@@ -64,11 +64,16 @@ public class ViewAction extends IntactBaseAction {
         Map idToView = (Map) super.getSession(request).getAttribute(
                 SearchConstants.FORWARD_MATCHES);
 
+       //local list to keep track of all bean IDs to be contracted -
+       //this is needed to ensure that sub-elements of them get contracted also
+       //and so keep the view modes in a consistent state
+       List beanIds = new ArrayList();
+
        //The set of objects in this session which have recently been expanded
-       Set expandedSet = (Set)super.getSession(request).getAttribute(SearchConstants.EXPANDED_AC_SET);
-       if (expandedSet == null) {
+       Map modeMap = (Map)super.getSession(request).getAttribute(SearchConstants.VIEW_MODE_MAP);
+       if (modeMap == null) {
            //should have been set up by SearchAction, but wasn't so do it here
-           super.getSession(request).setAttribute(SearchConstants.EXPANDED_AC_SET, new HashSet());
+           super.getSession(request).setAttribute(SearchConstants.VIEW_MODE_MAP, new HashMap());
        }
         // Save the parameters from the view page.
         Map map = request.getParameterMap();
@@ -85,9 +90,14 @@ public class ViewAction extends IntactBaseAction {
                 System.out.println("key: " + key);
        }
        System.out.println();
-       System.out.println("Keys that we know have already been expanded:");
-       for(Iterator it = expandedSet.iterator(); it.hasNext();) {
-           System.out.println(it.next());
+       System.out.println("Keys that we already have a view map for:");
+       for(Iterator it = modeMap.entrySet().iterator(); it.hasNext();) {
+           Map.Entry entry = (Map.Entry)it.next();
+           int value = ((Integer)entry.getValue()).intValue();
+           String mode = null;
+           if(value == XmlBuilder.CONTRACT_NODES) mode = "contracted";
+           if(value == XmlBuilder.EXPAND_NODES) mode = "expanded";
+           System.out.println("key:" + entry.getKey() + ", value: " + mode);
        }
        System.out.println();
 
@@ -123,38 +133,54 @@ public class ViewAction extends IntactBaseAction {
                     try {
 
                         int mode = XmlBuilder.CONTRACT_NODES;    //default op
-                        if(!expandedSet.contains(key)) {
-                            expandedSet.add(key);
+
+                        //have we done this key before? If not, assume expand required
+                        if(!modeMap.containsKey(key)) {
+
+                            modeMap.put(key, new Integer(XmlBuilder.EXPAND_NODES));
                             mode = XmlBuilder.EXPAND_NODES;
-                            System.out.println("not yet expanded in view - adding to set..");
+                            System.out.println("not yet found.. adding " + key +" to map as expanded..");
+                        }
+                        else {
+                            //change the mode (repeated code, but easier to read this way..)
+                            int currentMode = 0;
+                            Integer val = (Integer)modeMap.get(key);
+                            if(val != null) currentMode = val.intValue();
+                            if(currentMode == XmlBuilder.EXPAND_NODES) {
+
+                                modeMap.put(key, new Integer(XmlBuilder.CONTRACT_NODES));
+                                System.out.println("changing mode for key " + key + " to contracted");
+                                //don't need to set mode - already defaulted to contract
+                            }
+                            else {
+                                //put in as expand, even if somehow they key has a null value
+                                modeMap.put(key, new Integer(XmlBuilder.EXPAND_NODES));
+                                System.out.println("changing mode for key " + key + " to expanded");
+                                mode = XmlBuilder.EXPAND_NODES;
+                            }
                         }
 
-                        Iterator setIter = expandedSet.iterator();
-                        System.out.println("expanded so far:");
-                        while(setIter.hasNext()) {
-                                System.out.println(setIter.next());
-                        }
 
                         if(mode == XmlBuilder.CONTRACT_NODES) {
 
                             System.out.println("contract node " + ac);
-                            System.out.println("....removing key " + key + " from expanded set..");
-                            expandedSet.remove(key);
 
                             //if the root (wrapped) object is to be contracted - all
-                            //the ACs below should be too, ie those in the list
+                            //the ACs below should be too, ie those in the list,
+                            //so we need to keep track of it and then when we have processed
+                            //the whole request list of checkboxes we can then update the sub-items
+                            //with a contracted view state
                             Object wrappedObj = bean.getWrappedObject();
                             String wrappedAc = null;
                             if(wrappedObj instanceof BasicObject) wrappedAc = ((BasicObject)wrappedObj).getAc();
                             if(wrappedObj instanceof Institution) wrappedAc = ((Institution)wrappedObj).getAc();
 
-                            String keyToMatch = "tbl_" + beanId + wrappedAc;
+                            String keyToMatch = "tbl_" + beanId + "_" + wrappedAc;
                             if(key.equals(keyToMatch)) {
-                                //the bean ID represents the top level item, so go
-                                //through the expanded set and remove those in it containing
-                                //that ID
-                                System.out.println("AC to contract is the search object..");
-                                this.updateExpandedAcs(expandedSet, beanId);
+                                //hang on to the bean ID for later processing
+                                System.out.println("AC to contract is the search object - caching it...");
+                                //this.updateExpandedAcs(modeMap, beanId);
+                                beanIds.add(beanId);
 
                             }
                         }
@@ -218,6 +244,9 @@ public class ViewAction extends IntactBaseAction {
                 }
                 if(((ViewForm)form).expandAllSelected()) {
                     try {
+
+                        //due to the recursive nature of the tree here we only expand down to
+                        //Xrefs, and also for CvObjects only do a compact one..
                         TransformerFactory tf = TransformerFactory.newInstance();
                         Transformer transformer = tf.newTransformer();
                         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -235,7 +264,8 @@ public class ViewAction extends IntactBaseAction {
                         Element start = bean.getElement(ac);
                         if(start != null) {
                             System.out.println("found element with AC " + ac + " - expanding from there..");
-                            this.expandTree(bean, start, new ArrayList());
+                            String id = "tabl_" + beanId + "_";
+                            this.expandTree(bean, start, new ArrayList(), id, modeMap);
                         }
                         //no-op if the AC doesn't exist for some reason in the tree
                         System.out.println();
@@ -255,6 +285,17 @@ public class ViewAction extends IntactBaseAction {
 
                 }
 
+            }
+
+            //now we have processed all checkbox parameters we should make sure
+            //that for a contract mode involving root items, all sub-elements
+            //are marked with a contracted view state also (have to do it here, since
+            //we don't know what all the key states are until they have all been processed)
+            if(!beanIds.isEmpty()) {
+                System.out.println("marking all sub-elements of beans to contract...");
+                for(Iterator iter = beanIds.iterator(); iter.hasNext();) {
+                    this.updateExpandedAcs(modeMap, (String)iter.next());
+                }
             }
         }
 //        else {
@@ -303,22 +344,37 @@ public class ViewAction extends IntactBaseAction {
             System.out.println("calling expand for the Components...");
             bean.modifyXml(mode, componentList);
 
+            //don't need to mark the view modes of Components as expanded, because
+            //they are not displayed in any case (only their Proteins are)
+
         }
     }
 
     /**
-     * Updates the expanded Set of ACs to remove those related to the root object
-     * when it needs contracting. In other words, sub-items need to be taken out
-     * of the expanded set if they exist there because otherwise the next time the
-     * root object is expanded, the sub-items will have the wrong mode associated with
-     * them.
+     * Updates the mode Map for the items related to the root object
+     * when it needs contracting. In other words, sub-items need to be marked as contracted
+     * because otherwise the next time the root object is expanded, the sub-items will have
+     * the wrong mode associated with them.
      *
-     * @param expandedAcs The set of ACs currently expanded
+     * @param modes The Map of view modes for bean keys known so far
      * @param id The id of the Bean we are interested in
      */
-    private void updateExpandedAcs (Set expandedAcs, String id) {
+    private void updateExpandedAcs (Map modes, String id) {
 
-        Iterator it = expandedAcs.iterator();
+        //make sure all items associated with this bean are set to contracted
+        System.out.println("setting items associated with bean " + id + " to contracted...");
+        for (Iterator iter = modes.entrySet().iterator(); iter.hasNext();) {
+                Map.Entry entry = (Map.Entry) iter.next();
+                String key = (String) entry.getKey();
+                System.out.println("known key: " + key);
+                if (key.indexOf("tbl_" + id +"_") != -1) {
+                    entry.setValue(new Integer(XmlBuilder.CONTRACT_NODES));
+                    System.out.println("marked as contracted: " + key);
+
+                }
+       }
+
+        /*Iterator it = expandedAcs.iterator();
         System.out.println("removing expansion keys associated with bean ID = " + id +":-");
         Set toRemove = new HashSet();
         //have to copy them, *then* remove them as the Iterator
@@ -326,7 +382,7 @@ public class ViewAction extends IntactBaseAction {
         //NB probably a List would have been better..
         while(it.hasNext()) {
                 String acKey = (String)it.next();
-                if(acKey.indexOf("tbl_" + id) != -1) toRemove.add(acKey);
+                if(acKey.indexOf("tbl_" + id +"_") != -1) toRemove.add(acKey);
         }
         Iterator toRemoveIter = toRemove.iterator();
         System.out.println("sub-elements to be removed from expansion set:");
@@ -334,37 +390,41 @@ public class ViewAction extends IntactBaseAction {
             Object obj = toRemoveIter.next();
             System.out.println(obj);
             expandedAcs.remove(obj);
-        }
+        }*/
     }
 
     /**
      * Method to recursively expand the Elements of a tree until it can't be done
-     * anymore.
+     * anymore. NOte: this is intact-specific, so for example all expansions stop
+     * at an Xref element, and also any CvObjects are only generated to a compact level
+     * due to the recursive constraints they impose on the XML tree. For each new AC within
+     * a bean's tree that is expanded, the AC+bean id key information is also updated to expand mode
+     * to ensure cache and view consistency.
      *
      * @param bean The bean whose Document is to be expanded
      * @param currentNode The first Node of the tree identifying the tree level and hence
      * @param siblings The siblings of the current Node
+     * @param id The id of the bean (used to identify ACs in the xapnded set)
+     * @param modes The current Map of view modes for the known keys
      * where to start expanding from.
      *
      * @exception IntactException thrown if there was a modify problem
      */
-    private void expandTree(IntactViewBean bean, Node currentNode, List siblings) throws IntactException {
+    private void expandTree(IntactViewBean bean, Node currentNode, List siblings, String id, Map modes) throws IntactException {
 
-        //keep expanding the item until there are no children left..
         //Basic algorithm:
         //for each Node in a list of siblings:
         //get the ACs of the Node's children, then expand the bean for those ACs;
         //when the siblings are all done, move down to the next level of the DOM tree;
-        //repeat the above until all Nodes at one level no longer have any children
+        //repeat the above until all Nodes at one level are either Xrefs or compact CvObjects
 
-        System.out.println("current Node: " + ((Element)currentNode).getAttribute("ac"));
+        System.out.println("current Node AC: " + ((Element)currentNode).getAttribute("ac"));
         System.out.println("current Node Tag: " + ((Element)currentNode).getTagName());
         Node nextSibling = null;
 
         //local copy of siblings
         List remainingSibs = new ArrayList();
         if(!siblings.isEmpty()) {
-            System.out.println("sibling class: " + siblings.get(0).getClass());
             Node sib = (Node)siblings.get(0);
             if(sib != null) {
                 System.out.println("current Node first sibling: " + sib.getNodeType() + sib.getNodeName());
@@ -384,16 +444,18 @@ public class ViewAction extends IntactBaseAction {
         }
         else {System.out.println("current Node has no siblings - continuing..."); }
 
-        //base case - all Nodes at this level have no children
-        if(!currentNode.hasChildNodes()) {
+        //base case - all Nodes at this level are Xrefs, or CvObjects
+        if((((Element)currentNode).getTagName().equals("Xref")) ||
+            (((Element)currentNode).getTagName().startsWith("Cv"))) {
             boolean done = true;
             if(!siblings.isEmpty()) {
                 Iterator it = siblings.iterator();
                 while(it.hasNext()) {
                     Node checkNode = (Node)it.next();
-                    if(checkNode.hasChildNodes()) {
+                    if(!((Element)checkNode).getTagName().equals("Xref") &
+                        !(((Element)currentNode).getTagName().startsWith("Cv"))) {
                         //found one - better start here instead
-                        System.out.println("sibling has children - changing target node to it..");
+                        System.out.println("found a non-Xref/CvObject sibling - changing target node to it..");
                         currentNode = checkNode;
                         done = false;
                         break;
@@ -410,8 +472,21 @@ public class ViewAction extends IntactBaseAction {
         System.out.println("Children of current node " + ((Element)currentNode).getAttribute("ac") + ":");
         for(int i=0; i<children.getLength(); i++) {
             Element childElem = (Element)children.item(i);
-            System.out.println("child: " + childElem.getAttribute("ac"));
-            if(childElem.hasAttribute("ac")) childAcs.add(childElem.getAttribute("ac"));
+            String childAc = childElem.getAttribute("ac");
+            if(childElem.hasAttribute("ac")) {
+                System.out.println("child: " + childElem.getAttribute("ac"));
+            }
+            else {System.out.println("child has no AC - tag name: " + childElem.getTagName()); }
+            childAcs.add(childAc);
+
+            //update it in the mode Map (even though it is not yet expanded for
+            //this bean, but it will be..)
+            String key = id + childAc;
+            Integer val = (Integer)modes.get(key);
+            if(val != null) {
+                modes.remove(key);
+                modes.put(key, new Integer(XmlBuilder.EXPAND_NODES));
+            }
 
             //add the children into the sibling list for the next level down
             remainingSibs.add(childElem);
@@ -419,13 +494,14 @@ public class ViewAction extends IntactBaseAction {
         //got the current Node's child ACs, so now modify the bean data
         System.out.println("modifying bean with child ACs..");
         bean.modifyXml(XmlBuilder.EXPAND_NODES, childAcs);
+
         //now do the siblings and move to the next level
         if(!siblings.isEmpty()) {
             System.out.println("now doing siblings...");
             Iterator sibIterator = siblings.iterator();
 
             while(sibIterator.hasNext()) {
-                this.expandTree(bean, (Node)sibIterator.next(), siblings);
+                this.expandTree(bean, (Node)sibIterator.next(), siblings, id, modes);
             }
         }
         else {System.out.println("no siblings to check"); }
@@ -433,6 +509,6 @@ public class ViewAction extends IntactBaseAction {
         //take out the next level "first" child as it is the first node to check at the
         //next level
         remainingSibs.remove(nextLevelChild);
-        this.expandTree(bean, nextLevelChild, remainingSibs);
+        this.expandTree(bean, nextLevelChild, remainingSibs, id, modes);
     }
 }
