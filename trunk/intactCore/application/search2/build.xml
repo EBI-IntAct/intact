@@ -31,15 +31,18 @@
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
 
-    <property name="dist.dir" value="dist"/>
+    <property name="dist.dir"    value="dist"/>
     <property name="pg.war.file" value="${ant.project.name}.war"/>
 
     <!-- This project specific paths. -->
-    <property name="src.dir" value="src"/>
-    <property name="lib.dir" value="WEB-INF/lib"/>
-    <property name="tld.dir" value="WEB-INF/tld"/>
-    <property name="dest.dir" value="WEB-INF/classes"/>
-    <property name="docs.dir" value="doc/api"/>
+    <property name="src.dir"     value="src"/>
+    <property name="layouts.dir" value="layouts"/>
+    <property name="pages.dir"   value="pages"/>
+    <property name="images.dir"  value="images"/>
+    <property name="lib.dir"     value="WEB-INF/lib"/>
+    <property name="tld.dir"     value="WEB-INF/tld"/>
+    <property name="dest.dir"    value="WEB-INF/classes"/>
+    <property name="docs.dir"    value="doc/api"/>
 
     <!-- The name of the last modified file -->
     <property name="last.modified.file" value="last-modified.txt"/>
@@ -99,8 +102,41 @@
         <!-- Delete directories first -->
         <delete dir="${dest.dir}"/>
         <delete dir="${docs.dir}"/>
+        <delete dir="${layouts.dir}/styles"/>
 
-        <delete file="last-modified" quiet="true" />
+
+        <!-- layout commons files -->
+        <delete>
+             <fileset dir="${layouts.dir}">
+                 <!-- Do not remove search specific files -->
+                 <exclude name="sidebar.jsp"/>
+            </fileset>
+        </delete>
+
+        <!-- pages commons files -->
+        <delete>
+             <fileset dir="${pages.dir}">
+                 <!-- Do not remove search specific files -->
+                 <exclude name="noMatch.jsp"/>
+                 <exclude name="results.jsp"/>
+                 <exclude name="sidebarInput.jsp"/>
+            </fileset>
+        </delete>
+
+        <!-- images commons files -->
+        <delete>
+             <fileset dir="${images.dir}">
+                 <!-- Do not remove search specific files -->
+                 <exclude name="image23F.JPG"/>
+                 <exclude name="imageE0A.JPG"/>
+                 <exclude name="imageGKH.JPG"/>
+                 <exclude name="imageV3F.JPG"/>
+            </fileset>
+        </delete>
+
+        <delete dir="${tld.dir}" />
+
+        <delete file="${last.modified.file}" quiet="true" />
     </target>
 
     <!-- =================================================================== -->
@@ -176,12 +212,12 @@
         <mkdir dir="${dist.dir}"/>
 
         <!-- Create local directories to copy common files. -->
-        <mkdir dir="${basedir}/layouts/styles"/>
-        <mkdir dir="${basedir}/images"/>
+        <mkdir dir="${layouts.dir}/styles"/>
+        <mkdir dir="${images.dir}"/>
         <mkdir dir="${basedir}/${tld.dir}"/>
 
         <!-- Common layouts -->
-        <copy todir="${basedir}/layouts">
+        <copy todir="${layouts.dir}">
             <fileset dir="${intact.app.dir}/layouts">
                 <!-- Don't need any frame layouts for this application -->
                 <exclude name="*Frame.jsp"/>
@@ -191,12 +227,12 @@
         </copy>
 
         <!-- Common images -->
-        <copy todir="${basedir}/images">
+        <copy todir="${images.dir}">
             <fileset dir="${intact.app.dir}/images"/>
         </copy>
 
         <!-- Common jsp files -->
-        <copy todir="${basedir}/pages">
+        <copy todir="${pages.dir}">
             <fileset dir="${intact.app.dir}/pages">
                 <!-- Don't need error frame JSP -->
                 <exclude name="errorFrame.jsp"/>
