@@ -53,7 +53,7 @@ building the web service.
     It creates an archive called tulipWebService.tar.gz in the 'dist' directory.
 
 
-[ If you have choosen the GVF library, please go to (3) ]
+[ If you have choosen the GVF library, please go to (4) ]
 
 
 (3) Install the tulip console (software allowing to interact with the Tulip library)
