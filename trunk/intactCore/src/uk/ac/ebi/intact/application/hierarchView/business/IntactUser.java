@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Collection;
 import java.util.Properties;
-import java.net.URL;
 
 
 import org.apache.log4j.Logger;
