@@ -479,7 +479,7 @@ public class LineExport {
      */
     protected final Collection getInteractions( final Protein protein ) {
         Collection components = protein.getActiveInstances();
-        Collection interactions = new ArrayList( components.size() );
+        Set interactions = new HashSet( components.size() );
 
         for ( Iterator iterator = components.iterator(); iterator.hasNext(); ) {
             Component component = (Component) iterator.next();
@@ -487,6 +487,66 @@ public class LineExport {
         }
 
         return interactions;
+    }
+
+    /**
+     * Tells us if an Interaction is binary or not
+     *
+     * @param interaction the interaction we are interrested in.
+     * @return true if the interaction is binary, otherwise false.
+     */
+    public boolean isBinary( Interaction interaction ) {
+
+        boolean isBinaryInteraction = false;
+        // if that interaction has not exactly 2 interactors, it is not taken into account
+
+        if( interaction.getComponents() != null ) {
+
+            int componentCount = interaction.getComponents().size();
+
+            if( componentCount == 2 ) {
+
+                // check that the stochiometry is 1 for each component
+                Iterator iterator1 = interaction.getComponents().iterator();
+
+                Component component1 = (Component) iterator1.next();
+                float stochio1 = component1.getStoichiometry();
+
+                Component component2 = (Component) iterator1.next();
+                float stochio2 = component2.getStoichiometry();
+
+                if( stochio1 == 1 && stochio2 == 1 ) {
+
+                    isBinaryInteraction = true;
+
+                } else {
+
+                    log( "\t\t Interaction has 2 interactors but stochio are " + stochio1 + " and " + stochio2 + ", we don't export it." );
+                    isBinaryInteraction = false;
+                }
+
+            } else if( componentCount == 1 ) {
+
+                // check that the stochiometry is 2
+                Iterator iterator1 = interaction.getComponents().iterator();
+                Component component1 = (Component) iterator1.next();
+                if( component1.getStoichiometry() == 2 ) {
+
+                    isBinaryInteraction = true;
+
+                } else {
+
+                    log( "\t\t Interaction has 1 interactors but stochio is " + component1.getStoichiometry() + " (should be 1), we don't export it." );
+                    isBinaryInteraction = false;
+                }
+            } else {
+
+                log( "\t\t Interaction has not exactly 2 interactors (" + componentCount + "), we don't export it." );
+                isBinaryInteraction = false;
+            }
+        }
+
+        return isBinaryInteraction;
     }
 
     /**

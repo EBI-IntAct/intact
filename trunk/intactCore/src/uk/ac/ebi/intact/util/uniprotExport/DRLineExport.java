@@ -78,15 +78,14 @@ public class DRLineExport extends LineExport {
             }
 
             // if that interaction has not exactly 2 interactors, it is not taken into account
-            if( interaction.getComponents().size() != 2 ) {
-
-                // TODO find out if (getComponents().size() == 1 && stochiometry == 2) is valid too.
+            if( !isBinary( interaction ) ) {
 
                 log( "\t\t Interaction has not exactly 2 interactors (" + interaction.getComponents().size() +
                      "), we don't take it into account." );
                 continue; // loop to the next interaction
+
             } else {
-                log( "\t\t Interaction has exactly 2 interactors." );
+                log( "\t\t Interaction is binary." );
             }
 
             Collection experiments = interaction.getExperiments();
@@ -286,10 +285,17 @@ public class DRLineExport extends LineExport {
         Connection connection = helper.getJDBCConnection();
         Statement statement = connection.createStatement();
 
-        ResultSet proteinAcs = statement.executeQuery( "SELECT ac " +
-                                                       "FROM IA_INTERACTOR " +
-                                                       "WHERE objclass like '%Protein%' " );
 
+//        String oldSql = "SELECT ac " +
+//                         "FROM IA_INTERACTOR " +
+//                         "WHERE objclass like '%Protein%' ";
+
+        String sql = "SELECT distinct P.ac " +
+                     "FROM   ia_interactor P, ia_component C " +
+                     "WHERE  P.objclass like '%Protein%' and " +
+                     "       P.ac IN C.interactor_ac";
+
+        ResultSet proteinAcs = statement.executeQuery( sql );
         Runtime.getRuntime().addShutdownHook( new CCLineExport.DatabaseConnexionShutdownHook( helper ) );
 
         // fetch necessary vocabulary
@@ -306,6 +312,16 @@ public class DRLineExport extends LineExport {
 
             proteinCount++;
 
+            if( ( proteinCount % 100 ) == 0 ) {
+                System.out.print( "..." + proteinCount );
+
+                if( ( proteinCount % 1000 ) == 0 ) {
+                    System.out.println( "" );
+                } else {
+                    System.out.flush();
+                }
+            }
+
             String ac = proteinAcs.getString( 1 );
             proteins = helper.search( Protein.class.getName(), "ac", ac );
 
@@ -315,10 +331,11 @@ public class DRLineExport extends LineExport {
             }
 
             // only used in case the current protein is a splice variant
-            Protein protein = (Protein) proteins.iterator().next();
             Protein master = null;
 
-            boolean skip = false;
+            Protein protein = (Protein) proteins.iterator().next();
+
+            String uniprotId = null;
 
             // if this is a splice variant, we try to get its master protein
             if( protein.getShortLabel().indexOf( '-' ) != -1 ) {
@@ -326,8 +343,11 @@ public class DRLineExport extends LineExport {
                 String masterAc = getMasterAc( protein );
 
                 if( masterAc == null ) {
+
                     System.err.println( "The splice variant having the AC(" + protein.getAc() + ") doesn't have it's master AC." );
+
                 } else {
+
                     Collection c = null;
                     try {
                         c = helper.search( Protein.class.getName(), "ac", masterAc );
@@ -343,28 +363,23 @@ public class DRLineExport extends LineExport {
                         master = (Protein) c.iterator().next();
 
                         // check that the master hasn't been processed already
-                        String uniprot = getUniprotID( master );
-                        if( proteinEligible.contains( uniprot ) ) {
-                            // we can skip that protein
-                            skip = true;
-                        }
+                        uniprotId = getUniprotID( master );
                     }
                 }
-            } // splice variant handling
+            } else {
 
-            if( false == skip ) {
-                String id = getProteinExportStatus( protein, master );
+                uniprotId = getUniprotID( protein );
+            }
 
-                if( null != id ) {
-                    proteinEligible.add( id );
-                }
+            if( uniprotId != null && !proteinEligible.contains( uniprotId ) ) {
+
+                proteinEligible.add( uniprotId );
 
                 int count = proteinEligible.size();
                 float percentage = ( (float) count / (float) proteinCount ) * 100;
                 log( count + " protein" + ( count > 1 ? "s" : "" ) +
                      " eligible for export out of " + proteinCount +
                      " processed (" + percentage + "%)." );
-                System.out.print( '.' );
             }
         } // all proteins
 
@@ -410,7 +425,7 @@ public class DRLineExport extends LineExport {
     private static void displayUsage( Options options ) {
         // automatically generate the help statement
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp( "DRLineExport [-debug] [-debugFile]", options );
+        formatter.printHelp( "DRLineExport [-file <filename>] [-debug] [-debugFile]", options );
     }
 
     public static void main( String[] args ) throws IntactException, SQLException, LookupException,
@@ -418,6 +433,8 @@ public class DRLineExport extends LineExport {
 
         // create Option objects
         Option helpOpt = new Option( "help", "print this message" );
+
+        Option drExportOpt = OptionBuilder.withArgName( "drExportFilename" ).hasArg().withDescription( "DR export output filename." ).create( "file" );
 
         Option debugOpt = OptionBuilder.withDescription( "Shows verbose output." ).create( "debug" );
         debugOpt.setRequired( false );
@@ -427,6 +444,7 @@ public class DRLineExport extends LineExport {
 
         Options options = new Options();
 
+        options.addOption( drExportOpt );
         options.addOption( helpOpt );
         options.addOption( debugOpt );
         options.addOption( debugFileOpt );
@@ -458,6 +476,16 @@ public class DRLineExport extends LineExport {
         exporter.setDebugEnabled( debugEnabled );
         exporter.setDebugFileEnabled( debugFileEnabled );
 
+        boolean filenameGiven = line.hasOption( "file" );
+        String filename = null;
+        if( filenameGiven ) {
+            filename = line.getOptionValue( "file" );
+        } else {
+            filename = "DRLineExport_" + TIME + ".txt";
+        }
+
+        System.out.println( "DR export will be saved in: " + filename );
+
 
         IntactHelper helper = new IntactHelper();
         System.out.println( "Database instance: " + helper.getDbName() );
@@ -466,8 +494,9 @@ public class DRLineExport extends LineExport {
         // get the set of Uniprot ID to be exported to Swiss-Prot
         Set proteinEligible = exporter.getElibibleProteins( helper );
 
+        System.out.println( proteinEligible.size() + " protein(s) selected for export." );
+
         // save it to a file.
-        String filename = "DRLineExport_" + TIME + ".txt";
         File file = new File( filename );
         System.out.println( "Try to save to: " + file.getAbsolutePath() );
         BufferedWriter out = null;
@@ -476,6 +505,7 @@ public class DRLineExport extends LineExport {
             fw = new FileWriter( file );
             out = new BufferedWriter( fw );
             writeToFile( proteinEligible, out );
+            out.flush();
 
         } catch ( IOException e ) {
             e.printStackTrace();
