@@ -10,7 +10,7 @@
 
   Purpose:    Drop all Postgres components for IntAct
 
-  Usage:      psql - f drop_tables.sql
+  Usage:      psql -f drop_tables.sql
 
 
   $Date$
@@ -18,6 +18,14 @@
 
   *************************************************************/
 
+drop table ia_range cascade ;
+--  drop table ia_range_audit ;
+
+drop table ia_feature2annot cascade ;
+--  drop table ia_feature2annot_audit ;
+
+drop table ia_feature cascade ;
+--  drop table ia_feature_audit ;
 
 drop table ia_cvobject2annot cascade ;
 --  drop table ia_cvobject2annot_audit ;
