@@ -22,7 +22,9 @@
     * Retreive user's data from the session
     */
    IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
+    if (user == null) return;
    InteractionNetwork in = user.getInteractionNetwork();
+    if (in == null) return ;
 %>
 
 <table border="0" cellspacing="3" cellpadding="3" width="100%" heigth="100%">
