@@ -60,7 +60,6 @@
     <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA) %>
 </h3>
 
-<br>
 <span class="smalltext">(short labels of search criteria matches are
     <span style="color: rgb(255, 0, 0);">highlighted</span>
 </span><span class="smalltext">)<br></span></p>
@@ -74,9 +73,6 @@ mockups, June 2004
 <!-- we need the buttons at the top as well as the bottom now -->
 <%@ include file="buttonBar.html" %>
 
-
-    <hr size="2">   <!-- line separator -->
-
     <!-- The main display table -->
     <table style="background-color: rgb(51, 102, 102); width: 100%;" cellpadding="2">
         <tbody>
@@ -87,9 +83,9 @@ mockups, June 2004
                 <!-- checkbox and main label --->
                 <td class="headerdark">
                     <nobr>
-                    <input type="checkbox" name="<%= bean.getProteinAc()%>" checked>
+                    <input type="checkbox" name="<%= bean.getProteinAc()%>" >
                     <span class = "whiteheadertext">Protein</span>
-                    <a href="<%= bean.getHelpLink() + "search.TableLayout"%>"
+                    <a href="<%= bean.getHelpLink() + "Interactor"%>"
                     target="new"><sup><b><font color="white">?</font></b></sup></a></nobr>
                 </td>
 
