@@ -9,11 +9,10 @@ package uk.ac.ebi.intact.application.cvedit.business;
 import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.persistence.SearchException;
-import uk.ac.ebi.intact.persistence.DAO;
-import uk.ac.ebi.intact.persistence.TransactionException;
-import uk.ac.ebi.intact.persistence.CreateException;
+import uk.ac.ebi.intact.business.IntactException;
 
 import java.util.Collection;
+import java.util.Date;
 
 /**
  * This interface represents an Intact user.
@@ -39,6 +38,11 @@ public interface IntactUserIF {
     public static final String QUALIFIER_NAMES = "QualifierNames";
 
     /**
+     * Returns the user id of the user used to login into cvedit application.
+     */
+    public String getUser();
+
+    /**
      * Sets the topic selected by the user.
      *
      * @param topic the selected topic.
@@ -53,16 +57,10 @@ public interface IntactUserIF {
     /**
      * Returns the Institution.
      *
-     * @exception for errors in searching; this is also thrown if the search
-     * produced more than a single Institution.
+     * @exception SearchException for errors in searching; this is also
+     *  thrown if the search produced more than a single Institution.
      */
     public Institution getInstitution() throws SearchException;
-
-    /**
-     * Returns the reference to the DAO object. Just a wrapper for
-     * <code>getDAO</code> method of <code>DAOSource</code> class.
-     */
-    public DAO getDAO();
 
     /**
      * Returns the list for given list name.
@@ -97,14 +95,14 @@ public interface IntactUserIF {
      *
      * @exception TransactionException for errors in starting a transaction.
      */
-    public void begin() throws TransactionException;
+    public void begin() throws IntactException;
 
     /**
      * Wrapper to commit a transaction via OJB layer.
      *
-     * @exception TransactionException for errors in committing a transaction.
+     * @exception IntactException for errors in committing a transaction.
      */
-    public void commit() throws TransactionException;
+    public void commit() throws IntactException;
 
     /**
      * Returns the state of the transaction via OJB layer.
@@ -114,36 +112,39 @@ public interface IntactUserIF {
     /**
      * A wrapper to roll back a transaction vi OJB layer.
      *
-     * @exception TransactionException for errors in rolling back a transaction.
+     * @exception IntactException for errors in rolling back a transaction.
      */
-    public void rollback() throws TransactionException;
+    public void rollback() throws IntactException;
 
     /**
      * Wrapper to persist an object in the underlying persistence system.
      *
      * @param object the object to create.
      *
-     * @exception CreateException for errors in creating an object in the
+     * @exception IntactException for errors in creating an object in the
      * persistent system.
      */
-    public void create(Object object) throws CreateException;
+    public void create(Object object) throws IntactException;
 
     /**
      * Wrapper to update an object in the underlying persistence system.
      *
      * @param object the object to create.
      *
-     * @exception CreateException for errors in updating an object in the
+     * @exception IntactException for errors in updating an object in the
      * persistent system.
      */
-    public void update(Object object) throws CreateException;
+    public void update(Object object) throws IntactException;
 
     /**
      * Wrapper to delete an object from the underlying persistence system.
      *
      * @param object the object to delete.
+     *
+     * @exception IntactException for errors in deleting an object from the
+     * persistent system.
      */
-    public void delete(Object object) throws TransactionException;
+    public void delete(Object object) throws IntactException;
 
     /**
      * Sets the given CV Object as the current object the user is working
@@ -153,11 +154,14 @@ public interface IntactUserIF {
      *  working presently.
      *
      * <pre>
-     * post: return = cvobj
+     * post: getCurrentEditObject = cvobj
      * </pre>
      */
     public void setCurrentEditObject(CvObject cvobj);
 
+    /**
+     * Returns the current object the user is working presently.
+     */
     public CvObject getCurrentEditObject();
 
     /**
@@ -166,22 +170,11 @@ public interface IntactUserIF {
      * @param clazz the class object to search.
      * @param label the short label to search for.
      *
-     * @exception for errors in searching; this is also thrown if the search
-     * produced more than a single object.
+     * @exception SearchException for errors in searching; this is also
+     *  thrown if the search produced more than a single object.
      */
     public Object getObjectByLabel(Class clazz, String label)
         throws SearchException;
-
-    /**
-     * Return an Object by classname and ac.
-     *
-     * @param clazz the class object to search.
-     * @param ac the AC to search for.
-     *
-     * @exception for errors in searching; this is also thrown if the search
-     * produced more than a single object.
-     */
-    //public Object getObjectByAc(Class clazz, String ac) throws SearchException;
 
     /**
      * Removes the given object from cache of the underlying persistence system.
@@ -189,17 +182,6 @@ public interface IntactUserIF {
      * @param object the object to clear from the cache.
      */
     public void removeFromCache(Object object);
-
-    /**
-     * Return an Object by classname and AC.
-     *
-     * @param clazz the class object to search.
-     * @param ac the AC to search for.
-     *
-     * @return true if object of <code>clazz</code> with <code>ac</code>
-     * exists of the persistence system.
-     */
-    //public boolean objectExistsByAc(Class clazz, String ac);
 
     /**
      * This method provides a means of searching intact objects, within the constraints
@@ -217,4 +199,8 @@ public interface IntactUserIF {
     public Collection search(String objectType, String searchParam,
                               String searchValue) throws SearchException;
 
+    /**
+     * Returns the time the use logs off from the application.
+     */
+    public Date logoffTime();
 }

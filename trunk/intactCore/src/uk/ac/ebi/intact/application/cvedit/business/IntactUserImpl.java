@@ -13,6 +13,8 @@ import javax.servlet.http.HttpSessionBindingEvent;
 
 import uk.ac.ebi.intact.persistence.*;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.business.IntactException;
 
 /**
  * This class stores information about an Intact Web user session. Instead of
@@ -33,14 +35,29 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
     private static final String theirEmptyListItem = "-------------";
 
     /**
+     * The user ID.
+     */
+    private String myUser;
+
+    /**
      * Reference to the DAO.
      */
     private DAO myDAO;
 
     /**
-     * The session started time.
+     * Reference to the Intact Helper.
+     */
+    private IntactHelper myHelper;
+
+    /**
+     * The session start time.
      */
     private Date myStartTime;
+
+    /**
+     * The session end time.
+     */
+    private Date myEndTime;
 
     /**
      * The selected topic.
@@ -70,12 +87,14 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
      *  could be due to the errors in repository files or the underlying
      *  persistent mechanism rejected <code>user</code> and
      *  <code>password</code> combination.
-     * @exception SearchException thrown for any error in creating lists such
-     *  as topics, database names etc.
+     * @exception IntactException for errors in creating IntactHelper.
+     * @exception SearchException for error in creating lists such as topics,
+     *  database names etc.
      */
     public IntactUserImpl(String mapping, String dsClass, String user,
-                          String password)
-        throws DataSourceException, SearchException {
+            String password) throws DataSourceException, IntactException,
+            SearchException {
+        myUser = user;
         DAOSource ds = DAOFactory.getDAOSource(dsClass);
 
         // Pass config details to data source - don't need fast keys as only
@@ -83,6 +102,9 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         Map fileMap = new HashMap();
         fileMap.put(Constants.MAPPING_FILE_KEY, mapping);
         ds.setConfig(fileMap);
+
+        // Initialize the helper.
+        myHelper = new IntactHelper(ds);
 
         // Cache the DAO.
         // Need a method to get DAO object by passing user and password.
@@ -109,9 +131,17 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
     }
 
     /**
-     * Will call this method when an object is unbound from a session.
+     * Will call this method when an object is unbound from a session. This
+     * method sets the logout time.
      */
     public void valueUnbound(HttpSessionBindingEvent event) {
+        myEndTime = Calendar.getInstance().getTime();
+    }
+
+    // Implementation of IntactUserIF interface.
+
+    public String getUser() {
+        return myUser;
     }
 
     public void setSelectedTopic(String topic) {
@@ -127,10 +157,6 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
             Institution.class, "EBI");
     }
 
-    public DAO getDAO() {
-        return myDAO;
-    }
-
     public Collection getList(String name) {
         return (Collection) myNameToItems.get(name);
     }
@@ -141,38 +167,38 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         return ((String) iter.next()).equals(theirEmptyListItem) && !iter.hasNext();
     }
 
-    public void begin() throws TransactionException {
+    public void begin() throws IntactException {
         // Only begin a transaction if it hasn't been started before.
-        if (!myDAO.isActive()) {
-            myDAO.begin();
+        if (!isActive()) {
+            myHelper.startTransaction();
         }
     }
 
-    public void commit() throws TransactionException {
-        myDAO.commit();
+    public void commit() throws IntactException {
+        myHelper.finishTransaction();
     }
 
     public boolean isActive() {
-        return myDAO.isActive();
+        return myHelper.isInTransaction();
     }
 
-    public void rollback() throws TransactionException {
+    public void rollback() throws IntactException {
         // Only rollback if there is an active transaction.
-        if (myDAO.isActive()) {
-            myDAO.rollback();
+        if (isActive()) {
+            myHelper.undoTransaction();
         }
     }
 
-    public void create(Object object) throws CreateException {
-        myDAO.create(object);
+    public void create(Object object) throws IntactException {
+        myHelper.create(object);
     }
 
-    public void update(Object object) throws CreateException {
-       myDAO.update(object);
+    public void update(Object object) throws IntactException {
+        myHelper.update(object);
     }
 
-    public void delete(Object object) throws TransactionException {
-        myDAO.remove(object);
+    public void delete(Object object) throws IntactException {
+        myHelper.delete(object);
     }
 
     public void setCurrentEditObject(CvObject cvobj) {
@@ -205,16 +231,21 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
     public void removeFromCache(Object object) {
         // IMPORTANT: THIS IS removed to make the build successful.
         // This could be unnecessary with the new ODMG stuff????
-        //myDAO.getBroker().removeFromCache(object);
+        //myDAO.removeFromCache(object);
     }
 
     public Collection search(String objectType, String searchParam,
                               String searchValue) throws SearchException {
-        //set up variables used during searching..
-        Collection resultList = new ArrayList();
+        try {
+            return myHelper.search(objectType, searchParam, searchValue);
+        }
+        catch (IntactException ie) {
+            throw new SearchException("Search failed");
+        }
+    }
 
-        //now retrieve an object...
-        return myDAO.find(objectType, searchParam, searchValue);
+    public Date logoffTime() {
+        return myEndTime;
     }
 
     // Helper methods.
