@@ -17,6 +17,7 @@ import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean;
 import uk.ac.ebi.intact.application.cvedit.struts.view.ResultBean;
+import uk.ac.ebi.intact.util.GoTools;
 import org.apache.commons.collections.CollectionUtils;
 
 /**
@@ -24,13 +25,14 @@ import org.apache.commons.collections.CollectionUtils;
  * binding multiple objects, only an object of this class is bound to a session,
  * thus serving a single access point for multiple information.
  * <p>
- * This class implements the <tt>ttpSessionBindingListener</tt> interface for it
- * can be notified of session time outs.
+ * This class also implements the <tt>HttpSessionBindingListener</tt> interface
+ * for it can be notified of session time outs.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
 public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener {
+
      // Beginning of Inner classes
 
      // ------------------------------------------------------------------------
@@ -91,11 +93,6 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
      */
     private static final int theirMultipleEntries = 1;
 
-    /**
-     * A single element array to be used by toArray() method.
-     */
-    private static final ResultBean[] RESULT_BEAN_ARRAY = new ResultBean[0];
-
     // End of static data
 
     /**
@@ -119,14 +116,22 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
     private Date myEndTime;
 
     /**
+     * Maintains the edit state; it used when inserting the header dynamically.
+     * For example, if in the edit state, then append the current object's class
+     * type to the header or else display the standard header.
+     */
+    private boolean myEditState;
+
+    /**
+     * The topic selected by the user; transient as it is valid for the
+     * current session only.
+     */
+    private transient String mySelectedTopic;
+
+    /**
      * Maps list name -> list of items. Made it transient
      */
     private transient Map myNameToItems = new HashMap();
-
-    /**
-     * The current Cv object we are editing.
-     */
-    private CvObject myEditCvObject;
 
     /**
      * The current view of the user. Not saving the state of the view yet.
@@ -250,15 +255,19 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
     }
 
     public void setSelectedTopic(String topic) {
-        myView.setTopic(topic);
+        mySelectedTopic = topic;
     }
 
     public String getSelectedTopic() {
-        return myView.getTopic();
+        return mySelectedTopic;
     }
 
     public Institution getInstitution() throws SearchException {
         return (Institution) getObjectByLabel(Institution.class, "EBI");
+    }
+
+    public boolean isEditing() {
+        return myEditState;
     }
 
     public Collection getTopicList() {
@@ -278,7 +287,7 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
     }
 
     public void refreshList() throws SearchException {
-        Class clazz = myEditCvObject.getClass();
+        Class clazz = myView.getCvObject().getClass();
         // Has the current edit type got a list?
         if (!theirNameToType.containsValue(clazz)) {
             return;
@@ -303,10 +312,12 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
 
     public void commit() throws IntactException {
         myHelper.finishTransaction();
+        this.endEditing();
     }
 
     public void rollback() throws IntactException {
         myHelper.undoTransaction();
+        this.endEditing();
     }
 
     public void create(Object object) throws IntactException {
@@ -321,14 +332,16 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         myHelper.delete(object);
     }
 
-    public void setCurrentEditObject(CvObject cvobj) {
-        myEditCvObject = cvobj;
-        // Update the view using the current CV edit object.
-        myView.initialise(cvobj);
+    public void cancelEdit() {
+        this.endEditing();
+        myView.clearTransactions();
     }
 
-    public CvObject getCurrentEditObject() {
-        return myEditCvObject;
+    public void updateView(CvObject cvobj) {
+        // Start editing the object.
+        this.startEditing();
+        // Reset the view.
+        myView.initialise(cvobj);
     }
 
     public Object getObjectByLabel(Class clazz, String label)
@@ -392,12 +405,29 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         mySearchCache.add(new ResultBean(cvobj));
     }
 
-    public ResultBean[] getSearchCache() {
-        return (ResultBean[]) mySearchCache.toArray(RESULT_BEAN_ARRAY);
+    public Collection getSearchCache() {
+        return mySearchCache;
+    }
+
+    public void updateSearchCache(CvObject cvobj) {
+        this.removeFromSearchCache(cvobj.getAc());
+        this.addToSearchCache(cvobj);
     }
 
     public void removeFromSearchCache(String ac) {
         CollectionUtils.filter(mySearchCache, ResultBean.getPredicate(ac));
+    }
+
+    public String getUniqueShortLabel(Class clazz, String shortlabel)
+            throws SearchException {
+        CvObject cvobj = myView.getCvObject();
+        try {
+            return GoTools.getUniqueShortLabel(myHelper, clazz, cvobj,
+                    shortlabel, cvobj.getAc());
+        }
+        catch (IntactException ie) {
+            throw new SearchException("Search failed: " + ie.getNestedMessage());
+        }
     }
 
     public void logoff() throws IntactException {
@@ -473,9 +503,10 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
 
         // Remove the short label only when the current editable object's
         // class and the given class match.
-        if (myEditCvObject.getClass().equals(clazz)) {
+        CvObject cvobj = myView.getCvObject();
+        if (cvobj.getClass().equals(clazz)) {
             // The short label of the CV object we are editing at the moment.
-            String label = myEditCvObject.getShortLabel();
+            String label = cvobj.getShortLabel();
 
             // New collection because we are modifying the list.
             Collection topics = new ArrayList(list);
@@ -486,5 +517,19 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         }
         // No modifcations to the list; just return the cache list.
         return list;
+    }
+
+    /**
+     * Starts the editing session.
+     */
+    private void startEditing() {
+        myEditState = true;
+    }
+
+    /**
+     * Finishes the editing session.
+     */
+    private void endEditing() {
+        myEditState = false;
     }
 }
