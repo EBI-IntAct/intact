@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+     ANT master build configuration file for applications
+     Authors: Sugath Mudali (smudali@ebi.ac.uk), Samuel Kerrien (skerrien@ebi.ac.uk)
+-->
+
+<project name="application" basedir="." default="compile">
+
+    <property name="project.title" value="application"/>
+
+    <property environment="env"/>
+
+    <property name="tomcat.home"     value="${env.CATALINA_HOME}"/>
+    <property name="webapps.dir"     value="${tomcat.home}/webapps"/>
+    <property name="webapps.war.dir" value="${webapps.dir}/app-dir"/>
+    <property name="axis.home"       value="${webapps.dir}/axis"/>
+
+    <property name="start-tomcat" value="${tomcat.home}/bin/startup.sh"/>
+    <property name="stop-tomcat"  value="${tomcat.home}/bin/shutdown.sh"/>
+
+    <!-- =================================================================== -->
+
+    <!-- Ensures that tomcat.present property is called only once to avoid
+         error from Ant.
+    -->
+
+    <target name="run-once" unless="tomcat.present">
+        <available file="${tomcat.home}/conf/server.xml" property="tomcat.present"/>
+        <available file="${axis.home}/WEB-INF/web.xml" property="axis.present"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Displays a message to indicate that tomcat is not available. -->
+
+    <target name="check-tomcat" depends="run-once" unless="tomcat.present">
+        <echo message=
+            "Tomcat is not available on your system or CATALINA_HOME is not set"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Displays a message to indicate that axis is not available. -->
+
+    <target name="check-axis" depends="run-once" unless="axis.present">
+        <echo message=
+            "Axis is not available on your system or AXIS_HOME is not set"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Starts the Tomcat server. -->
+
+    <target name="start-tomcat" depends="check-tomcat" if="tomcat.present"
+        description="Starts Tomcat server">
+        <exec executable="${start-tomcat}" dir="${basedir}" vmlauncher="false" os="Linux"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Stops the Tomcat server. -->
+
+    <target name="stop-tomcat" depends="check-tomcat" if="tomcat.present"
+        description="Stops Tomcat server">
+        <exec executable="${stop-tomcat}" dir="${basedir}" vmlauncher="false" os="Linux"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Deploys the war file on the Tomcat server. -->
+
+    <target name="deploy" depends="check-tomcat" if="tomcat.present"
+        description="Deploys the WAR file on the Tomcat server">
+
+        <!-- Create the war repository directory -->
+        <mkdir dir="${webapps.war.dir}" />
+
+        <!-- Copy the file across to the deploy dir. -->
+        <copy file="${war}" todir="${webapps.war.dir}" overwrite="yes"/>
+
+        <echo message="Please start Tomcat to take effect (ant start-tomcat)"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Undeploys the war file from the Tomcat server. -->
+
+    <target name="undeploy" depends="check-tomcat" if="tomcat.present"
+        description="Removes the WAR file and the directory from the Tomcat server">
+
+        <!-- Stop the tomcat completely. -->
+        <antcall target="stop-tomcat"/>
+
+        <!-- Remove the war file. -->
+        <delete file="${webapps.war.dir}/${war}.war" quiet="true"/>
+
+        <!-- Delete the directory. -->
+        <delete dir="${webapps.war.dir}/${war}" quiet="true"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Generates the last modified file. -->
+
+    <target name="gen-last-modified-file">
+        <tstamp>
+            <format property="TODAY_UK" pattern="dd-MMMM-yyyy hh:mm aa" locale="en"/>
+      </tstamp>
+        <echo message="${TODAY_UK} by ${env.USER}" file="${file}"/>
+    </target>
+
+</project>

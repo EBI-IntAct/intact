@@ -1,0 +1,441 @@
+<html>
+
+<head>
+
+<title>IntAct editing form for controlled vocabularies</title>
+
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="content-style-type" content="text/css">
+<meta http-equiv="expires" content="250000">
+<meta name="robots" content="">
+<meta name="description" content="">
+<meta name="keywords" content="">
+
+<link rel=stylesheet type="text/css" href="form.css">
+<style type="text/css">
+<!--
+a:link { color:#000080; text-decoration:none; }
+a:visited { color:#000080; text-decoration:none; }
+-->
+</style>
+
+</head>
+
+<body>
+<center>
+<table width="700">
+<tr>
+<td class="kl">
+IntAct - Editing - Controlled Vocabularies - Class CvTopic</td> 
+<td class="kl">&nbsp;</td>
+<td class="kl">Logged in as xxx</td>
+<td class="kl" align=right><h1>Session ID: XXXX</h1></td>
+</tr>
+</table>
+
+<table width="700" cellpadding="15" cellspacing="0" border="0">
+
+<tr>
+<tr>
+<td class="hg" width="5%"></td>
+<td class="hbl" width="40%"><b>Select Object to edit:</b></td>
+<td class="hg" width="5%"></td>
+<td class="gr" width="45%"><b>Recently edited objects:</b></td>
+<td class="hg" width="5%"></td>
+</tr>
+
+<td class="hg"></td>
+<td class="hbl" align=right>
+AC: <INPUT TYPE="TEXT"
+  MAXLENGTH="30"
+  SIZE="15"
+  VALUE=""
+><br>
+Label: <INPUT TYPE="TEXT"
+  MAXLENGTH="30"
+  SIZE="15"
+  VALUE=""
+><br>
+Selection: 
+<SELECT
+  NAME="selectName"
+  SIZE="5">
+<OPTION>Topic 1
+<OPTION>Topic 2
+</SELECT>
+</td>
+<td class="hg"></td>
+
+<td class="gr">
+<INPUT TYPE="SUBMIT"
+  NAME="name"
+  VALUE="Clone">
+<a href="http:test">ObjectWithLabel1</a> (Status)<br>
+<INPUT TYPE="SUBMIT"
+  NAME="name"
+  VALUE="Clone">
+<a href="http:test">ObjectWithLabel2</a> (Status)<br>
+<INPUT TYPE="SUBMIT"
+  NAME="name"
+  VALUE="Clone">
+<a href="http:test">ObjectWithLabel3</a> (Status)<br>
+</td>
+
+<td class="hg"></td>
+</tr>
+
+<tr>
+<td class="hg"></td>
+<td class="hbl" align="right">
+<INPUT TYPE="SUBMIT"
+  NAME="name"
+  VALUE="Create new">&nbsp; &nbsp;
+<INPUT TYPE="SUBMIT"
+  NAME="name"
+  VALUE="Select">
+</td>
+<td class="hg"></td>
+<td class="gr"></td>
+<td class="hg"></td>
+</tr>
+
+
+<tr>
+<td class=""></td>
+<td class="hbl">
+<br><em>Selection by ac/label may be non-unique, in this case the possible options should move into the "selection" field</em>
+</td>
+<td class="hg"></td>
+
+<td class="gr">
+</td>
+<td class="hg"></td>
+</tr>
+
+</table>
+
+<table width="700" cellpadding="1" cellspacing="0" border="0">
+<tr>
+<td class="bl" width=20%><b>CvTopic</b></td>
+<td class="bl" width=20%></td>
+<td class="bl" width=60%></td>
+</tr>
+<tr>
+<td class="bl" align=right>Ac: </td>
+<td class="bl" >EBI-xxxxxxx</td>
+<td class="bl" >&nbsp;</td>
+</tr>
+<tr>
+<td class="bl" width=20% align=right>Label: </td>
+<td class="bl" width=20%><INPUT TYPE="TEXT"
+  MAXLENGTH="30"
+  SIZE="15"
+  VALUE=""
+></td>
+<td class="bl" width=60%>&nbsp;</td>
+</tr>
+<tr>
+<td class="bl" width=5%><b>Comments</b></td>
+<td class="bl" width=10%>Topic</td>
+<td class="bl" width=85%>Description</td>
+</tr>
+<tr>
+<td class="bl" width=5% align=right>
+<INPUT TYPE="SUBMIT"
+  NAME="name"
+  VALUE="Del">
+</td>
+<td class="bl" width=10%>
+<SELECT
+  NAME="selectName"
+  SIZE="1">
+<OPTION>Topic 1
+<OPTION>Topic 2
+</SELECT>
+</td>
+<td class="bl" width=85%>
+<TEXTAREA
+  COLS="50"
+  NAME="name"
+  ROWS="2"
+  WRAP="SOFT"
+>Sample comment.
+</TEXTAREA>
+</td>
+</tr>
+
+<tr>
+<td class="bl" width=5% align=right>
+<INPUT TYPE="SUBMIT"
+  NAME="name1"
+  VALUE="Del">
+</td>
+<td class="bl" width=10%>
+<SELECT
+  NAME="selectName"
+  SIZE="1">
+<OPTION>Topic 1
+<OPTION>Topic 2
+</SELECT>
+</td>
+<td class="bl" width=85%>
+<TEXTAREA
+  COLS="50"
+  NAME="name2"
+  ROWS="2"
+  WRAP="SOFT"
+>Sample comment 2.
+</TEXTAREA>
+</td>
+</tr>
+<tr>
+<td class="bl" width=5% align=right>
+<INPUT TYPE="SUBMIT"
+  NAME="name3"
+  VALUE="Add">
+</td>
+<td class="bl" width=10%>
+<SELECT
+  NAME="selectName"
+  SIZE="1">
+<OPTION>Topic 1
+<OPTION>Topic 2
+</SELECT>
+</td>
+<td class="bl" width=85%>
+<TEXTAREA
+  COLS="50"
+  NAME="name"
+  ROWS="2"
+  WRAP="SOFT"
+> &nbsp;</TEXTAREA>
+</td>
+</tr>
+</table>
+
+<table width="700" cellpadding="1" cellspacing="0" border="0">
+<tr>
+<td class="bl" width=5%><b>Crossreferences</b></td>
+<td class="bl" width=20%>Database</td>
+<td class="bl" width=20%>Primary ID</td>
+<td class="bl" width=20%>Secondary ID</td>
+<td class="bl" width=15%>Release number</td>
+<td class="bl" width=20%>Reference qualifier</td>
+</tr>
+<tr>
+<td class="bl" width=5% align=right>
+<INPUT TYPE="SUBMIT"
+  NAME="name"
+  VALUE="Del">
+</td>
+<td class="bl" width=10%>
+<SELECT
+  NAME="selectName"
+  SIZE="1">
+<OPTION>SPTR
+<OPTION>InterPro
+</SELECT>
+</td>
+<td class="bl" width=10%>
+<INPUT TYPE="TEXT"
+  MAXLENGTH="30"
+  SIZE="15"
+  VALUE=""
+>
+</td>
+
+<td class="bl" width=10%>
+<INPUT TYPE="TEXT"
+  MAXLENGTH="30"
+  SIZE="15"
+  VALUE=""
+>
+</td>
+<td class="bl" width=10%>
+<INPUT TYPE="TEXT"
+  MAXLENGTH="30"
+  SIZE="15"
+  VALUE=""
+>
+</td>
+<td class="bl" width=10%>
+<SELECT
+  NAME="selectName"
+  SIZE="1">
+<OPTION SELECT>None
+<OPTION>Identity
+</SELECT>
+</td>
+</tr>
+
+<tr>
+<td class="bl" width=5% align=right>
+<INPUT TYPE="SUBMIT"
+  NAME="name"
+  VALUE="Del">
+</td>
+<td class="bl" width=10%>
+<SELECT
+  NAME="selectName"
+  SIZE="1">
+<OPTION>SPTR
+<OPTION>InterPro
+</SELECT>
+</td>
+<td class="bl" width=10%>
+<INPUT TYPE="TEXT"
+  MAXLENGTH="30"
+  SIZE="15"
+  VALUE=""
+>
+</td>
+
+<td class="bl" width=10%>
+<INPUT TYPE="TEXT"
+  MAXLENGTH="30"
+  SIZE="15"
+  VALUE=""
+>
+<td class="bl" width=10%>
+<INPUT TYPE="TEXT"
+  MAXLENGTH="30"
+  SIZE="15"
+  VALUE=""
+>
+</td>
+<td class="bl" width=10%>
+<SELECT
+  NAME="selectName"
+  SIZE="1">
+<OPTION SELECT>None
+<OPTION>Identity
+</SELECT>
+</td>
+</tr>
+
+
+<tr>
+<td class="bl" width=5% align=right>
+<INPUT TYPE="SUBMIT"
+  NAME="name"
+  VALUE="Add">
+</td>
+<td class="bl" width=10%>
+<SELECT
+  NAME="selectName"
+  SIZE="1">
+<OPTION>SPTR
+<OPTION>InterPro
+</SELECT>
+</td>
+<td class="bl" width=10%>
+<INPUT TYPE="TEXT"
+  MAXLENGTH="30"
+  SIZE="15"
+  VALUE=""
+>
+</td>
+
+<td class="bl" width=10%>
+<INPUT TYPE="TEXT"
+  MAXLENGTH="30"
+  SIZE="15"
+  VALUE=""
+>
+<td class="bl" width=10%>
+<INPUT TYPE="TEXT"
+  MAXLENGTH="30"
+  SIZE="15"
+  VALUE=""
+>
+</td>
+<td class="bl" width=10%>
+<SELECT
+  NAME="selectName"
+  SIZE="1">
+<OPTION SELECT>None
+<OPTION>Identity
+</SELECT>
+</td>
+</tr>
+
+
+<tr><td class="bl" colspan=7>&nbsp;
+</td>
+</tr>
+</table>
+
+<table width="700" cellpadding="1" cellspacing="0">
+
+<tr>
+<td bgcolor="lightgreen" width=33% align=center>
+<INPUT TYPE="SUBMIT"
+  NAME="name"
+  VALUE="Submit">
+<br>
+<em>Saves the current object to the database.
+</em>
+</td>
+<td bgcolor="yellow" width=34% align=center>
+<INPUT TYPE="SUBMIT"
+  NAME="name"
+  VALUE="Cancel">
+<br>
+<em>Abandons editing of the current object, returns to the "selection" subscreen. 
+</em>
+</td>
+<td bgcolor="red" width=34% align=center>
+<INPUT TYPE="SUBMIT"
+  NAME="name"
+  VALUE="Delete">
+<br>
+<em>Deletes the current object from the database.
+</em>
+</td>
+</tr>
+
+</table>
+</center>
+<hr size=3>
+<h1>Specification for IntAct Cv Editing form:</h1>
+The above form is a sample form for the IntAct editing tool for
+controlled vocabularies. The layout is not mandatory, it should just
+indicate that a "nice" layout should be used.
+<p>
+Additional comments:
+<ol>
+<li>The two parts of the screen are largely independent, they might be
+implemented as subsequent forms. 
+<li>User identification should be based on the database
+login/password.
+<li>On submit the form contents should be verified, and errors should
+be noted in an additional field on top of the form, on a red
+background. 
+<li>Javascript can be used to improve the usability of the form, but
+should not be essential. Example: It might be possible to define a
+good "tabbing" order of the fields in Javascript.
+<li>The Session ID should allow to retrieve the current session in
+case of a server or client failure. It should be stored as a cooky on
+the client, but also be transferable from client to client by using it
+in a "retrieve session" form (after appropriate login). This obviously
+implies conservation of state on the server.
+<li>The number of objects in a CvObject class will normally be in the
+order of 10, but may be up to 1000.
+<li>The number of subelements (comments, crossreferences) will be low,
+in the order of 10.
+</ol>
+
+
+Extensions:
+<ol>
+<li>The form above is suitable for all current CvObjects, as they
+don't encode any specific attributes. However, this may change in the
+future, different form may be needed for different CvObject classes.
+<li>Currently all CvObject classes are just lists, but some will
+become hierarchies in the future.
+</ol>
+
+
+</body>
+
+</html>

@@ -1,0 +1,53 @@
+
+
+Notes for the PSI Generator
+------------------------------------------
+
+To Build it
+---------------
+Assuming you have already run ant compile-core to build the core files, cd to application/dataConversion. Then just type
+
+	ant compile
+
+to generate the classes directory. This will also copy the jar files from the lib directory of IntactCore, depending upon which 
+DB you have set to access (either postgres or oracle).
+
+
+To Run it
+-------------
+Assuming you have the usual things set up for Intact:
+
+It makes sense to run the Generator twice; the first time it will classify experiments according
+to size and species (ie BioSource), and produce a file of short labels with proposed filenames.
+The second time the application is run the PSI files themselves are generated. For those ecperiments
+classified as 'small scale', a (species specific) PSI file will be created containing the PSI XML
+for each experiment. For those experiments classified as 'large scale', PSI files will be
+generated that split the Interactions into 'chunks' - thus there will be a PSI file for that
+experiment per chunk of interactions. Typically a chunk will contain around 1000 Interactions.
+
+Given the above, usage should be as follows:
+
+First run: from the intactCore directory type
+
+	scripts/psiRun.sh FileGenerator % > <classification-filename>
+
+This will generate the intermediate file of classified experiments. 
+
+Second run: This is achieved via a perl script; type
+
+	perl scripts/psiXmlDownload.pl < <classification-filename>
+
+This will generate (in the current directory, which should be intactCore) all the relevant
+PSI XML files. If you wish to specify a directory to place the results instead, you should type:
+ 	
+	perl scripts/psiXmlDownload.pl -filePrefix <dirname> < <classification-filename>
+Note: The directory <dirname> must already exist - it will NOT be created for you currently!
+
+File Validation
+----------------
+A script is also included with intact which will provide a quick command-line check that
+the generated PSI conforms to the DTD. Again from the intactCore directory, type:
+
+	scripts/checkPsiXml.sh *.xml    (assuming your PSI files are all in the current directory)
+
+This will give a very quick check that the files validate against the PSI DTD.

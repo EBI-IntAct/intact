@@ -1,0 +1,32 @@
+shortlabel: agent
+term: agent
+definition: Molecule doing a modification on its interacting partner.
+
+shortlabel: bait
+term: bait
+definition: Single molecule experimentally treated to capture its interacting partners.
+
+shortlabel: complex
+term: complex
+definition: Larger molecule assembly formed by many distinct molecules.
+
+shortlabel: neutral
+term: neutral component
+definition: Interacting partner
+
+shortlabel: prey
+term: prey
+definition: Molecule experimentally identified as being captured via a given bait.
+
+shortlabel: self
+term: self
+definition: Molecule composed of an agent region able to modify a target region within the same molecule.
+
+shortlabel: target
+term: target
+definition: Molecule undergoing the action of its interacting partner.
+
+shortlabel: unspecified
+term: unspecified
+definition: The role of the interactor cannot be determined from the material supporting the interaction, usually a publication.
+

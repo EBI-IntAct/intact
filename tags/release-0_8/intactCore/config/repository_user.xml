@@ -1,0 +1,2545 @@
+<!-- Definitions for BasicObject -
+maps to multiple tables, fields are repeated in each descriptor of a subclass
+-->
+
+<!-- Interface class descriptors -->
+<class-descriptor
+    class="uk.ac.ebi.intact.model.IntactObject"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+    <!-- extending interfaces -->
+    <extent-class class-ref="uk.ac.ebi.intact.model.BasicObject"/>
+    <!-- implementations -->
+    <extent-class class-ref="uk.ac.ebi.intact.model.IntactObjectImpl"/>
+</class-descriptor>
+
+<class-descriptor
+    class="uk.ac.ebi.intact.model.BasicObject"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+    <!-- Extending interfaces -->
+    <extent-class class-ref="uk.ac.ebi.intact.model.AnnotatedObject"/>
+
+    <!-- implementations -->
+    <extent-class class-ref="uk.ac.ebi.intact.model.BasicObjectImpl"/>
+</class-descriptor>
+
+<class-descriptor
+    class="uk.ac.ebi.intact.model.AnnotatedObject"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+    <!-- extending interfaces -->
+    <extent-class class-ref="uk.ac.ebi.intact.model.Interactor"/>
+    <!-- implementations -->
+    <extent-class class-ref="uk.ac.ebi.intact.model.AnnotatedObjectImpl"/>
+</class-descriptor>
+
+<class-descriptor
+    class="uk.ac.ebi.intact.model.Interactor"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+    <!-- implementations -->
+    <extent-class class-ref="uk.ac.ebi.intact.model.InteractorImpl" />
+</class-descriptor>
+
+<class-descriptor
+    class="uk.ac.ebi.intact.model.Interaction"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+    <!-- implementations -->
+    <extent-class class-ref="uk.ac.ebi.intact.model.InteractionImpl" />
+</class-descriptor>
+
+<class-descriptor
+    class="uk.ac.ebi.intact.model.Protein"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+    <!-- implementations -->
+    <extent-class class-ref="uk.ac.ebi.intact.model.ProteinImpl" />
+</class-descriptor>
+
+<!-- Implementation class descriptors -->
+
+<class-descriptor
+    class="uk.ac.ebi.intact.model.IntactObjectImpl"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+    <extent-class class-ref="uk.ac.ebi.intact.model.BasicObjectImpl"/>
+    <extent-class class-ref="uk.ac.ebi.intact.model.Institution"/>
+</class-descriptor>
+
+<class-descriptor
+    class="uk.ac.ebi.intact.model.BasicObjectImpl"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+    <extent-class class-ref="uk.ac.ebi.intact.model.Annotation"/>
+    <extent-class class-ref="uk.ac.ebi.intact.model.IntactNode"/>
+    <extent-class class-ref="uk.ac.ebi.intact.model.Component"/>
+    <extent-class class-ref="uk.ac.ebi.intact.model.Xref"/>
+    <extent-class class-ref="uk.ac.ebi.intact.model.Alias"/>
+    <extent-class class-ref="uk.ac.ebi.intact.model.AnnotatedObjectImpl"/>
+</class-descriptor>
+
+
+<class-descriptor
+    class="uk.ac.ebi.intact.model.AnnotatedObjectImpl"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+    <extent-class class-ref="uk.ac.ebi.intact.model.BioSource"/>
+    <extent-class class-ref="uk.ac.ebi.intact.model.Experiment"/>
+    <extent-class class-ref="uk.ac.ebi.intact.model.InteractorImpl"/>
+    <extent-class class-ref="uk.ac.ebi.intact.model.CvObject"/>
+</class-descriptor>
+
+
+<class-descriptor
+    class="uk.ac.ebi.intact.model.CvObject"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+    <extent-class class-ref="uk.ac.ebi.intact.model.CvComponentRole" />
+    <extent-class class-ref="uk.ac.ebi.intact.model.CvDatabase" />
+    <extent-class class-ref="uk.ac.ebi.intact.model.CvXrefQualifier" />
+    <extent-class class-ref="uk.ac.ebi.intact.model.CvAliasType" />
+    <extent-class class-ref="uk.ac.ebi.intact.model.CvTopic" />
+    <extent-class class-ref="uk.ac.ebi.intact.model.CvDagObject" />
+</class-descriptor>
+
+<class-descriptor
+    class="uk.ac.ebi.intact.model.InteractorImpl"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+  <extent-class class-ref="uk.ac.ebi.intact.model.InteractionImpl" />
+    <extent-class class-ref="uk.ac.ebi.intact.model.ProteinImpl" />
+</class-descriptor>
+
+<class-descriptor
+    class="uk.ac.ebi.intact.model.CvDagObject"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+    <extent-class class-ref="uk.ac.ebi.intact.model.CvInteraction" />
+    <extent-class class-ref="uk.ac.ebi.intact.model.CvIdentification" />
+    <extent-class class-ref="uk.ac.ebi.intact.model.CvInteractionType" />
+    <extent-class class-ref="uk.ac.ebi.intact.model.CvGoNode" />
+</class-descriptor>
+
+
+<!-- 'normal' classes -->
+
+<class-descriptor
+    class="uk.ac.ebi.intact.model.ProteinImpl"
+    proxy="uk.ac.ebi.intact.model.proxy.ProteinProxy"
+    table="ia_Interactor"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+    <!-- ***************** fields from superclasses ********************* -->
+    <!-- fields from BasicObject... -->
+    <field-descriptor id="1"
+        name="ac"
+        column="ac"
+        jdbc-type="VARCHAR"
+        primarykey="true" autoincrement="true"
+        />
+    <field-descriptor id="2"
+        name="ownerAc"
+        column="owner_ac"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor id="3"
+        name="created"
+        column="created"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="4"
+        name="updated"
+        column="updated"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="5"
+        name="shortLabel"
+        column="shortLabel"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor id="6"
+        name="fullName"
+        column="fullName"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor id="7"
+        name="ojbConcreteClass"
+        column="objClass"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor id="8"
+        name="bioSourceAc"
+        column="bioSource_ac"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor id="10"
+        name="crc64"
+        column="crc64"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor id="11"
+        name="formOfAc"
+        column="formOf"
+        jdbc-type="VARCHAR"
+        />
+
+
+    <!-- reference classes -->
+    <!-- There is a column for a proteinForm field, which should be a
+    CvProteinForm, but this is to be left out for now (not intactCore).. -->
+    <!--  The self-reference seems to cause severe problems for OJB. Left out for now.
+    <reference-descriptor
+    name="formOf"
+    class-ref="uk.ac.ebi.intact.model.Protein"
+    >
+    <foreignkey field-id-ref="12"/>
+    </reference-descriptor>
+
+      -->
+
+    <reference-descriptor
+        name="owner"
+        class-ref="uk.ac.ebi.intact.model.Institution"
+        >
+        <foreignkey field-id-ref="2"/>
+    </reference-descriptor>
+
+
+    <reference-descriptor
+        name="bioSource"
+        class-ref="uk.ac.ebi.intact.model.BioSource"
+        >
+        <!-- key from a BioSource to an Interactor -->
+        <foreignkey field-id-ref="8"/>
+    </reference-descriptor>
+
+    <!-- fields from AnnotatedObject (intactCore only) -->
+    <collection-descriptor
+        name="xrefs"
+        proxy="true"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Xref"
+        >
+
+        <inverse-foreignkey field-id-ref="10"/>
+    </collection-descriptor>
+
+    <collection-descriptor
+        name="aliases"
+        proxy="true"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Alias"
+        >
+
+        <inverse-foreignkey field-id-ref="7"/>
+    </collection-descriptor>
+
+    <!-- Interactors and Annotations are linked via a (non-qualified) indirection
+    table INT2ANNOT..... -->
+    <collection-descriptor
+        name="annotations"
+        element-class-ref="uk.ac.ebi.intact.model.Annotation"
+        proxy="true"
+        auto-delete="true"
+        indirection-table="ia_INT2ANNOT"
+
+        >
+        <fk-pointing-to-this-class column="interactor_ac"/>
+        <fk-pointing-to-element-class column="annotation_ac"/>
+    </collection-descriptor>
+
+    <collection-descriptor
+        name="activeInstances"
+        element-class-ref="uk.ac.ebi.intact.model.Component"
+        proxy="true"
+        >
+        <inverse-foreignkey field-id-ref="6"/>
+    </collection-descriptor>
+
+    <collection-descriptor
+        name="sequenceChunks"
+        proxy="true"
+        element-class-ref="uk.ac.ebi.intact.model.SequenceChunk"
+        orderby="sequence_index"
+        sort="ASC"
+        >
+        <inverse-foreignkey field-id-ref="4"/>
+    </collection-descriptor>
+
+
+</class-descriptor>
+
+
+
+
+<!-- descriptor for Interaction.....-->
+<class-descriptor
+    class="uk.ac.ebi.intact.model.InteractionImpl"
+    table="ia_Interactor"
+    proxy="uk.ac.ebi.intact.model.proxy.InteractionProxy"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+
+    <!-- ***************** fields from superclasses ********************* -->
+    <!-- fields from BasicObject... -->
+    <field-descriptor id="1"
+        name="ac"
+        column="ac"
+        jdbc-type="VARCHAR"
+        primarykey="true" autoincrement="true"
+        nullable="false"
+        />
+    <field-descriptor id="2"
+        name="ownerAc"
+        column="owner_ac"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor id="3"
+        name="created"
+        column="created"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="4"
+        name="updated"
+        column="updated"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="5"
+        name="shortLabel"
+        column="shortLabel"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor id="6"
+        name="fullName"
+        column="fullName"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+
+    <!-- fields from Interactor -->
+
+    <!-- used for class identification - OJB gets it directly -->
+    <field-descriptor id="7"
+        name="ojbConcreteClass"
+        column="objClass"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor id="8"
+        name="bioSourceAc"
+        column="bioSource_ac"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor id="9"
+        name="cvInteractionTypeAc"
+        column="interactionType_ac"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor id="10"
+        name="kD"
+        column="kD"
+        jdbc-type="FLOAT"
+        />
+
+    <!-- fields from AnnotatedObject (intactCore only) -->
+
+    <reference-descriptor
+        name="owner"
+        class-ref="uk.ac.ebi.intact.model.Institution"
+        >
+        <foreignkey field-id-ref="2"/>
+    </reference-descriptor>
+    <reference-descriptor
+        name="owner"
+        class-ref="uk.ac.ebi.intact.model.Institution"
+        >
+        <foreignkey field-id-ref="2"/>
+    </reference-descriptor>
+    <reference-descriptor
+        name="cvInteractionType"
+        class-ref="uk.ac.ebi.intact.model.CvInteractionType"
+        >
+        <foreignkey field-id-ref="9"/>
+    </reference-descriptor>
+
+    <reference-descriptor
+        name="bioSource"
+        class-ref="uk.ac.ebi.intact.model.BioSource"
+        >
+        <foreignkey field-id-ref="8"/>
+    </reference-descriptor>
+
+    <!-- Collections... -->
+    <collection-descriptor
+        proxy="true"
+        name="xrefs"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Xref"
+        >
+        <inverse-foreignkey field-id-ref="10"/>
+    </collection-descriptor>
+
+    <collection-descriptor
+        name="aliases"
+        proxy="true"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Alias"
+        >
+
+        <inverse-foreignkey field-id-ref="7"/>
+    </collection-descriptor>
+
+
+
+    <!-- Interactors and Annotations are linked via a (non-qualified) indirection
+    table INT2ANNOT..... -->
+    <collection-descriptor
+        proxy="true"
+        name="annotations"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Annotation"
+        indirection-table="ia_INT2ANNOT"
+        >
+        <fk-pointing-to-this-class column="interactor_ac"/>
+        <fk-pointing-to-element-class column="annotation_ac"/>
+    </collection-descriptor>
+
+    <!-- Interactions and Experiments are linked via a (non-qualified) indirection
+    table Int2Exp..... -->
+    <collection-descriptor
+        proxy="true"
+        name="experiments"
+        element-class-ref="uk.ac.ebi.intact.model.Experiment"
+        indirection-table="ia_INT2EXP"
+        >
+        <fk-pointing-to-this-class column="interaction_ac"/>
+        <fk-pointing-to-element-class column="experiment_ac"/>
+    </collection-descriptor>
+
+    <!-- NB an Interaction object has two relations to a component - one as an
+    Interactor (via activeInstance) and one as an Interaction (via component)
+      -->
+    <collection-descriptor
+        proxy="true"
+        name="activeInstances"
+        element-class-ref="uk.ac.ebi.intact.model.Component"
+        >
+        <inverse-foreignkey field-id-ref="6"/>
+    </collection-descriptor>
+
+
+    <collection-descriptor
+        proxy="true"
+        name="components"
+        element-class-ref="uk.ac.ebi.intact.model.Component"
+        >
+        <inverse-foreignkey field-id-ref="7"/>
+    </collection-descriptor>
+
+</class-descriptor>
+
+
+
+
+
+
+
+<!-- Definitions for Experiment -->
+<class-descriptor
+    class="uk.ac.ebi.intact.model.Experiment"
+    table="ia_Experiment"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+
+    <!-- ************** fields inherited from BasicObject **************** -->
+    <!-- fields from BasicObject... -->
+    <field-descriptor id="1"
+        name="ac"
+        column="ac"
+        jdbc-type="VARCHAR"
+        primarykey="true" autoincrement="true"
+        nullable="false"
+
+        />
+    <field-descriptor id="2"
+        name="ownerAc"
+        column="owner_ac"
+        jdbc-type="VARCHAR"
+
+        />
+    <field-descriptor id="3"
+        name="created"
+        column="created"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="4"
+        name="updated"
+        column="updated"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+
+    <field-descriptor id="5"
+        name="shortLabel"
+        column="shortLabel"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor id="6"
+        name="fullName"
+        column="fullName"
+        jdbc-type="VARCHAR"
+        />
+
+    <!-- ************** fields declared for this class *************** -->
+    <field-descriptor id="7"
+        name="bioSourceAc"
+        column="bioSource_ac"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor id="8"
+        name="detectionMethodAc"
+        column="detectMethod_ac"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor id="9"
+        name="identMethodAc"
+        column="identMethod_ac"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor id="10"
+        name="relatedExperimentAc"
+        column="relatedExperiment_ac"
+        jdbc-type="VARCHAR"
+        />
+
+    <!-- used for class identification - OJB uses it directly -->
+    <reference-descriptor
+        name="owner"
+        class-ref="uk.ac.ebi.intact.model.Institution"
+        >
+        <foreignkey field-id-ref="2"/>
+    </reference-descriptor>
+
+    <reference-descriptor
+        name="bioSource"
+        class-ref="uk.ac.ebi.intact.model.BioSource"
+        >
+        <foreignkey field-id-ref="7"/>
+    </reference-descriptor>
+
+    <reference-descriptor
+        name="relatedExperiment"
+        class-ref="uk.ac.ebi.intact.model.Experiment"
+        >
+        <foreignkey field-id-ref="10"/>
+    </reference-descriptor>
+
+    <reference-descriptor
+        name="cvIdentification"
+        class-ref="uk.ac.ebi.intact.model.CvIdentification"
+        >
+        <foreignkey field-id-ref="9"/>
+    </reference-descriptor>
+
+    <reference-descriptor
+        name="cvInteraction"
+        class-ref="uk.ac.ebi.intact.model.CvInteraction"
+        >
+        <foreignkey field-id-ref="8"/>
+    </reference-descriptor>
+
+    <!-- ******************* fields inherited from AnnotatedObject ************** -->
+    <collection-descriptor
+        proxy="true"
+        name="xrefs"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Xref"
+        >
+        <inverse-foreignkey field-id-ref="10"/>
+    </collection-descriptor>
+
+    <collection-descriptor
+        name="aliases"
+        proxy="true"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Alias"
+        >
+
+        <inverse-foreignkey field-id-ref="7"/>
+    </collection-descriptor>
+
+
+
+    <!-- Experiments and Annotations are linked via a (non-qualified) indirection
+    table EXP2ANNOT..... -->
+    <collection-descriptor
+        proxy="true"
+        name="annotations"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Annotation"
+        indirection-table="ia_EXP2ANNOT"
+        >
+        <fk-pointing-to-this-class column="experiment_ac"/>
+        <fk-pointing-to-element-class column="annotation_ac"/>
+    </collection-descriptor>
+
+    <!-- Collections -->
+    <!-- Interactions and Experiments are linked via a (non-qualified) indirection
+    table Int2Exp..... -->
+    <collection-descriptor
+        name="interactions"
+        element-class-ref="uk.ac.ebi.intact.model.InteractionImpl"
+        indirection-table="ia_INT2EXP"
+        >
+        <fk-pointing-to-this-class column="experiment_ac"/>
+        <fk-pointing-to-element-class column="interaction_ac"/>
+    </collection-descriptor>
+
+</class-descriptor>
+
+
+<!-- Definitions for Biosource -->
+<class-descriptor
+    class="uk.ac.ebi.intact.model.BioSource"
+    table="ia_BioSource"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+    <field-descriptor id="1"
+        name="ac"
+        column="ac"
+        jdbc-type="VARCHAR"
+        primarykey="true" autoincrement="true"
+        nullable="false"
+        />
+
+    <field-descriptor id="2"
+        name="ownerAc"
+        column="owner_ac"
+        jdbc-type="VARCHAR"
+        />
+
+    <field-descriptor id="3"
+        name="shortLabel"
+        column="shortLabel"
+        jdbc-type="VARCHAR"
+        indexed="true"
+
+        />
+    <field-descriptor id="4"
+        name="fullName"
+        column="fullName"
+        jdbc-type="VARCHAR"
+        />
+
+    <field-descriptor id="5"
+        name="taxId"
+        column="taxId"
+        jdbc-type="VARCHAR"
+        />
+
+    <field-descriptor id="6"
+        name="created"
+        column="created"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="7"
+        name="updated"
+        column="updated"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+
+   <!-- controlled vocab fields for tissue and celltype -->
+    <field-descriptor id="8"
+        name="cvTissueAc"
+        column="tissue_ac"
+        jdbc-type="VARCHAR"
+        />
+
+    <field-descriptor id="9"
+        name="cvCellTypeAc"
+        column="celltype_ac"
+        jdbc-type="VARCHAR"
+        />
+
+    <!-- other descriptors -->
+    <reference-descriptor
+        name="owner"
+        class-ref="uk.ac.ebi.intact.model.Institution"
+        >
+        <foreignkey field-id-ref="2"/>
+    </reference-descriptor>
+
+    <!-- controlled vocab for tissue and celltype -->
+    <reference-descriptor
+        name="cvTissue"
+        class-ref="uk.ac.ebi.intact.model.CvTissue"
+        >
+        <foreignkey field-id-ref="8"/>
+    </reference-descriptor>
+
+    <reference-descriptor
+        name="cvCellType"
+        class-ref="uk.ac.ebi.intact.model.CvCellType"
+        >
+        <foreignkey field-id-ref="9"/>
+    </reference-descriptor>
+
+    <collection-descriptor
+        proxy="true"
+        name="xrefs"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Xref"
+        >
+        <inverse-foreignkey field-id-ref="10"/>
+    </collection-descriptor>
+
+    <collection-descriptor
+        name="aliases"
+        proxy="true"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Alias"
+        >
+
+        <inverse-foreignkey field-id-ref="7"/>
+    </collection-descriptor>
+
+    <collection-descriptor
+        proxy="true"
+        name="annotations"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Annotation"
+        indirection-table="ia_BIOSOURCE2ANNOT"
+        >
+        <fk-pointing-to-this-class column="biosource_ac"/>
+        <fk-pointing-to-element-class column="annotation_ac"/>
+    </collection-descriptor>
+
+</class-descriptor>
+
+
+<!-- Definitions for Annotation....
+NB although the relation between Annotation and both AnnotatedObject and Experiment
+is bi-directional, it is not intended that AnnotatedObject and Experiment will be
+accessed from an Annotation - hence Annotation does not contain field references
+to AnnotatedObject and Experiment
+   -->
+<class-descriptor
+    class="uk.ac.ebi.intact.model.Annotation"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    table="ia_Annotation"
+    >
+
+    <!-- ************ fields inherited from BasicObject ****************** -->
+    <!-- fields from BasicObject... -->
+    <field-descriptor id="1"
+        name="ac"
+        column="ac"
+        jdbc-type="VARCHAR"
+        primarykey="true" autoincrement="true"
+        nullable="false"
+
+        />
+
+    <field-descriptor id="2"
+        name="ownerAc"
+        column="owner_ac"
+        jdbc-type="VARCHAR"
+        />
+
+    <field-descriptor id="3"
+        name="created"
+        column="created"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+
+    <field-descriptor id="4"
+        name="updated"
+        column="updated"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+
+    <!-- ************* fields declared for this class ****************** -->
+    <field-descriptor id="5"
+        name="annotationText"
+        column="description"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        />
+    <field-descriptor id="6"
+        name="cvTopicAc"
+        column="topic_ac"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+
+    <!-- references to other classes -->
+    <reference-descriptor
+        name="owner"
+        class-ref="uk.ac.ebi.intact.model.Institution"
+        >
+        <foreignkey field-id-ref="2"/>
+    </reference-descriptor>
+
+    <reference-descriptor
+        name="cvTopic"
+        class-ref="uk.ac.ebi.intact.model.CvTopic"
+        >
+        <foreignkey field-id-ref="6"/>
+    </reference-descriptor>
+
+</class-descriptor>
+
+
+
+
+
+
+
+<!-- Definitions for Institution -->
+<class-descriptor
+    class="uk.ac.ebi.intact.model.Institution"
+    table="ia_Institution"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+    <!-- *********** fields identical to BasicObject ************** -->
+    <field-descriptor id="1"
+        name="ac"
+        column="ac"
+        jdbc-type="VARCHAR"
+        primarykey="true" autoincrement="true"
+
+        />
+
+    <!-- ************ fields declared for this class **************-->
+    <field-descriptor id="2"
+        name="shortLabel"
+        column="shortLabel"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor id="3"
+        name="fullName"
+        column="fullName"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor id="4"
+        name="postalAddress"
+        column="postalAddress"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor id="5"
+        name="url"
+        column="url"
+        jdbc-type="VARCHAR"
+        />
+
+    <field-descriptor id="7"
+        name="updated"
+        column="updated"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="8"
+        name="created"
+        column="created"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+
+</class-descriptor>
+
+
+
+
+<!-- Definitions for IntactNode -->
+<class-descriptor
+    class="uk.ac.ebi.intact.model.IntactNode"
+    table="ia_IntactNode"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+    <field-descriptor id="1"
+        name="ac"
+        column="ac"
+        jdbc-type="VARCHAR"
+        primarykey="true" autoincrement="true"
+        />
+    <field-descriptor id="2"
+        name="lastCheckId"
+        column="lastCheckId"
+        jdbc-type="INTEGER"
+        />
+    <field-descriptor id="3"
+        name="lastProvidedId"
+        column="lastProvidedId"
+        jdbc-type="INTEGER"
+        />
+    <field-descriptor id="4"
+        name="lastProvidedDate"
+        column="lastProvidedDate"
+        jdbc-type="TIMESTAMP"
+        />
+    <field-descriptor id="5"
+        name="rejected"
+        column="rejected"
+        jdbc-type="INTEGER"
+        />
+    <field-descriptor id="6"
+        name="ftpAddress"
+        column="ftpAddress"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor id="7"
+        name="ftpLogin"
+        column="ftpLogin"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor id="8"
+        name="ftpPassword"
+        column="ftpPassword"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor id="9"
+        name="ownerPrefix"
+        column="ownerPrefix"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor id="10"
+        name="ftpDirectory"
+        column="ftpDirectory"
+        jdbc-type="VARCHAR"
+        />
+
+
+    <field-descriptor id="11"
+        name="ownerAc"
+        column="owner_ac"
+        jdbc-type="VARCHAR"
+        />
+
+    <reference-descriptor
+        name="owner"
+        class-ref="uk.ac.ebi.intact.model.Institution"
+        >
+        <foreignkey field-id-ref="11"/>
+    </reference-descriptor>
+
+</class-descriptor>
+
+
+
+
+
+
+
+
+<!-- Definitions for Xref -->
+<class-descriptor
+    class="uk.ac.ebi.intact.model.Xref"
+    table="ia_Xref"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+    <!-- ************** fields inherited from BasicObject ******************* -->
+    <!-- fields from BasicObject... -->
+    <field-descriptor id="1"
+        name="ac"
+        column="ac"
+        jdbc-type="VARCHAR"
+        primarykey="true" autoincrement="true"
+        nullable="false"
+        />
+    <field-descriptor id="2"
+        name="ownerAc"
+        column="owner_ac"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        />
+    <field-descriptor id="3"
+        name="created"
+        column="created"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="4"
+        name="updated"
+        column="updated"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+
+    <!-- ************* fields declared for this class ******************* -->
+    <field-descriptor id="5"
+        name="primaryId"
+        column="primaryId"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor id="6"
+        name="secondaryId"
+        column="secondaryId"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor id="7"
+        name="cvXrefQualifierAc"
+        column="qualifier_ac"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor id="8"
+        name="cvDatabaseAc"
+        column="database_ac"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor id="9"
+        name="dbRelease"
+        column="dbRelease"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor id="10"
+        name="parentAc"
+        column="parent_ac"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+
+    <!-- other reference descriptors for related classes-->
+
+    <reference-descriptor
+        name="owner"
+        class-ref="uk.ac.ebi.intact.model.Institution"
+        >
+        <foreignkey field-id-ref="2"/>
+    </reference-descriptor>
+
+    <reference-descriptor
+        name="cvXrefQualifier"
+        class-ref="uk.ac.ebi.intact.model.CvXrefQualifier"
+        >
+        <foreignkey field-id-ref="7"/>
+    </reference-descriptor>
+
+    <reference-descriptor
+        name="cvDatabase"
+        class-ref="uk.ac.ebi.intact.model.CvDatabase"
+        >
+        <foreignkey field-id-ref="8"/>
+    </reference-descriptor>
+
+</class-descriptor>
+
+
+
+
+
+
+
+<!-- Definitions for Alias -->
+<class-descriptor
+    class="uk.ac.ebi.intact.model.Alias"
+    table="ia_Alias"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+    <!-- ************** fields inherited from BasicObject ******************* -->
+    <!-- fields from BasicObject... -->
+    <field-descriptor id="1"
+        name="ac"
+        column="ac"
+        jdbc-type="VARCHAR"
+        primarykey="true" autoincrement="true"
+        nullable="false"
+        />
+    <field-descriptor id="2"
+        name="ownerAc"
+        column="owner_ac"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        />
+    <field-descriptor id="3"
+        name="created"
+        column="created"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="4"
+        name="updated"
+        column="updated"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+
+    <!-- ************* fields declared for this class ******************* -->
+    <field-descriptor id="5"
+        name="name"
+        column="name"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor id="6"
+        name="cvAliasTypeAc"
+        column="aliastype_ac"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor id="7"
+        name="parentAc"
+        column="parent_ac"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+
+    <!-- other reference descriptors for related classes-->
+    <reference-descriptor
+        name="owner"
+        class-ref="uk.ac.ebi.intact.model.Institution"
+        >
+        <foreignkey field-id-ref="2"/>
+    </reference-descriptor>
+
+    <reference-descriptor
+        name="cvAliasType"
+        class-ref="uk.ac.ebi.intact.model.CvAliasType"
+        >
+        <foreignkey field-id-ref="6"/>
+    </reference-descriptor>
+
+</class-descriptor>
+
+
+
+
+
+
+
+
+<!-- Definitions for Component -->
+<class-descriptor
+    class="uk.ac.ebi.intact.model.Component"
+    table="ia_Component"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+
+    <!-- ***************** inherited from BasicObject ************** -->
+    <!-- fields from BasicObject... -->
+    <field-descriptor id="1"
+        name="ac"
+        column="ac"
+        jdbc-type="VARCHAR"
+        primarykey="true" autoincrement="true"
+        nullable="false"
+
+        />
+    <field-descriptor id="2"
+        name="ownerAc"
+        column="owner_ac"
+        jdbc-type="VARCHAR"
+
+        />
+    <field-descriptor id="3"
+        name="created"
+        column="created"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="4"
+        name="updated"
+        column="updated"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+
+    <!-- ************** declared fields for this class **************** -->
+    <field-descriptor id="5"
+        name="stoichiometry"
+        column="stoichiometry"
+        jdbc-type="REAL"
+        />
+    <field-descriptor id="6"
+        name="interactorAc"
+        column="interactor_ac"
+        jdbc-type="VARCHAR"
+        indexed="true"
+
+        />
+    <field-descriptor id="7"
+        name="interactionAc"
+        column="interaction_ac"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+
+    <field-descriptor id="8"
+        name="cvComponentRoleAc"
+        column="role"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor id="9"
+        name="expressedInAc"
+        column="expressedIn_ac"
+        jdbc-type="VARCHAR"
+        />
+
+    <!-- other reference descriptors for related classes-->
+    <reference-descriptor
+        name="owner"
+        class-ref="uk.ac.ebi.intact.model.Institution"
+        >
+        <foreignkey field-id-ref="2"/>
+    </reference-descriptor>
+
+    <reference-descriptor
+        name="interactor"
+        class-ref="uk.ac.ebi.intact.model.Interactor"
+        >
+        <foreignkey field-id-ref="6"/>
+    </reference-descriptor>
+
+    <reference-descriptor
+        name="interaction"
+        class-ref="uk.ac.ebi.intact.model.Interaction"
+        >
+        <foreignkey field-id-ref="7"/>
+    </reference-descriptor>
+
+    <reference-descriptor
+        name="expressedIn"
+        class-ref="uk.ac.ebi.intact.model.BioSource"
+        >
+        <foreignkey field-id-ref="9"/>
+    </reference-descriptor>
+
+    <reference-descriptor
+        name="cvComponentRole"
+        class-ref="uk.ac.ebi.intact.model.CvComponentRole"
+        >
+        <foreignkey field-id-ref="8"/>
+    </reference-descriptor>
+
+</class-descriptor>
+
+
+
+
+
+
+<!-- CV -->
+
+<!-- Definitions for CvXrefQualifier....-->
+<class-descriptor
+    class="uk.ac.ebi.intact.model.CvXrefQualifier"
+    table="ia_ControlledVocab"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+
+    <!-- ******** fields inherited from BasicObject *****************-->
+    <!-- fields from BasicObject... -->
+    <field-descriptor id="1"
+        name="ac"
+        column="ac"
+        jdbc-type="VARCHAR"
+        primarykey="true" autoincrement="true"
+
+        nullable="false"
+        />
+    <field-descriptor id="2"
+        name="ownerAc"
+        column="owner_ac"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor id="3"
+        name="created"
+        column="created"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="4"
+        name="updated"
+        column="updated"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="5"
+        name="shortLabel"
+        column="shortLabel"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor id="6"
+        name="fullName"
+        column="fullName"
+        jdbc-type="VARCHAR"
+        />
+
+    <!-- ********** declared fields for this class (actually inherited from CvObject) ********** -->
+
+    <!-- used for class identification -->
+    <field-descriptor id="7"
+        name="ojbConcreteClass"
+        column="objClass"
+        jdbc-type="VARCHAR"
+        />
+
+    <reference-descriptor
+        name="owner"
+        class-ref="uk.ac.ebi.intact.model.Institution"
+        >
+        <foreignkey field-id-ref="2"/>
+    </reference-descriptor>
+
+    <!-- ************ fields inherited from AnnotatedObject ********* -->
+
+    <collection-descriptor
+        proxy="true"
+        name="xrefs"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Xref"
+        >
+        <inverse-foreignkey field-id-ref="10"/>
+    </collection-descriptor>
+
+    <collection-descriptor
+        name="aliases"
+        proxy="true"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Alias"
+        >
+
+        <inverse-foreignkey field-id-ref="7"/>
+    </collection-descriptor>
+
+
+
+    <!-- Annotations and CvObjects are linked via a (non-qualified) indirection
+    table CVOBJECT2ANNOT -->
+    <collection-descriptor
+        proxy="true"
+        name="annotations"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Annotation"
+        indirection-table="ia_CVOBJECT2ANNOT"
+        >
+        <fk-pointing-to-this-class column="cvobject_ac"/>
+        <fk-pointing-to-element-class column="annotation_ac"/>
+    </collection-descriptor>
+
+</class-descriptor>
+
+
+
+
+
+
+<!-- Definitions for CvAliasType....-->
+<class-descriptor
+    class="uk.ac.ebi.intact.model.CvAliasType"
+    table="ia_ControlledVocab"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+
+    <!-- ******** fields inherited from BasicObject *****************-->
+    <!-- fields from BasicObject... -->
+    <field-descriptor id="1"
+        name="ac"
+        column="ac"
+        jdbc-type="VARCHAR"
+        primarykey="true" autoincrement="true"
+
+        nullable="false"
+        />
+    <field-descriptor id="2"
+        name="ownerAc"
+        column="owner_ac"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor id="3"
+        name="created"
+        column="created"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="4"
+        name="updated"
+        column="updated"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="5"
+        name="shortLabel"
+        column="shortLabel"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor id="6"
+        name="fullName"
+        column="fullName"
+        jdbc-type="VARCHAR"
+        />
+
+    <!-- ********** declared fields for this class (actually inherited from CvObject) ********** -->
+
+    <!-- used for class identification -->
+    <field-descriptor id="7"
+        name="ojbConcreteClass"
+        column="objClass"
+        jdbc-type="VARCHAR"
+        />
+
+    <reference-descriptor
+        name="owner"
+        class-ref="uk.ac.ebi.intact.model.Institution"
+        >
+        <foreignkey field-id-ref="2"/>
+    </reference-descriptor>
+
+    <!-- ************ fields inherited from AnnotatedObject ********* -->
+
+    <collection-descriptor
+        proxy="true"
+        name="xrefs"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Xref"
+        >
+        <inverse-foreignkey field-id-ref="10"/>
+    </collection-descriptor>
+
+    <collection-descriptor
+        name="aliases"
+        proxy="true"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Alias"
+        >
+
+        <inverse-foreignkey field-id-ref="7"/>
+    </collection-descriptor>
+
+
+
+    <!-- Annotations and CvObjects are linked via a (non-qualified) indirection
+    table CVOBJECT2ANNOT -->
+    <collection-descriptor
+        proxy="true"
+        name="annotations"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Annotation"
+        indirection-table="ia_CVOBJECT2ANNOT"
+        >
+        <fk-pointing-to-this-class column="cvobject_ac"/>
+        <fk-pointing-to-element-class column="annotation_ac"/>
+    </collection-descriptor>
+
+</class-descriptor>
+
+
+
+
+
+
+<!-- Definitions for CvDatabase....-->
+<class-descriptor
+    class="uk.ac.ebi.intact.model.CvDatabase"
+    table="ia_ControlledVocab"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+
+    <!-- ******** fields inherited from BasicObject *****************-->
+    <!-- fields from BasicObject... -->
+    <field-descriptor id="1"
+        name="ac"
+        column="ac"
+        jdbc-type="VARCHAR"
+        primarykey="true" autoincrement="true"
+
+        nullable="false"
+        />
+    <field-descriptor id="2"
+        name="ownerAc"
+        column="owner_ac"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        />
+    <field-descriptor id="3"
+        name="created"
+        column="created"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="4"
+        name="updated"
+        column="updated"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="5"
+        name="shortLabel"
+        column="shortLabel"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor id="6"
+        name="fullName"
+        column="fullName"
+        jdbc-type="VARCHAR"
+        />
+
+    <!-- ********** declared fields for this class (actually inherited from CvObject ********** -->
+
+    <!-- used for class identification -->
+    <field-descriptor id="7"
+        name="ojbConcreteClass"
+        column="objClass"
+        jdbc-type="VARCHAR"
+        />
+
+    <reference-descriptor
+        name="owner"
+        class-ref="uk.ac.ebi.intact.model.Institution"
+        >
+        <foreignkey field-id-ref="2"/>
+    </reference-descriptor>
+
+    <collection-descriptor
+        proxy="true"
+        name="xrefs"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Xref"
+        >
+        <inverse-foreignkey field-id-ref="10"/>
+    </collection-descriptor>
+
+    <collection-descriptor
+        name="aliases"
+        proxy="true"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Alias"
+        >
+
+        <inverse-foreignkey field-id-ref="7"/>
+    </collection-descriptor>
+
+
+
+    <!-- Annotations and CvObjects are linked via a (non-qualified) indirection
+    table CVOBJECT2ANNOT -->
+    <collection-descriptor
+        proxy="true"
+        name="annotations"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Annotation"
+        indirection-table="ia_CVOBJECT2ANNOT"
+        >
+        <fk-pointing-to-this-class column="cvobject_ac"/>
+        <fk-pointing-to-element-class column="annotation_ac"/>
+    </collection-descriptor>
+
+</class-descriptor>
+
+<!-- descriptor for CvCellType -->
+<class-descriptor
+    class="uk.ac.ebi.intact.model.CvCellType"
+    table="ia_ControlledVocab"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+
+    <!-- ******** fields inherited from BasicObject *****************-->
+    <!-- fields from BasicObject... -->
+    <field-descriptor id="1"
+        name="ac"
+        column="ac"
+        jdbc-type="VARCHAR"
+        primarykey="true" autoincrement="true"
+
+        nullable="false"
+        />
+    <field-descriptor id="2"
+        name="ownerAc"
+        column="owner_ac"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        />
+    <field-descriptor id="3"
+        name="created"
+        column="created"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="4"
+        name="updated"
+        column="updated"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="5"
+        name="shortLabel"
+        column="shortLabel"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor id="6"
+        name="fullName"
+        column="fullName"
+        jdbc-type="VARCHAR"
+        />
+
+    <!-- ********** declared fields for this class (actually inherited from CvObject ********** -->
+
+    <!-- used for class identification -->
+    <field-descriptor id="7"
+        name="ojbConcreteClass"
+        column="objClass"
+        jdbc-type="VARCHAR"
+        />
+
+    <reference-descriptor
+        name="owner"
+        class-ref="uk.ac.ebi.intact.model.Institution"
+        >
+        <foreignkey field-id-ref="2"/>
+    </reference-descriptor>
+
+    <collection-descriptor
+        proxy="true"
+        name="xrefs"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Xref"
+        >
+        <inverse-foreignkey field-id-ref="10"/>
+    </collection-descriptor>
+
+    <collection-descriptor
+        name="aliases"
+        proxy="true"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Alias"
+        >
+
+        <inverse-foreignkey field-id-ref="7"/>
+    </collection-descriptor>
+
+
+
+    <!-- Annotations and CvObjects are linked via a (non-qualified) indirection
+    table CVOBJECT2ANNOT -->
+    <collection-descriptor
+        proxy="true"
+        name="annotations"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Annotation"
+        indirection-table="ia_CVOBJECT2ANNOT"
+        >
+        <fk-pointing-to-this-class column="cvobject_ac"/>
+        <fk-pointing-to-element-class column="annotation_ac"/>
+    </collection-descriptor>
+
+</class-descriptor>
+
+<!-- descriptor for CvTissue -->
+<class-descriptor
+    class="uk.ac.ebi.intact.model.CvTissue"
+    table="ia_ControlledVocab"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+
+    <!-- ******** fields inherited from BasicObject *****************-->
+    <!-- fields from BasicObject... -->
+    <field-descriptor id="1"
+        name="ac"
+        column="ac"
+        jdbc-type="VARCHAR"
+        primarykey="true" autoincrement="true"
+
+        nullable="false"
+        />
+    <field-descriptor id="2"
+        name="ownerAc"
+        column="owner_ac"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        />
+    <field-descriptor id="3"
+        name="created"
+        column="created"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="4"
+        name="updated"
+        column="updated"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="5"
+        name="shortLabel"
+        column="shortLabel"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor id="6"
+        name="fullName"
+        column="fullName"
+        jdbc-type="VARCHAR"
+        />
+
+    <!-- ********** declared fields for this class (actually inherited from CvObject ********** -->
+
+    <!-- used for class identification -->
+    <field-descriptor id="7"
+        name="ojbConcreteClass"
+        column="objClass"
+        jdbc-type="VARCHAR"
+        />
+
+    <reference-descriptor
+        name="owner"
+        class-ref="uk.ac.ebi.intact.model.Institution"
+        >
+        <foreignkey field-id-ref="2"/>
+    </reference-descriptor>
+
+    <collection-descriptor
+        proxy="true"
+        name="xrefs"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Xref"
+        >
+        <inverse-foreignkey field-id-ref="10"/>
+    </collection-descriptor>
+
+    <collection-descriptor
+        name="aliases"
+        proxy="true"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Alias"
+        >
+
+        <inverse-foreignkey field-id-ref="7"/>
+    </collection-descriptor>
+
+
+
+    <!-- Annotations and CvObjects are linked via a (non-qualified) indirection
+    table CVOBJECT2ANNOT -->
+    <collection-descriptor
+        proxy="true"
+        name="annotations"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Annotation"
+        indirection-table="ia_CVOBJECT2ANNOT"
+        >
+        <fk-pointing-to-this-class column="cvobject_ac"/>
+        <fk-pointing-to-element-class column="annotation_ac"/>
+    </collection-descriptor>
+
+</class-descriptor>
+
+
+
+<!-- Definitions for CvTopic:
+NB CvTopic will contain the url field which was previously part of CvDatabase -
+this is because the CvTopic linked to an Annotation is a better home for it...
+
+-->
+<class-descriptor
+    class="uk.ac.ebi.intact.model.CvTopic"
+    table="ia_ControlledVocab"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+
+    <!-- ******** fields inherited from BasicObject *****************-->
+    <!-- fields from BasicObject... -->
+    <field-descriptor id="1"
+        name="ac"
+        column="ac"
+        jdbc-type="VARCHAR"
+        primarykey="true" autoincrement="true"
+
+        nullable="false"
+        />
+    <field-descriptor id="2"
+        name="ownerAc"
+        column="owner_ac"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        />
+    <field-descriptor id="3"
+        name="created"
+        column="created"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="4"
+        name="updated"
+        column="updated"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="5"
+        name="shortLabel"
+        column="shortLabel"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor id="6"
+        name="fullName"
+        column="fullName"
+        jdbc-type="VARCHAR"
+        />
+
+    <!-- ********** declared fields for this class (actually inherited from CvObject) ********** -->
+
+    <!-- used for class identification -->
+    <field-descriptor id="7"
+        name="ojbConcreteClass"
+        column="objClass"
+        jdbc-type="VARCHAR"
+        />
+
+    <reference-descriptor
+        name="owner"
+        class-ref="uk.ac.ebi.intact.model.Institution"
+        >
+        <foreignkey field-id-ref="2"/>
+    </reference-descriptor>
+
+    <!-- ************ fields inherited from AnnotatedObject ********* -->
+
+    <collection-descriptor
+        proxy="true"
+        name="xrefs"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Xref"
+        >
+        <inverse-foreignkey field-id-ref="10"/>
+    </collection-descriptor>
+
+    <collection-descriptor
+        name="aliases"
+        proxy="true"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Alias"
+        >
+
+        <inverse-foreignkey field-id-ref="7"/>
+    </collection-descriptor>
+
+
+
+    <!-- Annotations and CvObjects are linked via a (non-qualified) indirection
+    table CVOBJECT2ANNOT -->
+    <collection-descriptor
+        proxy="true"
+        name="annotations"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Annotation"
+        indirection-table="ia_CVOBJECT2ANNOT"
+        >
+        <fk-pointing-to-this-class column="cvobject_ac"/>
+        <fk-pointing-to-element-class column="annotation_ac"/>
+    </collection-descriptor>
+
+</class-descriptor>
+
+<!-- Definitions for CvInteraction....-->
+<class-descriptor
+    class="uk.ac.ebi.intact.model.CvInteraction"
+    table="ia_ControlledVocab"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+
+    <!-- ******** fields inherited from BasicObject *****************-->
+    <!-- fields from BasicObject... -->
+    <field-descriptor id="1"
+        name="ac"
+        column="ac"
+        jdbc-type="VARCHAR"
+        primarykey="true" autoincrement="true"
+
+        nullable="false"
+        />
+    <field-descriptor id="2"
+        name="ownerAc"
+        column="owner_ac"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor id="3"
+        name="created"
+        column="created"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="4"
+        name="updated"
+        column="updated"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="5"
+        name="shortLabel"
+        column="shortLabel"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor id="6"
+        name="fullName"
+        column="fullName"
+        jdbc-type="VARCHAR"
+        />
+
+    <!-- ********** declared fields for this class (actually inherited from CvDagObject) ********** -->
+
+    <!-- used for class identification -->
+    <field-descriptor id="7"
+        name="ojbConcreteClass"
+        column="objClass"
+        jdbc-type="VARCHAR"
+        />
+
+    <reference-descriptor
+        name="owner"
+        class-ref="uk.ac.ebi.intact.model.Institution"
+        >
+        <foreignkey field-id-ref="2"/>
+    </reference-descriptor>
+
+    <!-- CvDagObject has an n:m self-reference to implement a DAG structure.
+    This is the parent reference. -->
+    <collection-descriptor
+        proxy="true"
+        name="parents"
+        element-class-ref="uk.ac.ebi.intact.model.CvInteraction"
+        indirection-table="ia_Cv2Cv"
+        >
+        <fk-pointing-to-this-class column="child_ac"/>
+        <fk-pointing-to-element-class column="parent_ac"/>
+    </collection-descriptor>
+
+    <!-- CvDagObject has an n:m self-reference to implement a DAG structure.
+    This is the child reference. -->
+    <collection-descriptor
+        proxy="true"
+        name="children"
+        element-class-ref="uk.ac.ebi.intact.model.CvInteraction"
+        indirection-table="ia_Cv2Cv"
+        >
+        <fk-pointing-to-this-class column="parent_ac"/>
+        <fk-pointing-to-element-class column="child_ac"/>
+    </collection-descriptor>
+
+    <!-- ************ fields inherited from AnnotatedObject ********* -->
+
+    <collection-descriptor
+        proxy="true"
+        name="xrefs"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Xref"
+        >
+        <inverse-foreignkey field-id-ref="10"/>
+    </collection-descriptor>
+
+    <collection-descriptor
+        name="aliases"
+        proxy="true"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Alias"
+        >
+
+        <inverse-foreignkey field-id-ref="7"/>
+    </collection-descriptor>
+
+
+
+    <!-- Annotations and CvObjects are linked via a (non-qualified) indirection
+    table CVOBJECT2ANNOT -->
+    <collection-descriptor
+        proxy="true"
+        name="annotations"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Annotation"
+        indirection-table="ia_CVOBJECT2ANNOT"
+        >
+        <fk-pointing-to-this-class column="cvobject_ac"/>
+        <fk-pointing-to-element-class column="annotation_ac"/>
+    </collection-descriptor>
+
+</class-descriptor>
+
+<!-- Definitions for CvInteractionType....-->
+<class-descriptor
+    class="uk.ac.ebi.intact.model.CvInteractionType"
+    table="ia_ControlledVocab"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+
+    <!-- ******** fields inherited from BasicObject *****************-->
+    <!-- fields from BasicObject... -->
+    <field-descriptor id="1"
+        name="ac"
+        column="ac"
+        jdbc-type="VARCHAR"
+        primarykey="true" autoincrement="true"
+
+        nullable="false"
+        />
+    <field-descriptor id="2"
+        name="ownerAc"
+        column="owner_ac"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor id="3"
+        name="created"
+        column="created"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="4"
+        name="updated"
+        column="updated"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="5"
+        name="shortLabel"
+        column="shortLabel"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor id="6"
+        name="fullName"
+        column="fullName"
+        jdbc-type="VARCHAR"
+        />
+
+    <!-- ********** declared fields for this class (actually inherited from CvDagObject) ********** -->
+
+    <!-- used for class identification -->
+    <field-descriptor id="7"
+        name="ojbConcreteClass"
+        column="objClass"
+        jdbc-type="VARCHAR"
+        />
+
+    <reference-descriptor
+        name="owner"
+        class-ref="uk.ac.ebi.intact.model.Institution"
+        >
+        <foreignkey field-id-ref="2"/>
+    </reference-descriptor>
+
+    <!-- CvDagObject has an n:m self-reference to implement a DAG structure.
+    This is the parent reference. -->
+    <collection-descriptor
+        proxy="true"
+        name="parents"
+        element-class-ref="uk.ac.ebi.intact.model.CvInteractionType"
+        indirection-table="ia_Cv2Cv"
+        >
+        <fk-pointing-to-this-class column="child_ac"/>
+        <fk-pointing-to-element-class column="parent_ac"/>
+    </collection-descriptor>
+
+    <!-- CvDagObject has an n:m self-reference to implement a DAG structure.
+    This is the child reference. -->
+    <collection-descriptor
+        proxy="true"
+        name="children"
+        element-class-ref="uk.ac.ebi.intact.model.CvInteractionType"
+        indirection-table="ia_Cv2Cv"
+        >
+        <fk-pointing-to-this-class column="parent_ac"/>
+        <fk-pointing-to-element-class column="child_ac"/>
+    </collection-descriptor>
+
+    <!-- ************ fields inherited from AnnotatedObject ********* -->
+
+    <collection-descriptor
+        proxy="true"
+        name="xrefs"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Xref"
+        >
+        <inverse-foreignkey field-id-ref="10"/>
+    </collection-descriptor>
+
+    <collection-descriptor
+        name="aliases"
+        proxy="true"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Alias"
+        >
+
+        <inverse-foreignkey field-id-ref="7"/>
+    </collection-descriptor>
+
+
+
+    <!-- Annotations and CvObjects are linked via a (non-qualified) indirection
+    table CVOBJECT2ANNOT -->
+    <collection-descriptor
+        proxy="true"
+        name="annotations"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Annotation"
+        indirection-table="ia_CVOBJECT2ANNOT"
+        >
+        <fk-pointing-to-this-class column="cvobject_ac"/>
+        <fk-pointing-to-element-class column="annotation_ac"/>
+    </collection-descriptor>
+
+</class-descriptor>
+
+<!-- Definitions for CvIdentification....-->
+<class-descriptor
+    class="uk.ac.ebi.intact.model.CvIdentification"
+    table="ia_ControlledVocab"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+
+    <!-- ******** fields inherited from BasicObject *****************-->
+    <!-- fields from BasicObject... -->
+    <field-descriptor id="1"
+        name="ac"
+        column="ac"
+        jdbc-type="VARCHAR"
+        primarykey="true" autoincrement="true"
+
+        nullable="false"
+        />
+    <field-descriptor id="2"
+        name="ownerAc"
+        column="owner_ac"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor id="3"
+        name="created"
+        column="created"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="4"
+        name="updated"
+        column="updated"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="5"
+        name="shortLabel"
+        column="shortLabel"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor id="6"
+        name="fullName"
+        column="fullName"
+        jdbc-type="VARCHAR"
+        />
+
+    <!-- ********** declared fields for this class (actually inherited from CvDagObject) ********** -->
+
+    <!-- used for class identification -->
+    <field-descriptor id="7"
+        name="ojbConcreteClass"
+        column="objClass"
+        jdbc-type="VARCHAR"
+        />
+
+    <reference-descriptor
+        name="owner"
+        class-ref="uk.ac.ebi.intact.model.Institution"
+        >
+        <foreignkey field-id-ref="2"/>
+    </reference-descriptor>
+
+    <!-- CvDagObject has an n:m self-reference to implement a DAG structure.
+    This is the parent reference. -->
+    <collection-descriptor
+        proxy="true"
+        name="parents"
+        element-class-ref="uk.ac.ebi.intact.model.CvIdentification"
+        indirection-table="ia_Cv2Cv"
+        >
+        <fk-pointing-to-this-class column="child_ac"/>
+        <fk-pointing-to-element-class column="parent_ac"/>
+    </collection-descriptor>
+
+    <!-- CvDagObject has an n:m self-reference to implement a DAG structure.
+    This is the child reference. -->
+    <collection-descriptor
+        proxy="true"
+        name="children"
+        element-class-ref="uk.ac.ebi.intact.model.CvIdentification"
+        indirection-table="ia_Cv2Cv"
+        >
+        <fk-pointing-to-this-class column="parent_ac"/>
+        <fk-pointing-to-element-class column="child_ac"/>
+    </collection-descriptor>
+
+    <!-- ************ fields inherited from AnnotatedObject ********* -->
+
+    <collection-descriptor
+        proxy="true"
+        name="xrefs"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Xref"
+        >
+        <inverse-foreignkey field-id-ref="10"/>
+    </collection-descriptor>
+
+    <collection-descriptor
+        name="aliases"
+        proxy="true"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Alias"
+        >
+
+        <inverse-foreignkey field-id-ref="7"/>
+    </collection-descriptor>
+
+
+
+    <!-- Annotations and CvObjects are linked via a (non-qualified) indirection
+    table CVOBJECT2ANNOT -->
+    <collection-descriptor
+        proxy="true"
+        name="annotations"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Annotation"
+        indirection-table="ia_CVOBJECT2ANNOT"
+        >
+        <fk-pointing-to-this-class column="cvobject_ac"/>
+        <fk-pointing-to-element-class column="annotation_ac"/>
+    </collection-descriptor>
+
+</class-descriptor>
+
+<!-- Definitions for CvComponentRole....-->
+<class-descriptor
+    class="uk.ac.ebi.intact.model.CvComponentRole"
+    table="ia_ControlledVocab"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+
+    <!-- ******** fields inherited from BasicObject *****************-->
+    <!-- fields from BasicObject... -->
+    <field-descriptor id="1"
+        name="ac"
+        column="ac"
+        jdbc-type="VARCHAR"
+        primarykey="true" autoincrement="true"
+        nullable="false"
+        />
+    <field-descriptor id="2"
+        name="ownerAc"
+        column="owner_ac"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor id="3"
+        name="created"
+        column="created"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="4"
+        name="updated"
+        column="updated"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="5"
+        name="shortLabel"
+        column="shortLabel"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor id="6"
+        name="fullName"
+        column="fullName"
+        jdbc-type="VARCHAR"
+        />
+
+    <!-- ********** declared fields for this class (actually inherited from CvObject) ********** -->
+
+    <!-- used for class identification - FK to ObjClass table -->
+    <field-descriptor id="7"
+        name="ojbConcreteClass"
+        column="objClass"
+        jdbc-type="VARCHAR"
+        />
+
+    <reference-descriptor
+        name="owner"
+        class-ref="uk.ac.ebi.intact.model.Institution"
+        >
+        <foreignkey field-id-ref="2"/>
+    </reference-descriptor>
+
+    <!-- ************ fields inherited from AnnotatedObject ********* -->
+
+    <collection-descriptor
+        proxy="true"
+        name="xrefs"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Xref"
+
+        >
+        <inverse-foreignkey field-id-ref="10"/>
+    </collection-descriptor>
+
+    <collection-descriptor
+        name="aliases"
+        proxy="true"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Alias"
+        >
+
+        <inverse-foreignkey field-id-ref="7"/>
+    </collection-descriptor>
+
+
+
+    <!-- Annotations and CvObjects are linked via a (non-qualified) indirection
+    table CVOBJECT2ANNOT -->
+    <collection-descriptor
+        proxy="true"
+        name="annotations"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Annotation"
+        indirection-table="ia_CVOBJECT2ANNOT"
+        >
+        <fk-pointing-to-this-class column="cvobject_ac"/>
+        <fk-pointing-to-element-class column="annotation_ac"/>
+    </collection-descriptor>
+
+</class-descriptor>
+
+
+
+<!-- class "Statistics" dependant of the IntAct model -->
+<class-descriptor
+    class="uk.ac.ebi.intact.util.IntactStatistics"
+    table="ia_statistics"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+    <field-descriptor id="1"
+        name="ac"
+        column="ac"
+        jdbc-type="INTEGER"
+        primarykey="true"
+        autoincrement="false"
+        nullable="false"
+        />
+    <field-descriptor id="2"
+        name="timestamp"
+        column="timestamp"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="3"
+        name="proteinNumber"
+        column="protein_number"
+        jdbc-type="INTEGER"
+        nullable="false"
+        />
+    <field-descriptor id="4"
+        name="interactionNumber"
+        column="interaction_number"
+        jdbc-type="INTEGER"
+        nullable="false"
+        />
+    <field-descriptor id="5"
+        name="binaryInteractions"
+        column="binary_interactions"
+        jdbc-type="INTEGER"
+        nullable="false"
+        />
+    <field-descriptor id="6"
+        name="complexInteractions"
+        column="complex_interactions"
+        jdbc-type="INTEGER"
+        nullable="false"
+        />
+    <field-descriptor id="7"
+        name="experimentNumber"
+        column="experiment_number"
+        jdbc-type="INTEGER"
+        nullable="false"
+        />
+    <field-descriptor id="8"
+        name="termNumber"
+        column="term_number"
+        jdbc-type="INTEGER"
+        nullable="false"
+        />
+</class-descriptor>
+
+
+
+<!-- Definitions for Sequence Chunk -->
+<class-descriptor
+    class="uk.ac.ebi.intact.model.SequenceChunk"
+    table="ia_Sequence_Chunk"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+    <!-- ************* fields declared for this class ******************* -->
+    <field-descriptor id="1"
+        name="ac"
+        column="ac"
+        jdbc-type="VARCHAR"
+        primarykey="true" autoincrement="true"
+        nullable="false"
+        />
+
+    <field-descriptor id="2"
+        name="sequenceChunk"
+        column="sequence_chunk"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor id="3"
+        name="sequenceIndex"
+        column="sequence_index"
+        jdbc-type="INTEGER"
+        />
+    <field-descriptor id="4"
+        name="parentAc"
+        column="parent_ac"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+
+</class-descriptor>
+
+
+
+<!-- Definitions for CvGoNode ....-->
+<class-descriptor
+    class="uk.ac.ebi.intact.model.CvGoNode"
+    table="ia_ControlledVocab"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+
+    <!-- ******** fields inherited from BasicObject *****************-->
+    <!-- fields from BasicObject... -->
+    <field-descriptor id="1"
+        name="ac"
+        column="ac"
+        jdbc-type="VARCHAR"
+        primarykey="true" autoincrement="true"
+
+        nullable="false"
+        />
+    <field-descriptor id="2"
+        name="ownerAc"
+        column="owner_ac"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor id="3"
+        name="created"
+        column="created"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="4"
+        name="updated"
+        column="updated"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor id="5"
+        name="shortLabel"
+        column="shortLabel"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor id="6"
+        name="fullName"
+        column="fullName"
+        jdbc-type="VARCHAR"
+        />
+
+    <!-- ********** declared fields for this class (actually inherited from CvDagObject) ********** -->
+
+    <!-- used for class identification -->
+    <field-descriptor id="7"
+        name="ojbConcreteClass"
+        column="objClass"
+        jdbc-type="VARCHAR"
+        />
+
+    <reference-descriptor
+        name="owner"
+        class-ref="uk.ac.ebi.intact.model.Institution"
+        >
+        <foreignkey field-id-ref="2"/>
+    </reference-descriptor>
+
+    <!-- CvDagObject has an n:m self-reference to implement a DAG structure.
+    This is the parent reference. -->
+    <collection-descriptor
+        proxy="true"
+        name="parents"
+        element-class-ref="uk.ac.ebi.intact.model.CvGoNode"
+        indirection-table="ia_Cv2Cv"
+        >
+        <fk-pointing-to-this-class column="child_ac"/>
+        <fk-pointing-to-element-class column="parent_ac"/>
+    </collection-descriptor>
+
+    <!-- CvDagObject has an n:m self-reference to implement a DAG structure.
+    This is the child reference. -->
+    <collection-descriptor
+        proxy="false"
+        name="children"
+        element-class-ref="uk.ac.ebi.intact.model.CvGoNode"
+        indirection-table="ia_Cv2Cv"
+        >
+        <fk-pointing-to-this-class column="parent_ac"/>
+        <fk-pointing-to-element-class column="child_ac"/>
+    </collection-descriptor>
+
+    <!-- ************ fields inherited from AnnotatedObject ********* -->
+
+    <collection-descriptor
+        proxy="true"
+        name="xrefs"
+        element-class-ref="uk.ac.ebi.intact.model.Xref"
+        >
+        <inverse-foreignkey field-id-ref="10"/>
+    </collection-descriptor>
+
+    <collection-descriptor
+        name="aliases"
+        proxy="true"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Alias"
+        >
+
+        <inverse-foreignkey field-id-ref="7"/>
+    </collection-descriptor>
+
+
+
+    <!-- Annotations and CvObjects are linked via a (non-qualified) indirection
+    table CVOBJECT2ANNOT -->
+    <collection-descriptor
+        proxy="true"
+        name="annotations"
+        element-class-ref="uk.ac.ebi.intact.model.Annotation"
+        indirection-table="ia_CVOBJECT2ANNOT"
+        >
+        <fk-pointing-to-this-class column="cvobject_ac"/>
+        <fk-pointing-to-element-class column="annotation_ac"/>
+    </collection-descriptor>
+
+</class-descriptor>
+
+<!-- Mapping of User defined classes ends here -->

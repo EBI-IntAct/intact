@@ -1,0 +1,35 @@
+<!--
+// - popup.html is used to display the goHierarchy of QuickGo if someone clicks on a GO:ID
+//
+// - @author Peter Todorov (http://www.sitepoint.com/article/1022)
+// - @author modified by Markus Brosch (markus @ brosch.cc)
+// - @version $Id$
+-->
+
+<HTML>
+<HEAD>
+ <TITLE>goHierarchy</TITLE>
+ <script language='javascript'>
+   var arrTemp=self.location.href.split("?");
+   var picUrl1 = (arrTemp.length>0)?arrTemp[1]:"";
+   var picUrl2 = (arrTemp.length>0)?arrTemp[2]:"";
+   var picUrl = picUrl1 + "?" + picUrl2;
+   var NS = (navigator.appName=="Netscape")?true:false;
+     function FitPic() {
+       iWidth = (NS)?window.innerWidth:document.body.clientWidth+20;
+       iHeight = (NS)?window.innerHeight:document.body.clientHeight+20;
+       iWidth = document.images[0].width - iWidth + 20;
+       iHeight = document.images[0].height - iHeight+ 20;
+       window.resizeBy(iWidth, iHeight);
+       self.focus();
+     };
+ </script>
+</HEAD>
+
+<BODY bgcolor="#FFFFFF" onload='FitPic();' topmargin="0" marginheight="0" leftmargin="0" marginwidth="0">
+    <script language='javascript'>
+        document.write( "<img src='" + picUrl + "' border=10>" );
+    </script>
+</BODY>
+
+</HTML>
