@@ -3,10 +3,10 @@
  * User: clewington
  * Date: 12-Nov-2002
  * Time: 15:02:03
- * To change template for new class use 
+ * To change template for new class use
  * Code Style | Class Templates options (Tools | IDE Options).
  */
-package uk.ac.ebi.intact.struts.view;
+package uk.ac.ebi.intact.application.search.struts.view;
 
 import java.lang.Object;
 
