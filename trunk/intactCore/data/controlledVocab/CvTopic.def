@@ -1,0 +1,28 @@
+intact_ac: EBI-20
+shortlabel: function
+term: Biological Function of the Object
+function: Describes the biological function of the Object.
+
+intact_ac: EBI-307
+shortlabel: url
+term: URL/Web address
+definition: The URL (Web address) at which to find more information on the object.
+
+intact_ac: EBI-24
+shortlabel: comment
+term: Comment for public view
+
+intact_ac: EBI-23
+shortlabel: definition
+term: Definition of the controlled vocabulary term
+
+intact_ac: EBI-21
+shortlabel: remark
+term: Internal remark
+definition: Internal remark. Will normally not be shown to the public.
+
+intact_ac: EBI-347
+shortlabel: example
+term: null
+definition: Comment topic used to mark examples, normally used for the explanation of controlled vocabulary terms.
+

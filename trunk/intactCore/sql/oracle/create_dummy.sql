@@ -39,41 +39,6 @@ INSERT INTO intactnode (ac, ownerprefix, owner_ac)
 
 INSERT INTO ControlledVocab (ac, objClass, shortLabel, owner_ac)
        SELECT 'EBI-' || Intact_ac.nextval,
-	      'uk.ac.ebi.intact.model.CvDatabase',
-	      'SPTR',
-	      ac
-         FROM Institution
-        WHERE shortLabel='EBI';
-
-INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
-       SELECT 'EBI-' || Intact_ac.nextval,
-	      'uk.ac.ebi.intact.model.CvDatabase',
-	      'PubMed',
-	      'PubMed',
-	      ac
-         FROM Institution
-        WHERE shortLabel='EBI';
-
-INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
-       SELECT 'EBI-' || Intact_ac.nextval,
-	      'uk.ac.ebi.intact.model.CvDatabase',
-	      'SGD',
-	      'Saccharomyces Genome Database',
-	      ac
-         FROM Institution
-        WHERE shortLabel='EBI';
-
-INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
-       SELECT 'EBI-' || Intact_ac.nextval,
-	      'uk.ac.ebi.intact.model.CvDatabase',
-	      'GO',
-	      'Gene Ontology',
-	      ac
-         FROM Institution
-        WHERE shortLabel='EBI';
-
-INSERT INTO ControlledVocab (ac, objClass, shortLabel, owner_ac)
-       SELECT 'EBI-' || Intact_ac.nextval,
 	      'uk.ac.ebi.intact.model.CvComponentRole',
 	      'bait',
 	      ac
@@ -105,34 +70,7 @@ INSERT INTO Experiment (ac, shortLabel, owner_ac)
 INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
        SELECT 'EBI-' || Intact_ac.nextval,
 	      'uk.ac.ebi.intact.model.CvTopic',
-	      'Function',
-	      'Biological Function of the Object',
-	      ac
-         FROM Institution
-        WHERE shortLabel='EBI';
-
-INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
-       SELECT 'EBI-' || Intact_ac.nextval,
-	      'uk.ac.ebi.intact.model.CvTopic',
-	      'Remark',
-	      'Internal remark',
-	      ac
-         FROM Institution
-        WHERE shortLabel='EBI';
-
-INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
-       SELECT 'EBI-' || Intact_ac.nextval,
-	      'uk.ac.ebi.intact.model.CvTopic',
-	      'Note',
-	      'Public note',
-	      ac
-         FROM Institution
-        WHERE shortLabel='EBI';
-
-INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
-       SELECT 'EBI-' || Intact_ac.nextval,
-	      'uk.ac.ebi.intact.model.CvTopic',
-	      'Definition',
+	      'definition',
 	      'Definition of the controlled vocabulary term',
 	      ac
          FROM Institution
@@ -141,42 +79,8 @@ INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
 INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
        SELECT 'EBI-' || Intact_ac.nextval,
 	      'uk.ac.ebi.intact.model.CvTopic',
-	      'Comment',
+	      'comment',
 	      'Comment for public view',
-	      ac
-         FROM Institution
-        WHERE shortLabel='EBI';
-
-INSERT INTO Annotation (ac, topic_ac, owner_ac, description)
-       SELECT 'EBI-' || Intact_ac.nextval,
-	      cv.ac,
-	      i.ac,
-	      'Describes the biological function of the Object.'
-         FROM Institution i, ControlledVocab cv
-        WHERE i.shortLabel='EBI'
-          AND cv.shortLabel='Function';
-
-INSERT INTO cvobject2annot (annotation_ac, cvobject_ac)
-       SELECT a.ac,
-	      cv.ac
-         FROM Annotation a, ControlledVocab cv
-        WHERE a.description='Describes the biological function of the Object.'
-          AND cv.shortLabel='Function';
-
-INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
-       SELECT 'EBI-' || Intact_ac.nextval,
-	      'uk.ac.ebi.intact.model.CvXrefQualifier',
-	      'GO-definition-ref',
-	      'GO definition reference',
-	      ac
-         FROM Institution
-        WHERE shortLabel='EBI';
-
-INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
-       SELECT 'EBI-' || Intact_ac.nextval,
-	      'uk.ac.ebi.intact.model.CvXrefQualifier',
-	      'Identical',
-	      'Reference to the identical object in another database',
 	      ac
          FROM Institution
         WHERE shortLabel='EBI';
