@@ -13,4 +13,8 @@ package uk.ac.ebi.intact.application.editor.exception;
  * @version $Id$
  */
 public class ExperimentValidationException extends ValidationException {
+
+    public ExperimentValidationException() {
+        super("error.exp.validation", "exp.validation");
+    }
 }
