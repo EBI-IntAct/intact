@@ -111,11 +111,6 @@
          indexed="true"
       />
       <field-descriptor id="11"
-         name="sequence"
-         column="polymerseq"
-         jdbc-type="VARCHAR"
-      />
-      <field-descriptor id="12"
          name="formOfAc"
          column="formOf"
          jdbc-type="VARCHAR"
@@ -181,6 +176,19 @@
       >
         <inverse-foreignkey field-id-ref="6"/>
       </collection-descriptor>
+
+   <collection-descriptor
+       name="sequenceChunks"
+       proxy="true"
+       element-class-ref="uk.ac.ebi.intact.model.SequenceChunk"
+       orderby="sequence_index"
+       sort="ASC"
+   >
+
+       <inverse-foreignkey field-id-ref="4"/>
+    </collection-descriptor>
+
+
    </class-descriptor>
 
 
@@ -1618,6 +1626,42 @@
       </collection-descriptor>
 
    </class-descriptor>
+
+
+
+<!-- Definitions for Sequence Chunk -->
+<class-descriptor
+   class="uk.ac.ebi.intact.model.SequenceChunk"
+
+   table="ia_Sequence_Chunk"
+>
+   <!-- ************* fields declared for this class ******************* -->
+   <field-descriptor id="1"
+          name="ac"
+          column="ac"
+          jdbc-type="VARCHAR"
+          primarykey="true" autoincrement="true"
+          nullable="false"
+   />
+
+   <field-descriptor id="2"
+      name="sequenceChunk"
+      column="sequence_chunk"
+      jdbc-type="VARCHAR"
+   />
+   <field-descriptor id="3"
+      name="sequenceIndex"
+      column="sequence_index"
+      jdbc-type="INTEGER"
+   />
+   <field-descriptor id="4"
+      name="parentAc"
+      column="parent_ac"
+      jdbc-type="VARCHAR"
+      indexed="true"
+   />
+
+</class-descriptor>
 
 
 
