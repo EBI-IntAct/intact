@@ -33,8 +33,8 @@ public class GraphBuildThread extends Thread {
 	static transient Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
 
 	// the static values are set by the GraphManager !
-	static Cache cache;
-	static Set running;
+	private Cache cache;
+	private Set running;
 
 	private Integer toProcceed;
 	private IntactUserI user;
@@ -44,9 +44,11 @@ public class GraphBuildThread extends Thread {
 	 * 
 	 * @param i the graphID
 	 */
-	public GraphBuildThread(Integer i, IntactUserI user) {
+	public GraphBuildThread(Integer i, IntactUserI user, Cache cache, Set running) {
 		toProcceed = i;
 		this.user = user;
+		this.cache = cache;
+		this.running = running;
 	}
 
 	public void run() {
@@ -54,7 +56,6 @@ public class GraphBuildThread extends Thread {
 		try {
 			// build the graph
 			gd = buildGraph(toProcceed);
-
 			// the removal of the graphid and the adding of the graph is
 			// synchronized to avoid that another thread wants to read the
 			// running structure and build a graph whilst this thread removed it
@@ -62,10 +63,12 @@ public class GraphBuildThread extends Thread {
 			synchronized (running) {
 				// the data is stored in the cache
 				cache.addObject(toProcceed, gd);
+				logger.info(toProcceed + " is added to the cache");
 				// work is done -> remove it from the running structure
 				running.remove(toProcceed);
 			}
 		} catch (SQLException e) {
+			logger.warn(e);
 		}
 
 	}
@@ -137,7 +140,6 @@ public class GraphBuildThread extends Thread {
 		}
 		set.close();
 		stm.close();
-
 		return new GraphData(graph, nodeLabelMap);
 	}
 }

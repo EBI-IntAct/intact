@@ -114,7 +114,7 @@ public class DisplayAction extends Action {
 			// if the current search ac are in a graph in the database
 			if (graphid != Constants.SINGLETON_GRAPHID && search.size() > 1) {
 				// the shortest path is computed
-				logger.info("searching for MiNe with " + search);
+				logger.warn("searching for MiNe with " + search);
 				GraphData graphData;
 				// the graphManager is responsible for building and storing the
 				// graphs it is implemented as a singleton so just one instance
@@ -123,6 +123,7 @@ public class DisplayAction extends Action {
 				// the graph is fetched for the given graphid. As long as there
 				// is no graph given for the graphid the action waits 25ms and
 				// then tries again to retrieve the graph
+				logger.warn("starting it with ");
 				while ((graphData = graphManager.getGraphData(graphid, user))
 					== null) {
 					try {
@@ -137,7 +138,7 @@ public class DisplayAction extends Action {
 						return mapping.findForward(Constants.ERROR);
 					}
 				}
-
+				logger.warn("done");
 				try {
 					// the minimal network is computed
 					// the found network is then updated in the MiNeHelper class
