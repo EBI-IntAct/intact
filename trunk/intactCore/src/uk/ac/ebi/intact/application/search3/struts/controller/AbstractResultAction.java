@@ -108,6 +108,7 @@ public abstract class AbstractResultAction extends IntactBaseAction {
         //checking refactoring for Exp/Interaction
         if ((Experiment.class.isAssignableFrom(resultType)) ||
                 (Interaction.class.isAssignableFrom(resultType))) {
+          
             //use the procesRequest method instead....
             return mapping.findForward(processResults(request, user.getHelpLink()));
         }

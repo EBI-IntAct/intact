@@ -39,8 +39,6 @@ import java.util.List;
  */
 
 public class SearchAction extends IntactBaseAction {
-
-
     /**
      * this value is needed for the result wrapper
      */
@@ -72,6 +70,7 @@ public class SearchAction extends IntactBaseAction {
     public ActionForward execute(ActionMapping mapping, ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response) throws Exception {
+
 
         // Clear any previous errors.
         super.clearErrors();
@@ -109,6 +108,8 @@ public class SearchAction extends IntactBaseAction {
         String searchValue = (String) dyForm.get("searchString");
         String searchClass = (String) dyForm.get("searchClass");
         String selectedChunk = (String) dyForm.get("selectedChunk");
+        String binaryValue = (String) dyForm.get("binary");
+
 
         //this tabbed stuff is for handling subsequent page requests from tabbed JSPs
         int selectedChunkInt = Constants.NO_CHUNK_SELECTED;
@@ -125,11 +126,16 @@ public class SearchAction extends IntactBaseAction {
         user.setSearchValue(searchValue);
         user.setSearchClass(searchClass);
         user.setSelectedChunk(selectedChunkInt);
+        user.setBinaryValue(binaryValue);
+
 
         logger.info("searchValue: " + searchValue);
         logger.info("searchClass: " + searchClass);
         logger.info("selectedChunk: " +
                 (selectedChunkInt == Constants.NO_CHUNK_SELECTED ? "none" : selectedChunk));
+        logger.info("binaryValue: " + binaryValue);
+
+
 
         //reset the class string in the form for the next request
         dyForm.set("searchClass", "");
@@ -167,13 +173,26 @@ public class SearchAction extends IntactBaseAction {
                 return mapping.findForward(SearchConstants.FORWARD_NO_MATCHES);
             }
 
-            //try the specified String case first
             SearchHelper searchHelper = new SearchHelper(logger);
-            results = this.getResults(searchHelper, searchClass, searchValue, user);
+
+            // if it's a binary request first look for this one
+
+            if (binaryValue != null && !binaryValue.equals("")) {
+                // it's an binary request
+                // convert to binary query to a normal one 
+                binaryValue = binaryValue.replaceAll("\\,%20", ",");
+                results = this.getResults(searchHelper, null, binaryValue, user);
+                session.setAttribute(SearchConstants.SEARCH_CRITERIA, "'" + binaryValue + "'");
+
+
+            } else {
+                //try now the specified String case first
+                results = this.getResults(searchHelper, searchClass, searchValue, user);
+            }
 
             if (results.isTooLarge()) {
 
-                logger.info("No matches were found for the specified search criteria");
+                logger.info("Results set is too Large for the specified search criteeria");
                 request.setAttribute(SearchConstants.SEARCH_CRITERIA, "'" + searchValue + "'");
                 request.setAttribute(SearchConstants.RESULT_INFO, results.getInfo());
                 return mapping.findForward(SearchConstants.FORWARD_TOO_LARGE);
@@ -223,10 +242,11 @@ public class SearchAction extends IntactBaseAction {
         } catch (IntactException se) {
             logger.info("something went wrong ...");
             // Something failed during search...
-            // logger.info(se);
-            // logger.info(se.getNestedMessage());
-            //  logger.info(se.getRootCause().toString());
-            //  logger.info(se.getLocalizedMessage());
+            logger.info(se);
+            logger.info(se.getNestedMessage());
+            logger.info(se.getRootCause().toString());
+            logger.info(se.getLocalizedMessage());
+
 
             // clear in case there is some old errors in there.
             super.clearErrors();
@@ -280,10 +300,11 @@ public class SearchAction extends IntactBaseAction {
 
         ResultWrapper result = null;
         if (searchClass == null || searchClass.length() == 0) {
-            // this is a initial request, so we don´t know how big is the result set
+            // this is a initial request, so we don?t know how big is the result set
             // in that case searchFast, get the result from searchFast
             result = helper.searchFast(searchValue);
         } else {
+
             // this is a normal request from the servlet, we know the class, we know the value.
             Collection temp = new ArrayList();
             temp.addAll(helper.doLookup(searchClass, searchValue, user));
@@ -292,7 +313,7 @@ public class SearchAction extends IntactBaseAction {
 
         return result;
     }
-    
+
 }
 
 
