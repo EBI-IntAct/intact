@@ -123,6 +123,15 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         }
     }
 
+    // Override the super method to clear this object.
+    public void clear() {
+        super.clear();
+        // Clear of any references to this object.
+        myOrganism = null;
+        myInter = null;
+        myIdent = null;
+    }
+
     /**
      * The organism menu list.
      * @return the organism menu consisting of organism short labels. The first
