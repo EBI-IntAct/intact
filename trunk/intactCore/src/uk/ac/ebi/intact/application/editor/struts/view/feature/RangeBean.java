@@ -65,7 +65,7 @@ public class RangeBean extends AbstractEditKeyBean {
     /**
      * Handler to the fuzzy type converter.
      */
-    private FuzzyTypeConverter myFTConverter = FuzzyTypeConverter.getInstance();
+    private CvFuzzyType.Converter myFTConverter = CvFuzzyType.Converter.getInstance();
 
     // Class Methods
 
