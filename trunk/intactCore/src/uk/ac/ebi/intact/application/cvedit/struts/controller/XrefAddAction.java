@@ -68,7 +68,7 @@ public class XrefAddAction extends IntactBaseAction {
                 theForm.getSecondaryId(), theForm.getReleaseNumber());
 
             // Only set it if we have a non empty list for qualifiers.
-            if (!user.isListEmpty(IntactUserIF.QUALIFIER_NAMES)) {
+            if (!user.isQualifierListEmpty()) {
                 CvXrefQualifier xqual = (CvXrefQualifier) user.getObjectByLabel(
                     CvXrefQualifier.class, theForm.getQualifer());
                 xref.setCvXrefQualifier(xqual);
