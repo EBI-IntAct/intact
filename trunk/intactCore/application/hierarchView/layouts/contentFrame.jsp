@@ -1,12 +1,16 @@
 <%@ page language="java"%>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 
-<%--
-    Content of the content frame, it rely on the Tiles configuration.
+<!--
+   - Copyright (c) 2002 The European Bioinformatics Institute, and others.
+   - All rights reserved. Please see the file LICENSE
+   - in the root directory of this distribution.
+   -
+   - Content of the content frame, it rely on the Tiles configuration.
 
-    Author: Samuel Kerrien (skerrien@ebi.ac.uk)
-    Version: $Id$
---%>
+   - @author: Samuel Kerrien (skerrien@ebi.ac.uk)
+   - @version: $Id$
+-->
 
 <html:html>
 
@@ -20,7 +24,7 @@
 
 <frameset cols="63%,*" border=0>
 
-   <frame src="graphFrame.jsp" name="graphFrame">
+   <frame src="graphFrame.jsp" name="FOO">
 
    <frameset ROWS="31%,*">
       <frame src="sourceListFrame.jsp"     name="sourceListFrame">
