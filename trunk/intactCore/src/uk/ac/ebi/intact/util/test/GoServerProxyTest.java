@@ -49,7 +49,7 @@ public class GoServerProxyTest extends TestCase {
         GoServerProxy server = new GoServerProxy();
         GoServerProxy.GoResponse response = null;
 
-        // Test: existing GO term.
+        // Test 1: existing GO term.
         try {
             response = server.query( "GO:0000074" );
 
@@ -57,11 +57,14 @@ public class GoServerProxyTest extends TestCase {
             assertEquals(response.getName(),     "regulation of cell cycle");
             assertEquals(response.getCategory(), "process");
         }
+        catch (IOException ex) {
+            fail( "Could not connect to the GO server !" );
+        }
         catch (GoServerProxy.GoIdNotFoundException ex) {
-            fail();
+            fail( "Could not find GO:0000074" );
         }
 
-        // Test: existing GO term.
+        // Test 2: existing GO term.
         try {
             response = server.query( "GO:0008645" );
 
@@ -69,33 +72,39 @@ public class GoServerProxyTest extends TestCase {
             assertEquals(response.getName(),     "hexose transport");
             assertEquals(response.getCategory(), "process");
         }
+        catch (IOException ex) {
+            fail( "Could not connect to the GO server !" );
+        }
         catch (GoServerProxy.GoIdNotFoundException ex) {
-            fail();
+            fail( "Could not find GO:0008645" );
         }
 
-        // Test: no matches.
+        // Test 3: no matches.
         try {
             response = server.query( "GO:0000000" );
             // We shouldn't get here as there are no matches for this.
-            fail();
+            fail( "Found GO:0000000 where it should have crashed !" );
+        }
+        catch (IOException ex) {
+            fail( "Could not connect to the GO server !" );
         }
         catch (GoServerProxy.GoIdNotFoundException ex) {
-            assertTrue(true);
+            assertTrue( true );
         }
 
-        // Test: wrong URL.
+        // Test 4: wrong URL.
         String url = "http://www.ebi.ac.uk/ego/DisplayGoTermXYZ";
         server = new GoServerProxy( url );
         try {
             response = server.query( "GO:0000074" );
             // Invalid URL.
-            fail();
+            fail( "Succeded to parse the URL: " + url + " where it should have crashed !" );
         }
         catch (IOException ex) {
-            assertTrue(true);
+            assertTrue( true );
         }
         catch (GoServerProxy.GoIdNotFoundException ex) {
-            fail();
+            fail( "Succeded to parse the URL: " + url + " where it should have crashed !" );
         }
     }
 }
