@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * That class his hidding the logic which allow to get a valid biosource from a taxid.
@@ -52,6 +53,11 @@ public class BioSourceFactory {
     private static NewtServerProxy newtProxy;
     private static final String NEWT_URL = "http://www.ebi.ac.uk/newt/display";
     // http://web7-node1.ebi.ac.uk:9120/newt/display
+
+
+    public BioSourceFactory( IntactHelper helper ) throws IntactException {
+        this( helper, helper.getInstitution(), DEFAULT_CACHE_SIZE );
+    }
 
 
     public BioSourceFactory( IntactHelper helper, Institution institution ) {
@@ -96,6 +102,36 @@ public class BioSourceFactory {
 
 
     /**
+     * Select a BioSource that has neither CvCellType nor CvTissue.
+     *
+     * @param biosources the Collection of BioSource that potentially contains some having
+     *                   CvCellType or CvTissue.
+     * @return the unique BioSource that has neither CvCellType nor CvTissue
+     * @throws IntactException if several of such BioSource are found
+     */
+    private BioSource getOriginalBioSource( Collection biosources ) throws IntactException {
+        BioSource original = null;
+
+        for ( Iterator iterator = biosources.iterator(); iterator.hasNext(); ) {
+            final BioSource bioSource = (BioSource) iterator.next();
+            if( bioSource.getCvTissue() == null &&
+                bioSource.getCvCellType() == null ) {
+                if( original == null ) {
+                    // first on is found
+                    original = bioSource;
+                } else {
+                    // multiple bioSource, error.
+                    if( logger != null ) {
+                        logger.error( "More than one BioSource with this taxId found: " + original.getTaxId() );
+                    }
+                    throw new IntactException( "More than one BioSource with this taxId found: " + original.getTaxId() );
+                }
+            }
+        }
+        return original;
+    }
+
+    /**
      * Create or update a BioSource object from a taxid.
      *
      * @param aTaxId The tax id to create/update a biosource for
@@ -111,11 +147,14 @@ public class BioSourceFactory {
         // Get all existing BioSources with aTaxId
         // Exception if there are more than one.
         Collection currentBioSources = helper.search( BioSource.class.getName(), "taxId", aTaxId );
-        if( currentBioSources.size() > 1 ) {
-            if( logger != null ) {
-                logger.error( "More than one BioSource with this taxId found: " + aTaxId );
-            }
-            throw new IntactException( "More than one BioSource with this taxId found: " + aTaxId );
+
+        if( null == currentBioSources ) {
+            throw new IntactException( "Search for a BioSource having the taxId: " + aTaxId + " failed." );
+        }
+
+        BioSource intactBioSource = null;
+        if( currentBioSources.size() > 0 ) {
+            intactBioSource = getOriginalBioSource( currentBioSources );
         }
 
         // Get a correct BioSource from Newt
@@ -131,7 +170,7 @@ public class BioSourceFactory {
         BioSource newBioSource = null;
 
         // If there is no current BioSource, create it
-        if( 0 == currentBioSources.size() ) {
+        if( intactBioSource == null ) {
             if( validBioSource.getTaxId().equals( aTaxId ) ) {
                 // not in IntAct and found in Newt so make it persistent in IntAct
                 helper.create( validBioSource );
@@ -169,14 +208,13 @@ public class BioSourceFactory {
         } else {
             // only one BioSource found with the original taxid
             // If it is obsolete, update current BioSource
-            BioSource currentBioSource = (BioSource) currentBioSources.iterator().next();
-            if( !currentBioSource.equals( validBioSource ) ) {
+            if( !intactBioSource.equals( validBioSource ) ) {
                 if( logger != null ) {
                     logger.info( "Updating existing BioSource (" + validBioSource.getTaxId() + ")" );
                 }
-                newBioSource = updateBioSource( currentBioSource, validBioSource );
+                newBioSource = updateBioSource( intactBioSource, validBioSource );
             } else {
-                newBioSource = currentBioSource;
+                newBioSource = intactBioSource;
             }
         }
 
