@@ -259,9 +259,11 @@ public class ObjectBridgeDAO implements DAO, Serializable {
      */
     public String getDbName() throws LookupException, SQLException  {
         String dbName = "";
-        Connection conn = broker.getConnectionManager().getConnection();
-        DatabaseMetaData metaInfo = conn.getMetaData();
-        dbName = metaInfo.getDatabaseProductName();
+        JdbcConnectionDescriptor jDesc = DescriptorRepository.getDefaultInstance().getDefaultJdbcConnection();
+        if(jDesc.getDbAlias() != null) dbName = jDesc.getDbAlias();
+//        Connection conn = broker.getConnectionManager().getConnection();
+//        DatabaseMetaData metaInfo = conn.getMetaData();
+//        dbName = metaInfo.getDatabaseProductName();
         return dbName;
     }
     /**
@@ -962,6 +964,15 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         try {
 
             searchClass = Class.forName(type);
+            //should now call getConcreteClasses to obtain the concrete
+            //Class instances we should build if necessary....
+            System.out.println("search: requested for Class" + searchClass.getName());
+            Collection classesToSearch = getConcreteClasses(searchClass);
+            System.out.println("search: Concrete classes found:");
+            for(Iterator iter = classesToSearch.iterator(); iter.hasNext();) {
+                System.out.println(((Class)iter.next()).getName());
+            }
+
             Criteria crit = null;
 
             //check local cache first for the object, in case the col is not the PK
@@ -989,7 +1000,12 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             }
 
             logger.info("criteria built OK");
-            query = new QueryByCriteria(searchClass, crit);
+            //now build a query for each search class...
+            Collection queries = new ArrayList();
+            for(Iterator it = classesToSearch.iterator(); it.hasNext();) {
+                //query = new QueryByCriteria(searchClass, crit);
+                queries.add(new QueryByCriteria((Class)it.next(), crit));
+            }
             logger.info("query by criteria built OK: " + type + " " + col + " " + val);
 
             //simple timing
@@ -1002,7 +1018,9 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             //this is to avoid the oracle 'open cursors' problem. If connection
             //pooling is used, commit should just release the connection's resources..
             broker.beginTransaction();
-            results = broker.getCollectionByQuery(query);
+            for(Iterator queryIt = queries.iterator(); queryIt.hasNext();) {
+                results.addAll(broker.getCollectionByQuery((Query)queryIt.next()));
+            }
             broker.commitTransaction();
 
             tmp = System.currentTimeMillis();
@@ -1017,9 +1035,10 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             //problem doing the query....
             String msg = "search failed: problem executing query";
             logger.info(msg);
-            logger.info("Criteria: " + query.getCriteria().toString() + "\n");
-            logger.info("class: " + query.getSearchClass().getName() + "\n");
-            logger.info("attribute requested: " + query.getRequestedAttribute() + "\n");
+            //NB with the Collection of queries the debug below needs modifying...
+//            logger.info("Criteria: " + query.getCriteria().toString() + "\n");
+//            logger.info("class: " + query.getSearchClass().getName() + "\n");
+//            logger.info("attribute requested: " + query.getRequestedAttribute() + "\n");
             throw new SearchException(msg, pbe);
 
         }
@@ -1746,6 +1765,51 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             logger.error(ex);
         }
 
+    }
+
+    /**
+     * For the given class, checks whether or not it is abstract (ie it has
+     * extents in OJB) and if so obtains all the CONCRETE classes that are
+     * relevant to it. This enables OJB queries to be made with concrete class
+     * details rather than possibly abstract ones, and so avoids any possible
+     * problems with the way OJB handles abstract class queries.
+     * @param classToCheck The class to investigate
+     * @return Collection a Collection of concrete classes - empty if nothing found
+     */
+    private Collection getConcreteClasses(Class classToCheck) {
+
+        Collection result = new ArrayList();
+        ClassDescriptor classDesc = getClassDescriptor(classToCheck);
+        if(classDesc != null) {
+
+            //NB if this doesn't work we could just check to see if it is abstract..
+            if(!classDesc.isExtent()) {
+                //concrete already - just return it
+                result.add(classToCheck);
+            }
+            else {
+                //get all of the concrete classes we can find
+                Vector subClasses = classDesc.getExtentClasses();
+                for(Iterator it = subClasses.iterator(); it.hasNext();) {
+                    Class subClass = (Class)it.next();
+                   // ClassDescriptor subClassDesc = getClassDescriptor(subClass);
+                    result.addAll(getConcreteClasses(subClass));
+                }
+
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * trivial method to obtain an OJB class descriptor for a given class.
+     * @param clazz The class we are interested in
+     * @return ClassDescriptor The OJB class descriptor for that class (as specified
+     * in the repositro_user.xml configuration) - null if the descriptor does not exist
+     */
+    private ClassDescriptor getClassDescriptor(Class clazz) {
+        return(DescriptorRepository.getDefaultInstance().getDescriptorFor(clazz));
     }
 
 
