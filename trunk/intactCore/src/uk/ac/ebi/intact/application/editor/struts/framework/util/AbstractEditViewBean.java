@@ -9,7 +9,6 @@ package uk.ac.ebi.intact.application.editor.struts.framework.util;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.struts.tiles.ComponentContext;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
@@ -177,17 +176,6 @@ public abstract class AbstractEditViewBean implements Serializable {
             return false;
         }
         return true;
-    }
-
-    /**
-     * Refresh the current view. Annotated object must be set prior to calling
-     * this method.
-     */
-    public void refresh() {
-        // Clear any left overs from previous transaction.
-        clearTransactions();
-
-        reset(getAnnotatedObject());
     }
 
     /**
@@ -639,14 +627,6 @@ public abstract class AbstractEditViewBean implements Serializable {
      */
     public Map getAddXrefMenus() throws SearchException {
         return getXrefMenus(1);
-    }
-
-    /**
-     * Returns the default xref qualifier.
-     * @return the default xref qualifier as a string.
-     */
-    public String getDefaultXrefQualifier() {
-        return EditorService.getInstance().getResource("default.xref.qualifier");
     }
 
     /**
