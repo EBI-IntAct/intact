@@ -224,8 +224,10 @@
             <!-- Inlcude the intact core -->
             <lib dir="${root.dist.dir}"/>
 
-            <!-- Include common jar files for struts. -->
-            <lib dir="${intact.app.dir}/lib"/>
+            <!-- Inlcude application common jar files exclude test files. -->
+            <fileset dir="${intact.app.dir}/lib">
+                <exclude name="test/**"/>
+            </fileset>
 
             <!-- Include common jar files from intact core. -->
             <lib dir="${root.lib.dir}">

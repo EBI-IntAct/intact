@@ -307,8 +307,12 @@
             <fileset dir="WEB-INF/lib"/>
             <!-- Inlcude the intact core -->
             <fileset dir="${root.dist.dir}"/>
-            <!-- Inlcude application common jar files. -->
-            <fileset dir="${intact.app.lib.dir}"/>
+
+            <!-- Inlcude application common jar files exclude test files. -->
+            <fileset dir="${intact.app.lib.dir}">
+                <exclude name="test/**"/>
+            </fileset>
+
             <!-- Include required jar files from intact core. -->
             <fileset dir="${root.lib.dir}">
                 <include name="jakarta-ojb-0.9.7.jar"/>

@@ -628,8 +628,10 @@ Verison: $Id$
                 <include name="intact-core.jar"/>
             </lib>
 
-            <!-- Include common jar files -->
-            <lib dir="${intact.app.dir}/lib"/>
+            <!-- Inlcude application common jar files exclude test files. -->
+            <fileset dir="${intact.app.dir}/lib">
+                <exclude name="test/**"/>
+            </fileset>
 
             <!-- Include common jar files from intact core. -->
             <lib dir="${root.lib.dir}">
