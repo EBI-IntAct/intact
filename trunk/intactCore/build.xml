@@ -96,16 +96,26 @@
          Test packages, property and repository files required for persistence
          are not included.
     -->
-    <target name="jar-core" depends="compile-core"
+    <target name="jar-core"
         description="Creates the Intact core jar file in the distribution directory">
+
+        <!-- Delete the class directory. -->
+        <delete dir="${dest.dir}"/>
+
+        <!-- Just compile without copying config files to the class dir. -->
+        <mkdir dir="${dest.dir}" />
+        <javac srcdir="${src.dir}" destdir="${dest.dir}" debug="on" deprecation="on"
+            excludes="${non.core.files}, **/test/**">
+            <classpath refid="project.class.path"/>
+        </javac>
+
         <mkdir dir="${dist.dir}" />
 
         <!-- Delete the existing jar file. -->
         <delete file="${dist.dir}/intact-core.jar" quiet="true"/>
+
         <jar destfile="${dist.dir}/intact-core.jar"
            basedir="${basedir}/${dest.dir}"
-           excludes="**/test/**, config/**, OJB.properties, log4j.properties,
-                    ${non.core.files}"
         />
     </target>
 
@@ -177,6 +187,13 @@
 
     <!-- =================================================================== -->
 
+    <target name="show-java-version"
+        description="Displays the version of JRE">
+        <echo message="You are using JRE ${ant.java.version}"/>
+    </target>
+
+    <!-- =================================================================== -->
+
     <!-- Build javadocs -->
     <target name="javadoc" depends="compile"
         description="Creates Intact core API Documentation">
@@ -210,4 +227,5 @@
 
     <!-- Build entire project -->
     <target name="project" depends="javadoc,demo"/>
+
 </project>
