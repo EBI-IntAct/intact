@@ -20,6 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Action class for sidebar events. Actions are dispatched
@@ -168,7 +170,18 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         AnnotatedObject annobj = null;
         try {
             Class clazz = Class.forName(classname);
-            annobj = (AnnotatedObject) clazz.newInstance();
+            Constructor[] ctrs = clazz.getDeclaredConstructors();
+            Constructor noargctr = null;
+            for (int i = 0; i < ctrs.length; i++) {
+                if (ctrs[i].getParameterTypes().length == 0) {
+                    noargctr = ctrs[i];
+                    break;
+                }
+            }
+            if (noargctr != null) {
+                noargctr.setAccessible(true);
+                annobj = (AnnotatedObject) noargctr.newInstance(null);
+            }
         }
         catch (IllegalAccessException iae) {
             // Shouldn't happen.
@@ -180,6 +193,10 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         }
         catch (InstantiationException ie) {
             // Shouldn't happen.
+            assert false;
+        }
+        catch (InvocationTargetException e) {
+            // Thrown from the constructing the object.
             assert false;
         }
         return annobj;
