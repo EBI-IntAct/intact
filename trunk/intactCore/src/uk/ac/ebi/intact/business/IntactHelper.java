@@ -1433,24 +1433,27 @@ public class IntactHelper implements SearchI, Externalizable {
     }
 
     /**
-     *  Searches for a BioSource given a tax ID. The taxt ID must be
-     * unique and therefore if a match is found only a single BioSource should
-     * be returned.
-     * @param taxId The tax ID to search on - should be unique
-     * @return BioSource The matching BioSource object, or null if none found
-     * @exception IntactException thronw if there was a search problem, or if more
-     * than one BioSource was found
-     *
+     * Searches for a BioSource given a tax ID. Only a single BioSource is
+     * found for given tax id and null values for cell type and tissue.
+     * @param taxId The tax ID to search on
+     * @return BioSource The matching BioSource object, or null if none found (for
+     * the combination of tax id, cell and tissue)
+     * @exception IntactException thrown if there was a search problem.
      */
     public BioSource getBioSourceByTaxId(String taxId) throws IntactException {
+        // List of biosource objects for given tax id.
+        Collection results = search(BioSource.class.getName(), "taxId", taxId);
 
-        Collection resultList = null;
-        resultList = this.search("uk.ac.ebi.intact.model.BioSource", "taxId", taxId);
-
-        if (resultList.isEmpty()) return null;
-        if (resultList.size() > 1) throw new IntactException("More than one BioSource returned by taxtID search");
-        return (BioSource) resultList.iterator().next();
-
+        // Get the biosource with null values for cell type and tisse
+        //  (there is only one of them exists).
+        for (Iterator iter = results.iterator(); iter.hasNext(); ) {
+            BioSource biosrc = (BioSource) iter.next();
+            if ((biosrc.getCvCellType() == null) && (biosrc.getCvTissue() == null)) {
+                return biosrc;
+            }
+        }
+        // None found.
+        return null;
     }
 
 
