@@ -58,15 +58,6 @@
             <forward name="success" path="/do/search"/>
         </action>
 
-        <!-- Process a user selects from a search result. -->
-<!--        <action path="/view"-->
-<!--                type="uk.ac.ebi.intact.application.search2.struts.controller.ViewAction"-->
-<!--                name="viewForm"-->
-<!--                scope="request">-->
-<!--            <forward name="results" path="match.layout"/>-->
-<!--            <forward name="proteinView" path="/do/search"/>-->
-<!--        </action>-->
-
         <!-- Process a user searches for a CV Object. The form is in a session because
              we reuse search details from view action. Currently once a search has been
              successful, there are a number of options for subsequent processing:
@@ -84,6 +75,7 @@
             <forward name="detailAction" path="/do/detail"/>
             <forward name="freeTextSearchAction" path="/do/freeTextSearch"/>
             <forward name="linkSearchAction"     path="/do/linkSearch"/>
+            <forward name="proteinBinaryAction"  path="/do/proteinBinarySearch"/>
         </action>
 
         <!-- processed when a single object view is required after a search. This is
@@ -102,6 +94,15 @@
         -->
         <action path="/linkSearch"
                 type="uk.ac.ebi.intact.application.search2.struts.controller.LinkSearchAction"
+                scope="session">
+            <forward name="noMatch" path="no.match.layout"/>
+            <forward name="results" path="match.layout"/>
+            <forward name="sessionLost" path="/do/welcome"/>
+        </action>
+
+        <!-- Protein binary action  -->
+        <action path="/proteinBinarySearch"
+                type="uk.ac.ebi.intact.application.search2.struts.controller.ProteinBinaryAction"
                 scope="session">
             <forward name="noMatch" path="no.match.layout"/>
             <forward name="results" path="match.layout"/>
