@@ -560,9 +560,9 @@
         <action path="/int/exp/del"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ExperimentAction"
             name="intForm"
+            input="edit.layout"
             validate="false"
             scope="session" >
-            <forward name="success" path="/do/int/fill/form"/>
         </action>
 
         <!-- Action to handle when an experiment is added to or hidden from the hold area.
@@ -570,10 +570,9 @@
         <action path="/int/exp/hold"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ExperimentHoldAction"
             name="intForm"
-            input="/do/int/fill/form"
+            input="edit.layout"
             validate="false"
             scope="session" >
-            <forward name="success" path="/do/int/fill/form"/>
         </action>
 
         <!-- Action to handle when an experiment is added to or deleted from an Interaction.
@@ -581,11 +580,11 @@
         <action path="/int/exp/search"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ExperimentDispatchAction"
             name="intForm"
-            input="/do/int/fill/form"
+            input="edit.layout"
             validate="false"
             scope="session"
             parameter="dispatch">
-            <forward name="success" path="/do/int/fill/form"/>
+<!--            <forward name="success" path="/do/int/fill/form"/>-->
         </action>
 
         <!-- Action to handle when a Protein is saved/deleted or edited. -->
@@ -602,11 +601,9 @@
         <action path="/int/prot/search"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ProteinSearchAction"
             name="intForm"
-            input="/do/int/fill/form"
+            input="edit.layout"
             validate="false"
             scope="session">
-            <forward name="success" path="/do/int/fill/form"/>
-            <forward name="failure" path="/do/int/fill/form"/>
         </action>
 
         <!-- Action to handle add/edit/delete of a Feature. -->

@@ -78,7 +78,7 @@ public class ProteinSearchAction extends AbstractEditorAction {
             errors.add("int.prot.search",
                     new ActionError("error.int.protein.search.input"));
             saveErrors(request, errors);
-            return mapping.findForward(FAILURE);
+            return mapping.getInputForward();
         }
         // The default values for search.
         String value = shortLabel;
@@ -91,7 +91,7 @@ public class ProteinSearchAction extends AbstractEditorAction {
                 errors.add("int.prot.search",
                         new ActionError("error.int.protein.search.ac"));
                 saveErrors(request, errors);
-                return mapping.findForward(FAILURE);
+                return mapping.getInputForward();
             }
             value = ac;
             param = "ac";
@@ -103,7 +103,7 @@ public class ProteinSearchAction extends AbstractEditorAction {
                 errors.add("int.prot.search",
                         new ActionError("error.int.protein.search.sp"));
                 saveErrors(request, errors);
-                return mapping.findForward(FAILURE);
+                return mapping.getInputForward();
             }
             value = spAc;
             param = "spAc";
@@ -137,7 +137,7 @@ public class ProteinSearchAction extends AbstractEditorAction {
                         new ActionError("error.int.protein.search.empty", param));
             }
             saveErrors(request, errors);
-            return mapping.findForward(FAILURE);
+            return mapping.getInputForward();
         }
         // The number of Proteins retrieved from the search.
         int psize = proteins.size();
@@ -150,7 +150,7 @@ public class ProteinSearchAction extends AbstractEditorAction {
                     new ActionError("error.int.protein.search.many",
                             Integer.toString(psize), param, protlimit));
             saveErrors(request, errors);
-            return mapping.findForward(FAILURE);
+            return mapping.getInputForward();
         }
         // Can safely cast it as we have the correct editor view bean.
         InteractionViewBean view = (InteractionViewBean) user.getView();
@@ -158,6 +158,6 @@ public class ProteinSearchAction extends AbstractEditorAction {
         for (Iterator iter = proteins.iterator(); iter.hasNext();) {
             view.addProtein((Protein) iter.next());
         }
-        return mapping.findForward(SUCCESS);
+        return mapping.getInputForward();
     }
 }

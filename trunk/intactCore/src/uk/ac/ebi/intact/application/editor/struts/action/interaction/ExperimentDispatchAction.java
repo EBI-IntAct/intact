@@ -79,7 +79,8 @@ public class ExperimentDispatchAction extends AbstractEditorDispatchAction {
         }
         // We have edited/added experiments in the current session.
         view.addExperimentToHold(recentExps);
-        return mapping.findForward(SUCCESS);
+//        return mapping.findForward(SUCCESS);
+        return mapping.getInputForward();
     }
 
     public ActionForward search(ActionMapping mapping,
@@ -141,6 +142,7 @@ public class ExperimentDispatchAction extends AbstractEditorDispatchAction {
         // Add the search result to the holder.
         view.addExperimentToHold(experiments);
 
-        return mapping.findForward(SUCCESS);
+        return mapping.getInputForward();
+//        return mapping.findForward(SUCCESS);
     }
 }
