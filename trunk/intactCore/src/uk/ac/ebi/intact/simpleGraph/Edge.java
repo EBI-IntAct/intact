@@ -6,6 +6,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.simpleGraph;
 
 import uk.ac.ebi.intact.model.Component;
+import uk.ac.ebi.intact.model.Interactor;
 
 public class Edge extends BasicGraph implements EdgeI {
 
@@ -53,28 +54,24 @@ public class Edge extends BasicGraph implements EdgeI {
 
     ///////////////////////////////////////////////////
     // Instance methods
-    public boolean equals(Object o) {
+    public boolean equals( Object o ) {
         if (this == o) return true;
         if (!(o instanceof Edge)) return false;
         if (!super.equals(o)) return false;
 
         // An edge object is symmetric. Check if either
-        // this.attribute1 equals o.attribute1 or
-        // this.attribute1 equals o.attribute2
+        // this.attribute1 equals o.attribute1   A N D   this.attribute1 equals o.attribute2
+        //   O R
+        // this.attribute1 equals o.attribute2   A N D   this.attribute2 equals o.attribute1
 
-        final Edge that = (Edge) o;
+        final Edge edge = (Edge) o;
 
-        return (((this.getNode1().getAc().equals(that.getNode1().getAc())) &&
-                (this.getNode2().getAc().equals(that.getNode2().getAc())) &&
-                (this.getComponent1().getAc().equals(that.getComponent1().getAc())) &&
-                (this.getComponent2().getAc().equals(that.getComponent2().getAc()))
-                )
-                ||
-                ((this.getNode1().getAc().equals(that.getNode2().getAc())) &&
-                (this.getNode2().getAc().equals(that.getNode1().getAc())) &&
-                (this.getComponent1().getAc().equals(that.getComponent2().getAc())) &&
-                (this.getComponent2().getAc().equals(that.getComponent1().getAc()))
-                ));
+        Interactor i11 = this.getComponent1().getInteractor(),
+                   i12 = this.getComponent2().getInteractor(),
+                   i21 = edge.getComponent1().getInteractor(),
+                   i22 = edge.getComponent2().getInteractor();
+
+        return ((i11.equals(i21) && i12.equals(i22)) || (i11.equals(i22) && i12.equals(i21)));
     }
 
 }

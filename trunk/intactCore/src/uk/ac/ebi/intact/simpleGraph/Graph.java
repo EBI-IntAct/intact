@@ -15,6 +15,11 @@ import java.util.*;
  */
 public class Graph extends BasicGraph implements GraphI {
 
+    /**
+     * This is used in toString() in order to be platform compatible.
+     */
+    private final static String NEW_LINE = System.getProperty("line.separator");
+
     ///////////////////////////////////////
     // attributes
 
@@ -45,7 +50,8 @@ public class Graph extends BasicGraph implements GraphI {
 
 
     public void addEdge(EdgeI anEdge) {
-        edges.add(anEdge);
+        if ( ! edges.contains( anEdge ) )
+            edges.add(anEdge);
     }
 
     public HashMap getNodes() {
@@ -53,7 +59,7 @@ public class Graph extends BasicGraph implements GraphI {
     }
 
     public Collection getEdges() {
-        return (Collection) edges;
+        return edges;
     }
 
     /** record that a Component has been visited during
@@ -72,7 +78,7 @@ public class Graph extends BasicGraph implements GraphI {
     }
 
     public String toString(){
-        StringBuffer s = new StringBuffer();
+        StringBuffer s = new StringBuffer( 256 );
 
         for (int i = 0; i < edges.size(); i++) {
             EdgeI e = (EdgeI) edges.get(i);
@@ -85,9 +91,9 @@ public class Graph extends BasicGraph implements GraphI {
             s.append("(");
             s.append(e.getComponent2().getCvComponentRole().getShortLabel());
             s.append(")");
-            s.append("\n");
+            s.append(NEW_LINE);
         }
-        s.append("\n");
+        s.append(NEW_LINE);
         return s.toString();
     }
 }
