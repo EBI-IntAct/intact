@@ -347,6 +347,10 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         myEditView.clearTransactions();
     }
 
+    public boolean isPersistent(Object obj) {
+        return myHelper.isPersistent(obj);
+    }
+
     public void updateView(AnnotatedObject annot) {
         // Start editing the object.
         this.startEditing();
