@@ -32,7 +32,7 @@
     <logic:iterate id="item" name="items" type="org.apache.struts.tiles.beans.MenuItem" >
 
         <%  // Add server url if link start with "/"
-            String serverPath = "http://" + request.getServerName() + ":" + request.getServerPort();
+            String serverPath = request.getContextPath();
 
             String link = item.getLink();
             if (link.startsWith("/"))
