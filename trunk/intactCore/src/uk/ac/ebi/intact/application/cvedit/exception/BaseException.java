@@ -40,7 +40,7 @@ public class BaseException extends Exception {
 
     /**
      * Constructor that takes a root exception.
-     * @param casue the root exception.
+     * @param cause the root exception.
      */
     public BaseException(Throwable cause) {
         myRootException = cause;
