@@ -5,20 +5,24 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.intSeq.struts.framework;
 
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionError;
-//import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.struts.action.*;
+import org.apache.log4j.Logger;
 
-import uk.ac.ebi.intact.application.search.business.IntactUserIF;
-import uk.ac.ebi.intact.application.search.business.IntactServiceIF;
+//import uk.ac.ebi.intact.application.search.business.IntactUserIF;
+//import uk.ac.ebi.intact.application.search.business.IntactServiceIF;
 import uk.ac.ebi.intact.application.intSeq.struts.view.utils.SimilarityResultBean;
 import uk.ac.ebi.intact.application.intSeq.business.RunSimilaritySearchIF;
 import uk.ac.ebi.intact.application.intSeq.business.RunSimilaritySearch;
+import uk.ac.ebi.intact.application.intSeq.business.Constants;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.util.PropertyLoader;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.Properties;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * Super class for all Intact related action classes.
@@ -29,45 +33,53 @@ import java.util.ArrayList;
  */
 public abstract class IntactBaseAction extends Action {
 
+    public static Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
+
+    private static Properties properties = PropertyLoader.load (Constants.INTSEQ_PROPERTIES);
+
+
+
     /** The global Intact error key. */
     public static final String INTACT_ERROR = "IntactError";
 
     /** Error container */
     private ActionErrors myErrors = new ActionErrors();
 
-    private ArrayList toTransfer = new ArrayList();
-
     /**
-     * Returns the only instance of Intact Service instance.
-     * @return only instance of the <code>IntactServiceImpl</code> class.
-     */
-    protected IntactServiceIF getIntactService() {
-        IntactServiceIF service = (IntactServiceIF)
-            getApplicationObject(SeqIdConstants.INTACT_SERVICE);
-        return service;
-    }
-
-    /**
-     * Returns the Intact User instance saved in a session.
+     * returns a value stored in a properties file.
      *
-     * @param session the session to access the Intact user object.
-     * @return an instance of <code>IntactUserImpl</code> stored in
-     * <code>session</code>
+     * @param propName the property name
+     * @return the associated value or null if not exists or file not loaded.
      */
-    protected IntactUserIF getIntactUser(HttpSession session) {
-        IntactUserIF service = (IntactUserIF)
-            session.getAttribute(SeqIdConstants.INTACT_USER);
-        return service;
+    protected String getProperty (String propName) {
+        String value = null;
+
+        if (properties != null) {
+           value = properties.getProperty(propName);
+        } else {
+            logger.warn ("Could not load property " + propName + ", " + Constants.INTSEQ_PROPERTIES + " not loaded.");
+        }
+
+        return value;
     }
 
     /**
-     * Convenience method that logs for agiven message.
-     * @param message string that describes the error or exception
+     * eturns a value stored in a properties file, eventually a default value.
+     *
+     * @param propName propName the property name
+     * @param defaultValue the default value in case the property is not found
+     * @return the associated value or a default value if not found or null if the file is not loaded.
      */
-    protected void log(String message) {
-       if (super.servlet.getDebug() >= 1)
-           super.servlet.log(message);
+    protected String getProperty (String propName, String defaultValue) {
+        String value = getProperty(propName);
+
+        if (value == null) {
+            return defaultValue;
+        }
+
+        return value;
     }
+
 
     /**
      * Returns the session from given request. No new session is created.
@@ -112,6 +124,13 @@ public abstract class IntactBaseAction extends Action {
     }
 
     /**
+     * answer the question : "is the error set empty ?"
+     */
+    protected boolean isEmptyError () {
+        return (myErrors.size() == 0);
+    }
+
+    /**
      * Saves the errors in given request for <struts:errors> tag.
      *
      * @param request the request to save errors.
@@ -132,114 +151,216 @@ public abstract class IntactBaseAction extends Action {
      * @param perc_base is the minimum percentage identity required to validate the results.
      * @param param is the maximum E Value allowed to validate the results.
      *
-     * @return boolean to know if the command is executed or not.
+     * @return the reusulting collection.
 
      *
      */
-    protected boolean ManageBlastResult (String sequence, String commLine, String perc_base, String param) {
+    protected ArrayList ManageBlastResult (String sequence,
+                                           String commLine,
+                                           String perc_base,
+                                           String param)
+            throws IntactException {
 
-                //to empty the arraylist from its old request results.
-            toTransfer.clear();
-                 //Calling the business logic class.
-            RunSimilaritySearchIF run = null;
-               // object which contains another ArrayList of results.
-            ArrayList matchList = new ArrayList();
+        //to empty the arraylist from its old request results.
+        ArrayList toTransfer = new ArrayList();
 
-                //constants defined in the web.xml file
-            Integer percBase = new Integer(perc_base);
-            Double paramTest = new Double (param);
+        //Calling the business logic class.
+        RunSimilaritySearchIF run = null;
+        // object which contains another ArrayList of results.
+        ArrayList matchList = new ArrayList();
 
-           //try {
-               run = new RunSimilaritySearch(sequence, commLine, paramTest.doubleValue());
-               matchList = run.RetrieveParseResult();
-               boolean commandExecution = run.GetCommandExecResponse();
+        //constants defined in the web.xml file
+        Integer percBase = new Integer(perc_base);
+        Double paramTest = new Double (param);
 
-                    // command well done
-               if (commandExecution == true && matchList.size() != 0) {
-                   for (int i = 0; i < matchList.size(); i++) {
+        run = new RunSimilaritySearch (sequence, commLine, paramTest.doubleValue());
+        matchList = run.RetrieveParseResult();
+        boolean commandExecution = run.GetCommandExecResponse();
 
-                       ArrayList theGet = (ArrayList)matchList.get(i);
-                       int size = theGet.size();
+        logger.info ("Blast execution sends back: " + commandExecution);
+        logger.info ("#results = " + matchList.size());
 
-                       if (size != 6) { // we need six items to display the table in a good way
-                           break;
-                       }
-                       else {
-                           String id = (String)theGet.get(0);
-                           String perc = (String)theGet.get(1);
+        // command well done
+        if (commandExecution == true && matchList.size() != 0) {
+            for (int i = 0; i < matchList.size(); i++) {
 
-                                // to test if the percentage is greater than the percentage allowed.
-                           Integer thePerc = new Integer(perc);
+                ArrayList theGet = (ArrayList) matchList.get(i);
+                int size = theGet.size();
 
-                                /*
-                                    for a sequence with 47% of similarity,
-                                    Blast would gives us : 47
-                                    Fasta would gives us : 0.47
+                if (size != 6) { // we need six items to display the table in a good way
+                    break;
+                }
+                else {
+                    String id = (String)theGet.get(0);
+                    String perc = (String)theGet.get(1);
 
-                                    And we parse to get all after '.' ... so it cvould happen that we get
-                                    the result 0 in case Fasta gives 1.00
-                                */
-                           if (thePerc.intValue() == 0) {
-                                perc = "100";
-                           }
-                                // the percentage identity must be greater than a value choose by the biologist.
-                           if ( (thePerc.intValue() >= percBase.intValue()) ) {
+                    // to test if the percentage is greater than the percentage allowed.
+                    Integer thePerc = new Integer(perc);
 
-                                Integer theBegQuery = new Integer((String)theGet.get(2));
-                                int begQ = theBegQuery.intValue();
-                                Integer theEndQuery = new Integer((String)theGet.get(3));
-                                int endQ = theEndQuery.intValue();
+                    /*
+                     *  For a sequence with 47% of similarity,
+                     *  Blast would gives us : 47
+                     *  Fasta would gives us : 0.47
+                     *
+                     *  And we parse to get all after '.' ... so it cvould happen that we get
+                     *  the result 0 in case Fasta gives 1.00
+                     */
+                    if (thePerc.intValue() == 0) {
+                        perc = "100";
+                    }
+                    // the percentage identity must be greater than a value choose by the biologist.
+                    if ( (thePerc.intValue() >= percBase.intValue()) ) {
 
-                                Integer theBegSubj = new Integer((String)theGet.get(4));
-                                int begSub = theBegSubj.intValue();
-                                Integer theEndSubj = new Integer((String)theGet.get(5));
-                                int endSub = theEndSubj.intValue();
+                        Integer theBegQuery = new Integer((String)theGet.get(2));
+                        int begQ = theBegQuery.intValue();
+                        Integer theEndQuery = new Integer((String)theGet.get(3));
+                        int endQ = theEndQuery.intValue();
 
-                                    // store these result in a Bean, one for each session
-                                toTransfer.add(new SimilarityResultBean (id, perc, begQ, endQ, begSub, endSub));
-                           }
+                        Integer theBegSubj = new Integer((String)theGet.get(4));
+                        int begSub = theBegSubj.intValue();
+                        Integer theEndSubj = new Integer((String)theGet.get(5));
+                        int endSub = theEndSubj.intValue();
 
-                           theGet.clear();
-                       }
-                   }
+                        // store these result in a Bean, one for each session
+                        toTransfer.add(new SimilarityResultBean (id, perc, begQ, endQ, begSub, endSub));
+                    }
 
-                   if (toTransfer.isEmpty() == true) {
-                        toTransfer.add(new SimilarityResultBean ("",
-                               "no match greater than " + percBase.toString() + " % for an available EValue",
-                                0, 0, 0, 0));
-                   }
+                    theGet.clear();
+                }
+            }
 
-               }
-               return commandExecution;
-
-           //}
-           //catch (BlastException e) {
-           //    this.log(ExceptionUtils.getStackTrace(e));
-           //    return false;
-           //}
+            if (toTransfer.isEmpty() == true) {
+                toTransfer.add(new SimilarityResultBean ("",
+                        "no match greater than " + percBase.toString() + " % for an available EValue",
+                        0, 0, 0, 0));
+            }
+        } else {
+            // error during execution
+            return null;
+        }
+        return toTransfer;
     }
 
+    /**
+     * Perform the similarity search operation.<br>
+     * Check the protein sequence and similarity search program parameters.
+     * The result is stored in the session in order to be red by a JSP.
+     * CAUTION:
+     * After calling that method you MUST check the content of ActionErrors like :
+     * <pre>
+     *      if (false == isEmptyError()) {
+     *         // FOrward to an error page.
+     *         return mapping.findForward(SeqIdConstants.FORWARD_FAILURE);
+     *      }
+     * </pre>
+     *
+     * @param sequence the protein sequence to work on.
+     * @param request HttpRequest to record Errors and using the session.
+     */
+    protected void doSimilaritySearch (String sequence,
+                                            HttpServletRequest request) {
+
+        if (sequence == null || sequence.equals("")) {
+            addError ("error.srs.noseq");
+            saveErrors(request);
+            return;
+        }
+
+        // get similarity program parameters
+        String theBlastCommand = getProperty ("intSeq.alignmentProgram");
+        logger.info("theBlastCommand = " + theBlastCommand);
+
+        String minIdentityPercentage = getProperty ("intSeq.minIdentityPercentage");
+        logger.info("minIdentityPercentage = " + minIdentityPercentage);
+
+        String maxEValue = getProperty ("intSeq.maxEValue");
+        logger.info("maxEValue = " + maxEValue);
+
+        if (theBlastCommand == null || minIdentityPercentage == null || maxEValue == null) {
+            addError ("error.similaritySearch.parameter");
+            saveErrors(request);
+            return;
+        }
+
+        // through the RunSimilaritySearch class
+        ArrayList dataSetTransfered = null;
+        try {
+            dataSetTransfered = ManageBlastResult (sequence,
+                                                   theBlastCommand,
+                                                   minIdentityPercentage,
+                                                   maxEValue);
+        } catch (IntactException e) {
+            addError ("error.blast.processing", e.getMessage());
+            saveErrors(request);
+            return;
+        }
+
+        if (dataSetTransfered == null || dataSetTransfered.isEmpty()) {
+            addError("error.command.failed");
+            saveErrors(request);
+            return;
+        }
+
+        // store the result in the session "similarityList" will be recognized in the jsp page
+        request.getSession().setAttribute("similarityList", dataSetTransfered);
+    }
+
+
+    protected String getProteinsSrsUrl (String searchString) {
+
+        String srsProteinSearchUrl = getProperty("intSeq.SRS.getProteins.url");
+        logger.info ("URL: " + srsProteinSearchUrl);
+        // replace ${SEARCH_STRING} by the search string
+        srsProteinSearchUrl = replace (srsProteinSearchUrl, "${SEARCH_STRING}", searchString);
+        return srsProteinSearchUrl;
+    }
+
+    protected String getSequenceSrsUrl (String proteinAc) {
+
+        String srsSequenceSearchUrl = getProperty("intSeq.SRS.getSequence.url");
+        logger.info ("URL: " + srsSequenceSearchUrl);
+        // replace ${PROTEIN_AC} by the search string
+        String srsProteinSearchUrl = replace (srsSequenceSearchUrl, "${PROTEIN_AC}", proteinAc);
+        return srsProteinSearchUrl;
+    }
 
 
     /**
-     * A method which retrieves the similarity table full by the fasta program results
-     * @return the interesting arraylist
+     * Managment of search replace with regular expression
      */
-    protected ArrayList getToTransfer () {
-        return (this.toTransfer);
+    static Pattern escaper = Pattern.compile("([^a-zA-z0-9])");
+    /**
+     * Escape all non alphabetical caracters.
+     * ${TEST} becomes \$\{TEST\}
+     *
+     * @param str the pattern to modify
+     * @return an new pattern with all non alphabetical caracters protected with a '\'.
+     */
+    public String escapeRE (String str) {
+        return escaper.matcher(str).replaceAll("\\\\$1");
     }
-
-
-    // Helper methods.
 
     /**
-     * A convenient method to retrieve an application object from a session.
-     * @param attrName the attribute name.
-     * @return an application object stored in a session under <tt>attrName</tt>.
+     * Perform a search replace on a text
+     *
+     * @param text the text to work on.
+     * @param patternStr the string to look for
+     * @param replacement the replacement string
+     * @return the modified text
      */
-    private Object getApplicationObject(String attrName) {
-        return super.servlet.getServletContext().getAttribute(attrName);
-    }
+    public String replace (String text, String patternStr, String replacement) {
+        String escapedPatternStr = escapeRE(patternStr);
+        logger.info ("Replace " + patternStr + " by " + replacement + " in " + text);
+        logger.info ("Escaped pattern: " + escapedPatternStr);
+        // Compile regular expression
+        Pattern pattern = Pattern.compile (escapedPatternStr);
 
+        // Replace all occurrences of pattern in input
+        Matcher matcher = pattern.matcher (text);
+        String result = matcher.replaceAll (replacement);
+        logger.info ("After replacement: " + result);
+
+        return result;
+    }
 
 }

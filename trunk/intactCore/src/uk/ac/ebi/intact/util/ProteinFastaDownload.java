@@ -1,24 +1,18 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.util;
 
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.Constants;
-import uk.ac.ebi.intact.persistence.DAOFactory;
-import uk.ac.ebi.intact.persistence.DAOSource;
-import uk.ac.ebi.intact.persistence.DataSourceException;
 
 import uk.ac.ebi.intact.model.Protein;
 
 import java.io.*;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 /**
  * This util class retrieves protein sequences from IntAct
@@ -61,49 +55,34 @@ import java.util.Map;
 public class ProteinFastaDownload {
 
 
-    //------ INSTANCE VARIABLES ----//
+    //------ CONSTANTS ----//
 
-
-    /**
-     * absolute path where the proteinFastaDownload will be created
-     */
-    private final String PATH_INTACT_FORMAT_FILE = "/ebi/sp/misc1/tmp/shuet/intactblast" +
-                                                               "/intact-data/";
+    // Be aware that the directory /ebi/sp/misc1/intact is visible within bsub !!!
+    private static final String PATH_INTACT_FORMAT_FILE = "/ebi/sp/misc1/intact/";
 
     /**
      * absolute path where the proteinFastaDownload will be created
      */
-    private final String INTACT_FASTA_FILE_NAME = "proteinFastaDownload.fasta";  //this.getClass().getName()+".fasta"
+    private static final String INTACT_FASTA_FILE_NAME = "proteinSequence.fasta";
 
     /**
      * The command line to format the previous database file, once it is fulled
      * the file name need to be added
      */
-    private final String FORMAT_COMMAND_LINE = "bsub -I " +
-                                    "/ebi/extserv/data1/appbin/linux-x86/ncbi-blast/formatdb -i "
-                                                + PATH_INTACT_FORMAT_FILE;
-
-
-    //------ CONSTRUCTOR ----//
-
-    /**
-     * constructor allows to prepare the database access
-     *
-     */
-    public ProteinFastaDownload() throws IntactException, DataSourceException {
-
-    }
+    private static final String FORMAT_COMMAND_LINE = "bsub -I " +
+                                                      "/ebi/extserv/data1/appbin/linux-x86/ncbi-blast/formatdb -i "
+                                                      + PATH_INTACT_FORMAT_FILE;
 
 
     //--------- PROTECTED METHOD ---------------------//
 
     /**
-      * get the line separator string.
-      * It allows to use the same separator int the service and int the client
-      * to keep the multiplateform aspect.
-      *
-      * @return the line separator
-      */
+     * get the line separator string.
+     * It allows to use the same separator int the service and int the client
+     * to keep the multiplateform aspect.
+     *
+     * @return the line separator
+     */
     protected String getLineSeparator () {
         return System.getProperty ("line.separator");
     } // getLineSeparator
@@ -144,71 +123,73 @@ public class ProteinFastaDownload {
             }
         }
         catch (IOException io) {
-            System.err.println(io);
+            io.printStackTrace();
         }
     }
 
-      /**
-      *  If we need to format the protein database in a Fasta format file,
-       * before processing a biological software like Blast or Fasta,
-       * the corresponding command line must be runned by this method.
-      *
-      * @param fileToFormat the file which needs to be formatted
-      * @return boolean Attribute which inform if the process has been well done
-      */
-       protected boolean formatProteinFastaFile (File fileToFormat) {
+    /**
+     *  If we need to format the protein database in a Fasta format file,
+     * before processing a biological software like Blast or Fasta,
+     * the corresponding command line must be runned by this method.
+     *
+     * @param fileToFormat the file which needs to be formatted
+     * @return boolean Attribute which inform if the process has been well done
+     */
+    protected boolean formatProteinFastaFile (File fileToFormat) {
 
-               Runtime rt = Runtime.getRuntime();
+        Runtime rt = Runtime.getRuntime();
 
-           try{
-                   //Process returned to the JVM
-               Process child = rt.exec(FORMAT_COMMAND_LINE.concat(this.INTACT_FASTA_FILE_NAME));
+        try {
+            //Process returned to the JVM
+            final String command = FORMAT_COMMAND_LINE.concat(this.INTACT_FASTA_FILE_NAME);
+            System.out.println("Execute: " + command);
+            Process child = rt.exec (command);
 
-                   // screen output management
-               InputStream stdin = child.getInputStream();
-               outputProcessManagement(stdin, true);
+            // screen output management
+            InputStream stdin = child.getInputStream();
+            outputProcessManagement(stdin, true);
 
-               InputStream stdin_error = child.getErrorStream();
-               outputProcessManagement(stdin_error, true);
+            InputStream stderr = child.getErrorStream();
+            outputProcessManagement(stderr, true);
 
-               OutputStream stdout = child.getOutputStream();
-               outputProcessManagement(stdout, false);
+            OutputStream stdout = child.getOutputStream();
+            outputProcessManagement(stdout, false);
 
-                   // wait for the end of the blast process, 0 if it has been well done.
-                   // sometimes, process block, and even deadlock
-               int exitValue = child.waitFor();
+            // wait for the end of the blast process, 0 if it has been well done.
+            // sometimes, process block, and even deadlock
+            int exitValue = child.waitFor();
 
-               //child.destroy();
+            //test if the process has been finished in a right way ( value 0 if it is the case )
+            System.out.println ("Process sends back: " + exitValue);
 
-                   //test if the process has been finished in a right way ( value 0 if it is the case )
-               if (exitValue == 0) {
-                   return true;
-               }
-               else {
-                   return false;
-               }
-           }
-           catch (InterruptedException ie) {
-               System.err.println (ie);
-               return false;
-           }
-           catch (NullPointerException npe) {  // if command is null
-               System.err.println (npe);
-               return false;
-           }
-           catch (SecurityException se) {
-               System.err.print(se);
-               return false;
-           }
-           catch (RuntimeException re) {
-               System.err.print(re);
-               return false;
-           }
-           catch (IOException io) {
-               System.err.println(io);
-               return false;
-           }
-       }
+            if (exitValue == 0) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        catch (InterruptedException ie) {
+            ie.printStackTrace();
+            return false;
+        }
+        catch (NullPointerException npe) {  // if command is null
+            npe.printStackTrace();
+            return false;
+        }
+        catch (SecurityException se) {
+            se.printStackTrace();
+            return false;
+        }
+        catch (RuntimeException re) {
+            re.printStackTrace();
+            return false;
+        }
+        catch (IOException io) {
+            io.printStackTrace();
+            return false;
+        }
+    }
 
 
 
@@ -222,30 +203,67 @@ public class ProteinFastaDownload {
      */
     protected String getAllProteinIntAct (IntactHelper helper) {
 
-        String fastaSequence = "";
+        StringBuffer fastaSequence = new StringBuffer (8192); // default is 16 ... the buffer is likely to be big
         String lineSeparator = getLineSeparator();
+        final String dbname = "intact";
+        final char space = ' ';
+        int total   = 0;
+        int skipped = 0;
 
         try {
 
-                // search method to get the Protein object and all proteins in IntAct
+            // search method to get the Protein object and all proteins in IntAct
             Collection proteins = helper.search("uk.ac.ebi.intact.model.Protein", "ac", "*");
 
-                // for each protein, get the ac and the sequence string
-                // and creates the Fasta format there
+            // for each protein, get the ac and the sequence string
+            // and creates the Fasta format there
             for (Iterator iterator = proteins.iterator(); iterator.hasNext();) {
-                    // return the next Protein object
+                // return the next Protein object
                 Protein protein = (Protein) iterator.next();
-                    // the accession number of the protein and the protein sequence
-                String oneSequence = ">".concat(protein.getAc()+lineSeparator)
-                                                        .concat(protein.getSequence()+lineSeparator);
-                fastaSequence = fastaSequence.concat(oneSequence);
+                total++;
+
+                String sequence = protein.getSequence();
+                if (sequence == null) {
+                    System.out.println (protein.getAc() + " has no sequence");
+                    skipped++;
+                    continue;
+                }
+
+                /*
+                 *   >intact:ac shortLabel; fullname
+                 *   ABCDEF ... sequence ... GHIKL
+                 *   >desc sequence 2
+                 *   (...)
+                 */
+                fastaSequence.append('>');
+                fastaSequence.append(dbname);
+                fastaSequence.append(':');
+                fastaSequence.append(protein.getAc());
+                fastaSequence.append(space);
+                fastaSequence.append(protein.getShortLabel());
+                fastaSequence.append(";");
+                fastaSequence.append(space);
+                fastaSequence.append(protein.getFullName());
+
+                fastaSequence.append(lineSeparator);
+
+                fastaSequence.append(protein.getSequence());
+                fastaSequence.append(lineSeparator);
             }
         }
         catch (IntactException ie) {
-            System.err.println (ie);
+            ie.printStackTrace();
         }
 
-        return fastaSequence;
+        System.out.println ("\nReport");
+        System.out.println ("------\n");
+        System.out.println (total + " protein(s).");
+        System.out.println ((total - skipped) + " sequences stored.");
+        System.out.println (skipped + " protein(s) skipped.");
+        System.out.println("Generated file size: " + fastaSequence.length() + " bytes.");
+        System.out.println ("\n");
+
+        return fastaSequence.toString();
     }
 
 
@@ -263,52 +281,66 @@ public class ProteinFastaDownload {
      */
     protected boolean filledProteinFastaFile (String filecontent) {
 
-            // clean the directory
+        // clean the directory
         File path = new File(PATH_INTACT_FORMAT_FILE);
         File[] formattedFiles = path.listFiles();
+
+        if (formattedFiles == null) {
+            // the given path doesn't denote a directory.
+            System.out.println("the given path doesn't denote a directory, can't create the output file.");
+            return false;
+        }
+
         File oneFile;
         boolean delete;
         for (int i=0; i<formattedFiles.length; i++) {
 
-                // allows to delete all files in this directory except the proteinFastaFile file
+            // allows to delete all files in this directory except the proteinFastaFile file
             if (formattedFiles[i].isFile() == true) {
                 oneFile = formattedFiles[i];
                 delete = oneFile.delete();
                 if (delete == true) {
-                    System.out.println(" deleted file " + formattedFiles[i].getName());
+                    System.out.println("Deleted file " + formattedFiles[i].getName());
                 }
             }
         }
 
-        System.out.println("proteinFastaFile :" + PATH_INTACT_FORMAT_FILE.concat(this.INTACT_FASTA_FILE_NAME));
-        // create the proteinFastaDownload file
         File proteinFastaFile = new File (PATH_INTACT_FORMAT_FILE.concat(this.INTACT_FASTA_FILE_NAME));
+        boolean result = storeContent (proteinFastaFile, filecontent);
 
-        try {
-            if (proteinFastaFile.exists() == false) {
-                System.out.println("create the file !");
-                proteinFastaFile.createNewFile();
-            }
-            System.out.println(" we want now filling the file ");
-            if (proteinFastaFile.canWrite() == true ) {        // && proteinFastaFile.length() == 0) {
-                FileWriter fileWriter = new FileWriter(proteinFastaFile);
-                fileWriter.write(filecontent);
-                 //to make sure that all the buffer is write in the file.
-                fileWriter.flush();
-                System.out.println("all is written in the file");
-            }
-        }
-        catch (IOException io) {
-                System.err.println (io);
-        }
-
-            // call the format file method
-        boolean formatted = formatProteinFastaFile (proteinFastaFile);
-        return formatted;
+        return result;
     }
 
 
+    private boolean storeContent(File file, String content) {
 
+        System.out.println("proteinFastaFile :" + file.getAbsolutePath());
+
+        try {
+            if (file.exists() == false) {
+                System.out.print ("Create the file ... ");
+                file.createNewFile();
+                System.out.println("done");
+            }
+
+            System.out.print ("Write proteins' sequence in the file ... ");
+            if (file.canWrite() == true ) {
+                FileWriter fileWriter = new FileWriter(file);
+                fileWriter.write(content);
+                fileWriter.flush();
+                System.out.println("done");
+            } else {
+                System.out.println("Could not write in the file.");
+                return false;
+            }
+
+        } catch (IOException io) {
+            io.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
 
     /**
      * This utilitie allows to download all protein sequences being in the IntAct database
@@ -325,24 +357,27 @@ public class ProteinFastaDownload {
 
         ProteinFastaDownload pfd = new ProteinFastaDownload();
 
-        final String util = "this class allows to generate a file in fasta format " +
-                                    "with all IntAct protein sequences. The file is " +
-                                    "in the path : " + pfd.PATH_INTACT_FORMAT_FILE;
+        final String util = "This class allows to generate a file in fasta format " +
+                            "with all IntAct protein sequences.\n" +
+                            "The file is in the path : " + pfd.PATH_INTACT_FORMAT_FILE;
 
-        System.out.println ("utility of the class " + util);
+        System.out.println (util);
 
 
         IntactHelper helper = new IntactHelper();
 
         String fileContent = pfd.getAllProteinIntAct(helper);
-        System.out.println("fileContent = " + fileContent);
 
         boolean formatted = pfd.filledProteinFastaFile(fileContent);
         if (formatted == true) {
             System.out.println("OK the proteinFastaDownload file is formatted.");
         }
-        else
+        else {
             System.out.println("FAILURE in the format method.");
+            System.exit (1);
+        }
     }
+
+
 
 }

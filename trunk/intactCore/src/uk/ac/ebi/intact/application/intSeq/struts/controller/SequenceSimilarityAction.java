@@ -13,11 +13,8 @@ import uk.ac.ebi.intact.application.intSeq.struts.framework.SeqIdConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.servlet.ServletException;
-import javax.servlet.ServletContext;
 import java.io.IOException;
-import java.util.ArrayList;
 
 
 /**
@@ -36,82 +33,56 @@ import java.util.ArrayList;
 public class SequenceSimilarityAction extends IntactBaseAction {
 
 
-            // --------- PUBLIC METHODS --------//
+    // --------- PUBLIC METHODS --------//
 
     /**    Execute method with the Struts 1.1 release
-    * Process the specified HTTP request, and create the corresponding
-    * HTTP response (or forward to another web component that will create
-    * it). Return an ActionForward instance describing where and how
-    * control should be forwarded, or null if the response has
-    * already been completed. (exeptions are included and signaled)
-    *
-    * @param seqMap - The <code>ActionMapping</code> used to select this instance
-    * @param seqForm - The optional <code>ActionForm</code> bean for this request (if any)
-    * @param seqReq - The HTTP request we are processing
-    * @param seqRep - The HTTP response we are creating
-    *
-    * @return - represents a destination to which the controller servlet,
-    * <code>ActionServlet</code>, might be directed to perform a RequestDispatcher.forward()
-    * or HttpServletResponse.sendRedirect() to, as a result of processing
-    * activities of an <code>Action</code> class
-    */
+     * Process the specified HTTP request, and create the corresponding
+     * HTTP response (or forward to another web component that will create
+     * it). Return an ActionForward instance describing where and how
+     * control should be forwarded, or null if the response has
+     * already been completed. (exeptions are included and signaled)
+     *
+     * @param mapping - The <code>ActionMapping</code> used to select this instance
+     * @param form - The optional <code>ActionForm</code> bean for this request (if any)
+     * @param request - The HTTP request we are processing
+     * @param response - The HTTP response we are creating
+     *
+     * @return - represents a destination to which the controller servlet,
+     * <code>ActionServlet</code>, might be directed to perform a RequestDispatcher.forward()
+     * or HttpServletResponse.sendRedirect() to, as a result of processing
+     * activities of an <code>Action</code> class
+     */
+    public ActionForward execute (ActionMapping mapping,
+                                  ActionForm form,
+                                  HttpServletRequest request,
+                                  HttpServletResponse response)
+            throws IOException, ServletException{
 
-
-    public ActionForward execute (ActionMapping seqMap, ActionForm seqForm,
-                                  HttpServletRequest seqReq, HttpServletResponse seqRep)
-                                 throws IOException, ServletException{
-
-            // Validate the request parameters specified by the user
-	    ActionErrors errors = new ActionErrors();
-
-            // Save the context to avoid repeat calls.
-        ServletContext ctx = super.getServlet().getServletContext();
+        // clear all previous errors
+        super.clearErrors();
 
         String sequence = null;
 
-            // to retrieve the user sequence from the form
-        if (seqForm != null) {
-            sequence = ((SequenceSimilarityForm)seqForm).getSequence();
-        }
-        else {
-            errors.add(super.INTACT_ERROR, new ActionError("error.seqform.null"));
-            super.saveErrors(seqReq, errors);
-            return seqMap.findForward(SeqIdConstants.FORWARD_FAILURE);
-        }
-
-            // the blast command line is define in "SeqIdConstants.java" which refer to the web.xml file
-        String commLine = ctx.getInitParameter(SeqIdConstants.BLAST_COMM_INTACT);
-        String perc_base = ctx.getInitParameter(SeqIdConstants.GREATER_THAN_PERCENTAGE);
-        String param = ctx.getInitParameter(SeqIdConstants.SMALLER_THAN_EVALUE);
-
-            // through the RunSimilaritySearch class
-        boolean command = super.ManageBlastResult(sequence, commLine, perc_base, param);
-        if (command == false) {
-            errors.add(super.INTACT_ERROR, new ActionError("error.command.failed"));
-            super.saveErrors(seqReq, errors);
-            return seqMap.findForward(SeqIdConstants.FORWARD_FAILURE);
-        }
-        ArrayList dataSetTransfered = super.getToTransfer();
-
-        if (errors.size() != 0) {
-                //report any previous error
-            super.saveErrors(seqReq, errors);
-            return seqMap.findForward(SeqIdConstants.FORWARD_FAILURE);
+        // to retrieve the user sequence from the form
+        if (form != null) {
+            sequence = ((SequenceSimilarityForm)form).getSequence();
+        } else {
+            addError ("error.seqform.null");
+            saveErrors(request);
+            return mapping.findForward(SeqIdConstants.FORWARD_FAILURE);
         }
 
-            // get the current session
-        HttpSession session = seqReq.getSession();
+        // run blast.
+        doSimilaritySearch (sequence, request);
 
-        if (session == null) {
-            return seqMap.findForward(SeqIdConstants.FORWARD_END_SESSION);
+        if (false == isEmptyError()) {
+            //report any previous error
+            return mapping.findForward(SeqIdConstants.FORWARD_FAILURE);
         }
-        //else {*/
-            //store the result in the session "blast" will be recognized in the jsp page
-        //session.setAttribute("blast", brb);
-        session.setAttribute("similarityList", dataSetTransfered);
 
-            //to send the user to the next jsp path, thanks to the string refered in struts-config.xml
-        return seqMap.findForward(SeqIdConstants.FORWARD_SUCCESS_SEQ);
+        //to forward the user to the next jsp path, thanks to the string refered in struts-config.xml
+        return mapping.findForward(SeqIdConstants.FORWARD_SUCCESS_SEQ);
+
     }
 }
 

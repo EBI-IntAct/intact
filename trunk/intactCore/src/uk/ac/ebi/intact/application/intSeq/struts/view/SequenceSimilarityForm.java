@@ -9,11 +9,14 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
+import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
-import uk.ac.ebi.intact.application.intSeq.struts.framework.SeqIdConstants;
+import uk.ac.ebi.intact.application.intSeq.business.Constants;
+import uk.ac.ebi.intact.util.PropertyLoader;
+
+import java.util.Properties;
 
 /**
  * This form captures the user action of the similaritySearch.jsp.
@@ -23,6 +26,9 @@ import uk.ac.ebi.intact.application.intSeq.struts.framework.SeqIdConstants;
  */
 public final class SequenceSimilarityForm extends ActionForm {
 
+    public static Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
+
+    private static Properties properties = PropertyLoader.load (Constants.INTSEQ_PROPERTIES);
 
     /**
      * The protein sequence captured by the user in the provided textarea of similaritySearch.jsp
@@ -51,13 +57,21 @@ public final class SequenceSimilarityForm extends ActionForm {
 
         ActionErrors errors = new ActionErrors();
 
+        int smallestProteinLength;
+        if (properties != null) {
+           smallestProteinLength = new Integer(properties.getProperty("inSeq.minSequenceLength")).intValue();
+        } else {
+            logger.warn ("Could not load property 'inSeq.minSequenceLength', " + Constants.INTSEQ_PROPERTIES + " not loaded.");
+            smallestProteinLength = 20;
+        }
+
         if (sequence == null || sequence.length() < 1) {
             errors.add("idseqerror", new ActionError("error.sequence.required"));
         }
         else if ( (sequence.startsWith(">") == false) || (sequence.startsWith(">>") == true)) {
             errors.add("idseqerror", new ActionError("error.sequence.format"));
         }
-        else if (sequence.length() < SeqIdConstants.SMALLEST_LENGHT_PROTEIN) {
+        else if (sequence.length() < smallestProteinLength) {
             errors.add("idseqerror", new ActionError("error.sequence.longer"));
         }
 

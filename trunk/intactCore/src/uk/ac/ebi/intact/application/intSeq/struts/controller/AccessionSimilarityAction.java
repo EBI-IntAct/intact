@@ -9,13 +9,15 @@ import uk.ac.ebi.intact.application.intSeq.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.intSeq.struts.framework.SeqIdConstants;
 import uk.ac.ebi.intact.application.intSeq.business.CallingSrs;
 import uk.ac.ebi.intact.application.intSeq.business.CallingSrsIF;
+import uk.ac.ebi.intact.application.intSeq.business.Constants;
+import uk.ac.ebi.intact.business.IntactException;
 import org.apache.struts.action.*;
+import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.ServletException;
-import javax.servlet.ServletContext;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -31,95 +33,78 @@ import java.util.ArrayList;
  */
 public class AccessionSimilarityAction extends IntactBaseAction {
 
-         // --------- PUBLIC METHODS --------//
+    static Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
+
+    // --------- PUBLIC METHODS --------//
 
     /**    Execute method with the Struts 1.1 release
-    * Process the specified HTTP request, and create the corresponding
-    * HTTP response (or forward to another web component that will create
-    * it). Return an ActionForward instance describing where and how
-    * control should be forwarded, or null if the response has
-    * already been completed. (exeptions are included and signaled)
-    *
-    * @param acMap - The <code>ActionMapping</code> used to select this instance
-    * @param acForm - The optional <code>ActionForm</code> bean for this request (if any)
-    * @param acQuery - The HTTP request we are processing
-    * @param acResponse - The HTTP response we are creating
-    *
-    * @return - represents a destination to which the controller servlet,
-    * <code>ActionServlet</code>, might be directed to perform a RequestDispatcher.forward()
-    * or HttpServletResponse.sendRedirect() to, as a result of processing
-    * activities of an <code>Action</code> class
-    */
+     * Process the specified HTTP request, and create the corresponding
+     * HTTP response (or forward to another web component that will create
+     * it). Return an ActionForward instance describing where and how
+     * control should be forwarded, or null if the response has
+     * already been completed. (exeptions are included and signaled)
+     *
+     * @param mapping - The <code>ActionMapping</code> used to select this instance
+     * @param form - The optional <code>ActionForm</code> bean for this request (if any)
+     * @param request - The HTTP request we are processing
+     * @param response - The HTTP response we are creating
+     *
+     * @return - represents a destination to which the controller servlet,
+     * <code>ActionServlet</code>, might be directed to perform a RequestDispatcher.forward()
+     * or HttpServletResponse.sendRedirect() to, as a result of processing
+     * activities of an <code>Action</code> class
+     */
 
-    public ActionForward execute (ActionMapping acMap, ActionForm acForm,
-                                  HttpServletRequest acQuery, HttpServletResponse acResponse)
-    throws IOException,ServletException{
+    public ActionForward execute (ActionMapping mapping,
+                                  ActionForm form,
+                                  HttpServletRequest request,
+                                  HttpServletResponse response)
+            throws IOException,ServletException{
 
-            // Validate the request parameters specified by the user
-        ActionErrors errors = new ActionErrors();
+        // clear all previous errors
+        super.clearErrors();
 
-            // get the current session
-        HttpSession session = super.getSession(acQuery);
+        // get the current session
+        HttpSession session = super.getSession(request);
 
-            // Save the context to avoid repeat calls. (common to all users...)
-        ServletContext ctx = super.getServlet().getServletContext();
-
-            // recover the ac choosen by the user
-        String accessionNumber = acQuery.getParameter("acc");
+        // recover the ac choosen by the user
+        String accessionNumber = request.getParameter("acc");
 
         if (accessionNumber == null || accessionNumber.length() < 1) {
-            errors.add(super.INTACT_ERROR, new ActionError("error.choose.ac"));
-            super.saveErrors(acQuery, errors);
-            return acMap.findForward(SeqIdConstants.FORWARD_FAILURE);
+            addError ("error.choose.ac");
+            super.saveErrors(request);
+            return mapping.findForward(SeqIdConstants.FORWARD_FAILURE);
         }
 
-            // construct the wgetz command and recover the sequence corresponding to this AC.
-        String seqCommand = ctx.getInitParameter(SeqIdConstants.SRSGETZ_SECOND_DEB) +
-                               accessionNumber + ctx.getInitParameter(SeqIdConstants.SRSGETZ_SEQ_RETRIEVED);
+        // construct the wgetz command and recover the sequence corresponding to this AC.
+        String seqCommand = getSequenceSrsUrl(accessionNumber);
 
-            // calling the business logic class
+        // calling the business logic class
         CallingSrsIF intactSrsSeq = null;
         intactSrsSeq = new CallingSrs (accessionNumber, seqCommand);     //(user, identifier);
 
-            // retrieve the corresponding protein sequence.
-        String seq = intactSrsSeq.GetSequenceFasta ();
-
-        if (seq != "") {
-
-                // the blast command line is define in "SeqIdConstants.java" which refers
-                //to the web.xml file
-            String theBlastCommand = ctx.getInitParameter(SeqIdConstants.BLAST_COMM_INTACT);
-            String perc_base = ctx.getInitParameter(SeqIdConstants.GREATER_THAN_PERCENTAGE);
-            String param = ctx.getInitParameter(SeqIdConstants.SMALLER_THAN_EVALUE);
-
-
-                // run blast with a common method defined in IntactBaseAction.
-            boolean command = super.ManageBlastResult(seq, theBlastCommand, perc_base, param);
-            ArrayList dataSetTransfered = super.getToTransfer();
-            if (command == false || dataSetTransfered.isEmpty() == true) {
-                errors.add(super.INTACT_ERROR, new ActionError("error.command.failed"));
-                super.saveErrors(acQuery, errors);
-                return acMap.findForward(SeqIdConstants.FORWARD_FAILURE);
-            }
-
-            if (errors.size() != 0) {
-                    // report any previous error.
-                super.saveErrors(acQuery, errors);
-                return acMap.findForward(SeqIdConstants.FORWARD_FAILURE);
-            }
-
-                // store the result in the session "similarityList" will be recognized in the jsp page
-            session.setAttribute("similarityList", dataSetTransfered);
-
-                //to forward the user to the next jsp path, thanks to the string refered in struts-config.xml
-            return acMap.findForward(SeqIdConstants.FORWARD_SUCCESS_SEQ);
-
+        // retrieve the corresponding protein sequence.
+        String sequence = null;
+        try {
+            sequence = intactSrsSeq.GetSequenceFasta ();
+        } catch (IntactException e) {
+            addError ("error.srs.processing", e.getMessage());
+            super.saveErrors(request);
+            return mapping.findForward(SeqIdConstants.FORWARD_FAILURE);
         }
-        else {
-            errors.add(super.INTACT_ERROR, new ActionError("error.srs.noseq"));
-            super.saveErrors(acQuery, errors);
-            return acMap.findForward(SeqIdConstants.FORWARD_FAILURE);
+
+
+        // run blast.
+        doSimilaritySearch (sequence, request);
+
+        if (false == isEmptyError()) {
+            //report any previous error
+            return mapping.findForward(SeqIdConstants.FORWARD_FAILURE);
         }
+
+        //to forward the user to the next jsp path, thanks to the string refered in struts-config.xml
+        return mapping.findForward(SeqIdConstants.FORWARD_SUCCESS_SEQ);
+
     }
 }
 

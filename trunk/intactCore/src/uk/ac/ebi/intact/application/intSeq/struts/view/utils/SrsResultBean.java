@@ -18,6 +18,7 @@ public class SrsResultBean {
      * 2 items to full the two columns of the displayed table.
      */
     protected String acc = "";
+    protected String url = "";
     protected String des = "";
 
     /**
@@ -34,8 +35,9 @@ public class SrsResultBean {
      * @param description the description field in SRS, to describe the protein retrieved.
      *
      */
-    public SrsResultBean (String accNum, String description) {
+    public SrsResultBean (String accNum, String url, String description) {
         this.acc = accNum;
+        this.url = url;
         this.des = description;
     }
 
@@ -58,6 +60,14 @@ public class SrsResultBean {
      */
     public String getAcc () {
         return (this.acc);
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
      /**
