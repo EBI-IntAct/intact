@@ -154,6 +154,24 @@ public class IntactHelper implements SearchI, Externalizable {
      * Constructor allowing a helper instance to be created with a given
      * username and password.
      *
+     * @param user - the username to make a connection with
+     * @param password - the user's password (null values allowed)
+     */
+    public IntactHelper(String user, String password) throws IntactException {
+        try {
+            DAOSource ds = DAOFactory.getDAOSource("uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource");
+            initialize(ds, user, password, PB);
+        }
+        catch (DataSourceException de) {
+            String msg = "intact helper: There was a problem accessing a data store";
+            throw new IntactException(msg, de);
+        }
+    }
+
+    /**
+     * Constructor allowing a helper instance to be created with a given
+     * data source, username and password.
+     *
      * @param source - the data source to be connected to
      * @param user - the username to make a connection with
      * @param password - the user's password (null values allowed)
