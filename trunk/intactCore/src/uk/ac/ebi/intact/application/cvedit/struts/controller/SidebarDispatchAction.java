@@ -58,7 +58,7 @@ public class SidebarDispatchAction extends CvAbstractDispatchAction {
      * @param request the HTTP request we are processing
      * @param response the HTTP response we are creating
      * @return failure mapping for any errors in searching the CV database;
-     * no matches if the search failed to find any records; edit mapping if the
+     * no matches if the search failed to find any records; success if the
      * search produced only a single match; finally, results mapping if the
      * search produced multiple results.
      * @throws Exception for any uncaught errors.
@@ -125,7 +125,7 @@ public class SidebarDispatchAction extends CvAbstractDispatchAction {
             user.updateView(cvobj);
 
             // Straight to the edit jsp.
-            return mapping.findForward(CvEditConstants.FORWARD_EDIT);
+            return mapping.findForward(CvEditConstants.FORWARD_SUCCESS);
         }
         // Cache the search results.
         user.addToSearchCache(results);
@@ -168,6 +168,8 @@ public class SidebarDispatchAction extends CvAbstractDispatchAction {
 
         // The class name associated with the topic.
         String classname = super.getIntactService().getClassName(topic);
+        // The current topic.
+        user.setSelectedTopic(topic);
 
         // The owner of the object we are editing.
         Institution owner = null;
