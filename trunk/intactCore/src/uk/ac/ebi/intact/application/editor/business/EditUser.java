@@ -212,18 +212,19 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         // Initialize the helper.
         myHelper = new IntactHelper(ds, user, password);
 
-        // A dummy read to ensure that a connection is made as a valid user.
-        myHelper.search("uk.ac.ebi.intact.model.Institution", "ac", "*");
+        // Initialize the object.
+        initialize();
+    }
 
-        // Initialize the Protein factory.
-        try {
-            myProteinFactory = new UpdateProteins(myHelper);
-        }
-        catch (UpdateProteinsI.UpdateException e) {
-            throw new IntactException("Unable to create the Protein factory");
-        }
-        // Record the time started.
-        mySessionStartTime = Calendar.getInstance().getTime();
+    /**
+     * This constructor is used by Seralization test class.
+     * @param helper the Intact helper
+     * @throws IntactException for errors in accessing the persistent system.
+     * @see uk.ac.ebi.intact.application.editor.test.SessionSerializationTest
+     */
+    public EditUser(IntactHelper helper) throws IntactException {
+        myHelper = helper;
+        initialize();
     }
 
     // Implements HttpSessionBindingListener
@@ -688,6 +689,25 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     }
 
     // Helper methods.
+
+    /**
+     * Called by the constructors to initialize the object.
+     * @throws IntactException for errors in accessing the persistent system.
+     */
+    private void initialize() throws IntactException {
+        // A dummy read to ensure that a connection is made as a valid user.
+        myHelper.search("uk.ac.ebi.intact.model.Institution", "ac", "*");
+
+        // Initialize the Protein factory.
+        try {
+            myProteinFactory = new UpdateProteins(myHelper);
+        }
+        catch (UpdateProteinsI.UpdateException e) {
+            throw new IntactException("Unable to create the Protein factory");
+        }
+        // Record the time started.
+        mySessionStartTime = Calendar.getInstance().getTime();
+    }
 
     /**
      * @return returns an instance of search helper. A new object is created
