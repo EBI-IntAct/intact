@@ -104,7 +104,7 @@ public class InsertComplex {
             this.newProteins.put(spAc,protein);
             addNewXref(protein,
                        new Xref ((Institution) helper.getObjectByLabel(Institution.class, "EBI"),
-                                (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "SPTR"),
+                                (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "sptr"),
                                 spAc,
                                 null, null, null));
         }
