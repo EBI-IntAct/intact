@@ -157,7 +157,7 @@ public class SubmitFormAction extends AbstractEditorAction {
      */
     private boolean submitPressed(String title, MessageResources msgres) {
         if (title.equals(msgres.getMessage("button.submit"))
-                || title.equals(msgres.getMessage("button.save"))
+                || title.equals(msgres.getMessage("button.save.continue"))
                 || title.equals(msgres.getMessage("annotations.button.add"))
                 || title.equals(msgres.getMessage("xrefs.button.add"))) {
             return true;
