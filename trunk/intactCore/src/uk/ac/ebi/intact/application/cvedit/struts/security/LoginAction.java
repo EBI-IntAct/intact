@@ -33,6 +33,12 @@ import javax.servlet.ServletContext;
 public class LoginAction extends CvAbstractAction {
 
     /**
+     * Used as a key to identify a datasource class - its value
+     * is defined in the web.xml file as a servlet context parameter
+     */
+    private static final String theirDSKey = "datasource";
+
+    /**
      * Process the specified HTTP request, and create the corresponding HTTP
      * response (or forward to another web component that will create it).
      * Return an <code>ActionForward</code> instance describing where and how
@@ -73,7 +79,7 @@ public class LoginAction extends CvAbstractAction {
 
         // Name of the mapping file and data source.
         String repfile = ctx.getInitParameter(Constants.MAPPING_FILE_KEY);
-        String ds = ctx.getInitParameter(CvEditConstants.DATA_SOURCE);
+        String ds = ctx.getInitParameter(theirDSKey);
 
         // Create an instance of IntactService.
         IntactUserIF user = null;
