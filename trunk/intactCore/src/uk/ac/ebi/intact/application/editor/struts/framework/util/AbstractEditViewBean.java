@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.exception.validation.ShortLabelException;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
+import uk.ac.ebi.intact.application.editor.exception.validation.InteractionException;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.business.IntactException;
@@ -238,7 +239,8 @@ public abstract class AbstractEditViewBean implements Serializable {
         // First create/update the annotated object by the view.
         updateAnnotatedObject(user);
 
-        // Update the short label as it is common to all.
+        // Update the short label and full name as they are common to all.
+        myAnnotObject.setShortLabel(getShortLabel());
         myAnnotObject.setFullName(getFullName());
 
         // Add annotations and xrefs as they are common to all annotated objs.
@@ -648,10 +650,10 @@ public abstract class AbstractEditViewBean implements Serializable {
      */
     public void validate(EditUserI user)
             throws SearchException, ValidationException {
-        if (getShortLabel() == null) {
+//        if (getShortLabel() == null) {
 //            if ((myShortLabel == null) || SL_RE.matcher(myShortLabel).find()) {
-            throw new ShortLabelException();
-        }
+//            throw new ShortLabelException();
+//        }
     }
 
     /**

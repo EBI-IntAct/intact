@@ -11,9 +11,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.Experiment;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -57,17 +54,13 @@ public class CancelFormAction extends AbstractEditorAction {
         // Check and see if we have to go to the experiment page (only
         // applicable for an Interaction editor.
         if (returnToExperiment(request)) {
-            // The AC of the experiment.
-            String ac = ((InteractionViewBean)
-                    user.getView()).getSourceExperimentAc();
-            // The experiment we have been editing.
-            AnnotatedObject annobj = (AnnotatedObject) user.getObjectByAc(
-                    Experiment.class, ac);
-            // The experiment we going back to.
-            user.setView(annobj);
-            return mapping.findForward("experiment");
+            // Sets the destination experiment to return to.
+            setDestinationExperiment(request);
+
+            // Back to the experiment editor.
+            return mapping.findForward(EXP);
         }
         // Back to the search page.
-        return mapping.findForward(SEARCH);
+        return mapping.findForward(RESULT);
     }
 }

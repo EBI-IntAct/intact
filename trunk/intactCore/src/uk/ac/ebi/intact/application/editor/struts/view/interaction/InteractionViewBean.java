@@ -148,13 +148,22 @@ public class InteractionViewBean extends AbstractEditViewBean {
         if (intact == null) {
             if (getAc() == null) {
                 // Not persisted. Create a new Interaction.
-                intact = new Interaction(getExperimentsToAdd(), Collections.EMPTY_LIST,
+
+                // Collect experiments from beans.
+                List exps = new ArrayList();
+                for (Iterator iter = getExperimentsToAdd().iterator(); iter.hasNext();) {
+                    exps.add(((ExperimentBean) iter.next()).getExperiment());
+                }
+                // Must have at least one experiment.
+//                if (exps.isEmpty()) {
+//                    throw new InteractionException("error.int.validation.exp");
+//                }
+                intact = new Interaction(exps, Collections.EMPTY_LIST,
                         type, getShortLabel(), user.getInstitution());
             }
             else {
                 // Read it from the peristent system first and then update it.
                 intact = (Interaction) user.getObjectByAc(getEditClass(), getAc());
-                intact.setShortLabel(getShortLabel());
                 intact.setCvInteractionType(type);
 
                 // Add experiments.

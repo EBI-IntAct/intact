@@ -45,18 +45,15 @@ public class ExperimentSubmitAction extends SubmitFormAction {
         // List of buttons to check which interaction was selected.
         String[] intCmds = (String[]) dynaform.get("intCmd");
         int intIdx = getCurrentSelection(intCmds);
-
-//        System.out.println("Here: 1" + intIdx);
         if (intIdx != -1 ) {
             // Selected an interaction to delete/edit; set the index.
             dynaform.set("idx", new Integer(intIdx));
             return mapping.findForward("interaction");
         }
+
         // List of buttons to check which interaction was added/hidden.
         String[] intholdCmds = (String[]) dynaform.get("intsholdCmd");
         int intholdIdx = getCurrentSelection(intholdCmds);
-//        System.out.println("Here: 2" + intholdIdx);
-
         if (intholdIdx != -1 ) {
             // Selected an interaction to add/hide.
             dynaform.set("idx", new Integer(intholdIdx));

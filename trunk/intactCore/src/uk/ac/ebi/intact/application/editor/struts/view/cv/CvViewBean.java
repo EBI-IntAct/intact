@@ -61,7 +61,6 @@ public class CvViewBean extends AbstractEditViewBean {
             else {
                 // Read it from the peristent system and update it.
                 cvobj = (CvObject) user.getObjectByAc(getEditClass(), getAc());
-                cvobj.setShortLabel(getShortLabel());
             }
             // Set the current cv obj as the annotated object.
             setAnnotatedObject(cvobj);

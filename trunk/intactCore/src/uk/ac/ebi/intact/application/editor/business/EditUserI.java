@@ -33,8 +33,9 @@ import java.util.Set;
  */
 public interface EditUserI extends IntactUserI, Serializable {
 
-    // Getter for topic selected.
+    // Getter/Setter for topic selected.
     public String getSelectedTopic();
+    public void setSelectedTopic(String topic);
 
     /**
      * Returns the Institution.
@@ -47,6 +48,12 @@ public interface EditUserI extends IntactUserI, Serializable {
      * <code>false</code> is returned for all other instances.
      */
     public boolean isEditing();
+
+    /**
+     * Starts editing session. This is needed for Save & Continue operation as
+     * editing is turned off automatically upon comitting.
+     */
+    public void startEditing();
 
     // Transaction Methods
 

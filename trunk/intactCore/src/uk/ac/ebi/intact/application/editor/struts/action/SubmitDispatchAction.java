@@ -88,7 +88,12 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
                               HttpServletRequest request,
                               HttpServletResponse response)
             throws Exception {
-        return submitForm(mapping, form, request, false);
+        ActionForward forward = submitForm(mapping, form, request, false);
+        // Turn editing mode on as it was switched off upon a successfull committ.
+        if (forward.getPath().equals(mapping.findForward(SUCCESS).getPath())) {
+            getIntactUser(request).startEditing();
+        }
+        return forward;
     }
 
     /**
@@ -280,6 +285,9 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
             // Only show the submitted record.
             return mapping.findForward(RESULT);
         }
+        // We can't use mapping.getInputForward here as this return value
+        // is used by subclasses (they need to distinguish between a success or
+        // a failure such as duplicate short labels).
         return mapping.findForward(SUCCESS);
     }
 

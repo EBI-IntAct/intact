@@ -130,7 +130,6 @@ public class ExperimentViewBean extends AbstractEditViewBean {
             else {
                 // Read it from the peristent system first and then update it.
                 exp = (Experiment) user.getObjectByAc(getEditClass(), getAc());
-                exp.setShortLabel(getShortLabel());
                 exp.setBioSource(biosource);
             }
             // Set the current experiment as the annotated object.
@@ -138,7 +137,6 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         }
         exp.setCvInteraction(interaction);
         exp.setCvIdentification(ident);
-        exp.setFullName(getFullName());
 
         // Add interaction to the experiment.
         for (Iterator iter = getInteractionsToAdd().iterator(); iter.hasNext();) {
@@ -197,16 +195,16 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     // Null for any of these values will throw an exception.
     public void validate(EditUserI user) throws ValidationException,
             SearchException {
-        super.validate(user);
-        if (myOrganism == null) {
-            throw new ExperimentException("error.exp.biosrc");
-        }
-        else if (myInter == null) {
-            throw new ExperimentException("error.exp.inter");
-        }
-        else if (myIdent == null) {
-            throw new ExperimentException("error.exp.ident");
-        }
+//        super.validate(user);
+//        if (myOrganism == null) {
+//            throw new ExperimentException("error.exp.biosrc");
+//        }
+//        else if (myInter == null) {
+//            throw new ExperimentException("error.exp.inter");
+//        }
+//        else if (myIdent == null) {
+//            throw new ExperimentException("error.exp.ident");
+//        }
     }
 
     // Override the super method to clear this object.

@@ -48,11 +48,20 @@ public class InteractionDynaForm extends CvDynaForm {
             errors = new ActionErrors();
             errors.add(ActionErrors.GLOBAL_ERROR,
                     new ActionError("error.int.cvtype"));
+            return errors;
         }
-        else if (organism.equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
+        if (organism.equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
             errors = new ActionErrors();
             errors.add(ActionErrors.GLOBAL_ERROR,
                     new ActionError("error.int.biosrc"));
+            return errors;
+        }
+        // Must have at least one experiment.
+        ExperimentBean[] exps = (ExperimentBean[]) get("exps");
+        if (exps.length == 0) {
+            errors = new ActionErrors();
+            errors.add(ActionErrors.GLOBAL_ERROR,
+                    new ActionError("error.int.validation.exp"));
         }
         return errors;
     }

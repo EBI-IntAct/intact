@@ -95,6 +95,11 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         // Cache the search results.
         user.addToSearchCache(results);
 
+        // Set the selected topic, so the sidebar displays the currently
+        // selected type (not rquired for a single result as setView method
+        // sets the topic).
+        user.setSelectedTopic(topic);
+
         // Move to the results page.
         return mapping.findForward(RESULT);
     }
