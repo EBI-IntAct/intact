@@ -35,7 +35,6 @@
 %>
 
 <script language="JavaScript" type="text/javascript">
-
     // This is a global variable to setup a window.
     var newWindow;
 
@@ -52,8 +51,7 @@
         }
     }
 
-    // Will be invoked when user selects graph button. An AC must be selected.
-    // This in trun will create a new widow.
+    // Will be invoked when the user selects on a link.
     function show(topic, label) {
         var link = "<%=service.getSearchLink()%>"
             + "?searchString=" + label + "&searchClass=" + topic;
@@ -85,7 +83,7 @@
                 <bean:write property="ac" name="<%=formName%>"/>
             </td>
             <td class="tableCell">
-                <html:text property="shortLabel"  size="10" maxlength="16"
+                <html:text property="shortLabel"  size="15" maxlength="20"
                     name="<%=formName%>"/>
             </td>
             <td class="tableCell">
@@ -93,6 +91,19 @@
                     name="<%=formName%>"/>
             </td>
         </tr>
+
+        <%-- These errors are shown when the client side validation is
+             turned off.
+        --%>
+        <logic:messagesPresent>
+            <logc:messages id="error">
+                <tr class="tableRowOdd">
+                    <td class="tableErrorCell" colspan="4">
+                        <html:errors/>
+                    </td>
+                </tr>
+            </logic:messages>
+        </logic:messagesPresent>
 
         <%-- Filter error messages relevant to this page only. --%>
         <logic:messagesPresent property="cvinfo">
