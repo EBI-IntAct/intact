@@ -52,13 +52,13 @@
                 <html:errors property="xref.database"/>
             </td>
             <td class="tableCell" align="left" valign="top">
-                <html:text property="primaryId" size="15" value=""/>
+                <html:text property="primaryId" size="15"/>
             </td>
             <td class="tableCell" align="left" valign="top">
-                <html:text property="secondaryId" size="15" value=""/>
+                <html:text property="secondaryId" size="15"/>
             </td>
             <td class="tableCell" align="left" valign="top">
-                <html:text property="releaseNumber" size="15" value=""/>
+                <html:text property="releaseNumber" size="15"/>
             </td>
             <td class="tableCell" align="left" valign="top">
                 <html:select property="qualifier">
