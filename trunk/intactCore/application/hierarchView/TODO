@@ -20,7 +20,15 @@ T O   D O
 	     at org.apache.struts.taglib.bean.MessageTag.doStartTag(MessageTag.java:295)
 	     at org.apache.jsp.view_jsp._jspx_meth_bean_message_1(view_jsp.java:315)
 
+- Installing the latest stable release of Axis
 
+- check if the current use of Struts couldn't be improved
+  - storing the ActionBean instead of each data separetly
+
+- add some Graph properties :
+  - color of highlighted and non highlighted proteins
+  - color of selected (the one given in the form) and non selected proteins
+  - eventually boldness of them all
 
 + SVG integration 
   + SVG producing (batik)
@@ -28,18 +36,14 @@ T O   D O
   - SVG handling (real zoom, panning, text searching, centering via URL ...)
 
 + Remove all internal links in Interpro
-  -> modifying the simple.xsl file to customize our displaying
-
+  + modifying the simple.xsl file to customize our displaying (given to David Binns)
 
 - add logging facilities in the web service
 
-+ Presents to Sugath the new architecture to generate picture !
-  generate svg and the servlet build on the fly the image according to parameters (format ...)
-
-+ Work on the SVG applet 
++ Work on the SVG applet
    - create or reuse an existing one (CSIRO, Batik) 
    - features
-    - size
+   - size
 
 	Q: My applets are big and it takes much time to download (on 
 	browser) when a network is slow.
@@ -60,17 +64,10 @@ T O   D O
 	functionality is downloaded. And .jar and .class files does get
 	cached by most browsers. 
 
-- building a script allowing to do the tedious task of managing the web service !
-
 - Find a way to check if a web service is currently running (in the runtime)
 
 - solve browser behaviour problem
 	o Netscape, remove frames
-
-- Tomcat jar problem :
-  We have to add xercesImpl.jar (found in the WEB-INF/lib of our web application) in the 
-  $CATALINA_HOME/common/lib. It was not used when the jar file was in our application directory.
-  This jar is needed because org.w3c.dom.DOMErrorHandler class is used when tomcat launch our application
 
 - checkbox with struts.
   Maybe to store the bean in the session ?!
@@ -83,10 +80,31 @@ T O   D O
 
 
 
-==============
-   D O N E
-==============
 
+
+
+
+
+
+====================================
+              D O N E
+====================================
+
++ Write an ant task to test if the web service is properly running
+
++ Write an installation note
+   + cf intactCore/application/hierarchView/README
+
++ Presents to Sugath the new architecture to generate picture !
+  generate svg and the servlet build on the fly the image according to parameters (format ...)
+
++ Tomcat jar problem :
+  We have to add xercesImpl.jar (found in the WEB-INF/lib of our web application) in the
+  $CATALINA_HOME/common/lib. It was not used when the jar file was in our application directory.
+  This jar is needed because org.w3c.dom.DOMErrorHandler class is used when tomcat launch our application
+  -> Do not occur with Jakarta-Tomcat4.1.18-LE-jdk1.4
+
++ building a script allowing to do the tedious task of managing the web service !
 
 + create then an external build.xml for hierarchView
 
