@@ -77,8 +77,14 @@ public class Graph extends BasicGraph implements GraphI {
         for (int i = 0; i < edges.size(); i++) {
             EdgeI e = (EdgeI) edges.get(i);
             s.append(e.getNode1().getAc());
+            s.append("(");
+            s.append(e.getComponent1().getCvComponentRole().getShortLabel());
+            s.append(")");
             s.append("-> ");
             s.append(e.getNode2().getAc());
+            s.append("(");
+            s.append(e.getComponent2().getCvComponentRole().getShortLabel());
+            s.append(")");
             s.append("\n");
         }
         s.append("\n");
