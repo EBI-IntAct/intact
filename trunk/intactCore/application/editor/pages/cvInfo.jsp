@@ -47,8 +47,8 @@
     // Will be invoked when user selects graph button. An AC must be selected.
     // This in trun will create a new widow.
     function show(topic, label) {
-        var link = "http://localhost:8080/intact/editor/do/display?topic="
-            + topic + "&shortLabel=" + label;
+        var link = "http://localhost:8080/intact/search/do/hvWelcome?searchString="
+            + label + "&searchClass=" + topic;
         makeNewWindow(link);
     }
 </script>
