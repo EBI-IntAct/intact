@@ -12,7 +12,6 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.apache.struts.util.MessageResources;
-import org.apache.struts.util.RequestUtils;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
@@ -20,7 +19,6 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.Iterator;
 
 /**
  * This action class is responsible for selecting which to editor to display. The
