@@ -7,7 +7,18 @@
     Version: $Id$
 --%>
 
-<span class="header"><tiles:getAsString name="header.title"/></span>
-<intact:documentation section="hierarchView" />
+        <table width="100%" height="100%">
 
-<hr>
+            <%-- Application Header section --%>
+            <tr>
+                <td valign="top" height="5%">
+                    <span class="header"><tiles:getAsString name="header.title"/></span>
+                    <intact:documentation section="hierarchView" />
+                </td>
+            </tr>
+
+            <tr>
+                <td height="1" background="<%=request.getContextPath()%>/images/hor.gif"></td>
+            </tr>
+
+        </table>
