@@ -46,21 +46,7 @@ public class CommentBean implements Serializable {
      * instance of this class.
      */
     public CommentBean(Annotation annotation) {
-        this(IntactUserImpl.getId(), annotation);
-    }
-
-    /**
-     * Instantiate an object of this class from an Annotation object using
-     * the supplied key as the primary key (i.e., new primary key is not created).
-     * <p>
-     * This constructor is visible to subclasses only.
-     *
-     * @param key the primary key for this new instance.
-     * @param annotation the <code>Annotation</code> object to construct an
-     * instance of this class.
-     */
-    protected CommentBean(long key, Annotation annotation) {
-        myKey = key;
+        myKey = IntactUserImpl.getId();
         myAnnotation = annotation;
         myTopic = annotation.getCvTopic().getShortLabel();
         myAnnotatedText = annotation.getAnnotationText();
