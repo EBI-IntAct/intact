@@ -9,12 +9,17 @@ package uk.ac.ebi.intact.application.cvedit.struts.controller;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseForm;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
+import uk.ac.ebi.intact.application.cvedit.struts.view.ListObject;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.model.CvObject;
 import org.apache.struts.action.*;
+import org.apache.commons.lang.exception.ExceptionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * Called by struts framework when the user is prompted to confirm to delete a
@@ -52,36 +57,43 @@ public class CvDelConfirmAction extends IntactBaseAction {
         // Handler to the Intact User.
         IntactUserIF user = super.getIntactUser(request);
 
+        // The object to delete.
+        CvObject cvobj = user.getCurrentEditObject();
+
         if (theForm.isSubmitted()) {
-            // Try to delete the object we are editing at the moment..
             try {
-                user.delete(user.getCurrentEditObject());
-            }
-            catch (IntactException ie) {
-                super.addError("error.delete", ie.getMessage());
-                super.saveErrors(request);
-                return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
-            }
-            // Commit the transaction.
-            try {
+                // Begin the transaction.
+                user.begin();
+                // Delete the object we are editing at the moment.
+                user.delete(cvobj);
+                // Commit all the changes.
                 user.commit();
             }
-            catch (IntactException ie) {
-                // Unable to create an annotation.
-                super.addError("error.transaction.commit", ie.getNestedMessage());
+            catch (IntactException ie1) {
+                try {
+                    user.rollback();
+                }
+                catch (IntactException ie2) {
+                    // Oops! Problems with rollback; ignore this as this
+                    // error is reported via the main exception (ie1).
+                }
+                // Log the stack trace.
+                super.log(ExceptionUtils.getStackTrace(ie1));
+                // Error with deleting the object.
+                super.addError("error.delete", ie1.getMessage());
                 super.saveErrors(request);
                 return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
             }
             // Delete successful; back to the results or search.
-            return mapping.findForward(super.fwdResultsOrSearch(request));
+            if (user.hasSingleSearchResult()) {
+                return mapping.findForward(WebIntactConstants.FORWARD_SEARCH);
+            }
+            else {
+                user.removeFromSearchCache(cvobj.getAc());
+                return mapping.findForward(WebIntactConstants.FORWARD_RESULTS);
+            }
         }
-        // Cancel the delete; rollback changes and back to editing.
-        try {
-            user.rollback();
-        }
-        catch (IntactException ie1) {
-            // Just ignore it.
-        }
+        // Cancel chosen.
         return mapping.findForward(WebIntactConstants.FORWARD_EDIT);
     }
 }
