@@ -774,12 +774,11 @@
         </action>
 
         <!-- ============================================================== -->
-        <!-- Admin targets -->
 
-        <!-- Displays current locks on the system. -->
-        <action path="/admin/displayLocks"
+        <!-- Displays current users logged into on the system. -->
+        <action path="/show/users"
             type="org.apache.struts.actions.ForwardAction"
-            parameter="admin.locks.layout">
+            parameter="user.layout">
         </action>
 
     </action-mappings>
