@@ -1,3 +1,4 @@
+
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
 import uk.ac.ebi.intact.application.search3.business.Constants;
@@ -791,3 +792,4 @@ public class MainDetailViewBean extends AbstractViewBean {
 
 
 }
+
