@@ -5,6 +5,9 @@
    - All rights reserved. Please see the file LICENSE
    - in the root directory of this distribution.
    -
+   - This should be displayed in the content part of the IntAct layout,
+   - it displays the highlightment sources.
+   -
    - @author Samuel Kerrien (skerrien@ebi.ac.uk)
    - @version $Id$
 -->
@@ -13,14 +16,6 @@
                  uk.ac.ebi.intact.application.hierarchView.business.Constants"%>
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
-
-<%-- hierarchView seleted source page
-
-     This should be displayed in the content part of the IntAct layout,
-     it displays the highlightment sources.
-
-     author : Samuel Kerrien (skerrien@ebi.ac.uk)
- --%>
 
 <html:html>
 
