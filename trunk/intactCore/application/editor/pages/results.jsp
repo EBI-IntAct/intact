@@ -68,9 +68,20 @@
                  lock for the object and displayed in different colour -->
             <c:choose>
                 <c:when test="${i.locked == 'true'}">
-                    <td class="errorCell">
-                        <bean:write name="i" property="shortLabel"/>
-                    </td>
+                    <c:choose>
+                        <c:when test="${i.lockOwnerSimple == user.userName}">
+                           <!-- Lock owner is the current user -->
+                            <td class="editCell">
+                                <bean:write name="i" property="editorLink" filter="false"/>
+                            </td>
+                        </c:when>
+                        <c:otherwise>
+                           <!-- Locked by other than the current user -->
+                            <td class="errorCell">
+                                <bean:write name="i" property="shortLabel"/>
+                            </td>
+                        </c:otherwise>
+                    </c:choose>
                 </c:when>
                 <c:otherwise>
                     <td class="tableCell">
