@@ -1,9 +1,11 @@
 <%@ page import="uk.ac.ebi.intact.application.search.struts.framework.util.WebIntactConstants"%>
+<%@ page import="uk.ac.ebi.intact.application.search.struts.view.*"%>
 
 <%@ page import="javax.xml.transform.*"%>
 <%@ page import="javax.xml.transform.stream.*"%>
 <%@ page import="javax.xml.parsers.*"%>
 <%@ page import="java.io.*"%>
+<%@ page import="java.util.*"%>
 
  <%--
    /**
@@ -38,32 +40,59 @@
 </display:table>
 
 --%>
+
 <%
     //Now get the XML source, the XSL source,
     //apply the stylesheet transformation and write the result out...
-    StreamSource xml = new StreamSource(new StringReader(viewbean.getAsXml()));
     String filename =  session.getServletContext().getInitParameter(WebIntactConstants.XSL_FILE);
     String xslFile =  session.getServletContext().getRealPath(filename);
-    StreamSource xsl = new StreamSource(new File(xslFile));
-
+    StreamSource xml = null;
+    StreamSource xsl = null;
     //write to the JSP output stream
     StreamResult result = new StreamResult(out);
 
+    //set up the transformer
     TransformerFactory factory = TransformerFactory.newInstance();
-    Transformer transformer = factory.newTransformer(xsl);
+    Transformer transformer = null;
 
-    //now apply the XSL and send it to the output stream
-    transformer.transform(xml, result);
+    if(xslFile != null) {
+        xsl = new StreamSource(new File(xslFile));
+        transformer = factory.newTransformer(xsl);
+    }
+    //check to see if we have single or multiple results..
+    boolean singleMatch = ((Boolean)session.getAttribute(WebIntactConstants.SINGLE_MATCH)).booleanValue();
+    if(singleMatch) {
 
-    //get the results in XML format, or print as a String if not defined
-    /*String xml = viewbean.getAsXml();
-    if(xml != null) {
-        out.println(xml);
+        if(viewbean.getAsXml() != null) {
+
+            xml = new StreamSource(new StringReader(viewbean.getAsXml()));
+
+            //now apply the XSL and send it to the output stream
+            transformer.transform(xml, result);
+        }
+        else {
+
+%>
+            <%= viewbean.getData() %>
+<%
+        }
+
     }
     else {
-        out.println(viewbean.getData());
-    }*/
 
+        //multiple results - transform and display each bean in turn
+        //NB assuming in this case the XML string has been set (just lazy...)
+        Collection results = (Collection)session.getAttribute(WebIntactConstants.FORWARD_MATCHES);
+        Iterator it = results.iterator();
+        while(it.hasNext()) {
+
+            IntactViewBean bean = (IntactViewBean)it.next();
+            xml = new StreamSource(new StringReader(bean.getAsXml()));
+
+            //apply the XSL and send it to the output stream
+            transformer.transform(xml, result);
+        }
+    }
 %>
 
 <jsp:include page="footer.jsp" flush="true" />
