@@ -7,6 +7,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.framework.util;
 
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
+import uk.ac.ebi.intact.application.editor.util.MenuManager;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
@@ -272,13 +273,16 @@ public class EditorMenuFactory {
         Vector v = null;
         Class clazz = (Class) theirNameToType.get(key);
         try {
-            // Use a different construction for a CvDagObject.
-            if (clazz.getSuperclass().equals(CvDagObject.class)) {
-                v = CvDagObject.getMenuList(clazz, myHelper, true);
-            }
-            else {
-                v = AnnotatedObject.getMenuList(clazz, myHelper, true);
-            }
+
+            v = MenuManager.getInstance().getMenuList( clazz, myHelper, true );
+
+//            // Use a different construction for a CvDagObject.
+//            if (clazz.getSuperclass().equals(CvDagObject.class)) {
+//                v = CvDagObject.getMenuList(clazz, myHelper, true);
+//            }
+//            else {
+//                v = AnnotatedObject.getMenuList(clazz, myHelper, true);
+//            }
         }
         catch (IntactException ie) {
             throw new SearchException("Failed to get menu list for "
