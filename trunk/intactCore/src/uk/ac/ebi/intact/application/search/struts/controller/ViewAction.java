@@ -70,7 +70,7 @@ public class ViewAction extends IntactBaseAction {
         //first check for a CvObject - if there is one in the session
         //then the 'back' button has been pressed from a CvObject view before
         //coming to here, so we need to clear it to get the correct display
-        session.setAttribute(SearchConstants.CV_VIEW_BEAN, null);
+        session.setAttribute(SearchConstants.SINGLE_OBJ_VIEW_BEAN, null);
 
         //debug stuff...
         System.out.println("new view requested...");

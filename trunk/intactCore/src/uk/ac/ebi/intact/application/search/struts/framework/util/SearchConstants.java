@@ -133,7 +133,7 @@ public interface SearchConstants {
     /**
      * The view bean for a single CvObject.
      */
-    public static final String CV_VIEW_BEAN = "cvViewBean";
+    public static final String SINGLE_OBJ_VIEW_BEAN = "cvViewBean";
 
     /**
      * The most recent user-defined search (ie not from a CvObject link).

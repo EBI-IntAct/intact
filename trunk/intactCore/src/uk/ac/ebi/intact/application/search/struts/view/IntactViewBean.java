@@ -68,6 +68,11 @@ public class IntactViewBean implements Serializable {
      */
     private int currentMode;
 
+    /**
+     * Details of the search parameters, so the web pages can highlight theem
+     */
+    private String searchInfo;
+
 
     /**
      * The search link; need this to pass to the style sheet. This defaults to local
@@ -101,6 +106,14 @@ public class IntactViewBean implements Serializable {
         if (link != null ){
             searchLink = link;
         }
+    }
+
+    public void setSearchInfo(String info) {
+        searchInfo = info;
+    }
+
+    public String getSearchInfo() {
+        return searchInfo;
     }
 
     public Object getWrappedObject() {
@@ -227,6 +240,7 @@ public class IntactViewBean implements Serializable {
         // Set the global parameters.
         transformer.setParameter("tableName", "tbl_" + id);
         transformer.setParameter("searchLink", searchLink);
+        transformer.setParameter("searchParams", searchInfo);
         if (currentMode == XmlBuilder.EXPAND_NODES) transformer.setParameter("viewMode", "expand");
         if (currentMode == XmlBuilder.CONTRACT_NODES) transformer.setParameter("viewMode", "compact");
 
