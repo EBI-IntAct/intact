@@ -122,7 +122,16 @@ The process for building the web applications is broadly the same. At the intact
 
 	ant compile-search compile-cvedit compile-hv
 
-to build the main classes for the web applications. The next step is to put them into your tomcat server and start it, as follows:
+to build the main classes for the web applications. For search there is one further file to edit. In the file
+
+        application/search/WEB-INF/config/HierarchView.properties
+
+the hostname of the machine running hierarchView must be set correctly. The default is set to 'localhost', but
+if you wish to view graphs using the search application from remote machines then the hostname in this file
+should be set to a correct DNS value (ie your machine name where hierarchView resides). If you do not do this then browsers on remote machines will try to find
+the hierarchView application on their own machine!
+
+The next step is to put the web applications into your tomcat server and start it, as follows:
 
 a) cd applications/<webapp-name> (for cvedit and search), then type
 
