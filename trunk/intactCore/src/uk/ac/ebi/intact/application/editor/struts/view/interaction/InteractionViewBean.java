@@ -761,7 +761,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
         // This feature may be linked to another feature. If the short label
         // has been changed, we need to update the linked Feature as well.
         if (labelChanged && featureBean.hasBoundDomain()) {
-            FeatureBean destFb = getFeatureBean(featureBean.getBoundDomain());
+            FeatureBean destFb = getFeatureBean(featureBean.getBoundDomainAc());
             destFb.setBoundDomain(featureBean.getShortLabel());
         }
     }
@@ -827,7 +827,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
      */
     public void addFeatureToUnlink(FeatureBean fb) {
         // The destination feature as a bean.
-        FeatureBean toFb = getFeatureBean(fb.getBoundDomain());
+        FeatureBean toFb = getFeatureBean(fb.getBoundDomainAc());
         // This bean must exist.
         assert toFb != null;
 
@@ -960,19 +960,19 @@ public class InteractionViewBean extends AbstractEditViewBean {
     }
 
     /**
-     * Returns the Feature bean for given short label.
+     * Returns the Feature bean for given AC.
      *
-     * @param label the short label to get the feature for.
-     * @return the matching Feature bean for <code>label</code> or null
+     * @param ac the AC to get the feature for.
+     * @return the matching Feature bean for <code>ac</code> or null
      *         if none found.
      */
-    public FeatureBean getFeatureBean(String label) {
+    public FeatureBean getFeatureBean(String ac) {
         // Look in the componets.
         for (Iterator iter0 = myComponents.iterator(); iter0.hasNext();) {
             List features = ((ComponentBean) iter0.next()).getFeatures();
             for (Iterator iter1 = features.iterator(); iter1.hasNext();) {
                 FeatureBean fb = (FeatureBean) iter1.next();
-                if (fb.getShortLabel().equals(label)) {
+                if (fb.getAc().equals(ac)) {
                     return fb;
                 }
             }
@@ -1087,14 +1087,14 @@ public class InteractionViewBean extends AbstractEditViewBean {
                 Feature featureToDel = fb1.getFeature(user);
                 // Remove from the component and delete the feature
                 comp.removeBindingDomain(featureToDel);
-                user.delete(featureToDel);
+//                user.delete(featureToDel);
 
                 // No further action if this feature is not linked.
                 if (!fb1.hasBoundDomain()) {
                     continue;
                 }
                 // The linked feature bean.
-                FeatureBean fb2 = getFeatureBean(fb1.getBoundDomain());
+                FeatureBean fb2 = getFeatureBean(fb1.getBoundDomainAc());
 
                 // Linked feature may have already been deleted.
                 if (fb2 == null) {
@@ -1263,7 +1263,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
             // The Feature objets to link together. Use 'user' to get changes
             // to the bound domain.
             Feature srcFeature = fb.getFeature(user);
-            Feature toFeature = getFeatureBean(fb.getBoundDomain()).getFeature(user);
+            Feature toFeature = getFeatureBean(fb.getBoundDomainAc()).getFeature(user);
 
             // Sets the links.
             srcFeature.setBoundDomain(toFeature);
