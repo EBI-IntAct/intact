@@ -49,32 +49,4 @@ public interface SearchI {
     public List stringSearch(String objectType, String searchString,
                              boolean includeSubClass,
                              boolean matchSubString) throws IntactException;
-
-    /**
-     * Returns a subgraph centered on startNode.
-     * The subgraph will contain all nodes which are up to graphDepth interactions away from startNode.
-     * Only Interactions which belong to one of the Experiments in experiments will be taken into account.
-     * If experiments is empty, all Interactions are taken into account.
-     *
-     * Expansion:
-     * If an Interaction has more than two interactors, it has to be defined how pairwise interactions
-     * are generated from the complex data. The possible values are defined in the beginning of this file.
-     *
-     * @param startNode - the start node of the subgraph.
-     * @param graphDepth - depth of the graph
-     * @param experiments - Experiments which should be taken into account
-     * @param complexExpansion - Mode of expansion of complexes into pairwise interactions
-     * @param graph - the graph we have to fill with interaction data
-     *
-     * @return To be further defined, probably a simple GraphII object.
-     *
-     * @exception IntactException - thrown if problems are encountered
-     */
-    public Graph subGraph(Interactor startNode,
-			  int graphDepth,
-			  Collection experiments,
-			  int complexExpansion,
-			  Graph graph) throws IntactException;
-
-
 }
