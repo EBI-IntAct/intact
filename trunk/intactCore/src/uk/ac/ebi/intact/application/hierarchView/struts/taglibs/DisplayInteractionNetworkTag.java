@@ -17,6 +17,8 @@ import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 
 
 /**
@@ -26,6 +28,8 @@ import java.util.Properties;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  */
 public class DisplayInteractionNetworkTag extends TagSupport {
+
+    static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
 
     /**
      * Evaluate the tag's body content.
@@ -60,22 +64,31 @@ public class DisplayInteractionNetworkTag extends TagSupport {
                 String mapName = null;
                 String format = null;
 
-                Properties propertiesBusiness = PropertyLoader.load (uk.ac.ebi.intact.application.hierarchView.business.Constants.PROPERTY_FILE);
+                Properties properties = PropertyLoader.load (uk.ac.ebi.intact.application.hierarchView.business.Constants.PROPERTY_FILE);
 
-                if (null != propertiesBusiness) {
-                    mapName = propertiesBusiness.getProperty ("hierarchView.image.map.name");
-                    format = propertiesBusiness.getProperty ("hierarchView.image.format.name");
+                if (null != properties) {
+                    mapName = properties.getProperty ("hierarchView.image.map.name");
+                    format = properties.getProperty ("hierarchView.image.format.name");
+                } else {
+                    logger.error("Unable to load properties from " +
+                                 uk.ac.ebi.intact.application.hierarchView.business.Constants.PROPERTY_FILE);
                 }
 
+                // the random parameter in the URL is given to prevent some browser
+                // (eg. Netscape 4.7) to cache image.
                 String msg = "<p align=\"left\">\n"
                         + "  <center>"
-                        + "     <img src=\"/hierarchView/GenerateImage?format=" + format + "\" "
+                        + "     <img src=\"/hierarchView/GenerateImage?format=" + format
+                        +        "&random="+ System.currentTimeMillis() +"\" "
                         + "      USEMAP=\"#" + mapName +"\" border =\"0\">"
                         + "     <br>"
                         + "  </center>"
                         + "</p>";
 
                 pageContext.getOut().write (msg);
+            } else {
+                if (null == AC) logger.info ("Don't enter the servlet calling: AC == null");
+                if (null == imageBean) logger.info ("Don't enter the servlet calling: imageBean == null");
             }
 
         } catch (Exception ioe) {
