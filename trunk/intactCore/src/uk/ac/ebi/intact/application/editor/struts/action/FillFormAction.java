@@ -6,17 +6,18 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action;
 
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.*;
+import org.apache.struts.Globals;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 /**
  * Fills the form with values for ac, short label and full name.
@@ -34,6 +35,13 @@ public class FillFormAction extends AbstractEditorAction {
         // The editor form.
         EditorActionForm editorForm = (EditorActionForm) form;
 
+        // Any anchors to set?
+        String anchor = getAnchor(request, editorForm);
+
+        // Set the anchor only if it is set.
+        if (anchor != null) {
+            editorForm.setAnchor(anchor);
+        }
         // The view of the current object we are editing at the moment.
         AbstractEditViewBean view = getIntactUser(request).getView();
 
@@ -76,5 +84,36 @@ public class FillFormAction extends AbstractEditorAction {
         else {
             editorForm.setNewXref(new XreferenceBean());
         }
+    }
+
+    private String getAnchor(HttpServletRequest request, EditorActionForm form) {
+        // Errors are stored under this key.
+        String key =  Globals.ERROR_KEY;
+
+        // The map containing anchors.
+        Map anchorMap = (Map) getApplicationObject(EditorConstants.ANCHOR_MAP);
+
+        // Any errors?
+        if (request.getAttribute(key) != null) {
+            ActionErrors errors = (ActionErrors) request.getAttribute(key);
+            // Only interested in the first (or only) error.
+            ActionError error = (ActionError) errors.get().next();
+
+            // The key this error is stored.
+            String errorKey = error.getKey();
+
+            // Check the map for the error key.
+            if (anchorMap.containsKey(errorKey)) {
+                return (String) anchorMap.get(errorKey);
+            }
+        }
+        // Start searching the dispatch.
+        String dispatch = form.getDispatch();
+
+        // Now go for the non error anchor using the dispatch value.
+        if (anchorMap.containsKey(dispatch)) {
+            return (String) anchorMap.get(dispatch);
+        }
+        return null;
     }
 }

@@ -53,6 +53,8 @@ public abstract class AbstractEditViewBean implements Serializable {
      */
     private String myFullName;
 
+    private String myAnchor;
+
     /**
      * The annotations to display.
      */
@@ -323,6 +325,19 @@ public abstract class AbstractEditViewBean implements Serializable {
      */
     public String getFullName() {
         return myFullName;
+    }
+
+
+    public String getAnchor() {
+        return myAnchor;
+    }
+
+    public void setAnchor(String anchor) {
+        myAnchor = anchor;
+    }
+
+    public void resetAnchor() {
+        setAnchor("");
     }
 
     /**

@@ -54,4 +54,9 @@ public interface EditorConstants {
      * The key for the severe warning messages.
      */
     public static final String SEVERE_WARN = "severe-warning";
+
+    /**
+     * The key to access the anchor map.
+     */
+    public static final String ANCHOR_MAP = "anchors";
 }

@@ -1,4 +1,4 @@
-<!--
+<%@ page import="org.apache.struts.action.Action"%><!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
   - Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
@@ -15,6 +15,7 @@
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic"%>
 
 <c:set var="view" value="${user.view}"/>
 
@@ -29,6 +30,9 @@
 <h3>Proteins</h3>
 
 <c:if test="${not empty intForm.proteins}">
+
+    <%-- The anchor name for this page --%>
+    <a name="int.protein"></a>
 
     <table width="100%" border="0" cellspacing="1" cellpadding="2">
         <tr class="tableRowHeader">
@@ -196,15 +200,33 @@
                 </c:if>
 
                 <c:if test="${error}">
-                    <td class="tableCell">
-                        <html:select name="proteins" property="role" indexed="true"
-                            styleClass="inputRequired">
-                            <html:options name="rolelist_" />
-                        </html:select>
-                    </td>
+                    <%-- Determine the color for the role dropdown list --%>
+                    <logic:present name="<%=Action.ERROR_KEY%>">
+                        <%-- Error messages for the role --%>
+                            <td class="errorCell">
+                                <html:select name="proteins" property="role" indexed="true"
+                                    styleClass="inputRequired">
+                                    <html:options name="rolelist_" />
+                                </html:select>
+                            </td>
+                    </logic:present>
+
+                    <logic:notPresent name="<%=Action.ERROR_KEY%>">
+                        <%-- No error messages for the role  --%>
+                        <td class="tableCell">
+                            <html:select name="proteins" property="role" indexed="true"
+                                styleClass="inputRequired">
+                                <html:options name="rolelist_" />
+                            </html:select>
+                        </td>
+                    </logic:notPresent>
+
+                    <%-- Stoichiometry --%>
                     <td class="tableCell">
                         <html:text name="proteins" size="5" property="stoichiometry" indexed="true"/>
                     </td>
+
+                    <%-- Expressed In --%>
                     <td class="tableCell">
                         <html:select name="proteins" property="expressedIn" indexed="true">
                             <html:options name="biosrclist_" />
@@ -214,4 +236,17 @@
             </tr>
         </c:forEach>
     </table>
+
+    <%-- Error messages for the role --%>
+    <logic:present name="<%=Action.ERROR_KEY%>">
+        <table width="100%" border="0" cellspacing="1" cellpadding="2">
+<%--            <html:messages id="intProtRole">--%>
+                <tr class="tableRowEven">
+                    <html:errors property="intProtRole"/>
+<%--                    <td class="tableErrorCell"><bean:write name="intProtRole"/></td>--%>
+                </tr>
+<%--            </html:messages>--%>
+        </table>
+    </logic:present>
+
 </c:if>

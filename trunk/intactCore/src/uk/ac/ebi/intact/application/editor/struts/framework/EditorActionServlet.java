@@ -16,6 +16,9 @@ import uk.ac.ebi.intact.application.editor.util.LockManager;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import java.util.MissingResourceException;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.ResourceBundle;
 
 /**
  * This is Intact editor specific action servlet class. This class is
@@ -49,13 +52,38 @@ public class EditorActionServlet extends ActionServlet {
             log(ExceptionUtils.getStackTrace(mite));
             throw new ServletException();
         }
-//        catch (MalformedURLException murle) {
-//            log(ExceptionUtils.getStackTrace(murle));
-//            // Carry on as only the biosource editor is not available.
-//        }
         // Make them accessible for any servlets within the server.
         ctx.setAttribute(EditorConstants.EDITOR_SERVICE, service);
         ctx.setAttribute(EditorConstants.EDITOR_TOPICS, service.getIntactTypes());
         ctx.setAttribute(EditorConstants.LOCK_MGR, LockManager.getInstance());
+        ctx.setAttribute(EditorConstants.ANCHOR_MAP, getAnchorMap());
+    }
+
+    private Map getAnchorMap() {
+        // The map to return (map key -> anchor name).
+        Map map = new HashMap();
+
+        // Resource bundle to access the message resources to set keys.
+        ResourceBundle rb = ResourceBundle.getBundle(
+                "uk.ac.ebi.intact.application.editor.MessageResources");
+
+        // Editing short label.
+        map.put("error.cvinfo.label", "info");
+
+        // Protein search in the Interaction editor.
+        map.put("error.int.protein.edit.role", "int.protein");
+        map.put(rb.getString("int.proteins.button.search"), "int.protein");
+
+        // Adding annotation.
+        map.put("error.annotation.topic", "annotation");
+        map.put(rb.getString("annotations.button.add"), "annotation");
+
+        // Adding Xrefs.
+        map.put("error.xref.database", "xref");
+        map.put("error.xref.pid", "xref");
+        map.put(rb.getString("xrefs.button.add"), "xref");
+
+
+        return map;
     }
 }

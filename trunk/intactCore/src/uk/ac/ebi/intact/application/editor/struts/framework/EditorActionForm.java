@@ -177,6 +177,10 @@ public class EditorActionForm extends ValidatorForm {
         myAnchor = anchor;
     }
 
+    public void resetAnchor() {
+        setAnchor("");
+    }
+
     protected void setDispatch(int index, String value) {
         myDispatchIndex = index;
         setDispatch(value);
@@ -220,9 +224,9 @@ public class EditorActionForm extends ValidatorForm {
             if (dispatch.equals(msgres.getMessage("annotations.button.add"))) {
                 // The bean to extract the values.
                 if (getNewAnnotation().getTopic().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
+                    // Set the anchor for the page to scroll.
                     errors = new ActionErrors();
-                    errors.add(ActionErrors.GLOBAL_ERROR,
-                            new ActionError("error.annotation.topic"));
+                    errors.add("annotation", new ActionError("error.annotation.topic"));
                     return errors;
                 }
             }
@@ -232,15 +236,13 @@ public class EditorActionForm extends ValidatorForm {
                 XreferenceBean xb = getNewXref();
                 if (xb.getDatabase().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
                     errors = new ActionErrors();
-                    errors.add(ActionErrors.GLOBAL_ERROR,
-                            new ActionError("error.xref.database"));
+                    errors.add("xref.db", new ActionError("error.xref.database"));
                     return errors;
                 }
                 // Primary id is required.
                 if (AbstractEditorAction.isPropertyEmpty(xb.getPrimaryId())) {
                     errors = new ActionErrors();
-                    errors.add(ActionErrors.GLOBAL_ERROR,
-                            new ActionError("error.xref.pid"));
+                    errors.add("xref.pid", new ActionError("error.xref.pid"));
                 }
             }
         }

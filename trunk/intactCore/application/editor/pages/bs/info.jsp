@@ -1,4 +1,3 @@
-<%@ page import="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory"%>
 <!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
@@ -17,6 +16,7 @@
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
+<%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic"%>
 
 <%-- The current view --%>
 <c:set var="view" value="${user.view}"/>
@@ -24,6 +24,9 @@
 <%-- Individual menu lists --%>
 <c:set var="tissuemenu" value="${view.tissueMenu}"/>
 <c:set var="cellmenu" value="${view.cellTypeMenu}"/>
+
+<%-- The anchor name for this page --%>
+<a name="info"></a>
 
 <table width="100%" border="0" cellspacing="1" cellpadding="2">
     <tr class="tableRowHeader">
@@ -44,16 +47,43 @@
         <td class="tableCell">
             <bean:write property="ac" name="bsForm" filter="false"/>
         </td>
-        <td class="tableCell">
-            <html:text property="shortLabel" size="20" maxlength="20"
-                name="bsForm" styleClass="inputRequired"/>
-        </td>
+
+        <%-- Determine the color for the Short label text box --%>
+        <logic:messagesPresent>
+            <%-- Error message related to the short label --%>
+            <html:messages id="error">
+                <td class="errorCell">
+                    <html:text property="shortLabel" size="20" maxlength="20"
+                        name="bsForm" styleClass="inputRequired"/>
+                </td>
+            </html:messages>
+        </logic:messagesPresent>
+
+        <logic:messagesNotPresent property="shortLabel">
+            <%-- No error messages related to the short label --%>
+            <td class="tableCell">
+                <html:text property="shortLabel" size="20" maxlength="20"
+                    name="bsForm" styleClass="inputRequired"/>
+            </td>
+        </logic:messagesNotPresent>
 
         <td class="tableCell">
             <html:text property="fullName" size="100" maxlength="250" name="bsForm"/>
         </td>
     </tr>
 </table>
+
+<%-- Error messages are shown in a different table --%>
+<logic:messagesPresent>
+    <table width="100%" border="0" cellspacing="1" cellpadding="2">
+        <html:messages id="shortLabel">
+            <tr class="tableRowEven">
+                <html:errors property="shortLabel"/>
+<%--                <td class="tableErrorCell"><bean:write name="shortLabel"/></td>--%>
+            </tr>
+        </html:messages>
+    </table>
+</logic:messagesPresent>
 
 <p></p>
 

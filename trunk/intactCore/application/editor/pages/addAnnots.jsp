@@ -17,11 +17,23 @@
 <%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
 <%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic"%>
 
-<jsp:useBean id="user" scope="session"
-    class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
-
 <%-- The list of topics --%>
 <c:set var="topiclist" value="${user.view.addTopicMenu}"/>
+
+<%-- Errors are displayed in its own table if present --%>
+<%--<logic:messagesPresent name="annotation">--%>
+<%--    <table width="100%" border="0" cellspacing="1" cellpadding="2">--%>
+        <%-- Error messages --%>
+<%--        <html:messages id="annotation">--%>
+<%--            <tr class="tableRowEven">--%>
+<%--                <td class="tableErrorCell"><bean:write name="annotation" filter="false"/></td>--%>
+<%--            </tr>--%>
+<%--        </html:messages>--%>
+<%--    </table>--%>
+<%--</logic:messagesPresent>--%>
+
+<%-- The anchor name for this page --%>
+<a name="annotation"></a>
 
 <table class="table" width="100%" border="0" cellspacing="1" cellpadding="2">
     <tr class="tableRowHeader">
@@ -39,20 +51,19 @@
                 <bean:message key="annotations.button.add"/>
             </html:submit>
         </td>
-<%--        <td class="tableCell" align="left" valign="bottom">--%>
-<%--            <html:reset/>--%>
-<%--        </td>--%>
+
         <td class="tableCell" align="left" valign="top">
             <html:select property="newAnnotation.topic">
                 <html:options name="topiclist"/>
             </html:select>
+            <br/><html:errors property="annotation"/>
         </td>
         <td class="tableCell" align="left" valign="top">
             <html:textarea property="newAnnotation.description" rows="3" cols="70"/>
         </td>
     </tr>
-
-    <!-- Displays error messages for the short label -->
+<%----%>
+<%--    <!-- Displays error messages for the short label -->--%>
 <%--    <logic:messagesPresent>--%>
 <%--        <table width="100%" border="0" cellspacing="1" cellpadding="2">--%>
 <%--            <html:messages id="topic">--%>

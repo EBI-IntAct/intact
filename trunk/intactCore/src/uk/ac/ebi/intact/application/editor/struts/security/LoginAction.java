@@ -89,7 +89,7 @@ public class LoginAction extends AbstractEditorAction {
         // Store the server path.
         ctx.setAttribute(EditorConstants.SERVER_PATH, request.getContextPath());
 
-        // Sets the submit map.
+        // Sets the submit and anchor maps.
         session.setAttribute("formSubmitMap", getSubmitMap(request));
 
         return mapping.findForward(SUCCESS);

@@ -18,6 +18,11 @@ td.errorCell {
     background-color: #ccffcc
 }
 
+/* For errors to display in the input page */
+.error {
+    color: red;
+}
+
 /* For warning messages. */
 .warning {
     background-color: #90ee90
