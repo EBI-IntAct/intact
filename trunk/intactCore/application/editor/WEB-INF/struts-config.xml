@@ -289,15 +289,7 @@
             scope="request"
             parameter="dispatch">
 
-            <!-- Uses the input for these exceptions -->
-
-            <!-- Validation for short label failed. -->
-            <exception
-                handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"
-                type="uk.ac.ebi.intact.application.editor.exception.validation.ShortLabelException"
-                key="dummy.key"/>
-
-            <!-- Validation for experiment failed. -->
+            <!-- Uses the input for validation exceptions -->
             <exception
                 handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"
                 type="uk.ac.ebi.intact.application.editor.exception.validation.ValidationException"
