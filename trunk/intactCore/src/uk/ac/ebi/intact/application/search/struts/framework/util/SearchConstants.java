@@ -22,7 +22,7 @@ public interface SearchConstants {
     /**
      * The key to access a user session object.
      */
-    public static final String INTACT_USER = "IntactUser";
+    public static final String INTACT_USER = "user";
 
     /**
      * The key to success action.
