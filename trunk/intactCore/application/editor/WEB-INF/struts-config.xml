@@ -97,7 +97,6 @@
             <form-property name="kD" type="java.lang.Float"/>
             <form-property name="organism" type="java.lang.String"/>
             <form-property name="interactionType" type="java.lang.String"/>
-            <form-property name="experiment" type="java.lang.String"/>
         </form-bean>
 
         <!-- Forms related Interaction -->
@@ -423,13 +422,6 @@
             name="xrefEditForm"
             type="uk.ac.ebi.intact.application.editor.struts.action.XrefEditAction"
             scope="session">
-        </action>
-
-        <!-- Displays a read only view of an edit object. -->
-        <action path="/display"
-            type="uk.ac.ebi.intact.application.editor.struts.action.DisplayAction"
-            scope="request">
-            <forward name="success" path="ro.edit.layout"/>
         </action>
 
     </action-mappings>
