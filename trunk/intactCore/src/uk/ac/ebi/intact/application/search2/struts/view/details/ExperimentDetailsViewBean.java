@@ -207,11 +207,14 @@ public class ExperimentDetailsViewBean extends DetailsViewBean {
                 if(tabbedViewInfo.containsKey(exp.getAc())) tabbedViewInfo.remove(exp.getAc());
                 tabbedViewInfo.put(exp.getAc(), entry);
 
+                //now add the shallow view to the list being returned
+                experimentViews.add(shallowExperiment);
+            }
+            else {
+                //not a large experiment - just add it to the return list as it is
+                experimentViews.add(exp);
             }
 
-            //Add the processed one (either tabbed or just shallow view)
-            //to the list of experiments to view..
-            experimentViews.add(shallowExperiment);
         }
         return experimentViews;
 
