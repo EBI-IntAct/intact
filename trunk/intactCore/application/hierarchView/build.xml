@@ -335,7 +335,9 @@ Verison: $Id$
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
             includes="**/application/hierarchView/**,
                       **/application/commons/**,
-                      **/util/PropertyLoader*"
+                      **/util/PropertyLoader*,
+                      **/util/SearchReplace*"
+
             debug="on">
             <classpath refid="project.class.path"/>
         </javac>
@@ -584,10 +586,9 @@ Verison: $Id$
             </lib>
 
             <!-- Include common jar files -->
-            <lib dir="${intact.app.dir}/lib">
-               <exclude name="standard.jar"/>
-               <exclude name="jstl.jar"/>
-            </lib>
+            <lib dir="${intact.app.dir}/lib"/>
+<!--               <exclude name="standard.jar"/>-->
+<!--            </lib>-->
 
             <!-- Include common jar files from intact core. -->
             <lib dir="${root.lib.dir}">
