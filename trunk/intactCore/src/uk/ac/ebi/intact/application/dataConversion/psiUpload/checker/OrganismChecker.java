@@ -21,6 +21,9 @@ import uk.ac.ebi.intact.util.BioSourceFactory;
 public final class OrganismChecker extends AbstractOrganismChecker {
 
     public static BioSource getBioSource( final OrganismTag organism ) {
+        if( organism == null ) {
+            return null;
+        }
         final String taxid = organism.getTaxId();
         final CellTypeTag cellType = organism.getCellType();
         final TissueTag tissue = organism.getTissue();
