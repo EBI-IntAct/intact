@@ -6,7 +6,10 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action;
 
-import org.apache.struts.action.*;
+import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
@@ -14,7 +17,6 @@ import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
-import uk.ac.ebi.intact.model.Xref;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -121,7 +123,6 @@ public class XrefDispatchAction extends AbstractEditorAction {
 
         // The xref we are about to delete.
         XreferenceBean xb = editorForm.getSelectedXref();
-        System.out.println("in delete method XrefDispatchAction: " + xb.getPrimaryId());
 
         // The current view of the edit session.
         AbstractEditViewBean view = getIntactUser(request).getView();
@@ -171,14 +172,8 @@ public class XrefDispatchAction extends AbstractEditorAction {
                 return mapping.getInputForward();
             }
         }
-        // The current view of the edit session.
-        AbstractEditViewBean view = user.getView();
-
-        // Add this 'updated' as a new xref.
-        XreferenceBean xbup = new XreferenceBean(xb.getXref(user), xb.getKey());
-
         // Save the bean in the view.
-        view.saveXref(xb, xbup);
+        user.getView().saveXref(xb);
 
         // Back to the view mode again.
         xb.setEditState(AbstractEditBean.VIEW);
