@@ -12,29 +12,28 @@ public class Edge extends BasicGraph implements EdgeI {
 
     ///////////////////////////////////////
     // attributes
-    private NodeI node1;
-    private NodeI node2;
+    private BasicGraphI node1;
+    private BasicGraphI node2;
     private Component Component1;
     private Component Component2;
 
     ///////////////////////////////////////
     // access methods for attributes
-    public NodeI getNode1() {
+    public BasicGraphI getNode1() {
         return node1;
     }
 
-    public void setNode1(NodeI node1) {
+    public void setNode1(BasicGraphI node1) {
         this.node1 = node1;
     }
 
-    public NodeI getNode2() {
+    public BasicGraphI getNode2() {
         return node2;
     }
 
-    public void setNode2(NodeI node2) {
+    public void setNode2(BasicGraphI node2) {
         this.node2 = node2;
     }
-
 
     public Component getComponent1() {
         return Component1;

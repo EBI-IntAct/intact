@@ -14,13 +14,13 @@ import java.util.Map;
 
 public interface EdgeI extends BasicGraphI {
 
-    public void setNode1(NodeI aNode);
+    public void setNode1(BasicGraphI aNode);
 
-    public NodeI getNode1();
+    public BasicGraphI getNode1();
 
-    public void setNode2(NodeI aNode);
+    public void setNode2(BasicGraphI aNode);
 
-    public NodeI getNode2();
+    public BasicGraphI getNode2();
 
     public void setComponent1(Component aComponent);
 

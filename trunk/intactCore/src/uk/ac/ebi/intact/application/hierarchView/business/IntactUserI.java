@@ -89,6 +89,9 @@ public interface IntactUserI
      * Set the default value of user's data
      */
     public void init ();
+    
+    public void setMinePath(String path);
+    public String getMinePath();
 
 
     /**
@@ -119,7 +122,7 @@ public interface IntactUserI
                                         int graphDepth,
                                         Collection experiments,
                                         int complexExpansion) throws IntactException ;
-
+    
     /**
      * Clear all highlight options.
      */

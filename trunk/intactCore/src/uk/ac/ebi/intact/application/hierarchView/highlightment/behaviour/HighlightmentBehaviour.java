@@ -5,13 +5,15 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.highlightment.behaviour;
 
-import org.apache.log4j.Logger;
-import uk.ac.ebi.intact.application.hierarchView.business.Constants;
-import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
-import uk.ac.ebi.intact.simpleGraph.Node;
-
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+
+import uk.ac.ebi.intact.application.hierarchView.business.Constants;
+import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
+import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
 
 
 /**
@@ -70,7 +72,7 @@ public abstract class HighlightmentBehaviour {
      *
      * @param aProtein the node on which we want to apply the behaviour
      */
-    abstract public void applyBehaviour (Node aProtein);
+    abstract public void applyBehaviour (BasicGraphI aProtein);
 
     /**
      * Allow to apply a modification on the collection of protein to highlight.
@@ -101,15 +103,8 @@ public abstract class HighlightmentBehaviour {
         if (null != proteins) {
             Iterator iterator = proteins.iterator();
             while (iterator.hasNext()) {
-                Node protein = (Node) iterator.next();
-                applyBehaviour (protein);
+                applyBehaviour ((BasicGraphI) iterator.next());
             }
         } // if
     }
 }
-
-
-
-
-
-

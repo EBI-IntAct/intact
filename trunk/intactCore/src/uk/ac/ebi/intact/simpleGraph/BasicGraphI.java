@@ -21,6 +21,8 @@ public interface BasicGraphI extends Map{
     public String getLabel();
 
     public void setLabel(String aLabel);
+    
+    public String getAc();
 
 }
 

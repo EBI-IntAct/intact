@@ -7,6 +7,7 @@ package uk.ac.ebi.intact.application.hierarchView.highlightment.behaviour;
 
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
+import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
 import uk.ac.ebi.intact.simpleGraph.Node;
 
 import java.util.ArrayList;
@@ -52,8 +53,8 @@ public class VisibleHighlightmentBehaviour
      *
      * @param aProtein the node on which we want to apply the behaviour
      */
-    public void applyBehaviour (Node aProtein) {
-        aProtein.put(Constants.ATTRIBUTE_VISIBLE, new Boolean (false));
+    public void applyBehaviour (BasicGraphI aProtein) {
+        aProtein.put(Constants.ATTRIBUTE_VISIBLE, Boolean.FALSE);
     }
 }
 
