@@ -29,7 +29,7 @@ public class ProteinImpl extends InteractorImpl implements Protein, Editable {
      * As the maximum size of database objects is limited, the sequence is represented as
      * an array of strings of maximum length MAX_SEQUENCE_LENGTH.
      */
-    private static final int MAX_SEQUENCE_LENGTH = 1000;
+    protected static final int MAX_SEQUENCE_LENGTH = 1000;
 
 
 
@@ -38,7 +38,7 @@ public class ProteinImpl extends InteractorImpl implements Protein, Editable {
 
     //attributes used for mapping BasicObjects - project synchron
     // TODO: should be move out of the model.
-    private String  cvProteinFormAc;
+    private String cvProteinFormAc;
 
     /**
      * TODO comments
@@ -82,6 +82,7 @@ public class ProteinImpl extends InteractorImpl implements Protein, Editable {
      * This constructor should <b>not</b> be used as it could
      * result in objects with invalid state. It is here for object mapping
      * purposes only and if possible will be made private.
+     *
      * @deprecated Use the full constructor instead
      */
     private ProteinImpl() {
@@ -89,17 +90,19 @@ public class ProteinImpl extends InteractorImpl implements Protein, Editable {
         //super call sets creation time data
         super();
     }
+
     /**
      * Creates a valid Protein instance. A valid Protein must have at least an onwer, a
      * short label to refer to it and a biological source specified. A side-effect of this constructor is to
      * set the <code>created</code> and <code>updated</code> fields of the instance
      * to the current time.
-     * @param owner The 'owner' of the Protein (what does this mean in real terms??)
-     * @param source The biological source of the Protein observation
+     *
+     * @param owner      The 'owner' of the Protein (what does this mean in real terms??)
+     * @param source     The biological source of the Protein observation
      * @param shortLabel A memorable label used to refer to the Protein instance
-     * @exception NullPointerException thrown if any parameters are null.
+     * @throws NullPointerException thrown if any parameters are null.
      */
-    public ProteinImpl(Institution owner, BioSource source, String shortLabel) {
+    public ProteinImpl( Institution owner, BioSource source, String shortLabel ) {
 
         //TODO Q: what about crc64, fullName, formOf - they are all indexed...
         //ALSO..A Protein can have an interaction type IF it is an Interactor,
@@ -107,9 +110,9 @@ public class ProteinImpl extends InteractorImpl implements Protein, Editable {
         //match with the classes - Interaction has a type, not Interactor...
 
         //super call sets up a valid AnnotatedObject (should an Interactor be better defined?)
-        super(shortLabel, owner);
-        if(source == null) throw new NullPointerException("Can't create a valid Protein without a BioSource");
-        setBioSource(source);
+        super( shortLabel, owner );
+        if( source == null ) throw new NullPointerException( "Can't create a valid Protein without a BioSource" );
+        setBioSource( source );
     }
 
 
@@ -118,7 +121,7 @@ public class ProteinImpl extends InteractorImpl implements Protein, Editable {
 
     public String getSequence() {
 
-        if ((null == sequenceChunks) || 0 == (sequenceChunks.size() )) {
+        if( ( null == sequenceChunks ) || 0 == ( sequenceChunks.size() ) ) {
             return null;
         }
 
@@ -126,9 +129,9 @@ public class ProteinImpl extends InteractorImpl implements Protein, Editable {
         // The correct ordering is done during retrieval from the database.
         // It relies on the OJB setting (mapping)
         StringBuffer sequence = new StringBuffer();
-        for (Iterator iterator = sequenceChunks.iterator(); iterator.hasNext();) {
+        for( Iterator iterator = sequenceChunks.iterator(); iterator.hasNext(); ) {
             SequenceChunk sequenceChunk = (SequenceChunk) iterator.next();
-            sequence.append(sequenceChunk.getSequenceChunk());
+            sequence.append( sequenceChunk.getSequenceChunk() );
         }
 
         return sequence.toString();
@@ -137,14 +140,12 @@ public class ProteinImpl extends InteractorImpl implements Protein, Editable {
 
     // TODO finish it
     /**
-     *
-     *
      * @param helper
      * @param aSequence
      * @param crc64
      * @throws IntactException
      */
-    public void setSequence(IntactHelper helper, String aSequence, String crc64) throws IntactException {
+    public void setSequence( IntactHelper helper, String aSequence, String crc64 ) throws IntactException {
     }
 
 
@@ -156,19 +157,20 @@ public class ProteinImpl extends InteractorImpl implements Protein, Editable {
      * @param helper
      * @param aSequence the sequence to update in the protein
      * @throws uk.ac.ebi.intact.business.IntactException
+     *
      */
-    public void setSequence(IntactHelper helper, String aSequence) throws IntactException {
+    public void setSequence( IntactHelper helper, String aSequence ) throws IntactException {
 
-        if (null == aSequence) {
+        if( null == aSequence ) {
             return;
         }
 
-        if (null == getAc()) {
-            throw new IntactException ("The object AC must be set before setting the sequence.");
+        if( null == getAc() ) {
+            throw new IntactException( "The object AC must be set before setting the sequence." );
         }
 
         // Save work if the new sequence is identical to the old one.
-        if (aSequence.equals(getSequence())) {
+        if( aSequence.equals( getSequence() ) ) {
             return;
         }
 
@@ -177,56 +179,54 @@ public class ProteinImpl extends InteractorImpl implements Protein, Editable {
         String chunk = null;
 
         // All old data are kept, we try to recycle as much chunk as possible
-        if (sequenceChunks == null) {
+        if( sequenceChunks == null ) {
 
             sequenceChunks = new ArrayList();
-        } else if (false == sequenceChunks.isEmpty()) {
+        } else if( false == sequenceChunks.isEmpty() ) {
             // There is existing chunk ... prepare them for recycling.
-            chunkPool = new ArrayList (sequenceChunks.size());
-            chunkPool.addAll (sequenceChunks);
+            chunkPool = new ArrayList( sequenceChunks.size() );
+            chunkPool.addAll( sequenceChunks );
             int count = chunkPool.size();
 
             // clean chunk to recycle
-            for (int i = 0; i<count; i++) {
-                s = (SequenceChunk) chunkPool.get(i);
-                removeSequenceChunk(s);
+            for( int i = 0; i < count; i++ ) {
+                s = (SequenceChunk) chunkPool.get( i );
+                removeSequenceChunk( s );
             }
         }
 
         // Note the use of integer operations
         int chunkCount = aSequence.length() / MAX_SEQUENCE_LENGTH;
-        if (aSequence.length() % MAX_SEQUENCE_LENGTH > 0) {
+        if( aSequence.length() % MAX_SEQUENCE_LENGTH > 0 ) {
             chunkCount++;
         }
 
-        for (int i = 0; i < chunkCount; i++) {
+        for( int i = 0; i < chunkCount; i++ ) {
             chunk = aSequence.substring( i * MAX_SEQUENCE_LENGTH,
-                                         Math.min( (i+1) * MAX_SEQUENCE_LENGTH,
-                                                    aSequence.length()
-                                                 )
-                                       );
+                                         Math.min( ( i + 1 ) * MAX_SEQUENCE_LENGTH,
+                                                   aSequence.length() ) );
 
-            if (chunkPool != null && chunkPool.size() > 0) {
+            if( chunkPool != null && chunkPool.size() > 0 ) {
                 // recycle chunk
-                s = (SequenceChunk) chunkPool.remove (0);
-                s.setSequenceChunk(chunk);
-                s.setSequenceIndex(i);
-                addSequenceChunk(s);
+                s = (SequenceChunk) chunkPool.remove( 0 );
+                s.setSequenceChunk( chunk );
+                s.setSequenceIndex( i );
+                addSequenceChunk( s );
 
-                helper.update(s);
+                helper.update( s );
             } else {
                 // create new chunk
-                s = new SequenceChunk(i, chunk);
-                addSequenceChunk(s);
+                s = new SequenceChunk( i, chunk );
+                addSequenceChunk( s );
 
-                helper.create(s);
+                helper.create( s );
             }
         }
 
         // Delete non recyclable chunk
-        while (chunkPool != null && chunkPool.size() > 0) {
-            s = (SequenceChunk) chunkPool.remove (0);
-            helper.delete(s);
+        while( chunkPool != null && chunkPool.size() > 0 ) {
+            s = (SequenceChunk) chunkPool.remove( 0 );
+            helper.delete( s );
         }
     }
 
@@ -234,7 +234,8 @@ public class ProteinImpl extends InteractorImpl implements Protein, Editable {
     public String getCrc64() {
         return crc64;
     }
-    public void setCrc64(String crc64) {
+
+    public void setCrc64( String crc64 ) {
         this.crc64 = crc64;
     }
 
@@ -245,77 +246,83 @@ public class ProteinImpl extends InteractorImpl implements Protein, Editable {
         return formOf;
     }
 
-    public void setFormOf(Protein protein) {
+    public void setFormOf( Protein protein ) {
         this.formOf = protein;
     }
+
     public CvProteinForm getCvProteinForm() {
         return cvProteinForm;
     }
 
-    public void setCvProteinForm(CvProteinForm cvProteinForm) {
+    public void setCvProteinForm( CvProteinForm cvProteinForm ) {
         this.cvProteinForm = cvProteinForm;
     }
 
-    public void setModifications(Collection someModification) {
+    public void setModifications( Collection someModification ) {
         this.modifications = someModification;
     }
+
     public Collection getModifications() {
         return modifications;
     }
 
-    private void addSequenceChunk(SequenceChunk sequenceChunk) {
-        if (! this.sequenceChunks.contains(sequenceChunk)) {
-            this.sequenceChunks.add(sequenceChunk);
-            sequenceChunk.setParentAc(this.getAc());
+    protected void addSequenceChunk( SequenceChunk sequenceChunk ) {
+        if( !this.sequenceChunks.contains( sequenceChunk ) ) {
+            this.sequenceChunks.add( sequenceChunk );
+            sequenceChunk.setParentAc( this.getAc() );
         }
     }
-    private void removeSequenceChunk (SequenceChunk sequenceChunk) {
-        boolean removed = this.sequenceChunks.remove(sequenceChunk);
-        if (removed) sequenceChunk.setParentAc(null);
+
+    protected void removeSequenceChunk( SequenceChunk sequenceChunk ) {
+        boolean removed = this.sequenceChunks.remove( sequenceChunk );
+        if( removed ) sequenceChunk.setParentAc( null );
     }
 
 
     //attributes used for mapping BasicObjects - project synchron
     // TODO: should be move out of the model.
-    public String  getCvProteinFormAc() {
+    public String getCvProteinFormAc() {
         return cvProteinFormAc;
     }
-    public void setCvProteinFormAc(String cvProteinFormAc) {
+
+    public void setCvProteinFormAc( String cvProteinFormAc ) {
         this.cvProteinFormAc = cvProteinFormAc;
     }
+
     public String getFormOfAc() {
         return this.formOfAc;
     }
-    public void setFormOfAc(String ac) {
+
+    public void setFormOfAc( String ac ) {
         this.formOfAc = ac;
     }
 
     /**
      * Equality for Proteins is currently based on equality for
      * <code>Interactors</code>, the sequence and the crc64 checksum.
-     * @see uk.ac.ebi.intact.model.InteractorImpl
+     *
      * @param o The object to check
      * @return true if the parameter equals this object, false otherwise
+     * @see uk.ac.ebi.intact.model.InteractorImpl
      */
-    public boolean equals (Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Protein)) return false;
-        if (!super.equals(o)) return false;
+    public boolean equals( Object o ) {
+        if( this == o ) return true;
+        if( !( o instanceof Protein ) ) return false;
+        if( !super.equals( o ) ) return false;
 
         final Protein protein = (Protein) o;
 
         // TODO do we need to check sequence and CRC64
-        if(getSequence() != null) {
-            if (!getSequence().equals(protein.getSequence())) return false;
-        }
-        else {
-            if (protein.getSequence() != null) return false;
+        if( getSequence() != null ) {
+            if( !getSequence().equals( protein.getSequence() ) ) return false;
+        } else {
+            if( protein.getSequence() != null ) return false;
         }
 
-        if(crc64 != null) {
-            if (!crc64.equals(protein.getCrc64())) return false;
-        }
-        else return protein.getCrc64() == null;
+        if( crc64 != null ) {
+            if( !crc64.equals( protein.getCrc64() ) ) return false;
+        } else
+            return protein.getCrc64() == null;
 
         return true;
     }
@@ -326,13 +333,12 @@ public class ProteinImpl extends InteractorImpl implements Protein, Editable {
      * The other way round is NOT true.
      * Unless it could break consistancy when storing object in a hash-based
      * collection such as HashMap...
-     *
      */
-    public int hashCode () {
+    public int hashCode() {
 
         int code = super.hashCode();
-        if (getSequence() != null) code = code * 29 + getSequence().hashCode();
-        if (crc64 != null) code = code * 29 + crc64.hashCode();
+        if( getSequence() != null ) code = code * 29 + getSequence().hashCode();
+        if( crc64 != null ) code = code * 29 + crc64.hashCode();
 
         return code;
     }
