@@ -10,12 +10,6 @@
         Prediction application
     </description>
 
-    <!-- Where to find repository file. -->
-    <context-param>
-        <param-name>mappingfile</param-name>
-        <param-value>/config/repository.xml</param-value>
-    </context-param>
-
     <!--  Class name of the data source object to be used    -->
     <context-param>
         <param-name>datasource</param-name>
