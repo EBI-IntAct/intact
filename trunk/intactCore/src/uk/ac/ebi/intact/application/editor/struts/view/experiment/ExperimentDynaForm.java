@@ -40,15 +40,15 @@ public class ExperimentDynaForm extends DynaValidatorForm {
         // Must select from the drop down list.
         if (organism.equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
             errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.biosrc.list"));
+                    new ActionError("error.exp.biosrc"));
         }
         else if (interaction.equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
             errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.inter.list"));
+                    new ActionError("error.exp.inter"));
         }
         else if (identification.equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
             errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.ident.list"));
+                    new ActionError("error.exp.ident"));
         }
         return errors;
     }

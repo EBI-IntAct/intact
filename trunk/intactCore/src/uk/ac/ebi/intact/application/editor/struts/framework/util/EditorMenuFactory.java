@@ -6,14 +6,14 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.framework.util;
 
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
+import uk.ac.ebi.intact.model.*;
 
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The menu factory to generate various menus.
@@ -24,11 +24,6 @@ import java.util.regex.Matcher;
 public class EditorMenuFactory {
 
     // Static data
-
-    /**
-     * An empty list only contains this item.
-     */
-//    public static final String EMPTY_LIST_ITEM = "---";
 
     /**
      * The list item to indicate a selection is required. This item is always

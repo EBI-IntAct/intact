@@ -108,13 +108,13 @@ public class ExperimentViewBean extends AbstractEditViewBean {
             SearchException {
         super.validate(user);
         if (myOrganism == null) {
-            throw new ExperimentException("error.exp.bio.validation");
+            throw new ExperimentException("error.exp.biosrc");
         }
         else if (myInter == null) {
-            throw new ExperimentException("error.exp.cvint.validation");
+            throw new ExperimentException("error.exp.inter");
         }
         else if (myIdent == null) {
-            throw new ExperimentException("error.exp.ident.validation");
+            throw new ExperimentException("error.exp.ident");
         }
     }
 
