@@ -93,6 +93,7 @@ public class DetailsViewBean extends AbstractViewBean
         ex.setAc(experiment.getAc());
         ex.setAnnotation( experiment.getAnnotation() );
         ex.setCurator( experiment.getCurator() );
+        ex.setCvInteraction( experiment.getCvInteraction() );
         ex.setCvIdentification( experiment.getCvIdentification() );
         ex.setEvidence( experiment.getEvidence() );
         ex.setFullName( experiment.getFullName() );
@@ -141,6 +142,6 @@ public class DetailsViewBean extends AbstractViewBean
 
     // Just honouring the contract.
     public String getHelpSection() {
-        return "";
+        return "interaction.details.view";
     }
 }
