@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.business.IntactException;
 
 import java.util.Collection;
 import java.util.Date;
+import java.io.Serializable;
 
 /**
  * This interface provides methods specific to a user.
@@ -20,7 +21,7 @@ import java.util.Date;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public interface IntactUserIF {
+public interface IntactUserIF extends Serializable {
 
     /**
      * The name of the topic list.
