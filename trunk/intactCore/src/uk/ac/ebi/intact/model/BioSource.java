@@ -136,6 +136,29 @@ public class BioSource extends AnnotatedObject implements Editable {
     public void setCvDevelopmentalStageAc(String ac) {
         this.cvDevelopmentalStageAc = ac;
     }
+
+
+    /**
+     * Currently the equality rely only on the taxId.
+     */
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BioSource)) return false;
+        if (!super.equals(o)) return false;
+
+        final BioSource bioSource = (BioSource) o;
+
+        if (taxId != null ? !taxId.equals(bioSource.taxId) : bioSource.taxId != null) return false;
+
+        return true;
+    }
+
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 29 * result + (taxId != null ? taxId.hashCode() : 0);
+        return result;
+    }
+
 } // end BioSource
 
 
