@@ -27,7 +27,7 @@ import java.util.Vector;
 /**
  * Purpose :
  * -------
- *            This class allows to tranform a graph to SVG picture (XML content)
+ *            This class allows to tranform a graph to SVG DOM (XML content)
  * 
  * Note :
  * ----
@@ -60,6 +60,13 @@ public class GraphToSVG
     private final static String DEFAULT_COLOR_NODE_DEFAULT = DEFAULT_COLOR_NODE_DEFAULT_RED + "," +
             DEFAULT_COLOR_NODE_DEFAULT_GREEN + "," +
             DEFAULT_COLOR_NODE_DEFAULT_BLUE;
+
+    private final static int DEFAULT_COLOR_EDGE_DEFAULT_RED = 75;
+    private final static int DEFAULT_COLOR_EDGE_DEFAULT_GREEN = 158;
+    private final static int DEFAULT_COLOR_EDGE_DEFAULT_BLUE = 179;
+    private final static String DEFAULT_COLOR_EDGE_DEFAULT = DEFAULT_COLOR_EDGE_DEFAULT_RED + "," +
+            DEFAULT_COLOR_EDGE_DEFAULT_GREEN + "," +
+            DEFAULT_COLOR_EDGE_DEFAULT_BLUE;
 
     private final static String DEFAULT_SHAPE_STATE     = "disable";
     private final static String DEFAULT_BORDER_STATE    = "enable";
@@ -153,7 +160,8 @@ public class GraphToSVG
     private Properties properties;
 
     private Color  backgroundColor;
-    private Color nodeDefaultColor;
+    private Color  nodeDefaultColor;
+    private Color  edgeDefaultColor;
     private Color  borderColor;
     private String borderEnable;
 
@@ -204,8 +212,9 @@ public class GraphToSVG
 
 
     /**
-     * Compute the size of the final image according to proteins data (coordinates, size)
+     * Compute the size of the image according to proteins data (coordinates, size).
      *
+     * @param in the interaction network we build the SVG DOM  from
      */
     private void updateProteinData (InteractionNetwork in) {
 
@@ -218,8 +227,6 @@ public class GraphToSVG
         SVGDocument doc = (SVGDocument)impl.createDocument(svgNS, "svg", null);
 
         SVGGraphics2D g = new SVGGraphics2D(doc);
-
-
 
 
         g.setFont (fontLabel);
@@ -296,6 +303,7 @@ public class GraphToSVG
         String stringBgColor     = null;
         String stringBorderColor = null;
         String stringNodeColorDefault = null;
+        String stringEdgeColorDefault = null;
 
         String border       = null;
         String xSize        = null;
@@ -328,6 +336,7 @@ public class GraphToSVG
             stringBgColor             = properties.getProperty ("hierarchView.image.color.default.background");
             stringBorderColor         = properties.getProperty ("hierarchView.image.color.default.border");
             stringNodeColorDefault    = properties.getProperty ("hierarchView.image.color.default.node");
+            stringEdgeColorDefault    = properties.getProperty ("hierarchView.image.color.default.edge");
             this.borderEnable         = properties.getProperty ("hierarchView.image.border");
             border                    = properties.getProperty ("hierarchView.image.size.default.border");
             xSize                     = properties.getProperty ("hierarchView.image.size.default.image.length");
@@ -364,6 +373,15 @@ public class GraphToSVG
                 DEFAULT_COLOR_NODE_DEFAULT_RED,
                 DEFAULT_COLOR_NODE_DEFAULT_GREEN,
                 DEFAULT_COLOR_NODE_DEFAULT_BLUE);
+
+        if (null == stringEdgeColorDefault) {
+            stringEdgeColorDefault = DEFAULT_COLOR_EDGE_DEFAULT;
+        }
+
+        this.edgeDefaultColor = Utilities.parseColor (stringEdgeColorDefault,
+                DEFAULT_COLOR_EDGE_DEFAULT_RED,
+                DEFAULT_COLOR_EDGE_DEFAULT_GREEN,
+                DEFAULT_COLOR_EDGE_DEFAULT_BLUE);
 
 
 
@@ -544,8 +562,7 @@ public class GraphToSVG
      *
      * @return the new coordinate
      */
-    private float newCoordinateNode (float old, float min, float length, float rate)
-    {
+    private float newCoordinateNode (float old, float min, float length, float rate) {
         return (old - min) / rate - length/2 + borderSize;
     }
 
@@ -567,6 +584,7 @@ public class GraphToSVG
 
         ImageDimension dimension = graph.getImageDimension();
 
+        // Convert coordinates from Tulip space to hierarchView space
         float x1 = newCoordinateNode (proteinX,
                                       dimension.xmin(),
                                       proteinLength ,
@@ -591,18 +609,18 @@ public class GraphToSVG
         } else {
             // create a transparent color to allow to see edges
             Color bg = new Color ( this.backgroundColor.getRed (),
-                    this.backgroundColor.getGreen (),
-                    this.backgroundColor.getBlue (),
-                    180); // opacity : 0=transparent, 255=opaque
+                                   this.backgroundColor.getGreen (),
+                                   this.backgroundColor.getBlue (),
+                                   180); // opacity : 0=transparent, 255=opaque
 
             // dont display the node but clear edges to display label
             g.setColor(bg);
         }
 
         g.fillOval ((int) x1,
-                (int) y1,
-                (int) proteinLength,
-                (int) proteinHeight);
+                    (int) y1,
+                    (int) proteinLength,
+                    (int) proteinHeight);
 
         // In anycase turn the shape antialiasing off.
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -645,9 +663,6 @@ public class GraphToSVG
 
         ImageDimension dimension = graph.getImageDimension();
 
-
-
-
         // proteinRight
         proteinR           = (uk.ac.ebi.intact.simpleGraph.Node) interaction.getNode1();
         proteinRx          = ((Float) proteinR.get(Constants.ATTRIBUTE_COORDINATE_X)).floatValue();
@@ -684,37 +699,39 @@ public class GraphToSVG
         }
 
         // These color are different ?
-        boolean applyGradient = !(proteinRcolorNode.equals ( proteinLcolorNode ));
-        Paint defaultGradient = null;
-
-        if (true == applyGradient) {
+//        boolean applyGradient = !(proteinRcolorNode.equals ( proteinLcolorNode ));
+//        Paint defaultGradient = null;
+//
+//        if (true == applyGradient) {
 //       // Create a non-cyclic gradient
-//       GradientPaint gradient = new GradientPaint(xline1, yline1, proteinRcolorNode, 
+//       GradientPaint gradient = new GradientPaint(xline1, yline1, proteinRcolorNode,
 // 						 xline2, yline2, proteinLcolorNode);
 //       defaultGradient = g.getPaint();
 //       g.setPaint(gradient);
+//
+//            if (nodeDefaultColor == proteinLcolorNode) g.setColor (proteinRcolorNode);
+//            else g.setColor (proteinLcolorNode);
+//
+//        } else {
+//            g.setColor (proteinRcolorNode);
+//        }
 
-            if (nodeDefaultColor == proteinLcolorNode) g.setColor (proteinRcolorNode);
-            else g.setColor (proteinLcolorNode);
-
-        } else {
-            g.setColor (proteinRcolorNode);
-        }
+        g.setColor (this.edgeDefaultColor);
 
         // draw the edge
         g.drawLine((int)xline1,
-                (int)yline1,
-                (int)xline2,
-                (int)yline2);
+                   (int)yline1,
+                   (int)xline2,
+                   (int)yline2);
 
         // In anycase turn the antialiasing off.
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_OFF);
 
-        if (true == applyGradient) {
-            // set the default gradient
-            g.setPaint(defaultGradient);
-        }
+//        if (true == applyGradient) {
+//            // set the default gradient
+//            g.setPaint(defaultGradient);
+//        }
 
     }// drawEdge
 
