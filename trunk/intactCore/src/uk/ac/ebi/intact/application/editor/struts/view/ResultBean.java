@@ -56,8 +56,7 @@ public class ResultBean implements Serializable {
         myAc = annobj.getAc();
         myShortLabel = annobj.getShortLabel();
         myFullName = annobj.getFullName();
-//        mySearchClass = annobj.getClass().getName();
-        mySearchClass = IntactHelper.getRealClassName(annobj).getName();
+        mySearchClass = IntactHelper.getDisplayableClassName(annobj);
     }
 
     /**
@@ -85,22 +84,11 @@ public class ResultBean implements Serializable {
     }
 
     /**
-     * The class name of the wrapped object.
-     * @return he class name of the wrapped object as a string object.
-     */
-    public String getClassName() {
-        return mySearchClass;
-    }
-
-    /**
      * @return the link for the result page; clicking on this link, the
      * user will be taken into the edit page.
      */
     public String getSearchLink() {
-        String className = getClassName();
-        int lastPos = className.lastIndexOf('.');
-        String type = className.substring(lastPos + 1);
-        return "<a href=\"" + "javascript:show('" + type + "', " + "'"
+        return "<a href=\"" + "javascript:show('" + mySearchClass + "', " + "'"
                 + getShortLabel() + "')\"" + ">" + getAc() + "</a>";
     }
 
@@ -109,10 +97,8 @@ public class ResultBean implements Serializable {
      * user will be taken into the edit page.
      */
     public String getEditorLink() {
-        String className = getClassName();
-        int lastPos = className.lastIndexOf('.');
         return "<a href=result?ac=" + getAc() + "&searchClass="
-                + className.substring(lastPos + 1) + ">" + getShortLabel() + "</a>";
+                + mySearchClass + ">" + getShortLabel() + "</a>";
     }
 
     /**
