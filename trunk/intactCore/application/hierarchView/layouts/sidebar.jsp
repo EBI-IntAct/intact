@@ -48,5 +48,4 @@
 
 <%-- Separation line before the links --%>
 
-<br>
 <hr>
