@@ -1,3 +1,5 @@
+<%@ page import="uk.ac.ebi.intact.application.hierarchView.business.IntactUserI,
+                 uk.ac.ebi.intact.application.hierarchView.business.Constants"%>
 <%@ page language="java" %>
 
 <!--
@@ -24,7 +26,6 @@
                          has been generated and stored in the session.
                      -->
                    <hierarchView:displayInteractionNetwork/>
-
              </td>
       </tr>
 

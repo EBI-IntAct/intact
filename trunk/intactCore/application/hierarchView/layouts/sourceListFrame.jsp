@@ -2,12 +2,16 @@
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-tiles.tld" prefix="tiles"%>
 
-<%--
-    Content of the sources list frame, it rely on the Tiles configuration.
-
-    Author: Samuel Kerrien (skerrien@ebi.ac.uk)
-    Version: $Id$
---%>
+<!--
+   - Copyright (c) 2002 The European Bioinformatics Institute, and others.
+   - All rights reserved. Please see the file LICENSE
+   - in the root directory of this distribution.
+   -
+   - Content of the sources list frame, it rely on the Tiles configuration.
+   -
+   - @author: Samuel Kerrien (skerrien@ebi.ac.uk)
+   - @version: $Id$
+-->
 
 <html:html>
 
@@ -26,7 +30,6 @@
           <tr>
                  <td width="40%" valign="top">
                        <!-- Top Right cell: Display the highligh tool title -->
-<%--                       <tiles:insert attribute="highlightTitle"/>--%>
                        <tiles:insert definition="highlightTitle"/>
 
                  </td>
@@ -35,7 +38,6 @@
           <tr>
                  <td width="40%" valign="top">
                      <!-- Bottom Right cell: Display the highligh tool -->
-<%--                     <tiles:insert attribute="highlight"/>--%>
                      <tiles:insert definition="highlight"/>
                  </td>
           </tr>
