@@ -29,8 +29,7 @@ public class UserDisplayWrapper extends TableDecorator {
             new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
 
     /**
-     * @return the owner for the current bean. "---" is returned if the current
-     * bean is not locked.
+     * @return the lock information
      */
     public String getLockData() {
         // The lock manager.
@@ -48,6 +47,9 @@ public class UserDisplayWrapper extends TableDecorator {
             LockManager.LockObject lock = (LockManager.LockObject) iter.next();
             sb.append(lock.getId() + " - ");
             sb.append(ourDateFormatter.format(lock.getLockDate()));
+            if (iter.hasNext()) {
+                sb.append("</br>");
+            }
         }
         return sb.toString();
     }
