@@ -95,7 +95,8 @@ public class EditorDispatchAction extends AbstractEditorDispatchAction {
             // Error with updating.
             ActionErrors errors = new ActionErrors();
             errors.add(AbstractEditorAction.EDITOR_ERROR,
-                    new ActionError("error.update", ie1.getNestedMessage()));
+                    new ActionError("error.update",
+                            ie1.getRootCause().getMessage()));
             saveErrors(request, errors);
             return mapping.findForward(EditorConstants.FORWARD_FAILURE);
         }
