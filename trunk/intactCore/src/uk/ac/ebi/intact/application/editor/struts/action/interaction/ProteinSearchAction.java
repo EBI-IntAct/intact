@@ -8,13 +8,9 @@ package uk.ac.ebi.intact.application.editor.struts.action.interaction;
 
 import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.util.UpdateProteinsI;
-import uk.ac.ebi.intact.util.UpdateProteins;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -61,34 +57,24 @@ public class ProteinSearchAction extends AbstractEditorAction {
         // The collection to hold proteins.
         Collection proteins;
 
-        try {
-            if (searchParam.equals("spAc")) {
-                proteins = user.getProteinsByXref(searchValue);
-                // Try importing Proteins via SRS
-                if (proteins.isEmpty()){
-                    proteins = user.getSPTRProteins(searchValue);
-                }
-            }
-            else {
-                proteins = user.search(Protein.class.getName(), searchParam,
-                        searchValue);
+        if (searchParam.equals("spAc")) {
+            proteins = user.getProteinsByXref(searchValue);
+            // Try importing Proteins via SRS
+            if (proteins.isEmpty()) {
+                proteins = user.getSPTRProteins(searchValue);
             }
         }
-        catch (SearchException se) {
-            ActionErrors errors = new ActionErrors();
-            errors.add("int.protein.search",
-                    new ActionError("error.search", se.getMessage()));
-            saveErrors(request, errors);
-            return mapping.getInputForward();
+        else {
+            proteins = user.search(Protein.class.getName(), searchParam,
+                    searchValue);
         }
         // Search found any results?
         if (proteins.isEmpty()) {
             ActionErrors errors = new ActionErrors();
-            errors.add("int.protein.search",
+            errors.add(ActionErrors.GLOBAL_ERROR,
                     new ActionError("error.int.protein.search.empty", searchParam));
             saveErrors(request, errors);
             return mapping.getInputForward();
-//            return new ActionForward(mapping.getInput());
         }
         // The number of Proteins retrieved from the search.
         int psize = proteins.size();
@@ -100,7 +86,6 @@ public class ProteinSearchAction extends AbstractEditorAction {
                     new ActionError("error.int.protein.search.many",
                             Integer.toString(psize), searchParam, "10"));
             saveErrors(request, errors);
-//            return new ActionForward(mapping.getInput());
             return mapping.getInputForward();
         }
         // Can safely cast it as we have the correct editor view bean.
@@ -109,6 +94,6 @@ public class ProteinSearchAction extends AbstractEditorAction {
         for (Iterator iter = proteins.iterator(); iter.hasNext();) {
             view.addProtein((Protein) iter.next());
         }
-        return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
+        return mapping.findForward(FORWARD_SUCCESS);
     }
 }
