@@ -818,4 +818,97 @@ END;
 /
 
 
+
+
+
+-- Create tables for GO Density :
+
+
+PROMPT Creating table "ia_goDens_binary"
+CREATE TABLE ia_goDens_binary
+(  bait VARCHAR2(10) NOT NULL 
+  ,prey VARCHAR2(10) NOT NULL 
+  ,goBait VARCHAR2(10) NOT NULL
+  ,goPrey VARCHAR2(10) NOT NULL
+  ,PRIMARY KEY (bait, prey, goBait, goPrey) USING INDEX TABLESPACE &&intactIndexTablespace
+)
+TABLESPACE &&intactMainTablespace
+PCTFREE    15
+/
+
+CREATE INDEX igoBaitkey ON ia_goDens_binary (goBait) TABLESPACE &&intactIndexTablespace
+/
+
+CREATE INDEX igoPreykey ON ia_goDens_binary (goPrey) TABLESPACE &&intactIndexTablespace
+/
+
+
+PROMPT Creating table "ia_goDens_GoDag"
+CREATE TABLE ia_goDens_GoDag ( 
+ parent VARCHAR2(10),  
+ child VARCHAR2(10),  
+ parentDepth INTEGER NOT NULL,  
+ childDepth INTEGER NOT NULL,  
+ PRIMARY KEY (parent, child) USING INDEX TABLESPACE &&intactIndexTablespace
+ ) 
+TABLESPACE &&intactMainTablespace
+PCTFREE    15
+/
+
+CREATE INDEX iGoParent ON ia_goDens_GoDag (parent) TABLESPACE &&intactIndexTablespace
+/
+
+CREATE INDEX iGoChild ON ia_goDens_GoDag (child) TABLESPACE &&intactIndexTablespace
+/
+
+
+
+
+PROMPT Creating table "ia_goDens_GoDagDenorm"
+CREATE TABLE ia_goDens_GoDagDenorm (
+ parent VARCHAR2(10),
+ child VARCHAR2(10), 
+ PRIMARY KEY (parent, child) USING INDEX TABLESPACE &&intactIndexTablespace
+)
+TABLESPACE &&intactMainTablespace
+PCTFREE    15
+/
+
+
+CREATE INDEX iGoParentDenorm ON ia_goDens_GoDagDenorm (parent) TABLESPACE &&intactIndexTablespace
+/
+
+
+PROMPT Creating table "ia_goDens_GoProt"
+CREATE TABLE ia_goDens_GoProt (
+ goid VARCHAR2(10), 
+ interactor VARCHAR2(10), 
+ PRIMARY KEY (goid, interactor) USING INDEX TABLESPACE &&intactIndexTablespace
+)
+TABLESPACE &&intactMainTablespace 
+PCTFREE    15
+/
+
+CREATE INDEX iGoId ON ia_goDens_GoProt (goid) TABLESPACE &&intactIndexTablespace
+/
+
+PROMPT Creating table "ia_goDens_density"
+CREATE TABLE ia_goDens_density ( 
+ goid1 VARCHAR2(10) NOT NULL,  
+ goid2 VARCHAR2(10) NOT NULL,  
+ pos_IA INTEGER NOT NULL,  
+ is_IA INTEGER NOT NULL,  
+ PRIMARY KEY (goid1, goid2) USING INDEX TABLESPACE &&intactIndexTablespace
+)
+TABLESPACE &&intactMainTablespace
+PCTFREE    15
+/
+
+CREATE INDEX igoId1 ON ia_goDens_density(goid1) TABLESPACE &&intactIndexTablespace
+/
+CREATE INDEX igoId2 ON ia_goDens_density(goid2) TABLESPACE &&intactIndexTablespace
+/
+
+
+
 set term on
