@@ -8,7 +8,7 @@ package uk.ac.ebi.intact.application.hierarchView.struts.taglibs;
 // intact
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
-import uk.ac.ebi.intact.application.hierarchView.business.IntactUserIF;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 
 import javax.servlet.http.HttpSession;
@@ -44,7 +44,7 @@ public class DisplayInteractionNetworkTag extends TagSupport {
         HttpSession session = pageContext.getSession();
 
         try {
-            IntactUserIF user = (IntactUserIF) session.getAttribute (Constants.USER_KEY);
+            IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
             ImageBean imageBean = user.getImageBean();
             String AC = user.getAC();
 

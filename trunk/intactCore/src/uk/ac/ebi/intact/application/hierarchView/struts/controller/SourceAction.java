@@ -12,7 +12,7 @@ import uk.ac.ebi.intact.application.hierarchView.highlightment.source.Highlightm
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
-import uk.ac.ebi.intact.application.hierarchView.business.IntactUserIF;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -59,7 +59,7 @@ public final class SourceAction extends IntactBaseAction {
         HttpSession session = super.getSession(request);
 
         // retreive user fron the session
-        IntactUserIF user = super.getIntactUser(session);
+        IntactUserI user = super.getIntactUser(session);
         if (null == user) {
             super.addError ("error.datasource.notCreated");
             super.saveErrors(request);

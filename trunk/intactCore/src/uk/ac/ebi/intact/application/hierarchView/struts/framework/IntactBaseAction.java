@@ -6,7 +6,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.hierarchView.struts.framework;
 
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
-import uk.ac.ebi.intact.application.hierarchView.business.IntactUserIF;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.business.image.GraphToSVG;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
@@ -47,9 +47,9 @@ public abstract class IntactBaseAction extends Action {
      * @return an instance of <code>IntactUserImpl</code> stored in
      * <code>session</code>
      */
-    protected IntactUserIF getIntactUser(HttpSession session)
+    protected IntactUserI getIntactUser(HttpSession session)
             throws SessionExpiredException {
-        IntactUserIF user = (IntactUserIF) session.getAttribute(Constants.USER_KEY);
+        IntactUserI user = (IntactUserI) session.getAttribute(Constants.USER_KEY);
 
         if (null == user) {
             logger.warn ("Session expired ... forward to error page.");
@@ -120,7 +120,7 @@ public abstract class IntactBaseAction extends Action {
 
         // As an error occured, remove the image data stored in the session
         HttpSession session = this.getSession(request);
-        IntactUserIF user = getIntactUser(session);
+        IntactUserI user = getIntactUser(session);
         user.setImageBean (null);
     }
 
@@ -160,7 +160,7 @@ public abstract class IntactBaseAction extends Action {
      * @param depth the search depth around the cetered protein
      * @param user where are saved produced data
      */
-    public void produceInteractionNetworkImage (String AC, String depth, IntactUserIF user) {
+    public void produceInteractionNetworkImage (String AC, String depth, IntactUserI user) {
 
         int depthInt = 0;
         InteractionNetwork in = null;

@@ -9,7 +9,7 @@ import org.w3c.dom.Document;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
-import uk.ac.ebi.intact.application.hierarchView.business.IntactUserIF;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ConvertSVG;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 
@@ -52,7 +52,7 @@ public class GenerateImage extends HttpServlet {
         try {
             // get the current user session
             HttpSession session = aRequest.getSession ();
-            IntactUserIF user = (IntactUserIF) session.getAttribute (Constants.USER_KEY);
+            IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
             ImageBean ib = user.getImageBean();
 
             if (null == ib) {
