@@ -8,6 +8,7 @@ rm -rf uk
 # Your service
 echo "compile your service..."
 export ROOT=../../../..
+
 javac ${ROOT}/src/uk/ac/ebi/intact/application/hierarchView/business/tulip/webService/*.java \
       -d ${ROOT}/classes
 
@@ -52,11 +53,17 @@ java org.apache.axis.wsdl.WSDL2Java -o . -d ${SESSION_TYPE} -p uk.ac.ebi.intact.
 echo "Copy in the src directory generated client source files"
 cp -r uk ${ROOT}/src
 
+# copy configuration file in the current directory
+cp $ROOT/jsp/hierarchView/WEB-INF/classes/config/WebService.properties .
 
 # create the jar file
 echo "create the service jar file"
-jar cvf tulipService.jar -C ${ROOT}/classes uk/ac/ebi/intact/application/hierarchView/business/tulip/webService
- 
+jar cvf tulipService.jar -C ${ROOT}/classes uk/ac/ebi/intact/application/hierarchView/business/tulip/webService \
+                                            WebService.properties
+
+# delete property file
+rm -f WebService.properties
+
 
 # copy the service on the tomcat server (Axis)
 echo "copy the service on the tomcat server (Axis)"

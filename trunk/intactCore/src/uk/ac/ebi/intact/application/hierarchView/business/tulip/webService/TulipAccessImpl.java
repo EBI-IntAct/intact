@@ -1,10 +1,14 @@
 package uk.ac.ebi.intact.application.hierarchView.business.tulip.webService;
 
+// JDK
+import java.util.Properties;
+
 // Web Service
 import org.apache.axis.*;
 import org.apache.axis.session.*;
 
 // File & Input/Output managment
+import java.io.InputStream;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -24,7 +28,7 @@ import java.util.StringTokenizer;
 
 /**
   * Purpose : <br>
-  * Allows the user to send a TLP file to Tulip and get back the coordinate of the nodes.
+  * Allows the user to send a TLP file to Tulip and get back the node's coordinate.
   *
   * @author Samuel KERRIEN (skerrien@ebi.ac.uk)
   */
@@ -37,14 +41,11 @@ public class TulipAccessImpl implements TulipAccess {
   /**************/
 
   /**
-   * Had to be moved in a property file
+   * Where is it possible to find the property file int which that class find its parameter
+   * such as the location of the console.
+   * Currently the property file is provided in the Jar file of the web service, int the root.
    */
-  private static String TULIP_BINARY_CLIENT_FILE  = "/scratch/tulipRemote/cli";
-  private static String TULIP_IP                  = "arafel.ebi.ac.uk";
-  private static String TULIP_PORT                = "2000";
-
-  private static String TULIP_BINARY_CONSOLE_FILE = "/scratch/tulipRemote/console";
-
+  private static String PROPERTY_FILE_LOCATION = "/WebService.properties";
 
 
   /**
@@ -102,6 +103,19 @@ public class TulipAccessImpl implements TulipAccess {
 
 
 
+  /************************
+   *  Instance variables  *
+   ************************/
+   
+  /**
+   * Where the console binary file is stored on the hard disk.
+   */
+  private String consoleLocation = null;
+
+
+
+
+
   /****************************************/
   /** Public methods over the web service */
   /****************************************/
@@ -113,6 +127,15 @@ public class TulipAccessImpl implements TulipAccess {
    * @return the computed tlp file content or <b>null</b> if an error occurs.
    */
   public ProteinCoordinate[] getComputedTlpContent ( String tlpContent, String optionMask ) {
+
+    // init the service
+    readProperties (PROPERTY_FILE_LOCATION);
+
+    if (null == consoleLocation) {
+      // send back a meaningful message (maybe via an Exception)
+      return null;
+    }
+
     // get a unique key
     String sessionKey = getUniqueIdentifier ();
 
@@ -146,6 +169,36 @@ public class TulipAccessImpl implements TulipAccess {
   } // computeTlpContent
 
 
+
+
+  /*********************/
+  /** Internal methods */
+  /*********************/
+
+
+  /**
+   * Read from the property file all needed properties
+   *
+   */
+  private void readProperties (String filename) {
+    Properties properties = null;
+
+    try {
+      // get the content of the property file
+      InputStream is = TulipAccessImpl.class.getResourceAsStream (filename);
+      if (is != null) {
+        properties = new Properties ();
+        properties.load (is);        
+      }
+    } catch (IOException ioe) {}
+
+    if (null != properties) {
+      // look for properties ...
+      this.consoleLocation = properties.getProperty ("webService.console.location");
+    } 
+  } // readProperties
+
+
   /**
    * get the line separator string.
    * It allows to use the same separator int the service and int the client
@@ -157,12 +210,6 @@ public class TulipAccessImpl implements TulipAccess {
     return System.getProperty ("line.separator");
   } // getLineSeparator
 
-
-
-
-  /*********************/
-  /** Internal methods */
-  /*********************/
 
   /** Purpose : <br>
     * Creates a pure identifier that is unique with respect to the host on which it is generated
@@ -243,14 +290,15 @@ public class TulipAccessImpl implements TulipAccess {
 
       /**
        * Use the console binary file to access Tulip library, indeed, 
-       * Tulip have to be installed on the same conputer
+       * Tulip have to be installed on the same conputer.
        */
 
-      Process process = runtime.exec (TULIP_BINARY_CONSOLE_FILE + " " +
+      Process process = runtime.exec (consoleLocation + " " +
 				      anInputFile + " " + 
 				      anOutputFile + " " +
 				      aMask);
 
+      // wait for the end of the tuip process, can be long if the TLP file is big.
       process.waitFor();
     } catch ( Exception e ) {
       // an error occurs during execution of the process
