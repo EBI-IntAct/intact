@@ -86,29 +86,34 @@ public class XrefAddAction extends IntactBaseAction {
             // Xref constructor
             assert false;
         }
-        // The current CV object we are editing.
-        CvObject cvobj = user.getCurrentEditObject();
-
-        // Add the xref to the current cv object.
-        cvobj.addXref(xref);
-
-        // Create the xref on the database.
-        try {
-            user.create(xref);
-        }
-        catch (IntactException ie) {
-            // Unable to create an annotation; no nested message provided.
-            super.addError("error.create", ie.getMessage());
-            super.saveErrors(request);
-            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
-        }
+//        // The current CV object we are editing.
+//        CvObject cvobj = user.getCurrentEditObject();
+//
+//        // Add the xref to the current cv object.
+//        cvobj.addXref(xref);
+//
+//        // Create the xref on the database.
+//        try {
+//            user.create(xref);
+//        }
+//        catch (IntactException ie) {
+//            // Unable to create an annotation; no nested message provided.
+//            super.addError("error.create", ie.getMessage());
+//            super.saveErrors(request);
+//            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+//        }
         // We need to update on the screen as well.
-        XreferenceBean bean = new XreferenceBean(xref, user.isActive());
+        XreferenceBean xbean = new XreferenceBean(xref);
+
+        // The new xrefs to add when submit is pressed.
+        Collection addbeans = (Collection) super.getSessionObject(request,
+            WebIntactConstants.XREFS_TO_ADD);
+        addbeans.add(xbean);
 
         // The annotation collection.
-        Collection beans = (Collection) super.getSessionObject(
-            request, WebIntactConstants.XREFS);
-        beans.add(bean);
+        Collection viewbeans = (Collection) super.getSessionObject(
+            request, WebIntactConstants.XREFS_TO_VIEW);
+        viewbeans.add(xbean);
 
         // Reset the form
         theForm.reset();
