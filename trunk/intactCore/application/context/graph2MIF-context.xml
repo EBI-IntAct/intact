@@ -1,0 +1,6 @@
+<!--
+      Template of the context configuration for graph2MIFWS
+      version : $Id$
+  -->
+
+<Context path="/intact/graph2mif" docBase="[WAR.FILE.NAME]" />
