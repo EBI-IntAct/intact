@@ -1,3 +1,8 @@
+/*
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
+in the root directory of this distribution.
+*/
 package uk.ac.ebi.intact.application.hierarchView.business.image;
 
 
@@ -11,55 +16,55 @@ package uk.ac.ebi.intact.application.hierarchView.business.image;
 import org.w3c.dom.Document;
 
 public class ImageBean  {
-  
-  /*************************************************** Properties */
 
-  /**
-   * Coded image.
-   */
-  private byte[] imageData;
+    /*************************************************** Properties */
 
-  /**
-   * Document
-   */
-  private Document document;
+    /**
+     * Coded image.
+     */
+    private byte[] imageData;
 
-  /**
-   * HTML MAP code.
-   */
-  private String mapCode;
+    /**
+     * Document
+     */
+    private Document document;
 
-  /*************************************************** Constructor */
+    /**
+     * HTML MAP code.
+     */
+    private String mapCode;
 
-  public ImageBean() {}
+    /*************************************************** Constructor */
 
-  /*************************************************** Setter and getter */
+    public ImageBean() {}
 
-  public void setImageData (byte[] someImageData) {
-    imageData = someImageData;
-  } // setImageData
+    /*************************************************** Setter and getter */
 
-  public byte[] getImageData () {
-    return imageData;
-  } // getImageData
+    public void setImageData (byte[] someImageData) {
+        imageData = someImageData;
+    } // setImageData
 
-public void setDocument (Document aDocument) {
-    document = aDocument;
-  } // setDocument
+    public byte[] getImageData () {
+        return imageData;
+    } // getImageData
 
-  public Document getDocument () {
-    return document;
-  } // getDocument
-  
-  public void setMapCode (String aMapCode) {
-    mapCode = aMapCode;
-  } // setMapCode
+    public void setDocument (Document aDocument) {
+        document = aDocument;
+    } // setDocument
 
-  public String getMapCode () {
-    return mapCode;
-  } // getMapCode
+    public Document getDocument () {
+        return document;
+    } // getDocument
+
+    public void setMapCode (String aMapCode) {
+        mapCode = aMapCode;
+    } // setMapCode
+
+    public String getMapCode () {
+        return mapCode;
+    } // getMapCode
 
 
-  
+
 } // ImageBean
 

@@ -3,7 +3,6 @@ Copyright (c) 2002 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
-
 package uk.ac.ebi.intact.application.hierarchView.business;
 
 import uk.ac.ebi.intact.business.IntactException;
@@ -15,7 +14,6 @@ import uk.ac.ebi.intact.persistence.DataSourceException;
 
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -35,7 +33,7 @@ import java.util.logging.Logger;
 public class IntactUser implements HttpSessionBindingListener {
 
     // LOGGER
-    static Logger logger = Logger.getLogger(IntactUser.class.getName());
+    static Logger logger = Logger.getLogger("IntactUser");
 
     private IntactHelper intactHelper;
 

@@ -1,3 +1,8 @@
+/*
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
+in the root directory of this distribution.
+*/
 package uk.ac.ebi.intact.application.hierarchView.business.image;
 
 import org.apache.batik.transcoder.TranscoderInput;
@@ -16,37 +21,37 @@ import java.io.OutputStream;
 
 public class PNGConvertSVG extends ConvertSVG {
 
-/**
- * Convert an object Document to a byte []
- *
- */
-  public byte[] convert(Document doc) throws Exception {
-   
-    PNGTranscoder t = new PNGTranscoder();
-    t.addTranscodingHint(PNGTranscoder.KEY_FORCE_TRANSPARENT_WHITE ,
-			 new Boolean(true));
+    /**
+     * Convert an object Document to a byte []
+     *
+     */
+    public byte[] convert(Document doc) throws Exception {
 
-    TranscoderInput input   = new TranscoderInput(doc);
-    OutputStream ostream    = new ByteArrayOutputStream();
-    TranscoderOutput output = new TranscoderOutput(ostream);
+        PNGTranscoder t = new PNGTranscoder();
+        t.addTranscodingHint(PNGTranscoder.KEY_FORCE_TRANSPARENT_WHITE ,
+                new Boolean(true));
 
-    t.transcode(input, output);
-    
-    ostream = output.getOutputStream();
-    ByteArrayOutputStream baostream = (ByteArrayOutputStream) ostream;
-    ostream.flush();
-    byte[] imageData = baostream.toByteArray();
+        TranscoderInput input   = new TranscoderInput(doc);
+        OutputStream ostream    = new ByteArrayOutputStream();
+        TranscoderOutput output = new TranscoderOutput(ostream);
 
-    ostream.close();
-    return imageData;
-  }
-  
-  /**
-   * Update the Mime type
-   *
-   */
-  public String getMimeType() {
-    return "image/png";
-  }
-  
+        t.transcode(input, output);
+
+        ostream = output.getOutputStream();
+        ByteArrayOutputStream baostream = (ByteArrayOutputStream) ostream;
+        ostream.flush();
+        byte[] imageData = baostream.toByteArray();
+
+        ostream.close();
+        return imageData;
+    }
+
+    /**
+     * Update the Mime type
+     *
+     */
+    public String getMimeType() {
+        return "image/png";
+    }
+
 } // PNGConvertSVG

@@ -3,7 +3,6 @@ Copyright (c) 2002 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
-
 package uk.ac.ebi.intact.application.hierarchView.struts.taglibs;
 
 // intact
@@ -18,7 +17,6 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.TagSupport;
-
 import java.util.logging.Logger;
 
 
@@ -89,7 +87,7 @@ public class InitTag extends TagSupport {
             }
             catch (DataSourceException de) {
                 // Unable to get a data source...can't proceed
-                 de.printStackTrace ();
+                de.printStackTrace ();
                 logger.severe(de.toString());
                 throw new JspException ("Unable to get a data source.");
             }
@@ -118,15 +116,15 @@ public class InitTag extends TagSupport {
                 (WebServiceManager) servletContext.getAttribute (Constants.WEB_SERVICE_MANAGER);
 
         if (null == webServiceManager) {
-                try {
-                    WebServiceManager WSmanager = new WebServiceManager ();
-                    WSmanager.deploy();
-                    logger.info ("Tulip web service deployed successfully");
-                    servletContext.setAttribute (Constants.WEB_SERVICE_MANAGER, WSmanager);
-                } catch (Exception e) {
-                    logger.info (e.getMessage() + "\n" + e.toString());
-                    throw new JspException ("Fatal error: init tag could not deploy the Tulip web service.");
-                }
+            try {
+                WebServiceManager WSmanager = new WebServiceManager ();
+                WSmanager.deploy();
+                logger.info ("Tulip web service deployed successfully");
+                servletContext.setAttribute (Constants.WEB_SERVICE_MANAGER, WSmanager);
+            } catch (Exception e) {
+                logger.info (e.getMessage() + "\n" + e.toString());
+                throw new JspException ("Fatal error: init tag could not deploy the Tulip web service.");
+            }
         } else {
             logger.info ("Web service already deployed ...");
         }

@@ -1,3 +1,8 @@
+/*
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
+in the root directory of this distribution.
+*/
 package uk.ac.ebi.intact.application.hierarchView.struts.view;
 
 
@@ -7,7 +12,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 
 /**
@@ -138,7 +142,7 @@ public final class VisualizeForm extends ActionForm {
         this.depth  = null;
         this.method = null;
         this.hasNoDepthLimit = false;
-     } // reset
+    } // reset
 
 
     /**
@@ -183,7 +187,7 @@ public final class VisualizeForm extends ActionForm {
         if ((method == null) || (method.length() < 1))
             errors.add("method", new ActionError("error.method.required"));
 
-        if (false == errors.empty()) {
+        if (false == errors.isEmpty()) {
             // delete properties of the bean, so can't be saved in the session.
             reset(mapping, request);
         }

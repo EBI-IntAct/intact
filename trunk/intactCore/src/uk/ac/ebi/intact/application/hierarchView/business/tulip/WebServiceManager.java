@@ -6,17 +6,16 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.hierarchView.business.tulip;
 
-import org.apache.axis.utils.Options;
 import org.apache.axis.client.AdminClient;
+import org.apache.axis.utils.Options;
+import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
+import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
 
-import javax.servlet.ServletContextListener;
 import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.logging.Logger;
-
-import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
-import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
 
 /**
  * Allows to deploy and undeploy the web service
