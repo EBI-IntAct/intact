@@ -338,18 +338,6 @@ public interface EditUserI extends IntactUserI, Serializable {
     public void removeFromCurrentExperiment(Experiment exp);
 
     /**
-     * Returns a list of currently edited/added interactions.
-     * @return a set consists currently edited/added interactions.
-     * An empty set is returned if there are no
-     * interactions added or edited during the current session.
-     *
-     * <pre>
-     * post: results->forall(obj: Object | obj.oclIsTypeOf(Interaction))
-     * </pre>
-     */
-    public Set getCurrentInteractions();
-
-    /**
      * Returns a list of currently edited/added experiments.
      * @return a set consists currently edited/added experiments.
      * An empty set is returned if there are no
@@ -360,6 +348,31 @@ public interface EditUserI extends IntactUserI, Serializable {
      * </pre>
      */
     public Set getCurrentExperiments();
+
+    /**
+     * Adds the interaction to the currently edited/added interaction list.
+     * @param intact the interaction to add to the list.
+     */
+    public void addToCurrentInteraction(Interaction intact);
+
+    /**
+     * Removes the current interaction from the currently edited/added
+     * interaction list.
+     * @param intact the interaction to remove from the list.
+     */
+    public void removeFromCurrentInteraction(Interaction intact);
+
+    /**
+     * Returns a list of currently edited/added interactions.
+     * @return a set consists currently edited/added interactions.
+     * An empty set is returned if there are no
+     * interactions added or edited during the current session.
+     *
+     * <pre>
+     * post: results->forall(obj: Object | obj.oclIsTypeOf(Interaction))
+     * </pre>
+     */
+    public Set getCurrentInteractions();
 
     /**
      * Returns an <code>Annotation</code> constructed from the given bean.

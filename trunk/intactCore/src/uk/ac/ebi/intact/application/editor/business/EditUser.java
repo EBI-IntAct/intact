@@ -164,9 +164,14 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     private transient UpdateProteinsI myProteinFactory;
 
     /**
-     * A set of currently edited/added experiment short labels.
+     * A set of currently edited/added experiments.
      */
     private transient Set myCurrentExperiments = new HashSet();
+
+    /**
+     * A set of currently edited/added interactions.
+     */
+    private transient Set myCurrentInteractions = new HashSet();
 
     // Static Methods.
 
@@ -635,9 +640,16 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return myCurrentExperiments;
     }
 
+    public void addToCurrentInteraction(Interaction intact) {
+        myCurrentInteractions.add(intact);
+    }
+
+    public void removeFromCurrentInteraction(Interaction intact) {
+        myCurrentInteractions.remove(intact);
+    }
+
     public Set getCurrentInteractions() {
-        // For the moment return an empty set.
-        return Collections.EMPTY_SET;
+        return myCurrentInteractions;
     }
 
     public Annotation getAnnotation(CommentBean cb) throws SearchException {
