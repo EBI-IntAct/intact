@@ -8,9 +8,6 @@
 --%>
 
 <%@ page language="java" %>
-<%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html" %>
-
 <jsp:include page="header.jsp" flush="true" />
 
 
