@@ -383,12 +383,16 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     }
 
     public void delete() throws IntactException {
+        // Clear the view.
         myEditView.clear();
-        // Remove this from the experiment list.
-//        if (myEditView.getClass().isAssignableFrom(ExperimentViewBean.class)) {
-//            removeFromCurrentExperiment((Experiment) myEditView.getAnnotatedObject());
-//        }
-        delete(myEditView.getAnnotatedObject());
+        AnnotatedObject annobj = myEditView.getAnnotatedObject();
+        if (isPersistent(annobj)) {
+            myHelper.delete(annobj);
+            myHelper.deleteAllElements(annobj.getAnnotations());
+            annobj.getAnnotations().clear();
+            myHelper.deleteAllElements(annobj.getXrefs());
+            annobj.getXrefs().clear();
+        }
     }
 
     public void cancelEdit() {
