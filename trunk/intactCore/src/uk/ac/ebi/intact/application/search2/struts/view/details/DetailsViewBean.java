@@ -139,8 +139,8 @@ public class DetailsViewBean extends AbstractViewBean
         return true;
     }
 
+    // Just honouring the contract.
     public String getHelpSection() {
-        return "details.view";
+        return "";
     }
-
 }
