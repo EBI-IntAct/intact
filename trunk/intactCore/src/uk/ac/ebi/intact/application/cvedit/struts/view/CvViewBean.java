@@ -22,25 +22,19 @@ import org.apache.commons.collections.CollectionUtils;
 public class CvViewBean {
 
     /**
-     * Static empty container to return to JSPs to display
-     * no rows (to stop display tag library throwing an exception).
+     * The CV object to wrap.
      */
-    private static Collection theirEmptyCollection = Collections.EMPTY_LIST;
+    private CvObject myCvObject;
 
     /**
-     * Selected topic.
-     */
-    private String mySelectedTopic;
-
-    /**
-     * Accession number.
-     */
-    private String myAc;
-
-    /**
-     * The short label.
+     * The short label of the current edit object.
      */
     private String myShortLabel;
+
+    /**
+     * The full name of the current edit object.
+     */
+    private String myFullName;
 
     /**
      * The annotations to display.
@@ -95,8 +89,9 @@ public class CvViewBean {
      * @param cvobj the <code>CvObject</code> to set attributes of this class.
      */
     public void initialise(CvObject cvobj) {
-        setAc(cvobj.getAc());
-        setShortLabel(cvobj.getShortLabel());
+        myCvObject = cvobj;
+        this.setShortLabel(cvobj.getShortLabel());
+        this.setFullName(cvobj.getFullName());
 
         // Cache the annotations and xrefs here to save it from loading
         // multiple times with each invocation to getAnnotations()
@@ -108,48 +103,51 @@ public class CvViewBean {
     }
 
     /**
-     * Sets the selected topic.
-      * @param topic the selected topic.
+     * Returns the CV object.
+     * @return <code>CVObject</code> this instace is wrapped around.
      */
-    public void setTopic(String topic) {
-        mySelectedTopic = topic;
-    }
-
-    /**
-     * Returns the selected topic.
-     */
-    public String getTopic() {
-        return mySelectedTopic;
-    }
-
-    /**
-     * Sets the accession number.
-     * @param ac the accession number; shouldn't be null.
-     */
-    public void setAc(String ac) {
-        myAc = ac;
+    public CvObject getCvObject() {
+        return myCvObject;
     }
 
     /**
      * Returns accession number.
+     * @return the accession number as a <code>String</code> instance.
      */
     public String getAc() {
-        return myAc;
+        return myCvObject.getAc();
     }
 
     /**
      * Sets ther short label.
      * @param shortLabel the short label to set
      */
-    public void setShortLabel(String shortLabel) {
+    public final void setShortLabel(String shortLabel) {
         myShortLabel = shortLabel;
     }
 
     /**
      * Returns the short label.
+     * @return the short label as a <code>String</code> instance.
      */
     public String getShortLabel() {
         return myShortLabel;
+    }
+
+    /**
+     * Sets the full name.
+     * @param fullName the full name to set for the current edit object.
+     */
+    public final void setFullName(String fullName) {
+        myFullName = fullName;
+    }
+
+    /**
+     * Return the full name.
+     * @return the full name as a <code>String</code> instance.
+     */
+    public String getFullName() {
+        return myFullName;
     }
 
     /**
@@ -271,21 +269,6 @@ public class CvViewBean {
     }
 
     /**
-     * Clears annotations stored transaction containers.
-     *
-     * <pre>
-     * post: myAnnotsToAdd.isEmpty()
-     * post: myAnnotsToDel.isEmpty()
-     * post: myAnnotsToUpdate.isEmpty()
-     * </pre>
-     */
-    public void clearTransAnnotations() {
-        myAnnotsToAdd.clear();
-        myAnnotsToDel.clear();
-        myAnnotsToUpdate.clear();
-    }
-
-    /**
      * Returns a collection <code>Xref</code> objects.
      *
      * <pre>
@@ -403,32 +386,20 @@ public class CvViewBean {
     }
 
     /**
-     * Clears xrefs stored in transaction containers.
-     *
+     * Clears any pending xrefs and annotations stored in the transaction
+     * containers.
      * <pre>
-     * post: myXrefsToAdd.isEmpty()
-     * post: myXrefsToDel.isEmpty()
+     * post: myAnnotsToAdd->isEmpty
+     * post: myAnnotsToDel->isEmpty
+     * post: myAnnotsToUpdate->isEmpty
+     * post: myXrefsToAdd->isEmpty
+     * post: myXrefsToDel->isEmpty
+     * post: myXrefsToUpdate->isEmpty
      * </pre>
      */
-    public void clearTransXrefs() {
-        myXrefsToAdd.clear();
-        myXrefsToDel.clear();
-        myXrefsToUpdate.clear();
-    }
-
-    /**
-     * Returns an empty collection. This is to stop display tag library from
-     * throwing an exception when there are no rows to display for a high page
-     * number (only happens when we have two tables with different rows on
-     * a single page). <b>This has to be an insatace method not static for
-     * JSPs</b>.
-     *
-     * <pre>
-     * post: return->isEmpty
-     * </pre>
-     */
-    public Collection getEmptyCollection() {
-        return theirEmptyCollection;
+    public void clearTransactions() {
+        this.clearTransAnnotations();
+        this.clearTransXrefs();
     }
 
     /**
@@ -462,5 +433,23 @@ public class CvViewBean {
             Xref xref = (Xref) iter.next();
             myXrefs.add(new XreferenceBean(xref));
         }
+    }
+
+    /**
+     * Clears annotations stored transaction containers.
+     */
+    private void clearTransAnnotations() {
+        myAnnotsToAdd.clear();
+        myAnnotsToDel.clear();
+        myAnnotsToUpdate.clear();
+    }
+
+    /**
+     * Clears xrefs stored in transaction containers.
+     */
+    private void clearTransXrefs() {
+        myXrefsToAdd.clear();
+        myXrefsToDel.clear();
+        myXrefsToUpdate.clear();
     }
 }
