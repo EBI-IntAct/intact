@@ -13,6 +13,7 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
 import org.apache.struts.action.*;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -24,7 +25,7 @@ import org.exolab.castor.xml.*;
 import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.mapping.MappingException;
 
-import uk.ac.ebi.intact.application.search.struts.framework.util.WebIntactConstants;
+import uk.ac.ebi.intact.application.search.struts.framework.util.SearchConstants;
 import uk.ac.ebi.intact.application.search.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search.struts.view.SearchForm;
@@ -61,7 +62,7 @@ public class SearchAction extends IntactBaseAction {
     * or HttpServletResponse.sendRedirect() to, as a result of processing
     * activities of an <code>Action</code> class
     */
-    public ActionForward perform (ActionMapping mapping, ActionForm form,
+    public ActionForward execute (ActionMapping mapping, ActionForm form,
                                   HttpServletRequest request,
                                   HttpServletResponse response) {
         // Clear any previous errors.
@@ -98,7 +99,7 @@ public class SearchAction extends IntactBaseAction {
         //set up the Cator XML mapping resources...
         Mapping xmlMapping = new Mapping(getClass().getClassLoader());
         String mappingFile = servlet.getServletContext().getInitParameter(
-                WebIntactConstants.XML_MAPPING_FILE);
+                SearchConstants.XML_MAPPING_FILE);
         super.log("setting up XML marshalling resources - using mapping file " + mappingFile);
         try {
             xmlMapping.loadMapping(getClass().getResource(mappingFile));
@@ -109,8 +110,8 @@ public class SearchAction extends IntactBaseAction {
         }
 
        // The stylesheet for the transformation.
-       String xslname =  session.getServletContext().getInitParameter(WebIntactConstants.XSL_FILE);
-       String xslfile =  session.getServletContext().getRealPath(xslname);
+       String xslname = session.getServletContext().getInitParameter(SearchConstants.XSL_FILE);
+       String xslfile = session.getServletContext().getRealPath(xslname);
 
         //define the XML to be written to a String so we can store it simply in the view bean...
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -155,10 +156,10 @@ public class SearchAction extends IntactBaseAction {
                             //finished all current options - return a failure
                             super.log("No matches were found for the specified search criteria");
                             // Save the search parameters for results page to display.
-                            session.setAttribute(WebIntactConstants.SEARCH_CRITERIA,
+                            session.setAttribute(SearchConstants.SEARCH_CRITERIA,
                             searchParam + "=" + searchValue);
-                            session.setAttribute(WebIntactConstants.SEARCH_TYPE, searchClass);
-                            return mapping.findForward(WebIntactConstants.FORWARD_NO_MATCHES);
+                            session.setAttribute(SearchConstants.SEARCH_TYPE, searchClass);
+                            return mapping.findForward(SearchConstants.FORWARD_NO_MATCHES);
                         }
                         else {
                             //got a match on name - flag it for info later
@@ -180,24 +181,23 @@ public class SearchAction extends IntactBaseAction {
             // ************* Search was a success. ********************************
 
             // Retrieve the map to add matching results.
-            Map idToView = (Map) session.getAttribute(WebIntactConstants.FORWARD_MATCHES);
+            Map idToView = (Map) session.getAttribute(SearchConstants.FORWARD_MATCHES);
             // Remove any previous views.
             idToView.clear();
 
             // Save the search parameters for results page to display.
-            session.setAttribute(WebIntactConstants.SEARCH_CRITERIA,
+            session.setAttribute(SearchConstants.SEARCH_CRITERIA,
                 searchParam + "=" + searchValue);
 
             // If we retrieved one object then we can go straight to edit page.
             if (results.size() == 1) {
                 // Found a single match only; save it to determine which page to
                 // return from edit.jsp; for example, results jsp or search jsp.
-                session.setAttribute(WebIntactConstants.SINGLE_MATCH, Boolean.TRUE);
+//                session.setAttribute(SearchConstants.SINGLE_MATCH, Boolean.TRUE);
                 // The object to display.
                 Object obj = results.iterator().next();
                 //set up a viewbean to hold the results for display
-                IntactViewBean bean = new IntactViewBean(obj);
-                bean.setStylesheet(xslfile);
+                IntactViewBean bean = new IntactViewBean(obj, xslfile);
                 idToView.put("0", bean);
                 marshall(bean, xmlMapping, db);
                 bean.addStatusNodes();
@@ -205,16 +205,15 @@ public class SearchAction extends IntactBaseAction {
             else {
                 // Found multiple results.
                 super.log("multiple results - performing XML conversion...");
-                session.setAttribute(WebIntactConstants.SINGLE_MATCH, Boolean.FALSE);
+//                session.setAttribute(SearchConstants.SINGLE_MATCH, Boolean.FALSE);
 
                 // The counter for view beans.
                 int counter = 0;
 
-                // The collection to hold our List objects for display tag API.
+                // Store the view beans in a map.
                 for (Iterator iter = results.iterator(); iter.hasNext(); ++counter) {
                     // Construct a view bean for each search resul.
-                    IntactViewBean bean = new IntactViewBean(iter.next());
-                    bean.setStylesheet(xslfile);
+                    IntactViewBean bean = new IntactViewBean(iter.next(), xslfile);
                     // Collect the results together...
                     idToView.put(Integer.toString(counter), bean);
                     marshall(bean, xmlMapping, db);
@@ -223,7 +222,7 @@ public class SearchAction extends IntactBaseAction {
                 }
             }
             // Move to the results page.
-            return mapping.findForward(WebIntactConstants.FORWARD_RESULTS);
+            return mapping.findForward(SearchConstants.FORWARD_RESULTS);
         }
         catch (IntactException se) {
             // Something failed during search...
@@ -231,7 +230,15 @@ public class SearchAction extends IntactBaseAction {
             // The errors to report back.
             super.addError("error.search", se.getNestedMessage());
             super.saveErrors(request);
-            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+            return mapping.findForward(SearchConstants.FORWARD_FAILURE);
+        }
+        catch (TransformerException te) {
+            // Unable to create a transformer for given stylesheet.
+            super.log(ExceptionUtils.getStackTrace(te));
+            // The errors to report back.
+            super.addError("error.search", te.getMessage());
+            super.saveErrors(request);
+            return mapping.findForward(SearchConstants.FORWARD_FAILURE);
         }
     }
 
