@@ -67,16 +67,14 @@
                          Delete is visible regardless of the state.
                      --%>
                     <td class="tableCell">
-                        <nested:equal name="<%=formName%>"
-                            property="editState" value="<%=viewState%>">
+                        <nested:equal property="editState" value="<%=viewState%>">
                             <html:submit indexed="true" property="cmd"
                                 titleKey="xrefs.button.edit.titleKey">
                                 <bean:message key="button.edit"/>
                             </html:submit>
                         </nested:equal>
 
-                        <nested:equal name="<%=formName%>"
-                            property="editState" value="<%=saveState%>">
+                        <nested:equal property="editState" value="<%=saveState%>">
                             <html:submit indexed="true" property="cmd"
                                 titleKey="xrefs.button.save.titleKey">
                                 <bean:message key="button.save"/>
@@ -92,8 +90,7 @@
                     </td>
 
                     <%-- In view mode --%>
-                    <nested:equal name="<%=formName%>"
-                        property="editState" value="<%=viewState%>">
+                    <nested:equal property="editState" value="<%=viewState%>">
                         <td class="tableCell">
                             <nested:write property="databaseLink" filter="false"/>
                         </td>
@@ -112,8 +109,7 @@
                     </nested:equal>
 
                     <%-- In save mode --%>
-                    <nested:equal name="<%=formName%>"
-                        property="editState" value="<%=saveState%>">
+                    <nested:equal property="editState" value="<%=saveState%>">
                         <td class="tableCell">
                             <nested:select property="database">
                                 <nested:options name="dblist" />
