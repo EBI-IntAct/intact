@@ -9,8 +9,8 @@ import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource;
-import uk.ac.ebi.intact.application.hierarchView.struts.view.utils.LabelValueBean;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.utils.SourceBean;
+import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.model.Xref;
@@ -111,10 +111,22 @@ public class DisplaySourceTag extends TagSupport {
 
                     try {
                         ServletRequest request = pageContext.getRequest();
-                        String applicationPath = "http://" +
-                                                 request.getServerName() + ":" +
-                                                 request.getServerPort() +
-                                                 ((HttpServletRequest)request).getContextPath();
+                        String host     = (String) session.getAttribute( StrutsConstants.HOST );
+                        String protocol = (String) session.getAttribute( StrutsConstants.PROTOCOL );
+
+                        String protocolAndHost = "";
+                        if (host != null && protocol != null) {
+                            protocolAndHost = protocol + "//" + host;
+                        }
+
+                        HttpServletRequest httpRequest = (HttpServletRequest)request;
+
+                        String contextPath = httpRequest.getContextPath();
+                        System.out.println("CONTEXT PATH: " + contextPath);
+
+                        String applicationPath = protocolAndHost + contextPath;
+                        System.out.println("APPLICATION PATH: " + applicationPath);
+
 
                         Collection selectedKeys = user.getKeys();
                         String theClickedKeys = user.getSelectedKey();

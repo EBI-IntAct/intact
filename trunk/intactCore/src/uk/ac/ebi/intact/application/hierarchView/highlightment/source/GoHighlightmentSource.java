@@ -296,7 +296,8 @@ public class GoHighlightmentSource extends HighlightmentSource {
                                            goTermDescription,
                                            quickGoUrl,
                                            directHighlightUrl,
-                                           selected) );
+                                           selected,
+                                           applicationPath) );
             }
         }
 
