@@ -8,11 +8,11 @@ package uk.ac.ebi.intact.application.commons.search;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.commons.business.IntactUserI;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.model.Alias;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.model.*;
 
 import java.util.*;
+import java.sql.*;
 
 /**
  * Performs an intelligent search on the intact database.
@@ -20,7 +20,7 @@ import java.util.*;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
-public class  SearchHelper implements SearchHelperI {
+public class SearchHelper implements SearchHelperI {
 
     private transient Logger logger;
 
@@ -31,13 +31,14 @@ public class  SearchHelper implements SearchHelperI {
 
     /**
      * Create a search helper for which all the log message will be written by the provided logger.
+     *
      * @param logger the user's logger.
      */
-    public SearchHelper (Logger logger) {
+    public SearchHelper(Logger logger) {
         this.logger = logger;
     }
 
-    public Collection getSearchCritera () {
+    public Collection getSearchCritera() {
         return searchCriteria;
     }
 
@@ -53,19 +54,20 @@ public class  SearchHelper implements SearchHelperI {
         Collection results = doSearchSimple(className, query, user);
 
         if (results.isEmpty()) {
-            logger.info("no search results found for class: " + className +", query: " + query);
-        } else {
-            logger.info("found search match - class: " + className +", value: " + query);
+            logger.info("no search results found for class: " + className + ", query: " + query);
         }
-        logger.info( "Item count: " + results.size());
+        else {
+            logger.info("found search match - class: " + className + ", value: " + query);
+        }
+        logger.info("Item count: " + results.size());
 
         return results;
     }
 
-    public Collection doLookup (String searchClass, String values, IntactUserI user) throws IntactException {
+    public Collection doLookup(String searchClass, String values, IntactUserI user) throws IntactException {
 
         searchCriteria.clear();
-        Collection queries = splitQuery( values );
+        Collection queries = splitQuery(values);
 
         // avoid to have duplicate intact object in the dataset.
         Collection results = new HashSet();
@@ -74,28 +76,29 @@ public class  SearchHelper implements SearchHelperI {
         logger.info("className supplied in request - going straight to search...");
         String className = packageName + searchClass;
         logger.info("attempting search for " + className + " with values " + values);
-        for ( Iterator iterator = queries.iterator (); iterator.hasNext (); ) {
-            String subQuery = (String) iterator.next ();
-            logger.info( "Search for subquery: " +subQuery );
+        for (Iterator iterator = queries.iterator(); iterator.hasNext();) {
+            String subQuery = (String) iterator.next();
+            logger.info("Search for subquery: " + subQuery);
             Collection subResult = doSearch(className, subQuery, user);
 
-            if ( subResult.isEmpty() ) {
-                logger.info("no search results found for class: " + className +", value: " + values);
-            } else {
-                logger.info("found search match - class: " + className +", value: " + values);
+            if (subResult.isEmpty()) {
+                logger.info("no search results found for class: " + className + ", value: " + values);
+            }
+            else {
+                logger.info("found search match - class: " + className + ", value: " + values);
             }
 
-            results.addAll( subResult );
-            logger.info( "Item count: " + results.size());
+            results.addAll(subResult);
+            logger.info("Item count: " + results.size());
         }
 
         return results;
     }
 
-    public Collection doLookup (List searchClasses, String values, IntactUserI user) throws IntactException {
+    public Collection doLookup(List searchClasses, String values, IntactUserI user) throws IntactException {
 
         searchCriteria.clear();
-        Collection queries = splitQuery( values );
+        Collection queries = splitQuery(values);
 
         // avoid to have duplicate intact object in the dataset.
         Collection results = new HashSet();
@@ -103,36 +106,130 @@ public class  SearchHelper implements SearchHelperI {
 
         String className = null;
         boolean itemFound = false;
-        for ( Iterator iterator = queries.iterator (); iterator.hasNext (); ) {
-            String subQuery = (String) iterator.next ();
-            logger.info( "Search for subquery: " + subQuery );
+        for (Iterator iterator = queries.iterator(); iterator.hasNext();) {
+            String subQuery = (String) iterator.next();
+            logger.info("Search for subquery: " + subQuery);
 
             final int size = searchClasses.size();
             for (int i = 0; i < size; i++) {
                 if (false == itemFound) {
                     className = packageName + searchClasses.get(i);
-                } else {
+                }
+                else {
                     // if there is an item found (i.e. only one class to look for)
                     // we need only one iteration.
-                    if ( i > 0) break;
+                    if (i > 0) break;
                 }
 
-                Collection subResult = doSearch( className, subQuery, user );
-                logger.info( "sub result count: " + subResult.size() );
+                Collection subResult = doSearch(className, subQuery, user);
+                logger.info("sub result count: " + subResult.size());
 
                 if (subResult.size() > 0) {
-                    results.addAll( subResult );
+                    results.addAll(subResult);
                     className = subResult.iterator().next().getClass().getName();
-                    logger.info("found search match - class: " + className +", value: " + subQuery);
+                    logger.info("found search match - class: " + className + ", value: " + subQuery);
                     itemFound = true;
                     break; // exit the inner for
                 }
             } // inner for
-            logger.debug( "total result count: " + results.size() );
+            logger.debug("total result count: " + results.size());
         } // main for
 
         return results;
     }
+
+    public ResultWrapper search(Class clazz, String searchParam,
+                                 String searchValue, int max) throws IntactException {
+        IntactHelper helper = new IntactHelper();
+
+        // Replace * with % for SQL
+        String sqlValue = searchValue.replaceAll("\\*", "%");
+
+        String tableName = helper.getTableName(clazz);
+        assert tableName != null : "no descriptor for " + clazz.getName();
+
+        // The SQL expression to retrieve records.
+        String sql = "SELECT COUNT(*) from " + tableName + " where " + searchParam + " LIKE '"
+                + sqlValue + "'";
+
+        Connection conn = null;
+        Statement stmt = null;
+        PreparedStatement labelStmt = null;
+        ResultSet rs = null;
+        try {
+            // Access the Connection via the helper.
+            conn = helper.getJDBCConnection();
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery(sql);
+            if (!rs.next()) {
+                throw new IntactException("Unable to get number of possible records for the query");
+            }
+            int count = rs.getInt(1);
+            if (count > max) {
+                // Exceeds the maximum size.
+                return new ResultWrapper(count, max);
+            }
+
+            // We have a result which is within limits. Do the search.
+            Collection searchResults = helper.search(clazz, searchParam, searchValue);
+            return new ResultWrapper(searchResults, max);
+        }
+        catch (SQLException se) {
+            while ((se.getNextException()) != null) {
+                logger.info(se.getSQLState());
+                logger.info("SQL: Error Code: " + se.getErrorCode());
+            }
+            throw new IntactException("SQL errors, see the log out for more info");
+        }
+        finally {
+            helper.closeStore();
+            try {
+                rs.close();
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (labelStmt != null) {
+                    labelStmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            }
+            catch (SQLException se) {
+                throw new IntactException("SQL errors, see the log out for more info");
+            }
+        }
+    }
+
+//    public ResultWrapper search(Class searchClass, String searchParam, String searchValue,
+//                                int max) throws IntactException {
+//        return doSearch(Experiment.class, searchParam, searchValue, max);
+//
+//    }
+//
+//    public ResultWrapper searchExperiments(String searchParam, String searchValue,
+//                                        int max) throws IntactException {
+//        // Replace * with % for SQL
+//        String sqlValue = searchValue.replaceAll("\\*", "%");
+//
+//        // The SQL expression to retrieve records.
+//        String sql = "SELECT COUNT(*) from IA_Experiment where " + searchParam + " LIKE '"
+//                + sqlValue + "'";
+//
+//        return doSearch(Experiment.class, sql, searchParam, searchValue, max);
+//    }
+//
+//    public ResultWrapper searchInteractions(String searchParam, String searchValue,
+//                                        int max) throws IntactException {
+//        // Replace * with % for SQL
+//        String sqlValue = searchValue.replaceAll("\\*", "%");
+//
+//        // The SQL expression to retrieve records.
+//        String sql = "SELECT COUNT(*) from IA_Interactor where " + searchParam + " LIKE '"
+//                + sqlValue + "' and objclass='" + InteractionImpl.class.getName() + "'";
+//
+//        return doSearch(Interaction.class, sql, searchParam, searchValue, max);
+//    }
 
     /**
      * Split the query string.
@@ -142,12 +239,12 @@ public class  SearchHelper implements SearchHelperI {
      * @param query the query string to split
      * @return one to many subquery of the comma separated list.
      */
-    private Collection splitQuery( String query ) {
+    private Collection splitQuery(String query) {
         Collection queries = new LinkedList();
 
-        StringTokenizer st = new StringTokenizer( query, "," );
+        StringTokenizer st = new StringTokenizer(query, ",");
         while (st.hasMoreTokens()) {
-            queries.add( st.nextToken().trim() );
+            queries.add(st.nextToken().trim());
         }
 
         return queries;
@@ -163,33 +260,31 @@ public class  SearchHelper implements SearchHelperI {
      * @param value the user-specified value
      * @param user The object holding the IntactHelper for a given user/session
      * (passed as a parameter to avoid using an instance variable, which may
-     *  cause thread problems).
-     *
+     * cause thread problems).
      * @return Collection the results of the search - an empty Collection if no results found
-     *
-     * @exception uk.ac.ebi.intact.business.IntactException thrown if there were any search problems
+     * @throws uk.ac.ebi.intact.business.IntactException thrown if there were any search problems
      */
-    private Collection doSearch( String className, String value, IntactUserI user ) throws IntactException {
+    private Collection doSearch(String className, String value, IntactUserI user) throws IntactException {
         //try search on AC first...
-        Collection results = user.search( className, "ac", value );
+        Collection results = user.search(className, "ac", value);
         String currentCriteria = "ac";
 
         if (results.isEmpty()) {
             // No matches found - try a search by label now...
             logger.info("no match found for " + className + " with ac= " + value);
             logger.info("now searching for class " + className + " with label " + value);
-            results = user.search( className, "shortLabel", value );
+            results = user.search(className, "shortLabel", value);
             currentCriteria = "shortLabel";
 
             if (results.isEmpty()) {
                 //no match on label - try by alias.
                 logger.info("no match on label - looking for: " + className + " with name alias ID " + value);
-                Collection aliases = user.search( Alias.class.getName(), "name", value.toLowerCase() );
+                Collection aliases = user.search(Alias.class.getName(), "name", value.toLowerCase());
 
                 //could get more than one alias, eg if the name is a wildcard search value -
                 //then need to go through each alias found and accumulate the results...
-                for (Iterator it = aliases.iterator(); it.hasNext(); ) {
-                    results.addAll( user.search( className, "ac", ((Alias) it.next()).getParentAc() ) );
+                for (Iterator it = aliases.iterator(); it.hasNext();) {
+                    results.addAll(user.search(className, "ac", ((Alias) it.next()).getParentAc()));
                 }
                 currentCriteria = "alias";
             }
@@ -197,19 +292,19 @@ public class  SearchHelper implements SearchHelperI {
             if (results.isEmpty()) {
                 //no match on label - try by xref....
                 logger.info("no match on label - looking for: " + className + " with primary xref ID " + value);
-                Collection xrefs = user.search( Xref.class.getName(), "primaryId", value );
+                Collection xrefs = user.search(Xref.class.getName(), "primaryId", value);
 
                 //could get more than one xref, eg if the primary id is a wildcard search value -
                 //then need to go through each xref found and accumulate the results...
-                for (Iterator it = xrefs.iterator(); it.hasNext(); ) {
-                    results.addAll( user.search( className, "ac", ((Xref) it.next()).getParentAc() ) );
+                for (Iterator it = xrefs.iterator(); it.hasNext();) {
+                    results.addAll(user.search(className, "ac", ((Xref) it.next()).getParentAc()));
                 }
                 currentCriteria = "xref";
 
                 if (results.isEmpty()) {
                     //no match by xref - try finally by name....
                     logger.info("no matches found using ac, shortlabel or xref - trying fullname...");
-                    results = user.search( className, "fullName", value );
+                    results = user.search(className, "fullName", value);
                     currentCriteria = "fullName";
 
                     if (results.isEmpty()) {
@@ -221,8 +316,8 @@ public class  SearchHelper implements SearchHelperI {
             }
         }
 
-        CriteriaBean cb = new CriteriaBean( value, currentCriteria );
-        searchCriteria.add( cb );
+        CriteriaBean cb = new CriteriaBean(value, currentCriteria);
+        searchCriteria.add(cb);
         return results;
     }  // doSearch
 
@@ -233,29 +328,27 @@ public class  SearchHelper implements SearchHelperI {
      * @param value the user-specified value
      * @param user The object holding the IntactHelper for a given user/session
      * (passed as a parameter to avoid using an instance variable, which may
-     *  cause thread problems).
-     *
+     * cause thread problems).
      * @return Collection the results of the search - an empty Collection if
-     * no results found
-     *
-     * @exception uk.ac.ebi.intact.business.IntactException thrown if there were
+     *         no results found
+     * @throws uk.ac.ebi.intact.business.IntactException thrown if there were
      * any search problems
      */
-    private Collection doSearchSimple( String className, String value,
-                                       IntactUserI user ) throws IntactException {
+    private Collection doSearchSimple(String className, String value,
+                                      IntactUserI user) throws IntactException {
         //try search on AC first...
-        Collection results = user.search( className, "ac", value );
+        Collection results = user.search(className, "ac", value);
         String currentCriteria = "ac";
 
         if (results.isEmpty()) {
             // No matches found - try a search by label now...
             logger.info("no match found for " + className + " with ac= " + value);
             logger.info("now searching for class " + className + " with label " + value);
-            results = user.search( className, "shortLabel", value );
+            results = user.search(className, "shortLabel", value);
             currentCriteria = "shortLabel";
         }
-        CriteriaBean cb = new CriteriaBean( value, currentCriteria );
-        searchCriteria.add( cb );
+        CriteriaBean cb = new CriteriaBean(value, currentCriteria);
+        searchCriteria.add(cb);
         return results;
     }
 }

@@ -22,13 +22,14 @@ public interface SearchHelperI {
     /**
      * Peforms a simple search in the IntAct data for given search class and
      * value. This search is limited to AC and short label fields.
+     *
      * @param searchClass the search class to perform the search on
      * (e.g., Experiment)
      * @param query the search query; doesn't support mupltiple comma
      * separated values.
      * @param user the user to invoke search on.
      * @return a collection of Intact objects of same class as
-     * <code>searchClass</code> or an empty collection if none found.
+     *         <code>searchClass</code> or an empty collection if none found.
      * @throws IntactException for any errors in searching the persistent system.
      */
     public Collection doLookupSimple(String searchClass, String query,
@@ -44,24 +45,40 @@ public interface SearchHelperI {
      * @return A collection of Intact objects of the type <i>searchClass</i>.
      * @throws IntactException if an erro occurs when searching in the database.
      */
-    public Collection doLookup( String searchClass, String value, IntactUserI user ) throws IntactException;
+    public Collection doLookup(String searchClass, String value, IntactUserI user) throws IntactException;
 
     /**
      * Search in the IntAct data for a colleciton of object (type=searchClass).
      * The objects found must match with the value given by the user (ac, shortlabel ...).
      *
      * @param searchClasses the search classes (ordered by preference) we are
-     *        looking for in the IntAct data.
+     * looking for in the IntAct data.
      * @param value the queryString for which the objects should match.
      * @param user the IntAct datasource.
      * @return A collection of Intact objects of the type <i>searchClass</i>.
      * @throws IntactException if an erro occurs when searching in the database.
      */
-    public Collection doLookup( List searchClasses, String value, IntactUserI user ) throws IntactException;
+    public Collection doLookup(List searchClasses, String value, IntactUserI user) throws IntactException;
 
     /**
      * Return a collection of search criteria.
+     *
      * @return a Collection of <code>CriteriaBean</code>.
      */
     public Collection getSearchCritera();
+
+    /**
+     * Returns a result wrapper which contains the result for given search type.
+     *
+     * @param searchClass the class to search for. Eg., Experiment. It has to be a
+     * <b>concrete</b> class not an interface.
+     * @param searchParam the search criteria to search. Eg., ac, shortLabel
+     * @param searchValue the search value. Eg., ga-*
+     * @param max the maximum number of entries to retrieve
+     * @return the result wrapper which contains the result of the search
+     * @throws IntactException for errors in searching for persistent system. This
+     * is not thrown if the search produces no output.
+     */
+    public ResultWrapper search(Class searchClass, String searchParam, String searchValue,
+                                int max) throws IntactException;
 }
