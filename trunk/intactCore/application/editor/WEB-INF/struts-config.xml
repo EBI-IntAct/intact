@@ -701,18 +701,6 @@
       />
     </action>
     <action
-      path="/feature/delete"
-      type="uk.ac.ebi.intact.application.editor.struts.action.feature.DeleteFeatureAction"
-      unknown="false"
-      validate="false"
-    >
-      <forward
-        name="success"
-        path="/do/int/fill/form"
-        redirect="false"
-      />
-    </action>
-    <action
       path="/int/delete"
       type="uk.ac.ebi.intact.application.editor.struts.action.interaction.InteractionDeleteAction"
       unknown="false"
