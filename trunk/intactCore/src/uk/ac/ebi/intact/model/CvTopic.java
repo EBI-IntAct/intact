@@ -6,14 +6,21 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.model;
 
 
-
 /**
  * Controlled vocabulary for description topics.
- * 
+ *
  * @author hhe
  * @version $Id$
  */
 public class CvTopic extends CvObject implements Editable {
+
+    //////////////////////////
+    // Constants
+
+    public static final String XREF_VALIDATION_REGEXP = "id-validation-regexp";
+    public static final String INTERNAL_REMARK = "remark-internal";
+    public static final String UNIPROT_DR_EXPORT = "uniprot-dr-export";
+    public static final String UNIPROT_CC_EXPORT = "uniprot-cc-note";
 
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus.
@@ -26,6 +33,7 @@ public class CvTopic extends CvObject implements Editable {
      * This constructor should <b>not</b> be used as it could
      * result in objects with invalid state. It is here for object mapping
      * purposes only and if possible will be made private.
+     *
      * @deprecated Use the full constructor instead
      */
     private CvTopic() {
@@ -36,14 +44,15 @@ public class CvTopic extends CvObject implements Editable {
     /**
      * Creates a valid CvTopic instance. Requires at least a shortLabel and an
      * owner to be specified.
+     *
      * @param shortLabel The memorable label to identify this CvTopic
-     * @param owner The Institution which owns this CvTopic
-     * @exception NullPointerException thrown if either parameters are not specified
+     * @param owner      The Institution which owns this CvTopic
+     * @throws NullPointerException thrown if either parameters are not specified
      */
-    public CvTopic(Institution owner, String shortLabel) {
+    public CvTopic( Institution owner, String shortLabel ) {
 
         //super call sets up a valid CvObject
-        super(owner, shortLabel);
+        super( owner, shortLabel );
     }
 
 } // end CvTopic
