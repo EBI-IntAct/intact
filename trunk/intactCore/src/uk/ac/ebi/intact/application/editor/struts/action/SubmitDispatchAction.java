@@ -230,7 +230,8 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
             return mapping.getInputForward();
         }
         // Validate the data.
-        view.validate(user);
+//        view.validate(user);
+        view.sanityCheck(user);
 
         try {
             // Persist my current state (this takes care of updating the wrapped
