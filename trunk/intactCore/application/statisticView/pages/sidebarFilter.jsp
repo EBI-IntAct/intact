@@ -124,7 +124,7 @@
                      <td>
                         <html:text property="start" value="<%= startValue %>" size="12" maxlength="11" />
                         <br>
-                        <small><font color="#898989">(dd-mmm-yyyy)</font></small>
+                        <small><font color="#898989">(02-Feb-2004)</font></small>
                      </td>
                   </tr>
 
@@ -135,7 +135,7 @@
                     <td>
                        <html:text property="stop" value="<%= stopValue %>" size="12" maxlength="11" />
                        <br>
-                       <small><font color="#898989">(dd-mmm-yyyy)</font></small>
+                       <small><font color="#898989">(02-Feb-2004)</font></small>
                     </td>
                   </tr>
                   <tr>
