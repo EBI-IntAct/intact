@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditVie
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.util.NewtServerProxy;
 
@@ -21,6 +22,7 @@ import java.io.Serializable;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * Provides methods specific to a user editing an Annotated object.
@@ -287,4 +289,23 @@ public interface EditUserI extends IntactUserI, Serializable {
     public Date loginTime();
 
     public Date logoffTime();
+
+    /**
+     * Adds the experiment to the list of currently edited/
+     * added experiment list.
+     * @param exp the experiment to add.
+     */
+    public void addToCurrentExperiment(Experiment exp);
+
+    /**
+     * Returns a list of currently edited/added experiments.
+     * @return a set consists currently edited/added experiments.
+     * An empty set is returned if there are no
+     * experiments added or edited during the current session.
+     *
+     * <pre>
+     * post: results->forall(obj: Object | obj.oclIsTypeOf(Experiment))
+     * </pre>
+     */
+    public Set getCurrentExperiments();
 }
