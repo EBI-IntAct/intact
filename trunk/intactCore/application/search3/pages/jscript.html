@@ -30,10 +30,7 @@
         }
     }
 
-    // Will be invoked when user selects graph button. An AC must be selected.
-    // This in trun will create a new widow and invoke hierarchView application
-    // in the new window.
-    function writeToWindow(form, msg) {
+    function writeToWindow(form, msg, id) {
         // An AC must have been selected.
         if (!checkAC(form, msg)) {
             return;
@@ -56,11 +53,18 @@
                 }
             }
         }
-        var link = "<%=hvPath%>"
-            + "?AC=" + ac + "&depth=" + <%=service.getHierarchViewProp("hv.depth")%>
-            + "&method=" + "<%=service.getHierarchViewProp("hv.method")%>";
-        //window.alert(link);
-        makeNewWindow(link);
+        if(id == 0) {
+	     	var link = "<%=hvPath%>"
+    	        + "?AC=" + ac + "&depth=" + <%=service.getHierarchViewProp("hv.depth")%>
+        	    + "&method=" + "<%=service.getHierarchViewProp("hv.method")%>";
+        	//window.alert(link);
+        	makeNewWindow(link);
+       	}
+       	else {
+       		var link = "<%=minePath%>?AC=" + ac ;
+        	//window.alert(link);
+        	makeNewWindow(link);
+       	}
     }
 
     // Checks all the check boxes.

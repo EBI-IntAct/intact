@@ -44,6 +44,7 @@
 
     //build the URL for hierarchView from the absolute path and the relative beans..
     String hvPath = relativePath.concat(service.getHierarchViewProp("hv.url"));
+    String minePath = relativePath.concat("mine/display.jsp");
 
     //The view bean used to provide the data for this JSP. Could probably use
     //the jsp:useBean tag instead, but do it simply for now...
@@ -58,10 +59,10 @@
     <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA) %>
 </h1>
 
-<h4>(short labels of search criteria matches highlighted in
-    <b><i>bold italic</i></b>)
-</h4>
-
+<br>
+<span class="smalltext">(short labels of search criteria matches are
+    <span style="color: rgb(255, 0, 0);">highlighted</span>
+</span><span class="smalltext">)<br></span></p>
 <!--
 The (repaired) HTML here is more or less what was specified in the Intact webpage
 mockups, June 2004
@@ -98,7 +99,7 @@ mockups, June 2004
                         class="tdlink"
                        target="new"><span style="color: rgb(102, 102, 204);">IntAct </span>name:</a>
                     <a href="<%= bean.getProteinSearchURL() %>" class="tdlink" style="font-weight: bold;">
-                    <i><%= bean.getProteinIntactName() %></i></a>
+                    <b><span style="color: rgb(255, 0, 0);"><%= bean.getProteinIntactName() %></span></b></a>
                 </td>
 
                 <!-- AC:- NB this doesn't appear to need a hyperlink... -->

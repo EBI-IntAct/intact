@@ -2,8 +2,11 @@
     <tbody>
         <tr class="centertop">
             <td align="left" class="headerlight">
-                <input type="button" class ="form" name="action" value="Graph"
-                onclick="writeToWindow( this.form, 'Please select an AC to display the graph')">
+                <input type="button" class="form" name="action" value="Graph"
+                        onclick="writeToWindow( this.form, 'Please select an AC to display the graph', 0)">
+                    <input type="button" class="form" name="action" value="Path"
+                        onclick="writeToWindow( this.form, 'Please select an AC to display the path', 1)">
+                    <input type="reset" class="form" value="Reset">
                 <input type="button" name="action" class="form" value="Select all"
                        onclick="checkAll()">
                 <input type="button" class="form" value="Clear all" name="action" onclick="clearAll(this.form)">

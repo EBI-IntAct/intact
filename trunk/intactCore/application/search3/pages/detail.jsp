@@ -54,6 +54,7 @@
 
     //build the URL for hierarchView from the absolute path and the relative beans..
     String hvPath = relativePath.concat(service.getHierarchViewProp("hv.url"));
+    String minePath = relativePath.concat("mine/display.jsp");
 
     //The List of view beans used to provide the data for this JSP.
     List viewBeanList = (List)session.getAttribute(SearchConstants.VIEW_BEAN_LIST);
@@ -269,7 +270,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
                 <%
                     if(highlightList.contains(bean.getObjIntactName())) {
                 %>
-                    <span style="color: rgb(255, 0, 0);"><%= bean.getObjIntactName()%></span>
+                    <span style="color: rgb(255, 0, 0);"><b><%= bean.getObjIntactName()%></b></span>
                 <%
                     }
                     else {
@@ -521,7 +522,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
                 <%
                     if(highlightList.contains(interaction.getShortLabel())) {
                 %>
-                    <span style="color: rgb(255, 0, 0);"><%= interaction.getShortLabel()%></span>
+                    <b><span style="color: rgb(255, 0, 0);"><%= interaction.getShortLabel()%></span></b>
                 <%
                     }
                     else {
@@ -780,6 +781,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
 
             <!-- role, linked CvComponentRole search -->
             <%
+                    //NB this should never be null....
                     Component comp = bean.getComponent(protein, interaction);
             %>
             <td width="20%" class="lefttop">

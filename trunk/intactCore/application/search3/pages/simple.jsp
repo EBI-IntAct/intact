@@ -58,6 +58,7 @@ to identify the source page of the request to the Action classes.
 
     //build the URL for hierarchView from the absolute path and the relative beans..
     String hvPath = relativePath.concat(service.getHierarchViewProp("hv.url"));
+    String minePath = relativePath.concat("mine/display.jsp");
 
     //The List of view beans used to provide the data for this JSP. This is in fact
     //a List of sublists, partitioned by result type.
@@ -77,6 +78,12 @@ to identify the source page of the request to the Action classes.
 <h1>Search Results for
     <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA) %>
 </h1>
+<span class="smalltext">(short labels of search criteria matches are
+    <span style="color: rgb(255, 0, 0);">highlighted</span>
+</span><span class="smalltext">)<br></span></p>
+
+
+<br>
 
 <%-- Firstly need to check that we have at least one set of results that we can display,
 because if not then we should NOT display the message below..
@@ -273,7 +280,9 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
                 Action classes know what to do with eg Protein search requests..
             --%>
             <td style="vertical-align: top;">
-                <a href="<%= searchURL + "&" + SearchConstants.PAGE_SOURCE + "=simple"%>"><%= bean.getObjIntactName() %></a><br>
+                <a href="<%= searchURL + "&" + SearchConstants.PAGE_SOURCE + "=simple"%>">
+                    <b><span style="color: rgb(255, 0, 0);"><%= bean.getObjIntactName() %></span></b>
+                </a><br>
             </td>
 
             <!-- AC, not linked -->
