@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConsta
 
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.*;
+import java.util.Collection;
 
 /**
  * This tage class generates a list of names for a JSP to display.
@@ -58,9 +59,17 @@ public class CreateNameListTag extends TagSupport {
             super.pageContext.getSession().getAttribute(
             WebIntactConstants.INTACT_USER);
 
+        // The short label of the CV object we are editing at the moment.
+        String label = user.getCurrentEditObject().getShortLabel();
+
+        // The list for given name.
+        Collection list = user.getList(myListName);
+
+        // Remove the short label from the list (only for CvTopics).
+        //list.remove(label);
+
         // Save the list in a request.
-        super.pageContext.getRequest().setAttribute(
-            myListName, user.getList(myListName));
+        super.pageContext.getRequest().setAttribute(myListName, list);
         return EVAL_PAGE;
     }
 }
