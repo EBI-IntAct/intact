@@ -84,7 +84,7 @@ public class IntactHelper implements SearchI, Externalizable {
     /**
      * Wipe the whole cache.
      */
-    public void clearCache () {
+    public void clearCache() {
         if (dao != null) dao.clearCache();
     }
 
@@ -130,12 +130,12 @@ public class IntactHelper implements SearchI, Externalizable {
      */
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         in.readObject();
-        if(dataSource != null) pr = dataSource.getLogger();
+        if (dataSource != null) pr = dataSource.getLogger();
 
     }
 
     public Logger getLogger() {
-            return pr;
+        return pr;
     }
 
     /**
@@ -198,7 +198,8 @@ public class IntactHelper implements SearchI, Externalizable {
 
             //get a DAO so some work can be done!!
             dao = dataSource.getDAO();
-        } catch (DataSourceException de) {
+        }
+        catch (DataSourceException de) {
 
             String msg = "intact helper: There was a problem accessing a data store";
             throw new IntactException(msg, de);
@@ -311,7 +312,7 @@ public class IntactHelper implements SearchI, Externalizable {
      */
     public boolean isUserVerified(String user, String password) {
 
-        if(dao != null) return dao.isUserValid(user, password);
+        if (dao != null) return dao.isUserValid(user, password);
         return false;
     }
 
@@ -331,7 +332,7 @@ public class IntactHelper implements SearchI, Externalizable {
 
             dao.close();
         }
-        catch(Exception de) {
+        catch (Exception de) {
 
             throw new IntactException("failed to close data source!", de);
         }
@@ -343,7 +344,7 @@ public class IntactHelper implements SearchI, Externalizable {
      */
     public boolean isInTransaction() {
 
-        if(dao != null) {
+        if (dao != null) {
             return dao.isActive();
         }
         return false;
@@ -381,7 +382,7 @@ public class IntactHelper implements SearchI, Externalizable {
         try {
             dao.begin(txType);
         }
-        catch(Exception e) {
+        catch (Exception e) {
             throw new IntactException("unable to start an intact transaction!", e);
         }
     }
@@ -407,7 +408,7 @@ public class IntactHelper implements SearchI, Externalizable {
         try {
             dao.commit();
         }
-        catch(Exception e) {
+        catch (Exception e) {
             throw new IntactException("unable to complete an intact transaction!", e);
         }
     }
@@ -424,7 +425,7 @@ public class IntactHelper implements SearchI, Externalizable {
         try {
             dao.rollback();
         }
-        catch(Exception e) {
+        catch (Exception e) {
             throw new IntactException("unable to undo an intact transaction!", e);
         }
     }
@@ -438,8 +439,8 @@ public class IntactHelper implements SearchI, Externalizable {
      *            getting the Connection
      * @exception SQLException thrown if the metatdata can't be obtained
      */
-     public String getDbName() throws LookupException, SQLException {
-       return dao.getDbName();
+    public String getDbName() throws LookupException, SQLException {
+        return dao.getDbName();
     }
 
     /**
@@ -449,7 +450,7 @@ public class IntactHelper implements SearchI, Externalizable {
      * getting the Connection
      * @exception SQLException thrown if the metatdata can't be obtained
      */
-     public String getDbUserName() throws LookupException, SQLException {
+    public String getDbUserName() throws LookupException, SQLException {
         return dao.getDbUserName();
 
     }
@@ -467,7 +468,7 @@ public class IntactHelper implements SearchI, Externalizable {
 
         try {
 
-            if(dao == null) connect();
+            if (dao == null) connect();
 
             //just to be safe, restrict write access..
             synchronized (this) {
@@ -476,12 +477,14 @@ public class IntactHelper implements SearchI, Externalizable {
 
             }
 
-        } catch (CreateException ce) {
+        }
+        catch (CreateException ce) {
 
             String msg = "intact helper: object creation failed.. \n";
             throw new IntactException(msg, ce);
 
-        } catch (TransactionException te) {
+        }
+        catch (TransactionException te) {
 
             String msg = "intact helper: transaction problem during object creation.. \n";
             throw new IntactException(msg, te);
@@ -502,35 +505,35 @@ public class IntactHelper implements SearchI, Externalizable {
     }
 
     /**
-        *  This method provides a delete operation.
-        *
-        * @param obj -obj to be deleted
-        *
-        * @exception IntactException - thrown if a problem arises during the deletion
-        *
-        */
-        public void delete(Object obj) throws IntactException {
+     *  This method provides a delete operation.
+     *
+     * @param obj -obj to be deleted
+     *
+     * @exception IntactException - thrown if a problem arises during the deletion
+     *
+     */
+    public void delete(Object obj) throws IntactException {
 
-           try {
+        try {
 
-               if(dao == null) connect();
+            if (dao == null) connect();
 
-               //just to be safe, restrict write access..
-               synchronized(this) {
+            //just to be safe, restrict write access..
+            synchronized (this) {
 
                 dao.remove(obj);
 
-               }
+            }
 
-           }
-           catch(Exception de) {
+        }
+        catch (Exception de) {
 
-                  String msg = "intact helper: could not close data source connection properly";
-                  throw new IntactException(msg, de);
+            String msg = "intact helper: could not close data source connection properly";
+            throw new IntactException(msg, de);
 
-           }
+        }
 
-       }
+    }
 
     /**
      * Convenience method to create a single object in persistent store.
@@ -543,16 +546,16 @@ public class IntactHelper implements SearchI, Externalizable {
 
         try {
 
-            if(dao == null) connect();
+            if (dao == null) connect();
 
-                //just to be safe, restrict write access..
-                synchronized(this) {
+            //just to be safe, restrict write access..
+            synchronized (this) {
 
-                    dao.create(obj);
+                dao.create(obj);
 
-                }
+            }
         }
-        catch(Exception de) {
+        catch (Exception de) {
             de.printStackTrace();
             String msg = "intact helper: single object creation failed for class " + obj.getClass().getName();
             throw new IntactException(msg, de);
@@ -561,35 +564,35 @@ public class IntactHelper implements SearchI, Externalizable {
 
     }
 
-        /**
-        *  This method provides an update operation.
-        *
-        * @param obj -obj to be updated
-        *
-        * @exception IntactException - thrown if a problem arises during the update
-        *
-        */
-        public void update(Object obj) throws IntactException {
+    /**
+     *  This method provides an update operation.
+     *
+     * @param obj -obj to be updated
+     *
+     * @exception IntactException - thrown if a problem arises during the update
+     *
+     */
+    public void update(Object obj) throws IntactException {
 
-           try {
+        try {
 
-               if(dao == null) connect();
+            if (dao == null) connect();
 
-               //just to be safe, restrict write access..
-               synchronized(this) {
+            //just to be safe, restrict write access..
+            synchronized (this) {
 
                 dao.update(obj);
 
-               }
-           }
-           catch(Exception de) {
-                  de.printStackTrace();
-                  String msg = "intact helper: could not close data source connection properly";
-                  throw new IntactException(msg, de);
+            }
+        }
+        catch (Exception de) {
+            de.printStackTrace();
+            String msg = "intact helper: could not close data source connection properly";
+            throw new IntactException(msg, de);
 
-           }
+        }
 
-       }
+    }
 
     /**
      * Cancels the update for the given object.
@@ -648,7 +651,8 @@ public class IntactHelper implements SearchI, Externalizable {
             fieldsToSearch = classToSearch.getFields();
 
             if (matchSubString) {
-            } else {
+            }
+            else {
 
                 //standard search - need to check all fields...
                 for (int i = 0; i < fieldsToSearch.length; i++) {
@@ -664,7 +668,8 @@ public class IntactHelper implements SearchI, Externalizable {
 
                 //to get the list to return, must order the collection by "relevance"...
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
 
             //probablky a ClassNotFoundException
             throw new IntactException("error - possible class not found for " + objectType, e);
@@ -691,13 +696,14 @@ public class IntactHelper implements SearchI, Externalizable {
      * @exception IntactException - thrown if problems are encountered during the search process
      */
     public Iterator iterSearch(String objectType, String searchParam, String searchValue)
-                                                                    throws IntactException {
+            throws IntactException {
         Iterator result = null;
         try {
 
             result = dao.iteratorFind(objectType, searchParam, searchValue);
 
-        } catch (SearchException se) {
+        }
+        catch (SearchException se) {
 
             //return to action servlet witha forward to error page command
             String msg = "intact helper: query by Iterator failed.. \n";
@@ -726,7 +732,7 @@ public class IntactHelper implements SearchI, Externalizable {
             result = dao.findColumnValues(type, cols);
             return result;
         }
-        catch(SearchException se) {
+        catch (SearchException se) {
             throw new IntactException("failed to get column data!", se);
         }
 
@@ -749,7 +755,7 @@ public class IntactHelper implements SearchI, Externalizable {
             result = dao.findBySQL(type, sqlString);
             return result;
         }
-        catch(SearchException se) {
+        catch (SearchException se) {
             throw new IntactException("failed to execute SQL string " + sqlString, se);
         }
     }
@@ -786,7 +792,7 @@ public class IntactHelper implements SearchI, Externalizable {
         * NB assumed pooling is managed within the persistence layer..
         */
 
-         if (null == dao) connect();
+        if (null == dao) connect();
 
         //now retrieve an object...
         try {
@@ -805,7 +811,8 @@ public class IntactHelper implements SearchI, Externalizable {
 
                 return new ArrayList();
             }
-        } catch (SearchException se) {
+        }
+        catch (SearchException se) {
             se.printStackTrace();
             //return to action servlet witha forward to error page command
             String msg = "intact helper: unable to perform search operation.. \n";
@@ -887,7 +894,8 @@ public class IntactHelper implements SearchI, Externalizable {
                 return new ArrayList();
             }
 
-        } catch (SearchException se) {
+        }
+        catch (SearchException se) {
 
             //return to action servlet witha forward to error page command
             String msg = "intact helper: unable to perform search operation.. \n";
@@ -956,7 +964,8 @@ public class IntactHelper implements SearchI, Externalizable {
                     getterMethod = propsInfo[i].getReadMethod();
                     methodResult = getterMethod.invoke(base, null);
 
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
 
                     String msg = "error- unable to access getter methof for property" + propName;
                     throw new IntactException(msg, e);
@@ -980,7 +989,8 @@ public class IntactHelper implements SearchI, Externalizable {
 
                         relations.add(it.next());
                     }
-                } else {
+                }
+                else {
 
                     relations.add(methodResult);
                 }
@@ -991,14 +1001,16 @@ public class IntactHelper implements SearchI, Externalizable {
 
             pr.info("intact helper: done prop processing for object " + base.getClass().getName());
 
-        } else {
+        }
+        else {
 
             pr.info("intact helper: no pre-loaded reflection info - starting reflection...");
             //no reflection data - have to use reflection directly
             try {
 
                 relations = reflect(base);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
 
                 //something went wrong during reflection...
                 String msg = "intact helper: unable to get relations - failed retrieval";
@@ -1069,7 +1081,8 @@ public class IntactHelper implements SearchI, Externalizable {
 
                 //need to handle collection result here too....TBD
 
-            } catch (NoSuchMethodException nme) {
+            }
+            catch (NoSuchMethodException nme) {
 
                 //method does not exist in this object - do something
                 String msg1 = "Failed search: java NoSuchMethod exception thrown during reflection... \n";
@@ -1077,7 +1090,8 @@ public class IntactHelper implements SearchI, Externalizable {
                 String msg3 = "method Name: " + methodName;
                 String msg = msg1 + msg2 + msg3;
                 throw new Exception(msg);
-            } catch (SecurityException se) {
+            }
+            catch (SecurityException se) {
 
                 //not allowed to invoke it - do something
                 String msg1 = "Failed search: java Security exception thrown during refelction \n";
@@ -1085,7 +1099,8 @@ public class IntactHelper implements SearchI, Externalizable {
                 String msg3 = "method Name: " + methodName;
                 String msg = msg1 + msg2 + msg3;
                 throw new Exception(msg);
-            } catch (IllegalArgumentException iae) {
+            }
+            catch (IllegalArgumentException iae) {
 
                 //class does not specify such a method - do something
                 String msg1 = "Failed search: java IllegalArgument exception thrown during reflection \n";
@@ -1093,7 +1108,8 @@ public class IntactHelper implements SearchI, Externalizable {
                 String msg3 = "method Name: " + methodName;
                 String msg = msg1 + msg2 + msg3;
                 throw new Exception(msg);
-            } catch (IllegalAccessException ae) {
+            }
+            catch (IllegalAccessException ae) {
 
                 //method is not accessible (eg for security reasons) - do something
                 String msg1 = "Failed search: java IllegalAccess exception thrown during reflection \n";
@@ -1101,7 +1117,8 @@ public class IntactHelper implements SearchI, Externalizable {
                 String msg3 = "method Name: " + methodName;
                 String msg = msg1 + msg2 + msg3;
                 throw new Exception(msg);
-            } catch (InvocationTargetException te) {
+            }
+            catch (InvocationTargetException te) {
 
                 //method threw an exception - do something
                 String msg1 = "Failed search: java InvocationTarget exception thronw during reflection \n";
@@ -1122,7 +1139,7 @@ public class IntactHelper implements SearchI, Externalizable {
      *  Should search by database and primaryId.
      */
     public Collection getObjectsByXref(Class clazz,
-                                      String aPrimaryId) throws IntactException {
+                                       String aPrimaryId) throws IntactException {
 
         // get the Xref from the database
         Collection xrefs = this.search(Xref.class.getName(), "primaryId", aPrimaryId);
@@ -1143,35 +1160,48 @@ public class IntactHelper implements SearchI, Externalizable {
      * empty collection if none are found.
      * @exception IntactException if there is more than single protein returned from
      * the search or an error ocurred in searching.
+     *
+     * <b>This method is a temporary method added to get the splice proteins.
+     * This will be removed shortly once the necessary changes are performed to
+     * get all the splice proteins. Only the editor uses this method</b>
      */
     public Collection getSpliceProteinsByXref(String primaryId)
             throws IntactException {
         // The results to return.
         Collection results = new ArrayList();
 
-        // The protein retrieved via xrefs.
-        Protein protein = (Protein) getObjectByXref(Protein.class, primaryId);
+        // Proteins retrieved via xrefs.
+        Collection proteins = getObjectsByXref(Protein.class, primaryId);
 
-        // Null if no protein is found for the primary id.
-        if (protein == null) {
+        // Empty if no protein is found for the primary id.
+        if (proteins.isEmpty()) {
             // An empty collection if no proteins found.
             return results;
         }
+        if (proteins.size() > 1) {
+            return getObjectsByXref(Protein.class, primaryId);
+        }
+        // The primary protein.
+        Protein protein = (Protein) proteins.iterator().next();
+
         // Add the 'primary' protein.
         results.add(protein);
 
         // All splice proteins have 'this' protein as the primary id.
-        Collection proteins = search(Xref.class.getName(), "primaryId", protein.getAc());
+        Collection spProteins = search(Xref.class.getName(), "primaryId",
+                protein.getAc());
 
         // The iso-form to check for splice or not.
         CvXrefQualifier isoForm = (CvXrefQualifier) getObjectByLabel(
                 CvXrefQualifier.class, "isoform-parent");
 
         // Loop through proteins collection; only add the splice proteins.
-        for (Iterator iterator = proteins.iterator(); iterator.hasNext();) {
+        for (Iterator iterator = spProteins.iterator(); iterator.hasNext();) {
             Xref xref = (Xref) iterator.next();
+            // Filter out proteins which aren't iso-forms.
             if (xref.getCvXrefQualifier().equals(isoForm)) {
-                results.addAll(search(Protein.class.getName(), "ac", xref.getParentAc()));
+                results.addAll(search(Protein.class.getName(), "ac",
+                        xref.getParentAc()));
             }
         }
         return results;
@@ -1190,7 +1220,8 @@ public class IntactHelper implements SearchI, Externalizable {
         if (results.size() > 1) {
             throw new IntactException("error - more than one result returned with query by "
                     + aPrimaryId + " ");
-        } else {
+        }
+        else {
             if (results.isEmpty()) {
                 return null;
             }
@@ -1212,20 +1243,20 @@ public class IntactHelper implements SearchI, Externalizable {
      * @throws IllegalArgumentException if the name of the Alias is not specified or empty.
      * @see uk.ac.ebi.intact.model.Alias
      */
-    public Collection getObjectsByAlias( Class clazz,
-                                         String aliasName) throws IntactException {
+    public Collection getObjectsByAlias(Class clazz,
+                                        String aliasName) throws IntactException {
 
-        if ( aliasName == null || "".equals(aliasName) )
-            throw new IllegalArgumentException( "You have requested a search by alias, but the specified alias name is null." );
+        if (aliasName == null || "".equals(aliasName))
+            throw new IllegalArgumentException("You have requested a search by alias, but the specified alias name is null.");
 
         // get the Alias from the database
-        Collection aliases = search( Alias.class.getName(), "name", aliasName );
+        Collection aliases = search(Alias.class.getName(), "name", aliasName);
         Collection results = new ArrayList();
 
         // add all referenced objects of the searched class
         for (Iterator iterator = aliases.iterator(); iterator.hasNext();) {
             Alias alias = (Alias) iterator.next();
-            results.addAll( search( clazz.getName(), "ac", alias.getParentAc() ) );
+            results.addAll(search(clazz.getName(), "ac", alias.getParentAc()));
         }
         return results;
     }
@@ -1243,22 +1274,22 @@ public class IntactHelper implements SearchI, Externalizable {
      * @throws IllegalArgumentException if the name of the Alias is not specified or empty.
      * @see uk.ac.ebi.intact.model.Alias
      */
-    public Collection getObjectsByAlias( Class clazz,
-                                         String aliasName,
-                                         String aliasTypeShortLabel) throws IntactException {
+    public Collection getObjectsByAlias(Class clazz,
+                                        String aliasName,
+                                        String aliasTypeShortLabel) throws IntactException {
 
-        if ( aliasName == null || "".equals(aliasName) )
-            throw new IllegalArgumentException( "You have requested a search by alias, but the specified alias name is null." );
+        if (aliasName == null || "".equals(aliasName))
+            throw new IllegalArgumentException("You have requested a search by alias, but the specified alias name is null.");
 
         if (aliasTypeShortLabel == null)
-            throw new IllegalArgumentException( "You have requested a search by alias ("+ aliasName +
-                    ") but the specified alias type is null." );
+            throw new IllegalArgumentException("You have requested a search by alias (" + aliasName +
+                    ") but the specified alias type is null.");
 
-        CvAliasType cvAliasType = (CvAliasType) getObjectByLabel( CvAliasType.class, aliasTypeShortLabel);
+        CvAliasType cvAliasType = (CvAliasType) getObjectByLabel(CvAliasType.class, aliasTypeShortLabel);
         if (cvAliasType == null)
-            throw new IntactException( "The requested CvAliasType ("+ aliasTypeShortLabel +") could not be found in the database." );
+            throw new IntactException("The requested CvAliasType (" + aliasTypeShortLabel + ") could not be found in the database.");
 
-        return getObjectsByAlias( clazz, aliasName, cvAliasType );
+        return getObjectsByAlias(clazz, aliasName, cvAliasType);
     }
 
     /**
@@ -1274,9 +1305,9 @@ public class IntactHelper implements SearchI, Externalizable {
      * @throws IllegalArgumentException if the name of the Alias is not specified or empty.
      * @see uk.ac.ebi.intact.model.Alias
      */
-    public Collection getObjectsByAlias( Class clazz,
-                                         String aliasName,
-                                         CvAliasType cvAliasType) throws IntactException {
+    public Collection getObjectsByAlias(Class clazz,
+                                        String aliasName,
+                                        CvAliasType cvAliasType) throws IntactException {
 
         // get the Xref from the database
         Collection aliases = this.search(Alias.class.getName(), "name", aliasName);
@@ -1285,7 +1316,7 @@ public class IntactHelper implements SearchI, Externalizable {
         // add all referenced objects of the searched class
         for (Iterator iterator = aliases.iterator(); iterator.hasNext();) {
             Alias alias = (Alias) iterator.next();
-            if ( ! alias.getCvAliasType().equals(cvAliasType) )
+            if (!alias.getCvAliasType().equals(cvAliasType))
                 continue; // we use only aliases mathing with the requested CvAliasType
             results.addAll(this.search(clazz.getName(), "ac", alias.getParentAc()));
         }
@@ -1327,11 +1358,12 @@ public class IntactHelper implements SearchI, Externalizable {
 
         if (resultList.isEmpty()) {
             result = null;
-        } else {
+        }
+        else {
             Iterator i = resultList.iterator();
             result = i.next();
             if (i.hasNext()) {
-                IntactException ie = new DuplicateLabelException( label, clazz.getName() );
+                IntactException ie = new DuplicateLabelException(label, clazz.getName());
                 throw(ie);
             }
         }
@@ -1359,17 +1391,19 @@ public class IntactHelper implements SearchI, Externalizable {
 
         if (resultList.isEmpty()) {
             result = null;
-        } else {
+        }
+        else {
             Iterator i = resultList.iterator();
             result = i.next();
             if (i.hasNext()) {
-                IntactException ie = new DuplicateLabelException( ac, clazz.getName() );
+                IntactException ie = new DuplicateLabelException(ac, clazz.getName());
                 throw(ie);
             }
         }
 
         return result;
     }
+
     /**
      *  This method retrieves an intact object, given a class and the object's full
      * name (provided that name is unique).
@@ -1393,7 +1427,8 @@ public class IntactHelper implements SearchI, Externalizable {
 
         if (resultList.isEmpty()) {
             result = null;
-        } else {
+        }
+        else {
             Iterator i = resultList.iterator();
             result = i.next();
             if (i.hasNext()) {
@@ -1425,8 +1460,8 @@ public class IntactHelper implements SearchI, Externalizable {
         resultList = this.search("uk.ac.ebi.intact.model.BioSource", "scientificName", name);
 
         if (resultList.isEmpty()) return null;
-        if(resultList.size() > 1) throw new IntactException("More than one BioSource returned by name search");
-        return (BioSource)resultList.iterator().next();
+        if (resultList.size() > 1) throw new IntactException("More than one BioSource returned by name search");
+        return (BioSource) resultList.iterator().next();
     }
 
     /**
@@ -1439,14 +1474,14 @@ public class IntactHelper implements SearchI, Externalizable {
      * than one BioSource was found
      *
      */
-     public BioSource getBioSourceByTaxId(String taxId) throws IntactException {
+    public BioSource getBioSourceByTaxId(String taxId) throws IntactException {
 
         Collection resultList = null;
         resultList = this.search("uk.ac.ebi.intact.model.BioSource", "taxId", taxId);
 
         if (resultList.isEmpty()) return null;
-        if(resultList.size() > 1) throw new IntactException("More than one BioSource returned by taxtID search");
-        return (BioSource)resultList.iterator().next();
+        if (resultList.size() > 1) throw new IntactException("More than one BioSource returned by taxtID search");
+        return (BioSource) resultList.iterator().next();
 
     }
 
@@ -1470,13 +1505,13 @@ public class IntactHelper implements SearchI, Externalizable {
      */
     public Collection getInteractorBySource(Class clazz, BioSource source) throws IntactException {
 
-        if(source == null) throw new NullPointerException("Need a BioSource to search by BioSource!");
-        if(clazz == null) throw new NullPointerException("Class is null for Interactor/BioSource search!");
-        if(!Interactor.class.isAssignableFrom(clazz))
+        if (source == null) throw new NullPointerException("Need a BioSource to search by BioSource!");
+        if (clazz == null) throw new NullPointerException("Class is null for Interactor/BioSource search!");
+        if (!Interactor.class.isAssignableFrom(clazz))
             throw new IllegalArgumentException("Cannot do Interactor search - Class "
                     + clazz.getName() + "is not a subclass of Interactor");
 
-        return(this.search(Interactor.class.getName(), "bioSource_ac", source.getAc()));
+        return (this.search(Interactor.class.getName(), "bioSource_ac", source.getAc()));
 
     }
 
@@ -1502,7 +1537,8 @@ public class IntactHelper implements SearchI, Externalizable {
         resultList = this.search(Experiment.class.getName(), "bioSource_ac", bioAc);
         if (resultList.isEmpty()) {
             result = null;
-        } else {
+        }
+        else {
             Iterator i = resultList.iterator();
             result = (Experiment) i.next();
             if (i.hasNext()) {
@@ -1528,7 +1564,7 @@ public class IntactHelper implements SearchI, Externalizable {
      */
     public Collection getComponentsByRole(CvComponentRole role) throws IntactException {
 
-        return( this.search(Component.class.getName(), "role", role.getAc()));
+        return (this.search(Component.class.getName(), "role", role.getAc()));
 
     }
 
@@ -1546,7 +1582,7 @@ public class IntactHelper implements SearchI, Externalizable {
      */
     public Collection getInteractionsByType(CvInteractionType type) throws IntactException {
 
-        return(this.search(Interaction.class.getName(), "interactionType_ac", type.getAc()));
+        return (this.search(Interaction.class.getName(), "interactionType_ac", type.getAc()));
     }
 
 
@@ -1567,16 +1603,16 @@ public class IntactHelper implements SearchI, Externalizable {
     public Collection getExperimentsByInstitution(Institution institution) throws IntactException {
 
         String ownerAc = institution.getAc();
-        if(ownerAc == null) {
+        if (ownerAc == null) {
             //get it first via shortLabel
             Collection tmpResults = this.search(Institution.class.getName(), "shortLabel", institution.getShortLabel());
-            if(!tmpResults.isEmpty()) {
+            if (!tmpResults.isEmpty()) {
                 //take the first one
-                Institution inst = (Institution)tmpResults.iterator().next();
+                Institution inst = (Institution) tmpResults.iterator().next();
                 ownerAc = inst.getAc();
             }
         }
-        return(this.search(Experiment.class.getName(), "owner_ac", ownerAc));
+        return (this.search(Experiment.class.getName(), "owner_ac", ownerAc));
     }
 
     /**
@@ -1597,15 +1633,15 @@ public class IntactHelper implements SearchI, Externalizable {
 
         Collection resultList = null;
         resultList = this.search(Protein.class.getName(), "ac", xref.getParentAc());
-        if(resultList.isEmpty()) return null;
-        if(resultList.size() > 1) throw new IntactException("Got more than one Protein with Xref " + xref.getAc());
+        if (resultList.isEmpty()) return null;
+        if (resultList.size() > 1) throw new IntactException("Got more than one Protein with Xref " + xref.getAc());
 
         Object obj = resultList.iterator().next();
-        if(!(obj instanceof Protein))
+        if (!(obj instanceof Protein))
             throw new IntactException("Xref refers to an instance of "
                     + obj.getClass().getName() + ", NOT a Protein!!");
 
-        return (Protein)obj;
+        return (Protein) obj;
     }
 
     /**
@@ -1614,20 +1650,20 @@ public class IntactHelper implements SearchI, Externalizable {
     public void deleteAllElements(Collection aCollection) throws IntactException {
         try {
 
-            if(dao == null) connect();
+            if (dao == null) connect();
 
             //just to be safe, restrict write access..
-            synchronized(this) {
+            synchronized (this) {
                 for (Iterator i = aCollection.iterator(); i.hasNext();) {
-                    dao.remove (i.next());
+                    dao.remove(i.next());
                 }
             }
 
         }
-        catch(Exception de) {
+        catch (Exception de) {
 
-               String msg = "intact helper: error deleting collection elements";
-               throw new IntactException(msg, de);
+            String msg = "intact helper: error deleting collection elements";
+            throw new IntactException(msg, de);
 
         }
     }
@@ -1661,13 +1697,14 @@ public class IntactHelper implements SearchI, Externalizable {
                           int graphDepth,
                           Collection experiments,
                           int complexExpansion,
-			              Graph graph) throws IntactException {
+                          Graph graph) throws IntactException {
 
         //System.out.println("subGraph called: " + startNode.getAc() + " Depth: " + graphDepth);
 
-       if (startNode instanceof Interaction) {
+        if (startNode instanceof Interaction) {
             graph = subGraphPartial((Interaction) startNode, graphDepth, experiments, complexExpansion, graph);
-        } else if (startNode instanceof Interactor) {
+        }
+        else if (startNode instanceof Interactor) {
             graph = subGraphPartial(startNode, graphDepth, experiments, complexExpansion, graph);
         }
         return graph;
@@ -1690,9 +1727,10 @@ public class IntactHelper implements SearchI, Externalizable {
         /* If the Interaction has already been visited, return,
            else mark it.
         */
-        if (partialGraph.isVisited(startNode)){
+        if (partialGraph.isVisited(startNode)) {
             return partialGraph;
-        } else {
+        }
+        else {
             partialGraph.addVisited(startNode);
         }
 
@@ -1712,11 +1750,11 @@ public class IntactHelper implements SearchI, Externalizable {
             }
 
             /* Explore the next Interaction */
-            partialGraph = subGraphPartial (current.getInteraction(),
-                                            graphDepth,
-                                            experiments,
-                                            complexExpansion,
-                                            partialGraph);
+            partialGraph = subGraphPartial(current.getInteraction(),
+                    graphDepth,
+                    experiments,
+                    complexExpansion,
+                    partialGraph);
         }
 
         return partialGraph;
@@ -1740,9 +1778,10 @@ public class IntactHelper implements SearchI, Externalizable {
         /* If the Interaction has already been visited, return,
            else mark it.
         */
-        if (partialGraph.isVisited(current)){
+        if (partialGraph.isVisited(current)) {
             return partialGraph;
-        } else {
+        }
+        else {
             partialGraph.addVisited(current);
         }
 
@@ -1752,7 +1791,7 @@ public class IntactHelper implements SearchI, Externalizable {
         switch (complexExpansion) {
             case Constants.EXPANSION_ALL:
                 {
-                    baits = new ArrayList (current.getComponents().size());
+                    baits = new ArrayList(current.getComponents().size());
 
                     /* all components are considered as baits */
                     Iterator i = current.getComponents().iterator();
@@ -1768,13 +1807,14 @@ public class IntactHelper implements SearchI, Externalizable {
                      */
                     Component bait = current.getBait();
                     if (null == bait) {
-                        baits = new ArrayList (current.getComponents().size());
+                        baits = new ArrayList(current.getComponents().size());
                         Iterator i = current.getComponents().iterator();
                         if (i.hasNext()) {
                             baits.add(i.next());
                         }
-                    } else {
-                        baits = new ArrayList (1);
+                    }
+                    else {
+                        baits = new ArrayList(1);
                         baits.add(bait);
                     }
                 }
@@ -1818,11 +1858,11 @@ public class IntactHelper implements SearchI, Externalizable {
         /* recursively explore all Interactors linked to current Interaction */
         for (Iterator iterator = current.getComponents().iterator(); iterator.hasNext();) {
             Component component = (Component) iterator.next();
-            partialGraph = subGraphPartial (component.getInteractor(),
-                                            graphDepth - 1,
-                                            experiments,
-                                            complexExpansion,
-                                            partialGraph);
+            partialGraph = subGraphPartial(component.getInteractor(),
+                    graphDepth - 1,
+                    experiments,
+                    complexExpansion,
+                    partialGraph);
         }
 
         return partialGraph;
@@ -1841,56 +1881,55 @@ public class IntactHelper implements SearchI, Externalizable {
     public Collection getRelatedExperiments(Object item) {
 
         Collection results = new ArrayList();
-        if(item instanceof Protein) {
+        if (item instanceof Protein) {
             //collect all the related experiments (interactions can be displayed from them)
-            Protein protein = (Protein)item;
+            Protein protein = (Protein) item;
             Collection components = protein.getActiveInstances();
             Iterator iter1 = components.iterator();
-            while(iter1.hasNext()) {
-                Component component = (Component)iter1.next();
+            while (iter1.hasNext()) {
+                Component component = (Component) iter1.next();
                 Interaction interaction = component.getInteraction();
                 Collection experiments = interaction.getExperiments();
                 Iterator iter2 = experiments.iterator();
-                while(iter2.hasNext()) {
+                while (iter2.hasNext()) {
                     results.add(iter2.next());
                 }
             }
         }
 
-        if(item instanceof Interaction) {
+        if (item instanceof Interaction) {
             //collect all experiments....
-            Collection experiments = ((Interaction)item).getExperiments();
+            Collection experiments = ((Interaction) item).getExperiments();
             Iterator iter3 = experiments.iterator();
-                while(iter3.hasNext()) {
-                    results.add(iter3.next());
-                }
+            while (iter3.hasNext()) {
+                results.add(iter3.next());
+            }
         }
 
         return results;
     }
 
     /**
-         * Gets the underlying JDBC connection. This is a 'useful method' rather than
-         * a good practice one as it returns the underlying DB connection (and assumes there is one).
-         * No guarantees - if you screw up the Connection you are in trouble!.
-         *
-         * @return Connection a JDBC Connection, or null if the DAO you are using is not
-         * an OJB one.
-         * @throws IntactException thrown if there was a problem getting the connection
-         */
-        public Connection getJDBCConnection() throws IntactException {
+     * Gets the underlying JDBC connection. This is a 'useful method' rather than
+     * a good practice one as it returns the underlying DB connection (and assumes there is one).
+     * No guarantees - if you screw up the Connection you are in trouble!.
+     *
+     * @return Connection a JDBC Connection, or null if the DAO you are using is not
+     * an OJB one.
+     * @throws IntactException thrown if there was a problem getting the connection
+     */
+    public Connection getJDBCConnection() throws IntactException {
 
-            if(dao instanceof ObjectBridgeDAO)
-            {
-                try {
-                    return ((ObjectBridgeDAO)dao).getJDBCConnection();
-                }
-                catch(LookupException le) {
-                       throw new IntactException("Failed to get JDBC Connection!", le);
-                }
+        if (dao instanceof ObjectBridgeDAO) {
+            try {
+                return ((ObjectBridgeDAO) dao).getJDBCConnection();
             }
-            return null;
+            catch (LookupException le) {
+                throw new IntactException("Failed to get JDBC Connection!", le);
+            }
         }
+        return null;
+    }
 
 
     /**
@@ -1904,88 +1943,90 @@ public class IntactHelper implements SearchI, Externalizable {
     public Institution getInstitution() throws IntactException {
         Institution institution = null;
 
-        Properties props = PropertyLoader.load ( INSTITUTION_CONFIG_FILE );
+        Properties props = PropertyLoader.load(INSTITUTION_CONFIG_FILE);
         if (props != null) {
-            String shortlabel = props.getProperty ( "Institution.shortLabel" );
-            if (shortlabel == null || shortlabel.trim().equals( "" ))
-                throw new IntactException( "Your institution is not properly configured, check out the configuration file:"+
-                                           INSTITUTION_CONFIG_FILE + " and set 'Institution.shortLabel' correctly" );
+            String shortlabel = props.getProperty("Institution.shortLabel");
+            if (shortlabel == null || shortlabel.trim().equals(""))
+                throw new IntactException("Your institution is not properly configured, check out the configuration file:" +
+                        INSTITUTION_CONFIG_FILE + " and set 'Institution.shortLabel' correctly");
 
             // search for it (force it for LC as short labels must be in LC).
             shortlabel = shortlabel.trim();
-            Collection result = search( Institution.class.getName(), "shortLabel", shortlabel );
+            Collection result = search(Institution.class.getName(), "shortLabel", shortlabel);
 
-            if( result.size() == 0 ){
+            if (result.size() == 0) {
                 // doesn't exist, create it
-                institution = new Institution( shortlabel );
+                institution = new Institution(shortlabel);
 
-                String fullname = props.getProperty ( "Institution.fullName" );
-                if ( fullname != null ) {
+                String fullname = props.getProperty("Institution.fullName");
+                if (fullname != null) {
                     fullname = fullname.trim();
-                    if( ! fullname.equals( "" ) )
-                    institution.setFullName( fullname );
+                    if (!fullname.equals(""))
+                        institution.setFullName(fullname);
                 }
 
 
-                String lineBreak = System.getProperty( "line.separator" );
-                StringBuffer address = new StringBuffer( 128 );
-                String line = props.getProperty ( "Institution.postalAddress.line1" );
-                if ( line != null ) {
+                String lineBreak = System.getProperty("line.separator");
+                StringBuffer address = new StringBuffer(128);
+                String line = props.getProperty("Institution.postalAddress.line1");
+                if (line != null) {
                     line = line.trim();
-                    if( ! line.equals( "" ) ) {
-                        address.append( line ).append( lineBreak );
+                    if (!line.equals("")) {
+                        address.append(line).append(lineBreak);
                     }
                 }
 
-                line = props.getProperty ( "Institution.postalAddress.line2" );
-                if ( line != null ) {
+                line = props.getProperty("Institution.postalAddress.line2");
+                if (line != null) {
                     line = line.trim();
-                    if( ! line.equals( "" ) )
-                        address.append( line ).append( lineBreak );
+                    if (!line.equals(""))
+                        address.append(line).append(lineBreak);
                 }
 
-                line = props.getProperty ( "Institution.postalAddress.line3" );
-                if ( line != null ) {
+                line = props.getProperty("Institution.postalAddress.line3");
+                if (line != null) {
                     line = line.trim();
-                    if( ! line.equals( "" ) )
-                        address.append( line ).append( lineBreak );
+                    if (!line.equals(""))
+                        address.append(line).append(lineBreak);
                 }
 
-                line = props.getProperty ( "Institution.postalAddress.line4" );
-                if ( line != null ) {
+                line = props.getProperty("Institution.postalAddress.line4");
+                if (line != null) {
                     line = line.trim();
-                    if( ! line.equals( "" ) )
-                        address.append( line ).append( lineBreak );
+                    if (!line.equals(""))
+                        address.append(line).append(lineBreak);
                 }
 
-                line = props.getProperty ( "Institution.postalAddress.line5" );
-                if ( line != null ) {
+                line = props.getProperty("Institution.postalAddress.line5");
+                if (line != null) {
                     line = line.trim();
-                    if( ! line.equals( "" ) )
-                        address.append( line ).append( lineBreak );
+                    if (!line.equals(""))
+                        address.append(line).append(lineBreak);
                 }
 
-                if( address.length() > 0) {
-                    address.deleteCharAt( address.length() - 1 ); // delete the last line break;
-                    institution.setPostalAddress( address.toString() );
+                if (address.length() > 0) {
+                    address.deleteCharAt(address.length() - 1); // delete the last line break;
+                    institution.setPostalAddress(address.toString());
                 }
 
-                String url = props.getProperty ("Institution.url");
-                if ( url != null ) {
+                String url = props.getProperty("Institution.url");
+                if (url != null) {
                     url = url.trim();
-                    if( ! url.equals( "" ) )
-                        institution.setUrl( url );
+                    if (!url.equals(""))
+                        institution.setUrl(url);
                 }
 
-                this.create( institution );
+                this.create(institution);
 
-            } else {
+            }
+            else {
                 // return the object found
                 institution = (Institution) result.iterator().next();
             }
 
-        } else {
-            throw new IntactException( "Unable to read the properties from " + INSTITUTION_CONFIG_FILE );
+        }
+        else {
+            throw new IntactException("Unable to read the properties from " + INSTITUTION_CONFIG_FILE);
         }
 
         return institution;
@@ -2013,12 +2054,13 @@ public class IntactHelper implements SearchI, Externalizable {
      *
      * @see org.apache.ojb.broker.VirtualProxy
      */
-    public static Class getRealClassName( Object obj ) {
+    public static Class getRealClassName(Object obj) {
         Class name = null;
 
-        if( obj instanceof VirtualProxy ) {
-            name = ( (IntactObjectProxy) obj ).getRealClassName();
-        } else {
+        if (obj instanceof VirtualProxy) {
+            name = ((IntactObjectProxy) obj).getRealClassName();
+        }
+        else {
             name = obj.getClass();
         }
 
@@ -2031,23 +2073,23 @@ public class IntactHelper implements SearchI, Externalizable {
      * @param obj the object for which we want the class name to display - the object must not be null
      * @return the classname to display in the view.
      */
-    public static String getDisplayableClassName( Object obj ) {
+    public static String getDisplayableClassName(Object obj) {
 
-        return getDisplayableClassName( getRealClassName( obj ) );
+        return getDisplayableClassName(getRealClassName(obj));
     }
 
-     /**
+    /**
      * From the real className of className, gets a displayable name.
      *
      * @param clazz the class for which we want the class name to display - the class must not be null
      * @return the classname to display in the view.
      */
-    public static String getDisplayableClassName( Class clazz ) {
+    public static String getDisplayableClassName(Class clazz) {
 
-        return getDisplayableClassName( clazz.getName() );
+        return getDisplayableClassName(clazz.getName());
     }
 
-     /**
+    /**
      * From the real className of className, gets a displayable name.
      * <br>
      * 1. get the real class name.
@@ -2057,14 +2099,14 @@ public class IntactHelper implements SearchI, Externalizable {
      * @param name the class name for which we want the class name to display - the class must not be null
      * @return the classname to display in the view.
      */
-    public static String getDisplayableClassName( String name ) {
+    public static String getDisplayableClassName(String name) {
 
-        int indexDot  = name.lastIndexOf( "." );
-        int indexImpl = name.lastIndexOf( "Impl" );
-        if ( indexImpl != -1 )
-            name = name.substring( indexDot + 1, indexImpl ) ;
+        int indexDot = name.lastIndexOf(".");
+        int indexImpl = name.lastIndexOf("Impl");
+        if (indexImpl != -1)
+            name = name.substring(indexDot + 1, indexImpl);
         else
-            name = name.substring( indexDot + 1 ) ;
+            name = name.substring(indexDot + 1);
 
         return name;
     }
@@ -2080,7 +2122,7 @@ public class IntactHelper implements SearchI, Externalizable {
     private void connect() throws IntactException {
 
         try {
-            if(user != null) {
+            if (user != null) {
 
                 //try to create using given user details
                 dao = dataSource.getDAO(user, password);
@@ -2091,7 +2133,7 @@ public class IntactHelper implements SearchI, Externalizable {
                 dao = dataSource.getDAO();
             }
         }
-        catch(DataSourceException de) {
+        catch (DataSourceException de) {
             String msg = "failed to create a DAO when it was (somehow!) originally null";
             throw new IntactException(msg, de);
         }
