@@ -1,0 +1,7 @@
+<!--
+        Context configuration for editor
+        version : $Id$
+  -->
+
+<Context path="/intact/editor" docBase="app-dir/editor.war">
+</Context>
