@@ -130,6 +130,10 @@ public class InteractionViewBean extends AbstractEditViewBean {
         // Reset the current interaction with the argument interaction.
         resetInteraction(intact);
 
+        // Set the source experiment to null to indicate that this bean
+        // is not constructed within an experiment.
+        setSourceExperimentAc(null);
+
         // Prepare for Proteins and Experiments for display.
         makeExperimentBeans(intact.getExperiments());
         makeProteinBeans(intact.getComponents());
@@ -1207,10 +1211,6 @@ public class InteractionViewBean extends AbstractEditViewBean {
         CvInteractionType inter = interaction.getCvInteractionType();
         setInteractionType(inter != null
                 ? interaction.getCvInteractionType().getShortLabel() : null);
-
-        // Set the source experiment to null to indicate that this bean
-        // is not constructed within an experiment.
-        setSourceExperimentAc(null);
     }
 
     /**
