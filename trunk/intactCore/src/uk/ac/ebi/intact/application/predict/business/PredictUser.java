@@ -37,6 +37,8 @@ import java.util.*;
 public abstract class PredictUser implements IntactUserI,
         HttpSessionBindingListener, Serializable {
 
+    public static final String SELECTED_SPECIE = "mouse";
+
     /**
      * The intact helper to access the database.
      */
@@ -46,6 +48,19 @@ public abstract class PredictUser implements IntactUserI,
      * The current specie (as a link).
      */
     private String mySpecie;
+
+    /**
+     * The resource bundle for the application.
+     */
+    private ResourceBundle myResources;
+
+    /**
+     * Default constructor. Loads the resources file.
+     */
+    public PredictUser() {
+        myResources = ResourceBundle.getBundle(
+                "uk.ac.ebi.intact.application.predict.PredictResources");
+    }
 
     /**
      * Factory method to create different instances of Predict user instances
@@ -192,7 +207,13 @@ public abstract class PredictUser implements IntactUserI,
                 }
             }
         }
-        return species;
+        String[] items = (String[]) species.toArray(new String[0]);
+        Arrays.sort(items);
+        return Arrays.asList(items);
+    }
+
+    public String getDefaultChoice() {
+        return myResources.getString("default.organism");
     }
 
     /**
