@@ -47,6 +47,7 @@ public abstract class UpdateProteinsI {
      * Xref databases
      */
     protected static CvDatabase uniprotDatabase;
+    protected static CvDatabase intactDatabase;
     protected static CvDatabase sgdDatabase;
     protected static CvDatabase goDatabase;
     protected static CvDatabase interproDatabase;
@@ -160,6 +161,12 @@ public abstract class UpdateProteinsI {
             if (uniprotDatabase == null) {
                 logger.error ("Unable to find the UNIPROT database in your IntAct node");
                 throw new UpdateException ("Unable to find the UNIPROT database in your IntAct node");
+            }
+
+            intactDatabase = (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "intact");
+            if (intactDatabase == null) {
+                logger.error ("Unable to find the INTACT database in your IntAct node");
+                throw new UpdateException ("Unable to find the INTACT database in your IntAct node");
             }
 
             goDatabase = (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "go");
