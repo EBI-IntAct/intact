@@ -1,5 +1,3 @@
-<%@ page import="uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean"%>
-
 <!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
@@ -50,15 +48,14 @@
 --%>
 <c:if test="${numInts gt 0 and empty noDisplayInts}">
     <%-- Store in the page scope for the display library to access it --%>
-    <bean:define id="ints" name="view" property="interactions"
-        type="java.util.List"/>
+    <bean:define id="ints" name="view" property="interactions" type="java.util.List"/>
+
     <%-- Number of ints allowed to display per page --%>
     <bean:define id="pageSize" name="service" property="interactionPageLimit"
         type="java.lang.String"/>
 
     <%
-        String uri = request.getContextPath() + "/do/secure/edit?ac="
-                + view.getAc() + "&topic=Experiment";
+        String uri = request.getContextPath() + "/do/next";
     %>
 
     <display:table width="100%" name="ints" pagesize="<%=pageSize%>"
