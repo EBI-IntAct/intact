@@ -115,7 +115,10 @@ public final class VisualizeAction extends Action {
 	} else {
 
 	  if (hasNoDepthLimit == true) {
-	    depth = null;
+	    Properties properties2 = PropertyLoader.load (Constants.PROPERTY_FILE);
+	    if (null != properties2) {
+	      depth = properties2.getProperty ("hierarchView.view.form.default.value.nodepthlimit");
+	    }
 	  }
 
 	  // Save our data in the session
