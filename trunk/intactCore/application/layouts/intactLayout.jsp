@@ -24,7 +24,7 @@
     <link rel="stylesheet" type="text/css" href="styles/intact.css"/>
 </head>
 
-<body topmargin="0" leftmargin="0">
+<body bgcolor="#FFFFFF" topmargin="0" leftmargin="0">
 <table border="0" height="100%" width="100%" cellspacing="5">
 
 <tr>
