@@ -8,12 +8,11 @@ package uk.ac.ebi.intact.application.editor.business;
 
 import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.DuplicateLabelException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractROViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
+import uk.ac.ebi.intact.application.editor.exception.SearchException;
 
 import java.util.Collection;
 import java.util.Date;
@@ -32,11 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 public interface EditUserI extends Serializable {
 
     /**
-     * An empty list only contains this item.
-     */
-//    public static final String EMPTY_LIST_ITEM = "---";
-
-    /**
      * Retturns the user name.
      * @return the user name of the current user.
      */
@@ -48,10 +42,8 @@ public interface EditUserI extends Serializable {
 
     /**
      * Returns the Institution.
-     * @exception DuplicateLabelException thrown if the search produced more
-     * than a single Institution.
      */
-    public Institution getInstitution() throws DuplicateLabelException;
+    public Institution getInstitution();
 
     /**
      * Returns the state of editing.
@@ -122,13 +114,26 @@ public interface EditUserI extends Serializable {
     /**
      * Return an Object by classname and shortLabel.
      *
+     * @param className the name of the class to search.
+     * @param label the short label to search for.
+     *
+     * @exception SearchException thrown for a search failure; also thrown
+     * if <code>label</code> already exists in <code>className</code>.
+     */
+    public Object getObjectByLabel(String className, String label)
+            throws SearchException;
+
+    /**
+     * Return an Object by classname and shortLabel.
+     *
      * @param clazz the class object to search.
      * @param label the short label to search for.
      *
-     * @exception IntactException thrown for search errors.
+     * @exception SearchException thrown for a search failure; also thrown
+     * if <code>label</code> already exists in <code>clazz</code>.
      */
     public Object getObjectByLabel(Class clazz, String label)
-            throws IntactException;
+            throws SearchException;
 
     /**
      * This method provides a means of searching intact objects, within the constraints
@@ -258,8 +263,8 @@ public interface EditUserI extends Serializable {
      * @param shortLabel the short label to search the database for.
      * @return the read only view for <code>shortLabel</code> of
      * <code>clazz</code>.
-     * @throws IntactException for errors in searching the database.
+     * @throws SearchException for errors in searching the database.
      */
     public AbstractROViewBean getReadOnlyView(Class clazz, String shortLabel)
-            throws IntactException;
+            throws SearchException;
 }
