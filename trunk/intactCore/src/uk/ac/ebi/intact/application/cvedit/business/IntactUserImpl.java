@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.persistence.*;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.application.cvedit.exception.InvalidLoginException;
 
 /**
  * This class stores information about an Intact Web user session. Instead of
@@ -29,20 +30,47 @@ import uk.ac.ebi.intact.business.IntactException;
  */
 public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener {
 
+    // Beginning of Inner classes
+
+    // ------------------------------------------------------------------------
+
+    /**
+     * Inner class to generate unique ids to use primary keys for CommentBean
+     * class.
+     */
+    private static class UniqueID {
+
+        /**
+         * The initial value.
+         */
+        private static long theirCurrentTime = System.currentTimeMillis();
+
+        /**
+         * Returns a unique id using the initial seed value.
+         */
+        private static synchronized long get() {
+            return theirCurrentTime++;
+        }
+    }
+
+    // ------------------------------------------------------------------------
+
+    // End of Inner classes
+
     /**
      * An empty list only contains this item.
      */
     private static final String theirEmptyListItem = "-------------";
 
     /**
+     * Maps: List Name -> List type. Common to all the users and it is immutable.
+     */
+    private static final Map theirNameToType = new HashMap();
+
+    /**
      * The user ID.
      */
     private String myUser;
-
-    /**
-     * Reference to the DAO.
-     */
-    private DAO myDAO;
 
     /**
      * Reference to the Intact Helper.
@@ -65,14 +93,35 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
     private String mySelectedTopic;
 
     /**
-     * Maps list name -> list of items.
+     * Maps list name -> list of items. Made it transient
      */
-    private Map myNameToItems = new HashMap();
+    private transient Map myNameToItems = new HashMap();
 
     /**
      * The current Cv object we are editing.
      */
     private CvObject myEditCvObject;
+
+    // Static initializer.
+
+    // Fill the maps with list names and their associated classes.
+    static {
+        theirNameToType.put(IntactUserIF.TOPIC_NAMES, CvTopic.class);
+        theirNameToType.put(IntactUserIF.DB_NAMES, CvDatabase.class);
+        theirNameToType.put(IntactUserIF.QUALIFIER_NAMES, CvXrefQualifier.class);
+    }
+
+    // Static Methods.
+
+    /**
+     * Returns the unique id based on the current time; the ids are unique
+     * for a session.
+     */
+    public static long getId() {
+        return UniqueID.get();
+    }
+
+    // Constructors.
 
     /**
      * Constructs an instance of this class with given mapping file and
@@ -84,16 +133,16 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
      * @param password the password of <code>user</code>.
      *
      * @exception DataSourceException for error in getting the data source; this
-     *  could be due to the errors in repository files or the underlying
-     *  persistent mechanism rejected <code>user</code> and
-     *  <code>password</code> combination.
+     *  could be due to the errors in repository files.
      * @exception IntactException for errors in creating IntactHelper.
+     * @exception InvalidLoginException the underlying persistent mechanism
+     *  rejected <code>user</code> and <code>password</code> combination.
      * @exception SearchException for error in creating lists such as topics,
      *  database names etc.
      */
     public IntactUserImpl(String mapping, String dsClass, String user,
             String password) throws DataSourceException, IntactException,
-            SearchException {
+            InvalidLoginException, SearchException {
         myUser = user;
         DAOSource ds = DAOFactory.getDAOSource(dsClass);
 
@@ -104,19 +153,14 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         ds.setConfig(fileMap);
 
         // Initialize the helper.
-        myHelper = new IntactHelper(ds);
-
-        // Cache the DAO.
-        // Need a method to get DAO object by passing user and password.
-        // myDAO = ds.getDAO(user, password);
-        myDAO = ds.getDAO();
+        myHelper = new IntactHelper(ds, user, password);
 
         // Cache the list names.
-        myNameToItems.put(IntactUserIF.TOPIC_NAMES, makeList(CvTopic.class));
-        myNameToItems.put(IntactUserIF.DB_NAMES, makeList(CvDatabase.class));
-        myNameToItems.put(IntactUserIF.QUALIFIER_NAMES,
-            makeList(CvXrefQualifier.class));
-
+        for (Iterator iter = theirNameToType.entrySet().iterator();
+             iter.hasNext();) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            myNameToItems.put(entry.getKey(), makeList((Class) entry.getValue()));
+        }
         // Record the time started.
         myStartTime = Calendar.getInstance().getTime();
     }
@@ -165,6 +209,24 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         Collection list = getList(name);
         Iterator iter = list.iterator();
         return ((String) iter.next()).equals(theirEmptyListItem) && !iter.hasNext();
+    }
+
+    public void updateList(Class clazz) throws SearchException {
+        if (!theirNameToType.containsValue(clazz)) {
+            return;
+        }
+        // Valid type; must update the list. First get the name of the list to
+        // update.
+        for (Iterator iter = theirNameToType.entrySet().iterator();
+             iter.hasNext();) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            if (clazz.equals(entry.getValue())) {
+                String name = (String) entry.getKey();
+                // Remove this from the existing map.
+                myNameToItems.remove(name);
+                myNameToItems.put(name, makeList((Class) entry.getValue()));
+            }
+        }
     }
 
     public void begin() throws IntactException {
@@ -228,20 +290,22 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         return result;
     }
 
-    public void removeFromCache(Object object) {
-        // IMPORTANT: THIS IS removed to make the build successful.
-        // This could be unnecessary with the new ODMG stuff????
-        //myDAO.removeFromCache(object);
-    }
-
     public Collection search(String objectType, String searchParam,
                               String searchValue) throws SearchException {
         try {
             return myHelper.search(objectType, searchParam, searchValue);
         }
         catch (IntactException ie) {
-            throw new SearchException("Search failed");
+            throw new SearchException("Search failed: " + ie.getNestedMessage());
         }
+    }
+
+    public void logoff() throws IntactException {
+        myHelper.closeStore();
+    }
+
+    public Date loginTime() {
+        return myStartTime;
     }
 
     public Date logoffTime() {
