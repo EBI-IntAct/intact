@@ -37,6 +37,13 @@
         </td>
 	</tr>
 
+    <%-- PSI section --%>
+    <tr>
+		<td>
+            <tiles:insert attribute="psi" ignore="true"/>
+        </td>
+	</tr>
+
 </table>
 
 <%-- Separation line before the links --%>
