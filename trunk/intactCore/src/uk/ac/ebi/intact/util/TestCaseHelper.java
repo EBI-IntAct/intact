@@ -72,12 +72,12 @@ public class TestCaseHelper {
         //set up a helper object to handle the DB interactions
         try {
 
-            dataSource = DAOFactory.getDAOSource("uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource");
+          dataSource = DAOFactory.getDAOSource("uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource");
 
             //set the config details, ie repository file for OJB in this case
-            Map config = new HashMap();
-            config.put("mappingfile", "config/repository.xml");
-            dataSource.setConfig(config);
+            //Map config = new HashMap();
+            //config.put("mappingfile", "config/repository.xml");
+            //dataSource.setConfig(config);
 
             helper = new IntactHelper(dataSource);
 
