@@ -68,13 +68,11 @@
     <target name="prepare">
         <tstamp/>
         <available file="${lib.dir}/intact-core.jar" type="file" property="intact.jar.present"/>
-        <available file="${tomcat.home}/conf/server.xml" property="tomcat.present"/>
-        <available file="${tomcat.home}/webapps/axis/WEB-INF/web.xml" property="axis.present"/>
 
         <!-- These targets are called to display messages if tomcat or axis
              are not present.
         -->
-        <ant dir=".." inheritAll="false" target="check-tom"/>
+        <ant dir=".." inheritAll="false" target="check-tomcat"/>
         <ant dir=".." inheritAll="false" target="check-axis"/>
     </target>
 
@@ -295,28 +293,36 @@
     <!-- =================================================================== -->
 
     <!-- Deploys the war file on the Tomcat server. -->
-    <target name="deploy" depends="war" if="tomcat.present"
-        description="Deploys the WAR file on the Tomcat server">
-        <!-- Copy the file across to the deploy dir. -->
-        <copy file="${dist.dir}/${war.file}" todir="${tomcat.home}/webapps" overwrite="yes"/>
+    <target name="deploy" description="Deploys the WAR file on the Tomcat server">
+        <ant dir=".." inheritAll="false" target="deploy">
+            <property name="war" value="hierarchView/${dist.dir}/${war.file}"/>
+        </ant>
+    </target>
 
-        <echo message="Please restart Tomcat to take effect (ant restart-tom)"/>
+    <!-- =================================================================== -->
+
+    <!-- Undeploys the war file from the Tomcat server. -->
+    <target name="undeploy"
+        description="Undeploys the WAR file from the Tomcat server">
+        <ant dir=".." inheritAll="false" target="undeploy">
+            <property name="war" value="hierarchView"/>
+        </ant>
     </target>
 
     <!-- =================================================================== -->
 
     <!-- Starts the Tomcat server. -->
 
-    <target name="start-tom">
-        <ant dir=".." inheritAll="false" target="start-tom"/>
+    <target name="start-tomcat">
+        <ant dir=".." inheritAll="false" target="start-tomcat"/>
     </target>
 
     <!-- =================================================================== -->
 
     <!-- Stops the Tomcat server. -->
 
-    <target name="stop-tom">
-        <ant dir=".." inheritAll="false" target="stop-tom"/>
+    <target name="stop-tomcat">
+        <ant dir=".." inheritAll="false" target="stop-tomcat"/>
     </target>
 
     <!-- =================================================================== -->
@@ -324,7 +330,7 @@
     <!-- Restarts the Tomcat server. -->
 
     <target name="restart-tom">
-        <ant dir=".." inheritAll="false" target="restart-tom"/>
+        <ant dir=".." inheritAll="false" target="restart-tomcat"/>
     </target>
 
 </project>
