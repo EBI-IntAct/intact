@@ -4,56 +4,75 @@
 
 package uk.ac.ebi.intact.application.mine.business.graph;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Map;
 import java.util.Stack;
 
-import jdsl.graph.api.Vertex;
-import jdsl.graph.ref.IncidenceListGraph;
+import org.shiftone.cache.Cache;
+import org.shiftone.cache.policy.lru.LruCacheFactory;
+
 import uk.ac.ebi.intact.application.mine.business.IntactUserI;
-import uk.ac.ebi.intact.application.mine.business.graph.model.EdgeObject;
 import uk.ac.ebi.intact.application.mine.business.graph.model.GraphData;
 
 /**
  * @author Andreas Groscurth
  */
-public class GraphManager {
+public class GraphManager extends Thread {
     private static GraphManager INSTANCE;
+    // the timeout for the cache after which elements are erazed
+    // the time is measured in milliseconds and therefore
+    // 5 minutes are written in this way !
+    private static final long TIME_OUT = 1000 * 60 * 5;
+    // the maximal size of the cache
+    private static final int MAX_SIZE = 10;
 
-    private IntactUserI intactUser;
-    private Hashtable cache;
-    private GraphBuilder builder;
+    // a cache structure to store the graphs efficiently
+    private Cache cache;
+    // the collection stores all ids which are currently proceeded
+    private Collection running;
+    // the stack stores all ids which have to be proceeded
+    private Stack incoming;
 
+    /**
+     * Creates a new GraphManager.
+     * 
+     * @param user the intact user
+     */
     private GraphManager(IntactUserI user) {
-        intactUser = user;
-        // cache stores the actual mapping of a graphid to the graphData
-        // Integer -> GraphData
-        //TODO: TEST STRUCTURE !! HAS TO BE CHANGED TO A LRU OR SOMETHING
-        // SIMILAR
-        cache = new Hashtable();
-        builder = new GraphBuilder();
-        builder.start();
+        // the cache strucuture is created with
+        // a dummy name
+        // the time_out which indicates after which time the least valueable
+        // object is removed
+        // the maximal size of the cache
+        cache = new LruCacheFactory().newInstance( "mineCache", TIME_OUT,
+                MAX_SIZE );
+        running = new HashSet();
+
+        // the structures are set for the GraphBuilder Thread to avoid
+        // initialising a new thread with always the same data.
+        GraphBuildThread.intactUser = user;
+        GraphBuildThread.cache = cache;
+        GraphBuildThread.running = running;
+
+        incoming = new Stack();
+
+        // the monitoring of the incoming stack starts
+        start();
     }
 
     /**
      * Called by the client to retrieve a graphdata object for the given id.
      * 
-     * @param id
-     * @return
+     * @param id the graphid
+     * @return the graphData or null if not avaiable
      */
     public GraphData getGraphData(Integer id) {
-        GraphData graphData = (GraphData) cache.get( id );
+        GraphData graphData = (GraphData) cache.getObject( id );
 
         // no data available for the given id
         if ( graphData == null ) {
-            // the id is pushed into the incoming stack of the builder thread
-            // it checks every 25 ms if the stack contains data and proceess it
-            // if so
-            builder.queue( id );
+            // the id is pushed into the incoming stack
+            incoming.push( id );
             // because its no data available yet null is returned
             return null;
         }
@@ -62,12 +81,15 @@ public class GraphManager {
     }
 
     /**
-     * returns the instance of this class (singleton implementation). Method is
-     * synchronized to avoid that two threads are creating an instance
-     * simultaneously... The other possibilty: private static final GraphManager
-     * INSTANCE = new GraphManager(); [....] public static GraphManager
-     * getInstance() { return INSTANCE; } would be thread safe but the class
-     * needs the IntactUser as argument !!
+     * returns the instance of this class (singleton implementation). <br>
+     * Method is synchronized to avoid that two threads are creating an instance
+     * simultaneously... <br>
+     * <ol>
+     * The other possibilty: private static final GraphManager INSTANCE = new
+     * GraphManager(); <br>
+     * [....] public static GraphManager getInstance() { return INSTANCE; }<br>
+     * </ol>
+     * would be thread safe but the class needs the IntactUser as argument !!
      * 
      * @return
      */
@@ -79,124 +101,41 @@ public class GraphManager {
     }
 
     /**
-     * The GraphBuilder is the Demon to handle the building of the graph
+     * Method checks every 25 ms if a new id is in the incoming stack. <br>
+     * If a new id is in the stack it is popped out and tested whether:
+     * <ol>
+     * <li>one can find it already in the cache (which means a graph was
+     * already built)</li>
+     * <li>one can find it in the running structure (which means a graph is
+     * built currently)</li>
+     * </ol>
      */
-    private class GraphBuilder extends Thread {
-        private Stack incoming;
-        private HashSet running;
+    public void run() {
+        try {
+            while ( true ) {
+                // if there are graphids to work with
+                if ( !incoming.isEmpty() ) {
+                    // get the next graphid for which the graph should be
+                    // built
+                    final Integer toProcceed = (Integer) incoming.pop();
 
-        public GraphBuilder() {
-            // the stack stores all graphids which have to be procceeded
-            incoming = new Stack();
-            // the set stores all graphids which are proccessed currently
-            // TODO: TEST STRUCTURE !! MAYBE CHANGE THE STRUCTURE !!
-            running = new HashSet();
-        }
-
-        public void queue(Integer ac) {
-            incoming.push( ac );
-        }
-
-        public void run() {
-            try {
-                while ( true ) {
-                    // if there are graphids to work with
-                    if ( !incoming.isEmpty() ) {
-                        // get the next graphid for which the graph should be
-                        // built
-                        final Integer toProcceed = (Integer) incoming.pop();
-
-                        synchronized ( incoming ) {
-                            // if the running structure does not have the
-                            // graphid to
-                            // procceed -> no one is building a graph for it
-                            if ( !running.contains( toProcceed ) ) {
-                                running.add( toProcceed );
-                                //TODO: WORK(ER) THREAD SHOULD DO THIS TEST
-                                // STRUCTURE !!
-                                // a new Thread builds the graph
-                                new Thread() {
-                                    public void run() {
-                                        GraphData gd;
-                                        try {
-                                            gd = buildGraph( toProcceed );
-
-                                            // is 'synchronized( incoming )'
-                                            // needed because the lock above
-                                            // ????
-
-                                            // the number is removed from the
-                                            // running elements
-                                            running.remove( toProcceed );
-
-                                            // the data is stored in the cache
-                                            cache.put( toProcceed, gd );
-                                        }
-                                        catch ( SQLException e ) {
-                                            // TODO WHAT TO DO IF BUILDING
-                                            // FAILED
-                                            // ???
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                }.start();
-                            }
+                    synchronized ( running ) {
+                        // if for the given ID nothing can be found in the
+                        // cache and in the running structure -> a new thread
+                        // starts for building the graph for the given ID
+                        if ( cache.getObject( toProcceed ) == null
+                                && !running.contains( toProcceed ) ) {
+                            running.add( toProcceed );
+                            // a new Thread builds the graph
+                            new GraphBuildThread( toProcceed ).start();
                         }
                     }
-                    Thread.sleep( 25 );
                 }
-            }
-            catch ( InterruptedException e ) {
-                e.printStackTrace();
+                Thread.sleep( 25 );
             }
         }
-
-        private GraphData buildGraph(Integer graphid) throws SQLException {
-            Statement stm = intactUser.getDBConnection().createStatement();
-            ResultSet set = null;
-            IncidenceListGraph graph = null;
-            Vertex v1, v2;
-            String protein1_ac, protein2_ac, interaction_ac;
-            Map nodeLabelMap = new Hashtable();
-
-            set = stm
-                    .executeQuery( "SELECT * FROM ia_interactions WHERE graphid="
-                            + graphid );
-            // the graph is initialised
-            graph = new IncidenceListGraph();
-            while ( set.next() ) {
-                // the two interactors are fetched
-                protein1_ac = set.getString( 1 ).trim().toUpperCase();
-                protein2_ac = set.getString( 2 ).trim().toUpperCase();
-                // the interaction_ac of the interactions
-                interaction_ac = set.getString( 5 );
-
-                // if the map does not contain the interactor_ac
-                // this means the interactor is not yet in the graph
-                if ( !nodeLabelMap.containsKey( protein1_ac ) ) {
-                    v1 = graph.insertVertex( protein1_ac );
-                    nodeLabelMap.put( protein1_ac, v1 );
-                }
-                // if the map does not contain the interactor_ac
-                // this means the interactor is not yet in the graph
-                if ( !nodeLabelMap.containsKey( protein2_ac ) ) {
-                    v2 = graph.insertVertex( protein2_ac );
-                    nodeLabelMap.put( protein2_ac, v2 );
-                }
-                // because it can happens that just one of the if tests
-                // is succesful which means the protein1_ac may be old and
-                // different
-                // to the node v1 - the correct node for the given
-                // interactor_ac has to be fetched from the map
-                v1 = (Vertex) nodeLabelMap.get( protein1_ac );
-                v2 = (Vertex) nodeLabelMap.get( protein2_ac );
-                // the edge between these two nodes is inserted
-                graph.insertEdge( v1, v2, new EdgeObject( interaction_ac, set
-                        .getDouble( 6 ) ) );
-            }
-            set.close();
-            stm.close();
-            return new GraphData( graph, nodeLabelMap );
+        catch ( InterruptedException e ) {
+            e.printStackTrace();
         }
     }
 }
