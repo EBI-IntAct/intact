@@ -10,10 +10,11 @@ import org.apache.log4j.Logger;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 import org.w3c.dom.Document;
+import uk.ac.ebi.intact.application.graph2MIF.conversion.Graph2FoldedMIF;
+import uk.ac.ebi.intact.application.graph2MIF.exception.GraphNotConvertableException;
+import uk.ac.ebi.intact.application.graph2MIF.exception.NoGraphRetrievedException;
+import uk.ac.ebi.intact.application.graph2MIF.exception.NoInteractorFoundException;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.Constants;
-import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.simpleGraph.Graph;
 
 import javax.servlet.ServletException;
@@ -23,8 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Collection;
-import java.util.Iterator;
 
 
 /**
@@ -77,7 +76,7 @@ public class Graph2MIFWSServlet extends HttpServlet {
                 Integer depth = new Integer(aRequest.getParameter( "depth" ));
 
                 // call getMIF to retrieve and convert
-                Graph graph = getInteractionNetwork( ac, depth ); //NoGraphRetrievedExceptioni, IntactException and NoInteractorFoundException possible
+                Graph graph = GraphFactory.getGraph( ac, depth ); //NoGraphRetrievedExceptioni, IntactException and NoInteractorFoundException possible
                 logger.info("got graph:");
                 logger.info( graph );
 
@@ -131,70 +130,6 @@ public class Graph2MIFWSServlet extends HttpServlet {
         } finally {
             if (out != null) out.close();
         }
-    }
-
-    /**
-     * getInteractionNetwork retrieves a interactionnetwork (graph) from a given ac and depth
-     * @param ac String ac in IntAct
-     * @param depth Integer of the depth the graph should be expanded
-     * @return graph of the ac with given depth
-     * @exception IntactException thrown if search for interactor failed
-     * @exception uk.ac.ebi.intact.application.graph2MIF.NoGraphRetrievedException thrown if DOM-Object could not be serialized
-     * @exception uk.ac.ebi.intact.application.graph2MIF.NoInteractorFoundException thrown if no Interactor found for ac
-     */
-    private Graph getInteractionNetwork(String ac, Integer depth) throws IntactException, NoInteractorFoundException, NoGraphRetrievedException {
-
-        //create helper
-        IntactHelper helper = new IntactHelper();
-        logger.info( "Helper created" );
-
-        //for graph retrieval a interactor is necessary. So get the interactor of given ac.
-        Collection interactors = null;
-        try {
-            logger.info( "Retrieve Interactor from AC("+ ac +")" );
-            interactors = helper.search( Interactor.class.getName(), "ac", ac );
-        } catch (IntactException e) {
-            logger.error( "Could not search for Interactor AC: " + ac, e );
-            throw e;
-        }
-
-        logger.info( interactors.size() + " Interactor found." );
-
-        Interactor interactor = null;
-        // just take the 1st element - there should be no 2nd if searche for an ac !
-        Iterator interactorIterator = interactors.iterator();
-        if (interactorIterator.hasNext()) {
-            interactor = (Interactor) interactorIterator.next();
-            logger.info ( "Get interactor: " + interactor );
-        } else { //No Interactor found
-            logger.warn("No Interactor found for: " + ac);
-            throw new NoInteractorFoundException();
-        }
-
-        // retrieve the graph with interactor as root element and given depth
-        Graph graph = new Graph();
-        try {
-            logger.info ( "Start building an Interaction Network from AC: "+ interactor.getAc() +
-                          ", depth: "+ depth +"." );
-            graph = helper.subGraph( interactor,
-                    depth.intValue(),
-                    null,
-                    Constants.EXPANSION_BAITPREY,
-                    graph );
-        } catch (IntactException e) {
-            logger.warn("IntActException while subgraph() call " + e.getMessage(), e);
-            throw new NoGraphRetrievedException();
-        }
-
-        if (graph == null) {
-            logger.warn("retrieved graph == null");
-            throw new NoGraphRetrievedException();
-        }
-
-        logger.info ("Return the graph.");
-
-        //return this graph
-        return graph;
     }
 
     /**

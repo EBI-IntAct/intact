@@ -8,10 +8,10 @@ package uk.ac.ebi.intact.application.graph2MIF.client;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.commons.cli.*;
-import uk.ac.ebi.intact.application.graph2MIF.GraphNotConvertableException;
-import uk.ac.ebi.intact.application.graph2MIF.MIFSerializeException;
-import uk.ac.ebi.intact.application.graph2MIF.NoGraphRetrievedException;
-import uk.ac.ebi.intact.application.graph2MIF.NoInteractorFoundException;
+import uk.ac.ebi.intact.application.graph2MIF.exception.GraphNotConvertableException;
+import uk.ac.ebi.intact.application.graph2MIF.exception.MIFSerializeException;
+import uk.ac.ebi.intact.application.graph2MIF.exception.NoGraphRetrievedException;
+import uk.ac.ebi.intact.application.graph2MIF.exception.NoInteractorFoundException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.util.PropertyLoader;
@@ -50,6 +50,8 @@ public class Graph2MIFWSClient {
      * @param args [2] strict: (true|false) if only strict MIF should be produce
      */
     public static void main(String[] args) {
+        String ac = null;
+
         try {
             //loading properties
             Properties props = PropertyLoader.load("/graph2MIF.properties");
@@ -88,7 +90,7 @@ public class Graph2MIFWSClient {
                     }
 
                     // These argument are mandatory.
-                    String ac = line.getOptionValue("ac");
+                    ac = line.getOptionValue("ac");
                     Boolean strictmif;
                     if (line.getOptionValue("strict").equals("true")) {
                         strictmif = new Boolean(true);
@@ -98,10 +100,10 @@ public class Graph2MIFWSClient {
 
                     try {
                         Integer depth = new Integer(line.getOptionValue("depth"));
-                        URL url = new URL(props.getProperty("webservice.location"));
+                        URL url = new URL( props.getProperty("webservice.location") );
                         // prepare the call (the same for all called methods)
                         Call call = (Call) new Service().createCall();
-                        call.setTargetEndpointAddress(url);
+                        call.setTargetEndpointAddress( url );
                         // if no args are submitted give out usage.
                         // call  getMIF  & give out with params to retrieve data
                         call.setMaintainSession(false);
@@ -129,7 +131,7 @@ public class Graph2MIFWSClient {
             //an RemoteException which includes the class name of the thrown exception.
             //There is no way to get more information like the original stacktrace !!!
             if (e.toString().equals(IntactException.class.getName())) {
-                System.err.println("ERROR: Search for interactor failed (" + e.toString() + ")");
+                System.err.println("ERROR: Search for interactor ("+ ac +")failed (" + e.toString() + ")");
                 System.exit(1);
             } else if (e.toString().equals(GraphNotConvertableException.class.getName())) {
                 System.err.println("ERROR: Graph failed requirements of MIF. (" + e.toString() + ")");
