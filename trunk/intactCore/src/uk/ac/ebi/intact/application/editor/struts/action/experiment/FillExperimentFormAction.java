@@ -17,7 +17,6 @@ import uk.ac.ebi.intact.application.editor.struts.view.experiment.InteractionBea
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.Iterator;
 
 /**
  * Populates experiment form for display.
@@ -62,7 +61,6 @@ public class FillExperimentFormAction extends FillCvFormAction {
         }
         // Populate with the interaction for the experiment.
         List ints = view.getInteractions();
-        System.out.println("Found " + ints.size() + " interactions!");
         dynaform.set("ints", ints.toArray(new InteractionBean[0]));
         dynaform.set("intCmd", new String[ints.size()]);
 
