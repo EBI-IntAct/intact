@@ -956,7 +956,7 @@ public class IntactHelper implements SearchI, Serializable {
 
         //should be unique...
         if (results.size() > 1) {
-            throw new IntactException("protein search error - more than one result returned with query by"
+            throw new IntactException("error - more than one result returned with query by"
                     + aPrimaryId);
         } else {
             if (results.isEmpty()) {
