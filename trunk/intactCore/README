@@ -41,12 +41,11 @@ environment (or, for the DBs, at least have access to them over the network):
 
 For hierarchView:
 
-	- Apache Axis web application (1.0) for web services (for use with the HierarchView application)
+	- Apache Axis web application (1.0beta2) for web services (for use with the HierarchView application)
 	  see http://ws.apache.org/axis/
 	- Tulip, the graph rendering library which is needed by HierarchView
 	  see http://www.tulip-software.org/
 	- gcc++ 2.96 AND NO OTHER RELEASE to build the Console executable to access Tulip
-	- the interpro web application, installed on tomcat (to view GO terms)
 
 If you plan to run hierarchView, then Tulip needs the following environment variables to be set:
 
@@ -82,8 +81,7 @@ this is automated for you, via the 'config/build.properties' file. Edit that fil
 that you have (ie currently for oracle or postgres). Note that for oracle you need to have a file in the config directory called
 'oracle.properties' containing your password (eg 'password=abcd'). In the 'template' directory you will find a file called
 'oracle.template' - edit this file to define your oracle password, then save it as 'oracle.properties' in the 'config' directory.
-For Postgres, the current configuration assumes that you have a local postgres installation with your user name as the
-database name, and no password. This will soon be generalised to use the same mechanism as for Oracle.
+The current Postgres configuration will soon be generalised to use the same mechanism as for Oracle.
 
 In the intactCore directory, type
 
@@ -129,19 +127,15 @@ Intact comes bundled with a number of web applications - currently we have:
 	- search:       The search application.
 	- editor:       Edit interface for IntAct objects.
 	- hierarchView: Graph visualisation.
-        - intact:       Contains only static documentation pages,
-                        but installation is the same as for normal
-                        web applications.
+    - intact:       Contains only static documentation pages,
+                    but installation is the same as for normal
+                    web applications.
 
 There is also the 'synchron' application which is use to exchange data between intact sites - this is standalone
 and not web-based. As this application matures further details will be included about it in this file
 (it is currently still under development).
 
-The process for building the web applications is broadly the same. At the intactCore level, type
-
-	ant compile-search compile-editor compile-hv
-
-to build the main classes for the web applications. This step is not necessary for "intact". For search there is one further file to edit. In the file
+For search there is one file to customize. In the file
 
         application/search/WEB-INF/config/HierarchView.properties
 
