@@ -96,11 +96,16 @@
                 </td>
 
                 <td class="headerlight"
-                    rowspan="1" colspan="1">IntAct name<br>
+                    rowspan="1" colspan="1">
+                    <a href="<%= bean.getHelpLink() + "AnnotatedObject.shortLabel"%>" target="new"
+                   class="tdlink">IntAct name<br>
+                </a>
                 </td>
 
                 <td class="headerlight"
-                    colspan="1">IntAct Ac<br>
+                    colspan="1"><a href="<%= bean.getHelpLink() + "BasicObject.ac"%>" target="new"
+                   class="tdlink">IntAct Ac<br>
+                </a>
                 </td>
 
                 <td class="headerlight"
@@ -161,8 +166,8 @@
                     DECISION: link to the 'front' search page instead, then users can choose
                     what detail they want.
                 --%>
-                <td style="background-color: rgb(255, 255, 255);">
-                    <a href="<%= bean.getInteractionsSearchURL()%>"><%= bean.getNumberOfInteractions()%></a><br>
+                <td align="center" style="background-color: rgb(255, 255, 255);">
+                    <a href="<%= bean.getInteractionsSearchURL()%>"><%= bean.getNumberOfInteractions()%></a>
                 </td>
 
                 <!-- Uniprot AC, not linked -->
@@ -227,7 +232,7 @@
                 </td>
 
                 <!-- number of Interactions, linked new detail page -->
-                <td style="vertical-align: top; background-color: rgb(255, 255, 255);">
+                <td align="center" style="vertical-align: top; background-color: rgb(255, 255, 255);">
                     <a href="<%= partner.getInteractionsSearchURL()%>"><%= partner.getNumberOfInteractions() %></a>
                 </td>
 
