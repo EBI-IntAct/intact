@@ -4,8 +4,8 @@
 
 package uk.ac.ebi.intact.application.mine.business.graph;
 
-import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.Stack;
 
 import org.shiftone.cache.Cache;
@@ -22,14 +22,18 @@ public class GraphManager extends Thread {
     // the timeout for the cache after which elements are erazed
     // the time is measured in milliseconds and therefore
     // 5 minutes are written in this way !
-    private static final long TIME_OUT = 1000 * 60 * 5;
+    private static final long TIME_OUT = Long
+            .parseLong( IntactUserI.MINE_PROPERTIES.getProperty(
+                    "cache.timeOut", "300000" ) );
     // the maximal size of the cache
-    private static final int MAX_SIZE = 10;
+    private static final int MAX_SIZE = Integer
+            .parseInt( IntactUserI.MINE_PROPERTIES.getProperty(
+                    "cache.maxSize", "50" ) );
 
     // a cache structure to store the graphs efficiently
     private Cache cache;
     // the collection stores all ids which are currently proceeded
-    private Collection running;
+    private Set running;
     // the stack stores all ids which have to be proceeded
     private Stack incoming;
 
@@ -39,11 +43,15 @@ public class GraphManager extends Thread {
      * @param user the intact user
      */
     private GraphManager(IntactUserI user) {
-        // the cache strucuture is created with
-        // a dummy name
-        // the time_out which indicates after which time the least valueable
-        // object is removed
-        // the maximal size of the cache
+        /**
+         * the cache strucuture is created with <br>
+         * a dummy name <br>
+         * <br>
+         * the time_out which indicates after which time the least valueable
+         * object is removed <br>
+         * <br>
+         * the maximal size of the cache
+         */
         cache = new LruCacheFactory().newInstance( "mineCache", TIME_OUT,
                 MAX_SIZE );
         running = new HashSet();
@@ -82,16 +90,8 @@ public class GraphManager extends Thread {
 
     /**
      * returns the instance of this class (singleton implementation). <br>
-     * Method is synchronized to avoid that two threads are creating an instance
-     * simultaneously... <br>
-     * <ol>
-     * The other possibilty: private static final GraphManager INSTANCE = new
-     * GraphManager(); <br>
-     * [....] public static GraphManager getInstance() { return INSTANCE; }<br>
-     * </ol>
-     * would be thread safe but the class needs the IntactUser as argument !!
      * 
-     * @return
+     * @return GraphManager the instance
      */
     public static synchronized GraphManager getInstance(IntactUserI user) {
         if ( INSTANCE == null ) {
