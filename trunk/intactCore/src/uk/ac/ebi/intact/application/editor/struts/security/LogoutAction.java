@@ -11,7 +11,6 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.business.IntactException;
 import org.apache.struts.action.*;
-import org.apache.commons.lang.exception.ExceptionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -65,7 +64,7 @@ public class LogoutAction extends AbstractEditorAction {
             catch (IntactException ie) {
                 // Problems with logging off. Just log the errors as there
                 // is little point in informing the user.
-                LOGGER.info(ExceptionUtils.getStackTrace(ie));
+                LOGGER.info(ie);
             }
         }
         // Session is no longer valid.
