@@ -5,13 +5,13 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.statisticView.struts.view;
 
-import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionMapping;
 
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Form bean for the main form of the view.jsp page.  
+ * Form bean for the main form of the view.jsp page.
  * This form has the following fields, with default values in square brackets:
  * <ul>
  * <li><b>queryString</b> - Entered queryString value
@@ -28,19 +28,19 @@ public final class FilterForm extends ActionForm {
     private String start;
     private String stop;
 
-    public String getStart () {
+    public String getStart() {
         return start;
     }
 
-    public void setStart ( String start ) {
+    public void setStart(String start) {
         this.start = start;
     }
 
-    public String getStop () {
+    public String getStop() {
         return stop;
     }
 
-    public void setStop ( String stop ) {
+    public void setStop(String stop) {
         this.stop = stop;
     }
 
@@ -52,10 +52,10 @@ public final class FilterForm extends ActionForm {
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         this.start = null;
-        this.stop  = null;
+        this.stop = null;
     } // reset
 
-    public String toString () {
+    public String toString() {
         StringBuffer sb = new StringBuffer("FilterForm[start=");
         sb.append(start);
         sb.append(", stop=");
