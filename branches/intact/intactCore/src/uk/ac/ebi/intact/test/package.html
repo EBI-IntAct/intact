@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>JUnit for IntactCore</title>
+
+</head>
+<body>
+Overview of JUnit for IntactCore.
+<h2>Purpose</h2>
+The purpose of this document is to explain the framework required to adopt
+JUnit as the testing framework for Intact core Java development work.  The
+intention of the document is not to explain the merits of JUnit but rather
+how it can be applied to the Intact core development framework.  Click <a
+ href="http://www.junit.org">here</a> to read all about JUnit.
+</p>I would also like to emphasise that we are dealing specifically with unit
+test  cases. A unit test case is a collection of tests designed to verify
+the  behavior of a single unit within your program. In Java, the single unit
+is almost always a class.  Hence, a Java unit test case tests a single class.
+</p>
+
+<h3>Framework</h3>
+I suggest that we place all the test related classes in a separate <tt>test</tt>
+package.  This practice serves two purposes.  First of all, a package should
+only contain package related classes and test classes serve a different
+purpose.  Beside, we don't want a package to be cluttered
+with test classes.  Also, bear in mind that testing a single class may
+involve other classes and resources in addition to the test class itself.
+Secondly, we could easily exclude
+test related classes in creating a jar file.  The only disadvatage I can envisage
+for having a separate test package is that we wouldn't be able to test package
+visible class methods.  The same argument goes for protected methods but you
+can still create a dummy class in the test package that exposes the protected
+method and test this method via the dummy class. Applying the above naming convention,
+the test classes to test the package <tt>uk.ac.ebi.intact.model</tt>
+must reside in <tt>uk.ac.ebi.intact.model.test</tt> package.
+</p>
+By convention, each test package should contain a java class called <tt>AllJunitTests</tt>.
+The advantage of using a name convention is that it allows us to write
+a tool that invokes <tt>AllJUnitTests</tt> class for each test package. Hence,
+ we can run all the tests for Intact core with a single
+command.
+</p>The purpose of the <tt>AllJunitTests</tt> class is to run all the tests for a package.
+You can find a template for this class under <a href="AllJUnitTests.html">here</a>.
+The method suite() returns a suite of tests to run.  Using this approach,
+you have the choice of deciding which test class to include (or exclude) for running.
+
+</p>
+A <tt>TestCase</tt>
+is a command object and any class that contains test methods should subclass
+the <tt>TestCase</tt> class.  A <tt>TestCase</tt> can define any number of public <tt>testXXX()</tt>
+methods.  When you want to check the expected and actual test results, you
+invoke a variation of the <tt>assert()</tt> method (see JUnit API).  <tt>TestCase</tt> subclasses
+that contain multiple <tt>testXXX()</tt> methods can use the <tt>setUp()</tt> and
+<tt>tearDown()</tt>
+methods to initialize and release any common objects under test, referred
+to as the test fixture.  Each test runs in the context of its own fixture,
+calling <tt>setUp()</tt> before and <tt>tearDown()</tt> after each test method to ensure there
+can be no side effects among test runs.  <tt>TestCase</tt> instances can be composed
+into <tt>TestSuite</tt> hierarchies that automatically invoke all the <tt>testXXX()</tt> methods
+defined in each <tt>TestCase</tt> instance.  A <tt>TestSuite</tt> is a composite of other tests,
+either <tt>TestCase</tt> instances or other <tt>TestSuite</tt> instances.  Using the composite
+behavior of <tt>TestSuite</tt>, you can assemble test suites of test suites
+and run all the tests automatically. </p>
+<h3>Test Classes</h3>
+By convention, the test class consists of the same name as the class you are
+testing but with <i>Test</i> appended to the name.  For example, the test class
+to test <tt>Protein</tt> should be named as <tt>ProteinTest</tt> under <tt>test</tt> subpackage of
+<tt>Protein</tt> (ie., <tt>uk.ac.ebi.intact.model.test</tt>).
+To write a test case, follow these steps:
+<ol>
+  <li>Define a subclass of <tt>TestCase</tt>. Name this class according to the naming
+  convention.</li>
+  <li>Override the <tt>setUp()</tt> method to initialise object(s) under test (<i>optional</i>).</li>
+  <li>Override the <tt>tearDown()</tt> method to release object(s) under test (<i>optional</i>).</li>
+  <li>Define one or more public <tt>testXXX()</tt> methods that exercise the object(s)
+under test and assert expected results.</li>
+  <li>Define a static <tt>suite()</tt> factory method that creates a <tt>TestSuite</tt> instance.</li>
+  <li>See <a href="FirstTest.html">FirstTest</a> for a sample.</li>
+</ol>
+
+To write a test suite, follow these steps:
+<ol>
+<li>Define a subclass of <tt>TestCase</tt>.</li>
+<li>Define a static <tt>suite()</tt> factory method that creates a TestSuite containing
+all the tests.</li>
+<li>See <a href="AllJUnitTests.html">AllJUnitTests</a> for a sample.</li>
+</ol>
+
+<h3>Supporting Tools</h3>
+We may need supporting tools as we begin to write more tests.  For example,
+a test method may require to compare two text files for their contents (did the
+program generate the expected output?).  Instead of replicating the code
+to compare two files in various test classes, we should have a class (or a method) to
+do this task.  A package called <tt>testing</tt> under <tt>uk.ac.ebi.intact.util</tt>
+is a possible location to place these tools.  It is called <tt>testing</tt>
+to distinguish it from <tt>test</tt> packages.  As these tools are only required for
+testing purposes, we could easily omit them from creating a jar file by instructing
+it to avoid packages starting with <tt>test</tt>.
+</body>
+</html>

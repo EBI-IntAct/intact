@@ -1,0 +1,144 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>uk.ac.ebi.intact.persistence package</title>
+
+</head>
+<body bgcolor="white">
+
+This package provides a persistence capability for intact. Specifically interfaces are
+avaialable which allow for creation and use of abstract data sources for the creation and
+search of intact objects within a persistence storage mechanism.
+<p>
+Whilst the interfaces allow for the option of changing the underlying persistence
+technology, at present intact uses the OJB object-relational mapping tool to provide
+an object view of a backend oracle database. The OJB interface is hidden from users
+of the intact persistence package, but the package contains both the technology-independent
+classes and also the OJB-specific (and, if required, castor-specific) implementations. (Please
+note the change of underlying persistence technology: OJB was chosen to replace Castor mainly for
+performance, documentation and extensibility reasons.). There is also a Castor-specific implementation
+which again is available via the interface if required.
+<p>
+The package contains the following groups of classes and interfaces:
+
+<ul>
+<li>Classes for data source creation
+<li>Classes for accessing a data source
+<li>Classes which provide technology-specific implementations of the persistence interfaces
+</ul>
+
+</ul>
+<h3>Data Source Creation</h3>
+
+A specific data source instance is created via the {@link uk.ac.ebi.intact.persistence.DAOFactory} class, which provides
+a single point of contact for obtaining a particular data source. For web-based applications, the data source to be
+returned by this factory could be specified within a servlet configuration parameter, defined in the
+<code>web.xml</code> file of the webapps directory. Typically this would be the full
+ classname of a technology specific implementation of the <code>DAOSource</code> interface.
+ Currently intact uses the OJB-specific {@link uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource} implementation, although
+ this can be changed easily if required. Once a client has obtained a reference to the
+ data source implementation, it is possible to then use it in order to access the persistence
+ functionality. Alternatively a seperate helper class may be used (as is the case for intact) which
+ encapsulates all persistence layer access.
+ <p>
+ The data source itself is initialised via a collection of configuration files, which are passed
+ to it after its initial construction. For OJB, this is a single file called <code>repository.xml</code>,
+ which defines the class-to-table mappings. In the case of castor, these are database description
+ and mapping files, along with the database name. Once intitialised it is then ready to provide
+ clients with connections to the persistent storage.
+ <p>
+ <p>
+ If Castor is to be used as a persistence technology, a further parameter which may be set (via the same mechanism as setting the configuration files) is
+ a <code>Map</code> of reflection information for each known type of an application. The structure of the
+ <code>Map</code> should be keyed on full java classname, with the values of the <code>Map</code>
+ being arrays of java type <code>PropertyDescriptor</code> (see the java.beans package for details).
+ Internally the Castor-specific Data Access Object uses reflection information to optimise the
+ Castor lazy loading facility (assuming the persisted objects have basic Bean structure, ie
+ that each property has a get and set method). This is achieved either via the <code>Map</code>
+ and the java.beans classes or, if no such <code>Map</code> is provided, by straight java reflection.
+ It is recommended that users of this package construct their own <code>Map</code> and suppy it,
+ since reflection can affect performance and a "one off" up-front Bean introspection will improve
+ the performance.
+ <p>
+ <p>
+ Use of OJB as the persistence technology requires no further information, unlike Castor.
+ </p>
+
+
+<h3>Accessing the Data Source</h3>
+
+Access to the data source is provided via the <code>DAO</code> interface. This interface defines
+ a number of the more common operations provided by most persistence technologies - for example
+ creating and searching for objects, transaction management and so on. It is therefore possible
+ for clients of the <code>DAO</code> interface to manage their own transactions, but in cases
+ where this would not be appropriate (for example in a web environment), implementations of the
+ interface should manage transactions themselves, and therefore removing the need for clients
+ to worry about transactions.
+ <p>
+ <h3>Technology-specific Persistence Implementations</h3>
+
+ <h4>ObjectRelationalBridge (OJB)</h4>
+ <p>
+ The {@link uk.ac.ebi.intact.persistence.ObjectBridgeDAO} class provides an OJB-specific implementation
+ of the DAO interface, utilising both the PersistenceBroker and ODMG APIs provided by OJB (typically
+ if transaction management and locking are required ODMG is used, but for straight query the PersistenceBroker
+ API is used to avoid the transactional overhead of ODMG). OJB provides a more felxible method of query
+ to Castor, and is better documented. Furthermore OJB is under active development via Apache, whereas
+ Castor's object-relational mapping solution (JDO, *not* to be confused with the Java Data Object standard)
+ is not. The OJB approach to lazy data loading is centred around the proxy concept, whereby objects may
+ hold proxies to referenced objects. Full objects are then materialised on demand via the proxies. Also
+ OJB has the concept of a Collection proxy, which provides a single proxy for Collection references rather
+ thain requiring the maintenance of a Collection of individual proxy instances (which would be similar
+ to a Castor-based approach). Furthermore objects along with their proxies are not bound to a transaction
+ as they are for Castor. This makes objects retrieved available "as is" within an application, without having
+ to maintain the transaction to keep the object references alive. At present it appears that OJB provides
+ a superior object-relational solution to Castor - however Castor is the preferred solution for XML
+ marshalling applications, since OJB does not provide such functionality.
+ </p>
+ <h4>Castor</h4>
+ <p>
+ The {@link uk.ac.ebi.intact.persistence.CastorDAO} class implements a castor-specific solution. This class, in
+ a number of cases, simply wraps a castor database connection and performs typical operations
+ for commit, rollback etc via delegation to the castor API. However for more complex cases such
+ as searching and object creation, more functionality is included in the <code>CastorDAO</code>
+  class to allow for (where necessary) transaction management, and to overcome some of the limitations
+  of castor's lazy loading capability. Note however that due to Castor's lazy loading policy, although
+  full objects are not materialised there will still be (in the case of a Collection) a query to fetch
+  the Object ID for every item in a Collection. This is not the case with OJB, which uses a proxy-based
+  lazy loading strategy.
+  <p>
+  Difficulties arise with standard object loading because a request for a single
+  object will retrieve the complete object graph for high connectivity data structures. Castor
+  attempts to overcome this by providing an "on demand" loading facility, whereby objects are
+  loaded lazily (ie only when requested). This also causes problems in some cases, for example
+  within a web environment. The difficulty is caused by the fact that castor lazy loading must
+  be performed within the scope of a single transaction, otherwise the unloaded objects become
+  "out of scope". Essentially castor repalces the objects tehmselves only with their IDs, so that
+  they can be retrieved on demand within the same transaction. Howevere the IDs are invalid
+  once the transaction is commited or rolled back. Since web applications cannot have transactions
+  spanning requests, this makes lazily loaded objects unusable (unless the business tier is
+  based on stateful Session Beans in an EJB layer, which allows transactions to span method calls).
+  <p>
+  The simple solution adopted for now is that when the <code>CastorDAO</code> object receives
+   a search request, the object and its immediate neighbours only are loaded, but no more. It is
+   likely that the nearest neighbours of a queried object will be required anyway, so this is not
+   an unreasonable approach. The nearest neighbours themselves are loaded within the <code>CastorDAO</code>
+   search method, since castor uses its own <code>Iterator</code> class which again goes out of
+   scope when a transaction completes - hence the neighbours must be loaded and stored back again within
+   a single transaction. As discussed above, this is achieved using either client-supplied java
+   Bean introspection information (faster) or straight java reflection for each request (slower).
+<p>
+
+<h2>Package Specification</h2>
+
+ (none)
+
+
+<h2>Related Documentation </h2>
+
+(none)
+
+@since JDK1.1
+
+</body>
+</html>

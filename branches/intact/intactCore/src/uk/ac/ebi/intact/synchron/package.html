@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>uk.ac.ebi.intact.synchron package</title>
+
+</head>
+<body bgcolor="white">
+
+This package provides a capability for nodes to exchange data entries.
+<p>
+The package uses both Castor and OJB object-relational mapping tool to provide
+an object view of a backend oracle database: OJB provides the capability to map the persistent entries contains in the database
+into java Objects, and Castor the one to map the Objects into a XML file. The package contains the following
+classes:
+
+<ul>
+<li>Classe for dumping data entries from database into a XML file
+<li>Classe for loading data entries contain in a XML file to the database
+<li>Classe for collecting the XML files from others Intact nodes
+</ul>
+
+
+<h3>Configuration and mapping files requirements</h3>
+
+This package requires the configuration and mapping files for Castor and OJB, and the file Properties.pro containing
+the name of the directories where the XML files have to be downloaded and from where they can be uploaded, and the prefix
+used for the node (those three files should be placed into the config directory).
+
+<h3>Dumping data: class XmlDumper</h3>
+
+This executable class fetches into the database all data entries which ac is prefixed by the node's prefix using OJB
+interface and dump it into a XML file using Castor.
+
+
+<h3>Loading data: class XmlLoader</h3>
+
+This second executable class parses an XML file by using Castor and loads the data entries contained in this file into
+the database with OJB.
+
+
+<h3>Collecting files: class Collector</h3>
+
+This class collects the XML files provided by the others Intact nodes (those that are not set as rejected by the node).
+
+
+<h2>Package Specification</h2>
+
+ (none)
+
+
+<h2>Related Documentation </h2>
+
+(none)
+
+@since JDK1.1
+
+</body>
+</html>
