@@ -168,7 +168,8 @@ public class HtmlBuilder {
     }
 
     /**
-     * Provide a context-sensitive link to the user manual
+     * Provide a context-sensitive link to the user manual.
+     * Only a question mark is shown as visible text.
      */
     private void htmlHelp(String target) throws IOException {
 
@@ -176,6 +177,20 @@ public class HtmlBuilder {
         rs.write(helpLink);
         rs.write(target);
         rs.write("\" target=\"_blank\"/><sup><b><font color=red>?</font></b></sup></a>");
+    }
+
+    /**
+     * Provide a context-sensitive link to the user manual.
+     * The displayString is shown as visible text.
+     */
+    private void htmlHelp(String displayString, String target) throws IOException {
+
+        rs.write("<a href=\"");
+        rs.write(helpLink);
+        rs.write(target);
+        rs.write("\" target=\"_blank\"/>");
+        rs.write(displayString);
+        rs.write("</a>");
     }
 
     /**
@@ -304,6 +319,8 @@ public class HtmlBuilder {
         // xref qualifier
         rs.write("<td>");
         if (null != anXref.getCvXrefQualifier()) {
+            htmlHelp("Type:", "Xref.cvXrefType");
+            rs.write(" ");
             htmlSearch(anXref.getCvXrefQualifier());
         } else {
             rs.write("-");
@@ -483,16 +500,18 @@ public class HtmlBuilder {
     /**
      * HTML view of a CvObject. This is the view showing only the CvObject
      * shortLabel, with a hyperlink to the definition.
-     * Usually used within as a component in other htmlViews.
+     * Usually used as a component in other htmlViews.
      *
      * @param term
      * @throws java.io.IOException
      */
-    private void htmlViewPartial(CvObject term) throws IOException {
+    private void htmlViewPartial(CvObject term, String helpString, String helpTarget) throws IOException {
 
         rs.write("<td>");
 
         if (null!= term){
+            htmlHelp(helpString + ":", helpTarget);
+            rs.write(" ");
             htmlSearch(term);
         } else {
             rs.write("-");
@@ -514,6 +533,7 @@ public class HtmlBuilder {
 
 
         rs.write("<td class=objectClass>");
+        rs.write("<nobr>");
 
         // Checkbox
         if (checkBox){
@@ -530,15 +550,20 @@ public class HtmlBuilder {
         // Link to online help
         htmlHelp("search.TableLayout");
 
+        rs.write("</nobr>");
         rs.write("</td>");
 
         // ac
         rs.write("<td>");
+        htmlHelp("Ac:", "BasicObject.ac");
+        rs.write(" ");
         rs.write(anAnnotatedObject.getAc());
         rs.write("</td>");
 
         // shortLabel
         rs.write("<td>");
+        htmlHelp("Name:", "AnnotatedObject.shortLabel");
+        rs.write(" ");
         htmlSearch(anAnnotatedObject);
         rs.write("</td>");
 
@@ -590,11 +615,13 @@ public class HtmlBuilder {
 
 
         // Biosource
-        htmlViewPartial(aProtein.getBioSource());
+        htmlViewPartial(aProtein.getBioSource(), "Source:", "Interactor.bioSource");
 
         // CRC64
         rs.write("<td>");
         if (null!= aProtein.getCrc64()){
+            htmlHelp("Crc64:", "Protein.crc64");
+            rs.write(" ");
             rs.write(aProtein.getCrc64());
         } else {
             rs.write("-");
@@ -625,6 +652,8 @@ public class HtmlBuilder {
         // kD
         rs.write("<td>");
         if (null!= anInteraction.getKD()){
+            htmlHelp("kD:", "Interaction.kD");
+            rs.write(" ");
             rs.write(String.valueOf(anInteraction.getKD()));
         } else {
             rs.write("-");
@@ -632,10 +661,16 @@ public class HtmlBuilder {
         rs.write("</td>");
 
         // Interaction Type
-        htmlViewPartial(anInteraction.getCvInteractionType());
+        htmlViewPartial(anInteraction.getCvInteractionType(), "Type", "Intearction.CvInteractionType");
 
         // Biosource
-        htmlViewPartial(anInteraction.getBioSource());
+        // @todo The bioSource within an Interaction should for now not be displayed.
+        // htmlViewPartial(anInteraction.getBioSource(), "", "");
+
+        // One empty cell to get to the total of three cells per row
+        rs.write("<td>");
+        rs.write("&nbsp;");
+        rs.write("</td>");
 
         rs.write("</tr>\n");
     }
@@ -647,11 +682,13 @@ public class HtmlBuilder {
      * @param source
      * @throws java.io.IOException
      */
-    private void htmlViewPartial(BioSource source) throws IOException {
+    private void htmlViewPartial(BioSource source, String helpString, String helpTarget) throws IOException {
 
         // Biosource
         rs.write("<td>");
         if (null != source){
+            htmlHelp(helpString, helpTarget);
+            rs.write(" ");
             htmlSearch(source);
         } else {
             rs.write("-");
@@ -671,11 +708,11 @@ public class HtmlBuilder {
                 + tableHeaderColor
                 + ">");
 
-        htmlViewPartial(exp.getCvInteraction());
-        htmlViewPartial(exp.getCvIdentification());
+        htmlViewPartial(exp.getCvInteraction(), "Interaction identification", "Experiment.cvInteraction");
+        htmlViewPartial(exp.getCvIdentification(), "Participant identification", "Experiment.cvIdentification");
 
         // Biosource
-        htmlViewPartial(exp.getBioSource());
+        htmlViewPartial(exp.getBioSource(), "Host:", "Experiment.bioSource");
 
         rs.write("</tr>\n");
     }
@@ -692,6 +729,7 @@ public class HtmlBuilder {
                             String searchClass,
                             String text) throws IOException {
 
+        rs.write("<nobr>");
         // TODO: don't hard code the application path !! Try to give it in the constructor.
         rs.write("<a href=\"/intact/search/do/search?searchString=");
         rs.write(target);
@@ -715,6 +753,8 @@ public class HtmlBuilder {
             rs.write("</i></b>");
         }
         rs.write("</a>");
+        rs.write("</nobr>");
+
     }
 
     /**
