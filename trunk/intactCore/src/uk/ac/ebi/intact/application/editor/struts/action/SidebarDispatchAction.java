@@ -12,9 +12,6 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.application.editor.struts.view.ResultBean;
-import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +21,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Iterator;
 
 /**
  * Action class for sidebar events. Actions are dispatched
@@ -84,21 +80,8 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
 
         LOGGER.info("search action: topic is " + topic);
 
-        // The class name associated with the topic.
-        String classname = getIntactService().getClassName(topic);
-
         // Try searching as it is.
-        Collection results = user.lookup(classname, searchString, true);
-        if (results.isEmpty()) {
-            // try searching first using all uppercase, then all lower case
-            // if it returns nothing...
-            // NB this would be better done at the DB level, but keep it here for now
-            results = user.lookup(classname, searchString.toUpperCase(), true);
-            if (results.isEmpty()) {
-                // now try all lower case....
-                results = user.lookup(classname, searchString.toLowerCase(), true);
-            }
-        }
+        Collection results = user.lookup(topic, searchString);
         if (results.isEmpty()) {
             // No matches found - forward to a suitable page
             LOGGER.info("No matches were found for the specified search criteria");
