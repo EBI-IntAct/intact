@@ -279,8 +279,14 @@ public abstract class AbstractEditorAction extends Action implements ForwardCons
         // Handler to the edit user.
         EditUserI user = getIntactUser(request);
 
+        // The interaction view to get the AC and the source exp (if any).
+        InteractionViewBean intView = ((FeatureViewBean) user.getView()).getParentView();
+
         // The AC of the interaction to go back to.
-        String ac = ((FeatureViewBean) user.getView()).getParentView().getAc();//.getSourceInteractionAc();
+        String ac = intView.getAc();
+
+        // The source experiment (where the experiment came from).
+        String sourceExpAc = intView.getSourceExperimentAc();
 
         // The interaction we have been editing.
         Interaction interaction = (Interaction) user.getObjectByAc(
@@ -291,6 +297,12 @@ public abstract class AbstractEditorAction extends Action implements ForwardCons
 
         // The interaction we going back to.
         user.setView(interaction);
+
+        // The previous setView resets the source experiment, so this step must
+        // done after.
+        if (sourceExpAc != null) {
+            intView.setSourceExperimentAc(sourceExpAc);
+        }
     }
 
     /**
