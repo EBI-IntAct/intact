@@ -120,7 +120,8 @@ public final class CenteredAction extends Action {
 	  String dataTlp         = in.exportTlp(); 
 	  in.importDataToImage(dataTlp);
 	  
-	  GraphToImage te        = new GraphToImage(in);
+	  // GraphToImage te        = new GraphToImage(in);
+	  GraphToSVG te        = new GraphToSVG(in);
 	  te.draw();
 	  ImageBean ib           = te.getImageBean();
 	  

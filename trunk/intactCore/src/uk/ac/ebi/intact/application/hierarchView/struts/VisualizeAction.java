@@ -165,7 +165,9 @@ public final class VisualizeAction extends Action {
 	  System.out.println ("\n\n\n\n\n\n toto \n" + dataTlp + "\n\n\n\n\n\n");
 	  in.importDataToImage (dataTlp);
 	  
-	  GraphToImage te = new GraphToImage (in);
+	  // GraphToImage te = new GraphToImage (in);
+	  GraphToSVG te = new GraphToSVG (in);
+
 	  te.draw ();
 	  ImageBean ib    = te.getImageBean ();
 	  

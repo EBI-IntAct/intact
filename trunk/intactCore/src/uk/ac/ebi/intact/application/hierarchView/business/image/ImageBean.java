@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.application.hierarchView.business.image;
  *
  * @author Emilie Frot
  */
+import org.w3c.dom.Document;
 
 public class ImageBean  {
   
@@ -17,6 +18,11 @@ public class ImageBean  {
    * Coded image.
    */
   private byte[] imageData;
+
+  /**
+   * Document
+   */
+  private Document document;
 
   /**
    * HTML MAP code.
@@ -37,7 +43,14 @@ public class ImageBean  {
     return imageData;
   } // getImageData
 
+public void setDocument (Document aDocument) {
+    document = aDocument;
+  } // setDocument
 
+  public Document getDocument () {
+    return document;
+  } // getDocument
+  
   public void setMapCode (String aMapCode) {
     mapCode = aMapCode;
   } // setMapCode
@@ -45,6 +58,8 @@ public class ImageBean  {
   public String getMapCode () {
     return mapCode;
   } // getMapCode
+
+
   
 } // ImageBean
 

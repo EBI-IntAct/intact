@@ -52,14 +52,14 @@ public class HighlightProteins{
     
 
 
-    GraphToImage te = new GraphToImage(in);
+    GraphToSVG te = new GraphToSVG(in);
 
     te.draw();
     if (null == te) throw new IOException ("Unable to create the image data");
     ImageBean ib    = te.getImageBean();
     
     if (null == ib)
-      errors .add("ImageBean", new ActionError("error.ImageBean.build"));
+      errors.add("ImageBean", new ActionError("error.ImageBean.build"));
     
     // store the bean 
     session.setAttribute (Constants.ATTRIBUTE_IMAGE_BEAN, ib);
