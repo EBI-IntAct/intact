@@ -2,8 +2,6 @@
 <%@ page import="uk.ac.ebi.intact.application.cvedit.struts.framework.util.CvEditConstants,
                  uk.ac.ebi.intact.application.cvedit.struts.view.EditBean"%>
 
-<h3>Xreferences</h3>
-
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
@@ -23,6 +21,8 @@
 <c:set var="qlist" value="${intactuser.qualifierList}"/>
 
 <c:if test="${not empty viewbean.xrefs}">
+    <h3>Xreferences</h3>
+
     <html:form action="/cv/xref/edit">
         <table width="78%">
             <tr class="tableRowHeader">
@@ -123,5 +123,5 @@
 </c:if>
 
 <c:if test="${empty viewbean.xrefs}">
-    No Xreferences
+    <h3>No Xreferences</h3>
 </c:if>
