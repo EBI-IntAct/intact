@@ -1,6 +1,6 @@
 /**************************************************************************************************************************
 
-  Package:    IntAct PostgreSQL DDL step 1 
+  Package:    IntAct PostgreSQL DDL step 1  
 
   Purpose:    Create PostgreSQL components (tables and sequence) for IntAct
 

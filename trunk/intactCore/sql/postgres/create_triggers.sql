@@ -119,7 +119,7 @@ CREATE OR REPLACE FUNCTION make_triggers () RETURNS varchar AS '
             -- 2: Make the trigger itself
             ddl_command := 
  
-              ''CREATE TRIGGER ''|| tablenames.tablename ||''audit_trg BEFORE UPDATE ON ''|| tablenames.tablename ||
+              ''CREATE TRIGGER intact_''|| tablenames.tablename ||''audit_trg BEFORE UPDATE ON ''|| tablenames.tablename ||
               '' FOR EACH ROW EXECUTE PROCEDURE ''|| tablenames.tablename ||''_trg_body () ; ''
             ;
             -- Dynamic SQL: issue the DDL

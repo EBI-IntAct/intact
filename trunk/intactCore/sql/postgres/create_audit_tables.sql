@@ -15,9 +15,6 @@
               - suppose this script resides in /tmp , then give this command in psql :    
                      \i /tmp/create_audit_tables.sql 
                      
-              - to run actual trigger creation, next give this command in psql:
-                     select make_audit_tables ();
-
 
               - You then have a set of Intact main tables and audit tables,
                 which you can verify by typing:
@@ -51,9 +48,7 @@ CREATE OR REPLACE FUNCTION make_audit_tables () RETURNS varchar AS '
     BEGIN
        -- Loop over all the tables that are part of the IntAct system. Criterium : tableowner=...
        ddl_command := '' '';
-       FOR tableNames IN  select tablename from  pg_tables where  tableowner not like ''pg_%'' and tablename not like ''%audit'' order by tablename 
-                      -- actually: selecting on pg_% should be replace by selecting on a known database user account as the tableowner
-                      -- in EBI development environment evebrybody's using different owners, hence the select is done using pg_%
+       FOR tableNames IN  select tablename from  pg_tables where tableowner=user and tablename not like ''%audit'' order by tablename 
        LOOP
            comma := '''';
            -- make a DDL command to create an audit table for each master table
@@ -104,6 +99,11 @@ CREATE OR REPLACE FUNCTION make_audit_tables () RETURNS varchar AS '
                   ddl_command := ddl_command ||'' date'';
               END IF;
 
+
+              IF colNames.typname = ''_text'' THEN
+                  ddl_command := ddl_command ||'' text'';
+              END IF;
+
               IF colNames.typname like ''%float%'' THEN
                   ddl_command := ddl_command ||'' float'';
               END IF;
@@ -121,14 +121,14 @@ CREATE OR REPLACE FUNCTION make_audit_tables () RETURNS varchar AS '
           -- Dynamic SQL: issue the DDL to make an audit table
           EXECUTE ddl_command;
 
-
+          --return ddl_command;
 
           -- Now make a composite pk on the audit table, using the original pk of the master table plus a timestamp
           -- This all requires a bit of string processing, because of the content of pg_constraint.conname
 
           ddl_command := ''ALTER TABLE ''|| tableNames.tablename ||''_audit  ADD CONSTRAINT pk_''|| tableNames.tablename ||''_audit PRIMARY KEY  ( updated '';
 
-          SELECT conkey INTO pkSequence FROM pg_constraint WHERE conname like ''pk%'' AND conrelid= relNode;
+          SELECT conkey INTO pkSequence FROM pg_constraint WHERE (conname like ''pk%'' or conname like ''%_pkey%'') AND conrelid= relNode;
 
           nextChar:='' '';
           i:=2;
@@ -152,8 +152,11 @@ CREATE OR REPLACE FUNCTION make_audit_tables () RETURNS varchar AS '
           EXECUTE ddl_command;
 
        END LOOP;
+       --return ddl_command;
        RETURN ''Audit tables created succesfully'';
 
     END;
 ' LANGUAGE 'plpgsql';
 
+-- run it
+select make_audit_tables();
