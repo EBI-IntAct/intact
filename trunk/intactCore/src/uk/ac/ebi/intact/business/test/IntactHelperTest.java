@@ -741,38 +741,40 @@ public class IntactHelperTest extends TestCase {
     /**
     *  Test Experiment search using an Institution
     */
-    protected void institutionSearch() throws Exception {
-
-        System.out.println("Performing Experiments by Institution search test...");
-        System.out.println("using Institution '" + institution.getShortLabel() + "'.....");
-        System.out.println();
-
-
-        Collection resultList = null;
-        if (helper != null) {
-
-            resultList = helper.getExperimentsByInstitution(institution);
-            if(!resultList.isEmpty()) {
-
-                System.out.println("results for testInstitutionSearch -");
-                System.out.println("(expecting results for Experiments "
-                        + exp1.getShortLabel() + " and " + exp2.getShortLabel() + " ...");
-                System.out.println();
-                Iterator it = resultList.iterator();
-                while(it.hasNext()) {
-                    System.out.println(it.next().toString());
-                }
-                System.out.println();
-            }
-            else {
-                System.out.println("testInstitutiontSearch: completed with empty result set");
-            }
-        }
-        else {
-
-            fail("something failed - couldn't create a helper class to access the data!!");
-        }
-    }
+    // This test is comented out because the method getExperimentsByInstitution is
+    // not used anywhere else in the src.
+//    protected void institutionSearch() throws Exception {
+//
+//        System.out.println("Performing Experiments by Institution search test...");
+//        System.out.println("using Institution '" + institution.getShortLabel() + "'.....");
+//        System.out.println();
+//
+//
+//        Collection resultList = null;
+//        if (helper != null) {
+//
+//            resultList = helper.getExperimentsByInstitution(institution);
+//            if(!resultList.isEmpty()) {
+//
+//                System.out.println("results for testInstitutionSearch -");
+//                System.out.println("(expecting results for Experiments "
+//                        + exp1.getShortLabel() + " and " + exp2.getShortLabel() + " ...");
+//                System.out.println();
+//                Iterator it = resultList.iterator();
+//                while(it.hasNext()) {
+//                    System.out.println(it.next().toString());
+//                }
+//                System.out.println();
+//            }
+//            else {
+//                System.out.println("testInstitutiontSearch: completed with empty result set");
+//            }
+//        }
+//        else {
+//
+//            fail("something failed - couldn't create a helper class to access the data!!");
+//        }
+//    }
 
 
 
@@ -874,7 +876,7 @@ public class IntactHelperTest extends TestCase {
 
             basicSearch();
             nameSearch();
-            institutionSearch();
+//            institutionSearch();
 
             delete(txType);
 
