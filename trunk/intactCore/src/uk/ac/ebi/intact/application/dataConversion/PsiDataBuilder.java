@@ -1024,7 +1024,7 @@ public class PsiDataBuilder implements DataBuilder {
         Element psiProteinInteractorRef = doc.createElement("proteinInteractorRef");
         //param may not be defined....
         if (interactor != null)
-            psiProteinInteractorRef.setAttribute("ref", getValidId(interactor.getShortLabel()));
+            psiProteinInteractorRef.setAttribute("ref", getValidId(interactor.getAc()));
 
         //returning result DOMObject
         return psiProteinInteractorRef;
@@ -1065,7 +1065,7 @@ public class PsiDataBuilder implements DataBuilder {
                 logger.info("xref failed (not required):" + e.getMessage());
             }  //not required here - so dont worry
             //getAc @todo
-            psiProteinInteractor.setAttribute("id", getValidId(interactor.getShortLabel()));
+            psiProteinInteractor.setAttribute("id", getValidId(interactor.getAc()));
 
             //getCreated @todo
             //getEvidence @todo
