@@ -211,15 +211,28 @@ public class EditorService {
 
     /**
      * A convenient method to return the interaction limit for JSPs. This method
-     * is equvalent to calling {@link #getResource(String)} with exp.interaction.limit
+     * is equivalent to calling {@link #getInteger(String)} with exp.interaction.limit
      * as the key.
      * @return the maximum number of interactions allowed to display in the experiment
      * editor.
      *
-     * @see #getResource(String)
+     * @see #getInteger(String)
      */
     public int getInteractionLimit() {
-        return Integer.parseInt(myResources.getString("exp.interaction.limit"));
+        return getInteger("exp.interaction.limit");
+    }
+
+    /**
+     * A convenient method to return the interaction per page limit for JSPs.
+     * This method is equivalent to calling {@link #getResource(String)} with
+     * exp.interaction.page.limit as the key.
+     * @return the maximum number of interactions allowed (per page) to display
+     * in the experiment editor.
+     *
+     * @see #getResource(String)
+     */
+    public String getInteractionPageLimit() {
+        return getResource("exp.interaction.page.limit");
     }
 
     /**
