@@ -24,15 +24,15 @@ import java.io.IOException;
  * with what will be neededlater by the user of the web application.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
  */
 public class DisplayHttpContentTag extends TagSupport {
 
     /**
-     * Evaluate the tag's body content.
+     * Skip the body content.
      */
     public int doStartTag() throws JspTagException {
-        // evaluate the tag's body content and any sub-tag
-        return EVAL_BODY_INCLUDE;
+        return SKIP_BODY;
     } // doStartTag
 
 
@@ -81,13 +81,13 @@ public class DisplayHttpContentTag extends TagSupport {
 
             // return the content to the browser
             pageContext.getOut().write (httpContent.toString());
-            return EVAL_PAGE;
 
         } catch (Exception e) {
             e.printStackTrace();
             throw new JspException ("Error when trying to get HTTP content");
         }
 
+       return EVAL_PAGE;  // the rest of the calling JSP is evaluated
     } // doEndTag
 
-} // DisplaySourceTag
+}

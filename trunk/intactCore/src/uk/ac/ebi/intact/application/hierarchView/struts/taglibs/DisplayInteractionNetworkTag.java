@@ -28,17 +28,18 @@ import org.apache.log4j.Logger;
  * and the associated HTML MAP.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
  */
 public class DisplayInteractionNetworkTag extends TagSupport {
 
     static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
 
     /**
-     * Evaluate the tag's body content.
+     * Skip the body content.
      */
     public int doStartTag() throws JspTagException {
-        // evaluate the tag's body content and any sub-tag
-        return EVAL_BODY_INCLUDE;
+
+        return SKIP_BODY;
     } // doStartTag
 
 
@@ -50,6 +51,7 @@ public class DisplayInteractionNetworkTag extends TagSupport {
 
         try {
             IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
+            // Retrieve user's data
             ImageBean imageBean   = user.getImageBean();
             String behaviour      = user.getBehaviour();
             InteractionNetwork in = user.getInteractionNetwork();
@@ -66,7 +68,6 @@ public class DisplayInteractionNetworkTag extends TagSupport {
              *  Display only the picture if needed data are available
              */
             if (user.InteractionNetworkReadyToBeDisplayed()) {
-
                 // Display the HTML code map
                 pageContext.getOut().write (imageBean.getMapCode());
 
@@ -84,8 +85,10 @@ public class DisplayInteractionNetworkTag extends TagSupport {
                                  uk.ac.ebi.intact.application.hierarchView.business.Constants.PROPERTY_FILE);
                 }
 
-
-                // Prepare an identifier unique to the generated image
+                /*
+                 * Prepare an identifier unique for the generated image name, it will allows
+                 * to take advantage of the client side caching.
+                 */
                 String AC = user.getAC();
                 int depth = user.getCurrentDepth();
                 String method = user.getMethodClass();
@@ -100,7 +103,7 @@ public class DisplayInteractionNetworkTag extends TagSupport {
 
                 String userContext = AC + depth + method + highlightContext;
 
-                /* the context parameter in the URL is given to prevent some browser
+                /* The context parameter in the URL is also given to prevent some browser
                  * (eg. Netscape 4.7) to cache image wrongly.
                  * If the image link were /hierarchView/GenerateImage, netscape don't even
                  * call the servlet and display cached image.
@@ -120,7 +123,8 @@ public class DisplayInteractionNetworkTag extends TagSupport {
         } catch (Exception ioe) {
             throw new JspException ("Error: could not display interaction network.");
         }
-        return EVAL_PAGE;
+
+        return EVAL_PAGE; // the rest of the calling JSP is evaluated
     } // doEndTag
 
 } // DisplayInteractionNetworkTag

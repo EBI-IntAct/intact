@@ -22,17 +22,17 @@ import org.apache.log4j.Logger;
  * That class allows to include HTML code to Displays current highlight source options.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
  */
 public class DisplayHighlightOptions extends TagSupport {
 
     static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
 
     /**
-     * Evaluate the tag's body content.
+     * Skip the body content.
      */
     public int doStartTag() throws JspTagException {
-        // evaluate the tag's body content and any sub-tag
-        return EVAL_BODY_INCLUDE;
+        return SKIP_BODY;
     } // doStartTag
 
 
@@ -60,7 +60,8 @@ public class DisplayHighlightOptions extends TagSupport {
         } catch (Exception ioe) {
             throw new JspException ("Error: could not display highlight options.");
         }
-        return EVAL_PAGE;
+
+        return EVAL_PAGE; // the rest of the calling JSP is evaluated
     } // doEndTag
 
 } // DisplayHighlightOptions

@@ -9,13 +9,13 @@ import org.w3c.dom.Document;
 
 
 /**
- * Abstract class allowing convert a SVG document to an other format (JPEG, TIFF, PNG)
+ * Abstract class allowing to convert a SVG document to an other format (JPEG, PNG ...)
  *
- * @author Emilie FROT
+ * @author Emilie Frot & Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
  */
 
 public abstract class ConvertSVG {
-
 
     /**
      * Provides a implementation of ConvertSVG by its name.
