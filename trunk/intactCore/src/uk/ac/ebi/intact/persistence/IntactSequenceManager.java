@@ -5,17 +5,17 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.persistence;
 
+import org.apache.commons.lang.SystemUtils;
 import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.accesslayer.JdbcAccess;
 import org.apache.ojb.broker.accesslayer.StatementManagerIF;
 import org.apache.ojb.broker.metadata.ClassDescriptor;
 import org.apache.ojb.broker.metadata.FieldDescriptor;
 import org.apache.ojb.broker.query.Query;
-import org.apache.ojb.broker.util.logging.LoggerFactory;
 import org.apache.ojb.broker.util.logging.Logger;
+import org.apache.ojb.broker.util.logging.LoggerFactory;
 import org.apache.ojb.broker.util.sequence.AbstractSequenceManager;
 import org.apache.ojb.broker.util.sequence.SequenceManagerException;
-import org.apache.commons.lang.SystemUtils;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.util.PropertyLoader;
 
@@ -63,6 +63,11 @@ public class IntactSequenceManager extends AbstractSequenceManager {
         Properties props = PropertyLoader.load ( CONFIG_FILE );
         if (props != null) {
             _sitePrefix = props.getProperty ( "ac.prefix" );
+
+            // all prefix are uppercase.
+            if( null != _sitePrefix ) {
+                _sitePrefix = _sitePrefix.toUpperCase();
+            }
         } else {
             throw new IntactException( "Could not find the configuration file: "+ CONFIG_FILE +"." );
         }
