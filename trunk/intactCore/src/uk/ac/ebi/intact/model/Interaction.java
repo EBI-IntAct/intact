@@ -295,7 +295,8 @@ public class Interaction extends Interactor implements Editable {
         String result;
         Iterator i;
 
-        result = "Interaction: " + this.getAc() + "[" + NEW_LINE;
+        result = "Interaction: " + this.getAc() + " Label: "
+                + this.getShortLabel() + " [" + NEW_LINE;
         if (null != this.getComponents()) {
             i = this.getComponents().iterator();
             while (i.hasNext()) {
