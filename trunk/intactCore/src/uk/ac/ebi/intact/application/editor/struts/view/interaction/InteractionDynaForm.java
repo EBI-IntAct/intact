@@ -39,6 +39,7 @@ public class InteractionDynaForm extends CvDynaForm {
         if ((errors != null) && !errors.isEmpty()) {
             return errors;
         }
+        // Validate required fields.
         String interaction = (String) get("interactionType");
         String organism = (String) get("organism");
 
@@ -52,15 +53,6 @@ public class InteractionDynaForm extends CvDynaForm {
             errors = new ActionErrors();
             errors.add(ActionErrors.GLOBAL_ERROR,
                     new ActionError("error.int.biosrc"));
-        }
-        ProteinBean[] proteins = (ProteinBean[]) get("proteins");
-        for (int i = 0; i < proteins.length; i++) {
-            if (EditorMenuFactory.SELECT_LIST_ITEM.equals(proteins[i].getRole())) {
-                errors = new ActionErrors();
-                errors.add(ActionErrors.GLOBAL_ERROR,
-                        new ActionError("error.int.protein.edit.role"));
-                break;
-            }
         }
         return errors;
     }
