@@ -149,6 +149,17 @@ public class EditorService {
     }
 
     /**
+     * True if given type is recognized as a valid editable type. This
+     * method is used when a type is specified as a parameter in an URL
+     * to directly access an editor.
+     * @param type the type to validate.
+     * @return true if <code>type</code> exists among current list of types.
+     */
+    public boolean isValidTopic(String type) {
+        return myTopicsCache.contains(type);
+    }               
+
+    /**
      * Returns a collection of Intact types.
      * @return an <code>ArrayList</code> of Intact types. The list sorted on an
      * alphabetical order. Since this reference refers to this class's

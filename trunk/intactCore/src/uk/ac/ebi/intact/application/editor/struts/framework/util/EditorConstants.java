@@ -64,4 +64,9 @@ public interface EditorConstants {
      * The key to access the anchor map.
      */
     public static final String ANCHOR_MAP = "anchors";
+
+    /**
+     * The key to access the login status.
+     */
+    public static final String LOGGED_IN = "login";
 }

@@ -9,14 +9,10 @@ package uk.ac.ebi.intact.application.editor.struts.security;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.business.IntactException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  * The class is called by struts framework when the user logs off from editor
@@ -47,17 +43,8 @@ public class LogoutAction extends AbstractEditorAction {
     public ActionForward execute(ActionMapping mapping, ActionForm form,
                                  HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        // Session to access various session objects.
-        HttpSession session = super.getSession(request);
-
-        // Retrieve the user object from the session.
-        EditUserI user = super.getIntactUser(session);
-
-        LOGGER.info("User " + user.getUserName() + " logged off at " +
-                user.logoffTime());
-
         // Session is no longer valid.
-        session.invalidate();
+        getSession(request).invalidate();
 
         return mapping.findForward(SUCCESS);
     }
