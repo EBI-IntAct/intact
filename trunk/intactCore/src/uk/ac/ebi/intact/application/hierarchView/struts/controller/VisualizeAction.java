@@ -18,7 +18,6 @@ import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.VisualizeForm;
 import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
-import uk.ac.ebi.intact.business.IntactHelper;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -134,10 +133,9 @@ public final class VisualizeAction extends IntactBaseAction {
                 super.saveErrors(request);
                 return (mapping.findForward("error"));
             }
-            IntactHelper intactHelper = user.getIntactHelper ();
 
             try {
-                GraphHelper gh = new GraphHelper ( intactHelper );
+                GraphHelper gh = new GraphHelper ( user );
                 depthInt = Integer.parseInt(depth);
                 in = gh.getInteractionNetwork (AC, depthInt);
             } catch (Exception e) {

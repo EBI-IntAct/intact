@@ -6,9 +6,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.hierarchView.business.graph;
 
 // hierarchView
-import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
 import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.simpleGraph.Graph;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 
 import java.util.Collection;
@@ -29,35 +28,14 @@ public class GraphHelper  {
 
     static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
 
-    private IntactHelper helper;
+    IntactUser user;
 
     /**
      * basic constructor - sets up (hard-coded) data source and an intact helper.
      */
-    public GraphHelper (IntactHelper intactHelper)  throws Exception {
-        helper = intactHelper;
+    public GraphHelper (IntactUser intactUser)  throws Exception {
+        user = intactUser;
     } // GraphHelper
-
-
-
-    /**
-     *
-     *
-     */
-    public Collection doSearch(String className, String searchParam, String searchValue)
-            throws Exception {
-        Collection resultList = null;
-        if (helper != null) {
-            //NB assumes full java className supplied...
-            resultList = helper.search (className, searchParam, searchValue);
-            return resultList;
-        } else {
-            logger.error ("Couldn't create a helper class to access the data!!");
-            throw new Exception();
-        }
-    } // doSearch
-
-
 
 
     /**
@@ -68,23 +46,21 @@ public class GraphHelper  {
      */
     public InteractionNetwork getInteractionNetwork (String anAC, int depth) throws Exception {
 
-        InteractionNetwork in = new InteractionNetwork ();
+        InteractionNetwork in = null;
 
         // Retreiving interactor from the database according to the given AC
         logger.info ("retrieving Interactor ...");
-        Collection results = this.doSearch ("uk.ac.ebi.intact.model.Interactor", "ac", anAC);
+        Collection results = this.user.search ("uk.ac.ebi.intact.model.Interactor", "ac", anAC);
         Iterator iter1     = results.iterator ();
 
         //there is at most one - ac is unique
         if (iter1.hasNext()) {
             logger.info ("Starting graph generation ... ");
             Interactor interactor = (Interactor) iter1.next();
-            Graph graph = in;
-            graph = this.helper.subGraph (interactor,
-                    depth,
-                    null,
-                    uk.ac.ebi.intact.model.Constants.EXPANSION_BAITPREY,
-                    graph);
+            in = this.user.subGraph (interactor,
+                                     depth,
+                                     null,
+                                     uk.ac.ebi.intact.model.Constants.EXPANSION_BAITPREY);
 
             logger.info ("Generated graph : " + in);
         } else {
@@ -93,7 +69,6 @@ public class GraphHelper  {
         }
 
         return in;
-
     } // getInteractionNetwork
 
 } // GraphHelper
