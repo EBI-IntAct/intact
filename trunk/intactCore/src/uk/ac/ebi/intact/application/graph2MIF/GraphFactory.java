@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.application.graph2MIF.exception.NoGraphRetrievedExceptio
 import uk.ac.ebi.intact.application.graph2MIF.exception.NoInteractorFoundException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.business.IntactGraphHelper;
 import uk.ac.ebi.intact.model.Constants;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.simpleGraph.Graph;
@@ -73,6 +74,7 @@ public class GraphFactory {
         }
         logger.info( interactors.size() + " Interactor found." );
 
+        IntactGraphHelper graphHelper = new IntactGraphHelper(helper);
         Interactor interactor = null;
         FusionableGraph interactionNetwork = null;
         Iterator interactorIterator = interactors.iterator();
@@ -83,7 +85,7 @@ public class GraphFactory {
             try {
                 logger.info ( "Start building an Interaction Network from AC: "+ interactor.getAc() +
                         ", depth: "+ depth +"." );
-                helper.subGraph( interactor,
+                graphHelper.subGraph( interactor,
                         depth.intValue(),
                         null,
                         Constants.EXPANSION_BAITPREY,
@@ -101,7 +103,7 @@ public class GraphFactory {
                 try {
                     logger.info ( "Start building an Interaction Network from AC: "+ interactor.getAc() +
                             ", depth: "+ depth +"." );
-                    helper.subGraph( interactor,
+                    graphHelper.subGraph( interactor,
                             depth.intValue(),
                             null,
                             Constants.EXPANSION_BAITPREY,

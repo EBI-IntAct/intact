@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.ClickBehaviourForm;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.business.IntactGraphHelper;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
@@ -404,7 +405,8 @@ public class IntactUser implements IntactUserI {
         Chrono chrono = new Chrono();
         chrono.start();
 
-        graph = intactHelper.subGraph( ( (Node) in.getCentralProtein() )
+        IntactGraphHelper graphHelper = new IntactGraphHelper(intactHelper);
+        graph = graphHelper.subGraph( ( (Node) in.getCentralProtein() )
                 .getInteractor(), graphDepth, experiments, complexExpansion,
                 graph );
 
