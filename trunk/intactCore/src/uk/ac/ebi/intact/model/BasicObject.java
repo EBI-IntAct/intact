@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
@@ -154,20 +154,27 @@ public abstract class BasicObject implements Serializable {
         return this.ac + "; owner=" + this.ownerAc + "\n";
     }
 
-    /** Returns true if two objects have the same content.
-     *
-     * For BasicObject this method always returns true, as BasicObject
-     *  contains no content attributes.
-     *
+    /**
+     * Returns true if two objects have the same content.
      */
-    public boolean equals(Object anObject){
+    public boolean equals (Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BasicObject)) return false;
 
-        return true;
+//      By calling Object.equals, we do a reference equality !
+//        if (!super.equals(o)) {
+//            System.out.println("False sent back by Object");
+//            return false;
+//        }
+
+        final BasicObject bo = (BasicObject) o;
+
+        return bo.getOwner().equals(owner);
     }
 
-    public int hashCode(){
+    public int hashCode() {
 
-        return 0;
+        return (owner == null ? 0 : owner.hashCode());
     }
 
 } // end BasicObject
