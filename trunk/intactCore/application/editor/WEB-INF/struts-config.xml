@@ -55,7 +55,7 @@
 <!--            <form-property name="cmd" type="java.lang.String[]"/>-->
 <!--        </form-bean>-->
         <form-bean name="commentEditForm"
-            type="uk.ac.ebi.intact.application.editor.struts.view.EditForm"/>
+            type="uk.ac.ebi.intact.application.editor.struts.view.CommentEditForm"/>
 
         <!-- Form for editing a xref -->
         <form-bean name="xrefEditForm"
@@ -107,8 +107,8 @@
         <!-- Forms related Interaction -->
 
         <!-- Form for to display Experiments (Interaction) -->
-        <form-bean name="intExperimentForm"
-            type="uk.ac.ebi.intact.application.editor.struts.view.EditForm"/>
+        <form-bean name="intExpForm"
+            type="uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentForm"/>
 
         <!-- Form for to hold Experiments (Interaction) -->
         <form-bean name="intExperimentHoldForm"
@@ -260,17 +260,17 @@
             name="commentEditForm"
             validate="false"
             scope="session">
-            <forward name="success" path="/do/setUpEditor"/>
+            <forward name="success" path="/do/fillXrefForm"/>
         </action>
 
         <!-- This action fills the xreference form. -->
-<!--        <action path="/fillXrefForm"-->
-<!--            type="uk.ac.ebi.intact.application.editor.struts.action.FillXrefFormAction"-->
-<!--            name="xrefEditForm"-->
-<!--            validate="false"-->
-<!--            scope="session">-->
-<!--            <forward name="success" path="/do/setUpEditor"/>-->
-<!--        </action>-->
+        <action path="/fillXrefForm"
+            type="uk.ac.ebi.intact.application.editor.struts.action.FillXrefFormAction"
+            name="xrefEditForm"
+            validate="false"
+            scope="session">
+            <forward name="success" path="/do/setUpEditor"/>
+        </action>
 
         <!-- Chooses which Editor to forward to. -->
         <action path="/setUpEditor"
@@ -306,7 +306,18 @@
             name="interactionForm"
             validate="false"
             scope="request">
-            <forward name="editor" path="edit.layout"/>
+<!--            <forward name="editor" path="edit.layout"/>-->
+            <forward name="success" path="/do/setUpIntExpForm"/>
+        </action>
+
+        <!-- Populates the interaction form. -->
+        <action path="/setUpIntExpForm"
+            type="uk.ac.ebi.intact.application.editor.struts.action.interaction.FillExperimentFormAction"
+            name="intExpForm"
+            validate="false"
+            scope="session">
+<!--            <forward name="success" path="/do/setUpInteractionForm"/>-->
+            <forward name="success" path="edit.layout"/>
         </action>
 
         <!-- Process selection of Submit, Cancel or Delete buttons from edit.jsp. We need
@@ -375,7 +386,7 @@
         <!-- Handles when the user selectes to add or hide an experiment (Interaction). -->
         <action path="/interaction/experiment"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ExperimentAction"
-            name="intExperimentForm"
+            name="intExpForm"
             scope="request">
         </action>
 
@@ -384,7 +395,7 @@
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ExperimentHoldAction"
             name="intExperimentHoldForm"
             input="/do/fillCvForm"
-            scope="request">
+            scope="session">
         </action>
 
         <!-- Handles when the user clicks to search an experiment in an Interaction. -->

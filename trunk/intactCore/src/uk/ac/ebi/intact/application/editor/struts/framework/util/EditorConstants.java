@@ -103,7 +103,7 @@ public interface EditorConstants {
     /**
      * The name of the experiment form in an Interaction.
      */
-    public static final String FORM_INTERACTION_EXP = "intExperimentForm";
+    public static final String FORM_INTERACTION_EXP = "intExpForm";
 
     /**
      * The name of the experiment hold form in an Interaction.

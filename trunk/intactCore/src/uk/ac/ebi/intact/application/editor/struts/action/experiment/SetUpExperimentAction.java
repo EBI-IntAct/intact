@@ -47,14 +47,4 @@ public class SetUpExperimentAction extends AbstractEditorAction {
         }
         return mapping.findForward(EditorConstants.FORWARD_EDITOR);
     }
-
-    /**
-     * Returns true if the property for given name is empty.
-     * @param form the form to check.
-     * @param name the name of the property to check.
-     * @return true if <code>name</code> is empty in <code>form</code>.
-     */
-    private boolean isPropertyEmpty(DynaActionForm form, String name) {
-        return ((String) form.get(name)).length() == 0;
-    }
 }
