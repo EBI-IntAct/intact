@@ -192,7 +192,12 @@ public interface DAO {
      */
      public Collection find(Object obj) throws SearchException;
 
-
+    /**
+     * Removes the given object from the cachce; hence, cancelling any changes
+     * to the object.
+     * @param obj the object to remove from the cache.
+     */
+    public void removeFromCache(Object obj);
 
     /**
      * <p>updates a given object which was oroginally obtained in

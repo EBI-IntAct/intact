@@ -395,6 +395,10 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
     }
 
+    public void removeFromCache(Object obj) {
+        broker.removeFromCache(obj);
+    }
+
     /**
      * <p>updates a given object which was originally obtained in
      * another transaction. This allows, for example, objects to be read
