@@ -321,8 +321,8 @@ public class SearchAction extends IntactBaseAction {
 
             if (results.isEmpty()) {
                 //no match on label - try by alias.
-                super.log("no match on label - looking for: " + className + " with primary alias ID " + value);
-                Collection aliases = user.search(Alias.class.getName(), "name", value);
+                super.log("no match on label - looking for: " + className + " with name alias ID " + value);
+                Collection aliases = user.search(Alias.class.getName(), "name", value.toLowerCase());
 
                 //could get more than one alias, eg if the name is a wildcard search value -
                 //then need to go through each alias found and accumulate the results...
@@ -338,11 +338,8 @@ public class SearchAction extends IntactBaseAction {
 
                 //could get more than one xref, eg if the primary id is a wildcard search value -
                 //then need to go through each xref found and accumulate the results...
-//                Iterator it = xrefs.iterator();
-//                Collection partialResults = new ArrayList();
                 for (Iterator it = xrefs.iterator(); it.hasNext(); ) {
                     results.addAll(user.search(className, "ac", ((Xref) it.next()).getParentAc()));
-//                    results.addAll(partialResults);
                 }
 
                 if (results.isEmpty()) {
