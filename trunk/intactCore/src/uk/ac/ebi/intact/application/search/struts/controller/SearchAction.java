@@ -88,6 +88,9 @@ public class SearchAction extends IntactBaseAction {
         // Session to access various session objects.
         HttpSession session = super.getSession(request);
 
+        //clean out previous single object views
+        session.setAttribute(SearchConstants.SINGLE_OBJ_VIEW_BEAN, null);
+
         // Handler to the Intact User.
         IntactUserIF user = super.getIntactUser(session);
         if(user == null) {
