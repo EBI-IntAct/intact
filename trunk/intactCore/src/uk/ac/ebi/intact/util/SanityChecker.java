@@ -859,56 +859,6 @@ public class SanityChecker {
         return fullReport.toString();
     }
 
-    public void test() throws SQLException, IntactException {
-
-        Institution ebi = new Institution( "EBI" );
-
-        BioSource bioSource = new BioSource( ebi, "yeast", "xxxx" );
-
-        BioSource sam = helper.getBioSourceByName( "panpa" );
-        addMessage( BIOSOURCE_WITH_NO_TAXID, sam );
-
-        BioSource jyotis = helper.getBioSourceByName( "mouse-thymus" );
-        addMessage( BIOSOURCE_WITH_NO_TAXID, jyotis );
-
-
-        Experiment exp = new Experiment( ebi, "myExp", bioSource);
-        addMessage( INTERACTION_WITH_NO_BAIT, exp );
-
-            try {
-
-                postEmails();
-
-            } catch( MessagingException e ) {
-                // show error ...
-                e.printStackTrace();
-
-                // ... and save the full report on hard disk instead.
-                String filename = null;
-
-                    filename = "sanityCheck-" + TIME + ".txt";
-
-                    System.out.println( "Usage: javaRun.sh SanityChecker <filename>" );
-                    System.out.println( "<filename> automatically set to: " + filename );
-
-                File file = new File( filename );
-                System.out.println( "results filename: " + filename );
-                System.out.println( "Output will be written in: " + file.getAbsolutePath() );
-                PrintWriter out = null;
-                try {
-                    out = new PrintWriter( new BufferedWriter( new FileWriter( file ) ) );
-                } catch( IOException e1 ) {
-                    e1.printStackTrace();
-                }
-
-                out.write( getFullReportOutput() );
-                out.flush();
-                out.close();
-            }
-
-        System.exit( 1 );
-    }
-
     public static void main( String[] args ) throws Exception {
 
         IntactHelper helper = null;
@@ -924,8 +874,6 @@ public class SanityChecker {
                                 "Database: " + helper.getDbName() + ")" );
             System.out.print( "checking data integrity..." );
             checker = new SanityChecker( helper );
-
-//            checker.test();
 
             long start = System.currentTimeMillis();
             //do checks here.....
@@ -969,7 +917,7 @@ public class SanityChecker {
                 checker.postEmails();
 
             } catch( MessagingException e ) {
-                // show error ...
+                // scould not send emails, then how error ...
                 e.printStackTrace();
 
                 // ... and save the full report on hard disk instead.
