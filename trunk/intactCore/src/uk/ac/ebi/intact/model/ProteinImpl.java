@@ -262,12 +262,6 @@ public class ProteinImpl extends InteractorImpl implements Protein {
     public Collection getModifications() {
         return modifications;
     }
-    public void addModification(Modification modification) {
-        if (! this.modifications.contains(modification)) this.modifications.add(modification);
-    }
-    public void removeModification(Modification modification) {
-        this.modifications.remove(modification);
-    }
 
     private void addSequenceChunk(SequenceChunk sequenceChunk) {
         if (! this.sequenceChunks.contains(sequenceChunk)) {

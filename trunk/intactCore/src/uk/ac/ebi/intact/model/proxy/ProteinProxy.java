@@ -102,14 +102,6 @@ public class ProteinProxy extends InteractorProxy implements Protein {
         return realSubject().getModifications();
     }
 
-    public void addModification ( Modification modification ) {
-        realSubject().addModification( modification );
-    }
-
-    public void removeModification ( Modification modification ) {
-        realSubject().removeModification( modification );
-    }
-
     //attributes used for mapping BasicObjects - project synchron
     public String getCvProteinFormAc () {
         return realSubject().getCvProteinFormAc();

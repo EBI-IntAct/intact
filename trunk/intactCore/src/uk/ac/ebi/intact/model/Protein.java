@@ -39,10 +39,6 @@ public interface Protein extends Interactor {
 
     public Collection getModifications();
 
-    public void addModification(Modification modification);
-
-    public void removeModification(Modification modification);
-
     //attributes used for mapping BasicObjects - project synchron
     public String  getCvProteinFormAc();
 
