@@ -21,8 +21,9 @@ SET DOC OFF
 
 --- Setup layout
 SET PAGESIZE 50
-SET LINESIZE 79
+SET LINESIZE 2000
 SET NEWPAGE 0
+SET LINE 0
 
 --- Main query
 SELECT e.shortlabel Experiment, i.shortLabel Interaction, 
