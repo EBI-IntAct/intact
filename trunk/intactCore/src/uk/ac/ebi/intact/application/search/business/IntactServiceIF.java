@@ -16,22 +16,17 @@ package uk.ac.ebi.intact.application.search.business;
 public interface IntactServiceIF {
 
     /**
-     * Authenticate the user's credentials.
-     *
-     * @param username the user name; must not be null.
-     * @param password the password for the user; must not be null.
-     * @return an intact user object.
-     *
-     * @exception InvalidLoginException thrown for un unauthorized login.
-     */
-//    public IntactUser authenticate(String username, String password)
-//        throws InvalidLoginException;
-
-    /**
      * Returns the class name associated with the give topic.
      *
      * @param topic the topic to search in the Intact types resource.
      * @return the classname saved under <code>topic</code>.
      */
     public String getClassName(String topic);
+
+    /**
+     * Returns a hierarchy view property for given key as a <code>String</code>.
+     * @param key the key to return the property for.
+     * @return the property associated with <code>key</code>
+     */
+    public String getHierarchViewProp(String key);
 }

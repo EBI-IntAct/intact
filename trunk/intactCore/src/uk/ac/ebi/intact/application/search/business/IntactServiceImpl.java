@@ -7,12 +7,10 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.search.business;
 
 import java.util.*;
-import java.beans.*;
+import java.io.IOException;
 
-import uk.ac.ebi.intact.application.search.exception.InvalidLoginException;
+import uk.ac.ebi.intact.application.search.struts.framework.util.SearchConstants;
 import uk.ac.ebi.intact.application.search.exception.MissingIntactTypesException;
-import uk.ac.ebi.intact.persistence.*;
-import uk.ac.ebi.intact.util.Key;
 
 /**
  * Implments the IntactService interface.
@@ -23,86 +21,44 @@ import uk.ac.ebi.intact.util.Key;
 public class IntactServiceImpl implements IntactServiceIF {
 
     /**
-     * Intact Types.
+     * Holds Intact Types.
      */
-    private ResourceBundle myIntactTypes;
+    private ResourceBundle myIntactTypeProps;
 
     /**
-     * Intact types reflection map.
+     * Holds HierarchView properties.
      */
-    private Map myNameToClassInfo = new HashMap();
-
+    private ResourceBundle myHvProps;
 
     /**
      * Constructs an instance with given resource file.
      *
-     * @param types the name of the Intact types resource file.
-     *
-     * @exception MissingIntactTypesException for errors with IntactTypes
-     * resource file. This may be for not able to find the resource file or
-     * for an empty resource file.
-     * @exception ClassNotFoundException unable to load the class for types
-     * in the resource file.
-     * @exception IntrospectionException error thrown when getting bean info for
-     * types in the resource file.
+     * @param configdir the configuartion directory.
+     * @exception IOException if the method fails to load the properties file.
+     * @exception MissingResourceException unable to load a resource file.
+     * @exception MissingIntactTypesException no keys found in the Intact Type
+     * resource file.
      */
-    public IntactServiceImpl(String types) throws MissingIntactTypesException,
-        ClassNotFoundException, IntrospectionException {
-        try {
-            myIntactTypes = ResourceBundle.getBundle(types);
-        }
-        catch (MissingResourceException ex) {
-            throw new MissingIntactTypesException(
-                "Unable to find IntactTypes resource");
-        }
+    public IntactServiceImpl(String configdir) throws IOException,
+            MissingResourceException, MissingIntactTypesException {
+        myIntactTypeProps = ResourceBundle.getBundle(
+                configdir + SearchConstants.INTACT_TYPE_PROPS);
         // We must have Intact Types to search for; in other words, resource
         // bundle can't be empty.
-        if (!myIntactTypes.getKeys().hasMoreElements()) {
+        if (!myIntactTypeProps.getKeys().hasMoreElements()) {
             throw new MissingIntactTypesException(
-                "Can't build a map file from an empty IntactTypes resource file");
+                    "IntactTypes resource file cannot be empty");
         }
-//        HashMap map = new HashMap();
-//
-//        //don't want any other threads messing up the map....
-//        synchronized(map) {
-//            for (Enumeration enum = rb.getKeys(); enum.hasMoreElements();) {
-//                String type = (String) enum.nextElement();
-//                Key key = new Key(type);
-//                map.put(key, rb.getString(type));
-//            }
-//        }
-        // Loop through the resource bundle.
-        for (
-            Enumeration enum = myIntactTypes.getKeys(); enum.hasMoreElements();) {
-            // Get the class type for the current key.
-            String type = myIntactTypes.getString((String) enum.nextElement());
-            // Create our own key to put into the map.
-            Key key = new Key(type);
-            BeanInfo info = Introspector.getBeanInfo(Class.forName(type));
-            PropertyDescriptor[] fieldDescs = info.getPropertyDescriptors();
-            myNameToClassInfo.put(key, fieldDescs);
-        }
+        myHvProps = ResourceBundle.getBundle(configdir + SearchConstants.HV_PROPS);
     }
+
     // Implements business methods
 
-//    public IntactUser authenticate(String username, String password)
-//        throws InvalidLoginException {
-//
-//        // The intact user to return.
-//        IntactUser user = null;
-//
-//        // Just a dummy validation.
-//        if (username.equals("abc") && password.equals("abc")) {
-//            //user = new IntactUser(username, password);
-//        }
-//        else {
-//            throw new InvalidLoginException();
-//        }
-//        return user;
-//    }
-
-
     public String getClassName(String topic) {
-        return myIntactTypes.getString(topic);
+        return myIntactTypeProps.getString(topic);
+    }
+
+    public String getHierarchViewProp(String key) {
+        return myHvProps.getString(key);
     }
 }
