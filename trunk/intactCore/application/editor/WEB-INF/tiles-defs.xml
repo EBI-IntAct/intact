@@ -21,14 +21,6 @@
         </putList>
     </definition>
 
-    <!-- Menu for the results page -->
-    <definition name="result.menu.links" extends="search.menu.links">
-        <putList name="items">
-            <item value="New Search"  link="/editor/do/search/new"/>
-            <item value="Logout" link="/editor/do/logout"/>
-        </putList>
-    </definition>
-
     <!-- =============== Sidebars ====================================== -->
 
     <!-- Sidebar for the login page -->
@@ -43,23 +35,7 @@
         <put name="footer" value="/pages/sidebarFooter.jsp"/>
     </definition>
 
-    <!-- Sidebar for the result page -->
-    <definition name="result.sidebar.layout" extends="search.sidebar.layout">
-        <put name="menu" value="result.menu.links"/>
-    </definition>
-
     <!-- =============== Editor Layouts =================================== -->
-
-    <!-- The edit CV page layout. -->
-<!--    <definition name="edit.cv.layout" path="/layouts/cvLayout.jsp">-->
-<!--        <put name="error" value="/pages/editorErrors.jsp"/>-->
-<!--        <put name="cv-info" value="/pages/cvInfo.jsp"/>-->
-<!--        <put name="comments" value="/pages/comments.jsp"/>-->
-<!--        <put name="add-comments" value="/pages/commentsAdd.jsp"/>-->
-<!--        <put name="xrefs" value="/pages/xrefs.jsp"/>-->
-<!--        <put name="add-xrefs" value="/pages/xrefsAdd.jsp"/>-->
-<!--        <put name="action" value="/pages/editAction.jsp"/>-->
-<!--    </definition>-->
 
     <!-- The edit CV page layout. -->
     <definition name="edit.cv.layout" path="/layouts/cvLayout.jsp">
@@ -115,7 +91,7 @@
     <!-- Match page description. -->
     <definition name="match.layout" extends="search.layout">
         <put name="content" value="/pages/results.jsp"/>
-        <put name="sidebar" value="result.sidebar.layout"/>
+        <put name="sidebar" value="search.sidebar.layout"/>
     </definition>
 
     <!-- Match failed page description. -->
@@ -124,16 +100,9 @@
     </definition>
 
     <!-- Edit page description. -->
-<!--    <definition name="edit.layout" extends="login.layout"-->
-<!--        controllerUrl="/do/tiles/editorSwitch">-->
-<!--        <put name="sidebar" value="result.sidebar.layout"/>-->
-<!--        <put name="content" value="edit.cv.layout"/>-->
-<!--    </definition>-->
-
-    <!-- Edit page description. -->
     <definition name="edit.layout" extends="login.layout"
         controllerUrl="/do/tiles/editorSwitch">
-        <put name="sidebar" value="result.sidebar.layout"/>
+        <put name="sidebar" value="search.sidebar.layout"/>
         <put name="content" value="edit.cv.layout"/>
     </definition>
 

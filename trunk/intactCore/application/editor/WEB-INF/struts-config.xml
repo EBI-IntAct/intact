@@ -4,14 +4,13 @@
 	"http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
 
 <!--
-     This is the Struts configuration file for the example application,
-     using the proposed new syntax.
+    Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
+    All rights reserved. Please see the file LICENSE in the root directory of
+    this distribution.
 
-     NOTE:  You would only flesh out the details in the "form-bean"
-     declarations if you had a generator tool that used them to create
-     the corresponding Java classes for you.  Otherwise, you would
-     need only the "form-bean" element itself, with the corresponding
-     "name" and "type" attributes.
+     The Struts configuration file for the editor.
+     Version: $Id$
+     Author: Sugath Mudali (smudali@ebi.ac.uk)
 -->
 
 <struts-config>
@@ -243,7 +242,6 @@
         <!-- Need this global forward from the index.jsp -->
         <forward name="login" path="/do/welcome"/>
 
-<!--        <forward name="success" path="/do/fillCvForm"/>-->
         <forward name="failure" path="error.layout"/>
         <!-- Fill the form with search results -->
         <forward name="result" path="/do/fillResultForm"/>
@@ -313,12 +311,6 @@
             <forward name="single" path="/do/choose"/>
             <!-- Select the appropriate editor for the new record. -->
             <forward name="create" path="/do/choose"/>
-        </action>
-
-        <!-- Process a new search for a Editor Object. -->
-        <action path="/search/new"
-            type="org.apache.struts.actions.ForwardAction"
-            parameter="search.layout">
         </action>
 
         <!-- Fill the form with search results for the JSP to display. -->
