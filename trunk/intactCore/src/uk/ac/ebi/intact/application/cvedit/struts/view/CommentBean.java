@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.application.cvedit.struts.view;
 
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserImpl;
+import uk.ac.ebi.intact.application.cvedit.struts.framework.util.CvEditConstants;
 
 import java.io.Serializable;
 
@@ -17,7 +18,9 @@ import java.io.Serializable;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class CommentBean implements Serializable {
+public class CommentBean extends EditBean implements Serializable {
+
+    // Instance Data
 
     /**
      * The unique identifier for this bean.
@@ -41,7 +44,6 @@ public class CommentBean implements Serializable {
 
     /**
      * Instantiate an object of this class from an Annotation object.
-     *
      * @param annotation the <code>Annotation</code> object to construct an
      * instance of this class.
      */
@@ -54,6 +56,7 @@ public class CommentBean implements Serializable {
 
     /**
      * Return the key for this object.
+     * @return key for this object as a <code>long</code>.
      */
     public long getKey() {
         return myKey;
@@ -61,6 +64,8 @@ public class CommentBean implements Serializable {
 
     /**
      * Returns an annotation object this instance is created with.
+     * @return the instance of <code>Annotation</code> this instance is created
+     * with.
      */
     public Annotation getAnnotation() {
         return myAnnotation;
@@ -68,6 +73,7 @@ public class CommentBean implements Serializable {
 
     /**
      * Returns the topic.
+     * @return topic as a <code>String</code>.
      */
     public String getTopic() {
         return myTopic;
@@ -75,6 +81,7 @@ public class CommentBean implements Serializable {
 
     /**
      * Returns the annotated text.
+     * @return description as a <code>String</code>.
      */
     public String getDescription() {
         return myAnnotatedText;
@@ -82,20 +89,10 @@ public class CommentBean implements Serializable {
 
     /**
      * Sets the annotated text.
-     *
-     * @param text the annotated text.
+     * @param text the annotated text as a <code>String</code>.
      */
     public void setDescription(String text) {
         myAnnotatedText = text;
-    }
-
-    /**
-     * Adds new annotated text to the existing text.
-     *
-     * @param text the annotated text to add.
-     */
-    public void addDescription(String text) {
-        myAnnotatedText = myAnnotatedText + " " + text;
     }
 
     // Override Objects's equal method.
