@@ -14,6 +14,7 @@
     <property name="root.dest.dir" value="${intact.root}/classes"/>
     <property name="root.config.dir" value="${intact.root}/config"/>
     <property name="root.dist.dir" value="${intact.root}/dist"/>
+
     <property name="root.jar.file" value="${root.dist.dir}/intact-core.jar"/>
 
     <property name="lib.dir" value="WEB-INF/lib"/>
@@ -435,9 +436,10 @@
 
     <!-- =================================================================== -->
 
-    <!-- Undeploys the war file from the Tomcat server. -->
+    <!-- Undeploys the war file from the Tomcat server. Also stops the web service. -->
     <target name="undeploy"
         description="Undeploys the WAR file from the Tomcat server">
+        <antcall target="stop-ws" />
         <ant dir=".." inheritAll="false" target="undeploy">
             <property name="war" value="hierarchView"/>
         </ant>
@@ -456,6 +458,7 @@
     <!-- Stops the Tomcat server. -->
 
     <target name="stop-tomcat">
+        <antcall target="stop-ws" />
         <ant dir=".." inheritAll="false" target="stop-tomcat"/>
     </target>
 
