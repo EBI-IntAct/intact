@@ -1,5 +1,6 @@
 <%@ page language="java"%>
-<%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
+<%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
+<%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 
 <%--
     Presents information for the CV object.
@@ -7,11 +8,29 @@
     Version: $Id$
 --%>
 
-<jsp:useBean id="intactuser" scope="session"
-    class="uk.ac.ebi.intact.application.cvedit.business.IntactUserImpl"/>
-
-<c:set var="viewbean" value="${intactuser.view}"/>
-
-Topic: <b><c:out value="${viewbean.topic}"/></b>
-&nbsp;&nbsp;AC: <b><c:out value="${viewbean.ac}"/></b>
-&nbsp;&nbsp;Short Label: <b><c:out value="${viewbean.shortLabel}"/></b>
+<html:form action="/cv/info/edit">
+    <table width="80%" border="0" cellspacing="1" cellpadding="2">
+        <tr class="tableRowHeader">
+            <th class="tableCellHeader">Action</th>
+            <th class="tableCellHeader">AC</th>
+            <th class="tableCellHeader">Short Label</th>
+            <th class="tableCellHeader">Full Name</th>
+        </tr>
+        <tr class="tableRowEven">
+            <td class="tableCell">
+                <html:submit>
+                    <bean:message key="button.save"/>
+                </html:submit>
+            </td>
+            <td class="tableCell">
+                <bean:write property="ac" name="cvinfoForm"/>
+            </td>
+            <td class="tableCell">
+                <html:text property="shortLabel" name="cvinfoForm" size="10" maxlength="16"/>
+            </td>
+            <td class="tableCell">
+                <html:text property="fullName" name="cvinfoForm" size="80"/>
+            </td>
+        </tr>
+    </table>
+</html:form>
