@@ -213,7 +213,11 @@
 				<include name="*.jsp"/>
 	        	<include name="*.css"/>
 	  			<include name="WEB-INF/struts-config.xml"/>
+                <include name="WEB-INF/tiles-defs.xml"/>
 	  			<include name="${tld.dir}/**"/>
+                <include name="images/*"/>
+                <include name="pages/**"/>
+                <include name="layouts/**"/>
 	   		</fileset>
 
 			<!-- Include cvedit specific jar files. -->
