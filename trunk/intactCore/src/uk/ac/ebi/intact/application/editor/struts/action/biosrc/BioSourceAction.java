@@ -37,11 +37,6 @@ import java.util.StringTokenizer;
 public class BioSourceAction extends SubmitFormAction {
 
     /**
-     * The tax id database.
-     */
-    private static final String TAX_DB = "newt";
-
-    /**
      * Process the specified HTTP request, and create the corresponding
      * HTTP response (or forward to another web component that will create
      * it). Return an ActionForward instance describing where and how
@@ -119,7 +114,7 @@ public class BioSourceAction extends SubmitFormAction {
             saveErrors(request, errors);
         }
         // Retrieve the xref bean for previous tax id.
-        XreferenceBean taxXref = findXref(TAX_DB, bioview);
+        XreferenceBean taxXref = findXref(getService().getResource("taxid.db"), bioview);
 
         // Have we got an existing Xref?
         if (taxXref != null) {
@@ -146,10 +141,8 @@ public class BioSourceAction extends SubmitFormAction {
         if (taxIdExists(results, ac)) {
             // Found a tax id which belongs to another biosource.
             ActionMessages msgs = new ActionMessages();
-            String topic = user.getSelectedTopic();
-            String link = getBioSourcesLink(results, ac, topic);
-            msgs.add("bs.taxid", new ActionMessage("error.newt.taxid", taxid,
-                    link));
+            String link = getBioSourcesLink(results, ac);
+            msgs.add("bs.taxid", new ActionMessage("error.newt.taxid", taxid, link));
             saveMessages(request, msgs);
         }
         // Update the screen
@@ -208,7 +201,8 @@ public class BioSourceAction extends SubmitFormAction {
         Institution owner = user.getInstitution();
 
         // The database the new xref belong to.
-        CvDatabase db = (CvDatabase) user.getObjectByLabel(CvDatabase.class, TAX_DB);
+        CvDatabase db = (CvDatabase) user.getObjectByLabel(CvDatabase.class,
+                getService().getResource("taxid.db"));
 
         CvXrefQualifier xqual = (CvXrefQualifier) user.getObjectByLabel(CvXrefQualifier.class, "identity");
         return new Xref(owner, db, taxid, label, null, xqual);
@@ -299,10 +293,9 @@ public class BioSourceAction extends SubmitFormAction {
      * @param results a collection of BioSOurce objects.
      * @param ac      the AC to filter out. The biosource with this AC is not
      *                included in the list.
-     * @param topic   the topic to incliude in the search link.
      * @return a link to access various biosources from the search application.
      */
-    private String getBioSourcesLink(Collection results, String ac, String topic) {
+    private String getBioSourcesLink(Collection results, String ac) {
         // The buffer to construct existing labels.
         StringBuffer sb = new StringBuffer();
 
@@ -324,7 +317,7 @@ public class BioSourceAction extends SubmitFormAction {
             else {
                 sb.append(", ");
             }
-            sb.append("<a href=\"" + "javascript:show('" + label + "')\""
+            sb.append("<a href=\"" + "javascript:show('BioSource, " + label + "')\""
                     + ">" + label + "</a>");
         }
         return sb.toString();
