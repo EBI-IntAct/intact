@@ -77,15 +77,17 @@ public class PsiDataBuilder implements DataBuilder {
     public PsiDataBuilder() {
 
         //initialise a DOM-level2 Document ...
-        DOMImplementationImpl impl = new DOMImplementationImpl();
-        //The root-element is entrySet ... with a lot of Attributes ...
-        doc = impl.createDocument("net:sf:psidev:mi", "entrySet", null);
+        doc = newPsiDoc(false); //don't want to initialise source yet - done during processing!
         psiEntrySet = doc.getDocumentElement();
-        psiEntrySet.setAttribute("xmlns", "net:sf:psidev:mi");
-        psiEntrySet.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-        psiEntrySet.setAttribute("xsi:schemaLocation", "net:sf:psidev:mi http://psidev.sourceforge.net/mi/xml/src/MIF.xsd");
-        psiEntrySet.setAttribute("level", "1");
-        psiEntrySet.setAttribute("version", "1");
+        //DOMImplementationImpl impl = new DOMImplementationImpl();
+        //The root-element is entrySet ... with a lot of Attributes ...
+        //doc = impl.createDocument("net:sf:psidev:mi", "entrySet", null);
+        //psiEntrySet = doc.getDocumentElement();
+        //psiEntrySet.setAttribute("xmlns", "net:sf:psidev:mi");
+        //psiEntrySet.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        //psiEntrySet.setAttribute("xsi:schemaLocation", "net:sf:psidev:mi http://psidev.sourceforge.net/mi/xml/src/MIF.xsd");
+        //psiEntrySet.setAttribute("level", "1");
+        //psiEntrySet.setAttribute("version", "1");
 
         // Initialise regular expression
         try {
@@ -93,6 +95,56 @@ public class PsiDataBuilder implements DataBuilder {
         } catch (RESyntaxException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Creates an initialised PSI Document object. This is useful for exxample
+     * when processing lagre datasets and information may need to be generated
+     * in segments.
+     * @param sourceElementNeeded true if an Intact source element is wanted, false otherwise.
+     * For example internal initialisation of this class will not need a source element as
+     * it is generated during processing; however for large datasets a source element may be required
+     * but without affecting the Document held internally by this class (which is what the
+     * generation of a PSI entry alone will do.) NB this aspect will probably be refactored
+     * at some point.
+     * @return Document an newly initialised PSI Document, or null if the creation
+     * failed.
+     */
+    public Document newPsiDoc(boolean sourceElementNeeded) {
+
+        Element root = null;
+        Document newDoc = null;
+        DOMImplementationImpl impl = new DOMImplementationImpl();
+        //The root-element is entrySet ... with a lot of Attributes ...
+        newDoc = impl.createDocument("net:sf:psidev:mi", "entrySet", null);
+        root = newDoc.getDocumentElement();
+        root.setAttribute("xmlns", "net:sf:psidev:mi");
+        root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        root.setAttribute("xsi:schemaLocation", "net:sf:psidev:mi http://psidev.sourceforge.net/mi/xml/src/MIF.xsd");
+        root.setAttribute("level", "1");
+        root.setAttribute("version", "1");
+
+        Element psiEntry = null;
+        psiEntry = newDoc.createElement("entry");
+
+        if(sourceElementNeeded) {
+            // The source element
+            try {
+                Element psiSource = null;
+                //getId/Label are names
+                psiSource = newDoc.createElement("source");
+                psiEntry.appendChild(psiSource);
+                Node psiNames = newDoc.importNode(getNames("IntAct", "IntAct download"), true);  //generated in a different Document...
+                psiSource.appendChild(psiNames);
+                psiSource.setAttribute("releaseDate", getReleaseDate());
+                root.appendChild(psiSource);
+
+            } catch (ElementNotParseableException e) {
+                logger.info("source/names failed (not required):" + e.getMessage());
+            } //not required here - so dont worry
+        }
+
+        return newDoc;
     }
 
     /**
@@ -117,6 +169,7 @@ public class PsiDataBuilder implements DataBuilder {
                     TransformerFactory.newInstance();
             Transformer transformer = tFactory.newTransformer();
             transformer.setOutputProperty(javax.xml.transform.OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
 
 
             StreamResult result = new StreamResult(f);
@@ -260,52 +313,50 @@ public class PsiDataBuilder implements DataBuilder {
 
     /**
      * Provides access in Document format to the current Interactor List.
-     * @return A Document containing the current InteractorList, or null if not yet built.
-     * @throws DataConversionException  if there was a problem building a Document
+     * @return A root Element for a tree containing the current InteractorList, or null if not yet built.
      */
-    public Document getInteractorList() throws DataConversionException {
+    public Element getInteractorList() {
 
-        Document result = null;
-        Element root = null;
-        try {
-            DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            result = db.newDocument();
-            root = result.createElement("interactor-root");    //sets up a place-holder for the list
-            //now just import the list we want into the new document and return
-            Node newChild = result.importNode(globalInteractorList, true); //built in a different Document!!
-            root.appendChild(newChild);
-        }
-        catch(ParserConfigurationException pe) {
-            throw new DataConversionException("Unable to build a Document!", pe);
-        }
-
-        if((root != null) & (root.hasChildNodes())) result.appendChild(root);
-        return result;
+//        Document result = null;
+//        Element root = null;
+//        try {
+//            DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+//            result = db.newDocument();
+//            root = result.createElement("interactor-root");    //sets up a place-holder for the list
+//            //now just import the list we want into the new document and return
+//            Node newChild = result.importNode(globalInteractorList, true); //built in a different Document!!
+//            root.appendChild(newChild);
+//        }
+//        catch(ParserConfigurationException pe) {
+//            throw new DataConversionException("Unable to build a Document!", pe);
+//        }
+//
+//        if((root != null) & (root.hasChildNodes())) result.appendChild(root);
+        return globalInteractorList;
     }
 
     /**
      * Provides access in Document format to the current Experiment List.
-     * @return A Document containing the current ExperimentList, or null if not yet built.
-     * @throws DataConversionException  if there was a problem building a Document
+     * @return An Element containing the tree of current ExperimentList, or null if not yet built.
      */
-    public Document getExperimentList() throws DataConversionException {
+    public Element getExperimentList() {
 
-        Document result = null;
-        Element root = null;
-        try {
-            DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            result = db.newDocument();
-            root = result.createElement("experiment-root");    //sets up a place-holder for the list
-            //now just import the list we want into the new document and return
-            Node newChild = result.importNode(globalExperimentList, true); //built in a different Document!!
-            root.appendChild(newChild);
-        }
-        catch(ParserConfigurationException pe) {
-            throw new DataConversionException("Unable to build a Document!", pe);
-        }
-
-        if((root != null) & (root.hasChildNodes())) result.appendChild(root);
-        return result;
+//        Document result = null;
+//        Element root = null;
+//        try {
+//            DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+//            result = db.newDocument();
+//            root = result.createElement("experiment-root");    //sets up a place-holder for the list
+//            //now just import the list we want into the new document and return
+//            Node newChild = result.importNode(globalExperimentList, true); //built in a different Document!!
+//            root.appendChild(newChild);
+//        }
+//        catch(ParserConfigurationException pe) {
+//            throw new DataConversionException("Unable to build a Document!", pe);
+//        }
+//
+//        if((root != null) & (root.hasChildNodes())) result.appendChild(root);
+        return globalExperimentList;
     }
 
     /**
@@ -315,11 +366,11 @@ public class PsiDataBuilder implements DataBuilder {
      * 'chunks' for further processing. It is up to the caller to provide a reasonably
      * well sized Collection - more than 1000 will be rejected.
      * @param interactions A Collections of Interactions to be proceesed
-     * @return  Document an XML DOM containing the relevant elements for the Interactions
+     * @return  an XML DOM Element containing the relevant elements for the Interactions
      * @throws ElementNotParseableException thrown if the Document could not be created.
      * @throws DataConversionException thrown if the parameter size is tooo big to be processed in one chunk.
      */
-    public Document buildInteractionsOnly(Collection interactions) throws
+    public Element buildInteractionsOnly(Collection interactions) throws
                                                 DataConversionException, ElementNotParseableException {
 
         if(interactions.size() > 1000)
@@ -351,8 +402,9 @@ public class PsiDataBuilder implements DataBuilder {
         }
 
         //put the list into the document and return..
-        result.appendChild(list);
-        return result;
+        //result.appendChild(list);
+        //return result;
+        return list;
     }
 
     /**
@@ -1768,25 +1820,4 @@ public class PsiDataBuilder implements DataBuilder {
 
     }
 
-    /**
-     * Generates a new DOM Document with the PSI stuff filled in for the root.
-     * Mainly used so we can generate bits of the full XML (eg InteractionLists)
-     * and dump them to seperate files.
-     * @return Document a new PSI-initialised document.
-     */
-    private Document getNewDocRoot() {
-
-        Document newDoc = new DOMImplementationImpl().createDocument("net:sf:psidev:mi", "entrySet", null);
-        //The root-element is just a place-holder - we may not even need it,
-        //but to be safe we just generate a valid XML document to hold part of
-        //the InteractionList
-        Element root = newDoc.getDocumentElement();
-        root.setAttribute("xmlns", "net:sf:psidev:mi");
-        root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-        root.setAttribute("xsi:schemaLocation", "net:sf:psidev:mi http://psidev.sourceforge.net/mi/xml/src/MIF.xsd");
-        root.setAttribute("level", "1");
-        root.setAttribute("version", "1");
-
-        return newDoc;
-    }
 }
