@@ -20,7 +20,7 @@
 -- Tables
 CREATE TABLE Institution
 (
-	shortLabel		VARCHAR(10)	NOT NULL,
+	shortLabel		VARCHAR(20)	NOT NULL,
 	fullName		VARCHAR(50),
 	postalAddress		VARCHAR(2000),	
 	url			VARCHAR(255),
@@ -206,7 +206,7 @@ CREATE TABLE Interactor
 	interactionType_ac	VARCHAR(30)	CONSTRAINT fk_Interactor_interactionType
 						REFERENCES ControlledVocab(ac),
 	/* Colums belonging to AnnotatedObject */
-	shortLabel		VARCHAR(10)	NOT NULL,
+	shortLabel		VARCHAR(20)	NOT NULL,
 	fullName		VARCHAR(50),
 	/* Colums belonging to BasicObject */	
 	ac			VARCHAR(30)	NOT NULL 
@@ -373,7 +373,7 @@ CREATE TABLE Experiment
 						REFERENCES ControlledVocab(ac),
 	relatedExperiment_ac  	VARCHAR(30)     CONSTRAINT fk_Experiment_relatedExp
 						REFERENCES Experiment(ac),
-	shortLabel		VARCHAR(10)	NOT NULL,
+	shortLabel		VARCHAR(20)	NOT NULL,
 	fullName		VARCHAR(50),
 	ac			VARCHAR(30)	NOT NULL 
 						CONSTRAINT pk_Experiment 
