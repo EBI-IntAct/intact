@@ -6,19 +6,19 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.framework;
 
-import org.apache.struts.action.*;
-import org.apache.struts.config.ModuleConfig;
-import org.apache.struts.config.FormBeanConfig;
-import org.apache.struts.Globals;
 import org.apache.commons.beanutils.DynaBean;
 import org.apache.log4j.Logger;
-
+import org.apache.struts.Globals;
+import org.apache.struts.action.*;
+import org.apache.struts.config.FormBeanConfig;
+import org.apache.struts.config.ModuleConfig;
+import org.apache.struts.util.RequestUtils;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
+import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.application.editor.struts.view.XrefEditForm;
-import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -206,7 +206,7 @@ public abstract class AbstractEditorAction extends Action {
         if (session.getAttribute(formName) == null) {
             // The new form.
             EditForm form = null;
-            // Special form form xref editing.
+            // Special form for xref editing.
             if (formName.equals(EditorConstants.FORM_XREF_EDIT)) {
                 form = new XrefEditForm();
             }
@@ -243,6 +243,62 @@ public abstract class AbstractEditorAction extends Action {
      */
     protected ActionForward inputForward(ActionMapping mapping) {
         return mapping.findForward("input");
+    }
+
+    /**
+     * Returns an action form.
+     * @param request the Http request to search for the form; the form is
+     * created and saved in given scope.
+     * @param mapping the mapping to get the scope for the form.
+     * @param name the name of the form.
+     * @return an ActionForm instance; this will be stored under given scope.
+     * @exception SessionExpiredException when a session expires.
+     */
+    protected ActionForm createActionForm(HttpServletRequest request,
+                                          ActionMapping mapping,
+                                          String name)
+            throws SessionExpiredException {
+        FormBeanConfig config = mapping.getModuleConfig().findFormBeanConfig(name);
+        if (config == null) {
+            return null;
+        }
+        ActionForm instance = null;
+
+        if ("request".equals(mapping.getScope())) {
+            instance = (ActionForm) request.getAttribute(name);
+        }
+        else {
+            instance = (ActionForm) getSession(request).getAttribute(name);
+        }
+        // Create and return a new form bean instance
+        if (instance == null) {
+            if (config.getDynamic()) {
+                try {
+                    DynaActionFormClass dynaClass =
+                            DynaActionFormClass.createDynaActionFormClass(config);
+                    instance = (ActionForm) dynaClass.newInstance();
+                }
+                catch (Throwable t) {
+                    return null;
+                }
+            }
+            else {
+                try {
+                    instance = (ActionForm) RequestUtils.applicationInstance(
+                            config.getType());
+                }
+                catch (Throwable t) {
+                    return null;
+                }
+            }
+        }
+        if ("request".equals(mapping.getScope())) {
+            request.setAttribute(name, instance);
+        }
+        else {
+            getSession(request).setAttribute(name, instance);
+        }
+        return instance;
     }
 
     // Helper Methods
