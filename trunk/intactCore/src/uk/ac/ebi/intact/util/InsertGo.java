@@ -32,7 +32,7 @@ import org.apache.regexp.RESyntaxException;
  */
 public class InsertGo {
 
-    public static int MAX_ID_LEN = 30;
+    public static final int MAX_ID_LEN = 30;
 
     IntactHelper helper;
     DAOSource dataSource;
@@ -61,16 +61,16 @@ public class InsertGo {
 
         try {
 
-             helper = new IntactHelper(dataSource);
+            helper = new IntactHelper(dataSource);
 
-         } catch (IntactException ie) {
+        } catch (IntactException ie) {
 
-             //something failed with type map or datasource...
-             String msg = "unable to create intact helper class - no datasource";
-             System.out.println(msg);
-             ie.printStackTrace();
+            //something failed with type map or datasource...
+            String msg = "unable to create intact helper class - no datasource";
+            System.out.println(msg);
+            ie.printStackTrace();
 
-         }
+        }
 
         // Set cached classes
         helper.addCachedClass(CvDatabase.class);
@@ -83,14 +83,13 @@ public class InsertGo {
     /** Add a new xref to an annotatedObject.
      *
      */
-    public void addNewXref(AnnotatedObject current,
-                           Xref xref)  throws Exception {
+    public void addNewXref( AnnotatedObject current, Xref xref ) throws CreateException {
 
         // Todo: Make sure the xref does not yet exist in the object
 
-        current.addXref(xref);
+        current.addXref( xref );
         if (xref.getParentAc() == current.getAc()){
-            dao.create(xref);
+            dao.create( xref );
         }
     }
 
@@ -102,14 +101,14 @@ public class InsertGo {
                                  String spAc,
                                  String sgdAc,
                                  String goAc,
-                                 String pubmedAc) throws Exception {
+                                 String pubmedAc) throws IntactException, CreateException, UpdateException {
 
         // Retrieve the protein if it already exists.
         // Criterion: Same Swiss-Prot xref.
 
         Protein protein = null;
+        // TODO: why do we need that for ?
         Xref spXref = null;
-
         spXref = new Xref((Institution) helper.getObjectByLabel(Institution.class, "EBI"),
                           (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "sptr"),
                           spAc,
@@ -120,7 +119,7 @@ public class InsertGo {
         }
         catch (IntactException e) {
             System.err.println("Error retrieving Protein object for " + spAc
-                    + ". Ignoring associated crossreferences. ");
+                               + ". Ignoring associated crossreferences. ");
             e.printStackTrace();
             return null;
         }
@@ -155,10 +154,10 @@ public class InsertGo {
 
 
         addNewXref(protein,
-                    new Xref((Institution) helper.getObjectByLabel(Institution.class, "EBI"),
-                             (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "go"),
-                             goAc,
-                             goTerm, null, null));
+                   new Xref((Institution) helper.getObjectByLabel(Institution.class, "EBI"),
+                            (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "go"),
+                            goAc,
+                            goTerm, null, null));
         if (dao.isPersistent(protein)){
             dao.update(protein);
         }
@@ -173,17 +172,17 @@ public class InsertGo {
         String goId = null;
         String goTerm = null;
         HashMap goMap = new HashMap();
+        BufferedReader in     = null;
+        InputStreamReader isr = null;
 
         try {
             // Parse input line by line
             URL goServer = new URL(aUrl);
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(
-                            goServer.openStream()));
+            isr = new InputStreamReader( goServer.openStream() );
+            in  = new BufferedReader( isr );
 
 
             String line;
-            Protein protein;
             int lineCount = 0;
 
             System.err.println("GO definition file lines processed: ");
@@ -221,14 +220,26 @@ public class InsertGo {
                 }
 
                 // ignore comments and all other lines by doing nothing
-
             }
-
         }
                 // The GO terms are not essential, if anything fails,
                 // just catch the exception.
-        catch (Exception e) {
+        catch (IOException e) {
             e.printStackTrace();
+        } catch ( RESyntaxException e ) {
+            e.printStackTrace ();
+        } finally {
+            // close opened streams.
+            if(isr != null) {
+                try {
+                    isr.close();
+                } catch( IOException ioe) {}
+            }
+            if( in != null ){
+                try {
+                    in.close();
+                } catch( IOException ioe) {}
+            }
         }
 
         return goMap;
@@ -237,56 +248,76 @@ public class InsertGo {
 
 
 
-    public static void main(String[] args) throws Exception {
+    public static void main( String[] args ) throws Exception {
+
+        if( args.length < 2 ) {
+            System.err.println ( "Usage: InsertGo " );
+        }
+
 
         InsertGo app = new InsertGo();
 
         // parse GO definition file
-        if (null != args[1]){
-            app.goTerms = app.parseGoDefs(args[1]);
+        if (null != args[ 1 ]){
+            app.goTerms = app.parseGoDefs( args[ 1 ] );
         }
-
 
         // Parse input file line by line
 
-        BufferedReader file = new BufferedReader(new FileReader(args[0]));
-        String line;
-        Protein protein;
-        int lineCount = 0;
+        FileReader fr = null;
+        BufferedReader file = null;
+        try {
+            fr   = new FileReader( args[ 0 ] );
+            file = new BufferedReader( fr );
 
-        System.out.print("Lines processed: ");
+            String line;
+            int lineCount = 0;
 
-        while (null != (line = file.readLine())) {
+            System.out.print("Lines processed: ");
 
-            // Tokenize lines
-            StringTokenizer st = new StringTokenizer(line, "\t", false);
-            String spAc = st.nextToken();
-            String dummy = st.nextToken();
-            String sgdAc = st.nextToken();
-            String label = st.nextToken();
-            String goAc = st.nextToken();
-            String bibReference = st.nextToken();
-            String pubmedId = null;
+            while (null != (line = file.readLine())) {
 
-            // Parse the bibliographic reference
-            StringTokenizer bibTokenizer
-                    = new StringTokenizer(bibReference,
-                            "|", false);
-            dummy = bibTokenizer.nextToken();
-            if (bibTokenizer.hasMoreTokens()) {
-                pubmedId = bibTokenizer.nextToken();
-            } else {
-                pubmedId = null;
+                // Tokenize lines
+                StringTokenizer st = new StringTokenizer(line, "\t", false);
+                String spAc = st.nextToken();
+                st.nextToken();
+                String sgdAc = st.nextToken();
+                String label = st.nextToken();
+                String goAc = st.nextToken();
+                String bibReference = st.nextToken();
+                String pubmedId = null;
+
+                // Parse the bibliographic reference
+                StringTokenizer bibTokenizer = new StringTokenizer( bibReference, "|", false );
+                bibTokenizer.nextToken();
+                if (bibTokenizer.hasMoreTokens()) {
+                    pubmedId = bibTokenizer.nextToken();
+                } else {
+                    pubmedId = null;
+                }
+
+                // Insert results into database
+                app.updateProtein(label, spAc, sgdAc, goAc, null);
+
+                // Progress report
+                if((++lineCount % 10) == 0){
+                    System.out.print(lineCount + " ");
+                }
             }
-
-            // Insert results into database
-            protein = app.updateProtein(label, spAc, sgdAc, goAc, null);
-
-            // Progress report
-            if((++lineCount % 10) == 0){
-                System.out.print(lineCount + " ");
+            System.out.println("\n");
+        }
+        finally {
+            // close opened streams.
+            if(file != null) {
+                try {
+                    file.close();
+                } catch( IOException ioe) {}
+            }
+            if( fr != null ){
+                try {
+                    fr.close();
+                } catch( IOException ioe) {}
             }
         }
-        System.out.println("\n");
     }
 }

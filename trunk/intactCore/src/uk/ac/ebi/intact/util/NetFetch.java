@@ -10,7 +10,7 @@
  * @version
  */
 
-package uk.ac.ebi.intact.util; 
+package uk.ac.ebi.intact.util;
 
 import java.io.* ;
 import java.net.* ;
@@ -25,33 +25,56 @@ public class NetFetch {
      * @return A string 
      */
     public static String getFile(String url) {
-	String where = "" ;
-	BufferedReader rf = null ;
-	String outFile = "" ;
+        String where = "" ;
+        String outFile = "" ;
 
-	try {
-	    where = url ; 
-	} catch( Exception u ) {
-	    System.out.println("Please supply URL to getFile() method.") ;
-	    System.exit(1) ;
-	} ; 
+        try {
+            where = url ;
+        } catch( Exception u ) {
+            System.out.println("Please supply URL to getFile() method.") ;
+            System.exit( 1 ) ;
+        }
 
-	try {
-	    URL u = new URL(where) ;
-	    InputStream in = u.openStream() ;
-	    InputStreamReader isr = new InputStreamReader(in) ;
-	    rf = new BufferedReader(isr) ;
-	    String line ;
+        BufferedReader rf     = null ;
+        InputStream in        = null;
+        InputStreamReader isr = null;
+        try {
+            URL u = new URL( where ) ;
+            in  = u.openStream() ;
+            isr = new InputStreamReader( in ) ;
+            rf  = new BufferedReader( isr ) ;
+            String line ;
 
-	    while ((line = rf.readLine()) != null ) {
-		outFile += line + "\n" ;
-	    }
-	    //outFile.toString() ;
-	} 
-	catch (MalformedURLException e) {System.err.println(e);}
-	catch (IOException e) {System.err.println(e);}
-	
-	return outFile ;
+            while ((line = rf.readLine()) != null ) {
+                outFile += line + "\n" ;
+            }
+            //outFile.toString() ;
+        }
+        catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally{
+            // close opened streams.
+            if( rf != null ) {
+                try {
+                    rf.close();
+                } catch( IOException ioe) {}
+            }
+            if( isr != null ){
+                try {
+                    isr.close();
+                } catch( IOException ioe) {}
+            }
+            if( in != null ){
+                try {
+                    in.close();
+                } catch( IOException ioe) {}
+            }
+        }
+        return outFile ;
     }
 }
 
