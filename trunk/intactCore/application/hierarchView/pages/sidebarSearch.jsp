@@ -49,7 +49,10 @@
         </tr>
 
         <tr>
-            <td><html:text property="AC" value="<%= AC %>" size="16"/></td>
+            <td>
+                   <html:text property="AC" value="<%= AC %>" size="12""/>
+            </td>
+
         </tr>
 
 		    <%

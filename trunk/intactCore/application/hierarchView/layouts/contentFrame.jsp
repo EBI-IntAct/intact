@@ -12,15 +12,18 @@
 
 <head>
     <html:base target="_top"/>
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="expires" content="-1">
     <link rel="stylesheet" type="text/css" href="styles/intact.css"/>
 </head>
 
-<frameset cols="60%,*" border=0>
+<frameset cols="63%,*" border=0>
 
    <frame src="graphFrame.jsp" name="graphFrame">
 
    <frameset ROWS="31%,*">
-      <frame src="sourceListFrame.jsp"      name="sourceListFrame">
+      <frame src="sourceListFrame.jsp"     name="sourceListFrame">
       <frame src="selectedSourceFrame.jsp" name="selectedSourcetFrame">
    </frameset>
 
