@@ -15,6 +15,7 @@ public class SearchException extends Exception {
 
 
     private String nestedMessage;
+    private Exception rootCause;
 
     public SearchException() {
     }
@@ -30,6 +31,9 @@ public class SearchException extends Exception {
         e.fillInStackTrace();
         nestedMessage = e.getMessage();
 
+        //this is the bottom level of intact exceptions - so wrap the origin
+        rootCause = e;
+
     }
 
     public String getNestedMessage() {
@@ -42,6 +46,10 @@ public class SearchException extends Exception {
 
             return "No nested messages have been passed on.";
         }
+    }
+
+    public Exception getRootCause() {
+        return rootCause;
     }
 
 

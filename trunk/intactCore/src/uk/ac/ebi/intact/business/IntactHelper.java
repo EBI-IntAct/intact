@@ -628,7 +628,7 @@ public class IntactHelper implements SearchI, Serializable {
 
             //return to action servlet witha forward to error page command
             String msg = "intact helper: unable to perform search operation.. \n";
-            throw new IntactException(msg, se);
+            throw new IntactException(msg + "reason: " + se.getNestedMessage(), se.getRootCause());
 
         }
         finally {
