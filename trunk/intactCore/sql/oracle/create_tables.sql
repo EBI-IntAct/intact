@@ -121,7 +121,7 @@ PROMPT creating table ...
 PROMPT ... BioSource
 CREATE TABLE BioSource
 (
-	taxId			VARCHAR(10)
+	taxId			VARCHAR(30)
 						CONSTRAINT uq_BioSource$taxId
 						UNIQUE USING INDEX,
 	scientificName		VARCHAR2(255),
@@ -216,7 +216,7 @@ PROMPT ... Interactor
 CREATE TABLE Interactor
 (
         /* Colums belonging to Interaction */
-        kD                      NUMBER(10,8),
+        kD                      FLOAT,
  	/* Colums belonging to Protein */
         crc64		        VARCHAR2(16),
 	polymerSeq_ac		VARCHAR2(30)    CONSTRAINT fk_Interactor$polymerSeq
