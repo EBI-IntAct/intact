@@ -9,9 +9,6 @@
    - @version $Id$
 -->
 
-<%@ page import="uk.ac.ebi.intact.application.hierarchView.business.IntactUserI,
-                 uk.ac.ebi.intact.application.hierarchView.business.Constants"%>
-
 <%@ taglib uri="/WEB-INF/tld/hierarchView.tld" prefix="hierarchView" %>
 <%@ taglib uri="/WEB-INF/tld/display.tld" prefix="display" %>
 
@@ -22,13 +19,6 @@
 
      author : Samuel Kerrien (skerrien@ebi.ac.uk)
  --%>
-
-<%
-   /**
-    * Retreive user's data from the session
-    */
-   IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
-%>
 
 <table border="0" cellspacing="5" cellpadding="5" width="100%" heigth="100%">
 
@@ -46,6 +36,7 @@
 
                            <display:setProperty name="basic.msg.empty_list" value="No source available for that protein" />
                    </display:table>
+
 <%--
                    <br><br>Fake link to try highlight:<br>
                    <a href="http://holbein:8080/hierarchView/source.do?keys=GO:0005829"> GO:0005829 </a>
@@ -58,29 +49,5 @@
   --%>
              </td>
       </tr>
-
-
-      <tr>
-             <td valign="top">
-                   <!-- Displays Http content if URL updated in the session -->
-                   <%
-                        if (user.hasSourceUrlToDisplay()) {
-                            String urlStr = user.getSourceURL();
-                   %>
-                            <hr>
-
-                            <IFRAME SRC="<%= urlStr %>" WIDTH="430" HEIGHT="460">
-                                If you can see this, your browser doesn't
-                                understand IFRAME.  However, you will find
-                                below the wanted content.
-                                <hierarchView:displayHttpContent/>
-                            </IFRAME>
-                   <%
-                        }
-                   %>
-
-             </td>
-      </tr>
-
 
 </table>
