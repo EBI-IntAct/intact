@@ -7,7 +7,7 @@
 >
        <extent-class class-ref="uk.ac.ebi.intact.model.Annotation"/>
        <extent-class class-ref="uk.ac.ebi.intact.model.IntactNode"/>
-       <extent-class class-ref="uk.ac.ebi.intact.model.Institution"/>
+       <!-- <extent-class class-ref="uk.ac.ebi.intact.model.Institution"/> -->
        <extent-class class-ref="uk.ac.ebi.intact.model.Component"/>
        <extent-class class-ref="uk.ac.ebi.intact.model.Xref"/>
        <extent-class class-ref="uk.ac.ebi.intact.model.AnnotatedObject"/>
