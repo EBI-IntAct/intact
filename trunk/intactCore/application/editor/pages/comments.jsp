@@ -24,16 +24,21 @@
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
 <c:set var="viewbean" value="${user.view}"/>
+<%-- The list of topics --%>
+<c:set var="topiclist" value="${viewbean.editAnnotationMenus}"/>
 
-<%-- Set the drop down lists --%>
-<c:set var="topiclist" value="${user.topicList}"/>
+<%-- Class wide declarations. --%>
+<%!
+    String formName = EditorConstants.FORM_COMMENT_EDIT;
+    String viewState = EditBean.VIEW;
+    String saveState = EditBean.SAVE;
+%>
 
-    <%
-        // Fill with form data for this page to display.
-        String formName = EditorConstants.FORM_COMMENT_EDIT;
-        EditForm form = (EditForm) session.getAttribute(formName);
-        user.getView().populateAnnotations(form);
-    %>
+<%
+    // Fill with form data for this page to display.
+    EditForm form = (EditForm) session.getAttribute(formName);
+    user.getView().populateAnnotations(form);
+%>
 
 <h3>Annotations</h3>
 
@@ -48,8 +53,7 @@
             </tr>
             <%-- To calculate row or even row --%>
             <c:set var="row"/>
-            <nested:iterate name="<%=EditorConstants.FORM_COMMENT_EDIT%>"
-                property="items" scope="session">
+            <nested:iterate name="<%=formName%>" property="items">
                 <!-- Different styles for even or odd rows -->
                 <c:choose>
                     <c:when test="${row % 2 == 0}">
@@ -65,14 +69,14 @@
                          Delete is visible regardless of the state.
                      --%>
                     <td class="tableCell">
-                        <nested:equal property="editState" value="<%=EditBean.VIEW%>">
+                        <nested:equal property="editState" value="<%=viewState%>">
                             <html:submit indexed="true" property="cmd"
                                 titleKey="annotations.button.edit.titleKey">
                                 <bean:message key="button.edit"/>
                             </html:submit>
                         </nested:equal>
 
-                        <nested:equal property="editState" value="<%=EditBean.SAVE%>">
+                        <nested:equal property="editState" value="<%=saveState%>">
                             <html:submit indexed="true" property="cmd"
                                 titleKey="annotations.button.save.titleKey">
                                 <bean:message key="button.save"/>
@@ -87,7 +91,7 @@
                         </html:submit>
                     </td>
 
-                    <nested:equal property="editState" value="<%=EditBean.VIEW%>">
+                    <nested:equal property="editState" value="<%=viewState%>">
                         <td class="tableCell">
                             <nested:write property="topic"/>
                         </td>
@@ -96,7 +100,7 @@
                         </td>
                     </nested:equal>
 
-                    <nested:equal property="editState" value="<%=EditBean.SAVE%>">
+                    <nested:equal property="editState" value="<%=saveState%>">
                         <td class="tableCell">
                             <nested:select property="topic">
                                 <nested:options name="topiclist" />
