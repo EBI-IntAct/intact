@@ -38,6 +38,11 @@ public class XrefHelper {
     private static Pattern ourSearchUrlPat = Pattern.compile("\\$\\{ac\\}");
 
     /**
+     * The pattern to replace spaces in the Primary Id.
+     */
+    private static Pattern ourPrimaryIDPat = Pattern.compile("\\s");
+
+    /**
      * Maps: Short label of CV database -> url. Need a common map to store db
      * urls.
      */
@@ -57,9 +62,10 @@ public class XrefHelper {
      * xreference.
      */
     public static String getPrimaryIdLink(Xref xref) {
-        // Return the empty link if there is no primar yd.
-        String pid = xref.getPrimaryId();
-        if (pid == null) {
+        // Return the empty link if there is no primary id. This is a raw
+        // pid (may contains spaces in its name).
+        String pidraw = xref.getPrimaryId();
+        if (pidraw == null) {
             return ourEmptyPidLink;
         }
         // The short label of the database of the xref.
@@ -90,6 +96,12 @@ public class XrefHelper {
             // Cache the url.
             ourCvDbToUrl.put(dbname, searchUrl);
         }
+        // Match against the spaces.
+        Matcher pidmatch = ourPrimaryIDPat.matcher(pidraw);
+
+        // The primary id after replacing spaces with %20 characters.
+        String pid = pidmatch.replaceAll("%20");
+
         // return pid if there is no search url for the database.
         if (searchUrl.equals(ourEmptyPidLink)) {
             return pid;
