@@ -48,30 +48,6 @@ public abstract class CvObject extends AnnotatedObject {
         return menuList;
     }
 
-   ///////////////////////////////////////
-   // associations
-
-   // private String ojbConcreteClass;
-/**
- * 
- */
-    public CvProteinForm cvProteinForm;
-
-
-   ///////////////////////////////////////
-   // access methods for associations
-
-    public CvProteinForm getCvProteinForm() {
-        return cvProteinForm;
-    }
-
-    public void setCvProteinForm(CvProteinForm cvProteinForm) {
-        if (this.cvProteinForm != cvProteinForm) {
-            this.cvProteinForm = cvProteinForm;
-            if (cvProteinForm != null) cvProteinForm.setCvObject(this);  
-        }      
-    } 
-
 } // end CvObject
 
 
