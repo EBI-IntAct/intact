@@ -13,11 +13,13 @@ public final class Constants {
   // ******************************************************* Properties file
 
   /**
-   * Where to find the property file
+   * Where to find the properties file
    */
-  //public static final String PROPERTY_FILE = "/config/ApplicationResources.properties";
+  public static final String WEB_SERVICE_PROPERTY_FILE = "/config/WebService.properties";
+
   public static final String PROPERTY_FILE = "/config/Struts.properties";
- public static final String PROPERTY_FILE_HIGHLIGHTING = "/config/Highlighting.properties";
+
+  public static final String PROPERTY_FILE_HIGHLIGHTING = "/config/Highlighting.properties";
 
 
   // ******************************************************* Session Attributes
