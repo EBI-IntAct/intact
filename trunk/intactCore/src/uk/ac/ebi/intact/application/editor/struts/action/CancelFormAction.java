@@ -11,6 +11,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
+import uk.ac.ebi.intact.application.editor.struts.view.ResultBean;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,6 +52,9 @@ public class CancelFormAction extends AbstractEditorAction {
         // Release the lock.
         user.releaseLock();
 
+        // The next forward action.
+        ActionForward forward;
+
         // Check and see if we have to go to the experiment page (only
         // applicable for an Interaction editor.
         if (returnToExperiment(request)) {
@@ -58,9 +62,16 @@ public class CancelFormAction extends AbstractEditorAction {
             setDestinationExperiment(request);
 
             // Back to the experiment editor.
-            return mapping.findForward(EXP);
+            forward = mapping.findForward(EXP);
         }
-        // Back to the search page.
-        return mapping.findForward(RESULT);
+        else {
+            // Back to the search page.
+            forward = mapping.findForward(RESULT);
+        }
+        // Update the search cache to display the current object.
+        ResultBean rb = new ResultBean(user.getView().getAnnotatedObject());
+        user.updateSearchCache(rb);
+
+        return forward;
     }
 }
