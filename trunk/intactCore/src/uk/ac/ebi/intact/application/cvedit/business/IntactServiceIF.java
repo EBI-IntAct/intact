@@ -16,16 +16,9 @@ package uk.ac.ebi.intact.application.cvedit.business;
 public interface IntactServiceIF {
 
     /**
-     * Authenticate the user's credentials.
-     *
-     * @param username the user name; must not be null.
-     * @param password the password for the user; must not be null.
-     * @return an intact user object.
-     *
-     * @exception InvalidLoginException thrown for un unauthorized login.
+     * The key to access the CV object types.
      */
-//    public IntactUser authenticate(String username, String password)
-//        throws InvalidLoginException;
+    public static final String INTACT_TYPES = "intactTypes";
 
     /**
      * Returns the class name associated with the give topic.
