@@ -126,8 +126,8 @@ public class Annotation extends BasicObjectImpl {
         // To get around the problem of shared annotation having the same CvTopic and text, we take its ac into account.
         // Hence, two Annotations having the same CvTopic and text can be different, hence all loaded normally by OJB.
         if( ac != null ) {
-            return !ac.equals( annotation.ac );
-        } 
+            return ac.equals( annotation.ac );
+        }
 
 
         if( cvTopic != null ) {
@@ -159,9 +159,11 @@ public class Annotation extends BasicObjectImpl {
         if( ac != null ) {
             code = 29 * code + ac.hashCode();
         }
+
         if( cvTopic != null ) {
             code = 29 * code + cvTopic.hashCode();
         }
+
         if( null != annotationText ) {
             code = 29 * code + annotationText.hashCode();
         }
