@@ -27,17 +27,21 @@ public class SetUpExperimentAction  extends AbstractEditorAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
-//        LOGGER.info("In the SetUpExperimentAction");
         // The view of the current object we are editing at the moment.
         ExperimentViewBean view =
                 (ExperimentViewBean) getIntactUser(request).getView();
 
         // Poplulate with experiment data.
         DynaActionForm dynaForm = (DynaActionForm) form;
-        dynaForm.set("organism", view.getOrganism());
-        dynaForm.set("interaction", view.getInteraction());
-        dynaForm.set("identification", view.getIdentification());
-
+        if (dynaForm.get("organism") == null) {
+            dynaForm.set("organism", view.getOrganism());
+        }
+        if (dynaForm.get("interaction") == null) {
+            dynaForm.set("interaction", view.getInteraction());
+        }
+        if (dynaForm.get("identification") == null) {
+            dynaForm.set("identification", view.getIdentification());
+        }
         return mapping.findForward(EditorConstants.FORWARD_EDITOR);
     }
 }
