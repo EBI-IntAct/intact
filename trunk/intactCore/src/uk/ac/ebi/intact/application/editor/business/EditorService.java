@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.application.editor.business;
 
 import org.apache.commons.collections.CollectionUtils;
 import uk.ac.ebi.intact.application.editor.exception.EmptyTopicsException;
+import uk.ac.ebi.intact.application.commons.struts.taglibs.DocumentationTag;
 
 import javax.servlet.ServletRequest;
 import java.net.MalformedURLException;
@@ -108,30 +109,18 @@ public class EditorService {
     }
 
     /**
-     * Returns the standard help link as an HTML snippet.
-     * @param tag the tag to add to the help link.
-     * @param title the title to display for the link.
-     * @return the help HTML snippet as a String.
-     */
-    public String getHelpLinkAsHTML(String server, String tag, String title) {
-        String link = server + "#" + tag;
-        return "<a target=\"help\" href=\"" + link + "\">" + title + "</a>";
-    }
-
-    /**
-     * Returns the link to the help.
+     * Returns the URL to the help page.
      * @param request the request object to get the server name and host.
      * This is only used once when this method is called for the first time.
      * For subsequent calls, the cached  URL value is returned.
      * @return the URL to the help page or null is returned if a valid URL
-     * cannot be constructed from <code>request</code> and "hrlp.url" in
-     * the Editor properties file.
+     * cannot be constructed from <code>request</code>.
      */
-    public String getHelpLink(ServletRequest request) {
+    public String getHelpURL(ServletRequest request) {
         if (myHelpUrl == null) {
             try {
                 myHelpUrl = new URL("http", request.getServerName(),
-                        request.getServerPort(), myResources.getString("help.url"));
+                        request.getServerPort(), DocumentationTag.getJspPath());
             }
             catch (MalformedURLException e) {
                 e.printStackTrace();
