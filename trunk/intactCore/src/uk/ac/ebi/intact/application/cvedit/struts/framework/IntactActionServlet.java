@@ -16,16 +16,6 @@ import uk.ac.ebi.intact.application.cvedit.business.IntactServiceImpl;
 import uk.ac.ebi.intact.application.cvedit.business.IntactServiceIF;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
 import uk.ac.ebi.intact.application.cvedit.exception.MissingIntactTypesException;
-import uk.ac.ebi.intact.persistence.DataSourceException;
-import uk.ac.ebi.intact.persistence.SearchException;
-import uk.ac.ebi.intact.model.Constants;
-import uk.ac.ebi.intact.business.IntactException;
-
-import java.util.ResourceBundle;
-import java.util.Map;
-import java.beans.IntrospectionException;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 /**
  * This is Intact specific action servlet class. This class provides our own
@@ -54,17 +44,8 @@ public class IntactActionServlet extends ActionServlet {
             super.log(ExceptionUtils.getStackTrace(mite));
             throw new ServletException();
         }
-        catch (ClassNotFoundException cnfe) {
-            // Unable to load intact objects.
-            super.log(ExceptionUtils.getStackTrace(cnfe));
-            // Carry on; may cause problems later on.
-        }
-        catch (IntrospectionException ie) {
-            // Failed to get reflection data on object"
-            super.log(ExceptionUtils.getStackTrace(ie));
-            // Carry on; may cause problems later on.
-        }
-        // Store the service into the session scope.
+        // Make them accessible for any servlets within the server.
         ctx.setAttribute(WebIntactConstants.INTACT_SERVICE, service);
+        ctx.setAttribute(WebIntactConstants.INTACT_TYPES, service.getIntactTypes());
     }
 }
