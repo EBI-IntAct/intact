@@ -74,7 +74,7 @@
         <action path="/search"
                 name="sidebarForm"
                 type="uk.ac.ebi.intact.application.search2.struts.controller.SearchAction"
-                scope="session">
+                scope="request">
             <forward name="noMatch"     path="no.match.layout"/>
             <forward name="sessionLost" path="/do/welcome"/>
             <forward name="dispatcher"  path="/do/dispatcher"/>
