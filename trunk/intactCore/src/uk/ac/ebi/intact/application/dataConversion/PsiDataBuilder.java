@@ -542,14 +542,19 @@ public class PsiDataBuilder implements DataBuilder {
         //has a single one. Something needs to be changed at some point, therefore...
         //Process the Interactions' CvInteractionType...
         CvInteractionType cvType = interaction.getCvInteractionType();
-        try {
-            Element psiInteractionType = null;
-            psiInteractionType = doCvInteractionType(cvType);
-            psiInteraction.appendChild(psiInteractionType);
+
+        //need to check it is there - if not skip ti.
+        //NB PSI schema says interactionType is 0..many
+        if(cvType != null) {
+            try {
+                Element psiInteractionType = null;
+                psiInteractionType = doCvInteractionType(cvType);
+                psiInteraction.appendChild(psiInteractionType);
+            }
+            catch (ElementNotParseableException e) {
+                logger.info("CvInteractionType failed (not required):" + e.getMessage());
+            } // not mandatory - safe to ignore
         }
-        catch (ElementNotParseableException e) {
-            logger.info("CvInteractionType failed (not required):" + e.getMessage());
-        } // not mandatory - safe to ignore
 
         //Now do the Interaction's Xrefs...
         try {
@@ -1742,13 +1747,29 @@ public class PsiDataBuilder implements DataBuilder {
         //param may be undefined...
         if (cvCellType != null) {
             //generate DOM-Element
-            Element psiCellType = null;
-            doc.createElement("cellType");
+            Element psiCellType = doc.createElement("cellType");
 
+            //PSI schema says this could have names, xref, attributeList
+            //sub-elements. Presumably at least one of these exists if the
+            //cvCellType object is present. Also attributeList does not exist in
+            //the intact model so it is not handled here.
             try {
-                psiCellType.appendChild(doc.createTextNode(cvCellType.getShortLabel()));
-            } catch (NullPointerException e) {
+                Element psiNames = getPsiNamesOfAnnotatedObject(cvCellType);
+                psiCellType.appendChild(psiNames);
+            }
+            catch (ElementNotParseableException e) {
+                logger.info("names failed (not required):" + e.getMessage());
+            } //not required here - so dont worry
+            catch (NullPointerException e) {
                 logger.warn("cvCelltype failed (required):" + e.getMessage());
+            }
+
+            //xrefs
+            try {
+                Element psiXref = doXrefCollection(cvCellType.getXrefs(), "psi-mi");
+                psiCellType.appendChild(psiXref);
+            } catch (ElementNotParseableException e) {
+                logger.warn("xref failed (required):" + e.getMessage());
             }
             //returning result DOMObject
             if (!psiCellType.hasChildNodes()) {
@@ -1803,10 +1824,27 @@ public class PsiDataBuilder implements DataBuilder {
             //generate DOM-Element
             Element psiTissue = doc.createElement("tissue");
 
+            //PSI schema says this could have names, xref, attributeList
+            //sub-elements. Presumably at least one of these exists if the
+            //cvTissue object is present. Also attributeList does not exist in
+            //the intact model so it is not handled here.
             try {
-                psiTissue.appendChild(doc.createTextNode(cvTissue.getShortLabel()));
-            } catch (NullPointerException e) {
+                Element psiNames = getPsiNamesOfAnnotatedObject(cvTissue);
+                psiTissue.appendChild(psiNames);
+            }
+            catch (ElementNotParseableException e) {
+                logger.info("names failed (not required):" + e.getMessage());
+            } //not required here - so dont worry
+            catch (NullPointerException e) {
                 logger.warn("cvTissue failed (required):" + e.getMessage());
+            }
+
+            //xrefs
+            try {
+                Element psiXref = doXrefCollection(cvTissue.getXrefs(), "psi-mi");
+                psiTissue.appendChild(psiXref);
+            } catch (ElementNotParseableException e) {
+                logger.warn("xref failed (required):" + e.getMessage());
             }
             //returning result DOMObject
             if (!psiTissue.hasChildNodes()) {
@@ -1835,7 +1873,10 @@ public class PsiDataBuilder implements DataBuilder {
     private Element getPsiNamesOfAnnotatedObject(AnnotatedObject anAnnotatedObject)
             throws ElementNotParseableException {
 
-        return getNames(anAnnotatedObject.getShortLabel(), anAnnotatedObject.getFullName());
+        if(anAnnotatedObject != null)
+            return getNames(anAnnotatedObject.getShortLabel(), anAnnotatedObject.getFullName());
+
+        return null;
     }
 
     /**
