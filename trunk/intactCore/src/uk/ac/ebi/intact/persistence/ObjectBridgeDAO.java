@@ -978,12 +978,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             searchClass = Class.forName(type);
             //should now call getConcreteClasses to obtain the concrete
             //Class instances we should build if necessary....
-            System.out.println("search: requested for Class" + searchClass.getName());
             Collection classesToSearch = getConcreteClasses(searchClass);
-            System.out.println("search: Concrete classes found:");
-            for(Iterator iter = classesToSearch.iterator(); iter.hasNext();) {
-                System.out.println(((Class)iter.next()).getName());
-            }
 
             Criteria crit = null;
 
