@@ -33,12 +33,12 @@ public class EditViewBeanFactory {
     /**
      * CV editor is stored under this key.
      */
-    public static final String CV_EDITOR = "0";
+    private static final String CV_EDITOR = "0";
 
     /**
      * BioSource editor is stored under this key.
      */
-    public static final String BIOSRC_EDITOR = "1";
+    private static final String BIOSRC_EDITOR = "1";
 
     /**
      * Factory method to return an instance of an Edit view bean.
