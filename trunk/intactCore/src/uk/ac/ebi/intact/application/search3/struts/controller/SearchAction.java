@@ -17,8 +17,8 @@ import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchValidator;
-import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 
 import javax.servlet.http.HttpServletRequest;
@@ -107,6 +107,7 @@ public class SearchAction extends IntactBaseAction {
         }
 
         DynaActionForm dyForm = (DynaActionForm) form;
+
         String searchValue = (String) dyForm.get("searchString");
         String searchClass = (String) dyForm.get("searchClass");
         String selectedChunk = (String) dyForm.get("selectedChunk");
@@ -334,7 +335,8 @@ public class SearchAction extends IntactBaseAction {
         ResultWrapper result = null;
         if (SearchValidator.isSearchable(searchClass) || searchClass.equals("") || searchClass == null) {
             logger.info("SearchAction: searchfast: " + searchValue + " searchClass: " + searchClass);
-            result = helper.searchFast(searchValue, searchClass, filterValue, user);
+            IntactHelper intactHelper = user.getIntactHelper();
+            result = helper.searchFast(searchValue, searchClass, filterValue, intactHelper, SearchConstants.MAXIMUM_RESULT_SIZE);
         }
 
         else {
