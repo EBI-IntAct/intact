@@ -93,7 +93,7 @@ public class RestoreContextFromCookieTag extends TagSupport {
                 return EVAL_PAGE;
             }
 
-            url = contextPath + "/display.do?AC="+ query +"&method="+ method +"&depth="+ depth;
+            url = contextPath + "/display.jsp?AC="+ query +"&method="+ method +"&depth="+ depth;
         } else {
             // simply display the current page
             return EVAL_PAGE;
