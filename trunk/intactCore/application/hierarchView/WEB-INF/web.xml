@@ -6,6 +6,8 @@
 
 <web-app>
 
+    <display-name>hierarchView - 2D representation of small protein interaction network</display-name>
+
     <description>
         hierachView is an application which aims to give the user
         to have a graphical 2D representation of small protein
