@@ -512,8 +512,8 @@
             validate="true"
             scope="session"
             parameter="dispatch">
-            <!-- Back to the input page -->
-            <forward name="success" path="edit.layout"/>
+            <!-- Back to the display page -->
+            <forward name="success" path="/do/display"/>
             <!-- Back to the results page as we got here from a search result (global) -->
             <!-- Back to the experiment editor (where we came from) -->
             <forward name="experiment" path="/do/exp/fill/form"/>
@@ -661,7 +661,7 @@
             scope="session"
             parameter="dispatch">
             <!-- A success for Save/Continue -->
-            <forward name="success" path="edit.layout"/>
+            <forward name="success" path="/do/display"/>
             <forward name="interaction" path="/do/int/fill/form"/>
         </action>
 
@@ -756,6 +756,15 @@
              next link (from the tab entries above a table)
         -->
         <action path="/next"
+            type="org.apache.struts.actions.ForwardAction"
+            parameter="edit.layout">
+        </action>
+
+        <!-- This common action is for displaying the current edit page.
+             Need this separate action to distinguish from input and success
+             actions.
+        -->
+        <action path="/display"
             type="org.apache.struts.actions.ForwardAction"
             parameter="edit.layout">
         </action>
