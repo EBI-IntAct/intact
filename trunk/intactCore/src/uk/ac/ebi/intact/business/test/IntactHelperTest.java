@@ -277,7 +277,7 @@ public class IntactHelperTest extends TestCase {
             persistList.add(comp4);
 
             System.out.println("saving examples to store...");
-            helper.startTransaction();
+            helper.startTransaction(BusinessConstants.JDBC_TX);
             System.out.println("serializing helper within a TX...");
             IntactHelper newHelper = (IntactHelper)Serializer.serializeDeserialize(helper);
             System.out.println("resetting helper connections...");
@@ -286,7 +286,7 @@ public class IntactHelperTest extends TestCase {
             helper.finishTransaction();
 
             //now add the link between experiments and interactions and do an update
-            helper.startTransaction();
+            helper.startTransaction(BusinessConstants.JDBC_TX);
             int1.addExperiment(exp1);
             int2.addExperiment(exp1);
             int3.addExperiment(exp1);

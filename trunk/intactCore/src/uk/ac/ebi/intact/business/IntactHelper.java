@@ -11,9 +11,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 import java.io.*;
+import java.sql.SQLException;
 
 //as good a logging facility as any other....
 import org.apache.log4j.Logger;
+import org.apache.ojb.broker.accesslayer.LookupException;
 
 import uk.ac.ebi.intact.util.*;
 import uk.ac.ebi.intact.persistence.*;
@@ -303,14 +305,22 @@ public class IntactHelper implements SearchI, Serializable {
     /**
      * starts a business level transaction. This allows finer grained
      * transaction management of business operations (eg for performing
-     * a number of creates/deletes within one unit of work).
+     * a number of creates/deletes within one unit of work). You can choose, by
+     * specifying the appropriate parameter, which level of transaction you want:
+     * either object level or JDBC (ie relational) level. If an unkown type is supplied
+     * then the transaction type defaults to JDBC.
+     * @param transactionType The type of transaction you want (relational or object).
+     * Use either BusinessConstants.OBJECT_TX or BusinessConstants.JDBC_TX.
      *
      * @exception IntactException thrown usually if a transaction is already running
      */
-    public void startTransaction() throws IntactException {
+    public void startTransaction(int transactionType) throws IntactException {
+
+        int txType = BusinessConstants.JDBC_TX;
+        if(transactionType == BusinessConstants.OBJECT_TX) txType = transactionType;
 
         try {
-            dao.begin();
+            dao.begin(txType);
         }
         catch(Exception e) {
 
@@ -320,7 +330,7 @@ public class IntactHelper implements SearchI, Serializable {
 
     /**
      * Locks the given object for <b>write</b> access.
-     * <b>{@link #startTransaction()} must be called to prior to this method.</b>
+     * <b>{@link #startTransaction(int)} must be called to prior to this method.</b>
      * @param cvobj the object to lock for <b>write</b> access.
      */
     public void lock(CvObject cvobj) {
@@ -362,6 +372,30 @@ public class IntactHelper implements SearchI, Serializable {
             throw new IntactException("unable to undo an intact transaction!", e);
         }
     }
+
+    /**
+     * Provides the database name that is being connected to.
+     * @return String the database name, or an empty String if the query fails
+     * @exception org.apache.ojb.broker.accesslayer.LookupException thrown on error
+     * getting the Connection
+     * @exception SQLException thrown if the metatdata can't be obtained
+     */
+     public String getDbName() throws LookupException, SQLException {
+       return dao.getDbName();
+    }
+
+    /**
+     * Provides the user name that is connecting to the DB.
+     * @return String the user name, or an empty String if the query fails
+     * @exception org.apache.ojb.broker.accesslayer.LookupException thrown on error
+     * getting the Connection
+     * @exception SQLException thrown if the metatdata can't be obtained
+     */
+     public String getDbUserName() throws LookupException, SQLException {
+        return dao.getDbUserName();
+
+    }
+
 
     /**
      *  This method provides a create operation for intact objects.
