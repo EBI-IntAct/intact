@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+<title>IntAct project diary</title>
+</head>
+
+<body>
+<h1>IntAct project diary</h1>
+This "diary" should record, well, significant events in the life of
+IntAct, as diaries usually do. In particular, decisions and the
+reasoning behind them should be documented. Each entry should have
+date and user, and new entries should be added on top.
+<p>
+<dl>
+  <dt>2002-04-12, hhe: Relational mapping of polymorphic reference.
+  <dd>The the IntAct core model, there is a relationship from
+      Substrate to Interactor. Interactor is an abstract class. There
+      is no direct way to support polymorphic references in the
+      relational model.
+      <p>
+      I'll try to turn Interactor in a concrete class, and map it and
+      all it's subclasses to the same table. This should allow an
+      efficient implementation, at the only cost of unused columns in
+      the table.
+      <p>
+      Resources:
+      <ul>
+	<li><a href="http://www.prismtechnologies.com/English/Products/JDO/whitepaper/02b_jdo.html">http://www.prismtechnologies.com/English/Products/JDO/whitepaper/02b_jdo.html</a>
+      </ul>
+  <dt>2002-04-11, hhe: Oracle implementation: CLOB or LONG?
+  <dd>The sequence is a large object, which can exceed Oracle's 4K
+      limit for VARCHAR2. I've decided to use the CLOB data type
+      because it's 
+      <ul>
+	<li>is the Oracle-recommended type for large objects,
+	<li>offers better direct access to the data than LONG,
+	<li>it's the EBI standard to use CLOB for sequences.
+      </ul>
+      Thanks to Phil McNeil, who provided lots of info to base the
+      decision on.
+</dl>
+
+
+<hr>
+<address></address>
+<!-- hhmts start -->
+<!-- hhmts end -->
+</body> </html>

@@ -1,0 +1,105 @@
+<!-- Please keep user defined mappings in this file only
+     to avoid mixing user defined and system mappings. -->
+<!-- Mapping of User defined classes starts here -->
+
+<!-- NB have collapsed the Base class into all subclasses for now, ie ac and name attributes-->
+
+ <!-- Definitions for Molecule -->
+   <class-descriptor
+	  class="uk.ac.ebi.intact.test.Molecule"
+	  table="Molecule"
+   >
+      <field-descriptor id="1"
+         name="accessionNumber"
+         column="ac"
+         jdbc-type="VARCHAR"
+         primarykey="true"
+      />
+      <field-descriptor id="2"
+         name="name"
+         column="name"
+         jdbc-type="VARCHAR"
+      />
+      <collection-descriptor
+         name="condition"
+         element-class-ref="uk.ac.ebi.intact.test.Condition"
+         proxy="true"
+      >
+         <inverse-foreignkey field-id-ref="3"/>
+      </collection-descriptor>
+   </class-descriptor>
+
+   <!-- Definitions for Interaction -->
+   <class-descriptor
+	  class="uk.ac.ebi.intact.test.Interaction"
+	  table="Interaction"
+   >
+      <field-descriptor id="1"
+         name="accessionNumber"
+         column="ac"
+         jdbc-type="VARCHAR"
+         primarykey="true"
+      />
+      <field-descriptor id="2"
+         name="name"
+         column="name"
+         jdbc-type="VARCHAR"
+      />
+      <collection-descriptor
+         name="condition"
+         element-class-ref="uk.ac.ebi.intact.test.Condition"
+         proxy="true"
+      >
+         <inverse-foreignkey field-id-ref="4"/>
+      </collection-descriptor>
+   </class-descriptor>
+
+   <!-- Definitions for Condition - NB this class only really contains references to others. -->
+   <!-- NOTE - have to include id fields for the molecule and interaction objects,
+        because these are identified as the foreign keys. These are extra class fields..-->
+   <class-descriptor
+	  class="uk.ac.ebi.intact.test.Condition"
+	  table="Condition"
+   >
+      <field-descriptor id="1"
+         name="accessionNumber"
+         column="ac"
+         jdbc-type="VARCHAR"
+         primarykey="true"
+      />
+      <field-descriptor id="2"
+         name="name"
+         column="name"
+         jdbc-type="VARCHAR"
+      />
+
+      <field-descriptor id="3"
+         name="molecule_id"
+         column="molecule_ac"
+         jdbc-type="VARCHAR"
+      />
+
+      <field-descriptor id="4"
+         name="interaction_id"
+         column="interaction_ac"
+         jdbc-type="VARCHAR"
+      />
+
+      <reference-descriptor
+         name="molecule"
+         class-ref="uk.ac.ebi.intact.test.Molecule"
+      >
+         <foreignkey field-id-ref="3"/>
+      </reference-descriptor>
+
+      <reference-descriptor
+         name="interaction"
+         class-ref="uk.ac.ebi.intact.test.Interaction"
+      >
+         <foreignkey field-id-ref="4"/>
+      </reference-descriptor>
+
+   </class-descriptor>
+
+
+<!-- Mapping of User defined classes ends here -->
