@@ -21,6 +21,9 @@
     <!-- Intact application location. -->
     <property name="intact.app.dir" value=".."/>
 
+    <!-- The build properties. -->
+    <property file="${intact.root}/build.properties"/>
+
     <property name="dist.dir" value="dist"/>
     <property name="war.file" value="search.war"/>
 
@@ -130,9 +133,16 @@
 
     <!-- =================================================================== -->
 
-    <!-- Builds a war file. -->
+    <!-- Builds a war file using the current database setup. -->
 
-    <target name="war" depends="compile, make-jar" description="Builds a war file">
+    <target name="war" description="Builds a war file"
+            depends="set-db-type, war-pg, war-oracle"/>
+
+    <!-- =================================================================== -->
+
+    <!-- Builds a war file. The database to include is specified as a parameter. -->
+
+    <target name="build-war" depends="compile, make-jar" description="Builds a war file">
         <!-- Create the distribution dir if it doesn't exist. -->
         <mkdir dir="${dist.dir}" />
 
@@ -173,12 +183,51 @@
 			<lib dir="${root.lib.dir}">
 				<include name="jakarta-ojb-0.9.7.jar"/>
 				<include name="log4j-1.2.5.jar"/>
-				<include name="postgresql.jar"/>
+                <include name="${db}"/>
 			</lib>
 
             <!-- search specific classes -->
   			<classes dir="${dest.dir}"/>
 		</war>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Sets the database type using the values given in build.properties. -->
+
+    <target name="set-db-type">
+        <condition property="postgres">
+            <contains string="${target.env}" substring="-pg-"/>
+        </condition>
+        <condition property="oracle">
+            <contains string="${target.env}" substring="-oracle-"/>
+        </condition>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!--
+        Builds a war file with postgres; should be called only after calling
+        set-db-type. -->
+
+    <target name="war-pg" if="postgres">
+        <echo message="Building a war for postgres"/>
+        <antcall target="build-war">
+            <param name="db" value="postgresql.jar"/>
+        </antcall>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!--
+        Builds a war file with oracle; should be called only after calling
+        set-db-type. -->
+
+    <target name="war-oracle" if="oracle">
+        <echo message="Building a war for oracle"/>
+        <antcall target="build-war">
+            <param name="db" value="jdbc_oracle8i_thin_8.1.6.2.0.jar"/>
+        </antcall>
     </target>
 
     <!-- =================================================================== -->
