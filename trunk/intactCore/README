@@ -76,11 +76,11 @@ have Windows then everything can still be used provided you have cygwin installe
 
 For postgres 7.x:
     To allow all computer in the local network to connect to the database you have to configure the file 'pg_hba.conf'
-    in your postgres directory.
+    in your postgres directory (the one created by inidb).
     e.g:
     # Allow any user from any host with IP address 127.x.x.x to connect to database
-    # TYPE  DATABASE    USER        IP-ADDRESS        IP-MASK           METHOD
-      host    all         all         127.0.0.0         255.0.0.0   trust
+    # TYPE  DATABASE    USER        IP-ADDRESS        IP-MASK        METHOD
+      host  all         all         127.0.0.0         255.0.0.0      trust
 
     See also http://www.postgresql.org/docs/7.x/interactive/client-authentication.html#AUTH-PG-HBA-CONF
     (replace the '7.x' in the URL with your postgres version)
@@ -175,7 +175,7 @@ the generated javadoc can then be found in doc/api.
 
 Intact comes bundled with a number of web applications - currently we have:
 
-	- search:       The search application.
+	- search:       The search application (currently in version 3).
 	- editor:       Edit interface for IntAct objects.
 	- hierarchView: Graph visualisation.
     	- intact:       Contains only static documentation pages,
@@ -197,12 +197,15 @@ clean up the resources used by pooled connections correctly.
 
 For search there is one file to customize. In the file
 
-        application/search/WEB-INF/config/HierarchView.properties
+        application/search3/WEB-INF/config/HierarchView.properties
 
 the hostname of the machine running hierarchView must be set correctly. The default is set to 'localhost', but
 if you wish to view graphs using the search application from remote machines then the hostname in this file
 should be set to a correct DNS value (ie your machine name where hierarchView resides). If you do not do this then
 browsers on remote machines will try to find the hierarchView application on their own machine!
+
+Remark about search: even though the internal name of the search application is search3, the linking to the application
+                     via the URL is still http://<YOUR_SERVER_NAME>/intact/search
 
 HierarchView requires a little more effort. The web service for hierarchView needs to first be deployed.
 please read the README file in the application/hierarchView directory for more details about how to install
