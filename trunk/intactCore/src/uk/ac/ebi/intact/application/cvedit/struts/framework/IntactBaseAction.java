@@ -180,36 +180,41 @@ public abstract class IntactBaseAction extends Action {
     }
 
     /**
-     * Returns the course of action depending on the value in
-     * <code>WebIntactConstants.SINGLE_MATCH</code>. The default action
-     * is to forward to search page.
+     * Returns the course of action based on the last search result. If the
+     * last search produced multiple entries then this method returns the
+     * path to multiple results page. For a single result, the method
+     * returns the path to the search page.
      *
-     * @param request the HTTP request to access the
-     * <code>WebIntactConstants.SINGLE_MATCH</code>.
-     * @exception SessionExpiredException for an expired session.
+     * @param user the user to determine where to go.
      *
      * <pre>
-     * post: return = WebIntactConstants.SINGLE_MATCH or
+     * post: return = WebIntactConstants.FORWARD_SEARCH or
      *                WebIntactConstants.FORWARD_RESULTS
      * post: return <> Undefined
      * </pre>
      */
-    protected String fwdResultsOrSearch(HttpServletRequest request)
+    protected String getForwardAction(IntactUserIF user) {
+        return user.hasSingleSearchResult() ? WebIntactConstants.FORWARD_SEARCH :
+                WebIntactConstants.FORWARD_RESULTS;
+    }
+
+    /**
+     * Identicial to {@link #getForwardAction(IntactUserIF)} with user
+     * retrieved from <code>request</code>.
+     *
+     * @param request the HTTP request to extract the user.
+     * @exception SessionExpiredException if the session has expired.
+     * @see #getForwardAction(IntactUserIF)
+     *
+     * <pre>
+     * post: return = WebIntactConstants.FORWARD_SEARCH or
+     *                WebIntactConstants.FORWARD_RESULTS
+     * post: return <> Undefined
+     * </pre>
+     */
+    protected String getForwardAction(HttpServletRequest request)
             throws SessionExpiredException {
-        // The default is to search again.
-        String retval = WebIntactConstants.FORWARD_SEARCH;
-
-        // If we have multiple search results then we go to the results page
-        // otherwise go to search page.
-        Boolean singleCase = (Boolean) getSessionObject(request,
-            WebIntactConstants.SINGLE_MATCH);
-
-        // Ensure that we have this attribute or else NullPointerException.
-        if ((singleCase != null) && !singleCase.booleanValue()) {
-            // Multiple objects; go to results page.
-            retval = WebIntactConstants.FORWARD_RESULTS;
-        }
-        return retval;
+        return this.getForwardAction(this.getIntactUser(request));
     }
 
     // Helper Methods
