@@ -5,18 +5,15 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.struts.view;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
-import org.apache.log4j.Logger;
+import uk.ac.ebi.intact.application.hierarchView.business.Constants;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
+import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseForm;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
-import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseForm;
-import uk.ac.ebi.intact.application.hierarchView.business.Constants;
-import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
-import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
-import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
 
 /**
  * Form bean for the main form of the view.jsp page.  

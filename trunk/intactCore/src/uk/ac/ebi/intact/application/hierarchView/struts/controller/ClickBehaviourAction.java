@@ -9,13 +9,10 @@ package uk.ac.ebi.intact.application.hierarchView.struts.controller;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
-import uk.ac.ebi.intact.application.hierarchView.struts.view.InteractionNetworkForm;
-import uk.ac.ebi.intact.application.hierarchView.struts.view.ClickBehaviourForm;
-import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
-import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
-import uk.ac.ebi.intact.application.hierarchView.exception.MultipleResultException;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
+import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
+import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
+import uk.ac.ebi.intact.application.hierarchView.struts.view.ClickBehaviourForm;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
