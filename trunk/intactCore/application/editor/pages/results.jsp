@@ -11,16 +11,23 @@
   --%>
 
 <%@ page language="java" %>
-<%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic"%>
+<%@ taglib uri="http://jakarta.apache.org/taglibs/display" prefix="display" %>
 
-<%--<jsp:useBean id="user" scope="session"--%>
-<%--    class="uk.ac.ebi.intact.application.editor.business.EditUser"/>--%>
+<style>
+<!--
+    .error {
+        color: white;
+        background-color: blue
+    }
 
-<style type="text/css">
-    <%@ include file="/layouts/styles/editor.css" %>
+    .owner {
+        color: white;
+        background-color: #ff8c00
+    }
+-->
 </style>
 
 <%-- Javascript code to link to the search page. --%>
@@ -36,67 +43,19 @@
     </table>
 </logic:messagesPresent>
 
+<jsp:useBean id="user" scope="session"
+    class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
+
+<%-- Store in the page scope for the display library to access it --%>
+<bean:define id="results" name="user" property="searchResult"
+    type="java.util.List"/>
+
 <html:form action="/result">
-    <table width="100%" border="0" cellspacing="1" cellpadding="2">
-        <tr class="tableRowHeader">
-            <th class="tableCellHeader">AC</th>
-            <th class="tableCellHeader">Short Label</th>
-            <th class="tableCellHeader" width="70%">Full Name</th>
-            <th class="tableCellHeader">Lock</th>
-        </tr>
-
-        <%-- To calculate row or even row --%>
-        <c:set var="row"/>
-
-        <c:forEach var="i" items="${user.searchResult}">
-            <!-- Different styles for even or odd rows -->
-            <c:choose>
-                <c:when test="${row % 2 == 0}">
-                    <tr class="tableRowEven">
-                </c:when>
-                <c:otherwise>
-                    <tr class="tableRowOdd">
-                </c:otherwise>
-            </c:choose>
-            <c:set var="row" value="${row + 1}"/>
-
-            <td class="tableCell">
-                <bean:write name="i" property="searchLink" filter="false"/>
-            </td>
-
-            <!-- The link for the short label is not displayed if there is a
-                 lock for the object and displayed in different colour -->
-            <c:choose>
-                <c:when test="${i.locked == 'true'}">
-                    <c:choose>
-                        <c:when test="${i.lockOwnerSimple == user.userName}">
-                           <!-- Lock owner is the current user -->
-                            <td class="editCell">
-                                <bean:write name="i" property="editorLink" filter="false"/>
-                            </td>
-                        </c:when>
-                        <c:otherwise>
-                           <!-- Locked by other than the current user -->
-                            <td class="errorCell">
-                                <bean:write name="i" property="shortLabel"/>
-                            </td>
-                        </c:otherwise>
-                    </c:choose>
-                </c:when>
-                <c:otherwise>
-                    <td class="tableCell">
-                        <bean:write name="i" property="editorLink" filter="false"/>
-                    </td>
-                   </c:otherwise>
-            </c:choose>
-
-            <td class="tableCell">
-                <bean:write name="i" property="fullName"/>
-            </td>
-            <td class="tableCell">
-                <bean:write name="i" property="lockOwner" filter="false"/>
-            </td>
-        </tr>
-        </c:forEach>
-    </table>
+    <display:table width="100%" name="results" pagesize="50"
+        decorator="uk.ac.ebi.intact.application.editor.struts.view.ResultDisplayWrapper">
+        <display:column property="ac" title="AC"/>
+        <display:column property="shortLabel" title="Short Label"/>
+        <display:column property="fullName" title="Full Name" />
+        <display:column property="lock" title="Lock" />
+    </display:table>
 </html:form>
