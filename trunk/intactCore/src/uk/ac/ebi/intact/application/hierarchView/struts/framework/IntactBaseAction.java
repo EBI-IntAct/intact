@@ -215,7 +215,7 @@ public abstract class IntactBaseAction extends Action {
               throws MultipleResultException {
 
         InteractionNetwork in = null;
-        String AC = user.getAC();
+        String queryString = user.getQueryString();
         int depth = user.getCurrentDepth();
 
         try {
@@ -223,7 +223,7 @@ public abstract class IntactBaseAction extends Action {
             Chrono chrono = new Chrono ();
             chrono.start();
 
-            in = gh.getInteractionNetwork(AC, depth);
+            in = gh.getInteractionNetwork(queryString, depth);
 
             chrono.stop();
             String msg = "Time for retreiving the interaction network ( " +
@@ -232,7 +232,7 @@ public abstract class IntactBaseAction extends Action {
             logger.info(msg);
 
         } catch (ProteinNotFoundException e) {
-            addError ("error.protein.notFound", AC);
+            addError ("error.protein.notFound", queryString);
             return;
 
         } catch (SearchException e) {

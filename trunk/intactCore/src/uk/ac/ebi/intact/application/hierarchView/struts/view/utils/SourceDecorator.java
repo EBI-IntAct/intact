@@ -23,7 +23,7 @@ import uk.ac.ebi.intact.application.hierarchView.struts.view.utils.LabelValueBea
  *       <p>
  *          decorator="uk.ac.ebi.intact.application.hierarchView.struts.view.SourceDecorator">
  *            <p>
- *              <display:column property="label" title="<%= user.getAC() %>" /><br>
+ *              <display:column property="label" title="<%= user.getQueryString() %>" /><br>
  *              <display:column property="description"  />
  *            </p>
  *       </p>

@@ -17,7 +17,6 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.util.Properties;
-import java.util.Collection;
 
 import org.apache.log4j.Logger;
 
@@ -95,7 +94,7 @@ public class DisplayInteractionNetworkTag extends TagSupport {
                  * Prepare an identifier unique for the generated image name, it will allows
                  * to take advantage of the client side caching.
                  */
-                String AC = user.getAC();
+                String queryString = user.getQueryString();
                 int depth = user.getCurrentDepth();
                 String method = user.getMethodClass();
                 String key = user.getSelectedKey();
@@ -107,7 +106,7 @@ public class DisplayInteractionNetworkTag extends TagSupport {
                     highlightContext += behaviour;
                 }
 
-                String userContext = AC + depth + method + highlightContext;
+                String userContext = queryString + depth + method + highlightContext;
 
                 /* The context parameter in the URL is also given to prevent some browser
                  * (eg. Netscape 4.7) to cache image wrongly.

@@ -64,15 +64,15 @@ public class RestoreContextFromCookieTag extends TagSupport {
         Cookie cookies[] = ((HttpServletRequest) pageContext.getRequest()).getCookies();
         if (cookies == null) return EVAL_PAGE;
 
-        String cookieName = null;
-        String AC = null;
-        String method = null;
-        String depth = null;
+        String cookieName  = null;
+        String queryString = null;
+        String method      = null;
+        String depth       = null;
         for (int i = 0; i < cookies.length; i++) {
             cookieName = cookies[i].getName();
             logger.info("In the cookie : " + cookieName + " = " + cookies[i].getValue());
             if ("AC".equals(cookieName))
-                AC = cookies[i].getValue();
+                queryString = cookies[i].getValue();
             else if ("depth".equals(cookieName))
                  depth = cookies[i].getValue();
             else if ("method".equals(cookieName))
@@ -80,16 +80,14 @@ public class RestoreContextFromCookieTag extends TagSupport {
         }
 
         String url = null;
-        if (AC != null && method != null && depth != null) {
-            url = "/hierarchView/display.do?AC="+ AC +"&method="+ method +"&depth="+ depth;
+        if (queryString != null && method != null && depth != null) {
+            url = "/hierarchView/display.do?AC="+ queryString +"&method="+ method +"&depth="+ depth;
         } else {
             // simply display the current page
             return EVAL_PAGE;
         }
 
         try {
-
-
             // save the URL to forward to
             pageContext.getRequest().setAttribute ("restoreUrl", url);
             session.setAttribute ("restoreUrl", url);

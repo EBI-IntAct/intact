@@ -27,7 +27,7 @@ import java.io.Serializable;
  */
 public interface IntactUserI extends Serializable, HttpSessionBindingListener {
 
-    public String  getAC();
+    public String  getQueryString();
     public int     getCurrentDepth();
     public boolean minimalDepthReached();
     public boolean maximalDepthReached();
@@ -46,7 +46,7 @@ public interface IntactUserI extends Serializable, HttpSessionBindingListener {
     public boolean hasSourceUrlToDisplay();
     public String getSearchUrl ();
 
-    public void setAC (String AC);
+    public void setQueryString (String aQueryString);
     public void increaseDepth();
     public void desacreaseDepth();
     public void setDepthToDefault();

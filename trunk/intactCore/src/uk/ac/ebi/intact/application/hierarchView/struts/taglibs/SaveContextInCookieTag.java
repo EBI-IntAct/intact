@@ -33,7 +33,7 @@ public class SaveContextInCookieTag extends TagSupport {
     static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
 
     private final static int KEEP_UNTIL_BROWSER_IS_CLOSED = -1;
-    private final static int KILL_NOW = 0;
+//    private final static int KILL_NOW = 0;
 
 
     /**
@@ -98,7 +98,7 @@ public class SaveContextInCookieTag extends TagSupport {
 
 
         // save our context
-        saveCookie (applicationPath, "AC",     user.getAC());
+        saveCookie (applicationPath, "AC",     user.getInteractionNetwork().getCentralProteinAC());
         saveCookie (applicationPath, "depth",  ""+user.getCurrentDepth());
         saveCookie (applicationPath, "method", user.getMethodLabel());
 

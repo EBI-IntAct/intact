@@ -18,7 +18,7 @@ import uk.ac.ebi.intact.application.hierarchView.business.Constants;
  * Form bean for the main form of the view.jsp page.  
  * This form has the following fields, with default values in square brackets:
  * <ul>
- * <li><b>AC</b> - Entered AC value
+ * <li><b>queryString</b> - Entered queryString value
  * <li><b>method</b> - Selected method value
  * </ul>
  *
@@ -32,8 +32,8 @@ public final class SearchForm extends IntactBaseForm {
 
     // --------------------------------------------------- Instance Variables
 
-    // the AC of the protein to search.
-    private String AC = null;
+    // the queryString of the protein to search.
+    private String queryString = null;
 
     /**
      * The highlight method
@@ -44,12 +44,12 @@ public final class SearchForm extends IntactBaseForm {
 
     // ----------------------------------------------------------- Getters and Setters
 
-    public String getAC() {
-        return (this.AC);
+    public String getQueryString() {
+        return (this.queryString);
     }
 
-    public void setAC(String AC) {
-        this.AC = AC;
+    public void setQueryString(String queryString) {
+        this.queryString = queryString;
     }
 
     public String getMethod() {
@@ -71,7 +71,7 @@ public final class SearchForm extends IntactBaseForm {
      * @param request The servlet request we are processing
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
-        this.AC     = null;
+        this.queryString     = null;
         this.method = null;
     } // reset
 
@@ -89,8 +89,8 @@ public final class SearchForm extends IntactBaseForm {
     public ActionErrors validate(ActionMapping mapping,
                                  HttpServletRequest request) {
 
-        if ((AC == null) || (AC.trim().length() == 0)) {
-            addError ("error.AC.required");
+        if ((queryString == null) || (queryString.trim().length() == 0)) {
+            addError ("error.queryString.required");
         }
 
         if ((method == null) || (method.trim().length() == 0))
@@ -101,8 +101,8 @@ public final class SearchForm extends IntactBaseForm {
 
 
     public String toString () {
-        StringBuffer sb = new StringBuffer("SearchForm[AC=");
-        sb.append(AC);
+        StringBuffer sb = new StringBuffer("SearchForm[queryString=");
+        sb.append(queryString);
         if (method != null) {
             sb.append(", method=");
             sb.append(method);
