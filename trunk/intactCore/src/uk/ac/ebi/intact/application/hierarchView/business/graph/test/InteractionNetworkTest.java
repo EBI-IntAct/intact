@@ -10,6 +10,8 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.commons.search.CriteriaBean;
 import uk.ac.ebi.intact.simpleGraph.Edge;
+import uk.ac.ebi.intact.simpleGraph.EdgeI;
+import uk.ac.ebi.intact.simpleGraph.MineEdge;
 import uk.ac.ebi.intact.simpleGraph.Node;
 
 import java.util.Iterator;
@@ -60,7 +62,7 @@ public class InteractionNetworkTest extends TestCase {
     private void createEdge ( InteractionNetwork network, Component comp1, Component comp2 ) {
         Protein prot1 = (Protein) comp1.getInteractor(),
                 prot2 = (Protein) comp2.getInteractor();
-        Edge edge = new Edge();
+        EdgeI edge = new Edge();
         edge.setComponent1( comp1 );
         edge.setComponent2( comp2 );
         Node node1 = new Node( prot1 );
@@ -191,7 +193,7 @@ public class InteractionNetworkTest extends TestCase {
 
     private boolean containsNode ( InteractionNetwork network, Protein prot1, Protein prot2 ) {
         for ( Iterator iterator = network.getEdges().iterator (); iterator.hasNext (); ) {
-            Edge edge = (Edge) iterator.next ();
+            EdgeI edge = (EdgeI) iterator.next ();
             Node node1 = (Node) edge.getNode1();
             Node node2 = (Node) edge.getNode2();
             if ( ( node1.getInteractor() == prot1 ) && ( node2.getInteractor() == prot2 )
@@ -259,7 +261,7 @@ public class InteractionNetworkTest extends TestCase {
         System.out.println ( "InteractionNetwork" );
         Collection edges = network.getEdges();
         for ( Iterator iterator = edges.iterator (); iterator.hasNext (); ) {
-            Edge edge = (Edge) iterator.next ();
+            EdgeI edge = (EdgeI) iterator.next ();
             Node node1 = (Node) edge.getNode1();
             Node node2 = (Node) edge.getNode2();
             System.out.println ( node1.getInteractor().getShortLabel() + " - " +
