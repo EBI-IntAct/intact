@@ -224,7 +224,7 @@
 				<include name="jakarta-ojb-0.9.7.jar"/>
                 <include name="commons-lang-1.0.jar"/>
 				<include name="log4j-1.2.5.jar"/>
-				<include name="pgjdbc2.jar"/>
+				<include name="postgresql.jar"/>
 			</lib>
 
             <!-- cvedit specific classes -->
