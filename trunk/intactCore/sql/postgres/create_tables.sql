@@ -98,7 +98,7 @@ COMMENT on COLUMN ControlledVocab.userstamp IS
 
 CREATE TABLE BioSource
 (
-	taxId			NUMERIC(10)
+	taxId			VARCHAR(10)
 						CONSTRAINT uq_BioSource_taxId
 						UNIQUE   ,
 	scientificName 		VARCHAR(255)	,

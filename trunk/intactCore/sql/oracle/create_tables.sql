@@ -121,7 +121,7 @@ PROMPT creating table ...
 PROMPT ... BioSource
 CREATE TABLE BioSource
 (
-	taxId			NUMBER(10)
+	taxId			VARCHAR(10)
 						CONSTRAINT uq_BioSource$taxId
 						UNIQUE USING INDEX,
 	scientificName		VARCHAR2(255),
