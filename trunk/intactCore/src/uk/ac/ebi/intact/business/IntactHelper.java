@@ -266,7 +266,7 @@ public class IntactHelper implements SearchI, Serializable {
      * Note that any previous data may be lost, and a subsequent call to open()
      * will result in a new connection being established to the persitent store.
      *
-     * @exception thrown if the store was unable to be closed.
+     * @exception IntactException thrown if the store was unable to be closed.
      */
     public void closeStore() throws IntactException {
 
@@ -285,7 +285,7 @@ public class IntactHelper implements SearchI, Serializable {
      * explicitly manage the opening/clsoing yourself - in most cases you should
      * leave this to the Helper class and the persistence layer.
      *
-     * @exception thrown if the store was unable to be opened.
+     * @exception IntactException thrown if the store was unable to be opened.
      */
     public void openStore() throws IntactException {
 
