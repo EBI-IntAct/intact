@@ -2,12 +2,14 @@
 
 # deploy the service (with the modified WSDD file)
 echo "deploy the service (with the WSDD file you had modified)"
+
+
 java org.apache.axis.client.AdminClient wsdd/deploy.wsdd
+
 
 echo "If an error occur, check : "
 echo " (1) if Tomcat is properly running (with service available in Axis)"
-echo " (2) if Serveur (binary file from Bordeaux) is running"
-
+echo " (2) if the WebService.properties had been updated in the client and server side"
 
 
 echo ""
