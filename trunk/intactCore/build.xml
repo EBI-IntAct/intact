@@ -430,14 +430,27 @@
         </junit>
     </target>
 
+	<!-- Runs individual package tests using junit task. -->
+    <target name="model-test" depends="compile-core" description="Runs model JUnit tests">
+        <junit printsummary="withOutAndErr">
+            <test name="uk.ac.ebi.intact.model.test.AllJUnitTests"/>
+            <classpath refid="project.class.path"/>
+        </junit>
+    </target>
+
+
     <!-- =================================================================== -->
 
     <!-- Runs the JUnit tester directly. The output is redirected to std out -->
+<!-- <arg value="uk.ac.ebi.intact.model.test.AllJUnitTests"/> -->
+<!-- <arg value="uk.ac.ebi.intact.util.test.AllJUnitTests"/> -->
+<!-- <arg value="uk.ac.ebi.intact.business.test.AllJUnitTests"/> -->
+
     <target name="junit-test-stdout" depends="compile-core"
             description="Runs JUnit directly with output directed to stdout">
         <java classname="junit.textui.TestRunner" fork="true">
-            <arg value="uk.ac.ebi.intact.util.test.AllJUnitTests"/>
-            <classpath refid="project.class.path"/>
+		<arg value="uk.ac.ebi.intact.test.AllJUnitTests"/>
+		<classpath refid="project.class.path"/>
         </java>
     </target>
 
