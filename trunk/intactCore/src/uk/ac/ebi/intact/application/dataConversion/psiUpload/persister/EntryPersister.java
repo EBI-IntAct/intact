@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.InteractionTa
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.CommandLineOptions;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.model.Interaction;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -50,13 +51,24 @@ public final class EntryPersister {
         Monitor monitor = null;
         if( guiEnabled ) {
             monitor = new Monitor( interactions.size(), "Interaction creation" );
+            monitor.setStatus( "Waiting for the persister to start..." );
             monitor.show();
         }
         int current = 0;
+        Interaction intactInteraction = null;
         for ( Iterator iterator = interactions.iterator(); iterator.hasNext(); ) {
             final InteractionTag interaction = (InteractionTag) iterator.next();
             try {
-                InteractionPersister.persist( interaction, helper );
+                intactInteraction = InteractionPersister.persist( interaction, helper );
+                if( guiEnabled ) {
+                    final String status;
+                    if( intactInteraction == null ) {
+                        status = "";
+                    } else {
+                        status = intactInteraction.getShortLabel() + " created";
+                    }
+                    monitor.setStatus( status );
+                }
             } catch ( IntactException e ) {
                 System.err.println( "When the error occured, we were in: " + interaction );
                 throw e;
@@ -72,7 +84,5 @@ public final class EntryPersister {
         if( guiEnabled ) {
             monitor.hide();
         }
-
-
     }
 }
