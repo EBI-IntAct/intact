@@ -18,8 +18,6 @@ import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 import uk.ac.ebi.intact.application.cvedit.struts.view.*;
 import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.model.Institution;
-import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.persistence.SearchException;
 
 /**
@@ -57,17 +55,19 @@ public class SearchAction extends IntactBaseAction {
         // Clear any previous errors.
         super.clearErrors();
 
-        // Set up variables used during searching
+        // The search parameters.
         String searchParam = null;
         String searchValue = null;
-
-        SearchForm theForm = (SearchForm) form;
 
         // Session to access various session objects.
         HttpSession session = super.getSession(request);
 
         // Handler to the Intact User.
+        if (session == null) super.log("Session is null");
+        else super.log("Session is not null");
         IntactUserIF user = super.getIntactUser(session);
+        if (user == null) super.log("User is null");
+        else super.log("User is not null");
 
         // The topic selected by the user.
         String topic = user.getSelectedTopic();
@@ -75,16 +75,18 @@ public class SearchAction extends IntactBaseAction {
         // The class name associated with the topic.
         String classname = super.getIntactService().getClassName(topic);
 
+        // The form to access input data.
+        SearchForm theForm = (SearchForm) form;
+
         if (theForm.searchByAc()) {
             // Search by AC.
-            super.log("search by AC requested");
             searchParam = WebIntactConstants.SEARCH_BY_AC;
-            searchValue = theForm.getAcNumber();
+            searchValue = normalizeValue(theForm.getAcNumber());
         }
         else if (theForm.searchByLabel()) {
            // Search by short label.
            searchParam = WebIntactConstants.SEARCH_BY_LABEL;
-           searchValue = theForm.getLabel();
+           searchValue = normalizeValue(theForm.getLabel());
         }
         else if (theForm.createNew()) {
             super.log("creating a new CV object");
@@ -106,7 +108,7 @@ public class SearchAction extends IntactBaseAction {
             return mapping.findForward(WebIntactConstants.FORWARD_CREATE);
         }
         else {
-            // Unknown action.
+            // Unknown action; should never happen.
             assert false;
         }
 
@@ -188,5 +190,19 @@ public class SearchAction extends IntactBaseAction {
             labels.add(labelobj);
         }
         return labels;
+    }
+
+    /**
+     * Normalize a given string.
+     * @param value the value to normalize.
+     * @return "*" if <code>value</code> is either <code>null</code> or
+     *  empty; otherwise <code>value</code>.
+     *
+     * <pre>
+     * post: return = if (value <> null or value.size = 0) result = value else (result = value) endif
+     * </pre>
+     */
+    private String normalizeValue(String value) {
+        return ((value == null) || (value.length() == 0)) ? "*" : value;
     }
 }
