@@ -10,7 +10,8 @@
 <%@ page import="uk.ac.ebi.intact.application.search.struts.framework.util.SearchConstants,
                  uk.ac.ebi.intact.application.search.business.IntactServiceIF,
                  uk.ac.ebi.intact.application.search.struts.view.BasicObjectViewBean,
-                 uk.ac.ebi.intact.application.search.struts.view.AbstractViewBean"%>
+                 uk.ac.ebi.intact.application.search.struts.view.AbstractViewBean,
+                 uk.ac.ebi.intact.model.Protein"%>
 
 <%@ page import="javax.xml.transform.stream.StreamResult"%>
 
@@ -156,6 +157,13 @@
     if(session.getAttribute(SearchConstants.SINGLE_OBJ_VIEW_BEAN) != null) {
         //only have a single object to show..
         BasicObjectViewBean bean = (BasicObjectViewBean)session.getAttribute(SearchConstants.SINGLE_OBJ_VIEW_BEAN);
+        if(bean.getWrappedObject() instanceof Protein) {
+            //this means we are displaying a Protein with no Interactions - print
+            //a message first...
+            %>
+            <h2>This Protein is currently not attached to any Interactions:</h2>
+            <%
+        }
         bean.transform("0", result);
     }
     else {
