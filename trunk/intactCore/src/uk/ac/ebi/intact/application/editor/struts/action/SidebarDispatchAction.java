@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.
+Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
@@ -90,14 +90,15 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
 
         try {
             // Try searching as it is.
-            results = doLookup(classname, searchString, user);
+            results = user.lookup(classname, searchString, true);
             if (results.isEmpty()) {
-                // try searching first using all uppercase, then all lower case if it returns nothing...
+                // try searching first using all uppercase, then all lower case
+                // if it returns nothing...
                 // NB this would be better done at the DB level, but keep it here for now
-                results = doLookup(classname, searchString.toUpperCase(), user);
+                results = user.lookup(classname, searchString.toUpperCase(), true);
                 if (results.isEmpty()) {
                     // now try all lower case....
-                    results = doLookup(classname, searchString.toLowerCase(), user);
+                    results = user.lookup(classname, searchString.toLowerCase(), true);
                 }
             }
         }
@@ -117,9 +118,6 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
             super.log("No matches were found for the specified search criteria");
             return mapping.findForward(EditorConstants.FORWARD_NO_MATCHES);
         }
-        // Sets the result status type.
-        user.setSearchResultStatus(results.size());
-
         // If we retrieved one object then we can go strainght to edit page.
         if (results.size() == 1) {
             // The object to edit.
@@ -269,62 +267,5 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
             assert false;
         }
         return annobj;
-    }
-
-    /**
-     * utility method to handle the logic for lookup, ie trying AC, label etc.
-     * Isolating it here allows us to change initial strategy if we want to.
-     * NB this will probably be refactored out into the IntactHelper class later on.
-     *
-     * @param className the intact type to search on
-     * @param value the user-specified value
-     * @param user The object holding the IntactHelper for a given user/session
-     * (passed as a parameter to avoid using an instance variable, which may
-     *  cause thread problems).
-     * @return Collection the results of the search - an empty Collection if no results found
-     * @exception uk.ac.ebi.intact.persistence.SearchException thrown if there were any search problems
-     */
-    private Collection doLookup(String className, String value, EditUserI user)
-            throws SearchException {
-        // The result to return.
-        Collection results = new ArrayList();
-        // The search parameter.
-        String searchParam = "ac";
-
-        //try search on AC first...
-        results = user.search(className, searchParam, value);
-        if (results.isEmpty()) {
-            // No matches found - try a search by label now...
-            super.log("now searching for class " + className + " with label " + value);
-            searchParam = "shortLabel";
-            results = user.search(className, searchParam, value);
-            if (results.isEmpty()) {
-                //no match on label - try by xref....
-                //super.log("no match on label - looking for: " + className + " with primary xref ID " + value);
-                searchParam = "primaryId";
-                Collection xrefs = user.search(Xref.class.getName(), searchParam, value);
-
-                //could get more than one xref, eg if the primary id is a wildcard search value -
-                //then need to go through each xref found and accumulate the results...
-                Iterator it = xrefs.iterator();
-                Collection partialResults = new ArrayList();
-                searchParam = "ac";
-                while (it.hasNext()) {
-                    partialResults = user.search(className, searchParam,
-                            ((Xref) it.next()).getParentAc());
-                    results.addAll(partialResults);
-                }
-                if (results.isEmpty()) {
-                    //no match by xref - try finally by name....
-                    super.log("trying fullname...last resort");
-                    searchParam = "fullName";
-                    results = user.search(className, searchParam, value);
-                }
-            }
-        }
-        // Cache this info as we need to display them on the JSP.
-        user.setLastSearchClass(className);
-        user.setLastSearchQuery(searchParam, value);
-        return results;
     }
 }
