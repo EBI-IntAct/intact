@@ -156,7 +156,7 @@ public class ProteinSearchAction extends AbstractEditorAction {
             // Log the error if we have one.
             Exception exp = user.getProteinParseException();
             if (exp != null) {
-                LOGGER.error(exp);
+                LOGGER.error("", exp);
                 errors.add("int.prot.search",
                         new ActionError("error.int.protein.search.empty.parse", param));
             }
