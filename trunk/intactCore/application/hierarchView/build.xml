@@ -109,10 +109,7 @@ Verison: $Id$
         <pathelement path="${root.lib.dir}/commons-logging.jar"/>
 
         <pathelement path="${intact.app.dir}/lib/struts.jar"/>
-        <pathelement path="${intact.app.dir}/lib/concurrent.jar"/>
-        <pathelement path="${intact.app.dir}/lib/commons-beanutils.jar"/>
-        <pathelement path="${intact.app.dir}/lib/commons-collections.jar"/>
-
+      
     </path>
 
     <!-- =================================================================== -->
