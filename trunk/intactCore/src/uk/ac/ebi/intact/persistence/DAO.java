@@ -79,8 +79,9 @@ public interface DAO {
      * Locks the given object for <b>write</b> access. <b>{@link #begin(int)} must
      * be called to prior to this method.</b>
      * @param obj the object to lock for <b>write</b> access.
+     * @exception org.odmg.TransactionNotInProgressException thrown if no object TX is running
      */
-    public void lock(Object obj);
+    public void lock(Object obj)throws org.odmg.TransactionNotInProgressException;
 
     /**
      *   closes a DAO (connection).

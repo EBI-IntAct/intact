@@ -19,6 +19,7 @@ import org.apache.ojb.broker.accesslayer.LookupException;
 import org.apache.ojb.broker.query.*;
 import org.apache.ojb.broker.util.configuration.impl.*;
 import org.apache.ojb.broker.util.configuration.*;
+import org.apache.ojb.broker.util.ObjectModificationDefaultImpl;
 import org.apache.ojb.broker.metadata.*;
 
 //ODMG
@@ -316,7 +317,15 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
     }
 
-    public void lock(Object obj) {
+    /**
+     * Locks the specified object to a transaction for WRITE. Note
+     * that this method can ONLY be used if you are using object-level transactions
+     * (it doesn't make sense for JDBC transactions)
+     * @param obj The object to lock for write.
+     * @exception org.odmg.TransactionNotInProgressException thrown if no object TX is running
+     */
+    public void lock(Object obj) throws org.odmg.TransactionNotInProgressException {
+        if((tx == null) || (!tx.isOpen())) throw new org.odmg.TransactionNotInProgressException();
         tx.lock(obj, Transaction.WRITE);
     }
 
@@ -533,9 +542,6 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
         //use ODMG...
 
-        //old PB code
-        //ObjectModificationDefaultImpl mod = new ObjectModificationDefaultImpl();
-        //mod.setNeedsUpdate(true);
         checkForOpenStore();
         //Transaction tx1 = null;
         boolean localTx = false;
@@ -653,7 +659,13 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                     //local transaction, so commit here instead...(JDBC)
                     logger.debug("committing local TX");
                     //tx1.commit();
-                     broker.commitTransaction();
+
+                    //old PB code...
+                    //need to do a mark for update + PB.store here...
+                    ObjectModificationDefaultImpl mod = new ObjectModificationDefaultImpl();
+                    mod.setNeedsUpdate(true);
+                    broker.store(obj, mod);
+                    broker.commitTransaction();
                  }
              }
 
