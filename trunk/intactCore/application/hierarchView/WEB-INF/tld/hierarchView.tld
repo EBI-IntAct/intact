@@ -13,12 +13,24 @@
         in order to facilitate display on web pages.
     </info>
 
+
     <tag>
         <name>init</name>
         <tagclass>uk.ac.ebi.intact.application.hierarchView.struts.taglibs.InitTag</tagclass>
         <bodycontent>empty</bodycontent>
         <info>
-               Initialize data access by storing all the user needs in the session
+               Initializes data access by storing all the user needs in the session.
+        </info>
+    </tag>
+
+
+    <tag>
+        <name>displayInteractionNetwork</name>
+        <tagclass>uk.ac.ebi.intact.application.hierarchView.struts.taglibs.DisplayInteractionNetworkTag</tagclass>
+        <bodycontent>JSP</bodycontent>
+        <info>
+               Displays the interaction network if the picture has been generated
+               and stored in the session.
         </info>
     </tag>
 
