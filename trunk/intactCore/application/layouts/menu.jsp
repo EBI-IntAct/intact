@@ -18,6 +18,11 @@
 <%-- Push tiles attributes in page context --%>
 <tiles:importAttribute />
 
+<%
+    // Cache it as it is used in many places.
+    String serverPath = request.getContextPath();
+%>
+
 <table>
 
     <logic:present name="title">
@@ -30,16 +35,12 @@
 
     <%-- iterate on items list --%>
     <logic:iterate id="item" name="items" type="org.apache.struts.tiles.beans.MenuItem" >
-
         <%  // Add server url if link start with "/"
-            String serverPath = request.getContextPath();
-
-            // remove the application name from the path
-            serverPath = serverPath.substring (0, serverPath.lastIndexOf('/'));
-
             String link = item.getLink();
-            if (link.startsWith("/"))
-                link = serverPath + link;
+            if (link.startsWith("/")) {
+                // remove the application name from the path
+                link = serverPath.substring (0, serverPath.lastIndexOf('/')) + link;
+            }
         %>
 
         <tr>
