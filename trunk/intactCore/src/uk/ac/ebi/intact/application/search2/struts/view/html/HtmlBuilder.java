@@ -159,7 +159,7 @@ public class HtmlBuilder {
         rs.write("<a href=\"");
         rs.write(helpLink);
         rs.write(target);
-        rs.write("\" target\"_blank\"/><sup><b><font color=red>?</font></b></sup></a>");
+        rs.write("\" target=\"_blank\"/><sup><b><font color=red>?</font></b></sup></a>");
     }
 
     /**
@@ -653,16 +653,21 @@ public class HtmlBuilder {
 
         rs.write("<td colspan=4><code>");
         String seq = aProtein.getSequence();
-        int blocks = seq.length() / SEQBLOCKLENGTH;
-        for (int i = 0; i< blocks; i++){
-            rs.write(seq.substring(i*SEQBLOCKLENGTH,
-                    i*SEQBLOCKLENGTH + SEQBLOCKLENGTH));
+        if (seq != null) {
+            int blocks = seq.length() / SEQBLOCKLENGTH;
+            for (int i = 0; i< blocks; i++){
+                rs.write(seq.substring(i*SEQBLOCKLENGTH,
+                        i*SEQBLOCKLENGTH + SEQBLOCKLENGTH));
 
-            rs.write(" ");
+                rs.write(" ");
+            }
+            rs.write(seq.substring(blocks*SEQBLOCKLENGTH));
+
+            rs.write("</code></td>");
+        } else {
+            rs.write ("<font color=\"#898989\">No sequence available for that protein.");
         }
-        rs.write(seq.substring(blocks*SEQBLOCKLENGTH));
 
-        rs.write("</code></td>");
         rs.write("</tr>\n");
 
         // End table
