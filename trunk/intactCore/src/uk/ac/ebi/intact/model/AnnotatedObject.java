@@ -8,6 +8,8 @@ package uk.ac.ebi.intact.model;
 import java.util.*;
 
 import uk.ac.ebi.intact.util.Utilities;
+import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.business.IntactException;
 
 /**
  * Represents an object with biological annotation.
@@ -140,6 +142,51 @@ public abstract class AnnotatedObject extends BasicObject {
 
     ///////////////////////////////////////
     // instance methods
+
+    /** Update an annotated object in the database.
+     * Ensure subobjects are updated appropriately.
+     */
+    public AnnotatedObject update(IntactHelper helper) throws IntactException {
+
+        // Update dependent objects
+        for (Iterator i = xref.iterator(); i.hasNext();) {
+            Xref xref = (Xref) i.next();
+            helper.update(xref);
+        }
+        for (Iterator i = annotation.iterator(); i.hasNext();) {
+            Annotation annotation = (Annotation) i.next();
+            helper.update(annotation);
+        }
+
+        helper.update(this);
+
+        return this;
+    }
+
+    /** Create or update an annotation. The anntation topic may only occur once in the object.
+     *
+     */
+    public void updateUniqueAnnotation(CvTopic topic, String description, Institution owner){
+
+        Annotation annotation = null;
+         for (Iterator iterator = getAnnotation().iterator(); iterator.hasNext();) {
+             Annotation a = (Annotation) iterator.next();
+             if (a.getCvTopic() == topic){
+                 annotation = a;
+                 break;
+             }
+         }
+         if (null == annotation){
+             annotation = new Annotation();
+             annotation.setOwner(owner);
+             annotation.setCvTopic(topic);
+             addAnnotation(annotation);
+         }
+         // Now annotation is a valid object, (re-) set the text
+         if (annotation.getAnnotationText() != description){
+             annotation.setAnnotationText(description);
+         }
+    }
 
     /** Returns true if the "important" attributes are equal.
      */
