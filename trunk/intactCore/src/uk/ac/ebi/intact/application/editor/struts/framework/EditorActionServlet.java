@@ -37,7 +37,7 @@ public class EditorActionServlet extends ActionServlet {
         EditorService service = null;
         try {
             // Load resources.
-            service = new EditorService(ctx.getInitParameter("resources"));
+            service = EditorService.getInstance(ctx.getInitParameter("resources"));
         }
         catch (MissingResourceException mre) {
             // Unable to find the resource file.
