@@ -103,7 +103,7 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
             user.updateView(annobj);
 
             // Straight to the edit jsp.
-            return mapping.findForward(FORWARD_SUCCESS);
+            return mapping.findForward("single");
         }
         // Cache the search results.
         user.addToSearchCache(results);
