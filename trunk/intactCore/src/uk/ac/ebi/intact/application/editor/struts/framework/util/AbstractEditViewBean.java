@@ -11,9 +11,7 @@ import org.apache.struts.action.DynaActionForm;
 import org.apache.struts.tiles.ComponentContext;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
-import uk.ac.ebi.intact.application.editor.exception.validation.ShortLabelException;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
-import uk.ac.ebi.intact.application.editor.exception.validation.InteractionException;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.business.IntactException;
@@ -34,10 +32,9 @@ import java.util.*;
 public abstract class AbstractEditViewBean implements Serializable {
 
     /**
-     * The Annotated object to wrap. Transient as we can always retrieve it via
-     * the accession number.
+     * The Annotated object to wrap this bean around.
      */
-    private transient AnnotatedObject myAnnotObject;
+    private AnnotatedObject myAnnotObject;
 
     /**
      * The class we are editing.
@@ -176,15 +173,16 @@ public abstract class AbstractEditViewBean implements Serializable {
     }
 
     /**
-     * Sets the current edit class. This method is called when creating a new
-     * annotated object (only the class or the type is known).
-     * @param clazz
+     * Resets the bean with the current edit class. This method is called when
+     * creating a new annotated object (only the class or the type is known at
+     * that time).
+     * @param clazz the Class of the new annotated object.
      */
-    public void setAnnotatedClass(Class clazz) {
+    public void reset(Class clazz) {
         myEditClass = clazz;
 
         // Set them to null as they may have previous values.
-        myAnnotObject = null;
+        setAnnotatedObject(null);
         setShortLabel(null);
         setFullName(null);
 
@@ -197,12 +195,11 @@ public abstract class AbstractEditViewBean implements Serializable {
     }
 
     /**
-     * Construts an instance using an Annotated object.
-     * @param annot <code>AnnotatedObject</code> object to construct this
-     * instance from.
+     * Resets with the bean using an existing Annotated object.
+     * @param annot <code>AnnotatedObject</code> object to set this bean.
      */
-    public void setAnnotatedObject(AnnotatedObject annot) {
-        myAnnotObject = annot;
+    public void reset(AnnotatedObject annot) {
+        setAnnotatedObject(annot);
         myEditClass = annot.getClass();
         setShortLabel(annot.getShortLabel());
         setFullName(annot.getFullName());
@@ -226,42 +223,11 @@ public abstract class AbstractEditViewBean implements Serializable {
     }
 
     /**
-     * Returns the Annotated object. Could be null if
-     * {@link #update(EditUserI)} wasn't called prior to this method for a new
-     * edit object.
+     * Returns the Annotated object. Could be null if the object is not persisted.
      * @return <code>AnnotatedObject</code> this instace is wrapped around.
      */
     public AnnotatedObject getAnnotatedObject() {
         return myAnnotObject;
-    }
-
-    public void update(EditUserI user) throws SearchException {
-        // First create/update the annotated object by the view.
-        updateAnnotatedObject(user);
-
-        // Update the short label and full name as they are common to all.
-        myAnnotObject.setShortLabel(getShortLabel());
-        myAnnotObject.setFullName(getFullName());
-
-        // Add annotations and xrefs as they are common to all annotated objs.
-        for (Iterator iter = getAnnotationsToAdd().iterator(); iter.hasNext();) {
-            Annotation annot = ((CommentBean) iter.next()).getAnnotation(user);
-            myAnnotObject.addAnnotation(annot);
-        }
-        for (Iterator iter = getXrefsToAdd().iterator(); iter.hasNext();) {
-            Xref xref = ((XreferenceBean) iter.next()).getXref(user);
-            myAnnotObject.addXref(xref);
-        }
-
-        // Delete annotations and xrefs as they are common to all annotated objs.
-        for (Iterator iter = getAnnotationsToDel().iterator(); iter.hasNext();) {
-            Annotation annot = ((CommentBean) iter.next()).getAnnotation(user);
-            myAnnotObject.removeAnnotation(annot);
-        }
-        for (Iterator iter = getXrefsToDel().iterator(); iter.hasNext();) {
-            Xref xref = ((XreferenceBean) iter.next()).getXref(user);
-            myAnnotObject.removeXref(xref);
-        }
     }
 
     /**
@@ -693,11 +659,22 @@ public abstract class AbstractEditViewBean implements Serializable {
      */
     public void removeFromRecentList(EditUserI user) {}
 
+    // Protected Methods
+
+    /**
+     * Sets the annotated object for the bean.
+     * @param annot AnnotatedObject to set the bean.
+     */
+    protected void setAnnotatedObject(AnnotatedObject annot) {
+        myAnnotObject = annot;
+    }
+
     // Abstract method
 
     /**
-     * Gathers values in the view bean and updates the existing AnnotatedObject
-     * or create a new annotated object for the view.
+     * Gathers values in the view bean and updates the existing AnnotatedObject if it exists
+     * or create a new annotated object for the view and sets the annotated
+     * object.
      * @param user to access the persistent system.
      * @throws SearchException for errors in searching the persistent system.
      *
@@ -902,6 +879,13 @@ public abstract class AbstractEditViewBean implements Serializable {
 
     private void persistCurrentView(EditUserI user) throws IntactException,
             SearchException {
+        // First create/update the annotated object by the view.
+        updateAnnotatedObject(user);
+
+        // Update the short label and full name as they are common to all.
+        myAnnotObject.setShortLabel(getShortLabel());
+        myAnnotObject.setFullName(getFullName());
+
         // Don't care whether annotated object exists or not because we don't
         // need an AC in the annotation table.
 
@@ -910,13 +894,13 @@ public abstract class AbstractEditViewBean implements Serializable {
             Annotation annot = ((CommentBean) iter.next()).getAnnotation(user);
             // Need this to generate the PK for the indirection table.
             user.create(annot);
-//            myAnnotObject.addAnnotation(annot);
+            myAnnotObject.addAnnotation(annot);
         }
         // Delete annotations and remove them from CV object.
         for (Iterator iter = getAnnotationsToDel().iterator(); iter.hasNext();) {
             Annotation annot = ((CommentBean) iter.next()).getAnnotation(user);
             user.delete(annot);
-//            myAnnotObject.removeAnnotation(annot);
+            myAnnotObject.removeAnnotation(annot);
         }
         // Update annotations; update the object with values from the bean.
         // The update of annotated object ensures the sub objects are updated as well.
@@ -938,14 +922,14 @@ public abstract class AbstractEditViewBean implements Serializable {
             Xref xref = ((XreferenceBean) iter.next()).getXref(user);
 //            Xref xref = ((XreferenceBean) iter.next()).getXref();
             user.create(xref);
-//            myAnnotObject.addXref(xref);
+            myAnnotObject.addXref(xref);
         }
         // Delete xrefs and remove them from CV object.
         for (Iterator iter = getXrefsToDel().iterator(); iter.hasNext();) {
             Xref xref = ((XreferenceBean) iter.next()).getXref(user);
 //            Xref xref = ((XreferenceBean) iter.next()).getXref();
             user.delete(xref);
-//            myAnnotObject.removeXref(xref);
+            myAnnotObject.removeXref(xref);
         }
         // Update xrefs; see the comments for annotation update above.
         for (Iterator iter = getXrefsToUpdate().iterator(); iter.hasNext();) {

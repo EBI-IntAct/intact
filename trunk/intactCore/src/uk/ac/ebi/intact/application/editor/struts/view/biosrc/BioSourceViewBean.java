@@ -10,10 +10,7 @@ import org.apache.struts.tiles.ComponentContext;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.model.AnnotatedObject;
 
 /**
  * BioSource edit view bean.
@@ -29,15 +26,15 @@ public class BioSourceViewBean extends AbstractEditViewBean {
     private String myTaxId;
 
     // Override the super method to initialize this class specific resetting.
-    public void setAnnotatedClass(Class clazz) {
-        super.setAnnotatedClass(clazz);
+    public void reset(Class clazz) {
+        super.reset(clazz);
         // Set fields to null.
         setTaxId(null);
     }
 
     // Override the super method to set the tax id.
-    public void setAnnotatedObject(BioSource biosrc) {
-        super.setAnnotatedObject(biosrc);
+    public void reset(BioSource biosrc) {
+        super.reset(biosrc);
         setTaxId(biosrc.getTaxId());
     }
 
@@ -49,17 +46,12 @@ public class BioSourceViewBean extends AbstractEditViewBean {
 
         // Have we set the annotated object for the view?
         if (bs == null) {
-            if (getAc() == null) {
-                // Not persisted; create a new biosource object.
-                bs = new BioSource(user.getInstitution(), getShortLabel(), getTaxId());
-            }
-            else {
-                // Read it from the peristent system.
-                bs = (BioSource) user.getObjectByAc(getEditClass(), getAc());
-                bs.setTaxId(getTaxId());
-            }
-            // Set the current biosource as the annotated object.
+            // Not persisted; create a new biosource object.
+            bs = new BioSource(user.getInstitution(), getShortLabel(), getTaxId());
             setAnnotatedObject(bs);
+        }
+        else {
+            bs.setTaxId(getTaxId());
         }
     }
 

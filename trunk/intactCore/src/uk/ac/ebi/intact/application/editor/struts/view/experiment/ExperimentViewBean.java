@@ -6,17 +6,14 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view.experiment;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.struts.action.DynaActionForm;
 import org.apache.struts.tiles.ComponentContext;
-import org.apache.commons.collections.CollectionUtils;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
-import uk.ac.ebi.intact.application.editor.exception.validation.ExperimentException;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 
 import java.util.*;
@@ -68,8 +65,8 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     private transient List myInteractionsToHold = new ArrayList();
 
     // Override the super method to initialize this class specific resetting.
-    public void setAnnotatedClass(Class clazz) {
-        super.setAnnotatedClass(clazz);
+    public void reset(Class clazz) {
+        super.reset(clazz);
         // Set fields to null.
         setOrganism(null);
         setInter(null);
@@ -84,15 +81,15 @@ public class ExperimentViewBean extends AbstractEditViewBean {
 
     // Reset the fields to null if we don't have values to set. Failure
     // to do so will display the previous edit object's values as current.
-    public void setAnnotatedObject(AnnotatedObject annobj) {
-        super.setAnnotatedObject(annobj);
+    public void reset(AnnotatedObject annobj) {
+        super.reset(annobj);
 
         // Must be an experiment.
         Experiment exp = (Experiment) annobj;
 
         // Only set the short labels if the experiment has the objects.
         BioSource biosrc = exp.getBioSource();
-        setOrganism(biosrc != null ? biosrc.getShortLabel(): null);
+        setOrganism(biosrc != null ? biosrc.getShortLabel() : null);
 
         CvInteraction inter = exp.getCvInteraction();
         setInter(inter != null ? inter.getShortLabel() : null);
@@ -123,17 +120,14 @@ public class ExperimentViewBean extends AbstractEditViewBean {
 
         // Have we set the annotated object for the view?
         if (exp == null) {
-            if (getAc() == null) {
-                // Can't read from the persistent system. Create a new Experiment.
-                exp = new Experiment(user.getInstitution(), getShortLabel(), biosource);
-            }
-            else {
-                // Read it from the peristent system first and then update it.
-                exp = (Experiment) user.getObjectByAc(getEditClass(), getAc());
-                exp.setBioSource(biosource);
-            }
-            // Set the current experiment as the annotated object.
+            // Can't read from the persistent system. Create a new Experiment.
+            exp = new Experiment(user.getInstitution(), getShortLabel(), biosource);
             setAnnotatedObject(exp);
+        }
+        else {
+            // No need to set the biosource for a new experiment as it is done
+            // in the constructor.
+            exp.setBioSource(biosource);
         }
         exp.setCvInteraction(interaction);
         exp.setCvIdentification(ident);
@@ -141,12 +135,12 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         // Add interaction to the experiment.
         for (Iterator iter = getInteractionsToAdd().iterator(); iter.hasNext();) {
             Interaction intact = ((InteractionBean) iter.next()).getInteraction();
-            intact.addExperiment(exp);
+            exp.addInteraction(intact);
         }
         // Delete interactions from the experiment.
         for (Iterator iter = getInteractionsToDel().iterator(); iter.hasNext();) {
             Interaction intact = ((InteractionBean) iter.next()).getInteraction();
-            intact.removeExperiment(exp);
+            exp.removeInteraction(intact);
         }
     }
 

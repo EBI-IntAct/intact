@@ -91,8 +91,8 @@ public class InteractionViewBean extends AbstractEditViewBean {
     private String mySourceExperimentAc;
 
     // Override the super method to initialize this class specific resetting.
-    public void setAnnotatedClass(Class clazz) {
-        super.setAnnotatedClass(clazz);
+    public void reset(Class clazz) {
+        super.reset(clazz);
         // Set fields to null.
         setKD(Float.valueOf("1.0"));
         setOrganism(null);
@@ -107,8 +107,8 @@ public class InteractionViewBean extends AbstractEditViewBean {
         makeProteinBeans(Collections.EMPTY_LIST);
     }
 
-    public void setAnnotatedObject(AnnotatedObject annobj) {
-        super.setAnnotatedObject(annobj);
+    public void reset(AnnotatedObject annobj) {
+        super.reset(annobj);
 
         // Must be an Interaction; can cast it safely.
         Interaction intact = (Interaction) annobj;
@@ -146,34 +146,26 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
         // Have we set the annotated object for the view?
         if (intact == null) {
-            if (getAc() == null) {
-                // Not persisted. Create a new Interaction.
-
-                // Collect experiments from beans.
-                List exps = new ArrayList();
-                for (Iterator iter = getExperimentsToAdd().iterator(); iter.hasNext();) {
-                    exps.add(((ExperimentBean) iter.next()).getExperiment());
-                }
-                // Must have at least one experiment.
-//                if (exps.isEmpty()) {
-//                    throw new InteractionException("error.int.validation.exp");
-//                }
-                intact = new Interaction(exps, Collections.EMPTY_LIST,
-                        type, getShortLabel(), user.getInstitution());
+            // Collect experiments from beans.
+            List exps = new ArrayList();
+            for (Iterator iter = getExperimentsToAdd().iterator(); iter.hasNext();) {
+                exps.add(((ExperimentBean) iter.next()).getExperiment());
             }
-            else {
-                // Read it from the peristent system first and then update it.
-                intact = (Interaction) user.getObjectByAc(getEditClass(), getAc());
-                intact.setCvInteractionType(type);
-
-                // Add experiments.
-                for (Iterator iter = getExperimentsToAdd().iterator(); iter.hasNext();) {
-                    Experiment exp = ((ExperimentBean) iter.next()).getExperiment();
-                    intact.addExperiment(exp);
-                }
-            }
-            // Set the current interaction as the annotated object.
+            // Not persisted. Create a new Interaction.
+            intact = new Interaction(exps, new ArrayList(),
+                    type, getShortLabel(), user.getInstitution());
+            // Set this interaction as the annotated object.
             setAnnotatedObject(intact);
+        }
+        else {
+            // Update the existing interaction.
+            intact.setCvInteractionType(type);
+
+            // Add experiments.
+            for (Iterator iter = getExperimentsToAdd().iterator(); iter.hasNext();) {
+                Experiment exp = ((ExperimentBean) iter.next()).getExperiment();
+                intact.addExperiment(exp);
+            }
         }
         // Get the objects using their short label.
         BioSource biosource = (BioSource) user.getObjectByLabel(
@@ -188,20 +180,21 @@ public class InteractionViewBean extends AbstractEditViewBean {
         }
 
         // Delete proteins and remove it from the interaction.
-        for (Iterator iter = myProteinsToDel.iterator(); iter.hasNext();) {
-            Component comp = ((ProteinBean) iter.next()).getComponent(user);
-            // No need to delete from persistent storage if the link to this
-            // Protein is not persisted.
-            if (comp != null) {
-                intact.removeComponent(comp);
-            }
-        }
-        // Update proteins.
-        for (Iterator iter = myProteinsToUpdate.iterator(); iter.hasNext();) {
-            ProteinBean pb = (ProteinBean) iter.next();
-            Component comp = pb.getComponent(user);
-            intact.addComponent(comp);
-        }
+//        for (Iterator iter = myProteinsToDel.iterator(); iter.hasNext();) {
+//            Component comp = ((ProteinBean) iter.next()).getComponent(user);
+//            // No need to delete from persistent storage if the link to this
+//            // Protein is not persisted.
+//            if (comp != null) {
+//                intact.removeComponent(comp);
+//            }
+//        }
+//        // Update proteins.
+//        for (Iterator iter = myProteinsToUpdate.iterator(); iter.hasNext();) {
+//            ProteinBean pb = (ProteinBean) iter.next();
+//            pb.setInteraction((Interaction) getAnnotatedObject());
+//            Component comp = pb.getComponent(user);
+//            intact.addComponent(comp);
+//        }
     }
 
     // Override the super method to update the current Interaction.
@@ -271,6 +264,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
             user.commit();
         }
         catch (IntactException ie1) {
+            ie1.printStackTrace();
             try {
                 user.rollback();
             }
@@ -608,7 +602,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
      */
     public void addProtein(Protein protein) {
         // Add to the view.
-        myProteins.add(new ProteinBean(protein, (Interaction) getAnnotatedObject()));
+        myProteins.add(new ProteinBean(protein));
     }
 
     /**
@@ -719,7 +713,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * Set the AC of the source experiment.
      * @param ac the AC of the source experiment.
      */
-    public void setSourceExperimentAc(String  ac) {
+    public void setSourceExperimentAc(String ac) {
         mySourceExperimentAc = ac;
     }
 
@@ -803,6 +797,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
         // Update proteins.
         for (Iterator iter = myProteinsToUpdate.iterator(); iter.hasNext();) {
             ProteinBean pb = (ProteinBean) iter.next();
+            pb.setInteraction((Interaction) getAnnotatedObject());
             Component comp = pb.getComponent(user);
             intact.addComponent(comp);
             if (user.isPersistent(comp)) {
