@@ -309,6 +309,10 @@
     <target name="jar-core"
         description="Creates the Intact core jar file in the distribution directory">
 
+	<echo message=
+            "Building core JAR - NOTE: This will first remove any compiled core classes
+ before recompiling..."/>
+
         <!-- Delete the class directory. -->
         <delete dir="${dest.dir}"/>
 
@@ -325,6 +329,12 @@
         <delete file="${dist.dir}/${intact.core.jar}" quiet="true"/>
 
         <jar destfile="${dist.dir}/${intact.core.jar}" basedir="${basedir}/${dest.dir}" />
+
+	<!-- now copy the config files back to the classes directory, to put it back
+		to a 'compiled' state
+	-->
+	<antcall target="copyConfigFiles"/>
+
     </target>
 
     <!-- =================================================================== -->
