@@ -47,11 +47,11 @@ The dataset contains extensive crosslinking to UniProt, GO, InterPro, and FlyBas
                     <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/xml/">ftp://ftp.ebi.ac.uk/pub/databases/intact/current/xml/</a>.
                 </blockquote>
             </section>   <!-- end download -->
-            <section name="cvs" title="Controlled Vocabularies">
+            <section name="CVS" title="Controlled Vocabularies">
                 <blockquote>To ensure data consistency, IntAct makes intensive use of controlled vocabularies. All controlled vocabularies are available in Gene Ontology DAG-Edit format and HTML format. Some IntAct annotation of controlled vocabulary terms does not fit the GO DAG-Edit format, but as we want to export all available information, some comments might have to be filtered out from the *.def files before editing them in GO DAG-Edit. For an overview and download of IntAct controlled vocabularies, see
                     <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/cv/">ftp://ftp.ebi.ac.uk/pub/databases/intact/current/cv/</a>.
                 </blockquote>
-            </section>   <!-- end cvs -->
+            </section>   <!-- end CVS -->
             <section name="statistics" title="Statistics">
 Please see separate
                 <a href="statistics/index.html">statistics section</a>.
@@ -390,130 +390,130 @@ Please see separate
             IntAct provides a number of applications. Depending on the installation you are using, some modules described here may not be available, or additional modules not described in this manual might be available.
 
 
-        <section title="Search" name="search">
+            <section title="Search" name="search">
 
 
-            <section title="Availability" name="search.availability">
+                <section title="Availability" name="search.availability">
 
-                <blockquote>
-                </blockquote>
+                    <blockquote>
+                    </blockquote>
 
-            </section>
+                </section>
 
 
-            <section title="Basic Overview" name="search.Overview">
+                <section title="Basic Overview" name="search.Overview">
 
-                <blockquote>
+                    <blockquote>
                         The search application currently allows a text-based search by entering
                         a text string into the search text box. It is possible to obtain information
                         on experiments, protein interactions and the proteins themselves, with
                         various views used to display the data. Intact uses the concept of
-                    <a href="#AnnotatedObject.shortLabel"> short
+                        <a href="#AnnotatedObject.shortLabel"> short
                             label </a> which is intended to provide a way of 'more memorable identification'
                         compared to an
-                    <a href="#AnnotatedObject.ac"> accession number (ac) </a> , although searches by ac are
+                        <a href="#AnnotatedObject.ac"> accession number (ac) </a> , although searches by ac are
                         obviously allowed. For example a particular Experiment may have an ac of
                         EBI-14, but its name is 'gavin' indicating a more meaningful reference
                         to the physical experiment which the entry represents. Basic points on
                         usage:
 
-                    <ul>
                         <ul>
-                            <li>
+                            <ul>
+                                <li>
                                     Wildcard searching is supported - for example matches will be retrieved
                                     for strings such as EBI*, *BI-14, E*4, etc etc.</li>
 
-                            <li>
+                                <li>
                                     upper or lower case strings are acceptable (but not mixed case) and will be matched if they
                                     exist. The exception to this is a search by alias (ie gene name, as defined in
                                     UniProt) - currently these
                                     are stored as lower case and are searched for as such. This will become more sophisticated
                                     as the project matures.</li>
 
-                            <li>
+                                <li>
                                     currently searches progress in a certain order: proteins, then interactions,
                                     then experiments. At a lower level, specific attributes are searched by
                                     AC, short label, alias (gene name), Xref primary ID and finally full name. </li>
 
-                            <li>
+                                <li>
                                     Note that whilst CvObject details can be displayed via the click of a link,
                                     currently it is not possible to search for CvObjects via the text box search
                                     entry point.</li>
+                            </ul>
                         </ul>
-                    </ul>
-                </blockquote>
+                    </blockquote>
 
-            </section> <!--  -->
+                </section> <!--  -->
 
-            <section title="Structure of Search Results" name="search.TableLayout">
+                <section title="Structure of Search Results" name="search.TableLayout">
 
-                <blockquote>
+                    <blockquote>
                         The basic layout of the main results page follows the structure below:
 
-                    <br/>
+                        <br/>
 
 
-                    <p>
-                        <a NAME="experiment.single.view"></a>An example result screen when searching for an Experiment
+                        <p>
+                            <a NAME="experiment.single.view"></a>An example result screen when searching for an Experiment
                             is shown below:
-                    </p>
-                    <p>
-                        <img SRC="./images/search/exp.png" height="768" width="1024"/>
-                    </p>
+                        </p>
+                        <p>
+                            <img SRC="./images/search/exp.png" height="768" width="1024"/>
+                        </p>
 
-                    <p>
-                        <a NAME="experiment.single.chunked"></a>An other example result screen when searching for an Experiment,
+                        <p>
+                            <a NAME="experiment.single.chunked"></a>An other example result screen when searching for an Experiment,
                             this time there are too many interactions to display it in one go. So, the Experiment is splited in several pages
                             that you can reach using the index above the Experiment.
-                        <br/>
+                            <br/>
                             This is shown below:
-                    </p>
-                    <p>
-                        <img SRC="./images/search/exp-chunked.png" border="0"/>
-                    </p>
+                        </p>
+                        <p>
+                            <img SRC="./images/search/exp-chunked.png" border="0"/>
+                        </p>
 
-                    <p>
-                        <a NAME="interaction.single.view"></a>An example result screen when searching for an Interaction is shown below:
-                    </p>
-                    <p>
-                        <img SRC="./images/search/int_single.png" height="768" width="1024"/>
-                    </p>
+                        <p>
+                            <a NAME="interaction.single.view"></a>An example result screen when searching for an Interaction is shown below:
+                        </p>
+                        <p>
+                            <img SRC="./images/search/int_single.png" height="768" width="1024"/>
+                        </p>
 
-                    <p>
-                        <a NAME="binary.view"></a>Protein views can be of various types. Searching for a protein will result in a so-called
+                        <p>
+                            <a NAME="binary.view"></a>Protein views can be of various types. Searching for a protein will result in a so-called
                             'binary view'. This view shows the list of proteins which are in a pairwise interaction with the searched-for protein.
                             An example result screen for this view is shown below:
-                    </p>
-                    <p>
-                        <img SRC="./images/search/binary.png" height="768" width="1024"/>
-                    </p>
-                    <p>
-                        <a NAME="interaction.details.view"></a>Viewing the interactions for a particular protein can also be done from the binary view - an
+                        </p>
+                        <p>
+                            <img SRC="./images/search/binary.png" height="768" width="1024"/>
+                        </p>
+                        <p>
+                            <a NAME="interaction.details.view"></a>Viewing the interactions for a particular protein can also be done from the binary view - an
                             example screen displayed by clicking on the 'view 1 interaction' link is shown below:
-                    </p>
-                    <p>
-                        <img SRC="./images/search/interaction_details.png" height="768" width="1024"/>
-                    </p>
-                    <p>
-                        <a NAME="protein.single.view"></a>The details for an individual protein are displayed as below:
-                    </p>
-                    <p>
-                        <img SRC="./images/search/protein_single.png" height="768" width="1024"/>
-                    </p>
-                    <br/>
+                        </p>
+                        <p>
+                            <img SRC="./images/search/interaction_details.png" height="768" width="1024"/>
+                        </p>
+                        <p>
+                            <a NAME="protein.single.view"></a>The details for an individual protein are displayed as below:
+                        </p>
+                        <p>
+                            <img SRC="./images/search/protein_single.png" height="768" width="1024"/>
+                        </p>
+                        <br/>
 
-                    <p>
-                        <a NAME="single.view"></a>If for example in the above screen you click
+                        <p>
+                            <a NAME="single.view"></a>If for example in the above screen you click
                             on 'SPTR', this will display the controlled vocabulary information for
                             the database identified with a name of 'SPTR'. The screen looks
                             like this:
-                    </p>
-                    <p>
-                        <img SRC="./images/search/sptr.png" height="768" width="1024"/>
-                    </p>
-                    <br/>
-                    <p>
-                        <a NAME="ShortLabelHelp"></a>Protein names are links you can
+                        </p>
+                        <p>
+                            <img SRC="./images/search/sptr.png" height="768" width="1024"/>
+                        </p>
+                        <br/>
+                        <p>
+                            <a NAME="ShortLabelHelp"></a>Protein names are links you can
                             click to get a view of the protein details. Also each protein name
                             has a term in superscript which denotes the role that the protein
                             plays in the interaction. These terms have tooltips associated with them
@@ -521,49 +521,48 @@ Please see separate
                             you can view the full details of the controlled vocabulary term which presents
                             the controlled vocabulary information for that term (eg the details held
                             to define the meaning of the term 'bait').
-                    </p>
-                    <p>Since the items displayed for a search result include many items not
+                        </p>
+                        <p>Since the items displayed for a search result include many items not
                             actually queried for, the items that matched the original search string
                             are highlighted in
-                        <b>
-                            <i>bold italic</i>
-                        </b>. Specifically
+                            <b>
+                                <i>bold italic</i>
+                            </b>. Specifically
                             the *names* of the matching items are highlighted, since these are
                             always displayed in every view.
-                    </p>
-                    <p>Where a protein (for example) might actually occur more than once in
+                        </p>
+                        <p>Where a protein (for example) might actually occur more than once in
                             an experiment, the display is rationalised to avoid multiple presentations
                             of the same experiment - therefore all occurrences within an experiment
                             are gathered together into one experiment view.</p>
-                    <p>
-                        <a NAME="ButtonDefinition"></a>At the bottom of the page are a number
+                        <p>
+                            <a NAME="ButtonDefinition"></a>At the bottom of the page are a number
                             of buttons:
-                    </p>
-                    <ul>
+                        </p>
                         <ul>
+                            <ul>
 
-                            <li>a reset button to uncheck any textboxes;</li>
+                                <li>a reset button to uncheck any textboxes;</li>
 
-                            <li>
+                                <li>
                                     a graph button to display a graph of any selected proteins or interactions, which can be
                                     chosen by clicking the appropriate checkboxes.</li>
+                            </ul>
                         </ul>
-                    </ul>
 
-                </blockquote>
+                    </blockquote>
 
-            </section> <!-- Basic Overview -->
+                </section> <!-- Basic Overview -->
 
-            <section title="Number of Interaction" name="number.interactions">
-                <blockquote>
-                    <p>
+                <section title="Number of Interaction" name="number.interactions">
+                    <blockquote>
+                        <p>
                     The column "number of interactions" indicates:
                     a) for the query protein (first row), in how many distinct interactions it has been observed.
                     b) for all interactors of the query protein (subsequent rows), in how many interactions the current protein (current row) and the query protein (first row) interact.
-                    </p>
-                </blockquote>
-
-
+                        </p>
+                    </blockquote>
+                </section>
             </section> <!-- Search -->
 
 
@@ -1515,7 +1514,6 @@ When set to false, the generated graph will still be in PSI MI format, but might
                 </blockquote>
             </section>   <!-- end targets -->
         </section> <!-- applications -->
-
     </division>
 
 </page>
