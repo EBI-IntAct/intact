@@ -25,6 +25,17 @@ shortlabel: example
 term: Example
 definition: Comment topic used to mark examples, normally used for the explanation of controlled vocabulary terms.
 
+shortlabel: disease
+term: The interaction has a disease association.
+comment: The interaction is shown to have a disease association OR
+Mutations in any or all of the interacting proteins have a disease association.
+
+shortlabel: caution
+term:  warning about errors/ grounds for confusion.
+
+shortlabel: pathway
+term: refers to the metabolic pathway that the interaction/complex is involved in.
+
 shortlabel: isoform-comment
 term: Protein isoform's comment for public view
 
