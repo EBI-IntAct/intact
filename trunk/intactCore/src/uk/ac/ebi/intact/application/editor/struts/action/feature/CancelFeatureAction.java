@@ -74,8 +74,8 @@ public class CancelFeatureAction extends AbstractEditorAction {
         if (view.isNewFeature() && view.getAnnotatedObject() != null) {
             return mapping.findForward("delete");
         }
-        // Sets the destination interaction to return to.
-        setDestinationInteraction(request);
+        // Restore the previous view (interaction view).
+        user.restorePreviousView();
 
         // Back to the interaction editor.
         return mapping.findForward(INT);

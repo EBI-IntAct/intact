@@ -11,9 +11,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.action.DeleteFormAction;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
 import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.Experiment;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,6 +52,12 @@ public class InteractionDeleteAction extends DeleteFormAction {
                                 HttpServletRequest request,
                                 HttpServletResponse response)
             throws Exception {
+        // Handler to the Intact User.
+        EditUserI user = getIntactUser(request);
+
+        // Save the AC of the current view as it will be reset by super.execute
+        String ac = user.getView().getAc();
+
         // Delete the interaction first.
         ActionForward forward = super.execute(mapping, form, request, response);
 
@@ -60,39 +65,32 @@ public class InteractionDeleteAction extends DeleteFormAction {
         if (forward.getPath().equals(mapping.findForward(FAILURE).getPath())) {
             return forward;
         }
-        // Handler to the Intact User.
-        EditUserI user = getIntactUser(request);
-
-        // The current view of the edit session.
-        InteractionViewBean view = (InteractionViewBean) user.getView();
-
-        // No further processing if not returning back to exp.
-        if (!view.isSourceFromAnExperiment()) {
-            // Discard the view as it is not required.
-            user.releaseView();
+        // Need to get back to exp?
+        if (!user.hasPreviousView()) {
+            // Came directly from the search screen.
             return forward;
         }
-        // The AC of the experiment.
-        String ac = view.getSourceExperimentAc();
+        // Need to delete the Experiment-Interaction row from the returning exp.
+        // The experiment we going back to.
+        ExperimentViewBean expView = (ExperimentViewBean) user.popPreviousView();
 
-        // The intact helper to access the persistent layer.
-        IntactHelper helper = user.getIntactHelper();
-        try {
-            // Remove it from the cache first.
-            helper.removeFromCache(helper.getObjectByAc(Experiment.class, ac));
-            // Sets the destination experiment to return to.
-            setDestinationExperiment(request, helper);
-            // Back to the experiment editor.
-            forward = mapping.findForward(EXP);
-        }
-        finally {
-            // Close the helper.
-            helper.closeStore();
-        }
-        return forward;
-    }
+        // Update the experiment-Interaction table.
+        if (expView.deleteInteractionRow(ac)) {
+            // Need to remove from the cache as it contains the deleted interaction.
 
-    protected void releaseView(EditUserI user) {
-        // No op as we still need the view to get back to the exp.
+            // The intact helper to access the persistent layer.
+            IntactHelper helper = user.getIntactHelper();
+            try {
+                // Remove it from the cache first.
+                helper.removeFromCache(expView.getAnnotatedObject());
+            }
+            finally {
+                // Close the helper.
+                helper.closeStore();
+            }
+        }
+        user.setView(expView);
+        // Back to the experiment editor.
+        return mapping.findForward(EXP);
     }
 }

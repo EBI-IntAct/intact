@@ -10,12 +10,10 @@ import uk.ac.ebi.intact.application.commons.business.IntactUserI;
 import uk.ac.ebi.intact.application.commons.search.CriteriaBean;
 import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.model.Feature;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.util.GoServerProxy;
 import uk.ac.ebi.intact.util.NewtServerProxy;
@@ -92,22 +90,38 @@ public interface EditUserI extends IntactUserI, Serializable {
      * Feature editor.
      * @param view the view to set as the current interaction view.
      */
-    public void setView(InteractionViewBean view);
+    public void setView(AbstractEditViewBean view);
+
+    /**
+     * This method is equivalent to calling {@link #setView(Class, boolean)} method
+     * with release parameter set to true (release the current view).
+     */
+    public void setView(Class clazz);
 
     /**
      * Sets the current view for given class. This method is only used in when
      * creating a new object. For editing an existing object, please use
      * {@link #setView(uk.ac.ebi.intact.model.AnnotatedObject)} method.
      * @param clazz The class type is used when creating a view for a new object.
+     * @param release true to release the current view. The current view is
+     * stored on the view stack if this parameter is false
      */
-    public void setView(Class clazz);
+    public void setView(Class clazz, boolean release);
+
+    /**
+     * This method is equivalent to calling {@link #setView(AnnotatedObject, boolean)}
+     * method with release parameter set to true (release the current view).
+     */
+    public void setView(AnnotatedObject annobj);
 
     /**
      * Sets the current view with given Annotated object. For creating a new
      * object, please use {@link #setView(Class)} method.
      * @param annobj the annotated object to set as the current view.
+     * @param release true to release the current view. The current view is
+     * stored on the view stack if this parameter is false
      */
-    public void setView(AnnotatedObject annobj);
+    public void setView(AnnotatedObject annobj, boolean release);
 
     /**
      * Sets the view as a cloned object. This is different to
@@ -119,19 +133,35 @@ public interface EditUserI extends IntactUserI, Serializable {
     public void setClonedView(AnnotatedObject obj);
 
     /**
-     * Sets the current view as a new Feature editor. This separate method is
-     * required as Feature is always accessed via an Interaction and hence
-     * we want to preserve the existing Interaction view to get back to.
+     * Restores the previously stored on the stack. This is a convenient method
+     * to restore previous view without any updates to it. For example, this method
+     * is called upon cancelling the current view.
+     * @return true if the previous view was restored as the current. False is
+     * returned otherwise including where there is no view to go back to (view stack
+     * is empty).
      */
-    public void setViewFeature();
+    public boolean restorePreviousView();
 
     /**
-     * Sets the current view baseed on an existing Feature.
-     * @param feature the current view is based on this.
-     *
-     * @see #setViewFeature()
+     * Pops the previous view from the stack. The current view is not changed.
+     * @return the previous view from the top of the stack. A null object is returned
+     * if the view stack is empty.
      */
-    public void setViewFeature(Feature feature);
+    public AbstractEditViewBean popPreviousView();
+
+    /**
+     * Peeks at the top element of the stack without removing it. The current view
+     * is not changed.
+     * @return the view at the top of the view stack without removing it. A null
+     * object is returned if the view stack is empty.
+     */
+    public AbstractEditViewBean peekPreviousView();
+
+    /**
+     * Returns the status of the view stack.
+     * @return true if there is a view on the stack.
+     */
+    public boolean hasPreviousView();
 
     // Search methods
 

@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.IntactObject;
 
 import javax.servlet.http.HttpServletRequest;
@@ -87,9 +88,17 @@ public class ResultAction extends AbstractEditorAction {
         IntactHelper helper = new IntactHelper();
         // The selected Annotated object.
         AnnotatedObject annobj;
+        // The class for the search.
+        Class clazz = getModelClass(type);
         try {
-            annobj= (AnnotatedObject) helper.getObjectByAc(
-                getModelClass(type), ac);
+            // We need to do this because interactions can be added or removed from
+            // an experiment via the interaction editor. Those interactions that
+            // have been added or removed this way will not be visible until it
+            // is removed and reloaded again.
+            if ((clazz == Experiment.class) && helper.isInCache(clazz, ac)) {
+                helper.removeFromCache(clazz, ac);
+            }
+            annobj = (AnnotatedObject) helper.getObjectByAc(clazz, ac);
         }
         finally {
             helper.closeStore();

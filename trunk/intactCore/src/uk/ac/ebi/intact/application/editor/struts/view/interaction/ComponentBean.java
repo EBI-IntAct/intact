@@ -127,6 +127,18 @@ public class ComponentBean extends AbstractEditKeyBean {
 
     // Read only properties.
 
+    /**
+     * This methods returns the component this bean is based on. This is a convenient
+     * method to call after updating the bean. Ideally this method should be called
+     * after calling to {@link #getComponent(uk.ac.ebi.intact.business.IntactHelper)}
+     * method
+     * @return could be null if this method was called after constructing with a
+     * Protein but without calling getComponent(IntactHelper) method first.
+     */
+    public Component getComponent() {
+        return myComponent;
+    }
+
     public Component getComponent(IntactHelper helper) throws IntactException {
         CvComponentRole newrole = getCvRole(helper);
         // Must have a non null role and interaction for a valid component

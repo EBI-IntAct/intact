@@ -90,11 +90,6 @@ public class InteractionViewBean extends AbstractEditViewBean {
     private transient Set myComponentsToUpdate = new HashSet();
 
     /**
-     * This holds the AC of the experiment from this bean is construected.
-     */
-    private String mySourceExperimentAc;
-
-    /**
      * Keeps a track of features to link
      */
     private List myLinkFeatures = new ArrayList();
@@ -122,7 +117,6 @@ public class InteractionViewBean extends AbstractEditViewBean {
         setKD(Float.valueOf("1.0"));
         setOrganism(null);
         setInteractionType(null);
-        setSourceExperimentAc(null);
         myFeatureSorter = null;
 
         // Reset components and experiments
@@ -138,10 +132,6 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
         // Reset the current interaction with the argument interaction.
         resetInteraction(intact);
-
-        // Set the source experiment to null to indicate that this bean
-        // is not constructed within an experiment.
-        setSourceExperimentAc(null);
 
         // Prepare for Proteins and Experiments for display.
         makeExperimentBeans(intact.getExperiments());
@@ -586,35 +576,6 @@ public class InteractionViewBean extends AbstractEditViewBean {
     }
 
     /**
-     * Returns the AC of the source experiment.
-     *
-     * @return the AC of the source experiment if it is set; othewise
-     *         null is returned.
-     */
-    public String getSourceExperimentAc() {
-        return mySourceExperimentAc;
-    }
-
-    /**
-     * Set the AC of the source experiment.
-     *
-     * @param ac the AC of the source experiment.
-     */
-    public void setSourceExperimentAc(String ac) {
-        mySourceExperimentAc = ac;
-    }
-
-    /**
-     * True when this bean is constructed from an experiment.
-     *
-     * @return true if this bean is constructed from an experiment. For all
-     *         otheer instances, false is returned.
-     */
-    public boolean isSourceFromAnExperiment() {
-        return mySourceExperimentAc != null;
-    }
-
-    /**
      * Returns the state for this editor to clone.
      *
      * @return true for all the persistent interactions (i.e., false for a
@@ -767,6 +728,14 @@ public class InteractionViewBean extends AbstractEditViewBean {
         // Add to the set to update the database later.
         myUnlinkFeatures.add(fb);
         myUnlinkFeatures.add(toFb);
+    }
+
+    /**
+     * @return true only if there are no new features added to the current view.
+     */
+    public boolean hasFeaturesAdded() {
+        // Search among the updated and deleted components.
+        return !(myComponentsToUpdate.isEmpty() && myComponentsToDel.isEmpty());
     }
 
     /**

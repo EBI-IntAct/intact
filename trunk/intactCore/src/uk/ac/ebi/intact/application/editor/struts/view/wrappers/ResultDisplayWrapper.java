@@ -8,11 +8,8 @@ package uk.ac.ebi.intact.application.editor.struts.view.wrappers;
 
 import org.apache.taglibs.display.TableDecorator;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.business.IntactHelper;
 
 import java.text.SimpleDateFormat;
 
@@ -36,13 +33,10 @@ public class ResultDisplayWrapper extends TableDecorator {
      * user will be taken into the search application.
      */
     public String getAc() {
-        AnnotatedObject annotobj = (AnnotatedObject) getObject();
+        ResultRowData rowData = (ResultRowData) getObject();
 
-        // The type for the link..
-        String type = EditorService.getTopic(annotobj.getClass());
-
-        return "<a href=\"" + "javascript:show('" + type + "', '" + annotobj.getShortLabel()
-                + "')\">" + annotobj.getAc() + "</a>";
+        return "<a href=\"" + "javascript:show('" + rowData.getType() + "', '"
+                + rowData.getShortLabel() + "')\">" + rowData.getAc() + "</a>";
     }
 
     /**
@@ -50,31 +44,31 @@ public class ResultDisplayWrapper extends TableDecorator {
      * @return short label.
      */
     public String getShortLabel() {
-        AnnotatedObject annotbj = (AnnotatedObject) getObject();
+        ResultRowData rowData = (ResultRowData) getObject();
 
         // The lock manager to check the lock.
         LockManager lmr = getLockManager();
 
-        if (lmr.hasLock(annotbj.getAc())) {
+        if (lmr.hasLock(rowData.getAc())) {
             // This object has a lock. Get the current user.
             EditUserI user = (EditUserI) getPageContext().getSession().getAttribute(
                     EditorConstants.INTACT_USER);
 
             // The current lock associated with the object.
-            LockManager.LockObject lock = lmr.getLock(annotbj.getAc());
+            LockManager.LockObject lock = lmr.getLock(rowData.getAc());
 
             if (lock != null) {
                 // Check the lock owner with the current user.
                 if (lock.getOwner().equals(user.getUserName())) {
                     // Locked by the same user.
-                    return "<span class=\"owner\">" + getEditorLink(annotbj) + "</span>";
+                    return "<span class=\"owner\">" + getEditorLink(rowData) + "</span>";
                 }
                 // Locked by someone else.
-                return "<span class=\"error\">" + annotbj.getShortLabel() + "</span>";
+                return "<span class=\"error\">" + rowData.getShortLabel() + "</span>";
             }
         }
         // Not locked.
-        return getEditorLink(annotbj);
+        return getEditorLink(rowData);
     }
 
     /**
@@ -82,8 +76,7 @@ public class ResultDisplayWrapper extends TableDecorator {
      * @return the full name as a <code>String</code> for the wrapped object.
      */
     public String getFullName() {
-        AnnotatedObject annotbj = (AnnotatedObject) getObject();
-        return annotbj.getFullName();
+        return ((ResultRowData) getObject()).getFullName();
     }
 
     /**
@@ -91,8 +84,8 @@ public class ResultDisplayWrapper extends TableDecorator {
      * bean is not locked.
      */
     public String getLock() {
-        AnnotatedObject annotbj = (AnnotatedObject) getObject();
-        LockManager.LockObject lock = getLockManager().getLock(annotbj.getAc());
+        ResultRowData rowData = (ResultRowData) getObject();
+        LockManager.LockObject lock = getLockManager().getLock(rowData.getAc());
         if (lock == null) {
             // No owner; no need for the title
             return "<input type=\"text\" size=\"7\" value=\"  ---  \" readonly>";
@@ -110,10 +103,9 @@ public class ResultDisplayWrapper extends TableDecorator {
      * @return the link for the result page; clicking on this link, the
      * user will be taken into the edit page.
      */
-    private String getEditorLink(AnnotatedObject annotobj) {
-        String topic = IntactHelper.getDisplayableClassName(annotobj);
-        return "<a href=secure/edit?ac=" + annotobj.getAc() + "&type="
-                + topic + ">" + annotobj.getShortLabel() + "</a>";
+    private String getEditorLink(ResultRowData rowData) {
+        return "<a href=secure/edit?ac=" + rowData.getAc() + "&type="
+                + rowData.getType() + ">" + rowData.getShortLabel() + "</a>";
     }
 
     private LockManager getLockManager() {

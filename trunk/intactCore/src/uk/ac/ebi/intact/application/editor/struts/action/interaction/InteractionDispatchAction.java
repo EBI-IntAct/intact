@@ -10,14 +10,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.application.editor.business.EditorService;
-import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
-import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.Interaction;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -73,26 +69,15 @@ public class InteractionDispatchAction extends CommonDispatchAction {
         InteractionViewBean view = (InteractionViewBean) user.getView();
 
         // Do we have to return to the experiment editor?
-        if (returnToExperiment(request)) {
-            // The AC of the experiment.
-            String ac = view.getSourceExperimentAc();
-
-            // The helper to access to object for given ac.
-            IntactHelper helper = new IntactHelper();
-
-            // The experiment we have been editing.
-            AnnotatedObject annobj;
-            try {
-                annobj = (AnnotatedObject) helper.getObjectByAc(Experiment.class, ac);
-            }
-            finally {
-                helper.closeStore();
-            }
-            // Set the topic.
-            user.setSelectedTopic(EditorService.getTopic(Experiment.class));
-
+        if (user.hasPreviousView()) {
             // The experiment we going back to.
-            user.setView(annobj);
+            ExperimentViewBean expView = (ExperimentViewBean) user.popPreviousView();
+
+            // Update the experiment-Interaction view.
+            expView.updateInteractionRow((Interaction) view.getAnnotatedObject());
+
+            // Set the tpdated view.
+            user.setView(expView);
 
             // Return to the experiment editor.
             return mapping.findForward(EXP);
@@ -107,24 +92,30 @@ public class InteractionDispatchAction extends CommonDispatchAction {
         return mapping.findForward(RESULT);
     }
 
-    /**
-     * Returns true if the next forward action is back to the experiment editor.
-     * This is applicable to the InteractionView bean only.
-     *
-     * @param request the Http request to access the user.
-     * @return true if the next action path is back to the experiment editor.
-     * @throws SessionExpiredException if the session is expired.
-     */
-    private boolean returnToExperiment(HttpServletRequest request)
-            throws SessionExpiredException {
-        // The current view.
-        AbstractEditViewBean view = getIntactUser(request).getView();
+    // Override to add the saved interaction to the experiment if necessary.
+    public ActionForward save(ActionMapping mapping,
+                              ActionForm form,
+                              HttpServletRequest request,
+                              HttpServletResponse response)
+            throws Exception {
+        // Submit the form. Analyze the forward path.
+        ActionForward forward = super.save(mapping, form, request, response);
 
-        // Check and see if we have to go to the experiment page (only
-        // applicable for an Interaction editor.
-        if (view.getClass().isAssignableFrom(InteractionViewBean.class)) {
-            return ((InteractionViewBean) view).isSourceFromAnExperiment();
+        // Return the forward if it isn't a success.
+        if (!forward.equals(mapping.findForward(SUCCESS))) {
+            return forward;
         }
-        return false;
+        // Handler to the user.
+        EditUserI user = getIntactUser(request);
+
+        // Do we have to return to the experiment editor?
+        if (user.hasPreviousView()) {
+            // The experiment we will be going back to.
+            ExperimentViewBean expView = (ExperimentViewBean) user.peekPreviousView();
+
+            // Update the experiment-Interaction view.
+            expView.updateInteractionRow((Interaction) user.getView().getAnnotatedObject());
+        }
+        return forward;
     }
 }

@@ -14,13 +14,7 @@ import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.ForwardConstants;
-import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.Experiment;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -221,62 +215,6 @@ public abstract class AbstractEditorAction extends Action implements ForwardCons
      */
     protected boolean isPropertyEmpty(DynaActionForm form, String name) {
         return ((String) form.get(name)).trim().length() == 0;
-    }
-
-    /**
-     * Sets the destination experiment to edit. As a pre requisite, the Interaction
-     * view method isSourceFromAnExperiment() must return true.
-     * @param request the Http request to access the user.
-     * @param helper Intact helper to access the persistent system.
-     * @throws SessionExpiredException if the session is expired.
-     * @throws IntactException unable to access the experiment to go back to.
-     */
-    protected void setDestinationExperiment(HttpServletRequest request, IntactHelper helper)
-            throws SessionExpiredException, IntactException {
-        // Handler to the edit user.
-        EditUserI user = getIntactUser(request);
-
-        // The AC of the experiment.
-        String ac = ((InteractionViewBean) user.getView()).getSourceExperimentAc();
-
-        assert ac != null: "Must have an AC to return back to the Experiment";
-
-        // The experiment we have been editing.
-        AnnotatedObject annobj = (AnnotatedObject) helper.getObjectByAc(Experiment.class, ac);
-
-        // Set the topic
-        user.setSelectedTopic(EditorService.getTopic(Experiment.class));
-
-        // The experiment we going back to.
-        user.setView(annobj);
-
-        // Update the search cache with the experiment, so the Cancel from the
-        // experiment will correctly return to the result page with single
-        // experiment (or else it will display the last edited Interaction).
-        user.updateSearchCache(annobj);
-    }
-
-    /**
-     * Sets the destination interaction to edit. As a pre requisite
-     * the existing view must be of Feature type.
-     * @param request the Http request to access the user.
-     * @throws SessionExpiredException if the session is expired.
-     * @throws IntactException unable to access the interaction to go back to.
-     *
-     * <pre>
-     * pre: getIntactUser(request).getView() instanceof FeatureViewBean
-     * </pre>
-     */
-    protected void setDestinationInteraction(HttpServletRequest request)
-            throws SessionExpiredException, IntactException {
-        // Handler to the edit user.
-        EditUserI user = getIntactUser(request);
-
-        // The interaction view to get the AC and the source exp (if any).
-        InteractionViewBean intView = ((FeatureViewBean) user.getView()).getParentView();
-
-        // The interaction we are going back to.
-        user.setView(intView);
     }
 
     /**

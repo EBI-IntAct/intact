@@ -17,7 +17,6 @@ import uk.ac.ebi.intact.application.editor.struts.view.interaction.ComponentBean
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.model.Feature;
-import uk.ac.ebi.intact.business.IntactHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -71,24 +70,15 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
 
-        // Still with the interaction view.
-        InteractionViewBean intView = (InteractionViewBean) user.getView();
-
         // Set the selected topic as other operation use it for various tasks.
         user.setSelectedTopic("Feature");
 
         // The feature we are about to edit.
-        FeatureBean fb = intView.getSelectedFeature();
+        FeatureBean fb = ((InteractionViewBean) user.getView()).getSelectedFeature();
         Feature feature = fb.getFeature();
 
-        // Set the new object as the current edit object.
-        user.setViewFeature(feature);
-
-        // The feature view bean.
-        FeatureViewBean featureView = (FeatureViewBean) user.getView();
-
-        // Set the parent for the feature view.
-        featureView.setParentView(intView);
+        // Set the new object as the current edit object, don't release the pre view
+        user.setView(feature, false);
 
         return forward;
     }
@@ -113,20 +103,14 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
 
-        // Still with the interaction view.
-        InteractionViewBean intView = (InteractionViewBean) user.getView();
-
         // Set the selected topic as other operation use it for various tasks.
         user.setSelectedTopic("Feature");
 
-        // Set the new object as the current edit object.
-        user.setViewFeature();
+        // Set the new object as the current edit object, don't release the pre view
+        user.setView(Feature.class, false);
 
         // The feature view bean.
         FeatureViewBean featureView = (FeatureViewBean) user.getView();
-
-        // Set the parent for the feature view.
-        featureView.setParentView(intView);
 
         // The form.
         InteractionActionForm intform = (InteractionActionForm) form;
@@ -135,13 +119,7 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         ComponentBean selectedComp = intform.getSelectedComponent();
 
         // The component for the feature.
-        IntactHelper helper = new IntactHelper();
-        try {
-            featureView.setComponent(selectedComp.getComponent(helper));
-        }
-        finally {
-            helper.closeStore();
-        }
+        featureView.setComponent(selectedComp.getComponent());
         return mapping.findForward(SUCCESS);
     }
 }
