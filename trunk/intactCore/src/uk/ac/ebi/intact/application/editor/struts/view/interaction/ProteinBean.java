@@ -74,16 +74,10 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
     private String myOrganism;
 
     /**
-     * A flag to indicate that this instance is marked for deletion.
-     */
-//    private boolean myDeleteFlag;
-
-    /**
      * Instantiate an object of this class from a Protein instance.
      * @param protein the <code>Protein</code> object.
      */
-    public ProteinBean(Protein protein, Interaction interaction) {
-        myInteraction = interaction;
+    public ProteinBean(Protein protein) {
         myInteractor = protein;
         mySPAc = getSPAc(protein);
         setOrganism(protein);
@@ -169,6 +163,15 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
 
     public String getOrganism() {
         return myOrganism;
+    }
+
+    /**
+     * Sets the interaction for this bean. This is necessary for a newly created
+     * Interaction as it doesn't exist until it is ready to persist.
+     * @param interaction the interaction to set.
+     */
+    public void setInteraction(Interaction interaction) {
+        myInteraction = interaction;
     }
 
     // Override Objects's equal method.
