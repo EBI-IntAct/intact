@@ -19,10 +19,11 @@
 
     <!-- Repository/OJB file properties -->
     <property name="rep.template.file" value="${template.dir}/repository.template"/>
-    <property name="rep.dest.file" value="${config.dir}/repository.xml"/>
+    <property name="rep.dest.file"     value="${config.dir}/repository.xml"/>
     <property name="ojb.template.file" value="${template.dir}/OJB.template"/>
-    <property name="ojb.dest.file" value="${config.dir}/OJB.properties"/>
-    <property name="ora.props.file" value="${config.dir}/oracle.properties"/>
+    <property name="ojb.dest.file"     value="${config.dir}/OJB.properties"/>
+    <property name="ora.props.file"    value="${config.dir}/oracle.properties"/>
+    <property name="pg.props.file"     value="${config.dir}/postgres.properties"/>
 
     <!-- The non core files. -->
     <property name="non.core.files" value="**/intact/${app.dir}/**"/>
@@ -187,40 +188,35 @@
 
     <!-- =================================================================== -->
 
-    <!-- Convert repository.template to postgres local format. -->
-    <target name="set-pg-local-env"
-        description="Sets postgres environment for running on the local host">
-        <!-- Copy the template to config directory first -->
-        <copy file="${rep.template.file}" tofile="${rep.dest.file}"/>
+    <!-- Convert repository.template to postgres format. -->
+    <target name="set-postgres-env" description="Sets postgres environment">
+        <condition property="postgres.property.missing">
+            <not>
+                <available file="${pg.props.file}"/>
+            </not>
+        </condition>
 
-        <replace file="${rep.dest.file}">
-            <replacefilter token="@DBMS_NAME@" value="PostgreSQL" />
-            <replacefilter token="@DRIVER_NAME@" value="org.postgresql.Driver"/>
-            <replacefilter token="@URL_SUBPROTOCOL@" value="postgresql"/>
-            <replacefilter token="@URL_DBALIAS@" value="${env.USER}"/>
-            <replacefilter token="@USER_NAME@" value="${env.USER}"/>
-            <replacefilter token="@USER_PASSWD@" value=""/>
-        </replace>
-        <antcall target="setup-pg-ojb"/>
-    </target>
-
-    <!-- =================================================================== -->
-
-    <!-- Convert repository.template to postgres remote format. -->
-    <target name="set-pg-remote-env"
-        description="Sets postgres environment to allow access from a remote host">
+        <fail if="postgres.property.missing">
+              Unable to find ${pg.props.file} file;
+              see template/postgres.template file for the format.
+        </fail>
 
         <!-- Copy the template to config directory first -->
         <copy file="${rep.template.file}" tofile="${rep.dest.file}"/>
 
-        <replace file="${rep.dest.file}">
-            <replacefilter token="@DBMS_NAME@" value="PostgreSQL" />
-            <replacefilter token="@DRIVER_NAME@" value="org.postgresql.Driver"/>
-            <replacefilter token="@URL_SUBPROTOCOL@" value="postgresql://${env.HOSTNAME}:5432/${env.USER}"/>
-            <replacefilter token="@URL_DBALIAS@" value=""/>
-            <replacefilter token="@USER_NAME@" value="${env.USER}"/>
-            <replacefilter token="@USER_PASSWD@" value=""/>
+        <replace file="${rep.dest.file}" propertyfile="${pg.props.file}">
+            <replacefilter token="@DBMS_NAME@"       value="PostgreSQL" />
+            <replacefilter token="@DRIVER_NAME@"     value="org.postgresql.Driver"/>
+            <replacefilter token="@URL_SUBPROTOCOL@" property="subprotocol"/>
+            <replacefilter token="@URL_DBALIAS@"     property="dbalias"/>
+            <replacefilter token="@USER_NAME@"       property="username"/>
+            <replacefilter token="@USER_PASSWD@"     property="password"/>
         </replace>
+
+        <!-- Copy the template to config directory -->
+        <copy file="${ojb.template.file}" tofile="${ojb.dest.file}"/>
+
+        <!-- Set the postgres sequence manager -->
         <antcall target="setup-pg-ojb"/>
     </target>
 
@@ -235,7 +231,8 @@
         </condition>
 
         <fail if="oracle.property.missing">
-    Unable to find ${ora.props.file} file; see template/oracle.template file for the format.
+              Unable to find ${ora.props.file} file;
+              see template/oracle.template file for the format.
         </fail>
 
         <!-- Copy the template to config directory first -->

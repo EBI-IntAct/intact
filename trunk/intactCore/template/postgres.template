@@ -1,0 +1,4 @@
+username=YOUR-POSTGRES-USERNAME
+password=YOUR-POSTGRES-PASSWORD
+dbalias=YOUR-POSTGRES-DATABASE-ALIAS, e.g. INTACT-DEVELOPMENT
+subprotocol=e.g. postgresql (local DB) or postgresql://your.machine.url:Portnumber/dbname:username (remote DB)
