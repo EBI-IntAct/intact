@@ -480,7 +480,7 @@
              Interaction editor.
         -->
         <action path="/intDispatch"
-            type="uk.ac.ebi.intact.application.editor.struts.action.interaction.SubmitIntFormAction"
+            type="uk.ac.ebi.intact.application.editor.struts.action.SubmitFormAction"
             name="intForm"
             validate="false"
             scope="session">
@@ -592,14 +592,10 @@
         <action path="/int/prot"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ProteinDispatchAction"
             name="intForm"
-            input="/do/int/fill/form"
+            input="edit.layout"
             validate="true"
-            scope="session">
-            <forward name="success" path="/do/int/fill/form"/>
-            <forward name="failure" path="/do/int/fill/form"/>
-
-            <!-- Link to the feature editor (adding) -->
-            <forward name="feature" path="/do/int/add/feature"/>
+            scope="session"
+            parameter="dispatchProtein">
         </action>
 
         <!-- Action to handle for the Protein search. -->
@@ -613,17 +609,7 @@
             <forward name="failure" path="/do/int/fill/form"/>
         </action>
 
-        <!-- Action to add a new Feature. -->
-        <action path="/int/add/feature"
-            type="uk.ac.ebi.intact.application.editor.struts.action.interaction.AddFeatureAction"
-            name="intForm"
-            validate="true"
-            scope="session"
-            parameter="dispatchFeature">
-            <forward name="success" path="/do/feature/fill/form"/>
-        </action>
-
-        <!-- Action to handle edit/delete of a Feature. -->
+        <!-- Action to handle add/edit/delete of a Feature. -->
         <action path="/int/feature"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.FeatureDispatchAction"
             name="intForm"
@@ -763,11 +749,6 @@
             validate="false"
             scope="session">
             <!-- Back to the results page as we got here from a search result (global) -->
-
-            <!-- Back to the experiment editor (Interaction editor) -->
-<!--            <forward name="experiment" path="/do/exp/fill/form"/>-->
-            <!-- Back to the interaction editor (Feature editor) -->
-<!--            <forward name="interaction" path="/do/int/fill/form"/>-->
         </action>
 
         <!-- Action to handle when the current edit record is deleted. -->
@@ -779,8 +760,6 @@
             <!-- error goes to the global error action -->
             <!-- Back to the experiment editor (Interaction editor) -->
             <forward name="experiment" path="/do/exp/fill/form"/>
-            <!-- Back to the interaction editor (Feature editor) -->
-<!--            <forward name="interaction" path="/do/int/fill/form"/>-->
         </action>
 
         <!-- This common action is for displaying the editor when clicked on

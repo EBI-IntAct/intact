@@ -24,6 +24,7 @@
 
 <%-- Menus to edit a Protein --%>
 <c:set var="rolelist" value="${view.editProteinRoleMenu}"/>
+
 <%-- Menu to add a new Protein --%>
 <c:set var="rolelist_" value="${view.addProteinRoleMenu}"/>
 
@@ -35,11 +36,35 @@
             getServletConfig().getServletContext().getAttribute(Globals.MESSAGES_KEY);
 %>
 
-<%-- Need this to set the dispatch feature flag --%>
-<html:hidden property="dispatchFeature" value='error' />
+<%-- Initialize the dispatch protein flag --%>
+<html:hidden property="dispatchProtein" value="error" />
+
+<%-- Initialize the dispatch feature flag --%>
+<html:hidden property="dispatchFeature" value="error" />
 
 <script language="JavaScript" type="text/javascript">
-    // Set the hidden feature dispatch field when the user clicks on Edit/Delete Feature.
+    // Set the hidden protein dispatch field when the user clicks on
+    // Edit/Save/Delete Protein.
+    function setProteinDispatch(label) {
+        if (label == 'edit') {
+            document.forms[0].dispatchProtein.value='<%=msgres.getMessage(
+                    "int.proteins.button.edit")%>';
+        }
+        else if (label == 'save') {
+            document.forms[0].dispatchProtein.value='<%=msgres.getMessage(
+                    "int.proteins.button.save")%>';
+        }
+        else {
+            document.forms[0].dispatchProtein.value='<%=msgres.getMessage(
+                    "int.proteins.button.delete")%>';
+        }
+        //window.alert(document.forms[0].dispatchProtein.value);
+    }
+
+    // ------------------------------------------------------------------------
+
+    // Set the hidden feature dispatch field when the user clicks on
+    // Add/Edit/Delete Feature.
     function setFeatureDispatch(label) {
         //window.alert(label)
         if (label == 'edit') {
@@ -131,11 +156,13 @@
                <%-- Delete button: common to all --%>
                 <td class="tableCell">
                     <html:submit indexed="true" property="protCmd"
+                        onclick="setProteinDispatch('delete');"
                         titleKey="int.proteins.button.delete.titleKey">
                         <bean:message key="int.proteins.button.delete"/>
                     </html:submit>
                 </td>
 
+                <%-- View Data --%>
                 <td class="tableCell">
                     <nested:write property="shortLabelLink" filter="false"/>
                 </td>
@@ -172,6 +199,7 @@
                 <td class="tableCell">
                     <c:if test="${edit}">
                         <html:submit indexed="true" property="protCmd"
+                            onclick="setProteinDispatch('edit');"
                             titleKey="int.proteins.button.edit.titleKey">
                             <bean:message key="int.proteins.button.edit"/>
                         </html:submit>
@@ -179,13 +207,14 @@
 
                     <c:if test="${notEdit}">
                         <html:submit indexed="true" property="protCmd"
+                            onclick="setProteinDispatch('save');"
                             titleKey="int.proteins.button.save.titleKey">
                             <bean:message key="int.proteins.button.save"/>
                         </html:submit>
                     </c:if>
                 </td>
 
-                <%-- Data --%>
+                <%-- View Data --%>
                 <c:if test="${edit}">
                     <td class="tableCell">
                         <nested:write property="role"/>
@@ -200,56 +229,31 @@
 
                 <c:if test="${save}">
                     <td class="tableCell">
-                        <html:select name="components" property="role" indexed="true"
-                            styleClass="inputRequired">
+                        <nested:select property="role" styleClass="inputRequired">
                             <html:options name="rolelist" />
-                        </html:select>
-                    </td>
-                    <td class="tableCell">
-                        <html:text name="components" size="5" property="stoichiometry" indexed="true"/>
-                    </td>
-                    <td class="tableCell">
-                        <html:select name="components" property="expressedIn" indexed="true">
-                            <html:options name="biosrclist_" />
-                        </html:select>
+                        </nested:select>
                     </td>
                 </c:if>
 
-                <c:if test="${saveNew}">
+                <c:if test="${saveNew or error}">
                     <td class="tableCell">
-                        <html:select name="components" property="role" indexed="true"
-                            styleClass="inputRequired">
+                        <nested:select property="role" styleClass="inputRequired">
                             <html:options name="rolelist_" />
-                        </html:select>
-                    </td>
-                    <td class="tableCell">
-                        <html:text name="components" size="5" property="stoichiometry" indexed="true"/>
-                    </td>
-                    <td class="tableCell">
-                        <html:select name="components" property="expressedIn" indexed="true">
-                            <html:options name="biosrclist_" />
-                        </html:select>
+                        </nested:select>
                     </td>
                 </c:if>
 
-                <c:if test="${error}">
-                    <td class="tableCell">
-                        <html:select name="components" property="role" indexed="true"
-                            styleClass="inputRequired">
-                            <html:options name="rolelist_" />
-                        </html:select>
-                    </td>
-
+                <c:if test="${save or saveNew or error}">
                     <%-- Stoichiometry --%>
                     <td class="tableCell">
-                        <html:text name="components" size="5" property="stoichiometry" indexed="true"/>
+                        <nested:text size="5" property="stoichiometry"/>
                     </td>
 
                     <%-- Expressed In --%>
                     <td class="tableCell">
-                        <html:select name="components" property="expressedIn" indexed="true">
+                        <nested:select property="expressedIn">
                             <html:options name="biosrclist_" />
-                        </html:select>
+                        </nested:select>
                     </td>
                 </c:if>
             </tr>
@@ -268,7 +272,8 @@
             </c:choose>
                <%-- Add feature button: common to all --%>
                 <td class="tableCell">
-                    <html:submit indexed="true" property="protCmd" onclick="setFeatureDispatch('add');"
+                    <html:submit indexed="true" property="protCmd"
+                        onclick="setFeatureDispatch('add');"
                         titleKey="int.proteins.button.feature.add.titleKey">
                         <bean:message key="int.proteins.button.feature.add"/>
                     </html:submit>
@@ -303,10 +308,10 @@
                         </nested:submit>
 
                         <%-- Feature delete button --%>
-                        <nested:submit property="featureCmd" onclick="setFeatureDispatch('delete');"
-                            titleKey="int.proteins.button.feature.delete.titleKey">
-                            <bean:message key="int.proteins.button.feature.delete"/>
-                        </nested:submit>
+<%--                        <nested:submit property="featureCmd" onclick="setFeatureDispatch('delete');"--%>
+<%--                            titleKey="int.proteins.button.feature.delete.titleKey">--%>
+<%--                            <bean:message key="int.proteins.button.feature.delete"/>--%>
+<%--                        </nested:submit>--%>
                     </td>
                     <td class="tableCell">
                         <nested:write property="shortLabel"/>
