@@ -97,4 +97,24 @@ public interface IntactUserIF extends Serializable, HttpSessionBindingListener {
                                         Collection experiments,
                                         int complexExpansion) throws IntactException ;
 
+    /**
+     * Clear all highlight options.
+     */
+    public void resetHighlightOptions () ;
+
+    /**
+     * Add a new option in the option set.<br>
+     * That new option is referenced by its <i>name</i>
+     * @param name name of the option
+     * @param value value taken by the option
+     */
+    public void addHighlightOption (String name, Object value);
+
+    /**
+     * Get the value associated to the option name.
+     * @param name the name of the option we want the value
+     * @return the value associated to the name
+     */
+    public Object getHighlightOption (String name);
+
 } // IntactUser

@@ -83,7 +83,7 @@ public final class SourceAction extends IntactBaseAction {
         user.setKeys(keys);
 
         // Print debug in the log file
-        logger.info ("SourceAction: keys=" + keys +
+        logger.info ("SourceAction: keys=" + someKeys +
                      "\nlogged on in session " + session.getId());
 
         // Remove the obsolete form bean

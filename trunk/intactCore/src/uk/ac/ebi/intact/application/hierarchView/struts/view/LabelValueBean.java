@@ -6,7 +6,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.hierarchView.struts.view;
 
 /*
-* Provided byte the struts-example application.
+* Provided by the struts-example application.
 *
 * ====================================================================
 *

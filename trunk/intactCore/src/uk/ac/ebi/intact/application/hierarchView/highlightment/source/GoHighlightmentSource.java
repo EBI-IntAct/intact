@@ -9,7 +9,9 @@ import uk.ac.ebi.intact.application.hierarchView.struts.view.LabelValueBean;
 
 import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.simpleGraph.Node;
+import uk.ac.ebi.intact.business.IntactException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -21,7 +23,7 @@ import org.apache.log4j.Logger;
 /**
  * Interface allowing to wrap an highlightment source.
  *
- * @author Samuel KERRIEN
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  */
 
 public class GoHighlightmentSource extends HighlightmentSource {
@@ -58,10 +60,11 @@ public class GoHighlightmentSource extends HighlightmentSource {
 
 
     /**
-     * Return a set of keys corresponding to the source and finding in the IntAct database.
-     * if the method send back no keys, the given parameter have not keys for the source.
+     * Return a collection of keys specific to the selected protein and the current source.
+     * e.g. If the source is GO, we will send the collection of GO term owned by the given protein.
+     * Those informations are retreived from the Intact database
      *
-     * @param aProteinAC : a protein identifier (AC)
+     * @param aProteinAC a protein identifier (AC)
      * @return a set of keys (this keys are a String) (this Keys are a String[] which contains the GOterm and a description)
      */
     public Collection getKeysFromIntAct (String aProteinAC, HttpSession aSession) {
@@ -84,11 +87,11 @@ public class GoHighlightmentSource extends HighlightmentSource {
             return null;
         }
 
-        // recup object
+        // no object
         if (result.isEmpty()) return null;
 
         iterator = result.iterator();
-        uk.ac.ebi.intact.model.Interactor interactor = (uk.ac.ebi.intact.model.Interactor) iterator.next();
+        Interactor interactor = (Interactor) iterator.next();
 
         // get Xref collection
         Collection xRef = interactor.getXref();
@@ -113,22 +116,23 @@ public class GoHighlightmentSource extends HighlightmentSource {
 
     /**
      * Create a set of protein we must highlight in the graph given in parameter.
-     * The keys are GO terms, used to know what protein to select.
-     * If a protein of the graph has in attribute one of the GO term in keys,
-     * it's added in the returned Vector.
+     * The protein selection is done according to the source keys stored in the IntactUser.
+     * Keys are GO terms, so we select (and highlight) every protein which awned that GO term.
+     * If the children option is activated, all proteins which owned a children of the selected
+     * GO term are selected.
      *
-     * @param aSession
+     * @param aSession the session where to find selected keys.
      * @param aGraph the graph we want to highlight
-     * @return a set of node to highlight
+     * @return a collection of node to highlight
      */
     public Collection proteinToHightlight (HttpSession aSession, InteractionNetwork aGraph) {
         Collection nodeList = new Vector ();
 
         IntactUserIF user = (IntactUserIF) aSession.getAttribute(Constants.USER_KEY);
-        Collection keys     = user.getKeys();
+        Collection keys   = user.getKeys();
 
-        // Read source option in the session
-        String  check = (String)  aSession.getAttribute (ATTRIBUTE_OPTION_CHILDREN);
+        // get source option
+        String  check = (String) user.getHighlightOption (ATTRIBUTE_OPTION_CHILDREN);
 
         ArrayList listOfNode = aGraph.getOrderedNodes();
         int size = listOfNode.size();
@@ -184,30 +188,30 @@ public class GoHighlightmentSource extends HighlightmentSource {
 
     /**
      * Allows to update the session object with parameters' request.
-     * These parameter are specific of the implementation.
-     * The implementated method will have to use the updateSession method to do the work.
+     * These parameters are specific of the implementation.
      *
      * @param aRequest request in which we have to get parameters to save in the session
      * @param aSession session in which we have to save the parameter
      */
-    public void parseRequest (HttpServletRequest aRequest, HttpSession aSession) {
+    public void saveOptions (HttpServletRequest aRequest, HttpSession aSession) {
 
+        IntactUserIF user = (IntactUserIF) aSession.getAttribute(Constants.USER_KEY);
         String[] result = aRequest.getParameterValues(ATTRIBUTE_OPTION_CHILDREN);
 
-        if (result != null) {
-            aSession.setAttribute(ATTRIBUTE_OPTION_CHILDREN,result[0]);
-        }
-    } // parseRequest
+        if (result != null)
+            user.addHighlightOption (ATTRIBUTE_OPTION_CHILDREN, result[0]);
+    } // saveOptions
 
 
     /**
-     * Return a set of URL allowing to redirect to an end page of the highlightment source
-     * if the method send back no URL, the given parameter is wrong.
+     * Return a collection of URL corresponding to the selected protein and source
+     * Here it produce a list of GO terms and format URLs according to the InGO specification.<br>
      *
-     * @param aProteinAC : a protein identifier (AC)
+     * @param aProteinAC a protein identifier (AC)
      * @return a set of URL pointing on the highlightment source
      */
-    public Collection getUrl (String aProteinAC, HttpSession aSession) {
+    public Collection getSourceUrls (String aProteinAC, HttpSession aSession)
+         throws IntactException {
         Collection urls = new Vector();
 
         // get in the Highlightment properties file where is hosted interpro
@@ -215,8 +219,8 @@ public class GoHighlightmentSource extends HighlightmentSource {
         if (null == props) {
             String msg = "Unable to find the interpro hostname. "+
                          "The properties file '" + StrutsConstants.PROPERTY_FILE_HIGHLIGHTING + "' couldn't be loaded.";
-            logger.warn (msg);
-            return urls; // empty
+            logger.error (msg);
+            throw new IntactException ();
         }
 
         String hostname = props.getProperty("highlightment.source.GO.hostname");
@@ -225,8 +229,8 @@ public class GoHighlightmentSource extends HighlightmentSource {
             String msg = "Unable to find the interpro hostname. "+
                          "Check the 'highlightment.source.GO.hostname' property in the '" +
                          StrutsConstants.PROPERTY_FILE_HIGHLIGHTING + "' properties file";
-            logger.warn (msg);
-            return urls; // empty
+            logger.error (msg);
+            throw new IntactException ();
         }
 
         // Create a collection of label-value object (GOterm, URL to access a nice display in interpro)
@@ -250,30 +254,14 @@ public class GoHighlightmentSource extends HighlightmentSource {
         }
 
         return urls;
-    } // getUrl
+    } // getSourceUrls
 
 
     /**
-     * Generate a key string for a particular selectable item of the highlightment source.
-     * That key string will be used to be sent from the highlightment source to
-     * our the hierarchView module and used to select what protein we will have
-     * to highlight in the interaction graph.
-     * In the GO source, the item is a GO term Node in the GO hierarchy.
-     * Each item in the generated key string is separate by a specific character.
+     * Parse the set of key generate by the source and give back a collection of keys.
      *
-     * @param selectedId the selected id, here a GO term accession id (GO:XXXXXXX)
-     * @return a list of key separates by KEY_SEPARATOR.
-     */
-    public String generateKeys (String selectedId) {
-        return "";
-    } // generateKeys
-
-
-    /**
-     * Parse the set of key generate by the method above and given a set of keys.
-     *
-     * @param someKeys a string which contains some key separates by KEY_SEPARATOR.
-     * @return the splitted version of the key string
+     * @param someKeys a string which contains some key separates by a character.
+     * @return the splitted version of the key string as a collection of String.
      */
     public Collection parseKeys (String someKeys) {
         Collection keys = new Vector ();

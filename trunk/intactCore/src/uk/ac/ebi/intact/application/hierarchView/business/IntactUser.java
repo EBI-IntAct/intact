@@ -51,6 +51,7 @@ public class IntactUser implements IntactUserIF {
     private InteractionNetwork interactionNetwork;
     private ImageBean imageBean;
     private Collection keys;
+    private Map highlightOptions;
 
     public String getAC()               { return (this.AC); }
     public String getDepth()            { return (this.depth); }
@@ -94,6 +95,9 @@ public class IntactUser implements IntactUserIF {
     public IntactUser (String mapping, String dsClass) throws DataSourceException, IntactException {
 
         initUserData();
+
+        // create storage for highlight options
+        highlightOptions = new HashMap();
 
         DAOSource ds = DAOFactory.getDAOSource(dsClass);
 
@@ -191,6 +195,21 @@ public class IntactUser implements IntactUserIF {
 
         return (InteractionNetwork) graph;
     } // subGraph
+
+
+
+    public void resetHighlightOptions () {
+          highlightOptions.clear();
+    }
+
+    public void addHighlightOption (String name, Object value) {
+           highlightOptions.put(name, value);
+    }
+
+    public Object getHighlightOption (String name) {
+        return highlightOptions.get (name);
+    }
+
 
     // Implements HttpSessionBindingListener
 
