@@ -36,13 +36,13 @@
 
         <!-- Form bean for adding a comment (annotation) -->
         <form-bean name="commentAddForm"
-            type="org.apache.struts.action.DynaActionForm">
+            type="uk.ac.ebi.intact.application.editor.struts.view.CommentAddDynaForm">
             <form-property name="topic" type="java.lang.String"/>
             <form-property name="description" type="java.lang.String"/>
         </form-bean>
 
         <!-- Form for editing Annotated info (short label, fullname) data -->
-        <form-bean name="cvinfoForm"
+        <form-bean name="cvInfoForm"
             type="org.apache.struts.action.DynaActionForm">
             <form-property name="ac" type="java.lang.String"/>
             <form-property name="shortLabel" type="java.lang.String"/>
@@ -59,7 +59,7 @@
 
         <!-- Form bean for adding a xref (cross reference) -->
         <form-bean name="xrefAddForm"
-            type="org.apache.struts.action.DynaActionForm">
+            type="uk.ac.ebi.intact.application.editor.struts.view.XrefAddDynaForm">
             <form-property name="database" type="java.lang.String"/>
             <form-property name="primaryId" type="java.lang.String"/>
             <form-property name="secondaryId" type="java.lang.String"/>
@@ -82,6 +82,14 @@
         <form-bean name="bioSourceForm"
             type="org.apache.struts.action.DynaActionForm">
             <form-property name="taxId" type="java.lang.String"/>
+        </form-bean>
+
+        <!-- Form for experiment data -->
+        <form-bean name="experimentForm"
+            type="uk.ac.ebi.intact.application.editor.struts.viewx.ExperimentDynaForm">
+            <form-property name="organism" type="java.lang.String"/>
+            <form-property name="interaction" type="java.lang.String"/>
+            <form-property name="identification" type="java.lang.String"/>
         </form-bean>
 
     </form-beans>
@@ -128,6 +136,19 @@
             <forward name="failure" path="login.error.layout"/>
             <!-- Successful login; present the search page. -->
             <forward name="success" path="search.layout"/>
+
+            <!-- Invalid user -->
+            <exception key="error.invalid.user"
+                type="uk.ac.ebi.intact.business.IntactException"
+                path="login.error.layout"/>
+            <!-- Can't connect to the datasource -->
+            <exception key="error.datasource"
+                type="uk.ac.ebi.intact.persistence.DataSourceException"
+                path="login.error.layout"/>
+            <!-- Unable to load menus from database -->
+            <exception key="error.init.menu"
+                type="uk.ac.ebi.intact.persistence.SearchException"
+                path="login.error.layout"/>
         </action>
 
         <!-- This action is called by tiles when displaying the header. The
@@ -135,11 +156,11 @@
              with this action.
         -->
         <action path="/tiles/headerSwitch"
-            type="uk.ac.ebi.intact.application.editor.struts.action.HeaderSwitchAction">
+            type="uk.ac.ebi.intact.application.editor.struts.action.util.HeaderSwitchAction">
         </action>
 
         <action path="/tiles/editorSwitch"
-            type="uk.ac.ebi.intact.application.editor.struts.action.EditorSwitchAction">
+            type="uk.ac.ebi.intact.application.editor.struts.action.util.EditorSwitchAction">
         </action>
 
         <!-- Process an action for the sidebar. -->
@@ -171,7 +192,7 @@
         <action path="/results"
             name="resultForm"
             type="uk.ac.ebi.intact.application.editor.struts.action.ResultAction"
-            scope="session">
+            scope="request">
         </action>
 
         <!-- Process selection of Submit, Cancel or Delete buttons from edit.jsp. We need
@@ -183,6 +204,7 @@
         <action path="/edit"
             type="uk.ac.ebi.intact.application.editor.struts.action.EditorDispatchAction"
             name="dummyForm"
+            input="edit.layout"
             scope="request"
             parameter="dispatch">
             <forward name="results" path="match.layout"/>
@@ -190,24 +212,35 @@
         </action>
 
         <!-- Handles when the user changes the short label or the full name. -->
-        <action path="/info/edit"
+        <action path="/cv/info"
             type="uk.ac.ebi.intact.application.editor.struts.action.EditorInfoAction"
-            name="cvinfoForm"
-            scope="session">
+            name="cvInfoForm"
+            scope="request">
         </action>
 
-        <!-- Handles when the user clickes on aut complete for tax id. -->
-        <action path="/biosource/taxid"
-            type="uk.ac.ebi.intact.application.editor.struts.action.biosource.TaxIdAction"
+        <!-- Handles when the user clicks on auto complete for tax id. -->
+        <action path="/biosource/info"
+            type="uk.ac.ebi.intact.application.editor.struts.actionx.BioSourceAction"
             name="bioSourceForm"
-            scope="session"
+            scope="request"
             input="edit.layout">
+        </action>
+
+        <!-- Handles when the user clicks to save Experiment info. -->
+        <action path="/experiment/info"
+            type="uk.ac.ebi.intact.application.editor.struts.actionx.ExperimentAction"
+            name="experimentForm"
+            validate="true"
+            input="edit.layout"
+            scope="request">
         </action>
 
         <!-- Adds a new comment or annotation; updates the edit contents -->
         <action path="/comment/add"
             type="uk.ac.ebi.intact.application.editor.struts.action.CommentAddAction"
             name="commentAddForm"
+            validate="true"
+            input="edit.layout"
             scope="request">
         </action>
 
@@ -222,6 +255,8 @@
         <action path="/xref/add"
             type="uk.ac.ebi.intact.application.editor.struts.action.XrefAddAction"
             name="xrefAddForm"
+            validate="true"
+            input="edit.layout"
             scope="request">
         </action>
 
