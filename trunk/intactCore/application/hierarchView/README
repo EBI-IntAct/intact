@@ -16,28 +16,16 @@ INSTALLATION NOTES
 The command line 'ant -projecthelp' allows you to have the description of
 needed Ant task to install hierarchView.
 
-In the following part, I will consider that :
-   - the intactCore database access is already properly configured (cf. intactCore/README)
-   - the Tulip software had been installed (www.tulip-software.org)
-     and the needed environment variable properly set.
-   - a gcc 2.96 compiler is available on you system
-     it will allows to compile the command line tulip access software.
-   - you have already a proper installation of Tomcat (jakarta.apache.org/tomcat)
-   - you have already a proper installation of Axis (xml.apache.org/axis/)
-   - you have Interpro properly running on your tomcat server
-
-
-
 
 PART 0 : PREPARE THE INTACTCORE
 -------------------------------
-
 cf. README file in the intactCore root directory.
 
 
 
 PART 1 : INSTALL THE TULIP WEB SERVICE
 ---------------------------------------
+That web service will allow hierarchView to calculate proteins' coordinates of the interaction network to display.
 
 (1) Install the tulip console (software allowing to interact with the Tulip library)
     -------------------------
@@ -75,7 +63,6 @@ PART 1 : INSTALL THE TULIP WEB SERVICE
 
 PART 2 : INSTALL THE WEB APPLICATION
 ------------------------------------
-
 (1) Configure how to access the web service
     ------------------------------------------
     - edit the 'WEB-INF/config/WebService.properties' file.
@@ -90,11 +77,13 @@ PART 2 : INSTALL THE WEB APPLICATION
 
 (3) Build the application war file
     ------------------------------
-    run 'ant undeploy war deploy', will clean Tomcat and install the web application.
+    run 'ant undeploy war deploy', will clean Tomcat build the application war file and install
+    the web application in the local machine assuming you have $CATALINA_HOME correctly set as
+    an environment variable.
 
 (4) Start Tomcat
     ------------
-    run 'ant start-tomcat'
+    run 'ant start-tomcat' (once)- if this fails, simply go to your tomcat bin directory and start it manually from there.
 
 (5) Test the web service (OPTIONAL)
     -------------------------------
