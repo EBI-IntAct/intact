@@ -73,7 +73,12 @@ public class ProteinAction extends IntactBaseAction {
         String relativeSearchLink = getServlet().getServletContext().getInitParameter("searchLink");
         String relativeHelpLink = getServlet().getServletContext().getInitParameter("helpLink");
         String relativeExpLink = getServlet().getServletContext().getInitParameter("experimentLink");
-        String helpLink = request.getContextPath() + relativeHelpLink;
+        //build the help link out of the context path - strip off the 'search' bit...
+        String ctxtPath = (request.getContextPath());
+        String relativePath = ctxtPath.substring(0, ctxtPath.lastIndexOf("search"));
+        String helpLink = relativePath.concat(relativeHelpLink);
+
+        //String helpLink = request.getContextPath() + relativeHelpLink;
         String searchLink = request.getContextPath() + relativeSearchLink;
         String experimentLink = request.getContextPath() + relativeExpLink;
 
