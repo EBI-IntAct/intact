@@ -6,6 +6,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.hierarchView.business.image;
 
 import org.w3c.dom.Document;
+import org.apache.log4j.Logger;
+import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 
 
 /**
@@ -16,6 +18,8 @@ import org.w3c.dom.Document;
  */
 
 public abstract class ConvertSVG {
+
+    static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
 
     /**
      * Provides a implementation of ConvertSVG by its name.
@@ -28,10 +32,9 @@ public abstract class ConvertSVG {
      *      what implementation you are using.
      *
      * @param aClassName the name of the implementation class you want to get
-     * @return an ConvertSVG object, or null if an error occurs.
+     * @return an ConvertSVG object, or null if an error occurs or the type is wrong.
      */
     public static ConvertSVG getConvertSVG (String aClassName) {
-
         Object object = null;
 
         try {
@@ -41,13 +44,25 @@ public abstract class ConvertSVG {
             // Create an instance of the class invoked
             object = cls.newInstance();
 
-        } catch (Exception e) {
-            // nothing to do, object is already setted to null
+            if (false == (object instanceof ConvertSVG)) {
+                // my object is not from the proper type
+                return null;
+            }
+        } catch (ClassNotFoundException e) {
+            logger.error (e);
+            return null;
+        }
+        catch (InstantiationException ie) {
+            logger.error (ie);
+            return null;
+        }
+        catch (IllegalAccessException iae) {
+            logger.error (iae);
+            return null;
         }
 
         return (ConvertSVG) object;
-
-    } // getConvertSVG
+    }
 
     /**
      * Convert an object Document to a byte []

@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
+import uk.ac.ebi.intact.application.hierarchView.business.Chrono;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ConvertSVG;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 
@@ -42,11 +43,17 @@ public class GenerateImage extends HttpServlet {
      */
     public void doGet(HttpServletRequest aRequest, HttpServletResponse aResponse)
             throws ServletException{
+        ServletOutputStream out = null;
 
         try {
             // get the current user session
             HttpSession session = aRequest.getSession ();
             IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
+            if (user == null) {
+               logger.error ("No user in the session, don't displays interaction network");
+                return;
+            }
+
             ImageBean imageBean = user.getImageBean();
 
             if (null == imageBean) {
@@ -55,7 +62,7 @@ public class GenerateImage extends HttpServlet {
             }
 
             // binary output
-            ServletOutputStream out = aResponse.getOutputStream();
+            out = aResponse.getOutputStream();
 
             // take the parameter in the request
             String format = aRequest.getParameter("format");
@@ -77,46 +84,56 @@ public class GenerateImage extends HttpServlet {
             if (null == convert) {
                 logger.error ("Unable to create the rasterizer " + className);
                 out.println (ERROR_MESSAGE);
-            }
+            } else {
+                logger.info (className + " created");
 
-            logger.info (className + " created");
+                // set MIME type according to user format choice
+                String typeMime = convert.getMimeType();
+                logger.info ("set MIME Type to " + typeMime);
+                aResponse.setContentType(typeMime);
 
-            // set MIME type according to user format choice
-            String typeMime = convert.getMimeType();
-            logger.info ("set MIME Type to " + typeMime);
-            aResponse.setContentType(typeMime);
+                Document document = imageBean.getDocument();
+                if (null != document) {
+                    try {
+                        Chrono chrono = new Chrono ();
+                        chrono.start();
+                        byte[] imageData = convert.convert(document);
+                        chrono.stop();
+                        String msg = "Time for rasterizing the SVG DOM " + chrono;
+                        logger.info(msg);
 
-            Document document = imageBean.getDocument();
-            if (null != document) {
-                try {
-                    byte[] imageData = convert.convert(document);
-                    logger.info ("SVG transcoding done");
+                        logger.info ("SVG transcoding done");
 
-                    if (null != imageData) {
-                        logger.info ("Image file size: " + imageData.length + " bytes");
-                        out.write (imageData);
+                        if (null != imageData) {
+                            logger.info ("Image file size: " + imageData.length + " bytes");
+                            out.write (imageData);
+                        }
+                        else {
+                            logger.error ("No data produced by " + className);
+                            out.println (ERROR_MESSAGE);
+                        }
                     }
-                    else {
-                        logger.error ("No data produced by " + className);
+                    catch (Exception e) {
+                        logger.error ("Couldn't convert the DOM document", e);
                         out.println (ERROR_MESSAGE);
                     }
                 }
-                catch (Exception e) {
-                    logger.error ("Couldn't convert the DOM document", e);
+                else {
+                    logger.error ("SVG DOM document is null");
                     out.println (ERROR_MESSAGE);
                 }
             }
-            else {
-                logger.error ("SVG DOM document is null");
-                out.println (ERROR_MESSAGE);
-            }
-
             out.flush ();
             out.close ();
         }
         catch (IOException e) {
             logger.error ("Error during the image producing process", e);
             return;
+        }
+        finally {
+            try {
+                out.close();
+            } catch (IOException ioe) {}
         }
     } // doGet
 }
