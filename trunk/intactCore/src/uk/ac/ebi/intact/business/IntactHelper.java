@@ -784,7 +784,6 @@ public class IntactHelper implements SearchI, Externalizable {
         dao.closeResults(items);
     }
 
-
     /**
      *  This method provides a means of searching intact objects, within the constraints
      * provided by the parameters to the method. NB this will probably become private, and replaced
@@ -852,6 +851,35 @@ public class IntactHelper implements SearchI, Externalizable {
 
 
         return resultList;
+    }
+
+    /**
+     *  This method provides a means of searching intact objects, within the constraints
+     * provided by the parameters to the method. NB this will probably become private, and replaced
+     * for public access by paramSearch...
+     *
+     * @param searchClass - the class to search
+     * @param searchParam - the parameter to search on (eg field)
+     * @param searchValue - the search value to match with the parameter
+     *
+     * @return Collection - the results of the search (empty Collection if no matches found)
+     *
+     * @exception IntactException - thrown if problems are encountered during the search process
+     */
+    public Collection search(Class searchClass, String searchParam, String searchValue) throws IntactException {
+        if (null == dao) {
+            connect();
+        }
+        //now retrieve an object...
+        try {
+            return dao.find(searchClass, searchParam, searchValue);
+        }
+        catch (SearchException se) {
+            se.printStackTrace();
+            //return to action servlet witha forward to error page command
+            String msg = "intact helper: unable to perform search operation.. \n";
+            throw new IntactException(msg + "reason: " + se.getNestedMessage(), se.getRootCause());
+        }
     }
 
     /**
@@ -1242,48 +1270,50 @@ public class IntactHelper implements SearchI, Externalizable {
      * <b>This method is a temporary method added to get the splice proteins.
      * This will be removed shortly once the necessary changes are performed to
      * get all the splice proteins. Only the editor uses this method</b>
+     *
+     * THIS METHOD is NO LONGER needed.
      */
-    public Collection getSpliceProteinsByXref(String primaryId)
-            throws IntactException {
-        // The results to return.
-        Collection results = new ArrayList();
-
-        // Proteins retrieved via xrefs.
-        Collection proteins = getObjectsByXref(Protein.class, primaryId);
-
-        // Empty if no protein is found for the primary id.
-        if (proteins.isEmpty()) {
-            // An empty collection if no proteins found.
-            return results;
-        }
-        if (proteins.size() > 1) {
-            return getObjectsByXref(Protein.class, primaryId);
-        }
-        // The primary protein.
-        Protein protein = (Protein) proteins.iterator().next();
-
-        // Add the 'primary' protein.
-        results.add(protein);
-
-        // All splice proteins have 'this' protein as the primary id.
-        Collection spProteins = search(Xref.class.getName(), "primaryId",
-                protein.getAc());
-
-        // The iso-form to check for splice or not.
-        CvXrefQualifier isoForm = (CvXrefQualifier) getObjectByLabel(
-                CvXrefQualifier.class, "isoform-parent");
-
-        // Loop through proteins collection; only add the splice proteins.
-        for (Iterator iterator = spProteins.iterator(); iterator.hasNext();) {
-            Xref xref = (Xref) iterator.next();
-            // Filter out proteins which aren't iso-forms.
-            if (xref.getCvXrefQualifier().equals(isoForm)) {
-                results.addAll(search(Protein.class.getName(), "ac",
-                        xref.getParentAc()));
-            }
-        }
-        return results;
-    }
+//    public Collection getSpliceProteinsByXref(String primaryId)
+//            throws IntactException {
+//        // The results to return.
+//        Collection results = new ArrayList();
+//
+//        // Proteins retrieved via xrefs.
+//        Collection proteins = getObjectsByXref(Protein.class, primaryId);
+//
+//        // Empty if no protein is found for the primary id.
+//        if (proteins.isEmpty()) {
+//            // An empty collection if no proteins found.
+//            return results;
+//        }
+//        if (proteins.size() > 1) {
+//            return getObjectsByXref(Protein.class, primaryId);
+//        }
+//        // The primary protein.
+//        Protein protein = (Protein) proteins.iterator().next();
+//
+//        // Add the 'primary' protein.
+//        results.add(protein);
+//
+//        // All splice proteins have 'this' protein as the primary id.
+//        Collection spProteins = search(Xref.class.getName(), "primaryId",
+//                protein.getAc());
+//
+//        // The iso-form to check for splice or not.
+//        CvXrefQualifier isoForm = (CvXrefQualifier) getObjectByLabel(
+//                CvXrefQualifier.class, "isoform-parent");
+//
+//        // Loop through proteins collection; only add the splice proteins.
+//        for (Iterator iterator = spProteins.iterator(); iterator.hasNext();) {
+//            Xref xref = (Xref) iterator.next();
+//            // Filter out proteins which aren't iso-forms.
+//            if (xref.getCvXrefQualifier().equals(isoForm)) {
+//                results.addAll(search(Protein.class.getName(), "ac",
+//                        xref.getParentAc()));
+//            }
+//        }
+//        return results;
+//    }
 
     /** Searches for a unique Object by classname and Xref.
      *  Currently this searches only by primaryId.

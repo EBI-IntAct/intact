@@ -371,7 +371,9 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         //PersistenceBrokerFactory.releaseInstance(broker);
         checkForOpenStore();
         try {
-            broker.close();
+            if (!broker.isClosed()) {
+                broker.close();
+            }
 
             //clean up the ODMG stuff too
             db.close();
@@ -981,13 +983,24 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
     }
 
+    public Collection find(String type, String col, String val) throws SearchException {
+        try {
+            return find(Class.forName(type), col, val);
+
+        } catch (ClassNotFoundException c) {
+            //problem finding the class to search on....
+            String msg = "search failed: problem executing query - class to search not found! ";
+            logger.info(msg);
+            throw new SearchException(msg, c);
+        }
+    }
 
     /**
      *   <p>This method searches the DB based on the information in the
      *   parameters. Note that this only supports a single parameter
      *   (simple) search at present - bulk searches are TBD </p>
      *
-     * @param type - the class name (ie table) to be searched
+     * @param searchClass - the class to be searched
      * @param col - the parameter (column name) to search on (usually ac number or name)
      * @param val - the value of the search parameter. If null, then all items matching the class name will be returned
      *
@@ -997,22 +1010,16 @@ public class ObjectBridgeDAO implements DAO, Serializable {
      * @exception NullPointerException thrown if the type is not specified
      *
      */
-    public Collection find(String type, String col, String val) throws SearchException {
+    public Collection find(Class searchClass, String col, String val) throws SearchException {
 
         checkForOpenStore();
 //        Query query = null;
         Collection results = new ArrayList();
-        Class searchClass = null;
 
         //debug info..
         long timer = 0;
 
-        //first check the params
-        if (type == null)
-            throw new NullPointerException("can't search with a null type!");
-
         if (col == null) {
-
             //no table column
             String msg = "search failed: no search parameter specified in request";
             logger.info(msg);
@@ -1020,16 +1027,9 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         }
 
         try {
-
-            searchClass = Class.forName(type);
             //should now call getConcreteClasses to obtain the concrete
             //Class instances we should build if necessary....
-            //System.out.println("search: requested for Class " + searchClass.getName());
             Collection classesToSearch = getConcreteClasses(searchClass);
-            //System.out.println("search: Concrete classes found:");
-            //for (Iterator iter = classesToSearch.iterator(); iter.hasNext();) {
-                //System.out.println(((Class) iter.next()).getName());
-           //}
 
             Criteria crit = null;
 
@@ -1112,7 +1112,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                     queries.add(new QueryByCriteria(clazz, crit));
                 }
             }
-            logger.info("query by criteria built OK: " + type + " " + col + " " + val);
+            logger.info("query by criteria built OK: " + col + " " + val);
 
             //simple timing
             //System.gc();
@@ -1152,15 +1152,6 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 //            logger.info("class: " + query.getSearchClass().getName() + "\n");
 //            logger.info("attribute requested: " + query.getRequestedAttribute() + "\n");
             throw new SearchException(msg, pbe);
-
-        } catch (ClassNotFoundException c) {
-
-            //problem finding the class to search on....
-            String msg = "search failed: problem executing query - class to search not found! ";
-            logger.info(msg);
-            throw new SearchException(msg, c);
-
-
         }
 
         //Possible that only PROXIES have been returned - if so then we
