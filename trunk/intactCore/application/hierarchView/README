@@ -55,8 +55,6 @@ In the following part, I will consider that :
         * 'webService.adress' with the url of your Axis installation.
         * 'webService.console.location' with the absolute path to the console you
           have compiled.
-     - run 'Ant deploy-ws', will generate needed file and deploy the web service on
-      your Axis installation
 
 
 (4) set your Linux X11 system
@@ -89,7 +87,7 @@ In the following part, I will consider that :
 
 
 (8) Test the web service (OPTIONAL)
-    ---------------------
+    -------------------------------
     run 'ant start-ws', to start the tulip web service.
     You don't need to do that step to use hierarchView.
     By running 'ant test-ws', you should get the sended TLP
