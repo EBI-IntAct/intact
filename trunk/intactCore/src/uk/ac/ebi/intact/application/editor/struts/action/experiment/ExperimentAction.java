@@ -66,6 +66,6 @@ public class ExperimentAction extends AbstractEditorAction {
         view.setInter(interaction);
         view.setIdent(identification);
 
-        return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
+        return mapping.findForward(FORWARD_SUCCESS);
     }
 }

@@ -70,6 +70,6 @@ public class ResultAction extends AbstractEditorAction {
         LOGGER.info("Numner of annotations: " + annobj.getAnnotation().size());
         LOGGER.info("Number of xrefs: " + annobj.getXref().size());
 
-        return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
+        return mapping.findForward(FORWARD_SUCCESS);
     }
 }

@@ -81,6 +81,6 @@ public class XrefEditAction extends AbstractEditorAction {
             // Unknown operation; should never get here.
             assert false;
         }
-        return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
+        return mapping.findForward(FORWARD_SUCCESS);
     }
 }
