@@ -31,7 +31,19 @@ Search class: <c:out value="${user.searchClass}"/>
         <th class="tableCellHeader" width="70%">Full Name</th>
     </tr>
     <nested:iterate property="items">
-    <tr>
+        <!-- Different styles for even or odd rows -->
+        <c:choose>
+            <c:when test="${row % 2 == 0}">
+                <tr class="tableRowEven">
+            </c:when>
+            <c:otherwise>
+                <tr class="tableRowOdd">
+            </c:otherwise>
+        </c:choose>
+
+        <!-- Increment row by 1 -->
+        <c:set var="row" value="${row + 1}"/>
+
         <td class="tableCell">
             <nested:link page="/do/results"
                 paramId="shortLabel" paramProperty="shortLabel">
