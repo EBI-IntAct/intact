@@ -18,9 +18,6 @@
 <jsp:useBean id="user" scope="session"
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
-Search class: <c:out value="${user.searchClass}"/>
-&nbsp;Query: <c:out value="${user.searchQuery}"/>
-
 <%-- Need to to save this in a page context for display library to access --%>
 <c:set var="searchlist" value="${user.searchResult}"/>
 
