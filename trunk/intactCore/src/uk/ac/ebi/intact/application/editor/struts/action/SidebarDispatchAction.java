@@ -70,6 +70,9 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         // Handler to the Intact User.
         EditUserI user = super.getIntactUser(request);
 
+        // Remove any locks held by the user.
+        user.releaseLock(getLockManager());
+
         // The form to access input data.
         DynaActionForm theForm = (DynaActionForm) form;
 
@@ -134,13 +137,16 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
                                 HttpServletResponse response)
             throws Exception {
         // Handler to the Intact User.
-        EditUserI user = super.getIntactUser(request);
+        EditUserI user = getIntactUser(request);
+
+        // Remove any locks held by the user.
+        user.releaseLock(getLockManager());
 
         DynaActionForm theForm = (DynaActionForm) form;
         String topic = (String) theForm.get("topic");
 
         // The class name associated with the topic.
-        String classname = super.getIntactService().getClassName(topic);
+        String classname = getIntactService().getClassName(topic);
         // The current topic.
         user.setSelectedTopic(topic);
 
@@ -151,12 +157,6 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         // Set the new object as the current edit object. This has to be
         // done before removeMenu (it relies on current cv object).
         user.updateView(annobj);
-        // Need to load the current menu from the database.
-//        user.getView().removeMenu();
-        // Add to the view page.
-//        user.addToSearchCache(annobj);
-        // Started creating a new record.
-//        user.setEditNew(true);
         return mapping.findForward("create");
     }
 
