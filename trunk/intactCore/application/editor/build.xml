@@ -270,7 +270,7 @@
         <delete file="${dist.dir}/${war.file}" quiet="true"/>
 
         <!-- Generate editor topics -->
-        <!--        <antcall target="gen-editor-topics"/>-->
+        <antcall target="gen-editor-topics"/>
 
         <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
             <fileset dir="${temp.web}">
