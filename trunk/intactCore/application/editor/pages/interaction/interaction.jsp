@@ -14,17 +14,16 @@
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
-<%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic"%>
 
 <jsp:useBean id="user" scope="session"
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
-<%-- Set the drop down lists --%>
-<c:set var="menus" value="${user.view.editorMenus}"/>
+<%-- The current view --%>
+<c:set var="view" value="${user.view}"/>
 
 <%-- Individual menu lists --%>
-<c:set var="organismlist" value="${menus['Organisms']}"/>
-<c:set var="interactiontypelist" value="${menus['InteractionTypes']}"/>
+<c:set var="organismmenu" value="${view.organismMenu}"/>
+<c:set var="intertypemenu" value="${view.interactionTypeMenu}"/>
 
 <%-- Class wide declarations. --%>
 <%!
@@ -45,29 +44,21 @@
 <html:form action="/interaction/info">
     <table width="50%" border="0" cellspacing="1" cellpadding="2">
 
-        <%-- Only display validation error messages relevant to this page. --%>
-        <logic:messagesPresent property="int.validation">
-            <tr class="tableRowOdd">
-                <td class="tableErrorCell" colspan="4">
-                    <html:errors/>
-                </td>
-            </tr>
-        </logic:messagesPresent>
-
         <tr class="tableRowHeader">
             <th class="tableCellHeader">Action</th>
             <th class="tableCellHeader">kD</th>
             <th class="tableCellHeader">
                 <a href="javascript:showInteraction('CvInteractionType', 2)">
-                    Interaction Type
+                    <bean:message key="int.label.cvtype"/>
                 </a>
             </th>
             <th class="tableCellHeader">
                 <a href="javascript:showInteraction('BioSource', 3)">
-                    Organism
+                    <bean:message key="int.label.biosrc"/>
                 </a>
             </th>
         </tr>
+
         <tr class="tableRowEven">
             <td class="tableCell">
                 <html:submit titleKey="button.save.titleKey">
@@ -82,17 +73,18 @@
 
             <td class="tableCell" align="left" valign="top">
                 <html:select property="interactionType" name="<%=formName%>">
-                    <html:options name="interactiontypelist" />
+                    <html:options name="intertypemenu" />
                 </html:select>
                 <html:errors property="int.interaction"/>
             </td>
 
             <td class="tableCell" align="left" valign="top">
                 <html:select property="organism" name="<%=formName%>">
-                    <html:options name="organismlist" />
+                    <html:options name="organismmenu" />
                 </html:select>
                 <html:errors property="int.organism"/>
             </td>
         </tr>
+
     </table>
 </html:form>
