@@ -159,13 +159,13 @@ public class AnnotatedObjectProxy  extends BasicObjectProxy implements Annotated
         realSubject().setCuratorAc( ac );
     }
 
-    public AnnotatedObject update ( IntactHelper helper ) throws IntactException {
-        return realSubject().update( helper );
-    }
-
-    public Annotation updateUniqueAnnotation ( CvTopic topic, String description, Institution owner ) {
-        return realSubject().updateUniqueAnnotation( topic, description, owner );
-    }
+//    public AnnotatedObject update ( IntactHelper helper ) throws IntactException {
+//        return realSubject().update( helper );
+//    }
+//
+//    public Annotation updateUniqueAnnotation ( CvTopic topic, String description, Institution owner ) {
+//        return realSubject().updateUniqueAnnotation( topic, description, owner );
+//    }
 
     public boolean equals ( Object o ) {
         return realSubject().equals( o );

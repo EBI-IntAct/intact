@@ -76,9 +76,9 @@ public interface AnnotatedObject extends BasicObject {
 
     public void setCuratorAc(String ac);
 
-    public AnnotatedObject update(IntactHelper helper) throws IntactException;
-
-    public Annotation updateUniqueAnnotation(CvTopic topic, String description, Institution owner);
+//    public AnnotatedObject update(IntactHelper helper) throws IntactException;
+//
+//    public Annotation updateUniqueAnnotation(CvTopic topic, String description, Institution owner);
 
     public boolean equals (Object o);
 
