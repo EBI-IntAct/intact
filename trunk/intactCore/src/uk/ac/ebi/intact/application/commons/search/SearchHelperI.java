@@ -20,6 +20,21 @@ import java.util.List;
 public interface SearchHelperI {
 
     /**
+     * Peforms a simple search in the IntAct data for given search class and
+     * value. This search is limited to AC and short label fields.
+     * @param searchClass the search class to perform the search on
+     * (e.g., Experiment)
+     * @param query the search query; doesn't support mupltiple comma
+     * separated values.
+     * @param user the user to invoke search on.
+     * @return a collection of Intact objects of same class as
+     * <code>searchClass</code> or an empty collection if none found.
+     * @throws IntactException for any errors in searching the persistent system.
+     */
+    public Collection doLookupSimple(String searchClass, String query,
+                                     IntactUserI user) throws IntactException;
+
+    /**
      * Search in the IntAct data for a colleciton of object (type=searchClass).
      * The objects found must match with the value given by the user (ac, shortlabel ...).
      *
