@@ -74,11 +74,11 @@ public class ExperimentViewBean extends AbstractEditViewBean {
 
         // Update the experiment object.
         exp.setBioSource(biosource);
-        exp.setBioSourceAc(biosource.getAc());
+//        exp.setBioSourceAc(biosource.getAc());
         exp.setCvInteraction(interaction);
-        exp.setCvInteractionAc(interaction.getAc());
+//        exp.setCvInteractionAc(interaction.getAc());
         exp.setCvIdentification(ident);
-        exp.setCvIdentificationAc(ident.getAc());
+//        exp.setCvIdentificationAc(ident.getAc());
         super.persist(user);
     }
 
@@ -88,21 +88,18 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     }
 
     // Null for any of these values will throw an exception.
-    public void validate(EditUserI user) throws ValidationException {
+    public void validate(EditUserI user) throws ValidationException,
+            SearchException {
+        super.validate(user);
         // Get the objects using their short label.
-        try {
-            BioSource biosource = (BioSource) user.getObjectByLabel(
-                    BioSource.class, myOrganism);
-            CvInteraction interaction = (CvInteraction) user.getObjectByLabel(
-                    CvInteraction.class, myInteraction);
-            CvIdentification ident = (CvIdentification) user.getObjectByLabel(
-                    CvIdentification.class, myIdentification);
-            // We should have these proper objects.
-            if ((biosource == null) || (interaction == null) || (ident == null)) {
-                throw new ExperimentException();
-            }
-        }
-        catch (SearchException ie) {
+        BioSource biosource = (BioSource) user.getObjectByLabel(
+                BioSource.class, myOrganism);
+        CvInteraction interaction = (CvInteraction) user.getObjectByLabel(
+                CvInteraction.class, myInteraction);
+        CvIdentification ident = (CvIdentification) user.getObjectByLabel(
+                CvIdentification.class, myIdentification);
+        // We should have these proper objects.
+        if ((biosource == null) || (interaction == null) || (ident == null)) {
             throw new ExperimentException();
         }
     }
