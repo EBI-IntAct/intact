@@ -1461,7 +1461,7 @@ public class IntactHelper implements SearchI, Externalizable {
 
         Collection resultList = null;
 
-        resultList = this.search(clazz.getName(), "shortLabel", label);
+        resultList = this.search(clazz, "shortLabel", label);
 
         if (resultList.isEmpty()) {
             result = null;
