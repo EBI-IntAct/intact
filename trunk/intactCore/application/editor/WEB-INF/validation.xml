@@ -9,6 +9,10 @@
             <field property="username" depends="required">
          	    <arg0 key="loginForm.label.username"/>
             </field>
+
+            <field property="password" depends="required">
+         	    <arg0 key="loginForm.label.password"/>
+            </field>
         </form>
 
         <form name="cvInfoForm">
