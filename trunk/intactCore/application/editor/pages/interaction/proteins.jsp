@@ -26,19 +26,9 @@
 <%-- Menu to add a new Protein --%>
 <c:set var="rolelist_" value="${view.addProteinRoleMenu}"/>
 
-<style type="text/css">
-    td.proteinEditCell {
-        font-size: 8pt;
-        font-family: Arial, verdana, sans-serif;
-        text-align: left;
-        vertical-align: top;
-        background-color: #ff8c00
-    }
 
-    td.proteinErrorCell {
-        color: white;
-        background-color: red
-    }
+<style type="text/css">
+    <%@ include file="/layouts/styles/editor.css" %>
 </style>
 
 <h3>Proteins</h3>
