@@ -13,6 +13,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
 import org.apache.struts.validator.DynaValidatorForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
+import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 
@@ -88,9 +89,8 @@ public class CvDynaForm extends DynaValidatorForm {
                             new ActionError("error.xref.database"));
                     return errors;
                 }
-                String pid = xb.getPrimaryId();
                 // Primary id is required.
-                if (pid.trim().length() == 0) {
+                if (AbstractEditorAction.isPropertyEmpty(xb.getPrimaryId())) {
                     errors = new ActionErrors();
                     errors.add(ActionErrors.GLOBAL_ERROR,
                             new ActionError("error.xref.pid"));
