@@ -14,10 +14,11 @@
   --%>
 
 <%@ page language="java"%>
+
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic"%>
-<%@ taglib uri="/WEB-INF/tld/editor.tld" prefix="editor" %>
+<%@ taglib uri="/WEB-INF/tld/editor.tld" prefix="editor"%>
 
 <jsp:useBean id="user" scope="session"
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
@@ -31,7 +32,6 @@
     // To Allow access to Editor Service.
     EditorService service = (EditorService)
             application.getAttribute(EditorConstants.EDITOR_SERVICE);
-    String helpLink = service.getHelpLinkAsHTML("short.labels");
 %>
 
 <script language="JavaScript" type="text/javascript">
@@ -72,7 +72,7 @@
             </th>
             <th class="tableCellHeader">Full Name</th>
             <th>
-                <%=helpLink%>
+                <editor:helpLink tag="short.labels"/>
             </th>
         </tr>
         <tr class="tableRowEven">
