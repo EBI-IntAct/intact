@@ -1,0 +1,8 @@
+shortlabel: gene-name
+term: Gene name
+definition: A current gene name for the object. Usually defined by a normative body, e.g. HUGO for human genes.
+
+shortlabel: gene-name-synonym
+term: Gene name synonym
+definition: A synonym for a gene name.
+
