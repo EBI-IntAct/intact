@@ -33,19 +33,20 @@ public class GraphBuildThread extends Thread {
 	static transient Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
 
 	// the static values are set by the GraphManager !
-	static IntactUserI intactUser;
 	static Cache cache;
 	static Set running;
 
 	private Integer toProcceed;
+	private IntactUserI user;
 
 	/**
 	 * Creates new Thread to build a graph for the given ID
 	 * 
 	 * @param i the graphID
 	 */
-	public GraphBuildThread(Integer i) {
+	public GraphBuildThread(Integer i, IntactUserI user) {
 		toProcceed = i;
+		this.user = user;
 	}
 
 	public void run() {
@@ -79,7 +80,7 @@ public class GraphBuildThread extends Thread {
 	 */
 	private GraphData buildGraph(Integer graphid) throws SQLException {
 		logger.info("build graph for " + graphid);
-		Statement stm = intactUser.getDBConnection().createStatement();
+		Statement stm = user.getDBConnection().createStatement();
 		ResultSet set = null;
 		IncidenceListGraph graph = null;
 		Vertex v1, v2;
