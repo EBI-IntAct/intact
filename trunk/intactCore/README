@@ -74,6 +74,18 @@ remote postgres databases as well as a remote oracle DB. Thus intact is based ar
 have Windows then everything can still be used provided you have cygwin installed.
 
 
+For postgres 7.x:
+    To allow all computer in the local network to connect to the database you have to configure the file 'pg_hba.conf'
+    in your postgres directory.
+    e.g:
+    # Allow any user from any host with IP address 127.x.x.x to connect to database
+    # TYPE  DATABASE    USER        IP-ADDRESS        IP-MASK           METHOD
+      host    all         all         127.0.0.0         255.0.0.0   trust
+
+    See also http://www.postgresql.org/docs/7.x/interactive/client-authentication.html#AUTH-PG-HBA-CONF
+    (replace the '7.x' in the URL with your postgres version)
+
+    
 2. Setup
 ---------
 a) Firstly download the intact software from http://sourceforge.net/projects/intact, by following the
