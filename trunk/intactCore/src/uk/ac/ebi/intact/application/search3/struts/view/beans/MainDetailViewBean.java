@@ -424,9 +424,10 @@ public class MainDetailViewBean extends AbstractViewBean {
      */
     public Component getComponent(Protein protein, Interaction interaction) {
 
+        //go through the Components holding the Protein and pull out the Interaction match...
         for(Iterator it = protein.getActiveInstances().iterator(); it.hasNext();) {
             Component comp = (Component)it.next();
-            if(comp.getInteractor().equals(protein)) return comp;
+            if(comp.getInteraction().equals(interaction)) return comp;
         }
 
         return null;
