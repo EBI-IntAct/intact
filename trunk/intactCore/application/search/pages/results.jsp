@@ -152,12 +152,8 @@
                     <bean:message key="results.button.expand.contract"/>
                 </html:submit>
                 <html:submit property="action"
-                    onclick="return checkAC(this.form, 'Please select an AC to Expand All')">
+                    onclick="return checkAC(this.form, 'Please select an AC to Expand in Full')">
                     <bean:message key="results.button.expand.all"/>
-                </html:submit>
-                <html:submit property="action"
-                    onclick="return checkAC(this.form, 'Please select an AC to Contract All')">
-                    <bean:message key="results.button.contract.all"/>
                 </html:submit>
                 <html:button property="action"
                     onclick="writeToWindow(
