@@ -5,7 +5,6 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.simpleGraph;
 
-import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.model.BasicObject;
 
@@ -23,7 +22,7 @@ public class Graph extends BasicGraph implements GraphI {
     private HashMap nodes = new HashMap();
 
     /* Edges can be repeated */
-    private Vector edges = new Vector();
+    private ArrayList edges = new ArrayList();
 
     /* Record visited Components */
     private HashSet visited = new HashSet();
@@ -32,7 +31,7 @@ public class Graph extends BasicGraph implements GraphI {
     // access methods for attributes
     public void addNode(NodeI aNode) {
         nodes.put(aNode.getAc(),aNode);
-    };
+    }
 
     public Node addNode(Interactor anInteractor){
         Node node = (Node) nodes.get(anInteractor.getAc());
@@ -48,7 +47,7 @@ public class Graph extends BasicGraph implements GraphI {
 
     public void addEdge(EdgeI anEdge) {
         edges.add(anEdge);
-    };
+    }
 
     public HashMap getNodes() {
         return nodes;
@@ -64,7 +63,7 @@ public class Graph extends BasicGraph implements GraphI {
     public void addVisited(BasicObject anElement){
         visited.add(anElement.getAc());
         System.out.println("Marking: " + anElement.getAc());
-    };
+    }
 
     /** return true if a Component has been visited during graph exploration.
      *
@@ -77,7 +76,7 @@ public class Graph extends BasicGraph implements GraphI {
         StringBuffer s = new StringBuffer();
 
         for (int i = 0; i < edges.size(); i++) {
-            EdgeI e = (EdgeI) edges.elementAt(i);
+            EdgeI e = (EdgeI) edges.get(i);
             s.append(e.getNode1().getAc());
             s.append("-> ");
             s.append(e.getNode2().getAc());
