@@ -6,16 +6,20 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action;
 
-import org.apache.struts.action.*;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.DynaActionForm;
+import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.model.AnnotatedObject;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
-
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
-import uk.ac.ebi.intact.model.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Action class for sidebar events. Actions are dispatched
@@ -143,12 +147,12 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         // done before removeMenu (it relies on current cv object).
         user.updateView(annobj);
         // Need to load the current menu from the database.
-        user.getView().removeMenu();
+//        user.getView().removeMenu();
         // Add to the view page.
-        user.addToSearchCache(annobj);
+//        user.addToSearchCache(annobj);
         // Started creating a new record.
 //        user.setEditNew(true);
-        return mapping.findForward(FORWARD_SUCCESS);
+        return mapping.findForward("created");
     }
 
     // Helper methods
