@@ -12,7 +12,6 @@ import javax.servlet.http.HttpSessionBindingListener;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpServletRequest;
 
-import uk.ac.ebi.intact.persistence.*;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
@@ -20,7 +19,11 @@ import uk.ac.ebi.intact.business.DuplicateLabelException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.*;
 import uk.ac.ebi.intact.application.editor.struts.view.ResultBean;
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
+import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.util.GoTools;
+import uk.ac.ebi.intact.persistence.DataSourceException;
+import uk.ac.ebi.intact.persistence.DAOSource;
+import uk.ac.ebi.intact.persistence.DAOFactory;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.beanutils.DynaBean;
 import org.apache.log4j.Logger;
@@ -186,7 +189,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * @param user the user
      * @param password the password of <code>user</code>.
      *
-     * @exception DataSourceException for error in getting the data source; this
+     * @exception uk.ac.ebi.intact.persistence.DataSourceException for error in getting the data source; this
      *  could be due to the errors in repository files.
      * @exception IntactException for errors in creating IntactHelper; possibly
      * due to an invalid user.
@@ -257,10 +260,11 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return mySelectedTopic;
     }
 
-    public Institution getInstitution() throws DuplicateLabelException {
+    public Institution getInstitution() {
         if (myInstitution == null) {
             try {
-                Collection result = myHelper.search("uk.ac.ebi.intact.model.Institution", "ac", "*");
+                Collection result = myHelper.search(
+                        "uk.ac.ebi.intact.model.Institution", "ac", "*");
                 // Only one institute per site. Cache it.
                 myInstitution = (Institution) result.iterator().next();
             }
@@ -322,9 +326,31 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return myFormFactory.getEditForm(formName);
     }
 
+    public Object getObjectByLabel(String className, String label)
+            throws SearchException {
+        try {
+            return getObjectByLabel(Class.forName(className), label);
+        }
+        catch (ClassNotFoundException cnfe) {
+            throw new SearchException("Class not found for " + className);
+        }
+    }
+
     public Object getObjectByLabel(Class clazz, String label)
-            throws IntactException {
-        return myHelper.getObjectByLabel(clazz, label);
+            throws SearchException {
+        try {
+            return myHelper.getObjectByLabel(clazz, label);
+        }
+        catch (IntactException ie) {
+            String msg;
+            if (ie instanceof DuplicateLabelException) {
+                msg = label + " already exists";
+            }
+            else {
+                msg = "Failed to find a record for " + label;
+            }
+            throw new SearchException(msg);
+        }
     }
 
     public Collection search(String objectType, String searchParam,
@@ -334,7 +360,9 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
             return myHelper.search(objectType, searchParam, searchValue);
         }
         catch (IntactException ie) {
-            throw new SearchException("Search failed: " + ie.getNestedMessage());
+            String msg = "Failed to find any "  + objectType + " records for "
+                    + searchValue + " as " + searchParam;
+            throw new SearchException(msg);
         }
     }
 
@@ -445,7 +473,8 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
                     annobj, shortlabel, extAc);
         }
         catch (IntactException ie) {
-            throw new SearchException("Search failed: " + ie.getNestedMessage());
+            String msg = "Failed to get a unique short label for "  + extAc;
+            throw new SearchException(msg);
         }
     }
 
@@ -467,7 +496,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     }
 
     public AbstractROViewBean getReadOnlyView(Class clazz, String shortLabel)
-            throws IntactException {
+            throws SearchException {
         // Try searching as it is.
         AnnotatedObject annonj = (AnnotatedObject) getObjectByLabel(clazz,
                 shortLabel);
