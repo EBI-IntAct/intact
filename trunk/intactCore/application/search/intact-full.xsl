@@ -15,7 +15,8 @@
         around the value. -->
     <xsl:param name="tableName" select="'tbl_0'"/>
     <xsl:param name="searchLink"/>
-    <xsl:param name="helpLink" select="'http://web7-node1.ebi.ac.uk:8160/intact/search/search.html'"/>  <!-- link to the help page - targets added as required -->
+    <xsl:param name="helpLink"/>
+    <!-- <xsl:param name="helpLink" select="'http://web7-node1.ebi.ac.uk:8160/intact/search/search.html'"/> -->
     <!-- <xsl:param name="helpLink" select="'http://localhost:8080/search/search.html'"/>    -->
     <xsl:param name="searchParams"/> <!-- list of strings identifying search details -->
 
@@ -630,7 +631,7 @@ CvTissue | CvTopic | CvXrefQualifier">
     <xsl:template name="draw_help_link">
         <xsl:param name="item"/>
         <xsl:variable name="link">
-            <xsl:value-of select="concat($helpLink, '#', $item)"/>
+            <xsl:value-of select="concat($helpLink, $item)"/>
             <!-- try to embed the local target in the href, AND use a target for a new window -->
         </xsl:variable>
             <a href="{$link}" target="new">[?]</a>
