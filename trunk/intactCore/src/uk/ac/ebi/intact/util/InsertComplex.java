@@ -5,6 +5,8 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.util;
 
+import org.apache.commons.cli.*;
+import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.business.BusinessConstants;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
@@ -13,11 +15,8 @@ import uk.ac.ebi.intact.model.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
 import java.net.URL;
-
-import org.apache.commons.cli.*;
-import org.apache.log4j.Logger;
+import java.util.*;
 
 /**
  * Insert complex data for Ho and Gavin publications.
@@ -79,13 +78,13 @@ public final class InsertComplex {
             //set up newt access...
             URL newtUrl = new URL( "http://www.ebi.ac.uk/newt/display" );
             newtServer = new NewtServerProxy( newtUrl );
-        } catch( IntactException ie ) {
+        } catch ( IntactException ie ) {
 
             //something failed with type map or datasource...
             String msg = "unable to create intact helper class";
             System.err.println( msg );
             ie.printStackTrace();
-        } catch( UpdateProteinsI.UpdateException e ) {
+        } catch ( UpdateProteinsI.UpdateException e ) {
             //something failed with type map or datasource...
             String msg = "unable to create protein factory";
             logger.error( msg );
@@ -103,9 +102,30 @@ public final class InsertComplex {
                 System.out.println( "Database connexion closed." );
             }
 
-        } catch( IntactException e ) {
+        } catch ( IntactException e ) {
             e.printStackTrace();
         }
+    }
+
+    private boolean hasIdentity( Protein protein, String spAc ) {
+
+        // as long as the BioSource of the protein is checked, we don't need to
+        // filter on 'identity' Xref.
+        for( Iterator iterator = protein.getXrefs().iterator(); iterator.hasNext(); ) {
+            Xref xref = (Xref) iterator.next();
+
+//            if( "uniprot".equals( xref.getCvDatabase().getShortLabel() ) &&
+//                    "identity".equals( xref.getCvXrefQualifier().getShortLabel() )&&
+//                    spAc.equals(xref.getPrimaryId() )
+//            ) {
+            if( "uniprot".equals( xref.getCvDatabase().getShortLabel() ) &&
+                spAc.equals( xref.getPrimaryId() )
+            ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -115,7 +135,7 @@ public final class InsertComplex {
      * @param spAc Swiss-Prot accession number of the Protein to add.
      *             If the protein does not yet exist, it will be created.
      * @param role Role of the protein in the interaction.
-     * @throws Exception
+     * @throws IntactException
      */
     public final void insertComponent( Interaction act,
                                        String spAc,
@@ -125,8 +145,11 @@ public final class InsertComplex {
 
         // The relevant proteins might already have been created for the current complex.
         if( createdProteins.containsKey( spAc ) ) {
+
             proteins = (Collection) createdProteins.get( spAc );
+
         } else {
+
             proteins = helper.getObjectsByXref( Protein.class, spAc );
 
             if( 0 == proteins.size() ) {
@@ -151,14 +174,19 @@ public final class InsertComplex {
         }
         Protein targetProtein = null;
 
-        // Filter for the correct protein
-        for( Iterator i = proteins.iterator(); i.hasNext(); ) {
+        // Filter for the correct protein - the filter is done on taxid and uniprot identity (needed to distinguish protein from splice variant)
+        Set uniqProteins = new HashSet( proteins.size() );
+        uniqProteins.addAll( proteins );
+
+        for( Iterator i = uniqProteins.iterator(); i.hasNext(); ) {
             Protein tmp = (Protein) i.next();
 
-            if( tmp.getBioSource().getTaxId().equals( bioSource.getTaxId() ) ) {
+            // hasIdentity checks that the protein has a Uniprot Xref with spAc (primary or secondary)
+            if( tmp.getBioSource().getTaxId().equals( bioSource.getTaxId() ) && hasIdentity( tmp, spAc ) ) {
                 if( null == targetProtein ) {
                     targetProtein = tmp;
                 } else {
+                    System.err.println( tmp.getAc() + " and " + targetProtein.getAc() + " were found !!!!!!!!!!" );
                     throw new IntactException( "More than one target protein found for: " + spAc );
                 }
             }
@@ -213,7 +241,7 @@ public final class InsertComplex {
                 CvInteraction cvInteraction = (CvInteraction) result.iterator().next();
                 ex.setCvInteraction( cvInteraction );
             } else {
-                logger.debug( "ERROR! Found "+ result.size() +"  CvInteraction by shortlabel: experimental" );
+                logger.debug( "ERROR! Found " + result.size() + "  CvInteraction by shortlabel: experimental" );
                 throw new IntactException( "failed to add CvInteraction to Experiment - " +
                                            "multiple object found by shortlabel: experimental." );
             }
@@ -230,7 +258,7 @@ public final class InsertComplex {
                 CvIdentification cvIdentification = (CvIdentification) result.iterator().next();
                 ex.setCvIdentification( cvIdentification );
             } else {
-                logger.debug( "ERROR! Found "+ result.size() +" CvIdentification by shortlabel: experimental" );
+                logger.debug( "ERROR! Found " + result.size() + " CvIdentification by shortlabel: experimental" );
                 throw new IntactException( "failed to add CvInteraction to Experiment - " +
                                            "multiple object found by shortlabel: experimental." );
             }
@@ -284,7 +312,7 @@ public final class InsertComplex {
                     // TODO: Problem if type is unknown - do what??
                     logger.debug( typeLabel + " is not known as a CvInteractionType shortLabel." );
                 }
-            } catch( IntactException ie ) {
+            } catch ( IntactException ie ) {
                 // this is not mandatory, skip it.
             }
         }
@@ -326,8 +354,10 @@ public final class InsertComplex {
 
         //got our data - now build the new Interaction (with an empty component Collection)
         //get the info needed to create a new Interaction and build one...
-        Interaction interaction =
-                new InteractionImpl( experiments, new ArrayList(), cvInteractionType, actLabel, owner );
+
+        Interaction interaction = new InteractionImpl( experiments, cvInteractionType, actLabel, owner );
+        interaction.setBioSource( experiment.getBioSource() );
+
         helper.create( interaction );
 
         // Initialise list of proteins created
@@ -393,10 +423,10 @@ public final class InsertComplex {
         try {
             System.out.println( "Attempting to get BioSource info from Newt server....." );
             response = newtServer.query( Integer.parseInt( taxId ) );
-        } catch( NewtServerProxy.TaxIdNotFoundException txe ) {
+        } catch ( NewtServerProxy.TaxIdNotFoundException txe ) {
             logger.debug( "Error - failed to find BioSource with Tax ID " + taxId );
             throw new Exception( "failed to get BioSource - cannot proceed with data loading!" );
-        } catch( IOException ioe ) {
+        } catch ( IOException ioe ) {
             logger.debug( "IO Error - failed to access newt server to obtain BioSource" );
             throw new Exception( "IO Error trying to get BioSource - cannot proceed with data loading!" );
         }
@@ -433,7 +463,7 @@ public final class InsertComplex {
                 helper.startTransaction( BusinessConstants.OBJECT_TX );
                 helper.create( bioSource );
                 helper.finishTransaction();
-            } catch( Exception ie ) {
+            } catch ( Exception ie ) {
                 ie.printStackTrace();
                 System.err.println();
                 System.err.println( "Error persisting the BioSource for the data! (maybe taxId exists?)" );
@@ -493,12 +523,16 @@ public final class InsertComplex {
                         helper.finishTransaction();
 
                         //now do the Complexes....
-                        helper.startTransaction( BusinessConstants.OBJECT_TX );
+                        // TODO - BUG here with protein that have splice variants ... they are not created if the transaction is enabled.
+//                        helper.startTransaction( BusinessConstants.OBJECT_TX );
                         insertComplex( interactionNumber, bait, preys, actLabel, experiment, interactionType );
-                        helper.finishTransaction();
+//                        helper.finishTransaction();
 
-                    } catch( Exception ie ) {
+                    } catch ( Exception ie ) {
                         ie.printStackTrace();
+                        if( ie.getCause() != null ) {
+                            ie.getCause().printStackTrace();
+                        }
                         System.err.println();
                         System.err.println( "Error while processing input line: " );
                         System.err.println( line );
@@ -521,13 +555,13 @@ public final class InsertComplex {
             if( file != null ) {
                 try {
                     file.close();
-                } catch( IOException ioe ) {
+                } catch ( IOException ioe ) {
                 }
             }
             if( fr != null ) {
                 try {
                     fr.close();
-                } catch( IOException ioe ) {
+                } catch ( IOException ioe ) {
                 }
             }
         }
@@ -614,7 +648,7 @@ public final class InsertComplex {
 
             try {
                 HttpProxyManager.setup();
-            } catch( HttpProxyManager.ProxyConfigurationNotFound proxyConfigurationNotFound ) {
+            } catch ( HttpProxyManager.ProxyConfigurationNotFound proxyConfigurationNotFound ) {
                 proxyConfigurationNotFound.printStackTrace();
             }
 
@@ -624,14 +658,14 @@ public final class InsertComplex {
             tool.insert( filename, taxid, interactionType );
             tool.closeHelper();
             System.exit( 0 );
-        } catch( ParseException exp ) {
+        } catch ( ParseException exp ) {
             // Oops, something went wrong
 
             displayUsage( options );
 
             System.err.println( "Parsing failed.  Reason: " + exp.getMessage() );
             System.exit( 1 );
-        } catch( Exception e ) {
+        } catch ( Exception e ) {
             e.printStackTrace();
             System.exit( 1 );
         }

@@ -8,11 +8,13 @@
  */
 package uk.ac.ebi.intact.util;
 
-import uk.ac.ebi.intact.persistence.*;
-import uk.ac.ebi.intact.business.*;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.DAOFactory;
+import uk.ac.ebi.intact.persistence.DAOSource;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
 
 /**
@@ -22,12 +24,11 @@ import java.util.*;
  * delegate setUp/tearDown calls to TestCaseHelper. Then you can call one of the
  * 'get' methods to obtain a collection of various intact object types that have been
  * created, and then use any of them at random to perform tests.
- *
+ * <p/>
  * NB This class needs careful revision to work with the new model and new
  * constructors.
  *
  * @author Chris Lewington
- *
  */
 public class TestCaseHelper {
 
@@ -72,19 +73,18 @@ public class TestCaseHelper {
         //set up a helper object to handle the DB interactions
         try {
 
-          dataSource = DAOFactory.getDAOSource("uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource");
+            dataSource = DAOFactory.getDAOSource( "uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource" );
 
             //set the config details, ie repository file for OJB in this case
             //Map config = new HashMap();
             //config.put("mappingfile", "config/repository.xml");
             //dataSource.setConfig(config);
 
-            helper = new IntactHelper(dataSource);
+            helper = new IntactHelper( dataSource );
 
-        }
-        catch(Exception e) {
+        } catch ( Exception e ) {
 
-            throw new Exception("error - could not access the data source. Exception thrown was " + e.toString());
+            throw new Exception( "error - could not access the data source. Exception thrown was " + e.toString() );
         }
 
     }
@@ -144,7 +144,7 @@ public class TestCaseHelper {
         try {
 
             //now need to create specific info in the DB to use for the tests...
-            System.out.println("building example test objects...");
+            System.out.println( "building example test objects..." );
 
             /*
             * simple scenario:
@@ -157,177 +157,181 @@ public class TestCaseHelper {
             *
             * two options: a) store and get back ACs, or b) set ACs artificially. Go for b) just now (if it works!)..
             */
-            institution = new Institution("Boss");
+            institution = new Institution( "Boss" );
 
-                        //NB if Institution is not to extend BasicObject, its created/updated need setting also
-            institution.setFullName("The Owner Of Everything");
-            institution.setPostalAddress("1 AnySreet, AnyTown, AnyCountry");
-            institution.setUrl("http://www.dummydomain.org");
+            //NB if Institution is not to extend BasicObject, its created/updated need setting also
+            institution.setFullName( "The Owner Of Everything" );
+            institution.setPostalAddress( "1 AnySreet, AnyTown, AnyCountry" );
+            institution.setUrl( "http://www.dummydomain.org" );
 
-            bio1 = new BioSource(institution, "bio1", "1");
-            bio1.setFullName("test biosource 1");
+            bio1 = new BioSource( institution, "bio1", "1" );
+            bio1.setFullName( "test biosource 1" );
 
-            bio2 = new BioSource(institution, "bio2", "2");
-            bio2.setFullName("test biosource 2");
+            bio2 = new BioSource( institution, "bio2", "2" );
+            bio2.setFullName( "test biosource 2" );
 
-            exp1 = new Experiment(institution, "exp1", bio1);
-            exp1.setFullName("test experiment 1");
+            exp1 = new Experiment( institution, "exp1", bio1 );
+            exp1.setFullName( "test experiment 1" );
 
-            exp2 = new Experiment(institution, "exp2", bio2);
-            exp2.setFullName("test experiment 2");
+            exp2 = new Experiment( institution, "exp2", bio2 );
+            exp2.setFullName( "test experiment 2" );
 
-            prot1 = new ProteinImpl(institution, bio1, "prot1");
-            prot2 = new ProteinImpl(institution, bio1, "prot2");
-            prot3 = new ProteinImpl(institution, bio1, "prot3");
+            prot1 = new ProteinImpl( institution, bio1, "prot1" );
+            prot2 = new ProteinImpl( institution, bio1, "prot2" );
+            prot3 = new ProteinImpl( institution, bio1, "prot3" );
 
-            prot1.setFullName("test protein 1");
-            prot1.setCrc64("dummy 1 crc64");
-            prot2.setFullName("test protein 2");
-            prot2.setCrc64("dummy 2 crc64");
-            prot3.setFullName("test protein 3");
-            prot3.setCrc64("dummy 3 crc64");
+            prot1.setFullName( "test protein 1" );
+            prot1.setCrc64( "dummy 1 crc64" );
+            prot2.setFullName( "test protein 2" );
+            prot2.setCrc64( "dummy 2 crc64" );
+            prot3.setFullName( "test protein 3" );
+            prot3.setCrc64( "dummy 3 crc64" );
 
             //create some xrefs
-            cvDb = new CvDatabase(institution, "testCvDb");
-            cvDb.setFullName("dummy test cvdatabase");
-            xref1 = new Xref(institution, cvDb, "G0000000", "GAAAAAAA", "1.0", null);
+            cvDb = new CvDatabase( institution, "testCvDb" );
+            cvDb.setFullName( "dummy test cvdatabase" );
+            xref1 = new Xref( institution, cvDb, "G0000000", "GAAAAAAA", "1.0", null );
 
-            xref2 = new Xref(institution, cvDb, "GEEEEEEE", "GGGGGGGG", "1.0", null);
+            xref2 = new Xref( institution, cvDb, "GEEEEEEE", "GGGGGGGG", "1.0", null );
 
             //set up some collections to be added to later - needed for
             //some of the constructors..
             Collection experiments = new ArrayList();
             Collection components = new ArrayList();
 
-            experiments.add(exp1);
+            experiments.add( exp1 );
             //needs exps, components, type, shortlabel, owner...
             //No need to set BioSource - taken from the Experiment...
-            int1 = new InteractionImpl(experiments, components, null, "int1", institution);
-            int2 = new InteractionImpl(experiments, components, null, "int2", institution);
-            int3 = new InteractionImpl(experiments, components, null, "int3", institution);
+            int1 = new InteractionImpl( experiments, components, null, "int1", institution );
+            int1.setBioSource( bio1 );
 
-            int1.setFullName("test interaction 1");
-            int1.setKD(new Float(1));
+            int2 = new InteractionImpl( experiments, components, null, "int2", institution );
+            int2.setBioSource( bio1 );
 
-            int2.setFullName("test interaction 2");
-            int2.setKD(new Float(2));
+            int3 = new InteractionImpl( experiments, components, null, "int3", institution );
+            int3.setBioSource( bio1 );
 
-            int3.setFullName("test interaction 3");
-            int3.setKD(new Float(3));
+            int1.setFullName( "test interaction 1" );
+            int1.setKD( new Float( 1 ) );
+
+            int2.setFullName( "test interaction 2" );
+            int2.setKD( new Float( 2 ) );
+
+            int3.setFullName( "test interaction 3" );
+            int3.setKD( new Float( 3 ) );
 
             //now link up interactions and proteins via some components..
-            compRole = new CvComponentRole(institution, "role");
+            compRole = new CvComponentRole( institution, "role" );
 
-            comp1 = new Component(institution, int1, prot1, compRole);
-            comp1.setStoichiometry(1);
+            comp1 = new Component( institution, int1, prot1, compRole );
+            comp1.setStoichiometry( 1 );
 
-            comp2 = new Component(institution, int2, prot2, compRole);
-            comp2.setStoichiometry(2);
+            comp2 = new Component( institution, int2, prot2, compRole );
+            comp2.setStoichiometry( 2 );
 
             //needs owner, interaction, interactor, role
-            comp3 = new Component(institution, int2, prot3, compRole);
-            comp3.setStoichiometry(3);
+            comp3 = new Component( institution, int2, prot3, compRole );
+            comp3.setStoichiometry( 3 );
 
-            comp4 = new Component(institution, int1, prot2, compRole);
-            comp4.setStoichiometry(4);
+            comp4 = new Component( institution, int1, prot2, compRole );
+            comp4.setStoichiometry( 4 );
 
-            int1.addComponent(comp1);
-            int2.addComponent(comp2);
-            int3.addComponent(comp3);
-            int2.addComponent(comp4);
-            int3.addComponent(comp4);
+            int1.addComponent( comp1 );
+            int2.addComponent( comp2 );
+            int3.addComponent( comp3 );
+            int2.addComponent( comp4 );
+            int3.addComponent( comp4 );
 
             //add the Xrefs in.....
-            prot1.addXref(xref1);
-            int1.addXref(xref2);
+            prot1.addXref( xref1 );
+            int1.addXref( xref2 );
 
-            exp1.addXref(xref1);
-            exp1.addXref(xref2);
-            exp2.addXref(xref1);
-            exp2.addXref(xref2);
+            exp1.addXref( xref1 );
+            exp1.addXref( xref2 );
+            exp2.addXref( xref1 );
+            exp2.addXref( xref2 );
 
-            bio1.addXref(xref1);
-            bio1.addXref(xref2);
-            bio2.addXref(xref1);
-            bio2.addXref(xref2);
+            bio1.addXref( xref1 );
+            bio1.addXref( xref2 );
+            bio2.addXref( xref1 );
+            bio2.addXref( xref2 );
 
-            prot1.addXref(xref1);
-            prot1.addXref(xref2);
-            prot2.addXref(xref1);
-            prot2.addXref(xref2);
+            prot1.addXref( xref1 );
+            prot1.addXref( xref2 );
+            prot2.addXref( xref1 );
+            prot2.addXref( xref2 );
 
-            int1.addXref(xref1);
-            int1.addXref(xref2);
-            int2.addXref(xref1);
-            int2.addXref(xref2);
-            int3.addXref(xref1);
-            int3.addXref(xref2);
+            int1.addXref( xref1 );
+            int1.addXref( xref2 );
+            int2.addXref( xref1 );
+            int2.addXref( xref2 );
+            int3.addXref( xref1 );
+            int3.addXref( xref2 );
 
 
             //store everything...
             Collection persistList = new ArrayList();
-            persistList.add(institution);
-            persistList.add(bio1);
-            persistList.add(bio2);
-            persistList.add(exp1);
-            persistList.add(exp2);
-            persistList.add(cvDb);
-            persistList.add(compRole);
-            persistList.add(xref1);
-            persistList.add(xref2);
-            persistList.add(prot1);
-            persistList.add(prot2);
-            persistList.add(prot3);
-            persistList.add(int1);
-            persistList.add(int2);
-            persistList.add(int3);
-            persistList.add(comp1);
-            persistList.add(comp2);
-            persistList.add(comp3);
-            persistList.add(comp4);
+            persistList.add( institution );
+            persistList.add( bio1 );
+            persistList.add( bio2 );
+            persistList.add( exp1 );
+            persistList.add( exp2 );
+            persistList.add( cvDb );
+            persistList.add( compRole );
+            persistList.add( xref1 );
+            persistList.add( xref2 );
+            persistList.add( prot1 );
+            persistList.add( prot2 );
+            persistList.add( prot3 );
+            persistList.add( int1 );
+            persistList.add( int2 );
+            persistList.add( int3 );
+            persistList.add( comp1 );
+            persistList.add( comp2 );
+            persistList.add( comp3 );
+            persistList.add( comp4 );
 
-            System.out.println("saving examples to store...");
-            helper.create(persistList);
+            System.out.println( "saving examples to store..." );
+            helper.create( persistList );
 
             //now add an experiment and do an update
-            System.out.println("examples persisted - adding Experiments...");
-            int1.addExperiment(exp2);
-            int2.addExperiment(exp1);
-            int3.addExperiment(exp2);
+            System.out.println( "examples persisted - adding Experiments..." );
+            int1.addExperiment( exp2 );
+            int2.addExperiment( exp1 );
+            int3.addExperiment( exp2 );
 
-            System.out.println("updating Interactions...");
-            helper.update(int1);
-            helper.update(int2);
-            helper.update(int3);
+            System.out.println( "updating Interactions..." );
+            helper.update( int1 );
+            helper.update( int2 );
+            helper.update( int3 );
 
-            System.out.println("example test data successfully created - executing tests...");
+            System.out.println( "example test data successfully created - executing tests..." );
             System.out.println();
 
             //now put the created objects into their relevant Collections
-            institutions.add(institution);
-            bioSources.add(bio1);
-            bioSources.add(bio2);
-            this.experiments.add(exp1);
-            this.experiments.add(exp2);
-            proteins.add(prot1);
-            proteins.add(prot2);
-            proteins.add(prot3);
-            interactions.add(int1);
-            interactions.add(int2);
-            interactions.add(int3);
-            xrefs.add(xref1);
-            xrefs.add(xref2);
-            components.add(comp1);
-            components.add(comp2);
-            components.add(comp3);
-            components.add(comp4);
+            institutions.add( institution );
+            bioSources.add( bio1 );
+            bioSources.add( bio2 );
+            this.experiments.add( exp1 );
+            this.experiments.add( exp2 );
+            proteins.add( prot1 );
+            proteins.add( prot2 );
+            proteins.add( prot3 );
+            interactions.add( int1 );
+            interactions.add( int2 );
+            interactions.add( int3 );
+            xrefs.add( xref1 );
+            xrefs.add( xref2 );
+            components.add( comp1 );
+            components.add( comp2 );
+            components.add( comp3 );
+            components.add( comp4 );
 
-        }
-        catch (Exception ie) {
+        } catch ( Exception ie ) {
 
             //something failed with datasource, or helper.create...
             String msg = "error - helper.create/update failed - see stack trace...";
-            System.out.println(msg);
+            System.out.println( msg );
             ie.printStackTrace();
 
         }
@@ -338,42 +342,41 @@ public class TestCaseHelper {
         //need to clean out the example object data from the DB...
         try {
 
-            System.out.println("tests complete - removing test data...");
-            System.out.println("deleting test objects...");
+            System.out.println( "tests complete - removing test data..." );
+            System.out.println( "deleting test objects..." );
 
             //NB ORDER OF DELETION IS IMPORTANT!!...
-            helper.delete(prot1);
-            helper.delete(prot2);
-            helper.delete(prot3);
-            helper.delete(int1);
-            helper.delete(int2);
-            helper.delete(int3);
+            helper.delete( prot1 );
+            helper.delete( prot2 );
+            helper.delete( prot3 );
+            helper.delete( int1 );
+            helper.delete( int2 );
+            helper.delete( int3 );
 
-            helper.delete(exp1);
-            helper.delete(exp2);
+            helper.delete( exp1 );
+            helper.delete( exp2 );
 
-            helper.delete(bio1);
-            helper.delete(bio2);
+            helper.delete( bio1 );
+            helper.delete( bio2 );
 
-            helper.delete(comp1);
-            helper.delete(comp2);
-            helper.delete(comp3);
-            helper.delete(comp4);
+            helper.delete( comp1 );
+            helper.delete( comp2 );
+            helper.delete( comp3 );
+            helper.delete( comp4 );
 
-            helper.delete(xref1);
-            helper.delete(xref2);
+            helper.delete( xref1 );
+            helper.delete( xref2 );
 
-            helper.delete(cvDb);
-            helper.delete(compRole);
+            helper.delete( cvDb );
+            helper.delete( compRole );
 
-            helper.delete(institution);
+            helper.delete( institution );
 
-            System.out.println("done - all example test objects removed successfully.");
+            System.out.println( "done - all example test objects removed successfully." );
             System.out.println();
-        }
-        catch(Exception e) {
+        } catch ( Exception e ) {
 
-            System.out.println("problem deleteing examples from data store");
+            System.out.println( "problem deleteing examples from data store" );
             e.printStackTrace();
         }
         helper = null;
