@@ -13,7 +13,7 @@ package uk.ac.ebi.intact.model;
  * @author hhe
  * @version $Id$
  */
-public class CvFeatureIdentification extends CvObject {
+public class CvFeatureIdentification extends CvDagObject {
 
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus.
