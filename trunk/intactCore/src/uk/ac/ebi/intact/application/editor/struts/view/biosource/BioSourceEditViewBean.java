@@ -7,6 +7,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.biosource;
 
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditViewBeanFactory;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.business.IntactException;
@@ -37,6 +38,11 @@ public class BioSourceEditViewBean extends AbstractEditViewBean {
         // update the object as the last persistence call.
         ((BioSource) getAnnotatedObject()).setTaxId(getTaxId());
         super.persist(user);
+    }
+
+    // Override to provide the editory type.
+    public String getEditorType() {
+        return EditViewBeanFactory.BIOSRC_EDITOR;
     }
 
     // Getter/Setter methods for tax id.

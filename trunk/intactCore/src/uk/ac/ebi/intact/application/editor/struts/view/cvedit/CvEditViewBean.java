@@ -7,13 +7,18 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.cvedit;
 
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditViewBeanFactory;
 
 /**
- * CV edit view bean. This does not add any functionalities to its super class.
- * Since the super class is declared as abstract, we need a non abstract
- * version to create an instance of it.
+ * The CV edit view bean.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class CvEditViewBean extends AbstractEditViewBean {}
+public class CvEditViewBean extends AbstractEditViewBean {
+
+    // Override to provide the editory type.
+    public String getEditorType() {
+        return EditViewBeanFactory.CV_EDITOR;
+    }
+}
