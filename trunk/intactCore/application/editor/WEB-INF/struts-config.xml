@@ -81,7 +81,7 @@
 
         <forward name="failure" path="error.layout"/>
         <!-- Fill the form with search results -->
-        <forward name="result" path="/do/showResults"/>
+        <forward name="result" path="/do/show/results"/>
         <!-- Back to the search page. -->
         <forward name="search" path="search.layout"/>
     </global-forwards>
@@ -151,7 +151,7 @@
         </action>
 
         <!-- Fill the form with search results for the JSP to display. -->
-        <action path="/showResults"
+        <action path="/show/results"
             type="org.apache.struts.actions.ForwardAction"
             parameter="match.layout">
         </action>
@@ -219,21 +219,21 @@
              submit buttons (submit, cancel, delete, add annotation/xref) on the
              CV editor.
         -->
-        <action path="/cvDispatch"
+        <action path="/cv/dispatch"
             type="uk.ac.ebi.intact.application.editor.struts.action.SubmitFormAction"
             name="cvForm"
             validate="false"
             scope="session">
 
-            <forward name="submit" path="/do/cvSubmit"/>
+            <forward name="submit" path="/do/cv/submit"/>
             <forward name="cancel" path="/do/cancel"/>
             <forward name="delete" path="/do/delete"/>
-            <forward name="annotation" path="/do/cvAnnotSubmit"/>
-            <forward name="xref" path="/do/cvXrefSubmit"/>
+            <forward name="annotation" path="/do/cv/annot/submit"/>
+            <forward name="xref" path="/do/cv/xref/submit"/>
         </action>
 
         <!-- Action to handle when the Submit/Cancel/Delete button is pressed -->
-        <action path="/cvSubmit"
+        <action path="/cv/submit"
             type="uk.ac.ebi.intact.application.editor.struts.action.SubmitDispatchAction"
             name="cvForm"
             input="/do/cv/fill/form"
@@ -249,7 +249,7 @@
         <!-- Action to handle when a button (edit/save/delete) related to annotation
              is activated
         -->
-        <action path="/cvAnnotSubmit"
+        <action path="/cv/annot/submit"
             type="uk.ac.ebi.intact.application.editor.struts.action.AnnotationDispatchAction"
             name="cvForm"
             input="/do/cv/fill/form"
@@ -259,7 +259,7 @@
         <!-- Action to handle when a button (edit/save/delete) related to xref
              is activated
         -->
-        <action path="/cvXrefSubmit"
+        <action path="/cv/xref/submit"
             type="uk.ac.ebi.intact.application.editor.struts.action.XrefDispatchAction"
             name="cvForm"
             input="/do/cv/fill/form"
@@ -273,27 +273,26 @@
              Experiment editor.
         -->
         <action path="/expDispatch"
-            type="uk.ac.ebi.intact.application.editor.struts.action.experiment.ExperimentSubmitAction"
+            type="uk.ac.ebi.intact.application.editor.struts.action.SubmitFormAction"
             name="expForm"
             validate="false"
             scope="session">
 
-            <forward name="submit" path="/do/expSubmit"/>
-<!--            <forward name="save" path="/do/expSubmit"/>-->
+            <forward name="submit" path="/do/exp/submit"/>
             <forward name="cancel" path="/do/cancel"/>
             <forward name="delete" path="/do/delete"/>
-            <forward name="annotation" path="/do/expAnnotSubmit"/>
-            <forward name="xref" path="/do/expXrefSubmit"/>
+            <forward name="annotation" path="/do/exp/annot/submit"/>
+            <forward name="xref" path="/do/exp/xref/submit"/>
             <forward name="interaction" path="/do/interaction"/>
-            <forward name="intHold" path="/do/intHold"/>
-            <forward name="intSearch" path="/do/intSearch"/>
+            <forward name="exp.int.hold" path="/do/exp/int/hold"/>
+            <forward name="exp.int.search" path="/do/exp/int/search"/>
         </action>
 
         <!-- Action to handle when the Submit button is pressed.
              Note the same action as CV is used here. It is because there are
              no actions specific to the Experiment editor.
              -->
-        <action path="/expSubmit"
+        <action path="/exp/submit"
             type="uk.ac.ebi.intact.application.editor.struts.action.SubmitDispatchAction"
             name="expForm"
             input="/do/exp/fill/form"
@@ -308,7 +307,7 @@
         <!-- Action to handle when a button (edit/save/delete) related to annotation
              is activated
         -->
-        <action path="/expAnnotSubmit"
+        <action path="/exp/annot/submit"
             type="uk.ac.ebi.intact.application.editor.struts.action.AnnotationDispatchAction"
             name="expForm"
             input="/do/exp/fill/form"
@@ -318,7 +317,7 @@
         <!-- Action to handle when a button (edit/save/delete) related to xref
              is activated
         -->
-        <action path="/expXrefSubmit"
+        <action path="/exp/xref/submit"
             type="uk.ac.ebi.intact.application.editor.struts.action.XrefDispatchAction"
             name="expForm"
             input="/do/exp/fill/form"
@@ -333,13 +332,13 @@
             input="/do/exp/fill/form"
             validate="false"
             scope="session" >
-            <forward name="editInt" path="/do/intLink"/>
+            <forward name="editInt" path="/do/int/link"/>
         </action>
 
         <!-- Links an Interaction from an Experiment. The validate must be set to
              true for the form to be validated before saving the current experiment.
         -->
-        <action path="/intLink"
+        <action path="/int/link"
             type="uk.ac.ebi.intact.application.editor.struts.action.experiment.InteractionLinkAction"
             name="expForm"
             input="/do/exp/fill/form"
@@ -351,7 +350,7 @@
         <!-- Action to handle when an experiment is added to an Interaction
              hidden from the current view.
         -->
-        <action path="/intHold"
+        <action path="/exp/int/hold"
             type="uk.ac.ebi.intact.application.editor.struts.action.experiment.InteractionHoldAction"
             name="expForm"
             input="/do/exp/fill/form"
@@ -363,7 +362,7 @@
         <!-- Action to handle when an interaction is added to the experiment or
              hidden from the current view.
         -->
-        <action path="/intSearch"
+        <action path="/exp/int/search"
             type="uk.ac.ebi.intact.application.editor.struts.action.experiment.InteractionDispatchAction"
             name="expForm"
             input="/do/exp/fill/form"
@@ -380,21 +379,21 @@
              BioSource editor.
         -->
         <action path="/bsDispatch"
-            type="uk.ac.ebi.intact.application.editor.struts.action.biosrc.BioSourceSubmitAction"
+            type="uk.ac.ebi.intact.application.editor.struts.action.SubmitFormAction"
             name="bsForm"
             validate="false"
             scope="session">
 
-            <forward name="submit" path="/do/bsSubmit"/>
+            <forward name="submit" path="/do/bs/submit"/>
             <forward name="cancel" path="/do/cancel"/>
             <forward name="delete" path="/do/delete"/>
-            <forward name="annotation" path="/do/bsAnnotSubmit"/>
-            <forward name="xref" path="/do/bsXrefSubmit"/>
-            <forward name="taxid" path="/do/taxid"/>
+            <forward name="annotation" path="/do/bs/annot/submit"/>
+            <forward name="xref" path="/do/bs/xref/submit"/>
+            <forward name="taxid" path="/do/bs/taxid"/>
         </action>
 
         <!-- Action to handle when the Submit/Cancel/Delete button is pressed -->
-        <action path="/bsSubmit"
+        <action path="/bs/submit"
             type="uk.ac.ebi.intact.application.editor.struts.action.SubmitDispatchAction"
             name="bsForm"
             input="/do/bs/fill/form"
@@ -409,7 +408,7 @@
         <!-- Action to handle when a button (edit/save/delete) related to annotation
              is activated
         -->
-        <action path="/bsAnnotSubmit"
+        <action path="/bs/annot/submit"
             type="uk.ac.ebi.intact.application.editor.struts.action.AnnotationDispatchAction"
             name="bsForm"
             input="/do/bs/fill/form"
@@ -419,7 +418,7 @@
         <!-- Action to handle when a button (edit/save/delete) related to xref
              is activated
         -->
-        <action path="/bsXrefSubmit"
+        <action path="/bs/xref/submit"
             type="uk.ac.ebi.intact.application.editor.struts.action.XrefDispatchAction"
             name="bsForm"
             input="/do/bs/fill/form"
@@ -430,7 +429,7 @@
              to stop validating short label as well (short label is set via
              newt server).
         -->
-        <action path="/taxid"
+        <action path="/bs/taxid"
             type="uk.ac.ebi.intact.application.editor.struts.action.biosrc.BioSourceAction"
             name="bsForm"
             input="/do/bs/fill/form"
@@ -446,28 +445,28 @@
              Interaction editor.
         -->
         <action path="/intDispatch"
-            type="uk.ac.ebi.intact.application.editor.struts.action.interaction.InteractionSubmitAction"
+            type="uk.ac.ebi.intact.application.editor.struts.action.SubmitFormAction"
             name="intForm"
             validate="false"
             scope="session">
 
-            <forward name="submit" path="/do/intSubmit"/>
+            <forward name="submit" path="/do/int/submit"/>
             <forward name="cancel" path="/do/cancel"/>
             <forward name="delete" path="/do/delete"/>
 
-            <forward name="annotation" path="/do/intAnnotSubmit"/>
-            <forward name="xref" path="/do/intXrefSubmit"/>
+            <forward name="annotation" path="/do/int/annot/submit"/>
+            <forward name="xref" path="/do/int/xref/submit"/>
 
-            <forward name="expDel" path="/do/expDel"/>
-            <forward name="expHold" path="/do/expHold"/>
-            <forward name="expSearch" path="/do/expSearch"/>
+            <forward name="int.exp.del" path="/do/int/exp/del"/>
+            <forward name="int.exp.hold" path="/do/int/exp/hold"/>
+            <forward name="int.exp.search" path="/do/int/exp/search"/>
 
-            <forward name="prot" path="/do/prot"/>
-            <forward name="protSearch" path="/do/protSearch"/>
+            <forward name="int.prot" path="/do/int/prot"/>
+            <forward name="int.prot.search" path="/do/int/prot/search"/>
         </action>
 
         <!-- Action to handle when an Interaction is Submitted -->
-        <action path="/intSubmit"
+        <action path="/int/submit"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.SubmitAction"
             name="intForm"
             input="/do/int/fill/form"
@@ -484,7 +483,7 @@
         <!-- Action to handle when a button (edit/save/delete) related to annotation
              is activated
         -->
-        <action path="/intAnnotSubmit"
+        <action path="/int/annot/submit"
             type="uk.ac.ebi.intact.application.editor.struts.action.AnnotationDispatchAction"
             name="intForm"
             input="/do/int/fill/form"
@@ -494,7 +493,7 @@
         <!-- Action to handle when a button (edit/save/delete) related to xref
              is activated
         -->
-        <action path="/intXrefSubmit"
+        <action path="/int/xref/submit"
             type="uk.ac.ebi.intact.application.editor.struts.action.XrefDispatchAction"
             name="intForm"
             input="/do/int/fill/form"
@@ -503,7 +502,7 @@
 
         <!-- Action to handle when an experiment is deleted from an Interaction.
         -->
-        <action path="/expDel"
+        <action path="/int/exp/del"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ExperimentAction"
             name="intForm"
             validate="false"
@@ -514,7 +513,7 @@
         <!-- Action to handle when an experiment is added to an Interaction
              hidden from the current view.
         -->
-        <action path="/expHold"
+        <action path="/int/exp/hold"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ExperimentHoldAction"
             name="intForm"
             input="/do/int/fill/form"
@@ -526,7 +525,7 @@
         <!-- Action to handle when an experiment is added to an Interaction
              hidden from the current view.
         -->
-        <action path="/expSearch"
+        <action path="/int/exp/search"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ExperimentDispatchAction"
             name="intForm"
             input="/do/int/fill/form"
@@ -537,7 +536,7 @@
         </action>
 
         <!-- Action to handle when a Protein is saved/deleted or edited. -->
-        <action path="/prot"
+        <action path="/int/prot"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ProteinDispatchAction"
             name="intForm"
             input="/do/int/fill/form"
@@ -549,7 +548,7 @@
         </action>
 
         <!-- Action to handle for the Protein search. -->
-        <action path="/protSearch"
+        <action path="/int/prot/search"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ProteinSearchAction"
             name="intForm"
             input="/do/int/fill/form"

@@ -31,6 +31,10 @@
 
 <%-- Only display the table if the interactions are less (<) than the allowed limit --%>
 <c:if test="${user.view.numberOfInteractions lt service.interactionLimit}">
+
+    <%-- The anchor name for this page --%>
+    <a name="exp.int.search"/>
+
     <table width="50%" border="0" cellspacing="1" cellpadding="2">
         <tr class="tableRowHeader">
             <th class="tableCellHeader" width="10%" colspan="2">
@@ -69,3 +73,4 @@
         </tr>
     </table>
 </c:if>
+<html:errors property="exp.int.search"/>
