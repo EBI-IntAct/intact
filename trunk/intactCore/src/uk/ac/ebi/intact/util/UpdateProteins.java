@@ -81,9 +81,8 @@ import java.util.*;
  */
 public class UpdateProteins extends UpdateProteinsI {
 
+    // TODO: ask when run in command line about an alternative location for the error file.
     private static final String ENTRY_OUTPUT_FILE = "/tmp/Entries.error";
-
-
 
     // to record entry error
     private String filename = null;
@@ -92,8 +91,6 @@ public class UpdateProteins extends UpdateProteinsI {
 
     // flag for output on STDOUT
     private boolean debugOnScreen = false;
-
-
 
     // iterator on all parsed Entries.
     private EntryIterator entryIterator = null;
@@ -541,9 +538,15 @@ public class UpdateProteins extends UpdateProteinsI {
 
     private boolean isAliasAlreadyExisting( Collection aliases, String name, CvAliasType aliasType) {
 
+        /* TODO: the lowercase name is temporary, it should be removed later.
+         *       Currently, all name of alias are stored in lozercase in the db.
+         */
+        String lowerCaseName = name.toLowerCase();
+
         for ( Iterator iterator = aliases.iterator(); iterator.hasNext(); ) {
             Alias alias = (Alias) iterator.next ();
-            if ( alias.getName().equals( name ) && alias.getCvAliasType().equals( aliasType ) )
+
+            if ( alias.getName().equals( lowerCaseName ) && alias.getCvAliasType().equals( aliasType ) )
                 return true;
         }
         return false;
@@ -591,7 +594,6 @@ public class UpdateProteins extends UpdateProteinsI {
             for (int ii=1; ii<genes[i].length; ii++) {
 
                 if ( ! isAliasAlreadyExisting( aliases, genes[i][ii], geneNameSynonymAliasType ) ) {
-
                     alias = new Alias( myInstitution,
                                        protein,
                                        geneNameSynonymAliasType, // gene-name-synonym
@@ -810,20 +812,22 @@ public class UpdateProteins extends UpdateProteinsI {
         // create Aliases
         String[][] genes = sptrEntry.getGenes();
         Alias alias = null;
-        // TODO: create proper vocabularies for the alias type !!
-        for (int i=0; i<genes.length; i++) {
+        for ( int i=0; i<genes.length; i++ ) {
 
             alias = new Alias( myInstitution,
                                protein,
                                geneNameAliasType,  // gene-name
                                genes[i][0] );
+
             addNewAlias( protein, alias );
 
-            for (int ii=1; ii<genes[i].length; ii++) {
+            for ( int ii=1; ii<genes[i].length; ii++ ) {
+
                 alias = new Alias( myInstitution,
                                    protein,
                                    geneNameSynonymAliasType, // gene-name-synonym
                                    genes[i][ii] );
+
                 addNewAlias( protein, alias );
             }
         }
@@ -985,13 +989,6 @@ public class UpdateProteins extends UpdateProteinsI {
 
                 entryCount++;
 
-                /**
-                 *  E X I T   H E R E
-                 *  after n iteration
-                 */
-                // if (entryCount == 200) return proteinCreated + proteinUpdated;
-
-
                 // Check if there is any exception remaining in the Entry before to use it
                 if (entryIterator.hadException()) {
                     Exception originalException = entryIterator.getException().getOriginalException();
@@ -1024,7 +1021,6 @@ public class UpdateProteins extends UpdateProteinsI {
                 createProteinFromSPTrEntry (sptrEntry, taxid, update);
 
                 if (debugOnScreen) System.out.println(")");
-
 
                 // Display some statistics every 500 entries processed.
                 if (entryCount % 500 == 0) {
