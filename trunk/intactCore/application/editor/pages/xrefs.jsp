@@ -43,12 +43,24 @@
     <html:form action="/xref/edit">
         <table width="80%">
             <tr class="tableRowHeader">
-                <th class="tableCellHeader" colspan="2">Action</th>
-                <th class="tableCellHeader">Database</th>
-                <th class="tableCellHeader">Primary ID</th>
-                <th class="tableCellHeader">Secondary ID</th>
-                <th class="tableCellHeader">Release Number</th>
-                <th class="tableCellHeader">Reference Qualifier</th>
+                <th class="tableCellHeader" colspan="2">
+                    <bean:message key="label.action"/>
+                </th>
+                <th class="tableCellHeader">
+                    <bean:message key="xref.label.database"/>
+                </th>
+                <th class="tableCellHeader">
+                    <bean:message key="xref.label.primary"/>
+                </th>
+                <th class="tableCellHeader">
+                    <bean:message key="xref.label.secondary"/>
+                </th>
+                <th class="tableCellHeader">
+                    <bean:message key="xref.label.release"/>
+                </th>
+                <th class="tableCellHeader">
+                    <bean:message key="xref.label.reference"/>
+                </th>
             </tr>
             <%-- To calculate row or even row --%>
             <c:set var="row"/>

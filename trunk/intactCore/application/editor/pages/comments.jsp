@@ -40,9 +40,15 @@
     <html:form action="/comment/edit">
         <table width="80%" border="0" cellspacing="1" cellpadding="2">
             <tr class="tableRowHeader">
-                <th class="tableCellHeader" colspan="2">Action</th>
-                <th class="tableCellHeader">Topic</th>
-                <th class="tableCellHeader">Description</th>
+                <th class="tableCellHeader" colspan="2">
+                    <bean:message key="label.action"/>
+                </th>
+                <th class="tableCellHeader">
+                    <bean:message key="annotation.label.topic"/>
+                </th>
+                <th class="tableCellHeader">
+                    <bean:message key="annotation.label.desc"/>
+                </th>
             </tr>
             <%-- To calculate row or even row --%>
             <c:set var="row"/>
