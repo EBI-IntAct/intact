@@ -635,8 +635,7 @@
             name="intForm"
             input="edit.layout"
             validate="true"
-            scope="session"
-            parameter="dispatch">
+            scope="session">
         </action>
 
         <!-- ============= Actions related to the Feature editor ============ -->

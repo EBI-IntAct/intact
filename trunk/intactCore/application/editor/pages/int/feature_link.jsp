@@ -1,4 +1,5 @@
-<!--
+<%@ page import="org.apache.struts.util.PropertyMessageResources,
+                 org.apache.struts.Globals"%><!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
   - Copyright (c) 2002-2004 The European Bioinformatics Institute, and others.
@@ -14,6 +15,11 @@
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
 
+<%
+    PropertyMessageResources msgres = (PropertyMessageResources)
+            getServletConfig().getServletContext().getAttribute(Globals.MESSAGES_KEY);
+%>
+
 <script language="JavaScript" type="text/javascript">
 
     // Returns true if two checkboxes have been selected
@@ -21,7 +27,8 @@
         // Counter to count how many check items are selected.
         var count = 0;
 
-        for (var i = 0; i < form.elements.length; i++) {
+        // Loop all the elements or if the counter reaches more than 2.
+        for (var i = 0; i < form.elements.length && count <= 2; i++) {
             // Only interested in 'checkbox' fields.
             if (form.elements[i].type == "checkbox") {
                 // Only porcess if they are checked.
@@ -32,7 +39,33 @@
             }
         }
         if (count != 2) {
-            window.alert('Exactly two features must be selected to link them');
+            window.alert('<%=msgres.getMessage("error.int.feature.link")%>');//'Exactly two features must be selected to link them');
+            return false;
+        }
+        return true;
+    }
+
+    // ------------------------------------------------------------------------
+
+    // Returns true if a single checkbox has been selected.
+    function checkUnlink(form) {
+        // Counter to count how many check items are selected.
+        var count = 0;
+
+        // Loop all the elements or if the counter reaches more than 1.
+        for (var i = 0; i < form.elements.length && count <= 1; i++) {
+            // Only interested in 'checkbox' fields.
+            if (form.elements[i].type == "checkbox") {
+                // Only porcess if they are checked.
+                if (form.elements[i].checked) {
+                    //window.alert(form.elements[i].name);
+                    ++count;
+                }
+            }
+        }
+        if (count != 1) {
+            window.alert('<%=msgres.getMessage("error.int.feature.unlink")%>');        
+            //window.alert('One feature must be selected to unlink them');
             return false;
         }
         return true;
@@ -57,7 +90,7 @@
             </html:submit>
         </td>
         <td class="tableCell" align="right" valign="top">
-            <html:submit property="dispatch" onclick="return checkLink(this.form);"
+            <html:submit property="dispatch" onclick="return checkUnlink(this.form);"
                 titleKey="int.proteins.button.feature.unlink.titleKey">
                 <bean:message key="int.proteins.button.feature.unlink"/>
             </html:submit>
