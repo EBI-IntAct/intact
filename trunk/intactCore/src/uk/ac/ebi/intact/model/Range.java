@@ -277,12 +277,26 @@ public class Range extends BasicObjectImpl {
         if(link != range.link) return false;
         if(undetermined != range.undetermined) return false;
 
-        //check the fuzzy types
-        if (!fromCvFuzzyType.equals(range.fromCvFuzzyType)) return false;
-        if (!toCvFuzzyType.equals(range.toCvFuzzyType)) return false;
+        //check the from fuzzy types
+        if (fromCvFuzzyType != null) {
+            if (!fromCvFuzzyType.equals(range.fromCvFuzzyType)) return false;
+        } else {
+            if (range.fromCvFuzzyType != null) return false;
+        }
+
+        //check the to fuzzy types
+        if (toCvFuzzyType != null) {
+            if (!toCvFuzzyType.equals(range.toCvFuzzyType)) return false;
+        } else {
+            if (range.toCvFuzzyType != null) return false;
+        }
 
         //check the sequence
-        if(!sequence.equals(range.sequence)) return false;
+        if (sequence != null) {
+            if (!sequence.equals(range.sequence)) return false;
+        } else {
+            if (range.sequence != null) return false;
+        }
 
         return true;
     }
