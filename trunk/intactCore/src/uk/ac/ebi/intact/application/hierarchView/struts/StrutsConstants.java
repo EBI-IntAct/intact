@@ -21,13 +21,25 @@ public final class StrutsConstants {
 
     public static final String GRAPH_PROPERTY_FILE = "/config/Graph.properties";
 
+    public static final String SEARCH_PROPERTY_FILE = "/config/Search.properties";
+
 
     // ********************************************************* Request parameters
 
     /**
-     * The name of the keys attribute set in the session.
+     * The name of the attribute in the session which represents
+     * the list of elements selected component in the external
+     * application which allows to highlight.
      */
-    public static final String ATTRIBUTE_KEYS = "keys";
+    public static final String ATTRIBUTE_KEYS_LIST = "keys";
+
+    /**
+     * The name of the attribute in the session which represents
+     * the element selected in the external application which
+     * allows to highlight.
+     */
+    public static final String ATTRIBUTE_KEY_CLICKED = "clicked";
+
 
     /**
      * The name of the HTTP attribute to describe the URL of the highlight source.
