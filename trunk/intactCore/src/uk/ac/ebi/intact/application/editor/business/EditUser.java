@@ -22,6 +22,7 @@ import uk.ac.ebi.intact.business.BusinessConstants;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.*;
 import uk.ac.ebi.intact.application.editor.struts.view.ResultBean;
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentBean;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.util.GoTools;
 import uk.ac.ebi.intact.util.NewtServerProxy;
@@ -178,6 +179,11 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * Reference to the Protein factory.
      */
     private transient UpdateProteinsI myProteinFactory;
+
+    /**
+     * A set of currently edited/added experiment short labels.
+     */
+    private transient Set myCurrentExperiments = new HashSet();
 
     // Static Methods.
 
@@ -562,6 +568,14 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     public String getHelpTag() {
         return myEditView.getHelpTag();
+    }
+
+    public void addToCurrentExperiment(Experiment exp) {
+        myCurrentExperiments.add(exp);
+    }
+
+    public Set getCurrentExperiments() {
+        return myCurrentExperiments;
     }
 
     // Helper methods.
