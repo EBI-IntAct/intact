@@ -1,3 +1,5 @@
+<%@ page import="uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean"%>
+
 <!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
@@ -13,79 +15,29 @@
 <%@ page language="java"%>
 
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
-<%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="http://jakarta.apache.org/taglibs/display" prefix="display" %>
 
-<style type="text/css">
-    <%@ include file="/layouts/styles/editor.css" %>
-</style>
+<jsp:useBean id="user" scope="session"
+    class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
 <%-- Only display the table if the interactions less (<) the allowed limit --%>
 <c:if test="${user.view.numberOfInteractions lt service.interactionLimit}">
 
     <h3>Interactions not yet added to the Experiment</h3>
 
-    <c:if test="${not empty expForm.map.intshold}">
+    <c:if test="${user.view.holdInteractionCount gt 0 and empty noDisplayInts}">
 
-        <table width="100%" border="0" cellspacing="1" cellpadding="2">
-            <tr class="tableRowHeader">
-                <th class="tableCellHeader" width="2%"></th>
-                <th class="tableCellHeader" width="10%" colspan="2">
-                    <bean:message key="label.action"/>
-                </th>
-                <th class="tableCellHeader" width="10%">
-                    <bean:message key="label.shortlabel"/>
-                </th>
-                <th class="tableCellHeader" width="10%">Pubmed Id</th>
-                <th class="tableCellHeader" width="10%">
-                    <bean:message key="label.ac"/>
-                </th>
-                <th class="tableCellHeader" width="58%">
-                    <bean:message key="label.fullname"/>
-                </th>
-            </tr>
-            <%-- To calculate odd or even row --%>
-            <c:set var="row"/>
-            <c:forEach var="interaction" items="${expForm.map.intshold}">
-                <%-- Different styles for even or odd rows --%>
-                <c:choose>
-                    <c:when test="${row % 2 == 0}">
-                        <tr class="tableRowEven">
-                    </c:when>
-                    <c:otherwise>
-                        <tr class="tableRowOdd">
-                    </c:otherwise>
-                </c:choose>
+        <%
+            ExperimentViewBean view = (ExperimentViewBean) user.getView();
+            pageContext.setAttribute("ints", view.getHoldInteractions());
+        %>
 
-                    <td class="editCell"/>
-
-                    <td class="tableCell">
-                        <html:submit indexed="true" property="intsholdCmd"
-                            titleKey="exp.int.button.add.titleKey">
-                            <bean:message key="exp.int.button.add"/>
-                        </html:submit>
-                    </td>
-
-                    <td class="tableCell">
-                        <html:submit indexed="true" property="intsholdCmd"
-                            titleKey="exp.int.button.hide.titleKey">
-                            <bean:message key="exp.int.button.hide"/>
-                        </html:submit>
-                    </td>
-
-                    <td class="tableCell">
-                        <bean:write name="interaction" property="shortLabelLink" filter="false"/>
-                    </td>
-                    <td class="tableCell">
-                    </td>
-                    <td class="tableCell">
-                        <bean:write name="interaction" property="ac"/>
-                    </td>
-                    <td class="tableCell">
-                        <bean:write name="interaction" property="fullName"/>
-                    </td>
-                </tr>
-            </c:forEach>
-        </table>
+        <display:table width="100%" name="ints"
+            decorator="uk.ac.ebi.intact.application.editor.struts.view.experiment.IntHoldDisplayWrapper">
+            <display:column property="action" title="Action" />
+            <display:column property="shortLabel" title="Short Label" sort="true"/>
+            <display:column property="ac" title="Ac" />
+            <display:column property="fullName" title="Full Name" />
+        </display:table>
     </c:if>
 </c:if>
