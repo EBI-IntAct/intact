@@ -8,7 +8,6 @@ import java.io.*;
 
 import junit.framework.*;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.util.IntactTypesGenerator;
-import uk.ac.ebi.intact.util.AssertFailureException;
 
 /**
  * Test class for IntactTypesGenerator class.
@@ -49,7 +48,7 @@ public class IntactTypesGeneratorTest extends TestCase {
             // Generate the Intact Types resource.
             gen.doIt();
         }
-        catch (AssertFailureException ex) {
+        catch (AssertionError ex) {
             fail(ex.getMessage());
         }
         // The expected Intact Types resource file.
