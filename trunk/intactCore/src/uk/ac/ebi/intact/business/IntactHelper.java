@@ -431,10 +431,10 @@ public class IntactHelper implements SearchI, Externalizable {
      * @param obj the object to update.
      * @exception IntactException - thrown if a problem arises during the update
      */
-//     public void forceUpdate(Object obj) throws IntactException {
-//        // Force the update
-//        update(obj, true);
-//    }
+     public void forceUpdate(Object obj) throws IntactException {
+        // Force the update
+        update(obj, true);
+    }
 
     /**
      * Cancels the update for the given object.
@@ -1808,7 +1808,7 @@ return partialGraph;
             //just to be safe, restrict write access..
 //            synchronized (this) {
                 if (force) {
-                    ((ObjectBridgeDAO) dao).forceUpdate(obj);
+                    dao.forceUpdate(obj);
                 }
                 else {
                     dao.update(obj);
