@@ -13,4 +13,25 @@ package uk.ac.ebi.intact.application.editor.exception;
  * @version $Id$
  */
 public class ValidationException extends BaseException {
+
+    /**
+     * The filter key to filter messages.
+     */
+    private String myFilterKey;
+
+    /**
+     * Constructs with message and filter keys.
+     * @param mkey the message key.
+     * @param fkey the filter key.
+     */
+    protected ValidationException(String mkey, String fkey) {
+        setMessageKey(mkey);
+        myFilterKey = fkey;
+    }
+
+    // Getter methods.
+
+    public String  getFilterKey() {
+        return myFilterKey;
+    }
 }
