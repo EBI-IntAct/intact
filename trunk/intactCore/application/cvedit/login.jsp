@@ -1,5 +1,3 @@
-<%@ page import="uk.ac.ebi.intact.application.cvedit.business.IntactServiceIF,
-                 uk.ac.ebi.intact.application.cvedit.business.IntactUserIF"%>
  <%--
    /**
     * Logon page. Prompts a user with with user name and password.
@@ -28,7 +26,7 @@
 <h2><html:errors/></h2>
 
 <!-- Create the intact types using the following resource bundle. -->
-<intact:createIntactTypeListTag resource="config/IntactTypes"/>
+<intact:createIntactTypeListTag key="intacttypes" resource="config/IntactTypes"/>
 
 <html:form action="/login" focus="username">
     <table border="0" width="100%">
@@ -58,7 +56,7 @@
             </th>
             <td align="left">
             <html:select property="topic">
-                <html:options name="<%=IntactServiceIF.INTACT_TYPES%>" />
+                <html:options name="intacttypes" />
             </html:select>
             </td>
         </tr>
