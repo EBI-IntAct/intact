@@ -6,6 +6,7 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view.experiment;
 
+import org.apache.struts.action.DynaActionForm;
 import org.apache.struts.tiles.ComponentContext;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
@@ -13,7 +14,6 @@ import uk.ac.ebi.intact.application.editor.exception.validation.ExperimentExcept
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.CvIdentification;
@@ -106,6 +106,31 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     // Override to provide Experiment help tag.
     public String getHelpTag() {
         return "editor.experiment";
+    }
+
+    // Override to provide set experiment from the bean.
+    public void updateFromForm(DynaActionForm dynaform) {
+        // Set the common values by calling super first.
+        super.updateFromForm(dynaform);
+        String organism = (String) dynaform.get("organism");
+
+        // These two items need to be normalized.
+        String interaction = null;
+        String identification = null;
+        try {
+            interaction = getNormalizedInter((String) dynaform.get("inter"));
+            identification = getNormalizedIdent((String) dynaform.get("ident"));
+        }
+        catch (SearchException e) {
+            // Should log this exception; the validate method will fail if
+            // this exception is thrown.
+            e.printStackTrace();
+        }
+
+        // Set the view bean with the new values.
+        setOrganism(organism);
+        setInter(interaction);
+        setIdent(identification);
     }
 
     // Null for any of these values will throw an exception.

@@ -7,6 +7,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.struts.action.DynaActionForm;
 import org.apache.struts.tiles.ComponentContext;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
@@ -14,8 +15,7 @@ import uk.ac.ebi.intact.application.editor.exception.validation.InteractionExcep
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
-import uk.ac.ebi.intact.application.editor.struts.view.EditBean;
-import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
+import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 
@@ -182,12 +182,21 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
     // Override to provide Experiment layout.
     public void setLayout(ComponentContext context) {
-        context.putAttribute("content", "edit.interaction.layout");
+        context.putAttribute("content", "edit.int.layout");
     }
 
     // Override to provide Interaction help tag.
     public String getHelpTag() {
         return "editor.interaction";
+    }
+
+    // Override to provide set experiment from the bean.
+    public void updateFromForm(DynaActionForm dynaform) {
+        // Set the common values by calling super first.
+        super.updateFromForm(dynaform);
+        setInteractionType((String) dynaform.get("interactionType"));
+        setOrganism((String) dynaform.get("organism"));
+        setKD((Float) dynaform.get("kD"));
     }
 
     // Null for any of these values will throw an exception.
@@ -204,7 +213,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
         // Look for any unsaved or error proteins.
         for (Iterator iter = myProteins.iterator(); iter.hasNext();) {
             ProteinBean pb = (ProteinBean) iter.next();
-            if (!pb.getEditState().equals(EditBean.VIEW)) {
+            if (!pb.getEditState().equals(AbstractEditBean.VIEW)) {
                 throw new InteractionException();
             }
         }
@@ -452,22 +461,6 @@ public class InteractionViewBean extends AbstractEditViewBean {
     }
 
     /**
-     * Fills the given form with Experiment data.
-     * @param form the form to fill with.
-     */
-    public void fillExperiments(EditForm form) {
-        form.setItems(myExperiments);
-    }
-
-    /**
-     * Fills the given form with 'hold' Experiments.
-     * @param form the form to fill with.
-     */
-    public void fillHoldExperiments(EditForm form) {
-        form.setItems(myExperimentsToHold);
-    }
-
-    /**
      * Adds an Protein.
      * @param protein the Protein to add.
      *
@@ -555,14 +548,6 @@ public class InteractionViewBean extends AbstractEditViewBean {
      */
     public ProteinBean getProtein(int index) {
         return (ProteinBean) myProteins.get(index);
-    }
-
-    /**
-     * Fills the given form with Protein data.
-     * @param form the form to fill with.
-     */
-    public void fillProteins(EditForm form) {
-        form.setItems(myProteins);
     }
 
     // Override super to add extra.

@@ -8,9 +8,7 @@ package uk.ac.ebi.intact.application.editor.business;
 
 import org.apache.commons.collections.CollectionUtils;
 import uk.ac.ebi.intact.application.editor.exception.EmptyTopicsException;
-import uk.ac.ebi.intact.application.commons.struts.taglibs.DocumentationTag;
 
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;
 import java.net.URL;

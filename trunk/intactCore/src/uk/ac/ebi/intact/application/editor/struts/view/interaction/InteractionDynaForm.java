@@ -6,12 +6,13 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
-import org.apache.struts.action.*;
-import org.apache.struts.validator.DynaValidatorForm;
+import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionMapping;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
+import uk.ac.ebi.intact.application.editor.struts.view.cv.CvDynaForm;
 
 import javax.servlet.http.HttpServletRequest;
-
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 
 /**
  * The form to validate interaction info data.
@@ -19,7 +20,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFacto
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class InteractionDynaForm extends DynaValidatorForm {
+public class InteractionDynaForm extends CvDynaForm {
 
     /**
      * Validates Interaction info page.
@@ -32,18 +33,25 @@ public class InteractionDynaForm extends DynaValidatorForm {
      */
     public ActionErrors validate(ActionMapping mapping,
                                  HttpServletRequest request) {
-        ActionErrors errors = new ActionErrors();
-        String organism = (String) get("organism");
+        ActionErrors errors = super.validate(mapping, request);
+
+        // Only proceed if super method does not find any errors.
+        if ((errors != null) && !errors.isEmpty()) {
+            return errors;
+        }
         String interaction = (String) get("interactionType");
+        String organism = (String) get("organism");
 
         // Must select from the drop down list.
         if (interaction.equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.int.biosrc"));
-        }
-        else if (organism.equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
+            errors = new ActionErrors();
             errors.add(ActionErrors.GLOBAL_ERROR,
                     new ActionError("error.int.cvtype"));
+        }
+        else if (organism.equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
+            errors = new ActionErrors();
+            errors.add(ActionErrors.GLOBAL_ERROR,
+                    new ActionError("error.int.biosrc"));
         }
         return errors;
     }

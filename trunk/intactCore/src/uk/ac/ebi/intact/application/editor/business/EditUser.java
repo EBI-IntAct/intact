@@ -15,7 +15,9 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditVie
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditViewBeanFactory;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
+import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.ResultBean;
+import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
 import uk.ac.ebi.intact.business.BusinessConstants;
 import uk.ac.ebi.intact.business.DuplicateLabelException;
@@ -265,8 +267,10 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
             try {
                 return myHelper.getDbUserName();
             }
-            catch (LookupException e) {}
-            catch (SQLException e) {}
+            catch (LookupException e) {
+            }
+            catch (SQLException e) {
+            }
         }
         return null;
     }
@@ -276,8 +280,10 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
             try {
                 return myHelper.getDbName();
             }
-            catch (LookupException e) {}
-            catch (SQLException e) {}
+            catch (LookupException e) {
+            }
+            catch (SQLException e) {
+            }
         }
         return null;
     }
@@ -286,6 +292,15 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     public AbstractEditViewBean getView() {
         return myEditView;
+    }
+
+    public String getCurrentViewClass() {
+        // The object we are editing at the moment.
+        AnnotatedObject editObject = myEditView.getAnnotatedObject();
+        // The class name of the current edit object.
+        String className = editObject.getClass().getName();
+        // Strip the package name from the class name.
+        return className.substring(className.lastIndexOf('.') + 1);
     }
 
     public void setSelectedTopic(String topic) {
@@ -367,6 +382,10 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return myHelper.isPersistent(obj);
     }
 
+    public boolean isPersistent() {
+        return isPersistent(myEditView.getAnnotatedObject());
+    }
+
     public void updateView(AnnotatedObject annot) {
         // Start editing the object.
         this.startEditing();
@@ -438,7 +457,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
             return myHelper.search(objectType, searchParam, searchValue);
         }
         catch (IntactException ie) {
-            String msg = "Failed to find any "  + objectType + " records for "
+            String msg = "Failed to find any " + objectType + " records for "
                     + searchValue + " as " + searchParam;
             throw new SearchException(msg);
         }
@@ -470,23 +489,25 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         }
     }
 
-    public void addToSearchCache(AnnotatedObject anobj) {
+    public void updateSearchCache() {
+        AnnotatedObject annobj = myEditView.getAnnotatedObject();
+        // Remove from the cache and add it again (this will update any
+        // changes done in the editor).
+        removeFromSearchCache();
+//        this.addToSearchCache(annobj);
+
+//        private void addToSearchCache(AnnotatedObject anobj) {
         if (mySearchCache.isEmpty()) {
             return;
         }
         // Only add to the cache list if they are of same type; the check
         // is made against the first element (assumes that rest are of same type).
         ResultBean rb = (ResultBean) mySearchCache.iterator().next();
-        if (rb.isSameType(anobj)) {
+        if (rb.isSameType(annobj)) {
             // The same type; add it to the cache.
-            mySearchCache.add(new ResultBean(anobj));
+            mySearchCache.add(new ResultBean(annobj));
         }
-    }
-
-    public void updateSearchCache() {
-        AnnotatedObject annobj = myEditView.getAnnotatedObject();
-        this.removeFromSearchCache();
-        this.addToSearchCache(annobj);
+//        }
     }
 
     public Collection lookup(String className, String value, boolean cache)
@@ -551,12 +572,77 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
                     annobj, shortlabel, extAc);
         }
         catch (IntactException ie) {
-            String msg = "Failed to get a unique short label for "  + extAc;
+            String msg = "Failed to get a unique short label for " + extAc;
             throw new SearchException(msg);
         }
     }
 
+    public boolean duplicateShortLabel(String label) throws SearchException {
+        // The object we are editing at the moment.
+        AnnotatedObject annobj = myEditView.getAnnotatedObject();
+        Class clazz = annobj.getClass();
+
+        // Holds the result from the search.
+        Collection results = search(clazz.getName(), "shortLabel", label);
+        if (results.isEmpty()) {
+            // Don't have this short label on the database.
+            return false;
+        }
+        // If we found a single record then it could be the current record.
+        if (results.size() == 1) {
+            // Found an object with similar short label; is it as same as the
+            // current record?
+            String currentAc = annobj.getAc();
+            // ac is null until a record is persisted; current ac is null
+            // for a new object.
+            if (currentAc != null) {
+                // Eediting an existing record.
+                String resultAc = ((AnnotatedObject) results.iterator().next()).getAc();
+                if (currentAc.equals(resultAc)) {
+                    // We have retrieved the same record from the DB.
+                    return false;
+                }
+            }
+        }
+        // There is another record exists with the same short label.
+        return true;
+    }
+
+    public List getExistingShortLabels() throws SearchException {
+        // The object we are editing at the moment.
+        AnnotatedObject editObject = myEditView.getAnnotatedObject();
+        // The current edit object's short label.
+        String editLabel = editObject.getShortLabel();
+        // The class name of the current edit object.
+        String className = editObject.getClass().getName();
+
+        // The list to return.
+        List list = new ArrayList();
+
+        // Flag to indicate processing of the first item.
+        boolean first = true;
+        // Search the database.
+        Collection results = search(className, "shortLabel", "*");
+        for (Iterator iter = results.iterator(); iter.hasNext();) {
+            // Avoid this object's own short label.
+            String label = ((AnnotatedObject) iter.next()).getShortLabel();
+            if (label.equals(editLabel)) {
+                continue;
+            }
+            if (first) {
+                first = false;
+            }
+            else {
+                list.add(label);
+            }
+        }
+        return list;
+    }
+
     public void fillSearchResult(DynaBean dynaForm) {
+        for (Iterator iterator = mySearchCache.iterator(); iterator.hasNext();) {
+            ResultBean resultBean = (ResultBean) iterator.next();
+        }
         dynaForm.set("items", mySearchCache);
     }
 
@@ -598,6 +684,39 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     public Set getCurrentExperiments() {
         return myCurrentExperiments;
+    }
+
+    public Annotation getAnnotation(CommentBean cb) throws SearchException {
+        // The owner of the object we are editing.
+        Institution owner = getInstitution();
+
+        // The topic for the new annotation.
+        CvTopic cvtopic = (CvTopic) getObjectByLabel(CvTopic.class, cb.getTopic());
+
+        // The new annotation to return.
+        Annotation annot = new Annotation();
+        annot.setAnnotationText(cb.getDescription());
+        annot.setCvTopic(cvtopic);
+        annot.setOwner(owner);
+        return annot;
+    }
+
+    public Xref getXref(XreferenceBean xb) throws SearchException {
+        // The owner of the object we are editing.
+        Institution owner = getInstitution();
+
+        // The database the new xref belong to.
+        CvDatabase cvdb = (CvDatabase) getObjectByLabel(CvDatabase.class,
+                xb.getDatabase());
+
+        // The CV xref qualifier.
+        CvXrefQualifier cvxref = (CvXrefQualifier) getObjectByLabel(
+                CvXrefQualifier.class, xb.getQualifier());
+
+        // The new xref to add to the current cv object.
+        Xref xref = new Xref(owner, cvdb, xb.getPrimaryId(), xb.getSecondaryId(),
+                xb.getReleaseNumber(), cvxref);
+        return xref;
     }
 
     // Helper methods.

@@ -6,13 +6,12 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view.biosrc;
 
-import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.application.editor.business.EditorService;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
-import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.business.IntactException;
 import org.apache.struts.tiles.ComponentContext;
+import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.exception.SearchException;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.model.BioSource;
 
 /**
  * BioSource edit view bean.

@@ -10,18 +10,18 @@ import org.apache.commons.beanutils.DynaBean;
 import uk.ac.ebi.intact.application.commons.business.IntactUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
+import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.model.Institution;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.NewtServerProxy;
 
 import java.io.Serializable;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Set;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Provides methods specific to a user editing an Annotated object.
@@ -82,7 +82,19 @@ public interface EditUserI extends IntactUserI, Serializable {
 
     public void cancelEdit();
 
+    /**
+     * True if given object is persistent.
+     * @param obj the object to check for persistency.
+     * @return true if <code>obj</code> is persistent.
+     */
     public boolean isPersistent(Object obj);
+
+    /**
+     * True if the current edit object is persistent. When a new edit object
+     * is created, it is not persistent until the form is submitted.
+     * @return true if the current edit object is persistent.
+     */
+    public boolean isPersistent();
 
     // The current view.
 
@@ -98,6 +110,12 @@ public interface EditUserI extends IntactUserI, Serializable {
      * object the user is working presently.
      */
     public void updateView(AnnotatedObject annot);
+
+    /**
+     * Returns the class name of the current view.
+     * @return the class name of the current view without the package prefix.
+     */
+    public String getCurrentViewClass();
 
     // Search methods
 
@@ -223,7 +241,7 @@ public interface EditUserI extends IntactUserI, Serializable {
      * <code>cvobj</code> is of as same type as existing items in the search cache (
      * avoid mixing diffrent types in the search cache).
      */
-    public void addToSearchCache(AnnotatedObject cvobj);
+//    public void addToSearchCache(AnnotatedObject cvobj);
 
     /**
      * Updates the search cache with the current edit object; this is required
@@ -257,6 +275,27 @@ public interface EditUserI extends IntactUserI, Serializable {
      */
     public String getUniqueShortLabel(String shortlabel, String extAc)
             throws SearchException;
+
+    /**
+     * Check for duplicity of short label for the current edit object.
+     * @param shortlabel the short label to check for duplicity.
+     * @return true if <code>shortlabel</code> already exists (for the current edit object)
+     * in the database.
+     * @exception SearchException for errors in acccessing the database.
+     */
+    public boolean duplicateShortLabel(String shortlabel) throws SearchException;
+
+    /**
+     * Returns a list of existing short labels for the current edit object.
+     * @return a list of String objects for short labels of current object type
+     * minus the short label of the current edit object.
+     * @throws SearchException for errors in search the database for short labels.
+     *
+     * <pre>
+     * pre: results->forall(obj: Object | obj.oclIsTypeOf(String))
+     * </pre>
+     */
+    public List getExistingShortLabels() throws SearchException;
 
     /**
      * Popluate the given form with search result.
@@ -326,4 +365,20 @@ public interface EditUserI extends IntactUserI, Serializable {
      * </pre>
      */
     public Set getCurrentExperiments();
+
+    /**
+     * Returns an <code>Annotation</code> constructed from the given bean.
+     * @param cb the bean to extract information to construct an Anotation.
+     * @return an Annotation constructed from <code>cb</code>.
+     * @exception SearchException for errors in searching the database.
+     */
+    public Annotation getAnnotation(CommentBean cb) throws SearchException;
+
+    /**
+     * Returns a new instance of <code>Xref</code> constructed from the given bean.
+     * @param xb the bean to extract information to construct an Xref.
+     * @return an instance of <code>Xref</code> constructed from <code>xb</code>.
+     * @exception SearchException for errors in searching the database.
+     */
+    public Xref getXref(XreferenceBean xb) throws SearchException;
 }

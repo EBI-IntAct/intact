@@ -6,8 +6,8 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
-import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.application.editor.struts.view.EditBean;
+import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
+import uk.ac.ebi.intact.model.Experiment;
 
 import java.io.Serializable;
 
@@ -17,7 +17,7 @@ import java.io.Serializable;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class ExperimentBean extends EditBean implements Serializable {
+public class ExperimentBean extends AbstractEditBean implements Serializable {
 
     // Instance Data
 
@@ -27,29 +27,11 @@ public class ExperimentBean extends EditBean implements Serializable {
     private Experiment myExperiment;
 
     /**
-     * The AC.
-     */
-//    private String myAc;
-
-    /**
-     * The short label.
-     */
-//    private String myShortLabel;
-
-    /**
-     * The full name of the Protein.
-     */
-//    private String myFullName;
-
-    /**
      * Instantiate an object of this class from a Experiment instance.
      * @param experiment the <code>Experiment</code> object.
      */
     public ExperimentBean(Experiment experiment) {
         myExperiment = experiment;
-//        myAc = experiment.getAc();
-//        myShortLabel = experiment.getShortLabel();
-//        myFullName = experiment.getFullName();
     }
 
     // Read only properties.
@@ -59,15 +41,15 @@ public class ExperimentBean extends EditBean implements Serializable {
     }
 
     public String getAc() {
-        return myExperiment.getAc();//myAc;
+        return myExperiment.getAc();
     }
 
     public String getShortLabel() {
-        return myExperiment.getShortLabel();//myShortLabel;
+        return myExperiment.getShortLabel();
     }
 
     public String getFullName() {
-        return myExperiment.getFullName();//myFullName;
+        return myExperiment.getFullName();
     }
 
     /**

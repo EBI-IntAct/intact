@@ -6,12 +6,11 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view;
 
-import uk.ac.ebi.intact.model.Xref;
-import uk.ac.ebi.intact.model.CvXrefQualifier;
-import uk.ac.ebi.intact.model.CvDatabase;
-import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
+import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.CvXrefQualifier;
+import uk.ac.ebi.intact.model.Xref;
 
 import java.io.Serializable;
 
@@ -21,12 +20,7 @@ import java.io.Serializable;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class XreferenceBean extends EditBean implements Serializable {
-
-    /**
-     * The unique identifier for this bean.
-     */
-    private long myKey;
+public class XreferenceBean extends AbstractEditKeyBean implements Serializable {
 
     /**
      * Reference to the Xref object this instance is created with.
@@ -59,31 +53,28 @@ public class XreferenceBean extends EditBean implements Serializable {
     private String myReferenceQualifer;
 
     /**
+     * Default constructor.
+     */
+    public XreferenceBean() {}
+
+    /**
      * Instantiate an object of this class from a Xref object.
      *
      * @param xref the <code>Xref</code> object to construct an
      * instance of this class.
      */
     public XreferenceBean(Xref xref) {
-        myKey = EditUser.getId();
-        myXref = xref;
-        myDatabaseName = xref.cvDatabase.getShortLabel();
-        myPrimaryId = xref.getPrimaryId();
-        mySecondaryId = xref.getSecondaryId();
-        myReleaseNumber = xref.getDbRelease();
-
-        myReferenceQualifer = "";
-        CvXrefQualifier qualifier = xref.getCvXrefQualifier();
-        if (qualifier != null) {
-            myReferenceQualifer = qualifier.getShortLabel();
-        }
+        initialize(xref);
     }
 
     /**
-     * Return the key for this object.
+     * Instantiates with given xref and key.
+     * @param xref the underlying <code>Xref</code> object.
+     * @param key the key to assigned to this bean.
      */
-    public long getKey() {
-        return myKey;
+    public XreferenceBean(Xref xref, long key) {
+        super(key);
+        initialize(xref);
     }
 
     /**
@@ -204,25 +195,36 @@ public class XreferenceBean extends EditBean implements Serializable {
         myXref.setCvXrefQualifier(xqual);
     }
 
-    // Override Objects's equal method.
+    /**
+     * Resets fields to blanks, so the addXref form doesn't display
+     * previous values. Calls the super reset to reset the internal key.
+     */
+    public void reset() {
+        super.reset();
+        myDatabaseName = "";
+        myPrimaryId = "";
+        mySecondaryId = "";
+        myReleaseNumber = "";
+        myReferenceQualifer = "";
+    }
+
+    // Helper methods
 
     /**
-     * Compares <code>obj</code> with this object according to
-     * Java's equals() contract. Only returns <tt>true</tt> if the internal
-     * keys for both objects match. Made it final to allow slice comparision
-     * without violating transitivity law for equals() method.
-     *
-     * @param obj the object to compare.
+     * Intialize the member variables using the given Xref object.
+     * @param xref <code>Xref</code> object to populate this bean.
      */
-    public final boolean equals(Object obj) {
-        // Identical to this?
-        if (obj == this) {
-            return true;
+    private void initialize(Xref xref) {
+        myXref = xref;
+        myDatabaseName = xref.cvDatabase.getShortLabel();
+        myPrimaryId = xref.getPrimaryId();
+        mySecondaryId = xref.getSecondaryId();
+        myReleaseNumber = xref.getDbRelease();
+
+        myReferenceQualifer = "";
+        CvXrefQualifier qualifier = xref.getCvXrefQualifier();
+        if (qualifier != null) {
+            myReferenceQualifer = qualifier.getShortLabel();
         }
-        // Allow for slice comparision.
-        if ((obj != null) && (obj instanceof XreferenceBean)) {
-            return myKey == ((XreferenceBean) obj).getKey();
-        }
-        return false;
     }
 }

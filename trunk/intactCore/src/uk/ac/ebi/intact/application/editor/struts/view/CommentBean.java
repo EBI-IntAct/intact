@@ -6,7 +6,6 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view;
 
-import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.model.Annotation;
@@ -20,14 +19,9 @@ import java.io.Serializable;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class CommentBean extends EditBean implements Serializable {
+public class CommentBean extends AbstractEditKeyBean implements Serializable {
 
     // Instance Data
-
-    /**
-     * The unique identifier for this bean.
-     */
-    private long myKey;
 
     /**
      * Reference to the annotation object.
@@ -45,23 +39,29 @@ public class CommentBean extends EditBean implements Serializable {
     private String myAnnotatedText;
 
     /**
-     * Instantiate an object of this class from an Annotation object.
-     * @param annotation the <code>Annotation</code> object to construct an
-     * instance of this class.
+     * Default constructor.
+     *
+     * @see #reset()
+     */
+    public CommentBean() {}
+
+    /**
+     * Instantiate an object of this class from an Annotation object. The key
+     * is set to a default value (unique).
+     * @param annotation the underlying <code>Annotation</code> object.
      */
     public CommentBean(Annotation annotation) {
-        myKey = EditUser.getId();
-        myAnnotation = annotation;
-        myTopic = annotation.getCvTopic().getShortLabel();
-        myAnnotatedText = annotation.getAnnotationText();
+        initialize(annotation);
     }
 
     /**
-     * Return the key for this object.
-     * @return key for this object as a <code>long</code>.
+     * Instantiates with given annotation and key.
+     * @param annotation the underlying <code>Annotation</code> object.
+     * @param key the key to assigned to this bean.
      */
-    public long getKey() {
-        return myKey;
+    public CommentBean(Annotation annotation, long key) {
+        super(key);
+        initialize(annotation);
     }
 
     /**
@@ -124,24 +124,23 @@ public class CommentBean extends EditBean implements Serializable {
         myAnnotation.setCvTopic(cvtopic);
     }
 
-    // Override Objects's equal method.
+    /**
+     * Resets fields to blanks, so the addAnnotation form doesn't display
+     * previous values. Calls the super reset to reset the internal key.
+     */
+    public void reset() {
+        super.reset();
+        myTopic = "";
+        myAnnotatedText = "";
+    }
 
     /**
-     * Compares <code>obj</code> with this object according to
-     * Java's equals() contract. Only returns <tt>true</tt> if the internal
-     * keys for both objects match.
-     *
-     * @param obj the object to compare.
+     * Intialize the member variables using the given Annotation object.
+     * @param annotation <code>Annotation</code> object to populate this bean.
      */
-    public boolean equals(Object obj) {
-        // Identical to this?
-        if (obj == this) {
-            return true;
-        }
-        if ((obj != null) && (getClass() == obj.getClass())) {
-            // Can safely cast it.
-            return myKey == ((CommentBean) obj).getKey();
-        }
-        return false;
+    private void initialize(Annotation annotation) {
+        myAnnotation = annotation;
+        myTopic = annotation.getCvTopic().getShortLabel();
+        myAnnotatedText = annotation.getAnnotationText();
     }
 }

@@ -15,32 +15,31 @@
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
 
-<html:form action="/interaction/protein/search">
-    <table width="50%" border="0" cellspacing="1" cellpadding="2">
-        <tr class="tableRowHeader">
-            <th class="tableCellHeader" width="10%">Action</th>
-            <th class="tableCellHeader" width="10%">Short Label</th>
-            <th class="tableCellHeader" width="10%">SP AC</th>
-            <th class="tableCellHeader" width="10%">IntAct AC</th>
-            <th class="tableCellHeader" width="2%">
-                <intact:documentation section="editor.int.proteins"/>
-            </th>
-        </tr>
-        <tr class="tableRowEven">
-            <td class="tableCell">
-                <html:submit titleKey="biosource.taxid.button.titleKey">
-                    <bean:message key="button.search"/>
-                </html:submit>
-            </td>
-            <td class="tableCell">
-                <html:text property="shortLabel" size="10" maxlength="16"/>
-            </td>
-            <td class="tableCell">
-                <html:text property="spAc" size="10" maxlength="16"/>
-            </td>
-            <td class="tableCell">
-                <html:text property="ac" size="10" maxlength="16"/>
-            </td>
-        </tr>
-    </table>
-</html:form>
+<table width="70%" border="0" cellspacing="1" cellpadding="2">
+    <tr class="tableRowHeader">
+        <th class="tableCellHeader" width="10%">Action</th>
+        <th class="tableCellHeader" width="15%">Short Label</th>
+        <th class="tableCellHeader" width="15%">SP AC</th>
+        <th class="tableCellHeader" width="15%">IntAct AC</th>
+        <th class="tableCellHeader" width="2%">
+            <intact:documentation section="editor.int.proteins"/>
+        </th>
+    </tr>
+    <tr class="tableRowEven">
+        <td class="tableCell">
+            <html:submit titleKey="int.proteins.button.search.titleKey"
+                property="dispatch">
+                <bean:message key="int.proteins.button.search"/>
+            </html:submit>
+        </td>
+        <td class="tableCell">
+            <html:text property="protSearchLabel" size="20" maxlength="20"/>
+        </td>
+        <td class="tableCell">
+            <html:text property="protSearchSpAC" size="20" maxlength="20"/>
+        </td>
+        <td class="tableCell">
+            <html:text property="protSearchAC" size="20" maxlength="20"/>
+        </td>
+    </tr>
+</table>
