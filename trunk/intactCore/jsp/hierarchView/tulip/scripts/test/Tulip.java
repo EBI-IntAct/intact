@@ -35,7 +35,7 @@ public class Tulip {
   public static String file2String (String filename) {
     StringBuffer stringBuffer = new StringBuffer ();
     try {
-      FileReader fileReader = new FileReader(anOutputFile);
+      FileReader fileReader = new FileReader(filename);
       BufferedReader bufferedReader = new BufferedReader(fileReader);
       String currentLine;
       String newLine = System.getProperty ("line.separator");
@@ -70,8 +70,10 @@ public class Tulip {
     // the tlp content we want to compute 
     String content = null;
 
-    if (args.length > 1) {
-      content = file2String (args[1]);
+    // check parameter
+    if (args.length >= 1) {
+      System.out.println ("Load " + args[0]);
+      content = file2String (args[0]);
     }
 
     if (null == content) {
@@ -86,37 +88,24 @@ public class Tulip {
     result = client.getComputedTlpContent (content);
 
     if (null != result) {
-
+      System.out.println ("\nComputed coordinates :\n");
       for (int i = 0; i < result.length; i++) {
 	ProteinCoordinate c = (ProteinCoordinate) result[i];
 	System.out.println ( c.getId() + "  X=" + c.getX() + "  Y=" + c.getY() );
       }
-
-      String[] errorMessages = client.getErrorMessages (true);
-      if (null != errorMessages) {
-	String msg = null;
-	for (int i = 0; i < errorMessages.length; i++) {
-	  msg += errorMessages[i] + "\n";
-	}
-	System.out.println (msg);
-      } else {
-	System.out.println ("No message retreived.");
-      }
-
     } else {
-
       System.out.println ("result is null");
+    }
 
-      String[] errorMessages = client.getErrorMessages (true);
-      if (null != errorMessages) {
-	String msg = null;
-	for (int i = 0; i < errorMessages.length; i++) {
-	  msg += errorMessages[i] + "\n";
-	}
-	System.out.println (msg);
-      } else {
-	System.out.println ("No message retreived.");
-      }
+
+    // get messages and clean the web service message list
+    String[] errorMessages = client.getErrorMessages (true);
+
+    if ((null != errorMessages) || (0 == errorMessages.length)) {	
+      for (int i = 0; i < errorMessages.length; i++) 
+	System.out.println ( errorMessages[i] );	
+    } else {
+      System.out.println ("No message retreived.");
     }
 
   } // main
