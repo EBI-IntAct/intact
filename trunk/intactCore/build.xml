@@ -265,6 +265,7 @@
             <fileset dir="${config.dir}">
                 <include name="repository*.xml"/>
                 <include name="repository.dtd"/>
+                <include name="proxy.properties"/>
             </fileset>
         </copy>
 

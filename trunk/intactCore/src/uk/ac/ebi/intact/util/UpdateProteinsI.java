@@ -74,6 +74,15 @@ public abstract class UpdateProteinsI {
      */
     protected static boolean localTransactionControl = true;
 
+
+    public UpdateProteinsI (  ) {
+        try {
+            HttpProxyManager.setup();
+        } catch ( HttpProxyManager.ProxyConfigurationNotFound proxyConfigurationNotFound ) {
+            proxyConfigurationNotFound.printStackTrace ();
+        }
+    }
+
     /**
      *
      * @param helper IntactHelper object to access (read/write) the database.
@@ -81,6 +90,7 @@ public abstract class UpdateProteinsI {
      * @throws UpdateException
      */
     public UpdateProteinsI( IntactHelper helper, int cacheSize ) throws UpdateException {
+        this();
         this.helper = helper;
         collectDefaultObject( helper );
 
@@ -96,6 +106,7 @@ public abstract class UpdateProteinsI {
      * @throws UpdateException
      */
     public UpdateProteinsI ( IntactHelper helper ) throws UpdateException {
+        this();
         this.helper = helper;
         collectDefaultObject( helper );
 

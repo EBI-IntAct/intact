@@ -57,8 +57,11 @@ There are more detailed notes for hierarchView in a README file in the directory
 The following environment variables should be set:
 
 $CATALINA_HOME - the home directory of your tomcat installation
+CATALINA_OPTS - should be set with your proxy setting (needed by protein loading, and so by search)
+                in the EBI, it would be set to '-DproxySet=true -DproxyHost=www-proxy.ebi.ac.uk -DproxyPort=8080'
 $JAVA_HOME - the home directory of your JDK
 $CLASSPATH should contains, at least, the current directory (i.e. : .).
+
 
 All those variable settings could be done by sourcing one of the following scripts :
   - scripts/setEnv.sh  (for bash environment)
@@ -91,14 +94,27 @@ Afterwards you should check the config/repository.xml file to ensure that your c
 generated. If not you should edit 'repository.xml' manually to set the DB URL, user/password etc by using
 the template in that file as a guide.
 
-c) Having downloaded intact and set the configuration details as above, from the intactCore directory type
+c) As IntAct is using HTTP connexion to communicate with external resources (eg. SRS, ego, Newt...),
+   you could encounter some problems (ie. no connexion allowed) if your system runs behind an HTTP proxy.
+   In order to go through you proxy server, you need to customize the file 'config/proxy.properties'
+   by turning the proxy support on and specifying the hostname and port number of your proxy.
+
+   example:
+             if your proxy hostname is 'myproxy.mycompany.com' and it runs on the port '3129',
+             you should customize your configuration file as follow:
+
+             proxy.enable=true
+             proxy.host=myproxy.mycompany.com
+             proxy.port=3129
+
+d) Having downloaded intact and set the configuration details as above, from the intactCore directory type
 
 	ant compile-core
 
 This will generate the core intact classes - individual applications can then be built (there is also an option to
 build everything in one go - 'ant compile-all' - if you so wish).
 
-d) the final step for the intact core setup is to load the database. There are sample data files in the data directory,
+e) the final step for the intact core setup is to load the database. There are sample data files in the data directory,
 and to populate your database with this data simply type
 
 	scripts/postgres/testfill.sh 'user/pwd' <dbname> small | medium | large  (postgres - quotes can be omitted if no password)
@@ -166,7 +182,7 @@ a) cd applications/<webapp-name>, then type
 This will build a war file and copy it to your tomcat webapps directory
 (assuming you have $CATALINA_HOME set as an environment variable).
 Just to check things worked OK, you should see a collection of <appname>.war files in your
-$CATALINIA_HOME/webapps directory.
+$CATALINA_HOME/webapps directory.
 
 b) type ant start-tomcat (once)- if this fails, simply go to your tomcat bin directory and
    start it manually from there.
