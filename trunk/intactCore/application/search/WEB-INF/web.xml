@@ -20,13 +20,10 @@
         <param-value>/config/repository.xml</param-value>
     </context-param>
 
-    <!-- Location of the intact object type to classname properties file.
-         If you changed this location, then make sure to change it in
-         login.jsp as well.
-    -->
+    <!-- Where configuration files are stored. -->
     <context-param>
-        <param-name>intacttypesfile</param-name>
-        <param-value>/config/IntactTypes</param-value>
+        <param-name>configdir</param-name>
+        <param-value>/config/</param-value>
     </context-param>
 
     <!-- mapping file used for converting java objects to XML (used by Castor) -->
