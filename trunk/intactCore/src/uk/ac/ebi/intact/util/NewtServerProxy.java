@@ -6,8 +6,6 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.util;
 
-import uk.ac.ebi.intact.persistence.SearchException;
-
 import java.net.URL;
 import java.net.URLConnection;
 import java.io.*;
@@ -56,6 +54,14 @@ public class NewtServerProxy {
             return myFullName;
         }
     }
+
+    // Exception class for when a tax id is not found.
+    public static class TaxIdNotFoundException extends Exception {
+        public TaxIdNotFoundException(int taxid) {
+            super("Failed to find a match for " + taxid);
+        }
+    }
+
     // ------------------------------------------------------------------------
 
     // Class Data
@@ -96,16 +102,21 @@ public class NewtServerProxy {
      * the short label and the second contains the full name (scientific name).
      * It is possible for the server to return empty values for both.
      * @exception IOException for network errors.
-     * @exception SearchException thrown when no matches were found on the
-     * Newt server.
+     * @exception TaxIdNotFoundException thrown when the server fails to find
+     * a response for tax id.
      */
-    public NewtResponse query(int taxid) throws IOException, SearchException {
+    public NewtResponse query(int taxid) throws IOException,
+            TaxIdNotFoundException {
         // Query the Newt server.
         String response = getNewtResponse(SEARCH_PREFIX + taxid + "\r\n");
+        // Response can be null for some tax id (e.g., 38081).
+        if (response == null) {
+           throw new TaxIdNotFoundException(taxid);
+        }
         // Parse the newt response.
         Matcher matcher = REG_EXP.matcher(response);
         if (!matcher.matches()) {
-            throw new SearchException("No matches found on the Newt server");
+            throw new TaxIdNotFoundException(taxid);
         }
         // Values from newt stored in
         NewtResponse newtRes = new NewtResponse(matcher.group(2), matcher.group(3));
