@@ -367,14 +367,10 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     /**
      * Compares <code>obj</code> with this object according to
-     * Java's equals() contract. Delegates the task to
-     * {@link
-     * uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean#equals(Object)
-     * }.
+     * Java's equals() contract.
      * @param obj the object to compare.
      * @return true only if <code>obj</code> is an instance of this class
-     * and its wrapped view equals to this object's view. For all
-     * other instances, false is returned.
+     * and the user name is same. For all other instances, false is returned.
      */
     public boolean equals(Object obj) {
         // Identical to this?
@@ -386,11 +382,8 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         }
         // Can cast it safely.
         EditUser other = (EditUser) obj;
-        if (myEditView != null) {
-            return myEditView.equals(other.myEditView);
-        }
-        // Other's view must be null.
-        return other.myEditView == null;
+        // User name must equal
+        return other.myUserName.equals(other.myUserName);
     }
 
     // Implementation of IntactUserI interface.
@@ -456,6 +449,10 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return myEditState;
     }
 
+    public IntactHelper getIntactHelper() {
+        return myHelper;
+    }
+    
     public void startEditing() {
         myEditState = true;
     }

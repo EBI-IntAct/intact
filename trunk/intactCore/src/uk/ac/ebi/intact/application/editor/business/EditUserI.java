@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditVie
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.GoServerProxy;
 import uk.ac.ebi.intact.util.NewtServerProxy;
@@ -430,4 +431,10 @@ public interface EditUserI extends IntactUserI, Serializable {
      * @throws SearchException for errors in searching for the tax id.
      */
 	public BioSource getBioSourceByTaxId(String taxId) throws SearchException;
+
+    /**
+     * Allows access to Intact helper.
+     * @return IntactHelper instance assigned to the current user.
+     */
+    public IntactHelper getIntactHelper();
 }
