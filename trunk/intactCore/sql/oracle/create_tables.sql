@@ -127,12 +127,11 @@ CREATE TABLE IA_BioSource
         , owner_ac                VARCHAR2(30)    CONSTRAINT fk_BioSource$owner REFERENCES IA_Institution(ac)
         , shortLabel              VARCHAR2(20)
         , fullName                VARCHAR2(250)
+        , tissue_ac               VARCHAR2(30)    CONSTRAINT fk_Biosource$tissue REFERENCES IA_ControlledVocab(ac)
+        , celltype_ac             VARCHAR2(30)    CONSTRAINT fk_Biosource$celltype REFERENCES IA_ControlledVocab(ac)
 )
 TABLESPACE &&intactMainTablespace
 ;
-
--- too small a table ?  CREATE INDEX i_BioSource$shortLabel on BioSource(shortLabel);
-
 
 set term off
     COMMENT ON TABLE IA_BioSource IS
@@ -151,6 +150,10 @@ set term off
     'Date of the last update of the column.';
     COMMENT ON COLUMN IA_BioSource.userstamp IS
     'Database user who has performed the last update of the column.';
+    COMMENT ON COLUMN IA_BioSource.tissue_ac IS
+    'Refers to the tissue (Controlled Vocabulary) of the biosource.';
+    COMMENT ON COLUMN IA_BioSource.Celltype_ac IS
+    'Refers to the cell type (Controlled Vocabulary) of the biosource.';
 set term on
 
 
