@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 import java.io.*;
 import java.sql.SQLException;
+import java.sql.Connection;
 
 //as good a logging facility as any other....
 import org.apache.log4j.Logger;
@@ -688,6 +689,29 @@ public class IntactHelper implements SearchI, Serializable {
             throw new IntactException("failed to get column data!", se);
         }
 
+    }
+
+    /**
+     * Gets the underlying JDBC connection. This is a 'useful method' rather than
+     * a good practice one as it returns the underlying DB connection (and assumes there is one).
+     * No guarantees - if you screw up the Connection you are in trouble!.
+     *
+     * @return Connection a JDBC Connection, or null if the DAO you are using is not
+     * an OJB one.
+     * @throws IntactException thrown if there was a problem getting the connection
+     */
+    public Connection getJDBCConnection() throws IntactException {
+
+        if(dao instanceof ObjectBridgeDAO)
+        {
+            try {
+                return ((ObjectBridgeDAO)dao).getJDBCConnection();
+            }
+            catch(LookupException le) {
+                   throw new IntactException("Failed to get JDBC Connection!", le);
+            }
+        }
+        return null;
     }
 
     /**
