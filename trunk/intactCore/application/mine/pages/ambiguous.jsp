@@ -15,6 +15,7 @@
 	
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="/WEB-INF/tld/intact.tld"      prefix="intact"%>
 
 <jsp:useBean id="ambiguous" scope="request" class="java.util.Collection" />
 
@@ -51,6 +52,7 @@
 	}
 </script>
 <h1><span style="font-weight: bold;">Ambiguous search results</span></h1>
+<intact:documentation section="mine.ambiguous.result" />
 <span style="font-weight:bold;"></span>
 <h4>The parameters you have entered returned ambiguous search results. 
 For each of your input parameters, please select the appropriate IntAct object(s) below:</h4>
@@ -67,7 +69,8 @@ For each of your input parameters, please select the appropriate IntAct object(s
 	}
  %>
 <br>
-<bean:message key="ambiguous.additional.text"/><br>
+<bean:message key="ambiguous.additional.text"/>
+<intact:documentation section="mine.ambiguous.additional" /><br>
 <input name="AC" size="50"><br><br>
 <hr size="2">
 <table cellpadding="1" cellspacing="0" border="1" width="100%">

@@ -1,6 +1,8 @@
 <%@ page language="java"%>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-tiles.tld" prefix="tiles"%>
+<%@ taglib uri="/WEB-INF/tld/intact.tld"      prefix="intact"%>
+
 
 <%--
     Intact default look & feel layout. It consists of a sidebar and a display

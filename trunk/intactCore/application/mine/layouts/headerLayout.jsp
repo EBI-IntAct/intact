@@ -1,4 +1,5 @@
 <%@ taglib uri="/WEB-INF/tld/struts-tiles.tld" prefix="tiles"%>
+<%@ taglib uri="/WEB-INF/tld/intact.tld"      prefix="intact"%>
 
 <%--
     Intact default look & feel layout for the header.
@@ -11,7 +12,7 @@
             <tr>
                 <td valign="top" height="5%">
                     <span class="header"><tiles:getAsString name="header.title"/></span>
-                    <intact:documentation section="hierarchView" />
+                    <intact:documentation section="mine" />
                 </td>
             </tr>
 
