@@ -7,7 +7,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.cvedit.struts.security;
 
 import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
-import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
+import uk.ac.ebi.intact.application.cvedit.struts.framework.util.CvEditConstants;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 import uk.ac.ebi.intact.business.IntactException;
 import org.apache.struts.action.*;
@@ -53,7 +53,7 @@ public class LogoutAction extends IntactBaseAction {
         IntactUserIF user = super.getIntactUser(session);
 
         // Remove the user from the session.
-        session.removeAttribute(WebIntactConstants.INTACT_USER);
+        session.removeAttribute(CvEditConstants.INTACT_USER);
 
         if (user != null) {
             super.log("User " + user.getUser() + " logged off at " +
@@ -71,6 +71,6 @@ public class LogoutAction extends IntactBaseAction {
         // Session is no longer valid.
         session.invalidate();
 
-        return mapping.findForward(WebIntactConstants.FORWARD_SUCCESS);
+        return mapping.findForward(CvEditConstants.FORWARD_SUCCESS);
     }
 }

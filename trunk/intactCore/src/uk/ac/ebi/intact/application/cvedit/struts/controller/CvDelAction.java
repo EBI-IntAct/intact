@@ -7,7 +7,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.cvedit.struts.controller;
 
 import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
-import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
+import uk.ac.ebi.intact.application.cvedit.struts.framework.util.CvEditConstants;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.CvObject;
@@ -73,7 +73,7 @@ public class CvDelAction extends IntactBaseAction {
             // Error with deleting the object.
             super.addError("error.delete", ie1.getMessage());
             super.saveErrors(request);
-            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+            return mapping.findForward(CvEditConstants.FORWARD_FAILURE);
         }
         user.removeFromSearchCache(cvobj.getAc());
         // Deleted successfully; either search or results.

@@ -14,7 +14,7 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 
 import uk.ac.ebi.intact.application.cvedit.business.IntactServiceImpl;
 import uk.ac.ebi.intact.application.cvedit.business.IntactServiceIF;
-import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
+import uk.ac.ebi.intact.application.cvedit.struts.framework.util.CvEditConstants;
 import uk.ac.ebi.intact.application.cvedit.exception.MissingIntactTypesException;
 
 /**
@@ -45,7 +45,7 @@ public class IntactActionServlet extends ActionServlet {
             throw new ServletException();
         }
         // Make them accessible for any servlets within the server.
-        ctx.setAttribute(WebIntactConstants.INTACT_SERVICE, service);
-        ctx.setAttribute(WebIntactConstants.INTACT_TYPES, service.getIntactTypes());
+        ctx.setAttribute(CvEditConstants.INTACT_SERVICE, service);
+        ctx.setAttribute(CvEditConstants.INTACT_TYPES, service.getIntactTypes());
     }
 }

@@ -7,7 +7,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.cvedit.struts.controller;
 
 import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
-import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
+import uk.ac.ebi.intact.application.cvedit.struts.framework.util.CvEditConstants;
 import uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean;
 import uk.ac.ebi.intact.application.cvedit.struts.view.XreferenceBean;
 import org.apache.struts.action.*;
@@ -55,6 +55,6 @@ public class XrefDelAction extends IntactBaseAction {
         assert delxref != null;
         viewbean.delXref(delxref);
 
-        return mapping.findForward(WebIntactConstants.FORWARD_SUCCESS);
+        return mapping.findForward(CvEditConstants.FORWARD_SUCCESS);
     }
 }

@@ -7,7 +7,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.cvedit.struts.controller;
 
 import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
-import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
+import uk.ac.ebi.intact.application.cvedit.struts.framework.util.CvEditConstants;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 import uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean;
 import uk.ac.ebi.intact.business.IntactHelper;
@@ -81,14 +81,14 @@ public class ResultsAction extends IntactBaseAction {
             // The errors to report back.
             super.addError("error.class", cnfe.getMessage());
             super.saveErrors(request);
-            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+            return mapping.findForward(CvEditConstants.FORWARD_FAILURE);
         }
         catch (SearchException se) {
             super.log(ExceptionUtils.getStackTrace(se));
             // The errors to report back.
             super.addError("error.search", se.getNestedMessage());
             super.saveErrors(request);
-            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+            return mapping.findForward(CvEditConstants.FORWARD_FAILURE);
         }
         // The object we are editing presently.
         user.setCurrentEditObject(cvobj);
@@ -96,6 +96,6 @@ public class ResultsAction extends IntactBaseAction {
         super.log("Numbner of annotations: " + cvobj.getAnnotation().size());
         super.log("Numbner of xrefs: " + cvobj.getXref().size());
 
-        return mapping.findForward(WebIntactConstants.FORWARD_SUCCESS);
+        return mapping.findForward(CvEditConstants.FORWARD_SUCCESS);
     }
 }

@@ -7,7 +7,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.cvedit.struts.controller;
 
 import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
-import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
+import uk.ac.ebi.intact.application.cvedit.struts.framework.util.CvEditConstants;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 import uk.ac.ebi.intact.application.cvedit.exception.SessionExpiredException;
 import uk.ac.ebi.intact.model.CvObject;
@@ -55,10 +55,10 @@ public class CvAddAction extends IntactBaseAction {
 
         // Any errors in creating a new CV object?
         if (super.hasErrors()) {
-            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+            return mapping.findForward(CvEditConstants.FORWARD_FAILURE);
         }
         // To the edit patge.
-        return mapping.findForward(WebIntactConstants.FORWARD_SUCCESS);
+        return mapping.findForward(CvEditConstants.FORWARD_SUCCESS);
     }
 
     /**
@@ -95,7 +95,7 @@ public class CvAddAction extends IntactBaseAction {
         try {
             owner = user.getInstitution();
             result = user.search(classname,
-                WebIntactConstants.SEARCH_BY_LABEL, label);
+                CvEditConstants.SEARCH_BY_LABEL, label);
         }
         catch (SearchException se) {
             // Can't query the database.

@@ -13,7 +13,7 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 
 import javax.servlet.http.*;
 
-import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
+import uk.ac.ebi.intact.application.cvedit.struts.framework.util.CvEditConstants;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 import uk.ac.ebi.intact.model.CvObject;
@@ -95,12 +95,12 @@ public class SearchAction extends IntactBaseAction {
             // The errors to report back.
             super.addError("error.search", ie.getNestedMessage());
             super.saveErrors(request);
-            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+            return mapping.findForward(CvEditConstants.FORWARD_FAILURE);
         }
         if (results.isEmpty()) {
             // No matches found - forward to a suitable page
             super.log("No matches were found for the specified search criteria");
-            return mapping.findForward(WebIntactConstants.FORWARD_NO_MATCHES);
+            return mapping.findForward(CvEditConstants.FORWARD_NO_MATCHES);
         }
         // Sets the result status type.
         user.setSearchResultStatus(results.size());
@@ -112,13 +112,13 @@ public class SearchAction extends IntactBaseAction {
             user.setCurrentEditObject(cvobj);
 
             // Straight to the edit jsp.
-            return mapping.findForward(WebIntactConstants.FORWARD_EDIT);
+            return mapping.findForward(CvEditConstants.FORWARD_EDIT);
         }
         // Cache the search results.
         user.cacheSearchResult(results);
 
         // Move to the results page.
-        return mapping.findForward(WebIntactConstants.FORWARD_RESULTS);
+        return mapping.findForward(CvEditConstants.FORWARD_RESULTS);
     }
 
     /**
