@@ -245,7 +245,7 @@ public class Graph2FoldedMIF {
             logger.info("names failed (not required):" + e.getMessage());
         } //not required here - so dont worry
         //because we cannot directly get related Experiments, we access them from component1->interaction->experiments
-        Collection relExperiments = edge.getComponent1().getInteraction().getExperiment();
+        Collection relExperiments = edge.getComponent1().getInteraction().getExperiments();
         // TODO: what about the experiment of Component2 ?
         Element psiExperimentList = null;
         try {
@@ -288,7 +288,7 @@ public class Graph2FoldedMIF {
         }
         //because we cannot directly get Xref , we get it this way
         try {
-            Collection xrefs = edge.getComponent1().getInteraction().getXref();
+            Collection xrefs = edge.getComponent1().getInteraction().getXrefs();
             Element psiXref = procXrefCollection(xrefs);
             psiInteraction.appendChild(psiXref);
         } catch (ElementNotParseableError e) {
@@ -387,7 +387,7 @@ public class Graph2FoldedMIF {
         } //not required here - so dont worry
         // getXref
         try {
-            Element psiXrefPubMed = procXrefCollectionSelectingPubMed(experiment.getXref());
+            Element psiXrefPubMed = procXrefCollectionSelectingPubMed(experiment.getXrefs());
             Element psiBibref = doc.createElement("bibref");
             psiBibref.appendChild(psiXrefPubMed);
             psiExperimentDescription.appendChild(psiBibref);
@@ -395,7 +395,7 @@ public class Graph2FoldedMIF {
             logger.info("xref(pubmed) failed (not required):" + e.getMessage());
         } //not required here - so dont worry
         try {
-            Element psiXrefNotPubMed = procXrefCollectionSelectingNotPubMed(experiment.getXref());
+            Element psiXrefNotPubMed = procXrefCollectionSelectingNotPubMed(experiment.getXrefs());
             psiExperimentDescription.appendChild(psiXrefNotPubMed);
         } catch (ElementNotParseableError e) {
             logger.info("xref(not pubmed) failed (not required):" + e.getMessage());
@@ -487,7 +487,7 @@ public class Graph2FoldedMIF {
             }
         }
         try {
-            Element psiXref = procXrefCollection(cvInteractionDetection.getXref());
+            Element psiXref = procXrefCollection(cvInteractionDetection.getXrefs());
             psiInteractionDetection.appendChild(psiXref);
         } catch (ElementNotParseableError e) {
             logger.warn("xref failed (required):" + e.getMessage());
@@ -532,7 +532,7 @@ public class Graph2FoldedMIF {
             }
         }
         try {
-            Element psiXref = procXrefCollection(cvInteractionType.getXref());
+            Element psiXref = procXrefCollection(cvInteractionType.getXrefs());
             psiInteractionDetection.appendChild(psiXref);
         } catch (ElementNotParseableError e) {
             logger.warn("xref failed (required):" + e.getMessage());
@@ -574,7 +574,7 @@ public class Graph2FoldedMIF {
             }
         }
         try {
-            Element psiXref = procXrefCollection(cvIdentification.getXref());
+            Element psiXref = procXrefCollection(cvIdentification.getXrefs());
             psiParticipantDetection.appendChild(psiXref);
         } catch (ElementNotParseableError e) {
             logger.warn("xref failed (required):" + e.getMessage());
@@ -625,7 +625,7 @@ public class Graph2FoldedMIF {
         }
         //getBindingDomain
         try {
-            Element psiFeatureList = procFeatureList(component.getBindingDomain());
+            Element psiFeatureList = procFeatureList(component.getBindingDomains());
             psiProteinParticipant.appendChild(psiFeatureList);
         } catch (ElementNotParseableError e) {
             logger.info("featureList failed (not required):" + e.getMessage());
@@ -737,7 +737,7 @@ public class Graph2FoldedMIF {
         // getCvFeatureIdentificationAc() @todo
         // getProtein() @todo
         // getProteinAc() @todo
-        // getXref()
+        // getXrefs()
         try {
             Element psiXref = procXref(feature.getXref());
             psiFeature.appendChild(psiXref);
@@ -815,7 +815,7 @@ public class Graph2FoldedMIF {
             }
         }
         try {
-            Element psiXref = procXrefCollection(cvFeatureType.getXref());
+            Element psiXref = procXrefCollection(cvFeatureType.getXrefs());
             psiFeatureDescription.appendChild(psiXref);
         } catch (ElementNotParseableError e) {
             logger.warn("xref failed (required):" + e.getMessage());
@@ -857,7 +857,7 @@ public class Graph2FoldedMIF {
             }
         }
         try {
-            Element psiXref = procXrefCollection(cvFeatureIdentification.getXref());
+            Element psiXref = procXrefCollection(cvFeatureIdentification.getXrefs());
             psiFeatureDetection.appendChild(psiXref);
         } catch (ElementNotParseableError e) {
             logger.warn("xref failed (required):" + e.getMessage());
@@ -931,7 +931,7 @@ public class Graph2FoldedMIF {
         //getReference @todo
         //getXref
         try {
-            Element psiXref = procXrefCollection(interactor.getXref());
+            Element psiXref = procXrefCollection(interactor.getXrefs());
             psiProteinInteractor.appendChild(psiXref);
         } catch (ElementNotParseableError e) {
             logger.info("xref failed (not required):" + e.getMessage());
@@ -1029,7 +1029,7 @@ public class Graph2FoldedMIF {
         while (iteratorPrim.hasNext()) {
             Xref xref = (Xref) iteratorPrim.next();
             try {
-                if ((xref.cvDatabase.getShortLabel().equalsIgnoreCase("SPTR") && xref.getPrimaryId() != null) //SPTR found
+                if ((xref.getCvDatabase().getShortLabel().equalsIgnoreCase("SPTR") && xref.getPrimaryId() != null) //SPTR found
                         || !iteratorPrim.hasNext()) { //if no SPTR found, take any (here we take last)
                     Element psiPrimaryRef = procPrimaryRef(xref);
                     psiXref.appendChild(psiPrimaryRef);
@@ -1123,7 +1123,7 @@ public class Graph2FoldedMIF {
         while (iteratorPrim.hasNext()) {
             Xref xref = (Xref) iteratorPrim.next();
             try {
-                if ((xref.cvDatabase.getShortLabel().equalsIgnoreCase("PubMed") && xref.getPrimaryId() != null)) { //PubMed found
+                if ((xref.getCvDatabase().getShortLabel().equalsIgnoreCase("PubMed") && xref.getPrimaryId() != null)) { //PubMed found
                     Element psiPrimaryRef = procPrimaryRef(xref);
                     psiXref.appendChild(psiPrimaryRef);
                     xrefs.remove(xref); //this was already processed
@@ -1146,7 +1146,7 @@ public class Graph2FoldedMIF {
         while (iteratorSnd.hasNext()) {
             Xref xref = (Xref) iteratorSnd.next();
             try {
-                if ((xref.cvDatabase.getShortLabel().equalsIgnoreCase("PubMed") && xref.getPrimaryId() != null)) { //PubMed found
+                if ((xref.getCvDatabase().getShortLabel().equalsIgnoreCase("PubMed") && xref.getPrimaryId() != null)) { //PubMed found
                     Element psiSecondaryRef = procSecondaryRef(xref);
                     psiXref.appendChild(psiSecondaryRef);
                 }
@@ -1183,7 +1183,7 @@ public class Graph2FoldedMIF {
         while (iteratorPrim.hasNext()) {
             Xref xref = (Xref) iteratorPrim.next();
             try {
-                if (!(xref.cvDatabase.getShortLabel().equalsIgnoreCase("PubMed") && xref.getPrimaryId() != null)) { //PubMed found
+                if (!(xref.getCvDatabase().getShortLabel().equalsIgnoreCase("PubMed") && xref.getPrimaryId() != null)) { //PubMed found
                     Element psiPrimaryRef = procPrimaryRef(xref);
                     psiXref.appendChild(psiPrimaryRef);
                     xrefs.remove(xref); //this was already processed
@@ -1206,7 +1206,7 @@ public class Graph2FoldedMIF {
         while (iteratorSnd.hasNext()) {
             Xref xref = (Xref) iteratorSnd.next();
             try {
-                if (!(xref.cvDatabase.getShortLabel().equalsIgnoreCase("PubMed") && xref.getPrimaryId() != null)) { //PubMed found
+                if (!(xref.getCvDatabase().getShortLabel().equalsIgnoreCase("PubMed") && xref.getPrimaryId() != null)) { //PubMed found
                     Element psiSecondaryRef = procSecondaryRef(xref);
                     psiXref.appendChild(psiSecondaryRef);
                 }
@@ -1236,7 +1236,7 @@ public class Graph2FoldedMIF {
         Element psiPrimaryRef = doc.createElement("primaryRef");
         //local elements processing...
         try {
-            psiPrimaryRef.setAttribute("db", xref.cvDatabase.getShortLabel());
+            psiPrimaryRef.setAttribute("db", xref.getCvDatabase().getShortLabel());
             psiPrimaryRef.setAttribute("id", xref.getPrimaryId());
         } catch (NullPointerException e) {
             logger.warn("xref without db or id - failed (required):");
@@ -1267,7 +1267,7 @@ public class Graph2FoldedMIF {
         Element psiSecondaryRef = doc.createElement("secondaryRef");
         //local elements processing...
         try {
-            psiSecondaryRef.setAttribute("db", xref.cvDatabase.getShortLabel());
+            psiSecondaryRef.setAttribute("db", xref.getCvDatabase().getShortLabel());
             psiSecondaryRef.setAttribute("id", xref.getPrimaryId());
         } catch (NullPointerException e) {
             logger.warn("xref without db or id - failed (required):");
