@@ -21,7 +21,7 @@ CLASSPATH=`cygpath --path --windows "$CLASSPATH"`
 fi
 
 if [ "$JAVA_HOME" ]; then
-    $JAVA_HOME/bin/java -classpath $CLASSPATH uk.ac.ebi.intact.util.$1 $2 $3 $4 $5
+    $JAVA_HOME/bin/java -classpath $CLASSPATH uk.ac.ebi.intact.util.$1 $2 $3 $4 $5 $6 $7 $8 $9
 else
     echo Please set JAVA_HOME for this script to exceute
 fi
