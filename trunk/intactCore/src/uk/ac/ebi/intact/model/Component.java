@@ -5,6 +5,9 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import uk.ac.ebi.intact.model.proxy.InteractorProxy;
+import uk.ac.ebi.intact.model.proxy.InteractionProxy;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -141,6 +144,14 @@ public class Component extends BasicObjectImpl {
     // access methods for associations
 
     public Interactor getInteractor() {
+
+        //Need to check for Proxies - callers should
+        //not expect a Proxy back since Component only holds
+        //a single interactor, hence no need for a Proxy
+        if((interactor !=  null) & (interactor instanceof InteractorProxy)){
+            InteractorProxy proxy = (InteractorProxy)interactor;
+            return (Interactor)proxy.getRealSubject();
+        }
         return interactor;
     }
 
@@ -157,6 +168,14 @@ public class Component extends BasicObjectImpl {
     }
 
     public Interaction getInteraction() {
+
+        //Need to check for Proxies - callers should
+        //not expect a Proxy back since Component only holds
+        //a single interaction, hence no need for a Proxy
+        if((interaction !=  null) & (interaction instanceof InteractionProxy)){
+            InteractionProxy proxy = (InteractionProxy)interaction;
+            return (Interaction)proxy.getRealSubject();
+        }
         return interaction;
     }
 
