@@ -1,51 +1,76 @@
-shortlabel: caution
-term:  warning about errors/ grounds for confusion.
-
-shortlabel: comment
-term: Comment for public view
-
 shortlabel: definition
 term: Definition of the controlled vocabulary term
 
-shortlabel: disease
-term: The interaction has a disease association.
-comment: The interaction is shown to have a disease association OR
-
-shortlabel: example
-term: Example
-definition: Comment topic used to mark examples, normally used for the explanation of controlled vocabulary terms.
+shortlabel: comment
+term: Comment for public view
 
 shortlabel: function
 term: Biological Function of the Object
 function: Describes the biological function of the Object.
 
-shortlabel: isoform-comment
-term: Protein isoform's comment for public view
-
-shortlabel: pathway
-term: refers to the metabolic pathway that the interaction/complex is involved in.
-
-shortlabel: prerequisite ptm
-term: PTM required for an interaction to occur.
+shortlabel: url
+term: URL/Web address
+definition: The URL (Web address) at which to find more information on the object.
+example: Normally crossreferences will be entered as crossreference object with the appropriate accession number and database from the list of defined databases. However, in some cases the database many not be defined in IntAct, or the reference is to a web page, not a database with search by accession number. In this case, the appropriate URL can be inserted as a URL object.
+example: The home page of a database in a CvDatabase object, e.g. http://www.uniprot.org
 
 shortlabel: remark
 term: Internal remark
 definition: Internal remark. Will normally not be shown to the public.
-
-shortlabel: resulting ptm
-term: PTM occurs subsequent to interaction occuring
-definition: PTM occuring to one protein within the complex as a result of the complex formation.
 
 shortlabel: search-url
 term: Search engine URL.
 definition: Normally used for CvDatabase. The URL of a search engine which will retrieve an object by its primary  identifier. 
 example: http://www.expasy.org/cgi-bin/niceprot.pl?${ac} is the search url for the database uniprot. If ${ac} is replaced by an SPTR accession number, the resulting URL http://www.expasy.org/cgi-bin/niceprot.pl?P12345 will retrieve the corresponding database object.
 
+shortlabel: example
+term: Example
+definition: Comment topic used to mark examples, normally used for the explanation of controlled vocabulary terms.
+
+shortlabel: prerequisite ptm
+term: PTM required for an interaction to occur.
+
+shortlabel: resulting ptm
+term: PTM occurs subsequent to interaction occuring
+definition: PTM occuring to one protein within the complex as a result of the complex formation.
+
+shortlabel: isoform-comment
+term: Protein isoform's comment for public view
+
+shortlabel: disease
+term: The interaction has a disease association.
+comment: The interaction is shown to have a disease association OR
+
+shortlabel: caution
+term:  warning about errors/ grounds for confusion.
+
+shortlabel: pathway
+term: refers to the metabolic pathway that the interaction/complex is involved in.
+
 shortlabel: search-url-ascii
 term: Search URL to retrieve an external entry in ASCII format
 definition: Normally used for CvDatabase objects. A URL to retrieve an external object by its accession number. Same as search-url, but the URL retrieves the external object as ASCII text.
 
-shortlabel: url
-term: URL/Web address
-definition: The URL (Web address) at which to find more information on the object.
+shortlabel: confidence-mapping
+term: Description of confidence mappings in the experiment
+definition: Description of author-confidence mappings in the experiment. If more than one system of confidence mappings are used by the author, these will be described here.
 
+shortlabel: author-confidence
+term: Confidence classification assigned by the author of the publication
+definition: A confidence value assigned to an interaction by the author of a paper. This may be a numerical value or a classification into groups. There may be more than one author-confidence for an interaction if the author uses different systems to assign them. 
+example: In the Giot dataset (giot-2003-ex1), one interaction can have one author-confidence "0.43" and one author-confidence "low", because the authors chose 0.5 as a cutoff for high-confidence interactions.
+
+shortlabel: negative
+term: The interactions described in this experiment are not observed under these experimental conditions.
+definition: It was demonstrated in this paper that these interactions do not occur under the experimental conditions described.
+
+shortlabel: uniprot-dr-export
+term: Determines if the experiment is to be exported to UniProt DR lines.
+comment: For experiments: If set in an experiment, the setting overrides any setting derived from the CvInteraction controlled vocabulary. If this topic is set to value set by "author-confidence", e.g. "high", then this means only interactions with that author-confidence are to be exported to UniProt.
+comment: For CvInteraction: For each term of the controlled vocabulary CvInteraction, this topic should be added, being set to "yes", "no", or an integer number n. If it is set to a number n, at least n independent experiments of this method are necessary to trigger an export of the DR line.
+definition: Determines whether the interactions of an experiment should be exported to UniProt DR lines. This can be according to a setting in the CvInteraction controlled vocabulary, or by an explicit setting for an experiment.
+
+shortlabel: on-hold
+term: Experiment on hold until a defined date
+definition: Experiment on hold until a certain date. The date is shown in UniProt style as dd-MMM-yyyy as the first item of the line. Additional comments may be added in the same annotation. An experiment is only released if the on-hold comment has been DELETED, not automatically when it is exceeded.
+example: 30-JUL-2004: Authors expect publication in JBC in July 2004.
