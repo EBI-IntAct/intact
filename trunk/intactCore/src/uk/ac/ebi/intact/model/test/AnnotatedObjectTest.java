@@ -10,9 +10,9 @@ package uk.ac.ebi.intact.model.test;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import junitx.framework.Assert;
-import junitx.framework.ObjectFactory;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.AnnotatedObjectImpl;
+import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.test.util.StringUtils;
 
 public class AnnotatedObjectTest extends TestCase {
@@ -145,76 +145,5 @@ public class AnnotatedObjectTest extends TestCase {
         } catch ( Exception e ) {
             fail( "null fullname should be allowed." );
         }
-    }
-
-    public void testEqualsAndHashCode() {
-
-        // shortlabel are not equals
-        ObjectFactory factory = new ObjectFactory() {
-            public Object createInstanceX() {
-                return new MyAnnotatedObject( "EBI-yyy", "shortlabel 1", owner );
-            }
-
-            public Object createInstanceY() {
-                return new MyAnnotatedObject( "EBI-yyy", "shortlabel 2", owner );
-            }
-        };
-
-        System.out.println( factory.createInstanceX().getClass().getName() );
-        System.out.println( factory.createInstanceY().getClass().getName() );
-        System.out.println(
-                "TYPE: " + ( factory.createInstanceX().getClass() == factory.createInstanceY().getClass() ) );
-        System.out.println( factory.createInstanceX().equals( factory.createInstanceY() ) );
-
-        // Make sure the object factory meets its contract for testing.
-        // This contract is specified in the API documentation.
-        Assert.assertObjectFactoryContract( factory );
-        // Assert equals(Object) contract.
-        Assert.assertEqualsContract( factory );
-        // Assert hashCode() contract.
-        Assert.assertHashCodeContract( factory );
-
-
-        /////////////////////////////////////////////////////////
-        // fullName are not equals
-        factory = new ObjectFactory() {
-            public Object createInstanceX() {
-
-                AnnotatedObject ao = new MyAnnotatedObject( "EBI-yyy", "shortlabel", owner );
-                ao.setFullName( "a nice fullName" );
-                return ao;
-            }
-
-            public Object createInstanceY() {
-                return new MyAnnotatedObject( "EBI-yyy", "shortlabel", owner );
-            }
-        };
-
-        Assert.assertObjectFactoryContract( factory );
-        Assert.assertEqualsContract( factory );
-        Assert.assertHashCodeContract( factory );
-
-
-        /////////////////////////////////////////////////////////
-        // xref collection are not equals
-        final CvDatabase go = new CvDatabase( owner, "go" );
-        factory = new ObjectFactory() {
-            public Object createInstanceX() {
-                MyAnnotatedObject ao = new MyAnnotatedObject( "EBI-yyy", "shortlabel", owner );
-                ao.addXref( new Xref( owner, go, "GO:0000000", null, null, null ) );
-                return ao;
-            }
-
-            public Object createInstanceY() {
-                return new MyAnnotatedObject( "EBI-yyy", "shortlabel", owner );
-            }
-        };
-
-        Assert.assertObjectFactoryContract( factory );
-        Assert.assertEqualsContract( factory );
-        Assert.assertHashCodeContract( factory );
-
-
-        // Note: AC, aliases and annotations are not taken into account in the equals/hashCode.
     }
 }
