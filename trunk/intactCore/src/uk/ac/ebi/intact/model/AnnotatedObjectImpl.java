@@ -5,6 +5,8 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -207,6 +209,7 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
     public void addAlias( Alias alias ) {
         if( !this.aliases.contains( alias ) ) {
             this.aliases.add( alias );
+            // TODO this seems to be redondant with the Alias constructor !!
             alias.setParentAc( this.getAc() );
         }
     }
@@ -328,18 +331,7 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
             ;
         }
 
-        Iterator e1 = xrefs.iterator();
-        Iterator e2 = annotatedObject.getXrefs().iterator();
-
-        while( e1.hasNext() && e2.hasNext() ) {
-            Xref o1 = (Xref) e1.next();
-            Xref o2 = (Xref) e2.next();
-            if( !( o1 == null ? o2 == null : o1.equals( o2 ) ) )
-                return false;
-        }
-
-        return true;
-
+        return CollectionUtils.isEqualCollection( xrefs, annotatedObject.getXrefs() );
     }
 
     /**
@@ -353,6 +345,7 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
         //YUK AGAIN! ends up as a call to Object's hashcode, which is
         //based on indentity. Not require here...
         //int code = super.hashCode();
+
         int code = 29;
 
         for( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {

@@ -10,33 +10,26 @@ package uk.ac.ebi.intact.model.test;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.CvDatabase;
-import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.model.Xref;
-import uk.ac.ebi.intact.model.Institution;
-import uk.ac.ebi.intact.util.TestCaseHelper;
+import junitx.framework.Assert;
+import junitx.framework.ObjectFactory;
+import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.test.util.StringUtils;
 
 public class AnnotatedObjectTest extends TestCase {
 
-    /**
-     *
-     */
-    IntactHelper helper;
-    TestCaseHelper testHelper;
-    Institution owner;
+    ///////////////////////////
+    // instance variable.
+
+    private Institution owner;
+
 
     /**
      * Constructor
      *
      * @param name the name of the test.
      */
-    public AnnotatedObjectTest(String name) throws Exception {
-        super(name);
-        testHelper = new TestCaseHelper();
-        helper = testHelper.getHelper();
-        owner = new Institution("EBI-TEST-OWNER");
+    public AnnotatedObjectTest( String name ) throws Exception {
+        super( name );
     }
 
     /**
@@ -44,8 +37,7 @@ public class AnnotatedObjectTest extends TestCase {
      */
     protected void setUp() throws Exception {
         super.setUp();
-        testHelper.setUp();
-
+        owner = new Institution( "owner" );
     }
 
     /**
@@ -53,47 +45,6 @@ public class AnnotatedObjectTest extends TestCase {
      */
     protected void tearDown() throws Exception {
         super.tearDown();
-        testHelper.tearDown();
-    }
-
-    /** Test the addition and removal of Xref objects.
-     *
-     * @throws IntactException
-     */
-    public void testXref() throws IntactException {
-        // Set up required objects
-        System.out.println("Doing Xref test (AnnotatedObject Test Case)...");
-        Protein p1 = (Protein) helper.getObjectByLabel(Protein.class, "prot1");
-
-        CvDatabase db1 = (CvDatabase) helper.getObjectByLabel(CvDatabase.class,"testCvDb");
-        Xref x1 = new Xref(owner, db1, "xx1", null, null, null);
-        Xref x2 = new Xref(owner, db1, "xx1", null, null, null);
-        System.out.println("example Xrefs created...");
-        System.out.println("Doing add test...");
-
-        // get the initial state
-        int xrefCount = p1.getXrefs().size();
-
-        // check addition of xref
-        p1.addXref(x1);
-        super.assertEquals(xrefCount + 1, p1.getXrefs().size());
-
-        // x2 should not be added, it has the same content as x1
-        p1.addXref(x2);
-        super.assertEquals(xrefCount + 1, p1.getXrefs().size());
-
-        // change x2, now it should be added
-        x2.setPrimaryId("xx2");
-        p1.addXref(x2);
-        super.assertEquals(xrefCount + 2, p1.getXrefs().size());
-
-        // Test removal
-        p1.removeXref(x2);
-        p1.removeXref(x1);
-        super.assertEquals(xrefCount, p1.getXrefs().size());
-
-        System.out.println("AnnotatedObject tests done.");
-        System.out.println();
     }
 
     /**
@@ -101,6 +52,169 @@ public class AnnotatedObjectTest extends TestCase {
      * the testXXX() methods to the suite.
      */
     public static Test suite() {
-        return new TestSuite(AnnotatedObjectTest.class);
+        return new TestSuite( AnnotatedObjectTest.class );
+    }
+
+
+    /**
+     * Implementation of the AnnotatedObject that will allow testing of its equals and hashCode.
+     * we just give access to its constructor and provide a way of setting its AC.
+     */
+    private class MyAnnotatedObject extends AnnotatedObjectImpl {
+
+        public MyAnnotatedObject( String ac, String shortLabel, Institution owner ) {
+            super( shortLabel, owner );
+            this.ac = ac;
+        }
+
+        public MyAnnotatedObject( String shortLabel, Institution owner ) {
+            super( shortLabel, owner );
+        }
+        // nothing more , the class is abstract but implements everything already ;)
+    }
+
+
+    /////////////////////////////////
+    // Utility methods
+
+    private AnnotatedObject createAnnotatedObject() {
+
+        AnnotatedObject ao = new MyAnnotatedObject( "EBI-yyy", "test", owner );
+
+        return ao;
+    }
+
+
+    /////////////////////////////////
+    // Tests
+
+    public void testSetShortlabel() {
+
+        AnnotatedObject ao = createAnnotatedObject();
+        assertNotNull( ao );
+
+        // trimming
+        String shortlabel = "   myAnnotatedObject   ";
+        ao.setShortLabel( shortlabel );
+        assertEquals( shortlabel.trim(), ao.getShortLabel() );
+
+        // null shortlabel
+        try {
+            ao.setShortLabel( null );
+            fail( "null shortlabel should not be allowed." );
+        } catch ( Exception e ) {
+            // ok
+        }
+
+        // empty shortlabel
+        try {
+            ao.setShortLabel( "   " );
+            fail( "empty shortlabel should not be allowed." );
+        } catch ( Exception e ) {
+            // ok
+        }
+
+        // check truncation
+        shortlabel = StringUtils.generateStringOfLength( AnnotatedObject.MAX_SHORT_LABEL_LEN + 10 );
+        ao.setShortLabel( shortlabel );
+        assertEquals( AnnotatedObject.MAX_SHORT_LABEL_LEN,
+                      ao.getShortLabel().length() );
+    }
+
+    public void testSetFullName() {
+
+        AnnotatedObject ao = createAnnotatedObject();
+        assertNotNull( ao );
+
+        // trimming
+        String fullName = "   myAnnotatedObject   ";
+        ao.setFullName( fullName );
+        assertEquals( fullName.trim(), ao.getFullName() );
+
+        // null fullName
+        try {
+            ao.setFullName( null );
+        } catch ( Exception e ) {
+            fail( "null fullname should be allowed." );
+        }
+
+        // empty fullName
+        try {
+            ao.setFullName( "   " );
+            assertEquals( "", ao.getFullName() );
+        } catch ( Exception e ) {
+            fail( "null fullname should be allowed." );
+        }
+    }
+
+    public void testEqualsAndHashCode() {
+
+        // shortlabel are not equals
+        ObjectFactory factory = new ObjectFactory() {
+            public Object createInstanceX() {
+                return new MyAnnotatedObject( "EBI-yyy", "shortlabel 1", owner );
+            }
+
+            public Object createInstanceY() {
+                return new MyAnnotatedObject( "EBI-yyy", "shortlabel 2", owner );
+            }
+        };
+
+        System.out.println( factory.createInstanceX().getClass().getName() );
+        System.out.println( factory.createInstanceY().getClass().getName() );
+        System.out.println(
+                "TYPE: " + ( factory.createInstanceX().getClass() == factory.createInstanceY().getClass() ) );
+        System.out.println( factory.createInstanceX().equals( factory.createInstanceY() ) );
+
+        // Make sure the object factory meets its contract for testing.
+        // This contract is specified in the API documentation.
+        Assert.assertObjectFactoryContract( factory );
+        // Assert equals(Object) contract.
+        Assert.assertEqualsContract( factory );
+        // Assert hashCode() contract.
+        Assert.assertHashCodeContract( factory );
+
+
+        /////////////////////////////////////////////////////////
+        // fullName are not equals
+        factory = new ObjectFactory() {
+            public Object createInstanceX() {
+
+                AnnotatedObject ao = new MyAnnotatedObject( "EBI-yyy", "shortlabel", owner );
+                ao.setFullName( "a nice fullName" );
+                return ao;
+            }
+
+            public Object createInstanceY() {
+                return new MyAnnotatedObject( "EBI-yyy", "shortlabel", owner );
+            }
+        };
+
+        Assert.assertObjectFactoryContract( factory );
+        Assert.assertEqualsContract( factory );
+        Assert.assertHashCodeContract( factory );
+
+
+        /////////////////////////////////////////////////////////
+        // xref collection are not equals
+        final CvDatabase go = new CvDatabase( owner, "go" );
+        factory = new ObjectFactory() {
+            public Object createInstanceX() {
+                MyAnnotatedObject ao = new MyAnnotatedObject( "EBI-yyy", "shortlabel", owner );
+                ao.addXref( new Xref( owner, go, "GO:0000000", null, null, null ) );
+                return ao;
+            }
+
+            public Object createInstanceY() {
+                return new MyAnnotatedObject( "EBI-yyy", "shortlabel", owner );
+            }
+        };
+
+        Assert.assertObjectFactoryContract( factory );
+        Assert.assertEqualsContract( factory );
+        Assert.assertHashCodeContract( factory );
+
+
+        // Note: AC, aliases and annotations are not taken into account in the equals/hashCode.
     }
 }
