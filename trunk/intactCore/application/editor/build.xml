@@ -32,6 +32,9 @@
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
 
+    <!-- Editor specific build properties -->
+<!--    <property file="build.properties"/>-->
+
     <property name="dist.dir" value="dist"/>
     <property name="pg.war.file" value="${ant.project.name}.war"/>
 
@@ -243,6 +246,116 @@
 
     <!-- =================================================================== -->
 
+    <!-- Copies layouts. This target is not invoked for test deployment  -->
+
+    <target name="cp-layouts">
+        <antcall target="cp-non-test-layouts"/>
+        <antcall target="cp-test-layouts"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Copies layouts. This target is not invoked for test deployment  -->
+
+    <target name="cp-non-test-layouts" unless="test.dist">
+        <copy todir="${temp.web}/layouts">
+            <fileset dir="${intact.app.dir}/layouts">
+                <!-- Don't need any frame lauyouts for this application -->
+                <exclude name="*Frame.jsp"/>
+                <!--  No EBI header for this application (yet) -->
+                <exclude name="ebiHeaderLayout.jsp"/>
+                <!-- Editor header for this application; exclude the general one -->
+                <exclude name="headerLayout.jsp"/>
+                <!-- Don't include test layouts. -->
+                <exclude name="*TestLayout.jsp"/>
+                <!-- Exclude test css file. -->
+                <exclude name="styles/intactTest.css"/>
+            </fileset>
+
+            <!-- Editor specific layouts -->
+            <fileset dir="layouts">
+                <!-- Don't include the test layout. -->
+                <exclude name="editorTestLayout.jsp"/>
+            </fileset>
+
+        </copy>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Copies layouts. This target is not invoked for non test deployment  -->
+
+    <target name="cp-test-layouts" if="test.dist">
+        <copy todir="${temp.web}/layouts">
+            <fileset dir="${intact.app.dir}/layouts">
+                <!-- Don't need any frame lauyouts for this application -->
+                <exclude name="*Frame.jsp"/>
+                <!--  No EBI header for this application (yet) -->
+                <exclude name="ebiHeaderLayout.jsp"/>
+                <!-- Editor header for this application; exclude the general one -->
+                <exclude name="headerLayout.jsp"/>
+                <!-- Don't include intact layouts. -->
+                <exclude name="intact*.jsp"/>
+                <!-- Don't include intact css files -->
+                <exclude name="styles/intact*.css"/>
+            </fileset>
+
+            <!-- Editor specific layouts -->
+            <fileset dir="layouts">
+                <!-- Don't include any editor specific layout. -->
+                <exclude name="editor*.jsp"/>
+            </fileset>
+        </copy>
+
+        <!-- Copy test layouts to the layout directory. -->
+        <copy tofile="${temp.web}/layouts/intactLayout.jsp" file="${intact.app.dir}/layouts/intactTestLayout.jsp"/>
+        <copy tofile="${temp.web}/layouts/editorLayout.jsp" file="layouts/editorTestLayout.jsp"/>
+
+        <!-- Copy test css -->
+        <copy tofile="${temp.web}/layouts/styles/intact.css" file="${intact.app.dir}/layouts/styles/intactTest.css"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Copies intact logo -->
+
+    <target name="cp-intact-logo">
+        <antcall target="cp-non-test-intact-logo"/>
+        <antcall target="cp-test-intact-logo"/>
+    </target>
+    <!-- =================================================================== -->
+
+    <!-- Copies intact logo for non test deployment -->
+
+    <target name="cp-non-test-intact-logo" unless="test.dist">
+        <copy todir="${temp.web}/images">
+            <fileset dir="${intact.app.dir}/images">
+                <include name="*.gif"/>
+                <!-- Exclude test images -->
+                <exclude name="*test.*"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Copies intact logo for test deployment -->
+
+    <target name="cp-test-intact-logo" if="test.dist">
+        <copy todir="${temp.web}/images">
+            <fileset dir="${intact.app.dir}/images">
+                <include name="*.gif"/>
+                <!-- Exclude intact logo -->
+                <exclude name="logo*"/>
+            </fileset>
+        </copy>
+
+        <copy tofile="${temp.web}/images/logo_intact.gif"
+            file="${intact.app.dir}/images/logo_intact_test.gif"/>
+    </target>
+
+    <!-- =================================================================== -->
+
     <!-- Builds a war file using the current database setup. -->
 
     <target name="war" description="Builds a war file"
@@ -253,6 +366,7 @@
     <!-- Builds a war file. The database to include is specified as a parameter. -->
 
     <target name="build-war" depends="compile, gen-last-modified-file">
+        <echo message="In build war normal mode"/>
 
         <!-- Copy XML (configuration) files -->
         <copy todir="${temp.web}/WEB-INF">
@@ -262,24 +376,11 @@
             </fileset>
         </copy>
 
-        <!-- Common/Editor layouts -->
-        <copy todir="${temp.web}/layouts">
-            <fileset dir="${intact.app.dir}/layouts">
-                <!-- Don't need any frame lauyouts for this application -->
-                <exclude name="*Frame.jsp"/>
-                <!--  No EBI header for this application (yet) -->
-                <exclude name="ebiHeaderLayout.jsp"/>
-                <!-- Editor header for this application; exclude the general one -->
-                <exclude name="headerLayout.jsp"/>
-            </fileset>
-            <!-- Editor specific layouts -->
-            <fileset dir="layouts"/>
-        </copy>
+        <!-- Copy layouts -->
+        <antcall target="cp-layouts"/>
 
-        <!-- Common images -->
-        <copy todir="${temp.web}/images">
-            <fileset dir="${intact.app.dir}/images"/>
-        </copy>
+        <!-- Copy intact images -->
+        <antcall target="cp-intact-logo"/>
 
         <!-- Common/Editor jsp files -->
         <copy todir="${temp.web}/pages">
@@ -295,6 +396,8 @@
         <copy file="welcome.jsp" todir="${temp.web}"/>
         <!-- The last modifed file at the root. -->
         <copy file="${last.modified.file}" todir="${temp.web}"/>
+        <!-- Will be removed, only for testing -->
+<!--        <copy file="links.html" todir="${temp.web}"/>-->
 
         <!-- TLD files -->
         <copy todir="${temp.web}/WEB-INF/tld">
@@ -349,8 +452,6 @@
             <param name="war.file" value="${war.file}"/>
         </antcall>
 
-        <antcall target="gen-context-file" />
-
     </target>
 
     <!-- =================================================================== -->
@@ -400,10 +501,15 @@
         <echo message="Building a war for oracle ${dbalias} database"/>
         <property name="war.name" value="${ant.project.name}-${dbalias}-${TODAY}.war"/>
 
+        <condition property="test.dist">
+            <equals arg1="${dbalias}" arg2="d002"/>
+        </condition>
+
         <antcall target="build-war">
             <param name="db" value="jdbc_oracle8i_thin_8.1.6.2.0.jar"/>
             <param name="war.file" value="${war.name}"/>
         </antcall>
+
     </target>
 
     <!-- =================================================================== -->
@@ -426,6 +532,9 @@
 
         <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
             <fileset dir="${temp.web}">
+                <!-- To be removed once the testing is done -->
+                <include name="links.html"/>
+
                 <include name="welcome.jsp"/>
                 <include name="${last.modified.file}"/>
                 <include name="images/*"/>
@@ -436,6 +545,9 @@
 
             <webinf dir="${temp.web}/WEB-INF"/>
         </war>
+        
+        <!-- Generate the context file -->
+        <antcall target="gen-context-file" />
     </target>
 
     <!-- =================================================================== -->
