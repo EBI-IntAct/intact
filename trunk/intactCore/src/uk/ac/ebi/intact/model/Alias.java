@@ -8,7 +8,14 @@ package uk.ac.ebi.intact.model;
 /**
  * An alternative name for the object.
  *
- * @author hhe
+ * <p>
+ * Currently, the name of the Alias is set to lowercase.
+ * </p>
+ *
+ * @see uk.ac.ebi.intact.model.CvAliasType
+ *
+ * @author hhe, Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
  */
 public class Alias extends BasicObject {
 
@@ -24,7 +31,7 @@ public class Alias extends BasicObject {
     // associations
 
     /**
-     *
+     * the type of that alias.
      */
     private CvAliasType cvAliasType;
     public String cvAliasTypeAc; // only needed for the OJB mapping.
@@ -59,7 +66,7 @@ public class Alias extends BasicObject {
 
         this.parentAc = annotatedObject.getAc();
         this.cvAliasType = cvAliasType;
-        this.name = name;
+        setName( name );
     }
 
     ///////////////////////////////////////
@@ -69,7 +76,7 @@ public class Alias extends BasicObject {
         return name;
     }
     public void setName(String name) {
-        this.name = name;
+        this.name = name.toLowerCase();
     }
 
     public String getParentAc() {
