@@ -8,7 +8,6 @@ package uk.ac.ebi.intact.application.hierarchView.business;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Constants;
-import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.persistence.DAOFactory;
 import uk.ac.ebi.intact.persistence.DAOSource;
 import uk.ac.ebi.intact.persistence.DataSourceException;
@@ -325,7 +324,7 @@ public class IntactUser implements IntactUserI {
 
 
     /**
-     * Returns a subgraph centered on startNode.
+     * Returns a subgraph centered on startNode (stored in the interaction network).
      * The subgraph will contain all nodes which are up to graphDepth interactions away from startNode.
      * Only Interactions which belong to one of the Experiments in experiments will be taken into account.
      * If experiments is empty, all Interactions are taken into account.
@@ -339,7 +338,7 @@ public class IntactUser implements IntactUserI {
      * If an Interaction has more than two interactors, it has to be defined how pairwise interactions
      * are generated from the complex data. The possible values are defined in the beginning of this file.
      *
-     * @param startNode - the start node of the subgraph.
+     * @param in - the interaction network.
      * @param graphDepth - depth of the graph
      * @param experiments - Experiments which should be taken into account
      * @param complexExpansion - Mode of expansion of complexes into pairwise interactions
@@ -348,16 +347,16 @@ public class IntactUser implements IntactUserI {
      *
      * @exception IntactException - thrown if problems are encountered
      */
-    public InteractionNetwork subGraph (Interactor startNode,
+    public InteractionNetwork subGraph (InteractionNetwork in,
                                         int graphDepth,
                                         Collection experiments,
                                         int complexExpansion) throws IntactException {
 
-        logger.info("Starting graph generation (" + startNode.getAc() + ", depth=" + graphDepth + ")");
-        InteractionNetwork in = new InteractionNetwork (startNode.getAc());
+        logger.info("Starting graph generation (" + in.getCentralProteinAC() + ", depth=" + graphDepth + ")");
+//        InteractionNetwork in = new InteractionNetwork (startNode);
         Graph graph = in;
 
-        graph = intactHelper.subGraph (startNode,
+        graph = intactHelper.subGraph (in.getCentralProtein(),
                                        graphDepth,
                                        experiments,
                                        complexExpansion,

@@ -7,23 +7,26 @@ package uk.ac.ebi.intact.application.hierarchView.struts.taglibs;
 
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
+import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.utils.LabelValueBean;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.model.Interactor;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.util.List;
+import java.util.Collection;
 
 import org.apache.log4j.Logger;
 
 
 
 /**
- * That class allow to initialize properly the HTTPSession object
- * with what will be neededlater by the user of the web application.
+ * That class allow to initialize properly in the session the
+ * sources to display according to the current central protein.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
@@ -50,6 +53,21 @@ public class DisplaySourceTag extends TagSupport {
 
         try {
             IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
+            if (user == null) {
+                logger.error ("No existing session");
+                return EVAL_PAGE;
+            }
+
+            InteractionNetwork in = user.getInteractionNetwork();
+            if (in == null) {
+                logger.error ("No existing interaction network");
+                return EVAL_PAGE;
+            }
+
+            Interactor interactor = in.getCentralProtein();
+
+            Collection xRef = interactor.getXref();
+
             String AC = user.getAC();
             String method_class = user.getMethodClass();
 
@@ -66,7 +84,7 @@ public class DisplaySourceTag extends TagSupport {
                     List urls = null;
 
                     try {
-                        urls = source.getSourceUrls(AC, session);
+                        urls = source.getSourceUrls(xRef);
                     } catch (IntactException ie) {
                         String msg = "ERROR<br>The hierarchView system is not properly configured. Please warn your administrator.";
                         pageContext.getOut().write (msg);

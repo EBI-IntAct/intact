@@ -57,7 +57,7 @@ public class InteractionNetwork extends Graph {
      * Allow to record nodes and keep their order
      */
     private ArrayList nodeList;
-    private boolean   isInitialized;
+    private boolean isInitialized;
 
     /**
      * Properties of the final image (size ...)
@@ -67,18 +67,28 @@ public class InteractionNetwork extends Graph {
     /**
      * Protein from which has been created the interaction network.
      */
-    private String centralProteinAC;
-    private Node centralProtein;
+    private Interactor centralProtein;
+    private String centralProteinAC; // avoid numerous call to interactor.getAc()
+    private Node centralProteinNode;
+
+    /**
+     * Describe how the interaction network has been built,
+     * from which query strings and what is the associated target
+     * e.g. the [ShortLabel ABC] and [Xref DEF]
+     * That collection contains String[2] (0:queryString, 1:target)
+     */
+    private ArrayList criteriaList;
 
 
-    /*********************************************************************** Methods */
     /**
      * Constructor
      */
-    public InteractionNetwork (String aCentralProteinAC) {
-        centralProteinAC = aCentralProteinAC;
+    public InteractionNetwork (Interactor aCentralProtein) {
+        centralProtein   = aCentralProtein;
+        centralProteinAC = aCentralProtein.getAc();
+        criteriaList     = new ArrayList();
+
         // wait the user to add some node to reference the central one
-        centralProtein   = null;
         dimension        = new ImageDimension();
         isInitialized    = false;
     }
@@ -88,8 +98,34 @@ public class InteractionNetwork extends Graph {
         return centralProteinAC;
     }
 
-    public Node getCentralProtein() {
+    public Node getCentralProteinNode() {
+        return centralProteinNode;
+    }
+
+    public Interactor getCentralProtein() {
         return centralProtein;
+    }
+
+    public ArrayList getCriteria() {
+        return criteriaList;
+    }
+
+    /**
+     * Add a new criteria to the interaction network<br>
+     * Reminder: a criteria is a String[2].
+     * @param queryString the new queryString
+     * @param target the new target (AC, SHORT_LABEL ...)
+     */
+    public void addCriteria (String queryString, String target) {
+        String[] aCriteria = {queryString, target};
+        criteriaList.add (aCriteria);
+    }
+
+    /**
+     * remove all existing criteria from the interaction network
+     */
+    public void resetCriteria () {
+        criteriaList.clear();
     }
 
     /**
@@ -116,13 +152,12 @@ public class InteractionNetwork extends Graph {
 
         // initialization of the node
         if (null != aNode) {
-            String label = anInteractor.getAc ();
-            if (label.equals(centralProteinAC)) {
-               centralProtein = aNode;
+            if (anInteractor.equals(centralProtein)) {
+                centralProteinNode = aNode;
             }
-            aNode.put (Constants.ATTRIBUTE_LABEL,label);
+            aNode.put (Constants.ATTRIBUTE_LABEL, anInteractor.getAc ());
 
-            this.initNodeDisplay (aNode);
+            initNodeDisplay (aNode);
         }
 
         return aNode;
@@ -233,9 +268,13 @@ public class InteractionNetwork extends Graph {
      * @return an object String
      */
     public String exportTlp () {
+        /*
+         * TODO : could be possible to optimize the size of the string buffer
+         *        to avoid as much as possible to extend the buffer size.
+         */
 
         EdgeI edge;
-        StringBuffer out        = new StringBuffer();
+        StringBuffer out = new StringBuffer();
         String separator = System.getProperty ("line.separator");
         int i;
 
@@ -249,11 +288,9 @@ public class InteractionNetwork extends Graph {
 
         out.append(")" + separator);
 
-
-        Vector  myEdges = (Vector)  super.getEdges();
+        ArrayList myEdges = (ArrayList) super.getEdges();
 
         for (i = 1; i <= sizeEdges(); i++) {
-
             edge = (EdgeI) myEdges.get (i - 1);
             out.append("(edge "+ i + " "  +
                     (this.nodeList.indexOf (edge.getNode1 ()) + 1) + " " +
@@ -285,7 +322,6 @@ public class InteractionNetwork extends Graph {
         Vector  myEdges = (Vector)  super.getEdges();
 
         for (i = 1; i <= sizeEdges(); i++) {
-
             edge = (EdgeI) myEdges.get (i - 1);
             String label1 = ((Node) edge.getNode1 ()).getLabel () ;
             String label2 = ((Node) edge.getNode2 ()).getLabel () ;
@@ -326,14 +362,17 @@ public class InteractionNetwork extends Graph {
             return errors;
         } else {
             // update protein coordinates
-            for (int i = 0; i < result.length; i++) {
-                ProteinCoordinate p = result[i];
+            ProteinCoordinate p = null;
+            Float x, y;
+            Node protein;
 
-                Float x  = new Float (p.getX());
-                Float y  = new Float (p.getY());
+            for (int i = 0; i < result.length; i++) {
+                p = result[i];
+                x  = new Float (p.getX());
+                y  = new Float (p.getY());
 
                 // nodes are labelled from 1 to n int the tlp file and from 0 to n-1 int the collection.
-                Node protein = (Node) this.nodeList.get (p.getId() - 1);
+                protein = (Node) this.nodeList.get (p.getId() - 1);
 
                 // Store coordinates in the protein
                 protein.put (Constants.ATTRIBUTE_COORDINATE_X, x);
