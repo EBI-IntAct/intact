@@ -2,16 +2,74 @@
 maps to multiple tables, fields are repeated in each descriptor of a subclass
 -->
 
+<!-- Interface class descriptors -->
 <class-descriptor
     class="uk.ac.ebi.intact.model.IntactObject"
     row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
+    <!-- extending interfaces -->
     <extent-class class-ref="uk.ac.ebi.intact.model.BasicObject"/>
-    <extent-class class-ref="uk.ac.ebi.intact.model.Institution"/>
+    <!-- implementations -->
+    <extent-class class-ref="uk.ac.ebi.intact.model.IntactObjectImpl"/>
 </class-descriptor>
 
 <class-descriptor
     class="uk.ac.ebi.intact.model.BasicObject"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+    <!-- Extending interfaces -->
+    <extent-class class-ref="uk.ac.ebi.intact.model.AnnotatedObject"/>
+
+    <!-- implementations -->
+    <extent-class class-ref="uk.ac.ebi.intact.model.BasicObjectImpl"/>
+</class-descriptor>
+
+<class-descriptor
+    class="uk.ac.ebi.intact.model.AnnotatedObject"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+    <!-- extending interfaces -->
+    <extent-class class-ref="uk.ac.ebi.intact.model.Interactor"/>
+    <!-- implementations -->
+    <extent-class class-ref="uk.ac.ebi.intact.model.AnnotatedObjectImpl"/>
+</class-descriptor>
+
+<class-descriptor
+    class="uk.ac.ebi.intact.model.Interactor"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+    <!-- implementations -->
+    <extent-class class-ref="uk.ac.ebi.intact.model.InteractorImpl" />
+</class-descriptor>
+
+<class-descriptor
+    class="uk.ac.ebi.intact.model.Interaction"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+    <!-- implementations -->
+    <extent-class class-ref="uk.ac.ebi.intact.model.InteractionImpl" />
+</class-descriptor>
+
+<class-descriptor
+    class="uk.ac.ebi.intact.model.Protein"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+    <!-- implementations -->
+    <extent-class class-ref="uk.ac.ebi.intact.model.ProteinImpl" />
+</class-descriptor>
+
+<!-- Implementation class descriptors -->
+
+<class-descriptor
+    class="uk.ac.ebi.intact.model.IntactObjectImpl"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+    <extent-class class-ref="uk.ac.ebi.intact.model.BasicObjectImpl"/>
+    <extent-class class-ref="uk.ac.ebi.intact.model.Institution"/>
+</class-descriptor>
+
+<class-descriptor
+    class="uk.ac.ebi.intact.model.BasicObjectImpl"
     row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
     <extent-class class-ref="uk.ac.ebi.intact.model.Annotation"/>
@@ -19,17 +77,17 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
     <extent-class class-ref="uk.ac.ebi.intact.model.Component"/>
     <extent-class class-ref="uk.ac.ebi.intact.model.Xref"/>
     <extent-class class-ref="uk.ac.ebi.intact.model.Alias"/>
-    <extent-class class-ref="uk.ac.ebi.intact.model.AnnotatedObject"/>
+    <extent-class class-ref="uk.ac.ebi.intact.model.AnnotatedObjectImpl"/>
 </class-descriptor>
 
 
 <class-descriptor
-    class="uk.ac.ebi.intact.model.AnnotatedObject"
+    class="uk.ac.ebi.intact.model.AnnotatedObjectImpl"
     row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
     <extent-class class-ref="uk.ac.ebi.intact.model.BioSource"/>
     <extent-class class-ref="uk.ac.ebi.intact.model.Experiment"/>
-    <extent-class class-ref="uk.ac.ebi.intact.model.Interactor"/>
+    <extent-class class-ref="uk.ac.ebi.intact.model.InteractorImpl"/>
     <extent-class class-ref="uk.ac.ebi.intact.model.CvObject"/>
 </class-descriptor>
 
@@ -47,11 +105,11 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 </class-descriptor>
 
 <class-descriptor
-    class="uk.ac.ebi.intact.model.Interactor"
+    class="uk.ac.ebi.intact.model.InteractorImpl"
     row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
-    <extent-class class-ref="uk.ac.ebi.intact.model.Interaction" />
-    <extent-class class-ref="uk.ac.ebi.intact.model.Protein" />
+  <extent-class class-ref="uk.ac.ebi.intact.model.InteractionImpl" />
+    <extent-class class-ref="uk.ac.ebi.intact.model.ProteinImpl" />
 </class-descriptor>
 
 <class-descriptor
@@ -65,10 +123,11 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 </class-descriptor>
 
 
-
+<!-- 'normal' classes -->
 
 <class-descriptor
-    class="uk.ac.ebi.intact.model.Protein"
+    class="uk.ac.ebi.intact.model.ProteinImpl"
+    proxy="uk.ac.ebi.intact.model.proxy.ProteinProxy"
     table="ia_Interactor"
     row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
@@ -223,8 +282,9 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 
 <!-- descriptor for Interaction.....-->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.Interaction"
+    class="uk.ac.ebi.intact.model.InteractionImpl"
     table="ia_Interactor"
+    proxy="uk.ac.ebi.intact.model.proxy.InteractionProxy"
     row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
 
@@ -540,8 +600,8 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
     <!-- Interactions and Experiments are linked via a (non-qualified) indirection
     table Int2Exp..... -->
     <collection-descriptor
-        proxy="true"
         name="interactions"
+        proxy="true"
         element-class-ref="uk.ac.ebi.intact.model.Interaction"
         indirection-table="ia_INT2EXP"
         >
