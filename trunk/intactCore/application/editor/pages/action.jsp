@@ -39,21 +39,21 @@
             <html:submit property="dispatch" disabled="<%=disable.equals(Boolean.TRUE)%>">
                 <bean:message key="button.submit"/>
             </html:submit>
-            <br/>Submits the form and exits
+            <br/><bean:message key="button.submit.titleKey"/>
         </td>
 
         <td align="center" bgcolor="palegreen">
             <html:submit property="dispatch" disabled="<%=disable.equals(Boolean.TRUE)%>">
                 <bean:message key="button.save.continue"/>
             </html:submit>
-            <br/>Saves the changes to the database
+            <br/><bean:message key="button.save.continue.titleKey"/>
         </td>
 
         <td align="center" bgcolor="yellow">
             <html:submit property="dispatch">
                 <bean:message key="button.cancel"/>
             </html:submit>
-            <br/>Abandons editing of the current object
+            <br/><bean:message key="button.cancel.titleKey"/>
         </td>
 
         <td align="center" bgcolor="red">
@@ -61,7 +61,7 @@
                 disabled="<%=disable.equals(Boolean.TRUE)%>">
                 <bean:message key="button.delete"/>
             </html:submit>
-            <br/>Deletes the current object from the database
+            <br/><bean:message key="button.delete.titleKey"/>
         </td>
     </tr>
 </table>
