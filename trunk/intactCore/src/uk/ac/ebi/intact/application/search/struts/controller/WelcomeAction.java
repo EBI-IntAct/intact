@@ -8,7 +8,7 @@ package uk.ac.ebi.intact.application.search.struts.controller;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.HashMap;
 
 import uk.ac.ebi.intact.application.search.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search.struts.framework.util.WebIntactConstants;
@@ -91,8 +91,8 @@ public class WelcomeAction extends IntactBaseAction {
         HttpSession session = request.getSession(false);
         session.setAttribute(WebIntactConstants.INTACT_USER, user);
 
-        // The map to hold intact view beans; tree map to maintain the order.
-        Map idToView = new TreeMap();
+        // The map to hold intact view beans.
+        Map idToView = new HashMap();
         session.setAttribute(WebIntactConstants.FORWARD_MATCHES, idToView);
 
         return mapping.findForward(WebIntactConstants.FORWARD_SUCCESS);
