@@ -1,43 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<wsdl:definitions targetNamespace="urn:tulip" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:intf="urn:tulip" xmlns:impl="urn:tulip-impl" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+<wsdl:definitions targetNamespace="urn:tulip" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:impl="urn:tulip-impl" xmlns:intf="urn:tulip" xmlns:tns1="urn:uk.ac.ebi.intact.application.hierarchView.business.tulip.webService" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+ <types>
+  <schema targetNamespace="urn:uk.ac.ebi.intact.application.hierarchView.business.tulip.webService" xmlns="http://www.w3.org/2001/XMLSchema">
+   <complexType name="ProteinCoordinate">
+    <sequence>
+     <element name="id" type="xsd:int"/>
+     <element name="x" type="xsd:float"/>
+     <element name="y" type="xsd:float"/>
+    </sequence>
+   </complexType>
+  </schema>
+  <schema targetNamespace="urn:tulip" xmlns="http://www.w3.org/2001/XMLSchema">
+   <complexType name="ArrayOf_tns1_ProteinCoordinate">
+    <complexContent>
+     <restriction base="SOAP-ENC:Array">
+      <attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns1:ProteinCoordinate[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+   <element name="ArrayOf_tns1_ProteinCoordinate" nillable="true" type="intf:ArrayOf_tns1_ProteinCoordinate"/>
+  </schema>
+ </types>
 
    <wsdl:message name="getComputedTlpContentRequest">
 
       <wsdl:part name="in0" type="SOAP-ENC:string"/>
 
-   </wsdl:message>
-
-   <wsdl:message name="getLineSeparatorResponse">
-
-      <wsdl:part name="return" type="SOAP-ENC:string"/>
+      <wsdl:part name="in1" type="SOAP-ENC:string"/>
 
    </wsdl:message>
 
    <wsdl:message name="getComputedTlpContentResponse">
 
-      <wsdl:part name="return" type="SOAP-ENC:string"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="getLineSeparatorRequest">
+      <wsdl:part name="return" type="intf:ArrayOf_tns1_ProteinCoordinate"/>
 
    </wsdl:message>
 
    <wsdl:portType name="TulipAccess">
 
-      <wsdl:operation name="getComputedTlpContent" parameterOrder="in0">
+      <wsdl:operation name="getComputedTlpContent" parameterOrder="in0 in1">
 
          <wsdl:input message="intf:getComputedTlpContentRequest"/>
 
          <wsdl:output message="intf:getComputedTlpContentResponse"/>
-
-      </wsdl:operation>
-
-      <wsdl:operation name="getLineSeparator">
-
-         <wsdl:input message="intf:getLineSeparatorRequest"/>
-
-         <wsdl:output message="intf:getLineSeparatorResponse"/>
 
       </wsdl:operation>
 
@@ -53,31 +58,13 @@
 
          <wsdl:input>
 
-            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="getComputedTlpContent"/>
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="getComputedTlpContent" use="encoded"/>
 
          </wsdl:input>
 
          <wsdl:output>
 
-            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:tulip"/>
-
-         </wsdl:output>
-
-      </wsdl:operation>
-
-      <wsdl:operation name="getLineSeparator">
-
-         <wsdlsoap:operation soapAction=""/>
-
-         <wsdl:input>
-
-            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="getLineSeparator"/>
-
-         </wsdl:input>
-
-         <wsdl:output>
-
-            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:tulip"/>
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:tulip" use="encoded"/>
 
          </wsdl:output>
 
@@ -87,7 +74,7 @@
 
    <wsdl:service name="TulipAccessService">
 
-      <wsdl:port name="tulip" binding="intf:tulipSoapBinding">
+      <wsdl:port binding="intf:tulipSoapBinding" name="tulip">
 
          <wsdlsoap:address location="http://arafel:8080/axis/services/tulip"/>
 

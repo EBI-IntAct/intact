@@ -5,6 +5,8 @@ import uk.ac.ebi.intact.simpleGraph.*;
 import uk.ac.ebi.intact.model.*;
 
 // hierarchView
+import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.ProteinCoordinate;
+
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.TulipClient;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.*;
@@ -73,8 +75,9 @@ public class InteractionNetwork extends Graph {
    */
   public void init () {
     HashMap myNodes = super.getNodes();
+
+    // create a new collection (ordered) to allow a indexed access to the node list
     this.nodeList = new ArrayList (myNodes.values());
-     // this.nodeList = new ArrayList (myNodes);
     this.isInitialized = true;
   }
 
@@ -120,7 +123,6 @@ public class InteractionNetwork extends Graph {
     Iterator iterator = someNodes.values().iterator ();
 
     while (iterator.hasNext ()) {
-      // aNode = (NodeI) iterator.next ();
       aNode = (NodeI) ((Entry) iterator.next ()).getValue();
       initNodeDisplay (aNode);
     }
@@ -235,18 +237,6 @@ public class InteractionNetwork extends Graph {
 		 separator);
     }
 
-//     out.append("(property  0 string \"viewLabel\"" + 
-// 	       separator +
-// 	       "(default \"\" \"\" )" + 
-// 	       separator);
-    
-//     for (int i = 1; i <= numberOfProtein ; i++) {
-//       out.append("(node " + i + " \"" + 
-// 		 ((NodeI) myNodes.get (i-1)).getAc() + "\" )" + 
-// 		 separator + 
-// 		 ")");
-//    }
-
     return out.toString();
   } // exportTlp
 
@@ -254,91 +244,35 @@ public class InteractionNetwork extends Graph {
 
   /**
    * Send a String to Tulip to calculate coordinates
-   * Enter the obtained coordinates in the graph and calculate the 
-   * image dimension according to this informations.
+   * Enter the obtained coordinates in the graph.
    * 
    * @param dataTlp The obtained String by the exportTlp() method 
    */
   public void importDataToImage (String dataTlp) throws IOException {
 
-    String tmp;
-    StringTokenizer st;
-    StringBuffer buf;
-    String separator;
-    String result;
-    StringTokenizer tokens;
-    
+    ProteinCoordinate[] result;
     TulipClient client  = new TulipClient();
-    int numberOfProtein = sizeNodes();
-
     
     // Call Tulip Web Service
     if (!client.isReady()) throw new IOException ("Unable to create Tulip Web service"); 
     
-    // Result
+    // get coordinates
     result    = client.getComputedTlpContent(dataTlp);
 
-    if (null == result) throw new IOException ("Unable to get data from Tulip Web Service");
-    
-    separator = client.getLineSeparator();
-    
-    // Reading line by line. Each line is determinated with the element "separator"
-    tokens    = new StringTokenizer (result, separator);
-    
-    // We read all the String
-    while (tokens.hasMoreTokens()) {
+    // update protein coordinates
+    for (int i = 0; i < result.length; i++) {
+      ProteinCoordinate p = result[i];
 
-      tmp = tokens.nextToken();
-      if (tmp.equals("")) continue;
+      Float x  = new Float (p.getX());
+      Float y  = new Float (p.getY());
+
+      // nodes are labelled from 1 to n int the tlp file and from 0 to n-1 int the collection.
+      Node protein = (Node) this.nodeList.get (p.getId() - 1);
       
-      // We look, now, word by word
-      st = new StringTokenizer (tmp);
-      System.out.println(tmp);
-      
-      if (st.nextToken().equals ("(property")) {
-	st.nextToken();
-	st.nextToken();
-	tmp = st.nextToken();
-	
-	// viewLayout treatment : parse and store computed coordinates
-	if (tmp.equals ("\"viewLayout\"")) {
-	  tmp = tokens.nextToken (); // default line
-
-	  for (int i = 0 ; i < numberOfProtein ; i++) {
-	    int index;
-	    Node protein;
-	    Float x,y;
-	    
-	    st = new StringTokenizer (tokens.nextToken());		    
-	    
-	    if (!st.nextToken().equals ("(node"))
-	      throw new IOException ("Imported data don't contain the good number of nodes"); 
-	    
-	    tmp     = st.nextToken();
-	    index   = (new Integer(tmp)).intValue();
-	    protein = (Node) this.nodeList.get (index-1);
-	    
-	    if (null == protein) throw new IOException ("the protein sended back is null");
-	    
-	    buf     = new StringBuffer (st.nextToken()); /*"(15.0000, 45.2540, 78.454)"*/
-	    
-	    buf.delete (0,2);
-	    buf.delete (buf.length() - 3, buf.length());
-	    
-	    st = new StringTokenizer (buf.toString(), ",");
-	    x  = new Float (st.nextToken());
-	    y  = new Float (st.nextToken());
-	    
-	    // Store coordinates in the protein
-	    protein.put (Constants.ATTRIBUTE_COORDINATE_X, x);
-	    protein.put (Constants.ATTRIBUTE_COORDINATE_Y, y);
-
-	    // System.out.println ("Protein " + index + "   X=" + x + " Y=" + y);
-
-	  }	
-	}
-      }
-    }
+      // Store coordinates in the protein
+      protein.put (Constants.ATTRIBUTE_COORDINATE_X, x);
+      protein.put (Constants.ATTRIBUTE_COORDINATE_Y, y);
+    } // for
     
   } //importDataToImage
 
