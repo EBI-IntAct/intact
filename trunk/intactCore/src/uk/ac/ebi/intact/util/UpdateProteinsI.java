@@ -286,6 +286,16 @@ public abstract class UpdateProteinsI {
     }
 
     /**
+     * Closes the internal IntactHelper this object is created with. This is mainly
+     * for Editor which creates a special helper for update proteins. The editor
+     * uses an ODMG specific helper as opposed to JDBC version useb by Update proteins. 
+     * @throws IntactException
+     */
+    public void closeStore() throws IntactException {
+        this.helper.closeStore();
+    }
+
+    /**
      * Inserts zero or more proteins created from SPTR entries which are retrieved from a Stream.
      * IntAct Protein objects represent a specific amino acid sequence in a specific organism.
      * If a SPTr entry contains more than one organism, one IntAct entry will be created for each organism,
