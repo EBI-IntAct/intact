@@ -314,15 +314,8 @@ public class InteractionViewBean extends AbstractEditViewBean {
         // Set the common values by calling super first.
         super.updateFromForm(dynaform);
 
-        String inttype = (String) dynaform.get("interactionType");
-        if (!EditorMenuFactory.SELECT_LIST_ITEM.equals(inttype)) {
-            setInteractionType(inttype);
-        }
-        String organism = (String) dynaform.get("organism");
-        if (!EditorMenuFactory.SELECT_LIST_ITEM.equals(organism)) {
-            // Set the view bean with the new values.
-            setOrganism(organism);
-        }
+        setInteractionType((String) dynaform.get("interactionType"));
+        setOrganism((String) dynaform.get("organism"));
         setKD((Float) dynaform.get("kD"));
     }
 
@@ -420,7 +413,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
     }
 
     public void setOrganism(String organism) {
-        myOrganism = organism;
+        myOrganism = normalizeMenuItem(organism);
     }
 
     public String getOrganism() {
@@ -428,7 +421,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
     }
 
     public void setInteractionType(String interaction) {
-        myInteractionType = interaction;
+        myInteractionType = normalizeMenuItem(interaction);
     }
 
     public String getInteractionType() {
