@@ -369,7 +369,9 @@ public class Range extends BasicObjectImpl {
         result = 29 * result + toIntervalEnd;
 
         //add in the sequence hashcode
-        result = 29 * result + sequence.hashCode();
+        if (sequence != null) {
+            result = 29 * result + sequence.hashCode();
+        }
 
         return result;
     }
