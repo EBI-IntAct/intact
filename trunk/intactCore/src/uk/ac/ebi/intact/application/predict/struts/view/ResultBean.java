@@ -5,12 +5,8 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.predict.struts.view;
 
-import uk.ac.ebi.intact.application.commons.util.XrefHelper;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.model.Xref;
-
-import java.util.Iterator;
 
 /**
  *
