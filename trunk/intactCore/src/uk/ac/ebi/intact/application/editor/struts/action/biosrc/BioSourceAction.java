@@ -79,7 +79,8 @@ public class BioSourceAction extends SubmitFormAction {
             errors.add(ActionErrors.GLOBAL_ERROR,
                     new ActionError("error.taxid.mask", taxid));
             saveErrors(request, errors);
-            return mapping.findForward(FAILURE);
+            // Non integer value for taxid. Display the error in the input page.
+            return mapping.getInputForward();
         }
         // This shouldn't cause a class cast exception as we had
         // already created the correct editor view bean.
@@ -91,7 +92,8 @@ public class BioSourceAction extends SubmitFormAction {
 
         // Any errors?
         if (hasErrors(request)) {
-            return mapping.findForward(FAILURE);
+            // Errors are displayed in the input page.
+            return mapping.getInputForward();
         }
         // Values from newt.
         String newtLabel = newtResponse.getShortLabel();
