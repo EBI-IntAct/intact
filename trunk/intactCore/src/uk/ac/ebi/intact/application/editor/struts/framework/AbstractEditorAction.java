@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -186,6 +187,14 @@ public abstract class AbstractEditorAction extends Action {
         DynaActionFormClass dynaClass =
                 DynaActionFormClass.createDynaActionFormClass(config);
         return dynaClass.newInstance();
+    }
+
+    protected EditForm getEditForm(HttpSession session, String formName) {
+        if (session.getAttribute(formName) == null) {
+            LOGGER.info("Created a new " + formName);
+            session.setAttribute(formName, new EditForm());
+        }
+        return (EditForm) session.getAttribute(formName);
     }
 
     // Helper Methods
