@@ -14,10 +14,9 @@ Whilst the interfaces allow for the option of changing the underlying persistenc
 technology, at present intact uses the OJB object-relational mapping tool to provide
 an object view of a backend oracle database. The OJB interface is hidden from users
 of the intact persistence package, but the package contains both the technology-independent
-classes and also the OJB-specific (and, if required, castor-specific) implementations. (Please
+classes and also the OJB-specific implementations. (Please
 note the change of underlying persistence technology: OJB was chosen to replace Castor mainly for
-performance, documentation and extensibility reasons.). There is also a Castor-specific implementation
-which again is available via the interface if required.
+performance, documentation and extensibility reasons.).
 <p>
 The package contains the following groups of classes and interfaces:
 
@@ -46,19 +45,6 @@ returned by this factory could be specified within a servlet configuration param
  which defines the class-to-table mappings. In the case of castor, these are database description
  and mapping files, along with the database name. Once intitialised it is then ready to provide
  clients with connections to the persistent storage.
- <p>
- <p>
- If Castor is to be used as a persistence technology, a further parameter which may be set (via the same mechanism as setting the configuration files) is
- a <code>Map</code> of reflection information for each known type of an application. The structure of the
- <code>Map</code> should be keyed on full java classname, with the values of the <code>Map</code>
- being arrays of java type <code>PropertyDescriptor</code> (see the java.beans package for details).
- Internally the Castor-specific Data Access Object uses reflection information to optimise the
- Castor lazy loading facility (assuming the persisted objects have basic Bean structure, ie
- that each property has a get and set method). This is achieved either via the <code>Map</code>
- and the java.beans classes or, if no such <code>Map</code> is provided, by straight java reflection.
- It is recommended that users of this package construct their own <code>Map</code> and suppy it,
- since reflection can affect performance and a "one off" up-front Bean introspection will improve
- the performance.
  <p>
  <p>
  Use of OJB as the persistence technology requires no further information, unlike Castor.
@@ -95,38 +81,11 @@ Access to the data source is provided via the <code>DAO</code> interface. This i
  a superior object-relational solution to Castor - however Castor is the preferred solution for XML
  marshalling applications, since OJB does not provide such functionality.
  </p>
- <h4>Castor</h4>
+ <h4>Other Solutions</h4>
  <p>
- The {@link uk.ac.ebi.intact.persistence.CastorDAO} class implements a castor-specific solution. This class, in
- a number of cases, simply wraps a castor database connection and performs typical operations
- for commit, rollback etc via delegation to the castor API. However for more complex cases such
- as searching and object creation, more functionality is included in the <code>CastorDAO</code>
-  class to allow for (where necessary) transaction management, and to overcome some of the limitations
-  of castor's lazy loading capability. Note however that due to Castor's lazy loading policy, although
-  full objects are not materialised there will still be (in the case of a Collection) a query to fetch
-  the Object ID for every item in a Collection. This is not the case with OJB, which uses a proxy-based
-  lazy loading strategy.
-  <p>
-  Difficulties arise with standard object loading because a request for a single
-  object will retrieve the complete object graph for high connectivity data structures. Castor
-  attempts to overcome this by providing an "on demand" loading facility, whereby objects are
-  loaded lazily (ie only when requested). This also causes problems in some cases, for example
-  within a web environment. The difficulty is caused by the fact that castor lazy loading must
-  be performed within the scope of a single transaction, otherwise the unloaded objects become
-  "out of scope". Essentially castor repalces the objects tehmselves only with their IDs, so that
-  they can be retrieved on demand within the same transaction. Howevere the IDs are invalid
-  once the transaction is commited or rolled back. Since web applications cannot have transactions
-  spanning requests, this makes lazily loaded objects unusable (unless the business tier is
-  based on stateful Session Beans in an EJB layer, which allows transactions to span method calls).
-  <p>
-  The simple solution adopted for now is that when the <code>CastorDAO</code> object receives
-   a search request, the object and its immediate neighbours only are loaded, but no more. It is
-   likely that the nearest neighbours of a queried object will be required anyway, so this is not
-   an unreasonable approach. The nearest neighbours themselves are loaded within the <code>CastorDAO</code>
-   search method, since castor uses its own <code>Iterator</code> class which again goes out of
-   scope when a transaction completes - hence the neighbours must be loaded and stored back again within
-   a single transaction. As discussed above, this is achieved using either client-supplied java
-   Bean introspection information (faster) or straight java reflection for each request (slower).
+ Previously a CastorDAO class implemented a castor-specific solution. This has now been replaced
+ with an OJB solution for a number of reasons, chiefly concerned with the lazy loading strategy, code
+ complexity, lack of useful documentation and low level of development activity for Castor JDO.
 <p>
 
 <h2>Package Specification</h2>
