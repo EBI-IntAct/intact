@@ -95,8 +95,16 @@ public class HtmlBuilderManager {
     public void buildHtml(HtmlBuilder builder, AnnotatedObject object, Set highlights)
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
-        Class[] paras = new Class[]{object.getClass()};
-        Method m = HtmlBuilder.class.getMethod("htmlView", paras);
-        m.invoke(builder, new Object[]{object});
+        // TODO use a proper logger
+        System.out.println ( object.getShortLabel() + "  " + object.getClass().getName() );
+
+        try {
+            Class[] paras = new Class[]{object.getClass()};
+            Method m = HtmlBuilder.class.getMethod("htmlView", paras);
+            m.invoke(builder, new Object[]{object});
+        } catch ( InvocationTargetException e ) {
+            e.getTargetException().printStackTrace();
+            throw e;
+        }
     }
 }
