@@ -23,12 +23,16 @@
     <property name="webapps.dir" value="${tomcat.home}/webapps"/>
    
     <!-- Documentation related -->
-    <property name="xml.dir"    value="doc/xml"/>
-    <property name="xsl.dir"    value="doc/xsl"/>
-    <property name="css.dir"    value="doc/css"/>
-    <property name="html.dir"   value="doc/html"/>
-    <property name="images.dir" value="doc/images"/>
-    <property name="lib.dir"    value="doc/lib"/>
+    <property name="doc.dir"    value="doc"/>
+    <property name="xml.dir"    value="${doc.dir}/xml"/>
+    <property name="xsl.dir"    value="${doc.dir}/xsl"/>
+    <property name="css.dir"    value="${doc.dir}/css"/>
+    <property name="html.dir"   value="${doc.dir}/html"/>
+    <property name="images.dir" value="${doc.dir}/images"/>
+    <property name="lib.dir"    value="${doc.dir}/lib"/>
+
+	<!-- include project specific additional documentation -->
+	<property name="misc.dir"  value="${doc.dir}/misc"/>
 
     <property name="xml.documentation"   value="${xml.dir}/intact.xml"/>
     <property name="xsl.tableOfContent"  value="${xsl.dir}/contents.xsl"/>
@@ -84,6 +88,11 @@
 
         <!-- Delete the war file or else it will keep the old one -->
         <delete file="${dist.dir}/${war.file}" quiet="true"/>
+
+        <!-- misc.dir transfered to html for additional documentation -->
+        <copy todir="${html.dir}">
+            <fileset dir="${misc.dir}"/>
+        </copy>
 
         <!-- html.dir is created in the build-doc target -->
         <copy file="${css.dir}/stylesheet.css" todir="${html.dir}" />
