@@ -52,11 +52,8 @@ public class ResultsAction extends IntactBaseAction {
     public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        // Save the user session.
-        HttpSession session = super.getSession(request);
-
-        // Handler to the Intact Usre.
-        IntactUserIF user = super.getIntactUser(session);
+        // Handler to the Intact User.
+        IntactUserIF user = super.getIntactUser(request);
 
         // The topic selected by the user.
         String topic = user.getSelectedTopic();
@@ -68,7 +65,7 @@ public class ResultsAction extends IntactBaseAction {
         super.clearErrors();
 
         // The short label to search
-        String shortLabel = (String) request.getParameter("shortLabel");
+        String shortLabel = request.getParameter("shortLabel");
 
         // The selected CV object.
         CvObject cvobj = null;
