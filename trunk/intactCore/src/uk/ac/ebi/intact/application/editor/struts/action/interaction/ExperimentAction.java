@@ -6,14 +6,13 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action.interaction;
 
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentBean;
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
-
-import org.apache.struts.action.*;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,24 +43,29 @@ public class ExperimentAction extends AbstractEditorAction {
      * or HttpServletResponse.sendRedirect() to, as a result of processing
      * activities of an <code>Action</code> class
      */
-    public ActionForward execute(ActionMapping mapping, ActionForm form,
+    public ActionForward execute(ActionMapping mapping,
+                                 ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
-        EditForm editform = (EditForm) form;
+        // The dyna form.
+        DynaActionForm dynaform = (DynaActionForm) form;
+
+        // The index position of the annotation.
+        int idx = ((Integer) dynaform.get("idx")).intValue();
 
         // The current view of the edit session.
         InteractionViewBean view =
                 (InteractionViewBean) getIntactUser(request).getView();
 
         // The bean associated with the current action.
-        ExperimentBean expbean = view.getExperiment(editform.getIndex());
+        ExperimentBean eb = ((ExperimentBean[]) dynaform.get("exps"))[idx];
 
         // We must have the experiment bean.
-        assert expbean != null;
+        assert eb != null;
 
         // Wants to delete the selected experiment from the Interaction.
-        view.delExperiment(expbean);
+        view.delExperiment(eb);
 
         return mapping.findForward(FORWARD_SUCCESS);
     }
