@@ -1,31 +1,11 @@
 package uk.ac.ebi.intact.application.hierarchView.business.tulip.webService;
 
 // JDK
-import java.util.Properties;
+import org.apache.axis.MessageContext;
+import org.apache.axis.session.Session;
 
-// Web Service
-import org.apache.axis.*;
-import org.apache.axis.session.*;
-
-// File & Input/Output managment
-import java.io.InputStream;
-import java.io.FileWriter;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.File;
-
-// Process 
-import java.lang.Runtime;
-import java.lang.Process;
-import java.lang.InterruptedException;
-
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.Vector;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
 /**
   * Purpose : <br>

@@ -1,18 +1,15 @@
 package uk.ac.ebi.intact.application.hierarchView.business.tulip.client;
 
+import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
+import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.ProteinCoordinate;
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.TulipAccess;
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.TulipAccessService;
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.TulipAccessServiceLocator;
-import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.TulipSoapBindingStub;
-import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.ProteinCoordinate;
-
-import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
-import java.util.Properties;
 
-// JDK
-import java.net.URL;
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Properties;
 
 
 /**
