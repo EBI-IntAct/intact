@@ -86,7 +86,7 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
         super();
         if(shortLabel == null) throw new NullPointerException("Must define a short label for a " +getClass().getName());
         if(owner == null) throw new NullPointerException("valid " +getClass().getName()+" must have an owner (Institution)!");
-        this.shortLabel = shortLabel;
+        setShortLabel(shortLabel);
         setOwner(owner);
     }
     // Class methods
@@ -97,9 +97,16 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
     public String getShortLabel() {
         return shortLabel;
     }
+
     public void setShortLabel(String shortLabel) {
+        if ( shortLabel != null ) {
+            if( shortLabel.length() >= MAX_SHORT_LABEL_LEN ) {
+                shortLabel = shortLabel.substring( 0, MAX_SHORT_LABEL_LEN );
+            }
+        }
         this.shortLabel = shortLabel;
     }
+
     public String getFullName() {
         return fullName;
     }
