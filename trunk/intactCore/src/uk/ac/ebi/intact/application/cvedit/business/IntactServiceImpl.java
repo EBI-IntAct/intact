@@ -55,8 +55,9 @@ public class IntactServiceImpl implements IntactServiceIF {
 
     public Collection getIntactTypes() {
         // The collection to return.
-        Collection types = new ArrayList();
+        List types = new ArrayList();
         CollectionUtils.addAll(types, myIntactTypes.getKeys());
+        Collections.sort(types);
         return types;
     }
 }
