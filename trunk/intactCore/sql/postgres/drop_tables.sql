@@ -67,3 +67,8 @@
 --  drop table ia_institution_audit ;
 
   drop sequence intact_ac ;
+
+
+drop sequence statistics_seq;
+
+drop table ia_statistics;

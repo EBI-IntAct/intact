@@ -752,10 +752,70 @@ COMMENT ON COLUMN IA_Cv2Cv.userstamp IS
 'Database user who has performed the last update of the column.';
 
 
-
-
 -- Sequences
 PROMPT creating sequence Intact_ac
 CREATE SEQUENCE Intact_ac start with 10;
+
+
+
+
+-- components related to statisticView
+
+-- Sequence for table's AC
+PROMPT Creating sequence "Intact_statistics_seq"
+CREATE SEQUENCE Intact_statistics_seq
+START WITH 1
+INCREMENT BY 1
+NOCACHE
+NOCYCLE;
+
+
+PROMPT Creating table "IA_Statistics"
+CREATE TABLE IA_Statistics
+(     ac                       NUMBER(9) NOT NULL
+                               CONSTRAINT pk_Statistics
+                               PRIMARY KEY USING INDEX TABLESPACE &&intactIndexTablespace
+      , timestamp              DATE            DEFAULT  SYSDATE NOT NULL
+      , protein_number         NUMBER(9)      DEFAULT  0       NOT NULL
+      , interaction_number     NUMBER(9)      DEFAULT  0       NOT NULL
+      , binary_interactions    NUMBER(9)      DEFAULT  0       NOT NULL
+      , complex_interactions   NUMBER(9)      DEFAULT  0       NOT NULL
+      , experiment_number      NUMBER(9)      DEFAULT  0       NOT NULL
+      , term_number            NUMBER(9)      DEFAULT  0       NOT NULL
+)
+TABLESPACE &&intactIndexTablespace;
+
+
+COMMENT ON TABLE IA_Statistics IS
+'IA_Statistics. Stores statistics about this intact node.';
+COMMENT ON COLUMN IA_Statistics.timestamp IS
+'remind the moment of record for this line';
+COMMENT ON COLUMN IA_Statistics.protein_number IS
+'count how many proteins are stored in the database';
+COMMENT ON COLUMN IA_Statistics.interaction_number IS
+'count how many interactions are referred in the database';
+COMMENT ON COLUMN IA_Statistics.binary_interactions IS
+'how many interactions contain only 2 interactors';
+COMMENT ON COLUMN IA_Statistics.complex_interactions IS
+'how many interactions contain more than 2 interactors';
+COMMENT ON COLUMN IA_Statistics.experiment_number IS
+'how many different experiments are stored in the database';
+COMMENT ON COLUMN IA_Statistics.term_number IS
+'how many different controlled vocabularies terms are stored in the database';
+
+
+-- Create the trigger to update the table AC
+PROMPT Creating trigger "TRG_IA_Statistics"
+CREATE OR REPLACE TRIGGER TRG_IA_Statistics
+BEFORE INSERT
+ON IA_Statistics
+FOR EACH ROW
+BEGIN
+  select Intact_statistics_seq.nextval
+  into :new.ac
+  from dual;
+END;
+/
+
 
 set term on
