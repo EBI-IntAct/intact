@@ -199,7 +199,6 @@ public class LockManager {
         }
         if (lock != null) {
             myLocks.remove(lock);
-            System.out.println("Release locked: " + lock.getId() + " by owner: " + lock.getOwner());
         }
     }
 
@@ -214,7 +213,6 @@ public class LockManager {
         for (Iterator iter = myLocks.iterator(); iter.hasNext();) {
             LockObject lock = (LockObject) iter.next();
             if (lock.getOwner().equals(owner)) {
-                System.out.println("Added lock " + lock.getId() + " to release");
                 locks.add(lock);
             }
         }
