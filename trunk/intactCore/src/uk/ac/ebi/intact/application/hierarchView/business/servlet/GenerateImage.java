@@ -31,20 +31,9 @@ public class GenerateImage extends HttpServlet {
 
     static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
 
-    // * Public servlet methods
-
-    public void init(ServletConfig config)
-            throws ServletException {
-
-        // MANDATORY!
-        super.init(config);
-    }
-
-
     /**
-     *
-     *
-     *
+     * Servlet allowing to get SVG data, convert them into the user wanted format
+     * and send to the browser the image by taking care of the MIME type.
      */
     public void doGet(HttpServletRequest aRequest, HttpServletResponse aResponse)
             throws ServletException{
@@ -53,9 +42,9 @@ public class GenerateImage extends HttpServlet {
             // get the current user session
             HttpSession session = aRequest.getSession ();
             IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
-            ImageBean ib = user.getImageBean();
+            ImageBean imageBean = user.getImageBean();
 
-            if (null == ib) {
+            if (null == imageBean) {
                 logger.error ("ImageBean in the session is null");
                 return;
             }
@@ -73,8 +62,17 @@ public class GenerateImage extends HttpServlet {
                 className = propertiesBusiness.getProperty ("hierarchView.image.format." + format + ".class" );
             }
 
-            // Encode the off-screen image into a JPEG and send it to the client
-            ConvertSVG convert = ConvertSVG.getConvertSVG(className);
+            // Create a SVG Rasterizer to convert the SVG DOM to an image
+            ConvertSVG convert = ConvertSVG.getConvertSVG (className);
+
+            if (null == convert) {
+                logger.error ("Unable to create the rasterizer " + className);
+                String errorMsg = "Unable to produce the interaction network, please warn your administrator";
+                out.println (errorMsg);
+                out.flush ();
+                out.close ();
+            }
+
             logger.info (className + " created");
 
             // set MIME type according to user format choice
@@ -82,7 +80,7 @@ public class GenerateImage extends HttpServlet {
             logger.info ("set MIME Type to " + typeMime);
             aResponse.setContentType(typeMime);
 
-            Document document = ib.getDocument();
+            Document document = imageBean.getDocument();
             if (null != document) {
                 try {
                     byte[] imageData = convert.convert(document);
@@ -104,7 +102,10 @@ public class GenerateImage extends HttpServlet {
             out.flush ();
             out.close ();
         }
-        catch (IOException e) {return;}
+        catch (IOException e) {
+            logger.error ("Error during the image producing process", e);
+            return;
+        }
 
     } // doGet
 
