@@ -34,10 +34,25 @@ public class SanityChecker {
     private StringBuffer expCheck;
     private StringBuffer expCheckNoPubmed;
     private StringBuffer expCheckNoPubmedWithPrimaryReference;
+
     private StringBuffer interactionCheck;
+
+
+    private StringBuffer interactionWithMixedComponentCategoriesCheck;
+    private StringBuffer interactionWithNoCategoriesCheck;
+
     private StringBuffer interactionWithNoBaitCheck;
     private StringBuffer interactionWithNoPreyCheck;
-    private StringBuffer interactionWithNeitherPreyNorBaitCheck;
+
+    private StringBuffer interactionWithNoTargetCheck;
+    private StringBuffer interactionWithNoAgentCheck;
+    private StringBuffer interactionWithOnlyOneNeutralCheck;
+
+    private StringBuffer interactionWithProteinCountLowerThan2;
+
+    private StringBuffer interactionWithSelfProteinAndStoichiometryLowerThan2;
+    private StringBuffer interactionWithMoreThan2SelfProtein;
+
     private StringBuffer singleProteinCheck;
     private StringBuffer noProteinCheck;
 
@@ -45,7 +60,12 @@ public class SanityChecker {
     private Collection experiments;
     private Collection interactions;
 
-    private final String NEW_LINE = System.getProperty("line.separator");
+    private final String NEW_LINE = System.getProperty( "line.separator" );
+
+
+
+    // TODO: We could check if some Xrefs are orphan (check is the parent_ac is found in IA_INTERACTOR, IA_EXPERIMENT, IA_CONTROLLEDVOCAB)
+
 
     public SanityChecker(IntactHelper helper, PrintWriter writer) throws IntactException, SQLException {
         this.helper = helper;
@@ -64,23 +84,58 @@ public class SanityChecker {
 
         //initialize buffers that will accumulate the test results..
         expCheck = new StringBuffer("Experiments with no Interactions" +
-                "\n" + "------------------------------------------------" + NEW_LINE);
+                                    "\n" + "------------------------------------------------" + NEW_LINE);
+
         expCheckNoPubmed = new StringBuffer("Experiments with no pubmed id" +
-                "\n" + "------------------------------------------------" + NEW_LINE);
-        expCheckNoPubmedWithPrimaryReference = new StringBuffer("Experiments with no pubmed id (with 'primary-reference' as qualifier)" +
-                "\n" + "------------------------------------------------" + NEW_LINE);
+                                            "\n" + "------------------------------------------------" + NEW_LINE);
+
+        expCheckNoPubmedWithPrimaryReference =
+                new StringBuffer("Experiments with no pubmed id (with 'primary-reference' as qualifier)" +
+                                 "\n" + "------------------------------------------------" + NEW_LINE);
+
         interactionCheck = new StringBuffer("Interactions with no Experiment" +
-                "\n" + "------------------------------------------------" + NEW_LINE);
+                                            "\n" + "------------------------------------------------" + NEW_LINE);
+
+        interactionWithNoCategoriesCheck =
+                new StringBuffer("Interactions with no categories (bait-prey, target-agent, neutral, complex, self)" +
+                                 "\n" + "---------------------------------------------------------------------" + NEW_LINE);
+
+        interactionWithMixedComponentCategoriesCheck =
+                new StringBuffer("Interactions with mixed categories (bait-prey, target-agent, neutral, complex, self)" +
+                                 "\n" + "---------------------------------------------------------------------" + NEW_LINE);
+
         interactionWithNoBaitCheck = new StringBuffer("Interactions with no bait" +
-                "\n" + "------------------------------------------------" + NEW_LINE);
+                                                      "\n" + "------------------------------------------------" + NEW_LINE);
+
         interactionWithNoPreyCheck = new StringBuffer("Interactions with no prey" +
-                "\n" + "------------------------------------------------" + NEW_LINE);
-        interactionWithNeitherPreyNorBaitCheck = new StringBuffer("Interactions with neither prey nor Bait" +
-                "\n" + "------------------------------------------------" + NEW_LINE);
+                                                      "\n" + "------------------------------------------------" + NEW_LINE);
+
+        interactionWithNoTargetCheck = new StringBuffer("Interactions with no target" +
+                                                        "\n" + "------------------------------------------------" + NEW_LINE);
+
+        interactionWithNoAgentCheck = new StringBuffer("Interactions with no agent" +
+                                                       "\n" + "------------------------------------------------" + NEW_LINE);
+
+        interactionWithOnlyOneNeutralCheck =
+                new StringBuffer("Interactions with only one neutral component" +
+                                 "\n" + "------------------------------------------------" + NEW_LINE);
+
+        interactionWithProteinCountLowerThan2 = new StringBuffer("Interactions with less than 2 proteins (Role = complex)" +
+                                    "\n" + "------------------------------------------------" + NEW_LINE);
+
+        interactionWithSelfProteinAndStoichiometryLowerThan2 =
+                new StringBuffer("Interactions with protein having their role set to self and its stoichiometry lower than 2.0" +
+                                 "\n" + "------------------------------------------------" + NEW_LINE);
+
+        interactionWithMoreThan2SelfProtein =
+                new StringBuffer("Interactions with more than one protein having their role set to self" +
+                                 "\n" + "------------------------------------------------" + NEW_LINE);
+
         singleProteinCheck = new StringBuffer("Interactions with only One Protein" +
-                "\n" + "------------------------------------------------" + NEW_LINE);
+                                              "\n" + "------------------------------------------------" + NEW_LINE);
+
         noProteinCheck = new StringBuffer("Interactions with No Components" +
-                "\n" + "------------------------------------------------" + NEW_LINE);
+                                          "\n" + "------------------------------------------------" + NEW_LINE);
 
 
     }
@@ -113,12 +168,14 @@ public class SanityChecker {
      */
     public void checkExperiments() throws IntactException, SQLException  {
 
+        System.out.println ( "Checking on Experiment (rule 8) ..." );
+
         //check 8
         for(Iterator it = experiments.iterator(); it.hasNext();) {
             Experiment exp = (Experiment)it.next();
             if(exp.getInteractions().size() < 1) {
-                    //record it.....
-                    getUserInfo(expCheck, exp);
+                //record it.....
+                getUserInfo(expCheck, exp);
             }
         }
         writeResults(expCheck);
@@ -132,6 +189,8 @@ public class SanityChecker {
      * @throws SQLException Thrown if there was a DB access problem
      */
     public void checkExperimentsPubmedIds() throws IntactException, SQLException  {
+
+        System.out.println ( "Checking on Experiment and their pubmed IDs (rules 1 and 2) ..." );
 
         //check 1 and 2
         for(Iterator it = experiments.iterator(); it.hasNext();) {
@@ -150,8 +209,8 @@ public class SanityChecker {
             }
 
             if(pubmedCount == 0) {
-                    //record it.....
-                    getUserInfo(expCheckNoPubmed, exp);
+                //record it.....
+                getUserInfo(expCheckNoPubmed, exp);
             }
 
             if (pubmedPrimaryCount != 1) {
@@ -167,10 +226,12 @@ public class SanityChecker {
     }
 
     /**
-    * Performs Interaction checks.
-    * @exception uk.ac.ebi.intact.business.IntactException thrown if there was a search problem
-    */
+     * Performs Interaction checks.
+     * @exception uk.ac.ebi.intact.business.IntactException thrown if there was a search problem
+     */
     public void checkInteractions() throws IntactException, SQLException  {
+
+        System.out.println ( "Checking on Interactions (rule 7) ..." );
 
         //check 7
         for (Iterator it = interactions.iterator(); it.hasNext();) {
@@ -188,10 +249,12 @@ public class SanityChecker {
     }
 
     /**
-    * Performs Interaction checks.
-    * @exception uk.ac.ebi.intact.business.IntactException thrown if there was a search problem
-    */
+     * Performs Interaction checks.
+     * @exception uk.ac.ebi.intact.business.IntactException thrown if there was a search problem
+     */
     public void checkInteractionsBaitAndPrey() throws IntactException, SQLException  {
+
+        System.out.println ( "Checking on Interactions (rule 6) ..." );
 
         //check 7
         for (Iterator it = interactions.iterator(); it.hasNext();) {
@@ -200,43 +263,126 @@ public class SanityChecker {
             Collection components = interaction.getComponents();
             int preyCount    = 0,
                 baitCount    = 0,
-                neutralCount = 0;
+                agentCount   = 0,
+                targetCount  = 0,
+                neutralCount = 0,
+                selfCount    = 0,
+                complexCount = 0;
+            float selfStoichiometry = 0;
+            float neutralStoichiometry = 0;
+
             for ( Iterator iterator = components.iterator (); iterator.hasNext (); ) {
                 Component component = (Component) iterator.next ();
                 //record it.....
 
                 if (component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "bait" )) {
                     baitCount++;
-                }
-                if (component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "prey" )) {
+                } else if (component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "prey" )) {
                     preyCount++;
-                }
-                if (component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "neutral" )) {
+                }  else if (component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "target" )) {
+                    targetCount++;
+                } else if (component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "agent" )) {
+                    agentCount++;
+                } else if (component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "neutral" )) {
                     neutralCount++;
+                    neutralStoichiometry = component.getStoichiometry();
+                } else if (component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "self" )) {
+                    selfCount++;
+                    selfStoichiometry = component.getStoichiometry();
+                } else if (component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "complex" )) {
+                    complexCount++;
                 }
             }
 
-            // TODO: we have to consider Components as 3 distinct groups: bait-prey, agent-target and neutral
-            // TODO: we are not allowed to mix categories,
-            // TODO: if you have a bait you must have at least one prey
-            // TODO: if you have a target you must have at least one agent ----- NOT DONE YET
-            // TODO: else you must have at least 2 neutral components
-            if ( preyCount == 0 && baitCount == 0 ) {
-                if ( neutralCount <= 1 ) {
-                    getUserInfo(interactionWithNeitherPreyNorBaitCheck, interaction);
-                }
-            } else {
-                if (baitCount == 0) {
-                    getUserInfo(interactionWithNoBaitCheck, interaction);
-                } else if (preyCount == 0) {
-                    getUserInfo(interactionWithNoPreyCheck, interaction);
-                }
-            }
+
+            /**
+             * We have to consider Components as 3 distinct groups: bait-prey, agent-target and neutral
+             * We are not allowed to mix categories,
+             * if you have a bait you must have at least one prey
+             * if you have a target you must have at least one agent ----- NOT DONE YET
+             * if you have neutral component you must have at least 2
+             * if you have complex you must have at least 2
+             * if you have self you must have only one protein with Stochiometry >= 2
+             */
+
+            int baitPrey    = (baitCount + preyCount > 0 ? 1 : 0);
+            int targetAgent = (targetCount + agentCount > 0 ? 1 : 0);
+            int neutral     = (neutralCount > 0 ? 1 : 0);
+            int self        = (selfCount > 0 ? 1 : 0);
+            int complex     = (complexCount > 0 ? 1 : 0);
+
+            int categoryCount = baitPrey + targetAgent + neutral + self + complex;
+
+            switch ( categoryCount ) {
+                case 0:
+                    // none of those categories
+                    getUserInfo(interactionWithNoCategoriesCheck, interaction);
+                    break;
+
+                case 1:
+                    // exactly 1 category
+                    if (baitPrey == 1) {
+                        // bait-prey
+                        if ( baitCount == 0 ) {
+                            getUserInfo(interactionWithNoBaitCheck, interaction);
+                        } else if ( preyCount == 0 ) {
+                            getUserInfo(interactionWithNoPreyCheck, interaction);
+                        }
+
+                    } else if (targetAgent == 1) {
+                        // target-agent
+                        if ( targetCount == 0 ) {
+                            getUserInfo(interactionWithNoTargetCheck, interaction);
+                        } else if ( agentCount == 0 ) {
+                            getUserInfo(interactionWithNoAgentCheck, interaction);
+                        }
+
+                    } else if (self == 1) {
+                        // it has to be > 1
+                        if (selfCount > 1) {
+                           getUserInfo(interactionWithMoreThan2SelfProtein, interaction);
+                        } else { // = 1
+                            if (selfStoichiometry < 2F) {
+                                getUserInfo(interactionWithSelfProteinAndStoichiometryLowerThan2, interaction);
+                            }
+                        }
+
+                    } else if (complex == 1) {
+                        // it has to be > 1
+                        if( complexCount < 2 ) {
+                            getUserInfo(interactionWithProteinCountLowerThan2, interaction);
+                        }
+
+                    } else {
+                        // neutral
+                        if( neutralCount == 1) {
+                           if ( neutralStoichiometry < 2 ) {
+                               getUserInfo(interactionWithOnlyOneNeutralCheck, interaction);
+                           }
+                        }
+                    }
+                    break;
+
+                default:
+                    // > 1 : mixed up categories !
+                    getUserInfo(interactionWithMixedComponentCategoriesCheck, interaction);
+
+            } // switch
+
+            // What about self or the unknown category ?
         }
+
         //now dump the results...
-        writeResults(interactionWithNeitherPreyNorBaitCheck);
-        writeResults(interactionWithNoBaitCheck);
-        writeResults(interactionWithNoPreyCheck);
+        writeResults( interactionWithNoCategoriesCheck );
+        writeResults( interactionWithMixedComponentCategoriesCheck );
+
+        writeResults( interactionWithNoAgentCheck);
+        writeResults( interactionWithNoTargetCheck );
+
+        writeResults( interactionWithNoBaitCheck );
+        writeResults( interactionWithNoPreyCheck );
+
+        writeResults( interactionWithOnlyOneNeutralCheck );
         writer.println();
 
     }
@@ -247,6 +393,8 @@ public class SanityChecker {
      * @throws SQLException thrown if there were DB access problems
      */
     public void checkProteins() throws IntactException, SQLException {
+
+        System.out.println ( "Checking on Proteins (rules 5 and 6) ..." );
 
         //checks 5 and 6 (easier if done together)
         for (Iterator it = interactions.iterator(); it.hasNext();) {
@@ -344,7 +492,7 @@ public class SanityChecker {
         }
 
         buf.append("AC: " + obj.getAc() + "\t" + " User: " + user
-                + "\t" + "When: " + date + NEW_LINE);
+                   + "\t" + "When: " + date + NEW_LINE);
 
     }
 
@@ -381,7 +529,7 @@ public class SanityChecker {
             out = new PrintWriter(new BufferedWriter(new FileWriter(args[0])));
             helper = new IntactHelper();
             System.out.println("Helper created (User: " + helper.getDbUserName() + " " +
-                    "Database: " + helper.getDbName() + ")");
+                               "Database: " + helper.getDbName() + ")");
             System.out.println("results filename: " + args[0]);
             out.println("Checks against Database " + helper.getDbName());
             out.println("----------------------------------");
