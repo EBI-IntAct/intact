@@ -10,7 +10,8 @@ package uk.ac.ebi.intact.application.hierarchView.business.graph;
  * Give a specific behaviour to the generic graph definition
  * 
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
- * @version $Id$
+ * @version $Id: InteractionNetwork.java,v 1.28 2004/08/27 09:26:21 groscurth
+ *          Exp $
  */
 
 import java.awt.Color;
@@ -77,8 +78,8 @@ public class InteractionNetwork extends Graph {
                     .getProperty( "hierarchView.graph.max.cental.protein" );
         }
         else {
-            logger
-                    .warn( "properties file GRAPH_PROPERTIES could not been read" );
+            logger.warn( "properties file GRAPH_PROPERTIES could not"
+                    + " been read" );
         }
         // the color for the node is parsed
         NODE_COLOR = Utilities.parseColor( stringColorNode, DEFAULT_NODE_COLOR );
@@ -148,7 +149,9 @@ public class InteractionNetwork extends Graph {
     private BasicGraphI centralNode;
 
     /**
-     * Constructor
+     * Constructor which is called when the graph is build in the "normal" way
+     * its distinguishable to the other graph since it stores interactors in its
+     * nodes
      */
     public InteractionNetwork(Interactor aCentralProtein) {
         Collection xrefs = aCentralProtein.getXrefs();
@@ -180,7 +183,7 @@ public class InteractionNetwork extends Graph {
         sourceHighlightMap = new Hashtable( GraphHelper.SOURCES.size() );
         centralNodes.add( centralNode );
     }
-    
+
     /**
      * initialise some instance variables of the network
      */
@@ -196,8 +199,8 @@ public class InteractionNetwork extends Graph {
      * Adds a new node to the source map for the given source (e.g. GO) and the
      * given source id (e.g. GO:001900).
      * 
-     * If in the map already as the source id as key the node is added to the
-     * set of other nodes for this source.
+     * If the map already has the source id as key the node is added to the set
+     * of other nodes for this source.
      * 
      * Otherwise a new set is created and the node is added to it.
      * 
@@ -227,9 +230,7 @@ public class InteractionNetwork extends Graph {
             sourceNodes = new HashSet();
             sourceMap.put( sourceID, sourceNodes );
         }
-        if ( !sourceNodes.contains( node ) ) {
-            sourceNodes.add( node );
-        }
+        sourceNodes.add( node );
     }
 
     /**
@@ -667,16 +668,16 @@ public class InteractionNetwork extends Graph {
              * informations are added to the node of this network and added as
              * centralNode
              */
-            BasicGraphI newNode = (BasicGraphI) nodes.get( aNode.getAc() );
+            BasicGraphI thisNode = (BasicGraphI) nodes.get( aNode.getAc() );
 
             // every source information is transformed to the node of this
             // network
             for (int i = 0; i < GraphHelper.SOURCES.size(); i++) {
                 String source = (String) GraphHelper.SOURCES.get( i );
-                newNode.put( source, aNode.get( source ) );
+                thisNode.put( source, aNode.get( source ) );
             }
 
-            centralNodes.add( newNode );
+            centralNodes.add( thisNode );
         }
 
         // fusion search criteria using the addCriteria method to avois
@@ -700,7 +701,7 @@ public class InteractionNetwork extends Graph {
                 Map.Entry element = (Map.Entry) iter.next();
                 // source is the id of a source (e.g. GO)
                 String source = (String) element.getKey();
-                
+
                 // get all entries of the specific source map
                 Set sourceSets = ( (Map) element.getValue() ).entrySet();
 
