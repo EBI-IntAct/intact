@@ -71,9 +71,9 @@ public class SearchAction extends IntactBaseAction {
         // Set up variables used during searching
         //default the param to AC
         String searchParam = "ac";
-        String searchValue = null;
 
         SearchForm theForm = (SearchForm) form;
+        String searchValue = theForm.getSearchString();
 
         // Session to access various session objects.
         HttpSession session = super.getSession(request);
@@ -127,54 +127,31 @@ public class SearchAction extends IntactBaseAction {
         // Holds the result from the search.
         Collection results = null;
 
+        //now need to try searches based on AC, label or name (only
+       //ones we will accept for now) and return as soon as we get a result
+       //NB obviously can't distinguish between a zero return and a search
+       //with garbage input using this approach...
         super.log("search action: attempting to search by AC first...");
         try {
-            results = user.search(classname, searchParam, searchValue);
+            //try searching first using all uppercase, then all lower case if it returns nothing...
+            //NB this would be better done at the DB level, but keep it here for now
+            String upperCaseValue = theForm.getSearchString().toUpperCase();
+            results = doLookup(classname, searchParam, upperCaseValue, user);
             if (results.isEmpty()) {
-                // No matches found - try a search by label now...
-                super.log("now searching for class " + classname + " with label " + searchValue);
-                results = user.search(classname, "shortLabel", searchValue);
-                if (results.isEmpty()) {
-                    //no match on label - try by xref....
-                    super.log("no match on label - looking for: " + classname + " with primary xref ID " + searchValue);
-                    Collection xrefs = user.search(Xref.class.getName(), "primaryId", searchValue);
 
-                    //could get more than one xref, eg if the primary id is a wildcard search value -
-                    //then need to go through each xref found and accumulate the results...
-                    Iterator it = xrefs.iterator();
-                    Collection partialResults = new ArrayList();
-                    while (it.hasNext()) {
-                        partialResults = user.search(classname, "ac", ((Xref) it.next()).getParentAc());
-                        results.addAll(partialResults);
-                    }
+                //now try all lower case....
+                String lowerCaseValue = theForm.getSearchString().toLowerCase();
+                results = doLookup(classname, searchParam, lowerCaseValue, user);
+                if(results.isEmpty()) {
+                    //finished all current options, and still nothing - return a failure
+                    super.log("No matches were found for the specified search criteria");
+                    // Save the search parameters for results page to display.
+                    session.setAttribute(SearchConstants.SEARCH_CRITERIA,
+                    searchParam + "=" + searchValue);
+                    session.setAttribute(SearchConstants.SEARCH_TYPE, searchClass);
+                    return mapping.findForward(SearchConstants.FORWARD_NO_MATCHES);
+                }
 
-                    if (results.isEmpty()) {
-                        //no match by xref - try finally by name....
-                        super.log("no matches found using ac, shortlabel or xref - trying fullname...");
-                        results = user.search(classname, "fullName", searchValue);
-                        if (results.isEmpty()) {
-                            //finished all current options - return a failure
-                            super.log("No matches were found for the specified search criteria");
-                            // Save the search parameters for results page to display.
-                            session.setAttribute(SearchConstants.SEARCH_CRITERIA,
-                            searchParam + "=" + searchValue);
-                            session.setAttribute(SearchConstants.SEARCH_TYPE, searchClass);
-                            return mapping.findForward(SearchConstants.FORWARD_NO_MATCHES);
-                        }
-                        else {
-                            //got a match on name - flag it for info later
-                            searchParam = "name";
-                        }
-                    }
-                    else {
-                        //got a match on xref - save for later info
-                        searchParam = "primary ID";
-                    }
-                }
-                else {
-                    //matched on a label - flag it for later info
-                    searchParam = "label";
-                }
             }
             super.log("search action: search results retrieved OK");
 
@@ -267,4 +244,73 @@ public class SearchAction extends IntactBaseAction {
             super.log(ExceptionUtils.getStackTrace(ve));
         }
     }
+
+    /**
+         * utility method to handle the logic for lookup, ie trying AC, label etc.
+         * Isolating it here allows us to change initial strategy if we want to.
+         * NB this will probably be refactored out into the IntactHelper class later on.
+         *
+         * @param className the intact type to search on
+         * @param matchedParam the parameter which satisified the search, if results were non-empty
+         *    (ie the search parameter is set by this method if necessary)
+         * @param value the user-specified value
+         * @param user The object holding the IntactHelper for a given user/session
+         * (passed as a parameter to avoid using an instance variable, which may cause thread problems)
+         *
+         * @return Collection the results of the search - an empty Collection if no results found
+         *
+         * @exception IntactException thrown if there were any search problems
+         */
+        private Collection doLookup(String className, String matchedParam, String value, IntactUserIF user)
+           throws IntactException {
+
+            Collection results = new ArrayList();
+
+            //try search on AC first...
+            results = user.search(className, "ac", value);
+            if (results.isEmpty()) {
+                // No matches found - try a search by label now...
+                super.log("now searching for class " + className + " with label " + value);
+                results = user.search(className, "shortLabel", value);
+                if (results.isEmpty()) {
+                    //no match on label - try by xref....
+                    super.log("no match on label - looking for: " + className + " with primary xref ID " + value);
+                    Collection xrefs = user.search(Xref.class.getName(), "primaryId", value);
+
+                    //could get more than one xref, eg if the primary id is a wildcard search value -
+                    //then need to go through each xref found and accumulate the results...
+                    Iterator it = xrefs.iterator();
+                    Collection partialResults = new ArrayList();
+                    while (it.hasNext()) {
+                        partialResults = user.search(className, "ac", ((Xref) it.next()).getParentAc());
+                        results.addAll(partialResults);
+                    }
+
+                    if (results.isEmpty()) {
+                        //no match by xref - try finally by name....
+                        super.log("no matches found using ac, shortlabel or xref - trying fullname...");
+                        results = user.search(className, "fullName", value);
+                        if (!results.isEmpty()) {
+                            //finished all current options - matched on name. If not, an empty collection goes back
+                            matchedParam = "name";
+                        }
+                    }
+                    else {
+                        //got a match on xref - save for later info
+                        matchedParam = "primary ID";
+                   }
+                }
+                else {
+                    //matched on a label - flag it for later info
+                    matchedParam = "label";
+                }
+            }
+            else {
+                //got a match on AC - flag it
+                matchedParam = "ac";
+            }
+
+            return results;
+        }
+
 }
