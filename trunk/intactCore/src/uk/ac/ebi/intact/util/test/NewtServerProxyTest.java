@@ -10,7 +10,6 @@ import junit.framework.TestCase;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import uk.ac.ebi.intact.util.NewtServerProxy;
-import uk.ac.ebi.intact.persistence.SearchException;
 
 import java.net.URL;
 import java.io.IOException;
@@ -39,49 +38,83 @@ public class NewtServerProxyTest extends TestCase {
             getNewResponse();
         }
         catch (IOException ex) {
-            fail(ex.getMessage());
-        }
-        catch (SearchException ex) {
+            // Uncomment this line to find out where it went wrong!
+            //ex.printStackTrace();
             fail(ex.getMessage());
         }
     }
 
-    private void getNewResponse() throws IOException, SearchException {
-        URL url = new URL("http://web7-node1.ebi.ac.uk:9120/newt/display");
+    private void getNewResponse() throws IOException {
+        URL url = new URL("http://www.ebi.ac.uk/newt/display");
         // The server to connect to.
         NewtServerProxy server = new NewtServerProxy(url);
-        NewtServerProxy.NewtResponse response = server.query(45009);
-        // No short label for 45009.
-        assertTrue(!response.hasShortLabel());
-        assertEquals(response.getFullName(), "unidentified algae B0m10");
+        NewtServerProxy.NewtResponse response = null;
 
-        response = server.query(48509);
-        // No short label for 48509.
-        assertTrue(!response.hasShortLabel());
-        assertEquals(response.getFullName(), "environmental samples");
+        // Test: has full name but no short label.
+        try {
+            response = server.query(45009);
+            // No short label for 45009.
+            assertTrue(!response.hasShortLabel());
+            assertEquals(response.getFullName(), "unidentified algae B0m10");
+        }
+        catch (NewtServerProxy.TaxIdNotFoundException ex) {
+            fail();
+        }
 
-        response = server.query(9606);
-        assertEquals(response.getShortLabel(), "HUMAN");
-        assertEquals(response.getFullName(), "Homo sapiens");
+        // Test: has full name but no short label (another one).
+        try {
+            response = server.query(48509);
+            // No short label for 48509.
+            assertTrue(!response.hasShortLabel());
+            assertEquals(response.getFullName(), "environmental samples");
+        }
+        catch (NewtServerProxy.TaxIdNotFoundException ex) {
+            fail();
+        }
 
+        // Test: has full name and short label.
+        try {
+            response = server.query(9606);
+            assertEquals(response.getShortLabel(), "HUMAN");
+            assertEquals(response.getFullName(), "Homo sapiens");
+        }
+        catch (NewtServerProxy.TaxIdNotFoundException ex) {
+            fail();
+        }
+
+        // Test: no matches.
         try {
             response = server.query(8);
             // We shouldn't get here as there are no matches for this.
-            assertFalse(true);
+            fail();
         }
-        catch (SearchException ex) {
-            // This should throw an exception.
+        catch (NewtServerProxy.TaxIdNotFoundException e) {
             assertTrue(true);
         }
-        // With the wrong URL.
+
+        // Test: There is null response for this taxid.
+        try {
+            response = server.query(38081);
+            // We shouldn't get here as there is no response.
+            fail();
+        }
+        catch (NewtServerProxy.TaxIdNotFoundException ex) {
+            assertTrue(true);
+        }
+
+        // Test: wrong URL.
         url = new URL("http://web7-node1.ebi.ac.uk:9120/newt/display1");
         server = new NewtServerProxy(url);
         try {
             response = server.query(45009);
             // Invalid URL.
+            fail();
         }
         catch (IOException ex) {
             assertTrue(true);
+        }
+        catch (NewtServerProxy.TaxIdNotFoundException ex) {
+            fail();
         }
     }
 }
