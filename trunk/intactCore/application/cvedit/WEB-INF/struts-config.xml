@@ -14,7 +14,6 @@
      "name" and "type" attributes.
 -->
 
-
 <struts-config>
 
     <!-- ========== Form Bean Definitions =================================== -->
@@ -22,39 +21,46 @@
 
         <!-- logon form bean -->
         <form-bean name="loginForm"
-                   type="uk.ac.ebi.intact.application.cvedit.struts.security.LoginForm"/>
+                   type="org.apache.struts.action.DynaActionForm">
+            <form-property name="username" type="java.lang.String"/>
+            <form-property name="password" type="java.lang.String"/>
+        </form-bean>
 
-        <!-- cv search form bean -->
-        <form-bean name="searchForm"
-                   type="uk.ac.ebi.intact.application.cvedit.struts.view.SearchForm"/>
-
-        <!-- Form bean for editing CV  -->
-        <form-bean name="cvEditForm"
-                   type="uk.ac.ebi.intact.application.cvedit.struts.view.CvEditForm"/>
+        <!-- User entry form -->
+        <form-bean name="entryForm"
+                   type="org.apache.struts.action.DynaActionForm">
+            <form-property name="topic" type="java.lang.String"/>
+            <form-property name="searchString" initial="*" type="java.lang.String"/>
+            <form-property name="shortLabel" type="java.lang.String"/>
+        </form-bean>
 
         <!-- Form bean for adding a comment (annotation) -->
         <form-bean name="commentAddForm"
-                   type="uk.ac.ebi.intact.application.cvedit.struts.view.CommentAddForm"/>
+                   type="org.apache.struts.action.DynaActionForm">
+            <form-property name="topic" type="java.lang.String"/>
+            <form-property name="description" type="java.lang.String"/>
+        </form-bean>
 
         <!-- Form bean for adding a xref (cross reference) -->
         <form-bean name="xrefAddForm"
-                   type="uk.ac.ebi.intact.application.cvedit.struts.view.XrefAddForm"/>
+                   type="org.apache.struts.action.DynaActionForm">
+            <form-property name="database" type="java.lang.String"/>
+            <form-property name="primaryId" type="java.lang.String"/>
+            <form-property name="secondaryId" type="java.lang.String"/>
+            <form-property name="releaseNumber" type="java.lang.String"/>
+            <form-property name="qualifier" type="java.lang.String"/>
+        </form-bean>
 
-        <!-- Form bean for adding a new CV object. -->
-        <form-bean name="cvAddForm"
-                   type="uk.ac.ebi.intact.application.cvedit.struts.view.CvAddForm"/>
-
-        <!-- Form bean to confirm a delete operation on a CV object. -->
-        <form-bean name="cvDelForm"
-                   type="uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseForm"/>
-
+        <!-- Dummy form when we don't care about inputs -->
+        <form-bean name="dummyForm"
+                    type="org.apache.struts.action.DynaActionForm"/>
     </form-beans>
 
     <!-- ========== Global Exceptions ======================================= -->
     <global-exceptions>
         <exception
             key="error.session.expired"
-            path="/loginError.jsp"
+            path="login.error.layout"
             scope="request"
             type="uk.ac.ebi.intact.application.cvedit.exception.SessionExpiredException"
         />
@@ -62,134 +68,131 @@
 
     <!-- ========== Global Forward Definitions ============================== -->
     <global-forwards>
-        <forward name="logout"   path="/logout.do"/>
-        <forward name="login"    path="/login.jsp"/>
-        <forward name="success"  path="/edit.jsp"/>
-        <forward name="failure"  path="/error.jsp"/>
+        <forward name="success"  path="edit.layout"/>
+        <forward name="failure"  path="error.layout"/>
     </global-forwards>
 
     <!-- ========== Action Mapping Definitions ============================== -->
     <action-mappings>
 
         <!-- Process a user logout -->
-        <action path="/logout"
+        <action path="/cv/logout"
                 type="uk.ac.ebi.intact.application.cvedit.struts.security.LogoutAction">
             <forward name="success" path="/login.jsp"/>
         </action>
 
-        <!-- Process a user logon. error.jsp is set to input as basic error checking
-             is performed at LogonForm class. To display validation errors from
-             validate method in the form, provide loginError for 'input'.
-        -->
-        <action path="/login"
+        <!-- Process a user logon. -->
+        <action path="/cv/login"
                 type="uk.ac.ebi.intact.application.cvedit.struts.security.LoginAction"
                 name="loginForm"
                 scope="request"
                 input="/login.jsp">
-            <forward name="failure" path="/loginError.jsp"/>
-            <forward name="success" path="/search.jsp"/>
+            <forward name="failure" path="login.error.layout"/>
+            <forward name="success" path="search.layout"/>
+        </action>
+
+        <action path="/cv/choice"
+                name="entryForm"
+                type="uk.ac.ebi.intact.application.cvedit.struts.controller.RelayAction"
+                scope="request">
+            <forward name="search" path="/do/cv/search"/>
+            <forward name="create" path="/do/cv/add"/>
         </action>
 
         <!-- Process a user searches for a CV Object. -->
-        <action path="/search"
-                name="searchForm"
+        <action path="/cv/search"
+                name="entryForm"
                 type="uk.ac.ebi.intact.application.cvedit.struts.controller.SearchAction"
-                scope="request"
-                input="/error.jsp">
-            <forward name="noMatch" path="/noMatch.jsp"/>
-            <forward name="results" path="/results.jsp"/>
-            <forward name="edit" path="/edit.jsp"/>
-            <forward name="add" path="/addCv.jsp"/>
-        </action>
-
-        <!-- Process a user selects CvObject from a search result. -->
-        <action path="/results"
-                type="uk.ac.ebi.intact.application.cvedit.struts.controller.ResultsAction"
-                scope="request"
-                input="/results.jsp">
-        </action>
-
-        <!-- Process selection of Submit, Cancel or Delete buttons from edit.jsp.
-         -->
-        <action path="/editCv"
-                type="uk.ac.ebi.intact.application.cvedit.struts.controller.CvEditAction"
-                name="cvEditForm"
-                scope="request"
-                input="/edit.jsp">
-           <forward name="results" path="/results.jsp"/>
-           <forward name="search" path="/search.jsp"/>
-           <forward name="delConfirm" path="/delConfirm.jsp"/>
-        </action>
-
-        <!-- When the user adds a new comment. -->
-        <action path="/addComment"
-                type="uk.ac.ebi.intact.application.cvedit.struts.controller.CommentAddAction"
-                name="commentAddForm"
-                scope="request"
-                input="/edit.jsp">
-        </action>
-
-        <!-- When the user deletes an existing comment. -->
-        <action path="/delComment"
-                type="uk.ac.ebi.intact.application.cvedit.struts.controller.CommentDelAction"
-                scope="request"
-                input="/edit.jsp">
-        </action>
-
-        <!-- When the user adds a new xref. -->
-        <action path="/addXref"
-                type="uk.ac.ebi.intact.application.cvedit.struts.controller.XrefAddAction"
-                name="xrefAddForm"
-                scope="request"
-                input="/edit.jsp">
-        </action>
-
-        <!-- When the user deletes an existing xref. -->
-        <action path="/delXref"
-                type="uk.ac.ebi.intact.application.cvedit.struts.controller.XrefDelAction"
-                scope="request"
-                input="/edit.jsp">
+                scope="request">
+            <forward name="noMatch" path="no.match.layout"/>
+            <forward name="results" path="match.layout"/>
+            <forward name="edit" path="edit.layout"/>
         </action>
 
         <!-- When the user selects  -->
-        <action path="/addCv"
+        <action path="/cv/add"
                 type="uk.ac.ebi.intact.application.cvedit.struts.controller.CvAddAction"
-                name="cvAddForm"
-                scope="request"
-                input="/addCv.jsp">
-           <forward name="search" path="/search.jsp"/>
-           <forward name="edit" path="/edit.jsp"/>
+                name="entryForm"
+                scope="request">
         </action>
 
-        <!-- Confirmation for deleting a CV object. -->
-        <action path="/delConfirm"
-                type="uk.ac.ebi.intact.application.cvedit.struts.controller.CvDelConfirmAction"
-                name="cvDelForm"
-                scope="request"
-                input="/delConfirm.jsp">
-           <forward name="results" path="/results.jsp"/>
-           <forward name="search" path="/search.jsp"/>
-           <forward name="edit" path="/edit.jsp"/>
+        <!-- Process a user selects CV object from a search result. -->
+        <action path="/cv/results"
+                type="uk.ac.ebi.intact.application.cvedit.struts.controller.ResultsAction"
+                scope="request">
         </action>
 
-    <!-- The standard administrative actions available with Struts -->
-    <!-- These would be either omitted or protected by security -->
-    <!-- in a real application deployment
-    <action    path="/admin/addFormBean"
-               type="org.apache.struts.actions.AddFormBeanAction"/>
-    <action    path="/admin/addForward"
-               type="org.apache.struts.actions.AddForwardAction"/>
-    <action    path="/admin/addMapping"
-               type="org.apache.struts.actions.AddMappingAction"/>
-    <action    path="/admin/reload"
-               type="org.apache.struts.actions.ReloadAction"/>
-    <action    path="/admin/removeFormBean"
-               type="org.apache.struts.actions.RemoveFormBeanAction"/>
-    <action    path="/admin/removeForward"
-               type="org.apache.struts.actions.RemoveForwardAction"/>
-    <action    path="/admin/removeMapping"
-               type="org.apache.struts.actions.RemoveMappingAction"/>
+        <!-- Process selection of Submit, Cancel or Delete buttons from edit.jsp. We need
+             the dummyForm as JavaScript uses the hidden property.
+         -->
+        <action path="/cv/edit"
+                type="uk.ac.ebi.intact.application.cvedit.struts.controller.RelayAction"
+                name="dummyForm"
+                scope="request">
+           <forward name="submit" path="/do/cv/edit/submit"/>
+           <forward name="delete" path="/do/cv/del"/>
+           <forward name="cancel" path="/do/cv/edit/cancel"/>
+        </action>
 
-               -->
+        <!-- Submits the current edit session. -->
+        <action path="/cv/edit/submit"
+                type="uk.ac.ebi.intact.application.cvedit.struts.controller.CvEditSubmitAction"
+                scope="request">
+            <forward name="results" path="match.layout"/>
+            <forward name="search" path="search.layout"/>
+        </action>
+
+        <!-- User deletes the current CV object. -->
+        <action path="/cv/del"
+                type="uk.ac.ebi.intact.application.cvedit.struts.controller.CvDelAction"
+                scope="request">
+            <forward name="results" path="match.layout"/>
+            <forward name="search"  path="search.layout"/>
+        </action>
+
+        <!-- Cancels the current edit. -->
+        <action path="/cv/edit/cancel"
+                type="uk.ac.ebi.intact.application.cvedit.struts.controller.CvEditCancelAction"
+                scope="request">
+            <forward name="results" path="match.layout"/>
+            <forward name="search"  path="search.layout"/>
+        </action>
+
+        <!-- Adds a new comment. -->
+        <action path="/cv/comment/add"
+                type="uk.ac.ebi.intact.application.cvedit.struts.controller.CommentAddAction"
+                name="commentAddForm"
+                scope="request"
+                input="/pages/edit.jsp">
+        </action>
+
+        <!-- When the user deletes an existing comment. -->
+        <action path="/cv/comment/del"
+                type="uk.ac.ebi.intact.application.cvedit.struts.controller.CommentDelAction"
+                scope="request"
+                input="/pages/edit.jsp">
+        </action>
+
+        <!-- When the user adds a new xref. -->
+        <action path="/cv/xref/add"
+                type="uk.ac.ebi.intact.application.cvedit.struts.controller.XrefAddAction"
+                name="xrefAddForm"
+                scope="request"
+                input="/pages/edit.jsp">
+        </action>
+
+        <!-- When the user deletes an existing xref. -->
+        <action path="/cv/xref/del"
+                type="uk.ac.ebi.intact.application.cvedit.struts.controller.XrefDelAction"
+                scope="request"
+                input="/pages/edit.jsp">
+        </action>
+
     </action-mappings>
+
+      <plug-in className="org.apache.struts.tiles.TilesPlugin" >
+        <set-property property="definitions-config" value="/WEB-INF/tiles-defs.xml"/>
+        <set-property property="moduleAware" value="true" />
+      </plug-in>
+
 </struts-config>
