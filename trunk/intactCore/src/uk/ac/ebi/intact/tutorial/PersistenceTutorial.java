@@ -2,7 +2,6 @@ package uk.ac.ebi.intact.tutorial;
 
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.BusinessConstants;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.UpdateProteinsI;
 import uk.ac.ebi.intact.util.UpdateProteins;
@@ -25,28 +24,24 @@ public class PersistenceTutorial {
     Component component3;
 
     // create an Institution
-    private void createInstitution(String shortlabel) throws IntactException {
+    private Institution createInstitution(String shortlabel) throws IntactException {
         owner = new Institution(shortlabel);
-        helper.startTransaction(BusinessConstants.OBJECT_TX);
         helper.create(owner);
-        helper.finishTransaction();
-//      owner = (Institution) helper.getObjectByLabel(Institution.class, shortlabel );
+//      owner = helper.getInstitution();
+        return owner;
     }
 
     // create a BioSource
-    private void createBioSource(Institution owner, String shortLabel, String taxID) throws IntactException {
+    private BioSource createBioSource(Institution owner, String shortLabel, String taxID) throws IntactException {
         organism = new BioSource(owner, shortLabel, taxID);
-        helper.startTransaction(BusinessConstants.OBJECT_TX);
         helper.create(organism);
-        helper.finishTransaction();
+        return organism;
     }
 
     // create an Experiment
     private void createExperiment(Institution owner, String shortLabel, BioSource organism) throws IntactException {
         experiment = new Experiment(owner, shortLabel, organism);
-        helper.startTransaction(BusinessConstants.OBJECT_TX);
         helper.create(experiment);
-        helper.finishTransaction();
     }
 
     // create an Interaction
@@ -54,11 +49,9 @@ public class PersistenceTutorial {
         Collection experiments = new ArrayList();
         experiments.add(experiment);
         Collection components = new ArrayList();
-        CvInteractionType type = (CvInteractionType) helper.getObjectByLabel(CvInteractionType.class, "experimental");
+        CvInteractionType type = (CvInteractionType) helper.getObjectByLabel(CvInteractionType.class, "aggregation");
         interaction = new InteractionImpl(experiments, components, type, shortLabel, owner);
-        helper.startTransaction(BusinessConstants.OBJECT_TX);
         helper.create(interaction);
-        helper.finishTransaction();
     }
 
     // create Interactors
@@ -74,8 +67,6 @@ public class PersistenceTutorial {
         // create CvComponentRole's
         CvComponentRole bait = (CvComponentRole) helper.getObjectByLabel(CvComponentRole.class, "bait");
         CvComponentRole prey = (CvComponentRole) helper.getObjectByLabel(CvComponentRole.class, "prey");
-        helper.create(bait);
-        helper.create(prey);
 
         //create components
         component1 = new Component(owner, interaction, protein1, prey);
@@ -108,8 +99,8 @@ public class PersistenceTutorial {
     // update the interaction
     private void insertData() throws UpdateProteinsI.UpdateException {
         try {
-            createInstitution("ebi");
-            createBioSource(owner, "drosophila", "7215");
+            owner = createInstitution("ebi");
+            organism = createBioSource(owner, "drosophila", "7215");
             createExperiment(owner, "tutorial", organism);
             createInteraction(experiment, "interaction", owner);
             createInteractors(owner, organism, interaction);
@@ -121,7 +112,6 @@ public class PersistenceTutorial {
             ie.printStackTrace();
 
             if (ie.getRootCause() != null) {
-                System.err.println("=========================== CAUSED BY ========================");
                 ie.printStackTrace();
             }
         }
