@@ -41,6 +41,7 @@ public class AllJUnitTests extends TestCase {
         // Add your test suite here.
         //suite.addTest(uk.ac.ebi.intact.test.AllJUnitTests.suite());
         suite.addTest(XmlBuilderTest.suite());
+        suite.addTest(NewtServerProxyTest.suite());
         return suite;
     }
 }
