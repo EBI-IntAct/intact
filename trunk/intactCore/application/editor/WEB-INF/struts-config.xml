@@ -87,8 +87,8 @@
         <form-bean name="experimentForm"
             type="uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentDynaForm">
             <form-property name="organism" type="java.lang.String"/>
-            <form-property name="interaction" type="java.lang.String"/>
-            <form-property name="identification" type="java.lang.String"/>
+            <form-property name="inter" type="java.lang.String"/>
+            <form-property name="ident" type="java.lang.String"/>
         </form-bean>
 
         <!-- Form for interaction data -->
