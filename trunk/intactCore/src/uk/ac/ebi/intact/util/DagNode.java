@@ -5,19 +5,16 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.util;
 
+import org.apache.regexp.RE;
+import org.apache.regexp.RESyntaxException;
 import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.CvDagObject;
 
-import java.util.Vector;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Enumeration;
 import java.io.BufferedReader;
 import java.io.IOException;
-
-import org.apache.regexp.RESyntaxException;
-import org.apache.regexp.RE;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  * Auxiliary class to insert GO Dag nodes from a GO dag formatted flat file.
@@ -139,9 +136,11 @@ public class DagNode {
 
         RE dagLinePat =  new RE("^([:blank:]*)" +        // leading blanks
                             "([\\%\\$\\<].*)");
+
+        //removed space which causes problems at go-flatfile import! It seems to work like this.
         RE goIdPat = new RE("[\\%\\$\\<][:blank:]*" +
                             "([^\\;]*)" +                // term
-                            " \\; *" +
+                            "\\; *" +
                             "([^\\s\\,]*)"               // GO id
                             );
 
@@ -222,6 +221,7 @@ public class DagNode {
         CvDagObject targetNode = null;
         CvDagObject directParent = null;
 
+        System.out.println(goid);
         // Get parent and child (targetNode) from the database
         targetNode = (CvDagObject) helper.getObjectByXref(targetClass, goid);
 
