@@ -8,10 +8,10 @@
 >
        <extent-class class-ref="uk.ac.ebi.intact.model.Annotation"/>
        <extent-class class-ref="uk.ac.ebi.intact.model.IntactNode"/>
-       <extent-class class-ref="uk.ac.ebi.intact.model.Institution"/>
        <extent-class class-ref="uk.ac.ebi.intact.model.Component"/>
        <extent-class class-ref="uk.ac.ebi.intact.model.Xref"/>
        <extent-class class-ref="uk.ac.ebi.intact.model.AnnotatedObject"/>
+     <!--  <extent-class class-ref="uk.ac.ebi.intact.model.Institution"/>  -->
 </class-descriptor>
 
 
@@ -162,7 +162,6 @@
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
          proxy="true"
          indirection-table="OBJ2ANNOT"
-
       >
          <fk-pointing-to-this-class column="interactor_ac"/>
          <fk-pointing-to-element-class column="annotation_ac"/>
@@ -240,7 +239,7 @@
          indexed="true"
       />
      <field-descriptor id="9"
-         name="interactionTypeAc"
+         name="cvInteractionTypeAc"
          column="interactionType_ac"
          jdbc-type="VARCHAR"
       />
@@ -753,7 +752,6 @@
          jdbc-type="VARCHAR"
       />
 
-
       <field-descriptor id="11"
          name="ownerAc"
          column="owner_ac"
@@ -779,7 +777,6 @@
    <!-- Definitions for Xref -->
    <class-descriptor
 	  class="uk.ac.ebi.intact.model.Xref"
-
 	  table="Xref"
    >
       <!-- ************** fields inherited from BasicObject ******************* -->
@@ -822,12 +819,12 @@
          jdbc-type="VARCHAR"
       />
       <field-descriptor id="7"
-         name="qualifierAc"
+         name="cvXrefQualifierAc"
          column="qualifier_ac"
          jdbc-type="VARCHAR"
       />
       <field-descriptor id="8"
-         name="databaseAc"
+         name="cvDatabaseAc"
          column="database_ac"
          jdbc-type="VARCHAR"
       />
@@ -936,8 +933,8 @@
          name="cvComponentRoleAc"
          column="role"
          jdbc-type="VARCHAR"
-
       />
+
       <field-descriptor id="9"
          name="expressedInAc"
          column="expressedIn_ac"
@@ -992,7 +989,6 @@
 <!-- Definitions for CvXrefQualifier....-->
    <class-descriptor
 	  class="uk.ac.ebi.intact.model.CvXrefQualifier"
-
 	  table="ControlledVocab"
    >
 
@@ -1140,7 +1136,7 @@
       </reference-descriptor>
 
     <collection-descriptor
-    proxy="true"
+         proxy="true"
          name="xref"
          element-class-ref="uk.ac.ebi.intact.model.Xref"
       >
@@ -1571,10 +1567,9 @@
       <!-- ************ fields inherited from AnnotatedObject ********* -->
 
      <collection-descriptor
-     proxy="true"
+         proxy="true"
          name="xref"
          element-class-ref="uk.ac.ebi.intact.model.Xref"
-
       >
          <inverse-foreignkey field-id-ref="10"/>
       </collection-descriptor>
