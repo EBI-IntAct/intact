@@ -6,9 +6,9 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.graph2MIF;
 
+import org.apache.log4j.Logger;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
-import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
@@ -76,7 +76,7 @@ public class Graph2MIFWSService implements Graph2MIFWS {
 	  logger.info("got graph:");
 	  logger.info(graph);
 	  //convert graph to DOM Object
-	  Graph2MIF convert = new Graph2MIF(strictmif);
+	  Graph2FoldedMIF convert = new Graph2FoldedMIF(strictmif);
       Document mifDOM = null;
 	    mifDOM = convert.getMIF(graph); // GraphNotConvertableException possible
 	   // serialize the DOMObject

@@ -6,23 +6,25 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.graph2MIF;
 
-import uk.ac.ebi.intact.application.graph2MIF.*;
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.simpleGraph.Graph;
-import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.model.Constants;
-
-import java.io.*;
-import java.util.Collection;
-import java.util.Iterator;
-import javax.servlet.*;
-import javax.servlet.http.*;
-
-import org.w3c.dom.Document;
+import org.apache.log4j.Logger;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
-import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.model.Constants;
+import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.simpleGraph.Graph;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Collection;
+import java.util.Iterator;
 
 
 /**
@@ -68,7 +70,7 @@ public class Graph2MIFWSServlet extends HttpServlet {
             logger.info("got graph:");
             logger.info(graph);
             //convert graph to DOM Object
-            Graph2MIF convert = new Graph2MIF(strictmif);
+            Graph2FoldedMIF convert = new Graph2FoldedMIF(strictmif);
             Document mifDOM = null;
             mifDOM = convert.getMIF(graph); // GraphNotConvertableException possible
             // serialize the DOMObject
