@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.util.TestCaseHelper;
 
 public class AnnotatedObjectTest extends TestCase {
@@ -24,6 +25,7 @@ public class AnnotatedObjectTest extends TestCase {
      */
     IntactHelper helper;
     TestCaseHelper testHelper;
+    Institution owner;
 
     /**
      * Constructor
@@ -34,6 +36,7 @@ public class AnnotatedObjectTest extends TestCase {
         super(name);
         testHelper = new TestCaseHelper();
         helper = testHelper.getHelper();
+        owner = new Institution("EBI-TEST-OWNER");
     }
 
     /**
@@ -60,9 +63,11 @@ public class AnnotatedObjectTest extends TestCase {
     public void testXref() throws IntactException {
         // Set up required objects
         Protein p1 = (Protein) helper.getObjectByLabel(Protein.class, "prot1");
-        Xref x1 = new Xref();
-        Xref x2 = new Xref();
+
+
         CvDatabase db1 = (CvDatabase) helper.getObjectByLabel(CvDatabase.class,"testCvDb");
+        Xref x1 = new Xref(owner, db1, "xx1", null, null, null);
+        Xref x2 = new Xref(owner, db1, "xx1", null, null, null);
         x1.setCvDatabase(db1);
         x1.setPrimaryId("xx1");
         x2.setCvDatabase(db1);
