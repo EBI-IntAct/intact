@@ -6,7 +6,6 @@
 -->
 
 <project name="search" basedir="." default="compile">
-    <property name="project.title" value="search"/>
     <property name="project.version" value="1.0"/>
 
     <!-- Intact core locations -->
@@ -33,7 +32,7 @@
     <property file="${intact.root}/config/build.properties"/>
 
     <property name="dist.dir" value="dist"/>
-    <property name="war.file" value="search.war"/>
+    <property name="pg.war.file" value="${ant.project.name}.war"/>
 
     <!-- This project specific paths. -->
     <property name="src.dir" value="src"/>
@@ -75,6 +74,15 @@
     <target name="prepare">
         <tstamp/>
         <available file="${root.jar.file}" type="file" property="intact.jar.present"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Sets the time stamp. -->
+    <target name="set-tstamp">
+        <tstamp>
+            <format property="TODAY" pattern="yyyy-MM-dd" locale="en"/>
+        </tstamp>
     </target>
 
     <!-- =================================================================== -->
@@ -152,7 +160,7 @@
     <!-- Builds a war file using the current database setup. -->
 
     <target name="war" description="Builds a war file"
-        depends="set-db-type, war-pg, war-oracle"/>
+        depends="set-tstamp, set-db-type, war-pg, war-ora-d002, war-ora-iweb"/>
 
     <!-- =================================================================== -->
 
@@ -160,6 +168,8 @@
 
     <target name="build-war" depends="compile, make-jar, gen-last-modified-file"
         description="Builds a war file">
+        <echo message="Generating ${war.file} file"/>
+
         <!-- Create the distribution dir if it doesn't exist. -->
         <mkdir dir="${dist.dir}"/>
 
@@ -252,8 +262,11 @@
         <condition property="postgres">
             <contains string="${target.env}" substring="-postgres-"/>
         </condition>
-        <condition property="oracle">
-            <contains string="${target.env}" substring="-oracle-"/>
+        <condition property="ora-d002">
+            <contains string="${target.env}" substring="-ora-d002-"/>
+        </condition>
+        <condition property="ora-iweb">
+            <contains string="${target.env}" substring="-ora-iweb-"/>
         </condition>
     </target>
 
@@ -267,28 +280,49 @@
         <echo message="Building a war for postgres"/>
         <antcall target="build-war">
             <param name="db" value="postgresql.jar"/>
+            <param name="war.file" value="${pg.war.file}"/>
         </antcall>
     </target>
 
     <!-- =================================================================== -->
 
     <!--
-        Builds a war file with oracle; should be called only after calling
-        set-db-type. -->
+        Builds a war file for d002 oracle database; should be called only after
+        calling set-db-type. -->
 
-    <target name="war-oracle" if="oracle">
-        <echo message="Building a war for oracle"/>
+    <target name="war-ora-d002" description="Builds a war file for oracle"
+        if="ora-d002">
+        <echo message="Building a war for oracle d002 database"/>
+        <property name="war.name" value="${ant.project.name}-d002-${TODAY}.war"/>
         <antcall target="build-war">
             <param name="db" value="jdbc_oracle8i_thin_8.1.6.2.0.jar"/>
+            <param name="war.file" value="${war.name}"/>
         </antcall>
     </target>
+
+    <!-- =================================================================== -->
+
+    <!--
+        Builds a war file for oracle iweb database; should be called only after
+        calling set-db-type. -->
+
+    <target name="war-ora-iweb" description="Builds a war file for oracle"
+        if="ora-iweb">
+        <echo message="Building a war for oracle iweb database"/>
+        <property name="war.name" value="${ant.project.name}-iweb-${TODAY}.war"/>
+        <antcall target="build-war">
+            <param name="db" value="jdbc_oracle8i_thin_8.1.6.2.0.jar"/>
+            <param name="war.file" value="${war.name}"/>
+        </antcall>
+    </target>
+
 
     <!-- =================================================================== -->
 
     <!-- Deploys the war file on the Tomcat server. -->
     <target name="deploy" description="Deploys the WAR file on the Tomcat server">
         <ant dir=".." inheritAll="false" target="deploy">
-            <property name="war" value="search/${dist.dir}/${war.file}"/>
+            <property name="war" value="search/${dist.dir}/${pg.war.file}"/>
         </ant>
 
         <!-- Copy context files in the Tomcat's webapps directory -->

@@ -25,6 +25,10 @@
     <property name="ora.props.file"    value="${config.dir}/oracle.properties"/>
     <property name="pg.props.file"     value="${config.dir}/postgres.properties"/>
 
+    <!-- Oracle various properties file -->
+    <property name="ora.props.file.d002" value="${config.dir}/oracle-d002.properties"/>
+    <property name="ora.props.file.iweb" value="${config.dir}/oracle-iweb.properties"/>
+
     <!-- The non core files. -->
     <property name="non.core.files" value="**/intact/${app.dir}/**"/>
 
@@ -176,20 +180,30 @@
 
     <!-- =================================================================== -->
 
-    <!-- Convert OJB.template to postgres format. -->
-    <target name="setup-pg-ojb">
-        <!-- Copy the template to config directory -->
-        <copy file="${ojb.template.file}" tofile="${ojb.dest.file}"/>
+    <!-- Sets the oracle test environment. -->
+    <target name="set-ora-d002-env" description="Sets the oracle d002 environment">
+        <echo message="Setting the target environment to oracle d002 database"/>
+        <antcall target="set-ora-env">
+            <param name="ora.properties" value="${ora.props.file.d002}"/>
+        </antcall>
+    </target>
 
-        <replace file="${ojb.dest.file}">
-            <replacefilter token="@SEQ_MANAGER@" value="uk.ac.ebi.intact.persistence.PostgresSequenceManager" />
-        </replace>
+    <!-- =================================================================== -->
+
+    <!-- Sets the oracle test environment. -->
+    <target name="set-ora-iweb-env" description="Sets the oracle iweb environment">
+        <echo message="Setting the target environment to oracle iweb database"/>
+        <antcall target="set-ora-env">
+            <param name="ora.properties" value="${ora.props.file.iweb}"/>
+        </antcall>
     </target>
 
     <!-- =================================================================== -->
 
     <!-- Convert repository.template to postgres format. -->
     <target name="set-postgres-env" description="Sets postgres environment">
+        <echo message="Setting the target environment to local postgres database"/>
+
         <condition property="postgres.property.missing">
             <not>
                 <available file="${pg.props.file}"/>
@@ -207,7 +221,7 @@
         <replace file="${rep.dest.file}" propertyfile="${pg.props.file}">
             <replacefilter token="@DBMS_NAME@"       value="PostgreSQL" />
             <replacefilter token="@DRIVER_NAME@"     value="org.postgresql.Driver"/>
-            <replacefilter token="@URL_SUBPROTOCOL@" property="subprotocol"/>
+            <replacefilter token="@URL_SUBPROTOCOL@" value="postgresql"/>
             <replacefilter token="@URL_DBALIAS@"     property="dbalias"/>
             <replacefilter token="@USER_NAME@"       property="username"/>
             <replacefilter token="@USER_PASSWD@"     property="password"/>
@@ -217,35 +231,42 @@
         <copy file="${ojb.template.file}" tofile="${ojb.dest.file}"/>
 
         <!-- Set the postgres sequence manager -->
-        <antcall target="setup-pg-ojb"/>
+
+        <!-- Copy the template to config directory -->
+        <copy file="${ojb.template.file}" tofile="${ojb.dest.file}"/>
+
+        <replace file="${ojb.dest.file}">
+            <replacefilter token="@SEQ_MANAGER@" value="uk.ac.ebi.intact.persistence.PostgresSequenceManager" />
+        </replace>
     </target>
 
     <!-- =================================================================== -->
 
     <!-- Convert repository.template to oracle format. -->
-    <target name="set-oracle-env" description="Sets oracle environment">
+    <target name="set-ora-env" description="Sets oracle environment">
         <condition property="oracle.property.missing">
             <not>
-                <available file="${ora.props.file}"/>
+                <available file="${ora.properties}"/>
             </not>
         </condition>
 
         <fail if="oracle.property.missing">
-              Unable to find ${ora.props.file} file;
+              Unable to find ${ora.properties} file;
               see template/oracle.template file for the format.
         </fail>
 
         <!-- Copy the template to config directory first -->
         <copy file="${rep.template.file}" tofile="${rep.dest.file}"/>
 
-        <replace file="${rep.dest.file}" propertyfile="${ora.props.file}">
+        <replace file="${rep.dest.file}" propertyfile="${ora.properties}">
             <replacefilter token="@DBMS_NAME@" value="Oracle" />
             <replacefilter token="@DRIVER_NAME@" value="oracle.jdbc.pool.OracleConnectionCacheImpl"/>
-            <replacefilter token="@URL_SUBPROTOCOL@" property="subprotocol"/>
+            <replacefilter token="@URL_SUBPROTOCOL@" value="oracle"/>
             <replacefilter token="@URL_DBALIAS@" property="dbalias"/>
             <replacefilter token="@USER_NAME@" property="username"/>
             <replacefilter token="@USER_PASSWD@" property="password"/>
         </replace>
+
         <!-- Copy the template to config directory -->
         <copy file="${ojb.template.file}" tofile="${ojb.dest.file}"/>
 
