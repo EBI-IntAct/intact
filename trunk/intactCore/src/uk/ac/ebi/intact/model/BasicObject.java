@@ -10,11 +10,13 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.sql.Timestamp;
 
+import java.io.Serializable;
+
 
 /**
 
  */
-public abstract class BasicObject {
+public abstract class BasicObject implements Serializable {
 
     ///////////////////////////////////////
     //attributes

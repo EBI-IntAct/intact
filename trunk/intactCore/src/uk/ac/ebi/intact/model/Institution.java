@@ -1,18 +1,19 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.
-All rights reserved. Please see the file LICENSE
+Copyright (c) 2002 The European Bioinformatics Institute, and others.  
+All rights reserved. Please see the file LICENSE 
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
 import java.util.Date;
 import java.sql.Timestamp;
+import java.io.Serializable;
 
 /**
  * Represents the contact details for an institution.
  * @author Henning Hermjakob
  */
-public class Institution {
+public class Institution implements Serializable {
 
     ///////////////////////////////////////
     //attributes
@@ -78,56 +79,56 @@ public class Institution {
 
     /*
     public Date getCreated() {
-    return created;
+        return created;
     }
 
     public void setCreated(Date created) {
-    this.created = created;
+        this.created = created;
     }
 
     public Date getUpdated() {
-    return updated;
+        return updated;
     }
 
     public void setUpdated(Date updated) {
-    this.updated = updated;
+        this.updated = updated;
     }
     */
 
     public Timestamp getCreated() {
-        return created;
-    }
-
-    public void setCreated(java.util.Date created) {
-
-        if(created != null) {
-
-            this.created = new Timestamp(created.getTime());
-        }
-        else {
-
-            //needed for object-based search
-            this.created = null;
-        }
-    }
-
-    public Timestamp getUpdated() {
-        return updated;
-    }
-
-    public void setUpdated(java.util.Date updated) {
-
-        if(updated != null) {
-
-            this.updated = new Timestamp(updated.getTime());
+            return created;
         }
 
-        else {
+        public void setCreated(java.util.Date created) {
 
-            //needed for object-based search
-            this.updated = null;
+            if(created != null) {
+
+                this.created = new Timestamp(created.getTime());
+            }
+            else {
+
+                //needed for object-based search
+                this.created = null;
+            }
         }
-    }
+
+        public Timestamp getUpdated() {
+            return updated;
+        }
+
+        public void setUpdated(java.util.Date updated) {
+
+            if(updated != null) {
+
+                this.updated = new Timestamp(updated.getTime());
+            }
+
+            else {
+
+                //needed for object-based search
+                this.updated = null;
+            }
+        }
 
 
     public String getShortLabel() {
