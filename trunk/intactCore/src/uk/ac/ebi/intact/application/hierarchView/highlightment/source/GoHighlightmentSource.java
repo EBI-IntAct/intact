@@ -8,6 +8,7 @@ import java.sql.*;
 import java.util.zip.*;
 import java.net.MalformedURLException;
 import java.lang.String;
+import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
@@ -44,7 +45,7 @@ public class GoHighlightmentSource
   /**
    * separator of keys, use to create and parse key string.
    */
-  private static char KEY_SEPARATOR = ',';
+  private static String KEY_SEPARATOR = ",";
   private String ATTRIBUTE_OPTION_CHILDREN = "CHILDREN";
   private String PROMPT_OPTION_CHILDREN = "With children of the selected GO term";
   
@@ -77,7 +78,7 @@ public class GoHighlightmentSource
    * if the method send back no keys, the given parameter have not keys for the source.
    *
    * @param aProteinAC : a protein identifier (AC)
-   * @return a set of keys (this keys are a String)
+   * @return a set of keys (this keys are a String) (this Keys are a String[] which contains the GOterm and a description)
    */
   public Collection getKeysFromIntAct (String aProteinAC) {
 
@@ -85,7 +86,7 @@ public class GoHighlightmentSource
     Iterator iterator;
     DAOSource dataSource;
     Collection listGOTerm = new ArrayList();
-    String goTerm;
+    //String goTerm;
     
     try {
       dataSource = DAOFactory.getDAOSource("uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource");
@@ -113,10 +114,15 @@ public class GoHighlightmentSource
       int cptXRef = 0;
       
       while (xRefIterator.hasNext() ) {
+	String[] goterm = new String[2];
 	Xref xref = (Xref) xRefIterator.next();
 	
-	if (((String) xref.getCvDatabase().getShortLabel()).equals("GO"))
-	  listGOTerm.add((String) xref.getPrimaryId());            
+	if (((String) xref.getCvDatabase().getShortLabel()).equals("GO")) {
+	  goterm[0] = (String) xref.getPrimaryId();
+	  goterm[1] = (String) xref.getSecondaryId();
+	  // listGOTerm.add((String) xref.getPrimaryId());  
+          listGOTerm.add(goterm);
+	}
       }
     }
     catch (Exception e) {
@@ -141,7 +147,9 @@ public class GoHighlightmentSource
    */
   public Collection proteinToHightlight (HttpSession aSession, InteractionNetwork aGraph) {
     Collection nodeList = new Vector ();
-    String keys         = (String)  aSession.getAttribute (Constants.ATTRIBUTE_KEYS);
+    // String keys         = (String)  aSession.getAttribute (Constants.ATTRIBUTE_KEYS);
+
+    Collection keys     = (Collection)  aSession.getAttribute (Constants.ATTRIBUTE_KEYS);
 
     // Read source option in the session
     String  check = (String)  aSession.getAttribute (ATTRIBUTE_OPTION_CHILDREN); 
@@ -159,20 +167,39 @@ public class GoHighlightmentSource
 	
 	if (listGOTerm!= null && !listGOTerm.isEmpty())
 	  {
+	    String[] goTermInfo;
 	    String goTerm;
 	    Iterator list = listGOTerm.iterator();
-
+	    
 	    while (list.hasNext())
 	      {
+		Iterator it = keys.iterator();
+		String selectedGOTerm = null;
+		
+		if (it.hasNext()){
+		  selectedGOTerm = (String) it.next();
+		}
+		
+		goTermInfo = new String[2];
 		goTerm = new String();
-		goTerm = (String) list.next();
-	      
-		if (keys.equals(goTerm)) 
-		  {
+		// goTerm = (String) list.next();
+		goTermInfo = (String[]) list.next();
+		goTerm = (String) goTermInfo[0];
+		
+ 		if (selectedGOTerm.equals(goTerm)) 
+ 		  {
 		    nodeList.add(node);
 		    break;
 		  }
 		if ((check != null) && (check.equals("checked"))) {
+		  while (it.hasNext()) {
+		    String newGOTerm = (String) it.next();
+		    
+		    if (newGOTerm.equals(goTerm)) {
+		      nodeList.add(node);
+		      break;
+		    }
+		  }
 		  // goterm.isChildrenOf(keys)?? -> if it'OK nodeList.add(node) et break
 		}
 	      }
@@ -215,7 +242,8 @@ public class GoHighlightmentSource
     // Search in Intact data Base all Go term for the AC accession number 
     // Enter in urls all adress int interpro for each Go term
     
-    String goTerm;
+    String[] goTermInfo;
+    String goTerm, goTermDescription; 
     
     Collection listGOTerm = this.getKeysFromIntAct(aProteinAC);
     
@@ -224,9 +252,17 @@ public class GoHighlightmentSource
 	Iterator list = listGOTerm.iterator();
 	while (list.hasNext())
 	  {
-	    goTerm = new String();
-	    goTerm = (String) list.next();
-	    urls.add (new LabelValueBean(goTerm, "http://holbein:8080/interpro/DisplayGoTerm?id=" + goTerm + "&format=simple"));
+	    goTermInfo        = new String[2];
+	    goTerm            = new String();
+	    goTermDescription = new String();
+	    //goTerm = (String) list.next();
+	    goTermInfo        = (String[]) list.next();
+	    goTerm            = goTermInfo[0];
+	    goTermDescription = goTermInfo[1];
+	    
+	    
+
+	    urls.add (new LabelValueBean(goTerm, "http://holbein:8080/interpro/DisplayGoTerm?id=" + goTerm + "&format=simple", goTermDescription));
 	  }
       }
     return urls;
@@ -257,6 +293,18 @@ public class GoHighlightmentSource
    */
   public Collection parseKeys (String someKeys) {
     Collection keys = new Vector ();
+
+    if ((null == someKeys) || (someKeys.length() < 1)) {
+	return null;
+      } 
+
+    StringTokenizer st = new StringTokenizer (someKeys, KEY_SEPARATOR);
+      
+      while (st.hasMoreTokens()) {
+	String key = st.nextToken();
+
+	keys.add(key);
+      }
 
     return  keys;
   } // parseKeys
