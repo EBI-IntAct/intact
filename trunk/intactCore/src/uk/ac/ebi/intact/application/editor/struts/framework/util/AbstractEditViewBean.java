@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.application.editor.exception.validation.ValidationExcept
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.Xref;
@@ -172,6 +173,15 @@ public abstract class AbstractEditViewBean implements Serializable {
         return true;
     }
 
+    public void reset(Object obj) {
+        if (AnnotatedObject.class.isAssignableFrom(obj.getClass())) {
+            reset((AnnotatedObject) obj);
+        }
+        else {
+            reset((Class) obj);
+        }
+    }
+
     /**
      * Resets the bean with the current edit class. This method is called when
      * creating a new annotated object (only the class or the type is known at
@@ -199,8 +209,9 @@ public abstract class AbstractEditViewBean implements Serializable {
      * @param annot <code>AnnotatedObject</code> object to set this bean.
      */
     public void reset(AnnotatedObject annot) {
-        setAnnotatedObject(annot);
-        myEditClass = annot.getClass();
+        // Need to get the real object for a proxy type.
+        setAnnotatedObject((AnnotatedObject) IntactHelper.getRealIntactObject(annot));
+        myEditClass = IntactHelper.getRealClassName(annot);
         setShortLabel(annot.getShortLabel());
         setFullName(annot.getFullName());
 
