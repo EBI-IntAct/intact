@@ -337,10 +337,10 @@
     <!-- =================================================================== -->
 
     <!-- Compiles the cvedit module. -->
-    <target name="compile-cvedit" depends="compile-core"
-        description="Compiles the cvedit module">
+    <target name="compile-editor" depends="compile-core"
+        description="Compiles the editor module">
 
-        <ant dir="${app.dir}/cvedit" inheritAll="false" target="compile"/>
+        <ant dir="${app.dir}/editor" inheritAll="false" target="compile"/>
     </target>
 
     <!-- =================================================================== -->
@@ -364,7 +364,7 @@
 
     <!-- Compiles all the sources. -->
     <target name="compile-all" description="Compiles all the sources for Intact"
-        depends="compile-core, compile-hv, compile-cvedit, compile-search, compile-synchron">
+        depends="compile-core, compile-hv, compile-editor, compile-search, compile-synchron">
     </target>
 
     <!-- =================================================================== -->
