@@ -544,9 +544,8 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         name="annotations"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         proxy="true"
-        auto-delete="true"
         indirection-table="ia_INT2ANNOT"
-
+        collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="interactor_ac"/>
         <fk-pointing-to-element-class column="annotation_ac"/>
@@ -697,9 +696,9 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
     <collection-descriptor
         proxy="true"
         name="annotations"
-        auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_INT2ANNOT"
+        collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="interactor_ac"/>
         <fk-pointing-to-element-class column="annotation_ac"/>
@@ -712,6 +711,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         name="experiments"
         element-class-ref="uk.ac.ebi.intact.model.Experiment"
         indirection-table="ia_INT2EXP"
+        collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="interaction_ac"/>
         <fk-pointing-to-element-class column="experiment_ac"/>
@@ -879,9 +879,9 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
     <collection-descriptor
         proxy="true"
         name="annotations"
-        auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_EXP2ANNOT"
+        collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="experiment_ac"/>
         <fk-pointing-to-element-class column="annotation_ac"/>
@@ -894,6 +894,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         name="interactions"
         element-class-ref="uk.ac.ebi.intact.model.InteractionImpl"
         indirection-table="ia_INT2EXP"
+        collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="experiment_ac"/>
         <fk-pointing-to-element-class column="interaction_ac"/>
@@ -1015,9 +1016,9 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
     <collection-descriptor
         proxy="true"
         name="annotations"
-        auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_BIOSOURCE2ANNOT"
+        collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="biosource_ac"/>
         <fk-pointing-to-element-class column="annotation_ac"/>
@@ -1626,9 +1627,9 @@ to AnnotatedObject and Experiment
     <collection-descriptor
         proxy="true"
         name="annotations"
-        auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
+        collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="cvobject_ac"/>
         <fk-pointing-to-element-class column="annotation_ac"/>
@@ -1728,9 +1729,9 @@ to AnnotatedObject and Experiment
     <collection-descriptor
         proxy="true"
         name="annotations"
-        auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
+        collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="cvobject_ac"/>
         <fk-pointing-to-element-class column="annotation_ac"/>
@@ -1833,9 +1834,9 @@ to AnnotatedObject and Experiment
     <collection-descriptor
         proxy="true"
         name="annotations"
-        auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
+        collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="cvobject_ac"/>
         <fk-pointing-to-element-class column="annotation_ac"/>
@@ -1935,9 +1936,9 @@ to AnnotatedObject and Experiment
     <collection-descriptor
         proxy="true"
         name="annotations"
-        auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
+        collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="cvobject_ac"/>
         <fk-pointing-to-element-class column="annotation_ac"/>
@@ -2035,9 +2036,9 @@ to AnnotatedObject and Experiment
     <collection-descriptor
         proxy="true"
         name="annotations"
-        auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
+        collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="cvobject_ac"/>
         <fk-pointing-to-element-class column="annotation_ac"/>
@@ -2141,9 +2142,9 @@ this is because the CvTopic linked to an Annotation is a better home for it...
     <collection-descriptor
         proxy="true"
         name="annotations"
-        auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
+        collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="cvobject_ac"/>
         <fk-pointing-to-element-class column="annotation_ac"/>
@@ -2221,6 +2222,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         name="parents"
         element-class-ref="uk.ac.ebi.intact.model.CvInteraction"
         indirection-table="ia_Cv2Cv"
+        collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="child_ac"/>
         <fk-pointing-to-element-class column="parent_ac"/>
@@ -2233,6 +2235,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         name="children"
         element-class-ref="uk.ac.ebi.intact.model.CvInteraction"
         indirection-table="ia_Cv2Cv"
+        collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="parent_ac"/>
         <fk-pointing-to-element-class column="child_ac"/>
@@ -2266,9 +2269,9 @@ this is because the CvTopic linked to an Annotation is a better home for it...
     <collection-descriptor
         proxy="true"
         name="annotations"
-        auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
+        collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="cvobject_ac"/>
         <fk-pointing-to-element-class column="annotation_ac"/>
@@ -2346,6 +2349,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         name="parents"
         element-class-ref="uk.ac.ebi.intact.model.CvInteractionType"
         indirection-table="ia_Cv2Cv"
+        collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="child_ac"/>
         <fk-pointing-to-element-class column="parent_ac"/>
@@ -2358,6 +2362,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         name="children"
         element-class-ref="uk.ac.ebi.intact.model.CvInteractionType"
         indirection-table="ia_Cv2Cv"
+        collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="parent_ac"/>
         <fk-pointing-to-element-class column="child_ac"/>
@@ -2391,9 +2396,9 @@ this is because the CvTopic linked to an Annotation is a better home for it...
     <collection-descriptor
         proxy="true"
         name="annotations"
-        auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
+        collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="cvobject_ac"/>
         <fk-pointing-to-element-class column="annotation_ac"/>
@@ -2471,6 +2476,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         name="parents"
         element-class-ref="uk.ac.ebi.intact.model.CvIdentification"
         indirection-table="ia_Cv2Cv"
+        collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="child_ac"/>
         <fk-pointing-to-element-class column="parent_ac"/>
@@ -2483,6 +2489,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         name="children"
         element-class-ref="uk.ac.ebi.intact.model.CvIdentification"
         indirection-table="ia_Cv2Cv"
+        collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="parent_ac"/>
         <fk-pointing-to-element-class column="child_ac"/>
@@ -2516,9 +2523,9 @@ this is because the CvTopic linked to an Annotation is a better home for it...
     <collection-descriptor
         proxy="true"
         name="annotations"
-        auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
+        collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="cvobject_ac"/>
         <fk-pointing-to-element-class column="annotation_ac"/>
@@ -2617,9 +2624,9 @@ this is because the CvTopic linked to an Annotation is a better home for it...
     <collection-descriptor
         proxy="true"
         name="annotations"
-        auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
+        collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="cvobject_ac"/>
         <fk-pointing-to-element-class column="annotation_ac"/>
@@ -2797,6 +2804,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         name="parents"
         element-class-ref="uk.ac.ebi.intact.model.CvGoNode"
         indirection-table="ia_Cv2Cv"
+        collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="child_ac"/>
         <fk-pointing-to-element-class column="parent_ac"/>
@@ -2809,6 +2817,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         name="children"
         element-class-ref="uk.ac.ebi.intact.model.CvGoNode"
         indirection-table="ia_Cv2Cv"
+        collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="parent_ac"/>
         <fk-pointing-to-element-class column="child_ac"/>
@@ -2843,6 +2852,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         name="annotations"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
+        collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="cvobject_ac"/>
         <fk-pointing-to-element-class column="annotation_ac"/>
