@@ -33,7 +33,7 @@
     <property file="${intact.root}/config/build.properties"/>
     
     <!-- The jdbc properties.. --> 
-    <property file="${intact.root}/config/jdbc.properties">
+    <property file="${intact.root}/config/jdbc.properties"/>
     
     <property name="dist.dir" value="dist"/>
     <property name="pg.war.file" value="${ant.project.name}.war"/>
