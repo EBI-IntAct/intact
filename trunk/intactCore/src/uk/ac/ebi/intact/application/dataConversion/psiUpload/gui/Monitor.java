@@ -19,7 +19,11 @@ public class Monitor {
     private JProgressBar progressBar;
     private String name;
     private JFrame frame;
+    private JLabel totalLabel;
+    private JLabel currentLabel;
+    private JLabel statusLabel;
     private int max;
+    private int current = 0;
 
     public Monitor( final int max, final String name ) {
 
@@ -36,18 +40,35 @@ public class Monitor {
 
     private void init() {
         frame = new JFrame( name );
-        Container cp = frame.getContentPane();
+        frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 
-        cp.setLayout( new FlowLayout() );
+        Container cp = frame.getContentPane();
+        cp.setBackground( Color.white );
+        cp.setLayout( new BoxLayout( cp, BoxLayout.Y_AXIS ) );
 
         progressBar = new JProgressBar( JProgressBar.HORIZONTAL, 0, max - 1 );
         progressBar.setStringPainted( true );
+        progressBar.setBackground( Color.white );
+        progressBar.setForeground( new Color( 255, 217, 119 ) ); // light orange
+        progressBar.setStringPainted( true );
+
+        totalLabel = new JLabel( "Total: " + max );
+        totalLabel.setForeground( Color.orange.darker() );
+
+        currentLabel = new JLabel( "Current:" + current );
+        currentLabel.setForeground( Color.orange );
+
+        statusLabel = new JLabel();
+        statusLabel.setForeground( Color.gray.brighter() );
 
         cp.add( progressBar );
+        cp.add( totalLabel );
+        cp.add( currentLabel );
+        cp.add( statusLabel );
         frame.pack();  // shrink-wrap alternative
 
         Dimension d = frame.getSize();
-        frame.setSize( (int) ( d.getWidth() * 1.2 ),
+        frame.setSize( (int) ( d.getWidth() * 2 ),
                        (int) ( d.getHeight() * 1.2 ) );
     }
 
@@ -59,34 +80,57 @@ public class Monitor {
         frame.setVisible( false );
     }
 
-    public void updateProteinProcessedCound( int newCount ) {
+    public void updateProteinProcessedCound( final int newCount ) {
 
         if( progressBar == null ) {
             throw new NullPointerException( "The progress bar hasn't been created." );
         }
 
-        progressBar.setValue( newCount );
+        // update current element
+        current = newCount;
+        currentLabel.setText( "Current: " + current );
+        currentLabel.update( frame.getGraphics() );
+
+        // update the progress bar
+        progressBar.setValue( current );
+    }
+
+    public void updateProteinProcessedCound( final int newCount, final String status ) {
+
+        // update status
+        setStatus( status );
+
+        // update current element and progress bar
+        updateProteinProcessedCound( newCount );
+    }
+
+    public void setStatus( final String status ) {
+
+        // update status
+        statusLabel.setText( status );
+        statusLabel.update( frame.getGraphics() );
     }
 
 
     /**
      * D E M O
      */
-    public void testIt() {
+    public void testIt( Monitor monitor ) {
         for ( int i = 0; i <= max; i++ ) {
             try {
-                Thread.sleep( 10 );
+                Thread.sleep( 3 );
             } catch ( InterruptedException e ) {
                 e.printStackTrace();
             }
-            progressBar.setValue( i );
+            monitor.updateProteinProcessedCound( i, "processing: " + i );
         }
+        monitor.setStatus( "Test finished." );
     }
 
     public static void main( String[] args ) {
 
         Monitor monitor = new Monitor( 3000, "Protein update" );
         monitor.show();
-        monitor.testIt();
+        monitor.testIt( monitor );
     }
 }
