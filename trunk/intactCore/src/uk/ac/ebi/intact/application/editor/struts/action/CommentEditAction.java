@@ -9,6 +9,7 @@ package uk.ac.ebi.intact.application.editor.struts.action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.util.MessageResources;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
@@ -58,17 +59,20 @@ public class CommentEditAction extends AbstractEditorAction {
         // We must have the annotation bean.
         assert cb != null;
 
-        if (editform.editPressed()) {
+        // Message resources to access button labels.
+        MessageResources msgres = getResources(request);
+
+        if (editform.hasPressed(msgres.getMessage("button.edit"))) {
             // Must save this bean.
             cb.setEditState(EditBean.SAVE);
         }
-        else if (editform.savePressed()) {
+        else if (editform.hasPressed(msgres.getMessage("button.save"))) {
             // The annotation to update.
             view.addAnnotationToUpdate(cb);
             // Back to the view mode.
             cb.setEditState(EditBean.VIEW);
         }
-        else if (editform.deletePressed()) {
+        else if (editform.hasPressed(msgres.getMessage("button.delete"))) {
             // Delete is pressed.
             view.delAnnotation(cb);
         }

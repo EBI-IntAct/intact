@@ -9,6 +9,7 @@ package uk.ac.ebi.intact.application.editor.struts.action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.util.MessageResources;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
@@ -59,17 +60,20 @@ public class XrefEditAction extends AbstractEditorAction {
         // We must have the bean.
         assert xb != null;
 
-        if (editform.editPressed()) {
+        // Message resources to access button labels.
+        MessageResources msgres = getResources(request);
+
+        if (editform.hasPressed(msgres.getMessage("button.edit"))) {
             // Must save this bean.
             xb.setEditState(EditBean.SAVE);
         }
-        else if (editform.savePressed()) {
+        else if (editform.hasPressed(msgres.getMessage("button.save"))) {
             // Save button pressed. The xref to update.
             view.addXrefToUpdate(xb);
             // Back to the view mode again.
             xb.setEditState(EditBean.VIEW);
         }
-        else if (editform.deletePressed()) {
+        else if (editform.hasPressed(msgres.getMessage("button.delete"))) {
             // Delete is pressed.
             view.delXref(xb);
         }

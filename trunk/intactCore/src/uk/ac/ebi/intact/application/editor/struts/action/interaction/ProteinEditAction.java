@@ -7,9 +7,9 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.action.interaction;
 
 import org.apache.struts.action.*;
+import org.apache.struts.util.MessageResources;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.view.EditBean;
-import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.ProteinBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.ProteinEditForm;
@@ -58,11 +58,14 @@ public class ProteinEditAction extends AbstractEditorAction {
         // We must have the protein bean.
         assert pb != null;
 
-        if (protform.editPressed()) {
+        // Message resources to access button labels.
+        MessageResources msgres = getResources(request);
+
+        if (protform.hasPressed(msgres.getMessage("button.edit"))) {
             // Must save this bean.
             pb.setEditState(EditBean.SAVE);
         }
-        else if (protform.savePressed()) {
+        else if (protform.hasPressed(msgres.getMessage("button.save"))) {
             if (viewbean.hasDuplicates(pb)) {
                 ActionErrors errors = new ActionErrors();
                 errors.add(ActionErrors.GLOBAL_ERROR,
@@ -77,7 +80,7 @@ public class ProteinEditAction extends AbstractEditorAction {
             // Back to the view mode.
             pb.setEditState(EditBean.VIEW);
         }
-        else if (protform.deletePressed()) {
+        else if (protform.hasPressed(msgres.getMessage("button.delete"))) {
             // Delete is pressed; mark for deletion; see FillProteinFormAction
             // for more details.
             pb.markForDelete();
