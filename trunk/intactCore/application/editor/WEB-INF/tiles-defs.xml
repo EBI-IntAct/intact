@@ -105,17 +105,26 @@
         <put name="content" value="/pages/noMatch.jsp"/>
     </definition>
 
-    <!-- Edit page description. -->
-    <definition name="edit.layout" extends="login.layout"
-        controllerUrl="/do/tiles/editorSwitch">
-        <put name="sidebar" value="edit.sidebar.layout"/>
-        <put name="content" value="edit.cv.layout"/>
-    </definition>
-
     <!-- General error layout -->
     <definition name="error.layout" extends="login.layout">
         <put name="content" value="/pages/error.jsp"/>
         <put name="sidebar" value="search.sidebar.layout"/>
+    </definition>
+
+
+    <!-- Super layout for editor pages  -->
+<!--    <definition name="editor.layout" path="/layouts/editorLayout.jsp">-->
+<!--        <put name="header" value="header.layout"/>-->
+<!--        <put name="footer" value="/pages/footer.jsp"/>-->
+<!--    </definition>-->
+
+    <!-- Super layout for editor pages  -->
+    <definition name="edit.layout" path="/layouts/editorLayout.jsp"
+        controllerUrl="/do/tiles/editorSwitch">
+        <put name="header" value="header.layout"/>
+        <put name="sidebar" value="edit.sidebar.layout"/>
+        <put name="content" value="edit.cv.layout"/>
+        <put name="footer" value="/pages/footer.jsp"/>
     </definition>
 
     <!-- ===================================================================-->

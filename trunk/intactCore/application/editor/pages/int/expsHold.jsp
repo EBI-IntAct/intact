@@ -18,7 +18,7 @@
 
 <h3>Experiments not yet added to the Interaction</h3>
 
-<c:if test="${not empty intForm.map.expshold}">
+<c:if test="${not empty intForm.expsOnHold}">
 
     <table width="100%" border="0" cellspacing="1" cellpadding="2">
         <tr class="tableRowHeader">
@@ -41,7 +41,7 @@
         </tr>
         <%-- To calculate odd or even row --%>
         <c:set var="row"/>
-        <c:forEach var="exp" items="${intForm.map.expshold}">
+        <c:forEach var="exp" items="${intForm.expsOnHold}">
             <%-- Different styles for even or odd rows --%>
             <c:choose>
                 <c:when test="${row % 2 == 0}">
@@ -55,14 +55,14 @@
                 <td class="editCell"/>
 
                 <td class="tableCell">
-                    <html:submit indexed="true" property="expsholdCmd"
+                    <html:submit indexed="true" property="expOnHoldCmd"
                         titleKey="int.exp.button.add.titleKey">
                         <bean:message key="int.exp.button.add"/>
                     </html:submit>
                 </td>
 
                 <td class="tableCell">
-                    <html:submit indexed="true" property="expsholdCmd"
+                    <html:submit indexed="true" property="expOnHoldCmd"
                         titleKey="int.exp.button.hide.titleKey">
                         <bean:message key="int.exp.button.hide"/>
                     </html:submit>

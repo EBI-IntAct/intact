@@ -21,7 +21,7 @@
 
 <h3>Annotations</h3>
 
-<c:if test="${not empty bsForm.map.annotations}">
+<c:if test="${not empty bsForm.annotations}">
     <table width="100%" border="0" cellspacing="1" cellpadding="2">
         <tr class="tableRowHeader">
             <th class="tableCellHeader" width="2%"></th>
@@ -37,7 +37,7 @@
         </tr>
         <%-- To calculate row or even row --%>
         <c:set var="row"/>
-        <c:forEach var="annotations" items="${bsForm.map.annotations}">
+        <c:forEach var="annotations" items="${bsForm.annotations}">
             <!-- Different styles for even or odd rows -->
             <c:choose>
                 <c:when test="${row % 2 == 0}">

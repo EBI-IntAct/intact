@@ -28,7 +28,7 @@
 
 <h3>Proteins</h3>
 
-<c:if test="${not empty intForm.map.proteins}">
+<c:if test="${not empty intForm.proteins}">
 
     <table width="100%" border="0" cellspacing="1" cellpadding="2">
         <tr class="tableRowHeader">
@@ -55,7 +55,7 @@
         </tr>
         <%-- To calculate row or even row --%>
         <c:set var="row"/>
-        <c:forEach var="proteins" items="${intForm.map.proteins}">
+        <c:forEach var="proteins" items="${intForm.proteins}">
             <%-- Different styles for even or odd rows --%>
             <c:choose>
                 <c:when test="${row % 2 == 0}">

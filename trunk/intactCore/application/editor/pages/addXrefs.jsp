@@ -59,21 +59,21 @@
             </html:submit>
         </td>
         <td class="tableCell" align="left" valign="top">
-            <html:select property="xref.database">
+            <html:select property="newXref.database">
                 <html:options name="dblist" />
             </html:select>
         </td>
         <td class="tableCell" align="left" valign="top">
-            <html:text property="xref.primaryId" size="15"/>
+            <html:text property="newXref.primaryId" size="15"/>
         </td>
         <td class="tableCell" align="left" valign="top">
-            <html:text property="xref.secondaryId" size="15"/>
+            <html:text property="newXref.secondaryId" size="15"/>
         </td>
         <td class="tableCell" align="left" valign="top">
-            <html:text property="xref.releaseNumber" size="15"/>
+            <html:text property="newXref.releaseNumber" size="15"/>
         </td>
         <td class="tableCell" align="left" valign="top">
-            <html:select property="xref.qualifier"
+            <html:select property="newXref.qualifier"
                 value="<%=user.getView().getDefaultXrefQualifier()%>">
                 <html:options name="qlist" />
             </html:select>
