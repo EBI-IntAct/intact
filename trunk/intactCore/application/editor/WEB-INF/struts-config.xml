@@ -275,7 +275,7 @@
             validate="true"
             scope="session"
             parameter="dispatch">
-            <forward name="success" path="/do/cv/fill/form"/>
+            <forward name="success" path="edit.layout"/>
 
             <!-- Back to the results page as we got here from a search result (global) -->
             <!-- Back to the search page  (global) -->
@@ -330,11 +330,11 @@
         <action path="/exp/submit"
             type="uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction"
             name="expForm"
-            input="/do/exp/fill/form"
+            input="edit.layout"
             validate="true"
             scope="session"
             parameter="dispatch">
-            <forward name="success" path="/do/exp/fill/form"/>
+            <forward name="success" path="edit.layout"/>
 
             <!-- Back to the results page as we got here from a search result (global) -->
         </action>
@@ -364,7 +364,7 @@
         <action path="/interaction"
             type="uk.ac.ebi.intact.application.editor.struts.action.experiment.InteractionAction"
             name="expForm"
-            input="/do/exp/fill/form"
+            input="edit.layout"
             validate="false"
             scope="session" >
             <forward name="editInt" path="/do/int/link"/>
@@ -376,7 +376,7 @@
         <action path="/int/link"
             type="uk.ac.ebi.intact.application.editor.struts.action.experiment.InteractionLinkAction"
             name="expForm"
-            input="/do/exp/fill/form"
+            input="edit.layout"
             validate="true"
             scope="session" >
             <forward name="success" path="/do/int/fill/form"/>
@@ -388,10 +388,9 @@
         <action path="/exp/int/hold"
             type="uk.ac.ebi.intact.application.editor.struts.action.experiment.InteractionHoldAction"
             name="expForm"
-            input="/do/exp/fill/form"
+            input="edit.layout"
             validate="false"
             scope="session" >
-            <forward name="success" path="/do/exp/fill/form"/>
         </action>
 
         <!-- Action to handle when an interaction is added to the experiment or
@@ -400,11 +399,10 @@
         <action path="/exp/int/search"
             type="uk.ac.ebi.intact.application.editor.struts.action.experiment.InteractionDispatchAction"
             name="expForm"
-            input="/do/exp/fill/form"
+            input="edit.layout"
             validate="false"
             scope="session"
             parameter="dispatch">
-            <forward name="success" path="/do/exp/fill/form"/>
         </action>
 
         <!-- ============= Actions related to BioSource editor ============ -->
@@ -431,11 +429,11 @@
         <action path="/bs/submit"
             type="uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction"
             name="bsForm"
-            input="/do/bs/fill/form"
+            input="edit.layout"
             validate="true"
             scope="session"
             parameter="dispatch">
-            <forward name="success" path="/do/bs/fill/form"/>
+            <forward name="success" path="edit.layout"/>
             <!-- Back to the results page as we got here from a search result (global) -->
             <!-- Back to the search page  (global) -->
         </action>
@@ -444,7 +442,7 @@
              is activated
         -->
         <action path="/bs/annot/submit"
-            type="uk.ac.ebi.intact.application.editor.struts.action.7Action"
+            type="uk.ac.ebi.intact.application.editor.struts.action.AnnotationDispatchAction"
             name="bsForm"
             input="edit.layout"
             validate="false"
@@ -467,10 +465,9 @@
         <action path="/bs/taxid"
             type="uk.ac.ebi.intact.application.editor.struts.action.biosrc.BioSourceAction"
             name="bsForm"
-            input="/do/bs/fill/form"
+            input="edit.layout"
             validate="false"
             scope="session">
-            <forward name="success" path="/do/bs/fill/form"/>
         </action>
 
         <!-- ============= Actions related to Interaction editor ============ -->
@@ -511,12 +508,12 @@
         <action path="/int/submit"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.SubmitButtonAction"
             name="intForm"
-            input="/do/int/fill/form"
+            input="edit.layout"
             validate="true"
             scope="session"
             parameter="dispatch">
             <!-- Back to the input page -->
-            <forward name="success" path="/do/int/fill/form"/>
+            <forward name="success" path="edit.layout"/>
             <!-- Back to the results page as we got here from a search result (global) -->
             <!-- Back to the experiment editor (where we came from) -->
             <forward name="experiment" path="/do/exp/fill/form"/>
@@ -584,7 +581,6 @@
             validate="false"
             scope="session"
             parameter="dispatch">
-<!--            <forward name="success" path="/do/int/fill/form"/>-->
         </action>
 
         <!-- Action to handle when a Protein is saved/deleted or edited. -->
@@ -660,7 +656,7 @@
         <action path="/feature/submit"
             type="uk.ac.ebi.intact.application.editor.struts.action.feature.FeatureSubmitAction"
             name="featureForm"
-            input="/do/feature/fill/form"
+            input="edit.layout"
             validate="true"
             scope="session"
             parameter="dispatch">

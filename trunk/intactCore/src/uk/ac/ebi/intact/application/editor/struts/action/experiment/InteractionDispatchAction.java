@@ -75,11 +75,12 @@ public class InteractionDispatchAction extends AbstractEditorDispatchAction {
             errors.add("exp.int.search",
                     new ActionError("error.exp.int.search.recent.empty"));
             saveErrors(request, errors);
-            return mapping.getInputForward();
         }
-        // We have edited/added experiments in the current session.
-        view.addInteractionToHold(recentInts);
-        return mapping.findForward(SUCCESS);
+        else {
+            // We have edited/added experiments in the current session.
+            view.addInteractionToHold(recentInts);
+        }
+        return mapping.getInputForward();
     }
 
     public ActionForward search(ActionMapping mapping,
@@ -134,14 +135,14 @@ public class InteractionDispatchAction extends AbstractEditorDispatchAction {
                     new ActionError("error.exp.int.search.many",
                             Integer.toString(intsize), searchParam, intlimit));
             saveErrors(request, errors);
-            return mapping.getInputForward();
         }
-        // The current view of the edit session.
-        ExperimentViewBean view = (ExperimentViewBean) user.getView();
+        else {
+            // The current view of the edit session.
+            ExperimentViewBean view = (ExperimentViewBean) user.getView();
 
-        // Add the search result to the holder.
-        view.addInteractionToHold(ints);
-
-        return mapping.findForward(SUCCESS);
+            // Add the search result to the holder.
+            view.addInteractionToHold(ints);
+        }
+        return mapping.getInputForward();
     }
 }

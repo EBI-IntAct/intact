@@ -425,6 +425,28 @@ public abstract class AbstractEditViewBean implements Serializable {
     }
 
     /**
+     * True if given Annotation bean exists in the current display.
+     * @param bean the Annotation bean to compare.
+     * @return true if <code>bean</code> exists in the current display.
+     *
+     * @see CommentBean#isEquivalent(CommentBean)
+     */
+    public boolean annotationExists(CommentBean bean) {
+        for (Iterator iter = myAnnotations.iterator(); iter.hasNext();) {
+            CommentBean cb = (CommentBean) iter.next();
+            // Avoid comparing to itself.
+            if (cb.getKey() == bean.getKey()) {
+                continue;
+            }
+            if (cb.isEquivalent(bean)) {
+                return true;
+            }
+        }
+        // Not equivalent; false is returned.
+        return false;
+    }
+
+    /**
      * Returns a collection <code>Xref</code> objects.
      *
      * <pre>
@@ -465,6 +487,28 @@ public abstract class AbstractEditViewBean implements Serializable {
         myXrefsToDel.add(xb);
         // Remove from the view as well.
         myXrefs.remove(xb);
+    }
+
+    /**
+     * True if given xref bean exists in the current display.
+     * @param bean the Xref bean to compare.
+     * @return true if <code>bean</code> exists in the current display.
+     *
+     * @see XreferenceBean#isEquivalent(XreferenceBean)
+     */
+    public boolean xrefExists(XreferenceBean bean) {
+        for (Iterator iter = myXrefs.iterator(); iter.hasNext();) {
+            XreferenceBean xb = (XreferenceBean) iter.next();
+            // Avoid comparing to itself.
+            if (xb.getKey() == bean.getKey()) {
+                continue;
+            }
+            if (xb.isEquivalent(bean)) {
+                return true;
+            }
+        }
+        // Not equivalent; false is returned.
+        return false;
     }
 
     /**

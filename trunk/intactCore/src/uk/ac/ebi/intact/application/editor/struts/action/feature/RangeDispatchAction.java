@@ -76,10 +76,6 @@ public class RangeDispatchAction extends AbstractEditorAction {
                 // Display the errors.
                 return mapping.getInputForward();
             }
-            // The updated range bean; this needs to be a separate copy (don't
-            // want form and the view to share the same copy).
-//            RangeBean updated = (RangeBean) bean.clone();
-
             // Save the bean in the view.
             view.saveRange(bean);
 

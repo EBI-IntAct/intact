@@ -130,6 +130,17 @@ public class CommentBean extends AbstractEditKeyBean {
     }
 
     /**
+     * Returns true if given bean is equivalent to the current bean.
+     * @param cb the bean to compare.
+     * @return true if topic and text are equivalent; otherwise false is returned.
+     */
+    public boolean isEquivalent(CommentBean cb) {
+        // Check attributes.
+        return cb.getTopic().equals(getTopic())
+                && cb.getDescription().equals(getDescription());
+    }
+
+    /**
      * Intialize the member variables using the given Annotation object.
      * @param annotation <code>Annotation</code> object to populate this bean.
      */

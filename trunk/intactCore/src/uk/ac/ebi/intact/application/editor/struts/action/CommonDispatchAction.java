@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
+import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 
@@ -174,10 +175,27 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
 
+        // The current form.
+        EditorActionForm editorForm = (EditorActionForm) form;
+
         // The bean to extract the values.
-        CommentBean cb = ((EditorActionForm) form).getNewAnnotation();
+        CommentBean cb = editorForm.getNewAnnotation();
 
+        // The current view.
+        AbstractEditViewBean view = user.getView();
 
+        // Does this bean exist in the current view?
+        if (view.annotationExists(cb)) {
+            // The errors to display.
+            ActionErrors errors = new ActionErrors();
+            errors.add("new.annotation", new ActionError("error.annotation.exists"));
+            saveErrors(request, errors);
+
+            // Set the anchor
+            setAnchor(request, editorForm);
+            // Display the error in the edit page.
+            return mapping.getInputForward();
+        }
         // The topic for the annotation.
         CvTopic cvtopic = (CvTopic) user.getObjectByLabel(CvTopic.class,
                 cb.getTopic());
@@ -185,7 +203,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         annot.setAnnotationText(cb.getDescription());
 
         // Add the bean to the view; new bean is wrapped around the annotation.
-        user.getView().addAnnotation(new CommentBean(annot));
+        view.addAnnotation(new CommentBean(annot));
 
         return mapping.getInputForward();
     }
@@ -212,9 +230,26 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         // Handler to the EditUserI.
         EditUserI user = getIntactUser(request);
 
-        // The bean to extract the values.
-        XreferenceBean xb = ((EditorActionForm) form).getNewXref();
+        // The current form.
+        EditorActionForm editorForm = (EditorActionForm) form;
 
+        // The bean to extract the values.
+        XreferenceBean xb = editorForm.getNewXref();
+
+        // The current view.
+        AbstractEditViewBean view = user.getView();
+
+        // Does this bean exist in the current view?
+        if (view.xrefExists(xb)) {
+            ActionErrors errors = new ActionErrors();
+            errors.add("new.xref", new ActionError("error.xref.exists"));
+            saveErrors(request, errors);
+
+            // Set the anchor
+            setAnchor(request, editorForm);
+            // Display the error in the edit page.
+            return mapping.getInputForward();
+        }
         // For Go database, set values from the Go server.
         if (xb.getDatabase().equals("go")) {
             ActionErrors errors = xb.setFromGoServer(user);

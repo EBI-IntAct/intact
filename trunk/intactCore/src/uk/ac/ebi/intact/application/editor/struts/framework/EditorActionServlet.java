@@ -81,7 +81,7 @@ public class EditorActionServlet extends ActionServlet {
         map.put(rb.getString("button.cancel"), "cancel");
         map.put(rb.getString("button.delete"), "delete");
 
-        // Actions related to annoations. Common to all the editors.
+        // Actions related to annotaions. Common to all the editors.
         map.put(rb.getString("annotations.button.add"), "submit");
         map.put(rb.getString("annotations.button.edit"), "annotation");
         map.put(rb.getString("annotations.button.save"), "annotation");
@@ -147,8 +147,10 @@ public class EditorActionServlet extends ActionServlet {
 
         // Adding annotation.
         map.put("error.annotation.topic", "annotation");
+        map.put("error.annotation.exists", "annotation");
         map.put(rb.getString("annotations.button.add"), "annotation");
         // Editing annotation.
+        map.put("error.edit.annotation.exists", "annot.edit");
         map.put(rb.getString("annotations.button.edit"), "annot.edit");
         map.put(rb.getString("annotations.button.save"), "annot.edit");
         map.put(rb.getString("annotations.button.delete"), "annot.edit");
@@ -156,8 +158,11 @@ public class EditorActionServlet extends ActionServlet {
         // Adding Xrefs.
         map.put("error.xref.database", "xref");
         map.put("error.xref.pid", "xref");
+        map.put("error.xref.exists", "xref");
+
         map.put(rb.getString("xrefs.button.add"), "xref");
         // Editing xref
+        map.put("error.edit.xref.exists", "xref.edit");
         map.put(rb.getString("xrefs.button.edit"), "xref.edit");
         map.put(rb.getString("xrefs.button.save"), "xref.edit");
         map.put(rb.getString("xrefs.button.delete"), "xref.edit");

@@ -51,14 +51,13 @@ public class InteractionHoldAction extends AbstractEditorAction {
                                  HttpServletResponse response)
             throws Exception {
         // The dyna form.
-//        DynaActionForm dynaform = (DynaActionForm) form;
         ExperimentActionForm expForm = (ExperimentActionForm) form;
 
         // Handler to the current user.
         EditUserI user = getIntactUser(request);
 
         Interaction inter = (Interaction) user.getObjectByAc(
-                Interaction.class, expForm.getIntac());// (String) dynaform.get("intac"));
+                Interaction.class, expForm.getIntac());
 
         // We must have the interaction bean.
         assert inter != null;
@@ -68,7 +67,6 @@ public class InteractionHoldAction extends AbstractEditorAction {
 
         // Adding interactions in the hold section?
         if (expForm.getDispatch().equals(
-//        if (dynaform.get("dispatch").equals(
                 getResources(request).getMessage("exp.int.button.add"))) {
 
             // No need to check for duplicates because it has already been
@@ -81,6 +79,7 @@ public class InteractionHoldAction extends AbstractEditorAction {
             // Must have pressed 'Hide'.
             view.hideInteractionToHold(inter);
         }
-        return mapping.findForward(SUCCESS);
+        // Update the form.
+        return mapping.getInputForward();
     }
 }
