@@ -25,6 +25,9 @@
     |    Graph      |
     |    tools      |
     |_______________|
+    |    PSI-XML    |
+    |   Download    |
+    |_______________|
     |    Links      |
     |    menu       |
     _________________
@@ -81,6 +84,7 @@
         <put name="search" value="/pages/sidebarSearch.jsp"/>
         <put name="graph"  value="/pages/sidebarGraph.jsp"/>
         <put name="click"  value="/pages/sidebarClickBehaviour.jsp"/>
+        <put name="psi"    value="/pages/sidebarPsiDownload.jsp"/>
     </definition>
 
     <!-- Sidebar for the search page -->

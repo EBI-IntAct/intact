@@ -280,6 +280,7 @@ Verison: $Id$
                  <exclude name="restoreContext.jsp"/>
                  <exclude name="sidebarSearch.jsp"/>
                  <exclude name="sidebarGraph.jsp"/>
+                 <exclude name="sidebarPsiDownload.jsp"/>
                  <exclude name="sidebarClickBehaviour.jsp"/>
                  <exclude name="graphTitle.jsp"/>
                  <exclude name="highlightTitle.jsp"/>
