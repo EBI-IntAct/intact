@@ -10,3 +10,7 @@ td.errorCell {
     color: white;
     background-color: red
 }
+
+.inputRequired {
+    border-color: red;
+}

@@ -18,6 +18,10 @@
 <jsp:useBean id="user" scope="session"
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
+<style type="text/css">
+    <%@ include file="/layouts/styles/editor.css" %>
+</style>
+
 <%-- The current view --%>
 <c:set var="view" value="${user.view}"/>
 
@@ -42,7 +46,8 @@
             <bean:write property="ac" name="expForm"/>
         </td>
         <td class="tableCell">
-            <html:text property="shortLabel" size="20" maxlength="25" name="expForm"/>
+            <html:text property="shortLabel" size="20" maxlength="25" name="expForm"
+                styleClass="inputRequired"/>
         </td>
 
         <td class="tableCell">
@@ -61,17 +66,17 @@
     </tr>
     <tr class="tableRowEven">
         <td class="tableCell" align="left" valign="top">
-            <html:select property="organism" name="expForm">
+            <html:select property="organism" name="expForm" styleClass="inputRequired">
                 <html:options name="organismmenu"/>
             </html:select>
         </td>
         <td class="tableCell" align="left" valign="top">
-            <html:select property="inter" name="expForm">
+            <html:select property="inter" name="expForm" styleClass="inputRequired">
                 <html:options name="intermenu"/>
             </html:select>
         </td>
         <td class="tableCell" align="left" valign="top">
-            <html:select property="ident" name="expForm">
+            <html:select property="ident" name="expForm" styleClass="inputRequired">
                 <html:options name="identmenu"/>
             </html:select>
         </td>
