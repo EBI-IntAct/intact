@@ -57,9 +57,15 @@ public class FeatureBean extends AbstractEditKeyBean {
     private List myRanges = new ArrayList();
 
     /**
-     * The short label of feature this feature inteacts with
+     * The AC of the bound domain, we need this as Feature shortlabels are not
+     * unique.
      */
-    private String myBoundDomain;
+    private String myBoundDomainAc;
+
+    /**
+     * The short label of feature this feature interacts with.
+     */
+    private String myBoundDomain = "";
 
     /**
      * True if this feature is checked. Default is not.
@@ -161,6 +167,14 @@ public class FeatureBean extends AbstractEditKeyBean {
         myShortLabel = label;
     }
 
+    public String getBoundDomainAc() {
+        return myBoundDomainAc;
+    }
+
+    public void setBoundDomainAc(String ac) {
+        myBoundDomainAc = ac;
+    }
+
     public String getBoundDomain() {
         return myBoundDomain;
     }
@@ -208,8 +222,8 @@ public class FeatureBean extends AbstractEditKeyBean {
         myFeature.setShortLabel(getShortLabel());
         // Set the bound domain if it isn't empty.
         if (hasBoundDomain()) {
-            Feature boumdDomain = (Feature) user.getObjectByLabel(
-                    Feature.class, getBoundDomain());
+            Feature boumdDomain = (Feature) user.getObjectByAc(
+                    Feature.class, myBoundDomainAc);
             myFeature.setBoundDomain(boumdDomain);
         }
         return myFeature;
@@ -252,7 +266,10 @@ public class FeatureBean extends AbstractEditKeyBean {
             myRanges.add(new RangeBean(range));
         }
 
-        myBoundDomain = feature.getBoundDomain() == null ? ""
-                : feature.getBoundDomain().getShortLabel();
+        Feature boundFeature = feature.getBoundDomain();
+        if (boundFeature != null) {
+            myBoundDomainAc = boundFeature.getAc();
+            myBoundDomain = boundFeature.getShortLabel();
+        }
     }
 }
