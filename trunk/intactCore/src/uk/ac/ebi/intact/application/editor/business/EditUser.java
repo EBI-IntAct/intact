@@ -328,6 +328,8 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     public void commit() throws IntactException {
         myHelper.finishTransaction();
         this.endEditing();
+        // Clear the cache.
+        myHelper.removeFromCache(myEditView.getAnnotatedObject());
     }
 
     public void rollback() throws IntactException {
