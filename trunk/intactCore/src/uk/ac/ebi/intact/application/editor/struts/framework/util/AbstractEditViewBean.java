@@ -255,6 +255,10 @@ public abstract class AbstractEditViewBean implements Serializable {
         // Clear previous transactions.
         clearTransactions();
 
+        // Clear existing annotations & xrefs (don't want to share them).
+        myAnnotations.clear();
+        myXrefs.clear();
+        
         // Reset the cloned object with values given by parameter.
         resetAnnotatedObject(copy);
 
