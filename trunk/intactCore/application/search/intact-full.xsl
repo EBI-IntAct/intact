@@ -137,7 +137,10 @@
             <xsl:if test="CvInteractionType/@shortLabel">
                 <tr class="Interaction">
                     <td colspan="2">
-                        <xsl:value-of select="CvInteractionType/@shortLabel"/>
+                        <xsl:call-template name="draw_cv_link">
+                            <xsl:with-param name="cv" select="CvInteractionType/@shortLabel"/>
+                            <xsl:with-param name="type" select="'CvInteractionType'"/>
+                        </xsl:call-template>
                     </td>
                     <td colspan="3">
                         <xsl:value-of select="Float/@value"/>
@@ -148,7 +151,10 @@
             <xsl:for-each select="annotations/Annotation">
                 <tr class="Interaction">
                     <td colspan="2">
-                        <xsl:value-of select="CvTopic/@shortLabel"/>
+                        <xsl:call-template name="draw_cv_link">
+                            <xsl:with-param name="cv" select="CvTopic/@shortLabel"/>
+                            <xsl:with-param name="type" select="'CvTopic'"/>
+                        </xsl:call-template>
                     </td>
                     <td colspan="3">
                         <xsl:value-of select="@annotationText"/>
@@ -213,7 +219,10 @@
         <xsl:if test="../CvComponentRole">
             <tr class="Protein">
                 <td colspan="2">
-                    <xsl:value-of select="../CvComponentRole/@shortLabel"/>
+                    <xsl:call-template name="draw_cv_link">
+                        <xsl:with-param name="cv" select="../CvComponentRole/@shortLabel"/>
+                        <xsl:with-param name="type" select="'CvComponentRole'"/>
+                    </xsl:call-template>
                 </td>
                 <td>
                     <xsl:value-of select="../@stoichiometry"/>
@@ -274,6 +283,7 @@ CvTissue | CvTopic | CvXrefQualifier">
                 <xsl:for-each select="child::parents">
                     <xsl:call-template name="draw_cv_link">
                         <xsl:with-param name="cv" select="@shortLabel"/>
+                        <!-- need to also pass the parent's element tag name here... -->
                     </xsl:call-template>
                     <!-- Avoid printing  ',' for the last protein -->
                     <xsl:if test="not(position()=last())">, </xsl:if>
@@ -287,6 +297,7 @@ CvTissue | CvTopic | CvXrefQualifier">
                 <xsl:for-each select="child::childs">
                     <xsl:call-template name="draw_cv_link">
                         <xsl:with-param name="cv" select="@shortLabel"/>
+                        <!-- need to also pass the child's element tag name here... -->
                     </xsl:call-template>
                     <!-- Avoid printing  ',' for the last protein -->
                     <xsl:if test="not(position()=last())">, </xsl:if>
@@ -321,7 +332,7 @@ CvTissue | CvTopic | CvXrefQualifier">
         </tr>
 
         <xsl:for-each select="annotations/Annotation">
-            <tr class="CvObject">
+            <tr class="Interaction">
                 <td colspan="2">
                     <xsl:value-of select="CvTopic/@shortLabel"/>
                 </td>
@@ -411,9 +422,7 @@ CvTissue | CvTopic | CvXrefQualifier">
     </xsl:template>
     <!--
     ****************************************************************************
-    ** Draw Xreferences.
-    ** emptyCells - the number of empty cells to print.
-    ** colSpan - the number columns to span for the short label of CvDatabase.
+    ** Draw table dimensions
     *************************************************************************-->
     <xsl:template name="draw-table-headings">
         <tr>
@@ -441,7 +450,7 @@ CvTissue | CvTopic | CvXrefQualifier">
 
     <!--
     ****************************************************************************
-    ** Draws two empty cells.
+    ** Draws one empty cell.
     *************************************************************************-->
     <xsl:template name="draw-1-empty-cell">
         <xsl:call-template name="draw-empty-cells">
@@ -520,7 +529,10 @@ CvTissue | CvTopic | CvXrefQualifier">
     *************************************************************************-->
     <xsl:template name="draw-xrefs">
         <td colspan="2">
-            <xsl:value-of select="CvDatabase/@shortLabel"/>
+            <xsl:call-template name="draw_cv_link">
+                <xsl:with-param name="cv" select="CvDatabase/@shortLabel"/>
+                <xsl:with-param name="type" select="'CvDatabase'"/>
+            </xsl:call-template>
         </td>
         <td>
             <xsl:value-of select="@primaryId"/>
