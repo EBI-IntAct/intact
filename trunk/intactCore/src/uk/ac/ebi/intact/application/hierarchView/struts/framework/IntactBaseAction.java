@@ -28,6 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.ServletContext;
 import java.rmi.RemoteException;
+import java.util.StringTokenizer;
+import java.util.ArrayList;
 
 /**
  * Super class for all hierarchView related action classes.
@@ -277,23 +279,40 @@ public abstract class IntactBaseAction extends Action {
     public void updateInteractionNetwork (IntactUserI user, int action)
               throws MultipleResultException {
 
-        InteractionNetwork in = null;
+        InteractionNetwork in = null,
+                           tmp = null;
         String queryString = user.getQueryString();
         int depth = user.getCurrentDepth();
 
+        StringTokenizer st = new StringTokenizer (queryString, ",");
+        ArrayList queries = new ArrayList(10);
+        while (st.hasMoreElements()) {
+            queries.add (st.nextToken().trim()); // remove front and back blank space
+        }
+        int max = queries.size();
+
         try {
             GraphHelper gh = new GraphHelper(user);
+            String query = null;
             Chrono chrono = new Chrono ();
             chrono.start();
 
             switch (action) {
                 case StrutsConstants.CREATE_INTERACTION_NETWORK:
-                    in = gh.createInteractionNetwork (queryString, depth);
+                    for (int i = 0; i < max; i++) {
+                        query = (String) queries.get(i);
+                        in = gh.addInteractionNetwork (in, query, depth);
+                    }
+
                     break;
 
                 case StrutsConstants.ADD_INTERACTION_NETWORK:
                     in = user.getInteractionNetwork();
-                    in = gh.addInteractionNetwork (in, queryString, depth);
+                    for (int i = 0; i < max; i++) {
+                        query = (String) queries.get(i);
+                        in = gh.addInteractionNetwork (in, query, depth);
+                    }
+
                     break;
 
                 case StrutsConstants.UPDATE_INTERACTION_NETWORK:

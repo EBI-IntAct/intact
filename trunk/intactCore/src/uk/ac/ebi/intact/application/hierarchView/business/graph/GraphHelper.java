@@ -15,10 +15,7 @@ import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.simpleGraph.Node;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 
@@ -58,66 +55,12 @@ public class GraphHelper  {
     } // GraphHelper
 
 
-
-
-
-
-
-
     /**
-     * Create an interaction graph according to a protein AC
+     * Create an interaction graph according to a query string.
      *
-     * @param queryString the given protein AC.
+     * @param queryString the protein criteria from which we expect to find Interactor in the database.
      * @param depth The level of BAIT-BAIT interaction in the interaction graph.
-     */
-    public InteractionNetwork createInteractionNetwork (String queryString, int depth)
-            throws ProteinNotFoundException,
-                   SearchException,
-                   IntactException,
-                   MultipleResultException  {
-
-        // Retreiving interactor from the database according to the given AC
-        logger.info ("retrieving Interactor ...");
-        Collection results = null;
-
-        results = find (queryString);
-
-        InteractionNetwork in = null;
-
-        switch (results.size()) {
-            case 0 :
-                logger.error ("nothing found for: " + queryString);
-                throw new ProteinNotFoundException ();
-
-            case 1 :
-                Interactor interactor = (Interactor) results.iterator().next();
-
-                in = new InteractionNetwork (interactor);
-
-                // foundBy has been updated by doLookup
-                in.addCriteria (queryString, foundBy);
-
-                in = this.user.subGraph (in,
-                                         depth,
-                                         null,
-                                         uk.ac.ebi.intact.model.Constants.EXPANSION_BAITPREY);
-
-                break;
-
-            default : // more than 1
-                logger.error (queryString + " gave us multiple results");
-                throw new MultipleResultException();
-        }
-
-        return in;
-    }
-
-
-    /**
-     * Create an interaction graph according to a protein AC
-     *
-     * @param queryString the given protein AC.
-     * @param depth The level of BAIT-BAIT interaction in the interaction graph.
+     * @return the corresponding in teraciton network
      */
     public InteractionNetwork addInteractionNetwork (InteractionNetwork in, String queryString, int depth)
             throws ProteinNotFoundException,
@@ -267,6 +210,19 @@ public class GraphHelper  {
         return results;
     }
 
+
+    /**
+     * update the interaction network given in parameter, by reloading the whole set of
+     * entry point with the given depth.
+     *
+     * @param network the interaction network to update
+     * @param depth the depth to update to.
+     * @return the new interaction network.
+     * @throws ProteinNotFoundException
+     * @throws SearchException
+     * @throws IntactException
+     * @throws MultipleResultException
+     */
     public InteractionNetwork updateInteractionNetwork (InteractionNetwork network, int depth)
             throws ProteinNotFoundException,
                    SearchException,
