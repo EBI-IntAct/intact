@@ -88,6 +88,12 @@ public class EditorActionForm extends ValidatorForm {
      */
     private XreferenceBean myNewXref;
 
+    public EditorActionForm() {
+        // Initialize them to avoid Edit Experiment/Interaction error.
+        setNewAnnotation(new CommentBean());
+        setNewXref(new XreferenceBean());
+    }
+
     // Getter/Setter methods for form attributes.
 
     public void setShortLabel(String label) {
@@ -168,12 +174,20 @@ public class EditorActionForm extends ValidatorForm {
         return myNewAnnotation;
     }
 
+    public void resetNewAnnotation() {
+        myNewAnnotation.reset();
+    }
+
     public void setNewXref(XreferenceBean xb) {
         myNewXref = xb;
     }
 
     public XreferenceBean getNewXref() {
         return myNewXref;
+    }
+
+    public void resetNewXref() {
+        myNewXref.reset();
     }
 
     public void setDispatch(String dispatch) {
