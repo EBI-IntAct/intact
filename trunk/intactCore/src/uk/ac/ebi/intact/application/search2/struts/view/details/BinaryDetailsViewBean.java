@@ -79,6 +79,8 @@ public class BinaryDetailsViewBean extends DetailsViewBean {
 
         HashMap results = binaryData.getData();
 
+        //NB looking at the Interactor code this will never be null (unless
+        //explicitly set to be so), but may be empty...
         if (null != query.getActiveInstances()) {
             Iterator i = query.getActiveInstances().iterator();
 

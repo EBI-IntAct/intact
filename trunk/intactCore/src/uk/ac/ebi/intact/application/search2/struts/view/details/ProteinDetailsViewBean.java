@@ -75,7 +75,7 @@ public class ProteinDetailsViewBean extends DetailsViewBean {
                     // add a copy of the experiment
 //                    System.out.println("Distinct Experiment: " + experiment.getShortLabel());
                     if ( ! experiments.containsKey( experiment.getAc() )){
-                        Experiment ex = createShallowExperiment( experiment );
+                        Experiment ex = Experiment.getShallowCopy( experiment );
                         experiments.put( experiment.getAc(), ex );
                     }
                 }
