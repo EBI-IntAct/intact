@@ -51,7 +51,7 @@
             <forward name="success" path="search.layout"/>
         </action>
 
-        <!-- Process when user clicks on the logo to enter the application. -->
+        <!-- Process when user accesses search via HierarchView application -->
         <action path="/hvWelcome"
                 type="uk.ac.ebi.intact.application.search.struts.controller.WelcomeAction"
                 scope="request">
@@ -59,7 +59,11 @@
         </action>
 
         <!-- Process a user searches for a CV Object. The form is in a session because
-             we reuse search details from view action.
+             we reuse search details from view action. Currently once a search has been
+             successful, there are a number of options for subsequent processing:
+             - generate beans for a detailed view
+             - generate a bean for a single object view
+             - process requests from a protein view that is different to the main views
              -->
         <action path="/search"
                 name="sidebarForm"
@@ -67,6 +71,46 @@
                 scope="session">
             <forward name="noMatch" path="no.match.layout"/>
             <forward name="results" path="match.layout"/>
+            <forward name="sessionLost" path="/do/welcome"/>
+            <forward name="detailAction" path="/do/detail"/>
+            <forward name="singleItemAction" path="/do/singleItem"/>
+        </action>
+
+        <!-- processed when a detailed view is required after a search. This is
+            typically accessed from the searchAction rather than a user request
+        -->
+        <action path="/detail"
+                name="viewForm"
+                type="uk.ac.ebi.intact.application.search.struts.controller.DetailsAction"
+                scope="session">
+            <forward name="noMatch" path="no.match.layout"/>
+            <forward name="results" path="match.layout"/>
+            <forward name="sessionLost" path="/do/welcome"/>
+            <forward name="proteinAction" path="/do/protein"/>
+        </action>
+
+        <!-- processed when a single object view is required after a search. This is
+            typically accessed from the searchAction rather than a user request
+        -->
+        <action path="/singleItem"
+                name="viewForm"
+                type="uk.ac.ebi.intact.application.search.struts.controller.SingleItemAction"
+                scope="session">
+            <forward name="noMatch" path="no.match.layout"/>
+            <forward name="results" path="match.layout"/>
+            <forward name="sessionLost" path="/do/welcome"/>
+        </action>
+
+        <!-- processed when a protein follow-up view is required after a search. This is
+            typically accessed from the searchAction rather than a user request
+        -->
+        <action path="/protein"
+                name="viewForm"
+                type="uk.ac.ebi.intact.application.search.struts.controller.ProteinAction"
+                scope="session">
+            <forward name="noMatch" path="no.match.layout"/>
+            <forward name="results" path="match.layout"/>
+            <forward name="sessionLost" path="/do/welcome"/>
         </action>
 
         <!-- Process a user selects from a search result. -->
