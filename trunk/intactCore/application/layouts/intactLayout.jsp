@@ -21,6 +21,9 @@
 <head>
     <title><tiles:getAsString name="title"/></title>
     <html:base/>
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="expires" content="-1">
     <link rel="stylesheet" type="text/css" href="styles/intact.css"/>
 </head>
 
