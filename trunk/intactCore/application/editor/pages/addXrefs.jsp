@@ -66,12 +66,12 @@
 <%--            <html:reset/>--%>
 <%--        </td>--%>
         <td class="tableCell" align="left" valign="top">
-            <html:select property="xref.database" styleClass="inputRequired">
+            <html:select property="xref.database">
                 <html:options name="dblist" />
             </html:select>
         </td>
         <td class="tableCell" align="left" valign="top">
-            <html:text property="xref.primaryId" size="15" styleClass="inputRequired"/>
+            <html:text property="xref.primaryId" size="15"/>
         </td>
         <td class="tableCell" align="left" valign="top">
             <html:text property="xref.secondaryId" size="15"/>
