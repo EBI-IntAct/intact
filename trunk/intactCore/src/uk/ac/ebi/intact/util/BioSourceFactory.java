@@ -100,6 +100,14 @@ public class BioSourceFactory {
         this.logger = logger;
     }
 
+    /**
+     * Sets the Intact helper to access the persistent system. This method is
+     * package visible.
+     * @param helper the Intact helper to set.
+     */
+    void setIntactHelper(IntactHelper helper) {
+        this.helper = helper;
+    }
 
     /**
      * Select a BioSource that has neither CvCellType nor CvTissue.
