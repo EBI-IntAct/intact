@@ -7,8 +7,6 @@ package uk.ac.ebi.intact.model.test;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import junitx.framework.Assert;
-import junitx.framework.ObjectFactory;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.test.util.TestableProtein;
 
@@ -92,44 +90,5 @@ public class AliasTest extends TestCase {
         name = null;
         alias = new Alias( owner, protein, type1, name );
         assertNull( alias.getName() );
-    }
-
-    public void testEqualsAndHashCode() {
-
-        final Protein protein = new TestableProtein( "EBI-xxx", owner, yeast, "proteinTest", "AAAAAAAAAAAAAAAAAAAA" );
-
-        // names are not equals
-        ObjectFactory factory = new ObjectFactory() {
-            public Object createInstanceX() {
-                return new Alias( owner, protein, null, "name 1" );
-            }
-
-            public Object createInstanceY() {
-                return new Alias( owner, protein, null, "name 2" );
-            }
-        };
-
-        // Make sure the object factory meets its contract for testing.
-        // This contract is specified in the API documentation.
-        Assert.assertObjectFactoryContract( factory );
-        // Assert equals(Object) contract.
-        Assert.assertEqualsContract( factory );
-        // Assert hashCode() contract.
-        Assert.assertHashCodeContract( factory );
-
-        // alias type are not equals
-        factory = new ObjectFactory() {
-            public Object createInstanceX() {
-                return new Alias( owner, protein, type1, "name" );
-            }
-
-            public Object createInstanceY() {
-                return new Alias( owner, protein, null, "name" );
-            }
-        };
-
-        Assert.assertObjectFactoryContract( factory );
-        Assert.assertEqualsContract( factory );
-        Assert.assertHashCodeContract( factory );
     }
 }

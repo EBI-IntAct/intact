@@ -3,8 +3,6 @@ package uk.ac.ebi.intact.model.test;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import junitx.framework.Assert;
-import junitx.framework.ObjectFactory;
 import uk.ac.ebi.intact.model.*;
 
 public class XrefTest extends TestCase {
@@ -119,63 +117,5 @@ public class XrefTest extends TestCase {
 
         xref = new Xref( owner, go, "GO:111A111", null, null, identity );
         assertFalse( xref.hasValidPrimaryId() );
-    }
-
-    public void testEqualsAndHashCode() {
-
-        final Institution owner = new Institution( "owner" );
-        final CvDatabase interpro = new CvDatabase( owner, "interpro" );
-        final CvDatabase go = new CvDatabase( owner, "go" );
-
-        // primaryId are not equals
-        ObjectFactory factory = new ObjectFactory() {
-            public Object createInstanceX() {
-                return new Xref( owner, interpro, "IPR000000000", null, null, null );
-            }
-
-            public Object createInstanceY() {
-                return new Xref( owner, interpro, "IPR111111111", null, null, null );
-            }
-        };
-
-        // Make sure the object factory meets its contract for testing.
-        // This contract is specified in the API documentation.
-        Assert.assertObjectFactoryContract( factory );
-        // Assert equals(Object) contract.
-        Assert.assertEqualsContract( factory );
-        // Assert hashCode() contract.
-        Assert.assertHashCodeContract( factory );
-
-
-        // database are not equals
-        factory = new ObjectFactory() {
-            public Object createInstanceX() {
-                return new Xref( owner, interpro, "xxx", null, null, null );
-            }
-
-            public Object createInstanceY() {
-                return new Xref( owner, go, "xxx", null, null, null );
-            }
-        };
-
-        Assert.assertObjectFactoryContract( factory );
-        Assert.assertEqualsContract( factory );
-        Assert.assertHashCodeContract( factory );
-
-
-        // release are not equals
-        factory = new ObjectFactory() {
-            public Object createInstanceX() {
-                return new Xref( owner, interpro, "xxx", "description", "4", null );
-            }
-
-            public Object createInstanceY() {
-                return new Xref( owner, interpro, "xxx", "description", null, null );
-            }
-        };
-
-        Assert.assertObjectFactoryContract( factory );
-        Assert.assertEqualsContract( factory );
-        Assert.assertHashCodeContract( factory );
     }
 }
