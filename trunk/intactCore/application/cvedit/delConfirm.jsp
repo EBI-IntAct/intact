@@ -14,13 +14,10 @@
 <!-- JSTL tag libraries-->
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
 
-<!-- Our own tags to display CV topics -->
-<%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact" %>
+<jsp:useBean id="intactuser" scope="session"
+    class="uk.ac.ebi.intact.application.cvedit.business.IntactUserImpl"/>
 
-<intact:resetTransaction/>
-
-<jsp:useBean id="viewbean" scope="session"
-    class="uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean"/>
+<c:set var="viewbean" value="${intactuser.view}"/>
 
 <jsp:include page="header.jsp" flush="true" />
 
@@ -29,8 +26,8 @@
 <!-- a line to separate the header -->
 <hr size=2>
 
-Accession Number: <b><c:out value="${viewbean.ac}" /></b>
-&nbsp;&nbsp;Short Label:<c:out value="${viewbean.shortLabel}" />
+AC: <b><c:out value="${viewbean.ac}" /></b>
+&nbsp;&nbsp;Short Label: <c:out value="${viewbean.shortLabel}" />
 <p>
 Select <i>Submit</i> to continue with the deletion or <i>Cancel</i> to
 return to the previous screen.
