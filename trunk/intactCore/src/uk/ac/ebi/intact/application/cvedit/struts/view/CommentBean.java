@@ -1,12 +1,15 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 
 package uk.ac.ebi.intact.application.cvedit.struts.view;
 
 import uk.ac.ebi.intact.model.Annotation;
+import uk.ac.ebi.intact.application.cvedit.business.IntactUserImpl;
+
+import java.io.Serializable;
 
 /**
  * Bean to store data for comments (annotations).
@@ -14,23 +17,17 @@ import uk.ac.ebi.intact.model.Annotation;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class CommentBean {
+public class CommentBean implements Serializable {
+
+    /**
+     * The unique identifier for this bean.
+     */
+    private long myKey;
 
     /**
      * Reference to the annotation object.
      */
     private Annotation myAnnotation;
-
-    /**
-     * Stores the state of the transaction when this bean was added. This
-     * state in only set during the construction of an instance of this class.
-     */
-    private boolean myInTransaction;
-
-    /**
-     * The accession number.
-     */
-    private String myAc;
 
     /**
      * The CV topic.
@@ -43,30 +40,23 @@ public class CommentBean {
     private String myAnnotatedText;
 
     /**
-     * Instantiate an object of this class from an Annotation object. The
-     * bean is not involved in a transaction.
+     * Instantiate an object of this class from an Annotation object.
      *
      * @param annot the <code>Annotation</code> object to construct an
      * instance of this class.
      */
     public CommentBean(Annotation annot) {
-        this(annot, false);
+        myKey = IntactUserImpl.getId();
+        myAnnotation = annot;
+        myTopic = annot.getCvTopic().getShortLabel();
+        myAnnotatedText = annot.getAnnotationText();
     }
 
     /**
-     * Instantiate an object of this class from an Annotation object with
-     * the transaction state when the bean was added.
-     *
-     * @param annot the <code>Annotation</code> object to construct an
-     * instance of this class.
-     * @param state the state of the transaction when bean was added.
+     * Return the key for this object.
      */
-    public CommentBean(Annotation annot, boolean state) {
-        myAnnotation = annot;
-        myInTransaction = state;
-        myAc = annot.getAc();
-        myTopic = annot.getCvTopic().getShortLabel();
-        myAnnotatedText = annot.getAnnotationText();
+    public long getKey() {
+        return myKey;
     }
 
     /**
@@ -74,20 +64,6 @@ public class CommentBean {
      */
     public Annotation getAnnotation() {
         return myAnnotation;
-    }
-
-    /**
-     * Returns true if this object is in a transaction.
-     */
-    public boolean inTransaction() {
-        return myInTransaction;
-    }
-
-    /**
-     * Returns the accession number.
-     */
-    public String getAc() {
-        return myAc;
     }
 
     /**
@@ -126,9 +102,8 @@ public class CommentBean {
 
     /**
      * Compares <code>obj</code> with this object according to
-     * Java's equals() contract. Only returns <tt>true</tt> if the accesssion
-     * numbers match for a similar object type.
-     *
+     * Java's equals() contract. Only returns <tt>true</tt> if the internal
+     * keys for both objects match.
      *
      * @param obj the object to compare.
      */
@@ -138,10 +113,8 @@ public class CommentBean {
             return true;
         }
         if ((obj != null) && (obj.getClass() == getClass())) {
-            // Can safely cast it.
-            CommentBean other = (CommentBean) obj;
-            // Accession numbers must match.
-            return myAc.equals(other.getAc());
+            // Same class; can safely cast it.
+            return myKey == ((CommentBean) obj).getKey();
         }
         return false;
     }
