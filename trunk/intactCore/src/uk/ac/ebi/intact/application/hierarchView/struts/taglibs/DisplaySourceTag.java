@@ -10,6 +10,7 @@ import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserIF;
 import uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.LabelValueBean;
+import uk.ac.ebi.intact.business.IntactException;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
@@ -63,7 +64,17 @@ public class DisplaySourceTag extends TagSupport {
                     logger.info ("Display highlight source items for AC = " + AC +
                                  " SourceClass = " + method_class);
 
-                    Collection urls = source.getUrl(AC, session);
+                    Collection urls = null;
+
+                    try {
+                        urls = source.getSourceUrls(AC, session);
+                    } catch (IntactException ie) {
+                        String msg = "ERROR<br>The hierarchView system is not properly configured. Please warn your administrator.";
+                        pageContext.getOut().write (msg);
+                        return EVAL_PAGE;
+                    }
+
+
                     Iterator iterator = urls.iterator();
                     int size = urls.size();
 

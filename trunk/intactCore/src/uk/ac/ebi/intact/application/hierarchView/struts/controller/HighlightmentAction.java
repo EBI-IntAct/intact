@@ -76,10 +76,10 @@ public final class HighlightmentAction extends IntactBaseAction {
             // get the class method name to create an instance
             String source = user.getMethodClass();
 
-            // update the option (given in this request) of the source in the session
+            // save options (given in this request) of the source in the user's session
             HighlightmentSource highlightmentSource = HighlightmentSource.getHighlightmentSource(source);
             if (null != highlightmentSource) {
-                highlightmentSource.parseRequest (request, session);
+                highlightmentSource.saveOptions (request, session);
             } else {
                 addError ("error.HighlightmentSource.unknown", source);
             }
