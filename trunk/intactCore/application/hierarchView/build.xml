@@ -286,6 +286,7 @@
 				<include name="struts.jar"/>
 				<include name="log4j-1.2.5.jar"/>
                 <include name="jdbc_oracle8i_thin_8.1.6.2.0.jar"/>
+				<include name="commons-logging.jar"/>
 			</lib>
   			<classes dir="${dest.dir}"/>
 		</war>
