@@ -58,11 +58,6 @@ public class RangeBean extends AbstractEditKeyBean {
     private boolean myLink;
 
     /**
-     * Undetermined or not.
-     */
-    private boolean myUndetermined;
-
-    /**
      * Handler to the fuzzy type converter.
      */
     private CvFuzzyType.Converter myFTConverter = CvFuzzyType.Converter.getInstance();
@@ -111,10 +106,12 @@ public class RangeBean extends AbstractEditKeyBean {
      * @param user the user to get the CvFuzzyTypes.
      * @param fromRange the from range as a string
      * @param toRange the to range as a string
+     * @param linked true if the bean is linked.
+     * <code>toRange</code> are ignored.
      * @throws SearchException for errors in retrieving CvFuzzyTypes
      */
-    public RangeBean(EditUserI user, String fromRange, String toRange)
-            throws SearchException {
+    public RangeBean(EditUserI user, String fromRange, String toRange,
+                     boolean linked) throws SearchException {
         // The match result for from range
         Matcher fromMatcher = ourRangePattern.matcher(fromRange);
         if (!fromMatcher.matches()) {
@@ -134,10 +131,15 @@ public class RangeBean extends AbstractEditKeyBean {
         // Construct a range and set fuzzy types.
         Range range = new Range(user.getInstitution(), fromRanges[0], fromRanges[1],
                 toRanges[0], toRanges[1], null);
+        range.setLink(linked);
 
         // Set the from and to fuzzy types.
         range.setFromCvFuzzyType(getFuzzyType(user, fromFuzzyType));
         range.setToCvFuzzyType(getFuzzyType(user, toFuzzyType));
+
+        // This needs to be done after setting the fuzzy types.
+        range.setUndetermined();
+        // Initialize the bean with the new range.
         initialize(range);
     }
 
@@ -152,6 +154,10 @@ public class RangeBean extends AbstractEditKeyBean {
         return myFromRange;
     }
 
+    /**
+     * Sets the from range only if the undetermined is false.
+     * @param fromRange the from range as a string
+     */
     public void setFromRange(String fromRange) {
         myFromRange = fromRange.trim();
     }
@@ -165,6 +171,10 @@ public class RangeBean extends AbstractEditKeyBean {
         return myToRange;
     }
 
+    /**
+     * Sets the to range only if the undetermined is false.
+     * @param toRange the from range as a string
+     */
     public void setToRange(String toRange) {
         myToRange = toRange.trim();
     }
@@ -174,8 +184,8 @@ public class RangeBean extends AbstractEditKeyBean {
      *
      * @return the link as a string (true or false).
      */
-    public String getLink() {
-        return Boolean.toString(myLink);
+    public boolean getLink() {
+        return myLink;
     }
 
     /**
@@ -183,26 +193,8 @@ public class RangeBean extends AbstractEditKeyBean {
      *
      * @param link the link to set as a string object.
      */
-    public void setLink(String link) {
-        myLink = Boolean.valueOf(link).booleanValue();
-    }
-
-    /**
-     * Returns the undetermined as a string.
-     *
-     * @return the undetermined as a string (true or false).
-     */
-    public String getUndetermined() {
-        return Boolean.toString(myUndetermined);
-    }
-
-    /**
-     * Sets the undetermined.
-     *
-     * @param undetermined the undetermined to set as a string object.
-     */
-    public void setUndetermined(String undetermined) {
-        myUndetermined = Boolean.valueOf(undetermined).booleanValue();
+    public void setLink(boolean link) {
+        myLink = link;
     }
 
     // Override Object's toString() method to display the range.
@@ -215,22 +207,12 @@ public class RangeBean extends AbstractEditKeyBean {
      * Returns true if given bean is equivalent to the current bean.
      *
      * @param rb the bean to compare.
-     * @return true if ranges, link and undetermined are equivalent
-     *         to corresponding value in <code>rb</code>; false is returned for all
-     *         other instances.
+     * @return true if ranges and link are equivalent to corresponding value in
+     *  <code>rb</code>; false is returned for all other instances.
      */
     public boolean isEquivalent(RangeBean rb) {
-        // Check ranges.
-        if (!rb.getFromRange().equals(getFromRange())
-                || !rb.getToRange().equals(getToRange())) {
-            return false;
-        }
-
-        // Check link and undetermined types.
-        if ((myLink != rb.myLink) || (myUndetermined != rb.myUndetermined)) {
-            return false;
-        }
-        return true;
+        return  rb.getFromRange().equals(getFromRange()) && rb.getToRange().equals(
+                getToRange()) && myLink == rb.myLink;
     }
 
     /**
@@ -409,7 +391,7 @@ public class RangeBean extends AbstractEditKeyBean {
         myRange.setToCvFuzzyType(getFuzzyType(user, type));
 
         myRange.setLink(myLink);
-        myRange.setUndetermined(myUndetermined);
+        myRange.setUndetermined();
 
         return myRange;
     }
@@ -431,7 +413,8 @@ public class RangeBean extends AbstractEditKeyBean {
         if (range.getFromCvFuzzyType() != null) {
             fromType = range.getFromCvFuzzyType().getShortLabel();
         }
-        setFromRange(fromType, range);
+        myFromRange = Range.getRange(fromType, range.getFromIntervalStart(),
+                range.getFromIntervalEnd());
 
         // Saves the to type as a short label
         String toType = "";
@@ -439,38 +422,10 @@ public class RangeBean extends AbstractEditKeyBean {
         if (range.getToCvFuzzyType() != null) {
             toType = range.getToCvFuzzyType().getShortLabel();
         }
-        setToRange(toType, range);
+        myToRange = Range.getRange(toType, range.getToIntervalStart(),
+                range.getToIntervalEnd());
 
         myLink = range.isLinked();
-        myUndetermined = range.isUndertermined();
-    }
-
-    /**
-     * Sets the bean's from range
-     *
-     * @param range the Range to get the from range.
-     */
-    private void setFromRange(String type, Range range) {
-        // The value for display (fuzzy).
-        String dispLabel = myFTConverter.getDisplayValue(type);
-
-        // Single type?
-        if (isSingleType(type)) {
-            myFromRange = dispLabel;
-        }
-        // Range type?
-        else if (type.equals(CvFuzzyType.RANGE)) {
-            myFromRange = range.getFromIntervalStart() + dispLabel
-                    + range.getFromIntervalEnd();
-        }
-        // No fuzzy type?
-        else if (type.length() == 0) {
-            myFromRange = dispLabel + range.getFromIntervalStart();
-        }
-        else {
-            // >, <, c or n
-            myFromRange = dispLabel + range.getFromIntervalStart();
-        }
     }
 
     /**
@@ -535,7 +490,7 @@ public class RangeBean extends AbstractEditKeyBean {
         int[] ranges = new int[2];
 
         // No further parsing for single character types.
-        if (isSingleType(fuzzyType)) {
+        if (CvFuzzyType.isSingleType(fuzzyType)) {
             return ranges;
         }
         if (fuzzyType.equals(CvFuzzyType.RANGE)) {
@@ -564,33 +519,6 @@ public class RangeBean extends AbstractEditKeyBean {
         return ranges;
     }
 
-    /**
-     * Sets the bean's to range
-     *
-     * @param range the Range to get the to range.
-     */
-    private void setToRange(String type, Range range) {
-        // The value for display (fuzzy).
-        String dispLabel = myFTConverter.getDisplayValue(type);
-
-        // Single type?
-        if (isSingleType(type)) {
-            myToRange = dispLabel;
-        }
-        // Range type?
-        else if (type.equals(CvFuzzyType.RANGE)) {
-            myToRange = range.getToIntervalStart() + dispLabel + range.getToIntervalEnd();
-        }
-        // No fuzzy type?
-        else if (type.length() == 0) {
-            myToRange = dispLabel + range.getToIntervalStart();
-        }
-        else {
-            // >, <, c or n
-            myToRange = dispLabel + range.getToIntervalEnd();
-        }
-    }
-
     private CvFuzzyType getFuzzyType(EditUserI user, String type) throws SearchException {
         // Set the from and to fuzzy types.
         CvFuzzyType fuzzyType = null;
@@ -598,16 +526,5 @@ public class RangeBean extends AbstractEditKeyBean {
             fuzzyType = (CvFuzzyType) user.getObjectByLabel(CvFuzzyType.class, type);
         }
         return fuzzyType;
-    }
-
-    /**
-     * @param type the CvFuzzy label to compare
-     * @return true if <code>type</code> is of Untermined or C or N terminal types.
-     * False is returned for all other instances.
-     */
-    private boolean isSingleType(String type) {
-        return type.equals(CvFuzzyType.UNDETERMINED)
-                || type.equals(CvFuzzyType.C_TERMINAL)
-                || type.equals(CvFuzzyType.N_TERMINAL);
     }
 }

@@ -53,8 +53,9 @@ public class UndeterminedCloneAction extends AbstractEditorAction {
         // The undetermined range.
         RangeBean rb = dfb.getDefinedRange();
 
-        // Add a copy of the new range
-        view.addRange(new RangeBean(user, rb.getFromRange(), rb.getToRange()));
+        // Add a copy of the new range (as rb is shared among all users)
+        view.addRange(new RangeBean(user, rb.getFromRange(), rb.getToRange(),
+                rb.getLink()));
 
         // Update the form for the display.
         view.copyPropertiesTo((EditorActionForm) form);

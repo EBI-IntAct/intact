@@ -51,7 +51,8 @@ public class FeatureNewRangeAction extends AbstractEditorAction {
             return mapping.getInputForward();
         }
         // Add a copy of the new range
-        view.addRange(new RangeBean(user, rbnew.getFromRange(), rbnew.getToRange()));
+        view.addRange(new RangeBean(user, rbnew.getFromRange(), rbnew.getToRange(),
+                rbnew.getLink()));
 
         // Back to the input form.
         return mapping.getInputForward();
