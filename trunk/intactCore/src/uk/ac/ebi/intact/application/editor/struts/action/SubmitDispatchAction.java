@@ -8,8 +8,6 @@ package uk.ac.ebi.intact.application.editor.struts.action;
 
 import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
-import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
@@ -21,7 +19,6 @@ import uk.ac.ebi.intact.model.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -216,22 +213,14 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
         String formlabel = (String) dynaform.get("shortLabel");
 
         // Validate the short label.
-        if (user.duplicateShortLabel(formlabel)) {
-            // Suggested label.
-            String newlabel = user.getUniqueShortLabel(formlabel);
-            view.setShortLabel(newlabel);
-
+        if (user.shortLabelExists(formlabel)) {
             // Found more than one entry with the same short label.
+            String link = "<a href=\"javascript:show('" + user.getSelectedTopic()
+                    + "', '" + formlabel + "')\">here</a>";
             ActionErrors errors = new ActionErrors();
             errors.add("shortLabel",
-                    new ActionError("error.cvinfo.label", formlabel, newlabel));
+                    new ActionError("error.cvinfo.label", formlabel, link));
             saveErrors(request, errors);
-
-            ActionMessages messages = new ActionMessages();
-            messages.add(ActionMessages.GLOBAL_MESSAGE,
-                    new ActionMessage("message.existing.labels",
-                            getExistingLabels(user)));
-            saveMessages(request, messages);
             // Display the errors in the input page.
             return mapping.getInputForward();
         }
@@ -263,9 +252,8 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
             LOGGER.info(ie1);
             // Error with updating.
             ActionErrors errors = new ActionErrors();
-            errors.add(AbstractEditorAction.EDITOR_ERROR,
-                    new ActionError("error.update",
-                            ie1.getRootCause().getMessage()));
+            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("error.update",
+                    ie1.getRootCause().getMessage()));
             saveErrors(request, errors);
             return mapping.findForward(FAILURE);
         }
@@ -290,45 +278,5 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
         // is used by subclasses (they need to distinguish between a success or
         // a failure such as duplicate short labels).
         return mapping.findForward(SUCCESS);
-    }
-
-    /**
-     * Returns a list of existing short labels.
-     * @param user to search the database.
-     * @return a String object consisting of short labels of current object type
-     * minus the short label of the current edit object.
-     * @throws SearchException for errors in search the database for short labels.
-     */
-    private String getExistingLabels(EditUserI user) throws SearchException {
-        // The current view topic.
-        String topic = user.getSelectedTopic();
-
-        // The buffer to construct existing labels.
-        StringBuffer sb = new StringBuffer();
-
-        // The counter to count line length.
-        int lineLength = 0;
-        // Flag to indicate processing of the first item.
-        boolean first = true;
-        // Search the database.
-        for (Iterator iter = user.getExistingShortLabels().iterator();
-             iter.hasNext();) {
-            String label = (String) iter.next();
-            if (first) {
-                first = false;
-            }
-            else {
-                sb.append(", ");
-            }
-            sb.append("<a href=\"" + "javascript:show('" + topic + "', '"
-                    + label + "')\"" + ">" + label + "</a>");
-            lineLength += label.length();
-            if (lineLength > 80) {
-                sb.append("<br/>");
-                first = true;
-                lineLength = label.length();
-            }
-        }
-        return sb.toString();
     }
 }
