@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+     ANT build configuration file for intact root module.
+     Author: Henning Hermjakob, hhe@ebi.ac.uk
+     Version: $Id$
+-->
+
+<project name="intact" basedir="." default="war">
+
+    <property name="project.title" value="search"/>
+    <property name="project.version" value="1.0"/>
+
+    <property name="dist.dir" value="dist"/>
+    <property name="war.file" value="intact.war"/>
+
+    <!-- This project specific paths. -->
+
+    <!-- =================================================================== -->
+
+    <!-- Remove 'dest' and docs directories for clean build -->
+    <target name="clean" description="Prepare for clean build">
+        <!-- Delete directories first -->
+        <delete dir="${dest.dir}"/>
+        <delete dir="${docs.dir}"/>
+    </target>
+
+    <!-- =================================================================== -->
+    <!-- Builds a war file. -->
+    <target name="war" description="Builds a war file">
+
+
+        <!-- Create the distribution dir if it doesn't exist. -->
+        <mkdir dir="${dist.dir}"/>
+
+        <!-- Delete the war file or else it will keep the old one -->
+        <delete file="${dist.dir}/${war.file}" quiet="true"/>
+
+        <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
+            <fileset dir="${basedir}">
+                <include name="*.jsp"/>
+                <include name="*.jpg"/>
+                <include name="*.css"/>
+                <include name="*.xsl"/>
+                <include name="*.html"/>
+            </fileset>
+
+        </war>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Starts the Tomcat server. -->
+
+    <target name="start-tomcat">
+        <ant dir=".." inheritAll="false" target="start-tomcat"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Stops the Tomcat server. -->
+
+    <target name="stop-tomcat">
+        <ant dir=".." inheritAll="false" target="stop-tomcat"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Restarts the Tomcat server. -->
+
+    <target name="restart-tomcat">
+        <ant dir=".." inheritAll="false" target="restart-tomcat"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Displays the status of Tomcat server. -->
+
+    <target name="status-tomcat">
+        <ant dir=".." inheritAll="false" target="status-tomcat"/>
+    </target>
+
+</project>
