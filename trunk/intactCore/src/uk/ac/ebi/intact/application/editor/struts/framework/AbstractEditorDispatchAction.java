@@ -122,7 +122,7 @@ public abstract class AbstractEditorDispatchAction extends LookupDispatchAction
      *
      * @see EditorService#getAnchor(java.util.Map, HttpServletRequest, String)
      */
-    protected void setAnchor(HttpServletRequest request, EditorActionForm form) {
+    protected void setAnchor(HttpServletRequest request, EditorFormI form) {
         // The map containing anchors.
         Map map = (Map) getApplicationObject(EditorConstants.ANCHOR_MAP);
 

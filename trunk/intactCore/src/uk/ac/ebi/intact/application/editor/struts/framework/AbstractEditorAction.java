@@ -176,6 +176,18 @@ public abstract class AbstractEditorAction extends Action implements ForwardCons
     }
 
     /**
+     * Returns true if the property for given name is empty.
+     * @param property the property to check.
+     * @return true if <code>property</code> is null or empty.
+     */
+    protected boolean isPropertyNullOrEmpty(String property) {
+        if (property == null) {
+            return true;
+        }
+        return property.length() == 0;
+    }
+
+    /**
      * Returns true if the property for given name is empty. This assumes the
      * property value for given name is a String object.
      * @param form the form to check.
@@ -328,7 +340,7 @@ public abstract class AbstractEditorAction extends Action implements ForwardCons
      *
      * @see EditorService#getAnchor(java.util.Map, HttpServletRequest, String)
      */
-    protected void setAnchor(HttpServletRequest request, EditorActionForm form) {
+    protected void setAnchor(HttpServletRequest request, EditorFormI form) {
         // The map containing anchors.
         Map map = (Map) getApplicationObject(EditorConstants.ANCHOR_MAP);
 

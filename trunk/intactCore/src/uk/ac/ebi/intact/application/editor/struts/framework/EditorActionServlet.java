@@ -65,80 +65,8 @@ public class EditorActionServlet extends ActionServlet {
         ResourceBundle msgres = ResourceBundle.getBundle(
                 "uk.ac.ebi.intact.application.editor.MessageResources");
 
-        // Set the maps for all the users. These are read only maps.
-        ctx.setAttribute(EditorConstants.ACTION_MAP, getActionMap(msgres));
+        // Set the map for all the users (read only map).
         ctx.setAttribute(EditorConstants.ANCHOR_MAP, getAnchorMap(msgres));
-    }
-
-    private Map getActionMap(ResourceBundle rb) {
-        // The map to return.
-        Map map = new HashMap();
-
-        // Actions related to the buttons at the bottom of edit page. Common
-        // to all the editors. First three are all directed to
-        map.put(rb.getString("button.submit"), "submit");
-        map.put(rb.getString("button.save.continue"), "submit");
-        map.put(rb.getString("button.clone"), "submit");
-
-        map.put(rb.getString("button.cancel"), "cancel");
-        map.put(rb.getString("button.delete"), "delete");
-
-        // Actions related to annotaions. Common to all the editors.
-        map.put(rb.getString("annotations.button.add"), "submit");
-        map.put(rb.getString("annotations.button.edit"), "annotation");
-        map.put(rb.getString("annotations.button.save"), "annotation");
-        map.put(rb.getString("annotations.button.delete"), "annotation");
-
-        // Actions related to xrefs. Common to all the editors.
-        map.put(rb.getString("xrefs.button.add"), "submit");
-        map.put(rb.getString("xrefs.button.edit"), "xref");
-        map.put(rb.getString("xrefs.button.save"), "xref");
-        map.put(rb.getString("xrefs.button.delete"), "xref");
-
-        // Actions related Interaction.
-        map.put(rb.getString("int.exp.button.del"), "int.exp.del");
-        map.put(rb.getString("int.exp.button.add"), "int.exp.hold");
-        map.put(rb.getString("int.exp.button.hide"), "int.exp.hold");
-        map.put(rb.getString("int.exp.button.recent"), "int.exp.search");
-        map.put(rb.getString("int.exp.button.search"), "int.exp.search");
-
-        // Actions related to edit/save/delete of proteins.
-        map.put(rb.getString("int.proteins.button.edit"), "int.prot");
-        map.put(rb.getString("int.proteins.button.save"), "int.prot");
-        map.put(rb.getString("int.proteins.button.delete"), "int.prot");
-
-        // Related to add/edit feature.
-        map.put(rb.getString("int.proteins.button.feature.add"), "int.feature");
-        map.put(rb.getString("int.proteins.button.feature.edit"), "int.feature");
-
-        // Feature delete/link/unlink.
-        map.put(rb.getString("int.proteins.button.feature.delete"), "int.feature.link");
-        map.put(rb.getString("int.proteins.button.feature.link"), "int.feature.link");
-        map.put(rb.getString("int.proteins.button.feature.unlink"), "int.feature.link");
-
-        // Actions related protein search.
-        map.put(rb.getString("int.proteins.button.search"), "int.prot.search");
-
-        // Actions related to Experiment.
-        map.put(rb.getString("exp.int.button.edit"), "interaction");
-        map.put(rb.getString("exp.int.button.del"), "interaction");
-        map.put(rb.getString("exp.int.button.add"), "exp.int.hold");
-        map.put(rb.getString("exp.int.button.hide"), "exp.int.hold");
-        map.put(rb.getString("exp.int.button.recent"), "exp.int.search");
-        map.put(rb.getString("exp.int.button.search"),"exp.int.search");
-
-        // Actions related to BioSource.
-        map.put(rb.getString("biosource.button.taxid"), "taxid");
-
-        // Actions related to Feature.
-        map.put(rb.getString("feature.mutation.toggle.button"), "feature.mutation");
-        map.put(rb.getString("feature.undetermined.clone.button"), "feature.undetermined.clone");
-        map.put(rb.getString("feature.range.button.add"), "feature.range.new");
-        map.put(rb.getString("feature.range.button.edit"), "feature.range");
-        map.put(rb.getString("feature.range.button.save"), "feature.range");
-        map.put(rb.getString("feature.range.button.delete"), "feature.range");
-
-        return map;
     }
 
     private Map getAnchorMap(ResourceBundle rb) {

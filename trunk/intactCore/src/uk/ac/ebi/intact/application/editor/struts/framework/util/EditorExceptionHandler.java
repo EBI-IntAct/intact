@@ -60,7 +60,7 @@ public class EditorExceptionHandler extends ExceptionHandler {
         else if (ex instanceof BaseException) {
             System.out.println("Encountered a base exception");
             // Logs the error.
-            myLogger.info(ex);
+            myLogger.error("", ex);
             // Editor specific exception.
             BaseException baseEx = (BaseException) ex;
             error = new ActionError(baseEx.getMessageKey(), baseEx.getMessage());
