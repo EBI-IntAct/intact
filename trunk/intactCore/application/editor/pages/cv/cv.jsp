@@ -16,7 +16,7 @@
 
 <jsp:include page="../js.jsp" />
 
-<html:form action="/cvDispatch" focus="shortLabel">
+<html:form action="/cvDispatch">
 
     <!-- Displays error messages for the short label -->
 <%--    <logic:messagesPresent>--%>
