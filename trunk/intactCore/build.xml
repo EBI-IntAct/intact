@@ -408,17 +408,6 @@
         </javadoc>
     </target>
 
-    <target name="demo" depends="compile">
-        <pathconvert targetos="unix"
-                 property="class.path.name"
-                 refid="project.class.path"
-        />
-        <echo message="${class.path.name}"/>
-        <java classname="uk.ac.ebi.intact.model.IntactCoreApp"
-            dir="." failonerror="true" >
-            <classpath refid="project.class.path"/>
-        </java>
-    </target>
 
     <!-- Build entire project -->
     <target name="project" depends="javadoc,demo"/>
