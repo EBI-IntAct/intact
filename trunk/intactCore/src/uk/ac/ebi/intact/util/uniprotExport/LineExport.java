@@ -98,7 +98,7 @@ public class LineExport {
         }
 
         public void addKeywords( Collection keywords ) {
-            if( keywords == null ) {
+            if ( keywords == null ) {
                 throw new IllegalArgumentException( "Keywords must not be null" );
             }
             this.keywords = keywords;
@@ -109,7 +109,7 @@ public class LineExport {
             StringBuffer sb = new StringBuffer( 128 );
 
             sb.append( "ExperimentStatus{ keywords= " );
-            if( keywords != null ) {
+            if ( keywords != null ) {
                 for ( Iterator iterator = keywords.iterator(); iterator.hasNext(); ) {
                     String kw = (String) iterator.next();
                     sb.append( kw ).append( ' ' );
@@ -239,7 +239,7 @@ public class LineExport {
 
         public void run() {
             System.out.println( "JDBCShutdownHook thread started" );
-            if( helper != null ) {
+            if ( helper != null ) {
                 try {
                     helper.closeStore();
                     System.out.println( "Connexion to the database closed." );
@@ -275,7 +275,7 @@ public class LineExport {
         }
 
         public void run() {
-            if( outputFileWriter != null ) {
+            if ( outputFileWriter != null ) {
                 try {
                     outputFileWriter.close();
                 } catch ( IOException e ) {
@@ -284,7 +284,7 @@ public class LineExport {
                 }
             }
 
-            if( outputFileWriter != null ) {
+            if ( outputFileWriter != null ) {
                 try {
                     outputFileWriter.close();
                 } catch ( IOException e ) {
@@ -375,7 +375,7 @@ public class LineExport {
                    DatabaseContentException {
 
         CvObject cv = (CvObject) helper.getObjectByLabel( clazz, shortlabel );
-        if( cv == null ) {
+        if ( cv == null ) {
             StringBuffer sb = new StringBuffer( 128 );
             sb.append( shortlabel );
             sb.append( ' ' );
@@ -401,7 +401,7 @@ public class LineExport {
     protected void setDebugFileEnabled( boolean enabled ) {
         debugFileEnabled = enabled;
 
-        if( enabled ) {
+        if ( enabled ) {
             // create the output file if the user requested it.
             String filename = "export2uniprot_verboseOutput_" + TIME + ".txt";
             File file = new File( filename );
@@ -436,8 +436,8 @@ public class LineExport {
         for ( Iterator iterator = xrefs.iterator(); iterator.hasNext() && !found; ) {
             Xref xref = (Xref) iterator.next();
 
-            if( uniprotDatabase.equals( xref.getCvDatabase() ) &&
-                identityXrefQualifier.equals( xref.getCvXrefQualifier() ) ) {
+            if ( uniprotDatabase.equals( xref.getCvDatabase() ) &&
+                 identityXrefQualifier.equals( xref.getCvXrefQualifier() ) ) {
                 uniprot = xref.getPrimaryId();
                 found = true;
             }
@@ -461,8 +461,8 @@ public class LineExport {
         for ( Iterator iterator = xrefs.iterator(); iterator.hasNext() && !found; ) {
             Xref xref = (Xref) iterator.next();
 
-            if( intactDatabase.equals( xref.getCvDatabase() ) &&
-                isoformParentQualifier.equals( xref.getCvXrefQualifier() ) ) {
+            if ( intactDatabase.equals( xref.getCvDatabase() ) &&
+                 isoformParentQualifier.equals( xref.getCvXrefQualifier() ) ) {
                 ac = xref.getPrimaryId();
                 found = true;
             }
@@ -472,18 +472,66 @@ public class LineExport {
     }
 
     /**
+     * Fetches the master protein of a splice variant.
+     * <br>
+     * Nothing is returned if the protein is not a splice variant or if the splice variant doesn't have
+     * a valid Xref to the IntAct database.
+     *
+     * @param protein the protein for which we want a splice variant
+     * @param helper  the data source
+     * @return a Protein or null is nothing is found or an error occurs.
+     */
+    protected Protein getMasterProtein( Protein protein, IntactHelper helper ) {
+
+        Protein master = null;
+
+        String ac = getMasterAc( protein );
+
+        if ( ac != null ) {
+            // search for that Protein
+            Collection proteins = null;
+            try {
+                proteins = helper.search( Protein.class, "ac", ac );
+            } catch ( IntactException e ) {
+                e.printStackTrace();
+            }
+
+            if ( proteins != null ) {
+                if ( !proteins.isEmpty() ) {
+                    master = (Protein) proteins.iterator().next();
+                } else {
+                    System.err.println( "Could not find the master protein (AC: " + ac +
+                                        " ) of the splice variant AC: " + protein.getAc() );
+                }
+            } else {
+                System.err.println( "An error occured when searching the IntAct database for Protein having the AC: " + ac );
+            }
+        } else {
+            System.err.println( "Could not find a master protein AC in the Xrefs of the protein: " +
+                                protein.getAc() + ", " + protein.getShortLabel() );
+        }
+
+        return master;
+    }
+
+    /**
      * Get all interaction related to the given Protein.
      *
      * @param protein the protein of which we want the interactions.
      * @return a Collection if Interaction.
      */
-    protected final Collection getInteractions( final Protein protein ) {
+    protected final List getInteractions( final Protein protein ) {
         Collection components = protein.getActiveInstances();
-        Set interactions = new HashSet( components.size() );
+        List interactions = new ArrayList( components.size() );
 
         for ( Iterator iterator = components.iterator(); iterator.hasNext(); ) {
             Component component = (Component) iterator.next();
-            interactions.add( component.getInteraction() );
+
+            Interaction interaction = component.getInteraction();
+
+            if ( !interactions.contains( interaction ) ) {
+                interactions.add( interaction );
+            }
         }
 
         return interactions;
@@ -500,11 +548,11 @@ public class LineExport {
         boolean isBinaryInteraction = false;
         // if that interaction has not exactly 2 interactors, it is not taken into account
 
-        if( interaction.getComponents() != null ) {
+        if ( interaction.getComponents() != null ) {
 
             int componentCount = interaction.getComponents().size();
 
-            if( componentCount == 2 ) {
+            if ( componentCount == 2 ) {
 
                 // check that the stochiometry is 1 for each component
                 Iterator iterator1 = interaction.getComponents().iterator();
@@ -515,7 +563,7 @@ public class LineExport {
                 Component component2 = (Component) iterator1.next();
                 float stochio2 = component2.getStoichiometry();
 
-                if( stochio1 == 1 && stochio2 == 1 ) {
+                if ( stochio1 == 1 && stochio2 == 1 ) {
 
                     isBinaryInteraction = true;
 
@@ -525,12 +573,12 @@ public class LineExport {
                     isBinaryInteraction = false;
                 }
 
-            } else if( componentCount == 1 ) {
+            } else if ( componentCount == 1 ) {
 
                 // check that the stochiometry is 2
                 Iterator iterator1 = interaction.getComponents().iterator();
                 Component component1 = (Component) iterator1.next();
-                if( component1.getStoichiometry() == 2 ) {
+                if ( component1.getStoichiometry() == 2 ) {
 
                     isBinaryInteraction = true;
 
@@ -556,11 +604,11 @@ public class LineExport {
      */
     protected final void log( String message ) {
 
-        if( debugEnabled ) {
+        if ( debugEnabled ) {
             System.out.println( message );
         }
 
-        if( debugFileEnabled ) {
+        if ( debugFileEnabled ) {
             try {
                 outputBufferedWriter.write( message );
                 outputBufferedWriter.write( NEW_LINE );
@@ -599,10 +647,10 @@ public class LineExport {
         CvInteractionStatus status = null;
 
         // cache the CvInteraction status
-        if( null != cvInteraction ) {
+        if ( null != cvInteraction ) {
 
             CvInteractionStatus cache = (CvInteractionStatus) cvInteractionExportStatusCache.get( cvInteraction.getAc() );
-            if( null != cache ) {
+            if ( null != cache ) {
 
 //                log( logPrefix + "\t\t\t\t CvInteraction: Status already processed, retreived from cache." );
                 status = cache;
@@ -619,11 +667,11 @@ public class LineExport {
                 Annotation annotation = null;
                 for ( Iterator iterator = annotations.iterator(); iterator.hasNext() && !multipleAnnotationFound; ) {
                     Annotation _annotation = (Annotation) iterator.next();
-                    if( uniprotDR_Export.equals( _annotation.getCvTopic() ) ) {
+                    if ( uniprotDR_Export.equals( _annotation.getCvTopic() ) ) {
 
                         log( logPrefix + "\t\t\t\t Found uniprot-dr-export annotation: " + _annotation );
 
-                        if( true == found ) {
+                        if ( true == found ) {
                             multipleAnnotationFound = true;
                             System.err.println( "There are multiple annotation having Topic:" + UNIPROT_DR_EXPORT +
                                                 " in CvInteraction: " + cvInteraction.getShortLabel() +
@@ -636,26 +684,26 @@ public class LineExport {
                 }
 
 
-                if( multipleAnnotationFound ) {
+                if ( multipleAnnotationFound ) {
 
                     status = new CvInteractionStatus( CvInteractionStatus.DO_NOT_EXPORT );
                     log( logPrefix + "\t\t\t multiple annotation found: do not export " );
 
                 } else {
 
-                    if( true == found ) {
+                    if ( true == found ) {
 
                         String text = annotation.getAnnotationText();
-                        if( null != text ) {
+                        if ( null != text ) {
                             text = text.toLowerCase().trim();
                         }
 
-                        if( METHOD_EXPORT_KEYWORK_EXPORT.equals( annotation.getAnnotationText() ) ) {
+                        if ( METHOD_EXPORT_KEYWORK_EXPORT.equals( annotation.getAnnotationText() ) ) {
 
                             status = new CvInteractionStatus( CvInteractionStatus.EXPORT );
                             log( logPrefix + "\t\t\t " + METHOD_EXPORT_KEYWORK_EXPORT + " found: export " );
 
-                        } else if( METHOD_EXPORT_KEYWORK_DO_NOT_EXPORT.equals( annotation.getAnnotationText() ) ) {
+                        } else if ( METHOD_EXPORT_KEYWORK_DO_NOT_EXPORT.equals( annotation.getAnnotationText() ) ) {
 
                             status = new CvInteractionStatus( CvInteractionStatus.DO_NOT_EXPORT );
                             log( logPrefix + "\t\t\t " + METHOD_EXPORT_KEYWORK_DO_NOT_EXPORT + " found: do not export " );
@@ -669,13 +717,13 @@ public class LineExport {
                                 Integer value = new Integer( text );
                                 int i = value.intValue();
 
-                                if( i >= 2 ) {
+                                if ( i >= 2 ) {
 
                                     // value is >= 2
                                     status = new CvInteractionStatus( CvInteractionStatus.CONDITIONAL_EXPORT, i );
                                     log( logPrefix + "\t\t\t " + i + " found: conditional export " );
 
-                                } else if( i == 1 ) {
+                                } else if ( i == 1 ) {
 
                                     String err = cvInteraction.getShortLabel() + " having annotation (" + UNIPROT_DR_EXPORT +
                                                  ") has an annotationText like <integer value>. Value was: " + i +
@@ -755,7 +803,7 @@ public class LineExport {
 
         // cache the cvInteraction
         ExperimentStatus cache = (ExperimentStatus) experimentExportStatusCache.get( experiment.getAc() );
-        if( null != cache ) {
+        if ( null != cache ) {
 
 //            log( "\t\t\t\t Experiment: Status already processed, retreived from cache." );
             status = cache;
@@ -774,26 +822,26 @@ public class LineExport {
 
             for ( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
                 Annotation _annotation = (Annotation) iterator.next();
-                if( uniprotDR_Export.equals( _annotation.getCvTopic() ) ) {
+                if ( uniprotDR_Export.equals( _annotation.getCvTopic() ) ) {
 
                     log( logPrefix + "\t\t\t\t " + _annotation );
 
                     String text = _annotation.getAnnotationText();
-                    if( text != null ) {
+                    if ( text != null ) {
                         text = text.trim().toLowerCase();
                     }
 
-                    if( EXPERIMENT_EXPORT_KEYWORK_EXPORT.equals( text ) ) {
+                    if ( EXPERIMENT_EXPORT_KEYWORK_EXPORT.equals( text ) ) {
                         yesFound = true;
                         log( logPrefix + "\t\t\t\t '" + EXPERIMENT_EXPORT_KEYWORK_EXPORT + "' found" );
 
                     } else {
-                        if( EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT.equals( text ) ) {
+                        if ( EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT.equals( text ) ) {
                             noFound = true;
                             log( logPrefix + "\t\t\t\t '" + EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT + "' found" );
 
                         } else {
-                            if( keywords == null ) {
+                            if ( keywords == null ) {
                                 keywords = new ArrayList( 2 );
                             }
                             keywordFound = true;
@@ -806,11 +854,11 @@ public class LineExport {
             }
 
 
-            if( yesFound && !keywordFound ) { // if at least one keyword found, set to large scale experiment.
+            if ( yesFound && !keywordFound ) { // if at least one keyword found, set to large scale experiment.
                 status = new ExperimentStatus( ExperimentStatus.EXPORT );
-            } else if( noFound ) {
+            } else if ( noFound ) {
                 status = new ExperimentStatus( ExperimentStatus.DO_NOT_EXPORT );
-            } else if( keywordFound ) {
+            } else if ( keywordFound ) {
                 status = new ExperimentStatus( ExperimentStatus.LARGE_SCALE );
                 status.addKeywords( keywords );
             } else {
@@ -839,7 +887,7 @@ public class LineExport {
         for ( Iterator iterator = annotations.iterator(); iterator.hasNext() && false == isNegative; ) {
             Annotation annotation = (Annotation) iterator.next();
 
-            if( negativeTopic.equals( annotation.getCvTopic() ) ) {
+            if ( negativeTopic.equals( annotation.getCvTopic() ) ) {
                 isNegative = true;
             }
         }
@@ -857,8 +905,8 @@ public class LineExport {
         for ( Iterator iterator = interaction.getAnnotations().iterator(); iterator.hasNext(); ) {
             Annotation annotation = (Annotation) iterator.next();
 
-            if( ccNoteTopic.equals( annotation.getCvTopic() ) ) {
-                if( notes == null ) {
+            if ( ccNoteTopic.equals( annotation.getCvTopic() ) ) {
+                if ( notes == null ) {
                     notes = new ArrayList( 2 ); // should rarely have more than 2
                 }
 
@@ -869,23 +917,61 @@ public class LineExport {
         return notes;
     }
 
+
     /**
-     * @param protein
-     * @return
+     * Assess if a protein is a aplice variant on the basis of its shortlabel as we use the following format
+     * SPID-#.
+     * <br>
+     * Thought it doesn't mean we will find a master protein for it.
+     *
+     * @param protein the protein we are interrested in knowing if it is a splice variant.
+     * @return true if the name complies to the splice variant format.
      */
-    protected String getGeneName( Protein protein ) {
+    protected boolean isSpliceVariant( Protein protein ) {
+
+        // TODO check here is it has a master or not.
+
+        return ( protein.getShortLabel().indexOf( "-" ) != -1 ); // eg. P12345-2
+    }
+
+    /**
+     * Retreive the gene name of a protein, if this is a splice variant, get it from its master protein.
+     *
+     * @param protein the protein from which we want to get a gene name.
+     * @return a gene name or null if non could be found.
+     */
+    protected String getGeneName( Protein protein, IntactHelper helper ) {
 
         String geneName = null;
 
-        for ( Iterator iterator = protein.getAliases().iterator(); iterator.hasNext() && null == geneName; ) {
+        // Take into account that a Protein object can be either a protein or a splice variant,
+        // in the case of a splice variant, we should pick the gene name from the master protein.
+        Protein queryProtein = null;
+
+        if ( isSpliceVariant( protein ) ) {
+
+            // get the master protein.
+            queryProtein = getMasterProtein( protein, helper );
+            if ( queryProtein == null ) {
+
+                queryProtein = protein;
+            }
+
+        } else {
+
+            queryProtein = protein;
+        }
+
+        // search for a gene name in the aliases of that protein - stop when we find one.
+        for ( Iterator iterator = queryProtein.getAliases().iterator(); iterator.hasNext() && null == geneName; ) {
             Alias alias = (Alias) iterator.next();
 
-            if( geneNameAliasType.equals( alias.getCvAliasType() ) ) {
+            if ( geneNameAliasType.equals( alias.getCvAliasType() ) ) {
                 geneName = alias.getName();
             }
         }
 
-        if( geneName == null ) {
+        if ( geneName == null ) {
             System.err.println( "Could not find a geneName for Protein: " + protein );
         }
 
