@@ -62,16 +62,14 @@ public class AnnotatedObjectTest extends TestCase {
      */
     public void testXref() throws IntactException {
         // Set up required objects
+        System.out.println("Doing Xref test (AnnotatedObject Test Case)...");
         Protein p1 = (Protein) helper.getObjectByLabel(Protein.class, "prot1");
-
 
         CvDatabase db1 = (CvDatabase) helper.getObjectByLabel(CvDatabase.class,"testCvDb");
         Xref x1 = new Xref(owner, db1, "xx1", null, null, null);
         Xref x2 = new Xref(owner, db1, "xx1", null, null, null);
-        x1.setCvDatabase(db1);
-        x1.setPrimaryId("xx1");
-        x2.setCvDatabase(db1);
-        x2.setPrimaryId("xx1");
+        System.out.println("example Xrefs created...");
+        System.out.println("Doing add test...");
 
         // get the initial state
         int xrefCount = p1.getXrefs().size();
@@ -93,6 +91,9 @@ public class AnnotatedObjectTest extends TestCase {
         p1.removeXref(x2);
         p1.removeXref(x1);
         super.assertEquals(xrefCount, p1.getXrefs().size());
+
+        System.out.println("AnnotatedObject tests done.");
+        System.out.println();
     }
 
     /**

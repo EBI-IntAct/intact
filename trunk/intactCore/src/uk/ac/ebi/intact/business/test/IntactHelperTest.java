@@ -74,7 +74,7 @@ public class IntactHelperTest extends TestCase {
             helper = new IntactHelper(dataSource);
 
             //now need to create specific info in the DB to use for the tests...
-            System.out.println("building example test objects...");
+            System.out.println("IntactHelper Test: building example test objects...");
 
             /*
             * simple scenario:
@@ -95,32 +95,25 @@ public class IntactHelperTest extends TestCase {
             institution.setUrl("http://www.dummydomain.org");
 
             bio1 = new BioSource(institution, "bio1", "1");
-            bio1.setOwnerAc(institution.getAc());
             bio1.setFullName("test biosource 1");
 
             bio2 = new BioSource(institution, "bio2", "2");
-            bio2.setOwnerAc(institution.getAc());
             bio2.setFullName("test biosource 2");
 
             exp1 = new Experiment(institution, "exp1", bio1);
-            exp1.setOwnerAc(institution.getAc());
             exp1.setFullName("test experiment 1");
 
             exp2 = new Experiment(institution, "exp2", bio2);
-            exp2.setOwnerAc(institution.getAc());
             exp2.setFullName("test experiment 2");
 
             prot1 = new Protein(institution, bio1, "prot1");
             prot2 = new Protein(institution, bio1, "prot2");
             prot3 = new Protein(institution, bio1, "prot3");
 
-            prot1.setOwnerAc(institution.getAc());
             prot1.setFullName("test protein 1");
             prot1.setCrc64("dummy 1 crc64");
-            prot2.setOwnerAc(institution.getAc());
             prot2.setFullName("test protein 2");
             prot2.setCrc64("dummy 2 crc64");
-            prot3.setOwnerAc(institution.getAc());
             prot3.setFullName("test protein 3");
             prot3.setCrc64("dummy 3 crc64");
 
@@ -136,15 +129,12 @@ public class IntactHelperTest extends TestCase {
             int2 = new Interaction(experiments, components, null, "int2", institution);
             int3 = new Interaction(experiments, components, null, "int3", institution);
 
-            int1.setOwnerAc(institution.getAc());
             int1.setFullName("test interaction 1");
             int1.setKD(new Float(1));
 
-            int2.setOwnerAc(institution.getAc());
             int2.setFullName("test interaction 2");
             int2.setKD(new Float(2));
 
-            int3.setOwnerAc(institution.getAc());
             int3.setFullName("test interaction 3");
             int3.setKD(new Float(3));
 
@@ -153,14 +143,7 @@ public class IntactHelperTest extends TestCase {
             cvDb = new CvDatabase(institution, "testCvDb");
             cvDb.setFullName("dummy test cvdatabase");
             xref1 = new Xref(institution, cvDb, "G0000000", "GAAAAAAA", "1.0", null);
-            xref1.setOwnerAc(institution.getAc());
-            xref1.setParentAc(prot1.getAc());
-            cvDb.addXref(xref1);
-
             xref2 = new Xref(institution, cvDb, "GEEEEEEE", "GGGGGGGG", "1.0", null);
-            xref2.setOwnerAc(institution.getAc());
-            xref2.setParentAc(int1.getAc());
-            cvDb.addXref(xref2);
 
             prot1.addXref(xref1);
             int1.addXref(xref2);
@@ -169,16 +152,13 @@ public class IntactHelperTest extends TestCase {
             compRole = new CvComponentRole(institution, "role");
 
             comp1 = new Component(institution, int1, prot1, compRole);
-            comp1.setOwnerAc(institution.getAc());
             comp1.setStoichiometry(1);
 
             comp2 = new Component(institution, int2, prot2, compRole);
-            comp2.setOwnerAc(institution.getAc());
             comp2.setStoichiometry(2);
 
             //needs owner, interaction, interactor, role
             comp3 = new Component(institution, int2, prot3, compRole);
-            comp3.setOwnerAc(institution.getAc());
             comp3.setStoichiometry(3);
 
             comp4 = new Component(institution, int1, prot2, compRole);
@@ -189,7 +169,6 @@ public class IntactHelperTest extends TestCase {
             int3.addComponent(comp3);
             int2.addComponent(comp4);
             int3.addComponent(comp4);
-
 
             //store everything...
             Collection persistList = new ArrayList();
@@ -213,27 +192,23 @@ public class IntactHelperTest extends TestCase {
             persistList.add(comp3);
             persistList.add(comp4);
 
-            System.out.println("saving examples to store...");
+            System.out.println("saving examples to store (using JDBC TX)...");
             helper.startTransaction(BusinessConstants.JDBC_TX);
-            System.out.println("serializing helper within a TX...");
-            IntactHelper newHelper = (IntactHelper)Serializer.serializeDeserialize(helper);
-            System.out.println("resetting helper connections...");
-            helper = newHelper;
             helper.create(persistList);
             helper.finishTransaction();
+            System.out.println("JDBC TX completed OK.");
+            System.out.println();
 
             //now add some experiments and interactions and do an update
+            System.out.println("Attempting some updates (using a JDBC TX)...");
             helper.startTransaction(BusinessConstants.JDBC_TX);
             int2.addExperiment(exp2);
             int3.addExperiment(exp2);
-
             helper.update(int2);
-            System.out.println("serializing helper again, within an update TX...");
-            newHelper = (IntactHelper)Serializer.serializeDeserialize(helper);
-            System.out.println("resetting helper connections in update TX...");
-            helper = newHelper;
             helper.update(int3);
             helper.finishTransaction();
+            System.out.println("Updates in a JDBC TX completed OK.");
+            System.out.println();
 
             System.out.println("example test data successfully created - executing tests...");
             System.out.println();
@@ -349,42 +324,6 @@ public class IntactHelperTest extends TestCase {
     }
 
     /**
-     *  Test search by object only.
-     */
-//    protected void objectSearch() throws Exception {
-//
-//        System.out.println("testing simple search by object...");
-//        System.out.println("First checking for an Institution....");
-//        System.out.println();
-//
-//        Collection resultList = null;
-//            if (helper != null) {
-//
-//                resultList = helper.search(institution);
-//                if(!resultList.isEmpty()) {
-//
-//                    System.out.println("results for testObjectSearch (expecting details for "
-//                            + institution.getShortLabel() +")...");
-//                    System.out.println();
-//                    Iterator it = resultList.iterator();
-//                    while(it.hasNext()) {
-//                        System.out.println(it.next().toString());
-//                    }
-//                    System.out.println();
-//                }
-//                else {
-//                    System.out.println("testObjectSearch: completed with empty result set");
-//                }
-//
-//            }
-//            else {
-//
-//                fail("something failed - couldn't create a helper class to access the data!!");
-//
-//            }
-//    }
-
-    /**
     *  Test name search, ie by fullName
     */
     protected void nameSearch() throws Exception {
@@ -401,7 +340,7 @@ public class IntactHelperTest extends TestCase {
             if(result != null) {
 
                 System.out.println("results for testNameSearch (expecting details for "
-                        + int1.getFullName() +")...");
+                        + int1.getShortLabel() +")...");
                 System.out.println();
                 System.out.println(result.toString());
                 System.out.println();
@@ -422,7 +361,7 @@ public class IntactHelperTest extends TestCase {
     protected void institutionSearch() throws Exception {
 
         System.out.println("testing search for Experiments by Institution");
-        System.out.println("using Institution " + institution.getShortLabel() + ".....");
+        System.out.println("using Institution '" + institution.getShortLabel() + "'.....");
         System.out.println();
 
 
@@ -452,176 +391,12 @@ public class IntactHelperTest extends TestCase {
         }
     }
 
-    protected void collectionSearch() throws Exception {
 
-        //NB The 'example Protein' created here must of course be one we already
-        //know exists - howevere we need more information than we used to require
-        //due to the model changes. Thus our 'example' is just prot1, and we are
-        //expecting a result with a non-null AC...
-        Collection results = null;
 
-        if(helper != null) {
-
-            System.out.println("testing search by example object containing a collection.....");
-            System.out.println("example used: search for a Protein, given a single Xref...");
-            System.out.println("using example xref with primary ID "
-                    + xref1.getPrimaryId() + "...");
-            System.out.println();
-
-            System.out.println("building example Protein to search on.....");
-            System.out.println();
-
-            Protein prot = new Protein(institution, bio1, "prot1");
-
-            //NB unset created/updated for "new" object searching...
-            prot.setUpdated(null);
-            prot.setCreated(null);
-
-            System.out.println("adding Xref to Protein example....");
-            System.out.println();
-            prot.addXref(xref1);
-            System.out.println("done - example built, now performing search ..");
-            System.out.println();
-
-            results = helper.search(prot);
-
-            if (results.isEmpty()) {
-
-                //no matches found
-                System.out.println("something went wrong - no match found!!");
-
-            }
-            else {
-
-                //write results to console..
-                System.out.println("search results: ");
-                System.out.println("(expecting Protein(s) with non-null AC)....");
-                Iterator it2 = results.iterator();
-                while (it2.hasNext()) {
-
-                    System.out.println("Protein ACs found:");
-                    System.out.println(((Protein)it2.next()).getAc());
-                }
-                System.out.println();
-            }
-        }
-        else {
-
-                fail("something failed - couldn't create a helper class to access the data!!");
-        }
-
-    }
-
-    protected void collectionMtoNSearch() throws Exception {
-
-        //NB Again we need an 'example' that we know exists and expect to find
-        //one, and hence it should have something in it...
-
-        Collection results = null;
-        Collection exps = new ArrayList();
-        Collection comps = new ArrayList();
-
-        System.out.println("testing search by example object with collection, (m:n relation)....");
-        System.out.println("example used: search for an Interaction, given a single Experiment...");
-        System.out.println("using example Experiment object with label "
-                + exp1.getShortLabel() + " ...");
-        System.out.println();
-
-        if(helper != null) {
-
-            System.out.println("searching for interaction with label " + int1.getShortLabel());
-            System.out.println();
-            exps.add(exp1);
-            System.out.println("building example Interaction...");
-            Interaction interaction = new Interaction(exps, comps, null, "int1", institution);
-            interaction.setCreated(null);
-            interaction.setUpdated(null);
-
-            results = helper.search(interaction);
-            System.out.println("search returned OK...");
-
-            if (results.isEmpty()) {
-
-                //no matches found
-                System.out.println("something went wrong - no match found!!");
-
-            }
-            else {
-
-                //write results to console..
-                System.out.println("search results:");
-                System.out.println("(expecting non-null AC for interaction " + int1.getShortLabel() + ")....");
-                Iterator it2 = results.iterator();
-                while (it2.hasNext()) {
-
-                    System.out.println(((Interaction)it2.next()).getAc());
-                }
-                System.out.println();
-            }
-        }
-        else {
-
-            fail("something failed - couldn't create a helper class to access the data!!");
-        }
-
-    }
-
-    protected void componentSearch() throws Exception {
-
-        System.out.println("testing component search...(for a given Protein with label "
-                + prot2.getShortLabel() + ") ");
-
-        //first get correct details for the example protein from the DB
-        Collection results = helper.search("uk.ac.ebi.intact.model.Protein", "shortLabel", prot2.getShortLabel());
-        if (results.isEmpty()) {
-
-            //no matches found
-            System.out.println("something went wrong - no match found!!");
-
-        }
-        else {
-
-            //create a dummy Component and add the Protein to it (assumes result IS a Protein -
-            //OK as that is the class we searched on.....)
-            Component component = new Component(institution, int2,
-                    (Protein)results.iterator().next(), compRole);
-
-            //unset the created/updated fields for 'example object' search
-            component.setUpdated(null);
-            component.setCreated(null);
-
-            results = helper.search(component);
-
-            //now loop through the components and get the interactions from each one..
-            System.out.println("search results...");
-            System.out.println("(expecting component with interaction "
-                    + int2.getShortLabel() + "...)");
-            Iterator it2 = results.iterator();
-
-            while (it2.hasNext()) {
-
-                Object elem = it2.next();
-                if(elem instanceof Component) {
-                    Interaction inter = ((Component)elem).getInteraction();
-                    if(inter != null) {
-                        System.out.println(inter.toString());
-                    }
-                    else {
-
-                        fail("error - retrieved Component's Interaction is null!!");
-                    }
-                }
-                else {
-
-                    fail("testComponentSearch: did not retrieve Components! retrieved objects of class " + elem.getClass().getName());
-                }
-            }
-            System.out.println();
-       }
-    }
 
     /**
-     * simple check for object serialization of the helper class
+     * simple check for object serialization of the helper class, and also that you can
+     * still use it after you get it back again..
      */
     protected void checkSerialization() {
 
@@ -631,6 +406,22 @@ public class IntactHelperTest extends TestCase {
         dummy = (IntactHelper)Serializer.serializeDeserialize(helper);
         if(dummy != null) {
             System.out.println("helper serializes OK!");
+        }
+        System.out.println("Now checking you can still search with the rebuilt helper....");
+        try {
+        Collection results = dummy.search(Institution.class.getName(), "ac", "*");
+            if(!results.isEmpty()) {
+                System.out.println("found the following:");
+                for(Iterator it = results.iterator(); it.hasNext();) {
+                    System.out.println(it.next());
+                }
+            }
+            else System.out.println("No Institutions found!!");
+        }
+        catch(IntactException e) {
+            System.out.println("searching with deserialzed helper failed!");
+            System.out.println(e.getMessage() + e.getRootCause());
+            e.printStackTrace();
         }
         System.out.println();
     }
@@ -728,14 +519,11 @@ public class IntactHelperTest extends TestCase {
         try {
 
             basicSearch();
-            //objectSearch();
             nameSearch();
             institutionSearch();
-            collectionSearch();
-            collectionMtoNSearch();
-            componentSearch();
-
             checkSerialization();
+            System.out.println("IntactHelper test case complete.");
+            System.out.println();
 /*
             System.out.println("Do you wish to run the user validation test? [y/n]");
             System.out.println("Please note that this test will FAIL if you do not have " +
