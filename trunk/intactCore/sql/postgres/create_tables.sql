@@ -721,9 +721,9 @@ CREATE TABLE IA_alias
                                               CONSTRAINT pk_alias
                                               PRIMARY KEY
     ,  deprecated              DECIMAL(1)     DEFAULT  0       NOT NULL
-    ,  created                 DATE           DEFAULT  now()   NOT NULL
-    ,  updated                 DATE           DEFAULT  now()   NOT NULL
-    ,  timestamp               DATE           DEFAULT  now()   NOT NULL
+    ,  created                 TIMESTAMP      DEFAULT  now()   NOT NULL
+    ,  updated                 TIMESTAMP      DEFAULT  now()   NOT NULL
+    ,  timestamp               TIMESTAMP      DEFAULT  now()   NOT NULL
     ,  userstamp               VARCHAR(30)    DEFAULT  USER    NOT NULL
     ,  aliastype_ac            VARCHAR(30)    CONSTRAINT fk_alias_qualifier REFERENCES IA_ControlledVocab(ac)
     ,  parent_ac               VARCHAR(30)    -- eh missing constraint here??
