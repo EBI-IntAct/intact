@@ -5,10 +5,14 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
-
+ * TODO comments
+ *
+ * @author hhe
+ * @version $Id$
  */
 public class Feature extends BasicObject {
 
@@ -16,6 +20,7 @@ public class Feature extends BasicObject {
     //attributes
 
     //attributes used for mapping BasicObjects - project synchron
+    // TODO: should be move out of the model.
     protected String xrefAc;
     protected String proteinAc;
     protected String componentAc;
@@ -25,35 +30,50 @@ public class Feature extends BasicObject {
     /**
      * References a description of a domain in an external database.
      */
-    protected Xref xref;
+    private Xref xref;
 
     ///////////////////////////////////////
     // associations
 
     /**
-     *
+     *  TODO comments
      */
-    public CvFeatureType cvFeatureType;
+    private CvFeatureType cvFeatureType;
+
     /**
-     *
+     *  TODO comments
      */
-    public Protein protein;
+    private Protein protein;
+
     /**
      * The Substrate a domain belongs to.
      */
-    public Component component;
+    private Component component;
+
     /**
      * The domain the current domain binds to.
      */
-    public Feature boundDomain;
+    private Feature boundDomain;
+
     /**
-     *
+     *  TODO comments
      */
-    public Collection range = new Vector();
+    private Collection ranges = new ArrayList();
+
     /**
-     *
+     *  TODO comments
      */
-    public CvFeatureIdentification cvFeatureIdentification;
+    private CvFeatureIdentification cvFeatureIdentification;
+
+    /**
+     * This constructor should <b>not</b> be used as it could
+     * result in objects with invalid state. It is here for object mapping
+     * purposes only and if possible will be made private.
+     * @deprecated Use the full constructor instead
+     */
+    public Feature() {
+        super();
+    }
 
 
     ///////////////////////////////////////
@@ -79,7 +99,7 @@ public class Feature extends BasicObject {
     public Protein getProtein() {
         return protein;
     }
-
+    // TODO comments
     public void setProtein(Protein protein) {
         if (this.protein != protein) {
             if (this.protein != null) this.protein.removeFeature(this);
@@ -90,7 +110,7 @@ public class Feature extends BasicObject {
     public Component getComponent() {
         return component;
     }
-
+    // TODO comments
     public void setComponent(Component component) {
         if (this.component != component) {
             if (this.component != null) this.component.removeBindingDomain(this);
@@ -105,14 +125,14 @@ public class Feature extends BasicObject {
     public void setBoundDomain(Feature feature) {
         this.boundDomain = feature;
     }
-    public Collection getRange() {
-        return range;
+    public Collection getRanges() {
+        return ranges;
     }
     public void addRange(Range range) {
-        if (! this.range.contains(range)) this.range.add(range);
+        if (! this.ranges.contains(range)) this.ranges.add(range);
     }
     public void removeRange(Range range) {
-        this.range.remove(range);
+        this.ranges.remove(range);
     }
     public CvFeatureIdentification getCvFeatureIdentification() {
         return cvFeatureIdentification;
@@ -123,6 +143,7 @@ public class Feature extends BasicObject {
     }
 
     //attributes used for mapping BasicObjects - project synchron
+    // TODO: should be move out of the model.
     public String getXrefAc(){
         return this.xrefAc;
     }

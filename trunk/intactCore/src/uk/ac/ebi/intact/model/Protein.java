@@ -5,10 +5,12 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * Represents a protein or peptide. The object should only contain
@@ -16,6 +18,7 @@ import java.util.*;
  * should only be retrieved by the xref.
  *
  * @author hhe
+ * @version $Id$
  */
 public class Protein extends Interactor {
 
@@ -34,9 +37,13 @@ public class Protein extends Interactor {
     //attributes
 
     //attributes used for mapping BasicObjects - project synchron
-    public String  cvProteinFormAc;
+    // TODO: should be move out of the model.
+    private String  cvProteinFormAc;
 
-    protected String formOfAc;
+    /**
+     * TODO comments
+     */
+    private String formOfAc;
 
 
     /**
@@ -45,38 +52,42 @@ public class Protein extends Interactor {
      * refers to and the external sequence object, for example when the external
      * object has been updated.
      */
-    protected String crc64;
+    private String crc64;
 
     ///////////////////////////////////////
     // associations
 
     /**
+     * TODO comments
+     */
+    private Protein formOf;
 
-     */
-    public Protein formOf;
     /**
-     *
+     * TODO comments
      */
-    public CvProteinForm cvProteinForm;
+    private CvProteinForm cvProteinForm;
+
     /**
-     *
+     * TODO comments
      */
-    public Collection feature = new Vector();
+    private Collection features = new ArrayList();
+
     /**
-     *
+     * TODO comments
      */
-    public Collection modification = new Vector();
+    private Collection modifications = new ArrayList();
 
     /**
      * The protein sequence. If the protein is present in a public database,
      * the sequence should not be repeated.
      */
-    private Collection sequenceChunks = new Vector();
+    private Collection sequenceChunks = new ArrayList();
 
     /**
-     * no-arg constructor. Hope to replace with a private one as it should
-     * not be used by applications because it will result in objects with invalid
-     * states.
+     * This constructor should <b>not</b> be used as it could
+     * result in objects with invalid state. It is here for object mapping
+     * purposes only and if possible will be made private.
+     * @deprecated Use the full constructor instead
      */
     public Protein() {
 
@@ -95,16 +106,15 @@ public class Protein extends Interactor {
      */
     public Protein(Institution owner, BioSource source, String shortLabel) {
 
-        //Q: what about crc64, fullName, formOf - they are all indexed...
+        //TODO Q: what about crc64, fullName, formOf - they are all indexed...
         //ALSO..A Protein can have an interaction type IF it is an Interactor,
         //but if it isn't then it doesn't need an interaction type. This does not
         //match with the classes - Interaction has a type, not Interactor...
 
         //super call sets up a valid AnnotatedObject (should an Interactor be better defined?)
         super(shortLabel, owner);
-        if(source == null) throw new NullPointerException("valid Protein must have a BioSource!");
-        this.bioSource = source;
-
+        if(source == null) throw new NullPointerException("Can't create a valid Protein without a BioSource");
+        setBioSource(source);
     }
 
 
@@ -130,6 +140,19 @@ public class Protein extends Interactor {
     }
 
 
+    // TODO finish it
+    /**
+     *
+     *
+     * @param helper
+     * @param aSequence
+     * @param crc64
+     * @throws IntactException
+     */
+    public void setSequence(IntactHelper helper, String aSequence, String crc64) throws IntactException {
+    }
+
+
     /**
      * If there is existing sequence (and chunks), reuse existing chunk
      * in order to save AC.<br>
@@ -145,12 +168,12 @@ public class Protein extends Interactor {
             return;
         }
 
-        if (null == this.getAc()) {
+        if (null == getAc()) {
             throw new IntactException ("The object AC must be set before setting the sequence.");
         }
 
         // Save work if the new sequence is identical to the old one.
-        if (aSequence.equals(this.getSequence())) {
+        if (aSequence.equals(getSequence())) {
             return;
         }
 
@@ -160,7 +183,8 @@ public class Protein extends Interactor {
 
         // All old data are kept, we try to recycle as much chunk as possible
         if (sequenceChunks == null) {
-            sequenceChunks = new Vector();
+
+            sequenceChunks = new ArrayList();
         } else if (false == sequenceChunks.isEmpty()) {
             // There is existing chunk ... prepare them for recycling.
             chunkPool = new ArrayList (sequenceChunks.size());
@@ -236,37 +260,33 @@ public class Protein extends Interactor {
     public void setCvProteinForm(CvProteinForm cvProteinForm) {
         this.cvProteinForm = cvProteinForm;
     }
-    public void setFeature(Collection someFeature) {
-        this.feature = someFeature;
+    public void setFeatures(Collection someFeature) {
+        this.features = someFeature;
     }
-    public Collection getFeature() {
-        return feature;
+    public Collection getFeatures() {
+        return features;
     }
     public void addFeature(Feature feature) {
-        if (! this.feature.contains(feature)) {
-            this.feature.add(feature);
+        if (! this.features.contains(feature)) {
+            this.features.add(feature);
             feature.setProtein(this);
         }
     }
     public void removeFeature(Feature feature) {
-        boolean removed = this.feature.remove(feature);
+        boolean removed = this.features.remove(feature);
         if (removed) feature.setProtein(null);
     }
-    public void setModification(Collection someModification) {
-        this.modification = someModification;
+    public void setModifications(Collection someModification) {
+        this.modifications = someModification;
     }
-    public Collection getModification() {
-        return modification;
+    public Collection getModifications() {
+        return modifications;
     }
     public void addModification(Modification modification) {
-        if (! this.modification.contains(modification)) this.modification.add(modification);
+        if (! this.modifications.contains(modification)) this.modifications.add(modification);
     }
     public void removeModification(Modification modification) {
-        this.modification.remove(modification);
-    }
-
-    private Collection getSequenceChunks() {
-        return sequenceChunks;
+        this.modifications.remove(modification);
     }
 
     private void addSequenceChunk(SequenceChunk sequenceChunk) {
@@ -282,6 +302,7 @@ public class Protein extends Interactor {
 
 
     //attributes used for mapping BasicObjects - project synchron
+    // TODO: should be move out of the model.
     public String  getCvProteinFormAc() {
         return cvProteinFormAc;
     }
@@ -295,17 +316,34 @@ public class Protein extends Interactor {
         this.formOfAc = ac;
     }
 
-
+    /**
+     * Equality for Proteins is currently based on equality for
+     * <code>Interactors</code>, the sequence and the crc64 checksum.
+     * @see uk.ac.ebi.intact.model.Interactor
+     * @param o The object to check
+     * @return true if the parameter equals this object, false otherwise
+     */
     public boolean equals (Object o) {
         if (this == o) return true;
         if (!(o instanceof Protein)) return false;
         if (!super.equals(o)) return false;
 
-        Protein protein = (Protein) o;
+        final Protein protein = (Protein) o;
 
-        if (false == xref.equals(protein.getXref())) return false;
+        // TODO do we need to check sequence and CRC64
+        if(getSequence() != null) {
+            if (!getSequence().equals(protein.getSequence())) return false;
+        }
+        else {
+            if (protein.getSequence() != null) return false;
+        }
 
-        return protein.getBioSource().equals (bioSource);
+        if(crc64 != null) {
+            if (!crc64.equals(protein.crc64)) return false;
+        }
+        else return protein.crc64 == null;
+
+        return true;
     }
 
     /**
@@ -317,21 +355,12 @@ public class Protein extends Interactor {
      *
      */
     public int hashCode () {
-        int result = super.hashCode();
-        final int prime = 29;
 
-        for (Iterator iterator = xref.iterator(); iterator.hasNext();) {
-            Xref xref = (Xref) iterator.next();
-            result = prime * result + xref.hashCode();
-        }
+        int code = super.hashCode();
+        if (getSequence() != null) code = code * 29 + getSequence().hashCode();
+        if (crc64 != null) code = code * 29 + crc64.hashCode();
 
-        BioSource bioSource = getBioSource();
-        if (bioSource != null) {
-            String taxid = bioSource.getTaxId();
-            if (taxid != null) result = prime * result + taxid.hashCode();
-        }
-
-        return result;
+        return code;
     }
 
 } // end Protein

@@ -5,23 +5,28 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import uk.ac.ebi.intact.util.Utilities;
-
 /**
  * Represents a crossreference to another database.
  *
  * @author hhe
+ * @version $Id$
  */
 public class Xref extends BasicObject {
 
     ///////////////////////////////////////
     //attributes
 
-    //private String qualifierAc;
-    //protected String databaseAc;
-    protected String parentAc;
+    // TODO: find out if these two fields are used or not.
+//    private String qualifierAc;
+//    protected String databaseAc;
+
+    /**
+     * Ac of the object which holds that Xref
+     */
+    private String parentAc;
 
     //attributes used for mapping BasicObjects - project synchron
+    // TODO: should be move out of the model.
     protected String cvXrefQualifierAc;
     protected String cvDatabaseAc;
 
@@ -29,22 +34,40 @@ public class Xref extends BasicObject {
     /**
      * Primary identifier of the database referred to.
      */
-    protected String primaryId;
+    private String primaryId;
 
     /**
      * Secondary identifier of the database. This will usually be
      * a meaningful name, for example a domain name.
      */
-    protected String secondaryId;
+    private String secondaryId;
 
     /**
      * The release number of the external database from which the object
      * has been updated.
      */
-    protected String dbRelease;
+    private String dbRelease;
 
     ///////////////////////////////////////
-    // constructors
+    // associations
+
+    /**
+     * TODO comments
+     */
+    private CvXrefQualifier cvXrefQualifier;
+
+    /**
+     * TODO comments
+     */
+    private CvDatabase cvDatabase;
+
+
+    /**
+     * This constructor should <b>not</b> be used as it could
+     * result in objects with invalid state. It is here for object mapping
+     * purposes only and if possible will be made private.
+     * @deprecated Use the full constructor instead
+     */
     public Xref() {
         //super call sets creation time data
         super();
@@ -59,8 +82,10 @@ public class Xref extends BasicObject {
      * <li>a Primary ID</li>
      * @param anOwner Owner of the cross-reference (non-null)
      * @param aDatabase Controlled vocabulary instance defining the database details (non-null)
-     * @param aPrimaryId primary identifier for the corss-reference (non-null)
-     * @param aSecondaryId secondary identifier (eg a domain name)
+     * @param aPrimaryId primary identifier for the corss-reference (non-null), this should be 30 caracters maximum
+     * if it's more it will be truncated. if not done, Oracle would throw an error.
+     * @param aSecondaryId secondary identifier (eg a domain name), this should be 30 caracters maximum
+     * if it's more it will be truncated. if not done, Oracle would throw an error.
      * @param aDatabaseRelease database version
      * @param aCvXrefQualifier controlled vocabulary for any qualifiers
      * @exception NullPointerException thrown if any mandatory parameters are not specified
@@ -69,16 +94,14 @@ public class Xref extends BasicObject {
                  CvDatabase aDatabase,
                  String aPrimaryId,
                  String aSecondaryId,
-                 String aDatabaseRelease, CvXrefQualifier aCvXrefQualifier) {
+                 String aDatabaseRelease,
+                 CvXrefQualifier aCvXrefQualifier) {
 
         //super call sets creation time data
-        super();
-        if(anOwner == null) throw new NullPointerException("valid Xref must have an owner (Institution)!");
+        super(anOwner);
         if(aDatabase == null) throw new NullPointerException("valid Xref must have non-null database details!");
         if(aPrimaryId == null) throw new NullPointerException("valid Xref must have a primary ID!");
 
-        this.owner = anOwner;
-        this.cvDatabase = aDatabase;
         if (aPrimaryId != null && aPrimaryId.length() > 30) {
             aPrimaryId = aPrimaryId.substring(0,30);
         }
@@ -87,24 +110,11 @@ public class Xref extends BasicObject {
         if (aSecondaryId != null && aSecondaryId.length() > 30) {
             aSecondaryId = aSecondaryId.substring(0,30);
         }
+        this.cvDatabase = aDatabase;
         this.secondaryId = aSecondaryId;
         this.dbRelease = aDatabaseRelease;
         this.cvXrefQualifier = aCvXrefQualifier;
-
     }
-
-    ///////////////////////////////////////
-    // associations
-
-    /**
-     *
-     */
-    public CvXrefQualifier cvXrefQualifier;
-
-    /**
-     *
-     */
-    public CvDatabase cvDatabase;
 
 
     ///////////////////////////////////////
@@ -154,6 +164,7 @@ public class Xref extends BasicObject {
     }
 
     //attributes used for mapping BasicObjects - project synchron
+    // TODO: should be move out of the model.
     public String getCvXrefQualifierAc() {
         return cvXrefQualifierAc;
     }
@@ -172,7 +183,12 @@ public class Xref extends BasicObject {
     ///////////////////////////////////////
     // instance methods
 
-    /** Returns true if the "important" attributes are equal.
+    /**
+     * Equality for Xrefs is currently based on equality for
+     * <code>CvDatabases</code> and primaryIds.
+     * @see uk.ac.ebi.intact.model.CvDatabase
+     * @param o The object to check
+     * @return true if the parameter equals this object, false otherwise
      */
     public boolean equals(Object o){
         if (this == o) return true;
@@ -180,8 +196,17 @@ public class Xref extends BasicObject {
 
         final Xref xref = (Xref) o;
 
-        return (Utilities.equals(this.cvDatabase, xref.getCvDatabase()) &&
-                Utilities.equals(this.primaryId, xref.getPrimaryId()));
+        if(cvDatabase != null) {
+             if (!cvDatabase.equals(xref.cvDatabase)) return false;
+        }
+        else {
+            if (xref.cvDatabase != null) return false;
+        }
+
+        if(primaryId != null) {
+             return (primaryId.equals(xref.primaryId));
+        }
+        return (xref.primaryId == null);
     }
 
     /** This class overwrites equals. To ensure proper functioning of HashTable,
@@ -189,19 +214,18 @@ public class Xref extends BasicObject {
      * @return  hash code of the object.
      */
     public int hashCode(){
-        int code = super.hashCode();
-
-        if (null != cvDatabase) code = 29 * code + cvDatabase.hashCode();
-        if (null != primaryId)  code = 29 * code + primaryId.hashCode();
+        int code = 29;
+        if(cvDatabase != null) code = 29*code + cvDatabase.hashCode();
+        if(primaryId != null) code = 29 * code + primaryId.hashCode();
 
         return code;
     }
 
     public String toString(){
-        return " Xref: " + this.getAc()
-                + "; Owner: " + this.getOwner().getShortLabel()
-                + "; DB: " + getCvDatabase().getShortLabel()
-                + "; PrimaryId: "+ this.primaryId;
+        return " Xref: " + getAc()
+                + "; Owner: " + getOwner().getShortLabel()
+                + "; DB: " + cvDatabase.getShortLabel()
+                + "; PrimaryId: "+ primaryId;
     }
 } // end Xref
 

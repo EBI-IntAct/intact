@@ -1,17 +1,18 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import java.util.*;
+
 
 /**
  * Represents a type of modification.
  * 
- * @intact.example phosphorylation
+ * example phosphorylation
  * @author hhe
+ * @version $Id$
  */
 public class CvModificationType extends CvObject {
 
@@ -20,10 +21,13 @@ public class CvModificationType extends CvObject {
      * This should not be here as it has no model functionality but is
      * related to eg user interfaces.
      */
-    protected static Vector menuList = null;
+//    protected static Vector menuList = null;
 
     /**
-     * no-arg constructor which will hopefully be removed later...
+     * This constructor should <b>not</b> be used as it could
+     * result in objects with invalid state. It is here for object mapping
+     * purposes only and if possible will be made private.
+     * @deprecated Use the full constructor instead
      */
     public CvModificationType() {
         //super call sets creation time data
@@ -37,12 +41,11 @@ public class CvModificationType extends CvObject {
      * @param owner The Institution which owns this CvModificationType
      * @exception NullPointerException thrown if either parameters are not specified
      */
-    public CvModificationType(String shortLabel, Institution owner) {
+    public CvModificationType(Institution owner, String shortLabel) {
 
         //super call sets up a valid CvObject
-        super(shortLabel, owner);
+        super(owner, shortLabel);
     }
-
 
 } // end CvModificationType
 

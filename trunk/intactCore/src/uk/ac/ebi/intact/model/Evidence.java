@@ -5,10 +5,12 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import java.util.*;
-
 /**
-
+ * TODO comments
+ * TODO what to do with this ?
+ *
+ * @author hhe
+ * @version $Id$
  */
 public class Evidence {
 
@@ -16,19 +18,21 @@ public class Evidence {
     //attributes
 
     //attributes used for mapping BasicObjects - project synchron
+    // TODO: should be move out of the model.
     protected String cvEvidenceTypeAc;
-    /**
 
+    /**
+     * TODO comments
      */
-    protected String parameters;
+    private String parameters;
 
     ///////////////////////////////////////
     // associations
 
     /**
-     *
+     * TODO comments
      */
-    public CvEvidenceType cvEvidenceType;
+    private CvEvidenceType cvEvidenceType;
 
 
     ///////////////////////////////////////
@@ -53,6 +57,7 @@ public class Evidence {
     }
 
     //attributes used for mapping BasicObjects - project synchron
+    // TODO: should be move out of the model.
     public String getCvEvidenceTypeAc() {
         return this.cvEvidenceTypeAc;
     }

@@ -1,22 +1,24 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
 /**
  * Represents a biological source.
+ * TODO write a proper comment
  *
  * @author hhe
+ * @version $id$
  */
 public class BioSource extends AnnotatedObject implements Editable {
 
     ///////////////////////////////////////
     //attributes
 
-
     //attributes used for mapping BasicObjects - project synchron
+    // TODO: should be move out of the model.
     public String cvCellCycleAc;
     public String cvDevelopmentalStageAc;
     public String cvTissueAc;
@@ -27,36 +29,41 @@ public class BioSource extends AnnotatedObject implements Editable {
     /**
      * The NCBI tax id.
      */
-    protected String taxId;
+    private String taxId;
 
     ///////////////////////////////////////
     // associations
 
     /**
-     *
+     * TODO comments
      */
-    public CvCellCycle cvCellCycle;
-    /**
-     *
-     */
-    public CvDevelopmentalStage cvDevelopmentalStage;
-    /**
-     *
-     */
-    public CvTissue cvTissue;
-    /**
-     *
-     */
-    public CvCellType cvCellType;
-    /**
-     *
-     */
-    public CvCompartment cvCompartment;
+    private CvCellCycle cvCellCycle;
 
     /**
-     * no-arg constructor. Hope to replace with a private one as it should
-     * not be used by applications because it will result in objects with invalid
-     * states.
+     * TODO comments
+     */
+    private CvDevelopmentalStage cvDevelopmentalStage;
+
+    /**
+     * TODO comments
+     */
+    private CvTissue cvTissue;
+
+    /**
+     * TODO comments
+     */
+    private CvCellType cvCellType;
+
+    /**
+     * TODO comments
+     */
+    private CvCompartment cvCompartment;
+
+    /**
+     * This constructor should <b>not</b> be used as it could
+     * result in objects with invalid state. It is here for object mapping
+     * purposes only and if possible will be made private.
+     * @deprecated Use the full constructor instead
      */
     public BioSource() {
         //super call sets creation time data
@@ -73,13 +80,14 @@ public class BioSource extends AnnotatedObject implements Editable {
      * @param owner The <code>Institution</code> which 'owns' this BioSource
      * @exception NullPointerException thrown if either no shortLabel or Institution specified.
      */
-    public BioSource(String shortLabel, String taxId, Institution owner) {
+    public BioSource(Institution owner, String shortLabel, String taxId) {
 
         //super call sets up a valid AnnotatedObject
         super(shortLabel, owner);
-        //Q: taxId must be unique (but apparently may be null)- how to validate this??
-        this.taxId = taxId;
+        //TODO Q: taxId must be unique (but apparently may be null)- how to validate this??
 
+        //if(taxId == null) throw new NullPointerException("valid BioSource must have a non-null taxId!");
+        this.taxId = taxId;
     }
 
 
@@ -135,6 +143,7 @@ public class BioSource extends AnnotatedObject implements Editable {
 
 
     //attributes used for mapping BasicObjects - project synchron
+    // TODO: should be move out of the model.
     public String getCvCompartmentAc() {
         return cvCompartmentAc;
     }
@@ -168,7 +177,11 @@ public class BioSource extends AnnotatedObject implements Editable {
 
 
     /**
-     * Currently the equality rely only on the taxId.
+     * Equality for BioSources is currently based on equality for
+     * <code>AnnotatedObjects</code> and taxIds (String representation of an integer).
+     * @see uk.ac.ebi.intact.model.AnnotatedObject
+     * @param o The object to check
+     * @return true if the parameter equals this object, false otherwise
      */
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -177,15 +190,27 @@ public class BioSource extends AnnotatedObject implements Editable {
 
         final BioSource bioSource = (BioSource) o;
 
-        if (taxId != null ? !taxId.equals(bioSource.taxId) : bioSource.taxId != null) return false;
+        //check the taxId...
+        if(taxId != null) {
+            return (taxId.equals(bioSource.taxId));
+        }
 
-        return true;
+        return bioSource.taxId == null;
+        //if (taxId != null ? !taxId.equals(bioSource.taxId) : bioSource.taxId != null) return false;
+
+        //return true;
     }
 
     public int hashCode() {
-        int result = super.hashCode();
-        result = 29 * result + (taxId != null ? taxId.hashCode() : 0);
-        return result;
+
+        //YUK AGAIN!! This ends up calling the java Object hashcode -
+        //which generates an int based on memory address (ie for object
+        //identity) - not what we want here...
+        //int code = super.hashCode();
+
+        int code = 29;
+        if(taxId != null) code = 29*code + taxId.hashCode();
+        return code;
     }
 
 } // end BioSource

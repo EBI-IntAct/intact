@@ -6,12 +6,12 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.model;
 
 import java.util.Date;
-import java.util.*;
 
 /**
- * Represents ...
+ * TODO Represents ...
  *
  * @author Henning Hermjakob
+ * @version $Id$
  */
 public class SubmissionRef extends Reference {
 
@@ -19,21 +19,38 @@ public class SubmissionRef extends Reference {
     //attributes
 
     //attributes used for mapping BasicObjects - project synchron
+    // TODO: should be move out of the model.
     protected String referenceAc;
 
     /**
-     * Represents ...
+     * todo Represents ...
      */
-    protected Date holdDate;
+    private Date holdDate;
 
     ///////////////////////////////////////
     // associations
 
     /**
-     *
+     * TODO comments
      */
-    public Reference reference;
+    private Reference reference;
 
+    /**
+     * This constructor should <b>not</b> be used as it could
+     * result in objects with invalid state. It is here for object mapping
+     * purposes only and if possible will be made private.
+     * @deprecated Use the full constructor instead
+     */
+    public SubmissionRef () {
+        super();
+    }
+    public SubmissionRef(Institution owner, String title, String authors, Reference reference, Date holdDate) {
+        super(owner, title, authors);
+
+        // TODO null ?
+        this.reference = reference;
+        this.holdDate = holdDate;
+    }
 
     ///////////////////////////////////////
     //access methods for attributes
@@ -61,6 +78,7 @@ public class SubmissionRef extends Reference {
 
 
     //attributes used for mapping BasicObjects - project synchron
+    // TODO: should be move out of the model.
     public String getReferenceAc() {
         return referenceAc;
     }

@@ -49,7 +49,9 @@ public class CvGoNode extends CvDagObject {
     // =======================================================================
 
     /**
-     * Basic constructor for a CvGoNode
+     * This constructor should be replaced as it could
+     * result in objects with invalid state. It is here for object mapping
+     * purposes only and if possible will be made private.
      */
     public CvGoNode() {
         super();
@@ -64,7 +66,7 @@ public class CvGoNode extends CvDagObject {
      * @return The GO id, which belongs to this unique CvGoNode Object
      */
     public String getGoId() {
-        Collection someXrefs = this.getXref();
+        Collection someXrefs = this.getXrefs();
         if (someXrefs.size() != 1) {
             System.out.println("warning: a CvGoNode can only have one specific Xref");
         }
@@ -109,7 +111,7 @@ public class CvGoNode extends CvDagObject {
         StringBuffer string = new StringBuffer();
         string.append("\nCvGoNode object for " + this.getGoId());
         string.append("\n      -> childs: ");
-        Iterator itChilds = this.getChilds().iterator();
+        Iterator itChilds = this.getChildren().iterator();
         while (itChilds.hasNext()) {
             CvGoNode aCvGoNode = (CvGoNode) itChilds.next();
             string.append(aCvGoNode.getGoId() + ", ");
@@ -131,7 +133,7 @@ public class CvGoNode extends CvDagObject {
         if (!visited.contains(aParent)) {
             // Iterate over children to add subtrees.
             level++; // Hierarchylevel
-            Iterator itChilds = aParent.getChilds().iterator();
+            Iterator itChilds = aParent.getChildren().iterator();
             while (itChilds.hasNext()) {
                 // For each child recursive call
                 CvGoNode node = (CvGoNode) itChilds.next();

@@ -1,23 +1,24 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import java.util.*;
+
 
 /**
  * Terms in this controlled vocabulary qualify the association between an
-* AnnotatedObject and a Reference.
-*
-* @intact.example states
-*
-* @intact.example disputes
-* @intact.example supports
-* @intact.example describes
-*
-* @author hhe
+ * AnnotatedObject and a Reference.
+ *
+ * example states
+ *
+ * example disputes
+ * example supports
+ * example describes
+ *
+ * @author hhe
+ * @version $Id$
  */
 public class CvReferenceQualifier extends CvObject {
 
@@ -26,10 +27,13 @@ public class CvReferenceQualifier extends CvObject {
      * This should not be here as it has no model functionality but is
      * related to eg user interfaces.
      */
-    protected static Vector menuList = null;
+//    protected static Vector menuList = null;
 
     /**
-     * no-arg constructor which will hopefully be removed later...
+     * This constructor should <b>not</b> be used as it could
+     * result in objects with invalid state. It is here for object mapping
+     * purposes only and if possible will be made private.
+     * @deprecated Use the full constructor instead
      */
     public CvReferenceQualifier() {
         //super call sets creation time data
@@ -46,7 +50,7 @@ public class CvReferenceQualifier extends CvObject {
     public CvReferenceQualifier(String shortLabel, Institution owner) {
 
         //super call sets up a valid CvObject
-        super(shortLabel, owner);
+        super(owner, shortLabel);
     }
 
 } // end CvReferenceQualifier

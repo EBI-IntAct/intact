@@ -5,10 +5,13 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import java.util.*;
+
 
 /**
-
+ * TODO comments
+ *
+ * @author hhe
+ * @version $Id$
  */
 public class CvFeatureType extends CvObject {
 
@@ -17,10 +20,13 @@ public class CvFeatureType extends CvObject {
      * This should not be here as it has no model functionality but is
      * related to eg user interfaces.
      */
-    protected static Vector menuList = null;
+//    protected static Vector menuList = null;
 
     /**
-     * no-arg constructor which will hopefully be removed later...
+     * This constructor should <b>not</b> be used as it could
+     * result in objects with invalid state. It is here for object mapping
+     * purposes only and if possible will be made private.
+     * @deprecated Use the full constructor instead
      */
     public CvFeatureType() {
         //super call sets creation time data
@@ -34,12 +40,11 @@ public class CvFeatureType extends CvObject {
      * @param owner The Institution which owns this CvFeatureType
      * @exception NullPointerException thrown if either parameters are not specified
      */
-    public CvFeatureType(String shortLabel, Institution owner) {
+    public CvFeatureType(Institution owner, String shortLabel) {
 
         //super call sets up a valid CvObject
-        super(shortLabel, owner);
+        super(owner, shortLabel);
     }
-
 
 } // end CvFeatureType
 

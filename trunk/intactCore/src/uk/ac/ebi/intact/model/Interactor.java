@@ -5,12 +5,17 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import java.util.*;
+import org.apache.commons.collections.CollectionUtils;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * Defines a generic interacting object.
  *
  * @author hhe
+ * @version $Id$
  */
 public abstract class Interactor extends AnnotatedObject {
 
@@ -18,24 +23,27 @@ public abstract class Interactor extends AnnotatedObject {
     //attributes
 
     //attributes used for mapping BasicObjects - project synchron
-    protected String bioSourceAc;
+    // TODO: should be move out of the model.
+    private String bioSourceAc;
 
     /**
      * The biological source of the Interactor.
      */
-    protected BioSource bioSource;
+    private BioSource bioSource;
 
     ///////////////////////////////////////
     // associations
 
     /**
-     * What is this??
+     * TODO comments
      */
-    public Collection activeInstance = new Vector();
+    private Collection activeInstances = new ArrayList();
+
     /**
-     * What is this??
+     * TODO comments
      */
-    public Collection product = new Vector();
+    private Collection products = new ArrayList();
+
 
     /**
      * no-arg constructor provided for compatibility with subclasses
@@ -48,7 +56,9 @@ public abstract class Interactor extends AnnotatedObject {
 
     /**
      * Constructor for subclass use only. Ensures that Interactors cannot be
-     * created without at least a shortLabel and an owner specified.
+     * created without at least a shortLabel and an owner specified. NOTE: It is
+     * assumed that subclasses of Interactor will supply a valid BioSource; this
+     * is initially set to null but <b>other classes may expect it to be non-null</b>.
      * @param shortLabel The memorable label to identify this Interactor
      * @param owner The Institution which owns this Interactor
      * @exception NullPointerException thrown if either parameters are not specified
@@ -57,6 +67,7 @@ public abstract class Interactor extends AnnotatedObject {
 
         //NB is more than this required to define a valid Interactor?
         super(shortLabel, owner);
+
     }
 
 
@@ -66,46 +77,50 @@ public abstract class Interactor extends AnnotatedObject {
     public BioSource getBioSource() {
         return bioSource;
     }
-    public void setBioSource(BioSource bioSource) {
+    public void setBioSource( BioSource bioSource ) {
+        //System.out.println("setBioSource ... ");
+        if (bioSource == null) throw new NullPointerException("valid Interactor must have a BioSource!");
+        //System.out.println("BioSource NOT null");
         this.bioSource = bioSource;
     }
 
     ///////////////////////////////////////
     // access methods for associations
-    public void setActiveInstance(Collection someActiveInstance) {
-        this.activeInstance = someActiveInstance;
+    public void setActiveInstances(Collection someActiveInstance) {
+        this.activeInstances = someActiveInstance;
     }
-    public Collection getActiveInstance() {
-        return activeInstance;
+    public Collection getActiveInstances() {
+        return activeInstances;
     }
     public void addActiveInstance(Component component) {
-        if (! this.activeInstance.contains(component)) {
-            this.activeInstance.add(component);
+        if (! this.activeInstances.contains(component)) {
+            this.activeInstances.add(component);
             component.setInteractor(this);
         }
     }
     public void removeActiveInstance(Component component) {
-        boolean removed = this.activeInstance.remove(component);
+        boolean removed = this.activeInstances.remove(component);
         if (removed) component.setInteractor(null);
     }
-    public void setProduct(Collection someProduct) {
-        this.product = someProduct;
+    public void setProducts(Collection someProduct) {
+        this.products = someProduct;
     }
-    public Collection getProduct() {
-        return product;
+    public Collection getProducts() {
+        return products;
     }
     public void addProduct(Product product) {
-        if (! this.product.contains(product)) {
-            this.product.add(product);
+        if (! this.products.contains(product)) {
+            this.products.add(product);
             product.setInteractor(this);
         }
     }
     public void removeProduct(Product product) {
-        boolean removed = this.product.remove(product);
+        boolean removed = this.products.remove(product);
         if (removed) product.setInteractor(null);
     }
 
     //attributes used for mapping BasicObjects - project synchron
+    // TODO: should be move out of the model.
     public String getBioSourceAc() {
         return this.bioSourceAc;
     }
@@ -124,17 +139,24 @@ public abstract class Interactor extends AnnotatedObject {
                 + " Owner: " + this.getOwner().getShortLabel()
                 + " Label: " + this.getShortLabel()
                 + "[";
-        if (null != this.getXref()){
-            i = this.getXref().iterator();
+
+        if (null != this.getXrefs()){
+            i = this.getXrefs().iterator();
             while(i.hasNext()){
                 result = result + i.next();
             }
         }
 
-        return result + "]\n";
+        return result + "]";
     }
 
-
+    /**
+     * Equality for Interactors is currently based on equality for
+     * <code>AnnotatedObjects</code>, BioSources and Products.
+     * @see uk.ac.ebi.intact.model.AnnotatedObject
+     * @param o The object to check
+     * @return true if the parameter equlas this object, false otherwise
+     */
     public boolean equals (Object o) {
         if (this == o) return true;
         if (!(o instanceof Interactor)) return false;
@@ -142,28 +164,41 @@ public abstract class Interactor extends AnnotatedObject {
 
         final Interactor interactor = (Interactor) o;
 
-        // if (!activeInstance.equals(interactor.activeInstance)) return false;
-        if (bioSource != null ? !bioSource.equals(interactor.bioSource) : interactor.bioSource != null) return false;
-        if (bioSourceAc != null ? !bioSourceAc.equals(interactor.bioSourceAc) : interactor.bioSourceAc != null) return false;
-        if (!product.equals(interactor.product)) return false;
-
-        return true;
+        // possible cycle ...
+        // if (!activeInstances.equals(interactor.activeInstances)) return false;
+        if(bioSource != null) {
+            if (! bioSource.equals(interactor.bioSource)) return false;
+        }
+        else {
+            if (interactor.bioSource != null) return false;
+        }
+        return CollectionUtils.isEqualCollection(interactor.products, products);
     }
 
     public int hashCode() {
-        int result = super.hashCode();
-        result = 29 * result + (bioSourceAc != null ? bioSourceAc.hashCode() : 0);
-        result = 29 * result + (bioSource != null ? bioSource.hashCode() : 0);
 
-	/*
-         * Can't take into account activeInstance since it happens that an object
+        int code = 29 * super.hashCode();
+
+        //BioSource should NEVER be null as subclasses must set it -
+        //however just check it here to be safe....
+        if(bioSource != null) code = code + bioSource.hashCode();
+
+   	    /*
+         * Can't take into account activeInstances since it happens that an object
          * references himself into that collection ... it would never ends.
          */
-        // result = 29 * result + activeInstance.hashCode();
-
-
-        result = 29 * result + product.hashCode();
-        return result;
+        // code = 29 * code + activeInstances.hashCode();
+        if(!products.isEmpty()) {
+            //add the codes for those too....
+            int productsCode = 17;
+            for(Iterator it = products.iterator(); it.hasNext();) {
+                Product prod = (Product)it.next(); //controlled here - must be valid cast
+                productsCode = 29*productsCode + prod.hashCode();
+            }
+            code = 29*code + productsCode;
+        }
+        //return 29 * code + products.hashCode();
+        return code;
     }
 
 } // end Interactor

@@ -1,18 +1,16 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import uk.ac.ebi.intact.util.Utilities;
-
-import java.util.*;
 
 /**
  * Funtional description of an object.
  *
  * @author hhe
+ * @version $Id$
  */
 public class Annotation extends BasicObject {
 
@@ -20,34 +18,36 @@ public class Annotation extends BasicObject {
     //attributes
 
     //attributes used for mapping BasicObjects - project synchron
-    protected String cvTopicAc;
+    // TODO: should be move out of the model.
+    private String cvTopicAc;
 
     // replaced by cvTopicAc conform to synchron specifications
-    // private String topicAc;
+    private String topicAc;
 
     /**
      * Text describing one aspect of the annotation of
      * an object.
      */
-    protected String annotationText;
+    private String annotationText;
 
     ///////////////////////////////////////
     // associations
 
     /**
-     *
+     * TODO comments
      */
-    public CvTopic cvTopic;
+    private CvTopic cvTopic;
 
     /**
-     * no-arg constructor. Hope to replace with a private one as it should
-     * not be used by applications because it will result in objects with invalid
-     * states.
+     * This constructor should <b>not</b> be used as it could
+     * result in objects with invalid state. It is here for object mapping
+     * purposes only and if possible will be made private.
+     * @deprecated Use the full constructor instead
      */
     public Annotation() {
         //super call sets creation time data
         super();
-    };
+    }
 
     /**
      * Creates a valid Annotation instance. A valid instance must have at least
@@ -62,12 +62,9 @@ public class Annotation extends BasicObject {
     public Annotation(Institution owner, CvTopic topic) {
 
         //super call sets creation time data
-        super();
-        if(owner == null) throw new NullPointerException("valid Annotation must have an owner (Institution)!");
+        super(owner);
         if(topic == null) throw new NullPointerException("valid Annotation must have an associated topic!");
-        this.owner = owner;
         this.cvTopic = topic;
-
     }
 
     ///////////////////////////////////////
@@ -94,32 +91,47 @@ public class Annotation extends BasicObject {
     public String getCvTopicAc() {
         return this.cvTopicAc;
     }
+
     public void setCvTopicAc(String ac){
         this.cvTopicAc = ac;
     }
 
-    /** Returns true if the "important" attributes are equal.
+    /**
+     * Equality for Annotations is currently based on equality for
+     * <code>CvTopics</code> and annotationText (a String).
+     * @see uk.ac.ebi.intact.model.CvTopic
+     * @param o The object to check
+     * @return true if the parameter equals this object, false otherwise
      */
     public boolean equals(Object o){
         if (this == o) return true;
         if (!(o instanceof Annotation)) return false;
-        if (!super.equals(o)) return false;
 
         final Annotation annotation = (Annotation) o;
 
-        return (Utilities.equals(this.cvTopic, annotation.getCvTopic()) &&
-                Utilities.equals(this.annotationText, annotation.getAnnotationText()));
+        if(cvTopic != null) {
+        if (!cvTopic.equals(annotation.cvTopic)) return false;
+        }
+        else {
+           if (annotation.cvTopic != null) return false;
+        }
+
+        //get to here and cvTopics are equal (null or non-null)
+        if(annotationText != null) {
+            return annotationText.equals(annotation.annotationText);
+        }
+        return annotation.annotationText == null;
     }
 
-    /** This class overwrites equals. To ensure proper functioning of HashTable,
+    /**
+     * This class overwrites equals. To ensure proper functioning of HashTable,
      * hashCode must be overwritten, too.
      * @return  hash code of the object.
      */
     public int hashCode(){
 
-        int code = super.hashCode();
-
-        if (null != cvTopic)        code = 29 * code + cvTopic.hashCode();
+        int code = 29;
+        if(cvTopic != null) code = 29*code + cvTopic.hashCode();
         if (null != annotationText) code = 29 * code + annotationText.hashCode();
 
         return code;

@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
@@ -9,14 +9,18 @@ package uk.ac.ebi.intact.model;
  * The role of the specific substrate in the
  * interaction.
  * 
- * @intact.example bait
- * @intact.example prey
+ * example bait
+ * example prey
  * @author hhe
+ * @version $Id$
  */
 public class CvComponentRole extends CvObject implements Editable {
 
     /**
-     * no-arg constructor which will hopefully be removed later...
+     * This constructor should <b>not</b> be used as it could
+     * result in objects with invalid state. It is here for object mapping
+     * purposes only and if possible will be made private.
+     * @deprecated Use the full constructor instead
      */
     public CvComponentRole() {
         //super call sets creation time data
@@ -30,12 +34,11 @@ public class CvComponentRole extends CvObject implements Editable {
      * @param owner The Institution which owns this CvComponentRole
      * @exception NullPointerException thrown if either parameters are not specified
      */
-    public CvComponentRole(String shortLabel, Institution owner) {
+    public CvComponentRole(Institution owner, String shortLabel) {
 
         //super call sets up a valid CvObject
-        super(shortLabel, owner);
+        super(owner, shortLabel);
     }
-
 
 } // end CvComponentRole
 

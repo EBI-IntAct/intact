@@ -5,12 +5,13 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import java.util.*;
+
 
 /**
  * Controlled vocabulary for description topics.
  * 
  * @author hhe
+ * @version $Id$
  */
 public class CvTopic extends CvObject implements Editable {
 
@@ -19,10 +20,13 @@ public class CvTopic extends CvObject implements Editable {
      * This should not be here as it has no model functionality but is
      * related to eg user interfaces.
      */
-    protected static Vector menuList = null;
+//    protected static Vector menuList = null;
 
     /**
-     * no-arg constructor which will hopefully be removed later...
+     * This constructor should <b>not</b> be used as it could
+     * result in objects with invalid state. It is here for object mapping
+     * purposes only and if possible will be made private.
+     * @deprecated Use the full constructor instead
      */
     public CvTopic() {
         //super call sets creation time data
@@ -36,12 +40,11 @@ public class CvTopic extends CvObject implements Editable {
      * @param owner The Institution which owns this CvTopic
      * @exception NullPointerException thrown if either parameters are not specified
      */
-    public CvTopic(String shortLabel, Institution owner) {
+    public CvTopic(Institution owner, String shortLabel) {
 
         //super call sets up a valid CvObject
-        super(shortLabel, owner);
+        super(owner, shortLabel);
     }
-
 
 } // end CvTopic
 

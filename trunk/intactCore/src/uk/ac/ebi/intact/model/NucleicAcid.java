@@ -5,13 +5,12 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import java.util.*;
-
 /**
  * A nucleic acid sequence.
  * 
- * @intact.todo Further specification.
+ * todo Further specification.
  * @author hhe
+ * @version $Id$
  */
 public class NucleicAcid extends Interactor {
 } // end NucleicAcid

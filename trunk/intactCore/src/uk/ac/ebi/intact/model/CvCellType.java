@@ -1,17 +1,23 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
 /**
-
+ * TODO comments
+ *
+ * @author hhe
+ * @version $Id$
  */
 public class CvCellType extends CvObject {
 
     /**
-     * no-arg constructor which will hopefully be removed later...
+     * This constructor should <b>not</b> be used as it could
+     * result in objects with invalid state. It is here for object mapping
+     * purposes only and if possible will be made private.
+     * @deprecated Use the full constructor instead
      */
     public CvCellType() {
         //super call sets creation time data
@@ -25,12 +31,11 @@ public class CvCellType extends CvObject {
      * @param owner The Institution which owns this CvCellType
      * @exception NullPointerException thrown if either parameters are not specified
      */
-    public CvCellType(String shortLabel, Institution owner) {
+    public CvCellType(Institution owner, String shortLabel) {
 
         //super call sets up a valid CvObject
-        super(shortLabel, owner);
+        super(owner, shortLabel);
     }
-
 
 } // end CvCellType
 

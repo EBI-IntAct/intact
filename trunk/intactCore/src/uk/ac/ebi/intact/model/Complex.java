@@ -1,26 +1,28 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
 /**
-
+ * TODO comments
+ *
+ * @author hhe
+ * @version $Id$
  */
 public class Complex extends Interactor {
 
-  ///////////////////////////////////////
-  //attributes
+    ///////////////////////////////////////
+    //attributes
 
+    /**
+     * Molecular weight of the complex in kilodalton.
+     */
+    private float mw;
 
-/**
- * Molecular weight of the complex in kilodalton.
- */
-    protected float mw;
-
-  ///////////////////////////////////////
-  //access methods for attributes
+    ///////////////////////////////////////
+    //access methods for attributes
 
     public float getMw() {
         return mw;
