@@ -70,6 +70,7 @@
 
         <!-- Common jar files. -->
         <pathelement path="${root.lib.dir}/jakarta-ojb-0.9.7.jar"/>
+        <pathelement path="${root.lib.dir}/jakarta-regexp-1.2.jar"/>
         <pathelement path="${root.lib.dir}/log4j-1.2.5.jar"/>
         <pathelement path="${root.lib.dir}/servlet.jar"/>
         <pathelement path="${intact.app.dir}/lib/struts.jar"/>
