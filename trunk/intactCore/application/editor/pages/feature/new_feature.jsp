@@ -13,7 +13,6 @@
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
 
 <%-- The current view --%>
 <c:set var="view" value="${user.view}"/>
@@ -22,7 +21,7 @@
 <c:set var="type_menu" value="${view.cvFeatureTypeMenu}"/>
 <c:set var="ident_menu" value="${view.cvFeatureIdentificationMenu}"/>
 
-<h3>New features</h3>
+<h3>New feature</h3>
 
 <%-- The anchor name for this page --%>
 <a name="feature.new"/>
@@ -30,28 +29,37 @@
 <%-- The table id is for testing purposes --%>
 <table width="100%" border="0" cellspacing="1" cellpadding="2" id="new.feature">
     <tr class="tableRowHeader">
+
         <th class="tableCellHeader">
             <bean:message key="label.ac"/>
         </th>
+
         <%-- Short label is not needed when in mutation mode --%>
         <c:if test="${view.inNonMutationMode}">
             <th class="tableCellHeader">
                 <bean:message key="label.shortlabel"/>
             </th>
         </c:if>
+
         <th class="tableCellHeader">
             <bean:message key="label.fullname"/>
         </th>
+
         <th class="tableCellHeader">
-            <bean:message key="feature.new.label.type"/>
+            <a href="javascript:showColumnLink('CvFeatureType',
+                document.forms['featureForm'].elements['featureType'].value)">
+                <bean:message key="feature.new.label.type"/>
+            </a>
         </th>
+
         <th class="tableCellHeader">
-            <bean:message key="feature.new.label.ident"/>
-        </th>
-        <th>
-            <intact:documentation section="editor.short.labels"/>
+            <a href="javascript:showColumnLink('CvFeatureIdentification',
+                document.forms['featureForm'].elements['featureIdent'].value)">
+                <bean:message key="feature.new.label.ident"/>
+            </a>
         </th>
     </tr>
+
     <tr class="tableRowEven">
         <td class="tableCell">
             <bean:write property="ac" name="featureForm" filter="false"/>
@@ -68,6 +76,8 @@
 
         <td class="tableCell">
             <html:text property="fullName" size="80" maxlength="80" name="featureForm"/>
+            <html:errors property="feature.mutation.empty"/>
+            <html:errors property="feature.mutation.invalid"/>
         </td>
 
         <td class="tableCell" align="left" valign="top">
@@ -76,6 +86,7 @@
             </html:select>
             <html:errors property="feature.type"/>
         </td>
+
         <td class="tableCell" align="left" valign="top">
             <html:select property="featureIdent" name="featureForm">
                 <html:options name="ident_menu"/>
@@ -83,8 +94,6 @@
         </td>
     </tr>
 </table>
-<html:errors property="feature.mutation.empty"/>
-<html:errors property="feature.mutation.invalid"/>
 
 <%----%>
 <%--<html:messages id="message" message="true">--%>

@@ -13,7 +13,6 @@
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
 
 <%-- The current view --%>
 <c:set var="view" value="${user.view}"/>
