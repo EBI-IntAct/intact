@@ -17,9 +17,11 @@ INSTALLATION
 	Read the README file in the intact home directory to know how to configure the database access.
 	
 DEPENDENCIES:
-       - Make sure that the table in the database are created
-        - BE CAREFUL, statisticView got his OWN repository_user.xml OJB config file.
-          everything is done by ant, but be carefull with modification.
+       - Make sure that the table in the database are created and the scripts created the data
+
+       - BE CAREFUL, statisticView got his OWN repository_user.xml OJB config file.
+         everything is done by ant, but be carefull with modification. it stored under
+         /application/statisticView/WEB-INF/config/repository_user.xml
 
     ORACLE:
 	- The script sql/oracle/statistics/create_all_statistics.psql
