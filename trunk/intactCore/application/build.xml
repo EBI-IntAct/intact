@@ -98,4 +98,15 @@
         <delete dir="${webapps.war.dir}/${war}" quiet="true"/>
     </target>
 
+    <!-- =================================================================== -->
+
+    <!-- Generates the last modified file. -->
+
+    <target name="gen-last-modified-file">
+        <tstamp>
+            <format property="TODAY_UK" pattern="dd-MMMM-yyyy hh:mm aa" locale="en"/>
+      </tstamp>
+        <echo message="${TODAY_UK} by ${env.USER}" file="${file}"/>
+    </target>
+
 </project>
