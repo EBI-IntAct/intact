@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- This is the template metadata repository for the ObJectBridge System.
-     Authors: Intact Team
-     Version: $Id$
+<!--
+    This is the metadata repository template for the ObjectBridge System.
+    Authors: Intact Team
+    Version: $Id$
  -->
 
 <!-- defining entities for include-files -->
@@ -11,7 +12,7 @@
 <!ENTITY internal SYSTEM "repository_internal.xml">
 ]>
 
-<descriptor-repository version="0.9.6" isolation-level="read-uncommitted">
+<descriptor-repository version="0.9.6" isolation-level="read-committed">
 <!-- The connection-descriptor template -->
 
     <jdbc-connection-descriptor
