@@ -7,7 +7,6 @@
  */
 package uk.ac.ebi.intact.util;
 
-import gnu.regexp.REMatch;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
@@ -16,7 +15,6 @@ import uk.ac.ebi.intact.model.*;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 
@@ -55,6 +53,8 @@ public abstract class UpdateProteinsI {
     protected static CvDatabase goDatabase;
     protected static CvDatabase interproDatabase;
     protected static CvDatabase flybaseDatabase;
+    protected static CvDatabase reactomeDatabase;
+    protected static CvDatabase hugeDatabase;
 
     /**
      * Describe wether an Xref is related the primary SPTR AC (identityCrefQualifier)
@@ -155,162 +155,72 @@ public abstract class UpdateProteinsI {
         try {
             myInstitution = (Institution) helper.getObjectByLabel( Institution.class, "EBI" );
             if( myInstitution == null ) {
-                if( logger != null ) {
-                    logger.error( "Unable to find the Institution" );
-                }
-                throw new UpdateException( "Unable to find the Institution" );
-            }
-
-            sgdDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "sgd" );
-            if( sgdDatabase == null ) {
-                if( logger != null ) {
-                    logger.error( "Unable to find the SGD database in your IntAct node" );
-                }
-                throw new UpdateException( "Unable to find the SGD database in your IntAct node" );
-            }
-
-            uniprotDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "uniprot" );
-            if( uniprotDatabase == null ) {
-                if( logger != null ) {
-                    logger.error( "Unable to find the UNIPROT database in your IntAct node" );
-                }
-                throw new UpdateException( "Unable to find the UNIPROT database in your IntAct node" );
-            }
-
-            // search for the SRS link.
-            Collection annotations = uniprotDatabase.getAnnotations();
-            if( annotations != null ) {
-                // find the CvTopic search-url-ascii
-                Annotation searchedAnnotation = null;
-                for ( Iterator iterator = annotations.iterator(); iterator.hasNext() && searchedAnnotation == null; ) {
-                    Annotation annotation = (Annotation) iterator.next();
-                    if( CV_TOPIC_SEARCH_URL_ASCII.equals( annotation.getCvTopic().getShortLabel() ) ) {
-                        searchedAnnotation = annotation;
-                    }
-                }
-
-                if( searchedAnnotation != null ) {
-                    srsUrl = searchedAnnotation.getAnnotationText();
-                    if( logger != null ) {
-                        logger.info( "Found SRS URL in the Uniprot CvDatabase: " + srsUrl );
-                    }
-                } else {
-                    String msg = "Unable to find an annotation having a CvTopic: " + CV_TOPIC_SEARCH_URL_ASCII +
-                                 " in the UNIPROT database";
-                    if( logger != null ) {
-                        logger.error( msg );
-                    }
-                    throw new UpdateException( msg );
-                }
-            } else {
-                String msg = "No Annotation in the UNIPROT database, could not get the SRS URL.";
+                String msg = "Unable to find the Institution: EBI";
                 if( logger != null ) {
                     logger.error( msg );
                 }
                 throw new UpdateException( msg );
             }
 
-            intactDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "intact" );
-            if( intactDatabase == null ) {
-                if( logger != null ) logger.error( "Unable to find the INTACT database in your IntAct node" );
-                throw new UpdateException( "Unable to find the INTACT database in your IntAct node" );
-            }
+            /**
+             * Load CVs
+             */
 
-            goDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "go" );
-            if( goDatabase == null ) {
-                if( logger != null ) {
-                    logger.error( "Unable to find the GO database in your IntAct node" );
-                }
-                throw new UpdateException( "Unable to find the GO database in your IntAct node" );
-            }
+            sgdDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "sgd" );
+            uniprotDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "uniprot" );
 
-            interproDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "interpro" );
-            if( interproDatabase == null ) {
-                if( logger != null ) {
-                    logger.error( "Unable to find the interpro database in your IntAct node" );
-                }
-                throw new UpdateException( "Unable to find the interpro database in your IntAct node" );
-            }
+            // search for the SRS link.
+            srsUrl = "http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-noSession+-e+([uniprot-acc:${ac}]|[uniprot-isoid:${ac}])+-ascii";
+//            Collection annotations = uniprotDatabase.getAnnotations();
+//            if( annotations != null ) {
+//                // find the CvTopic search-url-ascii
+//                Annotation searchedAnnotation = null;
+//                for ( Iterator iterator = annotations.iterator(); iterator.hasNext() && searchedAnnotation == null; ) {
+//                    Annotation annotation = (Annotation) iterator.next();
+//                    if( CV_TOPIC_SEARCH_URL_ASCII.equals( annotation.getCvTopic().getShortLabel() ) ) {
+//                        searchedAnnotation = annotation;
+//                    }
+//                }
+//
+//                if( searchedAnnotation != null ) {
+//                    srsUrl = searchedAnnotation.getAnnotationText();
+//                    if( logger != null ) {
+//                        logger.info( "Found SRS URL in the Uniprot CvDatabase: " + srsUrl );
+//                    }
+//                } else {
+//                    String msg = "Unable to find an annotation having a CvTopic: " + CV_TOPIC_SEARCH_URL_ASCII +
+//                                 " in the UNIPROT database";
+//                    if( logger != null ) {
+//                        logger.error( msg );
+//                    }
+//                    throw new UpdateException( msg );
+//                }
+//            } else {
+//                String msg = "No Annotation in the UNIPROT database, could not get the SRS URL.";
+//                if( logger != null ) {
+//                    logger.error( msg );
+//                }
+//                throw new UpdateException( msg );
+//            }
 
-            flybaseDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "flybase" );
-            if( flybaseDatabase == null ) {
-                if( logger != null ) {
-                    logger.error( "Unable to find the flybase database in your IntAct node" );
-                }
-                throw new UpdateException( "Unable to find the flybase database in your IntAct node" );
-            }
+            intactDatabase = (CvDatabase) getCvObject( CvDatabase.class, "intact" );
+            goDatabase = (CvDatabase) getCvObject( CvDatabase.class, "go" );
+            interproDatabase = (CvDatabase) getCvObject( CvDatabase.class, "interpro" );
+            flybaseDatabase = (CvDatabase) getCvObject( CvDatabase.class, "flybase" );
+            reactomeDatabase = (CvDatabase) getCvObject( CvDatabase.class, "reactome" );
+            hugeDatabase = (CvDatabase) getCvObject( CvDatabase.class, "huge" );
 
-            identityXrefQualifier = (CvXrefQualifier) helper.getObjectByLabel( CvXrefQualifier.class, "identity" );
-            if( identityXrefQualifier == null ) {
-                if( logger != null ) {
-                    logger.error( "Unable to find the identity CvXrefQualifier in your IntAct node" );
-                }
-                throw new UpdateException( "Unable to find the identity CvXrefQualifier in your IntAct node" );
-            }
+            identityXrefQualifier = (CvXrefQualifier) getCvObject( CvXrefQualifier.class, "identity" );
+            secondaryXrefQualifier = (CvXrefQualifier) getCvObject( CvXrefQualifier.class, "secondary-ac" );
+            isoFormParentXrefQualifier = (CvXrefQualifier) getCvObject( CvXrefQualifier.class, "isoform-parent" );
 
-            secondaryXrefQualifier = (CvXrefQualifier) helper.getObjectByLabel( CvXrefQualifier.class, "secondary-ac" );
-            if( secondaryXrefQualifier == null ) {
-                if( logger != null ) {
-                    logger.error( "Unable to find the identity CvXrefQualifier in your IntAct node" );
-                }
-                throw new UpdateException( "Unable to find the identity CvXrefQualifier in your IntAct node" );
-            }
+            isoformComment = (CvTopic) getCvObject( CvTopic.class, "isoform-comment" );
 
-            isoFormParentXrefQualifier = (CvXrefQualifier) helper.getObjectByLabel( CvXrefQualifier.class, "isoform-parent" );
-            if( secondaryXrefQualifier == null ) {
-                if( logger != null ) {
-                    logger.error( "Unable to find the isoform-parent CvXrefQualifier in your IntAct node" );
-                }
-                throw new UpdateException( "Unable to find the identity CvXrefQualifier in your IntAct node" );
-            }
-
-            isoformComment = (CvTopic) helper.getObjectByLabel( CvTopic.class, "isoform-comment" );
-            if( isoformComment == null ) {
-                if( logger != null ) {
-                    logger.error( "Unable to find the isoform-comment CvTopic in your IntAct node" );
-                }
-                throw new UpdateException( "Unable to find the isoform-comment CvTopic in your IntAct node" );
-            }
-
-            isoformSynonym = (CvAliasType) helper.getObjectByLabel( CvAliasType.class, "isoform-synonym" );
-            if( isoformSynonym == null ) {
-                if( logger != null ) {
-                    logger.error( "Unable to find the isoform-synonym CvAliasType in your IntAct node" );
-                }
-                throw new UpdateException( "Unable to find the isoform-synonym CvAliasType in your IntAct node" );
-            }
-
-            geneNameAliasType = (CvAliasType) helper.getObjectByLabel( CvAliasType.class, "gene-name" );
-            if( geneNameAliasType == null ) {
-                if( logger != null ) {
-                    logger.error( "Unable to find the gene-name CvAliasType in your IntAct node" );
-                }
-                throw new UpdateException( "Unable to find the gene-name CvAliasType in your IntAct node" );
-            }
-
-            geneNameSynonymAliasType = (CvAliasType) helper.getObjectByLabel( CvAliasType.class, "gene-name-synonym" );
-            if( geneNameSynonymAliasType == null ) {
-                if( logger != null ) {
-                    logger.error( "Unable to find the gene-name-synonym CvAliasType in your IntAct node" );
-                }
-                throw new UpdateException( "Unable to find the gene-name-synonym CvAliasType in your IntAct node" );
-            }
-
-            orfNameAliasType = (CvAliasType) helper.getObjectByLabel( CvAliasType.class, "orf-name" );
-            if( orfNameAliasType == null ) {
-                if( logger != null ) {
-                    logger.error( "Unable to find the orf-name CvAliasType in your IntAct node" );
-                }
-                throw new UpdateException( "Unable to find the orf-name CvAliasType in your IntAct node" );
-            }
-
-            locusNameAliasType = (CvAliasType) helper.getObjectByLabel( CvAliasType.class, "locus-name" );
-            if( locusNameAliasType == null ) {
-                if( logger != null ) {
-                    logger.error( "Unable to find the locus-name CvAliasType in your IntAct node" );
-                }
-                throw new UpdateException( "Unable to find the locus-name CvAliasType in your IntAct node" );
-            }
+            isoformSynonym = (CvAliasType) getCvObject( CvAliasType.class, "isoform-synonym" );
+            geneNameAliasType = (CvAliasType) getCvObject( CvAliasType.class, "gene-name" );
+            geneNameSynonymAliasType = (CvAliasType) getCvObject( CvAliasType.class, "gene-name-synonym" );
+            orfNameAliasType = (CvAliasType) getCvObject( CvAliasType.class, "orf-name" );
+            locusNameAliasType = (CvAliasType) getCvObject( CvAliasType.class, "locus-name" );
 
         } catch ( IntactException e ) {
             if( logger != null ) {
@@ -319,6 +229,38 @@ public abstract class UpdateProteinsI {
             throw new UpdateException( "Couldn't find needed object in IntAct, cause: " + e.getMessage() );
         }
 
+    }
+
+
+    /**
+     * Get a CvObject based on its class name and its shortlabel.
+     *
+     * @param clazz the Class we are looking for
+     * @param shortlabel the shortlabel of the object we are looking for
+     *
+     * @return the CvObject of type <code>clazz</code> and having the shortlabel <code>shorltabel<code>.
+     *
+     * @throws IntactException if the search failed
+     * @throws UpdateException if the object is not found.
+     */
+    private CvObject getCvObject( Class clazz, String shortlabel ) throws IntactException,
+                                                                          UpdateException {
+
+        CvObject cv = (CvObject) helper.getObjectByLabel( clazz, shortlabel );
+        if( cv == null ) {
+            StringBuffer sb = new StringBuffer( 128 );
+            sb.append( shortlabel );
+            sb.append( ' ' );
+            sb.append( clazz.getName() );
+            sb.append( " in your IntAct node" );
+
+            if( logger != null ) {
+                logger.error( sb.toString() );
+            }
+            throw new UpdateException( sb.toString() );
+        }
+
+        return cv;
     }
 
     /**
@@ -418,24 +360,6 @@ public abstract class UpdateProteinsI {
      * @return a full URL.
      */
     public abstract String getUrl( String sptrAC );
-
-    /**
-     * From a given URL, returns a string of a SPTR entry.
-     *
-     * @param url a URL which outputs flatfile of
-     * @return a full URL.
-     */
-    public abstract String getAnEntry( String url );
-
-    /**
-     * from a given string and a given pattern(string), to find all matches. The matched are
-     * retured as a list. This method uses gnu.regexp.* package, not the org.apache.regexp.*
-     *
-     * @param textin  A string from which some pattern will be matched.
-     * @param pattern A string as a pattern.
-     * @return A list of matched pattern.
-     */
-    public abstract REMatch[] match( String textin, String pattern );
 
     /**
      * add (not update) a new Xref to the given Annotated object and write
