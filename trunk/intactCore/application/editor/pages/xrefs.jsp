@@ -22,9 +22,11 @@
 <jsp:useBean id="user" scope="session"
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
-<c:set var="viewbean" value="${user.view}"/>
-<c:set var="menus" value="${viewbean.editXrefMenus}"/>
-<c:set var="dblist" value="${menus['DatabaseNames']}"/>
+<%--<c:set var="viewbean" value="${user.view}"/>--%>
+<c:set var="view" value="${user.view}"/>
+<c:set var="dblist" value="${view.editDatabaseMenu}"/>
+<c:set var="menus" value="${view.editXrefMenus}"/>
+<%--<c:set var="dblist" value="${menus['DatabaseNames']}"/>--%>
 <c:set var="qlist" value="${menus['QualifierNames']}"/>
 
 <%-- Class wide declarations. --%>
@@ -36,7 +38,7 @@
 
 <h3>Crossreferences</h3>
 
-<c:if test="${not empty viewbean.xrefs}">
+<c:if test="${not empty view.xrefs}">
 
     <html:form action="/xref/edit">
         <table width="80%">
