@@ -65,7 +65,7 @@ public class BioSourceAction extends AbstractEditorAction {
 
         // Validate the tax id; it should be unique.
         if (!validateTaxId(user, taxid, request)) {
-            return inputForward(mapping);
+            return mapping.getInputForward();
         }
         // To report errors.
         ActionErrors errors;
@@ -83,7 +83,7 @@ public class BioSourceAction extends AbstractEditorAction {
             errors.add(ActionErrors.GLOBAL_ERROR,
                     new ActionError("error.newt.url"));
             saveErrors(request, errors);
-            return inputForward(mapping);
+            return mapping.getInputForward();
         }
 
         // The response from the Newt server.
@@ -92,7 +92,7 @@ public class BioSourceAction extends AbstractEditorAction {
 
         // Any errors?
         if (hasErrors(request)) {
-            return inputForward(mapping);
+            return mapping.getInputForward();
         }
         // Values from newt.
         String newtLabel = newtResponse.getShortLabel();
