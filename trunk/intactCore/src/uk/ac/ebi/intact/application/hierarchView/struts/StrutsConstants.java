@@ -23,6 +23,11 @@ public final class StrutsConstants {
 
     public static final String SEARCH_PROPERTY_FILE = "/config/Search.properties";
 
+    // ********************************************************* session keys
+
+    public static final String HOST     = "intact.hierarchView.host";
+    public static final String PROTOCOL = "intact.hierarchView.protocol";
+
 
     // ********************************************************* Request parameters
 
