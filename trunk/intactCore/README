@@ -4,22 +4,20 @@ README for Intact Core
 DIRECTORIES
 ------------
 
-application/    : standard structures for the web applications, including JSPs etc
-classes/	    : Java classes
-config/		    : Configuration files
-data/           : data to fill the database
-doc/		    : Documentation
+application/    : IntAct web applications, including JSPs etc
+classes/	    : compiled Java classes
+config/	    : Configuration files
+data/           : data flat files for test purposes
+doc/		    : documentation
 ide/		    : project files of Java IDEs
 lib/		    : third-party libraries needed in addition to the standard JDK
-notes/		    : -
-perl/           :
+perl/           : auxiliary perl scripts
 scripts/	    : auxiliary scripts, ant files, make files.
-specifications/ :
+specifications/ : specifications, mainly screen mockups, for IntAct applications
 sql/            : sql scripts for Oracle and Postgres
 src/		    : Java sources
-template/       : configuration files template
+template/       : template files for configuration etc.
 uml/		    : UML modeling files.
-web/            :
 
 Other directories under intactCore not mentioned above are currently not relevant to installing/running intact.
 
@@ -27,7 +25,7 @@ Other directories under intactCore not mentioned above are currently not relevan
 DETAILED INSTALLATION NOTES
 ----------------------------
 
-1. PreRequisites
+1. Prerequisites
 -----------------
 To install and run the intact software you must have the following installed in your
 environment (or, for the DBs, at least have access to them over the network):
@@ -37,15 +35,15 @@ environment (or, for the DBs, at least have access to them over the network):
 	- ant 1.5 or above (all the intact build process relies on ant)
 	  see http://ant.apache.org/bindownload.cgi
 	- Tomcat Light Edition, for JDK 1.4 (preferably 4.1.1.8 LE)
-      see http://jakarta.apache.org/builds/jakarta-tomcat-4.0/release/v4.1.18/bin/
+        see http://jakarta.apache.org/builds/jakarta-tomcat-4.0/release/v4.1.18/bin/
 	- either Postgres 7.2 or Oracle 8.1.6 (or higher)
-      for postgres see http://www.postgresql.org/mirrors-ftp.html
+        for postgres see http://www.postgresql.org/mirrors-ftp.html
 
 For hierarchView:
 
 	- Apache Axis web application (1.0) for web services (for use with the HierarchView application)
 	  see http://ws.apache.org/axis/
-	- Tulip (available from Bordeaux), which is needed by HierarchView
+	- Tulip, the graph rendering library which is needed by HierarchView
 	  see http://www.tulip-software.org/
 	- gcc++ 2.96 AND NO OTHER RELEASE to build the Console executable to access Tulip
 	- the interpro web application, installed on tomcat (to view GO terms)
@@ -57,11 +55,11 @@ LD_LIBRARY_PATH=$LD_LIBRARY_PATH:TLPDIR/lib
 
 There are more detailed notes for hierarchView in a README file in the directory application/hierarchView.
 
-In general, it will also help to have the following environment variables set too:
+The following environment variables should be set:
 
 $CATALINA_HOME - the home directory of your tomcat installation
 $JAVA_HOME - the home directory of your JDK
-$CLASSPATH should contains, at least, the current directory (i.e. : .). It allows Ant to find build.properties.
+$CLASSPATH should contains, at least, the current directory (i.e. : .).
 
 All those variable settings could be done by sourcing one of the following scripts :
   - scripts/setEnv.sh  (for bash environment)
@@ -78,24 +76,22 @@ have Windows then everything can still be used provided you have cygwin installe
 ---------
 a) Firstly download the intact software from http://sourceforge.net/projects/intact, by following the
 instructions for anonymous download on the CVS pages. All of what follows assumes a root directory of 'intactCore'.
-(If you haven't done this already, where did you get this READEME file from? :-))
 
 b) You must then ensure that the configuration files are set correctly for you environment. A lot of
-this is automated for you, via the 'build.properties' file. Edit that file and uncomment the target environment
+this is automated for you, via the 'config/build.properties' file. Edit that file and uncomment the target environment
 that you have (ie currently for oracle or postgres). Note that for oracle you need to have a file in the config directory called
 'oracle.properties' containing your password (eg 'password=abcd'). In the 'template' directory you will find a file called
 'oracle.template' - edit this file to define your oracle password, then save it as 'oracle.properties' in the 'config' directory.
-
-NOTE: if you are not logged on as the same user as your database account then before you perform the next step
-you should make sure that the $USER environment variable is set to your database username (or part of it). For example
-if your oracle username is 'ops$jbloggs' or for postgres just 'jbloggs', then $USER should be set to 'jbloggs'.
+For Postgres, the current configuration assumes that you have a local postgres installation with your user name as the
+database name, and no password. This will soon be generalised to use the same mechanism as for Oracle.
 
 In the intactCore directory, type
 
 	ant set-target-env
 
 Afterwards you should check the config/repository.xml file to ensure that your correct DB connection details have been
-generated. If not you should edit 'repository.xml' manually to set the DB URL, user/password etc by using the template in that file as a guide.
+generated. If not you should edit 'repository.xml' manually to set the DB URL, user/password etc by using 
+the template in that file as a guide.
 
 c) Having downloaded intact and set the configuration details as above, from the intactCore directory type
 
@@ -110,9 +106,9 @@ and to populate your database with this data simply type
 	scripts/postgres/testfill.sh 'user/pwd' <dbname> small | large  (postgres - quotes can be omitted if no password)
 
 or
-	scripts/testfill.sh 'user/pwd' <dbname> small | large (oracle)
+	scripts/oracle/testfill.sh 'user/pwd' <dbname> small | large (oracle)
 
-"small" is for minimal tests, will need < 5 minutes."large" is full, real data from the Ho and Gavin experiments,
+"small" is for minimal tests, will need < 5 minutes. "large" is full, real data from the Ho and Gavin experiments,
 will run > 1 hour.
 
 You should then check your database using an appropriate tool (eg pgaccess for postgres/linux) to make sure you have the
@@ -127,14 +123,16 @@ the generated javadoc can then be found in doc/api.
 
 3. Applications
 ----------------
+
 Intact comes bundled with a number of web applications - currently we have:
 
 	- search
 	- cvedit
 	- hierarchView
 
-There is also the 'synchron' application which is use to exchange data between intact sites - this is standalone and not web-based. As
-this application matures further details will be included about it in this file (it is currently still under development).
+There is also the 'synchron' application which is use to exchange data between intact sites - this is standalone 
+and not web-based. As this application matures further details will be included about it in this file 
+(it is currently still under development).
 
 The process for building the web applications is broadly the same. At the intactCore level, type
 
@@ -155,11 +153,13 @@ a) cd applications/<webapp-name>, then type
 
 	ant war deploy (for cvedit and search)
 
-This will build a war file and copy it to your tomcat webapps directory (assuming you have $CATALINA_HOME set as an environment variable).
-Just to check things worked OK, you should see a collection of <appname>.war files in your $CATALINIA_HOME/webapps directory.
+This will build a war file and copy it to your tomcat webapps directory 
+(assuming you have $CATALINA_HOME set as an environment variable).
+Just to check things worked OK, you should see a collection of <appname>.war files in your 
+$CATALINIA_HOME/webapps directory.
 
 HierarchView requires a little more effort. The web service for hierarchView needs to first be deployed.
-please read the README file in the application/hierarchView directory for more details about how to install
+Please read the README file in the application/hierarchView directory for more details about how to install
 the web service and the hierarchView application.
 
 b) For search and cvedit, type ant start-tomcat (once)- if this fails, simply go to your tomcat bin directory and start it manually from there.
@@ -168,19 +168,19 @@ c) to start a web application, open a web browser and type
 
 	http://<hostname>:8080/<webapp-name>
 
-Note that from the search application it is also possible to generate a graph of selected items - but to use this facility you should have
-installed the components for hierarchView (ie Tulip and axis). Note that Tulip is a C++ application and it may not run on Windows, but it seems
-to work OK with intact on a Linux machine (tested on Redhat 7.1 and 8.0).
+Note that from the search application it is also possible to generate a graph of selected items - but to use this facility 
+you should have installed the components for hierarchView (ie Tulip and axis). Note that Tulip is a C++ application and 
+has only been tested on Redhat Linux 7.1 and 8.0.
 
 
 4. Hints and Tips
 ------------------
-a) If you find that you get OutOfMemoryErrors with large queries through tomcat, increasing the heap size that tomcat uses can help. You can
-do this simply by setting the envirnoment variable JAVA_OPTS as follows:
+a) If you find that you get OutOfMemoryErrors with large queries through tomcat, increasing the heap 
+size that tomcat uses can help. You can do this simply by setting the envirnoment variable JAVA_OPTS as follows:
 
 setenv JAVA_OPTS '-Xms200M -Xmx250M' (or use export if you use another shell)
 
-before you start tomcat. These settings should allow you (if you want!) to retrieve at least all of the small data set supplied.
+before you start tomcat.
 
 b) If you experience problems relating to database connections which are generated from the OJB layer
 then you can try the following:
@@ -192,7 +192,7 @@ then you can try the following:
 
 c) If you wish to see (a lot of!) debug logging output, then edit the log4j.properties file and replace the
 line "log4j.rootCategory=ERROR, A1, A2" with "log4j.rootCategory=, A1, A2". This will generate a lot of
-logging output to a file called "intact-ojb.log". For example, a MetatDataException trhown from OJB usually
+logging output to a file called "intact-ojb.log". For example, a MetatDataException thrown from OJB usually
 indicates that there is an error in the repository_user.xml file when specifying the object to table
 mapping. Note however that this file can become large very quickly, especially if you are doing lots of
 large queries. Another source of logging information is the logfile generated by tomact, which you can
@@ -200,67 +200,6 @@ find in the $CATALINA_HOME/logs directory (this is usually timestamped).
 
 d) hierarchView can be very memory intensive, and will probably be refactored over time - so be aware that
 you may experience some of the above when submitting many requests to hierarchView.
-
-
-5. Simple Test Application
----------------------------
-This performs a full cycle of
-
-- database deletion
-- database initialisation
-- database fill
-- simple query possibility:
-
-The application may be started by typing (in the intactCore directory):
-
-	ant demo
-
-
-6. Unit Tests
--------------
-Currently there are only unit tests for the IntactHelper class - specifically
-for various ways of searching. The test itself can be run standalone using:
-
-scripts/runHelperTests.sh IntactHelperTest
-
-from the intactCore directory.
-
-These should be OK - however if something goes wrong between the test
-setUp/tearDown phases (eg test run interruption etc) then you will
-need to remove the example test data from your database. Note that due
-to integrity constraints on the data this must be done in the correct
-order.
-
-There is an SQL script to do this - simply run cleanup_test_data.sql
-in the usual way. However if for some reason this script fails, it is
-still possible to remove the data manually, as follows:
-
-To delete the test items, perform the following:
-
-1) connect to your DB as usual
-2) run the SQL command
-
-    delete from <tablename> where ac like 'EBITEST%';
-
-for each relevant table. The <tablename> should be as follows, *in order*:
-
-interactor
-experiment
-biosource
-xref
-controlledvocab
-institution
-
-
-PLEASE NOTE - it is not a good idea to run the test cases on the
-full-blown intacttest database - one of the tests may result in pretty
-much the whole DB being returned in that case!! Please just stick to
-your own DB and the example data provided with intactCore and you
-should be fine.
-
-
-REPORT DB CONTENTS:
-sqlplus user/password@databaseInstance @sql/oracle/list_interactions.sql
 
 
 ACKNOWLEDGEMENTS
