@@ -24,7 +24,7 @@ import java.io.IOException;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class XreferenceBean extends AbstractEditBean {
+public class XreferenceBean extends AbstractEditKeyBean {
 
     /**
      * Reference to the Xref object this instance is created with. Transient as
@@ -67,70 +67,32 @@ public class XreferenceBean extends AbstractEditBean {
      * Instantiate an object of this class from a Xref object.
      *
      * @param xref the <code>Xref</code> object to construct an
-     * instance of this class.
+     *             instance of this class.
      */
     public XreferenceBean(Xref xref) {
-        myXref = xref;
-        myDatabaseName = xref.getCvDatabase().getShortLabel();
-        myPrimaryId = xref.getPrimaryId();
-        mySecondaryId = xref.getSecondaryId();
-        myReleaseNumber = xref.getDbRelease();
-
-        myReferenceQualifer = "";
-        CvXrefQualifier qualifier = xref.getCvXrefQualifier();
-        if (qualifier != null) {
-            myReferenceQualifer = qualifier.getShortLabel();
-        }
+        initialize(xref);
     }
 
-    // Override Object's equals method.
-
     /**
-     * Compares <code>obj</code> with this object according to
-     * Java's equals() contract.
-     * @param obj the object to compare.
-     * @return true only if <code>obj</code> is an instance of this class
-     * and all non transient fields are equal to given object's non tranient
-     * fields. For all other instances, false is returned.
+     * Instantiates with given xref and key.
+     *
+     * @param xref the underlying <code>Xref</code> object.
+     * @param key  the key to assigned to this bean.
      */
-    public boolean equals(Object obj) {
-        // Identical to this?
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof XreferenceBean)) {
-            return false;
-        }
-        // Can safely cast it.
-        XreferenceBean other = (XreferenceBean) obj;
-
-        // Compare tdatabase, primary & secondary id, release number and
-        // reference qualifier.
-        if (!equals(myDatabaseName, other.myDatabaseName)) {
-            return false;
-        }
-        if (!equals(myPrimaryId, other.myPrimaryId)) {
-            return false;
-        }
-        if (!equals(mySecondaryId, other.mySecondaryId)) {
-            return false;
-        }
-        if (!equals(myReleaseNumber, other.myReleaseNumber)) {
-            return false;
-        }
-        return equals(myReferenceQualifer, other.myReferenceQualifer);
+    public XreferenceBean(Xref xref, long key) {
+        super(key);
+        initialize(xref);
     }
 
     /**
      * Updates the internal xref with the new values from the form.
+     *
      * @param user the user instance to search for a cv database and xref qualifier.
      * @throws SearchException for errors in searching the database.
      */
     public Xref getXref(EditUserI user) throws SearchException {
-        CvDatabase db = (CvDatabase) user.getObjectByLabel(
-                CvDatabase.class, myDatabaseName);
-        CvXrefQualifier xqual = (CvXrefQualifier) user.getObjectByLabel(
-                CvXrefQualifier.class, myReferenceQualifer);
+        CvDatabase db = (CvDatabase) user.getObjectByLabel(CvDatabase.class, myDatabaseName);
+        CvXrefQualifier xqual = (CvXrefQualifier) user.getObjectByLabel(CvXrefQualifier.class, myReferenceQualifer);
         // Update the existing xref with new values.
         myXref.setCvDatabase(db);
         myXref.setPrimaryId(myPrimaryId);
@@ -149,6 +111,7 @@ public class XreferenceBean extends AbstractEditBean {
 
     /**
      * Returns the database with a link to show its contents in a window.
+     *
      * @return the database as a browsable link.
      */
     public String getDatabaseLink() {
@@ -193,9 +156,10 @@ public class XreferenceBean extends AbstractEditBean {
 
     /**
      * Sets the primary id.
+     *
      * @param primaryId the primary id as a <code>String</code>; any excess
-     * blanks are trimmed as this is set from values entered into a free input
-     * text box.
+     *                  blanks are trimmed as this is set from values entered into a free input
+     *                  text box.
      */
     public void setPrimaryId(String primaryId) {
         myPrimaryId = primaryId.trim();
@@ -210,41 +174,11 @@ public class XreferenceBean extends AbstractEditBean {
 
     /**
      * Sets the secondary id.
+     *
      * @param secondaryId the primary id as a <code>String</code>.
      */
     public void setSecondaryId(String secondaryId) {
         mySecondaryId = secondaryId;
-    }
-
-    /**
-     * Sets the secondary id using the primary id only if the current database
-     * is Go and no errors in querying the Go database.
-     * @param user to access the Go server.
-     * @return non null for errors; null if no errors encountered or the database
-     * is not Go database.
-     */
-    public ActionErrors setSecondaryIdFromGo(EditUserI user) {
-        if (!getDatabase().equals("go")) {
-            return null;
-        }
-        ActionErrors errors = null;
-        try {
-            setSecondaryId(user.getGoProxy().query(getPrimaryId()).getName());
-        }
-        catch (IOException ioe) {
-            // Error in communcating with the server.
-            errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.xref.go.connection",
-                            ioe.getMessage()));
-        }
-        catch (GoServerProxy.GoIdNotFoundException ex) {
-            // GO id not found.
-            errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.xref.go.search", getPrimaryId()));
-        }
-        return errors;
     }
 
     /**
@@ -256,6 +190,7 @@ public class XreferenceBean extends AbstractEditBean {
 
     /**
      * Sets the release number.
+     *
      * @param releaseNumber the release number as a <code>String</code>.
      */
     public void setReleaseNumber(String releaseNumber) {
@@ -271,6 +206,7 @@ public class XreferenceBean extends AbstractEditBean {
 
     /**
      * Returns the qualifier with a link to show its contents in a window.
+     *
      * @return the qualifier as a browsable link.
      */
     public String getQualifierLink() {
@@ -279,22 +215,100 @@ public class XreferenceBean extends AbstractEditBean {
 
     /**
      * Sets the reference qualifier.
+     *
      * @param refQualifier the reference qaulifier as a <code>String</code>.
      */
     public void setQualifier(String refQualifier) {
         myReferenceQualifer = refQualifier;
     }
 
+    /**
+     * Sets Secondary id and Qualifier values from the Go Server using PrimaryId.
+     *
+     * @param user the user to access the Go server.
+     * @return non null for errors in accessing the Go server.
+     */
+    public ActionErrors setFromGoServer(EditUserI user) {
+        // Get the response from the Go server.
+        GoResult result = getGoResponse(user);
+
+        if (result.myGoErrors != null) {
+            // Found errors; return them.
+            return result.myGoErrors;
+        }
+        // Only set the secondary id and the qualifier if there are no errors.
+        setSecondaryId(result.myGoResponse.getName());
+        setQualifier(result.myGoResponse.getCategory());
+
+        // No errors; all set.
+        return null;
+    }
 
     /**
      * Resets fields to blanks, so the addXref form doesn't display
      * previous values.
      */
     public void reset() {
+        super.reset();
         myDatabaseName = "";
         myPrimaryId = "";
         mySecondaryId = "";
         myReleaseNumber = "";
         myReferenceQualifer = "";
+    }
+
+    // Helper methods
+
+    /**
+     * Intialize the member variables using the given Xref object.
+     *
+     * @param xref <code>Xref</code> object to populate this bean.
+     */
+    private void initialize(Xref xref) {
+        myXref = xref;
+        myDatabaseName = xref.getCvDatabase().getShortLabel();
+        myPrimaryId = xref.getPrimaryId();
+        mySecondaryId = xref.getSecondaryId();
+        myReleaseNumber = xref.getDbRelease();
+
+        myReferenceQualifer = "";
+        CvXrefQualifier qualifier = xref.getCvXrefQualifier();
+        if (qualifier != null) {
+            myReferenceQualifer = qualifier.getShortLabel();
+        }
+    }
+
+    private GoResult getGoResponse(EditUserI user) {
+        GoResult result = new GoResult();
+        try {
+            result.myGoResponse = user.getGoProxy().query(getPrimaryId());
+        }
+        catch (IOException ioe) {
+            // Error in communcating with the server.
+            result.addErrors(new ActionError("error.xref.go.connection",
+                    ioe.getMessage()));
+        }
+        catch (GoServerProxy.GoIdNotFoundException ex) {
+            // GO id not found.
+            result.addErrors(new ActionError("error.xref.go.search",
+                    getPrimaryId()));
+        }
+        return result;
+    }
+
+    // ------------------------------------------------------------------------
+
+    // Static class to encapsulate GO response and action errors.
+
+    private static class GoResult {
+        private ActionErrors myGoErrors;
+        private GoServerProxy.GoResponse myGoResponse;
+
+        private void addErrors(ActionError error) {
+            if (myGoErrors == null) {
+                myGoErrors = new ActionErrors();
+            }
+            myGoErrors.add(ActionErrors.GLOBAL_ERROR, error);
+        }
     }
 }

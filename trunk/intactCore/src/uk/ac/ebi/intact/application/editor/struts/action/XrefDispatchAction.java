@@ -171,31 +171,25 @@ public class XrefDispatchAction extends AbstractEditorAction {
         // Handler to the EditUserI.
         EditUserI user = getIntactUser(request);
 
-        // Try to to set the secondary id for a go primary id.
-        ActionErrors errors = xb.setSecondaryIdFromGo(user);
-
-        // Non null error indicates errors.
-        if (errors != null) {
-            saveErrors(request, errors);
-            // Display the errors in the input page.
-            return mapping.getInputForward();
+        // For Go database, set values from the Go server.
+        if (xb.getDatabase().equals("go")) {
+            ActionErrors errors = xb.setFromGoServer(user);
+            // Non null error indicates errors.
+            if (errors != null) {
+                saveErrors(request, errors);
+                // Display the errors in the input page.
+                return mapping.getInputForward();
+            }
         }
-
         // The current view of the edit session.
         AbstractEditViewBean view = user.getView();
 
-        // Only add to the update list if this isn't a new xref.
-        if (view.isNewXref(xb)) {
-            // Remove the existing 'new' xref.
-//            view.removeNewXref(xb);
-//            // Add this 'updated' as a new xref.
-//            Xref xref = user.getXref(xb);
-//            view.addXref(new XreferenceBean(xref, xb.getKey()));
-        }
-        else {
-            // Saving an existing annotation.
-            view.addXrefToUpdate(xb);
-        }
+        // Add this 'updated' as a new xref.
+        XreferenceBean xbup = new XreferenceBean(xb.getXref(user), xb.getKey());
+
+        // Save the bean in the view.
+        view.saveXref(xb, xbup);
+
         // Back to the view mode again.
         xb.setEditState(AbstractEditBean.VIEW);
 
