@@ -238,6 +238,7 @@
         <action path="/cv/info"
             type="uk.ac.ebi.intact.application.editor.struts.action.EditorInfoAction"
             name="cvInfoForm"
+            input="edit.layout"
             scope="request">
         </action>
 
