@@ -10,7 +10,7 @@
 <td width="5"><spacer type="block" width="5"></td>
 <td align="left"><span class="footer">Updated xx/10/2002</span></td>
 <td align="right"><span class="footer">
-Please send any questions or suggestions to <a href="mailto:webintact@ebi.ac.uk">web-intact@ebi.ac.uk</a></span></td>
+Please send any questions or suggestions to <a href="mailto:webintact@ebi.ac.uk">intact@ebi.ac.uk</a></span></td>
 <td width="5"><spacer type="block" width="5"></td>
 </tr>
 <tr><td colspan="4" height="4" ><spacer type="block" height="4"></td></tr>
