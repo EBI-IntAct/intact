@@ -11,19 +11,13 @@ import org.apache.commons.pool.KeyedPoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericKeyedObjectPool;
 import org.apache.commons.pool.impl.GenericKeyedObjectPoolFactory;
 import org.apache.log4j.Logger;
-
 import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.cv.CvViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.sequence.SequenceViewBean;
-import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.model.Feature;
-import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.model.*;
 
 /**
  * The factory class to create edit view beans.
@@ -101,7 +95,7 @@ public class EditViewBeanFactory implements KeyedPoolableObjectFactory {
 
         // Class is the key.
         Class clazz = (Class) key;
-//        System.out.println("Creating a view for " + clazz);
+        System.out.println("Creating a view for " + clazz);
 
         if (BioSource.class.isAssignableFrom(clazz)) {
             viewbean = new BioSourceViewBean();
@@ -133,12 +127,6 @@ public class EditViewBeanFactory implements KeyedPoolableObjectFactory {
     }
 
     public void activateObject(Object key, Object obj) throws Exception {
-        try {
-            ((AbstractEditViewBean) obj).loadMenus();
-        }
-        catch (IntactException ie) {
-            Logger.getLogger(EditorConstants.LOGGER).error("", ie);
-        }
     }
 
     public void passivateObject(Object key, Object obj) throws Exception {

@@ -68,6 +68,8 @@ public class InteractionDeleteAction extends DeleteFormAction {
 
         // No further processing if not returning back to exp.
         if (!view.isSourceFromAnExperiment()) {
+            // Discard the view as it is not required.
+            user.releaseView();
             return forward;
         }
         // The AC of the experiment.
@@ -88,5 +90,9 @@ public class InteractionDeleteAction extends DeleteFormAction {
             helper.closeStore();
         }
         return forward;
+    }
+
+    protected void releaseView(EditUserI user) {
+        // No op as we still need the view to get back to the exp.
     }
 }

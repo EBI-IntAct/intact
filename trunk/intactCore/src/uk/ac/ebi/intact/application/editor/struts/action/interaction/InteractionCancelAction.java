@@ -52,17 +52,14 @@ public class InteractionCancelAction extends CancelFormAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
+        // Do the common cancel stuff.
+        ActionForward forward = super.execute(mapping, form, request, response);
+
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
 
         // The current view of the edit session.
         InteractionViewBean view = (InteractionViewBean) user.getView();
-
-        // Release the lock.
-        getLockManager().release(view.getAc());
-
-        // The default forward path.
-        ActionForward forward = mapping.findForward(RESULT);
 
         IntactHelper helper = user.getIntactHelper();
         try {
@@ -75,10 +72,6 @@ public class InteractionCancelAction extends CancelFormAction {
                 setDestinationExperiment(request, helper);
                 // Back to the experiment editor.
                 forward = mapping.findForward(EXP);
-            }
-            else {
-                // Cancel the current edit session.
-                user.cancelEdit();
             }
         }
         finally {
