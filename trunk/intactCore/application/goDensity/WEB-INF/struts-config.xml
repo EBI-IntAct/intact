@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE struts-config PUBLIC
+ 	"-//Apache Software Foundation//DTD Struts Configuration 1.1//EN"
+	"http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
+
+<!--
+        Struts v1.1 configuration file for the template application
+-->
+
+<struts-config>
+
+    <!-- ========== Form Bean Definitions =================================== -->
+
+    <form-beans>
+        <!-- helloWorld form bean -->
+        <form-bean name="goInputForm"
+                   type="uk.ac.ebi.intact.application.goDensity.struts.view.goInputForm"/>
+
+        <form-bean name="ColorForm"
+                   type="uk.ac.ebi.intact.application.goDensity.struts.view.ColorForm"/>
+    </form-beans>
+
+    <!-- ========== Global Forward Definitions ============================== -->
+
+    <global-forwards>
+        <forward name="success"  path="success.layout"/>
+        <forward name="error"    path="goDensity.error.layout"/>
+        <forward name="input"    path="goDensity.layout"/>
+    </global-forwards>
+
+    <!-- ========== Action Mapping Definitions ============================== -->
+
+    <action-mappings>
+        <!-- Action mapping for the hierarchView application -->
+        <!-- Entrance of the application -->
+        <action path="/init"
+                type="uk.ac.ebi.intact.application.goDensity.struts.controller.InitAction"
+                scope="request">
+            <forward name="success" path="goDensity.layout"/>
+        </action>
+
+        <!-- Processes the user search -->
+        <action path="/input"
+                type="uk.ac.ebi.intact.application.goDensity.struts.controller.goInputAction"
+                name="goInputForm"
+                validate="true"
+                scope="request"
+                input="goDensity.layout">
+        </action>
+
+        <action path="/children"
+                type="uk.ac.ebi.intact.application.goDensity.struts.controller.goChildrenAction"
+                scope="request"
+                input="success.layout">
+        </action>
+
+        <action path="/color"
+                type="uk.ac.ebi.intact.application.goDensity.struts.controller.ColorAction"
+                scope="request">
+        </action>
+
+    </action-mappings>
+
+    <!-- ========== Message Resources Definitions =========================== -->
+
+    <message-resources parameter="config.MessageResources"/>
+
+    <!-- ============ Plug Ins Configuration ================================== -->
+
+    <!-- Declaration of the use of Tiles (where to find its configuration file) -->
+    <plug-in className="org.apache.struts.tiles.TilesPlugin" >
+        <set-property  property="definitions-config"  value="/WEB-INF/tiles-defs.xml"/>
+        <set-property  property="moduleAware"         value="true" />
+    </plug-in>
+
+</struts-config>
