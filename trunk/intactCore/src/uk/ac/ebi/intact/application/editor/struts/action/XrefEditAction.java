@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
+import uk.ac.ebi.intact.application.editor.struts.view.EditBean;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 
 import org.apache.struts.action.*;
@@ -62,13 +63,13 @@ public class XrefEditAction extends AbstractEditorAction {
 
         if (theForm.editPressed()) {
             // Must save this bean.
-            xb.setEditState(false);
+            xb.setEditState(EditBean.SAVE);
         }
         else if (theForm.savePressed()) {
             // Save button pressed. The xref to update.
             viewbean.addXrefToUpdate(xb);
-            // Back to edit
-            xb.setEditState(true);
+            // Back to the view mode again.
+            xb.setEditState(EditBean.VIEW);
         }
         else if (theForm.deletePressed()) {
             // Delete is pressed.
