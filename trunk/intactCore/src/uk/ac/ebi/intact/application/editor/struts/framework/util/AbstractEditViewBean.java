@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.application.editor.exception.validation.ValidationExcept
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 
 import java.util.*;
@@ -332,12 +333,11 @@ public abstract class AbstractEditViewBean {
             user.delete(annot);
             myAnnotObject.removeAnnotation(annot);
         }
-        // Update annotations; update the object as update of annotated object
-        // ensures the sub objects are updated as well.
+        // Update annotations; update the object with values from the bean.
+        // The update of annotated object ensures the sub objects are updated as well.
         for (Iterator iter = getAnnotationsToUpdate().iterator(); iter.hasNext();) {
             CommentBean cb = (CommentBean) iter.next();
             cb.update(user);
-//            user.update(cb.getAnnotation());
         }
         if (!user.isPersistent(myAnnotObject)) {
             user.create(myAnnotObject);
@@ -359,12 +359,20 @@ public abstract class AbstractEditViewBean {
         for (Iterator iter = getXrefsToUpdate().iterator(); iter.hasNext();) {
             XreferenceBean xb = (XreferenceBean) iter.next();
             xb.update(user);
-//            user.update(xb.getXref());
         }
         // Update the cv object only for an object already persisted.
         if (user.isPersistent(myAnnotObject)) {
             user.update(myAnnotObject);
         }
+    }
+
+    /**
+     * Deletes all the links to sub objects of the current edit object.
+     */
+    public void clear() {
+        // Delete all the annotations and xrefs.
+        myAnnotObject.getAnnotation().clear();
+        myAnnotObject.getXref().clear();
     }
 
     /**

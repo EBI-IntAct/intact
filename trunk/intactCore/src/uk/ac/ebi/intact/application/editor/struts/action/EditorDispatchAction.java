@@ -133,8 +133,11 @@ public class EditorDispatchAction extends AbstractEditorDispatchAction {
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
 
+        // The current view.
+        AbstractEditViewBean view = user.getView();
+
         // The object to delete.
-        AnnotatedObject annot = user.getView().getAnnotatedObject();
+        AnnotatedObject annot = view.getAnnotatedObject();
 
         try {
             // Begin the transaction.
@@ -165,6 +168,8 @@ public class EditorDispatchAction extends AbstractEditorDispatchAction {
             // Clear containers; regardless of the outcome.
             user.getView().clearTransactions();
         }
+        // Delete any sub objects.
+        view.clear();
         // Remove the current edit object from the cache.
         user.removeFromSearchCache();
         // Need to rebuild the menu again. Remove it from cache.

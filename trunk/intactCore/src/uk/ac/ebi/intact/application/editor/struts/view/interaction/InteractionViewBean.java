@@ -17,6 +17,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFacto
 import uk.ac.ebi.intact.application.editor.struts.view.EditBean;
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 
 import java.util.ArrayList;
@@ -118,12 +119,9 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
     // Override the super method to this bean's info.
     public void persist(EditUserI user) throws IntactException, SearchException {
-        // Persists the annotations and xrefs.
+        // Persists the annotations and xrefs; this will create the
+        // Interaction if it is a new one.
         super.persist(user);
-
-        // The order is important! update super last as it does
-        // the update of the object.
-        Interaction intact = (Interaction) getAnnotatedObject();
 
         // Get the objects using their short label.
         BioSource biosource = (BioSource) user.getObjectByLabel(
@@ -131,6 +129,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
         CvInteractionType type = (CvInteractionType) user.getObjectByLabel(
                 CvInteractionType.class, myInteractionType);
 
+        Interaction intact = (Interaction) getAnnotatedObject();
         intact.setBioSource(biosource);
         intact.setCvInteractionType(type);
         intact.setKD(myKD);
@@ -170,6 +169,17 @@ public class InteractionViewBean extends AbstractEditViewBean {
                 user.create(comp);
             }
         }
+    }
+
+    // Override super method to clear experiments and componets.
+    public void clear() {
+        super.clear();
+
+        Interaction intact = (Interaction) getAnnotatedObject();
+        // Experiments involved in this interaction.
+        intact.getExperiment().clear();
+        // Components.
+        intact.getComponent().clear();
     }
 
     // Override to provide Experiment layout.
