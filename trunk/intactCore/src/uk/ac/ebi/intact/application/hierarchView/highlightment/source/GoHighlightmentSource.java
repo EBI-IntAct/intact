@@ -261,7 +261,7 @@ public class GoHighlightmentSource
 	    goTermDescription = goTermInfo[1];
 	    
 	    
-
+        // TODO : put that server name as a parameter, eventually in a properties file !
 	    urls.add (new LabelValueBean(goTerm, "http://holbein:8080/interpro/DisplayGoTerm?id=" + goTerm + "&format=simple", goTermDescription));
 	  }
       }
