@@ -34,15 +34,16 @@ public class AllJUnitTests extends TestCase {
      * @return a suite containing tests.
      *         <p/>
      *         <pre>
-     *                                 post: return != null
-     *                                 post: return->forall(obj : Object | obj.oclIsTypeOf(TestSuite))
-     *                                 </pre>
+     *                                         post: return != null
+     *                                         post: return->forall(obj : Object | obj.oclIsTypeOf(TestSuite))
+     *                                         </pre>
      */
     public static Test suite() {
         TestSuite suite = new TestSuite();
 
         // Add your test suite here.
         suite.addTest( DRLineExportTest.suite() );
+        suite.addTest( CCLineExportTest.suite() );
 
         return suite;
     }
