@@ -230,7 +230,7 @@
 
         <replace file="${rep.dest.file}" propertyfile="${pg.props.file}">
             <replacefilter token="@DBMS_NAME@" value="PostgreSQL"/>
-            <replacefilter token="@DRIVER_NAME@" value="${postgres.driver.classname}"/>
+            <replacefilter token="@DRIVER_NAME@" value="${postgresql.driver.classname}"/>
             <replacefilter token="@URL_SUBPROTOCOL@" property="subprotocol"/>
             <replacefilter token="@URL_DBALIAS@" property="dbalias"/>
             <replacefilter token="@USER_NAME@" property="username"/>
