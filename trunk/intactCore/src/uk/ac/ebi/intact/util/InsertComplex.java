@@ -94,11 +94,11 @@ public class InsertComplex {
     public void insertComponent (Interaction act,
                                  String spAc,
                                  CvComponentRole role) throws Exception {
-	log.info((System.currentTimeMillis() - startTime) + " Insert component");
+	log.info((System.currentTimeMillis() - startTime) + " ZZ  Insert component");
         Component comp = new Component();
         comp.setOwner((Institution) helper.getObjectByLabel(Institution.class, "EBI"));
         comp.setInteraction(act);
-	log.info((System.currentTimeMillis() - startTime) + " Create protein");
+	log.info((System.currentTimeMillis() - startTime) + " ZZ  Create protein");
         Protein protein = (Protein) helper.getObjectByXref(Protein.class, spAc);
         if (null == protein){
             protein = new Protein();
@@ -111,11 +111,11 @@ public class InsertComplex {
                                 spAc,
                                 null, null));
         }
-	log.info((System.currentTimeMillis() - startTime) + " set interactor");
+	log.info((System.currentTimeMillis() - startTime) + " ZZ  set interactor");
         comp.setInteractor(protein);
-	log.info((System.currentTimeMillis() - startTime) + " set role");
+	log.info((System.currentTimeMillis() - startTime) + " ZZ  set role");
         comp.setCvComponentRole(role);
-	log.info((System.currentTimeMillis() - startTime) + " create comp");
+	log.info((System.currentTimeMillis() - startTime) + " ZZ  create comp");
         dao.create(comp);
 	
     }
@@ -126,7 +126,8 @@ public class InsertComplex {
                                Vector preys,
                                String experimentLabel) throws Exception {
 
-	log.info((System.currentTimeMillis() - startTime) + " Get Experiment");
+    startTime = System.currentTimeMillis();
+	log.info((System.currentTimeMillis() - startTime) + " ZZ  Get Experiment");
         // Get experiment
         Experiment ex = (Experiment) helper.getObjectByLabel(Experiment.class, experimentLabel);
         if (null == ex){
@@ -135,7 +136,7 @@ public class InsertComplex {
             dao.create(ex);
         }
 
-	log.info((System.currentTimeMillis() - startTime) + "Get Interaction");
+	log.info((System.currentTimeMillis() - startTime) + " ZZ Get Interaction");
         // Get Interaction
         // The label is the first two letters of the experiment label plus the interaction number
         String actLabel = experimentLabel.substring(0,2) + "-" + interactionNumber;
@@ -146,30 +147,29 @@ public class InsertComplex {
             act.setShortLabel(actLabel);
             dao.create(act);
         }
-	log.info("Interaction: \n" + act);
-	log.info((System.currentTimeMillis() - startTime) + "Add bait");
+	log.info(" ZZ Interaction: \n" + act);
+	log.info((System.currentTimeMillis() - startTime) + " ZZ Add bait");
         // add bait
         insertComponent(act, bait, (CvComponentRole) helper.getObjectByLabel(CvComponentRole.class, "bait"));
 
-	log.info((System.currentTimeMillis() - startTime) + "Add preys");
+	log.info((System.currentTimeMillis() - startTime) + " ZZ Add preys");
         // add preys
         for (int i = 0; i < preys.size(); i++) {
             String prey = (String) preys.elementAt(i);
             insertComponent(act, prey, (CvComponentRole) helper.getObjectByLabel(CvComponentRole.class, "prey"));
-	log.info((System.currentTimeMillis() - startTime) + "Added prey" + i);
+	log.info((System.currentTimeMillis() - startTime) + " ZZ Added prey" + i);
 
         }
 
         // link interaction to experiment
         ex.addInteraction(act);
-	log.info((System.currentTimeMillis() - startTime) + "Added int");
+	log.info((System.currentTimeMillis() - startTime) + " ZZ Added int");
 
         // Store or update
         dao.update(act);
-	log.info((System.currentTimeMillis() - startTime) + "Updated int");
+	log.info((System.currentTimeMillis() - startTime) + " ZZ Updated int");
 	//        dao.update(ex);
-	log.info(ex);
-	log.info((System.currentTimeMillis() - startTime) + "Updated ex");
+	log.info((System.currentTimeMillis() - startTime) + " ZZ Updated ex");
 
     }
 
