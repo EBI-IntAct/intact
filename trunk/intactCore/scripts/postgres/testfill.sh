@@ -25,7 +25,7 @@ echo
 echo You need to create a db with \(\${YOUR_POSTGRES_PATH} is to be replaced by the path of your postgres install\) :
 echo initdb -D \${YOUR_POSTGRES_PATH}/$DBUSER             
 echo postmaster -i -S -D \${YOUR_POSTGRES_PATH}/$DBUSER
-echo createuser $DBUSER
+echo createuser --createdb --no-adduser $DBUSER
 echo createdb -U $DBUSER $2
 echo
 
