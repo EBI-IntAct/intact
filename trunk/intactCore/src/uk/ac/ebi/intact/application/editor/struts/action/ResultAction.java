@@ -6,11 +6,12 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action;
 
-import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.model.AnnotatedObject;
-import org.apache.struts.action.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,23 +48,18 @@ public class ResultAction extends AbstractEditorAction {
                                  HttpServletResponse response)
             throws Exception {
         // Handler to the Intact User.
-        EditUserI user = super.getIntactUser(request);
+        EditUserI user = getIntactUser(request);
 
+        // The ac to search
+        String ac = request.getParameter("ac");
         // The class name to search.
-        String className = user.getSearchClass();
+        String className = request.getParameter("searchClass");
 
-        // Strip the package bit from the name.
-        int lastPos = className.lastIndexOf('.');
-        user.setSelectedTopic(className.substring(lastPos + 1));
-
-        // The short label to search
-        String shortLabel = request.getParameter("shortLabel");
-
-        LOGGER.info("Label: " + shortLabel + " class: " + className);
+        LOGGER.info("AC: " + ac + " class: " + className);
 
         // The selected Annotated object.
-        AnnotatedObject annobj =
-                (AnnotatedObject) user.getObjectByLabel(className, shortLabel);
+        AnnotatedObject annobj = (AnnotatedObject) user.getObjectByAc(
+                        Class.forName("uk.ac.ebi.intact.model." + className), ac);
         // The object we are editing presently.
         user.updateView(annobj);
 

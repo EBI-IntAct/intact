@@ -402,6 +402,22 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         }
     }
 
+    public Object getObjectByAc(Class clazz, String ac) throws SearchException {
+        try {
+            return myHelper.getObjectByAc(clazz, ac);
+        }
+        catch (IntactException ie) {
+            String msg;
+            if (ie instanceof DuplicateLabelException) {
+                msg = ac + " already exists";
+            }
+            else {
+                msg = "Failed to find a record for " + ac;
+            }
+            throw new SearchException(msg);
+        }
+    }
+
     public Collection getSPTRProteins(String pid) {
         return myProteinFactory.insertSPTrProteins(pid);
     }
@@ -542,6 +558,10 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     public void fillSearchResult(DynaBean dynaForm) {
         dynaForm.set("items", mySearchCache);
+    }
+
+    public List getSearchResult() {
+        return (List) mySearchCache;
     }
 
     public void logoff() throws IntactException {
