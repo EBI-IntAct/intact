@@ -7,6 +7,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.search.business;
 
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 
 import java.util.Collection;
 
@@ -39,4 +40,11 @@ public interface IntactUserIF {
      */
     public Collection search(String objectType, String searchParam,
                               String searchValue) throws IntactException;
+
+    /**
+     * Convenience method to provide general access to a User's IntactHelper.
+     *
+     * @return IntactHelper the helper instance for this user
+     */
+    public IntactHelper getHelper();
 }

@@ -20,11 +20,6 @@ public interface SearchConstants {
     public static final String INTACT_SERVICE = "IntactService";
 
     /**
-     * To access intact types.
-     */
-    public static final String INTACT_TYPES = "intacttypes";
-
-    /**
      * The key to access a user session object.
      */
     public static final String INTACT_USER = "IntactUser";
@@ -114,4 +109,19 @@ public interface SearchConstants {
      * The name of the file containing the XSL stylesheet
      */
     public static final String XSL_FILE = "xslFile";
+
+    /**
+     * The name of the XML builder instance
+     */
+    public static final String XML_BUILDER = "xmlBuilder";
+
+    /**
+     * The latest set of items in a view page which have been requested as expanded
+     */
+    public static final String EXPANDED_AC_SET = "expandedAcs";
+
+    /**
+     * To access intact types
+     */
+    public static final String INTACT_TYPES = "intacttypes";
 }

@@ -100,4 +100,9 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         //now retrieve an object...
         return helper.search(objectType, searchParam, searchValue);
     }
+
+    public IntactHelper getHelper() {
+
+        return this.helper;
+    }
 }

@@ -7,27 +7,23 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.search.struts.view;
 
 import java.io.Serializable;
-import java.util.Iterator;
+import java.util.*;
 
 import org.w3c.dom.*;
-import org.exolab.castor.mapping.Mapping;
-import org.exolab.castor.mapping.MappingException;
-import org.exolab.castor.xml.Marshaller;
-import org.exolab.castor.xml.MarshalException;
-import org.exolab.castor.xml.ValidationException;
 
-import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.dom.DOMSource;
 
-import uk.ac.ebi.intact.application.search.struts.framework.util.TreeViewAction;
+import uk.ac.ebi.intact.util.*;
+import uk.ac.ebi.intact.business.*;
 
 /**
  * Bean to display an Intact object. This bean is used by results.jsp to display
  * the data.
  *
- * @author Sugath Mudali, modified for basic search by Chris Lewington
+ * @author Sugath Mudali, modified for XML handling by Chris Lewington
  * @version $Id$
  */
 public class IntactViewBean implements Serializable {
@@ -38,6 +34,11 @@ public class IntactViewBean implements Serializable {
      * The document node of the XML tree.
      */
     private Document rootNode;
+
+    /**
+     * The object as an XML Element
+     */
+    private Element elem;
 
     /**
      * Stores the object being wrapped. Mainly used for
@@ -51,34 +52,96 @@ public class IntactViewBean implements Serializable {
     private String stylesheet;
 
     /**
-     * Construct an instance of this class for given object.
+     * The Xml builder - may go into Session as a seperate object
+     * later...
+     */
+    private XmlBuilder builder;
+
+
+    /**
+     * Construct an instance of this class for given object. A default XML builder is also created,
+     * however this means that the Bean maintains its own instance rather than reusing an
+     * existing one. Further, in the case of Intact it also means that a default repository
+     * configuration is used, which may not be the one you really want. To be safe you should use
+     * the other constructor and pass an alreayd correctly-configured XML builder.
      * @param object the object to contruct the view.
      * @param xslt the name of the stylesheet to use for transformation.
      * @exception TransformerException for errors in creating a new transformer.
      */
-    public IntactViewBean(Object object, String xslt) throws TransformerException {
-        this.wrappedObject = object;
-        this.stylesheet = xslt;
+    public IntactViewBean(Object object, String xslt) throws IntactException, TransformerException {
+
+        //default builder - NB uses a default repository so may not be what is required!!
+        this(object, xslt, new XmlBuilder());
     }
 
     /**
-     * Marshals the wrapped object to an XML node using Castor.
-     * @param mapping the mapping file for castor to do mapping.
-     * @param db the document builder to create an XML node.
-     * @exception MappingException for errrors with setting the map file.
-     * @exception MarshalException thrown for marshalling errors.
-     * @exception ValidationException thrown for XML validation errors.
+     * Construct an instance of this class for given object. If no XML builder is passed,
+     * one will be created. However this means that the bean will maintain its own instance
+     * rather than being able to reuse an existing one. Same comments apply as for the other constructor.
+     * @param object the object to contruct the view.
+     * @param xslt the name of the stylesheet to use for transformation.
+     * @param builder The XML builder to be used
+     * @exception TransformerException for errors in creating a new transformer.
      */
-    public void marshall(Mapping mapping, DocumentBuilder db)
-            throws MappingException, MarshalException, ValidationException {
-        // Create the root node for the XML tree.
-        this.rootNode = db.newDocument();
-        // The output is written to the root node.
-        Marshaller marshaller = new Marshaller(this.rootNode);
-        marshaller.setMapping(mapping);
-        // Marshall using the root node.
-        marshaller.marshal(this.wrappedObject);
+    public IntactViewBean(Object object, String xslt, XmlBuilder builder) throws IntactException, TransformerException {
+        this.wrappedObject = object;
+        this.stylesheet = xslt;
+
+        if(builder != null) {
+            this.builder = builder;
+        }
+        else {
+            this.builder = new XmlBuilder();
+        }
     }
+
+    public Object getWrappedObject() {
+
+        return this.wrappedObject;
+    }
+
+    /**
+     * Instructs the bean to create an XML Element for the object that it wraps. Also
+     * this method inserts the Element into a local Document to enable modifications
+     * to it as requested.
+     */
+    public void createXml()
+            throws ParserConfigurationException {
+        this.elem = builder.buildCompactElem(this.wrappedObject);
+        this.rootNode = builder.buildXml(this.wrappedObject);
+
+    }
+
+    /**
+     * obtains the wrapped object as an XML Element
+     * @return Element the Element - if currently null, it will be created
+     * @exception ParserConfigurationException thrown if no Element exists and a failure
+     * occurs when trying to build one
+     */
+    public Element getXml() throws ParserConfigurationException {
+
+        if(this.elem == null) {
+
+            this.createXml();
+        }
+        return this.elem;
+    }
+
+    /**
+     * returns the object as an Element within a Document
+     * @return Document The object suitably converted (created if currently null)
+     * @exception ParserConfigurationException thrown if no Element exists and a failure
+     * occurs when trying to build one
+     */
+    public Document getAsXmlDoc() throws ParserConfigurationException {
+
+        if(this.rootNode == null) {
+
+            this.createXml();
+        }
+        return this.rootNode;
+    }
+
 
     /**
      * Transforms this bean using given stylesheet.
@@ -98,42 +161,39 @@ public class IntactViewBean implements Serializable {
     }
 
     /**
-     * This method adds the status attribute to the root node and to all the
-     * elements defined in
-     * {@link uk.ac.ebi.intact.application.search.struts.framework.util.TreeViewAction#ELEMENT_TAGS}.
-     * The attribute is set to false.
+     * apply the mode change to the ACs within the object, as it is inside a Document
+     *
+     * @param action The change required - currently XmlBuilder.COMPACT_NODES or
+     * XmlBuilder.EXPAND_NODES. If an unknown mode is passed then compact is the default.
+     * @param acList The list of ACs to have the action applied
      */
-    public void addStatusNodes() {
-        // Set the status in the root element.
-        this.rootNode.getDocumentElement().setAttribute(
-                TreeViewAction.STATUS_ATTRIBUTE, TreeViewAction.FALSE_STR);
-        // Now go through the expandable list.
-        for (Iterator iter = TreeViewAction.ELEMENT_TAGS.iterator(); iter.hasNext(); ) {
-            NodeList elements = this.rootNode.getElementsByTagName((String) iter.next());
-            // Process each element.
-            for (int length = elements.getLength(), i = 0; i < length; i++) {
-                Element element = (Element) elements.item(i);
-                element.setAttribute(TreeViewAction.STATUS_ATTRIBUTE,
-                        TreeViewAction.FALSE_STR);
+    public void modifyXml(int action, List acList) throws IntactException {
+
+        System.out.println("modifyXml called on bean...");
+        System.out.println("mode value used: " + action);
+//        if(currentMode == action) {
+//            //do nothing - requested mode is the same as the current one
+//            System.out.println("mode unchanged! returning..");
+//            return;
+//        }
+        try {
+            if((action != XmlBuilder.EXPAND_NODES) & (action != XmlBuilder.CONTRACT_NODES)) {
+
+                System.out.println("unknown mode - default to compact..");
+                //default to compact as the requested mode is unknown
+                this.rootNode = builder.modifyDoc(this.rootNode, acList, XmlBuilder.CONTRACT_NODES);
+                //currentMode = XmlBuilder.CONTRACT_NODES;
             }
+            else {
+                System.out.println("mode OK - doing modify..");
+                this.rootNode = builder.modifyDoc(this.rootNode, acList, action);
+                //reset the current mode
+                //currentMode = action;
+            }
+        }
+        catch(ParserConfigurationException pe) {
+            throw new IntactException(pe.getMessage(), pe);
         }
     }
 
-    /**
-     * Apply the action for the root and all its subnodes.
-     * @param action the action to apply.
-     */
-//    public void setTreeStatus(TreeViewAction action) {
-//        Element rootElement = this.rootNode.getDocumentElement();
-//        String ac = rootElement.getAttribute("ac");
-//        this.setTreeStatus(action, ac);
-//    }
-
-    /**
-     * Apply the action for given ac.
-     * @param action the action to apply.
-     */
-    public void setTreeStatus(TreeViewAction action, String ac) {
-        action.apply(this.rootNode, ac);
-    }
  }
