@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.
+Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
@@ -9,6 +9,7 @@ package uk.ac.ebi.intact.application.editor.struts.framework.util;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
+import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.DuplicateLabelException;
@@ -16,6 +17,7 @@ import uk.ac.ebi.intact.business.DuplicateLabelException;
 import java.util.*;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.beanutils.DynaBean;
 
 /**
  * This super bean encapsulates behaviour for a common editing session. This
@@ -128,7 +130,6 @@ public abstract class AbstractEditViewBean {
      * @param shortLabel the short label to set.
      */
     public final void setShortLabel(String shortLabel) {
-        System.out.println("Setting the short label " + shortLabel);
         myShortLabel = shortLabel;
     }
 
@@ -368,9 +369,35 @@ public abstract class AbstractEditViewBean {
         user.update(myAnnotObject);
     }
 
+    /**
+     * Populates given form with annotations
+     * @param form the form to poplulate.
+     */
+    public void populateAnnotations(EditForm form) {
+        form.setItems(getAnnotations());
+    }
+
+    /**
+     * Populates given form with xrefs.
+     * @param form the form to poplulate.
+     */
+    public void populateXrefs(EditForm form) {
+        form.setItems(getXrefs());
+    }
+
+    /**
+     * Populate the given bean ac, short label and fullname of this object.
+     * @param dynaBean the bean to set the above values.
+     */
+    public void populate(DynaBean dynaBean) {
+        dynaBean.set("ac", getAc());
+        dynaBean.set("shortLabel", getShortLabel());
+        dynaBean.set("fullName", getFullName());
+    }
+
     // Abstract methods
 
-    public abstract String getEditorType();
+    public abstract void populateEditorSpecificInfo(DynaBean dynaBean);
 
     // Helper Methods
 
