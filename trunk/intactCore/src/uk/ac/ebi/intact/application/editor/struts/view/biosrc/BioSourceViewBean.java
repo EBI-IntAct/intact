@@ -113,7 +113,7 @@ public class BioSourceViewBean extends AbstractEditViewBean {
     }
 
     public void setCellType(String cellType) {
-        myCellType = normalizeMenuItem(cellType);
+        myCellType = EditorMenuFactory.normalizeMenuItem(cellType);
     }
 
     public String getTissue() {
@@ -121,7 +121,7 @@ public class BioSourceViewBean extends AbstractEditViewBean {
     }
 
     public void setTissue(String tissue) {
-        myTissue = normalizeMenuItem(tissue);
+        myTissue = EditorMenuFactory.normalizeMenuItem(tissue);
     }
 
     /**

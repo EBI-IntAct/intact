@@ -301,7 +301,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     }
 
     public void setOrganism(String organism) {
-        myOrganism = normalizeMenuItem(organism);
+        myOrganism = EditorMenuFactory.normalizeMenuItem(organism);
     }
 
     // Getter/Setter methods for Interaction.
@@ -310,7 +310,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     }
 
     public void setInter(String interaction) {
-        myInter = normalizeMenuItem(interaction);
+        myInter = EditorMenuFactory.normalizeMenuItem(interaction);
     }
 
     // Getter/Setter methods for Identification.
@@ -319,7 +319,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     }
 
     public void setIdent(String identification) {
-        myIdent = normalizeMenuItem(identification);
+        myIdent = EditorMenuFactory.normalizeMenuItem(identification);
     }
 
     /**

@@ -396,10 +396,6 @@ public class InteractionViewBean extends AbstractEditViewBean {
         return getMenuFactory().getMenu(EditorMenuFactory.ROLES, 1);
     }
 
-    public List getEditBioSourceMenu() throws SearchException {
-        return getMenuFactory().getMenu(EditorMenuFactory.ORGANISMS, 0);
-    }
-
     public List getAddBioSourceMenu() throws SearchException {
         return getMenuFactory().getMenu(EditorMenuFactory.ORGANISMS, 1);
     }
@@ -413,7 +409,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
     }
 
     public void setOrganism(String organism) {
-        myOrganism = normalizeMenuItem(organism);
+        myOrganism = EditorMenuFactory.normalizeMenuItem(organism);
     }
 
     public String getOrganism() {
@@ -421,7 +417,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
     }
 
     public void setInteractionType(String interaction) {
-        myInteractionType = normalizeMenuItem(interaction);
+        myInteractionType = EditorMenuFactory.normalizeMenuItem(interaction);
     }
 
     public String getInteractionType() {
