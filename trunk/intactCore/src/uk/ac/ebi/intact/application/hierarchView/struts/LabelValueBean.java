@@ -71,59 +71,60 @@ package uk.ac.ebi.intact.application.hierarchView.struts;
 
 public class LabelValueBean {
 
+  
+  // ----------------------------------------------------------- Instance variables
+  /**
+   * The label to be displayed to the user.
+   */
+  protected String label = null;
 
-    // ----------------------------------------------------------- Constructors
-
-
-    /**
-     * Construct a new LabelValueBean with the specified values.
-     *
-     * @param label The label to be displayed to the user
-     * @param value The value to be returned to the server
-     */
-    public LabelValueBean(String label, String value) {
-        this.label = label;
-        this.value = value;
-    }
+  /**
+   * The value to be returned to the server.
+   */
+  protected String value = null;
 
 
-    // ------------------------------------------------------------- Properties
+
+  // ----------------------------------------------------------- Constructors
+  
+  /**
+   * Construct a new LabelValueBean with the specified values.
+   *
+   * @param label The label to be displayed to the user
+   * @param value The value to be returned to the server
+   */
+  public LabelValueBean(String label, String value) {
+    this.label = label;
+    this.value = value;
+  }
 
 
-    /**
-     * The label to be displayed to the user.
-     */
-    protected String label = null;
-
-    public String getLabel() {
-        return (this.label);
-    }
+  // ------------------------------------------------------------- Properties
 
 
-    /**
-     * The value to be returned to the server.
-     */
-    protected String value = null;
+  public String getLabel() {
+    return (this.label);
+  }
 
-    public String getValue() {
-        return (this.value);
-    }
-
-
-    // --------------------------------------------------------- Public Methods
+  public String getValue() {
+    return (this.value);
+  }
 
 
-    /**
-     * Return a string representation of this object.
-     */
-    public String toString() {
-        StringBuffer sb = new StringBuffer("LabelValueBean[label=");
-        sb.append(this.label);
-        sb.append(", value=");
-        sb.append(this.value);
-        sb.append("]");
-        return (sb.toString());
-    }
+  // --------------------------------------------------------- Public Methods
+
+
+  /**
+   * Return a string representation of this object.
+   */
+  public String toString() {
+    StringBuffer sb = new StringBuffer("LabelValueBean[label=");
+    sb.append(this.label);
+    sb.append(", value=");
+    sb.append(this.value);
+    sb.append("]");
+    return (sb.toString());
+  }
 
 } // LabelValueBean
 
