@@ -20,7 +20,8 @@ You must correct the following error(s) before proceeding:
 <logic:messagesPresent>
     <ul>
          <html:messages id="error">
-            <li><bean:write name="error"/></li>
+            <%-- If the filter is false, it prevent bean:write to convert HTML to text --%>
+            <li><bean:write name="error" filter="false" /></li>
          </html:messages>
     </ul>
 </logic:messagesPresent>
