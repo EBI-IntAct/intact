@@ -6,10 +6,7 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.persistence;
 
-import org.exolab.castor.jdo.*;
-
-import java.util.*;
-import org.apache.ojb.broker.util.logging.*;
+import java.util.Collection;
 
 /**
  *  <p> This interface defines the methods available from a Data
@@ -228,6 +225,4 @@ public interface DAO {
      * @param clazz  class to be cached
      */
     public void addCachedClass(Class clazz);
-
-
 }
