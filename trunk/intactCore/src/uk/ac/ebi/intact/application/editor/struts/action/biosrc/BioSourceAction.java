@@ -104,6 +104,9 @@ public class BioSourceAction extends AbstractEditorAction {
                 ? user.getUniqueShortLabel(newtLabel, taxid)
                 : this.getUniqueShortLabel(newtName, taxid, user);
 
+        // Covert to lowercase as we only allow LC characters for a short label.
+        newtLabel = newtLabel.toLowerCase();
+
         // Validate the scientific name.
         if (newtName.length() == 0) {
             errors = new ActionErrors();
@@ -163,10 +166,13 @@ public class BioSourceAction extends AbstractEditorAction {
             // current record?
             BioSourceViewBean view = (BioSourceViewBean) user.getView();
             String currentAc = view.getAnnotatedObject().getAc();
-            String resultAc = ((BioSource) results.iterator().next()).getAc();
-            if (currentAc.equals(resultAc)) {
-                // We have retrieved the same record from the DB.
-                return true;
+            // Check for null here as it could be null for a new biosource.
+            if (currentAc != null) {
+                String resultAc = ((BioSource) results.iterator().next()).getAc();
+                if (currentAc.equals(resultAc)) {
+                    // We have retrieved the same record from the DB.
+                    return true;
+                }
             }
         }
         // Found a tax id which belongs to another biosource.
