@@ -511,18 +511,46 @@ public class PsiDataBuilder implements DataBuilder {
         }
 
         // TODO: shouldn't it be in the experiment scope ?
-        //Now do the CvInteractions for each Experiment (for some reason!)...
-        Collection interactionTypes = getRelInteractionTypes(experiments);
-        for (Iterator it = interactionTypes.iterator(); it.hasNext();) {
-            CvInteraction cvInteraction = (CvInteraction) it.next();
+        //Now do the CvInteractions for each Experiment
+        //(for some reason! (CL))...
+        //NB This retrieves CvInteractions, NOT CvInteractionTypes!!
+        //This is WRONG because CvInteraction defines the method used to detect
+        //the interaction, NOT the type of interaction itself
+        //(eg binary interaction, aggregation).
+        //Collection interactionTypes = getRelInteractionTypes(experiments);
+
+        //for (Iterator it = interactionTypes.iterator(); it.hasNext();) {
+            //CvInteraction cvInteraction = (CvInteraction) it.next();
+            //Element psiInteractionType = null;
+            //try {
+
+                //NB -This is the bit where the CvInteractionType Xref should be generated,
+                //and this needs to always be mapped to primary ref MI:0191...
+                //PROBLEM seems to be that we have a CvInteraction here,
+                //NOT a CvInteractionType!!
+                //psiInteractionType = doCvInteraction(cvInteraction);
+                //psiInteraction.appendChild(psiInteractionType);
+            //} catch (ElementNotParseableException e) {
+                //logger.info("CvInteraction failed (not required):" + e.getMessage());
+            //} // not one is required - so dont worry
+        //}
+
+        //----------------- CvInteractionType fix ----------------------------------
+        //CL 23/04/04: Code fix to get at the CvInteractionType. This may be a
+        //temporary fix as the PSI schema says an Interaction may have many
+        //CvInteractionTypes - however the IntactCore model Interaction class only
+        //has a single one. Something needs to be changed at some point, therefore...
+        //Process the Interactions' CvInteractionType...
+        CvInteractionType cvType = interaction.getCvInteractionType();
+        try {
             Element psiInteractionType = null;
-            try {
-                psiInteractionType = doCvInteraction(cvInteraction);
-                psiInteraction.appendChild(psiInteractionType);
-            } catch (ElementNotParseableException e) {
-                logger.info("CvInteraction failed (not required):" + e.getMessage());
-            } // not one is required - so dont worry
+            psiInteractionType = doCvInteractionType(cvType);
+            psiInteraction.appendChild(psiInteractionType);
         }
+        catch (ElementNotParseableException e) {
+            logger.info("CvInteractionType failed (not required):" + e.getMessage());
+        } // not mandatory - safe to ignore
+
         //Now do the Interaction's Xrefs...
         try {
             //every interaction has an Intact primary Xref - any other
@@ -761,7 +789,7 @@ public class PsiDataBuilder implements DataBuilder {
      * @exception uk.ac.ebi.intact.application.graph2MIF.exception.ElementNotParseableException if PSIrequired Elements are missing within graph
      * @see uk.ac.ebi.intact.model.CvInteraction
      */
-    private Element doCvInteraction(CvInteraction cvInteractionType) throws ElementNotParseableException {
+    private Element doCvInteractionType(CvInteractionType cvInteractionType) throws ElementNotParseableException {
         /* TODO: could be factorized with the doCvInteractionDetection if
            TODO: the name of the node is given in parameter.
          */
