@@ -7,14 +7,12 @@
 package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
 
 import javax.servlet.http.HttpServletRequest;
@@ -87,10 +85,16 @@ public class InteractionActionForm extends EditorActionForm {
     private List myExpsOnHold;
 
     /**
-     * Stores the feature dispatch action (to determine what course of action to
-     * take when Edit/Delete Feature button selected).
+     * Stores the protein dispatch action (to determine what course of action to
+     * take when Edit/Save/Delete Protein button selected).
      */
-    private String myFeatureDispatch;
+//    private String myProteinDispatch;
+
+    /**
+     * Stores the feature dispatch action (to determine what course of action to
+     * take when Add/Edit/Delete Feature button selected).
+     */
+//    private String myFeatureDispatch;
 
     // Setter / Getter methods.
     public void setKd(Float kd) {
@@ -177,26 +181,13 @@ public class InteractionActionForm extends EditorActionForm {
             // same.
             // This might be the case for page refresh for other than proteins.
             if (CollectionUtils.isEqualCollection(myComponents, comps)) {
-                Logger.getLogger(EditorConstants.LOGGER).debug(
-                        "THEY ARE EQUAL collections");
                 return;
             }
         }
-        Logger.getLogger(EditorConstants.LOGGER)
-                .debug("Setting the components");
-        // Clear previous components.
-//        myComponents.clear();
-//        // Create new components or form will share the objects with the bean.
-//        for (Iterator iter = comps.iterator(); iter.hasNext();) {
-//            ComponentBean cb = (ComponentBean) iter.next();
-//            myComponents.add(cb);
-//            myComponents.
-//        }
         myComponents = new ArrayList(comps);
     }
 
     public List getComponents() {
-        //        System.out.println("getting proteins");
         return myComponents;
     }
 
@@ -238,16 +229,14 @@ public class InteractionActionForm extends EditorActionForm {
         return (ComponentBean) myComponents.get(getDispatchIndex());
     }
 
-    public String getDispatchFeature() {
-        return myFeatureDispatch;
-    }
-
+    // There is no need for a method to set protein dispatch because it
+    // is already done via protCmd method.
+    
     public void setDispatchFeature(String dispatch) {
-        myFeatureDispatch = dispatch;
-    }
-
-    public void resetDispatchFeature() {
-        myFeatureDispatch = "";
+        // Only set it if not error (defualt)
+        if (!dispatch.equals("error")) {
+            setDispatch(dispatch);
+        }
     }
 
     public void reset(ActionMapping mapping, HttpServletRequest request) {
@@ -264,6 +253,24 @@ public class InteractionActionForm extends EditorActionForm {
             }
         }
     }
+
+    /**
+     * Returns the selected component bean by way of selecting edit/delete/
+     * add feature/save buttons.
+     * @return the selected component bean. <code>null</code> is returned
+     * if a Component wasn't selected.
+     */
+//    public ComponentBean getSelectedComponent() {
+//        for (Iterator iter = myComponents.iterator(); iter.hasNext();) {
+//            ComponentBean cb = (ComponentBean) iter.next();
+//            if (cb.isSelected()) {
+//                // Unselect the bean to avoid it being selected again.
+//                cb.unselect();
+//                return cb;
+//            }
+//        }
+//        return null;
+//    }
 
     /**
      * Returns an array that contains two selected (checkboxes) Feature beans.

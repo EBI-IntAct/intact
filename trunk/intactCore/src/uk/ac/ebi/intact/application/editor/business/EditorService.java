@@ -8,10 +8,13 @@ package uk.ac.ebi.intact.application.editor.business;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts.Globals;
+import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionErrors;
 import uk.ac.ebi.intact.application.editor.exception.EmptyTopicsException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.Interaction;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -244,6 +247,60 @@ public class EditorService {
      */
     public String getInteractionPageLimit() {
         return getResource("exp.interaction.page.limit");
+    }
+
+    /**
+     * Returns an anchor name by (1). error message, (2) the dispatch event.
+     * <code>null</code> is returned if no anchor was found for the above two.
+     * This method is protected for a subclass to overide it. For example,
+     * this allows an anchor to determine by analysing another method other than
+     * default two methods.
+     *
+     * @param anchorMap the Map to search for anchors.
+     * @param request the request holds the error message.
+     * @param dispatch the variable to search the map (mots likely a submit
+     * button name).
+     * @return anchor appropriate anchor for (1) error in <code>request</code>
+     * or (2) dispatch (in this order). <code>null</code> if no none found.
+     */
+    public String getAnchor(Map anchorMap, HttpServletRequest request, String dispatch) {
+		// Errors are stored under this key.
+		String errorkey =  Globals.ERROR_KEY;
+
+        // Any errors?
+        if (request.getAttribute(errorkey) != null) {
+            ActionErrors errors = (ActionErrors) request.getAttribute(errorkey);
+            // Only interested in the first (or only) error.
+            ActionError error = (ActionError) errors.get().next();
+
+            // The key this error is stored.
+            String key = error.getKey();
+
+            // Check the map for the error key.
+            if (anchorMap.containsKey(key)) {
+                return (String) anchorMap.get(key);
+            }
+        }
+
+        // Any messages? Messages are stored under this key.
+//        String msgkey = Globals.MESSAGE_KEY;
+//
+//        if (request.getAttribute(msgkey) != null) {
+//        	ActionMessages msgs = (ActionMessages) request.getAttribute(msgkey);
+//			// Only interested in the first (or only) message.
+//			ActionError msg = (ActionError) msgs.get().next();
+//
+//			// The key this error is stored.
+//			String key = msg.getKey();
+//
+//			// Check the map for the msg key.
+//			if (anchorMap.containsKey(key)) {
+//				return (String) anchorMap.get(key);
+//			}
+//        }
+        // Now go for the non error anchor using the dispatch value.
+        return anchorMap.containsKey(dispatch)
+                ? (String) anchorMap.get(dispatch) : null;
     }
 
     /**

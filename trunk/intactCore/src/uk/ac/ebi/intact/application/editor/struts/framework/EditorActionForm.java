@@ -20,6 +20,7 @@ import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Calendar;
 
 /**
  * The form to edit cv data. This form also is the super class for other

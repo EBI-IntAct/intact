@@ -7,109 +7,78 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.action.interaction;
 
 import org.apache.struts.action.*;
-import org.apache.struts.util.MessageResources;
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
+import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
-import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.ComponentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
-import uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction;
-import uk.ac.ebi.intact.model.Feature;
-import uk.ac.ebi.intact.model.Interaction;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
- * The action class for editing a Protein.
+ * The action class for edit/save/delete a Protein.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class ProteinDispatchAction extends AbstractEditorAction {
+public class ProteinDispatchAction extends AbstractEditorDispatchAction {
 
-//    protected Map getKeyMethodMap() {
-//        Map map = new HashMap();
-//        map.put("int.proteins.button.edit", "edit");
-//        map.put("int.proteins.button.save", "save");
-//        map.put("int.proteins.button.feature.add", "addFeature");
-//        map.put("int.proteins.button.delete", "delete");
-//        return map;
-//    }
+    protected Map getKeyMethodMap() {
+        Map map = new HashMap();
+        map.put("int.proteins.button.edit", "edit");
+        map.put("int.proteins.button.save", "save");
+        map.put("int.proteins.button.delete", "delete");
+        return map;
+    }
 
     /**
-     * This method dispatches calls to various methods using the 'dispatch' parameter.
-     *
-     * @param mapping  - The <code>ActionMapping</code> used to select this instance
-     * @param form     - The optional <code>ActionForm</code> bean for this request (if any)
-     * @param request  - The HTTP request we are processing
-     * @param response - The HTTP response we are creating
-     * @return - represents a destination to which the action servlet,
-     *         <code>ActionServlet</code>, might be directed to perform a RequestDispatcher.forward()
-     *         or HttpServletResponse.sendRedirect() to, as a result of processing
-     *         activities of an <code>Action</code> class
+     * Handles when Edit Protein button is pressed.
      */
-    public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
+    public ActionForward edit(ActionMapping mapping,
+                              ActionForm form,
+                              HttpServletRequest request,
+                              HttpServletResponse response)
             throws Exception {
         // The form.
         InteractionActionForm intform = (InteractionActionForm) form;
 
-        // The command associated with the dispatch
-        String cmd = intform.getDispatch();
-
-        // Message resources to access button labels.
-        MessageResources msgres = getResources(request);
-
-        if (cmd.equals(msgres.getMessage("int.proteins.button.edit"))) {
-            return edit(mapping, intform, request);
-        }
-        if (cmd.equals(msgres.getMessage("int.proteins.button.save"))) {
-            return save(mapping, intform, request);
-        }
-        if (cmd.equals(msgres.getMessage("int.proteins.button.feature.add"))) {
-            return mapping.findForward(FEATURE);
-        }
-        // default is delete protein.
-        return delete(mapping, intform, request);
-    }
-
-    // Helper methods
-
-    private ActionForward edit(ActionMapping mapping,
-                              InteractionActionForm form,
-                              HttpServletRequest request)
-            throws Exception {
         // The protein we are editing at the moment.
-        ComponentBean pb = form.getSelectedComponent();
+        ComponentBean cb = intform.getSelectedComponent();
 
         // We must have the protein bean.
-        assert pb != null;
+        assert cb != null;
 
         // Must save this bean.
-        pb.setEditState(AbstractEditBean.SAVE);
+        cb.setEditState(AbstractEditBean.SAVE);
 
-        // Update the form.
-        return mapping.findForward(SUCCESS);
-    }
-
-    private ActionForward save(ActionMapping mapping,
-                              InteractionActionForm form,
-                              HttpServletRequest request)
-            throws Exception {
         // The current view of the edit session.
-        InteractionViewBean viewbean =
+        InteractionViewBean view =
                 (InteractionViewBean) getIntactUser(request).getView();
 
+        // Update the form.
+        return updateForm(mapping, intform, request, view);
+    }
+
+    /**
+     * Handles when Save Protein button is pressed.
+     */
+    public ActionForward save(ActionMapping mapping,
+                              ActionForm form,
+                              HttpServletRequest request,
+                              HttpServletResponse response)
+            throws Exception {
+        // The form.
+        InteractionActionForm intform = (InteractionActionForm) form;
+
+        // The current view of the edit session.
+        InteractionViewBean view =
+                (InteractionViewBean) getIntactUser(request).getView();
 
         // The component we are editing at the moment.
-        ComponentBean cb = form.getSelectedComponent();
+        ComponentBean cb = intform.getSelectedComponent();
 
         // We must have the protein bean.
         assert cb != null;
@@ -121,33 +90,59 @@ public class ProteinDispatchAction extends AbstractEditorAction {
                     new ActionError("error.int.protein.edit.role"));
             saveErrors(request, errors);
             cb.setEditState(AbstractEditBean.ERROR);
-            return mapping.findForward(FAILURE);
+
+            // Set the anchor for the page to scroll.
+            setAnchor(request, intform);
+
+            // Display the error in the editor.
+            return mapping.getInputForward();
         }
         // The protein to update.
-        viewbean.addProteinToUpdate(cb);
+        view.addProteinToUpdate(cb);
 
         // Back to the view mode.
         cb.setEditState(AbstractEditBean.VIEW);
 
         // Remove the unsaved proteins.
-        viewbean.removeUnsavedProteins();
-        
+        view.removeUnsavedProteins();
+
         // Update the form.
-        return mapping.findForward(SUCCESS);
+        return updateForm(mapping, intform, request, view);
     }
 
-    private ActionForward delete(ActionMapping mapping,
-                                InteractionActionForm form,
-                                HttpServletRequest request)
+    /**
+     * Handles when Delete Protein button is pressed.
+     */
+    public ActionForward delete(ActionMapping mapping,
+                                ActionForm form,
+                                HttpServletRequest request,
+                                HttpServletResponse response)
             throws Exception {
+        // The form.
+        InteractionActionForm intform = (InteractionActionForm) form;
+
         // The current view of the edit session.
         InteractionViewBean view =
                 (InteractionViewBean) getIntactUser(request).getView();
 
         // Delete this Protein from the view.
-        view.delProtein(form.getDispatchIndex());
+        view.delProtein(intform.getDispatchIndex());
 
         // Update the form.
-        return mapping.findForward(SUCCESS);
+        return updateForm(mapping, intform, request, view);
+    }
+
+    private ActionForward updateForm(ActionMapping mapping,
+                                           InteractionActionForm form,
+                                           HttpServletRequest request,
+                                           InteractionViewBean view) {
+        // Refresh the form with updated components.
+        form.setComponents(view.getComponents());
+
+        // Set the anchor if necessary.
+        setAnchor(request, form);
+
+        // Update the form.
+        return mapping.getInputForward();
     }
 }

@@ -9,23 +9,19 @@ package uk.ac.ebi.intact.application.editor.struts.action.interaction;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.util.MessageResources;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.application.editor.struts.action.FillFormAction;
 import uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.ComponentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
-import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.model.Feature;
-import uk.ac.ebi.intact.model.Interaction;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The action class to handle events related to add/edit and delete of a
@@ -40,51 +36,13 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         Map map = new HashMap();
         map.put("int.proteins.button.feature.edit", "edit");
         map.put("int.proteins.button.feature.delete", "delete");
+        map.put("int.proteins.button.feature.add", "add");
         return map;
     }
 
     /**
-     * This method dispatches calls to various methods using the 'dispatch' parameter.
-     *
-     * @param mapping  - The <code>ActionMapping</code> used to select this instance
-     * @param form     - The optional <code>ActionForm</code> bean for this request (if any)
-     * @param request  - The HTTP request we are processing
-     * @param response - The HTTP response we are creating
-     * @return - represents a destination to which the action servlet,
-     *         <code>ActionServlet</code>, might be directed to perform a RequestDispatcher.forward()
-     *         or HttpServletResponse.sendRedirect() to, as a result of processing
-     *         activities of an <code>Action</code> class
+     * Handles when Edit Feature button is pressed.
      */
-//    public ActionForward execute(ActionMapping mapping,
-//                                 ActionForm form,
-//                                 HttpServletRequest request,
-//                                 HttpServletResponse response)
-//            throws Exception {
-//        // The form.
-//        InteractionActionForm intform = (InteractionActionForm) form;
-//
-//        // The command associated with the dispatch
-//        String cmd = intform.getDispatchFeature();
-//
-//        // Message resources to access button labels.
-//        MessageResources msgres = getResources(request);
-//
-//        // Dispatch according to the button label.
-//        if (cmd.equals(msgres.getMessage("int.proteins.button.feature.edit"))) {
-//            return edit(mapping, intform, request, response);
-////            return mapping.findForward(FEATURE);
-//        }
-//        // default is delete feature.
-//        delete(intform, request);
-//
-//        // Set Any anchors.
-////        setAnchor(request, intform);
-//
-//        return mapping.getInputForward();
-//    }
-
-//    private void edit(InteractionActionForm form, HttpServletRequest request)
-//            throws Exception {
     public ActionForward edit(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
@@ -93,7 +51,7 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         // Save the interaction first.
         ActionForward forward = save(mapping, form, request, response);
 
-        // Don not proceed if the inteaction wasn'r saved successfully first.
+        // Don not proceed if the inteaction wasn't saved successfully first.
         if (!forward.equals(mapping.findForward(SUCCESS))) {
             return forward;
         }
@@ -130,6 +88,9 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         return forward;
     }
 
+    /**
+     * Handles when Delete Protein button is pressed.
+     */
     public ActionForward delete(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
@@ -149,6 +110,53 @@ public class FeatureDispatchAction extends CommonDispatchAction {
 
         return mapping.getInputForward();
      }
+
+    /**
+     * Handles when Adde Feature button is pressed.
+     */
+    public ActionForward add(ActionMapping mapping,
+                                 ActionForm form,
+                                 HttpServletRequest request,
+                                 HttpServletResponse response)
+            throws Exception {
+        // Save the interaction first.
+        ActionForward forward = save(mapping, form, request, response);
+
+        // Don not proceed if the inteaction wasn't saved successfully first.
+        if (!forward.equals(mapping.findForward(SUCCESS))) {
+            return forward;
+        }
+        // Linking to the feature editor starts from here.
+
+        // Handler to the Intact User.
+        EditUserI user = getIntactUser(request);
+
+        // Still with the interaction view.
+        InteractionViewBean intView = (InteractionViewBean) user.getView();
+
+        // Set the selected topic as other operation use it for various tasks.
+        user.setSelectedTopic("Feature");
+
+        // Set the new object as the current edit object.
+        user.setView(Feature.class);
+
+        // The feature view bean.
+        FeatureViewBean featureView = (FeatureViewBean) user.getView();
+
+        // Set the parent for the feature view.
+        featureView.setParentView(intView);
+
+        // The form.
+        InteractionActionForm intform = (InteractionActionForm) form;
+
+        // The selected component from the form.
+        ComponentBean selectedComp = intform.getSelectedComponent();
+
+        // The component for the feature.
+        featureView.setComponent(selectedComp.getComponent(user));
+
+        return mapping.findForward(SUCCESS);
+    }
 
     // Override the super method to get the anchor for dispatch feature.
 
