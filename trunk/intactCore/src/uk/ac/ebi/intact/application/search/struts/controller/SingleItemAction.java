@@ -74,7 +74,11 @@ public class SingleItemAction extends IntactBaseAction {
         // The search and help links for links (used by style sheet).
         String relativeSearchLink = getServlet().getServletContext().getInitParameter("searchLink");
         String relativeHelpLink = getServlet().getServletContext().getInitParameter("helpLink");
-        String helpLink = request.getContextPath() + relativeHelpLink;
+
+        //build the help link out of the context path - strip off the 'search' bit...
+        String ctxtPath = (request.getContextPath());
+        String relativePath = ctxtPath.substring(0, ctxtPath.lastIndexOf("search"));
+        String helpLink = relativePath.concat(relativeHelpLink);
         String searchLink = request.getContextPath() + relativeSearchLink;
 
         // Session to access various session objects.
