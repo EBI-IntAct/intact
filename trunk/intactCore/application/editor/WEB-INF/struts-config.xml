@@ -111,11 +111,12 @@
             type="uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentForm"/>
 
         <!-- Form for to hold Experiments (Interaction) -->
-        <form-bean name="intExperimentHoldForm"
-            type="uk.ac.ebi.intact.application.editor.struts.view.EditForm"/>
+        <form-bean name="intHoldExpForm"
+            type="uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentHoldForm"/>
+<!--            type="uk.ac.ebi.intact.application.editor.struts.view.EditForm"/>-->
 
         <!-- Form to search for an Experiment in an Interaction  -->
-        <form-bean name="intExperimentSearchForm"
+        <form-bean name="intExpSearchForm"
             type="org.apache.struts.action.DynaActionForm">
             <form-property name="shortLabel" type="java.lang.String"/>
             <form-property name="spAc" type="java.lang.String"/>
@@ -123,7 +124,7 @@
         </form-bean>
 
         <!-- Form for editing a Protein -->
-        <form-bean name="intProteinEditForm"
+        <form-bean name="intProtEditForm"
             type="uk.ac.ebi.intact.application.editor.struts.view.interaction.ProteinEditForm"/>
 
         <!-- Form to search for a Protein -->
@@ -300,25 +301,45 @@
             <forward name="editor" path="edit.layout"/>
         </action>
 
+        <!-- ============= Actions to set various interaction forms ======= -->
+
         <!-- Populates the interaction form. -->
         <action path="/setUpInteractionForm"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.SetUpInteractionAction"
             name="interactionForm"
             validate="false"
             scope="request">
-<!--            <forward name="editor" path="edit.layout"/>-->
             <forward name="success" path="/do/setUpIntExpForm"/>
         </action>
 
-        <!-- Populates the interaction form. -->
+        <!-- Populates the interaction/experiment form. -->
         <action path="/setUpIntExpForm"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.FillExperimentFormAction"
             name="intExpForm"
             validate="false"
+            scope="request">
+            <forward name="success" path="/do/setUpIntHoldExpForm"/>
+        </action>
+
+        <!-- Populates the interaction/hold experiment form. -->
+        <action path="/setUpIntHoldExpForm"
+            type="uk.ac.ebi.intact.application.editor.struts.action.interaction.FillHoldExperimentFormAction"
+            name="intHoldExpForm"
+            validate="false"
+            scope="request">
+            <forward name="success" path="/do/setUpIntProteinForm"/>
+        </action>
+
+        <!-- Populates the interaction/protein form. -->
+        <action path="/setUpIntProteinForm"
+            type="uk.ac.ebi.intact.application.editor.struts.action.interaction.FillProteinFormAction"
+            name="intProtEditForm"
+            validate="false"
             scope="session">
-<!--            <forward name="success" path="/do/setUpInteractionForm"/>-->
             <forward name="success" path="edit.layout"/>
         </action>
+
+        <!-- ============= Common actions for all the editors ============= -->
 
         <!-- Process selection of Submit, Cancel or Delete buttons from edit.jsp. We need
              the dummyForm as JavaScript uses the hidden property. dispatch property
@@ -393,15 +414,15 @@
         <!-- Handles when the user selectes to add or hide an experiment (Interaction). -->
         <action path="/interaction/experiment/hold"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ExperimentHoldAction"
-            name="intExperimentHoldForm"
+            name="intHoldExpForm"
             input="/do/fillCvForm"
-            scope="session">
+            scope="request">
         </action>
 
         <!-- Handles when the user clicks to search an experiment in an Interaction. -->
         <action path="/interaction/experiment/search"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ExperimentSearchAction"
-            name="intExperimentSearchForm"
+            name="intExpSearchForm"
             input="/do/fillCvForm"
             scope="request">
         </action>
@@ -409,11 +430,10 @@
         <!-- Handles when the user clicks to save Interaction info. -->
         <action path="/interaction/protein/edit"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ProteinEditAction"
-            name="intProteinEditForm"
+            name="intProtEditForm"
             validate="true"
             input="/do/fillCvForm"
             scope="session">
-<!--            <forward name="success" path="/do/setUpInteractionForm"/>-->
         </action>
 
         <!-- Handles when the user clicks to save Interaction info. -->
