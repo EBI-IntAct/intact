@@ -79,6 +79,11 @@ public interface CvEditConstants {
     public static final String FORWARD_NO_MATCHES = "noMatch";
 
     /**
+     * Forward to refresh the screen.
+     */
+    public static final String FORWARD_REFRESH = "refresh";
+
+    /**
      * Search by Label.
      */
     public static final String SEARCH_BY_LABEL = "shortLabel";
@@ -99,6 +104,11 @@ public interface CvEditConstants {
      * The bean to display short labels when the user is adding a new CV obj.
      */
     public static final String SHORT_LABEL_BEAN = "labelBean";
+
+    /**
+     * The name of the CV info form.
+     */
+    public static final String CV_INFO_FORM = "cvinfoForm";
 
     /**
      * The name of the Xref edit form.
