@@ -67,6 +67,21 @@
 
     </servlet>
 
+    <!-- =================================================================== -->
+
+    <!-- Init servlet for the logging facilities -->
+    <servlet>
+      <servlet-name>logging-init</servlet-name>
+      <servlet-class>uk.ac.ebi.intact.application.commons.util.LoggingInitServlet</servlet-class>
+
+      <init-param>
+        <param-name>log4j-init-file</param-name>
+        <param-value>/WEB-INF/classes/log4j.properties</param-value>
+      </init-param>
+
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+
     <!-- Action Servlet Mapping -->
     <servlet-mapping>
         <servlet-name>action</servlet-name>
