@@ -459,9 +459,7 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
             return null;
         }
         // Reset the key to a different key.
-        System.out.println("Before reset: " + copy.getFromRange() + " key: " + copy.getKey());
         copy.reset();
-        System.out.println("After reset: " + copy.getFromRange() + " key: " + copy.getKey());
         return copy;
     }
 

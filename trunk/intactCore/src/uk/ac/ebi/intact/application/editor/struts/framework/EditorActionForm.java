@@ -196,12 +196,6 @@ public class EditorActionForm extends ValidatorForm {
         return myDispatchIndex;
     }
 
-//    public void reset() {
-//        myNewAnnotation.reset();
-//        myNewXref.reset();
-//        myDispatch = "";
-//    }
-
     /**
      * Validate the properties that have been set from the HTTP request.
      *

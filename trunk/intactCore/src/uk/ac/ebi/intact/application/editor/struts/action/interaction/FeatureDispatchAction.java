@@ -87,29 +87,29 @@ public class FeatureDispatchAction extends CommonDispatchAction {
 
         return forward;
     }
-
-    /**
-     * Handles when Delete Protein button is pressed.
-     */
-    public ActionForward delete(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
-            throws Exception {
-        // Handler to the Intact User.
-        EditUserI user = getIntactUser(request);
-
-        // The form.
-        InteractionActionForm intform = (InteractionActionForm) form;
-
-        // The feature bean we are about to delete.
-        FeatureBean bean = intform.getSelectedFeature();
-
-        // Delete the feature.
-        ((InteractionViewBean) user.getView()).deleteFeature(bean);
-
-        return mapping.getInputForward();
-     }
+//
+//    /**
+//     * Handles when Delete Protein button is pressed.
+//     */
+//    public ActionForward delete(ActionMapping mapping,
+//                                 ActionForm form,
+//                                 HttpServletRequest request,
+//                                 HttpServletResponse response)
+//            throws Exception {
+//        // Handler to the Intact User.
+//        EditUserI user = getIntactUser(request);
+//
+//        // The form.
+//        InteractionActionForm intform = (InteractionActionForm) form;
+//
+//        // The feature bean we are about to delete.
+//        FeatureBean bean = intform.getSelectedFeature();
+//
+//        // Delete the feature.
+//        ((InteractionViewBean) user.getView()).deleteFeature(bean);
+//
+//        return mapping.getInputForward();
+//     }
 
     /**
      * Handles when Adde Feature button is pressed.

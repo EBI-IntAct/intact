@@ -64,9 +64,9 @@ public class FeatureBean implements Serializable, Cloneable {
     private String myBoundDomain;
 
     /**
-     * True if this feature is linked. Default is not linked.
+     * True if this feature is checked. Default is not.
      */
-    private boolean myLinked;
+    private boolean myChecked;
 
     /**
      * True if this bein selected. Default is not selected.
@@ -155,12 +155,12 @@ public class FeatureBean implements Serializable, Cloneable {
         myBoundDomain = label;
     }
 
-    public boolean isLinked() {
-        return myLinked;
+    public boolean isChecked() {
+        return myChecked;
     }
 
-    public void setLinked(boolean linked) {
-        myLinked = linked;
+    public void setChecked(boolean linked) {
+        myChecked = linked;
     }
 
     public void setFeatureCmd(String value) {
