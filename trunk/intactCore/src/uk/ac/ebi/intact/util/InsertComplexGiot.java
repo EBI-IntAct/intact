@@ -288,9 +288,10 @@ public class InsertComplexGiot {
             System.out.println ( "giot-2003-ex1 already exist, use that one." );
 
             if ( giotExperiment.getBioSource() == null) {
-                giotExperiment.setBioSource( yeast );
-                helper.update( giotExperiment );
-                System.out.println ( "Giot's BioSource wasn't set, update it to: " + yeast.getShortLabel() );
+                System.out.println ( "giot-2003-ex1 BioSource's is not set !" );
+//                giotExperiment.setBioSource( yeast );
+//                helper.update( giotExperiment );
+//                System.out.println ( "Giot's BioSource wasn't set, update it to: " + yeast.getShortLabel() );
             }
         }
 
