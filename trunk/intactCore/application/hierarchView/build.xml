@@ -54,7 +54,6 @@
     <!-- We need this flag because deploy targets need to know where to deploy. -->
     <property environment="env"/>
     <property name="tomcat.home" value="${env.CATALINA_HOME}"/>
-    <property name="axis.home" value="${env.AXIS_HOME}"/>
 
     <!-- Build working classpath -->
     <path id="project.class.path">
@@ -247,9 +246,9 @@
         <echo message="Create the service jar file"/>
 
         <jar destfile="${ws.tulip.jar}">
-		<fileset dir="${root.dest.dir}" includes="${ws.props.file}"/>
-		<fileset dir="${dest.dir}" includes="${ws.tulip.server.dir}/**"/>
-	</jar>
+            <fileset dir="${root.dest.dir}" includes="${ws.props.file}"/>
+            <fileset dir="${dest.dir}" includes="${ws.tulip.server.dir}/**"/>
+	    </jar>
 
         <!-- Delete the webservice properties file. -->
         <echo message="Deleting the configuration file"/>
