@@ -19,7 +19,7 @@
 <%-- Include javascript for show user functionality --%>
 <jsp:include page="../misc/user_js.jsp"/>
 
-<html:form action="/featureDispatch" onsubmit="return validateFeatureForm(this)">
+<html:form action="/feature/dispatch" onsubmit="return validateFeatureForm(this)">
     <html:hidden property="anchor" />
     <jsp:include page="parent_protein.jsp" />
     </p>

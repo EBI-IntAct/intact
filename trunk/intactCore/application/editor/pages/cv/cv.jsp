@@ -19,7 +19,7 @@
 <%-- Include javascript for show user functionality --%>
 <jsp:include page="../misc/user_js.jsp"/>
 
-<html:form action="/cvDispatch" onsubmit="return validateCvForm(this)">
+<html:form action="/cv/dispatch" onsubmit="return validateCvForm(this)">
     <html:hidden property="anchor" />
 
     <jsp:include page="info.jsp" />
