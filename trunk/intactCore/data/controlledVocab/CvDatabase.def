@@ -17,3 +17,10 @@ term: Gene Ontology
 url: http://www.geneontology.org/
 definition: The Gene Ontology.
 
+shortlabel: newt
+term: New EBI Web Taxonomy
+url: http://www.ebi.ac.uk/newt/index.html
+definition: NEWT is the taxonomy database maintained by the Swiss-Prot group. It integrates taxonomy data compiled in the NCBI database and data specific to the Swiss-Prot protein knowledgebase. 
+
+
+
