@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The action class to search a Protein.
@@ -24,6 +26,17 @@ import java.util.Iterator;
  * @version $Id$
  */
 public class ProteinSearchAction extends AbstractEditorAction {
+
+    /**
+     * Must start with either o or P or Q, followed by 5 characters consists of
+     * either A - Z or 0 - 9.
+     */
+    private static final Pattern ourSpAcPat = Pattern.compile("[O|P|Q][A-Z0-9]{5}$");
+
+    /**
+     * Must start with either uppercase characters, followed by '-' and a number.
+     */
+    private static final Pattern ourIntactAcPat = Pattern.compile("[A-Z]+\\-[0-9]+$");
 
     /**
      * Process the specified HTTP request, and create the corresponding
@@ -46,35 +59,77 @@ public class ProteinSearchAction extends AbstractEditorAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
-        DynaActionForm theForm = (DynaActionForm) form;
+        // The dyna form.
+        DynaActionForm dynaform = (DynaActionForm) form;
 
+        String ac = ((String) dynaform.get("protSearchAC")).trim();
+        String spAc = ((String) dynaform.get("protSearchSpAC")).trim();
+        String shortLabel = ((String) dynaform.get("protSearchLabel")).trim();
+
+        // Cache string lengths.
+        int acLen = ac.length();
+        int spAcLen = spAc.length();
+        int shortLabelLen = shortLabel.length();
+
+        // Error if all three fields are empty.
+        if ((acLen == 0) && (spAcLen == 0) && (shortLabelLen == 0)) {
+            ActionErrors errors = new ActionErrors();
+            errors.add(ActionErrors.GLOBAL_ERROR,
+                    new ActionError("error.int.protein.search.input"));
+            saveErrors(request, errors);
+            return mapping.findForward(FORWARD_FAILURE);
+        }
+        // The default values for search.
+        String value = shortLabel;
+        String param = "shortLabel";
+
+        if (acLen != 0) {
+            Matcher matcher = ourIntactAcPat.matcher(ac);
+            if (!matcher.matches()) {
+                ActionErrors errors = new ActionErrors();
+                errors.add(ActionErrors.GLOBAL_ERROR,
+                        new ActionError("error.int.protein.search.ac"));
+                saveErrors(request, errors);
+                return mapping.findForward(FORWARD_FAILURE);
+            }
+            value = ac;
+            param = "ac";
+        }
+        else if (spAcLen != 0) {
+            Matcher matcher = ourSpAcPat.matcher(spAc);
+            if (!matcher.matches()) {
+                ActionErrors errors = new ActionErrors();
+                errors.add(ActionErrors.GLOBAL_ERROR,
+                        new ActionError("error.int.protein.search.sp"));
+                saveErrors(request, errors);
+                return mapping.findForward(FORWARD_FAILURE);
+            }
+            value = spAc;
+            param = "spAc";
+        }
         // Handler to the current user.
-        EditUserI user = super.getIntactUser(request);
-
-        String searchParam = (String) theForm.get("param");
-        String searchValue = (String) theForm.get("value");
+        EditUserI user = getIntactUser(request);
 
         // The collection to hold proteins.
         Collection proteins;
 
-        if (searchParam.equals("spAc")) {
-            proteins = user.getProteinsByXref(searchValue);
+        if (param.equals("spAc")) {
+            proteins = user.getProteinsByXref(value);
             // Try importing Proteins via SRS
             if (proteins.isEmpty()) {
-                proteins = user.getSPTRProteins(searchValue);
+                proteins = user.getSPTRProteins(value);
             }
         }
         else {
-            proteins = user.search(Protein.class.getName(), searchParam,
-                    searchValue);
+            proteins = user.search(Protein.class.getName(), param, value);
         }
         // Search found any results?
         if (proteins.isEmpty()) {
             ActionErrors errors = new ActionErrors();
             errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.int.protein.search.empty", searchParam));
+                    new ActionError("error.int.protein.search.empty", param));
             saveErrors(request, errors);
-            return mapping.getInputForward();
+            return mapping.findForward(FORWARD_FAILURE);
         }
         // The number of Proteins retrieved from the search.
         int psize = proteins.size();
@@ -84,9 +139,9 @@ public class ProteinSearchAction extends AbstractEditorAction {
             ActionErrors errors = new ActionErrors();
             errors.add(ActionErrors.GLOBAL_ERROR,
                     new ActionError("error.int.protein.search.many",
-                            Integer.toString(psize), searchParam, "10"));
+                            Integer.toString(psize), param, "10"));
             saveErrors(request, errors);
-            return mapping.getInputForward();
+            return mapping.findForward(FORWARD_FAILURE);
         }
         // Can safely cast it as we have the correct editor view bean.
         InteractionViewBean view = (InteractionViewBean) user.getView();

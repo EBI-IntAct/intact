@@ -7,8 +7,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.action.interaction;
 
 import org.apache.struts.action.*;
+import org.apache.struts.util.MessageResources;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 
@@ -45,38 +45,47 @@ public class ExperimentHoldAction extends AbstractEditorAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
-        EditForm editform = (EditForm) form;
+        // The dyna form.
+        DynaActionForm dynaform = (DynaActionForm) form;
+
+        // The index position of the annotation.
+        int idx = ((Integer) dynaform.get("idx")).intValue();
+
+        // The bean associated with the current action.
+        ExperimentBean eb = ((ExperimentBean[]) dynaform.get("expshold"))[idx];
+
+        // We must have the experiment bean.
+        assert eb != null;
 
         // The current view of the edit session.
         InteractionViewBean view =
                 (InteractionViewBean) getIntactUser(request).getView();
 
-        // The bean associated with the current action.
-        ExperimentBean expbean = view.getHoldExperiment(editform.getIndex());
+        // Message resources to access button labels.
+        MessageResources msgres = getResources(request);
 
-        // We must have the experiment bean.
-        assert expbean != null;
+        // The command associated with the index.
+        String cmd = ((String[]) dynaform.get("expsholdCmd"))[idx];
 
-        if (editform.hasPressed(getResources(request).getMessage("button.add"))) {
+        if (cmd.equals(msgres.getMessage("int.exp.button.add"))) {
             // Avoid duplicates.
-            if (view.experimentExists(expbean)) {
+            if (view.experimentExists(eb)) {
                 ActionErrors errors = new ActionErrors();
                 errors.add(ActionErrors.GLOBAL_ERROR,
-                        new ActionError("error.int.exp.hold.add",
-                                expbean.getShortLabel()));
+                        new ActionError("error.int.exp.hold.add", eb.getShortLabel()));
                 saveErrors(request, errors);
                 return mapping.getInputForward();
             }
             else {
                 // Wants to add the selected experiment to the Interaction.
-                view.addExperiment(expbean);
+                view.addExperiment(eb);
                 // Clear all the experiments in the hold section.
                 view.clearExperimentToHold();
             }
         }
         else {
             // Must have pressed 'Hide'.
-            view.hideExperimentToHold(expbean);
+            view.hideExperimentToHold(eb);
         }
         return mapping.findForward(FORWARD_SUCCESS);
     }
