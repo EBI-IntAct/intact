@@ -137,10 +137,6 @@ public class EditorMenuFactory {
         theirNameToType.put(ROLES, CvComponentRole.class);
         theirNameToType.put(CELLS, CvCellType.class);
         theirNameToType.put(TISSUES, CvTissue.class);
-
-
-        // Fills with default values.
-        theirNameToDefValue.put(QUALIFIERS, "identity");
     }
 
     /**
