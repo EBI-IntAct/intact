@@ -106,6 +106,16 @@ public interface SearchConstants {
      */
     public static final String FORWARD_SESSION_LOST = "sessionLost";
 
+     /**
+     * Forward to the too large page if the dataset is too large 
+     */
+    public static final String TOO_LARGE_DATASET = "tooLarge";
+
+    /**
+     *  Key to the too large action 
+     */
+    public static final String FORWARD_TOO_LARGE = "tooLarge";
+
     /**
      * Key to the dispatcher action.
      */
@@ -169,6 +179,22 @@ public interface SearchConstants {
      * maximum display size values for various intact types.
      */
     public static final String MAX_ITEMS_MAP = "maxMap";
+
+    /**
+     * Indetifies the map (stored in the servlet context) which contains the
+     * the count and classname from the initial search request for displaying
+     * on the the tooLarge jsp
+     */
+    public static final String RESULT_INFO = "resultInfo";
+    /**
+     * Maximum size for the initial request of objects 
+     */
+    public static final int MAXIMUM_RESULT_SIZE = 50;
+
+    /**
+     * This can go here later 
+     */
+    public static final String SEARCH_URL = "searchUrl";
 
     /**
      * Contains a list of the shortlabels of the items found in a search result. Used by

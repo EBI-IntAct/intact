@@ -79,6 +79,7 @@ public class CvObjectViewBean extends AbstractViewBean {
         annotationFilters = new ArrayList();
         annotationFilters.add("remark");
         annotationFilters.add("uniprot-dr-export");
+        annotationFilters.add("uniprot-cc-export");
 
 
     }
