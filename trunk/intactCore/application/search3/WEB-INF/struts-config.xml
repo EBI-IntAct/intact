@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE struts-config PUBLIC
+          "-//Apache Software Foundation//DTD Struts Configuration 1.1//EN"
+          "http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
+
+<!--
+     This is the Struts configuration file for the example application,
+     using the proposed new syntax.
+
+     NOTE:  You would only flesh out the details in the "form-bean"
+     declarations if you had a generator tool that used them to create
+     the corresponding Java classes for you.  Otherwise, you would
+     need only the "form-bean" element itself, with the corresponding
+     "name" and "type" attributes.
+
+     Workflow:
+                                                   _________
+                                              ==> | Binary |===|
+                                             |    |________|   |
+  Query     _________       ____________     |     ________    |     ____________
+ =======>  | Search | ===> | Dispatcher | ===|==> | Single |===|==> | Result.jsp |
+           |________|      |____________|    |    |________|   |    |____________|
+                                             |     _________   |
+                                              ==> | Details |==|
+                                                  |_________|
+-->
+
+
+<struts-config>
+
+    <!-- ========== Form Bean Definitions =================================== -->
+    <form-beans>
+
+        <!-- The sidebar form -->
+        <form-bean name="sidebarForm"
+                   type="org.apache.struts.action.DynaActionForm">
+            <form-property name="searchString"  type="java.lang.String" initial="*" />
+            <form-property name="searchClass"   type="java.lang.String" />
+            <form-property name="selectedChunk" type="java.lang.String" initial="-1" />
+        </form-bean>
+
+    </form-beans>
+
+    <!-- ========== Global Forward Definitions ============================== -->
+    <global-forwards>
+        <!-- Need this global forward from the index.jsp -->
+        <forward name="start"    path="/do/welcome"/>
+        <forward name="failure"  path="error.layout"/>
+        <forward name="warning"  path="warning.layout"/>
+    </global-forwards>
+
+    <!-- ========== Action Mapping Definitions ============================== -->
+    <action-mappings>
+
+        <!-- Process when user clicks on the logo to enter the application. -->
+        <action path="/welcome"
+                type="uk.ac.ebi.intact.application.search3.struts.controller.WelcomeAction"
+                scope="request">
+            <forward name="success" path="search.layout"/>
+        </action>
+
+        <!-- Process when user accesses search via HierarchView application -->
+        <action path="/hvWelcome"
+                type="uk.ac.ebi.intact.application.search3.struts.controller.WelcomeAction"
+                scope="request">
+            <forward name="success" path="/do/search"/>
+        </action>
+
+        <!-- Process a user searches. The form is in a session because we reuse search details
+             from view action. Currently once a search has been successful, we delegate the
+             choice of choosing the relevant action to a dispatcher.
+          -->
+        <action path="/search"
+                name="sidebarForm"
+                type="uk.ac.ebi.intact.application.search3.struts.controller.SearchAction"
+                scope="request">
+            <forward name="noMatch"     path="no.match.layout"/>
+            <forward name="sessionLost" path="/do/welcome"/>
+            <forward name="dispatcher"  path="/do/dispatcher"/>
+        </action>
+
+
+        <!-- Decide accordingly to the data retreived and the parameters given by the user,
+             which action will process the data collected in order to display them to the user.
+             The dispatcher could either delegate the processing to the following actions:
+             - single,
+             - binary,
+             - details.
+          -->
+        <action path="/dispatcher"
+                type="uk.ac.ebi.intact.application.search3.struts.controller.DispatcherAction"
+                scope="session">
+            <forward name="results"     path="match.layout"/>
+            <forward name="sessionLost" path="/do/welcome"/>
+            <forward name="single"      path="/do/single"/>
+            <forward name="binary"      path="/do/binary"/>
+            <forward name="details"     path="/do/details"/>
+            <forward name="simple"     path="/do/simple"/>
+        </action>
+
+
+        <!-- A single IntAct object has to be prepared and displayed.
+             It could process either a collection containing a single:
+             - Protein
+             - Interaction
+             - Experiment
+          -->
+
+        <!--
+        <action path="/single"
+                type="uk.ac.ebi.intact.application.search3.struts.controller.SingleResultAction"
+                scope="session">
+            <forward name="noMatch"     path="no.match.layout"/>
+            <forward name="results"     path="match.layout"/>
+            <forward name="sessionLost" path="/do/welcome"/>
+        </action>
+        -->
+       <!-- New single view - June 2004 Typically used to display single Protein views
+            but can also be used to display eg CvObjects.
+
+            NOTE: It seems that the Action below doesn't actually do the forwarding -
+            it simply builds a view bean and then the Abstract result Action does the
+            forwarding. May need to change this, because it is cleaner to have things
+            forwarded to specific JSPs rather than have it all done in one....
+ -->
+        <action path="/single"
+                type="uk.ac.ebi.intact.application.search3.struts.controller.SingleResultAction"
+                scope="session">
+            <forward name="noMatch"     path="no.match.layout"/>
+            <!-- new path to the single Protein view -->
+            <forward name="singleProtein"     path="singleProtein.layout"/>
+            <forward name="results"     path="match.layout"/>
+            <forward name="general"     path="single.layout"/>
+            <forward name="sessionLost" path="/do/welcome"/>
+        </action>
+
+        <!-- July 2004: summary view of Protein interaction partners (can also display multiple results) -->
+        <action path="/binary"
+                type="uk.ac.ebi.intact.application.search3.struts.controller.BinaryResultAction"
+                scope="session">
+            <forward name="noMatch"     path="no.match.layout"/>
+            <forward name="results"     path="match.layout"/>
+            <forward name="sessionLost" path="/do/welcome"/>
+
+            <!-- new path to the partners JSP -->
+            <forward name="partners" path="partners.layout"/>
+        </action>
+
+        <!-- Aug 2004: simple (initial) view - may contain multiple type details -->
+        <action path="/simple"
+                type="uk.ac.ebi.intact.application.search3.struts.controller.SimpleResultAction"
+                scope="session">
+            <forward name="noMatch"     path="no.match.layout"/>
+            <forward name="results"     path="match.layout"/>
+            <forward name="sessionLost" path="/do/welcome"/>
+
+            <!-- new path to the 'simple' JSP -->
+            <forward name="simpleResults" path="simple.layout"/>
+        </action>
+
+
+        <!-- one to many intactObjects have to be prepared
+             It could process either a collection of:
+             - Protein,
+             - Interaction,
+             - Experiment.
+             TBD...
+          -->
+        <action path="/details"
+                type="uk.ac.ebi.intact.application.search3.struts.controller.DetailsResultAction"
+                scope="session">
+            <forward name="noMatch"     path="no.match.layout"/>
+            <forward name="results"     path="match.layout"/>
+            <forward name="sessionLost" path="/do/welcome"/>
+            <!-- new look detail page -->
+            <forward name="detailPage"     path="detail.layout"/>
+        </action>
+
+    </action-mappings>
+
+    <!-- ========== Plug Ins Configuration ================================== -->
+
+    <!--
+        Add multiple validator resource files by setting the pathnames property
+        with a comma delimitted list of resource files to load.
+    -->
+    <plug-in className="org.apache.struts.tiles.TilesPlugin" >
+        <set-property property="definitions-config" value="/WEB-INF/tiles-defs.xml"/>
+        <set-property property="moduleAware"        value="true" />
+    </plug-in>
+
+</struts-config>
