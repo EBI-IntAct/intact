@@ -19,8 +19,25 @@
         <tagclass>uk.ac.ebi.intact.application.hierarchView.struts.taglibs.InitTag</tagclass>
         <bodycontent>empty</bodycontent>
         <info>
-               Initializes data access by storing all the user needs in the session.
+            Initializes some components :
+              - data access and by storing it in the session,
+              - web service by deploying it and storing a flag in the ServletContext.
         </info>
+    </tag>
+
+
+    <tag>
+        <name>checkInit</name>
+        <tagclass>uk.ac.ebi.intact.application.hierarchView.struts.taglibs.CheckInitTag</tagclass>
+        <bodycontent>empty</bodycontent>
+        <info>
+            Check if data access and the web service have been properly inittialized.
+        </info>
+        <attribute>
+            <name>forwardOnError</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     </tag>
 
 
@@ -29,8 +46,8 @@
         <tagclass>uk.ac.ebi.intact.application.hierarchView.struts.taglibs.DisplayInteractionNetworkTag</tagclass>
         <bodycontent>JSP</bodycontent>
         <info>
-               Displays the interaction network if the picture has been generated
-               and stored in the session.
+            Displays the interaction network if the picture has been generated
+            and stored in the session.
         </info>
     </tag>
 
@@ -40,7 +57,7 @@
         <tagclass>uk.ac.ebi.intact.application.hierarchView.struts.taglibs.DisplaySourceTag</tagclass>
         <bodycontent>JSP</bodycontent>
         <info>
-               Displays available source for the selected protein.
+            Displays available source for the selected protein.
         </info>
     </tag>
 
