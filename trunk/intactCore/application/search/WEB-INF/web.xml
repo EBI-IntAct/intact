@@ -35,10 +35,10 @@
         <param-value>/config/javaToXmlMapping.xml</param-value>
     </context-param>
 
-    <!-- XSL stylesheet location NB must be specified relative to the tomcat bin dir -->
+    <!-- XSL stylesheet location (relative to the context root path) -->
     <context-param>
         <param-name>xslFile</param-name>
-        <param-value>/intact.xsl</param-value>
+        <param-value>intact.xsl</param-value>
     </context-param>
 
     <!--  Class name of the data source object to be used    -->
