@@ -65,7 +65,7 @@ public class ProteinBean extends EditBean implements Serializable {
      * The organism. Empty if there is no biosource. This is necessary to
      * prevent Null pointer exception in validate method of ProteinEditForm.
      */
-    private String myOrganism = "";
+    private String myOrganism;
 
     /**
      * Instantiate an object of this class from a Protein instance.
@@ -76,6 +76,7 @@ public class ProteinBean extends EditBean implements Serializable {
         myShortLabel = protein.getShortLabel();
         mySPAc = getSPAc(protein);
         myFullName = protein.getFullName();
+        setOrganism(protein);
         setEditState(SAVE_NEW);
     }
 
@@ -91,10 +92,7 @@ public class ProteinBean extends EditBean implements Serializable {
         myFullName = interact.getFullName();
         myRole = component.getCvComponentRole().getShortLabel();
         myStoichiometry = component.getStoichiometry();
-        BioSource biosource = component.getExpressedIn();
-        if (biosource != null) {
-            myOrganism = biosource.getShortLabel();
-        }
+        setOrganism(interact);
     }
 
     // Read only properties.
@@ -122,7 +120,7 @@ public class ProteinBean extends EditBean implements Serializable {
     }
 
     public void setRole(String role) {
-       myRole = role;
+        myRole = role;
     }
 
     public float getStoichiometry() {
@@ -141,34 +139,23 @@ public class ProteinBean extends EditBean implements Serializable {
         myOrganism = organism;
     }
 
+    // Helper methods
+
+    private void setOrganism(Interactor interact) {
+        BioSource biosource = interact.getBioSource();
+        if (biosource != null) {
+            myOrganism = biosource.getShortLabel();
+        }
+    }
+
     private String getSPAc(Interactor interact) {
         for (Iterator iter = interact.getXref().iterator(); iter.hasNext();) {
             Xref xref = (Xref) iter.next();
+            // Only consider SwissProt database entries.
             if (xref.getCvDatabase().getShortLabel().equals("SPTR")) {
-                return xref.getAc();
+                return xref.getPrimaryId();
             }
         }
         return "";
-    }
-
-    // Override Objects's equal method.
-
-    /**
-     * Compares <code>obj</code> with this object according to
-     * Java's equals() contract. Only returns <tt>true</tt> if the internal
-     * keys for both objects match.
-     *
-     * @param obj the object to compare.
-     */
-    public boolean equals(Object obj) {
-        // Identical to this?
-        if (obj == this) {
-            return true;
-        }
-//        if ((obj != null) && (getClass() == obj.getClass())) {
-//            // Can safely cast it.
-//            return myKey == ((InteractorBean) obj).getKey();
-//        }
-        return false;
     }
 }
