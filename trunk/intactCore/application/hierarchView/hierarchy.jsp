@@ -2,7 +2,8 @@
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html" %>
 
-<%@ page import="uk.ac.ebi.intact.application.hierarchView.highlightment.source.*" %>
+<%@ page import="uk.ac.ebi.intact.application.hierarchView.highlightment.source.*,
+                 uk.ac.ebi.intact.application.hierarchView.struts.view.LabelValueBean" %>
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.struts.Constants" %>
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.struts.*"%>
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader" %>

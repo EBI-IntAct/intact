@@ -4,7 +4,7 @@ package uk.ac.ebi.intact.application.hierarchView.highlightment.source;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
-import uk.ac.ebi.intact.application.hierarchView.struts.LabelValueBean;
+import uk.ac.ebi.intact.application.hierarchView.struts.view.LabelValueBean;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.simpleGraph.Node;
