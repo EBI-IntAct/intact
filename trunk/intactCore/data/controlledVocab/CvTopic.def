@@ -1,28 +1,27 @@
-intact_ac: EBI-20
 shortlabel: function
 term: Biological Function of the Object
 function: Describes the biological function of the Object.
 
-intact_ac: EBI-307
 shortlabel: url
 term: URL/Web address
 definition: The URL (Web address) at which to find more information on the object.
 
-intact_ac: EBI-24
 shortlabel: comment
 term: Comment for public view
 
-intact_ac: EBI-23
 shortlabel: definition
 term: Definition of the controlled vocabulary term
 
-intact_ac: EBI-21
 shortlabel: remark
 term: Internal remark
 definition: Internal remark. Will normally not be shown to the public.
 
-intact_ac: EBI-347
+shortlabel: search-url
+term: Search engine URL.
+definition: Normally used for CvDatabase. The URL of a search engine which will retrieve an object by its primary  identifier. 
+example: http://www.expasy.org/cgi-bin/niceprot.pl? is the search url for the database sptr. If a primary sptr identifier is appended, the resulting URL http://www.expasy.org/cgi-bin/niceprot.pl?P12345 will retrieve the corresponding database object.
+
 shortlabel: example
-term: null
+term: Example
 definition: Comment topic used to mark examples, normally used for the explanation of controlled vocabulary terms.
 
