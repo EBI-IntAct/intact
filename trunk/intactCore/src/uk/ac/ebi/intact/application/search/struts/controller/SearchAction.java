@@ -28,7 +28,6 @@ import org.exolab.castor.mapping.MappingException;
 import uk.ac.ebi.intact.application.search.struts.framework.util.SearchConstants;
 import uk.ac.ebi.intact.application.search.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search.business.IntactUserIF;
-import uk.ac.ebi.intact.application.search.struts.view.SearchForm;
 import uk.ac.ebi.intact.application.search.struts.view.IntactViewBean;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.business.IntactException;
@@ -68,8 +67,8 @@ public class SearchAction extends IntactBaseAction {
         // Clear any previous errors.
         super.clearErrors();
 
-        SearchForm theForm = (SearchForm) form;
-        String searchValue = theForm.getSearchString();
+        DynaActionForm dyForm = (DynaActionForm) form;
+        String searchValue = (String) dyForm.get("searchString");
 
         // Session to access various session objects.
         HttpSession session = super.getSession(request);
@@ -79,7 +78,7 @@ public class SearchAction extends IntactBaseAction {
 
         // The type of search object selected by the user.
         //NB need to change the "user" I/F so it is not CV specific...
-        String searchClass = theForm.getClassName();
+        String searchClass = (String) dyForm.get("searchClass");
 
         // The class name associated with the topic.
         String classname = super.getIntactService().getClassName(searchClass);
@@ -88,9 +87,6 @@ public class SearchAction extends IntactBaseAction {
         //ones we will accept for now) and return as soon as we get a result
         //NB obviously can't distinguish between a zero return and a search
         //with garbage input using this approach...
-
-        //convert to uppercase to be on the safe side...
-        searchValue = theForm.getSearchString().toUpperCase();
 
         //set up the Cator XML mapping resources...
         Mapping xmlMapping = new Mapping(getClass().getClassLoader());
@@ -131,12 +127,12 @@ public class SearchAction extends IntactBaseAction {
         try {
             //try searching first using all uppercase, then all lower case if it returns nothing...
             //NB this would be better done at the DB level, but keep it here for now
-            String upperCaseValue = theForm.getSearchString().toUpperCase();
+            String upperCaseValue = searchValue.toUpperCase();
             results = doLookup(classname, upperCaseValue, user);
             if (results.isEmpty()) {
 
                 //now try all lower case....
-                String lowerCaseValue = theForm.getSearchString().toLowerCase();
+                String lowerCaseValue = searchValue.toLowerCase();
                 results = doLookup(classname, lowerCaseValue, user);
                 if(results.isEmpty()) {
                     //finished all current options, and still nothing - return a failure
