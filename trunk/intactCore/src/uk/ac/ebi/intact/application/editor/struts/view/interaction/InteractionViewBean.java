@@ -358,19 +358,21 @@ public class InteractionViewBean extends AbstractEditViewBean {
     }
 
     /**
-     * Adds an Experiment bean to hold.
+     * Adds an Experiment bean to hold if the new experiment doesn't
+     * already exists in the experiment hold collection and in the
+     * current experiment collection for this interaction.
      * @param exps a collection of <code>Experiment</code> to add.
+     *
      * <pre>
      * pre:  forall(obj : Object | obj.oclIsTypeOf(Experiment))
-     * post: myExperimentsToHold = myExperimentsToHold@pre + 1
-     * post: myExperimentsToHold = myExperimentsToHold@pre + exps->size
      * </pre>
      */
     public void addExperimentToHold(Collection exps) {
         for (Iterator iter = exps.iterator(); iter.hasNext();) {
             ExperimentBean expbean = new ExperimentBean((Experiment) iter.next());
             // Avoid duplicates.
-            if (!myExperimentsToHold.contains(expbean)) {
+            if (!myExperimentsToHold.contains(expbean)
+                    && !myExperiments.contains(expbean)) {
                 myExperimentsToHold.add(expbean);
             }
         }
@@ -386,6 +388,13 @@ public class InteractionViewBean extends AbstractEditViewBean {
      */
     public void hideExperimentToHold(ExperimentBean expbean) {
         myExperimentsToHold.remove(expbean);
+    }
+
+    /**
+     * Clears all the experiments on hold.
+     */
+    public void clearExperimentToHold() {
+        myExperimentsToHold.clear();
     }
 
     /**
