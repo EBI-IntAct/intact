@@ -512,11 +512,6 @@ public abstract class AbstractEditViewBean implements Serializable {
      * Deletes all the links to sub objects of the current edit object.
      */
     public void clear() {
-        // Delete all the annotations and xrefs.
-        if (getAnnotatedObject() != null) {
-            getAnnotatedObject().getAnnotations().clear();
-            getAnnotatedObject().getXrefs().clear();
-        }
         // Need to rebuild the menu again. Remove it from cache.
         removeMenu();
         // Clear Transaction containers.
@@ -918,9 +913,6 @@ public abstract class AbstractEditViewBean implements Serializable {
         // The update of annotated object ensures the sub objects are updated as well.
         for (Iterator iter = getAnnotationsToUpdate().iterator(); iter.hasNext();) {
             Annotation annot = ((CommentBean) iter.next()).getAnnotation(user);
-//            CommentBean cb = (CommentBean) iter.next();
-//            cb.update(user);
-//            user.update(cb.getAnnotation());
             user.update(annot);
         }
         // Xref has a parent_ac column which is not a foreign key. So, the parent needs
@@ -932,23 +924,18 @@ public abstract class AbstractEditViewBean implements Serializable {
         // Create xrefs and add them to CV object.
         for (Iterator iter = getXrefsToAdd().iterator(); iter.hasNext();) {
             Xref xref = ((XreferenceBean) iter.next()).getXref(user);
-//            Xref xref = ((XreferenceBean) iter.next()).getXref();
             user.create(xref);
             myAnnotObject.addXref(xref);
         }
         // Delete xrefs and remove them from CV object.
         for (Iterator iter = getXrefsToDel().iterator(); iter.hasNext();) {
             Xref xref = ((XreferenceBean) iter.next()).getXref(user);
-//            Xref xref = ((XreferenceBean) iter.next()).getXref();
             user.delete(xref);
             myAnnotObject.removeXref(xref);
         }
         // Update xrefs; see the comments for annotation update above.
         for (Iterator iter = getXrefsToUpdate().iterator(); iter.hasNext();) {
             Xref xref = ((XreferenceBean) iter.next()).getXref(user);
-//            XreferenceBean xb = (XreferenceBean) iter.next();
-//            xb.update(user);
-//            user.update(xb.getXref());
             user.update(xref);
         }
         // Update the cv object only for an object already persisted.
