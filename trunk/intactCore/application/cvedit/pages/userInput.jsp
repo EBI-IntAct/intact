@@ -2,7 +2,6 @@
 <%@ page import="uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants"%>
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 
 <!--
