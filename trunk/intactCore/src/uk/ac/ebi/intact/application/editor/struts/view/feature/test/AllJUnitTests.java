@@ -5,8 +5,9 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.editor.struts.view.feature.test;
 
-import junit.framework.*;
-import uk.ac.ebi.intact.test.FirstTest;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * Contains all JUnit Tests class for the
@@ -38,6 +39,7 @@ public class AllJUnitTests extends TestCase {
     public static Test suite() {
         TestSuite suite = new TestSuite();
         suite.addTest(RangeBeanTest.suite());
+        suite.addTest(FuzzyTypeConverterTest.suite());
         return suite;
     }
 }
