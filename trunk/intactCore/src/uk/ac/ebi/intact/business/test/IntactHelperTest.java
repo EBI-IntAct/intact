@@ -9,12 +9,14 @@ import junit.framework.*;
 import uk.ac.ebi.intact.persistence.*;
 import uk.ac.ebi.intact.business.*;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.util.*;
 
 //only used by zacharia's test
 import javax.jdo.Query;
 import javax.jdo.Extent;
 
 import java.util.*;
+import java.io.*;
 
 
 /**
@@ -279,16 +281,28 @@ public class IntactHelperTest extends TestCase {
             persistList.add(comp4);
 
             System.out.println("saving examples to store...");
+            helper.startTransaction();
+            System.out.println("serializing helper within a TX...");
+            IntactHelper newHelper = (IntactHelper)Serializer.serializeDeserialize(helper);
+            System.out.println("resetting helper connections...");
+            helper = newHelper;
             helper.create(persistList);
+            helper.finishTransaction();
 
             //now add the link between experiments and interactions and do an update
+            helper.startTransaction();
             int1.addExperiment(exp1);
             int2.addExperiment(exp1);
             int3.addExperiment(exp1);
 
             helper.update(int1);
+            System.out.println("serializing helper again, within an update TX...");
+            newHelper = (IntactHelper)Serializer.serializeDeserialize(helper);
+            System.out.println("resetting helper connections in update TX...");
+            helper = newHelper;
             helper.update(int2);
             helper.update(int3);
+            helper.finishTransaction();
 
             System.out.println("example test data successfully created - executing tests...");
             System.out.println();
@@ -298,9 +312,15 @@ public class IntactHelperTest extends TestCase {
         catch (Exception ie) {
 
             //something failed with datasource, or helper.create...
-            String msg = "error - failed to crerate datasource OR helper.create failed - see stack trace...";
+            String msg = "error - failed to create datasource OR helper.create failed - see stack trace...";
             System.out.println(msg);
             ie.printStackTrace();
+            try{
+                helper.undoTransaction();
+            } catch(Exception e1) {
+                System.out.println("unable to undo transaction!!");
+                e1.printStackTrace();
+            }
 
         }
     }
@@ -346,6 +366,13 @@ public class IntactHelperTest extends TestCase {
         catch(Exception e) {
 
             fail("problem deleteing examples from data store - exception message: " + e.toString());
+        }
+        try{
+            helper.closeStore();
+        }
+        catch(IntactException e) {
+            System.out.println("unable to close store on test cleanup!");
+            e.printStackTrace();
         }
         helper = null;
     }
@@ -682,6 +709,59 @@ public class IntactHelperTest extends TestCase {
     }
 
     /**
+     * simple check for object serialization of the helper class
+     */
+    protected void checkSerialization() {
+
+        System.out.println();
+        IntactHelper dummy = null;
+        System.out.println("Testing serialization of helper object...");
+        dummy = (IntactHelper)Serializer.serializeDeserialize(helper);
+        if(dummy != null) {
+            System.out.println("helper serializes OK!");
+        }
+        System.out.println();
+    }
+
+    protected void checkUserValidation() {
+        boolean isUserOk = false;
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+
+        try {
+            System.out.println();
+            System.out.println("now checking user validation....");
+            System.out.println("enter valid username:");
+            String userName = in.readLine();
+            System.out.println("enter valid password:");
+            String password = in.readLine();
+
+            isUserOk = helper.isUserVerified(userName, password);
+            if(isUserOk) {
+                System.out.println("user verified - validation succeeded");
+            }
+            else {
+                System.out.println("user validation failed - valid user rejected!!");
+            }
+            System.out.println();
+            System.out.println("checking for an invalid user (expect failure)..");
+            isUserOk = helper.isUserVerified("jbloggs", "abc");
+            if(isUserOk) {
+                System.out.println("user validation failed - unknown user accepted!!");
+            }
+            else {
+                System.out.println("user validation rejected unkown user correctly");
+            }
+            System.out.println();
+
+        }
+        catch(Exception e) {
+            System.out.println("failed user validation check...");
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * main test method - calls the others, which do all the work.
      * Using this method avoids repeated setUp/tearDown calls between test method calls.
      */
@@ -696,6 +776,9 @@ public class IntactHelperTest extends TestCase {
             collectionSearch();
             collectionMtoNSearch();
             componentSearch();
+
+            checkSerialization();
+            checkUserValidation();
         }
         catch(Exception e) {
             System.out.println("IntactHelperTest: test(s) failed...see stack trace.");
