@@ -15,15 +15,19 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditVie
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.model.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Collection;
 
 /**
  * Dispatcher action which dispatches according to 'dispatch' parameter. This
@@ -111,6 +115,14 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
 
             // Commit all the changes.
             user.commit();
+
+            // New transaction for updating proteins - this fixes the problem
+            // with adding new proteins and annotations together.
+            if (view.getAnnotatedObject() instanceof Interaction) {
+                user.begin();
+                ((InteractionViewBean) view).persistProteins(user);
+                user.commit();
+            }
         }
         catch (IntactException ie1) {
             try {
