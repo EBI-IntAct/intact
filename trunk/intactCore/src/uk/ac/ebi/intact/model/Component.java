@@ -111,8 +111,12 @@ public class Component extends BasicObjectImpl {
         if(interactor == null) throw new NullPointerException("valid Component must have an Interactor (eg Protein) set!");
         if(role == null) throw new NullPointerException("valid Component must have a role set (ie a CvComponentRole)!");
 
-        this.interaction = interaction;
-        this.interactor = interactor;
+//        this.interaction = interaction;
+//        this.interactor = interactor;
+
+        setInteraction( interaction );
+        setInteractor( interactor );
+
         this.cvComponentRole = role;
     }
 
