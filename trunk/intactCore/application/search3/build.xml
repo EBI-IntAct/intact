@@ -137,8 +137,6 @@
                 <exclude name="warning.jsp"/>
                 <exclude name="results.jsp"/>
                 <exclude name="sidebarInput.jsp"/>
-                <exclude name="footer.jsp"/>
-
                 <!-- these are the new JSPs and HTML files (for search mockups Aug 2004)-->
                 <exclude name="jscript.html"/>
                 <exclude name="buttonBar.html"/>
@@ -146,6 +144,13 @@
                 <exclude name="simple.jsp"/>
                 <exclude name="partners.jsp"/>
                 <exclude name="singleProtein.jsp"/>
+                <!-- these are the new JSPs and HTML files (for search mockups Dec 2004)-->
+                <exclude name="binaryProtein.jsp"/>
+                <exclude name="sidebarFooter.jsp"/>
+                <exclude name="tooLarge.jsp"/>
+                <exclude name="bioSource.jsp"/>
+                <exclude name="cvObject.jsp"/>
+
             </fileset>
         </delete>
 
