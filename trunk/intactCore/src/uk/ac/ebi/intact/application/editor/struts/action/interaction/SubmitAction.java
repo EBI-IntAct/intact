@@ -11,7 +11,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
-import uk.ac.ebi.intact.application.editor.struts.action.SubmitDispatchAction;
+import uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.model.AnnotatedObject;
@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class SubmitAction extends SubmitDispatchAction {
+public class SubmitAction extends CommonDispatchAction {
 
     // Override to provide a way to get back to the experiment editor when
     // an interaction is submitted.

@@ -62,9 +62,9 @@ public class SessionSerializationTest extends TestCase  {
         DAOSource ds = DAOFactory.getDAOSource(ourDAOSourceClass);
 
         //set the config details, ie repository file for OJB in this case
-        Map config = new HashMap();
-        config.put("mappingfile", ourMappingFile);
-        ds.setConfig(config);
+//        Map config = new HashMap();
+//        config.put("mappingfile", ourMappingFile);
+//        ds.setConfig(config);
         myHelper = new IntactHelper(ds);
     }
 
@@ -89,7 +89,7 @@ public class SessionSerializationTest extends TestCase  {
     public void atestExperiment1() throws DataSourceException {
         try {
             // Create the user we want to serialize.
-            EditUserI preUser = new EditUser(ourMappingFile, ourDAOSourceClass);
+            EditUserI preUser = new EditUser(ourDAOSourceClass);
 
             // The experiment we are dealing at the moment.
             Experiment exp = (Experiment) myHelper.getObjectByLabel(
@@ -138,7 +138,7 @@ public class SessionSerializationTest extends TestCase  {
     public void atestExperiment2() throws DataSourceException {
         try {
             // Create the user we want to serialize.
-            EditUserI preUser = new EditUser(ourMappingFile, ourDAOSourceClass);
+            EditUserI preUser = new EditUser(ourDAOSourceClass);
 
             // The experiment we are dealing at the moment.
             Experiment exp = (Experiment) myHelper.getObjectByLabel(
@@ -226,7 +226,7 @@ public class SessionSerializationTest extends TestCase  {
     public void testExperiment3() throws DataSourceException {
         try {
             // Create the user we want to serialize.
-            EditUserI preUser = new EditUser(ourMappingFile, ourDAOSourceClass);
+            EditUserI preUser = new EditUser(ourDAOSourceClass);
 
             // The experiment we are dealing at the moment.
             Experiment exp = (Experiment) myHelper.getObjectByLabel(
@@ -316,7 +316,7 @@ public class SessionSerializationTest extends TestCase  {
     public void testExperiment4() throws DataSourceException {
         try {
             // Create the user we want to serialize.
-            EditUserI preUser = new EditUser(ourMappingFile, ourDAOSourceClass);
+            EditUserI preUser = new EditUser(ourDAOSourceClass);
 
             // The experiment we are dealing at the moment.
             Experiment exp = (Experiment) myHelper.getObjectByLabel(
@@ -424,7 +424,7 @@ public class SessionSerializationTest extends TestCase  {
     public void testUser1() throws DataSourceException {
         try {
             // Create the user we want to serialize.
-            EditUserI preUser = new EditUser(ourMappingFile, ourDAOSourceClass);
+            EditUserI preUser = new EditUser(ourDAOSourceClass);
 
             // Serialize it.
             byte[] bytes0 = SerializationUtils.serialize(preUser);

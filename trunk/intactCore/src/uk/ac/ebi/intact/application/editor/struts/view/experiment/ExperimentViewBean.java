@@ -77,12 +77,6 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         setOrganism(null);
         setInter(null);
         setIdent(null);
-
-        // Clear any left overs from previous transaction.
-        clearTransactions();
-
-        // Clear Interaction beans.
-        makeInteractionBeans(Collections.EMPTY_LIST);
     }
 
     // Reset the fields to null if we don't have values to set. Failure
@@ -93,18 +87,18 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         // Must be an experiment.
         Experiment exp = (Experiment) annobj;
 
+        // Reset the experiment view.
+        resetExperiment(exp);
+
         // Only set the short labels if the experiment has the objects.
-        BioSource biosrc = exp.getBioSource();
-        setOrganism(biosrc != null ? biosrc.getShortLabel() : null);
-
-        CvInteraction inter = exp.getCvInteraction();
-        setInter(inter != null ? inter.getShortLabel() : null);
-
-        CvIdentification ident = exp.getCvIdentification();
-        setIdent(ident != null ? ident.getShortLabel() : null);
-
-        // Clear any left overs from previous transaction.
-        clearTransactions();
+//        BioSource biosrc = exp.getBioSource();
+//        setOrganism(biosrc != null ? biosrc.getShortLabel() : null);
+//
+//        CvInteraction inter = exp.getCvInteraction();
+//        setInter(inter != null ? inter.getShortLabel() : null);
+//
+//        CvIdentification ident = exp.getCvIdentification();
+//        setIdent(ident != null ? ident.getShortLabel() : null);
 
         // Check the limit for interactions.
         int maxLimit = EditorService.getInstance().getInteractionLimit();
@@ -122,7 +116,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         else {
             // Prepare for Interactions for display.
             makeInteractionBeans(exp.getInteractions());
-            myHasLargeInts = false;
+//            myHasLargeInts = false;
         }
     }
 
@@ -178,6 +172,15 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         }
     }
 
+
+    // Reset the fields to null if we don't have values to set. Failure
+    // to do so will display the previous edit object's values as current.
+    public void resetClonedObject(AnnotatedObject copy) {
+        super.resetClonedObject(copy);
+        // Reset the experiment view with the copy.
+        resetExperiment((Experiment) copy);
+    }
+
     // Override the super method as the current experiment is added to the
     // recent experiment list.
     public void addToRecentList(EditUserI user) {
@@ -223,6 +226,35 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         expform.setInter(getInter());
         expform.setIdent(getIdent());
     }
+
+//    public AnnotatedObject snapshot(EditUserI user) throws SearchException {
+//        // Get the objects using their short label.
+//        BioSource biosource = (BioSource) user.getObjectByLabel(
+//                BioSource.class, myOrganism);
+//        CvInteraction interaction = (CvInteraction) user.getObjectByLabel(
+//                CvInteraction.class, myInter);
+//        CvIdentification ident = (CvIdentification) user.getObjectByLabel(
+//                CvIdentification.class, myIdent);
+//
+//        // Original object.
+//        Experiment exp = new Experiment(user.getInstitution(), getShortLabel(),
+//                biosource);
+//        super.snapshot(exp, user);
+//        exp.setCvInteraction(interaction);
+//        exp.setCvIdentification(ident);
+//
+//        for (Iterator iter = myInteractionsToDel.iterator(); iter.hasNext();) {
+//            Interaction intact = (Interaction) iter.next();
+//            exp.removeInteraction((Interaction) IntactHelper.getRealIntactObject(intact));
+//        }
+//
+//        // 2. Now add the interaction as real objects.
+//        for (Iterator iter = myInteractions.iterator(); iter.hasNext();) {
+//            Interaction intact = (Interaction) iter.next();
+//            exp.addInteraction((Interaction) IntactHelper.getRealIntactObject(intact));
+//        }
+//        return exp;
+//    }
 
     // Override to check for a large experiment.
     public Boolean getReadOnly() {
@@ -452,6 +484,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         super.clearTransactions();
 
         // Clear interactions.
+        myInteractions.clear();
         myInteractionsToDel.clear();
         myInteractionsToHold.clear();
         clearInteractionToHold();
@@ -465,13 +498,36 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         return myHasLargeInts ? myLargeInts : myInteractions.size();
     }
 
+    /**
+     * Returns the state for this editor to clone.
+     * @return true for all the persistent experiments  (i.e., false for a
+     * new experiment not yet persisted).
+     */
+    public boolean getCloneState() {
+        return getAc() != null;
+    }
+
     // Helper methods
 
     private void makeInteractionBeans(Collection ints) {
-        myInteractions.clear();
         for (Iterator iter = ints.iterator(); iter.hasNext();) {
             Interaction interaction = (Interaction) iter.next();
             myInteractions.add(interaction);
         }
+    }
+
+    private void resetExperiment(Experiment exp) {
+        // Only set the short labels if the experiment has the objects.
+        BioSource biosrc = exp.getBioSource();
+        setOrganism(biosrc != null ? biosrc.getShortLabel() : null);
+
+        CvInteraction inter = exp.getCvInteraction();
+        setInter(inter != null ? inter.getShortLabel() : null);
+
+        CvIdentification ident = exp.getCvIdentification();
+        setIdent(ident != null ? ident.getShortLabel() : null);
+
+        // No interactions at this stage.
+        myHasLargeInts = false;
     }
 }

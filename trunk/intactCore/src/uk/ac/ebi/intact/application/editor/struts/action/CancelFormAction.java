@@ -70,7 +70,8 @@ public class CancelFormAction extends AbstractEditorAction {
         }
         // Update the search cache to display the current object.
         AnnotatedObject annobj = user.getView().getAnnotatedObject();
-        if (annobj != null) {
+        if ((annobj != null) && (annobj.getAc() != null)) {
+            // Only update the persistent objects.
             user.updateSearchCache(annobj);
         }
         return forward;

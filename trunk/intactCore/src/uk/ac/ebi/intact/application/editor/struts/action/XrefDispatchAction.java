@@ -121,6 +121,7 @@ public class XrefDispatchAction extends AbstractEditorAction {
 
         // The xref we are about to delete.
         XreferenceBean xb = editorForm.getSelectedXref();
+        System.out.println("in delete method XrefDispatchAction: " + xb.getPrimaryId());
 
         // The current view of the edit session.
         AbstractEditViewBean view = getIntactUser(request).getView();

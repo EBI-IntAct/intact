@@ -177,12 +177,26 @@ public abstract class AbstractEditViewBean implements Serializable {
     }
 
     /**
+     * Refresh the current view. Annotated object must be set prior to calling
+     * this method.
+     */
+    public void refresh() {
+        // Clear any left overs from previous transaction.
+        clearTransactions();
+
+        reset(getAnnotatedObject());
+    }
+
+    /**
      * Resets the bean with given object.
      * @param obj either an Annotated object or a Class. The class type is used
      * when creating a view bean for a new object. For an existing object,
      * AnnotatedObject is used.
      */
     public void reset(Object obj) {
+        // Clear any left overs from previous transaction.
+        clearTransactions();
+
         // Check for annotated object.
         if (AnnotatedObject.class.isAssignableFrom(obj.getClass())) {
             reset((AnnotatedObject) obj);
@@ -207,32 +221,58 @@ public abstract class AbstractEditViewBean implements Serializable {
         setFullName(null);
 
         // Clear any left overs from previous transaction.
-        clearTransactions();
+//        clearTransactions();
 
         // Clear annotations and xrefs.
-        makeCommentBeans(Collections.EMPTY_LIST);
-        makeXrefBeans(Collections.EMPTY_LIST);
+//        makeCommentBeans(Collections.EMPTY_LIST);
+//        makeXrefBeans(Collections.EMPTY_LIST);
     }
 
     /**
      * Resets with the bean using an existing Annotated object.
-     * @param annot <code>AnnotatedObject</code> object to set this bean.
+     * @param annobj <code>AnnotatedObject</code> object to set this bean.
      */
-    protected void reset(AnnotatedObject annot) {
+    protected void reset(AnnotatedObject annobj) {
+        resetAnnotatedObject(annobj);
         // Need to get the real object for a proxy type.
-        setAnnotatedObject((AnnotatedObject) IntactHelper.getRealIntactObject(annot));
-        myEditClass = IntactHelper.getRealClassName(annot);
-        setShortLabel(annot.getShortLabel());
-        setFullName(annot.getFullName());
-
-        // Clear any left overs from previous transaction.
-        clearTransactions();
+//        setAnnotatedObject((AnnotatedObject) IntactHelper.getRealIntactObject(annot));
+//        myEditClass = IntactHelper.getRealClassName(annot);
+//        setShortLabel(annot.getShortLabel());
+//        setFullName(annot.getFullName());
+//
+//        // Clear any left overs from previous transaction.
+//        clearTransactions();
 
         // Cache the annotations and xrefs here to save it from loading
         // multiple times with each invocation to getAnnotations()
         // or getXrefs() methods.
-        makeCommentBeans(annot.getAnnotations());
-        makeXrefBeans(annot.getXrefs());
+        makeCommentBeans(annobj.getAnnotations());
+        makeXrefBeans(annobj.getXrefs());
+    }
+
+    /**
+     * Resets the view with cloned object.
+     * @param copy the cloned object to set as the new view. This method is
+     * similar to {@link #reset(AnnotatedObject)} except for annotations and
+     * xrefs are added as new objects (so, upon persisting this object, new
+     * annotations and xrefs will be created).
+     */
+    public void resetClonedObject(AnnotatedObject copy) {
+        // Clear previous transactions.
+        clearTransactions();
+//        System.out.println("Copy's class: " + copy.getClass());
+        // Reset the cloned object with values given by parameter.
+        resetAnnotatedObject(copy);
+
+        // Add the annotations in the cloned as new annotations to add.
+        for (Iterator iter = copy.getAnnotations().iterator(); iter.hasNext();) {
+            addAnnotation(new CommentBean((Annotation) iter.next()));
+        }
+
+        // Add the xrefs in the cloned as new xrefs to add.
+        for (Iterator iter = copy.getXrefs().iterator(); iter.hasNext();) {
+            addXref(new XreferenceBean((Xref) iter.next()));
+        }
     }
 
     /**
@@ -711,6 +751,54 @@ public abstract class AbstractEditViewBean implements Serializable {
         return Boolean.FALSE;
     }
 
+    /**
+     * By default editor objects are not cloneable. Views such as Experiment
+     * and Interaction must override this method to true as these objects
+     * are cloneable.
+     * @return false as by default editor objects are not cloneable.
+     */
+    public boolean getCloneState() {
+        return false;
+    }
+
+//    protected void snapshot(AnnotatedObject annobj, EditUserI user) throws SearchException {
+//        annobj.setFullName(getFullName());
+//
+//        // Add existing annotations.
+//        for (Iterator iter = getAnnotations().iterator(); iter.hasNext();) {
+//            Annotation annot = ((CommentBean) iter.next()).getAnnotation(user);
+//            annobj.addAnnotation(annot);
+//        }
+//
+//        // Add existing xrefs.
+//        for (Iterator iter = getXrefs().iterator(); iter.hasNext();) {
+//            Xref xref = ((XreferenceBean) iter.next()).getXref(user);
+//            annobj.addXref(xref);
+//        }
+//
+//        // Create annotations and add them to CV object.
+//        for (Iterator iter = getAnnotationsToAdd().iterator(); iter.hasNext();) {
+//            Annotation annot = ((CommentBean) iter.next()).getAnnotation(user);
+//            annobj.addAnnotation(annot);
+//        }
+//        // Delete annotations and remove them from CV object.
+//        for (Iterator iter = getAnnotationsToDel().iterator(); iter.hasNext();) {
+//            Annotation annot = ((CommentBean) iter.next()).getAnnotation(user);
+//            annobj.removeAnnotation(annot);
+//        }
+//
+//        // Create xrefs and add them to CV object.
+//        for (Iterator iter = getXrefsToAdd().iterator(); iter.hasNext();) {
+//            Xref xref = ((XreferenceBean) iter.next()).getXref(user);
+//            annobj.addXref(xref);
+//        }
+//        // Delete xrefs and remove them from CV object.
+//        for (Iterator iter = getXrefsToDel().iterator(); iter.hasNext();) {
+//            Xref xref = ((XreferenceBean) iter.next()).getXref(user);
+//            annobj.removeXref(xref);
+//        }
+//    }
+
     // Protected Methods
 
     /**
@@ -753,7 +841,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      * @param annotations a collection of <code>Annotation</code> objects.
      */
     private void makeCommentBeans(Collection annotations) {
-        myAnnotations.clear();
+//        myAnnotations.clear();
         for (Iterator iter = annotations.iterator(); iter.hasNext();) {
             Annotation annot = (Annotation) iter.next();
             myAnnotations.add(new CommentBean(annot));
@@ -766,7 +854,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      * @param xrefs a collection of <code>Xref</code> objects.
      */
     private void makeXrefBeans(Collection xrefs) {
-        myXrefs.clear();
+//        myXrefs.clear();
         for (Iterator iter = xrefs.iterator(); iter.hasNext();) {
             Xref xref = (Xref) iter.next();
             myXrefs.add(new XreferenceBean(xref));
@@ -867,6 +955,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      * Clears annotations stored transaction containers.
      */
     private void clearTransAnnotations() {
+        myAnnotations.clear();
         myAnnotsToAdd.clear();
         myAnnotsToDel.clear();
         myAnnotsToUpdate.clear();
@@ -876,6 +965,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      * Clears xrefs stored in transaction containers.
      */
     private void clearTransXrefs() {
+        myXrefs.clear();
         myXrefsToAdd.clear();
         myXrefsToDel.clear();
         myXrefsToUpdate.clear();
@@ -951,7 +1041,7 @@ public abstract class AbstractEditViewBean implements Serializable {
         // Delete annotations and remove them from CV object.
         for (Iterator iter = getAnnotationsToDel().iterator(); iter.hasNext();) {
             Annotation annot = ((CommentBean) iter.next()).getAnnotation(user);
-            user.delete(annot);
+//            user.delete(annot);
             myAnnotObject.removeAnnotation(annot);
         }
         // Update annotations; update the object with values from the bean.
@@ -987,6 +1077,17 @@ public abstract class AbstractEditViewBean implements Serializable {
         if (user.isPersistent(myAnnotObject)) {
             user.update(myAnnotObject);
         }
+    }
+
+    private void resetAnnotatedObject(AnnotatedObject annobj) {
+        // Need to get the real object for a proxy type.
+        setAnnotatedObject((AnnotatedObject) IntactHelper.getRealIntactObject(annobj));
+        myEditClass = IntactHelper.getRealClassName(annobj);
+        setShortLabel(annobj.getShortLabel());
+        setFullName(annobj.getFullName());
+
+        // Clear any left overs from the previous transaction.
+//        clearTransactions();
     }
 
     private boolean equals(Object obj1, Object obj2) {
