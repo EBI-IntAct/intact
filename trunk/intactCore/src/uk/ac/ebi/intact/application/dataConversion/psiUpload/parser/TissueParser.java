@@ -15,7 +15,7 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -47,7 +47,10 @@ public class TissueParser {
         final Element cellTypeXref = DOMUtil.getFirstElement( element, "xref" );
 
         // Look at either primaryRef and secondaryRef
-        final XrefTag xref = XrefParser.getXrefByDb( cellTypeXref, Constants.PSI_DB_SHORTLABEL );
+        XrefTag xref = null;
+        if( cellTypeXref != null ) {
+            xref = XrefParser.getXrefByDb( cellTypeXref, Constants.PSI_DB_SHORTLABEL );
+        }
 
         TissueTag tissue = null;
         try {
