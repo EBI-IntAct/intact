@@ -15,9 +15,9 @@ import uk.ac.ebi.intact.application.search2.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search2.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search2.struts.framework.util.SearchConstants;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.model.Alias;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Xref;
-import uk.ac.ebi.intact.util.Chrono;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -311,17 +311,26 @@ public class SearchAction extends IntactBaseAction {
      */
     private Collection doSearch(String className, String value, IntactUserIF user)
             throws IntactException {
-
-        Collection results = new ArrayList();
-
-
         //try search on AC first...
-        results = user.search(className, "ac", value);
+        Collection results = user.search(className, "ac", value);
         if (results.isEmpty()) {
             // No matches found - try a search by label now...
             super.log("no match found for " + className + " with ac= " + value);
             super.log("now searching for class " + className + " with label " + value);
             results = user.search(className, "shortLabel", value);
+
+            if (results.isEmpty()) {
+                //no match on label - try by alias.
+                super.log("no match on label - looking for: " + className + " with primary alias ID " + value);
+                Collection aliases = user.search(Alias.class.getName(), "name", value);
+
+                //could get more than one alias, eg if the name is a wildcard search value -
+                //then need to go through each alias found and accumulate the results...
+                for (Iterator it = aliases.iterator(); it.hasNext(); ) {
+                    results.addAll(user.search(className, "ac", ((Alias) it.next()).getParentAc()));
+                }
+            }
+
             if (results.isEmpty()) {
                 //no match on label - try by xref....
                 super.log("no match on label - looking for: " + className + " with primary xref ID " + value);
@@ -329,11 +338,11 @@ public class SearchAction extends IntactBaseAction {
 
                 //could get more than one xref, eg if the primary id is a wildcard search value -
                 //then need to go through each xref found and accumulate the results...
-                Iterator it = xrefs.iterator();
-                Collection partialResults = new ArrayList();
-                while (it.hasNext()) {
-                    partialResults = user.search(className, "ac", ((Xref) it.next()).getParentAc());
-                    results.addAll(partialResults);
+//                Iterator it = xrefs.iterator();
+//                Collection partialResults = new ArrayList();
+                for (Iterator it = xrefs.iterator(); it.hasNext(); ) {
+                    results.addAll(user.search(className, "ac", ((Xref) it.next()).getParentAc()));
+//                    results.addAll(partialResults);
                 }
 
                 if (results.isEmpty()) {
