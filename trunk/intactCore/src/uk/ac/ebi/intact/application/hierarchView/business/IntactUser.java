@@ -7,9 +7,6 @@ package uk.ac.ebi.intact.application.hierarchView.business;
 
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.Constants;
-import uk.ac.ebi.intact.persistence.DAOFactory;
-import uk.ac.ebi.intact.persistence.DAOSource;
 import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.simpleGraph.Graph;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
@@ -293,22 +290,13 @@ public class IntactUser implements IntactUserI {
      * @exception IntactException thrown for any error in creating lists such
      *  as topics, database names etc.
      */
-    public IntactUser (String repositoryfile, String datasourceClass, String applicationPath)
-            throws DataSourceException, IntactException {
+    public IntactUser (String applicationPath) throws DataSourceException, IntactException {
 
         init ();
 
         this.applicationPath = applicationPath;
+        this.intactHelper = new IntactHelper ();
 
-        DAOSource dataSource = DAOFactory.getDAOSource (datasourceClass);
-
-        // Pass config details to data source - don't need fast keys as only accessed once
-        Map fileMap = new HashMap();
-        fileMap.put (Constants.MAPPING_FILE_KEY, repositoryfile);
-        dataSource.setConfig (fileMap);
-
-        // build a helper for use throughout a session
-        this.intactHelper = new IntactHelper (dataSource);
         logger.info ("IntactHelper created.");
     }
 

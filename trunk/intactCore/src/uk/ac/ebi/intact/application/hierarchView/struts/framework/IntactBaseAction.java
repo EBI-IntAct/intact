@@ -256,7 +256,7 @@ public abstract class IntactBaseAction extends Action {
         try {
             String applicationPath = aRequest.getContextPath();
 
-            user = new IntactUser (repositoryfile, datasourceClass, applicationPath);
+            user = new IntactUser (applicationPath);
             session.setAttribute (Constants.USER_KEY, user);
         }
         catch (DataSourceException de) {
