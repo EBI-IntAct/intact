@@ -30,9 +30,10 @@
 
     <%
         // Fill with form data for this page to display.
-        EditForm form = new EditForm();
+        String formName = EditorConstants.FORM_COMMENT_EDIT;
+        EditForm form = (EditForm) session.getAttribute(formName);
         user.getView().populateAnnotations(form);
-        pageContext.setAttribute(EditorConstants.FORM_COMMENT_EDIT, form);
+        pageContext.setAttribute(formName, form);
     %>
 
 <h3>Annotations</h3>
