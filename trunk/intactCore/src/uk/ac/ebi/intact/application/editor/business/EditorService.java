@@ -10,6 +10,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.editor.exception.EmptyTopicsException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.model.Experiment;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -117,8 +119,8 @@ public class EditorService {
         // Remove Experiment and Interaction and move them to the top of the list.
         // Order is important: interaction first and then followed by Experiment as
         // we want the Experiment to be at the top.
-        moveToFront("Interaction");
-        moveToFront("Experiment");
+        moveToFront(getTopic(Interaction.class));
+        moveToFront(getTopic(Experiment.class));
     }
 
     /**
@@ -128,6 +130,22 @@ public class EditorService {
      */
     public String getClassName(String topic) {
         return myTopics.getString(topic);
+    }
+
+    /**
+     * Returns the topic name for given class.
+     * @param clazz the Class object to extract the tipic name.
+     * @return the class name without the package prefix. The returned
+     * value equals to given class's class name if there is no package
+     * information associated with <code>clazz</code>
+     */
+    public String getTopic(Class clazz) {
+        String className = clazz.getName();
+        int lastIdx = className.lastIndexOf('.');
+        if (lastIdx != -1) {
+            return className.substring(lastIdx + 1);
+        }
+        return className;
     }
 
     /**
