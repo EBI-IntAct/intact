@@ -59,7 +59,7 @@
                                     The document you were searching for was not found. It has either been moved, never existed, or you might just have mistyped it. To find documents which have moved, you might try starting from the home page:
                                     <br><br>
                                     <center>
-                                    <a href="<%=request.getContextPath()%>" target="_top"><%=webSiteUrl%></a>
+                                    <a href="<%=webSiteUrl%>" target="_top"><%=webSiteUrl%></a>
                                     </center>
                                     <br><br>
                                     Also, if you feel this page should exist, send us an <a href="mailto:intact-help@ebi.ac.uk">email</a>.
