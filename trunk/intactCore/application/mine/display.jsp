@@ -27,9 +27,7 @@
     </form>
 
     <script language="JavaScript" type="text/javascript">
-        <!--// submit the form automatically toward the entry page
             document.forms[0].submit();
-        //-->
     </script>
 </body>
 </html>
