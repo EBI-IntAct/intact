@@ -2,7 +2,7 @@
 <%@ page buffer="none"    %>
 <%@ page autoFlush="true" %>
 
-<%@ page import="uk.ac.ebi.intact.application.search3.struts.framework.util.SearchConstants,
+<%@ page import="uk.ac.ebi.intact.application.search3.struts.util.SearchConstants,
                  uk.ac.ebi.intact.application.search3.struts.controller.SearchAction,
                  java.util.Collection,
                  java.util.Iterator"%>
@@ -22,9 +22,8 @@
 
 %>
 
-<h2>Search Results: No Matches!!</h2>
-<!-- a line to separate the header -->
-<hr size=2>
+<!-- top line info -->
+    <span class="middletext">Search Results: No Matches!  <br></span
 
 <h3>Sorry - could not find any Protein, Interaction, Experiment, or CvObject
   by trying to match  <font color="red"> <%= info.substring(info.indexOf('=') + 1) %> </font> with: </h3>
@@ -36,6 +35,6 @@
       <li>a full name.
   </ul>
 
-  <h2>Please try again!</h2>
+  <h3>Please try again!</h3>
 
 </html>
