@@ -12,10 +12,6 @@ import org.apache.ojb.broker.query.Query;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.proxy.IntactObjectProxy;
 import uk.ac.ebi.intact.persistence.*;
-import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
-import uk.ac.ebi.intact.simpleGraph.Edge;
-import uk.ac.ebi.intact.simpleGraph.EdgeI;
-import uk.ac.ebi.intact.simpleGraph.Graph;
 import uk.ac.ebi.intact.util.PropertyLoader;
 
 import java.io.Externalizable;
@@ -83,12 +79,12 @@ public class IntactHelper implements SearchI, Externalizable {
 
     /**
      * True if an object of given class and AC exists in the cache.
-     * @param clazz the object type. IntactObject must be the top class of this.
+     * @param clazz the object type.
      * @param ac the AC
      * @return true if an object is found in the cache.
      */
     public boolean isInCache(Class clazz, String ac) {
-        return dao.isInCache(clazz, IntactObject.class, ac);
+        return dao.isInCache(clazz, ac);
     }
 
     /**
@@ -101,11 +97,11 @@ public class IntactHelper implements SearchI, Externalizable {
 
     /**
      * Removes given object from the cache.
-     * @param clazz the object type. IntactObject must be the top class of this.
+     * @param clazz the object type.
      * @param ac the AC
      */
     public void removeFromCache(Class clazz, String ac) {
-        dao.removeFromCache(clazz, IntactObject.class, ac);
+        dao.removeFromCache(clazz, ac);
     }
 
     /**
@@ -221,9 +217,9 @@ public class IntactHelper implements SearchI, Externalizable {
      *
      * @return boolean true if valid details, false if not (including a null username).
      */
-    public boolean isUserVerified(String user, String password) {
-        return dao.isUserValid(user, password);
-    }
+//    public boolean isUserVerified(String user, String password) {
+//        return dao.isUserValid(user, password);
+//    }
 
     /**
      * close the data source. NOTE: performing this operation will
@@ -239,8 +235,21 @@ public class IntactHelper implements SearchI, Externalizable {
         try {
             dao.close();
         }
-        catch (DataSourceException de) {
-            throw new IntactException("failed to close data source!", de);
+        catch (DataSourceException dse) {
+            throw new IntactException("failed to close data source!", dse);
+        }
+    }
+
+    /**
+     * Open the data source which was closed previously by {@link #closeStore()}
+     * @throws IntactException for any errors in opening the data source.
+     */
+    public void openStore() throws IntactException {
+        try {
+            dao.open();
+        }
+        catch (DataSourceException dse) {
+            throw new IntactException("failed to reopen the data source!", dse);
         }
     }
 
@@ -486,17 +495,17 @@ public class IntactHelper implements SearchI, Externalizable {
      *
      * @exception IntactException - thrown if problems are encountered during the search process
      */
-    public Iterator iterSearch(String objectType, String searchParam, String searchValue)
-            throws IntactException {
-        try {
-            return dao.iteratorFind(objectType, searchParam, searchValue);
-        }
-        catch (SearchException se) {
-            //return to action servlet witha forward to error page command
-            String msg = "intact helper: query by Iterator failed.. \n";
-            throw new IntactException(msg + "reason: " + se.getNestedMessage(), se.getRootCause());
-        }
-    }
+//    public Iterator iterSearch(String objectType, String searchParam, String searchValue)
+//            throws IntactException {
+//        try {
+//            return dao.iteratorFind(objectType, searchParam, searchValue);
+//        }
+//        catch (SearchException se) {
+//            //return to action servlet witha forward to error page command
+//            String msg = "intact helper: query by Iterator failed.. \n";
+//            throw new IntactException(msg + "reason: " + se.getNestedMessage(), se.getRootCause());
+//        }
+//    }
 
     /**
      * Allows access to column data rather than whole objects. This is more of a convenience
@@ -508,14 +517,14 @@ public class IntactHelper implements SearchI, Externalizable {
      * cleaned up by passing it to the <code>closeData</code> method.
      * @throws IntactException
      */
-    public Iterator getColumnData(String type, String[] cols) throws IntactException {
-        try {
-            return dao.findColumnValues(type, cols);
-        }
-        catch (SearchException se) {
-            throw new IntactException("failed to get column data!", se);
-        }
-    }
+//    public Iterator getColumnData(String type, String[] cols) throws IntactException {
+//        try {
+//            return dao.findColumnValues(type, cols);
+//        }
+//        catch (SearchException se) {
+//            throw new IntactException("failed to get column data!", se);
+//        }
+//    }
 
     /**
      * Allows search by raw SQL String. This should only be used if you are confident
@@ -526,23 +535,23 @@ public class IntactHelper implements SearchI, Externalizable {
      * @return Collection The search results, empty if none found
      * @throws IntactException
      */
-    public Collection searchBySQL(String type, String sqlString) throws IntactException {
-        try {
-            return dao.findBySQL(type, sqlString);
-        }
-        catch (SearchException se) {
-            throw new IntactException("failed to execute SQL string " + sqlString, se);
-        }
-    }
+//    public Collection searchBySQL(String type, String sqlString) throws IntactException {
+//        try {
+//            return dao.findBySQL(type, sqlString);
+//        }
+//        catch (SearchException se) {
+//            throw new IntactException("failed to execute SQL string " + sqlString, se);
+//        }
+//    }
 
     /**
      * Closes result data.
      * @param items The Iterator used to retrieve the data originally.
      * @exception IllegalArgumentException thrown if the Iterator is an invalid type
      */
-    public void closeData(Iterator items) {
-        dao.closeResults(items);
-    }
+//    public void closeData(Iterator items) {
+//        dao.closeResults(items);
+//    }
 
     /**
      *  This method provides a means of searching intact objects, within the constraints
@@ -735,23 +744,23 @@ public class IntactHelper implements SearchI, Externalizable {
      * @throws IllegalArgumentException if the name of the Alias is not specified or empty.
      * @see uk.ac.ebi.intact.model.Alias
      */
-    public Collection getObjectsByAlias(Class clazz,
-                                        String aliasName) throws IntactException {
-
-        if (aliasName == null || "".equals(aliasName))
-            throw new IllegalArgumentException("You have requested a search by alias, but the specified alias name is null.");
-
-        // get the Alias from the database
-        Collection aliases = search(Alias.class.getName(), "name", aliasName);
-        Collection results = new ArrayList();
-
-        // add all referenced objects of the searched class
-        for (Iterator iterator = aliases.iterator(); iterator.hasNext();) {
-            Alias alias = (Alias) iterator.next();
-            results.addAll(search(clazz.getName(), "ac", alias.getParentAc()));
-        }
-        return results;
-    }
+//    public Collection getObjectsByAlias(Class clazz,
+//                                        String aliasName) throws IntactException {
+//
+//        if (aliasName == null || "".equals(aliasName))
+//            throw new IllegalArgumentException("You have requested a search by alias, but the specified alias name is null.");
+//
+//        // get the Alias from the database
+//        Collection aliases = search(Alias.class.getName(), "name", aliasName);
+//        Collection results = new ArrayList();
+//
+//        // add all referenced objects of the searched class
+//        for (Iterator iterator = aliases.iterator(); iterator.hasNext();) {
+//            Alias alias = (Alias) iterator.next();
+//            results.addAll(search(clazz.getName(), "ac", alias.getParentAc()));
+//        }
+//        return results;
+//    }
 
     /**
      * Search for objects by any alias with the specified name.
@@ -766,23 +775,23 @@ public class IntactHelper implements SearchI, Externalizable {
      * @throws IllegalArgumentException if the name of the Alias is not specified or empty.
      * @see uk.ac.ebi.intact.model.Alias
      */
-    public Collection getObjectsByAlias(Class clazz,
-                                        String aliasName,
-                                        String aliasTypeShortLabel) throws IntactException {
-
-        if (aliasName == null || "".equals(aliasName))
-            throw new IllegalArgumentException("You have requested a search by alias, but the specified alias name is null.");
-
-        if (aliasTypeShortLabel == null)
-            throw new IllegalArgumentException("You have requested a search by alias (" + aliasName +
-                    ") but the specified alias type is null.");
-
-        CvAliasType cvAliasType = (CvAliasType) getObjectByLabel(CvAliasType.class, aliasTypeShortLabel);
-        if (cvAliasType == null)
-            throw new IntactException("The requested CvAliasType (" + aliasTypeShortLabel + ") could not be found in the database.");
-
-        return getObjectsByAlias(clazz, aliasName, cvAliasType);
-    }
+//    public Collection getObjectsByAlias(Class clazz,
+//                                        String aliasName,
+//                                        String aliasTypeShortLabel) throws IntactException {
+//
+//        if (aliasName == null || "".equals(aliasName))
+//            throw new IllegalArgumentException("You have requested a search by alias, but the specified alias name is null.");
+//
+//        if (aliasTypeShortLabel == null)
+//            throw new IllegalArgumentException("You have requested a search by alias (" + aliasName +
+//                    ") but the specified alias type is null.");
+//
+//        CvAliasType cvAliasType = (CvAliasType) getObjectByLabel(CvAliasType.class, aliasTypeShortLabel);
+//        if (cvAliasType == null)
+//            throw new IntactException("The requested CvAliasType (" + aliasTypeShortLabel + ") could not be found in the database.");
+//
+//        return getObjectsByAlias(clazz, aliasName, cvAliasType);
+//    }
 
     /**
      * Search for objects by any alias with the specified name.
@@ -797,23 +806,23 @@ public class IntactHelper implements SearchI, Externalizable {
      * @throws IllegalArgumentException if the name of the Alias is not specified or empty.
      * @see uk.ac.ebi.intact.model.Alias
      */
-    public Collection getObjectsByAlias(Class clazz,
-                                        String aliasName,
-                                        CvAliasType cvAliasType) throws IntactException {
-
-        // get the Xref from the database
-        Collection aliases = this.search(Alias.class.getName(), "name", aliasName);
-        Collection results = new ArrayList();
-
-        // add all referenced objects of the searched class
-        for (Iterator iterator = aliases.iterator(); iterator.hasNext();) {
-            Alias alias = (Alias) iterator.next();
-            if (!alias.getCvAliasType().equals(cvAliasType))
-                continue; // we use only aliases mathing with the requested CvAliasType
-            results.addAll(this.search(clazz.getName(), "ac", alias.getParentAc()));
-        }
-        return results;
-    }
+//    public Collection getObjectsByAlias(Class clazz,
+//                                        String aliasName,
+//                                        CvAliasType cvAliasType) throws IntactException {
+//
+//        // get the Xref from the database
+//        Collection aliases = this.search(Alias.class.getName(), "name", aliasName);
+//        Collection results = new ArrayList();
+//
+//        // add all referenced objects of the searched class
+//        for (Iterator iterator = aliases.iterator(); iterator.hasNext();) {
+//            Alias alias = (Alias) iterator.next();
+//            if (!alias.getCvAliasType().equals(cvAliasType))
+//                continue; // we use only aliases mathing with the requested CvAliasType
+//            results.addAll(this.search(clazz.getName(), "ac", alias.getParentAc()));
+//        }
+//        return results;
+//    }
 
 
     /** Return an Object by classname and shortLabel.
@@ -906,28 +915,28 @@ public class IntactHelper implements SearchI, Externalizable {
      * @exception IntactException thrown if a search problem occurs
      *
      */
-    public Object getObjectByName(Class clazz,
-                                  String name) throws IntactException {
-
-        Object result = null;
-
-        Collection resultList = null;
-
-        resultList = this.search(clazz.getName(), "fullName", name);
-
-        if (resultList.isEmpty()) {
-            result = null;
-        } else {
-            Iterator i = resultList.iterator();
-            result = i.next();
-            if (i.hasNext()) {
-                IntactException ie = new IntactException("More than one object returned by search by name.");
-                throw(ie);
-            }
-        }
-
-        return result;
-    }
+//    public Object getObjectByName(Class clazz,
+//                                  String name) throws IntactException {
+//
+//        Object result = null;
+//
+//        Collection resultList = null;
+//
+//        resultList = this.search(clazz.getName(), "fullName", name);
+//
+//        if (resultList.isEmpty()) {
+//            result = null;
+//        } else {
+//            Iterator i = resultList.iterator();
+//            result = i.next();
+//            if (i.hasNext()) {
+//                IntactException ie = new IntactException("More than one object returned by search by name.");
+//                throw(ie);
+//            }
+//        }
+//
+//        return result;
+//    }
 
     /**
      *  This method is used for searching by short label (provided that name is unique).
@@ -1155,282 +1164,6 @@ public class IntactHelper implements SearchI, Externalizable {
             throw new IntactException(msg, te);
         }
     }
-
-    private CvTopic negativeTopic = null;
-    private boolean negativeAlreadySearched = false;
-    private static final String NEGATIVE = "negative";
-
-    /**
-     * Answers the question: is that AnnotatedObject (Interaction, Experiment) annotated as negative ?
-     *
-     * @param annotatedObject the object we want to introspect
-     * @return true if the object is annotated with the 'negative' CvTopic, otherwise false.
-     */
-    private boolean hasNegativeAnnotation( AnnotatedObject annotatedObject ) {
-
-        // get the necessary vocabulary (CvTopic: negative)
-        if( !negativeAlreadySearched ) {
-            try {
-                negativeTopic = (CvTopic) getObjectByLabel( CvTopic.class, NEGATIVE );
-            } catch ( IntactException e ) {
-                e.printStackTrace();
-            }
-        }
-
-        if( null == negativeTopic ) {
-            return false;
-        }
-
-        boolean isNegative = false;
-
-        Collection annotations = annotatedObject.getAnnotations();
-        for ( Iterator iterator = annotations.iterator(); iterator.hasNext() && false == isNegative; ) {
-            Annotation annotation = (Annotation) iterator.next();
-
-            if( negativeTopic.equals( annotation.getCvTopic() ) ) {
-                isNegative = true;
-            }
-        }
-
-        return isNegative;
-    }
-
-    /**
-     * Answers the question: is that Interaction negative ?
-     * <br>
-     * That takes into account a negative annotation at the Interaction level as well as at
-     * the experiment level
-     *
-     * @param interaction the interaction we want to introspect
-     * @return true if the interaction is negative, otherwise false.
-     */
-    private boolean isNegative( Interaction interaction ) {
-
-        boolean isNegative = hasNegativeAnnotation( interaction );
-
-        if( !isNegative ) {
-            // check all its experiments as well
-            Collection experiments = interaction.getExperiments();
-            // stops if all experiment checked or one is found to be annotated as negative.
-            for ( Iterator iterator = experiments.iterator(); iterator.hasNext() && !isNegative; ) {
-                Experiment experiment = (Experiment) iterator.next();
-                isNegative = hasNegativeAnnotation( experiment );
-            }
-        }
-
-        return isNegative;
-    }
-
-    /**
-     * Returns a subgraph centered on startNode.
-     * The subgraph will contain all nodes which are up to graphDepth interactions away from startNode.
-     * Only Interactions which belong to one of the Experiments in experiments will be taken into account.
-     * If experiments is empty, all Interactions are taken into account.
-     *
-     * Graph depth:
-     * This parameter limits the size of the returned interaction graph. All baits are shown with all
-     * the interacting preys, even if they would normally be on the "rim" of the graph.
-     * Therefore the actual diameter of the graph may be 2*(graphDepth+1).
-     *
-     * Expansion:
-     * If an Interaction has more than two interactors, it has to be defined how pairwise interactions
-     * are generated from the complex data. The possible values are defined in the beginning of this file.
-     *
-     * @param startNode - the start node of the subgraph.
-     * @param graphDepth - depth of the graph
-     * @param experiments - Experiments which should be taken into account
-     * @param complexExpansion - Mode of expansion of complexes into pairwise interactions
-     * @param graph - the graph we have to fill with interaction data
-     *
-     * @return a GraphI object.
-     *
-     * @exception IntactException - thrown if problems are encountered
-     */
-    public Graph subGraph( Interactor startNode,
-                           int graphDepth,
-                           Collection experiments,
-                           int complexExpansion,
-                           Graph graph ) throws IntactException {
-
-//        System.out.println("subGraph called: " + startNode.getAc() + " Shortlabel: "+ startNode.getShortLabel() +" Depth: " + graphDepth);
-
-        if( startNode instanceof Interaction ) {
-
-            if( ! isNegative( (Interaction) startNode ) ) {
-                graph = subGraphPartial( (Interaction) startNode, graphDepth, experiments, complexExpansion, graph );
-            }
-//            else {
-//                System.out.println( startNode.getShortLabel() + " is negative. SKIP IT." );
-//            }
-        } else if( startNode instanceof Interactor ) {
-            graph = subGraphPartial( startNode, graphDepth, experiments, complexExpansion, graph );
-        }
-
-        return graph;
-    }
-
-    private Graph subGraphPartial( Interactor startNode,
-                                   int graphDepth,
-                                   Collection experiments,
-                                   int complexExpansion,
-                                   Graph partialGraph ) throws IntactException {
-
-        /* This should not occur, but is ok. */
-        if( null == startNode ) {
-            return partialGraph;
-        }
-
-//        System.out.println("subGraphPartial (Interactor) called: " + startNode.getAc() + " Depth: " + graphDepth);
-
-        /* If the Interaction has already been visited, return,
-           else mark it.
-        */
-        if( partialGraph.isVisited( startNode ) ) {
-            return partialGraph;
-        } else {
-            partialGraph.addVisited( startNode );
-        }
-
-        /* End of recursion, return */
-        if( 0 == graphDepth ) {
-            return partialGraph;
-        }
-
-        Iterator i = startNode.getActiveInstances().iterator();
-
-        Component current = null;
-        while ( i.hasNext() ) {
-            current = (Component) i.next();
-
-            if( null == current ) {
-                continue;
-            }
-
-            Interaction interaction = current.getInteraction();
-
-            // Don't take into account the negative interaction.
-            if( !isNegative( interaction ) ) {
-
-                /* Explore the next Interaction if not negative */
-                partialGraph = subGraphPartial( current.getInteraction(),
-                                                graphDepth,
-                                                experiments,
-                                                complexExpansion,
-                                                partialGraph );
-            }
-//            else {
-//                System.out.println( interaction.getShortLabel() + " is negative. SKIP IT." );
-//            }
-        }
-
-        return partialGraph;
-    }
-
-    private Graph subGraphPartial( Interaction current,
-            int graphDepth,
-            Collection experiments,
-            int complexExpansion,
-            Graph partialGraph ) throws IntactException {
-
-
-/* This should not occur, but is ok.
-*/
-if( null == current ) {
-return partialGraph;
-}
-
-//System.out.println("subGraphPartial (Interaction) called: " + current.getAc() + " Depth: " + graphDepth);
-
-/* If the Interaction has already been visited, return,
-else mark it.
-*/
-if( partialGraph.isVisited( current ) ) {
-return partialGraph;
-} else {
-partialGraph.addVisited( current );
-}
-
-/* Create list of baits - the size is set later according to what we have to store */
-ArrayList baits = null;
-
-switch ( complexExpansion ) {
-case Constants.EXPANSION_ALL:
-{
-baits = new ArrayList( current.getComponents().size() );
-
-/* all components are considered as baits */
-Iterator i = current.getComponents().iterator();
-while ( i.hasNext() ) {
- baits.add( i.next() );
-}
-}
-break;
-case Constants.EXPANSION_BAITPREY:
-{
-/* only report bait-prey relations.
-* If there is no bait, select one arbitrarily. Choose the first.
-*/
-Component bait = current.getBait();
-if( null == bait ) {
- baits = new ArrayList( current.getComponents().size() );
- Iterator i = current.getComponents().iterator();
- if( i.hasNext() ) {
-     baits.add( i.next() );
- }
-} else {
- baits = new ArrayList( 1 );
- baits.add( bait );
-}
-}
-}
-
-/* Create list of preys */
-ArrayList preys = new ArrayList( current.getComponents().size() );
-Iterator i = current.getComponents().iterator();
-while ( i.hasNext() ) {
-preys.add( i.next() );
-}
-
-/* Generate all bait-prey pairs */
-int countBaits = baits.size();
-int countPreys = preys.size();
-
-for ( int j = 0; j < countBaits; j++ ) {
-//System.out.println("Bait: " + ((Component) baits.get(j)).getInteractor().getAc());
-for ( int k = j; k < countPreys; k++ ) {
-//System.out.println("Prey: " + ((Component) preys.get(k)).getInteractor().getAc());
-EdgeI edge = new Edge();
-Component baitComponent = (Component) baits.get( j );
-Interactor baitInteractor = baitComponent.getInteractor();
-Component preyComponent = (Component) preys.get( k );
-Interactor preyInteractor = preyComponent.getInteractor();
-
-if( baitInteractor != preyInteractor ) {
-BasicGraphI node1 = partialGraph.addNode( baitInteractor );
-BasicGraphI node2 = partialGraph.addNode( preyInteractor );
-
-edge.setNode1( node1 );
-edge.setComponent1( baitComponent );
-edge.setNode2( node2 );
-edge.setComponent2( preyComponent );
-partialGraph.addEdge( edge );
-//System.out.println("Adding: " + node1.getAc() + " -> " + node2.getAc());
-}
-}
-}
-
-/* recursively explore all Interactors linked to current Interaction */
-for ( Iterator iterator = current.getComponents().iterator(); iterator.hasNext(); ) {
-Component component = (Component) iterator.next();
-partialGraph = subGraphPartial( component.getInteractor(),
-                     graphDepth - 1,
-                     experiments,
-                     complexExpansion,
-                     partialGraph );
-}
-
-return partialGraph;
-}
 
     /**
      *  Used to obtain the Experiments related to a search object. For example, if the object is a
