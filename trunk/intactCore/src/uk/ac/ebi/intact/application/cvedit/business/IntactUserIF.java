@@ -142,11 +142,6 @@ public interface IntactUserIF extends Serializable {
     public void update(Object object) throws IntactException;
 
     /**
-     * Cancels the update for the current CV object.
-     */
-    public void cancelUpdate();
-
-    /**
      * Wrapper to delete an object from the underlying persistence system.
      *
      * @param object the object to delete.
