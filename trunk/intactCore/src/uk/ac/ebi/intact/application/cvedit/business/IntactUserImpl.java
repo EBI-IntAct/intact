@@ -77,11 +77,6 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
     private static final String theirQualifierNames = "QualifierNames";
 
     /**
-     * An empty list only contains this item.
-     */
-    private static final String theirEmptyListItem = "-------------";
-
-    /**
      * Maps: List Name -> List type. Common to all the users and it is immutable.
      */
     private static final Map theirNameToType = new HashMap();
@@ -443,7 +438,7 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         // Guard against the null pointer.
         if ((v == null) || v.isEmpty()) {
             // Special list when we don't have any names.
-            list.add(theirEmptyListItem);
+            list.add(EMPTY_LIST_ITEM);
             return list;
         }
         for (Iterator iter = v.iterator(); iter.hasNext();) {
@@ -460,7 +455,7 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
     private boolean isListEmpty(String name) {
         Collection list = (Collection) myNameToItems.get(name);
         Iterator iter = list.iterator();
-        return (iter.next()).equals(theirEmptyListItem) && !iter.hasNext();
+        return (iter.next()).equals(EMPTY_LIST_ITEM) && !iter.hasNext();
     }
 
     /**
