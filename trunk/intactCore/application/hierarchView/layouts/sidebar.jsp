@@ -16,13 +16,6 @@
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
-    <%-- Sidebar logo --%>
-	<tr>
-        <td bgcolor="#boc4de" valign="top" align="left" width="113" height="75">
-            <img src="<%= request.getContextPath() %>/images/logo_intact.gif" border="0">
-        </td>
-    </tr>
-
     <!-- The input dialog box -->
     <tr>
         <td>
@@ -41,15 +34,6 @@
     <tr>
 		<td>
             <tiles:insert attribute="click" ignore="true"/>
-        </td>
-	</tr>
-
-    <%-- Sidebar menu links --%>
-    <tr>
-		<td>
-            <br>
-            <hr>
-            <tiles:insert attribute="menu" ignore="true"/>
         </td>
 	</tr>
 
