@@ -194,27 +194,11 @@ public interface EditUserI extends IntactUserI, Serializable {
      *
      * @param className the intact type to search on
      * @param value the user-specified value.
-     * @param cache cache the search result if <code>true</code>; generally,
-     * this flag is set to true from a Search action.
      * @return Collection the results of the search - an empty Collection if no
      *  results found
      * @exception SearchException thrown if there were any search problems
      */
-    public Collection lookup(String className, String value, boolean cache)
-            throws SearchException;
-
-    /**
-     * Returns true if the last search produced a single entry.
-     * @return true if the last search produced a single entry.
-     */
-    public boolean hasSingleSearchResult();
-
-    /**
-     * Returns the latest search input.
-     * @return the latest search input. This is basically as same as the
-     *{@link #getSearchQuery()} without the search parameter.
-     */
-    public String getSearchInput();
+    public Collection lookup(String className, String value) throws SearchException;
 
     /**
      * Returns the latest search query.
@@ -381,5 +365,9 @@ public interface EditUserI extends IntactUserI, Serializable {
      */
     public Xref getXref(XreferenceBean xb) throws SearchException;
 
+    /**
+     * Releases the lock using given lock manager.
+     * @param lmr the lock manager to release the current edit object.
+     */
     public void releaseLock(LockManager lmr);
 }
