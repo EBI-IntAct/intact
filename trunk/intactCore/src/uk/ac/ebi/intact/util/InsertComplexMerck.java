@@ -103,7 +103,7 @@ public class InsertComplexMerck {
 
     private void collectCommonObject() throws IntactException {
 
-        owner = (Institution) helper.getObjectByLabel( Institution.class, "EBI" );
+        owner = helper.getInstitution();
         if ( owner == null ){
             throw new IntactException ( "Could not find the Institution: EBI. Stop processing." );
         }
