@@ -1,8 +1,3 @@
-/*
-  Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-  All rights reserved. Please see the file LICENSE 
-  in the root directory of this distribution.
-*/
 /*************************************************************
 
   Package:    IntAct
@@ -20,16 +15,15 @@
 -- Tables
 CREATE TABLE Institution
 (
-	shortLabel		VARCHAR(10)	NOT NULL,
+	shortLabel		VARCHAR(10),
 	fullName		VARCHAR(50),
-	postalAddress		VARCHAR(2000),	
-	url			VARCHAR(255),
-	ac			VARCHAR(30)	NOT NULL 
-						CONSTRAINT pk_Institution 
+	postalAddress	VARCHAR(2000),
+	url		    	VARCHAR(255),
+	ac			    VARCHAR(30)	NOT NULL
+						CONSTRAINT pk_Institution
 						PRIMARY KEY   ,
 	created			DATE		DEFAULT  now() NOT NULL,
-	updated
-			DATE		DEFAULT  now() NOT NULL,
+	updated         DATE		DEFAULT  now() NOT NULL,
 	timestamp		DATE		DEFAULT  now() NOT NULL,
 	userstamp		VARCHAR(30)	DEFAULT	 USER	 NOT NULL,
 	deprecated		SMALLINT	DEFAULT 0 NOT NULL
@@ -63,13 +57,13 @@ all controlled vocabularies. */
 CREATE TABLE ControlledVocab
 (
 	objClass		VARCHAR(255)	,
-	shortLabel		VARCHAR(20)	NOT NULL,
+	shortLabel		VARCHAR(20),
 	fullName		VARCHAR(70),
-	owner_ac		VARCHAR(30)   	NOT NULL 
-						CONSTRAINT fk_ControlledVocab_owner 
+	owner_ac		VARCHAR(30)
+						CONSTRAINT fk_ControlledVocab_owner
 						REFERENCES Institution(ac),
-	ac			VARCHAR(30)	NOT NULL 
-						CONSTRAINT pk_ControlledVocab 
+	ac			VARCHAR(30)	NOT NULL
+						CONSTRAINT pk_ControlledVocab
 						PRIMARY KEY   ,
 	created			DATE		DEFAULT  now() NOT NULL,
 	updated			DATE		DEFAULT  now() NOT NULL,
@@ -104,15 +98,15 @@ COMMENT on COLUMN ControlledVocab.userstamp IS
 
 CREATE TABLE BioSource
 (
-	taxId			NUMERIC(10)	NOT NULL
-						CONSTRAINT uq_BioSource_taxId 
+	taxId			NUMERIC(10)
+						CONSTRAINT uq_BioSource_taxId
 						UNIQUE   ,
-	scientificName 		VARCHAR(255)	NOT NULL,
-	ac			VARCHAR(30)	NOT NULL 
-						CONSTRAINT pk_BioSource 
+	scientificName 		VARCHAR(255)	,
+	ac			VARCHAR(30)	NOT NULL
+						CONSTRAINT pk_BioSource
 						PRIMARY KEY   ,
-	owner_ac		VARCHAR(30)     NOT NULL 
-						CONSTRAINT fk_BioSource_owner 
+	owner_ac		VARCHAR(30)
+						CONSTRAINT fk_BioSource_owner
 						REFERENCES Institution(ac),
 	created			DATE		DEFAULT  now() NOT NULL,
 	updated			DATE		DEFAULT  now() NOT NULL,
@@ -146,14 +140,14 @@ COMMENT on COLUMN BioSource.userstamp IS
 /* The PolymerSequence has been factured out from the table Interactor
 as Clobs often need special handling. The sequence is expected to be
 rarely needed, but the Interactor table is a heavily-queried table.
-*/ 
+*/
 CREATE TABLE PolymerSeq
 (
 	polymerSeq		VARCHAR(4000),
-	ac			VARCHAR(30)	NOT NULL 
+	ac			VARCHAR(30)	NOT NULL
 						CONSTRAINT pk_PolymerSeq
 						PRIMARY KEY,
-	owner_ac		VARCHAR(30)    	NOT NULL 
+	owner_ac		VARCHAR(30)    	NOT NULL
 						CONSTRAINT fk_PolymerSeq_owner
 						REFERENCES Institution(ac),
 	created			DATE		DEFAULT  now() NOT NULL,
@@ -185,7 +179,7 @@ COMMENT on COLUMN PolymerSeq.userstamp IS
 /* This is the key table. The class Interactor is the parent class of
 a class hierarchy which comprises all molecular objects. All
 subclasses are mapped to this table. It's likely to be the largest and
-most queried, hence most performance-critical table.  
+most queried, hence most performance-critical table.
 */
 CREATE TABLE Interactor
 (
@@ -206,14 +200,14 @@ CREATE TABLE Interactor
 	interactionType_ac	VARCHAR(30)	CONSTRAINT fk_Interactor_interactionType
 						REFERENCES ControlledVocab(ac),
 	/* Colums belonging to AnnotatedObject */
-	shortLabel		VARCHAR(10)	NOT NULL,
+	shortLabel		VARCHAR(10),
 	fullName		VARCHAR(50),
-	/* Colums belonging to BasicObject */	
-	ac			VARCHAR(30)	NOT NULL 
-						CONSTRAINT pk_Interactor 
+	/* Colums belonging to BasicObject */
+	ac			VARCHAR(30)	NOT NULL
+						CONSTRAINT pk_Interactor
 						PRIMARY KEY   ,
-	owner_ac		VARCHAR(30)    NOT NULL 
-						CONSTRAINT fk_Interactor_owner 
+	owner_ac		VARCHAR(30)
+						CONSTRAINT fk_Interactor_owner
 						REFERENCES Institution(ac),
 	created		 	DATE		DEFAULT  now() NOT NULL,
 	updated		 	DATE		DEFAULT  now() NOT NULL,
@@ -266,24 +260,24 @@ COMMENT on COLUMN Interactor.userstamp IS
 CREATE TABLE Component
 	(
 	stoichiometry		REAL,
-	interactor_ac		VARCHAR(30)	NOT NULL 
+	interactor_ac		VARCHAR(30)
 						CONSTRAINT fk_Component_interactor
 						REFERENCES Interactor(ac)
 						ON DELETE CASCADE,
-	interaction_ac		VARCHAR(30)	NOT NULL 
+	interaction_ac		VARCHAR(30)
 						CONSTRAINT fk_Component_interaction
 						REFERENCES Interactor(ac)
 						ON DELETE CASCADE,
-	role			VARCHAR(30)	NOT NULL 
+	role			VARCHAR(30)
 						CONSTRAINT fk_Component_role
 						REFERENCES ControlledVocab(ac),
         expressedIn_ac        	VARCHAR(30)    CONSTRAINT fk_Component_expressedIn
 						REFERENCES BioSource(ac),
-	ac			VARCHAR(30)	NOT NULL 
+	ac			VARCHAR(30)	NOT NULL
 						CONSTRAINT pk_Component
 						PRIMARY KEY   ,
-	owner_ac		VARCHAR(30)     NOT NULL 
-						CONSTRAINT fk_Component_owner 
+	owner_ac		VARCHAR(30)
+						CONSTRAINT fk_Component_owner
 						REFERENCES Institution(ac),
 	created			DATE		DEFAULT  now() NOT NULL,
 	updated			DATE		DEFAULT  now() NOT NULL,
@@ -323,18 +317,18 @@ COMMENT on COLUMN Component.userstamp IS
 
 CREATE TABLE Annotation
 (
-	description		VARCHAR(4000)	NOT NULL,
-	topic_ac		VARCHAR(30)	NOT NULL 
-						CONSTRAINT fk_Annotation_topic 
+	description		VARCHAR(4000),
+	topic_ac		VARCHAR(30)
+						CONSTRAINT fk_Annotation_topic
 						REFERENCES ControlledVocab(ac),
-	ac			VARCHAR(30)	NOT NULL 
-						CONSTRAINT pk_Annotatation 
-						PRIMARY KEY 
+	ac			VARCHAR(30)	NOT NULL
+						CONSTRAINT pk_Annotatation
+						PRIMARY KEY
 						  ,
-	owner_ac		VARCHAR(30)    NOT NULL 
-						CONSTRAINT fk_Annotation_owner 
+	owner_ac		VARCHAR(30)
+						CONSTRAINT fk_Annotation_owner
 						REFERENCES Institution(ac),
-	created		DATE		DEFAULT  now() NOT NULL,	
+	created		DATE		DEFAULT  now() NOT NULL,
 	updated		DATE		DEFAULT  now() NOT NULL,
 	timestamp		DATE		DEFAULT  now() NOT NULL,
 	userstamp		VARCHAR(30)	DEFAULT	 USER	 NOT NULL,
@@ -368,18 +362,18 @@ CREATE TABLE Experiment
 	bioSource_ac		VARCHAR(30)     CONSTRAINT fk_Experiment_bioSource
 						REFERENCES BioSource(ac),
 	detectMethod_ac		VARCHAR(30)	CONSTRAINT fk_Experiment_detectMethod
-						REFERENCES ControlledVocab(ac),	
+						REFERENCES ControlledVocab(ac),
 	identMethod_ac		VARCHAR(30)	CONSTRAINT fk_Experiment_identMethod
 						REFERENCES ControlledVocab(ac),
 	relatedExperiment_ac  	VARCHAR(30)     CONSTRAINT fk_Experiment_relatedExp
 						REFERENCES Experiment(ac),
-	shortLabel		VARCHAR(10)	NOT NULL,
+	shortLabel		VARCHAR(10)	,
 	fullName		VARCHAR(50),
-	ac			VARCHAR(30)	NOT NULL 
-						CONSTRAINT pk_Experiment 
+	ac			VARCHAR(30)	NOT NULL
+						CONSTRAINT pk_Experiment
 						PRIMARY KEY   ,
-	owner_ac		VARCHAR(30)     NOT NULL 
-						CONSTRAINT fk_Experiment_owner 
+	owner_ac		VARCHAR(30)
+						CONSTRAINT fk_Experiment_owner
 						REFERENCES Institution(ac),
 	created			DATE		DEFAULT  now() NOT NULL,
 	updated			DATE		DEFAULT  now() NOT NULL,
@@ -421,20 +415,20 @@ COMMENT on COLUMN Experiment.userstamp IS
 
 CREATE TABLE Xref
 (
-	primaryId		VARCHAR(30)	NOT NULL,
+	primaryId		VARCHAR(30)	,
 	secondaryId		VARCHAR(30),
 	dbRelease		VARCHAR(10),
 	qualifier_ac		VARCHAR(30)	CONSTRAINT fk_Xref_qualifier
 						REFERENCES ControlledVocab(ac),
-	database_ac		VARCHAR(30)	NOT NULL 
+	database_ac		VARCHAR(30)
 						CONSTRAINT fk_Xref_database
 						REFERENCES ControlledVocab(ac),
-	parent_ac		VARCHAR(30)	NOT NULL,
-	ac			VARCHAR(30)	NOT NULL 
-						CONSTRAINT pk_Xref 
+	parent_ac		VARCHAR(30)	,
+	ac			VARCHAR(30)	NOT NULL
+						CONSTRAINT pk_Xref
 						PRIMARY KEY   ,
-	owner_ac		VARCHAR(30)    	NOT NULL 
-						CONSTRAINT fk_Xref_owner 
+	owner_ac		VARCHAR(30)
+						CONSTRAINT fk_Xref_owner
 						REFERENCES Institution(ac),
 	created			DATE		DEFAULT  now() NOT NULL,
 	updated			DATE		DEFAULT  now() NOT NULL,
@@ -481,8 +475,7 @@ CREATE TABLE Int2Exp
 	created			DATE		DEFAULT  now() NOT NULL,
 	updated			DATE		DEFAULT  now() NOT NULL,
 	timestamp		DATE		DEFAULT  now() NOT NULL,
-	userstamp		VARCHAR(30)	DEFAULT	 USER	 NOT NULL,
-	deprecated		SMALLINT	DEFAULT  0	 NOT NULL
+	userstamp		VARCHAR(30)	DEFAULT	 USER	 NOT NULL
 );
 CREATE index i_Int2Exp_int on Int2Exp(interaction_ac);
 CREATE index i_Int2Exp_exp on Int2Exp(experiment_ac);
@@ -514,18 +507,17 @@ CREATE TABLE Obj2Annot
 	cvobject_ac		VARCHAR(30)	CONSTRAINT fk_Obj2Annot_cvobject
 						REFERENCES ControlledVocab(ac)
 						ON DELETE CASCADE,
-        biosource_ac            VARCHAR(30)     CONSTRAINT fk_Obj2Annot_biosource
+    biosource_ac            VARCHAR(30)     CONSTRAINT fk_Obj2Annot_biosource
                                                 REFERENCES Biosource(ac)
                                                 ON DELETE CASCADE,
-	annotation_ac		VARCHAR(30)	NOT NULL 
+	annotation_ac		VARCHAR(30)
 						CONSTRAINT fk_Obj2Annot_annotation
 						REFERENCES Annotation(ac)
 						ON DELETE CASCADE,
 	created			DATE		DEFAULT  now() NOT NULL,
 	updated			DATE		DEFAULT  now() NOT NULL,
 	timestamp 		DATE		DEFAULT  now() NOT NULL,
-	userstamp		VARCHAR(30)	DEFAULT	 USER	 NOT NULL,
-	deprecated		SMALLINT	DEFAULT  0	 NOT NULL
+	userstamp		VARCHAR(30)	DEFAULT	 USER	 NOT NULL
 );
 
 CREATE index i_Obj2Annot_interactor on Obj2Annot(interactor_ac);
@@ -556,8 +548,8 @@ CREATE TABLE IntactNode
 (
 	owner_ac	VARCHAR(30)	CONSTRAINT fk_IntactNode_owner
 					REFERENCES Institution(ac),
-	ac			VARCHAR(30)	NOT NULL 
-						CONSTRAINT pk_IntactNode 
+	ac			VARCHAR(30)	NOT NULL
+						CONSTRAINT pk_IntactNode
 						PRIMARY KEY   ,
 	ftpAddress	VARCHAR(255),
 	ftpLogin	VARCHAR(255),
@@ -572,7 +564,7 @@ CREATE TABLE IntactNode
 	timestamp	DATE		DEFAULT now()	NOT NULL,
 	userstamp	VARCHAR(30)	DEFAULT USER	NOT NULL,
 	deprecated	SMALLINT	DEFAULT 0	NOT NULL,
-	ownerPrefix	VARCHAR(30)	DEFAULT USER	NOT NULL       
+	ownerPrefix	VARCHAR(30)	DEFAULT USER	NOT NULL
 );
 
 -- Sequences
