@@ -230,7 +230,7 @@ public class IntactUser implements IntactUserI {
                                         Collection experiments,
                                         int complexExpansion) throws IntactException {
 
-        logger.info("Starting graph generation (" + startNode.getAc() + ", depth=" + graphDepth);
+        logger.info("Starting graph generation (" + startNode.getAc() + ", depth=" + graphDepth + ")");
         InteractionNetwork in = new InteractionNetwork (startNode.getAc());
         Graph graph = in;
 
