@@ -1,6 +1,5 @@
 package uk.ac.ebi.intact.application.hierarchView.highlightment.source;
 
-import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
@@ -9,6 +8,7 @@ import uk.ac.ebi.intact.application.hierarchView.struts.view.utils.LabelValueBea
 
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.simpleGraph.Node;
 import uk.ac.ebi.intact.business.IntactException;
 
@@ -85,7 +85,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
 
         try {
             logger.info ("Try to get a list of GO term (from protein AC=" + aProteinAC + ")");
-            result = user.getHelper().search ("uk.ac.ebi.intact.model.Protein","ac", aProteinAC);
+            result = user.getHelper().search (Protein.class.getName(), "ac", aProteinAC);
         } catch (IntactException ie) {
             logger.error ("When trying to get a list of GO", ie);
             return null;
@@ -119,7 +119,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
             String[] goterm = new String[2];
             Xref xref = (Xref) xRefIterator.next();
 
-            if ((xref.getCvDatabase().getShortLabel()).equals("GO")) {
+            if ((xref.getCvDatabase().getShortLabel()).toLowerCase().equals("go")) {
                 goterm[0] = xref.getPrimaryId();
                 goterm[1] = xref.getSecondaryId();
                 listGOTerm.add(goterm);
@@ -237,7 +237,6 @@ public class GoHighlightmentSource extends HighlightmentSource {
     public List getSourceUrls (Collection xRef, String applicationPath)
          throws IntactException {
 
-
         // get in the Highlightment properties file where is interpro
         Properties props = IntactUserI.HIGHLIGHTING_PROPERTIES;
 
@@ -245,7 +244,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
             String msg = "Unable to find the interpro hostname. "+
                          "The properties file '" + StrutsConstants.HIGHLIGHTING_PROPERTY_FILE + "' couldn't be loaded.";
             logger.error (msg);
-            throw new IntactException ();
+            throw new IntactException (msg);
         }
 
         String goPath = props.getProperty("highlightment.source.GO.applicationPath");
@@ -255,7 +254,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
                          "Check the 'highlightment.source.GO.applicationPath' property in the '" +
                          StrutsConstants.HIGHLIGHTING_PROPERTY_FILE + "' properties file";
             logger.error (msg);
-            throw new IntactException ();
+            throw new IntactException (msg);
         }
 
         // filter to keep only GO terms
@@ -268,7 +267,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
         String[] goTermInfo;
         String goTerm, goTermDescription;
 
-        if (listGOTerm != null && !listGOTerm.isEmpty()) {
+        if (listGOTerm != null && (false == listGOTerm.isEmpty())) {
             Iterator list = listGOTerm.iterator();
             while (list.hasNext()) {
                 goTermInfo        = (String[]) list.next();
@@ -279,13 +278,16 @@ public class GoHighlightmentSource extends HighlightmentSource {
                 try {
                     hierarchViewURL = URLEncoder.encode (applicationPath + "/source.do?keys=${selected-children}&clicked=${id}", "UTF-8");
                 } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
+                    logger.error(e);
                 }
 
-                String url = goPath + "/DisplayGoTerm?selected=" + goTerm + "&intact=true&format=contentonly&url=" + hierarchViewURL + "&frame=_top"; //graphFrame";
+                String url = goPath + "/DisplayGoTerm?selected=" + goTerm + "&intact=true&format=contentonly&url=" + hierarchViewURL + "&frame=_top";
+                logger.info ("Xref: " + goTerm);
                 urls.add ( new LabelValueBean (goTerm, url, goTermDescription) );
             }
         }
+
+        logger.info("");
 
         return urls;
     } // getSourceUrls
