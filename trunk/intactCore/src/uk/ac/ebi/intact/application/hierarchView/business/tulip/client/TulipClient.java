@@ -43,6 +43,8 @@ public class TulipClient {
    */
    public TulipClient () {
     try {
+      System.out.print ("Trying to create the web service");
+
       // Make a service locator (allow to find the service)
       TulipAccessServiceLocator serviceLocator = new TulipAccessServiceLocator();
       
@@ -50,11 +52,13 @@ public class TulipClient {
       TulipAccessService service = (TulipAccessService) serviceLocator;
 
       // Look in the property file where is the web service
-      Properties properties = PropertyLoader.load (Constants.PROPERTY_FILE);
+      
+      Properties properties = PropertyLoader.load (Constants.WEB_SERVICE_PROPERTY_FILE);
       String tulipAdress = null;
       if (null != properties) {
 	tulipAdress = properties.getProperty ("webService.adress");
-      } else {
+	System.out.println (" adress=" + tulipAdress);
+      } else {	
 	tulip = null;
 	return;
       }
@@ -77,8 +81,9 @@ public class TulipClient {
 
   /**
    * allows to know if the service is ready or not.
+   * BUG : that method isn't reliable !
    *
-   * @return 
+   * @return is the webService is rubbubg 
    */
   public boolean isReady () {
     if (null == tulip) {
