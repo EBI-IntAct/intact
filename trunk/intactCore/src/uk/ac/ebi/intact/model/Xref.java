@@ -6,6 +6,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.model;
 
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.util.Utilities;
 
 import java.util.*;
 
@@ -144,22 +145,27 @@ public class Xref extends BasicObject {
     ///////////////////////////////////////
     // instance methods
 
-    /** Returns true if the two object have equivalent content.
-     *  The definition depends on the object. Example:
-     *  This predicate returns true if two Xref have the same
-     *  Database and primary id.
+    /** Returns true if the "important" attributes are equal.
      */
-    public boolean isSameObject(Object obj){
-        Xref comparator = (Xref) obj;
-        if (super.isSameObject(obj)
-                &&
-                this.cvDatabase.equals(comparator.getCvDatabase())
-                &&
-                this.primaryId.equals(comparator.getPrimaryId())){
-            return true;
-        } else {
-            return false;
-        }
+    public boolean equals(Object obj){
+
+        return (super.equals(obj) &&
+                Utilities.equals(this.cvDatabase, ((Xref)obj).getCvDatabase()) &&
+                Utilities.equals(this.primaryId, ((Xref)obj).getPrimaryId()));
+    }
+
+    /** This class overwrites equals. To ensure proper functioning of HashTable,
+     * hashCode must be overwritten, too.
+     * @return  hash code of the object.
+     */
+    public int hashCode(){
+
+        int code = super.hashCode();
+
+        if (null != cvDatabase) code += cvDatabase.hashCode();
+        if (null != primaryId) code += primaryId.hashCode();
+
+        return code;
     }
 
     public String toString(){

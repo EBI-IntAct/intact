@@ -5,6 +5,8 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import uk.ac.ebi.intact.util.Utilities;
+
 import java.util.Date;
 import java.sql.Timestamp;
 import java.io.Serializable;
@@ -165,6 +167,29 @@ public class Institution implements Serializable {
 
     ///////////////////////////////////////
     // instance methods
+
+    /** Returns true if the "important" attributes are equal.
+     */
+    public boolean equals(Object obj){
+
+        return (super.equals(obj) &&
+                Utilities.equals(this.shortLabel, ((Institution)obj).getShortLabel()) &&
+                Utilities.equals(this.fullName, ((Institution)obj).getFullName()));
+    }
+
+    /** This class overwrites equals. To ensure proper functioning of HashTable,
+     * hashCode must be overwritten, too.
+     * @return  hash code of the object.
+     */
+    public int hashCode(){
+
+        int code = super.hashCode();
+
+        if (null != shortLabel) code += shortLabel.hashCode();
+        if (null != fullName) code += fullName.hashCode();
+
+        return code;
+    }
 
     public String toString() {
         return this.ac + "\n";
