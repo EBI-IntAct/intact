@@ -13,9 +13,8 @@ import uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.Institution;
-import uk.ac.ebi.intact.util.Assert;
 import uk.ac.ebi.intact.persistence.SearchException;
-import uk.ac.ebi.intact.persistence.CreateException;
+import uk.ac.ebi.intact.business.IntactException;
 import org.apache.struts.action.*;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
@@ -108,7 +107,7 @@ public class CvAddAction extends IntactBaseAction {
             try {
                 user.create(cvobj);
             }
-            catch (CreateException ce) {
+            catch (IntactException ce) {
                 super.log(ExceptionUtils.getStackTrace(ce));
                 super.addError("error.create", ce.getMessage());
                 super.saveErrors(request);
@@ -141,15 +140,15 @@ public class CvAddAction extends IntactBaseAction {
         }
         catch (IllegalAccessException iae) {
             // Shouldn't happen.
-            Assert.fail(iae.getMessage());
+            assert false;
         }
         catch (ClassNotFoundException cnfe) {
             // Shouldn't happen.
-            Assert.fail(cnfe.getMessage());
+            assert false;
         }
         catch (InstantiationException ie) {
             // Shouldn't happen.
-            Assert.fail(ie.getMessage());
+            assert false;
         }
         return cvobj;
     }
