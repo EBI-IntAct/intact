@@ -57,10 +57,11 @@ package uk.ac.ebi.intact.persistence;
 import org.apache.ojb.broker.PersistenceBrokerException;
 import org.apache.ojb.broker.PersistenceBrokerSQLException;
 import org.apache.ojb.broker.PersistenceBrokerFactory;
+import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.metadata.ClassDescriptor;
 import org.apache.ojb.broker.query.Query;
 
-import org.apache.ojb.broker.singlevm.PersistenceBrokerImpl;
+import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.util.logging.*;
 import org.apache.ojb.broker.util.sequence.SequenceManager;
 import org.apache.ojb.broker.util.sequence.SequenceConfiguration;
@@ -87,7 +88,7 @@ public class DbSequenceManager implements SequenceManager {
     /**
      * reference to the PersistenceBroker
      */
-    protected PersistenceBrokerImpl broker;
+    protected PersistenceBroker broker;
 
     /**
      * singleton instance of the SequenceManager
@@ -110,7 +111,7 @@ public class DbSequenceManager implements SequenceManager {
      * Public constructor
      *
      */
-    public DbSequenceManager(PersistenceBrokerImpl broker)
+    public DbSequenceManager(PersistenceBroker broker)
             throws ConfigurationException {
         this.broker = broker;
 
