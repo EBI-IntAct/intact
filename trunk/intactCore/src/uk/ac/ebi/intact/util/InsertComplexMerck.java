@@ -5,6 +5,7 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.util;
 
+import org.apache.commons.cli.*;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
@@ -14,13 +15,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-import org.apache.commons.cli.*;
-
 /**
  * Insert binary iteraction data (customize to MERCK format).
  * Custom version for IntAct Merck installation for initial * insertion of Merck and Mint data.
  * Data is read from an input text file.
- *
+ * <p/>
  * Input file format:
  * Line records, elements are space-delimited:
  * Prey   Bait ExperimentLabel addionalInformation
@@ -30,13 +29,12 @@ import org.apache.commons.cli.*;
  *
  * @author Henning Hermjakob, hhe@ebi.ac.uk
  * @author Samuel Kerrien, skerrien@ebi.ac.uk
- *
  * @version $Id$
  */
 public class InsertComplexMerck {
 
     // plateform independant '\n'
-    public static final String NEW_LINE = System.getProperty("line.separator");
+    public static final String NEW_LINE = System.getProperty( "line.separator" );
 
     IntactHelper helper;
     UpdateProteinsI proteinFactory;
@@ -75,8 +73,7 @@ public class InsertComplexMerck {
     public InsertComplexMerck() throws Exception {
         try {
             helper = new IntactHelper();
-        }
-        catch (IntactException ie) {
+        } catch ( IntactException ie ) {
 
             //something failed with type map or datasource...
             String msg = "unable to create intact helper class";
@@ -92,8 +89,7 @@ public class InsertComplexMerck {
             // Transactions are controlled by this class, not by UpdateProteins.
             // Set local transaction control to false.
             proteinFactory.setLocalTransactionControl( false );
-        }
-        catch ( UpdateProteinsI.UpdateException e) {
+        } catch ( UpdateProteinsI.UpdateException e ) {
             //something failed with type map or datasource...
             String msg = "unable to create protein factory";
             System.out.println( msg );
@@ -104,28 +100,28 @@ public class InsertComplexMerck {
     private void collectCommonObject() throws IntactException {
 
         owner = helper.getInstitution();
-        if ( owner == null ){
-            throw new IntactException ( "Could not find the Institution: EBI. Stop processing." );
+        if( owner == null ) {
+            throw new IntactException( "Could not find the Institution: EBI. Stop processing." );
         }
 
         uniprot = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "uniprot" );
-        if ( uniprot == null ){
-            throw new IntactException ( "Could not find the CvDatabase: uniprot. Stop processing." );
+        if( uniprot == null ) {
+            throw new IntactException( "Could not find the CvDatabase: uniprot. Stop processing." );
         }
 
-        pubmed = (CvDatabase) helper.getObjectByLabel ( CvDatabase.class, "pubmed" );
-        if ( pubmed == null ){
-            throw new IntactException ( "Could not find the CvDatabase: pubmed. Stop processing." );
+        pubmed = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "pubmed" );
+        if( pubmed == null ) {
+            throw new IntactException( "Could not find the CvDatabase: pubmed. Stop processing." );
         }
 
         bait = (CvComponentRole) helper.getObjectByLabel( CvComponentRole.class, "bait" );
-        if ( bait == null ){
-            throw new IntactException ( "Could not find the CvComponentRole: bait. Stop processing." );
+        if( bait == null ) {
+            throw new IntactException( "Could not find the CvComponentRole: bait. Stop processing." );
         }
 
         prey = (CvComponentRole) helper.getObjectByLabel( CvComponentRole.class, "prey" );
-        if ( prey == null ){
-            throw new IntactException ( "Could not find the CvComponentRole: prey. Stop processing." );
+        if( prey == null ) {
+            throw new IntactException( "Could not find the CvComponentRole: prey. Stop processing." );
         }
     }
 
@@ -146,14 +142,14 @@ public class InsertComplexMerck {
      * @return Collection of Protein found.
      * @throws IntactException
      */
-    private Collection getProteinsBySPTRAccessionNumber ( String sptrAC ) throws IntactException {
+    private Collection getProteinsBySPTRAccessionNumber( String sptrAC ) throws IntactException {
         Collection proteins = null;
 
-        if ( isSpliceVariantAC( sptrAC ) ) {
+        if( isSpliceVariantAC( sptrAC ) ) {
             // this is a splice variant
             proteins = new ArrayList( 1 );
             Protein protein = (Protein) helper.getObjectByLabel( Protein.class, sptrAC );
-            if ( protein != null )
+            if( protein != null )
                 proteins.add( protein );
         } else {
             // this is a protein
@@ -173,7 +169,7 @@ public class InsertComplexMerck {
      */
     private boolean isSpliceVariantAC( String ac ) {
         int index = ac.indexOf( "-" ); // search for splice variant (eg: P123456-1)
-        if ( index != -1 )
+        if( index != -1 )
             return true;
         else
             return false;
@@ -183,19 +179,19 @@ public class InsertComplexMerck {
      * Check if a protein (either master of splice variant) can be described by the given SPTR accession number.
      *
      * @param protein the Protein we are checking in
-     * @param ac the ac with
+     * @param ac      the ac with
      * @return true if the given protein can be described by the given SPTR accession number, else false.
      */
     private boolean isThatACBelongsToThatProtein( Protein protein, String ac ) {
-        if ( isSpliceVariantAC( ac ) ) {
+        if( isSpliceVariantAC( ac ) ) {
             // Check for the shortLabel
-            if ( protein.getShortLabel().equals( ac ) )
+            if( protein.getShortLabel().equals( ac ) )
                 return true;
         } else {
             // check for a SPTR cross reference qith the ac as promaryId
-            for ( Iterator iterator = protein.getXrefs ().iterator (); iterator.hasNext (); ) {
-                Xref xref = (Xref) iterator.next ();
-                if ( xref.getCvDatabase().equals( uniprot ) && xref.getPrimaryId().equals( ac ))
+            for( Iterator iterator = protein.getXrefs().iterator(); iterator.hasNext(); ) {
+                Xref xref = (Xref) iterator.next();
+                if( xref.getCvDatabase().equals( uniprot ) && xref.getPrimaryId().equals( ac ) )
                     return true;
             }
         }
@@ -207,40 +203,38 @@ public class InsertComplexMerck {
      * Insert a Component object linking an Interactor to an Interaction.
      *
      * @param interaction The interaction to add the Interactor to
-     * @param spAc Swiss-Prot accession number of the Protein to add.
-     *             If the protein does not yet exist, it will be created.
-     * @param taxId The tax Id of the target proteins.
-     * @param role Role of the protein in the interaction.
+     * @param spAc        Swiss-Prot accession number of the Protein to add.
+     *                    If the protein does not yet exist, it will be created.
+     * @param taxId       The tax Id of the target proteins.
+     * @param role        Role of the protein in the interaction.
      * @throws Exception
      */
-    public void insertComponent(Interaction interaction,
-                                String spAc,
-                                String taxId,
-                                CvComponentRole role) throws Exception {
+    public void insertComponent( Interaction interaction,
+                                 String spAc,
+                                 String taxId,
+                                 CvComponentRole role ) throws Exception {
 
         Collection proteins = null;
 
         // The relevant proteins might already have been created for the current complex.
-        if (createdProteins.containsKey( spAc )) {
+        if( createdProteins.containsKey( spAc ) ) {
             proteins = (Collection) createdProteins.get( spAc );
-        }
-        else {
+        } else {
             proteins = getProteinsBySPTRAccessionNumber( spAc );
 
-            if ( 0 == proteins.size() ) {
+            if( 0 == proteins.size() ) {
                 // * If the protein does not exist, create it
 
                 // if it is an uniprot protein, create a full protein object
-                proteins.addAll(proteinFactory.insertSPTrProteins( spAc, taxId, true ));
+                proteins.addAll( proteinFactory.insertSPTrProteins( spAc, taxId, true ) );
 
-                System.err.print("P");
+                System.err.print( "P" );
 
                 // if it looks like an sgd protein, create it with an xref to sgd
-                if ((0 == proteins.size()) && (spAc.substring(0, 1 ).equals ( "S" )) ) {
-                    proteins.add ( proteinFactory.insertSPTrProteins( spAc, taxId, true ) );
+                if( ( 0 == proteins.size() ) && ( spAc.substring( 0, 1 ).equals( "S" ) ) ) {
+                    proteins.add( proteinFactory.insertSPTrProteins( spAc, taxId, true ) );
                 }
-            }
-            else {
+            } else {
                 System.err.print( "p" );
             }
 
@@ -250,21 +244,20 @@ public class InsertComplexMerck {
 
         Protein targetProtein = null;
         // Filter for the correct protein
-        for (Iterator i = proteins.iterator(); i.hasNext();) {
+        for( Iterator i = proteins.iterator(); i.hasNext(); ) {
             Protein tmp = (Protein) i.next();
-            if (tmp.getBioSource().getTaxId().equals( taxId ) && isThatACBelongsToThatProtein( tmp, spAc ) ) {
-                if (null == targetProtein) {
+            if( tmp.getBioSource().getTaxId().equals( taxId ) && isThatACBelongsToThatProtein( tmp, spAc ) ) {
+                if( null == targetProtein ) {
                     targetProtein = tmp;
-                }
-                else {
+                } else {
                     // should not happen
-                    throw new IntactException("More than one target protein found for: " + spAc );
+                    throw new IntactException( "More than one target protein found for: " + spAc );
                 }
             }
         }
 
-        if (null == targetProtein) {
-            throw new IntactException("No target protein found for: " + spAc );
+        if( null == targetProtein ) {
+            throw new IntactException( "No target protein found for: " + spAc );
         }
 
         // Complete the component
@@ -282,7 +275,7 @@ public class InsertComplexMerck {
      * @throws IntactException
      */
     private void persist( Object o ) throws IntactException {
-        if ( helper.isPersistent( o ) ) {
+        if( helper.isPersistent( o ) ) {
             helper.update( o );
         } else {
             helper.create( o );
@@ -293,18 +286,17 @@ public class InsertComplexMerck {
      * Inserts a complex into the database
      * If the complex already exists, it is skipped!
      *
-     * @param baitAC Swiss-Prot accession number of the bait protein.
-     * @param preyACs Swiss-Prot accession numbers of the prey proteins.
+     * @param baitAC          Swiss-Prot accession number of the bait protein.
+     * @param preyACs         Swiss-Prot accession numbers of the prey proteins.
      * @param experimentLabel The short label of the experiment the complex
-     belongs to.
+     *                        belongs to.
      * @throws Exception
      */
-    public void insertComplex(String baitAC,
-                              ArrayList preyACs,
-                              String experimentLabel,
-                              String commentTopicLabel,
-                              String commentTopicDescription
-                              ) throws Exception {
+    public void insertComplex( String baitAC,
+                               ArrayList preyACs,
+                               String experimentLabel,
+                               String commentTopicLabel,
+                               String commentTopicDescription ) throws Exception {
         // Get experiment
         Experiment experiment = (Experiment) helper.getObjectByLabel( Experiment.class, experimentLabel );
         if( null == experiment ) {
@@ -323,7 +315,7 @@ public class InsertComplexMerck {
                 experiment.addXref( pubmedRef );
 
                 persist( experiment );
-            } catch (Exception e) {
+            } catch ( Exception e ) {
                 // tough luck, we don't create that Xref and keep it quiet ...
             }
         }
@@ -332,13 +324,14 @@ public class InsertComplexMerck {
         // The label is the first two letters of the experiment label plus the interaction number
         String actLabel = baitAC + "-" + preyACs.get( 0 );
         Interaction interaction = (Interaction) helper.getObjectByLabel( Interaction.class, actLabel );
-        if ( null == interaction ) {
+        if( null == interaction ) {
             Collection experiments = new ArrayList();
             experiments.add( experiment );
 
             Collection components = new ArrayList();
 
             interaction = new InteractionImpl( experiments, components, cvInteractionType, actLabel, owner );
+            interaction.setBioSource( experiment.getBioSource() );
             persist( interaction );
 
             // Initialise list of proteins created
@@ -346,15 +339,15 @@ public class InsertComplexMerck {
 
             // add bait
 
-            insertComponent( interaction, baitAC, bioSource.getTaxId(), bait);
+            insertComponent( interaction, baitAC, bioSource.getTaxId(), bait );
 
             // add preys
-            for (int i = 0; i < preyACs.size(); i++) {
+            for( int i = 0; i < preyACs.size(); i++ ) {
                 String preyAc = (String) preyACs.get( i );
                 insertComponent( interaction, preyAc, bioSource.getTaxId(), prey );
             }
             // Add auxiliary data as comment
-            if ( commentTopicDescription != null && ! commentTopicDescription.trim().equals( "" ) ) {
+            if( commentTopicDescription != null && !commentTopicDescription.trim().equals( "" ) ) {
                 CvTopic topic = (CvTopic) helper.getObjectByLabel( CvTopic.class, commentTopicLabel );
                 Annotation comment = new Annotation( owner, topic );
                 comment.setAnnotationText( commentTopicDescription );
@@ -367,19 +360,17 @@ public class InsertComplexMerck {
 
             helper.update( interaction );
 
-            System.err.print("C");
-        }
-        else {
-            System.err.print("c");
+            System.err.print( "C" );
+        } else {
+            System.err.print( "c" );
         }
 
         persist( experiment );
     }
 
     /**
-     *
-     * @param filename the filename to parse
-     * @param taxId the taxId
+     * @param filename        the filename to parse
+     * @param taxId           the taxId
      * @param interactionType the CvInteractionType shortlabel which will
      *                        allow to retreive the right object from the
      *                        database and then to link it to the created
@@ -392,21 +383,21 @@ public class InsertComplexMerck {
         BioSourceFactory bioSourceFactory = new BioSourceFactory( helper, owner );
         bioSource = bioSourceFactory.getValidBioSource( taxId );
 
-        if ( bioSource == null ) {
-            System.out.println ( "Cound not find that bioSource (taxid="+ taxId +"). exit..." );
+        if( bioSource == null ) {
+            System.out.println( "Cound not find that bioSource (taxid=" + taxId + "). exit..." );
             return;
         }
 
-        cvInteractionType = (CvInteractionType) helper.getObjectByLabel(CvInteractionType.class, interactionType);
-        if ( cvInteractionType == null ) {
-            System.out.println ( "Cound not find that interaction type (cvInteractionType.shortlabel="+
-                                 interactionType +"). exit..." );
+        cvInteractionType = (CvInteractionType) helper.getObjectByLabel( CvInteractionType.class, interactionType );
+        if( cvInteractionType == null ) {
+            System.out.println( "Cound not find that interaction type (cvInteractionType.shortlabel=" +
+                                interactionType + "). exit..." );
             return;
         }
 
         // TODO: REFACTOR THIS TO USE THE BeanReader
 
-        FileReader fr       = null;
+        FileReader fr = null;
         BufferedReader file = null;
         try {
             fr = new FileReader( filename );
@@ -415,11 +406,11 @@ public class InsertComplexMerck {
             String line;
             int lineCount = 0;
 
-            System.out.print("Lines processed: ");
+            System.out.print( "Lines processed: " );
 
-            while (null != (line = file.readLine())) {
+            while( null != ( line = file.readLine() ) ) {
 
-                if ( line.trim().equals("") ) continue; // skip blank line
+                if( line.trim().equals( "" ) ) continue; // skip blank line
 
                 // Tokenize lines
                 StringTokenizer st = new StringTokenizer( line );
@@ -430,16 +421,15 @@ public class InsertComplexMerck {
 
                 // Read the remainder of the line
                 StringBuffer comment = new StringBuffer();
-                while (st.hasMoreTokens()) {
-                    comment.append(st.nextToken());
-                    comment.append(" ");
+                while( st.hasMoreTokens() ) {
+                    comment.append( st.nextToken() );
+                    comment.append( " " );
                 }
 
                 // Insert results into database
                 try {
                     insertComplex( baitAC, preys, experimentLabel, "remark", comment.toString() );
-                }
-                catch (Exception ie) {
+                } catch ( Exception ie ) {
                     ie.printStackTrace();
                     System.err.println();
                     System.err.println( "Error while processing input line lineCount: " );
@@ -448,25 +438,26 @@ public class InsertComplexMerck {
                 }
 
                 // Progress report
-                if ((++lineCount % 1) == 0) {
-                    System.out.print(lineCount + " ");
-                }
-                else {
-                    System.out.println(".");
+                if( ( ++lineCount % 1 ) == 0 ) {
+                    System.out.print( lineCount + " " );
+                } else {
+                    System.out.println( "." );
                 }
             }
             System.out.println( NEW_LINE );
         } finally {
             // close opened streams.
-            if(file != null) {
+            if( file != null ) {
                 try {
                     file.close();
-                } catch( IOException ioe) {}
+                } catch ( IOException ioe ) {
+                }
             }
-            if( fr != null ){
+            if( fr != null ) {
                 try {
                     fr.close();
-                } catch( IOException ioe) {}
+                } catch ( IOException ioe ) {
+                }
             }
         }
     }
@@ -476,9 +467,9 @@ public class InsertComplexMerck {
      */
     public void closeHelper() {
         try {
-            if (helper != null) helper.closeStore();
+            if( helper != null ) helper.closeStore();
         } catch ( IntactException e ) {
-            e.printStackTrace ();
+            e.printStackTrace();
         }
     }
 
@@ -491,7 +482,7 @@ public class InsertComplexMerck {
                              options );
     }
 
-    private static void displayLegend( ){
+    private static void displayLegend() {
         System.out.println( "Legend:" );
         System.out.println( "C: new Complex created." );
         System.out.println( "c: Complex already existing." );
@@ -501,39 +492,38 @@ public class InsertComplexMerck {
 
     /**
      * Read complex data from flat file and insert it into the database.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * Format of the file: One line describe one binary interaction as follow,
-     *                     PREY BAIT EXPERIMENT DESCRIPTION,
-     *                     PREY and BAIT are swiss-prot ACs,
-     *                     EXPERIMENT is preferably a PUBMED id,
-     *                     DESCRIPTION is the rest of the line (stored as an Annotation).
+     * PREY BAIT EXPERIMENT DESCRIPTION,
+     * PREY and BAIT are swiss-prot ACs,
+     * EXPERIMENT is preferably a PUBMED id,
+     * DESCRIPTION is the rest of the line (stored as an Annotation).
      * </p>
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * Warning: there is no managment of transaction isolation, they have been removed because
-     *          nothing were written in the database.
-     *          So, if anything goes wrong during the loading, the program doesn't stop and
-     *          some objects may hang around.
+     * nothing were written in the database.
+     * So, if anything goes wrong during the loading, the program doesn't stop and
+     * some objects may hang around.
      * </p>
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * Usage of the program:
-     *
-     *          InsertComplexMerck -file <your_file> -taxId <taxId> -interactionType <type>
+     * <p/>
+     * InsertComplexMerck -file <your_file> -taxId <taxId> -interactionType <type>
      * </p>
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * Developper note: the command line interface uses common-cli (jakarta)
      * </p>
      *
      * @param args [0] InputFileName,
      *             [1] the tax id of the target proteins,
      *             [2] the interaction type of the experiment.
-     *
      * @throws Exception for any errors.
      */
-    public static void main(String[] args) throws Exception {
+    public static void main( String[] args ) throws Exception {
 
         // create Option objects
         Option helpOpt = new Option( "help", "print this message" );
@@ -552,8 +542,8 @@ public class InsertComplexMerck {
 
         Option interactionTypeOpt = OptionBuilder.withArgName( "CvInteractionType.shortLabel" )
                 .hasArg()
-                .withDescription ( "Shortlabel of the existing " +
-                                   "CvInteractionType to link to that Complex" )
+                .withDescription( "Shortlabel of the existing " +
+                                  "CvInteractionType to link to that Complex" )
                 .create( "interactionType" );
         // Not mandatory.
         // interactionTypeOpt.setRequired( true );
@@ -577,30 +567,29 @@ public class InsertComplexMerck {
             }
 
             // These argument are mandatory.
-            String filename        = line.getOptionValue( "file" );
-            String taxid           = line.getOptionValue( "taxId" );
+            String filename = line.getOptionValue( "file" );
+            String taxid = line.getOptionValue( "taxId" );
             String interactionType = line.getOptionValue( "interactionType" );
 
             try {
                 HttpProxyManager.setup();
             } catch ( HttpProxyManager.ProxyConfigurationNotFound proxyConfigurationNotFound ) {
-                proxyConfigurationNotFound.printStackTrace ();
+                proxyConfigurationNotFound.printStackTrace();
             }
 
-            displayLegend( );
+            displayLegend();
 
             InsertComplexMerck tool = new InsertComplexMerck();
             tool.insert( filename, taxid, interactionType );
             tool.closeHelper();
-        }
-        catch( ParseException exp ) {
+        } catch ( ParseException exp ) {
             // Oops, something went wrong
 
-            displayUsage(options);
+            displayUsage( options );
 
             System.err.println( "Parsing failed.  Reason: " + exp.getMessage() );
             System.exit( 1 );
-        } catch (Exception e) {
+        } catch ( Exception e ) {
             e.printStackTrace();
             System.exit( 1 );
         }
