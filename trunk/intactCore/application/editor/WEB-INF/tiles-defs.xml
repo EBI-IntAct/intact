@@ -88,14 +88,6 @@
         <put name="editor-info" value="interaction.layout"/>
     </definition>
 
-    <!-- Read only layouts -->
-    <definition name="ro.edit.cv.layout" path="/layouts/ro_cvLayout.jsp">
-        <put name="cv-info" value="/pages/ro_cvInfo.jsp"/>
-        <put name="comments" value="/pages/ro_comments.jsp"/>
-        <put name="xrefs" value="/pages/ro_xrefs.jsp"/>
-        <put name="action" value="/pages/ro_action.jsp"/>
-    </definition>
-
     <!-- =============== Definitions related to pages ================= -->
 
     <!-- The header layout. The controller may change the header when editing
@@ -148,21 +140,6 @@
     <definition name="error.layout" extends="login.layout">
         <put name="content" value="/pages/error.jsp"/>
         <put name="sidebar" value="search.sidebar.layout"/>
-    </definition>
-
-    <!-- Read only layouts -->
-
-    <definition name="ro.header.layout" path="/layouts/headerLayout.jsp"
-        controllerUrl="/do/tiles/headerSwitch">
-        <put name="header.title" value="View"/>
-    </definition>
-
-    <!-- Read only page description. -->
-    <definition name="ro.edit.layout" path="/layouts/ro_editorLayout.jsp">
-        <put name="title"  value="View"/>
-        <put name="header" value="ro.header.layout"/>
-        <put name="content" value="ro.edit.cv.layout"/>
-        <put name="footer" value="/pages/footer.jsp"/>
     </definition>
 
 </tiles-definitions>
