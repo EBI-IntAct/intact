@@ -955,8 +955,8 @@ Displaying <b><%= firstDisplayIndex %></b> to
                 <a href="<%= firstFeature.getCvFeatureTypeSearchURL() %>">
                     <%= firstFeature.getFeatureType().toUpperCase() %>
                 </a>
-                &nbsp;
-                <%= firstFeature.getFeatureName() %> of <%= firstFeature.getProteinName() %>
+
+                <%=firstFeature.getFeatureName()%> of <%=firstFeature.getProteinName()%>
                 <%
                      //now do the Ranges...
                      Collection ranges = firstFeature.getFeature().getRanges();
@@ -969,9 +969,10 @@ Displaying <b><%= firstDisplayIndex %></b> to
                         }
                         buf.append("]");
                         rangeString = buf.toString();
+                        rangeString.trim(); 
                      }
                 %>
-                <%= rangeString %> &nbsp;
+                <%=rangeString %>
 
                 <%
                      //only need some brackets if we have Xrefs to display..
@@ -985,8 +986,8 @@ Displaying <b><%= firstDisplayIndex %></b> to
                         Xref xref = (Xref)iter1.next();
                 %>
                 <a href="<%= firstFeature.getPrimaryIdURL(xref) %>">
-                    <%= xref.getPrimaryId()%>
-                </a>&nbsp;
+                    <%=xref.getPrimaryId()%>
+                </a>
                 <%
                     }   //end of Feature Xref loop
                 %>
@@ -996,8 +997,8 @@ Displaying <b><%= firstDisplayIndex %></b> to
                 %>
                 detected by
                 <%-- ** THERE IS NO CVFEATUREDETECTION CLASS!! - ASSUME it should be 'identification'..** --%>
-                <a href="<%= firstFeature.getCvFeatureIdentSearchURL()%>">
-                    <%= firstFeature.getFeatureIdentificationName() %>
+                <a href="<%=firstFeature.getCvFeatureIdentSearchURL()%>">
+                    <%=firstFeature.getFeatureIdentificationName() %>
                 </a>
                 , interacts with
 
@@ -1010,7 +1011,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
                 <a href="<%= firstBoundFeature.getCvFeatureTypeSearchURL() %>">
                     <%= firstBoundFeature.getFeatureType().toUpperCase() %>
                 </a>
-                &nbsp;
+
                 <%= firstBoundFeature.getFeatureName() %> of <%= firstBoundFeature.getProteinName() %>
                 <%
                      //now do the Ranges for the linked Feature (may reuse the other vars)...
@@ -1075,14 +1076,14 @@ Displaying <b><%= firstDisplayIndex %></b> to
 
 
                 <%-- feature type info, plus search link --%>
-                <td class="data" style="vertical-align: top;" rowspan="1" colspan="6">
+                <td class="data" style="vertical-align: top;" rowspan="1" colspan="8">
 
                     <a href="<%= firstFeature.getCvFeatureTypeSearchURL() %>">
                         <%= firstFeature.getFeatureType().toUpperCase() %>
                     </a>
                     &nbsp;
                     <%= firstFeature.getFeatureName() %> of <%= firstFeature.getProteinName() %>
-                    &nbsp;
+
                     <%
                      //now do the Ranges...
                      Collection ranges = firstFeature.getFeature().getRanges();
@@ -1097,12 +1098,12 @@ Displaying <b><%= firstDisplayIndex %></b> to
                         rangeString = buf.toString();
                      }
                 %>
-                    <%= rangeString %> &nbsp;
+                    <%= rangeString %>
                     <%
                      //it seems sometimes the detection beans are not present!
                      if(!firstFeature.getCvFeatureIdentSearchURL().equals("")) {
                     %>
-                        detected by &nbsp;
+                        detected by 
 
                     <%-- ** CVFEATUREDETECTION DOES NOT EXIST ** is this 'identification'? --%>
                     <a href="<%= firstFeature.getCvFeatureIdentSearchURL()%>">
@@ -1134,7 +1135,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
                 </td>
                 --%>
 
-                <td class="data" style="vertical-align: top;" rowspan="1" colspan="6">
+                <td class="data" style="vertical-align: top;" rowspan="1" colspan="8">
 
                     <%-- link 1 --%>
                     <a href="<%= linkedFeature.getCvFeatureTypeSearchURL() %>">
@@ -1271,14 +1272,14 @@ Displaying <b><%= firstDisplayIndex %></b> to
 
 
                 <%-- feature type info, plus search link --%>
-                <td class="data" style="vertical-align: top;" rowspan="1" colspan="6">
+                <td class="data" style="vertical-align: top;" rowspan="1" colspan="8">
 
                     <a href="<%= singleFeature.getCvFeatureTypeSearchURL() %>">
                         <%= singleFeature.getFeatureType().toUpperCase() %>
                     </a>
                     &nbsp;
                     <%= singleFeature.getFeatureName() %> of <%= singleFeature.getProteinName() %>
-                    &nbsp;
+
                     <%
                      //now do the Ranges...
                      Collection ranges = singleFeature.getFeature().getRanges();
@@ -1295,7 +1296,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
                 %>
 
 
-                    <%= rangeString %> &nbsp;
+                    <%= rangeString %>
                     <%
                         //it seems sometimes the detection beans are not present!
                         if(!singleFeature.getCvFeatureIdentSearchURL().equals("")) {
