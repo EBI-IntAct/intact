@@ -68,22 +68,10 @@ public class CommentEditAction extends CvAbstractAction {
             cb.setEditState(false);
         }
         else if (theForm.savePressed()) {
-            // Save button pressed.
-            Annotation annot = null;
-            try {
-                annot = doSaving(user, cb);
-            }
-            catch (SearchException se) {
-                // Can't query the database.
-                super.log(ExceptionUtils.getStackTrace(se));
-                // Clear any previous errors.
-                super.clearErrors();
-                super.addError("error.search", se.getMessage());
-                super.saveErrors(request);
-                return mapping.findForward(CvEditConstants.FORWARD_FAILURE);
-            }
             // The annotation to update.
-            viewbean.addAnnotationToUpdate(annot);
+            viewbean.addAnnotationToUpdate(cb);
+            // Back to edit
+            cb.setEditState(true);
         }
         else if (theForm.deletePressed()) {
             // Delete is pressed.
@@ -94,25 +82,5 @@ public class CommentEditAction extends CvAbstractAction {
             assert false;
         }
         return mapping.findForward(CvEditConstants.FORWARD_SUCCESS);
-    }
-
-    // Helper methods
-
-    private Annotation doSaving(IntactUserIF user, CommentBean cb)
-            throws SearchException {
-        // Update with the new description.
-        Annotation annot = cb.getAnnotation();
-        annot.setAnnotationText(cb.getDescription());
-
-        // Only update the topic if they differ.
-        String topic = cb.getTopic();
-        if (!topic.equals(annot.getCvTopic().getShortLabel())) {
-            // Get the topic object for the new annotation.
-            CvTopic cvtopic = (CvTopic) user.getObjectByLabel(CvTopic.class, topic);
-            annot.setCvTopic(cvtopic);
-        }
-        // Back to edit
-        cb.setEditState(true);
-        return annot;
     }
 }
