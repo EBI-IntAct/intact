@@ -131,6 +131,15 @@ public class ResultBean implements Serializable {
     }
 
     /**
+     * Returns the owner of the current lock without HTML.
+     * @return the current lock owner with no HTML.
+     */
+    public String getLockOwnerSimple() {
+        LockManager.LockObject lock = LockManager.getInstance().getLock(getAc());
+        return lock.getOwner();
+    }
+
+    /**
      * Get method for results.jsp
      * @return true if this bean is locked or false is returned for otherwise.
      */
