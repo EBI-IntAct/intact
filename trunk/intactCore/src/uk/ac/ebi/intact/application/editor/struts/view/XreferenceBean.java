@@ -216,7 +216,7 @@ public class XreferenceBean extends AbstractEditKeyBean implements Serializable 
      */
     private void initialize(Xref xref) {
         myXref = xref;
-        myDatabaseName = xref.cvDatabase.getShortLabel();
+        myDatabaseName = xref.getCvDatabase().getShortLabel();
         myPrimaryId = xref.getPrimaryId();
         mySecondaryId = xref.getSecondaryId();
         myReleaseNumber = xref.getDbRelease();

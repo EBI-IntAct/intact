@@ -63,8 +63,8 @@ public class ResultAction extends AbstractEditorAction {
         // The object we are editing presently.
         user.updateView(annobj);
 
-        LOGGER.info("Numner of annotations: " + annobj.getAnnotation().size());
-        LOGGER.info("Number of xrefs: " + annobj.getXref().size());
+        LOGGER.info("Numner of annotations: " + annobj.getAnnotations().size());
+        LOGGER.info("Number of xrefs: " + annobj.getXrefs().size());
 
         return mapping.findForward(FORWARD_SUCCESS);
     }

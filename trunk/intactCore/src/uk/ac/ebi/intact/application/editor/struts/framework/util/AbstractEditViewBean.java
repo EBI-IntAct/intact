@@ -115,8 +115,8 @@ public abstract class AbstractEditViewBean {
         // Cache the annotations and xrefs here to save it from loading
         // multiple times with each invocation to getAnnotations()
         // or getXrefs() methods.
-        makeCommentBeans(annot.getAnnotation());
-        makeXrefBeans(annot.getXref());
+        makeCommentBeans(annot.getAnnotations());
+        makeXrefBeans(annot.getXrefs());
     }
 
     /**
@@ -427,8 +427,8 @@ public abstract class AbstractEditViewBean {
      */
     public void clear() {
         // Delete all the annotations and xrefs.
-        myAnnotObject.getAnnotation().clear();
-        myAnnotObject.getXref().clear();
+        myAnnotObject.getAnnotations().clear();
+        myAnnotObject.getXrefs().clear();
         // Need to rebuild the menu again. Remove it from cache.
         removeMenu();
         // Clear Transaction containers.
