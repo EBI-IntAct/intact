@@ -4,9 +4,7 @@ import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.application.graph2MIF.exception.ElementNotParseableException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+import org.w3c.dom.*;
 
 
 import java.util.*;
@@ -25,15 +23,9 @@ public class FileGenerator {
 
     // if an experiment has more than this many interactions it is considered to be large scale.
     //NB changed for testing - usually 100
-    public static final int SMALLSCALELIMIT = 1;
+    public static final int SMALLSCALELIMIT = 1000;
 
     private IntactHelper helper;
-
-    /**
-     * Used to accumulate those Experiments which contain a large number of
-     * Interactions (currently more than 1000)
-     */
-    private static Collection largeExperimentList = new ArrayList();
 
     /**
      * The class to build the file data in the required format
@@ -81,7 +73,6 @@ public class FileGenerator {
      */
     public void buildFileData(Collection searchResults) throws ElementNotParseableException {
 
-        int i = 1;
         System.err.println("Building flat file data......");
         System.err.println("Experiments to process: " + searchResults.size());
         builder.processExperiments(searchResults);
@@ -173,16 +164,9 @@ public class FileGenerator {
 
                 Collection interactions = exp.getInteractions();
                 size = interactions.size();
-                System.out.println("number of Interactions for " + exp.getShortLabel()
+                System.err.println("number of Interactions for " + exp.getShortLabel()
                 + " = " + size);
-                // Avoid outOfMemory from huge datasets (Giot)
-                //NB use a a small size here for testing!!...
-                if (size>1000){
-                    //add to the large experiments list for different processing
-                    System.out.println("adding a large experiment to list...");
-                    largeExperimentList.add(exp);
-                    continue;
-                }
+
                 //THIS is where OJB loads ALL the Interactions - a call to Iterator..
                 Interaction interaction = (Interaction) interactions.iterator().next();
                 Collection components = interaction.getComponents();
@@ -219,149 +203,160 @@ public class FileGenerator {
     }
 
     /**
-     * Generates a PSI MI formatted file for a searchPattern.
+     * Generates a PSI MI formatted file for a searchPattern. Large scale
+     * Experiments will typically be a searchpattern of a single shortlabel, and
+     * these are processed as chunks. Small scale ones will generally have a searchpattern
+     * consisting of multiple shortlabels, and these will be placed into a single file.
      * @param searchPattern
      * @param fileName
      * @throws Exception
      */
     public static void generatePsiData(String searchPattern, String fileName)
             throws Exception {
-        IntactHelper helper = new IntactHelper();
 
-        //obtain data, probably experiment by experiment, build
-        //PSI data for it then write it to a file....
+        IntactHelper helper = new IntactHelper();
         DataBuilder builder = new PsiDataBuilder();
         FileGenerator generator = new FileGenerator(helper, builder);
-        generator.buildFileData(generator.getDbData(searchPattern));
+
+        //get all of the Experiment shortlabels and process them according
+        //to the size of their interaction list..
+        //NB this currently means that if the search result size
+        //is one and the number of interactions is large then we process seperately.
+        Collection searchResults = generator.getDbData(searchPattern);
+        if(searchResults.size() == 1) {
+            //may be a large experiment - check and process if necessary
+            Experiment exp = (Experiment)searchResults.iterator().next();
+            if(exp.getInteractions().size() > FileGenerator.SMALLSCALELIMIT) {
+                System.err.println("processing large experiment "
+                        + exp.getShortLabel() + " ....");
+                FileGenerator.processLargeExperiment(exp);
+                return;     //done
+            }
+        }
+        //not a large experiment - may be a single small one or a set of small ones,
+        //so process 'normally' into a single file...
+        generator.buildFileData(searchResults);
         generator.generateFile(fileName);
 
         if (helper != null) helper.closeStore();
+
     }
 
-    public static void processLargeExperiments() throws Exception {
+    public static void processLargeExperiment(Experiment exp) throws Exception {
 
         //Too many statics - now we have to create lots of unnecessary objects..
-        IntactHelper helper = new IntactHelper();
         PsiDataBuilder builder = new PsiDataBuilder(); //need a specific one here
-        FileGenerator generator = new FileGenerator(helper, builder);
 
-        if (!FileGenerator.largeExperimentList.isEmpty()) {
-            //need to process the big ones chunk by chunk -
-            //do this by splitting the Interactions into manageable
-            //pieces (1000 each), building and writing some XML to seperate
-            //files, and then merging them all.
-            //NB this last step may have to ve done in a seperate process..
-            int startIndex = 0;
-            int endIndex = 1000;
-            //int endIndex = 2;  //test size for eg small Ho NB END INDEX IS EXCLUSIVE!!
-            int chunkCount = 1; //used to distinguish files
-            String mainFileName = null;
-            List itemsToProcess = null;
+        //need to process the big ones chunk by chunk -
+        //do this by splitting the Interactions into manageable
+        //pieces (1000 each), then building and writing some XML to seperate
+        //files....
+        int startIndex = 0;
+        int endIndex = 1000; //NB END INDEX IS EXCLUSIVE!!
+        //int endIndex = 2;
+        int chunkCount = 1; //used to distinguish files
+        String mainFileName = null;
+        List itemsToProcess = null;
 
-            //set up the basic PSI stuff..
-            //Document singleFileDoc = builder.getCurrentDocument();
-            Document singleFileDoc = builder.newPsiDoc(true);
-            Node root = singleFileDoc.getDocumentElement();
-            if(!root.hasChildNodes()) throw new Exception("Fatal Error initialising PSI document!");
-            Node entry = root.getFirstChild(); //this is the entry Node
+        //set up the basic PSI stuff..
+        //Document singleFileDoc = builder.getCurrentDocument();
+        Document singleFileDoc = builder.newPsiDoc(true);
+        Node root = singleFileDoc.getDocumentElement();
+        if (!root.hasChildNodes()) throw new Exception("Fatal Error initialising PSI document!");
+        Node entry = root.getFirstChild(); //this is the entry Node
 
-            for (Iterator it = FileGenerator.largeExperimentList.iterator(); it.hasNext();) {
-                Experiment exp = (Experiment)it.next();
-                //first need to build a file with just the initial PSI info..
-                //String rootPsiDoc = exp.getShortLabel() + "_psi_entry.xml";
-                //builder.writeData(rootPsiDoc, builder.getCurrentDocument());
+        //first need to build a file with just the initial PSI info..
+        //String rootPsiDoc = exp.getShortLabel() + "_psi_entry.xml";
+        //builder.writeData(rootPsiDoc, builder.getCurrentDocument());
 
-                //build the interactionList files..
-                System.out.println("generating Interaction files for experiment "
-                        + exp.getShortLabel() + ": Blocks completed: ");
-                mainFileName = exp.getShortLabel() + "_interactions_";  //chunk number added later
-                Collection interactions = exp.getInteractions();
-                //System.out.println("Number of interactions found: " + interactions.size());
-                //System.out.println("Type of interaction Collection: " + interactions.getClass().getName());
-                //Lists are easier to work with...
-                if (List.class.isAssignableFrom(interactions.getClass())) {
-                    while(startIndex < interactions.size()) {
-                        if(endIndex > interactions.size()) endIndex = interactions.size(); //check for the end
-                        itemsToProcess = ((List) interactions).subList(startIndex, endIndex);
-                        //System.out.println("number of interactions per chunk: " + itemsToProcess.size());
-                        //now build the XML and generate a file for it...
-                        if(!itemsToProcess.isEmpty()) {
+        //build the interactionList files..
+        System.out.println("generating Interaction files for experiment "
+                + exp.getShortLabel() + ": Blocks completed: ");
+        mainFileName = exp.getShortLabel() + "_interactions_";  //chunk number added later
+        Collection interactions = exp.getInteractions();
+        //System.out.println("Number of interactions found: " + interactions.size());
+        //System.out.println("Type of interaction Collection: " + interactions.getClass().getName());
+        //Lists are easier to work with...
+        if (List.class.isAssignableFrom(interactions.getClass())) {
+            while (startIndex < interactions.size()) {
+                if (endIndex > interactions.size()) endIndex = interactions.size(); //check for the end
+                itemsToProcess = ((List) interactions).subList(startIndex, endIndex);
+                //System.out.println("number of interactions per chunk: " + itemsToProcess.size());
+                //now build the XML and generate a file for it...
+                if (!itemsToProcess.isEmpty()) {
 
-                            //build a Document containing the PSI info, the Experiment
-                            //info, the interactionList and the interactorList for
-                            //each chunk of interactions, then dump to a file
-                            System.out.println("Generating InteractionList for chunk "
-                                    + chunkCount + "...");
-                            System.out.println();
-                            Node interactionRoot = singleFileDoc.importNode(builder.buildInteractionsOnly(itemsToProcess), true);
+                    //build a Document containing the PSI info, the Experiment
+                    //info, the interactionList and the interactorList for
+                    //each chunk of interactions, then dump to a file
+                    System.out.println("Generating InteractionList for chunk "
+                            + chunkCount + "...");
+                    System.out.println();
+                    Node interactionRoot = singleFileDoc.importNode(builder.buildInteractionsOnly(itemsToProcess), true);
 
-                            //now the interactionList has been built we can get at the other info...
-                            //NB need to rearrange the order of child appending, but AFTER
-                            //generation of interactions...
-                            System.out.println();
-                            System.out.println("Generating ExperimentList for chunk "
-                                    + chunkCount + "...");
-                            System.out.println();
-                            Node expRoot = singleFileDoc.importNode(builder.getExperimentList(), true);
+                    //now the interactionList has been built we can get at the other info...
+                    //NB need to rearrange the order of child appending, but AFTER
+                    //generation of interactions...
+                    System.out.println();
+                    System.out.println("Generating ExperimentList for chunk "
+                            + chunkCount + "...");
+                    System.out.println();
+                    Node expRoot = singleFileDoc.importNode(builder.getExperimentList(), true);
 
-                            System.out.println("Generating InteractorList for chunk "
-                                    + chunkCount + "...");
-                            System.out.println();
-                            Node interactorRoot = singleFileDoc.importNode(builder.getInteractorList(), true);
+                    System.out.println("Generating InteractorList for chunk "
+                            + chunkCount + "...");
+                    System.out.println();
+                    Node interactorRoot = singleFileDoc.importNode(builder.getInteractorList(), true);
 
-                            //Now add the new elements into the root to be dumped...
-                            //NB this is the current order of the PSI elements...
-                            entry.appendChild(expRoot);
-                            entry.appendChild(interactorRoot);
-                            entry.appendChild(interactionRoot);
+                    //Now add the new elements into the root to be dumped...
+                    //NB this is the current order of the PSI elements...
+                    entry.appendChild(expRoot);
+                    entry.appendChild(interactorRoot);
+                    entry.appendChild(interactionRoot);
 
-                            //interactionList = builder.buildInteractionsOnly(itemsToProcess);
-                            String fileName = mainFileName + chunkCount + ".xml";
-                            //builder.writeData(fileName, interactionList);
-                            System.out.println("Dumping chunk data...");
-                            builder.writeData(fileName, singleFileDoc);
-                            System.out.println("chunk " + chunkCount + " complete.");
-                            System.out.println();
+                    //interactionList = builder.buildInteractionsOnly(itemsToProcess);
+                    String fileName = mainFileName + chunkCount + ".xml";
+                    //builder.writeData(fileName, interactionList);
+                    System.out.println("Dumping chunk data...");
+                    builder.writeData(fileName, singleFileDoc);
+                    System.out.println("chunk " + chunkCount + " complete.");
+                    System.out.println();
 
-                            //now need to reset the singleFileDoc for the next chunk..
-                            singleFileDoc = builder.newPsiDoc(true);
-                            root = singleFileDoc.getDocumentElement();
-                            entry = root.getFirstChild();
+                    //now need to reset the singleFileDoc for the next chunk..
+                    singleFileDoc = builder.newPsiDoc(true);
+                    root = singleFileDoc.getDocumentElement();
+                    entry = root.getFirstChild();
 
-                            chunkCount++;
-                            startIndex = endIndex;
-                            endIndex = endIndex + 1000;
-                            //endIndex = endIndex + 2; //should normally be eg 1000
-                        }
-                        //if it is empty we have done the last one already
-
-                        //dump the interactorList for this chunk - NB
-                        //this is not the best as it SHOULD have them all at th end but
-                        //currently it does not. Don't have time to debug this right now!!
-                        //System.out.println("Dumping interactorList XML...");
-                        //String protListFile = exp.getShortLabel() + "_interactorList"
-                       //         + chunkCount + ".xml";
-                        //builder.writeData(protListFile, builder.getInteractorList());
-                    }
+                    chunkCount++;
+                    startIndex = endIndex;
+                    endIndex = endIndex + 1000;
+                    //endIndex = endIndex + 2; //should normally be eg 1000
                 }
-                //This will only NOT be a List if someone changes the model
-                //data types!!
-
-                //now dump the ExperimentList
-                //System.out.println(("Dumping ExperimentList XML.."));
-                //String expListFile = exp.getShortLabel() + "_experimentList.xml";
-                //builder.writeData(expListFile, builder.getExperimentList());
-
-                //dump the interactorList - NB can only do this at the end
-                //System.out.println("Dumping interactorList XML...");
-                //String protListFile = exp.getShortLabel() + "_interactorList.xml";
-                //builder.writeData(protListFile, builder.getInteractorList());
 
             }
+        }
+        else {
+            //This will only NOT be a List if someone changes the model
+            //data types!!
+            throw new Exception("can't process large experiment - " +
+                    "the Collection of Interactions must be a List but is instead " +
+                    interactions.getClass().getName());
         }
 
     }
 
+    /**
+     * Main method for the PSI application. The application is typically run twice -
+     * firstly with a wildcard ('%') argument to generate a file containing classifications
+     * into species of experiment labels, then secondly to use that file to generate the
+     * PSI XML data for each classification. This secodn step is handled via a perl script
+     * which repeatedly calls this application to generate the files. Note that the
+     * exceptions to the species classification are large-scale experiments (as defined
+     * by the SMALLSCALELIMIIT constant) - these cannot be put into XMl files with other
+     * experiments due to size and memory constraints, and so they are generated in 'chunks'
+     * of data divided by 'chunks' of interactions.
+     * @param args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
 
         try {
@@ -383,7 +378,7 @@ public class FileGenerator {
                     System.err.println("FileName: " + fileName);
                     generatePsiData(searchPattern, fileName);
                 }
-                processLargeExperiments();
+
 
             } else {
                 System.err.println("Usage: psiRun.sh FileGenerator <searchPattern> [<filename>] ");
