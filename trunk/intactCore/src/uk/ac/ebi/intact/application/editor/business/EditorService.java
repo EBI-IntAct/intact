@@ -6,12 +6,13 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.business;
 
-import java.util.*;
+import org.apache.commons.collections.CollectionUtils;
+import uk.ac.ebi.intact.application.editor.exception.EmptyTopicsException;
+
+import javax.servlet.ServletRequest;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import uk.ac.ebi.intact.application.editor.exception.EmptyTopicsException;
-import org.apache.commons.collections.CollectionUtils;
+import java.util.*;
 
 /**
  * This class provides the general editor services common to all the users.
@@ -41,6 +42,11 @@ public class EditorService {
      * Reference to Newt proxy server URL.
      */
     private URL myNewtServerUrl;
+
+    /**
+     * Reference to the help server URL.
+     */
+    private URL myHelpUrl;
 
     /**
      * Construts with the resource file.
@@ -78,7 +84,8 @@ public class EditorService {
     /**
      * Returns a collection of Intact types.
      * @return an <code>ArrayList</code> of Intact types. The list sorted on an
-     * alphabetical order.
+     * alphabetical order. Since this reference refers to this class's
+     * internal cache, handle this reference with care (do not modify contents).
      */
     public Collection getIntactTypes() {
         return myTopicsCache;
@@ -107,7 +114,30 @@ public class EditorService {
      * @return the help HTML snippet as a String.
      */
     public String getHelpLinkAsHTML(String server, String tag, String title) {
-        String link = server + myResources.getString("help.url") + "#" + tag;
+        String link = server + "#" + tag;
         return "<a target=\"help\" href=\"" + link + "\">" + title + "</a>";
+    }
+
+    /**
+     * Returns the link to the help.
+     * @param request the request object to get the server name and host.
+     * This is only used once when this method is called for the first time.
+     * For subsequent calls, the cached  URL value is returned.
+     * @return the URL to the help page or null is returned if a valid URL
+     * cannot be constructed from <code>request</code> and "hrlp.url" in
+     * the Editor properties file.
+     */
+    public String getHelpLink(ServletRequest request) {
+        if (myHelpUrl == null) {
+            try {
+                myHelpUrl = new URL("http", request.getServerName(),
+                        request.getServerPort(), myResources.getString("help.url"));
+            }
+            catch (MalformedURLException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        return myHelpUrl.toExternalForm();
     }
 }
