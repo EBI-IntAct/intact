@@ -12,6 +12,8 @@ import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.DuplicateLabelException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractROViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 
 import java.util.Collection;
 import java.util.Date;
@@ -104,6 +106,16 @@ public interface EditUserI extends Serializable {
      * as unable to construct an instance).
      */
     public DynaBean getDynaBean(String formName, HttpServletRequest request);
+
+    /**
+     * Returns a EditForm constructed using given form name
+     * @param formName the name of the form.
+     * @return the <code>EditForm</code> form. A cached form is
+     * returned if a form exists in the local cache saved under
+     * <code>formName</code> or else a new form is created and
+     * saved in the cache before returning it.
+     */
+    public EditForm getEditForm(String formName);
 
     // Search methods
 
@@ -240,4 +252,8 @@ public interface EditUserI extends Serializable {
     public Date loginTime();
 
     public Date logoffTime();
+
+    public AbstractROViewBean getReadOnlyView(Class clazz,
+                                                   String shortLabel)
+            throws DuplicateLabelException;
 }
