@@ -16,7 +16,7 @@
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/tld/editor.tld" prefix="editor"%>
+<%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
 
 <html:form action="/sidebar" focus="AC">
     <table>
@@ -39,7 +39,7 @@
                         </td>
                         <td><html:text property="searchString" size="12"/></td>
                         <td>
-                            <editor:helpLink tag="search"/>
+                            <intact:documentation section="editor.search" />
                         </td>
                     </tr>
                     <tr>
@@ -49,7 +49,7 @@
                             </html:submit>
                         </td>
                         <td>
-                            <editor:helpLink tag="cv.editors"/>
+                            <intact:documentation section="editor.cv.editors" />
                         </td>
                     </tr>
                 </table>

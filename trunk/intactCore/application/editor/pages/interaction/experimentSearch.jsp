@@ -14,7 +14,7 @@
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/tld/editor.tld" prefix="editor"%>
+<%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
 
 <html:form action="/interaction/experiment/search">
     <table width="50%" border="0" cellspacing="1" cellpadding="2">
@@ -24,7 +24,7 @@
             <th class="tableCellHeader" width="30%">SP AC</th>
             <th class="tableCellHeader" width="30%">IntAct AC</th>
             <th>
-                <editor:helpLink tag="int.experiments"/>
+                <intact:documentation section="editor.int.experiments"/>
             </th>
         </tr>
         <tr class="tableRowEven">

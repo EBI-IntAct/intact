@@ -14,7 +14,7 @@
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/tld/editor.tld" prefix="editor"%>
+<%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
 
 <jsp:useBean id="user" scope="session"
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
@@ -30,7 +30,7 @@
             <th class="tableCellHeader">Topic</th>
             <th class="tableCellHeader">Description</th>
             <th>
-                <editor:helpLink tag="annotations"/>
+                <intact:documentation section="editor.annotations"/>
             </th>
         </tr>
         <tr class="tableRowOdd">
@@ -44,7 +44,7 @@
             </td>
             <td class="tableCell" align="left" valign="top">
                 <html:select property="topic">
-                    <html:options name="topiclist" />
+                    <html:options name="topiclist"/>
                 </html:select>
             </td>
             <td class="tableCell" align="left" valign="top">
