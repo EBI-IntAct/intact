@@ -10,10 +10,9 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import uk.ac.ebi.intact.application.editor.business.EditUser;
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.Interaction;
 
 /**
  * The test case for EditUser class. Only tests very few methods!!!
@@ -130,7 +129,7 @@ public class EditUserTest extends TestCase {
     public void testGetNextAvailableShortLabel() {
         EditUser user = null;
         try {
-            user = new EditUser("uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource");
+            user = new EditUser();
 
             // ga doesn't exist.
             assertEquals(user.getNextAvailableShortLabel(Interaction.class, "ga"),
