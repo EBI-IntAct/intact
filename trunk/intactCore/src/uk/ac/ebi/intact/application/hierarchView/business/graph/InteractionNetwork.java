@@ -151,12 +151,6 @@ public class InteractionNetwork extends Graph {
      * @param aCriteria the criteria to add if it doesn't exist in the collection already
      */
     public void addCriteria ( CriteriaBean aCriteria ) {
-        logger.info( "\n\nCurrent set" );
-        for ( Iterator iterator = criteriaList.iterator (); iterator.hasNext (); ) {
-            CriteriaBean criteriaBean = (CriteriaBean) iterator.next ();
-            logger.info ( criteriaBean );
-        }
-        logger.info( "Try to add: " + aCriteria );
         if ( ! criteriaList.contains( aCriteria ) )
             criteriaList.add( aCriteria );
     }
@@ -451,7 +445,7 @@ public class InteractionNetwork extends Graph {
         while (iterator.hasNext()) {
             aNewEdge = (Edge) iterator.next();
 
-            // see also the equals method of Edge
+            // (!) see also the equals method of Edge
             if (false == edges.contains (aNewEdge)) {
                 // check if both nodes are present
                 aNode = aNewEdge.getNode1 ();
