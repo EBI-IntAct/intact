@@ -256,6 +256,13 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
             // Display the errors in the input page.
             return mapping.getInputForward();
         }
+        // Does the shortlabel ends with -x?
+//        if (formlabel.endsWith("-x")) {
+//            // Just a warning to the user.
+//            ActionMessages msgs = new ActionMessages();
+//            msgs.add("shortlabel", new ActionMessage("warning.shortlabel.suffix"));
+//            saveMessages(request, msgs);
+//        }
         // Validate the data.
 //        view.validate(user);
         view.sanityCheck(user);

@@ -56,6 +56,12 @@
     </tr>
 </table>
 <html:errors property="shortLabel"/>
+<%----%>
+<%--<html:messages id="message" message="true">--%>
+<%--	<span class="warning">--%>
+<%--		<bean:write name="message" filter="false"/>--%>
+<%--	</span>--%>
+<%--</html:messages>--%>
 
 <p></p>
 
