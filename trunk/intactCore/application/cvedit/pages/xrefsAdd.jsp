@@ -34,13 +34,13 @@
             </html:select>
         </td>
         <td class="tableCell" align="left" valign="top">
-            <html:text property="primaryId" size="15"/>
+            <html:text property="primaryId" size="15" value=""/>
         </td>
         <td class="tableCell" align="left" valign="top">
-            <html:text property="secondaryId" size="15"/>
+            <html:text property="secondaryId" size="15" value=""/>
         </td>
         <td class="tableCell" align="left" valign="top">
-            <html:text property="releaseNumber" size="15"/>
+            <html:text property="releaseNumber" size="15" value=""/>
         </td>
         <td class="tableCell" align="left" valign="top">
             <html:select property="qualifier">
