@@ -1,4 +1,3 @@
-
 <!-- Definitions for BasicObject -
     maps to multiple tables, fields are repeated in each descriptor of a subclass
 -->
@@ -258,7 +257,12 @@
       >
          <foreignkey field-id-ref="2"/>
       </reference-descriptor>
-
+    <reference-descriptor
+         name="owner"
+         class-ref="uk.ac.ebi.intact.model.Institution"
+      >
+         <foreignkey field-id-ref="2"/>
+      </reference-descriptor>
      <reference-descriptor
          name="cvInteractionType"
          class-ref="uk.ac.ebi.intact.model.CvInteractionType"
@@ -498,7 +502,6 @@
          name="ownerAc"
          column="owner_ac"
          jdbc-type="VARCHAR"
-
       />
 
      <field-descriptor id="3"
@@ -520,18 +523,17 @@
          jdbc-type="VARCHAR"
          indexed="true"
       />
+
       <field-descriptor id="6"
          name="taxId"
          column="taxId"
          jdbc-type="INTEGER"
       />
 
-              <!-- used for class identification - OJB uses it directly -->
-
+      <!-- used for class identification - OJB uses it directly -->
       <reference-descriptor
          name="owner"
          class-ref="uk.ac.ebi.intact.model.Institution"
-
       >
          <foreignkey field-id-ref="2"/>
       </reference-descriptor>
@@ -613,7 +615,7 @@
          nullable="false"
       />
      <field-descriptor id="6"
-         name="topicAc"
+         name="cvTopicAc"
          column="topic_ac"
          jdbc-type="VARCHAR"
          indexed="true"
@@ -623,12 +625,11 @@
       <reference-descriptor
          name="owner"
          class-ref="uk.ac.ebi.intact.model.Institution"
-
       >
          <foreignkey field-id-ref="2"/>
       </reference-descriptor>
 
-   <reference-descriptor
+     <reference-descriptor
          name="cvTopic"
          class-ref="uk.ac.ebi.intact.model.CvTopic"
       >
@@ -888,7 +889,6 @@
          column="ac"
          jdbc-type="VARCHAR"
          primarykey="true" autoincrement="true"
-
          nullable="false"
 
       />
@@ -898,7 +898,6 @@
          jdbc-type="VARCHAR"
 
       />
-
       <field-descriptor id="3"
          name="created"
          column="created"
@@ -936,7 +935,6 @@
          name="cvComponentRoleAc"
          column="role"
          jdbc-type="VARCHAR"
-
       />
       <field-descriptor id="9"
          name="expressedInAc"

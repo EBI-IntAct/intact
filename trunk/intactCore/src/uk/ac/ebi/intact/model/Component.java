@@ -83,7 +83,6 @@ public class Component extends BasicObject {
     public Interactor getInteractor() {
         return interactor;
     }
-
     public void setInteractor(Interactor interactor) {
         if (this.interactor != interactor) {
             if (this.interactor != null) this.interactor.removeActiveInstance(this);     
@@ -91,10 +90,10 @@ public class Component extends BasicObject {
             if (interactor != null) interactor.addActiveInstance(this);  
         }
     } 
+
     public Interaction getInteraction() {
         return interaction;
     }
-
     public void setInteraction(Interaction interaction) {
         if (this.interaction != interaction) {
             if (this.interaction != null) this.interaction.removeComponent(this);     
@@ -102,6 +101,7 @@ public class Component extends BasicObject {
             if (interaction != null) interaction.addComponent(this);  
         }
     }
+
     public void setBindingDomain(Collection someBindingDomain) {
         this.bindingDomain = someBindingDomain;
     }
@@ -118,10 +118,10 @@ public class Component extends BasicObject {
         boolean removed = this.bindingDomain.remove(feature);
         if (removed) feature.setComponent(null);
     }
+
     public CvComponentRole getCvComponentRole() {
         return cvComponentRole;
     }
-
     public void setCvComponentRole(CvComponentRole cvComponentRole) {
         this.cvComponentRole = cvComponentRole;
     }
