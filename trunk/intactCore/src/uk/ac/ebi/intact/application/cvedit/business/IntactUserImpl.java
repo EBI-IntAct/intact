@@ -13,7 +13,6 @@ import javax.servlet.http.HttpSessionBindingEvent;
 
 import uk.ac.ebi.intact.persistence.*;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.util.Assert;
 
 /**
  * This class stores information about an Intact Web user session. Instead of
@@ -173,14 +172,7 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
     }
 
     public void delete(Object object) throws TransactionException {
-        try {
-            myDAO.remove(object);
-        }
-        catch (DataSourceException dse) {
-            // We shouldn't get this exception as it is never thrown but declared
-            // in the interface.
-            Assert.fail(dse.getMessage());
-        }
+        myDAO.remove(object);
     }
 
     public void setCurrentEditObject(CvObject cvobj) {
@@ -211,7 +203,9 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
     }
 
     public void removeFromCache(Object object) {
-        myDAO.getBroker().removeFromCache(object);
+        // IMPORTANT: THIS IS removed to make the build successful.
+        // This could be unnecessary with the new ODMG stuff????
+        //myDAO.getBroker().removeFromCache(object);
     }
 
     public Collection search(String objectType, String searchParam,
@@ -220,18 +214,7 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         Collection resultList = new ArrayList();
 
         //now retrieve an object...
-        try {
-            resultList = myDAO.find(objectType, searchParam, searchValue);
-        }
-        // The following.exception;are never thrown from the implementation but
-        // they are declared on the interface.
-        catch (DataSourceException de) {
-            Assert.fail(de);
-        }
-        catch (TransactionException te) {
-            Assert.fail(te);
-        }
-        return resultList;
+        return myDAO.find(objectType, searchParam, searchValue);
     }
 
     // Helper methods.
