@@ -727,32 +727,82 @@ public class IntactHelperTest extends TestCase {
         boolean isUserOk = false;
 
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        String username = null;
+        String password = null;
+
+        Collection results = new ArrayList();
 
         try {
             System.out.println();
             System.out.println("now checking user validation....");
-            System.out.println("enter valid username:");
-            String userName = in.readLine();
-            System.out.println("enter valid password:");
-            String password = in.readLine();
+            System.out.println("attempting to connect as three different users in turn, each creating an object..");
 
-            isUserOk = helper.isUserVerified(userName, password);
-            if(isUserOk) {
-                System.out.println("user verified - validation succeeded");
+            System.out.println("checking testuser1....");
+            username = "testuser1";
+            password = "testuser1";
+
+            //use a local helper to aqvoid mesing up other tests...
+            IntactHelper h = new IntactHelper(dataSource, username, password);
+            doUserCheck(h, "EBITEST-U1");
+
+            System.out.println("checking testuser2....");
+            username = "testuser2";
+            password = "testuser2";
+            h = new IntactHelper(dataSource, username, password);
+            doUserCheck(h, "EBITEST-U2");
+
+            System.out.println("checking testuser3....");
+            username = "testuser3";
+            password = "testuser3";
+            h = new IntactHelper(dataSource, username, password);
+            doUserCheck(h, "EBITEST-U3");
+
+            System.out.println();
+
+        }
+        catch(Exception e) {
+            System.out.println("failed user validation check...");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Used to check out user connections
+     * @param h an IntactHelper that has user details set
+     */
+    protected void doUserCheck(IntactHelper h, String Ac) {
+
+        Collection results = new ArrayList();
+        try {
+
+            Institution inst = new Institution();
+            inst.setAc(Ac);
+
+            //also need to seta label as it is a non-null field
+            inst.setShortLabel(String.valueOf(Ac.charAt(Ac.length()-1)));
+            h.create(inst);
+
+            //now check retrieval of the above object...
+            results = h.search(Institution.class.getName(), "ac", inst.getAc());
+            if(results.isEmpty()) {
+                System.out.println("an error occurred - object created by testuser1 could not be found!!");
             }
             else {
-                System.out.println("user validation failed - valid user rejected!!");
+                Iterator it = results.iterator();
+                Institution found = (Institution)it.next();
+                if(it.hasNext()) {
+                    System.out.println("error - more than one object found that was created by testuser1!");
+                }
+                else {
+                    System.out.println("checking for retrieved object...");
+                    System.out.println("object created by user (expecting Institution with AC " + Ac + ")");
+                    System.out.println("type: " + found.getClass().getName() + " AC: " + found.getAc());
+
+                    System.out.println();
+
+                }
+
             }
-            System.out.println();
-            System.out.println("checking for an invalid user (expect failure)..");
-            isUserOk = helper.isUserVerified("jbloggs", "abc");
-            if(isUserOk) {
-                System.out.println("user validation failed - unknown user accepted!!");
-            }
-            else {
-                System.out.println("user validation rejected unkown user correctly");
-            }
-            System.out.println();
 
         }
         catch(Exception e) {
@@ -767,6 +817,8 @@ public class IntactHelperTest extends TestCase {
      */
     public void testHelper() {
 
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        String answer = "n";
         try {
 
             basicSearch();
@@ -778,7 +830,21 @@ public class IntactHelperTest extends TestCase {
             componentSearch();
 
             checkSerialization();
-            checkUserValidation();
+
+            System.out.println("Do you wish to run the user validation test? [y/n]");
+            System.out.println("Please note that this test will FAIL if you do not have " +
+                        "DB users testuser1, testuser2, testuser3 defined (all with pwd = username),"
+                + " and they must have write access to the Institution table");
+            answer = in.readLine();
+            if(answer.equals("y")) {
+
+                checkUserValidation();
+                System.out.println("to verify the objects were created by the correct user you should examine" +
+                        " the userstamp column of the Institution table in your database.");
+                System.out.println();
+                System.out.println("The dummy objects created for this test must be deleted manually (otherwise you could not check the userstamp!!)");
+                System.out.println();
+            }
         }
         catch(Exception e) {
             System.out.println("IntactHelperTest: test(s) failed...see stack trace.");
