@@ -19,7 +19,7 @@
 <html:html>
 
 <head>
-    <html:base target="_top"/>
+<%--    <html:base target="_top"/>--%>
     <meta http-equiv="cache-control" content="no-cache">
     <meta http-equiv="pragma" content="no-cache">
     <meta http-equiv="expires" content="-1">
@@ -50,7 +50,7 @@
             <table>
               <tr>
                 <td>
-                    <img src="../images/clockT.gif" border="0">
+                    <img src="<%=request.getContextPath()%>/images/clockT.gif" border="0">
                 </td>
                 <td>
                     <strong>
@@ -71,7 +71,7 @@
 %>
     <%-- no URL for restoring the last context, error message --%>
     Unable to restore your last application context,<br>
-    please go to the hierarchView <a href="/hierarchView" target="_top">home page</a>.
+    please go to the hierarchView <a href="<%=request.getContextPath()%>" target="_top">home page</a>.
 <%
     }
 %>
