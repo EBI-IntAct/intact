@@ -21,11 +21,11 @@ shortlabel: n-terminal
 term: The n-terminal end of a sequence
 definition: Used to describe a feature position at the n-terminal end of a sequence.
 example: A sequence tag attached at the n-terminal end of protein sequence would have this sequence position.
-comment: Displayed as 'n-terminal'.
+comment: Displayed as 'n'.
 
 shortlabel: c-terminal
 term: The c-terminal end of a sequence
 definition: C-terminal end of a protein sequence.
 example: A protein tag attached to the c-terminal end of a sequence should have this fuzzy position instead of the numeric value of the sequence length as a position.
-comment: Displayed as 'c-terminal'.
+comment: Displayed as 'c'.
 
