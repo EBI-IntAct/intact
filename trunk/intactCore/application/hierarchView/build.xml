@@ -379,6 +379,7 @@ Verison: $Id$
                 <include name="repository*.xml"/>
                 <include name="repository.dtd"/>
                 <include name="Institution.properties"/>
+                <include name="proxy.properties"/>
             </fileset>
         </copy>
 
