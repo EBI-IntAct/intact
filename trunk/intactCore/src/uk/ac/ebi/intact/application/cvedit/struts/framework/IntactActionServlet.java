@@ -43,14 +43,11 @@ public class IntactActionServlet extends ActionServlet {
         // Save the context to avoid repeat calls.
         ServletContext ctx = super.getServletContext();
 
-        // The Intact Types file.
-        String types = ctx.getInitParameter(WebIntactConstants.INTACT_TYPES_FILE);
         // Create an instance of IntactService.
         IntactServiceIF service = null;
         try {
             // Load the Intact Types resources.
-            service = new IntactServiceImpl(types);
-            //service.setIntactTypes(types);
+            service = new IntactServiceImpl(ctx.getInitParameter("intacttypesfile"));
         }
         catch (MissingIntactTypesException mite) {
             // Unable to find the resource file.
