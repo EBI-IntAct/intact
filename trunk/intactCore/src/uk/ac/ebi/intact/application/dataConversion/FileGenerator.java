@@ -262,6 +262,8 @@ public class FileGenerator {
             //Document singleFileDoc = builder.getCurrentDocument();
             Document singleFileDoc = builder.newPsiDoc(true);
             Node root = singleFileDoc.getDocumentElement();
+            if(!root.hasChildNodes()) throw new Exception("Fatal Error initialising PSI document!");
+            Node entry = root.getFirstChild(); //this is the entry Node
 
             for (Iterator it = FileGenerator.largeExperimentList.iterator(); it.hasNext();) {
                 Experiment exp = (Experiment)it.next();
@@ -308,9 +310,10 @@ public class FileGenerator {
                             Node interactorRoot = singleFileDoc.importNode(builder.getInteractorList(), true);
 
                             //Now add the new elements into the root to be dumped...
-                            root.appendChild(expRoot);
-                            root.appendChild(interactionRoot);
-                            root.appendChild(interactorRoot);
+                            //NB this is the current order of the PSI elements...
+                            entry.appendChild(expRoot);
+                            entry.appendChild(interactorRoot);
+                            entry.appendChild(interactionRoot);
 
                             //interactionList = builder.buildInteractionsOnly(itemsToProcess);
                             String fileName = mainFileName + chunkCount + ".xml";
@@ -323,6 +326,7 @@ public class FileGenerator {
                             //now need to reset the singleFileDoc for the next chunk..
                             singleFileDoc = builder.newPsiDoc(true);
                             root = singleFileDoc.getDocumentElement();
+                            entry = root.getFirstChild();
 
                             chunkCount++;
                             startIndex = endIndex;

@@ -98,7 +98,7 @@ public class PsiDataBuilder implements DataBuilder {
     }
 
     /**
-     * Creates an initialised PSI Document object. This is useful for exxample
+     * Creates an initialised PSI Document object. This is useful for example
      * when processing lagre datasets and information may need to be generated
      * in segments.
      * @param sourceElementNeeded true if an Intact source element is wanted, false otherwise.
@@ -108,7 +108,8 @@ public class PsiDataBuilder implements DataBuilder {
      * generation of a PSI entry alone will do.) NB this aspect will probably be refactored
      * at some point.
      * @return Document an newly initialised PSI Document, or null if the creation
-     * failed.
+     * failed. Note that the Document root is an EntrySet with a single Entry child that has
+     * its source element inititialised.
      */
     public Document newPsiDoc(boolean sourceElementNeeded) {
 
@@ -137,7 +138,9 @@ public class PsiDataBuilder implements DataBuilder {
                 Node psiNames = newDoc.importNode(getNames("IntAct", "IntAct download"), true);  //generated in a different Document...
                 psiSource.appendChild(psiNames);
                 psiSource.setAttribute("releaseDate", getReleaseDate());
-                root.appendChild(psiSource);
+                root.appendChild(psiEntry);
+
+                //now have a fully inititialised PSI doc with a blank entry+source Node
 
             } catch (ElementNotParseableException e) {
                 logger.info("source/names failed (not required):" + e.getMessage());
@@ -312,6 +315,14 @@ public class PsiDataBuilder implements DataBuilder {
     }
 
     /**
+     * Provides the set of PSI entries currently generated.
+     * @return an Element containing all the current PSI entries
+     */
+    public Element getEntrySet() {
+        return psiEntrySet;
+    }
+
+    /**
      * Provides access in Document format to the current Interactor List.
      * @return A root Element for a tree containing the current InteractorList, or null if not yet built.
      */
@@ -377,7 +388,7 @@ public class PsiDataBuilder implements DataBuilder {
             throw new DataConversionException("Too many interactions to process!");
         //NB the globalExperimentList etc will not have been set here, but are used
         //further donw in the processing!!
-        Element dummy = psiEntry("junk1", "junk2"); //dummy to get things initialised!!
+        Element dummy = psiEntry("dummy1", "dummy2"); //dummy to initialise things
         Document result = null;
         Element list = null;
         try {
