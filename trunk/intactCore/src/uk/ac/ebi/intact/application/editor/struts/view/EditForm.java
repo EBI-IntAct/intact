@@ -69,6 +69,18 @@ public class EditForm extends ActionForm {
     }
 
     /**
+     * Returns the index position of the selected bean.
+     * @return an index psoition as an int.
+     *
+     * <pre>
+     * post: return >= 0 and <= myItems.length
+     * </pre>
+     */
+    public int getIndex() {
+        return myIndex;
+    }
+
+    /**
      * True if Edit button was pressed.
      * @return true if Edit button was pressed; for all other instances false
      * is returned.
