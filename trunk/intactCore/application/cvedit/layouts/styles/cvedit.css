@@ -86,7 +86,6 @@ a.tableCellHeader:hover {
 tr.tableRowOdd {
   font-family: verdana, tahoma, arial, helvetica;
   font-size: x-small;
-
   background-color: #ffffff
 }
 tr.tableRowEven {
@@ -98,5 +97,9 @@ tr.tableRowEven {
 td.tableCell {
   font-family: verdana, tahoma, arial, helvetica;
   font-size: x-small;
+  text-align: left;
+  vertical-align: top;
 }
+
+
 
