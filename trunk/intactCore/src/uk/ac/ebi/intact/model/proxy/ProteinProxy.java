@@ -10,8 +10,6 @@ import org.apache.ojb.broker.PBKey;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvProteinForm;
-import uk.ac.ebi.intact.model.Feature;
-import uk.ac.ebi.intact.model.Modification;
 import uk.ac.ebi.intact.model.Protein;
 
 import java.lang.reflect.InvocationHandler;
