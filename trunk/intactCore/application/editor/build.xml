@@ -261,9 +261,14 @@
         <!-- The last modifed file at the root. -->
         <copy file="${last.modified.file}" todir="${temp.web}"/>
 
-        <!-- Common struts standard tld files -->
+        <!-- TLD files -->
         <copy todir="${temp.web}/WEB-INF/tld">
+            <!-- Common struts standard tld files -->
             <fileset dir="${intact.app.dir}/tld">
+                <include name="*.tld"/>
+            </fileset>
+            <!-- Editor specific TLD files -->
+            <fileset dir="WEB-INF/tld">
                 <include name="*.tld"/>
             </fileset>
         </copy>
