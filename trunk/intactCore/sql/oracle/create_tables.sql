@@ -1286,7 +1286,9 @@ set term off
 PROMPT Creating table "IA_Interactions"
 CREATE TABLE ia_interactions
 (       protein1_ac     VARCHAR2(30)    CONSTRAINT fk_interactions$protein1_ac REFERENCES IA_Interactor(ac) ON DELETE CASCADE
+      , shortlabel1     VARCHAR2(20)
       , protein2_ac     VARCHAR2(30)    CONSTRAINT fk_interactions$protein2_ac REFERENCES IA_Interactor(ac) ON DELETE CASCADE
+      , shortlabel2     VARCHAR2(20)
       , taxid           VARCHAR2(30)
       , interaction_ac  VARCHAR2(30)    CONSTRAINT fk_interactions$interaction REFERENCES IA_Interactor(ac) ON DELETE CASCADE
       , weight          NUMBER(4,3)

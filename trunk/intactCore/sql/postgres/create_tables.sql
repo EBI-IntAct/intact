@@ -958,7 +958,9 @@ CREATE table temp_node(
 
 CREATE TABLE ia_interactions
 (       protein1_ac     VARCHAR(30)    CONSTRAINT fk_interactions_protein1_ac REFERENCES IA_Interactor(ac) ON DELETE CASCADE
+(     , shortlabel1     VARCHAR(20)
       , protein2_ac     VARCHAR(30)    CONSTRAINT fk_interactions_protein2_ac REFERENCES IA_Interactor(ac) ON DELETE CASCADE
+(     , shortlabel2     VARCHAR(20)    
       , taxid           VARCHAR(30)
       , interaction_ac  VARCHAR(30)    CONSTRAINT fk_interactions_interaction REFERENCES IA_Interactor(ac) ON DELETE CASCADE
       , weight          DECIMAL(4,3)
