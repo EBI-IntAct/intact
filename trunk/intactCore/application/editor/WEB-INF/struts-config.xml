@@ -678,8 +678,10 @@
         <action path="/prot"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ProteinDispatchAction"
             name="intForm"
-            validate="false"
-            scope="session">
+            input="/do/fillIntForm"
+            validate="true"
+            scope="session"
+            parameter="dispatch">
             <forward name="success" path="/do/fillIntForm"/>
             <forward name="failure" path="/do/fillIntForm"/>
         </action>
