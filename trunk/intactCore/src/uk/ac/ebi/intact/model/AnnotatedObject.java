@@ -221,7 +221,7 @@ public abstract class AnnotatedObject extends BasicObject {
     /** Create or update an annotation. The anntation topic may only occur once in the object.
      *
      */
-    public void updateUniqueAnnotation(CvTopic topic, String description, Institution owner){
+    public Annotation updateUniqueAnnotation(CvTopic topic, String description, Institution owner){
 
         Annotation annotation = null;
          for (Iterator iterator = getAnnotation().iterator(); iterator.hasNext();) {
@@ -241,6 +241,7 @@ public abstract class AnnotatedObject extends BasicObject {
          if (annotation.getAnnotationText() != description){
              annotation.setAnnotationText(description);
          }
+        return annotation;
     }
 
     /** Returns true if the "important" attributes are equal.
