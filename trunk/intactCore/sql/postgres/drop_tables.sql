@@ -88,5 +88,6 @@ drop sequence statistics_seq ;
 
 drop table ia_payg;
 drop table current_edge;
-drop table temp_node; 
+drop table temp_node;
 
+drop table ia_interactions cascade;
