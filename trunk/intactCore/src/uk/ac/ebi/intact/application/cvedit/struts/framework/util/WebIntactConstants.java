@@ -98,7 +98,6 @@ public interface WebIntactConstants {
      */
     public static final String SEARCH_CRITERIA = "searchCriteria";
 
-
     /**
      * Used as a key to identify a mapping filename (for Castor).
      * the value is defined in the web.xml file
@@ -116,41 +115,6 @@ public interface WebIntactConstants {
      * its value is defined in the web.xml file as a servlet context parameter.
      */
     public static final String INTACT_TYPES_FILE = "intacttypesfile";
-
-    /**
-     * The key to access annotations for display.
-     */
-    public static final String ANNOTS_TO_VIEW = "annotsToView";
-
-    /**
-     * The key to access annotations to add to the CV object.
-     */
-    public static final String ANNOTS_TO_ADD = "annotsToAdd";
-
-    /**
-     * The key to access annotations to remove from the CV object.
-     */
-    public static final String ANNOTS_TO_DELETE = "annotsToDel";
-
-    /**
-     * The key to access Cross References for display.
-     */
-    public static final String XREFS_TO_VIEW = "xrefsToView";
-
-    /**
-     * The key to access Cross References to add to the CV object.
-     */
-    public static final String XREFS_TO_ADD = "xrefsToAdd";
-
-    /**
-     * The key to access Cross References to remove from the CV object.
-     */
-    public static final String XREFS_TO_DELETE = "xrfesToDel";
-
-    /**
-     * The Intact bean to display/edit. Should have been called edit bean.
-     */
-    public static final String VIEW_BEAN = "viewbean";
 
     /**
      * The bean to display short labels when the user is adding a new CV obj.
