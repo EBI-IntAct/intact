@@ -1042,3 +1042,67 @@ set term on
 
 
 set term on
+
+
+/* ************************************************
+  	Auxiliary tables for curation 
+   ************************************************
+*/
+
+PROMPT Creating table "IA_PubMed"
+CREATE TABLE IA_PubMed
+(	created                 DATE            DEFAULT  SYSDATE NOT NULL
+     ,  updated                 DATE            DEFAULT  SYSDATE NOT NULL
+     ,  timestamp               DATE            DEFAULT  SYSDATE NOT NULL
+     ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
+     ,  primaryid               VARCHAR2(30)
+     ,  status                  VARCHAR2(30)
+     ,  description             VARCHAR2(100)
+)
+TABLESPACE INTACT_TAB
+;
+
+set term on
+    COMMENT ON TABLE IA_PUBMED IS
+    'Stores information on papers in processing by their pubmed is.';
+    COMMENT ON COLUMN IA_Pubmed.created IS
+    'Date of the creation of the row.';
+    COMMENT ON COLUMN IA_Pubmed.updated IS
+    'Date of the last update of the row.';
+    COMMENT ON COLUMN IA_Pubmed.timestamp IS
+    'Date of the last update of the column.';
+    COMMENT ON COLUMN IA_Pubmed.userstamp IS
+    'Database user who has performed the last update of the column.';
+    COMMENT ON COLUMN IA_Pubmed.primaryid IS
+    'Pubmed id of a paper.';
+    COMMENT ON COLUMN IA_Pubmed.status IS
+    'Status of the paper.';
+    COMMENT ON COLUMN IA_Pubmed.description IS
+    'Comment.';
+set term off
+
+/* Create a view on all known pubmed ids */
+	  CREATE 
+ OR REPLACE VIEW ia_paperstatus AS
+ SELECT DISTINCT e.ac as experiment_Ac, 
+                 e.shortlabel as Shortlabel, 
+                 e.userstamp as userstamp, 
+                 e.updated as updated, 
+                 x.primaryid as pubmedid,
+	         '-' as status,
+		 '-' as description
+            FROM ia_experiment e, ia_xref x, ia_controlledvocab cv
+           WHERE cv.shortlabel='pubmed' 
+             AND cv.ac=x.database_ac
+             AND x.parent_ac=e.ac
+           UNION
+ SELECT DISTINCT '-' as experiment_ac,
+		 '-' as shortlabel,
+		 p.userstamp as userstamp,
+                 p.updated as updated,
+	         p.primaryid as pubmedid,
+	         p.status as status,
+		 p.description as description
+            FROM ia_pubmed p
+      	ORDER BY pubmedid asc, updated desc;
+
