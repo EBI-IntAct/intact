@@ -524,7 +524,19 @@ public class PsiDataBuilder implements DataBuilder {
         //Now do the Interaction's Xrefs...
         try {
             Collection xrefs = interaction.getXrefs();
-            Element psiXref = doXrefCollection(xrefs, "intact");
+            Element psiXref = null;
+            if(xrefs.isEmpty()) {
+                //Feb 25th 2003: At this point we have no external Xrefs
+                //for Interaactions, so for PSI generation we include
+                //an element which simply refers to the Intact DB. This is to overcome
+                //the fact that our data does not yet include this information. When it
+                //has been added this special operation should not be needed.
+                psiXref = doIntactXref(interaction);
+            }
+            else {
+                //referenced in more than just Intact - do them all
+                psiXref = doXrefCollection(xrefs, "intact");
+            }
             psiInteraction.appendChild(psiXref);
         } catch (ElementNotParseableException e) {
             logger.info("xref failed (not required):" + e.getMessage());
@@ -1212,22 +1224,25 @@ public class PsiDataBuilder implements DataBuilder {
         //generate DOM-Element
         Element psiXref = doc.createElement("xref");
 
-        //the first SPTR Intact Xref will become primary & secondary ref in PSI
-        for (Iterator it = xrefs.iterator(); it.hasNext();) {
-            Xref xref = (Xref) it.next();
-            String dbShortLabel = xref.getCvDatabase().getShortLabel();
-            try {
-                if ((dbShortLabel.equalsIgnoreCase(primaryRefLabel) && xref.getPrimaryId() != null) //SPTR found
-                        || !it.hasNext()) { //if no SPTR found, take any (here we take last)
-                    Element psiPrimaryRef = doPrimaryRef(xref);
-                    psiXref.appendChild(psiPrimaryRef);
-                    primaryXref = xref;
-                    break;
+
+            //the first SPTR Intact Xref will become primary & secondary ref in PSI
+            for (Iterator it = xrefs.iterator(); it.hasNext();) {
+                Xref xref = (Xref) it.next();
+                //check for parent being an interaction
+                // - they should be handled differently...
+                String dbShortLabel = xref.getCvDatabase().getShortLabel();
+                try {
+                    if ((dbShortLabel.equalsIgnoreCase(primaryRefLabel) && xref.getPrimaryId() != null) //SPTR found
+                            || !it.hasNext()) { //if no SPTR found, take any (here we take last)
+                        Element psiPrimaryRef = doPrimaryRef(xref);
+                        psiXref.appendChild(psiPrimaryRef);
+                        primaryXref = xref;
+                        break;
+                    }
+                } catch (ElementNotParseableException e) { //dont worry - try next one
+                    logger.warn("Xref without primary db or id found ! Ignoring !");
                 }
-            } catch (ElementNotParseableException e) { //dont worry - try next one
-                logger.warn("Xref without primary db or id found ! Ignoring !");
             }
-        }
 
         /* secondary xrefs are optional, don't do them
 
@@ -1345,6 +1360,47 @@ public class PsiDataBuilder implements DataBuilder {
         }
         return psiXref;
     }
+    /**
+     * This method generates a PSI element for an Intact Xref. That is, for
+     * Interactions which currently have no external DB references, we generate
+     * a primary Xref to the Intact DB for them.
+     * This code is really an intermediate 'modification' because the error is currently
+     * in the data - we need to hav CV data for all Interactions in Intact which provides
+     * this information. When the DB is corrected this code should be removed.
+     * @param interaction - the Interaction we want an Intact reference for
+     * @return DOM-Object, representing a <xref>
+     * @exception  uk.ac.ebi.intact.application.graph2MIF.exception.ElementNotParseableException if it is not defined
+     * @see uk.ac.ebi.intact.model.Xref
+     */
+    private Element doIntactXref(Interaction interaction) throws ElementNotParseableException {
+        //generate DOM-Element
+        Element psiXref = doc.createElement("xref");
+        Element psiPrimaryRef = doc.createElement("primaryRef");
+        try {
+            psiPrimaryRef.setAttribute("db", "intact");
+            psiPrimaryRef.setAttribute("id", interaction.getAc()); //the interaction AC
+            psiPrimaryRef.setAttribute("secondary", interaction.getShortLabel());
+            psiXref.appendChild(psiPrimaryRef);
+
+        } catch (NullPointerException e) {
+            logger.warn("xref without db or id - failed (required):");
+            throw new ElementNotParseableException("PrimaryRef without id or db");
+        }
+
+        //NB currently there is no DB release version available in data for Intact
+        //though later this will need to be included if it exists
+        //try {
+            //psiPrimaryRef.setAttribute("version", xref.getDbRelease());
+        //} catch (NullPointerException e) {
+            //logger.info("no dbRelease");
+        //} // not required here - so dont worry
+
+        if (!psiXref.hasChildNodes()) {
+            logger.warn("xref failed, no child elements.");
+            throw new ElementNotParseableException("Xref has no Child Elements");
+        }
+        return psiXref;
+    }
 
 
     /**
@@ -1413,13 +1469,26 @@ public class PsiDataBuilder implements DataBuilder {
         Element psiPrimaryRef = doc.createElement("primaryRef");
         //local elements processing...
         try {
-            psiPrimaryRef.setAttribute("db", xref.getCvDatabase().getShortLabel());
-            psiPrimaryRef.setAttribute("id", xref.getPrimaryId());
+            //NB for giot interaction elements, db=intact, id=the AC, secondary=the shortLabel
+            //Q: does this apply to ALL interactions??
+           // if(isInteraction) {
+                //Currently all interaction data is assumed to come from our
+                //intact DB - proteins etc can come from eg SPTR etc
+                //So for interactions we need to set the Xref info differently....
+              //  psiPrimaryRef.setAttribute("db", "intact");
+              //  psiPrimaryRef.setAttribute("id", xref.getParentAc()); //the interaction AC
+              //  psiPrimaryRef.setAttribute("secondary", label);
+           // }
+           // else {
+                psiPrimaryRef.setAttribute("db", xref.getCvDatabase().getShortLabel());
+                psiPrimaryRef.setAttribute("id", xref.getPrimaryId());
+            //}
         } catch (NullPointerException e) {
             logger.warn("xref without db or id - failed (required):");
             throw new ElementNotParseableException("PrimaryRef without id or db");
         }
         try {
+            //if(!isInteraction) psiPrimaryRef.setAttribute("secondary", xref.getSecondaryId());
             psiPrimaryRef.setAttribute("secondary", xref.getSecondaryId());
         } catch (NullPointerException e) {
             logger.info("no secondaryRef");
