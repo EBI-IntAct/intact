@@ -177,8 +177,7 @@ public class SidebarDispatchAction extends CvAbstractDispatchAction {
 
         try {
             owner = user.getInstitution();
-            result = user.search(classname,
-                CvEditConstants.SEARCH_BY_LABEL, label);
+            result = user.search(classname, "shortLabel", label);
         }
         catch (SearchException se) {
             // Can't query the database.
@@ -210,6 +209,9 @@ public class SidebarDispatchAction extends CvAbstractDispatchAction {
             user.create(cvobj);
             // Commit all the changes.
             user.commit();
+            // Set the new object as the current edit object. This has to be
+            // done before refreshList (it relies on current cv object).
+            user.updateView(cvobj);
             // Added a new CV object; update the drop down list.
             user.refreshList();
         }
@@ -240,8 +242,6 @@ public class SidebarDispatchAction extends CvAbstractDispatchAction {
             super.saveErrors(request, errors);
             return mapping.findForward(CvEditConstants.FORWARD_FAILURE);
         }
-        // Set the new object as the current edit object.
-        user.updateView(cvobj);
         // Add to the view page.
         user.addToSearchCache(cvobj);
         return mapping.findForward(CvEditConstants.FORWARD_SUCCESS);
