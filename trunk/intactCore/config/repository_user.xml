@@ -323,19 +323,6 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         jdbc-type="TIMESTAMP"
         nullable="false"
         />
-    <field-descriptor
-        name="shortLabel"
-        column="shortLabel"
-        jdbc-type="VARCHAR"
-        indexed="true"
-        />
-    <field-descriptor
-        name="fullName"
-        column="fullName"
-        jdbc-type="VARCHAR"
-        indexed="true"
-        />
-
     <!-- local class field descriptors -->
 
     <!-- This is only present for the inverse FK relationship to Feature -->
