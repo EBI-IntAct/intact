@@ -88,12 +88,11 @@
 <c:if test="${not empty intForm.components}">
 
     <table width="100%" border="0" cellspacing="1" cellpadding="2">
+        <%-- Protein headings --%>
         <tr class="tableRowHeader">
             <th class="tableCellHeader" width="2%" rowspan="2"></th>
             <th class="tableCellHeader" width="2%" rowspan="2"></th>
-            <th class="tableCellHeader" width="10%" rowspan="2">
-                <bean:message key="label.action"/>
-            </th>
+            <th class="tableCellHeader" width="10%" rowspan="2">Proteins</th>
             <th class="tableCellHeader" width="10%">
                 <bean:message key="label.shortlabel"/>
             </th>
@@ -110,6 +109,22 @@
             <th class="tableCellHeader">Role*</th>
             <th class="tableCellHeader">Stoichiometry</th>
             <th class="tableCellHeader">ExpressedIn</th>
+        </tr>
+
+        <%-- Feature headings --%>
+        <tr class="tableFeatureRowHeader">
+            <th class="tableCellHeader" width="2%" rowspan="2"></th>
+            <th class="tableCellHeader" width="2%" rowspan="2"></th>
+            <th class="tableCellHeader" width="10%" rowspan="2">Features</th>
+            <th class="tableCellHeader" width="10%">Feature Short Label</th>
+            <th class="tableCellHeader" width="10%">Feature AC</th>
+            <th class="tableCellHeader" width="10%" rowspan="2">Range</th>
+            <th class="tableCellHeader" width="10%" rowspan="2">Interacts With</th>
+            <th class="tableCellHeader" width="50%" rowspan="2">Feature Full Name</th>
+        </tr>
+        <tr class="tableFeatureRowHeader">
+            <th class="tableCellHeader">Feature Type</th>
+            <th class="tableCellHeader">Feature Detection</th>
         </tr>
 
         <%-- To calculate row or even row --%>
@@ -306,12 +321,6 @@
                             titleKey="int.proteins.button.feature.edit.titleKey">
                             <bean:message key="int.proteins.button.feature.edit"/>
                         </nested:submit>
-
-                        <%-- Feature delete button --%>
-<%--                        <nested:submit property="featureCmd" onclick="setFeatureDispatch('delete');"--%>
-<%--                            titleKey="int.proteins.button.feature.delete.titleKey">--%>
-<%--                            <bean:message key="int.proteins.button.feature.delete"/>--%>
-<%--                        </nested:submit>--%>
                     </td>
                     <td class="tableCell">
                         <nested:write property="shortLabel"/>
