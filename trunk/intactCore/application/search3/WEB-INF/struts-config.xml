@@ -85,6 +85,7 @@
             scope="request">
             <forward name="noMatch" path="no.match.layout"/>
             <forward name="sessionLost" path="/do/welcome"/>
+            <forward name="tooLarge" path="/do/tooLarge"/>
             <forward name="dispatcher" path="/do/dispatcher"/>
         </action>
 
@@ -157,6 +158,12 @@
 
             <!-- new path to the 'simple' JSP -->
             <forward name="simpleResults" path="simple.layout"/>
+        </action>
+
+        <action path="/tooLarge"
+            type="uk.ac.ebi.intact.application.search3.struts.controller.TooLargeAction"
+            scope="session">
+            <forward name="results" path="too.large.layout"/>
         </action>
 
 
