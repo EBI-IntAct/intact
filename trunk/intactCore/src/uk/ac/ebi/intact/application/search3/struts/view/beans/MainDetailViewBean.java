@@ -677,10 +677,12 @@ public class MainDetailViewBean extends AbstractViewBean {
     /**
      * Provides a String representation of a URL to perform a search on
      * CvInteraction
-     * @return String a String representation of a search URL link for CvInteraction.
+     * @return String a String representation of a search URL link for CvInteraction, or "-"
+     * if there is No CvInteraction defined for the object.
      */
     public String getCvInteractionSearchURL() {
 
+        if(obj.getCvInteraction() == null) return "-";
         if (cvInteractionSearchURL == "") {
             //set it on the first call
             //get the CvInteraction object and pull out its AC
@@ -693,10 +695,12 @@ public class MainDetailViewBean extends AbstractViewBean {
     /**
      * Provides a String representation of a URL to perform a search on
      * CvIdentification (Experiments only)
-     * @return String a String representation of a search URL link for CvIdentification.
+     * @return String a String representation of a search URL link for CvIdentification, or
+     * "-" if there is NO CvIdentification specified for the object.
      */
     public String getCvIdentificationSearchURL() {
 
+        if(obj.getCvIdentification() == null) return "-";
         if (cvIdentificationSearchURL == "") {
             //set it on the first call
             //get the CvIdentification object and pull out its AC
@@ -709,11 +713,13 @@ public class MainDetailViewBean extends AbstractViewBean {
     /**
      * Provides a String representation of a URL to perform a search on
      * CvInteractionType (Interactions only)
-     * @return String a String representation of a search URL link for CvInteractionType.
+     * @return String a String representation of a search URL link for CvInteractionType, or
+     * "-" if there is NO CvInteractionType specified for the interaction.
      */
     public String getCvInteractionTypeSearchURL(Interaction interaction) {
 
-            return searchURL + interaction.getCvInteractionType().getAc()
+        if(interaction.getCvInteractionType() == null) return "-";
+        return searchURL + interaction.getCvInteractionType().getAc()
                     + "&amp;searchClass=CvInteractionType";
 
     }
