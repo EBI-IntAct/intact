@@ -1081,8 +1081,9 @@ public class InteractionViewBean extends AbstractEditViewBean {
             for (Iterator iter2 = cb.getFeaturesToDelete().iterator(); iter2.hasNext();) {
                 FeatureBean fb1 = (FeatureBean) iter2.next();
                 Feature featureToDel = fb1.getFeature(user);
-                // Remove from the component.
+                // Remove from the component and delete the feature
                 comp.removeBindingDomain(featureToDel);
+                user.delete(featureToDel);
 
                 // No further action if this feature is not linked.
                 if (!fb1.hasBoundDomain()) {
