@@ -24,7 +24,12 @@ DECLARE
       order  by cols.table_name, cols.column_id
       ;
    l_comma char(1):=',';
+   v_table_name user_tables.table_name%TYPE;
+   v_table_count INTEGER;
+
 begin
+
+   dbms_output.enable(1000000000000);
 
    for r_tab in (select table_name 
                  from   user_tables 
@@ -35,38 +40,54 @@ begin
                          ,'IA_GODENS_GODAGDENORM'
                          ,'IA_GODENS_GOPROT'
                          ,'IA_GODENS_DENSITY'
+
                          ,'IA_PAYG'
-                        )      
+                         ,'IA_PAYG_CURRENT_EDGE'
+                         ,'IA_PAYG_TEMP_NODE'
+
+                         ,'IA_INTERACTIONS'
+
+                         ,'IA_STATISTICS'
+                         ,'IA_EXPSTATISTICS'
+                         ,'IA_BIOSOURCESTATISTICS'
+
+                         ,'IA_SEARCH'
+                        )
                 )
    loop
 
-      dbms_output.put_line ('PROMPT Creating table "'||lower(r_tab.table_name)||'_audit"');
-      dbms_output.put_line ('create table '||r_tab.table_name||'_audit');
-      dbms_output.put_line (chr(9)||'(');
+      -- check if that audit table already exists, if not, try to create it.
+      v_table_name := r_tab.table_name || '_audit';
 
-      dbms_output.put_line (chr(9)||chr(9)||' EVENT                              CHAR(1) NOT NULL ');
-      for r_cols in c_cols (r_tab.table_name) loop
-         dbms_output.put_line (chr(9)||chr(9)||l_comma||rpad(r_cols.column_name,35)||r_cols.datatype||r_cols.nullInd);
-      end loop;
-      dbms_output.put_line (chr(9)||')');
-      dbms_output.put_line ('tablespace &intactAuditTablespace');
-      dbms_output.put_line ('/');
-      dbms_output.put_line (' ');
+      select count(1) into v_table_count
+      from   user_tables
+      where  UPPER(table_name) = UPPER(v_table_name);
 
-      l_comma := '';
+      if (v_table_count = 0) then
 
-      dbms_output.put_line ('CREATE INDEX i_'||r_tab.table_name||'_audit');
-      dbms_output.put_line ('ON '||r_tab.table_name||'_audit' );
-      dbms_output.put_line (chr(9)||'(');
-      for r_cols in c_cols (r_tab.table_name) loop
-         if r_cols.pk_col is not null then
-            dbms_output.put_line (chr(9)||chr(9)||l_comma||r_cols.column_name);
-            l_comma := ',';
-         end if;
-      end loop;
-      dbms_output.put_line (chr(9)||')');
-      dbms_output.put_line ('TABLESPACE &intactIndexAuditTablespace ');
-      dbms_output.put_line ('/ ');
+          dbms_output.put_line ('PROMPT Creating table "'|| v_table_name ||'"');
+          dbms_output.put_line ('create table '|| v_table_name);
+          dbms_output.put_line (chr(9)||'(');
+
+          dbms_output.put_line (chr(9)||chr(9)||' EVENT                              CHAR(1) NOT NULL ');
+          for r_cols in c_cols (r_tab.table_name) loop
+             dbms_output.put_line (chr(9)||chr(9)||l_comma||rpad(r_cols.column_name,35)||r_cols.datatype||r_cols.nullInd);
+          end loop;
+          dbms_output.put_line (chr(9)||')');
+          dbms_output.put_line ('tablespace &intactAuditTablespace');
+          dbms_output.put_line ('/');
+          dbms_output.put_line (' ');
+
+          l_comma := '';
+
+      else
+
+          dbms_output.put_line ('PROMPT table "'|| v_table_name ||'" already exists. Delete it first if you want to recreate it.');
+
+      end if;
+
+      -- FOR PERFORMANCE REASON, WE DON'T CREATE INDEX ON THE AUDIT TABLE.
+
    end loop;
 end;
 /
