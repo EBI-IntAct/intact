@@ -81,8 +81,9 @@
 	    LabelValueBean url = (LabelValueBean) iterator.next();
 	    String adress = url.getValue();
 	    String label = url.getLabel();
+	    String description = url.getDescription();
 
-	    String absoluteUrl = "http://holbein:8080/interpro/DisplayGoTerm?context=GO:0000192&id=GO:0030447&format=simple";
+	    String absoluteUrl = adress;
 
 	    /* redirection to this URL */
          %>
@@ -102,8 +103,13 @@
 		   LabelValueBean url = (LabelValueBean) iterator.next();
 		   String adress = url.getValue();
 		   String label = url.getLabel();
+		   String description = url.getDescription();
 
+		   if (null == description)
 		   out.println("<a href=" + adress +" target=\"frameHierarchy\">" + label + "</a> <br>");
+		   else 
+		   out.println("<a href=" + adress +" target=\"frameHierarchy\">" + label + "</a> " + description + "<br>");
+
 	       } // while
 
 	   } // else
