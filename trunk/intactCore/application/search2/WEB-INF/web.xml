@@ -26,25 +26,6 @@
         <param-value>/config/</param-value>
     </context-param>
 
-    <!-- mapping file used for converting java objects to XML (used by Castor) -->
-    <context-param>
-        <param-name>xmlMappingFile</param-name>
-        <param-value>/config/javaToXmlMapping.xml</param-value>
-    </context-param>
-
-    <!-- XSL stylesheet location (relative to the context root path) -->
-    <context-param>
-        <param-name>xslFile</param-name>
-        <param-value>/intact-full.xsl</param-value>
-    </context-param>
-
-    <!-- XSL stylesheet for Protein Partners view (relative to the context root path) -->
-        <context-param>
-            <param-name>proteinXslFile</param-name>
-            <param-value>/protein-view.xsl</param-value>
-        </context-param>
-
-
     <!--  Class name of the data source object to be used    -->
     <context-param>
         <param-name>datasource</param-name>
@@ -62,14 +43,6 @@
         <param-name>helpLink</param-name>
         <param-value>displayDoc.jsp?section=</param-value>
     </context-param>
-
-    <!-- The link for interaction partner views to access Experiment
-    views (relative to context root)-->
-    <context-param>
-        <param-name>experimentLink</param-name>
-        <param-value>/do/protein?viewExpsLink=</param-value>
-    </context-param>
-
 
       <!-- Action Servlet Configuration -->
     <servlet>
