@@ -1,10 +1,8 @@
 <%--
-   /**
-    * Intact welcome page. Allows a user to enter the search application.
-    *
-    * @author Chris Lewington
-    * @version $Id$
-    */
+    Intact welcome page. Allows a user to enter the search application.
+
+    @author Chris Lewington, Sugath Mudali (smudali@ebi.ac.uk)
+    @version $Id$
 --%>
 
 <%@ page language="java" %>
@@ -13,18 +11,19 @@
 
 <html:html locale="true">
     <head>
-        <title><bean:message key="login.title"/></title>
+        <title><bean:message key="welcome.main.title"/></title>
         <html:base/>
     </head>
 
     <body bgcolor="#ffffff">
 
-    <h1 align="center">Welcome to the Intact Database! </h1>
-    <h2 align="center">Please click on the logo:</h1>
+    <h1 align="center"><bean:message key="welcome.title1"/></h1>
+    <h2 align="center"><bean:message key="welcome.title2"/></h1>
     </h2>
         <html:form action="/welcome">
-            <h1 align="center"><input type="image" src="intact-logo.jpg" border="0" name="click here to begin"></h1>
-
+            <h1 align="center">
+                <html:image srcKey="welcome.logo" altKey="welcome.logo.alt"/>
+            </h1>
         </html:form>
     </body>
 </html:html>
