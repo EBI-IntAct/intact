@@ -41,7 +41,7 @@ Verison: $Id$
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
 
-     <!-- The jdbc properties. -->
+    <!-- The jdbc properties. -->
     <property file="${intact.root}/config/jdbc.properties"/>
 
     <!-- The logging configuration -->
@@ -109,6 +109,10 @@ Verison: $Id$
         <pathelement path="${root.lib.dir}/commons-logging.jar"/>
 
         <pathelement path="${intact.app.dir}/lib/struts.jar"/>
+        <pathelement path="${intact.app.dir}/lib/concurrent.jar"/>
+        <pathelement path="${intact.app.dir}/lib/commons-beanutils.jar"/>
+        <pathelement path="${intact.app.dir}/lib/commons-collections.jar"/>
+
     </path>
 
     <!-- =================================================================== -->
@@ -405,7 +409,9 @@ Verison: $Id$
         depends="prepare">
         <mkdir dir="${dest.dir}"/>
 
+
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
+            source="1.4"
             includes="**/application/hierarchView/**,
                       **/application/commons/**,
                       **/util/PropertyLoader*,
