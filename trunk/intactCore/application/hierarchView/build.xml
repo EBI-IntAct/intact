@@ -740,6 +740,9 @@ Verison: $Id$
         <replace file="${dist.dir}/${hierarchView.context.file}"
                  token="[WAR.FILE.NAME]"
                  value="${war.file}" />
+        <replace file="${dist.dir}/${hierarchView.context.file}"
+                 token="[server.name]"
+                 value="${server.name}" />
     </target>
 
 </project>

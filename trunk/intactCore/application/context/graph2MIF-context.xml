@@ -3,4 +3,4 @@
       version : $Id$
   -->
 
-<Context path="/intact/graph2mif" docBase="[WAR.FILE.NAME]" />
+<Context path="/[server.name]/graph2mif" docBase="[WAR.FILE.NAME]" />

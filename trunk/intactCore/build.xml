@@ -67,8 +67,8 @@
         </fileset>
 
         <!-- search specific jar files. -->
-        <pathelement location="${app.dir}/search/WEB-INF/classes"/>
-        <fileset dir="${app.dir}/search/WEB-INF/lib">
+        <pathelement location="${app.dir}/search2/WEB-INF/classes"/>
+        <fileset dir="${app.dir}/search2/WEB-INF/lib">
             <include name="*.jar"/>
         </fileset>
 
@@ -145,7 +145,7 @@
     <!-- Remove 'dest' and docs directories of search module for clean build -->
     <target name="clean-search"
         description="Prepare search module for a clean build">
-        <ant dir="${app.dir}/search" inheritAll="false" target="clean" />
+        <ant dir="${app.dir}/search2" inheritAll="false" target="clean" />
     </target>
 
     <!-- =================================================================== -->
@@ -374,7 +374,7 @@
     <target name="compile-search" depends="compile-core"
         description="Compiles the search module">
 
-        <ant dir="${app.dir}/search" inheritAll="false" target="compile"/>
+        <ant dir="${app.dir}/search2" inheritAll="false" target="compile"/>
     </target>
 
     <!-- =================================================================== -->

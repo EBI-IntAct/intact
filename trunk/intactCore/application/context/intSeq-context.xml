@@ -3,4 +3,4 @@
         version : $Id$
     -->
 
-<Context path="/intact/intSeq" docBase="app-dir/[WAR.FILE.NAME]" />
+<Context path="/[server.name]/intSeq" docBase="app-dir/[WAR.FILE.NAME]" />
