@@ -6,21 +6,27 @@ T O   D O
 	+ currently under progress
 
 
++ See with Florian Iragne (forian.iragne@labri.fr, Bordeaux)
+   + test the Turender web service
+   + definition of the future web service interface
 
-- install Struts 1.1 and check if everything ok
-  - bean:message tag send an exception :
+- put in every source package  'package.html' file which describe that package !
 
-     java.lang.IllegalStateException: getAttribute: Session already invalidated
-	     at org.apache.catalina.session.StandardSession.getAttribute(StandardSession.java:942)
-	     at org.apache.catalina.session.StandardSessionFacade.getAttribute(StandardSessionFacade.java:171)
-	     at org.apache.catalina.session.StandardSessionFacade.getAttribute(StandardSessionFacade.java:171)
-	     at org.apache.jasper.runtime.PageContextImpl.getAttribute(PageContextImpl.java:222)
-	     at org.apache.struts.util.RequestUtils.retrieveUserLocale(RequestUtils.java:758)
-	     at org.apache.struts.util.RequestUtils.message(RequestUtils.java:828)
-	     at org.apache.struts.taglib.bean.MessageTag.doStartTag(MessageTag.java:295)
-	     at org.apache.jsp.view_jsp._jspx_meth_bean_message_1(view_jsp.java:315)
+- Update libraries :
+    - install Struts 1.1 and check if everything ok
+      - bean:message tag send an exception :
 
-- Installing the latest stable release of Axis
+         java.lang.IllegalStateException: getAttribute: Session already invalidated
+             at org.apache.catalina.session.StandardSession.getAttribute(StandardSession.java:942)
+             at org.apache.catalina.session.StandardSessionFacade.getAttribute(StandardSessionFacade.java:171)
+             at org.apache.catalina.session.StandardSessionFacade.getAttribute(StandardSessionFacade.java:171)
+             at org.apache.jasper.runtime.PageContextImpl.getAttribute(PageContextImpl.java:222)
+             at org.apache.struts.util.RequestUtils.retrieveUserLocale(RequestUtils.java:758)
+             at org.apache.struts.util.RequestUtils.message(RequestUtils.java:828)
+             at org.apache.struts.taglib.bean.MessageTag.doStartTag(MessageTag.java:295)
+             at org.apache.jsp.view_jsp._jspx_meth_bean_message_1(view_jsp.java:315)
+
+    - Installing the latest stable release of Axis
 
 - check if the current use of Struts couldn't be improved
   - storing the ActionBean instead of each data separetly
