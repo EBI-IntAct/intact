@@ -41,7 +41,8 @@
         value="uk.ac.ebi.intact.application.hierarchView.business.tulip.webService"/>
     <property name="ws.tulip.server.dir"
         value="uk/ac/ebi/intact/application/hierarchView/business/tulip/webService"/>
-    <property name="ws.tulip.jar" value="${ws.dir}/tulipService.jar"/>
+    <property name="ws.tulip.jar.name" value="tulipService.jar"/>
+    <property name="ws.tulip.jar" value="${ws.dir}/${ws.tulip.jar.name}"/>
     <property name="ws.props.file" value="WebService.properties"/>
     <property name="ws.deploy.file" value="${ws.wsdd.dir}/deploy.wsdd"/>
     <property name="ws.undeploy.file" value="${ws.wsdd.dir}/undeploy.wsdd"/>
@@ -265,7 +266,7 @@
         <delete file="${root.dest.dir}/${ws.props.file}"/>
 
         <!-- Copy the service to Axis installed on Tomcat. -->
-        <echo message="Copy the service to Axis installed on Tomcat"/>
+        <echo message="Copy the service to Axis (installed on Tomcat)"/>
         <copy file="${ws.tulip.jar}" todir="${tomcat.home}/webapps/axis/WEB-INF/lib"
               overwrite="true"/>
 
@@ -275,6 +276,19 @@
         <echo message="Delete generated files"/>
         <delete dir="uk"/>
 
+
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Compile the web service source tree. -->
+    <target name="undeploy-ws" description="Undeploys the web service"
+            depends="run-once" if="axis.present">
+
+        <antcall target="stop-ws"/>
+
+        <echo message="Remove the service from Axis (installed on Tomcat)"/>
+        <delete file="${tomcat.home}/webapps/axis/WEB-INF/lib/${ws.tulip.jar.name}"/>
 
     </target>
 
