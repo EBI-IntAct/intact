@@ -47,9 +47,6 @@ public class CancelFormAction extends AbstractEditorAction {
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
 
-        // Cancel the current edit session.
-        user.cancelEdit();
-
         // Update the search cache to display the current object.
         AnnotatedObject annobj = user.getView().getAnnotatedObject();
         if ((annobj != null) && (annobj.getAc() != null)) {
@@ -59,6 +56,9 @@ public class CancelFormAction extends AbstractEditorAction {
             // Release the lock.
             getLockManager().release(annobj.getAc());
         }
+        // Cancel the current edit session.
+        user.cancelEdit();
+
         // Back to the search page.
         return mapping.findForward(RESULT);
     }

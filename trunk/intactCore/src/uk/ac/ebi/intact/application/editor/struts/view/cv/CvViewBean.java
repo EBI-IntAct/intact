@@ -71,24 +71,24 @@ public class CvViewBean extends AbstractEditViewBean {
         myMenus.clear();
     }
 
-    /**
-     * Override to provide the menus for this view.
-     * @return a map of menus for this view. It consists of common menus for
-     * annotation/xref.
-     * @throws IntactException for errors in accessing the persistent system.
-     */
-    public Map getMenus() throws IntactException {
-        if (!myMenus.isEmpty()) {
-            return myMenus;
-        }
+    public void loadMenus() throws IntactException {
         // The Intact helper to construct menus.
         IntactHelper helper = new IntactHelper();
 
         try {
-            return super.getMenus(helper);
+            myMenus = super.getMenus(helper);
         }
         finally {
             helper.closeStore();
         }
+    }
+
+    /**
+     * Override to provide the menus for this view.
+     * @return a map of menus for this view. It consists of common menus for
+     * annotation/xref.
+     */
+    public Map getMenus() {
+        return myMenus;
     }
 }

@@ -10,10 +10,12 @@ import uk.ac.ebi.intact.application.commons.business.IntactUserI;
 import uk.ac.ebi.intact.application.commons.search.CriteriaBean;
 import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.Feature;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.util.GoServerProxy;
 import uk.ac.ebi.intact.util.NewtServerProxy;
@@ -77,13 +79,13 @@ public interface EditUserI extends IntactUserI, Serializable {
     public AbstractEditViewBean getView();
 
     /**
-     * Sets the view. This is usefult in a situation where the last edited
-     * state is restored without reinitialising the view. For example,
-     * the Interaction editor state is restored when returning from the
+     * Sets the current view to the Interaction editor. This is used situation
+     * where the last edited state is restored without reinitialising the view.
+     * For example, the Interaction editor state is restored when returning from the
      * Feature editor.
-     * @param view the view to set as the current editor view.
+     * @param view the view to set as the current interaction view.
      */
-    public void setView(AbstractEditViewBean view);
+    public void setView(InteractionViewBean view);
 
     /**
      * Sets the current view for given class. This method is only used in when
@@ -108,6 +110,21 @@ public interface EditUserI extends IntactUserI, Serializable {
      * @param obj the cloned object.
      */
     public void setClonedView(AnnotatedObject obj);
+
+    /**
+     * Sets the current view as a new Feature editor. This separate method is
+     * required as Feature is always accessed via an Interaction and hence
+     * we want to preserve the existing Interaction view to get back to.
+     */
+    public void setViewFeature();
+
+    /**
+     * Sets the current view baseed on an existing Feature.
+     * @param feature the current view is based on this.
+     *
+     * @see #setViewFeature()
+     */
+    public void setViewFeature(Feature feature);
 
     // Search methods
 
@@ -287,4 +304,24 @@ public interface EditUserI extends IntactUserI, Serializable {
      * @return IntactHelper instance assigned to the current user.
      */
     public IntactHelper getIntactHelper() throws IntactException;
+
+    /**
+     * Sets the source class and AC to return back. This is only needed when the
+     * user goes from one view to another (e.g., Experiment to Interaction).
+     * @param clazz the class to return to (e.g., Experiment)
+     * @param ac the AC
+     */
+//    public void setSourceToReturn(Class clazz, String ac);
+
+    /**
+     * Returns the information to go back to.
+     * @return a map entry consists of Class and AC.
+     */
+//    public Map.Entry getSourceToReturn();
+
+    /**
+     * @return true if the user has a source to go back to (i.e., need to get
+     * back to the previous editor)
+     */
+//    public boolean hasSourceToGoBack();
 }

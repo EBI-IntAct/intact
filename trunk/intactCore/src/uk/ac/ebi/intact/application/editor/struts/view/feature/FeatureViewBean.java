@@ -252,16 +252,7 @@ public class FeatureViewBean extends AbstractEditViewBean {
         myRangesToUpdate.clear();
     }
 
-    /**
-     * Override to provide the menus for this view.
-     * @return a map of menus for this view. It consists of common menus for
-     * annotation/xref, feature type (add or edit), feature identification (add).
-     * @throws IntactException for errors in accessing the persistent system.
-     */
-    public Map getMenus() throws IntactException {
-        if (!myMenus.isEmpty()) {
-            return myMenus;
-        }
+    public void loadMenus() throws IntactException {
         // Handler to the menu factory.
         EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
 
@@ -283,6 +274,14 @@ public class FeatureViewBean extends AbstractEditViewBean {
         finally {
             helper.closeStore();
         }
+    }
+
+    /**
+     * Override to provide the menus for this view.
+     * @return a map of menus for this view. It consists of common menus for
+     * annotation/xref, feature type (add or edit), feature identification (add).
+     */
+    public Map getMenus() {
         return myMenus;
     }
 

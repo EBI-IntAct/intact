@@ -87,6 +87,7 @@
         <pathelement path="${root.lib.dir}/commons-dbcp-1.1.jar"/>
         <pathelement path="${intact.app.lib.dir}/commons-collections.jar"/>
         <pathelement path="${root.lib.dir}/commons-lang-2.0.jar"/>
+        <pathelement path="${root.lib.dir}/commons-pool-1.2.jar"/>
 
         <pathelement path="${root.lib.dir}/jakarta-regexp-1.3.jar"/>
         <pathelement path="${root.lib.dir}/log4j-1.2.8.jar"/>
@@ -442,7 +443,7 @@
                 <include name="commons-dbcp-1.1.jar"/>
                 <include name="log4j-1.2.8.jar"/>
                 <include name="${db}"/>
-                <include name="commons-pool-1.1.jar"/>
+                <include name="commons-pool-1.2.jar"/>
                 <!-- All the following files are required for ProteinUpdate to work -->
                 <include name="yasp.jar"/>
                 <include name="aristotle.jar"/>
