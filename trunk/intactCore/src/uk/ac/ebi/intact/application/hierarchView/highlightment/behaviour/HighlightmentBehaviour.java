@@ -6,10 +6,14 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.hierarchView.highlightment.behaviour;
 
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
+import uk.ac.ebi.intact.application.hierarchView.business.Constants;
+import uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource;
 import uk.ac.ebi.intact.simpleGraph.Node;
 
 import java.util.Collection;
 import java.util.Iterator;
+
+import org.apache.log4j.Logger;
 
 
 /**
@@ -22,6 +26,8 @@ import java.util.Iterator;
  */
 
 public abstract class HighlightmentBehaviour {
+
+    static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
 
     /**
      * Provides a implementation of HighlightmentBehaviour from its name.<br>
@@ -48,6 +54,11 @@ public abstract class HighlightmentBehaviour {
             // Create an instance of the class invoked
             object = cls.newInstance();
 
+            if (false == (object instanceof HighlightmentBehaviour)) {
+                // my object is not from the proper type
+                logger.error (aClassName + " is not a HighlightmentBehaviour");
+                return null;
+            }
         } catch (Exception e) {
             // nothing to do, object is already setted to null
         }
