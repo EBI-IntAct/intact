@@ -63,6 +63,24 @@
         </info>
     </tag>
 
+
+    <tag>
+        <name>documentation</name>
+        <tagclass>uk.ac.ebi.intact.application.commons.struts.taglibs.DocumentationTag</tagclass>
+        <bodycontent>empty</bodycontent>
+
+        <info>
+               Displays the IntAct documentation in a popup window.
+               If requensted, the ducumentation can directly show a
+               section.
+        </info>
+
+        <attribute>
+            <name>section</name>
+            <required>false</required>
+        </attribute>
+    </tag>
+
 </taglib>
 
 
