@@ -215,7 +215,7 @@
         <replace file="${rep.dest.file}" propertyfile="${pg.props.file}">
             <replacefilter token="@DBMS_NAME@"       value="PostgreSQL" />
             <replacefilter token="@DRIVER_NAME@"     value="org.postgresql.jdbc2.optional.PoolingDataSource"/>
-            <replacefilter token="@URL_SUBPROTOCOL@" value="postgresql"/>
+            <replacefilter token="@URL_SUBPROTOCOL@" property="subprotocol"/>
             <replacefilter token="@URL_DBALIAS@"     property="dbalias"/>
             <replacefilter token="@USER_NAME@"       property="username"/>
             <replacefilter token="@USER_PASSWD@"     property="password"/>
