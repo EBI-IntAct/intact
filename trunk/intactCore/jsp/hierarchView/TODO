@@ -21,33 +21,24 @@ T O   D O
 + take over the application with Sugath
   + overview of the application
   + how to play with the web service
-  - ...
+  - image processing
+  - highlighting process
 
 
 
+
+- Modify the SVG generation class to fit the improvement of the drawing process (GraphToImage)
 
 - building a script allowing to do the tedious task of managing the web service !
 
-- update INTACTCORE/build.xml with the description flag to make some target visible from
-  ant -projecthelp
-
 - create then an external build.xml for hierarchView
-
-- add some comments in properties files with #
 
 - add logging facilities in the web service
 
 - Find a way to check if a web service is currently running (in the runtime)
 
-- update jsp/hierarchView/tulip/scripts/startService.sh with right messages
-  don't speak anymore about 'Serveur' unless Bordeaux solve that problem !
-
-- write a proper test directory for the web service
-
 - solve browser behaviour problem
 	o Netscape, remove frames
-
-- Allows the web service to send error message
 
 - Tomcat jar problem :
   We have to add xercesImpl.jar (found in the WEB-INF/lib of our web application) in the 
@@ -62,15 +53,39 @@ T O   D O
   So the user is not warned ! It seems that no GO term are found.
   cf. HighlightProteins when it call proteinToHighlight ()
 
-- Document the way to launch the Tomcat server by taking care to run properly a new X server in the same window
-  Xvfb :2.0 &
-  setenv DISPLAY :2.0
-  (run Tomcat)
+
 
 
 ==============
    D O N E
 ==============
+
+- implement the option of GoHighlightmentSource to use the list of GO terms (children)
+
+- Document the way to launch the Tomcat server by taking care to run properly a new X server in the same window
+  Xvfb :2.0 &
+  setenv DISPLAY :2.0
+  (run Tomcat)
+
+- Allows the web service to send error message
+
+- update jsp/hierarchView/tulip/scripts/startService.sh with right messages
+  don't speak anymore about 'Serveur' unless Bordeaux solve that problem !
+
+- add some comments in properties files with #
+
+- update INTACTCORE/build.xml with the description flag to make some target visible from
+  ant -projecthelp
+
+- write a proper test directory for the web service
+  jsp/hierarchView/tulip/script.test
+
+- cleaning the web.xml to avoid Tomcat exception in its startup
+
+- Correcting the displaying if the interaction network :
+	o label out of the image range
+
+- give a meaning for each displayed GO term in the right frame.
 
 - get a list of GO term from AC in the IntAct database
 
@@ -82,16 +97,4 @@ T O   D O
   Maybe by reading a property file and editing the generated code !
 
 - option of the highlightment source
-
-- give a meaning for each displayed GO term in the right frame.
-
-- Correcting the displaying if the interaction network :
-	o label out of the image range
-
-- cleaning the web.xml to avoid Tomcat exception in its startup
-
-
-
-
-
 
