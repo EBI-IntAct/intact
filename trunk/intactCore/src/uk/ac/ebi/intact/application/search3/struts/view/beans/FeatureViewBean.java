@@ -1,3 +1,4 @@
+
 /*
 Copyright (c) 2002 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
@@ -255,3 +256,4 @@ public class FeatureViewBean extends AbstractViewBean {
 
 
 }
+

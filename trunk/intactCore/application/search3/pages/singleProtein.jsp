@@ -117,7 +117,7 @@ mockups, June 2004
             <tr bgcolor="white">
 
                 <!-- biosource label+ help link -->
-                <td rowspan="1" colspan="1" class="headerdarkmid">&nbsp;Source
+                <td rowspan="1" colspan="1" class="headerdarkmid">Source
                     <a
                         href="<%= bean.getHelpLink() + "Interactor.bioSource"%>"
                         target="new"><br>
@@ -169,7 +169,8 @@ others are subsequent rows.
                 <!-- label + CvDatabase link for primary ID (assumes first Xref is primary)-->
                 <td class="headerdarkmid"
                 rowspan="<%= bean.getXrefs().size() %>" colspan="1">
-                <a href="<%= bean.getCvDbURL(firstXref)%>" class="tdlink">Xref<br></a></td>
+                   <a href="<%= bean.getHelpLink() + "XREF_HELP_SECTION"  %>" class="tdlink">Xref<br></a></td>
+            <!--    <a href="<% //  bean.getCvDbURL(firstXref)%>" class="tdlink">Xref<br></a></td>  -->
 
         <!-- don't close the row tag here - it will be done in the Xref loop below
         for the first item....
