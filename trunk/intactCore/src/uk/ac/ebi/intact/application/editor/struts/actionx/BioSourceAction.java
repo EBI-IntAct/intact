@@ -106,6 +106,14 @@ public class BioSourceAction extends AbstractEditorAction {
             theForm.set("taxId", bioview.getTaxId());
             return new ActionForward(mapping.getInput());
         }
+        catch (NumberFormatException nfe) {
+            errors = new ActionErrors();
+            errors.add("biosource", new ActionError("error.newt.input", taxid));
+            saveErrors(request, errors);
+            // Restore (on screen) back to the bean's tax id.
+            theForm.set("taxId", bioview.getTaxId());
+            return new ActionForward(mapping.getInput());
+        }
         // Values from newt.
         String newtLabel = newtResponse.getShortLabel();
         String newtName = newtResponse.getFullName();
@@ -113,7 +121,7 @@ public class BioSourceAction extends AbstractEditorAction {
         // Validate the short label; compute the new name using
         // scientific name and tax id for an empty short label.
         newtLabel = newtResponse.hasShortLabel()
-                ?  user.getUniqueShortLabel(newtLabel, taxid)
+                ? user.getUniqueShortLabel(newtLabel, taxid)
                 : this.getUniqueShortLabel(newtName, taxid, user);
 
         // Validate the scientific name.
@@ -184,14 +192,24 @@ public class BioSourceAction extends AbstractEditorAction {
             saveErrors(request, errors);
             return false;
         }
-        // result is not empty if we have this taxid on the database.
-        if (!results.isEmpty()) {
-            ActionErrors errors = new ActionErrors();
-            errors.add("cvinfo", new ActionError("error.newt.taxid", taxid));
-            saveErrors(request, errors);
-            return false;
+        if (results.isEmpty()) {
+            // Don't have this tax id on the database.
+            return true;
         }
-        return true;
+        // Found a BioSource with similar tax id; is it as same as the
+        // current record?
+        BioSourceViewBean view = (BioSourceViewBean) user.getView();
+        String currentAc = view.getAnnotatedObject().getAc();
+        String resultAc = ((BioSource) results.iterator().next()).getAc();
+        if (currentAc.equals(resultAc)) {
+            // We have retrieved the same record from the DB.
+            return true;
+        }
+        // Found a tax id which belongs to another biosource.
+        ActionErrors errors = new ActionErrors();
+        errors.add("cvinfo", new ActionError("error.newt.taxid", taxid));
+        saveErrors(request, errors);
+        return false;
     }
 
     /**
