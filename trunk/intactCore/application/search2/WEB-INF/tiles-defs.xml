@@ -18,7 +18,8 @@
     <definition name="search.menu.links" path="/layouts/menu.jsp">
         <put name="title" value="Links"/>
         <putList name="items">
-            <item value="Home" link="../welcome.jsp"/>
+            <item value="New Search"  link="/search/do/welcome"/>
+            <item value="Intact Home" link="http://www.ebi.ac.uk/intact"/>
         </putList>
     </definition>
 
