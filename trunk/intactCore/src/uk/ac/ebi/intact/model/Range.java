@@ -48,6 +48,7 @@ package uk.ac.ebi.intact.model;
  *
  *
  * @author Chris Lewington, hhe
+ * @version $Id$
  */
 public class Range extends BasicObjectImpl {
 
@@ -235,7 +236,7 @@ public class Range extends BasicObjectImpl {
         this.toIntervalStart = toStart;
         this.toIntervalEnd = toEnd;
 
-        setSequenceIntern(seq);
+        setSequence(seq);
     }
 
     //------------------------- public methods --------------------------------------
