@@ -271,7 +271,7 @@ public class Protein extends Interactor implements Editable {
 
         Protein protein = (Protein) o;
 
-        if (xref.equals(protein.getXref())) return false;
+        if (false == xref.equals(protein.getXref())) return false;
 
         return protein.getBioSource().equals (bioSource);
     }
