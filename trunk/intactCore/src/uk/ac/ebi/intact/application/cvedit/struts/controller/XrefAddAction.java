@@ -17,7 +17,6 @@ import org.apache.struts.action.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collection;
 
 /**
  * The action class is called when the user adds a new cross reference to
@@ -45,14 +44,14 @@ public class XrefAddAction extends IntactBaseAction {
      * or HttpServletResponse.sendRedirect() to, as a result of processing
      * activities of an <code>Action</code> class
      */
-    public ActionForward perform (ActionMapping mapping, ActionForm form,
-                                  HttpServletRequest request,
-                                  HttpServletResponse response) {
-        // Handler to the IntactUserIF.
-        IntactUserIF user = super.getIntactUser(request);
-
+    public ActionForward execute(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
         // Need the form to get data entered by the user.
         XrefAddForm theForm = (XrefAddForm) form;
+
+        // Handler to the IntactUserIF.
+        IntactUserIF user = super.getIntactUser(request);
 
         // The new xref to add to the current cv object.
         Xref xref = null;
@@ -86,34 +85,9 @@ public class XrefAddAction extends IntactBaseAction {
             // Xref constructor
             assert false;
         }
-//        // The current CV object we are editing.
-//        CvObject cvobj = user.getCurrentEditObject();
-//
-//        // Add the xref to the current cv object.
-//        cvobj.addXref(xref);
-//
-//        // Create the xref on the database.
-//        try {
-//            user.create(xref);
-//        }
-//        catch (IntactException ie) {
-//            // Unable to create an annotation; no nested message provided.
-//            super.addError("error.create", ie.getMessage());
-//            super.saveErrors(request);
-//            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
-//        }
-        // We need to update on the screen as well.
-        XreferenceBean xbean = new XreferenceBean(xref);
-
-        // The new xrefs to add when submit is pressed.
-        Collection addbeans = (Collection) super.getSessionObject(request,
-            WebIntactConstants.XREFS_TO_ADD);
-        addbeans.add(xbean);
-
-        // The annotation collection.
-        Collection viewbeans = (Collection) super.getSessionObject(
-            request, WebIntactConstants.XREFS_TO_VIEW);
-        viewbeans.add(xbean);
+        // Add the annotation to the view.
+        CvViewBean viewbean = user.getView();
+        viewbean.addXref(xref);
 
         // Reset the form
         theForm.reset();
