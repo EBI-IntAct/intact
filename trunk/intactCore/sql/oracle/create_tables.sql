@@ -913,4 +913,53 @@ CREATE INDEX igoId2 ON ia_goDens_density(goid2) reverse TABLESPACE &&intactIndex
 
 
 
+-----------
+-- Alias --
+-----------
+
+PROMPT Creating table "IA_alias"
+CREATE TABLE IA_alias
+(       ac                      VARCHAR2(30)   NOT NULL
+                                               CONSTRAINT pk_alias
+                                               PRIMARY KEY USING INDEX TABLESPACE &&intactIndexTablespace
+    ,  deprecated              NUMBER(1)       DEFAULT  0       NOT NULL
+    ,  created                 DATE            DEFAULT  SYSDATE NOT NULL
+    ,  updated                 DATE            DEFAULT  SYSDATE NOT NULL
+    ,  timestamp               DATE            DEFAULT  SYSDATE NOT NULL
+    ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
+    ,  aliastype_ac            VARCHAR2(30)    CONSTRAINT fk_alias$qualifier REFERENCES IA_ControlledVocab(ac)
+    ,  parent_ac               VARCHAR2(30)    -- eh missing constraint here??
+    ,  owner_ac                VARCHAR2(30)    CONSTRAINT fk_alias$owner REFERENCES IA_Institution(ac)
+    ,  name                       VARCHAR2(30)
+)
+TABLESPACE &&intactIndexTablespace;
+
+CREATE index i_Alias$parent_ac on IA_Alias(parent_ac) TABLESPACE &&intactIndexTablespace;
+ 
+set term on
+    COMMENT ON TABLE IA_Alias IS
+    'Represents an alias. Therefore the column parent_ac can unfortunately not have a foreign key constraint.';
+    COMMENT ON COLUMN IA_Alias.aliastype_ac IS
+    'Type of the alias. ac found in the IA_ControlledVocab table.';
+    COMMENT ON COLUMN IA_Alias.name IS
+    'Name of the alias.';
+    COMMENT ON COLUMN IA_Alias.parent_ac IS
+    'Refers to the parent object this alias describes.';
+    COMMENT ON COLUMN IA_Alias.owner_ac IS
+    'Refers to the owner of this object.';
+    COMMENT ON COLUMN IA_Alias.ac IS
+    'Unique auto-generated accession number.';
+    COMMENT ON COLUMN IA_Alias.created IS
+    'Date of the creation of the row.';
+    COMMENT ON COLUMN IA_Alias.updated IS
+    'Date of the last update of the row.';
+    COMMENT ON COLUMN IA_Alias.timestamp IS
+    'Date of the last update of the column.';
+    COMMENT ON COLUMN IA_Alias.userstamp IS
+    'Database user who has performed the last update of the column.';
+set term off
+
+
+
+
 set term on
