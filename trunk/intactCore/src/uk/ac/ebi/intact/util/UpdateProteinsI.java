@@ -16,6 +16,8 @@ import uk.ac.ebi.intact.model.*;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.HashMap;
 
 
 /**
@@ -23,7 +25,7 @@ import java.util.Iterator;
  */
 public abstract class UpdateProteinsI {
 
-    protected final static org.apache.log4j.Logger logger = Logger.getLogger( "updateProtein" );
+    protected static Logger logger = Logger.getLogger( "updateProtein" );
 
     private final static String CV_TOPIC_SEARCH_URL_ASCII = "search-url-ascii";
 
@@ -82,6 +84,9 @@ public abstract class UpdateProteinsI {
      * Default is true.
      */
     protected static boolean localTransactionControl = true;
+
+    // Heeps eventual parsing error while the processing is carried on
+    protected Map parsingExceptions = new HashMap();
 
 
     //////////////////////////////////
@@ -148,19 +153,25 @@ public abstract class UpdateProteinsI {
         try {
             myInstitution = (Institution) helper.getObjectByLabel( Institution.class, "EBI" );
             if( myInstitution == null ) {
-                logger.error( "Unable to find the Institution" );
+                if( logger != null ) {
+                    logger.error( "Unable to find the Institution" );
+                }
                 throw new UpdateException( "Unable to find the Institution" );
             }
 
             sgdDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "sgd" );
             if( sgdDatabase == null ) {
-                logger.error( "Unable to find the SGD database in your IntAct node" );
+                if( logger != null ) {
+                    logger.error( "Unable to find the SGD database in your IntAct node" );
+                }
                 throw new UpdateException( "Unable to find the SGD database in your IntAct node" );
             }
 
             uniprotDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "uniprot" );
             if( uniprotDatabase == null ) {
-                logger.error( "Unable to find the UNIPROT database in your IntAct node" );
+                if( logger != null ) {
+                    logger.error( "Unable to find the UNIPROT database in your IntAct node" );
+                }
                 throw new UpdateException( "Unable to find the UNIPROT database in your IntAct node" );
             }
 
@@ -178,90 +189,137 @@ public abstract class UpdateProteinsI {
 
                 if( searchedAnnotation != null ) {
                     srsUrl = searchedAnnotation.getAnnotationText();
-                    logger.info( "Found SRS URL in the Uniprot CvDatabase: " + srsUrl );
+                    if( logger != null ) {
+                        logger.info( "Found SRS URL in the Uniprot CvDatabase: " + srsUrl );
+                    }
                 } else {
                     String msg = "Unable to find an annotation having a CvTopic: " + CV_TOPIC_SEARCH_URL_ASCII +
                                  " in the UNIPROT database";
-                    logger.error( msg );
+                    if( logger != null ) {
+                        logger.error( msg );
+                    }
                     throw new UpdateException( msg );
                 }
             } else {
                 String msg = "No Annotation in the UNIPROT database, could not get the SRS URL.";
-                logger.error( msg );
+                if( logger != null ) {
+                    logger.error( msg );
+                }
                 throw new UpdateException( msg );
             }
 
             intactDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "intact" );
             if( intactDatabase == null ) {
-                logger.error( "Unable to find the INTACT database in your IntAct node" );
+                if( logger != null ) logger.error( "Unable to find the INTACT database in your IntAct node" );
                 throw new UpdateException( "Unable to find the INTACT database in your IntAct node" );
             }
 
             goDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "go" );
             if( goDatabase == null ) {
-                logger.error( "Unable to find the GO database in your IntAct node" );
+                if( logger != null ) {
+                    logger.error( "Unable to find the GO database in your IntAct node" );
+                }
                 throw new UpdateException( "Unable to find the GO database in your IntAct node" );
             }
 
             interproDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "interpro" );
             if( interproDatabase == null ) {
-                logger.error( "Unable to find the interpro database in your IntAct node" );
+                if( logger != null ) {
+                    logger.error( "Unable to find the interpro database in your IntAct node" );
+                }
                 throw new UpdateException( "Unable to find the interpro database in your IntAct node" );
             }
 
             flybaseDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "flybase" );
             if( flybaseDatabase == null ) {
-                logger.error( "Unable to find the flybase database in your IntAct node" );
+                if( logger != null ) {
+                    logger.error( "Unable to find the flybase database in your IntAct node" );
+                }
                 throw new UpdateException( "Unable to find the flybase database in your IntAct node" );
             }
 
             identityXrefQualifier = (CvXrefQualifier) helper.getObjectByLabel( CvXrefQualifier.class, "identity" );
             if( identityXrefQualifier == null ) {
-                logger.error( "Unable to find the identity CvXrefQualifier in your IntAct node" );
+                if( logger != null ) {
+                    logger.error( "Unable to find the identity CvXrefQualifier in your IntAct node" );
+                }
                 throw new UpdateException( "Unable to find the identity CvXrefQualifier in your IntAct node" );
             }
 
             secondaryXrefQualifier = (CvXrefQualifier) helper.getObjectByLabel( CvXrefQualifier.class, "secondary-ac" );
             if( secondaryXrefQualifier == null ) {
-                logger.error( "Unable to find the identity CvXrefQualifier in your IntAct node" );
+                if( logger != null ) {
+                    logger.error( "Unable to find the identity CvXrefQualifier in your IntAct node" );
+                }
                 throw new UpdateException( "Unable to find the identity CvXrefQualifier in your IntAct node" );
             }
 
             isoFormParentXrefQualifier = (CvXrefQualifier) helper.getObjectByLabel( CvXrefQualifier.class, "isoform-parent" );
             if( secondaryXrefQualifier == null ) {
-                logger.error( "Unable to find the isoform-parent CvXrefQualifier in your IntAct node" );
+                if( logger != null ) {
+                    logger.error( "Unable to find the isoform-parent CvXrefQualifier in your IntAct node" );
+                }
                 throw new UpdateException( "Unable to find the identity CvXrefQualifier in your IntAct node" );
             }
 
             isoformComment = (CvTopic) helper.getObjectByLabel( CvTopic.class, "isoform-comment" );
             if( isoformComment == null ) {
-                logger.error( "Unable to find the isoform-comment CvTopic in your IntAct node" );
+                if( logger != null ) {
+                    logger.error( "Unable to find the isoform-comment CvTopic in your IntAct node" );
+                }
                 throw new UpdateException( "Unable to find the isoform-comment CvTopic in your IntAct node" );
             }
 
             isoformSynonym = (CvAliasType) helper.getObjectByLabel( CvAliasType.class, "isoform-synonym" );
             if( isoformSynonym == null ) {
-                logger.error( "Unable to find the isoform-synonym CvAliasType in your IntAct node" );
+                if( logger != null ) {
+                    logger.error( "Unable to find the isoform-synonym CvAliasType in your IntAct node" );
+                }
                 throw new UpdateException( "Unable to find the isoform-synonym CvAliasType in your IntAct node" );
             }
 
             geneNameAliasType = (CvAliasType) helper.getObjectByLabel( CvAliasType.class, "gene-name" );
             if( geneNameAliasType == null ) {
-                logger.error( "Unable to find the gene-name CvAliasType in your IntAct node" );
+                if( logger != null ) {
+                    logger.error( "Unable to find the gene-name CvAliasType in your IntAct node" );
+                }
                 throw new UpdateException( "Unable to find the gene-name CvAliasType in your IntAct node" );
             }
 
             geneNameSynonymAliasType = (CvAliasType) helper.getObjectByLabel( CvAliasType.class, "gene-name-synonym" );
             if( geneNameSynonymAliasType == null ) {
-                logger.error( "Unable to find the gene-name-synonym CvAliasType in your IntAct node" );
+                if( logger != null ) {
+                    logger.error( "Unable to find the gene-name-synonym CvAliasType in your IntAct node" );
+                }
                 throw new UpdateException( "Unable to find the gene-name-synonym CvAliasType in your IntAct node" );
             }
 
         } catch ( IntactException e ) {
-            logger.error( e );
+            if( logger != null ) {
+                logger.error( e );
+            }
             throw new UpdateException( "Couldn't find needed object in IntAct, cause: " + e.getMessage() );
         }
 
+    }
+
+    /**
+     * Gives all Exceptions that have been raised during the last processing.
+     *
+     * @return a map Entry Count ---> Exception. It can be null.
+     */
+    public Map getParsingExceptions() {
+        return parsingExceptions;
+    }
+
+
+    /**
+     * Set the updateprotein logger and those of 3rd party tools.
+     * @param aLogger the new logger.
+     */
+    public void setLogger( Logger aLogger ) {
+        logger = aLogger;
+        bioSourceFactory.setLogger( aLogger );
     }
 
 

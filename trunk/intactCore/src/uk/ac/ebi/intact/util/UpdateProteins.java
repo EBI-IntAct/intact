@@ -132,8 +132,8 @@ import java.util.*;
  */
 public class UpdateProteins extends UpdateProteinsI {
 
-    // TODO: ask when run in command line about an alternative location for the error file.
-    private static final String ENTRY_OUTPUT_FILE = "/tmp/Entries.error";
+    // Store that error in the temp directory (OS independant)
+    private static final String ENTRY_OUTPUT_FILE = System.getProperty("java.io.tmpdir") + "Entries.error";
 
     // to record entry error
     private String filename = null;
@@ -246,6 +246,8 @@ public class UpdateProteins extends UpdateProteinsI {
             proteins.clear();
         }
 
+        parsingExceptions.clear();
+
         proteinTotal = 0;
         proteinCreated = 0;
         proteinUpdated = 0;
@@ -269,7 +271,7 @@ public class UpdateProteins extends UpdateProteinsI {
 
     // TODO: the server might be busy, create a retry method ...
 
-    public String getAnEntry( String anUrl ) {
+    public String getAnEntry( final String anUrl ) {
         BufferedReader br = null;
         StringBuffer sb = null;
         URL u = null;
@@ -277,13 +279,17 @@ public class UpdateProteins extends UpdateProteinsI {
         final String isProxySet = System.getProperty( "proxySet" );
         final String proxyHost = System.getProperty( "proxyHost" );
         final String proxyPort = System.getProperty( "proxyPort" );
-        logger.debug( "Uses: proxySet=" + isProxySet + ", proxyHost=" + proxyHost + ", proxyPort=" + proxyPort );
+        if( logger != null ) {
+            logger.debug( "Uses: proxySet=" + isProxySet + ", proxyHost=" + proxyHost + ", proxyPort=" + proxyPort );
+        }
 
         try {
             u = new URL( anUrl );
         } catch ( Exception e ) {
-            logger.error( "Please supply URL to getAnEntry() method ..." );
-            logger.error( "If the URL returns html file, this program won't parse it." );
+            if( logger != null ) {
+                logger.error( "Please supply URL to getAnEntry() method ..." );
+                logger.error( "If the URL returns html file, this program won't parse it." );
+            }
         }
 
         InputStream in = null;
@@ -304,9 +310,13 @@ public class UpdateProteins extends UpdateProteinsI {
 
             return sb.toString();
         } catch ( MalformedURLException e ) {
-            logger.error( e );
+            if( logger != null ) {
+                logger.error( anUrl, e );
+            }
         } catch ( IOException e ) {
-            logger.error( e );
+            if( logger != null ) {
+                logger.error( anUrl, e );
+            }
         } finally {
             if( in != null ) {
                 try {
@@ -333,7 +343,9 @@ public class UpdateProteins extends UpdateProteinsI {
             RE magic = new RE( pattern );
             allMatches = magic.getAllMatches( textin );
         } catch ( Exception e_RE ) {
-            e_RE.printStackTrace();
+            if( logger!= null ) {
+                logger.error( "Regular Expression error: text("+ textin +" pattern("+ pattern +")", e_RE );
+            }
         }
 
         return allMatches;
@@ -402,7 +414,9 @@ public class UpdateProteins extends UpdateProteinsI {
             }
         } catch ( IntactException e ) {
             // multiple object found for that criteria
-            logger.error( "error when retreiving Proteins from AC: " + spAC[ i ], e );
+            if( logger != null ) {
+                logger.error( "error when retreiving Proteins from AC: " + spAC[ i ], e );
+            }
             return null;
         }
 
@@ -465,7 +479,9 @@ public class UpdateProteins extends UpdateProteinsI {
             }
         } catch ( IntactException e ) {
             // multiple object found for that criteria
-            logger.error( "error when retreiving splice variants (Protein) from AC: " + ac, e );
+            if( logger != null ) {
+                logger.error( "error when retreiving splice variants (Protein) from AC: " + ac, e );
+            }
             return null;
         }
 
@@ -487,19 +503,21 @@ public class UpdateProteins extends UpdateProteinsI {
         Protein protein = null;
         int i;
 
-        logger.info( "Update flag: " + update );
+        if( logger != null ) logger.info( "Update flag: " + update );
 
         try {
             // according to the SPTR entry, get the corresponding proteins in IntAct
             // TODO: we don't activate the taxid filter here
             Collection proteins = getProteinsFromSPTrAC( sptrEntry, null, helper );
             if( proteins == null ) {
-                logger.error( "An error occured when trying to get IntAct protein, exit update" );
+                if( logger != null ) {
+                    logger.error( "An error occured when trying to get IntAct protein, exit update" );
+                }
                 writeEntry2file();
                 return;
             } else {
-                if( logger.isInfoEnabled() ) {
-                    logger.info( "proteins found for that entry  (" + proteins.size() + "):" );
+                if( logger != null && logger.isInfoEnabled() ) {
+                    if( logger != null ) logger.info( "proteins found for that entry  (" + proteins.size() + "):" );
                     for ( Iterator iteratorX = proteins.iterator(); iteratorX.hasNext(); ) {
                         Protein p = (Protein) iteratorX.next();
                         logger.info( p.getAc() + " " + p.getShortLabel() + " " + p.getBioSource().getShortLabel() );
@@ -511,11 +529,11 @@ public class UpdateProteins extends UpdateProteinsI {
             // TODO: we don't activate the taxid filter here
             Collection spliceVariants = getSpliceVariantFromSPTrAC( sptrEntry, proteins, null, helper );
             if( spliceVariants == null ) {
-                logger.error( "An error occured when trying to get IntAct splice variants, exit update" );
+                if( logger != null ) logger.error( "An error occured when trying to get IntAct splice variants, exit update" );
                 writeEntry2file();
                 return;
             } else {
-                if( logger.isInfoEnabled() ) {
+                if( logger != null && logger.isInfoEnabled() ) {
                     logger.info( "Splice variant found for that entry  (" + spliceVariants.size() + "):" );
                     for ( Iterator iteratorX = spliceVariants.iterator(); iteratorX.hasNext(); ) {
                         Protein p = (Protein) iteratorX.next();
@@ -546,7 +564,9 @@ public class UpdateProteins extends UpdateProteinsI {
                 generateProteinShortlabelUsingBiosource = true;
             }
 
-            logger.info( "generateProteinShortlabelUsingBiosource = " + generateProteinShortlabelUsingBiosource );
+            if( logger != null ) {
+                logger.info( "generateProteinShortlabelUsingBiosource = " + generateProteinShortlabelUsingBiosource );
+            }
 
             for ( i = 0; i < taxidCount; i++ ) {
 
@@ -554,7 +574,9 @@ public class UpdateProteins extends UpdateProteinsI {
 
                 // for each taxid the user want to process
                 String sptrTaxid = (String) taxids.get( i );
-                logger.info( "Prossessing: sptrTaxid=" + sptrTaxid );
+                if( logger != null ) {
+                    logger.info( "Prossessing: sptrTaxid=" + sptrTaxid );
+                }
 
                 // get a valid Biosource from either Intact or Newt
                 BioSource bioSource = bioSourceFactory.getValidBioSource( sptrTaxid );
@@ -583,16 +605,22 @@ public class UpdateProteins extends UpdateProteinsI {
 
                 if( protein == null ) {
                     // didn't found an existing one so create a new one
-                    logger.info( "No existing protein for that taxid (" + sptrTaxid + "), create a new one" );
+                    if( logger != null ) {
+                        logger.info( "No existing protein for that taxid (" + sptrTaxid + "), create a new one" );
+                    }
 
                     if( localTransactionControl ) {
                         helper.startTransaction( BusinessConstants.OBJECT_TX );
                     }
 
-                    logger.info( "Call createProtein with parameter BioSource.taxId=" + bioSource.getTaxId() );
+                    if( logger != null ) {
+                        logger.info( "Call createProtein with parameter BioSource.taxId=" + bioSource.getTaxId() );
+                    }
 
                     if( ( protein = createNewProtein( sptrEntry, bioSource, generateProteinShortlabelUsingBiosource ) ) != null ) {
-                        logger.info( "creation sucessfully done: " + protein.getShortLabel() );
+                        if( logger != null ) {
+                            logger.info( "creation sucessfully done: " + protein.getShortLabel() );
+                        }
 
                         // Keep that reference as existing protein for that Entry and taxid.
                         masters.add( protein );
@@ -600,7 +628,9 @@ public class UpdateProteins extends UpdateProteinsI {
                     if( localTransactionControl ) {
                         helper.finishTransaction();
                     }
-                    logger.info( "Transaction complete" );
+                    if( logger != null ) {
+                        logger.info( "Transaction complete" );
+                    }
 
                 } else {
 
@@ -612,17 +642,23 @@ public class UpdateProteins extends UpdateProteinsI {
                         * We are doing the update of the existing protein only if the
                         * user request it we only update its content if needed
                         */
-                        logger.info( "A protein exists for that taxid (" + sptrTaxid + "), try to update" );
+                        if( logger != null ) {
+                            logger.info( "A protein exists for that taxid (" + sptrTaxid + "), try to update" );
+                        }
 
                         if( localTransactionControl ) {
                             helper.startTransaction( BusinessConstants.OBJECT_TX );
                         }
                         if( updateExistingProtein( protein, sptrEntry, bioSource, generateProteinShortlabelUsingBiosource ) ) {
-                            logger.info( "update sucessfully done" );
+                            if( logger != null ) {
+                                logger.info( "update sucessfully done" );
+                            }
                         }
                         if( localTransactionControl ) {
                             helper.finishTransaction();
-                            logger.info( "Transaction complete" );
+                            if( logger != null ) {
+                                logger.info( "Transaction complete" );
+                            }
                         }
                     } else {
                         // Store the protein in the list we'll return
@@ -637,9 +673,11 @@ public class UpdateProteins extends UpdateProteinsI {
                 for ( int j = 0; j < comments.length; j++ ) {
                     SPTRComment comment = comments[ j ];
                     if( !( comment instanceof AlternativeSplicingAdapter ) ) {
-                        logger.error( "Looking for Comment type: " + AlternativeSplicingAdapter.class.getName() );
-                        logger.error( "Could not handle comment type: " + comment.getClass().getName() );
-                        logger.error( "SKIP IT." );
+                        if( logger != null ) {
+                            logger.error( "Looking for Comment type: " + AlternativeSplicingAdapter.class.getName() );
+                            logger.error( "Could not handle comment type: " + comment.getClass().getName() );
+                            logger.error( "SKIP IT." );
+                        }
                         continue; // skip it, go to next iteration.
                     }
 
@@ -660,7 +698,9 @@ public class UpdateProteins extends UpdateProteinsI {
                         for ( int k = 0; k < ids.length; k++ ) {
                             String id = ids[ k ];
 
-                            logger.info( "Splice variant ID: " + id );
+                            if( logger != null ) {
+                                logger.info( "Splice variant ID: " + id );
+                            }
 
                             // Search for an existing splice variant in the IntAct database
                             Protein spliceVariant = null;
@@ -708,14 +748,18 @@ public class UpdateProteins extends UpdateProteinsI {
 
                                     if( master == null ) {
                                         // error.
-                                        logger.debug( "No master protein exists for that splice variant: " + id );
+                                        if( logger != null ) {
+                                            logger.debug( "No master protein exists for that splice variant: " + id );
+                                        }
                                     }
 
                                     /**
                                      * We are doing the update of the existing protein only if the
                                      * user request it we only update its content if needed
                                      */
-                                    logger.info( "A splice variant exists for that taxid (" + sptrTaxid + "), try to update" );
+                                    if( logger != null ) {
+                                        logger.info( "A splice variant exists for that taxid (" + sptrTaxid + "), try to update" );
+                                    }
 
                                     if( localTransactionControl ) {
                                         /**
@@ -733,11 +777,15 @@ public class UpdateProteins extends UpdateProteinsI {
                                     }
                                     if( updateExistingSpliceVariant( isoForm, id, spliceVariant, master, sptrEntry,
                                                                      bioSource, generateProteinShortlabelUsingBiosource ) ) {
-                                        logger.info( "update sucessfully done" );
+                                        if( logger != null ) {
+                                            logger.info( "update sucessfully done" );
+                                        }
                                     }
                                     if( localTransactionControl ) {
                                         helper.finishTransaction();
-                                        logger.info( "Transaction complete" );
+                                        if( logger != null ) {
+                                            logger.info( "Transaction complete" );
+                                        }
                                     }
                                 } else {
                                     // Store the splice variant in the list we'll return
@@ -751,24 +799,33 @@ public class UpdateProteins extends UpdateProteinsI {
 
                                 // get the original protein from the collected data
                                 Protein master = null;
-                                logger.info( "Look for master of: " + id );
+                                if( logger != null ) {
+                                    logger.info( "Look for master of: " + id );
+                                }
                                 for ( Iterator iterator = masters.iterator(); iterator.hasNext(); ) {
                                     master = (Protein) iterator.next();
                                     if( master.getBioSource().equals( bioSource ) ) {
-                                        logger.info( "Found(" + master.getShortLabel() + ")" );
+                                        if( logger != null ) {
+                                            logger.info( "Found(" + master.getShortLabel() + ")" );
+                                        }
                                         break; // found it
                                     }
                                 }
                                 if( master == null ) {
                                     // Shouldn't happen, we have found the splice variant from the masters.
-                                    System.out.println( "Didn't found a master protein for " + id );
+                                    if( debugOnScreen ) System.out.println( "Didn't found a master protein for " + id );
+                                    if( logger != null ) {
+                                        logger.error( "Didn't found a master protein for " + id );
+                                    }
                                 }
 
                                 /**
                                  * We didn't find a Protein related to that isoform ... create it.
                                  * doesn't found so create a new one
                                  */
-                                logger.info( "No existing protein for that taxid (" + sptrTaxid + "), create a new one" );
+                                if( logger != null ) {
+                                    logger.info( "No existing protein for that taxid (" + sptrTaxid + "), create a new one" );
+                                }
 
                                 if( localTransactionControl ) {
                                     /**
@@ -778,12 +835,16 @@ public class UpdateProteins extends UpdateProteinsI {
                                 }
                                 if( ( spliceVariant = createNewSpliceVariant( isoForm, id, master, sptrEntry, bioSource,
                                                                               generateProteinShortlabelUsingBiosource ) ) != null ) {
-                                    logger.info( "creation sucessfully done" );
+                                    if( logger != null ) {
+                                        logger.info( "creation sucessfully done" );
+                                    }
                                 }
                                 if( localTransactionControl ) {
                                     helper.finishTransaction();
                                 }
-                                logger.info( "Transaction complete" );
+                                if( logger != null ) {
+                                    logger.info( "Transaction complete" );
+                                }
                             }
 
                         } // for ids
@@ -797,29 +858,39 @@ public class UpdateProteins extends UpdateProteinsI {
             */
             if( false == proteins.isEmpty() ) {
 
-                logger.error( "The following association's <protein,taxid> list has been found in IntAct but not in SPTR:" );
+                if( logger != null ) {
+                    logger.error( "The following association's <protein,taxid> list has been found in IntAct but not in SPTR:" );
+                }
                 for ( Iterator iterator = proteins.iterator(); iterator.hasNext(); ) {
                     Protein p = (Protein) iterator.next();
                     BioSource bs = p.getBioSource();
 
-                    logger.error( "\t intactAC=" + p.getAc() +
+                    if( logger != null ) {
+                        logger.error( "\t intactAC=" + p.getAc() +
                                   " shortlabel:" + p.getShortLabel() +
                                   " taxid=" + ( bs == null ? "none" : bs.getTaxId() ) );
+                    }
                 }
             }
         } catch ( IntactException ie ) {
-            logger.error( ie.getRootCause(), ie );
+            if( logger != null ) {
+                logger.error( ie.getRootCause(), ie );
+            }
 
             writeEntry2file();
 
             // Try to rollback
             if( helper.isInTransaction() ) {
-                logger.error( "Try to undo transaction." );
+                if( logger != null ) {
+                    logger.error( "Try to undo transaction." );
+                }
                 try {
                     // try to undo the transaction
                     helper.undoTransaction();
                 } catch ( IntactException ie2 ) {
-                    logger.error( "Could not undo the current transaction" );
+                    if( logger != null ) {
+                        logger.error( "Could not undo the current transaction" );
+                    }
                 }
             }
         }
@@ -829,7 +900,9 @@ public class UpdateProteins extends UpdateProteinsI {
     public boolean addNewXref( AnnotatedObject current, final Xref xref ) {
         // Make sure the xref does not yet exist in the object
         if( current.getXrefs().contains( xref ) ) {
-            logger.info( "SKIPPED: [" + xref + "] already exists" );
+            if( logger != null ) {
+                logger.info( "SKIPPED: [" + xref + "] already exists" );
+            }
             return false; // quit
         }
 
@@ -841,9 +914,13 @@ public class UpdateProteins extends UpdateProteinsI {
         if( xref.getParentAc() == current.getAc() ) {
             try {
                 helper.create( xref );
-                logger.info( "CREATED: [" + xref + "]" );
+                if( logger != null ) {
+                    logger.info( "CREATED: [" + xref + "]" );
+                }
             } catch ( Exception e_xref ) {
-                logger.error( "Error while creating an Xref for protein " + current, e_xref );
+                if( logger != null ) {
+                    logger.error( "Error while creating an Xref for protein " + current, e_xref );
+                }
                 return false;
             }
         }
@@ -857,7 +934,9 @@ public class UpdateProteins extends UpdateProteinsI {
         for ( Iterator iterator = aliases.iterator(); iterator.hasNext(); ) {
             Alias anAlias = (Alias) iterator.next();
             if( anAlias.equals( alias ) ) {
-                logger.info( "SKIPPED: [" + alias + "] already exists" );
+                if( logger != null ) {
+                    logger.info( "SKIPPED: [" + alias + "] already exists" );
+                }
                 return; // already in, exit
             }
         }
@@ -870,9 +949,13 @@ public class UpdateProteins extends UpdateProteinsI {
         if( alias.getParentAc() == current.getAc() ) {
             try {
                 helper.create( alias );
-                logger.info( "CREATED: [" + alias + "]" );
+                if( logger != null ) {
+                    logger.info( "CREATED: [" + alias + "]" );
+                }
             } catch ( Exception e_alias ) {
-                logger.error( "Error when creating an Alias for protein " + current, e_alias );
+                if( logger != null ) {
+                    logger.error( "Error when creating an Alias for protein " + current, e_alias );
+                }
             }
         }
     }
@@ -904,9 +987,13 @@ public class UpdateProteins extends UpdateProteinsI {
 
         try {
             helper.create( annotation );
-            logger.info( "ADD " + annotation + " to: " + current.getShortLabel() );
+            if( logger != null ) {
+                logger.info( "ADD " + annotation + " to: " + current.getShortLabel() );
+            }
         } catch ( Exception e_alias ) {
-            logger.error( "Error when creating an Annotation for protein " + current, e_alias );
+            if( logger != null ) {
+                logger.error( "Error when creating an Annotation for protein " + current, e_alias );
+            }
         }
     }
 
@@ -934,7 +1021,9 @@ public class UpdateProteins extends UpdateProteinsI {
 
         // create existing GO Xrefs
         SPTRCrossReference cr[] = sptrEntry.getCrossReferences( database );
-        logger.info( "Look in the entry for Xref of type: " + database + " (" + cr.length + " found)" );
+        if( logger != null ) {
+            logger.info( "Look in the entry for Xref of type: " + database + " (" + cr.length + " found)" );
+        }
 
 
         for ( int i = 0; i < cr.length; i++ ) {
@@ -942,7 +1031,9 @@ public class UpdateProteins extends UpdateProteinsI {
             String ac = sptrXref.getAccessionNumber();
             String id = sptrXref.getPropertyValue( SPTRCrossReference.PROPERTY_DESCRIPTION );
 
-            logger.info( "XREF[" + i + "] - id: " + ac + "  desc: " + id );
+            if( logger != null ) {
+                logger.info( "XREF[" + i + "] - id: " + ac + "  desc: " + id );
+            }
 
             Xref xref = new Xref( myInstitution,
                                   cvDatabase,
@@ -1006,14 +1097,18 @@ public class UpdateProteins extends UpdateProteinsI {
 
                 // link the Xref to the protein and record it in the database
                 addNewAlias( protein, alias );
-                logger.info( "ADD new Alias[name: " + alias.getName() +
+                if( logger != null ) {
+                    logger.info( "ADD new Alias[name: " + alias.getName() +
                              " type: " + geneNameAliasType.getShortLabel() + "]" +
                              ", to: " + protein.getShortLabel() );
+                }
                 needUpdate = true;
             } else {
-                logger.info( "SKIP Alias[name: " + genes[ i ][ 0 ] +
+                if( logger != null ) {
+                    logger.info( "SKIP Alias[name: " + genes[ i ][ 0 ] +
                              " type: " + geneNameAliasType.getShortLabel() + "]" +
                              ", for: " + protein.getShortLabel() );
+                }
             }
 
             for ( int ii = 1; ii < genes[ i ].length; ii++ ) {
@@ -1026,14 +1121,18 @@ public class UpdateProteins extends UpdateProteinsI {
 
                     // link the Xref to the protein and record it in the database
                     addNewAlias( protein, alias );
-                    logger.info( "ADD new Alias[name: " + alias.getName() +
+                    if( logger != null ) {
+                        logger.info( "ADD new Alias[name: " + alias.getName() +
                                  " type: " + geneNameSynonymAliasType.getShortLabel() + "]" +
                                  ", to: " + protein.getShortLabel() );
+                    }
                     needUpdate = true;
                 } else {
-                    logger.info( "SKIP Alias[name: " + genes[ i ][ ii ] +
+                    if( logger != null ) {
+                        logger.info( "SKIP Alias[name: " + genes[ i ][ ii ] +
                                  " type: " + geneNameSynonymAliasType.getShortLabel() + "]" +
                                  ", for: " + protein.getShortLabel() );
+                    }
                 }
             }
         }
@@ -1056,22 +1155,38 @@ public class UpdateProteins extends UpdateProteinsI {
             }
 
             if( shortlabel == null ) {
-                System.err.println( "WARNING: could not generate the Shortlabel, no gene name available. Using the AC." );
+                final String msg = "WARNING: could not generate the Shortlabel, no gene name available. Using the AC.";
+                if( debugOnScreen ) {
+                    System.err.println( msg );
+                }
+                if( logger != null ) {
+                    logger.warn( msg );
+                }
                 shortlabel = sptrEntry.getID().toLowerCase();
             } else {
                 // check if the ID contains already _specie (TREMBL)
                 int index = shortlabel.indexOf( '_' );
                 if( index != -1 ) {
-                    logger.info( "Remove existing _${specie} from " + shortlabel );
+                    if( logger != null ) {
+                        logger.info( "Remove existing _${specie} from " + shortlabel );
+                    }
                     shortlabel = shortlabel.substring( 0, index );
-                    logger.info( "Result: " + shortlabel );
+                    if( logger != null ) {
+                        logger.info( "Result: " + shortlabel );
+                    }
                 }
 
                 // Concatenate Biosource to the gene name !
                 if( bioSource.getShortLabel() != null && !bioSource.getShortLabel().equals( "" ) ) {
                     shortlabel = shortlabel + "_" + bioSource.getShortLabel();
                 } else {
-                    System.err.println( "WARNING: generate the shortlabel using taxid since the shortlabel doesn't exists." );
+                    final String msg = "WARNING: generate the shortlabel using taxid since the shortlabel doesn't exists.";
+                    if( debugOnScreen ) {
+                         System.err.println( msg );
+                     }
+                    if( logger != null ) {
+                        logger.warn( msg );
+                    }
                     shortlabel = shortlabel + "_" + bioSource.getTaxId();
                 }
             }
@@ -1183,11 +1298,11 @@ public class UpdateProteins extends UpdateProteinsI {
                 proteinUpdated++;
                 return true;
             } catch ( IntactException ie ) {
-                logger.error( protein, ie );
+                if( logger != null ) logger.error( protein, ie );
                 throw ie;
             }
         } else {
-            logger.info( "That protein was up-to-date" );
+            if( logger != null ) logger.info( "That protein was up-to-date" );
             if( debugOnScreen ) {
                 System.out.print( " p-" );
             }
@@ -1333,7 +1448,9 @@ public class UpdateProteins extends UpdateProteinsI {
             // keep that protein
             proteins.add( protein );
 
-            logger.info( "protein updated: " + protein );
+            if( logger != null ) {
+                logger.info( "protein updated: " + protein );
+            }
             if( debugOnScreen ) {
                 System.out.print( " pC" );
             }
@@ -1341,7 +1458,9 @@ public class UpdateProteins extends UpdateProteinsI {
             proteinCreated++;
             return protein;
         } catch ( IntactException e ) {
-            logger.error( protein, e );
+            if( logger != null ) {
+                logger.error( protein, e );
+            }
             throw e;
         }
 
@@ -1373,7 +1492,9 @@ public class UpdateProteins extends UpdateProteinsI {
         boolean needUpdate = false;
 
         if( master == null ) {
-            logger.error( "the master protein is null ... can't do that" );
+            if( logger != null ) {
+                logger.error( "the master protein is null ... can't do that" );
+            }
             return false;
         }
 
@@ -1385,7 +1506,13 @@ public class UpdateProteins extends UpdateProteinsI {
             if( bioSource.getShortLabel() != null && !bioSource.getShortLabel().equals( "" ) ) {
                 shortLabel = shortLabel + "_" + bioSource.getShortLabel();
             } else {
-                System.err.println( "WARNING: generate the shortlabel using taxid since the shortlabel doesn't exists." );
+                final String msg = "WARNING: generate the shortlabel using taxid since the shortlabel doesn't exists.";
+                if( debugOnScreen ) {
+                    System.err.println( msg );
+                }
+                if( logger != null ) {
+                    logger.warn( msg );
+                }
                 shortLabel = shortLabel + "_" + bioSource.getTaxId();
             }
         }
@@ -1399,7 +1526,9 @@ public class UpdateProteins extends UpdateProteinsI {
                 crc64 = Crc64.getCrc64( sequence );
             }
         } catch ( FeatureException e ) {
-            logger.error( "Could not get the Alternative splice variant sequence from SPTREntry.", e );
+            if( logger != null ) {
+                logger.error( "Could not get the Alternative splice variant sequence from SPTREntry.", e );
+            }
             return false;
         }
 
@@ -1541,11 +1670,15 @@ public class UpdateProteins extends UpdateProteinsI {
                 spliceVariantUpdated++;
                 return true;
             } catch ( IntactException ie ) {
-                logger.error( spliceVariant, ie );
+                if( logger != null ) {
+                    logger.error( spliceVariant, ie );
+                }
                 throw ie;
             }
         } else {
-            logger.info( "That splice variant was up-to-date" );
+            if( logger != null ) {
+                logger.info( "That splice variant was up-to-date" );
+            }
             if( debugOnScreen ) {
                 System.out.print( " sv-" );
             }
@@ -1597,7 +1730,9 @@ public class UpdateProteins extends UpdateProteinsI {
         String fullName = sptrEntry.getProteinName();
 
         if( master == null ) {
-            logger.error( " The given master is null, EXIT " );
+            if( logger != null ) {
+                logger.error( " The given master is null, EXIT " );
+            }
             return null;
         }
 
@@ -1609,7 +1744,9 @@ public class UpdateProteins extends UpdateProteinsI {
                 crc64 = Crc64.getCrc64( sequence );
             }
         } catch ( FeatureException e ) {
-            logger.error( "Could not get the Alternative splice variant sequence from SPTREntry.", e );
+            if( logger != null ) {
+                logger.error( "Could not get the Alternative splice variant sequence from SPTREntry.", e );
+            }
             return null;
         }
 
@@ -1651,7 +1788,9 @@ public class UpdateProteins extends UpdateProteinsI {
             // keep that spliceVariant
             proteins.add( spliceVariant );
 
-            logger.info( "spliceVariant updated: " + spliceVariant );
+            if( logger != null ) {
+                logger.info( "spliceVariant updated: " + spliceVariant );
+            }
             if( debugOnScreen ) {
                 System.out.print( " svC" );
             }
@@ -1659,7 +1798,9 @@ public class UpdateProteins extends UpdateProteinsI {
             spliceVariantCreated++;
             return spliceVariant;
         } catch ( IntactException e ) {
-            logger.error( spliceVariant, e );
+            if( logger != null ) {
+                logger.error( spliceVariant, e );
+            }
             throw e;
         }
     } // createNewSpliceVariant
@@ -1670,11 +1811,6 @@ public class UpdateProteins extends UpdateProteinsI {
         if( proteinAc == null || proteinAc.trim().equals( "" ) ) {
             throw new IllegalArgumentException( "The protein AC MUST not be null or empty." );
         }
-
-//        int index = proteinAc.indexOf( "-" ); // search for splice variant (eg: P123456-1)
-//        if( index != -1 ) {
-//            proteinAc = proteinAc.substring( 0, index ); // will return P123456.
-//        }
 
         String url = getUrl( proteinAc );
         int i = insertSPTrProteinsFromURL( url, null, true );
@@ -1713,24 +1849,18 @@ public class UpdateProteins extends UpdateProteinsI {
             throw new IllegalArgumentException( "The protein AC MUST not be null or empty." );
         }
 
-//        int index = proteinAc.indexOf( "-" ); // search for splice variant (eg: P123456-1)
-//        if( index != -1 ) {
-//            proteinAc = proteinAc.substring( 0, index ); // will return P123456.
-//        }
-
         String url = getUrl( proteinAc );
         int i = insertSPTrProteinsFromURL( url, taxId, update );
         if( debugOnScreen ) {
             System.out.println( i + " proteins created/updated." );
         }
 
-
         // TODO: could be nice to have a method like getProteins() and getProtein( String taxid )
         // to allow multiple post call to insert.
         if( taxId != null ) {
             // filter out using the given taxid before to return the collection.
             Collection c = filterOnTaxid( proteins, taxId );
-            if( logger.isInfoEnabled() ) {
+            if( logger != null && logger.isInfoEnabled() ) {
                 logger.info( "Protein selected after filtering (" + c.size() + "):" );
                 for ( Iterator iterator = c.iterator(); iterator.hasNext(); ) {
                     Protein protein = (Protein) iterator.next();
@@ -1740,7 +1870,7 @@ public class UpdateProteins extends UpdateProteinsI {
             return c;
         }
 
-        if( logger.isInfoEnabled() ) {
+        if( logger != null && logger.isInfoEnabled() ) {
             logger.info( "Protein created/updated (" + proteins.size() + "):" );
             for ( Iterator iterator = proteins.iterator(); iterator.hasNext(); ) {
                 Protein protein = (Protein) iterator.next();
@@ -1825,7 +1955,9 @@ public class UpdateProteins extends UpdateProteinsI {
         Collection result = null;
 
         try {
-            logger.info( "update from URL: " + sourceUrl );
+            if( logger != null ) {
+                logger.info( "update from URL: " + sourceUrl );
+            }
             if( debugOnScreen ) {
                 System.out.println( "update from URL: " + sourceUrl );
             }
@@ -1845,25 +1977,38 @@ public class UpdateProteins extends UpdateProteinsI {
             if( debugOnScreen ) {
                 e.printStackTrace();
             }
-            logger.error( "URL error: " + sourceUrl, e );
-            logger.error( "Please provide a valid URL" );
+            if( logger != null ) {
+                logger.error( "URL error: " + sourceUrl, e );
+                logger.error( "Please provide a valid URL" );
+            }
 
         } catch ( IOException e ) {
             if( debugOnScreen ) {
                 e.printStackTrace();
             }
-            logger.error( "URL error: " + sourceUrl, e );
-            logger.error( "Please provide a valid URL" );
+            if( logger != null ) {
+                logger.error( "URL error: " + sourceUrl, e );
+                logger.error( "Please provide a valid URL" );
+            }
         }
 
         return ( result == null ? 0 : result.size() );
     }
 
 
+    /**
+     * Process one to many entries and insert/update the database.
+     *
+     * @param inputStream where we read the entries from.
+     * @param update true to allow update, otherwise false.
+     * @return a collection of updated created proteins and Splice variant (Protein object).
+     */
     private Collection insertSPTrProteins( InputStream inputStream, boolean update ) {
 
         if( inputStream == null ) {
-            logger.error( "You are trying to update using a null InputStream" );
+            if( logger != null ) {
+                logger.error( "You are trying to update using a null InputStream" );
+            }
             return null;
         }
 
@@ -1901,13 +2046,23 @@ public class UpdateProteins extends UpdateProteinsI {
 
                 // Check if there is any exception remaining in the Entry before to use it
                 if( entryIterator.hadException() ) {
+
                     Exception originalException = entryIterator.getException().getOriginalException();
+                    parsingExceptions.put( new Integer(entryCount) , originalException );
 
                     if( originalException != null ) {
-                        originalException.printStackTrace();
+                        if( debugOnScreen ){
+                            originalException.printStackTrace();
+                            entryIterator.getException().printStackTrace();
+                        }
                     } else {
-                        logger.error( entryIterator.getException() );
-                        entryIterator.getException().printStackTrace();
+                        if( logger != null ) {
+                            logger.error( "Parsing error while processing the entry " + entryCount,
+                                          entryIterator.getException() );
+                        }
+                        if( debugOnScreen ){
+                            entryIterator.getException().printStackTrace();
+                        }
                     }
 
                     // wrong entries are NOT processed any further
@@ -1920,7 +2075,9 @@ public class UpdateProteins extends UpdateProteinsI {
                 SPTREntry sptrEntry = (SPTREntry) entryIterator.next();
 
                 if( sptrEntry == null ) {
-                    logger.error( "\n\nSPTR entry is NULL ... skip it" );
+                    if( logger != null ) {
+                        logger.error( "\n\nSPTR entry is NULL ... skip it" );
+                    }
 
                     entrySkipped++;
                     continue;
@@ -1944,11 +2101,15 @@ public class UpdateProteins extends UpdateProteinsI {
 
         } catch ( YASPException e ) {
             e.printStackTrace();
-            logger.error( e.getOriginalException() );
+            if( logger != null ) {
+                logger.error( e.getOriginalException() );
+            }
 
         } catch ( Exception e ) {
             e.printStackTrace();
-            logger.error( "Error while processing an SPTREntry", e );
+            if( logger != null ) {
+                logger.error( "Error while processing an SPTREntry", e );
+            }
         }
 
         closeFile(); // try to close the bad entries repository if it exists
@@ -1966,13 +2127,17 @@ public class UpdateProteins extends UpdateProteinsI {
             if( taxid != null ) {
                 String newTaxid = bioSourceFactory.getUpToDateTaxid( taxid );
                 if( newTaxid == null ) {
-                    logger.error( "Could not find an up-to-date taxid for " + taxid + " abort update procedure." );
+                    if( logger != null ) {
+                        logger.error( "Could not find an up-to-date taxid for " + taxid + " abort update procedure." );
+                    }
                     return null;
                 }
             }
         } catch ( IntactException ie ) {
             String msg = "Could not find an up-to-date taxid for " + taxid + " abort update procedure.";
-            logger.error( msg, ie );
+            if( logger != null ) {
+                logger.error( msg, ie );
+            }
             return null;
         }
 
@@ -1981,7 +2146,7 @@ public class UpdateProteins extends UpdateProteinsI {
         if( taxid != null ) {
             // filter out using the given taxid before to return the collection.
             Collection c = filterOnTaxid( proteins, taxid );
-            if( logger.isInfoEnabled() ) {
+            if( logger != null && logger.isInfoEnabled() ) {
                 logger.info( "Protein selected after filtering (" + c.size() + "):" );
                 for ( Iterator iterator = c.iterator(); iterator.hasNext(); ) {
                     Protein protein = (Protein) iterator.next();
@@ -1996,50 +2161,30 @@ public class UpdateProteins extends UpdateProteinsI {
 
     private void printStats() {
         // in log file
-        logger.info( "Protein created:    " + getProteinCreatedCount() );
-        logger.info( "Protein updated:    " + getProteinUpdatedCount() );
-        logger.info( "Protein up-to-date: " + getProteinUpToDateCount() );
-        logger.info( "Protein skipped:    " + getProteinSkippedCount() );
-
-        logger.info( "Splice variant created:    " + getSpliceVariantCreatedCount() );
-        logger.info( "Splice variant updated:    " + getSpliceVariantUpdatedCount() );
-        logger.info( "Splice variant up-to-date: " + getSpliceVariantUpToDateCount() );
-        logger.info( "Splice variant skipped:    " + getSpliceVariantSkippedCount() );
-
-        logger.info( "Entry processed:    " + getEntryProcessededCount() );
-        logger.info( "Entry skipped:      " + getEntrySkippedCount() );
+        if( logger != null ) {
+            logger.info( "Protein created:    " + getProteinCreatedCount() );
+            logger.info( "Protein updated:    " + getProteinUpdatedCount() );
+            logger.info( "Protein up-to-date: " + getProteinUpToDateCount() );
+            logger.info( "Protein skipped:    " + getProteinSkippedCount() );
+            logger.info( "Splice variant created:    " + getSpliceVariantCreatedCount() );
+            logger.info( "Splice variant updated:    " + getSpliceVariantUpdatedCount() );
+            logger.info( "Splice variant up-to-date: " + getSpliceVariantUpToDateCount() );
+            logger.info( "Splice variant skipped:    " + getSpliceVariantSkippedCount() );
+            logger.info( "Entry processed:    " + getEntryProcessededCount() );
+            logger.info( "Entry skipped:      " + getEntrySkippedCount() );
+        }
 
         // on STDOUT
         if( debugOnScreen ) {
             System.out.println( "Protein created:    " + getProteinCreatedCount() );
-        }
-        if( debugOnScreen ) {
             System.out.println( "Protein updated:    " + getProteinUpdatedCount() );
-        }
-        if( debugOnScreen ) {
             System.out.println( "Protein up-to-date: " + getProteinUpToDateCount() );
-        }
-        if( debugOnScreen ) {
             System.out.println( "Protein skipped:    " + getProteinSkippedCount() );
-        }
-
-        if( debugOnScreen ) {
             System.out.println( "Splice variant created:    " + getSpliceVariantCreatedCount() );
-        }
-        if( debugOnScreen ) {
             System.out.println( "Splice variant updated:    " + getSpliceVariantUpdatedCount() );
-        }
-        if( debugOnScreen ) {
             System.out.println( "Splice variant up-to-date: " + getSpliceVariantUpToDateCount() );
-        }
-        if( debugOnScreen ) {
             System.out.println( "Splice variant skipped:    " + getSpliceVariantSkippedCount() );
-        }
-
-        if( debugOnScreen ) {
             System.out.println( "Entry processed:    " + getEntryProcessededCount() );
-        }
-        if( debugOnScreen ) {
             System.out.println( "Entry skipped:      " + getEntrySkippedCount() );
         }
     }
@@ -2064,7 +2209,9 @@ public class UpdateProteins extends UpdateProteinsI {
                 buffer = new BufferedOutputStream( file, 4096 );
 
             } catch ( FileNotFoundException e ) {
-                e.printStackTrace();
+                if( logger != null ) {
+                    logger.error( "Could not write the current entry to the temp file: " + filename, e );
+                }
                 return;
             }
         }
@@ -2074,12 +2221,18 @@ public class UpdateProteins extends UpdateProteinsI {
             String entry = entryIterator.getOriginal();
             if( entry != null ) {
                 buffer.write( entry.getBytes() );
-                logger.error( "\nEntry written in the file" );
+                if( logger != null ) {
+                    logger.error( "\nEntry written in the file" );
+                }
             } else {
-                logger.error( "Couldn't write the entry in the file" );
+                if( logger != null ) {
+                    logger.error( "Couldn't write the entry in the file" );
+                }
             }
         } catch ( IOException e ) {
-            logger.error( "An error occur when trying to save an entry which cause a processing problem", e );
+            if( logger != null ) {
+                logger.error( "An error occur when trying to save an entry which cause a processing problem", e );
+            }
         }
     }
 
@@ -2090,7 +2243,9 @@ public class UpdateProteins extends UpdateProteinsI {
             try {
                 buffer.close();
             } catch ( IOException e ) {
-                logger.error( "Error when trying to close faulty entry file", e );
+                if( logger != null ) {
+                    logger.error( "Error when trying to close faulty entry file", e );
+                }
             }
         }
 
@@ -2098,7 +2253,9 @@ public class UpdateProteins extends UpdateProteinsI {
             try {
                 file.close();
             } catch ( IOException e ) {
-                logger.error( "Error when trying to close faulty entry file", e );
+                if( logger != null ) {
+                    logger.error( "Error when trying to close faulty entry file", e );
+                }
             }
         }
 
