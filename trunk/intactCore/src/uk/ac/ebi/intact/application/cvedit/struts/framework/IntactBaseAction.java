@@ -6,17 +6,13 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.cvedit.struts.framework;
 
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.*;
 
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 import uk.ac.ebi.intact.application.cvedit.business.IntactServiceIF;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
 import uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean;
 import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.persistence.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -121,47 +117,6 @@ public abstract class IntactBaseAction extends Action {
     }
 
     /**
-     * Returns the topic selected by the user.
-     *
-     * @param session the session object to access the user object stored under
-     * <code>WebIntactConstants.USER_SESSION</code>.
-     *
-     * @return the selected topic retrieved from the user object stored under
-     * <code>WebIntactConstants.USER_SESSION</code> in a session.
-     *
-     * <pre>
-     * pre: session.existsAttribute(WebIntactConstants.USER_SESSION)
-     * post: return != null
-     * </pre>
-     */
-//    protected String getSelectedTopic(HttpSession session) {
-//        // Get the topic to search for from the servlet context.
-//        IntactUserSession user = (IntactUserSession) session.getAttribute(
-//           WebIntactConstants.USER_SESSION);
-//        return user.getSelectedTopic();
-//    }
-
-    /**
-     * Retrieve the user session associated with the request.
-     * @param request the HTTP request to search for the session request. If
-     * the user session object is not found, this request will contain a new
-     * user session object.
-     * @return an existing user session if it is found in the request or a
-     * new session if not found.
-     */
-//    protected IntactUserSession getIntactUser(HttpServletRequest request) {
-//        IntactUserSession userSession = (IntactUserSession) getSessionObject(
-//            request, WebIntactConstants.USER_SESSION);
-//        // Create a new user session object if we don't have an existing one.
-//        if (userSession == null) {
-//            userSession = new IntactUserSession();
-//            HttpSession session = request.getSession();
-//            session.setAttribute(WebIntactConstants.USER_SESSION, userSession);
-//        }
-//        return userSession;
-//    }
-
-    /**
      * Retrieve a session object based on the request and attribute name.
      *
      * @param request the HTTP request to retrieve a session object stored
@@ -207,155 +162,6 @@ public abstract class IntactBaseAction extends Action {
         return myErrors;
     }
 
-//    protected ActionErrors getErrorBean(HttpSession session) {
-//        // Reuse an existing bean without creating a new bean for each call.
-//        ActionErrors errorbean = (ActionErrors) session.getAttribute(
-//            WebIntactConstants.ERROR_BEAN);
-//        if (errorbean == null) {
-//            log("Creating a new error bean");
-//            errorbean = new ActionErrors();
-//            session.setAttribute(WebIntactConstants.ERROR_BEAN, errorbean);
-//        }
-//        return errorbean;
-//    }
-
-    /**
-     * Returns the current CvObject we are editing at the moment.
-     * <code>null</code> object is returned if it hasn't been saved under a
-     * session object.
-     *
-     * @param request the HTTP request to access the session object to
-     * retrieve current Cv object.
-     */
-//    public CvObject getEditCvObject(HttpServletRequest request) {
-//        // Handler to the IntactService.
-//        IntactService service = getIntactService();
-//
-//        // The current CV object we are editing.
-//        CvViewBean viewbean = (CvViewBean) getSessionObject(
-//            request, WebIntactConstants.VIEW_BEAN);
-//        return viewbean.getCvObject();
-//    }
-
-    /**
-     * Wrapper to create an object via OJB layer. All the errors are saved
-     * in internal error container.
-     *
-     * @param object the object to create.
-     */
-//    public void create(Object object) {
-//        // Handler to the IntactService.
-//        IntactService service = getIntactService();
-//
-//        try {
-//            service.getDAO().create(object);
-//        }
-//        catch (CreateException ce) {
-//            // Unable to create an annotation; no nested message provided.
-//            addError("error.create", ce.getMessage());
-//        }
-//    }
-
-//    public void update(Object object) {
-//        // Handler to the IntactService.
-//        IntactService service = getIntactService();
-//
-//        try {
-//            //this.log("BEFORE update - COMMIT FLAG: " + service.getDAO().getConnection().getAutoCommit());
-//            service.getDAO().update(object);
-//            //this.log("After update - COMMIT FLAG: " + service.getDAO().getConnection().getAutoCommit());
-//        }
-//        catch (CreateException ce) {
-//            // Unable to create an annotation; no nested message provided.
-//            addError("error.create", ce.getMessage());
-//        }
-//    }
-
-//    public void delete(Object object) {
-//        // Handler to the IntactService.
-//        IntactService service = getIntactService();
-//
-//        try {
-//            log("Before delete: Transaction flag=" + service.getDAO().isActive());
-//            service.getDAO().remove(object);
-//            log("After delete: Transaction flag=" + service.getDAO().isActive());
-//        }
-//        catch (TransactionException te) {
-//            // Unable to create an annotation; no nested message provided.
-//            addError("error.create", te.getMessage());
-//        }
-//        catch (DataSourceException dse) {
-//            log(dse.getMessage());
-//        }
-//    }
-
-//    public Object find(String objectType, String searchParam, String searchValue) {
-//        // Handler to the IntactService.
-//        IntactService service = getIntactService();
-//
-//        try {
-//            service.getDAO().find(objectType, searchParam, searchValue);
-//        }
-//        catch (DataSourceException dse) {
-//            // Can't acquire the DAO instance to create.
-//            addError("error.dao", dse.getNestedMessage());
-//        }
-//        catch (SearchException se) {
-//            // Unable to create an annotation; no nested message provided.
-//            addError("error.create", se.getMessage());
-//        }
-////        catch (SQLException sqlex) {
-////            log("SQL Error: " + sqlex.getMessage());
-////        }
-//    }
-
-    /**
-     * Wrapper to begin a transaction via OJB layer. All the errors are saved
-     * in internal error container.
-     */
-//    public void begin() {
-//        // Handler to the IntactService.
-//        IntactService service = getIntactService();
-//
-//        try {
-//            //this.log("BEFORE BEGIN - COMMIT FLAG: " + service.getDAO().getConnection().getAutoCommit());
-//            service.begin();
-//            //service.getDAO().getConnection().setAutoCommit(false);
-//            //this.log("After Begin - COMMIT FLAG: " + service.getDAO().getConnection().getAutoCommit());
-//        }
-//        catch (TransactionException ce) {
-//            // Unable to create an annotation.
-//            addError("error.transaction", ce.getNestedMessage());
-//        }
-//        catch (SQLException sqlex) {
-//            log("SQL Error: " + sqlex.getMessage());
-//        }
-//    }
-
-    /**
-     * Wrapper to roll back a transaction via OJB layer. All the errors are saved
-     * in internal error container.
-     */
-//    public void rollback() {
-//        // Handler to the IntactService.
-//        IntactService service = getIntactService();
-//
-//        try {
-//            DAO dao = service.getDAO();
-//            // Only roll back if we had started the transaction.
-//            if (dao.isActive()) {
-//                dao.rollback();
-//            }
-//        }
-//        catch (DataSourceException dse) {
-//            // Can't acquire the DAO instance to create.
-//            addError("error.dao", dse.getNestedMessage());
-//        }
-//        catch (TransactionException ce) {
-//            // Unable to create an annotation.
-//            addError("error.transaction", ce.getNestedMessage());
-//        }
-//    }
 
     /**
      * Clear error container.
@@ -387,13 +193,6 @@ public abstract class IntactBaseAction extends Action {
     protected void addError(String key, String value) {
         myErrors.add(INTACT_ERROR, new ActionError(key, value));
     }
-
-    /**
-     * Return <code>true</code> if error container is not empty.
-     */
-//    protected boolean hasErrors() {
-//        return !myErrors.empty();
-//    }
 
     /**
      * Saves the errors in given request for <struts:errors> tag.
