@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConsta
 import uk.ac.ebi.intact.application.cvedit.struts.view.CvEditForm;
 import uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
+import uk.ac.ebi.intact.application.cvedit.exception.SessionExpiredException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.Annotation;
@@ -84,8 +85,10 @@ public class CvEditAction extends IntactBaseAction {
      *
      * @param request the request to access various objects saved under a
      * session.
+     * @exception SessionExpiredException for an expired session.
      */
-    private void formSubmitted(HttpServletRequest request) {
+    private void formSubmitted(HttpServletRequest request)
+            throws SessionExpiredException {
         // Handler to the Intact User.
         IntactUserIF user = super.getIntactUser(request);
 
