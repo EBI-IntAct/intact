@@ -1,9 +1,16 @@
+/*
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
+in the root directory of this distribution.
+*/
+
 package uk.ac.ebi.intact.application.graph2MIF;
 
 /**
  * This Exception should be thrown, if a fatal Error occours - so the PSIFormat
- * will NOT be valid withour this mising Element
+ * will NOT be valid without this mising Element
  * @author Henning Mersch <hmersch@ebi.ac.uk>
+ * @version $Id$
  */
 public class GraphNotConvertableException extends Exception {
     public GraphNotConvertableException() {
