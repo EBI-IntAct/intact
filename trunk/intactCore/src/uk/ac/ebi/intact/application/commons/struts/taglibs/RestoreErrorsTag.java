@@ -15,6 +15,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 import org.apache.log4j.Logger;
 
 import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionMessages;
 import org.apache.struts.Globals;
 
 /**
@@ -48,11 +49,17 @@ public class RestoreErrorsTag extends TagSupport {
     public int doEndTag() throws JspException {
 
         HttpSession session = pageContext.getSession();
-        ActionErrors errors = (ActionErrors) session.getAttribute(Globals.ERROR_KEY);
 
+        ActionErrors errors     = (ActionErrors)   session.getAttribute (Globals.ERROR_KEY);
         if ( null != errors ) {
-            pageContext.setAttribute(Globals.ERROR_KEY, errors);
-            session.removeAttribute(Globals.ERROR_KEY);
+            pageContext.setAttribute (Globals.ERROR_KEY, errors);
+            session.removeAttribute (Globals.ERROR_KEY);
+        }
+
+        ActionMessages messages = (ActionMessages) session.getAttribute (Globals.MESSAGE_KEY);
+        if ( null != messages ) {
+            pageContext.setAttribute (Globals.MESSAGE_KEY, messages);
+            session.removeAttribute (Globals.MESSAGE_KEY);
         }
 
         return EVAL_PAGE; // the rest of the calling JSP is evaluated
