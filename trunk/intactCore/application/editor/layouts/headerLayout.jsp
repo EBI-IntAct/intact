@@ -23,4 +23,3 @@
     <intact:documentation section="editor" title="Help Topics"/>
     <intact:documentation section="editor.faq" title="FAQ"/>
 </div>
-<hr>
