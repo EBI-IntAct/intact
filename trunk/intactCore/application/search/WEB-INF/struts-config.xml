@@ -40,6 +40,8 @@
 
     <!-- ========== Global Forward Definitions ============================== -->
     <global-forwards>
+        <!-- Need this global forward from the index.jsp -->
+        <forward name="start" path="/do/welcome"/>
         <forward name="failure"  path="error.layout"/>
     </global-forwards>
 
