@@ -44,4 +44,10 @@
         //    window.alert(link);
         makeNewWindow(link);
     }
+
+    // Displays the link from Xref's primary id in the same window as the
+    // search window.
+    function showXrefPId(link) {
+        makeNewWindow(link);
+    }
 </script>
