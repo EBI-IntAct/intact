@@ -24,9 +24,9 @@ public class BinaryResultAction extends AbstractResulltAction {
     // Abstract methods implementation
     ///////////////////////////////////
 
-    protected AbstractViewBean getAbstractViewBean ( Collection results, IntactUserIF user ) {
+    protected AbstractViewBean getAbstractViewBean ( Collection results, IntactUserIF user, String contextPath ) {
 
         super.log( "binary action: building view beans..." );
-        return ViewBeanFactory.getInstance().getBinaryViewBean ( results, user.getHelpLink() );
+        return ViewBeanFactory.getInstance().getBinaryViewBean ( results, user.getHelpLink(), contextPath );
     }
 }

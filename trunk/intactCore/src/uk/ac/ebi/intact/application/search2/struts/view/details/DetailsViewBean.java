@@ -47,8 +47,8 @@ public class DetailsViewBean extends AbstractViewBean
      * pre: forall(obj:objects -> obj instanceof AnnotatedObject)
      * </pre>
      */
-    public DetailsViewBean(Collection objects, String link) {
-        super( link );
+    public DetailsViewBean(Collection objects, String link, String contextPath) {
+        super( link, contextPath );
         if( objects == null || objects.isEmpty() )
             throw new NullPointerException( "cannot create view bean without Collection of AnnotatedObject !" );
         this.wrappedObjects = objects;
@@ -106,8 +106,11 @@ public class DetailsViewBean extends AbstractViewBean
     public void getHTML( Writer writer ) {
 
         try {
-            HtmlBuilderManager.getInstance().getHtml(writer, getWrappedObjects(),
-                    getHighlightMap(), getHelpLink());
+            HtmlBuilderManager.getInstance().getHtml(writer,
+                                                     getWrappedObjects(),
+                                                     getHighlightMap(),
+                                                     getHelpLink(),
+                                                     getContextPath());
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
             try {

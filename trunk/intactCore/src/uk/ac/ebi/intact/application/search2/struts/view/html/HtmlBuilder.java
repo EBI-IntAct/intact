@@ -89,9 +89,13 @@ public class HtmlBuilder {
 
     /**
      * The link to the online help system.
-     * todo: Get rid of the hardcoded link.
      */
-    private static String helpLink;// = "/intact/displayDoc.jsp?section=";
+    private static String helpLink; // = "/intact/displayDoc.jsp?section=";
+
+    /**
+     * The context of the application.
+     */
+    private String contextPath;
 
     // The destination writer to write HTML to.
     // All output is sent to this writer, which produces fast and
@@ -119,10 +123,12 @@ public class HtmlBuilder {
      */
     public HtmlBuilder( Writer writer,
                         Set highlight,
-                        String link) {
+                        String link,
+                        String contextPath) {
         rs = writer;
         toHighlight = highlight;
         helpLink = link;
+        this.contextPath = contextPath;
     }
 
     /**
@@ -753,7 +759,7 @@ public class HtmlBuilder {
         //This nobr adds too many....
         //write("<nobr>");
         // TODO: don't hard code the application path !! Try to give it in the constructor.
-        write("<a href=\"/intact/search/do/search?searchString=");
+        write("<a href=\""+ contextPath +"/do/search?searchString=");
         write(target);
 
         if (searchClass != null) {

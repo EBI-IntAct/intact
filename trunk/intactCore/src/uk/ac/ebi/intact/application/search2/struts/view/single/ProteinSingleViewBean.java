@@ -24,8 +24,8 @@ public class ProteinSingleViewBean extends SingleViewBean {
      * @param link the link to the help page.
      * @exception NullPointerException thrown if the object is null.
      */
-    public ProteinSingleViewBean( AnnotatedObject object, String link ) {
-        super( object, link );
+    public ProteinSingleViewBean( AnnotatedObject object, String link, String contextPath ) {
+        super( object, link, contextPath );
     }
 
     /**

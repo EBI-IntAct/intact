@@ -29,6 +29,11 @@ public abstract class AbstractViewBean implements Serializable {
     private String helpLink;
 
     /**
+     * Context path of the current application.
+     */
+    private String contextPath;
+
+    /**
      *  A collection of short labels to highlight.
      */
     private Set highlightMap;
@@ -40,8 +45,9 @@ public abstract class AbstractViewBean implements Serializable {
      * Construst an instance of this class with help link.
      * @param link the link to help page.
      */
-    public AbstractViewBean(String link) {
+    public AbstractViewBean(String link, String contextPath) {
         helpLink = link;
+        this.contextPath = contextPath;
     }
 
     /**
@@ -61,6 +67,10 @@ public abstract class AbstractViewBean implements Serializable {
 
     public String getHelpLink() {
         return helpLink;
+    }
+
+    public String getContextPath () {
+        return contextPath;
     }
 
     /**

@@ -111,7 +111,7 @@ public class ViewBeanFactory {
      * returned if there is no mapping or an error in creating an
      * instance of the view.
      */
-    public AbstractViewBean getBinaryViewBean ( Collection objects, String link ) {
+    public AbstractViewBean getBinaryViewBean ( Collection objects, String link, String contextPath ) {
 
         Object firstItem = objects.iterator ().next ();
         Class objsClass = firstItem.getClass ();
@@ -119,7 +119,7 @@ public class ViewBeanFactory {
         System.out.println ( objsClass );
 
         Class clazz = (Class) ourBeanToBinaryView.get ( objsClass );
-        return getViewBean( clazz, objects, link);
+        return getViewBean( clazz, objects, link, contextPath);
     }
 
 
@@ -131,7 +131,7 @@ public class ViewBeanFactory {
      * returned if there is no mapping or an error in creating an
      * instance of the view.
      */
-    public AbstractViewBean getDetailsViewBean ( Collection objects, String link ) {
+    public AbstractViewBean getDetailsViewBean ( Collection objects, String link, String contextPath ) {
 
         Object firstItem = objects.iterator().next ();
         Class objsClass = firstItem.getClass ();
@@ -139,7 +139,7 @@ public class ViewBeanFactory {
         System.out.println ( objsClass );
 
         Class clazz = (Class) ourBeanToDetailsView.get ( objsClass );
-        return getViewBean( clazz, objects, link );
+        return getViewBean( clazz, objects, link, contextPath );
     }
 
 
@@ -152,12 +152,12 @@ public class ViewBeanFactory {
      * returned if there is no mapping or an error in creating an
      * instance of the view.
      */
-    public AbstractViewBean getSingleViewBean ( AnnotatedObject object, String link ) {
+    public AbstractViewBean getSingleViewBean ( AnnotatedObject object, String link, String contextPath ) {
 
         System.out.println ( object.getClass () );
         Class beanClass = (Class) ourBeanToSingleItemView.get ( object.getClass () );
 
-        return getViewBean( beanClass, object, link );
+        return getViewBean( beanClass, object, link, contextPath );
     }
 
 
@@ -175,7 +175,8 @@ public class ViewBeanFactory {
      */
     private AbstractViewBean getViewBean ( Class beanClazz,
                                            Object objectToWrap,
-                                           String link ) {
+                                           String link,
+                                           String contextPath ) {
 
         if (beanClazz == null) {
             return null;
@@ -201,12 +202,13 @@ public class ViewBeanFactory {
             System.out.println ( "Ask constructor to: " + beanClazz.getName());
             System.out.println ( "Param1: " + classToWrap.getName() );
             System.out.println ( "Param2: " + String.class.getName() );
+            System.out.println ( "Param3: " + String.class.getName() );
 
             Constructor constructor = beanClazz.getConstructor (
-                    new Class[]{ classToWrap, String.class } );
+                    new Class[]{ classToWrap, String.class, String.class } );
 
             return (AbstractViewBean) constructor.newInstance (
-                    new Object[]{ objectToWrap, link } );
+                    new Object[]{ objectToWrap, link, contextPath } );
         } catch ( InstantiationException e ) {
             e.printStackTrace ();
         } catch ( IllegalAccessException e ) {

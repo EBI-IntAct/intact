@@ -41,8 +41,8 @@ public class SingleViewBean extends AbstractViewBean
      * @param object an AnnotatedObject to display.
      * @param link the link to the help page.
      */
-    public SingleViewBean( AnnotatedObject object, String link ) {
-        super( link );
+    public SingleViewBean( AnnotatedObject object, String link, String contextPath ) {
+        super( link, contextPath );
         if( object == null )
             throw new NullPointerException( "cannot create view bean without an AnnotatedObject !" );
         this.wrappedObject = object;
@@ -61,8 +61,11 @@ public class SingleViewBean extends AbstractViewBean
     public void getHTML( Writer writer ) {
 
         try {
-            HtmlBuilderManager.getInstance().getHtml(writer, getWrappedObject(),
-                    getHighlightMap(), getHelpLink());
+            HtmlBuilderManager.getInstance().getHtml(writer,
+                                                     getWrappedObject(),
+                                                     getHighlightMap(),
+                                                     getHelpLink(),
+                                                     getContextPath());
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
             try {

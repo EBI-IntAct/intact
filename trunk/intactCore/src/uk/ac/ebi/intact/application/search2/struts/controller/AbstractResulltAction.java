@@ -63,7 +63,7 @@ public abstract class AbstractResulltAction extends IntactBaseAction {
         //get the search results from the request
         Collection results = (Collection) request.getAttribute( SearchConstants.SEARCH_RESULTS );
 
-        AbstractViewBean bean = getAbstractViewBean( results, user );
+        AbstractViewBean bean = getAbstractViewBean( results, user, request.getContextPath());
 
         if ( bean == null ) {
             super.log("No bean instanciated for empty collection");
@@ -83,5 +83,5 @@ public abstract class AbstractResulltAction extends IntactBaseAction {
     // Abstract methods
     //////////////////////
 
-    protected abstract AbstractViewBean getAbstractViewBean (Collection results, IntactUserIF user );
+    protected abstract AbstractViewBean getAbstractViewBean (Collection results, IntactUserIF user, String contextPath );
 }

@@ -25,10 +25,10 @@ public class SingleResultAction extends AbstractResulltAction {
     // Abstract methods implementation
     ///////////////////////////////////
 
-    protected AbstractViewBean getAbstractViewBean ( Collection results, IntactUserIF user ) {
+    protected AbstractViewBean getAbstractViewBean ( Collection results, IntactUserIF user, String contextPath ) {
 
         super.log( "single action: building view beans..." );
         AnnotatedObject firstItem = (AnnotatedObject) results.iterator().next();
-        return ViewBeanFactory.getInstance().getSingleViewBean ( firstItem, user.getHelpLink() );
+        return ViewBeanFactory.getInstance().getSingleViewBean ( firstItem, user.getHelpLink(), contextPath );
     }
 }
