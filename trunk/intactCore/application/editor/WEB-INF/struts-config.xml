@@ -32,6 +32,9 @@
             <form-property name="searchString" initial="*" type="java.lang.String"/>
         </form-bean>
 
+        <!-- For /results action -->
+        <form-bean name="dummyForm" type="org.apache.struts.action.DynaActionForm"/>
+
         <!-- Form for a CV object -->
         <form-bean name="cvForm"
             type="uk.ac.ebi.intact.application.editor.struts.view.cv.CvDynaForm">
@@ -332,6 +335,7 @@
         <!-- Process when a user selects an Editor object from a search result. -->
         <action path="/result"
             type="uk.ac.ebi.intact.application.editor.struts.action.ResultAction"
+            name="dummyForm"
             scope="request">
             <!-- Select the appropriate editor based on the selected topic. -->
             <forward name="success" path="/do/choose"/>
