@@ -210,7 +210,9 @@ public class UpdateProteins extends UpdateProteinsI {
         return url ;
     }
 
-    public String getAnEntry (String anUrl) {
+    // TODO: the server might be busy, create a retry method ...
+
+    public String getAnEntry( String anUrl ) {
         BufferedReader br = null ;
         StringBuffer sb = null;
         URL u = null;
@@ -239,6 +241,8 @@ public class UpdateProteins extends UpdateProteinsI {
             while ((line = br.readLine()) != null ) {
                 sb.append (line).append (lineSeparator) ;
             }
+
+            in.close();
 
             return sb.toString();
         }
