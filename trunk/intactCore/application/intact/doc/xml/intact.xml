@@ -1,3 +1,5 @@
+<!-- version: $Id$ -->
+
 <page zone="IntAct" title="User Manual" format="column">
 
     <section title="Contents" name="cont">
@@ -64,20 +66,20 @@
                         providing all the necessary data to repeat the experiment. The
                         attributes of the Experiment are the
                         <dl>
-                            <dt/>
-                            <a name="Experiment.bioSource"></a>
-                            <a href="#BioSource">Host</a>
-                            <dd/>The biological system in which the interaction took place in the experiment.
-                            <dt/><a name="Experiment.cvIdentification"></a>
-                                 Participant identification method
-                            <dd/>The experimental method by which the molecules participating in the
-                            interaction have been detected.
-                            <br/>Example: Mass spectrometry.
-                            <dt/><a name="Experiment.cvInteraction"></a>
-                                 Interaction identification method
-                            <dd/>The experimental method by which the interaction has been detected.
-                            <br/>
-                            Example: yeast two hybrid.
+                            <dt><a href="#BioSource">BioSource</a></dt>
+                            <dd>The biological system in which the interaction took place in the experiment.</dd>
+
+                            <dt>identificationMethod</dt>
+                            <dd>The experimental method by which the molecules participating in the
+                                interaction have been detected.
+                                <br/>Example: Mass spectrometry.
+                            </dd>
+
+                            <dt>interactionMethod</dt>
+                            <dd>The experimental method by which the interaction has been detected.
+                                <br/>
+                                Example: yeast two hybrid.
+                            </dd>
                         </dl>
                         Each Experiment provides a list of one or more
                         <a href="#Interaction">Interactions</a>
@@ -98,14 +100,13 @@
                         with more than two Interactors, for example determined by "TAP" experiments.
                         The attributes of an Interaction are
                         <dl>
-                            <dt/><a name="Interaction.cvInteractionType"></a>
-                                 Interaction type
-                            <dd/>A description of the type of interaction.
-                            <br/>
-                            Example: association.
-                            <dt/><a name="Interaction.kD"></a>
-                                 kD
-                            <dd/>The dissociation constant.
+                            <dt>CvInteractionType</dt>
+                            <dd>A description of the type of interaction.
+                                <br/>
+                                Example: association.
+                            </dd>
+                            <dt>kD</dt>
+                            <dd>The dissociation constant.</dd>
                         </dl>
                     </blockquote>
 
@@ -118,38 +119,36 @@
                         A molecule or complex participating in an Interaction. The
                         only direct attribute of an Interactor is
                         <dl>
-                            <dt/>
-                            <a name="Interactor.bioSource"></a>
-                            <a href="#BioSource">Source</a>
-                            <dd/>The biological system in which the interactor normally is
-                            found. For a human protein, the BioSource would be "Human",
-                            even if it has been expressed in E.coli in a particular
-                            experiment.
+                            <dt><a href="#BioSource">BioSource</a></dt>
+                            <dd>The biological system in which the interactor normally is
+                                found. For a human protein, the BioSource would be "Human",
+                                even if it has been expressed in E.coli in a particular
+                                experiment.
+                            </dd>
                         </dl>
                         If the Interactor is a Protein, it additionally has the attributes
                         <dl>
-                            <dt/><a name="Protein.sequence"></a>
-                                 sequence
-                            <dd/>The amino acid sequence of the protein.
-                            <dt/><a name="Protein.crc64"></a>
-                                 crc64
-                            <dd/>The CRC64 checksum for the amino acid sequence. This
-                            checksum is used to quickly detect if the amino acid sequence
-                            has changed, for example during an update process. It is also
-                            used to check if the amino acid sequence has potentially been
-                            corrupted.
-                            <br/>
-                            The
-                            algorithm to compute the CRC64 is described in the ISO 3309
-                            standard. The generator polynomial is x64 + x4 + x3 + x + 1.
-                            <br/>
-                            Reference: Press W.H., Flannery B.P., Teukolsky S.A. and Vetterling
-                            W.T. "Numerical recipes in C", 2nd ed., pp896-902, Cambridge
-                            University Press (1993). (See
-                            http://www.ulib.org/webRoot/Books/Numerical_Recipes/bookcpdf/c20-3.pdf)
-                            It should be noted that while, in theory, two different
-                            sequences could have the same CRC64 value, the likelihood that
-                            this would happen is extremely low.
+                            <dt>sequence</dt>
+                            <dd>The amino acid sequence of the protein.</dd>
+                            <dt>crc64</dt>
+                            <dd>The CRC64 checksum for the amino acid sequence. This
+                                checksum is used to quickly detect if the amino acid sequence
+                                has changed, for example during an update process. It is also
+                                used to check if the amino acid sequence has potentially been
+                                corrupted.
+                                <br/>
+                                The
+                                algorithm to compute the CRC64 is described in the ISO 3309
+                                standard. The generator polynomial is x64 + x4 + x3 + x + 1.
+                                <br/>
+                                Reference: Press W.H., Flannery B.P., Teukolsky S.A. and Vetterling
+                                W.T. "Numerical recipes in C", 2nd ed., pp896-902, Cambridge
+                                University Press (1993). (See
+                                http://www.ulib.org/webRoot/Books/Numerical_Recipes/bookcpdf/c20-3.pdf)
+                                It should be noted that while, in theory, two different
+                                sequences could have the same CRC64 value, the likelihood that
+                                this would happen is extremely low.
+                            </dd>
                         </dl>
                         An Interactor describes an "abstract" form of e.g. a protein,
                         similar to a description in a protein sequence database. One
@@ -157,22 +156,24 @@
                         specific conditions in which an Interactor participates in an
                         Interaction, the following additional attributes are used:
                         <dl>
-                            <dt/>stoichiometry
-                            <dd/>The number of units of this interactor which participate in
-                            the interaction. The default is one.
-                            <dt/>expressedIn
-                            <dd/>A
-                            <a href="#BioSource">BioSource </a> object which describes
-                            the biological system in which the protein has been
-                            expressed.
-                            <br/>
-                            Example: If a human protein has been expresed in E.coli,
-                            expressedIn would refer to E.coli.
-                            <dt/>Role
-                            <dd/>The role of the Interactor in the Interaction. In a yeast
-                            two hybrid experiment, each Interaction would usually have an
-                            Interactor which has the role "bait" and another one which has
-                            the role "prey".
+                            <dt>stoichiometry</dt>
+                            <dd>The number of units of this interactor which participate in
+                                the interaction. The default is one.
+                            </dd>
+                            <dt>expressedIn</dt>
+                            <dd>A <a href="#BioSource">BioSource </a> object which describes
+                                the biological system in which the protein has been
+                                expressed.
+                                <br/>
+                                Example: If a human protein has been expresed in E.coli,
+                                expressedIn would refer to E.coli.
+                            </dd>
+                            <dt>Role</dt>
+                            <dd>The role of the Interactor in the Interaction. In a yeast
+                                two hybrid experiment, each Interaction would usually have an
+                                Interactor which has the role "bait" and another one which has
+                                the role "prey".
+                            </dd>
                         </dl>
 
                         An Interactor is normally a protein. However, to model
@@ -205,14 +206,15 @@
                     <blockquote>
                         <dd/>The BioSource object describes a biological system, usually a species. The attributes of a BioSource are
                         <dl>
-                            <dt/>taxId
-                            <dd/>The NCBI tax id, see the
-                            <a href="http://www.ncbi.nlm.nih.gov/Taxonomy/">NCBI taxonomy server</a> or the
-                            <a href="http://www.ebi.ac.uk/newt/index.html">NEWT taxonomy server</a>.
-                            <dt/>name
-                            <dd/>The name is the Swiss-Prot OS code, where available.
-                            <dt/>fullName
-                            <dd/>The full name is the scientific name of the species.
+                            <dt>taxId</dt>
+                            <dd>The NCBI tax id, see the
+                                <a href="http://www.ncbi.nlm.nih.gov/Taxonomy/">NCBI taxonomy server</a> or the
+                                <a href="http://www.ebi.ac.uk/newt/index.html">NEWT taxonomy server</a>.
+                            </dd>
+                            <dt>shortLabel</dt>
+                            <dd>The shortLabel is the Swiss-Prot OS code, where available.</dd>
+                            <dt>fullName</dt>
+                            <dd>The full name is the scientific name of the species.</dd>
                         </dl>
                     </blockquote>
 
@@ -222,7 +224,7 @@
                 <section title="CvObject" name="CvObject">
 
                     <blockquote>
-                        <dd/>IntAct makes intensive use of controlled vocabularies. Where
+                        IntAct makes intensive use of controlled vocabularies. Where
                         possible, data attributes are controlled vocabularies, the
                         terms are selected from a defined list instead of being free
                         text. For each attribute which is selected from a controlled
@@ -291,7 +293,7 @@
                 <section title="Xref" name="AnnotatedObject.Xref">
 
                     <blockquote>
-                        Crossreferences to other databases. A crossreference has the following attributes: 
+                        Crossreferences to other databases. A crossreference has the following attributes:
                         <dl>
                             <dt/>Name
                             <dd/>The name of the external database.
