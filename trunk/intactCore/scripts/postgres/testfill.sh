@@ -141,9 +141,40 @@ then
     exit 1
 fi
 
+echo ""
+echo "Insert CvInteraction"
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvInteraction psi-mi data/controlledVocab/CvInteraction.def data/controlledVocab/CvInteraction.dag
+if [ $? != 0 ]
+then
+    exit 1
+fi
+
+echo ""
+echo "Insert CvInteractionType"
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvInteractionType psi-mi data/controlledVocab/CvInteractionType.def data/controlledVocab/CvInteractionType.dag
+if [ $? != 0 ]
+then
+    exit 1
+fi
+
+echo ""
+echo "Insert CvFeatureType"
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvFeatureType psi-mi data/controlledVocab/CvFeatureType.def data/controlledVocab/CvFeatureType.dag
+if [ $? != 0 ]
+then
+    exit 1
+fi
+
+echo ""
+echo "Insert CvFeatureIdentification"
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvFeatureIdentification psi-mi data/controlledVocab/CvFeatureIdentification.def data/controlledVocab/CvFeatureIdentification.dag
+if [ $? != 0 ]
+then
+    exit 1
+fi
+
 #echo "Stop the script before to insert proteins and complexes ... "
 #exit 0
-
 
 if [ "$3" = "onlyCV" ]
 then
