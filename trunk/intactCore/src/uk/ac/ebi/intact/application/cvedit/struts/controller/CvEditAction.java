@@ -10,6 +10,8 @@ import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
 import uk.ac.ebi.intact.application.cvedit.struts.view.CvEditForm;
 import uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean;
+import uk.ac.ebi.intact.application.cvedit.struts.view.CommentBean;
+import uk.ac.ebi.intact.application.cvedit.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 import uk.ac.ebi.intact.application.cvedit.exception.SessionExpiredException;
 import uk.ac.ebi.intact.business.IntactException;
@@ -110,25 +112,25 @@ public class CvEditAction extends IntactBaseAction {
 
             // Create annotations and add them to CV object.
             for (Iterator iter = addcomments.iterator(); iter.hasNext();) {
-                Annotation annot = (Annotation) iter.next();
+                Annotation annot = ((CommentBean) iter.next()).getAnnotation();
                 user.create(annot);
                 cvobj.addAnnotation(annot);
             }
             // Delete annotations and remove them from CV object.
             for (Iterator iter = delcomments.iterator(); iter.hasNext();) {
-                Annotation annot = (Annotation) iter.next();
+                Annotation annot = ((CommentBean) iter.next()).getAnnotation();
                 user.delete(annot);
                 cvobj.removeAnnotation(annot);
             }
             // Create xrefs and add them to CV object.
             for (Iterator iter = addxrefs.iterator(); iter.hasNext();) {
-                Xref xref = (Xref) iter.next();
+                Xref xref = ((XreferenceBean) iter.next()).getXref();
                 user.create(xref);
                 cvobj.addXref(xref);
             }
             // Delete xrefs and remove them from CV object.
             for (Iterator iter = delxrefs.iterator(); iter.hasNext();) {
-                Xref xref = (Xref) iter.next();
+                Xref xref = ((XreferenceBean) iter.next()).getXref();
                 user.delete(xref);
                 cvobj.removeXref(xref);
             }

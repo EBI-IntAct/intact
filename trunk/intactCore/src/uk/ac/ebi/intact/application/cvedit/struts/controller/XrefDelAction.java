@@ -9,7 +9,7 @@ package uk.ac.ebi.intact.application.cvedit.struts.controller;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
 import uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean;
-import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.application.cvedit.struts.view.XreferenceBean;
 import org.apache.struts.action.*;
 
 import javax.servlet.http.*;
@@ -49,11 +49,11 @@ public class XrefDelAction extends IntactBaseAction {
         CvViewBean viewbean = super.getIntactUser(request).getView();
 
         // The xref we want to delete.
-        Xref delxref = viewbean.findXref(key);
+        XreferenceBean delxref = viewbean.findXref(key);
 
         // We must have the xref.
         assert delxref != null;
-        viewbean.delXref(key, delxref);
+        viewbean.delXref(delxref);
 
         return mapping.findForward(WebIntactConstants.FORWARD_SUCCESS);
     }
