@@ -5,9 +5,7 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.util.fileParsing;
 
-import uk.ac.ebi.intact.util.fileParsing.beans.MappingLineBean;
-import uk.ac.ebi.intact.util.fileParsing.beans.GiotLineBean;
-import uk.ac.ebi.intact.util.fileParsing.beans.DecypherOutputBean;
+import uk.ac.ebi.intact.util.fileParsing.beans.*;
 
 import java.net.URL;
 import java.net.MalformedURLException;
@@ -35,11 +33,11 @@ public class BeanStreamReader {
     /**
      * The supported bean -> parameter to give them in constructor
      */
-    private static final HashMap allowedBean = new HashMap( 3 );
+    private static final HashMap allowedBean = new HashMap( );
     static {
         allowedBean.put( GiotLineBean.class,       String.class );
-        allowedBean.put( MappingLineBean.class,    String.class );
-        allowedBean.put( DecypherOutputBean.class, String.class );
+//        allowedBean.put( MappingLineBean.class,    String.class );
+//        allowedBean.put( DecypherOutputBean.class, String.class );
     }
 
 
