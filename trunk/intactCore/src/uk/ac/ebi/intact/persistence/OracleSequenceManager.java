@@ -75,6 +75,6 @@ public class OracleSequenceManager extends AbstractSequenceManager {
     }
 
     protected final String getNextSequence() {
-        return "SELECT intact.intact_ac.nextval FROM DUAL";
+        return "SELECT intact_ac.nextval FROM DUAL";
     }
 }
