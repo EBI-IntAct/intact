@@ -50,15 +50,6 @@
 
 <script language="JavaScript" type="text/javascript">
 
-    // Returns true an interactor has been selected.
-    function checkIfDataSelected(form, msg) {
-        if (form.ac.value == "") {
-            window.alert( msg );
-            return false;
-        }
-        return true;
-    }
-
     // This is a global variable to setup a window.
     var newWindow;
 
@@ -77,19 +68,25 @@
     // Will be invoked when user selects graph button. An AC must be selected.
     // This in trun will create a new widow and invoke hierarchView application
     // in the new window.
-    function writeToWindow(form, msg) {
-        // An AC must have been selected.
-        if (!checkIfDataSelected(form, msg)) {
-            return;
-        }
-        var ac = form.ac.value;
+    function openPsiDownloadPage() {
+
         <%
             String graph2mif = user.GRAPH2MIF_PROPERTIES.getProperty( "graph2mif.url" );
+            // Build queryString (comma-separated list of AC)
+            StringBuffer ac = new StringBuffer( 32 );
+            Iterator iterator = user.getInteractionNetwork().getCentralInteractors().iterator();
+            while ( iterator.hasNext() ) {
+                Interactor interactor = (Interactor) iterator.next();
+                ac.append( interactor.getAc() ).append( "%2C" ); // %2C <=> ,
+            }
+            int l = ac.length();
+            if (l > 0)
+                ac.delete( l-3, l ); // the 3 last caracters (%2C)
         %>
 
         var link = "<%= graph2mif %>"
-            + "?ac=" + ac + "&depth=" + form.depth.value
-            + "&strict=false";
+                   + "?ac=<%= ac.toString() %>&depth=<%= user.getCurrentDepth() %>"
+                   + "&strict=false";
         //window.alert(link);
         makeNewWindow(link);
     }
@@ -109,37 +106,13 @@
           </th>
         </tr>
 
-        <tr>
-            <td>
-
-                <select name="ac">
-                    <option value="">Interactor</option>
-
-                <%
-                    // Build up the drop-down list content.
-                    Collection interactors = user.getInteractionNetwork().getCentralInteractors();
-                    for ( Iterator iterator = interactors.iterator (); iterator.hasNext (); ) {
-                        Interactor interactor = (Interactor) iterator.next ();
-                    %>
-                          <option value="<%= interactor.getAc() %>"> <%= interactor.getShortLabel() %> </option>
-                    <%
-                    }
-                %>
-
-                </select>
-
-                <input type="hidden" name="depth" value="<%= user.getCurrentDepth() %>">
-                <input type="hidden" name="strict" value="false">
-
-            </td>
-        <tr>
         </tr>
             <td>
 
                 <input type="button"
                        name="action"
                        value="Download"
-                       onclick="writeToWindow( this.form, 'Please select a interactor' )">
+                       onclick="openPsiDownloadPage( )">
 
             </td>
         </tr>
