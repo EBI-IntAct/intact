@@ -45,14 +45,10 @@ public class GraphFactory {
      * @exception uk.ac.ebi.intact.application.graph2MIF.exception.NoGraphRetrievedException thrown if DOM-Object could not be serialized
      * @exception uk.ac.ebi.intact.application.graph2MIF.exception.NoInteractorFoundException thrown if no Interactor found for queryString
      */
-    public static Graph getGraph( String queryString, Integer depth )
+    public static Graph getGraph( IntactHelper helper, String queryString, Integer depth )
             throws IntactException,
                    NoInteractorFoundException,
                    NoGraphRetrievedException {
-
-        //create helper
-        IntactHelper helper = new IntactHelper();
-        logger.info( "Helper created" );
 
         StringTokenizer st = new StringTokenizer (queryString, ",");
         ArrayList queries = new ArrayList();
