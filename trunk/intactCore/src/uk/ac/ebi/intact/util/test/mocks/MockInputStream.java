@@ -24,6 +24,11 @@ public class MockInputStream extends InputStream {
     private int    position   = 0;
     private int    closeCount = 0;
 
+    /**
+     * Set the data that will be read later on from the stream.
+     * 
+     * @param buffer
+     */
     public void setBuffer( String buffer ) {
          this.buffer = buffer;
     }
@@ -41,10 +46,16 @@ public class MockInputStream extends InputStream {
         super.close();
     }
 
+    /**
+     * Allow the user of that mock object to check after use if it has been closed properly.
+     * ie. the close() methodd should have been called one and only once by the user of the Stream.
+     *
+     * @throws AssertionFailedError if the close() method hasn't been called exactly once.
+     */
     public void verify() throws AssertionFailedError {
         if( closeCount != 1 ) {
             throw new AssertionFailedError( "close() has been called "+ closeCount +" time"+
-                    (closeCount>1?"s":"")+" but should have been called once and once only." );
+                    (closeCount>1?"s":"")+" but should have been called exactly  once." );
         }
     }
 }
