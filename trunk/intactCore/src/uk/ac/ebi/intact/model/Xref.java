@@ -5,10 +5,7 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.util.Utilities;
-
-import java.util.*;
 
 /**
  * Represents a crossreference to another database.
@@ -39,6 +36,7 @@ public class Xref extends BasicObject {
      * a meaningful name, for example a domain name.
      */
     protected String secondaryId;
+
     /**
      * The release number of the external database from which the object
      * has been updated.
@@ -61,7 +59,14 @@ public class Xref extends BasicObject {
         super();
         this.owner = anOwner;
         this.cvDatabase = aDatabase;
+        if (aPrimaryId != null && aPrimaryId.length() > 30) {
+            aPrimaryId = aPrimaryId.substring(0,30);
+        }
         this.primaryId = aPrimaryId;
+
+        if (aSecondaryId != null && aSecondaryId.length() > 30) {
+            aSecondaryId = aSecondaryId.substring(0,30);
+        }
         this.secondaryId = aSecondaryId;
         this.dbRelease = aDatabaseRelease;
         this.cvXrefQualifier = aCvXrefQualifier;
