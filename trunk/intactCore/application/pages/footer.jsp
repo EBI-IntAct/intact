@@ -20,6 +20,7 @@
         Please send any questions or suggestions to
             <a href="mailto:Intact-developers@lists.sourceforge.net">Intact-developers@lists.sourceforge.net</a>
         </br>
+        Last modified: <i><%@ include file="../last-modified.txt" %></i>
     </td>
     <td class="tableCell">
         <img border="0" align="right" src="<%=request.getContextPath()%>/images/struts-power.gif">
