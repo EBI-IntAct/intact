@@ -129,7 +129,7 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         String topic = (String) theForm.get("topic");
 
         // The class name associated with the topic.
-        String classname = getIntactService().getClassName(topic);
+        String classname = getService().getClassName(topic);
         // The current topic.
         user.setSelectedTopic(topic);
 
