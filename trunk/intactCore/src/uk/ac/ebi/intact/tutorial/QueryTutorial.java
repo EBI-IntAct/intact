@@ -5,18 +5,10 @@ import uk.ac.ebi.intact.model.*;
 
 import org.apache.ojb.broker.accesslayer.LookupException;
 
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.*;
 import java.sql.SQLException;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.IOException;
+import java.io.*;
 
-
-/**
- * @author Anja Friedrichsem (afrie@ebi.ac.uk)
- * @version $Id$
- */
 public class QueryTutorial {
 
     public static void main(String[] args) throws IntactException {
@@ -67,7 +59,7 @@ public class QueryTutorial {
         }
         String expStr = "*" + str + "*";
         // get a collection of experiments with the specified name
-        Collection experiments = helper.search(Experiment.class.getName(), "shortlabel", expStr);
+        Collection experiments = helper.search(Experiment.class, "shortlabel", expStr);
 
         // check if there is an experiment with that name
         // if not the list of available experiment are given
@@ -75,13 +67,13 @@ public class QueryTutorial {
             System.out.println("You have entered the experiment:  " + str);
             System.out.println("Unfortunately it is not in your database!");
             System.out.println("The following experiments are in your database: ");
-            Collection allExperiments = helper.search(Experiment.class.getName(), "shortlabel", null);
+            Collection allExperiments = helper.search(Experiment.class, "shortlabel", null);
             for (Iterator iterator = allExperiments.iterator(); iterator.hasNext();) {
                 Experiment exp = (Experiment) iterator.next();
                 System.out.println("\t" + exp.getShortLabel());
             }
         } else {
-            System.out.println("We have " + experiments.size() + " experiment(s) found.");
+            System.out.println(experiments.size() + " experiment(s) found.");
 
             // search experiments interacions and print out the experiments shortlabels
             for (Iterator iterator = experiments.iterator(); iterator.hasNext();) {
