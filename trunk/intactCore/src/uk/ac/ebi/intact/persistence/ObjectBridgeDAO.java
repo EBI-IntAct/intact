@@ -1014,7 +1014,8 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             //if found locally, would have returned by here)
             if (val != null) {
                 crit = new Criteria();
-                crit.addEqualTo(col, val);
+                //crit.addEqualTo(col, val);
+                addSearchClause(crit, col, val);
             }
 
             logger.info("criteria built OK");
@@ -1031,7 +1032,8 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 concreteType = clazz.getName();
                 //System.out.println("concrete type to be searched: " + concreteType);
                 queryCriteria = new Criteria(); //holds all the search criteria
-                if (val != null) queryCriteria.addEqualTo(col, val);
+                //if (val != null) queryCriteria.addEqualTo(col, val);
+                if (val != null) addSearchClause(queryCriteria, col, val);
                 //check to see if the table holds multiple object types,
                 //and add an extra criteria if so
                 if( isTypeNeeded( concreteType ) ) {
@@ -1968,5 +1970,31 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         }
         return results;
 
+    }
+
+    /**
+     * Convenience method to add an appropriate clause to a search Criteria object.
+     * Thus an equality clause is added in general, but if any wildcard characters
+     * (as specified by '*' or '%') exist in the search value then a 'like' clause
+     * is added instead.
+     * @param crit The Criteria object to which the clause should be added
+     * @param column The column to seacrh on
+     * @param value The value to search with - may contain '*' or '%'.
+     */
+    private void addSearchClause(Criteria crit, String column, String value) {
+        if((value.indexOf('*') != -1) || (value.indexOf('%') != -1)) {
+            //some wildcards in the string - add a 'like' clause
+            //NOTE - OJB 0.9.7 BUG:
+            //---------------------
+            //combination of case-insensitive + wildcard '*' does not work
+            //correctly in OJB 0.9.7 (ie 'like' fails with a '*'). This is fixed
+            //in rc6, however...
+            String newValue = value.replaceAll("\\*", "%");
+            crit.addLike("upper("+column+")", newValue.toUpperCase());
+        }
+        else {
+            //normal equality..
+            crit.addEqualTo("upper("+column+")", value.toUpperCase());
+        }
     }
 }
