@@ -56,7 +56,7 @@
         requestURI="<%=uri%>"
         decorator="uk.ac.ebi.intact.application.editor.struts.view.experiment.IntDisplayWrapper">
         <display:column property="action" title="Action" />
-        <display:column property="shortLabel" title="Short Label" sort="true"/>
+        <display:column property="shortLabel" title="Short Label"/>
         <display:column property="ac" title="Ac" />
         <display:column property="fullName" title="Full Name" />
     </display:table>
