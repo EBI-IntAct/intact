@@ -114,6 +114,8 @@ public class OptionGenerator {
 
     return behaviours;
 
-  } // getHighlightmentMethods
+  } // getAuthorizedBehaviour
   
+
+
 } // OptionGenerator
