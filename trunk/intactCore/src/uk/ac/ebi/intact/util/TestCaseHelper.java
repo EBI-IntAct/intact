@@ -307,8 +307,8 @@ public class TestCaseHelper {
             institutions.add(institution);
             bioSources.add(bio1);
             bioSources.add(bio2);
-            experiments.add(exp1);
-            experiments.add(exp2);
+            this.experiments.add(exp1);
+            this.experiments.add(exp2);
             proteins.add(prot1);
             proteins.add(prot2);
             proteins.add(prot3);
