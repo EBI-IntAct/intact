@@ -111,7 +111,18 @@ public class DisplaySourceTag extends TagSupport {
                                                  request.getServerName() + ":" +
                                                  request.getServerPort() +
                                                  ((HttpServletRequest)request).getContextPath();
-                        urls = source.getSourceUrls(xRefs, applicationPath);
+
+                        Collection selectedKeys = user.getKeys();
+                        String theClickedKeys = user.getSelectedKey();
+
+                        Collection allSelectedKeys = new ArrayList ();
+
+                        if (selectedKeys != null) {
+                            allSelectedKeys.addAll (selectedKeys);
+                        }
+                        if (theClickedKeys != null) allSelectedKeys.add (theClickedKeys);
+
+                        urls = source.getSourceUrls(xRefs, allSelectedKeys, applicationPath);
                     } catch (IntactException ie) {
                         String msg = "ERROR<br>The hierarchView system is not properly configured. Please warn your administrator.";
                         pageContext.getOut().write (msg);

@@ -6,10 +6,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.hierarchView.struts.view.utils;
 
 import org.apache.taglibs.display.Decorator;
-import java.net.URLEncoder;
-import java.io.UnsupportedEncodingException;
-
-import uk.ac.ebi.intact.application.hierarchView.struts.view.utils.LabelValueBean;
 
 
 /**
@@ -34,7 +30,6 @@ import uk.ac.ebi.intact.application.hierarchView.struts.view.utils.LabelValueBea
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
-
 public class SourceDecorator extends Decorator {
 
     /**
@@ -46,15 +41,38 @@ public class SourceDecorator extends Decorator {
      *
      * @return data properly formated in order to be displayed by the display taglib
      */
-    public String getLabel() {
-        LabelValueBean lvb = (LabelValueBean) this.getObject();
-        if (lvb == null) return "";
+    public String getId() {
+        SourceBean bean = (SourceBean) this.getObject();
+        if (bean == null) return "";
 
-        String sourceName = lvb.getLabel();
-        String sourceLink = lvb.getValue();
+        final String id = bean.getId();
+        final String sourceBrowserUrl = bean.getSourceBrowserUrl();
 
-        return "<a href=\"" + sourceLink + "\" target=\"selectedSourcetFrame\">" + sourceName + "</a>";
+        return "<a href=\"" + sourceBrowserUrl + "\" target=\"selectedSourcetFrame\">" + id + "</a>";
     }
+
+
+    /**
+     * Transform the label and value data contained by the LabelValueBean beiing
+     * displayed by the Display:* tag into a link.
+     *
+     * e.g. label = XY:0000123 and value = http://www.mysourceXY.com/displayIt?id=XY:0000123
+     *      it format it as : <a href="http://www.mysourceXY.com/displayIt?id=XY:0000123"> XY:0000123 </a>
+     *
+     * @return data properly formated in order to be displayed by the display taglib
+     */
+    public String getDirectHighlightUrl() {
+        SourceBean bean = (SourceBean) this.getObject();
+        if (bean == null) return "";
+
+        if (bean.isSelected() == false) {
+            final String url = bean.getDirectHighlightUrl();
+            return "<center><a href=\"" + url + "\" target=\"_top\"><img src=\"../images/ok-grey.png\" border=\"0\" alt=\"(*)\"></a></center>";
+        } else {
+            return "<center><img src=\"../images/ok-red.png\" border=\"0\" alt=\"(-)\"></center>";
+        }
+    }
+
 
     /**
      * Send back the desciption of the source and in case it doesn't exists,
@@ -62,10 +80,10 @@ public class SourceDecorator extends Decorator {
      * @return the soruce description or an explanation messages.
      */
     public String getDescription () {
-        LabelValueBean lvb = (LabelValueBean) this.getObject();
-        if (lvb == null) return "";
+        SourceBean bean = (SourceBean) this.getObject();
+        if (bean == null) return "";
 
-        String description = lvb.getDescription();
+        String description = bean.getDescription();
         if (description == null || description.trim().length() == 0) {
             description = "<font color=\"#898989\"> No description available </font>";
         }
