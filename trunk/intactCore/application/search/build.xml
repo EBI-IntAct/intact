@@ -42,6 +42,9 @@
     <property name="dest.dir" value="WEB-INF/classes"/>
     <property name="docs.dir" value="doc/api"/>
 
+    <!-- The name of the last modified file -->
+    <property name="last.modified.file" value="last-modified.txt"/>
+
     <!-- Build working classpath -->
     <path id="project.class.path">
 
@@ -155,7 +158,8 @@
 
     <!-- Builds a war file. The database to include is specified as a parameter. -->
 
-    <target name="build-war" depends="compile, make-jar" description="Builds a war file">
+    <target name="build-war" depends="compile, make-jar, gen-last-modified-file"
+        description="Builds a war file">
         <!-- Create the distribution dir if it doesn't exist. -->
         <mkdir dir="${dist.dir}"/>
 
@@ -173,10 +177,12 @@
                 <exclude name="ebiHeaderLayout.jsp"/>
             </fileset>
         </copy>
+
         <!-- Common images -->
         <copy todir="${basedir}/images">
             <fileset dir="${intact.app.dir}/images"/>
         </copy>
+
         <!-- Common jsp files -->
         <copy todir="${basedir}/pages">
             <fileset dir="${intact.app.dir}/pages">
@@ -210,6 +216,7 @@
                 <include name="images/*"/>
                 <include name="pages/**"/>
                 <include name="layouts/**"/>
+                <include name="${last.modified.file}"/>
             </fileset>
 
             <!-- Include cvedit specific jar files. -->
@@ -358,6 +365,16 @@
 
     <target name="status-tomcat">
         <ant dir=".." inheritAll="false" target="status-tomcat"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Generates the last modified date file. -->
+
+    <target name="gen-last-modified-file">
+        <ant dir=".." inheritAll="false" target="gen-last-modified-file">
+            <property name="file" value="search/${last.modified.file}"/>
+        </ant>
     </target>
 
 </project>
