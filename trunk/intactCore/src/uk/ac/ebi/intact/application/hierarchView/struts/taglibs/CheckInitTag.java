@@ -1,3 +1,8 @@
+/*
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
+in the root directory of this distribution.
+*/
 package uk.ac.ebi.intact.application.hierarchView.struts.taglibs;
 
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
@@ -11,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 /**
  * That class allow to check if the initialisation has been properly done.
@@ -19,6 +25,8 @@ import java.io.IOException;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  */
 public class CheckInitTag  extends TagSupport {
+
+    private static Logger logger = Logger.getLogger("CheckInitTag");
 
     private String forwardOnError;
 
@@ -46,34 +54,39 @@ public class CheckInitTag  extends TagSupport {
         // check the datasource
         HttpSession session = pageContext.getSession();
         IntactUser user = (IntactUser) session.getAttribute (Constants.USER_KEY);
+
         if (null == user) {
-            System.out.println ("Data source unavailable, forward to home page");
+            logger.warning ("Data source unavailable, forward to home page");
             // user doesn't exists
             try {
                 // FORWARD
                 super.pageContext.forward (this.forwardOnError);
                 return SKIP_PAGE;
             } catch (ServletException e) {
+                logger.warning (e.toString());
                 e.printStackTrace();
             } catch (IOException e) {
+                logger.warning (e.toString());
                 e.printStackTrace();
             }
         }
 
-        // check the web service edeployment
+        // check the web service deployment
         ServletContext servletContext = pageContext.getServletContext();
         WebServiceManager webServiceManager =
                 (WebServiceManager) servletContext.getAttribute (Constants.WEB_SERVICE_MANAGER);
 
         if ((null == webServiceManager) || (false == webServiceManager.isRunning() )) {
-            System.out.println ("Web Service not properly deployed, forward to home page");
+            logger.warning ("Web Service not properly deployed, forward to home page");
             try {
                 // FORWARD
                 super.pageContext.forward (this.forwardOnError);
                  return SKIP_PAGE;
             } catch (ServletException e) {
+                logger.warning (e.toString());
                 e.printStackTrace();
             } catch (IOException e) {
+                logger.warning (e.toString());
                 e.printStackTrace();
             }
         }

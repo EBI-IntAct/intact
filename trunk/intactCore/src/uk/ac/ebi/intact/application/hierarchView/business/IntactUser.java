@@ -15,8 +15,10 @@ import uk.ac.ebi.intact.persistence.DataSourceException;
 
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 
 /**
@@ -31,6 +33,9 @@ import java.util.Map;
  *         Modified by Samuel Kerrien (skerrien@ebi.ac.uk)
  */
 public class IntactUser implements HttpSessionBindingListener {
+
+    // LOGGER
+    static Logger logger = Logger.getLogger(IntactUser.class.getName());
 
     private IntactHelper intactHelper;
 
@@ -63,8 +68,10 @@ public class IntactUser implements HttpSessionBindingListener {
         fileMap.put (Constants.MAPPING_FILE_KEY, mapping);
         ds.setConfig (fileMap);
 
+
         // build a helper for use throughout a session
         this.intactHelper = new IntactHelper (ds);
+        logger.info("IntactHelper created.");
     }
 
 
@@ -87,7 +94,8 @@ public class IntactUser implements HttpSessionBindingListener {
         }
         catch(IntactException ie) {
             //failed to close the store - not sure what to do here yet....
-            // TODO : log that error when closing store
+            logger.severe ("error when closing the IntactHelper store");
+            logger.severe (ie.toString());
         }
     }
 

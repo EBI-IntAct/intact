@@ -19,6 +19,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.TagSupport;
 
+import java.util.logging.Logger;
 
 
 /**
@@ -28,6 +29,8 @@ import javax.servlet.jsp.tagext.TagSupport;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  */
 public class InitTag extends TagSupport {
+
+    private static Logger logger = Logger.getLogger("InitTag");
 
     /**
      * Evaluate the tag's body content.
@@ -44,7 +47,6 @@ public class InitTag extends TagSupport {
      */
     public int doEndTag() throws JspException {
 
-        // TODO : create a logger here and store it in the session
         initDataSource ();
         initWebService ();
 
@@ -66,7 +68,7 @@ public class InitTag extends TagSupport {
         IntactUser user = (IntactUser) session.getAttribute (Constants.USER_KEY);
         if (null != user) {
             // user already exists
-            System.out.println("User already exists ... don't create a new one !");
+            logger.info ("User already exists ... don't create a new one !");
             return ;
         }
 
@@ -87,13 +89,13 @@ public class InitTag extends TagSupport {
             }
             catch (DataSourceException de) {
                 // Unable to get a data source...can't proceed
-                // TODO : log it
-                de.printStackTrace ();
+                 de.printStackTrace ();
+                logger.severe(de.toString());
                 throw new JspException ("Unable to get a data source.");
             }
             catch (IntactException se) {
                 // Unable to construct lists such as topics, db names etc.
-                // TODO : log it
+                logger.severe(se.toString());
                 se.printStackTrace ();
             }
 
@@ -119,15 +121,14 @@ public class InitTag extends TagSupport {
                 try {
                     WebServiceManager WSmanager = new WebServiceManager ();
                     WSmanager.deploy();
-                    // TODO : log it
-                    System.out.println ("Tulip web service deployed successfully");
+                    logger.info ("Tulip web service deployed successfully");
                     servletContext.setAttribute (Constants.WEB_SERVICE_MANAGER, WSmanager);
                 } catch (Exception e) {
-                    System.out.println (e.getMessage() + "\n" + e.toString());
+                    logger.info (e.getMessage() + "\n" + e.toString());
                     throw new JspException ("Fatal error: init tag could not deploy the Tulip web service.");
                 }
         } else {
-            System.out.println ("Web service already deployed ...");
+            logger.info ("Web service already deployed ...");
         }
 
     } // initWebService
