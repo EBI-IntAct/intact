@@ -132,23 +132,36 @@
     //write to the JSP output stream
     StreamResult result = new StreamResult(out);
 
-    // The collection of beans to process.
-    Map idToView = (Map) session.getAttribute(SearchConstants.FORWARD_MATCHES);
+    if(session.getAttribute(SearchConstants.CV_VIEW_BEAN) != null) {
+        //only have a single CvObject to show..
+        IntactViewBean bean = (IntactViewBean)session.getAttribute(SearchConstants.CV_VIEW_BEAN);
+        bean.transform("0", result);
+    }
+    else {
 
-    // Process each bean.
-    for (Iterator it = idToView.entrySet().iterator(); it.hasNext(); ) {
-        Map.Entry entry = (Map.Entry) it.next();
-        IntactViewBean bean = (IntactViewBean) entry.getValue();
-        String id = (String) entry.getKey();
-        bean.transform(id, result);
-        %>
+        // The collection of beans to process.
+        Map idToView = (Map) session.getAttribute(SearchConstants.FORWARD_MATCHES);
+
+        // Process each bean.
+        for (Iterator it = idToView.entrySet().iterator(); it.hasNext(); ) {
+            Map.Entry entry = (Map.Entry) it.next();
+            IntactViewBean bean = (IntactViewBean) entry.getValue();
+            String id = (String) entry.getKey();
+            bean.transform(id, result);
+            %>
 <hr size=2>
         <%
+        }
     }
 %>
     <!-- The footer table. -->
     <table cellpadding="1" cellspacing="0" border="1" width="100%">
         <tr>
+
+        <%
+            if(session.getAttribute(SearchConstants.CV_VIEW_BEAN) == null) {
+                //display buttons - none to display for CvObject views..
+        %>
             <td align="center">
                 <%
                     if (request.getAttribute(SearchConstants.PROTEIN_VIEW_BUTTON) != null) {
@@ -165,6 +178,10 @@
                 </html:button>
                 <html:reset/>
             </td>
+
+            <%
+            }
+            %>
         </tr>
     </table>
 </html:form>
