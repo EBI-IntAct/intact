@@ -87,7 +87,7 @@ public class InteractionNetwork extends Graph {
      * Constructor
      */
     public InteractionNetwork (Interactor aCentralProtein) {
-        Collection xrefs = aCentralProtein.getXref();
+        Collection xrefs = aCentralProtein.getXrefs();
         logger.info("Create an Interaction Network with centralProtein:" + aCentralProtein.getAc() + " #xref=" + (xrefs==null?0:xrefs.size()));
         centralProtein     = aCentralProtein;
         centralProteinAC   = aCentralProtein.getAc();
