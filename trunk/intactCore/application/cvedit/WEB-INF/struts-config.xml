@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="ISO-8859-1" ?>
-
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE struts-config PUBLIC
-          "-//Apache Software Foundation//DTD Struts Configuration 1.1//EN"
-          "http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
+ 	"-//Apache Software Foundation//DTD Struts Configuration 1.1//EN"
+	"http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
 
 <!--
      This is the Struts configuration file for the example application,
@@ -51,14 +50,6 @@
 
     </form-beans>
 
-    <!-- ========== Global Forward Definitions ============================== -->
-    <global-forwards>
-        <forward name="logout"   path="/logout.do"/>
-        <forward name="login"    path="/login.jsp"/>
-        <forward name="success"  path="/edit.jsp"/>
-        <forward name="failure"  path="/error.jsp"/>
-    </global-forwards>
-
     <!-- ========== Global Exceptions ======================================= -->
     <global-exceptions>
         <exception
@@ -68,6 +59,14 @@
             type="uk.ac.ebi.intact.application.cvedit.exception.SessionExpiredException"
         />
     </global-exceptions>
+
+    <!-- ========== Global Forward Definitions ============================== -->
+    <global-forwards>
+        <forward name="logout"   path="/logout.do"/>
+        <forward name="login"    path="/login.jsp"/>
+        <forward name="success"  path="/edit.jsp"/>
+        <forward name="failure"  path="/error.jsp"/>
+    </global-forwards>
 
     <!-- ========== Action Mapping Definitions ============================== -->
     <action-mappings>
