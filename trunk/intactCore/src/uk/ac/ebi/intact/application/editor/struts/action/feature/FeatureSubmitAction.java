@@ -103,7 +103,7 @@ public class FeatureSubmitAction extends CommonDispatchAction {
         // Update individual Features if in mutation mode.
         if (view.isInMutationMode()) {
             // features variable can never be null when in mutation mode. At least
-            // it could contain a single entry
+            // it should contain a single entry
             for (Iterator iter = features.iterator(); iter.hasNext(); ) {
                 intView.saveFeature((Feature) iter.next());
             }
@@ -135,92 +135,94 @@ public class FeatureSubmitAction extends CommonDispatchAction {
         // The owner for new Features.
         Institution owner = user.getInstitution();
 
+        // Cache CV objects.
+
         // CvFeature types.
         CvFeatureType featureType = (CvFeatureType) user.getObjectByLabel(
                 CvFeatureType.class, view.getCvFeatureType());
+
         // CvFeatureIdent is optional.
         CvFeatureIdentification featureIdent = null;
         if (view.getCvFeatureIdentification() != null) {
             featureIdent = (CvFeatureIdentification) user.getObjectByLabel(
                     CvFeatureIdentification.class, view.getCvFeatureIdentification());
         }
-        StringTokenizer stk1 = new StringTokenizer(view.getFullName(),
+        StringTokenizer stk = new StringTokenizer(view.getFullName(),
                 getService().getResource("mutation.feature.sep"));
 
-        // The mutation Feture to create.
+        // The mutation Feature to create.
         Feature feature;
 
         // The sequence to set in Ranges.
         String sequence = ((Protein) view.getComponent().getInteractor()).getSequence();
 
-        // The range separator.
-        String sep = getService().getResource("mutation.range.sep");
         do {
             // Contains info for a single feature mutation
-            String token = stk1.nextToken();
+            String token = stk.nextToken();
 
             // The next possible label for the new Feature.
-            String nextSL = computeFeatureShortLabel(token, sep);
+            String nextSL = computeFeatureShortLabel(token);
             feature = new Feature(owner, nextSL, view.getComponent(), featureType);
             if (featureIdent != null) {
                 feature.setCvFeatureIdentification(featureIdent);
             }
             // Create a Feature in a separate transaction.
-            user.begin();
-            user.create(feature);
-            user.endTransaction();
-
+            try {
+                user.begin();
+                user.create(feature);
+                user.endTransaction();
+            }
+            catch (IntactException ie) {
+                try {
+                    user.rollback();
+                }
+                catch (IntactException ie1) {
+                    // Oops! Problems with rollback.
+                }
+                throw ie;
+            }
             // Feature is persisted, add it to the list.
             features.add(feature);
 
-            StringTokenizer stk2 = new StringTokenizer(token, sep);
-
-            user.begin();
-
             try {
-                if (!stk2.hasMoreTokens()) {
-                    // Only a single range specified.
-                    int rangeValue = extractRange(token);
-                    if (rangeValue != -1) {
-                        Range range = new Range(owner, rangeValue, rangeValue, sequence);
-                        user.create(range);
-                        feature.addRange(range);
-                    }
-                    continue;
-                }
-                // Multiple ranges specified.
-                do {
-                    // Extract the range value to construct a range object.
-                    int rangeValue = extractRange(stk2.nextToken());
-                    Range range = new Range(owner, rangeValue, rangeValue, sequence);
+                user.begin();
+                for (Iterator iter = rangesToCreate(token, owner, sequence); iter.hasNext(); ) {
+                    Range range = (Range) iter.next();
                     user.create(range);
                     feature.addRange(range);
                 }
-                while (stk2.hasMoreTokens());
+                user.update(feature);
+                user.endTransaction();
             }
             catch (IntactException ie) {
-                // Delete the current Feature (it has already been created)
-                user.delete(feature);
+                try {
+                    user.rollback();
+                }
+                catch (IntactException ie1) {
+                    // Oops! Problems with rollback.
+                }
                 // Rethrow it again for logging the exception.
                 throw ie;
             }
-            user.update(feature);
-            user.endTransaction();
         }
-        while (stk1.hasMoreTokens());
+        while (stk.hasMoreTokens());
         return features;
     }
 
     /**
      * Computes the short label for a Feature
      * @param token this token may consist of multiple ranges
-     * @param sep the range separtor
      * @return the computed short label. Each range is joined with '-' as long
      * as the string of the text is less than or equals tm max chars allowed for
      * a short label.
      */
-    private String computeFeatureShortLabel(String token, String sep) {
+    private String computeFeatureShortLabel(String token) {
+        // The buffer to construct the name
         StringBuffer sb = new StringBuffer();
+
+        // The range separator.
+        String sep = getService().getResource("mutation.range.sep");
+
         StringTokenizer stk1 = new StringTokenizer(token, sep);
         while (stk1.hasMoreTokens()) {
             String range = stk1.nextToken().trim();
@@ -237,6 +239,32 @@ public class FeatureSubmitAction extends CommonDispatchAction {
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * Returns an iterator which contains Ranges to create.
+     * @param str the string consists of ranges
+     * @param owner the owner for a Range
+     * @param sequence the sequence for the range
+     * @return an iterator consists of Ranges to create
+     */
+    private Iterator rangesToCreate(String str, Institution owner, String sequence) {
+        // The ranges to return.
+        List ranges = new ArrayList();
+
+        // The range separator.
+        String sep = getService().getResource("mutation.range.sep");
+
+        // Break into tokens.
+        StringTokenizer stk = new StringTokenizer(str, sep);
+
+        do {
+            // Extract the range value to construct a range object.
+            int rangeValue = extractRange(stk.nextToken());
+            ranges.add(new Range(owner, rangeValue, rangeValue, sequence));
+        }
+        while (stk.hasMoreTokens());
+        return ranges.iterator();
     }
 
     /**
