@@ -391,6 +391,10 @@ public class GraphToImage
       }
     }
  
+    // make all local fonts available
+    GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+    env.getAvailableFontFamilyNames();
+
     this.fontLabel = new Font (fontName, Font.PLAIN, intFontSize); 
     this.borderSize = (new Float(border)).floatValue();
     this.imageLength     = (new Float(xSize)).floatValue();
