@@ -1,6 +1,5 @@
 package uk.ac.ebi.intact.application.commons.logging;
 
-import java.util.Properties;
 import java.net.UnknownHostException;
 import java.net.InetAddress;
 import java.io.IOException;
@@ -45,31 +44,10 @@ public class IntactDailyRollingFileAppender extends org.apache.log4j.DailyRollin
                        fileName.substring(indexOfFlag + HOSTNAME_FLAG.length(), fileName.length());
         }
 
-//       // add the hostname if doesn't exists
-//        if (fileName.indexOf(hostname) == -1) {
-//            Properties systemProperties = System.getProperties();
-//            String fileSeparator = systemProperties.getProperty ("file.separator");
-//            int index = fileName.lastIndexOf (fileSeparator);
-//            fileName = fileName.substring(0, index) +
-//                    fileSeparator + hostname + "_" +
-//                    fileName.substring(index + 1, fileName.length());
-//        }
-
         super.setFile (fileName,
                 append,
                 bufferedIO,
                 bufferSize);
 
     }
-
-
-    public static void main (String args[]) {
-
-        System.out.println (IntactDailyRollingFileAppender.hostname);
-
-        Properties p = System.getProperties();
-        p.list( System.out);
-
-    }
-
 }
