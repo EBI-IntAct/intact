@@ -339,10 +339,9 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
 
     /**
      * Construts a new Range using the current values in the bean.
-     * <b>Must </b> call {@link #validate(String)}method prior to calling
+     * <b>Must </b> call {@link #validate(String)} method prior to calling
      * this method.
      * 
-     * @param parent the parent of the range to return.
      * @param user the user object to access <code>CvFuzzyType</code>s.
      * 
      * @return a new Range using values from the bean.
@@ -354,8 +353,8 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
      *  pre: validate(String)
      * </pre>
      */
-    public Range getRange(Feature parent, EditUserI user)
-            throws SearchException, IllegalArgumentException {
+    public Range getRange(EditUserI user) throws SearchException,
+            IllegalArgumentException {
         // The from fuzzy type as a string.
         String fromType = denormalizeFuzzyType(myFromRange);
         // From range as a string.
@@ -442,14 +441,13 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
 
     /**
      * Makes a new Range instance.
-     * @param parent the parent for the new Range.
      * @param user handler to access the persistent system.
      * @return a new Range constructed using values in the bean.
      * @throws SearchException for errors in searching the persistent system.
      * @throws IllegalArgumentException for validation errors.
      */ 
-    public Range makeRange(Feature parent, EditUserI user)
-            throws SearchException, IllegalArgumentException {
+    public Range makeRange(EditUserI user) throws SearchException,
+            IllegalArgumentException {
         // The from fuzzy type as a string.
         String fromType = denormalizeFuzzyType(myFromRange);
         // From range as a string.
@@ -496,7 +494,7 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
         CvFuzzyType toFuzzyType = getFuzzyType(toType, user);
 
         // Construct a range object to return.
-        Range range = new Range(user.getInstitution(), parent, fromStart,
+        Range range = new Range(user.getInstitution(), fromStart,
                 fromEnd, toStart, toEnd, null);
 
         // Set the fuzzy types.

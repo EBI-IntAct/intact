@@ -55,16 +55,16 @@ public class FeatureNewRangeAction extends CommonDispatchAction {
         FeatureViewBean view = (FeatureViewBean) user.getView();
 
         // The feature must exist before adding a new range.
-        if (view.getAnnotatedObject() == null) {
-            // Save & Continue. Analyze the forward path.
-            ActionForward forward = save(mapping, form, request, response);
-
-            // Return the forward for any non success.
-            if (!forward.getPath().equals(mapping.findForward(SUCCESS).getPath())) {
-                return forward;
-            }
-            // Feature is persisted.
-        }
+//        if (view.getAnnotatedObject() == null) {
+//            // Save & Continue. Analyze the forward path.
+//            ActionForward forward = save(mapping, form, request, response);
+//
+//            // Return the forward for any non success.
+//            if (!forward.getPath().equals(mapping.findForward(SUCCESS).getPath())) {
+//                return forward;
+//            }
+//            // Feature is persisted.
+//        }
         // Can we create a Range instance from the user input? validate
         // method only confirms ranges are valid.
         RangeBean rbnew = featureForm.getNewRange();
@@ -80,7 +80,7 @@ public class FeatureNewRangeAction extends CommonDispatchAction {
         }
 
         // The range to construct from the bean.
-        Range range = rbnew.makeRange(((Feature) view.getAnnotatedObject()), user);
+        Range range = rbnew.makeRange(user);
 
         // Wraps the range around a bean.
         RangeBean rb = new RangeBean(range);
@@ -89,7 +89,7 @@ public class FeatureNewRangeAction extends CommonDispatchAction {
         view.addRange(rb);
 
         // Update the existing defined feature.
-        view.updateDefinedFeature(rb);
+//        view.updateDefinedFeature(rb);
 
         // Back to the input form.
         return mapping.getInputForward();

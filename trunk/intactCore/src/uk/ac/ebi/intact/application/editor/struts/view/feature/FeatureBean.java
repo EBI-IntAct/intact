@@ -211,7 +211,7 @@ public class FeatureBean implements Serializable, Cloneable {
         // Update the ranges.
         for (Iterator iterator = myRanges.iterator(); iterator.hasNext();) {
             RangeBean rangeBean = (RangeBean) iterator.next();
-            myFeature.addRange(rangeBean.getRange(myFeature, user));
+            myFeature.addRange(rangeBean.getRange(user));
         }
         // Set the bound domain if it isn't empty.
         if (getBoundDomain().length() != 0) {
