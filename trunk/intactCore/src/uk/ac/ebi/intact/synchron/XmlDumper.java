@@ -1,3 +1,8 @@
+/*
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
+in the root directory of this distribution.
+*/
 package uk.ac.ebi.intact.synchron;
 
 // JDK
@@ -32,6 +37,8 @@ import org.apache.ojb.broker.metadata.*;
 
 /**
  * Dump all data to XML in a normalised XML format.
+ *
+ * @author Antje Mueller, Arnaud Ceol
  */
 public class XmlDumper {
 
@@ -72,29 +79,23 @@ public class XmlDumper {
      */
     private void init() throws Exception {
 
-
         //get properties from the property file
         try{
             properties=Utilities.getProperties("config");
         } catch(Exception e) {
-            System.out.println("[ERROR] Was not possible to get the poperties");
+            System.out.println("[XmlDumper] [ERROR] Was not possible to get the poperties");
             throw e;
         }
 
-        System.out.println("got properties\n");
-        System.out.println("a property: " + properties.getProperty("XmlDumper.directory",""));
+        System.out.println("[XmlDumper] got properties");
 
         // initialise OJB broker
         try{
             broker=PersistenceBrokerFactory.createPersistenceBroker(RepositoryFile);
         } catch(MalformedURLException e) {
-            System.out.println("[ERROR] Was not possible to get the repository file");
+            System.out.println("[XmlDumper] [ERROR] Was not possible to get the repository file");
             throw e;
         }
-
-
-        System.out.println("\nOJB Broker\n");
-
 
         //initialize FileWriter and PrintWriter for Castor output messages
         try{
@@ -103,25 +104,24 @@ public class XmlDumper {
             throw e;
         }
 
-        System.out.println("Created appropriate Filename: " + fileName+"\n");
+        System.out.println("[XmlDumper] Created appropriate Filename: " + fileName);
 
         try{
             outputFile = new CheckedOutputStream(new FileOutputStream(properties.getProperty("XmlDumper.directory","") + fileName + ".xml"), new CRC32());
         } catch(FileNotFoundException e) {
-            System.out.println("[ERROR] Was not possible to open the output file");
+            System.out.println("[XmlDumper] [ERROR] Was not possible to open the output file");
             throw e;
         }
-
         writer = new Logger(outputFile).setPrefix(properties.getProperty("loggerPrefix",""));
 
         // Load the mapping file and builds the mapping
-        System.out.println("createMapping \n");
+        System.out.println("[XmlDumper] createMapping");
         mapping = new Mapping( getClass().getClassLoader() );
 
         try{
             mapping.loadMapping( getClass().getResource( MappingFile ) );
         } catch(Exception e) {
-            System.out.println("[ERROR] Was not possible to load the mappingfile");
+            System.out.println("[XmlDumper] [ERROR] Was not possible to load the mappingfile");
             throw e;
         }
         mapping.setLogWriter( writer );
@@ -132,7 +132,7 @@ public class XmlDumper {
             marshaller = new Marshaller(writer);
             marshaller.setMapping(mapping);
         } catch (Exception e){
-            System.out.println("[ERROR] Was not possible to get the marshaller");
+            System.out.println("[XmlDumper] [ERROR] Was not possible to get the marshaller");
             throw e;
         }
     }
@@ -154,27 +154,21 @@ public class XmlDumper {
         criteria.addLike("ownerPrefix",(properties.getProperty("ownerPrefix")));
         query =	QueryFactory.newQuery(IntactNode.class,criteria);
 
-        System.out.println("getFileName \n");
+        System.out.println("[XmlDumper] getFileName");
 
         broker.beginTransaction();
-        System.out.println("beginTransaction \n");
-        System.out.println("[[query: " + query.toString() + "]]");
 
         //select db entry about itselfs
         intactNode = (IntactNode) broker.getObjectByQuery(query);
         if (intactNode == null) {
-            System.out.println("[ERROR][No node found for the prefix specified in property file");
+            System.out.println("[XmlDumper] [ERROR] No node found for the prefix specified in property file");
             throw new Exception();
         }
 
-        System.out.println("getIntactNode " + broker.getExtentClass(intactNode.getClass()) + "\n");
-
         broker.commitTransaction();
 
-
-
         //build file name
-        System.out.println("\nGot db entry about my own intactnode to build the filename ac: "+ intactNode.getAc()+"\n");
+        System.out.println("[XmlDumper] Got db entry about my own intactnode to build the filename ac: "+ intactNode.getAc());
         intactNode.setLastProvidedId(intactNode.getLastProvidedId() + 1);
 
         fileName += String.valueOf(intactNode.getLastProvidedId());  //add serial number to the name by increasing the last on; concurrently, the field of the object is updated
@@ -209,10 +203,10 @@ public class XmlDumper {
         //update db entry
         broker.store(intactNode);
 
-        System.out.println("updated my intactnode entry...");
-        System.out.println("lastProvidedId: "+ intactNode.getLastProvidedId() + "\n");
-        System.out.println("lastProvidedDate: " + intactNode.getLastProvidedDate() + "\n");
-        System.out.println("dateOflastFile: " + dateOfLastFile.toString() +"\n");
+        System.out.println("[XmlDumper] updated my intactnode entry...");
+        System.out.println("[XmlDumper] lastProvidedId: "+ intactNode.getLastProvidedId());
+        System.out.println("[XmlDumper] lastProvidedDate: " + intactNode.getLastProvidedDate());
+        System.out.println("[XmlDumper] dateOflastFile: " + dateOfLastFile.toString());
 
         return fileName;
 
@@ -226,7 +220,7 @@ public class XmlDumper {
     private void fillFile()
             throws Exception {
 
-        System.out.println("Try to fill the file\n");
+        System.out.println("[XmlDumper] Try to fill the file");
 
         Collection result;
         Query query;
@@ -237,26 +231,22 @@ public class XmlDumper {
 
         //build "where" part of the query
         criteria.addLike("ac", "%" + properties.getProperty("ownerPrefix")+"%");
+        criteria.addOrderByAscending("ac");
         if( !release ) {
             criteria.addGreaterThan("updated",dateOfLastFile);
         }
 
         //build query
-//        query =	QueryFactory.newQuery(BasicObject.class,criteria,true);
-
-        System.out.println("created appropriate query to select the required data\n");
-
-
+        System.out.println("[XmlDumper] created appropriate query to select the required data");
 
         //Collect objects
-//        result = broker.getCollectionByQuery(query);
         int cpt = 0;
         query =	QueryFactory.newQuery(BasicObject.class,criteria,true);
 
         broker.beginTransaction();
 
         result = broker.getCollectionByQuery(query);
-        System.out.println("selected data\n");
+        System.out.println("[XmlDumper] selected data");
 
         broker.commitTransaction();
 
@@ -264,55 +254,24 @@ public class XmlDumper {
         iterator =result.iterator() ;
         while (iterator.hasNext() ) {
             Object o = iterator.next();
-
+            // remove from collections informations we don't need in the Xml file = everything but ac
             simplifyCollections(o);
-
             container.addObject(o);
             cpt++;
         }
 
-
-
-//        ClassDescriptor cd = broker.getClassDescriptor(Interaction.class);
-//        Vector subclasses = cd.getExtentClasses();
-//        Iterator it = subclasses.iterator();
-//
-//        while(it.hasNext())
-//        {
-//            Class c = (Class)(it.next());
-//            System.out.println("[Dump class: " + c.getName() + "]");
-//            query =	QueryFactory.newQuery(c,criteria,true);
-//
-//            broker.beginTransaction();
-//
-//            result = broker.getCollectionByQuery(query);
-////          System.out.println("selected data\n");
-//
-//            broker.commitTransaction();
-//
-//            //put collected objects in a container
-//            iterator =result.iterator() ;
-//
-////            int cpt = 0;
-//
-//            while (iterator.hasNext() ) {
-//                Object o = iterator.next();
-//                container.addObject(o);
-//                cpt++;
-//            }
-//        }
         broker.close();
-        System.out.println("put all recieved objects into a container: " + cpt +"\n");
+        System.out.println("[XmlDumper] put " + cpt + " objects into a container");
 
         // XML dump container
         try{
             marshaller.marshal(container);
         } catch(MarshalException e){
-            System.out.println("[ERROR] Was not possible to marshal the container");
+            System.out.println("[XmlDumper] [ERROR] Was not possible to marshal the container");
             throw e;
         }
 
-        System.out.println("marshall container\n");
+        System.out.println("[XmlDumper] container marshalled");
     }
 
 
@@ -327,20 +286,17 @@ public class XmlDumper {
             if (Collection.class == f.getType())
             {
                 Collection c = (Collection)f.get(o);
-//                System.out.println("Object: "+((BasicObject)o).getAc());
                 Collection newC = new Vector();
 
                 Iterator it = c.iterator();
                 while(it.hasNext())
                 {
-                    BasicObject e= (BasicObject)it.next();
-//                    System.out.println("Simplify Object: "+e.getAc()+ " of type: "+e.getClass().getName());
+                    BasicObject e = (BasicObject)it.next();
                     Object emptyObject = e.getClass().newInstance() ;
                     ((BasicObject)emptyObject).setUpdated(null);
                     ((BasicObject)emptyObject).setCreated(null);
                     ((BasicObject)emptyObject).setAc(e.getAc());
                     newC.add(emptyObject);
-
                 }
                 f.set(o, newC);
             }
@@ -351,19 +307,17 @@ public class XmlDumper {
     /**
      * Computes the checksum for the output file an writes it to the checksum file
      */
-
     private void buildCheckSum() throws FileNotFoundException, IOException{
 
-        System.out.println("build checksum for the "+ fileName + ".xml and writes this to a " + fileName + ".crc32 file\n");
+        System.out.println("[XmlDumper] build checksum for the "+ fileName + ".xml and writes this to a " + fileName + ".crc32 file");
         try {
             FileWriter checksumFile = new FileWriter(properties.getProperty("XmlDumper.directory","") + fileName + ".crc32");
 
             checksumFile.write(String.valueOf(outputFile.getChecksum().getValue()));
             checksumFile.close();
         } catch (Exception e) {
-            System.out.println("[ERROR] Was not possible to create the checksum file");
+            System.out.println("[XmlDumper] [ERROR] Was not possible to create the checksum file");
         }
-
     }
 
 
@@ -392,7 +346,7 @@ public class XmlDumper {
                     xmlDumper.release = true;
 
                 try {
-                    System.out.println("[XmlDumper: initialisation]" );
+                    System.out.println("[XmlDumper] initialisation]" );
                     xmlDumper.init();
                     xmlDumper.fillFile();
                     xmlDumper.buildCheckSum();

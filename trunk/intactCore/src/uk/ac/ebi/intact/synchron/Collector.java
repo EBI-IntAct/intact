@@ -1,10 +1,7 @@
 /*
-* Created by IntelliJ IDEA.
-* User: aceol
-* Date: Jul 17, 2002
-* Time: 12:48:40 PM
-* To change template for new class use
-* Code Style | Class Templates options (Tools | IDE Options).
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
+in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.synchron;
 
@@ -38,6 +35,8 @@ import uk.ac.ebi.intact.util.Utilities;
 /**
  * Purpose: collects XML files
  * from others IntAct nodes
+ *
+ *  @author Antje Mueller, Arnaud Ceol
  */
 public class Collector {
 
@@ -78,22 +77,21 @@ public class Collector {
         try {
             properties=Utilities.getProperties("config");
         } catch ( IOException e) {
-            System.out.println("[ERROR] Was not possible to get the poperties");
+            System.out.println("[Collector] [ERROR] Was not possible to get the poperties");
             throw e;
         }
 
         try {
             broker= PersistenceBrokerFactory.createPersistenceBroker("repository.xml");
         } catch(MalformedURLException e) {
-            System.out.println("[ERROR] Was not possible to get the repository file");
+            System.out.println("[Collector] [ERROR] Was not possible to get the repository file");
             throw e;
         }
 
         try {
-
-                xmlLoader = new XmlLoader(broker);
+            xmlLoader = new XmlLoader(broker);
         } catch ( Exception e ) {
-            System.out.println("[ERROR] Was not possible to create the loader");
+            System.out.println("[Collector] [ERROR] Was not possible to create the loader");
             throw e;
         }
 
@@ -123,7 +121,7 @@ public class Collector {
     private void getXmlFiles(IntactNode node)  throws Exception {
         // this int will contain either the last check id
         // or the last release if it's more recent
-        System.out.println("[Collector get XML files for node : " + node.getOwnerPrefix() + "]");
+        System.out.println("[Collector]  get XML files for node : " + node.getOwnerPrefix() + "]");
         int lastId = node.getLastCheckId();
         int firstId = lastId +1;
 
@@ -134,11 +132,11 @@ public class Collector {
             ftpClient.password(node.getFtpPassword());
             ftpClient.chdir(node.getFtpDirectory());
         } catch (FTPException ftpe) {
-            System.out.println("[ERROR] unable to connect to ftp server: " + node.getFtpAddress());
-            System.out.println("        maybe wrong address, login, password");
+            System.out.println("[Collector] [ERROR] unable to connect to ftp server: " + node.getFtpAddress());
+            System.out.println("[Collector]         maybe wrong address, login, password");
             return;
         } catch (IOException e) {
-            System.out.println("[ERROR] unable to connect to ftp server: ");
+            System.out.println("[Collector] [ERROR] unable to connect to ftp server: ");
             return;
         }
 
@@ -150,7 +148,7 @@ public class Collector {
             try {
                 files = ftpClient.dir("*.xml");
             } catch(FTPException ftpe) {
-                System.out.println("no files found for node " + node.getOwnerPrefix());
+                System.out.println("[Collector] no files found for node " + node.getOwnerPrefix());
                 return;
             }
 
@@ -159,19 +157,19 @@ public class Collector {
 
                 // check for last release file
                 for (int i=0; i < Array.getLength(releaseFiles); i++) {
-                    System.out.println("[release file :" + releaseFiles[i]+ "]");
+                    System.out.println("[Collector] release file :" + releaseFiles[i]);
                     int id = Integer.parseInt(releaseFiles[i].substring(0, files[i].indexOf('-')));
                     if (id > firstId) firstId = id;
                 }
             } catch(FTPException ftpe) {
-                System.out.println("no release file found for node " + node.getOwnerPrefix());
+                System.out.println("[Collector] no release file found for node " + node.getOwnerPrefix());
             }
 
             HashMap files2download = new HashMap();
 
             // get files names
             for (int i=0; i < Array.getLength(files); i++) {
-                System.out.println("[found file :" + files[i]+ "]");
+                System.out.println("[Collector] found file :" + files[i]);
                 int id = Integer.parseInt(files[i].substring(0, files[i].indexOf('-')));
                 if (id > lastId) lastId = id;
                 files2download.put(new Integer(id), files[i]);
@@ -184,7 +182,7 @@ public class Collector {
             // download the files
             for (int i = firstId; i <= lastId; i++) {
                 String fileName = (String)files2download.get(new Integer(i));
-                System.out.println("[Download file: " + fileName + "]");
+                System.out.println("[Collector] Download file: " + fileName);
                 ftpClient.get(properties.getProperty("Collector.directory") + "/" + fileName, fileName);
 
                 // after downloading a file, a check is done on the file
@@ -192,42 +190,42 @@ public class Collector {
                 // if an exception is thrown or the test failed, the file are downloaded
                 // a second time and the test is made again
 
-//                boolean isNotCorrupted;
-//                try {
-//                    isNotCorrupted = isNotCorrupted(properties.getProperty("Collector.directory") + "/" + fileName);
-//                } catch (Exception e) {
-//                    isNotCorrupted = false;
-//                }
-//
-//                if (! isNotCorrupted) {
-//                    ftpClient.get(properties.getProperty("Collector.directory") + "/" + fileName, fileName);
-//                    ftpClient.get(properties.getProperty("Collector.directory") + "/"
-//                            + fileName.substring(0, fileName.length() - 4) + ".crc32", fileName.substring(0, fileName.length() - 4) + ".crc32");
-//
-//                    try {
-//                        isNotCorrupted = isNotCorrupted(properties.getProperty("Collector.directory") + "/" + fileName);
-//
-//                        if (! isNotCorrupted) {
-//                            files2download.remove(new Integer(i));
-//                            System.out.println("[error: downloaded file " + fileName + " corrupted]");
-//                        }
-//                    } catch (Exception e) {
-//                        System.out.println("[error] was not possible to check file " + fileName);
-//                        files2download.remove(new Integer(i));
-//                    }
-//                }
+                boolean isNotCorrupted;
+                try {
+                    isNotCorrupted = isNotCorrupted(properties.getProperty("Collector.directory") + "/" + fileName);
+                } catch (Exception e) {
+                    isNotCorrupted = false;
+                }
+
+                if (! isNotCorrupted) {
+                    ftpClient.get(properties.getProperty("Collector.directory") + "/" + fileName, fileName);
+                    ftpClient.get(properties.getProperty("Collector.directory") + "/"
+                            + fileName.substring(0, fileName.length() - 4) + ".crc32", fileName.substring(0, fileName.length() - 4) + ".crc32");
+
+                    try {
+                        isNotCorrupted = isNotCorrupted(properties.getProperty("Collector.directory") + "/" + fileName);
+
+                        if (! isNotCorrupted) {
+                            files2download.remove(new Integer(i));
+                            System.out.println("[Collector] [ERROR] downloaded file " + fileName + " corrupted");
+                        }
+                    } catch (Exception e) {
+                        System.out.println("[Collector] [ERROR] was not possible to check file " + fileName);
+                        files2download.remove(new Integer(i));
+                    }
+                }
             }
 
             // load the files
             for (int i = firstId; i <= lastId; i++) {
                 String fileName = (String)(String)files2download.get(new Integer(i));
-                System.out.println("[load file:" + fileName + "]");
+                System.out.println("[Collector] load file:" + fileName );
                 try {
                     broker.clearCache();
                     xmlLoader.loadFile(properties.getProperty("Collector.directory") + "/" + fileName);
 
                 } catch(Exception e) {
-                    System.out.println("[ERROR] unable to load the file " + fileName + " from node " + node.getOwner().getFullName());
+                    System.out.println("[Collector] [ERROR] unable to load the file " + fileName + " from node " + node.getOwner().getFullName());
                     return;
                 }
             }
@@ -238,11 +236,11 @@ public class Collector {
             broker.store(node);
 
         } catch (FTPException ftpe) {
-            System.out.println("[ERROR] no xml file found on ftp server: " + node.getFtpAddress());
+            System.out.println("[Collector] [ERROR] no xml file found on ftp server: " + node.getFtpAddress());
             ftpe.printStackTrace(System.out);
             return;
         } catch (IOException e) {
-            System.out.println("[ERROR] was not possible to get the files from " + node.getFtpAddress());
+            System.out.println("[Collector] [ERROR] was not possible to get the files from " + node.getFtpAddress());
             e.printStackTrace(System.out);
             return;
         }
@@ -275,10 +273,10 @@ public class Collector {
             }
 
         } catch (FileNotFoundException e) {
-            System.out.println("[ERROR] was not possible to open xml file: " + fileName);
+            System.out.println("[Collector] [ERROR] was not possible to open xml file: " + fileName);
             throw e;
         } catch (IOException e) {
-            System.out.println("[ERROR] was not possible to read xml file: " + fileName);
+            System.out.println("[Collector] [ERROR] was not possible to read xml file: " + fileName);
             throw e;
         }
 
@@ -290,10 +288,10 @@ public class Collector {
             }
 
         } catch (FileNotFoundException e) {
-            System.out.println("[ERROR] was not possible to open checksum file: " + fileName.substring(0, fileName.length() -4) + ".crc32");
+            System.out.println("[Collector] [ERROR] was not possible to open checksum file: " + fileName.substring(0, fileName.length() -4) + ".crc32");
             throw e;
         }  catch (IOException e) {
-            System.out.println("[ERROR] was not possible to read checksum file: " + fileName.substring(0, fileName.length() -4) + ".crc32");
+            System.out.println("[Collector] [ERROR] was not possible to read checksum file: " + fileName.substring(0, fileName.length() -4) + ".crc32");
             throw e;
         }
 
@@ -313,7 +311,7 @@ public class Collector {
         try {
             c.init();
         } catch (Exception e) {
-            System.out.println("[ERROR] Was not possible to initialize the collector");
+            System.out.println("[Collector] [ERROR] Was not possible to initialize the collector");
             e.printStackTrace(System.out);
             System.exit(0);
         }
@@ -322,7 +320,7 @@ public class Collector {
 
         while (intactNodes.hasNext()) {
             IntactNode in =   (IntactNode)intactNodes.next();
-            System.out.println("[node: " + in.getOwnerPrefix() + "]");
+            System.out.println("[Collector] node: " + in.getOwnerPrefix());
             c.getXmlFiles(in);
         }
     }
