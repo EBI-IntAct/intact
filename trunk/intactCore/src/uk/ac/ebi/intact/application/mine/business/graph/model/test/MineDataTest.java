@@ -9,7 +9,7 @@ import java.util.Map;
 
 import jdsl.graph.api.Graph;
 import jdsl.graph.ref.IncidenceListGraph;
-import uk.ac.ebi.intact.application.mine.business.graph.model.MineData;
+import uk.ac.ebi.intact.application.mine.business.graph.model.GraphData;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -17,6 +17,7 @@ import junit.framework.TestSuite;
 /**
  * @author Andreas Groscurth
  */
+//TODO: RENAME IT !!!
 public class MineDataTest extends TestCase {
 
     public MineDataTest(String name) {
@@ -34,7 +35,7 @@ public class MineDataTest extends TestCase {
     public void test_normalObject() {
         Graph g = new IncidenceListGraph();
         Map m = new Hashtable();
-        MineData md = new MineData(g, m);
+        GraphData md = new GraphData(g, m);
         assertNotNull(md);
         assertEquals(g, md.getGraph());
         assertEquals(m, md.getAccMap());
@@ -42,7 +43,7 @@ public class MineDataTest extends TestCase {
 
     public void test_nullGraph() {
         try {
-            new MineData(null, new Hashtable());
+            new GraphData(null, new Hashtable());
             fail("graph should actually not be null !");
         }
         catch (Exception e) {
@@ -52,7 +53,7 @@ public class MineDataTest extends TestCase {
 
     public void test_nullMap() {
         try {
-            new MineData(new IncidenceListGraph(), null);
+            new GraphData(new IncidenceListGraph(), null);
             fail("map should actually not be null !");
         }
         catch (Exception e) {

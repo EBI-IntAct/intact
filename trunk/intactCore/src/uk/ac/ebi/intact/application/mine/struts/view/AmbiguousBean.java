@@ -11,8 +11,6 @@ import java.io.Writer;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.apache.struts.action.ActionForm;
-
 import uk.ac.ebi.intact.application.mine.business.Constants;
 import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.Experiment;
@@ -28,7 +26,7 @@ import uk.ac.ebi.intact.model.Protein;
  * 
  * @author Andreas Groscurth
  */
-public class AmbiguousBean extends ActionForm {
+public class AmbiguousBean {
     private Collection proteins = null;
     private Collection interactions = null;
     private Collection experiments = null;
@@ -40,14 +38,14 @@ public class AmbiguousBean extends ActionForm {
     }
 
     public boolean equals(Object o) {
-        if (this == o) {
+        if ( this == o ) {
             return true;
         }
-        if (!(o instanceof AmbiguousBean)) {
+        if ( !( o instanceof AmbiguousBean ) ) {
             return false;
         }
         AmbiguousBean element = (AmbiguousBean) o;
-        return element.searchAc.equals(searchAc);
+        return element.searchAc.equals( searchAc );
     }
 
     /**
@@ -120,15 +118,15 @@ public class AmbiguousBean extends ActionForm {
     }
 
     /**
-     * Returns wether the search returned an ambigious result. This is the case
+     * Returns whether the search returned an ambigious result. This is the case
      * when more than one protein was found or at least one interaction or on
      * experiment.
      * 
-     * @return wether an ambiguous result exists.
+     * @return whether an ambiguous result exists.
      */
     public boolean hasAmbiguousResult() {
-        return proteins.size() > 1 || proteins.size() == 0
-                || interactions.size() != 0 || experiments.size() != 0;
+        return !( proteins.size() == 1 && interactions.size() == 0 && experiments
+                .size() == 0 );
     }
 
     /**
@@ -148,38 +146,38 @@ public class AmbiguousBean extends ActionForm {
      */
     public void printHTML(Writer out, String contextPath) {
         try {
-            out.write(searchAc + " returned<br>");
+            out.write( searchAc + " returned<br>" );
             context = contextPath;
             int interactorNumber = getNumberOfResults();
             // if no results where found
-            if (interactorNumber == 0) {
-                out.write("<i>no results</i><br>");
+            if ( interactorNumber == 0 ) {
+                out.write( "<i>no results</i><br>" );
             }
             // if more results than allowed were found
-            else if (interactorNumber > Constants.MAX_NUMBER_RESULTS) {
-                out.write("<i>more than " + Constants.MAX_NUMBER_RESULTS);
-                out.write(" results, please refine your query</i><br>");
+            else if ( interactorNumber > Constants.MAX_NUMBER_RESULTS ) {
+                out.write( "<i>more than " + Constants.MAX_NUMBER_RESULTS );
+                out.write( " results, please refine your query</i><br>" );
             }
             else {
-                out.write("<table width=\"100%\" bgcolor=\"#336666\">");
+                out.write( "<table width=\"100%\" bgcolor=\"#336666\">" );
                 Iterator iter;
                 // all found proteins are displayed
                 for (iter = proteins.iterator(); iter.hasNext();) {
-                    printProtein(out, (Protein) iter.next());
+                    printProtein( out, (Protein) iter.next() );
                 }
                 // all found interactions are displayed
                 for (iter = interactions.iterator(); iter.hasNext();) {
-                    printInteraction(out, (Interaction) iter.next());
+                    printInteraction( out, (Interaction) iter.next() );
                 }
                 // all found eperiments are displayed
                 for (iter = experiments.iterator(); iter.hasNext();) {
-                    printExperiment(out, (Experiment) iter.next());
+                    printExperiment( out, (Experiment) iter.next() );
                 }
-                out.write("</table><br>\n");
+                out.write( "</table><br>\n" );
             }
-            out.write("<br>");
+            out.write( "<br>" );
         }
-        catch (IOException e) {
+        catch ( IOException e ) {
             e.printStackTrace();
         }
     }
@@ -196,16 +194,16 @@ public class AmbiguousBean extends ActionForm {
     private void printExperiment(Writer out, Experiment exp) throws IOException {
         Collection interactions = exp.getInteractions();
         // if the number of interactions is greater than allowed
-        if (interactions.size() > Constants.MAX_INTERACTION_SIZE) {
-            out.write("<i>" + exp.getAc() + " has more than "
+        if ( interactions.size() > Constants.MAX_INTERACTION_SIZE ) {
+            out.write( "<i>" + exp.getAc() + " has more than "
                     + Constants.MAX_INTERACTION_SIZE
-                    + " number of interactions</i>");
+                    + " number of interactions</i>" );
             return;
         }
 
         // every interaction is displayed
         for (Iterator iter = interactions.iterator(); iter.hasNext();) {
-            printInteraction(out, (Interaction) iter.next());
+            printInteraction( out, (Interaction) iter.next() );
         }
     }
 
@@ -221,21 +219,21 @@ public class AmbiguousBean extends ActionForm {
             throws IOException {
         Collection components = in.getComponents();
         // if an interaction has more than the allowed number of components
-        if (components.size() > Constants.MAX_INTERACTION_SIZE) {
-            out.write("<i>" + in.getAc() + " has more than "
+        if ( components.size() > Constants.MAX_INTERACTION_SIZE ) {
+            out.write( "<i>" + in.getAc() + " has more than "
                     + Constants.MAX_INTERACTION_SIZE
-                    + " number of interactors</i>");
+                    + " number of interactors</i>" );
             return;
         }
         Interactor inter;
         // every component is displayed
         for (Iterator iter = components.iterator(); iter.hasNext();) {
-            inter = ((Component) iter.next()).getInteractor();
-            if (inter instanceof Protein) {
-                printProtein(out, (Protein) inter);
+            inter = ( (Component) iter.next() ).getInteractor();
+            if ( inter instanceof Protein ) {
+                printProtein( out, (Protein) inter );
             }
-            else if (inter instanceof Interaction) {
-                printInteraction(out, (Interaction) inter);
+            else if ( inter instanceof Interaction ) {
+                printInteraction( out, (Interaction) inter );
             }
         }
 
@@ -252,36 +250,36 @@ public class AmbiguousBean extends ActionForm {
     private void printProtein(Writer out, Protein prot) throws IOException {
         String ac = prot.getAc();
 
-        out.write("<tr bgcolor=\"#eeeeee\">");
-        out.write("<td class=\"objectClass\"><nobr>");
+        out.write( "<tr bgcolor=\"#eeeeee\">" );
+        out.write( "<td class=\"objectClass\"><nobr>" );
         // a checkbox is added so that the user can select the protein for the
         // algorithm
-        out.write("<input type=\"checkbox\" name=\"" + ac + "\"");
+        out.write( "<input type=\"checkbox\" name=\"" + ac + "\"" );
         // if only one protein is given the checkbox is checked by default
-        if (!hasAmbiguousResult()) {
-            out.write(" checked");
+        if ( !hasAmbiguousResult() ) {
+            out.write( " checked" );
         }
-        out.write(">");
+        out.write( ">" );
 
-        out.write("<b>Protein</b>");
-        out.write("<a href=\"" + context + Constants.HELP_LINK
-                + "search.TableLayout\"");
-        out.write(" target=\"new\"><sup><b><font color=\"red\">?</font>");
-        out.write("</b></sup></a></nobr></td>");
+        out.write( "<b>Protein</b>" );
+        out.write( "<a href=\"" + context + Constants.HELP_LINK
+                + "search.TableLayout\"" );
+        out.write( " target=\"new\"><sup><b><font color=\"red\">?</font>" );
+        out.write( "</b></sup></a></nobr></td>" );
 
         // the ac number is added
-        out.write("<td><a href=\"" + context + Constants.HELP_LINK
-                + "BasicObject.ac\"");
-        out.write("target=\"new\">Ac:</a>" + ac + "</td>");
+        out.write( "<td><a href=\"" + context + Constants.HELP_LINK
+                + "BasicObject.ac\"" );
+        out.write( "target=\"new\">Ac:</a>" + ac + "</td>" );
 
         // the shortlabel is added
-        out.write("<td><a href=\"" + context + Constants.HELP_LINK
-                + "AnnotatedObject.shortLabel\"");
-        out.write(" target=\"new\">Name:</a> ");
-        out.write("<a href=\"" + context + "/search/do/search?searchString="
-                + ac + "&searchClass=Protein\">");
-        out.write("<b><i>" + prot.getShortLabel() + "</i></b></a></td>");
-        out.write("<td>" + prot.getFullName() + "</td>");
-        out.write("</tr>");
+        out.write( "<td><a href=\"" + context + Constants.HELP_LINK
+                + "AnnotatedObject.shortLabel\"" );
+        out.write( " target=\"new\">Name:</a> " );
+        out.write( "<a href=\"" + context + "/search/do/search?searchString="
+                + ac + "&searchClass=Protein\">" );
+        out.write( "<b><i>" + prot.getShortLabel() + "</i></b></a></td>" );
+        out.write( "<td>" + prot.getFullName() + "</td>" );
+        out.write( "</tr>" );
     }
 }

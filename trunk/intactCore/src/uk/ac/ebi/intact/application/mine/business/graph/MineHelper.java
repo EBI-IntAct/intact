@@ -3,41 +3,48 @@
  * rights reserved. Please see the file LICENSE in the root directory of this
  * distribution.
  */
+
 package uk.ac.ebi.intact.application.mine.business.graph;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
 
 import jdsl.core.api.ObjectIterator;
 import jdsl.core.api.Sequence;
 import jdsl.graph.api.Edge;
 import jdsl.graph.api.Graph;
 import jdsl.graph.api.Vertex;
-import jdsl.graph.ref.IncidenceListGraph;
 import uk.ac.ebi.intact.application.mine.business.Constants;
 import uk.ac.ebi.intact.application.mine.business.IntactUserI;
 import uk.ac.ebi.intact.application.mine.business.MineException;
-import uk.ac.ebi.intact.application.mine.business.graph.model.EdgeObject;
-import uk.ac.ebi.intact.application.mine.business.graph.model.MineData;
-import uk.ac.ebi.intact.application.mine.business.graph.model.NetworkKey;
+import uk.ac.ebi.intact.application.mine.business.graph.model.GraphData;
 import uk.ac.ebi.intact.application.mine.business.graph.model.SearchObject;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.*;
-
 /**
- * The <tt>MineHelper</tt> provides all methods to coordinate between the web
- * application and the algorithm. It contains several methods which work on
- * database level.
+ * The <tt>MineHelper</tt> is a helper class to communicate between the action
+ * which is calling it and the Dijkstra implementation. <br>
+ * It provides several methods which works on the database level.
  * 
  * @author Andreas Groscurth
  */
 public class MineHelper {
+    private static final String SELECT_GRAPHKEY = "SELECT DISTINCT graphid FROM ia_interactions "
+            + "WHERE protein1_ac=? or protein2_ac=?";
+    private static final String SELECT_SHORTLABEL = "SELECT shortlabel FROM ia_interactor "
+            + "WHERE ac IN";
+
     private IntactUserI intactUser;
 
     /**
-     * Creates a new MineHelper which organise the search for the minimal
-     * connection network.
+     * Creates a new <tt>MineHelper</tt>
      * 
      * @param user the intacthelper
      */
@@ -46,195 +53,236 @@ public class MineHelper {
     }
 
     /**
-     * Creates a map which maps a vertex of the graph to a <tt>SearchObject</tt>.
-     * The vertex is found via searching the given accMap which contains for
-     * each search accnr the corresponding vertex in the graph.
+     * Returns a map which maps a node of the graph to a <tt>SearchObject</tt>.
+     * <br>
+     * The <tt>SearchObject</tt> is the template object to use in the
+     * algorithm. <br>
+     * Which node is used as a key in the generated map is determined by the
+     * accession numbers which are given in the collection. In this collection
+     * one can find the label attached to a node. <br>
+     * To get the node via the label the graphMap is needed which maps a label
+     * to the actual node of the graph.
      * 
-     * @param accMap the map which maps the search ac with the vertex of the
-     *            graph
-     * @return @throws MineException if for a given search ac no data was found
-     *         in the database
+     * @param graphMap the map which maps the label to the actual node
+     * @param searchAC the collection of the search accession numbers
+     * @return @throws MineException whether a search accession number could not
+     *         been mapped to a node in the graph
      */
-    private Map getSearchNodes(Map accMap, Collection searchAc)
+    private Map getSearchNodes(Map graphMap, Collection searchAC)
             throws MineException {
+        // map to store the mapping of a node to a SearchObject
         Map map = new Hashtable();
-        Object key;
-        Vertex vertex;
+        String accessionNumber;
+        Vertex node;
         int i = 0;
-        for (Iterator iter = searchAc.iterator(); iter.hasNext();) {
-            key = iter.next();
-            // the vertex is fetched
-            vertex = (Vertex) accMap.get(key);
-            // if no vertex could be found for the given accnr
-            if (vertex == null) {
-                throw new MineException("No node in the graph could be "
-                        + "found for the accession number " + key + " ");
+        int size = searchAC.size();
+
+        // the accession numbers are iterated
+        for (Iterator iter = searchAC.iterator(); iter.hasNext();) {
+            // the current accession number is fetched
+            accessionNumber = (String) iter.next();
+
+            // the node for the current accession number is fetched
+            node = (Vertex) graphMap.get( accessionNumber );
+
+            // there should be an entry for the given accession number
+            // so if not -> an exception is thrown.
+            if ( node == null ) {
+                throw new MineException( "No node in the graph could be "
+                        + "found for the accession number " + accessionNumber );
             }
-            // the vertex is stored with the corresponding search object
-            map.put(vertex, new SearchObject(i++));
+            // a new SearchObject is stored
+            map.put( node, new SearchObject( i++, size ) );
         }
         return map;
     }
 
-    public Map getNetworkMap(Collection searchFor) throws MineException {
+    /**
+     * Returns a map which maps for the unique graphid a collection of accession
+     * numbers which are in the graph represented by the key. <br>
+     * For every accession number it is looked to which graphid it belongs. If
+     * the graphid is already in the map, the number is added to the other
+     * numbers for the graphid. If not a new collection with the current number
+     * is initialised.
+     * 
+     * @param searchFor the accession numbers one wants to compute the minimal
+     *            network.
+     * @return @throws SQLException whether something failed on the database
+     *         level
+     */
+    public Map getNetworkMap(Collection searchFor) throws SQLException {
         Map networks = new Hashtable();
-        try {
-            // statement to select the biosource and graphid for a specific
-            // interactor
-            PreparedStatement pstm = intactUser.getDBConnection()
-                    .prepareStatement(
-                            "SELECT DISTINCT taxid, graphid FROM ia_interactions "
-                                    + "WHERE protein1_ac=? or protein2_ac=?");
+        // statement to select the taxis and graphid for every interactor
+        PreparedStatement pstm = intactUser.getDBConnection().prepareStatement(
+                SELECT_GRAPHKEY );
 
-            String ac;
-            NetworkKey key;
-            ResultSet set;
-            Collection search;
+        String ac;
+        Integer key;
+        ResultSet set;
+        Collection search;
 
-            for (Iterator iter = searchFor.iterator(); iter.hasNext();) {
-                ac = iter.next().toString();
-                pstm.setString(1, ac);
-                pstm.setString(2, ac);
-                set = pstm.executeQuery();
+        // every given accession number is taken and its graphid and taxid
+        // is fetched
+        for (Iterator iter = searchFor.iterator(); iter.hasNext();) {
+            ac = (String) iter.next();
+            // the accesion number is set in the sql statement
+            pstm.setString( 1, ac );
+            pstm.setString( 2, ac );
+            set = pstm.executeQuery();
 
-                // if something was found in the database a new key is created
-                // with the database information, otherwise the dummy key is
-                // taken
-                key = !set.next() ? Constants.DUMMY_KEY : new NetworkKey(set
-                        .getString(1), set.getInt(2));
-
-                // if the network map contains the current key the search ac is
-                // added to the collection of the current key, otherwise a new
-                // collection is added to the map.
-                if (networks.containsKey(key)) {
-                    ((Collection) networks.get(key)).add(ac);
-                }
-                else {
-                    search = new HashSet();
-                    search.add(ac);
-                    networks.put(key, search);
-                }
-                set.close();
+            // if no data was found for the given accession number
+            // the accession number is added to the singletons of the map
+            if ( !set.next() ) {
+                key = Constants.SINGLETON_GRAPHID;
             }
-            pstm.close();
+            else {
+                // a new graphid is generated
+                key = new Integer( set.getInt( 2 ) );
+            }
+            // if the map contains the current key
+            // the accession number is added to the other numbers belonging
+            // to the key
+            if ( networks.containsKey( key ) ) {
+                ( (Collection) networks.get( key ) ).add( ac );
+            }
+            else {
+                // a new collection is created to store the accession
+                // numbers
+                search = new ArrayList();
+                search.add( ac );
+                networks.put( key, search );
+            }
+            set.close();
         }
-        catch (Exception e) {
-            throw new MineException(e);
-        }
+        pstm.close();
         return networks;
     }
 
-    public final Collection getMine(MineData mineData, Collection searchAc)
-            throws MineException {
-        // the search nodes are creates
-        Map searchMap = getSearchNodes(mineData.getAccMap(), searchAc);
-        Graph graph = mineData.getGraph();
-        // the storage class is created
-        Storage storage = new MineStorage(graph.numVertices());
-        Dijkstra d = new Dijkstra(storage, searchMap);
+    /**
+     * Computes with minimal connecting network for the accession numbers in the
+     * given collection.
+     * 
+     * @param graphData the wrapper class with the graph
+     * @param searchAc the accession numbers to search for
+     * @return @throws MineException whether the computation fails
+     * @throws SQLException
+     */
+    public void computeMiNe(GraphData graphData, Collection searchAc)
+            throws SQLException, MineException {
+        // the map which maps the nodes of the graph and the SearchObjects is
+        // created (Vertex -> SearchObject)
+        Map searchMap = getSearchNodes( graphData.getAccMap(), searchAc );
+
+        Graph graph = graphData.getGraph();
+        // the structure to store the informations for the algorithm
+        Storage storage = new MineStorage( graph.numVertices() );
+        Dijkstra d = new Dijkstra( storage, searchMap );
+
         // for easy access the nodes and the search objects are rearranged into
         // an array
         Vertex[] nodes = (Vertex[]) searchMap.keySet().toArray(
-                new Vertex[searchMap.keySet().size()]);
-        SearchObject[] se = (SearchObject[]) searchMap.values().toArray(
-                new SearchObject[searchMap.values().size()]);
+                new Vertex[searchMap.keySet().size()] );
 
+        // all possible combinations of the nodes are considered.
+        // e.g. if someone searches for A, B, C the following searches are
+        // considered:
+        // A -> B
+        // A -> C
+        // B -> C
+        SearchObject so1, so2;
         for (int i = 0; i < nodes.length; i++) {
+            // the searchobject for the current node is fetched
+            so1 = (SearchObject) searchMap.get( nodes[i] );
             for (int j = i + 1; j < nodes.length; j++) {
-                // the bitid of the start node is fetched
-                int bitID = se[i].getBitID();
-                // if a path between the two of them is not already found
-                if ((se[j].getBitID() & bitID) != bitID) {
-                    // the path is searched
-                    d.execute(graph, nodes[i], nodes[j]);
+                // the searchobject for the other node is fetched
+                so2 = (SearchObject) searchMap.get( nodes[j] );
+                // if a path was already found for the current two searchobjects
+                // no search is started !
+                if ( !so1.hasPathAlreadyFound( so2 ) ) {
+                    // the shortest path for the two nodes
+                    d.execute( graph, nodes[i], nodes[j] );
                     storage.cleanup();
                 }
             }
         }
 
-        Collection mine = new HashSet();
+        // the collection stores the minimal connecting network.
+        // to avoid duplicates a HashSet is used.
+        Collection miNe = new HashSet();
         Edge edge;
-        Vertex[] v;
-        for (int i = 0; i < se.length; i++) {
-            Sequence seq = se[i].getPath();
-            // if no path is found for the current entry
-            if (seq == null) {
-                continue;
-            }
-            for (ObjectIterator iter = seq.elements(); iter.hasNext();) {
+        Sequence shortesPath;
+        for (Iterator iter = searchMap.values().iterator(); iter.hasNext();) {
+            so1 = (SearchObject) iter.next();
+            shortesPath = so1.getPath();
+
+            for (ObjectIterator edgeIter = shortesPath.elements(); iter
+                    .hasNext();) {
                 // the current edge of the path
-                edge = (Edge) iter.nextObject();
+                edge = (Edge) edgeIter.nextObject();
                 // the end nodes of the edges are fetched
-                v = graph.endVertices(edge);
-                mine.add(v[0].element());
-                mine.add(v[1].element());
+                nodes = graph.endVertices( edge );
+
+                // if the path as still elements we just add the start node
+                // of the edge to avoid on purpose redundant adds to the
+                // collection
+                if ( edgeIter.hasNext() ) {
+                    miNe.add( nodes[0].element() );
+                }
+                // the path has no more elements the end node is added
+                else {
+                    miNe.add( nodes[1].element() );
+                }
             }
         }
-        try {
-            return mine.size() == 0 ? mine : getShortLabels(mine);
+        // if no path was found the search accession numbers are added with
+        // their shortlabels to the singletons of the user
+        if ( miNe.isEmpty() ) {
+            intactUser.addToSingletons( getShortLabels( searchAc ) );
         }
-        catch (SQLException e) {
-            throw new MineException(e);
+        // if a path was found the shortlabels of the accession numbers in
+        // this path are added to the path of the user
+        else {
+            intactUser.addToPath( getShortLabels( miNe ) );
         }
     }
 
+    /**
+     * Returns the shortlabels for the given accession numbers.
+     * 
+     * @param acs the accession numbers
+     * @return the shortlabels of the accession numbers
+     * @throws SQLException whether something failed on the database level
+     */
     public Collection getShortLabels(Collection acs) throws SQLException {
-        StringBuffer buf = new StringBuffer();
+        // easily allows 8 acs with the size of 11 {e.g. EBI-1111111} letters
+        // which is enough in most cases
+        StringBuffer buf = new StringBuffer( 96 );
         String ac;
+        // the collection of the accession numbers is exploded to the
+        // stringbuffer for the sql statement.
+        // [1,2,3,4] -> "'1','2','3','4'"
         for (Iterator iter = acs.iterator(); iter.hasNext();) {
             ac = iter.next().toString();
-            buf.append("'" + ac + "'");
-            if (iter.hasNext()) {
-                buf.append(",");
+            buf.append( "'" + ac + "'" );
+            if ( iter.hasNext() ) {
+                buf.append( "," );
             }
         }
 
-        String query = "SELECT shortlabel FROM ia_interactor "
-                + "WHERE ac IN (" + buf.toString() + ")";
+        String query = SELECT_SHORTLABEL + "(" + buf + ")";
+        // the collection with the accession numbers is cleared
+        // because it is reused for the shortlabels
         acs.clear();
         Statement stm = intactUser.getDBConnection().createStatement();
-        ResultSet set = stm.executeQuery(query);
-        while (set.next()) {
-            acs.add(set.getString(1));
+        ResultSet set = stm.executeQuery( query );
+        // every shortLabel is added to the collection.
+        // the order of the shortlabel is not relevant !
+        while ( set.next() ) {
+            acs.add( set.getString( 1 ) );
         }
         set.close();
         stm.close();
 
         return acs;
-    }
-
-    public MineData buildGraph(NetworkKey key) throws SQLException {
-        Statement stm = intactUser.getDBConnection().createStatement();
-        ResultSet set = null;
-        IncidenceListGraph graph = null;
-        Vertex v1, v2;
-        String acc1, acc2, interAcc;
-        Map bioMap = new Hashtable();
-
-        String query = "SELECT * FROM ia_interactions WHERE taxid='"
-                + key.getBioSourceTaxID() + "' AND graphID=" + key.getGraphID();
-        set = stm.executeQuery(query);
-        graph = new IncidenceListGraph();
-        while (set.next()) {
-            acc1 = set.getString(1).trim().toUpperCase();
-            acc2 = set.getString(2).trim().toUpperCase();
-            interAcc = set.getString(5);
-            if (!bioMap.containsKey(acc1)) {
-                v1 = graph.insertVertex(acc1);
-                bioMap.put(acc1, v1);
-            }
-            if (!bioMap.containsKey(acc2)) {
-                v2 = graph.insertVertex(acc2);
-                bioMap.put(acc2, v2);
-            }
-            v1 = (Vertex) bioMap.get(acc1);
-            v2 = (Vertex) bioMap.get(acc2);
-            graph
-                    .insertEdge(v1, v2, new EdgeObject(interAcc, set
-                            .getDouble(6)));
-        }
-        set.close();
-        stm.close();
-        return new MineData(graph, bioMap);
     }
 }

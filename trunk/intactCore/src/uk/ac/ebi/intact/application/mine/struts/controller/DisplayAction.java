@@ -6,6 +6,7 @@
 
 package uk.ac.ebi.intact.application.mine.struts.controller;
 
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -21,9 +22,10 @@ import org.apache.struts.action.ActionMapping;
 
 import uk.ac.ebi.intact.application.mine.business.Constants;
 import uk.ac.ebi.intact.application.mine.business.IntactUserI;
+import uk.ac.ebi.intact.application.mine.business.MineException;
+import uk.ac.ebi.intact.application.mine.business.graph.GraphHelper;
 import uk.ac.ebi.intact.application.mine.business.graph.MineHelper;
-import uk.ac.ebi.intact.application.mine.business.graph.model.MineData;
-import uk.ac.ebi.intact.application.mine.business.graph.model.NetworkKey;
+import uk.ac.ebi.intact.application.mine.business.graph.model.GraphData;
 import uk.ac.ebi.intact.application.mine.struts.view.ErrorForm;
 
 /**
@@ -53,97 +55,100 @@ public class DisplayAction extends Action {
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) {
-        HttpSession session = request.getSession(true);
-        IntactUserI user = (IntactUserI) session.getAttribute(Constants.USER);
-        // the ac nr for the minimal connecting network are fetched
+        HttpSession session = request.getSession( true );
+        IntactUserI user = (IntactUserI) session.getAttribute( Constants.USER );
+        // the accession numbers for the minimal connecting network are fetched
         Collection searchFor = (Collection) request
-                .getAttribute(Constants.SEARCH);
+                .getAttribute( Constants.SEARCH );
 
         try {
             // if no user is in the current session an excepion is thrown
             // because up to now a user should have been created and e.g.
             // the search ac nr. should have been set.
-            if (user == null || searchFor == null) {
-                throw new NullPointerException("No user could be found in the "
-                        + "current session");
+            if ( user == null || searchFor == null ) {
+                throw new NullPointerException(
+                        "No user could be found in the " + "current session" );
             }
             // if less than two search Ac are given
-            else if (searchFor.size() < 2) {
-                request.setAttribute(Constants.ERROR, new ErrorForm(
+            else if ( searchFor.size() < 2 ) {
+                request.setAttribute( Constants.ERROR, new ErrorForm(
                         "At least two interactors have to be given !"
-                                + " No network can be displayed !"));
-                return mapping.findForward(Constants.ERROR);
+                                + " No network can be displayed !" ) );
+                return mapping.findForward( Constants.ERROR );
             }
 
-            Constants.LOGGER.info("start minehelper");
+            Constants.LOGGER.info( "start minehelper" );
 
-            MineHelper helper = new MineHelper(user);
-            // the network map maps the wrapper class containing
-            // the biosource taxid and the graphid to a collection
-            // of search acnr.
-            Map networks = helper.getNetworkMap(searchFor);
-            Constants.LOGGER.info("found the different graphs to search in");
-            
-            NetworkKey key;
-            MineData md;
+            MineHelper helper = new MineHelper( user );
+            // the network map maps the unique graphid to the accession numbers
+            // which are in the graph represented by the graphid
+            // Integer -> Collection (related protein ac)
+            Map networks = helper.getNetworkMap( searchFor );
+            Constants.LOGGER.info( "found the different graphs to search in" );
+
+            Integer graphid;
+            GraphHelper graphHelper;
             Collection search = null;
             for (Iterator iter = networks.keySet().iterator(); iter.hasNext();) {
                 // the key stores the taxid and graphid for the current search
-                key = (NetworkKey) iter.next();
-                search = (Collection) networks.get(key);
-                
-                Constants.LOGGER.warn("start with " + key);
-                
-                // if the current search ac are in a graph in the database
-                if (key != Constants.DUMMY_KEY) {
-                    // the wrapper class which stores the graph and the
-                    // searchac->vertex map is fetched from the user
-                    md = user.getMineData(key);
-                    // if there is no data, the graph is build and add to the
-                    // user
-                    if (md == null) {
-                        //TODO: STRUCTURE WHICH IS VALID OVER A SESSION
-                        md = helper.buildGraph(key);
-                        user.addToGraphMap(key, md);
-                    }
+                graphid = (Integer) iter.next();
+                search = (Collection) networks.get( graphid );
 
+                Constants.LOGGER.warn( "start with " + graphid );
+
+                // if the current search ac are in a graph in the database
+                if ( graphid != Constants.SINGLETON_GRAPHID ) {
                     // the shortest path is computed
-                    Constants.LOGGER.info("searching for the minimal network for " + search);
-                    Collection path = helper.getMine(md, search);
-                    // if no path could be found the search values are
-                    // added to the singleton collection of the user
-                    if (path.size() == 0) {
-                        user.addToSingletons(helper.getShortLabels(search));
+                    Constants.LOGGER.info( "searching for MiNe with " + search );
+                    // the graphHelper is fetched from the application scope
+                    graphHelper = (GraphHelper) session.getServletContext()
+                            .getAttribute( Constants.GRAPH_HELPER );
+                    // if the helper is not initialised yet it is
+                    // initialised now and put in the application scope.
+                    if ( null == graphHelper ) {
+                        graphHelper = new GraphHelper( user );
+                        session.getServletContext().setAttribute(
+                                Constants.GRAPH_HELPER, graphHelper );
                     }
-                    else {
-                        user.addToPath(path);
-                    }
+                    // the graphdata is fetched for the specific graphid
+                    GraphData gd = graphHelper.getGraph( graphid );
+                    // the minimal network is computed
+                    // the found network is then updated in the MiNeHelper class
+                    helper.computeMiNe( gd, search );
                 }
                 else {
-                    user.addToSingletons(helper.getShortLabels(search));
+                    // the search accession numbers are not in a graph
+                    // therefore they are added to the singletons
+                    user.addToSingletons( helper.getShortLabels( search ) );
                 }
             }
 
             // if no paths could been found the application is forwarded
             // to the error page
-            if (user.getPaths().size() == 0) {
-                Constants.LOGGER.warn("no connecting network found");
+            if ( user.getPaths().isEmpty() ) {
+                Constants.LOGGER.warn( "no connecting network found" );
                 String singletons = user.getSingletons().toString();
-                singletons = singletons.substring(1, singletons.length() - 1);
+                singletons = singletons.substring( 1, singletons.length() - 1 );
 
-                request.setAttribute(Constants.ERROR, new ErrorForm(
+                request.setAttribute( Constants.ERROR, new ErrorForm(
                         "The proteins <i>" + singletons
                                 + "</i> are not in a connecting network !<br>"
-                                + "Therfore no display is available !"));
-                return mapping.findForward(Constants.ERROR);
+                                + "Therfore no display is available !" ) );
+                return mapping.findForward( Constants.ERROR );
             }
             // forward to the result page
-            return mapping.findForward(Constants.SUCCESS);
+            return mapping.findForward( Constants.SUCCESS );
         }
-        catch (Exception e) {
-            request.setAttribute(Constants.ERROR, new ErrorForm(e
-                    .getLocalizedMessage()));
-            return mapping.findForward(Constants.ERROR);
+        //TODO: ActionErrors USE IT ?!
+        catch ( MineException e ) {
+            request.setAttribute( Constants.ERROR, new ErrorForm( e
+                    .getLocalizedMessage() ) );
+            return mapping.findForward( Constants.ERROR );
+        }
+        catch ( SQLException e ) {
+            request.setAttribute( Constants.ERROR, new ErrorForm( e
+                    .getLocalizedMessage() ) );
+            return mapping.findForward( Constants.ERROR );
         }
     }
 }
