@@ -320,11 +320,11 @@ public class PredictOra {
     private String getNextNode(String species) throws IntactException, SQLException {
         // selecting the next bait but only from one species
         Statement S = null;
-        int in = 0, out = 0;
-        double q = 0.0, avg = 0.0;
+        int in = 0;
+        double avg = 0.0;
         String nid = "";
         try {
-            System.out.println("looking for the NextNode");
+            System.out.print('.');
             // determine avg Q in of node sampled so far
             S = getConnection().createStatement();
             String query = "SELECT avg( indegree) FROM ia_payg WHERE bait=0 AND species =\'"
@@ -335,7 +335,7 @@ public class PredictOra {
                 avg = R.getDouble(1);
             }
             R.close();
-            System.out.println("Current avg=" + avg);
+//            System.out.println("Current avg=" + avg);
 
             // get the node with max indegree
             R = S.executeQuery("SELECT nID, indegree, qdegree, outdegree FROM ia_payg WHERE ROWNUM=1 AND bait=0 AND species =\'"
@@ -344,17 +344,17 @@ public class PredictOra {
             if (R.next()) {
                 nid = R.getString(1);
                 in = R.getInt(2);
-                q = R.getDouble(3);
-                out = R.getInt(4);
+//                double q = R.getDouble(3);
+//                out = R.getInt(4);
             }
             R.close();
-            System.out.println("nextNode:" + nid + " out=" + out + "\tin=" + in + "\tq=" + q);
+//            System.out.println("nextNode:" + nid + " out=" + out + "\tin=" + in + "\tq=" + q);
 
             // if we are below average : random sampling
             if (in <= avg) { // we have nothing above average or q is empty
                 // since we have nothing yet, so random jumpstart
-                System.out.println(">>>> random!");
-                System.out.println("Species is: " + species);
+//                System.out.println(">>>> random!");
+//                System.out.println("Species is: " + species);
                 R = S.executeQuery("SELECT nID FROM ia_payg WHERE bait=0 AND species =\'"
                         + species + "\'");
                 String rnid = getRandomNid(R);
@@ -391,10 +391,10 @@ public class PredictOra {
             if (R.next()) {
                 k = R.getInt(1);
             }
-//            R.close();
-            System.out.println("K = " + k);
+            R.close();
+//            System.out.println("K = " + k);
             double delta = 1 / (double) k;
-            System.out.println("delta = " + delta);
+//            System.out.println("delta = " + delta);
 
             // mark the bait & set k
             S.executeUpdate("UPDATE ia_payg SET bait=" + step + ", outdegree=" + k
@@ -427,14 +427,14 @@ public class PredictOra {
                 else {
                     preyId = aId;
                 }
-                System.out.println(">> " + ID + " =-> " + preyId);
+//                System.out.println(">> " + ID + " =-> " + preyId);
                 S.executeUpdate("UPDATE ia_payg SET prey=" + step + " WHERE nID=\'"
                         + preyId + "\' AND prey=0 AND species =\'" + species + "\'");
                 // update the indegree and delta for all adjacent node
                 S.executeUpdate("UPDATE ia_payg SET indegree=indegree+1,qdegree=qdegree+"
                         + delta + " WHERE nID=\'" + preyId + "\' AND species =\'" + species + "\'");
             } // next interaction of this ID
-//            R.close();
+            R.close();
             // 2. compute the Nr. of edge seen & confirmed so far
             int nSeen = 0;
             R = S.executeQuery("SELECT COUNT(*) FROM ia_payg_current_edge WHERE seen>0"
@@ -443,8 +443,8 @@ public class PredictOra {
             if (R.next()) {
                 nSeen = R.getInt(1);
             }
-            System.out.println("seen=" + nSeen);
-//            R.close();
+//            System.out.println("seen=" + nSeen);
+            R.close();
 
             int nConfirm = 0;
             R = S.executeQuery("SELECT COUNT(*) FROM ia_payg_current_edge"
@@ -453,7 +453,7 @@ public class PredictOra {
             if (R.next()) {
                 nConfirm = R.getInt(1);
             }
-            System.out.println("conf=" + nConfirm);
+//            System.out.println("conf=" + nConfirm);
 
             // Results saved into ia_payg
             S.executeUpdate("UPDATE ia_payg SET eseen =" + nSeen + ", econf ="
