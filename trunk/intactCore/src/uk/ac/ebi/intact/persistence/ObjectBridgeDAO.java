@@ -6,29 +6,31 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.persistence;
 
-import java.util.*;
-import java.lang.reflect.*;
-import java.io.*;
+import org.apache.log4j.Logger;
+import org.apache.ojb.broker.*;
+import org.apache.ojb.broker.accesslayer.LookupException;
+import org.apache.ojb.broker.accesslayer.OJBIterator;
+import org.apache.ojb.broker.metadata.*;
+import org.apache.ojb.broker.metadata.fieldaccess.PersistentField;
+import org.apache.ojb.broker.query.*;
+import org.apache.ojb.broker.util.ObjectModificationDefaultImpl;
+import org.apache.ojb.odmg.OJB;
+import org.apache.ojb.odmg.TransactionImpl;
+import org.odmg.Database;
+import org.odmg.Implementation;
+import org.odmg.ODMGException;
+import org.odmg.Transaction;
+import uk.ac.ebi.intact.business.BusinessConstants;
+import uk.ac.ebi.intact.model.proxy.IntactObjectProxy;
+
+import java.io.Serializable;
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
-
-import org.apache.ojb.broker.*;
-import org.apache.ojb.broker.accesslayer.OJBIterator;
-import org.apache.ojb.broker.accesslayer.LookupException;
-import org.apache.ojb.broker.query.*;
-import org.apache.ojb.broker.util.ObjectModificationDefaultImpl;
-import org.apache.ojb.broker.metadata.*;
-import org.apache.ojb.broker.metadata.ClassNotPersistenceCapableException;
-import org.apache.ojb.broker.metadata.fieldaccess.PersistentField;
-
-//ODMG
-import org.odmg.*;
-import org.apache.ojb.odmg.*;
-
-import org.apache.log4j.Logger;
-import uk.ac.ebi.intact.business.BusinessConstants;
-import uk.ac.ebi.intact.model.proxy.IntactObjectProxy;
+import java.util.*;
 
 /**
  *  <p>This class provides an ObjectBridge-specific Data Access Object, which
@@ -1371,6 +1373,13 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         return cld.getFullTableName();
     }
 
+    public int getCountByQuery(Query query) {
+        return broker.getCount(query);
+    }
+
+    public Collection getCollectionByQuery(Query query) {
+        return broker.getCollectionByQuery(query);
+    }
 
 //-------------------------- private helper methods ----------------------------------------
 
