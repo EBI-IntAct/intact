@@ -27,8 +27,8 @@ SET NEWPAGE 0
 --- Main query
 SELECT e.shortlabel Experiment, i.shortLabel Interaction, 
        m.shortLabel Molecule, r.shortLabel Role
-  FROM interactor i, interactor m, component c, ControlledVocab r, 
-       experiment e, int2exp i2e 
+  FROM ia_interactor i, ia_interactor m, ia_component c, ia_ControlledVocab r, 
+       ia_experiment e, ia_int2exp i2e 
  WHERE i.ac=c.interaction_ac 
    AND m.ac=interactor_ac 
    AND c.role=r.ac 
