@@ -151,16 +151,23 @@ public class Range extends BasicObjectImpl {
      * @param toStart The starting point of the 'to' interval of the Range
      * @param toEnd The end point of the 'to' interval
      * @param seq The sequence - maximum of 100 characters (null allowed)
+     *
+     * <p>
+     * NB ASSUMPTION: The progression of intervals is always assumed to be from 'left
+     * to right' along the number line when defining intervals. Thus '-6 to -4',
+     * '5 to 20' and '-7 to 15' are  all <b>valid</b> single intervals,
+     * but '-3 to -8', '12 to 1' and  '5 to -7' are <b>not</b>.
+     * </p>
      */
     public Range (int fromStart, int fromEnd, int toStart, int toEnd, String seq) {
 
+        //NB negative intervals are allowed!! This needs more sophisticated checking..
+
         if (fromEnd < fromStart) throw new IllegalArgumentException ("End of 'from' interval must be bigger than the start!");
         if (toEnd < toStart) throw new IllegalArgumentException ("End of 'to' interval must be bigger than the start!");
-        if (fromStart < 0) throw new IllegalArgumentException ("Start of 'from' interval should be positive");
-        if (toStart < 0) throw new IllegalArgumentException ("End of 'from' should be positive");
         if(fromEnd > toStart) throw new IllegalArgumentException("The 'from' and 'to' intervals cannot overlap!");
         if(fromStart > toEnd) throw new IllegalArgumentException("The 'from' interval starts beyond the 'to' interval!");
-
+        if(fromStart > toStart) throw new IllegalArgumentException("The 'from' interval cannot begin during the 'to' interval!");
         //don't allow default empty String to be replaced by null. Check size also
         //to avoid unnecessary DB call for a seq that is too big...
         if(seq != null) {
