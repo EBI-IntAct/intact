@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 
@@ -146,11 +146,14 @@ public interface DAO {
     public boolean isClosed();
 
     /**
-     *   checks to determine if a given object is persistent or not
+     * checks to determine if a given object is persistent or not.
+     * <b>Note</b> If the object has manually set primary key this method will
+     * return true even if it isn't actually in the database.
      *
      * @param obj - the object to be checked
      *
-     * @return boolean - true if the object is persistent, false otherwise
+     * @return boolean - true if the object is persistent (ie., exists in the DB);
+     * false otherwise including object created but not yet committed.
      */
     public boolean isPersistent(Object obj);
 
@@ -301,11 +304,13 @@ public interface DAO {
      *
      * @param obj - the object to be updated
      *
-     * @exception CreateException  - thrown if the object could not me modified,
-     * eg called outside a transaction scope
+     * @exception UpdateException  - thrown if the object could not me modified
+     * (eg called outside a transaction scope) or hasn't been persisted previously (
+     * {@link #isPersistent(Object)} must return true).
      *
+     * @see #isPersistent(Object)
      */
-     public void update(Object obj) throws CreateException;
+     public void update(Object obj) throws UpdateException;
 
     /**
      *  allows a logging destination to be specified
