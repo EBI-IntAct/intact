@@ -381,5 +381,13 @@ public class RangeTest extends TestCase {
         checkSequence(range, "0123456789", "56789");
         checkSequence(range, "01234", "");
         checkSequence(range, "0123", null);
+
+        // From range is 5 but actual sequence is less than from + max
+        range = new Range(inst, 5, 5, 5, 5, null);
+        range.setFromCvFuzzyType(type);
+        checkSequence(range, "01234", "");
+        checkSequence(range, "012345", "5");
+        checkSequence(range, "0123456", "56");
+        checkSequence(range, "012345678901", "56789");
     }
 }

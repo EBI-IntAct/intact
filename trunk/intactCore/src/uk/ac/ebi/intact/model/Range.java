@@ -524,7 +524,14 @@ public class Range extends BasicObjectImpl {
         }
         // full sequence is greater than the required length.
         if (first) {
-            seq = sequence.substring(start, start + getMaxSequenceSize());
+            if (sequence.length() >= start + getMaxSequenceSize()) {
+                // The given sequence is large enough to go upto max size
+                seq = sequence.substring(start, start + getMaxSequenceSize());
+            }
+            else {
+                // Exceeds the current sequence length
+                seq = sequence.substring(start);
+            }
         }
         // returning the last 'size' characters
         else {
