@@ -22,7 +22,7 @@ import org.apache.ojb.broker.PersistenceBroker ;
 /**
  * UpdateProteins.java
  *
- * It's a two step work -- parse the SPTR data (flat file or a net fetched file),
+ * It's a two step work -- parse the SPTR data (flat file or a net fetched file)
  * which is done mainly by ParseSPTR class. Then put the data into Intact db,
  * which is done by this class.
  *
@@ -33,8 +33,8 @@ import org.apache.ojb.broker.PersistenceBroker ;
 
 
 public class UpdateProteins {
-    static IntactHelper helper ;
-    static DAOSource dataSource ;
+    IntactHelper helper ;
+    DAOSource dataSource ;
     static DAO dao ;
     Logger log = null ;
     PersistenceBroker login ;
@@ -61,6 +61,7 @@ public class UpdateProteins {
 
         //for testing the function. To be moved to main() later.
         try {
+            //hard coded now, will change to args[0], args[1] for username and psword
             helper = new IntactHelper(dataSource, "danwu", "") ;
             //helper = new IntactHelper(dataSource, "ops$danwu", "wedn1452") ;
         } catch (Exception hlp) {           
@@ -77,37 +78,71 @@ public class UpdateProteins {
     } //constructor
 
 
+    public void addNewXref(AnnotatedObject current,
+                           Xref xref)  throws Exception {
+
+        // Todo: Make sure the xref does not yet exist in the object
+
+        current.addXref(xref);
+        if (xref.getParentAc() == current.getAc()){
+            dao.create(xref);
+        }
+    }
+
+
+    /**
+     * add (not update) a new BioSource to the db
+     *@param orgName Organism name 
+     *@param taxId Taxonomy ID 
+     *@throws Exception
+     */
+    public void addBioSource(String orgName, String taxId) throws Exception {
+        BioSource bs = new BioSource() ;
+        bs.setOwner((Institution) helper.getObjectByLabel(Institution.class, "EBI")) ;
+        bs.setScientificName(orgName) ;
+        bs.setTaxId(taxId) ;
+        dao.create(bs) ;
+    }
+
+
     public static void main(String[] args) throws Exception {
 
+
+        UpdateProteins app = new UpdateProteins() ;
         String inFile = "" ;
         String source = "" ;
         ParseSPTR ps = new ParseSPTR() ;
-
-        //Moved from UpdateProteins constructor
-        /*
-        try {
-            helper = new IntactHelper(dataSource, args[0], args[1]) ;
-        } catch (Exception hlp) {           
-            System.out.println("\nUsage: java UpdateProteins <username> <psword> <dataSource>" ) ;
-            System.out.println("dataSource = " +  "<SPTR source file or SPTR protein AC>\n") ;
-            hlp.printStackTrace() ;
-            System.exit(1) ;
-        }
-        */
+        Protein protein ;
+        String filterTaxId = "" ;
 
         // check the type of input 
         try {
-            REMatch[] srcFile = Match(args[2], "\\S+\\/\\S+|\\S+\\.\\S+") ; 
+            REMatch[] srcFile = match(args[2], "\\S+\\/\\S+|\\S+\\.\\S+") ; 
             if (srcFile.length != 0) {
                 inFile = srcFile[0].toString() ;
             }
         } catch (Exception arg0) {
-            System.out.println("\nUsage: java UpdateProteins <username> <password> <dataSource>" ) ;
+            System.out.println("\nUsage: java UpdateProteins <username> <password> <dataSource> <TaxID>?" ) ;
             System.out.println("dataSource = " +  "<SPTR source file or SPTR protein AC>\n") ;
+            System.out.println("TaxID is cumpulsary if the SPTR source is a flatfile rather than a SPTR ac\n") ;
             System.exit(1) ;
         }
 
         source = ( inFile != "" )? inFile : args[2] ;
+
+        //check, if the data source is a flatfile, a TaxId may be specified. 
+        if (inFile != "") {
+            try {
+                filterTaxId = args[3] ;
+            } catch (Exception taxidParam) {
+                System.out.println("\nUsage: java UpdateProteins <username> <password> <dataSource> <TaxID>?") ;
+                System.out.println("You need to specify the TaxID\n") ;
+                taxidParam.printStackTrace() ;
+                System.exit(1) ;
+            }
+        }
+
+
         System.out.println("\nYour data source/AC : " + source) ;
 
         if (inFile == "" ) {//param is a protein AC, not a flat file.
@@ -124,22 +159,23 @@ public class UpdateProteins {
                 
             while ((entry = loader.getNextEntry()) != null) {
                 sptrData = ps.parseSPTR(entry) ; //entry from flat file
-                //to be modified to take a 2nd param -- taxid (e.g. 4932)
 
                 if ( sptrData != null ) {
                     String id    = (String)sptrData.get("ID") ;
                     String ac    = (String)sptrData.get("AC") ;
                     String taxId = (String)sptrData.get("TAXID") ;
+                    String orgName = (String)sptrData.get("ORGNAME") ;
                     String seq   = (String)sptrData.get("SEQ") ;
                     String crc   = (String)sptrData.get("CRC64");
                     String gn    = (String)sptrData.get("GN") ;
                     String de    = (String)sptrData.get("DE") ;
                     String loc   = (String)sptrData.get("LOCATION") ;
-                
-                    toIntactDB(helper, id, ac, taxId, seq, 
-                               crc, gn, de, loc) ;
+                    String sgd   = (String)sptrData.get("SGD") ;                
+                    
+                    if (taxId.equals(filterTaxId)) {
+                        app.toIntactDB(id, ac, taxId, orgName, seq, crc, gn, de, loc, sgd) ;
+                    }
                 }
-                //dao.close() ;
             }
         }
 
@@ -150,23 +186,26 @@ public class UpdateProteins {
                 String id    = (String)sptrData.get("ID") ;
                 String ac    = (String)sptrData.get("AC") ;
                 String taxId = (String)sptrData.get("TAXID") ;
+                String orgName = (String)sptrData.get("ORGNAME") ;
                 String seq   = (String)sptrData.get("SEQ") ;
                 String crc   = (String)sptrData.get("CRC64");
                 String gn    = (String)sptrData.get("GN") ;
                 String de    = (String)sptrData.get("DE") ;
                 String loc   = (String)sptrData.get("LOCATION") ;
-            
-                toIntactDB(helper, id,  ac, taxId,  seq, 
-                            crc, gn, de, loc) ;
+                String sgd   = (String)sptrData.get("SGD") ;
+
+                if (taxId.equals(taxId)) {
+                    app.toIntactDB(id, ac, taxId, orgName, seq, crc, gn, de, loc, sgd) ;
+                }
             }
-            //dao.close() ;
         }
     } //main()
 
 
     /**
      * fetches a SPTR entry on net from a given SPTR protein AC, returns the entry text
-     * as a string
+     * as a string. Since the yasp/aristotle takes an entry as parameter (rather than a individaul
+     * text line), this method and the class NetFetch are needed.
      */
     public static String getSPTRDateOnNet(String sptrAC) {
         String url = "http://www3.ebi.ac.uk/srs7bin/cgi-bin/wgetz?-e+[SWALL-acc:" 
@@ -181,9 +220,9 @@ public class UpdateProteins {
 
     /**
      * from a given string and a given pattern(string), to find all matches. The matched are  
-     * retured as a list.
+     * retured as a list. This method uses gnu.regexp.* package, not the org.apache.regexp.*
      */
-    public static REMatch[] Match(String textin, String pattern )  throws REException {
+    public static REMatch[] match(String textin, String pattern )  throws REException {
         
         RE magic = new RE( pattern );
         REMatch[] allMatches = magic.getAllMatches( textin );
@@ -211,7 +250,7 @@ public class UpdateProteins {
         REMatch[] allMatches = null ;
 
         try {
-            allMatches = Match(original, pattern);
+            allMatches = match(original, pattern);
         } catch (Exception ac1) {
             ac1.printStackTrace() ;
         }
@@ -219,58 +258,52 @@ public class UpdateProteins {
     }
 
 
-    public static void addNewXref(AnnotatedObject current,
-                           Xref xref)  throws Exception {
-
-        // Todo: Make sure the xref does not yet exist in the object
-
-        current.addXref(xref);
-        if (xref.getParentAc() == current.getAc()){
-            dao.create(xref);
-        }
-    }
-
 
     /**
      * puts data parsed from a SPTR entry, into a SQL db.  
      * 
      */
-    public static void toIntactDB(IntactHelper helper, 
-                                  String id, String ac, 
-                                  String taxid, String seq, 
-                                  String crc, String gn, 
-                                  String de, String loc) {
+    public void toIntactDB( String id, String ac,
+                            String taxId, String orgName,
+                            String seq, String crc, 
+                            String gn, String de,
+                            String loc, String sgd) {
+
+        Xref SpXref = null ;
+        Protein protein  = null ;
+        BioSource biosrcID = null ;
+        BioSource biosrcName = null ;
 
         ac = getFirstElement(ac, "[A-Za-z0-9]+") ;
         gn = (gn.equals (""))?  "" : getFirstElement(gn, "[A-Za-z0-9\\'\\-\\.]+") ;
+        de = de.trim() ;
 
         if (de.length() > 50) {
             de = de.substring(0, 46) + " ..." ;
         } //see Interactor table definition
 
+        //note: the orgName and sgd were not from yasp/aristotle.
         /*
         System.out.println("ID: "+ id) ;
         System.out.println("AC: "+ ac) ;
-        System.out.println("TaxID: "+ taxid) ;
+        System.out.println("TaxID: "+ taxId) ;
+        System.out.println("OrgName (OS): "+ orgName) ;
         System.out.println("SEQ: "+ seq) ;
         System.out.println("CRC64: "+ crc) ;
         System.out.println("ShortLabel (GN): " + gn) ;
         System.out.println("FullName (DE): "+ de) ;
         System.out.println("Place (CC): "+ loc) ;
+        System.out.println("SGD (DR): "+ sgd) ;
         System.out.println() ;
         */
-
-        UpdateProteins app = null ;
-        Xref SpXref = null ;
-        Protein protein  = null ;
        
         try {
             SpXref = new Xref( (Institution) helper.getObjectByLabel(Institution.class, "EBI"),
-                                  (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "SPTR"),
-                                   ac, null, null ) ;
+                               (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "SPTR"),
+                               ac, null, null ) ;
 
             ////next line not working
-            //System.out.println("ParentAC: " + SpXref.getParentAc()) ; //all null!
+            //System.out.println("ParentAC: "   + SpXref.getParentAc()) ; //all null!
             System.out.println("Primary_ID: " + SpXref.getPrimaryId() + "\n") ;
         }
         catch(Exception xr ) {
@@ -279,6 +312,15 @@ public class UpdateProteins {
         
 
         try {
+            //add bioSource. cannot use taxId as param.
+            biosrcName = (BioSource) helper.getBioSourceByName(orgName) ;
+
+            System.out.println("taxID: " + taxId + ", orgName: " + orgName) ;
+            if (biosrcName == null) {
+                addBioSource(orgName, taxId) ;
+            }
+
+            //add/update Protein 
             protein = (Protein) helper.getObjectByXref(Protein.class, id) ;
 
             ////next method may return more than one entrys for same protein, because 
@@ -287,7 +329,7 @@ public class UpdateProteins {
 
             if ( protein != null) {
                 System.out.println("Protein found ByXref(primaryID): " + protein) ;
-
+                
                 //if GN line null, use ID as ShortLabel (in Interactor)
                 if (gn.equals("")) {
                     protein.setShortLabel(id) ; 
@@ -296,10 +338,13 @@ public class UpdateProteins {
 
                 protein.setFullName(de) ;
                 protein.setCrc64(crc) ;
+                protein.setUpdated(new Date()) ;
                 // protein.setFormOfAc("EBI-14") ;//just a test!
                //other data for a given protein may be updated here. 
 
+                dao.begin();
                 dao.update(protein);
+                dao.commit() ;
              }
 
             
@@ -317,14 +362,30 @@ public class UpdateProteins {
                 protein.setFullName(de) ;
                 protein.setCrc64(crc) ;
 
+                dao.begin() ;
                 dao.create(protein) ;
                 
+                //xref in terms of SPTR db
                 addNewXref(protein,
                            new Xref ((Institution) helper.getObjectByLabel(Institution.class, "EBI"),
                                      (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "SPTR"),
                                      ac,
                                      null, null));
-                
+
+
+                //xref in terms of SGD db
+                if (sgd != null) {
+                    addNewXref(protein,
+                               new Xref((Institution) helper.getObjectByLabel(Institution.class, "EBI"),
+                                        (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "SGD"),
+                                        sgd,
+                                        null, null));
+                }
+
+                //xref in terms of XXX db
+                //addNewXref() ; 
+
+                dao.commit() ;
             }
             
 
@@ -334,18 +395,6 @@ public class UpdateProteins {
         catch (Exception pr) {
             pr.printStackTrace() ;
         }
-            
-        
-        try {
-            //dao.begin() ;
-            //dao.update(protein) ;            
-            //dao.create(protein) ;
-            //dao.commit() ;
-            //dao.close() ;
-        }
-        catch (Exception wr) {
-            wr.printStackTrace() ;
-        }
+    } //toIntactDB()
 
-    } 
 }
