@@ -6,14 +6,12 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.framework.util;
 
+import org.apache.ojb.broker.query.Query;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.ObjectBridgeQueryFactory;
 
 import java.util.*;
-
-import org.apache.ojb.broker.query.Query;
 
 /**
  * The menu factory to generate various menus.
@@ -223,13 +221,12 @@ public class EditorMenuFactory {
      * @param helper Database access object
      * @return a List of short labels as Strings.
      */
-    private List getMenuList(Class targetClass, IntactHelper helper)
-            throws IntactException {
+    private List getMenuList(Class targetClass, IntactHelper helper) {
         // The menu to return.
         List menu = new ArrayList();
 
         // The query factory to get a query.
-        ObjectBridgeQueryFactory qf = ObjectBridgeQueryFactory.getInstance();
+        OJBQueryFactory qf = OJBQueryFactory.getInstance();
 
         Query query = qf.getMenuBuildQuery(targetClass);
         Iterator iter = helper.getIteratorByReportQuery(query);
