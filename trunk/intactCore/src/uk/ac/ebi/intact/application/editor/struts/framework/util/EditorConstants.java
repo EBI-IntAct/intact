@@ -15,6 +15,11 @@ package uk.ac.ebi.intact.application.editor.struts.framework.util;
 public interface EditorConstants {
 
     /**
+     * The name of the logger.
+     */
+    public static final String LOGGER = "Editor";
+
+    /**
      * The key to store an Intact Service object.
      */
     public static final String EDITOR_SERVICE = "service";
