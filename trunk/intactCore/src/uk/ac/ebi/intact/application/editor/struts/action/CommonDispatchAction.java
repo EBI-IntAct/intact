@@ -332,25 +332,15 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
             view.persist(user);
 
             // Any other objects to persist in their own transaction.
-            try {
-                view.persistOthers(user);
-            }
-            catch (IntactException ie) {
-                // Delete the object we are editing at the moment (it has
-                // already been made persisted by persist() method.
-                user.delete();
-                // Rethrow it again for outer try block to catch it and
-                // log the exception.
-                throw ie;
-            }
+            view.persistOthers(user);
         }
-        catch (IntactException ie1) {
+        catch (IntactException ie) {
             // Log the stack trace.
-            LOGGER.info(ie1);
+            LOGGER.error("", ie);
             // Error with updating.
             ActionErrors errors = new ActionErrors();
             errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("error.update",
-                    ie1.getRootCause().getMessage()));
+                    ie.getRootCause().getMessage()));
             saveErrors(request, errors);
             return mapping.findForward(FAILURE);
         }
