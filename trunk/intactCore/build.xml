@@ -11,12 +11,26 @@
     <property name="src.dir"  value="src"/>
     <property name="dest.dir" value="classes"/>
     <property name="jdoc.dir" value="doc/api"/>
+    <property name="config.dir" value="config"/>
+    <property name="template.dir" value="template"/>
+
+    <!-- Repository/OJB file properties -->
+    <property name="rep.template.file" value="${template.dir}/repository.template"/>
+    <property name="rep.dest.file" value="${config.dir}/repository.xml"/>
+    <property name="ojb.template.file" value="${template.dir}/OJB.template"/>
+    <property name="ojb.dest.file" value="${config.dir}/OJB.properties"/>
 
     <!-- The non core files. -->
     <property name="non.core.files" value="**/intact/application/**"/>
 
     <!-- Where the distribution files are going to be (jar) -->
     <property name="dist.dir" value="dist"/>
+
+    <!-- To access the environment properties. -->
+    <property environment="env"/>
+
+    <!-- The build properties. -->
+    <property resource="build.properties"/>
 
     <!-- Build working classpath -->
     <path id="project.class.path">
@@ -34,6 +48,16 @@
     </path>
 
     <!-- ************ End of Project level data *************** -->
+
+    <!-- =================================================================== -->
+
+    <!-- Sets the target environment. -->
+    <target name="set-target-env" description="Sets the target environment">
+        <!-- Delete existing environment files. -->
+        <delete file="${rep.dest.file}" quiet="true"/>
+        <delete file="${ojb.dest.file}" quiet="true"/>
+        <antcall target="${target.env}"/>
+    </target>
 
     <!-- =================================================================== -->
 
@@ -67,7 +91,7 @@
     <!-- Copy mapping files for castor and ojb in synchron class directory. -->
     <target name="copySynchronMappings">
         <copy todir="${dest.dir}/uk/ac/ebi/intact/application/synchron" >
-            <fileset dir="config" >
+            <fileset dir="${config.dir}" >
                 <include name="**/*.xml"/>
             </fileset>
         </copy>
@@ -75,28 +99,93 @@
 
     <!-- =================================================================== -->
 
+    <!-- Convert OJB.template to postgres format. -->
+    <target name="setup-pg-ojb">
+        <!-- Copy the template to config directory -->
+        <copy file="${ojb.template.file}" tofile="${ojb.dest.file}"/>
+
+        <replace file="${ojb.dest.file}">
+            <replacefilter token="@SEQ_MANAGER@" value="uk.ac.ebi.intact.persistence.PostgresSequenceManager" />
+        </replace>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Convert repository.template to postgres local format. -->
+    <target name="set-pg-local-env"
+        description="Sets postgres environment for running on the local host">
+        <!-- Copy the template to config directory first -->
+        <copy file="${rep.template.file}" tofile="${rep.dest.file}"/>
+
+        <replace file="${rep.dest.file}">
+            <replacefilter token="@DBMS_NAME@" value="PostgreSQL" />
+            <replacefilter token="@DRIVER_NAME@" value="org.postgresql.Driver"/>
+            <replacefilter token="@URL_SUBPROTOCOL@" value="postgresql"/>
+            <replacefilter token="@URL_DBALIAS@" value="${env.USER}"/>
+            <replacefilter token="@USER_NAME@" value="${env.USER}"/>
+            <replacefilter token="@USER_PASSWD@" value=""/>
+        </replace>
+        <antcall target="setup-pg-ojb"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Convert repository.template to postgres remote format. -->
+    <target name="set-pg-remote-env"
+        description="Sets postgres environment to allow access from a remote host">
+
+        <!-- Copy the template to config directory first -->
+        <copy file="${rep.template.file}" tofile="${rep.dest.file}"/>
+
+        <replace file="${rep.dest.file}">
+            <replacefilter token="@DBMS_NAME@" value="PostgreSQL" />
+            <replacefilter token="@DRIVER_NAME@" value="org.postgresql.Driver"/>
+            <replacefilter token="@URL_SUBPROTOCOL@" value="postgresql://${env.HOSTNAME}:5432/${env.USER}"/>
+            <replacefilter token="@URL_DBALIAS@" value=""/>
+            <replacefilter token="@USER_NAME@" value="${env.USER}"/>
+            <replacefilter token="@USER_PASSWD@" value=""/>
+        </replace>
+        <antcall target="setup-pg-ojb"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Convert repository.template to oracle format. -->
+    <target name="set-oracle-env" description="Sets oracle environment">
+        <!-- Copy the template to config directory first -->
+        <copy file="${rep.template.file}" tofile="${rep.dest.file}"/>
+
+        <replace file="${rep.dest.file}" propertyfile="config/oracle.properties">
+            <replacefilter token="@DBMS_NAME@" value="Oracle" />
+            <replacefilter token="@DRIVER_NAME@" value="oracle.jdbc.pool.OracleConnectionCacheImpl"/>
+            <replacefilter token="@URL_SUBPROTOCOL@" value="oracle:thin:@vodka.ebi.ac.uk:1521"/>
+            <replacefilter token="@URL_DBALIAS@" value="IDEV"/>
+            <replacefilter token="@USER_NAME@" property="user"/>
+            <replacefilter token="@USER_PASSWD@" property="password"/>
+        </replace>
+        <!-- Copy the template to config directory -->
+        <copy file="${ojb.template.file}" tofile="${ojb.dest.file}"/>
+
+        <replace file="${ojb.dest.file}">
+            <replacefilter token="@SEQ_MANAGER@" value="uk.ac.ebi.intact.persistence.DbSequenceManager"/>
+        </replace>
+    </target>
+
+    <!-- =================================================================== -->
+
     <!-- Copy configuration files. -->
     <target name="copyConfigFiles">
-        <!--
-        <copy todir="${dest.dir}/config" filtering="on">
-            <fileset dir="config">
-                <include name="*.properties"/>
-                <include name="*.xml"/>
-                <include name="*.dtd"/>
-            </fileset>
-        </copy>
-        -->
         <!-- Experimental purposes only; just copy only necessary files -->
-        <copy todir="${dest.dir}/config" filtering="on">
-            <fileset dir="config">
+        <copy todir="${dest.dir}/${config.dir}" filtering="on">
+            <fileset dir="${config.dir}">
                 <include name="repository*.xml"/>
                 <include name="repository.dtd"/>
             </fileset>
         </copy>
 
         <!-- the OJB and log4J properties files should be at the top level in 'dest' -->
-        <copy todir="${dest.dir}" file="config/OJB.properties"/>
-        <copy todir="${dest.dir}" file="config/log4j.properties"/>
+        <copy todir="${dest.dir}" file="${config.dir}/OJB.properties"/>
+        <copy todir="${dest.dir}" file="${config.dir}/log4j.properties"/>
     </target>
 
     <!-- =================================================================== -->
@@ -123,9 +212,7 @@
         <!-- Delete the existing jar file. -->
         <delete file="${dist.dir}/intact-core.jar" quiet="true"/>
 
-        <jar destfile="${dist.dir}/intact-core.jar"
-           basedir="${basedir}/${dest.dir}"
-        />
+        <jar destfile="${dist.dir}/intact-core.jar" basedir="${basedir}/${dest.dir}" />
     </target>
 
     <!-- =================================================================== -->
@@ -190,7 +277,6 @@
 
     <!-- =================================================================== -->
 
-
     <!-- Compiles all the sources. -->
     <target name="compile-all" description="Compiles all the sources for Intact">
 
@@ -202,6 +288,7 @@
         <!-- Call other modules as they rely on intact core. -->
         <antcall target="compile-hv"/>
         <antcall target="compile-cvedit"/>
+        <antcall target="compile-search"/>
     </target>
 
     <!-- =================================================================== -->
