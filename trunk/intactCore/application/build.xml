@@ -28,21 +28,9 @@
 
     <!-- =================================================================== -->
 
-    <target name="detect-services">
-        <condition property="tomcat">
-            <contains string="${tomcat.home}" substring="jakarta-tomcat"/>
-        </condition>
-
-        <condition property="axis">
-            <contains string="${axis.home}" substring="webapps/axis"/>
-        </condition>
-    </target>
-
-    <!-- =================================================================== -->
-
     <!-- Displays a message to indicate that tomcat is not available. -->
 
-    <target name="check-tomcat" depends="detect-services" unless="tomcat">
+    <target name="check-tomcat" depends="run-once" unless="tomcat.present">
         <echo message=
             "Tomcat is not available on your system or CATALINA_HOME is not set"/>
     </target>
@@ -51,7 +39,7 @@
 
     <!-- Displays a message to indicate that axis is not available. -->
 
-    <target name="check-axis" depends="detect-services" unless="axis">
+    <target name="check-axis" depends="run-once" unless="axis.present">
         <echo message=
             "Axis is not available on your system or AXIS_HOME is not set"/>
     </target>
@@ -60,7 +48,7 @@
 
     <!-- Starts the Tomcat server. -->
 
-    <target name="start-tomcat" depends="check-tomcat" if="tomcat"
+    <target name="start-tomcat" depends="check-tomcat" if="tomcat.present"
         description="Starts Tomcat server">
         <exec executable="${start-tomcat}" dir="${basedir}" vmlauncher="false" os="Linux"/>
     </target>
@@ -69,7 +57,7 @@
 
     <!-- Stops the Tomcat server. -->
 
-    <target name="stop-tomcat" depends="check-tomcat" if="tomcat"
+    <target name="stop-tomcat" depends="check-tomcat" if="tomcat.present"
         description="Stops Tomcat server">
         <exec executable="${stop-tomcat}" dir="${basedir}" vmlauncher="false" os="Linux"/>
     </target>
@@ -77,7 +65,7 @@
     <!-- =================================================================== -->
 
     <!-- Deploys the war file on the Tomcat server. -->
-    <target name="deploy" depends="check-tomcat" if="tomcat"
+    <target name="deploy" depends="check-tomcat" if="tomcat.present"
         description="Deploys the WAR file on the Tomcat server">
         <!-- Copy the file across to the deploy dir. -->
         <copy file="${war}" todir="${tomcat.home}/webapps" overwrite="yes"/>
@@ -88,7 +76,7 @@
     <!-- =================================================================== -->
 
     <!-- Undeploys the war file from the Tomcat server. -->
-    <target name="undeploy" depends="check-tomcat" if="tomcat"
+    <target name="undeploy" depends="check-tomcat" if="tomcat.present"
         description="Removes the WAR file and the directory from the Tomcat server">
 
         <!-- Stop the tomcat completely. -->
