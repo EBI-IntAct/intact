@@ -5,6 +5,7 @@
  */
 package uk.ac.ebi.intact.application.dataConversion.psiUpload.checker;
 
+import uk.ac.ebi.intact.application.dataConversion.psiUpload.gui.Monitor;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.*;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.util.BioSourceFactory;
@@ -24,7 +25,8 @@ public final class InteractionChecker {
     public static void check( final InteractionTag interaction,
                               final IntactHelper helper,
                               final UpdateProteinsI proteinFactory,
-                              final BioSourceFactory bioSourceFactory ) {
+                              final BioSourceFactory bioSourceFactory,
+                              final Monitor monitor ) {
 
         // TODO do we play with that ?
 //        final String shortlabel = interaction.getShortlabel();
@@ -42,6 +44,21 @@ public final class InteractionChecker {
         // TODO do we have to check that we have at least 1 bait and 1..m preys/neutrals
         for ( Iterator iterator = participants.iterator(); iterator.hasNext(); ) {
             ProteinParticipantTag proteinParticipant = (ProteinParticipantTag) iterator.next();
+            if( monitor != null ) {
+                ProteinInteractorTag proteinInteractor = proteinParticipant.getProteinInteractor();
+                String uniprotID = null;
+                String taxid = null;
+
+                if( proteinInteractor != null && proteinInteractor.getUniprotXref() != null ) {
+                    uniprotID = proteinInteractor.getUniprotXref().getId();
+                }
+                if( proteinInteractor != null && proteinInteractor.getOrganism() != null ) {
+                    taxid = proteinInteractor.getOrganism().getTaxId();
+                } else {
+                    taxid = "taxid not specified";
+                }
+                monitor.setStatus( "Checking " + uniprotID + " (" + taxid + ")" );
+            }
             ProteinParticipantChecker.check( proteinParticipant, helper, proteinFactory, bioSourceFactory );
         }
 
