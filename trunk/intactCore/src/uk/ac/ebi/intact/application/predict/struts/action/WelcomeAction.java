@@ -64,10 +64,9 @@ public class WelcomeAction extends AbstractPredictAction {
             ServletContext ctx = getServlet().getServletContext();
 
             // Name of the mapping file and data source.
-            String repfile = ctx.getInitParameter("mappingfile");
             String ds = ctx.getInitParameter("datasource");
             try {
-                user = PredictUser.create(repfile, ds);
+                user = PredictUser.create(ds);
                 System.out.println("Predict user created");
             }
             catch (DataSourceException dse) {
