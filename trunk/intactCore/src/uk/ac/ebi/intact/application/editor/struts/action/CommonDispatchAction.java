@@ -13,7 +13,6 @@ import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
-import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 
@@ -107,8 +106,8 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
                               HttpServletResponse response)
             throws Exception {
         ActionForward forward = submitForm(mapping, form, request, false);
-        // Turn editing mode on as it was switched off upon a successfull committ.
-        if (forward.getPath().equals(mapping.findForward(SUCCESS).getPath())) {
+        // Turn editing mode on as it was switched off upon a successfull comitt
+        if (forward.equals(mapping.findForward(SUCCESS))) {
             getIntactUser(request).startEditing();
         }
         return forward;

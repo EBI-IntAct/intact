@@ -33,8 +33,8 @@ public class InteractionLinkAction extends CommonDispatchAction {
         // Save the experiment first.
         ActionForward forward = save(mapping, form, request, response);
 
-        // Check for any errors and redirect to the error page.
-        if (forward.equals(mapping.findForward(FAILURE))) {
+        // Return the forward for any non success.
+        if (!forward.equals(mapping.findForward(SUCCESS))) {
             return forward;
         }
         // No errors. Linking starts from here.
@@ -49,7 +49,7 @@ public class InteractionLinkAction extends CommonDispatchAction {
         String expAc = user.getView().getAc();
 
         // The AC of the interaction we are about to edit.
-        String intAc = (String) ((ExperimentActionForm) form).getIntac();//dynaform.get("intac");
+        String intAc = (String) ((ExperimentActionForm) form).getIntac();
 
         // The interaction we are about to edit.
         Interaction inter = (Interaction) user.getObjectByAc(

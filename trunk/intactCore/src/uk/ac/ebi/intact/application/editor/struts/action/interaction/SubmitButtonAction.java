@@ -42,7 +42,7 @@ public class SubmitButtonAction extends CommonDispatchAction {
         ActionForward forward = submitForm(mapping, form, request, true);
 
         // Return the forward if it isn't a success.
-        if (!forward.getPath().equals(mapping.findForward(SUCCESS).getPath())) {
+        if (!forward.equals(mapping.findForward(SUCCESS))) {
             return forward;
         }
         // Handler to the user.
@@ -50,6 +50,11 @@ public class SubmitButtonAction extends CommonDispatchAction {
 
         // The current view.
         AbstractEditViewBean view = user.getView();
+
+        // TODO debuuging statement to monitor why submitting an interaction
+        // is not returning back to the experiment as it should.
+        LOGGER.error("Current interaction: " + view.getAc() + " Source exp: "
+                + ((InteractionViewBean) view).getSourceExperimentAc());
 
         // Do we have to return to the experiment editor?
         if (returnToExperiment(request)) {
@@ -65,11 +70,6 @@ public class SubmitButtonAction extends CommonDispatchAction {
 
             // The experiment we going back to.
             user.setView(annobj);
-
-            // Update the search cache with the experiment, so the Cancel from the
-            // experiment will correctly return to the result page with single
-            // experiment (or else it will display the last edited Interaction).
-//                user.updateSearchCache(annobj);
 
             // Return to the experiment editor.
             return mapping.findForward(EXP);

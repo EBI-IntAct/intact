@@ -53,7 +53,7 @@ public class FeatureSubmitAction extends CommonDispatchAction {
         ActionForward forward = submitForm(mapping, form, request, true);
 
         // Return the forward for any non success.
-        if (!forward.getPath().equals(mapping.findForward(SUCCESS).getPath())) {
+        if (!forward.equals(mapping.findForward(SUCCESS))) {
             return forward;
         }
         // Redirection is only required if the submit form is successful

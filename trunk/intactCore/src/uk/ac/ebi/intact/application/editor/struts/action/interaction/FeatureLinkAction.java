@@ -9,8 +9,8 @@ package uk.ac.ebi.intact.application.editor.struts.action.interaction;
 import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
+import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,24 +47,17 @@ public class FeatureLinkAction extends AbstractEditorDispatchAction {
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
 
-        // The form.
-        InteractionActionForm intform = (InteractionActionForm) form;
-
-        // The features we are about to delete.
-        List beans = intform.getFeaturesToDelete();
-
         // The current view to delete features.
         InteractionViewBean view = (InteractionViewBean) user.getView();
+
+        // The features we are about to delete.
+        List beans = view.getFeaturesToDelete();
 
         // Delete the features.
         for (Iterator iter = beans.iterator(); iter.hasNext();) {
             view.deleteFeature((FeatureBean) iter.next());
         }
-
-        // Components changed; refresh the form.
-        intform.setComponents(view.getComponents());
-
-        return updateForm(mapping, intform, request);
+        return updateForm(mapping, form, request);
     }
 
     /**
@@ -75,11 +68,12 @@ public class FeatureLinkAction extends AbstractEditorDispatchAction {
                               HttpServletRequest request,
                               HttpServletResponse response)
             throws Exception {
-        // The form.
-        InteractionActionForm intform = (InteractionActionForm) form;
+        // The current view to link/unlink features.
+        InteractionViewBean view =
+                (InteractionViewBean) getIntactUser(request).getView();
 
         // The two Features to link.
-        FeatureBean[] fbs = intform.getFeaturesForLink();
+        FeatureBean[] fbs = view.getFeaturesForLink();
 
         // Check if they already have bound domains.
         if ((fbs[0].getBoundDomain().length() != 0)
@@ -90,13 +84,10 @@ public class FeatureLinkAction extends AbstractEditorDispatchAction {
             saveErrors(request, errors);
         }
         else {
-            // The current view to link/unlink features.
-            InteractionViewBean view =
-                    (InteractionViewBean) getIntactUser(request).getView();
             // Link two features.
             view.addFeatureLink(fbs[0], fbs[1]);
         }
-        return updateForm(mapping, intform, request);
+        return updateForm(mapping, form, request);
     }
 
     /**
@@ -107,11 +98,12 @@ public class FeatureLinkAction extends AbstractEditorDispatchAction {
                                 HttpServletRequest request,
                                 HttpServletResponse response)
             throws Exception {
-        // The form.
-        InteractionActionForm intform = (InteractionActionForm) form;
+        // The current view to link/unlink features.
+        InteractionViewBean view =
+                (InteractionViewBean) getIntactUser(request).getView();
 
         // The Feature to unlink.
-        FeatureBean fb = intform.getFeatureForUnlink();
+        FeatureBean fb = view.getFeatureForUnlink();
 
         // Check if they already have bound domains.
         if (fb.getBoundDomain().length() == 0) {
@@ -121,21 +113,18 @@ public class FeatureLinkAction extends AbstractEditorDispatchAction {
             saveErrors(request, errors);
         }
         else {
-            // The current view to link/unlink features.
-            InteractionViewBean view =
-                    (InteractionViewBean) getIntactUser(request).getView();
             // This feature is linked.
             view.addFeatureToUnlink(fb);
         }
-        return updateForm(mapping, intform, request);
+        return updateForm(mapping, form, request);
     }
 
     // Encapsulate common functionality
     private ActionForward updateForm(ActionMapping mapping,
-                                     InteractionActionForm form,
+                                     ActionForm form,
                                      HttpServletRequest request) {
         // Set the anchor if necessary.
-        setAnchor(request, form);
+        setAnchor(request, (EditorActionForm) form);
 
         // Update the form.
         return mapping.getInputForward();
