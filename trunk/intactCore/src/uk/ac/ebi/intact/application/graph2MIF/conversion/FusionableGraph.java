@@ -52,7 +52,7 @@ public class FusionableGraph extends Graph {
             // see also the equals method of Edge
             if (false == edges.contains (aNewEdge)) {
                 // check if both nodes are present
-                aNode = aNewEdge.getNode1 ();
+                aNode = (NodeI) aNewEdge.getNode1 ();
                 ACNode = aNode.getAc();
                 // see also the equals method of Node
                 if (false == nodes.containsKey(ACNode)) {
@@ -61,7 +61,7 @@ public class FusionableGraph extends Graph {
                     aNewEdge.setNode1 ((Node) nodes.get(ACNode));
                 }
 
-                aNode = aNewEdge.getNode2 ();
+                aNode = (NodeI) aNewEdge.getNode2 ();
                 ACNode = aNode.getAc();
                 if (false == nodes.containsKey(ACNode)) {
                     nodes.put (ACNode, aNode);
