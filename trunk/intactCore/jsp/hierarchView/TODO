@@ -1,0 +1,79 @@
+=========
+T O   D O
+=========
+
+	- have to be done
+	+ currently under progress
+
+
++ interact with EGO (e.g. GOTerm.isAParent(GOTerm))
+
++ no depth limit (see hhe)
+
++ SVG integration 
+  + SVG producing (batik)
+  + SVG displaying (batik, CSIRO applet)
+  - SVG handling (real zoom, panning, text searching, centering via URL ...)
+
++ Remove all internal links in Interpro
+  -> modifiing the simple.xsl file to customize our displaying
+
++ take over the application with Sugath
+  + overview of the application
+  + how to play with the web service
+  - ...
+
+
+
+
+- solve browser behaviour problem
+	o Netscape, remove frames
+
+- Allows the web service to send error message
+
+- Tomcat jar problem :
+  We have to add xercesImpl.jar (found in the WEB-INF/lib of our web application) in the 
+  $CATALINA_HOME/common/lib. It was not used when the jar file was in our application directory.
+  This jar is needed because org.w3c.dom.DOMErrorHandler class is used when tomcat launch our application
+
+- checkbox with struts.
+  Maybe to store the bean in the session ?!
+
+- If an error occurs during the highlightment process,
+  the error is not caught currently and so, not reported in the Struts Level.
+  So the user is not warned ! It seems that no GO term are found.
+  cf. HighlightProteins when it call proteinToHighlight ()
+
+- Document the way to launch the Tomcat server by taking care to run properly a new X server in the same window
+  Xvfb :2.0 &
+  setenv DISPLAY :2.0
+  (run Tomcat)
+
+
+==============
+   D O N E
+==============
+
+- get a list of GO term from AC in the IntAct database
+
+- put under CVS source code of cli, Serveur and console.
+
+- Allow to read dinamically (in runtime) the URL of the Web Service, instead to have this hardcoded in the 
+  following class :
+  uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.TulipAccessServiceLocator.java
+  Maybe by reading a property file and editing the generated code !
+
+- option of the highlightment source
+
+- give a meaning for each displayed GO term in the right frame.
+
+- Correcting the displaying if the interaction network :
+	o label out of the image range
+
+
+
+
+
+
+
+
