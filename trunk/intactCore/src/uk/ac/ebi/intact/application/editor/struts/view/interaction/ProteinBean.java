@@ -6,16 +6,14 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
-import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.application.editor.struts.view.EditBean;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
+import uk.ac.ebi.intact.application.editor.struts.view.EditBean;
+import uk.ac.ebi.intact.model.*;
 
 import java.io.Serializable;
-import java.util.Iterator;
 import java.text.MessageFormat;
-
-import org.apache.struts.action.ActionError;
+import java.util.Iterator;
 
 /**
  * Bean to store data for an Interactor (Protein).
@@ -243,7 +241,7 @@ public class ProteinBean extends EditBean implements Serializable {
         for (Iterator iter = interact.getXref().iterator(); iter.hasNext();) {
             Xref xref = (Xref) iter.next();
             // Only consider SwissProt database entries.
-            if (xref.getCvDatabase().getShortLabel().equals("SPTR")) {
+            if (xref.getCvDatabase().getShortLabel().equals("sptr")) {
                 return xref.getPrimaryId();
             }
         }
