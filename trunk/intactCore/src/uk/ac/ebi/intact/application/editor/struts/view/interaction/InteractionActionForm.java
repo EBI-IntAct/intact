@@ -223,12 +223,12 @@ public class InteractionActionForm extends EditorActionForm {
                     new ActionError("error.int.biosrc"));
             return errors;
         }
-        // Must have at least one experiment.
-        if (getExperiments().isEmpty()) {
-            errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.int.validation.exp"));
-        }
+        // Must have at least one experiment. This is a business decision.
+//        if (getExperiments().isEmpty()) {
+//            errors = new ActionErrors();
+//            errors.add(ActionErrors.GLOBAL_ERROR,
+//                    new ActionError("error.int.validation.exp"));
+//        }
         return errors;
     }
 }

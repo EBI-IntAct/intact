@@ -27,6 +27,9 @@
 <c:set var="dblist" value="${view.addDatabaseMenu}"/>
 <c:set var="qlist" value="${menus['QualifierNames']}"/>
 
+<%-- The anchor name for this page --%>
+<a name="xref"></a>
+
 <%-- Adds a new xreferece. This will invoke addXref action. --%>
 <table class="table" width="100%" border="0" cellspacing="1" cellpadding="2">
     <tr class="tableRowHeader">
@@ -58,20 +61,27 @@
                 <bean:message key="xrefs.button.add"/>
             </html:submit>
         </td>
+
         <td class="tableCell" align="left" valign="top">
             <html:select property="newXref.database">
                 <html:options name="dblist" />
             </html:select>
+            <br/><html:errors property="xref.db"/>
         </td>
+
         <td class="tableCell" align="left" valign="top">
             <html:text property="newXref.primaryId" size="15"/>
+            <br/><html:errors property="xref.pid"/>
         </td>
+
         <td class="tableCell" align="left" valign="top">
             <html:text property="newXref.secondaryId" size="15"/>
         </td>
+
         <td class="tableCell" align="left" valign="top">
             <html:text property="newXref.releaseNumber" size="15"/>
         </td>
+
         <td class="tableCell" align="left" valign="top">
             <html:select property="newXref.qualifier"
                 value="<%=user.getView().getDefaultXrefQualifier()%>">

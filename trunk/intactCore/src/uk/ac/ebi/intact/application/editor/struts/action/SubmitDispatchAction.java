@@ -111,14 +111,11 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
                                   HttpServletRequest request,
                                   HttpServletResponse response)
             throws Exception {
-        // Need the form to get data entered by the user.
-//        DynaActionForm dynaform = (DynaActionForm) form;
-
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
 
         // The bean to extract the values.
-        CommentBean cb = ((EditorActionForm) form).getNewAnnotation();//CommentBean) dynaform.get("annotation");
+        CommentBean cb = ((EditorActionForm) form).getNewAnnotation();
 
         // The topic for the annotation.
         CvTopic cvtopic = (CvTopic) user.getObjectByLabel(CvTopic.class,

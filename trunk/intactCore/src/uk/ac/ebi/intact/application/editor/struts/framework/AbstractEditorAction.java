@@ -269,16 +269,16 @@ public abstract class AbstractEditorAction extends Action implements ForwardCons
         user.updateSearchCache(annobj);
     }
 
-    // Helper Methods
-
     /**
      * A convenient method to retrieve an application object from a session.
      * @param attrName the attribute name.
      * @return an application object stored in a session under <tt>attrName</tt>.
      */
-    private Object getApplicationObject(String attrName) {
+    protected Object getApplicationObject(String attrName) {
         return super.servlet.getServletContext().getAttribute(attrName);
     }
+
+    // Helper Methods
 
     /**
      * Retrieve a session object based on the request and attribute name.

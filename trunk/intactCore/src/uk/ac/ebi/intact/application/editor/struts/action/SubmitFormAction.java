@@ -55,7 +55,7 @@ public class SubmitFormAction extends AbstractEditorAction {
         getIntactUser(request).getView().copyPropertiesFrom(editorForm);
 
         // The map containing action paths.
-        Map map = (Map) getSession(request).getAttribute("formSubmitMap");
+        Map map = (Map) super.getSession(request).getAttribute("formSubmitMap");
 
         // The dispatch value holds the button label.
         String dispatch = editorForm.getDispatch();

@@ -66,11 +66,6 @@ public class EditorSwitchAction extends TilesAction {
             request.setAttribute(EditorConstants.SEVERE_WARN,
                     resources.getMessage("message.exp.read.only"));
         }
-//        response.sendRedirect("http://localhost:8080/intact/editor/do/intDispatch#dick");
-//        for (Iterator i = context.getAttributeNames(); i.hasNext();) {
-//            System.out.println("name: " + i.next());
-//        }
-//        System.out.println("response: " + request.getPathTranslated() + " xx " + request.getPathInfo());
         return null;
     }
 }
