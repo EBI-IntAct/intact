@@ -5,12 +5,12 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.editor.struts.view.feature.test;
 
-import junit.framework.*;
-import uk.ac.ebi.intact.test.FirstTest;
-import uk.ac.ebi.intact.application.editor.struts.view.feature.RangeBean;
-import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionError;
+import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
+import uk.ac.ebi.intact.application.editor.struts.view.feature.RangeBean;
 
 /**
  * The test class for RangeBean class.

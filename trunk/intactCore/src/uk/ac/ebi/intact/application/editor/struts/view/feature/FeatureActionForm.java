@@ -139,15 +139,8 @@ public class FeatureActionForm extends EditorActionForm {
      * pre:  forall(obj : Object | obj.oclIsTypeOf(RangeBean))
      * </pre>
      */
-    public void setRanges(Collection ranges) {
-        if (myRanges != null) {
-            // No need to create a new ranges if both collections contain same.
-            // This might be the case for page refresh for other than ranges.
-            if (CollectionUtils.isEqualCollection(myRanges, ranges)) {
-                return;
-            }
-        }
-        myRanges = new ArrayList(ranges);
+    public void setRanges(List ranges) {
+        myRanges = ranges;
     }
 
     public List getRanges() {

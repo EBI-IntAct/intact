@@ -65,7 +65,7 @@ public class RangeDispatchAction extends AbstractEditorAction {
         else if (cmd.equals(msgres.getMessage("feature.range.button.save"))) {
             // Does the range exist in the current ranges?
             if (view.rangeExists(bean)) {
-                // Mar the bean as error.
+                // Mark the bean as error.
                 bean.setEditState(AbstractEditBean.ERROR);
 
                 // The errors to display.
@@ -78,17 +78,16 @@ public class RangeDispatchAction extends AbstractEditorAction {
             }
             // The updated range bean; this needs to be a separate copy (don't
             // want form and the view to share the same copy).
-            RangeBean updated = (RangeBean) bean.clone();
+//            RangeBean updated = (RangeBean) bean.clone();
 
             // Save the bean in the view.
-            view.saveRange(updated);
+            view.saveRange(bean);
 
             // Back to the view mode.
             bean.setEditState(AbstractEditBean.VIEW);
         }
         else {
-            // Default is to delete a range. Delete the selected Range
-            // from the view.
+            // Default is to delete a range.
             view.delRange(bean);
         }
         // Update the form.

@@ -177,6 +177,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         // The bean to extract the values.
         CommentBean cb = ((EditorActionForm) form).getNewAnnotation();
 
+
         // The topic for the annotation.
         CvTopic cvtopic = (CvTopic) user.getObjectByLabel(CvTopic.class,
                 cb.getTopic());
@@ -224,6 +225,8 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
                 return mapping.getInputForward();
             }
         }
+        // We need to create a Xref here because getPrimaryIdLink() returns
+        // the primary key with out the link if Xref is null.
         CvDatabase db = (CvDatabase) user.getObjectByLabel(
                 CvDatabase.class, xb.getDatabase());
         CvXrefQualifier xqual = (CvXrefQualifier) user.getObjectByLabel(

@@ -68,6 +68,8 @@ public interface EditUserI extends IntactUserI, Serializable {
 
     public void update(Object object) throws IntactException;
 
+    public void forceUpdate(Object object) throws IntactException;
+
     public void delete(Object object) throws IntactException;
 
     /**

@@ -11,9 +11,12 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
+import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.DefinedFeatureBean;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.feature.RangeBean;
 import uk.ac.ebi.intact.model.Feature;
+import uk.ac.ebi.intact.model.Range;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -48,8 +51,27 @@ public class FeatureCloneAction extends AbstractEditorAction {
         view.setShortLabel(dfb.getShortLabel());
         view.setFullName(dfb.getFullName());
 
-        // Add a copy of the new range.
-        view.addRange(dfb.getDefinedRange().copy());
+        // The undetermined range.
+        RangeBean rb = dfb.getDefinedRange();
+        String fromRange = rb.getFromRange();
+        String toRange = rb.getToRange();
+
+        // Create a new range.
+        int[] ranges = RangeBean.parseRange(fromRange, toRange);
+
+        // The new range created from the new range bean.
+        Range range = new Range(user.getInstitution(), ranges[0],
+                ranges[1], ranges[2], ranges[3], null);
+
+        // Sets the fuzzy types.
+        range.setFromCvFuzzyType(RangeBean.parseFuzzyType(fromRange, user));
+        range.setToCvFuzzyType(RangeBean.parseFuzzyType(toRange, user));
+
+        // Add a copy of the new range
+        view.addRange(new RangeBean(range));
+
+        // Update the form for the display.
+        view.copyPropertiesTo((EditorActionForm) form);
 
         // Update the form and display.
         return mapping.findForward(SUCCESS);

@@ -13,7 +13,7 @@ package uk.ac.ebi.intact.application.editor.struts.view;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public abstract class AbstractEditKeyBean extends AbstractEditBean {
+public abstract class AbstractEditKeyBean extends AbstractEditBean implements Cloneable {
     // Beginning of Inner classes
 
     // ------------------------------------------------------------------------
@@ -87,7 +87,17 @@ public abstract class AbstractEditKeyBean extends AbstractEditBean {
         result = 17 * result + (int)(myKey & 0xFFFFFFFF);
         return result;
     }
-    
+
+    /**
+     * Makes a clone of this object.
+     *
+     * @return a cloned version of the current instance.
+     * @throws CloneNotSupportedException for errors in cloning.
+     */
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
     /**
      * Returns the key assigned to this bean.
      * @return the key as a long.
@@ -97,11 +107,9 @@ public abstract class AbstractEditKeyBean extends AbstractEditBean {
     }
 
     /**
-     * Resets the internal key. This is important as we want the application
-     * to believe that we are dealing with a new edit bean but without actually
-     * creating a new one.
+     * Resets the internal key to a new value.
      */
-    protected void reset() {
-        myKey = UniqueID.get();
-    }
+//    public void resetKey() {
+//        myKey = UniqueID.get();
+//    }
 }

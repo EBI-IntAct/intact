@@ -10,7 +10,6 @@ import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
-import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
 import uk.ac.ebi.intact.model.CvFuzzyType;
 import uk.ac.ebi.intact.model.Range;
@@ -21,7 +20,7 @@ import uk.ac.ebi.intact.model.Range;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class RangeBean extends AbstractEditKeyBean implements Cloneable {
+public class RangeBean extends AbstractEditKeyBean {
 
     // Instance Data
 
@@ -59,6 +58,53 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
      * Undetermined or not.
      */
     private boolean myUndetermined;
+
+    // Class Methods
+
+    /**
+     * Parses given ranges and return the parsed values via an int array.
+     * @param fromRange the from range
+     * @param toRange the to range
+     * @return an array of four ints. The items in the array are in the following
+     * order: position 0: start for from range, pos 1: end for from range,
+     * pos 2: start for to range and pos 3: end for to range.
+     * @throws NumberFormatException any errors in parsing the range string.
+     */
+    public static int[] parseRange(String fromRange, String toRange) {
+        // The array to return.
+        int[] ranges = new int[4];
+
+        // The array to hold the result.
+        int[] results;
+
+        // Copy the from range values.
+        results = RangeBean.parseRange(fromRange);
+        ranges[0] = results[0];
+        ranges[1] = results[1];
+
+        // Copy the to range values.
+        results = RangeBean.parseRange(toRange);
+        ranges[2] = results[0];
+        ranges[3] = results[1];
+
+        return ranges;
+    }
+
+    /**
+     * Returns the fuzzy type for given range.
+     * @param range the range as a string.
+     * @param user the user search for the fuzzy type
+     * @return the fuzzy type for given range. <code>null</code> is returned
+     * if there is no fuzzy type associated with <code>range</code>.
+     * @throws SearchException for errors in searching the persisten system
+     * for the fuzzy type.
+     */
+    public static CvFuzzyType parseFuzzyType(String range, EditUserI user)
+            throws SearchException {
+        // The from fuzzy type as a string.
+        String fromType = denormalizeFuzzyType(range);
+        return getFuzzyType(fromType, user);
+    }
 
     /**
      * Default constructor. Needs for adding new ranges to a feature.
@@ -201,14 +247,23 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
         // The errors to return.
         ActionErrors errors = null;
 
-        // Extract the fuzzy type for the from range.
-        String fromType = denormalizeFuzzyType(myFromRange);
-        // From range as a string.
-        String fromRange = getRange(fromType, myFromRange);
+        // Stores the range values.
+        int[] ranges;
+
+        // Holds values for from range.
+        int fromStart = 0;
+        int fromEnd = 0;
 
         try {
-            // Parse the from range.
-            if (!isRangeValid(fromType, fromRange)) {
+            // Parse ranges.
+            ranges = parseRange(myFromRange);
+
+            // Split ranges to start and end.
+            fromStart = ranges[0];
+            fromEnd = ranges[1];
+
+            // Check the validity of ranges.
+            if (fromStart > fromEnd) {
                 errors = new ActionErrors();
                 errors.add(prefix + ".fromRange", new ActionError(
                         "error.feature.range.interval.invalid"));
@@ -224,14 +279,20 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
             return errors;
         }
 
-        // Extract the fuzzy type for the to range.
-        String toType = denormalizeFuzzyType(myToRange);
-        // To Range as a string.
-        String toRange = getRange(toType, myToRange);
+        // Holds values for to range.
+        int toStart = 0;
+        int toEnd = 0;
 
         try {
-            // Parse the to range.
-            if (!isRangeValid(toType, toRange)) {
+            // Parse ranges.
+            ranges = parseRange(myToRange);
+
+            // Split ranges to start and end.
+            toStart = ranges[0];
+            toEnd = ranges[1];
+
+            // Check the validity of ranges.
+            if (toStart > toEnd) {
                 errors = new ActionErrors();
                 errors.add(prefix + ".toRange", new ActionError(
                         "error.feature.range.interval.invalid"));
@@ -245,38 +306,6 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
         // Don't check any further if we have errors.
         if (errors != null) {
             return errors;
-        }
-        // Do the parsing to get the values for 'from'.
-        int fromStart = 0;
-        int fromEnd = 0;
-        // Need special parsing for fuzzy types.
-        if (fromType.equals(CvFuzzyType.FUZZY)) {
-            int pos = fromRange.indexOf('.');
-            fromStart = Integer.parseInt(fromRange.substring(0, pos));
-            // Skip two positions to be on the first character of the end level.
-            pos += 2;
-            fromEnd = Integer.parseInt(fromRange.substring(pos));
-        }
-        else {
-            // Non fuzzy types.
-            fromStart = Integer.parseInt(fromRange);
-            fromEnd = fromStart;
-        }
-        // Do the parsing to get the values for 'to'.
-        int toStart = 0;
-        int toEnd = 0;
-        // Need special parsing for fuzzy types.
-        if (toType.equals(CvFuzzyType.FUZZY)) {
-            int pos = toRange.indexOf('.');
-            toStart = Integer.parseInt(toRange.substring(0, pos));
-            // Skip two positions to be on the first character of the end level.
-            pos += 2;
-            toEnd = Integer.parseInt(toRange.substring(pos));
-        }
-        else {
-            // Non fuzzy types.
-            toStart = Integer.parseInt(toRange);
-            toEnd = toStart;
         }
         // Need to validate the from and start ranges. These validations are
         // copied from Range constructor.
@@ -338,50 +367,18 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
      */
     public Range getRange(EditUserI user) throws SearchException,
             IllegalArgumentException {
-        // The from fuzzy type as a string.
-        String fromType = denormalizeFuzzyType(myFromRange);
-        // From range as a string.
-        String fromRange = getRange(fromType, myFromRange);
+        // The range as an int array.
+        int[] ranges = RangeBean.parseRange(myFromRange, myToRange);
 
-        int fromStart = 0;
-        int fromEnd = 0;
-        // Need special parsing for fuzzy types.
-        if (fromType.equals(CvFuzzyType.FUZZY)) {
-            int pos = fromRange.indexOf('.');
-            fromStart = Integer.parseInt(fromRange.substring(0, pos));
-            // Skip two positions to be on the first character of the end level.
-            pos += 2;
-            fromEnd = Integer.parseInt(fromRange.substring(pos));
-        }
-        else {
-            // Non fuzzy types.
-            fromStart = Integer.parseInt(fromRange);
-            fromEnd = fromStart;
-        }
+        // Split the ranges to parts.
+        int fromStart = ranges[0];
+        int fromEnd = ranges[1];
+        int toStart = ranges[2];
+        int toEnd = ranges[3];
 
-        // The to fuzzy type as a string.
-        String toType = denormalizeFuzzyType(myToRange);
-        // To range as a string.
-        String toRange = getRange(toType, myToRange);
-
-        int toStart = 0;
-        int toEnd = 0;
-        // Need special parsing for fuzzy types.
-        if (toType.equals(CvFuzzyType.FUZZY)) {
-            int pos = toRange.indexOf('.');
-            toStart = Integer.parseInt(toRange.substring(0, pos));
-            // Skip two positions to be on the first character of the end level.
-            pos += 2;
-            toEnd = Integer.parseInt(toRange.substring(pos));
-        }
-        else {
-            // Non fuzzy types.
-            toStart = Integer.parseInt(toRange);
-            toEnd = toStart;
-        }
         // The from/to fuzzy types.
-        CvFuzzyType fromFuzzyType = getFuzzyType(fromType, user);
-        CvFuzzyType toFuzzyType = getFuzzyType(toType, user);
+        CvFuzzyType fromFuzzyType = parseFuzzyType(myFromRange, user);
+        CvFuzzyType toFuzzyType = parseFuzzyType(myToRange, user);
 
         // Need to validate the from and start ranges. These validations are
         // copied from Range constructor. Alternative is to create a dummy
@@ -406,61 +403,19 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
             throw new IllegalArgumentException(
                     "The 'from' interval cannot begin during the 'to' interval!");
         }
-        // The range to rturn.
-        Range range = myRange;
-
-        // Create a new range object if the current range is null (for new range)
-        if (range == null) {
-            // Construct a range object to return.
-            range = new Range(user.getInstitution(), fromStart, fromEnd, toStart,
-                    toEnd, null);
-        }
-        else {
-            // Update the ranges for the existing range.
-            range.setFromIntervalStart(fromStart);
-            range.setFromIntervalEnd(fromEnd);
-            range.setToIntervalStart(toStart);
-            range.setToIntervalEnd(toEnd);
-        }
+        // Update the ranges.
+        myRange.setFromIntervalStart(fromStart);
+        myRange.setFromIntervalEnd(fromEnd);
+        myRange.setToIntervalStart(toStart);
+        myRange.setToIntervalEnd(toEnd);
         // Set the fuzzy types.
-        range.setFromCvFuzzyType(fromFuzzyType);
-        range.setToCvFuzzyType(toFuzzyType);
+        myRange.setFromCvFuzzyType(fromFuzzyType);
+        myRange.setToCvFuzzyType(toFuzzyType);
 
-        range.setLink(myLink);
-        range.setUndetermined(myUndetermined);
+        myRange.setLink(myLink);
+        myRange.setUndetermined(myUndetermined);
 
-        return range;
-    }
-
-    /**
-     * Makes a clone of this object.
-     * 
-     * @return a cloned version of the current instance.
-     * @throws CloneNotSupportedException for errors in cloning.
-     */
-    public Object clone() throws CloneNotSupportedException {
-        RangeBean copy = (RangeBean) super.clone();
-        // Reset to view mode.
-        copy.setEditState(AbstractEditBean.VIEW);
-        return copy;
-    }
-
-    /**
-     * Make a copy of the current object. The key is set to a different key. Apart
-     * from that this method is similar to the {@link #clone()} method.
-     * @return a copy of the current object with key reset to a different key.
-     */
-    public RangeBean copy() {
-        RangeBean copy = null;
-        try {
-            copy = (RangeBean) clone();
-        }
-        catch (CloneNotSupportedException e) {
-            return null;
-        }
-        // Reset the key to a different key.
-        copy.reset();
-        return copy;
+        return myRange;
     }
 
     // Helper methods
@@ -620,30 +575,32 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
     }
 
     /**
-     * True if given range is valid.
-     * 
-     * @param fuzzyType the type consider when checking for range. If the type
-     * is fuzzy, intervals are considered for validation purposes.
-     * @param range the range to check as a string object.
-     * @return true only if range consists of numbers and start is <= end range.
-     * @throws NumberFormatException any errors in parsing the range string.
+     * Parses the given range.
+     * @param rangeStr the range string to parse.
+     * @return an array of two ints with the first element contains
+     * the start and the second element contains the end value.
      */
-    private static boolean isRangeValid(String fuzzyType, String range)
-            throws NumberFormatException {
-        int start = 0;
-        int end = 0;
-        // Special processing for fuzzy type.
-        if (fuzzyType.equals(CvFuzzyType.FUZZY)) {
+    private static int[] parseRange(String rangeStr) {
+        // To hold from start and end values.
+        int[] result = new int[2];
+        // The fuzzy type as a string.
+        String type = denormalizeFuzzyType(rangeStr);
+        // Range as a string after taking into the type.
+        String range = getRange(type, rangeStr);
+
+        // Need special parsing for fuzzy types.
+        if (type.equals(CvFuzzyType.FUZZY)) {
             int pos = range.indexOf('.');
-            start = Integer.parseInt(range.substring(0, pos));
+            result[0] = Integer.parseInt(range.substring(0, pos));
             // Skip two positions to be on the first character of the end level.
             pos += 2;
-            end = Integer.parseInt(range.substring(pos));
+            result[1] = Integer.parseInt(range.substring(pos));
         }
         else {
-            start = Integer.parseInt(range);
-            end = start;
+            // Non fuzzy types.
+            result[0] = Integer.parseInt(range);
+            result[1] = result[0];
         }
-        return start <= end;
+        return result;
     }
 }
