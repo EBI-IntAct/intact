@@ -35,8 +35,6 @@ public class FillXrefFormAction extends AbstractEditorAction {
 
         // Populate the form.
         ((XrefEditForm) form).setXrefs(view.getXrefs());
-//        EditForm editform = (EditForm) form;
-//        editform.setItems(view.getXrefs());
 
         return mapping.findForward(FORWARD_SUCCESS);
     }
