@@ -24,14 +24,14 @@
     <h3>Xreferences</h3>
 
     <html:form action="/cv/xref/edit">
-        <table width="78%">
+        <table width="80%">
             <tr class="tableRowHeader">
-                <th class="tableCellHeader" width="15%">Database</th>
-                <th class="tableCellHeader" width="15%">Primary ID</th>
-                <th class="tableCellHeader" width="15%">Secondary ID</th>
-                <th class="tableCellHeader" width="15%">Release Number</th>
-                <th class="tableCellHeader" width="17%">Reference Qualifier</th>
-                <th class="tableCellHeader" width="5%" colspan="2">Action</th>
+                <th class="tableCellHeader" colspan="2">Action</th>
+                <th class="tableCellHeader">Database</th>
+                <th class="tableCellHeader">Primary ID</th>
+                <th class="tableCellHeader">Secondary ID</th>
+                <th class="tableCellHeader">Release Number</th>
+                <th class="tableCellHeader">Reference Qualifier</th>
             </tr>
             <%-- To calculate row or even row --%>
             <c:set var="row"/>
@@ -48,23 +48,48 @@
                 <c:set var="row" value="${row + 1}"/>
                 <%-- The following loop is under <tr> tag --%>
 
+                    <%-- Buttons; Edit or Save depending on the bean state;
+                         Delete is visible regardless of the state.
+                     --%>
+                    <td class="tableCell">
+                        <nested:equal name="<%=CvEditConstants.XREF_EDIT_FORM%>"
+                            property="editState" value="<%=EditBean.VIEW%>">
+                            <html:submit indexed="true" property="cmd">
+                                <bean:message key="button.edit"/>
+                            </html:submit>
+                        </nested:equal>
+
+                        <nested:equal name="<%=CvEditConstants.XREF_EDIT_FORM%>"
+                            property="editState" value="<%=EditBean.SAVE%>">
+                            <html:submit indexed="true" property="cmd">
+                                <bean:message key="button.save"/>
+                            </html:submit>
+                        </nested:equal>
+                    </td>
+
+                    <td class="tableCell">
+                        <html:submit indexed="true" property="cmd">
+                            <bean:message key="button.delete"/>
+                        </html:submit>
+                    </td>
+
                     <%-- In view mode --%>
                     <nested:equal name="<%=CvEditConstants.XREF_EDIT_FORM%>"
                         property="editState" value="<%=EditBean.VIEW%>">
                         <td class="tableCell">
-                            <nested:text size="15" readonly="true" property="database"/>
+                            <nested:write property="database"/>
                         </td>
                         <td class="tableCell">
-                            <nested:text size="15" readonly="true" property="primaryId"/>
+                            <nested:write property="primaryId"/>
                         </td>
                         <td class="tableCell">
-                            <nested:text size="15" readonly="true" property="secondaryId"/>
+                            <nested:write property="secondaryId"/>
                         </td>
                         <td class="tableCell">
-                            <nested:text size="15" readonly="true" property="releaseNumber"/>
+                            <nested:write property="releaseNumber"/>
                         </td>
                         <td class="tableCell">
-                            <nested:text size="15" readonly="true" property="qualifier"/>
+                            <nested:write property="qualifier"/>
                         </td>
                     </nested:equal>
 
@@ -91,31 +116,6 @@
                             </nested:select>
                         </td>
                     </nested:equal>
-
-                    <%-- Buttons; Edit or Save depending on the bean state;
-                         Delete is visible regardless of the state.
-                     --%>
-                    <td class="tableCell">
-                        <nested:equal name="<%=CvEditConstants.XREF_EDIT_FORM%>"
-                            property="editState" value="<%=EditBean.VIEW%>">
-                            <html:submit indexed="true" property="cmd">
-                                <bean:message key="button.edit"/>
-                            </html:submit>
-                        </nested:equal>
-
-                        <nested:equal name="<%=CvEditConstants.XREF_EDIT_FORM%>"
-                            property="editState" value="<%=EditBean.SAVE%>">
-                            <html:submit indexed="true" property="cmd">
-                                <bean:message key="button.save"/>
-                            </html:submit>
-                        </nested:equal>
-                    </td>
-
-                    <td class="tableCell">
-                        <html:submit indexed="true" property="cmd">
-                            <bean:message key="button.delete"/>
-                        </html:submit>
-                    </td>
                 </tr>
             </nested:iterate>
         </table>
