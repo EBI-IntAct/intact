@@ -35,10 +35,13 @@ This will generate the intermediate file of classified experiments.
 
 Second run: This is achieved via a perl script; type
 
-	perl scripts/psiXmlDownlaod.pl <classification-filename>
+	perl scripts/psiXmlDownload.pl < <classification-filename>
 
 This will generate (in the current directory, which should be intactCore) all the relevant
-PSI XML files.
+PSI XML files. If you wish to specify a directory to place the results instead, you should type:
+ 	
+	perl scripts/psiXmlDownload.pl -filePrefix <dirname> < <classification-filename>
+Note: The directory <dirname> must already exist - it will NOT be created for you currently!
 
 File Validation
 ----------------
