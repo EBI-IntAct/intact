@@ -15,8 +15,6 @@ public class IntactDailyRollingFileAppender extends org.apache.log4j.DailyRollin
     private static String hostname;
     private static String username;
 
-
-
     static {
 
         // try to get the hostname
@@ -26,11 +24,6 @@ public class IntactDailyRollingFileAppender extends org.apache.log4j.DailyRollin
             e.printStackTrace();
             hostname="noHostnameFound";
         }
-
-        // get the current time
-//        Date date = new Date(); // today's date
-//        Format formatter = new SimpleDateFormat("yyyy.MM.dd@HH.mm.ss"); // 2003.03.29@09.45.33
-//        currentTime = formatter.format(date);
 
         // get the username
         Properties props = System.getProperties();
@@ -56,7 +49,7 @@ public class IntactDailyRollingFileAppender extends org.apache.log4j.DailyRollin
 
         // look for the $hostname flag and replace it by the proper value if it exists
         int indexOfFlag = fileName.indexOf(HOSTNAME_FLAG);
-        if (indexOfFlag >= -1) {
+        if (indexOfFlag > -1) {
             fileName = fileName.substring(0, indexOfFlag) +
                        hostname +
                        fileName.substring(indexOfFlag + HOSTNAME_FLAG.length(), fileName.length());
