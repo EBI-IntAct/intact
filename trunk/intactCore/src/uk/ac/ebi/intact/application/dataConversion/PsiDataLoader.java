@@ -73,6 +73,7 @@ public class PsiDataLoader {
                              "[-reuseExistingProtein] " +
                              "[-upToParsing] " +
                              "[-upToChecking] " +
+                             "[-force] " +
                              "[-gui] " +
                              "[-debug] ",
                              options );
@@ -133,6 +134,10 @@ public class PsiDataLoader {
                 .create( "debug" );
         debugOpt.setRequired( false );
 
+        Option forceOpt = OptionBuilder.withDescription( "prevent the application to ask question qbout production server." )
+                .create( "force" );
+        forceOpt.setRequired( false );
+
         Options options = new Options();
 
         options.addOption( helpOpt );
@@ -144,6 +149,7 @@ public class PsiDataLoader {
         options.addOption( upToCheckingOpt );
         options.addOption( debugOpt );
         options.addOption( guiOpt );
+        options.addOption( forceOpt );
 
         // create the parser
         CommandLineParser parser = new BasicParser();
@@ -175,6 +181,7 @@ public class PsiDataLoader {
         final boolean processUpToChecking = line.hasOption( "upToChecking" );
         final boolean debugEnabled = line.hasOption( "debug" );
         final boolean guiEnabled = line.hasOption( "gui" );
+        final boolean forceEnabled = line.hasOption( "force" );
 
         CommandLineOptions myOptions = CommandLineOptions.getInstance();
 
@@ -271,23 +278,25 @@ public class PsiDataLoader {
                         System.out.println( "Database: " + db );
                         System.out.println( "User:     " + helper.getDbUserName() );
 
-                        // THIS IS SPECIFIC CODE THAT AVOIDS TO WRITE ON A PRODUCTION DATABASE BY MISTAKES
-                        if( "d002".equals( db.toLowerCase() ) || "zpro".equals( db.toLowerCase() ) ) {
-                            System.out.println( "You are about to write data in a produciton environment, " +
-                                                "do you really want to proceed:" );
-                            int ch;
-                            System.out.print( "[yes/no]:" );
-                            System.out.flush();
-                            StringBuffer sb = new StringBuffer();
-                            while ( ( ch = System.in.read() ) != 10 ) {
-                                sb.append( (char) ch );
-                            }
+                        if( forceEnabled == false ) {
+                            // THIS IS SPECIFIC CODE THAT AVOIDS TO WRITE ON A PRODUCTION DATABASE BY MISTAKES
+                            if( "d002".equals( db.toLowerCase() ) || "zpro".equals( db.toLowerCase() ) ) {
+                                System.out.println( "You are about to write data in a produciton environment, " +
+                                                    "do you really want to proceed:" );
+                                int ch;
+                                System.out.print( "[yes/no]:" );
+                                System.out.flush();
+                                StringBuffer sb = new StringBuffer();
+                                while ( ( ch = System.in.read() ) != 10 ) {
+                                    sb.append( (char) ch );
+                                }
 
-                            String input = sb.toString();
+                                String input = sb.toString();
 
-                            if( !"yes".equals( input.trim().toLowerCase() ) ) {
-                                System.out.println( "Abort procedure." );
-                                System.exit( 0 );
+                                if( !"yes".equals( input.trim().toLowerCase() ) ) {
+                                    System.out.println( "Abort procedure." );
+                                    System.exit( 0 );
+                                }
                             }
                         }
                     } catch ( LookupException e ) {
