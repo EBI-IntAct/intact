@@ -16,10 +16,6 @@
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 
-<style type="text/css">
-    <%@ include file="/layouts/styles/editor.css" %>
-</style>
-
 <h3>Experiments not yet added to the Interaction</h3>
 
 <c:if test="${not empty intForm.map.expshold}">

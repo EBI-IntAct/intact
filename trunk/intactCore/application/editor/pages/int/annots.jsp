@@ -19,10 +19,6 @@
 <jsp:useBean id="user" scope="session"
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
-<style type="text/css">
-    <%@ include file="/layouts/styles/editor.css" %>
-</style>
-
 <%-- The list of topics --%>
 <c:set var="view" value="${user.view}"/>
 <c:set var="topiclist" value="${view.editTopicMenu}"/>

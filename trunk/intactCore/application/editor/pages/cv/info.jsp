@@ -16,10 +16,6 @@
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
 
-<style type="text/css">
-    <%@ include file="/layouts/styles/editor.css" %>
-</style>
-
 <table width="100%" border="0" cellspacing="1" cellpadding="2">
     <tr class="tableRowHeader">
         <th class="tableCellHeader">

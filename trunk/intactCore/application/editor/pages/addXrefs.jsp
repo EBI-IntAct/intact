@@ -27,10 +27,6 @@
 <c:set var="dblist" value="${view.addDatabaseMenu}"/>
 <c:set var="qlist" value="${menus['QualifierNames']}"/>
 
-<style type="text/css">
-    <%@ include file="/layouts/styles/editor.css" %>
-</style>
-
 <%-- Adds a new xreferece. This will invoke addXref action. --%>
 <table class="table" width="100%" border="0" cellspacing="1" cellpadding="2">
     <tr class="tableRowHeader">

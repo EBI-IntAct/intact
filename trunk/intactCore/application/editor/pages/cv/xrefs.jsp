@@ -19,10 +19,6 @@
 <jsp:useBean id="user" scope="session"
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
-<style type="text/css">
-    <%@ include file="/layouts/styles/editor.css" %>
-</style>
-
 <c:set var="view" value="${user.view}"/>
 <c:set var="dblist" value="${view.editDatabaseMenu}"/>
 <c:set var="menus" value="${view.editXrefMenus}"/>

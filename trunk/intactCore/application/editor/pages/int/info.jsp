@@ -15,10 +15,6 @@
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 
-<style type="text/css">
-    <%@ include file="/layouts/styles/editor.css" %>
-</style>
-
 <%-- The current view --%>
 <c:set var="view" value="${user.view}"/>
 

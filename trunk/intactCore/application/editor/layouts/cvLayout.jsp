@@ -13,6 +13,12 @@
   --%>
 
 <%@ taglib uri="/WEB-INF/tld/struts-tiles.tld" prefix="tiles"%>
+
+<%-- CSS for editor --%>
+<style type="text/css">
+    <%@ include file="/layouts/styles/editor.css" %>
+</style>
+
 <%-- The error page at the top --%>
 <tiles:insert attribute="error"/>
 
