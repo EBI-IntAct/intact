@@ -6,6 +6,7 @@
 
 package uk.ac.ebi.intact.application.mine.business.graph;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -51,9 +52,28 @@ public class MineHelper {
      * Creates a new <tt>MineHelper</tt>
      * 
      * @param user the intacthelper
+     * @throws MineException
      */
-    public MineHelper(IntactUserI user) {
+    public MineHelper(IntactUserI user) throws MineException {
         this.intactUser = user;
+        checkMineTable();
+    }
+
+    private void checkMineTable() throws MineException {
+        Connection con = intactUser.getDBConnection();
+        Statement stm;
+        try {
+            stm = con.createStatement();
+            stm.setFetchSize( 1 );
+            ResultSet set = stm
+                    .executeQuery( "SELECT protein1_ac FROM ia_interactions" );
+            if ( !set.next() ) {
+                throw new MineException();
+            }
+        }
+        catch ( SQLException e ) {
+            throw new MineException();
+        }
     }
 
     /**
