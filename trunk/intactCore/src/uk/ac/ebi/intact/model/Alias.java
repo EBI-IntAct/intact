@@ -65,7 +65,6 @@ public class Alias extends BasicObjectImpl {
      * @see uk.ac.ebi.intact.model.AnnotatedObject
      */
     public Alias ( Institution anOwner, AnnotatedObject annotatedObject, CvAliasType cvAliasType, String name ) {
-        this();
         setOwner(anOwner);
         String ac = annotatedObject.getAc();
         if ( ac == null ){
@@ -83,15 +82,14 @@ public class Alias extends BasicObjectImpl {
     public String getName() {
         return name;
     }
+
     public void setName( String name ) {
 
         if( name != null ) {
             if( name.length() >= MAX_ALIAS_NAME_LEN ) {
                 name = name.substring( 0, MAX_ALIAS_NAME_LEN );
             }
-            name = name.toLowerCase();
         }
-
         this.name = name;
     }
 
