@@ -11,12 +11,9 @@ import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConsta
 import uk.ac.ebi.intact.application.cvedit.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 import uk.ac.ebi.intact.model.Xref;
-import uk.ac.ebi.intact.business.IntactException;
 import org.apache.struts.action.*;
-import org.apache.commons.lang.exception.ExceptionUtils;
 
 import javax.servlet.http.*;
-import javax.servlet.ServletException;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -49,49 +46,44 @@ public class XrefDelAction extends IntactBaseAction {
                                   HttpServletRequest request,
                                   HttpServletResponse response) {
         // The annotation collection.
-        Collection collection = (Collection) super.getSessionObject(request,
-            WebIntactConstants.XREFS);
+        Collection viewbeans = (Collection) super.getSessionObject(request,
+            WebIntactConstants.XREFS_TO_VIEW);
 
-        // The bean for 'ac'.
-        XreferenceBean bean = findByAc(request.getParameter("ac"), collection);
+        // The bean for 'key'.
+        XreferenceBean bean = findByKey(request.getParameter("key"), viewbeans);
 
         // null if the bean wasn't found. this is not expected to happen.
         assert bean != null;
 
-        // Remove it from the collection.
-        collection.remove(bean);
+        // Remove it from the view.
+        viewbeans.remove(bean);
 
-        // There is no need to delete from the persistence system if this x'ref
-        // is in a transaction.
-        if (bean.inTransaction()) {
-            super.log("Deleting an uncommitted xref");
-            return mapping.findForward(WebIntactConstants.FORWARD_SUCCESS);
+        // Collection of xrefs to delete.
+        Collection delxrefs = (Collection) super.getSessionObject(request,
+            WebIntactConstants.XREFS_TO_DELETE);
+
+        // Collections of xrefs to add.
+        Collection addxrefs = (Collection) super.getSessionObject(request,
+            WebIntactConstants.XREFS_TO_ADD);
+
+        // Are we trying to delete a bean that has been just added?
+        if (addxrefs.contains(bean)) {
+            addxrefs.remove(bean);
         }
-        // Not in a transaction; we must delete it from the persistence storage.
-        IntactUserIF user = super.getIntactUser(request);
-        try {
-            super.log("Transaction before xref delete: " + user.isActive());
-            user.delete(bean.getXref());
-            super.log("Transaction after xref delete: " + user.isActive());
-        }
-        catch (IntactException ie) {
-            // Log the stack trace.
-            super.log(ExceptionUtils.getStackTrace(ie));
-            // Clear any previous errors.
-            super.clearErrors();
-            super.addError("error.transaction", ie.getMessage());
-            super.saveErrors(request);
-            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+        else {
+            // No; we should remove it when the transaction is committed.
+            delxrefs.add(bean);
         }
         // The annotation for the selected object.
         return mapping.findForward(WebIntactConstants.FORWARD_SUCCESS);
     }
 
     // Returns a Xreference bean from a given collection for matching Ac.
-    private XreferenceBean findByAc(String ac, Collection collection) {
+    private XreferenceBean findByKey(String keystr, Collection collection) {
+        long key = Long.parseLong(keystr);
         for (Iterator iter = collection.iterator(); iter.hasNext();) {
             XreferenceBean bean = (XreferenceBean) iter.next();
-            if (bean.getAc().equals(ac)) {
+            if (bean.getKey() == key) {
                 return bean;
             }
         }
