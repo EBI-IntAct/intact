@@ -77,9 +77,14 @@ public class EditorMenuFactory {
     public static final String ROLES = "Roles";
 
     /**
-     * Maps: List Name -> List type. Common to all the users and it is immutable.
+     * Maps: Menu Name -> Menu type. Common to all the users and it is immutable.
      */
     private static final Map theirNameToType = new HashMap();
+
+    /**
+     * Maps: Menu Name -> default value.
+     */
+    private static final Map theirNameToDefValue = new HashMap();
 
     /**
      * The prefix for Normalized Dag menu items.
@@ -110,8 +115,8 @@ public class EditorMenuFactory {
 
     // Static initializer.
 
-    // Fill the maps with list names and their associated classes.
     static {
+        // Fill the maps with list names and their associated classes.
         theirNameToType.put(TOPICS, CvTopic.class);
         theirNameToType.put(DATABASES, CvDatabase.class);
         theirNameToType.put(QUALIFIERS, CvXrefQualifier.class);
@@ -124,6 +129,9 @@ public class EditorMenuFactory {
         theirNameToType.put(DAG_PREFIX + INTERACTION_TYPES, CvInteractionType.class);
         theirNameToType.put(EXPERIMENTS, Experiment.class);
         theirNameToType.put(ROLES, CvComponentRole.class);
+
+        // Fills with default values.
+        theirNameToDefValue.put(QUALIFIERS, "identity");
     }
 
     /**
@@ -278,14 +286,22 @@ public class EditorMenuFactory {
         }
         // Guard against the null pointer.
         if ((v == null) || v.isEmpty()) {
-            // Special list when we don't have any names.
+            // Special list when we don't have any menu items.
             list.add(SELECT_LIST_ITEM);
             return list;
         }
-        // -- select list -- for add menus.
         if (mode == 1) {
-            list.add(SELECT_LIST_ITEM);
+            // The default value for add menu.
+            String  defvalue = SELECT_LIST_ITEM;
+            // -- select list -- for add menus only if there is no default value.
+            if (hasDefaultValue(key)) {
+                defvalue = getDefaultValue(key);
+                // Remove the default value to avoid adding it twice.
+                v.remove(defvalue);
+            }
+            list.add(defvalue);
         }
+
         for (Iterator iter = v.iterator(); iter.hasNext();) {
             list.add(iter.next());
         }
@@ -317,5 +333,25 @@ public class EditorMenuFactory {
             }
         }
         return newList;
+    }
+
+    /**
+     * True if there is a default value associated with <code>name</code>.
+     * @param name the menu name.
+     * @return true if <code>name</code> has a default value; false is returned
+     * otherwise.
+     */
+    private boolean hasDefaultValue(String name) {
+        return theirNameToDefValue.containsKey(name);
+    }
+
+    /**
+     * Returns the default value for <code>name</code>
+     * @param name the menu name.
+     * @return the default value for <code>name</code>; null if there is no
+     * default value for <code>name</code>.
+     */
+    private String getDefaultValue(String name) {
+        return (String) theirNameToDefValue.get(name);
     }
 }
