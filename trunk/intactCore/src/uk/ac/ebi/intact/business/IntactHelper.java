@@ -1670,6 +1670,71 @@ public class IntactHelper implements SearchI, Externalizable {
         }
     }
 
+    private CvTopic negativeTopic = null;
+    private boolean negativeAlreadySearched = false;
+    private static final String NEGATIVE = "negative";
+
+    /**
+     * Answers the question: is that AnnotatedObject (Interaction, Experiment) annotated as negative ?
+     *
+     * @param annotatedObject the object we want to introspect
+     * @return true if the object is annotated with the 'negative' CvTopic, otherwise false.
+     */
+    private boolean hasNegativeAnnotation( AnnotatedObject annotatedObject ) {
+
+        // get the necessary vocabulary (CvTopic: negative)
+        if( !negativeAlreadySearched ) {
+            try {
+                negativeTopic = (CvTopic) getObjectByLabel( CvTopic.class, NEGATIVE );
+            } catch ( IntactException e ) {
+                e.printStackTrace();
+            }
+        }
+
+        if( null == negativeTopic ) {
+            return false;
+        }
+
+        boolean isNegative = false;
+
+        Collection annotations = annotatedObject.getAnnotations();
+        for ( Iterator iterator = annotations.iterator(); iterator.hasNext() && false == isNegative; ) {
+            Annotation annotation = (Annotation) iterator.next();
+
+            if( negativeTopic.equals( annotation.getCvTopic() ) ) {
+                isNegative = true;
+            }
+        }
+
+        return isNegative;
+    }
+
+    /**
+     * Answers the question: is that Interaction negative ?
+     * <br>
+     * That takes into account a negative annotation at the Interaction level as well as at
+     * the experiment level
+     *
+     * @param interaction the interaction we want to introspect
+     * @return true if the interaction is negative, otherwise false.
+     */
+    private boolean isNegative( Interaction interaction ) {
+
+        boolean isNegative = hasNegativeAnnotation( interaction );
+
+        if( !isNegative ) {
+            // check all its experiments as well
+            Collection experiments = interaction.getExperiments();
+            // stops if all experiment checked or one is found to be annotated as negative.
+            for ( Iterator iterator = experiments.iterator(); iterator.hasNext() && !isNegative; ) {
+                Experiment experiment = (Experiment) iterator.next();
+                isNegative = hasNegativeAnnotation( experiment );
+            }
+        }
+
+        return isNegative;
+    }
+
     /**
      * Returns a subgraph centered on startNode.
      * The subgraph will contain all nodes which are up to graphDepth interactions away from startNode.
@@ -1695,81 +1760,96 @@ public class IntactHelper implements SearchI, Externalizable {
      *
      * @exception IntactException - thrown if problems are encountered
      */
-    public Graph subGraph(Interactor startNode,
-                          int graphDepth,
-                          Collection experiments,
-                          int complexExpansion,
-                          Graph graph) throws IntactException {
+    public Graph subGraph( Interactor startNode,
+                           int graphDepth,
+                           Collection experiments,
+                           int complexExpansion,
+                           Graph graph ) throws IntactException {
 
-        //System.out.println("subGraph called: " + startNode.getAc() + " Depth: " + graphDepth);
+//        System.out.println("subGraph called: " + startNode.getAc() + " Shortlabel: "+ startNode.getShortLabel() +" Depth: " + graphDepth);
 
-        if (startNode instanceof Interaction) {
-            graph = subGraphPartial((Interaction) startNode, graphDepth, experiments, complexExpansion, graph);
-        } else if (startNode instanceof Interactor) {
-            graph = subGraphPartial(startNode, graphDepth, experiments, complexExpansion, graph);
+        if( startNode instanceof Interaction ) {
+
+            if( ! isNegative( (Interaction) startNode ) ) {
+                graph = subGraphPartial( (Interaction) startNode, graphDepth, experiments, complexExpansion, graph );
+            }
+//            else {
+//                System.out.println( startNode.getShortLabel() + " is negative. SKIP IT." );
+//            }
+        } else if( startNode instanceof Interactor ) {
+            graph = subGraphPartial( startNode, graphDepth, experiments, complexExpansion, graph );
         }
-        return graph;
 
+        return graph;
     }
 
-    private Graph subGraphPartial(Interactor startNode,
-                                  int graphDepth,
-                                  Collection experiments,
-                                  int complexExpansion,
-                                  Graph partialGraph) throws IntactException {
+    private Graph subGraphPartial( Interactor startNode,
+                                   int graphDepth,
+                                   Collection experiments,
+                                   int complexExpansion,
+                                   Graph partialGraph ) throws IntactException {
 
         /* This should not occur, but is ok. */
-        if (null == startNode) {
+        if( null == startNode ) {
             return partialGraph;
         }
 
-        //System.out.println("subGraphPartial (Interactor) called: " + startNode.getAc() + " Depth: " + graphDepth);
+//        System.out.println("subGraphPartial (Interactor) called: " + startNode.getAc() + " Depth: " + graphDepth);
 
         /* If the Interaction has already been visited, return,
            else mark it.
         */
-        if (partialGraph.isVisited(startNode)) {
+        if( partialGraph.isVisited( startNode ) ) {
             return partialGraph;
         } else {
-            partialGraph.addVisited(startNode);
+            partialGraph.addVisited( startNode );
         }
 
         /* End of recursion, return */
-        if (0 == graphDepth) {
+        if( 0 == graphDepth ) {
             return partialGraph;
         }
 
         Iterator i = startNode.getActiveInstances().iterator();
 
         Component current = null;
-        while (i.hasNext()) {
+        while ( i.hasNext() ) {
             current = (Component) i.next();
 
-            if (null == current) {
+            if( null == current ) {
                 continue;
             }
 
-            /* Explore the next Interaction */
-            partialGraph = subGraphPartial(current.getInteraction(),
-                    graphDepth,
-                    experiments,
-                    complexExpansion,
-                    partialGraph);
+            Interaction interaction = current.getInteraction();
+
+            // Don't take into account the negative interaction.
+            if( !isNegative( interaction ) ) {
+
+                /* Explore the next Interaction if not negative */
+                partialGraph = subGraphPartial( current.getInteraction(),
+                                                graphDepth,
+                                                experiments,
+                                                complexExpansion,
+                                                partialGraph );
+            }
+//            else {
+//                System.out.println( interaction.getShortLabel() + " is negative. SKIP IT." );
+//            }
         }
 
         return partialGraph;
     }
 
-    private Graph subGraphPartial(Interaction current,
-                                  int graphDepth,
-                                  Collection experiments,
-                                  int complexExpansion,
-                                  Graph partialGraph) throws IntactException {
+    private Graph subGraphPartial( Interaction current,
+                                   int graphDepth,
+                                   Collection experiments,
+                                   int complexExpansion,
+                                   Graph partialGraph ) throws IntactException {
 
 
         /* This should not occur, but is ok.
         */
-        if (null == current) {
+        if( null == current ) {
             return partialGraph;
         }
 
@@ -1778,24 +1858,24 @@ public class IntactHelper implements SearchI, Externalizable {
         /* If the Interaction has already been visited, return,
            else mark it.
         */
-        if (partialGraph.isVisited(current)) {
+        if( partialGraph.isVisited( current ) ) {
             return partialGraph;
         } else {
-            partialGraph.addVisited(current);
+            partialGraph.addVisited( current );
         }
 
         /* Create list of baits - the size is set later according to what we have to store */
         ArrayList baits = null;
 
-        switch (complexExpansion) {
+        switch ( complexExpansion ) {
             case Constants.EXPANSION_ALL:
                 {
-                    baits = new ArrayList(current.getComponents().size());
+                    baits = new ArrayList( current.getComponents().size() );
 
                     /* all components are considered as baits */
                     Iterator i = current.getComponents().iterator();
-                    while (i.hasNext()) {
-                        baits.add(i.next());
+                    while ( i.hasNext() ) {
+                        baits.add( i.next() );
                     }
                 }
                 break;
@@ -1805,62 +1885,62 @@ public class IntactHelper implements SearchI, Externalizable {
                      * If there is no bait, select one arbitrarily. Choose the first.
                      */
                     Component bait = current.getBait();
-                    if (null == bait) {
-                        baits = new ArrayList(current.getComponents().size());
+                    if( null == bait ) {
+                        baits = new ArrayList( current.getComponents().size() );
                         Iterator i = current.getComponents().iterator();
-                        if (i.hasNext()) {
-                            baits.add(i.next());
+                        if( i.hasNext() ) {
+                            baits.add( i.next() );
                         }
                     } else {
-                        baits = new ArrayList(1);
-                        baits.add(bait);
+                        baits = new ArrayList( 1 );
+                        baits.add( bait );
                     }
                 }
         }
 
         /* Create list of preys */
-        ArrayList preys = new ArrayList(current.getComponents().size());
+        ArrayList preys = new ArrayList( current.getComponents().size() );
         Iterator i = current.getComponents().iterator();
-        while (i.hasNext()) {
-            preys.add(i.next());
+        while ( i.hasNext() ) {
+            preys.add( i.next() );
         }
 
         /* Generate all bait-prey pairs */
         int countBaits = baits.size();
         int countPreys = preys.size();
 
-        for (int j = 0; j < countBaits; j++) {
+        for ( int j = 0; j < countBaits; j++ ) {
             //System.out.println("Bait: " + ((Component) baits.get(j)).getInteractor().getAc());
-            for (int k = j; k < countPreys; k++) {
+            for ( int k = j; k < countPreys; k++ ) {
                 //System.out.println("Prey: " + ((Component) preys.get(k)).getInteractor().getAc());
                 Edge edge = new Edge();
-                Component baitComponent = (Component) baits.get(j);
+                Component baitComponent = (Component) baits.get( j );
                 Interactor baitInteractor = baitComponent.getInteractor();
-                Component preyComponent = (Component) preys.get(k);
+                Component preyComponent = (Component) preys.get( k );
                 Interactor preyInteractor = preyComponent.getInteractor();
 
-                if (baitInteractor != preyInteractor) {
-                    Node node1 = partialGraph.addNode(baitInteractor);
-                    Node node2 = partialGraph.addNode(preyInteractor);
+                if( baitInteractor != preyInteractor ) {
+                    Node node1 = partialGraph.addNode( baitInteractor );
+                    Node node2 = partialGraph.addNode( preyInteractor );
 
-                    edge.setNode1(node1);
-                    edge.setComponent1(baitComponent);
-                    edge.setNode2(node2);
-                    edge.setComponent2(preyComponent);
-                    partialGraph.addEdge(edge);
-                    //System.out.println("Adding: " + node1.getAc() + " -> " + node2.getAc());
+                    edge.setNode1( node1 );
+                    edge.setComponent1( baitComponent );
+                    edge.setNode2( node2 );
+                    edge.setComponent2( preyComponent );
+                    partialGraph.addEdge( edge );
+//                    System.out.println("Adding: " + node1.getAc() + " -> " + node2.getAc());
                 }
             }
         }
 
         /* recursively explore all Interactors linked to current Interaction */
-        for (Iterator iterator = current.getComponents().iterator(); iterator.hasNext();) {
+        for ( Iterator iterator = current.getComponents().iterator(); iterator.hasNext(); ) {
             Component component = (Component) iterator.next();
-            partialGraph = subGraphPartial(component.getInteractor(),
-                    graphDepth - 1,
-                    experiments,
-                    complexExpansion,
-                    partialGraph);
+            partialGraph = subGraphPartial( component.getInteractor(),
+                                            graphDepth - 1,
+                                            experiments,
+                                            complexExpansion,
+                                            partialGraph );
         }
 
         return partialGraph;
