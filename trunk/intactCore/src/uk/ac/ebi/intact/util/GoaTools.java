@@ -80,11 +80,18 @@ public class GoaTools {
         }
     }
 
+
+
+    /**
+     *
+     */
     private class GoaCollection {
 
         private URL mySourceURL;
 
         private BufferedReader goaBufferedReader;
+
+        private GoaIterator currentIterator;
 
         public GoaCollection( String sourceUrl ) throws MalformedURLException {
 
@@ -107,7 +114,8 @@ public class GoaTools {
                 InputStreamReader isr = new InputStreamReader( in );
                 goaBufferedReader = new BufferedReader( isr );
 
-                Iterator goaIterator = new GoaIterator( goaBufferedReader );
+                GoaIterator goaIterator = new GoaIterator( goaBufferedReader );
+                currentIterator = goaIterator;
                 return goaIterator;
             }
             catch (IOException e) {
@@ -115,6 +123,10 @@ public class GoaTools {
             }
 
             return null;
+        }
+
+        public long getLineProcessedCount() {
+            return currentIterator.getLineProcessedCount();
         }
     } // GoaCollection
 
@@ -124,11 +136,14 @@ public class GoaTools {
 
         private BufferedReader goaBufferedReader;
         private String currentLine;
+        private long goaLineCount = 0;
+
 
         public GoaIterator ( BufferedReader goaBufferedReader ) {
             this.goaBufferedReader = goaBufferedReader;
             try {
                 currentLine = goaBufferedReader.readLine();
+                goaLineCount++;
             } catch (IOException ioe) {
             }
         }
@@ -162,6 +177,7 @@ public class GoaTools {
             // Read the next item
             try {
                 currentLine = goaBufferedReader.readLine();
+                goaLineCount++;
             } catch (IOException ioe) {
             }
 
@@ -172,6 +188,11 @@ public class GoaTools {
             // do nothing ... can't remove element from a readonly stream.
             // TODO: pass the current item ?
         }
+
+        public long getLineProcessedCount() {
+            return goaLineCount;
+        }
+
     } // GoaIterator
 
 
@@ -181,11 +202,14 @@ public class GoaTools {
     // Instance variables
     ////////////////////////
 
-    GoaCollection goaBrowser;
+    private GoaCollection goaBrowser;
 
-    IntactHelper helper;
+    private IntactHelper helper;
 
-    GoServerProxy goServerProxy;
+    private GoServerProxy goServerProxy;
+
+    private long newAnnotationCount = 0;
+
 
 
     //////////////////////////
@@ -247,6 +271,7 @@ public class GoaTools {
         if (xref.getParentAc() == current.getAc()) {
             try {
                 helper.create(xref);
+                newAnnotationCount++;
             } catch (Exception e_xref) {
                 System.err.println ( "Could not create the Xref: " + xref.getPrimaryId() +
                                      " for the AnnotatedObject: " + current.getShortLabel() );
@@ -282,13 +307,13 @@ public class GoaTools {
 
             addNewXref( protein, xref );
             System.out.println ( "Update protein " + protein.getShortLabel() + " with Xref: " + goId );
-        }   else {
-            System.out.println ( "No update, "+ goaItem.getGoId() +
-                                 " is already existing for " + protein.getShortLabel());
         }
     } // updateGoXref
 
-
+    public void displayStatistics() {
+        System.out.println ( "#GOA line processed: " + getGoaBrowser().getLineProcessedCount());
+        System.out.println ( "#GO added: " + newAnnotationCount );
+    }
 
 
 
@@ -326,8 +351,12 @@ public class GoaTools {
         GoaCollection goaCollection = goaTools.getGoaBrowser();
         Collection proteins;
         Protein protein;
+        long count = 0;
         for ( Iterator goaIterator = goaCollection.iterator (); goaIterator.hasNext () ; ) {
-            GoaItem goaItem = (GoaItem) goaIterator.next ();
+            GoaItem goaItem = (GoaItem) goaIterator.next();
+
+            count++;
+            if ((count % 500) == 0) goaTools.displayStatistics();
 
             proteins = helper.getObjectsByXref( Protein.class, goaItem.getAc() );
             if (proteins.size() != 0) {
@@ -351,7 +380,7 @@ public class GoaTools {
                 }
             }
 
-            System.out.print ( "." );
+            System.out.print ( "." ); // displayed only if the Goa line hasn't been usedfull
         }
     } // main
 
