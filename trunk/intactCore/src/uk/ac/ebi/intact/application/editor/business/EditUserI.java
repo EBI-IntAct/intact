@@ -119,19 +119,6 @@ public interface EditUserI extends IntactUserI, Serializable {
      */
     public void setView(Object obj);
 
-    /**
-     * Updates the current Annotated object the user is about to edit.
-     * @param annot the <code>AnnotatedObject</code> to set as the current
-     * object the user is working presently.
-     */
-//    public void setView(AnnotatedObject annot);
-
-    /**
-     * Set this class as the editor is editing at the moment.
-     * @param clazz the class to set as the editing class.
-     */
-//    public void setView(Class clazz);
-
     // Search methods
 
     /**
@@ -177,6 +164,12 @@ public interface EditUserI extends IntactUserI, Serializable {
      * @return collection of <code>Protein</code> instances for <code>pid</code>.
      */
     public Collection getSPTRProteins(String pid);
+
+    /**
+     * Returns the last protein parse exception.
+     * @return the last protein parse exception`.
+     */
+    public Exception getProteinParseException();
 
     /**
      * This method provides a means of searching intact objects, within the constraints
