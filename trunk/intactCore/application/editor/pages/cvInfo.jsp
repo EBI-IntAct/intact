@@ -49,17 +49,18 @@
     function show(topic, label) {
         var link = "http://localhost:8080/intact/editor/do/display?topic="
             + topic + "&shortLabel=" + label;
-        //window.alert(link);
         makeNewWindow(link);
     }
 </script>
 
-<html:form action="/cv/info">
+<html:form action="/cv/info" focus="shortLabel" onsubmit="return validateCvInfoForm(this)">
     <table width="80%" border="0" cellspacing="1" cellpadding="2">
         <tr class="tableRowHeader">
             <th class="tableCellHeader">Action</th>
             <th class="tableCellHeader">AC</th>
-            <th class="tableCellHeader">Short Label</th>
+            <th class="tableCellHeader">
+                    <bean:message key="cvinfo.label.shortlabel"/>
+            </th>
             <th class="tableCellHeader">Full Name</th>
         </tr>
         <tr class="tableRowEven">
@@ -74,30 +75,26 @@
             <td class="tableCell">
                 <html:text property="shortLabel"  size="10" maxlength="16"
                     name="<%=formName%>"/>
-<%--                <html:errors property="shortLabel"/>--%>
             </td>
             <td class="tableCell">
                 <html:text property="fullName"  size="80" maxlength="250"
                     name="<%=formName%>"/>
-<%--                <html:errors property="fullName"/>--%>
             </td>
         </tr>
 
-        <%-- Prints all the error messages relevant to this page only. --%>
+        <%-- Filter error messages relevant to this page only. --%>
         <logic:messagesPresent property="cvinfo">
             <tr class="tableRowOdd">
                 <td class="tableErrorCell" colspan="4">
-                    <%-- Filter out other error messages. --%>
                     <html:errors/>
                 </td>
             </tr>
         </logic:messagesPresent>
 
-        <%-- Prints verbose error messages relevant to label. --%>
+        <%-- Filter error messages relevant to the short label. --%>
         <logic:messagesPresent property="cvinfo.label">
             <tr class="tableRowOdd">
                 <td class="tableErrorCell" colspan="4">
-                    <%-- Filter out other error messages. --%>
                     <html:errors/>
                 </td>
             </tr>
@@ -115,3 +112,4 @@
 
     </table>
 </html:form>
+<html:javascript formName="cvInfoForm"/>
