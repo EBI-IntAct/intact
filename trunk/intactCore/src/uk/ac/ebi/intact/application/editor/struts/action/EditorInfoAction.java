@@ -11,7 +11,6 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.persistence.SearchException;
-import uk.ac.ebi.intact.business.DuplicateLabelException;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import org.apache.struts.action.*;
 
@@ -59,36 +58,13 @@ public class EditorInfoAction extends AbstractEditorAction {
         // Handler to the current user.
         EditUserI user = super.getIntactUser(request);
 
-        // The object we are editing at the moment.
-        AnnotatedObject annobj = user.getView().getAnnotatedObject();
-        Class clazz = annobj.getClass();
-
-        // Holds the result from the search.
-        Collection result = null;
-
-        try {
-            result = user.search(clazz.getName(), "shortLabel", formlabel);
-        }
-        catch (SearchException se) {
-            // Can't query the database.
-            LOGGER.info(se);
-            ActionErrors errors = new ActionErrors();
-            errors.add(AbstractEditorAction.EDITOR_ERROR,
-                    new ActionError("error.search", se.getNestedMessage()));
-            saveErrors(request, errors);
-            return mapping.findForward(EditorConstants.FORWARD_FAILURE);
-        }
-        // result is not empty if we have this label on the database.
-        if (!result.isEmpty()) {
-            ActionErrors errors = new ActionErrors();
-            errors.add("cvinfo.label",
-                    new ActionError("error.duplicate", annobj.getAc()));
-            saveErrors(request, errors);
-            return new ActionForward(mapping.getInput());
+        // Validate the short label.
+        if (!validateShortLabel(user, formlabel, request)) {
+            // Display the errors in the input page.
+            return mapping.findForward(EditorConstants.FORWARD_INPUT);
         }
         // Holds the unique short label.
         String newlabel = null;
-        LOGGER.info("Got this far");
         try {
             newlabel = user.getUniqueShortLabel(formlabel);
         }
@@ -106,5 +82,56 @@ public class EditorInfoAction extends AbstractEditorAction {
         viewbean.setFullName((String) theForm.get("fullName"));
 
         return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
+    }
+
+    /**
+     * Validates the short label.
+     * @param user the user to search the database.
+     * @param label the label to validate.
+     * @param request the Http request to save errors
+     * @return true if <code>label</code> doesn't exist in the database.
+     */
+    private boolean validateShortLabel(EditUserI user, String label,
+                                       HttpServletRequest request) {
+        // The object we are editing at the moment.
+        AnnotatedObject annobj = user.getView().getAnnotatedObject();
+        Class clazz = annobj.getClass();
+
+        // Holds the result from the search.
+        Collection results = null;
+
+        try {
+            results = user.search(clazz.getName(), "shortLabel", label);
+        }
+        catch (SearchException se) {
+            // Can't query the database.
+            LOGGER.info(se);
+            ActionErrors errors = new ActionErrors();
+            errors.add("cvinfo", new ActionError("error.search",
+                    "Unable to search the database to check for unique tax ids"));
+            saveErrors(request, errors);
+            return false;
+        }
+        if (results.isEmpty()) {
+            // Don't have this short label on the database.
+            return true;
+        }
+        // If we found a single record then it must be the current record.
+        if (results.size() == 1) {
+            // Found an object with similar short label; is it as same as the
+            // current record?
+            AbstractEditViewBean view = user.getView();
+            String currentAc = view.getAnnotatedObject().getAc();
+            String resultAc = ((AnnotatedObject) results.iterator().next()).getAc();
+            if (currentAc.equals(resultAc)) {
+                // We have retrieved the same record from the DB.
+                return true;
+            }
+        }
+        // Found more than one entry with the same short label.
+        ActionErrors errors = new ActionErrors();
+        errors.add("cvinfo.label", new ActionError("error.cvinfo.label", label));
+        saveErrors(request, errors);
+        return false;
     }
 }
