@@ -16,6 +16,15 @@
 <%-- The plugin for editor specific info. --%>
 <tiles:insert attribute="interaction-info"/>
 
+<%-- The experiments --%>
+<tiles:insert attribute="experiments"/>
+
+<%-- The experiments (on hold)--%>
+<tiles:insert attribute="experiments-hold"/>
+
+<%-- The experiments (search) --%>
+<tiles:insert attribute="experiments-search"/>
+
 <%-- The proteins --%>
 <tiles:insert attribute="proteins"/>
 
