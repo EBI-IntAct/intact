@@ -27,6 +27,10 @@
 <h3>Crossreferences</h3>
 
 <c:if test="${not empty expForm.xrefs}">
+
+    <%-- The anchor name for this page --%>
+    <a name="xref.edit"/>
+
     <table width="100%" border="0" cellspacing="1" cellpadding="2">
         <tr class="tableRowHeader">
             <th class="tableCellHeader" width="2%"></th>

@@ -126,17 +126,25 @@ public class EditorActionServlet extends ActionServlet {
         // Adding annotation.
         map.put("error.annotation.topic", "annotation");
         map.put(rb.getString("annotations.button.add"), "annotation");
+        // Editing annotation.
+        map.put(rb.getString("annotations.button.edit"), "annot.edit");
+        map.put(rb.getString("annotations.button.save"), "annot.edit");
+        map.put(rb.getString("annotations.button.delete"), "annot.edit");
 
         // Adding Xrefs.
         map.put("error.xref.database", "xref");
         map.put("error.xref.pid", "xref");
         map.put(rb.getString("xrefs.button.add"), "xref");
+        // Editing xref
+        map.put(rb.getString("xrefs.button.edit"), "xref.edit");
+        map.put(rb.getString("xrefs.button.save"), "xref.edit");
+        map.put(rb.getString("xrefs.button.delete"), "xref.edit");
 
         // Experiment page anchors
         map.put("error.exp.biosrc", "info");
         map.put("error.exp.inter", "info");
         map.put("error.exp.ident", "info");
-        // Anchors related searchin an Interaction from an experiment.
+        // Anchors related search in an Interaction from an experiment.
         map.put("error.exp.int.search.input", "exp.int.search");
         map.put("error.exp.int.search.empty", "exp.int.search");
         map.put("error.exp.int.search.many", "exp.int.search");
