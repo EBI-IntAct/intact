@@ -35,7 +35,7 @@
     <!-- XSL stylesheet location (relative to the context root path) -->
     <context-param>
         <param-name>xslFile</param-name>
-        <param-value>intact-full.xsl</param-value>
+        <param-value>/intact-full.xsl</param-value>
     </context-param>
 
     <!--  Class name of the data source object to be used    -->
