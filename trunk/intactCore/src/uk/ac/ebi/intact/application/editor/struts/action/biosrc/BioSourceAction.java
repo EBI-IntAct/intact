@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
+ Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.application.editor.struts.action.SubmitFormAction;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceViewBean;
+import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.model.Institution;
@@ -22,6 +23,7 @@ import uk.ac.ebi.intact.util.NewtServerProxy;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -81,12 +83,16 @@ public class BioSourceAction extends SubmitFormAction {
         }
         catch (NumberFormatException nfe) {
             errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.taxid.mask", taxid));
+            errors.add("bs.taxid", new ActionError("error.taxid.mask", taxid));
             saveErrors(request, errors);
             // Non integer value for taxid. Display the error in the input page.
             return mapping.getInputForward();
         }
+        // Any existing tax ids?
+        if (taxIdExists(user, taxid, request)) {
+			return mapping.getInputForward();
+        }
+        
         // This shouldn't cause a class cast exception as we had
         // already created the correct editor view bean.
         BioSourceViewBean bioview = (BioSourceViewBean) user.getView();
@@ -116,8 +122,7 @@ public class BioSourceAction extends SubmitFormAction {
         // Validate the scientific name.
         if (newtName.length() == 0) {
             errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.newt.name", taxid));
+            errors.add("bs.taxid", new ActionError("error.newt.name", taxid));
             // Display the error and continue on.
             saveErrors(request, errors);
         }
@@ -158,14 +163,13 @@ public class BioSourceAction extends SubmitFormAction {
         catch (IOException ioe) {
             // Error in communcating with the server.
             errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
+            errors.add("bs.taxid",
                     new ActionError("error.newt.connection", ioe.getMessage()));
             saveErrors(request, errors);
         }
         catch (NewtServerProxy.TaxIdNotFoundException ex) {
             errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.newt.search", taxid));
+            errors.add("bs.taxid", new ActionError("error.newt.search", taxid));
             saveErrors(request, errors);
         }
         return newtResponse;
@@ -260,4 +264,82 @@ public class BioSourceAction extends SubmitFormAction {
         }
         return firstThreeChars + firstTwoChars;
     }
+
+	/**
+	 * True if there is a tax id other than the current one exists of the
+	 * persistent system. 
+	 * @param user the handler to user to search the database.
+	 * @param taxid the tax id to search in the database for.
+	 * @param request the HTTP request to save errors
+	 * @return <code>false</code> if the search fails or a BioSource
+	 * instance found  with the same <code>taxid</code>.
+	 * @exception SearchException for errors in acccessing the database.
+	 */
+	private boolean taxIdExists(EditUserI user, String taxid,
+		HttpServletRequest request) throws SearchException {
+		// Holds the results from the search.
+		Collection results = user.search1(BioSource.class.getName(), 
+			"taxId", taxid);
+		if (results.isEmpty()) {
+			// Don't have this tax id on the database.
+			return false;
+		}
+		// Found a BioSource; is it as same as the current record?
+		String currentAc = user.getView().getAc();
+
+		// If we found a single record then it must be the current record.
+		if (results.size() == 1) {
+			// Check for null here as it could be null for a new biosource.
+			if (currentAc != null) {
+				String resultAc = ((BioSource) results.iterator().next()).getAc();
+				if (currentAc.equals(resultAc)) {
+					// We have retrieved the same record from the DB.
+					return false;
+				}
+			}
+		}
+		// Found a tax id which belongs to another biosource.
+		ActionMessages msgs = new ActionMessages();
+		String topic = user.getSelectedTopic();
+		String link = getBioSourcesLink(results, currentAc, topic);
+		msgs.add("bs.taxid", new ActionMessage("error.newt.taxid", taxid, link));
+		saveMessages(request, msgs);
+		return true;
+	}
+	
+	/**
+	 * Returns a list of biosource links derived from given collection.
+	 * @param results a collection of BioSOurce objects.
+	 * @param ac the AC to filter out. The biosource with this AC is not
+	 * included in the list.
+	 * @param topic the topic to incliude in the search link.
+	 * @return a link to access various biosources from the search application.
+	 */
+	private String getBioSourcesLink(Collection results, String ac, String topic) {
+		// The buffer to construct existing labels.
+		StringBuffer sb = new StringBuffer();
+		
+		// Flag to indicate processing of the first item.
+		boolean first = true;
+		
+		// Search the database.
+		for (Iterator iter = results.iterator(); iter.hasNext();) {
+			BioSource bs = (BioSource) iter.next();
+			if (bs.getAc().equals(ac)) {
+				// Filter out the current ac.
+				continue;
+			}
+			String label = bs.getShortLabel();
+			if (first) {
+				// Avoid prefixing with "," for the first item.
+				first = false;
+			}
+			else {
+				sb.append(", ");
+			}
+			sb.append("<a href=\"" + "javascript:show('" + topic + "', '"
+					+ label + "')\"" + ">" + label + "</a>");
+		}
+		return sb.toString();
+	}
 }
