@@ -74,9 +74,9 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
 
         // Pass config details to data source - don't need fast keys as only
         // accessed once
-        Map fileMap = new HashMap();
-        fileMap.put(Constants.MAPPING_FILE_KEY, mapping);
-        ds.setConfig(fileMap);
+//        Map fileMap = new HashMap();
+//        fileMap.put(Constants.MAPPING_FILE_KEY, mapping);
+//        ds.setConfig(fileMap);
 
         // build a helper and XmlBuilder for use throughout a session
         this.helper = new IntactHelper(ds);
