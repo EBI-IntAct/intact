@@ -17,19 +17,6 @@
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 
-<script language="JavaScript" type="text/javascript">
-
-    // Validate the short label.
-    function validate() {
-        var re = /\W+/;
-        if (re.test(document.forms[0].shortLabel.value)) {
-            window.alert("Only letters and/or numbers are allowed for a new short label.");
-            return false;
-        }
-    }
-
-</script>
-
 <html:form action="/sidebar" focus="AC">
     <table>
         <tr>
@@ -44,15 +31,14 @@
             <td>
                 <table>
                     <tr>
-                        <td><html:text property="searchString" size="15"/></td>
                         <td>
                             <html:submit tabindex="1" property="dispatch">
                                 <bean:message key="button.search"/>
                             </html:submit>
                         </td>
+                        <td><html:text property="searchString" size="12"/></td>
                     </tr>
                     <tr>
-                        <td><html:text property="shortLabel" size="15"/></td>
                         <td>
                             <html:submit property="dispatch" onclick="return validate()">
                                 <bean:message key="button.create"/>
