@@ -6,14 +6,13 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view.feature.test;
 
-import junit.framework.TestCase;
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FuzzyTypeConverter;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.RangeBean;
 import uk.ac.ebi.intact.model.CvFuzzyType;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -70,8 +69,8 @@ public class FuzzyTypeConverterTest extends TestCase {
         // The pattern for matching the range.
         Pattern pattern = RangeBean.testGetRangePattern();
 
-        assertEquals(ftc.getFuzzyShortLabel(pattern.matcher("<")), CvFuzzyType.LESS_THAN);
-        assertEquals(ftc.getFuzzyShortLabel(pattern.matcher(">")), CvFuzzyType.GREATER_THAN);
+        assertEquals(ftc.getFuzzyShortLabel(pattern.matcher("<1")), CvFuzzyType.LESS_THAN);
+        assertEquals(ftc.getFuzzyShortLabel(pattern.matcher(">1")), CvFuzzyType.GREATER_THAN);
         assertEquals(ftc.getFuzzyShortLabel(pattern.matcher("?")), CvFuzzyType.UNDETERMINED);
         assertEquals(ftc.getFuzzyShortLabel(pattern.matcher("c")), CvFuzzyType.C_TERMINAL);
         assertEquals(ftc.getFuzzyShortLabel(pattern.matcher("n")), CvFuzzyType.N_TERMINAL);
@@ -81,7 +80,12 @@ public class FuzzyTypeConverterTest extends TestCase {
         // Range
         assertEquals(ftc.getFuzzyShortLabel(pattern.matcher("1..2")), CvFuzzyType.RANGE);
 
-        // Two mixed types (less than and range); range overtakes.
-        assertEquals(ftc.getFuzzyShortLabel(pattern.matcher("<2..3")), CvFuzzyType.RANGE);
+        // Two mixed types. error
+        try {
+            ftc.getFuzzyShortLabel(pattern.matcher("<2..3"));
+        }
+        catch (IllegalArgumentException iae) {
+            assertTrue(true);
+        }
     }
 }
