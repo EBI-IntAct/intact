@@ -18,6 +18,8 @@
     <property name="root.dist.dir" value="${intact.root}/dist"/>
     <property name="root.jar.file" value="${root.dist.dir}/intact-core.jar"/>
 
+    <!-- Intact application location. -->
+    <property name="intact.app.dir" value=".."/>
 
     <property name="dist.dir" value="dist"/>
     <property name="war.file" value="search.war"/>
@@ -110,7 +112,7 @@
     <!-- =================================================================== -->
 
     <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
-    <target name="compile" depends="make-jar">
+    <target name="compile">
 
         <!-- Create the dest dir if it doesn't exist. -->
         <mkdir dir="${dest.dir}" />
@@ -129,7 +131,7 @@
 
     <!-- Builds a war file. -->
 
-    <target name="war" depends="compile" description="Builds a war file">
+    <target name="war" depends="compile, make-jar" description="Builds a war file">
         <!-- Create the distribution dir if it doesn't exist. -->
         <mkdir dir="${dist.dir}" />
 
@@ -155,13 +157,13 @@
             <!-- Inlcude the intact core -->
             <lib dir="${root.dist.dir}"/>
 
+            <!-- Include common jar files for struts. -->
+            <lib dir="${intact.app.dir}/lib" />
+
 			<!-- Include common jar files from intact core. -->
 			<lib dir="${root.lib.dir}">
 				<include name="jakarta-ojb-0.9.7.jar"/>
-				<include name="struts.jar"/>
 				<include name="log4j-1.2.5.jar"/>
-				<include name="commons-beanutils.jar"/>
-				<include name="commons-collections-2.0.jar"/>
 				<include name="postgresql.jar"/>
 			</lib>
 
