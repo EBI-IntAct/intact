@@ -35,8 +35,9 @@
         <!-- The sidebar form -->
         <form-bean name="sidebarForm"
                    type="org.apache.struts.action.DynaActionForm">
-            <form-property name="searchString" initial="*" type="java.lang.String"/>
-            <form-property name="searchClass" type="java.lang.String"/>
+            <form-property name="searchString"  type="java.lang.String" initial="*" />
+            <form-property name="searchClass"   type="java.lang.String" />
+            <form-property name="selectedChunk" type="java.lang.String" initial="-1" />
         </form-bean>
 
     </form-beans>
@@ -44,8 +45,9 @@
     <!-- ========== Global Forward Definitions ============================== -->
     <global-forwards>
         <!-- Need this global forward from the index.jsp -->
-        <forward name="start" path="/do/welcome"/>
+        <forward name="start"    path="/do/welcome"/>
         <forward name="failure"  path="error.layout"/>
+        <forward name="warning"  path="warning.layout"/>
     </global-forwards>
 
     <!-- ========== Action Mapping Definitions ============================== -->
@@ -73,9 +75,9 @@
                 name="sidebarForm"
                 type="uk.ac.ebi.intact.application.search2.struts.controller.SearchAction"
                 scope="session">
-            <forward name="noMatch" path="no.match.layout"/>
+            <forward name="noMatch"     path="no.match.layout"/>
             <forward name="sessionLost" path="/do/welcome"/>
-            <forward name="dispatcher" path="/do/dispatcher"/>
+            <forward name="dispatcher"  path="/do/dispatcher"/>
         </action>
 
 
@@ -89,11 +91,11 @@
         <action path="/dispatcher"
                 type="uk.ac.ebi.intact.application.search2.struts.controller.DispatcherAction"
                 scope="session">
-            <forward name="results" path="match.layout"/>
+            <forward name="results"     path="match.layout"/>
             <forward name="sessionLost" path="/do/welcome"/>
-            <forward name="single" path="/do/single"/>
-            <forward name="binary" path="/do/binary"/>
-            <forward name="details" path="/do/details"/>
+            <forward name="single"      path="/do/single"/>
+            <forward name="binary"      path="/do/binary"/>
+            <forward name="details"     path="/do/details"/>
         </action>
 
 
@@ -106,8 +108,8 @@
         <action path="/single"
                 type="uk.ac.ebi.intact.application.search2.struts.controller.SingleResultAction"
                 scope="session">
-            <forward name="noMatch" path="no.match.layout"/>
-            <forward name="results" path="match.layout"/>
+            <forward name="noMatch"     path="no.match.layout"/>
+            <forward name="results"     path="match.layout"/>
             <forward name="sessionLost" path="/do/welcome"/>
         </action>
 
@@ -118,8 +120,8 @@
         <action path="/binary"
                 type="uk.ac.ebi.intact.application.search2.struts.controller.BinaryResultAction"
                 scope="session">
-            <forward name="noMatch" path="no.match.layout"/>
-            <forward name="results" path="match.layout"/>
+            <forward name="noMatch"     path="no.match.layout"/>
+            <forward name="results"     path="match.layout"/>
             <forward name="sessionLost" path="/do/welcome"/>
         </action>
 
@@ -133,8 +135,8 @@
         <action path="/details"
                 type="uk.ac.ebi.intact.application.search2.struts.controller.DetailsResultAction"
                 scope="session">
-            <forward name="noMatch" path="no.match.layout"/>
-            <forward name="results" path="match.layout"/>
+            <forward name="noMatch"     path="no.match.layout"/>
+            <forward name="results"     path="match.layout"/>
             <forward name="sessionLost" path="/do/welcome"/>
         </action>
 
@@ -148,7 +150,7 @@
     -->
     <plug-in className="org.apache.struts.tiles.TilesPlugin" >
         <set-property property="definitions-config" value="/WEB-INF/tiles-defs.xml"/>
-        <set-property property="moduleAware" value="true" />
+        <set-property property="moduleAware"        value="true" />
     </plug-in>
 
 </struts-config>
