@@ -28,13 +28,13 @@ import java.util.regex.Pattern;
 public class ProteinSearchAction extends AbstractEditorAction {
 
     /**
-     * Must start with either o or P or Q, followed by 5 characters consists of
-     * either A - Z or 0 - 9.
+     * SP AC. 10 characters allowed.
      */
-    private static final Pattern ourSpAcPat = Pattern.compile("[O|P|Q][A-Z0-9]{5}$");
+    private static final Pattern ourSpAcPat = Pattern.compile("\\w{1,10}$");
 
     /**
-     * Must start with either uppercase characters, followed by '-' and a number.
+     * Intact AC. Must start with either uppercase characters, followed by
+     * '-' and a number.
      */
     private static final Pattern ourIntactAcPat = Pattern.compile("[A-Z]+\\-[0-9]+$");
 
