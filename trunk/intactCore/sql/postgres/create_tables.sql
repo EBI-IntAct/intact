@@ -134,7 +134,7 @@ CREATE TABLE IA_BioSource
         , updated                 TIMESTAMP       DEFAULT  now()   NOT NULL
         , timestamp               TIMESTAMP       DEFAULT  now()   NOT NULL
         , userstamp               VARCHAR (30)    DEFAULT  USER    NOT NULL
-        , taxId                   VARCHAR (30)    CONSTRAINT uq_BioSource_taxId UNIQUE
+        , taxId                   VARCHAR (30)                     NOT NULL
         , owner_ac                VARCHAR (30)    CONSTRAINT fk_BioSource_owner REFERENCES IA_Institution(ac)
         , shortLabel              VARCHAR (20)
         , fullName                VARCHAR (250)
@@ -769,7 +769,7 @@ CREATE table IA_Payg(
         , eseen INTEGER
         , econf INTEGER
         , really_used_as_bait CHAR(1)
-	, species VARCHAR(20) NOT NULL CONSTRAINT fk_payg_species REFERENCES IA_BioSource(taxId)
+	, species VARCHAR(20) NOT NULL 
 	, PRIMARY KEY (nID, species)
 );
 
