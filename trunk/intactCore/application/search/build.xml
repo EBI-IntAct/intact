@@ -54,6 +54,7 @@
         <pathelement path="${root.lib.dir}/servlet.jar"/>
         <pathelement path="${intact.app.dir}/lib/struts.jar"/>
         <pathelement path="${intact.app.dir}/lib/commons-collections.jar"/>
+        <pathelement path="${root.lib.dir}/log4j-1.2.5.jar"/>
     </path>
 
     <!-- =================================================================== -->
@@ -124,7 +125,9 @@
 
         <!-- Only compile search sources only. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-            includes="**/application/search/**" debug="on" source="1.4">
+            includes="**/application/search/**,
+                      **/application/commons/**"
+            debug="on" source="1.4">
             <classpath refid="project.class.path"/>
         </javac>
 
