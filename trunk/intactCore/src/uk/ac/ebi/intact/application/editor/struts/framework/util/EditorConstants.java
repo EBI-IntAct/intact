@@ -17,7 +17,7 @@ public interface EditorConstants {
     /**
      * The name of the logger.
      */
-    public static final String LOGGER = "Editor";
+    public static final String LOGGER = "editor";
 
     /**
      * The key to store an Intact Service object.
