@@ -809,6 +809,8 @@ public class IntactHelper implements SearchI, Serializable {
      * </ul>
      * </p>
      *
+     * @deprecated This should not be used with the new model, as applications should
+     * not use no-arg constructors.
      * @param obj - the partial object to search on
      *
      * @return Collection - the results of the search (empty Collection if no matches found)
@@ -850,23 +852,6 @@ public class IntactHelper implements SearchI, Serializable {
             throw new IntactException(msg, se);
 
         }
-//        finally {
-//
-//            //done with the connection, so close it
-//            try {
-//
-//                //debug
-//                pr.info("intact helper: doing final dao close in search...");
-//                //      dao.close();
-//                pr.info("intact helper: connection closed OK after search...");
-//            } catch (Exception de) {
-//
-//                String msg = "intact helper: could not close data source connection properly";
-//                throw new IntactException(msg, de);
-//
-//            }
-//        }
-
         return resultList;
     }
 
@@ -1392,65 +1377,25 @@ public class IntactHelper implements SearchI, Serializable {
      * @param clazz the subclass of Interactor to search on
      * @param source the BioSource to search with - must be fully defined or at least AC set
      *
-     * @return Interactor the result of the search, or null if not found
+     * @return Collection the list of Interactors that have the given BioSource, or empty if none found
      *
      * @exception IntactException thrown if a search problem occurs
+     * @exception NullPointerException if source or class is null
+     * @exception IllegalArgumentException if the class parameter is not assignable from Interactor
      *
      * NB Not tested yet - BioSource data in DB required
      *
      */
-    public Interactor getInteractorBySource(Class clazz, BioSource source) throws IntactException {
+    public Collection getInteractorBySource(Class clazz, BioSource source) throws IntactException {
 
-        Interactor result = null;
+        if(source == null) throw new NullPointerException("Need a BioSource to search by BioSource!");
+        if(clazz == null) throw new NullPointerException("Class is null for Interactor/BioSource search!");
+        if(!Interactor.class.isAssignableFrom(clazz))
+            throw new IllegalArgumentException("Cannot do Interactor search - Class "
+                    + clazz.getName() + "is not a subclass of Interactor");
 
-        Collection resultList = null;
+        return(this.search(Interactor.class.getName(), "bioSource_ac", source.getAc()));
 
-        Interactor interactor = null;
-
-        /*
-        *  Basic idea:
-        *  build an interactor (subclass) object, set its bioSource to the param given,
-        *  then do a search based on ther "partial" object
-        */
-        if (Interactor.class.isAssignableFrom(clazz)) {
-
-            try {
-
-                interactor = (Interactor) clazz.newInstance();
-                interactor.setBioSource(source);
-
-                //NB created/updated are auto set inside BasicObject -
-                //need to turn them OFF in an example for searching otherwise there will be no matches!!
-                interactor.setCreated(null);
-                interactor.setUpdated(null);
-            } catch (Exception e) {
-
-                //probably thrown from the newInstance() call - wrap and rethrow
-                IntactException ie = new IntactException("problem creating isnatnce of interactor", e);
-                throw ie;
-            }
-
-        } else {
-
-            //parameter class is not a subclass of Interactor
-            IntactException ie = new IntactException("search by source failed - class parameter must be a subclass of Interactor");
-            throw(ie);
-        }
-
-        resultList = this.search(interactor);
-
-        if (resultList.isEmpty()) {
-            result = null;
-        } else {
-            Iterator i = resultList.iterator();
-            result = (Interactor) i.next();
-            if (i.hasNext()) {
-                IntactException ie = new IntactException("More than one object returned by search by bioSource.");
-                throw(ie);
-            }
-        }
-
-        return result;
     }
 
 
@@ -1460,7 +1405,7 @@ public class IntactHelper implements SearchI, Serializable {
      *
      * @param source the BioSource to search with - must be fully defined or at least AC set
      *
-     * @return Experiment the result of the search, or null if not found
+     * @return Experiment the result of the search, or empty if none found
      *
      * @exception IntactException thrown if a search problem occurs
      *
@@ -1470,18 +1415,9 @@ public class IntactHelper implements SearchI, Serializable {
     public Experiment getExperimentBySource(BioSource source) throws IntactException {
 
         Experiment result = null;
-
         Collection resultList = null;
-
-        Experiment exp = new Experiment();
-        exp.setBioSource(source);
-
-        //NB created/updated auto-set in BasicObject - turn OFF in search example
-        exp.setCreated(null);
-        exp.setUpdated(null);
-
-        resultList = this.search(exp);
-
+        String bioAc = source.getAc();
+        resultList = this.search(Experiment.class.getName(), "bioSource_ac", bioAc);
         if (resultList.isEmpty()) {
             result = null;
         } else {
@@ -1510,18 +1446,8 @@ public class IntactHelper implements SearchI, Serializable {
      */
     public Collection getComponentsByRole(CvComponentRole role) throws IntactException {
 
-        Collection resultList = null;
+        return( this.search(Component.class.getName(), "role", role.getAc()));
 
-        Component comp = new Component();
-        comp.setCvComponentRole(role);
-
-        //NB created/updated auto-set in BasicObject - turn OFF in search example
-        comp.setCreated(null);
-        comp.setUpdated(null);
-
-        resultList = this.search(comp);
-
-        return resultList;
     }
 
     /**
@@ -1538,18 +1464,7 @@ public class IntactHelper implements SearchI, Serializable {
      */
     public Collection getInteractionsByType(CvInteractionType type) throws IntactException {
 
-        Collection resultList = null;
-
-        Interaction interaction = new Interaction();
-        interaction.setCvInteractionType(type);
-
-        //NB created/updated auto-set in BasicObject - turn OFF in search example
-        interaction.setCreated(null);
-        interaction.setUpdated(null);
-
-        resultList = this.search(interaction);
-
-        return resultList;
+        return(this.search(Interaction.class.getName(), "interactionType_ac", type.getAc()));
     }
 
 
@@ -1566,57 +1481,36 @@ public class IntactHelper implements SearchI, Serializable {
      */
     public Collection getExperimentsByInstitution(Institution institution) throws IntactException {
 
-        Collection resultList = null;
-
-        Experiment exp = new Experiment();
-        exp.setOwner(institution);
-
-        //NB created/updated auto-set in BasicObject - turn OFF in search example
-        exp.setCreated(null);
-        exp.setUpdated(null);
-
-        resultList = this.search(exp);
-
-        return resultList;
+        return(this.search(Experiment.class.getName(), "owner_ac", institution.getAc()));
     }
 
     /**
      *  Search for Protein given a cross reference. Assumed this is unique.
      *
-     * @param xref the cross reference to search with - must be fully defnined, or
-     * at least have its primary key set
+     * @param xref the cross reference to search with - must be fully defined, or
+     * at least have its parent AC field set
      *
-     * @return Collection the result of the search, or an empty Collection if not found
+     * @return Protein the result of the search, or null if not found
      *
-     * @exception IntactException thrown if a search problem occurs
+     * @exception IntactException thrown if a search problem occurs, the Xref does
+     * not match a Protein, or we get more than one Protein back
      *
-     * NB not yet tested - requires object search over a Collection (in development)
+     * NB not yet tested....
      *
      */
     public Protein getProteinByXref(Xref xref) throws IntactException {
 
-        Protein prot = new Protein();
-        prot.addXref(xref);
+        Collection resultList = null;
+        resultList = this.search(Protein.class.getName(), "ac", xref.getParentAc());
+        if(resultList.isEmpty()) return null;
+        if(resultList.size() > 1) throw new IntactException("Got more than one Protein with Xref " + xref.getAc());
 
-        //NB created/updated auto-set in BasicObject - turn OFF in search example
-        prot.setCreated(null);
-        prot.setUpdated(null);
+        Object obj = resultList.iterator().next();
+        if(!(obj instanceof Protein))
+            throw new IntactException("Xref refers to an instance of "
+                    + obj.getClass().getName() + ", NOT a Protein!!");
 
-        Collection results = this.search(prot);
-
-        //should be unique...
-        if (results.size() > 1) {
-
-            throw new IntactException("protein search error - more than one result returned with query by" + xref.toString());
-        } else {
-
-            if (results.isEmpty()) {
-
-                return null;
-            }
-            Iterator it = results.iterator();
-            return (Protein) it.next();
-        }
+        return (Protein)obj;
     }
 
     /**
@@ -1633,11 +1527,13 @@ public class IntactHelper implements SearchI, Serializable {
                     dao.remove (i.next());
                 }
             }
+
         }
         catch(Exception de) {
 
                String msg = "intact helper: error deleting collection elements";
                throw new IntactException(msg, de);
+
         }
     }
 
@@ -1680,6 +1576,7 @@ public class IntactHelper implements SearchI, Serializable {
             graph = subGraphPartial(startNode, graphDepth, experiments, complexExpansion, graph);
         }
         return graph;
+
     }
 
     private Graph subGraphPartial(Interactor startNode,
@@ -1789,7 +1686,7 @@ public class IntactHelper implements SearchI, Serializable {
         }
 
         /* Create list of preys */
-        ArrayList preys = new ArrayList( current.getComponents().size() );
+        ArrayList preys = new ArrayList(current.getComponents().size());
         Iterator i = current.getComponents().iterator();
         while (i.hasNext()) {
             preys.add(i.next());
@@ -1813,11 +1710,11 @@ public class IntactHelper implements SearchI, Serializable {
                     Node node1 = partialGraph.addNode(baitInteractor);
                     Node node2 = partialGraph.addNode(preyInteractor);
 
-                    edge.setNode1( node1 );
-                    edge.setComponent1( baitComponent );
-                    edge.setNode2( node2 );
-                    edge.setComponent2( preyComponent );
-                    partialGraph.addEdge( edge );
+                    edge.setNode1(node1);
+                    edge.setComponent1(baitComponent);
+                    edge.setNode2(node2);
+                    edge.setComponent2(preyComponent);
+                    partialGraph.addEdge(edge);
                     //System.out.println("Adding: " + node1.getAc() + " -> " + node2.getAc());
                 }
             }
