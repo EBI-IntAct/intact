@@ -920,7 +920,7 @@ public class LineExport {
 
     /**
      * Assess if a protein is a aplice variant on the basis of its shortlabel as we use the following format
-     * SPID-#.
+     * SPID-# and if it has a isoform-parent cross reference.
      * <br>
      * Thought it doesn't mean we will find a master protein for it.
      *
@@ -931,7 +931,15 @@ public class LineExport {
 
         // TODO check here is it has a master or not.
 
-        return ( protein.getShortLabel().indexOf( "-" ) != -1 ); // eg. P12345-2
+        if ( protein.getShortLabel().indexOf( "-" ) != -1 ) {
+            // eg. P12345-2
+
+            if( getMasterAc( protein ) != null ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -971,9 +979,9 @@ public class LineExport {
             }
         }
 
-        if ( geneName == null ) {
-            System.err.println( "Could not find a geneName for Protein: " + protein );
-        }
+//        if ( geneName == null ) {
+//            System.err.println( "Could not find a geneName for Protein: " + protein );
+//        }
 
         return geneName;
     }
