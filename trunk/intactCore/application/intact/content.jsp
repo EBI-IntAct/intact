@@ -32,7 +32,7 @@
                                 <span class="text"> </span> <li><span class="text">Gene name: lsm7</span></li>
                                 <li><span class="text">IntAct Ac: EBI-141</span></li>
                                 <li><span class="text">SPTR Ac: Q08162</span></li>
-                                <li><span class="text">SPTR Id: rr44_yeast</span></li>
+                                <li><span class="text">SPTR Id: rrp44_yeast</span></li>
                                 <li><span class="text">InterPro Ac: IPR001900</span></li>
                                 <li><span class="text">GO Id: GO:0000176</span></li>
                                 <li><span class="text">PubMed Id: 10831611</span></li>
