@@ -717,7 +717,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     public void releaseLock() {
         // Release any locks the user is holding.
         if (myEditView.getAc() != null) {
-            System.out.println("Just about to release the lock: " + myEditView.getAc());
             LockManager.getInstance().release(myEditView.getAc());
         }
     }
