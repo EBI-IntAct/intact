@@ -27,7 +27,10 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.DAOFactory;
 import uk.ac.ebi.intact.persistence.DAOSource;
 import uk.ac.ebi.intact.persistence.DataSourceException;
-import uk.ac.ebi.intact.util.*;
+import uk.ac.ebi.intact.util.GoServerProxy;
+import uk.ac.ebi.intact.util.NewtServerProxy;
+import uk.ac.ebi.intact.util.UpdateProteins;
+import uk.ac.ebi.intact.util.UpdateProteinsI;
 
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
@@ -36,8 +39,8 @@ import java.io.ObjectInputStream;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class stores information about an Intact Web user session. Instead of
@@ -52,6 +55,11 @@ import java.util.regex.Matcher;
  */
 public class EditUser implements EditUserI, HttpSessionBindingListener {
 
+    // -------------------------------------------------------------------------
+
+    /**
+     * The formatter for a short label.
+     */
     public static class ShortLabelFormatter {
 
         /**
@@ -245,6 +253,11 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      */
     private transient Set myCurrentInteractions = new HashSet();
 
+    /**
+     * Holds user data.
+     */
+//    private UserInfo myUserInfo;
+
     // ------------------------------------------------------------------------
 
     // Inner class to sort search result.
@@ -333,9 +346,11 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * method sets the logout time.
      */
     public void valueUnbound(HttpSessionBindingEvent event) {
-        Logger.getLogger(EditorConstants.LOGGER).info("User is about to unbound");
+        getLogger().info("User is about to unbound");
+        LockManager lm = (LockManager) event.getSession().getServletContext().getAttribute(
+                EditorConstants.LOCK_MGR);
         try {
-            logoff();
+            logoff(lm);
         }
         catch (IntactException ie) {
             // Just ignore this exception. Where to log this?
@@ -649,26 +664,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return Arrays.asList(items);
     }
 
-//    public String getUniqueShortLabel(String shortlabel) throws SearchException {
-//        // Need to change to lower case as uppercases are not allowed for a name.
-//        String ac = myEditView.getAc();
-//        // If ac is null, just a template as the suggested value.
-//        return this.getUniqueShortLabel(shortlabel, ac == null ? "xxx-xx"
-//                : ac.toLowerCase());
-//    }
-//
-//    public String getUniqueShortLabel(String shortlabel, String extAc)
-//            throws SearchException {
-//        try {
-//            return GoTools.getUniqueShortLabel(myHelper, myEditView.getEditClass(),
-//                    myEditView.getAc(), shortlabel, extAc);
-//        }
-//        catch (IntactException ie) {
-//            String msg = "Failed to get a unique short label for " + extAc;
-//            throw new SearchException(msg);
-//        }
-//    }
-
     public boolean shortLabelExists(String label) throws SearchException {
         return doesShortLabelExist(myEditView.getEditClass(), label, myEditView.getAc());
     }
@@ -710,12 +705,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     }
 
     public void logoff() throws IntactException {
-        mySessionEndTime = Calendar.getInstance().getTime();
-        Logger.getLogger(EditorConstants.LOGGER).info("User is logging off at: "
-                + mySessionEndTime);
-        // Release all the locks held by this user.
-        LockManager.getInstance().releaseAllLocks(getUserName());
-        myHelper.closeStore();
+        logoff(LockManager.getInstance());
     }
 
     public Date loginTime() {
@@ -734,7 +724,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
             catch (MalformedURLException murle) {
                 // This should never happen because default constructor has a
                 // valid URL.
-                Logger.getLogger(EditorConstants.LOGGER).info(murle);
+                getLogger().info(murle);
             }
         }
         return myNewtServer;
@@ -803,13 +793,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return xref;
     }
 
-    public void releaseLock() {
-        // Release any locks the user is holding.
-        if (myEditView.getAc() != null) {
-            LockManager.getInstance().release(myEditView.getAc());
-        }
-    }
-    
 	public BioSource getBioSourceByTaxId(String taxId) throws SearchException {
 		try {
 			return myHelper.getBioSourceByTaxId(taxId);
@@ -853,10 +836,13 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      */
     private SearchHelperI getSearchHelper() {
         if (mySearchHelper == null) {
-            Logger logger = Logger.getLogger(EditorConstants.LOGGER);
-            mySearchHelper = new SearchHelper(logger);
+            mySearchHelper = new SearchHelper(getLogger());
         }
         return mySearchHelper;
+    }
+
+    private Logger getLogger() {
+        return Logger.getLogger(EditorConstants.LOGGER);
     }
 
     /**
@@ -864,6 +850,14 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      */
     private void endEditing() {
         myEditState = false;
+    }
+
+    private void logoff(LockManager lm) throws IntactException {
+        mySessionEndTime = Calendar.getInstance().getTime();
+        getLogger().info("User is logging off at: " + mySessionEndTime);
+        // Release all the locks held by this user.
+        lm.releaseAllLocks(getUserName());
+        myHelper.closeStore();
     }
 
     /**

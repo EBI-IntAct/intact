@@ -349,6 +349,12 @@ public interface EditUserI extends IntactUserI, Serializable {
     /**
      * Logs off from the application. This will close the connection to
      * the persistent storage.
+     *
+     * <b>
+     * Use this method only for logging a user off in a non web environement
+     * (i.e., unit testing).
+     * </b>
+     *
      * @exception IntactException for problems with logging off.
      */
     public void logoff() throws IntactException;
@@ -422,11 +428,6 @@ public interface EditUserI extends IntactUserI, Serializable {
      * @exception SearchException for errors in searching the database.
      */
     public Xref getXref(XreferenceBean xb) throws SearchException;
-
-    /**
-     * Releases the lock held by the user.
-     */
-    public void releaseLock();
     
     /**
      * Returns the BioSource for given tax id.
