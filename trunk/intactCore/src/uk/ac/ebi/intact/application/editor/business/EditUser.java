@@ -168,11 +168,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     private transient IntactHelper myHelper;
 
     /**
-     * The data source; need this to create a helper.
-     */
-    private DAOSource myDAOSource;
-
-    /**
      * The session start time. This info is reset at deserialization.
      */
     private transient Date mySessionStartTime;
@@ -217,9 +212,19 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     private transient Institution myInstitution;
 
     /**
+     * The name of the data source class.
+     */
+    private String myDSClass;
+
+    /**
      * The name of the current user.
      */
     private String myUserName;
+
+    /**
+     * The password for the current user.
+     */
+    private String myPassword;
 
     /**
      * The name of the current database.
@@ -298,12 +303,9 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      */
     public EditUser(String dsClass, String user, String password)
             throws DataSourceException, IntactException {
-        myDAOSource = DAOFactory.getDAOSource(dsClass);
-
-        // Save the user info in the DS for us to access them later.
-        myDAOSource.setUser(user);
-        myDAOSource.setPassword(password);
-
+        myDSClass = dsClass;
+        myUserName = user;
+        myPassword = password;
         // Initialize the object.
         initialize();
     }
@@ -335,6 +337,9 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         }
         catch (IntactException ie) {
             throw new IOException(ie.getMessage());
+        }
+        catch (DataSourceException dse) {
+            throw new IOException(dse.getMessage());
         }
     }
 
@@ -795,20 +800,15 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * Called by the constructors to initialize the object.
      * @throws IntactException for errors in accessing the persistent system.
      */
-    private void initialize() throws IntactException {
-        // Construct the the helper.
-        myHelper = new IntactHelper(myDAOSource);
+    private void initialize() throws IntactException, DataSourceException {
+        DAOSource dao = DAOFactory.getDAOSource(myDSClass);
 
-        // Initialize the valid user name and the database.
-        try {
-            myUserName = myHelper.getDbUserName().toLowerCase();
-        }
-        catch (LookupException e) {
-            throw new IntactException("Unable to initialize the user name", e);
-        }
-        catch (SQLException e) {
-            throw new IntactException("Unable to initialize the user name", e);
-        }
+        // Save the user info in the DS for us to access them later.
+        dao.setUser(myUserName);
+        dao.setPassword(myPassword);
+
+        // Construct the the helper.
+        myHelper = new IntactHelper(dao);
 
         try {
             myDatabaseName = myHelper.getDbName();
