@@ -75,7 +75,7 @@
 
             <!-- Primary id is a required item -->
             <field property="primaryId" depends="required">
-         	    <arg0 key="xref.label.primaryId"/>
+         	    <arg0 key="xref.label.primary"/>
             </field>
 
             <!-- Validation for qualifier -->
