@@ -46,15 +46,21 @@
             <form-property name="ac" type="java.lang.String"/>
             <form-property name="shortLabel" type="java.lang.String"/>
             <form-property name="fullName" type="java.lang.String"/>
+            <form-property name="display" type="java.lang.Boolean"/>
         </form-bean>
 
         <!-- Form for editing a comment -->
+<!--        <form-bean name="commentEditForm"-->
+<!--            type="org.apache.struts.validator.DynaValidatorForm">-->
+<!--            <form-property name="items" type="java.lang.String"/>-->
+<!--            <form-property name="description" type="java.lang.String"/>-->
+<!--        </form-bean>-->
         <form-bean name="commentEditForm"
             type="uk.ac.ebi.intact.application.editor.struts.view.EditForm"/>
 
         <!-- Form for editing a xref -->
         <form-bean name="xrefEditForm"
-            type="uk.ac.ebi.intact.application.editor.struts.view.EditForm"/>
+            type="uk.ac.ebi.intact.application.editor.struts.view.XrefEditForm"/>
 
         <!-- Form bean for adding a xref (cross reference) -->
         <form-bean name="xrefAddForm"
@@ -152,7 +158,7 @@
     <global-forwards>
         <!-- Need this global forward from the index.jsp -->
         <forward name="login" path="/do/welcome"/>
-        <forward name="success" path="/do/setUpEditorForm"/>
+        <forward name="success" path="/do/fillCvForm"/>
         <forward name="failure" path="error.layout"/>
         <forward name="input" path="/do/setUpEditorForm"/>
     </global-forwards>
@@ -235,12 +241,40 @@
             name="resultForm"
             type="uk.ac.ebi.intact.application.editor.struts.action.ResultAction"
             scope="request">
+            <forward name="success" path="/do/fillCvForm"/>
         </action>
 
         <!-- ==================== Actions for setting up editors ========== -->
 
-        <!-- Populates editor common forms. Editor specific forms are set by forwards -->
-        <action path="/setUpEditorForm"
+        <!-- This action fills the cv form. -->
+        <action path="/fillCvForm"
+            type="uk.ac.ebi.intact.application.editor.struts.action.FillCvFormAction"
+            attribute="cvInfoForm"
+            validate="false"
+            scope="request">
+            <forward name="success" path="/do/fillAnnotForm"/>
+        </action>
+
+        <!-- This action fills the annotation form. -->
+        <action path="/fillAnnotForm"
+            type="uk.ac.ebi.intact.application.editor.struts.action.FillAnnotFormAction"
+            name="commentEditForm"
+            validate="false"
+            scope="session">
+            <forward name="success" path="/do/fillXrefForm"/>
+        </action>
+
+        <!-- This action fills the xreference form. -->
+        <action path="/fillXrefForm"
+            type="uk.ac.ebi.intact.application.editor.struts.action.FillXrefFormAction"
+            name="xrefEditForm"
+            validate="false"
+            scope="session">
+            <forward name="success" path="/do/setUpEditor"/>
+        </action>
+
+        <!-- Chooses which Editor to forward to. -->
+        <action path="/setUpEditor"
             type="uk.ac.ebi.intact.application.editor.struts.action.SetUpEditorAction"
             scope="request">
             <forward name="biosource" path="/do/setUpBioSourceForm"/>
@@ -285,7 +319,7 @@
         <action path="/edit"
             type="uk.ac.ebi.intact.application.editor.struts.action.EditorDispatchAction"
             name="dummyForm"
-            input="/do/setUpEditorForm"
+            input="/do/fillCvForm"
             scope="request"
             parameter="dispatch">
 
@@ -305,7 +339,7 @@
         <action path="/cv/info"
             type="uk.ac.ebi.intact.application.editor.struts.action.EditorInfoAction"
             name="cvInfoForm"
-            input="/do/setUpEditorForm"
+            input="/do/fillCvForm"
             scope="request">
         </action>
 
@@ -314,7 +348,7 @@
             type="uk.ac.ebi.intact.application.editor.struts.action.biosrc.BioSourceAction"
             name="bioSourceForm"
             scope="request"
-            input="/do/setUpEditorForm">
+            input="/do/fillCvForm">
         </action>
 
         <!-- ==================== Actions for Experiment ================= -->
@@ -324,7 +358,7 @@
             type="uk.ac.ebi.intact.application.editor.struts.action.experiment.ExperimentAction"
             name="experimentForm"
             validate="true"
-            input="/do/setUpEditorForm"
+            input="/do/fillCvForm"
             scope="request">
         </action>
 
@@ -335,7 +369,7 @@
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.InteractionAction"
             name="interactionForm"
             validate="true"
-            input="/do/setUpEditorForm"
+            input="/do/fillCvForm"
             scope="request">
         </action>
 
@@ -343,7 +377,7 @@
         <action path="/interaction/experiment"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ExperimentAction"
             name="intExperimentForm"
-            input="/do/setUpEditorForm"
+            input="/do/fillCvForm"
             scope="request">
         </action>
 
@@ -351,7 +385,7 @@
         <action path="/interaction/experiment/hold"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ExperimentHoldAction"
             name="intExperimentHoldForm"
-            input="/do/setUpEditorForm"
+            input="/do/fillCvForm"
             scope="request">
         </action>
 
@@ -359,7 +393,7 @@
         <action path="/interaction/experiment/search"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ExperimentSearchAction"
             name="intExperimentSearchForm"
-            input="/do/setUpEditorForm"
+            input="/do/fillCvForm"
             scope="request">
         </action>
 
@@ -368,7 +402,7 @@
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ProteinEditAction"
             name="intProteinEditForm"
             validate="true"
-            input="/do/setUpEditorForm"
+            input="/do/fillCvForm"
             scope="session">
         </action>
 
@@ -376,7 +410,7 @@
         <action path="/interaction/protein/search"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ProteinSearchAction"
             name="intProteinSearchForm"
-            input="/do/setUpEditorForm"
+            input="/do/fillCvForm"
             scope="request">
         </action>
 
@@ -387,7 +421,7 @@
             type="uk.ac.ebi.intact.application.editor.struts.action.CommentAddAction"
             name="commentAddForm"
             validate="true"
-            input="/do/setUpEditorForm"
+            input="/do/fillAnnotForm"
             scope="request">
         </action>
 
@@ -405,7 +439,7 @@
             type="uk.ac.ebi.intact.application.editor.struts.action.XrefAddAction"
             name="xrefAddForm"
             validate="true"
-            input="/do/setUpEditorForm"
+            input="/do/fillXrefForm"
             scope="request">
         </action>
 
@@ -413,6 +447,8 @@
         <action path="/xref/edit"
             name="xrefEditForm"
             type="uk.ac.ebi.intact.application.editor.struts.action.XrefEditAction"
+            validate="true"
+            input="/do/fillXrefForm"
             scope="session">
         </action>
 
