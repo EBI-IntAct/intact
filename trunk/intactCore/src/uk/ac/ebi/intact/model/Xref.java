@@ -108,18 +108,6 @@ public class Xref extends BasicObjectImpl {
         setCvXrefQualifier(aCvXrefQualifier);
     }
 
-
-    /**
-     * Returns a copy of the current Xref with few exceptions as utlined
-     * below.
-     * @return the copy of the current Xref. The copy inherits values for
-     *  CvDatabase, Owner and CvXrefQualifier. Primary id, Secondary Id
-     * and database release are copied.    
-     */
-    public Xref copy() {
-        return new Xref(getOwner(), getCvDatabase(), getPrimaryId(),
-            getSecondaryId(), getDbRelease(), getCvXrefQualifier());
-    }
     
     ///////////////////////////////////////
     //access methods for attributes
