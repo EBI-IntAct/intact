@@ -75,7 +75,8 @@ public class SearchAction extends IntactBaseAction {
         super.clearErrors();
 
         // The search link for links (used by style sheet).
-        String link = getServlet().getServletContext().getInitParameter("searchLink");
+        String relativeLink = getServlet().getServletContext().getInitParameter("searchLink");
+        String link = request.getContextPath() + relativeLink;
 
         DynaActionForm dyForm = (DynaActionForm) form;
         String searchValue = (String) dyForm.get("searchString");
@@ -129,6 +130,15 @@ public class SearchAction extends IntactBaseAction {
         //with garbage input using this approach...
         super.log("search action: attempting to search by AC first...");
         try {
+            //testing iterator version....
+//            System.out.println("trying Iterator search....");
+//            String className = AnnotatedObject.class.getPackage().getName() + "." + "Interaction";
+//            Iterator resIter = user.getHelper().iterSearch(className, "ac", searchValue);
+//            if(resIter != null) {
+//                System.out.println("Got an Iterator - its type is " + resIter.getClass().getName());
+//            }
+//
+
 
             results = doLookup(searchClass, searchValue, user);
             if (results.isEmpty()) {
@@ -257,8 +267,10 @@ public class SearchAction extends IntactBaseAction {
                     }
                     //go through the search results and build beans as required...
                     Iterator it = results.iterator();
+
                     Map doneExperiments = new HashMap();
                     boolean isNew = false;
+                    //while(resIter.hasNext()) {
                     while (it.hasNext()) {
 
                         //need to get any related objects - eg if a Protein we want to
@@ -266,6 +278,7 @@ public class SearchAction extends IntactBaseAction {
                         //the results to be all the same type, and related objects we want to be
                         //Experiments (eg when Proteins or Interactions have been searched for)
                         Object item = it.next();
+                        //Object item = resIter.next();
                         Collection relatedObjs = user.getHelper().getRelatedObjects(item);
                         // Store the view beans in a map.
                         for (Iterator iter = relatedObjs.iterator(); iter.hasNext(); ++counter) {
@@ -395,6 +408,10 @@ public class SearchAction extends IntactBaseAction {
                         super.log("Experiment view bean built OK...");
                     }
                 }
+
+                //close results
+                System.out.println("closing the result data (Iterator used up, so done automatically).....");
+                //user.getHelper().closeData(resIter);
              }
             // Move to the results page.
             return mapping.findForward(SearchConstants.FORWARD_RESULTS);
@@ -584,9 +601,10 @@ public class SearchAction extends IntactBaseAction {
             //expandTree(bean, "Protein", null);
         }
         //if(tagName.equals("Experiment")) {
-        //for an Experiment we want to expand the Interactions
-        //containing the the Protein ONLY
-        //expandTree(bean, "Interaction");
+        //for an Experiment we want to expand everything EXCEPT any
+        //Interactions - always want eg Xrefs, CVs, Annotations, but
+        //XML for Interactions may be only selectively needed....
+        //HOW? XML builder full expansion covers *all* collections!!
         //}
 
     }
