@@ -16,7 +16,6 @@ import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
-import uk.ac.ebi.intact.model.Annotation;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -175,18 +174,12 @@ public class AnnotationDispatchAction extends AbstractEditorAction {
         // The current view of the edit session.
         AbstractEditViewBean view = user.getView();
 
-        // Only add to the update list if this isn't a new annotation.
-//        if (view.isNewAnnotation(cb)) {
-            // Remove the existing 'new' annotation.
-//            view.removeNewAnnotation(cb);
-//            // Add this 'updated' as a new annotation.
-//            Annotation annot = user.getAnnotation(cb);
-//            view.addAnnotation(new CommentBean(annot));//, cb.getKey()));
-//        }
-        if (!view.isNewAnnotation(cb)) {
-            // Saving an existing annotation.
-            view.addAnnotationToUpdate(cb);
-        }
+        // The updated annotation bean.
+        CommentBean cbup = new CommentBean(cb.getAnnotation(user), cb.getKey());
+
+        // Save the bean in the view.
+        view.saveComment(cb, cbup);
+
         // Back to the view mode.
         cb.setEditState(AbstractEditBean.VIEW);
 

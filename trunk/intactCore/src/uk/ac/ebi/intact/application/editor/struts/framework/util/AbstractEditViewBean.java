@@ -353,31 +353,6 @@ public abstract class AbstractEditViewBean implements Serializable {
     }
 
     /**
-     * @param cb the bean to check for existence in the list of new annotations.
-     * @return true if <code>cb</code> exists in the list of new annotations;
-     * false is returned for all other instances.
-     */
-    public boolean isNewAnnotation(CommentBean cb) {
-        return myAnnotsToAdd.contains(cb);
-    }
-
-    /**
-     * Removes the given bean from the list of annotations to add and also from
-     * the view as well.
-     * @param cb the bean to remove.
-     *
-     * <pre>
-     * post: myAnnotsToAdd = myAnnotsToAdd@pre - 1
-     * post: myAnnotations = myAnnotations@pre - 1
-     * </pre>
-     */
-    public void removeNewAnnotation(CommentBean cb) {
-        myAnnotsToAdd.remove(cb);
-        // Remove from the view.
-        myAnnotations.remove(cb);
-    }
-
-    /**
      * Removes an annotation
      * @param cb the comment bean to remove.
      *
@@ -391,19 +366,6 @@ public abstract class AbstractEditViewBean implements Serializable {
         myAnnotsToDel.add(cb);
         // Remove from the view as well.
         myAnnotations.remove(cb);
-    }
-
-    /**
-     * Adds a Comment bean to update.
-     * @param cb a <code>CommentBean</code> object to update.
-     *
-     * <pre>
-     * post: myAnnotsToUpdate = myAnnotsToUpdate@pre + 1
-     * post: myAnnotations = myAnnotations@pre
-     * </pre>
-     */
-    public void addAnnotationToUpdate(CommentBean cb) {
-        myAnnotsToUpdate.add(cb);
     }
 
     /**
@@ -434,31 +396,6 @@ public abstract class AbstractEditViewBean implements Serializable {
     }
 
     /**
-     * @param xb the bean to check for existence in the list of new xrefs.
-     * @return true if <code>xb</code> exists in the list of new xrefs;
-     * false is returned for all other instances.
-     */
-    public boolean isNewXref(XreferenceBean xb) {
-        return myXrefsToAdd.contains(xb);
-    }
-
-    /**
-     * Removes the given bean from the list of xrefs to add and also from
-     * the view as well.
-     * @param xb the bean to remove.
-     *
-     * <pre>
-     * post: myXrefsToAdd = myXrefsToAdd@pre - 1
-     * post: myXrefs = myXrefs@pre - 1
-     * </pre>
-     */
-    public void removeNewXref(XreferenceBean xb) {
-        myXrefsToAdd.remove(xb);
-        // Remove from the view.
-        myXrefs.remove(xb);
-    }
-
-    /**
      * Removes a xref.
      * @param xb the X'reference bean to remove.
      *
@@ -475,16 +412,63 @@ public abstract class AbstractEditViewBean implements Serializable {
     }
 
     /**
-     * Adds a xref bean to update.
-     * @param xb an <code>XreferenceBean</code> object to update.
-     *
-     * <pre>
-     * post: myXrefsToUpdate = myXrefsToUpdate@pre + 1
-     * post: myXrefs = myXrefs@pre
-     * </pre>
+     * Replaces an existing annotation bean with a new bean. This method takes
+     * care of refreshing relevant lists. For example, if the existing bean is in
+     * the new collection, it will be removed from the new collection before the
+     * new bean is added.
+     * @param oldcb the existing bean to replace.
+     * @param newcb the new bean to replace <code>oldcb</code>.
      */
-    public void addXrefToUpdate(XreferenceBean xb) {
-        myXrefsToUpdate.add(xb);
+    public void saveComment(CommentBean oldcb, CommentBean newcb) {
+        // Does the existing bean belong to the newly added beans?
+        if (myAnnotsToAdd.contains(oldcb)) {
+            // Remove from the 'new' list.
+            myAnnotsToAdd.remove(oldcb);
+            // Remove from the view.
+            myAnnotations.remove(oldcb);
+            // Add the updated bean.
+            addAnnotation(newcb);
+        }
+        else {
+            // Remove from the 'update' list.
+            myAnnotsToUpdate.remove(oldcb);
+            // Remove from the view.
+            myAnnotations.remove(oldcb);
+            // Add to the update list.
+            myAnnotsToUpdate.add(newcb);
+            // Add to the view as well.
+            myAnnotations.add(newcb);
+        }
+    }
+
+    /**
+     * Replaces an existing xref bean with a new bean. This method takes care of
+     * refreshing relevant lists. For example, if the existing bean is in
+     * the new collection, it will be removed from the new collection before the
+     * new bean is added.
+     * @param oldxb the existing bean to replace.
+     * @param newxb the new bean to replace <code>oldexb</code>.
+     */
+    public void saveXref(XreferenceBean oldxb, XreferenceBean newxb) {
+        // Does the existing bean belong to the newly added beans?
+        if (myXrefsToAdd.contains(oldxb)) {
+            // Remove from the 'new' list.
+            myXrefsToAdd.remove(oldxb);
+            // Remove from the view.
+            myXrefs.remove(oldxb);
+            // Add the updated bean.
+            addXref(newxb);
+        }
+        else {
+            // Remove from the existing 'update' list.
+            myXrefsToUpdate.remove(oldxb);
+            // Remove from the view.
+            myXrefs.remove(oldxb);
+            // Add to the updated list.
+            myXrefsToUpdate.add(newxb);
+            // Add to the view as well.
+            myXrefs.add(newxb);
+        }
     }
 
     /**

@@ -163,14 +163,15 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
         // The bean to extract the values.
         XreferenceBean xb = (XreferenceBean) dynaform.get("xref");
 
-        // Try to to set the secondary id for a go primary id.
-        ActionErrors errors = xb.setSecondaryIdFromGo(user);
-
-        // Non null error indicates errors.
-        if (errors != null) {
-            saveErrors(request, errors);
-            // Display the errors in the input page.
-            return mapping.getInputForward();
+        // For Go database, set values from the Go server.
+        if (xb.getDatabase().equals("go")) {
+            ActionErrors errors = xb.setFromGoServer(user);
+            // Non null error indicates errors.
+            if (errors != null) {
+                saveErrors(request, errors);
+                // Display the errors in the input page.
+                return mapping.getInputForward();
+            }
         }
         CvDatabase db = (CvDatabase) user.getObjectByLabel(
                 CvDatabase.class, xb.getDatabase());
@@ -178,9 +179,6 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
                 CvXrefQualifier.class, xb.getQualifier());
         Xref xref = new Xref(user.getInstitution(), db, xb.getPrimaryId(),
                 xb.getSecondaryId(), xb.getReleaseNumber(), xqual);
-        // Bean is wrapped around this xref
-//        Xref xref = xb.getXref(user);
-
         // Add the bean to the view; new bean is wrapped around the xref.
         user.getView().addXref(new XreferenceBean(xref));
 

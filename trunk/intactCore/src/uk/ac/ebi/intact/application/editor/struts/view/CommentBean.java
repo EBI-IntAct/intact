@@ -17,7 +17,7 @@ import uk.ac.ebi.intact.model.CvTopic;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class CommentBean extends AbstractEditBean {
+public class CommentBean extends AbstractEditKeyBean {
 
     // Instance Data
 
@@ -51,9 +51,17 @@ public class CommentBean extends AbstractEditBean {
      * @param annotation the underlying <code>Annotation</code> object.
      */
     public CommentBean(Annotation annotation) {
-        myAnnotation = annotation;
-        myTopic = annotation.getCvTopic().getShortLabel();
-        myAnnotatedText = annotation.getAnnotationText();
+        initialize(annotation);
+    }
+
+    /**
+     * Instantiates with given annotation and key.
+     * @param annotation the underlying <code>Annotation</code> object.
+     * @param key the key to assigned to this bean.
+     */
+    public CommentBean(Annotation annotation, long key) {
+        super(key);
+        initialize(annotation);
     }
 
     // Override Object's equals method.
@@ -66,23 +74,23 @@ public class CommentBean extends AbstractEditBean {
      * and all non transient fields are equal to given object's non tranient
      * fields. For all other instances, false is returned.
      */
-    public boolean equals(Object obj) {
-        // Identical to this?
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof CommentBean)) {
-            return false;
-        }
-        // Can safely cast it.
-        CommentBean other = (CommentBean) obj;
-
-        // Compare topic and annotation text.
-        if (!equals(myTopic, other.myTopic)) {
-            return false;
-        }
-        return equals(myAnnotatedText, other.myAnnotatedText);
-    }
+//    public boolean equals(Object obj) {
+//        // Identical to this?
+//        if (this == obj) {
+//            return true;
+//        }
+//        if (!(obj instanceof CommentBean)) {
+//            return false;
+//        }
+//        // Can safely cast it.
+//        CommentBean other = (CommentBean) obj;
+//
+//        // Compare topic and annotation text.
+//        if (!equals(myTopic, other.myTopic)) {
+//            return false;
+//        }
+//        return equals(myAnnotatedText, other.myAnnotatedText);
+//    }
 
     /**
      * Updates the internal annotation with the new values from the form. If there
@@ -146,7 +154,18 @@ public class CommentBean extends AbstractEditBean {
      * previous values.
      */
     public void reset() {
+        super.reset();
         myTopic = "";
         myAnnotatedText = "";
+    }
+
+    /**
+     * Intialize the member variables using the given Annotation object.
+     * @param annotation <code>Annotation</code> object to populate this bean.
+     */
+    private void initialize(Annotation annotation) {
+        myAnnotation = annotation;
+        myTopic = annotation.getCvTopic().getShortLabel();
+        myAnnotatedText = annotation.getAnnotationText();
     }
 }
