@@ -24,6 +24,7 @@ public class RangeTest extends TestCase {
 
     /**
      * Constructs an instance with the specified name.
+     *
      * @param name the name of the test.
      */
     public RangeTest(String name) {
@@ -70,7 +71,29 @@ public class RangeTest extends TestCase {
                 try {
                     helper.closeStore();
                 }
-                catch (IntactException e) {}
+                catch (IntactException e) {
+                }
+            }
+        }
+    }
+
+    public void testSetSequenceRaw() {
+        IntactHelper helper = null;
+        try {
+            helper = new IntactHelper();
+            doTestSetSequenceRaw(helper);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+            fail(ex.getMessage());
+        }
+        finally {
+            if (helper != null) {
+                try {
+                    helper.closeStore();
+                }
+                catch (IntactException e) {
+                }
             }
         }
     }
@@ -78,12 +101,12 @@ public class RangeTest extends TestCase {
     // Helper methods
 
     private void doTestToString(IntactHelper helper) throws IntactException {
-        CvFuzzyType lessThan = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
-                CvFuzzyType.LESS_THAN);
-        CvFuzzyType greaterThan = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
-                CvFuzzyType.GREATER_THAN);
-        CvFuzzyType undetermined = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
-                CvFuzzyType.UNDETERMINED);
+        CvFuzzyType lessThan = (CvFuzzyType) helper.getObjectByLabel(
+                CvFuzzyType.class, CvFuzzyType.LESS_THAN);
+        CvFuzzyType greaterThan = (CvFuzzyType) helper.getObjectByLabel(
+                CvFuzzyType.class, CvFuzzyType.GREATER_THAN);
+        CvFuzzyType undetermined = (CvFuzzyType) helper.getObjectByLabel(
+                CvFuzzyType.class, CvFuzzyType.UNDETERMINED);
         CvFuzzyType range = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
                 CvFuzzyType.RANGE);
         CvFuzzyType ct = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
@@ -248,5 +271,115 @@ public class RangeTest extends TestCase {
         assertEquals(testRange.getFromCvFuzzyType(), nt);
         // Fuzzy type is n-terminal for to type.
         assertEquals(testRange.getToCvFuzzyType(), nt);
+    }
+
+    private void doTestSetSequenceRaw(IntactHelper helper) throws IntactException {
+        CvFuzzyType lessThan = (CvFuzzyType) helper.getObjectByLabel(
+                CvFuzzyType.class, CvFuzzyType.LESS_THAN);
+        CvFuzzyType greaterThan = (CvFuzzyType) helper.getObjectByLabel(
+                CvFuzzyType.class, CvFuzzyType.GREATER_THAN);
+        CvFuzzyType undetermined = (CvFuzzyType) helper.getObjectByLabel(
+                CvFuzzyType.class, CvFuzzyType.UNDETERMINED);
+        CvFuzzyType rangeType = (CvFuzzyType) helper.getObjectByLabel(
+                CvFuzzyType.class, CvFuzzyType.RANGE);
+        CvFuzzyType ct = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
+                CvFuzzyType.C_TERMINAL);
+        CvFuzzyType nt = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
+                CvFuzzyType.N_TERMINAL);
+
+        // Cache the institution.
+        Institution inst = helper.getInstitution();
+
+        Range range = null;
+
+        // Set the maximum size for the tests.
+        Range.setMaxSequenceSize(5);
+
+        range = new Range(inst, 0, 2, 3, 3, null);
+
+        // fuzzy type set to C-Terminal
+        range.setFromCvFuzzyType(ct);
+        checkSequence(range, "0123456789", "56789");
+        checkSequence(range, "01234", "01234");
+        checkSequence(range, "0123", "0123");
+        checkSequence(range, "0", "0");
+        checkSequence(range, "", "");
+        checkSequence(range, null, null);
+
+        // Set it back N-terminal.
+        range.setFromCvFuzzyType(nt);
+        checkSequence(range, "0123456789", "01234");
+        checkSequence(range, "01234", "01234");
+        checkSequence(range, "0123", "0123");
+        checkSequence(range, "0", "0");
+        checkSequence(range, "", "");
+        checkSequence(range, null, null);
+
+        // Set it undetermined type.
+        range.setFromCvFuzzyType(undetermined);
+        checkSequence(range, "0123456789", "01234");
+        checkSequence(range, "01234", "01234");
+        checkSequence(range, "0123", "0123");
+        checkSequence(range, "0", "0");
+        checkSequence(range, "", "");
+        checkSequence(range, null, null);
+
+        // Fuzzy type is none.
+        testOtherSetSequenceType(null, inst);
+        // Fuzzy type is <
+        testOtherSetSequenceType(lessThan, inst);
+        // Fuzzy type is >
+        testOtherSetSequenceType(greaterThan, inst);
+        // Fuzzy type range
+        testOtherSetSequenceType(rangeType, inst);
+    }
+
+    private void checkSequence(Range range, String sequence, String expected) {
+        range.setSequenceRaw(sequence);
+        if (sequence == null) {
+            assertNull(range.getSequene());
+        }
+        else {
+            assertEquals(range.getSequene(), expected);
+        }
+    }
+
+    private void testOtherSetSequenceType(CvFuzzyType type, Institution inst) {
+        // From range is 0
+        Range range = new Range(inst, 0, 0, 2, 2, null);
+        range.setFromCvFuzzyType(type);
+        checkSequence(range, "0123456789", "01234");
+        checkSequence(range, "01234", "01234");
+        checkSequence(range, "0123", "0123");
+        checkSequence(range, "0", "0");
+        checkSequence(range, "", "");
+        checkSequence(range, null, null);
+
+        // From range is 1
+        range = new Range(inst, 1, 1, 2, 2, null);
+        range.setFromCvFuzzyType(type);
+        checkSequence(range, "0123456789", "12345");
+        checkSequence(range, "01234", "1234");
+        checkSequence(range, "0123", "123");
+        checkSequence(range, "0", "");
+        checkSequence(range, "", null);
+        checkSequence(range, null, null);
+
+        // From range is 2
+        range = new Range(inst, 2, 2, 2, 2, null);
+        range.setFromCvFuzzyType(type);
+        checkSequence(range, "0123456789", "23456");
+        checkSequence(range, "01234", "234");
+        checkSequence(range, "0123", "23");
+        checkSequence(range, "0", null);
+        checkSequence(range, "", null);
+        checkSequence(range, null, null);
+
+        // From range is 5
+        range = new Range(inst, 5, 5, 5, 5, null);
+        range.setFromCvFuzzyType(type);
+        checkSequence(range, "0123456789", "56789");
+        checkSequence(range, "01234", "");
+        checkSequence(range, "0123", null);
     }
 }
