@@ -127,11 +127,12 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
         myComponent.setStoichiometry(getStoichiometry());
 
         // The expressed in to set in the component.
+        BioSource expressedIn = null;
         if (myExpressedIn != null) {
-            BioSource expressedIn = (BioSource) user.getObjectByLabel(
+            expressedIn = (BioSource) user.getObjectByLabel(
                     BioSource.class, myExpressedIn);
-            myComponent.setExpressedIn(expressedIn);
         }
+        myComponent.setExpressedIn(expressedIn);
         return myComponent;
     }
 
@@ -162,9 +163,7 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
     }
 
     public void setRole(String role) {
-        if (!role.equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
-            myRole = role;
-        }
+        myRole = EditorMenuFactory.normalizeMenuItem(role);
     }
 
     public float getStoichiometry() {
@@ -176,19 +175,11 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
     }
 
     public String getExpressedIn() {
-        if (myComponent != null) {
-            BioSource bs = myComponent.getExpressedIn();
-            if (bs != null) {
-                myExpressedIn = bs.getShortLabel();
-            }
-        }
         return myExpressedIn;
     }
 
     public void setExpressedIn(String expressedIn) {
-        if (!expressedIn.equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
-            myExpressedIn = expressedIn;
-        }
+        myExpressedIn = EditorMenuFactory.normalizeMenuItem(expressedIn);
     }
 
     public String getOrganism() {
@@ -225,13 +216,6 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
         }
         return false;
     }
-
-//    public void update(EditUserI user) throws SearchException {
-//        CvComponentRole role = (CvComponentRole) user.getObjectByLabel(
-//                    CvComponentRole.class, myRole);
-//        myComponent.setCvComponentRole(role);
-//        myComponent.setStoichiometry(myStoichiometry);
-//    }
 
     // Helper methods
 
