@@ -177,13 +177,10 @@ public class AnnotationDispatchAction extends AbstractEditorAction {
 
         // Only add to the update list if this isn't a new annotation.
         if (view.isNewAnnotation(cb)) {
-//            System.out.println("Editing a new annotation: " + cb.getTopic() + ", " + cb.getDescription());
             // Remove the existing 'new' annotation.
             view.removeNewAnnotation(cb);
             // Add this 'updated' as a new annotation.
             Annotation annot = user.getAnnotation(cb);
-//            CommentBean cb1 = new CommentBean(annot, cb.getKey());
-//            System.out.println("Added an annotation as (1-1): " + cb1.getKey());
             view.addAnnotation(new CommentBean(annot, cb.getKey()));
         }
         else {
