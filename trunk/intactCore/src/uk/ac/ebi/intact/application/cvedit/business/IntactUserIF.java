@@ -27,6 +27,11 @@ import java.io.Serializable;
 public interface IntactUserIF extends Serializable {
 
     /**
+     * An empty list only contains this item.
+     */
+    public static final String EMPTY_LIST_ITEM = "-------------";
+
+    /**
      * Return the view of what the user sees on the screen.
      */
     public CvViewBean getView();
