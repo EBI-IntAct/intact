@@ -514,7 +514,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
         // The result to return.
         try {
-            results = helper.doLookup(className, value, this);
+            results = helper.doLookupSimple(className, value, this);
         }
         catch (IntactException e) {
             String msg = "Failed to find any " + className + " records for " + value;
