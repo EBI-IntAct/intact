@@ -48,7 +48,7 @@ public final class InteractionDetectionChecker {
                 if( cvInteraction == null ) {
                     MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find CvInteraction by PSI definition: " + id ) );
                 } else {
-                    System.out.println( "Found ParticipantDetection " + id + " as " + cvInteraction.getShortLabel() );
+                    System.out.println( "Found CvInteraction " + id + " as " + cvInteraction.getShortLabel() );
                 }
             } catch ( IntactException e ) {
                 MessageHolder.getInstance().addCheckerMessage( new Message( "An error occured while searching for CvInteraction " +

@@ -45,7 +45,7 @@ public final class AnnotationChecker {
                     MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find CvTopic having the " +
                                                                                 "shortlabel: " + type ) );
                 } else {
-                    System.out.println( "Found ParticipantDetection " + type + " as " + cvTopic.getShortLabel() );
+                    System.out.println( "Found CvTopic " + type + " as " + cvTopic.getShortLabel() );
                 }
             } catch ( IntactException e ) {
                 MessageHolder.getInstance().addCheckerMessage( new Message( "An error occured while searching for " +
