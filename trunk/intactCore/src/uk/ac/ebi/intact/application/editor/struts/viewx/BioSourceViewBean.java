@@ -45,13 +45,6 @@ public class BioSourceViewBean extends AbstractEditViewBean {
         context.putAttribute("content", "edit.biosrc.layout");
     }
 
-    // Implement the abstract methods.
-
-    public void fillEditorSpecificInfo(DynaBean form) {
-        // Fill the form with current values.
-        form.set("taxId", getTaxId());
-    }
-
     // Getter/Setter methods for tax id.
     public String getTaxId() {
         return myTaxId;
