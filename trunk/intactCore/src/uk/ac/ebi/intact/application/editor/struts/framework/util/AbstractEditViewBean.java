@@ -708,6 +708,17 @@ public abstract class AbstractEditViewBean implements Serializable {
         return myMenuFactory;
     }
 
+    /**
+     * A utility method to normalizes a menu item
+     * @param item the item to normalize.
+     * @return if give <code>item</code> equals to
+     * {@link uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory#SELECT_LIST_ITEM}
+     * null is returned. For all other times, given code>item</code> is returned.
+     */
+    protected static String normalizeMenuItem(String item) {
+        return EditorMenuFactory.SELECT_LIST_ITEM.equals(item) ? null : item;
+    }
+
     // Helper Methods
 
     /**
