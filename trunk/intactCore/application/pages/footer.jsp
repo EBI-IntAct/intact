@@ -17,7 +17,7 @@
         </br><i>Last modified:</i> <last:lastModified/>
     </td>
     <td class="tableCell">
-        <img border="0" align="right" src="../images/struts-power.gif">
+        <img border="0" align="right" src="../../images/struts-power.gif">
     </td>
 </tr>
 </table>
