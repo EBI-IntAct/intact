@@ -674,7 +674,7 @@ public class Graph2UnfoldedMIF {
         // getProteinAc() @todo
         // getXref()
         try {
-            Element psiXref = procXref(feature.getXref());
+            Element psiXref = procXrefCollection(feature.getXrefs());
             psiFeature.appendChild(psiXref);
         } catch (ElementNotParseableException e) {
             logger.info("xref failed (not required):" + e.getMessage());
