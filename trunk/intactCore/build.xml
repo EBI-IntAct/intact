@@ -183,7 +183,7 @@
         </condition>
 
         <fail if="oracle.property.missing">
-    Unable to find ${ora.props.file} file; see oracle.template file for the format.
+    Unable to find ${ora.props.file} file; see template/oracle.template file for the format.
         </fail>
 
         <!-- Copy the template to config directory first -->
