@@ -126,6 +126,22 @@ public class HtmlBuilder {
     }
 
     /**
+     * Writes info to the output stream. Usually direct, but if the
+     * argument is null (eg no full names in objects) then a 'no data'
+     * indication is written (output stream can't handle nulls)
+     * @param aString The String to write out
+     */
+    private void write(String aString) throws IOException {
+        if(aString == null) {
+            rs.write("-");
+        }
+        else {
+            rs.write(aString);
+        }
+
+    }
+
+    /**
      * Start a new html table if currently no table is open.
      * Do nothing otherwise.
      *
@@ -135,7 +151,7 @@ public class HtmlBuilder {
     private void beginTable(AnnotatedObject anObject) throws IOException {
 
         if (null == tableLevel) {
-            rs.write("<table width=100% bgcolor=\""
+            write("<table width=100% bgcolor=\""
                     + tableBackgroundColor
                     + "\">");
             tableLevel = anObject.getClass();
@@ -152,7 +168,7 @@ public class HtmlBuilder {
      */
     private void endTable(AnnotatedObject anObject) throws IOException {
         if (anObject.getClass().equals(tableLevel)) {
-            rs.write("</table>");
+            write("</table>");
             tableLevel = null;
         }
     }
@@ -162,9 +178,9 @@ public class HtmlBuilder {
      */
     private void htmlCheckBox(AnnotatedObject anObject) throws IOException {
 
-        rs.write("<input type=\"checkbox\" name=\"");
-        rs.write(anObject.getAc());
-        rs.write("\"/>");
+        write("<input type=\"checkbox\" name=\"");
+        write(anObject.getAc());
+        write("\"/>");
     }
 
     /**
@@ -173,10 +189,10 @@ public class HtmlBuilder {
      */
     private void htmlHelp(String target) throws IOException {
 
-        rs.write("<a href=\"");
-        rs.write(helpLink);
-        rs.write(target);
-        rs.write("\" target=\"new\"/><sup><b><font color=red>?</font></b></sup></a>");
+        write("<a href=\"");
+        write(helpLink);
+        write(target);
+        write("\" target=\"new\"/><sup><b><font color=red>?</font></b></sup></a>");
     }
 
     /**
@@ -185,12 +201,12 @@ public class HtmlBuilder {
      */
     private void htmlHelp(String displayString, String target) throws IOException {
 
-        rs.write("<a href=\"");
-        rs.write(helpLink);
-        rs.write(target);
-        rs.write("\" target=\"new\"/>");
-        rs.write(displayString);
-        rs.write("</a>");
+        write("<a href=\"");
+        write(helpLink);
+        write(target);
+        write("\" target=\"new\"/>");
+        write(displayString);
+        write("</a>");
     }
 
     /**
@@ -203,21 +219,21 @@ public class HtmlBuilder {
         if (anAnnotation.getCvTopic().getShortLabel().equals("remark")) {
             return;
         }
-        rs.write("<tr bgcolor="
+        write("<tr bgcolor="
                 + tableCellColor
                 + ">");
 
         // Annotation topic
-        rs.write("<td>");
+        write("<td>");
         htmlSearch(anAnnotation.getCvTopic());
-        rs.write("</td>");
+        write("</td>");
 
         // Annotation description
-        rs.write("<td colspan=3>");
-        rs.write(anAnnotation.getAnnotationText());
-        rs.write("</td>");
+        write("<td colspan=3>");
+        write(anAnnotation.getAnnotationText());
+        write("</td>");
 
-        rs.write("</tr>\n");
+        write("</tr>\n");
     }
 
     /**
@@ -245,7 +261,7 @@ public class HtmlBuilder {
      */
     private void htmlViewPrimaryId(Xref anXref) throws IOException {
 
-        rs.write("<td>");
+        write("<td>");
 
         String id = anXref.getPrimaryId();
 
@@ -278,21 +294,21 @@ public class HtmlBuilder {
             if ( ! searchUrl.equals( "-" ) ) {
                 // we have a proper search URL.
                 // Hyperlink the id
-                rs.write("<a href=\"");
-                rs.write(SearchReplace.replace(searchUrl, "${ac}", id));
-                rs.write("\">");
-                rs.write(id);
-                rs.write("</a>");
+                write("<a href=\"");
+                write(SearchReplace.replace(searchUrl, "${ac}", id));
+                write("\">");
+                write(id);
+                write("</a>");
 
             } else {
                 // No hyperlinking possible
-                rs.write(id);
+                write(id);
             }
         } else {
-            rs.write("-");
+            write("-");
         }
 
-        rs.write("</td>");
+        write("</td>");
     }
 
     /**
@@ -300,38 +316,38 @@ public class HtmlBuilder {
      */
     private void htmlView(Xref anXref) throws IOException {
 
-        rs.write("<tr bgcolor="
+        write("<tr bgcolor="
                 + tableCellColor
                 + ">");
 
         // xref db
-        rs.write("<td>");
+        write("<td>");
         htmlSearch(anXref.getCvDatabase());
-        rs.write("</td>");
+        write("</td>");
 
         // xref primaryId
         htmlViewPrimaryId(anXref);
 
         // xref secondaryId
-        rs.write("<td>");
+        write("<td>");
         if (null != anXref.getSecondaryId()) {
-            rs.write(anXref.getSecondaryId());
+            write(anXref.getSecondaryId());
         } else {
-            rs.write("-");
+            write("-");
         }
-        rs.write("</td>");
+        write("</td>");
 
         // xref qualifier
-        rs.write("<td>");
+        write("<td>");
         if (null != anXref.getCvXrefQualifier()) {
             htmlHelp("Type:", "Xref.cvXrefType");
-            rs.write(" ");
+            write(" ");
             htmlSearch(anXref.getCvXrefQualifier());
         } else {
-            rs.write("-");
+            write("-");
         }
-        rs.write("</td>");
-        rs.write("</tr>\n");
+        write("</td>");
+        write("</tr>\n");
     }
 
     /**
@@ -431,37 +447,37 @@ public class HtmlBuilder {
         }
 
         // write the line
-        rs.write("<tr bgcolor=\"" + rowColor + "\">" );
-        rs.write( "<td>" );
+        write("<tr bgcolor=\"" + rowColor + "\">" );
+        write( "<td>" );
         htmlCheckBox( partner );
-        rs.write( "</td><td>" );
+        write( "</td><td>" );
 
-        rs.write( prefix );
-        rs.write( partner.getShortLabel() );
-        rs.write( postfix );
+        write( prefix );
+        write( partner.getShortLabel() );
+        write( postfix );
 
-        rs.write( "</td><td>" );
+        write( "</td><td>" );
 
-        rs.write( prefix );
-        rs.write( partner.getFullName() );
-        rs.write( postfix );
+        write( prefix );
+        write( partner.getFullName() );
+        write( postfix );
 
-        rs.write( "</td><td>" );
+        write( "</td><td>" );
         if (text != null) {
             htmlSearch( acList, "Interaction", text); // interaction link
         }
-        rs.write( "</td><td>" );
+        write( "</td><td>" );
 
-        rs.write( prefix );
+        write( prefix );
         if ( binaryLink == true ) {
             htmlSearch( partner.getShortLabel(), "Protein", "Query with " + partner.getShortLabel() );
         } else {
             htmlSearch( partner.getShortLabel(), null, "Query with " + partner.getShortLabel() );
         }
-        rs.write( postfix );
+        write( postfix );
 
-        rs.write( "</td></tr>" );
-        rs.write( "\n" );
+        write( "</td></tr>" );
+        write( "\n" );
     }
 
     /**
@@ -474,7 +490,7 @@ public class HtmlBuilder {
 
         HashMap results = binaryData.getData();
 
-        rs.write("<table width=100% bgcolor=\""
+        write("<table width=100% bgcolor=\""
                     + tableBackgroundColor
                     + "\">");
 
@@ -486,7 +502,7 @@ public class HtmlBuilder {
              * The last cell displays the Protein view.
              */
             processLine( query, null, tableHeaderColor, true, "<b>", "</b>" );
-            rs.write( "<tr bgcolor=\"" + tableHeaderColor + "\"><td colspan=\"5\">interacts with</td></tr>" );
+            write( "<tr bgcolor=\"" + tableHeaderColor + "\"><td colspan=\"5\">interacts with</td></tr>" );
 
             HashMap currentResults = (HashMap) results.get(query);
             Iterator j = currentResults.keySet().iterator();
@@ -499,7 +515,7 @@ public class HtmlBuilder {
             }
         }
 
-        rs.write("</table>");
+        write("</table>");
     }
 
     /**
@@ -512,16 +528,16 @@ public class HtmlBuilder {
      */
     private void htmlViewPartial(CvObject term, String helpString, String helpTarget) throws IOException {
 
-        rs.write("<td>");
+        write("<td>");
 
         if (null!= term){
             htmlHelp(helpString + ":", helpTarget);
-            rs.write(" ");
+            write(" ");
             htmlSearch(term);
         } else {
-            rs.write("-");
+            write("-");
         }
-        rs.write("</td>");
+        write("</td>");
     }
 
 
@@ -532,13 +548,13 @@ public class HtmlBuilder {
     private void htmlViewHead(AnnotatedObject anAnnotatedObject,
                               boolean checkBox) throws IOException {
 
-        rs.write("<tr bgcolor="
+        write("<tr bgcolor="
                 + tableHeaderColor
                 + ">");
 
 
-        rs.write("<td class=objectClass>");
-        rs.write("<nobr>");
+        write("<td class=objectClass>");
+        write("<nobr>");
 
         // Checkbox
         if (checkBox){
@@ -546,41 +562,41 @@ public class HtmlBuilder {
         }
 
         // Class name
-        rs.write("<b>");
+        write("<b>");
         String className = anAnnotatedObject.getClass().getName();
         className = className.substring(className.lastIndexOf('.')+1, className.length());
-        rs.write(className);
-        rs.write("</b>");
+        write(className);
+        write("</b>");
 
         // Link to online help
         htmlHelp("search.TableLayout");
 
-        rs.write("</nobr>");
-        rs.write("</td>");
+        write("</nobr>");
+        write("</td>");
 
         // ac
-        rs.write("<td>");
+        write("<td>");
         htmlHelp("Ac:", "BasicObject.ac");
-        rs.write(" ");
-        rs.write(anAnnotatedObject.getAc());
-        rs.write("</td>");
+        write(" ");
+        write(anAnnotatedObject.getAc());
+        write("</td>");
 
         // shortLabel
-        rs.write("<td>");
+        write("<td>");
         htmlHelp("Name:", "AnnotatedObject.shortLabel");
-        rs.write(" ");
+        write(" ");
         htmlSearch(anAnnotatedObject);
-        rs.write("</td>");
+        write("</td>");
 
         // fullName
-        rs.write("<td rowspan=2>");
+        write("<td rowspan=2>");
         if (null!= anAnnotatedObject.getFullName()){
-            rs.write(anAnnotatedObject.getFullName());
+            write(anAnnotatedObject.getFullName());
         } else {
-            rs.write("-");
+            write("-");
         }
-        rs.write("</td>");
-        rs.write("</tr>\n");
+        write("</td>");
+        write("</tr>\n");
     }
 
 
@@ -593,17 +609,17 @@ public class HtmlBuilder {
     private void htmlViewData(AnnotatedObject anAnnotatedObject)
             throws IOException {
 
-        rs.write("<tr bgcolor="
+        write("<tr bgcolor="
                 + tableHeaderColor
                 + ">");
 
 
         // empty cell to get to the total of three cells per row
-        rs.write("<td colspan=3>");
-        rs.write("&nbsp;");
-        rs.write("</td>");
+        write("<td colspan=3>");
+        write("&nbsp;");
+        write("</td>");
 
-        rs.write("</tr>\n");
+        write("</tr>\n");
     }
 
     /**
@@ -614,7 +630,7 @@ public class HtmlBuilder {
      */
     private void htmlViewData(Protein aProtein) throws IOException {
 
-        rs.write("<tr bgcolor="
+        write("<tr bgcolor="
                 + tableHeaderColor
                 + ">");
 
@@ -623,22 +639,22 @@ public class HtmlBuilder {
         htmlViewPartial(aProtein.getBioSource(), "Source:", "Interactor.bioSource");
 
         // CRC64
-        rs.write("<td>");
+        write("<td>");
         if (null!= aProtein.getCrc64()){
             htmlHelp("Crc64:", "Protein.crc64");
-            rs.write(" ");
-            rs.write(aProtein.getCrc64());
+            write(" ");
+            write(aProtein.getCrc64());
         } else {
-            rs.write("-");
+            write("-");
         }
-        rs.write("</td>");
+        write("</td>");
 
         // One empty cell to get to the total of three cells per row
-        rs.write("<td>");
-        rs.write("&nbsp;");
-        rs.write("</td>");
+        write("<td>");
+        write("&nbsp;");
+        write("</td>");
 
-        rs.write("</tr>\n");
+        write("</tr>\n");
     }
 
 
@@ -650,20 +666,20 @@ public class HtmlBuilder {
      */
     private void htmlViewData(Interaction anInteraction) throws IOException {
 
-        rs.write("<tr bgcolor="
+        write("<tr bgcolor="
                 + tableHeaderColor
                 + ">");
 
         // kD
-        rs.write("<td>");
+        write("<td>");
         if (null!= anInteraction.getKD()){
             htmlHelp("kD:", "Interaction.kD");
-            rs.write(" ");
-            rs.write(String.valueOf(anInteraction.getKD()));
+            write(" ");
+            write(String.valueOf(anInteraction.getKD()));
         } else {
-            rs.write("-");
+            write("-");
         }
-        rs.write("</td>");
+        write("</td>");
 
         // Interaction Type
         htmlViewPartial(anInteraction.getCvInteractionType(), "Type", "Intearction.CvInteractionType");
@@ -673,11 +689,11 @@ public class HtmlBuilder {
         // htmlViewPartial(anInteraction.getBioSource(), "", "");
 
         // One empty cell to get to the total of three cells per row
-        rs.write("<td>");
-        rs.write("&nbsp;");
-        rs.write("</td>");
+        write("<td>");
+        write("&nbsp;");
+        write("</td>");
 
-        rs.write("</tr>\n");
+        write("</tr>\n");
     }
 
 
@@ -690,15 +706,15 @@ public class HtmlBuilder {
     private void htmlViewPartial(BioSource source, String helpString, String helpTarget) throws IOException {
 
         // Biosource
-        rs.write("<td>");
+        write("<td>");
         if (null != source){
             htmlHelp(helpString, helpTarget);
-            rs.write(" ");
+            write(" ");
             htmlSearch(source);
         } else {
-            rs.write("-");
+            write("-");
         }
-        rs.write("</td>");
+        write("</td>");
     }
 
     /**
@@ -709,7 +725,7 @@ public class HtmlBuilder {
      */
     private void htmlViewData(Experiment exp) throws IOException {
 
-        rs.write("<tr bgcolor="
+        write("<tr bgcolor="
                 + tableHeaderColor
                 + ">");
 
@@ -719,7 +735,7 @@ public class HtmlBuilder {
         // Biosource
         htmlViewPartial(exp.getBioSource(), "Host:", "Experiment.bioSource");
 
-        rs.write("</tr>\n");
+        write("</tr>\n");
     }
 
     /**
@@ -735,32 +751,32 @@ public class HtmlBuilder {
                             String text) throws IOException {
 
         //This nobr adds too many....
-        //rs.write("<nobr>");
+        //write("<nobr>");
         // TODO: don't hard code the application path !! Try to give it in the constructor.
-        rs.write("<a href=\"/intact/search/do/search?searchString=");
-        rs.write(target);
+        write("<a href=\"/intact/search/do/search?searchString=");
+        write(target);
 
         if (searchClass != null) {
-            rs.write("&amp;" );
-            rs.write( "searchClass=");
-            rs.write(searchClass);
+            write("&amp;" );
+            write( "searchClass=");
+            write(searchClass);
         }
 
-        rs.write("\">");
+        write("\">");
 
         boolean doHighlight = toHighlight.contains( text );
         if ( doHighlight ){
-            rs.write("<b><i>");
+            write("<b><i>");
         }
 
-        rs.write(text);
+        write(text);
 
         if ( doHighlight ){
-            rs.write("</i></b>");
+            write("</i></b>");
         }
-        rs.write("</a>");
+        write("</a>");
         //this nobr adds too many..
-        //rs.write("</nobr>");
+        //write("</nobr>");
 
     }
 
@@ -810,7 +826,7 @@ public class HtmlBuilder {
         String role = componentRole.getShortLabel();
 
         // avoid that a checkbox appears at the end of a line
-        rs.write("<nobr>");
+        write("<nobr>");
 
         // Checkbox
         htmlCheckBox(act);
@@ -822,16 +838,16 @@ public class HtmlBuilder {
         htmlSearch(componentRole,
                 "<sup>" + role.substring(0,1) + "</sup>");
 
-        rs.write(",");
+        write(",");
         // avoid that a checkbox appears at the end of a line
-        rs.write("</nobr>");
+        write("</nobr>");
 
 
         // write spaces to fill up to the "normal" length of component shortlabels
         for(int i = label.length(); i<FORMATTED_LABEL_LENGTH; i++){
-            rs.write("&nbsp;");
+            write("&nbsp;");
         }
-        rs.write("\n");
+        write("\n");
     }
 
     /**
@@ -851,27 +867,27 @@ public class HtmlBuilder {
         htmlViewXref(aProtein);
 
         // Sequence
-        rs.write("<tr bgcolor="
+        write("<tr bgcolor="
                 + tableCellColor
                 + ">");
 
-        rs.write("<td colspan=4><font face=\"Courier New, Courier, monospace\">");
+        write("<td colspan=4><font face=\"Courier New, Courier, monospace\">");
         String seq = aProtein.getSequence();
         if (seq != null) {
             int blocks = seq.length() / SEQBLOCKLENGTH;
             for (int i = 0; i< blocks; i++){
-                rs.write(seq.substring( i * SEQBLOCKLENGTH,
+                write(seq.substring( i * SEQBLOCKLENGTH,
                                         i * SEQBLOCKLENGTH + SEQBLOCKLENGTH ));
-                rs.write(" ");
+                write(" ");
             }
-            rs.write(seq.substring(blocks*SEQBLOCKLENGTH));
+            write(seq.substring(blocks*SEQBLOCKLENGTH));
 
-            rs.write("</font></td>");
+            write("</font></td>");
         } else {
-            rs.write ("<font color=\"#898989\">No sequence available for that protein.</font>");
+            write ("<font color=\"#898989\">No sequence available for that protein.</font>");
         }
 
-        rs.write("</tr>\n");
+        write("</tr>\n");
 
         // End table
         endTable(aProtein);
@@ -974,22 +990,22 @@ public class HtmlBuilder {
         htmlViewXref(act);
 
         // Interactors
-        rs.write("<tr bgcolor="
+        write("<tr bgcolor="
                 + tableCellColor
                 + ">");
 
-        rs.write("<td colspan=\"4\">");
+        write("<td colspan=\"4\">");
 
-        rs.write("<code>");
+        write("<code>");
         Iterator c = act.getComponents().iterator();
         while (c.hasNext()) {
             htmlViewPartial((Component) c.next());
         }
-        rs.write("</code>");
+        write("</code>");
 
 
-        rs.write("</td>");
-        rs.write("</tr>\n");
+        write("</td>");
+        write("</tr>\n");
 
         // End table
         endTable(act);
