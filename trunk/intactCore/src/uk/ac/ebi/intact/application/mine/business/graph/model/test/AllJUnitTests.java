@@ -41,7 +41,6 @@ public class AllJUnitTests extends TestCase {
         suite.addTest(EdgeObjectTest.suite());
         suite.addTest(SearchObjectTest.suite());
         suite.addTest(MineDataTest.suite());
-        suite.addTest(NetworkKeyTest.suite());
         return suite;
     }
 }

@@ -1,7 +1,7 @@
 /*
  * Created on 21.05.2004
- *
  */
+
 package uk.ac.ebi.intact.application.mine.business.graph.model;
 
 import java.util.Map;
@@ -27,14 +27,13 @@ public class GraphData {
      * Creates a new <tt>GraphData</tt> object
      * 
      * @param g the graph
-     * @param m the map mapping the labels of the nodes to the nodes of the
-     *            graph
+     * @param m the map maps the labels of the nodes to the nodes of the graph
      * @throws IllegalArgumentException whether the graph or the map is null
      */
     public GraphData(Graph g, Map m) {
-        if (g == null || m == null) {
-            throw new IllegalArgumentException("neither the graph "
-                    + "nor the map are allowed to be null !");
+        if ( g == null || m == null ) {
+            throw new IllegalArgumentException( "neither the graph "
+                    + "nor the map are allowed to be null !" );
         }
         graph = g;
         accMap = m;

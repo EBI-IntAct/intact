@@ -1,6 +1,7 @@
 /*
  * Created on 01.06.2004
  */
+
 package uk.ac.ebi.intact.application.mine.business;
 
 /**
@@ -11,32 +12,32 @@ package uk.ac.ebi.intact.application.mine.business;
  */
 public class MineException extends Exception {
 
-	/**
-	 *  
-	 */
-	public MineException() {
-		super();
-	}
+    /**
+     *  
+     */
+    public MineException() {
+        super();
+    }
 
-	/**
-	 * @param message
-	 */
-	public MineException(String message) {
-		super(message);
-	}
+    /**
+     * @param message
+     */
+    public MineException(String message) {
+        super( message );
+    }
 
-	/**
-	 * @param cause
-	 */
-	public MineException(Throwable cause) {
-		super(cause);
-	}
+    /**
+     * @param cause
+     */
+    public MineException(Throwable cause) {
+        super( cause );
+    }
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public MineException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    /**
+     * @param message
+     * @param cause
+     */
+    public MineException(String message, Throwable cause) {
+        super( message, cause );
+    }
 }

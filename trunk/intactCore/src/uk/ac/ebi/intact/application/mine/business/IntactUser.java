@@ -3,6 +3,7 @@
  * rights reserved. Please see the file LICENSE in the root directory of this
  * distribution.
  */
+
 package uk.ac.ebi.intact.application.mine.business;
 
 import java.sql.Connection;
@@ -17,8 +18,6 @@ import javax.servlet.http.HttpSessionBindingEvent;
 
 import org.apache.ojb.broker.accesslayer.LookupException;
 
-import uk.ac.ebi.intact.application.mine.business.graph.model.MineData;
-import uk.ac.ebi.intact.application.mine.business.graph.model.NetworkKey;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 
@@ -43,19 +42,19 @@ public class IntactUser implements IntactUserI {
         singletons = new HashSet();
     }
 
-    /**
-     * Returns the path of the minimal connecting network
+    /*
+     * (non-Javadoc)
      * 
-     * @return Returns the path.
+     * @see uk.ac.ebi.intact.application.mine.business.IntactUserI#getPaths()
      */
     public Collection getPaths() {
         return paths;
     }
 
-    /**
-     * Returns the intacthelper
+    /*
+     * (non-Javadoc)
      * 
-     * @return Returns the intactHelper.
+     * @see uk.ac.ebi.intact.application.mine.business.IntactUserI#getIntactHelper()
      */
     public IntactHelper getIntactHelper() {
         return intactHelper;
@@ -78,13 +77,13 @@ public class IntactUser implements IntactUserI {
     public void valueUnbound(HttpSessionBindingEvent arg0) {
         try {
             this.intactHelper.closeStore();
-            Constants.LOGGER.info("IntactHelper datasource closed "
-                    + "(cause: removing attribute from session)");
+            Constants.LOGGER.info( "IntactHelper datasource closed "
+                    + "(cause: removing attribute from session)" );
         }
-        catch (IntactException ie) {
+        catch ( IntactException ie ) {
             //failed to close the store - not sure what to do here yet....
-            Constants.LOGGER.error("error when closing the IntactHelper store",
-                    ie);
+            Constants.LOGGER.error(
+                    "error when closing the IntactHelper store", ie );
         }
 
     }
@@ -97,7 +96,7 @@ public class IntactUser implements IntactUserI {
      */
     public Collection search(String objectType, String searchParam,
             String searchValue) throws IntactException {
-        return intactHelper.search(objectType, searchParam, searchValue);
+        return intactHelper.search( objectType, searchParam, searchValue );
     }
 
     /*
@@ -106,13 +105,13 @@ public class IntactUser implements IntactUserI {
      * @see uk.ac.ebi.intact.application.commons.business.IntactUserI#getUserName()
      */
     public String getUserName() {
-        if (this.intactHelper != null) {
+        if ( this.intactHelper != null ) {
             try {
                 return this.intactHelper.getDbUserName();
             }
-            catch (LookupException e) {
+            catch ( LookupException e ) {
             }
-            catch (SQLException e) {
+            catch ( SQLException e ) {
             }
         }
         return null;
@@ -124,13 +123,13 @@ public class IntactUser implements IntactUserI {
      * @see uk.ac.ebi.intact.application.commons.business.IntactUserI#getDatabaseName()
      */
     public String getDatabaseName() {
-        if (this.intactHelper != null) {
+        if ( this.intactHelper != null ) {
             try {
                 return this.intactHelper.getDbName();
             }
-            catch (LookupException e) {
+            catch ( LookupException e ) {
             }
-            catch (SQLException e) {
+            catch ( SQLException e ) {
             }
         }
         return null;
@@ -145,28 +144,9 @@ public class IntactUser implements IntactUserI {
         try {
             return intactHelper.getJDBCConnection();
         }
-        catch (IntactException e) {
+        catch ( IntactException e ) {
             return null;
         }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see uk.ac.ebi.intact.application.mine.business.IntactUserI#getMineData(uk.ac.ebi.intact.application.mine.business.graph.model.NetworkKey)
-     */
-    public MineData getMineData(NetworkKey key) {
-        return (MineData) graphMap.get(key);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see uk.ac.ebi.intact.application.mine.business.IntactUserI#addToGraphMap(uk.ac.ebi.intact.application.mine.business.graph.model.NetworkKey,
-     *      uk.ac.ebi.intact.application.mine.business.graph.model.MineData)
-     */
-    public void addToGraphMap(NetworkKey key, MineData md) {
-        graphMap.put(key, md);
     }
 
     /*
@@ -176,7 +156,7 @@ public class IntactUser implements IntactUserI {
      *      java.util.Collection)
      */
     public void addToPath(Collection path) {
-        paths.add(path);
+        paths.add( path );
     }
 
     /*
@@ -185,10 +165,10 @@ public class IntactUser implements IntactUserI {
      * @see uk.ac.ebi.intact.application.mine.business.IntactUserI#clearPaths()
      */
     public void clearAll() {
-        if (paths != null) {
+        if ( null != paths ) {
             paths.clear();
         }
-        if (singletons != null) {
+        if ( null != singletons ) {
             singletons.clear();
         }
     }
@@ -199,7 +179,7 @@ public class IntactUser implements IntactUserI {
      * @see uk.ac.ebi.intact.application.mine.business.IntactUserI#addToSingletons()
      */
     public void addToSingletons(Collection element) {
-        singletons.addAll(element);
+        singletons.addAll( element );
     }
 
     /*
@@ -216,27 +196,45 @@ public class IntactUser implements IntactUserI {
      * 
      * @see uk.ac.ebi.intact.application.mine.business.IntactUserI#getHVLink()
      */
-    public String getHVLink() {
-        StringBuffer acs = new StringBuffer();
+    public String getHVLink(String context) {
+        StringBuffer link = new StringBuffer( 256 );
+        link.append( context );
+        link.append( "/hierarchView/display.jsp?AC=" );
+        // borders stores the borders of the different minimal connecting
+        // networks. E.g. borders=2,4 means for the
+        // network=EBI-1,EBI-2,EBI-3,EBI-4 that (EBI-1,EBI-2) is one network
+        // and (EBI-3,EBI-4) is one network
         StringBuffer borders = new StringBuffer();
-        int i = 0;
-        Collection p;
-        for (Iterator it = paths.iterator(); it.hasNext();) {
-            p = (Collection) it.next();
-            for (Iterator iter = p.iterator(); iter.hasNext();) {
-                acs.append(iter.next().toString());
+        int boundaries = 0;
+        Collection path;
 
-                if (iter.hasNext()) {
-                    acs.append(",");
+        for (Iterator it = paths.iterator(); it.hasNext();) {
+            path = (Collection) it.next();
+            // the current path is added to the link
+            for (Iterator iter = path.iterator(); iter.hasNext();) {
+                link.append( iter.next() );
+                if ( iter.hasNext() ) {
+                    link.append( "," );
                 }
             }
-            i += p.size();
-            borders.append(i);
-            if (it.hasNext()) {
-                acs.append(",");
-                borders.append(",");
+            // boundaries stores the sizes of the different networks
+            boundaries += path.size();
+            borders.append( boundaries );
+            if ( it.hasNext() ) {
+                link.append( "," );
+                borders.append( "," );
             }
         }
-        return acs.append("&network=").append(borders).toString();
+        link.append( "&network=" ).append( borders ).append(
+                "&method=GO&depth=1" );
+
+        // if singletons are present they are added to the link
+        if ( !singletons.isEmpty() ) {
+            String sing = singletons.toString();
+            sing = sing.substring( 1, sing.length() - 1 );
+
+            link.append( "&singletons=" + singletons );
+        }
+        return link.toString();
     }
 }

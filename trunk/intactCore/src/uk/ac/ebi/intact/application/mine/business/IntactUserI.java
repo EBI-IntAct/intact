@@ -12,8 +12,6 @@ import java.util.Collection;
 
 import javax.servlet.http.HttpSessionBindingListener;
 
-import uk.ac.ebi.intact.application.mine.business.graph.model.MineData;
-import uk.ac.ebi.intact.application.mine.business.graph.model.NetworkKey;
 import uk.ac.ebi.intact.business.IntactHelper;
 
 /**
@@ -30,23 +28,6 @@ public interface IntactUserI extends Serializable, HttpSessionBindingListener,
      * @return the database connection
      */
     public Connection getDBConnection();
-
-    /**
-     * Returns the <tt>MineData</tt> for the given key. The <tt>MineData</tt>
-     * provides among other things the graph to search
-     * 
-     * @param key a key to access the data
-     * @return the data according to the key
-     */
-    public MineData getMineData(NetworkKey key);
-
-    /**
-     * Adds a new minedata to the user
-     * 
-     * @param key the key
-     * @param md the value
-     */
-    public void addToGraphMap(NetworkKey key, MineData md);
 
     /**
      * Returns the shortest paths found by the algorithm
@@ -86,7 +67,7 @@ public interface IntactUserI extends Serializable, HttpSessionBindingListener,
      * 
      * @return a formatted string for the link
      */
-    public String getHVLink();
+    public String getHVLink(String context);
 
     /**
      * Returns the intact helper

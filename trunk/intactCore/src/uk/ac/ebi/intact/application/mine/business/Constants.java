@@ -3,11 +3,10 @@
  * rights reserved. Please see the file LICENSE in the root directory of this
  * distribution.
  */
+
 package uk.ac.ebi.intact.application.mine.business;
 
 import org.apache.log4j.Logger;
-
-import uk.ac.ebi.intact.application.mine.business.graph.model.NetworkKey;
 
 /**
  * The class <tt>Constants</tt> stores several constants which are used in the
@@ -19,7 +18,7 @@ public class Constants {
     // the name of the logger
     public static final String LOGGER_NAME = "mine";
     // the logger itself
-    public static final Logger LOGGER = Logger.getLogger(LOGGER_NAME);
+    public static final Logger LOGGER = Logger.getLogger( LOGGER_NAME );
     public static final String USER = "user";
     public static final String PARAMETER = "AC";
     public static final String ERROR = "error";
@@ -30,5 +29,7 @@ public class Constants {
     public static final int MAX_SEARCH_NUMBER = 7;
     public static final String HELP_LINK = "/displayDoc.jsp?section=";
     public static final String SEARCH = "search";
-    public static final NetworkKey DUMMY_KEY = new NetworkKey("", 0);
+    public static final Integer SINGLETON_GRAPHID = new Integer(
+            Integer.MIN_VALUE );
+    public static final String GRAPH_HELPER = "graphHelper";
 }

@@ -1,12 +1,12 @@
 /*
- Copyright (c) 2002 The European Bioinformatics Institute, and others.
- All rights reserved. Please see the file LICENSE
- in the root directory of this distribution.
+ * Copyright (c) 2002 The European Bioinformatics Institute, and others. All
+ * rights reserved. Please see the file LICENSE in the root directory of this
+ * distribution.
  */
+
 package uk.ac.ebi.intact.application.mine.struts.controller;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -39,68 +39,73 @@ import uk.ac.ebi.intact.model.Interactor;
  * @author Andreas Groscurth
  */
 public class SearchAction extends Action {
-    private static final String[] SEARCHES = { "Protein", "Interaction",
-            "Experiment" };
+    private static final String PROTEIN = "Protein";
+    private static final String INTERACTION = "Interaction";
+    private static final String EXPERIMENT = "Experiment";
     private static final String PROTEIN_PARAMETER = "on";
 
     public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) {
-        HttpSession session = request.getSession(true);
-        IntactUserI user = (IntactUserI) session.getAttribute(Constants.USER);
+        HttpSession session = request.getSession( true );
+        IntactUserI user = (IntactUserI) session.getAttribute( Constants.USER );
         try {
             // if no user exists in the session a new user is created
             // this is done because via the external management this action
             // can be called as first action
-            if (user == null) {
+            if ( user == null ) {
                 user = new IntactUser();
-                session.setAttribute(Constants.USER, user);
+                session.setAttribute( Constants.USER, user );
             }
             else {
                 // clear all former found paths and singletons
                 user.clearAll();
             }
-            Constants.LOGGER.info("start searching");
+            Constants.LOGGER.info( "start searching" );
 
-            // a collection of ac nr which are needed to search for
+            // the collection stores all values provided by the
+            // parametername 'AC'. Because it is not sure if these values are
+            // proteins, interactions or experiments one has to search for them
             Collection searchAc = new HashSet();
-            // a collection of ac nr which do not need to search for
+
+            // the collection stores all proteins which were selected via a
+            // checkbox in the ambiguous page. No search is needed because we
+            // know they are proteins.
             Collection notSearchAc = new HashSet();
+
             // all given parameters are fetched
             Map parameters = request.getParameterMap();
-            Object key;
+            String key;
             String[] values;
             StringTokenizer tok;
 
             for (Iterator iter = parameters.keySet().iterator(); iter.hasNext();) {
-                key = iter.next();
-                values = (String[]) parameters.get(key);
-                // if a checkbox with a protein was checked the protein ac
+                key = (String) iter.next();
+                values = (String[]) parameters.get( key );
+                // if a checkbox with a protein was ticked the protein ac
                 // number is the key and stored in the list
-                if (PROTEIN_PARAMETER.equals(values[0])) {
-                    // the ac is added to the notSearch collection
-                    // because its sure that its a protein
-                    notSearchAc.add(key.toString().trim());
+                if ( PROTEIN_PARAMETER.equals( values[0] ) ) {
+                    notSearchAc.add( key.trim() );
                 }
-                else if (key.equals(Constants.PARAMETER)) {
-                    tok = new StringTokenizer(values[0], ",");
-                    while (tok.hasMoreTokens()) {
+                else if ( key.equals( Constants.PARAMETER ) ) {
+                    tok = new StringTokenizer( values[0], "," );
+                    while ( tok.hasMoreTokens() ) {
                         // the parameter can be something else
                         // than a protein -> it has to be searched for
-                        searchAc.add(tok.nextToken().trim());
+                        searchAc.add( tok.nextToken().trim() );
                     }
                 }
             }
 
-            //TODO: FORWARD TO AMBIGUOUS PAGE !!!!!!
-            if ((searchAc.size() + notSearchAc.size()) > Constants.MAX_SEARCH_NUMBER) {
-                Constants.LOGGER.warn("too many searches");
-                request.setAttribute(Constants.ERROR, new ErrorForm(
+            if ( ( searchAc.size() + notSearchAc.size() ) > Constants.MAX_SEARCH_NUMBER ) {
+                Constants.LOGGER.warn( "too many searches" );
+                request.setAttribute( Constants.ERROR, new ErrorForm(
                         "The number of selected proteins " + "is greater than "
                                 + Constants.MAX_SEARCH_NUMBER
-                                + " !<br>Please select less proteins !"));
-                return mapping.findForward(Constants.ERROR);
+                                + " !<br>Please select less proteins !" ) );
+                return mapping.findForward( Constants.ERROR );
             }
 
+            // flag whether the search returned an ambiguous result
             boolean ambiguous = false;
             // the collection stores all found ambiguous results by the search
             Collection ambiguousResults = new HashSet();
@@ -111,14 +116,14 @@ public class SearchAction extends Action {
             Collection mineSearchAc = new HashSet();
 
             // the search helper provides the search for the ac numbers
-            SearchHelper sh = new SearchHelper(Constants.LOGGER);
+            SearchHelper sh = new SearchHelper( Constants.LOGGER );
             // for every ac number of the list a search is done
             for (Iterator iter = searchAc.iterator(); iter.hasNext();) {
-                searchPhrase = iter.next().toString();
-                ab = searchFor(searchPhrase, sh, user);
-                Collections.min(searchAc);
+                searchPhrase = (String) iter.next();
+                ab = searchForAll( searchPhrase, sh, user );
+
                 // if the search returned a ambiguous result
-                if (ab.hasAmbiguousResult()) {
+                if ( ab.hasAmbiguousResult() ) {
                     ambiguous = true;
                 }
                 else {
@@ -126,46 +131,45 @@ public class SearchAction extends Action {
                     // collection used for the dijkstra algorithm
                     for (Iterator it = ab.getProteins().iterator(); it
                             .hasNext();) {
-                        mineSearchAc.add(((Interactor) it.next()).getAc());
+                        mineSearchAc.add( ( (Interactor) it.next() ).getAc() );
                     }
                 }
                 // the searchPhrase is stored to distinguish which search result
                 // belongs to which search phrase
-                ab.setSearchAc(searchPhrase);
-                ambiguousResults.add(ab);
+                ab.setSearchAc( searchPhrase );
+                ambiguousResults.add( ab );
             }
 
             // if the results are ambiguous the application is forwarded to a
             // special page to display all search results.
-            if (ambiguous) {
-                Constants.LOGGER
-                        .info("found an ambiguous result - forward to the ambiguous page");
+            if ( ambiguous ) {
+                Constants.LOGGER.info( "forward to the ambiguous page" );
                 // because we want also the information of the proteins
                 // which were not used in the first search - the informations
                 // are now fetched
                 for (Iterator iter = notSearchAc.iterator(); iter.hasNext();) {
                     searchPhrase = iter.next().toString();
-                    ab = searchFor(searchPhrase, sh, user);
-                    ab.setSearchAc(searchPhrase);
-                    ambiguousResults.add(ab);
+                    ab = searchForProteins( searchPhrase, sh, user );
+                    ab.setSearchAc( searchPhrase );
+                    ambiguousResults.add( ab );
                 }
-                request.setAttribute(Constants.AMBIGOUS, ambiguousResults);
-                return mapping.findForward(Constants.AMBIGOUS);
+                request.setAttribute( Constants.AMBIGOUS, ambiguousResults );
+                return mapping.findForward( Constants.AMBIGOUS );
             }
             else {
                 // the search result is not ambiguous therefore
                 // the other proteins are added to the mine search collection
-                mineSearchAc.addAll(notSearchAc);
+                mineSearchAc.addAll( notSearchAc );
             }
 
-            Constants.LOGGER.info("forward to the algorithm");
-            request.setAttribute(Constants.SEARCH, mineSearchAc);
-            return mapping.findForward(Constants.SUCCESS);
+            Constants.LOGGER.info( "forward to the algorithm" );
+            request.setAttribute( Constants.SEARCH, mineSearchAc );
+            return mapping.findForward( Constants.SUCCESS );
         }
-        catch (Exception e) {
-            request.setAttribute(Constants.ERROR, new ErrorForm(e
-                    .getLocalizedMessage()));
-            return mapping.findForward(Constants.ERROR);
+        catch ( IntactException e ) {
+            request.setAttribute( Constants.ERROR, new ErrorForm( e
+                    .getLocalizedMessage() ) );
+            return mapping.findForward( Constants.ERROR );
         }
     }
 
@@ -179,12 +183,28 @@ public class SearchAction extends Action {
      * @param user the intact user
      * @return @throws IntactException
      */
-    private AmbiguousBean searchFor(String ac, SearchHelperI sh,
+    private AmbiguousBean searchForAll(String ac, SearchHelperI sh,
             IntactUserI user) throws IntactException {
         AmbiguousBean ab = new AmbiguousBean();
-        ab.setProteins(sh.doLookup(SEARCHES[0], ac, user));
-        ab.setInteractions(sh.doLookup(SEARCHES[1], ac, user));
-        ab.setExperiments(sh.doLookup(SEARCHES[2], ac, user));
+        ab.setProteins( sh.doLookup( PROTEIN, ac, user ) );
+        ab.setInteractions( sh.doLookup( INTERACTION, ac, user ) );
+        ab.setExperiments( sh.doLookup( EXPERIMENT, ac, user ) );
+        return ab;
+    }
+
+    /**
+     * Searches in the database for the given accession number. <br>
+     * Returns a bean which stores all found results in proteins.
+     * 
+     * @param ac the accession number to search for
+     * @param sh the searchhelper
+     * @param user the intact user
+     * @return @throws IntactException
+     */
+    private AmbiguousBean searchForProteins(String ac, SearchHelperI sh,
+            IntactUserI user) throws IntactException {
+        AmbiguousBean ab = new AmbiguousBean();
+        ab.setProteins( sh.doLookup( PROTEIN, ac, user ) );
         return ab;
     }
 }
