@@ -6,13 +6,17 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action;
 
-import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.business.IntactException;
-import org.apache.struts.action.*;
+import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.CvXrefQualifier;
+import uk.ac.ebi.intact.model.Institution;
+import uk.ac.ebi.intact.model.Xref;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,7 +60,6 @@ public class XrefAddAction extends AbstractEditorAction {
         String database = (String) theForm.get("database");
         String qualifier = (String) theForm.get("qualifier");
 
-//        try {
         // The owner of the object we are editing.
         Institution owner = user.getInstitution();
 
@@ -72,15 +75,6 @@ public class XrefAddAction extends AbstractEditorAction {
         Xref xref = new Xref(owner, db, (String) theForm.get("primaryId"),
                 (String) theForm.get("secondaryId"),
                 (String) theForm.get("releaseNumber"), xqual);
-//        }
-//        catch (IntactException ie) {
-//            // Error in accessing the database.
-//            ActionErrors errors = new ActionErrors();
-//            errors.add(AbstractEditorAction.EDITOR_ERROR,
-//                    new ActionError("error.search", ie.getMessage()));
-//            saveErrors(request, errors);
-//            return mapping.findForward(EditorConstants.FORWARD_FAILURE);
-//        }
         // Add the annotation to the view.
         AbstractEditViewBean viewbean = user.getView();
         viewbean.addXref(xref);
@@ -88,6 +82,6 @@ public class XrefAddAction extends AbstractEditorAction {
         // Clear previous entries and reset to the default values.
         theForm.reset(mapping, request);
 
-        return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
+        return mapping.findForward(FORWARD_SUCCESS);
     }
 }

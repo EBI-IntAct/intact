@@ -6,13 +6,16 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action;
 
-import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.model.*;
-
-import org.apache.struts.action.*;
+import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import uk.ac.ebi.intact.model.Annotation;
+import uk.ac.ebi.intact.model.CvTopic;
+import uk.ac.ebi.intact.model.Institution;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,11 +54,8 @@ public class CommentAddAction extends AbstractEditorAction {
         // Need the form to get data entered by the user.
         DynaActionForm theForm = (DynaActionForm) form;
 
-        // The topic for the annotation.
-//        CvTopic cvtopic = null;
-
         // Handler to the Intact User.
-        EditUserI user = super.getIntactUser(request);
+        EditUserI user = getIntactUser(request);
 
         // The owner of the object we are editing.
         Institution owner = user.getInstitution();
@@ -63,20 +63,8 @@ public class CommentAddAction extends AbstractEditorAction {
         // The topic selected by the user.
         String topic = (String) theForm.get("topic");
 
-//        try {
-            // Get the topic object for the new annotation.
+        // Get the topic object for the new annotation.
         CvTopic cvtopic = (CvTopic) user.getObjectByLabel(CvTopic.class, topic);
-//        }
-//        catch (IntactException ie) {
-//            // Can't query the database.
-//            LOGGER.info(ie);
-//            // The errors to report back.
-//            ActionErrors errors = new ActionErrors();
-//            errors.add(AbstractEditorAction.EDITOR_ERROR,
-//                    new ActionError("error.search", ie.getMessage()));
-//            saveErrors(request, errors);
-//            return mapping.findForward(EditorConstants.FORWARD_FAILURE);
-//        }
         // The new annotation to add to database.
         Annotation annot = new Annotation();
         annot.setAnnotationText((String) theForm.get("description"));
@@ -87,9 +75,6 @@ public class CommentAddAction extends AbstractEditorAction {
         AbstractEditViewBean viewbean = user.getView();
         viewbean.addAnnotation(annot);
 
-        // Clear previous entries and reset to the default values.
-//        theForm.reset(mapping, request);
-
-        return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
+        return mapping.findForward(FORWARD_SUCCESS);
     }
 }
