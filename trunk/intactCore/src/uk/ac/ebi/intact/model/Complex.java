@@ -8,7 +8,7 @@ package uk.ac.ebi.intact.model;
 /**
 
  */
-public class Complex extends Interactor implements Editable {
+public class Complex extends Interactor {
 
   ///////////////////////////////////////
   //attributes

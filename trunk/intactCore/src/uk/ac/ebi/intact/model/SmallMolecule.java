@@ -8,7 +8,7 @@ package uk.ac.ebi.intact.model;
 /**
 
  */
-public class SmallMolecule extends Interactor implements Editable {
+public class SmallMolecule extends Interactor {
 } // end SmallMolecule
 
 
