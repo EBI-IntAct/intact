@@ -524,7 +524,7 @@ ALTER TABLE IA_Int2Exp
         USING INDEX
         TABLESPACE   &&intactIndexTablespace
      )
-/
+;
 
 
 set term off
@@ -566,7 +566,7 @@ ALTER TABLE IA_Int2Annot
         USING INDEX
         TABLESPACE   &&intactIndexTablespace
      )
-/
+;
 
 set term off
     COMMENT ON TABLE IA_Int2Annot IS
@@ -606,7 +606,7 @@ ALTER TABLE IA_Exp2Annot
         USING INDEX
         TABLESPACE   &&intactIndexTablespace
      )
-/
+;
 
 set term off
     COMMENT ON TABLE IA_Exp2Annot IS
@@ -687,7 +687,7 @@ ALTER TABLE IA_Biosource2Annot
         USING INDEX
         TABLESPACE   &&intactIndexTablespace
      )
-/
+;
 
 set term off
     COMMENT ON TABLE IA_Biosource2Annot IS
@@ -834,13 +834,13 @@ CREATE TABLE ia_goDens_binary
 )
 TABLESPACE &&intactMainTablespace
 PCTFREE    15
-/
+;
 
 CREATE INDEX igoBaitkey ON ia_goDens_binary (goBait) reverse TABLESPACE &&intactIndexTablespace
-/
+;
 
 CREATE INDEX igoPreykey ON ia_goDens_binary (goPrey) reverse TABLESPACE &&intactIndexTablespace
-/
+;
 
 
 
@@ -854,13 +854,13 @@ CREATE TABLE ia_goDens_GoDag (
  ) 
 TABLESPACE &&intactMainTablespace
 PCTFREE    15
-/
+;
 
 CREATE INDEX iGoParent ON ia_goDens_GoDag (parent) reverse TABLESPACE &&intactIndexTablespace
-/
+;
 
 CREATE INDEX iGoChild ON ia_goDens_GoDag (child) reverse TABLESPACE &&intactIndexTablespace
-/
+;
 
 
 
@@ -872,10 +872,10 @@ CREATE TABLE ia_goDens_GoDagDenorm (
 )
 TABLESPACE &&intactMainTablespace
 PCTFREE    15
-/
+;
 
 CREATE INDEX iGoParentDenorm ON ia_goDens_GoDagDenorm (parent) reverse TABLESPACE &&intactIndexTablespace
-/
+;
 
 
 
@@ -887,10 +887,10 @@ CREATE TABLE ia_goDens_GoProt (
 )
 TABLESPACE &&intactMainTablespace 
 PCTFREE    15
-/
+;
 
 CREATE INDEX iGoId ON ia_goDens_GoProt (goid) reverse TABLESPACE &&intactIndexTablespace
-/
+;
 
 
 
@@ -904,12 +904,12 @@ CREATE TABLE ia_goDens_density (
 )
 TABLESPACE &&intactMainTablespace
 PCTFREE    15
-/
+;
 
 CREATE INDEX igoId1 ON ia_goDens_density(goid1) reverse TABLESPACE &&intactIndexTablespace
-/
+;
 CREATE INDEX igoId2 ON ia_goDens_density(goid2) reverse TABLESPACE &&intactIndexTablespace
-/
+;
 
 
 
@@ -932,11 +932,13 @@ CREATE TABLE IA_alias
     ,  owner_ac                VARCHAR2(30)    CONSTRAINT fk_alias$owner REFERENCES IA_Institution(ac)
     ,  name                       VARCHAR2(30)
 )
-TABLESPACE &&intactIndexTablespace;
+TABLESPACE &&intactIndexTablespace
+;
 
-CREATE index i_Alias$parent_ac on IA_Alias(parent_ac) TABLESPACE &&intactIndexTablespace;
+CREATE index i_Alias$parent_ac on IA_Alias(parent_ac) TABLESPACE &&intactIndexTablespace
+;
  
-set term on
+set term off
     COMMENT ON TABLE IA_Alias IS
     'Represents an alias. Therefore the column parent_ac can unfortunately not have a foreign key constraint.';
     COMMENT ON COLUMN IA_Alias.aliastype_ac IS
@@ -957,8 +959,72 @@ set term on
     'Date of the last update of the column.';
     COMMENT ON COLUMN IA_Alias.userstamp IS
     'Database user who has performed the last update of the column.';
-set term off
+set term on
 
+
+PROMPT Creating table "IA_PAYG"
+CREATE TABLE IA_PAYG(
+      NID                 VARCHAR2(20) NOT NULL CONSTRAINT PK_PAYG PRIMARY KEY
+    , BAIT                INTEGER
+    , PREY                INTEGER
+    , INDEGREE            NUMBER(6)
+    , OUTDEGREE           NUMBER(6)
+    , QDEGREE             FLOAT
+    , ESEEN               INTEGER
+    , ECONF               INTEGER
+    , REALLY_USED_AS_BAIT NUMBER(1)
+    , SPECIES             VARCHAR2(30) CONSTRAINT FK_PAYG_SPECIES REFERENCES IA_BIOSOURCE(TAXID)
+)
+TABLESPACE &&intactMainTablespace
+PCTFREE    15
+;
+
+
+set term off
+   COMMENT ON TABLE IA_Payg IS
+   'Table where the pay-as-you-go algorithm is executed for each species.';
+   COMMENT ON COLUMN IA_Payg.nID IS
+   'The Id for the node.';
+   COMMENT ON COLUMN IA_Payg.bait IS
+   'At what step no. the nID was used as a bait.';
+   COMMENT ON COLUMN IA_Payg.prey IS
+   'At what step no. the nID was first seen as prey.';
+   COMMENT ON COLUMN IA_Payg.indegree IS
+   'The number of times this nID has been seen as prey.';
+   COMMENT ON COLUMN IA_Payg.outdegree IS
+   'The number of prey associated with this nID.';
+   COMMENT ON COLUMN IA_Payg.qdegree IS
+   'Used as a tie-breaker in the event two or more nIDs have the same and highest indegree.';
+   COMMENT ON COLUMN IA_Payg.eseen IS
+   'Running totals of how many interactions have been seen.';
+   COMMENT ON COLUMN IA_Payg.econf IS
+   'Running totals of how many interactions have been confirmed.';
+   COMMENT ON COLUMN IA_Payg.really_used_as_bait IS
+   '.';
+   COMMENT ON COLUMN IA_Payg.species IS
+   'The tax id of the bio source.';
+set term on
+
+--PROMPT Creating table "CURRENT_EDGE"
+--CREATE TABLE CURRENT_EDGE(
+--     NIDA VARCHAR2(20)
+--    ,NIDB VARCHAR2(20)
+--    ,SEEN INTEGER
+--    ,CONF INTEGER
+--    ,SPECIES VARCHAR(20)
+--)
+--TABLESPACE &&intactMainTablespace
+--PCTFREE    15
+--;
+--
+--PROMPT Creating table "TEMP_NODE"
+--CREATE TABLE TEMP_NODE(
+--     NID VARCHAR(20)
+--    ,SPECIES VARCHAR2(20)
+--)
+--TABLESPACE &&intactMainTablespace
+--PCTFREE    15
+--;
 
 
 
