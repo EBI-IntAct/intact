@@ -52,11 +52,11 @@ begin
                         and    lower(column_name) not in ('updated', 'userstamp')
                         order  by column_id)
       loop
-          if r_tabcols.data_type != 'CLOB' then
+          --if r_tabcols.data_type != 'CLOB' then
               dbms_output.put_line (chr(9)||chr(9)||', :old.'||r_tabcols.column_name);
-          else
-   		      dbms_output.put_line (chr(9)||chr(9)||', decode (nvl(dbms_lob.compare(:new.'||r_tabcols.column_name||', :old.'||r_tabcols.column_name||'),0) ,0, ''CLOB UNCHANGED'', :old.'||r_tabcols.column_name||')' );            
-          end if;
+          --else
+   		  --    dbms_output.put_line (chr(9)||chr(9)||', decode (nvl(dbms_lob.compare(:new.'||r_tabcols.column_name||', :old.'||r_tabcols.column_name||'),0) ,0, ''CLOB UNCHANGED'', :old.'||r_tabcols.column_name||')' );            
+          --end if;
       end loop;
 
       dbms_output.put_line (chr(9)||chr(9)||');');
