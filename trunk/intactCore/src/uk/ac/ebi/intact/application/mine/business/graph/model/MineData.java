@@ -4,7 +4,6 @@
  */
 package uk.ac.ebi.intact.application.mine.business.graph.model;
 
-import java.io.Serializable;
 import java.util.Map;
 
 import jdsl.graph.api.Graph;
@@ -15,7 +14,7 @@ import jdsl.graph.api.Graph;
  * 
  * @author Andreas Groscurth
  */
-public class MineData implements Serializable {
+public class MineData {
     private Graph graph;
     private Map accMap;
 

@@ -10,8 +10,8 @@ package uk.ac.ebi.intact.application.mine.business.graph.model;
  * 
  * @author Andreas Groscurth
  */
-public class NetworkKey implements Comparable {
-    private String bioSource;
+public class NetworkKey {
+    private String bioSourceTaxID;
     private int graphID;
 
     /**
@@ -21,7 +21,7 @@ public class NetworkKey implements Comparable {
      * @param g the graphid
      */
     public NetworkKey(String b, int g) {
-        bioSource = b;
+        bioSourceTaxID = b;
         graphID = g;
     }
 
@@ -30,8 +30,8 @@ public class NetworkKey implements Comparable {
      * 
      * @return Returns the bioSource.
      */
-    public String getBioSource() {
-        return bioSource;
+    public String getBioSourceTaxID() {
+        return bioSourceTaxID;
     }
 
     /**
@@ -52,24 +52,14 @@ public class NetworkKey implements Comparable {
         }
         NetworkKey dw = (NetworkKey) o;
 
-        return bioSource.equals(dw.bioSource) && graphID == dw.graphID;
+        return bioSourceTaxID.equals(dw.bioSourceTaxID) && graphID == dw.graphID;
     }
 
     public int hashCode() {
-        return bioSource.hashCode() + graphID;
+        return bioSourceTaxID.hashCode() + graphID;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
-    public int compareTo(Object o) {
-        NetworkKey other = (NetworkKey) o;
-        int comp = other.bioSource.compareTo(bioSource);
-        if (comp == 0) {
-            return other.graphID - graphID;
-        }
-        return comp;
+    public String toString() {
+        return "biosource taxid: " + bioSourceTaxID + " / graphid " + graphID;
     }
 }
