@@ -64,6 +64,12 @@ public final class CenteredAction extends IntactBaseAction {
             return (mapping.findForward("error"));
         }
 
+        if (null == user.getDepth()) {
+            addError ("error.setting.notCorrect");
+            saveErrors(request);
+            return (mapping.findForward("error"));
+        }
+
         String AC = null;
 
         // look in the request ...
