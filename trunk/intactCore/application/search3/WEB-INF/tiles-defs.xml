@@ -70,12 +70,12 @@
         <put name="content" value="/pages/single.jsp"/>
     </definition>
 
-     <!-- single AnnotatedObject view description. Used for eg CvObjects, BioSource-->
+     <!-- single  BioSource view -->
     <definition name="cvObject.layout" extends="search.layout">
         <put name="content" value="/pages/cvObject.jsp"/>
     </definition>
 
-     <!-- single AnnotatedObject view description. Used for eg CvObjects, BioSource-->
+      <!-- single  CvObject view -->
     <definition name="bioSource.layout" extends="search.layout">
         <put name="content" value="/pages/bioSource.jsp"/>
     </definition>
@@ -111,6 +111,12 @@
     <!-- General error layout -->
     <definition name="error.layout" extends="search.layout">
         <put name="content" value="/pages/error.jsp"/>
+        <put name="sidebar" value="search.sidebar.layout"/>
+    </definition>
+
+      <!-- General too large layout -->
+    <definition name="too.large.layout" extends="search.layout">
+        <put name="content" value="/pages/tooLarge.jsp"/>
         <put name="sidebar" value="search.sidebar.layout"/>
     </definition>
 
