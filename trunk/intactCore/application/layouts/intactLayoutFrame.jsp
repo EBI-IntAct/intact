@@ -21,21 +21,22 @@
 
 <head>
     <title><tiles:getAsString name="title"/></title>
-    <html:base target="_top"/>
+
+    <base target="_top">
     <meta http-equiv="cache-control" content="no-cache">
     <meta http-equiv="pragma" content="no-cache">
     <meta http-equiv="expires" content="-1">
-    <link rel="stylesheet" type="text/css" href="styles/intact.css"/>
+    <link rel="stylesheet" type="text/css" href="layouts/styles/intact.css"/>
 </head>
 
     <frameset cols="12%,*" border=0>
 
-       <frame src="<tiles:getAsString name="sidebar"/>" name="sidebarFrame">
+       <frame src="<%=request.getContextPath()%>/<tiles:getAsString name="sidebar"/>" name="sidebarFrame">
 
        <frameset rows="8%,*, 9%">
-          <frame src="<tiles:getAsString name="header"/>"  name="headerFrame">
-          <frame src="<tiles:getAsString name="content"/>" name="contentFrame">
-          <frame src="footerFrame.jsp"  name="footerFrame">
+          <frame src="<%=request.getContextPath()%>/<tiles:getAsString name="header"/>"  name="headerFrame">
+          <frame src="<%=request.getContextPath()%>/<tiles:getAsString name="content"/>" name="contentFrame">
+          <frame src="<%=request.getContextPath()%>/layouts/footerFrame.jsp"  name="footerFrame">
        </frameset>
 
        <noframes>
