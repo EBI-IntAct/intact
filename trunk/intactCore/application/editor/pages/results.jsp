@@ -32,8 +32,8 @@
     request.setAttribute(formName, form);
 %>
 
-Search class: <c:out value="${user.lastSearchClass}"/>
-&nbsp;Query: <c:out value="${user.lastSearchQuery}"/>
+Search class: <c:out value="${user.searchClass}"/>
+&nbsp;Query: <c:out value="${user.searchQuery}"/>
 
 <html:form action="/results">
 
