@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 import java.io.*;
+import java.net.MalformedURLException;
 
 /**
  * Handles when the user enters a value for tax id. The short label and the full
@@ -172,16 +173,21 @@ public class BioSourceAction extends AbstractEditorAction {
     private NewtServerProxy.NewtResponse getNewtResponse(EditorService service,
                                                          String taxid,
                                                          HttpServletRequest request) {
-        // Handler to the Newt server.
-        NewtServerProxy newtServer = service.getNewtServer();
-
         // To report errors.
         ActionErrors errors;
 
         // Query the server.
         NewtServerProxy.NewtResponse newtResponse = null;
         try {
+            // Handler to the Newt server.
+            NewtServerProxy newtServer = service.getNewtServer();
             newtResponse = newtServer.query(Integer.parseInt(taxid));
+        }
+        catch (MalformedURLException murle) {
+            // Error in communcating with the server.
+            errors = new ActionErrors();
+            errors.add("biosource", new ActionError("error.newt.url"));
+            saveErrors(request, errors);
         }
         catch (IOException ioe) {
             // Error in communcating with the server.
