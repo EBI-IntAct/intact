@@ -52,12 +52,100 @@ import java.util.regex.Matcher;
  */
 public class EditUser implements EditUserI, HttpSessionBindingListener {
 
-    /**
-     * The pattern to parse the given short label to get the next available
-     * short label.
-     * pattern: any number of characters followed by -x.
-     */
-    private static final Pattern ourNextSLPattern = Pattern.compile("^(.+)?\\-(x)$");
+    public static class ShortLabelFormatter {
+
+        /**
+         * The pattern to split the short label.
+         */
+        private static final Pattern ourSLSplitPattern = Pattern.compile("-");
+
+        /**
+         * An array of strings after applying the split pattern.
+         */
+        private String[] myLabelComps;
+
+        /**
+         * Constructs an instance with given short label.
+         * @param shortLabel the short label to do the formatting.
+         */
+        public ShortLabelFormatter(String shortLabel) {
+            myLabelComps = ourSLSplitPattern.split(shortLabel);
+        }
+
+        /**
+         * @return true if this short label has a branch (i.e., ends with a digit).
+         */
+        public boolean hasBranch() {
+            return myLabelComps[getBranchPos()].matches("\\d+");
+        }
+
+        /**
+         * @return true if this short label ends with x (e.g., abc-x).
+         */
+        public boolean hasClonedSuffix() {
+            return myLabelComps[myLabelComps.length - 1].equals("x");
+        }
+
+        /**
+         * @return true only if the short label hasn't got a branch or cloned suffix.
+         */
+        public boolean isRootOnly() {
+            return !hasBranch() && !hasClonedSuffix();
+        }
+
+        /**
+         * @return the branch number as an int or -1 if there is no branch.
+         */
+        public int getBranchNumber() {
+            if (!hasBranch()) {
+                // No branch.
+                return -1;
+            }
+            return Integer.parseInt(getBranch());
+        }
+
+        /**
+         * @return the root element without the branch (if it exists).
+         */
+        public String getRoot() {
+            // Initialize with the first item.
+            StringBuffer sb = new StringBuffer(myLabelComps[0]);
+
+            // Decide where to stop.
+            int stop = myLabelComps.length;
+            if (hasClonedSuffix()) {
+                --stop;
+            }
+            if (hasBranch()) {
+                --stop;
+            }
+            // Loop from the second item.
+            for (int i = 1; i < stop; i++) {
+                sb.append("-" + myLabelComps[i]);
+            }
+            return sb.toString();
+        }
+
+        /**
+         * @return the branch component ot null if none exists.
+         */
+        public String getBranch() {
+            if (!hasBranch()) {
+                return null;
+            }
+            return myLabelComps[getBranchPos()];
+        }
+
+        private int getBranchPos() {
+            int pos = myLabelComps.length - 1;
+            if (hasClonedSuffix()) {
+                --pos;
+            }
+            return pos;
+        }
+    }
+
+    // -- End of Inner class --------------------------------------------------
 
     /**
      * The pattern to parse an existing cloned short label.
@@ -458,7 +546,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         catch (IntactException ie) {
             String msg;
             if (ie instanceof DuplicateLabelException) {
-                msg = label + " already exists";
+                msg = "More than one record exists for " + label;
             }
             else {
                 msg = "Failed to find a record for " + label;
@@ -603,41 +691,14 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * invalid format.
      */
     public String getNextAvailableShortLabel(Class clazz, String label) {
-        Matcher matcher = ourNextSLPattern.matcher(label);
-        if (!matcher.matches()) {
-            return null;
-        }
-        // Try the longest name first.
-        String prefix = matcher.group(1) + "-";
-        Collection results = null;
         try {
-            results = search1(clazz.getName(), "shortLabel", prefix + "*");
+            return doGetNextAvailableShortLabel(clazz, label);
         }
         catch (SearchException se) {
-            return label;
+            // Error in searching, just return the original name for user to
+            // decide.
         }
-        if (results.isEmpty()) {
-            // No matches found for the longes match. The first clone entry.
-            return prefix + "1";
-        }
-        // Found at least one entry. Need to find out the largest number.
-        int number = 1;
-        for (Iterator iter = results.iterator(); iter.hasNext();) {
-            String shortLabel = ((AnnotatedObject) iter.next()).getShortLabel();
-            // Need to split the short label to extract the number.
-            Matcher matcher1 = ourClonedSLPattern.matcher(shortLabel);
-            if (matcher1.matches()) {
-                // Only consider a short label matching the prefix.
-                if (matcher1.group(1).equals(matcher.group(1))) {
-                    // They should match; the search returns only the matching one.
-                    int digit = Integer.parseInt(matcher1.group(2));
-                    if (digit >= number) {
-                        number = digit + 1;
-                    }
-                }
-            }
-        }
-        return prefix + number;
+        return label;
     }
 
     public void fillSearchResult(DynaBean dynaForm) {
@@ -757,7 +818,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 			throw new SearchException("Failed to get a BioSource for " + taxId);
 		}
 	}
-	
+
     // Helper methods.
 
     /**
@@ -837,5 +898,69 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         }
         // There is another record exists with the same short label.
         return true;
+    }
+
+    private String doGetNextAvailableShortLabel(Class clazz, String label)
+            throws SearchException {
+        // The formatter to analyse the short label.
+        ShortLabelFormatter formatter = new ShortLabelFormatter(label);
+
+        // Holds the result from the search.
+        Collection results = null;
+
+        // The prefix for the proposed short label;
+        String prefix = null;
+
+        // Try to guess the next new label.
+        String nextLabel;
+
+        if (formatter.isRootOnly()) {
+            // case: abc
+            if (getObjectByLabel(clazz, label) == null) {
+                // Label is not found in the DB.
+                return label;
+            }
+            // Label already exists.
+            prefix = label;
+            nextLabel = prefix + "-1";
+        }
+        else {
+            // case: abc-x or abc-1
+            prefix = formatter.getRoot();
+            // Trying to guess the new label by increment the branch number by
+            // one. This avoids loading all the cloned names with prefix-*.
+            nextLabel = formatter.hasBranch()
+                    ? prefix + "-" + (formatter.getBranchNumber() + 1)
+                    : prefix + "-1";
+        }
+        if (getObjectByLabel(clazz, nextLabel) == null) {
+            return nextLabel;
+        }
+        // AT this point: no success with incrementing the branch number.
+
+        // Get all the short labels with the prefix.
+        results = search1(clazz.getName(), "shortLabel", prefix + "-*");
+        if (results.isEmpty()) {
+            // No matches found for the longest match. The first clone entry.
+            return prefix + "-1";
+        }
+        // Found at least one entry. Need to find out the largest number.
+        int number = 2;
+        for (Iterator iter = results.iterator(); iter.hasNext();) {
+            String shortLabel = ((AnnotatedObject) iter.next()).getShortLabel();
+            // Need to split the short label to extract the number.
+            Matcher matcher1 = ourClonedSLPattern.matcher(shortLabel);
+            if (matcher1.matches()) {
+                // Only consider a short label matching the prefix.
+                if (matcher1.group(1).equals(prefix)) {
+                    // They should match; the search returns only the matching one.
+                    int digit = Integer.parseInt(matcher1.group(2));
+                    if (digit >= number) {
+                        number = digit + 1;
+                    }
+                }
+            }
+        }
+        return prefix + "-" + number;
     }
 }
