@@ -17,6 +17,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants
 import uk.ac.ebi.intact.application.editor.exception.EmptyTopicsException;
 
 import java.util.MissingResourceException;
+import java.net.MalformedURLException;
 
 /**
  * This is Intact editor specific action servlet class. This class is
@@ -49,6 +50,10 @@ public class EditorActionServlet extends ActionServlet {
             // An empty topic resource file.
             log(ExceptionUtils.getStackTrace(mite));
             throw new ServletException();
+        }
+        catch (MalformedURLException murle) {
+            log(ExceptionUtils.getStackTrace(murle));
+            // Carry on as only the biosource editor is not available.
         }
         // Make them accessible for any servlets within the server.
         ctx.setAttribute(EditorConstants.EDITOR_SERVICE, service);

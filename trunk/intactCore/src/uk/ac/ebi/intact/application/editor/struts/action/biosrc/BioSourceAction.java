@@ -10,7 +10,6 @@ import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
-import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.model.Xref;
@@ -25,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 import java.io.*;
 import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Handles when the user enters a value for tax id. The short label and the full
@@ -78,12 +78,20 @@ public class BioSourceAction extends AbstractEditorAction {
         // already created the correct editor view bean.
         BioSourceViewBean bioview = (BioSourceViewBean) user.getView();
 
-        // The service instance to access newt server properties.
-        EditorService service = super.getService();
+        // The URL to access the Newt proxy.
+        URL url = getService().getNewtServerUrl();
+        // URL is null for an incorrect URL set for NewtProxy.
+        if (url == null) {
+            // Error in communcating with the server.
+            errors = new ActionErrors();
+            errors.add("biosource", new ActionError("error.newt.url"));
+            saveErrors(request, errors);
+            return inputForward(mapping);
+        }
 
         // The response from the Newt server.
         NewtServerProxy.NewtResponse newtResponse =
-                getNewtResponse(service, taxid, request);
+                getNewtResponse(user, url, taxid, request);
 
         // Any errors?
         if (hasErrors(request)) {
@@ -170,24 +178,20 @@ public class BioSourceAction extends AbstractEditorAction {
         return false;
     }
 
-    private NewtServerProxy.NewtResponse getNewtResponse(EditorService service,
+    private NewtServerProxy.NewtResponse getNewtResponse(EditUserI user,
+                                                         URL url,
                                                          String taxid,
                                                          HttpServletRequest request) {
         // To report errors.
         ActionErrors errors;
 
+        // Handler to the Newt server.
+        NewtServerProxy newtServer = user.getNewtProxy(url);
+
         // Query the server.
         NewtServerProxy.NewtResponse newtResponse = null;
         try {
-            // Handler to the Newt server.
-            NewtServerProxy newtServer = service.getNewtServer();
             newtResponse = newtServer.query(Integer.parseInt(taxid));
-        }
-        catch (MalformedURLException murle) {
-            // Error in communcating with the server.
-            errors = new ActionErrors();
-            errors.add("biosource", new ActionError("error.newt.url"));
-            saveErrors(request, errors);
         }
         catch (IOException ioe) {
             // Error in communcating with the server.
