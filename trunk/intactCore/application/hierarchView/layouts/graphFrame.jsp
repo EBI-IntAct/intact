@@ -1,13 +1,24 @@
 <%@ page language="java"%>
-<%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
+<%@ taglib uri="/WEB-INF/tld/struts-html.tld"  prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-tiles.tld" prefix="tiles"%>
+<%@ taglib uri="/WEB-INF/tld/hierarchView.tld" prefix="hierarchView" %>
 
-<%--
-    Content of the graph frame, it rely on the Tiles configuration.
+<!--
+   - Copyright (c) 2002 The European Bioinformatics Institute, and others.
+   - All rights reserved. Please see the file LICENSE
+   - in the root directory of this distribution.
+   -
+   - Content of the graph frame, it rely on the Tiles configuration.
+   -
+   - @author: Samuel Kerrien (skerrien@ebi.ac.uk)
+   - @version: $Id$
+-->
 
-    Author: Samuel Kerrien (skerrien@ebi.ac.uk)
-    Version: $Id$
---%>
+    <!--
+        Save current context (before the HTML header)
+    -->
+    <hierarchView:saveContextInCookie/>
+
 
 <html:html>
 
@@ -26,7 +37,6 @@
           <tr>
                  <td width="60%" valign="top">
                       <!-- Top Left cell: displays the interaction network title -->
-<%--                      <tiles:insert attribute="graphTitle" ignore="true"/>--%>
                       <tiles:insert definition="hierarchView.graphTitle.layout" ignore="true"/>
                  </td>
           </tr>
@@ -34,7 +44,6 @@
           <tr>
                  <td width="40%" valign="top">
                        <!-- Bottom Left cell: displays the interaction network -->
-<%--                       <tiles:insert attribute="graph" ignore="true"/>--%>
                        <tiles:insert definition="hierarchView.graph.layout" ignore="true"/>
                  </td>
           </tr>
