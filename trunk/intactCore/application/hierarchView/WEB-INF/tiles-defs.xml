@@ -7,6 +7,7 @@
 <!--
     Tiles definitions for hierarchView.
     Author: Samuel Kerrien (skerrien@ebi.ac.uk)
+    version: $Id$
 
     The header and footer are common to all IntAct application and just need to
     receive proper value in defined key
@@ -68,6 +69,7 @@
     <definition name="hierarchView.menu.links" path="/layouts/menu.jsp">
         <put name="title" value="Links"/>
         <putList name="items">
+            <item value="IntAct home" link="/"/>
             <item value="Back to search" link="/search/welcome.jsp"/>
         </putList>
     </definition>
@@ -84,8 +86,8 @@
     <!-- Sidebar for the search page -->
     <definition name="intact.sidebar.layout" path="/layouts/sidebarLayout.jsp">
         <put name="input-dialog" value="hv.intact.sidebar"/>
-        <put name="menu" value="hierarchView.menu.links"/>
-        <put name="footer" value="/pages/sidebarFooter.jsp"/>
+        <put name="menu"         value="hierarchView.menu.links"/>
+        <put name="footer"       value="/pages/sidebarFooter.jsp"/>
     </definition>
 
     <!-- ============ Commons to all IntAct pplication ==================== -->
