@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.
+Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
@@ -12,10 +12,8 @@ import java.util.HashMap;
 import uk.ac.ebi.intact.application.editor.struts.viewx.CvViewBean;
 import uk.ac.ebi.intact.application.editor.struts.viewx.BioSourceViewBean;
 import uk.ac.ebi.intact.application.editor.struts.viewx.ExperimentViewBean;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.application.editor.struts.viewx.interaction.InteractionViewBean;
+import uk.ac.ebi.intact.model.*;
 
 /**
  * The factory class to create edit view beans.
@@ -48,6 +46,11 @@ public class EditViewBeanFactory {
     private static final String EXPERIMENT_EDITOR = "2";
 
     /**
+     * Interaction editor is stored under this key.
+     */
+    private static final String INTERACTION_EDITOR = "3";
+
+    /**
      * Factory method to return an instance of an Edit view bean.
      * @param annot the Annotated object to initialize the edit view bean.
      * @return an instance of <code>AbstractEditViewBean</code>; the type to return
@@ -64,6 +67,9 @@ public class EditViewBeanFactory {
         else if (clazz.isAssignableFrom(Experiment.class)) {
             viewbean = getExperimentEditor((Experiment) annot);
         }
+        else if (clazz.isAssignableFrom(Interaction.class)) {
+            viewbean = getInteractionEditor((Interaction) annot);
+        }
         else {
             // Assume it is an CV object.
             viewbean = getCvEditor((CvObject) annot);
@@ -78,10 +84,9 @@ public class EditViewBeanFactory {
         if (!nameToView.containsKey(name)) {
             nameToView.put(name, new BioSourceViewBean());
         }
-        BioSourceViewBean bioview =
-                (BioSourceViewBean) nameToView.get(name);
-        bioview.setAnnotatedObject(biosrc);
-        return bioview;
+        BioSourceViewBean view = (BioSourceViewBean) nameToView.get(name);
+        view.setAnnotatedObject(biosrc);
+        return view;
     }
 
     private AbstractEditViewBean getExperimentEditor(Experiment exp) {
@@ -89,10 +94,19 @@ public class EditViewBeanFactory {
         if (!nameToView.containsKey(name)) {
             nameToView.put(name, new ExperimentViewBean());
         }
-        ExperimentViewBean expview =
-                (ExperimentViewBean) nameToView.get(name);
-        expview.setAnnotatedObject(exp);
-        return expview;
+        ExperimentViewBean view = (ExperimentViewBean) nameToView.get(name);
+        view.setAnnotatedObject(exp);
+        return view;
+    }
+
+    private AbstractEditViewBean getInteractionEditor(Interaction intact) {
+        String name = INTERACTION_EDITOR;
+        if (!nameToView.containsKey(name)) {
+            nameToView.put(name, new InteractionViewBean());
+        }
+        InteractionViewBean view = (InteractionViewBean) nameToView.get(name);
+        view.setAnnotatedObject(intact);
+        return view;
     }
 
     private AbstractEditViewBean getCvEditor(CvObject cvobj) {
@@ -100,8 +114,8 @@ public class EditViewBeanFactory {
         if (!nameToView.containsKey(name)) {
             nameToView.put(name, new CvViewBean());
         }
-        CvViewBean cvview = (CvViewBean) nameToView.get(name);
-        cvview.setAnnotatedObject(cvobj);
-        return cvview;
+        CvViewBean view = (CvViewBean) nameToView.get(name);
+        view.setAnnotatedObject(cvobj);
+        return view;
     }
 }
