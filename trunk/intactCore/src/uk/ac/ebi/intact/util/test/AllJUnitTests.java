@@ -49,8 +49,6 @@ public class AllJUnitTests extends TestCase {
         suite.addTest( NewtServerProxyTest.suite() );
         suite.addTest( GoServerProxyTest.suite() );
         suite.addTest( UpdateProteinsTest.suite() );
-        // Need to run initdb_go_testing script in scripts/postgres dir first.
-//        suite.addTest(GoToolsTest.suite());
         // Add your test suite here.
 
         return suite;
