@@ -296,6 +296,7 @@ public class FileGenerator {
                             //now the interactionList has been built we can get at the other info...
                             //NB need to rearrange the order of child appending, but AFTER
                             //generation of interactions...
+                            System.out.println();
                             System.out.println("Generating ExperimentList for chunk "
                                     + chunkCount + "...");
                             System.out.println();
