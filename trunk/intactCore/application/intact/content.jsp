@@ -210,7 +210,7 @@
                           <li class="greenboldsmalllist"><span class="text">The current release is available from <br>
                             <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current">ftp://ftp.ebi.ac.uk/pub/databases/intact/current</a></span></li>
                           <li class="greenboldsmalllist"><span class="text">More detailed information is available in the <a href="doc/html/documentation.html#download">user manual</a></span></li>
-                          <li class="greenboldsmalllist"><a href="doc/html/statistics/index.html"><span class="text">Statistics<br>
+                          <li class="greenboldsmalllist"><a href="http://www.ebi.ac.uk/intact/statisticView"><span class="text">Statistics<br>
                             </span></a></li>
                         </ul>
                         <span class="pbold"><a name="availability"></a>Availability:</span><br>
