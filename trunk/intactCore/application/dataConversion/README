@@ -1,53 +1,158 @@
+=========================================
+            Data Conversion
+=========================================
+
+This README file will give you more information about how to download and upload
+PSI-MI XML content from and to IntAct.
 
 
-Notes for the PSI Generator
-------------------------------------------
+CONTENT
+=======
 
-To Build it
+1. Notes for the PSI Generator
+   1.1. To Build it
+   1.2. To Run it
+   1.3. File Validation
+2. Loading of a PSI-MI XML file
+   2.1. To Build it
+   2.2. To Run it
+3. Bug Reporting
+
+========================================
+
+
+
+1. Notes for the PSI Generator
+-------------------------------
+
+1.1. To Build it
+-----------------
+Assuming you have already run ant compile-core to build the core files,
+cd to application/dataConversion. Then just type
+
+     ant compile
+
+to generate the classes directory. This will also copy the jar files from
+the lib directory of IntactCore, depending upon which DB you have set to
+access (either postgres or oracle).
+
+
+1.2. To Run it
 ---------------
-Assuming you have already run ant compile-core to build the core files, cd to application/dataConversion. Then just type
-
-	ant compile
-
-to generate the classes directory. This will also copy the jar files from the lib directory of IntactCore, depending upon which 
-DB you have set to access (either postgres or oracle).
-
-
-To Run it
--------------
 Assuming you have the usual things set up for Intact:
 
-It makes sense to run the Generator twice; the first time it will classify experiments according
-to size and species (ie BioSource), and produce a file of short labels with proposed filenames.
-The second time the application is run the PSI files themselves are generated. For those ecperiments
-classified as 'small scale', a (species specific) PSI file will be created containing the PSI XML
-for each experiment. For those experiments classified as 'large scale', PSI files will be
-generated that split the Interactions into 'chunks' - thus there will be a PSI file for that
-experiment per chunk of interactions. Typically a chunk will contain around 1000 Interactions.
+It makes sense to run the Generator twice; the first time it will classify experiments
+according to size and species (ie BioSource), and produce a file of short labels with
+proposed filenames.
+The second time the application is run the PSI files themselves are generated. For those
+experiments classified as 'small scale', a (species specific) PSI file will be created
+containing the PSI XML for each experiment. For those experiments classified as 'large scale',
+PSI files will be generated that split the Interactions into 'chunks' - thus there will be
+a PSI file for that experiment per chunk of interactions. Typically a chunk will contain
+around 1000 Interactions.
 
 Given the above, usage should be as follows:
 
 First run: from the intactCore directory type
 
-	scripts/psiRun.sh FileGenerator % > <classification-filename>
+     scripts/psiRun.sh FileGenerator % > <classification-filename>
 
 This will generate the intermediate file of classified experiments. 
 
 Second run: This is achieved via a perl script; type
 
-	perl scripts/psiXmlDownload.pl < <classification-filename>
+     perl scripts/psiXmlDownload.pl < <classification-filename>
 
 This will generate (in the current directory, which should be intactCore) all the relevant
 PSI XML files. If you wish to specify a directory to place the results instead, you should type:
- 	
-	perl scripts/psiXmlDownload.pl -filePrefix <dirname> < <classification-filename>
+
+     perl scripts/psiXmlDownload.pl -filePrefix <dirname> < <classification-filename>
 Note: The directory <dirname> must already exist - it will NOT be created for you currently!
 
-File Validation
-----------------
+
+1.3. File Validation
+---------------------
 A script is also included with intact which will provide a quick command-line check that
 the generated PSI conforms to the DTD. Again from the intactCore directory, type:
 
-	scripts/checkPsiXml.sh *.xml    (assuming your PSI files are all in the current directory)
+     scripts/checkPsiXml.sh *.xml    (assuming your PSI files are all in the current directory)
 
 This will give a very quick check that the files validate against the PSI DTD.
+
+
+
+2. Loading of a PSI-MI XML file (PsiDataLoader)
+------------------------------------------------
+
+Here is a note about how to use the PsiDataLoader that will allow you to import PSI-MI file
+into your local installation of IntAct.
+Firstly, please check that you have the latest intact version, you can get an update from CVS.
+
+
+2.1. To Build it
+-----------------
+
+Now you can compile the application (dataConversion):
+
+   1. go in the intactCore directory
+   2. please read the README file in order to know how to configure your database
+   3. run: ant set-target-env in order to prepare the configuration files
+   4. run: ant compile-core in order to compile the IntAct shared resources
+   5. run: ant compile-dataConversion to compile the PsiDataLoader
+
+The PsiDataLoader should now be ready.
+
+
+2.2. To Run it
+---------------
+
+Usage:
+run: ./scripts/psiRun.sh PsiDataLoader -help to get the list of available options:
+
+OUTPUT:
+    running in a Windows JVM (from cygwin)..
+    usage: PsiDataLoader -file <filename> [-useTaxidWhenMissing
+                         <biosource.taxId>] [-useInteractionTypeWhenMissing <MI term>]
+                         [-reuseExistingProtein] [-upToParsing] [-upToChecking] [-force] [-gui]
+                         [-debug]
+     -debug                                    Shows debugging messages.
+     -file <filename>                          PSI file to upload in IntAct.
+     -force                                    prevent the application to ask
+                                               question about production server.
+     -gui                                      Shows Progress during
+                                               processing.
+     -help                                     print this message.
+     -reuseExistingProtein                     Do not force protein update,
+                                               reuse existing protein when possible.
+     -upToChecking                             Stop processing after checking.
+     -upToParsing                              Stop processing after parsing.
+     -useInteractionTypeWhenMissing <PSI_ID>   PSI id of the CvInteractionType
+                                               to use when missing from an Interaction
+                                               (eg. for aggregation: MI:0191).
+     -useTaxidWhenMissing <taxid>              TaxId to use when missing in an
+                                               Interactor (eg. for human: 9606).
+
+Then you can use it as follow (from the intactCore directory):
+
+     ./scripts/psiRun.sh PsiDataLoader -file  E:\psi\ito.v3.xml -gui -reuseExistingProtein
+
+     That command would load the file located at E:\psi\ito.v3.xml and reuse all existing
+     proteins from your IntAct node.
+     Note1: You need to have a valid internet connection as the protein will be loaded over
+            the network.
+     Note2: that only the -file <filename> option is mandatory.
+
+The program works in 3 steps, Parsing, Checking and Saving of the data.
+If something goes wrong in any of those steps, you should be given explicit error message(s),
+(eg. about format of the XML file, missing controlled vocabulary, unknown proteins...)
+If there is an error during the processing, no data will be saved into the intact node.
+
+Note: if an interaction already exists in the IntAct node (in the same experiment), it is not
+      duplicated and a message will be displayed. An interaction is declared already existing if
+      it has the same participant with same role and same features.
+
+
+      
+3. Bug Reporting
+-----------------
+  Send emails to support@ebi.ac.uk
