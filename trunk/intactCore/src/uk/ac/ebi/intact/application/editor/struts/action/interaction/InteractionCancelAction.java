@@ -12,7 +12,6 @@ import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.action.CancelFormAction;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
-import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
 import uk.ac.ebi.intact.business.IntactHelper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -63,7 +62,6 @@ public class InteractionCancelAction extends CancelFormAction {
         InteractionViewBean view = (InteractionViewBean) user.getView();
 
         if (view.hasFeaturesAdded()) {
-            System.out.println("Have adde some new features, delete them");
             // We have some features added. Will remove them first before going back.
             IntactHelper helper = user.getIntactHelper();
             try {
@@ -73,9 +71,6 @@ public class InteractionCancelAction extends CancelFormAction {
             finally {
                 helper.closeStore();
             }
-        }
-        else {
-            System.out.println("No new features added");
         }
         // Cancel the edit session.
         user.cancelEdit();
