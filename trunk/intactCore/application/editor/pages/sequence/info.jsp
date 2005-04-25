@@ -54,7 +54,7 @@
 
 <table class="table" width="100%" border="0" cellspacing="1" cellpadding="2">
     <tr class="tableRowHeader">
-        <th class="tableCellHeader">Molecular Type</th>
+        <th class="tableCellHeader">Source</th>
         <th class="tableCellHeader">Sequence</th>
         <th>
             <intact:documentation section="editor.sequence"/>
