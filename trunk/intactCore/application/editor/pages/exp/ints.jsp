@@ -16,6 +16,7 @@
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="http://jakarta.apache.org/taglibs/display" prefix="display" %>
+<%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 
 <jsp:useBean id="user" scope="session"
     beanName="uk.ac.ebi.intact.application.editor.business.EditUser"
@@ -68,3 +69,5 @@
         <display:column property="fullName" title="Full Name" />
     </display:table>
 </c:if>
+
+<html:errors property="err.interaction"/>
