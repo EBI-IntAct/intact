@@ -73,10 +73,10 @@ public class InteractionLinkAction extends CommonDispatchAction {
         assert inter != null;
 
         // Try to acquire the lock.
-        ActionErrors errors = acquire(intAc, user.getUserName());
+        ActionErrors errors = acquire(intAc, user.getUserName(), "err.interaction");
         if (errors != null) {
             saveErrors(request, errors);
-            return mapping.findForward(FAILURE);
+            return mapping.getInputForward();
         }
         // Set the topic.
         user.setSelectedTopic(EditorService.getTopic(Interaction.class));

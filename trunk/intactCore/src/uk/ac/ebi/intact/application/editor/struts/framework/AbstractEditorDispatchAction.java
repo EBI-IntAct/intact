@@ -150,12 +150,25 @@ public abstract class AbstractEditorDispatchAction extends LookupDispatchAction
      * non null value is returned to indicate errors.
      */
     protected ActionErrors acquire(String ac, String owner) {
+        return acquire(ac, owner, ActionErrors.GLOBAL_ERROR);
+    }
+
+    /**
+     * Tries to acquire a lock for given id and owner.
+     * @param ac the id or the accession number to lock.
+     * @param owner the owner of the lock.
+     * @param errGroup the error group for action errors (JSPs can display errors
+     * under this name)
+     * @return null if there are no errors in acquiring the lock or else
+     * non null value is returned to indicate errors.
+     */
+    protected ActionErrors acquire(String ac, String owner, String errGroup) {
         // Try to acuire the lock.
         if (!getLockManager().acquire(ac, owner)) {
             ActionErrors errors = new ActionErrors();
             // The owner of the lock (not the current user).
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.lock", ac, getLockManager().getOwner(ac)));
+            errors.add(errGroup, new ActionError("error.lock", ac,
+                    getLockManager().getOwner(ac)));
             return errors;
         }
         return null;
