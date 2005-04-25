@@ -9,6 +9,7 @@ package uk.ac.ebi.intact.application.editor.struts.view.experiment;
 import java.util.ResourceBundle;
 
 import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
 
 /**
  * This class contains data for an Interaction row in the experiment editor.
@@ -16,71 +17,78 @@ import uk.ac.ebi.intact.model.Interaction;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class InteractionRowData {
+public class InteractionRowData extends ResultRowData {
 
-    private String myAc;
-
-    private String myShortLabel;
-
-    private String myFullName;
-
+    /**
+     * The underlying Interaction. Could be null if none assigned to it (e.g. search).
+     */
     private Interaction myInteraction;
     
     /**
-     * This contains HTML script for action button. Allows access from
-     * subclasses.
+     * This contains HTML script for action button.
      */
-    protected String myAction;
+    private String myAction;
+
+    // Static methods
+
+    /**
+     * Creates a dummy Row.
+     * @param ac the AC of the row
+     * @return a dummy row for searching a row in a collection.
+     */
+    public static InteractionRowData makeRow(String ac) {
+        return new InteractionRowData(ac);
+    }
+
+    /**
+     * Creates a Row with action set to Delete/Edit Interaction.
+     * @param inter the interaction to wrap this instance around.
+     * @return a table row wrapped around the given Interaction.
+     */
+    public static InteractionRowData makeRow(Interaction inter) {
+        InteractionRowData row = new InteractionRowData(inter);
+        row.setActionString();
+        return row;
+    }
+
+    /**
+     * Creates a Row with action set to Add/Hide Interaction.
+     * @param rowData the row
+     * @return a table row with action set to Add/Hide Interaction.
+     */
+    public static InteractionRowData makeSearchRow(ResultRowData rowData) {
+        InteractionRowData row = new InteractionRowData(rowData.getAc(),
+               rowData.getShortLabel(), rowData.getFullName());
+        row.setSearchActionString();
+        return row;
+    }
 
     /**
      * This constructor is mainly used for creating an instance to find it in a
      * collection.
      * @param ac the ac is required as it is used for equals method.
      */
-    public InteractionRowData(String ac) {
-        myAc = ac;
+    private InteractionRowData(String ac) {
+        this(ac, null, null);
     }
 
     /**
      * Creates an instance of this class using given Interaction.
      * @param inter the interaction to wrap this instance around.
      */
-    public InteractionRowData(Interaction inter) {
+    private InteractionRowData(Interaction inter) {
         this(inter.getAc(), inter.getShortLabel(), inter.getFullName());
         myInteraction = inter;
     }
-    
+
+    /**
+     * Creates an instance of this class using ac, shortlabel and fullname.
+     * @param ac
+     * @param shortlabel
+     * @param fullname
+     */
     private InteractionRowData(String ac, String shortlabel, String fullname) {
-        myAc = ac;
-        myShortLabel = shortlabel;
-        myFullName = fullname;
-        setAction();
-    }
-
-    // Setter method for suclasses to override.
-    protected void setAction() {
-        // Resource bundle to access the message resources to set keys.
-        ResourceBundle msgres = ResourceBundle
-                .getBundle("uk.ac.ebi.intact.application.editor.MessageResources");
-        myAction = "<input type=\"submit\" name=\"dispatch\" value=\""
-                + msgres.getString("exp.int.button.edit") + "\""
-                + " onclick=\"setIntAc('" + getAc() + "');\">"
-                + "<input type=\"submit\" name=\"dispatch\" value=\""
-                + msgres.getString("exp.int.button.del") + "\""
-                + " onclick=\"setIntAc('" + getAc() + "');\">";
-    }
-    
-    // Getter methods
-    public String getAc() {
-        return myAc;
-    }
-
-    public String getShortLabel() {
-        return myShortLabel;
-    }
-
-    public String getFullName() {
-        return myFullName;
+        super(ac, shortlabel, fullname);
     }
 
     public Interaction getInteraction() {
@@ -91,28 +99,37 @@ public class InteractionRowData {
         return myAction;
     }
 
-    // Override equals method.
+    // Setter methods.
 
     /**
-     * True if ACs match
-     * @see java.lang.Object#equals(java.lang.Object)
+     * Sets the default string for action buttons. This string is for Edit/Delete
+     * Interactions.
      */
-    public boolean equals(Object obj) {
-        if (obj == this) {
-            return true;
-        }
-        if ((obj != null) && (getClass() == obj.getClass())) {
-            // Same class; can cast safely.
-            InteractionRowData other = (InteractionRowData) obj;
-            return myAc.equals(other.myAc);
-        }
-        return false;
+    public void setActionString() {
+        // Resource bundle to access the message resources to set keys.
+        ResourceBundle msgres = ResourceBundle
+                .getBundle("uk.ac.ebi.intact.application.editor.MessageResources");
+        myAction = "<input type=\"submit\" name=\"dispatch\" value=\""
+                + msgres.getString("exp.int.button.edit") + "\""
+                + " onclick=\"setIntAc('" + getAc() + "');\">"
+                + "<input type=\"submit\" name=\"dispatch\" value=\""
+                + msgres.getString("exp.int.button.del") + "\""
+                + " onclick=\"setIntAc('" + getAc() + "');\">";
     }
 
     /**
-     * @see java.lang.Object#hashCode()
+     * Sets the action string for Interaction search.
      */
-    public int hashCode() {
-        return myAc.hashCode();
+    private void setSearchActionString() {
+        // Resource bundle to access the message resources to set keys.
+        ResourceBundle msgres = ResourceBundle
+                .getBundle("uk.ac.ebi.intact.application.editor.MessageResources");
+
+        myAction = "<input type=\"submit\" name=\"dispatch\" value=\""
+                + msgres.getString("exp.int.button.add") + "\""
+                + " onclick=\"setIntAc('" + getAc() + "');\">"
+                + "<input type=\"submit\" name=\"dispatch\" value=\""
+                + msgres.getString("exp.int.button.hide") + "\""
+                + " onclick=\"setIntAc('" + getAc() + "');\">";
     }
 }

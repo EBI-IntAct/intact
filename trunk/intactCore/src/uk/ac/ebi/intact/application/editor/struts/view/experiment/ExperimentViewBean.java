@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.application.editor.exception.validation.ValidationExcept
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
+import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
@@ -165,8 +166,14 @@ public class ExperimentViewBean extends AbstractEditViewBean {
             // 2. Now add the interaction as real objects.
             for (Iterator iter = myInteractions.iterator(); iter.hasNext();) {
                 InteractionRowData row = (InteractionRowData) iter.next();
+                Interaction inter = row.getInteraction();
+                // could be null for an interaction added from the 'hold' area.
+                if (inter == null) {
+                    inter = (Interaction) helper.getObjectByAc(Interaction.class,
+                            row.getAc());
+                }
                 exp.addInteraction((Interaction) IntactHelper.getRealIntactObject(
-                        row.getInteraction()));
+                        inter));
             }
             // --------------------------------------------------------------------
         }
@@ -304,16 +311,16 @@ public class ExperimentViewBean extends AbstractEditViewBean {
 
     /**
      * Adds an Interaction.
-     * @param inter the Interaction to add.
+     * @param row an Interaction row to add.
      *
      * <pre>
      * post: myInteractionsToAdd = myInteractionsToAdd@pre + 1
      * post: myInteractions = myInteractions@pre + 1
      * </pre>
      */
-    public void addInteraction(Interaction inter) {
+    public void addInteraction(InteractionRowData row) {
         // Add to the view.
-        myInteractions.add(new InteractionRowData(inter));
+        myInteractions.add(row);
     }
 
     /**
@@ -329,28 +336,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         // Add to the container to delete interactions.
         myInteractionsToDel.add(inter);
         // Remove from the view as well.
-        myInteractions.remove(new InteractionRowData(inter));
-    }
-
-    /**
-     * Adds an Interaction to hold if the new interaction doesn't
-     * already exists in the interaction hold collection and in the
-     * current interaction collection for this experiment.
-     * @param ints a collection of <code>Interaction</code> to add.
-     *
-     * <pre>
-     * pre:  forall(obj : Object | obj.oclIsTypeOf(Interaction))
-     * </pre>
-     */
-    public void addInteractionToHold(Collection ints) {
-        for (Iterator iter = ints.iterator(); iter.hasNext();) {
-            InteractionSearchRowData row = new InteractionSearchRowData((Interaction) iter.next());
-            // Avoid duplicates.
-            if (!myInteractionsToHold.contains(row)
-                    && !myInteractions.contains(row)) {
-                myInteractionsToHold.add(row);
-            }
-        }
+        myInteractions.remove(InteractionRowData.makeRow(inter));
     }
 
     /**
@@ -364,6 +350,28 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      */
     public List getInteractions() {
         return myInteractions;
+    }
+
+    /**
+     * Adds an Interaction to hold if the new interaction doesn't
+     * already exists in the interaction hold collection and in the
+     * current interaction collection for this experiment.
+     * @param ints a collection of <code>Interaction</code> to add.
+     *
+     * <pre>
+     * pre:  forall(obj : Object | obj.oclIsTypeOf(ResultRowData))
+     * </pre>
+     */
+    public void addInteractionToHold(Collection ints) {
+        for (Iterator iter = ints.iterator(); iter.hasNext();) {
+            ResultRowData rowData = (ResultRowData) iter.next();
+            InteractionRowData row = InteractionRowData.makeSearchRow(rowData);
+            // Avoid duplicates.
+            if (!myInteractionsToHold.contains(row)
+                    && !interactionExists(row.getAc())) {
+                myInteractionsToHold.add(row);
+            }
+        }
     }
 
     /**
@@ -387,15 +395,30 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     }
 
     /**
+     * Returns the row for given AC
+     * @param ac the AC to search for a row.
+     * @return the row corresponding to given AC or null if none found.
+     */
+    public InteractionRowData getHoldInteraction(String ac) {
+        // Dummy record to search.
+        InteractionRowData dummy = InteractionRowData.makeRow(ac);
+        int pos = myInteractionsToHold.indexOf(dummy);
+        if (pos != -1) {
+            return (InteractionRowData) myInteractionsToHold.get(pos);
+        }
+        return null;
+    }
+
+    /**
      * Hides an Interaction bean from hold.
-     * @param inter an <code>Interaction</code> to hide.
+     * @param ac the accession number of the <code>Interaction</code> to hide.
      * <pre>
      * pre: myInteractionsToHold->includes(intbean)
      * post: myInteractionsToHold = myInteractionsToHold@pre - 1
      * </pre>
      */
-    public void hideInteractionToHold(Interaction inter) {
-        myInteractionsToHold.remove(new InteractionSearchRowData(inter));
+    public void hideInteractionToHold(String ac) {
+        myInteractionsToHold.remove(InteractionRowData.makeRow(ac));
     }
 
     /**
@@ -448,7 +471,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         // Given interaction is part of the current experiment.
         
         // Create a dummy row data for comparision.
-        InteractionRowData dummy = new InteractionRowData(interaction);
+        InteractionRowData dummy = InteractionRowData.makeRow(interaction);
         
         // Compare with the existing rows.
         if (myInteractions.contains(dummy)) {
@@ -466,7 +489,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      */
     public boolean deleteInteractionRow(String ac) {
         // Create a dummy row data for comparision.
-        InteractionRowData dummy = new InteractionRowData(ac);
+        InteractionRowData dummy = InteractionRowData.makeRow(ac);
         
         // Compare with the existing rows.
         if (myInteractions.contains(dummy)) {
@@ -512,7 +535,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     private void makeInteractionRows(Collection ints) {
         for (Iterator iter = ints.iterator(); iter.hasNext();) {
             Interaction inter = (Interaction) iter.next();
-            InteractionRowData row = new InteractionRowData(inter);
+            InteractionRowData row = InteractionRowData.makeRow(inter);
             myInteractions.add(row);
         }
     }
@@ -541,5 +564,14 @@ public class ExperimentViewBean extends AbstractEditViewBean {
             list.add(((Experiment) iter.next()).getAc());
         }
         return list;
+    }
+
+    private boolean interactionExists(String ac) {
+        for (Iterator iter = myInteractions.iterator(); iter.hasNext();) {
+            if (((InteractionRowData) iter.next()).getAc().equals(ac)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

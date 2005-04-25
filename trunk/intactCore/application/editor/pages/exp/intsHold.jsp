@@ -29,7 +29,7 @@
 
     <h3>Interactions not yet added to the Experiment</h3>
 
-    <c:if test="${view.holdInteractionCount gt 0 and empty noDisplayInts}">
+    <c:if test="${view.holdInteractionCount gt 0}">
         <%-- Store in the page scope for the display library to access it --%>
         <bean:define id="ints" name="view" property="holdInteractions" type="java.util.List"/>
 

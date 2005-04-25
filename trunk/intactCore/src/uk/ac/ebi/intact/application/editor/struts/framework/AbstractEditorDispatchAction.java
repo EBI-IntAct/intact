@@ -171,6 +171,22 @@ public abstract class AbstractEditorDispatchAction extends LookupDispatchAction
      * result set or search produces no output.
      */
     protected List search(Query[] queries, int max, HttpServletRequest request) {
+        return search(queries, max, request, ActionErrors.GLOBAL_ERROR);
+    }
+
+    /**
+     * Performs the search using given query array.
+     * @param queries an array of queries. The first query is to get a count and
+     * the secodn query for the actual search.
+     * @param max the max allowed records
+     * @param request the request to store the ActionError
+     * @param errGroup the error group for action errors (JSPs can display errors
+     * under this name)
+     * @return a list of search results or an empty list for any errors, too large
+     * result set or search produces no output.
+     */
+    protected List search(Query[] queries, int max, HttpServletRequest request,
+                          String errGroup) {
         // The search helper to do the searching.
         SearchHelperI searchHelper = new SearchHelper(Logger.getLogger(
                 EditorConstants.LOGGER));
@@ -184,7 +200,7 @@ public abstract class AbstractEditorDispatchAction extends LookupDispatchAction
             // This can only happen when problems with creating an internal helper
             // This error is already logged from the User class.
             ActionErrors errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("error.intact"));
+            errors.add(errGroup, new ActionError("error.intact"));
             saveErrors(request, errors);
             return Collections.EMPTY_LIST;
         }
@@ -192,8 +208,7 @@ public abstract class AbstractEditorDispatchAction extends LookupDispatchAction
         // Too large result set?
         if (rw.isTooLarge()) {
             ActionErrors errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.search.large",
+            errors.add(errGroup, new ActionError("error.search.large",
                             Integer.toString(rw.getPossibleResultSize())));
             saveErrors(request, errors);
             return Collections.EMPTY_LIST;
@@ -218,8 +233,8 @@ public abstract class AbstractEditorDispatchAction extends LookupDispatchAction
             }
             // No matches found - forward to a suitable page
             ActionErrors errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.search.nomatch", searchParam, topic));
+            errors.add(errGroup, new ActionError("error.search.nomatch",
+                    searchParam, topic));
             saveErrors(request, errors);
             return Collections.EMPTY_LIST;
         }

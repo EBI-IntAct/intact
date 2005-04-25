@@ -22,8 +22,9 @@ public class ExperimentActionForm extends EditorActionForm {
     private String myOragnism;
     private String myInter;
     private String myIdent;
-    private String myIntSearchLabel;
-    private String myIntSearchAC;
+    private String mySearchValue;
+//    private String myIntSearchLabel;
+//    private String myIntSearchAC;
 
     public void setIntac(String intac) {
         myInteractionAC = intac;
@@ -69,19 +70,26 @@ public class ExperimentActionForm extends EditorActionForm {
         return myIdent;
     }
 
-    public void setIntSearchLabel(String label) {
-        myIntSearchLabel = label;
+    public void setSearchValue(String value) {
+        mySearchValue = value;
     }
 
-    public String getIntSearchLabel() {
-        return myIntSearchLabel;
+    public String getSearchValue() {
+        return mySearchValue;
     }
-
-    public void setIntSearchAC(String ac) {
-        myIntSearchAC = ac;
-    }
-
-    public String getIntSearchAC() {
-        return myIntSearchAC;
-    }
+//    public void setIntSearchLabel(String label) {
+//        myIntSearchLabel = label;
+//    }
+//
+//    public String getIntSearchLabel() {
+//        return myIntSearchLabel;
+//    }
+//
+//    public void setIntSearchAC(String ac) {
+//        myIntSearchAC = ac;
+//    }
+//
+//    public String getIntSearchAC() {
+//        return myIntSearchAC;
+//    }
 }

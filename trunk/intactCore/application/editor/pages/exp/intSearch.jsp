@@ -41,12 +41,6 @@
             <th class="tableCellHeader" width="10%" colspan="2">
                 <bean:message key="label.action"/>
             </th>
-            <th class="tableCellHeader" width="30%">
-                <bean:message key="label.shortlabel"/>
-            </th>
-            <th class="tableCellHeader" width="30%">
-                <bean:message key="label.ac"/>
-            </th>
             <th>
                 <%-- This NEED to be FIXED --%>
                 <intact:documentation section="editor.int.experiments"/>
@@ -66,12 +60,9 @@
                 </html:submit>
             </td>
             <td class="tableCell">
-                <html:text property="intSearchLabel" size="20" maxlength="20"/>
-            </td>
-            <td class="tableCell">
-                <html:text property="intSearchAC" size="20" maxlength="20"/>
+                <html:text property="searchValue" size="20" maxlength="20"/>
             </td>
         </tr>
     </table>
 </c:if>
-<html:errors property="exp.int.search"/>
+<html:errors property="err.search"/>
