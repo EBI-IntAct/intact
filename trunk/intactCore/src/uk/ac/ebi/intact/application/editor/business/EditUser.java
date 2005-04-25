@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.application.editor.event.LogoutEvent;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditViewBeanFactory;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.application.editor.struts.view.experiment.InteractionRowData;
 import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.business.BusinessConstants;
@@ -22,7 +23,6 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.util.GoServerProxy;
 import uk.ac.ebi.intact.util.NewtServerProxy;
 import uk.ac.ebi.intact.util.UpdateProteins;
@@ -672,12 +672,12 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return myCurrentExperiments;
     }
 
-    public void addToCurrentInteraction(Interaction intact) {
-        myCurrentInteractions.add(intact);
+    public void addToCurrentInteraction(InteractionRowData row) {
+        myCurrentInteractions.add(row);
     }
 
-    public void removeFromCurrentInteraction(Interaction intact) {
-        myCurrentInteractions.remove(intact);
+    public void removeFromCurrentInteraction(InteractionRowData row) {
+        myCurrentInteractions.remove(row);
     }
 
     public Set getCurrentInteractions() {

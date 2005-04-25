@@ -6,18 +6,18 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action.experiment;
 
+import org.apache.ojb.broker.query.Query;
 import org.apache.struts.action.*;
-import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
-import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Interaction;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -81,8 +81,7 @@ public class InteractionDispatchAction extends AbstractEditorDispatchAction {
         Set recentInts = user.getCurrentInteractions();
         if (recentInts.isEmpty()) {
             ActionErrors errors = new ActionErrors();
-            errors.add("exp.int.search",
-                    new ActionError("error.exp.int.search.recent.empty"));
+            errors.add("err.search", new ActionError("error.exp.int.search.recent.empty"));
             saveErrors(request, errors);
         }
         else {
@@ -100,69 +99,27 @@ public class InteractionDispatchAction extends AbstractEditorDispatchAction {
         // The form.
         ExperimentActionForm expform = (ExperimentActionForm) form;
 
-        // Search AC has high priority.
-        String searchValue = expform.getIntSearchAC();
+        // The array to store queries.
+        Query[] queries = getSearchQueries(Interaction.class, expform.getSearchValue());
 
-        // Assume search parameter is AC.
-        String searchParam = "ac";
+        // The maximum interactions allowed.
+        int max = getService().getInteger("int.search.limit");
 
-        // Search for short label if 'ac' is empty.
-        if (searchValue.length() == 0) {
-            searchValue = expform.getIntSearchLabel();
-            searchParam = "shortLabel";
-        }
-        // The search value.
-        if (searchValue.length() == 0) {
-            ActionErrors errors = new ActionErrors();
-            errors.add("exp.int.search",
-                    new ActionError("error.exp.int.search.input"));
-            saveErrors(request, errors);
+        // The results to display.
+        List results = super.search(queries, max, request, "err.search");
+
+        if (results.isEmpty()) {
+            // Errors or empty or too large
             return mapping.getInputForward();
         }
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
 
-        // The maximum interactions allowed.
-        int max = getService().getInteger("int.search.limit");
-
-        // The wrapper to hold lookup result.
-        ResultWrapper rw = null;
-        try {
-            rw = user.lookup(Interaction.class, searchParam, searchValue, max);
-        }
-        catch (IntactException ie) {
-            // This can only happen when problems with creating an internal helper
-            // This error is already logged from the User class.
-            ActionErrors errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("error.intact"));
-            saveErrors(request, errors);
-            return mapping.findForward(FAILURE);
-        }
-
-        // Check the size
-        if (rw.isTooLarge()) {
-            ActionErrors errors = new ActionErrors();
-            errors.add("exp.int.search", new ActionError("error.exp.int.search.many",
-                    Integer.toString(rw.getPossibleResultSize()), searchParam, Integer.toString(max)));
-            saveErrors(request, errors);
-            // Report back to the form.
-            return mapping.getInputForward();
-        }
-
-        // Search found any results?
-        if (rw.isEmpty()) {
-            ActionErrors errors = new ActionErrors();
-            errors.add("exp.int.search",
-                    new ActionError("error.exp.int.search.empty", searchParam));
-            saveErrors(request, errors);
-            // Report back to the form.
-            return mapping.getInputForward();
-        }
         // The current view of the edit session.
         ExperimentViewBean view = (ExperimentViewBean) user.getView();
 
         // Add the search result to the holder.
-        view.addInteractionToHold(rw.getResult());
+        view.addInteractionToHold(results);
 
         return mapping.getInputForward();
     }

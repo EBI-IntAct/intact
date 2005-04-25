@@ -12,8 +12,7 @@ import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
-import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.application.editor.struts.view.experiment.InteractionRowData;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -58,19 +57,6 @@ public class InteractionHoldAction extends AbstractEditorAction {
         // The dyna form.
         ExperimentActionForm expForm = (ExperimentActionForm) form;
 
-        // Helper to access the interaction.
-        IntactHelper helper = new IntactHelper();
-        Interaction inter;
-        try {
-            inter = (Interaction) helper.getObjectByAc(Interaction.class,
-                    expForm.getIntac());
-        }
-        finally {
-            helper.closeStore();
-        }
-        // We must have the interaction bean.
-        assert inter != null;
-
         // The current view of the edit session.
         ExperimentViewBean view = (ExperimentViewBean) getIntactUser(request).getView();
 
@@ -78,15 +64,25 @@ public class InteractionHoldAction extends AbstractEditorAction {
         if (expForm.getDispatch().equals(
                 getResources(request).getMessage("exp.int.button.add"))) {
 
+            // The search row data.
+            InteractionRowData row = view.getHoldInteraction(expForm.getIntac());
+
+            // We should have this row.
+            assert row != null;
+
+            // Set the action string (previously, it has add/hide action string).
+            row.setActionString();
+
             // No need to check for duplicates because it has already been
             // checked when adding to the hold section.
-            view.addInteraction(inter);
+            view.addInteraction(row);
+
             // Clear all the interactions in the hold section.
             view.clearInteractionToHold();
         }
         else {
             // Must have pressed 'Hide'.
-            view.hideInteractionToHold(inter);
+            view.hideInteractionToHold(expForm.getIntac());
         }
         // Update the form.
         return mapping.getInputForward();

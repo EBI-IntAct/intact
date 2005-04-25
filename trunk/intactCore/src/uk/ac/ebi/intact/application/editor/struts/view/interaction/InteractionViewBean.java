@@ -18,6 +18,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditVie
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
+import uk.ac.ebi.intact.application.editor.struts.view.experiment.InteractionRowData;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
@@ -223,12 +224,15 @@ public class InteractionViewBean extends AbstractEditViewBean {
     // Override the super method as the current interaction is added to the
     // recent interaction list.
     public void addToRecentList(EditUserI user) {
-        user.addToCurrentInteraction((Interaction) getAnnotatedObject());
+        InteractionRowData row = InteractionRowData.makeRow(
+                (Interaction) getAnnotatedObject());
+        user.addToCurrentInteraction(row);
     }
 
     // Override to remove the current interaction from the recent list.
     public void removeFromRecentList(EditUserI user) {
-        user.removeFromCurrentInteraction((Interaction) getAnnotatedObject());
+        InteractionRowData row = InteractionRowData.makeRow(getAc());
+        user.removeFromCurrentInteraction(row);
     }
 
     // Override to provide Experiment layout.

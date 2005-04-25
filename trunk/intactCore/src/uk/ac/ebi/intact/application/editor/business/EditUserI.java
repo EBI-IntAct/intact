@@ -9,11 +9,11 @@ package uk.ac.ebi.intact.application.editor.business;
 import uk.ac.ebi.intact.application.commons.business.IntactUserI;
 import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.experiment.InteractionRowData;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.util.GoServerProxy;
 import uk.ac.ebi.intact.util.NewtServerProxy;
 
@@ -292,26 +292,26 @@ public interface EditUserI extends IntactUserI, Serializable {
     public Set getCurrentExperiments();
 
     /**
-     * Adds the interaction to the currently edited/added interaction list.
-     * @param intact the interaction to add to the list.
+     * Adds the AC as the currently edited/added interaction.
+     * @param row the row to add to the current interaction list.
      */
-    public void addToCurrentInteraction(Interaction intact);
+    public void addToCurrentInteraction(InteractionRowData row);
 
     /**
-     * Removes the current interaction from the currently edited/added
+     * Removes the interaction for given ac from the currently edited/added
      * interaction list.
-     * @param intact the interaction to remove from the list.
+     * @param row the row to remove from the current interaction list.
      */
-    public void removeFromCurrentInteraction(Interaction intact);
+    public void removeFromCurrentInteraction(InteractionRowData row);
 
     /**
-     * Returns a list of currently edited/added interactions.
+     * Returns a list of currently edited/added interaction data rows.
      * @return a set consists currently edited/added interactions.
-     * An empty set is returned if there are no
-     * interactions added or edited during the current session.
+     * An empty set is returned if there are no interactions added or edited
+     * during the current session.
      *
      * <pre>
-     * post: results->forall(obj: Object | obj.oclIsTypeOf(Interaction))
+     * post: results->forall(obj: Object | obj.oclIsTypeOf(InteractionRowData))
      * </pre>
      */
     public Set getCurrentInteractions();
