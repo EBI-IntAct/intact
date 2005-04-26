@@ -412,14 +412,17 @@ public class ComponentBean extends AbstractEditKeyBean {
         }
     }
 
-    private void setGeneName(IntactHelper helper) {
+    private void setGeneName(IntactHelper helper) throws IntactException {
         // The query factory to get a query.
         OJBQueryFactory qf = OJBQueryFactory.getInstance();
 
         // The string buffer to construct the gene name.
         StringBuffer sb = new StringBuffer();
 
-        Query query = qf.getGeneNameQuery(myInteractor.getAc());
+        // The alias AC.
+        String ac = ((AnnotatedObject) helper.getObjectByLabel(
+                CvAliasType.class, "gene-name")).getAc();
+        Query query = qf.getGeneNameQuery(ac, myInteractor.getAc());
 
         // The flag to say that we are processing the first gene name.
         boolean first = true;

@@ -96,15 +96,22 @@ public class OJBQueryFactory {
 
     /**
      * Returns the query to get gene names for a Protein
+     * @param alias the AC of the alias type.
      * @param parent the AC of the parent (AC of the Protein)
      * @return the query to extract the gene name for given protein AC
      */
-    public Query getGeneNameQuery(String parent) {
-        // Records for given parent ac
-        Criteria crit = new Criteria();
-        crit.addEqualTo("parent_ac", parent);
+    public Query getGeneNameQuery(String alias, String parent) {
+        Criteria crit1 = new Criteria();
+        // Need all records for given alias AC.
+        crit1.addEqualTo("aliastype_ac", alias);
 
-        ReportQueryByCriteria query = QueryFactory.newReportQuery(Alias.class, crit);
+        Criteria crit2 = new Criteria();
+        crit2.addEqualTo("parent_ac", parent);
+
+        // Looking for both alias and parent
+        crit1.addAndCriteria(crit2);
+
+        ReportQueryByCriteria query = QueryFactory.newReportQuery(Alias.class, crit1);
 
         // Limit to name
         query.setAttributes(new String[] {"name"});
