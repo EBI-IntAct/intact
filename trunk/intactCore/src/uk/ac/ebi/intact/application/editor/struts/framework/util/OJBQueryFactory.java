@@ -10,6 +10,7 @@ import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.Query;
 import org.apache.ojb.broker.query.QueryFactory;
 import org.apache.ojb.broker.query.ReportQueryByCriteria;
+import uk.ac.ebi.intact.model.Alias;
 
 /**
  * This factory class builds queries for the editor.
@@ -90,6 +91,23 @@ public class OJBQueryFactory {
         // Limit to shortlabel
         query.setAttributes(new String[] {"shortLabel"});
         query.addOrderByAscending("shortLabel");
+        return query;
+    }
+
+    /**
+     * Returns the query to get gene names for a Protein
+     * @param parent the AC of the parent (AC of the Protein)
+     * @return the query to extract the gene name for given protein AC
+     */
+    public Query getGeneNameQuery(String parent) {
+        // Records for given parent ac
+        Criteria crit = new Criteria();
+        crit.addEqualTo("parent_ac", parent);
+
+        ReportQueryByCriteria query = QueryFactory.newReportQuery(Alias.class, crit);
+
+        // Limit to name
+        query.setAttributes(new String[] {"name"});
         return query;
     }
 }

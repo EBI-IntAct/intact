@@ -7,8 +7,12 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.ojb.broker.query.Query;
+import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.OJBQueryFactory;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
 import uk.ac.ebi.intact.business.IntactException;
@@ -85,6 +89,11 @@ public class ComponentBean extends AbstractEditKeyBean {
     private List myFeatures = new ArrayList();
 
     /**
+     * The gene names for display
+     */
+    private String myGeneNames;
+
+    /**
      * A list of features to add.
      */
     private transient List myFeaturesToAdd = new ArrayList();
@@ -109,6 +118,7 @@ public class ComponentBean extends AbstractEditKeyBean {
         mySPAc = getSPAc();
         setOrganism();
         setEditState(SAVE_NEW);
+        setGeneName();
     }
 
     /**
@@ -218,6 +228,10 @@ public class ComponentBean extends AbstractEditKeyBean {
 
     public String getOrganism() {
         return myOrganism;
+    }
+
+    public String getGeneName() {
+        return myGeneNames;
     }
 
 //    public void setSelect(String value) {
@@ -368,6 +382,62 @@ public class ComponentBean extends AbstractEditKeyBean {
         myStoichiometry = component.getStoichiometry();
         setOrganism();
         setExpressedIn();
+        setGeneName();
+    }
+
+    /**
+     * Sets the gene name for a component to display. This method delegates simply
+     * does the clean up opertaion with the helper. The real work is performed
+     * in the {@link #setGeneName(uk.ac.ebi.intact.business.IntactHelper)} method.
+     */
+    private void setGeneName() {
+        // The helper to run the query.
+        IntactHelper helper = null;
+        try {
+            helper = new IntactHelper();
+            setGeneName(helper);
+        }
+        catch (IntactException ex) {
+            // Error in setting the Gene name for display
+            Logger.getLogger(EditorConstants.LOGGER).error("Gene Name", ex);
+        }
+        finally {
+            if (helper != null) {
+                try {
+                    helper.closeStore();
+                }
+                catch (IntactException e) {
+                }
+            }
+        }
+    }
+
+    private void setGeneName(IntactHelper helper) {
+        // The query factory to get a query.
+        OJBQueryFactory qf = OJBQueryFactory.getInstance();
+
+        // The string buffer to construct the gene name.
+        StringBuffer sb = new StringBuffer();
+
+        Query query = qf.getGeneNameQuery(myInteractor.getAc());
+
+        // The flag to say that we are processing the first gene name.
+        boolean first = true;
+
+        // Run through the query result set.
+        for (Iterator iter = helper.getIteratorByReportQuery(query);
+             iter.hasNext(); ) {
+            // Though this returns an array we are interested only in the first item.
+            Object name = ((Object[])iter.next())[0];
+            if (first) {
+                sb.append(name);
+                first = false;
+            }
+            else {
+                sb.append(", " + name);
+            }
+        }
+        myGeneNames = sb.toString();
     }
 
     private void setOrganism() {

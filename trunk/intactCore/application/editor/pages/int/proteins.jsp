@@ -99,7 +99,7 @@
             <th class="tableCellHeader" width="10%">
                 <bean:message key="label.ac"/>
             </th>
-            <th class="tableCellHeader" width="10%" rowspan="2">Organism</th>
+            <th class="tableCellHeader" width="10%">Gene Name</th>
             <th class="tableCellHeader" width="50%" rowspan="2">
                 <bean:message key="label.fullname"/>
             </th>
@@ -108,6 +108,7 @@
             <th class="tableCellHeader">Role*</th>
             <th class="tableCellHeader">Stoichiometry</th>
             <th class="tableCellHeader">ExpressedIn</th>
+            <th class="tableCellHeader">Organism</th>
         </tr>
 
         <%-- Feature headings --%>
@@ -186,8 +187,8 @@
                 <td class="tableCell">
                     <nested:write property="ac"/>
                 </td>
-                <td class="tableCell" rowspan="2">
-                    <nested:write property="organism"/>
+                <td class="tableCell">
+                    <nested:write property="geneName"/>
                 </td>
                 <td class="tableCell" rowspan="2">
                     <nested:write property="fullName"/>
@@ -270,6 +271,9 @@
                         </nested:select>
                     </td>
                 </c:if>
+                <td class="tableCell">
+                    <nested:write property="organism"/>
+                </td>
             </tr>
 
             <%-- ==============================================================
