@@ -98,6 +98,17 @@
         <welcome-file>welcome.jsp</welcome-file>
     </welcome-file-list>
 
+    <!-- Drawing dynamic Images -->
+      <servlet>
+          <servlet-name>dynamicImage</servlet-name>
+          <servlet-class>uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.business.graphdraw.servlet.ImageServlet</servlet-class>
+      </servlet>
+
+      <servlet-mapping>
+          <servlet-name>dynamicImage</servlet-name>
+          <url-pattern>/image</url-pattern>
+      </servlet-mapping>
+
     <!-- =================================================================== -->
 
     <!-- JSTL Tag Library Descriptor  -->

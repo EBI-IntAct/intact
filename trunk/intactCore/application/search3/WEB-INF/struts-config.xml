@@ -5,36 +5,36 @@
           "http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
 
 <!--
-   Copyright (c) 2002 The European Bioinformatics Institute, and others.
-   All rights reserved. Please see the file LICENSE
-   in the root directory of this distribution.
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
+in the root directory of this distribution.
 -->
 
 <!--
-     This is the Struts configuration file for the example application,
-     using the proposed new syntax.
+This is the Struts configuration file for the example application,
+using the proposed new syntax.
 
-     NOTE:  You would only flesh out the details in the "form-bean"
-     declarations if you had a generator tool that used them to create
-     the corresponding Java classes for you.  Otherwise, you would
-     need only the "form-bean" element itself, with the corresponding
-     "name" and "type" attributes.
+NOTE:  You would only flesh out the details in the "form-bean"
+declarations if you had a generator tool that used them to create
+the corresponding Java classes for you.  Otherwise, you would
+need only the "form-bean" element itself, with the corresponding
+"name" and "type" attributes.
 
-  Workflow:                                         __________      _____________
-                ================================>  | tooLarge |==> |tooLarge.jsp |
-                |                                  |__________|    |_____________|
-                |                                   _________      _____________
-                |                              ==> | partner  |==> | partner.jsp|
-                |                             |    |_________ |    |____________|
-  Query     _________       ____________      |     _________      _____________
- =======>  | Search | ===> | Dispatcher | ===|==>  | Single  |==> | single.jsp  |
-           |________|      |____________|     |    |_________|    |_____________|
-                                |             |     _________      ____________
-                                |             |==> | Details |==> | detail.jsp |
-                                |             |    |_________|    |____________|
-                            ____|____         |    _________      ____________
-                           |binary  |         ==> | simple  |==> | simple.jsp |
-                           |________|===========> |_________|    |____________|
+Workflow:                                         __________      _____________
+================================>  | tooLarge |==> |tooLarge.jsp |
+|                                  |__________|    |_____________|
+|                                   _________      _____________
+|                              ==> | partner  |==> | partner.jsp|
+|                             |    |_________ |    |____________|
+Query     _________       ____________      |     _________      _____________
+=======>  | Search | ===> | Dispatcher | ===|==>  | Single  |==> | single.jsp  |
+|________|      |____________|     |    |_________|    |_____________|
+|             |     _________      ____________
+|             |==> | Details |==> | detail.jsp |
+|             |    |_________|    |____________|
+____|____         |    _________      ____________
+|binary  |         ==> | simple  |==> | simple.jsp |
+|________|===========> |_________|    |____________|
 
 
 -->
@@ -55,8 +55,39 @@
             <form-property name="view" type="java.lang.String" initial="partner"/>
             <form-property name="filter" type="java.lang.String" initial="all"/>
         </form-bean>
-    </form-beans>
 
+
+        <!-- form bean for the advanced search -->
+        <form-bean name="advancedForm"
+            type="org.apache.struts.action.DynaActionForm">
+            <form-property name="searchObject" type="java.lang.String" initial="any"/>
+            <form-property name="acNumber" type="java.lang.String"/>
+            <form-property name="shortlabel" type="java.lang.String"/>
+            <form-property name="description" type="java.lang.String"/>
+            <form-property name="connection" type="java.lang.String" initial="and"/>
+            <form-property name="cvDB" type="java.lang.String"/>
+            <form-property name="cvDatabases" type="java.util.Collection"/>
+            <form-property name="xRef" type="java.lang.String"/>
+            <form-property name="cvTopic" type="java.lang.String"/>
+            <form-property name="cvTopics" type="java.util.Collection"/>
+            <form-property name="annotation" type="java.lang.String"/>
+            <form-property name="fulltext" type="java.lang.String"/>
+            <form-property name="cvInteraction" type="java.lang.String"/>
+            <form-property name="cvInteractions" type="java.util.Collection"/>
+            <form-property name="cvIdentification" type="java.lang.String"/>
+            <form-property name="cvIdentifications" type="java.util.Collection"/>
+            <form-property name="cvInteractionType" type="java.lang.String"/>
+            <form-property name="cvInteractionTypes" type="java.util.Collection"/>
+            <form-property name="cvTest" type="java.util.Collection"/>
+            <form-property name="cvName" type="java.lang.String"/>
+            <form-property name="interDetChildren" type="java.lang.String"/>
+            <form-property name="interTypeChildren" type="java.lang.String"/>
+            <form-property name="partDetChildren" type="java.lang.String"/>
+            <form-property name="iqlStatement" type="java.lang.String"/>
+            
+        </form-bean>
+
+    </form-beans>
     <!-- ========== Global Forward Definitions ============================== -->
     <global-forwards>
         <forward name="start" path="/do/welcome"/>
@@ -89,8 +120,8 @@
         <!-- ========== Buisness Logic ================================== -->
 
         <!-- Process the dispatch action th the view. The form is in a session because we reuse search details
-             from view action. Currently once a search has been successful, we delegate the
-             choice of choosing the relevant action to a dispatcher.
+        from view action. Currently once a search has been successful, we delegate the
+        choice of choosing the relevant action to a dispatcher.
           -->
 
         <action path="/search"
@@ -184,13 +215,76 @@
             <forward name="results" path="too.large.layout"/>
         </action>
 
+        <!-- ========== advanced search specific actions ================================== -->
+
+        <!-- Entrance of the advanced search application -->
+        <action path="/initAdvSearch"
+            type="uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.controller.InitAction"
+            scope="session">
+
+            <forward name="success" path="adv.search.layout"/>
+            <forward name="noResource" path="no.resource.layout"/>
+        </action>
+
+
+        <!-- Processes the advanced search-->
+        <action path="/advsearch"
+            type="uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.controller.AdvancedSearchAction"
+            name="advancedForm"
+            validate="true"
+            scope="request"
+            input="/advancedSearch.jsp">
+
+            <forward name="tooLarge" path="/do/advTooLarge"/>
+            <forward name="error" path="adv.search.layout"/>
+            <forward name="advDispatcher" path="/do/advDispatcher"/>
+            <forward name="indexError" path="adv.no.index.layout"/>
+
+        </action>
+
+        <!-- dispatcher for the advanced search-->
+        <action path="/advDispatcher"
+            type="uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.controller.AdvDispatcherAction"
+            scope="session">
+            <forward name="sessionLost" path="/do/welcome"/>
+            <forward name="single" path="/do/single"/>
+            <forward name="binary" path="/do/binary"/>
+            <forward name="details" path="/do/details"/>
+            <forward name="simple" path="/do/advSimple"/>
+            <forward name="binaryProtein" path="/do/binaryProtein"/>
+        </action>
+
+
+        <action path="/advSimple"
+            type="uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.controller.AdvSimpleResultAction"
+            scope="session">
+            <forward name="noMatch" path="no.match.layout"/>
+            <forward name="sessionLost" path="/do/welcome"/>
+            <forward name="simpleResults" path="simple.layout"/>
+        </action>
+
+        <action path="/advTooLarge"
+            type="uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.controller.AdvTooLargeAction"
+            scope="session">
+            <forward name="results" path="adv.too.large.layout"/>
+        </action>
+
+        <action path="/showGraph"
+            type="uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.controller.ShowCvGraphAction"
+            name="advancedForm"
+            scope="response">
+            <forward name="showIdGraph" path="/pages/cvIdGraph.jsp"/>
+            <forward name="showIntGraph" path="/pages/cvIntGraph.jsp"/>
+            <forward name="showIntTypeGraph" path="/pages/cvIntTypeGraph.jsp"/>
+        </action>
+
     </action-mappings>
 
     <!-- ========== Plug Ins Configuration ================================== -->
 
     <!--
-        Add multiple validator resource files by setting the pathnames property
-        with a comma delimitted list of resource files to load.
+    Add multiple validator resource files by setting the pathnames property
+    with a comma delimitted list of resource files to load.
     -->
     <plug-in className="org.apache.struts.tiles.TilesPlugin">
         <set-property property="definitions-config" value="/WEB-INF/tiles-defs.xml"/>
