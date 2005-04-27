@@ -12,7 +12,7 @@
   - The common footer for the sidebar.
 --%>
 
-<%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
+<%@ taglib uri="/WEB-INF/tld/c.tld" prefix="c"%>
 
 <c:if test="${not empty sessionScope.user}">
 
