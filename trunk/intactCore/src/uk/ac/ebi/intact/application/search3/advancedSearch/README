@@ -1,0 +1,22 @@
+README for advanced search
+*******************************************************
+
+before using the advanced search:
+
+create the index:
+    call the script createLuceneIndex.sh (located in /scripts) with the target directory of the index as an argument
+
+set the index path:
+    set the name of the index directory in the file advancedSearch.properties (located in /config)
+
+insert the CV for search3
+    if the table 'treehierarchie' is not jet created in the database:
+        run the script createTableOracle.sh/createTablePostgres (located in /scripts/cv2tree) respectivley,
+        depending on your database
+    if the tabel 'treehierarchie' exists in the database:
+        run the script insertSearch3CVs.sh (located in /scripts/cv2tree)
+        this script will insert the 3 CVs (CvInteraction, CvIdentification, CvInteractionType) into the database
+            
+
+
+
