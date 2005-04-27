@@ -5,15 +5,15 @@
        "http://jakarta.apache.org/struts/dtds/tiles-config_1_1.dtd">
 
 <!--
-  Copyright (c) 2002 The European Bioinformatics Institute, and others.
-  All rights reserved. Please see the file LICENSE
-  in the root directory of this distribution.
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
+in the root directory of this distribution.
 -->
 
 <!--
-    Tiles definitions for search.
-    Author: Sugath Mudali (smudali@ebi.ac.uk)
-    Version: $Id$
+Tiles definitions for search.
+Author: Sugath Mudali (smudali@ebi.ac.uk)
+Version: $Id$
  -->
 
 <tiles-definitions>
@@ -25,6 +25,7 @@
         <put name="title" value="Links"/>
         <putList name="items">
             <item value="New Search" link="/search/do/welcome"/>
+            <item value="Advanced Search" link="/search/do/initAdvSearch"/>
             <item value="Intact Home" link="http://www.ebi.ac.uk/intact"/>
         </putList>
     </definition>
@@ -66,10 +67,10 @@
     <!-- single AnnotatedObject view description. Used for eg CvObjects, BioSource-->
     <!--
     <definition name="single.layout" extends="search.layout">
-        <put name="content" value="/pages/single.jsp"/>
+    <put name="content" value="/pages/single.jsp"/>
     </definition>
     -->
-    
+
     <!-- single  BioSource view -->
     <definition name="cvObject.layout" extends="search.layout">
         <put name="content" value="/pages/cvObject.jsp"/>
@@ -139,5 +140,51 @@
     <definition name="too.many.proteins.layout" extends="search.layout">
         <put name="content" value="/pages/tooManyProteins.jsp"/>
     </definition>
+
+    <!-- =============== advanced search specific layouts ====================================== -->
+
+    <!-- Menu links for the advanced search page. -->
+      <definition name="powerSearch.menu.links" path="/layouts/menu.jsp">
+          <put name="title" value="Links"/>
+          <putList name="items">
+              <item value="Simple Search" link="/search/do/welcome"/>
+              <item value="New Advanced Search" link="/search/do/initAdvSearch"/>
+              <item value="IntAct" link="http://www.ebi.ac.uk/intact"/>
+          </putList>
+      </definition>
+
+    <!-- Sidebar for the power search page -->
+    <definition name="powerSearch.sidebar.layout" path="/layouts/sidebarLayout.jsp">
+        <put name="menu" value="powerSearch.menu.links"/>
+        <put name="footer" value="/pages/sidebarFooter.jsp"/>
+    </definition>
+
+    <!-- The header layout. -->
+    <definition name="adv.header.layout" path="/layouts/headerLayout.jsp">
+        <put name="header.title" value="Advanced Search"/>
+    </definition>
+
+    <!-- advanced search layout -->
+    <definition name="adv.search.layout" extends="powerSearch.layout">
+        <put name="content" value="/pages/advancedSearch.jsp"/>
+    </definition>
+
+    <!-- power search page description  -->
+    <definition name="powerSearch.layout" path="/layouts/intactLayout.jsp">
+        <put name="title" value="IntAct - Power Search"/>
+        <put name="sidebar" value="powerSearch.sidebar.layout"/>
+        <put name="header" value="adv.header.layout"/>
+        <put name="footer" value="/pages/footer.jsp"/>
+    </definition>
+
+    <definition name="adv.no.index.layout" extends="search.layout">
+        <put name="content" value="/pages/noIndexError.jsp"/>
+    </definition>
+
+    <!-- too large layout for the advanced search -->
+    <definition name="adv.too.large.layout" extends="search.layout">
+        <put name="content" value="/pages/advTooLarge.jsp"/>
+    </definition>
+
 
 </tiles-definitions>

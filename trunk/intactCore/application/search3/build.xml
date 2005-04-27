@@ -28,6 +28,7 @@
     <property name="tomcat.home" value="${env.CATALINA_HOME}"/>
     <property name="webapps.dir" value="${tomcat.home}/webapps"/>
 
+    <property name="tomcat.conf.dir" value="${tomcat.home}/conf/Catalina/localhost"/>
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
 
@@ -95,6 +96,9 @@
         <pathelement path="${httpunit.install.dir}/jars/netkohtml.jar"/>
         <pathelement path="${httpunit.install.dir}/jars/xmlParserAPIs.jar"/>
 
+        <!-- jar files specific for the advanced search-->
+        <pathelement path="${root.lib.dir}/lucene-1.4.3.jar"/>
+        <pathelement path="${intact.app.dir}/lib/jimi.jar"/>
 
         <fileset dir="${root.lib.dir}">
             <include name="junit.jar"/>
@@ -169,6 +173,14 @@
                 <exclude name="tooLarge.jsp"/>
                 <exclude name="bioSource.jsp"/>
                 <exclude name="cvObject.jsp"/>
+                <!-- these are advanced search specific JSPs -->
+                <exclude name="advancedSearch.jsp"/>
+                <exclude name="advTooLarge.jsp"/>
+                <exclude name="cvIdGraph.jsp"/>
+                <exclude name="cvIntGraph.jsp"/>
+                <exclude name="cvIntTypeGraph.jsp"/>
+                <exclude name="noIndexError.jsp"/>
+                <exclude name="sidebarFooter.jsp"/>
 
             </fileset>
         </delete>
@@ -181,10 +193,21 @@
                 <exclude name="imageE0A.JPG"/>
                 <exclude name="imageGKH.JPG"/>
                 <exclude name="imageV3F.JPG"/>
+                <!-- Do not remove advanced search specific files -->
+                <exclude name="anyExample.png"/>
+                <exclude name="cvExample.png"/>
+                <exclude name="expExample.png"/>
+                <exclude name="interExample.png"/>
+                <exclude name="protExample.png"/>
             </fileset>
         </delete>
 
-        <delete dir="${tld.dir}"/>
+  <!-- images commons files -->
+        <delete>
+            <fileset dir="${tld.dir}">
+                <exclude name="cvGraph.tld"/>
+            </fileset>
+        </delete>
 
         <delete file="${last.modified.file}" quiet="true"/>
     </target>
@@ -414,7 +437,7 @@
 
         <!-- Copy context files in the Tomcat's webapps directory -->
         <copy file="${dist.dir}/${search-context-file}"
-            todir="${webapps.dir}" overwrite="yes"/>
+            todir="${tomcat.conf.dir}" overwrite="yes"/>
     </target>
 
     <!-- =================================================================== -->
