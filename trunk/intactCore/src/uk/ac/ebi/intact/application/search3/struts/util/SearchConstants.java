@@ -82,7 +82,15 @@ public interface SearchConstants {
      */
     public static final String SEARCH_RESULTS = "searchResults";
 
+    /**
+      * The label used to identify the search results Map (often saved in a request)
+     */
+    public static final String SEARCH_RESULTS_MAP = "searchResultsMap";
 
+     /**
+      * class to be searched for, needed for the advanced search
+      */
+    public static final String SEARCH_CLASS = "search_class" ;
 
     ///////////////////////
     // STRUTS forwards
@@ -122,6 +130,11 @@ public interface SearchConstants {
     public static final String FORWARD_DISPATCHER_ACTION = "dispatcher";
 
     /**
+     * Key to the advanced dispatcher action.
+     */
+    public static final String FORWARD_ADV_DISPATCHER_ACTION = "advDispatcher";
+
+    /**
      * Forward to the Action responsible for setting up a view when using the search box
      */
     public static final String FORWARD_DETAILS_ACTION = "details";
@@ -141,6 +154,12 @@ public interface SearchConstants {
      * search results
      */
     public static final String FORWARD_SIMPLE_ACTION = "simple";
+
+ /**
+     * Forward to the Action responsible for setting up the 'simple' initial view of simple text
+     * search results
+     */
+    public static final String FORWARD_SIMPLE_RESULTS = "simpleResults";
 
     /**
      * Forward to the Action responsible for setting up a view when clicking on a link
@@ -178,6 +197,12 @@ public interface SearchConstants {
      * Used as a key to identify the binary protein action
      */
     public static final String FORWARD_BINARYPROTEIN_ACTION = "binaryProtein";
+
+    /**
+     *  Used to forward to a syntax error page, if the search string has an incorrect syntax
+     */
+    public static final String FORWARD_ERROR = "error";
+
 
     /**
      * Used to identify which page a request came from. Mainly needed by Action classes to decide
@@ -230,4 +255,21 @@ public interface SearchConstants {
     public static final String FORWARD_NO_RESOURCE = "noResource";
 
 
+    public static final String FORWARD_SHOW_IDENTIFICATION_GRAPH = "showIdGraph";
+
+    public static final String FORWARD_SHOW_INTERACTION_GRAPH = "showIntGraph";
+
+    public static final String FORWARD_SHOW_INTERACTION_TYPE_GRAPH = "showIntTypeGraph";
+
+
+    // string to hold the shortened iql statement
+    public static final String IQL_DISPLAY = "iqlDisplay";
+
+    public static final String FORWARD_INDEX_ERROR = "indexError";
+
+    public static final String ERROR_MESSAGE = "error_message";
+
+    public static final String IMAGE_BEAN = "imageBean";
+
+    public static final  String SEARCH_OBJECT = "searchObject" ;
 }

@@ -207,4 +207,8 @@ public interface SearchConstants {
     public static final int MAXIMUM_DISPLAYABLE_CVOBJECTS = 30;
     public static final int MAXIMUM_DISPLAYABLE_EXPERIMENTS = 30;
 
+    public static final String ERROR_MESSAGE = "error_message";
+    public static final String IMAGE_BEAN = "imageBean";
+
+    public static final String FORWARD_INDEX_ERROR = "indexError";
 }
