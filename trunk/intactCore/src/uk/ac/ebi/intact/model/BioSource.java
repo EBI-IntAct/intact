@@ -6,8 +6,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.model;
 
 /**
- * Represents a biological source.
- * TODO write a proper comment
+ * Represents a biological source. TODO write a proper comment
  *
  * @author hhe
  * @version $id$
@@ -60,9 +59,9 @@ public class BioSource extends AnnotatedObjectImpl implements Editable {
     private CvCompartment cvCompartment;
 
     /**
-     * This constructor should <b>not</b> be used as it could
-     * result in objects with invalid state. It is here for object mapping
-     * purposes only and if possible will be made private.
+     * This constructor should <b>not</b> be used as it could result in objects with invalid state. It is here for
+     * object mapping purposes only and if possible will be made private.
+     *
      * @deprecated Use the full constructor instead
      */
     private BioSource() {
@@ -71,23 +70,22 @@ public class BioSource extends AnnotatedObjectImpl implements Editable {
     }
 
     /**
-     * Creates a valid BioSource (ie a source organism) instance. A valid instance must have at least
-     * a non-null shortLabel specified. A side-effect of this constructor is to
-     * set the <code>created</code> and <code>updated</code> fields of the instance
-     * to the current time.
+     * Creates a valid BioSource (ie a source organism) instance. A valid instance must have at least a non-null
+     * shortLabel specified. A side-effect of this constructor is to set the <code>created</code> and
+     * <code>updated</code> fields of the instance to the current time.
+     *
      * @param shortLabel The label used to identify this instance
-     * @param taxId the NCBI taxId, which must be unique if defined (may be null)
-     * @param owner The <code>Institution</code> which 'owns' this BioSource
-     * @exception NullPointerException thrown if either no shortLabel or Institution specified.
+     * @param taxId      the NCBI taxId, which must be unique if defined (may be null)
+     * @param owner      The <code>Institution</code> which 'owns' this BioSource
+     *
+     * @throws NullPointerException thrown if either no shortLabel or Institution specified.
      */
-    public BioSource(Institution owner, String shortLabel, String taxId) {
+    public BioSource( Institution owner, String shortLabel, String taxId ) {
 
         //super call sets up a valid AnnotatedObject
-        super(shortLabel, owner);
-        //TODO Q: taxId must be unique (but apparently may be null)- how to validate this??
+        super( shortLabel, owner );
 
-        //if(taxId == null) throw new NullPointerException("valid BioSource must have a non-null taxId!");
-        this.taxId = taxId;
+        setTaxId( taxId );
     }
 
 
@@ -98,7 +96,20 @@ public class BioSource extends AnnotatedObjectImpl implements Editable {
         return taxId;
 
     }
-    public void setTaxId(String taxId) {
+
+    public void setTaxId( String taxId ) {
+        if ( taxId == null ) {
+            throw new NullPointerException( "Valid BioSource must have a non-null taxId!" );
+        } else {
+            try {
+                Integer.parseInt( taxId );
+            } catch ( NumberFormatException e ) {
+                throw new IllegalArgumentException( "A BioSource's taxid has to be an integer value." );
+            }
+        }
+
+        // Note: negative in can be given: -1=in vitro, -2=chemical synthesis, -3=not affected yet
+
         this.taxId = taxId;
     }
 
@@ -108,38 +119,42 @@ public class BioSource extends AnnotatedObjectImpl implements Editable {
     public CvCellCycle getCvCellCycle() {
         return cvCellCycle;
     }
-    public void setCvCellCycle(CvCellCycle cvCellCycle) {
+
+    public void setCvCellCycle( CvCellCycle cvCellCycle ) {
         this.cvCellCycle = cvCellCycle;
     }
 
     public CvDevelopmentalStage getCvDevelopmentalStage() {
         return cvDevelopmentalStage;
     }
-    public void setCvDevelopmentalStage(CvDevelopmentalStage cvDevelopmentalStage) {
+
+    public void setCvDevelopmentalStage( CvDevelopmentalStage cvDevelopmentalStage ) {
         this.cvDevelopmentalStage = cvDevelopmentalStage;
     }
 
     public CvTissue getCvTissue() {
         return cvTissue;
     }
-    public void setCvTissue(CvTissue cvTissue) {
+
+    public void setCvTissue( CvTissue cvTissue ) {
         this.cvTissue = cvTissue;
     }
 
     public CvCellType getCvCellType() {
         return cvCellType;
     }
-    public void setCvCellType(CvCellType cvCellType) {
+
+    public void setCvCellType( CvCellType cvCellType ) {
         this.cvCellType = cvCellType;
     }
 
     public CvCompartment getCvCompartment() {
         return cvCompartment;
     }
-    public void setCvCompartment(CvCompartment cvCompartment) {
+
+    public void setCvCompartment( CvCompartment cvCompartment ) {
         this.cvCompartment = cvCompartment;
     }
-
 
 
     //attributes used for mapping BasicObjects - project synchron
@@ -147,52 +162,70 @@ public class BioSource extends AnnotatedObjectImpl implements Editable {
     public String getCvCompartmentAc() {
         return cvCompartmentAc;
     }
-    public void setCvCompartmentAc(String ac) {
+
+    public void setCvCompartmentAc( String ac ) {
         this.cvCompartmentAc = ac;
     }
+
     public String getCvCellCycleAc() {
         return cvCellCycleAc;
     }
-    public void setCvCellCycleAc(String ac) {
+
+    public void setCvCellCycleAc( String ac ) {
         this.cvCellCycleAc = ac;
     }
+
     public String getCvCellTypeAc() {
         return cvCellTypeAc;
     }
-    public void setCvCellTypeAc(String ac) {
+
+    public void setCvCellTypeAc( String ac ) {
         this.cvCellTypeAc = ac;
     }
+
     public String getCvTissueAc() {
         return cvTissueAc;
     }
-    public void setCvTissueAc(String ac) {
+
+    public void setCvTissueAc( String ac ) {
         this.cvTissueAc = ac;
     }
+
     public String getCvDevelopmentalStageAc() {
         return cvDevelopmentalStageAc;
     }
-    public void setCvDevelopmentalStageAc(String ac) {
+
+    public void setCvDevelopmentalStageAc( String ac ) {
         this.cvDevelopmentalStageAc = ac;
     }
 
 
     /**
-     * Equality for BioSources is currently based on equality for
-     * <code>AnnotatedObjects</code> and taxIds (String representation of an integer).
-     * @see uk.ac.ebi.intact.model.AnnotatedObjectImpl
+     * Equality for BioSources is currently based on equality for <code>AnnotatedObjects</code> and taxIds (String
+     * representation of an integer).
+     *
      * @param o The object to check
+     *
      * @return true if the parameter equals this object, false otherwise
+     *
+     * @see uk.ac.ebi.intact.model.AnnotatedObjectImpl
      */
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof BioSource)) return false;
-        if (!super.equals(o)) return false;
+    public boolean equals( Object o ) {
+        if ( this == o ) {
+            return true;
+        }
+        if ( !( o instanceof BioSource ) ) {
+            return false;
+        }
+        if ( !super.equals( o ) ) {
+            return false;
+        }
 
         final BioSource bioSource = (BioSource) o;
 
         //check the taxId...
-        if(taxId != null) {
-            return (taxId.equals(bioSource.taxId));
+        if ( taxId != null ) {
+            return ( taxId.equals( bioSource.taxId ) );
         }
 
         return bioSource.taxId == null;
@@ -209,9 +242,13 @@ public class BioSource extends AnnotatedObjectImpl implements Editable {
         //int code = super.hashCode();
 
         int code = 29;
-        if(taxId != null) code = 29*code + taxId.hashCode();
+        if ( taxId != null ) {
+            code = 29 * code + taxId.hashCode();
+        }
         return code;
     }
+
+    // TODO write toString !!
 
 } // end BioSource
 
