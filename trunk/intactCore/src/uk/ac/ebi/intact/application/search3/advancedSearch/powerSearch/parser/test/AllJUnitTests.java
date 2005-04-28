@@ -8,8 +8,6 @@ package uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.parser.t
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import uk.ac.ebi.intact.application.search3.advancedSearch.temp.sqlLikeParserTemp.sqlLikeParser.test.OjbParserTest;
-import uk.ac.ebi.intact.application.search3.advancedSearch.temp.sqlLikeParserTemp.sqlLikeParser.test.QueryHandlingTest;
 
 /**
  * @author Anja Friedrichsen
