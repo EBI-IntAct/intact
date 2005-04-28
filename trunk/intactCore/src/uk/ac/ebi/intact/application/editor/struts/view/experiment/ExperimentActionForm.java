@@ -77,19 +77,4 @@ public class ExperimentActionForm extends EditorActionForm {
     public String getSearchValue() {
         return mySearchValue;
     }
-//    public void setIntSearchLabel(String label) {
-//        myIntSearchLabel = label;
-//    }
-//
-//    public String getIntSearchLabel() {
-//        return myIntSearchLabel;
-//    }
-//
-//    public void setIntSearchAC(String ac) {
-//        myIntSearchAC = ac;
-//    }
-//
-//    public String getIntSearchAC() {
-//        return myIntSearchAC;
-//    }
 }

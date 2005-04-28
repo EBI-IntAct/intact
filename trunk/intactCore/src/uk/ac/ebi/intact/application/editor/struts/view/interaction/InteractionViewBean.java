@@ -135,7 +135,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
         resetInteraction(intact);
 
         // Prepare for Proteins and Experiments for display.
-        makeExperimentBeans(intact.getExperiments());
+        makeExperimentRows(intact.getExperiments());
         makeProteinBeans(intact.getComponents());
     }
 
@@ -179,7 +179,12 @@ public class InteractionViewBean extends AbstractEditViewBean {
             // Collect experiments from beans.
             List exps = new ArrayList();
             for (Iterator iter = getExperimentsToAdd().iterator(); iter.hasNext();) {
-                exps.add(((ExperimentBean) iter.next()).getExperiment());
+                ExperimentRowData row = (ExperimentRowData) iter.next();
+                Experiment exp = row.getExperiment();
+                if (exp == null) {
+                    exp = (Experiment) helper.getObjectByAc(Experiment.class, row.getAc());
+                }
+                exps.add(exp);
             }
             // Not persisted. Create a new Interaction.
             intact = new InteractionImpl(exps, new ArrayList(),
@@ -201,7 +206,11 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
         // Delete experiments.
         for (Iterator iter = getExperimentsToDel().iterator(); iter.hasNext();) {
-            Experiment exp = ((ExperimentBean) iter.next()).getExperiment();
+            ExperimentRowData row = (ExperimentRowData) iter.next();
+            Experiment exp = row.getExperiment();
+            if (exp == null) {
+                exp = (Experiment) helper.getObjectByAc(Experiment.class, row.getAc());
+            }
             intact.removeExperiment(exp);
         }
     }
@@ -329,51 +338,51 @@ public class InteractionViewBean extends AbstractEditViewBean {
     /**
      * Adds an Experiment.
      *
-     * @param expbean the Experiment bean to add.
+     * @param expRow the Experiment row to add.
      * <p/>
      * <pre>
      * post: myExperimentsToAdd = myExperimentsToAdd@pre + 1
      * post: myExperiments = myExperiments@pre + 1
      * </pre>
      */
-    public void addExperiment(ExperimentBean expbean) {
+    public void addExperiment(ExperimentRowData expRow) {
         // Experiment to add.
-        myExperimentsToAdd.add(expbean);
+        myExperimentsToAdd.add(expRow);
         // Add to the view as well.
-        myExperiments.add(expbean);
+        myExperiments.add(expRow);
     }
 
     /**
      * True if given experiment exists in this object's experiment collection.
      *
-     * @param expbean the bean to compare.
-     * @return true <code>expbean</code> exists in this object's experiment
+     * @param expRow the experiment row to compare.
+     * @return true <code>expRow</code> exists in this object's experiment
      * collection. The comparision uses the equals method of
-     * <code>ExperimentBean</code> class.
+     * <code>ExperimentRowData</code> class.
      * <p/>
      * <pre>
      * post: return->true implies myExperimentsToAdd.exists(exbean)
      * </pre>
      */
-    public boolean experimentExists(ExperimentBean expbean) {
-        return myExperiments.contains(expbean);
+    public boolean experimentExists(ExperimentRowData expRow) {
+        return myExperiments.contains(expRow);
     }
 
     /**
      * Removes an Experiment
      *
-     * @param expbean the Experiment bean to remove.
+     * @param expRow the Experiment row to remove.
      * <p/>
      * <pre>
      * post: myExperimentsToDel = myExperimentsToDel@pre - 1
      * post: myExperiments = myExperiments@pre - 1
      * </pre>
      */
-    public void delExperiment(ExperimentBean expbean) {
+    public void delExperiment(ExperimentRowData expRow) {
         // Add to the container to delete experiments.
-        myExperimentsToDel.add(expbean);
+        myExperimentsToDel.add(expRow);
         // Remove from the view as well.
-        myExperiments.remove(expbean);
+        myExperiments.remove(expRow);
     }
 
     /**
@@ -389,11 +398,10 @@ public class InteractionViewBean extends AbstractEditViewBean {
      */
     public void addExperimentToHold(Collection exps) {
         for (Iterator iter = exps.iterator(); iter.hasNext();) {
-            ExperimentBean expbean = new ExperimentBean((Experiment) iter.next());
+            ExperimentRowData expRow = (ExperimentRowData) iter.next();
             // Avoid duplicates.
-            if (!myExperimentsToHold.contains(expbean)
-                    && !myExperiments.contains(expbean)) {
-                myExperimentsToHold.add(expbean);
+            if (!myExperimentsToHold.contains(expRow) && !myExperiments.contains(expRow)) {
+                myExperimentsToHold.add(expRow);
             }
         }
     }
@@ -401,14 +409,14 @@ public class InteractionViewBean extends AbstractEditViewBean {
     /**
      * Hides an Experiment bean from hold.
      *
-     * @param expbean an <code>ExperimentBean</code> to hide.
+     * @param expRow experiment row to hide.
      * <pre>
-     * pre: myExperimentsToHold->includes(expbean)
+     * pre: myExperimentsToHold->includes(expRow)
      * post: myExperimentsToHold = myExperimentsToHold@pre - 1
      * </pre>
      */
-    public void hideExperimentToHold(ExperimentBean expbean) {
-        myExperimentsToHold.remove(expbean);
+    public void hideExperimentToHold(ExperimentRowData expRow) {
+        myExperimentsToHold.remove(expRow);
     }
 
     /**
@@ -419,11 +427,11 @@ public class InteractionViewBean extends AbstractEditViewBean {
     }
 
     /**
-     * Returns a collection of <code>ExperimentBean</code> objects.
+     * Returns a collection of <code>ExperimentRowData</code> objects.
      * <p/>
      * <pre>
      * post: return != null
-     * post: return->forall(obj : Object | obj.oclIsTypeOf(ExperimentBean))
+     * post: return->forall(obj : Object | obj.oclIsTypeOf(ExperimentRowData))
      * </pre>
      */
     public List getExperiments() {
@@ -431,11 +439,11 @@ public class InteractionViewBean extends AbstractEditViewBean {
     }
 
     /**
-     * Returns a collection of <code>ExperimentBean</code> objects on hold.
+     * Returns a collection of <code>ExperimentRowData</code> objects on hold.
      * <p/>
      * <pre>
      * post: return != null
-     * post: return->forall(obj : Object | obj.oclIsTypeOf(ExperimentBean))
+     * post: return->forall(obj : Object | obj.oclIsTypeOf(ExperimentRowData))
      * </pre>
      */
     public List getHoldExperiments() {
@@ -443,10 +451,10 @@ public class InteractionViewBean extends AbstractEditViewBean {
     }
 
     /**
-     * Returns an <code>ExperimentBean</code> at given location.
+     * Returns an <code>ExperimentRowData</code> at given location.
      *
-     * @param index the position to return <code>ExperimentBean</code>.
-     * @return <code>ExperimentBean</code> at <code>index</code>.
+     * @param index the position to return <code>ExperimentRowData</code>.
+     * @return <code>ExperimentRowData</code> at <code>index</code>.
      * <p/>
      * <pre>
      * pre: index >=0 and index < myExperiments->size
@@ -454,8 +462,8 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * post: return = myExperiments->at(index)
      * </pre>
      */
-    public ExperimentBean getExperiment(int index) {
-        return (ExperimentBean) myExperiments.get(index);
+    public ExperimentRowData getExperiment(int index) {
+        return (ExperimentRowData) myExperiments.get(index);
     }
 
     /**
@@ -472,8 +480,8 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * post: return = myExperimentsToHold->at(index)
      * </pre>
      */
-    public ExperimentBean getHoldExperiment(int index) {
-        return (ExperimentBean) myExperimentsToHold.get(index);
+    public ExperimentRowData getHoldExperiment(int index) {
+        return (ExperimentRowData) myExperimentsToHold.get(index);
     }
 
     /**
@@ -927,11 +935,11 @@ public class InteractionViewBean extends AbstractEditViewBean {
         }
     }
 
-    private void makeExperimentBeans(Collection exps) {
+    private void makeExperimentRows(Collection exps) {
         myExperiments.clear();
         for (Iterator iter = exps.iterator(); iter.hasNext();) {
             Experiment exp = (Experiment) iter.next();
-            myExperiments.add(new ExperimentBean(exp));
+            myExperiments.add(new ExperimentRowData(exp));
         }
     }
 
@@ -942,7 +950,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * Empty if there are no experiments to add.
      * <p/>
      * <pre>
-     * post: return->forall(obj: Object | obj.oclIsTypeOf(ExperimentBean)
+     * post: return->forall(obj: Object | obj.oclIsTypeOf(ExperimentRowData)
      * </pre>
      */
     private Collection getExperimentsToAdd() {
@@ -960,7 +968,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * Could be empty if there are no experiments to delete.
      * <p/>
      * <pre>
-     * post: return->forall(obj: Object | obj.oclIsTypeOf(ExperimentBean)
+     * post: return->forall(obj: Object | obj.oclIsTypeOf(ExperimentRowData)
      * </pre>
      */
     private Collection getExperimentsToDel() {
@@ -1028,7 +1036,11 @@ public class InteractionViewBean extends AbstractEditViewBean {
         // Add experiments here. Make sure this is done after persisting the
         // Interaction first. - IMPORTANT. don't change the order.
         for (Iterator iter = getExperimentsToAdd().iterator(); iter.hasNext();) {
-            Experiment exp = ((ExperimentBean) iter.next()).getExperiment();
+            ExperimentRowData row = (ExperimentRowData) iter.next();
+            Experiment exp = row.getExperiment();
+            if (exp == null) {
+                exp = (Experiment) helper.getObjectByAc(Experiment.class, row.getAc());
+            }
             intact.addExperiment(exp);
         }
 

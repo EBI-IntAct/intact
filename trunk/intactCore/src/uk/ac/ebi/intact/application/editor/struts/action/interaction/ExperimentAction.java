@@ -10,7 +10,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentBean;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentRowData;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 
@@ -63,7 +63,7 @@ public class ExperimentAction extends AbstractEditorAction {
         InteractionActionForm intform = (InteractionActionForm) form;
 
         // The bean associated with the current action.
-        ExperimentBean eb = intform.getSelectedExperiment();
+        ExperimentRowData eb = intform.getSelectedExperiment();
 
         // We must have the experiment bean.
         assert eb != null;

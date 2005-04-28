@@ -16,13 +16,13 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditVie
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditViewBeanFactory;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.InteractionRowData;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentRowData;
 import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.business.BusinessConstants;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.util.GoServerProxy;
 import uk.ac.ebi.intact.util.NewtServerProxy;
 import uk.ac.ebi.intact.util.UpdateProteins;
@@ -660,12 +660,12 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return null;
     }
 
-    public void addToCurrentExperiment(Experiment exp) {
-        myCurrentExperiments.add(exp);
+    public void addToCurrentExperiment(ExperimentRowData row) {
+        myCurrentExperiments.add(row);
     }
 
-    public void removeFromCurrentExperiment(Experiment exp) {
-        myCurrentExperiments.remove(exp);
+    public void removeFromCurrentExperiment(ExperimentRowData row) {
+        myCurrentExperiments.remove(row);
     }
 
     public Set getCurrentExperiments() {

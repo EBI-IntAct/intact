@@ -6,12 +6,14 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action.interaction;
 
-import org.apache.struts.action.*;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentBean;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentRowData;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -57,7 +59,7 @@ public class ExperimentHoldAction extends AbstractEditorAction {
         InteractionActionForm intform = (InteractionActionForm) form;
 
         // The bean associated with the current action.
-        ExperimentBean eb = intform.getSelectedExpOnHoldCmd();
+        ExperimentRowData eb = intform.getSelectedExpOnHoldCmd();
 
         // We must have the experiment bean.
         assert eb != null;
@@ -73,19 +75,10 @@ public class ExperimentHoldAction extends AbstractEditorAction {
         String cmd = intform.getDispatch();
 
         if (cmd.equals(msgres.getMessage("int.exp.button.add"))) {
-            // Avoid duplicates.
-            if (view.experimentExists(eb)) {
-                ActionErrors errors = new ActionErrors();
-                errors.add(ActionErrors.GLOBAL_ERROR,
-                        new ActionError("error.int.exp.hold.add", eb.getShortLabel()));
-                saveErrors(request, errors);
-            }
-            else {
-                // Wants to add the selected experiment to the Interaction.
-                view.addExperiment(eb);
-                // Clear all the experiments in the hold section.
-                view.clearExperimentToHold();
-            }
+            // Wants to add the selected experiment to the Interaction.
+            view.addExperiment(eb);
+            // Clear all the experiments in the hold section.
+            view.clearExperimentToHold();
         }
         else {
             // Must have pressed 'Hide'.

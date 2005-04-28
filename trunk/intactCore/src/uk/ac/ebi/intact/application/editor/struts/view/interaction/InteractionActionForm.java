@@ -42,12 +42,12 @@ public class InteractionActionForm extends EditorActionForm {
     /**
      * The short label to search an experiment.
      */
-    private String myExpSearchLabel;
+    private String myExpSearchValue;
 
     /**
      * The AC to search an experiment.
      */
-    private String myExpSearchAC;
+//    private String myExpSearchAC;
 
     /**
      * The short label to search a protein.
@@ -108,21 +108,29 @@ public class InteractionActionForm extends EditorActionForm {
         return myInteractionType;
     }
 
-    public void setExpSearchLabel(String label) {
-        myExpSearchLabel = label;
+    public void setExpSearchValue(String value) {
+        myExpSearchValue = value;
     }
 
-    public String getExpSearchLabel() {
-        return myExpSearchLabel;
+    public String getExpSearchValue() {
+        return myExpSearchValue;
     }
-
-    public void setExpSearchAC(String ac) {
-        myExpSearchAC = ac;
-    }
-
-    public String getExpSearchAC() {
-        return myExpSearchAC;
-    }
+//
+//    public void setExpSearchLabel(String label) {
+//        myExpSearchLabel = label;
+//    }
+//
+//    public String getExpSearchLabel() {
+//        return myExpSearchLabel;
+//    }
+//
+//    public void setExpSearchAC(String ac) {
+//        myExpSearchAC = ac;
+//    }
+//
+//    public String getExpSearchAC() {
+//        return myExpSearchAC;
+//    }
 
     public void setProtSearchLabel(String label) {
         myProSearchLabel = label.trim();
@@ -176,16 +184,16 @@ public class InteractionActionForm extends EditorActionForm {
         setDispatch(index, value);
     }
 
-    public ExperimentBean getSelectedExperiment() {
-        return (ExperimentBean) myExperiments.get(getDispatchIndex());
+    public ExperimentRowData getSelectedExperiment() {
+        return (ExperimentRowData) myExperiments.get(getDispatchIndex());
     }
 
     public void setExpOnHoldCmd(int index, String value) {
         setDispatch(index, value);
     }
 
-    public ExperimentBean getSelectedExpOnHoldCmd() {
-        return (ExperimentBean) myExpsOnHold.get(getDispatchIndex());
+    public ExperimentRowData getSelectedExpOnHoldCmd() {
+        return (ExperimentRowData) myExpsOnHold.get(getDispatchIndex());
     }
 
     public void setProtCmd(int index, String value) {

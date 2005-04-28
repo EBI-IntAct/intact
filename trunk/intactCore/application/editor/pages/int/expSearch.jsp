@@ -24,12 +24,7 @@
         <th class="tableCellHeader" width="10%" colspan="2">
             <bean:message key="label.action"/>
         </th>
-        <th class="tableCellHeader" width="30%">
-            <bean:message key="label.shortlabel"/>
-        </th>
-        <th class="tableCellHeader" width="30%">
-            <bean:message key="label.ac"/>
-        </th>
+        <th class="tableCellHeader" width="30%"/>
         <th>
             <intact:documentation section="editor.int.experiments"/>
         </th>
@@ -49,12 +44,9 @@
             </html:submit>
         </td>
         <td class="tableCell">
-            <html:text property="expSearchLabel" size="20" maxlength="20"/>
-        </td>
-        <td class="tableCell">
-            <html:text property="expSearchAC" size="20" maxlength="20"/>
+            <html:text property="expSearchValue" size="20" maxlength="20"/>
         </td>
     </tr>
 </table>
 <html:errors property="int.sanity.exp"/>
-<html:errors property="int.exp.search"/>
+<html:errors property="err.search"/>
