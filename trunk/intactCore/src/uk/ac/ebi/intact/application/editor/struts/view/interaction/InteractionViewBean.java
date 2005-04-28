@@ -467,11 +467,11 @@ public class InteractionViewBean extends AbstractEditViewBean {
     }
 
     /**
-     * Returns an <code>ExperimentBean</code> from a collection of
+     * Returns an <code>ExperimentRowData</code> from a collection of
      * 'hold' experiments at given location.
      *
-     * @param index the position to return <code>ExperimentBean</code>.
-     * @return <code>ExperimentBean</code> at <code>index</code> from 'hold'
+     * @param index the position to return <code>ExperimentRowData</code>.
+     * @return <code>ExperimentRowData</code> at <code>index</code> from 'hold'
      * (or experiment not yet added) collection.
      * <p/>
      * <pre>
