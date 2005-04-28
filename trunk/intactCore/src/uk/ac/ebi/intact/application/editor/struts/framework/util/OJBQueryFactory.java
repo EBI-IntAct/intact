@@ -11,6 +11,7 @@ import org.apache.ojb.broker.query.Query;
 import org.apache.ojb.broker.query.QueryFactory;
 import org.apache.ojb.broker.query.ReportQueryByCriteria;
 import uk.ac.ebi.intact.model.Alias;
+import uk.ac.ebi.intact.model.Xref;
 
 /**
  * This factory class builds queries for the editor.
@@ -116,5 +117,25 @@ public class OJBQueryFactory {
         // Limit to name
         query.setAttributes(new String[] {"name"});
         return query;
+    }
+
+    /**
+     * Returns the query to get the primary xref qualifier
+     * @param qualifier the AC of the primary xref qualifier.
+     * @param parent the AC of the parent
+     * @return the query to extract the primary Xref with given parent AC
+     */
+    public Query getQualifierXrefQuery(String qualifier, String parent) {
+        Criteria crit1 = new Criteria();
+        // Need all records for qualifier AC.
+        crit1.addEqualTo("qualifier_ac", qualifier);
+
+        Criteria crit2 = new Criteria();
+        crit2.addEqualTo("parent_ac", parent);
+
+        // Looking for both qualfier and parent
+        crit1.addAndCriteria(crit2);
+
+        return QueryFactory.newQuery(Xref.class, crit1);
     }
 }

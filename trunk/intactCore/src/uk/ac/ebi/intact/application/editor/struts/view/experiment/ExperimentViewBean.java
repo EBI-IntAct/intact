@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentRowData;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
@@ -194,12 +195,14 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     // Override the super method as the current experiment is added to the
     // recent experiment list.
     public void addToRecentList(EditUserI user) {
-        user.addToCurrentExperiment((Experiment) getAnnotatedObject());
+        ExperimentRowData row = new ExperimentRowData((Experiment) getAnnotatedObject());
+        user.addToCurrentExperiment(row);
     }
 
     // Override to remove the current experiment from the recent list.
     public void removeFromRecentList(EditUserI user) {
-        user.removeFromCurrentExperiment((Experiment) getAnnotatedObject());
+        ExperimentRowData row = new ExperimentRowData(getAc());
+        user.removeFromCurrentExperiment(row);
     }
 
     // Override to provide Experiment layout.

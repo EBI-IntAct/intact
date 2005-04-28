@@ -72,7 +72,7 @@ public abstract class AbstractEditBean implements Serializable {
      * be the short label.
      * @return the link to display a read only version of window.
      */
-    protected String getLink(String type, String label) {
+    public static String getLink(String type, String label) {
         String link = "<a href=\"" + "javascript:show('" + type + "', '" + label + "')\""
                 + ">" + label + "</a>";
         return link;

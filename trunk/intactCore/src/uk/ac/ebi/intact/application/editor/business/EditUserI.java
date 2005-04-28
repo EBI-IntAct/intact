@@ -10,6 +10,7 @@ import uk.ac.ebi.intact.application.commons.business.IntactUserI;
 import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.InteractionRowData;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentRowData;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
@@ -268,16 +269,16 @@ public interface EditUserI extends IntactUserI, Serializable {
 
     /**
      * Adds the experiment to the currently edited/added experiment list.
-     * @param exp the experiment to add to the list.
+     * @param row the row to add to the current experiment list.
      */
-    public void addToCurrentExperiment(Experiment exp);
+    public void addToCurrentExperiment(ExperimentRowData row);
 
     /**
      * Removes the current experiment from the currently edited/added
      * experiment list.
-     * @param exp the experiment to remove from the list.
+     * @param row the row to remove from the current experiment list.
      */
-    public void removeFromCurrentExperiment(Experiment exp);
+    public void removeFromCurrentExperiment(ExperimentRowData row);
 
     /**
      * Returns a list of currently edited/added experiments.
@@ -286,7 +287,7 @@ public interface EditUserI extends IntactUserI, Serializable {
      * experiments added or edited during the current session.
      *
      * <pre>
-     * post: results->forall(obj: Object | obj.oclIsTypeOf(Experiment))
+     * post: results->forall(obj: Object | obj.oclIsTypeOf(ExperimentRowData))
      * </pre>
      */
     public Set getCurrentExperiments();
