@@ -12,10 +12,12 @@ import uk.ac.ebi.intact.application.search3.searchEngine.util.sql.SqlSearchObjec
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.application.search3.business.Constants;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.sql.SQLException;
 
 /**
@@ -29,12 +31,10 @@ public class SearchDAOImpl implements SearchDAO {
 
     private SearchObjectProvider soProvider;
 
-    // todo use this IntactHelper also in all methods instead of instanciating always a new one
-    private IntactHelper helper;
+    private static Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
 
-    public SearchDAOImpl() {
+    public SearchDAOImpl(IntactHelper helper) {
         try {
-            helper = new IntactHelper();
             this.soProvider = new SqlSearchObjectProvider(helper);
 
             // print out the database information
@@ -48,16 +48,7 @@ public class SearchDAOImpl implements SearchDAO {
             }
         } catch (IntactException e) {
             e.printStackTrace();
-        }finally{
-            if(helper != null){
-                try {
-                    helper.closeStore();
-                } catch (IntactException e) {
-                    e.printStackTrace();
-                }
-            }
         }
-        
     }
 
     /**
@@ -112,20 +103,47 @@ public class SearchDAOImpl implements SearchDAO {
             objclass = objclass.trim();
 
             if (objclass.equalsIgnoreCase("uk.ac.ebi.intact.model.ProteinImpl")) {
+
                 Object result = helper.getObjectByAc(Protein.class, ac);
-                protResults.add(result);
+                if( result == null ) {
+                    // this should not happen unless the Lucene index is not in synch with the database.
+                    logger.warning("Looking for AC:" + ac + " Type: Protein.class and no object was found. Index and database not in synch.");
+                } else {
+                    protResults.add(result);
+                }
+
             } else if (objclass.equalsIgnoreCase("uk.ac.ebi.intact.model.InteractionImpl")) {
                 Object result = helper.getObjectByAc(Interaction.class, ac);
-                interResults.add(result);
+                if( result == null ) {
+                    // this should not happen unless the Lucene index is not in synch with the database.
+                    logger.warning("Looking for AC:" + ac + " Type: Interaction.class and no object was found. Index and database not in synch.");
+                } else {
+                    interResults.add(result);
+                }
             } else if (objclass.equalsIgnoreCase("uk.ac.ebi.intact.model.Experiment")) {
                 Object result = helper.getObjectByAc(Experiment.class, ac);
-                expResults.add(result);
+                if( result == null ) {
+                    // this should not happen unless the Lucene index is not in synch with the database.
+                    logger.warning("Looking for AC:" + ac + " Type: Experiment.class and no object was found. Index and database not in synch.");
+                } else {
+                    expResults.add(result);
+                }
             } else if (objclass.equalsIgnoreCase("uk.ac.ebi.intact.model.CvObject")) {
                 Object result = helper.getObjectByAc(CvObject.class, ac);
-                cvResults.add(result);
+                if( result == null ) {
+                    // this should not happen unless the Lucene index is not in synch with the database.
+                    logger.warning("Looking for AC:" + ac + " Type: CvObject.class and no object was found. Index and database not in synch.");
+                } else {
+                    cvResults.add(result);
+                }
             } else if (objclass.equalsIgnoreCase("uk.ac.ebi.intact.model.BioSource")) {
                 Object result = helper.getObjectByAc(BioSource.class, ac);
-                bioResults.add(result);
+                if( result == null ) {
+                    // this should not happen unless the Lucene index is not in synch with the database.
+                    logger.warning("Looking for AC:" + ac + " Type: Protein.class and no object was found. Index and database not in synch.");
+                } else {
+                    bioResults.add(result);
+                }
             } else {
                 throw new IntactException("that class(" + objclass + ") is not part of the IntAct model");
             }
