@@ -33,6 +33,23 @@ public abstract class CvDagObject extends CvObject {
      */
     private Collection parents = new ArrayList(); // of type CvDagObject
 
+    ///////////////////////////
+    // start modification (afrie)
+
+    /**
+     * specifies the left bound number if the DAG would be a tree
+     */
+    private long leftBound = -1;
+
+    /**
+     * specifies the right bound number if the DAG would be a tree
+     */
+    private long rightBound = -1;
+
+
+    // end modification (afrie)
+    /////////////////////////////
+
     /**
      * no-arg constructor which will hopefully be removed later...
      */
@@ -60,6 +77,71 @@ public abstract class CvDagObject extends CvObject {
     public Collection getChildren() {
         return children;
     }
+
+
+     /////////////////////////////
+     // start modification (afrie)
+     //
+     // these methods are used in the CvDagObjectUtils class
+     // the setter and getter are only used for testing
+
+
+    /**
+     * this method returns 'true' when children are present 'false' otherwise
+     * @return
+     */
+    public boolean hasChildren(){
+        boolean result = false;
+
+        if(this.getChildren().size()>0 && children != null){
+            result = true;
+        }
+        return result;
+    }
+
+
+      /**
+       * This method returns the left bound of this instance,
+       * or '-1' if the bounds have not been calculated.
+       *
+       * @return int with the left bound, or '-1' if the
+       *         bounds have not yet been calculated.
+       */
+      public long getLeftBound() {
+          return leftBound;
+      }
+
+    /**
+     * This method set the left bound of this instance
+     *
+     * @param leftBound  left bound of this instance
+     */
+      public void setLeftBound(long leftBound) {
+          this.leftBound = leftBound;
+      }
+
+      /**
+       * This method returns the right bound of this instance,
+       * or '-1' if the bounds have not been calculated.
+       *
+       * @return int with the right bound, or '-1' if the
+       *         bounds have not yet been calculated.
+       */
+      public long getRightBound() {
+          return rightBound;
+      }
+
+      /**
+       * This method sets the right bound of this instance
+       * @param rightBound   right bound of this instance
+       */
+      public void setRightBound(long rightBound) {
+          this.rightBound = rightBound;
+      }
+
+        // end modification (afrie)
+    /////////////////////////////
+
 
     // TODO are they unique ?
     public void addChild(CvDagObject cvDagObject) {
