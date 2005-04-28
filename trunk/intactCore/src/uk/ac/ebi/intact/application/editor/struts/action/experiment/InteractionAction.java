@@ -12,8 +12,6 @@ import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
-import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.Interaction;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,25 +51,11 @@ public class InteractionAction extends AbstractEditorAction {
         }
         // default is to delete an interaction from the experiment.
 
-        // The Intact helper to access the Interaction.
-        IntactHelper helper = new IntactHelper();
-        // The interaction to delete.
-        Interaction inter;
-        try {
-            inter = (Interaction) helper.getObjectByAc(Interaction.class,
-                    (String) expform.getIntac());
-        }
-        finally {
-            helper.closeStore();
-        }
-        // We must have the interaction bean.
-        assert inter != null;
-
         // The current view of the edit session.
         ExperimentViewBean view = (ExperimentViewBean) getIntactUser(request).getView();
 
         // Delete the selected interaction.
-        view.delInteraction(inter);
+        view.delInteraction(expform.getIntac());
 
         // Back to the input page.
         return mapping.getInputForward();

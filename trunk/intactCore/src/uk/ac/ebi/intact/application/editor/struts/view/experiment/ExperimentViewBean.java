@@ -61,7 +61,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     private transient List myInteractions = new ArrayList();
 
     /**
-     * Holds Interactions to del. This collection is cleared once the user
+     * Holds ACs of Interactions to delete. This collection is cleared once the user
      * commits the transaction.
      */
     private transient List myInteractionsToDel = new ArrayList();
@@ -155,7 +155,8 @@ public class ExperimentViewBean extends AbstractEditViewBean {
             // clearing interactions or else 'this' experiment wouldn't be removed
             // from interactions.
             for (Iterator iter = myInteractionsToDel.iterator(); iter.hasNext();) {
-                Interaction intact = (Interaction) iter.next();
+                String ac = (String) iter.next();
+                Interaction intact = (Interaction) helper.getObjectByAc(Interaction.class, ac);
                 exp.removeInteraction((Interaction) IntactHelper.getRealIntactObject(intact));
             }
 
@@ -328,18 +329,18 @@ public class ExperimentViewBean extends AbstractEditViewBean {
 
     /**
      * Removes an Interaction
-     * @param inter the Interaction to remove.
+     * @param ac the AC of the Interaction to remove.
      *
      * <pre>
      * post: myInteractionsToDel = myInteractionsToDel@pre - 1
      * post: myInteractions = myInteractions@pre - 1
      * </pre>
      */
-    public void delInteraction(Interaction inter) {
-        // Add to the container to delete interactions.
-        myInteractionsToDel.add(inter);
+    public void delInteraction(String ac) {
+        // The interaction to delete
+        myInteractionsToDel.add(ac);
         // Remove from the view as well.
-        myInteractions.remove(InteractionRowData.makeRow(inter));
+        myInteractions.remove(new InteractionRowData(ac));
     }
 
     /**
@@ -404,7 +405,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      */
     public InteractionRowData getHoldInteraction(String ac) {
         // Dummy record to search.
-        InteractionRowData dummy = InteractionRowData.makeRow(ac);
+        InteractionRowData dummy = new InteractionRowData(ac);
         int pos = myInteractionsToHold.indexOf(dummy);
         if (pos != -1) {
             return (InteractionRowData) myInteractionsToHold.get(pos);
@@ -421,7 +422,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      * </pre>
      */
     public void hideInteractionToHold(String ac) {
-        myInteractionsToHold.remove(InteractionRowData.makeRow(ac));
+        myInteractionsToHold.remove(new InteractionRowData(ac));
     }
 
     /**
@@ -474,7 +475,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         // Given interaction is part of the current experiment.
         
         // Create a dummy row data for comparision.
-        InteractionRowData dummy = InteractionRowData.makeRow(interaction);
+        InteractionRowData dummy = new InteractionRowData(interaction);
         
         // Compare with the existing rows.
         if (myInteractions.contains(dummy)) {
@@ -492,7 +493,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      */
     public boolean deleteInteractionRow(String ac) {
         // Create a dummy row data for comparision.
-        InteractionRowData dummy = InteractionRowData.makeRow(ac);
+        InteractionRowData dummy = new InteractionRowData(ac);
         
         // Compare with the existing rows.
         if (myInteractions.contains(dummy)) {
@@ -538,7 +539,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     private void makeInteractionRows(Collection ints) {
         for (Iterator iter = ints.iterator(); iter.hasNext();) {
             Interaction inter = (Interaction) iter.next();
-            InteractionRowData row = InteractionRowData.makeRow(inter);
+            InteractionRowData row = new InteractionRowData(inter);
             myInteractions.add(row);
         }
     }

@@ -233,14 +233,14 @@ public class InteractionViewBean extends AbstractEditViewBean {
     // Override the super method as the current interaction is added to the
     // recent interaction list.
     public void addToRecentList(EditUserI user) {
-        InteractionRowData row = InteractionRowData.makeRow(
+        InteractionRowData row = new InteractionRowData(
                 (Interaction) getAnnotatedObject());
         user.addToCurrentInteraction(row);
     }
 
     // Override to remove the current interaction from the recent list.
     public void removeFromRecentList(EditUserI user) {
-        InteractionRowData row = InteractionRowData.makeRow(getAc());
+        InteractionRowData row = new InteractionRowData(getAc());
         user.removeFromCurrentInteraction(row);
     }
 

@@ -32,26 +32,6 @@ public class InteractionRowData extends ResultRowData {
     // Static methods
 
     /**
-     * Creates a dummy Row.
-     * @param ac the AC of the row
-     * @return a dummy row for searching a row in a collection.
-     */
-    public static InteractionRowData makeRow(String ac) {
-        return new InteractionRowData(ac);
-    }
-
-    /**
-     * Creates a Row with action set to Delete/Edit Interaction.
-     * @param inter the interaction to wrap this instance around.
-     * @return a table row wrapped around the given Interaction.
-     */
-    public static InteractionRowData makeRow(Interaction inter) {
-        InteractionRowData row = new InteractionRowData(inter);
-        row.setActionString();
-        return row;
-    }
-
-    /**
      * Creates a Row with action set to Add/Hide Interaction.
      * @param rowData the row
      * @return a table row with action set to Add/Hide Interaction.
@@ -68,7 +48,7 @@ public class InteractionRowData extends ResultRowData {
      * collection.
      * @param ac the ac is required as it is used for equals method.
      */
-    private InteractionRowData(String ac) {
+    public InteractionRowData(String ac) {
         this(ac, null, null);
     }
 
@@ -76,9 +56,10 @@ public class InteractionRowData extends ResultRowData {
      * Creates an instance of this class using given Interaction.
      * @param inter the interaction to wrap this instance around.
      */
-    private InteractionRowData(Interaction inter) {
+    public InteractionRowData(Interaction inter) {
         this(inter.getAc(), inter.getShortLabel(), inter.getFullName());
         myInteraction = inter;
+        setActionString();
     }
 
     /**
