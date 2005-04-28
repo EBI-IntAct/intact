@@ -68,6 +68,7 @@ public class AdvTooLargeAction extends IntactBaseAction {
         while (it.hasNext()) {
             key = (String) it.next();
             className = (String) it.getValue();
+            className = className.trim();
             logger.info("tooLarge action: searching for class" + className);
             Class clazz = null;
             try {
@@ -86,11 +87,10 @@ public class AdvTooLargeAction extends IntactBaseAction {
                 }
 
             } catch (ClassNotFoundException e) {
-                logger.info("Class: " + clazz.toString());
+                logger.info("Class: " + clazz);
                 // we got a class which is not part of the the searchable classes.
                 logger.info("tooLarge action: the resultset contains to an object which is no " +
                         "assignable from an intactType");
-                logger.info("tooLarge action: forward to an errorpage");
                 return mapping.findForward(SearchConstants.FORWARD_FAILURE);
             }
         }
