@@ -7,7 +7,7 @@ package uk.ac.ebi.intact.application.dataConversion.psiUpload.util;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */

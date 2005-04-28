@@ -14,7 +14,7 @@ import java.util.Iterator;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -34,7 +34,7 @@ public class ParserTest extends TestCase {
     protected void displayExistingMessages() {
 
         Collection messages = MessageHolder.getInstance().getParserMessages();
-        if( !messages.isEmpty() ) {
+        if ( !messages.isEmpty() ) {
             for ( Iterator iterator = messages.iterator(); iterator.hasNext(); ) {
                 Message message = (Message) iterator.next();
                 System.out.println( message );

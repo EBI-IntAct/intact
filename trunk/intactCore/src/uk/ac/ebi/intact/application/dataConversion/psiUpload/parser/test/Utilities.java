@@ -13,7 +13,7 @@ import java.util.Iterator;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -24,7 +24,7 @@ public final class Utilities {
 
         for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
             final XrefTag xref = (XrefTag) iterator.next();
-            if( db.equals( xref.getDb() ) ) {
+            if ( db.equals( xref.getDb() ) ) {
                 return xref;
             }
         }
@@ -37,8 +37,8 @@ public final class Utilities {
 
         for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
             final XrefTag xref = (XrefTag) iterator.next();
-            if( db.equals( xref.getDb() ) &&
-                primaryId.equals( xref.getId() ) ) {
+            if ( db.equals( xref.getDb() ) &&
+                 primaryId.equals( xref.getId() ) ) {
                 return xref;
             }
         }
@@ -50,7 +50,7 @@ public final class Utilities {
 
         for ( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
             final AnnotationTag annotation = (AnnotationTag) iterator.next();
-            if( type.equals( annotation.getType() ) ) {
+            if ( type.equals( annotation.getType() ) ) {
                 return annotation;
             }
         }

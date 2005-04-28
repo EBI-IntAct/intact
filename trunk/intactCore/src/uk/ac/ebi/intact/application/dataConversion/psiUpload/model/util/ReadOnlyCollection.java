@@ -10,7 +10,7 @@ import java.util.Iterator;
 
 /**
  * That class hold a collection and only allow its user to read it's content.
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -19,7 +19,7 @@ public final class ReadOnlyCollection implements Collection {
     private Collection collection;
 
     public ReadOnlyCollection( Collection collection ) {
-        if( collection == null ) {
+        if ( collection == null ) {
             throw new IllegalArgumentException( "You must give a non null Collection." );
         }
         this.collection = collection;

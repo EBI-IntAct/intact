@@ -13,7 +13,7 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.XrefTag;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -29,8 +29,7 @@ public class TissueTest extends TestCase {
     }
 
     /**
-     * Returns this test suite. Reflection is used here to add all
-     * the testXXX() methods to the suite.
+     * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
      */
     public static Test suite() {
         return new TestSuite( TissueTest.class );

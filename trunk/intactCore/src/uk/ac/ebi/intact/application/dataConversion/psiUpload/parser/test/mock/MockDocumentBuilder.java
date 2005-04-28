@@ -16,7 +16,7 @@ import java.io.InputStream;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -34,7 +34,7 @@ public class MockDocumentBuilder {
         } catch ( SAXException sxe ) {
             // Error generated during parsing.
             Exception x = sxe;
-            if( sxe.getException() != null ) {
+            if ( sxe.getException() != null ) {
                 x = sxe.getException();
             }
             x.printStackTrace();

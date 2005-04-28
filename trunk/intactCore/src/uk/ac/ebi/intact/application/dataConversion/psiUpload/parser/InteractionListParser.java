@@ -8,14 +8,14 @@ package uk.ac.ebi.intact.application.dataConversion.psiUpload.parser;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.InteractionTag;
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.DOMUtil;
+import uk.ac.ebi.intact.application.dataConversion.util.DOMUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -55,11 +55,11 @@ public class InteractionListParser {
 
         for ( int i = 0; i < count; i++ ) {
             final Element interactionNode = (Element) someInteractions.item( i );
-
             final InteractionParser interaction = new InteractionParser( experimentList, participantList,
                                                                          interactionNode );
             InteractionTag interactionTag = interaction.process();
-            if( interactionTag != null ) {
+
+            if ( interactionTag != null ) {
                 interactions.add( interactionTag );
             }
         } // interactions

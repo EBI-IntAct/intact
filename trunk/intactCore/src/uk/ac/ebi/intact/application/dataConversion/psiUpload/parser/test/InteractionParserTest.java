@@ -21,7 +21,7 @@ import java.util.Iterator;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -44,8 +44,7 @@ public class InteractionParserTest extends TestCase {
     }
 
     /**
-     * Returns this test suite. Reflection is used here to add all
-     * the testXXX() methods to the suite.
+     * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
      */
     public static Test suite() {
         return new TestSuite( InteractionParserTest.class );
@@ -54,15 +53,15 @@ public class InteractionParserTest extends TestCase {
     private ProteinParticipantTag getParticipantByRole( Collection participants, String role )
             throws MultipleParticipantFound {
 
-        if( role == null || "".equals( role.trim() ) ) {
+        if ( role == null || "".equals( role.trim() ) ) {
             return null;
         }
         ProteinParticipantTag found = null;
 
         for ( Iterator iterator = participants.iterator(); iterator.hasNext(); ) {
             ProteinParticipantTag proteinParticipant = (ProteinParticipantTag) iterator.next();
-            if( role.equals( proteinParticipant.getRole() ) ) {
-                if( found != null ) {
+            if ( role.equals( proteinParticipant.getRole() ) ) {
+                if ( found != null ) {
                     throw new MultipleParticipantFound( role );
                 } else {
                     found = proteinParticipant;
@@ -180,6 +179,10 @@ public class InteractionParserTest extends TestCase {
         assertEquals( "blablabla", xref.getSecondary() );
         assertEquals( "2.46", xref.getVersion() );
 
+        // features of the bait
+        Collection features = proteinParticipant.getFeatures();
+        assertEquals( 2, features.size() );
+
 
         try {
             proteinParticipant = getParticipantByRole( participants, "prey" );
@@ -212,5 +215,6 @@ public class InteractionParserTest extends TestCase {
         assertNotNull( confidence );
         assertEquals( "arbitrary", confidence.getUnit() );
         assertEquals( "high", confidence.getValue() );
+
     }
 }

@@ -44,11 +44,11 @@ public final class ProteinInteractorTag {
     public ProteinInteractorTag( final XrefTag uniprotXref,
                                  final OrganismTag organism ) {
 
-        if( uniprotXref == null ) {
+        if ( uniprotXref == null ) {
             throw new IllegalArgumentException( "You must give a non null uniprotXref for a proteinInteractor" );
         }
 
-        if( !Constants.UNIPROT_DB_SHORTLABEL.equals( uniprotXref.getDb() ) ) {
+        if ( !Constants.UNIPROT_DB_SHORTLABEL.equals( uniprotXref.getDb() ) ) {
             throw new IllegalArgumentException( "You must give a uniprot Xref, not " + uniprotXref.getDb() +
                                                 " for an ProteinInteractor" );
         }
@@ -74,19 +74,19 @@ public final class ProteinInteractorTag {
     // Equality
 
     public boolean equals( Object o ) {
-        if( this == o ) {
+        if ( this == o ) {
             return true;
         }
-        if( !( o instanceof ProteinInteractorTag ) ) {
+        if ( !( o instanceof ProteinInteractorTag ) ) {
             return false;
         }
 
         final ProteinInteractorTag proteinInteractorTag = (ProteinInteractorTag) o;
 
-        if( organism != null ? !organism.equals( proteinInteractorTag.organism ) : proteinInteractorTag.organism != null ) {
+        if ( organism != null ? !organism.equals( proteinInteractorTag.organism ) : proteinInteractorTag.organism != null ) {
             return false;
         }
-        if( !uniprotXref.equals( proteinInteractorTag.uniprotXref ) ) {
+        if ( !uniprotXref.equals( proteinInteractorTag.uniprotXref ) ) {
             return false;
         }
 

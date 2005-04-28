@@ -20,7 +20,7 @@ import java.util.Map;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -40,7 +40,7 @@ public final class ExperimentDescriptionChecker {
                               final BioSourceFactory bioSourceFactory ) {
 
         final String shortlabel = experimentDescription.getShortlabel();
-        if( cache.get( shortlabel ) == null ) {
+        if ( cache.get( shortlabel ) == null ) {
             // we check once per shortlabel...
             Experiment experiment = null;
             try {
@@ -51,7 +51,7 @@ public final class ExperimentDescriptionChecker {
                 e.printStackTrace();
             }
 
-            if( experiment != null ) {
+            if ( experiment != null ) {
                 // keep it for later use !
                 System.out.println( "The experiments having the shortlabel: " + shortlabel + " already exists! " +
                                     "It will be reused." );

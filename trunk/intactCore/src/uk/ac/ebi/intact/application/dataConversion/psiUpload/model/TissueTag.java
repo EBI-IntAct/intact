@@ -38,7 +38,7 @@ public class TissueTag {
 
     public TissueTag( final XrefTag psiDefinition, final String shortlabel ) {
 
-        if( shortlabel == null || shortlabel.trim().equals( "" ) ) {
+        if ( shortlabel == null || shortlabel.trim().equals( "" ) ) {
             throw new IllegalArgumentException( "You must give a non null/empty shortlabel for a cellType" );
         }        
 
@@ -72,19 +72,19 @@ public class TissueTag {
     // Equality
 
     public boolean equals( Object o ) {
-        if( this == o ) {
+        if ( this == o ) {
             return true;
         }
-        if( !( o instanceof TissueTag ) ) {
+        if ( !( o instanceof TissueTag ) ) {
             return false;
         }
 
         final TissueTag tissueTag = (TissueTag) o;
 
-        if( !psiDefinition.equals( tissueTag.psiDefinition ) ) {
+        if ( !psiDefinition.equals( tissueTag.psiDefinition ) ) {
             return false;
         }
-        if( shortlabel != null ? !shortlabel.equals( tissueTag.shortlabel ) : tissueTag.shortlabel != null ) {
+        if ( shortlabel != null ? !shortlabel.equals( tissueTag.shortlabel ) : tissueTag.shortlabel != null ) {
             return false;
         }
 

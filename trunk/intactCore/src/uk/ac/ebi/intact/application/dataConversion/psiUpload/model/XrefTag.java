@@ -39,15 +39,15 @@ public final class XrefTag {
                     final String id,
                     final String db ) {
 
-        if( type != PRIMARY_REF && type != SECONDARY_REF ) {
+        if ( type != PRIMARY_REF && type != SECONDARY_REF ) {
             throw new IllegalArgumentException( "An xref must be either PRIMARY_REF or SECONDARY_REF" );
         }
 
-        if( id == null || id.trim().equals( "" ) ) {
+        if ( id == null || id.trim().equals( "" ) ) {
             throw new IllegalArgumentException( "You must give a non null/empty id for an xref" );
         }
 
-        if( db == null || db.trim().equals( "" ) ) {
+        if ( db == null || db.trim().equals( "" ) ) {
             throw new IllegalArgumentException( "You must give a non null/empty id for an xref" );
         }
 
@@ -100,28 +100,28 @@ public final class XrefTag {
     // Equality
     
     public boolean equals( Object o ) {
-        if( this == o ) {
+        if ( this == o ) {
             return true;
         }
-        if( !( o instanceof XrefTag ) ) {
+        if ( !( o instanceof XrefTag ) ) {
             return false;
         }
 
         final XrefTag xrefTag = (XrefTag) o;
 
-        if( type != xrefTag.type ) {
+        if ( type != xrefTag.type ) {
             return false;
         }
-        if( !db.equals( xrefTag.db ) ) {
+        if ( !db.equals( xrefTag.db ) ) {
             return false;
         }
-        if( !id.equals( xrefTag.id ) ) {
+        if ( !id.equals( xrefTag.id ) ) {
             return false;
         }
-        if( secondary != null ? !secondary.equals( xrefTag.secondary ) : xrefTag.secondary != null ) {
+        if ( secondary != null ? !secondary.equals( xrefTag.secondary ) : xrefTag.secondary != null ) {
             return false;
         }
-        if( version != null ? !version.equals( xrefTag.version ) : xrefTag.version != null ) {
+        if ( version != null ? !version.equals( xrefTag.version ) : xrefTag.version != null ) {
             return false;
         }
 

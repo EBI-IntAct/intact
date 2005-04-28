@@ -70,10 +70,12 @@ public class MessageHolder {
     }
 
     public void addCheckerMessage( Message message ) {
+        System.err.println( message.getText() );
         checkerMessages.add( message );
     }
 
     public void addPersisterMessage( Message message ) {
+        System.err.println( message.getText() );
         persisterMessages.add( message );
     }
 
@@ -113,7 +115,7 @@ public class MessageHolder {
                               final String title,
                               StringBuffer sb ) {
 
-        if( sb == null ) {
+        if ( sb == null ) {
             sb = new StringBuffer( 128 );
         }
 

@@ -8,19 +8,17 @@ package uk.ac.ebi.intact.application.dataConversion.psiUpload.parser;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.XrefTag;
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.DOMUtil;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
+import uk.ac.ebi.intact.application.dataConversion.util.DOMUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * That class .
- * <br>
- * Called XrefParser to avois clash with uk.ac.ebi.intact.model.Xref
- * 
+ * That class . <br> Called XrefParser to avois clash with uk.ac.ebi.intact.model.Xref
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -31,30 +29,31 @@ public class XrefParser {
      *
      * @param xrefElement
      * @param db
+     *
      * @return
      */
     static XrefTag getXrefByDb( final Element xrefElement,
                                 final String db ) {
 
-        if( xrefElement == null ) {
+        if ( xrefElement == null ) {
             throw new IllegalArgumentException( "the xref element must not be null." );
         }
 
-        if( db == null || "".equals( db.trim() ) ) {
+        if ( db == null || "".equals( db.trim() ) ) {
             throw new IllegalArgumentException( "the db given must not be null or empty." );
         }
 
         XrefTag interactionXref = null;
 
         XrefTag xref = XrefParser.processPrimaryRef( xrefElement );
-        if( db.equalsIgnoreCase( xref.getDb() ) ) {
+        if ( db.equalsIgnoreCase( xref.getDb() ) ) {
             interactionXref = xref;
         } else {
             final Collection interactionDetectionXrefs = XrefParser.processSecondaryRef( xrefElement );
             for ( Iterator iterator = interactionDetectionXrefs.iterator(); iterator.hasNext(); ) {
                 xref = (XrefTag) iterator.next();
-                if( db.equals( xref.getDb() ) ) {
-                    if( interactionXref == null ) {
+                if ( db.equals( xref.getDb() ) ) {
+                    if ( interactionXref == null ) {
                         interactionXref = xref;
                     } else {
                         // ERROR multiple definition of a psi element
@@ -88,7 +87,7 @@ public class XrefParser {
         xrefs = processSecondaryRef( root );
         XrefTag xref = processPrimaryRef( root );
 
-        if( xref != null ) {
+        if ( xref != null ) {
             xrefs.add( xref );
         }
 
@@ -110,8 +109,8 @@ public class XrefParser {
         XrefTag xref = null;
 
         final String nodeName = root.getNodeName();
-        if( false == "xref".equals( nodeName ) ) {
-            MessageHolder.getInstance().addParserMessage( new Message( root, "ERROR - We should be in xref tag." ) );
+        if ( false == "xref".equals( nodeName ) ) {
+            MessageHolder.getInstance().addParserMessage( new Message( root, "ERROR - We should be in xref tag, <" + root.getNodeName() + "> instead." ) );
         }
 
         final Element xrefNode = DOMUtil.getFirstElement( root, "primaryRef" ); // and the secondary ?!
@@ -139,7 +138,7 @@ public class XrefParser {
      */
     public static Collection processSecondaryRef( final Element root ) {
 
-        if( false == "xref".equals( root.getNodeName() ) ) {
+        if ( false == "xref".equals( root.getNodeName() ) ) {
             MessageHolder.getInstance().addParserMessage( new Message( root, "ERROR - We should be in xref tag." ) );
         }
 
@@ -153,7 +152,7 @@ public class XrefParser {
             XrefTag xref;
             try {
                 xref = createXref( xrefNode, XrefTag.SECONDARY_REF );
-                if( xref != null ) {
+                if ( xref != null ) {
                     xrefs.add( xref );
                 }
             } catch ( IllegalArgumentException e ) {
@@ -169,7 +168,7 @@ public class XrefParser {
         XrefTag xref = null;
         try {
             String db = xrefNode.getAttribute( "db" );
-            if( db != null ) {
+            if ( db != null ) {
                 db = db.toLowerCase();
             }
 

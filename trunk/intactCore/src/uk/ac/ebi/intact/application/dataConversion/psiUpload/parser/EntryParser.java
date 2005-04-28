@@ -14,7 +14,7 @@ import java.util.Collection;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -38,8 +38,7 @@ public final class EntryParser {
 
 
     /**
-     * Load all global Experiment and Interaction succeptible to be used by the interactions
-     * described in the PSI data.
+     * Load all global Experiment and Interaction succeptible to be used by the interactions described in the PSI data.
      *
      * @param entry
      */

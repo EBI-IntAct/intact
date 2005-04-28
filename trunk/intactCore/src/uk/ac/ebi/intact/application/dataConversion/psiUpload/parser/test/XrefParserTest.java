@@ -20,7 +20,7 @@ import java.util.Collection;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -36,8 +36,7 @@ public class XrefParserTest extends TestCase {
     }
 
     /**
-     * Returns this test suite. Reflection is used here to add all
-     * the testXXX() methods to the suite.
+     * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
      */
     public static Test suite() {
         return new TestSuite( XrefParserTest.class );

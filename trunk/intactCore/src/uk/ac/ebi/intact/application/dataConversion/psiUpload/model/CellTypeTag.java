@@ -38,7 +38,7 @@ public class CellTypeTag {
 
     public CellTypeTag( final XrefTag psiDefinition, final String shortlabel ) {
 
-        if( shortlabel == null || shortlabel.trim().equals( "" ) ) {
+        if ( shortlabel == null || shortlabel.trim().equals( "" ) ) {
             throw new IllegalArgumentException( "You must give a non null/empty shortlabel for a cellType" );
         }
 
@@ -73,19 +73,19 @@ public class CellTypeTag {
     // Equality
 
     public boolean equals( Object o ) {
-        if( this == o ) {
+        if ( this == o ) {
             return true;
         }
-        if( !( o instanceof CellTypeTag ) ) {
+        if ( !( o instanceof CellTypeTag ) ) {
             return false;
         }
 
         final CellTypeTag cellTypeTag = (CellTypeTag) o;
 
-        if( !psiDefinition.equals( cellTypeTag.psiDefinition ) ) {
+        if ( !psiDefinition.equals( cellTypeTag.psiDefinition ) ) {
             return false;
         }
-        if( shortlabel != null ? !shortlabel.equals( cellTypeTag.shortlabel ) : cellTypeTag.shortlabel != null ) {
+        if ( shortlabel != null ? !shortlabel.equals( cellTypeTag.shortlabel ) : cellTypeTag.shortlabel != null ) {
             return false;
         }
 

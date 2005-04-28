@@ -32,8 +32,8 @@ package uk.ac.ebi.intact.application.dataConversion.psiUpload.model;
  * @see uk.ac.ebi.intact.model.BioSource
  */
 public final class HostOrganismTag {
-
     private final String taxId;
+
     private CellTypeTag cellType;
     private TissueTag tissue;
 
@@ -41,7 +41,7 @@ public final class HostOrganismTag {
     // Constructors
 
     public HostOrganismTag( String taxId ) {
-        if( taxId == null || taxId.trim().equals( "" ) ) {
+        if ( taxId == null || taxId.trim().equals( "" ) ) {
             throw new IllegalArgumentException( "You must give a non null/empty taxId for a hostOrganism" );
         }
 
@@ -80,22 +80,22 @@ public final class HostOrganismTag {
     // Equality
 
     public boolean equals( Object o ) {
-        if( this == o ) {
+        if ( this == o ) {
             return true;
         }
-        if( !( o instanceof HostOrganismTag ) ) {
+        if ( !( o instanceof HostOrganismTag ) ) {
             return false;
         }
 
         final HostOrganismTag hostOrganismTag = (HostOrganismTag) o;
 
-        if( cellType != null ? !cellType.equals( hostOrganismTag.cellType ) : hostOrganismTag.cellType != null ) {
+        if ( cellType != null ? !cellType.equals( hostOrganismTag.cellType ) : hostOrganismTag.cellType != null ) {
             return false;
         }
-        if( !taxId.equals( hostOrganismTag.taxId ) ) {
+        if ( !taxId.equals( hostOrganismTag.taxId ) ) {
             return false;
         }
-        if( tissue != null ? !tissue.equals( hostOrganismTag.tissue ) : hostOrganismTag.tissue != null ) {
+        if ( tissue != null ? !tissue.equals( hostOrganismTag.tissue ) : hostOrganismTag.tissue != null ) {
             return false;
         }
 
@@ -116,13 +116,13 @@ public final class HostOrganismTag {
         buf.append( "HostOrganismTag" );
         buf.append( "{taxId=" ).append( taxId );
         buf.append( ", tissue=" );
-        if( null == tissue ) {
+        if ( null == tissue ) {
             buf.append( '-' );
         } else {
             buf.append( tissue );
         }
         buf.append( ", cellType=" );
-        if( null == cellType ) {
+        if ( null == cellType ) {
             buf.append( '-' );
         } else {
             buf.append( cellType );

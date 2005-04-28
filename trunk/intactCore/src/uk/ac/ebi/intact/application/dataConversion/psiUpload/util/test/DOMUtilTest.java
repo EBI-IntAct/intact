@@ -12,12 +12,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.parser.test.mock.MockDocumentBuilder;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.parser.test.mock.MockXmlContent;
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.DOMUtil;
+import uk.ac.ebi.intact.application.dataConversion.util.DOMUtil;
 import uk.ac.ebi.intact.util.test.mocks.MockInputStream;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -33,8 +33,7 @@ public class DOMUtilTest extends TestCase {
     }
 
     /**
-     * Returns this test suite. Reflection is used here to add all
-     * the testXXX() methods to the suite.
+     * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
      */
     public static Test suite() {
         return new TestSuite( DOMUtilTest.class );

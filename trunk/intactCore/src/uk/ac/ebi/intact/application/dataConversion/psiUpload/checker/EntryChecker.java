@@ -21,7 +21,7 @@ import java.util.Map;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -50,7 +50,7 @@ public final class EntryChecker {
         boolean guiEnabled = CommandLineOptions.getInstance().isGuiEnabled();
         Monitor monitor = null;
         boolean displayProgressBar = guiEnabled && keys.size() > 0;
-        if( displayProgressBar ) {
+        if ( displayProgressBar ) {
             monitor = new Monitor( keys.size(), "Protein update" );
             monitor.setStatus( "Waiting for the checker to start..." );
             monitor.show();
@@ -59,14 +59,14 @@ public final class EntryChecker {
         for ( Iterator iterator = keys.iterator(); iterator.hasNext(); ) {
             final String key = (String) iterator.next();
             final ProteinInteractorTag proteinInteractor = (ProteinInteractorTag) proteinInteractors.get( key );
-            if( guiEnabled ) {
+            if ( guiEnabled ) {
                 String uniprotID = null;
                 String taxid = null;
 
-                if( proteinInteractor != null && proteinInteractor.getUniprotXref() != null ) {
+                if ( proteinInteractor != null && proteinInteractor.getUniprotXref() != null ) {
                     uniprotID = proteinInteractor.getUniprotXref().getId();
                 }
-                if( proteinInteractor != null && proteinInteractor.getOrganism() != null ) {
+                if ( proteinInteractor != null && proteinInteractor.getOrganism() != null ) {
                     taxid = proteinInteractor.getOrganism().getTaxId();
                 }
                 monitor.setStatus( "Checking " + uniprotID + " (" + taxid + ")" );
@@ -74,17 +74,17 @@ public final class EntryChecker {
 
             ProteinInteractorChecker.check( proteinInteractor, helper, proteinFactory, bioSourceFactory );
 
-            if( guiEnabled ) {
+            if ( guiEnabled ) {
                 monitor.updateProteinProcessedCound( ++current );
             }
         }
-        if( displayProgressBar ) {
+        if ( displayProgressBar ) {
             monitor.hide();
         }
 
 
         displayProgressBar = guiEnabled && interactions.size() > 0;
-        if( displayProgressBar ) {
+        if ( displayProgressBar ) {
             monitor = new Monitor( interactions.size(), "Interaction checking" );
             monitor.setStatus( "Waiting for the checker to start..." );
             monitor.show();
@@ -92,9 +92,9 @@ public final class EntryChecker {
         current = 0;
         for ( Iterator iterator = interactions.iterator(); iterator.hasNext(); ) {
             final InteractionTag interaction = (InteractionTag) iterator.next();
-            if( guiEnabled ) {
+            if ( guiEnabled ) {
                 String name = interaction.getShortlabel();
-                if( name == null ) {
+                if ( name == null ) {
                     name = "no shortlabel specified";
                 }
                 monitor.setStatus( "Checking " + name );
@@ -102,7 +102,7 @@ public final class EntryChecker {
             }
             InteractionChecker.check( interaction, helper, proteinFactory, bioSourceFactory, monitor );
         }
-        if( displayProgressBar ) {
+        if ( displayProgressBar ) {
             monitor.setStatus( "finished..." );
             monitor.hide();
         }

@@ -9,7 +9,7 @@ import uk.ac.ebi.intact.model.Protein;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -24,7 +24,7 @@ public final class ProteinHolder {
 
     public ProteinHolder( Protein protein ) {
 
-        if( protein == null ) {
+        if ( protein == null ) {
             throw new IllegalArgumentException( "You must give a non null protein" );
         }
 
@@ -57,19 +57,19 @@ public final class ProteinHolder {
     // Equality
 
     public boolean equals( Object o ) {
-        if( this == o ) {
+        if ( this == o ) {
             return true;
         }
-        if( !( o instanceof ProteinHolder ) ) {
+        if ( !( o instanceof ProteinHolder ) ) {
             return false;
         }
 
         final ProteinHolder proteinHolder = (ProteinHolder) o;
 
-        if( !protein.equals( proteinHolder.protein ) ) {
+        if ( !protein.equals( proteinHolder.protein ) ) {
             return false;
         }
-        if( spliceVariant != null ? !spliceVariant.equals( proteinHolder.spliceVariant ) : proteinHolder.spliceVariant != null ) {
+        if ( spliceVariant != null ? !spliceVariant.equals( proteinHolder.spliceVariant ) : proteinHolder.spliceVariant != null ) {
             return false;
         }
 

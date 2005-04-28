@@ -39,11 +39,11 @@ public final class InteractionDetectionTag {
 
     public InteractionDetectionTag( final XrefTag psiDefinition ) {
 
-        if( psiDefinition == null ) {
+        if ( psiDefinition == null ) {
             throw new IllegalArgumentException( "You must give a non null psi definition for an interactionDetection" );
         }
 
-        if( !Constants.PSI_DB_SHORTLABEL.equals( psiDefinition.getDb() ) ) {
+        if ( !Constants.PSI_DB_SHORTLABEL.equals( psiDefinition.getDb() ) ) {
             throw new IllegalArgumentException( "You must give a pubmed Xref, not " + psiDefinition.getDb() +
                                                 " for an InteractionDetection" );
         }
@@ -64,16 +64,16 @@ public final class InteractionDetectionTag {
     // Equality
     
     public boolean equals( final Object o ) {
-        if( this == o ) {
+        if ( this == o ) {
             return true;
         }
-        if( !( o instanceof InteractionDetectionTag ) ) {
+        if ( !( o instanceof InteractionDetectionTag ) ) {
             return false;
         }
 
         final InteractionDetectionTag interactionDetectionTag = (InteractionDetectionTag) o;
 
-        if( !psiDefinition.equals( interactionDetectionTag.psiDefinition ) ) {
+        if ( !psiDefinition.equals( interactionDetectionTag.psiDefinition ) ) {
             return false;
         }
 

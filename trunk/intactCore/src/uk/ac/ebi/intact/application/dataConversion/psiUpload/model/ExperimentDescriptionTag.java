@@ -72,16 +72,14 @@ public final class ExperimentDescriptionTag {
     private final ParticipantDetectionTag participantDetection;
 
     /**
-     * Reflects <xref>
-     * Collection of XrefTag
+     * Reflects <xref> Collection of XrefTag
      *
      * @see uk.ac.ebi.intact.application.dataConversion.psiUpload.model.XrefTag
      */
     private final Collection xrefs;
 
     /**
-     * Reflects <attributeList>
-     * Collection of AnnotationTag
+     * Reflects <attributeList> Collection of AnnotationTag
      *
      * @see uk.ac.ebi.intact.application.dataConversion.psiUpload.model.AnnotationTag
      */
@@ -100,35 +98,35 @@ public final class ExperimentDescriptionTag {
                                      final InteractionDetectionTag interactionDetection,
                                      final ParticipantDetectionTag participantDetection ) {
 
-        if( shortlabel == null || shortlabel.trim().equals( "" ) ) {
+        if ( shortlabel == null || shortlabel.trim().equals( "" ) ) {
             throw new IllegalArgumentException( "You must give a non null/empty shortlabel for an experimentDescription" );
         }
 
-        if( fullname == null || fullname.trim().equals( "" ) ) {
+        if ( fullname == null || fullname.trim().equals( "" ) ) {
             throw new IllegalArgumentException( "You must give a non null/empty fullname for an experimentDescription" );
         }
 
 
         // TODO make a switch for the mandatory-ness of that value !!!
         // TODO Because of people submiting their data without having a pubmed ID 
-        if( bibRef == null ) {
+        if ( bibRef == null ) {
             throw new IllegalArgumentException( "You must give a non null bibRef for an experimentDescription" );
         }
 
-        if( !Constants.PUBMED_DB_SHORTLABEL.equals( bibRef.getDb() ) ) {
+        if ( !Constants.PUBMED_DB_SHORTLABEL.equals( bibRef.getDb() ) ) {
             throw new IllegalArgumentException( "You must give a pubmed Xref, not " + bibRef.getDb() +
                                                 " for an experimentDescription" );
         }
 
-        if( hostOrganism == null ) {
+        if ( hostOrganism == null ) {
             throw new IllegalArgumentException( "You must give a non null hostOrganism for an experimentDescription" );
         }
 
-        if( interactionDetection == null ) {
+        if ( interactionDetection == null ) {
             throw new IllegalArgumentException( "You must give a non null interactionDetection for an experimentDescription" );
         }
 
-        if( participantDetection == null ) {
+        if ( participantDetection == null ) {
             throw new IllegalArgumentException( "You must give a non null participantDetection for an experimentDescription" );
         }
 
@@ -136,13 +134,13 @@ public final class ExperimentDescriptionTag {
         this.fullname = fullname;
         this.bibRef = bibRef;
 
-        if( xrefs == null ) {
+        if ( xrefs == null ) {
             this.xrefs = new ReadOnlyCollection( new ArrayList( 0 ) );
         } else {
             // check the collection content
             for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
                 Object o = (Object) iterator.next();
-                if( !( o instanceof XrefTag ) ) {
+                if ( !( o instanceof XrefTag ) ) {
                     throw new IllegalArgumentException( "The annotation collection added to the experiment doesn't " +
                                                         "contains only XrefTag." );
                 }
@@ -150,13 +148,13 @@ public final class ExperimentDescriptionTag {
             this.xrefs = new ReadOnlyCollection( xrefs );
         }
 
-        if( additionalBibRef == null ) {
+        if ( additionalBibRef == null ) {
             this.additionalBibRef = new ReadOnlyCollection( new ArrayList( 0 ) );
         } else {
             // check the collection content
             for ( Iterator iterator = additionalBibRef.iterator(); iterator.hasNext(); ) {
                 Object o = (Object) iterator.next();
-                if( !( o instanceof XrefTag ) ) {
+                if ( !( o instanceof XrefTag ) ) {
                     throw new IllegalArgumentException( "The additionalBibRef collection added to the experiment doesn't " +
                                                         "contains only XrefTag." );
                 }
@@ -164,13 +162,13 @@ public final class ExperimentDescriptionTag {
             this.additionalBibRef = new ReadOnlyCollection( additionalBibRef );
         }
 
-        if( annotations == null ) {
+        if ( annotations == null ) {
             this.annotations = new ReadOnlyCollection( new ArrayList( 0 ) );
         } else {
             // check the collection content
             for ( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
                 Object o = (Object) iterator.next();
-                if( !( o instanceof AnnotationTag ) ) {
+                if ( !( o instanceof AnnotationTag ) ) {
                     throw new IllegalArgumentException( "The annotation collection added to the experiment doesn't " +
                                                         "contains only AnnotationTag." );
                 }
@@ -228,40 +226,40 @@ public final class ExperimentDescriptionTag {
     // Equality
 
     public boolean equals( Object o ) {
-        if( this == o ) {
+        if ( this == o ) {
             return true;
         }
-        if( !( o instanceof ExperimentDescriptionTag ) ) {
+        if ( !( o instanceof ExperimentDescriptionTag ) ) {
             return false;
         }
 
         final ExperimentDescriptionTag experimentDescriptionTag = (ExperimentDescriptionTag) o;
 
-        if( annotations != null ? !annotations.equals( experimentDescriptionTag.annotations ) : experimentDescriptionTag.annotations != null ) {
+        if ( annotations != null ? !annotations.equals( experimentDescriptionTag.annotations ) : experimentDescriptionTag.annotations != null ) {
             return false;
         }
-        if( additionalBibRef != null ? !additionalBibRef.equals( experimentDescriptionTag.additionalBibRef ) : experimentDescriptionTag.additionalBibRef != null ) {
+        if ( additionalBibRef != null ? !additionalBibRef.equals( experimentDescriptionTag.additionalBibRef ) : experimentDescriptionTag.additionalBibRef != null ) {
             return false;
         }
-        if( !bibRef.equals( experimentDescriptionTag.bibRef ) ) {
+        if ( !bibRef.equals( experimentDescriptionTag.bibRef ) ) {
             return false;
         }
-        if( !fullname.equals( experimentDescriptionTag.fullname ) ) {
+        if ( !fullname.equals( experimentDescriptionTag.fullname ) ) {
             return false;
         }
-        if( !hostOrganism.equals( experimentDescriptionTag.hostOrganism ) ) {
+        if ( !hostOrganism.equals( experimentDescriptionTag.hostOrganism ) ) {
             return false;
         }
-        if( !interactionDetection.equals( experimentDescriptionTag.interactionDetection ) ) {
+        if ( !interactionDetection.equals( experimentDescriptionTag.interactionDetection ) ) {
             return false;
         }
-        if( !participantDetection.equals( experimentDescriptionTag.participantDetection ) ) {
+        if ( !participantDetection.equals( experimentDescriptionTag.participantDetection ) ) {
             return false;
         }
-        if( !shortlabel.equals( experimentDescriptionTag.shortlabel ) ) {
+        if ( !shortlabel.equals( experimentDescriptionTag.shortlabel ) ) {
             return false;
         }
-        if( xrefs != null ? !xrefs.equals( experimentDescriptionTag.xrefs ) : experimentDescriptionTag.xrefs != null ) {
+        if ( xrefs != null ? !xrefs.equals( experimentDescriptionTag.xrefs ) : experimentDescriptionTag.xrefs != null ) {
             return false;
         }
 
@@ -290,7 +288,7 @@ public final class ExperimentDescriptionTag {
         buf.append( ",fullname=" ).append( fullname );
         buf.append( ",bibRef=" ).append( bibRef );
         buf.append( ",additional bibref=" );
-        if( additionalBibRef.size() == 0 ) {
+        if ( additionalBibRef.size() == 0 ) {
             buf.append( "none" );
         }
         for ( Iterator iterator = additionalBibRef.iterator(); iterator.hasNext(); ) {
@@ -299,7 +297,7 @@ public final class ExperimentDescriptionTag {
         }
 
         buf.append( ",annotations=" );
-        if( annotations.size() == 0 ) {
+        if ( annotations.size() == 0 ) {
             buf.append( "none" );
         }
         for ( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
@@ -308,7 +306,7 @@ public final class ExperimentDescriptionTag {
         }
 
         buf.append( ",xrefs=" );
-        if( xrefs.size() == 0 ) {
+        if ( xrefs.size() == 0 ) {
             buf.append( "none" );
         }
         for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {

@@ -17,7 +17,7 @@ import java.util.Map;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -34,12 +34,12 @@ public final class XrefChecker {
                               final IntactHelper helper ) {
 
         final String db = xref.getDb();
-        if( !cache.keySet().contains( db ) ) {
+        if ( !cache.keySet().contains( db ) ) {
             CvDatabase cvDatabase = null;
             try {
                 cvDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, db );
 
-                if( cvDatabase != null ) {
+                if ( cvDatabase != null ) {
                     System.out.println( "Found CvDatabase with shortlabel: " + db );
                 } else {
                     MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find CvDatabase " +

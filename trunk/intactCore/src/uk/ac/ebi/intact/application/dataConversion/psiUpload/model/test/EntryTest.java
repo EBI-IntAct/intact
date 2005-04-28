@@ -19,7 +19,7 @@ import java.util.Map;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -35,8 +35,7 @@ public class EntryTest extends TestCase {
     }
 
     /**
-     * Returns this test suite. Reflection is used here to add all
-     * the testXXX() methods to the suite.
+     * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
      */
     public static Test suite() {
         return new TestSuite( EntryTest.class );
@@ -90,7 +89,7 @@ public class EntryTest extends TestCase {
     private ProteinParticipantTag getProteinParticipant( String id, String role ) {
 
         ProteinInteractorTag proteinInteractor = getProteinInteractor( id );
-        ProteinParticipantTag proteinParticipant = new ProteinParticipantTag( proteinInteractor, role, null );
+        ProteinParticipantTag proteinParticipant = new ProteinParticipantTag( proteinInteractor, role, null, null, null, null );
 
         return proteinParticipant;
     }

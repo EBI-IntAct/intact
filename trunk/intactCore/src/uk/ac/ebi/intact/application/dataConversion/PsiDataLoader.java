@@ -82,39 +82,39 @@ public class PsiDataLoader {
     /**
      * D E M O
      * <p/>
-     * -file  E:\Programs\cygwin\home\Samuel\intactCore\psi\Lehner_2003.v3.xml -useInteractionTypeWhenMissing MI:0191 -useTaxidWhenMissing 9606
+     * -file  E:\Programs\cygwin\home\Samuel\intactCore\psi\Lehner_2003.v3.xml -useInteractionTypeWhenMissing MI:0191
+     * -useTaxidWhenMissing 9606
      * <p/>
-     * TODO:
-     * (1) show time to check and persist
+     * TODO: (1) show time to check and persist
      *
      * @param args
      */
     public static void main( String[] args ) {
 
         // create Option objects
-        Option helpOpt = new Option( "help", "print this message" );
+        Option helpOpt = new Option( "help", "print this message." );
 
         Option filenameOpt = OptionBuilder.withArgName( "filename" )
                 .hasArg()
-                .withDescription( "PSI file to upload in IntAct" )
+                .withDescription( "PSI file to upload in IntAct." )
                 .create( "file" );
         filenameOpt.setRequired( true );
 
         Option taxidOpt = OptionBuilder.withArgName( "taxid" )
                 .hasArg()
                 .withDescription( "TaxId to use when missing in an Interactor " +
-                                  "(eg. for human:  9606)" )
+                                  "(eg. for human: 9606)." )
                 .create( "useTaxidWhenMissing" );
         taxidOpt.setRequired( false );
 
         Option interactionTypeOpt = OptionBuilder.withArgName( "PSI_ID" )
                 .hasArg()
                 .withDescription( "PSI id of the CvInteractionType to use when missing from an Interaction " +
-                                  "(eg. for aggregation: MI:0191)" )
+                                  "(eg. for aggregation: MI:0191)." )
                 .create( "useInteractionTypeWhenMissing" );
         interactionTypeOpt.setRequired( false );
 
-        Option reuseProteinOpt = OptionBuilder.withDescription( "Do not force protein update, reuse existing protein" )
+        Option reuseProteinOpt = OptionBuilder.withDescription( "Do not force protein update, reuse existing protein when possible." )
                 .create( "reuseExistingProtein" );
         reuseProteinOpt.setRequired( false );
 
@@ -134,7 +134,7 @@ public class PsiDataLoader {
                 .create( "debug" );
         debugOpt.setRequired( false );
 
-        Option forceOpt = OptionBuilder.withDescription( "prevent the application to ask question qbout production server." )
+        Option forceOpt = OptionBuilder.withDescription( "prevent the application to ask question about production server." )
                 .create( "force" );
         forceOpt.setRequired( false );
 
@@ -167,7 +167,7 @@ public class PsiDataLoader {
         }
 
 
-        if( line.hasOption( "help" ) ) {
+        if ( line.hasOption( "help" ) ) {
             displayUsage( options );
             System.exit( 0 );
         }
@@ -185,11 +185,11 @@ public class PsiDataLoader {
 
         CommandLineOptions myOptions = CommandLineOptions.getInstance();
 
-        if( defaultTaxid != null ) {
+        if ( defaultTaxid != null ) {
             myOptions.setDefaultInteractorTaxid( defaultTaxid );
         }
 
-        if( defaultInteractionType != null ) {
+        if ( defaultInteractionType != null ) {
             myOptions.setDefaultInteractionType( defaultInteractionType );
         }
 
@@ -197,7 +197,7 @@ public class PsiDataLoader {
         myOptions.setDebugEnabled( debugEnabled );
         myOptions.setGuiEnabled( guiEnabled );
 
-        if( debugEnabled ) {
+        if ( debugEnabled ) {
             System.out.println( "File: " + filename );
             System.out.println( "default taxid: " + defaultTaxid );
             System.out.println( "default InteractionType: " + defaultInteractionType );
@@ -221,7 +221,8 @@ public class PsiDataLoader {
         final MessageHolder messages = MessageHolder.getInstance();
 
         try {
-            System.out.print( "\nStep 1: Parsing and extracting relevant data from your PSI file..." );
+            System.out.print( "\nStep 1: Parsing and extracting relevant data from your PSI file ... " );
+            System.out.flush();
             final Chrono chrono = new Chrono();
             chrono.start();
 
@@ -235,7 +236,7 @@ public class PsiDataLoader {
             try {
                 entrySet = entrySetParser.process( rootElement );
             } catch ( RuntimeException re ) {
-                if( messages.parserMessageExists() ) {
+                if ( messages.parserMessageExists() ) {
                     System.err.println( "Before to exit, here are the messages creating during the parsing:" );
                     messages.printParserReport( System.err );
                     System.err.println( "\nPlease fix your file and try again." );
@@ -246,9 +247,9 @@ public class PsiDataLoader {
             }
 
             chrono.stop();
-            System.out.println( "done (took " + chrono + ")" );
+            System.out.println( "done (time elapsed: " + chrono + ")" );
 
-            if( messages.parserMessageExists() ) {
+            if ( messages.parserMessageExists() ) {
                 // display parser message.
                 messages.printParserReport( System.err );
                 System.err.println( "\nPlease fix your file and try again." );
@@ -256,14 +257,20 @@ public class PsiDataLoader {
                 System.exit( 1 );
             } else {
 
-                if( debugEnabled ) {
+                if ( debugEnabled ) {
                     System.out.println( "Data collected from you file:" );
                     System.out.println( entrySet );
                 }
 
+                // stop here if user requested parsing only.
+                if ( processUpToParsing ) {
+                    System.out.println( "Abort requested (after parsing) by the user from the command line." );
+                    System.exit( 0 );
+                }
+
+
                 System.out.println( "\n\nStep 2: Checking that all the data found in your PSI file are available " +
                                     "(Proteins, BioSources, CVs...)" );
-
 
                 /////////////////////////////////////////////
                 // (2a) Get needed objects before checking
@@ -278,10 +285,10 @@ public class PsiDataLoader {
                         System.out.println( "Database: " + db );
                         System.out.println( "User:     " + helper.getDbUserName() );
 
-                        if( forceEnabled == false ) {
+                        if ( forceEnabled == false ) {
                             // THIS IS SPECIFIC CODE THAT AVOIDS TO WRITE ON A PRODUCTION DATABASE BY MISTAKES
-                            if( "d002".equals( db.toLowerCase() ) || "zpro".equals( db.toLowerCase() ) ) {
-                                System.out.println( "You are about to write data in a produciton environment, " +
+                            if ( "d002".equals( db.toLowerCase() ) || "zpro".equals( db.toLowerCase() ) ) {
+                                System.out.println( "You are about to write data in a production environment, " +
                                                     "do you really want to proceed:" );
                                 int ch;
                                 System.out.print( "[yes/no]:" );
@@ -293,7 +300,7 @@ public class PsiDataLoader {
 
                                 String input = sb.toString();
 
-                                if( !"yes".equals( input.trim().toLowerCase() ) ) {
+                                if ( !"yes".equals( input.trim().toLowerCase() ) ) {
                                     System.out.println( "Abort procedure." );
                                     System.exit( 0 );
                                 }
@@ -342,11 +349,6 @@ public class PsiDataLoader {
                     System.exit( 1 );
                 }
 
-                if( processUpToParsing ) {
-                    System.out.println( "Abort requested (after parsing) by the user from the command line." );
-                    System.exit( 0 );
-                }
-
 
                 ///////////////////////////////////////////
                 // (2b) Check the content of the entrySet
@@ -357,7 +359,7 @@ public class PsiDataLoader {
                 // check the parsed model
                 EntrySetChecker.check( entrySet, helper, proteinFactory, bioSourceFactory );
 
-                if( messages.checkerMessageExists() ) {
+                if ( messages.checkerMessageExists() ) {
 
                     // display checker messages.
                     MessageHolder.getInstance().printCheckerReport( System.err );
@@ -365,7 +367,7 @@ public class PsiDataLoader {
                     System.exit( 1 );
                 } else {
 
-                    if( processUpToChecking ) {
+                    if ( processUpToChecking ) {
                         System.out.println( "Abort requested (after checking) by the user from the command line." );
                         System.exit( 0 );
                     }
@@ -379,7 +381,7 @@ public class PsiDataLoader {
                     try {
                         EntrySetPersister.persist( entrySet, helper );
 
-                        if( messages.checkerMessageExists() ) {
+                        if ( messages.checkerMessageExists() ) {
 
                             // display persister messages.
                             MessageHolder.getInstance().printPersisterReport( System.err );
@@ -415,7 +417,7 @@ public class PsiDataLoader {
         } catch ( SAXException sxe ) {
             // Error generated during parsing.
             Exception x = sxe;
-            if( sxe.getException() != null ) {
+            if ( sxe.getException() != null ) {
                 x = sxe.getException();
             }
             x.printStackTrace();
@@ -432,7 +434,7 @@ public class PsiDataLoader {
             System.exit( 1 );
 
         } finally {
-            if( helper != null ) {
+            if ( helper != null ) {
                 try {
                     helper.closeStore();
                 } catch ( IntactException e ) {

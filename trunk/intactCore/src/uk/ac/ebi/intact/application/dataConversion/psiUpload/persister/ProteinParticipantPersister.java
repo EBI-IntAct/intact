@@ -9,21 +9,18 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.ExpressedIn
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.OrganismChecker;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.ProteinInteractorChecker;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.RoleChecker;
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.ExpressedInTag;
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.ProteinHolder;
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.ProteinInteractorTag;
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.ProteinParticipantTag;
+import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.*;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 /**
- * That class make the data persitent in the Intact database.
- * <br>
- * That class takes care of a Component for a specific Interaction.
- * <br>
- * It assumes that the data are already parsed and passed the validity check successfully.
- * 
+ * That class make the data persitent in the Intact database. <br> That class takes care of a Component for a specific
+ * Interaction. <br> It assumes that the data are already parsed and passed the validity check successfully.
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -41,7 +38,7 @@ public class ProteinParticipantPersister {
         final CvComponentRole role = RoleChecker.getCvComponentRole( proteinParticipant.getRole() );
 
         final Protein protein;
-        if( proteinHolder.isSpliceVariantExisting() ) {
+        if ( proteinHolder.isSpliceVariantExisting() ) {
             protein = proteinHolder.getSpliceVariant();
         } else {
             protein = proteinHolder.getProtein();
@@ -55,10 +52,23 @@ public class ProteinParticipantPersister {
 
         // add expressedIn if it is available.
         ExpressedInTag expressedIn = proteinParticipant.getExpressedIn();
-        if( null != expressedIn ) {
+        if ( null != expressedIn ) {
             BioSource bs = ExpressedInChecker.getBioSource( expressedIn.getBioSourceShortlabel() );
             component.setExpressedIn( bs );
             helper.update( component );
+        }
+
+        // TODO process the <confidence> tag here
+
+        // add features if any
+        Collection features = proteinParticipant.getFeatures();
+        for ( Iterator iterator = features.iterator(); iterator.hasNext(); ) {
+            FeatureTag featureTag = (FeatureTag) iterator.next();
+
+            FeaturePersister.persist( featureTag,
+                                      component,
+                                      protein,
+                                      helper );
         }
     }
 }

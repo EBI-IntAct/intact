@@ -10,9 +10,12 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.*;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -27,9 +30,28 @@ public class ProteinParticipantTest extends TestCase {
         super( name );
     }
 
+    private FeatureTag createFeature( String aFeatureType,
+                                      String aDetectionType,
+                                      String aClusterID,
+                                      String aInterproID,
+                                      long begin1, long begin2,
+                                      long end1, long end2 ) {
+
+        FeatureTypeTag featureType = new FeatureTypeTag( new XrefTag( XrefTag.PRIMARY_REF, aFeatureType, "psi-mi" ) );
+        FeatureDetectionTag featureDetection = new FeatureDetectionTag( new XrefTag( XrefTag.PRIMARY_REF, aDetectionType, "psi-mi" ) );
+
+        Collection xrefs = new ArrayList();
+        xrefs.add( new XrefTag( XrefTag.PRIMARY_REF, aInterproID, "interpro" ) );
+        xrefs.add( new XrefTag( XrefTag.PRIMARY_REF, aClusterID, FeatureTag.FEATURE_CLUSTER_ID_XREF ) );
+
+        LocationTag location = new LocationTag( new LocationIntervalTag( begin1, begin2 ), new LocationIntervalTag( end1, end2 ) );
+        FeatureTag feature = new FeatureTag( "feature1", null, featureType, location, featureDetection, xrefs );
+
+        return feature;
+    }
+
     /**
-     * Returns this test suite. Reflection is used here to add all
-     * the testXXX() methods to the suite.
+     * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
      */
     public static Test suite() {
         return new TestSuite( ProteinParticipantTest.class );
@@ -52,12 +74,19 @@ public class ProteinParticipantTest extends TestCase {
         AnnotationTag annotation = new AnnotationTag( "expressedIn", "12345:biosource" );
         ExpressedInTag expressedIn = new ExpressedInTag( annotation );
 
-        ProteinParticipantTag proteinParticipant = new ProteinParticipantTag( proteinInteractor, "bait", expressedIn );
+        ProteinParticipantTag proteinParticipant = new ProteinParticipantTag( proteinInteractor,
+                                                                              "bait",
+                                                                              expressedIn,
+                                                                              null,
+                                                                              null,
+                                                                              null );
 
         assertNotNull( proteinParticipant );
         assertEquals( expressedIn, proteinParticipant.getExpressedIn() );
         assertEquals( "bait", proteinParticipant.getRole() );
         assertEquals( proteinInteractor, proteinParticipant.getProteinInteractor() );
+        assertNull( proteinParticipant.getOverExpressedProtein() );
+        assertNull( proteinParticipant.getTaggedProtein() );
     }
 
 
@@ -67,12 +96,50 @@ public class ProteinParticipantTest extends TestCase {
 
         ProteinInteractorTag proteinInteractor = new ProteinInteractorTag( xrefUniprot, null );
 
-        ProteinParticipantTag proteinParticipant = new ProteinParticipantTag( proteinInteractor, "bait", null );
+        ProteinParticipantTag proteinParticipant = new ProteinParticipantTag( proteinInteractor,
+                                                                              "bait",
+                                                                              null,
+                                                                              null,
+                                                                              Boolean.TRUE,
+                                                                              Boolean.FALSE );
 
         assertNotNull( proteinParticipant );
         assertEquals( null, proteinParticipant.getExpressedIn() );
         assertEquals( "bait", proteinParticipant.getRole() );
         assertEquals( proteinInteractor, proteinParticipant.getProteinInteractor() );
+        assertEquals( Boolean.TRUE, proteinParticipant.getTaggedProtein() );
+        assertEquals( Boolean.FALSE, proteinParticipant.getOverExpressedProtein() );
+    }
+
+
+    public void testProcess_ok_features() {
+
+        XrefTag xrefUniprot = new XrefTag( XrefTag.PRIMARY_REF, "P12345", "uniprot" );
+
+        ProteinInteractorTag proteinInteractor = new ProteinInteractorTag( xrefUniprot, null );
+
+
+        Collection features = new ArrayList();
+        features.add( createFeature( "type1", "detect1", "1", "blabla", 1, 1, 3, 5 ) );
+        features.add( createFeature( "type1", "detect1", "2", "blabla", 2, 21, 99, 99 ) );
+        features.add( createFeature( "type1", "detect1", "1", "blabla", 7, 7, 8, 8 ) );
+
+        ProteinParticipantTag proteinParticipant = new ProteinParticipantTag( proteinInteractor,
+                                                                              "bait",
+                                                                              null,
+                                                                              features,
+                                                                              Boolean.FALSE,
+                                                                              Boolean.TRUE );
+
+        assertNotNull( proteinParticipant );
+        assertEquals( null, proteinParticipant.getExpressedIn() );
+        assertEquals( "bait", proteinParticipant.getRole() );
+        assertEquals( proteinInteractor, proteinParticipant.getProteinInteractor() );
+        assertEquals( true, proteinParticipant.hasFeature() );
+        assertEquals( 3, proteinParticipant.getFeatures().size() );
+        assertEquals( 2, proteinParticipant.getClusteredFeatures().size() );
+        assertEquals( Boolean.FALSE, proteinParticipant.getTaggedProtein() );
+        assertEquals( Boolean.TRUE, proteinParticipant.getOverExpressedProtein() );
     }
 
 
@@ -84,7 +151,7 @@ public class ProteinParticipantTest extends TestCase {
 
         ProteinParticipantTag proteinParticipant = null;
         try {
-            proteinParticipant = new ProteinParticipantTag( proteinInteractor, "", null );
+            proteinParticipant = new ProteinParticipantTag( proteinInteractor, "", null, null, null, null );
             fail( "Should not allow to create a proteinParticipant with empty role." );
         } catch ( Exception e ) {
             // ok
@@ -102,7 +169,7 @@ public class ProteinParticipantTest extends TestCase {
 
         ProteinParticipantTag proteinParticipant = null;
         try {
-            proteinParticipant = new ProteinParticipantTag( proteinInteractor, null, null );
+            proteinParticipant = new ProteinParticipantTag( proteinInteractor, null, null, null, null, null );
             fail( "Should not allow to create a proteinParticipant with null role." );
         } catch ( Exception e ) {
             // ok
@@ -116,7 +183,7 @@ public class ProteinParticipantTest extends TestCase {
 
         ProteinParticipantTag proteinParticipant = null;
         try {
-            proteinParticipant = new ProteinParticipantTag( null, "bait", null );
+            proteinParticipant = new ProteinParticipantTag( null, "bait", null, null, null, null );
             fail( "Should not allow to create a proteinParticipant with a null proteinInteractor." );
         } catch ( Exception e ) {
             // ok

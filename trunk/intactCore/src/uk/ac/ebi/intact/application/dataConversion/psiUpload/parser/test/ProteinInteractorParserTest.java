@@ -25,7 +25,7 @@ import java.util.Iterator;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -43,8 +43,7 @@ public class ProteinInteractorParserTest extends TestCase {
     }
 
     /**
-     * Returns this test suite. Reflection is used here to add all
-     * the testXXX() methods to the suite.
+     * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
      */
     public static Test suite() {
         return new TestSuite( ProteinInteractorParserTest.class );
@@ -54,7 +53,7 @@ public class ProteinInteractorParserTest extends TestCase {
 
         for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
             final Xref xref = (Xref) iterator.next();
-            if( db.equals( xref.getCvDatabase().getShortLabel() ) ) {
+            if ( db.equals( xref.getCvDatabase().getShortLabel() ) ) {
                 return xref;
             }
         }

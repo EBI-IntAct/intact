@@ -10,14 +10,14 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.OrganismTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.ProteinInteractorTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.XrefTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.CommandLineOptions;
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.DOMUtil;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.LabelValueBean;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
+import uk.ac.ebi.intact.application.dataConversion.util.DOMUtil;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -61,21 +61,22 @@ public class ProteinInteractorParser {
      * </pre>
      *
      * @return an intact <code>Protein</code> or null if something goes wrong.
+     *
      * @see uk.ac.ebi.intact.model.Protein
      */
     public LabelValueBean process() {
         ProteinInteractorTag proteinInteractor = null;
 
-        if( false == "proteinInteractor".equals( root.getNodeName() ) ) {
+        if ( false == "proteinInteractor".equals( root.getNodeName() ) ) {
             MessageHolder.getInstance().addParserMessage( new Message( root, "We should be in proteinInteractor tag." ) );
         }
 
         final String id = root.getAttribute( "id" );
 
         // check if the proteinInteractor is existing in the global context
-        if( interactorList != null ) {
+        if ( interactorList != null ) {
             proteinInteractor = (ProteinInteractorTag) interactorList.getInteractors().get( id );
-            if( proteinInteractor != null ) {
+            if ( proteinInteractor != null ) {
                 final String msg = "WARNING - the protein id: " + id + " is defined several times. " +
                                    "The global definition will be used instead.";
                 MessageHolder.getInstance().addParserMessage( new Message( root, msg ) );
@@ -86,11 +87,11 @@ public class ProteinInteractorParser {
         // CAUTION - MAY NOT BE THERE
         final Element biosourceElement = DOMUtil.getFirstElement( root, "organism" );
         OrganismTag hostOrganism = null;
-        if( biosourceElement != null ) {
+        if ( biosourceElement != null ) {
             hostOrganism = OrganismParser.process( biosourceElement );
         } else {
             // the PSI file lacks a taxid, check if the user requested us to put a default value in such case.
-            if( CommandLineOptions.getInstance().hasDefaultInteractorTaxid() ) {
+            if ( CommandLineOptions.getInstance().hasDefaultInteractorTaxid() ) {
                 final String defaultTaxid = CommandLineOptions.getInstance().getDefaultInteractorTaxid();
                 hostOrganism = new OrganismTag( defaultTaxid );
             }

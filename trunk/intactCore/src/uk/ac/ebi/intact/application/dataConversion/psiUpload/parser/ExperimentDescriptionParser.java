@@ -9,17 +9,17 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.*;
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.DOMUtil;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.LabelValueBean;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
+import uk.ac.ebi.intact.application.dataConversion.util.DOMUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -67,22 +67,23 @@ public class ExperimentDescriptionParser {
      * </pre>
      *
      * @return a map: id --> Experiment to use.
+     *
      * @see uk.ac.ebi.intact.model.Experiment
      */
     public LabelValueBean process() {
 
         ExperimentDescriptionTag experiment = null;
 
-        if( false == "experimentDescription".equals( root.getNodeName() ) ) {
+        if ( false == "experimentDescription".equals( root.getNodeName() ) ) {
             MessageHolder.getInstance().addParserMessage( new Message( root, "ERROR - We should be in experimentDescription tag." ) );
         }
 
         final String id = root.getAttribute( "id" );
 
         // check if the experiment is existing in the global context
-        if( experimentList != null ) {
+        if ( experimentList != null ) {
             experiment = (ExperimentDescriptionTag) experimentList.getExperiments().get( id );
-            if( experiment != null ) {
+            if ( experiment != null ) {
                 final String msg = "WARNING - the experiment id: " + id + "is defined several times. " +
                                    "The global definition will be used instead.";
                 MessageHolder.getInstance().addParserMessage( new Message( root, msg ) );
@@ -95,7 +96,7 @@ public class ExperimentDescriptionParser {
         final Element names = DOMUtil.getFirstElement( root, "names" );
         String shortLabel = null;
         String fullName = null;
-        if( names != null ) {
+        if ( names != null ) {
             shortLabel = DOMUtil.getShortLabel( names );
             fullName = DOMUtil.getFullName( names );
         } else {
@@ -107,7 +108,7 @@ public class ExperimentDescriptionParser {
         // CAUTION - MAY NOT BE THERE
         final Element biosourceElement = DOMUtil.getFirstElement( root, "hostOrganism" );
         HostOrganismTag hostOrganism = null;
-        if( biosourceElement != null ) {
+        if ( biosourceElement != null ) {
             hostOrganism = HostOrganismParser.process( biosourceElement );
         } else {
             // no hostOrganism
@@ -120,7 +121,7 @@ public class ExperimentDescriptionParser {
         final Element bibref = DOMUtil.getFirstElement( root, "bibref" );
         XrefTag bibXref = null;
         Collection secondaryBibXrefs = null;
-        if( bibref != null ) {
+        if ( bibref != null ) {
             final Element bibXrefElement = DOMUtil.getFirstElement( bibref, "xref" );
             bibXref = XrefParser.processPrimaryRef( bibXrefElement );
             secondaryBibXrefs = XrefParser.processSecondaryRef( bibXrefElement );
@@ -132,7 +133,7 @@ public class ExperimentDescriptionParser {
         XrefTag primaryXref = null;
         Collection secondaryXrefs = null;
         Collection xrefs = null;
-        if( xrefElement != null ) {
+        if ( xrefElement != null ) {
             primaryXref = XrefParser.processPrimaryRef( xrefElement );
             secondaryXrefs = XrefParser.processSecondaryRef( xrefElement );
 
@@ -145,11 +146,11 @@ public class ExperimentDescriptionParser {
 
         final Element interactionDetectionElement = DOMUtil.getFirstElement( root, "interactionDetection" );
         InteractionDetectionTag interactionDetection = null;
-        if( interactionDetectionElement != null ) {
+        if ( interactionDetectionElement != null ) {
 
             // CAUTION - MAY NOT BE THERE - MAY BE A LIST
             final Element interactionDetectionXrefElement = DOMUtil.getFirstElement( interactionDetectionElement, "xref" );
-            if( null != interactionDetectionXrefElement ) {
+            if ( null != interactionDetectionXrefElement ) {
                 XrefTag interactionXref = XrefParser.getXrefByDb( interactionDetectionXrefElement,
                                                                   Constants.PSI_DB_SHORTLABEL );
                 try {
@@ -165,10 +166,10 @@ public class ExperimentDescriptionParser {
         // CAUTION - MAY NOT BE THERE
         final Element participantDetectionElement = DOMUtil.getFirstElement( root, "participantDetection" );
         ParticipantDetectionTag participantDetection = null;
-        if( participantDetectionElement != null ) {
+        if ( participantDetectionElement != null ) {
             // CAUTION - MAY NOT BE THERE
             final Element participantDetectionXrefElement = DOMUtil.getFirstElement( participantDetectionElement, "xref" );
-            if( null != participantDetectionXrefElement ) {
+            if ( null != participantDetectionXrefElement ) {
                 XrefTag participantXref = XrefParser.getXrefByDb( participantDetectionXrefElement,
                                                                   Constants.PSI_DB_SHORTLABEL );
                 try {
@@ -185,7 +186,7 @@ public class ExperimentDescriptionParser {
         // CAUTION - MAY NOT BE THERE
         final Element annotationElement = DOMUtil.getFirstElement( root, "attributeList" );
         Collection annotations = null;
-        if( annotationElement != null ) {
+        if ( annotationElement != null ) {
             final NodeList someAttributes = annotationElement.getElementsByTagName( "attribute" );
             final int count = someAttributes.getLength();
             annotations = new ArrayList( count );
@@ -194,7 +195,7 @@ public class ExperimentDescriptionParser {
                 final Node entryNode = someAttributes.item( i );
                 AnnotationTag annotation = AnnotationParser.process( (Element) entryNode );
                 // only add annotation with text
-                if( annotation.hasText() ) {
+                if ( annotation.hasText() ) {
                     annotations.add( annotation );
                 }
             } // attributes

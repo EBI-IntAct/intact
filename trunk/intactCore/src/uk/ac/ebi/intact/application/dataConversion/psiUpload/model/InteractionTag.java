@@ -56,32 +56,28 @@ public final class InteractionTag {
     private final InteractionTypeTag interactionType;
 
     /**
-     * Reflects <experimentList>
-     * Collection of ExperimentDescriptionTag
+     * Reflects <experimentList> Collection of ExperimentDescriptionTag
      *
      * @see uk.ac.ebi.intact.application.dataConversion.psiUpload.model.ExperimentDescriptionTag
      */
     private final Collection experiments;
 
     /**
-     * Reflects <participantList>
-     * Collection of ProteinParticipantTag
+     * Reflects <participantList> Collection of ProteinParticipantTag
      *
      * @see uk.ac.ebi.intact.application.dataConversion.psiUpload.model.ProteinParticipantTag
      */
     private final Collection participants;
 
     /**
-     * Reflects <xref>
-     * Collection of XrefTag
+     * Reflects <xref> Collection of XrefTag
      *
      * @see uk.ac.ebi.intact.application.dataConversion.psiUpload.model.XrefTag
      */
     private final Collection xrefs;
 
     /**
-     * Reflects <attributeList>
-     * Collection of AnnotationTag
+     * Reflects <attributeList> Collection of AnnotationTag
      *
      * @see uk.ac.ebi.intact.application.dataConversion.psiUpload.model.AnnotationTag
      */
@@ -101,12 +97,12 @@ public final class InteractionTag {
                            final Collection annotations,
                            final ConfidenceTag confidence ) {
 
-        if( experiments == null ) {
+        if ( experiments == null ) {
             throw new IllegalArgumentException( "You must give a non null collection of experiments " +
                                                 "for an interaction " );
         }
 
-        if( experiments.size() == 0 ) {
+        if ( experiments.size() == 0 ) {
             throw new IllegalArgumentException( "You must give a non empty collection of experiments " +
                                                 "for an interaction " );
         }
@@ -114,26 +110,26 @@ public final class InteractionTag {
         // check the collection content
         for ( Iterator iterator = experiments.iterator(); iterator.hasNext(); ) {
             Object o = (Object) iterator.next();
-            if( !( o instanceof ExperimentDescriptionTag ) ) {
+            if ( !( o instanceof ExperimentDescriptionTag ) ) {
                 throw new IllegalArgumentException( "The experiment collection added to the interaction doesn't " +
                                                     "contains only ExperimentDescriptionTag." );
             }
         }
 
-        if( participants == null ) {
+        if ( participants == null ) {
             throw new IllegalArgumentException( "You must give a non null collection of participants " +
                                                 "for an interaction " );
         }
 
-        if( participants.size() < MIN_PARTICIPANTS ) {
+        if ( participants.size() < MIN_PARTICIPANTS ) {
 
-            if( participants.size() == 1 ) {
+            if ( participants.size() == 1 ) {
                 // search which is the given protein participant to facilitate to the user the reserch of
                 // that interaction in the XML file.
                 String uniprotID = null;
                 for ( Iterator iterator = participants.iterator(); iterator.hasNext(); ) {
                     Object o = (Object) iterator.next();
-                    if( o instanceof ProteinParticipantTag ) {
+                    if ( o instanceof ProteinParticipantTag ) {
                         uniprotID = ( (ProteinParticipantTag) o ).getProteinInteractor().getUniprotXref().getId();
                     }
                 }
@@ -149,23 +145,23 @@ public final class InteractionTag {
         // check the collection content
         for ( Iterator iterator = participants.iterator(); iterator.hasNext(); ) {
             Object o = (Object) iterator.next();
-            if( !( o instanceof ProteinParticipantTag ) ) {
+            if ( !( o instanceof ProteinParticipantTag ) ) {
                 throw new IllegalArgumentException( "The participants collection added to the interaction doesn't " +
                                                     "contains only ProteinParticipantTag: " + o.getClass().getName() + "." );
             }
         }
 
-        if( interactionType == null ) {
+        if ( interactionType == null ) {
             throw new IllegalArgumentException( "You must give a non null interactionType for an interaction " );
         }
 
-        if( xrefs == null ) {
+        if ( xrefs == null ) {
             this.xrefs = new ReadOnlyCollection( new ArrayList( 0 ) );
         } else {
             // check the collection content
             for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
                 Object o = (Object) iterator.next();
-                if( !( o instanceof XrefTag ) ) {
+                if ( !( o instanceof XrefTag ) ) {
                     throw new IllegalArgumentException( "The annotation collection added to the interaction doesn't " +
                                                         "contains only XrefTag: " + o.getClass().getName() + "." );
                 }
@@ -173,13 +169,13 @@ public final class InteractionTag {
             this.xrefs = new ReadOnlyCollection( xrefs );
         }
 
-        if( annotations == null ) {
+        if ( annotations == null ) {
             this.annotations = new ReadOnlyCollection( new ArrayList( 0 ) );
         } else {
             // check the collection content
             for ( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
                 Object o = (Object) iterator.next();
-                if( !( o instanceof AnnotationTag ) ) {
+                if ( !( o instanceof AnnotationTag ) ) {
                     throw new IllegalArgumentException( "The annotation collection added to the interaction doesn't " +
                                                         "contains only AnnotationTag: " + o.getClass().getName() + "." );
                 }
@@ -236,37 +232,37 @@ public final class InteractionTag {
     // Equality
 
     public boolean equals( Object o ) {
-        if( this == o ) {
+        if ( this == o ) {
             return true;
         }
-        if( !( o instanceof InteractionTag ) ) {
+        if ( !( o instanceof InteractionTag ) ) {
             return false;
         }
 
         final InteractionTag interactionTag = (InteractionTag) o;
 
-        if( !annotations.equals( interactionTag.annotations ) ) {
+        if ( !annotations.equals( interactionTag.annotations ) ) {
             return false;
         }
-        if( confidence != null ? !confidence.equals( interactionTag.confidence ) : interactionTag.confidence != null ) {
+        if ( confidence != null ? !confidence.equals( interactionTag.confidence ) : interactionTag.confidence != null ) {
             return false;
         }
-        if( !experiments.equals( interactionTag.experiments ) ) {
+        if ( !experiments.equals( interactionTag.experiments ) ) {
             return false;
         }
-        if( fullname != null ? !fullname.equals( interactionTag.fullname ) : interactionTag.fullname != null ) {
+        if ( fullname != null ? !fullname.equals( interactionTag.fullname ) : interactionTag.fullname != null ) {
             return false;
         }
-        if( !interactionType.equals( interactionTag.interactionType ) ) {
+        if ( !interactionType.equals( interactionTag.interactionType ) ) {
             return false;
         }
-        if( !participants.equals( interactionTag.participants ) ) {
+        if ( !participants.equals( interactionTag.participants ) ) {
             return false;
         }
-        if( shortlabel != null ? !shortlabel.equals( interactionTag.shortlabel ) : interactionTag.shortlabel != null ) {
+        if ( shortlabel != null ? !shortlabel.equals( interactionTag.shortlabel ) : interactionTag.shortlabel != null ) {
             return false;
         }
-        if( !xrefs.equals( interactionTag.xrefs ) ) {
+        if ( !xrefs.equals( interactionTag.xrefs ) ) {
             return false;
         }
 
@@ -312,7 +308,7 @@ public final class InteractionTag {
         buf.append( ",confidence=" ).append( confidence );
 
         buf.append( ",xrefs=" );
-        if( xrefs.size() == 0 ) {
+        if ( xrefs.size() == 0 ) {
             buf.append( "none" );
         }
         for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
@@ -321,7 +317,7 @@ public final class InteractionTag {
         }
 
         buf.append( ",annotations=" );
-        if( annotations.size() == 0 ) {
+        if ( annotations.size() == 0 ) {
             buf.append( "none" );
         }
         for ( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
