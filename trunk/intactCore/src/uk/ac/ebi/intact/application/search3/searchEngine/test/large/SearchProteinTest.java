@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.application.search3.searchEngine.business.dao.SearchDAO;
 import uk.ac.ebi.intact.application.search3.searchEngine.business.dao.SearchDAOImpl;
 import uk.ac.ebi.intact.application.search3.searchEngine.lucene.IntactAnalyzer;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Protein;
 
@@ -55,8 +56,9 @@ public class SearchProteinTest extends TestCase {
     /**
      * Sets up the test fixture. Called before every test case method.
      */
-    protected void setUp() {
-        SearchDAO dao = new SearchDAOImpl();
+    protected void setUp() throws IntactException {
+        IntactHelper helper = new IntactHelper();        
+        SearchDAO dao = new SearchDAOImpl(helper);
         engine = new SearchEngineImpl(new IntactAnalyzer(), new File("indexLarge"), dao, null);
     }
 
