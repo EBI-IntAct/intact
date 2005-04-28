@@ -7,7 +7,7 @@ package uk.ac.ebi.intact.application.dataConversion.psiUpload.parser;
 
 import org.w3c.dom.Element;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.AnnotationTag;
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.DOMUtil;
+import uk.ac.ebi.intact.application.dataConversion.util.DOMUtil;
 
 /**
  * That class reflects what is needed to create an IntAct <code>Annotation</code>.

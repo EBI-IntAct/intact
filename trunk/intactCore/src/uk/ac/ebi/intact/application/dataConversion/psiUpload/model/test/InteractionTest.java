@@ -16,7 +16,7 @@ import java.util.Collection;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -32,8 +32,7 @@ public class InteractionTest extends TestCase {
     }
 
     /**
-     * Returns this test suite. Reflection is used here to add all
-     * the testXXX() methods to the suite.
+     * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
      */
     public static Test suite() {
         return new TestSuite( InteractionTest.class );
@@ -125,7 +124,7 @@ public class InteractionTest extends TestCase {
         AnnotationTag annotation = new AnnotationTag( "expressedIn", "12345:biosource" );
         ExpressedInTag expressedIn = new ExpressedInTag( annotation );
 
-        ProteinParticipantTag proteinParticipant = new ProteinParticipantTag( proteinInteractor, "bait", expressedIn );
+        ProteinParticipantTag proteinParticipant = new ProteinParticipantTag( proteinInteractor, "bait", expressedIn, null, null, null );
 
         return proteinParticipant;
     }
@@ -136,7 +135,7 @@ public class InteractionTest extends TestCase {
 
         ProteinInteractorTag proteinInteractor = new ProteinInteractorTag( xrefUniprot, null );
 
-        ProteinParticipantTag proteinParticipant = new ProteinParticipantTag( proteinInteractor, "prey", null );
+        ProteinParticipantTag proteinParticipant = new ProteinParticipantTag( proteinInteractor, "prey", null, null, null, null );
 
         return proteinParticipant;
     }

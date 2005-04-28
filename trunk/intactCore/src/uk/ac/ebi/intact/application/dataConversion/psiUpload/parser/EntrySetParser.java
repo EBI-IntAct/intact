@@ -18,7 +18,7 @@ import java.util.Collection;
 
 /**
  * That class is parsing a set of Entry.
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -28,11 +28,12 @@ public final class EntrySetParser {
      * Parse an &lt;entrySet&gt;
      *
      * @param entrySet the entrySet to parse.
+     *
      * @return the result of the parsing of that entrySet.
      */
     public EntrySetTag process( Element entrySet ) {
 
-        if( false == "entrySet".equals( entrySet.getNodeName() ) ) {
+        if ( false == "entrySet".equals( entrySet.getNodeName() ) ) {
             MessageHolder.getInstance().addParserMessage( new Message( entrySet, "ERROR - We should be in entrySet tag." ) );
         }
 
@@ -43,12 +44,13 @@ public final class EntrySetParser {
         for ( int i = 0; i < someEntries.getLength(); i++ ) {
             Node entryNode = someEntries.item( i );
             final EntryTag entry = EntryParser.process( (Element) entryNode );
-            if( entry == null ) {
+            if ( entry == null ) {
 
             } else {
                 entries.add( entry );
             }
         } // entries
+
 
         return new EntrySetTag( entries );
     }

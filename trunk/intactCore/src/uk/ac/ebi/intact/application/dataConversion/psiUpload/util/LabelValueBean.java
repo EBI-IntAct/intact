@@ -7,7 +7,7 @@ package uk.ac.ebi.intact.application.dataConversion.psiUpload.util;
 
 /**
  * That class is used internally to return a mapping id -> created object
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */

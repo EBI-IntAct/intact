@@ -18,7 +18,7 @@ import java.util.Map;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -39,13 +39,13 @@ public final class ParticipantDetectionChecker {
 
         final String id = psiDef.getId();
 
-        if( !cache.keySet().contains( id ) ) {
+        if ( !cache.keySet().contains( id ) ) {
             CvIdentification cvIdentification = null;
 
             try {
                 cvIdentification = (CvIdentification) helper.getObjectByXref( CvIdentification.class, id );
 
-                if( cvIdentification == null ) {
+                if ( cvIdentification == null ) {
                     MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find CvIdentification for the PSI definition: " + id ) );
                 } else {
                     System.out.println( "Found ParticipantDetection " + id + " as " + cvIdentification.getShortLabel() );

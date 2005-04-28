@@ -9,7 +9,7 @@ import java.util.Iterator;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -18,7 +18,7 @@ public final class ReadOnlyIterator implements Iterator {
     private Iterator iterator;
 
     public ReadOnlyIterator( Iterator iterator ) {
-        if( iterator == null ) {
+        if ( iterator == null ) {
             throw new IllegalArgumentException( "You must give a non null Iterator." );
         }
         this.iterator = iterator;

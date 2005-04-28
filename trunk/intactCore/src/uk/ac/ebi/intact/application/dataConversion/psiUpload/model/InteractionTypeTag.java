@@ -35,11 +35,11 @@ public final class InteractionTypeTag {
 
     public InteractionTypeTag( final XrefTag psiDefinition ) {
 
-        if( psiDefinition == null ) {
+        if ( psiDefinition == null ) {
             throw new IllegalArgumentException( "You must give a non null psi definition for an interactionType" );
         }
 
-        if( !Constants.PSI_DB_SHORTLABEL.equals( psiDefinition.getDb() ) ) {
+        if ( !Constants.PSI_DB_SHORTLABEL.equals( psiDefinition.getDb() ) ) {
             throw new IllegalArgumentException( "You must give a psi-mi Xref, not " + psiDefinition.getDb() +
                                                 " for an InteractionType" );
         }
@@ -60,16 +60,16 @@ public final class InteractionTypeTag {
     // Equality
     
     public boolean equals( final Object o ) {
-        if( this == o ) {
+        if ( this == o ) {
             return true;
         }
-        if( !( o instanceof InteractionTypeTag ) ) {
+        if ( !( o instanceof InteractionTypeTag ) ) {
             return false;
         }
 
         final InteractionTypeTag interactionTypeTag = (InteractionTypeTag) o;
 
-        if( !psiDefinition.equals( interactionTypeTag.psiDefinition ) ) {
+        if ( !psiDefinition.equals( interactionTypeTag.psiDefinition ) ) {
             return false;
         }
 

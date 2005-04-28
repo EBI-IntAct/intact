@@ -7,6 +7,8 @@ package uk.ac.ebi.intact.application.dataConversion.psiUpload.checker;
 
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.gui.Monitor;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.*;
+import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
+import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.util.BioSourceFactory;
 import uk.ac.ebi.intact.util.UpdateProteinsI;
@@ -16,7 +18,7 @@ import java.util.Iterator;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -27,10 +29,6 @@ public final class InteractionChecker {
                               final UpdateProteinsI proteinFactory,
                               final BioSourceFactory bioSourceFactory,
                               final Monitor monitor ) {
-
-        // TODO do we play with that ?
-//        final String shortlabel = interaction.getShortlabel();
-//        final String fullname = interaction.getFullname();
 
         // experiment
         Collection experiments = interaction.getExperiments();
@@ -45,16 +43,16 @@ public final class InteractionChecker {
         for ( Iterator iterator = participants.iterator(); iterator.hasNext(); ) {
             ProteinParticipantTag proteinParticipant = (ProteinParticipantTag) iterator.next();
 
-            if( monitor != null ) {
+            if ( monitor != null ) {
                 ProteinInteractorTag proteinInteractor = proteinParticipant.getProteinInteractor();
                 String uniprotID = null;
                 String taxid = null;
 
-                if( proteinInteractor != null && proteinInteractor.getUniprotXref() != null ) {
+                if ( proteinInteractor != null && proteinInteractor.getUniprotXref() != null ) {
                     uniprotID = proteinInteractor.getUniprotXref().getId();
                 }
 
-                if( proteinInteractor != null && proteinInteractor.getOrganism() != null ) {
+                if ( proteinInteractor != null && proteinInteractor.getOrganism() != null ) {
                     taxid = proteinInteractor.getOrganism().getTaxId();
                 } else {
                     taxid = "taxid not specified";
@@ -68,7 +66,7 @@ public final class InteractionChecker {
 
             // check the expressedIn if it is there.
             ExpressedInTag expressedIn = proteinParticipant.getExpressedIn();
-            if( null != expressedIn ) {
+            if ( null != expressedIn ) {
                 ExpressedInChecker.check( expressedIn, helper );
             }
         }
@@ -86,9 +84,20 @@ public final class InteractionChecker {
 
         // annotations
         final Collection annotations = interaction.getAnnotations();
+        int countKd = 0;
         for ( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
             AnnotationTag annotation = (AnnotationTag) iterator.next();
+            if ( annotation.isDissociationConstant() ) {
+                countKd++;
+            }
             AnnotationChecker.check( annotation, helper );
+        }
+
+        // 0 or 1 dissociation constant can be specified, no more.
+        if ( countKd > 1 ) {
+            // TODO find a way to indicate to the user which interaction we are talking about
+            MessageHolder.getInstance().addCheckerMessage( new Message( "More than one dissociation constant specified " +
+                                                                        "in an Interaction (one at most is allowed)." ) );
         }
     }
 }

@@ -17,7 +17,7 @@ import java.util.Map;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -35,7 +35,7 @@ public final class AnnotationChecker {
 
         final String type = annotation.getType();
 
-        if( "expressedIn".equalsIgnoreCase( type ) ) {
+        if ( annotation.isExpressedIn() ) {
             /**
              * HACK: in order to get PSI to fit the IntAct model,
              * ----  we 'stuff' the expressedIn value (as a bioSource shortlabel)
@@ -52,19 +52,40 @@ public final class AnnotationChecker {
              *      </attributeList>
              */
 
-            // check the protein ID
+            // TODO check the protein ID
 
+            // TODO Check that the BioSource exists
 
-            // Check that the BioSource exists
+        } else if ( annotation.isDissociationConstant() ) {
+            /**
+             * HACK: in order to get PSI to fit the IntAct model,
+             * ----  we 'stuff' the Kd value in a comment of the interaction as follow
+             *
+             *      eg.
+             *          here a Kd with the attached value 32519.82
+             *          Bear in mind this is a float value.
+             *
+             *      ... code example ...
+             *
+             *      <attributeList>
+             *         <attribute name="dissociation constant">32519.82</attribute>
+             *      </attributeList>
+             */
 
+            try {
+                Float.parseFloat( annotation.getText() );
+            } catch ( NumberFormatException e ) {
+                MessageHolder.getInstance().addCheckerMessage( new Message( "The given dissociation constant (Kd) " +
+                                                                            "wasn't a float value. " + annotation ) );
+            }
 
-        } else if( !cache.keySet().contains( type ) ) {
+        } else if ( !cache.keySet().contains( type ) ) {
             CvTopic cvTopic = null;
 
             try {
                 cvTopic = (CvTopic) helper.getObjectByLabel( CvTopic.class, type );
 
-                if( cvTopic == null ) {
+                if ( cvTopic == null ) {
                     MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find CvTopic having the " +
                                                                                 "shortlabel: " + type ) );
                 } else {

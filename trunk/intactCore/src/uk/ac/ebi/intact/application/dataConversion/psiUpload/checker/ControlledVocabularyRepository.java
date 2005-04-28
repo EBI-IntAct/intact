@@ -56,14 +56,14 @@ public class ControlledVocabularyRepository {
     // Init
     private static void initialise( final IntactHelper helper ) {
 
-        if( initialisationDone == false ) {
+        if ( initialisationDone == false ) {
 
             ////////////////////////////
             // author confidence
             String name = "author-confidence";
             try {
                 authorConfidenceTopic = (CvTopic) helper.getObjectByLabel( CvTopic.class, name );
-                if( authorConfidenceTopic == null ) {
+                if ( authorConfidenceTopic == null ) {
                     final String msg = "Could not find CvTopic by shortlabel: " + name;
                     MessageHolder.getInstance().addCheckerMessage( new Message( msg ) );
                 } else {
@@ -88,7 +88,7 @@ public class ControlledVocabularyRepository {
 
         try {
             qualifier = (CvXrefQualifier) helper.getObjectByLabel( CvXrefQualifier.class, name );
-            if( qualifier == null ) {
+            if ( qualifier == null ) {
                 final String msg = "Could not find CvXrefQualifier by shortlabel: " + name;
                 MessageHolder.getInstance().addCheckerMessage( new Message( msg ) );
             } else {

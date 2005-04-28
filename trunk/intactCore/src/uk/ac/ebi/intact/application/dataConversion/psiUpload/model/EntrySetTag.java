@@ -24,8 +24,7 @@ public final class EntrySetTag {
     private static final String NEW_LINE = System.getProperty( "line.separator" );
 
     /**
-     * Collection of EntryTag.
-     * Collection of EntryTag
+     * Collection of EntryTag. Collection of EntryTag
      *
      * @see uk.ac.ebi.intact.application.dataConversion.psiUpload.model.EntryTag
      */
@@ -36,18 +35,18 @@ public final class EntrySetTag {
 
     public EntrySetTag( final Collection entries ) {
 
-        if( entries == null ) {
+        if ( entries == null ) {
             throw new IllegalArgumentException( "You must give a non null Collection of entry for an EntryList" );
         }
 
-        if( entries.size() == 0 ) {
+        if ( entries.size() == 0 ) {
             throw new IllegalArgumentException( "You must give a non empty Collection of entry for an EntryList" );
         }
 
         // check the collection content
         for ( Iterator iterator = entries.iterator(); iterator.hasNext(); ) {
             Object o = (Object) iterator.next();
-            if( !( o instanceof EntryTag ) ) {
+            if ( !( o instanceof EntryTag ) ) {
                 final String name = ( o == null ? "null" : o.getClass().getName() );
                 throw new IllegalArgumentException( "The entry collection added to the EntrySet doesn't " +
                                                     "contains only EntryTag (eg. " + name + ")." );
@@ -70,16 +69,16 @@ public final class EntrySetTag {
     // Equality
 
     public boolean equals( final Object o ) {
-        if( this == o ) {
+        if ( this == o ) {
             return true;
         }
-        if( !( o instanceof EntrySetTag ) ) {
+        if ( !( o instanceof EntrySetTag ) ) {
             return false;
         }
 
         final EntrySetTag entrySetTag = (EntrySetTag) o;
 
-        if( !entries.equals( entrySetTag.entries ) ) {
+        if ( !entries.equals( entrySetTag.entries ) ) {
             return false;
         }
 

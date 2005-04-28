@@ -14,12 +14,9 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * That class make the data persitent in the Intact database.
- * <br>
- * That class takes care of a set of experiments.
- * <br>
+ * That class make the data persitent in the Intact database. <br> That class takes care of a set of experiments. <br>
  * It assumes that the data are already parsed and passed the validity check successfully.
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */

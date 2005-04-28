@@ -42,7 +42,7 @@ public final class OrganismTag {
     // Constructors
 
     public OrganismTag( final String taxId ) {
-        if( taxId == null || taxId.trim().equals( "" ) ) {
+        if ( taxId == null || taxId.trim().equals( "" ) ) {
             throw new IllegalArgumentException( "You must give a non null/empty taxId for a hostOrganism" );
         }
 
@@ -83,22 +83,22 @@ public final class OrganismTag {
     // Equality
 
     public boolean equals( Object o ) {
-        if( this == o ) {
+        if ( this == o ) {
             return true;
         }
-        if( !( o instanceof OrganismTag ) ) {
+        if ( !( o instanceof OrganismTag ) ) {
             return false;
         }
 
         final OrganismTag organismTag = (OrganismTag) o;
 
-        if( cellType != null ? !cellType.equals( organismTag.cellType ) : organismTag.cellType != null ) {
+        if ( cellType != null ? !cellType.equals( organismTag.cellType ) : organismTag.cellType != null ) {
             return false;
         }
-        if( !taxId.equals( organismTag.taxId ) ) {
+        if ( !taxId.equals( organismTag.taxId ) ) {
             return false;
         }
-        if( tissue != null ? !tissue.equals( organismTag.tissue ) : organismTag.tissue != null ) {
+        if ( tissue != null ? !tissue.equals( organismTag.tissue ) : organismTag.tissue != null ) {
             return false;
         }
 
@@ -119,13 +119,13 @@ public final class OrganismTag {
         buf.append( "HostOrganismTag" );
         buf.append( "{taxId=" ).append( taxId );
         buf.append( ", tissue=" );
-        if( null == tissue ) {
+        if ( null == tissue ) {
             buf.append( '-' );
         } else {
             buf.append( tissue.getPsiDefinition().getId() );
         }
         buf.append( ", cellType=" );
-        if( null == cellType ) {
+        if ( null == cellType ) {
             buf.append( '-' );
         } else {
             buf.append( cellType.getPsiDefinition().getId() );

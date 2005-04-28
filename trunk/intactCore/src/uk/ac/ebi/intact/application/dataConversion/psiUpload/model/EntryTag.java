@@ -49,17 +49,17 @@ public final class EntryTag {
                      final Map proteinInteractors,
                      final Collection interactions ) {
 
-        if( interactions == null ) {
+        if ( interactions == null ) {
             throw new IllegalArgumentException( "You must give a non null Collection of interactions for an Entry" );
         }
 
-        if( interactions.size() == 0 ) {
+        if ( interactions.size() == 0 ) {
             throw new IllegalArgumentException( "You must give a non empty Collection of interactions for an Entry" );
         }
 
         for ( Iterator iterator = interactions.iterator(); iterator.hasNext(); ) {
             Object o = (Object) iterator.next();
-            if( !( o instanceof InteractionTag ) ) {
+            if ( !( o instanceof InteractionTag ) ) {
                 throw new IllegalArgumentException( "The Interaction collection added to the entry doesn't " +
                                                     "contains only InteractionTag: " + o.getClass().getName() + "." );
             }
@@ -67,13 +67,13 @@ public final class EntryTag {
 
         this.interactions = new ReadOnlyCollection( interactions );
 
-        if( experimentDescriptions == null ) {
+        if ( experimentDescriptions == null ) {
             this.experimentDescriptions = new ReadOnlyHashMap( new HashMap( 0 ) );
         } else {
 
             for ( Iterator iterator = experimentDescriptions.values().iterator(); iterator.hasNext(); ) {
                 Object o = (Object) iterator.next();
-                if( !( o instanceof ExperimentDescriptionTag ) ) {
+                if ( !( o instanceof ExperimentDescriptionTag ) ) {
                     throw new IllegalArgumentException( "The ExperimentDescription collection added to the entry doesn't " +
                                                         "contains only ExperimentDescriptionTag: " + o.getClass().getName() + "." );
                 }
@@ -82,13 +82,13 @@ public final class EntryTag {
             this.experimentDescriptions = new ReadOnlyHashMap( experimentDescriptions );
         }
 
-        if( experimentDescriptions == null ) {
+        if ( experimentDescriptions == null ) {
             this.proteinInteractors = new ReadOnlyHashMap( new HashMap( 0 ) );
         } else {
 
             for ( Iterator iterator = proteinInteractors.values().iterator(); iterator.hasNext(); ) {
                 Object o = (Object) iterator.next();
-                if( !( o instanceof ProteinInteractorTag ) ) {
+                if ( !( o instanceof ProteinInteractorTag ) ) {
                     throw new IllegalArgumentException( "The ProteinInteractor collection added to the entry doesn't " +
                                                         "contains only ProteinInteractorTag: " + o.getClass().getName() + "." );
                 }
@@ -103,10 +103,11 @@ public final class EntryTag {
     // Getters
 
     /**
-     * return an <code>ExperimentDescriptionTag</code> by id.
-     * Bear in mind that if you give a non existing id, you get back null.
+     * return an <code>ExperimentDescriptionTag</code> by id. Bear in mind that if you give a non existing id, you get
+     * back null.
      *
      * @param id the id referencing the wanted ExperimentDescriptionTag
+     *
      * @return an ExperimentDescriptionTag or null if the id is not found.
      */
     public ExperimentDescriptionTag getExperimentDescriptions( final String id ) {
@@ -114,10 +115,11 @@ public final class EntryTag {
     }
 
     /**
-     * return an <code>ProteinParticipantTag</code> by id.
-     * Bear in mind that if you give a non existing id, you get back null.
+     * return an <code>ProteinParticipantTag</code> by id. Bear in mind that if you give a non existing id, you get back
+     * null.
      *
      * @param id the id referencing the wanted ProteinParticipantTag
+     *
      * @return an ProteinParticipantTag or null if the id is not found.
      */
     public ProteinInteractorTag getProteinInteractors( final String id ) {
@@ -141,22 +143,22 @@ public final class EntryTag {
     // Equality
 
     public boolean equals( final Object o ) {
-        if( this == o ) {
+        if ( this == o ) {
             return true;
         }
-        if( !( o instanceof EntryTag ) ) {
+        if ( !( o instanceof EntryTag ) ) {
             return false;
         }
 
         final EntryTag entryTag = (EntryTag) o;
 
-        if( !experimentDescriptions.equals( entryTag.experimentDescriptions ) ) {
+        if ( !experimentDescriptions.equals( entryTag.experimentDescriptions ) ) {
             return false;
         }
-        if( !interactions.equals( entryTag.interactions ) ) {
+        if ( !interactions.equals( entryTag.interactions ) ) {
             return false;
         }
-        if( !proteinInteractors.equals( entryTag.proteinInteractors ) ) {
+        if ( !proteinInteractors.equals( entryTag.proteinInteractors ) ) {
             return false;
         }
 

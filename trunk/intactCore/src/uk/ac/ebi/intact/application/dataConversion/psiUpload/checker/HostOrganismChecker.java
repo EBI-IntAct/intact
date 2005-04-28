@@ -14,7 +14,7 @@ import uk.ac.ebi.intact.util.BioSourceFactory;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */

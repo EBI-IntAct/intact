@@ -10,7 +10,7 @@ import java.awt.*;
 
 /**
  * That class allows us to display the progress of .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -27,7 +27,7 @@ public class Monitor {
 
     public Monitor( final int max, final String name ) {
 
-        if( max <= 0 ) {
+        if ( max <= 0 ) {
             throw new IllegalArgumentException( "The count has to be greater than 0, you gave" + max + "." );
         }
 
@@ -86,7 +86,7 @@ public class Monitor {
 
     public void updateProteinProcessedCound( final int newCount ) {
 
-        if( progressBar == null ) {
+        if ( progressBar == null ) {
             throw new NullPointerException( "The progress bar hasn't been created." );
         }
 

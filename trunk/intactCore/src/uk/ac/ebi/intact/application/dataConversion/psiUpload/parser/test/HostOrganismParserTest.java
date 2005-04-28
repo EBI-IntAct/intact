@@ -19,15 +19,14 @@ import uk.ac.ebi.intact.util.test.mocks.MockInputStream;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
 public class HostOrganismParserTest extends ParserTest {
 
     /**
-     * Returns this test suite. Reflection is used here to add all
-     * the testXXX() methods to the suite.
+     * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
      */
     public static Test suite() {
         return new TestSuite( HostOrganismParserTest.class );
@@ -93,6 +92,22 @@ public class HostOrganismParserTest extends ParserTest {
         TissueTag tissue = bioSource.getTissue();
         assertNotNull( tissue );
         assertEquals( "MI:123", tissue.getPsiDefinition().getId() );
+        assertEquals( "1234", tissue.getShortlabel() );
+    }
+
+    public void testProcessWithMinimalTissue() {
+
+        HostOrganismTag bioSource = parse( MockXmlContent.HOST_ORGANISM_3b );
+
+        assertNotNull( bioSource );
+        assertEquals( "4932", bioSource.getTaxId() );
+
+        CellTypeTag cellType = bioSource.getCellType();
+        assertNull( cellType );
+
+        TissueTag tissue = bioSource.getTissue();
+        assertNotNull( tissue );
+        assertNull( tissue.getPsiDefinition() );
         assertEquals( "1234", tissue.getShortlabel() );
     }
 

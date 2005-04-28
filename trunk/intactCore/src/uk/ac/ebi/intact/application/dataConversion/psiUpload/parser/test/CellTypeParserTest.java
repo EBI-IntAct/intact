@@ -19,7 +19,7 @@ import uk.ac.ebi.intact.util.test.mocks.MockInputStream;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -35,8 +35,7 @@ public class CellTypeParserTest extends TestCase {
     }
 
     /**
-     * Returns this test suite. Reflection is used here to add all
-     * the testXXX() methods to the suite.
+     * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
      */
     public static Test suite() {
         return new TestSuite( CellTypeParserTest.class );
@@ -58,7 +57,6 @@ public class CellTypeParserTest extends TestCase {
 
         assertNotNull( cellType );
 
-        assertNotNull( cellType );
         XrefTag definition = cellType.getPsiDefinition();
         assertNotNull( definition );
         assertEquals( "MI:987", definition.getId() );

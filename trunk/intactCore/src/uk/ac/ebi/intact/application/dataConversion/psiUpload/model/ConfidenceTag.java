@@ -6,8 +6,8 @@
 package uk.ac.ebi.intact.application.dataConversion.psiUpload.model;
 
 /**
- * That class reflects what is needed to create a specific IntAct <code>Annotation</code> related to the
- * interaction confidence.
+ * That class reflects what is needed to create a specific IntAct <code>Annotation</code> related to the interaction
+ * confidence.
  * <p/>
  * <pre>
  * <p/>
@@ -29,11 +29,11 @@ public final class ConfidenceTag {
 
     public ConfidenceTag( String unit, String value ) {
 
-        if( unit == null ) {
+        if ( unit == null ) {
             throw new IllegalArgumentException( "You must give a non null unit for an interaction's confidence" );
         }
 
-        if( value == null ) {
+        if ( value == null ) {
             throw new IllegalArgumentException( "You must give a non null value for an interaction's confidence" );
         }
 
@@ -58,19 +58,19 @@ public final class ConfidenceTag {
     // Equality
 
     public boolean equals( Object o ) {
-        if( this == o ) {
+        if ( this == o ) {
             return true;
         }
-        if( !( o instanceof ConfidenceTag ) ) {
+        if ( !( o instanceof ConfidenceTag ) ) {
             return false;
         }
 
         final ConfidenceTag confidenceTag = (ConfidenceTag) o;
 
-        if( !unit.equals( confidenceTag.unit ) ) {
+        if ( !unit.equals( confidenceTag.unit ) ) {
             return false;
         }
-        if( !value.equals( confidenceTag.value ) ) {
+        if ( !value.equals( confidenceTag.value ) ) {
             return false;
         }
 

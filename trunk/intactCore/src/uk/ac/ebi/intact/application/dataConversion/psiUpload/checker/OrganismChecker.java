@@ -14,14 +14,14 @@ import uk.ac.ebi.intact.util.BioSourceFactory;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
 public final class OrganismChecker extends AbstractOrganismChecker {
 
     public static BioSource getBioSource( final OrganismTag organism ) {
-        if( organism == null ) {
+        if ( organism == null ) {
             return null;
         }
         final String taxid = organism.getTaxId();

@@ -11,7 +11,7 @@ import java.util.Set;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -20,7 +20,7 @@ public class ReadOnlyHashMap implements Map {
     private Map map;
 
     public ReadOnlyHashMap( Map map ) {
-        if( map == null ) {
+        if ( map == null ) {
             throw new IllegalArgumentException( "You must give a non null Map." );
         }
         this.map = map;

@@ -19,12 +19,10 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * That class make the data persitent in the Intact database.
- * <br>
- * That class takes care of an Experiment including its Interactions, Proteins, Components...
- * <br>
- * It assumes that the data are already parsed and passed the validity check successfully.
- * 
+ * That class make the data persitent in the Intact database. <br> That class takes care of an Experiment including its
+ * Interactions, Proteins, Components... <br> It assumes that the data are already parsed and passed the validity check
+ * successfully.
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -49,7 +47,7 @@ public final class EntryPersister {
 
         boolean guiEnabled = CommandLineOptions.getInstance().isGuiEnabled();
         Monitor monitor = null;
-        if( guiEnabled ) {
+        if ( guiEnabled ) {
             monitor = new Monitor( interactions.size(), "Interaction creation" );
             monitor.setStatus( "Waiting for the persister to start..." );
             monitor.show();
@@ -60,14 +58,14 @@ public final class EntryPersister {
             try {
                 Collection createdInteractions = InteractionPersister.persist( interaction, helper );
 
-                if( guiEnabled ) {
+                if ( guiEnabled ) {
                     StringBuffer sb = new StringBuffer( 64 );
                     for ( Iterator iterator1 = createdInteractions.iterator(); iterator1.hasNext(); ) {
                         Interaction interaction1 = (Interaction) iterator1.next();
                         sb.append( interaction1.getShortLabel() ).append( ' ' );
                     }
                     final String status;
-                    if( sb.length() > 0 ) {
+                    if ( sb.length() > 0 ) {
                         status = sb.append( "created" ).toString();
                     } else {
                         status = "No interaction created";
@@ -82,11 +80,11 @@ public final class EntryPersister {
                 System.err.println( "When the error occured, we were in: " + interaction );
                 throw e;
             }
-            if( guiEnabled ) {
+            if ( guiEnabled ) {
                 monitor.updateProteinProcessedCound( ++current );
             }
         }
-        if( guiEnabled ) {
+        if ( guiEnabled ) {
             monitor.hide();
         }
     }

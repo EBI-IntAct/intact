@@ -5,13 +5,12 @@
  */
 package uk.ac.ebi.intact.application.dataConversion.psiUpload.model;
 
+import uk.ac.ebi.intact.application.dataConversion.PsiConstants;
+
 /**
- * That class .
- * <attributeList>
- * <attribute name="comment">CAV1 was expressed as GST fusion in E. coli.</attribute>
- * <attribute name="comment">CAV1 was expressed in MDCK cells.</attribute>
- * <attribute name="remark">aa 61-101 of CAV1 are sufficient</attribute>
- * </attributeList>
+ * That class . <attributeList> <attribute name="comment">CAV1 was expressed as GST fusion in E. coli.</attribute>
+ * <attribute name="comment">CAV1 was expressed in MDCK cells.</attribute> <attribute name="remark">aa 61-101 of CAV1
+ * are sufficient</attribute> </attributeList>
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
@@ -27,7 +26,7 @@ public final class AnnotationTag {
 
     public AnnotationTag( final String type, final String text ) {
 
-        if( type == null || "".equals( type ) ) {
+        if ( type == null || "".equals( type ) ) {
             throw new IllegalArgumentException( "You must give a non null/empty type for an annotation" );
         }
 
@@ -37,7 +36,7 @@ public final class AnnotationTag {
 //        }
 
         this.type = type;
-        this.text = text;
+        this.text = ( text == null ? text : text.trim() );
     }
 
 
@@ -57,23 +56,36 @@ public final class AnnotationTag {
     }
 
 
+    ////////////////////
+    // Utility methods
+
+    public boolean isDissociationConstant() {
+        return ( PsiConstants.KD_ATTRIBUTE_NAME.equalsIgnoreCase( type )
+                 || PsiConstants.DISSOCIATION_CONSTANT_ATTRIBUTE_NAME.equalsIgnoreCase( type ) );
+    }
+
+    public boolean isExpressedIn() {
+        return PsiConstants.EXPRESSED_IN_ATTRIBUTE_NAME.equalsIgnoreCase( type );
+    }
+
+
     //////////////////////////////////
     // Equality
 
     public boolean equals( final Object o ) {
-        if( this == o ) {
+        if ( this == o ) {
             return true;
         }
-        if( !( o instanceof AnnotationTag ) ) {
+        if ( !( o instanceof AnnotationTag ) ) {
             return false;
         }
 
         final AnnotationTag annotationTag = (AnnotationTag) o;
 
-        if( !text.equals( annotationTag.text ) ) {
+        if ( !text.equals( annotationTag.text ) ) {
             return false;
         }
-        if( !type.equals( annotationTag.type ) ) {
+        if ( !type.equals( annotationTag.type ) ) {
             return false;
         }
 

@@ -18,7 +18,7 @@ import java.util.Map;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -39,13 +39,13 @@ public class InteractionTypeChecker {
 
         final String id = psiDef.getId();
 
-        if( !cache.keySet().contains( id ) ) {
+        if ( !cache.keySet().contains( id ) ) {
             CvInteractionType cvInteractionType = null;
 
             try {
                 cvInteractionType = (CvInteractionType) helper.getObjectByXref( CvInteractionType.class, id );
 
-                if( cvInteractionType == null ) {
+                if ( cvInteractionType == null ) {
                     MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find CvInteractionType " +
                                                                                 "for the PSI definition: " + id ) );
                 } else {

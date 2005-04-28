@@ -34,11 +34,11 @@ public final class ParticipantDetectionTag {
 
     public ParticipantDetectionTag( final XrefTag psiDefinition ) {
 
-        if( psiDefinition == null ) {
+        if ( psiDefinition == null ) {
             throw new IllegalArgumentException( "You must give a non null psi definition for an participantDetection" );
         }
 
-        if( !Constants.PSI_DB_SHORTLABEL.equals( psiDefinition.getDb() ) ) {
+        if ( !Constants.PSI_DB_SHORTLABEL.equals( psiDefinition.getDb() ) ) {
             throw new IllegalArgumentException( "You must give a psi-mi Xref, not " + psiDefinition.getDb() +
                                                 " for an ParticipantDetection" );
         }
@@ -59,16 +59,16 @@ public final class ParticipantDetectionTag {
     // Equality
     
     public boolean equals( final Object o ) {
-        if( this == o ) {
+        if ( this == o ) {
             return true;
         }
-        if( !( o instanceof ParticipantDetectionTag ) ) {
+        if ( !( o instanceof ParticipantDetectionTag ) ) {
             return false;
         }
 
         final ParticipantDetectionTag participantDetectionTag = (ParticipantDetectionTag) o;
 
-        if( !psiDefinition.equals( participantDetectionTag.psiDefinition ) ) {
+        if ( !psiDefinition.equals( participantDetectionTag.psiDefinition ) ) {
             return false;
         }
 

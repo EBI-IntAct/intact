@@ -18,7 +18,7 @@ import java.util.Map;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -36,26 +36,26 @@ public final class ExpressedInChecker {
     public static void check( final ExpressedInTag expressedIn,
                               final IntactHelper helper ) {
 
-        if( expressedIn == null ) {
+        if ( expressedIn == null ) {
             throw new IllegalArgumentException( "Could not check ExpressedInTag if the given parameter is null" );
         }
         String shortlabel = expressedIn.getBioSourceShortlabel();
 
-        if( !cache.keySet().contains( shortlabel ) ) {
+        if ( !cache.keySet().contains( shortlabel ) ) {
             BioSource bioSource = null;
             try {
 
                 Collection bioSources = helper.search( BioSource.class.getName(), "shortlabel", shortlabel );
 
-                if( bioSources.size() == 1 ) {
+                if ( bioSources.size() == 1 ) {
                     // TODO could be a problem if we want to use a biosource that has cell type [and/or] tissue.
                     System.out.println( "Found ExpressedIn Biosource having the shortlabel: " + shortlabel );
                     bioSource = (BioSource) bioSources.iterator().next();
 
-                } else if( bioSources.size() > 0 ) {
+                } else if ( bioSources.size() > 0 ) {
                     MessageHolder.getInstance().addCheckerMessage( new Message( "Found more than one BioSource (expressedIn) " +
                                                                                 "having the shortlabel: " + shortlabel ) );
-                } else if( bioSources.size() == 0 ) {
+                } else if ( bioSources.size() == 0 ) {
                     MessageHolder.getInstance().addCheckerMessage( new Message( "Found no BioSource (expressedIn) " +
                                                                                 "having the shortlabel: " + shortlabel ) );
                 }

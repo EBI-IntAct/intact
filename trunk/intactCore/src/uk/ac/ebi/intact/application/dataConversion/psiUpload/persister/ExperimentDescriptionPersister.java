@@ -19,12 +19,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * That class make the data persitent in the Intact database.
- * <br>
- * That class takes care of an Experiments object.
- * <br>
+ * That class make the data persitent in the Intact database. <br> That class takes care of an Experiments object. <br>
  * It assumes that the data are already parsed and passed the validity check successfully.
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -36,18 +33,16 @@ public class ExperimentDescriptionPersister {
 
 
     /**
-     * Make an ExperimentTag persistent as an Intact Experiemnt.
-     * <br>
-     * (1) check if the experiment is not existing in IntAct, if so, reuse it
-     * <br>
-     * (2) check if it has been made paersistent already, if so, reuse it.
-     * <br>
-     * (3) else, make it persistent.
+     * Make an ExperimentTag persistent as an Intact Experiemnt. <br> (1) check if the experiment is not existing in
+     * IntAct, if so, reuse it <br> (2) check if it has been made paersistent already, if so, reuse it. <br> (3) else,
+     * make it persistent.
      *
      * @param experimentDescription the data from which we want to make an Experiment persistent
      * @param helper                the access to the intact database
-     * @return either an already existing Experiment in IntAct or a brand new one created out of the data present
-     *         in the PSI file
+     *
+     * @return either an already existing Experiment in IntAct or a brand new one created out of the data present in the
+     *         PSI file
+     *
      * @throws IntactException
      */
     public static Experiment persist( final ExperimentDescriptionTag experimentDescription,
@@ -59,7 +54,7 @@ public class ExperimentDescriptionPersister {
 
         // (1) check if the experiment is not existing in IntAct, if so, reuse it
         experiment = ExperimentDescriptionChecker.getIntactExperiment( shortlabel );
-        if( experiment != null ) {
+        if ( experiment != null ) {
             // we made the choice to trust the IntAct database content, hence not to alter it.
             // altimately, this can be manually edited through the editor afterward.
             return experiment;
@@ -69,7 +64,7 @@ public class ExperimentDescriptionPersister {
         // (2) check if it has been made paersistent already, if so, reuse it.
         experiment = (Experiment) cache.get( shortlabel );
 
-        if( experiment != null ) {
+        if ( experiment != null ) {
             // already created ... reuse it !
             return experiment;
         }
@@ -138,7 +133,7 @@ public class ExperimentDescriptionPersister {
             // search for an annotation to re-use, instead of creating a new one.
             Annotation annotation = searchIntactAnnotation( annotationTag, helper );
 
-            if( annotation == null ) {
+            if ( annotation == null ) {
                 // doesn't exist, then create a new Annotation
                 annotation = new Annotation( helper.getInstitution(), cvTopic );
                 annotation.setAnnotationText( annotationTag.getText() );
@@ -178,7 +173,9 @@ public class ExperimentDescriptionPersister {
      *
      * @param annotationTag the description of the Annotation we are looking for.
      * @param helper        the access to the IntAct database
+     *
      * @return the found Annotation or null if not found.
+     *
      * @throws IntactException
      */
     private static Annotation searchIntactAnnotation( final AnnotationTag annotationTag,
@@ -190,10 +187,10 @@ public class ExperimentDescriptionPersister {
         Collection annotations = helper.search( Annotation.class.getName(), "annotationText", text );
         Annotation annotation = null;
 
-        if( annotations != null ) {
+        if ( annotations != null ) {
             for ( Iterator iterator = annotations.iterator(); iterator.hasNext() && annotation == null; ) {
                 Annotation anAnnotation = (Annotation) iterator.next();
-                if( annotationTag.getType().equals( anAnnotation.getCvTopic().getShortLabel() ) ) {
+                if ( annotationTag.getType().equals( anAnnotation.getCvTopic().getShortLabel() ) ) {
                     annotation = anAnnotation;
                 }
             }

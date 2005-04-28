@@ -8,18 +8,17 @@ package uk.ac.ebi.intact.application.dataConversion.psiUpload.parser;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.DOMUtil;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.LabelValueBean;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
+import uk.ac.ebi.intact.application.dataConversion.util.DOMUtil;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * That class deals with:
- * http://psidev.sourceforge.net/mi/xml/doc/MIF.html#element_experimentList_Link02BD0B20
- * 
+ * That class deals with: http://psidev.sourceforge.net/mi/xml/doc/MIF.html#element_experimentList_Link02BD0B20
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -49,9 +48,9 @@ public final class ExperimentListParser {
      */
     public void process( final Element element ) {
         final String name = element.getNodeName();
-        if( false == "entry".equals( name )
-            &&
-            false == "interaction".equals( name ) ) {
+        if ( false == "entry".equals( name )
+             &&
+             false == "interaction".equals( name ) ) {
             MessageHolder.getInstance().addParserMessage( new Message( element, "ERROR - We should be in either " +
                                                                                 "entry or interaction tag." ) );
             // TODO should we carry on here ? If the tag is not right ... the parsing can only fail !
@@ -59,7 +58,7 @@ public final class ExperimentListParser {
 
         final Element experimentList = DOMUtil.getFirstElement( element, "experimentList" );
 
-        if( experimentList != null ) {
+        if ( experimentList != null ) {
             final NodeList someExperiments = experimentList.getElementsByTagName( "experimentDescription" );
             final int count = someExperiments.getLength();
 
@@ -69,7 +68,7 @@ public final class ExperimentListParser {
                 final ExperimentDescriptionParser expDesc = new ExperimentDescriptionParser( this, (Element) experimentNode );
                 final LabelValueBean lvb = expDesc.process();
 
-                if( lvb != null ) {
+                if ( lvb != null ) {
                     experiments.put( lvb.getLabel(), lvb.getValue() );
                 }
             } // experiments

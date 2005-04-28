@@ -11,8 +11,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * Testsuite that is composed of the individual JUnit test suites. Any new test
- * suite should be added here.
+ * Testsuite that is composed of the individual JUnit test suites. Any new test suite should be added here.
  *
  * @author Sugath Mudali
  * @version $Id$
@@ -34,9 +33,12 @@ public class AllJUnitTests extends TestCase {
      * @return a suite containing tests.
      *         <p/>
      *         <pre>
-     *                                                                                                                 post: return != null
-     *                                                                                                                 post: return->forall(obj : Object | obj.oclIsTypeOf(TestSuite))
-     *                                                                                                                 </pre>
+     *
+     *                       post: return != null
+     *
+     *                       post: return->forall(obj : Object | obj.oclIsTypeOf(TestSuite))
+     *
+     *                       </pre>
      */
     public static Test suite() {
         final TestSuite suite = new TestSuite();
@@ -52,6 +54,10 @@ public class AllJUnitTests extends TestCase {
         suite.addTest( InteractionParserTest.suite() );
         suite.addTest( TissueParserTest.suite() );
         suite.addTest( CellTypeParserTest.suite() );
+        suite.addTest( LocationParserTest.suite() );
+        suite.addTest( FeatureParserTest.suite() );
+        suite.addTest( ConfidenceParserTest.suite() );
+
         return suite;
     }
 }

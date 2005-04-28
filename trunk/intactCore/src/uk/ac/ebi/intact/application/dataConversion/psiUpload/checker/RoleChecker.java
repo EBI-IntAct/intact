@@ -16,7 +16,7 @@ import java.util.Map;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -33,13 +33,13 @@ public final class RoleChecker {
     public static void check( final String role,
                               final IntactHelper helper ) {
 
-        if( !cache.keySet().contains( role ) ) {
+        if ( !cache.keySet().contains( role ) ) {
             CvComponentRole cvComponentRole = null;
             try {
 
-                if( !( "bait".equals( role ) ||
-                       "prey".equals( role ) ||
-                       "neutral".equals( role ) ) ) {
+                if ( !( "bait".equals( role ) ||
+                        "prey".equals( role ) ||
+                        "neutral".equals( role ) ) ) {
 
                     final String msg = "The role: " + role +
                                        " is not supported by PSI. It should be either bait, pery or neutral";
@@ -49,7 +49,7 @@ public final class RoleChecker {
 
                 cvComponentRole = (CvComponentRole) helper.getObjectByLabel( CvComponentRole.class, role );
 
-                if( cvComponentRole != null ) {
+                if ( cvComponentRole != null ) {
                     System.out.println( "Found CvComponentRole with shortlabel: " + role );
                 } else {
                     MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find CvComponentRole " +
