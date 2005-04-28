@@ -62,11 +62,11 @@
     <!-- Build working classpath -->
     <path id="project.class.path">
 
-        <!-- Currently no JAR file use in search -->
-        <!-- Project specific jar files. -->
-        <!--        <fileset dir="${lib.dir}">-->
-        <!--            <include name="**/*.jar"/>-->
-        <!--        </fileset>-->
+<!--         Currently no JAR file use in search -->
+<!--         Project specific jar files. -->
+<!--                <fileset dir="${lib.dir}">-->
+<!--                    <include name="**/*.jar"/>-->
+<!--                </fileset>-->
 
         <!-- Where the classes are compiled to. -->
         <pathelement path="${dest.dir}"/>
@@ -97,8 +97,10 @@
         <pathelement path="${httpunit.install.dir}/jars/xmlParserAPIs.jar"/>
 
         <!-- jar files specific for the advanced search-->
-        <pathelement path="${root.lib.dir}/lucene-1.4.3.jar"/>
+        <pathelement path="${intact.app.dir}/lib/lucene-1.4.3.jar"/>
         <pathelement path="${intact.app.dir}/lib/jimi.jar"/>
+        <pathelement path="${intact.app.dir}/lib/antlr.jar"/>
+        
 
         <fileset dir="${root.lib.dir}">
             <include name="junit.jar"/>
