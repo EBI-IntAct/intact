@@ -69,7 +69,7 @@ public class SingleResultViewBean {
             return "-";
         }
     }
-
+    
     public String getSearchName() {
         if (intactType.equalsIgnoreCase("Protein")) {
             return "Select by Protein";
@@ -82,6 +82,25 @@ public class SingleResultViewBean {
         }
         if (intactType.equalsIgnoreCase("Controlled vocabulary term")) {
             return "Select by Controlled vocabulary";
+        }
+        else {
+            return "-";
+        }
+    }
+
+    // inserted the following method (afrie)
+     public String getSearchObject() {
+        if (intactType.equalsIgnoreCase("Protein")) {
+            return "protein";
+        }
+        if (intactType.equalsIgnoreCase("Interaction")) {
+            return "interaction";
+        }
+        if (intactType.equalsIgnoreCase("Experiment")) {
+            return "experiment";
+        }
+        if (intactType.equalsIgnoreCase("Controlled vocabulary term")) {
+            return "cv";
         }
         else {
             return "-";
