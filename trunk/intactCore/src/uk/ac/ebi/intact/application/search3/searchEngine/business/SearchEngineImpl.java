@@ -96,7 +96,6 @@ public class SearchEngineImpl implements SearchEngine {
      *         the values are the objclass
      * @throws IntactException
      */
-    // todo public just for testing...
     public Map findObjectByLucene(final String luceneQuery, final int numberOfResults) throws IntactException {
 
         final Query query;
@@ -138,8 +137,9 @@ public class SearchEngineImpl implements SearchEngine {
             // into the map, that will be returned
             for (int i = 0; i != hits.length(); ++i) {
                 final Document doc = hits.doc(i);
-                logger.info("found doc: " + doc.toString());
+//                logger.info("found doc: " + doc.toString());
                 final String ac = doc.getField(SearchEngineConstants.AC).stringValue();
+                logger.info("found AC: " + ac);
                 final String objclass = doc.getField(SearchEngineConstants.OBJCLASS).stringValue();
                 searchKeys.put(ac, objclass);
             }
