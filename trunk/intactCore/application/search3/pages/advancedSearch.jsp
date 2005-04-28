@@ -239,7 +239,7 @@ function getRadioButton(radioButtonNS,radioButtonIE) {
 <body leftmargin="0" topmargin="0" style="background-color: rgb(255, 255, 255);" marginheight="0"
       marginwidth="0" onload="hideLists()">
 
-<html:form action="/advsearch" focus="searchObject">
+<html:form action="/advsearch">
 
 <%
     String errorMessage = (String) session.getAttribute(SearchConstants.ERROR_MESSAGE);
