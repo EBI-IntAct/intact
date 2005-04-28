@@ -22,6 +22,7 @@ import uk.ac.ebi.intact.application.search3.searchEngine.business.SearchEngineIm
 import uk.ac.ebi.intact.application.search3.searchEngine.business.dao.SearchDAOImpl;
 import uk.ac.ebi.intact.application.search3.searchEngine.lucene.IntactAnalyzer;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.util.PropertyLoader;
 
@@ -323,15 +324,19 @@ public class AdvancedSearchAction extends IntactBaseAction {
             value = (ArrayList) it.getValue();
             for (Iterator iterator = value.iterator(); iterator.hasNext();) {
                 obj = (AnnotatedObject) iterator.next();
-                System.out.println("Object: " + obj.getShortLabel());
-                labelList.add(obj.getShortLabel());
-                logger.info("Search result: " + obj.getShortLabel());
+//                System.out.println("Object: " + obj.getShortLabel());
+                if( obj != null){
+                    labelList.add(obj.getShortLabel());
+                    logger.info("Search result: " + obj.getShortLabel());
+                }else{
+                    System.out.println("null object? ");
+                    logger.error("null object?");
+                }
             }
         }
         //put a list of the shortlabels for highlighting into the request
         request.setAttribute(SearchConstants.HIGHLIGHT_LABELS_LIST, labelList);
 
-//         request.setAttribute(Constants.SQL_LIKE_STATEMENT, iqlStatement);
         // modifie the iqlStatement, so that it is better readable in the webpage
         iqlStatement = iqlStatement.replaceFirst("select", "<b>select</b>");
         iqlStatement = iqlStatement.replaceFirst("from", "<b>from</b>");
@@ -355,13 +360,19 @@ public class AdvancedSearchAction extends IntactBaseAction {
      * @throws IntactException
      */
     public Map estimateResults(String iqlQuery) throws IntactException {
+
+        IntactHelper helper = new IntactHelper();
         Map searchKeys = null;
-        SearchEngineImpl engine = new SearchEngineImpl(new IntactAnalyzer(), new File(indexPath), new SearchDAOImpl(), new IQLParserImpl());
+        SearchEngineImpl engine = new SearchEngineImpl(new IntactAnalyzer(), new File(indexPath), new SearchDAOImpl(helper), new IQLParserImpl());
         try {
             // get all hits out of the database
             searchKeys = engine.findObjectByIQL(iqlQuery);
         } catch (IntactException e) {
             throw new IntactException("Problems with finding objects by IQL", e);
+        }finally{
+            if(helper != null){
+                helper.closeStore();
+            }
         }
         return searchKeys;
     }
@@ -377,12 +388,17 @@ public class AdvancedSearchAction extends IntactBaseAction {
      */
     public Map getResults(Map searchKeys) throws IntactException {
         Map results = null;
-        SearchEngineImpl engine = new SearchEngineImpl(new IntactAnalyzer(), new File(indexPath), new SearchDAOImpl(), null);
+        IntactHelper helper = new IntactHelper();
+        SearchEngineImpl engine = new SearchEngineImpl(new IntactAnalyzer(), new File(indexPath), new SearchDAOImpl(helper), null);
         try {
             // retrieve the intact search objects in a map
             results = engine.getResult(searchKeys);
         } catch (IntactException e) {
             throw new IntactException("Problems with finding objects in the database", e);
+        }finally{
+            if(helper != null){
+                helper.closeStore();
+            }
         }
         return results;
     }
