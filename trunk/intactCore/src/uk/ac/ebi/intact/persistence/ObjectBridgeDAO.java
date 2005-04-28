@@ -1329,6 +1329,10 @@ public class ObjectBridgeDAO implements DAO {
         return broker.getCount(query);
     }
 
+    public Object getObjectByQuery(Query query) {
+        return broker.getObjectByQuery(query);
+    }
+
     public Collection getCollectionByQuery(Query query) {
         return broker.getCollectionByQuery(query);
     }

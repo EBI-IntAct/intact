@@ -1331,6 +1331,10 @@ public class IntactHelper implements SearchI, Externalizable {
         return dao.getCountByQuery(query);
     }
 
+    public Object getObjectByQuery(Query query) {
+        return dao.getObjectByQuery(query);
+    }
+
     public Collection getCollectionByQuery(Query query) {
         return dao.getCollectionByQuery(query);
     }

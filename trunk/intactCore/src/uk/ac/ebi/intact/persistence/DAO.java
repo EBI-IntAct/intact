@@ -123,27 +123,6 @@ public interface DAO {
     public boolean isActive();
 
     /**
-     *   checks to see if object saving automatically is turned on
-     *
-     * @return boolean - true if auto saving is on, false otherwise
-     */
-//    public boolean isAutoSave();
-
-    /**
-     *   sets whether or not auto saving is turned on
-     *
-     * @param val - true to turn on, false for off
-     */
-//    public void setAutoSave(boolean val);
-
-    /**
-     *   checks to see if a transaction is closed
-     *
-     * @return boolean - true if closed, false otherwise
-     */
-//    public boolean isClosed();
-
-    /**
      * checks to determine if a given object is persistent or not.
      * <b>Note</b> If the object has manually set primary key this method will
      * return true even if it isn't actually in the database.
@@ -390,6 +369,13 @@ public interface DAO {
      * @return the number of items retrieved by executing <code>query</code>.
      */
     public int getCountByQuery(Query query);
+
+    /**
+     * Returns the Object for the given query.
+     * @param query the query to execute.
+     * @return the object retrieved by executing <code>query</code>.
+     */
+    public Object getObjectByQuery(Query query);
 
     /**
      * Returns a collection of items retrieved by executing the query.
