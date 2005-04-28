@@ -39,8 +39,6 @@ public class AllJUnitTests extends TestCase {
     public static Test suite() {
         final TestSuite suite = new TestSuite();
 
-        suite.addTest(QueryHandlingTest.suite());
-        suite.addTest(OjbParserTest.suite());
         suite.addTest(IQLParserImplTest.suite());
 
         return suite;
