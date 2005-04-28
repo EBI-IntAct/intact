@@ -717,6 +717,10 @@ public abstract class AbstractObjectBridgeDAO implements DAO {
         return myBroker.getCount(query);
     }
 
+    public Object getObjectByQuery(Query query) {
+        return myBroker.getObjectByQuery(query);
+    }
+
     public Collection getCollectionByQuery(Query query) {
         return myBroker.getCollectionByQuery(query);
     }
