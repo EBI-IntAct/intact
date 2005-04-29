@@ -41,6 +41,7 @@
             <th class="tableCellHeader" width="10%" colspan="2">
                 <bean:message key="label.action"/>
             </th>
+            <th class="tableCellHeader" width="30%"/>
             <th>
                 <%-- This NEED to be FIXED --%>
                 <intact:documentation section="editor.int.experiments"/>
