@@ -32,9 +32,9 @@
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
     
-    <!-- The jdbc properties.. --> 
+    <!-- The jdbc properties.. -->
     <property file="${intact.root}/config/jdbc.properties"/>
-    
+
     <property name="dist.dir" value="dist"/>
     <property name="pg.war.file" value="${ant.project.name}.war"/>
 
@@ -114,6 +114,7 @@
     <!-- Remove 'dest' directory for clean build -->
     <target name="clean" description="Prepare for clean build">
         <delete dir="${dest.dir}"/>
+        <delete dir="${dist.dir}"/>
     </target>
 
     <!-- =================================================================== -->

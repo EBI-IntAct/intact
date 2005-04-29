@@ -30,8 +30,8 @@
 
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
-    
-     <!-- The jdbc properties. -->
+
+    <!-- The jdbc properties. -->
     <property file="${intact.root}/config/jdbc.properties"/>
 
     <property name="dist.dir" value="dist"/>
@@ -105,6 +105,7 @@
     <target name="clean" description="Prepare for clean build">
         <!-- Delete directories first -->
         <delete dir="${dest.dir}"/>
+        <delete dir="${dist.dir}"/>
         <delete dir="${docs.dir}"/>
         <delete dir="${layouts.dir}/styles"/>
 
@@ -408,38 +409,6 @@
                 "uk.ac.ebi.intact.application.mine.struts.framework.util.test.AllJUnitTests"/>
             <classpath refid="project.class.path"/>
         </java>
-    </target>
-
-    <!-- =================================================================== -->
-
-    <!-- Starts the Tomcat server. -->
-
-    <target name="start-tomcat">
-        <ant dir=".." inheritAll="false" target="start-tomcat"/>
-    </target>
-
-    <!-- =================================================================== -->
-
-    <!-- Stops the Tomcat server. -->
-
-    <target name="stop-tomcat">
-        <ant dir=".." inheritAll="false" target="stop-tomcat"/>
-    </target>
-
-    <!-- =================================================================== -->
-
-    <!-- Restarts the Tomcat server. -->
-
-    <target name="restart-tomcat">
-        <ant dir=".." inheritAll="false" target="restart-tomcat"/>
-    </target>
-
-    <!-- =================================================================== -->
-
-    <!-- Displays the status of Tomcat server. -->
-
-    <target name="status-tomcat">
-        <ant dir=".." inheritAll="false" target="status-tomcat"/>
     </target>
 
     <!-- =================================================================== -->
