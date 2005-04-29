@@ -138,10 +138,47 @@
         <delete file="${dist.dir}/${intact.core.jar}" quiet="true"/>
 
         <antcall target="clean-editor"/>
+        <antcall target="clean-goDensity"/>
+        <antcall target="clean-intSeq"/>
+        <antcall target="clean-predict"/>
+        <antcall target="clean-statisticView"/>
         <antcall target="clean-search"/>
         <antcall target="clean-hv"/>
+        <antcall target="clean-mine"/>
         <antcall target="clean-intact"/>
         <antcall target="clean-dataConversion"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Remove 'dest' and docs directories of goDensity module for clean build -->
+    <target name="clean-goDensity"
+        description="Prepare goDensity module for a clean build">
+        <ant dir="${app.dir}/goDensity" inheritAll="false" target="clean"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Remove 'dest' and docs directories of intSeq module for clean build -->
+    <target name="clean-intSeq"
+        description="Prepare intSeq module for a clean build">
+        <ant dir="${app.dir}/intSeq" inheritAll="false" target="clean"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Remove 'dest' and docs directories of predict module for clean build -->
+    <target name="clean-predict"
+        description="Prepare predict module for a clean build">
+        <ant dir="${app.dir}/predict" inheritAll="false" target="clean"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Remove 'dest' and docs directories of statisticView module for clean build -->
+    <target name="clean-statisticView"
+        description="Prepare statisticView module for a clean build">
+        <ant dir="${app.dir}/statisticView" inheritAll="false" target="clean"/>
     </target>
 
     <!-- =================================================================== -->
@@ -156,7 +193,8 @@
 
     <!-- Remove 'dest' and docs directories of search module for clean build -->
     <target name="clean-search"
-        description="Prepare search module for a clean build">
+        description="Prepare search (2 and 3) module for a clean build">
+        <ant dir="${app.dir}/search2" inheritAll="false" target="clean"/>
         <ant dir="${app.dir}/search3" inheritAll="false" target="clean"/>
     </target>
 
@@ -166,6 +204,14 @@
     <target name="clean-dataConversion"
         description="Prepare dataConversion module for a clean build">
         <ant dir="${app.dir}/dataConversion" inheritAll="false" target="clean"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Remove 'dest' and docs directories of search module for clean build -->
+    <target name="clean-mine"
+        description="Prepare mine module for a clean build">
+        <ant dir="${app.dir}/mine" inheritAll="false" target="clean"/>
     </target>
 
     <!-- =================================================================== -->
@@ -184,14 +230,6 @@
     <target name="clean-intact"
         description="Prepare intact module for a clean build">
         <ant dir="${app.dir}/intact" inheritAll="false" target="clean"/>
-    </target>
-
-    <!-- =================================================================== -->
-
-    <!-- Cleans tutorial module -->
-    <target name="clean-tutorial"
-        description="Prepare tutorial module for a clean build">
-        <delete dir="${tutorial.dest.dir}"/>
     </target>
 
     <!-- =================================================================== -->
@@ -444,7 +482,7 @@
     <target name="compile-search" depends="compile-core"
         description="Compiles the search module">
 
-        <ant dir="${app.dir}/search3" inheritAll="false" target="compile"/>
+        <ant dir="${app.dir}/search2" inheritAll="false" target="compile"/>
     </target>
 
     <!-- =================================================================== -->
@@ -454,18 +492,6 @@
         description="Compiles the data conversion module">
 
         <ant dir="${app.dir}/dataConversion" inheritAll="false" target="compile"/>
-    </target>
-
-    <!-- =================================================================== -->
-
-    <!-- Compiles the tutorial module. -->
-    <target name="compile-tutorial" depends="compile-core"
-        description="Compiles the tutorial module">
-
-        <javac srcdir="${tutorial.src.dir}" destdir="${dest.dir}" debug="on" deprecation="on"
-            source="1.4">
-            <classpath refid="project.class.path"/>
-        </javac>
     </target>
 
     <!-- =================================================================== -->
@@ -548,48 +574,34 @@
     <!-- There is one target for each set of package tests -->
 
     <!-- model target -->
-    <target name="test-model-stdout"
-        description="Runs model tests directly with output directed to stdout">
-        <antcall target="run-junit-single">
-            <param name="test.case" value="uk.ac.ebi.intact.model.test.AllJUnitTests"/>
-        </antcall>
-    </target>
-
-    <!-- helper target -->
-    <target name="test-helper-stdout"
-        description="Runs helper tests directly with output directed to stdout">
-        <antcall target="run-junit-single">
-            <param name="test.case" value="uk.ac.ebi.intact.business.test.AllJUnitTests"/>
-        </antcall>
-    </target>
-
-    <!-- util target -->
-    <target name="test-util-stdout"
-        description="Runs util tests directly with output directed to stdout">
-        <antcall target="run-junit-single">
-            <param name="test.case" value="uk.ac.ebi.intact.util.test.AllJUnitTests"/>
-        </antcall>
-    </target>
-
-    <!-- go tests -->
-    <target name="test-go-stdout"
-        description="Runs go tests directly with output directed to stdout">
-        <antcall target="run-junit-single">
-            <param name="test.case" value="uk.ac.ebi.intact.util.go.test.AllJUnitTests"/>
-        </antcall>
-    </target>
-
-    <!-- Runs a junit test for given test.case. e.g.
-         ant run-junit-single -Dtest.case=uk.ac.ebi.intact.util.go.AllJUnitTests
-    -->
-    <target name="run-junit-single" depends="compile-core"
-        description="Runs JUnit for given test case">
-        <echo message="Running the test for ${test.case}"/>
+    <target name="test-model-stdout" depends="compile-core"
+        description="Runs JUnit directly with output directed to stdout">
         <java classname="junit.textui.TestRunner" fork="true">
-            <arg value="${test.case}"/>
+            <arg value="uk.ac.ebi.intact.model.test.AllJUnitTests"/>
             <classpath refid="project.class.path"/>
         </java>
     </target>
+
+    <!-- helper target -->
+    <target name="test-helper-stdout" depends="compile-core"
+        description="Runs JUnit directly with output directed to stdout">
+        <java classname="junit.textui.TestRunner" fork="true">
+            <arg value="uk.ac.ebi.intact.business.test.AllJUnitTests"/>
+            <classpath refid="project.class.path"/>
+        </java>
+    </target>
+
+    <!-- util target -->
+    <target name="test-util-stdout" depends="compile-core"
+        description="Runs JUnit directly with output directed to stdout">
+        <java classname="junit.textui.TestRunner" fork="true">
+            <arg value="uk.ac.ebi.intact.util.test.AllJUnitTests"/>
+            <classpath refid="project.class.path"/>
+        </java>
+    </target>
+
+
+
 
     <!-- =================================================================== -->
 
