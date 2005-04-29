@@ -25,7 +25,7 @@
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
 
-     <!-- The jdbc properties. -->
+    <!-- The jdbc properties. -->
     <property file="${intact.root}/config/jdbc.properties"/>
 
     <property name="dist.dir" value="dist"/>
@@ -114,6 +114,7 @@
     <target name="clean" description="Prepare for clean build">
         <!-- Delete directories first -->
         <delete dir="${dest.dir}"/>
+        <delete dir="${dist.dir}"/>
         <delete dir="${docs.dir}"/>
         <delete dir="${lib.dir}"/>
     </target>
@@ -167,7 +168,8 @@
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
             debug="on" source="1.4"
             includes="**/application/dataConversion/**"
-            excludes="**/test/**">
+            excludes="**/test/**, **/psiDownload/**">
+
             <classpath refid="project.class.path"/>
         </javac>
 

@@ -109,7 +109,7 @@ Verison: $Id$
         <pathelement path="${root.lib.dir}/commons-logging.jar"/>
 
         <pathelement path="${intact.app.dir}/lib/struts.jar"/>
-      
+
     </path>
 
     <!-- =================================================================== -->
@@ -292,6 +292,7 @@ Verison: $Id$
     <target name="clean"
         description="Prepare for clean build; removes api docs and classes dirs">
         <delete dir="${dest.dir}"/>
+        <delete dir="${dist.dir}"/>
         <delete dir="${jdoc.dir}"/>
         <delete dir="${dist.dir}"/>
 
