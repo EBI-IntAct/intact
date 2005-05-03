@@ -39,7 +39,7 @@ public class GoTools {
 
         String usage = "Usage: GoTools upload IntAct_classname goid_db "
                 + "Go_DefinitionFile [Go_DagFile] OR" + nl
-                + "GoTools download|downloadpre IntAct_classname goid_db "
+                + "GoTools download IntAct_classname goid_db "
                 + "Go_DefinitionFile [Go_DagFile]" + nl + "goid_db is the "
                 + "shortLabel of the database which is to be used to establish"
                 + nl + "object identity by mapping it to goid: in the GO flat file."
@@ -83,24 +83,12 @@ public class GoTools {
             else if (args[0].equals("download")) {
                 // Write definitions
                 System.out.println("Writing GO definitons to " + args[3] + " ...");
-                goUtils.writeGoDefinitions(args[3], true);
+                goUtils.writeGoDefinitions(args[3]);
 
                 // Write go dag format
                 if (args.length == 5) {
                     System.out.println("Writing GO DAG to " + args[4] + " ...");
-                    goUtils.writeGoDag(args[4], true);
-                    System.out.println("Done.");
-                }
-            }
-            else if (args[0].equals("downloadpre")) {
-                // Write definitions
-                System.out.println("Writing GO definitons to " + args[3] + " ...");
-                goUtils.writeGoDefinitions(args[3], false);
-
-                // Write go dag format
-                if (args.length == 5) {
-                    System.out.println("Writing GO DAG to " + args[4] + " ...");
-                    goUtils.writeGoDag(args[4], false);
+                    goUtils.writeGoDag(args[4]);
                     System.out.println("Done.");
                 }
             }

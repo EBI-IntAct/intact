@@ -185,8 +185,12 @@ public class DagNode {
 
         // if the target node is not defined, create it.
         if (targetNode == null) {
-            targetNode = (CvDagObject) goUtils.insertDefinition(myGoId, myGoTerm,
-                    myGoShortLabel, false);
+            // This shouldn't happen because def file has taken care of inserting
+            // nodes. Only way, you get to this point is when you have an entry in
+            // the dag file that wasn't found in the def file (error in saving files)
+            throw new IntactException("Target node wasn't found");
+//            targetNode = (CvDagObject) goUtils.insertDefinition(myGoId, myGoTerm,
+//                    myGoShortLabel, false);
         }
 
         // Insert the direct parent
@@ -194,8 +198,11 @@ public class DagNode {
             CvDagObject directParent = (CvDagObject) goUtils.selectCvObject(
                     myParent.myGoId, myParent.myGoShortLabel);
             if (directParent == null) {
-                directParent = (CvDagObject) goUtils.insertDefinition(myGoId,
-                        myGoTerm, myGoShortLabel, false);
+                // Wants to check where this condition is true. This shouldn't be
+                // true because def file has taken care of inserting all the parents.
+                throw new IntactException("Direct parent wasn't found");
+//                directParent = (CvDagObject) goUtils.insertDefinition(myParent.myGoId,
+//                        myParent.myGoTerm, myParent.myGoShortLabel, false);
             }
             // Add the link between parent and child
             targetNode.addParent(directParent);
@@ -218,8 +225,11 @@ public class DagNode {
             }
 
             if (additionalParent == null) {
-                additionalParent = (CvDagObject) goUtils.insertDefinition(myGoId,
-                        myGoTerm, myGoShortLabel, false);
+                // Wants to check where this condition is true. This shouldn't be
+                // true because def file has taken care of inserting all the parents.
+                throw new IntactException("Additional parent wasn't found");
+//                additionalParent = (CvDagObject) goUtils.insertDefinition(nextGoid,
+//                        parentData.myTerm, nextGoLabel, false);
             }
             // Add the link between parent and child
             targetNode.addParent(additionalParent);

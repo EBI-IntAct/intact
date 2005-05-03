@@ -99,6 +99,25 @@ public class GoToolsTest extends TestCase {
         }
     }
 
+    public void testInsertCvIdentificationDef() {
+        try {
+            doTestCvIdentificationDef();
+        }
+        catch (IntactException e) {
+            fail(e.getMessage());
+        }
+    }
+
+    public void testInsertCvIdentificationDag() {
+        try {
+            doTestCvIdentificationDag();
+        }
+        catch (IntactException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
+
     public void testInsertCvInteractionTypeDef() {
         try {
             doTestCvInteractionTypeDef();
@@ -234,8 +253,6 @@ public class GoToolsTest extends TestCase {
         // Cache cvobjs
         CvTopic definition = (CvTopic) myHelper.getObjectByLabel(CvTopic.class,
                 "definition");
-        CvTopic uniprot = (CvTopic) myHelper.getObjectByLabel(CvTopic.class,
-                "uniprot-dr-export");
         CvDatabase pubmed = (CvDatabase) myHelper.getObjectByLabel(CvDatabase.class,
                 "pubmed");
         CvDatabase goid = (CvDatabase) myHelper.getObjectByLabel(CvDatabase.class,
@@ -249,24 +266,23 @@ public class GoToolsTest extends TestCase {
         String shortlabel;
         AnnotatedObject annobj;
 
-        shortlabel = "affinity chromatogra";
+        shortlabel = "affinity techniques";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteraction.class,
                 shortlabel);
         // Must have the object
         assertNotNull(annobj);
         assertNotNull(annobj.getAc());
         // Check the full name.
-        assertEquals(annobj.getFullName(), "affinity chromatography technologies");
+        assertEquals(annobj.getFullName(), "affinity technologies");
         // There are two annotations.
-        assertEquals(annobj.getAnnotations().size(), 2);
-        // Must contain topics definition and uniprot.
-        assertTrue(containsTopic(annobj, uniprot));
+        assertEquals(annobj.getAnnotations().size(), 1);
+        // Must contain topics definition.
         assertTrue(containsTopic(annobj, definition));
         // Compare the primary id for the object
-        assertTrue(checkDBXref(annobj, pubmed, "7708014", godef));
-        assertTrue(checkDBXref(annobj, goid, "MI:0004", identity));
+        assertTrue(checkDBXref(annobj, pubmed, "14755292", godef));
+        assertTrue(checkDBXref(annobj, goid, "MI:0400", identity));
 
-        shortlabel = "anti tag coimmunopre";
+        shortlabel = "anti tag coip";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteraction.class,
                 shortlabel);
         // Must have the object
@@ -275,15 +291,14 @@ public class GoToolsTest extends TestCase {
         // Check the full name.
         assertEquals(annobj.getFullName(), "anti tag coimmunoprecipitation");
         // There are two annotations.
-        assertEquals(annobj.getAnnotations().size(), 2);
-        // Must contain topics definition and uniprot.
-        assertTrue(containsTopic(annobj, uniprot));
+        assertEquals(annobj.getAnnotations().size(), 1);
+        // Must contain topics definition.
         assertTrue(containsTopic(annobj, definition));
         // Compare the primary id for the object
         assertTrue(checkDBXref(annobj, pubmed, "7708014", godef));
         assertTrue(checkDBXref(annobj, goid, "MI:0007", identity));
 
-        shortlabel = "beta galactosidase c";
+        shortlabel = "beta galactosidase";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteraction.class,
                 shortlabel);
         // Must have the object
@@ -292,30 +307,29 @@ public class GoToolsTest extends TestCase {
         // Check the full name.
         assertEquals(annobj.getFullName(), "beta galactosidase complementation");
         // There are two annotations.
-        assertEquals(annobj.getAnnotations().size(), 2);
-        // Must contain topics definition and uniprot.
-        assertTrue(containsTopic(annobj, uniprot));
+        assertEquals(annobj.getAnnotations().size(), 1);
+        // Must contain topics definition.
         assertTrue(containsTopic(annobj, definition));
         // Compare the primary id for the object
         assertTrue(checkDBXref(annobj, pubmed, "9237989", godef));
         assertTrue(checkDBXref(annobj, pubmed, "12042868", godef));
         assertTrue(checkDBXref(annobj, goid, "MI:0010", identity));
 
-        shortlabel = "colocalization/visua";
+        shortlabel = "x-ray";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteraction.class,
                 shortlabel);
         // Must have the object
         assertNotNull(annobj);
         assertNotNull(annobj.getAc());
         // Check the full name.
-        assertEquals(annobj.getFullName(), "colocalization/visualisation technologies");
+        assertEquals(annobj.getFullName(), "x-ray crystallography");
         // There are two annotations.
-        assertEquals(annobj.getAnnotations().size(), 2);
-        // Must contain topics definition and uniprot.
-        assertTrue(containsTopic(annobj, uniprot));
+        assertEquals(annobj.getAnnotations().size(), 1);
+        // Must contain topics definition.
         assertTrue(containsTopic(annobj, definition));
         // go id
-        assertTrue(checkDBXref(annobj, goid, "MI:0023", identity));
+        assertTrue(checkDBXref(annobj, goid, "MI:0114", identity));
+        assertTrue(checkDBXref(annobj, pubmed, "14755292", godef));
 
         shortlabel = "phage display";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteraction.class,
@@ -326,9 +340,8 @@ public class GoToolsTest extends TestCase {
         // Check the full name.
         assertEquals(annobj.getFullName(), "phage display");
         // There are two annotations.
-        assertEquals(annobj.getAnnotations().size(), 2);
+        assertEquals(annobj.getAnnotations().size(), 1);
         // Must contain topics definition and uniprot.
-        assertTrue(containsTopic(annobj, uniprot));
         assertTrue(containsTopic(annobj, definition));
         // Compare the primary id for the object
         assertTrue(checkDBXref(annobj, pubmed, "7708014", godef));
@@ -340,10 +353,9 @@ public class GoToolsTest extends TestCase {
         // Check the database contents
         CvInteraction cvinter = (CvInteraction) myHelper.getObjectByLabel(CvInteraction.class,
                 "interaction detectio");
-        // Has two children
-        assertEquals(cvinter.getChildren().size(), 2);
+        // Has one child
+        assertEquals(cvinter.getChildren().size(), 1);
         assertTrue(hasChild(cvinter, "experimental"));
-        assertTrue(hasChild(cvinter, "in silico"));
         // No parents.
         assertTrue(cvinter.getParents().isEmpty());
 
@@ -351,21 +363,164 @@ public class GoToolsTest extends TestCase {
                 "biophysical");
         // Has 11 children
         assertEquals(cvinter.getChildren().size(), 11);
-        assertTrue(hasChild(cvinter, "circular dichroism"));
-        assertTrue(hasChild(cvinter, "electron microscopy"));
-        assertTrue(hasChild(cvinter, "electron resonance"));
+        assertTrue(hasChild(cvinter, "nmr"));
+        assertTrue(hasChild(cvinter, "cd"));
+        assertTrue(hasChild(cvinter, "x-ray"));
         // Has one parent.
         assertEquals(cvinter.getParents().size(), 1);
         assertTrue(hasParent(cvinter, "experimental"));
 
         cvinter = (CvInteraction) myHelper.getObjectByLabel(CvInteraction.class,
-                "bioluminescence reso");
+                "bret");
         // Has no children
         assertTrue(cvinter.getChildren().isEmpty());
+        // Has one parent.
+        assertEquals(cvinter.getParents().size(), 1);
+        assertTrue(hasParent(cvinter, "fluorescence"));
+
+        // Nodes with more than one parent.
+        cvinter = (CvInteraction) myHelper.getObjectByLabel(CvInteraction.class,
+                "bacterial display");
         // Has two parents.
         assertEquals(cvinter.getParents().size(), 2);
-        assertTrue(hasParent(cvinter, "fluorescence technol"));
-        assertTrue(hasParent(cvinter, "colocalization/visua"));
+        assertTrue(hasParent(cvinter, "facs"));
+        assertTrue(hasParent(cvinter, "display technologies"));
+
+        cvinter = (CvInteraction) myHelper.getObjectByLabel(CvInteraction.class,
+                "phosphatase htrf");
+        // Has two parents.
+        assertEquals(cvinter.getParents().size(), 2);
+        assertTrue(hasParent(cvinter, "htrf"));
+        assertTrue(hasParent(cvinter, "phosphatase assay"));
+        // Two aliases.
+        assertEquals(cvinter.getAliases().size(), 2);
+        assertTrue(checkAlias(cvinter, "homogeneous time-resolved fluo"));
+        assertTrue(checkAlias(cvinter, "phosphatase HTRF"));
+
+        cvinter = (CvInteraction) myHelper.getObjectByLabel(CvInteraction.class,
+                "kinase htrf");
+        // Has two parents.
+        assertEquals(cvinter.getParents().size(), 2);
+        assertTrue(hasParent(cvinter, "protein kinase assay"));
+        assertTrue(hasParent(cvinter, "htrf"));
+        // Two aliases.
+        assertEquals(cvinter.getAliases().size(), 2);
+        assertTrue(checkAlias(cvinter, "homogeneous time-resolved fluo"));
+        assertTrue(checkAlias(cvinter, "kinase HTRF"));
+    }
+
+    private void doTestCvIdentificationDef() throws IntactException {
+        // Cache cvobjs
+        CvDatabase goid = (CvDatabase) myHelper.getObjectByLabel(CvDatabase.class,
+                "psi-mi");
+        CvDatabase pubmed = (CvDatabase) myHelper.getObjectByLabel(CvDatabase.class,
+                "pubmed");
+        CvXrefQualifier identity = (CvXrefQualifier) myHelper.getObjectByLabel(
+                CvXrefQualifier.class, "identity");
+        CvXrefQualifier godef = (CvXrefQualifier) myHelper.getObjectByLabel(
+                CvXrefQualifier.class, "go-definition-ref");
+
+        // Temp objects.
+        String shortlabel;
+        AnnotatedObject annobj;
+
+        shortlabel = "antibody detection";
+        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvIdentification.class,
+                shortlabel);
+        assertNotNull(annobj.getAc());
+        // Check the full name.
+        assertEquals(annobj.getFullName(), "identification by antibody");
+        // There is one definition
+        assertEquals(annobj.getAnnotations().size(), 1);
+        // go id
+        assertTrue(checkDBXref(annobj, goid, "MI:0421", identity));
+
+        shortlabel = "fingerprinting";
+        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvIdentification.class,
+                shortlabel);
+        assertNotNull(annobj.getAc());
+        // Check the full name.
+        assertEquals(annobj.getFullName(), "peptide massfingerprinting");
+        // There is one definition
+        assertEquals(annobj.getAnnotations().size(), 1);
+        // Compare the primary id for the object
+        assertTrue(checkDBXref(annobj, pubmed, "10967324", godef));
+        assertTrue(checkDBXref(annobj, pubmed, "11752590", godef));
+        assertTrue(checkDBXref(annobj, goid, "MI:0082", identity));
+
+        shortlabel = "sequence tag";
+        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvIdentification.class,
+                shortlabel);
+        assertNotNull(annobj.getAc());
+        // Check the full name.
+        assertEquals(annobj.getFullName(), "sequence tag identification");
+        // There is one definition
+        assertEquals(annobj.getAnnotations().size(), 1);
+        // Compare the primary id for the object
+        assertTrue(checkDBXref(annobj, pubmed, "10967324", godef));
+        assertTrue(checkDBXref(annobj, pubmed, "11752590", godef));
+        assertTrue(checkDBXref(annobj, goid, "MI:0102", identity));
+
+        shortlabel = "southern blot";
+        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvIdentification.class,
+                shortlabel);
+        assertNotNull(annobj.getAc());
+        // Check the full name.
+        assertEquals(annobj.getFullName(), "southern blot");
+        // There is one definition
+        assertEquals(annobj.getAnnotations().size(), 1);
+        // Compare the primary id for the object
+        assertTrue(checkDBXref(annobj, goid, "MI:0103", identity));
+    }
+
+    private void doTestCvIdentificationDag() throws IntactException {
+        // Check the database contents
+        CvIdentification cvident = (CvIdentification) myHelper.getObjectByLabel(
+                CvIdentification.class, "participant identifi");
+        // Has 5 children
+        assertEquals(cvident.getChildren().size(), 5);
+        assertTrue(hasChild(cvident, "antibody detection"));
+        assertTrue(hasChild(cvident, "mass spectrometry"));
+        assertTrue(hasChild(cvident, "nucleotide sequence"));
+        assertTrue(hasChild(cvident, "predetermined"));
+        assertTrue(hasChild(cvident, "protein sequence"));
+        // No parents.
+        assertTrue(cvident.getParents().isEmpty());
+        // One alias.
+        assertEquals(cvident.getAliases().size(), 1);
+        assertTrue(checkAlias(cvident, "participant detection"));
+
+        cvident = (CvIdentification) myHelper.getObjectByLabel(CvIdentification.class,
+                "mass spectrometry");
+        // Has 3 children
+        assertEquals(cvident.getChildren().size(), 3);
+        assertTrue(hasChild(cvident, "fingerprinting"));
+        assertTrue(hasChild(cvident, "ms protein sequence"));
+        assertTrue(hasChild(cvident, "sequence tag"));
+        // Has one parent.
+        assertEquals(cvident.getParents().size(), 1);
+        assertTrue(hasParent(cvident, "participant identifi"));
+
+        cvident = (CvIdentification) myHelper.getObjectByLabel(CvIdentification.class,
+                "nucleotide sequence");
+        // Has 2 children
+        assertEquals(cvident.getChildren().size(), 2);
+        assertTrue(hasChild(cvident, "full dna sequence"));
+        assertTrue(hasChild(cvident, "partial dna sequence"));
+        // Has one parent.
+        assertEquals(cvident.getParents().size(), 1);
+        assertTrue(hasParent(cvident, "participant identifi"));
+        // One alias.
+        assertEquals(cvident.getAliases().size(), 1);
+        assertTrue(checkAlias(cvident, "sequence cloning"));
+
+        cvident = (CvIdentification) myHelper.getObjectByLabel(CvIdentification.class,
+                "peptide synthesis");
+        // Has no children
+        assertTrue(cvident.getChildren().isEmpty());
+        // Has one parent.
+        assertEquals(cvident.getParents().size(), 1);
+        assertTrue(hasParent(cvident, "protein sequence"));
     }
 
     private void doTestCvInteractionTypeDef() throws IntactException {
@@ -390,7 +545,7 @@ public class GoToolsTest extends TestCase {
         String shortlabel;
         AnnotatedObject annobj;
 
-        shortlabel = "acetylation reaction";
+        shortlabel = "acetylation";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
                 shortlabel);
         assertNotNull(annobj.getAc());
@@ -404,22 +559,7 @@ public class GoToolsTest extends TestCase {
             assertTrue(checkDBXref(annobj, resid, "AA00" + i, godef));
         }
 
-        shortlabel = "aggregation";
-        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
-                shortlabel);
-        // Must have the object
-        assertNotNull(annobj);
-        assertNotNull(annobj.getAc());
-        // Check the full name.
-        assertEquals(annobj.getFullName(), "aggregation");
-        // There is one definition
-        assertEquals(annobj.getAnnotations().size(), 1);
-        // There is 1 xref.
-        assertEquals(annobj.getXrefs().size(), 1);
-        // go id
-        assertTrue(checkDBXref(annobj, goid, "MI:0191", identity));
-
-        shortlabel = "amidation reaction";
+        shortlabel = "amidation";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
                 shortlabel);
         assertNotNull(annobj.getAc());
@@ -443,13 +583,13 @@ public class GoToolsTest extends TestCase {
         assertNotNull(annobj);
         assertNotNull(annobj.getAc());
         // Check the full name.
-        assertEquals(annobj.getFullName(), "cleavage");
+        assertEquals(annobj.getFullName(), "cleavage reaction");
         // There is one definition
         assertEquals(annobj.getAnnotations().size(), 1);
         // go id
         assertTrue(checkDBXref(annobj, goid, "MI:0194", identity));
         // There is 1 xref.
-        assertEquals(annobj.getXrefs().size(), 1);
+        assertEquals(annobj.getXrefs().size(), 2);
 
         shortlabel = "covalent binding";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
@@ -464,24 +604,9 @@ public class GoToolsTest extends TestCase {
         // go id
         assertTrue(checkDBXref(annobj, goid, "MI:0195", identity));
         // There is 1 xref.
-        assertEquals(annobj.getXrefs().size(), 1);
+        assertEquals(annobj.getXrefs().size(), 2);
 
-        shortlabel = "covalent interaction";
-        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
-                shortlabel);
-        // Must have the object
-        assertNotNull(annobj);
-        assertNotNull(annobj.getAc());
-        // Check the full name.
-        assertEquals(annobj.getFullName(), "covalent interaction");
-        // There is one definition
-        assertEquals(annobj.getAnnotations().size(), 1);
-        // go id
-        assertTrue(checkDBXref(annobj, goid, "MI:0196", identity));
-        // There is 1 xref.
-        assertEquals(annobj.getXrefs().size(), 1);
-
-        shortlabel = "deacetylation reacti";
+        shortlabel = "deacetylation";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
                 shortlabel);
         // Must have the object
@@ -498,7 +623,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(annobj, resid, "AA0055", godef));
         assertTrue(checkDBXref(annobj, resid, "AA0056", godef));
 
-        shortlabel = "defarnesylation reac";
+        shortlabel = "defarnesylation";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
                 shortlabel);
         // Must have the object
@@ -514,7 +639,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(annobj, goid, "MI:0198", identity));
         assertTrue(checkDBXref(annobj, resid, "AA0102", godef));
 
-        shortlabel = "deformylation reacti";
+        shortlabel = "deformylation";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
                 shortlabel);
         // Must have the object
@@ -537,7 +662,7 @@ public class GoToolsTest extends TestCase {
         assertNotNull(annobj);
         assertNotNull(annobj.getAc());
         // Check the full name.
-        assertEquals(annobj.getFullName(), "degeranylation");
+        assertEquals(annobj.getFullName(), "degeranylation reaction");
         // There is one definition
         assertEquals(annobj.getAnnotations().size(), 1);
         // There are 2 xrefs.
@@ -553,7 +678,7 @@ public class GoToolsTest extends TestCase {
         assertNotNull(annobj);
         assertNotNull(annobj.getAc());
         // Check the full name.
-        assertEquals(annobj.getFullName(), "demyristoylation");
+        assertEquals(annobj.getFullName(), "demyristoylation reaction");
         // There is one definition
         assertEquals(annobj.getAnnotations().size(), 1);
         // There are 2 xrefs.
@@ -569,7 +694,7 @@ public class GoToolsTest extends TestCase {
         assertNotNull(annobj);
         assertNotNull(annobj.getAc());
         // Check the full name.
-        assertEquals(annobj.getFullName(), "depalmitoylation");
+        assertEquals(annobj.getFullName(), "depalmitoylation reaction");
         // There is one definition
         assertEquals(annobj.getAnnotations().size(), 1);
         // There are 5 xrefs.
@@ -582,7 +707,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(annobj, resid, "AA0079", godef));
         assertTrue(checkDBXref(annobj, resid, "AA0080", godef));
 
-        shortlabel = "dephosphorylation re";
+        shortlabel = "dephosphorylation";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
                 shortlabel);
         // Must have the object
@@ -607,7 +732,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(annobj, resid, "AA0039", godef));
         assertTrue(checkDBXref(annobj, resid, "AA0222", godef));
 
-        shortlabel = "deubiquitination rea";
+        shortlabel = "deubiquitination";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
                 shortlabel);
         // Must have the object
@@ -624,22 +749,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(annobj, pubmed, "11583613", godef));
         assertTrue(checkDBXref(annobj, resid, "AA0125", godef));
 
-        shortlabel = "disaggregation";
-        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
-                shortlabel);
-        // Must have the object
-        assertNotNull(annobj);
-        assertNotNull(annobj.getAc());
-        // Check the full name.
-        assertEquals(annobj.getFullName(), "disaggregation");
-        // There is one definition
-        assertEquals(annobj.getAnnotations().size(), 1);
-        // There is 1 xref.
-        assertEquals(annobj.getXrefs().size(), 1);
-        // go id
-        assertTrue(checkDBXref(annobj, goid, "MI:0205", identity));
-
-        shortlabel = "farnesylation reacti";
+        shortlabel = "farnesylation";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
                 shortlabel);
         // Must have the object
@@ -655,7 +765,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(annobj, goid, "MI:0206", identity));
         assertTrue(checkDBXref(annobj, resid, "AA0102", godef));
 
-        shortlabel = "formylation reaction";
+        shortlabel = "formylation";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
                 shortlabel);
         // Must have the object
@@ -675,7 +785,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(annobj, resid, "AA0211", godef));
         assertTrue(checkDBXref(annobj, resid, "AA0057", godef));
 
-        shortlabel = "methylation reaction";
+        shortlabel = "methylation";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
                 shortlabel);
         // Must have the object
@@ -695,7 +805,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(annobj, resid, "AA0234", godef));
         assertTrue(checkDBXref(annobj, resid, "AA0272", godef));
 
-        shortlabel = "ubiquitination react";
+        shortlabel = "ubiquitination";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
                 shortlabel);
         // Must have the object
@@ -716,52 +826,49 @@ public class GoToolsTest extends TestCase {
     }
 
     private void doTestCvInteractionTypeDag() throws IntactException {
-        // Check the database contents
         CvInteractionType cvintertype = (CvInteractionType) myHelper.getObjectByLabel(
-                CvInteractionType.class, "aggregation");
+                CvInteractionType.class, "cleavage");
         // Has no children.
         assertTrue(cvintertype.getChildren().isEmpty());
         // Has one parent
         assertEquals(cvintertype.getParents().size(), 1);
-        assertTrue(hasParent(cvintertype, "non covalent interac"));
+        assertTrue(hasParent(cvintertype, "enzymatic reaction"));
 
         cvintertype = (CvInteractionType) myHelper.getObjectByLabel(
-                CvInteractionType.class, "cleavage");
-        // Has 5 children
-        assertEquals(cvintertype.getChildren().size(), 5);
-        assertTrue(hasChild(cvintertype, "deacetylation reacti"));
-        assertTrue(hasChild(cvintertype, "deformylation reacti"));
-        assertTrue(hasChild(cvintertype, "dephosphorylation re"));
-        assertTrue(hasChild(cvintertype, "deubiquitination rea"));
-        assertTrue(hasChild(cvintertype, "lipid cleavage"));
+                CvInteractionType.class, "lipid addition");
+        // Has 4 children
+        assertEquals(cvintertype.getChildren().size(), 4);
+        assertTrue(hasChild(cvintertype, "farnesylation"));
+        assertTrue(hasChild(cvintertype, "geranylation"));
+        assertTrue(hasChild(cvintertype, "myristoylation"));
+        assertTrue(hasChild(cvintertype, "palmitoylation"));
         // Has one parent.
-        assertTrue(hasParent(cvintertype, "covalent interaction"));
+        assertTrue(hasParent(cvintertype, "enzymatic reaction"));
 
         cvintertype = (CvInteractionType) myHelper.getObjectByLabel(
                 CvInteractionType.class, "lipid cleavage");
         // Has two children.
         assertEquals(cvintertype.getChildren().size(), 4);
-        assertTrue(hasChild(cvintertype, "defarnesylation reac"));
+        assertTrue(hasChild(cvintertype, "defarnesylation"));
         assertTrue(hasChild(cvintertype, "degeranylation"));
         assertTrue(hasChild(cvintertype, "demyristoylation"));
         assertTrue(hasChild(cvintertype, "depalmitoylation"));
         // Has one parent.
-        assertTrue(hasParent(cvintertype, "cleavage"));
+        assertTrue(hasParent(cvintertype, "enzymatic reaction"));
 
         cvintertype = (CvInteractionType) myHelper.getObjectByLabel(
                 CvInteractionType.class, "physical interaction");
         // Has two children.
         assertEquals(cvintertype.getChildren().size(), 2);
-        assertTrue(hasChild(cvintertype, "covalent interaction"));
-        assertTrue(hasChild(cvintertype, "non covalent interac"));
+        assertTrue(hasChild(cvintertype, "direct interaction"));
+        assertTrue(hasChild(cvintertype, "enzymatic reaction"));
         // Has one parent.
         assertTrue(hasParent(cvintertype, "interaction type"));
 
         cvintertype = (CvInteractionType) myHelper.getObjectByLabel(
-                CvInteractionType.class, "covalent interaction");
+                CvInteractionType.class, "direct interaction");
         // Has two children.
-        assertEquals(cvintertype.getChildren().size(), 2);
-        assertTrue(hasChild(cvintertype, "cleavage"));
+        assertEquals(cvintertype.getChildren().size(), 1);
         assertTrue(hasChild(cvintertype, "covalent binding"));
         // Has one parent.
         assertTrue(hasParent(cvintertype, "physical interaction"));
@@ -785,14 +892,14 @@ public class GoToolsTest extends TestCase {
         CvXrefQualifier godef = (CvXrefQualifier) myHelper.getObjectByLabel(
                 CvXrefQualifier.class, "go-definition-ref");
 
-        String shortlabel = "3-methylthio-asparti";
+        String shortlabel = "methylthioaspartate";
         CvFeatureType cvfeature = (CvFeatureType) myHelper.getObjectByLabel(
                 CvFeatureType.class, shortlabel);
         // Must have the object
         assertNotNull(cvfeature);
         assertNotNull(cvfeature.getAc());
         // Check the full name.
-        assertEquals(cvfeature.getFullName(), "L-beta-methylthioaspartic acid");
+        assertEquals(cvfeature.getFullName(), "beta-methylthioaspartic acid");
         // There is one annotation.
         assertEquals(cvfeature.getAnnotations().size(), 1);
         // Must contain the topic definition.
@@ -804,18 +911,17 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(cvfeature, goid, "MI:0161", identity));
         assertTrue(checkDBXref(cvfeature, resid, "AA0232", godef));
         // Two aliases.
-        assertEquals(cvfeature.getAliases().size(), 2);
+        assertEquals(cvfeature.getAliases().size(), 6);
         assertTrue(checkAlias(cvfeature, "DM2"));
-        assertTrue(checkAlias(cvfeature, "D:meth_b"));
 
-        shortlabel = "4-hydroxy-l-proline";
+        shortlabel = "4hydroxyproline";
         cvfeature = (CvFeatureType) myHelper.getObjectByLabel(CvFeatureType.class,
                 shortlabel);
         // Must have the object
         assertNotNull(cvfeature);
         assertNotNull(cvfeature.getAc());
         // Check the full name.
-        assertEquals(cvfeature.getFullName(), "4-hydroxy-L-proline");
+        assertEquals(cvfeature.getFullName(), "4-hydroxy-proline");
         // There is one annotation.
         assertEquals(cvfeature.getAnnotations().size(), 1);
         // Must contain the topic definition.
@@ -829,16 +935,16 @@ public class GoToolsTest extends TestCase {
         // Two aliases.
         assertEquals(cvfeature.getAliases().size(), 2);
         assertTrue(checkAlias(cvfeature, "HYP"));
-        assertTrue(checkAlias(cvfeature, "P:hy_g"));
+        assertTrue(checkAlias(cvfeature, "4-hydroxy-L-proline"));
 
-        shortlabel = "tau-phosphohistidine";
+        shortlabel = "1-phosphohistidine";
         cvfeature = (CvFeatureType) myHelper.getObjectByLabel(CvFeatureType.class,
                 shortlabel);
         // Must have the object
         assertNotNull(cvfeature);
         assertNotNull(cvfeature.getAc());
         // Check the full name.
-        assertEquals(cvfeature.getFullName(), "1'-phospho-L-histidine");
+        assertEquals(cvfeature.getFullName(), "1'-phospho-histidine");
         // There is one annotation.
         assertEquals(cvfeature.getAnnotations().size(), 1);
         // Must contain the topic definition.
@@ -849,19 +955,20 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(cvfeature, pubmed, "11125103", godef));
         assertTrue(checkDBXref(cvfeature, goid, "MI:0174", identity));
         assertTrue(checkDBXref(cvfeature, resid, "AA0035", godef));
-        // Two aliases.
-        assertEquals(cvfeature.getAliases().size(), 2);
+        // 8 aliases.
+        assertEquals(cvfeature.getAliases().size(), 8);
         assertTrue(checkAlias(cvfeature, "HPE"));
-        assertTrue(checkAlias(cvfeature, "H:po_e"));
+        assertTrue(checkAlias(cvfeature, "tau-phosphohistidine"));
+        assertTrue(checkAlias(cvfeature, "tele-phosphohistidine"));
 
-        shortlabel = "n-acetyl-l-arginine";
+        shortlabel = "acetylarginine";
         cvfeature = (CvFeatureType) myHelper.getObjectByLabel(CvFeatureType.class,
                 shortlabel);
         // Must have the object
         assertNotNull(cvfeature);
         assertNotNull(cvfeature.getAc());
         // Check the full name.
-        assertEquals(cvfeature.getFullName(), "N-acetyl-L-arginine");
+        assertEquals(cvfeature.getFullName(), "n2-acetyl-arginine");
         // There is one annotation.
         assertEquals(cvfeature.getAnnotations().size(), 1);
         // Must contain the topic definition.
@@ -873,9 +980,9 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(cvfeature, goid, "MI:0123", identity));
         assertTrue(checkDBXref(cvfeature, resid, "AA0354", godef));
         // Two aliases.
-        assertEquals(cvfeature.getAliases().size(), 2);
+        assertEquals(cvfeature.getAliases().size(), 4);
         assertTrue(checkAlias(cvfeature, "RAC"));
-        assertTrue(checkAlias(cvfeature, "R:ac"));
+        assertTrue(checkAlias(cvfeature, "acetylarginine"));
 
         shortlabel = "hypusine";
         cvfeature = (CvFeatureType) myHelper.getObjectByLabel(CvFeatureType.class,
@@ -884,7 +991,7 @@ public class GoToolsTest extends TestCase {
         assertNotNull(cvfeature);
         assertNotNull(cvfeature.getAc());
         // Check the full name.
-        assertEquals(cvfeature.getFullName(), "N6-(4-amino-2-hydroxybutyl)-L-lysine (hypusine)");
+        assertEquals(cvfeature.getFullName(), "n6-(4-amino-2-hydroxybutyl)-lysine");
         // There is one annotation.
         assertEquals(cvfeature.getAnnotations().size(), 1);
         // Must contain the topic definition.
@@ -896,9 +1003,9 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(cvfeature, goid, "MI:0187", identity));
         assertTrue(checkDBXref(cvfeature, resid, "AA0116", godef));
         // Two aliases.
-        assertEquals(cvfeature.getAliases().size(), 2);
+        assertEquals(cvfeature.getAliases().size(), 4);
         assertTrue(checkAlias(cvfeature, "KHY"));
-        assertTrue(checkAlias(cvfeature, "K:hypu"));
+        assertTrue(checkAlias(cvfeature, "hypusine"));
 
         shortlabel = "his-tagged";
         cvfeature = (CvFeatureType) myHelper.getObjectByLabel(CvFeatureType.class,
@@ -907,14 +1014,15 @@ public class GoToolsTest extends TestCase {
         assertNotNull(cvfeature);
         assertNotNull(cvfeature.getAc());
         // Check the full name.
-        assertEquals(cvfeature.getFullName(), "His-Tagged");
+        assertEquals(cvfeature.getFullName(), "his-tagged");
         // There is one annotation.
         assertEquals(cvfeature.getAnnotations().size(), 1);
         // Must contain the topic definition.
         assertTrue(containsTopic(cvfeature, definition));
-        // One xref.
-        assertEquals(cvfeature.getXrefs().size(), 1);
+        // Two xrefs.
+        assertEquals(cvfeature.getXrefs().size(), 2);
         // Compare the primary id for the object
+        assertTrue(checkDBXref(cvfeature, pubmed, "14755292", godef));
         assertTrue(checkDBXref(cvfeature, goid, "MI:0521", identity));
         // Three aliases.
         assertEquals(cvfeature.getAliases().size(), 3);
@@ -930,14 +1038,15 @@ public class GoToolsTest extends TestCase {
         assertNotNull(cvfeature);
         assertNotNull(cvfeature.getAc());
         // Check the full name.
-        assertEquals(cvfeature.getFullName(), "Tagged-protein");
+        assertEquals(cvfeature.getFullName(), "tagged-protein");
         // There is one annotation.
         assertEquals(cvfeature.getAnnotations().size(), 1);
         // Must contain the topic definition.
         assertTrue(containsTopic(cvfeature, definition));
-        // One xref.
-        assertEquals(cvfeature.getXrefs().size(), 1);
+        // Two xrefs.
+        assertEquals(cvfeature.getXrefs().size(), 2);
         // Compare the primary id for the object
+        assertTrue(checkDBXref(cvfeature, pubmed, "14755292", godef));
         assertTrue(checkDBXref(cvfeature, goid, "MI:0507", identity));
         // No aliases.
         assertTrue(cvfeature.getAliases().isEmpty());
@@ -947,29 +1056,31 @@ public class GoToolsTest extends TestCase {
         // Check the database contents
         CvFeatureType cvfeature = (CvFeatureType) myHelper.getObjectByLabel(
                 CvFeatureType.class, "binding site");
-        // Has no children
-        assertTrue(cvfeature.getChildren().isEmpty());
+        // Has two children
+        assertEquals(cvfeature.getChildren().size(), 2);
+        assertTrue(hasChild(cvfeature, "required to bind"));
+        assertTrue(hasChild(cvfeature, "sufficient to bind"));
         // Has one parent.
         assertEquals(cvfeature.getParents().size(), 1);
         assertTrue(hasParent(cvfeature, "feature type"));
 
         cvfeature = (CvFeatureType) myHelper.getObjectByLabel(CvFeatureType.class,
-                "acetylation");
-        // Has 21 children
-        assertEquals(cvfeature.getChildren().size(), 21);
+                "acetylated residue");
+        // Has 20 children
+        assertEquals(cvfeature.getChildren().size(), 20);
         assertTrue(hasChild(cvfeature, "acetylalanine"));
-        assertTrue(hasChild(cvfeature, "n-acetylglycine"));
-        assertTrue(hasChild(cvfeature, "n6-acetyl-l-lysine"));
+        assertTrue(hasChild(cvfeature, "acetylglycine"));
+        assertTrue(hasChild(cvfeature, "acetyllysine"));
         // Has one parent.
         assertEquals(cvfeature.getParents().size(), 1);
         assertTrue(hasParent(cvfeature, "ptm"));
 
         cvfeature = (CvFeatureType) myHelper.getObjectByLabel(CvFeatureType.class,
-                "amidation");
+                "amidated residue");
         // Has 2 children
         assertEquals(cvfeature.getChildren().size(), 2);
-        assertTrue(hasChild(cvfeature, "alaninamide"));
-        assertTrue(hasChild(cvfeature, "argininamide"));
+        assertTrue(hasChild(cvfeature, "alanineamide"));
+        assertTrue(hasChild(cvfeature, "arginineamide"));
         // Has one parent.
         assertEquals(cvfeature.getParents().size(), 1);
         assertTrue(hasParent(cvfeature, "ptm"));
@@ -1011,14 +1122,15 @@ public class GoToolsTest extends TestCase {
         assertEquals(cvfeature.getAnnotations().size(), 1);
         // Must contain the topic definition.
         assertTrue(containsTopic(cvfeature, definition));
-        // One xref.
-        assertEquals(cvfeature.getXrefs().size(), 1);
+        // Two xrefs.
+        assertEquals(cvfeature.getXrefs().size(), 2);
         // Compare the primary id for the object
         assertTrue(checkDBXref(cvfeature, goid, "MI:0005", identity));
+        assertTrue(checkDBXref(cvfeature, pubmed, "14755292", godef));
         // No aliases.
         assertTrue(cvfeature.getAliases().isEmpty());
 
-        shortlabel = "complete sequence";
+        shortlabel = "full dna sequence";
         cvfeature = (CvFeatureIdentification) myHelper.getObjectByLabel(CvFeatureIdentification.class,
                 shortlabel);
         // Must have the object
@@ -1030,10 +1142,11 @@ public class GoToolsTest extends TestCase {
         assertEquals(cvfeature.getAnnotations().size(), 1);
         // Must contain the topic definition.
         assertTrue(containsTopic(cvfeature, definition));
-        // One xref.
-        assertEquals(cvfeature.getXrefs().size(), 1);
+        // Two xrefs.
+        assertEquals(cvfeature.getXrefs().size(), 2);
         // Compare the primary id for the object
         assertTrue(checkDBXref(cvfeature, goid, "MI:0056", identity));
+        assertTrue(checkDBXref(cvfeature, pubmed, "14755292", godef));
         // No aliases.
         assertTrue(cvfeature.getAliases().isEmpty());
 
@@ -1091,10 +1204,11 @@ public class GoToolsTest extends TestCase {
         assertEquals(cvfeature.getAnnotations().size(), 1);
         // Must contain the topic definition.
         assertTrue(containsTopic(cvfeature, definition));
-        // One xref.
-        assertEquals(cvfeature.getXrefs().size(), 1);
+        // Two xrefs.
+        assertEquals(cvfeature.getXrefs().size(), 2);
         // Compare the primary id for the object
         assertTrue(checkDBXref(cvfeature, goid, "MI:0113", identity));
+        assertTrue(checkDBXref(cvfeature, pubmed, "14755292", godef));
         // One alias.
         assertEquals(cvfeature.getAliases().size(), 1);
         assertTrue(checkAlias(cvfeature, "Immuno blot"));
@@ -1111,10 +1225,11 @@ public class GoToolsTest extends TestCase {
         assertEquals(cvfeature.getAnnotations().size(), 1);
         // Must contain the topic definition.
         assertTrue(containsTopic(cvfeature, definition));
-        // One xref.
-        assertEquals(cvfeature.getXrefs().size(), 1);
+        // Two xrefs.
+        assertEquals(cvfeature.getXrefs().size(), 2);
         // Compare the primary id for the object
         assertTrue(checkDBXref(cvfeature, goid, "MI:0114", identity));
+        assertTrue(checkDBXref(cvfeature, pubmed, "14755292", godef));
         // One alias.
         assertEquals(cvfeature.getAliases().size(), 1);
         assertTrue(checkAlias(cvfeature, "X-ray"));
@@ -1142,9 +1257,8 @@ public class GoToolsTest extends TestCase {
 
         cvfeature = (CvFeatureIdentification) myHelper.getObjectByLabel(
                 CvFeatureIdentification.class, "endor");
-        // Has one child.
-        assertEquals(cvfeature.getChildren().size(), 1);
-        assertTrue(hasChild(cvfeature, "docking"));
+        // Has no children.
+        assertTrue(cvfeature.getChildren().isEmpty());
         // Has one parent.
         assertEquals(cvfeature.getParents().size(), 1);
         assertTrue(hasParent(cvfeature, "electron resonance"));
@@ -1228,16 +1342,14 @@ public class GoToolsTest extends TestCase {
 
     private void verifyCvInteractionTypes(IntactHelper helper) throws IntactException {
         String[] items = new String[] {
-            "acetylation reaction", "aggregation", "amidation reaction", "cleavage",
-            "covalent binding", "covalent interaction", "deacetylation reacti",
-            "defarnesylation reac", "deformylation reacti", "degeranylation",
-            "demyristoylation", "depalmitoylation", "dephosphorylation re",
-            "deubiquitination rea", "disaggregation", "farnesylation reacti",
-            "formylation reaction", "genetic interaction", "geranylation reactio",
-            "hydroxylation reacti", "interaction type", "lipid addition",
-            "lipid cleavage", "methylation reaction", "myristoylation react",
-            "non covalent interac", "palmitoylation react", "phosphorylation reac",
-            "physical interaction", "synthetic lethal", "ubiquitination react"
+            "acetylation", "adp ribosylation", "amidation", "cleavage", "colocalization",
+            "covalent binding", "deacetylation", "defarnesylation", "deformylation",
+            "degeranylation", "deglycosylation", "demyristoylation", "depalmitoylation",
+            "dephosphorylation", "deubiquitination", "direct interaction", "disulfide bond",
+            "enzymatic reaction", "farnesylation", "formylation", "geranylation", "glycosylation",
+            "hydroxylation", "interaction type", "lipid addition", "lipid cleavage",
+            "methylation", "myristoylation", "palmitoylation", "phosphorylation",
+            "physical interaction", "transglutamination", "ubiquitination", "ubiquitin binding"
         };
         List results = extractShortLabels((List) helper.search(
                 CvInteractionType.class, "ac", "*"));
@@ -1246,31 +1358,36 @@ public class GoToolsTest extends TestCase {
 
     private void verifyCvFeatureTypes(IntactHelper helper) throws IntactException {
         String[] items = new String[] {
-            "3-methylthio-asparti", "4-hydroxy-l-proline", "5-methyl-l-glutamate",
-            "acetylalanine", "acetylaspartic acid", "acetylation",
-            "acetylglutamic acid", "acetylglutamine", "acetylisoleucine",
-            "acetylproline", "alaninamide", "amidation", "argininamide",
-            "binding site", "dimethyl-l-arginine", "diphthamide", "feature type",
-            "flag-tagged", "formylation", "gst-tagged", "ha-tagged", "his-tagged",
-            "hotspot", "hydroxylation", "hypusine", "l-3-oxoalanine",
-            "l-glutamyl 5-glycery", "lipid modification", "l-selenocysteine",
-            "l-selenomethionine", "methionamine", "methylation", "mutation",
-            "myc-tagged", "n2-acetyllysine", "n6-acetyl-l-lysine",
-            "n6-biotinyl-l-lysine", "n6-dimethyl-l-lysine", "n6-methyl-l-lysine",
-            "n6-myristoyl-l-lysin", "n6-retinyl-lysine", "n-acetylcysteine",
-            "n-acetylglycine", "n-acetyl-l-arginine", "n-acetyl-l-asparagin",
-            "n-acetyl-l-histidine", "n-acetyl-l-leucine", "n-acetylphenylalanin",
-            "n-acetylserine", "n-acetylthreonine", "n-acetyltryptophan",
-            "n-acetyltyrosine", "n-acetylvaline", "n-formylmethionine",
-            "n-methylalanine", "n-methylglutamine", "n-methylmethionine",
-            "n-methylphenylalanin", "n-myristoyl-glycine", "n-palmitoyl-l-cystei",
-            "o3-phosphoserine", "o3-phosphothreonine", "omegaphosphoarginine",
-            "other modification", "phosphoaspartic acid", "phosphorylation",
-            "pi-methylhistidine", "pi-phosphohistidine", "ptm", "pyroglutamic acid",
-            "s3-phosphocysteine", "s-farnesyl-l-cystein", "s-geranylgeranyl-l-c",
-            "s-palmitoyl-l-cystei", "t7-tagged", "tagged-protein", "tap-tagged",
-            "tau-phosphohistidine", "trimethyl-l-alanine", "trimethyl-l-lysine",
-            "tyrosine-phosphate", "ubiquitinated", "v5-tagged"
+            "1-phosphohistidine", "3-phosphohistidine", "4hydroxyproline",
+            "acetylalanine", "acetylarginine", "acetylasparagine", "acetylaspartate",
+            "acetylated residue", "acetylcysteine", "acetylglutamate", "acetylglutamine",
+            "acetylglycine", "acetylhistidine", "acetylisoleucine", "acetylleucine",
+            "acetyllysine", "acetylmethionine", "acetylphenylalanine", "acetylproline",
+            "acetylserine", "acetylthreonine", "acetyltryptophan", "acetyltyrosine",
+            "acetylvaline", "adp-ribosylarginine", "adpribosylasparagine", "adp-ribosylated",
+            "adp-ribosylcysteine", "adp-ribosylglutamate", "adp-ribosylserine", "alanineamide",
+            "alkylated cysteine", "amidated residue", "arginineamide", "binding site",
+            "biotinyllysine", "carboxyglutamic acid", "dimethylarginine", "dimethyllysine",
+            "diphthamide", "farnesylcysteine", "feature type", "flag-tagged",
+            "formylated residue", "formylmethionine", "geranylgeranylcys", "glutamatemethylester",
+            "glycerylpo4etohamine", "glycosylarginine", "glycosylasparagine", "glycosylated residue",
+            "glycosyl-cysteine", "glycosyl-serine", "glycosyl-threonine", "gpi-alanine",
+            "gpi anchor residue", "gpi-asparagine", "gpi-aspartate", "gpi-cysteine",
+            "gpi-glycine", "gpi-serine", "gpi-threonine", "gst-tagged", "ha-tagged",
+            "his-tagged", "hotspot", "hydroxylated residue", "hypusine", "lipid modification",
+            "methylalanine", "methylarginine", "methylated alanine", "methylated arginine",
+            "methylatedlysine", "methylated residue", "methylglutamine", "methylhistidine",
+            "methyllysine", "methylmethionine", "methylphenylalanine", "methylthioaspartate",
+            "mutation", "myc-tagged", "myristoylglycine", "myristoyllysine", "mytistoylated aa",
+            "n2-acetyllysine", "n6-acetyllysine", "nitrosylcysteine", "nitro-tyrosine",
+            "n-palmitoylcysteine", "other modification", "oxoalanine", "palmitoylated aa",
+            "phosphoarginine", "phosphoaspartic acid", "phosphocysteine", "phosphorylated",
+            "phosphoserine", "phosphoshistidine", "phosphothreonine", "phosphotyrosine",
+            "prenylcysteine", "ptm", "pyroglutamic acid", "required to bind", "retinallysine",
+            "selenocysteine", "selenomethionine", "s-palmitoylcysteine", "sufficient to bind",
+            "sulfotyrosine", "sumoylated lysine", "t7-tagged", "tagged-protein", 
+            "tap-tagged", "trimethylalanine", "trimethyllysine", "ubiquitinated lysine",
+            "v5-tagged"
         };
         List results = extractShortLabels((List) helper.search(
                 CvFeatureType.class, "ac", "*"));
@@ -1279,13 +1396,13 @@ public class GoToolsTest extends TestCase {
 
     private void verifyCvFeatureIdentifications(IntactHelper helper) throws IntactException {
         String[] items = new String[] {
-            "alanine scanning", "complete sequence", "correlated mutations",
-            "deletion analysis", "docking", "domain profile pairs",
-            "electron resonance", "endor", "epr", "feature detection",
-            "interface predictor", "mobility shift", "modified residue ms",
-            "monoclonal antibody", "mutation analysis", "nmr", "polyclonal antibody",
-            "protein sequence_ms", "protein staining", "surface patches",
-            "western blot", "x-ray"
+            "alanine scanning", "correlated mutations", "deletion analysis",
+            "docking", "domain profile pairs", "electron resonance", "endor",
+            "epr", "feature detection", "full dna sequence", "interface predictor",
+            "mobility shift", "modified residue ms", "monoclonal antibody",
+            "ms protein sequence", "mutation analysis", "nmr", "polyclonal antibody",
+            "protein footprinting", "protein staining", "surface patches", "western blot",
+            "x-ray"
         };
         List results = extractShortLabels((List) helper.search(
                 CvFeatureIdentification.class, "ac", "*"));
