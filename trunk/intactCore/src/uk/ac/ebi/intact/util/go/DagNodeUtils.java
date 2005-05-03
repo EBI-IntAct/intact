@@ -55,18 +55,9 @@ public class DagNodeUtils {
             Pattern.compile("([^\\\\:]*)[\\\\: ]*(.*)");
 
     /**
-     * This pattern identifies a synonym.
+     * Pattern: synonym:[any characters apart for ;]
      */
-    private static final Pattern ourSynonymRegx = Pattern.compile("synonym:");
-
-    /**
-     * This pattern identifies a single synonym entry.
-     * pattern: [, followed by a character, \: and any group of characters
-     * until ] is encountered (this matches the pattern [A\:ac]). Or group of
-     * chars till ; encountered (this matches the pattern AAC).
-     */
-    private static final Pattern ourSynonymItemRegx =
-            Pattern.compile("\\[(\\w)\\\\:([^\\]]+)|([^;]+)");
+    private static final Pattern ourSynonymRegx = Pattern.compile("synonym:([^;@]+)");
 
     /**
      * Reference to the GoTools.
@@ -160,15 +151,13 @@ public class DagNodeUtils {
                 // The "main" parent is defined by a preceding line, the additional
                 // additionalParents are defined in the current line and are
                 // added as parent data of the current node.
-
                 // Matcher for go id
-                Matcher goIdMatch;
+
                 if (termLine.startsWith("@")) {
                     // Stores the go term.
                     String goTerm = null;
 
-                    goIdMatch = ourGoId14Regex.matcher(termLine);
-                    if (goIdMatch.find()) {
+                    for (Matcher goIdMatch = ourGoId14Regex.matcher(termLine); goIdMatch.find(); ) {
                         Matcher m = ourShortLabelGoTerm14Regx.matcher(goIdMatch.group(1));
                         // Store goterm
                         if (m.find()) {
@@ -182,43 +171,29 @@ public class DagNodeUtils {
                             node.setGoId(goIdMatch.group(2));
                         }
                         else {
-                            // Store goterm
+                            // Must be the parent data.
                             node.addParentData(goIdMatch.group(2), goTerm, m.group(1));
                         }
                         // Any synoyms?
-                        String[] synonymns = ourSynonymRegx.split(termLine);
-                        // Can ignore the first as it contains the go id part.
-                        for (int i = 1; i < synonymns.length; i++) {
-                            Matcher m1 = ourSynonymItemRegx.matcher(synonymns[i]);
-                            if (m1.find()) {
-                                if (m1.group(1) != null) {
-                                    // A:\ac case
-                                    node.addAlias(m1.group(1) + ":" + m1.group(2));
-                                }
-                                else {
-                                    // AAC case
-                                    node.addAlias(m1.group(3).trim());
-                                }
-                            }
+                        for (Matcher m1 = ourSynonymRegx.matcher(termLine); m1.find();) {
+                            node.addAlias(m1.group(1).trim());
                         }
                     }
                 }
                 else {
-                    // We only get here if we are parsing files saved in pre14 format.
-                    goIdMatch = ourGoIdRegex.matcher(termLine);
+                    // Encountered the first line in the dag file (starts with $)
+                    Matcher goIdMatch = ourGoIdRegex.matcher(termLine);
                     if (goIdMatch.find()) {
-                        // The first Go id is the id of the current term,
-                        //  subsequent ones are ids of additional Parents.
-                        if (null == node.getGoId()) {
-                            // Store goid
-                            node.setGoId(goIdMatch.group(2));
-                            // Store goterm
-                            node.setGoTerm(goIdMatch.group(1).trim());
-                            // Set the short label for search.
-                            node.setGoShortLabelFromTerm();
-                        }
-                        else {
-                            node.addParentData(goIdMatch.group(2), goIdMatch.group(1));
+                        // There is no node for given go id (as this is the first one)
+                        // Store goid
+                        node.setGoId(goIdMatch.group(2));
+                        // Store goterm
+                        node.setGoTerm(goIdMatch.group(1).trim());
+                        // Set the short label for search.
+                        node.setGoShortLabelFromTerm();
+                        // Any synoyms?
+                        for (Matcher m1 = ourSynonymRegx.matcher(termLine); m1.find();) {
+                            node.addAlias(m1.group(1).trim());
                         }
                     }
                 }

@@ -30,21 +30,14 @@ public class DagGenerator {
     private String myGoIdDatabase;
 
     /**
-     * True if DAG v14 output is needed.
-     */
-    private boolean myV14;
-
-    /**
      * Constructs an instance of this class.
      * @param writer the writer to write to.
      * @param goidDatabase the name of the GO id database.
-     * @param v14 true if DAG v14 output is needed.
      */
 
-    public DagGenerator(PrintWriter writer, String goidDatabase, boolean v14) {
+    public DagGenerator(PrintWriter writer, String goidDatabase) {
         myWriter = writer;
         myGoIdDatabase = goidDatabase;
-        myV14 = v14;
     }
 
     /**
@@ -77,17 +70,17 @@ public class DagGenerator {
             myWriter.print("$");
         }
         else {
-            myWriter.print(myV14 ? "@is_a@" : "%");
+            myWriter.print("@is_a@");
         }
         // write the current term
-        term2DagLine(current);
+        term2DagLine(current, true);
 
         // additional parents
         for (Iterator iter = current.getParents().iterator(); iter.hasNext();) {
             CvDagObject nextParent = (CvDagObject) iter.next();
             if (parent != nextParent) {
-                myWriter.print(myV14 ? " @is_a@ " : " % ");
-                term2DagLine(nextParent);
+                myWriter.print(" @is_a@ ");
+                term2DagLine(nextParent, false);
             }
         }
         // end term line
@@ -103,13 +96,10 @@ public class DagGenerator {
     /**
      * Prints the term, goid and synonym info
      */
-    private void term2DagLine(CvDagObject current) {
-        // v14 has shortlabel\: go term
-        if (myV14) {
-            // No need to print the short label if it is as same as the term.
-            if (!current.getShortLabel().equals(current.getFullName())) {
-                myWriter.print(current.getShortLabel() + "\\: ");
-            }
+    private void term2DagLine(CvDagObject current, boolean printAlias) {
+        // No need to print the short label if it is as same as the term.
+        if (!current.getShortLabel().equals(current.getFullName())) {
+            myWriter.print(current.getShortLabel() + "\\: ");
         }
         // The term itself
         myWriter.print(current.getFullName());
@@ -120,7 +110,10 @@ public class DagGenerator {
         if (goid != null) {
             myWriter.print(" ; " + goid);
         }
-
+        // Return if there is no need to print aliases.
+        if (!printAlias) {
+            return;
+        }
         // Print aliases.
         for (Iterator iter = current.getAliases().iterator(); iter.hasNext(); ) {
             String alias = ((Alias) iter.next()).getName();

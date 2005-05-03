@@ -11,7 +11,8 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * Testsuite for testing GoUtils.
+ * Testsuite for testing GoUtils. Use test-go-stdout target of the main build file
+ * to run this test.
  *
  * @author Sugath Mudali
  * @version $Id$

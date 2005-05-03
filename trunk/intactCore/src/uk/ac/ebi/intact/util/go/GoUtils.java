@@ -156,11 +156,6 @@ public class GoUtils {
 
     // Global Data
 
-    /**
-     * Maximum length of a shortLabel
-     */
-    public static final int ourMaxLabelLen = 20;
-
     // Class Data
 
     /**
@@ -222,16 +217,17 @@ public class GoUtils {
     // Class methods.
 
     /**
-     * Returns a string that has maximum of {@link #ourMaxLabelLen} and all characters
-     * are in lowercase. Givenb string is only truncated if it erxceeds max characters.
+     * Returns a string that has maximum of {@link AnnotatedObject.MAX_SHORT_LABEL_LEN}
+     * and all characters are in lowercase. Givenb string is only truncated if it
+     * exceeds max characters.
      *
      * @param label given string
      * @return the string after normalizing <code>label</code>.
      */
     public static String normalizeShortLabel(String label) {
-        if (label.length() > ourMaxLabelLen) {
+        if (label.length() > AnnotatedObject.MAX_SHORT_LABEL_LEN) {
             return label.substring(0, Math.min(label.length(),
-                    ourMaxLabelLen)).toLowerCase();
+                    AnnotatedObject.MAX_SHORT_LABEL_LEN)).toLowerCase();
         }
         return label.toLowerCase();
     }
@@ -396,11 +392,10 @@ public class GoUtils {
      * Writes a Controlled vocabulary in GO definition format flat file.
      *
      * @param targetFile the name of the file to write to.
-     * @param v14 true to write the file in new DAG V14 format.
      * @throws IntactException for errors in accessing the persisten system.
      * @throws IOException for I/O errors.
      */
-    public void writeGoDefinitions(String targetFile, boolean v14)
+    public void writeGoDefinitions(String targetFile)
             throws IntactException, IOException {
         PrintWriter out = null;
 
@@ -411,7 +406,7 @@ public class GoUtils {
             Collection result = myHelper.search(myTargetClass, "ac", "*");
 
             for (Iterator iterator = result.iterator(); iterator.hasNext();) {
-                printGoDef((CvObject) iterator.next(), out, v14);
+                printGoDef((CvObject) iterator.next(), out);
             }
         }
         finally {
@@ -425,11 +420,10 @@ public class GoUtils {
      * Print the GO format DAG to a file.
      *
      * @param targetFile the name of the file to write to.
-     * @param v14 true to write the file in new DAG V14 format.
      * @throws IntactException for errors in accessing the persisten system.
      * @throws IOException for I/O errors.
      */
-    public void writeGoDag(String targetFile, boolean v14) throws IntactException, IOException {
+    public void writeGoDag(String targetFile) throws IntactException, IOException {
         // The writer to write the output.
         PrintWriter out = null;
 
@@ -442,7 +436,7 @@ public class GoUtils {
             if (result.size() > 0) {
                 Iterator iterator = result.iterator();
                 CvDagObject o = (CvDagObject) iterator.next();
-                DagGenerator dagGenerator = new DagGenerator(out, myGoIdDatabase, v14);
+                DagGenerator dagGenerator = new DagGenerator(out, myGoIdDatabase);
                 dagGenerator.toGoDag(o.getRoot());
             }
         }
@@ -735,35 +729,24 @@ public class GoUtils {
      *
      * @param cvobj the CVObject to print.
      * @param out the write to write to
-     * @param v14 true for DAG 14 format (the new format).
      */
-    private void printGoDef(CvObject cvobj, PrintWriter out, boolean v14)
+    private void printGoDef(CvObject cvobj, PrintWriter out)
             throws IntactException {
-        // Write shortlabel (for the old format)
-        if (!v14) {
-            out.print("shortlabel: ");
-            out.println(cvobj.getShortLabel());
-        }
         // Write GO term
         out.print("term: ");
 
-        if (v14) {
-            // The new format combines short label and full name under term
-            if (cvobj.getShortLabel().equals(cvobj.getFullName())) {
-                out.println(cvobj.getShortLabel());
-            }
-            else {
-                out.println(cvobj.getShortLabel() + ": " + cvobj.getFullName());
-            }
+        // The new format combines short label and full name under term
+        if (cvobj.getShortLabel().equals(cvobj.getFullName())) {
+            out.println(cvobj.getShortLabel());
         }
         else {
-            out.println(cvobj.getFullName());
+            out.println(cvobj.getShortLabel() + ": " + cvobj.getFullName());
         }
 
         // write goid
         String goid = getGoid(cvobj, myGoIdDatabase);
         if (goid != null) {
-            out.print(v14 ? "id: " : "goid: ");
+            out.print("id: ");
             out.println(goid);
         }
 	
