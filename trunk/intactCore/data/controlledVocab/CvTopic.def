@@ -66,14 +66,14 @@ definition_reference: PMID:INTACT
 term: pathway: refers to the metabolic pathway that the interaction/complex is involved in.
 definition_reference: PMID:INTACT
 
-term: prerequisite ptm: PTM required for an interaction to occur.
+term: prerequisite-ptm: PTM required for an interaction to occur.
 definition_reference: PMID:INTACT
 
-term: remark_internal: Internal remark
+term: remark-internal: Internal remark
 definition: Internal remark. Will normally not be shown to the public.
 definition_reference: PMID:INTACT
 
-term: resulting ptm: PTM occurs subsequent to interaction occuring
+term: resulting-ptm: PTM occurs subsequent to interaction occuring
 definition: PTM occuring to one protein within the complex as a result of the complex formation.
 definition_reference: PMID:INTACT
 
