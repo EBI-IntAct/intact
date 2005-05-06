@@ -198,12 +198,14 @@
       </form>
       <form name="bsForm">
               <field property="taxId"
-                     depends="mask">
+                     depends="required,mask">
                   <msg
                     name="mask"
                     key="error.taxid.mask"/>
 
-                  <arg0 key="bsForm.taxId"/>
+                  <arg0
+                    key="biosource.label.tax"
+                  />
                   <var>
                     <var-name>mask</var-name>
                     <var-value>^[0-9\-]+$</var-value>
