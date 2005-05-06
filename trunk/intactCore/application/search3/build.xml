@@ -205,7 +205,7 @@
         </delete>
 
   <!-- images commons files -->
-        <delete>
+        <delete quiet="true">
             <fileset dir="${tld.dir}">
                 <exclude name="cvGraph.tld"/>
             </fileset>
