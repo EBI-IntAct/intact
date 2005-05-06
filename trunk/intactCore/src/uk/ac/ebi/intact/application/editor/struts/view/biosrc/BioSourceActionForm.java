@@ -40,6 +40,9 @@ public class BioSourceActionForm extends EditorActionForm {
     }
 
     /**
+     * @struts.validator type="required"
+     * @struts.validator-args arg0resource="biosource.label.tax"
+     *
      * @struts.validator type="mask" msgkey="error.taxid.mask"
      * @struts.validator-var name="mask" value="^[0-9\-]+$"
      */
