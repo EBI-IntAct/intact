@@ -80,14 +80,8 @@ public class InteractionDeleteAction extends DeleteFormAction {
 
             // The intact helper to access the persistent layer.
             IntactHelper helper = user.getIntactHelper();
-            try {
-                // Remove it from the cache first.
-                helper.removeFromCache(expView.getAnnotatedObject());
-            }
-            finally {
-                // Close the helper.
-                helper.closeStore();
-            }
+            // Remove it from the cache first.
+            helper.removeFromCache(expView.getAnnotatedObject());
         }
         user.setView(expView);
         // Back to the experiment editor.

@@ -85,24 +85,18 @@ public class ResultAction extends AbstractEditorAction {
             saveErrors(request, errors);
             return mapping.findForward(FAILURE);
         }
-        IntactHelper helper = new IntactHelper();
-        // The selected Annotated object.
-        AnnotatedObject annobj;
+        IntactHelper helper = user.getIntactHelper();
         // The class for the search.
         Class clazz = getModelClass(type);
-        try {
-            // We need to do this because interactions can be added or removed from
-            // an experiment via the interaction editor. Those interactions that
-            // have been added or removed this way will not be visible until it
-            // is removed and reloaded again.
-            if (Experiment.class.isAssignableFrom(clazz) && helper.isInCache(clazz, ac)) {
-                helper.removeFromCache(clazz, ac);
-            }
-            annobj = (AnnotatedObject) helper.getObjectByAc(clazz, ac);
+        // We need to do this because interactions can be added or removed from
+        // an experiment via the interaction editor. Those interactions that
+        // have been added or removed this way will not be visible until it
+        // is removed and reloaded again.
+        if (Experiment.class.isAssignableFrom(clazz) && helper.isInCache(clazz, ac)) {
+            helper.removeFromCache(clazz, ac);
         }
-        finally {
-            helper.closeStore();
-        }
+        // The selected Annotated object.
+        AnnotatedObject annobj = (AnnotatedObject) helper.getObjectByAc(clazz, ac);
         // Set the object and the type we are about to edit.
         user.setSelectedTopic(type);
         user.setView(annobj);

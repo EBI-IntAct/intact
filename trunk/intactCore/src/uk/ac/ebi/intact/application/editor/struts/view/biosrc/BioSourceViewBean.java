@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.application.editor.exception.validation.ValidationExcept
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
+import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
@@ -69,30 +70,6 @@ public class BioSourceViewBean extends AbstractEditViewBean {
         setTissue(tissue != null ? tissue.getShortLabel() : null);
     }
 
-    // Implements abstract methods
-
-    protected void updateAnnotatedObject(IntactHelper helper) throws IntactException {
-        // The current biosource.
-        BioSource bs = (BioSource) getAnnotatedObject();
-
-        // Have we set the annotated object for the view?
-        if (bs == null) {
-            // Not persisted; create a new biosource object.
-            bs = new BioSource(getService().getOwner(), getShortLabel(), getTaxId());
-            setAnnotatedObject(bs);
-        }
-        else {
-            bs.setTaxId(getTaxId());
-        }
-        // Set tissue and cell objects.
-        bs.setCvTissue(getCvTissue(helper));
-        bs.setCvCellType(getCvCellType(helper));
-    }
-
-    protected void clearMenus() {
-        myMenus.clear();
-    }
-
     // Override to copy biosource from the form to the bean.
     public void copyPropertiesFrom(EditorFormI editorForm) {
         // Set the common values by calling super first.
@@ -132,14 +109,8 @@ public class BioSourceViewBean extends AbstractEditViewBean {
     public void sanityCheck() throws ValidationException, IntactException {
         // There should be one unique bisosurce.
         if ((getCellType() == null) && (getTissue() == null)) {
-            IntactHelper helper = new IntactHelper();
-            BioSource bs;
-            try {
-                bs = helper.getBioSourceByTaxId(myTaxId);
-            }
-            finally {
-                helper.closeStore();
-            }
+            IntactHelper helper = IntactHelperUtil.getIntactHelper();
+            BioSource bs = helper.getBioSourceByTaxId(myTaxId);
             if (bs != null) {
                 // A BioSource found.
                 if (!bs.getAc().equals(getAc())) {
@@ -178,41 +149,52 @@ public class BioSourceViewBean extends AbstractEditViewBean {
     }
 
     /**
+     * Override to provide menus for this view.
      * @return a map of menus for this view. It consists of common menus for
      * annotation/xref, cell (add) and tissue (add).
      */
     public Map getMenus() throws IntactException {
-        if (myMenus.isEmpty()) {
-            loadMenus();
-        }
         return myMenus;
+    }
+
+    // Implements abstract methods
+
+    protected void updateAnnotatedObject(IntactHelper helper) throws IntactException {
+        // The current biosource.
+        BioSource bs = (BioSource) getAnnotatedObject();
+
+        // Have we set the annotated object for the view?
+        if (bs == null) {
+            // Not persisted; create a new biosource object.
+            bs = new BioSource(getService().getOwner(), getShortLabel(), getTaxId());
+            setAnnotatedObject(bs);
+        }
+        else {
+            bs.setTaxId(getTaxId());
+        }
+        // Set tissue and cell objects.
+        bs.setCvTissue(getCvTissue(helper));
+        bs.setCvCellType(getCvCellType(helper));
     }
 
     /**
      * Override to load the menus for this view.
-     * @throws IntactException for errors in accessing the persistent system.
      */
-    private void loadMenus() throws IntactException {
+    protected void loadMenus() throws IntactException {
         // Handler to the menu factory.
         EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
 
-        // The Intact helper to construct menus.
-        IntactHelper helper = new IntactHelper();
+        // Clear any existing menus first.
+        myMenus.clear();
+        myMenus.putAll(super.getMenus());
 
-        try {
-            myMenus.putAll(super.getMenus(helper));
+        // The cell type menu
+        String name = EditorMenuFactory.CELL;
+        myMenus.put(name, menuFactory.getMenu(name, 1));
 
-            // The cell type menu
-            String name = EditorMenuFactory.CELL;
-            myMenus.put(name, menuFactory.getMenu(name, 1, helper));
-
-            // The tissue menu.
-            name = EditorMenuFactory.TISSUE;
-            myMenus.put(name, menuFactory.getMenu(name, 1, helper));
-        }
-        finally {
-            helper.closeStore();
-        }
+        // The tissue menu.
+        name = EditorMenuFactory.TISSUE;
+        myMenus.put(name, menuFactory.getMenu(name, 1));
     }
 
     /**

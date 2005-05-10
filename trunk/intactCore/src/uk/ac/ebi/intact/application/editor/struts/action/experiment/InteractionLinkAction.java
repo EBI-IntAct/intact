@@ -59,16 +59,11 @@ public class InteractionLinkAction extends CommonDispatchAction {
         String intAc = (String) ((ExperimentActionForm) form).getIntac();
 
         // The Intact helper to access the Interaction.
-        IntactHelper helper = new IntactHelper();
+        IntactHelper helper = user.getIntactHelper();
 
         // The interaction we are about to edit.
-        Interaction inter;
-        try {
-            inter = (Interaction) helper.getObjectByAc(Interaction.class, intAc);
-        }
-        finally {
-            helper.closeStore();
-        }
+        Interaction inter = (Interaction) helper.getObjectByAc(Interaction.class, intAc);
+
         // We must have this Interaction.
         assert inter != null;
 

@@ -18,6 +18,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.InteractionRowData;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentRowData;
 import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
+import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.business.BusinessConstants;
 import uk.ac.ebi.intact.business.IntactException;
@@ -190,9 +191,10 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     private String myPassword;
 
     /**
-     * The name of the current database.
+     * The name of the current database. Transient as it can be retrieved via
+     * IntactHelper
      */
-    private String myDatabaseName;
+    private transient String myDatabaseName;
 
     /**
      * The search helper. This is recreated if necessary.
@@ -253,15 +255,8 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     public EditUser(String user, String password) throws IntactException {
         myUserName = user;
         myPassword = password;
-        IntactHelper helper = new IntactHelper();
-        try {
-            // Initialize the object.
-            initialize(helper);
-        }
-        finally {
-            helper.closeStore();
-            myProteinFactory.setIntactHelper(null);
-        }
+        // Initialize the object.
+        initialize();
     }
 
     // Methods to handle special serialization issues.
@@ -269,22 +264,11 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     private void readObject(ObjectInputStream in) throws IOException,
             ClassNotFoundException {
         in.defaultReadObject();
-        IntactHelper helper = null;
         try {
-            helper = new IntactHelper();
-            initialize(helper);
+            initialize();
         }
         catch (IntactException ie) {
             throw new IOException(ie.getMessage());
-        }
-        finally {
-            if (helper != null) {
-                try {
-                    helper.closeStore();
-                }
-                catch (IntactException e) {}
-            }
-            myProteinFactory.setIntactHelper(null);
         }
     }
 
@@ -473,7 +457,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     public IntactHelper getIntactHelper() throws IntactException {
         // Construct the the helper.
-        return new IntactHelper(myUserName, myPassword);
+        return IntactHelperUtil.getIntactHelper(myUserName, myPassword);
     }
     
     public void startEditing() {
@@ -522,19 +506,16 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     }
 
     public ResultWrapper getSPTRProteins(String pid, int max) throws IntactException {
-        // The helper to insert proteins.
-        IntactHelper helper = getIntactHelper();
         // The result wrapper to return.
         ResultWrapper rw = null;
 
         // Set the helper as it has already been closed.
-        myProteinFactory.setIntactHelper(helper);
+        myProteinFactory.setIntactHelper(getIntactHelper());
         Collection prots;
         try {
             prots = myProteinFactory.insertSPTrProteins(pid);
         }
         finally {
-            helper.closeStore();
             myProteinFactory.setIntactHelper(null);
         }
         if (prots.size() > max) {
@@ -592,7 +573,25 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     }
 
     public boolean shortLabelExists(String label) throws IntactException {
-        return doesShortLabelExist(myEditView.getEditClass(), label, myEditView.getAc());
+        // Holds the result from the search.
+        Collection results = getIntactHelper().search(
+                myEditView.getEditClass().getName(), "shortLabel", label);
+        if (results.isEmpty()) {
+            // Don't have this short label on the database.
+            return false;
+        }
+        // If we found a single record then it could be the current record.
+        if (results.size() == 1) {
+            // Found an object with similar short label; is it as same as the
+            // current record?
+            String resultAc = ((AnnotatedObject) results.iterator().next()).getAc();
+            if (resultAc.equals(myEditView.getAc())) {
+                // We have retrieved the same record from the DB.
+                return false;
+            }
+        }
+        // There is another record exists with the same short label.
+        return true;
     }
 
     /**
@@ -608,22 +607,12 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * invalid format.
      */
     public String getNextAvailableShortLabel(Class clazz, String label) {
-        IntactHelper helper = null;
         try {
-            helper = new IntactHelper();
-            return doGetNextAvailableShortLabel(helper, clazz, label);
+            return doGetNextAvailableShortLabel(clazz, label);
         }
         catch (IntactException ie) {
             // Error in searching, just return the original name for user to
             // decide.
-        }
-        finally {
-            if (helper != null) {
-                try {
-                    helper.closeStore();
-                }
-                catch (IntactException ie) {}
-            }
         }
         return label;
     }
@@ -688,18 +677,23 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     /**
      * Called by the constructors to initialize the object.
-     * @param helper the Intact helper to access the persistent system.
      * @throws IntactException for errors in accessing the persistent system.
      */
-    private void initialize(IntactHelper helper) throws IntactException {
+    private void initialize() throws IntactException {
+        IntactHelper helper = getIntactHelper();
         myDatabaseName = helper.getDbName();
 
-        // Initialize the Protein factory.
+        // Initialize the Protein factory. Needs a valid to initialize factory values.
         try {
             myProteinFactory = new UpdateProteins(helper);
         }
         catch (UpdateProteinsI.UpdateException e) {
             throw new IntactException("Unable to create the Protein factory");
+        }
+        finally {
+            // We reset it because the current helper will be closed soon (hence
+            // no longer valid).
+            myProteinFactory.setIntactHelper(null);
         }
     }
 
@@ -725,50 +719,8 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         myEditState = false;
     }
 
-    /**
-     * Returns true if given label exists in the persistent system.
-     * @param clazz the Class to search for (ie., scope)
-     * @param label the label to search for.
-     * @param ac the AC to exclude match for the retrieved record. This criteia
-     * is taken into consideration only when a single record was found. If the
-     * retieved object's AC matches this value then we conclude that we have
-     * retrieved the the same entry.
-     * @return true if <code>label</code> exists for <code>clazz</code>. False
-     * is returned for all other instances.
-     * @throws IntactException unable to create an Intact helper or error in
-     * searching the persistent system.
-     */
-    private boolean doesShortLabelExist(Class clazz, String label, String ac)
+    private String doGetNextAvailableShortLabel(Class clazz, String label)
             throws IntactException {
-        IntactHelper helper = new IntactHelper();
-        // Holds the result from the search.
-        Collection results;
-        try {
-           results = helper.search(clazz.getName(), "shortLabel", label);
-        }
-        finally {
-            helper.closeStore();
-        }
-        if (results.isEmpty()) {
-            // Don't have this short label on the database.
-            return false;
-        }
-        // If we found a single record then it could be the current record.
-        if (results.size() == 1) {
-            // Found an object with similar short label; is it as same as the
-            // current record?
-            String resultAc = ((AnnotatedObject) results.iterator().next()).getAc();
-            if (resultAc.equals(ac)) {
-                // We have retrieved the same record from the DB.
-                return false;
-            }
-        }
-        // There is another record exists with the same short label.
-        return true;
-    }
-
-    private String doGetNextAvailableShortLabel(IntactHelper helper, Class clazz,
-                                                String label) throws IntactException {
         // The formatter to analyse the short label.
         ShortLabelFormatter formatter = new ShortLabelFormatter(label);
 
@@ -780,6 +732,9 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
         // Try to guess the next new label.
         String nextLabel;
+
+        // The helper to search the persistent system.
+        IntactHelper helper = getIntactHelper();
 
         if (formatter.isRootOnly()) {
             // case: abc

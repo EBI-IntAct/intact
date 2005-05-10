@@ -6,15 +6,15 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.util;
 
-import java.util.List;
+import EDU.oswego.cs.dl.util.concurrent.ReadWriteLock;
+import EDU.oswego.cs.dl.util.concurrent.WriterPreferenceReadWriteLock;
+import org.apache.log4j.Logger;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
-
-import EDU.oswego.cs.dl.util.concurrent.WriterPreferenceReadWriteLock;
-import EDU.oswego.cs.dl.util.concurrent.ReadWriteLock;
-import org.apache.log4j.Logger;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import java.util.List;
 
 /**
  * The lock manager keeps a track of edit objects. It uses the AC as a unique

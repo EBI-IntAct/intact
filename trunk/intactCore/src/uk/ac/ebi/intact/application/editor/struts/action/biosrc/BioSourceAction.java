@@ -7,7 +7,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.action.biosrc;
 
 import org.apache.struts.action.*;
-import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
@@ -15,7 +14,10 @@ import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceActionFor
 import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceViewBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.BioSource;
+import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.CvXrefQualifier;
+import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.util.NewtServerProxy;
 
 import javax.servlet.http.HttpServletRequest;
@@ -127,7 +129,7 @@ public class BioSourceAction extends AbstractEditorAction {
             bioview.delXref(taxXref);
         }
         // Add the nex Xref.
-        Xref xref = createTaxXref(taxid, newtLabel);
+        Xref xref = createTaxXref(user.getIntactHelper(), taxid, newtLabel);
         bioview.addXref(new XreferenceBean(xref));
 
         // Set the view with the new inputs.
@@ -138,16 +140,11 @@ public class BioSourceAction extends AbstractEditorAction {
         // Update the form.
         bioview.copyPropertiesTo(bsform);
 
-        // Collection of biosources for the current taxid.
-        Collection results;
+        // The helper to access the DB
+        IntactHelper helper = user.getIntactHelper();
 
-        IntactHelper helper = new IntactHelper();
-        try {
-           results = helper.search(BioSource.class.getName(), "taxId", taxid);
-        }
-        finally {
-            helper.closeStore();
-        }
+        // Collection of biosources for the current taxid.
+        Collection results = helper.search(BioSource.class.getName(), "taxId", taxid);
         // AC of the current biosource.
         String ac = user.getView().getAc();
 
@@ -209,21 +206,15 @@ public class BioSourceAction extends AbstractEditorAction {
         return newlabel;
     }
 
-    private Xref createTaxXref(String taxid, String label) throws IntactException {
-        IntactHelper helper = new IntactHelper();
-        CvDatabase db;
-        CvXrefQualifier xqual;
-        try {
-            // The database the new xref belong to.
-            db = (CvDatabase) helper.getObjectByLabel(CvDatabase.class,
+    private Xref createTaxXref(IntactHelper helper, String taxid, String label)
+            throws IntactException {
+        // The database the new xref belong to.
+        CvDatabase db = (CvDatabase) helper.getObjectByLabel(CvDatabase.class,
                     getService().getResource("taxid.db"));
 
-            xqual = (CvXrefQualifier) helper.getObjectByLabel(
+        // The qualifier is identity
+        CvXrefQualifier xqual = (CvXrefQualifier) helper.getObjectByLabel(
                     CvXrefQualifier.class, "identity");
-        }
-        finally {
-            helper.closeStore();
-        }
         return new Xref(getService().getOwner(), db, taxid, label, null, xqual);
     }
 

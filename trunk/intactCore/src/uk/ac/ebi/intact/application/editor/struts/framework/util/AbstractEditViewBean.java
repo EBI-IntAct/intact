@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.application.editor.struts.framework.util;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.struts.tiles.ComponentContext;
+import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
@@ -188,11 +189,8 @@ public abstract class AbstractEditViewBean implements Serializable {
         setShortLabel(null);
         setFullName(null);
 
-        // editclass is not set to null because passivateObject method relies
-        // on this value (key in the object pool).
-
-        // Clear menus.
-        clearMenus();
+        // editclass is not set to null because passivateObject (EditViewBeanFactory)
+        // method relies on this value (key in the object pool).
     }
 
     /**
@@ -203,7 +201,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      */
     public void reset(Class clazz) {
         // reset() methid is called before passivating the object and hence
-        // no need to call it from here.
+        // no need to call it from here. See EditViewBeanFactory#passivateObject()
         myEditClass = clazz;
     }
 
@@ -221,6 +219,16 @@ public abstract class AbstractEditViewBean implements Serializable {
         // or getXrefs() methods.
         makeCommentBeans(annobj.getAnnotations());
         makeXrefBeans(annobj.getXrefs());
+
+        // Remove the current short label from the menu. Menus are already loaded
+        // via activateObject method call of the EditViewBeanFactory class.
+        try {
+            removeCurrentSLFromMenus();
+        }
+        catch (IntactException ie) {
+            // Log the error; the editor will display without menus!
+            Logger.getLogger(EditorConstants.LOGGER).error("loadMenus() error", ie);
+        }
     }
 
     /**
@@ -559,47 +567,6 @@ public abstract class AbstractEditViewBean implements Serializable {
             // Rethrow the exception to be logged.
             throw ie1;
         }
-        finally {
-            helper.closeStore();
-        }
-    }
-
-    /**
-     * Returns the map of menus which are common to all the editors.
-     * @param helper the helper to get the menu lables from the persistent system.
-     * @return map of menus. This consists of edit/add menus for Topic, Database
-     * and Qualifiers.
-     * @throws IntactException for errors in accessing the persistent system.
-     */
-    protected Map getMenus(IntactHelper helper) throws IntactException {
-        // The map containing the menus.
-        Map map = new HashMap();
-
-        // The short label to remove from the list.
-        String label = getShortLabel();
-
-        // Handler to the menu factory.
-        EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
-
-        // The topic edit/add menu
-        String name = EditorMenuFactory.TOPIC;
-        List menu = getMenu(name, label, 0, helper);
-        map.put(name, menu);
-        map.put(name + "_", menuFactory.convertToAddMenu(name, menu));
-
-        // The database edit/add menu.
-        name = EditorMenuFactory.DATABASE;
-        menu = getMenu(name, label, 0, helper);
-        map.put(name, menu);
-        map.put(name + "_", menuFactory.convertToAddMenu(name, menu));
-
-        // The qualifier edit/add menu.
-        name = EditorMenuFactory.QUALIFIER;
-        menu = getMenu(name, label, 0, helper);
-        map.put(name, menu);
-        map.put(name + "_", menuFactory.convertToAddMenu(name, menu));
-
-        return map;
     }
 
     /**
@@ -735,6 +702,40 @@ public abstract class AbstractEditViewBean implements Serializable {
         return EditorService.getInstance();
     }
 
+    /**
+     * Returns the map of menus which are common to all the editors.
+     * @return map of menus. This consists of edit/add menus for Topic, Database
+     * and Qualifiers.
+     * @throws IntactException for errors in accessing the persistent system.
+     */
+    protected Map getMenus() throws IntactException {
+        // The map containing the menus.
+        Map map = new HashMap();
+
+        // Handler to the menu factory.
+        EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
+
+        // The topic edit/add menu
+        String name = EditorMenuFactory.TOPIC;
+        List menu = menuFactory.getMenu(name, 0);
+        map.put(name, menu);
+        map.put(name + "_", menuFactory.convertToAddMenu(name, menu));
+
+        // The database edit/add menu.
+        name = EditorMenuFactory.DATABASE;
+        menu = menuFactory.getMenu(name, 0);
+        map.put(name, menu);
+        map.put(name + "_", menuFactory.convertToAddMenu(name, menu));
+
+        // The qualifier edit/add menu.
+        name = EditorMenuFactory.QUALIFIER;
+        menu = menuFactory.getMenu(name, 0);
+        map.put(name, menu);
+        map.put(name + "_", menuFactory.convertToAddMenu(name, menu));
+
+        return map;
+    }
+
     // Abstract method
 
     /**
@@ -752,9 +753,10 @@ public abstract class AbstractEditViewBean implements Serializable {
             IntactException;
 
     /**
-     * Clears menus.
+     * Loads menus. Subclasses must implement to provide their own menus.
+     * @throws IntactException for errors in accessing the persistent system.
      */
-    protected abstract void clearMenus();
+    protected abstract void loadMenus() throws IntactException;
 
     // Helper Methods
 
@@ -894,53 +896,22 @@ public abstract class AbstractEditViewBean implements Serializable {
         myXrefsToUpdate.clear();
     }
 
-//    private List getTopicMenu(int mode) throws IntactException {
-//        return getMenu(EditorMenuFactory.TOPIC, getShortLabel(), mode);
-//    }
-
-//    private List getDatabaseMenu(int mode) throws IntactException {
-//        return getMenu(EditorMenuFactory.DATABASE, getShortLabel(), mode);
-//    }
-
-//    private Map getXrefMenus(int mode) throws IntactException {
-//        Map map = new HashMap();
-//        String name;
-//        // The short label to remove from the list.
-//        String label = getShortLabel();
-//
-//        // The database menu.
-//        name = EditorMenuFactory.DATABASE;
-//        map.put(name, getMenu(name, label, mode));
-//
-//        // The qualifier menu.
-//        name = EditorMenuFactory.QUALIFIER;
-//        map.put(name, getMenu(name, label, mode));
-//        return map;
-//    }
-
     /**
-     * Returns a menu for <code>name</code> without <code>label</code>; the menu
-     * type is dependent on the <code>mode</code>
-     * @param name the name of the menu to get.
-     * @param label the label to strip off from the returning menu.
-     * @param mode 0 for edit or 1 for add.
-     * @param helper the Intact helper to access the persistent system.
-     * @return menu for <code>name</code> without <code>label</code> if applicable.
-     * @throws IntactException for database search error when constructing the
-     * menu.
+     * Removes the current short label from menus if the current edit type is a
+     * menu type.
+     * @throws IntactException for errors in accessing menus.
      */
-    private List getMenu(String name, String label, int mode,
-                         IntactHelper helper) throws IntactException {
+    private void removeCurrentSLFromMenus() throws IntactException {
         EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
-        // Remove the current label from menus (to stop recursive calls to db)!
-        if (menuFactory.isMenuType(getEditClass())) {
-            // Remove my short label to avoid circular reference. We create a
-            // new list so the remove method wouldn't affect the original list.
-            List list = new ArrayList(menuFactory.getMenu(name, mode, helper));
-            list.remove(label);
-            return list;
+        if (!menuFactory.isMenuType(getEditClass())) {
+            // Not a menu type.
+            return;
         }
-        return menuFactory.getMenu(name, mode, helper);
+        // The map of menus to iterate.
+        for (Iterator iter = getMenus().values().iterator(); iter.hasNext();) {
+            // Remove my short label to avoid circular reference.
+            ((List) iter.next()).remove(getShortLabel());
+        }
     }
 
     // Persist the current annotated object.

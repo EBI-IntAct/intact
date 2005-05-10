@@ -64,13 +64,13 @@ public class InteractionCancelAction extends CancelFormAction {
         if (view.hasFeaturesAdded()) {
             // We have some features added. Will remove them first before going back.
             IntactHelper helper = user.getIntactHelper();
-            try {
+//            try {
                 // Delete any features that have been added.
                 view.delFeaturesAdded(helper);
-            }
-            finally {
-                helper.closeStore();
-            }
+//            }
+//            finally {
+//                helper.closeStore();
+//            }
         }
         // Cancel the edit session.
         user.cancelEdit();

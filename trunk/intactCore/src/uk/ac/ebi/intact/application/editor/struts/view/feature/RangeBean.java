@@ -9,6 +9,7 @@ package uk.ac.ebi.intact.application.editor.struts.view.feature;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
+import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvFuzzyType;
@@ -132,15 +133,9 @@ public class RangeBean extends AbstractEditKeyBean {
                 fromRanges[1], toRanges[0], toRanges[1], null);
         range.setLink(linked);
 
-        IntactHelper helper = new IntactHelper();
-        try {
-            // Set the from and to fuzzy types.
-            range.setFromCvFuzzyType(getFuzzyType(fromFuzzyType, helper));
-            range.setToCvFuzzyType(getFuzzyType(toFuzzyType, helper));
-        }
-        finally {
-            helper.closeStore();
-        }
+        // Set the from and to fuzzy types.
+        range.setFromCvFuzzyType(getFuzzyType(fromFuzzyType));
+        range.setToCvFuzzyType(getFuzzyType(toFuzzyType));
         // This needs to be done after setting the fuzzy types.
         range.setUndetermined();
         // Initialize the bean with the new range.
@@ -390,15 +385,8 @@ public class RangeBean extends AbstractEditKeyBean {
         Matcher toMatcher = ourRangePattern.matcher(myToRange);
         String toType = myFTConverter.getFuzzyShortLabel(toMatcher);
 
-        // Helper to get the fuzzy types.
-        IntactHelper helper = new IntactHelper();
-        try {
-            myRange.setFromCvFuzzyType(getFuzzyType(fromType, helper));
-            myRange.setToCvFuzzyType(getFuzzyType(toType, helper));
-        }
-        finally {
-            helper.closeStore();
-        }
+        myRange.setFromCvFuzzyType(getFuzzyType(fromType));
+        myRange.setToCvFuzzyType(getFuzzyType(toType));
         myRange.setLink(myLink);
         myRange.setUndetermined();
 
@@ -528,10 +516,11 @@ public class RangeBean extends AbstractEditKeyBean {
         return ranges;
     }
 
-    private CvFuzzyType getFuzzyType(String type, IntactHelper helper) throws IntactException {
+    private CvFuzzyType getFuzzyType(String type) throws IntactException {
         // Set the from and to fuzzy types.
         CvFuzzyType fuzzyType = null;
         if (type.length() != 0) {
+            IntactHelper helper = IntactHelperUtil.getDefaultIntactHelper();
             fuzzyType = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class, type);
         }
         return fuzzyType;
