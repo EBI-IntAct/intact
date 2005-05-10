@@ -63,20 +63,20 @@
 <p></p>
 
 <table width="50%" border="0" cellspacing="1" cellpadding="2">
-    <tr class="tableRowHeader">
+    <tr class="tableLinkRowHeader">
         <th class="tableCellHeader" width="30%">
             <bean:message key="label.action"/>
         </th>
-        <th class="tableCellHeader">
+        <th>
             <bean:message key="biosource.label.tax"/>
         </th>
-        <th class="tableCellHeader">
+        <th>
             <a href="javascript:showColumnLink('CvTissue',
                 document.forms['bsForm'].elements['tissue'].value)">
                 <bean:message key="biosource.label.tissue"/>
             </a>
         </th>
-        <th class="tableCellHeader">
+        <th>
             <a href="javascript:showColumnLink('CvCellType',
                 document.forms['bsForm'].elements['cellType'].value)">
                 <bean:message key="biosource.label.cell"/>

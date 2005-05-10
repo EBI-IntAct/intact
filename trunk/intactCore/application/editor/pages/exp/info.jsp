@@ -66,22 +66,22 @@
 <p></p>
 
 <table width="100%" border="0" cellspacing="1" cellpadding="2">
-    <tr class="tableRowHeader">
-        <th class="tableCellHeader" width="20%">
+    <tr class="tableLinkRowHeader">
+        <th width="20%">
             <a href="javascript:showColumnLink('BioSource',
                 document.forms['expForm'].elements['organism'].value)">
                 Host Organism
             </a>
         </th>
 
-        <th class="tableCellHeader">
+        <th>
             <a href="javascript:showColumnLink('CvInteraction',
                 document.forms['expForm'].elements['inter'].value)">
                 Interaction Detection
             </a>
         </th>
 
-        <th class="tableCellHeader">
+        <th>
             <a href="javascript:showColumnLink('CvIdentification',
                 document.forms['expForm'].elements['ident'].value)">
                 Participant Detection
@@ -90,7 +90,7 @@
 
     </tr>
 
-    <tr class="tableRowEven">
+    <tr class="tableRowHeader">
         <td class="tableCell" align="left" valign="top">
             <html:select property="organism" name="expForm" styleClass="inputRequired">
                 <html:options name="organismmenu"/>

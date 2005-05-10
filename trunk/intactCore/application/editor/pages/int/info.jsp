@@ -58,24 +58,18 @@
 </table>
 <html:errors property="shortLabel"/>
 
-<%--<html:messages id="message" message="true">--%>
-<%--	<span class="warning">--%>
-<%--		<bean:write name="message" filter="false"/>--%>
-<%--	</span>--%>
-<%--</html:messages>--%>
-
 <p></p>
 
 <table width="50%" border="0" cellspacing="1" cellpadding="2">
-    <tr class="tableRowHeader">
-        <th class="tableCellHeader">Kd</th>
-        <th class="tableCellHeader">
+    <tr class="tableLinkRowHeader">
+        <th>Kd</th>
+        <th>
             <a href="javascript:showColumnLink('CvInteractionType',
                 document.forms['intForm'].elements['interactionType'].value)"/>
                 <bean:message key="int.label.cvtype"/>
             </a>
         </th>
-        <th class="tableCellHeader">
+        <th>
             <a href="javascript:showColumnLink('BioSource',
                 document.forms['intForm'].elements['organism'].value)">
                 <bean:message key="int.label.biosrc"/>
@@ -83,10 +77,9 @@
         </th>
     </tr>
 
-    <tr class="tableRowEven">
+    <tr class="tableRowHeader">
         <td class="tableCell">
-            <html:text property="kd" name="intForm" size="5"
-                maxlength="16"/>
+            <html:text property="kd" name="intForm" size="5" maxlength="16"/>
         </td>
 
         <td class="tableCell" align="left" valign="top">
