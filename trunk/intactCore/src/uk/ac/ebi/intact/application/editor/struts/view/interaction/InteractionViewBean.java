@@ -1070,7 +1070,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
                 Feature featureToDel = fb1.getUpdatedFeature(helper);
                 // Remove from the component and delete the feature
                 comp.removeBindingDomain(featureToDel);
-//                user.delete(featureToDel);
+                helper.delete(featureToDel);
 
                 // No further action if this feature is not linked.
                 if (!fb1.hasBoundDomain()) {
