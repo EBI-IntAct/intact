@@ -20,6 +20,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFacto
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.InteractionRowData;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
+import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
@@ -164,69 +165,54 @@ public class InteractionViewBean extends AbstractEditViewBean {
         }
     }
 
-    // Implements abstract methods
-
-    protected void updateAnnotatedObject(IntactHelper helper) throws IntactException {
-        // The cv interaction type for the interaction.
-        CvInteractionType type = (CvInteractionType) helper.getObjectByLabel(
-                CvInteractionType.class, myInteractionType);
-
-        // The current Interaction.
-        Interaction intact = (Interaction) getAnnotatedObject();
-
-        // Have we set the annotated object for the view?
-        if (intact == null) {
-            // Collect experiments from beans.
-            List exps = new ArrayList();
-            for (Iterator iter = getExperimentsToAdd().iterator(); iter.hasNext();) {
-                ExperimentRowData row = (ExperimentRowData) iter.next();
-                Experiment exp = row.getExperiment();
-                if (exp == null) {
-                    exp = (Experiment) helper.getObjectByAc(Experiment.class, row.getAc());
-                }
-                exps.add(exp);
-            }
-            // Not persisted. Create a new Interaction.
-            intact = new InteractionImpl(exps, new ArrayList(),
-                    type, getShortLabel(), getService().getOwner());
-            // Set this interaction as the annotated object.
-            setAnnotatedObject(intact);
-        }
-        else {
-            // Update the existing interaction.
-            intact.setCvInteractionType(type);
-        }
-        // Get the objects using their short label.
-        if (myOrganism != null) {
-            BioSource biosource = (BioSource) helper.getObjectByLabel(
-                    BioSource.class, myOrganism);
-            intact.setBioSource(biosource);
-        }
-        intact.setKD(myKD);
-
-        // Delete experiments.
-        for (Iterator iter = getExperimentsToDel().iterator(); iter.hasNext();) {
-            ExperimentRowData row = (ExperimentRowData) iter.next();
-            Experiment exp = row.getExperiment();
-            if (exp == null) {
-                exp = (Experiment) helper.getObjectByAc(Experiment.class, row.getAc());
-            }
-            intact.removeExperiment(exp);
-        }
-    }
-
-    protected void clearMenus() {
-        myMenus.clear();
-    }
-
     // Override the super to persist others.
     public void persistOthers(EditUserI user) throws IntactException {
         IntactHelper helper = user.getIntactHelper();
+        // First transaction for
         try {
-            doPersistOthers(user, helper);
+            // Begin the transaction.
+            user.startTransaction(helper);
+
+            // persist the view.
+            persistCurrentView();
+
+            // Commit the transaction.
+            user.commit(helper);
         }
-        finally {
-            helper.closeStore();
+        catch (IntactException ie1) {
+            Logger.getLogger(EditorConstants.LOGGER).error("", ie1);
+            try {
+                user.rollback(helper);
+            }
+            catch (IntactException ie2) {
+                // Oops! Problems with rollback; ignore this as this
+                // error is reported via the main exception (ie1).
+            }
+            // Rethrow the exception to be logged.
+            throw ie1;
+        }
+        // Need another transaction to delete features.
+        try {
+            // Begin the transaction.
+            user.startTransaction(helper);
+
+            // persist the view in a second transaction
+            persistCurrentView2(helper);
+
+            // Commit the transaction.
+            user.commit(helper);
+        }
+        catch (IntactException ie1) {
+            Logger.getLogger(EditorConstants.LOGGER).error("", ie1);
+            try {
+                user.rollback(helper);
+            }
+            catch (IntactException ie2) {
+                // Oops! Problems with rollback; ignore this as this
+                // error is reported via the main exception (ie1).
+            }
+            // Rethrow the exception to be logged.
+            throw ie1;
         }
     }
 
@@ -305,9 +291,6 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * annotation/xref, organism (add), interaction type and role (add & edit).
      */
     public Map getMenus() throws IntactException {
-        if (myMenus.isEmpty()) {
-            loadMenus();
-        }
         return myMenus;
     }
 
@@ -886,9 +869,63 @@ public class InteractionViewBean extends AbstractEditViewBean {
         return null;
     }
 
-    // Helper methods
+    // --------------------- Protected Methods ---------------------------------
 
-    private void loadMenus() throws IntactException {
+    // Implements abstract methods
+
+    protected void updateAnnotatedObject(IntactHelper helper) throws IntactException {
+        // The cv interaction type for the interaction.
+        CvInteractionType type = (CvInteractionType) helper.getObjectByLabel(
+                CvInteractionType.class, myInteractionType);
+
+        // The current Interaction.
+        Interaction intact = (Interaction) getAnnotatedObject();
+
+        // Have we set the annotated object for the view?
+        if (intact == null) {
+            // Collect experiments from beans.
+            List exps = new ArrayList();
+            for (Iterator iter = getExperimentsToAdd().iterator(); iter.hasNext();) {
+                ExperimentRowData row = (ExperimentRowData) iter.next();
+                Experiment exp = row.getExperiment();
+                if (exp == null) {
+                    exp = (Experiment) helper.getObjectByAc(Experiment.class, row.getAc());
+                }
+                exps.add(exp);
+            }
+            // Not persisted. Create a new Interaction.
+            intact = new InteractionImpl(exps, new ArrayList(),
+                    type, getShortLabel(), getService().getOwner());
+            // Set this interaction as the annotated object.
+            setAnnotatedObject(intact);
+        }
+        else {
+            // Update the existing interaction.
+            intact.setCvInteractionType(type);
+        }
+        // Get the objects using their short label.
+        if (myOrganism != null) {
+            BioSource biosource = (BioSource) helper.getObjectByLabel(
+                    BioSource.class, myOrganism);
+            intact.setBioSource(biosource);
+        }
+        intact.setKD(myKD);
+
+        // Delete experiments.
+        for (Iterator iter = getExperimentsToDel().iterator(); iter.hasNext();) {
+            ExperimentRowData row = (ExperimentRowData) iter.next();
+            Experiment exp = row.getExperiment();
+            if (exp == null) {
+                exp = (Experiment) helper.getObjectByAc(Experiment.class, row.getAc());
+            }
+            intact.removeExperiment(exp);
+        }
+    }
+
+    /**
+     * Override to load the menus for this view.
+     */
+    protected void loadMenus() throws IntactException {
         // Holds the menu name.
         String name;
 
@@ -898,29 +935,24 @@ public class InteractionViewBean extends AbstractEditViewBean {
         // Handler to the menu factory.
         EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
 
-        // The Intact helper to construct menus.
-        IntactHelper helper = new IntactHelper();
+        // Clear any existing menus first.
+        myMenus.clear();
+        myMenus.putAll(super.getMenus());
 
-        try {
-            myMenus.putAll(super.getMenus(helper));
+        // The organism menu
+        name = EditorMenuFactory.ORGANISM;
+        myMenus.put(name, menuFactory.getMenu(name, 1));
 
-            // The organism menu
-            name = EditorMenuFactory.ORGANISM;
-            myMenus.put(name, menuFactory.getMenu(name, 1, helper));
+        // The interactiontype menu.
+        name = EditorMenuFactory.INTERACTION_TYPE;
+        int mode = (myInteractionType == null) ? 1 : 0;
+        myMenus.put(name, menuFactory.getMenu(name, mode));
 
-            // The interactiontype menu.
-            name = EditorMenuFactory.INTERACTION_TYPE;
-            int mode = (myInteractionType == null) ? 1 : 0;
-            myMenus.put(name, menuFactory.getMenu(name, mode, helper));
+        // Protein role edit menu
+        name = EditorMenuFactory.ROLE;
+        menu = menuFactory.getMenu(name, 0);
+        myMenus.put(name, menu);
 
-            // Protein role edit menu
-            name = EditorMenuFactory.ROLE;
-            menu = menuFactory.getMenu(name, 0, helper);
-            myMenus.put(name, menu);
-        }
-        finally {
-            helper.closeStore();
-        }
         // Add the Role add menu.
         name = EditorMenuFactory.ROLE;
         menu = (List) myMenus.get(name);
@@ -942,6 +974,8 @@ public class InteractionViewBean extends AbstractEditViewBean {
             myExperiments.add(new ExperimentRowData(exp));
         }
     }
+
+    // Helper methods
 
     /**
      * Returns a collection of experiments to add.
@@ -979,57 +1013,8 @@ public class InteractionViewBean extends AbstractEditViewBean {
         return CollectionUtils.subtract(myExperimentsToDel, common);
     }
 
-    private void doPersistOthers(EditUserI user, IntactHelper helper)
-            throws IntactException {
-        // First transaction for
-        try {
-            // Begin the transaction.
-            user.startTransaction(helper);
-
-            // persist the view.
-            persistCurrentView(helper);
-
-            // Commit the transaction.
-            user.commit(helper);
-        }
-        catch (IntactException ie1) {
-            Logger.getLogger(EditorConstants.LOGGER).error("", ie1);
-            try {
-                user.rollback(helper);
-            }
-            catch (IntactException ie2) {
-                // Oops! Problems with rollback; ignore this as this
-                // error is reported via the main exception (ie1).
-            }
-            // Rethrow the exception to be logged.
-            throw ie1;
-        }
-        // Need another transaction to delete features.
-        try {
-            // Begin the transaction.
-            user.startTransaction(helper);
-
-            // persist the view in a second transaction
-            persistCurrentView2(helper);
-
-            // Commit the transaction.
-            user.commit(helper);
-        }
-        catch (IntactException ie1) {
-            Logger.getLogger(EditorConstants.LOGGER).error("", ie1);
-            try {
-                user.rollback(helper);
-            }
-            catch (IntactException ie2) {
-                // Oops! Problems with rollback; ignore this as this
-                // error is reported via the main exception (ie1).
-            }
-            // Rethrow the exception to be logged.
-            throw ie1;
-        }
-    }
-
-    private void persistCurrentView(IntactHelper helper) throws IntactException {
+    private void persistCurrentView() throws IntactException {
+        IntactHelper helper = IntactHelperUtil.getIntactHelper();
         // The current Interaction.
         Interaction intact = (Interaction) getAnnotatedObject();
 

@@ -12,8 +12,8 @@ import uk.ac.ebi.intact.application.editor.exception.validation.ValidationExcept
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
-import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentRowData;
+import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
@@ -121,70 +121,6 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         }
     }
 
-    // Implements abstract methods
-
-    protected void updateAnnotatedObject(IntactHelper helper) throws IntactException {
-        // Get the objects using their short label.
-        BioSource biosource = (BioSource) helper.getObjectByLabel(
-                BioSource.class, myOrganism);
-        CvInteraction interaction = (CvInteraction) helper.getObjectByLabel(
-                CvInteraction.class, myInter);
-        CvIdentification ident = (CvIdentification) helper.getObjectByLabel(
-                CvIdentification.class, myIdent);
-
-        // The current experiment.
-        Experiment exp = (Experiment) getAnnotatedObject();
-
-        // Have we set the annotated object for the view?
-        if (exp == null) {
-            // Can't read from the persistent system. Create a new Experiment.
-            exp = new Experiment(getService().getOwner(), getShortLabel(), biosource);
-            setAnnotatedObject(exp);
-        }
-        else {
-            // No need to set the biosource for a new experiment as it is done
-            // in the constructor.
-            exp.setBioSource(biosource);
-        }
-        exp.setCvInteraction(interaction);
-        exp.setCvIdentification(ident);
-
-        // There is no need to touch interactions for a large interaction.
-        if (!myHasLargeInts) {
-            // Delete interactions from the experiment. Do this block of code before
-            // clearing interactions or else 'this' experiment wouldn't be removed
-            // from interactions.
-            for (Iterator iter = myInteractionsToDel.iterator(); iter.hasNext();) {
-                String ac = (String) iter.next();
-                Interaction intact = (Interaction) helper.getObjectByAc(Interaction.class, ac);
-                exp.removeInteraction((Interaction) IntactHelper.getRealIntactObject(intact));
-            }
-
-            // --------------------------------------------------------------------
-            // Need this fix to get around the proxies.
-            // 1. Clear all the interaction proxies first.
-            exp.getInteractions().clear();
-
-            // 2. Now add the interaction as real objects.
-            for (Iterator iter = myInteractions.iterator(); iter.hasNext();) {
-                InteractionRowData row = (InteractionRowData) iter.next();
-                Interaction inter = row.getInteraction();
-                // could be null for an interaction added from the 'hold' area.
-                if (inter == null) {
-                    inter = (Interaction) helper.getObjectByAc(Interaction.class,
-                            row.getAc());
-                }
-                exp.addInteraction((Interaction) IntactHelper.getRealIntactObject(
-                        inter));
-            }
-            // --------------------------------------------------------------------
-        }
-    }
-
-    protected void clearMenus() {
-        myMenus.clear();
-    }
-
     // Reset the fields to null if we don't have values to set. Failure
     // to do so will display the previous edit object's values as current.
     public void resetClonedObject(AnnotatedObject copy, EditUserI user) {
@@ -280,9 +216,6 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      * CV identification (add or edit).
      */
     public Map getMenus() throws IntactException {
-        if (myMenus.isEmpty()) {
-            loadMenus();
-        }
         return myMenus;
     }
 
@@ -465,15 +398,6 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      * @param interaction the interaction to update or add.
      */
     public void updateInteractionRow(Interaction interaction) {
-        // Extract the experiment ACs for gievn interaction
-        List exps = extractExperimentACs(interaction.getExperiments());
-        
-        // If the current experiment is not in the list, we can ignore
-        if (!exps.contains(getAc())) {
-            return;
-        }
-        // Given interaction is part of the current experiment.
-        
         // Create a dummy row data for comparision.
         InteractionRowData dummy = new InteractionRowData(interaction);
         
@@ -482,7 +406,13 @@ public class ExperimentViewBean extends AbstractEditViewBean {
             int pos = myInteractions.indexOf(dummy);
             myInteractions.remove(pos);
         }
-        myInteractions.add(dummy);
+        // Extract the experiment ACs for gievn interaction
+        List exps = extractExperimentACs(interaction.getExperiments());
+
+        // Add the updated row if the current experiment is part of the list.
+        if (exps.contains(getAc())) {
+            myInteractions.add(dummy);
+        }
     }
     
     /**
@@ -503,38 +433,93 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         }
         return false;
     }
-    
-    // Helper methods
 
-    private void loadMenus() throws IntactException {
+    // Implements abstract methods
+
+    protected void updateAnnotatedObject(IntactHelper helper) throws IntactException {
+        // Get the objects using their short label.
+        BioSource biosource = (BioSource) helper.getObjectByLabel(
+                BioSource.class, myOrganism);
+        CvInteraction interaction = (CvInteraction) helper.getObjectByLabel(
+                CvInteraction.class, myInter);
+        CvIdentification ident = (CvIdentification) helper.getObjectByLabel(
+                CvIdentification.class, myIdent);
+
+        // The current experiment.
+        Experiment exp = (Experiment) getAnnotatedObject();
+
+        // Have we set the annotated object for the view?
+        if (exp == null) {
+            // Can't read from the persistent system. Create a new Experiment.
+            exp = new Experiment(getService().getOwner(), getShortLabel(), biosource);
+            setAnnotatedObject(exp);
+        }
+        else {
+            // No need to set the biosource for a new experiment as it is done
+            // in the constructor.
+            exp.setBioSource(biosource);
+        }
+        exp.setCvInteraction(interaction);
+        exp.setCvIdentification(ident);
+
+        // There is no need to touch interactions for a large interaction.
+        if (!myHasLargeInts) {
+            // Delete interactions from the experiment. Do this block of code before
+            // clearing interactions or else 'this' experiment wouldn't be removed
+            // from interactions.
+            for (Iterator iter = myInteractionsToDel.iterator(); iter.hasNext();) {
+                String ac = (String) iter.next();
+                Interaction intact = (Interaction) helper.getObjectByAc(Interaction.class, ac);
+                exp.removeInteraction((Interaction) IntactHelper.getRealIntactObject(intact));
+            }
+
+            // --------------------------------------------------------------------
+            // Need this fix to get around the proxies.
+            // 1. Clear all the interaction proxies first.
+            exp.getInteractions().clear();
+
+            // 2. Now add the interaction as real objects.
+            for (Iterator iter = myInteractions.iterator(); iter.hasNext();) {
+                InteractionRowData row = (InteractionRowData) iter.next();
+                Interaction inter = row.getInteraction();
+                // could be null for an interaction added from the 'hold' area.
+                if (inter == null) {
+                    inter = (Interaction) helper.getObjectByAc(Interaction.class,
+                            row.getAc());
+                }
+                exp.addInteraction((Interaction) IntactHelper.getRealIntactObject(
+                        inter));
+            }
+            // --------------------------------------------------------------------
+        }
+    }
+
+    /**
+     * Override to load the menus for this view.
+     */
+    protected void loadMenus() throws IntactException {
         // Handler to the menu factory.
         EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
 
-        // The Intact helper to construct menus.
-        IntactHelper helper = new IntactHelper();
+        myMenus.putAll(super.getMenus());
 
-        try {
-            myMenus.putAll(super.getMenus(helper));
+        // The organism menu
+        String name = EditorMenuFactory.ORGANISM;
+        int mode = (myOrganism == null) ? 1 : 0;
+        myMenus.put(name, menuFactory.getMenu(name, mode));
 
-            // The organism menu
-            String name = EditorMenuFactory.ORGANISM;
-            int mode = (myOrganism == null) ? 1 : 0;
-            myMenus.put(name, menuFactory.getMenu(name, mode, helper));
+        // The CVInteraction menu.
+        name = EditorMenuFactory.INTERACTION;
+        mode = (myInter == null) ? 1 : 0;
+        myMenus.put(name, menuFactory.getMenu(name, mode));
 
-            // The CVInteraction menu.
-            name = EditorMenuFactory.INTERACTION;
-            mode = (myInter == null) ? 1 : 0;
-            myMenus.put(name, menuFactory.getMenu(name, mode, helper));
-
-            // The CVIdentification menu.
-            name = EditorMenuFactory.IDENTIFICATION;
-            mode = (myIdent == null) ? 1 : 0;
-            myMenus.put(name, menuFactory.getMenu(name, mode, helper));
-        }
-        finally {
-            helper.closeStore();
-        }
+        // The CVIdentification menu.
+        name = EditorMenuFactory.IDENTIFICATION;
+        mode = (myIdent == null) ? 1 : 0;
+        myMenus.put(name, menuFactory.getMenu(name, mode));
     }
+
+    // Helper methods
 
     private void makeInteractionRows(Collection ints) {
         for (Iterator iter = ints.iterator(); iter.hasNext();) {

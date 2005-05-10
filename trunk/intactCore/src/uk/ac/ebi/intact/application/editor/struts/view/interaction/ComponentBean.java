@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.OJBQueryFactory
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
+import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
@@ -118,7 +119,13 @@ public class ComponentBean extends AbstractEditKeyBean {
         mySPAc = getSPAc();
         setOrganism();
         setEditState(SAVE_NEW);
-        setGeneName();
+        try {
+            setGeneName();
+        }
+        catch (IntactException ex) {
+            // Error in setting the Gene name for display
+            Logger.getLogger(EditorConstants.LOGGER).error("Gene Name", ex);
+        }
     }
 
     /**
@@ -382,37 +389,19 @@ public class ComponentBean extends AbstractEditKeyBean {
         myStoichiometry = component.getStoichiometry();
         setOrganism();
         setExpressedIn();
-        setGeneName();
-    }
-
-    /**
-     * Sets the gene name for a component to display. This method delegates simply
-     * does the clean up opertaion with the helper. The real work is performed
-     * in the {@link #setGeneName(uk.ac.ebi.intact.business.IntactHelper)} method.
-     */
-    private void setGeneName() {
-        // The helper to run the query.
-        IntactHelper helper = null;
         try {
-            helper = new IntactHelper();
-            setGeneName(helper);
+            setGeneName();
         }
         catch (IntactException ex) {
             // Error in setting the Gene name for display
             Logger.getLogger(EditorConstants.LOGGER).error("Gene Name", ex);
         }
-        finally {
-            if (helper != null) {
-                try {
-                    helper.closeStore();
-                }
-                catch (IntactException e) {
-                }
-            }
-        }
     }
 
-    private void setGeneName(IntactHelper helper) throws IntactException {
+    private void setGeneName() throws IntactException {
+        // The helper to run the query.
+        IntactHelper helper = IntactHelperUtil.getIntactHelper();
+
         // The query factory to get a query.
         OJBQueryFactory qf = OJBQueryFactory.getInstance();
 

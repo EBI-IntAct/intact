@@ -135,15 +135,12 @@ public class ExperimentDispatchAction extends AbstractEditorDispatchAction {
         // The current view of the edit session.
         InteractionViewBean view = (InteractionViewBean) user.getView();
 
-        // The helper tomake experiment rows.
-        IntactHelper helper = new IntactHelper();
-        try {
-            // Add the search result to the holder.
-            view.addExperimentToHold(makeExperimentRows(results, helper));
-        }
-        finally {
-            helper.closeStore();
-        }
+        // The helper to make experiment rows.
+        IntactHelper helper = user.getIntactHelper();
+
+        // Add the search result to the holder.
+        view.addExperimentToHold(makeExperimentRows(results, helper));
+
         return mapping.getInputForward();
     }
 

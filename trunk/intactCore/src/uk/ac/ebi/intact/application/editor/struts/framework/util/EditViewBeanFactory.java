@@ -72,7 +72,6 @@ public class EditViewBeanFactory implements KeyedPoolableObjectFactory {
      * @param view the view to return to.
      */
     public void returnObject(AbstractEditViewBean view) {
-//        System.out.println("Returning: " + view.getEditClass() + " and: " + view.getShortLabel());
         try {
             myPool.returnObject(view.getEditClass(), view);
         }
@@ -91,7 +90,6 @@ public class EditViewBeanFactory implements KeyedPoolableObjectFactory {
 
         // Class is the key.
         Class clazz = (Class) key;
-//        System.out.println("Creating a view for " + clazz);
 
         if (BioSource.class.isAssignableFrom(clazz)) {
             viewbean = new BioSourceViewBean();
@@ -123,9 +121,12 @@ public class EditViewBeanFactory implements KeyedPoolableObjectFactory {
     }
 
     public void activateObject(Object key, Object obj) throws Exception {
+        // Load menus when activating a view.
+        ((AbstractEditViewBean) obj).loadMenus();
     }
 
     public void passivateObject(Object key, Object obj) throws Exception {
+        // Clear the view when passivating.
         ((AbstractEditViewBean) obj).reset();
     }
 }

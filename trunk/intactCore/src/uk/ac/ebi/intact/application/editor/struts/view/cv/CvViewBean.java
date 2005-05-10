@@ -7,6 +7,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.cv;
 
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvObject;
@@ -31,6 +32,17 @@ public class CvViewBean extends AbstractEditViewBean {
      * The map of menus for this view.
      */
     private transient Map myMenus = new HashMap();
+
+    /**
+     * Override to provide the menus for this view.
+     * @return a map of menus for this view. It consists of common menus for
+     * annotation/xref.
+     */
+    public Map getMenus() throws IntactException {
+        return myMenus;
+    }
+
+    // --------------------- Protected Methods ---------------------------------
 
     // Implements abstract methods
 
@@ -67,31 +79,11 @@ public class CvViewBean extends AbstractEditViewBean {
         }
     }
 
-    protected void clearMenus() {
-        myMenus.clear();
-    }
-
     /**
-     * Override to provide the menus for this view.
-     * @return a map of menus for this view. It consists of common menus for
-     * annotation/xref.
+     * Override to load the menus for this view.
      */
-    public Map getMenus() throws IntactException {
-        if (myMenus.isEmpty()) {
-            loadMenus();
-        }
-        return myMenus;
-    }
-
-    private void loadMenus() throws IntactException {
-        // The Intact helper to construct menus.
-        IntactHelper helper = new IntactHelper();
-
-        try {
-            myMenus = super.getMenus(helper);
-        }
-        finally {
-            helper.closeStore();
-        }
+    protected void loadMenus() throws IntactException {
+        myMenus.clear();
+        myMenus = super.getMenus();
     }
 }

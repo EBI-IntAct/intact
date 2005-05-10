@@ -7,8 +7,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.framework.util;
 
 import org.apache.ojb.broker.query.Query;
+import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 
 import java.util.*;
@@ -183,16 +183,15 @@ public class EditorMenuFactory {
      * {@link #EXPERIMENT} and {@link #ROLE}.
      * @param mode 0 for and edit menu and 1 for an add menu; the difference is
      * {@link #SELECT_LIST_ITEM} is added as the first entry for an add menu.
-     * @param helper the Intact helper to access the persistent system.
      * @return the menu for given <code>name</code>; <code><label/code> is
      * removed if it exists.
      * @throws IntactException for errors in contructing the menu or unable to
      * create an Intact helper to access persistent system.
      */
-    public List getMenu(String key, int mode, IntactHelper helper) throws IntactException {
+    public List getMenu(String key, int mode) throws IntactException {
         // The class associated with the key.
         Class clazz = (Class) ourNameToType.get(key);
-        List menu = getMenuList(clazz, helper);
+        List menu = getMenuList(clazz);
         if (menu.isEmpty()) {
             // Special list when we don't have any menu items.
             menu.add(SELECT_LIST_ITEM);
@@ -218,10 +217,9 @@ public class EditorMenuFactory {
     /**
      * Return a List of all shortLabels of the class, e.g. for menus.
      *
-     * @param helper Database access object
      * @return a List of short labels as Strings.
      */
-    private List getMenuList(Class targetClass, IntactHelper helper) {
+    private List getMenuList(Class targetClass) throws IntactException {
         // The menu to return.
         List menu = new ArrayList();
 
@@ -229,7 +227,8 @@ public class EditorMenuFactory {
         OJBQueryFactory qf = OJBQueryFactory.getInstance();
 
         Query query = qf.getMenuBuildQuery(targetClass);
-        Iterator iter = helper.getIteratorByReportQuery(query);
+
+        Iterator iter = IntactHelperUtil.getDefaultIntactHelper().getIteratorByReportQuery(query);
         
         while (iter.hasNext()) {
             Object[] row = (Object[])iter.next();

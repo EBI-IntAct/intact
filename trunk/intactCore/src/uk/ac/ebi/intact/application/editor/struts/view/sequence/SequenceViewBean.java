@@ -65,37 +65,6 @@ public class SequenceViewBean extends AbstractEditViewBean {
         mySequence = prot.getSequence();
     }
 
-    // Implements abstract methods
-
-    protected void updateAnnotatedObject(IntactHelper helper) throws IntactException {
-        // Get the objects using their short label.
-        BioSource biosrc = (BioSource) helper.getObjectByLabel(BioSource.class,
-                myOrganism);
-
-        // The current protein
-        Protein prot = (Protein) getAnnotatedObject();
-
-        // Have we set the annotated object for the view?
-        if (prot == null) {
-            // Not persisted; create a new Protein
-            prot = new ProteinImpl(getService().getOwner(), biosrc, getShortLabel());
-            setAnnotatedObject(prot);
-        }
-        else {
-            prot.setBioSource(biosrc);
-        }
-        // Set the sequence should have done here but we can't do it because it
-        // will go ahead and start persisting sequences on the DB!!! This behaviour
-        // is TOTALLY inconsistent with other editors (they all persist records only
-        // upon submitting the form (or save & continue).
-        // prot.setSequence(user.getIntactHelper(), getSequence());
-        prot.setCrc64(Crc64.getCrc64(mySequence));
-    }
-
-    protected void clearMenus() {
-        myMenus.clear();
-    }
-
     // Override to copy sequence data from the form to the bean.
     public void copyPropertiesFrom(EditorFormI editorForm) {
         // Set the common values by calling super first.
@@ -141,13 +110,8 @@ public class SequenceViewBean extends AbstractEditViewBean {
             // The current protein.
             Protein prot = (Protein) getAnnotatedObject();
             IntactHelper helper = user.getIntactHelper();
-            try {
-                // Only set the sequence for when we have a seq.
-                prot.setSequence(helper, getSequence());
-            }
-            finally {
-                helper.closeStore();
-            }
+            // Only set the sequence for when we have a seq.
+            prot.setSequence(helper, getSequence());
         }
     }
 
@@ -157,25 +121,44 @@ public class SequenceViewBean extends AbstractEditViewBean {
      * annotation/xref and organism (add or edit).
      */
     public Map getMenus() throws IntactException {
-        if (myMenus.isEmpty()) {
-            loadMenus();
-        }
         return myMenus;
     }
 
-    private void loadMenus() throws IntactException {
-        // The Intact helper to construct menus.
-        IntactHelper helper = new IntactHelper();
+    // --------------------- Protected Methods ---------------------------------
 
-        try {
-            myMenus.putAll(super.getMenus(helper));
+    // Implements abstract methods
 
-            String name = EditorMenuFactory.ORGANISM;
-            int mode = (myOrganism == null) ? 1 : 0;
-            myMenus.put(name, EditorMenuFactory.getInstance().getMenu(name, mode, helper));
+    protected void updateAnnotatedObject(IntactHelper helper) throws IntactException {
+        // Get the objects using their short label.
+        BioSource biosrc = (BioSource) helper.getObjectByLabel(BioSource.class,
+                myOrganism);
+
+        // The current protein
+        Protein prot = (Protein) getAnnotatedObject();
+
+        // Have we set the annotated object for the view?
+        if (prot == null) {
+            // Not persisted; create a new Protein
+            prot = new ProteinImpl(getService().getOwner(), biosrc, getShortLabel());
+            setAnnotatedObject(prot);
         }
-        finally {
-            helper.closeStore();
+        else {
+            prot.setBioSource(biosrc);
         }
+        // Set the sequence should have done here but we can't do it because it
+        // will go ahead and start persisting sequences on the DB!!! This behaviour
+        // is TOTALLY inconsistent with other editors (they all persist records only
+        // upon submitting the form (or save & continue).
+        // prot.setSequence(user.getIntactHelper(), getSequence());
+        prot.setCrc64(Crc64.getCrc64(mySequence));
+    }
+
+    protected void loadMenus() throws IntactException {
+        myMenus.clear();
+        myMenus.putAll(super.getMenus());
+
+        String name = EditorMenuFactory.ORGANISM;
+        int mode = (myOrganism == null) ? 1 : 0;
+        myMenus.put(name, EditorMenuFactory.getInstance().getMenu(name, mode));
     }
 }

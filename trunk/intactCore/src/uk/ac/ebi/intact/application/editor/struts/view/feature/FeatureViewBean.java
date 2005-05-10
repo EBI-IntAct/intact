@@ -12,7 +12,7 @@ import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
+import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
@@ -237,9 +237,6 @@ public class FeatureViewBean extends AbstractEditViewBean {
      * annotation/xref, feature type (add or edit), feature identification (add).
      */
     public Map getMenus() throws IntactException {
-        if (myMenus.isEmpty()) {
-            loadMenus();
-        }
         return myMenus;
     }
 
@@ -328,7 +325,7 @@ public class FeatureViewBean extends AbstractEditViewBean {
             user.startTransaction(helper);
 
             // persist the view.
-            persistCurrentView(helper);
+            persistCurrentView();
 
             // Commit the transaction.
             user.commit(helper);
@@ -344,9 +341,6 @@ public class FeatureViewBean extends AbstractEditViewBean {
             }
             // Rethrow the exception to be logged.
             throw ie1;
-        }
-        finally {
-            helper.closeStore();
         }
     }
 
@@ -412,6 +406,8 @@ public class FeatureViewBean extends AbstractEditViewBean {
         myNewFeature = false;
     }
 
+    // --------------------- Protected Methods ---------------------------------
+
     // Implements abstract methods
 
     protected void updateAnnotatedObject(IntactHelper helper) throws IntactException {
@@ -436,35 +432,24 @@ public class FeatureViewBean extends AbstractEditViewBean {
         feature.setCvFeatureIdentification(getCvFeatureIndent(helper));
     }
 
-    protected void clearMenus() {
-        myMenus.clear();
-    }
-
-    // Helper methods.
-
-    private void loadMenus() throws IntactException {
+    protected void loadMenus() throws IntactException {
         // Handler to the menu factory.
         EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
 
-        // The Intact helper to construct menus.
-        IntactHelper helper = new IntactHelper();
+        myMenus.clear();
+        myMenus.putAll(super.getMenus());
 
-        try {
-            myMenus.putAll(super.getMenus(helper));
+        // The feature type menu
+        String name = EditorMenuFactory.FEATURE_TYPE;
+        int mode = (getCvFeatureType() == null) ? 1 : 0;
+        myMenus.put(name, menuFactory.getMenu(name, mode));
 
-            // The feature type menu
-            String name = EditorMenuFactory.FEATURE_TYPE;
-            int mode = (getCvFeatureType() == null) ? 1 : 0;
-            myMenus.put(name, menuFactory.getMenu(name, mode, helper));
-
-            // The feature identification menu.
-            name = EditorMenuFactory.FEATURE_IDENTIFICATION;
-            myMenus.put(name, menuFactory.getMenu(name, 1, helper));
-        }
-        finally {
-            helper.closeStore();
-        }
+        // The feature identification menu.
+        name = EditorMenuFactory.FEATURE_IDENTIFICATION;
+        myMenus.put(name, menuFactory.getMenu(name, 1));
     }
+
+    // Helper methods.
 
     private String getParentAc() {
         return myComponent.getInteractor().getAc();
@@ -528,7 +513,10 @@ public class FeatureViewBean extends AbstractEditViewBean {
         return CollectionUtils.subtract(myRangesToDel, common);
     }
     
-    private void persistCurrentView(IntactHelper helper) throws IntactException {
+    private void persistCurrentView() throws IntactException {
+        // The helper to access persistence API.
+        IntactHelper helper = IntactHelperUtil.getIntactHelper();
+
         // The current feature.
         Feature feature = (Feature) getAnnotatedObject();
 

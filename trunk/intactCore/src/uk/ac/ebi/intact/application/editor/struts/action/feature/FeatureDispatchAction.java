@@ -143,12 +143,12 @@ public class FeatureDispatchAction extends CommonDispatchAction {
 
     private List persistMutations(EditUserI user) throws IntactException {
         IntactHelper helper = user.getIntactHelper();
-        try {
+//        try {
             return persistMutations(user, helper);
-        }
-        finally {
-            helper.closeStore();
-        }
+//        }
+//        finally {
+//            helper.closeStore();
+//        }
     }
 
     // Does persisting of the mutations in here. Need  a separate method for it

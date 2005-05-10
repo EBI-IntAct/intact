@@ -85,7 +85,7 @@ public class DeleteFormAction extends AbstractEditorAction {
             // Release the lock.
             getLockManager().release(view.getAc());
             // Close the helper.
-            helper.closeStore();
+//            helper.closeStore();
             releaseView(user);
         }
         // Remove this current bean from the recent lists.
