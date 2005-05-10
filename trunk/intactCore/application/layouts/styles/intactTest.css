@@ -75,6 +75,13 @@ tr.tableRowHeader {
     background-color: #483D8B;
 }
 
+/* For a table header with a link */
+tr.tableLinkRowHeader {
+    font-family: Arial, verdana, sans-serif;
+    color: #483D8B;
+    background-color: #cccccc;
+}
+
 .objectClass {
     background-color: #483D8B;
     color: white;
@@ -88,7 +95,6 @@ th.tableCellHeader {
 
 a.tableCellHeader {
     font-family: Arial, verdana, sans-serif;
-    color: #ffffff;
     font-weight: bold;
     text-decoration: none;
     color: black;

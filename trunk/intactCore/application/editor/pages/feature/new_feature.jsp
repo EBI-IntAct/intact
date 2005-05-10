@@ -31,7 +31,7 @@
 
 <%-- The table id is for testing purposes --%>
 <table width="100%" border="0" cellspacing="1" cellpadding="2" id="new.feature">
-    <tr class="tableRowHeader">
+    <tr class="tableLinkRowHeader">
 
         <th class="tableCellHeader">
             <bean:message key="label.ac"/>
@@ -44,18 +44,18 @@
             </th>
         </c:if>
 
-        <th class="tableCellHeader">
+        <th>
             <bean:message key="label.fullname"/>
         </th>
 
-        <th class="tableCellHeader">
+        <th>
             <a href="javascript:showColumnLink('CvFeatureType',
                 document.forms['featureForm'].elements['featureType'].value)">
                 <bean:message key="feature.new.label.type"/>
             </a>
         </th>
 
-        <th class="tableCellHeader">
+        <th>
             <a href="javascript:showColumnLink('CvFeatureIdentification',
                 document.forms['featureForm'].elements['featureIdent'].value)">
                 <bean:message key="feature.new.label.ident"/>
@@ -63,7 +63,7 @@
         </th>
     </tr>
 
-    <tr class="tableRowEven">
+    <tr class="tableRowHeader">
         <td class="tableCell">
             <bean:write property="ac" name="featureForm" filter="false"/>
         </td>
