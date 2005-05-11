@@ -435,6 +435,8 @@
             <!-- Inlcude application common jar files exclude test files. -->
             <fileset dir="${intact.app.lib.dir}">
                 <exclude name="test/**"/>
+                <exclude name="lucene-1.4.3.jar"/>
+                <exclude name="jimi.jar"/>
             </fileset>
 
             <!-- Include required jar files from intact core. -->
