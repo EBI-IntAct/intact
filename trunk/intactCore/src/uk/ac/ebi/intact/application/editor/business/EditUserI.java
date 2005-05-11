@@ -50,9 +50,9 @@ public interface EditUserI extends IntactUserI, Serializable {
 
     // Transaction Methods
 
-    public void startTransaction(IntactHelper helper) throws IntactException;
-    public void commit(IntactHelper helper) throws IntactException;
-    public void rollback(IntactHelper helper) throws IntactException;
+    public void startTransaction() throws IntactException;
+    public void commit() throws IntactException;
+    public void rollback() throws IntactException;
 
     // Persistent Methods
 
@@ -61,10 +61,9 @@ public interface EditUserI extends IntactUserI, Serializable {
      * the search cache, deletes from the experiment list (if the current edit
      * is an instance of an Experiment class),  tand finally delete the current
      * edit object.
-     * @param helper the helper to delete the current view.
      * @exception IntactException for errors in deleting the current edit object.
      */
-    public void delete(IntactHelper helper) throws IntactException;
+    public void delete() throws IntactException;
 
     public void cancelEdit();
 

@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.application.editor.exception.validation.ValidationExcept
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
+import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
@@ -545,20 +546,19 @@ public abstract class AbstractEditViewBean implements Serializable {
      * @exception IntactException for errors in updating the persistent system.
      */
     public void persist(EditUserI user) throws IntactException {
-        IntactHelper helper = user.getIntactHelper();
         try {
             // Begin the transaction.
-            user.startTransaction(helper);
+            user.startTransaction();
 
             // Persiste the current view.
-            persistCurrentView(helper);
+            persistCurrentView();
 
             // Commit the transaction.
-            user.commit(helper);
+            user.commit();
         }
         catch (IntactException ie1) {
             try {
-                user.rollback(helper);
+                user.rollback();
             }
             catch (IntactException ie2) {
                 // Oops! Problems with rollback; ignore this as this
@@ -916,7 +916,8 @@ public abstract class AbstractEditViewBean implements Serializable {
 
     // Persist the current annotated object.
 
-    private void persistCurrentView(IntactHelper helper) throws IntactException {
+    private void persistCurrentView() throws IntactException {
+        IntactHelper helper = IntactHelperUtil.getIntactHelper();
         // First create/update the annotated object by the view.
         updateAnnotatedObject(helper);
 

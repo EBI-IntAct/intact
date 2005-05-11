@@ -319,21 +319,20 @@ public class FeatureViewBean extends AbstractEditViewBean {
 
     // Override the super to persist others.
     public void persistOthers(EditUserI user) throws IntactException {
-        IntactHelper helper = user.getIntactHelper();
         try {
             // Begin the transaction.
-            user.startTransaction(helper);
+            user.startTransaction();
 
             // persist the view.
             persistCurrentView();
 
             // Commit the transaction.
-            user.commit(helper);
+            user.commit();
         }
         catch (IntactException ie1) {
             ie1.printStackTrace();
             try {
-                user.rollback(helper);
+                user.rollback();
             }
             catch (IntactException ie2) {
                 // Oops! Problems with rollback; ignore this as this

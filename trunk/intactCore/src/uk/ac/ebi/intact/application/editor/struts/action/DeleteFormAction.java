@@ -58,15 +58,15 @@ public class DeleteFormAction extends AbstractEditorAction {
                 return mapping.findForward(SEARCH);
             }
             // Start the transaction.
-            user.startTransaction(helper);
+            user.startTransaction();
             // Delete the object we are editing at the moment.
-            user.delete(helper);
+            user.delete();
             // Commit all the changes.
-            user.commit(helper);
+            user.commit();
         }
         catch (IntactException ie1) {
             try {
-                user.rollback(helper);
+                user.rollback();
             }
             catch (IntactException ie2) {
                 // Oops! Problems with rollback; ignore this as this
@@ -84,8 +84,6 @@ public class DeleteFormAction extends AbstractEditorAction {
         finally {
             // Release the lock.
             getLockManager().release(view.getAc());
-            // Close the helper.
-//            helper.closeStore();
             releaseView(user);
         }
         // Remove this current bean from the recent lists.

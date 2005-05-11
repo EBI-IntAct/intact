@@ -464,23 +464,25 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         myEditState = true;
     }
 
-    public void startTransaction(IntactHelper helper) throws IntactException {
-        helper.startTransaction(BusinessConstants.OBJECT_TX);
+    public void startTransaction() throws IntactException {
+        getIntactHelper().startTransaction(BusinessConstants.OBJECT_TX);
     }
 
-    public void commit(IntactHelper helper) throws IntactException {
+    public void commit() throws IntactException {
+        IntactHelper helper = getIntactHelper();
         helper.finishTransaction();
         endEditing();
         // Clear the cache; this will force the OJB to read from the database.
         helper.removeFromCache(myEditView.getAnnotatedObject());
     }
 
-    public void rollback(IntactHelper helper) throws IntactException {
-        helper.undoTransaction();
+    public void rollback() throws IntactException {
+        getIntactHelper().undoTransaction();
         endEditing();
     }
 
-    public void delete(IntactHelper helper) throws IntactException {
+    public void delete() throws IntactException {
+        IntactHelper helper = getIntactHelper();
         AnnotatedObject annobj = myEditView.getAnnotatedObject();
         if (!helper.isPersistent(annobj)) {
             return;

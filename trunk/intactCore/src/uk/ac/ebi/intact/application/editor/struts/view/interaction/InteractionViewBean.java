@@ -167,22 +167,21 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
     // Override the super to persist others.
     public void persistOthers(EditUserI user) throws IntactException {
-        IntactHelper helper = user.getIntactHelper();
         // First transaction for
         try {
             // Begin the transaction.
-            user.startTransaction(helper);
+            user.startTransaction();
 
             // persist the view.
             persistCurrentView();
 
             // Commit the transaction.
-            user.commit(helper);
+            user.commit();
         }
         catch (IntactException ie1) {
             Logger.getLogger(EditorConstants.LOGGER).error("", ie1);
             try {
-                user.rollback(helper);
+                user.rollback();
             }
             catch (IntactException ie2) {
                 // Oops! Problems with rollback; ignore this as this
@@ -194,18 +193,18 @@ public class InteractionViewBean extends AbstractEditViewBean {
         // Need another transaction to delete features.
         try {
             // Begin the transaction.
-            user.startTransaction(helper);
+            user.startTransaction();
 
             // persist the view in a second transaction
-            persistCurrentView2(helper);
+            persistCurrentView2();
 
             // Commit the transaction.
-            user.commit(helper);
+            user.commit();
         }
         catch (IntactException ie1) {
             Logger.getLogger(EditorConstants.LOGGER).error("", ie1);
             try {
-                user.rollback(helper);
+                user.rollback();
             }
             catch (IntactException ie2) {
                 // Oops! Problems with rollback; ignore this as this
@@ -1030,17 +1029,18 @@ public class InteractionViewBean extends AbstractEditViewBean {
         }
 
         // Delete components and remove it from the interaction.
-        deleteComponents(intact, helper);
+        deleteComponents(intact);
 
         // Update components.
-        updateComponents(intact, helper);
+        updateComponents(intact);
 
         // No need to test whether this 'intact' persistent or not because we
         // know it has been already persisted by persist() call.
         helper.update(intact);
     }
 
-    private void persistCurrentView2(IntactHelper helper) throws IntactException {
+    private void persistCurrentView2() throws IntactException {
+        IntactHelper helper = IntactHelperUtil.getIntactHelper();
         // Keeps a track of Features to update. This avoids multiple updates to the
         // same feature.
         Set featuresToUpdate = new HashSet();
@@ -1157,11 +1157,10 @@ public class InteractionViewBean extends AbstractEditViewBean {
     /**
      * Deletes all the components in the components to delete collection.
      * @param intact the current Interaction
-     * @param helper the helper to delete a Component.
      * @throws IntactException for errors in creating or retrieving a Component.
      */
-    private void deleteComponents(Interaction intact, IntactHelper helper)
-            throws IntactException {
+    private void deleteComponents(Interaction intact) throws IntactException {
+        IntactHelper helper = IntactHelperUtil.getIntactHelper();
         for (Iterator iter = myComponentsToDel.iterator(); iter.hasNext();) {
             ComponentBean cb = (ComponentBean) iter.next();
             Component comp = cb.getComponent(helper);
@@ -1181,11 +1180,10 @@ public class InteractionViewBean extends AbstractEditViewBean {
     /**
      * Updates Components.
      * @param intact the current Interaction
-     * @param helper the helper to create objects if they don't exist.
      * @throws IntactException for errors in creating/retrieving a Feature or a Range
      */
-    private void updateComponents(Interaction intact, IntactHelper helper)
-            throws IntactException {
+    private void updateComponents(Interaction intact) throws IntactException {
+        IntactHelper helper = IntactHelperUtil.getIntactHelper();
         // Update components.
         for (Iterator iter1 = myComponentsToUpdate.iterator(); iter1.hasNext();) {
             ComponentBean cb = (ComponentBean) iter1.next();
