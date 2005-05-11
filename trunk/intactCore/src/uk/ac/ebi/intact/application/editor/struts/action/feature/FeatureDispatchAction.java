@@ -143,17 +143,6 @@ public class FeatureDispatchAction extends CommonDispatchAction {
 
     private List persistMutations(EditUserI user) throws IntactException {
         IntactHelper helper = user.getIntactHelper();
-//        try {
-            return persistMutations(user, helper);
-//        }
-//        finally {
-//            helper.closeStore();
-//        }
-    }
-
-    // Does persisting of the mutations in here. Need  a separate method for it
-    // wrap around a try / finally block.
-    private List persistMutations(EditUserI user, IntactHelper helper) throws IntactException{
         // The list of features to return.
         List features = new ArrayList();
 
@@ -196,7 +185,7 @@ public class FeatureDispatchAction extends CommonDispatchAction {
             }
             // Create a Feature in a separate transaction.
             try {
-                user.startTransaction(helper);
+                user.startTransaction();
                 helper.create(feature);
                 helper.finishTransaction();
             }
@@ -215,7 +204,7 @@ public class FeatureDispatchAction extends CommonDispatchAction {
             features.add(feature);
 
             try {
-                user.startTransaction(helper);
+                user.startTransaction();
                 for (Iterator iter = rangesToCreate(token, owner, sequence); iter.hasNext(); ) {
                     Range range = (Range) iter.next();
                     helper.create(range);
