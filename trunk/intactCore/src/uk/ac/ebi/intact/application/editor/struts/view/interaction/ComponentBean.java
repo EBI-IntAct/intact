@@ -400,7 +400,7 @@ public class ComponentBean extends AbstractEditKeyBean {
 
     private void setGeneName() throws IntactException {
         // The helper to run the query.
-        IntactHelper helper = IntactHelperUtil.getIntactHelper();
+        IntactHelper helper = IntactHelperUtil.getDefaultIntactHelper();
 
         // The query factory to get a query.
         OJBQueryFactory qf = OJBQueryFactory.getInstance();
