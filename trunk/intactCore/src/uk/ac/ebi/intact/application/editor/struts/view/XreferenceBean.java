@@ -43,9 +43,19 @@ public class XreferenceBean extends AbstractEditKeyBean {
     private String myDatabaseName;
 
     /**
-     * The primary id. Set to empty; this is a required field.
+     * The database link.
      */
-    private String myPrimaryId = "";
+    private String myDatabaseLink;
+
+    /**
+     * The primary id.
+     */
+    private String myPrimaryId;
+
+    /**
+     * The primary id as a link.
+     */
+    private String myPrimaryIdLink;
 
     /**
      * The secondary id.
@@ -61,6 +71,11 @@ public class XreferenceBean extends AbstractEditKeyBean {
      * The reference qualifier.
      */
     private String myReferenceQualifer;
+
+    /**
+     * Reference qualifier as a link.
+     */
+    private String myRefQualifierLink;
 
     /**
      * Default constructor.
@@ -112,6 +127,7 @@ public class XreferenceBean extends AbstractEditKeyBean {
                 CvDatabase.class, myDatabaseName);
         CvXrefQualifier xqual = (CvXrefQualifier) helper.getObjectByLabel(
                 CvXrefQualifier.class, myReferenceQualifer);
+
         // Create a new xref (true if this object was cloned).
         if (myXref == null) {
             myXref = new Xref(getService().getOwner(), db, myPrimaryId,
@@ -141,7 +157,10 @@ public class XreferenceBean extends AbstractEditKeyBean {
      * @return the database as a browsable link.
      */
     public String getDatabaseLink() {
-        return getLink(EditorService.getTopic(CvDatabase.class), myDatabaseName);
+        if (myDatabaseLink == null) {
+            setDatabaseLink();
+        }
+        return myDatabaseLink;
     }
 
     /**
@@ -157,27 +176,10 @@ public class XreferenceBean extends AbstractEditKeyBean {
      * Return the primary id as a link. Only used when viewing a xref.
      */
     public String getPrimaryIdLink() {
-        // When no Xref is wrapped (for instance adding a new xref).
-        if (myXref == null) {
-            return myPrimaryId;
+        if (myPrimaryIdLink == null) {
+            setPrimaryIdLink();
         }
-
-        // The primary id link.
-        String link = XrefHelper.getPrimaryIdLink(myXref);
-
-        // javascipt to display the link.
-        if (link.startsWith("http://")) {
-            try {
-                return "<a href=\"" + "javascript:showXrefPId('"
-                        + URLEncoder.encode(link, "UTF-8") + "')\"" + ">"
-                        + myPrimaryId + "</a>";
-            }
-            catch (UnsupportedEncodingException uee) {
-                // This shouldn't happen as we know the encoding.
-                Logger.getLogger(EditorConstants.LOGGER).info(uee);
-            }
-        }
-        return link;
+        return myPrimaryIdLink;
     }
 
     /**
@@ -243,7 +245,10 @@ public class XreferenceBean extends AbstractEditKeyBean {
      * @return the qualifier as a browsable link.
      */
     public String getQualifierLink() {
-        return getLink(EditorService.getTopic(CvXrefQualifier.class), myReferenceQualifer);
+        if (myRefQualifierLink == null) {
+            setRefQualifierLink();
+        }
+        return myRefQualifierLink;
     }
 
     /**
@@ -282,11 +287,12 @@ public class XreferenceBean extends AbstractEditKeyBean {
      * previous values.
      */
     public void clear() {
-        myDatabaseName = "";
-        myPrimaryId = "";
-        mySecondaryId = "";
-        myReleaseNumber = "";
-        myReferenceQualifer = "";
+        myDatabaseName = null;
+        myPrimaryId = null;
+        myPrimaryIdLink = null;
+        mySecondaryId = null;
+        myReleaseNumber = null;
+        myReferenceQualifer = null;
     }
 
     /**
@@ -313,16 +319,20 @@ public class XreferenceBean extends AbstractEditKeyBean {
      */
     private void initialize(Xref xref) {
         myXref = xref;
+
         myDatabaseName = xref.getCvDatabase().getShortLabel();
+        setDatabaseLink();
+
         myPrimaryId = xref.getPrimaryId();
         mySecondaryId = xref.getSecondaryId();
         myReleaseNumber = xref.getDbRelease();
 
-        myReferenceQualifer = "";
         CvXrefQualifier qualifier = xref.getCvXrefQualifier();
         if (qualifier != null) {
             myReferenceQualifer = qualifier.getShortLabel();
         }
+        setRefQualifierLink();
+        setPrimaryIdLink();
     }
 
     private GoResult getGoResponse(GoServerProxy proxy) {
@@ -331,22 +341,52 @@ public class XreferenceBean extends AbstractEditKeyBean {
             result.myGoResponse = proxy.query(getPrimaryId());
         }
         catch (IOException ioe) {
-            ioe.printStackTrace();
+            Logger.getLogger(EditorConstants.LOGGER).info("GO Proxy", ioe);
             // Error in communcating with the server.
             result.addErrors(new ActionError("error.xref.go.connection",
                     ioe.getMessage()));
         }
         catch (GoServerProxy.GoIdNotFoundException ex) {
-            ex.printStackTrace();
+            Logger.getLogger(EditorConstants.LOGGER).info("GO Proxy", ex);
             // GO id not found.
             result.addErrors(new ActionError("error.xref.go.search",
                     getPrimaryId()));
         }
-        catch(Exception ex) {
-            System.out.println("Unknown exception");
-            ex.printStackTrace();
-        }
         return result;
+    }
+
+    private void setDatabaseLink() {
+        myDatabaseLink = getLink(EditorService.getTopic(CvDatabase.class),
+                myDatabaseName);
+    }
+
+    private void setPrimaryIdLink() {
+        // When no Xref is wrapped (for instance adding a new xref).
+        if (myXref == null) {
+            myPrimaryIdLink = myPrimaryId;
+            return;
+        }
+        // The primary id link.
+        String link = XrefHelper.getPrimaryIdLink(myXref);
+
+        // javascipt to display the link.
+        if (link.startsWith("http://")) {
+            try {
+                link = "<a href=\"" + "javascript:showXrefPId('"
+                        + URLEncoder.encode(link, "UTF-8") + "')\"" + ">"
+                        + myPrimaryId + "</a>";
+            }
+            catch (UnsupportedEncodingException uee) {
+                // This shouldn't happen as we know the encoding.
+                Logger.getLogger(EditorConstants.LOGGER).info("PID Link", uee);
+            }
+        }
+        myPrimaryIdLink = link;
+    }
+
+    private void setRefQualifierLink() {
+        myRefQualifierLink = getLink(EditorService.getTopic(CvXrefQualifier.class),
+                myReferenceQualifer);
     }
 
     // ------------------------------------------------------------------------
