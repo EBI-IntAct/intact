@@ -39,13 +39,13 @@ public abstract class AbstractEditorAction extends Action implements ForwardCons
     // Class Methods
 
     /**
-     * Returns true if given value is empty.
+     * Returns true if given value is null or empty.
      * @param value the value to check for empty.
-     * @return true if <code>value</code> is empty; any excess spaces
+     * @return true if <code>value</code> is null or empty; any excess spaces
      * are removed before checking for empty.
      */
     public static boolean isPropertyEmpty(String value) {
-        return value.trim().length() == 0;
+        return (value == null) || (value.trim().length() == 0);
     }
 
     // Protected methods
