@@ -34,6 +34,11 @@ public class CommentBean extends AbstractEditKeyBean {
     private String myTopic;
 
     /**
+     * The topic as as a link
+     */
+    private String myTopicLink;
+
+    /**
      * The annotated text.
      */
     private String myAnnotatedText;
@@ -112,7 +117,10 @@ public class CommentBean extends AbstractEditKeyBean {
      * @return the topic as a browsable link.
      */
     public String getTopicLink() {
-        return getLink(EditorService.getTopic(CvTopic.class), myTopic);
+        if (myTopicLink == null) {
+            setTopicLink();
+        }
+        return myTopicLink;
     }
 
     /**
@@ -144,8 +152,9 @@ public class CommentBean extends AbstractEditKeyBean {
      * previous values.
      */
     public void clear() {
-        myTopic = "";
-        myAnnotatedText = "";
+        myTopic = null;
+        myTopicLink = null;
+        myAnnotatedText = null;
     }
 
     /**
@@ -166,6 +175,11 @@ public class CommentBean extends AbstractEditKeyBean {
     private void initialize(Annotation annotation) {
         myAnnotation = annotation;
         myTopic = annotation.getCvTopic().getShortLabel();
+        setTopicLink();
         myAnnotatedText = annotation.getAnnotationText();
+    }
+
+    private void setTopicLink() {
+        myTopicLink = getLink(EditorService.getTopic(CvTopic.class), myTopic);
     }
 }
