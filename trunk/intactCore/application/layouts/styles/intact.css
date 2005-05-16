@@ -16,7 +16,6 @@ body, input, td, th, p {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 18pt;
     font-weight: bold;
-
 }
 
 h1 {
@@ -67,13 +66,6 @@ tr.tableRowHeader {
     font-family: Arial, verdana, sans-serif;
     color: #ffffff;
     background-color: #336666;
-}
-
-/* For a table header with a link */
-tr.tableLinkRowHeader {
-    font-family: Arial, verdana, sans-serif;
-    color: #336666;
-    background-color: #cccccc;
 }
 
 .objectClass {
