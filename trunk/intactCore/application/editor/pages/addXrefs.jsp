@@ -38,14 +38,19 @@
 <%-- The anchor name for this page --%>
 <a name="xref"/>
 
+<%-- Wrap around the border --%>
+<div class="tableBorder">
+
 <%-- Adds a new xreferece. This will invoke addXref action. --%>
-<table class="table" width="100%" border="0" cellspacing="1" cellpadding="2">
-    <tr class="tableRowHeader">
+<table class="table" width="100%" cellspacing="1" cellpadding="2">
+    <tr class="tableLinkRowHeader">
         <th class="tableCellHeader">
             <bean:message key="label.action"/>
         </th>
-        <th class="tableCellHeader">
-            <bean:message key="xref.label.database"/>
+        <th>
+            <a href="javascript:showColumnLink('CvDatabase', document.forms[0].elements['newXref.database'].value)">
+                <bean:message key="xref.label.database"/>
+            </a>
         </th>
         <th class="tableCellHeader">
             <bean:message key="xref.label.primary"/>
@@ -56,8 +61,10 @@
         <th class="tableCellHeader">
             <bean:message key="xref.label.release"/>
         </th>
-        <th class="tableCellHeader">
-            <bean:message key="xref.label.reference"/>
+        <th>
+            <a href="javascript:showColumnLink('CvXrefQualifier', document.forms[0].elements['newXref.qualifier'].value)">
+                <bean:message key="xref.label.reference"/>
+            </a>
         </th>
         <th>
             <intact:documentation section="editor.xrefs"/>
@@ -95,6 +102,9 @@
         </td>
     </tr>
 </table>
+
+</div>
+
 <html:errors property="xref.db"/>
 <html:errors property="xref.pid"/>
 <html:errors property="new.xref"/>
