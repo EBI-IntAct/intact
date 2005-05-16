@@ -52,3 +52,15 @@ tr.tableFeatureRow {
     vertical-align: top;
     background-color: #B0C4DE
 }
+
+/* For a table header with a link */
+tr.tableLinkRowHeader {
+    font-family: Arial, verdana, sans-serif;
+    color: #336666;
+    background-color: #cccccc;
+}
+
+/* The special border for add annotation/xref tables */
+.tableBorder {
+  border: 8px outset green;
+}
