@@ -1,4 +1,3 @@
-<%@ page import="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory"%>
 <!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
@@ -17,31 +16,25 @@
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
 
-<script language="JavaScript" type="text/javascript">
-
-    function validateAnnotation() {
-    //window.alert('I am here');
-    var v = document.forms[0].elements['dispatch'].value;
-    window.alert(v);
-        if (dispatch == "<%= EditorMenuFactory.SELECT_LIST_ITEM%>") {
-            alert("Please select an item from the list first!");
-            return;
-        }
-        return window.confirm("Do you want to delete this CV? Press OK to confirm");
-    }
-
-</script>
-
 <%-- The list of topics --%>
 <c:set var="topiclist" value="${user.view.menus['Topic_']}"/>
 
 <%-- The anchor name for this page --%>
 <a name="annotation"/>
 
+<%-- Wrap around the border --%>
+<div class="tableBorder">
+
 <table class="table" width="100%" border="0" cellspacing="1" cellpadding="2">
-    <tr class="tableRowHeader">
-        <th class="tableCellHeader">Action</th>
-        <th class="tableCellHeader">Topic</th>
+    <tr class="tableLinkRowHeader">
+        <th class="tableCellHeader">
+            <bean:message key="label.action"/>
+        </th>
+        <th>
+            <a href="javascript:showColumnLink('CvTopic', document.forms[0].elements['newAnnotation.topic'].value)">
+                Topic
+            </a>
+        </th>
         <th class="tableCellHeader">Description</th>
         <th>
             <intact:documentation section="editor.annotations"/>
@@ -65,5 +58,8 @@
         </td>
     </tr>
 </table>
+
+</div>
+
 <html:errors property="annotation"/>
 <html:errors property="new.annotation"/>
