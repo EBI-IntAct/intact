@@ -225,11 +225,11 @@ public abstract class UpdateProteinsI {
 
             isoformComment = (CvTopic) getCvObject( CvTopic.class, "isoform-comment" );
 
-            isoformSynonym = (CvAliasType) getCvObject( CvAliasType.class, "isoform-synonym" );
-            geneNameAliasType = (CvAliasType) getCvObject( CvAliasType.class, "gene-name" );
-            geneNameSynonymAliasType = (CvAliasType) getCvObject( CvAliasType.class, "gene-name-synonym" );
-            orfNameAliasType = (CvAliasType) getCvObject( CvAliasType.class, "orf-name" );
-            locusNameAliasType = (CvAliasType) getCvObject( CvAliasType.class, "locus-name" );
+            isoformSynonym = (CvAliasType) getCvObject( CvAliasType.class, "isoform synonym" );
+            geneNameAliasType = (CvAliasType) getCvObject( CvAliasType.class, "gene name" );
+            geneNameSynonymAliasType = (CvAliasType) getCvObject( CvAliasType.class, "gene name-synonym" );
+            orfNameAliasType = (CvAliasType) getCvObject( CvAliasType.class, "orf name" );
+            locusNameAliasType = (CvAliasType) getCvObject( CvAliasType.class, "locus name" );
 
         } catch ( IntactException e ) {
             if( logger != null ) {

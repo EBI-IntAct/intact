@@ -410,7 +410,7 @@ public class ComponentBean extends AbstractEditKeyBean {
 
         // The alias AC.
         String ac = ((AnnotatedObject) helper.getObjectByLabel(
-                CvAliasType.class, "gene-name")).getAc();
+                CvAliasType.class, "gene name")).getAc();
         Query query = qf.getGeneNameQuery(ac, myInteractor.getAc());
 
         // The flag to say that we are processing the first gene name.
