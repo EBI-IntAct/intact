@@ -1,26 +1,37 @@
-term: gene-name: Gene name
+term: author assigned-name: author assigned name
+id: MI:0345
+definition: Name assigned to a molecule by the authors within a paper that may differ from the reference database.
+definition_reference: PMID:INTACT
+
+term: gene name
+id: MI:0301
 definition: A current gene name for the object. Usually defined by a normative body, e.g. HUGO for human genes.
 definition_reference: PMID:INTACT
 
-term: gene-name-synonym: Gene name synonym
+term: gene name-synonym: gene name synonym
+id: MI:0302
 definition: A synonym for a gene name.
 definition_reference: PMID:INTACT
 
-term: go-synonym: Synonym as used in GO DAGedit-formatted files
-definition: Synonym as used in GO DAGedit-formatted files.
+term: go synonym: gene ontology synonym
+id: MI:0303
+definition: Synonym as used in Gene Ontologgy
 definition_reference: PMID:INTACT
 
-term: isoform-synonym: Isoform synonym
+term: isoform synonym
+id: MI:0304
 definition: A synonym for a protein isoform.
 definition_reference: PMID:INTACT
 
-term: locus-name: Ordered locus name
+term: locus name: ordered locus name
+id: MI:0305
 definition: A name used to represent an ORF in a completely sequenced genome or chromosome. It is generally based on a prefix representing the organism and a number which usually represents the sequential ordering of genes on the chromosome. Depending on the genome sequencing center, numbers are attributed only to protein-coding genes, or also to pseudogenes, or also to tRNAs and other features.
 example: HI0934, Rv3245c, At5g34500, YER456W
 comment: Also called OLN, ORF numbers, CDS numbers or Gene numbers.
 definition_reference: PMID:INTACT
 
-term: orf-name: Open Reading Frame name
+term: orf name: open reading frame name
+id: MI:0306
 definition: A name temporarily attributed by a sequencing project to an open reading frame. This name is generally based on a cosmid numbering system.
 example: MtCY277.28c, SYGP-ORF50, SpBC2F12.04, C06E1.1, CG10954.
 comment: Also called Sequencing names or Contig names or Temporary ORFNames.
