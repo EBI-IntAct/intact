@@ -6,7 +6,6 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.util;
 
-import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.util.go.GoUtils;
 
@@ -48,61 +47,50 @@ public class GoTools {
                 + "as an object from the flat file with goid MI:123." + nl
                 + "If goid_db is '-', the short label will be used if present.";
 
-        Class targetClass = null;
-
-        try {
-            // Check parameters
-            if ((args.length < 4) || (args.length > 5)) {
-                System.out.println("Invalid number of arguments.\n" + usage);
-                System.exit(1);
-            }
-
-            try {
-                targetClass = Class.forName(args[1]);
-            }
-            catch (ClassNotFoundException e) {
-                System.out.println("Class " + args[1] + " not found.\n" + usage);
-                System.exit(1);
-            }
+        // Check parameters
+        if ((args.length < 4) || (args.length > 5)) {
+            throw new IllegalArgumentException("Invalid number of arguments.\n" + usage);
+        }
+        // The first argument must be either upload or download
+        if (args[0].equals("upload") || args[0].equals("download")) {
+            // The target as a Class object
+            Class targetClass = Class.forName(args[1]);
 
             // Create database access object
             IntactHelper helper = new IntactHelper();
 
-            // args[2] is the go id database.
-            GoUtils goUtils = new GoUtils(helper, args[2], targetClass);
+            try {
+                // args[2] is the go id database.
+                GoUtils goUtils = new GoUtils(helper, args[2], targetClass);
 
-            if (args[0].equals("upload")) {
-                // Insert definitions
-                goUtils.insertGoDefinitions(args[3]);
+                if (args[0].equals("upload")) {
+                    // Insert definitions
+                    goUtils.insertGoDefinitions(args[3]);
 
-                // Insert DAG
-                if (args.length == 5) {
-                    goUtils.insertGoDag(args[4]);
+                    // Insert DAG
+                    if (args.length == 5) {
+                        goUtils.insertGoDag(args[4]);
+                    }
+                }
+                else if (args[0].equals("download")) {
+                    // Write definitions
+                    System.out.println("Writing GO definitons to " + args[3] + " ...");
+                    goUtils.writeGoDefinitions(args[3]);
+
+                    // Write go dag format
+                    if (args.length == 5) {
+                        System.out.println("Writing GO DAG to " + args[4] + " ...");
+                        goUtils.writeGoDag(args[4]);
+                        System.out.println("Done.");
+                    }
                 }
             }
-            else if (args[0].equals("download")) {
-                // Write definitions
-                System.out.println("Writing GO definitons to " + args[3] + " ...");
-                goUtils.writeGoDefinitions(args[3]);
-
-                // Write go dag format
-                if (args.length == 5) {
-                    System.out.println("Writing GO DAG to " + args[4] + " ...");
-                    goUtils.writeGoDag(args[4]);
-                    System.out.println("Done.");
-                }
-            }
-            else {
-                System.out.println("Invalid argument " + args[0] + "\n" + usage);
-                System.exit(1);
-            }
-
-            if (helper != null) {
+            finally {
                 helper.closeStore();
             }
         }
-        catch (IntactException e) {
-            System.out.println(e.getMessage());
+        else {
+            throw new IllegalArgumentException("Invalid argument " + args[0] + "\n" + usage);
         }
     }
 }
