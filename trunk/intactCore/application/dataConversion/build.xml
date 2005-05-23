@@ -22,6 +22,11 @@
 
     <property environment="env"/>
 
+    <!-- The jdbc properties. -->
+    <property file="../../config/jdbc.properties"/>
+    <property name="ora.props.file" value="../../config/oracle.properties"/>
+    <property name="pg.props.file" value="../../config/postgres.properties"/>
+
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
 
@@ -224,16 +229,17 @@
             <!--fileset dir="${intact.app.dir}/lib"/ -->
             <!-- Include required jar files from intact core. -->
             <fileset dir="${root.lib.dir}">
+
+                <include name="${db}"/>
+
                 <include name="db-ojb-1.0.rc6.jar"/>
                 <include name="commons-dbcp-1.1.jar"/>
                 <include name="commons-cli-1.0.jar"/>
                 <include name="yasp.jar"/>
                 <include name="aristotle.jar"/>
-                <!-- include name="flatfilewriter.jar"/ -->
                 <include name="antlr.jar"/>
                 <include name="sptr-interfaces.jar"/>
                 <include name="log4j-1.2.8.jar"/>
-                <include name="${db}"/>
                 <include name="commons-pool.jar"/>
                 <include name="xercesImpl.jar"/>
                 <include name="xml-apis.jar"/>
@@ -270,10 +276,35 @@
       -->
 
     <target name="cp-postgres" if="postgres">
+
+        <condition property="pg.property.missing">
+            <not>
+                <available file="${pg.props.file}"/>
+            </not>
+        </condition>
+
+
+        <fail if="pg.property.missing">
+              Unable to find ${pg.props.file} file;
+              see template/postgres.template file for the format.
+        </fail>
+
+        <condition property="pg.jdbc.driver.missing">
+            <not>
+                <available file="${root.lib.dir}/${postgresql.jar}"/>
+            </not>
+        </condition>
+
+        <fail if="pg.jdbc.driver.missing">
+             Unable to find your postgres jdbc driver !
+              see /config/jdbc.properties file for the format.
+        </fail>
+
         <!-- Load postgres properties. -->
         <antcall target="copy-lib">
             <param name="db" value="${postgresql.jar}"/>
         </antcall>
+
     </target>
 
     <!-- =================================================================== -->
@@ -284,9 +315,32 @@
       -->
 
     <target name="cp-oracle" description="copies driver for oracle" if="oracle">
+
+        <condition property="oracle.property.missing">
+            <not>
+                <available file="${ora.props.file}"/>
+            </not>
+        </condition>
+
+        <fail if="oracle.property.missing">
+              Unable to find ${ora.props.file} file;
+              see template/oracle.template file for the format.
+        </fail>
+
+        <condition property="oracle.jdbc.driver.missing">
+            <not>
+                <available file="${root.lib.dir}/${oracle.jar}"/>
+            </not>
+        </condition>
+
+        <fail if="oracle.jdbc.driver.missing">
+             Unable to find your oracle jdbc driver !
+              see /config/jdbc.properties file for the format.
+        </fail>
+
         <!-- Load oracle properties. -->
         <antcall target="copy-lib">
-            <param name="db" value=" ${oracle.jar}"/>
+            <param name="db" value="${oracle.jar}"/>
         </antcall>
     </target>
 
