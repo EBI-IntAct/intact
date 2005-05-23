@@ -22,13 +22,22 @@ public class CvTopic extends CvObject implements Editable {
     public static final String UNIPROT_DR_EXPORT = "uniprot-dr-export";
     public static final String UNIPROT_CC_EXPORT = "uniprot-cc-note";
     public static final String NEGATIVE = "negative";
+    public static final String COPYRIGHT = "copyright";
     public static final String AUTHOR_CONFIDENCE = "author-confidence";
-    public static final String COFIDENCE_MAPPING = "confidence-mapping";
+    public static final String CONFIDENCE_MAPPING = "confidence-mapping";
+    public static final String SEARCH_URL_ASCII = "search-url-ascii";
+    public static final String ISOFORM_COMMENT = "isoform-comment";
 
     /**
-     * This constructor should <b>not</b> be used as it could
-     * result in objects with invalid state. It is here for object mapping
-     * purposes only and if possible will be made private.
+     * Cache a Vector of all shortLabels of the class, e.g. for menus.
+     * This should not be here as it has no model functionality but is
+     * related to eg user interfaces.
+     */
+//    protected static Vector menuList = null;
+
+    /**
+     * This constructor should <b>not</b> be used as it could result in objects with invalid state. It is here for
+     * object mapping purposes only and if possible will be made private.
      *
      * @deprecated Use the full constructor instead
      */
@@ -38,14 +47,15 @@ public class CvTopic extends CvObject implements Editable {
     }
 
     /**
-     * Creates a valid CvTopic instance. Requires at least a shortLabel and an
-     * owner to be specified.
+     * Creates a valid CvTopic instance. Requires at least a shortLabel and an owner to be specified.
      *
      * @param shortLabel The memorable label to identify this CvTopic
      * @param owner      The Institution which owns this CvTopic
+     *
      * @throws NullPointerException thrown if either parameters are not specified
      */
     public CvTopic( Institution owner, String shortLabel ) {
+
         //super call sets up a valid CvObject
         super( owner, shortLabel );
     }
