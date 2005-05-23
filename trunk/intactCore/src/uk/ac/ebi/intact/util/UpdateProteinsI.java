@@ -61,8 +61,7 @@ public abstract class UpdateProteinsI {
     protected static CvDatabase hugeDatabase;
 
     /**
-     * Describe wether an Xref is related the primary SPTR AC (identityCrefQualifier)
-     * or not (secondaryXrefQualifier)
+     * Describe wether an Xref is related the primary SPTR AC (identityCrefQualifier) or not (secondaryXrefQualifier)
      */
     protected static CvXrefQualifier identityXrefQualifier;
     protected static CvXrefQualifier secondaryXrefQualifier;
@@ -82,12 +81,9 @@ public abstract class UpdateProteinsI {
     protected BioSourceFactory bioSourceFactory;
 
     /**
-     * If true, each protein is updated in a distinct transaction.
-     * If localTransactionControl is false, no local transactions are initiated,
-     * control is left with the calling class.
-     * This can be used e.g. to have transactions span the insertion of all
-     * proteins of an entire complex.
-     * Default is true.
+     * If true, each protein is updated in a distinct transaction. If localTransactionControl is false, no local
+     * transactions are initiated, control is left with the calling class. This can be used e.g. to have transactions
+     * span the insertion of all proteins of an entire complex. Default is true.
      */
     protected static boolean localTransactionControl = true;
 
@@ -100,7 +96,7 @@ public abstract class UpdateProteinsI {
 
     public UpdateProteinsI( boolean setOutputOn ) {
         try {
-            if( setOutputOn ) {
+            if ( setOutputOn ) {
                 HttpProxyManager.setup();
             } else {
                 HttpProxyManager.setup( null );
@@ -176,63 +172,64 @@ public abstract class UpdateProteinsI {
              * Load CVs
              */
 
-            sgdDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "sgd" );
-            uniprotDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "uniprot" );
+            sgdDatabase = (CvDatabase) helper.getObjectByXref( CvDatabase.class, "MI:0484" ); // sgd
+            uniprotDatabase = (CvDatabase) helper.getObjectByXref( CvDatabase.class, "MI:0486" ); // uniprot
 
             // search for the SRS link.
             Collection annotations = uniprotDatabase.getAnnotations();
-            if( annotations != null ) {
+            if ( annotations != null ) {
                 // find the CvTopic search-url-ascii
                 Annotation searchedAnnotation = null;
-                for( Iterator iterator = annotations.iterator(); iterator.hasNext() && searchedAnnotation == null; ) {
+                for ( Iterator iterator = annotations.iterator(); iterator.hasNext() && searchedAnnotation == null; ) {
                     Annotation annotation = (Annotation) iterator.next();
-                    if( CV_TOPIC_SEARCH_URL_ASCII.equals( annotation.getCvTopic().getShortLabel() ) ) {
+                    if ( CV_TOPIC_SEARCH_URL_ASCII.equals( annotation.getCvTopic().getShortLabel() ) ) {
                         searchedAnnotation = annotation;
                     }
                 }
 
-                if( searchedAnnotation != null ) {
+                if ( searchedAnnotation != null ) {
                     srsUrl = searchedAnnotation.getAnnotationText();
-                    if( logger != null ) {
+                    if ( logger != null ) {
                         logger.info( "Found UniProt URL in the Uniprot CvDatabase: " + srsUrl );
                     }
                 } else {
                     String msg = "Unable to find an annotation having a CvTopic: " + CV_TOPIC_SEARCH_URL_ASCII +
                                  " in the UNIPROT database";
-                    if( logger != null ) {
+                    if ( logger != null ) {
                         logger.error( msg );
                     }
                     throw new UpdateException( msg );
                 }
             } else {
                 String msg = "No Annotation in the UNIPROT database, could not get the UniProt URL.";
-                if( logger != null ) {
+                if ( logger != null ) {
                     logger.error( msg );
                 }
                 throw new UpdateException( msg );
             }
 
-            intactDatabase = (CvDatabase) getCvObject( CvDatabase.class, "intact" );
-            goDatabase = (CvDatabase) getCvObject( CvDatabase.class, "go" );
-            interproDatabase = (CvDatabase) getCvObject( CvDatabase.class, "interpro" );
-            flybaseDatabase = (CvDatabase) getCvObject( CvDatabase.class, "flybase" );
-            reactomeDatabase = (CvDatabase) getCvObject( CvDatabase.class, "reactome-protein" );
-            hugeDatabase = (CvDatabase) getCvObject( CvDatabase.class, "huge" );
+            intactDatabase = (CvDatabase) helper.getObjectByXref( CvDatabase.class, "MI:0469" );   // intact
+            goDatabase = (CvDatabase) helper.getObjectByXref( CvDatabase.class, "MI:0448" );       // go
+            interproDatabase = (CvDatabase) helper.getObjectByXref( CvDatabase.class, "MI:0449" ); // interpro
+            flybaseDatabase = (CvDatabase) helper.getObjectByXref( CvDatabase.class, "MI:0478" );  // flybase
+            reactomeDatabase = (CvDatabase) helper.getObjectByXref( CvDatabase.class, "MI:0245" ); // reactome-protein
+            hugeDatabase = (CvDatabase) helper.getObjectByXref( CvDatabase.class, "MI:0249" );     // huge
 
-            identityXrefQualifier = (CvXrefQualifier) getCvObject( CvXrefQualifier.class, "identity" );
-            secondaryXrefQualifier = (CvXrefQualifier) getCvObject( CvXrefQualifier.class, "secondary-ac" );
-            isoFormParentXrefQualifier = (CvXrefQualifier) getCvObject( CvXrefQualifier.class, "isoform-parent" );
+            identityXrefQualifier = (CvXrefQualifier) helper.getObjectByXref( CvXrefQualifier.class, "MI:0356" );      // identity
+            secondaryXrefQualifier = (CvXrefQualifier) helper.getObjectByXref( CvXrefQualifier.class, "MI:0360" );     // secondary-ac
+            isoFormParentXrefQualifier = (CvXrefQualifier) helper.getObjectByXref( CvXrefQualifier.class, "MI:0243" ); // isoform-parent
 
-            isoformComment = (CvTopic) getCvObject( CvTopic.class, "isoform-comment" );
+            // only one search by shortlabel as it still doesn't have MI number.
+            isoformComment = (CvTopic) getCvObject( CvTopic.class, CvTopic.ISOFORM_COMMENT );
 
-            isoformSynonym = (CvAliasType) getCvObject( CvAliasType.class, "isoform synonym" );
-            geneNameAliasType = (CvAliasType) getCvObject( CvAliasType.class, "gene name" );
-            geneNameSynonymAliasType = (CvAliasType) getCvObject( CvAliasType.class, "gene name-synonym" );
-            orfNameAliasType = (CvAliasType) getCvObject( CvAliasType.class, "orf name" );
-            locusNameAliasType = (CvAliasType) getCvObject( CvAliasType.class, "locus name" );
+            geneNameAliasType = (CvAliasType) helper.getObjectByXref( CvAliasType.class, "MI:0301" );        // gene name
+            geneNameSynonymAliasType = (CvAliasType) helper.getObjectByXref( CvAliasType.class, "MI:0302" ); // gene name-synonym
+            isoformSynonym = (CvAliasType) helper.getObjectByXref( CvAliasType.class, "MI:0304" );           // isoform synonym
+            locusNameAliasType = (CvAliasType) helper.getObjectByXref( CvAliasType.class, "MI:0305" );       // locus name
+            orfNameAliasType = (CvAliasType) helper.getObjectByXref( CvAliasType.class, "MI:0306" );         // orf name
 
         } catch ( IntactException e ) {
-            if( logger != null ) {
+            if ( logger != null ) {
                 logger.error( e );
             }
             throw new UpdateException( "Couldn't find needed object in IntAct, cause: " + e.getMessage() );
@@ -254,7 +251,7 @@ public abstract class UpdateProteinsI {
                                                                           UpdateException {
 
         CvObject cv = (CvObject) helper.getObjectByLabel( clazz, shortlabel );
-        if( cv == null ) {
+        if ( cv == null ) {
             StringBuffer sb = new StringBuffer( 128 );
             sb.append( "Could not find " );
             sb.append( shortlabel );
@@ -262,7 +259,7 @@ public abstract class UpdateProteinsI {
             sb.append( clazz.getName() );
             sb.append( " in your IntAct node" );
 
-            if( logger != null ) {
+            if ( logger != null ) {
                 logger.error( sb.toString() );
             }
             throw new UpdateException( sb.toString() );
@@ -291,9 +288,8 @@ public abstract class UpdateProteinsI {
     }
 
     /**
-     * Sets the internal helper. This method is used by the editor to set the
-     * helper, call necessary methods and close the helper again (the objective
-     * is to keep the scope of the Intact helper to minimum).
+     * Sets the internal helper. This method is used by the editor to set the helper, call necessary methods and close
+     * the helper again (the objective is to keep the scope of the Intact helper to minimum).
      *
      * @param helper the Intact helper to set.
      */
@@ -303,43 +299,39 @@ public abstract class UpdateProteinsI {
     }
 
     /**
-     * Inserts zero or more proteins created from SPTR entries which are retrieved from a Stream.
-     * IntAct Protein objects represent a specific amino acid sequence in a specific organism.
-     * If a SPTr entry contains more than one organism, one IntAct entry will be created for each organism,
-     * unless the taxid parameter is not null.
+     * Inserts zero or more proteins created from SPTR entries which are retrieved from a Stream. IntAct Protein objects
+     * represent a specific amino acid sequence in a specific organism. If a SPTr entry contains more than one organism,
+     * one IntAct entry will be created for each organism, unless the taxid parameter is not null.
      *
      * @param inputStream The straem from which YASP will read the ENtries content.
-     * @param taxid       Of all entries retrieved from sourceURL, insert only those which have this
-     *                    taxid.
-     *                    If taxid is empty, insert all protein objects.
-     * @param update      If true, update existing Protein objects according to the retrieved data.
-     *                    else, skip existing Protein objects.
+     * @param taxid       Of all entries retrieved from sourceURL, insert only those which have this taxid. If taxid is
+     *                    empty, insert all protein objects.
+     * @param update      If true, update existing Protein objects according to the retrieved data. else, skip existing
+     *                    Protein objects.
      *
      * @return Collection of protein objects created/updated.
      */
     public abstract Collection insertSPTrProteins( InputStream inputStream, String taxid, boolean update );
 
     /**
-     * Inserts zero or more proteins created from SPTR entries which are retrieved from a URL.
-     * IntAct Protein objects represent a specific amino acid sequence in a specific organism.
-     * If a SPTr entry contains more than one organism, one IntAct entry will be created for each organism,
-     * unless the taxid parameter is not null.
+     * Inserts zero or more proteins created from SPTR entries which are retrieved from a URL. IntAct Protein objects
+     * represent a specific amino acid sequence in a specific organism. If a SPTr entry contains more than one organism,
+     * one IntAct entry will be created for each organism, unless the taxid parameter is not null.
      *
      * @param sourceUrl The URL which delivers zero or more SPTR flat file formatted entries.
-     * @param taxid     Of all entries retrieved from sourceURL, insert only those which have this
-     *                  taxid.
-     *                  If taxid is empty, insert all protein objects.
-     * @param update    If true, update existing Protein objects according to the retrieved data.
-     *                  else, skip existing Protein objects.
+     * @param taxid     Of all entries retrieved from sourceURL, insert only those which have this taxid. If taxid is
+     *                  empty, insert all protein objects.
+     * @param update    If true, update existing Protein objects according to the retrieved data. else, skip existing
+     *                  Protein objects.
      *
      * @return The number of protein objects created.
      */
     public abstract int insertSPTrProteinsFromURL( String sourceUrl, String taxid, boolean update );
 
     /**
-     * Inserts zero or more proteins created from SPTR entries which are retrieved from an SPTR Accession number.
-     * IntAct Protein objects represent a specific amino acid sequence in a specific organism.
-     * If a SPTr entry contains more than one organism, one IntAct entry will be created for each organism.
+     * Inserts zero or more proteins created from SPTR entries which are retrieved from an SPTR Accession number. IntAct
+     * Protein objects represent a specific amino acid sequence in a specific organism. If a SPTr entry contains more
+     * than one organism, one IntAct entry will be created for each organism.
      *
      * @param proteinAc SPTR Accession number of the protein to insert/update
      *
@@ -348,22 +340,22 @@ public abstract class UpdateProteinsI {
     public abstract Collection insertSPTrProteins( String proteinAc );
 
     /**
-     * Inserts zero or more proteins created from SPTR entries which are retrieved from an SPTR Accession number.
-     * IntAct Protein objects represent a specific amino acid sequence in a specific organism.
-     * If a SPTr entry contains more than one organism, one IntAct entry will be created for each organism.
+     * Inserts zero or more proteins created from SPTR entries which are retrieved from an SPTR Accession number. IntAct
+     * Protein objects represent a specific amino acid sequence in a specific organism. If a SPTr entry contains more
+     * than one organism, one IntAct entry will be created for each organism.
      *
      * @param proteinAc SPTR Accession number of the protein to insert/update
      * @param taxId     The tax id the protein should have
-     * @param update    If true, update existing Protein objects according to the retrieved data.
-     *                  else, skip existing Protein objects.
+     * @param update    If true, update existing Protein objects according to the retrieved data. else, skip existing
+     *                  Protein objects.
      *
      * @return a set of created/updated protein.
      */
     public abstract Collection insertSPTrProteins( String proteinAc, String taxId, boolean update );
 
     /**
-     * Creates a simple Protein object for entries which are not in SPTR.
-     * The Protein will more or less only contain the crossreference to the source database.
+     * Creates a simple Protein object for entries which are not in SPTR. The Protein will more or less only contain the
+     * crossreference to the source database.
      *
      * @param anAc      The primary identifier of the protein in the external database.
      * @param aDatabase The database in which the protein is listed.
@@ -375,10 +367,9 @@ public abstract class UpdateProteinsI {
             throws IntactException;
 
     /**
-     * From a given sptr AC, returns a full URL from where a flatfile format SPTR entry
-     * will be fetched. Note, the SRS has several format of data output, the URLs which
-     * outputs html format SPTR entry CANNOT be used, since YASP does't have html parsing
-     * function.
+     * From a given sptr AC, returns a full URL from where a flatfile format SPTR entry will be fetched. Note, the SRS
+     * has several format of data output, the URLs which outputs html format SPTR entry CANNOT be used, since YASP
+     * does't have html parsing function.
      *
      * @param sptrAC a SPTR AC
      *
@@ -387,8 +378,7 @@ public abstract class UpdateProteinsI {
     public abstract String getUrl( String sptrAC );
 
     /**
-     * add (not update) a new Xref to the given Annotated object and write
-     * it in the database.
+     * add (not update) a new Xref to the given Annotated object and write it in the database.
      *
      * @param current the object to which we add a new Xref
      * @param xref    the Xref to add to the AnnotatedObject
@@ -420,16 +410,15 @@ public abstract class UpdateProteinsI {
     public abstract int getProteinUpdatedCount();
 
     /**
-     * Gives the count of up-to-date protein
-     * (i.e. existing in IntAct but don't need to be updated)
+     * Gives the count of up-to-date protein (i.e. existing in IntAct but don't need to be updated)
      *
      * @return up-to-date protein count
      */
     public abstract int getProteinUpToDateCount();
 
     /**
-     * Gives the count of all potential protein
-     * (i.e. for an SPTREntry, we can create/update several IntAct protein. One by entry's taxid)
+     * Gives the count of all potential protein (i.e. for an SPTREntry, we can create/update several IntAct protein. One
+     * by entry's taxid)
      *
      * @return potential protein count
      */
@@ -457,16 +446,15 @@ public abstract class UpdateProteinsI {
     public abstract int getSpliceVariantUpdatedCount();
 
     /**
-     * Gives the count of up-to-date splice variant
-     * (i.e. existing in IntAct but don't need to be updated)
+     * Gives the count of up-to-date splice variant (i.e. existing in IntAct but don't need to be updated)
      *
      * @return up-to-date protein count
      */
     public abstract int getSpliceVariantUpToDateCount();
 
     /**
-     * Gives the count of all potential splice variant
-     * (i.e. for an SPTREntry, we can create/update several IntAct protein. One by entry's taxid)
+     * Gives the count of all potential splice variant (i.e. for an SPTREntry, we can create/update several IntAct
+     * protein. One by entry's taxid)
      *
      * @return potential protein count
      */
@@ -515,30 +503,26 @@ public abstract class UpdateProteinsI {
     public abstract String getErrorFileName();
 
     /**
-     * If true, each protein is updated in a distinct transaction.
-     * If localTransactionControl is false, no local transactions are initiated,
-     * control is left with the calling class.
-     * This can be used e.g. to have transctions span the insertion of all
-     * proteins of an entire complex.
+     * If true, each protein is updated in a distinct transaction. If localTransactionControl is false, no local
+     * transactions are initiated, control is left with the calling class. This can be used e.g. to have transctions
+     * span the insertion of all proteins of an entire complex.
      *
      * @return current value of localTransactionControl
      */
     public abstract boolean isLocalTransactionControl();
 
     /**
-     * If true, each protein is updated in a distinct transaction.
-     * If localTransactionControl is false, no local transactions are initiated,
-     * control is left with the calling class.
-     * This can be used e.g. to have transctions span the insertion of all
-     * proteins of an entire complex.
+     * If true, each protein is updated in a distinct transaction. If localTransactionControl is false, no local
+     * transactions are initiated, control is left with the calling class. This can be used e.g. to have transctions
+     * span the insertion of all proteins of an entire complex.
      *
      * @param localTransactionControl New value for localTransactionControl
      */
     public abstract void setLocalTransactionControl( boolean localTransactionControl );
 
     /**
-     * Update all protein found in the provided collection.
-     * If none provided, update all protein that can be retreived from the current intact node.
+     * Update all protein found in the provided collection. If none provided, update all protein that can be retreived
+     * from the current intact node.
      *
      * @param proteins a Collection of protein.
      */
