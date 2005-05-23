@@ -254,6 +254,14 @@ public class ObjectBridgeDAO implements DAO {
     }
 
     /**
+     * Method to release a SQL connection which was obtained via
+     * {@link #getJDBCConnection()} method.
+     */
+    public void releaseJDBCConnection() {
+        broker.serviceConnectionManager().releaseConnection();
+    }
+
+    /**
      *   Used to begin a transaction. The transaction level (object or JDBC) should be
      * specified. Defaults to JDBC level.
      * @param txType The type of transaction to begin (JDBC or object)

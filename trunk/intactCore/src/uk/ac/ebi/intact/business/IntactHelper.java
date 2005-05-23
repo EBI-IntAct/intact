@@ -1215,6 +1215,8 @@ public class IntactHelper implements SearchI, Externalizable {
      * @return Connection a JDBC Connection, or null if the DAO you are using is not
      * an OJB one.
      * @throws IntactException thrown if there was a problem getting the connection
+     *
+     * @see #releaseJDBCConnection()
      */
     public Connection getJDBCConnection() throws IntactException {
 
@@ -1228,6 +1230,15 @@ public class IntactHelper implements SearchI, Externalizable {
         return null;
     }
 
+    /**
+     * Relases the JDBC connection obtained via {@link #getJDBCConnection()}. You must
+     * call this method to release the connection properly.
+     */
+    public void releaseJDBCConnection() throws IntactException {
+        if (dao instanceof ObjectBridgeDAO) {
+            ((ObjectBridgeDAO) dao).releaseJDBCConnection();
+        }
+    }
 
     /**
      * Allow the user not to know about the it's Institution, it has to be configured once
