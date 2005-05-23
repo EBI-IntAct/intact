@@ -188,9 +188,8 @@ public class DagNode {
             // This shouldn't happen because def file has taken care of inserting
             // nodes. Only way, you get to this point is when you have an entry in
             // the dag file that wasn't found in the def file (error in saving files)
-            throw new IntactException("Target node wasn't found");
-//            targetNode = (CvDagObject) goUtils.insertDefinition(myGoId, myGoTerm,
-//                    myGoShortLabel, false);
+            throw new IntactException("Target node wasn't found for: " + myGoId
+                    + " " + myGoTerm + " " + myGoShortLabel);
         }
 
         // Insert the direct parent
@@ -200,9 +199,9 @@ public class DagNode {
             if (directParent == null) {
                 // Wants to check where this condition is true. This shouldn't be
                 // true because def file has taken care of inserting all the parents.
-                throw new IntactException("Direct parent wasn't found");
-//                directParent = (CvDagObject) goUtils.insertDefinition(myParent.myGoId,
-//                        myParent.myGoTerm, myParent.myGoShortLabel, false);
+                throw new IntactException("Direct parent wasn't found for: "
+                        + myParent.myGoId + " " + myParent.myGoTerm + " "
+                        + myParent.myGoShortLabel);
             }
             // Add the link between parent and child
             targetNode.addParent(directParent);

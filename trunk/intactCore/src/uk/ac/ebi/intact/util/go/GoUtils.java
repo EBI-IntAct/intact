@@ -272,37 +272,30 @@ public class GoUtils {
     /**
      * Select an appropriate CvObject for update if it exists.
      * Criterion of object identity:
-     * if goidDatabase is '-', try to match by shortlabel
+     * if goidDatabase is '-' or godid is null , try to match by shortlabel
      * otherwise try to match by goid and goidDatabase
      * @param goid the GO id
      * @param shortLabel the short label to match
      */
-    public CvObject selectCvObject(String goid, String shortLabel)
-            throws IntactException {
-
-        if (myGoIdDatabase.equals("-")) {
-            if (null != shortLabel) {
-                return (CvObject) myHelper.getObjectByLabel(myTargetClass, shortLabel);
-            }
-        }
-        else {
-            if ((null != myGoIdDatabase) && (null != goid)) {
-                CvObject current = (CvObject) myHelper.getObjectByXref(myTargetClass, goid);
-                if (null != current) {
-                    Collection xref = current.getXrefs();
-                    for (Iterator iterator = xref.iterator(); iterator.hasNext();) {
-                        Xref x = (Xref) iterator.next();
-                        if (x.getCvDatabase().getShortLabel().equals(myGoIdDatabase)
-                                && x.getPrimaryId().equals(goid)) {
-                            return current;
-                        }
-                    }
-                }
-            }
-            // We have not found any match by goid. Try shortlabel.
+    public CvObject selectCvObject(String goid, String shortLabel) throws IntactException {
+        // If the GO database '-' or no GO id
+        if (myGoIdDatabase.equals("-") || (goid == null)) {
             return (CvObject) myHelper.getObjectByLabel(myTargetClass, shortLabel);
         }
-        return null;
+        // Try with Go id
+        CvObject current = (CvObject) myHelper.getObjectByXref(myTargetClass, goid);
+        if (null != current) {
+            Collection xref = current.getXrefs();
+            for (Iterator iterator = xref.iterator(); iterator.hasNext();) {
+                Xref x = (Xref) iterator.next();
+                if (x.getCvDatabase().getShortLabel().equals(myGoIdDatabase)
+                        && x.getPrimaryId().equals(goid)) {
+                    return current;
+                }
+            }
+        }
+        // We have not found any match by goid. Try shortlabel.
+        return (CvObject) myHelper.getObjectByLabel(myTargetClass, shortLabel);
     }
 
     /**
