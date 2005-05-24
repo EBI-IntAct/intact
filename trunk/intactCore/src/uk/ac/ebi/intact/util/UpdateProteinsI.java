@@ -172,8 +172,8 @@ public abstract class UpdateProteinsI {
              * Load CVs
              */
 
-            sgdDatabase = (CvDatabase) helper.getObjectByXref( CvDatabase.class, "MI:0484" ); // sgd
-            uniprotDatabase = (CvDatabase) helper.getObjectByXref( CvDatabase.class, "MI:0486" ); // uniprot
+            sgdDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, "MI:0484" ); // sgd
+            uniprotDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, "MI:0486" ); // uniprot
 
             // search for the SRS link.
             Collection annotations = uniprotDatabase.getAnnotations();
@@ -208,25 +208,25 @@ public abstract class UpdateProteinsI {
                 throw new UpdateException( msg );
             }
 
-            intactDatabase = (CvDatabase) helper.getObjectByXref( CvDatabase.class, "MI:0469" );   // intact
-            goDatabase = (CvDatabase) helper.getObjectByXref( CvDatabase.class, "MI:0448" );       // go
-            interproDatabase = (CvDatabase) helper.getObjectByXref( CvDatabase.class, "MI:0449" ); // interpro
-            flybaseDatabase = (CvDatabase) helper.getObjectByXref( CvDatabase.class, "MI:0478" );  // flybase
-            reactomeDatabase = (CvDatabase) helper.getObjectByXref( CvDatabase.class, "MI:0245" ); // reactome-protein
-            hugeDatabase = (CvDatabase) helper.getObjectByXref( CvDatabase.class, "MI:0249" );     // huge
+            intactDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, "MI:0469" );   // intact
+            goDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, "MI:0448" );       // go
+            interproDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, "MI:0449" ); // interpro
+            flybaseDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, "MI:0478" );  // flybase
+            reactomeDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, "MI:0245" ); // reactome-protein
+            hugeDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, "MI:0249" );     // huge
 
-            identityXrefQualifier = (CvXrefQualifier) helper.getObjectByXref( CvXrefQualifier.class, "MI:0356" );      // identity
-            secondaryXrefQualifier = (CvXrefQualifier) helper.getObjectByXref( CvXrefQualifier.class, "MI:0360" );     // secondary-ac
-            isoFormParentXrefQualifier = (CvXrefQualifier) helper.getObjectByXref( CvXrefQualifier.class, "MI:0243" ); // isoform-parent
+            identityXrefQualifier = (CvXrefQualifier) getCvObjectViaMI( CvXrefQualifier.class, "MI:0356" );      // identity
+            secondaryXrefQualifier = (CvXrefQualifier) getCvObjectViaMI( CvXrefQualifier.class, "MI:0360" );     // secondary-ac
+            isoFormParentXrefQualifier = (CvXrefQualifier) getCvObjectViaMI( CvXrefQualifier.class, "MI:0243" ); // isoform-parent
 
             // only one search by shortlabel as it still doesn't have MI number.
             isoformComment = (CvTopic) getCvObject( CvTopic.class, CvTopic.ISOFORM_COMMENT );
 
-            geneNameAliasType = (CvAliasType) helper.getObjectByXref( CvAliasType.class, "MI:0301" );        // gene name
-            geneNameSynonymAliasType = (CvAliasType) helper.getObjectByXref( CvAliasType.class, "MI:0302" ); // gene name-synonym
-            isoformSynonym = (CvAliasType) helper.getObjectByXref( CvAliasType.class, "MI:0304" );           // isoform synonym
-            locusNameAliasType = (CvAliasType) helper.getObjectByXref( CvAliasType.class, "MI:0305" );       // locus name
-            orfNameAliasType = (CvAliasType) helper.getObjectByXref( CvAliasType.class, "MI:0306" );         // orf name
+            geneNameAliasType = (CvAliasType) getCvObjectViaMI( CvAliasType.class, "MI:0301" );        // gene name
+            geneNameSynonymAliasType = (CvAliasType) getCvObjectViaMI( CvAliasType.class, "MI:0302" ); // gene name-synonym
+            isoformSynonym = (CvAliasType) getCvObjectViaMI( CvAliasType.class, "MI:0304" );           // isoform synonym
+            locusNameAliasType = (CvAliasType) getCvObjectViaMI( CvAliasType.class, "MI:0305" );       // locus name
+            orfNameAliasType = (CvAliasType) getCvObjectViaMI( CvAliasType.class, "MI:0306" );         // orf name
 
         } catch ( IntactException e ) {
             if ( logger != null ) {
@@ -255,6 +255,39 @@ public abstract class UpdateProteinsI {
             StringBuffer sb = new StringBuffer( 128 );
             sb.append( "Could not find " );
             sb.append( shortlabel );
+            sb.append( ' ' );
+            sb.append( clazz.getName() );
+            sb.append( " in your IntAct node" );
+
+            if ( logger != null ) {
+                logger.error( sb.toString() );
+            }
+            throw new UpdateException( sb.toString() );
+        }
+
+        return cv;
+    }
+
+    /**
+     * Get a CvObject based on its class name and its shortlabel.
+     *
+     * @param clazz the Class we are looking for
+     * @param miRef the PSI-MI reference of the object we are looking for
+     *
+     * @return the CvObject of type <code>clazz</code> and having the PSI-MI reference.
+     *
+     * @throws IntactException if the search failed
+     * @throws UpdateException if the object is not found.
+     */
+    private CvObject getCvObjectViaMI( Class clazz, String miRef ) throws IntactException,
+                                                                          UpdateException {
+
+        CvObject cv = (CvObject) helper.getObjectByXref( CvDatabase.class, miRef );
+
+        if ( cv == null ) {
+            StringBuffer sb = new StringBuffer( 128 );
+            sb.append( "Could not find " );
+            sb.append( miRef );
             sb.append( ' ' );
             sb.append( clazz.getName() );
             sb.append( " in your IntAct node" );
