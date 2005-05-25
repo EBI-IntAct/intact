@@ -7,17 +7,49 @@
 # downLoadCVs.sh targetDirectory
 #
 
+if [ $# -ne 1 ]; then
+   echo ""
+   echo "ERROR: wrong number of parameters."
+   echo "usage: downLoadCVs.sh <output directory>"
+   echo ""
+   exit 1
+fi
 
-# write simple lists which are not part of PSI
-for cv in CvAliasType CvComponentRole CvDatabase CvTopic CvXrefQualifier CvFuzzyType
+
+OUTPUT_DIR=$1
+
+# check that the directory exits, if not create it.
+if [ -d $OUTPUT_DIR ]
+then
+        echo "Found directory $OUTPUT_DIR"
+else
+        echo "Directory $OUTPUT_DIR doesn't exist!"
+        echo "Creating it..."
+        mkdir $OUTPUT_DIR
+        echo "done."
+fi
+
+
+# write simple lists which are not DAGs
+for cv in CvTopic \
+          CvAliasType \
+          CvComponentRole \
+          CvDatabase \
+          CvXrefQualifier \
+          CvFuzzyType
 do
-   scripts/javaRun.sh GoTools download uk.ac.ebi.intact.model.$cv - $1/$cv.def
+   scripts/javaRun.sh GoTools download uk.ac.ebi.intact.model.$cv psi-mi $1/$cv.def
    perl -w scripts/dag2html.pl -targetDir $1 -stems $cv
 done
 
-# write CVs which are part of PSI
-for cv in CvIdentification CvInteraction CvInteractionType CvFeatureType CvFeatureIdentification
-do scripts/javaRun.sh GoTools download uk.ac.ebi.intact.model.$cv psi-mi $1/$cv.def $1/$cv.dag
+# write CVs which are DAGs
+for cv in CvIdentification \
+          CvInteraction \
+          CvInteractionType \
+          CvFeatureType \
+          CvFeatureIdentification
+do
+   scripts/javaRun.sh GoTools download uk.ac.ebi.intact.model.$cv psi-mi $1/$cv.def $1/$cv.dag
    perl -w scripts/dag2html.pl -targetDir $1 -stems $cv
 done
 
