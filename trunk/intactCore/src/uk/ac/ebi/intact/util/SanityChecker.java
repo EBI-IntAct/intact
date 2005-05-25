@@ -17,10 +17,17 @@ import java.util.*;
  * Utility class to perform some sanity checks on the DB. Mainly for use by curators. A allUsersReport of anomolies
  * detected (as per the list of checks) is sent via email to the appropriate people.
  *
- * @author Chris Lewington
+ * @author Samuel Kerrien, Chris Lewington
  * @version $Id$
  */
 public class SanityChecker {
+
+    public static class SanityCheckerException extends Exception {
+
+        public SanityCheckerException( String message ) {
+            super( message );
+        }
+    }
 
     private static final String NEW_LINE = System.getProperty( "line.separator" );
 
@@ -218,15 +225,34 @@ public class SanityChecker {
      */
     private Map adminReport = new HashMap();
 
-    //The Experiments and Interactions - may be used in more than one test
-    private CvDatabase uniprot;
-    private CvXrefQualifier identity;
-
-    // for annotations at the experiment level.
-    private CvTopic onHoldCvTopic;
     private IntactHelper helper;
 
-    public SanityChecker( IntactHelper helper ) throws IntactException, SQLException {
+
+    ///////////////////////////////////
+    // Needed Controlled Vocabularies
+
+    /**
+     * Xref databases
+     */
+    private static CvDatabase uniprotDatabase;
+    private static CvDatabase pubmedDatabase;
+
+    /**
+     * Describe wether an Xref is related the primary SPTR AC (identityCrefQualifier) or not (secondaryXrefQualifier)
+     */
+    private static CvXrefQualifier identityXrefQualifier;
+    private static CvXrefQualifier primaryReferenceXrefQualifier;
+
+    private CvComponentRole neutral;
+    private CvComponentRole bait;
+    private CvComponentRole prey;
+    private CvComponentRole self;
+    private CvComponentRole unspecified;
+
+    private CvTopic onHoldCvTopic;
+
+
+    public SanityChecker( IntactHelper helper ) throws IntactException, SQLException, SanityCheckerException {
 
         //set up statements to get user info...
         //NB remember the Connection belongs to the helper - don't close it anywhere but
@@ -239,20 +265,55 @@ public class SanityChecker {
         experimentStatement = conn.prepareStatement( "SELECT userstamp, timestamp FROM ia_experiment WHERE ac=?" );
 
 
-        uniprot = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "uniprot" );
-        if ( uniprot == null ) {
-            throw new RuntimeException( "Your IntAct node doesn't contain the required: CvDatabase( uniprot )." );
-        }
+        ////////////////////////////////////////////////
+        // Collecting required Controlled Vocabularies
+        uniprotDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, "MI:0486" );
+        pubmedDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, "MI:0446" );
 
-        identity = (CvXrefQualifier) helper.getObjectByLabel( CvXrefQualifier.class, "identity" );
-        if ( uniprot == null ) {
-            throw new RuntimeException( "Your IntAct node doesn't contain the required: CvXrefQualifier( identity )." );
-        }
+        neutral = (CvComponentRole) getCvObjectViaMI( CvComponentRole.class, "MI:0497" );
+        bait = (CvComponentRole) getCvObjectViaMI( CvComponentRole.class, "MI:0496" );
+        prey = (CvComponentRole) getCvObjectViaMI( CvComponentRole.class, "MI:0498" );
+        self = (CvComponentRole) getCvObjectViaMI( CvComponentRole.class, "MI:0503" );
+        unspecified = (CvComponentRole) getCvObjectViaMI( CvComponentRole.class, "MI:0499" );
 
+        identityXrefQualifier = (CvXrefQualifier) getCvObjectViaMI( CvXrefQualifier.class, "MI:0356" );
+        primaryReferenceXrefQualifier = (CvXrefQualifier) getCvObjectViaMI( CvXrefQualifier.class, "MI:0358" );
+
+        // CvTopix still don't have MI reference
         onHoldCvTopic = (CvTopic) helper.getObjectByLabel( CvTopic.class, "on-hold" );
-        if ( uniprot == null ) {
-            throw new RuntimeException( "Your IntAct node doesn't contain the required: CvTopic( on-hold )." );
+        if ( onHoldCvTopic == null ) {
+            throw new SanityCheckerException( "Your IntAct node doesn't contain the required: CvTopic( on-hold )." );
         }
+    }
+
+    /**
+     * Get a CvObject based on its class name and its shortlabel.
+     *
+     * @param clazz the Class we are looking for
+     * @param miRef the PSI-MI reference of the object we are looking for
+     *
+     * @return the CvObject of type <code>clazz</code> and having the PSI-MI reference.
+     *
+     * @throws IntactException        if the search failed
+     * @throws SanityCheckerException if the object is not found.
+     */
+    private CvObject getCvObjectViaMI( Class clazz, String miRef ) throws IntactException,
+                                                                          SanityCheckerException {
+
+        CvObject cv = (CvObject) helper.getObjectByXref( clazz, miRef );
+
+        if ( cv == null ) {
+            StringBuffer sb = new StringBuffer( 128 );
+            sb.append( "Could not find " );
+            sb.append( miRef );
+            sb.append( ' ' );
+            sb.append( clazz.getName() );
+            sb.append( " in your IntAct node" );
+
+            throw new SanityCheckerException( sb.toString() );
+        }
+
+        return cv;
     }
 
     /**
@@ -272,7 +333,6 @@ public class SanityChecker {
      * able to build Criteria and Query objects probably used in OJB (easiest to do). This is going to be needed anyway
      * so that we can handle more complex search queries later....
      */
-
     public void checkBioSource( Collection bioSources ) throws IntactException, SQLException {
 
         System.out.println( "Checking on BioSource (rule 15) ..." );
@@ -346,9 +406,10 @@ public class SanityChecker {
                 Collection Xrefs = exp.getXrefs();
                 for ( Iterator iterator = Xrefs.iterator(); iterator.hasNext(); ) {
                     Xref xref = (Xref) iterator.next();
-                    if ( xref.getCvDatabase().getShortLabel().equals( "pubmed" ) ) {
+                    if ( pubmedDatabase.equals( xref.getCvDatabase() ) ) {
                         pubmedCount++;
-                        if ( xref.getCvXrefQualifier().getShortLabel().equals( "primary-reference" ) ) {
+
+                        if ( primaryReferenceXrefQualifier.equals( xref.getCvXrefQualifier() ) ) {
                             pubmedPrimaryCount++;
                         }
                     }
@@ -420,8 +481,6 @@ public class SanityChecker {
                 Collection components = interaction.getComponents();
                 int preyCount = 0,
                         baitCount = 0,
-                        agentCount = 0,
-                        targetCount = 0,
                         neutralCount = 0,
                         selfCount = 0,
                         complexCount = 0,
@@ -433,23 +492,17 @@ public class SanityChecker {
                     Component component = (Component) iterator.next();
                     //record it.....
 
-                    if ( component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "bait" ) ) {
+                    if ( bait.equals( component.getCvComponentRole() ) ) {
                         baitCount++;
-                    } else if ( component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "prey" ) ) {
+                    } else if ( prey.equals( component.getCvComponentRole() ) ) {
                         preyCount++;
-                    } else if ( component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "target" ) ) {
-                        targetCount++;
-                    } else if ( component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "agent" ) ) {
-                        agentCount++;
-                    } else if ( component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "neutral" ) ) {
+                    } else if ( neutral.equals( component.getCvComponentRole() ) ) {
                         neutralCount++;
                         neutralStoichiometry = component.getStoichiometry();
-                    } else if ( component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "self" ) ) {
+                    } else if ( self.equals( component.getCvComponentRole() ) ) {
                         selfCount++;
                         selfStoichiometry = component.getStoichiometry();
-                    } else if ( component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "complex" ) ) {
-                        complexCount++;
-                    } else if ( component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "unspecified" ) ) {
+                    } else if ( unspecified.equals( component.getCvComponentRole() ) ) {
                         unspecifiedCount++;
                     }
                 }
@@ -459,20 +512,18 @@ public class SanityChecker {
                  * We have to consider Components as 3 distinct groups: bait-prey, agent-target and neutral
                  * We are not allowed to mix categories,
                  * if you have a bait you must have at least one prey
-                 * if you have a target you must have at least one agent ----- NOT DONE YET
                  * if you have neutral component you must have at least 2
                  * if you have complex you must have at least 2
                  * if you have self you must have only one protein with Stochiometry >= 2
                  */
 
                 int baitPrey = ( baitCount + preyCount > 0 ? 1 : 0 );
-                int targetAgent = ( targetCount + agentCount > 0 ? 1 : 0 );
                 int neutral = ( neutralCount > 0 ? 1 : 0 );
                 int self = ( selfCount > 0 ? 1 : 0 );
                 int complex = ( complexCount > 0 ? 1 : 0 );
                 int unspecified = ( unspecifiedCount > 0 ? 1 : 0 );
 
-                int categoryCount = baitPrey + targetAgent + neutral + self + complex + unspecified;
+                int categoryCount = baitPrey + neutral + self + complex + unspecified;
 
                 switch ( categoryCount ) {
                     case 0:
@@ -488,14 +539,6 @@ public class SanityChecker {
                                 addMessage( INTERACTION_WITH_NO_BAIT, interaction );
                             } else if ( preyCount == 0 ) {
                                 addMessage( INTERACTION_WITH_NO_PREY, interaction );
-                            }
-
-                        } else if ( targetAgent == 1 ) {
-                            // target-agent
-                            if ( targetCount == 0 ) {
-                                addMessage( INTERACTION_WITH_NO_TARGET, interaction );
-                            } else if ( agentCount == 0 ) {
-                                addMessage( INTERACTION_WITH_NO_AGENT, interaction );
                             }
 
                         } else if ( self == 1 ) {
@@ -601,7 +644,7 @@ public class SanityChecker {
             for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
                 Xref xref = (Xref) iterator.next();
 
-                if ( uniprot.equals( xref.getCvDatabase() ) && identity.equals( xref.getCvXrefQualifier() ) ) {
+                if ( uniprotDatabase.equals( xref.getCvDatabase() ) && identityXrefQualifier.equals( xref.getCvXrefQualifier() ) ) {
                     count++;
                 }
             } // xrefs
