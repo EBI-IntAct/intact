@@ -282,7 +282,7 @@ public abstract class UpdateProteinsI {
     private CvObject getCvObjectViaMI( Class clazz, String miRef ) throws IntactException,
                                                                           UpdateException {
 
-        CvObject cv = (CvObject) helper.getObjectByXref( CvDatabase.class, miRef );
+        CvObject cv = (CvObject) helper.getObjectByXref( clazz, miRef );
 
         if ( cv == null ) {
             StringBuffer sb = new StringBuffer( 128 );
