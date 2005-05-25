@@ -330,11 +330,12 @@ public final class InteractionPersister {
             // the gene name is held in the master protein, not the splice variant.
             final String geneName = getGeneName( proteinHolder.getProtein() );
 
+            // TODO load default CVs via MI reference and use the CvObject.equals() !!!!
             if ( role.equals( "prey" ) ) { // most numerous role, cut down the number of test
                 preys.add( geneName );
             } else if ( role.equals( "bait" ) ) {
                 baits.add( geneName );
-            } else if ( role.equals( "neutral" ) ) {
+            } else if ( role.equals( "neutral component" ) ) {
                 neutrals.add( geneName );
             } else {
                 // we should never get in here if RoleChecker plays its role !
@@ -1139,7 +1140,8 @@ public final class InteractionPersister {
         final Collection aliases = protein.getAliases();
         for ( Iterator iterator = aliases.iterator(); iterator.hasNext() && geneName == null; ) {
             final Alias alias = (Alias) iterator.next();
-            if ( alias.getCvAliasType().getShortLabel().equals( "gene-name" ) ) {
+            // TODO load default CVs via MI reference and use the CvObject.equals() !!!!
+            if ( alias.getCvAliasType().getShortLabel().equals( "gene name" ) ) {
                 geneName = alias.getName();
             }
         }
