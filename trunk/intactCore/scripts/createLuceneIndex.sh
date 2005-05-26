@@ -4,8 +4,13 @@
 # createLuceneIndex.sh targetDirectory
 #
 
-CLASSPATH=`echo lib/*.jar | tr ' ' ':'`:$CLASSPATH
-CLASSPATH=classes/:$CLASSPATH
+# to be sure that the Indexer is compiled
+ant compile-search
+
+ROOT_CLASSPATH=`echo lib/*.jar | tr ' ' ':'`
+SEARCH_CLASSPATH=`echo application/lib/*.jar | tr ' ' ':'`
+
+CLASSPATH=classes/:application/search3/WEB-INF/classes:$ROOT_CLASSPATH:$SEARCH_CLASSPATH:$CLASSPATH
 
 #if cygwin used (ie on a Windows machine), make sure the paths
 #are converted from Unix to run correctly with the windows JVM
@@ -25,6 +30,7 @@ CLASSPATH=`cygpath --path --windows "$CLASSPATH"`
 fi
 
 if [ "$JAVA_HOME" ]; then
+    echo "The Lucene index will be created in: $1"
     $JAVA_HOME/bin/java -Xms256m -Xmx1024m -classpath $CLASSPATH uk.ac.ebi.intact.application.search3.searchEngine.lucene.Indexer $1
 else
     echo Please set JAVA_HOME for this script to exceute
