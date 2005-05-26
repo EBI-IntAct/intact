@@ -13,8 +13,8 @@ $interaction detectio\: interaction detection ; MI:0001
     @is_a@fluorescence-activat\: fluorescence-activated cell sorting ; MI:0054
      @is_a@yeast display ; MI:0115 @is_a@ display technologies ; MI:0034
      @is_a@bacterial display ; MI:0009 @is_a@ display technologies ; MI:0034
-    @is_a@fluorescent resonanc\: fluorescent resonance energy transfer ; MI:0055 @is_a@ colocalization/visua\: colocalization/visualisation technologies ; MI:0023
-    @is_a@bioluminescence reso\: bioluminescence resonance energy transfer ; MI:0012 @is_a@ colocalization/visua\: colocalization/visualisation technologies ; MI:0023
+    @is_a@fluorescent resonanc\: fluorescent resonance energy transfer ; MI:0055 @is_a@ colocalization-visua\: colocalization/visualisation technologies ; MI:0023
+    @is_a@bioluminescence reso\: bioluminescence resonance energy transfer ; MI:0012 @is_a@ colocalization-visua\: colocalization/visualisation technologies ; MI:0023
    @is_a@isothermal titration\: isothermal titration calorimetry ; MI:0065
    @is_a@light scattering ; MI:0067
     @is_a@dynamic light scatte\: dynamic light scattering ; MI:0038
@@ -24,7 +24,7 @@ $interaction detectio\: interaction detection ; MI:0001
    @is_a@scintillation proxim\: scintillation proximity assay ; MI:0099
    @is_a@surface plasmon reso\: surface plasmon resonance ; MI:0107
    @is_a@x-ray crystallograph\: x-ray crystallography ; MI:0114
-  @is_a@colocalization/visua\: colocalization/visualisation technologies ; MI:0023
+  @is_a@colocalization-visua\: colocalization/visualisation technologies ; MI:0023
    @is_a@colocalization by el\: colocalization by electron microscopy ; MI:0020
    @is_a@colocalization by fl\: colocalization by fluorescent probes cloning ; MI:0021
    @is_a@colocalization by im\: colocalization by immunostaining ; MI:0022
@@ -55,7 +55,7 @@ $interaction detectio\: interaction detection ; MI:0001
   @is_a@protein complementat\: protein complementation assay ; MI:0090
    @is_a@bordetella pertussis\: bordetella pertussis adenilate cyclase ; MI:0014
    @is_a@reverse ras recruitm\: reverse ras recruitment system ; MI:0097
-   @is_a@triple hybrid: dehyd\: triple hybrid: dehydrofolate reductase reconstruction ; MI:0111
+   @is_a@triple hybrid\: dehyd: triple hybrid: dehydrofolate reductase reconstruction ; MI:0111
    @is_a@ubiqitin reconstruct\: ubiqitin reconstruction ; MI:0112
    @is_a@classical two hybrid ; MI:0018
    @is_a@beta galactosidase c\: beta galactosidase complementation ; MI:0010
@@ -63,7 +63,7 @@ $interaction detectio\: interaction detection ; MI:0001
   @is_a@other biochemical te\: other biochemical technologies ; MI:0079
    @is_a@cross-linking studie\: cross-linking studies ; MI:0030
     @is_a@cross-linking with a\: cross-linking with a bifunctional reagent ; MI:0031
-   @is_a@enzyme-linked immuno\: enzyme-linked immunosorbent assay ; MI:0044
+   @is_a@enzyme-linked immuno\: enzyme-linked immunosorbent assay ; MI:0411
    @is_a@far western blotting ; MI:0047
    @is_a@filter binding ; MI:0049
   @is_a@affinity chromatogra\: affinity chromatography technologies ; MI:0004

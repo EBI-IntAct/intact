@@ -1,36 +1,53 @@
-term: component: GO term for cellular component
+term: component: gene ontology  term for cellular component
+id: MI:0354
+definition: Cross reference pointing to a Gene Ontology -'cellular component' term.
 definition_reference: PMID:INTACT
 
-term: function: GO term denoting function of the complex
-definition: GO term denoting function of the complex.
+term: function: gene ontology  term for cellular function
+id: MI:0335
+definition: Cross reference pointing to a Gene Ontology -'cellular function' term.
 definition_reference: PMID:INTACT
 
-term: go-definition-ref: GO definition reference
+term: go-definition-ref: gene ontology definition reference
+id: MI:0242
 definition: This qualifier is used when the crossreference is imported from the GO tag definition_reference.
-remark_internal: Normally not used in manual curation.
+remark-internal: Normally not used in manual curation.
 definition_reference: PMID:INTACT
 
-term: identity: Reference to the identical object in another database
+term: identity: Reference to the corresponding object in another database. Correspondance may be complete or partial
+id: MI:0356
 example: The same protein, described in two different databases.
-definition: This qualifier is used when the object referred to by the crossreference describes the same object. The reference will usually be done by primary accession number of the external database.
+definition: This qualifier is used when the object referred to by the crossreference describes all or part of the same object. The reference will usually be done by primary accession number of the external database.
 definition_reference: PMID:INTACT
 
 term: isoform-parent: Reference to the master sequence from which this isoform has been derived.
+id: MI:0243
 definition: This qualifier is used when an isoform is created, the object refered is the protein to which the original sequence belongs.
 definition_reference: PMID:INTACT
 
+term: method: Reference to a related paper which more fully describes either the experimental method or one or more of the interactors used within the experiment
+id: MI:0357
+definition_reference: PMID:INTACT
+
 term: primary-reference: Used to indicate the PMID from which the experimental data is taken
+id: MI:0358
+definition: Used to indicate the PMID from which the experimental data is taken
 definition_reference: PMID:INTACT
 
-term: process: GO term for biological process in which the complex is involved.
+term: process: gene ontology  term for cellular process
+id: MI:0359
+definition: Cross reference pointing to a Gene Ontology -'cellular process' term.
 definition_reference: PMID:INTACT
 
-term: secondary-ac: Secondary accession number
+term: secondary-ac: secondary accession number
+id: MI:0360
 definition: This qualifier is used when the object referred to by the crossreference describes the same object, and the identifier used is a secondary identifier in the external database. Crossreferences using secondary accession numbers are only included in IntAct to allow to retrieve imported proteins by their secondary accession numbers.
-remark_internal: Normally not used in manual curation.
+remark-internal: Normally not used in manual curation.
+remark-internal: Normally not used in manual curation.
 definition_reference: PMID:INTACT
 
 term: see-also: Related object in IntAct
+id: MI:0361
 definition: Related object in IntAct, usually of the same class.
 example: Two experiments published by the same author in different papers, where the author refers to his previous work in one of them. In this case, the second experiment can optionally use an IntAct crossreference to the first experiment, using the reference qualifier "see-also".
 definition_reference: PMID:INTACT

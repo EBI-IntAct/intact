@@ -1,88 +1,135 @@
 term: cabri: CABRI cell lines catalogue
+id: MI:0246
 url: http://www.cabri.org/
 search-url: http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?[libs%3d{dsmz_mutz%20ecacc_cell%20iclc%20CABI_BACT%20CIP_BACT%20CABI_YEAST%20DSMZ_PLANT_CELL}-id:${ac}]+-e
 definition: The CABRI cell lines catalogue crossreferences are normally used in BioSource objects.
 example: The primary id is the full CABRI ac, e.g.  ECACC 84121901.
-remark_internal: If links are established to any CABRI libraries in addition to the following ones, the search-url needs to be updated. DSMZ_MUTZ, ECACC_CELL, ICLC (Human); CABI_BACT (Bacteria); CIP_BACT (Bacteria); CABI_YEAST (Yeast); DSMZ_PLANT_CELL (Plant).
+remark-internal: If links are established to any CABRI libraries in addition to the following ones, the search-url needs to be updated. DSMZ_MUTZ, ECACC_CELL, ICLC (Human); CABI_BACT (Bacteria); CIP_BACT (Bacteria); CABI_YEAST (Yeast); DSMZ_PLANT_CELL (Plant).
+remark-internal: If links are established to any CABRI libraries in addition to the following ones, the search-url needs to be updated. DSMZ_MUTZ, ECACC_CELL, ICLC (Human); CABI_BACT (Bacteria); CIP_BACT (Bacteria); CABI_YEAST (Yeast); DSMZ_PLANT_CELL (Plant).
+id-validation-regexp: [0-9]+|ACC\s[A-Z0-9]+|ECACC\s[A-Z0-9]+|LMBP\s[A-Z0-9]+|ICLC\s[A-Z0-9]+|CIP-[0-9]+
+definition_reference: PMID:INTACT
+
+term: ensembl: Ensembl is a joint project between the EMBL-EBI and the Wellcome Trust Sanger Institute that aims at developing a system that maintains automatic annotation of large eukaryotic genomes
+id: MI:0476
+definition: Ensembl is a joint project between the EMBL-EBI and the Wellcome Trust Sanger Institute that aims at developing a system that maintains automatic annotation of large eukaryotic genomes
 definition_reference: PMID:INTACT
 
 term: flybase: FlyBase - A Database of the Drosophila Genome
+id: MI:0478
 search-url: http://flybase.net/cgi-bin/fbannq.html?acc=${ac}
+id-validation-regexp: FBgn[0-9]{7}
+definition: FlyBase is a comprehensive database for information on the genetics and molecular biology of Drosophila.
 url: http://fbserver.gen.cam.ac.uk:7081/
 definition_reference: PMID:INTACT
 
 term: go: Gene Ontology
+id: MI:0448
 url: http://www.geneontology.org/
-definition: The Gene Ontology.
+definition: The Gene Ontology. The objective of Gene Ontology (GO) is to provide controlled vocabularies for the description of the molecular function, biological process and cellular component of gene products
 search-url: http://www.ebi.ac.uk/ego/DisplayGoTerm?id=${ac}
+id-validation-regexp: GO:[0-9]{7}
 definition_reference: PMID:INTACT
 
 term: huge: A Database of Human Unidentified Gene-Encoded Large Proteins Analyzed by Kazusa Human cDNA Project
+id: MI:0249
 search-url: http://www.kazusa.or.jp/huge/gfpage/${ac}
 url: http://www.kazusa.or.jp/huge/
+id-validation-regexp: KIAA[0-9]{4}
+definition: A Database of Human Unidentified Gene-Encoded Large Proteins Analyzed by Kazusa Human cDNA Project
 definition_reference: PMID:INTACT
 
 term: intact: IntAct molecular InterAction database
+id: MI:0469
+definition: INTerAction database (IntAct) provides an open source database and toolkit for the storage, presentation and analysis of protein interactions.
 url: http://www.ebi.ac.uk/intact/
 search-url: http://www.ebi.ac.uk/intact/search/do/hvWelcome?searchString=${ac}
 definition_reference: PMID:INTACT
 
 term: interpro: InterPro
+id: MI:0449
+id-validation-regexp: IPR[0-9]{6}
 search-url: http://www.ebi.ac.uk/interpro/DisplayIproEntry?ac=${ac}
 url: http://www.ebi.ac.uk/interpro
 definition: InterPro is a database of protein families, domains and functional sites in which identifiable features found in known proteins can be applied to unknown protein sequences.
 definition_reference: PMID:INTACT
 
 term: newt: New EBI Web Taxonomy
+id: MI:0247
 search-url: http://www.ebi.ac.uk/newt/display?search=${ac}
 url: http://www.ebi.ac.uk/newt/index.html
 definition: NEWT is the taxonomy database maintained by the Swiss-Prot group. It integrates taxonomy data compiled in the NCBI database and data specific to the Swiss-Prot protein knowledgebase.
+id-validation-regexp: [0-9]+
 definition_reference: PMID:INTACT
 
 term: omim: Online Mendelian Inheritance in Man
+id: MI:0480
 url: http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=OMIM
 search-url: http://www.ncbi.nlm.nih.gov/entrez/dispomim.cgi?id=${ac}
 comment: The primary id given in the crossreference needs to be the OMIM number, e.g. 605420.
+id-validation-regexp: [0-9]+
+definition: Online Mendelian Inheritance in Man (OMIM) is a catalogue of human genes and genetic disorders, with links to literature references, sequence records, maps, and related databases
 definition_reference: PMID:INTACT
 
 term: pdb: Protein Data Bank
+id: MI:0460
 url: http://www.ebi.ac.uk/msd-srv/msdlite/index.html
 definition: The Protein Structure Databank.
 search-url: http://www.ebi.ac.uk/msd-srv/atlas?id=${ac}
+id-validation-regexp: [0-9][a-zA-Z0-9]{3}
+definition: PDB maintain a single Protein Data Bank Archive of macromolecular structural data that is freely and publicly available to the global community.
 definition_reference: PMID:INTACT
 
 term: psi-mi: Proteomics Standards Initiative - Molecular Interaction XML format CVs
+id-validation-regexp: MI:[0-9]{4}
 definition: The HUPO Proteomics Standards Initiative has developed controlled vocabularies for protein interaction data. These CVs are fully integrated into IntAct, therefore no search-url is given, only the URL of the PSI documentation.
 url: http://psidev.sf.net/mi/xml/doc/user/index.html
 url: http://psidev.sf.net/mi/controlledVocab/psi-mi.dag.html
 definition_reference: PMID:INTACT
 
 term: pubmed: PubMed
+id: MI:0446
 url: http://www.ncbi.nlm.nih.gov/PubMed/
 definition: Citation database of the National Library of Medicine, US.
 search-url: http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=${ac}&dopt=Abstract
+id-validation-regexp: [0-9]+
+definition_reference: PMID:INTACT
+
+term: reactome-complex: Reactome - a knowledgebase of biological processes
+id: MI:0244
+search-url: http://www.reactome.org/cgi-bin/eventbrowser?ID=${ac}
+url: http://www.reactome.org
+id-validation-regexp: [0-9]+
 definition_reference: PMID:INTACT
 
 term: reactome-protein: Reactome - a knowledgebase of biological processes
+id: MI:0245
 url: http://www.reactome.org/
 search-url: http://www.reactome.org/cgi-bin/search?SUBMIT=1&QUERY_CLASS=DatabaseIdentifier&QUERY=SWALL:${ac}
+id-validation-regexp: [OPQ][0-9][A-Z0-9]{3}[0-9]
 definition_reference: PMID:INTACT
 
 term: resid: RESID
+id: MI:0248
 definition: The RESID Database of Protein Modifications is a comprehensive collection of annotations and structures for protein modifications including amino-terminal, carboxyl-terminal and peptide chain cross-link post-translational modifications.
 url: http://www.ebi.ac.uk/RESID/index.html
 search-url: http://srs.ebi.ac.uk/cgi-bin/wgetz?[resid-id:${ac}]+-e
+id-validation-regexp: AA[0-9]{4}
 definition_reference: PMID:INTACT
 
 term: sgd: Saccharomyces Genome Database
+id: MI:0484
 url: http://genome-www.stanford.edu/Saccharomyces/
 search-url: http://genome-www4.stanford.edu/cgi-bin/SGD/locus.pl?locus=${ac}
+id-validation-regexp: S[0-9]{9}
+definition: SGD is a scientific database of the molecular biology and genetics of the yeast Saccharomyces cerevisiae
 definition_reference: PMID:INTACT
 
 term: uniprot: UniProt protein sequence database
+id: MI:0486
 search-url: http://www.ebi.uniprot.org/entry/${ac}
 search-url-ascii: http://www.ebi.uniprot.org/entry/${ac}?format=text&ascii
 url: http://www.uniprot.org/
-definition: The UniProt protein sequence database.
+definition: UniProt (Universal Protein Resource) is the world's most comprehensive catalogue of information on proteins. It is a central repository of protein sequence and function created by joining the information contained in Swiss-Prot, TrEMBL, and PIR.
+id-validation-regexp: [OPQ][0-9][A-Z0-9]{3}[0-9]|[OPQ][0-9][A-Z0-9]{3}[0-9]-[0-9]+|[A-Z]{3}[0-9]{5}
 definition_reference: PMID:INTACT
 
