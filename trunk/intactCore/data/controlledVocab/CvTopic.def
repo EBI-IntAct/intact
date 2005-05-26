@@ -1,3 +1,17 @@
+term: 3d-r-factors: free R-Factor and working R-Factor for the quality of the crystallographic model
+definition: R-factors are measures of the quality of a crystallographic model.
+During refinement of a crystal structure a small test set of refinement data may be set aside and used to assess the quality of the refinement process.
+The R-factor that is calculated using such a test set of data is the free R-factor whilst the R-factor calculated for the data that is used in refinement is the working R-factor. If no test set was used in refinement, the single, overall R-factor is given.
+definition_reference: PMID:INTACT
+
+term: 3d-resolution: Resolution of the 3D structure
+definition: The effective resolution of the structure. This value is only applicable to structures which have been solved with certain experimental methods, most commonly by single crystal X-ray crystallography.
+definition_reference: PMID:INTACT
+
+term: 3d-structure: Comments on the 3D structure
+definition: any comments on the 3D structure
+definition_reference: PMID:INTACT
+
 term: agonist: Activator of an interactor.
 definition: This biological entity interacts with the interactor such that the proportion of interactor in active form is increased.
 example: EBI-448589: pretreatment of IRAK1 with agonist IL-1 beta required for interaction.
@@ -18,8 +32,15 @@ definition_reference: PMID:INTACT
 term: comment: Comment for public view
 definition_reference: PMID:INTACT
 
+term: complex-properties: Information on the complex being annotated.
+definition_reference: PMID:INTACT
+
 term: confidence-mapping: Description of confidence mappings in the experiment
 definition: Description of author-confidence mappings in the experiment. If more than one system of confidence mappings are used by the author, these will be described here.
+definition_reference: PMID:INTACT
+
+term: copyright: Description of the copyright under which the data is distributed.
+definition: Individual experiments or interactions might have specific copyright statements attached to them. A copyright statement on experiment level applies to all interactions which are part of the experiment. Copyright statements attached to individual interactions override the statements inherited from the experiment.
 definition_reference: PMID:INTACT
 
 term: definition: Definition of the controlled vocabulary term
@@ -37,8 +58,14 @@ term: exp-modification: Modifications of an existing experimental method.
 definition: Modifications of experimental method/s described in the controlled vocabulary.
 definition_reference: PMID:INTACT
 
+term: figure-legend: Figure legend(s) associated with an experiment
+definition_reference: PMID:INTACT
+
 term: function: Biological Function of the Object
 function: Describes the biological function of the Object.
+definition_reference: PMID:INTACT
+
+term: id-validation-regexp: Regular Expression used to check the validity of cross references' identifier.
 definition_reference: PMID:INTACT
 
 term: inhibition: Inhibitor of an interaction.
@@ -56,6 +83,10 @@ definition_reference: PMID:INTACT
 
 term: negative: The interactions described in this experiment are not observed under these experimental conditions.
 definition: It was demonstrated in this paper that these interactions do not occur under the experimental conditions described.
+definition_reference: PMID:INTACT
+
+term: obsolete term: Flag for controlled vocabulary terms that become obsolete
+remark-internal: This flag is used to filter out the obsolete terms from the drop down list. This is not for manual curation.
 definition_reference: PMID:INTACT
 
 term: on-hold: Experiment on hold until a defined date

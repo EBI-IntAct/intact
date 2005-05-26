@@ -1,6 +1,6 @@
 $participant detectio\: participant detection ; MI:0002
- @is_a@predetermined ; MI:0221
-  @is_a@radio-labelled prote\: radio-labelled protein ; MI:0222
+ @is_a@predetermined ; MI:0396
+  @is_a@radio-labelled prote\: radio-labelled protein ; MI:0517
  @is_a@peptide massfingerpr\: peptide massfingerprinting ; MI:0082
  @is_a@protein sequence ide\: protein sequence identification ; MI:0093
   @is_a@peptide synthesis ; MI:0083

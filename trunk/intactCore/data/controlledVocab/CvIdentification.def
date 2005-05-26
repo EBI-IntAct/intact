@@ -48,7 +48,7 @@ definition: Polyclonal antibodies are a mixture of different antibodies that rep
 definition_reference: PMID:INTACT
 
 term: predetermined
-id: MI:0221
+id: MI:0396
 definition_reference: PMID:7940758
 
 term: primer specific pcr
@@ -62,7 +62,7 @@ definition: Single amino acid identification along a protein sequence.
 definition_reference: PMID:INTACT
 
 term: radio-labelled prote: radio-labelled protein
-id: MI:0222
+id: MI:0517
 definition_reference: PMID:INTACT
 
 term: sequence tag identif: sequence tag identification

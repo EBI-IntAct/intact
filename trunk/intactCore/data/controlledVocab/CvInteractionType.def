@@ -99,7 +99,7 @@ id: MI:0210
 definition: Irreversible reaction that can affect K,P,Y  or R residues.
 definition_reference: RESID:AA0028 , AA0029 , AA0030 , AA0146 , AA0215
 
-term: interaction type: interaction type 
+term: interaction type
 id: MI:0190
 definition_reference: PMID:INTACT
 
