@@ -482,7 +482,7 @@
     <target name="compile-search" depends="compile-core"
         description="Compiles the search module">
 
-        <ant dir="${app.dir}/search2" inheritAll="false" target="compile"/>
+        <ant dir="${app.dir}/search3" inheritAll="false" target="compile"/>
     </target>
 
     <!-- =================================================================== -->
