@@ -189,12 +189,12 @@ public class SanityChecker {
     public final ReportTopic INTERACTION_WITH_NO_EXPERIMENT = new ReportTopic( "Interactions with no Experiment" );
     public final ReportTopic INTERACTION_WITH_NO_CVINTERACTIONTYPE = new ReportTopic( "Interactions with no CvInteractionType" );
     public final ReportTopic INTERACTION_WITH_NO_ORGANISM = new ReportTopic( "Interactions with no Organism" );
-    public final ReportTopic INTERACTION_WITH_NO_CATEGORIES = new ReportTopic( "Interactions with no categories (bait-prey, target-agent, neutral, complex, self, unspecified)" );
-    public final ReportTopic INTERACTION_WITH_MIXED_COMPONENT_CATEGORIES = new ReportTopic( "Interactions with mixed categories (bait-prey, target-agent, neutral, complex, self, unspecified)" );
+    public final ReportTopic INTERACTION_WITH_NO_CATEGORIES = new ReportTopic( "Interactions with no categories (bait-prey, neutral, self, unspecified)" );
+    public final ReportTopic INTERACTION_WITH_MIXED_COMPONENT_CATEGORIES = new ReportTopic( "Interactions with mixed categories (bait-prey, enzyme-enzymeTarget, neutral, complex, self, unspecified)" );
     public final ReportTopic INTERACTION_WITH_NO_BAIT = new ReportTopic( "Interactions with no bait" );
     public final ReportTopic INTERACTION_WITH_NO_PREY = new ReportTopic( "Interactions with no prey" );
-    public final ReportTopic INTERACTION_WITH_NO_TARGET = new ReportTopic( "Interactions with no target" );
-    public final ReportTopic INTERACTION_WITH_NO_AGENT = new ReportTopic( "Interactions with no agent" );
+    public final ReportTopic INTERACTION_WITH_NO_ENZYME_TARGET = new ReportTopic( "Interactions with no enzymeTarget" );
+    public final ReportTopic INTERACTION_WITH_NO_ENZYME = new ReportTopic( "Interactions with no enzyme" );
     public final ReportTopic INTERACTION_WITH_ONLY_ONE_NEUTRAL = new ReportTopic( "Interactions with only one neutral component" );
     public final ReportTopic INTERACTION_WITH_PROTEIN_COUNT_LOWER_THAN_2 = new ReportTopic( "Interactions with less than 2 proteins (Role = complex)" );
     public final ReportTopic INTERACTION_WITH_SELF_PROTEIN_AND_STOICHIOMETRY_LOWER_THAN_2 = new ReportTopic( "Interactions with protein having their role set to self and its stoichiometry lower than 1.0" );
@@ -246,6 +246,8 @@ public class SanityChecker {
     private CvComponentRole neutral;
     private CvComponentRole bait;
     private CvComponentRole prey;
+    private CvComponentRole enzyme;
+    private CvComponentRole enzymeTarget;
     private CvComponentRole self;
     private CvComponentRole unspecified;
 
@@ -273,6 +275,8 @@ public class SanityChecker {
         neutral = (CvComponentRole) getCvObjectViaMI( CvComponentRole.class, "MI:0497" );
         bait = (CvComponentRole) getCvObjectViaMI( CvComponentRole.class, "MI:0496" );
         prey = (CvComponentRole) getCvObjectViaMI( CvComponentRole.class, "MI:0498" );
+        enzyme = (CvComponentRole) getCvObjectViaMI( CvComponentRole.class, "MI:0501" );
+        enzymeTarget = (CvComponentRole) getCvObjectViaMI( CvComponentRole.class, "MI:0502" );
         self = (CvComponentRole) getCvObjectViaMI( CvComponentRole.class, "MI:0503" );
         unspecified = (CvComponentRole) getCvObjectViaMI( CvComponentRole.class, "MI:0499" );
 
@@ -481,9 +485,10 @@ public class SanityChecker {
                 Collection components = interaction.getComponents();
                 int preyCount = 0,
                         baitCount = 0,
+                        enzymeCount = 0,
+                        enzymeTargetCount = 0,
                         neutralCount = 0,
                         selfCount = 0,
-                        complexCount = 0,
                         unspecifiedCount = 0;
                 float selfStoichiometry = 0;
                 float neutralStoichiometry = 0;
@@ -496,6 +501,10 @@ public class SanityChecker {
                         baitCount++;
                     } else if ( prey.equals( component.getCvComponentRole() ) ) {
                         preyCount++;
+                    } else if ( enzyme.equals( component.getCvComponentRole() ) ) {
+                        enzymeCount++;
+                    } else if ( enzymeTarget.equals( component.getCvComponentRole() ) ) {
+                        enzymeTargetCount++;
                     } else if ( neutral.equals( component.getCvComponentRole() ) ) {
                         neutralCount++;
                         neutralStoichiometry = component.getStoichiometry();
@@ -512,18 +521,19 @@ public class SanityChecker {
                  * We have to consider Components as 3 distinct groups: bait-prey, agent-target and neutral
                  * We are not allowed to mix categories,
                  * if you have a bait you must have at least one prey
+                 * if you have a enzyme you must have exactly one enzymeTarget
                  * if you have neutral component you must have at least 2
-                 * if you have complex you must have at least 2
                  * if you have self you must have only one protein with Stochiometry >= 2
                  */
 
                 int baitPrey = ( baitCount + preyCount > 0 ? 1 : 0 );
+                int enzymeTarget = ( enzymeCount + enzymeTargetCount > 0 ? 1 : 0 );
                 int neutral = ( neutralCount > 0 ? 1 : 0 );
                 int self = ( selfCount > 0 ? 1 : 0 );
-                int complex = ( complexCount > 0 ? 1 : 0 );
                 int unspecified = ( unspecifiedCount > 0 ? 1 : 0 );
 
-                int categoryCount = baitPrey + neutral + self + complex + unspecified;
+                // count the number of categories used.
+                int categoryCount = baitPrey + neutral + enzymeTarget + self + unspecified;
 
                 switch ( categoryCount ) {
                     case 0:
@@ -541,6 +551,14 @@ public class SanityChecker {
                                 addMessage( INTERACTION_WITH_NO_PREY, interaction );
                             }
 
+                        } else if ( enzymeTarget == 1 ) {
+                            // enzyme - enzymeTarget
+                            if ( enzymeCount == 0 ) {
+                                addMessage( INTERACTION_WITH_NO_ENZYME, interaction );
+                            } else if ( enzymeTargetCount == 0 ) {
+                                addMessage( INTERACTION_WITH_NO_ENZYME_TARGET, interaction );
+                            }
+
                         } else if ( self == 1 ) {
                             // it has to be > 1
                             if ( selfCount > 1 ) {
@@ -549,12 +567,6 @@ public class SanityChecker {
                                 if ( selfStoichiometry < 1F ) {
                                     addMessage( INTERACTION_WITH_SELF_PROTEIN_AND_STOICHIOMETRY_LOWER_THAN_2, interaction );
                                 }
-                            }
-
-                        } else if ( complex == 1 ) {
-                            // it has to be > 1
-                            if ( complexCount < 2 ) {
-                                addMessage( INTERACTION_WITH_PROTEIN_COUNT_LOWER_THAN_2, interaction );
                             }
 
                         } else {
