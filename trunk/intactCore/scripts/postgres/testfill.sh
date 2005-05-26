@@ -78,7 +78,7 @@ fi
 
 echo ""
 echo "Insert CvXrefQualifier"
-scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvXrefQualifier - data/controlledVocab/CvXrefQualifier.def
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvXrefQualifier psi-mi data/controlledVocab/CvXrefQualifier.def
 if [ $? != 0 ]
 then
     exit 1
@@ -86,7 +86,7 @@ fi
 
 echo ""
 echo "Insert CvAliasType"
-scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvAliasType - data/controlledVocab/CvAliasType.def
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvAliasType psi-mi data/controlledVocab/CvAliasType.def
 if [ $? != 0 ]
 then
     exit 1
@@ -94,7 +94,7 @@ fi
 
 echo ""
 echo "Insert CvDatabase"
-scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvDatabase - data/controlledVocab/CvDatabase.def
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvDatabase psi-mi data/controlledVocab/CvDatabase.def
 if [ $? != 0 ]
 then
     exit 1
@@ -102,7 +102,7 @@ fi
 
 echo ""
 echo "Insert CvComponentRole"
-scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvComponentRole - data/controlledVocab/CvComponentRole.def
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvComponentRole psi-mi data/controlledVocab/CvComponentRole.def
 if [ $? != 0 ]
 then
     exit 1
