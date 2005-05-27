@@ -531,6 +531,8 @@ public class GoUtils {
                 CvXrefQualifier.class, "identity");
         CvXrefQualifier goDefRef = (CvXrefQualifier) myHelper.getObjectByLabel(
                 CvXrefQualifier.class, "go-definition-ref");
+        CvTopic definition = (CvTopic) myHelper.getObjectByLabel(
+                CvTopic.class, "definition");
 
         // Update shortLabel. Label has to be unique!
         String goTerm = goRec.getGoTerm();
@@ -588,6 +590,12 @@ public class GoUtils {
                 // Topic is not found, continue with the next.
                 continue;
             }
+            // There should be only one definition
+            if (cvtopic.equals(definition)) {
+                handleDefinition(goRec, current);
+                continue;
+            }
+
             // Loop through each annotation stored under a single topic.
             for (Iterator texts = goRec.getAnnotationTexts(topic); texts.hasNext();) {
                 // Create a proper annotation - needed it for equals method.
@@ -822,5 +830,49 @@ public class GoUtils {
             }
         }
         return sb.length() > 0 ? sb.toString() : null;
+    }
+
+    private void handleDefinition(GoRecord goRec, CvObject current) throws IntactException {
+        // Cache the institution and definition topic
+        Institution inst = myHelper.getInstitution();
+        CvTopic definition = (CvTopic) myHelper.getObjectByLabel(
+                CvTopic.class, "definition");
+
+        // Collect any existing definition definition annotations (can be
+        // more than one if we are updating an existing CVs
+        List exdefs = new ArrayList();
+        for (Iterator annots = current.getAnnotations().iterator(); annots.hasNext(); ) {
+            Annotation annotation = (Annotation) annots.next();
+            if (annotation.getCvTopic().equals(definition)) {
+                exdefs.add(annotation);
+            }
+        }
+        // Create an annotation to compare.
+
+        // There should be only one definition stored under the topic 'definition'
+        String text = (String) goRec.getAnnotationTexts("definition").next();
+        Annotation newdef = new Annotation(inst, definition, text);
+
+        // Compare this new annotation with the existing annotations
+        if (exdefs.contains(newdef)) {
+            // This new definition exists, we need to delete all others apart for
+            // the existing one.
+            for (Iterator iter = exdefs.iterator(); iter.hasNext();) {
+                Annotation annotation = (Annotation) iter.next();
+                if (!newdef.equals(annotation)) {
+                    current.removeAnnotation(annotation);
+                    myHelper.delete(annotation);
+                }
+            }
+        }
+        else {
+            // A new definition. Delete all the existing ones.
+            for (Iterator iter = exdefs.iterator(); iter.hasNext();) {
+                Annotation annotation = (Annotation) iter.next();
+                myHelper.delete(annotation);
+            }
+            myHelper.create(newdef);
+            current.addAnnotation(newdef);
+        }
     }
 }
