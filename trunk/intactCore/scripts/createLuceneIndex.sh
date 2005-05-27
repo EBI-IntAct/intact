@@ -1,8 +1,16 @@
 #!/bin/sh
 #
 # Usage:
-# createLuceneIndex.sh targetDirectory
+# createLuceneIndex.sh <targetDirectory>
 #
+
+if [ $# -ne 1 ]; then
+   echo ""
+   echo "ERROR: wrong number of parameters."
+   echo "usage: createLuceneIndex.sh <luceneIndexDirectory>"
+   echo ""
+   exit 1
+fi
 
 # to be sure that the Indexer is compiled
 ant compile-search
