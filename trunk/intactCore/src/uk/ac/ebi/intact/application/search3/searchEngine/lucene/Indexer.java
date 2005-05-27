@@ -19,13 +19,15 @@ import uk.ac.ebi.intact.util.Chrono;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * This class provides methods to index the IntAct database. The indexing uses the RAM directory to store the index first,
- * which speeds the indexing up in comparison to the trivial index.
+ * This class provides methods to index the IntAct database. The indexing uses the RAM directory to store the index
+ * first, which speeds the indexing up in comparison to the trivial index.
  *
  * @author Anja Friedrichsen
  * @version $id$
@@ -36,18 +38,19 @@ public class Indexer {
     private SearchObjectIndexer soi;
 
 
-    public Indexer(SearchDAO dao, SearchObjectIndexer soi) {
+    public Indexer( SearchDAO dao, SearchObjectIndexer soi ) {
         this.dao = dao;
         this.soi = soi;
     }
 
     /**
-     * This method that creates a Lucene index out of the IntAct database. This methods fetchs first all objects,
-     * that should be searchable, out of the database. Afterwards the index is created and while creating the index
-     * is first stored into RAM and when the creation is finished the whole index is written into the given file
-     * @param dir  file to write the index
+     * This method that creates a Lucene index out of the IntAct database. This methods fetchs first all objects, that
+     * should be searchable, out of the database. Afterwards the index is created and while creating the index is first
+     * stored into RAM and when the creation is finished the whole index is written into the given file
+     *
+     * @param dir file to write the index
      */
-    public void createIndex(File dir) throws IOException, IntactException {
+    public void createIndex( File dir ) throws IOException, IntactException {
         // writer to write the index on scratch disk
         IndexWriter fsWriter = null;
         // writer to store the index in RAM
@@ -56,50 +59,52 @@ public class Indexer {
         Collection documents = new ArrayList( 512 * 512 ); // this is over 250.000 but not reallocation in most cases.
         // directory to write the index to
         FSDirectory fsDir = null;
-        fsDir = FSDirectory.getDirectory(dir, true);
+        fsDir = FSDirectory.getDirectory( dir, true );
         // RAM directory to hold the index temporarily
         RAMDirectory ramDir = new RAMDirectory();
 
         // instanciate the writer with the corresponding directory and with the IntActAnalyzer,
         // which analyzed the search objects and their features first
-        fsWriter = new IndexWriter(fsDir, new IntactAnalyzer(), true);
-        ramWriter = new IndexWriter(ramDir, new IntactAnalyzer(), true);
+        fsWriter = new IndexWriter( fsDir, new IntactAnalyzer(), true );
+        ramWriter = new IndexWriter( ramDir, new IntactAnalyzer(), true );
 
         // get all searchable IntAct objects
         documents = this.getAllDocuments();
-//        System.out.println("found documents: " + documents.size());
 
+        NumberFormat formatter = new DecimalFormat( ".00" );
         int countDocs = 0;
         // iterate through the collection of search objects and add one document per search object
         // into the index
-        for (Iterator iterator = documents.iterator(); iterator.hasNext();) {
+        for ( Iterator iterator = documents.iterator(); iterator.hasNext(); ) {
             countDocs++;
 
             Document doc = (Document) iterator.next();
-            ramWriter.addDocument(doc);
-            // print out the heap size at this state
-            long heapSize = Runtime.getRuntime().totalMemory();
-//            System.out.println("heapSize in createIndex: " + heapSize);
+            ramWriter.addDocument( doc );
 
-            System.out.print(".");
-            System.out.flush();
+            if ( ( countDocs % 40 ) == 0 ) {
+                System.out.print( "." );
+                System.out.flush();
 
-            if((countDocs%100) == 0){
-                System.out.println("\n indexed " + countDocs + " search objects from " + documents.size());
+                if ( ( countDocs % 2400 ) == 0 ) {
+                    // 60 dots per line
+                    String percent = formatter.format( ( (float) countDocs / (float) documents.size() ) * 100 );
+                    System.out.println( " " + countDocs + "(" + percent + "%)" );
+                }
             }
         }
 
         // write the index from the RAM into the file on scratch
-        fsWriter.addIndexes(new Directory[]{ramDir});
+        fsWriter.addIndexes( new Directory[]{ramDir} );
 
         fsWriter.close();
         ramWriter.close();
     }
 
     /**
-     * This method retrieves all IntAct object that should be searchable, transform them into an Lucene Document
-     * and returns a list of these documents. There is one document per search object.
-     * @return  collection holding all documents to be inserted into the index
+     * This method retrieves all IntAct object that should be searchable, transform them into an Lucene Document and
+     * returns a list of these documents. There is one document per search object.
+     *
+     * @return collection holding all documents to be inserted into the index
      */
     public Collection getAllDocuments() throws IntactException {
         // collection of all searchable IntAct objects
@@ -110,52 +115,54 @@ public class Indexer {
         // get all IntAct object out of the database
         try {
             searchObjects = dao.getAllSearchObjects();
-        } catch (IntactException e) {
+        } catch ( IntactException e ) {
             throw new IntactException();
         }
 
         // iterate through the IntAct objects, to transform them into Lucene documents.
-        for (Iterator iterator = searchObjects.iterator(); iterator.hasNext();) {
+        for ( Iterator iterator = searchObjects.iterator(); iterator.hasNext(); ) {
             SearchObject obj = (SearchObject) iterator.next();
 
             // print out the heap size at this state
             long heapSize = Runtime.getRuntime().totalMemory();
 //            System.out.println("heapSize in getAllDocuments: " + heapSize);
             // add the document to the collection of documents
-            documents.add(soi.getDocument(obj));
+            documents.add( soi.getDocument( obj ) );
         }
         return documents;
     }
 
     /**
      * The main method expects one argument, which defines the location where to store the index.
+     *
      * @param args
+     *
      * @throws IOException
      */
-    public static void main(String[] args) throws IOException, IntactException {
+    public static void main( String[] args ) throws IOException, IntactException {
         IntactHelper helper = null;
 
         try {
             helper = new IntactHelper();
             String usage = "Usage: Indexer <Name of the index directory>";
-            System.out.println("Start to create the Lucene index...");
+            System.out.println( "Start to create the Lucene index..." );
 
-             // first check the number of arguments
-            if(args.length != 1){
-                System.out.println("Invalid numbers of argument!\n" + usage);
-                System.exit(1);
+            // first check the number of arguments
+            if ( args.length != 1 ) {
+                System.out.println( "Invalid numbers of argument!\n" + usage );
+                System.exit( 1 );
             }
             //create a file with the name of the first argument
-            File indexFile = new File(args[0]);
+            File indexFile = new File( args[ 0 ] );
 
-            Indexer test = new Indexer(new SearchDAOImpl(helper), new SearchObjectIndexer());
+            Indexer test = new Indexer( new SearchDAOImpl( helper ), new SearchObjectIndexer() );
             Chrono time = new Chrono();
             time.start();
             // create the index
-            test.createIndex(indexFile);
+            test.createIndex( indexFile );
             time.stop();
             // print the time the indexing used
-            System.out.println("\nIndex created in " + time.toString());
+            System.out.println( "\nIndex created in " + time.toString() );
 
         } catch ( OutOfMemoryError aome ) {
 
@@ -171,13 +178,13 @@ public class Indexer {
 
             System.exit( 1 );
 
-        } catch (IntactException e) {
+        } catch ( IntactException e ) {
             e.printStackTrace();
-            System.err.println("");
-            System.err.println("There went something wrong with fetching the search objects out of the database");
-        }finally{
-            if(helper != null){
-                System.out.println("Helper closing");
+            System.err.println( "" );
+            System.err.println( "There went something wrong with fetching the search objects out of the database" );
+        } finally {
+            if ( helper != null ) {
+                System.out.println( "Helper closing" );
                 helper.closeStore();
             }
         }
