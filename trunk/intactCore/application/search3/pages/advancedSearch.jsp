@@ -10,7 +10,7 @@ response.setDateHeader ("Expires", 0); //prevents caching at the proxy server
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic" %>
-
+ <%@ taglib uri="/WEB-INF/tld/intact.tld"      prefix="intact"%>
  <%--
   Created by IntelliJ IDEA.
   User: Anja
@@ -241,6 +241,8 @@ function getRadioButton(radioButtonNS,radioButtonIE) {
 
 <html:form action="/advsearch">
 
+
+
 <%
     String errorMessage = (String) session.getAttribute(SearchConstants.ERROR_MESSAGE);
     if(errorMessage != null || !(errorMessage.equals(""))){
@@ -250,6 +252,20 @@ function getRadioButton(radioButtonNS,radioButtonIE) {
 <%
     }
 %>
+<table style="width: 100%;">
+<tbody>
+    <tr>
+    <td></td>
+    <td align="right" valign="top">
+         <intact:documentation section="advancedSearch" title="Help Topics"/>
+     </td>
+    </tr>
+    <tr>
+     <td></td>
+     <td></td>
+    </tr>
+</tbody>
+</table>
 
 <table style="width: 100%; background-color: rgb(241, 245, 248);" border="1"
        bordercolor="#4b9996" cellpadding="5" cellspacing="0">
@@ -284,22 +300,65 @@ function getRadioButton(radioButtonNS,radioButtonIE) {
         <tr>
             <td class="headerlight" style="vertical-align: top;"><br>
                 <!-- radiobuttons to specify the search object-->
-                <html:radio property="searchObject" value="any"
+                <table>
+                <tr>
+                    <td class="headerlight" style="vertical-align: middle;">
+                    <html:radio property="searchObject" value="any"
+                        onclick="resetForm(this.value); "
+                        /> Any object
+                     </td>
+                     <td>
+                     </td>
+                </tr>
+                </table>
+                <table>
+                <tr>
+                    <td  class="headerlight" style="vertical-align: middle;">
+                        <html:radio property="searchObject" value="cv"
+                            onclick="resetForm(this.value); "
+                            /> Controlled Vocabulary Term
+                    </td>
+                    <td style="vertical-align: middle;">
+                        <intact:documentation section="CVS" />
+                    </td>
+                </tr>
+                </table>
+                <table>
+                <tr>
+                    <td class="headerlight" style="vertical-align: middle;">
+                        <html:radio property="searchObject" value="experiment"
                        onclick="resetForm(this.value); "
-                       /> Any object <br>
-                <html:radio property="searchObject" value="cv"
+                       /> Experiment
+                    </td>
+                    <td  style="vertical-align: middle;">
+                        <intact:documentation section="Experiment" />
+                    </td>
+                </tr>
+                </table>
+                <table>
+                <tr>
+                    <td class="headerlight" style="vertical-align: middle;">
+                        <html:radio property="searchObject" value="interaction"
                        onclick="resetForm(this.value); "
-                       /> Controlled Vocabulary Term<br>
-                <html:radio property="searchObject" value="experiment"
-                       onclick="resetForm(this.value); "
-                       /> Experiment<br>
-                <html:radio property="searchObject" value="interaction"
-                       onclick="resetForm(this.value); "
-                       /> Interaction<br>
-                <html:radio property="searchObject" value="protein"
+                       /> Interaction
+                    </td>
+                    <td style="vertical-align: middle;">
+                        <intact:documentation section="Interaction" />
+                    </td>
+                </tr>
+                </table>
+                <table>
+                <tr>
+                    <td class="headerlight" style="vertical-align: middle;">
+                        <html:radio property="searchObject" value="protein"
                        onclick="resetForm(this.value);"
-                       /> Protein<br>
-
+                       /> Protein
+                     </td>
+                     <td style="vertical-align: middle;">
+                       <intact:documentation section="Interactor" />
+                     </td>
+                </tr>
+                </table>
             </td>
 
             <td colspan="1" rowspan="1" class="headerdarkmid" style="vertical-align: middle;">which has<br>
@@ -358,7 +417,8 @@ function getRadioButton(radioButtonNS,radioButtonIE) {
             <td class="headerlight" style="vertical-align: top;">
                <html:text property="acNumber" size="40"/>
             </td>
-            <td class="headerdarkmid" style="vertical-align: middle;">accession number<br>
+            <td class="headerdarkmid" style="vertical-align: middle;">accession number
+                                                                     <intact:documentation section="BasicObject.ac" /><br>
             </td>
 
         </tr>
@@ -367,7 +427,8 @@ function getRadioButton(radioButtonNS,radioButtonIE) {
             <td class="headerlight" style="vertical-align: top;"><small><small>
                <html:text property="shortlabel" size="40"/>
             </td>
-            <td class="headerdarkmid" style="vertical-align: middle;">short label<br>
+            <td class="headerdarkmid" style="vertical-align: middle;">short label
+                                                                      <intact:documentation section="AnnotatedObject.shortLabel" /><br>
             </td>
         </tr>
         <tr>
@@ -375,7 +436,8 @@ function getRadioButton(radioButtonNS,radioButtonIE) {
             <td class="headerlight" style="vertical-align: top;"><small><small><small>
                <html:text property="description" size="40"/>
             </td>
-            <td class="headerdarkmid" style="vertical-align: middle;">description<br>
+            <td class="headerdarkmid" style="vertical-align: middle;">description
+                                                                      <intact:documentation section="AnnotatedObject.fullName" /><br>
             </td>
         </tr>
 
@@ -401,7 +463,8 @@ function getRadioButton(radioButtonNS,radioButtonIE) {
 
                    </td>
 
-                  <td colspan="2" rowspan="1" class="headerdarkmid" style="vertical-align: middle;"> as a crossreference referring to this database</td>
+                  <td colspan="2" rowspan="1" class="headerdarkmid" style="vertical-align: middle;"> as a crossreference referring to this database
+                                                                                                    <intact:documentation section="AnnotatedObject.Xref" /></td>
               </tr>
 
 
@@ -415,7 +478,8 @@ function getRadioButton(radioButtonNS,radioButtonIE) {
                       <img src="spacer.gif" width="100" height="5" border="0"><br>
                       <html:text property="annotation" size="40" />
                 </td>
-                <td colspan="2" rowspan="1" class="headerdarkmid" style="vertical-align: middle;"> as an annotation with this annotation topic</td>
+                <td colspan="2" rowspan="1" class="headerdarkmid" style="vertical-align: middle;"> as an annotation with this annotation topic
+                                                                                                   <intact:documentation section="AnnotatedObject.Annotation" /></td>
              </tr>
 
 
@@ -429,7 +493,8 @@ function getRadioButton(radioButtonNS,radioButtonIE) {
                       <input type="button" name="button1" value="Interaction Detection Browser" style="width: 200" onclick="doScript('CvInteraction', '<%=request.getContextPath()%>')">
                 </td>
 
-            <td colspan="2" rowspan="1" class="headerdarkmid" style="vertical-align: middle;"> where this method has been used to determine the interaction </td>
+            <td colspan="2" rowspan="1" class="headerdarkmid" style="vertical-align: middle;"> where this method has been used to determine the interaction
+                                                                                               <intact:documentation section="editor.experiment" /> </td>
             <td colspan="1" rowspan="1" class="headerdark" style="vertical-align: top;"></td>
        </tr>
 
@@ -443,7 +508,8 @@ function getRadioButton(radioButtonNS,radioButtonIE) {
                       <input type="button" name="button2" value="Participant Detection Browser" style="width: 200" onclick="doScript('CvIdentification', '<%=request.getContextPath()%>')">
             </td>
 
-            <td colspan="2" rowspan="1" class="headerdarkmid" style="vertical-align: middle;">where this method has been used to determine the participants in the interaction </td>
+            <td colspan="2" rowspan="1" class="headerdarkmid" style="vertical-align: middle;">where this method has been used to determine the participants in the interaction
+                                                                                              <intact:documentation section="editor.experiment" /> </td>
             <td colspan="1" rowspan="1" class="headerdark" style="vertical-align: top;"></td>
           </tr>
 
@@ -458,18 +524,27 @@ function getRadioButton(radioButtonNS,radioButtonIE) {
                       <input type="button" name="button3" value="CvInteractionType Browser" style="width: 200" onclick="doScript('CvInteractionType', '<%=request.getContextPath()%>')">
                 </td>
 
-            <td colspan="2" rowspan="1" class="headerdarkmid" style="vertical-align: middle;"> having this interaction type </td>
+            <td colspan="2" rowspan="1" class="headerdarkmid" style="vertical-align: middle;"> having this interaction type
+                                                                                               <intact:documentation section="Interaction" /></td>
             <td colspan="1" rowspan="1" class="headerdark" style="vertical-align: top;"></td>
        </tr>
 
 
          <tr>
             <!--radiobuttons to specify the type of connecting the search terms -->
-            <td class="headerlight" style="vertical-align: top;">
-                <html:radio property="connection" value="and" /> all of the above (and) <br>
-                <html:radio property="connection" value="or" /> any of the above (or)
+            <td class="headerlight">
+                <table>
+                    <tr>
+                     <td  class="headerlight" style="vertical-align: top;"><html:radio property="connection" value="and" /> all of the above (and)</td>
+                     <td class="headerlight" valign="top" align="right"></td>
+                    </tr>
+                    <tr>
+                     <td  class="headerlight" style="vertical-align: top;"><html:radio property="connection" value="or" /> any of the above (or)</td>
+                     <td></td>
+                    </tr>
+                </table>
             </td>
-            <td colspan="2" rowspan="1" class="headerdarkmid" style="vertical-align: top;"><br> </td>
+            <td colspan="2" rowspan="1" class="headerdarkmid" style="vertical-align: top;">criteria combination<intact:documentation section="advancedSearch.basicOverview.criteriaCombination" /><br> </td>
             <td colspan="1" rowspan="1" class="headerdark" style="vertical-align: top;"></td>
         </tr>
 
