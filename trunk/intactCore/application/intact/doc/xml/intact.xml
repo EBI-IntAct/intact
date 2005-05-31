@@ -742,6 +742,105 @@
 
                 </section> <!-- Basic Overview -->
 
+                <section title="Advanced Search" name="advancedSearch">
+                    <section title="Access" name="advancedSearch.access">
+                        <blockquote>
+                        The URL to access the editor is dependent upon the server where the editor is installed.
+                        The general format to access the editor takes the form of: http://server/intact/search/do/initAdvSearch.
+                        </blockquote>
+                    </section>
+
+                    <section title="Basic overview" name="advancedSearch.basicOverview">
+                        <blockquote>
+                        <p>
+                        Before going into any further details you should notice that the AdvancedSearch page is vertically
+                        split within two parts. On the left hand side there is the real advancedSearch where you can define
+                        your request. On the right hand side there is a relevant example to help you using the advancedSearch :
+                        <br/>
+                        <br/>    
+                        <img src="./images/search/advancedSearch1.png" title=""/>
+                        <br/>
+                        </p>
+                        <p>
+                        The advanced Search permits you to search for a specific object thus to choose what you want to
+                        see in your result page. Here are the objects you can ask for :
+                            <ul>
+                                <li>Controlled Vocabulary Term</li>
+                                <li>Experiment</li>
+                                <li>Interaction</li>
+                                <li>Protein</li>
+                            </ul>
+                        You can also search for any object.
+                        </p>
+                        <p>
+                        After selecting which object you are searching for, you define the creterii which will be used for
+                        the request. Depending on the object you choosed to display and on your desire, you can define 1 or
+                        several of the following fields :
+                            <ul>
+                                <li> The Accession Number</li>
+                                <li> The Short Label</li>
+                                <li> The Description</li>
+                                <li> A crossresference to an other database</li>
+                                <li> An annotation topic</li>
+                                <li>The method used to determine the interaction (Interaction detection, for Experiment only)</li>
+                                <li>The method used to determine the participants in the interaction (Participant detection, for Experiment only)</li>
+                                <li>The interaction type (for Interaction only)</li>
+                            </ul>
+                        </p>
+                        <p>
+                        <a NAME="advancedSearch.basicOverview.criteriaCombination"></a>
+                        If you decide to define several of the fields (ex : Accession Number and Description) you can tell
+                        the advanced Search whether you want the objects to match all the define fields or only one of the
+                        fields in selecting either &quot;all of the above (and)&quot; box or &quot;any of the above (or)&quot; box.
+                        </p>
+                        </blockquote>
+                    </section>
+
+                    <section title="Structure of Advanced Search result" name="advancedSearch.result">
+                        <blockquote>
+                            <p>
+                            If you choose to display any object you will obtain the same page then if you were doing a normal search :
+                            <br/>
+                            <br/>
+                            <img src="./images/search/advancedSearch2.png" title=""/>
+                            <br/>
+                            </p>
+
+                            <p>
+                            If you choosed to display Controlled Vocabularies Term, the result page will follow the structure below:
+                            <br/>
+                            <br/>
+                            <img src="./images/search/advancedSearch3.png" title=""/>
+                            <br/>
+                            </p>
+
+                            <p>
+                            If you choosed to display Experiments, the result page will follow the structure below:
+                            <br/>
+                            <br/>
+                            <img src="./images/search/advancedSearch4.png" title=""/>
+                            </p>
+
+                            <p>
+                            <br/>
+                            If you choosed to display Interactions, the result page will follow the structure below:
+                            <br/>
+                            <br/>
+                            <img src="./images/search/advancedSearch5.png" title=""/>
+                            <br/>
+                            </p>
+
+                            <p>
+                            If you choosed to display Proteins, the result page will follow the structure below:
+                            <br/>
+                            <br/>
+                            <img src="./images/search/advancedSearch6.png" title=""/>
+                            <br/>
+                            </p>
+                        </blockquote>
+                    </section>
+                </section> <!-- Advanced Search -->
+
             </section> <!-- Search -->
 
 
