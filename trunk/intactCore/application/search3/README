@@ -29,7 +29,7 @@ DATABASE:
         We don't find an fancy solution for postgres at the moment. We are using simply
         a table. In that case the data resource for search3 is static. you have to update
         manually the table. for creating an updating run /sql/postgres/search.sql.
-
+        (ex : psql intactdb -U intactuser -f ./sql/postgres/search.sql)
 BUILD
     ant war
         prepares a WAR file to be deployed in a WEB container. The WAR file is
@@ -40,6 +40,8 @@ OTHER USEFUL COMMANDS
         deploys the WAR file in the dist/ location to the CATALINA_HOME/webapps. The
         environment variable CATALINA_HOME must be set for this command to work
         correctly.
+        You might have to specify where to find the war file using the option
+        -Dwar=/dist/MyWarFile.war
 
     ant undeploy (Tomcat specific)
         reverses the effects of 'ant deploy' command. In addition to that, this
