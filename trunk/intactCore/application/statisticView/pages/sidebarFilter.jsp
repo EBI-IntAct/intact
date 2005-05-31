@@ -20,16 +20,11 @@
                  java.util.Calendar,
                  java.util.ArrayList,
                  uk.ac.ebi.intact.application.statisticView.struts.view.FilterBean,
-                 uk.ac.ebi.intact.application.statisticView.temp.StatisticsBean,
                  uk.ac.ebi.intact.application.statisticView.business.util.Constants,
-                 uk.ac.ebi.intact.application.statisticView.business.exception.NoDataException,
                  uk.ac.ebi.intact.application.statisticView.business.model.IntactStatistics,
                  java.sql.Timestamp,
                  java.sql.Date,
                  org.apache.log4j.Logger,
-                 uk.ac.ebi.intact.application.statisticView.temp.StatisticsDataSet,
-                 uk.ac.ebi.intact.application.statisticView.temp.StatisticsBean,
-                 uk.ac.ebi.intact.application.statisticView.temp.StatisticsBean,
                  uk.ac.ebi.intact.application.statisticView.business.data.StatisticHelper"%>
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
