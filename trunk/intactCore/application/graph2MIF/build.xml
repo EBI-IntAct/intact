@@ -21,7 +21,7 @@
     <property name="intact.app.dir" value=".."/>
 
     <!-- context path for graph2MIF store in the application level -->
-    <property name="intact.context.dir"     value="${intact.app.dir}/context"/>
+    <property name="intact.context.dir" value="${intact.app.dir}/context"/>
     <property name="graph2MIF.context.file" value="graph2MIF-context.xml"/>
 
     <property environment="env"/>
@@ -31,14 +31,14 @@
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
 
-     <!-- The jdbc properties. -->
+    <!-- The jdbc properties. -->
     <property file="${intact.root}/config/jdbc.properties"/>
 
     <!-- The logging configuration -->
     <property file="${intact.root}/config/log4j.properties"/>
 
     <property name="dist.dir" value="dist"/>
-	<property name="docs.dir" value="doc/api"/>
+    <property name="docs.dir" value="doc/api"/>
     <property name="war.file" value="graph2mif.war"/>
 
     <!-- The console properties -->
@@ -48,7 +48,7 @@
     <property file="graph2MIF.properties"/>
 
     <!-- This project specific paths. -->
-	<property name="src.dir" value="src"/>
+    <property name="src.dir" value="src"/>
     <property name="lib.dir" value="WEB-INF/lib"/>
     <property name="wsdd.file" value="Graph2MIFWS.wsdd"/>
 
@@ -109,14 +109,14 @@
             <contains string="${log4j.logger.graph2MIF}" substring="ERROR"/>
         </condition>
 
-        <ant target="check-log-level" />
+        <ant target="check-log-level"/>
 
     </target>
 
     <!-- =================================================================== -->
 
     <!-- If the log level isn't set to ERROR, a blocking message is displayed to let the user know -->
-    <target name="check-log-level" unless="log.level.is.error" >
+    <target name="check-log-level" unless="log.level.is.error">
 
         <echo>
             BEWARE that if the logging feature isn't set to ERROR (ie. ${log4j.logger.graph2MIF}),
@@ -142,17 +142,17 @@
     <!-- Creates the java 'docs' . -->
     <target name="doc">
         <mkdir dir="${docs.dir}"/>
-		<javadoc packagenames="uk.ac.ebi.intact.application.graph2MIF, uk.ac.ebi.intact.application.graph2MIF.client"
-		         sourcepath="${root.src.dir}"
-				 defaultexcludes="yes"
-				 destdir="${docs.dir}"
-				 author="true"
-				 private="true"
-				 version="true"
-				 use="true"
-				 windowtitle="graph2MIF APIS">
-			  <classpath refid="project.class.path"/>
-		 </javadoc>
+        <javadoc packagenames="uk.ac.ebi.intact.application.graph2MIF, uk.ac.ebi.intact.application.graph2MIF.client"
+            sourcepath="${root.src.dir}"
+            defaultexcludes="yes"
+            destdir="${docs.dir}"
+            author="true"
+            private="true"
+            version="true"
+            use="true"
+            windowtitle="graph2MIF APIS">
+            <classpath refid="project.class.path"/>
+        </javadoc>
     </target>
 
     <!-- =================================================================== -->
@@ -167,7 +167,7 @@
 
     <!-- Cleans temp-web, classes and docs directories  -->
     <target name="clean-all" description="Cleaning everything..." depends="clean">
-		<delete dir="${root.dest.dir}/uk/ac/ebi/intact/application/graph2MIF/"/>
+        <delete dir="${root.dest.dir}/uk/ac/ebi/intact/application/graph2MIF/"/>
     </target>
 
     <!-- =================================================================== -->
@@ -267,9 +267,9 @@
             </fileset>
         </copy>
 
-        <echo message="-----------------------------------------------------------------------------------------------" /> 
-        <echo message="The jar file: jaxprpc.jar has to be put in a shared location between hierarchView and graph2MIF" />
-        <echo message="-----------------------------------------------------------------------------------------------" />
+        <echo message="-----------------------------------------------------------------------------------------------"/>
+        <echo message="The jar file: jaxprpc.jar has to be put in a shared location between hierarchView and graph2MIF"/>
+        <echo message="-----------------------------------------------------------------------------------------------"/>
 
         <!-- Copy jar files -->
         <copy todir="${temp.web}/WEB-INF/lib">
@@ -291,13 +291,13 @@
             </fileset>
         </copy>
         <!-- Generate server-config.wsdd from Graph2MIFWS.wsdd -->
-		<java classname="org.apache.axis.utils.Admin" fork="yes">
-		      <arg line="server"/>
-			  <arg line="${wsdd.file}"/>
-			  <classpath refid="project.class.path"/>
-		</java>
-		<!-- ...must be moved to WEB-INF  -->
-		<move file="server-config.wsdd" todir="${temp.web}/WEB-INF"/>
+        <java classname="org.apache.axis.utils.Admin" fork="yes">
+            <arg line="server"/>
+            <arg line="${wsdd.file}"/>
+            <classpath refid="project.class.path"/>
+        </java>
+        <!-- ...must be moved to WEB-INF  -->
+        <move file="server-config.wsdd" todir="${temp.web}/WEB-INF"/>
 
         <!-- Create the distribution dir if it doesn't exist. -->
         <mkdir dir="${dist.dir}"/>
@@ -336,7 +336,7 @@
 
     <target name="war-postgres" if="postgres">
         <!-- Load postgres properties. -->
-        <property file="${intact.root}/config/postgres.properties" />
+        <property file="${intact.root}/config/postgres.properties"/>
 
         <echo message="Building a war for postgres ${dbalias} database"/>
         <property name="war.name" value="${ant.project.name}-${dbalias}-${TODAY}.war"/>
@@ -356,13 +356,13 @@
 
     <target name="war-oracle" description="Builds a war file for oracle" if="oracle">
         <!-- Load oracle properties. -->
-        <property file="${intact.root}/config/oracle.properties" />
+        <property file="${intact.root}/config/oracle.properties"/>
 
         <echo message="Building a war for oracle ${dbalias} database"/>
         <property name="war.name" value="${ant.project.name}-${dbalias}-${TODAY}.war"/>
 
         <antcall target="build-war">
-            <param name="db" value=" ${oracle.jar}"/>
+            <param name="db" value="${oracle.jar}"/>
             <param name="war.file" value="${war.name}"/>
         </antcall>
     </target>
@@ -412,23 +412,23 @@
 
     <!-- Display the parameters of the client. -->
     <target name="displayClientParameter"
-	        description="Display the parameters of the client">
-         <echo message="Interactor AC         : ${client.AC}" />
-         <echo message="Graph depth           : ${client.depth}" />
-         <echo message="Strict MIF compliance : ${client.strictMIF}" />
-	</target>
+        description="Display the parameters of the client">
+        <echo message="Interactor AC         : ${client.AC}"/>
+        <echo message="Graph depth           : ${client.depth}"/>
+        <echo message="Strict MIF compliance : ${client.strictMIF}"/>
+    </target>
 
     <!-- =================================================================== -->
 
     <!-- Compile example webservice client application. -->
     <target name="wsclient"
-	    description="Builds the example webservice client for Graph2MIF">
+        description="Builds the example webservice client for Graph2MIF">
         <javac srcdir="${root.src.dir}" destdir="${root.dest.dir}" deprecation="on"
-		  debug="on" source="1.4"
-		  includes=" **/graph2MIF/client/Graph2MIFWSClient.java">
-		  <classpath refid="project.class.path"/>
-		</javac>
-	</target>
+            debug="on" source="1.4"
+            includes=" **/graph2MIF/client/Graph2MIFWSClient.java">
+            <classpath refid="project.class.path"/>
+        </javac>
+    </target>
 
     <!-- =================================================================== -->
     <!-- Run example webservice client application. -->
@@ -436,42 +436,42 @@
         description="Copies properties and runs the webservice client for testing.">
         <copy todir="${root.dest.dir}" file="graph2MIF.properties"/>
 
-        <echo message="Web service URL: ${webservice.location}" />
-        <ant target="displayClientParameter" />
+        <echo message="Web service URL: ${webservice.location}"/>
+        <ant target="displayClientParameter"/>
 
-		<java classname="uk.ac.ebi.intact.application.graph2MIF.client.Graph2MIFWSClient" fork="yes">
-		      <arg line="-ac ${client.AC}"/>
-			  <arg line="-depth ${client.depth}"/>
-			  <arg line="-strict ${client.strictMIF}"/>
-			  <classpath refid="intact.class.path"/>
-			  <classpath refid="project.class.path"/>
-		</java>
-	</target>
+        <java classname="uk.ac.ebi.intact.application.graph2MIF.client.Graph2MIFWSClient" fork="yes">
+            <arg line="-ac ${client.AC}"/>
+            <arg line="-depth ${client.depth}"/>
+            <arg line="-strict ${client.strictMIF}"/>
+            <classpath refid="intact.class.path"/>
+            <classpath refid="project.class.path"/>
+        </java>
+    </target>
 
     <!-- =================================================================== -->
     <!-- Compile example console application. -->
     <target name="console"
-	    description="Builds the example console for Graph2MIF">
-        <ant target="displayClientParameter" />
-		<javac srcdir="${root.src.dir}" destdir="${root.dest.dir}" deprecation="on"
-		  debug="on" source="1.4"
-		  includes=" **/graph2MIF/client/Graph2MIFConsole.java">
-		  <classpath refid="project.class.path"/>
-		</javac>
-	</target>
+        description="Builds the example console for Graph2MIF">
+        <ant target="displayClientParameter"/>
+        <javac srcdir="${root.src.dir}" destdir="${root.dest.dir}" deprecation="on"
+            debug="on" source="1.4"
+            includes=" **/graph2MIF/client/Graph2MIFConsole.java">
+            <classpath refid="project.class.path"/>
+        </javac>
+    </target>
 
     <!-- =================================================================== -->
     <!-- Run example webservice client application. -->
     <target name="run-console" depends="console"
         description="Runs the console for testing.">
-		<java classname="uk.ac.ebi.intact.application.graph2MIF.client.Graph2MIFConsole" fork="yes">
-		      <arg line="-ac ${client.AC}"/>
-			  <arg line="-depth ${client.depth}"/>
-			  <arg line="-strict ${client.strictMIF}"/>
-			  <classpath refid="intact.class.path"/>
-			  <classpath refid="project.class.path"/>
-		</java>
-	</target>
+        <java classname="uk.ac.ebi.intact.application.graph2MIF.client.Graph2MIFConsole" fork="yes">
+            <arg line="-ac ${client.AC}"/>
+            <arg line="-depth ${client.depth}"/>
+            <arg line="-strict ${client.strictMIF}"/>
+            <classpath refid="intact.class.path"/>
+            <classpath refid="project.class.path"/>
+        </java>
+    </target>
 
     <!-- =================================================================== -->
 
@@ -482,20 +482,20 @@
 
         <!-- Copy the template file -->
         <copy todir="${dist.dir}"
-              file="${intact.context.dir}/${graph2MIF.context.file}"
-              overwrite="true" />
+            file="${intact.context.dir}/${graph2MIF.context.file}"
+            overwrite="true"/>
 
         <!-- Customize the context file -->
         <replace file="${dist.dir}/${graph2MIF.context.file}"
-                 token="[WAR.FILE.NAME]"
-                 value="${war.file}" />
+            token="[WAR.FILE.NAME]"
+            value="${war.file}"/>
         <replace file="${dist.dir}/${graph2MIF.context.file}"
-                 token="[server.name]"
-                 value="${server.name}" />
+            token="[server.name]"
+            value="${server.name}"/>
 
         <replace file="${dist.dir}/${graph2MIF.context.file}"
-                 token=".war"
-                 value="" />
+            token=".war"
+            value=""/>
     </target>
 
 </project>
