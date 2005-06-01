@@ -29,36 +29,37 @@ import java.util.List;
 public class DetailsResultAction extends AbstractResultAction {
 
     /**
-     * This method overrides the parent one to process the request more effectively. It avoids
-     * making any assumptions about the beans or the size of search result list and keep all of the
-     * processing in a single place for each Action type.
+     * This method overrides the parent one to process the request more effectively. It avoids making any assumptions
+     * about the beans or the size of search result list and keep all of the processing in a single place for each
+     * Action type.
      *
      * @param request  The request to be processed
      * @param helpLink The contextual help link
+     *
      * @return String the forward code for the parent execute method to return.
      */
-    protected String processResults(HttpServletRequest request, String helpLink) {
+    protected String processResults( HttpServletRequest request, String helpLink ) {
 
         // Session to access various session objects. This will create
         //a new session if one does not exist.
-        HttpSession session = super.getSession(request);
+        HttpSession session = super.getSession( request );
 
         //first check for and process a tabbed page request - ROUGHLY....
         //get the ViewBean (it already should contain the Experiment)
         //set the index of the Interaction page to that given in the request
         //send back to detail.jsp.
-        String selectedPage = request.getParameter("selectedChunk");
-        if ((selectedPage != null) && (!selectedPage.equals(""))) {
+        String selectedPage = request.getParameter( "selectedChunk" );
+        if ( ( selectedPage != null ) && ( !selectedPage.equals( "" ) ) ) {
 
-            logger.error("doing next page request..next page is " + selectedPage);
+            logger.debug( "doing next page request..next page is " + selectedPage );
             //got a request for a tabbed page from a detail view -
             //so use the request info on the specified view bean to change the
             //Interaction list to be viewed, and go back to the detail JSP afterwards...
 
-            MainDetailViewBean bean = (MainDetailViewBean) session.getAttribute(SearchConstants.LARGE_EXPERIMENT_BEAN);
-            if (bean != null) {
-                bean.setInteractionPage(Integer.parseInt(selectedPage));
-                logger.error("bean index set OK");
+            MainDetailViewBean bean = (MainDetailViewBean) session.getAttribute( SearchConstants.LARGE_EXPERIMENT_BEAN );
+            if ( bean != null ) {
+                bean.setInteractionPage( Integer.parseInt( selectedPage ) );
+                logger.debug( "bean index set OK" );
                 //TODO use a Constant here 
                 return "detailPage";   //done
             }
@@ -67,13 +68,13 @@ public class DetailsResultAction extends AbstractResultAction {
         }
 
         //new info to process, so get the search results from the request
-        Collection results = (Collection) request.getAttribute(SearchConstants.SEARCH_RESULTS);
+        Collection results = (Collection) request.getAttribute( SearchConstants.SEARCH_RESULTS );
         //initial sanity check - empty results should be just ignored
-        if ((results == null) || (results.isEmpty())) {
+        if ( ( results == null ) || ( results.isEmpty() ) ) {
             return SearchConstants.FORWARD_NO_MATCHES;
         }
 
-        logger.info("DetailAction: result Collection contains " + results.size() + " items.");
+        logger.info( "DetailAction: result Collection contains " + results.size() + " items." );
         List beanList = null;
         
         // String appPath = getServlet().getServletContext().getInitParameter("searchLink");
@@ -88,33 +89,33 @@ public class DetailsResultAction extends AbstractResultAction {
         Collection experiments = null;
         Interaction interactionResult = null;   //used to tell the viewbean what needs displaying
 
-        if ((Interaction.class.isAssignableFrom(resultType))) {
+        if ( ( Interaction.class.isAssignableFrom( resultType ) ) ) {
             interactionResult = (Interaction) results.iterator().next();
             experiments = interactionResult.getExperiments();
 
-        }
-        else if (Experiment.class.isAssignableFrom(resultType)) {
+        } else if ( Experiment.class.isAssignableFrom( resultType ) ) {
             experiments = results;  //got Experiments in the first place
         }
 
-        if (experiments != null) {
+        if ( experiments != null ) {
             beanList = new ArrayList();
-            for (Iterator it = experiments.iterator(); it.hasNext();) {
-                MainDetailViewBean bean = new MainDetailViewBean((Experiment) it.next(), helpLink,
-                                                                 searchURL, request.getContextPath());
-                if (interactionResult != null) bean.setWrappedInteraction(interactionResult);   //tell bean display info
-                beanList.add(bean);
+            for ( Iterator it = experiments.iterator(); it.hasNext(); ) {
+                MainDetailViewBean bean = new MainDetailViewBean( (Experiment) it.next(), helpLink,
+                                                                  searchURL, request.getContextPath() );
+                if ( interactionResult != null ) {
+                    bean.setWrappedInteraction( interactionResult );   //tell bean display info
+                }
+                beanList.add( bean );
             }
-            logger.info("DetailAction: Collection of " + beanList.iterator().next().getClass() +
-                        " created");
+            logger.info( "DetailAction: Collection of " + beanList.iterator().next().getClass() +
+                         " created" );
 
-            request.setAttribute(SearchConstants.VIEW_BEAN_LIST, beanList);
+            request.setAttribute( SearchConstants.VIEW_BEAN_LIST, beanList );
             //send to the detail view JSP
-            logger.info("detailsAction: forwarding to 'details' JSP..");
+            logger.info( "detailsAction: forwarding to 'details' JSP.." );
             // TODO use a Constant here
             return "detailPage";
-        }
-        else {
+        } else {
             //something is wrong here - forward to error page 
             return SearchConstants.FORWARD_FAILURE;
         }
