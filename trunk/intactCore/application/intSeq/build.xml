@@ -23,25 +23,25 @@
 
     <!-- context path for hierarchView store in the application level -->
     <property name="intact.context.dir" value="${intact.app.dir}/context"/>
-    <property name="intSeq-context-file"    value="intSeq-context.xml"/>
+    <property name="intSeq-context-file" value="intSeq-context.xml"/>
 
-    <property name="commons.pages.dir"   value="${intact.app.dir}/pages"/>
+    <property name="commons.pages.dir" value="${intact.app.dir}/pages"/>
     <property name="commons.layouts.dir" value="${intact.app.dir}/layouts"/>
-    <property name="commons.images.dir"  value="${intact.app.dir}/images"/>
+    <property name="commons.images.dir" value="${intact.app.dir}/images"/>
 
-    <property name="pages.dir"          value="pages"/>
-    <property name="images.dir"         value="images"/>
-    <property name="layouts.dir"        value="layouts"/>
+    <property name="pages.dir" value="pages"/>
+    <property name="images.dir" value="images"/>
+    <property name="layouts.dir" value="layouts"/>
     <property name="layouts.styles.dir" value="${layouts.dir}/styles"/>
 
-    <property name="config.dir"         value="WEB-INF/config" />
+    <property name="config.dir" value="WEB-INF/config"/>
     <property name="lib.dir" value="WEB-INF/lib"/>
     <property name="tld.dir" value="WEB-INF/tld"/>
     <property name="dest.dir" value="WEB-INF/classes"/>
 
     <property name="docs.dir" value="doc/api"/>
-    <property name="dist.dir"           value="dist"/>
-    <property name="war.file"           value="intSeq.war"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="war.file" value="intSeq.war"/>
 
     <!-- The name of the last modified file -->
     <property name="last.modified.file" value="last-modified.txt"/>
@@ -49,8 +49,8 @@
 
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
-    
-     <!-- The jdbc properties. -->
+
+    <!-- The jdbc properties. -->
     <property file="${intact.root}/config/jdbc.properties"/>
 
     <!-- This project specific paths.
@@ -107,7 +107,7 @@
 
     <!-- Creates the 'docs' directory. -->
     <target name="mk-docs">
-        <mkdir dir="${docs.dir}" />
+        <mkdir dir="${docs.dir}"/>
     </target>
 
     <!-- =================================================================== -->
@@ -121,30 +121,30 @@
 
         <!-- Struts imported tlds-->
         <delete>
-             <fileset dir="${tld.dir}">
-                  <exclude name="display.tld"/>
-                  <exclude name="taglib3.tld"/>
-             </fileset>
+            <fileset dir="${tld.dir}">
+                <exclude name="display.tld"/>
+                <exclude name="taglib3.tld"/>
+            </fileset>
         </delete>
 
         <!-- Tiles commons files -->
         <delete>
-             <fileset dir="${layouts.dir}">
-                 <!-- Do not remove our specific files -->
-                 <exclude name="sidebar.jsp"/>
-             </fileset>
+            <fileset dir="${layouts.dir}">
+                <!-- Do not remove our specific files -->
+                <exclude name="sidebar.jsp"/>
+            </fileset>
         </delete>
 
         <delete dir="${layouts.styles.dir}"/>
 
         <delete>
-             <fileset dir="${pages.dir}">
-                 <!-- Do not remove our specific files -->
-                 <exclude name="sidebarInput.jsp"/>
-                 <exclude name="similaritySearch.jsp"/>
-                 <exclude name="similaritySearchResults.jsp"/>
-                 <exclude name="srsSearch.jsp"/>
-                 <exclude name="srsSearchResults.jsp"/>
+            <fileset dir="${pages.dir}">
+                <!-- Do not remove our specific files -->
+                <exclude name="sidebarInput.jsp"/>
+                <exclude name="similaritySearch.jsp"/>
+                <exclude name="similaritySearchResults.jsp"/>
+                <exclude name="srsSearch.jsp"/>
+                <exclude name="srsSearchResults.jsp"/>
             </fileset>
         </delete>
         <delete dir="${images.dir}"/>
@@ -191,7 +191,7 @@
         depends="prepare">
 
         <!-- Create the dest dir if it doesn't exist. -->
-        <mkdir dir="${dest.dir}" />
+        <mkdir dir="${dest.dir}"/>
 
         <!-- Only compile intSeq sources only. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on" debug="on" source="1.4"
@@ -209,7 +209,7 @@
     <!-- Builds a war file using the current database setup. -->
 
     <target name="war" description="Builds a war file"
-            depends="set-db-type, set-tstamp, war-postgres, war-oracle"/>
+        depends="set-db-type, set-tstamp, war-postgres, war-oracle"/>
 
     <!-- =================================================================== -->
 
@@ -217,7 +217,7 @@
 
     <target name="build-war" depends="compile, gen-last-modified-file, make-jar" description="Builds a war file">
         <!-- Create the distribution dir if it doesn't exist. -->
-        <mkdir dir="${dist.dir}" />
+        <mkdir dir="${dist.dir}"/>
 
         <!-- Delete the war file or else it will keep the old one -->
         <delete file="${dist.dir}/${war.file}" quiet="true"/>
@@ -225,7 +225,7 @@
         <!-- Copy struts standard tld files -->
         <copy todir="${tld.dir}">
             <fileset dir="${intact.app.dir}/tld">
-<!--                <include name="intact.tld"/>-->
+                <!--                <include name="intact.tld"/>-->
                 <include name="struts-bean.tld"/>
                 <include name="struts-html.tld"/>
                 <include name="struts-logic.tld"/>
@@ -252,23 +252,23 @@
             <fileset dir="${commons.pages.dir}"/>
         </copy>
 
-		<war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
-		   <fileset dir="${basedir}">
-				<include name="*.jsp"/>
+        <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
+            <fileset dir="${basedir}">
+                <include name="*.jsp"/>
                 <include name="${layouts.dir}/*.jsp"/>
-               <!-- Exclude un-usefull files -->
+                <!-- Exclude un-usefull files -->
                 <exclude name="${layouts.dir}/*Frame.jsp"/>
 
                 <include name="${layouts.styles.dir}/*.css"/>
                 <include name="${images.dir}/*.gif"/>
                 <include name="${pages.dir}/*.jsp"/>
-	  			<include name="WEB-INF/struts-config.xml"/>
+                <include name="WEB-INF/struts-config.xml"/>
                 <include name="WEB-INF/tiles-defs.xml"/>
                 <include name="${tld.dir}/**"/>
-	   		</fileset>
+            </fileset>
 
-			<!-- Include intSeq specific jar files. -->
-			<lib dir="${lib.dir}">
+            <!-- Include intSeq specific jar files. -->
+            <lib dir="${lib.dir}">
                 <!-- Avoid NFS temp files (occationally) -->
                 <include name="*.jar"/>
             </lib>
@@ -279,21 +279,21 @@
             </lib>
 
             <!-- Include common jar files for struts. -->
-            <lib dir="${intact.app.dir}/lib" />
+            <lib dir="${intact.app.dir}/lib"/>
 
-			<!-- Include common jar files from intact core. -->
+            <!-- Include common jar files from intact core. -->
             <lib dir="${root.lib.dir}">
-		<include name="db-ojb-1.0.rc6.jar"/>
+                <include name="db-ojb-1.0.rc6.jar"/>
                 <include name="commons-dbcp-1.1.jar"/>
-		<include name="log4j-1.2.8.jar"/>
+                <include name="log4j-1.2.8.jar"/>
                 <include name="${db}"/>
-	    </lib>
+            </lib>
 
             <!-- intSeq specific classes -->
-  			<classes dir="${dest.dir}"/>
-		</war>
+            <classes dir="${dest.dir}"/>
+        </war>
 
-        <antcall target="gen-context-file" />
+        <antcall target="gen-context-file"/>
     </target>
 
     <!-- =================================================================== -->
@@ -318,7 +318,7 @@
 
     <target name="war-postgres" if="postgres">
         <!-- Load postgres properties. -->
-        <property file="${intact.root}/config/postgres.properties" />
+        <property file="${intact.root}/config/postgres.properties"/>
 
         <echo message="Building a war for postgres ${dbalias} database"/>
         <property name="war.name" value="${ant.project.name}-${dbalias}-${TODAY}.war"/>
@@ -338,13 +338,13 @@
 
     <target name="war-oracle" description="Builds a war file for oracle" if="oracle">
         <!-- Load oracle properties. -->
-        <property file="${intact.root}/config/oracle.properties" />
+        <property file="${intact.root}/config/oracle.properties"/>
 
         <echo message="Building a war for oracle ${dbalias} database"/>
         <property name="war.name" value="${ant.project.name}-${dbalias}-${TODAY}.war"/>
 
         <antcall target="build-war">
-            <param name="db" value=" ${oracle.jar}"/>
+            <param name="db" value="${oracle.jar}"/>
             <param name="war.file" value="${war.name}"/>
         </antcall>
     </target>
@@ -359,7 +359,7 @@
 
         <!-- Copy context files in the Tomcat's webapps directory -->
         <copy file="${dist.dir}/${intSeq-context-file}"
-              todir="${webapps.dir}" overwrite="yes"/>
+            todir="${webapps.dir}" overwrite="yes"/>
     </target>
 
     <!-- =================================================================== -->
@@ -410,15 +410,15 @@
 
         <!-- Copy the template file -->
         <copy todir="${dist.dir}"
-              file="${intact.context.dir}/${intSeq-context-file}"
-              overwrite="true" />
+            file="${intact.context.dir}/${intSeq-context-file}"
+            overwrite="true"/>
 
         <!-- Customize the context file -->
         <replace file="${dist.dir}/${intSeq-context-file}"
-                 token="[WAR.FILE.NAME]"
-                 value="${war.file}" />
+            token="[WAR.FILE.NAME]"
+            value="${war.file}"/>
         <replace file="${dist.dir}/${intSeq-context-file}"
-                 token="[server.name]"
-                 value="${server.name}" />
+            token="[server.name]"
+            value="${server.name}"/>
     </target>
 </project>

@@ -26,21 +26,21 @@
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
 
-     <!-- The jdbc properties. -->
+    <!-- The jdbc properties. -->
     <property file="${intact.root}/config/jdbc.properties"/>
 
-    <property name="dist.dir"    value="dist"/>
+    <property name="dist.dir" value="dist"/>
     <property name="pg.war.file" value="${ant.project.name}.war"/>
 
     <!-- This project specific paths. -->
-    <property name="src.dir"     value="src"/>
+    <property name="src.dir" value="src"/>
     <property name="layouts.dir" value="layouts"/>
-    <property name="pages.dir"   value="pages"/>
-    <property name="images.dir"  value="images"/>
-    <property name="lib.dir"     value="WEB-INF/lib"/>
-    <property name="tld.dir"     value="WEB-INF/tld"/>
-    <property name="dest.dir"    value="WEB-INF/classes"/>
-    <property name="docs.dir"    value="doc/api"/>
+    <property name="pages.dir" value="pages"/>
+    <property name="images.dir" value="images"/>
+    <property name="lib.dir" value="WEB-INF/lib"/>
+    <property name="tld.dir" value="WEB-INF/tld"/>
+    <property name="dest.dir" value="WEB-INF/classes"/>
+    <property name="docs.dir" value="doc/api"/>
 
     <!-- The name of the last modified file -->
     <property name="last.modified.file" value="last-modified.txt"/>
@@ -50,9 +50,9 @@
 
         <!-- Currently no JAR file use in search -->
         <!-- Project specific jar files. -->
-<!--        <fileset dir="${lib.dir}">-->
-<!--            <include name="**/*.jar"/>-->
-<!--        </fileset>-->
+        <!--        <fileset dir="${lib.dir}">-->
+        <!--            <include name="**/*.jar"/>-->
+        <!--        </fileset>-->
 
         <!-- Where the classes are compiled to. -->
         <pathelement path="${dest.dir}"/>
@@ -67,7 +67,7 @@
         <pathelement path="${root.lib.dir}/log4j-1.2.8.jar"/>
         <pathelement path="${root.lib.dir}/commons-dbcp-1.1.jar"/>
 
-	<!-- NB these probably need upgrading from the intact lib directory.. -->
+        <!-- NB these probably need upgrading from the intact lib directory.. -->
         <pathelement path="${intact.app.dir}/lib/struts.jar"/>
         <pathelement path="${intact.app.dir}/lib/commons-collections.jar"/>
         <pathelement path="${intact.app.dir}/lib/commons-lang.jar"/>
@@ -112,37 +112,37 @@
 
         <!-- layout commons files -->
         <delete>
-             <fileset dir="${layouts.dir}">
-                 <!-- Do not remove search specific files -->
-                 <exclude name="sidebar.jsp"/>
+            <fileset dir="${layouts.dir}">
+                <!-- Do not remove search specific files -->
+                <exclude name="sidebar.jsp"/>
             </fileset>
         </delete>
 
         <!-- pages commons files -->
         <delete>
-             <fileset dir="${pages.dir}">
-                 <!-- Do not remove search specific files -->
-                 <exclude name="noMatch.jsp"/>
-                 <exclude name="warning.jsp"/>
-                 <exclude name="results.jsp"/>
-                 <exclude name="sidebarInput.jsp"/>
+            <fileset dir="${pages.dir}">
+                <!-- Do not remove search specific files -->
+                <exclude name="noMatch.jsp"/>
+                <exclude name="warning.jsp"/>
+                <exclude name="results.jsp"/>
+                <exclude name="sidebarInput.jsp"/>
             </fileset>
         </delete>
 
         <!-- images commons files -->
         <delete>
-             <fileset dir="${images.dir}">
-                 <!-- Do not remove search specific files -->
-                 <exclude name="image23F.JPG"/>
-                 <exclude name="imageE0A.JPG"/>
-                 <exclude name="imageGKH.JPG"/>
-                 <exclude name="imageV3F.JPG"/>
+            <fileset dir="${images.dir}">
+                <!-- Do not remove search specific files -->
+                <exclude name="image23F.JPG"/>
+                <exclude name="imageE0A.JPG"/>
+                <exclude name="imageGKH.JPG"/>
+                <exclude name="imageV3F.JPG"/>
             </fileset>
         </delete>
 
-        <delete dir="${tld.dir}" />
+        <delete dir="${tld.dir}"/>
 
-        <delete file="${last.modified.file}" quiet="true" />
+        <delete file="${last.modified.file}" quiet="true"/>
     </target>
 
     <!-- =================================================================== -->
@@ -277,16 +277,16 @@
 
             <!-- Currently no JAR file use in search -->
             <!-- Include search specific jar files. -->
-<!--            <lib dir="${lib.dir}">-->
-<!--                <include name="*.jar"/>-->
-<!--            </lib>-->
+            <!--            <lib dir="${lib.dir}">-->
+            <!--                <include name="*.jar"/>-->
+            <!--            </lib>-->
 
             <!-- Inlcude the intact core -->
             <lib dir="${root.dist.dir}"/>
 
             <!-- Include application common jar files but exclude test files -->
             <lib dir="${intact.app.dir}/lib">
-            <exclude name="test/**"/>
+                <exclude name="test/**"/>
             </lib>
 
             <!-- Include common jar files from intact core. -->
@@ -302,7 +302,7 @@
             <classes dir="${dest.dir}"/>
         </war>
 
-        <antcall target="gen-context-file" />
+        <antcall target="gen-context-file"/>
     </target>
 
     <!-- =================================================================== -->
@@ -327,7 +327,7 @@
 
     <target name="war-postgres" if="postgres">
         <!-- Load postgres properties. -->
-        <property file="${intact.root}/config/postgres.properties" />
+        <property file="${intact.root}/config/postgres.properties"/>
 
         <echo message="Building a war for postgres ${dbalias} database"/>
         <property name="war.name" value="${ant.project.name}-${dbalias}-${TODAY}.war"/>
@@ -347,13 +347,13 @@
 
     <target name="war-oracle" description="Builds a war file for oracle" if="oracle">
         <!-- Load oracle properties. -->
-        <property file="${intact.root}/config/oracle.properties" />
+        <property file="${intact.root}/config/oracle.properties"/>
 
         <echo message="Building a war for oracle ${dbalias} database"/>
         <property name="war.name" value="${ant.project.name}-${dbalias}-${TODAY}.war"/>
 
         <antcall target="build-war">
-            <param name="db" value=" ${oracle.jar}"/>
+            <param name="db" value="${oracle.jar}"/>
             <param name="war.file" value="${war.name}"/>
         </antcall>
     </target>
@@ -368,7 +368,7 @@
 
         <!-- Copy context files in the Tomcat's webapps directory -->
         <copy file="${dist.dir}/${search-context-file}"
-              todir="${webapps.dir}" overwrite="yes"/>
+            todir="${webapps.dir}" overwrite="yes"/>
     </target>
 
     <!-- =================================================================== -->
@@ -461,16 +461,16 @@
 
         <!-- Copy the template file -->
         <copy todir="${dist.dir}"
-              file="${intact.context.dir}/${search-context-file}"
-              overwrite="true" />
+            file="${intact.context.dir}/${search-context-file}"
+            overwrite="true"/>
 
         <!-- Customize the context file -->
         <replace file="${dist.dir}/${search-context-file}"
-                 token="[WAR.FILE.NAME]"
-                 value="${war.file}" />
+            token="[WAR.FILE.NAME]"
+            value="${war.file}"/>
         <replace file="${dist.dir}/${search-context-file}"
-                 token="[server.name]"
-                 value="${server.name}" />
+            token="[server.name]"
+            value="${server.name}"/>
     </target>
 
 </project>

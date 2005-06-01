@@ -752,6 +752,8 @@ Verison: $Id$
         <echo message="Building a war for postgres ${dbalias} database"/>
         <property name="war.name" value="${ant.project.name}-${dbalias}-${TODAY}.war"/>
 
+        <echo message="Using PostgreSQL JAR file: ${postgresql.jar}"/>
+
         <antcall target="build-war">
             <param name="db" value="${postgresql.jar}"/>
             <param name="war.file" value="${war.name}"/>
@@ -772,8 +774,10 @@ Verison: $Id$
         <echo message="Building a war for oracle ${dbalias} database"/>
         <property name="war.name" value="${ant.project.name}-${dbalias}-${TODAY}.war"/>
 
+        <echo message="Using Oracle JAR file: ${oracle.jar}"/>
+
         <antcall target="build-war">
-            <param name="db" value=" ${oracle.jar}"/>
+            <param name="db" value="${oracle.jar}"/>
             <param name="war.file" value="${war.name}"/>
         </antcall>
     </target>

@@ -7,23 +7,23 @@
 
 <project name="goDensity" basedir="." default="compile">
 
-    <property name="project.title"   value="goDensity"/>
+    <property name="project.title" value="goDensity"/>
     <property name="project.version" value="1.0"/>
 
     <!-- Intact core locations -->
-    <property name="intact.root"     value="../.."/>
-    <property name="root.lib.dir"    value="${intact.root}/lib"/>
-    <property name="root.src.dir"    value="${intact.root}/src"/>
-    <property name="root.dest.dir"   value="${intact.root}/classes"/>
+    <property name="intact.root" value="../.."/>
+    <property name="root.lib.dir" value="${intact.root}/lib"/>
+    <property name="root.src.dir" value="${intact.root}/src"/>
+    <property name="root.dest.dir" value="${intact.root}/classes"/>
     <property name="root.config.dir" value="${intact.root}/config"/>
-    <property name="root.dist.dir"   value="${intact.root}/dist"/>
-    <property name="root.jar.file"   value="${root.dist.dir}/intact-core.jar"/>
+    <property name="root.dist.dir" value="${intact.root}/dist"/>
+    <property name="root.jar.file" value="${root.dist.dir}/intact-core.jar"/>
 
     <!-- Intact application location. -->
-    <property name="intact.app.dir"  value=".."/>
+    <property name="intact.app.dir" value=".."/>
 
     <!-- Context path for goDensity -->
-    <property name="intact.context.dir"     value="${intact.app.dir}/context"/>
+    <property name="intact.context.dir" value="${intact.app.dir}/context"/>
     <property name="goDensity-context-file" value="goDensity-context.xml"/>
 
     <property environment="env"/>
@@ -33,16 +33,16 @@
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
 
-     <!-- The jdbc properties. -->
+    <!-- The jdbc properties. -->
     <property file="${intact.root}/config/jdbc.properties"/>
 
     <property name="dist.dir" value="dist"/>
     <property name="war.file" value="goDensity.war"/>
 
     <!-- This project specific paths. -->
-    <property name="src.dir"  value="src"/>
-<!--    <property name="lib.dir"  value="WEB-INF/lib"/>-->
-    <property name="tld.dir"  value="WEB-INF/tld"/>
+    <property name="src.dir" value="src"/>
+    <!--    <property name="lib.dir"  value="WEB-INF/lib"/>-->
+    <property name="tld.dir" value="WEB-INF/tld"/>
     <property name="dest.dir" value="WEB-INF/classes"/>
     <property name="docs.dir" value="doc/api"/>
 
@@ -50,9 +50,9 @@
     <path id="project.class.path">
 
         <!-- Project specific jar files. -->
-<!--        <fileset dir="${lib.dir}">-->
-<!--            <include name="**/*.jar"/>-->
-<!--        </fileset>-->
+        <!--        <fileset dir="${lib.dir}">-->
+        <!--            <include name="**/*.jar"/>-->
+        <!--        </fileset>-->
 
         <!-- Where the classes are compiled to. -->
         <pathelement path="${dest.dir}"/>
@@ -282,7 +282,7 @@
     <target name="war-oracle" if="oracle">
         <echo message="Building a war for oracle"/>
         <antcall target="build-war">
-            <param name="db" value=" ${oracle.jar}"/>
+            <param name="db" value="${oracle.jar}"/>
         </antcall>
     </target>
 
@@ -296,7 +296,7 @@
 
         <!-- Copy context files in the Tomcat's webapps directory -->
         <copy file="${intact.context.dir}/${goDensity-context-file}"
-              todir="${webapps.dir}" overwrite="yes"/>
+            todir="${webapps.dir}" overwrite="yes"/>
     </target>
 
     <!-- =================================================================== -->
