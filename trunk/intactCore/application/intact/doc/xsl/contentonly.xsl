@@ -16,10 +16,15 @@
 
     <xsl:template match="page">
 
-          <html>
+        <html>
             <head>
-<!--                <link rel="stylesheet" href="../services/include/stylesheet.css" type="text/css"/>-->
+                <!--                <link rel="stylesheet" href="../services/include/stylesheet.css" type="text/css"/>-->
                 <link rel="stylesheet" href="stylesheet.css" type="text/css"/>
+
+                <!-- Don't cache the documentation -->
+                <meta http-equiv="cache-control" content="no-cache"/>
+                <meta http-equiv="pragma" content="no-cache"/>
+                <meta http-equiv="expires" content="-1"/>
             </head>
             <body>
 
@@ -42,7 +47,6 @@
             <xsl:apply-templates/>
         </p>
     </xsl:template>
-
 
 
 </xsl:stylesheet>

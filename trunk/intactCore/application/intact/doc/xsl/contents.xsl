@@ -15,15 +15,23 @@
     <xsl:param name="editlink"></xsl:param>
     <xsl:param name="request-index"></xsl:param>
     <xsl:param name="target">text</xsl:param>
-    <xsl:param name="targetdocument"><xsl:value-of select="concat($baseurl,'')"/></xsl:param>
+    <xsl:param name="targetdocument">
+        <xsl:value-of select="concat($baseurl,'')"/>
+    </xsl:param>
 
 
     <xsl:template match="page">
 
         <html>
             <head>
-<!--                <link rel="stylesheet" href="../services/include/stylesheet.css" type="text/css"/>-->
+                <!--                <link rel="stylesheet" href="../services/include/stylesheet.css" type="text/css"/>-->
                 <link rel="stylesheet" href="stylesheet.css" type="text/css"/>
+
+                <!-- Don't cache the documentation -->
+                <meta http-equiv="cache-control" content="no-cache"/>
+                <meta http-equiv="pragma" content="no-cache"/>
+                <meta http-equiv="expires" content="-1"/>
+
             </head>
             <body>
 
@@ -36,7 +44,6 @@
         </html>
 
     </xsl:template>
-
 
 
     <xsl:template match="p">
