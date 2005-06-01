@@ -272,7 +272,7 @@ ____|____         |    _________      ____________
         <action path="/showGraph"
             type="uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.controller.ShowCvGraphAction"
             name="advancedForm"
-            scope="response">
+            scope="session">
             <forward name="showIdGraph" path="/pages/cvIdGraph.jsp"/>
             <forward name="showIntGraph" path="/pages/cvIntGraph.jsp"/>
             <forward name="showIntTypeGraph" path="/pages/cvIntTypeGraph.jsp"/>
