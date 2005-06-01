@@ -498,7 +498,7 @@
 
     <!-- Compiles all the sources. -->
     <target name="compile-all" description="Compiles all the sources for Intact"
-        depends="compile-core, compile-hv, compile-editor, compile-search, compile-synchron, compile-dataConversion">
+        depends="compile-core, compile-hv, compile-editor, compile-search, compile-dataConversion">
     </target>
 
     <!-- =================================================================== -->
