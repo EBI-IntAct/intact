@@ -458,7 +458,7 @@ function getRadioButton(radioButtonNS,radioButtonIE) {
                    <html:options collection="cvDatabases" property="shortlabel" labelProperty="shortlabel" />
                    </html:select>
                    <br>
-                   <img src="spacer.gif" width="100" height="5" border="0"><br>
+                   <img src="/intact/search/images/spacer.gif" width="100" height="5" border="0"><br>
                    <html:text property="xRef" size="40" />
 
                    </td>
@@ -475,7 +475,7 @@ function getRadioButton(radioButtonNS,radioButtonIE) {
                       <html:select property="cvTopic" style="width: 200">
                           <html:options collection="cvTopics" property="shortlabel" labelProperty="shortlabel" />
                       </html:select><br>
-                      <img src="spacer.gif" width="100" height="5" border="0"><br>
+                      <img src="/intact/search/images/spacer.gif" width="100" height="5" border="0"><br>
                       <html:text property="annotation" size="40" />
                 </td>
                 <td colspan="2" rowspan="1" class="headerdarkmid" style="vertical-align: middle;"> as an annotation with this annotation topic
@@ -489,7 +489,7 @@ function getRadioButton(radioButtonNS,radioButtonIE) {
                       <html:select property="cvInteraction" style="width: 200">
                           <html:options collection="cvInteractions" property="shortlabel" labelProperty="shortlabel" />
                       </html:select><br>
-                       <img src="spacer.gif" width="100" height="5" border="0"><br>
+                       <img src="/intact/search/images/spacer.gif" width="100" height="5" border="0"><br>
                       <input type="button" name="button1" value="Interaction Detection Browser" style="width: 200" onclick="doScript('CvInteraction', '<%=request.getContextPath()%>')">
                 </td>
 
@@ -504,7 +504,7 @@ function getRadioButton(radioButtonNS,radioButtonIE) {
                       <html:select property="cvIdentification" style="width: 200">
                           <html:options collection="cvIdentifications" property="shortlabel" labelProperty="shortlabel" />
                       </html:select><br>
-                       <img src="spacer.gif" width="100" height="5" border="0"><br>
+                       <img src="/intact/search/images/spacer.gif" width="100" height="5" border="0"><br>
                       <input type="button" name="button2" value="Participant Detection Browser" style="width: 200" onclick="doScript('CvIdentification', '<%=request.getContextPath()%>')">
             </td>
 
@@ -519,7 +519,7 @@ function getRadioButton(radioButtonNS,radioButtonIE) {
                       <html:select property="cvInteractionType" style="width: 200">
                           <html:options collection="cvInteractionTypes" property="shortlabel" labelProperty="shortlabel" />
                       </html:select><br>
-                       <img src="spacer.gif" width="100" height="5" border="0"><br>
+                       <img src="/intact/search/images/spacer.gif" width="100" height="5" border="0"><br>
 
                       <input type="button" name="button3" value="CvInteractionType Browser" style="width: 200" onclick="doScript('CvInteractionType', '<%=request.getContextPath()%>')">
                 </td>
