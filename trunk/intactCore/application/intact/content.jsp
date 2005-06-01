@@ -26,7 +26,9 @@
                         <form name="sidebarForm" method="post" action="<%=request.getContextPath()%>/search/do/hvWelcome">
                           <ul>
                             <li class="greenboldsmalllist"><span class="text"> <input name="searchString" size="16" type="text">
-                            <input value="Search" title="Search IntAct" type="submit"> </span></li>
+                            <input value="Search" title="Search IntAct" type="submit">
+                            <a class="red_boldsmall" href="search/do/initAdvSearch"><b>Advanced Search</b></a>
+                            </span></li>
                             <li class="greenboldsmalllist"><span class="text">Examples: </span>
                               <ul>
                                 <span class="text"> </span> <li><span class="text">Gene name: lsm7</span></li>
