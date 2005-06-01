@@ -869,10 +869,11 @@ public class GoUtils {
             // A new definition. Delete all the existing ones.
             for (Iterator iter = exdefs.iterator(); iter.hasNext();) {
                 Annotation annotation = (Annotation) iter.next();
+                current.removeAnnotation(annotation);
                 myHelper.delete(annotation);
             }
-            myHelper.create(newdef);
             current.addAnnotation(newdef);
+            myHelper.create(newdef);
         }
     }
 }
