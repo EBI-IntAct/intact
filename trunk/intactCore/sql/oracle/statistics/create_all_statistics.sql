@@ -1,4 +1,4 @@
-DEFINE intactIndexTablespace        = INTACT_IDX
+DEFINE intactIndexTablespace = INTACT_IDX
 
 CLEAR SCREEN
 
@@ -9,26 +9,21 @@ SET   LINES 150
 SET   PAGES 20000
 SET   DOC OFF
 
-PROMPT **********************************************************************************
+PROMPT *********************************************************************************
 PROMPT
 PROMPT   Copyright (c) 2005 The European Bioinformatics Institute, and others.
 PROMPT   All rights reserved. Please see the file LICENSE
 PROMPT   in the root directory of this distribution.
 PROMPT
-PROMPT  **********************************************************************************
-PROMPT
+PROMPT **********************************************************************************
 PROMPT   Package:    statistics
-PROMPT
 PROMPT   Author : Michael Kleen (mkleen@ebi.ac.uk)
-PROMPT
 PROMPT   Purpose: Create Tables and Datas needed for statisticView used with Oracle
-PROMPT
 PROMPT   Usage:   sqlplus username/password@INSTANCE @create_all_statistics.sql
 PROMPT
 PROMPT   $Date$
 PROMPT   $Locker$
-PROMPT
-PROMPT *********************************************************************************
+PROMPT **********************************
 PROMPT Starting creation.
 PROMPT
 PROMPT Drop and recreating statistics tables
@@ -37,6 +32,7 @@ PROMPT **********************************
 PROMPT
 PROMPT
 PROMPT Creating ia_biosourcestatistics
+
 PROMPT **********************************
 @insert_ia_biosourcestatistics.sql
 PROMPT
