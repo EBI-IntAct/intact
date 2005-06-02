@@ -5,6 +5,8 @@ echo "Usage: testfill.sh user/password database onlyCV|small|medium|large"
 # extract username from the user/password parameter
 DBUSER=${1%%/*}
 
+PG_OPTIONS=""
+
 # set default dataset if needed
 if [ "$3" = "" ]
 then
@@ -25,6 +27,7 @@ echo
 echo "user name     : $DBUSER"
 echo "database name : $2"
 echo "data set      : ${DATASET} ${DEFAULT_WARN}"
+echo "additional Postgres options: $PG_OPTIONS"
 
 echo
 echo You need to create a db with \(\${YOUR_POSTGRES_PATH} is to be replaced by the path of your postgres install\) :
@@ -37,28 +40,28 @@ echo
 # wait until server has properly started up
 sleep 2
 
-psql -U $DBUSER -d $2 -f sql/postgres/drop_tables.sql
+psql $PG_OPTIONS -U $DBUSER -d $2 -f sql/postgres/drop_tables.sql
 if [ $? != 0 ]
 then
     exit 1 # if something went wrong in the previous command line, exit with an error code
 fi
 
-psql -U $DBUSER -d $2 -f sql/postgres/create_tables.sql
+psql $PG_OPTIONS -U $DBUSER -d $2 -f sql/postgres/create_tables.sql
 if [ $? != 0 ]
 then
     exit 1
 fi
 
 # add plpgsql in case it's not already done
-createlang -d $2 plpgsql
+createlang $PG_OPTIONS -U $DBUSER -d $2 plpgsql
 
-psql -d $2 -f sql/postgres/create_xref_trigger.sql
+psql $PG_OPTIONS -U $DBUSER -d $2 -f sql/postgres/create_xref_trigger.sql
 if [ $? != 0 ]
 then
     exit 1
 fi
 
-psql -U $DBUSER -d $2 -f sql/postgres/create_dummy.sql
+psql $PG_OPTIONS -U $DBUSER -d $2 -f sql/postgres/create_dummy.sql
 if [ $? != 0 ]
 then
     exit 1
