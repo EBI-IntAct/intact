@@ -694,8 +694,11 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         }
         finally {
             // We reset it because the current helper will be closed soon (hence
-            // no longer valid).
-            myProteinFactory.setIntactHelper(null);
+            // no longer valid). Check for null here as it is possible for
+            // updateProteins fails to create an insance
+            if (myProteinFactory != null) {
+                myProteinFactory.setIntactHelper(null);
+            }
         }
     }
 
