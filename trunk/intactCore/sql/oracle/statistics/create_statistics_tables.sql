@@ -16,10 +16,6 @@
 
 *************************************************************/
 
-DROP TABLE IA_BioSourceStatistics;
-DROP TABLE IA_DetectionMethodsStatistics; 
-
-DEFINE intactIndexTablespace        = INTACT_IDX
 
 CREATE TABLE IA_BioSourceStatistics
 (     ac                      NUMBER(9) NOT NULL
@@ -40,5 +36,3 @@ CREATE TABLE IA_DetectionMethodsStatistics
      , fullName               VARCHAR(250)
      , number_interactions    NUMBER(9)       DEFAULT  0       NOT NULL
 );
-
-
