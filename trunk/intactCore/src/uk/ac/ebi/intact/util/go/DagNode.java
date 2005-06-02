@@ -227,8 +227,6 @@ public class DagNode {
                 // Wants to check where this condition is true. This shouldn't be
                 // true because def file has taken care of inserting all the parents.
                 throw new IntactException("Additional parent wasn't found");
-//                additionalParent = (CvDagObject) goUtils.insertDefinition(nextGoid,
-//                        parentData.myTerm, nextGoLabel, false);
             }
             // Add the link between parent and child
             targetNode.addParent(additionalParent);
@@ -239,7 +237,11 @@ public class DagNode {
             // Cache objects to create aliases.
             Institution owner = helper.getInstitution();
             CvAliasType aliasType = (CvAliasType) helper.getObjectByLabel(
-                    CvAliasType.class, "go-synonym");
+                    CvAliasType.class, "go synonym");
+            // Must have an alias type
+            if (aliasType == null) {
+                throw new IntactException("Alias type go synonym is missing");
+            }
 
             for (Iterator iter = myAliases.iterator(); iter.hasNext(); ) {
                 Alias alias = new Alias(owner, targetNode, aliasType, (String) iter.next());
