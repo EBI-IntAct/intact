@@ -34,8 +34,7 @@
 
 <%
     // To allow access hierarchView properties. Used only by the javascript.
-    IntactServiceIF service = (IntactServiceIF) application.getAttribute(
-            SearchConstants.INTACT_SERVICE);
+    IntactServiceIF service = (IntactServiceIF) application.getAttribute( SearchConstants.INTACT_SERVICE);
 
     //build the absolute path out of the context path for 'search'
     //NB for eg HV and help pages, we have to use the relative path because the
@@ -246,7 +245,14 @@ others are subsequent rows.
 
 <%
     }
+
+
+      String seq = bean.getSequence();
+    if (seq != null) {
 %>
+
+
+
 
         <!-- sequence info (2 rows plus block display) -->
         <tr bgcolor="white">
@@ -273,6 +279,10 @@ others are subsequent rows.
 
         </tr>
 
+<%
+    } // end of display sequence's length and CRC if available.
+%>
+
         <!-- the sequence itself, written as blocks... -->
         <tr bgcolor="white">
 
@@ -282,10 +292,10 @@ others are subsequent rows.
     //Write out a formatted sequence, if there is one...
 
     //The length of one block of amino acids.
-    int SEQBLOCKLENGTH = 10;
+    final int SEQBLOCKLENGTH = 10;
 
     // Sequence itself
-    String seq = bean.getSequence();
+
     if (seq != null) {
         out.write("<font face=\"Courier New, Courier, monospace\">");
         int blocks = seq.length() / SEQBLOCKLENGTH;
