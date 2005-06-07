@@ -17,8 +17,16 @@ else
    then
        DATASET="Only insert the Controlled Vocabulary"
    else
-       DATASET=$3
-       DEFAULT_WARN=""
+       DATAFILE="data/ho_gavin_$3.dat"
+       if [ -f $DATAFILE ]
+       then
+          DATASET=$3
+          DEFAULT_WARN=""
+       else
+          echo "'$3' is not a recognized option, expected values are: onlyCV|small|medium|large."
+          echo "abort."
+          exit 1
+       fi
    fi
 fi
 
@@ -36,6 +44,9 @@ echo postmaster -i -S -D \${YOUR_POSTGRES_PATH}/$DBUSER
 echo createuser --createdb --no-adduser $DBUSER
 echo createdb -U $DBUSER $2
 echo
+
+
+
 
 # wait until server has properly started up
 sleep 2
