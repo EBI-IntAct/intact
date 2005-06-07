@@ -173,9 +173,13 @@
                     <a href="<%= bean.getInteractionsSearchURL()%>"><%= bean.getNumberOfInteractions()%></a>
                 </td>
 
-                <!-- Uniprot AC-->               
+                <!-- Uniprot AC-->
                  <td class="data" style="vertical-align: top; background-color: rgb(255, 255, 255);">
-                    <a href="<%= bean.getUniprotURL() %>"><%= bean.getUniprotAc() %></a>
+                    <% if( null == bean.getUniprotAc() ) { %>
+                       -
+                    <% } else { %>
+                       <a href="<%= bean.getUniprotURL() %>"><%= bean.getUniprotAc() %></a>
+                    <% } %>
                 </td>
 
                 <!-- gene name, not linked -->
@@ -253,7 +257,11 @@
                     the order of partners determined?
                     -->
                 <td class="data" style="vertical-align: top; background-color: rgb(255, 255, 255);">
-                    <a href="<%= partner.getUniprotURL()%>"><%= partner.getUniprotAc() %></a>
+                    <% if( null == partner.getUniprotAc() ) { %>
+                       -
+                    <% } else { %>
+                       <a href="<%= partner.getUniprotURL()%>"><%= partner.getUniprotAc() %></a>
+                    <% } %>
                 </td>
 
                 <!-- gene name, not linked -->
