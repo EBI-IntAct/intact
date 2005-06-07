@@ -572,36 +572,50 @@
 
     <!-- Runs the JUnit tester directly. The output is redirected to std out -->
     <!-- There is one target for each set of package tests -->
-
     <!-- model target -->
-    <target name="test-model-stdout" depends="compile-core"
-        description="Runs JUnit directly with output directed to stdout">
-        <java classname="junit.textui.TestRunner" fork="true">
-            <arg value="uk.ac.ebi.intact.model.test.AllJUnitTests"/>
-            <classpath refid="project.class.path"/>
-        </java>
+
+    <target name="test-model-stdout"
+        description="Runs model tests directly with output directed to stdout">
+        <antcall target="run-junit-single">
+            <param name="test.case" value="uk.ac.ebi.intact.model.test.AllJUnitTests"/>
+        </antcall>
     </target>
 
     <!-- helper target -->
-    <target name="test-helper-stdout" depends="compile-core"
-        description="Runs JUnit directly with output directed to stdout">
-        <java classname="junit.textui.TestRunner" fork="true">
-            <arg value="uk.ac.ebi.intact.business.test.AllJUnitTests"/>
-            <classpath refid="project.class.path"/>
-        </java>
+    <target name="test-helper-stdout"
+        description="Runs helper tests directly with output directed to stdout">
+        <antcall target="run-junit-single">
+            <param name="test.case" value="uk.ac.ebi.intact.business.test.AllJUnitTests"/>
+        </antcall>
     </target>
 
     <!-- util target -->
-    <target name="test-util-stdout" depends="compile-core"
-        description="Runs JUnit directly with output directed to stdout">
+    <target name="test-util-stdout"
+        description="Runs util tests directly with output directed to stdout">
+        <antcall target="run-junit-single">
+            <param name="test.case" value="uk.ac.ebi.intact.util.test.AllJUnitTests"/>
+        </antcall>
+    </target>
+
+    <!-- go tests -->
+    <target name="test-go-stdout"
+        description="Runs go tests directly with output directed to stdout">
+        <antcall target="run-junit-single">
+            <param name="test.case" value="uk.ac.ebi.intact.util.go.test.AllJUnitTests"/>
+        </antcall>
+    </target>
+
+    <!-- Runs a junit test for given test.case. e.g.
+         ant run-junit-single -Dtest.case=uk.ac.ebi.intact.util.go.AllJUnitTests
+    -->
+    <target name="run-junit-single" depends="compile-core"
+        description="Runs JUnit for given test case">
+        <echo message="Running the test for ${test.case}"/>
         <java classname="junit.textui.TestRunner" fork="true">
-            <arg value="uk.ac.ebi.intact.util.test.AllJUnitTests"/>
+            <arg value="${test.case}"/>
             <classpath refid="project.class.path"/>
         </java>
     </target>
-
-
-
 
     <!-- =================================================================== -->
 
