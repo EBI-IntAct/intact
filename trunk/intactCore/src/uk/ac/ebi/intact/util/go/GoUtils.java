@@ -853,6 +853,13 @@ public class GoUtils {
         String text = (String) goRec.getAnnotationTexts("definition").next();
         Annotation newdef = new Annotation(inst, definition, text);
 
+        // If we don't have any existing defs, then create a new def and return.
+        if (exdefs.isEmpty()) {
+            current.addAnnotation(newdef);
+            myHelper.create(newdef);
+            return;
+        }
+
         // Compare this new annotation with the existing annotations
         if (exdefs.contains(newdef)) {
             // This new definition exists, we need to delete all others apart for
@@ -866,14 +873,22 @@ public class GoUtils {
             }
         }
         else {
-            // A new definition. Delete all the existing ones.
+            // Boolean to indicate whether we have updated the existing annotation or not.
+            // Reuse an existing annotation instead of creating a new one.
+            boolean updatedExisting = false;
+
+            // A new definition. Delete all the existing ones apart for one.
             for (Iterator iter = exdefs.iterator(); iter.hasNext();) {
                 Annotation annotation = (Annotation) iter.next();
-                current.removeAnnotation(annotation);
-                myHelper.delete(annotation);
+                if (updatedExisting) {
+                    current.removeAnnotation(annotation);
+                    myHelper.delete(annotation);
+                }
+                else {
+                    annotation.setAnnotationText(text);
+                    updatedExisting = true;
+                }
             }
-            current.addAnnotation(newdef);
-            myHelper.create(newdef);
         }
     }
 }
