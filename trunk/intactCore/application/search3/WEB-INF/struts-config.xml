@@ -21,20 +21,20 @@ need only the "form-bean" element itself, with the corresponding
 "name" and "type" attributes.
 
 Workflow:                                         __________      _____________
-================================>  | tooLarge |==> |tooLarge.jsp |
-|                                  |__________|    |_____________|
-|                                   _________      _____________
-|                              ==> | partner  |==> | partner.jsp|
-|                             |    |_________ |    |____________|
+              ================================>  | tooLarge |==> |tooLarge.jsp |
+              |                                  |__________|    |_____________|
+              |                                   _________      _____________
+              |                              ==> | partner  |==> | partner.jsp|
+              |                             |    |_________ |    |____________|
 Query     _________       ____________      |     _________      _____________
 =======>  | Search | ===> | Dispatcher | ===|==>  | Single  |==> | single.jsp  |
-|________|      |____________|     |    |_________|    |_____________|
-|             |     _________      ____________
-|             |==> | Details |==> | detail.jsp |
-|             |    |_________|    |____________|
-____|____         |    _________      ____________
-|binary  |         ==> | simple  |==> | simple.jsp |
-|________|===========> |_________|    |____________|
+          |________|      |____________|    |     |_________|    |_____________|
+                              |             |     _________      ____________
+                              |             |==> | Details |==> | detail.jsp |
+                              |             |    |_________|    |____________|
+                          ____|____         |    _________      ____________
+                          |binary  |         ==> | simple  |==> | simple.jsp |
+                          |________|===========> |_________|    |____________|
 
 
 -->
@@ -84,7 +84,7 @@ ____|____         |    _________      ____________
             <form-property name="interTypeChildren" type="java.lang.String"/>
             <form-property name="partDetChildren" type="java.lang.String"/>
             <form-property name="iqlStatement" type="java.lang.String"/>
-            
+
         </form-bean>
 
     </form-beans>
