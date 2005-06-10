@@ -102,9 +102,9 @@ public final class ExperimentDescriptionTag {
             throw new IllegalArgumentException( "You must give a non null/empty shortlabel for an experimentDescription" );
         }
 
-        if ( fullname == null || fullname.trim().equals( "" ) ) {
-            throw new IllegalArgumentException( "You must give a non null/empty fullname for an experimentDescription" );
-        }
+//        if ( fullname == null || fullname.trim().equals( "" ) ) {
+//            throw new IllegalArgumentException( "You must give a non null/empty fullname for an experimentDescription" );
+//        }
 
 
         // TODO make a switch for the mandatory-ness of that value !!!
