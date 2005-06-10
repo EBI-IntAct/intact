@@ -130,7 +130,7 @@ public final class ExperimentDescriptionTag {
             throw new IllegalArgumentException( "You must give a non null participantDetection for an experimentDescription" );
         }
 
-        this.shortlabel = shortlabel.toLowerCase();
+        this.shortlabel = shortlabel.toLowerCase().trim();
         this.fullname = fullname;
         this.bibRef = bibRef;
 
