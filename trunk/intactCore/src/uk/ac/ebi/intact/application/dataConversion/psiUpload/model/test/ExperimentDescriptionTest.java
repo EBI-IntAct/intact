@@ -227,7 +227,7 @@ public class ExperimentDescriptionTest extends TestCase {
             // ok
         }
 
-        assertNull( experimentDescription );
+        assertNotNull( experimentDescription );
 
         try {
             experimentDescription = new ExperimentDescriptionTag( "shortlabel",
@@ -243,7 +243,7 @@ public class ExperimentDescriptionTest extends TestCase {
             // ok
         }
 
-        assertNull( experimentDescription );
+        assertNotNull( experimentDescription );
     }
 
     public void testProcess_error_no_bibRef() {
