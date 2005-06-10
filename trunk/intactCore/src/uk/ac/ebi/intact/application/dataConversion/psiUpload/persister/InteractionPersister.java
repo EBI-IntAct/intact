@@ -679,8 +679,9 @@ public final class InteractionPersister {
 
         // TODO when reading the PSI XML we could already load the FeatureTag with multiple Location based on the xref.id
 
-        System.out.println( "\n\tCompare IntAct Component: " + intactComponent + "\n\tand\n\t" + psiComponent );
-
+        if ( DEBUG ) {
+            System.out.println( "\n\tCompare IntAct Component: " + intactComponent + "\n\tand\n\t" + psiComponent );
+        }
         // Component and proteinParticipant are different as soon as we discover one difference
         boolean found = true;
 
