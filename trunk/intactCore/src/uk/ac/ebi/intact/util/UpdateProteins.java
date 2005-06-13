@@ -615,6 +615,15 @@ public class UpdateProteins extends UpdateProteinsI {
             // we don't activate the taxid filter here. Can throw IntactException
             Collection proteins = getProteinsFromSPTrAC( sptrEntry, identityXrefQualifier, null, PRIMARY_AC, helper );
 
+            // TODO bug to fix !!
+            // use case
+            //
+            // we have a protein that has AC 4 3 2 1
+            // on the web site the same entry 4 gives multiple flat files
+            // what happens is that  is a share secondary AC to many proteins
+            // eg. 4 as P02248 -> 11 proteins
+
+
             // Select which taxid to consider in the process.
             Collection taxids = getTaxids( sptrEntry );
 
@@ -1121,7 +1130,7 @@ public class UpdateProteins extends UpdateProteinsI {
 
             try {
 
-                id = sptrXref.getPropertyValue( SPTRCrossReference.PROPERTY_DESCRIPTION );
+                id = sptrXref.getPropertyValue( SPTRCrossReference.SECONDARY_PROPERTY );
 
             } catch ( AristotleSPTRException e ) {
                 // there was no description, we don't fail for that.
@@ -1548,6 +1557,33 @@ public class UpdateProteins extends UpdateProteinsI {
         return aliases;
     }
 
+
+    /**
+     * Extract from the SPTREntry the annotation release and the entry type, then combine them to get a version we will
+     * use in the Xref. uniprot, identity )
+     *
+     * @param sptrEntry the entry from which we extract the information.
+     *
+     * @return a version as a String.
+     *
+     * @throws SPTRException
+     */
+    private String getSPTREntryReleaseVersion( SPTREntry sptrEntry ) throws SPTRException {
+        String version = null;
+        String uniprotRelease = sptrEntry.getLastAnnotationUpdateRelease();
+
+        if ( sptrEntry.getEntryType() == SPTREntry.SWISSPROT ) {
+            version = "SP_" + uniprotRelease;
+        } else if ( sptrEntry.getEntryType() == SPTREntry.TREMBL ) {
+            version = "TrEMBL_" + uniprotRelease;
+        } else {
+            // though should not happen.
+            version = uniprotRelease;
+        }
+
+        return version;
+    }
+
     /**
      * Update (create them if not exist) SPTR Cross references to the given protein It also deletes all irrelevant Xref(
      * uniprot, identity )
@@ -1567,9 +1603,9 @@ public class UpdateProteins extends UpdateProteinsI {
         String shortLabel = protein.getShortLabel();
 
         // TODO use that annotation to quick check if a protein need update
-        String uniprotRelease = sptrEntry.getLastAnnotationUpdateRelease();
+        String version = getSPTREntryReleaseVersion( sptrEntry );
 
-        // TODO we need also to keep track of the last sequence update somhow.
+        // TODO we need also to keep track of the last sequence update somehow.
         // TODO a similar realease data is available for the last sequence update
         // we would need to store that information somewhere in order to know what need to be updated.
         // could be annotRelease/seqRelease.
@@ -1584,7 +1620,7 @@ public class UpdateProteins extends UpdateProteinsI {
                              uniprotDatabase,
                              proteinAC[ 0 ],
                              shortLabel,
-                             uniprotRelease,
+                             version,
                              identityXrefQualifier ) );
 
         String ac = null;
@@ -1595,7 +1631,7 @@ public class UpdateProteins extends UpdateProteinsI {
                                  uniprotDatabase,
                                  ac,
                                  shortLabel,
-                                 uniprotRelease,
+                                 version,
                                  secondaryXrefQualifier ) );
         }
 
@@ -1628,13 +1664,15 @@ public class UpdateProteins extends UpdateProteinsI {
 
         String uniprotRelease = sptrEntry.getLastAnnotationUpdateRelease();
 
+        String version = getSPTREntryReleaseVersion( sptrEntry );
+
         // create a list of all new Xrefs
         Collection xrefs = new ArrayList( isoIds.length );
         xrefs.add( new Xref( myInstitution,
                              uniprotDatabase,
                              isoIds[ 0 ],
                              masterAc,
-                             uniprotRelease,
+                             version,
                              identityXrefQualifier ) );
 
         for ( int i = 1; i < isoIds.length; i++ ) {
@@ -1644,7 +1682,7 @@ public class UpdateProteins extends UpdateProteinsI {
                                  uniprotDatabase,
                                  isoId,
                                  masterAc,
-                                 uniprotRelease,
+                                 version,
                                  secondaryXrefQualifier ) );
         }
 
@@ -2220,9 +2258,7 @@ public class UpdateProteins extends UpdateProteinsI {
      */
     private boolean needAnnotationUpdate( SPTREntry sptrEntry, Protein protein ) throws SPTRException {
 
-        // TODO we may have to check that the primary accession number are the same in the protein and the entry.
-
-        String sptrRelease = sptrEntry.getLastAnnotationUpdateRelease();
+        String sptrRelease = getSPTREntryReleaseVersion( sptrEntry );
 
         String intactRelease = null;
         // exit the loop as soon as we find a release in IntAct.
@@ -2942,7 +2978,21 @@ public class UpdateProteins extends UpdateProteinsI {
             System.exit( 1 );
 
         } catch ( Exception e ) {
+
             e.printStackTrace();
+
+            Throwable t = e;
+            while ( t.getCause() != null ) {
+
+                t = e.getCause();
+
+                System.err.println( "" );
+                System.err.println( "================== ROOT CAUSE ==========================" );
+                System.err.println( "" );
+
+                t.printStackTrace( System.err );
+            }
+
             System.exit( 1 );
         } finally {
             if ( helper != null ) {
