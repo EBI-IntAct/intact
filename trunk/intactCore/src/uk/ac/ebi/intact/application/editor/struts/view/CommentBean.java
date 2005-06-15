@@ -128,7 +128,11 @@ public class CommentBean extends AbstractEditKeyBean {
      * @param topic the new topic as a <code>String</code>.
      */
     public void setTopic(String topic) {
-        myTopic = topic.trim();
+        // The order is improtant! myTopic can be null but not topic
+        if (!topic.equals(myTopic)) {
+            myTopic = topic;
+            setTopicLink();
+        }
     }
 
     /**
