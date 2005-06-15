@@ -169,7 +169,10 @@ public class XreferenceBean extends AbstractEditKeyBean {
      * @param dbname the name of the database.
      */
     public void setDatabase(String dbname) {
-        myDatabaseName = dbname.trim();
+        if (!dbname.equals(myDatabaseName)) {
+            myDatabaseName = dbname;
+            setDatabaseLink();
+        }
     }
 
     /**
@@ -197,7 +200,11 @@ public class XreferenceBean extends AbstractEditKeyBean {
      *                  text box.
      */
     public void setPrimaryId(String primaryId) {
-        myPrimaryId = primaryId.trim();
+        String pid = primaryId.trim();
+        if (!pid.equals(myPrimaryId)) {
+            myPrimaryId = pid;
+            setPrimaryIdLink();
+        }
     }
 
     /**
@@ -257,7 +264,10 @@ public class XreferenceBean extends AbstractEditKeyBean {
      * @param refQualifier the reference qaulifier as a <code>String</code>.
      */
     public void setQualifier(String refQualifier) {
-        myReferenceQualifer = refQualifier;
+        if (!refQualifier.equals(myReferenceQualifer)) {
+            myReferenceQualifer = refQualifier;
+            setRefQualifierLink();
+        }
     }
 
     /**
