@@ -12,10 +12,8 @@ import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.search2.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search2.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search2.struts.framework.util.SearchConstants;
-import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.model.proxy.ProteinProxy;
+import uk.ac.ebi.intact.model.Protein;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

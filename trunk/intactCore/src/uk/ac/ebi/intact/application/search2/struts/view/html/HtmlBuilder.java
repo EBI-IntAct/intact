@@ -10,8 +10,6 @@ import uk.ac.ebi.intact.application.search2.business.Constants;
 import uk.ac.ebi.intact.application.search2.struts.view.details.BinaryDetailsViewBean;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.model.proxy.InteractionProxy;
-import uk.ac.ebi.intact.model.proxy.ProteinProxy;
 import uk.ac.ebi.intact.util.SearchReplace;
 
 import java.io.IOException;
