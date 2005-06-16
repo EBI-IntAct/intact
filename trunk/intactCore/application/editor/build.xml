@@ -85,7 +85,7 @@
         <pathelement path="${root.lib.dir}/db-ojb-1.0.rc6.jar"/>
         <pathelement path="${root.lib.dir}/servlet.jar"/>
         <pathelement path="${root.lib.dir}/commons-dbcp-1.1.jar"/>
-        <pathelement path="${intact.app.lib.dir}/commons-collections.jar"/>
+        <pathelement path="${root.lib.dir}/commons-collections-3.0.jar"/>
         <pathelement path="${root.lib.dir}/commons-lang-2.0.jar"/>
         <pathelement path="${root.lib.dir}/commons-pool-1.2.jar"/>
 
