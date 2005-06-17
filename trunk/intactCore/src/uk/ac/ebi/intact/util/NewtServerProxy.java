@@ -6,7 +6,7 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.util;
 
-import org.apache.commons.collections.LRUMap;
+import org.apache.commons.collections.map.LRUMap;
 
 import java.net.URL;
 import java.net.URLConnection;
