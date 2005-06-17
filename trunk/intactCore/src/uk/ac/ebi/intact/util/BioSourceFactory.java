@@ -5,7 +5,7 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.util;
 
-import org.apache.commons.collections.LRUMap;
+import org.apache.commons.collections.map.LRUMap;
 import org.apache.log4j.Logger;
 import org.apache.ojb.broker.accesslayer.LookupException;
 import uk.ac.ebi.intact.business.IntactException;
