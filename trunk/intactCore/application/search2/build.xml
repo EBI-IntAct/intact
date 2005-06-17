@@ -69,7 +69,7 @@
 
         <!-- NB these probably need upgrading from the intact lib directory.. -->
         <pathelement path="${intact.app.dir}/lib/struts.jar"/>
-        <pathelement path="${intact.app.dir}/lib/commons-collections.jar"/>
+        <pathelement path="${root.lib.dir}/commons-collections-3.0.jar"/>
         <pathelement path="${intact.app.dir}/lib/commons-lang.jar"/>
         <pathelement path="${intact.app.dir}/lib/commons-beanutils.jar"/>
         <pathelement path="${intact.app.dir}/lib/concurrent.jar"/>
