@@ -198,6 +198,20 @@ public class SimpleViewBean extends AbstractViewBean {
     }
 
     /**
+     * Provides a String representation of a URL to perform a search on this AnnotatedObject's beans
+     * (curently via AC)
+     *
+     * @param clazz the class of the object we want to link to.
+     * @param ac the AC of the object we want to link to.
+     *
+     * @return String a String representation of a search URL link for the wrapped AnnotatedObject
+     */
+    public String getObjSearchURL( Class clazz, String ac ) {
+
+        return searchURL + ac + "&amp;searchClass=" + getIntactType( clazz );
+    }
+
+    /**
      * Provides a String representation of the number of 'related items' for the wrapped
      * AnnotatedObject. For an Experiment this will be the number of Interactions it has; for an
      * Interaction it will be the number of active instances (Proteins) it has. In all other cases
@@ -281,19 +295,44 @@ public class SimpleViewBean extends AbstractViewBean {
 
         if (intactType == null) {
 
-            //   if (obj instanceof CvObject)
-            //            intactType = "CvObject";
-            //   else {
-            String className = obj.getClass().getName();
-            String basicType = className.substring(className.lastIndexOf(".") + 1);
-
-            //now check for 'Impl' and ignore it...
-            intactType = ((basicType.indexOf("Impl") == -1) ?
-                    basicType : basicType.substring(0, basicType.indexOf("Impl")));
-            //    }
+            intactType = getIntactType( obj.getClass() );
         }
         return intactType;
 
+    }
+
+    private static Map typeCache = null;
+
+    /**
+     * Provides the basic Intact type of the wrapped AnnotatedObject (ie no java package beans). NOTE: only the
+     * INTERFACE types are provided as these are the only ones of interest in the model - display pages are not
+     * interested in objects of type XXXImpl. For subclasses of CvObject we only need 'CvObject' for display purposes.
+     *
+     * @param clazz the class of the object we are interrested in.
+     *
+     * @return String The intact type of the wrapped object (eg 'Experiment')
+     */
+    public String getIntactType( Class clazz ) {
+
+        if( typeCache == null ) {
+            typeCache = new HashMap( );
+        }
+
+        String type = (String) typeCache.get( clazz );
+
+        if ( type == null ) {
+
+            String className = clazz.getName();
+            String basicType = className.substring( className.lastIndexOf( "." ) + 1 );
+
+            //now check for 'Impl' and ignore it...
+            type = ( ( basicType.indexOf( "Impl" ) == -1 ) ?
+                     basicType : basicType.substring( 0, basicType.indexOf( "Impl" ) ) );
+
+            typeCache.put( clazz, type );
+        }
+
+        return type;
     }
 
     /**
