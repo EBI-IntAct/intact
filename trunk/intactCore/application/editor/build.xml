@@ -419,6 +419,11 @@
         <!-- The last modifed file at the root. -->
         <copy file="${last.modified.file}" todir="${temp.web}"/>
 
+        <!-- JavaScript files -->
+        <copy todir="${temp.web}/js">
+            <fileset dir="js"/>
+        </copy>
+
         <!-- TLD files -->
         <copy todir="${temp.web}/WEB-INF/tld">
             <!-- Common struts standard tld files -->
@@ -559,6 +564,7 @@
                 <include name="images/*"/>
                 <include name="pages/**"/>
                 <include name="layouts/**"/>
+                <include name="js/**"/>
                 <include name="editor.html"/>
             </fileset>
 
