@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.application.editor.struts.framework;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.Globals;
+import org.apache.struts.util.MessageResources;
 import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
@@ -265,7 +266,22 @@ public abstract class AbstractEditorAction extends Action implements ForwardCons
         }
         return null;
     }
-    
+
+    /**
+     * @param form the current form holds the label of the currently selected
+     * button.
+     * @param request the request object to get application resources
+     * @param label the label of the button to check
+     * @return true if <code>label</code> equals to currently selected button
+     */
+    protected boolean hasPressedButton(EditorFormI form, HttpServletRequest request,
+                                       String label) {
+        // Message resources to access button labels.
+        MessageResources msgres = getResources(request);
+
+        return form.getDispatch().equals(msgres.getMessage(label));
+    }
+
     // Helper Methods
 
     /**
