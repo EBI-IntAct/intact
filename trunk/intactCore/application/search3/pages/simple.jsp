@@ -163,7 +163,7 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
                 }
             %>
 
-            <td nowrap="nowrap" class="headerdarkmid" rowspan="1" colspan="1">
+            <td nowrap="nowrap" class="headerdarkmid" > <!-- rowspan="1" colspan="1" -->
                 <a href="<%= firstItem.getHelpLink() + "AnnotatedObject.shortLabel"%>" target="new"
                    class="tdlink">Name</a>
             </td>
@@ -179,7 +179,7 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
             <td class="headerdarkmid">Gene-Name</td>
             <% } %>
 
-            <td nowrap="nowrap" class="headerdarkmid" rowspan="1" colspan="3">
+            <td nowrap="nowrap" class="headerdarkmid"> <!-- rowspan="1" colspan="3" -->
                 <a href="<%= firstItem.getHelpLink() + "AnnotatedObject.fullName"%>" target="new"
                    class="tdlink">Description
                 </a>
@@ -195,8 +195,11 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
                 }
                 else if(Interaction.class.isAssignableFrom(firstItem.getObject().getClass())) {
             %>
-            <td colspan="2" nowrap="nowrap" class="headerdarkmid">Proteins
-            </td>
+
+
+            <%-- colspan="2" --%>
+            <td nowrap="nowrap" class="headerdarkmid">Experiment</td>
+            <td nowrap="nowrap" class="headerdarkmid">Proteins</td>
             <%
                 } else if (Protein.class.isAssignableFrom(firstItem.getObject().getClass())) {
             %>
@@ -229,8 +232,9 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
 
             <!-- checkbox - presumably checked by default? NOT NEEDED for CvObjects and Experiments -->
             <%
-                if(CvObject.class.isAssignableFrom(firstItem.getObject().getClass()) ||
-                        Experiment.class.isAssignableFrom(firstItem.getObject().getClass()) ) {
+                if( CvObject.class.isAssignableFrom(firstItem.getObject().getClass())
+                     ||
+                    Experiment.class.isAssignableFrom(firstItem.getObject().getClass()) ) {
             %>
             <!-- Single cell padding -->
             <td>
@@ -306,9 +310,34 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
 
           <% } %>
             <!-- Description (ie full name - or a dash if there isn't one), not linked -->
-            <td class="lefttop" rowspan="1" colspan="3">
+            <td class="lefttop"> <!-- rowspan="1" colspan="3" -->
                 <%= bean.getObjDescription()%><br>
             </td>
+
+            <!-- 'number of related items', ie interactions for Experiments,
+                    Proteins for Interactions. This is not linked to anything either -->
+            <%
+                if ( Interaction.class.isAssignableFrom( bean.getObject().getClass() ) ) {
+            %>
+            <td class="data">
+                <%
+                    Interaction interaction = (Interaction) bean.getObject();
+                    Collection experiments = interaction.getExperiments();
+
+                    for ( Iterator iterator = experiments.iterator(); iterator.hasNext(); ) {
+                        Experiment experiment = (Experiment) iterator.next();
+                 %>
+                        <a href="<%= bean.getObjSearchURL( Experiment.class, experiment.getAc() ) + "&filter=ac" %>"><%= experiment.getShortLabel() %></a>
+                 <%
+                        if( iterator.hasNext() ) {
+                            out.write( "<br>" );
+                        }
+                    }
+                %>
+            </td>
+            <%
+                }
+            %>
 
             <!-- 'number of related items', ie interactions for Experiments,
                     Proteins for Interactions. This is not linked to anything either -->
