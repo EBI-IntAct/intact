@@ -210,6 +210,9 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         // Add the bean to the view.
         view.addAnnotation((CommentBean) cb.clone());
 
+        // Set anchor if necessary.
+        setAnchor(request, editorForm);
+
         return mapping.getInputForward();
     }
 
@@ -269,6 +272,9 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         }
         // Add the bean to the view.
         view.addXref((XreferenceBean) xb.clone());
+
+        // Set anchor if necessary.
+        setAnchor(request, editorForm);
 
         return mapping.getInputForward();
     }

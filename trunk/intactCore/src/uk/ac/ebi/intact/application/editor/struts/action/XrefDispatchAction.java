@@ -7,7 +7,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.action;
 
 import org.apache.struts.action.*;
-import org.apache.struts.util.MessageResources;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
@@ -90,20 +89,22 @@ public class XrefDispatchAction extends AbstractEditorAction {
         // The editor form.
         EditorFormI editorForm = (EditorFormI) form;
 
-        // The command associated with the dispatch
-        String cmd = editorForm.getDispatch();
+        // The action forward to return
+        ActionForward fwd = null;
 
-        // Message resources to access button labels.
-        MessageResources msgres = getResources(request);
-
-        if (cmd.equals(msgres.getMessage("xrefs.button.edit"))) {
-            return edit(mapping, form, request, response);
+        if (hasPressedButton(editorForm, request, "xrefs.button.edit")) {
+            fwd = edit(mapping, form, request, response);
         }
-        if (cmd.equals(msgres.getMessage("xrefs.button.save"))) {
-            return save(mapping, form, request, response);
+        else if (hasPressedButton(editorForm, request, "xrefs.button.save")) {
+            fwd = save(mapping, form, request, response);
         }
-        // default is delete.
-        return delete(mapping, form, request, response);
+        else {
+            // default is delete.
+            fwd = delete(mapping, form, request, response);
+        }
+        // Set anchor if necessary.
+        setAnchor(request, editorForm);
+        return fwd;
     }
 
     /**
