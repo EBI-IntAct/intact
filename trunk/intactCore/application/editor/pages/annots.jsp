@@ -16,7 +16,6 @@
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 
-
 <jsp:useBean id="user" scope="session"
     beanName="uk.ac.ebi.intact.application.editor.business.EditUser"
     type="uk.ac.ebi.intact.application.editor.business.EditUser"/>
@@ -119,8 +118,8 @@
                     </html:select>
                 </td>
                 <td class="tableCell">
-                    <html:textarea name="annotations" cols="70" rows="3"
-                        property="description" indexed="true"/>
+                    <html:textarea name="annotations" cols="70" rows="3" property="description"
+                       indexed="true" onkeypress="return validateComment(this, event)"/>
                 </td>
             </c:if>
         </tr>
