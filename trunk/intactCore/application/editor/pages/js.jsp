@@ -14,38 +14,19 @@
 
 <%@ page language="java"%>
 
+<!-- Import the common JS utilis -->
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/common.js"></script>
+
 <jsp:useBean id="service" scope="application"
     beanName="uk.ac.ebi.intact.application.editor.business.EditorService"
     type="uk.ac.ebi.intact.application.editor.business.EditorService"/>
 
 <script language="JavaScript" type="text/javascript">
-    // This is a global variable to setup a window.
-    var newWindow;
-
-    // Create a new window if it hasnt' created before and bring it to the
-    // front if it is focusable.
-    function makeNewWindow(link) {
-        if (!newWindow || newWindow.closed) {
-            newWindow = window.open(link, "display", "scrollbars=yes,height=500,width=600");
-            newWindow.focus();
-        }
-        else if (newWindow.focus) {
-            newWindow.focus();
-            newWindow.location.href = link;
-        }
-    }
-
     // Will be invoked when the user selects on a link.
     function show(type, label) {
         var link = "<%=service.getSearchURL(request)%>" + "?searchString=" + label
            + "&searchClass=" + type;
         //window.alert(link);
-        makeNewWindow(link);
-    }
-
-    // Displays the link from Xref's primary id in the same window as the
-    // search window.
-    function showXrefPId(link) {
         makeNewWindow(link);
     }
 

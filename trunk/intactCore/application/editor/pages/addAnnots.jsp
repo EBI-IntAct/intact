@@ -54,7 +54,8 @@
             </html:select>
         </td>
         <td class="tableCell" align="left" valign="top">
-            <html:textarea property="newAnnotation.description" rows="3" cols="70"/>
+            <html:textarea property="newAnnotation.description" rows="3" cols="70"
+               onkeypress="return validateComment(this, event)"/>
         </td>
     </tr>
 </table>
