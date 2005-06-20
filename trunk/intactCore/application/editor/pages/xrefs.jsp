@@ -25,12 +25,12 @@
 <c:set var="dblist" value="${view.menus['Database']}"/>
 <c:set var="qlist" value="${view.menus['Qualifier']}"/>
 
+<%-- The anchor name for this page --%>
+<a name="xref.edit"/>
+
 <h3>Crossreferences</h3>
 
 <c:if test="${not empty view.xrefs}">
-
-    <%-- The anchor name for this page --%>
-    <a name="xref.edit"/>
 
     <table width="100%" border="0" cellspacing="1" cellpadding="2">
         <tr class="tableRowHeader">

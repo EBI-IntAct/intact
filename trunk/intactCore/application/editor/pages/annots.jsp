@@ -24,12 +24,12 @@
 <c:set var="view" value="${user.view}"/>
 <c:set var="topiclist" value="${view.menus['Topic']}"/>
 
+<%-- The anchor name for this page --%>
+<a name="annot.edit"/>
+
 <h3>Annotations</h3>
 
 <c:if test="${not empty view.annotations}">
-
-    <%-- The anchor name for this page --%>
-    <a name="annot.edit"/>
 
     <table width="100%" border="0" cellspacing="1" cellpadding="2">
         <tr class="tableRowHeader">
