@@ -148,7 +148,7 @@ public class CommentBean extends AbstractEditKeyBean {
      * @param text the annotated text as a <code>String</code>.
      */
     public void setDescription(String text) {
-        myAnnotatedText = text;
+        myAnnotatedText = text.trim();
     }
 
     /**
