@@ -27,6 +27,7 @@ public class CvTopic extends CvObject implements Editable {
     public static final String CONFIDENCE_MAPPING = "confidence-mapping";
     public static final String SEARCH_URL_ASCII = "search-url-ascii";
     public static final String ISOFORM_COMMENT = "isoform-comment";
+    public static final String NON_UNIPROT = "no-uniprot-update";
 
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus.
