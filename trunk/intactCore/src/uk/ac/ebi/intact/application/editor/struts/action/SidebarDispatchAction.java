@@ -11,12 +11,13 @@ import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
+import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
+import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.business.IntactHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Action class for sidebar events. Actions are dispatched
@@ -99,6 +100,7 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         Query[] queries = getSearchQueries(searchClass, searchString);
 
         // The results to display.
+
         List results = super.search(queries, max, request);
 
         if (results.isEmpty()) {
@@ -159,7 +161,23 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         String classname = getService().getClassName(topic);
 
         // Set the new object as the current edit object.
-        user.setView(Class.forName(classname));
+        user.setView(clazz);
+        
+        // Add a no-uniprot-update annotation when a protein is created
+
+        CommentBean cb=null;
+        Class clazz = Class.forName(classname);
+        if(clazz.equals(ProteinImpl.class)){
+            IntactHelper helper=user.getIntactHelper();
+            Annotation annotation=null;
+            CvTopic cvTopic = (CvTopic) helper.getObjectByLabel(CvTopic.class, "no-uniprot-update");
+            annotation=new Annotation(getService().getOwner(), cvTopic,cvTopic.getFullName());
+            cb = new CommentBean(annotation);
+            user.getView().addAnnotation(cb);
+        }
+
+
+
         return mapping.findForward("create");
     }
 }
