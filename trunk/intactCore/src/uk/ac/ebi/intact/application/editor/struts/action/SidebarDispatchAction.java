@@ -160,24 +160,27 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         // The class name associated with the topic.
         String classname = getService().getClassName(topic);
 
+        // The class we are about to create
+        Class clazz = Class.forName(classname);
+
         // Set the new object as the current edit object.
         user.setView(clazz);
         
         // Add a no-uniprot-update annotation when a protein is created
-
-        CommentBean cb=null;
-        Class clazz = Class.forName(classname);
         if(clazz.equals(ProteinImpl.class)){
             IntactHelper helper=user.getIntactHelper();
-            Annotation annotation=null;
-            CvTopic cvTopic = (CvTopic) helper.getObjectByLabel(CvTopic.class, "no-uniprot-update");
-            annotation=new Annotation(getService().getOwner(), cvTopic,cvTopic.getFullName());
-            cb = new CommentBean(annotation);
+
+            // The topic for new annotation.
+            CvTopic cvTopic = (CvTopic) helper.getObjectByLabel(CvTopic.class,
+                    "no-uniprot-update");
+
+            Annotation annotation = new Annotation(getService().getOwner(),
+                    cvTopic,cvTopic.getFullName());
+
+            // Add the new annotation as a bean.
+            CommentBean cb = new CommentBean(annotation);
             user.getView().addAnnotation(cb);
         }
-
-
-
         return mapping.findForward("create");
     }
 }
