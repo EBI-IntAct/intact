@@ -362,7 +362,7 @@ public class Range extends BasicObjectImpl {
         }
     }
 
-    public String getSequene() {
+    public String getSequence() {
         return this.sequence;
     }
 

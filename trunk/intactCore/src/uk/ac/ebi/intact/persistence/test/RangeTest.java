@@ -319,9 +319,9 @@ public class RangeTest extends TestCase {
     private void checkSequence( Range range, String sequence, String expected ) {
         range.setSequence( sequence );
         if( sequence == null ) {
-            assertNull( range.getSequene() );
+            assertNull( range.getSequence() );
         } else {
-            assertEquals( range.getSequene(), expected );
+            assertEquals( range.getSequence(), expected );
         }
     }
 
