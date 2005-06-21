@@ -150,7 +150,9 @@ public class SequenceViewBean extends AbstractEditViewBean {
         // is TOTALLY inconsistent with other editors (they all persist records only
         // upon submitting the form (or save & continue).
         // prot.setSequence(user.getIntactHelper(), getSequence());
-        prot.setCrc64(Crc64.getCrc64(mySequence));
+        if (getSequence().length() > 0) {
+            prot.setCrc64(Crc64.getCrc64(getSequence()));
+        }
     }
 
     protected void loadMenus() throws IntactException {
