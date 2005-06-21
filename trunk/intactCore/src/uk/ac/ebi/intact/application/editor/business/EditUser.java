@@ -266,6 +266,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         in.defaultReadObject();
         try {
             initialize();
+            myViewStack = new Stack();
         }
         catch (IntactException ie) {
             throw new IOException(ie.getMessage());
