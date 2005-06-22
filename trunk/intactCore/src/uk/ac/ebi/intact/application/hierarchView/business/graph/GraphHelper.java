@@ -125,7 +125,7 @@ public class GraphHelper {
      */
     public GraphHelper(IntactUserI user) {
         this.user = user;
-    } // GraphHelper
+    } // IntactGraphHelper
 
     /**
      * Create or extend an interaction network by using the given Interactor as
