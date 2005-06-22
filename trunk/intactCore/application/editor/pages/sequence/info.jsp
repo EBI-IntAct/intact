@@ -62,7 +62,7 @@
     </tr>
     <tr class="tableRowOdd">
         <td class="tableCell" align="left" valign="top">
-            <html:select property="organism" name="seqForm">
+            <html:select property="organism" name="seqForm" styleClass="inputRequired">
                 <html:options name="organismmenu" />
             </html:select>
             <html:errors property="organism"/>
