@@ -21,6 +21,7 @@ public class Xref extends BasicObjectImpl {
     // Constamt
 
     public static final int MAX_ID_LEN = 30;
+    public static final int MAX_DB_RELEASE_LEN = 10;
 
 
     ///////////////////////////////////////
@@ -171,6 +172,11 @@ public class Xref extends BasicObjectImpl {
     }
 
     public void setDbRelease( String aDbRelease ) {
+
+        if( aDbRelease != null && aDbRelease.length() >= MAX_DB_RELEASE_LEN ) {
+            aDbRelease = aDbRelease.substring( 0, MAX_DB_RELEASE_LEN );
+        }
+
         this.dbRelease = aDbRelease;
     }
 
@@ -296,6 +302,14 @@ public class Xref extends BasicObjectImpl {
     }
 
     public String toString() {
+
+        if(getOwner() == null) {
+            System.out.println( "owner" );
+        }
+        if(cvDatabase == null) {
+            System.out.println( "database" );
+        }
+
         return " Xref: " + getAc()
                + "; Owner: " + getOwner().getShortLabel()
                + "; DB: " + cvDatabase.getShortLabel()
