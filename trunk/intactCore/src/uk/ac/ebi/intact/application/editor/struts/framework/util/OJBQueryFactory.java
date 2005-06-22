@@ -82,16 +82,31 @@ public class OJBQueryFactory {
     /**
      * Returns a query to build menus
      * @param clazz the class to construct menus. Eg., CvTopic.class
+     * @param ac the 'obsolete term'; could be null if the term wasn't found in the
+     * database.
      * @return a query to build menus. The menus are sorted in ascending order.
      */
-    public Query getMenuBuildQuery(Class clazz) {
+    public Query getMenuBuildQuery(Class clazz, String ac) {
         Criteria crit = new Criteria();
         // Need all records for given class.
         crit.addLike("ac", "%");
+
+        if (ac != null) {
+            // Sub criteria to weed out obsolete items
+            Criteria subcrit = new Criteria();
+            subcrit.addEqualTo("annotations.cvTopicAc", ac);
+            // Don't want 'obsolete' terms
+            subcrit.setNegative(true);
+
+            // Combine with the sub criteria
+            crit.addAndCriteria(subcrit);
+        }
         ReportQueryByCriteria query = QueryFactory.newReportQuery(clazz, crit);
         // Limit to shortlabel
         query.setAttributes(new String[] {"shortLabel"});
         query.addOrderByAscending("shortLabel");
+        // No duplicates
+        query.setDistinct(true);
         return query;
     }
 
