@@ -18,17 +18,15 @@
 *************************************************************/
 
 INSERT INTO IA_DetectionMethodsStatistics(ac , fullname, number_interactions)
-SELECT  Intact_statistics_seq.nextval, t.*
-FROM (SELECT ia_controlledvocab.fullname,
-         count(ia_interactor.ac)
-FROM
-          dual,
-          ia_interactor,
-          ia_int2exp,
-          ia_experiment,
-          ia_controlledvocab
-WHERE ia_interactor.objclass ='uk.ac.ebi.intact.model.InteractionImpl'
-    AND ia_interactor.ac = ia_int2exp.interaction_ac
-    AND ia_experiment.ac = ia_int2exp.experiment_ac
-    AND ia_controlledvocab.ac = ia_experiment.detectmethod_ac
-GROUP BY ia_controlledvocab.fullname )t;
+    SELECT  Intact_statistics_seq.nextval, t.*
+    FROM (SELECT ia_controlledvocab.fullname, count(ia_interactor.ac)
+          FROM dual,
+               ia_interactor,
+               ia_int2exp,
+               ia_experiment,
+               ia_controlledvocab
+          WHERE ia_interactor.objclass like '%Interaction%'
+                AND ia_interactor.ac = ia_int2exp.interaction_ac
+                AND ia_experiment.ac = ia_int2exp.experiment_ac
+                AND ia_controlledvocab.ac = ia_experiment.detectmethod_ac
+          GROUP BY ia_controlledvocab.fullname ) t;
