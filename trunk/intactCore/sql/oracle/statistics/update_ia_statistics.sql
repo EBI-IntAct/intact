@@ -9,7 +9,7 @@
 
   Purpose:    Anonymous PL/SQL block allowing to update regularly the IntAct statistics table (ia_statistics).
 
-  Usage:      sqlplus username/password @progname.sql
+  Usage:      sqlplus username/password@instance @progname.sql
 
   Input parameter:
       p_start : the date of the first row to be created (non mandatory, can be set to NULL)
