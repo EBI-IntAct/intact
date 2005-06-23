@@ -13,7 +13,7 @@
 
   $Date$
   $Author$
-  $Locker$
+  $Id$
   
 *************************************************************/
 
@@ -46,6 +46,9 @@ BEGIN
 
    dbms_output.enable ( 1000000 );
 
+   -- select the biosources but only those that have no CellType or Tissue
+   -- the work around here is to select from a pool of BioSource having the same taxid
+   -- the one with the shortest shortlabel.
    FOR r in (SELECT DISTINCT taxid, shortlabel
              FROM ia_biosource b1
              WHERE length(shortlabel) = (SELECT min(length(shortlabel))
