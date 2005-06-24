@@ -23,7 +23,6 @@ import java.util.*;
  */
 public class FeatureViewBean extends AbstractViewBean {
 
-
     /**
      * The Feature we want the beans for.
      */
@@ -77,14 +76,12 @@ public class FeatureViewBean extends AbstractViewBean {
         setHighlightMap(set);
     }
 
-
     /**
      * Returns the help section.
      */
     public String getHelpSection() {
         return "protein.single.view";
     }
-
 
     /**
      * Returns the Shortlabel of the given Feature Object
@@ -95,7 +92,6 @@ public class FeatureViewBean extends AbstractViewBean {
         return feature.getShortLabel();
 
     }
-
 
     /**
      * Returns the Feature Object itself
@@ -205,6 +201,10 @@ public class FeatureViewBean extends AbstractViewBean {
         return cvFeatureTypeSearchURL;
     }
 
+    public boolean hasCvFeatureIdentification() {
+        return feature.getCvFeatureIdentification() != null;
+    }
+
     /**
      * Provides a String representation of a URL to perform a search on CvFeatureIdentification
      *
@@ -220,7 +220,6 @@ public class FeatureViewBean extends AbstractViewBean {
         }
         return cvFeatureIdentSearchURL;
     }
-
 
     /**
      * Provides a String representation of a URL to provide acces to an Xrefs' database (curently
@@ -262,6 +261,27 @@ public class FeatureViewBean extends AbstractViewBean {
         return searchUrl;
     }
 
+    public boolean equals( Object o ) {
+        if ( this == o ) {
+            return true;
+        }
+        if ( !( o instanceof FeatureViewBean ) ) {
+            return false;
+        }
 
+        final FeatureViewBean featureViewBean = (FeatureViewBean) o;
+
+        if ( feature != null ? !feature.equals( featureViewBean.feature ) : featureViewBean.feature != null ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public int hashCode() {
+        int result;
+        result = ( feature != null ? feature.hashCode() : 0 );
+        return result;
+    }
 }
 
