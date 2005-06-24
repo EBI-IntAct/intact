@@ -82,31 +82,20 @@ public class OJBQueryFactory {
     /**
      * Returns a query to build menus
      * @param clazz the class to construct menus. Eg., CvTopic.class
-     * @param ac the 'obsolete term'; could be null if the term wasn't found in the
-     * database.
      * @return a query to build menus. The menus are sorted in ascending order.
      */
-    public Query getMenuBuildQuery(Class clazz, String ac) {
+    public Query getMenuBuildQuery(Class clazz) {
         Criteria crit = new Criteria();
         // Need all records for given class.
         crit.addLike("ac", "%");
 
-        if (ac != null) {
-            // Sub criteria to weed out obsolete items
-            Criteria subcrit = new Criteria();
-            subcrit.addEqualTo("annotations.cvTopicAc", ac);
-            // Don't want 'obsolete' terms
-            subcrit.setNegative(true);
+        // Filter out obsolete items
+        crit.addNotIn("ac", getObsoleteQuery(clazz));
 
-            // Combine with the sub criteria
-            crit.addAndCriteria(subcrit);
-        }
         ReportQueryByCriteria query = QueryFactory.newReportQuery(clazz, crit);
         // Limit to shortlabel
-        query.setAttributes(new String[] {"shortLabel"});
+        query.setAttributes(new String[] { "shortlabel" });
         query.addOrderByAscending("shortLabel");
-        // No duplicates
-        query.setDistinct(true);
         return query;
     }
 
@@ -152,5 +141,29 @@ public class OJBQueryFactory {
         crit1.addAndCriteria(crit2);
 
         return QueryFactory.newQuery(Xref.class, crit1);
+    }
+
+    // Helper Methods
+
+    /**
+     * Returns a query to get a list of obsolete ACs
+     * @param clazz the returned oboslete terms are related to this class.
+     * @return a list of obsolete ACs
+     */
+    private static Query getObsoleteQuery(Class clazz) {
+        Criteria crit = new Criteria();
+        // Need all records for given class.
+        crit.addLike("ac", "%");
+
+        // We only need obsolete items
+        Criteria subcrit = new Criteria();
+        subcrit.addEqualTo("annotations.cvTopic.shortLabel", "obsolete term");
+
+        // Combine with the sub criteria
+        crit.addAndCriteria(subcrit);
+        ReportQueryByCriteria query = QueryFactory.newReportQuery(clazz, crit);
+        // Limit to shortlabel
+        query.setAttributes(new String[] { "ac" });
+        return query;
     }
 }

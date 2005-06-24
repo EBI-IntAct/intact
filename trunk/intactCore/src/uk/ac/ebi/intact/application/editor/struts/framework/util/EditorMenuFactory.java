@@ -9,7 +9,6 @@ package uk.ac.ebi.intact.application.editor.struts.framework.util;
 import org.apache.ojb.broker.query.Query;
 import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 
 import java.util.*;
@@ -98,7 +97,7 @@ public class EditorMenuFactory {
     /**
      * The only instance of this class.
      */
-    private static EditorMenuFactory ourInstance;
+    private static final EditorMenuFactory ourInstance = new EditorMenuFactory();
 
     /**
      * Maps: Menu Name -> Menu type. Common to all the users and it is immutable.
@@ -109,11 +108,6 @@ public class EditorMenuFactory {
      * Maps: Menu Name -> default value.
      */
     private static final Map ourNameToDefValue = new HashMap();
-
-    /**
-     * The AC of the obsolete term; cache it. Could be null if there is no topic
-     */
-    private static String ourObsoleteAc;
 
     // Static initializer.
 
@@ -135,25 +129,12 @@ public class EditorMenuFactory {
     }
 
     // No instantiation from outside.
-    private EditorMenuFactory() throws IntactException {
-        // Helper to execute the query
-        IntactHelper helper = IntactHelperUtil.getDefaultIntactHelper();
-        CvTopic obsoleteTerm = (CvTopic) helper.getObjectByLabel(CvTopic.class,
-                "obsolete term");
-        // Guard against not finding the 'obsolete term'
-        if (obsoleteTerm != null) {
-            ourObsoleteAc = obsoleteTerm.getAc();
-        }
-    }
+    private EditorMenuFactory() {}
 
     /**
      * Returns the only instance of this class.
-     * @exception IntactException for error is accessing the IntactHelper
      */
-    public static EditorMenuFactory getInstance() throws IntactException {
-        if (ourInstance == null) {
-            ourInstance = new EditorMenuFactory();
-        }
+    public static EditorMenuFactory getInstance() {
         return ourInstance;
     }
 
@@ -245,12 +226,14 @@ public class EditorMenuFactory {
         // The query factory to get a query.
         OJBQueryFactory qf = OJBQueryFactory.getInstance();
 
-        Query query = qf.getMenuBuildQuery(targetClass, ourObsoleteAc);
+        Query query = qf.getMenuBuildQuery(targetClass);
 
         Iterator iter = IntactHelperUtil.getDefaultIntactHelper().getIteratorByReportQuery(query);
         
         while (iter.hasNext()) {
             Object[] row = (Object[])iter.next();
+            if (targetClass.isAssignableFrom(CvInteraction.class)) {
+            }
             menu.add(row[0]);
         }
         return menu;
