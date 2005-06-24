@@ -297,9 +297,16 @@ public class SearchAction extends IntactBaseAction {
         catch (IntactException se) {
             logger.info("something went wrong ...");
             // Something failed during search...
-            logger.info(se);
-            logger.info(se.getNestedMessage());
-            logger.info(se.getRootCause().toString());
+            logger.info( se );
+
+            if( se.getNestedMessage() != null ) {
+                logger.info(se.getNestedMessage());
+            }
+
+            if( se.getRootCause() != null ) {
+                logger.info( "Root cause", se.getRootCause() );
+            }
+
             logger.info(se.getLocalizedMessage());
 
             // clear in case there is some old errors in there.
