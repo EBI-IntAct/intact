@@ -945,464 +945,216 @@ Displaying <b><%= firstDisplayIndex %></b> to
         <!-- 'sequence features' details start here... -->
 
         <%
-              //TODO much of this code has to gone, it's not maintable
+                // first get the linked and unlinked feature view beans....
+                // note: we expect to get a non redondant set of linked feature. ie. we won't display F1-F2 and F2-F1 !
+                Collection linkedFeatures = bean.getLinkedFeatures( interaction );
+                Collection singleFeatures = bean.getSingleFeatures( interaction );
 
-                //ISSUE- It is possible that there may be zero, one or both of the linked
-             //and unlinked feature beans. We have to display the title cell as long
-                //as there is at least one group to display, BUT we don't know which!
-                //This is a problem because to format the rows correctly the first item
-                //always has to go on the same row as the title cell - but we don't know which
-                //this might be (linked or unlinked features). So to solve this we just pick
-                //one of the sublists which is not empty and process that as the 'first'..
+                int featureCount = linkedFeatures.size() + singleFeatures.size();
 
-            //first get the linked and unlinked feature view beans....
-            Collection linkedFeatures = bean.getLinkedFeatures(interaction);
-            Collection singleFeatures = bean.getSingleFeatures(interaction);
-
-             //if there are no features, do nothing here...
-             if((linkedFeatures.size() != 0) || (singleFeatures.size() != 0)) {
-
-                 //to get here we know at least one of them has some data....
-
-                 //as before, the first item gets displayed on the same row as the title cell
-                 //(should be linked features, if there are any, first)
-                FeatureViewBean firstFeature = null;
-
-                if(!linkedFeatures.isEmpty())
-                    firstFeature = (FeatureViewBean)linkedFeatures.iterator().next();
-                else
-                    firstFeature = (FeatureViewBean)singleFeatures.iterator().next();
-
-                //need also to keep track of the linked features (if any) we have done, because
-                //there is a bidirectional relation between them and we don't want
-                //to display them twice...
-                Collection doneFeatures = new ArrayList();
-
+                if( featureCount > 0 ) {
         %>
-        <tr>
-
-            <!-- 'sequence features' title cell, linked to help (spans 2 rows) -->
-            <%-- The rowspan of this cell should be equal to the sum of
-                linked+unlinked Features
-            --%>
-            <td style="vertical-align: top;" class="headerlight"
-                rowspan="<%= linkedFeatures.size() + singleFeatures.size() %>" colspan="1">
-                <a href="<%= bean.getHelpLink() + "FEATURES_HELP_SECTION"%>" class="tdlink">
-                    Sequence features
-                </a><br>
-            </td>
-
-            <%
-                 //need to display different things depending upon whether the first feature
-                 //is linked or not...
-                 if(linkedFeatures.contains(firstFeature)) {
-                     //need to display linked feature info
-            %>
-            <!-- 'interaction' title cell -->
-            <%-- NO LONGER NEEDED
-            <td class="data" style="vertical-align: top;">
-                interaction<br>
-            </td>
-            --%>
-
-            <!-- seems to be some kind of 'summary' cell -->
-            <%-- ** WHERE DOES IT COME FROM?? **
-                ANS:
-                link 1: CvFeatureType, for the Feature that is 'linked' to another one.
-                text1: <Feature shortlabel> of <Protein shortlabel> <region data of the Feature>
-                link 2: Xref link for the feature (or rather, one primary ID link for each Feature Xref)
-                text2: detected by <link 3: CvfeatureDetection (!!)>, interacts with <above again, but
-                for the Feature that is 'linked to'>
-            --%>
-            <td class="data" style="vertical-align: top;" rowspan="1" colspan="7">
-
-                <%-- link 1 --%>
-                <a href="<%= firstFeature.getCvFeatureTypeSearchURL() %>">
-                    <%= firstFeature.getFeatureType() %>
-                </a>
-
-                <%=firstFeature.getFeatureName()%> of <%=firstFeature.getProteinName()%>
-                <%
-                     //now do the Ranges...
-                     Collection ranges = firstFeature.getFeature().getRanges();
-                     String rangeString = "";   //will hold the result (if there is one)
-                     if(!ranges.isEmpty()) {
-                        StringBuffer buf = new StringBuffer("["); //convenience object for building results
-                        for(Iterator it1 = ranges.iterator(); it1.hasNext();) {
-                            buf.append(it1.next().toString());  //The toString of Range does the display format for us
-                            if(it1.hasNext()) buf.append((","));
-                        }
-                        buf.append("]");
-                        rangeString = buf.toString();
-                        rangeString.trim();
-                         if(rangeString.equalsIgnoreCase("[?-?]")) {
-                            rangeString = "[range undetermined]";
-                        }
-                     }
-                %>
-                <%=rangeString %>
-
-                <%
-                     //only need some brackets if we have Xrefs to display..
-                     if(!firstFeature.getFeatureXrefs().isEmpty()) {
-                %>
-                (
-
-                <%-- link 2 --%>
-                <%
-                    for(Iterator iter1 = firstFeature.getFeatureXrefs().iterator(); iter1.hasNext();) {
-                        Xref xref = (Xref)iter1.next();
-                %>
-                <a href="<%= firstFeature.getPrimaryIdURL(xref) %>">
-                    <%=xref.getPrimaryId()%>
-                </a>
-                <%
-                    }   //end of Feature Xref loop
-                %>
-                ),
-                <%
-                     }  //end of Xref check
-                %>
-                detected by
-                <%-- ** THERE IS NO CVFEATUREDETECTION CLASS!! - ASSUME it should be 'identification'..** --%>
-                <a href="<%=firstFeature.getCvFeatureIdentSearchURL()%>">
-                    <%=firstFeature.getFeatureIdentificationName() %>
-                </a>
-                , interacts with
-
-                <%-- Now repeat for the Feature it is linked to.... --%>
-                <%
-                    //there must be one as we are dealing with linked Features here..
-                    FeatureViewBean firstBoundFeature = firstFeature.getBoundFeatureView();
-                %>
-                <%-- link 1 --%>
-                <a href="<%= firstBoundFeature.getCvFeatureTypeSearchURL() %>">
-                    <%= firstBoundFeature.getFeatureType() %>
-                </a>
-
-                <%= firstBoundFeature.getFeatureName() %> of <%= firstBoundFeature.getProteinName() %>
-                <%
-                     //now do the Ranges for the linked Feature (may reuse the other vars)...
-                     ranges = firstBoundFeature.getFeature().getRanges();
-                     rangeString = "";   //will hold the result (if there is one)
-                     if(!ranges.isEmpty()) {
-                        StringBuffer buf = new StringBuffer("["); //convenience object for building results
-                        for(Iterator it1 = ranges.iterator(); it1.hasNext();) {
-                            buf.append(it1.next().toString());  //The toString of Range does the display format for us
-                            if(it1.hasNext()) buf.append((","));
-                        }
-                        buf.append("]");
-                        rangeString = buf.toString();
-                         if(rangeString.equalsIgnoreCase("[?-?]")) {
-                            rangeString = "[range undetermined]";
-                        }
-                     }
-                %>
-                <%= rangeString %> &nbsp;
-
-                <%
-                     //only need brackets if we have Xrefs to display..
-                     if(!firstBoundFeature.getFeatureXrefs().isEmpty()) {
-                %>
-                (
-
-                <%-- link 2 --%>
-                <%
-                    for(Iterator iter1 = firstBoundFeature.getFeatureXrefs().iterator(); iter1.hasNext();) {
-                        Xref xref = (Xref)iter1.next();
-                %>
-                <a href="<%= firstBoundFeature.getPrimaryIdURL(xref) %>">
-                    <%= xref.getPrimaryId()%>
-                </a>
-                &nbsp;
-                <%
-                    }   //end of Feature Xref loop
-                %>
-                ), &nbsp;
-                <%
-                     }  //end of Xref check
-                %>
-                detected by
-                <%-- ** THERE IS NO CVFEATUREDETECTION CLASS!! - should it be 'identification'?** --%>
-                <a href="<%= firstFeature.getCvFeatureIdentSearchURL()%>">
-                    <%= firstBoundFeature.getFeatureIdentificationName() %>
-                </a>.
-
-            </td>
-        </tr>
+                    <tr>
+                        <%--
+                            'sequence features' title cell, linked to help (spans all feature's rows)
+                             The rowspan of this cell is equal to the sum of linked + unlinked Features
+                          --%>
+                        <td style="vertical-align: top;" class="headerlight" rowspan="<%= featureCount %>" colspan="1">
+                        <a href="<%= bean.getHelpLink() + "FEATURES_HELP_SECTION"%>"
+                           class="tdlink">Sequence features</a>
+                        </td>
         <%
-                    //record that we've done them so we don't process them again...
-                    doneFeatures.add(firstFeature);
-                    doneFeatures.add(firstBoundFeature);
-                 }
-                 else {
-                     //must be a single Feature to display first...
+                    boolean firstItem = true;
+                    while( linkedFeatures.size() + singleFeatures.size() > 0 ) {
+
+                        boolean islinked = false;
+                        Iterator iterator = null;
+
+                        if( false == linkedFeatures.isEmpty() ) {
+                            iterator = linkedFeatures.iterator();
+                            islinked = true;
+                        } else {
+                            iterator = singleFeatures.iterator();
+                        }
+
+                        FeatureViewBean firstFeature = ( FeatureViewBean ) iterator.next();
+                        iterator.remove(); // take it off the collection.
+
+                        if( ! firstItem ) {
+                            firstItem = false;
+           %>
+                           <tr>
+           <%
+                        }
+                        // display that row
+                        if( islinked ) {
+           %>
+                            <!-- seems to be some kind of 'summary' cell -->
+                            <%-- ** WHERE DOES IT COME FROM?? **
+                                ANS:
+                                link 1: CvFeatureType, for the Feature that is 'linked' to another one.
+                                text1: <Feature shortlabel> of <Protein shortlabel> <region data of the Feature>
+                                link 2: Xref link for the feature (or rather, one primary ID link for each Feature Xref)
+                                text2: detected by <link 3: CvfeatureDetection (!!)>, interacts with <above again, but
+                                for the Feature that is 'linked to'>
+                            --%>
+                            <td class="data" style="vertical-align: top;" rowspan="1" colspan="7">
+                                <%-- link 1 --%>
+                                <a href="<%= firstFeature.getCvFeatureTypeSearchURL() %>"><%= firstFeature.getFeatureType() %></a>
+                                <%=firstFeature.getFeatureName()%> of <%=firstFeature.getProteinName()%>
+                                <%
+                                     //now do the Ranges...
+                                     Collection ranges = firstFeature.getFeature().getRanges();
+                                     String rangeString = "";   //will hold the result (if there is one)
+                                     if(!ranges.isEmpty()) {
+                                        StringBuffer buf = new StringBuffer("["); //convenience object for building results
+                                        for(Iterator it1 = ranges.iterator(); it1.hasNext();) {
+                                            buf.append(it1.next().toString());  //The toString of Range does the display format for us
+                                            if(it1.hasNext()) buf.append((","));
+                                        }
+                                        buf.append("]");
+                                        rangeString = buf.toString();
+                                        rangeString.trim();
+                                         if(rangeString.equalsIgnoreCase("[?-?]")) {
+                                            rangeString = "[range undetermined]";
+                                        }
+                                     }
+                                %>
+                                <%=rangeString %>
+                                <%
+                                     //only need some brackets if we have Xrefs to display..
+                                     if(!firstFeature.getFeatureXrefs().isEmpty()) {
+                                %>
+                                (
+
+                                <%-- link 2 --%>
+                                <%
+                                    for(Iterator iter1 = firstFeature.getFeatureXrefs().iterator(); iter1.hasNext();) {
+                                        Xref xref = (Xref)iter1.next();
+                                %>
+                                <a href="<%= firstFeature.getPrimaryIdURL(xref) %>"><%=xref.getPrimaryId()%></a>
+                                <%
+                                    }   //end of Feature Xref loop
+                                %>
+                                ),
+                                <%
+                                     }  //end of Xref check
+
+                                     if( firstFeature.hasCvFeatureIdentification() ) {
+                                       // only display detected by XXX if there is a method
+                                        %>
+                                        detected by
+                                        <%-- ** THERE IS NO CVFEATUREDETECTION CLASS!! - ASSUME it should be 'identification'..** --%>
+                                        <a href="<%=firstFeature.getCvFeatureIdentSearchURL()%>"><%=firstFeature.getFeatureIdentificationName() %></a>
+                                        <%-- Now repeat for the Feature it is linked to.... --%>
+                                        <%
+                                     }
+                                    //there must be one as we are dealing with linked Features here..
+                                    FeatureViewBean firstBoundFeature = firstFeature.getBoundFeatureView();
+                                %>
+                                , interacts with
+                                <%-- link 1 --%>
+                                <a href="<%= firstBoundFeature.getCvFeatureTypeSearchURL() %>"><%= firstBoundFeature.getFeatureType() %></a>
+                                <%= firstBoundFeature.getFeatureName() %> of <%= firstBoundFeature.getProteinName() %>
+                                <%
+                                     //now do the Ranges for the linked Feature (may reuse the other vars)...
+                                     ranges = firstBoundFeature.getFeature().getRanges();
+                                     rangeString = "";   //will hold the result (if there is one)
+                                     if(!ranges.isEmpty()) {
+                                        StringBuffer buf = new StringBuffer("["); //convenience object for building results
+                                        for(Iterator it1 = ranges.iterator(); it1.hasNext();) {
+                                            buf.append(it1.next().toString());  //The toString of Range does the display format for us
+                                            if(it1.hasNext()) buf.append((","));
+                                        }
+                                        buf.append("]");
+                                        rangeString = buf.toString();
+                                         if(rangeString.equalsIgnoreCase("[?-?]")) {
+                                            rangeString = "[range undetermined]";
+                                        }
+                                     }
+                                %>
+                                <%= rangeString %> &nbsp;
+
+                                <%
+                                     //only need brackets if we have Xrefs to display..
+                                     if(!firstBoundFeature.getFeatureXrefs().isEmpty()) {
+                                %>
+                                (
+
+                                <%-- link 2 --%>
+                                <%
+                                    for(Iterator iter1 = firstBoundFeature.getFeatureXrefs().iterator(); iter1.hasNext();) {
+                                        Xref xref = (Xref)iter1.next();
+                                %>
+                                <a href="<%= firstBoundFeature.getPrimaryIdURL(xref) %>"><%= xref.getPrimaryId()%></a>
+                                &nbsp;
+                                <%
+                                    }   //end of Feature Xref loop
+                                %>
+                                ), &nbsp;
+                                <%
+                                     }  //end of Xref check
+
+                                     if( firstFeature.hasCvFeatureIdentification() ) {
+                                       // only display detected by XXX if there is a method
+                                        %>
+                                        detected by
+                                        <%-- ** THERE IS NO CVFEATUREDETECTION CLASS!! - ASSUME it should be 'identification'..** --%>
+                                        <a href="<%=firstFeature.getCvFeatureIdentSearchURL()%>"><%=firstFeature.getFeatureIdentificationName() %></a>
+                                        <%-- Now repeat for the Feature it is linked to.... --%>
+                                        <%
+                                     }
+                                %>
+                            </td>
+        <%
+                 } else {
+                     // must be a single Feature to display first...
         %>
+                        <%-- feature type info, plus search link --%>
+                        <td class="data" style="vertical-align: top;" rowspan="1" colspan="8">
+                            <a href="<%= firstFeature.getCvFeatureTypeSearchURL() %>"><%= firstFeature.getFeatureType() %></a>
+                            <%= firstFeature.getFeatureName() %> of <%= firstFeature.getProteinName() %>
+                            <%
+                             //now do the Ranges...
+                             Collection ranges = firstFeature.getFeature().getRanges();
+                             String rangeString = "";   //will hold the result (if there is one)
+                             if(!ranges.isEmpty()) {
+                                StringBuffer buf = new StringBuffer("["); //convenience object for building results
+                                for(Iterator it1 = ranges.iterator(); it1.hasNext();) {
+                                    buf.append(it1.next().toString());  //The toString of Range does the display format for us
+                                    if(it1.hasNext()) buf.append((","));
+                                }
+                                buf.append("]");
+                                rangeString = buf.toString();
+                                 if(rangeString.equalsIgnoreCase("[?-?]")) {
+                                    rangeString = "[range undetermined]";
+                                }
+                             }
+                        %>
+                            <%= rangeString %>
+                        <%
+                             //it seems sometimes the detection beans are not present!
+                             if(!firstFeature.getCvFeatureIdentSearchURL().equals("")) {
+                        %>
+                                detected by
+                                <%-- ** CVFEATUREDETECTION DOES NOT EXIST ** is this 'identification'? --%>
+                                <a href="<%= firstFeature.getCvFeatureIdentSearchURL()%>"><%= firstFeature.getFeatureIdentFullName() %></a>.
+                        <%
+                             }
+                        %>
+                        </td>
+                <%
+                         }  // end of simple feature (no related feature)
 
-                <!-- 'mutation' title cell -->
-                <%--  NO LONGER NEEDED
-                <td class="data" style="vertical-align: top;">mutation<br>
-                </td>
-                --%>
-
-
-                <%-- feature type info, plus search link --%>
-                <td class="data" style="vertical-align: top;" rowspan="1" colspan="8">
-
-                    <a href="<%= firstFeature.getCvFeatureTypeSearchURL() %>">
-                        <%= firstFeature.getFeatureType() %>
-                    </a>
-                    &nbsp;
-                    <%= firstFeature.getFeatureName() %> of <%= firstFeature.getProteinName() %>
-
-                    <%
-                     //now do the Ranges...
-                     Collection ranges = firstFeature.getFeature().getRanges();
-                     String rangeString = "";   //will hold the result (if there is one)
-                     if(!ranges.isEmpty()) {
-                        StringBuffer buf = new StringBuffer("["); //convenience object for building results
-                        for(Iterator it1 = ranges.iterator(); it1.hasNext();) {
-                            buf.append(it1.next().toString());  //The toString of Range does the display format for us
-                            if(it1.hasNext()) buf.append((","));
-                        }
-                        buf.append("]");
-                        rangeString = buf.toString();
-                         if(rangeString.equalsIgnoreCase("[?-?]")) {
-                            rangeString = "[range undetermined]";
-                        }
-                     }
-                %>
-                    <%= rangeString %>
-                    <%
-                     //it seems sometimes the detection beans are not present!
-                     if(!firstFeature.getCvFeatureIdentSearchURL().equals("")) {
-                    %>
-                        detected by 
-
-                    <%-- ** CVFEATUREDETECTION DOES NOT EXIST ** is this 'identification'? --%>
-                    <a href="<%= firstFeature.getCvFeatureIdentSearchURL()%>">
-                        <%= firstFeature.getFeatureIdentFullName() %>
-                    </a>.<br>
-                    <%
-                     }
-                    %>
-
-                </td>
-
-        <%
-                     singleFeatures.remove(firstFeature);   //make sure we don't do this twice
-                 }  //end of 'first feature = single' block
+                        %>
+              </tr>
+                        <%
+                    } // while more feature to display
+                } // if any feature available
         %>
-
-        <%-- Now do the rest of the linked and unlinked Features on new rows (like
-            the Annotations etc...--%>
-            <%
-                    for(Iterator iter1 = linkedFeatures.iterator(); iter1.hasNext();) {
-                        FeatureViewBean linkedFeature = (FeatureViewBean)iter1.next();
-                        if(doneFeatures.contains(linkedFeature)) continue;  //already processed
-            %>
-            <tr>
-                <!-- 'interaction' title cell -->
-                <%-- NO LONGER NEEDED
-                <td class="data" style="vertical-align: top;">
-                interaction<br>
-                </td>
-                --%>
-
-                <td class="data" style="vertical-align: top;" rowspan="1" colspan="8">
-
-                    <%-- link 1 --%>
-                    <a href="<%= linkedFeature.getCvFeatureTypeSearchURL() %>">
-                        <%= linkedFeature.getFeatureType() %>
-                    </a>
-                    &nbsp;
-                    <%= linkedFeature.getFeatureName() %> of <%= linkedFeature.getProteinName() %>
-
-                    <%
-                     //now do the Ranges...
-                     Collection ranges = linkedFeature.getFeature().getRanges();
-                     String rangeString = "";   //will hold the result (if there is one)
-                     if(!ranges.isEmpty()) {
-                        StringBuffer buf = new StringBuffer("["); //convenience object for building results
-                        for(Iterator it1 = ranges.iterator(); it1.hasNext();) {
-                            buf.append(it1.next().toString());  //The toString of Range does the display format for us
-                            if(it1.hasNext()) buf.append((","));
-                        }
-                        buf.append("]");
-                        rangeString = buf.toString();
-                         if(rangeString.equalsIgnoreCase("[?-?]")) {
-                            rangeString = "[range undetermined]";
-                        }
-                     }
-                %>
-                    <%= rangeString %>
-
-                    <%
-                        //only need brackets if there are Xrefs for display...
-                        if(!linkedFeature.getFeatureXrefs().isEmpty()) {
-                    %>
-                    (
-                    <%-- link 2 --%>
-                    <%
-                        for(Iterator iter2 = linkedFeature.getFeatureXrefs().iterator(); iter1.hasNext();) {
-                            Xref xref = (Xref)iter2.next();
-                    %>
-                    <a href="<%= linkedFeature.getPrimaryIdURL(xref) %>">
-                        <%= xref.getPrimaryId()%>&nbsp;
-                    </a>
-                    <%
-                        }   //end of Feature Xref loop
-                    %>
-                    ), &nbsp;
-                    <%
-                        }   //end of xref check
-                    %>
-                    detected by
-                    <%-- ** THERE IS NO CVFEATUREDETECTION CLASS!! - should it be 'identification'?** --%>
-                    <a href="<%= firstFeature.getCvFeatureIdentSearchURL()%>">
-                        <%= linkedFeature.getFeatureIdentificationName() %>
-                    </a>
-                    , interacts with
-
-                    <%-- Now repeat for the Feature it is linked to.... --%>
-                    <%
-                        //there must be one as we are dealing with linked Features here..
-                        FeatureViewBean boundFeature = firstFeature.getBoundFeatureView();
-                    %>
-                    <%-- link 1 --%>
-                    <a href="<%= boundFeature.getCvFeatureTypeSearchURL() %>">
-                        <%= boundFeature.getFeatureType() %>
-                    </a>
-                    &nbsp;
-                    <%= boundFeature.getFeatureName() %> of <%= boundFeature.getProteinName() %>
-
-                    <%
-                     //now do the Ranges...
-                     ranges = boundFeature.getFeature().getRanges();
-                     rangeString = "";   //will hold the result (if there is one)
-                     if(!ranges.isEmpty()) {
-                        StringBuffer buf = new StringBuffer("["); //convenience object for building results
-                        for(Iterator it1 = ranges.iterator(); it1.hasNext();) {
-                            buf.append(it1.next().toString());  //The toString of Range does the display format for us
-                            if(it1.hasNext()) buf.append((","));
-                        }
-                        buf.append("]");
-                        rangeString = buf.toString();
-                         if(rangeString.equalsIgnoreCase("[?-?]")) {
-                            rangeString = "[range undetermined]";
-                        }
-                     }
-                %>
-                    <%= rangeString %> &nbsp;
-                    <%
-                        //only need brackets if there are Xrefs for display...
-                        if(!boundFeature.getFeatureXrefs().isEmpty()) {
-                    %>
-                    (
-                    <%-- link 2 --%>
-                    <%
-                        for(Iterator iter2 = boundFeature.getFeatureXrefs().iterator(); iter1.hasNext();) {
-                            Xref xref = (Xref)iter2.next();
-                    %>
-                    <a href="<%= boundFeature.getPrimaryIdURL(xref) %>">
-                        <%= xref.getPrimaryId()%>&nbsp;
-                    </a>
-                    <%
-                        }   //end of Feature Xref loop
-                    %>
-                    ), &nbsp;
-                    <%
-                        }   //end of Xref check
-                    %>
-                    detected by
-                    <%-- ** THERE IS NO CVFEATUREDETECTION CLASS!! - should it be 'identification'?** --%>
-                    <a href="<%= firstFeature.getCvFeatureIdentSearchURL()%>">
-                        <%= boundFeature.getFeatureIdentificationName() %>
-                    </a>.
-
-                </td>
-
-            </tr>   <%-- done an 'interaction' row --%>
-
-            <%
-                        //record that we've done them so we don't process them again...
-                        doneFeatures.add(linkedFeature);
-                        doneFeatures.add(boundFeature);
-                    }   //end of linked features rows
-            %>
-
-        <!-- 'mutation' row data -->
-        <%-- This is for 'standalone' features, ie not linked to others.
-            Structure is as above, BUT with the FULLNAME OF THE DETECTION METHOD, **not**
-            its shortlabel.
-            Q: What is CvFeatureDetection? It isn't available from the Feature (only Identification is)
-        --%>
-
+         </tr>
         <%
-                    for(Iterator iter1 = singleFeatures.iterator(); iter1.hasNext();) {
-                        FeatureViewBean singleFeature = (FeatureViewBean)iter1.next();
-        %>
-            <tr>
-
-                <!-- 'mutation' title cell -->
-                <%-- NO LONGER NEEDED
-                <td class="data" style="vertical-align: top;">mutation<br>
-                </td>
-                --%>
-
-
-                <%-- feature type info, plus search link --%>
-                <td class="data" style="vertical-align: top;" rowspan="1" colspan="8">
-
-                    <a href="<%= singleFeature.getCvFeatureTypeSearchURL() %>">
-                        <%= singleFeature.getFeatureType() %>
-                    </a>
-                    &nbsp;
-                    <%= singleFeature.getFeatureName() %> of <%= singleFeature.getProteinName() %>
-
-                    <%
-                     //now do the Ranges...
-                     Collection ranges = singleFeature.getFeature().getRanges();
-                     String rangeString = "";   //will hold the result (if there is one)
-                     if(!ranges.isEmpty()) {
-                        StringBuffer buf = new StringBuffer("["); //convenience object for building results
-                        for(Iterator it1 = ranges.iterator(); it1.hasNext();) {
-                            buf.append(it1.next().toString());  //The toString of Range does the display format for us
-                            if(it1.hasNext()) buf.append((","));
-                        }
-                        buf.append("]");
-                        rangeString = buf.toString();
-                        if(rangeString.equalsIgnoreCase("[?-?]")) {
-                            rangeString = "[range undetermined]";
-                        }
-                     }
-                %>
-
-
-                    <%= rangeString %>
-                    <%
-                        //it seems sometimes the detection beans are not present!
-                        if(!singleFeature.getCvFeatureIdentSearchURL().equals("")) {
-                    %>
-                        detected by &nbsp;
-
-                    <%-- ** CVFEATUREDETECTION DOES NOT EXIST ** is this 'identification'? --%>
-                    <a href="<%= singleFeature.getCvFeatureIdentSearchURL()%>">
-                        <%= singleFeature.getFeatureIdentFullName() %>
-                    </a>.<br>
-                    <%
-                        } else {%>
-                       .<% } %>
-
-                </td>
-
-            </tr>
-
-        <%
-                        }   //end of 'single features' loop
-                    }   //end of size check on features
-
-                }   //end of interactions loop
+             }   //end of interactions loop
         %>
 
     </tbody>
