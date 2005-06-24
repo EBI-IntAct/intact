@@ -106,13 +106,14 @@ public class MainDetailViewBean extends AbstractViewBean {
     /**
      * ArrayList to provide a Filter on Gene Names
      */
-    private static ArrayList geneNameFilter = new ArrayList();
+    private static ArrayList geneNameFilter = new ArrayList( 4 );
 
     static {
-        geneNameFilter.add("gene-name");
-        geneNameFilter.add("gene-name-synonym");
-        geneNameFilter.add("orf-name");
-        geneNameFilter.add("locus-name");
+        // TODO somehow find a way to use MI references that are stable
+        geneNameFilter.add("gene name");
+        geneNameFilter.add("gene name-synonym");
+        geneNameFilter.add("orf name");
+        geneNameFilter.add("locus name");
     }
 
     /**
@@ -455,36 +456,51 @@ public class MainDetailViewBean extends AbstractViewBean {
     }
 
     /**
-     * This method provides beans of all the Features for an Interaction which are linked to other
-     * Features. Feature view beans, rather than the Features themselves, are provided to allow JSPs
-     * an easier display method.
+     * This method provides beans of all the Features for an Interaction which are linked to other Features.
+     * Feature view beans, rather than the Features themselves, are provided to allow JSPs an easier display method.
      *
      * @param interaction The Interaction we want the linked Features for
-     * @return Collection a List of FeatureViewBeans providing a view on each linked Feature of the
-     *         Interaction.
+     *
+     * @return Collection a List of FeatureViewBeans providing a view on each linked Feature of the Interaction.
      */
-    public Collection getLinkedFeatures(Interaction interaction) {
+    public Collection getLinkedFeatures( Interaction interaction ) {
 
         //TODO: needs refactoring - perhaps cache some beans for Interactions done...
         Collection linkedFeatures = new ArrayList();
+
+        // while we populate the collection of feature to display, we keep track of those are are already going to
+        // be display. eg. F1 interacts with F2, when F2 comes again, we don't create a bean for it.
+        Collection seen = new ArrayList();
 
         //Go through the Features and for each linked one, build a view bean and save it...
         //NB The Feature beans are held inside Collections within each Component of the
         //Interaction - they are called 'binding domains'...
         Collection components = interaction.getComponents();
-        Component component = null;
-        Feature feature = null;
-        for (Iterator it = components.iterator(); it.hasNext();) {
-            component = (Component) it.next();
+
+        for ( Iterator it = components.iterator(); it.hasNext(); ) {
+            Component component = (Component) it.next();
+
             Collection features = component.getBindingDomains();
-            for (Iterator it1 = features.iterator(); it1.hasNext();) {
-                feature = (Feature) it1.next();
-                if (feature.getBoundDomain() != null) {
-                    linkedFeatures.add(new FeatureViewBean(feature, getHelpLink(), searchURL,
-                                                           this.getContextPath()));
+
+            for ( Iterator it1 = features.iterator(); it1.hasNext(); ) {
+                Feature feature = (Feature) it1.next();
+
+                if ( feature.getBoundDomain() != null ) {
+                    if( false == seen.contains( feature ) ) {
+                        linkedFeatures.add( new FeatureViewBean( feature, getHelpLink(), searchURL, this.getContextPath() ) );
+
+                        seen.add( feature );
+
+                        if( feature.getBoundDomain().getBoundDomain() == feature ) {
+                            // if the features relate to each other
+                            seen.add( feature.getBoundDomain() );
+                        }
+                    }
                 }
-            }
-        }
+            } // features
+
+        } // components
+
         return linkedFeatures;
     }
 
@@ -492,9 +508,10 @@ public class MainDetailViewBean extends AbstractViewBean {
      * Provides a List of view beans for unlinked Features of an Interaction.
      *
      * @param interaction The Interaction we want the single Feature information for.
+     *
      * @return Collection a List of FeatureViewBeans for the INteraction's unlinked Features.
      */
-    public Collection getSingleFeatures(Interaction interaction) {
+    public Collection getSingleFeatures( Interaction interaction ) {
 
         //TODO: Needs refactoring - see above....
         Collection singleFeatures = new ArrayList();
@@ -502,19 +519,20 @@ public class MainDetailViewBean extends AbstractViewBean {
         //NB The Feature beans are held inside Collections within each Component of the
         //Interaction - they are called 'binding domains'...
         Collection components = interaction.getComponents();
-        Component component = null;
-        Feature feature = null;
-        for (Iterator it = components.iterator(); it.hasNext();) {
-            component = (Component) it.next();
+
+        for ( Iterator it = components.iterator(); it.hasNext(); ) {
+            Component component = (Component) it.next();
             Collection features = component.getBindingDomains();
-            for (Iterator it1 = features.iterator(); it1.hasNext();) {
-                feature = (Feature) it1.next();
-                if (feature.getBoundDomain() == null) {
-                    singleFeatures.add(new FeatureViewBean(feature, getHelpLink(), searchURL,
-                                                           this.getContextPath()));
+
+            for ( Iterator it1 = features.iterator(); it1.hasNext(); ) {
+                Feature feature = (Feature) it1.next();
+
+                if ( feature.getBoundDomain() == null ) {
+                    singleFeatures.add( new FeatureViewBean( feature, getHelpLink(), searchURL, this.getContextPath() ) );
                 }
             }
-        }
+        } //
+
         return singleFeatures;
     }
 

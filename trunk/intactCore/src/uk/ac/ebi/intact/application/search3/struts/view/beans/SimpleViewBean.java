@@ -56,10 +56,11 @@ public class SimpleViewBean extends AbstractViewBean {
     private static ArrayList geneNameFilter = new ArrayList();
 
     static {
-        geneNameFilter.add("gene-name");
-        geneNameFilter.add("gene-name-synonym");
-        geneNameFilter.add("orf-name");
-        geneNameFilter.add("locus-name");
+        // TODO somehow find a way to use MI references that are stable
+        geneNameFilter.add("gene name");
+        geneNameFilter.add("gene name-synonym");
+        geneNameFilter.add("orf name");
+        geneNameFilter.add("locus name");
     }
 
 
