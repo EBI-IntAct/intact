@@ -367,6 +367,7 @@
                 <include name="${db}"/>
                 <include name="commons-pool-1.1.jar"/>
                 <include name="commons-dbcp-1.1.jar"/>
+                <include name="commons-collections-3.0.jar"/>
             </lib>
 
             <!-- search specific classes -->
