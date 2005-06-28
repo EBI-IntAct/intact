@@ -5,13 +5,19 @@ import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 
 import javax.mail.MessagingException;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
+import javax.net.ssl.HttpsURLConnection;
+
+import java.io.*;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import org.apache.commons.httpclient.*;
+import org.apache.commons.httpclient.methods.GetMethod;
+
+
+
+
 
 /**
  * Utility class to perform some sanity checks on the DB. Mainly for use by curators. A allUsersReport of anomolies
@@ -167,6 +173,11 @@ public class SanityChecker {
     /**
      * Report topics
      */
+    //
+    // A N N O T A T I O N
+    //
+    public final ReportTopic URL_NOT_VALID = new ReportTopic ("This/those Url(s) is/are not valid");
+
 
     //
     // B I O S O U R C E
@@ -201,7 +212,12 @@ public class SanityChecker {
     public final ReportTopic INTERACTION_WITH_MORE_THAN_2_SELF_PROTEIN = new ReportTopic( "Interactions with more than one protein having their role set to self" );
     public final ReportTopic SINGLE_PROTEIN_CHECK = new ReportTopic( "Interactions with only One Protein" );
     public final ReportTopic NO_PROTEIN_CHECK = new ReportTopic( "Interactions with No Components" );
-
+    public final ReportTopic PROTEIN_SEQUENCE_AND_RANGE_SEQUENCE_NOT_EQUAL = new ReportTopic ("Sequence associated with the Range differs from the Protein sequence");
+    public final ReportTopic RANGE_HAS_NO_SEQUENCE_WHEN_PROTEIN_HAS_A_SEQUENCE = new ReportTopic("Range has no sequence but Protein got one");
+    public final ReportTopic RANGE_HAS_A_SEQUENCE_BUT_THE_PROTEIN_DOES_NOT_HAVE_ONE = new ReportTopic("Range has a sequence but Protein does not have one");
+    public final ReportTopic INTERACTION_ASSOCIATED_TO_A_RANGE_BUT_PROTEIN_DOES_NOT_HAVE_SEQUENCE = new ReportTopic("Interaction assiciated to a range when the protein has no related sequence");
+    public final ReportTopic FUZZY_TYPE_NOT_APPROPRIATE = new ReportTopic("As the protein is not associated to any sequence, the fuzzy type must be either n-terminal, c-terminal or undetermined and numeric feature range should not be given");
+    public final ReportTopic INTERVAL_VALUE_NOT_APPROPRIATE = new ReportTopic("Interval values not appropriate for the FromCvFuzzyType. When FromCvFuzzyType is n-terminal, c-terminal or undetermined, all interval values should be equal to zero.");
     //
     // P R O T E I N S
     //
@@ -214,7 +230,17 @@ public class SanityChecker {
     private PreparedStatement interationStatement;
     private PreparedStatement proteinStatement;
     private PreparedStatement bioSourceStatement;
+    private PreparedStatement rangeStatement;
+    private PreparedStatement annotationStatement;
+    private PreparedStatement interactorStatement;
+    private PreparedStatement featureStatement;
+    private PreparedStatement cvStatement;
 
+    private PreparedStatement exp2AnnotStatement; //statement to retrieve the ac experiment linked to a specific annotation
+    private PreparedStatement bs2AnnotStatement;
+    private PreparedStatement int2AnnotStatement;
+    private PreparedStatement cv2AnnotStatement;
+    private PreparedStatement feature2AnnotStatement;
     /**
      * Contains individual errors of curators as Map( user, Map( topic, Collection( message ) ) )
      */
@@ -265,7 +291,18 @@ public class SanityChecker {
         proteinStatement = conn.prepareStatement( "SELECT userstamp, timestamp FROM ia_interactor WHERE ac=?" );
         interationStatement = conn.prepareStatement( "SELECT userstamp, timestamp FROM ia_interactor WHERE ac=?" );
         experimentStatement = conn.prepareStatement( "SELECT userstamp, timestamp FROM ia_experiment WHERE ac=?" );
+        rangeStatement=conn.prepareStatement("SELECT userstamp,timestamp FROM ia_experiment WHERE ac=?");
+        annotationStatement = conn.prepareStatement("SELECT userstamp, timestamp FROM ia_annotation WHERE ac=?");
+        interactorStatement = conn.prepareStatement("SELECT userstamp, timestamp FROM ia_interactor WHERE ac=?");
+        featureStatement = conn.prepareStatement("SELECT userstamp, timestamp FROM ia_feature WHERE ac=?");
+        cvStatement = conn.prepareStatement("SELECT userstamp, timestamp FROM ia_controlledvocab WHERE ac=?");
 
+
+        exp2AnnotStatement = conn.prepareStatement("SELECT experiment_ac FROM ia_exp2annot WHERE annotation_ac=?");
+        bs2AnnotStatement = conn.prepareStatement("SELECT biosource_ac FROM ia_biosource2annot WHERE annotation_ac=?");
+        int2AnnotStatement = conn.prepareStatement("SELECT interactor_ac FROM ia_int2annot WHERE annotation_ac=?");
+        cv2AnnotStatement = conn.prepareStatement("SELECT cvobject_ac FROM ia_cvobject2annot WHERE annotation_ac=?");
+        feature2AnnotStatement = conn.prepareStatement("SELECT feature_ac FROM ia_feature2annot WHERE annotation_ac=?");
 
         ////////////////////////////////////////////////
         // Collecting required Controlled Vocabularies
@@ -284,7 +321,7 @@ public class SanityChecker {
         primaryReferenceXrefQualifier = (CvXrefQualifier) getCvObjectViaMI( CvXrefQualifier.class, "MI:0358" );
 
         // CvTopix still don't have MI reference
-        onHoldCvTopic = (CvTopic) helper.getObjectByLabel( CvTopic.class, "on-hold" );
+        onHoldCvTopic = (CvTopic) helper.getObjectByLabel( CvTopic.class, CvTopic.ON_HOLD );
         if ( onHoldCvTopic == null ) {
             throw new SanityCheckerException( "Your IntAct node doesn't contain the required: CvTopic( on-hold )." );
         }
@@ -687,6 +724,36 @@ public class SanityChecker {
             if ( bioSourceStatement != null ) {
                 bioSourceStatement.close();
             }
+            if (rangeStatement != null) {
+                rangeStatement.close();
+            }
+            if(annotationStatement != null){
+                annotationStatement.close();
+            }
+            if(cvStatement != null){
+                cvStatement.close();
+            }
+            if (interactorStatement != null){
+                interactorStatement.close();
+            }
+            if (featureStatement != null){
+                featureStatement.close();
+            }
+            if(exp2AnnotStatement != null){
+                exp2AnnotStatement.close();
+            }
+            if(bs2AnnotStatement!= null){
+                bs2AnnotStatement.close();
+            }
+            if(int2AnnotStatement!= null){
+                int2AnnotStatement.close();
+            }
+            if(cv2AnnotStatement != null){
+                cv2AnnotStatement.close();
+            }
+            if(feature2AnnotStatement != null){
+                feature2AnnotStatement.close();
+            }
         } catch ( SQLException se ) {
             System.out.println( "failed to close statement!!" );
             se.printStackTrace();
@@ -756,7 +823,7 @@ public class SanityChecker {
      *
      * @throws SQLException thrown if there were DB problems
      */
-    private void addMessage( ReportTopic topic, AnnotatedObject obj ) throws SQLException {
+    private void addMessage( ReportTopic topic, BasicObject obj/*AnnotatedObject obj*/ ) throws SQLException {
 
         String user = null;
         Timestamp date = null;
@@ -777,7 +844,11 @@ public class SanityChecker {
         } else if ( obj instanceof BioSource ) {
             bioSourceStatement.setString( 1, obj.getAc() );
             results = bioSourceStatement.executeQuery();
+        }else if (obj instanceof Annotation ) {
+            annotationStatement.setString(1,obj.getAc());
+            results = annotationStatement.executeQuery();
         }
+
 
         if ( results.next() ) {
             user = results.getString( "userstamp" );
@@ -785,11 +856,32 @@ public class SanityChecker {
         }
 
         results.close();
-
+        String userMessageReport="";
+        String adminMessageReport="";
         // Build users report
-        String userMessageReport = "AC: " + obj.getAc() +
-                                   "\t Shortlabel: " + obj.getShortLabel() +
+        if(obj instanceof Annotation){
+            Annotation annotation = (Annotation) obj;
+            userMessageReport = "AC: " + annotation.getAc() +
+                                   "\t URL: " + annotation.getAnnotationText() +
                                    "\t When: " + date;
+            adminMessageReport = "AC: " + obj.getAc() +
+                                 "\t URL: " + annotation.getAnnotationText() +
+                                 "\t User: " + user +
+                                 "\t When: " + date;
+
+        }
+        if(obj instanceof AnnotatedObject){
+            AnnotatedObject annotObj = (AnnotatedObject) obj;
+            userMessageReport = "AC: " + annotObj.getAc() +
+                                "\t Shortlabel: " + annotObj.getShortLabel() +
+                                "\t When: " + date;
+            adminMessageReport = "AC: " + annotObj.getAc() +
+                                 "\t Shortlabel: " + annotObj.getShortLabel() +
+                                 "\t User: " + user +
+                                 "\t When: " + date;
+
+
+        }
 
         if ( user != null && !( user.trim().length() == 0 ) ) {
 
@@ -818,12 +910,12 @@ public class SanityChecker {
         }
 
 
-        // build admin admin report
+      /*  // build admin admin report
         String adminMessageReport = "AC: " + obj.getAc() +
                                     "\t Shortlabel: " + obj.getShortLabel() +
                                     "\t User: " + user +
                                     "\t When: " + date;
-
+        */
         Collection topicMessages = (Collection) adminReport.get( topic );
         if ( topicMessages == null ) {
             topicMessages = new ArrayList();
@@ -885,7 +977,8 @@ public class SanityChecker {
                     mailer.postMail( recipients,
                                      "SANITY CHECK - " + TIME + " (" + errorCount + " error" + ( errorCount > 1 ? "s" : "" ) + ")",
                                      fullReport.toString(),
-                                     "skerrien@ebi.ac.uk" );
+                                     "cleroy@ebi.ac.uk" );
+                    System.out.println("FULL REPORT for User : " + fullReport.toString());
                 } else {
 
                     // keep track of unknown users
@@ -896,6 +989,7 @@ public class SanityChecker {
 
                 }
             }
+
         } // users
 
         // send summary of all individual mail to admin
@@ -924,6 +1018,7 @@ public class SanityChecker {
             }
 
             fullReport.append( NEW_LINE ).append( NEW_LINE );
+            System.out.println("FULL REPORT for User : " + fullReport.toString());
         }
 
         // generate full report
@@ -962,7 +1057,8 @@ public class SanityChecker {
         mailer.postMail( recipients,
                          "SANITY CHECK (ADMIN) - " + TIME + " (" + errorCount + " error" + ( errorCount > 1 ? "s" : "" ) + ")",
                          fullReport.toString(),
-                         "skerrien@ebi.ac.uk" );
+                         "cleroy@ebi.ac.uk" );
+        System.out.println("FULL REPORT for Admin : " + fullReport.toString());
 
     }
 
@@ -1004,6 +1100,15 @@ public class SanityChecker {
 
             long start = System.currentTimeMillis();
             //do checks here.....
+
+
+            //get the Annotation corresponding to url (i.e. having topic_ac equal to EBI-18
+            Collection annotations = helper.search( Annotation.class.getName(), "topic_ac", "EBI-18" );
+            System.out.println(annotations.size() + "annotation loaded.");
+            checker.checkURL(annotations);
+            annotations = null;
+            Runtime.getRuntime().gc();
+
 
             //get the Experiment and Interaction info from the DB for later use.
             Collection bioSources = helper.search( BioSource.class.getName(), "ac", "*" );
@@ -1109,4 +1214,245 @@ public class SanityChecker {
 
         System.exit( 0 );
     }
+
+
+
+   /**
+     * This method check whether the url contained in the annotation are valide. To do so, it uses the HttpClient
+     * library (commons-httpclient-3.0-rc2.ja, http://jakarta.apache.org/commons/httpclient). This library depends on
+     * two other libraries ( commons-codec-1.4-dev.jar and junit.jar).
+     * @param annotations : collection of Annotation having corresponding to URL (i.e. having for topic_ac : EBI-18)
+     * @throws SQLException
+     */
+
+    public void checkURL(Collection annotations) throws SQLException {//Collection annotations){
+
+        for (Iterator iterator = annotations.iterator(); iterator.hasNext();) {
+            Annotation annotation = (Annotation) iterator.next();
+            String urlString=annotation.getAnnotationText();
+            HttpURL httpUrl= null;
+
+
+            //Creating the httpUrl object corresponding to the the url string contained in the annotation
+            try {
+                httpUrl = new HttpURL(urlString);
+            } catch (URIException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                retrieveObject(annotation);
+            }
+
+            // If httpUrl is not null, get the method corresponding to the uri, execute if and analyze the
+            // status code to know whether the url is valide or not.
+            if(httpUrl!=null){
+                HttpClient client = new HttpClient();
+                HttpMethod method=null;
+                try{
+                    method = new GetMethod(urlString);
+                }catch (IllegalArgumentException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    retrieveObject(annotation);
+                }
+                int statusCode = -1;
+                if(method!=null){
+                    try {
+                        statusCode = client.executeMethod(method);
+                    } catch (IOException e) {
+                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        retrieveObject(annotation);
+                    }
+
+                    if(statusCode!=-1){
+                        String statusText=HttpStatus.getStatusText(statusCode);
+                        if(statusCode >= 300 && statusCode <400) {
+                            retrieveObject(annotation);
+                        }
+                        else
+                            if(statusCode >= 400 && statusCode<600){
+                                retrieveObject(annotation);
+                            }
+                        }
+                    }
+                }
+            }
+
+    }
+
+   /**
+    * This method execute several statements to retrieve the object ac that are associated with the annotation given
+    * in parameter. Those object ac can correspond to Interactor, Experiment, BioSource, CvObject or Feature. The ResultSet
+    * containing this or those ac is givent to the AnnotationMessage method which build the message.
+    *
+    * @param annotation
+    */
+
+    public void retrieveObject(Annotation annotation) {
+
+        ResultSet resultsExp = null;
+        ResultSet resultsBs = null;
+        ResultSet resultsInt = null;
+        ResultSet resultsCv = null;
+        ResultSet resultsFeature = null;
+
+        try {
+            exp2AnnotStatement.setString(1,annotation.getAc());
+            bs2AnnotStatement.setString(1,annotation.getAc());
+            int2AnnotStatement.setString(1,annotation.getAc());
+            cv2AnnotStatement.setString(1,annotation.getAc());
+            feature2AnnotStatement.setString(1,annotation.getAc());
+        } catch (SQLException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+
+        try {
+            resultsExp = exp2AnnotStatement.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        try {
+            resultsBs =  bs2AnnotStatement.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        try {
+            resultsInt = int2AnnotStatement.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        try {
+            resultsCv = cv2AnnotStatement.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        try {
+            resultsFeature = feature2AnnotStatement.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+        if(resultsExp != null ){
+            annotationMessage(resultsExp,Experiment.class,annotation);
+        }
+        if(resultsBs != null ){
+            annotationMessage(resultsBs,BioSource.class,annotation);
+        }
+        if(resultsInt != null ){
+            annotationMessage(resultsInt,Interactor.class,annotation);
+        }
+        if(resultsCv != null){
+            annotationMessage(resultsCv,CvObject.class,annotation);
+        }
+        if(resultsFeature != null ){
+            annotationMessage(resultsFeature,Feature.class,annotation);
+        }
+    }
+
+    /**
+     *   This method create the adminReportMessage and the userReportMessage for a not valide URI.
+     *
+     * @param results ResultSet containing the ac of object annotated by the annotation given in parameter
+     * @param clazz   The class of the object annotated by the annotation (can be : Interactor, Experiment, BioSource, CvObject or Feature)
+     * @param annotation
+     */
+    public void annotationMessage (ResultSet results, Class clazz, Annotation annotation){
+
+        String relatedObjectAcName = null;
+        String user = null;
+        Timestamp date = null;
+        PreparedStatement statement = null;
+        String userMessageReport = null;
+        String adminMessageReport = null;
+
+        if(Experiment.class.equals(clazz)){
+            relatedObjectAcName="experiment_ac";
+            statement=experimentStatement;
+        } else if(BioSource.class.equals(clazz)){
+            relatedObjectAcName="biosource_ac";
+            statement=bioSourceStatement;
+        } else if(Interactor.class.equals(clazz)){
+            relatedObjectAcName="interactor_ac";
+            statement=interactorStatement;
+        } else if (Feature.class.equals(clazz)){
+            relatedObjectAcName="feature_ac";
+            statement=featureStatement;
+        } else if (CvObject.class.equals(clazz)){
+            relatedObjectAcName="cvobject_ac";
+            statement=cvStatement;
+        }
+
+        try{
+            while(results.next()){
+                String relatedObjectAc=null;
+                //if(results.next()) {
+                    relatedObjectAc = results.getString( relatedObjectAcName );
+                //}
+                //else System.out.println("For annotation "+annotation.getAc() + "next() didn't go well");
+                System.out.println("relatedObjectAc : " + relatedObjectAc);
+                statement.setString(1,relatedObjectAc);
+                ResultSet relatedObjectResults = statement.executeQuery();
+                if( relatedObjectResults.next()){
+                    user = relatedObjectResults.getString( "userstamp" );
+                    date = relatedObjectResults.getTimestamp( "timestamp" );
+                    System.out.println("user : "+ user);
+                }
+                relatedObjectResults.close();
+
+                userMessageReport =     "Annotation Description (URI): " + annotation.getAnnotationText()+
+                                        "\t Annotation AC: " + annotation.getAc()+
+                                        "\t This uri is used to annotate the following object :" + relatedObjectAcName + ": " + relatedObjectAc +
+                                        "\t When: " + date +
+                                        "\n";
+
+                adminMessageReport =     "Annotation Description (URI): " + annotation.getAnnotationText()+
+                                         "\t Annotation AC: " + annotation.getAc()+
+                                         "\t This uri is used to annotate the following object :" + relatedObjectAcName + ": " + relatedObjectAc +
+                                         "\t User: " + user +
+                                         "\t When: " + date +
+                                         "\n";
+
+
+                if ( user != null && !( user.trim().length() == 0 ) ) {
+
+                    // add new message to the user
+                    Map userReport = (Map) allUsersReport.get( user );
+                    if ( userReport == null ) {
+                        userReport = new HashMap();
+                    }
+
+                    Collection topicMessages = (Collection) userReport.get( URL_NOT_VALID );
+                    if ( topicMessages == null ) {
+                        topicMessages = new ArrayList();
+
+                        // add the messages to the topic
+                        userReport.put( URL_NOT_VALID, topicMessages );
+                    }
+
+                    // add the message to the topic
+                    topicMessages.add( userMessageReport );
+
+                    // add the user's messages
+                    allUsersReport.put( user, userReport );
+                } else {
+
+                    System.err.println( "No user found for object: " + userMessageReport );
+                }
+
+
+                Collection topicMessages = (Collection) adminReport.get( URL_NOT_VALID );
+                if ( topicMessages == null ) {
+                    topicMessages = new ArrayList();
+
+                    // add the messages to the topic
+                    adminReport.put( URL_NOT_VALID, topicMessages );
+                }
+
+                // add the message to the topic
+                topicMessages.add( adminMessageReport );
+
+            }
+        }catch(SQLException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
 }
+
