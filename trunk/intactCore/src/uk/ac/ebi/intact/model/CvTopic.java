@@ -29,6 +29,9 @@ public class CvTopic extends CvObject implements Editable {
     public static final String ISOFORM_COMMENT = "isoform-comment";
     public static final String NON_UNIPROT = "no-uniprot-update";
     public static final String CC_NOTE = "uniprot-cc-note";
+    public static final String ON_HOLD = "on-hold";
+    public static final String ACCEPTED = "accepted";
+    public static final String REJECTED = "rejected";
 
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus.
