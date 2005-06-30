@@ -454,6 +454,7 @@
             <fileset dir="${root.lib.dir}">
                 <include name="db-ojb-1.0.rc6.jar"/>
                 <include name="commons-dbcp-1.1.jar"/>
+                <include name="commons-collections-3.0.jar"/>
                 <include name="log4j-1.2.8.jar"/>
                 <include name="${db}"/>
                 <include name="commons-pool-1.2.jar"/>
