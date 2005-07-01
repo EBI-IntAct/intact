@@ -44,4 +44,49 @@ public class ObjectBridgeQueryFactory {
         crit.addLike(param, sqlValue);
         return QueryFactory.newQuery(clazz, crit);
     }
+
+
+    /**
+     * Returns a query to build menus. The obsolete terms are not included.
+     * @param clazz the class to construct menus. Eg., CvTopic.class
+     * @return a query to build menus. The menus are sorted in ascending order.
+     */
+    public Query getMenuBuildQuery(Class clazz) {
+        Criteria crit = new Criteria();
+        // Need all records for given class.
+        crit.addLike("ac", "%");
+
+        // Filter out obsolete items
+        crit.addNotIn("ac", getObsoleteQuery(clazz));
+
+        ReportQueryByCriteria query = QueryFactory.newReportQuery(clazz, crit);
+        // Limit to shortlabel
+        query.setAttributes(new String[] { "shortlabel" });
+        query.addOrderByAscending("shortLabel");
+        return query;
+    }
+
+    // Helper Methods
+
+    /**
+     * Returns a query to get a list of obsolete ACs
+     * @param clazz the returned oboslete terms are related to this class.
+     * @return a list of obsolete ACs
+     */
+    private static Query getObsoleteQuery(Class clazz) {
+        Criteria crit = new Criteria();
+        // Need all records for given class.
+        crit.addLike("ac", "%");
+
+        // We only need obsolete items
+        Criteria subcrit = new Criteria();
+        subcrit.addEqualTo("annotations.cvTopic.shortLabel", "obsolete term");
+
+        // Combine with the sub criteria
+        crit.addAndCriteria(subcrit);
+        ReportQueryByCriteria query = QueryFactory.newReportQuery(clazz, crit);
+        // Limit to shortlabel
+        query.setAttributes(new String[] { "ac" });
+        return query;
+    }
 }
