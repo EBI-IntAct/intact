@@ -57,13 +57,8 @@ public class ImageServlet extends HttpServlet {
         long heapFreeSize = Runtime.getRuntime().freeMemory();
 
         logger.info("in Servlet: current size of heap: " + heapSize);
-        System.out.println("in Servlet: current size of heap: " + heapSize);
         logger.info("maximum heap size: " + heapMaxSize);
-        System.out.println("in Servlet: maximum heap size: " + heapMaxSize);
         logger.info("free heap size: " + heapFreeSize);
-        System.out.println("in Servlet: free heap size: " + heapFreeSize);
-
-
 
         response.setContentType("image/png");
     }
