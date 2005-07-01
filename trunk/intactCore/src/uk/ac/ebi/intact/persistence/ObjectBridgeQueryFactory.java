@@ -60,8 +60,8 @@ public class ObjectBridgeQueryFactory {
         crit.addNotIn("ac", getObsoleteQuery(clazz));
 
         ReportQueryByCriteria query = QueryFactory.newReportQuery(clazz, crit);
-        // Limit to shortlabel
-        query.setAttributes(new String[] { "shortlabel" });
+        // Limit to ac, shortlabel and fullname
+        query.setAttributes(new String[] { "ac", "shortlabel", "fullname" });
         query.addOrderByAscending("shortLabel");
         return query;
     }
