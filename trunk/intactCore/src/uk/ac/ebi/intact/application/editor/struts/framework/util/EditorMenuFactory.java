@@ -233,7 +233,7 @@ public class EditorMenuFactory {
         
         while (iter.hasNext()) {
             Object[] row = (Object[])iter.next();
-            menu.add(row[0]);
+            menu.add(row[1]);
         }
         return menu;
     }
