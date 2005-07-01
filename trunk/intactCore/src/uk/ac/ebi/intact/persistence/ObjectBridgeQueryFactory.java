@@ -10,6 +10,7 @@ import org.apache.ojb.broker.query.QueryFactory;
 import org.apache.ojb.broker.query.Query;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.ReportQueryByCriteria;
+import uk.ac.ebi.intact.model.CvTopic;
 
 /**
  * This factory class builds common queries for IntAct.
@@ -80,7 +81,7 @@ public class ObjectBridgeQueryFactory {
 
         // We only need obsolete items
         Criteria subcrit = new Criteria();
-        subcrit.addEqualTo("annotations.cvTopic.shortLabel", "obsolete term");
+        subcrit.addEqualTo( "annotations.cvTopic.shortLabel", CvTopic.OBSOLETE );
 
         // Combine with the sub criteria
         crit.addAndCriteria(subcrit);
