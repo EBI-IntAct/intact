@@ -34,6 +34,7 @@ public class CvTopic extends CvObject implements Editable {
     public static final String ON_HOLD = "on-hold";
     public static final String ACCEPTED = "accepted";
     public static final String REJECTED = "rejected";
+    public static final String URL = "url";
     
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus.
