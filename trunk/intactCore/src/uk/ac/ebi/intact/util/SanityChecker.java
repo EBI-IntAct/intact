@@ -1237,7 +1237,7 @@ public class SanityChecker {
             try {
                 httpUrl = new HttpURL(urlString);
             } catch (URIException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+               // e.printStackTrace();
                 retrieveObject(annotation);
             }
 
@@ -1249,7 +1249,7 @@ public class SanityChecker {
                 try{
                     method = new GetMethod(urlString);
                 }catch (IllegalArgumentException e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    //e.printStackTrace();
                     retrieveObject(annotation);
                 }
                 int statusCode = -1;
@@ -1257,7 +1257,7 @@ public class SanityChecker {
                     try {
                         statusCode = client.executeMethod(method);
                     } catch (IOException e) {
-                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        //e.printStackTrace();
                         retrieveObject(annotation);
                     }
 
@@ -1300,34 +1300,34 @@ public class SanityChecker {
             cv2AnnotStatement.setString(1,annotation.getAc());
             feature2AnnotStatement.setString(1,annotation.getAc());
         } catch (SQLException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        //    e.printStackTrace();
         }
 
 
         try {
             resultsExp = exp2AnnotStatement.executeQuery();
         } catch (SQLException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        //    e.printStackTrace();
         }
         try {
             resultsBs =  bs2AnnotStatement.executeQuery();
         } catch (SQLException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        //    e.printStackTrace();
         }
         try {
             resultsInt = int2AnnotStatement.executeQuery();
         } catch (SQLException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        //    e.printStackTrace();
         }
         try {
             resultsCv = cv2AnnotStatement.executeQuery();
         } catch (SQLException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        //    e.printStackTrace();
         }
         try {
             resultsFeature = feature2AnnotStatement.executeQuery();
         } catch (SQLException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        //    e.printStackTrace();
         }
 
         if(resultsExp != null ){
@@ -1381,10 +1381,11 @@ public class SanityChecker {
         }
 
         try{
-            while(results.next()){
+            if(results.next()){
                 String relatedObjectAc=null;
                 //if(results.next()) {
-                    relatedObjectAc = results.getString( relatedObjectAcName );
+                relatedObjectAc = results.getString( relatedObjectAcName );
+
                 //}
                 //else System.out.println("For annotation "+annotation.getAc() + "next() didn't go well");
                 System.out.println("relatedObjectAc : " + relatedObjectAc);
