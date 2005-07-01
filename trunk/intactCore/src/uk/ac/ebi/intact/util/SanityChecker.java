@@ -193,6 +193,7 @@ public class SanityChecker {
     public final ReportTopic EXPERIMENT_WITHOUT_ORGANISM = new ReportTopic( "Experiments with no organism" );
     public final ReportTopic EXPERIMENT_WITHOUT_CVIDENTIFICATION = new ReportTopic( "Experiments with no CvIdentification" );
     public final ReportTopic EXPERIMENT_WITHOUT_CVINTERACTION = new ReportTopic( "Experiments with no CvInteraction" );
+    public final ReportTopic EXPERIMENT_TO_BE_REVIEWED = new ReportTopic( "Experiments to be reviewed" );
 
     //
     // I N T E R A C T I O  N S
@@ -223,6 +224,8 @@ public class SanityChecker {
     //
     public final ReportTopic PROTEIN_WITH_NO_UNIPROT_IDENTITY = new ReportTopic( "proteins with no Xref with XrefQualifier(identity) and CvDatabase(uniprot)" );
     public final ReportTopic PROTEIN_WITH_MORE_THAN_ONE_UNIPROT_IDENTITY = new ReportTopic( "proteins with more than one Xref with XrefQualifier(identity) and CvDatabase(uniprot)" );
+    public final ReportTopic PROTEIN_WITH_WRONG_CRC64 = new ReportTopic( "proteins Crc64 stored in the database does not correspond to the Crc64 calculated from the sequence");
+    public final ReportTopic PROTEIN_WITHOUT_A_SEQUENCE_BUT_WITH_AN_CRC64 = new ReportTopic( "proteins does not have a sequence but have a Crc64");
 
 
     //Holds the statements for finding userstamps in various tables
@@ -1137,6 +1140,8 @@ public class SanityChecker {
             System.out.println( proteins.size() + " proteins loaded." );
             checker.checkProteins( proteins );
 
+            checker.checkCrc64(proteins);
+
             long end = System.currentTimeMillis();
             long total = end - start;
             System.out.println( "....Done. " );
@@ -1453,6 +1458,42 @@ public class SanityChecker {
             }
         }catch(SQLException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
+    public void checkCrc64(Collection proteins) throws SQLException {
+        for (Iterator iterator = proteins.iterator(); iterator.hasNext();) {
+            Protein protein = (Protein) iterator.next();
+
+            String crc64Stored=protein.getCrc64();
+            String sequence=protein.getSequence();
+            if(sequence!=null && false==sequence.trim().equals("")){
+                String crc64Calculated=Crc64.getCrc64(sequence);
+                if(!crc64Calculated.equals(crc64Stored)){
+                    addMessage(PROTEIN_WITH_WRONG_CRC64, protein);
+                }
+            }
+            else{
+                if(crc64Stored!=null){
+                    addMessage(PROTEIN_WITHOUT_A_SEQUENCE_BUT_WITH_AN_CRC64,protein);
+                    System.out.println("Sequence"+sequence);
+                }
+            }
+        }
+    }
+
+    public void checkReviewed(Collection experiments) throws SQLException {
+
+        for (Iterator iterator = experiments.iterator(); iterator.hasNext();) {
+            Experiment experiment =  (Experiment) iterator.next();
+            Collection annotations=experiment.getInteractions();
+            for (Iterator iterator1 = annotations.iterator(); iterator1.hasNext();) {
+                Annotation annotation =  (Annotation) iterator1.next();
+                CvTopic cvTopic = annotation.getCvTopic();
+                if("to-be-reviewed".equals(cvTopic.getShortLabel())){
+                    addMessage( EXPERIMENT_TO_BE_REVIEWED,experiment);
+                }
+            }
         }
     }
 }
