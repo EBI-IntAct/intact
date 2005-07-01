@@ -10,6 +10,7 @@ import org.apache.ojb.broker.query.Query;
 import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.ObjectBridgeQueryFactory;
 
 import java.util.*;
 
@@ -224,7 +225,7 @@ public class EditorMenuFactory {
         List menu = new ArrayList();
 
         // The query factory to get a query.
-        OJBQueryFactory qf = OJBQueryFactory.getInstance();
+        ObjectBridgeQueryFactory qf = ObjectBridgeQueryFactory.getInstance();
 
         Query query = qf.getMenuBuildQuery(targetClass);
 
@@ -232,8 +233,6 @@ public class EditorMenuFactory {
         
         while (iter.hasNext()) {
             Object[] row = (Object[])iter.next();
-            if (targetClass.isAssignableFrom(CvInteraction.class)) {
-            }
             menu.add(row[0]);
         }
         return menu;
