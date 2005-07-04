@@ -21,7 +21,8 @@ in the root directory of this distribution.
                  uk.ac.ebi.intact.application.search3.struts.view.beans.XrefViewBean,
                  java.util.Collection,
                  uk.ac.ebi.intact.application.search3.struts.view.beans.AnnotationViewBean,
-                 uk.ac.ebi.intact.application.search3.struts.util.SearchConstants"
+                 uk.ac.ebi.intact.application.search3.struts.util.SearchConstants,
+                 uk.ac.ebi.intact.model.CvTopic"
     %>
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
@@ -115,21 +116,42 @@ in the root directory of this distribution.
                     </a>
                 </td>
 
-<%
+        <%
         for(Iterator it = someAnnotations.iterator(); it.hasNext();) {
-             AnnotationViewBean anAnnotation = (AnnotationViewBean) it.next();
-            if(!anAnnotation.equals(firstAnnotation)) {
+
+            AnnotationViewBean anAnnotation = (AnnotationViewBean) it.next();
+
+            if( ! anAnnotation.equals( firstAnnotation ) ) {
             //we need to have new rows for each Annotations OTHER THAN the first..
-%>
+        %>
                <tr bgcolor="white">
          <% } %>
+
                 <td td class="data">
                     <a href="<%=bean.getSearchUrl(anAnnotation.getObject().getCvTopic()) %>" >
                     <%=anAnnotation.getName()%>
                  </td>
                       <!-- todo -->
                       <td td class="data" colspan="4" >
-                         <%=anAnnotation.getText()%>
+
+                        <%
+                            //need to check for a 'url' annotation and hyperlink them if so...
+                            if( anAnnotation.getObject().getCvTopic().getShortLabel().equals( CvTopic.URL ) ) {
+                        %>
+                              <a href="<%= anAnnotation.getText() %>" target="_blank"><%= anAnnotation.getText() %></a><br>
+                        <%
+                            } else {
+                                    if( anAnnotation.getText() != null) {  %>
+                                        <%= anAnnotation.getText() %><br>
+                                <%   }
+                                    else {
+                                    %>
+                                  - <br>
+                                    <% }
+                            }
+
+                        %>
+
                      </td>
                </tr>
         <% } %>
