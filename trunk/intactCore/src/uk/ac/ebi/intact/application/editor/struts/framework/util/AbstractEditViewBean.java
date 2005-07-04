@@ -719,19 +719,19 @@ public abstract class AbstractEditViewBean implements Serializable {
         String name = EditorMenuFactory.TOPIC;
         List menu = menuFactory.getMenu(name, 0);
         map.put(name, menu);
-        map.put(name + "_", menuFactory.convertToAddMenu(name, menu));
+        map.put(name + "_", menuFactory.convertToAddMenu(menu));
 
         // The database edit/add menu.
         name = EditorMenuFactory.DATABASE;
         menu = menuFactory.getMenu(name, 0);
         map.put(name, menu);
-        map.put(name + "_", menuFactory.convertToAddMenu(name, menu));
+        map.put(name + "_", menuFactory.convertToAddMenu(menu));
 
         // The qualifier edit/add menu.
         name = EditorMenuFactory.QUALIFIER;
         menu = menuFactory.getMenu(name, 0);
         map.put(name, menu);
-        map.put(name + "_", menuFactory.convertToAddMenu(name, menu));
+        map.put(name + "_", menuFactory.convertToAddMenu(menu));
 
         return map;
     }

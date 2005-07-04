@@ -955,7 +955,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
         // Add the Role add menu.
         name = EditorMenuFactory.ROLE;
         menu = (List) myMenus.get(name);
-        myMenus.put(name + "_", menuFactory.convertToAddMenu(name, menu));
+        myMenus.put(name + "_", menuFactory.convertToAddMenu(menu));
     }
 
     private void makeProteinBeans(Collection components) {
