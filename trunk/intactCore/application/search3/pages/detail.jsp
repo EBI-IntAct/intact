@@ -398,10 +398,9 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <td class="data" style="vertical-align: top;" rowspan="1" colspan="6">
                 <%
                     //need to check for a 'url' annotation and hyperlink them if so...
-                    if(annot.getCvTopic().getShortLabel().equals("url")) {
+                    if( annot.getCvTopic().getShortLabel().equals( CvTopic.URL ) ) {
                 %>
-                <a href="<%= annot.getAnnotationText() %>">
-                    <%= annot.getAnnotationText() %></a><br>
+                <a href="<%= annot.getAnnotationText() %>" target="_blank"><%= annot.getAnnotationText() %></a><br>
                 <%
                     } else {
                             if( annot.getAnnotationText() != null) {  %>
