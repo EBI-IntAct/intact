@@ -74,7 +74,7 @@ public class MainDetailViewBean extends AbstractViewBean {
      * List of Annotation topics which should be filtered on. The values are set in the bean's
      * constructor.
      */
-    private List annotationFilters;
+//    private List annotationFilters;
 
     /**
      * Holds a list of Annotations that may be publicly displayed, ie a filtered list removing those
@@ -161,12 +161,12 @@ public class MainDetailViewBean extends AbstractViewBean {
             interactionList = obj.getInteractions();
         }
 
-        //now set up the Annotation filter list
-        annotationFilters = new ArrayList();
-        annotationFilters.add("remark");
-        annotationFilters.add("remark-internal");
-        annotationFilters.add("uniprot-dr-export");
-        annotationFilters.add("uniprot-cc-export");
+//        //now set up the Annotation filter list
+//        annotationFilters = new ArrayList();
+//        annotationFilters.add("remark");
+//        annotationFilters.add("remark-internal");
+//        annotationFilters.add("uniprot-dr-export");
+//        annotationFilters.add("uniprot-cc-export");
 
     }
 
@@ -299,11 +299,9 @@ public class MainDetailViewBean extends AbstractViewBean {
                 Annotation annotation = (Annotation) it.next();
 
                 //run through the filter
-                if ((annotationFilters.contains(annotation.getCvTopic().getShortLabel()))) {
-                    continue;   //ignore these
+                if( false == AnnotationFilter.getInstance().isFilteredOut( annotation ) ) {
+                    annotationsForDisplay.add(annotation);
                 }
-
-                annotationsForDisplay.add(annotation);
             }
         }
 
@@ -317,7 +315,7 @@ public class MainDetailViewBean extends AbstractViewBean {
      *
      * @return Collection the filtered List of Annotations (empty if there are none)
      */
-    public Collection getFilteredAnnotations(Interaction interaction) {
+    public Collection getFilteredAnnotations( Interaction interaction ) {
 
         Collection filteredAnnots = new ArrayList();
 
@@ -325,11 +323,9 @@ public class MainDetailViewBean extends AbstractViewBean {
             Annotation annotation = (Annotation) it.next();
 
             //run through the filter
-            if ((annotationFilters.contains(annotation.getCvTopic().getShortLabel()))) {
-                continue;   //ignore these
+            if ( false == AnnotationFilter.getInstance().isFilteredOut( annotation ) ) {
+                filteredAnnots.add( annotation );
             }
-
-            filteredAnnots.add(annotation);
         }
 
         return filteredAnnots;
