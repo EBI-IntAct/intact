@@ -5,3 +5,5 @@
 DELETE FROM IA_BioSourceStatistics;
 DELETE FROM IA_DetectionMethodsStatistics;
 DELETE FROM IA_Statistics;
+
+exit

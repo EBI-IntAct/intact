@@ -17,7 +17,16 @@
   
 *************************************************************/
 
-declare
+SET   SERVEROUT ON
+SET   FEEDBACK OFF
+SET   VERIFY OFF
+SET   LINES 150
+SET   PAGES 20000
+SET   DOC OFF
+
+
+DECLARE
+
   cursor c_bin (b_taxid ia_biosource.taxid%TYPE)
   IS
           SELECT count(distinct(component1.interaction_ac)) AS binary_interactions
@@ -74,3 +83,5 @@ BEGIN
 
 END;
 /
+
+exit
