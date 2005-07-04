@@ -67,24 +67,16 @@ public class ObjectBridgeQueryFactory {
         return query;
     }
 
-    // Helper Methods
-
     /**
      * Returns a query to get a list of obsolete ACs
      * @param clazz the returned oboslete terms are related to this class.
      * @return a list of obsolete ACs
      */
-    private static Query getObsoleteQuery(Class clazz) {
+    public Query getObsoleteQuery(Class clazz) {
         Criteria crit = new Criteria();
-        // Need all records for given class.
-        crit.addLike("ac", "%");
-
         // We only need obsolete items
-        Criteria subcrit = new Criteria();
-        subcrit.addEqualTo( "annotations.cvTopic.shortLabel", CvTopic.OBSOLETE );
+        crit.addEqualTo("annotations.cvTopic.shortLabel", CvTopic.OBSOLETE );
 
-        // Combine with the sub criteria
-        crit.addAndCriteria(subcrit);
         ReportQueryByCriteria query = QueryFactory.newReportQuery(clazz, crit);
         // Limit to shortlabel
         query.setAttributes(new String[] { "ac" });
