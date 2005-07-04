@@ -1,7 +1,7 @@
 <%
 response.setHeader("Cache-Control","no-cache"); //HTTP 1.1
-response.setHeader("Pragma","no-cache"); //HTTP 1.0
-response.setDateHeader ("Expires", 0); //prevents caching at the proxy server
+response.setHeader("Pragma","no-cache");        //HTTP 1.0
+response.setDateHeader ("Expires", 0);          //prevents caching at the proxy server
 %>
 
 <%@ page import="uk.ac.ebi.intact.application.search3.struts.framework.util.SearchConstants"%>
@@ -10,14 +10,7 @@ response.setDateHeader ("Expires", 0); //prevents caching at the proxy server
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic" %>
- <%@ taglib uri="/WEB-INF/tld/intact.tld"      prefix="intact"%>
- <%--
-  Created by IntelliJ IDEA.
-  User: Anja
-  Date: 11.01.2005
-  Time: 19:21:19
-  To change this template use File | Settings | File Templates.
---%>
+<%@ taglib uri="/WEB-INF/tld/intact.tld"      prefix="intact"%>
 
 <%--
     Search view which contains testfields to specify the query.
@@ -30,6 +23,8 @@ response.setDateHeader ("Expires", 0); //prevents caching at the proxy server
 
     It also contains radiobuttons to specify if all search conditions should be found or any
     At the end there is a button to submit the data
+
+    @author: anja, Catherine Leroy, Samuel Kerrien
 --%>
 
 <html:html>
