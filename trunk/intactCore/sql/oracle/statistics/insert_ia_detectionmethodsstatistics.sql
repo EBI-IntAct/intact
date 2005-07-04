@@ -30,3 +30,5 @@ INSERT INTO IA_DetectionMethodsStatistics(ac , fullname, number_interactions)
                 AND ia_experiment.ac = ia_int2exp.experiment_ac
                 AND ia_controlledvocab.ac = ia_experiment.detectmethod_ac
           GROUP BY ia_controlledvocab.fullname ) t;
+
+exit

@@ -12,11 +12,11 @@
   Usage:      sqlplus username/password@instance @progname.sql
 
   Input parameter:
-      p_start : the date of the first row to be created (non mandatory, can be set to NULL)
+       p_start : the date of the first row to be created (non mandatory, can be set to NULL)
        v_num_day : the number of days between two statistics
 
   Note: that script doesn't recreate or update a stat if it already exists.
-      to do so, you should clean the table first and regenerate it all.
+        to do so, you should clean the table first and regenerate it all.
 
   $Date$
   $Author$
@@ -24,6 +24,14 @@
 
   
 *************************************************************/
+
+
+SET   SERVEROUT ON
+SET   FEEDBACK OFF
+SET   VERIFY OFF
+SET   LINES 150
+SET   PAGES 20000
+SET   DOC OFF
 
 
 DECLARE
@@ -137,3 +145,5 @@ BEGIN
 END;
 
 /
+
+exit
