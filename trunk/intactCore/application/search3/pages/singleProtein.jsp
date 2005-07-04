@@ -8,10 +8,12 @@
     This page will usually be used when a user clicks on a hyperlink of another
     page to view the specific details of a single Protein. Protein searches are handled
     by the overview.jsp page as the interaction partners are required in that case.
+--%>
 
+<!--
     @author Chris Lewington
     @version $Id$
---%>
+-->
 
 <!-- really need to have an error page specified here to catch anything unhandled -->
 <%@ page language="java"  %>

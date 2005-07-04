@@ -3,7 +3,9 @@
     specification is as per the mockups June 2004. This page is typically used when a
     Protein is searched for - a summary of the relevant information (eg Interactions
     etc) is displayed.
+--%>
 
+<!--
     @author Chris Lewington
     @version $Id$
 --%>
