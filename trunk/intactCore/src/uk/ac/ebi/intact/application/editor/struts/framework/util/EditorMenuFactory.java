@@ -7,6 +7,9 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.framework.util;
 
 import org.apache.ojb.broker.query.Query;
+import org.apache.ojb.broker.query.Criteria;
+import org.apache.ojb.broker.query.QueryFactory;
+import org.apache.ojb.broker.query.ReportQueryByCriteria;
 import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
@@ -106,9 +109,13 @@ public class EditorMenuFactory {
     private static final Map ourNameToType = new HashMap();
 
     /**
-     * Maps: Menu Name -> default value.
+     * A list of MI numbers for a polymer.
      */
-    private static final Map ourNameToDefValue = new HashMap();
+    private static final List ourPolymerMIs = Arrays.asList(new String[] {
+        "MI:0383", "MI:0318", "MI:0319", "MI:0320", "MI:0321", "MI:0322",
+        "MI:0323", "MI:0324", "MI:0325", "MI:0326", "MI:0327"});
+
+    private static final Criteria ourPolymerCriteria = new Criteria();
 
     // Static initializer.
 
@@ -127,6 +134,11 @@ public class EditorMenuFactory {
         ourNameToType.put(TISSUE, CvTissue.class);
         ourNameToType.put(FEATURE_TYPE, CvFeatureType.class);
         ourNameToType.put(FEATURE_IDENTIFICATION, CvFeatureIdentification.class);
+
+        // Fill the criteria
+        for (Iterator iter = ourPolymerMIs.iterator(); iter.hasNext();) {
+            ourPolymerCriteria.addOrCriteria(buildMICriteria((String) iter.next()));
+        }
     }
 
     // No instantiation from outside.
@@ -151,41 +163,29 @@ public class EditorMenuFactory {
 
     /**
      * Converts the given list to add menu.
-     * @param key the key to search in default value map.
      * @param menu the menu to convert (not modified).
-     * @return converted menu. If there is a default specified for
-     * <code>key</code>, then it will be added or else {@link #SELECT_LIST_ITEM}
-     * is added as the first item to the list.
+     * @return converted menu; {@link #SELECT_LIST_ITEM} is added as the first
+     * item to the list.
      */
-    public List convertToAddMenu(String key, List menu) {
+    public List convertToAddMenu(List menu) {
         // The menu to return.
         List modMenu = new LinkedList(menu);
         // The default value for add menu.
         String  defvalue = SELECT_LIST_ITEM;
-        // -- select list -- for add menus only if there is no default value.
-        if (ourNameToDefValue.containsKey(key)) {
-            // eg., Qualifier menu has a default value.
-            defvalue = (String) ourNameToDefValue.get(key);
-            // Remove the default value to avoid adding it twice.
-            modMenu.remove(defvalue);
-        }
         // Add as the first item in the list.
         modMenu.add(0, defvalue);
         return modMenu;
     }
 
     /**
-     * Returns a menu for given name. This is retrieved from cache if it is
-     * in the cache or else new menu is created and stored in the cache before
-     * returning it.
+     * Returns a menu for given name.
      * @param key the name of the menu; the valid values are: {@link #TOPIC},
      * {@link #DATABASE}, {@link #QUALIFIER}, {@link #ORGANISM},
      * {@link #INTERACTION}, {@link #IDENTIFICATION}, {@link #INTERACTION_TYPE},
      * {@link #EXPERIMENT} and {@link #ROLE}.
      * @param mode 0 for and edit menu and 1 for an add menu; the difference is
      * {@link #SELECT_LIST_ITEM} is added as the first entry for an add menu.
-     * @return the menu for given <code>name</code>; <code><label/code> is
-     * removed if it exists.
+     * @return a list of menu items for given <code>name</code>.
      * @throws IntactException for errors in contructing the menu or unable to
      * create an Intact helper to access persistent system.
      */
@@ -199,7 +199,42 @@ public class EditorMenuFactory {
             return menu;
         }
         if (mode == 1) {
-            menu = convertToAddMenu(key, menu);
+            menu = convertToAddMenu(menu);
+        }
+        return menu;
+    }
+
+    /**
+     * Returns a list of menu itsm for the Polymer editor.
+     * @param mode 0 for and edit menu and 1 for an add menu; the difference is
+     * {@link #SELECT_LIST_ITEM} is added as the first entry for an add menu.
+     * @return a list of menu items for hte Polymer editor.
+     * @throws IntactException for errors in contructing the menu or unable to
+     * create an Intact helper to access persistent system.
+     */
+    public List getPolymerMenu(int mode) throws IntactException {
+        // The menu to return.
+        List menu = new ArrayList();
+
+        ReportQueryByCriteria query = QueryFactory.newReportQuery(
+                CvInteractorType.class, ourPolymerCriteria);
+        // Limit to shortlabel
+        query.setAttributes(new String[] { "shortlabel" });
+        query.addOrderByAscending("shortLabel");
+
+        Iterator iter = IntactHelperUtil.getDefaultIntactHelper().getIteratorByReportQuery(query);
+
+        while (iter.hasNext()) {
+            Object[] row = (Object[])iter.next();
+            menu.add(row[0]);
+        }
+        if (menu.isEmpty()) {
+            // Special list when we don't have any menu items.
+            menu.add(SELECT_LIST_ITEM);
+            return menu;
+        }
+        if (mode == 1) {
+            menu = convertToAddMenu(menu);
         }
         return menu;
     }
@@ -236,5 +271,18 @@ public class EditorMenuFactory {
             menu.add(row[1]);
         }
         return menu;
+    }
+
+    /**
+     * @param mi
+     * @return returns a criteria for matching primaryid with given mi (without
+     * obsolete terms)
+     */
+    private static Criteria buildMICriteria(String mi) {
+        Criteria crit = new Criteria();
+        crit.addEqualTo("xrefs.primaryid", mi);
+        crit.addNotIn("ac", ObjectBridgeQueryFactory.getInstance().getObsoleteQuery(
+                CvInteractorType.class));
+        return crit;
     }
 }
