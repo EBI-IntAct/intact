@@ -25,6 +25,11 @@ import java.util.Map;
  */
 public class SqlSearchObjectProvider implements SearchObjectProvider {
 
+    /**
+     * Set the maximum amount of row fetched when executing an SQL query.
+     */
+    public static final int MAX_FETCH_SIZE = 128;
+
 
     private IntactHelper helper;
     // database connection
@@ -56,6 +61,7 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         ResultSet resultSet = null;
         try {
             stmt = conn.createStatement();
+            stmt.setFetchSize( MAX_FETCH_SIZE );
             resultSet = stmt.executeQuery( sqlQuery );
 
             String ac = null;
@@ -174,6 +180,8 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         ResultSet resultSet = null;
         try {
             stmt = conn.createStatement();
+            stmt.setFetchSize( MAX_FETCH_SIZE );
+
             resultSet = stmt.executeQuery( sqlQuery );
 
             String ac = null;
@@ -287,6 +295,8 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         ResultSet resultSet = null;
         try {
             stmt = conn.createStatement();
+            stmt.setFetchSize( MAX_FETCH_SIZE );
+
             resultSet = stmt.executeQuery( sqlQuery );
 
             String ac = null;
@@ -390,6 +400,8 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         ResultSet resultSet = null;
         try {
             stmt = conn.createStatement();
+            stmt.setFetchSize( MAX_FETCH_SIZE );
+
             resultSet = stmt.executeQuery( sqlQuery );
 
             String ac = null;
@@ -489,6 +501,8 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         ResultSet resultSet = null;
         try {
             stmt = conn.createStatement();
+            stmt.setFetchSize( MAX_FETCH_SIZE );
+
             resultSet = stmt.executeQuery( sqlQuery );
 
             String ac = null;
@@ -595,6 +609,8 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
 
         try {
             stmt = conn.createStatement();
+            stmt.setFetchSize( MAX_FETCH_SIZE );
+
             resultSet = stmt.executeQuery( sqlQuery );
 
             // checks if the resultset is empty,
@@ -660,6 +676,8 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         ResultSet resultSet = null;
         try {
             stmt = conn.createStatement();
+            stmt.setFetchSize( MAX_FETCH_SIZE );
+
             resultSet = stmt.executeQuery( sql_query );
 
             String ac = null;
