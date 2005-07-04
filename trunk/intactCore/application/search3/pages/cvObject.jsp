@@ -101,7 +101,7 @@ in the root directory of this distribution.
 <!-- list all the anotations -->
 <%
     // first get all annotations from the bean
-    if(!someAnnotations.isEmpty())  {
+    if( false == someAnnotations.isEmpty() )  {
     //get the first one and process it on its own - it seems we need it to put a search
     //link for it into the first cell of the row, then process the others as per
     //'usual'
@@ -146,11 +146,11 @@ in the root directory of this distribution.
 
      <tr bgcolor="white">
 
-                       <td class="headerdarkmid" rowspan="<%= someXrefBeans.size() %>">
-                            <a href="<%= bean.getHelpLink() + "Xref.cvrefType" %>" class="tdlink">
-                            Xref
-                            </a>
-                        </td> 
+           <td class="headerdarkmid" rowspan="<%= someXrefBeans.size() %>">
+                <a href="<%= bean.getHelpLink() + "Xref.cvrefType" %>" class="tdlink">
+                Xref
+                </a>
+            </td>
     <%  // now go on with all the other xrefs
         for(Iterator it1 = someXrefBeans.iterator(); it1.hasNext();) {
             XrefViewBean aXref = (XrefViewBean) it1.next();
@@ -162,7 +162,7 @@ in the root directory of this distribution.
 %>
             <tr bgcolor="white">
 <%
-        }
+       }
 %>
                   <!-- name of the xref -->
                   <td class="data">
@@ -184,7 +184,7 @@ in the root directory of this distribution.
                      <td class="data">
                           <%=aXref.getSecondaryId()%>
                      </td>
-            <%  }    %>
+            <% }    %>
 
                       <!-- type -->
                      <td class="data">
@@ -199,9 +199,10 @@ in the root directory of this distribution.
                         </a>
                      </td>
                </tr>
-    <% }  %>
 
-  <%   } %>
+    <% } // for all Xrefs %>
+
+  <% } // if any Xrefs %>
 
         </tbody>
     </table>
