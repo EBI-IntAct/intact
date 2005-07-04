@@ -16,6 +16,17 @@ package uk.ac.ebi.intact.model;
  */
 public class CvComponentRole extends CvObject implements Editable {
 
+    //////////////////////
+    // Constants
+
+    public static final String BAIT = "bait";
+    public static final String PREY = "prey";
+    public static final String TARGET = "target";
+    public static final String NEUTRAL = "neutral component";
+    public static final String ENZYME = "enzyme";
+    public static final String ENZYME_TARGET = "enzyme target";
+    public static final String UNSPECIFIED = "unspecified";
+
     /**
      * This constructor should <b>not</b> be used as it could
      * result in objects with invalid state. It is here for object mapping
