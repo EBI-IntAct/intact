@@ -14,17 +14,14 @@ import uk.ac.ebi.intact.model.Xref;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
-
-/**
- * @author Michael Kleen
- * @version BioSourceViewBean.java Date: Nov 14, 2004 Time: 9:09:19 PM
- */
 
 /**
  * This view bean is used to provide the information for JSP display relating to a particular BioSource Object.
  * Its main purpose is to provide very simple beans for display in an initial search result page.
+ *
+ * @author Michael Kleen, Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version BioSourceViewBean.java Date: Nov 14, 2004 Time: 9:09:19 PM
  */
 public class BioSourceViewBean extends AbstractViewBean {
 
@@ -50,19 +47,6 @@ public class BioSourceViewBean extends AbstractViewBean {
      * interface types.
      */
     private String intactType;
-
-    /**
-     * List of Annotation topics which should be filtered on. The values are set in the bean's
-     * constructor.
-     */
-    //TODO  move that code in an superclass 
-    private static List annotationFilters = new ArrayList(3);
-
-    static {
-        annotationFilters.add("remark-internal");
-        annotationFilters.add("uniprot-dr-export");
-        annotationFilters.add("uniprot-cc-export");
-    }
 
 
     /**
@@ -174,11 +158,10 @@ public class BioSourceViewBean extends AbstractViewBean {
         for (Iterator it = someAnnotations.iterator(); it.hasNext();) {
             Annotation annotation = (Annotation) it.next();
             //run through the filter
-            if ((!annotationFilters.contains(annotation.getCvTopic().getShortLabel()))) {
+            if ( false == AnnotationFilter.getInstance().isFilteredOut( annotation ) ) {
                 // if it's not in the filter get them
-                AnnotationViewBean anAnnotationViewBean = new AnnotationViewBean(annotation,
-                                                                                 this.searchURL);
-                result.add(anAnnotationViewBean);
+                AnnotationViewBean anAnnotationViewBean = new AnnotationViewBean(annotation, this.searchURL );
+                result.add( anAnnotationViewBean );
             }
         }
 
