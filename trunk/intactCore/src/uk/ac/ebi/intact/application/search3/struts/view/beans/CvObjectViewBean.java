@@ -14,7 +14,6 @@ import uk.ac.ebi.intact.model.Xref;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * @author Michael Kleen
@@ -51,22 +50,6 @@ public class CvObjectViewBean extends AbstractViewBean {
      * 'Protein'). Would be nice to get rid of the proxies one day ...:-)
      */
     private String intactType;
-
-
-    //TODO  move that code in an superclass
-
-    /**
-     * List of Annotation topics which should be filtered on. The values are set in the bean's
-     * constructor.
-     */
-    private static List annotationFilters = new ArrayList(3);
-
-    static {
-        annotationFilters.add("remark-internal");
-        annotationFilters.add("uniprot-dr-export");
-        annotationFilters.add("uniprot-cc-export");
-    }
-
 
     /**
      * The bean constructor requires an CvObject to wrap, plus beans on the context path to
@@ -193,11 +176,10 @@ public class CvObjectViewBean extends AbstractViewBean {
         for (Iterator it = someAnnotations.iterator(); it.hasNext();) {
             Annotation annotation = (Annotation) it.next();
             //run through the filter
-            if ((!annotationFilters.contains(annotation.getCvTopic().getShortLabel()))) {
+            if ( false == AnnotationFilter.getInstance().isFilteredOut( annotation ) ) {
                 // if it's not in the filter get them
-                AnnotationViewBean anAnnotationViewBean = new AnnotationViewBean(annotation,
-                                                                                 this.searchURL);
-                result.add(anAnnotationViewBean);
+                AnnotationViewBean anAnnotationViewBean = new AnnotationViewBean(annotation, this.searchURL );
+                result.add( anAnnotationViewBean );
             }
         }
 
