@@ -14,13 +14,11 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * @author Michael Kleen
+ * This class provides JSP view information for a particular Xref.
+ * It is used in the CvObject View and in the BioSource View.
+ *
+ * @author Michael Kleen, Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version XrefViewBean.java Date: Nov 24, 2004 Time: 12:50:50 PM
- */
-
-/**
- * This class provides JSP view information for a particular Xref. It is used in the CvObject View and
- * in the BioSource View.
  */
 public class XrefViewBean {
 
@@ -37,7 +35,6 @@ public class XrefViewBean {
         this.searchURL = searchURL;
     }
 
-
     /**
      * not used ! just here to satified the AbstractViewBean
      */
@@ -45,14 +42,12 @@ public class XrefViewBean {
 
     }
 
-
     /**
      * Returns the help section. Needs to be reviewed.
      */
     public String getHelpSection() {
         return "protein.single.view";
     }
-
 
     /**
      * Provides direct access to the wrapped Xref itself.
@@ -62,7 +57,6 @@ public class XrefViewBean {
     public Xref getObject() {
         return this.obj;
     }
-
 
     /**
      * @return the SearchUrl to the given Xref Object
@@ -90,11 +84,9 @@ public class XrefViewBean {
         return "-";
     }
 
-
     public String getName() {
         return this.obj.getCvDatabase().getShortLabel();
     }
-
 
     public String getXrefQualifierName() {
         if (null != this.obj.getCvXrefQualifier()) {
@@ -105,17 +97,14 @@ public class XrefViewBean {
         }
     }
 
-
     public String getPrimaryId() {
 
         if (null != this.obj.getPrimaryId()) {
             return this.obj.getPrimaryId();
-
         }
         else {
             return "-";
         }
-
     }
 
     public String getPrimaryIdSearchUrl() {
@@ -165,7 +154,4 @@ public class XrefViewBean {
         return this.helpLink + "Xref.cvrefType";
 
     }
-
-
 }
-

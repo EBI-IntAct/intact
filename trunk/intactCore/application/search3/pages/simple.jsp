@@ -19,10 +19,12 @@ first one, any subsequeent views will have the type specified anyway, so we must
 between a single Protein detail request and a request for a partners view. This has an impact on
 other types too. Maybe this JSP has to set an additional request/form parameter, 'front',
 to identify the source page of the request to the Action classes.
-
-    @author Chris Lewington
-    @version $Id$
 --%>
+
+<!--
+    @author Chris Lewington, Samuel Kerrien (skerrien@ebi.ac.uk)
+    @version $Id$
+-->
 
 <%-- need to provide an error page here to catch unhandled failures --%>
 <%@ page language="java"  %>

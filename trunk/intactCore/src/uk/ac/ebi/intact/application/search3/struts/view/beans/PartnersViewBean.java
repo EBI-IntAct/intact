@@ -263,7 +263,6 @@ public class PartnersViewBean extends AbstractViewBean {
         return geneNames;
     }
 
-
     /**
      * This provides beans of the number of Interactions this Protein participates in. ISSUE: This
      * is a hyperlinked number on the web page mockup, pointing to the 'detail-blue' page mockup.
@@ -299,7 +298,6 @@ public class PartnersViewBean extends AbstractViewBean {
         }
         return numberOfInteractions;
     }
-
 
     /**
      * Returns a fully populated URL to perform a search for all this Protein's Interactions. ISSUE:
@@ -408,14 +406,12 @@ public class PartnersViewBean extends AbstractViewBean {
 
     }
 
-
     /**
      * Provides this Protein's Uniprot AC (ie its Xref to Uniprot).
      *
      * @return String the Protein's Uniprot AC.
      */
-    public String getUniprotAc
-            () {
+    public String getUniprotAc() {
 
         //the Uniprot AC is the primaryID from an Xref whose database is 'uniprot'..
         if (uniprotAc == null) {
@@ -433,8 +429,7 @@ public class PartnersViewBean extends AbstractViewBean {
      *
      * @return String the usable Uniprot URL
      */
-    public String getUniprotURL
-            () {
+    public String getUniprotURL() {
 
         //set on first call
         if (uniprotURL == null) {
@@ -467,8 +462,7 @@ public class PartnersViewBean extends AbstractViewBean {
      *
      * @return String a String representation of a search URL link for Protein
      */
-    public String getProteinSearchURL
-            () {
+    public String getProteinSearchURL() {
 
         return getSimpleSearchURL() + "&amp;searchClass=Protein&amp;view=single" +
                 "&filter=ac";
@@ -481,8 +475,7 @@ public class PartnersViewBean extends AbstractViewBean {
      *
      * @return String a String representation of a search URL link for Protein.
      */
-    public String getProteinPartnerURL
-            () {
+    public String getProteinPartnerURL() {
 
         protSearchURL = getSimpleSearchURL() + "&amp;searchClass=Protein&amp;view=partner" +
                 "&filter=ac";
@@ -490,15 +483,13 @@ public class PartnersViewBean extends AbstractViewBean {
         return protSearchURL;
     }
 
-
     /**
      * Provides a String representation of a URL to perform a basic search on this Protein's AC.
      * Thus a general search is performed using this Proterin's AC.
      *
      * @return String a String representation of a search URL link
      */
-    public String getSimpleSearchURL
-            () {
+    public String getSimpleSearchURL() {
 
         return searchURL + protein.getAc() + "&filter=ac";
     }
@@ -511,9 +502,7 @@ public class PartnersViewBean extends AbstractViewBean {
      * @param obj The bean we want to check
      * @return boolean true if the beans are equal, false otherwise.
      */
-    public boolean equals
-            (Object
-            obj) {
+    public boolean equals( Object obj ) {
 
         if (obj == null) return false;
         if (!(obj instanceof PartnersViewBean)) return false;
@@ -526,8 +515,7 @@ public class PartnersViewBean extends AbstractViewBean {
      *
      * @return int the bean's hashcode (ie the Protein's)
      */
-    public int hashCode
-            () {
+    public int hashCode() {
         return this.getMainProtein().hashCode();
     }
 
@@ -536,8 +524,7 @@ public class PartnersViewBean extends AbstractViewBean {
      *
      * @return Xref The Uniprot Xref for the Protein, or null if there isn't one
      */
-    private Xref getUniprotXref
-            () {
+    private Xref getUniprotXref() {
 
         Collection xrefs = protein.getXrefs();
         for (Iterator it = xrefs.iterator(); it.hasNext();) {
