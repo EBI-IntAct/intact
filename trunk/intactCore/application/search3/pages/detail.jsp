@@ -16,10 +16,12 @@
     number of Interactions that they cannot be displayed on a single page. Thus for such Experiments
     this 'detail' JSP is also responsible for displaying the results in a tabbed view - although
     the actual content for each tab will be provided from the view bean itself.
-
-    @author Chris Lewington
-    @version $Id$
 --%>
+
+<!--
+    @author Chris Lewington, Samuel Kerrien (skerrien@ebi.ac.uk)
+    @version $Id$
+-->
 
 <%-- need to provide an error page here to catch unhandled failures --%>
 <%@ page language="java"  %>
@@ -46,39 +48,38 @@
 
 <%
     // To allow access hierarchView properties. Used only by the javascript.
-    IntactServiceIF service = (IntactServiceIF) application.getAttribute(
-            SearchConstants.INTACT_SERVICE);
+    IntactServiceIF service = (IntactServiceIF) application.getAttribute( SearchConstants.INTACT_SERVICE );
 
     //build the absolute path out of the context path for 'search'
-    String ctxtPath = (request.getContextPath());
-    String relativePath = ctxtPath.substring(0, ctxtPath.lastIndexOf("search"));
+    String ctxtPath = ( request.getContextPath() );
+    String relativePath = ctxtPath.substring( 0, ctxtPath.lastIndexOf("search") );
 
     //build the URL for hierarchView from the absolute path and the relative beans..
-    String hvPath = relativePath.concat(service.getHierarchViewProp("hv.url"));
-    String minePath = relativePath.concat("mine/display.jsp");
+    String hvPath = relativePath.concat( service.getHierarchViewProp( "hv.url" ) );
+    String minePath = relativePath.concat( "mine/display.jsp" );
 
     //The List of view beans used to provide the data for this JSP.
-    List viewBeanList = (List)request.getAttribute(SearchConstants.VIEW_BEAN_LIST);
+    List viewBeanList = (List)request.getAttribute( SearchConstants.VIEW_BEAN_LIST );
 
     //the list of shortlabels for the search matches - need to be highlighted
     //NB the SearchAction ensures (in most cases!) this will not be null
-    List highlightList = (List)request.getAttribute(SearchConstants.HIGHLIGHT_LABELS_LIST);
-    if(highlightList == null) highlightList = new ArrayList();  //avoids null checks everywhere!
-
-
+    List highlightList = (List) request.getAttribute( SearchConstants.HIGHLIGHT_LABELS_LIST );
+    if( highlightList == null ) {
+        highlightList = new ArrayList();  //avoids null checks everywhere!
+    }
 %>
 
 <%-- The javascript for the button bars.... --%>
 <%@ include file="jscript.html" %>
 
 <!-- top line info -->
-    <span class="middletext">Search Results for <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA)%> <br></span
+    <span class="middletext">Search Results for <%=session.getAttribute( SearchConstants.SEARCH_CRITERIA )%> <br></span>
      <br/>
 
-<span class="smalltext">(short labels of search criteria matches are
-    <span style="color: rgb(255, 0, 0);">highlighted</span>
-</span><span class="smalltext">)<br></span>
-<span class="smalltext"><br></span>
+    <span class="smalltext">(short labels of search criteria matches are
+        <span style="color: rgb(255, 0, 0);">highlighted</span>
+    </span><span class="smalltext">)<br></span>
+    <span class="smalltext"><br></span>
 
 <%
     //first check to see if the bean list is null - if it is then it means that the
@@ -86,18 +87,17 @@
     //previously saved bean from the session and use that for the rest of this display....
     if(viewBeanList == null) {
         viewBeanList = new ArrayList();
-        MainDetailViewBean existingBean =
-                (MainDetailViewBean)session.getAttribute(SearchConstants.LARGE_EXPERIMENT_BEAN);
-        viewBeanList.add(existingBean);
+        MainDetailViewBean existingBean = (MainDetailViewBean) session.getAttribute( SearchConstants.LARGE_EXPERIMENT_BEAN );
+        viewBeanList.add( existingBean );
         //need to get its shortlabel for highlighting
         //(this comes from the request in all cases EXCEPT a tabbed view)
-        highlightList.add(existingBean.getObjIntactName());
+        highlightList.add( existingBean.getObjIntactName() );
     }
+
     //now go through the viewbean list and produce a table for each bean.....
-    for(Iterator it = viewBeanList.iterator(); it.hasNext();) {
-        MainDetailViewBean bean = (MainDetailViewBean)it.next();
-%>
-<%
+    for( Iterator it = viewBeanList.iterator(); it.hasNext(); ) {
+        MainDetailViewBean bean = (MainDetailViewBean) it.next();
+
         //first thing is to check for a 'large' Experiment view - if it is, then need to display
         //a table with tabbed pages...
         //NB Use the REAL size of the Interaction list here - the BEAN holds a SUBLIST
@@ -127,7 +127,7 @@
             int firstPage = Math.max((currentPage - pageOffset), 1);
 
             // last page number of the page list (bounded above by the largest possible page no.)
-            int lastPage  = Math.min((currentPage + pageOffset), bean.getMaxPage());
+            int lastPage = Math.min((currentPage + pageOffset), bean.getMaxPage());
 
             //now calculate the List indexes of the Interactions to be displayed in this page..
             //SOME MATHS:
@@ -147,8 +147,8 @@
 
             int lastDisplayIndex = Math.min((currentPage * Constants.MAX_PAGE_SIZE), maxListSize);
             int firstDisplayIndex = (lastDisplayIndex - displayPageSize) + 1;
-
 %>
+
 <!-- The summary message of pages of Interactions for the 'large' Experiment -->
 <p>
 <center>
@@ -183,7 +183,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
             %>
                        <font color="red"><strong><%= i%></strong></font>&nbsp;
 
-                    <%
+            <%
                     }
                     else {
                     %>
@@ -376,7 +376,6 @@ Displaying <b><%= firstDisplayIndex %></b> to
             --%>
 
         <%
-
             rowCount = 0;
             for(Iterator iter = annotations.iterator(); iter.hasNext();) {
                 Annotation annot = (Annotation)iter.next();
@@ -674,10 +673,10 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <!-- annotation text cell -->
             <%
                     //need to check for a 'url' annotation and hyperlink them if so...
-                    if(annot.getCvTopic().getShortLabel().equals("url")) {
+                    if(annot.getCvTopic().getShortLabel().equals( CvTopic.URL )) {
             %>
             <td style="vertical-align: top;" rowspan="1" colspan="6">
-                <a href="<%= annot.getAnnotationText() %>" class="tdlink">
+                <a href="<%= annot.getAnnotationText() %>" class="tdlink" target="_blank">
                     <%= annot.getAnnotationText() %>
                 </a><br>
             <%
@@ -1164,7 +1163,6 @@ Displaying <b><%= firstDisplayIndex %></b> to
 <br>
 <!-- button bar for the table -->
 <%@ include file="buttonBar.html" %>
-
 
 <%
     }   //end of viewbean list loop
