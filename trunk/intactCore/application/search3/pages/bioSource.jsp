@@ -97,7 +97,7 @@ in the root directory of this distribution.
                       </td>
                     <!-- Fullname of the object -->
                     <!-- changed -->
-                    <td colspan="4" class="tdlink" >
+                    <td colspan="4" class="data" >
                         <%= bean.getFullname() %>
                     </td>
 
@@ -123,7 +123,8 @@ in the root directory of this distribution.
 
 <%
         for(Iterator it = someAnnotations.iterator(); it.hasNext();) {
-             AnnotationViewBean anAnnotation = (AnnotationViewBean) it.next();
+            AnnotationViewBean anAnnotation = (AnnotationViewBean) it.next();
+
             if(!anAnnotation.equals(firstAnnotation)) {
             //we need to have new rows for each Annotations OTHER THAN the first..
 %>
@@ -164,9 +165,7 @@ in the root directory of this distribution.
 
     <%    for(Iterator it1 = someXrefBeans.iterator(); it1.hasNext();) {
             XrefViewBean aXref = (XrefViewBean) it1.next();
-%>
 
-<%
             if(!aXref.equals(firstXref)) {
             //we need to have new rows for each Xref OTHER THAN the first..
 %>
