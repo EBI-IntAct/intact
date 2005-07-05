@@ -31,6 +31,7 @@ public class CvDatabase extends CvObject implements Editable {
     public static final String RESID = "resid";
     public static final String SGD = "sgd";
     public static final String UNIPROT = "uniprot";
+    public static final String IMEX = "imex";
 
 
     /**
