@@ -49,6 +49,9 @@ public class DeleteFormAction extends AbstractEditorAction {
         // The current view.
         AbstractEditViewBean view = user.getView();
 
+        // Remove this current bean from the recent lists.
+        view.removeFromRecentList(user);
+
         // The intact helper to access the persistent layer.
         IntactHelper helper = user.getIntactHelper();
         try {
@@ -86,9 +89,6 @@ public class DeleteFormAction extends AbstractEditorAction {
             getLockManager().release(view.getAc());
             releaseView(user);
         }
-        // Remove this current bean from the recent lists.
-        view.removeFromRecentList(user);
-
         // Back to the search page.
         return mapping.findForward(SEARCH);
     }
