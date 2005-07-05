@@ -33,9 +33,6 @@ public class ResultRowData {
      */
     public ResultRowData(Object[] data, Class clazz) {
         this((String) data[0], (String) data[1], (String) data[2]);
-//        myAc = (String) data[0];
-//        myShortLabel = (String) data[1];
-//        myFullName = (String) data[2];
         myType = IntactHelper.getDisplayableClassName(clazz);
     }
 
@@ -45,9 +42,6 @@ public class ResultRowData {
      */
     public ResultRowData(AnnotatedObject annobj) {
         this(annobj.getAc(), annobj.getShortLabel(), annobj.getFullName());
-//        myAc = annobj.getAc();
-//        myShortLabel = annobj.getShortLabel();
-//        myFullName = annobj.getFullName();
         myType = IntactHelper.getDisplayableClassName(annobj);
     }
 
