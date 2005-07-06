@@ -48,7 +48,18 @@
             </html:submit>
         </td>
 
+
         <td class="tableCell" align="left" valign="top">
+            <html:select property="newAnnotation.topic" >
+                <html:options name="topiclist"/>
+            </html:select>
+        </td>
+        <td class="tableCell" align="left" valign="top">
+            <html:textarea property="newAnnotation.description" rows="3" cols="70"
+               onkeypress="return validateComment(this, event)"/>
+        </td>
+
+        <%-- <td class="tableCell" align="left" valign="top">
             <html:select property="annotationSelect" name="expForm">
                 <html:options name="topiclist"/>
             </html:select>
@@ -58,7 +69,7 @@
             <html:textarea property="annotationTextArea" name="expForm" rows="3" cols="70"
                onkeypress="return validateComment(this, event)"
                />
-        </td>
+        </td>   --%>
 
 
     </tr>
