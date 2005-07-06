@@ -51,6 +51,9 @@ public abstract class AbstractSubmitAction extends AbstractEditorAction {
         ourButtonToAction.put(rb.getString("xrefs.button.edit"), "xref");
         ourButtonToAction.put(rb.getString("xrefs.button.save"), "xref");
         ourButtonToAction.put(rb.getString("xrefs.button.delete"), "xref");
+
+        ourButtonToAction.put(rb.getString("exp.button.accept"),"submit");
+        ourButtonToAction.put(rb.getString("exp.button.review"),"submit");
     }
 
     /**
