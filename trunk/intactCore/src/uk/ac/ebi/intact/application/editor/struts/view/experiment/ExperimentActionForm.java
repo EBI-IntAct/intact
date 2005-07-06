@@ -23,8 +23,26 @@ public class ExperimentActionForm extends EditorActionForm {
     private String myInter;
     private String myIdent;
     private String mySearchValue;
-//    private String myIntSearchLabel;
-//    private String myIntSearchAC;
+    private String myAnnotationSelect;
+    private String myAnnotationTextArea;
+
+
+    public void setAnnotationTextArea(String annotationTextArea){
+        myAnnotationTextArea = annotationTextArea;
+    }
+
+    public String getAnnotationTextArea(){
+        return myAnnotationTextArea;
+    }
+
+    public void setAnnotationSelect(String annotationSelect){
+        myAnnotationSelect = annotationSelect;
+    }
+
+    public String getAnnotationSelect(){
+        return myAnnotationSelect;
+    }
+
 
     public void setIntac(String intac) {
         myInteractionAC = intac;
