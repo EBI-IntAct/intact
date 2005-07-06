@@ -531,15 +531,15 @@ public class UpdateProteins extends UpdateProteinsI {
      *            1.3 Get the Proteins (should be one since Xref are not shared) who own that particular Xref.
      * </pre>
      *
-     * @param masters The master protein of the splice variant
-     * @param helper  The database access
+     * @param master The master protein of the splice variant
+     * @param helper The database access
      *
      * @return the created splice variants
      */
-    private Collection getSpliceVariantFromSPTrAC( Collection masters, IntactHelper helper ) throws IntactException {
+    private Collection getSpliceVariantFromSPTrAC( Protein master, IntactHelper helper ) throws IntactException {
 
-        if ( masters == null ) {
-            throw new IllegalArgumentException( "You must give a non null master Collection." );
+        if ( master == null ) {
+            return Collections.EMPTY_SET;
         }
 
         // TODO to get the splice variant, we could use the SPTREntry and get the SV by uniprot ID.
@@ -549,26 +549,22 @@ public class UpdateProteins extends UpdateProteinsI {
         // need that reference to ac out of the loop in order to have it available if an exception is raised.
         String ac = null;
 
-        for ( Iterator iterator = masters.iterator(); iterator.hasNext(); ) {
-            Protein protein = (Protein) iterator.next();
+        ac = master.getAc();
+        logInfo( "Look for splice variant for the master: " + master.getShortLabel() + "(" + ac + ")" );
 
-            ac = protein.getAc();
-            logInfo( "Look for splice variant for the master: " + protein.getShortLabel() + "(" + ac + ")" );
+        // All splice proteins have 'this' protein as the primary id.
+        Collection proteins = helper.getObjectsByXref( Protein.class, intactDatabase, isoFormParentXrefQualifier, ac );
 
-            // All splice proteins have 'this' protein as the primary id.
-            Collection proteins = helper.getObjectsByXref( Protein.class, intactDatabase, isoFormParentXrefQualifier,
-                                                           ac );
-            if ( proteins != null || !proteins.isEmpty() ) {
-                logInfo( proteins.size() + " splice variant(s) found." );
+        if ( proteins != null || !proteins.isEmpty() ) {
+            logInfo( proteins.size() + " splice variant(s) found." );
 
-                if ( spliceVariants == null ) {
-                    spliceVariants = new HashSet( 2 );
-                }
-
-                spliceVariants.addAll( proteins );
-            } else {
-                logInfo( "no splice variant found." );
+            if ( spliceVariants == null ) {
+                spliceVariants = new HashSet( 2 );
             }
+
+            spliceVariants.addAll( proteins );
+        } else {
+            logInfo( "no splice variant found." );
         }
 
         logInfo( spliceVariants.size() + " splice variant(s) selected." );
@@ -592,6 +588,35 @@ public class UpdateProteins extends UpdateProteinsI {
         }
 
         return taxids;
+    }
+
+    /**
+     * Checks if the protein has been annotated with the no-uniprot-update CvTopic, if so, return false,
+     * otherwise true. That flag is added to a protein when created via the editor. As some protein may
+     * have a UniProt ID as identity we don't want those to be overwitten.
+     *
+     * @param protein the protein to check
+     *
+     * @return false if no Annotation having CvTopic( no-uniprot-update ), otherwise true.
+     */
+    private boolean needsUniprotUpdate( final Protein protein ) {
+
+        boolean needsUpdate = true;
+
+        if( null == noUniprotUpdate ) {
+            // in case the term hasn't been created, assume there are no proteins created via editor.
+            return true;
+        }
+
+        for ( Iterator iterator = protein.getAnnotations().iterator(); iterator.hasNext() && true == needsUpdate; ) {
+            Annotation annotation = (Annotation) iterator.next();
+
+            if( noUniprotUpdate.equals( annotation.getCvTopic() ) ) {
+                needsUpdate = false;
+            }
+        }
+
+        return needsUpdate;
     }
 
     /**
@@ -658,19 +683,32 @@ public class UpdateProteins extends UpdateProteinsI {
 
                     if ( bs.equals( sptrBioSource ) ) {
                         // found it.
-                        selectedProtein = p;
+                        if( needsUniprotUpdate( p ) ) {
+
+                            // that protein should be updated.
+                            selectedProtein = p;
+
+                            // remove it from the collection
+                            iterator.remove();
+
+                        } else {
+
+                            // that protein should not be updated but it is returned to the user.
+                            logInfo( "A protein was found but 'no-uniprot-update' was requested: " + p );
+                            this.proteins.add( p );
+                        }
                     }
                 }
 
                 // remove it from the collection
-                proteins.remove( selectedProtein );
+//                proteins.remove( selectedProtein );
 
                 // allow to know, while we are processing the splice variant, if the master was demerged.
                 boolean masterWasDemerged = false;
 
                 if ( selectedProtein == null ) {
 
-                    logInfo( "No existing protein in IntAct for taxid " + sptrTaxid );
+                    logInfo( "No existing protein (with no 'no-uniprot-update' Annotation) found in IntAct for taxid " + sptrTaxid );
 
                     /**
                      * We could NOT find an existing protein so now two cases have to be taken into account:
@@ -692,11 +730,26 @@ public class UpdateProteins extends UpdateProteinsI {
 
                     // (1) Search for IntAct proteins by Xref( uniprot, identity ) based on the secondary Ac of the entry
 
-                    // don't we need to put a taxid here ?! we are in the context of A SPECIFIC taxid !!!
-                    logInfo( "Looking for protein using secondaryId with filter on " + sptrTaxid );
+                    logInfo( "Looking for protein having secondaryId with filter on " + sptrTaxid );
                     Collection secondaryProteins = getProteinsFromSPTrAC( sptrEntry, identityXrefQualifier,
                                                                           sptrTaxid,
                                                                           SECONDARY_AC, helper );
+
+                    // take out the no-uniprot-update
+                    for ( Iterator iterator = secondaryProteins.iterator(); iterator.hasNext(); ) {
+                        Protein protein = (Protein) iterator.next();
+
+                        if( false == needsUniprotUpdate( protein ) ) {
+
+                            logInfo( "A protein was found (secondaryId) but 'no-uniprot-update' was requested: " + protein );
+                            // add that protein to the list that will be returned to the user.
+                            this.proteins.add( protein );
+
+                            // remove it t the collection
+                            iterator.remove();
+                        }
+                    }
+
                     boolean doUpdate = false;
                     boolean doCreate = false;
 
@@ -734,7 +787,8 @@ public class UpdateProteins extends UpdateProteinsI {
                             // create the protein
                             doCreate = true;
                         }
-                    }
+
+                    } // else
 
                     if ( localTransactionControl ) {
                         helper.startTransaction( BusinessConstants.JDBC_TX );
@@ -743,7 +797,8 @@ public class UpdateProteins extends UpdateProteinsI {
                     if ( doCreate ) {
                         logInfo( "Call createProtein with parameter BioSource.taxId=" + sptrBioSource.getTaxId() );
 
-                        if ( ( selectedProtein = createNewProtein( sptrEntry, sptrBioSource,
+                        if ( ( selectedProtein = createNewProtein( sptrEntry,
+                                                                   sptrBioSource,
                                                                    generateProteinShortlabelUsingBiosource ) ) != null ) {
                             logInfo( "creation sucessfully done: " + selectedProtein.getShortLabel() );
                         }
@@ -752,7 +807,9 @@ public class UpdateProteins extends UpdateProteinsI {
                     if ( doUpdate ) {
                         logInfo( "Call updateProtein with parameter BioSource.taxId=" + sptrBioSource.getTaxId() );
 
-                        if ( updateExistingProtein( selectedProtein, sptrEntry, sptrBioSource,
+                        if ( updateExistingProtein( selectedProtein,
+                                                    sptrEntry,
+                                                    sptrBioSource,
                                                     generateProteinShortlabelUsingBiosource ) ) {
                             logInfo( "update sucessfully done" );
                         }
@@ -777,20 +834,25 @@ public class UpdateProteins extends UpdateProteinsI {
                         if ( localTransactionControl ) {
                             helper.startTransaction( BusinessConstants.JDBC_TX );
                         }
-                        if ( updateExistingProtein( selectedProtein, sptrEntry, sptrBioSource,
+
+                        if ( updateExistingProtein( selectedProtein,
+                                                    sptrEntry,
+                                                    sptrBioSource,
                                                     generateProteinShortlabelUsingBiosource ) ) {
                             logInfo( "update sucessfully done" );
                         }
+
                         if ( localTransactionControl ) {
                             helper.finishTransaction();
                             logInfo( "Transaction complete" );
                         }
+
                     } else {
                         // Store the protein in the list we'll return
-                        // TODO that could be global instead of being spread across several methods (createP, createSV, updateC, updateSV)
                         this.proteins.add( selectedProtein );
                     }
-                }
+
+                } // selectedProtein != null
 
 
                 ///////////////////////////////////////
@@ -800,13 +862,26 @@ public class UpdateProteins extends UpdateProteinsI {
                 // that selected protein has been either
                 //     - freshly created, there will be no splice variant attached.
                 //     - updated in which case we MIGHT find some
-                //       Note: that the AC of an updated protein stays the same.
-                Collection selectedProteinAsCollection = new ArrayList( 1 );
-                selectedProteinAsCollection.add( selectedProtein );
-                // TODO could refactored that by giving one protein instead of a Collection
-                Collection spliceVariants = getSpliceVariantFromSPTrAC( selectedProteinAsCollection, helper );
+                //       Note: the AC of an updated protein stays the same.
 
                 Protein master = selectedProtein;
+                Collection spliceVariants = getSpliceVariantFromSPTrAC( master, helper );
+
+                // take out the no-uniprot-update
+                for ( Iterator iterator = spliceVariants.iterator(); iterator.hasNext(); ) {
+                    Protein protein = (Protein) iterator.next();
+
+                    if( false == needsUniprotUpdate( protein ) ) {
+
+                        logInfo( "A splice variant was found but 'no-uniprot-update' was requested: " + protein );
+                        // add that protein to the list that will be returned to the user.
+                        this.proteins.add( protein );
+
+                        // remove it t the collection
+                        iterator.remove();
+                    }
+                }
+
 
                 // retrieve the comments of that entry
                 SPTRComment[] comments = sptrEntry.getComments( Factory.COMMENT_ALTERNATIVE_SPLICING );
@@ -915,7 +990,10 @@ public class UpdateProteins extends UpdateProteinsI {
                                         helper.startTransaction( BusinessConstants.JDBC_TX );
                                     }
 
-                                    if ( updateExistingSpliceVariant( isoForm, spliceVariantID, spliceVariant, master,
+                                    if ( updateExistingSpliceVariant( isoForm,
+                                                                      spliceVariantID,
+                                                                      spliceVariant,
+                                                                      master,
                                                                       sptrEntry,
                                                                       sptrBioSource,
                                                                       generateProteinShortlabelUsingBiosource ) ) {
@@ -1575,6 +1653,7 @@ public class UpdateProteins extends UpdateProteinsI {
         if ( sptrEntry.getEntryType() == SPTREntry.SWISSPROT ) {
             version = "SP_" + uniprotRelease;
         } else if ( sptrEntry.getEntryType() == SPTREntry.TREMBL ) {
+            // will allow Version up to 999 ... then it will be truncated as Xref.dbRelease is VARCHAR2(10)
             version = "TrEMBL_" + uniprotRelease;
         } else {
             // though should not happen.
@@ -1661,8 +1740,6 @@ public class UpdateProteins extends UpdateProteinsI {
             masterAc = masterAc.toLowerCase();
         }
         String[] isoIds = isoform.getIDs();
-
-        String uniprotRelease = sptrEntry.getLastAnnotationUpdateRelease();
 
         String version = getSPTREntryReleaseVersion( sptrEntry );
 

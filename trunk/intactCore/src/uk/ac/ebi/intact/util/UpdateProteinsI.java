@@ -47,9 +47,9 @@ public abstract class UpdateProteinsI {
      */
     protected static Institution myInstitution;
 
-    /**
-     * Xref databases
-     */
+    ////////////////////
+    // Xref databases
+
     protected static CvDatabase uniprotDatabase;
     protected static String srsUrl;
     protected static CvDatabase intactDatabase;
@@ -60,17 +60,19 @@ public abstract class UpdateProteinsI {
     protected static CvDatabase reactomeDatabase;
     protected static CvDatabase hugeDatabase;
 
-    /**
-     * Describe wether an Xref is related the primary SPTR AC (identityCrefQualifier) or not (secondaryXrefQualifier)
-     */
+    /////////////////////////////////////////////////
+    // Describe wether an Xref is related the primary
+    // SPTR AC (identityCrefQualifier) or
+    // not (secondaryXrefQualifier)
     protected static CvXrefQualifier identityXrefQualifier;
     protected static CvXrefQualifier secondaryXrefQualifier;
 
-    protected CvXrefQualifier isoFormParentXrefQualifier;
+    protected static CvXrefQualifier isoFormParentXrefQualifier;
 
-    protected CvTopic isoformComment;
-    protected CvAliasType isoformSynonym;
+    protected static CvTopic isoformComment;
+    protected static CvTopic noUniprotUpdate;
 
+    protected static CvAliasType isoformSynonym;
     protected static CvAliasType geneNameAliasType;
     protected static CvAliasType geneNameSynonymAliasType;
     protected static CvAliasType orfNameAliasType;
@@ -87,7 +89,7 @@ public abstract class UpdateProteinsI {
      */
     protected static boolean localTransactionControl = true;
 
-    // Heeps eventual parsing error while the processing is carried on
+    // Keeps eventual parsing error while the processing is carried on
     protected Map parsingExceptions = new HashMap();
 
 
@@ -220,7 +222,9 @@ public abstract class UpdateProteinsI {
             isoFormParentXrefQualifier = (CvXrefQualifier) getCvObjectViaMI( CvXrefQualifier.class, "MI:0243" ); // isoform-parent
 
             // only one search by shortlabel as it still doesn't have MI number.
-            isoformComment = (CvTopic) getCvObject( CvTopic.class, CvTopic.ISOFORM_COMMENT );
+            isoformComment = (CvTopic) getCvObject( CvTopic.class, CvTopic.ISOFORM_COMMENT );  // isoform-comment
+            noUniprotUpdate = (CvTopic) getCvObject( CvTopic.class, CvTopic.NON_UNIPROT);      // no-uniprot-update
+
 
             geneNameAliasType = (CvAliasType) getCvObjectViaMI( CvAliasType.class, "MI:0301" );        // gene name
             geneNameSynonymAliasType = (CvAliasType) getCvObjectViaMI( CvAliasType.class, "MI:0302" ); // gene name-synonym
