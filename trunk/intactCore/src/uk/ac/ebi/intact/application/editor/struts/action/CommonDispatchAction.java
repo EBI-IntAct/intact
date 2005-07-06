@@ -236,14 +236,8 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
 
             return mapping.getInputForward();
         }
+        //setAnchor(request, editorForm);
         return mapping.getInputForward();
-    }
-
-    public void acceptOrReview(ActionMapping mapping,
-                                  ActionForm form,
-                                  HttpServletRequest request,
-                                  HttpServletResponse response){
-
     }
 
     /**
@@ -424,14 +418,14 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         query.setAttributes(new String[] {"userstamp"});
         return query;
     }
-    
+
     public ActionForward acceptOrReview(ActionMapping mapping,
-                                  ActionForm form,
-                                  HttpServletRequest request,
-                                  HttpServletResponse response, 
-                                  String dispatch,
-                                  String acceptButtonLabel) throws SessionExpiredException, IntactException {
-        
+                                        ActionForm form,
+                                        HttpServletRequest request,
+                                        HttpServletResponse response,
+                                        String dispatch,
+                                        String acceptButtonLabel) throws SessionExpiredException, IntactException {
+
         EditUserI user = getIntactUser(request);
         EditorFormI editorForm = (EditorFormI)form;
         ExperimentActionForm expForm=(ExperimentActionForm)form;
@@ -463,28 +457,22 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
             int year = cal.get(Calendar.YEAR);
             int month = cal.get(Calendar.MONTH)+1;
             int day = cal.get(Calendar.DAY_OF_MONTH);
-
+            CvTopic cvTopic;
 
             if(dispatch.equals(acceptButtonLabel)){ // if the button press is "Accept"
                 // The topic for new annotation.
-                CvTopic cvTopic = (CvTopic) helper.getObjectByLabel(CvTopic.class, "accepted");
-                //Set the select box of annotation to the shortlabel value of the "accepted" CvTopic
-                expForm.setAnnotationSelect(cvTopic.getShortLabel());
-                //Fill the textArea of Annotation with the fullName of the CvTopic
-                expForm.setAnnotationTextArea(cvTopic.getFullName()+" (Senior curator name : "+userName+", date : "+year+"/"+month+"/"+day+")");
-                expForm.clearNewBeans();
-                expForm.resetDispatch();
+                cvTopic = (CvTopic) helper.getObjectByLabel(CvTopic.class, "accepted");
             }else{ // if the button press is "Review"
                 // The topic for new annotation.
-                CvTopic cvTopic = (CvTopic) helper.getObjectByLabel(CvTopic.class, "to-be-reviewed");
-                //Set the select box of annotation to the shortlabel value of the "accepted" CvTopic
-                expForm.setAnnotationSelect(cvTopic.getShortLabel());
-                //Fill the textArea of Annotation with the fullName of the CvTopic
-                expForm.setAnnotationTextArea(cvTopic.getFullName()+" (Senior curator name : "+userName+", date : "+year+"/"+month+"/"+day+")");
-                expForm.clearNewBeans();
-                expForm.resetDispatch();
-             }
-        
+                cvTopic = (CvTopic) helper.getObjectByLabel(CvTopic.class, "to-be-reviewed");
+            }
+            Annotation annotation=new Annotation(getService().getOwner(), cvTopic,cvTopic.getFullName());
+            CommentBean cb = new CommentBean(annotation);
+            AbstractEditViewBean view = getIntactUser(request).getView();
+            view.addAnnotation(cb);
+            view.copyPropertiesTo(editorForm);
+            expForm.clearNewBeans();
+            expForm.resetDispatch();
         }
         setAnchor(request, editorForm);
 
