@@ -11,7 +11,7 @@
   --%>
 
 <%@ page language="java"%>
-
+<%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 
 <script language="JavaScript" type="text/javascript">
@@ -30,6 +30,10 @@
 <%-- Include javascript for show user functionality --%>
 <jsp:include page="../misc/user_js.jsp"/>
 
+<c:set var="user" value="${user.userName}"/>
+
+
+
 <html:form action="/expDispatch" onsubmit="return validateExpForm(this)">
     <html:hidden property="intac" />
     <html:hidden property="anchor" />
@@ -45,6 +49,26 @@
     <jsp:include page="../addAnnots.jsp" />
     <jsp:include page="../xrefs.jsp" />
     <jsp:include page="../addXrefs.jsp" />
+
+
+
+
+    <c:choose>
+    <c:when test="${user == 'krobbe'}" >
+        <p></p>
+        <jsp:include page="../reviewAccept.jsp" />
+    </c:when>
+    <c:when test="${user == 'orchad'}" >
+            <p></p>
+            <jsp:include page="../reviewAccept.jsp" />
+    </c:when>
+    <c:when test="${user == 'jyoti'}" >
+            <p></p>
+            <jsp:include page="../reviewAccept.jsp" />
+    </c:when>
+    <c:otherwise>
+    </c:otherwise>
+    </c:choose>
 
     <p></p>
     <jsp:include page="../action.jsp" />

@@ -7,19 +7,25 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.action;
 
 import org.apache.struts.action.*;
+import org.apache.ojb.broker.query.Criteria;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
+import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentActionForm;
+import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.model.AnnotatedObjectImpl;
+import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.model.*;
+import org.apache.ojb.broker.query.Query;
+import org.apache.ojb.broker.query.QueryFactory;
+import org.apache.ojb.broker.query.ReportQueryByCriteria;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This dispatcher class contains common dispath events for all the forms.
@@ -44,6 +50,10 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         map.put("button.save.continue", "save");
         map.put("button.clone", "clone");
         map.put("annotations.button.add", "addAnnot");
+
+        map.put("exp.button.review","addAnnot");
+        map.put("exp.button.accept","addAnnot");
+
         map.put("xrefs.button.add", "addXref");
         return map;
     }
@@ -185,35 +195,55 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
             throws Exception {
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
+        String userName = user.getUserName();
+
+        ResourceBundle rb = ResourceBundle.getBundle("uk.ac.ebi.intact.application.editor.MessageResources");
 
         // The current form.
         EditorFormI editorForm = (EditorFormI) form;
 
-        // The bean to extract the values.
-        CommentBean cb = editorForm.getNewAnnotation();
+        // The dispatch value holds the button label.
+        String dispatch = editorForm.getDispatch();
+        String acceptButtonLabel = rb.getString("exp.button.accept");
+        String reviewButtonLabel = rb.getString("exp.button.review");
+        if(dispatch.equals(reviewButtonLabel) || dispatch.equals(acceptButtonLabel)) {
+            acceptOrReview(mapping, form, request, response, dispatch, acceptButtonLabel);
+        } else{
 
-        // The current view.
-        AbstractEditViewBean view = user.getView();
+            // The bean to extract the values.
+            CommentBean cb = editorForm.getNewAnnotation();
 
-        // Does this bean exist in the current view?
-        if (view.annotationExists(cb)) {
-            // The errors to display.
-            ActionErrors errors = new ActionErrors();
-            errors.add("new.annotation", new ActionError("error.annotation.exists"));
-            saveErrors(request, errors);
+            // The current view.
+            AbstractEditViewBean view = user.getView();
 
-            // Set the anchor
+            // Does this bean exist in the current view?
+            if (view.annotationExists(cb)) {
+                // The errors to display.
+                ActionErrors errors = new ActionErrors();
+                errors.add("new.annotation", new ActionError("error.annotation.exists"));
+                saveErrors(request, errors);
+
+                // Set the anchor
+                setAnchor(request, editorForm);
+                // Display the error in the edit page.
+                return mapping.getInputForward();
+            }
+            // Add the bean to the view.
+            view.addAnnotation((CommentBean) cb.clone());
+
+            // Set anchor if necessary.
             setAnchor(request, editorForm);
-            // Display the error in the edit page.
+
             return mapping.getInputForward();
         }
-        // Add the bean to the view.
-        view.addAnnotation((CommentBean) cb.clone());
-
-        // Set anchor if necessary.
-        setAnchor(request, editorForm);
-
         return mapping.getInputForward();
+    }
+
+    public void acceptOrReview(ActionMapping mapping,
+                                  ActionForm form,
+                                  HttpServletRequest request,
+                                  HttpServletResponse response){
+
     }
 
     /**
@@ -376,5 +406,88 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         // end with -
         formlabel += formlabel.endsWith("-") ? "x" : "-x";
         return user.getNextAvailableShortLabel(editClass, formlabel);
+    }
+
+    /**
+     * Returns the query to get gene names for a Protein
+     * @param shortlabel the Shortlabel of the Experiment.
+     * @return the query to extract the gene name for given protein AC
+     */
+    public Query getCuratorNameQuery(String shortlabel) {
+        Criteria crit = new Criteria();
+        // Need all records for given alias AC.
+        crit.addEqualTo("shortlabel", shortlabel);
+
+        ReportQueryByCriteria query = QueryFactory.newReportQuery(Experiment.class, crit);
+
+        // Limit to userstamp
+        query.setAttributes(new String[] {"userstamp"});
+        return query;
+    }
+    
+    public ActionForward acceptOrReview(ActionMapping mapping,
+                                  ActionForm form,
+                                  HttpServletRequest request,
+                                  HttpServletResponse response, 
+                                  String dispatch,
+                                  String acceptButtonLabel) throws SessionExpiredException, IntactException {
+        
+        EditUserI user = getIntactUser(request);
+        EditorFormI editorForm = (EditorFormI)form;
+        ExperimentActionForm expForm=(ExperimentActionForm)form;
+        IntactHelper helper=user.getIntactHelper();
+        String userName = user.getUserName();
+
+        // Search for the userstamp corresponding to the experiment (name of the curator who has
+        // curated the experiment)
+        String shortlabel = expForm.getShortLabel();
+        String userstamp="";
+        Query query = getCuratorNameQuery(shortlabel);
+        Iterator userstamps = helper.getIteratorByReportQuery(query);
+        Object[] row = (Object[])userstamps.next();
+        userstamp=(String)row[0];
+
+
+        // If the user who is trying to Accept or Review the experiment is the user who has curated the experiment
+        // display the error : "You can not Accept or Review your own curated experiment"d
+        if(userName.toUpperCase().trim().equals(userstamp)){
+            ActionErrors errors = new ActionErrors();
+            errors.add("new.annotation", new ActionError("error.curator.accepter"));
+            saveErrors(request, errors);
+            // Set the anchor
+            setAnchor(request, editorForm);
+            // Display the error in the edit page.
+            return mapping.getInputForward();
+        }else{
+            Calendar cal = new GregorianCalendar();
+            int year = cal.get(Calendar.YEAR);
+            int month = cal.get(Calendar.MONTH)+1;
+            int day = cal.get(Calendar.DAY_OF_MONTH);
+
+
+            if(dispatch.equals(acceptButtonLabel)){ // if the button press is "Accept"
+                // The topic for new annotation.
+                CvTopic cvTopic = (CvTopic) helper.getObjectByLabel(CvTopic.class, "accepted");
+                //Set the select box of annotation to the shortlabel value of the "accepted" CvTopic
+                expForm.setAnnotationSelect(cvTopic.getShortLabel());
+                //Fill the textArea of Annotation with the fullName of the CvTopic
+                expForm.setAnnotationTextArea(cvTopic.getFullName()+" (Senior curator name : "+userName+", date : "+year+"/"+month+"/"+day+")");
+                expForm.clearNewBeans();
+                expForm.resetDispatch();
+            }else{ // if the button press is "Review"
+                // The topic for new annotation.
+                CvTopic cvTopic = (CvTopic) helper.getObjectByLabel(CvTopic.class, "to-be-reviewed");
+                //Set the select box of annotation to the shortlabel value of the "accepted" CvTopic
+                expForm.setAnnotationSelect(cvTopic.getShortLabel());
+                //Fill the textArea of Annotation with the fullName of the CvTopic
+                expForm.setAnnotationTextArea(cvTopic.getFullName()+" (Senior curator name : "+userName+", date : "+year+"/"+month+"/"+day+")");
+                expForm.clearNewBeans();
+                expForm.resetDispatch();
+             }
+        
+        }
+        setAnchor(request, editorForm);
+
+        return mapping.getInputForward();
     }
 }
