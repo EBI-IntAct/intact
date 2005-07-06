@@ -37,7 +37,6 @@
     try {
         helper = new StatisticHelper();
         Timestamp timestamp = helper.getFirstTimestamp();
-        System.out.println("timestamp");
         eldest = new Date( timestamp.getTime() );
         logger.info( "Oldest date found: " + eldest );
     } catch ( Exception nde ) {
