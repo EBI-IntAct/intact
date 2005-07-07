@@ -4,14 +4,13 @@ definition: Cross reference pointing to a Gene Ontology -'cellular component' te
 definition_reference: PMID:INTACT
 
 term: function: gene ontology  term for cellular function
-id: MI:0335
+id: MI:0355
 definition: Cross reference pointing to a Gene Ontology -'cellular function' term.
 definition_reference: PMID:INTACT
 
 term: go-definition-ref: gene ontology definition reference
 id: MI:0242
 definition: This qualifier is used when the crossreference is imported from the GO tag definition_reference.
-remark-internal: Normally not used in manual curation.
 definition_reference: PMID:INTACT
 
 term: identity: Reference to the corresponding object in another database. Correspondance may be complete or partial
@@ -42,8 +41,6 @@ definition_reference: PMID:INTACT
 term: secondary-ac: secondary accession number
 id: MI:0360
 definition: This qualifier is used when the object referred to by the crossreference describes the same object, and the identifier used is a secondary identifier in the external database. Crossreferences using secondary accession numbers are only included in IntAct to allow to retrieve imported proteins by their secondary accession numbers.
-remark-internal: Normally not used in manual curation.
-remark-internal: Normally not used in manual curation.
 definition_reference: PMID:INTACT
 
 term: see-also: Related object in IntAct
