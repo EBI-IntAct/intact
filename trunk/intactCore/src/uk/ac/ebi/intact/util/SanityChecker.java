@@ -1,19 +1,16 @@
 package uk.ac.ebi.intact.util;
 
+import org.apache.commons.httpclient.*;
+import org.apache.commons.httpclient.methods.GetMethod;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 
 import javax.mail.MessagingException;
-import javax.net.ssl.HttpsURLConnection;
-
 import java.io.*;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
-import org.apache.commons.httpclient.*;
-import org.apache.commons.httpclient.methods.GetMethod;
 
 
 
@@ -222,6 +219,7 @@ public class SanityChecker {
     //
     // P R O T E I N S
     //
+    public final ReportTopic NON_UNIPROT_PROTEIN_WITH_NO_UNIPROT_IDENTITY = new ReportTopic( "proteins (non uniprot) with no Xref with XrefQualifier(identity)" );
     public final ReportTopic PROTEIN_WITH_NO_UNIPROT_IDENTITY = new ReportTopic( "proteins with no Xref with XrefQualifier(identity) and CvDatabase(uniprot)" );
     public final ReportTopic PROTEIN_WITH_MORE_THAN_ONE_UNIPROT_IDENTITY = new ReportTopic( "proteins with more than one Xref with XrefQualifier(identity) and CvDatabase(uniprot)" );
     public final ReportTopic PROTEIN_WITH_WRONG_CRC64 = new ReportTopic( "proteins Crc64 stored in the database does not correspond to the Crc64 calculated from the sequence");
@@ -363,15 +361,24 @@ public class SanityChecker {
     /**
      * Checks We have so far: -----------------------
      * <p/>
-     * 1.  Any Experiment lacking a PubMed ID 2.  Any PubMed ID in Experiment DBXref without qualifier=Primary-reference
-     * 3.  Any Interaction containing a bait but not a prey protein 4.  Any Interaction containing a prey but not a bait
-     * protein 5.  Any interaction with no protein attached 6.  Any interaction with 1 protein attached, stoichiometry=1
-     * 7.  Any Interaction missing a link to an Experiment 8.  Any experiment (not on hold) with no Interaction linked
-     * to it 9.  Any interaction missing CvInteractionType 10. Any interaction missing Organism 11. Any experiment (not
-     * on hold) missing Organism 12. Any experiment (not on hold) missing CvInteraction 13. Any experiment (not on hold)
-     * missing CvIdentification 14. Any proteins with no Xref with XrefQualifier(identity) and CvDatabase(uniprot) 15.
-     * Any BioSource with a NULL or empty taxid. 16. Any proteins with more than one Xref with XrefQualifier(identity)
-     * and CvDatabase(uniprot)
+     * 1.  Any Experiment lacking a PubMed ID
+     * 2.  Any PubMed ID in Experiment DBXref without qualifier=Primary-reference
+     * 3.  Any Interaction containing a bait but not a prey protein
+     * 4.  Any Interaction containing a prey but not a bait protein
+     * 5.  Any interaction with no protein attached
+     * 6.  Any interaction with 1 protein attached, stoichiometry=1
+     * 7.  Any Interaction missing a link to an Experiment
+     * 8.  Any experiment (not on hold) with no Interaction linked to it
+     * 9.  Any interaction missing CvInteractionType
+     * 10. Any interaction missing Organism
+     * 11. Any experiment (not on hold) missing Organism
+     * 12. Any experiment (not on hold) missing CvInteraction
+     * 13. Any experiment (not on hold) missing CvIdentification
+     * 14. Any proteins with no Xref with XrefQualifier(identity) and CvDatabase(uniprot), unless it is not a UniProt
+     *     Protein in which case it must have at least one XrefQualifier(identity)
+     * 15. Any BioSource with a NULL or empty taxid.
+     * 16. Any proteins with more than one Xref with XrefQualifier(identity) and CvDatabase(uniprot), only for uniprot
+     *     proteins
      * <p/>
      * To perform these checks we need to enhance the Helper/persistence code to handle more complex queries, ie to be
      * able to build Criteria and Query objects probably used in OJB (easiest to do). This is going to be needed anyway
@@ -683,6 +690,32 @@ public class SanityChecker {
         } // interactions
     }
 
+    /**
+     * Checks if the protein has been annotated with the no-uniprot-update CvTopic, if so, return false,
+     * otherwise true. That flag is added to a protein when created via the editor. As some protein may
+     * have a UniProt ID as identity we don't want those to be overwitten.
+     *
+     * @param protein the protein to check
+     *
+     * @return false if no Annotation having CvTopic( no-uniprot-update ), otherwise true.
+     */
+    private boolean needsUniprotUpdate( final Protein protein ) {
+
+        // TODO Move to IntAct model
+
+        boolean needsUpdate = true;
+
+        for ( Iterator iterator = protein.getAnnotations().iterator(); iterator.hasNext() && true == needsUpdate; ) {
+            Annotation annotation = (Annotation) iterator.next();
+
+            if( CvTopic.NON_UNIPROT.equals( annotation.getCvTopic().getShortLabel() ) ) {
+                needsUpdate = false;
+            }
+        }
+
+        return needsUpdate;
+    }
+
     public void checkProteins( Collection proteins ) throws SQLException {
 
         System.out.println( "Checking on Proteins (rules 14 and 16) ..." );
@@ -693,18 +726,37 @@ public class SanityChecker {
 
             Collection xrefs = protein.getXrefs();
             int count = 0;
-            for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
-                Xref xref = (Xref) iterator.next();
 
-                if ( uniprotDatabase.equals( xref.getCvDatabase() ) && identityXrefQualifier.equals( xref.getCvXrefQualifier() ) ) {
-                    count++;
+            if( needsUniprotUpdate( protein ) ) {
+
+                for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
+                    Xref xref = (Xref) iterator.next();
+
+                    if ( uniprotDatabase.equals( xref.getCvDatabase() ) && identityXrefQualifier.equals( xref.getCvXrefQualifier() ) ) {
+                        count++;
+                    }
+                } // xrefs
+
+                if ( count == 0 ) {
+                    addMessage( PROTEIN_WITH_NO_UNIPROT_IDENTITY, protein );
+                } else if ( count > 1 ) {
+                    addMessage( PROTEIN_WITH_MORE_THAN_ONE_UNIPROT_IDENTITY, protein );
                 }
-            } // xrefs
 
-            if ( count == 0 ) {
-                addMessage( PROTEIN_WITH_NO_UNIPROT_IDENTITY, protein );
-            } else if ( count > 1 ) {
-                addMessage( PROTEIN_WITH_MORE_THAN_ONE_UNIPROT_IDENTITY, protein );
+            } else {
+
+                // this is not a UniProt Protein.
+                for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
+                    Xref xref = (Xref) iterator.next();
+
+                    if ( identityXrefQualifier.equals( xref.getCvXrefQualifier() ) ) {
+                        count++;
+                    }
+                } // xrefs
+
+                if ( count == 0 ) {
+                    addMessage( NON_UNIPROT_PROTEIN_WITH_NO_UNIPROT_IDENTITY, protein );
+                }
             }
         } // proteins
     }
