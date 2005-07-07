@@ -4,8 +4,6 @@ url: http://www.cabri.org/
 search-url: http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?[libs%3d{dsmz_mutz%20ecacc_cell%20iclc%20CABI_BACT%20CIP_BACT%20CABI_YEAST%20DSMZ_PLANT_CELL}-id:${ac}]+-e
 definition: The CABRI cell lines catalogue crossreferences are normally used in BioSource objects.
 example: The primary id is the full CABRI ac, e.g.  ECACC 84121901.
-remark-internal: If links are established to any CABRI libraries in addition to the following ones, the search-url needs to be updated. DSMZ_MUTZ, ECACC_CELL, ICLC (Human); CABI_BACT (Bacteria); CIP_BACT (Bacteria); CABI_YEAST (Yeast); DSMZ_PLANT_CELL (Plant).
-remark-internal: If links are established to any CABRI libraries in addition to the following ones, the search-url needs to be updated. DSMZ_MUTZ, ECACC_CELL, ICLC (Human); CABI_BACT (Bacteria); CIP_BACT (Bacteria); CABI_YEAST (Yeast); DSMZ_PLANT_CELL (Plant).
 id-validation-regexp: [0-9]+|ACC\s[A-Z0-9]+|ECACC\s[A-Z0-9]+|LMBP\s[A-Z0-9]+|ICLC\s[A-Z0-9]+|CIP-[0-9]+
 definition_reference: PMID:INTACT
 
@@ -56,7 +54,7 @@ definition_reference: PMID:INTACT
 term: newt: New EBI Web Taxonomy
 id: MI:0247
 search-url: http://www.ebi.ac.uk/newt/display?search=${ac}
-url: http://www.ebi.ac.uk/newt/index.html
+url: http://www.ebi.ac.uk/newt/display
 definition: NEWT is the taxonomy database maintained by the Swiss-Prot group. It integrates taxonomy data compiled in the NCBI database and data specific to the Swiss-Prot protein knowledgebase.
 id-validation-regexp: [0-9]+
 definition_reference: PMID:INTACT
@@ -80,6 +78,7 @@ definition: PDB maintain a single Protein Data Bank Archive of macromolecular st
 definition_reference: PMID:INTACT
 
 term: psi-mi: Proteomics Standards Initiative - Molecular Interaction XML format CVs
+id: MI:0488
 id-validation-regexp: MI:[0-9]{4}
 definition: The HUPO Proteomics Standards Initiative has developed controlled vocabularies for protein interaction data. These CVs are fully integrated into IntAct, therefore no search-url is given, only the URL of the PSI documentation.
 url: http://psidev.sf.net/mi/xml/doc/user/index.html
