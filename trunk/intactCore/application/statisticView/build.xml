@@ -154,6 +154,7 @@
                 <!-- Do not remove our specific files -->
                 <exclude name="public_error_500x300.png"/>
                 <exclude name="public_nodata_500x300.png"/>
+                <exclude name="top.gif"/>
             </fileset>
         </delete>
 
@@ -291,7 +292,6 @@
                 <include name="${layouts.dir}/**"/>
                 <include name="${pages.dir}/*.jsp"/>
                 <include name="${images.dir}/*"/>
-                <!--                <include name="${styles.dir}/*.css"/>-->
                 <include name="WEB-INF/struts-config.xml"/>
                 <include name="WEB-INF/tiles-defs.xml"/>
                 <include name="${tld.dir}/**"/>
