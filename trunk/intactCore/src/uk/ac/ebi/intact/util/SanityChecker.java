@@ -180,6 +180,7 @@ public class SanityChecker {
     // B I O S O U R C E
     //
     public final ReportTopic BIOSOURCE_WITH_NO_TAXID = new ReportTopic( "BioSource having no taxId set" );
+    public final ReportTopic BIOSOURCE_WITH_NO_NEWT_XREF = new ReportTopic( "BioSource having no Newt xref with Reference Qualifier equal to identity" );
 
     //
     // E X P E R I M E N T S
@@ -1158,41 +1159,42 @@ public class SanityChecker {
 
 
             //get the Annotation corresponding to url (i.e. having topic_ac equal to EBI-18
-            Collection annotations = helper.search( Annotation.class.getName(), "topic_ac", "EBI-18" );
-            System.out.println(annotations.size() + "annotation loaded.");
-            checker.checkURL(annotations);
-            annotations = null;
-            Runtime.getRuntime().gc();
+            //Collection annotations = helper.search( Annotation.class.getName(), "topic_ac", "EBI-18" );
+            //System.out.println(annotations.size() + "annotation loaded.");
+            //checker.checkURL(annotations);
+            //annotations = null;
+            //Runtime.getRuntime().gc();
 
 
             //get the Experiment and Interaction info from the DB for later use.
             Collection bioSources = helper.search( BioSource.class.getName(), "ac", "*" );
             System.out.println( bioSources.size() + " biosources loaded." );
-            checker.checkBioSource( bioSources );
+            //checker.checkBioSource( bioSources );
+            checker.checkNewt(bioSources);
             bioSources = null;
             Runtime.getRuntime().gc(); // free memory before to carry on.
 
             //get the Experiment and Interaction info from the DB for later use.
-            Collection experiments = helper.search( Experiment.class.getName(), "ac", "*" );
-            System.out.println( experiments.size() + " experiments loaded." );
-            checker.checkExperiments( experiments );
-            checker.checkExperimentsPubmedIds( experiments );
-            experiments = null;
-            Runtime.getRuntime().gc(); // free memory before to carry on.
+            //Collection experiments = helper.search( Experiment.class.getName(), "ac", "*" );
+            //System.out.println( experiments.size() + " experiments loaded." );
+            //checker.checkExperiments( experiments );
+            //checker.checkExperimentsPubmedIds( experiments );
+            //experiments = null;
+            //Runtime.getRuntime().gc(); // free memory before to carry on.
 
-            Collection interactions = helper.search( Interaction.class.getName(), "ac", "*" );
-            System.out.println( interactions.size() + " interactions loaded." );
-            checker.checkInteractions( interactions );
-            checker.checkInteractionsBaitAndPrey( interactions );
-            checker.checkComponentOfInteractions( interactions );
-            interactions = null;
-            Runtime.getRuntime().gc(); // free memory before to carry on.
+            //Collection interactions = helper.search( Interaction.class.getName(), "ac", "*" );
+            //System.out.println( interactions.size() + " interactions loaded." );
+            //checker.checkInteractions( interactions );
+            //checker.checkInteractionsBaitAndPrey( interactions );
+            //checker.checkComponentOfInteractions( interactions );
+            //interactions = null;
+            //Runtime.getRuntime().gc(); // free memory before to carry on.
 
-            Collection proteins = helper.search( Protein.class.getName(), "ac", "*" );
-            System.out.println( proteins.size() + " proteins loaded." );
-            checker.checkProteins( proteins );
+            //Collection proteins = helper.search( Protein.class.getName(), "ac", "*" );
+            //System.out.println( proteins.size() + " proteins loaded." );
+            ///checker.checkProteins( proteins );
 
-            checker.checkCrc64(proteins);
+            //checker.checkCrc64(proteins);
 
             long end = System.currentTimeMillis();
             long total = end - start;
@@ -1544,6 +1546,49 @@ public class SanityChecker {
                 CvTopic cvTopic = annotation.getCvTopic();
                 if("to-be-reviewed".equals(cvTopic.getShortLabel())){
                     addMessage( EXPERIMENT_TO_BE_REVIEWED,experiment);
+                }
+            }
+        }
+    }
+    /**
+     * This method check that all biosource have at least one xref with a "Newt" taxid AND
+     * with the xref qualifier equal to "identity"
+     * It will not send any message when the taxid is < 0 because those are particular biosources
+     * to tell that those experiments were done "in vitro" or that it was a "chemical synthesis"
+     * (EBI-1318 or EBI-350168)
+     *
+     * @param bioSources A collection containing bioSources
+     * @throws IntactException
+     * @throws SQLException
+     */
+    public void checkNewt(Collection bioSources) throws IntactException, SQLException {
+
+        System.out.println("Checking bioSource (existing newt identity xref) :");
+
+        for (Iterator iterator = bioSources.iterator(); iterator.hasNext();) {
+            boolean hasNewtXref=false;
+            BioSource bioSource = (BioSource) iterator.next();
+            Collection xrefs = bioSource.getXrefs();
+            for (Iterator iterator1 = xrefs.iterator(); iterator1.hasNext();) {
+                Xref xref =  (Xref) iterator1.next();
+                String xrefQualifier = xref.getCvXrefQualifier().getShortLabel();
+                CvDatabase cvDatabase= xref.getCvDatabase();
+                String cvDatabaseAc =cvDatabase.getAc();
+
+                if(cvDatabaseAc!=null){
+                    Collection cvObjects = helper.search(CvObject.class.getName(), "shortlabel", "newt");
+                    for (Iterator iterator2 = cvObjects.iterator(); iterator2.hasNext();) {
+                        CvObject cvObject =  (CvObject) iterator2.next();
+                        if(cvDatabaseAc.equals(cvObject.getAc()) && "identity".equals(xrefQualifier)){
+                            hasNewtXref=true;
+                        }
+                    }
+                }
+            }
+            if(false==hasNewtXref){
+                int taxid = Integer.parseInt(bioSource.getTaxId());
+                if(taxid>=1){
+                    addMessage(BIOSOURCE_WITH_NO_NEWT_XREF,bioSource);
                 }
             }
         }
