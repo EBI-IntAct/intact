@@ -9,12 +9,14 @@
     <property name="project.title" value="statisticView"/>
 
     <!-- Intact core locations -->
-    <property name="intact.root" value="../.."/>
-    <property name="root.lib.dir" value="${intact.root}/lib"/>
-    <property name="root.src.dir" value="${intact.root}/src"/>
-    <property name="root.dest.dir" value="${intact.root}/classes"/>
+    <property name="intact.root"     value="../.."/>
+    <property name="root.lib.dir"    value="${intact.root}/lib"/>
+    <property name="root.src.dir"    value="${intact.root}/src"/>
+    <property name="root.dest.dir"   value="${intact.root}/classes"/>
     <property name="root.config.dir" value="${intact.root}/config"/>
-    <property name="root.dist.dir" value="${intact.root}/dist"/>
+    <property name="root.dist.dir"   value="${intact.root}/dist"/>
+    <property name="root.jar.file"   value="${root.dist.dir}/intact-core.jar"/>
+
 
     <!--<property name="root.util.dir" value="${root.src.dir}/uk/ac/ebi/intact/util"/>-->
     <!-- Intact application location for the shared common pages -->
@@ -67,14 +69,19 @@
     <!-- Build working classpath -->
     <path id="project.class.path">
 
-        <!-- JFreeChart -->
-        <pathelement path="${lib.dir}/jcommon-1.0.0-pre2.jar"/>
-        <pathelement path="${lib.dir}/jfreechart-1.0.0-pre2.jar"/>
-
         <!-- Intact core at root. -->
         <pathelement path="${root.dest.dir}"/>
         <!-- Where the classes are compiled to. -->
         <pathelement path="${dest.dir}"/>
+
+        <!-- JFreeChart -->
+        <pathelement path="${lib.dir}/jcommon-1.0.0-pre2.jar"/>
+        <pathelement path="${lib.dir}/jfreechart-1.0.0-pre2.jar"/>
+
+        <!-- Display Tag lib -->
+        <pathelement path="${lib.dir}/display.jar"/>
+
+        <pathelement path="${intact.app.dir}/lib/struts.jar"/>
 
         <pathelement path="${root.lib.dir}/db-ojb-1.0.rc6.jar"/>
         <pathelement path="${root.lib.dir}/junit.jar"/>
@@ -84,7 +91,6 @@
         <pathelement path="${root.lib.dir}/commons-collections-3.0.jar"/>
         <pathelement path="${root.lib.dir}/commons-pool-1.1.jar"/>
         <pathelement path="${root.lib.dir}/commons-lang-2.0.jar"/>
-        <pathelement path="${intact.app.dir}/lib/struts.jar"/>
     </path>
 
     <!-- =================================================================== -->
@@ -93,7 +99,7 @@
     -->
     <target name="prepare">
         <tstamp/>
-        <available file="${root.lib.file}" type="file" property="intact.jar.present"/>
+        <available file="${root.jar.file}" type="file" property="intact.jar.present"/>
         <!-- This target is called to display messages if tomcat is not present. -->
         <ant dir=".." inheritAll="false" target="check-tomcat"/>
     </target>
