@@ -12,40 +12,51 @@ package uk.ac.ebi.intact.application.statisticView.struts.view;
  * @version $Id$
  */
 public final class DisplayStatisticsBean {
-    private String object;
+
+    ///////////////////////////
+    // Instance variables
+
+    private String statObject;
     private String description;
-    private int count;
+    private String count;
+
+
+    //////////////////////////
+    // Constructor
 
     public DisplayStatisticsBean(final String object,
-                                 final int count,
+                                 final String count,
                                  final String description) {
-        this.object = object;
+        this.statObject = object;
         this.count = count;
         this.description = description;
     }
 
 
-    public final String getObject() {
-        return object;
+    /////////////////////////
+    // Getters & Setters
+
+    public String getStatObject() {
+        return statObject;
     }
 
-    public final void setObject(final String object) {
-        this.object = object;
+    public void setStatObject(final String object) {
+        this.statObject = object;
     }
 
-    public final int getCount() {
+    public String getCount() {
         return count;
     }
 
-    public final void setCount(final int count) {
+    public void setCount(final String count) {
         this.count = count;
     }
 
-    public final String getDescription() {
+    public String getDescription() {
         return description;
     }
 
-    public final void setDescription(final String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 }
