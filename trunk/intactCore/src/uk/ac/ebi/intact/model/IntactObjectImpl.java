@@ -7,6 +7,8 @@ package uk.ac.ebi.intact.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * This is the top level class for all intact model object.
@@ -59,10 +61,7 @@ public abstract class IntactObjectImpl implements IntactObject, Serializable,
      * the creation data for instances
      */
     protected IntactObjectImpl() {
-
         ojbConcreteClass = this.getClass().getName();
-        created = new java.sql.Timestamp(System.currentTimeMillis());
-        updated = new java.sql.Timestamp(System.currentTimeMillis());
     }
 
 
@@ -88,8 +87,11 @@ public abstract class IntactObjectImpl implements IntactObject, Serializable,
         return created;
     }
 
+    /**
+     * <b>Avoid calling this method as this field is set by the DB and it can't
+     * be modifiable via OJB because 'created' field is declared as read-only</b>
+     */
     public void setCreated(java.util.Date created) {
-
         if(created != null) {
 
             this.created = new Timestamp(created.getTime());
@@ -105,6 +107,10 @@ public abstract class IntactObjectImpl implements IntactObject, Serializable,
         return updated;
     }
 
+    /**
+     * <b>Avoid calling this method as this field is set by the DB and it can't
+     * be modifiable via OJB because 'updated' field is declared as read-only</b>
+     */
     public void setUpdated(java.util.Date updated) {
 
         if(updated != null) {
@@ -128,9 +134,11 @@ public abstract class IntactObjectImpl implements IntactObject, Serializable,
         IntactObjectImpl copy =  (IntactObjectImpl) super.clone();
         // Reset the AC.
         copy.ac = null;
-        // Reset the created and updated time stamps.
-        copy.created = new java.sql.Timestamp(System.currentTimeMillis());
-        copy.updated = new java.sql.Timestamp(System.currentTimeMillis());
+
+        // Sets the dates to the current date.
+        copy.created = null;
+        copy.updated = null;
+
         return copy;
     }
 
@@ -140,9 +148,4 @@ public abstract class IntactObjectImpl implements IntactObject, Serializable,
     public String toString() {
         return this.ac;
     }
-
 } // end IntactObject
-
-
-
-
