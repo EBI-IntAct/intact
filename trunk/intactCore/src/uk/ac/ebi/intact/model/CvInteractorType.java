@@ -41,7 +41,7 @@ public class CvInteractorType extends CvDagObject {
      * @return true if given MI number belongs to a Protein menu item; false is
      * returned for all other instances.
      */
-    public static boolean isProteinMenuItem(String mi) {
+    public static boolean isProteinMI(String mi) {
         return ourProteinMIs.contains(mi);
     }
 
@@ -51,7 +51,7 @@ public class CvInteractorType extends CvDagObject {
      * @return true if given MI number belongs to a NucleicAcid menu item; false is
      * returned for all other instances.
      */
-    public static boolean isNucleicAcidMenuItem(String mi) {
+    public static boolean isNucleicAcidMI(String mi) {
         return ourNucleicAcidMIs.contains(mi);
     }
 
