@@ -9,9 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * User: Michael Kleen mkleen@ebi.ac.uk
- * Date: Mar 17, 2005
- * Time: 5:16:48 PM
+ * User: Michael Kleen mkleen@ebi.ac.uk Date: Mar 17, 2005 Time: 5:16:48 PM
  */
 public class IntactStatisticsBean {
 
@@ -32,43 +30,43 @@ public class IntactStatisticsBean {
     private final static String SERVLET_PATH = "/servlet/DisplayChart?filename=";
 
 
-    public IntactStatisticsBean(String contextPath) {
+    public IntactStatisticsBean( String contextPath ) {
         this.contextPath = contextPath;
     }
 
-    public void setInteractionChartName(String interactionChartName) {
+    public void setInteractionChartName( String interactionChartName ) {
         this.interactionChartName = interactionChartName;
     }
 
-    public void setExperimentChartName(String experimentChartName) {
+    public void setExperimentChartName( String experimentChartName ) {
         this.experimentChartName = experimentChartName;
     }
 
-    public void setProteinChartName(String proteinChartName) {
+    public void setProteinChartName( String proteinChartName ) {
         this.proteinChartName = proteinChartName;
     }
 
-    public void setCvTermChartName(String cvTermChartName) {
+    public void setCvTermChartName( String cvTermChartName ) {
         this.cvTermChartName = cvTermChartName;
     }
 
-    public void setBinaryChartName(String binaryChartName) {
+    public void setBinaryChartName( String binaryChartName ) {
         this.binaryChartName = binaryChartName;
     }
 
-    public void setExperimentCount(int experimentCount) {
+    public void setExperimentCount( int experimentCount ) {
         this.experimentCount = experimentCount;
     }
 
-    public void setBioSourceChartName(String bioSourceChartName) {
+    public void setBioSourceChartName( String bioSourceChartName ) {
         this.bioSourceChartName = bioSourceChartName;
     }
 
-    public void setEvidenceChartName(String evidenceChartName) {
+    public void setEvidenceChartName( String evidenceChartName ) {
         this.evidenceChartName = evidenceChartName;
     }
 
-    public void setDetectionChartName(String detectionChartName) {
+    public void setDetectionChartName( String detectionChartName ) {
         this.detectionChartName = detectionChartName;
     }
 
@@ -76,7 +74,7 @@ public class IntactStatisticsBean {
         return interactionCount;
     }
 
-    public void setInteractionCount(int interactionCount) {
+    public void setInteractionCount( int interactionCount ) {
         this.interactionCount = interactionCount;
     }
 
@@ -84,7 +82,7 @@ public class IntactStatisticsBean {
         return proteinCount;
     }
 
-    public void setProteinCount(int proteinCount) {
+    public void setProteinCount( int proteinCount ) {
         this.proteinCount = proteinCount;
     }
 
@@ -92,7 +90,7 @@ public class IntactStatisticsBean {
         return cvTermCount;
     }
 
-    public void setCvTermCount(int cvTermCount) {
+    public void setCvTermCount( int cvTermCount ) {
         this.cvTermCount = cvTermCount;
     }
 
@@ -100,7 +98,7 @@ public class IntactStatisticsBean {
         return binaryInteractionCount;
     }
 
-    public void setBinaryInteractionCount(int binaryInteractionCount) {
+    public void setBinaryInteractionCount( int binaryInteractionCount ) {
         this.binaryInteractionCount = binaryInteractionCount;
     }
 
@@ -136,28 +134,44 @@ public class IntactStatisticsBean {
         return contextPath + SERVLET_PATH + detectionChartName;
     }
 
+    public static final String PROTEINS = "Proteins";
+    public static final String INTERACTIONS = "Interactions";
+    public static final String BINARY_INTERACTIONS = "Binary interactions";
+    public static final String EXPERIMENTS = "Experiments";
+    public static final String CV_TERMS = "Terms";
+    public static final String INTERACTIONS_PER_BIOSOURCE = "Interactions per organism";
+    public static final String INTERACTIONS_PER_IDENTIFICATION = "Interactions per identification method";
+
     public List getDisplayBeans() {
         List result = new ArrayList();
 
-        result.add(new DisplayStatisticsBean("Proteins",
-                                             proteinCount,
-                                             "Number of proteins in the database"));
+        result.add( new DisplayStatisticsBean( PROTEINS,
+                                               proteinCount + "",
+                                               "Number of proteins in the database" ) );
 
-        result.add(new DisplayStatisticsBean("Interactions",
-                                             interactionCount,
-                                             "Number of interactions and complexes"));
+        result.add( new DisplayStatisticsBean( INTERACTIONS,
+                                               interactionCount + "",
+                                               "Number of interactions and complexes" ) );
 
-        result.add(new DisplayStatisticsBean("Binary interactions",
-                                             binaryInteractionCount,
-                                             "Number of interactions, n-ary interactions expanded according to the \"spoke\" model"));
+        result.add( new DisplayStatisticsBean( BINARY_INTERACTIONS,
+                                               binaryInteractionCount + "",
+                                               "Number of interactions, n-ary interactions expanded according to the \"spoke\" model" ) );
 
-        result.add(new DisplayStatisticsBean("Experiments",
-                                             experimentCount,
-                                             "Distinct experiments"));
+        result.add( new DisplayStatisticsBean( EXPERIMENTS,
+                                               experimentCount + "",
+                                               "Distinct experiments" ) );
 
-        result.add(new DisplayStatisticsBean("Terms",
-                                             cvTermCount,
-                                             "Controlled vocabulary terms"));
+        result.add( new DisplayStatisticsBean( CV_TERMS,
+                                               cvTermCount + "",
+                                               "Controlled vocabulary terms" ) );
+
+        result.add( new DisplayStatisticsBean( INTERACTIONS_PER_BIOSOURCE,
+                                               "",
+                                               "" ) );
+
+        result.add( new DisplayStatisticsBean( INTERACTIONS_PER_IDENTIFICATION,
+                                               "",
+                                               "" ) );
 
         return result;
     }
