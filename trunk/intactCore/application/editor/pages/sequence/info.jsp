@@ -19,6 +19,7 @@
 <c:set var="menus" value="${user.view.menus}"/>
 
 <%-- Individual menu lists --%>
+<c:set var="polymermenu" value="${menus['Polymer']}"/>
 <c:set var="organismmenu" value="${menus['Organism']}"/>
 
 <table width="100%" border="0" cellspacing="1" cellpadding="2">
@@ -54,6 +55,7 @@
 
 <table class="table" width="100%" border="0" cellspacing="1" cellpadding="2">
     <tr class="tableRowHeader">
+        <th class="tableCellHeader">Interactor Type</th>
         <th class="tableCellHeader">Source</th>
         <th class="tableCellHeader">Sequence</th>
         <th>
@@ -61,6 +63,12 @@
         </th>
     </tr>
     <tr class="tableRowOdd">
+        <td class="tableCell" align="left" valign="top">
+            <html:select property="interactorType" name="seqForm" styleClass="inputRequired">
+                <html:options name="polymermenu" />
+            </html:select>
+            <html:errors property="polymer"/>
+        </td>
         <td class="tableCell" align="left" valign="top">
             <html:select property="organism" name="seqForm" styleClass="inputRequired">
                 <html:options name="organismmenu" />
