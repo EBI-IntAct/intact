@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.persistence;
 
 import org.apache.log4j.Logger;
 import org.apache.ojb.broker.PersistenceBrokerException;
+import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.accesslayer.LookupException;
 import org.apache.ojb.broker.query.Query;
 
@@ -362,32 +363,4 @@ public interface DAO {
      * <code>clazz</code> is not found in the repository.
      */
     public String getTableName(Class clazz);
-
-    /**
-     * Returns the number of items retrieved by executing the query.
-     * @param query the query to execute.
-     * @return the number of items retrieved by executing <code>query</code>.
-     */
-    public int getCountByQuery(Query query);
-
-    /**
-     * Returns the Object for the given query.
-     * @param query the query to execute.
-     * @return the object retrieved by executing <code>query</code>.
-     */
-    public Object getObjectByQuery(Query query);
-
-    /**
-     * Returns a collection of items retrieved by executing the query.
-     * @param query the query to execute.
-     * @return a collection items retrieved by executing <code>query</code>.
-     */
-    public Collection getCollectionByQuery(Query query);
-    
-    /**
-     * Returns an iterator for executing the query.
-     * @param query to execute.
-     * @return an iterator consists of Object[]. 
-     */
-    public Iterator getIteratorByReportQuery(Query query);
 }
