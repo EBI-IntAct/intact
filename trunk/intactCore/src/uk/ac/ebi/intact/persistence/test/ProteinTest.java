@@ -74,8 +74,8 @@ public class ProteinTest extends TestCase {
         BioSource src = (BioSource) myHelper.getObjectByLabel(BioSource.class, "yeast");
 
         // The interactor type.
-        CvInteractorType interactorType = (CvInteractorType) myHelper.getObjectByLabel(
-                CvInteractorType.class, "protein");
+        CvInteractorType interactorType = (CvInteractorType) myHelper.getObjectByPrimaryId(
+                CvInteractorType.class, CvInteractorType.getProteinMI());
 
         // Set the maximum sequence length for testing.
         PolymerImpl.setMaxSequenceLength(10);
@@ -148,8 +148,8 @@ public class ProteinTest extends TestCase {
         BioSource src = (BioSource) myHelper.getObjectByLabel(BioSource.class, "yeast");
 
         // The interactor type.
-        CvInteractorType interactorType = (CvInteractorType) myHelper.getObjectByLabel(
-                CvInteractorType.class, "protein");
+        CvInteractorType interactorType = (CvInteractorType) myHelper.getObjectByPrimaryId(
+                CvInteractorType.class, CvInteractorType.getProteinMI());
 
         // Set the maximum sequence length for testing.
         PolymerImpl.setMaxSequenceLength(10);
@@ -216,8 +216,8 @@ public class ProteinTest extends TestCase {
         BioSource src = (BioSource) myHelper.getObjectByLabel(BioSource.class, "yeast");
 
         // The interactor type.
-        CvInteractorType interactorType = (CvInteractorType) myHelper.getObjectByLabel(
-                CvInteractorType.class, "protein");
+        CvInteractorType interactorType = (CvInteractorType) myHelper.getObjectByPrimaryId(
+                CvInteractorType.class, CvInteractorType.getProteinMI());
 
         // Set the maximum sequence length for testing.
         PolymerImpl.setMaxSequenceLength(10);
