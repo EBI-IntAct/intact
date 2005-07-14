@@ -388,11 +388,11 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         myEditView.reset(clazz);
     }
 
-    public void setView(AnnotatedObject annobj) {
+    public void setView(AnnotatedObject annobj) throws IntactException {
         setView(annobj, true);
     }
 
-    public void setView(AnnotatedObject annobj, boolean release) {
+    public void setView(AnnotatedObject annobj, boolean release) throws IntactException {
         if (release) {
             // Return the view back to the pool.
             releaseView();
@@ -404,18 +404,22 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         startEditing();
         // View based on the class for given edit object.
         myEditView = EditViewBeanFactory.getInstance().borrowObject(
-                IntactHelper.getRealClassName(annobj));
+                IntactHelper.getRealClassName(annobj), 0);
         // Resets the view with the new annotated object.
         myEditView.reset(annobj);
+        // Load menus after setting the annotated object.
+        myEditView.loadMenus();
     }
 
-    public void setClonedView(AnnotatedObject obj) {
+    public void setClonedView(AnnotatedObject obj) throws IntactException {
         startEditing();
         // Return the view back to the pool.
         releaseView();
         myEditView = EditViewBeanFactory.getInstance().borrowObject(
-                IntactHelper.getRealClassName(obj));
+                IntactHelper.getRealClassName(obj), 0);
         myEditView.resetClonedObject(obj, this);
+        // Load menus after setting the annotated object.
+        myEditView.loadMenus();
     }
 
     public boolean restorePreviousView() {
