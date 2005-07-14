@@ -7,10 +7,7 @@ package uk.ac.ebi.intact.model.proxy;
 
 import org.apache.ojb.broker.Identity;
 import org.apache.ojb.broker.PBKey;
-import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.model.Component;
-import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.model.Product;
+import uk.ac.ebi.intact.model.*;
 
 import java.lang.reflect.InvocationHandler;
 import java.util.Collection;
@@ -96,21 +93,29 @@ public class InteractorProxy  extends AnnotatedObjectProxy implements Interactor
         realSubject().removeProduct( product );
     }
 
+    public CvInteractorType getCvInteractorType() {
+        return realSubject().getCvInteractorType();
+    }
+
+    public void setCvInteractorType(CvInteractorType type) {
+        realSubject().setCvInteractorType(type);
+    }
+
     //attributes used for mapping BasicObjects - project synchron
     // TODO: should be move out of the model.
-    public String getBioSourceAc () {
-        return realSubject().getBioSourceAc();
-    }
-
-    public void setBioSourceAc ( String bioSourceAc ) {
-        realSubject().setBioSourceAc( bioSourceAc );
-    }
-
-    public boolean equals ( Object o ) {
-        return realSubject().equals( o );
-    }
-
-    public int hashCode () {
-        return realSubject().hashCode();
-    }
+//    public String getBioSourceAc () {
+//        return realSubject().getBioSourceAc();
+//    }
+//
+//    public void setBioSourceAc ( String bioSourceAc ) {
+//        realSubject().setBioSourceAc( bioSourceAc );
+//    }
+//
+//    public boolean equals ( Object o ) {
+//        return realSubject().equals( o );
+//    }
+//
+//    public int hashCode () {
+//        return realSubject().hashCode();
+//    }
 }
