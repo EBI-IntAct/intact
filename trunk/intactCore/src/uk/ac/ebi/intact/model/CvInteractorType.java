@@ -23,6 +23,11 @@ public class CvInteractorType extends CvDagObject {
     private static final String ourInteractionMI = "MI:0317";
 
     /**
+     * The MI number for a Protein.
+     */
+    private static final String ourProteinMI = "MI:0326";
+
+    /**
      * A list of MI numbers for Nucleic acid type
      */
     private static final List ourNucleicAcidMIs = Arrays.asList(new String[] {
@@ -33,7 +38,7 @@ public class CvInteractorType extends CvDagObject {
      * A list of MI numbers for a Protein type.
      */
     private static final List ourProteinMIs = Arrays.asList(new String[] {
-        "MI:0326", "MI:0327"});
+        ourProteinMI, "MI:0327"});
 
     /**
      *
@@ -60,6 +65,13 @@ public class CvInteractorType extends CvDagObject {
      */
     public static List getNucleicAcidMIs() {
         return Collections.unmodifiableList(ourNucleicAcidMIs);
+    }
+
+    /**
+     * @return returns the default MI for a Protein as a string.
+     */
+    public static String getProteinMI() {
+        return ourProteinMI;
     }
 
     /**
