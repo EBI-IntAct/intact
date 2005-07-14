@@ -5,10 +5,7 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.persistence;
 
-import java.util.*;
-
 import org.apache.log4j.Logger;
-import uk.ac.ebi.intact.business.IntactHelper;
 
 /**
  *  <p>This interface defines the functionality usually provided by
@@ -41,14 +38,10 @@ public interface DAOSource {
      *
      * @param user username to make a connection with
      * @param password the user's password (null values are allowed)
-     * @param type the persistence type (i.e, ODMG or PB)
-     *
      * @return a Data Access Object
-     *
      * @exception DataSourceException - thrown if a DAO cannot be obtained
     */
-    public DAO getDAO(String user, String password, IntactHelper.PersistenceType type)
-            throws DataSourceException;
+    public DAO getDAO(String user, String password) throws DataSourceException;
 
     /**
      *  @return the name of the data source (as per configuration)
