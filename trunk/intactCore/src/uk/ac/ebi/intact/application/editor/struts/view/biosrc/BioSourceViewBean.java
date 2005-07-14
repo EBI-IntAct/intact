@@ -180,7 +180,7 @@ public class BioSourceViewBean extends AbstractEditViewBean {
     /**
      * Override to load the menus for this view.
      */
-    protected void loadMenus() throws IntactException {
+    public void loadMenus() throws IntactException {
         // Handler to the menu factory.
         EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
 
