@@ -31,6 +31,16 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
      */
     private BioSource bioSource;
 
+    /**
+     * For OJB access
+     */
+    private String cvInteractorTypeAc;
+
+    /**
+     * The interactor type.
+     */
+    private CvInteractorType interactorType;
+
     ///////////////////////////////////////
     // associations
 
@@ -63,13 +73,29 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
      * @param shortLabel The memorable label to identify this Interactor
      * @param owner      The Institution which owns this Interactor
      * @throws NullPointerException thrown if either parameters are not specified
+     *
+     * @deprecated Use {@link #InteractorImpl(String, Institution, CvInteractorType)} instead
      */
     protected InteractorImpl( String shortLabel, Institution owner ) {
-
-        //NB is more than this required to define a valid Interactor?
-        super( shortLabel, owner );
+        this( shortLabel, owner, null );
     }
 
+
+    /**
+     * Constructor for subclass use only. Ensures that Interactors cannot be
+     * created without at least a shortLabel, an owner and type specified. NOTE: It is
+     * assumed that subclasses of Interactor will supply a valid BioSource; this
+     * is initially set to null but <b>other classes may expect it to be non-null</b>.
+     *
+     * @param shortLabel The memorable label to identify this Interactor
+     * @param owner      The Institution which owns this Interactor
+     * @param type       The Interactor type
+     * @throws NullPointerException thrown if either parameters are not specified
+     */
+    protected InteractorImpl( String shortLabel, Institution owner, CvInteractorType type ) {
+        super( shortLabel, owner );
+        setCvInteractorType(type);
+    }
 
     ///////////////////////////////////////
     //access methods for attributes
@@ -79,11 +105,9 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
     }
 
     public void setBioSource( BioSource bioSource ) {
-
         if( bioSource == null ) {
             throw new NullPointerException( "valid Interactor must have a BioSource!" );
         }
-
         this.bioSource = bioSource;
     }
 
@@ -129,14 +153,12 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
         if( removed ) product.setInteractor( null );
     }
 
-    //attributes used for mapping BasicObjects - project synchron
-    // TODO: should be move out of the model.
-    public String getBioSourceAc() {
-        return this.bioSourceAc;
+    public void setCvInteractorType(CvInteractorType type) {
+        interactorType = type;
     }
 
-    public void setBioSourceAc( String bioSourceAc ) {
-        this.bioSourceAc = bioSourceAc;
+    public CvInteractorType getCvInteractorType() {
+        return interactorType;
     }
 
     ///////////////////////////////////////
