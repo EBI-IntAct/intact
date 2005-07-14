@@ -38,16 +38,6 @@ public interface Interactor extends AnnotatedObject {
 
     public void removeProduct(Product product);
 
-    //attributes used for mapping BasicObjects - project synchron
-    // TODO: should be move out of the model.
-    public String getBioSourceAc();
-
-    public void setBioSourceAc(String bioSourceAc);
-
-    public String toString();
-
-    public boolean equals (Object o);
-
-    public int hashCode();
-
+    public CvInteractorType getCvInteractorType();
+    public void setCvInteractorType(CvInteractorType type);
 }
