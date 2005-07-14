@@ -111,7 +111,7 @@ public interface EditUserI extends IntactUserI, Serializable {
      * This method is equivalent to calling {@link #setView(AnnotatedObject, boolean)}
      * method with release parameter set to true (release the current view).
      */
-    public void setView(AnnotatedObject annobj);
+    public void setView(AnnotatedObject annobj) throws IntactException;
 
     /**
      * Sets the current view with given Annotated object. For creating a new
@@ -120,7 +120,7 @@ public interface EditUserI extends IntactUserI, Serializable {
      * @param release true to release the current view. The current view is
      * stored on the view stack if this parameter is false
      */
-    public void setView(AnnotatedObject annobj, boolean release);
+    public void setView(AnnotatedObject annobj, boolean release) throws IntactException;
 
     /**
      * Sets the view as a cloned object. This is different to
@@ -129,7 +129,7 @@ public interface EditUserI extends IntactUserI, Serializable {
      * correctly (these annotations need to be created first).
      * @param obj the cloned object.
      */
-    public void setClonedView(AnnotatedObject obj);
+    public void setClonedView(AnnotatedObject obj) throws IntactException;
 
     /**
      * Restores the previously stored on the stack. This is a convenient method
