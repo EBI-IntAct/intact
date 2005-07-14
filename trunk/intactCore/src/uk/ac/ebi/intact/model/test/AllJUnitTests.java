@@ -46,14 +46,16 @@ public class AllJUnitTests extends TestCase {
         suite.addTest( CvFuzzyTypeTest.suite() );
         suite.addTest( AnnotatedObjectTest.suite() );
 
+        suite.addTest(ProteinTest.suite());
+        suite.addTest(NucleicAcidTest.suite());
+        suite.addTest(InteractionTest.suite());
+
         // will be replaced by smaller test in dedicated files.
 //        suite.addTest( EqualityTests.suite() );
 
         // not implemented yet, those tests are empty.
-//        suite.addTest(ProteinTest.suite());
 //        suite.addTest(RangeTest.suite());
 //        suite.addTest(ExperimentTest.suite());
-//        suite.addTest(InteractionTest.suite());
 
         return suite;
     }
