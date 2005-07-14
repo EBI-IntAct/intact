@@ -80,8 +80,8 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
      * <li> At least one valid Experiment</li>
      * <li>at least two Components</li>
      * <li>an Interaction type (eg covalent binding)</li>
-     * <li>a dissociation constant (ie kD), as a <code>Float</code> object</li>
      * <li>a short label to refer to this instance</li>
+     * <li>an owner</li>
      * </ul>
      * <p/>
      * A side-effect of this constructor is to
@@ -97,17 +97,57 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
      *                    but may be empty to allow creation of an Interaction for later population with Components
      * @param type        The type of Interaction observed - may be null if initially unkown
      * @param shortLabel  The short label to refer to this instance (non-null)
+     * @param owner       the owner of this Interaction
+     * @throws NullPointerException     thrown if any of the specified paraneters are
+     *                                  null OR the Experiment does not contain a BioSource.
+     * @throws IllegalArgumentException thrown if either of the experiments or components Collections
+     *                                  are empty, or if there are less than two components specified
+     * @deprecated Use
+     * {@link #InteractionImpl(java.util.Collection, java.util.Collection, CvInteractionType, CvInteractorType, String, Institution)}
+     * instead.
+     *
+     */
+    public InteractionImpl( Collection experiments, Collection components,
+                            CvInteractionType type, String shortLabel,
+                            Institution owner ) {
+        this(experiments, components, type, null, shortLabel, owner);
+    }
+
+    /**
+     * Creates a valid Interaction instance. This requires at least the following:
+     * <ul>
+     * <li> At least one valid Experiment</li>
+     * <li>at least two Components</li>
+     * <li>an Interaction type (eg covalent binding)</li>
+     * <li>an Interactor type</li>
+     * <li>a short label to refer to this instance</li>
+     * <li>an owner</li>
+     * </ul>
+     * <p/>
+     * A side-effect of this constructor is to
+     * set the <code>created</code> and <code>updated</code> fields of the instance
+     * to the current time. NOTE: the BioSource value is required for this class as
+     * it is not set via Interactor - this will be taken from the (first) Experiment
+     * in the Collection parameter. It is tehrefore assumed that the Experiment will
+     * be a valid one.
+     *
+     * @param experiments A Collection of Experiments which observed this Interaction (non-empty)
+     *                    NB The BioSource for this Interaction will be taken from the first element of this Collection.
+     * @param components  A Collection of Interaction components (eg Proteins). This cannot be null
+     *                    but may be empty to allow creation of an Interaction for later population with Components
+     * @param type        The type of Interaction observed - may be null if initially unkown
+     * @param interactorType The interactor type
+     * @param shortLabel  The short label to refer to this instance (non-null)
+     * @param owner       the owner of this Interaction
      * @throws NullPointerException     thrown if any of the specified paraneters are
      *                                  null OR the Experiment does not contain a BioSource.
      * @throws IllegalArgumentException thrown if either of the experiments or components Collections
      *                                  are empty, or if there are less than two components specified
      */
     public InteractionImpl( Collection experiments, Collection components,
-                            CvInteractionType type, String shortLabel,
-                            Institution owner ) {
-
-        //super call sets up a valid AnnotatedObject (Q: is Interactor more tightly defined?)
-        super( shortLabel, owner );
+                            CvInteractionType type, CvInteractorType interactorType,
+                            String shortLabel, Institution owner ) {
+        super( shortLabel, owner, interactorType );
 
         setExperiments( experiments );
         setComponents( components );
@@ -122,8 +162,8 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
      * <li> At least one valid Experiment</li>
      * <li>at least two Components</li>
      * <li>an Interaction type (eg covalent binding)</li>
-     * <li>a dissociation constant (ie kD), as a <code>Float</code> object</li>
      * <li>a short label to refer to this instance</li>
+     * <li>an owner</li>
      * </ul>
      * <p/>
      * A side-effect of this constructor is to
@@ -139,19 +179,58 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
      *                    NB The BioSource for this Interaction will be taken from the first element of this Collection.
      * @param type        The type of Interaction observed - may be null if initially unkown
      * @param shortLabel  The short label to refer to this instance (non-null)
+     * @param owner       the owner of this Interaction
+     * @throws NullPointerException     thrown if any of the specified paraneters are
+     *                                  null OR the Experiment does not contain a BioSource.
+     * @throws IllegalArgumentException thrown if either of the experiments or components Collections
+     *                                  are empty, or if there are less than two components specified
+     *
+     * @deprecated {@link #InteractionImpl(java.util.Collection, CvInteractionType, CvInteractorType, String, Institution)}
+     * instead
+     */
+    public InteractionImpl( Collection experiments, CvInteractionType type,
+                            String shortLabel, Institution owner ) {
+        this( experiments, new ArrayList(), type, shortLabel, owner );
+    }
+
+
+    /**
+     * Creates a valid Interaction instance. This requires at least the following:
+     * <ul>
+     * <li> At least one valid Experiment</li>
+     * <li>at least two Components</li>
+     * <li>an Interaction type (eg covalent binding)</li>
+     * <li>an Interactor type</li>
+     * <li>a short label to refer to this instance</li>
+     * <li>an owner</li>
+     * </ul>
+     * <p/>
+     * A side-effect of this constructor is to
+     * set the <code>created</code> and <code>updated</code> fields of the instance
+     * to the current time. NOTE: the BioSource value is required for this class as
+     * it is not set via Interactor - this will be taken from the (first) Experiment
+     * in the Collection parameter. It is tehrefore assumed that the Experiment will
+     * be a valid one.
+     * <br>
+     * A default empty collection of component is created when calling that constructor.
+     *
+     * @param experiments A Collection of Experiments which observed this Interaction (non-empty)
+     *                    NB The BioSource for this Interaction will be taken from the first element of this Collection.
+     * @param type        The type of Interaction observed - may be null if initially unkown
+     * @param interactorType The interactor type
+     * @param shortLabel  The short label to refer to this instance (non-null)
+     * @param owner       the owner of this Interaction
      * @throws NullPointerException     thrown if any of the specified paraneters are
      *                                  null OR the Experiment does not contain a BioSource.
      * @throws IllegalArgumentException thrown if either of the experiments or components Collections
      *                                  are empty, or if there are less than two components specified
      */
-    public InteractionImpl( Collection experiments,
-                            CvInteractionType type, String shortLabel,
+    public InteractionImpl( Collection experiments, CvInteractionType type,
+                            CvInteractorType interactorType, String shortLabel,
                             Institution owner ) {
-
-        this( experiments, new ArrayList(), type, shortLabel, owner );
+        this( experiments, new ArrayList(), type, interactorType, shortLabel, owner );
     }
 
-    
     ///////////////////////////////////////
     //access methods for attributes
 
@@ -360,24 +439,6 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
             copyComp.setInteractorForClone( (Interactor) IntactHelper.getRealIntactObject( comp.getInteractor() ) );
             copy.components.add( copyComp );
         }
-
-        // Go through Features again to reset linked Features (they are still
-        // pointing to the original Features - not cloned).
-//        for (Iterator iter0 = copy.components.iterator(); iter0.hasNext(); ) {
-//            Component comp = (Component) iter0.next();
-//            for (Iterator iter1 = comp.getBindingDomains().iterator(); iter1.hasNext();) {
-//                Feature feature = (Feature) iter1.next();
-//                // Only process if linked to another feature.
-//                if (feature.getBoundDomain() != null) {
-//                    // Get the cloned feature for the bound domain.
-//                    Feature linkedFeature = findFeature(copy.components,
-//                            feature.getBoundDomain().getShortLabel() + "-x");
-//                    // We must have the linked feature.
-//                    assert linkedFeature != null;
-//                    feature.setBoundDomain(linkedFeature);
-//                }
-//            }
-//        }
         return copy;
     }
 
@@ -396,28 +457,6 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
 
         return result + "] Interaction" + NEW_LINE;
     }
-
-    /**
-     * Returns a feature for given short label.
-     *
-     * @param comps the collection of Component objects to search for.
-     * @param label the short label to match.
-     * @return the matching Feature or null if none found for <code>label</code>
-     *         in <code>comps</code>.
-     */
-    private Feature findFeature( Collection comps, String label ) {
-        for( Iterator iter0 = comps.iterator(); iter0.hasNext(); ) {
-            Component comp = (Component) iter0.next();
-            for( Iterator iter1 = comp.getBindingDomains().iterator(); iter1.hasNext(); ) {
-                Feature feature = (Feature) iter1.next();
-                if( feature.getShortLabel().equals( label ) ) {
-                    return feature;
-                }
-            }
-        }
-        return null;
-    }
-
 } // end Interaction
 
 
