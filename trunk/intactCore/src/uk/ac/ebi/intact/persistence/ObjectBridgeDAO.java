@@ -192,30 +192,6 @@ public class ObjectBridgeDAO implements DAO {
     }
 
     /**
-     * tries to restore a connection if it has been lost due to
-     * serialization (PBs and ODMG DB/TX objects are not serializable)
-     *
-     */
-//    private void checkForOpenStore() {
-//        if ((broker == null) & (db == null) & (odmg == null)) {
-//            System.out.println("OPENING again");
-//            //the DAO has been serialized and the connections need to be
-//            //restored.
-//            //NB does this mean we lose transactions?....
-//            try {
-//                logger.debug("db class is null, reopening.....before open()");
-//                this.open();
-//
-//                //get the current transaction back as it couldn't be serialised..
-//                tx = odmg.currentTransaction();
-//
-//            } catch (Exception e) {
-//                logger.error("unable to reconnect to store after serialization", e);
-//            }
-//        }
-//    }
-
-    /**
      * Provides the database name that is being connected to.
      * @return String the database name, or an empty String if the query fails
      */
@@ -513,8 +489,6 @@ public class ObjectBridgeDAO implements DAO {
         //old PB code
         //ObjectModificationDefaultImpl mod = new ObjectModificationDefaultImpl();
         //mod.setNeedsUpdate(true);
-//        checkForOpenStore();
-        //Transaction tx1 = null;
         boolean localTx = false;
         Object dummy = null;
 
@@ -661,7 +635,6 @@ public class ObjectBridgeDAO implements DAO {
      * @return boolean - true if a transaction is active, false otherwise
      */
     public boolean isActive() {
-//        checkForOpenStore();
         if (isODMGTransaction()) {
             if (tx != null) {
                 return tx.isOpen();
@@ -674,51 +647,6 @@ public class ObjectBridgeDAO implements DAO {
     }
 
     /**
-     *   checks to see if object saving automatically is turned on
-     *
-     * @return boolean - true if auto saving is on, false otherwise
-     */
-//    public boolean isAutoSave() {
-//        checkForOpenStore();
-//        JdbcConnectionDescriptor connDesc = MetadataManager.getInstance().connectionRepository().getDescriptor(defaultKey);
-//        if(connDesc.getUseAutoCommit() == 1)
-//            return true;
-//        return false;
-//    }
-
-    /**
-     *   sets whether or not auto saving is turned on
-     *
-     * @param val - true to turn on, false for off
-     */
-//    public void setAutoSave(boolean val) {
-//
-//        checkForOpenStore();
-//        try {
-//            broker.serviceConnectionManager().getConnection().setAutoCommit(val);
-//        } catch (Exception se) {
-//
-//            logger.error("unable to reset autocommit value - reset failed", se);
-//        }
-//    }
-
-
-    /**
-     *   checks to see if a transaction is closed.
-     *
-     * @return boolean - true if closed (default), false otherwise
-     */
-//    public boolean isClosed() {
-//
-////        checkForOpenStore();
-//        if (tx != null) {
-//            return tx.isOpen();
-//        } else {
-//            return false;
-//        }
-//    }
-
-    /**
      *   checks to determine if a given object is persistent or not
      *
      * @param obj - the object to be checked
@@ -727,7 +655,6 @@ public class ObjectBridgeDAO implements DAO {
      * all other instances.
      */
     public boolean isPersistent(Object obj) {
-//        checkForOpenStore();
         // Check for the proxy first; if it is an Intact proxy, we assume it is a
         // persistent class.
         if (IntactObjectProxy.class.isAssignableFrom(obj.getClass())) {
@@ -766,8 +693,6 @@ public class ObjectBridgeDAO implements DAO {
      */
     public void remove(Object obj) throws TransactionException {
         //do this through ODMG - removes from the cache too...
-//        checkForOpenStore();
-        //Transaction tx1 = null;
         boolean localTx = false;
         try {
 
@@ -818,7 +743,6 @@ public class ObjectBridgeDAO implements DAO {
      * @exception TransactionException - thrown if  the transaction couldn't be rolled back
      */
     public void rollback() throws TransactionException {
-//        checkForOpenStore();
         try {
             if (isODMGTransaction()) {
                 //make sure the current thread is associated with the TX first, to be safe
@@ -846,10 +770,8 @@ public class ObjectBridgeDAO implements DAO {
      *
      */
     public void makePersistent(Collection objs) throws CreateException, TransactionException {
-
         //local check flag for a localised transaction
         //do this in ODMG....
-//        checkForOpenStore();
         boolean startedHere = false;
 
         if (objs != null) {
@@ -919,8 +841,6 @@ public class ObjectBridgeDAO implements DAO {
      *
      */
     public Collection find(Class searchClass, String col, String val) throws SearchException {
-
-//        checkForOpenStore();
         Collection results = new ArrayList();
 
         //debug info..
@@ -1080,7 +1000,6 @@ public class ObjectBridgeDAO implements DAO {
         //search by object. If the example has no ID set it returns all for that class.
         //see private method buildQueryByExample for an attempt to do it properly.....
 
-//        checkForOpenStore();
         Query query = null;
         Collection results = new ArrayList();
 
@@ -1232,8 +1151,6 @@ public class ObjectBridgeDAO implements DAO {
      * @exception SearchException -  thrown for errors during the search process, eg query problems
      */
     public Iterator iteratorFind(String type, String col, String val) throws SearchException {
-
-//        checkForOpenStore();
         Query query = null;
         Iterator resultIterator = null;
         Class searchClass = null;
@@ -1333,20 +1250,48 @@ public class ObjectBridgeDAO implements DAO {
         return cld.getFullTableName();
     }
 
+    /**
+     * Returns the number of items retrieved by executing the query.
+     * @param query the query to execute.
+     * @return the number of items retrieved by executing <code>query</code>.
+     */
     public int getCountByQuery(Query query) {
         return broker.getCount(query);
     }
 
+    /**
+     * Returns the Object for the given query.
+     * @param query the query to execute.
+     * @return the object retrieved by executing <code>query</code>.
+     */
     public Object getObjectByQuery(Query query) {
         return broker.getObjectByQuery(query);
     }
 
+    /**
+     * Returns a collection of items retrieved by executing the query.
+     * @param query the query to execute.
+     * @return a collection items retrieved by executing <code>query</code>.
+     */
     public Collection getCollectionByQuery(Query query) {
         return broker.getCollectionByQuery(query);
     }
-    
+
+    /**
+     * Returns an iterator for executing the query.
+     * @param query to execute.
+     * @return an iterator consists of Object[].
+     */
     public Iterator getIteratorByReportQuery(Query query) {
         return broker.getReportQueryIteratorByQuery(query);
+    }
+
+    /**
+     * Returns the underlying broker.
+     * @return the persistence broker
+     */
+    public PersistenceBroker getBroker() {
+        return this.broker;
     }
 
 //-------------------------- private helper methods ----------------------------------------
