@@ -448,6 +448,7 @@
                 <exclude name="test/**"/>
                 <exclude name="lucene-1.4.3.jar"/>
                 <exclude name="jimi.jar"/>
+                <exclude name="commons-collections.jar"/>
             </fileset>
 
             <!-- Include required jar files from intact core. -->
