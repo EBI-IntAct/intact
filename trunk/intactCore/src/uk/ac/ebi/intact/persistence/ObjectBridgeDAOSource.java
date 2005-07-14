@@ -11,13 +11,10 @@ import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.PersistenceBrokerFactory;
 import org.apache.ojb.broker.metadata.JdbcConnectionDescriptor;
 import org.apache.ojb.broker.metadata.MetadataManager;
-import org.odmg.ODMGException;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
-
-import uk.ac.ebi.intact.business.IntactHelper;
 
 /**
  *  <p>This class effectively wraps an ObjectBridge broker factory instance and abstracts
@@ -79,17 +76,10 @@ public class ObjectBridgeDAOSource implements DAOSource, Serializable {
         return password;
     }
 
-    public DAO getDAO(String user, String password,
-                      IntactHelper.PersistenceType type) throws DataSourceException {
+    public DAO getDAO(String user, String password) throws DataSourceException {
         setUser(user);
         setPassword(password);
-        if (type == IntactHelper.PB) {
-            return getDAO();
-        }
-        else if (type == IntactHelper.ODMG) {
-            return getODMGDAO();
-        }
-        throw new DataSourceException("Unknown type specified as DAO");
+        return getDAO();
    }
 
     /**
@@ -190,27 +180,5 @@ public class ObjectBridgeDAOSource implements DAOSource, Serializable {
      */
     private void setPassword(String password) {
         this.password = password;
-    }
-
-    /**
-     *  This method returns a connection to the data source, ie in this case
-     * a broker instance which provides database connection.
-     *
-     * @return a Data Access Object (connection)
-    */
-    private DAO getODMGDAO() throws DataSourceException {
-        // Defaults to default key for a null user.
-        MetadataManager metaData = MetadataManager.getInstance();
-
-        PBKey key = (getUser() == null) ? metaData.getDefaultPBKey() :
-                new PBKey(getJcdAlias(), getUser(), getPassword());
-        PersistenceBroker broker = PersistenceBrokerFactory.createPersistenceBroker(key);
-        //create an ObjectBridgeDAO, passing the initialised broker as a param
-        try {
-            return new ObjectBridgeODMG(broker);
-        }
-        catch (ODMGException e) {
-            throw new DataSourceException("error - unable to create a DAO object", e);
-        }
     }
 }
