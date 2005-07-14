@@ -5,6 +5,10 @@
  */
 package uk.ac.ebi.intact.model;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * This describes the nature of the molecule. For example, protein, DNA etc.
  *
@@ -12,6 +16,65 @@ package uk.ac.ebi.intact.model;
  * @version $Id$
  */
 public class CvInteractorType extends CvDagObject {
+
+    /**
+     * The MI number for an Interaction.
+     */
+    private static final String ourInteractionMI = "MI:0317";
+
+    /**
+     * A list of MI numbers for Nucleic acid type
+     */
+    private static final List ourNucleicAcidMIs = Arrays.asList(new String[] {
+        "MI:0318", "MI:0319", "MI:0320", "MI:0321", "MI:0322", "MI:0323",
+        "MI:0324", "MI:0325"});
+
+    /**
+     * A list of MI numbers for a Protein type.
+     */
+    private static final List ourProteinMIs = Arrays.asList(new String[] {
+        "MI:0326", "MI:0327"});
+
+    /**
+     *
+     * @param mi the MI number to check
+     * @return true if given MI number belongs to a Protein menu item; false is
+     * returned for all other instances.
+     */
+    public static boolean isProteinMenuItem(String mi) {
+        return ourProteinMIs.contains(mi);
+    }
+
+    /**
+     *
+     * @param mi the MI number to check
+     * @return true if given MI number belongs to a NucleicAcid menu item; false is
+     * returned for all other instances.
+     */
+    public static boolean isNucleicAcidMenuItem(String mi) {
+        return ourNucleicAcidMIs.contains(mi);
+    }
+
+    /**
+     * @return returns an unmodifiable list consists of NucleicAcid MIs as strings.
+     */
+    public static List getNucleicAcidMIs() {
+        return Collections.unmodifiableList(ourNucleicAcidMIs);
+    }
+
+    /**
+     * @return returns an unmodifiable list consists of Protein MIs as strings.
+     */
+    public static List getProteinMIs() {
+        return Collections.unmodifiableList(ourProteinMIs);
+    }
+
+    /**
+     * @return the MI number for an Interaction as a String.
+     */
+    public static String getInteractionMI() {
+        return ourInteractionMI;
+    }
 
     /**
      * This constructor should <b>not</b> be used as it could
