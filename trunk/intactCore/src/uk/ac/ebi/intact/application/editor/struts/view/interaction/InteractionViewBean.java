@@ -892,9 +892,13 @@ public class InteractionViewBean extends AbstractEditViewBean {
                 }
                 exps.add(exp);
             }
+            // The interactor type.
+            CvInteractorType intType = (CvInteractorType) helper.getObjectByPrimaryId(
+                    CvInteractorType.class, CvInteractorType.getInteractionMI());
+
             // Not persisted. Create a new Interaction.
             intact = new InteractionImpl(exps, new ArrayList(),
-                    type, getShortLabel(), getService().getOwner());
+                    type, intType, getShortLabel(), getService().getOwner());
             // Set this interaction as the annotated object.
             setAnnotatedObject(intact);
         }
@@ -924,7 +928,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
     /**
      * Override to load the menus for this view.
      */
-    protected void loadMenus() throws IntactException {
+    public void loadMenus() throws IntactException {
         // Holds the menu name.
         String name;
 
