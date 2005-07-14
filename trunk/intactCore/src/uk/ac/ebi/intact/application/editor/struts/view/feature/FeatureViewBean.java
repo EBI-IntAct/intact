@@ -431,7 +431,7 @@ public class FeatureViewBean extends AbstractEditViewBean {
         feature.setCvFeatureIdentification(getCvFeatureIndent(helper));
     }
 
-    protected void loadMenus() throws IntactException {
+    public void loadMenus() throws IntactException {
         // Handler to the menu factory.
         EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
 

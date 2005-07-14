@@ -82,7 +82,7 @@ public class CvViewBean extends AbstractEditViewBean {
     /**
      * Override to load the menus for this view.
      */
-    protected void loadMenus() throws IntactException {
+    public void loadMenus() throws IntactException {
         myMenus.clear();
         myMenus = super.getMenus();
     }
