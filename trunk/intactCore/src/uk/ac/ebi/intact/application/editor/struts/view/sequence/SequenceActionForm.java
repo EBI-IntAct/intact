@@ -24,6 +24,11 @@ public class SequenceActionForm extends EditorActionForm {
     private String mySequence;
 
     /**
+     * The interactor type
+     */
+    private String myInteractorType;
+
+    /**
      * The host organism
      */
     private String myOrganism;
@@ -41,6 +46,19 @@ public class SequenceActionForm extends EditorActionForm {
      */
     public void setSequence(String seq) {
         mySequence = seq;
+    }
+
+    public String getInteractorType() {
+        return myInteractorType;
+    }
+
+    /**
+     * @struts.validator type="mask" msgkey="error.seq.inttype"
+     * @struts.validator-args arg0resource="seq.inttype.label"
+     * @struts.validator-var name="mask" value="${menu-pat}"
+     */
+    public void setInteractorType(String interType) {
+        myInteractorType = interType;
     }
 
     public String getOrganism() {

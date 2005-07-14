@@ -16,7 +16,8 @@ import uk.ac.ebi.intact.application.editor.struts.view.cv.CvViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
-import uk.ac.ebi.intact.application.editor.struts.view.sequence.SequenceViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.sequence.NucleicAcidViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.sequence.ProteinViewBean;
 import uk.ac.ebi.intact.model.*;
 
 /**
@@ -53,20 +54,34 @@ public class EditViewBeanFactory implements KeyedPoolableObjectFactory {
     }
     
     /**
-     * Gets a view from the pool 
+     * Gets a view from the pool. The menus are pre-loaded
      * @param key the key to get the view from the pool
      * @return the view for <code>key</code>.
      */
     public AbstractEditViewBean borrowObject(Class key) {
+        return borrowObject(key, 1);
+    }
+
+    /**
+     * Gets a view from the pool
+     * @param key the key to get the view from the pool
+     * @param mode 1 to load menus now or later for any other value.
+     * @return the view for <code>key</code>.
+     */
+    public AbstractEditViewBean borrowObject(Class key, int mode) {
         try {
-            return (AbstractEditViewBean) myPool.borrowObject(key);
+            AbstractEditViewBean view = (AbstractEditViewBean) myPool.borrowObject(key);
+            if (mode == 1) {
+                view.loadMenus();
+            }
+            return view;
         }
         catch (Exception ex) {
             Logger.getLogger(EditorConstants.LOGGER).error("", ex);
         }
         return null;
     }
-    
+
     /**
      * Returns the view back to the pool.
      * @param view the view to return to.
@@ -103,8 +118,11 @@ public class EditViewBeanFactory implements KeyedPoolableObjectFactory {
         else if (Feature.class.isAssignableFrom(clazz)) {
             viewbean = new FeatureViewBean();
         }
+        else if (NucleicAcid.class.isAssignableFrom(clazz)) {
+            viewbean = new NucleicAcidViewBean();
+        }
         else if (Protein.class.isAssignableFrom(clazz)) {
-            viewbean = new SequenceViewBean();
+            viewbean = new ProteinViewBean();
         }
         else {
             // Assume it is an CV object.
@@ -121,8 +139,6 @@ public class EditViewBeanFactory implements KeyedPoolableObjectFactory {
     }
 
     public void activateObject(Object key, Object obj) throws Exception {
-        // Load menus when activating a view.
-        ((AbstractEditViewBean) obj).loadMenus();
     }
 
     public void passivateObject(Object key, Object obj) throws Exception {

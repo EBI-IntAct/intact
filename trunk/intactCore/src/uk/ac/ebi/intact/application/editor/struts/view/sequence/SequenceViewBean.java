@@ -15,11 +15,13 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.model.ProteinImpl;
+import uk.ac.ebi.intact.model.CvInteractorType;
+import uk.ac.ebi.intact.model.Polymer;
+import uk.ac.ebi.intact.model.util.PolymerFactory;
 import uk.ac.ebi.intact.util.Crc64;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,7 +30,7 @@ import java.util.Map;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class SequenceViewBean extends AbstractEditViewBean {
+public abstract class SequenceViewBean extends AbstractEditViewBean {
 
     /**
      * The sequence
@@ -36,33 +38,35 @@ public class SequenceViewBean extends AbstractEditViewBean {
     private String mySequence;
 
     /**
+     * The interactor type
+     */
+    private String myInteractorType;
+
+    /**
      * The organism for the sequence.
      */
     private String myOrganism;
-
-    /**
-     * The map of menus for this view.
-     */
-    private transient Map myMenus = new HashMap();
 
     // Override the super method to initialize this class specific resetting.
     public void reset() {
         super.reset();
         // Set fields to null.
-        mySequence = null;
+        myInteractorType = null;
         myOrganism = null;
+        mySequence = null;
     }
 
     // Override the super method to set the tax id.
     public void reset(AnnotatedObject annobj) {
         super.reset(annobj);
 
-        // Must be a protein (for the moment, this could be the new abstract super).
-        Protein prot = (Protein) annobj;
+        // Cast to the new abstract super.
+        Polymer polymer = (Polymer) annobj;
 
         // Set the bean data
-        myOrganism = prot.getBioSource().getShortLabel();
-        mySequence = prot.getSequence();
+        myInteractorType = polymer.getCvInteractorType().getShortLabel();
+        myOrganism = polymer.getBioSource().getShortLabel();
+        mySequence = polymer.getSequence();
     }
 
     // Override to copy sequence data from the form to the bean.
@@ -73,6 +77,7 @@ public class SequenceViewBean extends AbstractEditViewBean {
         // Cast to the sequence form to get sequence data.
         SequenceActionForm seqform = (SequenceActionForm) editorForm;
 
+        myInteractorType = seqform.getInteractorType();
         myOrganism = seqform.getOrganism();
         mySequence = seqform.getSequence();
     }
@@ -84,6 +89,7 @@ public class SequenceViewBean extends AbstractEditViewBean {
         // Cast to the sequence form to copy sequence data.
         SequenceActionForm seqform = (SequenceActionForm) form;
 
+        seqform.setInteractorType(myInteractorType);
         seqform.setOrganism(myOrganism);
         seqform.setSequence(mySequence);
     }
@@ -108,23 +114,33 @@ public class SequenceViewBean extends AbstractEditViewBean {
         // Set the sequence here, so it will create sequence records.
         if (getSequence().length() > 0) {
             // The current protein.
-            Protein prot = (Protein) getAnnotatedObject();
-            IntactHelper helper = user.getIntactHelper();
+            Polymer polymer = (Polymer) getAnnotatedObject();
             // Only set the sequence for when we have a seq.
-            prot.setSequence(helper, getSequence());
+            List emptyChunks = polymer.setSequence(getSequence());
+            if (!emptyChunks.isEmpty()) {
+                user.getIntactHelper().deleteAllElements(emptyChunks);
+            }
         }
     }
+
+    // --------------------- Protected Methods ---------------------------------
 
     /**
      * Override to provide the menus for this view.
      * @return a map of menus for this view. It consists of common menus for
      * annotation/xref and organism (add or edit).
      */
-    public Map getMenus() throws IntactException {
-        return myMenus;
-    }
+    protected Map getMenus() throws IntactException {
+        // The map containing the menus.
+        Map map = new HashMap();
 
-    // --------------------- Protected Methods ---------------------------------
+        map.putAll(super.getMenus());
+
+        String name = EditorMenuFactory.ORGANISM;
+        int mode = (myOrganism == null) ? 1 : 0;
+        map.put(name, EditorMenuFactory.getInstance().getMenu(name, mode));
+        return map;
+    }
 
     // Implements abstract methods
 
@@ -132,35 +148,30 @@ public class SequenceViewBean extends AbstractEditViewBean {
         // Get the objects using their short label.
         BioSource biosrc = (BioSource) helper.getObjectByLabel(BioSource.class,
                 myOrganism);
-
-        // The current protein
-        Protein prot = (Protein) getAnnotatedObject();
+        CvInteractorType intType = (CvInteractorType) helper.getObjectByLabel(
+                CvInteractorType.class, myInteractorType);
+        // The current polymer
+        Polymer polymer = (Polymer) getAnnotatedObject();
 
         // Have we set the annotated object for the view?
-        if (prot == null) {
-            // Not persisted; create a new Protein
-            prot = new ProteinImpl(getService().getOwner(), biosrc, getShortLabel());
-            setAnnotatedObject(prot);
+        if (polymer == null) {
+            // Not persisted; create a new Polymer using the factory
+            polymer = PolymerFactory.factory(getService().getOwner(), biosrc,
+                    getShortLabel(), intType);
+            setAnnotatedObject(polymer);
         }
         else {
-            prot.setBioSource(biosrc);
+            polymer.setCvInteractorType(intType);
+            polymer.setBioSource(biosrc);
         }
-        // Set the sequence should have done here but we can't do it because it
-        // will go ahead and start persisting sequences on the DB!!! This behaviour
-        // is TOTALLY inconsistent with other editors (they all persist records only
-        // upon submitting the form (or save & continue).
-        // prot.setSequence(user.getIntactHelper(), getSequence());
+        // Set the sequence in the persistOthers method we can safely delete
+        // unused sequences.
         if (getSequence().length() > 0) {
-            prot.setCrc64(Crc64.getCrc64(getSequence()));
+            polymer.setCrc64(Crc64.getCrc64(getSequence()));
         }
     }
 
-    protected void loadMenus() throws IntactException {
-        myMenus.clear();
-        myMenus.putAll(super.getMenus());
-
-        String name = EditorMenuFactory.ORGANISM;
-        int mode = (myOrganism == null) ? 1 : 0;
-        myMenus.put(name, EditorMenuFactory.getInstance().getMenu(name, mode));
+    protected String getInteractorType() {
+        return myInteractorType;
     }
 }

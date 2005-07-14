@@ -109,13 +109,14 @@ public class EditorMenuFactory {
     private static final Map ourNameToType = new HashMap();
 
     /**
-     * A list of MI numbers for a polymer.
+     * The criteria to retrieve nucleic acid types
      */
-    private static final List ourPolymerMIs = Arrays.asList(new String[] {
-        "MI:0383", "MI:0318", "MI:0319", "MI:0320", "MI:0321", "MI:0322",
-        "MI:0323", "MI:0324", "MI:0325", "MI:0326", "MI:0327"});
+    private static final Criteria ourNucleicAcidCriteria = new Criteria();
 
-    private static final Criteria ourPolymerCriteria = new Criteria();
+    /**
+     * The criteria to retrieve protein types
+     */
+    private static final Criteria ourProteinCriteria = new Criteria();
 
     // Static initializer.
 
@@ -135,9 +136,12 @@ public class EditorMenuFactory {
         ourNameToType.put(FEATURE_TYPE, CvFeatureType.class);
         ourNameToType.put(FEATURE_IDENTIFICATION, CvFeatureIdentification.class);
 
-        // Fill the criteria
-        for (Iterator iter = ourPolymerMIs.iterator(); iter.hasNext();) {
-            ourPolymerCriteria.addOrCriteria(buildMICriteria((String) iter.next()));
+        // Fill the criterias
+        for (Iterator iter = CvInteractorType.getNucleicAcidMIs().iterator();iter.hasNext();) {
+            ourNucleicAcidCriteria.addOrCriteria(buildMICriteria((String) iter.next()));
+        }
+        for (Iterator iter = CvInteractorType.getProteinMIs().iterator();iter.hasNext();) {
+            ourProteinCriteria.addOrCriteria(buildMICriteria((String) iter.next()));
         }
     }
 
@@ -205,38 +209,27 @@ public class EditorMenuFactory {
     }
 
     /**
-     * Returns a list of menu itsm for the Polymer editor.
+     * Returns a list of menu itsm for the NucleicAcid editor.
      * @param mode 0 for and edit menu and 1 for an add menu; the difference is
      * {@link #SELECT_LIST_ITEM} is added as the first entry for an add menu.
-     * @return a list of menu items for hte Polymer editor.
+     * @return a list of menu items for hte NucleicAcid editor.
      * @throws IntactException for errors in contructing the menu or unable to
      * create an Intact helper to access persistent system.
      */
-    public List getPolymerMenu(int mode) throws IntactException {
-        // The menu to return.
-        List menu = new ArrayList();
+    public List getNucleicAcidMenu(int mode) throws IntactException {
+        return getPolymerMenu(mode, ourNucleicAcidCriteria);
+    }
 
-        ReportQueryByCriteria query = QueryFactory.newReportQuery(
-                CvInteractorType.class, ourPolymerCriteria);
-        // Limit to shortlabel
-        query.setAttributes(new String[] { "shortlabel" });
-        query.addOrderByAscending("shortLabel");
-
-        Iterator iter = IntactHelperUtil.getDefaultIntactHelper().getIteratorByReportQuery(query);
-
-        while (iter.hasNext()) {
-            Object[] row = (Object[])iter.next();
-            menu.add(row[0]);
-        }
-        if (menu.isEmpty()) {
-            // Special list when we don't have any menu items.
-            menu.add(SELECT_LIST_ITEM);
-            return menu;
-        }
-        if (mode == 1) {
-            menu = convertToAddMenu(menu);
-        }
-        return menu;
+    /**
+     * Returns a list of menu itsm for the Protein editor.
+     * @param mode 0 for and edit menu and 1 for an add menu; the difference is
+     * {@link #SELECT_LIST_ITEM} is added as the first entry for an add menu.
+     * @return a list of menu items for hte Protein editor.
+     * @throws IntactException for errors in contructing the menu or unable to
+     * create an Intact helper to access persistent system.
+     */
+    public List getProteinMenu(int mode) throws IntactException {
+        return getPolymerMenu(mode, ourProteinCriteria);
     }
 
     /**
@@ -269,6 +262,41 @@ public class EditorMenuFactory {
         while (iter.hasNext()) {
             Object[] row = (Object[])iter.next();
             menu.add(row[1]);
+        }
+        return menu;
+    }
+
+    /**
+     * Returns a list of menu itsm for the Polymer editor.
+     * @param mode 0 for and edit menu and 1 for an add menu; the difference is
+     * {@link #SELECT_LIST_ITEM} is added as the first entry for an add menu.
+     * @return a list of menu items for hte Polymer editor.
+     * @throws IntactException for errors in contructing the menu or unable to
+     * create an Intact helper to access persistent system.
+     */
+    private List getPolymerMenu(int mode, Criteria criteria) throws IntactException {
+        // The menu to return.
+        List menu = new ArrayList();
+
+        ReportQueryByCriteria query = QueryFactory.newReportQuery(
+                CvInteractorType.class, criteria);
+        // Limit to shortlabel
+        query.setAttributes(new String[] { "shortlabel" });
+        query.addOrderByAscending("shortLabel");
+
+        Iterator iter = IntactHelperUtil.getDefaultIntactHelper().getIteratorByReportQuery(query);
+
+        while (iter.hasNext()) {
+            Object[] row = (Object[])iter.next();
+            menu.add(row[0]);
+        }
+        if (menu.isEmpty()) {
+            // Special list when we don't have any menu items.
+            menu.add(SELECT_LIST_ITEM);
+            return menu;
+        }
+        if (mode == 1) {
+            menu = convertToAddMenu(menu);
         }
         return menu;
     }
