@@ -125,11 +125,11 @@ public class InteractionProxy extends InteractorProxy implements Interaction {
         return realSubject().getBait();
     }
 
-    public boolean equals ( Object o ) {
-        return realSubject().equals( o );
-    }
-
-    public int hashCode () {
-        return realSubject().hashCode();
-    }
+//    public boolean equals ( Object o ) {
+//        return realSubject().equals( o );
+//    }
+//
+//    public int hashCode () {
+//        return realSubject().hashCode();
+//    }
 }
