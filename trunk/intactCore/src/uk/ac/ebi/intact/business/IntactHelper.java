@@ -7,8 +7,12 @@ package uk.ac.ebi.intact.business;
 
 import org.apache.log4j.Logger;
 import org.apache.ojb.broker.VirtualProxy;
+import org.apache.ojb.broker.PersistenceBroker;
+import org.apache.ojb.broker.Identity;
 import org.apache.ojb.broker.accesslayer.LookupException;
+import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.Query;
+import org.apache.ojb.broker.query.QueryFactory;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.proxy.IntactObjectProxy;
 import uk.ac.ebi.intact.persistence.*;
@@ -32,24 +36,6 @@ import java.util.*;
  * @author Chris Lewington
  */
 public class IntactHelper implements SearchI, Externalizable {
-
-    // Inner static class ------------------------------------------------------
-
-    public static final class PersistenceType {
-        private final int myType;
-
-        private PersistenceType(int type) {
-            myType = type;
-        }
-    }
-
-    // End of Inner class ------------------------------------------------------
-
-    /** The Persistence Broker */
-    public static final PersistenceType PB = new PersistenceType(0);
-
-    /** The ODMG */
-    public static final PersistenceType ODMG = new PersistenceType(1);
 
     /**
      * Path of the configuration file which allow to retrieve the
@@ -148,22 +134,21 @@ public class IntactHelper implements SearchI, Externalizable {
     }
 
     /**
-     *  Shortcut constructor
-     *
+     * Default constructor. The user and password defaults to values given in the
+     * repository file.
      * @exception IntactException - thrown if either the type map or source are invalid
      *
      */
     public IntactHelper() throws IntactException {
         try {
             DAOSource ds = DAOFactory.getDAOSource("uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource");
-            initialize(ds, ds.getUser(), ds.getPassword(), PB);
+            initialize(ds, ds.getUser(), ds.getPassword());
         }
         catch (DataSourceException de) {
             String msg = "intact helper: There was a problem accessing a data store";
             throw new IntactException(msg, de);
         }
     }
-
 
     /**
      * Constructor allowing a helper instance to be created with a given
@@ -175,7 +160,7 @@ public class IntactHelper implements SearchI, Externalizable {
     public IntactHelper(String user, String password) throws IntactException {
         try {
             DAOSource ds = DAOFactory.getDAOSource("uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource");
-            initialize(ds, user, password, PB);
+            initialize(ds, user, password);
         }
         catch (DataSourceException de) {
             String msg = "intact helper: There was a problem accessing a data store";
@@ -192,34 +177,8 @@ public class IntactHelper implements SearchI, Externalizable {
      * @param password - the user's password (null values allowed)
      */
     public IntactHelper(DAOSource source, String user, String password) throws IntactException {
-        this(source, user, password, PB);
+        initialize(source, user, password);
     }
-
-    /**
-     * Constructor allowing a helper instance to be created with a given
-     * username and password.
-     *
-     * @param source - the data source to be connected to
-     * @param user - the username to make a connection with
-     * @param password - the user's password (null values allowed)
-     * @param type the persistence type (e.g., ODMG or PB)
-     */
-    public IntactHelper(DAOSource source, String user, String password,
-                        PersistenceType type) throws IntactException {
-        initialize(source, user, password, type);
-    }
-
-    /**
-     * validates a user's credentials against the data store.
-     *
-     * @param user the username
-     * @param password the user password (may be null)
-     *
-     * @return boolean true if valid details, false if not (including a null username).
-     */
-//    public boolean isUserVerified(String user, String password) {
-//        return dao.isUserValid(user, password);
-//    }
 
     /**
      * close the data source. NOTE: performing this operation will
@@ -479,81 +438,6 @@ public class IntactHelper implements SearchI, Externalizable {
         throw new IntactException("Not Fully Implemented yet");
     }
 
-    //other various search methods......
-
-    /**
-     * Search which provides an Iterator rather than a Collection. This is particularly
-     * useful for applications which may need to close result data for DB resource
-     * reasons (the iterator from this method can be passed to <code>closeResults</code>).
-     * Note that this will NOT close oracle cursors on the oracle server, as it seems the
-     * only guranteed way to do that is to 'cose' the connection (preferably via an oracle
-     * connection pool supplied with the driver).
-     * @param objectType - the object type to be searched
-     * @param searchParam - the parameter to search on (eg field)
-     * @param searchValue - the search value to match with the parameter
-     *
-     * @return Iterator - a "DB aware" Iterator over the results - null if no match found
-     *
-     * @exception IntactException - thrown if problems are encountered during the search process
-     */
-//    public Iterator iterSearch(String objectType, String searchParam, String searchValue)
-//            throws IntactException {
-//        try {
-//            return dao.iteratorFind(objectType, searchParam, searchValue);
-//        }
-//        catch (SearchException se) {
-//            //return to action servlet witha forward to error page command
-//            String msg = "intact helper: query by Iterator failed.. \n";
-//            throw new IntactException(msg + "reason: " + se.getNestedMessage(), se.getRootCause());
-//        }
-//    }
-
-    /**
-     * Allows access to column data rather than whole objects. This is more of a convenience
-     * method if you want to get at some data without retrieving complete objects.
-     * @param type The name of the object you want data from (fully qualified java name) - must be specified
-     * @param cols The columns (NOT attribute names) that you are interested in - null returns all
-     * @return Iterator an Iterator over all column values, returned as Objects (null if nothing found),
-     * NB if you do not exhaust this Iterator you should make sure datastore resources are
-     * cleaned up by passing it to the <code>closeData</code> method.
-     * @throws IntactException
-     */
-//    public Iterator getColumnData(String type, String[] cols) throws IntactException {
-//        try {
-//            return dao.findColumnValues(type, cols);
-//        }
-//        catch (SearchException se) {
-//            throw new IntactException("failed to get column data!", se);
-//        }
-//    }
-
-    /**
-     * Allows search by raw SQL String. This should only be used if you are confident
-     * with SQL syntaxt and you know what you are doing - no gurantees are made on the
-     * results (garbage in, garbage out).
-     * @param type The object you are interested in - must be specified
-     * @param sqlString The SQL string you wish to search with
-     * @return Collection The search results, empty if none found
-     * @throws IntactException
-     */
-//    public Collection searchBySQL(String type, String sqlString) throws IntactException {
-//        try {
-//            return dao.findBySQL(type, sqlString);
-//        }
-//        catch (SearchException se) {
-//            throw new IntactException("failed to execute SQL string " + sqlString, se);
-//        }
-//    }
-
-    /**
-     * Closes result data.
-     * @param items The Iterator used to retrieve the data originally.
-     * @exception IllegalArgumentException thrown if the Iterator is an invalid type
-     */
-//    public void closeData(Iterator items) {
-//        dao.closeResults(items);
-//    }
-
     /**
      *  This method provides a means of searching intact objects, within the constraints
      * provided by the parameters to the method. NB this will probably become private, and replaced
@@ -732,99 +616,17 @@ public class IntactHelper implements SearchI, Externalizable {
         }
     }
 
-
     /**
-     * Search for objects by any alias with the specified name.
-     *
-     * @param clazz the class filter.
-     *              All objects in the returned collection will be instance of that class.
-     * @param aliasName the name of the alias to look for.
-     * @return the collection of objects of type <code>clazz</code> who have an alias
-     *         named <code>aliasName</code>
-     * @throws IntactException when an error occurs when searching.
-     * @throws IllegalArgumentException if the name of the Alias is not specified or empty.
-     * @see uk.ac.ebi.intact.model.Alias
+     * Searches for a unique Object by classname and primary id.
+     * @param clazz the search class type
+     * @param primaryId the primary Id
+     * @return the object for given primary id or null if there is no object found.
      */
-//    public Collection getObjectsByAlias(Class clazz,
-//                                        String aliasName) throws IntactException {
-//
-//        if (aliasName == null || "".equals(aliasName))
-//            throw new IllegalArgumentException("You have requested a search by alias, but the specified alias name is null.");
-//
-//        // get the Alias from the database
-//        Collection aliases = search(Alias.class.getName(), "name", aliasName);
-//        Collection results = new ArrayList();
-//
-//        // add all referenced objects of the searched class
-//        for (Iterator iterator = aliases.iterator(); iterator.hasNext();) {
-//            Alias alias = (Alias) iterator.next();
-//            results.addAll(search(clazz.getName(), "ac", alias.getParentAc()));
-//        }
-//        return results;
-//    }
-
-    /**
-     * Search for objects by any alias with the specified name.
-     *
-     * @param clazz the class filter.
-     *              All objects in the returned collection will be instance of that class.
-     * @param aliasName the name of the alias to look for.
-     * @param aliasTypeShortLabel the shortLabel of the alias type we are interrested in.
-     * @return the collection of objects of type <code>clazz</code> who have an alias
-     *         named <code>aliasName</code>
-     * @throws IntactException When the requested aliasType is not found or an error occurs when searching.
-     * @throws IllegalArgumentException if the name of the Alias is not specified or empty.
-     * @see uk.ac.ebi.intact.model.Alias
-     */
-//    public Collection getObjectsByAlias(Class clazz,
-//                                        String aliasName,
-//                                        String aliasTypeShortLabel) throws IntactException {
-//
-//        if (aliasName == null || "".equals(aliasName))
-//            throw new IllegalArgumentException("You have requested a search by alias, but the specified alias name is null.");
-//
-//        if (aliasTypeShortLabel == null)
-//            throw new IllegalArgumentException("You have requested a search by alias (" + aliasName +
-//                    ") but the specified alias type is null.");
-//
-//        CvAliasType cvAliasType = (CvAliasType) getObjectByLabel(CvAliasType.class, aliasTypeShortLabel);
-//        if (cvAliasType == null)
-//            throw new IntactException("The requested CvAliasType (" + aliasTypeShortLabel + ") could not be found in the database.");
-//
-//        return getObjectsByAlias(clazz, aliasName, cvAliasType);
-//    }
-
-    /**
-     * Search for objects by any alias with the specified name.
-     *
-     * @param clazz the class filter.
-     *              All objects in the returned collection will be instance of that class.
-     * @param aliasName the name of the alias to look for.
-     * @param cvAliasType the type of the alias we are interrested in.
-     * @return the collection of objects of type <code>clazz</code> who have an alias
-     *         named <code>aliasName</code>
-     * @throws IntactException When the requested aliasType is not found or an error occurs when searching.
-     * @throws IllegalArgumentException if the name of the Alias is not specified or empty.
-     * @see uk.ac.ebi.intact.model.Alias
-     */
-//    public Collection getObjectsByAlias(Class clazz,
-//                                        String aliasName,
-//                                        CvAliasType cvAliasType) throws IntactException {
-//
-//        // get the Xref from the database
-//        Collection aliases = this.search(Alias.class.getName(), "name", aliasName);
-//        Collection results = new ArrayList();
-//
-//        // add all referenced objects of the searched class
-//        for (Iterator iterator = aliases.iterator(); iterator.hasNext();) {
-//            Alias alias = (Alias) iterator.next();
-//            if (!alias.getCvAliasType().equals(cvAliasType))
-//                continue; // we use only aliases mathing with the requested CvAliasType
-//            results.addAll(this.search(clazz.getName(), "ac", alias.getParentAc()));
-//        }
-//        return results;
-//    }
-
+    public Object getObjectByPrimaryId(Class clazz, String primaryId) {
+        Criteria crit = new Criteria();
+        crit.addEqualTo("xrefs.primaryId", primaryId);
+        return getObjectByQuery(QueryFactory.newQuery(clazz, crit));
+    }
 
     /** Return an Object by classname and shortLabel.
      *  For efficiency, classes which are subclasses of CvObject are cached
@@ -905,62 +707,6 @@ public class IntactHelper implements SearchI, Externalizable {
     }
 
     /**
-     *  This method retrieves an intact object, given a class and the object's full
-     * name (provided that name is unique).
-     *
-     * @param clazz the class to search on
-     * @param name the name of the object required
-     *
-     * @return Object the result of the search, or null if not found
-     *
-     * @exception IntactException thrown if a search problem occurs
-     *
-     */
-//    public Object getObjectByName(Class clazz,
-//                                  String name) throws IntactException {
-//
-//        Object result = null;
-//
-//        Collection resultList = null;
-//
-//        resultList = this.search(clazz.getName(), "fullName", name);
-//
-//        if (resultList.isEmpty()) {
-//            result = null;
-//        } else {
-//            Iterator i = resultList.iterator();
-//            result = i.next();
-//            if (i.hasNext()) {
-//                IntactException ie = new IntactException("More than one object returned by search by name.");
-//                throw(ie);
-//            }
-//        }
-//
-//        return result;
-//    }
-
-    /**
-     *  This method is used for searching by short label (provided that name is unique).
-     *
-     * @param name the name of the BioSource required
-     *
-     * @return BioSource the result of the search, or null if not found
-     *
-     * @exception IntactException thrown if a search problem occurs, or more than
-     * one BioSource found
-     *
-     */
-//    public BioSource getBioSourceByName(String name) throws IntactException {
-//
-//        Collection resultList = null;
-//        resultList = this.search("uk.ac.ebi.intact.model.BioSource", "shortLabel", name);
-//
-//        if (resultList.isEmpty()) return null;
-//        if (resultList.size() > 1) throw new IntactException("More than one BioSource returned by name search");
-//        return (BioSource) resultList.iterator().next();
-//    }
-
-    /**
      * Searches for a BioSource given a tax ID. Only a single BioSource is found
      * for given tax id and null values for cell type and tissue.
      *
@@ -1016,141 +762,6 @@ public class IntactHelper implements SearchI, Externalizable {
 
     }
 
-
-    /**
-     *  Search for an experiment given a specific BioSource. NB is it true that a match would
-     * be unique?? Object model suggests a 1-1 match...
-     *
-     * @param source the BioSource to search with - must be fully defined or at least AC set
-     *
-     * @return Experiment the result of the search, or empty if none found
-     *
-     * @exception IntactException thrown if a search problem occurs
-     *
-     * NB not tested yet!! (requires data in the DB)
-     *
-     */
-//    public Experiment getExperimentBySource(BioSource source) throws IntactException {
-//
-//        Experiment result = null;
-//        Collection resultList = null;
-//        String bioAc = source.getAc();
-//        resultList = this.search(Experiment.class.getName(), "bioSource_ac", bioAc);
-//        if (resultList.isEmpty()) {
-//            result = null;
-//        } else {
-//            Iterator i = resultList.iterator();
-//            result = (Experiment) i.next();
-//            if (i.hasNext()) {
-//                IntactException ie = new IntactException("More than one object returned by search by bioSource.");
-//                throw(ie);
-//            }
-//        }
-//
-//        return result;
-//    }
-
-    /**
-     *  Search for components given a role. Assumed this is unlikely to be unique.
-     *
-     * @param role the role to search with - must be fully defined or at least AC set
-     *
-     * @return Collection the result of the search, or an empty Collection if not found
-     *
-     * @exception IntactException thrown if a search problem occurs
-     *
-     * NB Not tested yet!!
-     *
-     */
-//    public Collection getComponentsByRole(CvComponentRole role) throws IntactException {
-//
-//        return (this.search(Component.class.getName(), "role", role.getAc()));
-//
-//    }
-
-    /**
-     *  Search for interactions given a type. Assumed this is unlikely to be unique.
-     *
-     * @param type the type to search with - must be fully defined or at least AC set
-     *
-     * @return Collection the result of the search, or an empty Collection if not found
-     *
-     * @exception IntactException thrown if a search problem occurs
-     *
-     * NB Not tested yet!!
-     *
-     */
-//    public Collection getInteractionsByType(CvInteractionType type) throws IntactException {
-//
-//        return (this.search(Interaction.class.getName(), "interactionType_ac", type.getAc()));
-//    }
-
-
-    /**
-     *  Search for Experiments given an Institution. Assumed this is unlikely to be unique.
-     * Note: If the Institution AC is not set, a search will first be carried out for it
-     * using its shortLabel - thus only Institutions that are persistent will provide
-     * a non-empty search result. If more than one Institution is returned,
-     * the first one's AC will be used.
-     *
-     * @param institution the institution to search with
-     *
-     * @return Collection the result of the search, or an empty Collection if not found
-     *
-     * @exception IntactException thrown if a search problem occurs
-     *
-     */
-//    public Collection getExperimentsByInstitution(Institution institution) throws IntactException {
-//
-//        String ownerAc = institution.getAc();
-//        if (ownerAc == null) {
-//            //get it first via shortLabel
-//            Collection tmpResults = this.search(Institution.class.getName(), "shortLabel", institution.getShortLabel());
-//            if (!tmpResults.isEmpty()) {
-//                //take the first one
-//                Institution inst = (Institution) tmpResults.iterator().next();
-//                ownerAc = inst.getAc();
-//            }
-//        }
-//        return (this.search(Experiment.class.getName(), "owner_ac", ownerAc));
-//    }
-
-    /**
-     *  Search for Protein given a cross reference. Assumed this is unique.
-     *
-     * @param xref the cross reference to search with - must be fully defined, or
-     * at least have its parent AC field set
-     *
-     * @return Protein the result of the search, or null if not found
-     *
-     * @exception IntactException thrown if a search problem occurs, the Xref does
-     * not match a Protein, or we get more than one Protein back
-     *
-     * NB not yet tested....
-     *
-     */
-//    public Protein getProteinByXref(Xref xref) throws IntactException {
-//
-//        Collection resultList = null;
-//        resultList = this.search(Protein.class.getName(), "ac", xref.getParentAc());
-//        if (resultList.isEmpty()) return null;
-//        if (resultList.size() > 1) throw new IntactException("Got more than one Protein with Xref " + xref.getAc());
-//
-//        Object obj = resultList.iterator().next();
-//        if (!(obj instanceof Protein))
-//            throw new IntactException("Xref refers to an instance of "
-//                    + obj.getClass().getName() + ", NOT a Protein!!");
-//
-//        return (Protein) obj;
-//    }
-
-    /**
-     * @see uk.ac.ebi.intact.persistence.DAO#getTableName(Class)
-     */
-//    public String getTableName(Class clazz) {
-//        return dao.getTableName(clazz);
-//    }
-
     /**
      * Delete all elements in a collection.
      */
@@ -1167,47 +778,6 @@ public class IntactHelper implements SearchI, Externalizable {
     }
 
     /**
-     *  Used to obtain the Experiments related to a search object. For example, if the object is a
-     * Protein then we are interested in the Interactions and also the Experiments that the Protein
-     * is related to. In practice this therefore means that we only need the Experiments, since
-     * the Interactions can be obtained from those.
-     *
-     * @param item A search result item (though anything can be tried!)
-     * @return Collection The Experiments related to the parameter item
-     * (empty if none found)
-     */
-//    public Collection getRelatedExperiments(Object item) {
-//
-//        Collection results = new ArrayList();
-//        if (item instanceof Protein) {
-//            //collect all the related experiments (interactions can be displayed from them)
-//            Protein protein = (Protein) item;
-//            Collection components = protein.getActiveInstances();
-//            Iterator iter1 = components.iterator();
-//            while (iter1.hasNext()) {
-//                Component component = (Component) iter1.next();
-//                Interaction interaction = component.getInteraction();
-//                Collection experiments = interaction.getExperiments();
-//                Iterator iter2 = experiments.iterator();
-//                while (iter2.hasNext()) {
-//                    results.add(iter2.next());
-//                }
-//            }
-//        }
-//
-//        if (item instanceof Interaction) {
-//            //collect all experiments....
-//            Collection experiments = ((Interaction) item).getExperiments();
-//            Iterator iter3 = experiments.iterator();
-//            while (iter3.hasNext()) {
-//                results.add(iter3.next());
-//            }
-//        }
-//
-//        return results;
-//    }
-
-    /**
      * Gets the underlying JDBC connection. This is a 'useful method' rather than
      * a good practice one as it returns the underlying DB connection (and assumes there is one).
      * No guarantees - if you screw up the Connection you are in trouble!.
@@ -1219,8 +789,7 @@ public class IntactHelper implements SearchI, Externalizable {
      * @see #releaseJDBCConnection()
      */
     public Connection getJDBCConnection() throws IntactException {
-
-        if (dao instanceof ObjectBridgeDAO) {
+       if (dao instanceof ObjectBridgeDAO) {
             try {
                 return ((ObjectBridgeDAO) dao).getJDBCConnection();
             } catch (LookupException le) {
@@ -1338,22 +907,64 @@ public class IntactHelper implements SearchI, Externalizable {
         return institution;
     }
 
+    /**
+     * Returns the number of records likely to retrieve for given query. Only valid
+     * for OJB data access.
+     * @param query the query to run
+     * @return the number of records likely to retrieve for given query
+     * @throws IllegalStateException if the uderlying DAO is not the ObjectBridge DAO
+     */
     public int getCountByQuery(Query query) {
-        return dao.getCountByQuery(query);
+        verifyObjectBridgeDAO();
+        return ((ObjectBridgeDAO) dao).getCountByQuery(query);
     }
 
+    /**
+     * Retrieve an object by query. Only valid for OJB data access.
+     * @param query the query to run
+     * @return the object retrieved by given query
+     * @throws IllegalStateException if the uderlying DAO is not the ObjectBridge DAO
+     */
     public Object getObjectByQuery(Query query) {
-        return dao.getObjectByQuery(query);
+        verifyObjectBridgeDAO();
+        return ((ObjectBridgeDAO) dao).getObjectByQuery(query);
     }
 
+    /**
+     * Retrieve a collection by query. Only valid for OJB data access.
+     * @param query the query to run
+     * @return the collection retrieved by given query
+     * @throws IllegalStateException if the uderlying DAO is not the ObjectBridge DAO
+     */
     public Collection getCollectionByQuery(Query query) {
-        return dao.getCollectionByQuery(query);
+        verifyObjectBridgeDAO();
+        return ((ObjectBridgeDAO) dao).getCollectionByQuery(query);
     }
 
+    /**
+     * Retrieve an iterator by query. Only valid for OJB data access.
+     * @param query the query to run
+     * @return the interator after running the given query
+     * @throws IllegalStateException if the uderlying DAO is not the ObjectBridge DAO
+     */
     public Iterator getIteratorByReportQuery(Query query) {
-        return dao.getIteratorByReportQuery(query);
+        verifyObjectBridgeDAO();
+        return ((ObjectBridgeDAO) dao).getIteratorByReportQuery(query);
     }
-    
+
+    /**
+     * Materializes an intact object, presumbly a proxy. Only valid for OJB data access.
+     * @param obj the object to materialize
+     * @return the materiliazed object
+     * @throws IllegalStateException if the uderlying DAO is not the ObjectBridge DAO
+     */
+    public IntactObject materializeIntactObject(IntactObject obj) {
+        verifyObjectBridgeDAO();
+        PersistenceBroker broker = ((ObjectBridgeDAO) dao).getBroker();
+        Identity oid = new Identity(obj, broker);
+        return (IntactObject) broker.getObjectByIdentity(oid);
+    }
+
     /**
      * Returns the real object wrapped around the proxy for given object of
      * IntactObjectProxy type.
@@ -1434,8 +1045,7 @@ public class IntactHelper implements SearchI, Externalizable {
 
     //---------------- private helper methods ------------------------------------
 
-    private void initialize(DAOSource source, String user, String password,
-                            PersistenceType type) throws IntactException {
+    private void initialize(DAOSource source, String user, String password) throws IntactException {
         dataSource = source;
 
         if (source == null) {
@@ -1449,7 +1059,7 @@ public class IntactHelper implements SearchI, Externalizable {
 
         //get a DAO using the supplied user details
         try {
-            dao = dataSource.getDAO(user, password, type);
+            dao = dataSource.getDAO(user, password);
         }
         catch (DataSourceException dse) {
             String msg = "intact helper: There was a problem accessing a data store";
@@ -1472,6 +1082,12 @@ public class IntactHelper implements SearchI, Externalizable {
             throw new IntactException(msg, ue);
 
         }
+    }
 
+    private void verifyObjectBridgeDAO() {
+        if (dao instanceof ObjectBridgeDAO) {
+            return;
+        }
+        throw new IllegalStateException("Illegal method call: only valid for ObjectBridge DAO");
     }
 }
