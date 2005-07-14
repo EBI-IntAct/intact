@@ -21,6 +21,7 @@ import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.Polymer;
 
 import java.io.Serializable;
 import java.util.*;
@@ -687,6 +688,12 @@ public abstract class AbstractEditViewBean implements Serializable {
     // Protected Methods
 
     /**
+     * Loads menus. Subclasses must implement to provide their own menus.
+     * @throws IntactException for errors in accessing the persistent system.
+     */
+    public abstract void loadMenus() throws IntactException;
+
+    /**
      * Sets the annotated object for the bean.
      * @param annot AnnotatedObject to set the bean.
      */
@@ -751,12 +758,6 @@ public abstract class AbstractEditViewBean implements Serializable {
      */
     protected abstract void updateAnnotatedObject(IntactHelper helper) throws
             IntactException;
-
-    /**
-     * Loads menus. Subclasses must implement to provide their own menus.
-     * @throws IntactException for errors in accessing the persistent system.
-     */
-    protected abstract void loadMenus() throws IntactException;
 
     // Helper Methods
 
@@ -994,8 +995,15 @@ public abstract class AbstractEditViewBean implements Serializable {
 
     private void resetAnnotatedObject(AnnotatedObject annobj) {
         // Need to get the real object for a proxy type.
-        setAnnotatedObject((AnnotatedObject) IntactHelper.getRealIntactObject(annobj));
-        myEditClass = IntactHelper.getRealClassName(annobj);
+        if (Polymer.class.isAssignableFrom(annobj.getClass())) {
+            IntactHelper helper = IntactHelperUtil.getIntactHelper();
+            setAnnotatedObject((AnnotatedObject) helper.materializeIntactObject(annobj));
+            myEditClass = getAnnotatedObject().getClass();
+        }
+        else {
+            setAnnotatedObject((AnnotatedObject) IntactHelper.getRealIntactObject(annobj));
+            myEditClass = IntactHelper.getRealClassName(annobj);
+        }
         setFullName(annobj.getFullName());
     }
 
