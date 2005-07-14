@@ -4,9 +4,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 
 <!-- Interface class descriptors -->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.IntactObject"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.IntactObject">
     <!-- extending interfaces -->
     <extent-class class-ref="uk.ac.ebi.intact.model.BasicObject"/>
     <!-- implementations -->
@@ -14,9 +12,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 </class-descriptor>
 
 <class-descriptor
-    class="uk.ac.ebi.intact.model.BasicObject"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.BasicObject">
     <!-- Extending interfaces -->
     <extent-class class-ref="uk.ac.ebi.intact.model.AnnotatedObject"/>
 
@@ -25,9 +21,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 </class-descriptor>
 
 <class-descriptor
-    class="uk.ac.ebi.intact.model.AnnotatedObject"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.AnnotatedObject">
     <!-- extending interfaces -->
     <extent-class class-ref="uk.ac.ebi.intact.model.Interactor"/>
     <!-- implementations -->
@@ -35,25 +29,25 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 </class-descriptor>
 
 <class-descriptor
-    class="uk.ac.ebi.intact.model.Interactor"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.Interactor">
     <!-- implementations -->
     <extent-class class-ref="uk.ac.ebi.intact.model.InteractorImpl" />
 </class-descriptor>
 
 <class-descriptor
-    class="uk.ac.ebi.intact.model.Interaction"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.NucleicAcid">
+    <!-- implementations -->
+    <extent-class class-ref="uk.ac.ebi.intact.model.NucleicAcidImpl" />
+</class-descriptor>
+
+<class-descriptor
+    class="uk.ac.ebi.intact.model.Interaction">
     <!-- implementations -->
     <extent-class class-ref="uk.ac.ebi.intact.model.InteractionImpl" />
 </class-descriptor>
 
 <class-descriptor
-    class="uk.ac.ebi.intact.model.Protein"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.Protein">
     <!-- implementations -->
     <extent-class class-ref="uk.ac.ebi.intact.model.ProteinImpl" />
 </class-descriptor>
@@ -61,17 +55,13 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 <!-- Implementation class descriptors -->
 
 <class-descriptor
-    class="uk.ac.ebi.intact.model.IntactObjectImpl"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.IntactObjectImpl">
     <extent-class class-ref="uk.ac.ebi.intact.model.BasicObjectImpl"/>
     <extent-class class-ref="uk.ac.ebi.intact.model.Institution"/>
 </class-descriptor>
 
 <class-descriptor
-    class="uk.ac.ebi.intact.model.BasicObjectImpl"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.BasicObjectImpl">
     <extent-class class-ref="uk.ac.ebi.intact.model.Annotation"/>
     <extent-class class-ref="uk.ac.ebi.intact.model.IntactNode"/>
     <extent-class class-ref="uk.ac.ebi.intact.model.Component"/>
@@ -83,9 +73,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 
 
 <class-descriptor
-    class="uk.ac.ebi.intact.model.AnnotatedObjectImpl"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.AnnotatedObjectImpl">
     <extent-class class-ref="uk.ac.ebi.intact.model.BioSource"/>
     <extent-class class-ref="uk.ac.ebi.intact.model.Experiment"/>
     <extent-class class-ref="uk.ac.ebi.intact.model.InteractorImpl"/>
@@ -93,11 +81,8 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
     <extent-class class-ref="uk.ac.ebi.intact.model.Feature"/>
 </class-descriptor>
 
-
 <class-descriptor
-    class="uk.ac.ebi.intact.model.CvObject"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.CvObject">
 
     <extent-class class-ref="uk.ac.ebi.intact.model.CvComponentRole" />
     <extent-class class-ref="uk.ac.ebi.intact.model.CvDatabase" />
@@ -106,7 +91,6 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
     <extent-class class-ref="uk.ac.ebi.intact.model.CvTopic" />
     <extent-class class-ref="uk.ac.ebi.intact.model.CvDagObject" />
     <extent-class class-ref="uk.ac.ebi.intact.model.CvFuzzyType" />
-
     <extent-class class-ref="uk.ac.ebi.intact.model.CvCellCycle" />
     <extent-class class-ref="uk.ac.ebi.intact.model.CvCellType" />
     <extent-class class-ref="uk.ac.ebi.intact.model.CvCompartment" />
@@ -121,23 +105,26 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 </class-descriptor>
 
 <class-descriptor
-    class="uk.ac.ebi.intact.model.InteractorImpl"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
-  <extent-class class-ref="uk.ac.ebi.intact.model.InteractionImpl" />
-    <extent-class class-ref="uk.ac.ebi.intact.model.ProteinImpl" />
+    class="uk.ac.ebi.intact.model.InteractorImpl">
+    <extent-class class-ref="uk.ac.ebi.intact.model.InteractionImpl" />
+    <extent-class class-ref="uk.ac.ebi.intact.model.PolymerImpl" />
 </class-descriptor>
 
 <class-descriptor
-    class="uk.ac.ebi.intact.model.CvDagObject"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.PolymerImpl">
+    <extent-class class-ref="uk.ac.ebi.intact.model.ProteinImpl" />
+    <extent-class class-ref="uk.ac.ebi.intact.model.NucleicAcidImpl" />
+</class-descriptor>
+
+<class-descriptor
+    class="uk.ac.ebi.intact.model.CvDagObject">
     <extent-class class-ref="uk.ac.ebi.intact.model.CvInteraction" />
     <extent-class class-ref="uk.ac.ebi.intact.model.CvIdentification" />
     <extent-class class-ref="uk.ac.ebi.intact.model.CvInteractionType" />
     <extent-class class-ref="uk.ac.ebi.intact.model.CvGoNode" />
     <extent-class class-ref="uk.ac.ebi.intact.model.CvFeatureIdentification" />
     <extent-class class-ref="uk.ac.ebi.intact.model.CvFeatureType" />
+    <extent-class class-ref="uk.ac.ebi.intact.model.CvInteractorType" />
 </class-descriptor>
 
 
@@ -146,10 +133,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 <!-- class descriptor for Feature
 -->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.Feature"
-    table="ia_Feature"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.Feature" table="ia_Feature">
     <!-- ***************** fields from superclasses ********************* -->
     <!-- fields from BasicObject... -->
     <field-descriptor
@@ -169,12 +153,14 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         column="created"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="updated"
         column="updated"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="shortLabel"
@@ -306,10 +292,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 <!-- class descriptor for Range
 -->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.Range"
-    table="ia_Range"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.Range" table="ia_Range">
     <!-- ***************** fields from superclasses ********************* -->
     <!-- fields from BasicObject... -->
     <field-descriptor
@@ -329,12 +312,14 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         column="created"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="updated"
         column="updated"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
     <!-- local class field descriptors -->
 
@@ -434,11 +419,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 <!-- descriptor for Protein
 -->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.ProteinImpl"
-    proxy="uk.ac.ebi.intact.model.proxy.ProteinProxy"
-    table="ia_Interactor"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.ProteinImpl" table="ia_Interactor" proxy="dynamic">
     <!-- ***************** fields from superclasses ********************* -->
     <!-- fields from BasicObject... -->
     <field-descriptor
@@ -458,12 +439,14 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         column="created"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="updated"
         column="updated"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="shortLabel"
@@ -485,6 +468,12 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
     <field-descriptor
         name="bioSourceAc"
         column="bioSource_ac"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor
+        name="cvInteractorTypeAc"
+        column="interactorType_ac"
         jdbc-type="VARCHAR"
         indexed="true"
         />
@@ -521,13 +510,20 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         <foreignkey field-ref="ownerAc"/>
     </reference-descriptor>
 
-
     <reference-descriptor
         name="bioSource"
         class-ref="uk.ac.ebi.intact.model.BioSource"
         >
         <!-- key from a BioSource to an Interactor -->
         <foreignkey field-ref="bioSourceAc"/>
+    </reference-descriptor>
+
+    <reference-descriptor
+        name="interactorType"
+        class-ref="uk.ac.ebi.intact.model.CvInteractorType"
+        >
+        <!-- key from a CvInteractorType to a Protein -->
+        <foreignkey field-ref="cvInteractorTypeAc"/>
     </reference-descriptor>
 
     <!-- fields from AnnotatedObject (intactCore only) -->
@@ -575,6 +571,8 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
     <collection-descriptor
         name="sequenceChunks"
         proxy="true"
+        auto-update="object"
+        auto-delete="object"
         element-class-ref="uk.ac.ebi.intact.model.SequenceChunk"
         orderby="sequence_index"
         sort="ASC"
@@ -586,13 +584,158 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 </class-descriptor>
 
 
+<!-- descriptor for NucleicAcid
+-->
+<class-descriptor
+    class="uk.ac.ebi.intact.model.NucleicAcidImpl" table="ia_Interactor" proxy="dynamic">
+    <!-- ***************** fields from superclasses ********************* -->
+    <!-- fields from BasicObject... -->
+    <field-descriptor
+        name="ac"
+        column="ac"
+        jdbc-type="VARCHAR"
+        primarykey="true" autoincrement="true"
+        sequence-name="intact_ac"
+        />
+    <field-descriptor
+        name="ownerAc"
+        column="owner_ac"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor
+        name="created"
+        column="created"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="updated"
+        column="updated"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="shortLabel"
+        column="shortLabel"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor
+        name="fullName"
+        column="fullName"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor
+        name="ojbConcreteClass"
+        column="objClass"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor
+        name="bioSourceAc"
+        column="bioSource_ac"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor
+        name="cvInteractorTypeAc"
+        column="interactorType_ac"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor
+        name="crc64"
+        column="crc64"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+
+    <reference-descriptor
+        name="owner"
+        class-ref="uk.ac.ebi.intact.model.Institution"
+        >
+        <foreignkey field-ref="ownerAc"/>
+    </reference-descriptor>
+
+    <reference-descriptor
+        name="bioSource"
+        class-ref="uk.ac.ebi.intact.model.BioSource"
+        >
+        <!-- key from a BioSource to an Interactor -->
+        <foreignkey field-ref="bioSourceAc"/>
+    </reference-descriptor>
+
+    <reference-descriptor
+        name="interactorType"
+        class-ref="uk.ac.ebi.intact.model.CvInteractorType"
+        >
+        <!-- key from a CvInteractorType to a NucleicAcid -->
+        <foreignkey field-ref="cvInteractorTypeAc"/>
+    </reference-descriptor>
+
+    <!-- fields from AnnotatedObject (intactCore only) -->
+    <collection-descriptor
+        name="xrefs"
+        proxy="true"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Xref"
+        >
+
+        <inverse-foreignkey field-ref="parentAc"/>
+    </collection-descriptor>
+
+    <collection-descriptor
+        name="aliases"
+        proxy="true"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Alias"
+        >
+
+        <inverse-foreignkey field-ref="parentAc"/>
+    </collection-descriptor>
+
+    <!-- Interactors and Annotations are linked via a (non-qualified) indirection
+    table INT2ANNOT..... -->
+    <collection-descriptor
+        name="annotations"
+        element-class-ref="uk.ac.ebi.intact.model.Annotation"
+        proxy="true"
+        indirection-table="ia_INT2ANNOT"
+        collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
+        >
+        <fk-pointing-to-this-class column="interactor_ac"/>
+        <fk-pointing-to-element-class column="annotation_ac"/>
+    </collection-descriptor>
+
+    <collection-descriptor
+        name="activeInstances"
+        element-class-ref="uk.ac.ebi.intact.model.Component"
+        proxy="true"
+        >
+        <inverse-foreignkey field-ref="interactorAc"/>
+    </collection-descriptor>
+
+    <collection-descriptor
+        name="sequenceChunks"
+        proxy="true"
+        auto-update="object"
+        auto-delete="object"
+        element-class-ref="uk.ac.ebi.intact.model.SequenceChunk"
+        orderby="sequence_index"
+        sort="ASC"
+        >
+        <inverse-foreignkey field-ref="parentAc"/>
+    </collection-descriptor>
+
+
+</class-descriptor>
+
 <!-- descriptor for Interaction.....-->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.InteractionImpl"
-    table="ia_Interactor"
-    proxy="uk.ac.ebi.intact.model.proxy.InteractionProxy"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.InteractionImpl" table="ia_Interactor"
+    proxy="uk.ac.ebi.intact.model.proxy.InteractionProxy">
 
     <!-- ***************** fields from superclasses ********************* -->
     <!-- fields from BasicObject... -->
@@ -614,12 +757,14 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         column="created"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="updated"
         column="updated"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="shortLabel"
@@ -649,6 +794,12 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         indexed="true"
         />
     <field-descriptor
+        name="cvInteractorTypeAc"
+        column="interactorType_ac"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor
         name="cvInteractionTypeAc"
         column="interactionType_ac"
         jdbc-type="VARCHAR"
@@ -673,6 +824,13 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         class-ref="uk.ac.ebi.intact.model.CvInteractionType"
         >
         <foreignkey field-ref="cvInteractionTypeAc"/>
+    </reference-descriptor>
+
+    <reference-descriptor
+        name="interactorType"
+        class-ref="uk.ac.ebi.intact.model.CvInteractorType"
+        >
+        <foreignkey field-ref="cvInteractorTypeAc"/>
     </reference-descriptor>
 
     <reference-descriptor
@@ -760,10 +918,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 
 <!-- Definitions for Experiment -->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.Experiment"
-    table="ia_Experiment"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.Experiment" table="ia_Experiment">
 
     <!-- ************** fields inherited from BasicObject **************** -->
     <!-- fields from BasicObject... -->
@@ -787,12 +942,14 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         column="created"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="updated"
         column="updated"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
 
     <field-descriptor
@@ -918,10 +1075,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 
 <!-- Definitions for Biosource -->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.BioSource"
-    table="ia_BioSource"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.BioSource" table="ia_BioSource">
     <field-descriptor
         name="ac"
         column="ac"
@@ -961,12 +1115,14 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         column="created"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="updated"
         column="updated"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
 
    <!-- controlled vocab fields for tissue and celltype -->
@@ -1047,10 +1203,7 @@ accessed from an Annotation - hence Annotation does not contain field references
 to AnnotatedObject and Experiment
    -->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.Annotation"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    table="ia_Annotation"
-    >
+    class="uk.ac.ebi.intact.model.Annotation" table="ia_Annotation">
 
     <!-- ************ fields inherited from BasicObject ****************** -->
     <!-- fields from BasicObject... -->
@@ -1075,6 +1228,7 @@ to AnnotatedObject and Experiment
         column="created"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
 
     <field-descriptor
@@ -1082,6 +1236,7 @@ to AnnotatedObject and Experiment
         column="updated"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
 
     <!-- ************* fields declared for this class ****************** -->
@@ -1119,10 +1274,8 @@ to AnnotatedObject and Experiment
 
 <!-- Definitions for Institution -->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.Institution"
-    table="ia_Institution"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.Institution" table="ia_Institution">
+
     <!-- *********** fields identical to BasicObject ************** -->
     <field-descriptor
         name="ac"
@@ -1161,12 +1314,14 @@ to AnnotatedObject and Experiment
         column="updated"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="created"
         column="created"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
 
 </class-descriptor>
@@ -1176,10 +1331,8 @@ to AnnotatedObject and Experiment
 
 <!-- Definitions for IntactNode -->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.IntactNode"
-    table="ia_IntactNode"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.IntactNode" table="ia_IntactNode">
+
     <field-descriptor
         name="ac"
         column="ac"
@@ -1253,10 +1406,7 @@ to AnnotatedObject and Experiment
 
 <!-- Definitions for Xref -->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.Xref"
-    table="ia_Xref"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.Xref" table="ia_Xref">
     <!-- ************** fields inherited from BasicObject ******************* -->
     <!-- fields from BasicObject... -->
     <field-descriptor
@@ -1278,12 +1428,14 @@ to AnnotatedObject and Experiment
         column="created"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="updated"
         column="updated"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
 
     <!-- ************* fields declared for this class ******************* -->
@@ -1348,10 +1500,7 @@ to AnnotatedObject and Experiment
 
 <!-- Definitions for Alias -->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.Alias"
-    table="ia_Alias"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.Alias" table="ia_Alias">
     <!-- ************** fields inherited from BasicObject ******************* -->
     <!-- fields from BasicObject... -->
     <field-descriptor
@@ -1373,12 +1522,14 @@ to AnnotatedObject and Experiment
         column="created"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="updated"
         column="updated"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
 
     <!-- ************* fields declared for this class ******************* -->
@@ -1421,10 +1572,7 @@ to AnnotatedObject and Experiment
 
 <!-- Definitions for Component -->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.Component"
-    table="ia_Component"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.Component" table="ia_Component">
 
     <!-- ***************** inherited from BasicObject ************** -->
     <!-- fields from BasicObject... -->
@@ -1456,12 +1604,14 @@ to AnnotatedObject and Experiment
         column="created"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="updated"
         column="updated"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
 
     <!-- ************** declared fields for this class **************** -->
@@ -1550,10 +1700,7 @@ to AnnotatedObject and Experiment
 
 <!-- Definitions for CvXrefQualifier....-->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.CvXrefQualifier"
-    table="ia_ControlledVocab"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.CvXrefQualifier" table="ia_ControlledVocab">
 
     <!-- ******** fields inherited from BasicObject *****************-->
     <!-- fields from BasicObject... -->
@@ -1576,12 +1723,14 @@ to AnnotatedObject and Experiment
         column="created"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="updated"
         column="updated"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="shortLabel"
@@ -1654,10 +1803,7 @@ to AnnotatedObject and Experiment
 
 <!-- Definitions for CvAliasType....-->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.CvAliasType"
-    table="ia_ControlledVocab"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.CvAliasType" table="ia_ControlledVocab">
 
     <!-- ******** fields inherited from BasicObject *****************-->
     <field-descriptor
@@ -1679,12 +1825,14 @@ to AnnotatedObject and Experiment
             column="created"
             jdbc-type="TIMESTAMP"
             nullable="false"
+            access="readonly"
             />
         <field-descriptor
             name="updated"
             column="updated"
             jdbc-type="TIMESTAMP"
             nullable="false"
+            access="readonly"
             />
         <field-descriptor
             name="shortLabel"
@@ -1758,10 +1906,7 @@ to AnnotatedObject and Experiment
 
 <!-- Definitions for CvDatabase....-->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.CvDatabase"
-    table="ia_ControlledVocab"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.CvDatabase" table="ia_ControlledVocab">
 
     <!-- ******** fields inherited from BasicObject *****************-->
     <!-- fields from BasicObject... -->
@@ -1784,12 +1929,14 @@ to AnnotatedObject and Experiment
             column="created"
             jdbc-type="TIMESTAMP"
             nullable="false"
+            access="readonly"
             />
         <field-descriptor
             name="updated"
             column="updated"
             jdbc-type="TIMESTAMP"
             nullable="false"
+            access="readonly"
             />
         <field-descriptor
             name="shortLabel"
@@ -1860,10 +2007,7 @@ to AnnotatedObject and Experiment
 
 <!-- descriptor for CvCellType -->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.CvCellType"
-    table="ia_ControlledVocab"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.CvCellType" table="ia_ControlledVocab">
 
     <!-- ******** fields inherited from BasicObject *****************-->
     <!-- fields from BasicObject... -->
@@ -1886,12 +2030,14 @@ to AnnotatedObject and Experiment
             column="created"
             jdbc-type="TIMESTAMP"
             nullable="false"
+            access="readonly"
             />
         <field-descriptor
             name="updated"
             column="updated"
             jdbc-type="TIMESTAMP"
             nullable="false"
+            access="readonly"
             />
         <field-descriptor
             name="shortLabel"
@@ -1960,10 +2106,7 @@ to AnnotatedObject and Experiment
 
 <!-- descriptor for CvReferenceQualifier-->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.CvReferenceQualifier"
-    table="ia_ControlledVocab"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.CvReferenceQualifier" table="ia_ControlledVocab">
 
     <!-- ******** fields inherited from BasicObject *****************-->
     <!-- fields from BasicObject... -->
@@ -2061,10 +2204,7 @@ to AnnotatedObject and Experiment
 
 <!-- descriptor for CvProteinForm -->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.CvProteinForm"
-    table="ia_ControlledVocab"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.CvProteinForm" table="ia_ControlledVocab">
 
     <!-- ******** fields inherited from BasicObject *****************-->
     <!-- fields from BasicObject... -->
@@ -2163,10 +2303,7 @@ to AnnotatedObject and Experiment
 
 <!-- descriptor for CvProductRole -->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.CvProductRole"
-    table="ia_ControlledVocab"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.CvProductRole" table="ia_ControlledVocab">
 
     <!-- ******** fields inherited from BasicObject *****************-->
     <!-- fields from BasicObject... -->
@@ -2263,10 +2400,7 @@ to AnnotatedObject and Experiment
 
 <!-- descriptor for CvModificationType -->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.CvModificationType"
-    table="ia_ControlledVocab"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.CvModificationType" table="ia_ControlledVocab">
 
     <!-- ******** fields inherited from BasicObject *****************-->
     <!-- fields from BasicObject... -->
@@ -2364,10 +2498,7 @@ to AnnotatedObject and Experiment
 
 <!-- descriptor for CvJournal -->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.CvJournal"
-    table="ia_ControlledVocab"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.CvJournal" table="ia_ControlledVocab">
 
     <!-- ******** fields inherited from BasicObject *****************-->
     <!-- fields from BasicObject... -->
@@ -2464,10 +2595,7 @@ to AnnotatedObject and Experiment
 
 <!-- descriptor for CvEvidenceType -->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.CvEvidenceType"
-    table="ia_ControlledVocab"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.CvEvidenceType" table="ia_ControlledVocab">
 
     <!-- ******** fields inherited from BasicObject *****************-->
     <!-- fields from BasicObject... -->
@@ -2567,10 +2695,7 @@ to AnnotatedObject and Experiment
 
 <!-- descriptor for CvDevelopmentalStage-->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.CvDevelopmentalStage"
-    table="ia_ControlledVocab"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.CvDevelopmentalStage" table="ia_ControlledVocab">
 
     <!-- ******** fields inherited from BasicObject *****************-->
     <!-- fields from BasicObject... -->
@@ -2668,10 +2793,7 @@ to AnnotatedObject and Experiment
 
 <!-- descriptor for CvCellCycle -->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.CvCellCycle"
-    table="ia_ControlledVocab"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.CvCellCycle" table="ia_ControlledVocab">
 
     <!-- ******** fields inherited from BasicObject *****************-->
     <!-- fields from BasicObject... -->
@@ -2769,10 +2891,7 @@ to AnnotatedObject and Experiment
 
 <!-- descriptor for CvCompartment -->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.CvCompartment"
-    table="ia_ControlledVocab"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.CvCompartment" table="ia_ControlledVocab">
 
     <!-- ******** fields inherited from BasicObject *****************-->
     <!-- fields from BasicObject... -->
@@ -2870,10 +2989,7 @@ to AnnotatedObject and Experiment
 
 <!-- descriptor for CvTissue -->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.CvTissue"
-    table="ia_ControlledVocab"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.CvTissue" table="ia_ControlledVocab">
 
     <!-- ******** fields inherited from BasicObject *****************-->
     <!-- fields from BasicObject... -->
@@ -2896,12 +3012,14 @@ to AnnotatedObject and Experiment
             column="created"
             jdbc-type="TIMESTAMP"
             nullable="false"
+            access="readonly"
             />
         <field-descriptor
             name="updated"
             column="updated"
             jdbc-type="TIMESTAMP"
             nullable="false"
+            access="readonly"
             />
         <field-descriptor
             name="shortLabel"
@@ -2976,10 +3094,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
 
 -->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.CvTopic"
-    table="ia_ControlledVocab"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.CvTopic" table="ia_ControlledVocab">
 
     <!-- ******** fields inherited from BasicObject *****************-->
     <!-- fields from BasicObject... -->
@@ -3002,12 +3117,14 @@ this is because the CvTopic linked to an Annotation is a better home for it...
             column="created"
             jdbc-type="TIMESTAMP"
             nullable="false"
+            access="readonly"
             />
         <field-descriptor
             name="updated"
             column="updated"
             jdbc-type="TIMESTAMP"
             nullable="false"
+            access="readonly"
             />
         <field-descriptor
             name="shortLabel"
@@ -3076,10 +3193,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
 
 <!-- Definitions for CvInteraction....-->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.CvInteraction"
-    table="ia_ControlledVocab"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.CvInteraction" table="ia_ControlledVocab">
 
     <!-- ******** fields inherited from BasicObject *****************-->
     <!-- fields from BasicObject... -->
@@ -3102,12 +3216,14 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         column="created"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="updated"
         column="updated"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="shortLabel"
@@ -3203,10 +3319,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
 
 <!-- Definitions for CvInteractionType....-->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.CvInteractionType"
-    table="ia_ControlledVocab"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.CvInteractionType" table="ia_ControlledVocab">
 
     <!-- ******** fields inherited from BasicObject *****************-->
     <!-- fields from BasicObject... -->
@@ -3229,12 +3342,14 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         column="created"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="updated"
         column="updated"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="shortLabel"
@@ -3330,10 +3445,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
 
 <!-- Definitions for CvIdentification....-->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.CvIdentification"
-    table="ia_ControlledVocab"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.CvIdentification" table="ia_ControlledVocab">
 
     <!-- ******** fields inherited from BasicObject *****************-->
     <!-- fields from BasicObject... -->
@@ -3356,12 +3468,14 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         column="created"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="updated"
         column="updated"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="shortLabel"
@@ -3457,10 +3571,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
 
 <!-- Definitions for CvComponentRole....-->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.CvComponentRole"
-    table="ia_ControlledVocab"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.CvComponentRole" table="ia_ControlledVocab">
 
     <!-- ******** fields inherited from BasicObject *****************-->
     <!-- fields from BasicObject... -->
@@ -3482,12 +3593,14 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         column="created"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="updated"
         column="updated"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="shortLabel"
@@ -3557,13 +3670,114 @@ this is because the CvTopic linked to an Annotation is a better home for it...
 </class-descriptor>
 
 
+<!-- ======================================================================= -->
+
+<!-- Definitions for CvInteractorType....-->
+<class-descriptor
+    class="uk.ac.ebi.intact.model.CvInteractorType" table="ia_ControlledVocab">
+
+    <!-- ******** fields inherited from BasicObject *****************-->
+    <!-- fields from BasicObject... -->
+    <field-descriptor
+        name="ac"
+        column="ac"
+        jdbc-type="VARCHAR"
+        primarykey="true" autoincrement="true"
+        sequence-name="intact_ac"
+        nullable="false"
+        />
+    <field-descriptor
+        name="ownerAc"
+        column="owner_ac"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor
+        name="created"
+        column="created"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="updated"
+        column="updated"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="shortLabel"
+        column="shortLabel"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor
+        name="fullName"
+        column="fullName"
+        jdbc-type="VARCHAR"
+        />
+
+    <!-- ********** declared fields for this class (actually inherited from CvObject) ********** -->
+
+    <!-- used for class identification - FK to ObjClass table -->
+    <field-descriptor
+        name="ojbConcreteClass"
+        column="objClass"
+        jdbc-type="VARCHAR"
+        />
+
+    <reference-descriptor
+        name="owner"
+        class-ref="uk.ac.ebi.intact.model.Institution"
+        >
+        <foreignkey field-ref="ownerAc"/>
+    </reference-descriptor>
+
+    <!-- ************ fields inherited from AnnotatedObject ********* -->
+
+    <collection-descriptor
+        proxy="true"
+        name="xrefs"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Xref"
+
+        >
+        <inverse-foreignkey field-ref="parentAc"/>
+    </collection-descriptor>
+
+    <collection-descriptor
+        name="aliases"
+        proxy="true"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Alias"
+        >
+
+        <inverse-foreignkey field-ref="parentAc"/>
+    </collection-descriptor>
+
+
+
+    <!-- Annotations and CvObjects are linked via a (non-qualified) indirection
+    table CVOBJECT2ANNOT -->
+    <collection-descriptor
+        proxy="true"
+        name="annotations"
+        element-class-ref="uk.ac.ebi.intact.model.Annotation"
+        indirection-table="ia_CVOBJECT2ANNOT"
+        collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
+        >
+        <fk-pointing-to-this-class column="cvobject_ac"/>
+        <fk-pointing-to-element-class column="annotation_ac"/>
+    </collection-descriptor>
+
+</class-descriptor>
+
+<!-- ======================================================================= -->
 
 <!-- class "Statistics" dependant of the IntAct model -->
 <class-descriptor
-    class="uk.ac.ebi.intact.util.IntactStatistics"
-    table="ia_statistics"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.util.IntactStatistics" table="ia_statistics">
+
     <field-descriptor
         name="ac"
         column="ac"
@@ -3621,10 +3835,8 @@ this is because the CvTopic linked to an Annotation is a better home for it...
 
 <!-- Definitions for Sequence Chunk -->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.SequenceChunk"
-    table="ia_Sequence_Chunk"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.SequenceChunk" table="ia_Sequence_Chunk">
+
     <!-- ************* fields declared for this class ******************* -->
     <field-descriptor
         name="ac"
@@ -3658,10 +3870,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
 
 <!-- Definitions for CvGoNode ....-->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.CvGoNode"
-    table="ia_ControlledVocab"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.CvGoNode" table="ia_ControlledVocab">
 
     <!-- ******** fields inherited from BasicObject *****************-->
     <!-- fields from BasicObject... -->
@@ -3684,12 +3893,14 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         column="created"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="updated"
         column="updated"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="shortLabel"
@@ -3786,10 +3997,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
 <!-- Descriptor for CvFuzzyType. Currently only used by Range classes.
 -->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.CvFuzzyType"
-    table="ia_ControlledVocab"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.CvFuzzyType" table="ia_ControlledVocab">
 
     <!-- ******** fields inherited from BasicObject *****************-->
     <!-- fields from BasicObject... -->
@@ -3812,12 +4020,14 @@ this is because the CvTopic linked to an Annotation is a better home for it...
             column="created"
             jdbc-type="TIMESTAMP"
             nullable="false"
+            access="readonly"
             />
         <field-descriptor
             name="updated"
             column="updated"
             jdbc-type="TIMESTAMP"
             nullable="false"
+            access="readonly"
             />
         <field-descriptor
             name="shortLabel"
@@ -3888,10 +4098,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
 <!-- Descriptor for CvFeatureIdentification (subclass of CvDagObject)
 -->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.CvFeatureIdentification"
-    table="ia_ControlledVocab"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
+    class="uk.ac.ebi.intact.model.CvFeatureIdentification" table="ia_ControlledVocab">
 
     <!-- ******** fields inherited from BasicObject *****************-->
     <!-- fields from BasicObject... -->
@@ -3914,12 +4121,14 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         column="created"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="updated"
         column="updated"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="shortLabel"
@@ -4013,11 +4222,8 @@ this is because the CvTopic linked to an Annotation is a better home for it...
 <!-- Descriptor for CvFeatureType (subclass of CvDagObject)
 -->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.CvFeatureType"
-    table="ia_ControlledVocab"
-    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
-    >
-
+    class="uk.ac.ebi.intact.model.CvFeatureType" table="ia_ControlledVocab">
+    
     <!-- ******** fields inherited from BasicObject *****************-->
     <!-- fields from BasicObject... -->
     <field-descriptor
@@ -4039,12 +4245,14 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         column="created"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="updated"
         column="updated"
         jdbc-type="TIMESTAMP"
         nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="shortLabel"
