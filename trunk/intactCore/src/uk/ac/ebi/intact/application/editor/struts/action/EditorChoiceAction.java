@@ -84,7 +84,7 @@ public class EditorChoiceAction extends AbstractEditorAction {
         if (topic.equals("Interaction")) {
             return mapping.findForward("int");
         }
-        if (topic.equals("Protein")) {
+        if (topic.equals("Protein") || topic.equals("NucleicAcid")) {
             return mapping.findForward("seq");
         }
         // Must have selected a CV object to edit.
