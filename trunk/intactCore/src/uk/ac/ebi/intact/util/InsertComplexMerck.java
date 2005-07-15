@@ -330,7 +330,11 @@ public class InsertComplexMerck {
 
             Collection components = new ArrayList();
 
-            interaction = new InteractionImpl( experiments, components, cvInteractionType, actLabel, owner );
+            CvInteractorType interactorType = (CvInteractorType) helper.getObjectByPrimaryId(
+                    CvInteractorType.class, CvInteractorType.getInteractionMI());
+
+            interaction = new InteractionImpl( experiments, components, cvInteractionType,
+                    interactorType, actLabel, owner );
             interaction.setBioSource( experiment.getBioSource() );
             persist( interaction );
 
