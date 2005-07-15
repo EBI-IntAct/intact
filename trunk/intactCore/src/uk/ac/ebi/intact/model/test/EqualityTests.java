@@ -83,9 +83,10 @@ public class EqualityTests extends TestCase {
         exp3 = new Experiment( inst1, "exp1", bio1 );
 
         //three equal Proteins
-        prot1 = new ProteinImpl( inst1, bio1, "prot1" );
-        prot2 = new ProteinImpl( inst1, bio1, "prot1" );
-        prot3 = new ProteinImpl( inst1, bio1, "prot1" );
+        CvInteractorType protType = new CvInteractorType( inst1, "protein");
+        prot1 = new ProteinImpl( inst1, bio1, "prot1", protType );
+        prot2 = new ProteinImpl( inst1, bio1, "prot1", protType );
+        prot3 = new ProteinImpl( inst1, bio1, "prot1", protType );
 
         //three equal Xrefs -
         //NB only the CvDatabase and primaryId are checked for equality
@@ -110,19 +111,20 @@ public class EqualityTests extends TestCase {
         //create some valid Interactions (should be equal), then some Components,
         //then add the Components into the Interactions
         exps.add( exp1 ); //Interaction needs at least one Experiment
+        CvInteractorType intType = new CvInteractorType( inst1, "interaction" );
         int1 = new InteractionImpl( exps, comps,
                                     new CvInteractionType( inst1, "interaction type" ),
-                                    "interaction1", inst1 );
+                                    intType, "interaction1", inst1 );
         int1.setBioSource( bio1 );
 
         int2 = new InteractionImpl( exps, comps,
                                     new CvInteractionType( inst1, "interaction type" ),
-                                    "interaction1", inst1 );
+                                    intType, "interaction1", inst1 );
         int2.setBioSource( bio1 );
 
         int3 = new InteractionImpl( exps, comps,
                                     new CvInteractionType( inst1, "interaction type" ),
-                                    "interaction1", inst1 );
+                                    intType, "interaction1", inst1 );
         int3.setBioSource( bio1 );
 
         Component comp1 = new Component( inst1, int1, prot1,
