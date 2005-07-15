@@ -164,6 +164,7 @@ public class InteractionTest extends TestCase {
 
         // Make a copy.
         Interaction copy = (Interaction) orig.clone();
+        myHelper.materializeInteraction(copy);
 
         // No AC.
         assertNull( copy.getAc() );
