@@ -191,6 +191,8 @@ CREATE TABLE IA_Interactor
         , fullName              VARCHAR (250)
         /* Colums belonging to BasicObject */
         , owner_ac              VARCHAR (30)    CONSTRAINT fk_Interactor_owner REFERENCES IA_Institution(ac)
+        /* Colums belonging to InteractorType */
+        , interactorType_ac       VARCHAR (30)    CONSTRAINT fk_Interactor_type_ac REFERENCES IA_ControlledVocab(ac)
 )
 ;
 
@@ -231,6 +233,8 @@ COMMENT ON COLUMN IA_Interactor.timestamp IS
 'Date of the last update of the column.';
 COMMENT ON COLUMN IA_Interactor.userstamp IS
 'Database user who has performed the last update of the column.';
+COMMENT ON COLUMN IA_Interactor.interactionType_ac IS
+'Holds the accession number for the interactor type.';
 
 
 
