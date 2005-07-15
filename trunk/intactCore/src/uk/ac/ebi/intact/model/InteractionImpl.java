@@ -436,25 +436,20 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
             Component copyComp = (Component) comp.clone();
             // Set the interactor as the current cloned interactions.
             copyComp.setInteractionForClone( copy );
-            copyComp.setInteractorForClone( (Interactor) IntactHelper.getRealIntactObject( comp.getInteractor() ) );
-            copy.components.add( copyComp );
+            copyComp.setInteractorForClone((Interactor) comp.getInteractor());
+            copy.components.add(copyComp);
         }
         return copy;
     }
 
     public String toString() {
-        String result;
-        Iterator i;
-
-        result = "Interaction: " + this.getAc() + " Label: "
-                 + this.getShortLabel() + " [" + NEW_LINE;
+        String result = "Interaction: " + getAc() + " Label: " + getShortLabel()
+                + " [" + NEW_LINE;
         if( null != this.getComponents() ) {
-            i = this.getComponents().iterator();
-            while( i.hasNext() ) {
-                result = result + ( (Component) i.next() ).getInteractor();
+            for (Iterator iter = this.getComponents().iterator(); iter.hasNext(); ) {
+                result += ( (Component) iter.next() ).getInteractor();
             }
         }
-
         return result + "] Interaction" + NEW_LINE;
     }
 } // end Interaction
