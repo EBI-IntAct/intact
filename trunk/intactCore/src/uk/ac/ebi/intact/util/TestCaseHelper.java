@@ -8,10 +8,9 @@
  */
 package uk.ac.ebi.intact.util;
 
+import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.DAOFactory;
-import uk.ac.ebi.intact.persistence.DAOSource;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,7 +32,6 @@ import java.util.Collection;
 public class TestCaseHelper {
 
 
-    private DAOSource dataSource;
     private IntactHelper helper;
 
     private Institution institution;
@@ -68,27 +66,9 @@ public class TestCaseHelper {
     private ArrayList xrefs = new ArrayList();
     private ArrayList components = new ArrayList();
 
-    public TestCaseHelper() throws Exception {
-
-        //set up a helper object to handle the DB interactions
-        try {
-
-            dataSource = DAOFactory.getDAOSource( "uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource" );
-
-            //set the config details, ie repository file for OJB in this case
-            //Map config = new HashMap();
-            //config.put("mappingfile", "config/repository.xml");
-            //dataSource.setConfig(config);
-
-            helper = new IntactHelper( dataSource );
-
-        } catch ( Exception e ) {
-
-            throw new Exception( "error - could not access the data source. Exception thrown was " + e.toString() );
-        }
-
+    public TestCaseHelper() throws IntactException {
+        helper = new IntactHelper();
     }
-
 
     /**
      * provides a way to use the same helper object that is used to create/remove the
@@ -176,9 +156,11 @@ public class TestCaseHelper {
             exp2 = new Experiment( institution, "exp2", bio2 );
             exp2.setFullName( "test experiment 2" );
 
-            prot1 = new ProteinImpl( institution, bio1, "prot1" );
-            prot2 = new ProteinImpl( institution, bio1, "prot2" );
-            prot3 = new ProteinImpl( institution, bio1, "prot3" );
+            CvInteractorType protType = (CvInteractorType) helper.getObjectByPrimaryId(
+                    CvInteractorType.class, CvInteractorType.getProteinMI());
+            prot1 = new ProteinImpl(institution, bio1, "prot1", protType);
+            prot2 = new ProteinImpl(institution, bio1, "prot2", protType);
+            prot3 = new ProteinImpl(institution, bio1, "prot3", protType);
 
             prot1.setFullName( "test protein 1" );
             prot1.setCrc64( "dummy 1 crc64" );
@@ -200,15 +182,17 @@ public class TestCaseHelper {
             Collection components = new ArrayList();
 
             experiments.add( exp1 );
+            CvInteractorType intType = (CvInteractorType) helper.getObjectByPrimaryId(
+                    CvInteractorType.class, CvInteractorType.getInteractionMI());
             //needs exps, components, type, shortlabel, owner...
             //No need to set BioSource - taken from the Experiment...
-            int1 = new InteractionImpl( experiments, components, null, "int1", institution );
+            int1 = new InteractionImpl( experiments, components, null, intType, "int1", institution );
             int1.setBioSource( bio1 );
 
-            int2 = new InteractionImpl( experiments, components, null, "int2", institution );
+            int2 = new InteractionImpl( experiments, components, null, intType, "int2", institution );
             int2.setBioSource( bio1 );
 
-            int3 = new InteractionImpl( experiments, components, null, "int3", institution );
+            int3 = new InteractionImpl( experiments, components, null, intType, "int3", institution );
             int3.setBioSource( bio1 );
 
             int1.setFullName( "test interaction 1" );

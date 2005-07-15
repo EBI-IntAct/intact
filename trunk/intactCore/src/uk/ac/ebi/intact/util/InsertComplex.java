@@ -352,10 +352,15 @@ public final class InsertComplex {
         // if requested, try to set the CvInteractionType.
         CvInteractionType cvInteractionType = getInteractionType( interactionTypeLabel );
 
+        // Get the default interactor type for an interaction.
+        CvInteractorType cvInteractorType = (CvInteractorType) helper.getObjectByPrimaryId(
+                CvInteractorType.class, CvInteractorType.getInteractionMI());
+
         //got our data - now build the new Interaction (with an empty component Collection)
         //get the info needed to create a new Interaction and build one...
 
-        Interaction interaction = new InteractionImpl( experiments, cvInteractionType, actLabel, owner );
+        Interaction interaction = new InteractionImpl(
+                experiments, cvInteractionType, cvInteractorType, actLabel, owner );
         interaction.setBioSource( experiment.getBioSource() );
 
         helper.create( interaction );

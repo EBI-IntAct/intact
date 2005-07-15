@@ -5,13 +5,18 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.business.test;
 
-import junit.framework.*;
-import uk.ac.ebi.intact.persistence.*;
-import uk.ac.ebi.intact.business.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import uk.ac.ebi.intact.business.BusinessConstants;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.util.*;
+import uk.ac.ebi.intact.util.Serializer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 
 /**
@@ -31,7 +36,6 @@ public class IntactHelperTest extends TestCase {
      */
     private static Class CLASS = IntactHelperTest.class;
 
-    private DAOSource dataSource;
     private IntactHelper helper;
 
     private Institution institution;
@@ -67,14 +71,7 @@ public class IntactHelperTest extends TestCase {
 
         try {
 
-        dataSource = DAOFactory.getDAOSource("uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource");
-
-        //set the config details, ie repository file for OJB in this case
-//        Map config = new HashMap();
-//        config.put("mappingfile", "config/repository.xml");
-//        dataSource.setConfig(config);
-
-            helper = new IntactHelper(dataSource);
+            helper = new IntactHelper();
 
             //now need to create specific info to use for the tests...
             System.out.println("IntactHelper Test: building example test objects (in memory)...");
@@ -106,12 +103,14 @@ public class IntactHelperTest extends TestCase {
             exp2 = new Experiment(institution, "exp2", bio2);
             exp2.setFullName("test experiment 2");
 
-            prot1 = new ProteinImpl(institution, bio1, "prot1");
-            prot2 = new ProteinImpl(institution, bio1, "prot2");
-            prot3 = new ProteinImpl(institution, bio1, "prot3");
+            CvInteractorType protType = (CvInteractorType) helper.getObjectByPrimaryId(
+                    CvInteractorType.class, CvInteractorType.getProteinMI());
+            prot1 = new ProteinImpl(institution, bio1, "prot1", protType);
+            prot2 = new ProteinImpl(institution, bio1, "prot2", protType);
+            prot3 = new ProteinImpl(institution, bio1, "prot3", protType);
 
             //this one will be standalone and used for a persistence check..
-            prot4 = new ProteinImpl(institution, bio1, "prot4");
+            prot4 = new ProteinImpl(institution, bio1, "prot4", protType);
 
             //An example annotation - used only for checking protein update
             cvTopic = new CvTopic(institution, "test topic");
@@ -131,9 +130,11 @@ public class IntactHelperTest extends TestCase {
             experiments.add(exp1);
             //needs exps, components (empty in this case), type, shortlabel, owner...
             //No need to set BioSource - taken from the Experiment...
-            int1 = new InteractionImpl(experiments, new ArrayList(), null, "int1", institution);
-            int2 = new InteractionImpl(experiments, new ArrayList(), null, "int2", institution);
-            int3 = new InteractionImpl(experiments, new ArrayList(), null, "int3", institution);
+            CvInteractorType intType = (CvInteractorType) helper.getObjectByPrimaryId(
+                    CvInteractorType.class, CvInteractorType.getInteractionMI());
+            int1 = new InteractionImpl(experiments, new ArrayList(), null, intType, "int1", institution);
+            int2 = new InteractionImpl(experiments, new ArrayList(), null, intType, "int2", institution);
+            int3 = new InteractionImpl(experiments, new ArrayList(), null, intType, "int3", institution);
 
             int1.setFullName("test interaction 1");
             int1.setKD(new Float(1f));
@@ -827,19 +828,19 @@ public class IntactHelperTest extends TestCase {
             password = "testuser1";
 
             //use a local helper to aqvoid mesing up other tests...
-            IntactHelper h = new IntactHelper(dataSource, username, password);
+            IntactHelper h = new IntactHelper(username, password);
             doUserCheck(h, "EBITEST-U1");
 
             System.out.println("checking testuser2....");
             username = "testuser2";
             password = "testuser2";
-            h = new IntactHelper(dataSource, username, password);
+            h = new IntactHelper(username, password);
             doUserCheck(h, "EBITEST-U2");
 
             System.out.println("checking testuser3....");
             username = "testuser3";
             password = "testuser3";
-            h = new IntactHelper(dataSource, username, password);
+            h = new IntactHelper(username, password);
             doUserCheck(h, "EBITEST-U3");
 
             System.out.println();

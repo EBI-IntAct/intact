@@ -23,12 +23,9 @@ public class DRLineExportTest extends TestCase {
      */
     private class TestableProtein extends ProteinImpl {
 
-        public TestableProtein( Institution owner, BioSource source, String shortLabel ) {
-            super( owner, source, shortLabel );
-        }
-
-        public TestableProtein( String ac, Institution owner, BioSource source, String shortLabel ) {
-            super( owner, source, shortLabel );
+        public TestableProtein( String ac, Institution owner, BioSource source,
+                                String shortLabel, CvInteractorType intType ) {
+            super( owner, source, shortLabel, intType );
             this.ac = ac;
         }
     }
@@ -96,30 +93,32 @@ public class DRLineExportTest extends TestCase {
         BioSource bioSource = new BioSource( institution, "bio1", "1" );
         CvDatabase cvDatabase = new CvDatabase( institution, "oneOfMine" );
 
-        protein1 = new TestableProtein( "EBI-123", institution, bioSource, "PROT1_bio1" );
+        CvInteractorType protType = new CvInteractorType(institution, "protein");
+
+        protein1 = new TestableProtein( "EBI-123", institution, bioSource, "PROT1_bio1", protType );
         protein1.addXref( new Xref( institution, uniprot, "PROTEIN1", null, null, identityCvXrefQualifier ) );
         protein1.addXref( new Xref( institution, cvDatabase, "1laigvh", null, null, null ) );
         protein1.addXref( new Xref( institution, cvDatabase, "1slgn", null, null, null ) );
 
-        protein1SpliceVariant = new TestableProtein( "EBI-123", institution, bioSource, "PROT1_bio1-1" );
+        protein1SpliceVariant = new TestableProtein( "EBI-123", institution, bioSource, "PROT1_bio1-1", protType );
         protein1SpliceVariant.addXref( new Xref( institution, uniprot, "PROTEIN1-1", null, null, identityCvXrefQualifier ) );
         // Link to its master protein
         protein1SpliceVariant.addXref( new Xref( institution, intact, "EBI-123", "PROTEIN1", null, isoformParentXrefQualifier ) );
         protein1SpliceVariant.addXref( new Xref( institution, cvDatabase, "1laigvh", null, null, null ) );
         protein1SpliceVariant.addXref( new Xref( institution, cvDatabase, "1slgn", null, null, null ) );
 
-        protein2 = new ProteinImpl( institution, bioSource, "PROT2_bio1" );
+        protein2 = new ProteinImpl( institution, bioSource, "PROT2_bio1", protType );
         protein2.addXref( new Xref( institution, cvDatabase, "2qwerty", null, null, null ) );
         protein2.addXref( new Xref( institution, uniprot, "PROTEIN2", null, null, identityCvXrefQualifier ) );
         protein2.addXref( new Xref( institution, cvDatabase, "2zxcvb", null, null, null ) );
 
-        protein3 = new ProteinImpl( institution, bioSource, "PROT3_bio1" );
+        protein3 = new ProteinImpl( institution, bioSource, "PROT3_bio1", protType );
         protein3.addXref( new Xref( institution, cvDatabase, "3asfdg", null, null, null ) );
         protein3.addXref( new Xref( institution, cvDatabase, "3ryuk", null, null, null ) );
         protein3.addXref( new Xref( institution, uniprot, "PROTEIN3", null, null, identityCvXrefQualifier ) );
         protein3.addXref( new Xref( institution, cvDatabase, "3lkjhgf", null, null, null ) );
 
-        protein4 = new ProteinImpl( institution, bioSource, "PROT4_bio1" );
+        protein4 = new ProteinImpl( institution, bioSource, "PROT4_bio1", protType );
         protein4.addXref( new Xref( institution, cvDatabase, "4alklk", null, null, null ) );
         protein4.addXref( new Xref( institution, cvDatabase, "4pppp", null, null, null ) );
         protein4.addXref( new Xref( institution, uniprot, "PROTEIN4", null, null, identityCvXrefQualifier ) );
@@ -192,21 +191,27 @@ public class DRLineExportTest extends TestCase {
 
         experiments.add( experiment );
 
+        CvInteractorType intType = new CvInteractorType(institution, "interaction");
+
         //needs exps, components (empty in this case), type, shortlabel, owner...
         //No need to set BioSource - taken from the Experiment...
-        interaction1a = new InteractionImpl( experiments, new ArrayList(), null, "int1a", institution );
+        interaction1a = new InteractionImpl( experiments, new ArrayList(), null,
+                intType, "int1a", institution );
         interaction1a.addAnnotation( new Annotation( institution, topic1 ) );
         interaction1a.addAnnotation( new Annotation( institution, topic2 ) );
 
-        interaction2a = new InteractionImpl( experiments, new ArrayList(), null, "int2a", institution );
+        interaction2a = new InteractionImpl( experiments, new ArrayList(), null,
+                intType, "int2a", institution );
         interaction2a.addAnnotation( new Annotation( institution, topic2 ) );
         interaction2a.addAnnotation( new Annotation( institution, topic1 ) );
 
-        interaction3a = new InteractionImpl( experiments, new ArrayList(), null, "int3a", institution );
+        interaction3a = new InteractionImpl( experiments, new ArrayList(), null,
+                intType, "int3a", institution );
         interaction3a.addAnnotation( new Annotation( institution, topic1 ) );
         interaction3a.addAnnotation( new Annotation( institution, topic1 ) );
 
-        interaction4a = new InteractionImpl( experiments, new ArrayList(), null, "int3a", institution );
+        interaction4a = new InteractionImpl( experiments, new ArrayList(), null,
+                intType, "int3a", institution );
         interaction4a.addAnnotation( new Annotation( institution, topic1 ) );
         interaction4a.addAnnotation( new Annotation( institution, topic1 ) );
 
@@ -278,13 +283,17 @@ public class DRLineExportTest extends TestCase {
 
         experiments.add( experiment );
 
+        CvInteractorType intType = new CvInteractorType(institution, "interaction");
+
         //needs exps, components (empty in this case), type, shortlabel, owner...
         //No need to set BioSource - taken from the Experiment...
-        interaction1b = new InteractionImpl( experiments, new ArrayList(), null, "int1b", institution );
+        interaction1b = new InteractionImpl( experiments, new ArrayList(), null,
+                intType, "int1b", institution );
         interaction1b.addAnnotation( new Annotation( institution, topic1 ) );
         interaction1b.addAnnotation( new Annotation( institution, topic2 ) );
 
-        interaction2b = new InteractionImpl( experiments, new ArrayList(), null, "int2b", institution );
+        interaction2b = new InteractionImpl( experiments, new ArrayList(), null,
+                intType, "int2b", institution );
         interaction2b.addAnnotation( new Annotation( institution, topic2 ) );
         interaction2b.addAnnotation( new Annotation( institution, topic1 ) );
 
