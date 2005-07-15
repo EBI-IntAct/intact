@@ -168,10 +168,8 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
         String result;
         Iterator i;
 
-        result = "Interactor: " + this.getAc()
-                 + " Owner: " + this.getOwner().getShortLabel()
-                 + " Label: " + this.getShortLabel()
-                 + "[";
+        result = "AC: " + this.getAc() + " Owner: " + this.getOwner().getShortLabel()
+                 + " Label: " + this.getShortLabel() + "[";
 
         if( null != this.getXrefs() ) {
             i = this.getXrefs().iterator();
@@ -203,6 +201,13 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
 
         if (bioSource != null) {
             if( !bioSource.equals( interactor.getBioSource() ) ) {
+                return false;
+            }
+        }
+        // We should remove this check later as interactor type is mandatory.
+        // This is here till we migrated all our code to accept the InteractorType.
+        if (interactorType != null) {
+            if (!interactorType.equals(interactor.getCvInteractorType())) {
                 return false;
             }
         }
