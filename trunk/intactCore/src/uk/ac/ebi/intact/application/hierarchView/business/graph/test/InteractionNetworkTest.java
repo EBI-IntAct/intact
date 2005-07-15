@@ -5,18 +5,19 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.business.graph.test;
 
-import junit.framework.*;
-import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 import uk.ac.ebi.intact.application.commons.search.CriteriaBean;
+import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.simpleGraph.Edge;
 import uk.ac.ebi.intact.simpleGraph.EdgeI;
-import uk.ac.ebi.intact.simpleGraph.MineEdge;
 import uk.ac.ebi.intact.simpleGraph.Node;
 
-import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * A template for a test class.
@@ -49,8 +50,8 @@ public class InteractionNetworkTest extends TestCase {
     }
 
     private Protein createProtein (Institution institution, BioSource bio, String ac, String shortLabel,
-                                   String fullname, String crc64) {
-        Protein prot = new ProteinImpl( institution, bio, shortLabel);
+                                   String fullname, String crc64, CvInteractorType protType) {
+        Protein prot = new ProteinImpl( institution, bio, shortLabel, protType);
         // TODO I have to set the AC to make the fusion work
         prot.setAc( ac );
         prot.setOwnerAc( institution.getAc() );
@@ -105,8 +106,11 @@ public class InteractionNetworkTest extends TestCase {
         Collection colexp1 = new ArrayList(1);
         colexp1.add( exp1 );
 
+        CvInteractorType interactorType = new CvInteractorType( institution, "interaction" );
+
         interactionType = new CvInteractionType( institution, "type" );
-        int1 = new InteractionImpl( colexp1, new ArrayList(), interactionType, "int1", institution  );
+        int1 = new InteractionImpl( colexp1, new ArrayList(), interactionType,
+                interactorType, "int1", institution  );
 
         exp2 = new Experiment(institution, "exp2", bio2);
         exp2.setOwnerAc(institution.getAc());
@@ -115,20 +119,23 @@ public class InteractionNetworkTest extends TestCase {
         Collection colexp2 = new ArrayList(1);
         colexp2.add( exp2 );
 
-        int2 = new InteractionImpl( colexp2, new ArrayList(), interactionType, "int1", institution  );
+        int2 = new InteractionImpl( colexp2, new ArrayList(), interactionType,
+                interactorType, "int1", institution  );
 
         bait = new CvComponentRole( institution, "bait");
         prey = new CvComponentRole( institution, "prey");
 
-        prot1 = createProtein( institution, bio1, "1", "P1", "test protein 1", "dummy 1 crc64" );
-        prot2 = createProtein( institution, bio1, "2", "P2", "test protein 2", "dummy 2 crc64" );
-        prot3 = createProtein( institution, bio1, "3", "P3", "test protein 3", "dummy 3 crc64" );
-        prot4 = createProtein( institution, bio1, "4", "P4", "test protein 4", "dummy 4 crc64" );
-        prot5 = createProtein( institution, bio1, "5", "P5", "test protein 5", "dummy 5 crc64" );
-        prot6 = createProtein( institution, bio1, "6", "P6", "test protein 6", "dummy 6 crc64" );
-        prot7 = createProtein( institution, bio1, "7", "P7", "test protein 7", "dummy 7 crc64" );
-        prot8 = createProtein( institution, bio1, "8", "P8", "test protein 8", "dummy 8 crc64" );
-        prot9 = createProtein( institution, bio1, "9", "P9", "test protein 9", "dummy 9 crc64" );
+        CvInteractorType protType = new CvInteractorType( institution, "protein" );
+
+        prot1 = createProtein( institution, bio1, "1", "P1", "test protein 1", "dummy 1 crc64", protType );
+        prot2 = createProtein( institution, bio1, "2", "P2", "test protein 2", "dummy 2 crc64", protType );
+        prot3 = createProtein( institution, bio1, "3", "P3", "test protein 3", "dummy 3 crc64", protType );
+        prot4 = createProtein( institution, bio1, "4", "P4", "test protein 4", "dummy 4 crc64", protType );
+        prot5 = createProtein( institution, bio1, "5", "P5", "test protein 5", "dummy 5 crc64", protType );
+        prot6 = createProtein( institution, bio1, "6", "P6", "test protein 6", "dummy 6 crc64", protType );
+        prot7 = createProtein( institution, bio1, "7", "P7", "test protein 7", "dummy 7 crc64", protType );
+        prot8 = createProtein( institution, bio1, "8", "P8", "test protein 8", "dummy 8 crc64", protType );
+        prot9 = createProtein( institution, bio1, "9", "P9", "test protein 9", "dummy 9 crc64", protType );
 
         comp1 = new Component( institution, int1, prot1, bait);
         comp2 = new Component( institution, int1, prot2, prey);

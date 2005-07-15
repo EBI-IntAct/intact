@@ -890,9 +890,13 @@ public class InsertComplexGiot {
         Collection experiments = new ArrayList( 1 );
         experiments.add( giotExperiment );
 
+        CvInteractorType interactorType = (CvInteractorType) helper.getObjectByPrimaryId(
+                CvInteractorType.class, CvInteractorType.getInteractionMI());
+
         interaction = new InteractionImpl( experiments,
                                        new ArrayList( 2 ), // we know there are only 2 components to add !
                                        interactionType,
+                                       interactorType,
                                        interactionLabel,
                                        owner );
         interaction.setFullName( "Interaction detected by Y2H." );
