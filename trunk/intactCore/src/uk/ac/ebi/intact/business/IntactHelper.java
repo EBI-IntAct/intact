@@ -966,6 +966,23 @@ public class IntactHelper implements SearchI, Externalizable {
     }
 
     /**
+     * A helper method to materialize an interaction as proteins are proxies.
+     * Only valid for OJB data access.
+     * @param interaction the interaction to materialize
+     * @throws IllegalStateException if the uderlying DAO is not the ObjectBridge DAO
+     */
+    public void materializeInteraction(Interaction interaction) {
+        for (Iterator iter = interaction.getComponents().iterator(); iter.hasNext(); ) {
+            Component comp = (Component) iter.next();
+            Interactor interactor = comp.getInteractor();
+            // Only do for Polymer subclasses as they are declared as dynamic proxies
+            if (Polymer.class.isAssignableFrom(interactor.getClass())) {
+                comp.setInteractor((Interactor) materializeIntactObject(interactor));
+            }
+        }
+    }
+
+    /**
      * Returns the real object wrapped around the proxy for given object of
      * IntactObjectProxy type.
      * @param obj the object to return the real object from.
