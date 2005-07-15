@@ -52,7 +52,9 @@ public class ProteinTest extends TestCase {
         // The source
         BioSource src = new BioSource(owner, "yeast", "1234");
 
-        Protein prot = new ProteinImpl(owner, src, "prot1");
+        CvInteractorType type = new CvInteractorType(owner, "protein");
+
+        Protein prot = new ProteinImpl(owner, src, "prot1", type);
 
         // Shouldn't equal to null or another type
         assertFalse(prot.equals(null));
@@ -69,7 +71,7 @@ public class ProteinTest extends TestCase {
         assertEquals(prot, prot);
 
         // Identical protein
-        Protein other = new ProteinImpl(owner, src, "prot1");
+        Protein other = new ProteinImpl(owner, src, "prot1", type);
 
         // Set the same sequence to both.
         prot.setSequence("0123");
@@ -87,9 +89,9 @@ public class ProteinTest extends TestCase {
         assertFalse(prot.hashCode() == other.hashCode());
 
         // Identical object (transitive)
-        Protein p1 = new ProteinImpl(owner, src, "p1");
-        Protein p2 = new ProteinImpl(owner, src, "p1");
-        Protein p3 = new ProteinImpl(owner, src, "p1");
+        Protein p1 = new ProteinImpl(owner, src, "p1", type);
+        Protein p2 = new ProteinImpl(owner, src, "p1", type);
+        Protein p3 = new ProteinImpl(owner, src, "p1", type);
 
         // Both should be same.
         assertEquals(p1, p2);
