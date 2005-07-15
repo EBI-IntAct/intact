@@ -313,6 +313,10 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
         if (crc64 != null) code = code * 29 + crc64.hashCode();
         return code;
     }
+
+    public String toString() {
+        return super.toString() + " [ CRC64: " + getCrc64() + " Sequence: " + getSequence() + "]";
+    }
 }
 
 
