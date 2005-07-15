@@ -64,7 +64,11 @@ public class InteractionTest extends TestCase {
     public void testLoading() throws IntactException {
         Interaction interaction = (Interaction) myHelper.getObjectByLabel(Interaction.class, "ga-1");
 
-        assertEquals(interaction.getCvInteractorType().getShortLabel(), "interaction");
+        // The interactor type.
+        CvInteractorType interactorType = (CvInteractorType) myHelper.getObjectByPrimaryId(
+                CvInteractorType.class, CvInteractorType.getInteractionMI());
+
+        assertEquals(interaction.getCvInteractorType(), interactorType);
         assertEquals(interaction.getBioSource().getShortLabel(), "yeast");
     }
 
@@ -77,8 +81,8 @@ public class InteractionTest extends TestCase {
                 CvInteractionType.class, "cleavage");
 
         // The interactor type.
-        CvInteractorType interactorType = (CvInteractorType) myHelper.getObjectByLabel(
-                CvInteractorType.class, "interaction");
+        CvInteractorType interactorType = (CvInteractorType) myHelper.getObjectByPrimaryId(
+                CvInteractorType.class, CvInteractorType.getInteractionMI());
 
         // Need to have an experiment - at least
         List exps = new ArrayList();
