@@ -46,6 +46,7 @@ done
 for cv in CvIdentification \
           CvInteraction \
           CvInteractionType \
+          CvInteractorType \
           CvFeatureType \
           CvFeatureIdentification
 do
@@ -56,11 +57,13 @@ done
 # create a single DAG-Edit file for all hierarchical CVS for curation support
 echo Creating DAG-Edit formatted file
 perl -w scripts/toDagEditFormat.pl -sourceDagFile $1/CvInteractionType.dag \
+                                   -sourceDagFile $1/CvInteractorType.dag \
                                    -sourceDagFile $1/CvIdentification.dag \
                                    -sourceDagFile $1/CvInteraction.dag \
                                    -sourceDagFile $1/CvFeatureType.dag \
                                    -sourceDagFile $1/CvFeatureIdentification.dag \
                                    -sourceDefFile $1/CvInteractionType.def \
+                                   -sourceDefFile $1/CvInteractorType.def \
                                    -sourceDefFile $1/CvIdentification.def \
                                    -sourceDefFile $1/CvInteraction.def \
                                    -sourceDefFile $1/CvFeatureType.def \
