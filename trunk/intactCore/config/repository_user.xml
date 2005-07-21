@@ -419,7 +419,8 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 <!-- descriptor for Protein
 -->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.ProteinImpl" table="ia_Interactor" proxy="dynamic">
+    class="uk.ac.ebi.intact.model.ProteinImpl" table="ia_Interactor"
+    proxy="uk.ac.ebi.intact.model.proxy.ProteinProxy">
     <!-- ***************** fields from superclasses ********************* -->
     <!-- fields from BasicObject... -->
     <field-descriptor
@@ -1702,6 +1703,12 @@ to AnnotatedObject and Experiment
 <class-descriptor
     class="uk.ac.ebi.intact.model.CvXrefQualifier" table="ia_ControlledVocab">
 
+    <object-cache class="org.apache.ojb.broker.cache.ObjectCacheDefaultImpl">
+          <attribute attribute-name="timeout" attribute-value="-1"/> <!-- keep it forever -->
+          <attribute attribute-name="autoSync" attribute-value="true"/>
+          <attribute attribute-name="cachingKeyType" attribute-value="0"/>
+    </object-cache>
+
     <!-- ******** fields inherited from BasicObject *****************-->
     <!-- fields from BasicObject... -->
     <field-descriptor
@@ -1804,6 +1811,12 @@ to AnnotatedObject and Experiment
 <!-- Definitions for CvAliasType....-->
 <class-descriptor
     class="uk.ac.ebi.intact.model.CvAliasType" table="ia_ControlledVocab">
+
+    <object-cache class="org.apache.ojb.broker.cache.ObjectCacheDefaultImpl">
+          <attribute attribute-name="timeout" attribute-value="-1"/> <!-- keep it forever -->
+          <attribute attribute-name="autoSync" attribute-value="true"/>
+          <attribute attribute-name="cachingKeyType" attribute-value="0"/>
+    </object-cache>
 
     <!-- ******** fields inherited from BasicObject *****************-->
     <field-descriptor
@@ -1908,6 +1921,12 @@ to AnnotatedObject and Experiment
 <class-descriptor
     class="uk.ac.ebi.intact.model.CvDatabase" table="ia_ControlledVocab">
 
+    <object-cache class="org.apache.ojb.broker.cache.ObjectCacheDefaultImpl">
+          <attribute attribute-name="timeout" attribute-value="-1"/> <!-- keep it forever -->
+          <attribute attribute-name="autoSync" attribute-value="true"/>
+          <attribute attribute-name="cachingKeyType" attribute-value="0"/>
+    </object-cache>
+
     <!-- ******** fields inherited from BasicObject *****************-->
     <!-- fields from BasicObject... -->
     <field-descriptor
@@ -2008,6 +2027,12 @@ to AnnotatedObject and Experiment
 <!-- descriptor for CvCellType -->
 <class-descriptor
     class="uk.ac.ebi.intact.model.CvCellType" table="ia_ControlledVocab">
+
+    <object-cache class="org.apache.ojb.broker.cache.ObjectCacheDefaultImpl">
+          <attribute attribute-name="timeout" attribute-value="-1"/> <!-- keep it forever -->
+          <attribute attribute-name="autoSync" attribute-value="true"/>
+          <attribute attribute-name="cachingKeyType" attribute-value="0"/>
+    </object-cache>     
 
     <!-- ******** fields inherited from BasicObject *****************-->
     <!-- fields from BasicObject... -->
