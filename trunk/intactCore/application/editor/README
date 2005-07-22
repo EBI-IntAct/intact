@@ -89,6 +89,12 @@ SOME USEFULL COMMAND
             file for testing. Other similar command, deploy-test and undeploy-test, are
             also partially implemented.
 
+        ant generate-struts-xml
+            Generates struts-config.xml and validation.xml files. To use this target
+            you must define an environment variable XDOCLET_HOME. This environment variable
+            must point to the xdoclet installation. Visit
+            http://xdoclet.sourceforge.net/xdoclet/index.html for more info on xdoclet
+   
     NOTES
         The WAR file is being built using jar and class file from various locations.
         Given below are locations where it looks for these files:
