@@ -56,12 +56,11 @@
 <%-- The javascript for the button bars.... --%>
 <%@ include file="jscript.html" %>
 
-    <span class="middletext">Search Results for <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA)%> <br></span
-     <br/>
-
-<span class="smalltext">(short labels of search criteria matches are
+<span class="smalltext">Search Results for <%= session.getAttribute(SearchConstants.SEARCH_CRITERIA) %> </span>
+<br/>
+<span class="verysmalltext">(short labels of search criteria matches are
     <span style="color: rgb(255, 0, 0);">highlighted</span>
-</span><span class="smalltext">)<br></span></p>
+</span><span class="verysmalltext">)<br></span></p>
 
 <!-- the main form for the page -->
 <form name="viewForm">
@@ -188,10 +187,15 @@
                 <td class="data" style="vertical-align: top; background-color: rgb(255, 255, 255);"
                     rowspan="1" colspan="1">
                     <% Collection someGeneNames = bean.getGeneNames();
-                       for (Iterator iterator = someGeneNames.iterator(); iterator.hasNext();) {
-                           String aGeneName =  (String) iterator.next();    %>
-                            <%=aGeneName%><br>
-                  <%     } %>
+                    
+                       for (Iterator iterator =  someGeneNames.iterator(); iterator.hasNext();) {
+                           String aGeneName =  (String) iterator.next();
+                           out.write( aGeneName );
+                           if( iterator.hasNext() ) {
+                               out.write( ", " );
+                           }
+                       }
+                   %>
                 </td>
 
                 <!-- description, not linked -->
@@ -269,11 +273,18 @@
                 <!-- gene name, not linked -->
                 <td class="data" style="vertical-align: top; background-color: rgb(255, 255, 255);"
                     rowspan="1" colspan="1">
-                     <% Collection somePartnerGeneNames = partner.getGeneNames();
+
+                    <% Collection somePartnerGeneNames = partner.getGeneNames();
+
                        for (Iterator iterator =  somePartnerGeneNames.iterator(); iterator.hasNext();) {
-                           String aGeneName =  (String) iterator.next();    %>
-                            <%=aGeneName%><br>
-                  <%     } %>
+                           String aGeneName =  (String) iterator.next();
+                           out.write( aGeneName );
+                           if( iterator.hasNext() ) {
+                               out.write( ", " );
+                           }
+                       }
+                     %>
+
                 </td>
 
                 <!-- description, not linked -->
