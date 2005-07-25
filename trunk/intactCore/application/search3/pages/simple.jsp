@@ -76,18 +76,44 @@ to identify the source page of the request to the Action classes.
 <%-- The javascript for the button bars.... --%>
 <%@ include file="jscript.html" %>
 <!-- top line info -->
-    <span class="middletext">Search Results for <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA)%> <br></span
+<%--    <span class="middletext">Search Results for <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA)%> <br></span>--%>
+<span class="smalltext">Search Results for
+
+    <%
+        String params = (String) session.getAttribute(SearchConstants.SEARCH_CRITERIA);
+
+        if( params.length() > 20 ) {
+
+            // split the params and display 10 per lines.
+            StringTokenizer st = new StringTokenizer( params, "," );
+            int count = 0;
+            while( st.hasMoreTokens() ) {
+                out.write( st.nextToken() );
+                out.write( ',' );
+                count++;
+                if( (count % 10) == 0 ) {
+                    out.write( "<br>" );
+                }
+            }
+
+        } else {
+            out.write( params );
+        }
+
+    %>
+
+</span>
      <br/>
 
-<span class="smalltext">(short labels of search criteria matches are
+<span class="verysmalltext">(short labels of search criteria matches are
     <span style="color: rgb(255, 0, 0);">highlighted</span>
-</span><span class="smalltext">)<br></span></p>
+</span><span class="verysmalltext">)<br></span></p>
 
 <%-- Firstly need to check that we have at least one set of results that we can display,
 because if not then we should NOT display the message below..
 --%>
 
-    <span class="largetext">Please click on any name to view more detail.</span>
+    <span class="verysmalltext">Please click on any name to view more detail.</span>
   <span class="smalltext"> <br> </span>
 
 </p>
@@ -280,11 +306,17 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
 
                <!-- Gene Name (not linked)  -->
            <td class="lefttop" rowspan="1" colspan="1">
-                  <% Collection somePartnerGeneNames = bean.getGeneNames((Protein)bean.getObject());
-                       for (Iterator iterator =  somePartnerGeneNames.iterator(); iterator.hasNext();) {
-                           String aGeneName =  (String) iterator.next();    %>
-                            <%=aGeneName%><br>
-                  <%     } %>
+                <%
+                    Collection somePartnerGeneNames = bean.getGeneNames((Protein)bean.getObject());
+
+                    for (Iterator iteratorGene =  somePartnerGeneNames.iterator(); iteratorGene.hasNext();) {
+                        String aGeneName =  (String) iteratorGene.next();
+                        out.write( aGeneName );
+                        if( iteratorGene.hasNext() ) {
+                            out.write( ", " );
+                        }
+                    }
+                %>
             </td>
 
           <% } else { %>
