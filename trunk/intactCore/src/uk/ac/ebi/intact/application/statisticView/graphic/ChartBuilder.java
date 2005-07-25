@@ -19,10 +19,7 @@ import uk.ac.ebi.intact.application.statisticView.business.util.Constants;
 import uk.ac.ebi.intact.application.statisticView.business.util.IdentificationComparator;
 import uk.ac.ebi.intact.business.IntactException;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Michael Kleen
@@ -178,42 +175,64 @@ public class ChartBuilder {
         return proteinChart;
     }
 
+    private static Set taxidFilter = new HashSet();
+
+    static {
+
+        taxidFilter.add( "9606" );
+        taxidFilter.add( "10090" );
+        taxidFilter.add( "10116" );
+        taxidFilter.add( "6239" );
+        taxidFilter.add( "7227" );
+        taxidFilter.add( "3792" );
+        taxidFilter.add( "4932" );
+        taxidFilter.add( "4896" );
+        taxidFilter.add( "562" );
+
+        // todo load that from a properties file.
+    }
+
+
     /**
-     * Creates a barchart graph over the increase of controlled vocabulary terms based on the given
-     * BioSourceStatistics objects.
+     * Creates a barchart graph that shows the count of binary interactions and proteins for a selected set of
+     * organism, all others are summed up and shown under a category 'others'.
      *
      * @param someBioSourceStatistics a collection of BioSourceStatistics must not be null
-     * @return a JfreeChart diagramm which represents a barchart graph of the binary interactions/proteins  of the different
-     *         hosts based on the newt tax id
+     * @return a JfreeChart diagram which represents a barchart graph of the binary interactions/proteins
+     *         of the different hosts based on the newt taxid
      * @throws IntactException if someBioSourceStatistics is null
      */
     public JFreeChart binaryInteractionsPerOrganism(final Collection someBioSourceStatistics) throws IntactException {
+
         // first check if it is not null
         if (someBioSourceStatistics == null) {
             throw new IntactException("DataSource of BioSourceStatistics must no be null");
         }
+
         // create the dataseries
         final DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
         int proteinRestCount = 0;
         int binaryRestCount = 0;
+
         for (Iterator iterator = someBioSourceStatistics.iterator(); iterator.hasNext();) {
+
             BioSourceStatistics statistics = (BioSourceStatistics) iterator.next();
-            // make a threshold, we don't want to display interactions which a lesser than a speficic limit
-            if (statistics.getProteinNumber() != 0) {
-                if (statistics.getProteinNumber() > Constants.MIN_DISPLAY_PROTEINS) {
-                    dataSet.addValue(statistics.getBinaryInteractions(), "Binary Interactions", statistics.getShortlabel());
-                    dataSet.addValue(statistics.getProteinNumber(), "Proteins", statistics.getShortlabel());
-                }
-                else {
-                    // summ the threshold up
-                    proteinRestCount += statistics.getProteinNumber();
-                    binaryRestCount += statistics.getBinaryInteractions();
-                }
+
+            if( taxidFilter.contains( statistics.getTaxId() ) ) {
+                // we display that biosource
+                dataSet.addValue(statistics.getBinaryInteractions(), "Binary Interactions", statistics.getShortlabel());
+                dataSet.addValue(statistics.getProteinNumber(), "Proteins", statistics.getShortlabel());
+            } else {
+                // this goes in to the 'other' category
+                proteinRestCount += statistics.getProteinNumber();
+                binaryRestCount += statistics.getBinaryInteractions();
             }
         }
+
         // add the summ of the threshold as  "others"
         dataSet.addValue(binaryRestCount, "Binary Interactions", "others");
         dataSet.addValue(proteinRestCount, "Proteins", "others");
+
         // create the chart
         final JFreeChart chart = ChartFactory.getBarChart(dataSet, PER_ORGANISM_CHART_TITLE, "", "", true);
         return chart;
