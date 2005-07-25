@@ -33,13 +33,11 @@ in the root directory of this distribution.
 
 <span class="smalltext"> </span>
 
-    <span class="middletext">Search Results for <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA)%> <br></span
-     <br/>
-<!-- show the searched object ac -->
-<span class="smalltext">(short labels of search criteria matches are
+<span class="smalltext">Search Results for <%= session.getAttribute(SearchConstants.SEARCH_CRITERIA) %> </span>
+<br/>
+<span class="verysmalltext">(short labels of search criteria matches are
     <span style="color: rgb(255, 0, 0);">highlighted</span>
-</span><span class="smalltext">)<br></span>
-<span class="smalltext"><br></span>
+</span><span class="verysmalltext">)<br></span></p>
 
 <form name="viewForm">
    <!-- create a table with the object deatils -->
