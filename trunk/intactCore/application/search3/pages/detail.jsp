@@ -73,13 +73,41 @@
 <%@ include file="jscript.html" %>
 
 <!-- top line info -->
-    <span class="middletext">Search Results for <%=session.getAttribute( SearchConstants.SEARCH_CRITERIA )%> <br></span>
-     <br/>
+<%--    <span class="middletext">Search Results for <%=session.getAttribute( SearchConstants.SEARCH_CRITERIA )%> <br></span>--%>
 
-    <span class="smalltext">(short labels of search criteria matches are
+<span class="smalltext">Search Results for
+
+    <%
+        String params = (String) session.getAttribute(SearchConstants.SEARCH_CRITERIA);
+
+        if( params.length() > 30 ) {
+
+            // split the params and display 10 per lines.
+            StringTokenizer st = new StringTokenizer( params, "," );
+            int count = 0;
+            while( st.hasMoreTokens() ) {
+                out.write( st.nextToken() );
+                out.write( ',' );
+                count++;
+                if( (count % 10) == 0 ) {
+                    out.write( "<br>" );
+                }
+            }
+
+        } else {
+            out.write( params );
+        }
+
+    %>
+
+</span>
+
+<br/>
+
+    <span class="verysmalltext">(short labels of search criteria matches are
         <span style="color: rgb(255, 0, 0);">highlighted</span>
-    </span><span class="smalltext">)<br></span>
-    <span class="smalltext"><br></span>
+    </span><span class="verysmalltext">)<br></span>
+    <span class="verysmalltext"><br></span>
 
 <%
     //first check to see if the bean list is null - if it is then it means that the
@@ -898,16 +926,22 @@ Displaying <b><%= firstDisplayIndex %></b> to
                 <%
                     }
                 %>
-            </td>
+                </td>
 
-            <!-- gene name(s), not linked -->
-           <td class="data"><%// bean.getGeneNames(protein)%>
+                <!-- gene name(s), not linked -->
+                <td class="data"><%// bean.getGeneNames(protein)%>
 
-              <% Collection somePartnerGeneNames = bean.getGeneNames(protein);
-                       for (Iterator it2 =  somePartnerGeneNames.iterator(); it2.hasNext();) {
-                           String aGeneName =  (String) it2.next();    %>
-                            <%=aGeneName%><br>
-                  <%     } %>
+                <%
+                    Collection somePartnerGeneNames = bean.getGeneNames(protein);
+
+                    for (Iterator iteratorGene =  somePartnerGeneNames.iterator(); iteratorGene.hasNext();) {
+                        String aGeneName =  (String) iteratorGene.next();
+                        out.write( aGeneName );
+                        if( iteratorGene.hasNext() ) {
+                            out.write( ", " );
+                        }
+                    }
+                %>
         </td>
 
             <!-- role, linked CvComponentRole search -->
