@@ -19,35 +19,33 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- * User: Michael Kleen mkleen@ebi.ac.uk
- * Date: Mar 17, 2005
- * Time: 1:47:53 PM
+ * User: Michael Kleen mkleen@ebi.ac.uk Date: Mar 17, 2005 Time: 1:47:53 PM
  * <p/>
- * This class provides the actions required to carry out the filter request from the sidebar for the
- * web-based interface. The filter criteria are obtained from a Form object and then the search is
- * carried out. The class generates the specific Charts as pngs and store them in the tomcat /temp folder.
- * After the http session from the user is expired the .png file will automatically deleted.  *
+ * This class provides the actions required to carry out the filter request from the sidebar for the web-based
+ * interface. The filter criteria are obtained from a Form object and then the search is carried out. The class
+ * generates the specific Charts as pngs and store them in the tomcat /temp folder. After the http session from the user
+ * is expired the .png file will automatically deleted.  *
  */
 public class IntactStatisticsAction extends Action {
 
     /**
-     * Process the specified HTTP request, and create the corresponding HTTP response (or forward to
-     * another web component that will create it). Return an ActionForward instance describing where
-     * and how control should be forwarded, or null if the response has already been completed.
+     * Process the specified HTTP request, and create the corresponding HTTP response (or forward to another web
+     * component that will create it). Return an ActionForward instance describing where and how control should be
+     * forwarded, or null if the response has already been completed.
      *
      * @param mapping  - The <code>ActionMapping</code> used to select this instance
      * @param form     - The optional <code>ActionForm</code> bean for this request (if any)
      * @param request  - The HTTP request we are processing
      * @param response - The HTTP response we are creating
-     * @return - represents a destination to which the controller servlet,
-     *         <code>ActionServlet</code>, might be directed to perform a
-     *         RequestDispatcher.forward() or HttpServletResponse.sendRedirect() to, as a result of
+     *
+     * @return - represents a destination to which the controller servlet, <code>ActionServlet</code>, might be directed
+     *         to perform a RequestDispatcher.forward() or HttpServletResponse.sendRedirect() to, as a result of
      *         processing activities of an <code>Action</code> class
      */
-    public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response) {
+    public ActionForward execute( ActionMapping mapping,
+                                  ActionForm form,
+                                  HttpServletRequest request,
+                                  HttpServletResponse response ) {
         // get the session
         HttpSession session = request.getSession();
 
@@ -58,28 +56,31 @@ public class IntactStatisticsAction extends Action {
         FilterForm filterForm = (FilterForm) form;
 
         // get the date to search for
-        if (null != form) {
+        if ( null != form ) {
             // read start values from the form
             start = filterForm.getStart();
-            if (start != null) request.setAttribute("start", start);
+            if ( start != null ) {
+                request.setAttribute( "start", start );
+            }
             // read stop values from the form
             stop = filterForm.getStop();
-            if (stop != null) request.setAttribute("stop", stop);
+            if ( stop != null ) {
+                request.setAttribute( "stop", stop );
+            }
         }
 
         try {
             // recieve the viewbean for the specific
-            ViewBeanFactory chartFactory = new ViewBeanFactory(request.getContextPath());
-            intactBean = chartFactory.createViewBean(start, stop, session);
+            ViewBeanFactory chartFactory = new ViewBeanFactory( request.getContextPath() );
+            intactBean = chartFactory.createViewBean( start, stop, session );
 
-        }
-        catch (Exception e) {
+        } catch ( Exception e ) {
             // forward to an error page if something went wrong
-            return mapping.findForward("error");
+            return mapping.findForward( "error" );
         }
         // put the databean to the request and forward to the jsp
-        request.setAttribute("intactbean", intactBean);
-        return mapping.findForward(Constants.FORWARD_RESULT_PAGE);
-    }
 
+        request.setAttribute( "intactbean", intactBean );
+        return mapping.findForward( Constants.FORWARD_RESULT_PAGE );
+    }
 }
