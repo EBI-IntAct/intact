@@ -24,7 +24,7 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
      * As the maximum size of database objects is limited, the sequence is represented as
      * an array of strings of maximum length.
      */
-    private static int ourMaxSeqLength = 1000;
+    protected static int ourMaxSeqLength = 1000;
 
     //attributes
 
