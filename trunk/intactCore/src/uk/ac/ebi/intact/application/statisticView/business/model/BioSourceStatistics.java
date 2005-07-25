@@ -29,7 +29,6 @@ public class BioSourceStatistics implements Comparable {
     private int proteinNumber;
     private int ac;
 
-
     public String getShortlabel() {
         return shortlabel;
     }
@@ -80,8 +79,14 @@ public class BioSourceStatistics implements Comparable {
 
     public final int compareTo(Object o) {
         //  final Timestamp t = ( (BioSourceStatistics) o ).getTimestamp();
-        final Timestamp t = ((BioSourceStatistics) o).getTimestamp();
-        return timestamp.compareTo(t);
+
+        BioSourceStatistics bs = null;
+        if( o instanceof BioSourceStatistics ) {
+            bs = (BioSourceStatistics) o;
+        }
+
+        // sort the stats by decreasing interaction count
+        return bs.getBinaryInteractions() - binaryInteractions;
     }
 
     public String toString() {
