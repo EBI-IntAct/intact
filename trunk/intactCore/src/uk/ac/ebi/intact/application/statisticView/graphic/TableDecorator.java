@@ -9,7 +9,9 @@ import org.apache.taglibs.display.Decorator;
 import uk.ac.ebi.intact.application.statisticView.struts.view.DisplayStatisticsBean;
 
 /**
- * allow the Display tag library to customize the table view.
+ * Allow the Display tag library to customize the table view.
+ * 
+ * @see uk.ac.ebi.intact.application.statisticView.struts.view.DisplayStatisticsBean
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
@@ -24,6 +26,6 @@ public class TableDecorator extends Decorator {
      */
     public String getStatObject() {
         DisplayStatisticsBean bean = (DisplayStatisticsBean) this.getObject();
-        return "<a href=\"#"+ bean.getStatObject() +"\">" + bean.getStatObject() + "</a>";
+        return "<a href=\"#"+ bean.getStatObject() +"\" class=\"red_bold_small\">" + bean.getStatObject() + "</a>";
     }
 }
