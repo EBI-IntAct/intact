@@ -27,59 +27,70 @@ SET   DOC OFF
 
 DECLARE
 
-  cursor c_bin (b_taxid ia_biosource.taxid%TYPE)
+  -- given a biosource taxid, gives a count of binary interaction
+  cursor c_interaction (b_taxid ia_biosource.taxid%TYPE)
   IS
-          SELECT count(distinct(component1.interaction_ac)) AS binary_interactions
-          FROM ia_interactor i1, ia_component component1
-          WHERE 2 = (SELECT COUNT(*)
-                     FROM ia_component component2
-                     WHERE component1.interaction_ac = component2.interaction_ac) AND
-                i1.biosource_ac in (SELECT ac
-                                    FROM ia_biosource
-                                    WHERE taxid = b_taxid) AND
-                component1.interactor_ac = i1.ac ;
+          SELECT count( 1 ) AS cnt_interactions
+          FROM   ia_interactions i
+          WHERE  i.taxid = b_taxid ;
 
+
+   -- Return a count of protein having the given taxid and being used in at least one interaction
    cursor c_prot (b_taxid ia_biosource.taxid%TYPE)
    IS
-          SELECT count(distinct(i2.ac)) AS proteins
-          FROM ia_interactor i2
-          WHERE i2.biosource_ac in (SELECT ac
-                                    FROM ia_biosource
-                                    WHERE taxid = b_taxid) AND
-                i2.objclass ='uk.ac.ebi.intact.model.ProteinImpl' ;
+        SELECT count(distinct(I.ac)) as PROTEINS_WITH_INTERACTIONS
+        FROM ia_interactor I, ia_component C
+        WHERE I.objclass like '%Protein%' AND
+              C.interactor_ac = I.ac AND
+              I.biosource_ac IN ( SELECT ac
+                                  FROM ia_biosource
+                                  WHERE taxid = b_taxid );
 
+   cnt_component INTEGER;
+   cnt_interaction INTEGER;
    cnt_bin INTEGER;
    cnt_prot INTEGER;
+   cnt_total INTEGER;
 
 BEGIN
 
    dbms_output.enable ( 1000000 );
+   cnt_total := 0;
 
    -- select the biosources but only those that have no CellType or Tissue
    -- the work around here is to select from a pool of BioSource having the same taxid
    -- the one with the shortest shortlabel.
    FOR r in (SELECT DISTINCT taxid, shortlabel
              FROM ia_biosource b1
-             WHERE length(shortlabel) = (SELECT min(length(shortlabel))
+             WHERE length(shortlabel) = (SELECT min( length( shortlabel ) )
                                          FROM ia_biosource b2
                                          WHERE b1.taxid=b2.taxid)
              order by shortlabel)
    LOOP
-       dbms_output.put_line ( 'Processing taxid: ' || r.taxid );
 
-       OPEN c_bin (r.taxid);
-       FETCH c_bin INTO cnt_bin;
-       CLOSE c_bin;
+       OPEN c_interaction (r.taxid);
+       FETCH c_interaction INTO cnt_bin;
+       CLOSE c_interaction;
 
        OPEN c_prot (r.taxid);
        FETCH c_prot INTO cnt_prot;
        CLOSE c_prot;
 
-       dbms_output.put_line ( 'Inserting statement...' );
-       INSERT INTO ia_biosourcestatistics(ac, taxid, shortlabel, protein_number, binary_interactions)
-       VALUES (Intact_statistics_seq.nextval, r.taxid, r.shortlabel, cnt_bin, cnt_prot);
+       INSERT INTO ia_biosourcestatistics( ac, taxid, shortlabel, protein_number, binary_interactions )
+       VALUES ( Intact_statistics_seq.nextval, r.taxid, r.shortlabel, cnt_prot, cnt_bin );
+
+       if ( cnt_bin > 50 ) THEN
+
+            dbms_output.put_line ( r.shortlabel || '   ' || 'taxid(' || r.taxid || ')' || '  I' || '(' || cnt_bin || ')' || '  P' || '(' || cnt_prot || ')'  );
+
+       END IF;
+
+       cnt_total := cnt_total + cnt_bin;
 
    END LOOP;
+
+   dbms_output.put_line ( '... (we only displayed biosources having more than 50 interactions)' );
+   dbms_output.put_line ( 'Total Interaction Count: ' || cnt_total );
 
 END;
 /
