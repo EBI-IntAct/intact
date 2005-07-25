@@ -1,6 +1,6 @@
 $Id$
 **********************************************************************
-README for Search (intactCore/application/search2)
+README for Search (intactCore/application/search3)
 **********************************************************************
 
 DIRECTORIES:
@@ -26,7 +26,7 @@ DATABASE:
         this view you have to run /sql/oracle/search.sql.
 
     Postgres:
-        We don't find an fancy solution for postgres at the moment. We are using simply
+        We haven't found an fancy solution for postgres at the moment. We are using simply
         a table. In that case the data resource for search3 is static. you have to update
         manually the table. for creating an updating run /sql/postgres/search.sql.
         (ex : psql intactdb -U intactuser -f ./sql/postgres/search.sql)
@@ -68,4 +68,4 @@ NOTES
         WEB-INF/classes - search class files.
 
 COMMENTS
-    Send any comments/feedback to clewing@ebi.ac.uk, smudali@ebi.ac.uk
+    Send any comments/feedback to skerrien@ebi.ac.uk
