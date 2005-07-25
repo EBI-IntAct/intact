@@ -153,45 +153,19 @@ public class StatisticHelper {
     }
 
     public JFreeChart getBioSourceChart(String date) throws IntactException {
-        // we can use criteria here
-        final SimpleDateFormat dateFormater = new SimpleDateFormat("dd-MMM-yyyy");
+
+        // Collect the data
         IntactHelper intactHelper = new IntactHelper();
-        Collection result = intactHelper.search(BioSourceStatistics.class, "ac", null);
+        Collection result = intactHelper.search( BioSourceStatistics.class, "ac", null );
         intactHelper.closeStore();
-        long dateNumber = 0;
 
-        if (date == null || date == "") {
-            dateNumber = (this.getLastBioSourceTimestamp()).getTime();
-        }
-        else {
-            try {
-                dateNumber = dateFormater.parse(date).getTime();
-            }
-            catch (ParseException e) {
-                throw new IntactException("unable to parse date", e);
-            }
-        }
-
-        final List filteredIntactStatistics = new ArrayList();
-
-        for (Iterator iterator = result.iterator(); iterator.hasNext();) {
-            final BioSourceStatistics intactStatistics = (BioSourceStatistics) iterator.next();
-            final long timestamp = intactStatistics.getTimestamp().getTime();
-
-            if (timestamp != dateNumber) {
-                filteredIntactStatistics.add(intactStatistics);
-            }
-
-        } // for
-
-        List toSort = new ArrayList(filteredIntactStatistics);
+        // sort the items
+        List toSort = new ArrayList( result );
         Collections.sort(toSort);
 
         ChartBuilder chartBuilder = new ChartBuilder();
         JFreeChart chart = chartBuilder.binaryInteractionsPerOrganism(toSort);
         return chart;
-
-
     }
 
     public JFreeChart getEvidenceChart(String start) throws IntactException {
