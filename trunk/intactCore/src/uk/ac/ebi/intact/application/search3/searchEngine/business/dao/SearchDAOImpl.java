@@ -4,7 +4,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.IterableMap;
 import org.apache.commons.collections.MapIterator;
 import org.apache.commons.collections.map.HashedMap;
-import org.apache.ojb.broker.accesslayer.LookupException;
 import uk.ac.ebi.intact.application.search3.business.Constants;
 import uk.ac.ebi.intact.application.search3.searchEngine.SearchEngineConstants;
 import uk.ac.ebi.intact.application.search3.searchEngine.lucene.model.SearchObject;
@@ -14,7 +13,6 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -34,21 +32,7 @@ public class SearchDAOImpl implements SearchDAO {
     private static Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
 
     public SearchDAOImpl( IntactHelper helper ) {
-        try {
-            this.soProvider = new SqlSearchObjectProvider( helper );
-
-            // print out the database information
-            try {
-                System.out.println( "Helper created (User: " + helper.getDbUserName() + " " +
-                                    "Database: " + helper.getDbName() + ")" );
-            } catch ( LookupException e ) {
-                throw  new IntactException( e.toString() );
-            } catch ( SQLException e ) {
-                throw  new IntactException( e.toString() );
-            }
-        } catch ( IntactException e ) {
-            e.printStackTrace();
-        }
+        this.soProvider = new SqlSearchObjectProvider( helper );
     }
 
     /**
@@ -150,7 +134,6 @@ public class SearchDAOImpl implements SearchDAO {
             } else {
                 throw new IntactException( "that class(" + objclass + ") is not part of the IntAct model" );
             }
-
         }
 
         // In case the result-collection is not empty, add it to the Map.
@@ -221,5 +204,4 @@ public class SearchDAOImpl implements SearchDAO {
     public SearchObject getSearchObject( String ac, String objClass ) throws IntactException {
         return soProvider.getSearchObject( ac, objClass );
     }
-
 }
