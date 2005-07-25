@@ -19,25 +19,21 @@ import java.util.Collection;
  */
 public class InteractorProxy  extends AnnotatedObjectProxy implements Interactor {
 
-    public InteractorProxy()
-    {
+    public InteractorProxy() {
     }
 
     /**
      * @param uniqueId org.apache.ojb.broker.Identity
      */
-    public InteractorProxy(PBKey key, Identity uniqueId)
-    {
+    public InteractorProxy(PBKey key, Identity uniqueId ) {
         super(key, uniqueId);
     }
 
-    public InteractorProxy(InvocationHandler handler)
-    {
+    public InteractorProxy(InvocationHandler handler ) {
         super(handler);
     }
 
-    private Interactor realSubject()
-    {
+    private Interactor realSubject() {
         try
         {
             return (Interactor) getRealSubject();
