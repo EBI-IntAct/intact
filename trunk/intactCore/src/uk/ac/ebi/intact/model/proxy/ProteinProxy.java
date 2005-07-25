@@ -6,14 +6,11 @@ package uk.ac.ebi.intact.model.proxy;
 
 import org.apache.ojb.broker.Identity;
 import org.apache.ojb.broker.PBKey;
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvProteinForm;
 import uk.ac.ebi.intact.model.Protein;
 
 import java.lang.reflect.InvocationHandler;
 import java.util.Collection;
-import java.util.List;
 
 /**
 *
@@ -21,27 +18,23 @@ import java.util.List;
 * @author Samuel Kerrien (skerrien@ebi.ac.uk)
 * @version $Id$
 */
-public class ProteinProxy extends InteractorProxy implements Protein {
+public class ProteinProxy extends PolymerProxy implements Protein {
 
-   public ProteinProxy()
-   {
+   public ProteinProxy() {
    }
 
    /**
     * @param uniqueId org.apache.ojb.broker.Identity
     */
-   public ProteinProxy(PBKey key, Identity uniqueId)
-   {
+   public ProteinProxy(PBKey key, Identity uniqueId ) {
        super(key, uniqueId);
    }
 
-   public ProteinProxy(InvocationHandler handler)
-   {
+   public ProteinProxy(InvocationHandler handler ) {
        super(handler);
    }
 
-   private Protein realSubject()
-   {
+   private Protein realSubject() {
        try
        {
            return (Protein) getRealSubject();
@@ -50,33 +43,6 @@ public class ProteinProxy extends InteractorProxy implements Protein {
        {
            return null;
        }
-   }
-
-   /**
-    * Implements Protein's methods
-    */
-   public String getSequence () {
-       return realSubject().getSequence();
-   }
-
-   public void setSequence ( IntactHelper helper, String aSequence ) throws IntactException {
-       realSubject().setSequence( helper, aSequence );
-   }
-
-   public List setSequence ( String sequence ){
-       return realSubject().setSequence( sequence );
-   }
-
-   public String getCrc64 () {
-       return realSubject().getCrc64();
-   }
-
-   public void setCrc64 ( String crc64 ) {
-       realSubject().setCrc64( crc64 );
-   }
-
-   public List getSequenceChunks() {
-       return realSubject().getSequenceChunks();
    }
 
    public Protein getFormOf () {
