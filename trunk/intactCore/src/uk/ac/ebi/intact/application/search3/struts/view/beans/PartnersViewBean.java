@@ -358,19 +358,21 @@ public class PartnersViewBean extends AbstractViewBean {
 
             // this protein got no partner in the view, just grab all interactions
             // and that's it
-            interactions = ProteinUtils.getNnaryInteractions(protein);
+            interactions = ProteinUtils.getNnaryInteractions( protein );
             //TODO unefficent, find better way for that
 
-            interactionPartners = new HashSet(interactions.size());
+            interactionPartners = new HashSet( interactions.size() );
             if (selfInteraction) {
+
                 interactionPartners.add(new PartnersViewBean(protein, protein, getHelpLink(), searchURL,
                                                              getContextPath()));
-            }
-            else {
+            } else {
+
                 boolean hasNoSelfInteraction = ProteinUtils.getSelfInteractions(protein).isEmpty();
 
                 for (Iterator iterator = interactions.iterator(); iterator.hasNext();) {
                     Interaction anInteraction = (Interaction) iterator.next();
+
                     Collection someComponents = anInteraction.getComponents();
 
                     for (Iterator iterator1 = someComponents.iterator(); iterator1.hasNext();) {
@@ -379,12 +381,26 @@ public class PartnersViewBean extends AbstractViewBean {
 
                         //TODO this can write much clearer and easier
                         if (hasNoSelfInteraction) {
-                            if (!protein.equals(anInteractor)) {
-                                interactionPartners.add(new PartnersViewBean((Protein) anInteractor, protein, getHelpLink(), searchURL,
-                                                                             getContextPath()));
+                            if ( ! protein.equals( anInteractor ) ) {
+                                try {
+                                    interactionPartners.add(new PartnersViewBean((Protein) anInteractor, protein, getHelpLink(), searchURL,
+                                                                                 getContextPath()));
+                                } catch ( ClassCastException e ) {
+
+                                    // Only here for debugging purpose ...
+                                    System.out.println( "["+ anInteractor.getShortLabel() +"] Trying to cast " + anInteractor.getClass().getName() + " to Protein." );
+
+                                    for ( int i = 0; i < anInteractor.getClass().getInterfaces().length; i++ ) {
+                                        Class clazz = (Class) anInteractor.getClass().getInterfaces()[ i ];
+                                        System.out.println( "Interface " + i + ": " + clazz.getName() );
+                                    }
+
+                                    e.printStackTrace( );
+
+                                    throw e;
+                                }
                             }
-                        }
-                        else {
+                        } else {
                             // we got a self interaction here
                             interactionPartners.add(new PartnersViewBean((Protein) anInteractor, protein, getHelpLink(), searchURL,
                                                                          getContextPath()));
@@ -392,9 +408,7 @@ public class PartnersViewBean extends AbstractViewBean {
                     }
                 }
             }
-
-        }
-        else {
+        } else {
             // we should never arrive here (look assert)
         }
 
