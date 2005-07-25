@@ -25,7 +25,10 @@
                  uk.ac.ebi.intact.application.search3.business.IntactServiceIF,
                  uk.ac.ebi.intact.application.search3.struts.view.beans.ProteinViewBean,
                  uk.ac.ebi.intact.model.Xref,
-                 uk.ac.ebi.intact.application.search3.struts.util.SearchConstants"%>
+                 uk.ac.ebi.intact.application.search3.struts.util.SearchConstants,
+                 uk.ac.ebi.intact.model.Protein,
+                 uk.ac.ebi.intact.model.Component,
+                 uk.ac.ebi.intact.model.Interaction"%>
 
 <!-- Standard Java imports -->
 <%@ page import="java.util.*"%>
@@ -58,12 +61,13 @@
 <%-- The javascript for the button bars.... --%>
 <%@ include file="jscript.html" %>
 
-    <span class="middletext">Search Results for <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA)%> <br></span
-     <br/>
+<%--    <span class="middletext">Search Results for <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA)%> <br></span>--%>
 
-<span class="smalltext">(short labels of search criteria matches are
+<span class="smalltext">Search Results for <%= session.getAttribute(SearchConstants.SEARCH_CRITERIA) %> </span>
+<br/>
+<span class="verysmalltext">(short labels of search criteria matches are
     <span style="color: rgb(255, 0, 0);">highlighted</span>
-</span><span class="smalltext">)<br></span></p>
+</span><span class="verysmalltext">)<br></span></p>
 <!--
 The (repaired) HTML here is more or less what was specified in the Intact webpage
 mockups, June 2004
@@ -142,12 +146,36 @@ mockups, June 2004
             <tr bgcolor="white">
                 <td class="headerdarkmid">Gene name(s)<br></td>
                <td class="lefttop" rowspan="1" colspan="4">
-                    <% Collection somePartnerGeneNames = bean.getGeneNames();
-                       for (Iterator iterator =  somePartnerGeneNames.iterator(); iterator.hasNext();) {
-                           String aGeneName =  (String) iterator.next(); %>
-                            <%=aGeneName%><br>
-                  <%   } %></td>
+                    <%
+                        Collection somePartnerGeneNames = bean.getGeneNames();
+
+                        for (Iterator iterator =  somePartnerGeneNames.iterator(); iterator.hasNext();) {
+                            String aGeneName =  (String) iterator.next();
+                            out.write( aGeneName );
+                            if( iterator.hasNext() ) {
+                                out.write( ", " );
+                            }
+                        }
+                    %>
+               </td>
             </tr>
+
+            <!-- Row 5: gene names row -->
+            <tr bgcolor="white">
+                <td class="headerdarkmid">Interaction(s)<br></td>
+               <td class="lefttop" rowspan="1" colspan="4">
+                    <%
+                        int count = bean.getInteractionsCount();
+                        out.write( "" + count );
+
+                        // Display the link only if there is data to be displayed.
+                        if( count > 0 ) {
+                            out.write( "&nbsp;(<a href=\""+ bean.getBinaryViewUrl() +"\">see all interaction partners</a>)");
+                        }
+                    %>
+               </td>
+            </tr>
+
 
             <!-- Xrefs rows (xN)... -->
 
