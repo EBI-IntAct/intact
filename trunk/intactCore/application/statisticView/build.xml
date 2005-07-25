@@ -187,6 +187,7 @@
         <copy todir="${dest.dir}/config">
             <fileset dir="${config.dir}">
                 <include name="repository_user.xml"/> <!-- Specific mapping for statisticView -->
+                <include name="biosourceFilter.txt"/>
             </fileset>
         </copy>
 
@@ -199,7 +200,6 @@
 
         <!-- the OJB and log4J properties files should be at the top level in 'dest' -->
         <copy todir="${dest.dir}" file="${root.config.dir}/OJB.properties"/>
-        <!--        <copy todir="${dest.dir}" file="${root.config.dir}/log4j.properties"/>-->
     </target>
 
     <!-- =================================================================== -->
