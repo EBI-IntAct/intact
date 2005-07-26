@@ -588,7 +588,8 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 <!-- descriptor for NucleicAcid
 -->
 <class-descriptor
-    class="uk.ac.ebi.intact.model.NucleicAcidImpl" table="ia_Interactor" proxy="dynamic">
+    class="uk.ac.ebi.intact.model.NucleicAcidImpl" table="ia_Interactor"
+    proxy="uk.ac.ebi.intact.model.proxy.NucleicAcidProxy">
     <!-- ***************** fields from superclasses ********************* -->
     <!-- fields from BasicObject... -->
     <field-descriptor
