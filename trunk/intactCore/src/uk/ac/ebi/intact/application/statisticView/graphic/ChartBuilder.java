@@ -20,6 +20,8 @@ import uk.ac.ebi.intact.application.statisticView.business.util.IdentificationCo
 import uk.ac.ebi.intact.business.IntactException;
 
 import java.util.*;
+import java.util.List;
+import java.awt.*;
 
 /**
  * @author Michael Kleen
@@ -65,9 +67,9 @@ public class ChartBuilder {
         }
         //  create the chart
         final XYDataset aXYDataset = new XYSeriesCollection(aDataSeries);
-        final JFreeChart proteinChart = ChartFactory.getXYChart(aXYDataset, EXPERIMENT_CHART_TITLE, "", "");
-        return proteinChart;
-
+        final JFreeChart chart = ChartFactory.getXYChart(aXYDataset, EXPERIMENT_CHART_TITLE, "", "");
+        chart.setAntiAlias( true );
+        return chart;
     }
 
     /**
@@ -91,9 +93,9 @@ public class ChartBuilder {
         }
         //  create the chart
         final XYDataset aXYDataset = new XYSeriesCollection(aDataSeries);
-        final JFreeChart proteinChart = ChartFactory.getXYChart(aXYDataset, PROTEIN_CHART_TITLE, "", "");
-        return proteinChart;
-
+        final JFreeChart chart = ChartFactory.getXYChart(aXYDataset, PROTEIN_CHART_TITLE, "", "");
+        chart.setAntiAlias( true );
+        return chart;
     }
 
     /**
@@ -117,9 +119,9 @@ public class ChartBuilder {
         }
         //  create the chart
         final XYDataset aXYDataset = new XYSeriesCollection(aDataSeries);
-        final JFreeChart proteinChart = ChartFactory.getXYChart(aXYDataset, INTERACTION_CHART_TITLE, "", "");
-        return proteinChart;
-
+        final JFreeChart chart = ChartFactory.getXYChart(aXYDataset, INTERACTION_CHART_TITLE, "", "");
+        chart.setAntiAlias( true );
+        return chart;
     }
 
     /**
@@ -144,8 +146,9 @@ public class ChartBuilder {
         }
         //  create the chart
         final XYDataset aXYDataset = new XYSeriesCollection(aDataSeries);
-        final JFreeChart proteinChart = ChartFactory.getXYChart(aXYDataset, BIN_INTERACTION_CHART_TITLE, "", "");
-        return proteinChart;
+        final JFreeChart chart = ChartFactory.getXYChart(aXYDataset, BIN_INTERACTION_CHART_TITLE, "", "");
+        chart.setAntiAlias( true );
+        return chart;
     }
 
     /**
@@ -171,27 +174,28 @@ public class ChartBuilder {
         }
         //  create the chart
         final XYDataset aXYDataset = new XYSeriesCollection(aDataSeries);
-        final JFreeChart proteinChart = ChartFactory.getXYChart(aXYDataset, CV_CHART_TITLE, "", "");
-        return proteinChart;
+        final JFreeChart chart = ChartFactory.getXYChart(aXYDataset, CV_CHART_TITLE, "", "");
+        chart.setAntiAlias( true );
+        return chart;
     }
 
+    /**
+     * List of taxid to show in the biosource stat.
+     */
     private static Set taxidFilter = new HashSet();
 
     static {
-
+        // todo load that from a properties file.
         taxidFilter.add( "9606" );
         taxidFilter.add( "10090" );
         taxidFilter.add( "10116" );
         taxidFilter.add( "6239" );
         taxidFilter.add( "7227" );
-        taxidFilter.add( "3792" );
+        taxidFilter.add( "3702" );
         taxidFilter.add( "4932" );
         taxidFilter.add( "4896" );
         taxidFilter.add( "562" );
-
-        // todo load that from a properties file.
     }
-
 
     /**
      * Creates a barchart graph that shows the count of binary interactions and proteins for a selected set of
@@ -235,6 +239,7 @@ public class ChartBuilder {
 
         // create the chart
         final JFreeChart chart = ChartFactory.getBarChart(dataSet, PER_ORGANISM_CHART_TITLE, "", "", true);
+        chart.setAntiAlias( true );
         return chart;
     }
 
@@ -271,6 +276,13 @@ public class ChartBuilder {
         dataSet.setValue("other methods", rest);
         // create the chart
         final JFreeChart chart = ChartFactory.getPieChart(dataSet, IDENTIFICATION_CHART_TITLE);
+        chart.setAntiAlias( true );
+
+        // Set the default colors for the chart
+        ((org.jfree.chart.plot.PiePlot) chart.getPlot()).setSectionPaint(0, Color.red);
+        ((org.jfree.chart.plot.PiePlot) chart.getPlot()).setSectionPaint(1, Color.blue);
+        ((org.jfree.chart.plot.PiePlot) chart.getPlot()).setSectionPaint(2, Color.green);
+
         return chart;
 
     }
@@ -297,6 +309,7 @@ public class ChartBuilder {
         }
         // create the chart
         final JFreeChart chart = ChartFactory.getBarChart(dataSet, EVIDENCE_PER_EXPERIMENT_CHART_TITLE, "Experiments", "Binary interactions", false);
+        chart.setAntiAlias( true );
         return chart;
     }
 }
