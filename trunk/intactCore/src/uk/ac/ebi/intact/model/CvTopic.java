@@ -33,7 +33,7 @@ public class CvTopic extends CvObject implements Editable {
     public static final String NO_EXPORT = "no-export";
     public static final String ON_HOLD = "on-hold";
     public static final String ACCEPTED = "accepted";
-    public static final String REJECTED = "rejected";
+    public static final String TO_BE_REVIEWED = "to-be-reviewed";
     public static final String URL = "url";
     
     /**
