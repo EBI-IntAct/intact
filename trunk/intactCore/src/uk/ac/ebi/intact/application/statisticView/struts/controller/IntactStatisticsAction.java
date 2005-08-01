@@ -9,14 +9,17 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.statisticView.business.util.Constants;
 import uk.ac.ebi.intact.application.statisticView.struts.view.FilterForm;
 import uk.ac.ebi.intact.application.statisticView.struts.view.IntactStatisticsBean;
 import uk.ac.ebi.intact.application.statisticView.struts.view.ViewBeanFactory;
+import uk.ac.ebi.intact.business.IntactException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 /**
  * User: Michael Kleen mkleen@ebi.ac.uk Date: Mar 17, 2005 Time: 1:47:53 PM
@@ -27,6 +30,8 @@ import javax.servlet.http.HttpSession;
  * is expired the .png file will automatically deleted.  *
  */
 public class IntactStatisticsAction extends Action {
+
+    private static Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
 
     /**
      * Process the specified HTTP request, and create the corresponding HTTP response (or forward to another web
@@ -60,26 +65,33 @@ public class IntactStatisticsAction extends Action {
             // read start values from the form
             start = filterForm.getStart();
             if ( start != null ) {
+                logger.info( "START: " + start );
                 request.setAttribute( "start", start );
             }
             // read stop values from the form
             stop = filterForm.getStop();
             if ( stop != null ) {
+                logger.info( "STOP: " + stop );
                 request.setAttribute( "stop", stop );
             }
         }
 
         try {
-            // recieve the viewbean for the specific
+            // receive the viewbean for the specific
             ViewBeanFactory chartFactory = new ViewBeanFactory( request.getContextPath() );
             intactBean = chartFactory.createViewBean( start, stop, session );
 
-        } catch ( Exception e ) {
+        } catch ( IntactException e ) {
             // forward to an error page if something went wrong
+            logger.error( "Error when loading the statistics data.", e);
+            return mapping.findForward( "error" );
+        } catch(IOException ioe) {
+            // forward to an error page if something went wrong
+            logger.error( "Error when savingthe charts on disk.", ioe);
             return mapping.findForward( "error" );
         }
-        // put the databean to the request and forward to the jsp
 
+        // put the databean to the request and forward to the jsp
         request.setAttribute( "intactbean", intactBean );
         return mapping.findForward( Constants.FORWARD_RESULT_PAGE );
     }
