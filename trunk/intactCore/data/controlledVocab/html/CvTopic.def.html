@@ -38,8 +38,8 @@ same receptor or alters the state of an upstream molecule to inhibit a downstrea
 <tr><td>definition:<td> Description of author-confidence mappings in the experiment. If more than one system of confidence mappings are used by the author, these will be described here.
 <tr><td>definition_reference:<td> PMID:INTACT
 <tr><td colspan=2><hr><tr><tr><td>term:<td> contact-comment: Free text notes on how to contact the author organisation which has produced the data.
-<tr><td>definition:<td> The original address given in the publication was john@doe.com. This address is now invalid and has been replaced by the one given in contact-email. May also be used to give a postal address, particulalry if no valid e-mail address can be found.
-<tr><td>example:<td> John Doe, Wellcome Trust Genome Campus, Hinxton, Cambs, UK
+<tr><td>definition:<td> The original address given in the publication was john@doe.com. This address is now invalid and has been replaced by the one given in contact-email. May also be used to give a postal address but this is not mandatory..
+<tr><td>no-export:<td> Will be excluded from export to the public.
 <tr><td>definition_reference:<td> PMID:INTACT
 <tr><td colspan=2><hr><tr><tr><td>term:<td> contact-email: E-mail address to contact the author/organisation which has produced the data
 <tr><td>definition:<td> Valid e-mail address to contact the data producer. Usually the contact given in the publication, unless this has been replaced with a more up to date one. Must be a valid e-mail only, no comments, postal address etc.
@@ -79,8 +79,8 @@ same receptor or alters the state of an upstream molecule to inhibit a downstrea
 <tr><td colspan=2><hr><tr><tr><td>term:<td> kinetics: Data related to kinetics of enzymes.
 <tr><td>definition:<td> Data with the rates of change in the concentration of reactants in a enzymatic reaction should be entered here.
 <tr><td>definition_reference:<td> PMID:INTACT
-<tr><td colspan=2><hr><tr><tr><td>term:<td> negative: The interactions described in this experiment are not observed under these experimental conditions.
-<tr><td>definition:<td> It was demonstrated in this paper that these interactions do not occur under the experimental conditions described.
+<tr><td colspan=2><hr><tr><tr><td>term:<td> negative: One or more of the  interactions described in this experiment are not observed under these experimental conditions.
+<tr><td>definition:<td> It was demonstrated in this paper that one or more of these interactions do not occur under the experimental conditions described. The annotation topic Negative will be added at both the Experiment and Interaction level to those Interactions which have been specifically shown not to occur.
 <tr><td>definition_reference:<td> PMID:INTACT
 <tr><td colspan=2><hr><tr><tr><td>term:<td> no-export: Do not export annotation which has a topic annotated with this topic.
 <tr><td>definition:<td> Some annotation topics are not for export to the public, e.g. remark-internal. Annotations with these topics are excluded from export to the public by adding this annotation topic "no-export" to the corresponding topic.
