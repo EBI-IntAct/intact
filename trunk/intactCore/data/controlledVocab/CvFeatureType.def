@@ -1,74 +1,278 @@
-term: 3-methylthio-asparti: L-beta-methylthioaspartic acid
-id: MI:0161
+term: 1-phosphohistidine: 1'-phospho-histidine
+id: MI:0174
 definition: residue modification
 definition_reference: PMID:11125103
-definition_reference: RESID:AA0232
+definition_reference: RESID:AA0035
 
-term: 4-hydroxy-l-proline: 4-hydroxy-L-proline
+term: 131i radiolabelled
+id: MI:0234
+definition: Molecule labelled with 131 radio isotope of iodine atoms
+definition_reference: PMID:14755292
+
+term: 13c labelled
+id: MI:0379
+definition: Molecules labelled with isotope 13 of carbon atoms.
+definition_reference: PMID:14577292
+
+term: 14c radiolabelled
+id: MI:0235
+definition: Molecule labelled with the radio isotope 14 of carbon atoms
+definition_reference: PMID:14755292
+
+term: 15n labelled
+id: MI:0380
+definition: Molecules labelled with isotope 15 of nytrogen atoms.
+definition_reference: PMID:14577292
+
+term: 2h labelled
+id: MI:0381
+definition: Molecules labelled with isotope 2 of hydrogen atoms.
+definition_reference: PMID:14577292
+
+term: 3-phosphohistidine: 3'-phospho-histidine
+id: MI:0175
+definition: residue modification
+definition_reference: PMID:11125103
+definition_reference: RESID:AA0036
+
+term: 32p radiolabelled
+id: MI:0236
+definition: Molecule labelled with the radio isotope 32 of phosphorus atoms.
+definition_reference: PMID:14755292
+
+term: 33p radiolabelled
+id: MI:0237
+definition: Molecule labelled with the radio isotope 33 of phosphorus atoms.
+definition_reference: PMID:14755292
+
+term: 35s radiolabelled
+id: MI:0371
+definition: Molecule labelled with 35 radio isotope of sulfur. Proteins are often metabolically labelled, usually be growth in 35S labelled culture medium.
+definition_reference: PMID:14755292
+
+term: 3h radiolabelled
+id: MI:0238
+definition: Molecules labelled with isotope 3 of hydrogen atoms.
+definition_reference: PMID:14755292
+
+term: 4hydroxyproline: 4-hydroxy-proline
 id: MI:0149
 definition: residue modification
 definition_reference: PMID:11125103
 definition_reference: RESID:AA0030
 
-term: 5-methyl-l-glutamate: L-glutamic acid 5-methyl ester
-id: MI:0163
-definition: residue modification
-definition_reference: PMID:11125103
-definition_reference: RESID:AA0072
-
-term: acetylalanine: N-acetyl-L-alanine
+term: acetylalanine: n-acetyl-alanine
 id: MI:0122
 definition: residue modification
 definition_reference: PMID:11125103
 definition_reference: RESID:AA0041
 
-term: acetylaspartic acid: N-acetyl-L-aspartic acid
+term: acetylarginine: n2-acetyl-arginine
+id: MI:0123
+definition: residue modification
+definition_reference: PMID:11125103
+definition_reference: RESID:AA0354
+
+term: acetylasparagine: n-acetyl-asparagine
+id: MI:0124
+definition: residue modification
+definition_reference: PMID:11125103
+
+term: acetylaspartate: n-acetyl-aspartic acid
 id: MI:0125
 definition: residue modification
 definition_reference: PMID:11125103
 definition_reference: RESID:AA0042
 
-term: acetylation
+term: acetylated residue
 id: MI:0121
 definition: residue modification
 definition_reference: PMID:11125103
 
-term: acetylglutamic acid: N-acetyl-L-glutamic acid
+term: acetylcysteine: n-acetyl-cysteine
+id: MI:0126
+definition: residue modification
+definition_reference: PMID:11125103
+definition_reference: RESID:AA0043
+
+term: acetylglutamate: n-acetyl-glutamic acid
 id: MI:0128
 definition: residue modification
 definition_reference: PMID:11125103
 definition_reference: RESID:AA0044
 
-term: acetylglutamine: N-acetyl-L-glutamine
+term: acetylglutamine: n-acetyl-glutamine
 id: MI:0127
 definition: residue modification
 definition_reference: PMID:11125103
 definition_reference: RESID:AA0045
 
-term: acetylisoleucine: N-acetyl-L-isoleucine
+term: acetylglycine: n-acetylglycine
+id: MI:0129
+definition: residue modification
+definition_reference: PMID:11125103
+definition_reference: RESID:AA0046
+
+term: acetylhistidine: n-acetyl-histidine
+id: MI:0130
+definition: residue modification
+definition_reference: PMID:11125103
+
+term: acetylisoleucine: n-acetyl-isoleucine
 id: MI:0131
 definition: residue modification
 definition_reference: PMID:11125103
 definition_reference: RESID:AA0047
 
-term: acetylproline: N-acetyl-L-proline
+term: acetylleucine: n-acetyl-leucine
+id: MI:0132
+definition: residue modification
+definition_reference: PMID:11125103
+
+term: acetyllysine: n-acetyl-lysine
+id: MI:0526
+definition: residue modification
+definition_reference: RESID:AA0048 , AA0055
+
+term: acetylmethionine: n-acetyl-methionine
+id: MI:0135
+definition: residue modification
+definition_reference: PMID:11125103
+definition_reference: RESID:AA0049
+
+term: acetylphenylalanine: n-acetyl-phenylalanine
+id: MI:0136
+definition: residue modification
+definition_reference: PMID:11125103
+
+term: acetylproline: n-acetyl-proline
 id: MI:0137
 definition: residue modification
 definition_reference: PMID:11125103
 definition_reference: RESID:AA0050
 
-term: alaninamide: L-alanine amide
+term: acetylserine: n-acetyl-serine
+id: MI:0138
+definition: residue modification
+definition_reference: PMID:11125103
+definition_reference: RESID:AA0051
+
+term: acetylthreonine: n-acetyl-threonine
+id: MI:0139
+definition: residue modification
+definition_reference: PMID:11125103
+definition_reference: RESID:AA0052
+
+term: acetyltryptophan: n-acetyl-tryptophan
+id: MI:0140
+definition: residue modification
+definition_reference: PMID:11125103
+
+term: acetyltyrosine: n-acetyl-tyrosine
+id: MI:0141
+definition: residue modification
+definition_reference: PMID:11125103
+definition_reference: RESID:AA0053
+
+term: acetylvaline: n-acetyl-valine
+id: MI:0142
+definition: residue modification
+definition_reference: PMID:11125103
+definition_reference: RESID:AA0054
+
+term: adp-ribosylarginine: omega-n-(adp-ribosyl)-arginine
+id: MI:0528
+definition: residue modification
+definition_reference: RESID:AA0168
+
+term: adp-ribosylated: adp ribosylated residue
+id: MI:0527
+definition: residue modification
+definition_reference: PMID:14755292
+
+term: adp-ribosylcysteine: s-(adp-ribosyl)-cysteine
+id: MI:0529
+definition: residue modification
+definition_reference: RESID:AA0169
+
+term: adp-ribosylglutamate: glutamyl-5-poly(adp-ribose)
+id: MI:0530
+definition: residue modification
+definition_reference: RESID:AA0295
+
+term: adp-ribosylserine: o-(adp-ribosyl)-serine
+id: MI:0531
+definition: residue modification
+definition_reference: RESID:AA0237
+
+term: adpribosylasparagine: n4-(adp-ribosyl)-asparagine
+id: MI:0532
+definition: residue modification
+definition_reference: RESID:AA0231
+
+term: alanineamide: alanine amide
 id: MI:0144
 definition: residue modification
 definition_reference: PMID:11125103
+definition_reference: PMID:14755292
 definition_reference: RESID:AA0081
 
-term: amidation
+term: alexa 350 labelled
+id: MI:0385
+definition: Alexa fluorescent dye analogue to AMCA (7-amino-4-methylcoumarin-3-acetic acid) with an approximate excitation wavelength maximum of 350 nm.
+definition_reference: PMID:10449539
+
+term: alexa 430 labelled
+id: MI:0386
+definition: Alexa fluorescent dye analogue to Lucifer Yellow  with an approximate excitation wavelength maximum of 430 nm.
+definition_reference: PMID:10449539
+
+term: alexa 488 labelled
+id: MI:0387
+definition: Alexa fluorescent dye analogue to Oregon Green 488  with an approximate excitation wavelength maximum of 488 nm.
+definition_reference: PMID:10449539
+
+term: alexa 532 labelled
+id: MI:0388
+definition: Alexa fluorescent dye analogue to Rhodamine 6G  with an approximate excitation wavelength maximum of 532nm.
+definition_reference: PMID:10449539
+
+term: alexa 546 labelled
+id: MI:0389
+definition: Alexa fluorescent dye analogue to Cy3  with an approximate excitation wavelength maximum of 546nm.
+definition_reference: PMID:10449539
+
+term: alexa 568 labelled
+id: MI:0390
+definition: Alexa fluorescent dye analogue to Rhodamine Red-X  with an approximate excitation wavelength maximum of 568nm.
+definition_reference: PMID:10449539
+
+term: alexa 594 labelled
+id: MI:0391
+definition: Alexa fluorescent dye analogue to Texas Red-X  with an approximate excitation wavelength maximum of 594nm.
+definition_reference: PMID:10449539
+
+term: alexa labelled
+id: MI:0384
+definition: All Alexa dyes are fluorescent iodoacetamide dyes that can be conjugated with the primary amines of biomolecules. All Alexa dyes and their conjugates are more fluorescent and more photostable than the commonly used dyes. The numbers in the Alexa names indicate the approximate excitation wavelength maximum in nm).
+definition_reference: PMID:10449539
+
+term: alk phosphatase tag: alkaline phosphatase tagged
+id: MI:0366
+definition: Protein is fused to alkaline phosphatase, and the measure of this enzyme activity can be taken as indicative of presence of protein
+definition_reference: PMID:10935637
+
+term: alkylated cysteine
+id: MI:0549
+definition: Artificial residue modification enabling studies of cysteine binding status.
+definition_reference: PMID:15325307
+
+term: amidated residue
 id: MI:0143
 definition: residue modification
 definition_reference: PMID:11125103
 
-term: argininamide: L-arginine amide
+term: arginineamide: arginine amide
 id: MI:0145
 definition: residue modification
 definition_reference: PMID:11125103
@@ -77,316 +281,433 @@ definition_reference: RESID:AA0082
 term: binding site
 id: MI:0117
 definition: A sequence range within a protein identified as involved in an interaction.
-definition_reference: PMID:INTACT
+definition_reference: PMID:14755292
 
-term: dimethyl-l-arginine: omega-N-dimethyl-L-arginine
+term: biotin tagged
+id: MI:0239
+definition: Biotin, a 244 Dalton vitamin found in tissue and blood, binds with high affinity to avidin and  streptavidin protein. Since biotin is a relatively small molecule, it can be conjugated to many proteins or nucleic acids without significantly altering their biological activity. Biotinylation reagents are available for targeting a variety of specific functional groups, including primary amines, sulfhydryls, carboxyls and carbohydrates that lead to nucleotides or amino acid biotinilation. \n
+definition_reference: PMID:14755292
+
+term: biotinyllysine: n6-biotinyl-lysine
+id: MI:0186
+definition: residue modification
+definition_reference: PMID:11125103
+definition_reference: RESID:AA0117
+
+term: carboxyglutamic acid: gamma-carboxyglutamic acid
+id: MI:0550
+definition: residue modification
+definition_reference: RESID:AA0032
+
+term: cy3 labelled
+id: MI:0375
+definition: The organic cyanine  Cy3 emits maximally at 570 nm.
+definition_reference: PMID:14577292
+
+term: cy5 labelled
+id: MI:0376
+definition: The organic cyanine  Cy5 emits maximally at 670 nm
+definition_reference: PMID:14577292
+
+term: cyanine labelled
+id: MI:0374
+definition: The organic cyanine dyes emit in the red range (>550 nm), offer a number of advantages. Their emission range is such that background fluorescence is often reduced. In addition these molecules can be linked directly to specific locations in synthetically produced nucleic acids.
+definition_reference: PMID:14577292
+
+term: dimethylarginine: omega-n,omega-n-dimethyl-arginine
 id: MI:0160
 definition: residue modification
 definition_reference: PMID:11125103
 definition_reference: RESID:AA0068
 
-term: diphthamide: 2'-[3-carboxamido-3-(trimethylammonio)propyl]-L-histidine (diphthamide)
+term: dimethyllysine: n6,n6-dimethyl-lysine
+id: MI:0166
+definition: residue modification
+definition_reference: PMID:11125103
+definition_reference: RESID:AA0075
+
+term: diphthamide: 2'-[3-carboxamido-3-(trimethylammonio)propyl]-histidine
 id: MI:0185
 definition: residue modification
 definition_reference: PMID:11125103
 definition_reference: RESID:AA0040
 
-term: feature type
-id: MI:0116
-definition: Property of a subsequence that interferes with the binding of the protein
-definition_reference: PMID:INTACT
+term: dye labelled: dye labelled molecule
+id: MI:0373
+definition: Molecules coupled with a dye  which aids identification isolation and monitoring.
+definition_reference: PMID:14577292
 
-term: flag-tagged: FLAG-tagged
+term: enzyme tagged
+id: MI:0365
+definition: Protein is fused to an enzyme, for example alkaline phosphatase, and measure of enzyme activity can be taken as indicative of presence of protein
+definition_reference: PMID:10935637
+
+term: farnesylcysteine: s-farnesyl-cysteine
+id: MI:0151
+definition: residue modification
+definition_reference: PMID:11125103
+definition_reference: RESID:AA0102
+
+term: fitc labelled: fluorescein isothiocyanate labelled
+id: MI:0377
+definition: Fluorescein isothiocyanate is a yellow-green coloured low molecular weight dye which couples to proteins via reaction with primary amine groups at high pH. FITC is excitable at 488nm, close to its absorption maximum at 494nm, and produces maximum fluorescence emission around 520nm.
+definition_reference: PMID:14577292
+
+term: flag tagged
 id: MI:0518
 definition: The protein of interest is expressed as a fusion to the peptide DYKDDDDKV for which antibodies are commercially available. Sometimes multiple copies of the peptide are fused in tandem.
 definition_reference: PMID:INTACT
 
-term: formylation
+term: formylated residue
 id: MI:0146
 definition: residue modification
 definition_reference: PMID:11125103
 
-term: gst-tagged: GST-tagged
-id: MI:0519
-definition: The protein is expressed and purified as a fusion to the gluthathione S-tranferase protein.
-definition_reference: PMID:INTACT
-
-term: ha-tagged: HA-tagged
-id: MI:0520
-definition: The protein of interest is expressed as a fusion to the peptide YPYDVPDYA (a fragment of the influenza hemagglutinin protein) for which antibodies are commercially available
-definition_reference: PMID:INTACT
-
-term: his-tagged: His-Tagged
-id: MI:0521
-definition: The protein of interest is expressed as a fusion to a poly-His tail. This permits purification by chromatography over a metal column or by binding to commercially available anti poly-His antibodies.
-definition_reference: PMID:INTACT
-
-term: hotspot
-id: MI:0119
-definition: Residue of a protein whose identity modifies significantly interaction properties
-definition_reference: PMID:INTACT
-
-term: hydroxylation
-id: MI:0148
+term: formylmethionine: n-formyl-methionine
+id: MI:0147
 definition: residue modification
 definition_reference: PMID:11125103
+definition_reference: RESID:AA0021
 
-term: hypusine: N6-(4-amino-2-hydroxybutyl)-L-lysine (hypusine)
-id: MI:0187
+term: fusion proteins
+id: MI:0240
+definition: The protein under study  is expressed as a fusion with a labelling protein, having either fluorescence properties or an enzymatic activity that facilitates its identification, localisation or quantification. \n
+definition_reference: PMID:14755292
+
+term: geranylgeranylcys: s-geranylgeranyl-cysteine
+id: MI:0152
 definition: residue modification
 definition_reference: PMID:11125103
-definition_reference: RESID:AA0116
+definition_reference: RESID:AA0104
 
-term: l-3-oxoalanine: L-3-oxoalanine
-id: MI:0182
+term: gfp tagged
+id: MI:0367
+definition: The green fluorescent protein (GFP) of the bioluminescent jellyfish Aequorea victoria can be fused to individual proteins which then acquire fluorescence excitation and emission spectra virtually identical to those of the native.
+definition_reference: PMID:7491768
+
+term: glutamatemethylester: glutamic acid 5-methyl ester
+id: MI:0163
 definition: residue modification
 definition_reference: PMID:11125103
-definition_reference: RESID:AA0185
+definition_reference: RESID:AA0072
 
-term: l-glutamyl 5-glycery: L-glutamyl 5-glycerylphosphorylethanolamine
+term: glycerylpo4etohamine: glutamyl 5-glycerylphosphorylethanolamine
 id: MI:0184
 definition: residue modification
 definition_reference: PMID:11125103
 definition_reference: RESID:AA0170
 
-term: l-selenocysteine: L-selenocysteine
-id: MI:0180
+term: glycosyl-cysteine
+id: MI:0534
 definition: residue modification
-definition_reference: PMID:11125103
-definition_reference: RESID:AA0022
+definition_reference: RESID:AA0122
 
-term: l-selenomethionine: L-selenomethionine
-id: MI:0181
+term: glycosyl-serine
+id: MI:0535
+definition: residue modification
+definition_reference: RESID:AA0154
+
+term: glycosyl-threonine
+id: MI:0536
+definition: residue modification
+definition_reference: RESID:AA0155
+
+term: glycosylarginine: omega-n-glycosyl-arginine
+id: MI:0537
+definition: residue modification
+definition_reference: RESID:AA0327
+
+term: glycosylasparagine: n4-glycosyl-asparagine
+id: MI:0538
+definition: residue modification
+definition_reference: RESID:AA0151
+
+term: glycosylated residue
+id: MI:0533
+definition: residue modification
+definition_reference: PMID:14755292
+
+term: gpi anchor residue
+id: MI:0539
+definition: residue modification
+definition_reference: PMID:14755292
+
+term: gpi-alanine: gpi-anchor amidated alanine
+id: MI:0540
+definition: residue modification
+definition_reference: RESID:AA0163
+
+term: gpi-asparagine: gpi-anchor amidated asparagine
+id: MI:0541
+definition: residue modification
+definition_reference: RESID:AA0158
+
+term: gpi-aspartate: gpi-anchor amidated aspartate
+id: MI:0542
+definition: residue modification
+definition_reference: RESID:AA0159
+
+term: gpi-cysteine: gpi-anchor amidated cysteine
+id: MI:0543
+definition: residue modification
+definition_reference: RESID:AA0160
+
+term: gpi-glycine: gpi-anchor amidated glycine
+id: MI:0544
+definition: residue modification
+definition_reference: RESID:AA0161
+
+term: gpi-serine: gpi-anchor amidated serine
+id: MI:0545
+definition: residue modification
+definition_reference: RESID:AA0162
+
+term: gpi-threonine: gpi-anchor amidated threonine
+id: MI:0546
+definition: residue modification
+definition_reference: RESID:AA0164
+
+term: gst tagged
+id: MI:0519
+definition: The protein is expressed and purified as a fusion to the gluthathione S-tranferase protein.
+definition_reference: PMID:INTACT
+
+term: ha tagged
+id: MI:0520
+definition: The protein of interest is expressed as a fusion to the peptide YPYDVPDYA (a fragment of the influenza hemagglutinin protein) for which antibodies are commercially available
+definition_reference: PMID:14755292
+
+term: his tagged
+id: MI:0521
+definition: The protein of interest is expressed as a fusion to a poly-His tail. This permits purification by chromatography over a metal column or by binding to commercially available anti poly-His antibodies.
+definition_reference: PMID:14755292
+
+term: hrp tagged: horseradish peroxidase tagged
+id: MI:0241
+definition: Protein is fused to horseradish peroxidase, and the measure of this enzyme activity can be taken as indicative of presence of protein
+definition_reference: PMID:14755292
+
+term: hydroxylated residue
+id: MI:0148
 definition: residue modification
 definition_reference: PMID:11125103
+
+term: hypusine: n6-(4-amino-2-hydroxybutyl)-lysine
+id: MI:0187
+definition: residue modification
+definition_reference: PMID:11125103
+definition_reference: RESID:AA0116
 
 term: lipid modification
 id: MI:0150
 definition: residue modification
 definition_reference: PMID:11125103
 
-term: methionamine: N-acetyl-L-methionine
-id: MI:0135
-definition: residue modification
-definition_reference: PMID:11125103
-definition_reference: RESID:AA0049
-
-term: methylation
-id: MI:0157
-definition: residue modification
-definition_reference: PMID:11125103
-
-term: mutation
-id: MI:0118
-definition: Sequence variation due to insertion, deletion or substitution event
-definition_reference: PMID:INTACT
-
-term: myc-tagged: Myc-tagged
-id: MI:0522
-definition: The protein of interest is expressed as a fusion to the peptide EUKLISEED (a fragment of the Myc oncogene protein) for which antibodies are commercially available. Sometimes multiple copies of the peptide are fused in tandem.
-definition_reference: PMID:INTACT
-
-term: n-acetyl-l-arginine: N-acetyl-L-arginine
-id: MI:0123
-definition: residue modification
-definition_reference: PMID:11125103
-definition_reference: RESID:AA0354
-
-term: n-acetyl-l-asparagin: N-acetyl-L-asparagine
-id: MI:0124
-definition: residue modification
-definition_reference: PMID:11125103
-
-term: n-acetyl-l-histidine: N-acetyl-L-histidine
-id: MI:0130
-definition: residue modification
-definition_reference: PMID:11125103
-
-term: n-acetyl-l-leucine: N-acetyl-L-leucine
-id: MI:0132
-definition: residue modification
-definition_reference: PMID:11125103
-
-term: n-acetylcysteine: N-acetyl-L-cysteine
-id: MI:0126
-definition: residue modification
-definition_reference: PMID:11125103
-definition_reference: RESID:AA0043
-
-term: n-acetylglycine: N-acetylglycine
-id: MI:0129
-definition: residue modification
-definition_reference: PMID:11125103
-definition_reference: RESID:AA0046
-
-term: n-acetylphenylalanin: N-acetyl-L-phenylalanine
-id: MI:0136
-definition: residue modification
-definition_reference: PMID:11125103
-
-term: n-acetylserine: N-acetyl-L-serine
-id: MI:0138
-definition: residue modification
-definition_reference: PMID:11125103
-definition_reference: RESID:AA0051
-
-term: n-acetylthreonine: N-acetyl-L-threonine
-id: MI:0139
-definition: residue modification
-definition_reference: PMID:11125103
-definition_reference: RESID:AA0052
-
-term: n-acetyltryptophan: N-acetyl-L-tryptophan
-id: MI:0140
-definition: residue modification
-definition_reference: PMID:11125103
-
-term: n-acetyltyrosine: N-acetyl-L-tyrosine
-id: MI:0141
-definition: residue modification
-definition_reference: PMID:11125103
-definition_reference: RESID:AA0053
-
-term: n-acetylvaline: N-acetyl-L-valine
-id: MI:0142
-definition: residue modification
-definition_reference: PMID:11125103
-definition_reference: RESID:AA0054
-
-term: n-formylmethionine: N-formyl-L-methionine
-id: MI:0147
-definition: residue modification
-definition_reference: PMID:11125103
-definition_reference: RESID:AA0021
-
-term: n-methylalanine: N-methyl-L-alanine
+term: methylalanine: n-methyl-alanine
 id: MI:0158
 definition: residue modification
 definition_reference: PMID:11125103
 definition_reference: RESID:AA0061
 
-term: n-methylglutamine: N5-methyl-L-glutamine
+term: methylarginine: omega-n-methyl-arginine
+id: MI:0564
+definition: residue modification
+definition_reference: RESID:AA0069
+
+term: methylated alanine
+id: MI:0562
+definition: residue modification
+definition_reference: RESID:AA0061 , AA0062
+
+term: methylated arginine
+id: MI:0563
+definition: residue modification
+definition_reference: RESID:AA0068 , AA0069
+
+term: methylated residue
+id: MI:0157
+definition: residue modification
+definition_reference: PMID:11125103
+
+term: methylatedlysine: methylated-lysine
+id: MI:0548
+definition: residue modification
+definition_reference: RESID:AA0074 , AA0075 , AA0076
+
+term: methylglutamine: n5-methyl-glutamine
 id: MI:0162
 definition: residue modification
 definition_reference: PMID:11125103
 definition_reference: RESID:AA0071
 
-term: n-methylmethionine: N-methyl-L-methionine
-id: MI:0168
+term: methylhistidine: 3'-methyl-histidine
+id: MI:0164
 definition: residue modification
 definition_reference: PMID:11125103
-definition_reference: RESID:AA0064
+definition_reference: RESID:AA0073
 
-term: n-methylphenylalanin: N-methyl-L-phenylalanine
-id: MI:0169
-definition: residue modification
-definition_reference: PMID:11125103
-definition_reference: RESID:AA0065
-
-term: n-myristoyl-glycine: N-myristoyl-glycine
-id: MI:0155
-definition: residue modification
-definition_reference: PMID:11125103
-definition_reference: RESID:AA0059
-
-term: n-palmitoyl-l-cystei: N-palmitoyl-L-cysteine
-id: MI:0153
-definition: residue modification
-definition_reference: PMID:11125103
-definition_reference: RESID:AA0060
-
-term: n2-acetyllysine: N2-acetyl-L-lysine
-id: MI:0133
-definition: residue modification
-definition_reference: PMID:11125103
-definition_reference: RESID:AA0048
-
-term: n6-acetyl-l-lysine: N6-acetyl-L-lysine
-id: MI:0134
-definition: residue modification
-definition_reference: PMID:11125103
-definition_reference: RESID:AA0055
-
-term: n6-biotinyl-l-lysine: N6-biotinyl-L-lysine
-id: MI:0186
-definition: residue modification
-definition_reference: PMID:11125103
-definition_reference: RESID:AA0117
-
-term: n6-dimethyl-l-lysine: N6-dimethyl-L-lysine
-id: MI:0166
-definition: residue modification
-definition_reference: PMID:11125103
-definition_reference: RESID:AA0075
-
-term: n6-methyl-l-lysine: N6-methyl-L-lysine
+term: methyllysine: n6-methyl-lysine
 id: MI:0165
 definition: residue modification
 definition_reference: PMID:11125103
 definition_reference: RESID:AA0076
 
-term: n6-myristoyl-l-lysin: N6-myristoyl-L-lysine
+term: methylmethionine: n-methyl-methionine
+id: MI:0168
+definition: residue modification
+definition_reference: PMID:11125103
+definition_reference: RESID:AA0064
+
+term: methylphenylalanine: n-methyl-phenylalanine
+id: MI:0169
+definition: residue modification
+definition_reference: PMID:11125103
+definition_reference: PMID:14755292
+definition_reference: RESID:AA0065
+
+term: methylthioaspartate: beta-methylthioaspartic acid
+id: MI:0161
+definition: residue modification
+definition_reference: PMID:11125103
+definition_reference: RESID:AA0232
+
+term: mutation
+id: MI:0118
+definition: Sequence variation due to insertion, deletion or substitution event
+definition_reference: PMID:14755292
+
+term: mutation decreasing: mutation decreasing interaction
+id: MI:0119
+definition: Residue of a protein whose identity modifies significantly interaction properties
+definition_reference: PMID:14755292
+
+term: mutation increasing: mutation increasing interaction
+id: MI:0382
+definition: Residue of a protein whose identity mutation or deletion increases significantly interaction strength.
+definition_reference: PMID:14577292
+
+term: myc tagged
+id: MI:0522
+definition: The protein of interest is expressed as a fusion to the peptide EUKLISEED (a fragment of the Myc oncogene protein) for which antibodies are commercially available. Sometimes multiple copies of the peptide are fused in tandem.
+definition_reference: PMID:INTACT
+
+term: myristoylated aa: myristoylated residue
+id: MI:0560
+definition: residue modification
+definition_reference: PMID:14755292
+
+term: myristoylglycine: n-myristoyl-glycine
+id: MI:0155
+definition: residue modification
+definition_reference: PMID:11125103
+definition_reference: RESID:AA0059
+
+term: myristoyllysine: n6-myristoyl-lysine
 id: MI:0156
 definition: residue modification
 definition_reference: PMID:11125103
 definition_reference: RESID:AA0078
 
-term: n6-retinyl-lysine: N6-retinal-L-lysine
-id: MI:0188
+term: n-palmitoylcysteine: n-palmitoyl-cysteine
+id: MI:0153
 definition: residue modification
 definition_reference: PMID:11125103
-definition_reference: RESID:AA0120
+definition_reference: RESID:AA0060
 
-term: o3-phosphoserine: O-phospho-L-serine
-id: MI:0176
+term: n2-acetyllysine: n2-acetyl-lysine
+id: MI:0133
 definition: residue modification
 definition_reference: PMID:11125103
-definition_reference: RESID:AA0037
+definition_reference: RESID:AA0048
 
-term: o3-phosphothreonine: O-phospho-L-threonine
-id: MI:0177
+term: n6-acetyllysine: n6-acetyl-lysine
+id: MI:0134
 definition: residue modification
 definition_reference: PMID:11125103
-definition_reference: RESID:AA0038
+definition_reference: RESID:AA0055
 
-term: omegaphosphoarginine: omega-N-phospho-L-arginine
-id: MI:0171
+term: nitro-tyrosine
+id: MI:0551
 definition: residue modification
-definition_reference: PMID:11125103
-definition_reference: RESID:AA0222
+definition_reference: PMID:9636206
+definition_reference: PMID:15657065
+
+term: nitrosylcysteine: s-nitrosyl-cysteine
+id: MI:0552
+definition: residue modification
+definition_reference: RESID:AA0230
 
 term: other modification
 id: MI:0179
 definition: residue modification
 definition_reference: PMID:11125103
 
-term: phosphoaspartic acid: L-aspartic 4-phosphoric anhydride
+term: oxoalanine: 3-oxoalanine
+id: MI:0182
+definition: residue modification
+definition_reference: PMID:11125103
+definition_reference: RESID:AA0185
+
+term: palmitoylated aa: palmitoylated residue
+id: MI:0561
+definition: residue modification
+definition_reference: PMID:14755292
+
+term: phosphoarginine: omega-n-phospho-arginine
+id: MI:0171
+definition: residue modification
+definition_reference: PMID:11125103
+definition_reference: RESID:AA0222
+
+term: phosphoaspartic acid: aspartic 4-phosphoric anhydride
 id: MI:0172
 definition: residue modification
 definition_reference: PMID:11125103
 definition_reference: RESID:AA0033
 
-term: phosphorylation
+term: phosphocysteine: s-phospho-cysteine
+id: MI:0173
+definition: residue modification
+definition_reference: PMID:11125103
+definition_reference: RESID:AA0034
+
+term: phosphorylated: phosphorylated residue
 id: MI:0170
 definition: residue modification
 definition_reference: PMID:11125103
 
-term: pi-methylhistidine: 3'-methyl-L-histidine
-id: MI:0164
+term: phosphoserine: o-phospho-serine
+id: MI:0176
 definition: residue modification
 definition_reference: PMID:11125103
-definition_reference: RESID:AA0073
+definition_reference: RESID:AA0037
 
-term: pi-phosphohistidine: 3'-phospho-L-histidine
-id: MI:0175
+term: phosphoshistidine: phospho-histidine
+id: MI:0555
+definition: residue modification
+definition_reference: RESID:AA0035 , AA0036
+
+term: phosphothreonine: o-phospho-threonine
+id: MI:0177
 definition: residue modification
 definition_reference: PMID:11125103
-definition_reference: RESID:AA0036
+definition_reference: RESID:AA0038
+
+term: phosphotyrosine: o4'-phospho-tyrosine
+id: MI:0178
+definition: residue modification
+definition_reference: PMID:11125103
+definition_reference: RESID:AA0039
+
+term: prenylcysteine: s-prenyl-cysteine
+id: MI:0547
+definition: residue modification
+definition_reference: PMID:14755292
 
 term: ptm: post translation modification
 id: MI:0120
 definition: Residue covalent modifications occurring in the specific protein form involved in an interaction
-definition_reference: PMID:INTACT
+definition_reference: PMID:14755292
 
 term: pyroglutamic acid: 2-pyrrolidone-5-carboxylic acid
 id: MI:0183
@@ -394,76 +715,100 @@ definition: residue modification
 definition_reference: PMID:11125103
 definition_reference: RESID:AA0031
 
-term: s-farnesyl-l-cystein: S-farnesyl-L-cysteine
-id: MI:0151
+term: radiolabelled: radiolabelled molecule
+id: MI:0517
+definition: A radiolabelled molecule has radio isotopes among its constituent atoms that can be used to identify, localize or quantify the full molecule.
+definition_reference: PMID:14755292
+
+term: rare isotope label: rare isotope labelled molecule
+id: MI:0378
+definition: Molecule that has rare isotopes among its constituent atoms that can be used to identify, localize or quantify the full molecule.
+definition_reference: PMID:14577292
+
+term: required to bind: necessary binding site
+id: MI:0429
+definition: A sequence range within a protein identified as being absolutely required for an interaction.
+definition_reference: PMID:14755292
+
+term: retinallysine: n6-retinal-lysine
+id: MI:0188
 definition: residue modification
 definition_reference: PMID:11125103
-definition_reference: RESID:AA0102
+definition_reference: RESID:AA0120
 
-term: s-geranylgeranyl-l-c: S-geranylgeranyl-L-cysteine
-id: MI:0152
-definition: residue modification
-definition_reference: PMID:11125103
-definition_reference: RESID:AA0104
-
-term: s-palmitoyl-l-cystei: S-palmitoyl-L-cysteine
+term: s-palmitoylcysteine: s-palmitoyl-cysteine
 id: MI:0154
 definition: residue modification
 definition_reference: PMID:11125103
 definition_reference: RESID:AA0106
 
-term: s3-phosphocysteine: S-phospho-L-cysteine
-id: MI:0173
+term: selenocysteine
+id: MI:0180
 definition: residue modification
 definition_reference: PMID:11125103
-definition_reference: RESID:AA0034
+definition_reference: RESID:AA0022
 
-term: t7-tagged: T7-tagged
+term: selenomethionine
+id: MI:0181
+definition: residue modification
+definition_reference: PMID:11125103
+
+term: sufficient to bind: sufficient binding site
+id: MI:0442
+definition: Binding will occur when this sequence range is present. within a protein
+definition_reference: PMID:14755292
+
+term: sulfotyrosine: o4'-sulfo-tyrosine
+id: MI:0553
+definition: residue modification
+definition_reference: RESID:AA0172
+
+term: sumoylated lysine
+id: MI:0554
+definition: Residue modification due to a cross-link between a lysine and a glycine from the sumo (Small Ubiquitin-related MOdifier) protein.
+definition_reference: PMID:12612601
+definition_reference: RESID:AA0125
+
+term: t7 tagged
 id: MI:0523
 definition: T7 tagged protein
-definition_reference: PMID:INTACT
+definition_reference: PMID:14755292
 
-term: tagged-protein: Tagged-protein
+term: tagged molecule
 id: MI:0507
 definition: Proteins are engineered to include a tag, generally at the N-terminal, which aids in isolation and detection
-definition_reference: PMID:INTACT
+definition_reference: PMID:14755292
 
-term: tap-tagged: TAP-tagged
+term: tap tagged
 id: MI:0524
 definition: The TAP method involves the fusion of the TAP tag (encoding a calmodulin binding peptide, a TEV cleavage site, and the Staphylococcus aureus Protein A) to the target protein and the introduction of the construct into the host cell or organism, maintaining the expression of the fusion protein at, or close to, its natural level. The fusion protein and associated components are recovered from cell extracts by affinity selection on an IgG matrix. After washing, the TEV protease is added to release the bound material. The eluate is incubated with calmodulin-coated beads in the presence of calcium. This second affinity step is required to remove the TEV protease as well as traces of contaminants remaining after the first affinity selection. After washing, the bound material is released with EGTA. This two steps purification steps ensures a highly selective complex purification of the "Tapped" protein (first round of selection on the protein A, a high affinity tag) under mild condition (non denaturant pH or conditions required to remove the tag).
-definition_reference: PMID:INTACT
+definition_reference: PMID:14755292
 
-term: tau-phosphohistidine: 1'-phospho-L-histidine
-id: MI:0174
-definition: residue modification
-definition_reference: PMID:11125103
-definition_reference: RESID:AA0035
-
-term: trimethyl-l-alanine: N-trimethyl-L-alanine
+term: trimethylalanine: n,n,n-trimethyl-alanine
 id: MI:0159
 definition: residue modification
 definition_reference: PMID:11125103
 definition_reference: RESID:AA0062
 
-term: trimethyl-l-lysine: N6-trimethyl-L-lysine
+term: trimethyllysine: n6,n6,n6-trimethyl-lysine
 id: MI:0167
 definition: residue modification
 definition_reference: PMID:11125103
 definition_reference: RESID:AA0074
 
-term: tyrosine-phosphate: O4'-phospho-L-tyrosine
-id: MI:0178
-definition: residue modification
-definition_reference: PMID:11125103
-definition_reference: RESID:AA0039
-
-term: ubiquitinated
+term: ubiquitinated lysine
 id: MI:0189
 definition: residue modification
 definition_reference: PMID:11125103
+definition_reference: RESID:AA0125
 
-term: v5-tagged: V5-tagged
+term: v5 tagged
 id: MI:0525
 definition: V5-tagged protein
-definition_reference: PMID:INTACT
+definition_reference: PMID:14755292
+
+term: yfp tagged
+id: MI:0368
+definition: Yellow fluorescent protein from Vibrio fischeri can be fused to individual proteins which then acquire fluorescence excitation and emission spectra virtually identical to those of the native.
+definition_reference: PMID:10929120
 
