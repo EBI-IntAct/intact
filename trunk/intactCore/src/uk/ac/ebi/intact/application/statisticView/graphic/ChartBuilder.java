@@ -248,13 +248,12 @@ public class ChartBuilder {
         }
     }
 
-    private boolean listInitialized = false;
+    private static boolean listInitialized = false;
 
     static {
         // todo load that from a properties file.
         taxidFilter.add( new Item( "Human", new String[]{"9606"} ) );
         taxidFilter.add( new Item( "Mouse", new String[]{"10090"} ) );
-//        taxidFilter.add( new Item( "Rat", new String[]{"10116"} ) );
         taxidFilter.add( new Item( "C. elegans", new String[]{"6239"} ) );
         taxidFilter.add( new Item( "D. melanogaster", new String[]{"7227"} ) );
         taxidFilter.add( new Item( "A. thaliana", new String[]{"3702"} ) );
@@ -314,6 +313,9 @@ public class ChartBuilder {
 
             // displayed 'others' as the last item.
             taxidFilter.add( others );
+
+            // we won't do that part a second time.
+            listInitialized = true;
         }
 
         // create the dataseries
