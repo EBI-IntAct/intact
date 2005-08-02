@@ -36,6 +36,9 @@ id-validation-regexp: KIAA[0-9]{4}
 definition: A Database of Human Unidentified Gene-Encoded Large Proteins Analyzed by Kazusa Human cDNA Project
 definition_reference: PMID:INTACT
 
+term: imex: International Molecular Interaction Exchange
+definition_reference: PMID:INTACT
+
 term: intact: IntAct molecular InterAction database
 id: MI:0469
 definition: INTerAction database (IntAct) provides an open source database and toolkit for the storage, presentation and analysis of protein interactions.
@@ -122,6 +125,16 @@ search-url: http://genome-www4.stanford.edu/cgi-bin/SGD/locus.pl?locus=${ac}
 id-validation-regexp: S[0-9]{9}
 definition: SGD is a scientific database of the molecular biology and genetics of the yeast Saccharomyces cerevisiae
 definition_reference: PMID:INTACT
+
+term: uniparc: UniProt Archive
+id: MI:0485
+definition: UniProt Archive (UniParc) is part of UniProt project. It is a non-redundant archive of protein sequences derived from many sources
+http://www.ebi.ac.uk/uniparc/
+url: http://www.uniprot.org/
+id-validation-regexp: UPI[A-F0-9]{10}
+search-url-ascii: http://www.ebi.uniprot.org/entry/${ac}?format=text&ascii
+search-url: http://www.ebi.uniprot.org/entry/${ac}
+definition_reference: PMID:14681372
 
 term: uniprot: UniProt protein sequence database
 id: MI:0486

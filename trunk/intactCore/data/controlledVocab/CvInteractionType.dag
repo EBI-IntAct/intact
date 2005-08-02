@@ -1,31 +1,75 @@
-$interaction type ; MI:0190
- @is_a@genetic interaction ; MI:0208
-  @is_a@synthetic lethal ; MI:0219
- @is_a@physical interaction ; MI:0218
-  @is_a@covalent interaction ; MI:0196
-   @is_a@cleavage ; MI:0194
-    @is_a@deacetylation reacti\: deacetylation reaction ; MI:0197
-    @is_a@deformylation reacti\: deformylation reaction ; MI:0199
-    @is_a@dephosphorylation re\: dephosphorylation reaction ; MI:0203
-    @is_a@deubiquitination rea\: deubiquitination reaction ; MI:0204
-    @is_a@lipid cleavage ; MI:0212
-     @is_a@defarnesylation reac\: defarnesylation reaction ; MI:0198
-     @is_a@degeranylation ; MI:0200
-     @is_a@demyristoylation ; MI:0201
-     @is_a@depalmitoylation ; MI:0202
-   @is_a@covalent binding ; MI:0195
-    @is_a@acetylation reaction ; MI:0192
-    @is_a@amidation reaction ; MI:0193
-    @is_a@formylation reaction ; MI:0207
-    @is_a@hydroxylation reacti\: hydroxylation reaction ; MI:0210
-    @is_a@lipid addition ; MI:0211
-     @is_a@farnesylation reacti\: farnesylation reaction ; MI:0206
-     @is_a@geranylation reactio\: geranylation reaction ; MI:0209
-     @is_a@myristoylation react\: myristoylation reaction ; MI:0214
-     @is_a@palmitoylation react\: palmitoylation reaction ; MI:0216
-    @is_a@methylation reaction ; MI:0213
-    @is_a@phosphorylation reac\: phosphorylation reaction ; MI:0217
-    @is_a@ubiquitination react\: ubiquitination reaction ; MI:0220
-  @is_a@non covalent interac\: non covalent interaction ; MI:0215
-   @is_a@aggregation ; MI:0191
-   @is_a@disaggregation ; MI:0205
+$physical interaction ; MI:0218 ; synonym:aggregation
+ @is_a@covalent interaction ; MI:0196
+  @is_a@cleavage\: cleavage reaction ; MI:0194 @is_a@ enzymatic reaction ; MI:0414
+   @is_a@deacetylation\: deacetylation reaction ; MI:0197 @is_a@ enzymatic reaction ; MI:0414
+   @is_a@deformylation\: deformylation reaction ; MI:0199 @is_a@ enzymatic reaction ; MI:0414
+   @is_a@dephosphorylation\: dephosphorylation reaction ; MI:0203 @is_a@ enzymatic reaction ; MI:0414
+   @is_a@deubiquitination\: deubiquitination reaction ; MI:0204 @is_a@ enzymatic reaction ; MI:0414
+   @is_a@lipid cleavage ; MI:0212 @is_a@ enzymatic reaction ; MI:0414
+    @is_a@defarnesylation\: defarnesylation reaction ; MI:0198
+    @is_a@depalmitoylation\: depalmitoylation reaction ; MI:0202
+  @is_a@covalent binding ; MI:0195 @is_a@ direct interaction ; MI:0407
+   @is_a@acetylation\: acetylation reaction ; MI:0192 @is_a@ enzymatic reaction ; MI:0414
+   @is_a@amidation\: amidation reaction ; MI:0193 @is_a@ enzymatic reaction ; MI:0414
+   @is_a@formylation\: formylation reaction ; MI:0207 @is_a@ enzymatic reaction ; MI:0414
+   @is_a@hydroxylation\: hydroxylation reaction ; MI:0210 @is_a@ enzymatic reaction ; MI:0414
+   @is_a@lipid addition ; MI:0211 @is_a@ enzymatic reaction ; MI:0414
+    @is_a@farnesylation\: farnesylation reaction ; MI:0206
+    @is_a@geranylgeranylation\: geranylgeranylation reaction ; MI:0209
+    @is_a@myristoylation\: myristoylation reaction ; MI:0214
+    @is_a@palmitoylation\: palmitoylation reaction ; MI:0216
+   @is_a@methylation\: methylation reaction ; MI:0213 @is_a@ enzymatic reaction ; MI:0414
+   @is_a@phosphorylation\: phosphorylation reaction ; MI:0217 @is_a@ enzymatic reaction ; MI:0414
+   @is_a@ubiquitination\: ubiquitination reaction ; MI:0220 @is_a@ enzymatic reaction ; MI:0414
+   @is_a@disulfide bond ; MI:0408
+   @is_a@transglutamination\: transglutamination reaction ; MI:0556
+ @is_a@non covalent interac\: non covalent interaction ; MI:0215
+  @is_a@aggregation ; MI:0191
+  @is_a@disaggregation ; MI:0205
+ @is_a@direct interaction ; MI:0407
+  @is_a@covalent binding ; MI:0195 @is_a@ covalent interaction ; MI:0196
+   @is_a@acetylation\: acetylation reaction ; MI:0192 @is_a@ enzymatic reaction ; MI:0414
+   @is_a@amidation\: amidation reaction ; MI:0193 @is_a@ enzymatic reaction ; MI:0414
+   @is_a@formylation\: formylation reaction ; MI:0207 @is_a@ enzymatic reaction ; MI:0414
+   @is_a@hydroxylation\: hydroxylation reaction ; MI:0210 @is_a@ enzymatic reaction ; MI:0414
+   @is_a@lipid addition ; MI:0211 @is_a@ enzymatic reaction ; MI:0414
+    @is_a@farnesylation\: farnesylation reaction ; MI:0206
+    @is_a@geranylgeranylation\: geranylgeranylation reaction ; MI:0209
+    @is_a@myristoylation\: myristoylation reaction ; MI:0214
+    @is_a@palmitoylation\: palmitoylation reaction ; MI:0216
+   @is_a@methylation\: methylation reaction ; MI:0213 @is_a@ enzymatic reaction ; MI:0414
+   @is_a@phosphorylation\: phosphorylation reaction ; MI:0217 @is_a@ enzymatic reaction ; MI:0414
+   @is_a@ubiquitination\: ubiquitination reaction ; MI:0220 @is_a@ enzymatic reaction ; MI:0414
+   @is_a@disulfide bond ; MI:0408
+   @is_a@transglutamination\: transglutamination reaction ; MI:0556
+ @is_a@enzymatic reaction ; MI:0414 ; synonym:Biochemical reaction
+  @is_a@acetylation\: acetylation reaction ; MI:0192 @is_a@ covalent binding ; MI:0195
+  @is_a@amidation\: amidation reaction ; MI:0193 @is_a@ covalent binding ; MI:0195
+  @is_a@cleavage\: cleavage reaction ; MI:0194 @is_a@ covalent interaction ; MI:0196
+   @is_a@deacetylation\: deacetylation reaction ; MI:0197 @is_a@ enzymatic reaction ; MI:0414
+   @is_a@deformylation\: deformylation reaction ; MI:0199 @is_a@ enzymatic reaction ; MI:0414
+   @is_a@dephosphorylation\: dephosphorylation reaction ; MI:0203 @is_a@ enzymatic reaction ; MI:0414
+   @is_a@deubiquitination\: deubiquitination reaction ; MI:0204 @is_a@ enzymatic reaction ; MI:0414
+   @is_a@lipid cleavage ; MI:0212 @is_a@ enzymatic reaction ; MI:0414
+    @is_a@defarnesylation\: defarnesylation reaction ; MI:0198
+    @is_a@depalmitoylation\: depalmitoylation reaction ; MI:0202
+  @is_a@deacetylation\: deacetylation reaction ; MI:0197 @is_a@ cleavage\: cleavage reaction ; MI:0194
+  @is_a@deformylation\: deformylation reaction ; MI:0199 @is_a@ cleavage\: cleavage reaction ; MI:0194
+  @is_a@dephosphorylation\: dephosphorylation reaction ; MI:0203 @is_a@ cleavage\: cleavage reaction ; MI:0194
+  @is_a@deubiquitination\: deubiquitination reaction ; MI:0204 @is_a@ cleavage\: cleavage reaction ; MI:0194
+  @is_a@formylation\: formylation reaction ; MI:0207 @is_a@ covalent binding ; MI:0195
+  @is_a@hydroxylation\: hydroxylation reaction ; MI:0210 @is_a@ covalent binding ; MI:0195
+  @is_a@lipid addition ; MI:0211 @is_a@ covalent binding ; MI:0195
+   @is_a@farnesylation\: farnesylation reaction ; MI:0206
+   @is_a@geranylgeranylation\: geranylgeranylation reaction ; MI:0209
+   @is_a@myristoylation\: myristoylation reaction ; MI:0214
+   @is_a@palmitoylation\: palmitoylation reaction ; MI:0216
+  @is_a@lipid cleavage ; MI:0212 @is_a@ cleavage\: cleavage reaction ; MI:0194
+   @is_a@defarnesylation\: defarnesylation reaction ; MI:0198
+   @is_a@depalmitoylation\: depalmitoylation reaction ; MI:0202
+  @is_a@methylation\: methylation reaction ; MI:0213 @is_a@ covalent binding ; MI:0195
+  @is_a@phosphorylation\: phosphorylation reaction ; MI:0217 @is_a@ covalent binding ; MI:0195
+  @is_a@ubiquitination\: ubiquitination reaction ; MI:0220 @is_a@ covalent binding ; MI:0195
+  @is_a@adp ribosylation\: adp ribosylation reaction ; MI:0557
+  @is_a@deglycosylation\: deglycosylation reaction ; MI:0558
+  @is_a@glycosylation\: glycosylation reaction ; MI:0559
