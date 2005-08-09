@@ -5,7 +5,7 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import java.util.Collection;
+
 
 /**
  *
@@ -13,16 +13,4 @@ import java.util.Collection;
  * @version $Id$
  */
 public interface Protein extends Polymer {
-
-    public Protein getFormOf();
-
-    public void setFormOf(Protein protein);
-
-    public CvProteinForm getCvProteinForm();
-
-    public void setCvProteinForm(CvProteinForm cvProteinForm);
-
-    public void setModifications(Collection someModification);
-
-    public Collection getModifications();
 }

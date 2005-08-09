@@ -5,7 +5,7 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import java.util.Collection;
+
 
 /**
  * Represents a protein or peptide. The object should only contain
@@ -16,26 +16,6 @@ import java.util.Collection;
  * @version $Id$
  */
 public class ProteinImpl extends PolymerImpl implements Protein, Editable {
-
-    /**
-     * TODO comments
-     */
-    private Protein formOf;
-
-    /**
-     * Need this for OJB
-     */
-    private String formOfAc;
-
-    /**
-     * TODO comments
-     */
-    private CvProteinForm cvProteinForm;
-
-    /**
-     * TODO comments
-     */
-    private Collection modifications;
 
     /**
      * This constructor should <b>not</b> be used as it could
@@ -81,35 +61,8 @@ public class ProteinImpl extends PolymerImpl implements Protein, Editable {
      * @param shortLabel A memorable label used to refer to this instance
      * @param type     The interactor type
      */
-    public ProteinImpl(Institution owner, BioSource source, String shortLabel,
-                           CvInteractorType type) {
+    public ProteinImpl(Institution owner, BioSource source, String shortLabel, CvInteractorType type ) {
         super(owner, source, shortLabel, type);
     }
 
-    ///////////////////////////////////////
-    // access methods for associations
-
-    public Protein getFormOf() {
-        return formOf;
-    }
-
-    public void setFormOf( Protein protein ) {
-        this.formOf = protein;
-    }
-
-    public CvProteinForm getCvProteinForm() {
-        return cvProteinForm;
-    }
-
-    public void setCvProteinForm( CvProteinForm cvProteinForm ) {
-        this.cvProteinForm = cvProteinForm;
-    }
-
-    public void setModifications( Collection someModification ) {
-        this.modifications = someModification;
-    }
-
-    public Collection getModifications() {
-        return modifications;
-    }
-} // end Protein
+}
