@@ -484,12 +484,13 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         jdbc-type="VARCHAR"
         indexed="true"
         />
-    <field-descriptor
-        name="formOfAc"
-        column="formOf"
-        jdbc-type="VARCHAR"
-        />
 
+    <!--  This is not used  -->
+    <!--    <field-descriptor-->
+    <!--        name="formOfAc"-->
+    <!--        column="formOf"-->
+    <!--        jdbc-type="VARCHAR"-->
+    <!--        />-->
 
     <!-- reference classes -->
     <!-- There is a column for a proteinForm field, which should be a
