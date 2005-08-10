@@ -19,18 +19,47 @@ public class CvDatabase extends CvObject implements Editable {
     // Constants
 
     public static final String CABRI = "cabri";
+    public static final String CABRI_MI_REF = "MI:0246";
+
     public static final String FLYBASE = "flybase";
+    public static final String FLYBASE_MI_REF = "MI:0478";
+
     public static final String GO = "go";
+    public static final String GO_MI_REF = "MI:0448";
+
     public static final String HUGE = "huge";
+    public static final String HUGE_MI_REF = "MI:0249";
+
     public static final String INTACT = "intact";
+    public static final String INTACT_MI_REF = "MI:0469";
+
     public static final String INTERPRO = "interpro";
+    public static final String INTERPRO_MI_REF = "MI:0449";
+
     public static final String NEWT = "newt";
+    public static final String NEWT_MI_REF = "MI:0247";
+
+    public static final String REACTOME_COMPLEX = "reactome-complex";
+    public static final String REACTOME_COMPLEX_PSI_REF = "MI:0244";
+
     public static final String REACTOME_PROTEIN = "reactome-protein";
+    public static final String REACTOME_PROTEIN_PSI_REF = "MI:0245";
+
     public static final String PUBMED = "pubmed";
+    public static final String PUBMED_MI_REF = "MI:0446";
+
     public static final String PSI_MI = "psi-mi";
+    public static final String PSI_MI_MI_REF = "MI:0488";
+
     public static final String RESID = "resid";
+    public static final String RESID_MI_REF = "MI:0248";
+
     public static final String SGD = "sgd";
+    public static final String SGD_MI_REF = "MI:0484";
+
     public static final String UNIPROT = "uniprot";
+    public static final String UNIPROT_MI_REF = "MI:0486";
+
     public static final String IMEX = "imex";
 
 
