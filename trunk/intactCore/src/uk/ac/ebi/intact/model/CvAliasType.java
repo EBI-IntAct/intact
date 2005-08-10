@@ -19,10 +19,20 @@ public class CvAliasType extends CvObject implements Editable {
     // Constants
     
     public static final String ISOFORM_SYNONYM = "isoform synonym";
+    public static final String ISOFORM_SYNONYM_MI_REF = "MI:0304";
+
     public static final String GENE_NAME = "gene name";
+    public static final String GENE_NAME_MI_REF = "MI:0301";
+
     public static final String GENE_NAME_SYNONYM = "gene name-synonym";
+    public static final String GENE_NAME_SYNONYM_MI_REF = "MI:0302";
+
     public static final String ORF_NAME = "orf name";
+    public static final String ORF_NAME_MI_REF = "MI:0306";
+
     public static final String LOCUS_NAME = "locus name";
+    public static final String LOCUS_NAME_MI_REF = "MI:0305";
+
 
 
     /**

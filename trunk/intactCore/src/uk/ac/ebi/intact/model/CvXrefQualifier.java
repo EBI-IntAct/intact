@@ -21,10 +21,19 @@ public class CvXrefQualifier extends CvObject implements Editable {
     // Constants
 
     public static final String IDENTITY = "identity";
+    public static final String IDENTITY_MI_REF = "MI:0356";
+
     public static final String SECONDARY_AC = "secondary-ac";
+    public static final String SECONDARY_AC_MI_REF = "MI:0360";
+
     public static final String ISOFORM_PARENT = "isoform-parent";
+    public static final String ISOFORM_PARENT_MI_REF = "MI:0243";
+
     public static final String PRIMARY_REFERENCE = "primary-reference";
+    public static final String PRIMARY_REFERENCE_MI_REF = "MI:0358";
+
     public static final String SEE_ALSO = "see-also";
+    public static final String SEE_ALSO_MI_REF = "MI:0361";
 
 
     /**
