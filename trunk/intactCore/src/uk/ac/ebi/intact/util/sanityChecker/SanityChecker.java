@@ -1012,8 +1012,7 @@ public class SanityChecker {
                                             "where database_ac = db.ac and " +
                                             "db.shortlabel = ? and "+
                                             "qualifier_ac = q.ac and "+
-                                            "q.shortlabel = 'identity' "+//and "+
-                                           // "parent_ac not in (SELECT ac FROM ia_annotation WHERE topic_ac='" + noUniprotUpdateCvBean.getAc() +"') "+
+                                            "q.shortlabel = 'identity' "+
                                             "group by primaryId "+
                                             "having count(primaryId) > 1");
 
@@ -1024,8 +1023,14 @@ public class SanityChecker {
         scn.sch.addMapping(InteractorBean.class,"SELECT i.ac, i.shortlabel, i.biosource_ac, i.userstamp, i.timestamp "+
                                                 "FROM ia_interactor i, ia_xref x "+
                                                 "WHERE i.ac = x.parent_ac AND " +
-                                                "x.qualifier_ac = '" +identityXrefQualifierCvBean.getAc()+"' AND "+
-                                                "x.primaryid=?");
+                                                    "0 = ( SELECT count(1) " +
+                                                            "FROM ia_annotation a, ia_int2annot i2a, ia_controlledvocab topic "+
+                                                            "WHERE i.ac = i2a.interactor_ac AND "+
+                                                            "i2a.annotation_ac = a.ac AND " +
+                                                            "a.topic_ac = topic.ac AND " +
+                                                            "topic.shortlabel = 'no-uniprot-update' ) AND "+
+                                                    "x.qualifier_ac = '" +identityXrefQualifierCvBean.getAc()+"' AND "+
+                                                    "x.primaryid=?");
                                                 //scn.duplicatedProtein(xrefBeans);
         for (int i = 0; i < xrefBeans.size(); i++) {
             XrefBean xrefBean =  (XrefBean) xrefBeans.get(i);
@@ -1053,7 +1058,6 @@ public class SanityChecker {
         /*
         *     Check on protein
         */
-
 
         schIntAc.addMapping(InteractorBean.class,"SELECT ac, crc64, shortlabel, userstamp, timestamp, objclass "+
                                                  "FROM ia_interactor "+
