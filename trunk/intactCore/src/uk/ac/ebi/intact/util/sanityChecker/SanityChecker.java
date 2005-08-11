@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.util.Crc64;
 import javax.mail.MessagingException;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.sql.SQLException;
 import java.io.IOException;
 
@@ -53,6 +54,7 @@ public class SanityChecker {
     private SanityCheckerHelper sch12;
     private SanityCheckerHelper sch13;
     private SanityCheckerHelper retrieveObjectSch;
+    private SanityCheckerHelper oneIntOneExpSch;
 
     /* ControlledvocabBean */
     private static ControlledvocabBean onHoldCvBean;
@@ -103,6 +105,30 @@ public class SanityChecker {
         retrieveObjectSch.addMapping(CvObject2AnnotBean.class, "SELECT cvobject_ac FROM ia_cvobject2annot WHERE annotation_ac=?");
         retrieveObjectSch.addMapping(Feature2AnnotBean.class, "SELECT feature_ac FROM ia_feature2annot WHERE annotation_ac=?");
 
+        this.oneIntOneExpSch = new SanityCheckerHelper(helper);
+        /*oneIntOneExpSch.addMapping(Int2ExpBean.class,"select interaction_ac, experiment_ac "+
+                                                    "from ia_int2exp "+
+                                                    "where interaction_ac = ? and "+
+                                                          "interaction_ac in ( select interaction_ac "+
+						                                                       "from ia_int2exp "+
+						                                                       "group by interaction_ac "+
+						                                                       "having count(experiment_ac) > 1)");  */
+
+        oneIntOneExpSch.addMapping(Int2ExpBean.class,"select interaction_ac, experiment_ac "+
+                                                    "from ia_int2exp "+
+                                                    "where interaction_ac like ? and "+
+                                                          "interaction_ac in ( select interaction_ac "+
+						                                                       "from ia_int2exp "+
+						                                                       "group by interaction_ac "+
+						                                                       "having count(experiment_ac) > 1)");
+
+        //oneIntOneExpSch.addMapping(Int2ExpBean.class, )
+        oneIntOneExpSch.addMapping(ExperimentBean.class, "select ac, shortlabel, timestamp, userstamp "+
+                                                      "from ia_experiment "+
+                                                      "where ac = ? ");
+        oneIntOneExpSch.addMapping(InteractorBean.class, "select ac, shortlabel, timestamp, userstamp "+
+                                                         "from ia_interactor "+
+                                                         "where ac = ? ");
 
         this.sch12=new SanityCheckerHelper(helper);
         sch12.addMapping(ExperimentBean.class,"select e.ac " +
@@ -868,6 +894,89 @@ public class SanityChecker {
 
     }
 
+    /**
+     * This check if there is any interaction linked to more then one experiment if any it will send a message
+     * The sql request is the following one :
+     *      select interaction_ac, experiment_ac
+     *      from ia_int2exp
+     *      where interaction_ac like '%' and
+     *      interaction_ac in ( select interaction_ac
+     *                          from ia_int2exp
+     *                          group by interaction_ac
+     *                          having count(experiment_ac) > 1)
+     *
+     * For exemple it can return a list of Int2ExpBean like that :
+     *      INTERACTION_AC          EXPERIMENT_AC
+     *      EBI-367255              EBI-367251
+     *      EBI-367255              EBI-79369
+     *      EBI-520663              EBI-495409
+     *      EBI-520663              EBI-495685
+     *
+     * For each line you check if the interaction_ac was the same then for the previous line, if it was you add the
+     * the experimentBean to the experimentBeans list corresponding to this interaction_ac.
+     * If it is not the same (and if it is not the first line), you ask the messageSender to send an error message giving
+     * in parameter the interactionBean and the list of all ExperimentBeans.
+     *
+     * You obtain this kind of message :
+     *
+     *      Interaction linked to more then one experiment
+     *      ----------------------------------------------
+     *      AC: EBI-367255	 Shortlabel: tra_2-tra_4	 User: INTACT	 When: 2004-06-15 15:37:50.0
+	 *          AC: EBI-79369		 Shortlabel: wang-2000-3		 User: SKERRIEN		 When: 2003-12-05 14:26:41.0
+	 *          AC: EBI-367251		 Shortlabel: wang-2001-3		 User: SMUDALI		 When: 2004-06-15 15:34:38.0
+     *      AC: EBI-520663	 Shortlabel: mdc1-brca1-1	 User: INTACT	 When: 2005-03-21 10:08:52.0
+	 *          AC: EBI-495685		 Shortlabel: stewart-2003-4		 User: SMUDALI		 When: 2005-02-24 16:16:11.0
+	 *          AC: EBI-495409		 Shortlabel: stewart-2003-1		 User: ABRIDGE		 When: 2005-02-24 14:23:33.0
+     *
+     *
+     * @throws SQLException
+     */
+
+    public void checkOneIntOneExp() throws SQLException {
+        List int2ExpBeans = oneIntOneExpSch.getBeans(Int2ExpBean.class, "%");
+
+        List experimentBeans = new ArrayList();
+        InteractorBean interactionBean=new InteractorBean();
+        String interactionAc="";
+
+        for (int i = 0; i < int2ExpBeans.size(); i++) {
+            Int2ExpBean int2ExpBean =  (Int2ExpBean) int2ExpBeans.get(i);
+            String currentInteractionAc = int2ExpBean.getInteraction_ac();
+            String currentExperimentAc = int2ExpBean.getExperiment_ac();
+            if(!interactionAc.equals(currentInteractionAc)){
+                if(!interactionAc.equals("")){
+                    messageSender.addMessage(ReportTopic.INTERACTION_LINKED_TO_MORE_THEN_ONE_EXPERIMENT,interactionBean,experimentBeans);
+                }
+                interactionBean=retrieveInteractorFromAc(oneIntOneExpSch,currentInteractionAc);
+                experimentBeans.clear();
+                experimentBeans.add(retrieveExperimentFromAc(oneIntOneExpSch, currentExperimentAc));
+                interactionAc=currentInteractionAc;
+            }
+            else{
+                experimentBeans.add(retrieveExperimentFromAc(oneIntOneExpSch, currentExperimentAc));
+            }
+        } //end of for on int2ExpBeans list
+        messageSender.addMessage(ReportTopic.INTERACTION_LINKED_TO_MORE_THEN_ONE_EXPERIMENT,interactionBean,experimentBeans);
+    }
+
+   public ExperimentBean retrieveExperimentFromAc (SanityCheckerHelper helper, String ac) throws SQLException {
+        ExperimentBean experimentBean = new ExperimentBean();
+        List experimentBeans = helper.getBeans(ExperimentBean.class, ac);
+        for (int i = 0; i < experimentBeans.size(); i++) {
+            experimentBean =  (ExperimentBean) experimentBeans.get(i);
+        }
+        return experimentBean;
+   }
+
+    public InteractorBean retrieveInteractorFromAc (SanityCheckerHelper helper, String ac) throws SQLException {
+        InteractorBean interactorBean = new InteractorBean();
+        List interactorBeans = helper.getBeans(InteractorBean.class, ac);
+        for (int i = 0; i < interactorBeans.size(); i++) {
+            interactorBean =  (InteractorBean) interactorBeans.get(i);
+        }
+        return interactorBean;
+   }
+
 
 
 
@@ -888,9 +997,10 @@ public class SanityChecker {
 
         List interactorBeans = schIntAc.getBeans(InteractorBean.class, "EBI-%");
         System.out.println("The size of the list is :"+interactorBeans.size());
-        scn.checkInteractionsComplete(interactorBeans);
-        scn.checkInteractionsBaitAndPrey(interactorBeans);
-        scn.checkComponentOfInteractions(interactorBeans);
+        //scn.checkInteractionsComplete(interactorBeans);
+        //scn.checkInteractionsBaitAndPrey(interactorBeans);
+        //scn.checkComponentOfInteractions(interactorBeans);
+        scn.checkOneIntOneExp();
 
         /*
         *     Check on xref
