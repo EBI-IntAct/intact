@@ -956,7 +956,9 @@ public class SanityChecker {
                 experimentBeans.add(retrieveExperimentFromAc(oneIntOneExpSch, currentExperimentAc));
             }
         } //end of for on int2ExpBeans list
-        messageSender.addMessage(ReportTopic.INTERACTION_LINKED_TO_MORE_THEN_ONE_EXPERIMENT,interactionBean,experimentBeans);
+        if(!int2ExpBeans.isEmpty()){
+            messageSender.addMessage(ReportTopic.INTERACTION_LINKED_TO_MORE_THEN_ONE_EXPERIMENT,interactionBean,experimentBeans);
+        }
     }
 
    public ExperimentBean retrieveExperimentFromAc (SanityCheckerHelper helper, String ac) throws SQLException {
@@ -997,9 +999,9 @@ public class SanityChecker {
 
         List interactorBeans = schIntAc.getBeans(InteractorBean.class, "EBI-%");
         System.out.println("The size of the list is :"+interactorBeans.size());
-        //scn.checkInteractionsComplete(interactorBeans);
-        //scn.checkInteractionsBaitAndPrey(interactorBeans);
-        //scn.checkComponentOfInteractions(interactorBeans);
+        scn.checkInteractionsComplete(interactorBeans);
+        scn.checkInteractionsBaitAndPrey(interactorBeans);
+        scn.checkComponentOfInteractions(interactorBeans);
         scn.checkOneIntOneExp();
 
         /*
@@ -1052,6 +1054,7 @@ public class SanityChecker {
         *     Check on protein
         */
 
+
         schIntAc.addMapping(InteractorBean.class,"SELECT ac, crc64, shortlabel, userstamp, timestamp, objclass "+
                                                  "FROM ia_interactor "+
                                                  "WHERE objclass = '"+ProteinImpl.class.getName()+
@@ -1060,6 +1063,7 @@ public class SanityChecker {
 
         scn.checkProtein(proteinBeans);
         scn.checkCrc64(proteinBeans);
+
 
         /*
         *     Check on annotation
