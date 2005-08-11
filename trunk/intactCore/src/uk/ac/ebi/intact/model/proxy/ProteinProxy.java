@@ -6,11 +6,9 @@ package uk.ac.ebi.intact.model.proxy;
 
 import org.apache.ojb.broker.Identity;
 import org.apache.ojb.broker.PBKey;
-import uk.ac.ebi.intact.model.CvProteinForm;
 import uk.ac.ebi.intact.model.Protein;
 
 import java.lang.reflect.InvocationHandler;
-import java.util.Collection;
 
 /**
 *
@@ -43,30 +41,6 @@ public class ProteinProxy extends PolymerProxy implements Protein {
        {
            return null;
        }
-   }
-
-   public Protein getFormOf () {
-       return realSubject().getFormOf();
-   }
-
-   public void setFormOf ( Protein protein ) {
-       realSubject().setFormOf( protein );
-   }
-
-   public CvProteinForm getCvProteinForm () {
-       return realSubject().getCvProteinForm();
-   }
-
-   public void setCvProteinForm ( CvProteinForm cvProteinForm ) {
-       realSubject().setCvProteinForm( cvProteinForm );
-   }
-
-   public void setModifications ( Collection someModification ) {
-       realSubject().setModifications( someModification );
-   }
-
-   public Collection getModifications () {
-       return realSubject().getModifications();
    }
 
    public boolean equals ( Object o ) {
