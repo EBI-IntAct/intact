@@ -115,6 +115,93 @@ public class MessageSender {
         TIME = formatter.format( date );
     }
 
+     public void addMessage( ReportTopic topic, IntactBean intactBean, List intactBeans ) throws SQLException {
+
+        String user = intactBean.getUserstamp();
+        Timestamp date = intactBean.getTimestamp();
+
+        String userMessageReport="";
+        String adminMessageReport="";
+        // Build users report
+         if(intactBean instanceof InteractorBean){
+            InteractorBean interactorBean = (InteractorBean) intactBean;
+            userMessageReport = "AC: " + interactorBean.getAc() +
+                    "\t Shortlabel: " + interactorBean.getShortlabel() +
+                    "\t When: " + date;
+            adminMessageReport = "AC: " + interactorBean.getAc() +
+                    "\t Shortlabel: " + interactorBean.getShortlabel() +
+                    "\t User: " + user +
+                    "\t When: " + date;
+        }
+
+        for (int i = 0; i < intactBeans.size(); i++) {
+            Object o =  intactBeans.get(i);
+            if(o instanceof ExperimentBean){
+
+                ExperimentBean experimentBean = (ExperimentBean) o;
+                String experimentUser = experimentBean.getUserstamp();
+                Timestamp experimentDate = experimentBean.getTimestamp();
+                userMessageReport = userMessageReport +
+                        "\n\tAC: " + experimentBean.getAc() +
+                        "\t\t Shortlabel: " + experimentBean.getShortlabel() +
+                        "\t\t When: " + experimentDate;
+                adminMessageReport =adminMessageReport +
+                        "\n\tAC: " + experimentBean.getAc() +
+                        "\t\t Shortlabel: " + experimentBean.getShortlabel() +
+                        "\t\t User: " + experimentUser +
+                        "\t\t When: " + experimentDate;
+            }
+
+
+        }
+
+         if ( user != null && !( user.trim().length() == 0 ) ) {
+
+             // add new message to the user
+             Map userReport = (Map) allUsersReport.get( user );
+             if ( userReport == null ) {
+                 userReport = new HashMap();
+             }
+
+             Collection topicMessages = (Collection) userReport.get( topic );
+             if ( topicMessages == null ) {
+                 topicMessages = new ArrayList();
+
+                 // add the messages to the topic
+                 userReport.put( topic, topicMessages );
+             }
+
+             // add the message to the topic
+             topicMessages.add( userMessageReport );
+
+             // add the user's messages
+             allUsersReport.put( user, userReport );
+         } else {
+
+             System.err.println( "No user found for object: " + userMessageReport );
+         }
+
+
+         /*  // build admin admin report
+         String adminMessageReport = "AC: " + obj.getAc() +
+         "\t Shortlabel: " + obj.getShortLabel() +
+         "\t User: " + user +
+         "\t When: " + date;
+         */
+         Collection topicMessages = (Collection) adminReport.get( topic );
+         if ( topicMessages == null ) {
+             topicMessages = new ArrayList();
+
+             // add the messages to the topic
+             adminReport.put( topic, topicMessages );
+         }
+
+         // add the message to the topic
+         topicMessages.add( adminMessageReport );
+
+     }
+
+
     /**
      * Helper method to obtain userstamp info from a given record, and then if it has any to append the details to a
      * result buffer.
@@ -134,19 +221,31 @@ public class MessageSender {
         String adminMessageReport="";
         // Build users report
 
-        if(intactBean instanceof InteractorBean){
-            InteractorBean interactorBean = (InteractorBean) intactBean;
+        if(intactBean instanceof AnnotatedBean){
+            AnnotatedBean annotatedBean = (AnnotatedBean) intactBean;
 
 
-            userMessageReport = "AC: " + interactorBean.getAc() +
-                    "\t Shortlabel: " + interactorBean.getShortlabel() +
+            userMessageReport = "AC: " + annotatedBean.getAc() +
+                    "\t Shortlabel: " + annotatedBean.getShortlabel() +
                     "\t When: " + date;
-            adminMessageReport = "AC: " + interactorBean.getAc() +
-                    "\t Shortlabel: " + interactorBean.getShortlabel() +
+            adminMessageReport = "AC: " + annotatedBean.getAc() +
+                    "\t Shortlabel: " + annotatedBean.getShortlabel() +
                     "\t User: " + user +
                     "\t When: " + date;
 
-        }else if(intactBean instanceof ExperimentBean){
+        }else if(intactBean instanceof XrefBean ){
+            XrefBean xrefBean = (XrefBean) intactBean;
+            userMessageReport = "AC: " + xrefBean.getAc() +
+                    "\t PrimaryId: " + xrefBean.getPrimaryid() +
+                    "\t Database_ac: " + xrefBean.getDatabase_ac()+
+                    "\t When: " + date;
+            adminMessageReport = "AC: " + xrefBean.getAc() +
+                    "\t PrimaryId: " + xrefBean.getPrimaryid() +
+                    "\t Database_ac: " + xrefBean.getDatabase_ac()+
+                    "\t User: " + user +
+                    "\t When: " + date;
+        }
+        /*else if(intactBean instanceof ExperimentBean){
             ExperimentBean experimentBean = (ExperimentBean) intactBean;
 
 
@@ -169,7 +268,7 @@ public class MessageSender {
                     "\t User: " + user +
                     "\t When: " + date;
 
-        }
+        }*/
 
 
         if ( user != null && !( user.trim().length() == 0 ) ) {
@@ -296,9 +395,6 @@ public class MessageSender {
                 System.err.println( "No user found for object: " + userMessageReport );
             }
         }
-
-
-
         /*  // build admin admin report
         String adminMessageReport = "AC: " + obj.getAc() +
         "\t Shortlabel: " + obj.getShortLabel() +
@@ -430,6 +526,8 @@ public class MessageSender {
 
 
     }
+
+
 
 
     /**
