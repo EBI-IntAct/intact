@@ -67,7 +67,7 @@
                           <li class="greenboldsmalllist"><span class="text"><a href="http://www.molgen.mpg.de/">MPI-MG</a> - Max-Planck-Institut fuer Molekulare Genetik, Berlin, Germany</span></li>
                           <li class="greenboldsmalllist"><span class="text"><a href="http://www.isb-sib.ch/">SIB</a> - Swiss Institute of Bioinformatics, Geneva, Switzerland</span></li>
                           <li class="greenboldsmalllist"><span class="text"><a href="http://www.sdu.dk/">SDU</a> - Odense University, Denmark</span></li>
-                          <li class="greenboldsmalllist"><span class="text"><a href="http://www.cribx1.u-bordeaux.fr/ub1/default.html">UB1</a> - University of Bordeaux, France</span></li>
+                          <li class="greenboldsmalllist"><span class="text"><a href="http://www.u-bordeaux1.fr/">UB1</a> - University of Bordeaux, France</span></li>
                           <li class="greenboldsmalllist"><span class="text"><a href="http://www.cnb.uam.es/">CNB-CSIC</a> - Centro National de Biotecnologia, Madrid, Spain</span></li>
                           <li class="greenboldsmalllist"><span class="text"><a href="http://www.huji.ac.il/unew/main.html">HUJI</a> - The Hebrew University of Jerusalem, Israel</span></li>
                           <li class="greenboldsmalllist"><span class="text"><a href="http://www.gsk.com/index.htm">GSK</a> - GlaxoSmithKline plc, Harlow, United Kingdom</span> </li>
