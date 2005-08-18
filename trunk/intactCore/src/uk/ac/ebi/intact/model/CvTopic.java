@@ -35,7 +35,9 @@ public class CvTopic extends CvObject implements Editable {
     public static final String ACCEPTED = "accepted";
     public static final String TO_BE_REVIEWED = "to-be-reviewed";
     public static final String URL = "url";
-    
+    public static final String CONTACT_EMAIL = "contact-email";
+    public static final String AUTHOR_LIST = "author-list";
+
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus.
      * This should not be here as it has no model functionality but is
