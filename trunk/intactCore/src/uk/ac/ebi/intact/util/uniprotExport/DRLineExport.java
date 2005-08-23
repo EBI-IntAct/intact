@@ -20,7 +20,55 @@ import java.sql.Statement;
 import java.util.*;
 
 /**
- * That class .
+ * That class performs the export of the IntAct DR lines to UniProt.
+ * <br>
+ * We export all proteins that have been seen in at least one high confidence interaction.
+ * <br>
+ * Only protein imported directly from UniProt are taken into account
+ * <br>
+ * note: the proteins created via the editor should have an Annotation( CvTopic( no-uniprot-update ) )  attached to it.
+ *
+ * <br>
+ * <br>
+ * Now I'll explain the details of how we decide whether or not an interaction is of high confidence.
+ * <pre>
+ *
+ *   Here is a sketch of the algorithm for the DR lines ( I hope I will be clear enough ;) ):
+ *      - let *P* be a Protein (and we are trying to determinate if it should be exported)
+ *        note: in the case of splice variant (which are individual Protein in IntAct), if a splice variant
+ *              is found to be eligible, it's parent is exported in the DR file instead. (eg. if P12345-1 were
+ *              to be eligible, we would put P12345 as eligible without further checking).
+ *      - let *I* be all non negative interactions in which *P* interacts
+ *        (_*negative interaction* being defined as_: it was demonstrated in this paper that these interactions
+ *         do not occur under the experimental conditions described.)
+ *      - for each interaction *i* in *I
+ *          *- get *i*'s experiment and check if it has an explicit export flag (can be yes, no or an arbitrary word)
+ *              - if it is flagged yes, the related interaction becomes eligible for export too.
+ *              - if it is flagged no,  the related interaction is declared not eligible.
+ *              - if it is an arbitrary word, then we check if the interaction has it too,
+ *                if so, the interaction becomes eligible for export
+ *              - if no flag is found, we check the experiment's method (CvInteraction, eg. y2h, ...) of
+ *                the experiment.
+ *                Please find attached the definition of the term uniprot-dr-export in IntAct (uniprot-dr-export.JPG)
+ *                Here again we have several cases,
+ *                  - if the flag is yes, then the experiment (and the interaction) becomes eligible for export,
+ *                  - if the flag is no, then the experiment (and the interaction) becomes NOT eligible for export,
+ *                  - if the flag is a numerical value that describes how many distinct experiment using that method
+ *                    should be found in order to get the interaction to be eligible.
+ *                    eg. Y2H has a threshold of 2, let's say we have 2 experiments E1 and E2 having
+ *                        interaction list E1{I1, I2} and E2{I3}.
+ *                        the interaction related to P1 are I1 and I3.
+ *                        Now let's say we look at I1, unfold the algorithm and end up checking on the method,
+ *                        Y2H having a threshold of 2, we need to check over all interaction of P1 (ie. I1 and I3)
+ *                        but not the current one (I1) if there experiment's method has either an explicit yes flag or
+ *                        if the count of the experiments having that method allow to reach the defined threshold.
+ *                        in our example, the threshold is 2 and we have E1 and E2 being Y2H hence we declare the
+ *                        interaction I1 eligible.
+ *                        The enclosed drawing illustrates what I just explained (Y2H-example).
+ *
+ *         If at least one of the interactions of *P* is declared eligible for export, the protein becomes
+ *         itself eligible for DR export.
+ * </pre>
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
@@ -41,7 +89,7 @@ public class DRLineExport extends LineExport {
         log( "\n\nChecking on Protein: " + uniprotID + "(" + protein.getAc() + ", " + protein.getShortLabel() + ") ..." );
 
         // getting all interactions in which that protein plays a role.
-        List interactions = new ArrayList( getInteractions( protein ) );
+        List interactions = getInteractions( protein );
         log( interactions.size() + " interactions found." );
 
         for( int i = 0; i < interactions.size() && isHighConfidence == false; i++ ) {
@@ -575,6 +623,11 @@ public class DRLineExport extends LineExport {
             Protein master = null;
 
             Protein protein = (Protein) proteins.iterator().next();
+
+            if ( false == needsUniprotUpdate( protein ) ) {
+                log( protein.getAc() + " " + protein.getShortLabel() + " is not from UniProt, skip it." );
+                continue; // process next AC
+            }
 
             String uniprotId = null;
 
