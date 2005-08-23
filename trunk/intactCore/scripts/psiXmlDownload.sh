@@ -44,7 +44,7 @@ processLine()
 if [ $# -ne 2 ]; then
       echo ""
       echo "ERROR: wrong number of parameters."
-      echo "usage: psiXmlDownload.sh <file_prefix> <psiVersion(1, 2, 25)> [mapping.file] < sections_file"
+      echo "usage: psiXmlDownload.sh <file_prefix> <psiVersion(either '1', '2' or '2.5')> [mapping.file] < sections_file"
       echo ""
       exit 1
 fi
