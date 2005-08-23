@@ -56,6 +56,7 @@ public class LineExport {
     protected static final String EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT = "no";
 
     protected static final String NEW_LINE = System.getProperty( "line.separator" );
+    protected static final char TABULATION = '\t';
 
 
     ////////////////////////////
@@ -303,15 +304,18 @@ public class LineExport {
     // Vocabulary that we need for processing
     protected CvXrefQualifier identityXrefQualifier = null;
     protected CvXrefQualifier isoformParentQualifier = null;
+    protected CvXrefQualifier primaryReferenceQualifier = null;
 
     protected CvDatabase uniprotDatabase = null;
     protected CvDatabase intactDatabase = null;
+    protected CvDatabase pubmedDatabase = null;
 
     protected CvTopic uniprotDR_Export = null;
     protected CvTopic uniprotCC_Export = null;
     protected CvTopic authorConfidenceTopic = null;
     protected CvTopic negativeTopic = null;
     protected CvTopic ccNoteTopic = null;
+    protected CvTopic noUniprotUpdate = null;
 
     protected CvAliasType geneNameAliasType;
     protected CvAliasType locusNameAliasType; // locus-name
@@ -350,21 +354,24 @@ public class LineExport {
      */
     public void init( IntactHelper helper ) throws IntactException, DatabaseContentException {
 
-        uniprotDatabase = (CvDatabase) getCvObject( helper, CvDatabase.class, UNIPROT );
-        intactDatabase = (CvDatabase) getCvObject( helper, CvDatabase.class, INTACT );
+        uniprotDatabase = (CvDatabase) getCvObject( helper, CvDatabase.class, CvDatabase.UNIPROT );
+        intactDatabase = (CvDatabase) getCvObject( helper, CvDatabase.class, CvDatabase.INTACT );
+        pubmedDatabase = (CvDatabase) getCvObject( helper, CvDatabase.class, CvDatabase.PUBMED );
 
-        identityXrefQualifier = (CvXrefQualifier) getCvObject( helper, CvXrefQualifier.class, IDENTITY );
-        isoformParentQualifier = (CvXrefQualifier) getCvObject( helper, CvXrefQualifier.class, ISOFORM_PARENT );
+        identityXrefQualifier = (CvXrefQualifier) getCvObject( helper, CvXrefQualifier.class, CvXrefQualifier.IDENTITY );
+        isoformParentQualifier = (CvXrefQualifier) getCvObject( helper, CvXrefQualifier.class, CvXrefQualifier.ISOFORM_PARENT );
+        primaryReferenceQualifier = (CvXrefQualifier) getCvObject( helper, CvXrefQualifier.class, CvXrefQualifier.PRIMARY_REFERENCE );
 
-        uniprotDR_Export = (CvTopic) getCvObject( helper, CvTopic.class, UNIPROT_DR_EXPORT );
-        uniprotCC_Export = (CvTopic) getCvObject( helper, CvTopic.class, UNIPROT_CC_EXPORT );
-        authorConfidenceTopic = (CvTopic) getCvObject( helper, CvTopic.class, AUTHOR_CONFIDENCE );
-        negativeTopic = (CvTopic) getCvObject( helper, CvTopic.class, NEGATIVE );
-        ccNoteTopic = (CvTopic) getCvObject( helper, CvTopic.class, CC_NOTE );
+        uniprotDR_Export = (CvTopic) getCvObject( helper, CvTopic.class, CvTopic.UNIPROT_DR_EXPORT );
+        uniprotCC_Export = (CvTopic) getCvObject( helper, CvTopic.class, CvTopic.UNIPROT_CC_EXPORT );
+        authorConfidenceTopic = (CvTopic) getCvObject( helper, CvTopic.class, CvTopic.AUTHOR_CONFIDENCE );
+        negativeTopic = (CvTopic) getCvObject( helper, CvTopic.class, CvTopic.NEGATIVE );
+        ccNoteTopic = (CvTopic) getCvObject( helper, CvTopic.class, CvTopic.CC_NOTE );
+        noUniprotUpdate = (CvTopic) getCvObject( helper, CvTopic.class, CvTopic.NON_UNIPROT );
 
-        geneNameAliasType = (CvAliasType) getCvObject( helper, CvAliasType.class, GENE_NAME );
-        locusNameAliasType = (CvAliasType) getCvObject( helper, CvAliasType.class, LOCUS_NAME );
-        orfNameAliasType = (CvAliasType) getCvObject( helper, CvAliasType.class, ORF_NAME );
+        geneNameAliasType = (CvAliasType) getCvObject( helper, CvAliasType.class, CvAliasType.GENE_NAME );
+        locusNameAliasType = (CvAliasType) getCvObject( helper, CvAliasType.class, CvAliasType.LOCUS_NAME );
+        orfNameAliasType = (CvAliasType) getCvObject( helper, CvAliasType.class, CvAliasType.ORF_NAME );
     }
 
     /**
@@ -1123,5 +1130,34 @@ public class LineExport {
         }
 
         return result;
+    }
+
+    /**
+     * Checks if the protein has been annotated with the no-uniprot-update CvTopic, if so, return false,
+     * otherwise true. That flag is added to a protein when created via the editor. As some protein may
+     * have a UniProt ID as identity we don't want those to be overwitten.
+     *
+     * @param protein the protein to check
+     *
+     * @return false if no Annotation having CvTopic( no-uniprot-update ), otherwise true.
+     */
+    protected boolean needsUniprotUpdate( final Protein protein ) {
+
+        boolean needsUpdate = true;
+
+        if( null == noUniprotUpdate ) {
+            // in case the term hasn't been created, assume there are no proteins created via editor.
+            return true;
+        }
+
+        for ( Iterator iterator = protein.getAnnotations().iterator(); iterator.hasNext() && true == needsUpdate; ) {
+            Annotation annotation = (Annotation) iterator.next();
+
+            if( noUniprotUpdate.equals( annotation.getCvTopic() ) ) {
+                needsUpdate = false;
+            }
+        }
+
+        return needsUpdate;
     }
 }
