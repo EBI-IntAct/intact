@@ -1128,12 +1128,16 @@ public class CCLineExport extends LineExport {
         String ccExportFilename = null;
         String goExportFilename = null;
         if ( line.hasOption( "ccExport" ) ) {
+            goExportFilename = line.getOptionValue( "goExport" );
+        }
+
+        if ( line.hasOption( "goExport" ) ) {
             ccExportFilename = line.getOptionValue( "ccExport" );
         }
 
         System.out.println( "Try to open: " + drExportFilename );
         Set uniprotIDs = getEligibleProteinsFromFile( drExportFilename );
-        System.out.println( uniprotIDs.size() + " DR protein(s) loaded from goFile: " + drExportFilename );
+        System.out.println( uniprotIDs.size() + " DR protein(s) loaded from drFile: " + drExportFilename );
 
         // create a database access
         IntactHelper helper = new IntactHelper();
