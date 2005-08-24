@@ -25,6 +25,16 @@ import java.util.*;
  */
 public class EditorMenuFactory {
 
+    // Those variables are used when a called of the function getMenus(String EditorPageName) from the Class
+    // AbstractEditViexBean is done in order to tell for which page this method is called to remove the relevant
+    // cvTopic from the annotation section
+    public static final String FEATURE_PAGE = "featurePage";
+
+    public static final String SEQUENCE= "Sequence";
+
+    public static final String CV_PAGE = "Cv";
+
+    public static final String BIOSOURCE_PAGE = "BioSource";
     // Static data
 
     /**
@@ -97,6 +107,11 @@ public class EditorMenuFactory {
      * The name for the CvFeatureIdentification list.
      */
     public static final String FEATURE_IDENTIFICATION = "FeatureIdentification";
+
+    /**
+     * The name for the Protein list (used for exemple by the function getMenu(String type) to filter the CvTopic menu
+     */
+     public static final String PROTEIN= "Protein";
 
     /**
      * The only instance of this class.
