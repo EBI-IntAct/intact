@@ -7,6 +7,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.cv;
 
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
@@ -18,6 +20,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 /**
  * The CV edit view bean. Currently, this class does not provide any additional
  * functionalities (simply extend the super abstract class to allow to create
@@ -27,6 +31,8 @@ import java.util.Map;
  * @version $Id$
  */
 public class CvViewBean extends AbstractEditViewBean {
+
+    protected static final Logger LOGGER = Logger.getLogger(EditorConstants.LOGGER);
 
     /**
      * The map of menus for this view.
@@ -84,6 +90,10 @@ public class CvViewBean extends AbstractEditViewBean {
      */
     public void loadMenus() throws IntactException {
         myMenus.clear();
-        myMenus = super.getMenus();
+
+
+        //LOGGER.info("help tag : " + this.getHelpTag());
+
+        myMenus = super.getMenus(EditorMenuFactory.CV_PAGE);//EditorMenuFactory.TOPIC);
     }
 }

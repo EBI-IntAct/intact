@@ -28,6 +28,8 @@ import java.util.*;
  */
 public class ExperimentViewBean extends AbstractEditViewBean {
 
+    private String myPubmedId;
+
     /**
      * The host organism.
      */
@@ -83,6 +85,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         setOrganism(null);
         setInter(null);
         setIdent(null);
+        setPubmedId(null);
 
         myHasLargeInts = false;
         myLargeInts = 0;
@@ -163,6 +166,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         setOrganism(expform.getOrganism());
         setInter(expform.getInter());
         setIdent(expform.getIdent());
+        setPubmedId(expform.getPubmedId());
     }
 
     // Override to copy Experiment data.
@@ -175,6 +179,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         expform.setOrganism(getOrganism());
         expform.setInter(getInter());
         expform.setIdent(getIdent());
+        expform.setPubmedId(getPubmedId());
     }
 
     // Override to check for a large experiment.
@@ -219,6 +224,16 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         return myMenus;
     }
 
+    //Getter/Setter methods for pubmedId
+
+    public String getPubmedId(){
+        return myPubmedId;
+    }
+
+    public void setPubmedId(String pubmedId){
+        myPubmedId=pubmedId;
+    }
+
     // Getter/Setter methods for Organism.
     public String getOrganism() {
         return myOrganism;
@@ -245,6 +260,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     public void setIdent(String identification) {
         myIdent = EditorMenuFactory.normalizeMenuItem(identification);
     }
+
 
     /**
      * Adds an Interaction.
@@ -501,7 +517,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         // Handler to the menu factory.
         EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
 
-        myMenus.putAll(super.getMenus());
+        myMenus.putAll(super.getMenus(EditorMenuFactory.EXPERIMENT));
 
         // The organism menu
         String name = EditorMenuFactory.ORGANISM;
