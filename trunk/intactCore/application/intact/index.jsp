@@ -120,7 +120,15 @@
   </tbody>
 </table>
 <div align="center">
-<p>Page maintained by <a href="mailto:support@ebi.ac.uk"> support@ebi.ac.uk</a>.&nbsp;&nbsp;Last updated:&nbsp; <script language="javascript" src="http://www.ebi.ac.uk/include/lastmod_noprint.js"></script></p>
+<p>
+   Please contact <a target="_top" title="Contact EBI Support" class="normaltext" href="http://www.ebi.ac.uk/support/index.php?query=IntAct">EBI Support</a> with any problems or suggestions regarding this site.
+   <br>
+   <br>
+   <span class="psmall"> <a href="/Information/termsofuse.html" class="small_list">Terms of Use</a> </span>
+   <br><br>
+</p>
+
+
 </div>
 <map name="Map">
 <area shape="rect" coords="70,1,156,25" href="http://srs.ebi.ac.uk/" alt="Start SRS Session" title="Start SRS Session">
