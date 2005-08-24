@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
+import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
 import uk.ac.ebi.intact.model.Interaction;
 
 import javax.servlet.http.HttpServletRequest;
@@ -70,8 +71,7 @@ public class InteractionDispatchAction extends AbstractEditorDispatchAction {
     public ActionForward recent(ActionMapping mapping,
                                 ActionForm form,
                                 HttpServletRequest request,
-                                HttpServletResponse response)
-            throws Exception {
+                                HttpServletResponse response) throws SessionExpiredException {
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
 
@@ -94,8 +94,7 @@ public class InteractionDispatchAction extends AbstractEditorDispatchAction {
     public ActionForward search(ActionMapping mapping,
                                 ActionForm form,
                                 HttpServletRequest request,
-                                HttpServletResponse response)
-            throws Exception {
+                                HttpServletResponse response) throws SessionExpiredException {
         // The form.
         ExperimentActionForm expform = (ExperimentActionForm) form;
 
