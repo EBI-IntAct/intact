@@ -185,7 +185,7 @@
       name="seqForm"
       scope="session"
       input="edit.layout"
-      unknown="false"
+      unknown="false/expDispatch"
       validate="false"
     >
     </action>
@@ -225,6 +225,11 @@
       <forward
         name="interaction"
         path="/do/interaction"
+        redirect="false"
+      />
+      <forward
+        name="exp.autocomp"
+        path="/do/exp/autocomp"
         redirect="false"
       />
       <forward
@@ -866,6 +871,17 @@
       unknown="false"
       validate="false"
     >
+    </action>
+    <action
+      path="/exp/autocomp"
+      type="uk.ac.ebi.intact.application.editor.struts.action.experiment.AutocompDispatchAction"
+      name="expForm"
+      scope="session"
+      input="edit.layout"
+      parameter="dispatch"
+      unknown="false"
+      validate="false"
+    >    
     </action>
     <action
       path="/cv/annot/submit"

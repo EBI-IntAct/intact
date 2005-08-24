@@ -27,6 +27,8 @@
 <!-- To validate annotation text -->
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/annotation.js"></script>
 
+
+
 <%-- Include javascript for show user functionality --%>
 <jsp:include page="../misc/user_js.jsp"/>
 
@@ -38,6 +40,8 @@
     <html:hidden property="intac" />
     <html:hidden property="anchor" />
 
+    <jsp:include page="autoCompletion.jsp" />
+    <p></p>
     <jsp:include page="info.jsp" />
     <p></p>
     <jsp:include page="ints.jsp" />
@@ -58,7 +62,7 @@
         <p></p>
         <jsp:include page="../reviewAccept.jsp" />
     </c:when>
-    <c:when test="${user == 'orchad'}" >
+    <c:when test="${user == 'orchard'}" >
             <p></p>
             <jsp:include page="../reviewAccept.jsp" />
     </c:when>
