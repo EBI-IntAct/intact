@@ -54,6 +54,10 @@ import java.util.ResourceBundle;
  *      path="/do/interaction"
  *
  * @struts.action-forward
+ *      name="exp.autocomp"
+ *      path="/do/exp/autocomp"
+ *
+ * @struts.action-forward
  *      name="exp.int.hold"
  *      path="/do/exp/int/hold"
  *
@@ -76,6 +80,8 @@ public class ExperimentSubmitAction extends AbstractSubmitAction {
         ourButtonToAction.put(rb.getString("exp.int.button.hide"), "exp.int.hold");
         ourButtonToAction.put(rb.getString("exp.int.button.recent"), "exp.int.search");
         ourButtonToAction.put(rb.getString("exp.int.button.search"),"exp.int.search");
+        ourButtonToAction.put(rb.getString("exp.button.autocompletion"),"exp.autocomp");
+
     }
 
     public ActionForward execute(ActionMapping mapping,
