@@ -19,7 +19,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 public class ExperimentActionForm extends EditorActionForm {
 
     private String myPubmedId;
-     private String myInteractionAC;
+    private String myInteractionAC;
     private String myOragnism;
     private String myInter;
     private String myIdent;
