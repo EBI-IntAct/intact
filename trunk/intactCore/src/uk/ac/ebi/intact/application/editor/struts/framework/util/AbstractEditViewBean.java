@@ -16,14 +16,16 @@ import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
+import uk.ac.ebi.intact.application.commons.util.CvFilterRessources;
+import uk.ac.ebi.intact.application.commons.util.AnnotationSection;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.Annotation;
-import uk.ac.ebi.intact.model.Xref;
-import uk.ac.ebi.intact.model.Polymer;
+import uk.ac.ebi.intact.model.*;
 
 import java.io.Serializable;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -710,7 +712,8 @@ public abstract class AbstractEditViewBean implements Serializable {
     }
 
     /**
-     * Returns the map of menus which are common to all the editors.
+     * Returns the map of menus which are common to all the editors. It calls the removeFromMenu method to remove the
+     * non-relevent term in the menu (see javadoc for this method).
      * @return map of menus. This consists of edit/add menus for Topic, Database
      * and Qualifiers.
      * @throws IntactException for errors in accessing the persistent system.
@@ -741,6 +744,95 @@ public abstract class AbstractEditViewBean implements Serializable {
         map.put(name + "_", menuFactory.convertToAddMenu(menu));
 
         return map;
+    }
+
+    /**
+     * Returns the map of menus which are common to all the editors, it call the .
+     * @param editorPageName The editor page name. This parameter is taken from EditorMenuFactory :
+     *          Editor - Interaction =====> EditorMenuFactory.INTERACTION
+     *          Editor - Experiment  =====> EditorMenuFactory.EXPERIMENT
+     *          Editor - Cv?         =====> EditorMenuFactory.TOPIC
+     *          Editor - Protein     =====> EditorMenuFactory.PROTEIN
+     * @return
+     * @throws IntactException
+     */
+    protected Map getMenus(String editorPageName) throws IntactException {
+        // The map containing the menus.
+        Map map = new HashMap();
+
+        // Handler to the menu factory.
+        EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
+
+        // The topic edit/add menu
+        String name = EditorMenuFactory.TOPIC;
+        List menu = menuFactory.getMenu(name, 0);
+        //Remove the non relevant terms from topic menu
+        menu = removeFromCvMenu(menu,editorPageName);
+        map.put(name, menu);
+        map.put(name + "_", menuFactory.convertToAddMenu(menu));
+
+        // The database edit/add menu.
+        name = EditorMenuFactory.DATABASE;
+        menu = menuFactory.getMenu(name, 0);
+        map.put(name, menu);
+        map.put(name + "_", menuFactory.convertToAddMenu(menu));
+
+        // The qualifier edit/add menu.
+        name = EditorMenuFactory.QUALIFIER;
+        menu = menuFactory.getMenu(name, 0);
+        map.put(name, menu);
+        map.put(name + "_", menuFactory.convertToAddMenu(menu));
+
+        return map;
+    }
+
+    /**
+     * This method is in charge to remove from the Topic menu list of annotation all the topics which are not relevant
+     * for the considered  Editor page. For exemple, it wouldn't be correct to add to an experiment an annotation with
+     * the topic equal to "isoform-annotation". This topic can only fit for a protein so it shouldn't appear in the
+     * Experiment - Editor page.
+     *
+     * @param menu The general menu containing all the cvTopic
+     * @param editorPageName The editor page name. This parameter is taken from EditorMenuFactory :
+     *          Editor - Interaction =====> EditorMenuFactory.INTERACTION
+     *          Editor - Experiment  =====> EditorMenuFactory.EXPERIMENT
+     *          Editor - Cv?         =====> EditorMenuFactory.TOPIC
+     *          Editor - Protein     =====> EditorMenuFactory.PROTEIN
+     * @return  The new menu list
+     */
+
+    protected List removeFromCvMenu(List menu, String editorPageName) throws IntactException {
+
+        //  The annotationSection object contains 5 Maps associating each of the editor page to a List. Those lists
+        //  contains the relevant cvTopics that can be used to annotate the considered edited object.
+        AnnotationSection annotationSection = new AnnotationSection();
+
+        List newMenulist = new ArrayList();
+        List cvTopicRessources= new ArrayList();
+
+        // This method return a list containing all the cvTopic that can be used to annotate the Edited object.
+        // For expemple if you are in the BioSource Editor the returned list will contained : 'caution', 'remark-internal'
+        // and 'url'
+        cvTopicRessources=annotationSection.getUsableTopics(editorPageName);
+
+
+        for (int i = 0; i < menu.size(); i++) {
+
+            String menuElement= ((String) menu.get(i)).trim().toLowerCase();
+            boolean removeElement=true;
+            for (int j = 0; j < cvTopicRessources.size(); j++) {
+                String ressourceElement = (String) cvTopicRessources.get(j);
+                ressourceElement = ressourceElement.trim().toLowerCase();
+                if(ressourceElement.equals(menuElement)){
+                    removeElement=false;
+                }
+            }
+            if(false==removeElement){
+                newMenulist.add(menu.get(i));
+            }
+
+        }
+        return newMenulist;
     }
 
     // Abstract method
