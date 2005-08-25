@@ -36,7 +36,7 @@ public class OptionGenerator {
         ArrayList sources = new ArrayList ();
 
         // read the Highlighting.proterties file
-        Properties properties = IntactUserI.HIGHLIGHTING_PROPERTIES;;
+        Properties properties = IntactUserI.HIGHLIGHTING_PROPERTIES;
 
         if (null != properties) {
 
@@ -88,7 +88,7 @@ public class OptionGenerator {
     public static LabelValueBean getDefaultSource () {
 
         // read the Highlighting.proterties file
-        Properties properties = IntactUserI.HIGHLIGHTING_PROPERTIES;;
+        Properties properties = IntactUserI.HIGHLIGHTING_PROPERTIES;
 
         if (null != properties) {
 
