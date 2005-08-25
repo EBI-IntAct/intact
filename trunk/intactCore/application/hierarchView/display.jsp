@@ -27,13 +27,13 @@
                     <table>
                       <tr>
                         <td>
-                            <img src="<%=request.getContextPath()%>/images/clockT.gif" border="0">
+                            <img src="<%=request.getContextPath()%>/images/clockT.gif" border="0" />
                         </td>
                         <td>
                             <strong>
                                 <font color="#000080">
                                     Please wait, your request is being processed.
-                                    <br>
+                                    <br />
                                     Graphical view of the interaction network centered on the
                                     Interactor AC: <%= request.getParameter ("AC") %>.
                                 </font>
@@ -48,11 +48,10 @@
     <form action="<%=request.getContextPath()%>/display.do" method="post">
           <input type="hidden" name="host" />
           <input type="hidden" name="protocol" />
-
-          <input type="hidden" name="AC"     value="<%= request.getParameter ("AC")     %>" />
-          <input type="hidden" name="depth"  value="<%= request.getParameter ("depth")  %>" />
-          <input type="hidden" name="method" value="<%= request.getParameter ("method") %>" />
-          <input type="hidden" name="network" value="<%= request.getParameter ("network") %>" />
+          <input type="hidden" name="AC"         value="<%= request.getParameter ("AC")     %>" />
+          <input type="hidden" name="depth"      value="<%= request.getParameter ("depth")  %>" />
+          <input type="hidden" name="method"     value="<%= request.getParameter ("method") %>" />
+          <input type="hidden" name="network"    value="<%= request.getParameter ("network") %>" />
           <input type="hidden" name="singletons" value="<%= request.getParameter ("singletons") %>" />
     </form>
 
