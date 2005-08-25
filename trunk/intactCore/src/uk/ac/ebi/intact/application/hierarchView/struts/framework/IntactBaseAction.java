@@ -340,6 +340,7 @@ public abstract class IntactBaseAction extends Action {
 
         // store the image data and the graph
         user.setImageBean( ib );
+        user.setNodeCoordinates( te.getNodeCoordinates() );
     }
 
     /**
