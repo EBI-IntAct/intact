@@ -16,14 +16,14 @@
 <html:html>
 
 <head>
-    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="pragma" content="no-cache">
-    <meta http-equiv="expires" content="-1">
+    <meta http-equiv="expires" content="0">
 </head>
 
 <body bgcolor="white">
 
-    <jsp:forward page="/index.jsp"/>
+    <jsp:forward page="/index.jsp" />
 
 </body>
 
