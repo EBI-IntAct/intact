@@ -4,16 +4,10 @@ package uk.ac.ebi.intact.application.hierarchView.highlightment.source;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.Vector;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -77,12 +71,13 @@ public class GoHighlightmentSource extends HighlightmentSource {
             check = "";
         }
 
-        htmlCode = "<INPUT TYPE=\"checkbox\" NAME=\""
+        htmlCode = "<input type=\"checkbox\" name=\""
                 + ATTRIBUTE_OPTION_CHILDREN + "\" " + check
-                + " VALUE=\"checked\">" + PROMPT_OPTION_CHILDREN;
+                + " value=\"checked\">" + PROMPT_OPTION_CHILDREN;
 
         return htmlCode;
     }
+
 
     /**
      * Return a collection of keys specific to the selected protein and the
@@ -103,8 +98,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
                 .getAttribute( uk.ac.ebi.intact.application.hierarchView.business.Constants.USER_KEY );
 
         if ( null == user ) {
-            logger
-                    .error( "No user found in the session, unable to search for GO terms" );
+            logger.error( "No user found in the session, unable to search for GO terms" );
             return null;
         }
 
@@ -134,6 +128,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
         return listGOTerm;
     } // getKeysFromIntAct
 
+
     /**
      * get a collection of XRef and filter to keep only GO terms
      * 
@@ -141,26 +136,25 @@ public class GoHighlightmentSource extends HighlightmentSource {
      * @return a GO term collection or an empty collection if none exists.
      */
     private Collection filterInteractorXref(Collection xRef) {
-        Collection listGOTerm = new ArrayList( xRef.size() ); // size will be >=
-        // to needed
-        // capacity
+        Collection listGOTerm = new ArrayList( xRef.size() ); // size will be >= to needed capacity
         Iterator xRefIterator = xRef.iterator();
 
         while ( xRefIterator.hasNext() ) {
-            String[] goterm = new String[2];
+            String[] goTerm = new String[3];
             Xref xref = (Xref) xRefIterator.next();
 
-            if ( ( xref.getCvDatabase().getShortLabel() ).toLowerCase().equals(
-                    SOURCE_KEY ) ) {
-                goterm[0] = xref.getPrimaryId();
-                goterm[1] = xref.getSecondaryId();
-                listGOTerm.add( goterm );
+            if ( ( xref.getCvDatabase().getShortLabel() ).toLowerCase().equals( SOURCE_KEY ) ) {
+                goTerm[0] = "Go";
+                goTerm[1] = xref.getPrimaryId();
+                goTerm[2] = xref.getSecondaryId();
+                listGOTerm.add( goTerm );
                 logger.info( xref.getPrimaryId() );
             }
         }
 
         return listGOTerm;
     }
+
 
     /**
      * get a collection of the xrefs and filter to keep only GO terms.
@@ -217,14 +211,15 @@ public class GoHighlightmentSource extends HighlightmentSource {
         return listGOTerm;
     }
 
+
     /**
      * Returns a collection of nodes to highlight for the display
-     * 
-     * @param aSession the current session
+     *
      * @param aGraph the network to display
      * @param selectedGOTerm the selected GO Term
      * @param children the children GO Terms of the selected GO Term
      * @param searchForChildren whether it shall be searched for the children
+     * @param user
      * @return
      * @throws IntactException
      * @throws SQLException
@@ -258,6 +253,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
         return proteinToHighlightSourceMap( aGraph, children, selectedGOTerm,
                 searchForChildren );
     }
+
 
     private Collection proteinToHighlightDatabase(HttpSession aSession,
             InteractionNetwork aGraph, String selectedGOTerm,
@@ -299,6 +295,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
         } // for
         return nodeList;
     }
+
 
     /**
      * Returns a collection of proteins to be highlighted in the graph.
@@ -345,6 +342,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
         return nodeList;
     }
 
+
     /**
      * Create a set of protein we must highlight in the graph given in
      * parameter. The protein selection is done according to the source keys
@@ -360,8 +358,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
     public Collection proteinToHightlight(HttpSession aSession,
             InteractionNetwork aGraph) {
 
-        IntactUserI user = (IntactUserI) aSession
-                .getAttribute( Constants.USER_KEY );
+        IntactUserI user = (IntactUserI) aSession.getAttribute( Constants.USER_KEY );
         Collection children = user.getKeys();
         String selectedGOTerm = user.getSelectedKey();
 
@@ -370,8 +367,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
         }
 
         // get source option
-        String check = (String) user
-                .getHighlightOption( ATTRIBUTE_OPTION_CHILDREN );
+        String check = (String) user.getHighlightOption( ATTRIBUTE_OPTION_CHILDREN );
         boolean searchForChildren;
         if ( check != null ) {
             searchForChildren = check.equals( "checked" );
@@ -403,6 +399,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
         }
     }
 
+
     /**
      * Allows to update the session object with parameters' request. These
      * parameters are specific of the implementation.
@@ -422,10 +419,17 @@ public class GoHighlightmentSource extends HighlightmentSource {
             user.addHighlightOption( ATTRIBUTE_OPTION_CHILDREN, result[0] );
     } // saveOptions
 
-    public List getSourceUrls(Collection xRefs, Collection selectedXRefs,
-            String applicationPath) throws IntactException {
+    
+    public List getSourceUrls(Collection xRefs, Collection selectedXRefs, String applicationPath,
+                              IntactUserI user) throws IntactException, SQLException {
 
-        // get in the Highlightment properties file where is interpro
+        // connection to database
+        Connection con = user.getHelper().getJDBCConnection();
+
+        //PreparedStatement sourceStm = con.prepareStatement( "SELECT count(X.ac) FROM ia_xref X, ia_controlledvocab C "
+        //  + "WHERE C.ac = X.database_ac AND X.primaryid=? AND X.parent_ac in ?" );
+
+        // get in the Highlightment properties file where is go
         Properties props = IntactUserI.HIGHLIGHTING_PROPERTIES;
 
         if ( null == props ) {
@@ -437,8 +441,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
             throw new IntactException( msg );
         }
 
-        String goPath = props
-                .getProperty( "highlightment.source.GO.applicationPath" );
+        String goPath = props.getProperty( "highlightment.source.GO.applicationPath" );
 
         if ( null == goPath ) {
             String msg = "Unable to find the interpro hostname. "
@@ -459,15 +462,53 @@ public class GoHighlightmentSource extends HighlightmentSource {
             listGOTerm = filterInteractorXref( xRefs );
         }
 
-        logger.info( listGOTerm.size() + " GO term after filtering" );
+        logger.info( listGOTerm.size() + " GO term(s) after filtering" );
 
         // create url collection with exact size
         List urls = new ArrayList( listGOTerm.size() );
 
+        // list of Nodes of the Graph
+        InteractionNetwork aGraph = user.getInteractionNetwork();
+        ArrayList listOfNode = aGraph.getOrderedNodes();
+        String listOfNodesSQL = null;
+
+
+        // transform the list of nodes in SQL syntax
+        for( int i=0; i<listOfNode.size(); i++ ) {
+            if ( i > 0 ) {
+                 listOfNodesSQL = "'" + listOfNode.get(i).toString() + "'," + listOfNodesSQL;
+            }
+            else {
+                 listOfNodesSQL = "'" + listOfNode.get(i).toString() + "'";
+            }
+        }
+
+        String[] tmpList = listOfNodesSQL.split(",");
+        listOfNodesSQL = "";
+        for( int i=0; i<tmpList.length ; i++ ) {
+            tmpList[i] = tmpList[i].replaceAll( "Node:\\s","" );
+            tmpList[i] = tmpList[i].replaceAll( "\\[","" );
+            tmpList[i] = tmpList[i].replaceAll( "\\]","" );
+            if( i > 0) {
+                listOfNodesSQL = listOfNodesSQL + "," + tmpList[i];
+            }
+            else {
+                listOfNodesSQL = listOfNodesSQL + tmpList[i];
+            }
+        }
+        listOfNodesSQL = "(" + listOfNodesSQL + ")";
+        // list of Nodes "SQL ready"
+
+
+        // SQL request to fill the "count" column
+        PreparedStatement sourceStm = con.prepareStatement( "SELECT count(X.ac) FROM ia_xref X, ia_controlledvocab C "
+                + "WHERE C.ac = X.database_ac AND X.primaryid=? AND X.parent_ac in " + listOfNodesSQL );
+
         // Create a collection of label-value object (GOterm, URL to access a
-        // nice display in interpro)
+        // nice display in go)
         String[] goTermInfo;
-        String goTermId, goTermDescription;
+        String goTermId, goTermType, goTermDescription;
+        int goTermCount = 0;
 
         /*
          * In order to avoid the browser to cache the response to that request
@@ -479,32 +520,53 @@ public class GoHighlightmentSource extends HighlightmentSource {
             Iterator list = listGOTerm.iterator();
             while ( list.hasNext() ) {
                 goTermInfo = (String[]) list.next();
-                goTermId = goTermInfo[0];
-                goTermDescription = goTermInfo[1];
+                goTermId = goTermInfo[1];
+                goTermType = goTermInfo[0];
+                goTermDescription = goTermInfo[2];
+
+                ResultSet set;
+
+                // the current source is fetched (e.g. GO)
+                sourceStm.setString( 1, goTermId );
+                // sourceStm.setString( 2, listOfNodesSQL );
+                set = sourceStm.executeQuery();
+                logger.info( "query for (" + goTermId + "," + listOfNodesSQL + ") done" );
+                while ( set.next() ) {
+                    goTermCount = set.getInt( 1 );
+                }
+                set.close();
+
+                // to summarize
+                logger.info("goTermType=" + goTermType + " | goTermId=" + goTermId
+                + " | goTermDescription=" + goTermDescription + " | goTermCount="
+                + goTermCount);
 
                 String directHighlightUrl = applicationPath
-                        + "/source.do?keys=${selected-children}&clicked=${id}"
+                        + "/source.do?keys=${selected-children}&clicked=${id}&type=${type}"
                         + randomParam;
                 String hierarchViewURL = null;
 
                 try {
-                    hierarchViewURL = URLEncoder.encode( directHighlightUrl,
-                            "UTF-8" );
+                    hierarchViewURL = URLEncoder.encode( directHighlightUrl, "UTF-8" );
                 }
                 catch ( UnsupportedEncodingException e ) {
                     logger.error( e );
                 }
 
-                // replace ${selected-children} and ${id} by the GO id.
+                // replace ${selected-children}, ${id} by the GO id and ${type} by Go
                 logger.info( "direct highlight URL: " + directHighlightUrl );
                 directHighlightUrl = SearchReplace.replace( directHighlightUrl,
                         "${selected-children}", goTermId );
                 directHighlightUrl = SearchReplace.replace( directHighlightUrl,
                         "${id}", goTermId );
+                directHighlightUrl = SearchReplace.replace( directHighlightUrl,
+                        "${type}", goTermType );
                 logger.info( "direct highlight URL (modified): "
                         + directHighlightUrl );
 
-                String quickGoUrl = goPath + "/DisplayGoTerm?selected="
+                String quickGoUrl = goPath + "/DisplayGoTerm?id=" + goTermId +"&format=contentonly";
+
+                String quickGoGraphUrl = goPath + "/DisplayGoTerm?selected="
                         + goTermId + "&intact=true&format=contentonly&url="
                         + hierarchViewURL + "&frame=_top";
                 logger.info( "Xref: " + goTermId );
@@ -514,19 +576,27 @@ public class GoHighlightmentSource extends HighlightmentSource {
                     logger.info( goTermId + " SELECTED" );
                     selected = true;
                 }
-                urls.add( new SourceBean( goTermId, goTermDescription,
-                        quickGoUrl, directHighlightUrl, selected,
+
+                urls.add( new SourceBean( goTermId, goTermType, goTermDescription, goTermCount,
+                        quickGoUrl, quickGoGraphUrl, directHighlightUrl, selected,
                         applicationPath ) );
             }
         }
 
+        sourceStm.close();
+        //con.close();
+
+        // sort the source list by count
+        Collections.sort(urls);
+
         return urls;
     } // getSourceUrls
+
 
     /**
      * Parse the set of key generate by the source and give back a collection of
      * keys.
-     * 
+     *
      * @param someKeys a string which contains some key separates by a
      *            character.
      * @return the splitted version of the key string as a collection of String.
