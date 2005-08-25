@@ -13,7 +13,6 @@ import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
-import uk.ac.ebi.intact.application.commons.util.CvFilterRessources;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
@@ -31,6 +30,18 @@ import java.util.Map;
  * @version $Id$
  */
 public class BioSourceViewBean extends AbstractEditViewBean {
+
+    //private String myBioSourceXref;
+
+    //public String getBioSourceXref() {
+    //    return this.myBioSourceXref;
+    //}
+
+    //public void setBioSourceXref() {
+    //    CvFilterRessources cvFilterRessources= new CvFilterRessources();
+
+    //    this.myBioSourceXref = cvFilterRessources.getBiosourceXref().toString();
+    ///}
 
     /**
      * The tax id.
@@ -52,6 +63,7 @@ public class BioSourceViewBean extends AbstractEditViewBean {
         setTaxId(null);
         setCellType(null);
         setTissue(null);
+        //setBioSourceXref(null);
     }
 
     // Override the super method to set the tax id.
@@ -61,6 +73,9 @@ public class BioSourceViewBean extends AbstractEditViewBean {
         // Must be a BioSource.
         BioSource bio = (BioSource) annobj;
 
+
+        //For javascript
+        //setBioSourceXref();
 
         // Must have a tax id.
         setTaxId(bio.getTaxId());
@@ -83,6 +98,7 @@ public class BioSourceViewBean extends AbstractEditViewBean {
         setTaxId(bsform.getTaxId());
         setTissue(bsform.getTissue());
         setCellType(bsform.getCellType());
+        //setBioSourceXref();
     }
 
 
@@ -96,6 +112,7 @@ public class BioSourceViewBean extends AbstractEditViewBean {
         bsform.setTaxId(getTaxId());
         bsform.setTissue(getTissue());
         bsform.setCellType(getCellType());
+      //  bsform.setBioSourceXref(getBioSourceXref());
     }
 
     // Override to provide BioSource layout.
@@ -178,6 +195,7 @@ public class BioSourceViewBean extends AbstractEditViewBean {
         // Set tissue and cell objects.
         bs.setCvTissue(getCvTissue(helper));
         bs.setCvCellType(getCvCellType(helper));
+        bs.setBioSourceXref();
     }
 
     /**
@@ -189,7 +207,7 @@ public class BioSourceViewBean extends AbstractEditViewBean {
 
         // Clear any existing menus first.
         //myMenus.clear();
-        
+
         myMenus.putAll(super.getMenus(EditorMenuFactory.BIOSOURCE_PAGE));
         //myMenus.putAll(super.getMenus());
 
