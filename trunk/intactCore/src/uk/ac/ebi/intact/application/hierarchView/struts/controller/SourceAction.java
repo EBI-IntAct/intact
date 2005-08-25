@@ -72,8 +72,10 @@ public final class SourceAction extends IntactBaseAction {
             return (mapping.findForward("error"));
         }
 
-        String someKeys    = request.getParameter (StrutsConstants.ATTRIBUTE_KEYS_LIST);
-        String clickedKeys = request.getParameter (StrutsConstants.ATTRIBUTE_KEY_CLICKED);
+        String someKeys         = request.getParameter(StrutsConstants.ATTRIBUTE_KEYS_LIST);
+        String clickedKeys      = request.getParameter(StrutsConstants.ATTRIBUTE_KEY_CLICKED);
+        String keyType          = request.getParameter(StrutsConstants.ATTRIBUTE_KEY_TYPE);
+        String selectedTabIndex = request.getParameter( "selected" );
 
         if ((null == clickedKeys) || (clickedKeys.trim().length() == 0)) {
             addError ("error.keys.required");
@@ -89,10 +91,11 @@ public final class SourceAction extends IntactBaseAction {
 
         user.setKeys(keys);
         user.setSelectedKey(clickedKeys);
+        user.setSelectedKeyType(keyType);
 
         // Print debug in the log file
-        logger.info ("SourceAction: selectedKey=" + clickedKeys + " keys=" + someKeys +
-                     "\nlogged on in session " + session.getId());
+        logger.info ("SourceAction: selectedKey=" + clickedKeys + " | keys=" + someKeys +
+                     " | keys type=" + keyType + " | selectedTabIndex=" + selectedTabIndex + "\nlogged on in session " + session.getId());
 
         // Remove the obsolete form bean
         if (mapping.getAttribute() != null) {
@@ -100,6 +103,10 @@ public final class SourceAction extends IntactBaseAction {
                 request.removeAttribute(mapping.getAttribute());
             else
                 session.removeAttribute(mapping.getAttribute());
+        }
+
+        if( selectedTabIndex != null ) {
+            session.setAttribute( "selectedTabIndex", selectedTabIndex );
         }
 
         // Forward control to the specified success URI
