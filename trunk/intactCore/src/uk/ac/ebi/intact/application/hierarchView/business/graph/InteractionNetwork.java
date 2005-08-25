@@ -15,18 +15,8 @@ package uk.ac.ebi.intact.application.hierarchView.business.graph;
  */
 
 import java.awt.Color;
-import java.awt.event.FocusAdapter;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 
@@ -39,7 +29,6 @@ import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.TulipClie
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.ProteinCoordinate;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
-import uk.ac.ebi.intact.simpleGraph.MineEdge;
 import uk.ac.ebi.intact.simpleGraph.EdgeI;
 import uk.ac.ebi.intact.simpleGraph.Graph;
 import uk.ac.ebi.intact.simpleGraph.Node;
@@ -78,8 +67,7 @@ public class InteractionNetwork extends Graph {
                     .getProperty( "hierarchView.graph.max.cental.protein" );
         }
         else {
-            logger.warn( "properties file GRAPH_PROPERTIES could not"
-                    + " been read" );
+            logger.warn( "properties file GRAPH_PROPERTIES could not been read" );
         }
         // the color for the node is parsed
         NODE_COLOR = Utilities.parseColor( stringColorNode, DEFAULT_NODE_COLOR );
@@ -163,10 +151,9 @@ public class InteractionNetwork extends Graph {
         centralNode = new Node( aCentralProtein );
         centralProteinAC = aCentralProtein.getAc();
         centralInteractors = new ArrayList();
-        centralInteractors.add( aCentralProtein ); // can be an Interaction or a
-        // Protein
-
+        centralInteractors.add( aCentralProtein ); // can be an Interaction or a Protein
     }
+
 
     /**
      * Creates a interactionnetwork with the given node as central node
@@ -179,6 +166,7 @@ public class InteractionNetwork extends Graph {
         centralProteinAC = centralNode.getAc();
         centralNodes.add( centralNode );
     }
+
 
     /**
      * initialise some instance variables of the network
@@ -194,10 +182,12 @@ public class InteractionNetwork extends Graph {
         // with the provided number of sources.
         sourceHighlightMap = new Hashtable( GraphHelper.SOURCES.size() );
     }
-    
+
+
     public boolean isSourceHighlightMapEmpty() {
         return sourceHighlightMap.isEmpty();
     }
+
 
     /**
      * Adds a new node to the source map for the given source (e.g. GO) and the
@@ -237,6 +227,7 @@ public class InteractionNetwork extends Graph {
         sourceNodes.add( node );
     }
 
+
     /**
      * Returns all proteins which are related to the given source (e.g. GO) and
      * the given sourceID (e.g. GO:001900).
@@ -246,23 +237,55 @@ public class InteractionNetwork extends Graph {
      * @return a set of related proteins
      */
     public Set getProteinsForHighlight(String source, String sourceID) {
-        Map sourceMap = (Map) sourceHighlightMap.get( source );
+
+        logger.info("in getProteinsForHighlight looking for sourceID=" + sourceID);
+
+        // get the list of all the source terms allowed
+        Properties properties = IntactUserI.HIGHLIGHTING_PROPERTIES;
+        String sourceList = properties.getProperty ("highlightment.source.allowed");
+
+        // get the delimiter token
+        String delimiter = IntactUserI.HIGHLIGHTING_PROPERTIES.getProperty( "highlightment.source.token" );
+
+        // split the list with the delimiter
+        String[] listSource = sourceList.split(delimiter);
+
+        Map sourceMap = null, sourceMapTmp = null;
+        boolean init = false;
+
+        // build the sourceMap with all source allowed
+        // first element, "All", is ignored
+        for(int i=1; i<listSource.length; i++) {
+            if ( !init ) {
+                sourceMap = (Map) sourceHighlightMap.get( listSource[i].toLowerCase() );
+                init = true;
+            }
+            sourceMapTmp = (Map) sourceHighlightMap.get( listSource[i].toLowerCase() );
+            sourceMap.putAll(sourceMapTmp);
+            sourceMapTmp = null;
+        }
+
+        logger.info( "sourceMap = " + sourceMap );
+
         // if no nodes are given for the provided source null is returned
         if ( sourceMap == null ) {
+            logger.warn( "sourceMap is null !" );
             return null;
         }
 
         return (Set) sourceMap.get( sourceID );
     }
 
+
     /**
      * Returns the maximal number of allowed central proteins
-     * 
+     *
      * @return
      */
     public static int getMaxCentralProtein() {
         return MAX_CENTRAL_PROTEINS;
     }
+
 
     /**
      * Returns the current number of central proteins
@@ -273,6 +296,7 @@ public class InteractionNetwork extends Graph {
         return centralNodes.size();
     }
 
+
     /**
      * Returns the accession number of the central protein
      * 
@@ -281,6 +305,7 @@ public class InteractionNetwork extends Graph {
     public String getCentralProteinAC() {
         return centralProteinAC;
     }
+
 
     /**
      * Returns the central node. It has the same behaviour as
@@ -293,6 +318,7 @@ public class InteractionNetwork extends Graph {
         return getCentralNode();
     }
 
+
     /**
      * Returns the central node
      * 
@@ -301,6 +327,7 @@ public class InteractionNetwork extends Graph {
     public BasicGraphI getCentralNode() {
         return centralNode;
     }
+
 
     /**
      * Add the node to the central nodes if this node is already a central node
@@ -312,6 +339,7 @@ public class InteractionNetwork extends Graph {
             centralNodes.add( node );
     }
 
+
     /**
      * Returns all central nodes
      * 
@@ -321,6 +349,7 @@ public class InteractionNetwork extends Graph {
         return centralNodes;
     }
 
+
     /**
      * Returns all central interactors
      * 
@@ -329,6 +358,7 @@ public class InteractionNetwork extends Graph {
     public ArrayList getCentralInteractors() {
         return centralInteractors;
     }
+
 
     /**
      * Returns whether the provided node is a central protein
@@ -340,9 +370,11 @@ public class InteractionNetwork extends Graph {
         return centralNodes.contains( node );
     }
 
+
     public ArrayList getCriteria() {
         return criteriaList;
     }
+
 
     /**
      * Add a new criteria to the interaction network <br>
@@ -355,12 +387,14 @@ public class InteractionNetwork extends Graph {
             criteriaList.add( aCriteria );
     }
 
+
     /**
      * remove all existing criteria from the interaction network
      */
     public void resetCriteria() {
         criteriaList.clear();
     }
+
 
     /**
      * Initialization of the interaction network Record the nodes in a list
@@ -374,6 +408,7 @@ public class InteractionNetwork extends Graph {
         this.nodeList = new ArrayList( myNodes.values() );
         this.isInitialized = true;
     }
+
 
     /**
      * add the initialization part to the super class method
@@ -399,12 +434,14 @@ public class InteractionNetwork extends Graph {
         return aNode;
     } // addNode
 
+
     /**
      * return a list of nodes ordered
      */
     public ArrayList getOrderedNodes() {
         return this.nodeList;
     }
+
 
     /**
      * Allow to put the default color and default visibility for each protein of
@@ -422,6 +459,7 @@ public class InteractionNetwork extends Graph {
         }
     } // initNodes
 
+
     /**
      * initialisation of one Node about its color, its visible attribute
      * 
@@ -436,6 +474,7 @@ public class InteractionNetwork extends Graph {
         aNode.put( Constants.ATTRIBUTE_VISIBLE, Boolean.TRUE );
     }
 
+
     /**
      * Return the number of node
      * 
@@ -444,6 +483,7 @@ public class InteractionNetwork extends Graph {
     public int sizeNodes() {
         return super.getNodes().size();
     }
+
 
     /**
      * Return the number of edge
@@ -454,6 +494,7 @@ public class InteractionNetwork extends Graph {
         return super.getEdges().size();
     }
 
+
     /**
      * Return the object ImageDimension which correspond to the graph
      * 
@@ -462,6 +503,7 @@ public class InteractionNetwork extends Graph {
     public ImageDimension getImageDimension() {
         return this.dimension;
     }
+
 
     /**
      * Create a String giving informations for the Tulip treatment the
@@ -506,6 +548,7 @@ public class InteractionNetwork extends Graph {
         return out.toString();
     } // exportTlp
 
+
     /**
      * Create a String giving informations for the bioLayout EMBL software the
      * informations are just pairwise of protein label.
@@ -534,6 +577,56 @@ public class InteractionNetwork extends Graph {
 
         return out.toString();
     } // exportBioLayout
+
+
+    /**
+     * Create a String giving the Javascript structure of the interaction network
+     *
+     * @return an object String
+     */
+    public String exportJavascript( float rateX, float rateY, int borderSize ) {
+        StringBuffer out = new StringBuffer();
+
+        if ( false == this.isInitialized )
+            this.init();
+
+        // get the list of nodes and the dimension of the image
+        ImageDimension dimension = this.getImageDimension();
+        List proteinList = this.getOrderedNodes();
+
+        // declaration of a Javascript Array
+        out.append("var data = new Array(");
+
+        for( int i=0; i < proteinList.size(); i++ ) {
+            BasicGraphI currentProtein = (BasicGraphI) proteinList.get(i);
+            float proteinX = ( (Float) currentProtein.get( Constants.ATTRIBUTE_COORDINATE_X ) )
+                .floatValue();
+            float proteinY = ( (Float) currentProtein.get( Constants.ATTRIBUTE_COORDINATE_Y ) )
+                .floatValue();
+            float proteinLength = ( (Float) currentProtein.get( Constants.ATTRIBUTE_LENGTH ) )
+                 .floatValue();
+            float proteinHeight = ( (Float) currentProtein.get( Constants.ATTRIBUTE_HEIGHT ) )
+                 .floatValue();
+
+            logger.info( "Initial coordinates of node : " + currentProtein.getAc() + " | X=" + proteinX + " | Y=" + proteinY);
+
+            // convertion to real coordinates
+            float x = ( proteinX - dimension.xmin() ) / rateX - ( proteinLength / 2 ) + borderSize;
+            float y = ( proteinY - dimension.ymin() ) / rateY - ( proteinHeight / 2 ) + borderSize;
+
+            logger.info( "Real coordinates : X=" + x + " | Y=" + y);
+
+            out.append( "new Array(\"" + currentProtein.getAc() + "\",\"" + x + "\",\"" + y + "\")" );
+            if ( i < proteinList.size() - 1 ) {
+                 out.append(", ");
+            }
+        }
+
+        out.append(");");
+
+        return out.toString();
+    }
+
 
     /**
      * Send a String to Tulip to calculate coordinates Enter the obtained
@@ -592,6 +685,7 @@ public class InteractionNetwork extends Graph {
 
         return null;
     } //importDataToImage
+
 
     /**
      * Fusion a interaction network to the current one. <br>
