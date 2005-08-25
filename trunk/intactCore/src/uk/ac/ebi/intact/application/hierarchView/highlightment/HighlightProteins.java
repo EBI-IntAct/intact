@@ -17,12 +17,13 @@ import uk.ac.ebi.intact.application.hierarchView.highlightment.source.Highlightm
 
 import javax.servlet.http.HttpSession;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Allows to perfoem the highlightment according to data stored in the user
  * session
  * 
- * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk) & Alexandre Liban (aliban@ebi.ac.uk)
  * @version $Id$
  */
 
@@ -48,24 +49,24 @@ public class HighlightProteins {
         in.initNodes();
 
         // Search the highlight source implementation
-        HighlightmentSource highlightmentSource = HighlightmentSource
-                .getHighlightmentSource( source );
+        HighlightmentSource highlightmentSource = HighlightmentSource.getHighlightmentSource( source );
 
         // Search the protein to highlight
-        Collection proteinsToHighlight = highlightmentSource
-                .proteinToHightlight( session, in );
+        Collection proteinsToHighlight = highlightmentSource.proteinToHightlight( session, in );
 
-        // Interaction network 's modification
+        // Check if the protein selected is in the selected tab
+        IntactUserI user = (IntactUserI) session.getAttribute( Constants.USER_KEY );
+
+        // Interaction network's modification
         HighlightmentBehaviour highlightmentBehaviour;
-        highlightmentBehaviour = HighlightmentBehaviour
-                .getHighlightmentBehaviour( behaviourClass );
+        highlightmentBehaviour = HighlightmentBehaviour.getHighlightmentBehaviour( behaviourClass );
 
         // apply the highlight to the selected set of protein
+        logger.info( "Proteins collection to be highlighted : " + proteinsToHighlight );
         highlightmentBehaviour.apply( proteinsToHighlight, in );
 
         // store data in the session
-        IntactUserI user = (IntactUserI) session
-                .getAttribute( Constants.USER_KEY );
+        // IntactUserI user = (IntactUserI) session.getAttribute( Constants.USER_KEY );
         if ( user == null ) {
             logger.info( "USER is null, exit the highlight process" );
             return;
@@ -75,12 +76,12 @@ public class HighlightProteins {
 
         // Rebuild Image data
         //        GraphToSVG svgProducer = new GraphToSVG (in);
-        DrawGraph imageProducer = new DrawGraph( in, applicationPath, user
-                .getMinePath() );
+        DrawGraph imageProducer = new DrawGraph( in, applicationPath, user.getMinePath() );
         imageProducer.draw();
         ImageBean ib = imageProducer.getImageBean();
 
         // TODO : test is user OK
+        user.setImageBean( null );
         user.setImageBean( ib );
 
         // TODO: needed ?! have to be tested !
