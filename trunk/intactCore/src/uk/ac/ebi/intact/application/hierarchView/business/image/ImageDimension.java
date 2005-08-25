@@ -8,7 +8,7 @@ package uk.ac.ebi.intact.application.hierarchView.business.image;
 import java.io.Serializable;
 
 /**
- * Storage of the image dimension, allow to keep the heigth, width, border soze ...
+ * Storage of the image dimension, allow to keep the height, width, border size ...
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
@@ -82,7 +82,7 @@ public class ImageDimension implements Serializable {
      *     <----- width ------> <br>
      *
      * @param width width of the conponent
-     * @param height heigth of the component
+     * @param height height of the component
      * @param x the X coordinate
      * @param y the Y coordinate
      */
