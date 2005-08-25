@@ -3,6 +3,7 @@ package uk.ac.ebi.intact.application.hierarchView.highlightment.source;
 
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.business.IntactException;
 
@@ -10,12 +11,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Collection;
 import java.util.List;
+import java.sql.SQLException;
 
 
 /**
  * Abstract class allowing to wrap an highlightment source.
  *
- * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk) & Alexandre Liban (aliban@ebi.ac.uk)
  */
 
 public abstract class HighlightmentSource {
@@ -116,10 +118,12 @@ public abstract class HighlightmentSource {
      * @param xRefs The collection of XRef from which we want to get the list of corresponding URL
      * @param selectedXRefs The collection of selected XRef
      * @param applicationPath our application path
+     * @param user the current user
      * @return a set of URL pointing on the highlightment source.
      */
-    abstract public List getSourceUrls (Collection xRefs, Collection selectedXRefs,String applicationPath)
-            throws IntactException;
+    abstract public List getSourceUrls (Collection xRefs, Collection selectedXRefs,
+                                        String applicationPath, IntactUserI user)
+            throws IntactException, SQLException;
 
 
     /**
