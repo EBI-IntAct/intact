@@ -29,8 +29,7 @@ public class ColorHighlightmentBehaviour extends HighlightmentBehaviour {
     static Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
 
     /** ******** CONSTANTS *********** */
-    private final static Color DEFAULT_COLOR_HIGHLIGHTING = new Color( 255, 0,
-            0 );
+    private final static Color DEFAULT_COLOR_HIGHLIGHTING = new Color( 255, 0, 0 );
     private final static Color COLOR_HIGHLIGHTING;
 
     static {
@@ -66,5 +65,7 @@ public class ColorHighlightmentBehaviour extends HighlightmentBehaviour {
      */
     public void applyBehaviour(BasicGraphI aProtein) {
         aProtein.put( Constants.ATTRIBUTE_COLOR_LABEL, COLOR_HIGHLIGHTING );
+        logger.info("Protein (" + aProtein + ") receives this behaviour : "
+                + Constants.ATTRIBUTE_COLOR_LABEL + "-" + COLOR_HIGHLIGHTING);        
     }
 }
