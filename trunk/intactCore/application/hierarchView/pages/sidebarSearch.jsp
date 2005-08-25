@@ -71,12 +71,18 @@
                  */
                 ArrayList sources = OptionGenerator.getHighlightmentSources ();
 
+                // by default, all available source are selected ("All")
                 if (sources.size() > 1) {
-                    /**
-                     * set the item collection and display it
-                     */
+                    // set the item collection and display it
                     pageContext.setAttribute("sources", sources, PageContext.PAGE_SCOPE);
-            %>
+
+               %>
+
+                    <html:hidden property="method" value="All" />
+
+               <%
+                    /*
+
                     <table border=0>
                       <tr>
                          <td align="right">
@@ -85,19 +91,21 @@
                       </tr>
                       <tr>
                          <td>
-                            <html:select property="method" size="1" value="<%= fieldMethod %>">
-                              <html:options collection="sources" property="value" labelProperty="label"/>
+                            <html:select property="method" size="1" value="= fieldMethod">
+                              <html:options collection="sources" property="value" labelProperty="< % =label % >" />
                             </html:select>
                          </td>
                       </tr>
                     </table>
-            <%
-                } else if (sources.size() == 1) {
+
+                    */
+                }
+                else if (sources.size() == 1) {
                     LabelValueBean lvb = (LabelValueBean) sources.get(0);
                     String methodClassName = lvb.getValue();
             %>
                     <!-- dont't display the method if no choice available -->
-                    <html:hidden property="method" value="<%= methodClassName %>"/>
+                    <html:hidden property="method" value="<%= methodClassName %>" />
             <%
                 }
             %>
@@ -105,14 +113,14 @@
         <tr>
             <td>
                 <html:submit property="action" titleKey="sidebar.search.button.submit.title">
-                    <bean:message key="sidebar.search.button.submit"/>
+                    <bean:message key="sidebar.search.button.submit" />
                 </html:submit>
             <%
                 if (user != null && user.InteractionNetworkReadyToBeDisplayed()) {
                     // display the Add button only if the user as already a network
             %>
                 <html:submit property="action" titleKey="sidebar.search.button.add.title">
-                    <bean:message key="sidebar.search.button.add"/>
+                    <bean:message key="sidebar.search.button.add" />
                 </html:submit>
             <%
                 }

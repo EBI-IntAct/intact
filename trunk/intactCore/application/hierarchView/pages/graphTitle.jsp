@@ -127,7 +127,7 @@
 
 %>
 
-<table border="0" cellspacing="3" cellpadding="3" width="100%" heigth="100%">
+<table border="0" cellspacing="3" cellpadding="3" width="100%" height="100%">
 
       <tr>
              <td>
