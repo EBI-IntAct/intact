@@ -32,18 +32,6 @@ import java.util.Map;
  */
 public class BioSourceViewBean extends AbstractEditViewBean {
 
-    private String myBioSourceXref;
-
-    public String getBioSourceXref() {
-        return this.myBioSourceXref;
-    }
-
-    public void setBioSourceXref() {
-        CvFilterRessources cvFilterRessources= new CvFilterRessources();
-
-        this.myBioSourceXref = cvFilterRessources.getBiosourceXref().toString();
-    }
-
     /**
      * The tax id.
      */
@@ -64,7 +52,6 @@ public class BioSourceViewBean extends AbstractEditViewBean {
         setTaxId(null);
         setCellType(null);
         setTissue(null);
-        //setBioSourceXref(null);
     }
 
     // Override the super method to set the tax id.
@@ -74,9 +61,6 @@ public class BioSourceViewBean extends AbstractEditViewBean {
         // Must be a BioSource.
         BioSource bio = (BioSource) annobj;
 
-
-        //For javascript
-        setBioSourceXref();
 
         // Must have a tax id.
         setTaxId(bio.getTaxId());
@@ -99,7 +83,6 @@ public class BioSourceViewBean extends AbstractEditViewBean {
         setTaxId(bsform.getTaxId());
         setTissue(bsform.getTissue());
         setCellType(bsform.getCellType());
-        setBioSourceXref();
     }
 
 
@@ -113,7 +96,6 @@ public class BioSourceViewBean extends AbstractEditViewBean {
         bsform.setTaxId(getTaxId());
         bsform.setTissue(getTissue());
         bsform.setCellType(getCellType());
-        bsform.setBioSourceXref(getBioSourceXref());
     }
 
     // Override to provide BioSource layout.
@@ -196,7 +178,6 @@ public class BioSourceViewBean extends AbstractEditViewBean {
         // Set tissue and cell objects.
         bs.setCvTissue(getCvTissue(helper));
         bs.setCvCellType(getCvCellType(helper));
-        bs.setBioSourceXref();
     }
 
     /**
