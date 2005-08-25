@@ -38,7 +38,7 @@ public final class Constants {
     public static final String ATTRIBUTE_LENGTH = "length";
 
     /**
-     * The attribute which allows to access the heigth of the image graph.
+     * The attribute which allows to access the height of the image graph.
      */
     public static final String ATTRIBUTE_HEIGHT = "height";
 
