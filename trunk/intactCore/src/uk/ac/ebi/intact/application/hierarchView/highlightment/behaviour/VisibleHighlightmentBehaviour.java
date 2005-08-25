@@ -20,8 +20,7 @@ import java.util.Collection;
  * @version $Id$
  */
 
-public class VisibleHighlightmentBehaviour
-        extends HighlightmentBehaviour {
+public class VisibleHighlightmentBehaviour extends HighlightmentBehaviour {
     /**
      * Select all the graph's protein which are not in the given collection.<br>
      * The aim of that behaviour is to display only se selected protein, so we
