@@ -52,8 +52,10 @@ public interface IntactUserI
     public String  getMethodClass();
     public String  getBehaviour();
     public ImageBean getImageBean();
+    public String getNodeCoordinates();
     public Collection getKeys();
-    public String getSelectedKey ();
+    public String getSelectedKey();
+    public String getSelectedKeyType();
 
     public void setClickBehaviour (ClickBehaviourForm form);
     public boolean clickBehaviourIsAdd ();
@@ -76,8 +78,10 @@ public interface IntactUserI
     public void setMethodClass (String methodClass);
     public void setBehaviour (String behaviour);
     public void setImageBean (ImageBean imageBean);
+    public void setNodeCoordinates (String nodeCoordinates);
     public void setKeys (Collection keys);
     public void setSelectedKey (String key);
+    public void setSelectedKeyType (String keyType);
 
     public void setInteractionNetwork (InteractionNetwork in);
 
