@@ -198,10 +198,8 @@ public final class DisplayAction extends IntactBaseAction {
             }
         }
 
-        logger
-                .info( "DisplayAction: AC=" + AC + " depth=" + depth
-                        + " methodLabel=" + methodLabel + " methodClass="
-                        + methodClass );
+        logger.info( "DisplayAction: AC=" + AC + " depth=" + depth
+                + " methodLabel=" + methodLabel + " methodClass=" + methodClass );
 
         // Forward control to the specified success URI
         return ( mapping.findForward( "success" ) );
