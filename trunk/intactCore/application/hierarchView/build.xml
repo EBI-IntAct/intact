@@ -329,7 +329,12 @@ Verison: $Id$
             </fileset>
         </delete>
 
-        <delete dir="${layouts.styles.dir}"/>
+        <delete>
+            <fileset dir="${layouts.styles.dir}">
+                <!-- Do not remove hv specific files -->
+                <exclude name="hv.css" />
+            </fileset>
+        </delete>
 
         <delete>
             <fileset dir="${pages.dir}">
@@ -350,6 +355,9 @@ Verison: $Id$
                 <exclude name="highlight.jsp"/>
                 <exclude name="selectedSource.jsp"/>
                 <exclude name="warning.jsp"/>
+                <exclude name="allTab.jsp" />
+                <exclude name="goTab.jsp" />
+                <exclude name="interproTab.jsp" />
             </fileset>
         </delete>
 
@@ -714,6 +722,7 @@ Verison: $Id$
                 <include name="log4j-1.2.8.jar"/>
                 <include name="${db}"/>
                 <include name="commons-lang-2.0.jar"/>
+		<include name="commons-collections-3.0.jar"/>
                 <include name="commons-pool-1.1.jar"/>
             </lib>
 
