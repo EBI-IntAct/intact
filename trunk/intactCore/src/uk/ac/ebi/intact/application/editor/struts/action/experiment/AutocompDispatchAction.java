@@ -133,9 +133,6 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
             // The ac of the experiment
             String expAc=view.getAc();
 
-            //The Experiment object corresponding to this ac
-            Experiment exp=(Experiment) helper.getObjectByAc(Experiment.class, expAc);
-
             /*********************************************************************************************
             C r e a t i n g   t h e   f u l l n a m e   a n d   a d d i n g   i t   t o   t h e   v i e w
             *********************************************************************************************/
@@ -161,7 +158,7 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
                 CommentBean authorListCb = new CommentBean(authorListAnnotation);
 
                 //Create the authorList CvTopic
-                CvTopic authorListTopic = (CvTopic) helper.getObjectByLabel( CvTopic.class, CvTopic.AUTHOR_LIST );
+                //CvTopic authorListTopic = (CvTopic) helper.getObjectByLabel( CvTopic.class, CvTopic.AUTHOR_LIST );
 
                 /*
                 Work to do on the view :
@@ -188,6 +185,7 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
                 update the annotationText of the annotation with the new list of author.
                 */
                 if(false=="".equals(expAc) && null != expAc){
+                    Experiment exp =(Experiment) helper.getObjectByAc(Experiment.class, expAc);
                     //get all the annotations contained in the database linked to this experiment
                     Collection annotations = exp.getAnnotations();
                     for (Iterator iterator = annotations.iterator(); iterator.hasNext();) {
@@ -259,6 +257,7 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
             in the database, we update the primaryId with the new one.
             */
             if(false=="".equals(expAc) && null != expAc){
+                Experiment exp =(Experiment) helper.getObjectByAc(Experiment.class, expAc);                
                 Collection xrefs = exp.getXrefs();
                 for (Iterator iterator = xrefs.iterator(); iterator.hasNext();) {
                     Xref xref =  (Xref) iterator.next();
