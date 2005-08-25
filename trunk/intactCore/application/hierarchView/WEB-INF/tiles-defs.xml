@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
- <!DOCTYPE tiles-definitions PUBLIC
+<!DOCTYPE tiles-definitions PUBLIC
        "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
        "http://jakarta.apache.org/struts/dtds/tiles-config_1_1.dtd">
 
 <!--
     Tiles definitions for hierarchView.
-    Author: Samuel Kerrien (skerrien@ebi.ac.uk)
+    Author: Samuel Kerrien (skerrien@ebi.ac.uk) & Alexandre Liban (aliban@ebi.ac.uk)
     version: $Id$
 
     The header and footer are common to all IntAct application and just need to
@@ -145,7 +145,15 @@
 
     <definition name="highlightTitle" path="../pages/highlightTitle.jsp"/>
 
-    <definition name="highlight" path="../pages/highlight.jsp"/>
+    <definition name="highlight" path="../pages/highlight.jsp">
+        <put name="selectedIndex" value="0" />
+        <put name="parameterName" value="selected" />
+        <putList name="tabList">
+            <item value="All" link="/pages/allTab.jsp" classtype="org.apache.struts.tiles.beans.SimpleMenuItem" />
+            <item value="GO" link="/pages/goTab.jsp" classtype="org.apache.struts.tiles.beans.SimpleMenuItem" />
+            <item value="Interpro" link="/pages/interproTab.jsp" classtype="org.apache.struts.tiles.beans.SimpleMenuItem" />            
+        </putList>
+    </definition>
 
     <definition name="hierarchView.selectedSource.layout" path="../pages/selectedSource.jsp"/>
 
