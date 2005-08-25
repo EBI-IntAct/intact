@@ -51,7 +51,7 @@
                     <table>
                       <tr>
                         <td>
-                            <img src="<%=request.getContextPath()%>/images/clockT.gif" border="0">
+                            <img src="<%=request.getContextPath()%>/images/clockT.gif" border="0" />
                         </td>
                         <td>
                             <strong>
