@@ -61,7 +61,7 @@ public final class DisplaySourceAction extends IntactBaseAction {
         IntactUserI user = getIntactUser(session);
 
         // get the URL given in parameter
-        String url = request.getParameter (StrutsConstants.ATTRIBUTE_SOURCE_URL);
+        String url = request.getParameter(StrutsConstants.ATTRIBUTE_SOURCE_URL);
 
         if (url != null) {
             // save URL in the user
