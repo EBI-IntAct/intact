@@ -20,7 +20,7 @@ import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
 import uk.ac.ebi.intact.simpleGraph.Node;
 
-import javax.print.DocFlavor;
+// import javax.print.DocFlavor;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -28,13 +28,9 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.TagSupport;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+// import java.lang.reflect.Array;
+import java.util.*;
+
 
 /**
  * That class allow to initialize properly in the session the sources to display
@@ -111,8 +107,7 @@ public class DisplaySourceTag extends TagSupport {
         HttpSession session = pageContext.getSession();
 
         try {
-            IntactUserI user = (IntactUserI) session
-                    .getAttribute( Constants.USER_KEY );
+            IntactUserI user = (IntactUserI) session.getAttribute( Constants.USER_KEY );
             if ( user == null ) {
                 logger.error( "No existing session" );
                 return EVAL_PAGE;
@@ -124,9 +119,9 @@ public class DisplaySourceTag extends TagSupport {
                 return EVAL_PAGE;
             }
 
-            //            BasicGraphI interactor = in.getCentralProtein();
+            // BasicGraphI interactor = in.getCentralProtein();
             ArrayList centrals = in.getCentralProteins();
-            //logger.info( "Central protein AC: " + interactor.getAc() );
+            // logger.info( "Central protein AC: " + interactor.getAc() );
             logger.info( centrals.size()
                     + " central protein(s) referenced in the"
                     + " interaction network." );
@@ -139,14 +134,13 @@ public class DisplaySourceTag extends TagSupport {
 
             if ( null != queryString ) {
                 // get the implementation class of the selected source
-                HighlightmentSource source = HighlightmentSource
-                        .getHighlightmentSource( method_class );
+                HighlightmentSource source = HighlightmentSource.getHighlightmentSource( method_class );
 
                 if ( null == source ) {
                     pageContext
                             .getOut()
                             .write(
-                                    "An error occured when trying to retreive source.<br>" );
+                                    "An error occured when trying to retreive source.<br />" );
                     logger
                             .error( "Error when trying to load the source class: "
                                     + method_class );
@@ -159,10 +153,8 @@ public class DisplaySourceTag extends TagSupport {
 
                     try {
                         ServletRequest request = pageContext.getRequest();
-                        String host = (String) session
-                                .getAttribute( StrutsConstants.HOST );
-                        String protocol = (String) session
-                                .getAttribute( StrutsConstants.PROTOCOL );
+                        String host = (String) session.getAttribute( StrutsConstants.HOST );
+                        String protocol = (String) session.getAttribute( StrutsConstants.PROTOCOL );
 
                         String protocolAndHost = "";
                         if ( host != null && protocol != null ) {
@@ -173,28 +165,45 @@ public class DisplaySourceTag extends TagSupport {
 
                         String contextPath = httpRequest.getContextPath();
                         System.out.println( "CONTEXT PATH: " + contextPath );
+                        logger.info( "CONTEXT PATH : " + contextPath );
 
                         String applicationPath = protocolAndHost + contextPath;
-                        System.out.println( "APPLICATION PATH: "
-                                + applicationPath );
+                        System.out.println( "APPLICATION PATH: " + applicationPath );
+                        logger.info( "APPLICATION PATH: " + applicationPath );
 
                         Collection selectedKeys = user.getKeys();
                         String theClickedKeys = user.getSelectedKey();
+                        String selectedKeysType = user.getSelectedKeyType();
+                        String tabType = (String) session.getAttribute( "tabType" );
+                        logger.info( "selectedKeys=" + selectedKeys + " | theClickedKeys=" + theClickedKeys
+                                    + " | selectedKeysType=" + selectedKeysType + " | tabType=" + tabType );
 
                         Collection allSelectedKeys = new ArrayList();
 
-                        if ( selectedKeys != null ) {
+                        if ( ( selectedKeys != null ) && ( ( tabType.equals("All") ) || ( selectedKeysType.toLowerCase().equals(tabType.toLowerCase()) ) ) ) {
                             allSelectedKeys.addAll( selectedKeys );
                         }
+                        else {
+                            user.setKeys( null );
+                            user.setSelectedKey( "null" );
+                            user.setSelectedKeyType( "null" );
+                        }
 
-                        if ( theClickedKeys != null )
+                        if ( ( theClickedKeys != null ) && ( ( tabType.equals("All") ) || ( selectedKeysType.toLowerCase().equals(tabType.toLowerCase()) ) ) ) {
                             allSelectedKeys.add( theClickedKeys );
+                        }
+                        else {
+                            user.setKeys( null );
+                            user.setSelectedKey( "null" );
+                            user.setSelectedKeyType( "null" );
+                        }
 
-                        urls = source.getSourceUrls( xRefs, allSelectedKeys,
-                                applicationPath );
+                        logger.info( "xRefs=" + xRefs + " | allSelectedKeys=" + allSelectedKeys );
+
+                        urls = source.getSourceUrls( xRefs, allSelectedKeys, applicationPath, user );
                     }
                     catch ( IntactException ie ) {
-                        String msg = "ERROR<br>The hierarchView system is not properly configured. Please warn your administrator.";
+                        String msg = "ERROR<br />The hierarchView system is not properly configured. Please warn your administrator.<br />" + ie;
                         pageContext.getOut().write( msg );
                         return EVAL_PAGE;
                     }
@@ -206,10 +215,9 @@ public class DisplaySourceTag extends TagSupport {
                     session.setAttribute( "sources", urls );
 
                     if ( urls.size() == 1 ) {
-                        // only one source element, let's display automatically
-                        // the relevant page.
+                        // only one source element, let's display automatically the relevant page.
                         SourceBean url = (SourceBean) urls.get( 0 );
-                        String absoluteUrl = url.getSourceBrowserUrl(); // Value();
+                        String absoluteUrl = url.getSourceBrowserGraphUrl(); // Value();
                         user.setSourceURL( absoluteUrl );
                     }
                     else {
@@ -221,8 +229,7 @@ public class DisplaySourceTag extends TagSupport {
         }
         catch ( Exception ioe ) {
             ioe.printStackTrace();
-            throw new JspException(
-                    "Fatal error: could not display protein associated source." );
+            throw new JspException( "Fatal error: could not display protein associated source. <em>" + ioe + "</em>.");
         }
         return EVAL_PAGE;
     } // doEndTag
