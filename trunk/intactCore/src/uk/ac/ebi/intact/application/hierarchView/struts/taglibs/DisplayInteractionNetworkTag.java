@@ -122,12 +122,15 @@ public class DisplayInteractionNetworkTag extends TagSupport {
                  * If the image link were /hierarchView/GenerateImage, netscape don't even
                  * call the servlet and display cached image.
                  */
+                String randomParam = "&now=" + System.currentTimeMillis();
                 String msg = "<p align=\"left\">\n"
                         + "  <center>"
-                        + "     <img src=\""+ contextPath +"/GenerateImage?context="+ userContext +"\" "
-                        + "      USEMAP=\"#" + mapName +"\" width=\""+ imageWidth +"\" "
-                        +        "height=\""+ imageHeight +"\"  border =\"0\">"
-                        + "     <br>"
+                        + "     <img src=\""+ contextPath +"/GenerateImage?context="+ userContext
+                        + randomParam
+                        +"\" "
+                        + "      usemap=\"#" + mapName +"\" width=\""+ imageWidth +"\" "
+                        +        "height=\""+ imageHeight +"\"  border =\"0\" />"
+                        + "     <br />"
                         + "  </center>"
                         + "</p>";
 
