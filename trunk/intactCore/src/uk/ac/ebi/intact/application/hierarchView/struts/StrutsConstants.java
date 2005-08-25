@@ -47,12 +47,17 @@ public final class StrutsConstants {
      */
     public static final String ATTRIBUTE_KEY_CLICKED = "clicked";
 
+/**
+     * The name of the attribute in the session which represents
+     * the type of the element selected in the external application which
+     * allows to highlight.
+     */
+    public static final String ATTRIBUTE_KEY_TYPE = "type";
 
     /**
      * The name of the HTTP attribute to describe the URL of the highlight source.
      */
     public static final String ATTRIBUTE_SOURCE_URL = "url";
-
 
     /**
      * Action allowed to create an interaction network
