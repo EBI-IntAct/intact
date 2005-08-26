@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 ANT build configuration file for hierarchView module.
-Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
+Author: Samuel Kerrien, Sugath Mudali, Alexandre Liban (aliban@ebi.ac.uk)
 Verison: $Id$
 -->
 <project name="hierarchView" basedir="." default="compile">
