@@ -16,6 +16,9 @@ import javax.mail.MessagingException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Collection;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import java.sql.SQLException;
 import java.io.IOException;
 
@@ -55,6 +58,7 @@ public class SanityChecker {
     private SanityCheckerHelper sch13;
     private SanityCheckerHelper retrieveObjectSch;
     private SanityCheckerHelper oneIntOneExpSch;
+    private SanityCheckerHelper hasValidPrimaryIdSch;
 
     /* ControlledvocabBean */
     private static ControlledvocabBean onHoldCvBean;
@@ -104,6 +108,13 @@ public class SanityChecker {
         retrieveObjectSch.addMapping(Int2AnnotBean.class, "SELECT interactor_ac FROM ia_int2annot WHERE annotation_ac=?");
         retrieveObjectSch.addMapping(CvObject2AnnotBean.class, "SELECT cvobject_ac FROM ia_cvobject2annot WHERE annotation_ac=?");
         retrieveObjectSch.addMapping(Feature2AnnotBean.class, "SELECT feature_ac FROM ia_feature2annot WHERE annotation_ac=?");
+
+        this.hasValidPrimaryIdSch=new SanityCheckerHelper(helper);
+        hasValidPrimaryIdSch.addMapping(AnnotationBean.class, "select a.description " +
+                                                           "from ia_annotation a, ia_cvobject2annot c2a " +
+                                                           "where c2a.cvobject_ac = ? and "+//in (select ac from ia_controlledvocab where objclass like '" + CvDatabase.class.getName() + "') and " +
+                                                           "c2a.annotation_ac=a.ac and " +
+                                                           "a.topic_ac=(select ac from ia_controlledvocab where shortlabel='" + CvTopic.XREF_VALIDATION_REGEXP + "')");
 
         this.oneIntOneExpSch = new SanityCheckerHelper(helper);
         /*oneIntOneExpSch.addMapping(Int2ExpBean.class,"select interaction_ac, experiment_ac "+
@@ -421,7 +432,7 @@ public class SanityChecker {
                             } else { // = 1
                                 if ( selfStoichiometry < 1F ) {
                                     System.out.println("Interaction " +interactionAc + "  self protein and stoichiometry lower than 2");
-                                    messageSender.addMessage( ReportTopic.INTERACTION_WITH_SELF_PROTEIN_AND_STOICHIOMETRY_LOWER_THAN_2, interactionBean);
+                                  //  messageSender.addMessage( ReportTopic.INTERACTION_WITH_SELF_PROTEIN_AND_STOICHIOMETRY_LOWER_THAN_2, interactionBean);
                                 }
                             }
 
@@ -980,6 +991,48 @@ public class SanityChecker {
    }
 
 
+    /**
+     * For each XrefBean this method will verify that the primaryId is valide
+     *
+     * @param xrefBeans a List containing all the xref of the database
+     * @throws SQLException
+     */
+
+    public void hasValidPrimaryId(List xrefBeans) throws SQLException {
+
+        for (int i = 0; i < xrefBeans.size(); i++) {
+            XrefBean xrefBean =  (XrefBean) xrefBeans.get(i);
+
+            //Get the annotationBean containing the regular expression wich describe the primaryid of the database ac
+            List annotationBeans = hasValidPrimaryIdSch.getBeans(AnnotationBean.class,xrefBean.getDatabase_ac());
+
+            for (int j = 0; j < annotationBeans.size(); j++) {
+
+                AnnotationBean annotationBean =  (AnnotationBean) annotationBeans.get(j);
+                // Get the regular expression (stored in the field description of the annotation
+                String regexp=annotationBean.getDescription();
+                // PrimaryId to check
+                String primaryId = xrefBean.getPrimaryid();
+
+                 try {
+                    // TODO escape special characters !!
+                    Pattern pattern = Pattern.compile( regexp );
+
+                    // validate the primaryId against that regular expression
+                    Matcher matcher = pattern.matcher( primaryId );
+                     // If the primaryId hadn't been validate against that regular expression send a message
+                     if( false == matcher.matches() ) {
+                        messageSender.addMessage(ReportTopic.XREF_WITH_NON_VALID_PRIMARYID,xrefBean);
+                    }
+
+                } catch ( Exception e ) {
+                    // if the RegExp engine thrown an Exception, that may happen if the format is wrong.
+                    // we just display it for debugging sake, but the Xref is declared valid.
+                    //e.printStackTrace();
+                }
+            }
+        }
+   }
 
 
     public static void main(String[] args) throws SQLException, IntactException, LookupException {
@@ -1037,6 +1090,12 @@ public class SanityChecker {
             scn.duplicatedProtein(xrefBean);
         }
 
+         schIntAc.addMapping(XrefBean.class,"select ac, userstamp, timestamp, database_ac, primaryid "+
+                                            "from ia_xref "+
+                                            "where ac like ?");
+        xrefBeans = schIntAc.getBeans(XrefBean.class, "%");
+        scn.hasValidPrimaryId(xrefBeans);
+
         /*
         *     Check on Experiment
         */
@@ -1045,7 +1104,6 @@ public class SanityChecker {
         scn.checkReviewed(experimentBeans);
         scn.checkExperiment(experimentBeans);
         scn.checkExperimentsPubmedIds(experimentBeans);
-
         /*
         *     Check on BioSource
         */
@@ -1054,7 +1112,6 @@ public class SanityChecker {
         System.out.println("The size of bioSource list is " + bioSourceBeans.size());
         scn.checkBioSource(bioSourceBeans);
         scn.checkNewt(bioSourceBeans);
-
         /*
         *     Check on protein
         */
@@ -1068,7 +1125,6 @@ public class SanityChecker {
         scn.checkProtein(proteinBeans);
         scn.checkCrc64(proteinBeans);
 
-
         /*
         *     Check on annotation
         */
@@ -1081,14 +1137,13 @@ public class SanityChecker {
         System.out.println("There is " + annotationBeans.size() + "annotations");
         scn.checkURL(annotationBeans);
 
-
         // try to send emails
         try {
             scn.messageSender.postEmails();
 
         } catch ( MessagingException e ) {
         // scould not send emails, then how error ...
-            e.printStackTrace();
+            //e.printStackTrace();
 
         }
 
