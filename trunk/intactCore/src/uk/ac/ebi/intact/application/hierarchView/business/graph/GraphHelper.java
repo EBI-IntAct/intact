@@ -8,7 +8,6 @@ package uk.ac.ebi.intact.application.hierarchView.business.graph;
 
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
-import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.exception.MultipleResultException;
 import uk.ac.ebi.intact.business.IntactException;
@@ -187,6 +186,7 @@ public class GraphHelper {
         return in;
     } // addInteractionNetwork
 
+
     /**
      * Create or extend an interaction network by using the given Interactor as
      * a central node. If a network is already existing, we fusion them.
@@ -240,6 +240,7 @@ public class GraphHelper {
         return in;
     } // addInteractionNetwork
 
+
     /**
      * Builds a network around the provided node as long as the depth of the
      * network is smaller than the given depth.
@@ -248,7 +249,7 @@ public class GraphHelper {
      * every interaction between the node as a prey and its baits are added
      * 
      * @param baitNode the central node of the network
-     * @param network the network to buil
+     * @param network the network to build
      * @param depth the maximal depth of the network
      * @return the built network
      * @throws SQLException
@@ -401,14 +402,14 @@ public class GraphHelper {
         return network;
     }
 
+
     /**
      * Adds to a node all sources given by the allowed sources defined in the
      * Highlight.properties.
      * 
      * @param node the node to add the sources
      * @param central whether the node is a central protein
-     * @param sourceHighlightMap the map which stores the source information of
-     *            the nodes
+     * @param network the interaction network
      * @throws SQLException whether the retrieving of the sources failed due to
      *             database error
      * @throws IntactException
@@ -433,6 +434,7 @@ public class GraphHelper {
 
         PreparedStatement sourceStm = con.prepareStatement( SOURCE_QUERY );
         sourceStm.setString( 2, node.getAc() );
+        logger.info( "node.getAc() = " + node.getAc() );
 
         String source, sourceID;
         Collection proteinSources = null;
@@ -440,6 +442,7 @@ public class GraphHelper {
         for (int i = 0; i < SOURCES.size(); i++) {
             // the current source is fetched (e.g. GO)
             source = (String) SOURCES.get( i );
+            logger.info("Current source = " + source);
 
             /*
              * the collection stores all source informations for the current
@@ -463,10 +466,13 @@ public class GraphHelper {
 
             while ( set.next() ) {
                 sourceID = set.getString( "primaryId" );
+                logger.info( "sourceID=" + sourceID );
                 /*
                  * the retrieved information is added to the highlight map of
                  * the network.
                  */
+                logger.info( "addToSourceHighlightMap : source=" + source + " | sourceID="
+                + sourceID + " | node=" + node );
                 network.addToSourceHighlightMap( source, sourceID, node );
 
                 // if the node is a central protein the information are stored
@@ -475,6 +481,7 @@ public class GraphHelper {
                 if ( central ) {
                     proteinSources.add( sourceID );
                     proteinSources.add( set.getString( "secondaryId" ) );
+                    logger.info( "secondaryID=" + set.getString( "secondaryId" ) );
                 }
             }
             set.close();
@@ -487,6 +494,7 @@ public class GraphHelper {
         }
         sourceStm.close();
     }
+
 
     //    /**
     //     * update the interaction in given in parameter, by reloading the whole
