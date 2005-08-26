@@ -75,6 +75,11 @@ public class IntactUser implements IntactUserI {
     private ImageBean imageBean;
 
     /**
+     * the Javascript Array containing all the nodes real coordinates
+     */
+    private String nodeCoordinates;
+
+    /**
      * Collection of keys received from the current source. The highlightment of
      * the current interaction network is done according to these keys. <b>keys
      * </b> contains a set of keys to take into account in the highlight process
@@ -82,6 +87,7 @@ public class IntactUser implements IntactUserI {
      */
     private Collection keys;
     private String selectedKey;
+    private String selectedKeyType;
 
     /**
      * URL describes the link to the highlight source in the case the user has
@@ -210,12 +216,20 @@ public class IntactUser implements IntactUserI {
         return imageBean;
     }
 
+    public String getNodeCoordinates() {
+        return nodeCoordinates;
+    }
+
     public Collection getKeys() {
         return keys;
     }
 
     public String getSelectedKey() {
         return selectedKey;
+    }
+
+    public String getSelectedKeyType() {
+        return selectedKeyType;
     }
 
     public IntactHelper getHelper() {
@@ -275,12 +289,20 @@ public class IntactUser implements IntactUserI {
         this.imageBean = imageBean;
     }
 
+    public void setNodeCoordinates(String nodeCoordinates) {
+        this.nodeCoordinates = nodeCoordinates;
+    }
+
     public void setKeys(Collection keys) {
         this.keys = keys;
     }
 
     public void setSelectedKey(String key) {
         selectedKey = key;
+    }
+
+    public void setSelectedKeyType(String keyType) {
+        selectedKeyType = keyType;
     }
 
     public void setSourceURL(String aSourceURL) {
