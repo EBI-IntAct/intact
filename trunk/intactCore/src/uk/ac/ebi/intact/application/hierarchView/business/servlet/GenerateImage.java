@@ -44,7 +44,7 @@ public class GenerateImage extends HttpServlet {
      * to the browser the image by taking care of the MIME type.
      */
     public void doGet (HttpServletRequest aRequest, HttpServletResponse aResponse)
-            throws ServletException{
+            throws ServletException {
         OutputStream outputStream = null;
 
         try {
