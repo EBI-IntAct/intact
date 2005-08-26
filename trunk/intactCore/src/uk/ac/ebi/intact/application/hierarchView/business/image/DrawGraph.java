@@ -89,6 +89,11 @@ public class DrawGraph {
     private BufferedImage bufferedImage;
 
     /**
+     * The Javascript Array containing all of the nodes coordinates
+     */
+    private StringBuffer nodeCoordinates = null;
+
+    /**
      * The name of the HTML MAP
      */
     private static String mapName;
@@ -97,6 +102,7 @@ public class DrawGraph {
      * The Interaction Network graph which will allow to create the image
      */
     private InteractionNetwork graph = null;
+
     /**
      * The centralnodes of the network
      */
@@ -309,6 +315,7 @@ public class DrawGraph {
 
         // Initialization of mapCode container
         this.mapCode = new StringBuffer();
+        this.nodeCoordinates = new StringBuffer();
 
         // Compute the size of the final image
         updateProteinData( in );
@@ -369,7 +376,7 @@ public class DrawGraph {
 
                 fontMetrics = g.getFontMetrics();
 
-                // calculate heigth and width
+                // calculate height and width
                 float height = fontMetrics.getHeight() + internalTopMargin
                         + internalBottomMargin;
                 float length = fontMetrics.stringWidth( protein.getLabel() )
@@ -398,7 +405,7 @@ public class DrawGraph {
 
     /**
      * Return the element "dimensionRate"
-     * 
+     *
      * @return the dimension rate
      */
     private float getDimensionRateX() {
@@ -498,7 +505,7 @@ public class DrawGraph {
                 RenderingHints.VALUE_ANTIALIAS_OFF );
 
         // Write the map
-        mapCode.append( "<AREA SHAPE=\"RECT\" HREF=\"" + applicationPath
+        mapCode.append( "<area shape=\"rect\" href=\"" + applicationPath
                 + "/click.do?AC=" + protein.getAc() + currentTime
                 + "\" COORDS=" + (int) x1 + "," + (int) y1 + "," + x2 + ","
                 + y2 + ">" );
@@ -644,7 +651,7 @@ public class DrawGraph {
         BasicGraphI currentNode;
 
         // We draw all visible nodes
-        mapCode.append( "<MAP NAME=\"" + mapName + "\">" );
+        mapCode.append( "<map name=\"" + mapName + "\">" );
 
         // iterate over the nodes of the network to draw them
         // if the current node is a central protein it is not drawn now
@@ -655,6 +662,8 @@ public class DrawGraph {
             // if the current node is not a central protein
             if ( !centralNodes.contains( currentNode ) ) {
                 // if the current node is visible
+                // to avoid drawing the node : uncomment the following line
+                // currentNode.put ( Constants.ATTRIBUTE_VISIBLE, Boolean.FALSE );
                 if ( ( currentNode.get( Constants.ATTRIBUTE_VISIBLE ) == Boolean.TRUE ) ) {
                     drawNode( currentNode, g, fontLabel );
                 }
@@ -671,12 +680,14 @@ public class DrawGraph {
                 continue;
             }
 
+            // to avoid drawing the node : uncomment the following line
+            // currentNode.put( Constants.ATTRIBUTE_VISIBLE, Boolean.FALSE );
             if ( currentNode.get( Constants.ATTRIBUTE_VISIBLE ) == Boolean.TRUE ) {
                 drawNode( currentNode, g, boldFontLabel );
             }
         }
 
-        mapCode.append( "</MAP>" );
+        mapCode.append( "</map>" );
 
         if ( borderEnable.equals( "enable" ) ) {
             g.setColor( borderColor );
@@ -684,7 +695,10 @@ public class DrawGraph {
         }
         // release
         g.dispose();
+
+        nodeCoordinates.append( graph.exportJavascript( getDimensionRateX(), getDimensionRateY(), borderSize ) );
     } // draw
+
 
     /**
      * Create an Container with the image and the HTML MAP code.
@@ -699,4 +713,10 @@ public class DrawGraph {
         ib.setImageData( bufferedImage );
         return ib;
     }
+
+
+    public String getNodeCoordinates() {
+        return nodeCoordinates.toString();
+    }
+
 }
