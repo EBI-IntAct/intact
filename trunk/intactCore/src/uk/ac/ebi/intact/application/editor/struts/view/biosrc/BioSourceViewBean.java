@@ -195,7 +195,7 @@ public class BioSourceViewBean extends AbstractEditViewBean {
         // Set tissue and cell objects.
         bs.setCvTissue(getCvTissue(helper));
         bs.setCvCellType(getCvCellType(helper));
-        bs.setBioSourceXref();
+        //bs.setBioSourceXref();
     }
 
     /**
