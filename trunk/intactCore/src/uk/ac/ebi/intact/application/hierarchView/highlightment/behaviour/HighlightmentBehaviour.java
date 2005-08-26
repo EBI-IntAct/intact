@@ -47,7 +47,6 @@ public abstract class HighlightmentBehaviour {
         Object object = null;
 
         try {
-
             // create a class by its name
             Class cls = Class.forName(aClassName);
 
