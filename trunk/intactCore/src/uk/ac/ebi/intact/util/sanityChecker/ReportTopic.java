@@ -68,6 +68,7 @@ public class ReportTopic {
         public static final ReportTopic FUZZY_TYPE_NOT_APPROPRIATE = new ReportTopic("As the protein is not associated to any sequence, the fuzzy type must be either n-terminal, c-terminal or undetermined and numeric feature range should not be given");
         public static final ReportTopic INTERVAL_VALUE_NOT_APPROPRIATE = new ReportTopic("Interval values not appropriate for the FromCvFuzzyType. When FromCvFuzzyType is n-terminal, c-terminal or undetermined, all interval values should be equal to zero.");
         public static final ReportTopic INTERACTION_LINKED_TO_MORE_THEN_ONE_EXPERIMENT = new ReportTopic("Interaction linked to more then one experiment");
+
         //
         // P R O T E I N S
         //
@@ -78,6 +79,10 @@ public class ReportTopic {
         public static final ReportTopic PROTEIN_WITHOUT_A_SEQUENCE_BUT_WITH_AN_CRC64 = new ReportTopic( "proteins does not have a sequence but have a Crc64");
         public static final ReportTopic DUPLICATED_PROTEIN = new ReportTopic("Those proteins are duplicated");
 
+        //
+        // X R E F
+        //
+        public static final ReportTopic XREF_WITH_NON_VALID_PRIMARYID = new ReportTopic( "Xref having non valid primaryId");
 
     private static final String NEW_LINE = System.getProperty( "line.separator" );
 
