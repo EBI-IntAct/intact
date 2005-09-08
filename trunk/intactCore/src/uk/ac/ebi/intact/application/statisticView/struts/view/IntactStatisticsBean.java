@@ -166,12 +166,12 @@ public class IntactStatisticsBean {
                                                "Controlled vocabulary terms" ) );
 
         result.add( new DisplayStatisticsBean( INTERACTIONS_PER_BIOSOURCE,
-                                               "",
-                                               "" ) );
+                                               "-",
+                                               "<a href=\"#"+ INTERACTIONS_PER_BIOSOURCE +"\" class=\"red_bold_small\">(Link to detailed statistics)</a>" ) );
 
         result.add( new DisplayStatisticsBean( INTERACTIONS_PER_IDENTIFICATION,
-                                               "",
-                                               "" ) );
+                                               "-",
+                                               "<a href=\"#"+ INTERACTIONS_PER_IDENTIFICATION +"\" class=\"red_bold_small\">(Link to detailed statistics)</a>" ) );
 
         return result;
     }
