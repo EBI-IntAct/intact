@@ -14,9 +14,14 @@
 <%@ taglib uri="/WEB-INF/tld/intact.tld"      prefix="intact" %>
 
 <%
-  IntactStatisticsBean intactBean = (IntactStatisticsBean) request.getAttribute("intactbean");
-  List stats = intactBean.getDisplayBeans();
-  request.setAttribute("statistics", stats);
+    IntactStatisticsBean intactBean = (IntactStatisticsBean) request.getAttribute("intactbean");
+
+    if( intactBean == null ) {
+        // TODO forward to an error page
+    }
+
+    List stats = intactBean.getDisplayBeans();
+    request.setAttribute("statistics", stats);
 %>
 
 <a name="top">
