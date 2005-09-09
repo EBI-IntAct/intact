@@ -1,50 +1,51 @@
 package uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.business.graphdraw;
 
-import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.business.graphdraw.graph.*;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.CvDagObject;
+import uk.ac.ebi.intact.model.CvFeatureIdentification;
+import uk.ac.ebi.intact.model.CvFeatureType;
 import uk.ac.ebi.intact.model.CvInteraction;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 /**
- * Draw an example graph.
- * <p/>
- * After running see: <a href="../../../../../../InterGraph.html">results</a>.
+ * Draw an example graphs.
  */
 public class SampleGraphDraw {
 
+    public static void produceImage( Class cvClass, File file ) throws IntactException, IOException {
 
-    public static void main(String[] args) {
-        CvGraph test = new CvGraph();
-        BufferedImage image = null;
-        String imageMap = null;
+        String cvName = cvClass.getName().substring( cvClass.getName().lastIndexOf( "." ) + 1 );
 
-        PrintWriter pw = null;
-        try {
-            image = (BufferedImage) test.createImage("CvInteraction");
-            imageMap = test.getImageMap();
-            pw = new PrintWriter(new FileWriter("InterGraph.html"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        CvGraph graphGenerator = new CvGraph();
 
-        try {
-            ImageIO.write(image, "png", new FileOutputStream("interGraph.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        System.out.print( "Creating "+ cvName +"'s DAG representation..." );
 
-        pw.println("<html><body><img src='interGraph.png' usemap='#bob' /><map name='bob'>" + imageMap + "</map></body></html>");
+        BufferedImage image = (BufferedImage) graphGenerator.createImage( cvClass );
+        String map = graphGenerator.getImageMap();
+
+        System.out.println( "done." );
+
+        // write to disk
+        ImageIO.write( image, "png", new FileOutputStream( file ) );
+
+        PrintWriter pw = new PrintWriter( new FileWriter( cvName + ".html" ) );
+        pw.println( "<html><body>" +
+                    "<img border=\"0\" src=\""+ cvName + ".png\" usemap=\"#"+ cvName +"\" />" +
+                    "<map name=\""+ cvName +"\">" + map + "</map>" +
+                    "</body></html>" );
+
         pw.close();
     }
 
+    /**
+     * D E M O
+     */
+    public static void main( String[] args ) throws IntactException, IOException {
+
+        produceImage( CvInteraction.class, new File( "CvInteraction.png" ) );
+        produceImage( CvFeatureType.class, new File( "CvFeatureType.png" ) );
+        produceImage( CvFeatureIdentification.class, new File( "CvFeatureIdentification.png" ) );
+    }
 }
