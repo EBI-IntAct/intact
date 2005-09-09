@@ -7,8 +7,7 @@ import java.util.*;
 /**
  * Layout a hierarchical graph.
  * <p/>
- * Layout similar to the algorithm implemented by
- * <a href="http://www.graphviz.org/">GraphViz, AT&T laboratories</a>.
+ * Layout similar to the algorithm implemented by <a href="http://www.graphviz.org/">GraphViz, AT&T laboratories</a>.
  * </p>
  * <pre>
  * Usage:
@@ -18,14 +17,10 @@ import java.util.*;
  * ...layout.getWidth()...layout.getHeight()...
  * </pre>
  * <p/>
- * See SimpleGraphDraw.java for an example.
- * </p>
+ * See SimpleGraphDraw.java for an example. </p>
  * <p/>
- * The following documentation assumes orientation is PARENT_TOP,
- * in which case the parent nodes are at the top and
- * a level is a horizontal group of nodes.
- * Normally the magic field values should be left at their default values.
- * </p>
+ * The following documentation assumes orientation is PARENT_TOP, in which case the parent nodes are at the top and a
+ * level is a horizontal group of nodes. Normally the magic field values should be left at their default values. </p>
  */
 public class HierarchicalLayout {
 
@@ -46,44 +41,43 @@ public class HierarchicalLayout {
      * @param graph       Graph containing LayoutNodes and LayoutEdges, will not be modified.
      * @param orientation PARENT_TOP or PARENT_LEFT
      */
-
-    public HierarchicalLayout(Graph graph, int orientation) {
+    public HierarchicalLayout( Graph graph, int orientation ) {
 
         Map hnodes = new HashMap();
 
-        for (Iterator i = graph.nodes.iterator(); i.hasNext();) {
+        for ( Iterator i = graph.nodes.iterator(); i.hasNext(); ) {
 
             LayoutNode n = (LayoutNode) i.next();
             HierarchicalNode hnode;
-            if (orientation == PARENT_TOP)
-                hnode = new HierarchicalNode(n, n.getHeight(), n.getWidth());
-            else
-                hnode = new HierarchicalNode(n, n.getWidth(), n.getHeight());
-            hnodes.put(n, hnode);
-            hierarchicalGraph.nodes.add(hnode);
+            if ( orientation == PARENT_TOP ) {
+                hnode = new HierarchicalNode( n, n.getHeight(), n.getWidth() );
+            } else {
+                hnode = new HierarchicalNode( n, n.getWidth(), n.getHeight() );
+            }
+            hnodes.put( n, hnode );
+            hierarchicalGraph.nodes.add( hnode );
         }
-        for (Iterator i = graph.edges.iterator(); i.hasNext();) {
+
+        for ( Iterator i = graph.edges.iterator(); i.hasNext(); ) {
             LayoutEdge e = (LayoutEdge) i.next();
-            hierarchicalGraph.edges.add(new HierarchicalEdge((HierarchicalNode) hnodes.get(e.getParent()), (HierarchicalNode) hnodes.get(e.getChild()), e));
+            hierarchicalGraph.edges.add( new HierarchicalEdge( (HierarchicalNode) hnodes.get( e.getParent() ),
+                                                               (HierarchicalNode) hnodes.get( e.getChild() ), e ) );
         }
     }
 
     /**
-     * Compute layout.
-     * This method finally calls setLocation on all the nodes and
-     * setRoute on all the edges.
+     * Compute layout. This method finally calls setLocation on all the nodes and setRoute on all the edges.
      */
-
     public void layout() {
 
-        for (Iterator i = hierarchicalGraph.nodes.iterator(); i.hasNext();) {
+        for ( Iterator i = hierarchicalGraph.nodes.iterator(); i.hasNext(); ) {
             HierarchicalNode n = (HierarchicalNode) i.next();
-            findLevel(maxLevelSize, n);
+            findLevel( maxLevelSize, n );
         }
 
         rationalise();
 
-        for (Iterator i = levels.iterator(); i.hasNext();) {
+        for ( Iterator i = levels.iterator(); i.hasNext(); ) {
             Level l = (Level) i.next();
             l.calcInitialPositions();
 
@@ -95,38 +89,32 @@ public class HierarchicalLayout {
 
         int minStart = Integer.MAX_VALUE;
 
-        for (Iterator i = levels.iterator(); i.hasNext();)
-            minStart = Math.min(minStart, ((Level) i.next()).getStart());
+        for ( Iterator i = levels.iterator(); i.hasNext(); ) {
+            minStart = Math.min( minStart, ( (Level) i.next() ).getStart() );
+        }
 
-        for (Iterator i = levels.iterator(); i.hasNext();)
-            ((Level) i.next()).shiftLeft(minStart);
+        for ( Iterator i = levels.iterator(); i.hasNext(); ) {
+            ( (Level) i.next() ).shiftLeft( minStart );
+        }
 
         storeLayout();
     }
 
     /**
-     * After calling layout() call getWidth and getHeight
-     * <br/>
-     * All nodes will be in this bounding box.
-     * <br/>
-     * 0&lt;node.x+/-node.getWidth/2&lt;layout.getWidth
-     * <br/>
-     * 0&lt;node.y+/-node.getHeight/2&lt;layout.getHeight
-     * <br/>
-     * Noting that x and y are the centres of the nodes.
-     * All edge routes will also be in the bounding box.
+     * After calling layout() call getWidth and getHeight <br/> All nodes will be in this bounding box. <br/>
+     * 0&lt;node.x+/-node.getWidth/2&lt;layout.getWidth <br/> 0&lt;node.y+/-node.getHeight/2&lt;layout.getHeight <br/>
+     * Noting that x and y are the centres of the nodes. All edge routes will also be in the bounding box.
      *
      * @return width of layout
      */
-
     public int getWidth() {
         int maxWidth = 0;
 
-        for (Iterator i = levels.iterator(); i.hasNext();)
-            maxWidth = Math.max(maxWidth, ((Level) i.next()).getWidth());
+        for ( Iterator i = levels.iterator(); i.hasNext(); ) {
+            maxWidth = Math.max( maxWidth, ( (Level) i.next() ).getWidth() );
+        }
 
-        return maxWidth;
-
+        return maxWidth + 1;
     }
 
 
@@ -134,9 +122,11 @@ public class HierarchicalLayout {
      * See getWidth()
      */
     public int getHeight() {
-        Level l = (Level) levels.get(levels.size() - 1);
-        return l.location + l.depth / 2;
+        Level l = (Level) levels.get( levels.size() - 1 );
+        return ( l.location + l.depth / 2 ) + 1;
     }
+
+
 //
 // Magic constants.
 // WARNING! Playing with these constants will mess with your head.
@@ -151,8 +141,7 @@ public class HierarchicalLayout {
      */
     public final int reorderIterations = 25;
     /**
-     * Minimum gap between levels
-     * changed from 10 to 3 (afrie)
+     * Minimum gap between levels changed from 10 to 3 (afrie)
      */
     public final int minLevelGap = 3;
     /**
@@ -164,11 +153,9 @@ public class HierarchicalLayout {
      */
     public int insertedEdgeWidth = 20;
     /**
-     * Horizontal gap between nodes
-     * changed from 20 to 0 (afrie)
+     * Horizontal gap between nodes changed from 20 to 0 (afrie)
      */
     public int withinLevelGap = 0;
-//
 
 
 // Internal implementation
@@ -210,13 +197,13 @@ public class HierarchicalLayout {
         /**
          * Create nodedata for node
          */
-        HierarchicalNode(LayoutNode node, int betweenLevelSize, int withinLevelSize) {
+        HierarchicalNode( LayoutNode node, int betweenLevelSize, int withinLevelSize ) {
             underlying = node;
             this.betweenLevelSize = betweenLevelSize;
             this.withinLevelSize = withinLevelSize;
         }
 
-        HierarchicalNode(int betweenLevelSize, int withinLevelSize) {
+        HierarchicalNode( int betweenLevelSize, int withinLevelSize ) {
             this.betweenLevelSize = betweenLevelSize;
             this.withinLevelSize = withinLevelSize;
         }
@@ -238,12 +225,12 @@ public class HierarchicalLayout {
             return child;
         }
 
-        public HierarchicalEdge(HierarchicalNode parent, HierarchicalNode child) {
+        public HierarchicalEdge( HierarchicalNode parent, HierarchicalNode child ) {
             this.parent = parent;
             this.child = child;
         }
 
-        public HierarchicalEdge(HierarchicalNode parent, HierarchicalNode child, LayoutEdge underlying) {
+        public HierarchicalEdge( HierarchicalNode parent, HierarchicalNode child, LayoutEdge underlying ) {
             this.parent = parent;
             this.child = child;
             this.underlying = underlying;
@@ -259,43 +246,43 @@ public class HierarchicalLayout {
         List nodes = new ArrayList();
         Graph hierarchicalGraph;
 
-        public Level(Graph hierarchicalGraph, int levelNumber) {
+        public Level( Graph hierarchicalGraph, int levelNumber ) {
             this.hierarchicalGraph = hierarchicalGraph;
-
             this.levelNumber = levelNumber;
         }
 
-        void reorder(Level above, Level below) {
+        void reorder( Level above, Level below ) {
 
-            for (int j = 0; j < nodes.size(); j++) {
+            for ( int j = 0; j < nodes.size(); j++ ) {
 
-                HierarchicalNode nj = (HierarchicalNode) nodes.get(j);
+                HierarchicalNode nj = (HierarchicalNode) nodes.get( j );
 
                 double total = 0;
                 int connected = 0;
 
-                if (above != null)
-                    for (int i = 0; i < above.nodes.size(); i++) {
-                        HierarchicalNode ni = (HierarchicalNode) above.nodes.get(i);
+                if ( above != null ) {
+                    for ( int i = 0; i < above.nodes.size(); i++ ) {
+                        HierarchicalNode ni = (HierarchicalNode) above.nodes.get( i );
 
-
-                        if (hierarchicalGraph.connected(ni, nj)) {
+                        if ( hierarchicalGraph.connected( ni, nj ) ) {
                             connected++;
                             total += ni.location;
                         }
                     }
+                }
 
-                if (below != null)
-                    for (int i = 0; i < below.nodes.size(); i++) {
-                        HierarchicalNode ni = (HierarchicalNode) below.nodes.get(i);
+                if ( below != null ) {
+                    for ( int i = 0; i < below.nodes.size(); i++ ) {
+                        HierarchicalNode ni = (HierarchicalNode) below.nodes.get( i );
 
-                        if (hierarchicalGraph.connected(nj, ni)) {
+                        if ( hierarchicalGraph.connected( nj, ni ) ) {
                             connected++;
                             total += ni.location;
                         }
                     }
+                }
 
-                if (connected == 0) {
+                if ( connected == 0 ) {
                     continue;
                     //throw new RuntimeException("No connected Nodes");
                 } else {
@@ -306,179 +293,187 @@ public class HierarchicalLayout {
             }
 
 
-            while (true) {
+            while ( true ) {
 
-                Collections.sort(nodes, nodeLayoutComparator);
+                Collections.sort( nodes, nodeLayoutComparator );
 
                 boolean foundOverlap = false;
-                for (int i = 1; i < nodes.size(); i++) {
-                    HierarchicalNode a = (HierarchicalNode) nodes.get(i - 1);
-                    HierarchicalNode b = (HierarchicalNode) nodes.get(i);
+                for ( int i = 1; i < nodes.size(); i++ ) {
+                    HierarchicalNode a = (HierarchicalNode) nodes.get( i - 1 );
+                    HierarchicalNode b = (HierarchicalNode) nodes.get( i );
 
-                    int overlap = minLevelGap + (a.location + a.withinLevelSize / 2) - (b.location - b.withinLevelSize / 2);
-                    if (overlap > 0) {
+                    int overlap = minLevelGap + ( a.location + a.withinLevelSize / 2 ) - ( b.location - b.withinLevelSize / 2 );
+                    if ( overlap > 0 ) {
                         foundOverlap = true;
                         a.location = a.location - overlap / 2 - 1;
                         b.location = b.location + overlap / 2 + 1;
                     }
                 }
-                if (!foundOverlap) break;
+                if ( !foundOverlap ) {
+                    break;
+                }
             }
 
-/*    		excess=0;
-if (excess>((Node)nodes.get(0)).x) {excess=((Node)nodes.get(0)).x;}
-shiftLeft(excess);*/
-
+            /*    		excess=0;
+            if (excess>((Node)nodes.get(0)).x) {excess=((Node)nodes.get(0)).x;}
+            shiftLeft(excess);*/
         }
 
 
         void calcInitialPositions() {
 
             int width = 0;
-            for (int i = 0; i < nodes.size(); i++) {
-                HierarchicalNode n = (HierarchicalNode) nodes.get(i);
+            for ( int i = 0; i < nodes.size(); i++ ) {
+                HierarchicalNode n = (HierarchicalNode) nodes.get( i );
 
                 n.location = width + n.withinLevelSize / 2;
                 width += n.withinLevelSize + withinLevelGap;
             }
-
-
         }
 
-        void shiftLeft(int delta) {
-            for (int i = 0; i < nodes.size(); i++) {
-                ((HierarchicalNode) nodes.get(i)).location -= delta;
+        void shiftLeft( int delta ) {
+            for ( int i = 0; i < nodes.size(); i++ ) {
+                ( (HierarchicalNode) nodes.get( i ) ).location -= delta;
             }
         }
 
-        void setDepth(int depth) {
+        void setDepth( int depth ) {
             this.depth = depth;
-
         }
 
-        void setLocation(int location) {
+        void setLocation( int location ) {
             this.location = location;
         }
 
         int getWidth() {
-            final HierarchicalNode nd = ((HierarchicalNode) nodes.get(nodes.size() - 1));
+            final HierarchicalNode nd = ( (HierarchicalNode) nodes.get( nodes.size() - 1 ) );
             return nd.location + nd.withinLevelSize / 2;
         }
 
 
         int getStart() {
-            final HierarchicalNode nd = ((HierarchicalNode) nodes.get(0));
+            final HierarchicalNode nd = ( (HierarchicalNode) nodes.get( 0 ) );
             return nd.location - nd.withinLevelSize / 2;
         }
 
+    }  // class Level
 
-    }
 
     private static final Comparator nodeLayoutComparator = new Comparator() {
         // Classcast exception if not NodeLayoutData
-        public int compare(Object o1, Object o2) {
-            return ((HierarchicalNode) o1).location - ((HierarchicalNode) o2).location;
+        public int compare( Object o1, Object o2 ) {
+            return ( (HierarchicalNode) o1 ).location - ( (HierarchicalNode) o2 ).location;
         }
-
     };
+
 
 // methods
 
-    private int findLevel(int maxLevelSize, HierarchicalNode node) {
+    private int findLevel( int maxLevelSize, HierarchicalNode node ) {
 
-        if (node.level != null) return node.level.levelNumber;
+        if ( node.level != null ) {
+            return node.level.levelNumber;
+        }
 
         int maxParentLevel = -1;
 
-        Set parents = hierarchicalGraph.parents(node);
+        Set parents = hierarchicalGraph.parents( node );
 
-        for (Iterator i = parents.iterator(); i.hasNext();) {
+        for ( Iterator i = parents.iterator(); i.hasNext(); ) {
             HierarchicalNode parent = (HierarchicalNode) i.next();
-            if (parent == null) continue;
-            int l = findLevel(maxLevelSize, parent);
-            if (l > maxParentLevel) maxParentLevel = l;
+            if ( parent == null ) {
+                continue;
+            }
+            int l = findLevel( maxLevelSize, parent );
+            if ( l > maxParentLevel ) {
+                maxParentLevel = l;
+            }
         }
 
 
         int levelNumber = maxParentLevel + 1;
 
-        while (true) {
+        while ( true ) {
 
-            while (levelNumber >= levels.size()) levels.add(new Level(hierarchicalGraph, levels.size()));
+            while ( levelNumber >= levels.size() ) {
+                levels.add( new Level( hierarchicalGraph, levels.size() ) );
+            }
 
-            if (((Level) levels.get(levelNumber)).nodes.size() < maxLevelSize) break;
+            if ( ( (Level) levels.get( levelNumber ) ).nodes.size() < maxLevelSize ) {
+                break;
+            }
 
             levelNumber++;
         }
 
-        node.level = (Level) levels.get(levelNumber);
+        node.level = (Level) levels.get( levelNumber );
 
-        node.level.nodes.add(node);
+        node.level.nodes.add( node );
 
         return levelNumber;
     }
 
 
-    private void rationalise(HierarchicalEdge e, Graph g) {
-        int parentLevel = ((HierarchicalNode) e.getParent()).level.levelNumber;
-        int childLevel = ((HierarchicalNode) e.getChild()).level.levelNumber;
+    private void rationalise( HierarchicalEdge e, Graph g ) {
+        int parentLevel = ( (HierarchicalNode) e.getParent() ).level.levelNumber;
+        int childLevel = ( (HierarchicalNode) e.getChild() ).level.levelNumber;
 
-        if (parentLevel < childLevel - 1) {
+        if ( parentLevel < childLevel - 1 ) {
             //System.out.println("Rationalise "+parentLevel+" "+childLevel);
             HierarchicalNode a = (HierarchicalNode) e.getParent();
-            for (int i = parentLevel + 1; i <= childLevel; i++) {
+            for ( int i = parentLevel + 1; i <= childLevel; i++ ) {
 
                 HierarchicalNode b;
-                if (i == childLevel) {
+                if ( i == childLevel ) {
                     b = (HierarchicalNode) e.getChild();
                 } else {
-                    b = new HierarchicalNode(-1, insertedEdgeWidth);
-                    b.level = (Level) levels.get(i);
-                    b.level.nodes.add(b);
+                    b = new HierarchicalNode( -1, insertedEdgeWidth );
+                    b.level = (Level) levels.get( i );
+                    b.level.nodes.add( b );
 
                 }
-                HierarchicalEdge insertedEdge = new HierarchicalEdge(a, b);
-                g.edges.add(insertedEdge);
-                g.nodes.add(b);
-                e.componentEdges.add(insertedEdge);
+                HierarchicalEdge insertedEdge = new HierarchicalEdge( a, b );
+                g.edges.add( insertedEdge );
+                g.nodes.add( b );
+                e.componentEdges.add( insertedEdge );
 
                 a = b;
             }
 
         } else {
-            e.componentEdges.add(e);
-            g.edges.add(e);
+            e.componentEdges.add( e );
+            g.edges.add( e );
         }
     }
 
     private void rationalise() {
-        originalEdges = new HashSet(hierarchicalGraph.edges);
+        originalEdges = new HashSet( hierarchicalGraph.edges );
 
         hierarchicalGraph.edges.clear();
 
-        for (Iterator i = originalEdges.iterator(); i.hasNext();) {
+        for ( Iterator i = originalEdges.iterator(); i.hasNext(); ) {
             HierarchicalEdge e = (HierarchicalEdge) i.next();
-            rationalise(e, hierarchicalGraph);
+            rationalise( e, hierarchicalGraph );
         }
     }
 
     private void orderNodesInLevels() {
-        for (int j = 0; j < reorderIterations; j++) {
+        for ( int j = 0; j < reorderIterations; j++ ) {
 
             int s = levels.size();
 
-            for (int i = 0; i < s; i++) {
-                Level p = (i == 0) ? null : (Level) levels.get(i - 1);
-                Level l = (Level) levels.get(i);
-                Level n = (i == s - 1) ? null : (Level) levels.get(i + 1);
-                l.reorder(p, n);
+            for ( int i = 0; i < s; i++ ) {
+                Level p = ( i == 0 ) ? null : (Level) levels.get( i - 1 );
+                Level l = (Level) levels.get( i );
+                Level n = ( i == s - 1 ) ? null : (Level) levels.get( i + 1 );
+                l.reorder( p, n );
             }
 
-            for (int i = s - 1; i >= 0; i--) {
-                Level p = (i == 0) ? null : (Level) levels.get(i - 1);
-                Level l = (Level) levels.get(i);
-                Level n = (i == s - 1) ? null : (Level) levels.get(i + 1);
-                l.reorder(p, n);
+            for ( int i = s - 1; i >= 0; i-- ) {
+                Level p = ( i == 0 ) ? null : (Level) levels.get( i - 1 );
+                Level l = (Level) levels.get( i );
+                Level n = ( i == s - 1 ) ? null : (Level) levels.get( i + 1 );
+                l.reorder( p, n );
             }
 
         }
@@ -490,7 +485,7 @@ shiftLeft(excess);*/
 
         Level p = null;
 
-        for (Iterator i = levels.iterator(); i.hasNext();) {
+        for ( Iterator i = levels.iterator(); i.hasNext(); ) {
 
             Level l = (Level) i.next();
 
@@ -498,59 +493,57 @@ shiftLeft(excess);*/
 
             // Calculate maximum edge length
 
-            if (p != null) {
-                for (Iterator i2 = l.nodes.iterator(); i2.hasNext();) {
+            if ( p != null ) {
+                for ( Iterator i2 = l.nodes.iterator(); i2.hasNext(); ) {
                     HierarchicalNode n1 = (HierarchicalNode) i2.next();
-                    for (Iterator i3 = p.nodes.iterator(); i3.hasNext();) {
+                    for ( Iterator i3 = p.nodes.iterator(); i3.hasNext(); ) {
                         HierarchicalNode n2 = (HierarchicalNode) i3.next();
-                        if (hierarchicalGraph.connected(n1, n2)) {
-                            maxLength = Math.max(maxLength, Math.abs(n1.location - n2.location));
+                        if ( hierarchicalGraph.connected( n1, n2 ) ) {
+                            maxLength = Math.max( maxLength, Math.abs( n1.location - n2.location ) );
                         }
                     }
                 }
-                height += Math.max(minLevelGap, maxLength / edgeLengthHeightRatio);
+                height += Math.max( minLevelGap, maxLength / edgeLengthHeightRatio );
             }
-
 
             int maxHeight = 0;
 
-            for (Iterator i2 = l.nodes.iterator(); i2.hasNext();) {
-                maxHeight = Math.max(maxHeight, ((HierarchicalNode) i2.next()).betweenLevelSize);
+            for ( Iterator i2 = l.nodes.iterator(); i2.hasNext(); ) {
+                maxHeight = Math.max( maxHeight, ( (HierarchicalNode) i2.next() ).betweenLevelSize );
             }
 
-            l.setDepth(maxHeight);
-
+            l.setDepth( maxHeight );
             height += l.depth / 2;
-
-            l.setLocation(height);
-
+            l.setLocation( height );
             height += maxHeight;
-
             p = l;
         }
     }
 
     private void storeLayout() {
-        for (Iterator it = hierarchicalGraph.nodes.iterator(); it.hasNext();) {
+
+        for ( Iterator it = hierarchicalGraph.nodes.iterator(); it.hasNext(); ) {
             HierarchicalNode n = (HierarchicalNode) it.next();
-            if (n.underlying == null) continue;
-            if (orientation == PARENT_TOP)
-                n.underlying.setLocation(n.location, n.level.location);
-            else
-                n.underlying.setLocation(n.level.location, n.location);
+
+            if ( n.underlying == null ) {
+                continue;
+            }
+
+            if ( orientation == PARENT_TOP ) {
+                n.underlying.setLocation( n.location, n.level.location );
+            } else {
+                n.underlying.setLocation( n.level.location, n.location );
+            }
         }
 
-
-        for (Iterator it = originalEdges.iterator(); it.hasNext();) {
+        for ( Iterator it = originalEdges.iterator(); it.hasNext(); ) {
             HierarchicalEdge e = (HierarchicalEdge) it.next();
-
 
             GeneralPath shape = new GeneralPath();
 
+            for ( int i = 0; i < e.componentEdges.size(); i++ ) {
 
-            for (int i = 0; i < e.componentEdges.size(); i++) {
-
-                HierarchicalEdge edge = (HierarchicalEdge) e.componentEdges.get(i);
+                HierarchicalEdge edge = (HierarchicalEdge) e.componentEdges.get( i );
                 HierarchicalNode parent = (HierarchicalNode) edge.getParent();
                 HierarchicalNode child = (HierarchicalNode) edge.getChild();
 
@@ -560,33 +553,32 @@ shiftLeft(excess);*/
                 int levelParent = parent.level.location + parent.level.depth / 2;
                 int levelChild = child.level.location - child.level.depth / 2;
 
-                int levelCentre = (levelParent + levelChild) / 2;
+                int levelCentre = ( levelParent + levelChild ) / 2;
 
                 int nodeParent = parent.level.location + parent.betweenLevelSize / 2;
                 int nodeChild = child.level.location - child.betweenLevelSize / 2;
 
-                if (orientation == PARENT_TOP) {
-                    shape.moveTo(parentLocation, nodeParent);
-                    shape.lineTo(parentLocation, levelParent);
-                    shape.curveTo(parentLocation, levelCentre,
-                            childLocation, levelCentre,
-                            childLocation, levelChild);
-                    shape.lineTo(childLocation, nodeChild);
+                if ( orientation == PARENT_TOP ) {
+                    shape.moveTo( parentLocation, nodeParent );
+                    shape.lineTo( parentLocation, levelParent );
+                    shape.curveTo( parentLocation, levelCentre,
+                                   childLocation, levelCentre,
+                                   childLocation, levelChild );
+                    shape.lineTo( childLocation, nodeChild );
 
                 } else {
-                    shape.moveTo(nodeParent, parentLocation);
-                    shape.lineTo(levelParent, parentLocation);
-                    shape.curveTo(levelCentre, parentLocation,
-                            levelCentre, childLocation,
-                            levelChild, childLocation);
-                    shape.lineTo(nodeChild, childLocation);
+                    shape.moveTo( nodeParent, parentLocation );
+                    shape.lineTo( levelParent, parentLocation );
+                    shape.curveTo( levelCentre, parentLocation,
+                                   levelCentre, childLocation,
+                                   levelChild, childLocation );
+                    shape.lineTo( nodeChild, childLocation );
 
                 }
             }
 
-            e.underlying.setRoute(shape);
+            e.underlying.setRoute( shape );
 
         }
     }
-
 }
