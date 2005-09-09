@@ -10,8 +10,8 @@ import java.awt.image.BufferedImage;
 /**
  * A bean that holds the imagedata and the corresponding map
  *
- * @author Anja Friedrichsen
- * @version $id$
+ * @author Samuel Kerrien (Samuel kerrien), Anja Friedrichsen
+ * @version $Id$
  */
 public class ImageBean {
 
@@ -20,17 +20,25 @@ public class ImageBean {
      */
     private transient BufferedImage imageData;
 
-    // HTML map code
+    /**
+     * HTML map code
+     */
     private String imageMap;
 
-    // name of the CV to generate the image
+    /**
+     * name of the CV to generate the image
+     */
     private String cvName;
+
+
+    //////////////////////////
+    // Getters and Setters
 
     public BufferedImage getImageData() {
         return imageData;
     }
 
-    public void setImageData(BufferedImage imageData) {
+    public void setImageData( BufferedImage imageData ) {
         this.imageData = imageData;
     }
 
@@ -38,7 +46,7 @@ public class ImageBean {
         return imageMap;
     }
 
-    public void setImageMap(String imageMap) {
+    public void setImageMap( String imageMap ) {
         this.imageMap = imageMap;
     }
 
@@ -46,7 +54,7 @@ public class ImageBean {
         return cvName;
     }
 
-    public void setCvName(String cvName) {
+    public void setCvName( String cvName ) {
         this.cvName = cvName;
     }
 }
