@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.business.
 import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
+import uk.ac.ebi.intact.business.IntactException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -23,116 +24,130 @@ import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
- * This action is called to view the Cv DAG graphs. It creates the image and the corresponding image map
- * and stores them into an ImageBean.
+ * This action is called to view the Cv DAG graphs. It creates the image and the corresponding image map and stores them
+ * into an ImageBean.
  *
  * @author Anja Friedrichsen
- * @version $id$
+ * @version $Id$
  */
 public class ShowCvGraphAction extends IntactBaseAction {
 
-//    private static Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
-
     // Basic Caching parameters
-    private static final long CACHE_TIMEOUT = 10000; // 10 seconds
+    private static final long CACHE_TIMEOUT = 5 * 60 * 1000; // 5 minutes
     private long lastImageGeneratedTime = -1;
     private HashMap cacheMap = new HashMap();
 
+    private static Map requestedCVs = new HashMap( 8 );
+
     /**
-     * Process the specified HTTP request, and create the corresponding
-     * HTTP response (or forward to another web component that will create
-     * it). Return an ActionForward instance describing where and how
-     * control should be forwarded, or null if the response has
-     * already been completed.
+     * Process the specified HTTP request, and create the corresponding HTTP response (or forward to another web
+     * component that will create it). Return an ActionForward instance describing where and how control should be
+     * forwarded, or null if the response has already been completed.
      *
      * @param mapping  - The <code>ActionMapping</code> used to select this instance
      * @param form     - The optional <code>ActionForm</code> bean for this request (if any)
      * @param request  - The HTTP request we are processing
      * @param response - The HTTP response we are creating
-     * @return - represents a destination to which the controller servlet,
-     *         <code>ActionServlet</code>, might be directed to perform a RequestDispatcher.forward()
-     *         or HttpServletResponse.sendRedirect() to, as a result of processing
-     *         activities of an <code>Action</code> class
+     *
+     * @return - represents a destination to which the controller servlet, <code>ActionServlet</code>, might be directed
+     *         to perform a RequestDispatcher.forward() or HttpServletResponse.sendRedirect() to, as a result of
+     *         processing activities of an <code>Action</code> class
      */
-    public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
+    public ActionForward execute( ActionMapping mapping,
+                                  ActionForm form,
+                                  HttpServletRequest request,
+                                  HttpServletResponse response )
             throws IOException, ServletException {
 
-        logger.info("in ShowCvGraphAction");
+        logger.info( "in ShowCvGraphAction" );
 
-        if (lastImageGeneratedTime == -1) {
+        if ( lastImageGeneratedTime == -1 ) {
             lastImageGeneratedTime = System.currentTimeMillis();
         }
 
         long timeElapsed = System.currentTimeMillis() - lastImageGeneratedTime;
         boolean timeout = timeElapsed > CACHE_TIMEOUT;
 
-        logger.info("time elapsed: " + timeElapsed);
-        logger.info("timeout: " + timeout);
+        logger.info( "time elapsed: " + timeElapsed );
+        logger.info( "timeout: " + timeout );
 
         // Session to access various session objects. This will create
         //a new session if one does not exist.
-        HttpSession session = super.getSession(request);
+        HttpSession session = super.getSession( request );
 
         // Handle to the Intact User.
-        IntactUserIF user = super.getIntactUser(session);
-        if (user == null) {
+        IntactUserIF user = super.getIntactUser( session );
+        if ( user == null ) {
             //just set up a new user for the session - if it fails, need to give up!
-            user = super.setupUser(request);
-            if (user == null) {
-                return mapping.findForward(SearchConstants.FORWARD_FAILURE);
+            user = super.setupUser( request );
+            if ( user == null ) {
+                return mapping.findForward( SearchConstants.FORWARD_FAILURE );
             }
         }
 
         DynaActionForm dyForm = (DynaActionForm) form;
         // retrieve the name of the CV which should be viewed
-        String cvName = (String) dyForm.get("cvName");
+        String cvName = (String) dyForm.get( "cvName" );
+        Class cvClass = null;
+        if ( requestedCVs.keySet().contains( cvName ) ) {
+            cvClass = (Class) requestedCVs.get( cvName );
+        } else {
+            try {
+                // Class lookup
+                cvClass = Class.forName( cvName );
+                cvName = cvClass.getName().substring( cvClass.getName().lastIndexOf( "." ) + 1 );
+
+                // cache it
+                requestedCVs.put( cvName, cvClass );
+            } catch ( ClassNotFoundException e ) {
+                return mapping.findForward( SearchConstants.FORWARD_ERROR );
+            }
+        }
 
         ImageBean imageBean = null;
 
         // create a new Imagebean with the image and the imageMap, if it is not in the cache
-        if(!cacheMap.containsKey(cvName) || timeout){
+        if ( !cacheMap.containsKey( cvName ) || timeout ) {
 
-            logger.info("Generate the picture");
+            logger.info( "Generate the picture for " + cvName );
 
             CvGraph imageProducer = new CvGraph();
             imageBean = new ImageBean();
 
             // create the image and set it to the bean
-            imageBean.setImageData((BufferedImage) imageProducer.createImage(cvName));
-            // set the corresponding map to the bean
-            imageBean.setImageMap(imageProducer.getImageMap());
-            // set the cvName to the bean
-            imageBean.setCvName(cvName);
-            // cache the imageBean
-            cacheMap.put(cvName, imageBean);
-        }else{
+            try {
+                imageBean.setImageData( (BufferedImage) imageProducer.createImage( cvClass ) );
+            } catch ( IntactException e ) {
+                e.printStackTrace();
+                logger.error( "Could not produce image for " + cvClass, e );
+                return mapping.findForward( SearchConstants.FORWARD_ERROR );
+            }
 
-            logger.info("Use the cache");
-            imageBean = (ImageBean) cacheMap.get(cvName);
+            // set the corresponding map to the bean
+            imageBean.setImageMap( imageProducer.getImageMap() );
+
+            // set the cvName to the bean
+            imageBean.setCvName( cvName );
+
+            // cache the imageBean
+            cacheMap.put( cvName, imageBean );
+        } else {
+
+            logger.info( "Use the cache" );
+            imageBean = (ImageBean) cacheMap.get( cvName );
         }
 
-        logger.info("cvName: " + imageBean.getCvName());
-        logger.info("ImageMapLength: " + imageBean.getImageMap().length());
+        logger.info( "cvName: " + imageBean.getCvName() );
+        logger.info( "ImageMapLength: " + imageBean.getImageMap().length() );
 
-        getServlet().getServletContext().setAttribute(Constants.IMAGE_BEAN, imageBean);
+        getServlet().getServletContext().setAttribute( Constants.IMAGE_BEAN, imageBean );
 
         // forward to the corresponding jsp page, dependent on the cvName
-        if (cvName.equalsIgnoreCase("CvInteraction")) {
-            logger.info("forward Interaction");
-            return mapping.findForward(SearchConstants.FORWARD_SHOW_INTERACTION_GRAPH);
-        } else if (cvName.equalsIgnoreCase("CvInteractionType")) {
-            logger.info("forward InteractionType");
-            return mapping.findForward(SearchConstants.FORWARD_SHOW_INTERACTION_TYPE_GRAPH);
-        } else if (cvName.equalsIgnoreCase("CvIdentification")) {
-            logger.info("forward Identification");
-            return mapping.findForward(SearchConstants.FORWARD_SHOW_IDENTIFICATION_GRAPH);
-        } else {
-            return mapping.findForward(SearchConstants.FORWARD_ERROR);
-        }
+
+        logger.info( "forward to display of " + imageBean.getCvName() );
+        return mapping.findForward( "showCvDag" );
     }
 }
