@@ -178,9 +178,7 @@
                 <!-- these are advanced search specific JSPs -->
                 <exclude name="advancedSearch.jsp"/>
                 <exclude name="advTooLarge.jsp"/>
-                <exclude name="cvIdGraph.jsp"/>
-                <exclude name="cvIntGraph.jsp"/>
-                <exclude name="cvIntTypeGraph.jsp"/>
+                <exclude name="cvBrowser.jsp"/>
                 <exclude name="noIndexError.jsp"/>
                 <exclude name="sidebarFooter.jsp"/>
 
