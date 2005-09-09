@@ -273,9 +273,8 @@ Query     _________       ____________      |     _________      _____________
             type="uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.controller.ShowCvGraphAction"
             name="advancedForm"
             scope="session">
-            <forward name="showIdGraph" path="/pages/cvIdGraph.jsp"/>
-            <forward name="showIntGraph" path="/pages/cvIntGraph.jsp"/>
-            <forward name="showIntTypeGraph" path="/pages/cvIntTypeGraph.jsp"/>
+
+            <forward name="showCvDag" path="/pages/cvBrowser.jsp"/>
         </action>
 
     </action-mappings>
