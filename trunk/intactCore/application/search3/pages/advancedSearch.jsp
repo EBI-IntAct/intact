@@ -4,7 +4,10 @@ response.setHeader("Pragma","no-cache");        //HTTP 1.0
 response.setDateHeader ("Expires", 0);          //prevents caching at the proxy server
 %>
 
-<%@ page import="uk.ac.ebi.intact.application.search3.struts.framework.util.SearchConstants"%>
+<%@ page import="uk.ac.ebi.intact.application.search3.struts.framework.util.SearchConstants,
+                 uk.ac.ebi.intact.model.CvIdentification,
+                 uk.ac.ebi.intact.model.CvInteraction,
+                 uk.ac.ebi.intact.model.CvInteractionType"%>
 <%@ page language="java" %>
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
@@ -35,195 +38,202 @@ response.setDateHeader ("Expires", 0);          //prevents caching at the proxy 
 <script language="javascript" type="text/javascript">
 <!--
 
-var idArrayAll         = new Array("Interaction1", "Interaction2", "Interaction3", "Interaction4",
-                                   "Experiment1", "Experiment2", "Experiment3", "Experiment4", "Experiment5",
-                                   "Protein1", "Protein2", "Protein3", "Any1", "Any2", "Any3", "Cv1", "Cv2", "Cv3");
-var idArrayAny         = new Array("Any1", "Any2", "Any3");
-<%--var idArrayAny         = new Array("Interaction1","Experiment1", "Experiment2", "Any1", "Any2", "Any3");--%>
-var idArrayInteraction = new Array("Interaction1", "Interaction2", "Interaction3", "Interaction4");
-var idArrayExperiment  = new Array("Experiment1", "Experiment2", "Experiment3", "Experiment4", "Experiment5");
-var idArrayProtein     = new Array("Protein1", "Protein2", "Protein3");
-var idArrayCv          = new Array("Cv1", "Cv2", "Cv3");
+    var idArrayAll         = new Array("Interaction1", "Interaction2", "Interaction3", "Interaction4",
+                                       "Experiment1", "Experiment2", "Experiment3", "Experiment4", "Experiment5",
+                                       "Protein1", "Protein2", "Protein3", "Any1", "Any2", "Any3", "Cv1", "Cv2", "Cv3");
+    var idArrayAny         = new Array("Any1", "Any2", "Any3");
+    <%--var idArrayAny         = new Array("Interaction1","Experiment1", "Experiment2", "Any1", "Any2", "Any3");--%>
+    var idArrayInteraction = new Array("Interaction1", "Interaction2", "Interaction3", "Interaction4");
+    var idArrayExperiment  = new Array("Experiment1", "Experiment2", "Experiment3", "Experiment4", "Experiment5");
+    var idArrayProtein     = new Array("Protein1", "Protein2", "Protein3");
+    var idArrayCv          = new Array("Cv1", "Cv2", "Cv3");
 
 
-function openrow(rowsIDArray){
-	for(var i=0; i< rowsIDArray.length; i++){
-		var tag = document.getElementById(rowsIDArray[i]);
-		  if (navigator.userAgent.indexOf("Netscape6") != -1) {
-		  	//if(tag.style.visibility=="hidden";){
-				tag.style.visibility="visible";
-				//alert("showing row: " + rowsIDArray[i]);
-			//}
-		  }
-		  else{
-		  	//if(tag.style.display=="none";){
-				tag.style.display="";
-				//alert("showing row: " + rowsIDArray[i]);
-			//}
-		}
-	}
-}
-
-function closerow(rowsIDArray){
-	for(var i=0; i< rowsIDArray.length; i++){
-		var tag = document.getElementById(rowsIDArray[i]);
-		  if (navigator.userAgent.indexOf("Netscape6") != -1) {
-		  //if(tag.style.visibility=="visible";){
-				tag.style.visibility="hidden";
-				//alert("hiding row: " + rowsIDArray[i]);
-			}
-		  //}
-		  else{
-		  //	if(tag.style.display=="";){
-				tag.style.display="none";
-				//alert("hiding row: " + rowsIDArray[i]);
-			//}
-		}
-	}
-}
-
-
-// this function resets all form elements to its default value
-// it is used with the resetbutton and with the change of one radiobutton
-function resetForm(theValue){
-    // first set the radiobutton to the the given value
-    var btn = document.advancedForm["searchObject"];
-    for (var x = 0;x < btn.length; x++){
-		if(btn[x].checked==true){
-			btn[x].checked=false;
-			break;
-		}
-	}
-	for (var x = 0;x < btn.length; x++){
-		if(btn[x].value==theValue){
-			btn[x].checked=true;
-            // hide and show the correspomding rows
-            closerow(idArrayAll);
-            if(btn[x].value == "any"){
-               openrow(idArrayAny);
+    function openrow(rowsIDArray){
+        for(var i=0; i< rowsIDArray.length; i++){
+            var tag = document.getElementById(rowsIDArray[i]);
+              if (navigator.userAgent.indexOf("Netscape6") != -1) {
+                //if(tag.style.visibility=="hidden";){
+                    tag.style.visibility="visible";
+                    //alert("showing row: " + rowsIDArray[i]);
+                //}
+              }
+              else{
+                //if(tag.style.display=="none";){
+                    tag.style.display="";
+                    //alert("showing row: " + rowsIDArray[i]);
+                //}
             }
-            if(btn[x].value == "experiment"){
-               openrow(idArrayExperiment);
-            }
-            if(btn[x].value == "interaction"){
-               openrow(idArrayInteraction);
-            }
-            if(btn[x].value == "cv"){
-               openrow(idArrayCv);
-            }
-            if(btn[x].value == "protein"){
-               openrow(idArrayProtein);
-            }
-			break;
-		}
-	}
-
-    // clear the ac number
-    document.advancedForm["acNumber"].value = "";
-    // clear the shortlabel
-    document.advancedForm["shortlabel"].value = "";
-    // clear the description
-    document.advancedForm["description"].value = "";
-    // clear the fulltext search
-    document.advancedForm["fulltext"].value = "";
-    // clear the cvTopic textfield
-    document.advancedForm["annotation"].value = "";
-    // clear the cvDatabase textfield
-    document.advancedForm["xRef"].value = "";
-
-    // reset the drop down list of cvTopics
-    var topic = document.advancedForm["cvTopic"];
-    topic[0].selected = true;
-
-    // reset the drop down list of cvDatabase
-    var xref = document.advancedForm["cvDB"];
-    xref[0].selected = true;
-
-    // reset the drop down list of cvInteraction
-    var interaction = document.advancedForm["cvInteraction"];
-    interaction[0].selected = true;
-
-    // reset the drop down list of cvInteractionType
-    var interactionType = document.advancedForm["cvInteractionType"];
-    interactionType[0].selected = true;
-
-    // reset the drop down list of cvIdentification
-    var identification = document.advancedForm["cvIdentification"];
-    identification[0].selected = true;
-
-    //alert("reset done!");
-}
-
-function hideLists(){
-    closerow(idArrayAll);
-    // check if 'any' is checked
-    if(getRadioButton("document.advancedForm.searchObject[0]", "document.advancedForm.searchObject[0]")){
-          //alert("any checked");
-          openrow(idArrayAny);
-    }
-    // check if 'cv' is checked
-    if(getRadioButton("document.advancedForm.searchObject[1]", "document.advancedForm.searchObject[1]")){
-          //alert("cv checked");
-          openrow(idArrayCv);
-    }
-    // check if 'experiment' is checked
-    if(getRadioButton("document.advancedForm.searchObject[2]", "document.advancedForm.searchObject[2]")){
-          //alert("experiment checked");
-          openrow(idArrayExperiment);
-    }
-    // check if 'interaction' is checked
-    if(getRadioButton("document.advancedForm.searchObject[3]", "document.advancedForm.searchObject[3]")){
-          //alert("interaction checked");
-          openrow(idArrayInteraction);
-    }
-    // check if 'protein' is checked
-    if(getRadioButton("document.advancedForm.searchObject[4]", "document.advancedForm.searchObject[4]")){
-          //alert("protein checked");
-          openrow(idArrayProtein);
+        }
     }
 
-}
+    function closerow(rowsIDArray){
+        for(var i=0; i< rowsIDArray.length; i++){
+            var tag = document.getElementById(rowsIDArray[i]);
+              if (navigator.userAgent.indexOf("Netscape6") != -1) {
+              //if(tag.style.visibility=="visible";){
+                    tag.style.visibility="hidden";
+                    //alert("hiding row: " + rowsIDArray[i]);
+                }
+              //}
+              else{
+              //	if(tag.style.display=="";){
+                    tag.style.display="none";
+                    //alert("hiding row: " + rowsIDArray[i]);
+                //}
+            }
+        }
+    }
 
-// got the following function from 'http://ufia.hku.hk/ufiaLibrary/javascript/javascript.htm#getRadioButton'
 
-function getRadioButton(radioButtonNS,radioButtonIE) {
-  var NS=(navigator.appName=='Netscape');
-  return(NS?eval(radioButtonNS).checked:eval(radioButtonIE).checked);
-}
-
-<%-- script copied from 'http://www.jguru.com/faq/view.jsp?EID=1074755' and modified--%>
-        function doScript(aCvName, contextPath) {
-          aBase = contextPath + '/do/showGraph';
-          doOpenRemote(aBase + '?cvName=' + aCvName,'preview','500','600','scrollbars','form');
+    // this function resets all form elements to its default value
+    // it is used with the resetbutton and with the change of one radiobutton
+    function resetForm(theValue){
+        // first set the radiobutton to the the given value
+        var btn = document.advancedForm["searchObject"];
+        for (var x = 0;x < btn.length; x++){
+            if(btn[x].checked==true){
+                btn[x].checked=false;
+                break;
+            }
+        }
+        for (var x = 0;x < btn.length; x++){
+            if(btn[x].value==theValue){
+                btn[x].checked=true;
+                // hide and show the correspomding rows
+                closerow(idArrayAll);
+                if(btn[x].value == "any"){
+                   openrow(idArrayAny);
+                }
+                if(btn[x].value == "experiment"){
+                   openrow(idArrayExperiment);
+                }
+                if(btn[x].value == "interaction"){
+                   openrow(idArrayInteraction);
+                }
+                if(btn[x].value == "cv"){
+                   openrow(idArrayCv);
+                }
+                if(btn[x].value == "protein"){
+                   openrow(idArrayProtein);
+                }
+                break;
+            }
         }
 
-        function doOpenRemote(aURL, newName, aHEIGHT, aWIDTH, aFeatures, orgName){
-          if (aHEIGHT == "*"){ aHEIGHT = (screen.availHeight - 80) };
-          if (aWIDTH == "*"){ aWIDTH = (screen.availWidth - 30) };
-          var newFeatures = "height=" + aHEIGHT + ",innerHeight=" + aHEIGHT;
-          newFeatures += ",width=" + aWIDTH + ",innerWidth=" + aWIDTH;
-          if (window.screen){
-            var ah = (screen.availHeight - 30);
-            var aw = (screen.availWidth - 10);
-            var xc = (( aw - aWIDTH ) / 2);
-            var yc = (( ah - aHEIGHT ) /  2);
-            newFeatures += ",left=" + xc + ",screenX=" + xc;
-            newFeatures += ",top=" + yc + ",screenY=" + yc;
-            newFeatures += ",resizable=yes";
-            newFeatures += "," + aFeatures
-          };
-          var newWin = openWin(aURL, newName, newFeatures, orgName);
-          newWin.focus();
-          return newWin
+        // clear the ac number
+        document.advancedForm["acNumber"].value = "";
+        // clear the shortlabel
+        document.advancedForm["shortlabel"].value = "";
+        // clear the description
+        document.advancedForm["description"].value = "";
+        // clear the fulltext search
+        document.advancedForm["fulltext"].value = "";
+        // clear the cvTopic textfield
+        document.advancedForm["annotation"].value = "";
+        // clear the cvDatabase textfield
+        document.advancedForm["xRef"].value = "";
+
+        // reset the drop down list of cvTopics
+        var topic = document.advancedForm["cvTopic"];
+        topic[0].selected = true;
+
+        // reset the drop down list of cvDatabase
+        var xref = document.advancedForm["cvDB"];
+        xref[0].selected = true;
+
+        // reset the drop down list of cvInteraction
+        var interaction = document.advancedForm["cvInteraction"];
+        interaction[0].selected = true;
+
+        // reset the drop down list of cvInteractionType
+        var interactionType = document.advancedForm["cvInteractionType"];
+        interactionType[0].selected = true;
+
+        // reset the drop down list of cvIdentification
+        var identification = document.advancedForm["cvIdentification"];
+        identification[0].selected = true;
+
+        //alert("reset done!");
+    }
+
+    function hideLists(){
+        closerow(idArrayAll);
+        // check if 'any' is checked
+        if(getRadioButton("document.advancedForm.searchObject[0]", "document.advancedForm.searchObject[0]")){
+              //alert("any checked");
+              openrow(idArrayAny);
+        }
+        // check if 'cv' is checked
+        if(getRadioButton("document.advancedForm.searchObject[1]", "document.advancedForm.searchObject[1]")){
+              //alert("cv checked");
+              openrow(idArrayCv);
+        }
+        // check if 'experiment' is checked
+        if(getRadioButton("document.advancedForm.searchObject[2]", "document.advancedForm.searchObject[2]")){
+              //alert("experiment checked");
+              openrow(idArrayExperiment);
+        }
+        // check if 'interaction' is checked
+        if(getRadioButton("document.advancedForm.searchObject[3]", "document.advancedForm.searchObject[3]")){
+              //alert("interaction checked");
+              openrow(idArrayInteraction);
+        }
+        // check if 'protein' is checked
+        if(getRadioButton("document.advancedForm.searchObject[4]", "document.advancedForm.searchObject[4]")){
+              //alert("protein checked");
+              openrow(idArrayProtein);
         }
 
-        function openWin(newURL, newName, newFeatures, orgName) {
-          var newWin = open(newURL, newName, newFeatures);
-          if (newWin.opener == null)
-            newWin.opener = window;
-          newWin.opener.name = orgName;
-          return newWin
-        }
+    }
+
+    // got the following function from 'http://ufia.hku.hk/ufiaLibrary/javascript/javascript.htm#getRadioButton'
+
+    function getRadioButton(radioButtonNS,radioButtonIE) {
+      var NS=(navigator.appName=='Netscape');
+      return(NS?eval(radioButtonNS).checked:eval(radioButtonIE).checked);
+    }
+
+    <%-- script copied from 'http://www.jguru.com/faq/view.jsp?EID=1074755' and modified--%>
+
+    // Function that open the CvBrowser and gives it the requires parameters.
+    //
+    // param: aCvName     the CV to be displayed.
+    // param: contextPath the context of the current application, will be used to access CvBrowser.
+    // param: aFieldForm  the HTML form name that should be updated when the user clicks on a term.
+    //
+    function openCvBrowser(aCvName, contextPath, aFieldForm) {
+      aBase = contextPath + '/do/showGraph';
+      doOpenRemote(aBase + '?cvName=' + aCvName + '&field=' + aFieldForm,'preview','500','600','scrollbars','form');
+    }
+
+    function doOpenRemote(aURL, newName, aHEIGHT, aWIDTH, aFeatures, orgName){
+      if (aHEIGHT == "*"){ aHEIGHT = (screen.availHeight - 80) };
+      if (aWIDTH == "*"){ aWIDTH = (screen.availWidth - 30) };
+      var newFeatures = "height=" + aHEIGHT + ",innerHeight=" + aHEIGHT;
+      newFeatures += ",width=" + aWIDTH + ",innerWidth=" + aWIDTH;
+      if (window.screen){
+        var ah = (screen.availHeight - 30);
+        var aw = (screen.availWidth - 10);
+        var xc = (( aw - aWIDTH ) / 2);
+        var yc = (( ah - aHEIGHT ) /  2);
+        newFeatures += ",left=" + xc + ",screenX=" + xc;
+        newFeatures += ",top=" + yc + ",screenY=" + yc;
+        newFeatures += ",resizable=yes";
+        newFeatures += "," + aFeatures
+      };
+      var newWin = openWin(aURL, newName, newFeatures, orgName);
+      newWin.focus();
+      return newWin
+    }
+
+    function openWin(newURL, newName, newFeatures, orgName) {
+      var newWin = open(newURL, newName, newFeatures);
+      if (newWin.opener == null)
+        newWin.opener = window;
+      newWin.opener.name = orgName;
+      return newWin
+    }
 
 // -->
 
@@ -242,8 +252,7 @@ function getRadioButton(radioButtonNS,radioButtonIE) {
     String errorMessage = (String) session.getAttribute(SearchConstants.ERROR_MESSAGE);
     if(errorMessage != null || !(errorMessage.equals(""))){
 %>
-  <h3>  <font color="red"><%= errorMessage %> </font> </h3>
-
+         <h3><font color="red"><%= errorMessage %></font></h3>
 <%
     }
 %>
@@ -298,9 +307,8 @@ function getRadioButton(radioButtonNS,radioButtonIE) {
                 <table>
                 <tr>
                     <td class="headerlight" style="vertical-align: middle;">
-                    <html:radio property="searchObject" value="any"
-                        onclick="resetForm(this.value); "
-                        /> Any object
+                    <html:radio property="searchObject" value="any" onclick="resetForm(this.value); " />
+                       Any object
                      </td>
                      <td>
                      </td>
@@ -309,9 +317,8 @@ function getRadioButton(radioButtonNS,radioButtonIE) {
                 <table>
                 <tr>
                     <td  class="headerlight" style="vertical-align: middle;">
-                        <html:radio property="searchObject" value="cv"
-                            onclick="resetForm(this.value); "
-                            /> Controlled Vocabulary Term
+                        <html:radio property="searchObject" value="cv" onclick="resetForm(this.value); " />
+                            Controlled Vocabulary Term
                     </td>
                     <td style="vertical-align: middle;">
                         <intact:documentation section="CVS" />
@@ -321,9 +328,8 @@ function getRadioButton(radioButtonNS,radioButtonIE) {
                 <table>
                 <tr>
                     <td class="headerlight" style="vertical-align: middle;">
-                        <html:radio property="searchObject" value="experiment"
-                       onclick="resetForm(this.value); "
-                       /> Experiment
+                        <html:radio property="searchObject" value="experiment" onclick="resetForm(this.value); " />
+                          Experiment
                     </td>
                     <td  style="vertical-align: middle;">
                         <intact:documentation section="Experiment" />
@@ -333,9 +339,8 @@ function getRadioButton(radioButtonNS,radioButtonIE) {
                 <table>
                 <tr>
                     <td class="headerlight" style="vertical-align: middle;">
-                        <html:radio property="searchObject" value="interaction"
-                       onclick="resetForm(this.value); "
-                       /> Interaction
+                        <html:radio property="searchObject" value="interaction" onclick="resetForm(this.value); " />
+                          Interaction
                     </td>
                     <td style="vertical-align: middle;">
                         <intact:documentation section="Interaction" />
@@ -345,9 +350,8 @@ function getRadioButton(radioButtonNS,radioButtonIE) {
                 <table>
                 <tr>
                     <td class="headerlight" style="vertical-align: middle;">
-                        <html:radio property="searchObject" value="protein"
-                       onclick="resetForm(this.value);"
-                       /> Protein
+                        <html:radio property="searchObject" value="protein" onclick="resetForm(this.value);" />
+                          Protein
                      </td>
                      <td style="vertical-align: middle;">
                        <intact:documentation section="Interactor" />
@@ -485,7 +489,7 @@ function getRadioButton(radioButtonNS,radioButtonIE) {
                           <html:options collection="cvInteractions" property="shortlabel" labelProperty="shortlabel" />
                       </html:select><br>
                        <img src="/intact/search/images/spacer.gif" width="100" height="5" border="0"><br>
-                      <input type="button" name="button1" value="Interaction Detection Browser" style="width: 200" onclick="doScript('CvInteraction', '<%=request.getContextPath()%>')">
+                      <input type="button" name="button1" value="Interaction Detection Browser" style="width: 200" onclick="openCvBrowser('<%= CvInteraction.class.getName() %>', '<%=request.getContextPath()%>', 'cvInteraction')">
                 </td>
 
             <td colspan="2" rowspan="1" class="headerdarkmid" style="vertical-align: middle;"> where this method has been used to determine the interaction
@@ -500,7 +504,7 @@ function getRadioButton(radioButtonNS,radioButtonIE) {
                           <html:options collection="cvIdentifications" property="shortlabel" labelProperty="shortlabel" />
                       </html:select><br>
                        <img src="/intact/search/images/spacer.gif" width="100" height="5" border="0"><br>
-                      <input type="button" name="button2" value="Participant Detection Browser" style="width: 200" onclick="doScript('CvIdentification', '<%=request.getContextPath()%>')">
+                      <input type="button" name="button2" value="Participant Detection Browser" style="width: 200" onclick="openCvBrowser('<%= CvIdentification.class.getName() %>', '<%=request.getContextPath()%>', 'cvIdentification')">
             </td>
 
             <td colspan="2" rowspan="1" class="headerdarkmid" style="vertical-align: middle;">where this method has been used to determine the participants in the interaction
@@ -516,7 +520,7 @@ function getRadioButton(radioButtonNS,radioButtonIE) {
                       </html:select><br>
                        <img src="/intact/search/images/spacer.gif" width="100" height="5" border="0"><br>
 
-                      <input type="button" name="button3" value="CvInteractionType Browser" style="width: 200" onclick="doScript('CvInteractionType', '<%=request.getContextPath()%>')">
+                      <input type="button" name="button3" value="CvInteractionType Browser" style="width: 200" onclick="openCvBrowser('<%= CvInteractionType.class.getName() %>', '<%=request.getContextPath()%>', 'cvInteractionType')">
                 </td>
 
             <td colspan="2" rowspan="1" class="headerdarkmid" style="vertical-align: middle;"> having this interaction type
