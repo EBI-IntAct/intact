@@ -52,6 +52,37 @@ public class FeatureNewRangeAction extends AbstractEditorAction {
             // Incorrect values for ranges. Display the error in the input page.
             return mapping.getInputForward();
         }
+
+        //Make sure that if "toRange" is an int, it does not have a negativ value
+        RangeBean newRangeBean = featureForm.getNewRange();
+        try{
+            int toRange = Integer.parseInt(newRangeBean.getToRange());
+            if(toRange<0){
+                ActionErrors errors = new ActionErrors();
+                errors.add("new.range",new ActionError("error.feature.range.toRange.isInt.isNegativ"));
+                saveErrors(request, errors);
+                return mapping.getInputForward();
+             }
+        }
+        catch(NumberFormatException e){
+            //Do nothing because the toRange can be a String as well
+        }
+
+        //Make sure that if "fromRange" is an int, it does not have a negativ value
+        try{
+            int fromRange = Integer.parseInt(newRangeBean.getFromRange());
+            if(fromRange<0){
+                ActionErrors errors = new ActionErrors();
+                errors.add("new.range",new ActionError("error.feature.range.toRange.isInt.isNegativ"));
+                saveErrors(request, errors);
+                return mapping.getInputForward();
+             }
+        }
+        catch(NumberFormatException e){
+            //Do nothing because the toRange can be a String as well
+        }
+
+
         // Add a copy of the new range
         view.addRange(new RangeBean(rbnew.getFromRange(), rbnew.getToRange(),
                 rbnew.getLink()));
