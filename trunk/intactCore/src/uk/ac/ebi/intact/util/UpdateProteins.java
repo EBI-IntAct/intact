@@ -601,6 +601,8 @@ public class UpdateProteins extends UpdateProteinsI {
      */
     private boolean needsUniprotUpdate( final Protein protein ) {
 
+        // TODO Move to IntAct model
+
         boolean needsUpdate = true;
 
         if( null == noUniprotUpdate ) {
@@ -645,7 +647,7 @@ public class UpdateProteins extends UpdateProteinsI {
             //
             // we have a protein that has AC 4 3 2 1
             // on the web site the same entry 4 gives multiple flat files
-            // what happens is that  is a share secondary AC to many proteins
+            // what happens is that is a share secondary AC to many proteins
             // eg. 4 as P02248 -> 11 proteins
 
 
@@ -700,9 +702,6 @@ public class UpdateProteins extends UpdateProteinsI {
                     }
                 }
 
-                // remove it from the collection
-//                proteins.remove( selectedProtein );
-
                 // allow to know, while we are processing the splice variant, if the master was demerged.
                 boolean masterWasDemerged = false;
 
@@ -731,7 +730,8 @@ public class UpdateProteins extends UpdateProteinsI {
                     // (1) Search for IntAct proteins by Xref( uniprot, identity ) based on the secondary Ac of the entry
 
                     logInfo( "Looking for protein having secondaryId with filter on " + sptrTaxid );
-                    Collection secondaryProteins = getProteinsFromSPTrAC( sptrEntry, identityXrefQualifier,
+                    Collection secondaryProteins = getProteinsFromSPTrAC( sptrEntry,
+                                                                          identityXrefQualifier,
                                                                           sptrTaxid,
                                                                           SECONDARY_AC, helper );
 
@@ -786,6 +786,8 @@ public class UpdateProteins extends UpdateProteinsI {
                         } else {
                             // create the protein
                             doCreate = true;
+
+                            // TODO how can we get there ?!?!
                         }
 
                     } // else
@@ -1304,60 +1306,62 @@ public class UpdateProteins extends UpdateProteinsI {
                                               boolean generateProteinShortlabelUsingBiosource ) throws SPTRException {
         String shortlabel = null;
 
-        if ( generateProteinShortlabelUsingBiosource ) {
+        shortlabel = sptrEntry.getID();
 
-            Gene[] genes = sptrEntry.getGenes();
-
-            if ( genes.length > 0 ) {
-                shortlabel = genes[ 0 ].getName();
-
-                // replace any weird character by '_'
-                if ( shortlabel != null ) {
-                    shortlabel = SearchReplace.replace( shortlabel, "-", "_" );
-                    shortlabel = SearchReplace.replace( shortlabel, " ", "_" );
-                    shortlabel = SearchReplace.replace( shortlabel, ".", "_" );
-                }
-            }
-
-            if ( shortlabel == null ) {
-                final String msg = "WARNING: could not generate the Shortlabel, no gene name available. Using the AC.";
-                if ( debugOnScreen ) {
-                    System.err.println( msg );
-                }
-                if ( logger != null ) {
-                    logger.warn( msg );
-                }
-                shortlabel = sptrEntry.getID();
-            } else {
-                // check if the ID contains already _specie (TREMBL)
-                int index = shortlabel.indexOf( '_' );
-                if ( index != -1 ) {
-                    if ( logger != null ) {
-                        logInfo( "Remove existing _${specie} from " + shortlabel );
-                    }
-                    shortlabel = shortlabel.substring( 0, index );
-                    if ( logger != null ) {
-                        logInfo( "Result: " + shortlabel );
-                    }
-                }
-
-                // Concatenate Biosource to the gene name !
-                if ( bioSource.getShortLabel() != null && !bioSource.getShortLabel().equals( "" ) ) {
-                    shortlabel = shortlabel + "_" + bioSource.getShortLabel();
-                } else {
-                    final String msg = "WARNING: generate the shortlabel using taxid since the shortlabel doesn't exists.";
-                    if ( debugOnScreen ) {
-                        System.err.println( msg );
-                    }
-                    if ( logger != null ) {
-                        logger.warn( msg );
-                    }
-                    shortlabel = shortlabel + "_" + bioSource.getTaxId();
-                }
-            }
-        } else {
-            shortlabel = sptrEntry.getID();
-        }
+//        if ( generateProteinShortlabelUsingBiosource ) {
+//
+//            Gene[] genes = sptrEntry.getGenes();
+//
+//            if ( genes.length > 0 ) {
+//                shortlabel = genes[ 0 ].getName();
+//
+//                // replace any weird character by '_'
+//                if ( shortlabel != null ) {
+//                    shortlabel = SearchReplace.replace( shortlabel, "-", "_" );
+//                    shortlabel = SearchReplace.replace( shortlabel, " ", "_" );
+//                    shortlabel = SearchReplace.replace( shortlabel, ".", "_" );
+//                }
+//            }
+//
+//            if ( shortlabel == null ) {
+//                final String msg = "WARNING: could not generate the Shortlabel, no gene name available. Using the AC.";
+//                if ( debugOnScreen ) {
+//                    System.err.println( msg );
+//                }
+//                if ( logger != null ) {
+//                    logger.warn( msg );
+//                }
+//                shortlabel = sptrEntry.getID();
+//            } else {
+//                // check if the ID contains already _specie (TREMBL)
+//                int index = shortlabel.indexOf( '_' );
+//                if ( index != -1 ) {
+//                    if ( logger != null ) {
+//                        logInfo( "Remove existing _${specie} from " + shortlabel );
+//                    }
+//                    shortlabel = shortlabel.substring( 0, index );
+//                    if ( logger != null ) {
+//                        logInfo( "Result: " + shortlabel );
+//                    }
+//                }
+//
+//                // Concatenate Biosource to the gene name !
+//                if ( bioSource.getShortLabel() != null && !bioSource.getShortLabel().equals( "" ) ) {
+//                    shortlabel = shortlabel + "_" + bioSource.getShortLabel();
+//                } else {
+//                    final String msg = "WARNING: generate the shortlabel using taxid since the shortlabel doesn't exists.";
+//                    if ( debugOnScreen ) {
+//                        System.err.println( msg );
+//                    }
+//                    if ( logger != null ) {
+//                        logger.warn( msg );
+//                    }
+//                    shortlabel = shortlabel + "_" + bioSource.getTaxId();
+//                }
+//            }
+//        } else {
+//            shortlabel = sptrEntry.getID();
+//        }
 
         return shortlabel.toLowerCase();
     }
@@ -1790,7 +1794,7 @@ public class UpdateProteins extends UpdateProteinsI {
          */
         String shortLabel = generateProteinShortLabel( sptrEntry, bioSource, generateProteinShortlabelUsingBiosource );
 
-        Protein protein = new ProteinImpl( myInstitution, bioSource, shortLabel );
+        Protein protein = new ProteinImpl( myInstitution, bioSource, shortLabel, proteinType );
 
         // get the protein info we need
         helper.create( protein );
@@ -2018,7 +2022,7 @@ public class UpdateProteins extends UpdateProteinsI {
             }
         }
 
-        Protein spliceVariant = new ProteinImpl( myInstitution, bioSource, shortLabel.toLowerCase() );
+        Protein spliceVariant = new ProteinImpl( myInstitution, bioSource, shortLabel.toLowerCase(), proteinType );
 
         // get the spliceVariant info we need
         helper.create( spliceVariant );
@@ -2494,7 +2498,7 @@ public class UpdateProteins extends UpdateProteinsI {
             // No appropriate protein found, create it.
 
             // Create new Protein
-            targetProtein = new ProteinImpl( myInstitution, validBioSource, anAc );
+            targetProtein = new ProteinImpl( myInstitution, validBioSource, anAc, proteinType );
             helper.create( targetProtein );
 
             // Create new Xref if a DB has been given
