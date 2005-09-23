@@ -78,6 +78,8 @@ public abstract class UpdateProteinsI {
     protected static CvAliasType orfNameAliasType;
     protected static CvAliasType locusNameAliasType;
 
+    protected static CvInteractorType proteinType;
+
     protected IntactHelper helper = null;
 
     protected BioSourceFactory bioSourceFactory;
@@ -174,8 +176,8 @@ public abstract class UpdateProteinsI {
              * Load CVs
              */
 
-            sgdDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, "MI:0484" ); // sgd
-            uniprotDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, "MI:0486" ); // uniprot
+            sgdDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, CvDatabase.SGD_MI_REF ); // sgd
+            uniprotDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, CvDatabase.UNIPROT_MI_REF ); // uniprot
 
             // search for the SRS link.
             Collection annotations = uniprotDatabase.getAnnotations();
@@ -210,27 +212,29 @@ public abstract class UpdateProteinsI {
                 throw new UpdateException( msg );
             }
 
-            intactDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, "MI:0469" );   // intact
-            goDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, "MI:0448" );       // go
-            interproDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, "MI:0449" ); // interpro
-            flybaseDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, "MI:0478" );  // flybase
-            reactomeDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, "MI:0245" ); // reactome-protein
-            hugeDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, "MI:0249" );     // huge
+            intactDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, CvDatabase.INTACT_MI_REF );
+            goDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, CvDatabase.GO_MI_REF );
+            interproDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, CvDatabase.INTERPRO_MI_REF );
+            flybaseDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, CvDatabase.FLYBASE_MI_REF );
+            reactomeDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, CvDatabase.REACTOME_PROTEIN_PSI_REF );
+            hugeDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, CvDatabase.HUGE_MI_REF );
 
-            identityXrefQualifier = (CvXrefQualifier) getCvObjectViaMI( CvXrefQualifier.class, "MI:0356" );      // identity
-            secondaryXrefQualifier = (CvXrefQualifier) getCvObjectViaMI( CvXrefQualifier.class, "MI:0360" );     // secondary-ac
-            isoFormParentXrefQualifier = (CvXrefQualifier) getCvObjectViaMI( CvXrefQualifier.class, "MI:0243" ); // isoform-parent
+            identityXrefQualifier = (CvXrefQualifier) getCvObjectViaMI( CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF );
+            secondaryXrefQualifier = (CvXrefQualifier) getCvObjectViaMI( CvXrefQualifier.class, CvXrefQualifier.SECONDARY_AC_MI_REF );
+            isoFormParentXrefQualifier = (CvXrefQualifier) getCvObjectViaMI( CvXrefQualifier.class, CvXrefQualifier.ISOFORM_PARENT_MI_REF );
 
             // only one search by shortlabel as it still doesn't have MI number.
-            isoformComment = (CvTopic) getCvObject( CvTopic.class, CvTopic.ISOFORM_COMMENT );  // isoform-comment
-            noUniprotUpdate = (CvTopic) getCvObject( CvTopic.class, CvTopic.NON_UNIPROT);      // no-uniprot-update
+            isoformComment = (CvTopic) getCvObject( CvTopic.class, CvTopic.ISOFORM_COMMENT );
+            noUniprotUpdate = (CvTopic) getCvObject( CvTopic.class, CvTopic.NON_UNIPROT);
 
 
-            geneNameAliasType = (CvAliasType) getCvObjectViaMI( CvAliasType.class, "MI:0301" );        // gene name
-            geneNameSynonymAliasType = (CvAliasType) getCvObjectViaMI( CvAliasType.class, "MI:0302" ); // gene name-synonym
-            isoformSynonym = (CvAliasType) getCvObjectViaMI( CvAliasType.class, "MI:0304" );           // isoform synonym
-            locusNameAliasType = (CvAliasType) getCvObjectViaMI( CvAliasType.class, "MI:0305" );       // locus name
-            orfNameAliasType = (CvAliasType) getCvObjectViaMI( CvAliasType.class, "MI:0306" );         // orf name
+            geneNameAliasType = (CvAliasType) getCvObjectViaMI( CvAliasType.class, CvAliasType.GENE_NAME_MI_REF );
+            geneNameSynonymAliasType = (CvAliasType) getCvObjectViaMI( CvAliasType.class, CvAliasType.GENE_NAME_SYNONYM_MI_REF );
+            isoformSynonym = (CvAliasType) getCvObjectViaMI( CvAliasType.class, CvAliasType.ISOFORM_SYNONYM_MI_REF );
+            locusNameAliasType = (CvAliasType) getCvObjectViaMI( CvAliasType.class, CvAliasType.LOCUS_NAME_MI_REF );
+            orfNameAliasType = (CvAliasType) getCvObjectViaMI( CvAliasType.class, CvAliasType.ORF_NAME_MI_REF );
+
+            proteinType = (CvInteractorType) getCvObjectViaMI( CvInteractorType.class, CvInteractorType.getProteinMI() );
 
         } catch ( IntactException e ) {
             if ( logger != null ) {
