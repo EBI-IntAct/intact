@@ -5,6 +5,8 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.util.sanityChecker.model;
 
+//import uk.ac.ebi.intact.application.commons.util.CvFilterRessources;
+
 /**
  * TODO comment it.
  *
@@ -12,6 +14,19 @@ package uk.ac.ebi.intact.util.sanityChecker.model;
  * @version $Id$
  */
 public class BioSourceBean extends AnnotatedBean {
+
+    private String bioSourceXref;
+
+    public String getBioSourceXref() {
+        return bioSourceXref;
+    }
+
+    /*public void setBioSourceXref() {
+        CvFilterRessources cvFilterRessources=new CvFilterRessources();
+        this.bioSourceXref = cvFilterRessources.getBiosourceXref().toString();
+    }*/
+
+
 
     private String taxid;
 
