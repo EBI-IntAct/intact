@@ -10,10 +10,7 @@ import uk.ac.ebi.intact.util.MailSender;
 import uk.ac.ebi.intact.util.PropertyLoader;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.Annotation;
-import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.IntactObject;
+import uk.ac.ebi.intact.model.*;
 
 import javax.mail.MessagingException;
 import java.sql.SQLException;
@@ -30,8 +27,6 @@ import java.text.SimpleDateFormat;
  * @version $Id$
  */
 public class MessageSender {
-
-
 
 
     public static final String TIME;
@@ -115,7 +110,7 @@ public class MessageSender {
         TIME = formatter.format( date );
     }
 
-     public void addMessage( ReportTopic topic, IntactBean intactBean, List intactBeans ) throws SQLException {
+    public void addMessage( ReportTopic topic, IntactBean intactBean, List intactBeans ) throws SQLException {
 
         String user = intactBean.getUserstamp();
         Timestamp date = intactBean.getTimestamp();
@@ -123,7 +118,7 @@ public class MessageSender {
         String userMessageReport="";
         String adminMessageReport="";
         // Build users report
-         if(intactBean instanceof InteractorBean){
+        if(intactBean instanceof InteractorBean){
             InteractorBean interactorBean = (InteractorBean) intactBean;
             userMessageReport = "AC: " + interactorBean.getAc() +
                     "\t Shortlabel: " + interactorBean.getShortlabel() +
@@ -155,51 +150,51 @@ public class MessageSender {
 
         }
 
-         if ( user != null && !( user.trim().length() == 0 ) ) {
+        if ( user != null && !( user.trim().length() == 0 ) ) {
 
-             // add new message to the user
-             Map userReport = (Map) allUsersReport.get( user );
-             if ( userReport == null ) {
-                 userReport = new HashMap();
-             }
+            // add new message to the user
+            Map userReport = (Map) allUsersReport.get( user );
+            if ( userReport == null ) {
+                userReport = new HashMap();
+            }
 
-             Collection topicMessages = (Collection) userReport.get( topic );
-             if ( topicMessages == null ) {
-                 topicMessages = new ArrayList();
+            Collection topicMessages = (Collection) userReport.get( topic );
+            if ( topicMessages == null ) {
+                topicMessages = new ArrayList();
 
-                 // add the messages to the topic
-                 userReport.put( topic, topicMessages );
-             }
+                // add the messages to the topic
+                userReport.put( topic, topicMessages );
+            }
 
-             // add the message to the topic
-             topicMessages.add( userMessageReport );
+            // add the message to the topic
+            topicMessages.add( userMessageReport );
 
-             // add the user's messages
-             allUsersReport.put( user, userReport );
-         } else {
+            // add the user's messages
+            allUsersReport.put( user, userReport );
+        } else {
 
-             System.err.println( "No user found for object: " + userMessageReport );
-         }
+            System.err.println( "No user found for object: " + userMessageReport );
+        }
 
 
-         /*  // build admin admin report
-         String adminMessageReport = "AC: " + obj.getAc() +
-         "\t Shortlabel: " + obj.getShortLabel() +
-         "\t User: " + user +
-         "\t When: " + date;
-         */
-         Collection topicMessages = (Collection) adminReport.get( topic );
-         if ( topicMessages == null ) {
-             topicMessages = new ArrayList();
+        /*  // build admin admin report
+        String adminMessageReport = "AC: " + obj.getAc() +
+        "\t Shortlabel: " + obj.getShortLabel() +
+        "\t User: " + user +
+        "\t When: " + date;
+        */
+        Collection topicMessages = (Collection) adminReport.get( topic );
+        if ( topicMessages == null ) {
+            topicMessages = new ArrayList();
 
-             // add the messages to the topic
-             adminReport.put( topic, topicMessages );
-         }
+            // add the messages to the topic
+            adminReport.put( topic, topicMessages );
+        }
 
-         // add the message to the topic
-         topicMessages.add( adminMessageReport );
+        // add the message to the topic
+        topicMessages.add( adminMessageReport );
 
-     }
+    }
 
 
     /**
@@ -211,7 +206,7 @@ public class MessageSender {
      *
      * @throws java.sql.SQLException thrown if there were DB problems
      */
-    public void addMessage( ReportTopic topic, IntactBean intactBean ) throws SQLException {
+    public void addMessage( ReportTopic topic, IntactBean intactBean ) {
 
         String user = intactBean.getUserstamp();
         Timestamp date = intactBean.getTimestamp();
@@ -221,13 +216,46 @@ public class MessageSender {
         String adminMessageReport="";
         // Build users report
 
-        if(intactBean instanceof AnnotatedBean){
+
+
+        if(intactBean instanceof RangeBean){
+            RangeBean rangeBean = (RangeBean) intactBean;
+            IntactHelper helper = null;
+            try {
+                helper = new IntactHelper();
+                Range range = (Range) helper.getObjectByAc(Range.class, rangeBean.getAc());
+
+                userMessageReport ="Intercation Ac: "+rangeBean.getInteraction_ac() +
+                        "\t Interactor Ac : "+rangeBean.getInteractor_ac() +
+                        "\t Feature Ac : "+rangeBean.getFeature_ac() +
+                        "\t FromIntervalStart: "+range.getFromIntervalEnd() +
+                        "\t ToIntervalEnd: "+range.getToIntervalStart() +
+                        "\t Deletion Size " + (range.getToIntervalStart()-range.getFromIntervalEnd()) +
+                        "\t Range Ac: " + rangeBean.getAc() +
+                        "\t Shortlabel: " + rangeBean.getShortlabel() +
+                        "\t When: " + date + "/n";
+                adminMessageReport = "Intercation Ac: "+rangeBean.getInteraction_ac() +
+                        "\t Interactor Ac : "+rangeBean.getInteractor_ac() +
+                        "\t Feature Ac : "+rangeBean.getFeature_ac() +
+                        "\t FromIntervalStart: "+range.getFromIntervalEnd() +
+                        "\t ToIntervalEnd: "+range.getToIntervalStart() +
+                        "\t Deletion Size " + (range.getFromIntervalEnd() - range.getToIntervalStart()) +
+                        "\t Range Ac: " + rangeBean.getAc() +
+                        "\t Shortlabel: " + rangeBean.getShortlabel() +
+                        "\t When: " + date +
+                        "\t User: " + user + "\n";
+            } catch (IntactException e) {
+                e.printStackTrace();
+            }
+
+        }else if(intactBean instanceof AnnotatedBean){
             AnnotatedBean annotatedBean = (AnnotatedBean) intactBean;
 
 
             userMessageReport = "AC: " + annotatedBean.getAc() +
                     "\t Shortlabel: " + annotatedBean.getShortlabel() +
                     "\t When: " + date;
+
             adminMessageReport = "AC: " + annotatedBean.getAc() +
                     "\t Shortlabel: " + annotatedBean.getShortlabel() +
                     "\t User: " + user +
@@ -246,29 +274,108 @@ public class MessageSender {
                     "\t When: " + date;
         }
         /*else if(intactBean instanceof ExperimentBean){
-            ExperimentBean experimentBean = (ExperimentBean) intactBean;
+        ExperimentBean experimentBean = (ExperimentBean) intactBean;
 
 
-            userMessageReport = "AC: " + experimentBean.getAc() +
-                    "\t Shortlabel: " + experimentBean.getShortlabel() +
-                    "\t When: " + date;
-            adminMessageReport = "AC: " + experimentBean.getAc() +
-                    "\t Shortlabel: " + experimentBean.getShortlabel() +
-                    "\t User: " + user +
-                    "\t When: " + date;
+        userMessageReport = "AC: " + experimentBean.getAc() +
+        "\t Shortlabel: " + experimentBean.getShortlabel() +
+        "\t When: " + date;
+        adminMessageReport = "AC: " + experimentBean.getAc() +
+        "\t Shortlabel: " + experimentBean.getShortlabel() +
+        "\t User: " + user +
+        "\t When: " + date;
 
         }else if (intactBean instanceof BioSourceBean){
-            BioSourceBean bioSourceBean = (BioSourceBean) intactBean;
+        BioSourceBean bioSourceBean = (BioSourceBean) intactBean;
 
-            userMessageReport = "AC: " + bioSourceBean.getAc() +
-                    "\t Shortlabel: " + bioSourceBean.getShortlabel() +
-                    "\t When: " + date;
-            adminMessageReport = "AC: " + bioSourceBean.getAc() +
-                    "\t Shortlabel: " + bioSourceBean.getShortlabel() +
-                    "\t User: " + user +
-                    "\t When: " + date;
+        userMessageReport = "AC: " + bioSourceBean.getAc() +
+        "\t Shortlabel: " + bioSourceBean.getShortlabel() +
+        "\t When: " + date;
+        adminMessageReport = "AC: " + bioSourceBean.getAc() +
+        "\t Shortlabel: " + bioSourceBean.getShortlabel() +
+        "\t User: " + user +
+        "\t When: " + date;
 
         }*/
+
+
+        if ( user != null && !( user.trim().length() == 0 ) /*&& false==ReportTopic.EXPERIMENT_NOT_ACCEPTED_NOT_TO_BE_REVIEWED.equals(topic)*/) {
+
+            // add new message to the user
+
+            Map userReport = (Map) allUsersReport.get( user );
+            if ( userReport == null ) {
+                userReport = new HashMap();
+            }
+
+            Collection topicMessages = (Collection) userReport.get( topic );
+            if ( topicMessages == null ) {
+                topicMessages = new ArrayList();
+
+                // add the messages to the topic
+                if(false==ReportTopic.EXPERIMENT_NOT_ACCEPTED_NOT_TO_BE_REVIEWED.equals(topic)){
+                    userReport.put( topic, topicMessages );
+                }
+            }
+
+            // add the message to the topic
+            topicMessages.add( userMessageReport );
+
+            // add the user's messages
+            if(false==ReportTopic.EXPERIMENT_NOT_ACCEPTED_NOT_TO_BE_REVIEWED.equals(topic)){
+                allUsersReport.put( user, userReport );
+            }
+        } else {
+
+            System.err.println( "No user found for object: " + userMessageReport );
+        }
+
+
+        /*  // build admin admin report
+        String adminMessageReport = "AC: " + obj.getAc() +
+        "\t Shortlabel: " + obj.getShortLabel() +
+        "\t User: " + user +
+        "\t When: " + date;
+        */
+        Collection topicMessages = (Collection) adminReport.get( topic );
+        if ( topicMessages == null ) {
+            topicMessages = new ArrayList();
+
+            // add the messages to the topic
+            adminReport.put( topic, topicMessages );
+        }
+
+        // add the message to the topic
+        topicMessages.add( adminMessageReport );
+    }
+
+
+
+
+     public void addMessage( ReportTopic topic, IntactBean intactBean, String message ) throws SQLException {
+
+        String user = intactBean.getUserstamp();
+        Timestamp date = intactBean.getTimestamp();
+
+
+        String userMessageReport="";
+        String adminMessageReport="";
+        // Build users report
+
+        if(intactBean instanceof AnnotatedBean){
+            AnnotatedBean annotatedBean = (AnnotatedBean) intactBean;
+
+            userMessageReport = "Interaction AC: " + annotatedBean.getAc() +
+                    "\t When: " + date +
+                    "\n " + message + "\n";
+
+            adminMessageReport = "Interaction AC: " + annotatedBean.getAc() +
+                    "\t User: " + user +
+                    "\t When: " + date +
+                    "\n" + message + "\n";
+
+
+        }
 
 
         if ( user != null && !( user.trim().length() == 0 ) ) {
@@ -315,7 +422,6 @@ public class MessageSender {
         // add the message to the topic
         topicMessages.add( adminMessageReport );
     }
-
 
 
     /**
@@ -413,6 +519,115 @@ public class MessageSender {
         topicMessages.add( adminMessageReport );
     }
 
+    public void addMessage( ReportTopic topic, AnnotationBean annotationBean, AnnotatedBean annotatedBean, String annotatedType, String topicShortlabel){
+        String user = annotationBean.getUserstamp();
+        Timestamp date = annotationBean.getTimestamp();
+
+
+        String userMessageReport="";
+        String adminMessageReport="";
+        // Build users report
+
+        //if(annotatedBean instanceof AnnotatedBean){
+        //    AnnotatedBean annotatedBean = (AnnotatedBean) intactBean;
+
+            //userMessageReport =
+            userMessageReport = "Annotation AC: " + annotationBean.getAc() +
+                    "\t Topic Shortlabel: " + topicShortlabel+//annotationBean.getTopic_ac() +
+                    "\t When: " + date +
+                    "\n" + annotatedType + "Ac: " + annotatedBean.getAc() +
+                    "\t Shortlabel: " + annotatedBean.getShortlabel()+"\n";
+
+            adminMessageReport = "Annotation AC: " + annotationBean.getAc() +
+                    "\t TopicAc: " + topicShortlabel +//annotationBean.getTopic_ac() +
+                    "\t When: " + date +
+                    "\t User: " + user +
+                    "\n" + annotatedType + "Ac: " + annotatedBean.getAc() +
+                    "\t Shortlabel: " + annotatedBean.getShortlabel()+"\n";
+
+        /*}else if(intactBean instanceof XrefBean ){
+            XrefBean xrefBean = (XrefBean) intactBean;
+            userMessageReport = "AC: " + xrefBean.getAc() +
+                    "\t PrimaryId: " + xrefBean.getPrimaryid() +
+                    "\t Database_ac: " + xrefBean.getDatabase_ac()+
+                    "\t When: " + date;
+            adminMessageReport = "AC: " + xrefBean.getAc() +
+                    "\t PrimaryId: " + xrefBean.getPrimaryid() +
+                    "\t Database_ac: " + xrefBean.getDatabase_ac()+
+                    "\t User: " + user +
+                    "\t When: " + date;
+        }*/
+        /*else if(intactBean instanceof ExperimentBean){
+        ExperimentBean experimentBean = (ExperimentBean) intactBean;
+
+
+        userMessageReport = "AC: " + experimentBean.getAc() +
+        "\t Shortlabel: " + experimentBean.getShortlabel() +
+        "\t When: " + date;
+        adminMessageReport = "AC: " + experimentBean.getAc() +
+        "\t Shortlabel: " + experimentBean.getShortlabel() +
+        "\t User: " + user +
+        "\t When: " + date;
+
+        }else if (intactBean instanceof BioSourceBean){
+        BioSourceBean bioSourceBean = (BioSourceBean) intactBean;
+
+        userMessageReport = "AC: " + bioSourceBean.getAc() +
+        "\t Shortlabel: " + bioSourceBean.getShortlabel() +
+        "\t When: " + date;
+        adminMessageReport = "AC: " + bioSourceBean.getAc() +
+        "\t Shortlabel: " + bioSourceBean.getShortlabel() +
+        "\t User: " + user +
+        "\t When: " + date;
+
+        }*/
+
+
+        if ( user != null && !( user.trim().length() == 0 ) ) {
+
+            // add new message to the user
+            Map userReport = (Map) allUsersReport.get( user );
+            if ( userReport == null ) {
+                userReport = new HashMap();
+            }
+
+            Collection topicMessages = (Collection) userReport.get( topic );
+            if ( topicMessages == null ) {
+                topicMessages = new ArrayList();
+
+                // add the messages to the topic
+                userReport.put( topic, topicMessages );
+            }
+
+            // add the message to the topic
+            topicMessages.add( userMessageReport );
+
+            // add the user's messages
+            allUsersReport.put( user, userReport );
+        } else {
+
+            System.err.println( "No user found for object: " + userMessageReport );
+        }
+
+
+        /*  // build admin admin report
+        String adminMessageReport = "AC: " + obj.getAc() +
+        "\t Shortlabel: " + obj.getShortLabel() +
+        "\t User: " + user +
+        "\t When: " + date;
+        */
+        Collection topicMessages = (Collection) adminReport.get( topic );
+        if ( topicMessages == null ) {
+            topicMessages = new ArrayList();
+
+            // add the messages to the topic
+            adminReport.put( topic, topicMessages );
+        }
+
+        // add the message to the topic
+        topicMessages.add( adminMessageReport );
+
+    }
     /**
      *   This method create the adminReportMessage and the userReportMessage for a not valide URI.
      *
