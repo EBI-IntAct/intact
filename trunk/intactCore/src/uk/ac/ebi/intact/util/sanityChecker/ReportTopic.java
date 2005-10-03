@@ -19,11 +19,20 @@ public class ReportTopic {
     /**
          * Report topics
          */
+
+        //
+        // R A N G E
+        //
+        public static final ReportTopic RANGE_SEQUENCE_NOT_EQUAL_TO_PROTEIN_SEQ = new ReportTopic ("This/those Range(s) are associated to a sequence which does not corresponds to the protein sequence. And the Range Sequence couldn't be remapped");
+        public static final ReportTopic RANGE_SEQUENCE_SAVED_BY_ADDING_THE_M = new ReportTopic("This/those Range(s) were created when the first Methionine was not there, since then the Methionine had been added to the Protein Sequence. The Range Sequence has been remapped. ");
+        public static final ReportTopic RANGE_SEQUENCE_SAVED_BY_SUPPRESSING_THE_M = new ReportTopic("This/those Range(s) were created when the first Methionine was there, since then the Methionine had been remooved from the Protein Sequence. The Range Sequence has been remapped. ");
+        public static final ReportTopic DELETION_INTERVAL_TO_LONG_TO_BE_CARACTERIZED_BY_DELETION_ANALYSIS_FEATURE_TYPE = new ReportTopic (" Features caracterising deletion of more then 2 amino-acid and having CvFeatureIdentification set to \"Deletion Analysis\"");
+
         //
         // A N N O T A T I O N
         //
         public static final ReportTopic URL_NOT_VALID = new ReportTopic ("This/those Url(s) is/are not valid");
-
+        public static final ReportTopic TOPICAC_NOT_VALID = new ReportTopic ("This topic ac shouldn't be use to annotate this kind of object");
 
         //
         // B I O S O U R C E
@@ -42,6 +51,7 @@ public class ReportTopic {
         public static final ReportTopic EXPERIMENT_WITHOUT_CVINTERACTION = new ReportTopic( "Experiments with no CvInteraction" );
         public static final ReportTopic EXPERIMENT_TO_BE_REVIEWED = new ReportTopic( "Experiments to be reviewed" );
         public static final ReportTopic EXPERIMENT_ON_HOLD = new ReportTopic( "Experiments is on hold" );
+        public static final ReportTopic EXPERIMENT_NOT_ACCEPTED_NOT_TO_BE_REVIEWED = new ReportTopic("Experiment(s) without annotation 'to-be-reviewed' or 'accepted'");
 
         //
         // I N T E R A C T I O  N S
