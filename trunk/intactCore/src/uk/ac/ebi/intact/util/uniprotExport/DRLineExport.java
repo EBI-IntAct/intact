@@ -624,6 +624,7 @@ public class DRLineExport extends LineExport {
 
             Protein protein = (Protein) proteins.iterator().next();
 
+            // Skip proteins annotated no-uniprot-update
             if ( false == needsUniprotUpdate( protein ) ) {
                 log( protein.getAc() + " " + protein.getShortLabel() + " is not from UniProt, skip it." );
                 continue; // process next AC
@@ -673,6 +674,7 @@ public class DRLineExport extends LineExport {
             }
 
             if( uniprotId != null && !proteinEligible.contains( uniprotId ) ) {
+                log( "Exporting UniProt( "+ uniprotId +" )" );
                 proteinEligible.add( uniprotId );
             }
 
