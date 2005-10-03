@@ -76,15 +76,15 @@ public class CCLineExport extends LineExport {
     ///////////////////////////////
     // Constructor
 
-    public CCLineExport( IntactHelper helper, Writer ccWriter , Writer goWriter ) throws IntactException,
-                                                                                         DatabaseContentException {
+    public CCLineExport( IntactHelper helper, Writer ccWriter, Writer goWriter ) throws IntactException,
+                                                                                        DatabaseContentException {
         super();
 
-        if( ccWriter == null ) {
+        if ( ccWriter == null ) {
             throw new NullPointerException( "You must give a CC Line writer." );
         }
 
-        if( goWriter == null ) {
+        if ( goWriter == null ) {
             throw new NullPointerException( "You must give a GO Line writer." );
         }
 
@@ -332,7 +332,6 @@ public class CCLineExport extends LineExport {
         return new CcLine( buffer.toString(), geneName );
     }
 
-
     public Set getPumedIds( Set experiments ) {
 
         Set pubmeds = new HashSet();
@@ -363,7 +362,7 @@ public class CCLineExport extends LineExport {
     private void createGoLine( String uniprotID_1, Protein protein1,
                                String uniprotID_2, Protein protein2,
                                Set eligibleExperiments,
-                               Set eligibleInteractions) throws IOException {
+                               Set eligibleInteractions ) throws IOException {
 
         // in case a protein is a splice variant, get its master ID
         // we consider an isoform interacting with its parent as self interaction.
@@ -446,7 +445,7 @@ public class CCLineExport extends LineExport {
         line.append( "IntAct" );   // Assigned By
         line.append( NEW_LINE );
 
-        if( !self ) {
+        if ( !self ) {
             // write the reverse
 
             line.append( "UniProt" ).append( TABULATION ); // DB
@@ -473,7 +472,6 @@ public class CCLineExport extends LineExport {
         goWriter.write( line.toString() );
         goWriter.flush();
     }
-
 
     /**
      * process a set of interaction ACs in order to find out which interaction are eligible for CC export. <br> Note 1:
@@ -509,7 +507,7 @@ public class CCLineExport extends LineExport {
      * <p/>
      * </pre>
      *
-     * @param interactions a collection of interaction AC
+     * @param interactions         a collection of interaction AC
      * @param eligibleInteractions collection to be filled with all eligible interactions
      *
      * @return Collection( ExportableInteraction ) or can be null if no interaction have been found to be eligible for
@@ -988,7 +986,7 @@ public class CCLineExport extends LineExport {
                                     createGoLine( uniprotID_1, protein1,
                                                   uniprotID_2, protein2,
                                                   eligibleExperiments,
-                                                  eligibleInteractions);
+                                                  eligibleInteractions );
 
                                 }
 
@@ -1012,7 +1010,6 @@ public class CCLineExport extends LineExport {
             }
         }
     }
-
 
     /**
      * Convert the DR line export file to an String array of Uniprot IDs.
@@ -1061,16 +1058,19 @@ public class CCLineExport extends LineExport {
         return proteins;
     }
 
-
+    /**
+     * Show usage for the program.
+     *
+     * @param options
+     */
     private static void displayUsage( Options options ) {
         // automatically generate the help statement
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp( "CCLineExport <DR import file> <CC export file> <GO export file> [-debug] [-debugFile]", options );
     }
 
-    public static void main( String[] args )
-            throws IntactException,
-                   SQLException, IOException, DatabaseContentException {
+    public static void main( String[] args ) throws IntactException, SQLException, IOException,
+                                                    DatabaseContentException {
 
         // create Option objects
         Option helpOpt = new Option( "help", "print this message" );
@@ -1199,7 +1199,7 @@ public class CCLineExport extends LineExport {
             ccFileWriter = new FileWriter( ccFile );
             goFileWriter = new FileWriter( goFile );
 
-            CCLineExport exporter = new CCLineExport( helper, (Writer) ccFileWriter , (Writer) goFileWriter );
+            CCLineExport exporter = new CCLineExport( helper, (Writer) ccFileWriter, (Writer) goFileWriter );
             exporter.setDebugEnabled( debugEnabled );
             exporter.setDebugFileEnabled( debugFileEnabled );
 
