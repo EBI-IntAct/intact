@@ -11,9 +11,9 @@ import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 
 import java.io.File;
-import java.io.Writer;
-import java.io.IOException;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -77,12 +77,13 @@ public class ExperimentListGenerator {
 
                 Collection interactions = exp.getInteractions();
                 size = interactions.size();
-                System.out.println( "Classifying " + exp.getShortLabel() + " ("+ size +" interaction"+( size>1 ? "s" : "" )+")");
+                System.out.println( "Classifying " + exp.getShortLabel() + " (" + size + " interaction" + ( size > 1 ? "s" : "" ) + ")" );
 
                 //THIS is where OJB loads ALL the Interactions - a call to Iterator..
                 Interaction interaction = (Interaction) interactions.iterator().next();
                 Collection components = interaction.getComponents();
                 Interactor protein = ( (Component) components.iterator().next() ).getInteractor();
+                // TODO find out if this is the right way of doing it ! experiment.hostOrganism
                 source = protein.getBioSource();
 
                 size = interactions.size();
@@ -91,6 +92,9 @@ public class ExperimentListGenerator {
                 experiments without interactions etc are the most likely cause.
                 Just ignore these in the classification and therefore in the output.
                 */
+
+                e.printStackTrace();
+
                 continue;
             }
 
@@ -219,6 +223,18 @@ public class ExperimentListGenerator {
      */
     public static void writeExperimentsClassification( HashMap allExp, Writer writer ) throws IOException {
 
+        // display the content of the map
+        for ( Iterator iterator = allExp.keySet().iterator(); iterator.hasNext(); ) {
+            BioSource bioSource = (BioSource) iterator.next();
+
+            ArrayList smallScaleExp = (ArrayList) ( (HashMap) allExp.get( bioSource ) ).get( "small" );
+            System.out.println( bioSource.getShortLabel() + "(small) -> " + smallScaleExp.size() );
+
+            ArrayList largeScaleExp = (ArrayList) ( (HashMap) allExp.get( bioSource ) ).get( "large" );
+            System.out.println( bioSource.getShortLabel() + "(large) -> " + largeScaleExp.size() );
+        }
+
+
         for ( Iterator iterator = allExp.keySet().iterator(); iterator.hasNext(); ) {
 
             BioSource bioSource = (BioSource) iterator.next();
@@ -230,8 +246,8 @@ public class ExperimentListGenerator {
             String negFile = fileNameRoot + "_small_negative.xml";
 
             //buffers to hold the labels for small and negative small exps
-            StringBuffer negPattern = new StringBuffer();
-            StringBuffer pattern = new StringBuffer();
+            StringBuffer negPattern = new StringBuffer( 128 );
+            StringBuffer pattern = new StringBuffer( 128 );
 
             String label = null;
             for ( int i = 0; i < smallScaleExp.size(); i++ ) {
@@ -311,6 +327,7 @@ public class ExperimentListGenerator {
     }
 
     protected static String TIME;
+
     static {
         SimpleDateFormat formatter = new SimpleDateFormat( "yyyy-MM-dd@HH.mm" );
         TIME = formatter.format( new Date() );
@@ -399,5 +416,8 @@ public class ExperimentListGenerator {
 
         HashMap exps = classifyExperiments( pattern );
         writeExperimentsClassification( exps, writer );
+
+        writer.flush();
+        writer.close();
     }
 }
