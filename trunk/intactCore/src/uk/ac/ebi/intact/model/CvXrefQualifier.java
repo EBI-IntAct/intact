@@ -35,6 +35,11 @@ public class CvXrefQualifier extends CvObject implements Editable {
     public static final String SEE_ALSO = "see-also";
     public static final String SEE_ALSO_MI_REF = "MI:0361";
 
+    public static final String GO_DEFINITION_REF = "go-definition-ref";
+    public static final String GO_DEFINITION_REF_MI_REF = "MI:0242";
+
+    public static final String TARGET_SPECIES = "target-species";
+
 
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus.
