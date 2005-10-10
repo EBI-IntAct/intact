@@ -55,6 +55,8 @@ public class InteractionPersisterTest extends TestCase {
     private CvDatabase uniprot = new CvDatabase( owner, Constants.UNIPROT_DB_SHORTLABEL );
     private CvComponentRole bait = new CvComponentRole( owner, "bait" );
     private CvComponentRole prey = new CvComponentRole( owner, "prey" );
+    private CvInteractorType proteinType = new CvInteractorType( owner, "protein" );
+    private CvInteractorType interactionType = new CvInteractorType( owner, "interaction" );
 
 
     ///////////////////////////////
@@ -67,7 +69,7 @@ public class InteractionPersisterTest extends TestCase {
         experiments.add( experiment );
 
         CvInteractionType cvInteractionType = new CvInteractionType( owner, "interactionType" );
-        Interaction interaction = new InteractionImpl( experiments, cvInteractionType, "interaction 1", owner );
+        Interaction interaction = new InteractionImpl( experiments, cvInteractionType, interactionType, "interaction 1", owner );
 
         return new Component( owner, interaction, protein, role );
     }
@@ -236,7 +238,7 @@ public class InteractionPersisterTest extends TestCase {
 
         /////////////////////////
         // create IntAct object
-        Protein protein = new ProteinImpl( owner, human, "P12345" );
+        Protein protein = new ProteinImpl( owner, human, "P12345", proteinType );
         protein.addXref( new Xref( owner, uniprot, "P12345", null, null, identity ) );
 
         Component component = createComponent( owner, protein, bait );
@@ -275,7 +277,7 @@ public class InteractionPersisterTest extends TestCase {
 
         /////////////////////////
         // create IntAct object
-        Protein protein = new ProteinImpl( owner, human, "P12345" );
+        Protein protein = new ProteinImpl( owner, human, "P12345", proteinType );
         protein.addXref( new Xref( owner, uniprot, "P12345", null, null, identity ) );
 
         Component component = createComponent( owner, protein, bait );
@@ -340,11 +342,11 @@ public class InteractionPersisterTest extends TestCase {
 
         /////////////////////////
         // create IntAct object
-        Protein protein = new ProteinImpl( owner, human, "P12345" );
+        Protein protein = new ProteinImpl( owner, human, "P12345", proteinType );
         protein.addXref( new Xref( owner, uniprot, "P12345", null, null, identity ) );
         Component component1 = createComponent( owner, protein, bait );
 
-        Protein protein2 = new ProteinImpl( owner, human, "Q98765" );
+        Protein protein2 = new ProteinImpl( owner, human, "Q98765", proteinType );
         protein.addXref( new Xref( owner, uniprot, "Q98765", null, null, identity ) );
         Component component2 = createComponent( owner, protein2, prey );
 
@@ -356,9 +358,9 @@ public class InteractionPersisterTest extends TestCase {
         Collection experiments = new ArrayList();
         experiments.add( experiment );
 
-        CvInteractionType interactionType = createInteractionType( "intType", "MI:intTyp" );
+        CvInteractionType anInteractionType = createInteractionType( "intType", "MI:intTyp" );
 
-        Interaction intactInteraction = new InteractionImpl( experiments, components, interactionType, "p12345-q98765", owner );
+        Interaction intactInteraction = new InteractionImpl( experiments, components, anInteractionType, interactionType, "p12345-q98765", owner );
         intactInteraction.setBioSource( human );
         
 

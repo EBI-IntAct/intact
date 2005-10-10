@@ -15,10 +15,7 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.model.CvDatabase;
-import uk.ac.ebi.intact.model.CvXrefQualifier;
-import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.BioSourceFactory;
 import uk.ac.ebi.intact.util.UpdateProteinsI;
 
@@ -32,6 +29,8 @@ import java.util.*;
  */
 public final class ProteinInteractorChecker {
 
+    private static CvInteractorType cvProteinType = null;
+
     private static final String LINE_SEPARATOR = System.getProperty( "line.separator" );
 
     private static class AmbiguousBioSourceException extends Exception {
@@ -43,13 +42,33 @@ public final class ProteinInteractorChecker {
 
     private final static boolean DEBUG = CommandLineOptions.getInstance().isDebugEnabled();
 
-
     /**
      * will avoid to have to search again later !
      * <p/>
      * uniprotId#taxid --> Collection(Protein)
      */
     private static final Map cache = new HashMap();
+
+
+    public static boolean interatorTypeChecked = false;
+
+    public static void checkCvInteractorType( IntactHelper helper ) {
+
+        if ( false == interatorTypeChecked ) {
+
+            // Load CvInteractorType( interaction / MI: )
+            cvProteinType = (CvInteractorType) helper.getObjectByPrimaryId( CvInteractorType.class,
+                                                                                 CvInteractorType.getInteractionMI() );
+            if ( cvProteinType == null ) {
+                MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find CvInteractorType( interaction )." ) );
+            }
+            interatorTypeChecked = true;
+        }
+    }
+
+    public static CvInteractorType getCvProteinType() {
+        return cvProteinType;
+    }
 
     /**
      * Search a protein in the cache
@@ -396,6 +415,9 @@ public final class ProteinInteractorChecker {
                               final IntactHelper helper,
                               final UpdateProteinsI proteinFactory,
                               final BioSourceFactory bioSourceFactory ) {
+
+        // check that the CvInteractorType( interaction is available ).
+        checkCvInteractorType( helper );
 
         final OrganismTag organism = proteinInteractor.getOrganism();
         String taxId = null;

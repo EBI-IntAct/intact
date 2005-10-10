@@ -155,6 +155,7 @@ public final class InteractionPersister {
             Interaction interaction = new InteractionImpl( myExperiments,
                                                            components,
                                                            cvInteractionType,
+                                                           InteractionChecker.getCvInteractionType(), 
                                                            shortlabel,
                                                            helper.getInstitution() );
 
