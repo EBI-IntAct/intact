@@ -6,7 +6,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.model;
 
 import org.apache.commons.collections.CollectionUtils;
-import uk.ac.ebi.intact.business.IntactHelper;
 
 import java.util.ArrayList;
 import java.util.Collection;
