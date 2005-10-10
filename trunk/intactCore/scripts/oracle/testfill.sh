@@ -122,6 +122,16 @@ then
     exit 1
 fi
 
+echo ""
+echo "Insert CvInteractorType"
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvInteractorType psi-mi \
+                                  data/controlledVocab/CvInteractorType.def \
+                                  data/controlledVocab/CvInteractorType.dag
+if [ $? != 0 ]
+then
+    exit 1
+fi
+
 if [ "$3" = "onlyCV" ]
 then
     echo ""
