@@ -184,6 +184,36 @@
 
     <!-- =================================================================== -->
 
+    <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
+    <target name="compile-upload" depends="make-jar, set-db-type"
+        description="Compiles non test source files">
+
+        <!-- Create the dest dir if it doesn't exist. -->
+        <mkdir dir="${dest.dir}"/>
+
+        <!-- now make sure the correct DB driver is copied -->
+        <antcall target="cp-postgres"/>
+        <antcall target="cp-oracle"/>
+
+        <!-- Only compile sources. -->
+        <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
+            debug="on" source="1.4"
+            includes="**/application/dataConversion/psiUpload/**,
+                      **/application/dataConversion/util/**,
+                      **/application/dataConversion/PsiDataLoader.java,
+                      **/application/dataConversion/PsiCosntants.java"
+            excludes="**/test/**">
+
+            <classpath refid="project.class.path"/>
+        </javac>
+
+        <!-- Copy configuration files -->
+        <antcall target="cp-config-files"/>
+
+    </target>
+
+    <!-- =================================================================== -->
+
     <!-- Compile the test source tree. -->
     <target name="compile-test" depends="compile" description="Compiles test source files">
 
