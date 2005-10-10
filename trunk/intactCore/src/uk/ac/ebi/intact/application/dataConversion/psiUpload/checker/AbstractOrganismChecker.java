@@ -5,6 +5,7 @@
  */
 package uk.ac.ebi.intact.application.dataConversion.psiUpload.checker;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.CellTypeTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.Constants;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.TissueTag;
@@ -65,18 +66,18 @@ public abstract class AbstractOrganismChecker {
         if ( null != cellType ) {
             sb.append( '#' );
             if ( null != cellType.getPsiDefinition() ) {
-                sb.append( cellType.getShortlabel() );
-            } else {
                 sb.append( cellType.getPsiDefinition().getId() );
+            } else {
+                sb.append( cellType.getShortlabel() );
             }
         }
 
         if ( null != tissue ) {
             sb.append( '@' );
-            if ( tissue.getPsiDefinition() == null ) {
-                sb.append( tissue.getShortlabel() );
-            } else {
+            if ( tissue.getPsiDefinition() != null ) {
                 sb.append( tissue.getPsiDefinition().getId() );
+            } else {
+                sb.append( tissue.getShortlabel() );
             }
         }
 
@@ -146,6 +147,7 @@ public abstract class AbstractOrganismChecker {
 
             } else {
 
+                // either tissue or cellType wasn't null
                 Collection biosources = null;
                 try {
                     if ( DEBUG ) {
@@ -172,15 +174,101 @@ public abstract class AbstractOrganismChecker {
                 }
 
                 if ( false == found ) {
-                    // error, the requested BioSource can't be found
-                    StringBuffer sb = new StringBuffer( 128 );
 
-                    sb.append( "Could not find in IntAct the BioSource having the following caracteristics: " );
-                    sb.append( "taxid: " ).append( taxid );
-                    sb.append( ", CellType: " ).append( cellType );
-                    sb.append( ", Tissue: " ).append( tissue );
+                    // create missing bioSource
+                    try {
+                        BioSourceFactory factory = new BioSourceFactory( helper );
+                        BioSource templateBioSource = factory.getValidBioSource( taxid );
+                        String label = null;
+                        if ( templateBioSource != null ) {
+                            label = templateBioSource.getShortLabel();
+                        } else {
+                            label = taxid;
+                        }
 
-                    MessageHolder.getInstance().addCheckerMessage( new Message( sb.toString() ) );
+                        CvCellType bsCellType = null;
+                        CvTissue bsTissue = null;
+
+                        if ( tissue != null ) {
+                            label += "-" + tissue.getShortlabel();
+
+                            // search for the CvTissue, if it can't be found then create it.
+                            bsTissue = (CvTissue) helper.getObjectByLabel( CvTissue.class, tissue.getShortlabel() );
+
+                            if ( bsTissue == null ) {
+
+                                // create it
+                                bsTissue = new CvTissue( helper.getInstitution(), tissue.getShortlabel() );
+                                helper.create( bsTissue );
+
+                                if ( DEBUG ) {
+                                    System.out.println( "Created new CvTissue( " + tissue.getShortlabel() + " )" );
+                                }
+                            } else {
+                                if ( DEBUG ) {
+                                    System.out.println( "Found CvTissue( " + tissue.getShortlabel() + " )" );
+                                }
+                            }
+                        }
+
+                        if ( cellType != null ) {
+                            label += "-" + cellType.getShortlabel();
+
+                            // search for the CellType, if it can't be found then create it.
+                            bsCellType = (CvCellType) helper.getObjectByLabel( CvCellType.class, cellType.getShortlabel() );
+
+                            if ( bsCellType == null ) {
+
+                                // create it
+                                bsCellType = new CvCellType( helper.getInstitution(), cellType.getShortlabel() );
+                                helper.create( bsCellType );
+
+                                if ( DEBUG ) {
+                                    System.out.println( "Created new CvCellType( " + cellType.getShortlabel() + " )" );
+                                }
+                            } else {
+                                if ( DEBUG ) {
+                                    System.out.println( "Found CvCellType( " + cellType.getShortlabel() + " )" );
+                                }
+                            }
+                        }
+
+                        // create the new BioSource and associate the CellType and Tissue to it.
+                        BioSource bs = new BioSource( helper.getInstitution(), label, taxid );
+                        helper.create( bs );
+
+                        boolean needUpdate = false;
+                        if ( bsTissue != null ) {
+                            bs.setCvTissue( bsTissue );
+                            needUpdate = true;
+                        }
+
+                        if ( bsCellType != null ) {
+                            bs.setCvCellType( bsCellType );
+                            needUpdate = true;
+                        }
+
+                        if ( needUpdate ) {
+                            helper.update( bs );
+                        }
+
+                    } catch ( IntactException e ) {
+                        e.printStackTrace();
+
+                        // error, the requested BioSource can't be found
+                        StringBuffer sb = new StringBuffer( 128 );
+
+                        sb.append( "Could not find in IntAct the BioSource having the following caracteristics: " );
+                        sb.append( "taxid: " ).append( taxid );
+                        sb.append( ", CellType: " ).append( cellType );
+                        sb.append( ", Tissue: " ).append( tissue );
+                        sb.append( " Reason " ).append( e.getMessage() );
+                        sb.append( ExceptionUtils.getFullStackTrace( e ) );
+
+                        MessageHolder.getInstance().addCheckerMessage( new Message( sb.toString() ) );
+                    }
+
+
                 } else {
 
                     displayFoundMessage( bioSource );
@@ -189,6 +277,7 @@ public abstract class AbstractOrganismChecker {
 
             // cache the result of the search.
             cache.put( cacheId, bioSource );
+
         } else {
             if ( DEBUG ) {
                 System.out.println( "Found in cache" );
@@ -214,7 +303,9 @@ public abstract class AbstractOrganismChecker {
 
         CvTissue bsTissue = bioSource.getCvTissue();
         if ( bsTissue == null && tissue == null ) {
+
             answer = true;
+
         } else if ( bsTissue != null && tissue != null ) {
 
             // TODO temporarily, we check also the shortlabel of the cellType, that should disappear when we have
@@ -249,6 +340,10 @@ public abstract class AbstractOrganismChecker {
                     }
                 }
             }
+
+        } else {
+
+            answer = false;
         }
 
         return answer;
@@ -305,6 +400,9 @@ public abstract class AbstractOrganismChecker {
                     answer = true;
                 }
             }
+        } else {
+
+            answer = false;
         }
 
         return answer;
