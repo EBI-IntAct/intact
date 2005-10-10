@@ -10,6 +10,7 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.*;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.model.CvInteractorType;
 import uk.ac.ebi.intact.util.BioSourceFactory;
 import uk.ac.ebi.intact.util.UpdateProteinsI;
 
@@ -24,11 +25,36 @@ import java.util.Iterator;
  */
 public final class InteractionChecker {
 
+    private static CvInteractorType cvInteractionType = null;
+
+    public static boolean interatorTypeChecked = false;
+
+    public static void checkCvInteractorType( IntactHelper helper ) {
+
+        if ( false == interatorTypeChecked ) {
+
+            // Load CvInteractorType( interaction / MI: )
+            cvInteractionType = (CvInteractorType) helper.getObjectByPrimaryId( CvInteractorType.class,
+                                                                                 CvInteractorType.getInteractionMI() );
+            if ( cvInteractionType == null ) {
+                MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find CvInteractorType( interaction )." ) );
+            }
+            interatorTypeChecked = true;
+        }
+    }
+
+    public static CvInteractorType getCvInteractionType() {
+        return cvInteractionType;
+    }
+
     public static void check( final InteractionTag interaction,
                               final IntactHelper helper,
                               final UpdateProteinsI proteinFactory,
                               final BioSourceFactory bioSourceFactory,
                               final Monitor monitor ) {
+
+        // check that the CvInteractorType( interaction is available ).
+        checkCvInteractorType( helper );
 
         // experiment
         Collection experiments = interaction.getExperiments();
