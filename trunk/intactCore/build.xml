@@ -494,6 +494,15 @@
         <ant dir="${app.dir}/dataConversion" inheritAll="false" target="compile"/>
     </target>
 
+     <!-- =================================================================== -->
+
+    <!-- Compiles the search module. -->
+    <target name="compile-dataConversion-upload" depends="compile-core"
+        description="Compiles the data conversion module (only Psi Upload)">
+
+        <ant dir="${app.dir}/dataConversion" inheritAll="false" target="compile-upload"/>
+    </target>
+
     <!-- =================================================================== -->
 
     <!-- Compiles all the sources. -->
