@@ -4,10 +4,7 @@
 
 package uk.ac.ebi.intact.model.test.util;
 
-import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.model.Institution;
-import uk.ac.ebi.intact.model.ProteinImpl;
-import uk.ac.ebi.intact.model.SequenceChunk;
+import uk.ac.ebi.intact.model.*;
 
 /**
  * TODO document this ;o)
@@ -18,7 +15,7 @@ import uk.ac.ebi.intact.model.SequenceChunk;
 public class TestableProtein extends ProteinImpl {
 
     public TestableProtein( String ac, Institution owner, BioSource source, String shortLabel, String aSequence ) {
-        super( owner, source, shortLabel );
+        super( owner, source, shortLabel, new CvInteractorType( owner, "protein" ) );
 
         if( ac == null ) {
             throw new IllegalArgumentException( "You must give a non null AC." );
