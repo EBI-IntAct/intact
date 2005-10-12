@@ -1739,9 +1739,9 @@
 						As search phrases can be used:
                         <ol>
                             <li>IntAct Ac: EBI-44444</li>
-                            <li>ene names: lsm7</li>
-                            <li>SwissProt / Trembl Ac: Q08162</li>
-                            <li>SwissProt / Trembl Id: rr44_yeast</li>
+                            <li>Gene names: lsm7</li>
+                            <li>UniProtKB Ac: Q08162</li>
+                            <li>UniProtKB Id: rr44_yeast</li>
                             <li>InterPro Ac: IPR001900</li>
                             <li>GO Id: GO:0000176</li>
                         </ol>
