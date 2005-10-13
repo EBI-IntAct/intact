@@ -12,7 +12,16 @@ package uk.ac.ebi.intact.util.sanityChecker.model;
  * @version $Id$
  */
 public class ControlledvocabBean extends AnnotatedBean{
+    private String objclass;
 
     public ControlledvocabBean() {
+    }
+
+    public String getObjclass() {
+        return objclass;
+    }
+
+    public void setObjclass(String objclass) {
+        this.objclass = objclass;
     }
 }

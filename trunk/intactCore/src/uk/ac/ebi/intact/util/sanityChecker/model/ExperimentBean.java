@@ -12,11 +12,22 @@ package uk.ac.ebi.intact.util.sanityChecker.model;
  * @version $Id$
  */
 public class ExperimentBean extends AnnotatedBean{
+
+    private String relatedexperiment_ac;
+
     private String biosource_ac;
 
     private String detectmethod_ac;
 
     private String identmethod_ac;
+
+    public String getRelatedexperiment_ac() {
+        return relatedexperiment_ac;
+    }
+
+    public void setRelatedexperiment_ac(String relatedexperiment_ac) {
+        this.relatedexperiment_ac = relatedexperiment_ac;
+    }
 
     public String getBiosource_ac() {
         return biosource_ac;

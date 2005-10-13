@@ -17,8 +17,32 @@ public class BioSourceBean extends AnnotatedBean {
 
     private String bioSourceXref;
 
+    private String tissue_ac;
+
+    private String celltype_ac;
+
+    public String getTissue_ac() {
+        return tissue_ac;
+    }
+
+    public void setTissue_ac(String tissue_ac) {
+        this.tissue_ac = tissue_ac;
+    }
+
+    public String getCelltype_ac() {
+        return celltype_ac;
+    }
+
+    public void setCelltype_ac(String celltype_ac) {
+        this.celltype_ac = celltype_ac;
+    }
+
     public String getBioSourceXref() {
         return bioSourceXref;
+    }
+
+    public void setBioSourceXref(String bioSourceXref) {
+        this.bioSourceXref = bioSourceXref;
     }
 
     /*public void setBioSourceXref() {
