@@ -23,15 +23,21 @@ public class ReportTopic {
         //
         // R A N G E
         //
+        //special format
         public static final ReportTopic RANGE_SEQUENCE_NOT_EQUAL_TO_PROTEIN_SEQ = new ReportTopic ("This/those Range(s) are associated to a sequence which does not corresponds to the protein sequence. And the Range Sequence couldn't be remapped");
+        //special format
         public static final ReportTopic RANGE_SEQUENCE_SAVED_BY_ADDING_THE_M = new ReportTopic("This/those Range(s) were created when the first Methionine was not there, since then the Methionine had been added to the Protein Sequence. The Range Sequence has been remapped. ");
+        //special format
         public static final ReportTopic RANGE_SEQUENCE_SAVED_BY_SUPPRESSING_THE_M = new ReportTopic("This/those Range(s) were created when the first Methionine was there, since then the Methionine had been remooved from the Protein Sequence. The Range Sequence has been remapped. ");
-        public static final ReportTopic DELETION_INTERVAL_TO_LONG_TO_BE_CARACTERIZED_BY_DELETION_ANALYSIS_FEATURE_TYPE = new ReportTopic (" Features caracterising deletion of more then 2 amino-acid and having CvFeatureIdentification set to \"Deletion Analysis\"");
+        //special format
+        public static final ReportTopic DELETION_INTERVAL_TO_LONG_TO_BE_CARACTERIZED_BY_DELETION_ANALYSIS_FEATURE_TYPE = new ReportTopic (" Features characterizing deletion of more then 2 amino-acid and having CvFeatureIdentification set to \"Deletion Analysis\"");
 
         //
         // A N N O T A T I O N
         //
+        //special format
         public static final ReportTopic URL_NOT_VALID = new ReportTopic ("This/those Url(s) is/are not valid");
+        //special format
         public static final ReportTopic TOPICAC_NOT_VALID = new ReportTopic ("This topic ac shouldn't be use to annotate this kind of object");
 
         //
@@ -71,12 +77,15 @@ public class ReportTopic {
         public static final ReportTopic INTERACTION_WITH_MORE_THAN_2_SELF_PROTEIN = new ReportTopic( "Interactions with more than one protein having their role set to self" );
         public static final ReportTopic SINGLE_PROTEIN_CHECK = new ReportTopic( "Interactions with only One Protein" );
         public static final ReportTopic NO_PROTEIN_CHECK = new ReportTopic( "Interactions with No Components" );
+        //special format
         public static final ReportTopic PROTEIN_SEQUENCE_AND_RANGE_SEQUENCE_NOT_EQUAL = new ReportTopic ("Sequence associated with the Range differs from the Protein sequence");
         public static final ReportTopic RANGE_HAS_NO_SEQUENCE_WHEN_PROTEIN_HAS_A_SEQUENCE = new ReportTopic("Range has no sequence but Protein got one");
-        public static final ReportTopic RANGE_HAS_A_SEQUENCE_BUT_THE_PROTEIN_DOES_NOT_HAVE_ONE = new ReportTopic("Range has a sequence but Protein does not have one");
-        public static final ReportTopic INTERACTION_ASSOCIATED_TO_A_RANGE_BUT_PROTEIN_DOES_NOT_HAVE_SEQUENCE = new ReportTopic("Interaction assiciated to a range when the protein has no related sequence");
-        public static final ReportTopic FUZZY_TYPE_NOT_APPROPRIATE = new ReportTopic("As the protein is not associated to any sequence, the fuzzy type must be either n-terminal, c-terminal or undetermined and numeric feature range should not be given");
-        public static final ReportTopic INTERVAL_VALUE_NOT_APPROPRIATE = new ReportTopic("Interval values not appropriate for the FromCvFuzzyType. When FromCvFuzzyType is n-terminal, c-terminal or undetermined, all interval values should be equal to zero.");
+        //public static final ReportTopic RANGE_HAS_A_SEQUENCE_BUT_THE_PROTEIN_DOES_NOT_HAVE_ONE = new ReportTopic("Range has a sequence but Protein does not have one");
+        //public static final ReportTopic INTERACTION_ASSOCIATED_TO_A_RANGE_BUT_PROTEIN_DOES_NOT_HAVE_SEQUENCE = new ReportTopic("Interaction assiciated to a range when the protein has no related sequence");
+        //public static final ReportTopic FUZZY_TYPE_NOT_APPROPRIATE = new ReportTopic("As the protein is not associated to any sequence, the fuzzy type must be either n-terminal, c-terminal or undetermined and numeric feature range should not be given");
+        //public static final ReportTopic INTERVAL_VALUE_NOT_APPROPRIATE = new ReportTopic("Interval values not appropriate for the FromCvFuzzyType. When FromCvFuzzyType is n-terminal, c-terminal or undetermined, all interval values should be equal to zero.");
+
+        //special format ==> addMessage( ReportTopic rt, InteractionBean ib, List experimentBeans)
         public static final ReportTopic INTERACTION_LINKED_TO_MORE_THEN_ONE_EXPERIMENT = new ReportTopic("Interaction linked to more then one experiment");
 
         //
@@ -87,14 +96,16 @@ public class ReportTopic {
         public static final ReportTopic PROTEIN_WITH_MORE_THAN_ONE_UNIPROT_IDENTITY = new ReportTopic( "proteins with more than one Xref with XrefQualifier(identity) and CvDatabase(uniprot)" );
         public static final ReportTopic PROTEIN_WITH_WRONG_CRC64 = new ReportTopic( "proteins Crc64 stored in the database does not correspond to the Crc64 calculated from the sequence");
         public static final ReportTopic PROTEIN_WITHOUT_A_SEQUENCE_BUT_WITH_AN_CRC64 = new ReportTopic( "proteins does not have a sequence but have a Crc64");
+        //special format
         public static final ReportTopic DUPLICATED_PROTEIN = new ReportTopic("Those proteins are duplicated");
 
         //
         // X R E F
         //
+        //special format
         public static final ReportTopic XREF_WITH_NON_VALID_PRIMARYID = new ReportTopic( "Xref having non valid primaryId");
 
-    private static final String NEW_LINE = System.getProperty( "line.separator" );
+    private static final String NEW_LINE = "<br>";// System.getProperty( "line.separator" );
 
     private String title;
 
