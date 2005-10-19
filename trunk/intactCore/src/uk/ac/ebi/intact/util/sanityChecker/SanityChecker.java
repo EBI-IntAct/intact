@@ -37,10 +37,12 @@ import org.apache.ojb.broker.accesslayer.LookupException;
  * @author Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id$
  */
-public class SanityChecker {
+public class
+        SanityChecker {
     private int duplicProt = 0;
     private SanityCheckerHelper sch;
 
+    private EditorUrlBuilder editorUrlBuilder;
 
     /*
     * Those are the several SanityCheckerHelper to help retrieving the data in the database
@@ -62,7 +64,7 @@ public class SanityChecker {
     private SanityCheckerHelper hasValidPrimaryIdSch;
     private SanityCheckerHelper annotationTopic;
     private SanityCheckerHelper rangeSeqSch;
-
+    private SanityCheckerHelper objectFromAc;
     /* ControlledvocabBean */
     private static ControlledvocabBean onHoldCvBean;
     private static ControlledvocabBean toBeReviewedCvBean;
@@ -101,7 +103,7 @@ public class SanityChecker {
      */
     private MessageSender messageSender;
 
-    //private AnnotationSection annotationSection;
+    private AnnotationSection annotationSection;
 
     private Map cvTopics;
 
@@ -110,8 +112,13 @@ public class SanityChecker {
 
     public SanityChecker() throws IntactException, SQLException {
 
+        editorUrlBuilder = new EditorUrlBuilder();
+
         helper = new IntactHelper();
 
+        objectFromAc = new SanityCheckerHelper(helper);
+        objectFromAc.addMapping(ExperimentBean.class, "select ac, shortlabel, fullname, timestamp, userstamp, detectmethod_ac, identmethod_ac, biosource_ac from ia_experiment where ac = ?");
+        objectFromAc.addMapping(InteractorBean.class, "select ac, shortlabel, fullname, crc64, timestamp, userstamp, biosource_ac, interactiontype_ac, objclass from ia_interactor where ac = ? ");
 
 
         deletionFeatureSch = new SanityCheckerHelper(helper);
@@ -136,7 +143,7 @@ public class SanityChecker {
                                                "i.ac = ?");
 
         rangeSeqSch.addMapping(ComponentBean.class, "select interaction_ac from ia_component where ac=?");
-        rangeSeqSch.addMapping(InteractorBean.class, "select ac, userstamp, timestamp from ia_interactor where ac=?");
+        rangeSeqSch.addMapping(InteractorBean.class, "select ac, userstamp, timestamp, objclass from ia_interactor where ac=?");
 
         this.retrieveObjectSch = new SanityCheckerHelper(helper);
 
@@ -174,7 +181,7 @@ public class SanityChecker {
         oneIntOneExpSch.addMapping(ExperimentBean.class, "select ac, shortlabel, timestamp, userstamp "+
                                                          "from ia_experiment "+
                                                          "where ac = ? ");
-        oneIntOneExpSch.addMapping(InteractorBean.class, "select ac, shortlabel, timestamp, userstamp "+
+        oneIntOneExpSch.addMapping(InteractorBean.class, "select ac, objclass, shortlabel, timestamp, userstamp "+
                                                          "from ia_interactor "+
                                                          "where ac = ? ");
 
@@ -198,7 +205,7 @@ public class SanityChecker {
 
         cvTopics = new HashMap();
         this.annotationTopic = new SanityCheckerHelper(helper);
-        annotationTopic.addMapping(ControlledvocabBean.class,"select shortlabel, ac from ia_controlledvocab where objclass = '"+ CvTopic.class.getName() +"' and ac like ?");
+        annotationTopic.addMapping(ControlledvocabBean.class,"select shortlabel, ac, objclass from ia_controlledvocab where objclass = '"+ CvTopic.class.getName() +"' and ac like ?");
 
         List cvTopicBeans = annotationTopic.getBeans(ControlledvocabBean.class,"%");
         for (int i = 0; i < cvTopicBeans.size(); i++) {
@@ -207,7 +214,7 @@ public class SanityChecker {
         }
 
         this.sch = new SanityCheckerHelper(helper);
-        sch.addMapping(ControlledvocabBean.class, "SELECT ac FROM ia_controlledvocab WHERE shortlabel = ?");
+        sch.addMapping(ControlledvocabBean.class, "SELECT ac, objclass FROM ia_controlledvocab WHERE shortlabel = ?");
         List cvs = sch.getBeans(ControlledvocabBean.class,CvTopic.ON_HOLD);
         this.onHoldCvBean = (ControlledvocabBean) cvs.get(0);
 
@@ -223,7 +230,7 @@ public class SanityChecker {
         cvs = sch.getBeans(ControlledvocabBean.class,CvTopic.NON_UNIPROT);
         noUniprotUpdateCvBean = (ControlledvocabBean) cvs.get(0);
 
-        sch.addMapping(ControlledvocabBean.class, "SELECT ac FROM ia_controlledvocab WHERE ac IN ( SELECT parent_ac FROM ia_xref WHERE primaryid = ? )" );
+        sch.addMapping(ControlledvocabBean.class, "SELECT ac, objclass FROM ia_controlledvocab WHERE ac IN ( SELECT parent_ac FROM ia_xref WHERE primaryid = ? )" );
         neutralCvBean = (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, "MI:0497").get(0);
         baitCvBean = (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, "MI:0496" ).get(0);
         preyCvBean = (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, "MI:0498" ).get(0);
@@ -321,7 +328,7 @@ public class SanityChecker {
 
         messageSender = new MessageSender();
 
-//        annotationSection = new AnnotationSection(helper);
+        annotationSection = new AnnotationSection();
 
 
     }
@@ -451,7 +458,7 @@ public class SanityChecker {
                     case 0:
                         // none of those categories
                         System.out.println("Interaction " +interactionAc + " with no categories");
-                        messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_CATEGORIES, interactionBean);
+                        messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_CATEGORIES, interactionBean);//, editorUrlBuilder.getEditorUrl(interactionBean));//, editorUrlBuilder.getEditorUrl(interationBean));
                         break;
 
                     case 1:
@@ -460,27 +467,28 @@ public class SanityChecker {
                             // bait-prey
                             if ( baitCount == 0 ) {
                                 System.out.println("Interaction " +interactionAc + "  with no bait");
-                                messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_BAIT, interactionBean );
+                                messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_BAIT, interactionBean);//, editorUrlBuilder.getEditorUrl(interactionBean) );
                             } else if ( preyCount == 0 ) {
                                 System.out.println("Interaction " +interactionAc + "  with no prey");
-                                messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_PREY, interactionBean );
+                                messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_PREY, interactionBean);//, editorUrlBuilder.getEditorUrl(interactionBean) );
                             }
 
                         } else if ( enzymeTarget == 1 ) {
                             // enzyme - enzymeTarget
                             if ( enzymeCount == 0 ) {
                                 System.out.println("Interaction  " +interactionAc + " with no enzyme");
-                                messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_ENZYME, interactionBean);
+
+                                messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_ENZYME, interactionBean);//, editorUrlBuilder.getEditorUrl(interactionBean));
                             } else if ( enzymeTargetCount == 0 ) {
                                 System.out.println("Interaction " +interactionAc + "  with no enzyme target");
-                                messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_ENZYME_TARGET, interactionBean);
+                                messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_ENZYME_TARGET, interactionBean);//, editorUrlBuilder.getEditorUrl(interactionBean));
                             }
 
                         } else if ( self == 1 ) {
                             // it has to be > 1
                             if ( selfCount > 1 ) {
                                 System.out.println("Interaction " +interactionAc + "  with more then 2 self protein");
-                                messageSender.addMessage( ReportTopic.INTERACTION_WITH_MORE_THAN_2_SELF_PROTEIN, interactionBean);
+                                messageSender.addMessage( ReportTopic.INTERACTION_WITH_MORE_THAN_2_SELF_PROTEIN, interactionBean);//,editorUrlBuilder.getEditorUrl(interactionBean));
                             } else { // = 1
                                 if ( selfStoichiometry < 1F ) {
                                     System.out.println("Interaction " +interactionAc + "  self protein and stoichiometry lower than 2");
@@ -493,7 +501,7 @@ public class SanityChecker {
                             if ( neutralCount == 1 ) {
                                 if ( neutralStoichiometry < 2 ) {
                                     System.out.println("Interaction  " +interactionAc + "  with only one neutral");
-                                    messageSender.addMessage( ReportTopic.INTERACTION_WITH_ONLY_ONE_NEUTRAL, interactionBean);
+                                    messageSender.addMessage( ReportTopic.INTERACTION_WITH_ONLY_ONE_NEUTRAL, interactionBean);//, editorUrlBuilder.getEditorUrl(interactionBean));
                                 }
                             }
                         }
@@ -502,18 +510,20 @@ public class SanityChecker {
                     default:
                         // > 1 : mixed up categories !
                         System.out.println("Interaction  " +interactionAc + "  with mixed component categories");
-                        messageSender.addMessage( ReportTopic.INTERACTION_WITH_MIXED_COMPONENT_CATEGORIES, interactionBean);
+                        messageSender.addMessage( ReportTopic.INTERACTION_WITH_MIXED_COMPONENT_CATEGORIES, interactionBean);//, editorUrlBuilder.getEditorUrl(interactionBean));
                 } // switch
             }
         }
         //check 7
     }
 
-    public void experimentNotSuperCurated() throws SQLException {
+
+
+    public void experimentNotSuperCurated() throws SQLException, IntactException {
         List ExperimentBeans = superCuratedSch.getBeans(ExperimentBean.class, "%" );
         for (int i = 0; i < ExperimentBeans.size(); i++) {
             ExperimentBean experimentBean =  (ExperimentBean) ExperimentBeans.get(i);
-            messageSender.addMessage(ReportTopic.EXPERIMENT_NOT_ACCEPTED_NOT_TO_BE_REVIEWED,experimentBean);
+            messageSender.addMessage(ReportTopic.EXPERIMENT_NOT_ACCEPTED_NOT_TO_BE_REVIEWED,experimentBean);//, editorUrlBuilder.getEditorUrl(experimentBean));
     }
     }
 
@@ -522,7 +532,7 @@ public class SanityChecker {
      * @param interactorBeans List containing interactorBean having objclass equal to InteractionImpl
      * @throws SQLException
      */
-    public void checkComponentOfInteractions( List interactorBeans ) throws SQLException {
+    public void checkComponentOfInteractions( List interactorBeans ) throws SQLException, IntactException {
         System.out.println( "Checking on Components (rules 5 and 6) ..." );
 
         for (int i = 0; i < interactorBeans.size(); i++) {
@@ -536,7 +546,7 @@ public class SanityChecker {
                 if ( componentBeans.size() == 0 ) {
                     //Interaction has no Components!! This is in fact test 5...
                     System.out.println("Interaction has no component");
-                    messageSender.addMessage( ReportTopic.NO_PROTEIN_CHECK, interactionBean );
+                    messageSender.addMessage( ReportTopic.NO_PROTEIN_CHECK, interactionBean);//, editorUrlBuilder.getEditorUrl(interactionBean) );
                 }
             }
         }
@@ -565,7 +575,7 @@ public class SanityChecker {
      * @throws SQLException
      */
 
-    public void checkProtein( List interactorBeans ) throws SQLException {
+    public void checkProtein( List interactorBeans ) throws SQLException, IntactException {
 
         //System.out.println( "Checking on Proteins (rules 14 and 16) ..." );
 
@@ -582,10 +592,10 @@ public class SanityChecker {
             }
             if (count == 0){
                 if(!noUniprotUpdate(proteinBean.getAc())){
-                    messageSender.addMessage( ReportTopic.PROTEIN_WITH_NO_UNIPROT_IDENTITY, proteinBean );
+                    messageSender.addMessage( ReportTopic.PROTEIN_WITH_NO_UNIPROT_IDENTITY, proteinBean);//, editorUrlBuilder.getEditorUrl(proteinBean) );
                 }
             } else if ( count > 1 ) {
-                messageSender.addMessage( ReportTopic.PROTEIN_WITH_MORE_THAN_ONE_UNIPROT_IDENTITY, proteinBean );
+                messageSender.addMessage( ReportTopic.PROTEIN_WITH_MORE_THAN_ONE_UNIPROT_IDENTITY, proteinBean);//, editorUrlBuilder.getEditorUrl(proteinBean) );
             }
         }
     }
@@ -596,7 +606,7 @@ public class SanityChecker {
      * @throws SQLException
      */
 
-    public void checkInteractionsComplete(List interactorBeans) throws SQLException {
+    public void checkInteractionsComplete(List interactorBeans) throws SQLException, IntactException {
         System.out.println( "Checking on Interactions (rule 7) ..." );
 
         for (int i = 0; i < interactorBeans.size(); i++) {
@@ -609,13 +619,13 @@ public class SanityChecker {
                 if ( sch.getBeans(Int2ExpBean.class,interactionAc).isEmpty() ) {
                     //record it.....
                     System.out.println("Interaction "+interactionAc + " with no experiment");
-                    messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_EXPERIMENT, interactionBean );
+                    messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_EXPERIMENT, interactionBean);//, editorUrlBuilder.getEditorUrl(interactionBean) );
                 }
                 //check 9
                 if (false == sch.getBeans(InteractorBean.class, interactionAc).isEmpty() ) {
                     System.out.println("Interaction "+interactionAc + " has no interaction type");
 
-                    messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_CVINTERACTIONTYPE, interactionBean );
+                    messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_CVINTERACTIONTYPE, interactionBean);//, editorUrlBuilder.getEditorUrl(interactionBean) );
                 }
                 //check 10
                 // 2005-04-14: on-hold ... might be re-introduced later.
@@ -647,21 +657,21 @@ public class SanityChecker {
 
                 //check 8
                 if(sch.getBeans(ExperimentBean.class, experimentBean.getAc()).isEmpty()){
-                    messageSender.addMessage(ReportTopic.EXPERIMENT_WITHOUT_INTERACTIONS, experimentBean );
+                    messageSender.addMessage(ReportTopic.EXPERIMENT_WITHOUT_INTERACTIONS, experimentBean);//, editorUrlBuilder.getEditorUrl(experimentBean) );
                 }
 
                 //check 11
                 if (experimentBean.getBiosource_ac()==(null)){
-                    messageSender.addMessage( ReportTopic.EXPERIMENT_WITHOUT_ORGANISM, experimentBean );
+                    messageSender.addMessage( ReportTopic.EXPERIMENT_WITHOUT_ORGANISM, experimentBean);//, editorUrlBuilder.getEditorUrl(experimentBean) );
                 }
 
                 //check 12
                 if(sch12.getBeans(ExperimentBean.class, experimentBean.getAc()).isEmpty()){
-                    messageSender.addMessage( ReportTopic.EXPERIMENT_WITHOUT_CVINTERACTION, experimentBean );
+                    messageSender.addMessage( ReportTopic.EXPERIMENT_WITHOUT_CVINTERACTION, experimentBean);//, editorUrlBuilder.getEditorUrl(experimentBean) );
                 }
                 //check 13
                 if(sch13.getBeans(ExperimentBean.class, experimentBean.getAc()).isEmpty()){
-                    messageSender.addMessage( ReportTopic.EXPERIMENT_WITHOUT_CVIDENTIFICATION, experimentBean );
+                    messageSender.addMessage( ReportTopic.EXPERIMENT_WITHOUT_CVIDENTIFICATION, experimentBean);//, editorUrlBuilder.getEditorUrl(experimentBean) );
                 }
             }
         }
@@ -697,12 +707,12 @@ public class SanityChecker {
                 }
                 if ( pubmedCount == 0 ) {
                     //record it.....
-                    messageSender.addMessage( ReportTopic.EXPERIMENT_WITHOUT_PUBMED, experimentBean );
+                    messageSender.addMessage( ReportTopic.EXPERIMENT_WITHOUT_PUBMED, experimentBean);//, editorUrlBuilder.getEditorUrl(experimentBean) );
                 }
 
                 if ( pubmedPrimaryCount < 1 ) {
                     //record it.....
-                    messageSender.addMessage( ReportTopic.EXPERIMENT_WITHOUT_PUBMED_PRIMARY_REFERENCE, experimentBean );
+                    messageSender.addMessage( ReportTopic.EXPERIMENT_WITHOUT_PUBMED_PRIMARY_REFERENCE, experimentBean);//, editorUrlBuilder.getEditorUrl(experimentBean) );
                 }
             }// experimentIsOnHold
         }
@@ -733,7 +743,7 @@ public class SanityChecker {
         for (int i = 0; i < bioSourceBeans.size(); i++) {
             BioSourceBean bioSourceBean =  (BioSourceBean) bioSourceBeans.get(i);
             if ( bioSourceBean.getTaxid() == null || "".equals( bioSourceBean.getTaxid() ) ) {
-                messageSender.addMessage( ReportTopic.BIOSOURCE_WITH_NO_TAXID, bioSourceBean );
+                messageSender.addMessage( ReportTopic.BIOSOURCE_WITH_NO_TAXID, bioSourceBean);//, editorUrlBuilder.getEditorUrl(bioSourceBean) );
             }
         }
 
@@ -795,7 +805,8 @@ public class SanityChecker {
                 httpUrl = new HttpURL(urlString);
             } catch (URIException e) {
                 // e.printStackTrace();
-                retrieveObject(annotationBean);
+                //retrieveObject(annotationBean);
+                messageSender.addMessage(annotationBean);
                 //System.out.println("couldn't create httpURL uri" + urlString);
             }
 
@@ -809,18 +820,21 @@ public class SanityChecker {
                 }catch (IllegalArgumentException e) {
                     //e.printStackTrace();
                     //System.out.println("Couldn't get method uri" + urlString);
-                    retrieveObject(annotationBean);
+                    //retrieveObject(annotationBean);
+                    messageSender.addMessage(annotationBean);
                 }
                 int statusCode = -1;
                 if(method!=null){
                     try {
                         statusCode = client.executeMethod(method);
                     } catch (IOException e) {
-                        retrieveObject(annotationBean);
+                        //retrieveObject(annotationBean);
+                        messageSender.addMessage(annotationBean);
                     }
                     if(statusCode!=-1){
                         if(statusCode >= 300 && statusCode <600) {
-                            retrieveObject(annotationBean);
+                            //retrieveObject(annotationBean);
+                            messageSender.addMessage(annotationBean);
                         }
                     }
                 }
@@ -829,33 +843,33 @@ public class SanityChecker {
         }
     }
 
-    /**
-     * Permit to retrieve to which object is link an annotation link
-     * @param annotationBean
-     * @throws IntactException
-     * @throws SQLException
-     */
-    public void retrieveObject(AnnotationBean annotationBean) throws IntactException, SQLException {
-
-
-        List exp2AnnotBeans = retrieveObjectSch.getBeans(Exp2AnnotBean.class, annotationBean.getAc());
-        List bs2AnnotBeans = retrieveObjectSch.getBeans(Bs2AnnotBean.class, annotationBean.getAc());
-        List int2AnnotBeans = retrieveObjectSch.getBeans(Int2AnnotBean.class, annotationBean.getAc());
-        List cvObject2AnnotBeans = retrieveObjectSch.getBeans(CvObject2AnnotBean.class, annotationBean.getAc());
-        List feature2AnnotBeans = retrieveObjectSch.getBeans(Feature2AnnotBean.class, annotationBean.getAc());
-
-        if(!exp2AnnotBeans.isEmpty() ){
-            messageSender.annotationMessage(exp2AnnotBeans,annotationBean);
-        } else if(!bs2AnnotBeans.isEmpty() ){
-            messageSender.annotationMessage(bs2AnnotBeans,annotationBean);
-        } else if(!int2AnnotBeans.isEmpty() ){
-            messageSender.annotationMessage(int2AnnotBeans,annotationBean);
-        } else if(!cvObject2AnnotBeans.isEmpty()){
-            messageSender.annotationMessage(cvObject2AnnotBeans,annotationBean);
-        } else if(!feature2AnnotBeans.isEmpty() ){
-            messageSender.annotationMessage(feature2AnnotBeans,annotationBean);
-        }
-    }
+//    /**
+//     * Permit to retrieve to which object is link an annotation link
+//     * @param annotationBean
+//     * @throws IntactException
+//     * @throws SQLException
+//     */
+//    public void retrieveObject(AnnotationBean annotationBean) throws IntactException, SQLException {
+//
+//
+//        List exp2AnnotBeans = retrieveObjectSch.getBeans(Exp2AnnotBean.class, annotationBean.getAc());
+//        List bs2AnnotBeans = retrieveObjectSch.getBeans(Bs2AnnotBean.class, annotationBean.getAc());
+//        List int2AnnotBeans = retrieveObjectSch.getBeans(Int2AnnotBean.class, annotationBean.getAc());
+//        List cvObject2AnnotBeans = retrieveObjectSch.getBeans(CvObject2AnnotBean.class, annotationBean.getAc());
+//        List feature2AnnotBeans = retrieveObjectSch.getBeans(Feature2AnnotBean.class, annotationBean.getAc());
+//
+//        if(!exp2AnnotBeans.isEmpty() ){
+//            messageSender.annotationMessage(exp2AnnotBeans,annotationBean);
+//        } else if(!bs2AnnotBeans.isEmpty() ){
+//            messageSender.annotationMessage(bs2AnnotBeans,annotationBean);
+//        } else if(!int2AnnotBeans.isEmpty() ){
+//            messageSender.annotationMessage(int2AnnotBeans,annotationBean);
+//        } else if(!cvObject2AnnotBeans.isEmpty()){
+//            messageSender.annotationMessage(cvObject2AnnotBeans,annotationBean);
+//        } else if(!feature2AnnotBeans.isEmpty() ){
+//            messageSender.annotationMessage(feature2AnnotBeans,annotationBean);
+//        }
+//    }
 
     /**
      * This function retrieve all the sequence chunk corresponding to a protein and associate them in the good order to
@@ -882,15 +896,15 @@ public class SanityChecker {
      * @throws SQLException
      */
 
-    public void checkReviewed(List experimentBeans) throws SQLException {
+    public void checkReviewed(List experimentBeans) throws SQLException, IntactException {
 
         for (int i = 0; i < experimentBeans.size(); i++) {
             ExperimentBean experimentBean =  (ExperimentBean) experimentBeans.get(i);
             if(experimentIsOnHold(experimentBean.getAc())){
-                messageSender.addMessage( ReportTopic.EXPERIMENT_ON_HOLD, experimentBean);
+                messageSender.addMessage( ReportTopic.EXPERIMENT_ON_HOLD, experimentBean);//, editorUrlBuilder.getEditorUrl(experimentBean));
             }
             if(experimentToBeReviewed(experimentBean.getAc())){
-                messageSender.addMessage(ReportTopic.EXPERIMENT_TO_BE_REVIEWED, experimentBean);
+                messageSender.addMessage(ReportTopic.EXPERIMENT_TO_BE_REVIEWED, experimentBean);//, editorUrlBuilder.getEditorUrl(experimentBean));
             }
         }
     }
@@ -901,7 +915,7 @@ public class SanityChecker {
      * @param interactorBeans
      * @throws SQLException
      */
-    public void checkCrc64(List interactorBeans) throws SQLException {
+    public void checkCrc64(List interactorBeans) throws SQLException, IntactException {
         for (int i = 0; i < interactorBeans.size(); i++) {
             InteractorBean interactorBean =  (InteractorBean) interactorBeans.get(i);
             String sequence = getProteinSequence(interactorBean.getAc());
@@ -909,12 +923,12 @@ public class SanityChecker {
             if(sequence!=null && false==sequence.trim().equals("")){
                 String crc64Calculated=Crc64.getCrc64(sequence);
                 if(!crc64Calculated.equals(crc64Stored)){
-                    messageSender.addMessage(ReportTopic.PROTEIN_WITH_WRONG_CRC64, interactorBean);
+                    messageSender.addMessage(ReportTopic.PROTEIN_WITH_WRONG_CRC64, interactorBean);//, editorUrlBuilder.getEditorUrl(interactorBean));
                 }
             }
             else{
                 if(crc64Stored!=null){
-                    messageSender.addMessage(ReportTopic.PROTEIN_WITHOUT_A_SEQUENCE_BUT_WITH_AN_CRC64,interactorBean);
+                    messageSender.addMessage(ReportTopic.PROTEIN_WITHOUT_A_SEQUENCE_BUT_WITH_AN_CRC64,interactorBean);//, editorUrlBuilder.getEditorUrl(interactorBean));
                 }
             }
 
@@ -952,7 +966,7 @@ public class SanityChecker {
             if(false==hasNewtXref){
                 int taxid = Integer.parseInt(bioSourceBean.getTaxid());
                 if(taxid>=1){
-                    messageSender.addMessage(ReportTopic.BIOSOURCE_WITH_NO_NEWT_XREF,bioSourceBean);
+                    messageSender.addMessage(ReportTopic.BIOSOURCE_WITH_NO_NEWT_XREF,bioSourceBean, editorUrlBuilder.getEditorUrl(bioSourceBean));
                 }
             }
         }
@@ -1028,7 +1042,8 @@ public class SanityChecker {
 
     public ExperimentBean retrieveExperimentFromAc (SanityCheckerHelper helper, String ac) throws SQLException {
         ExperimentBean experimentBean = new ExperimentBean();
-        List experimentBeans = helper.getBeans(ExperimentBean.class, ac);
+
+        List experimentBeans = objectFromAc.getBeans(ExperimentBean.class, ac);
         for (int i = 0; i < experimentBeans.size(); i++) {
             experimentBean =  (ExperimentBean) experimentBeans.get(i);
         }
@@ -1037,7 +1052,7 @@ public class SanityChecker {
 
     public InteractorBean retrieveInteractorFromAc (SanityCheckerHelper helper, String ac) throws SQLException {
         InteractorBean interactorBean = new InteractorBean();
-        List interactorBeans = helper.getBeans(InteractorBean.class, ac);
+        List interactorBeans = objectFromAc.getBeans(InteractorBean.class, ac);
         for (int i = 0; i < interactorBeans.size(); i++) {
             interactorBean =  (InteractorBean) interactorBeans.get(i);
         }
@@ -1052,7 +1067,11 @@ public class SanityChecker {
      * @throws IntactException
      */
     public String generateNormalRangeSeq(String protSeq, RangeBean rangeBean) throws SQLException, IntactException {
+        IntactHelper helperBis;
         String normalRangeSeq = new String();
+        try{
+        helperBis = new IntactHelper();
+
         if(protSeq!=null){
 
             String fromFuzzyTypeAc=  rangeBean.getFromfuzzytype_ac();
@@ -1083,7 +1102,7 @@ public class SanityChecker {
             * from "fromIntervalStart"
             */
             else{
-                Range range = (Range) helper.getObjectByAc(Range.class,rangeBean.getAc());
+                Range range = (Range) helperBis.getObjectByAc(Range.class,rangeBean.getAc());
                 int fromIntervalStart=range.getFromIntervalStart();
                 if(fromIntervalStart+100 > protSeq.length()){
                     /*
@@ -1104,6 +1123,12 @@ public class SanityChecker {
                     }
                 }
             }
+        }
+            helperBis.closeStore();
+        }
+        catch(IntactException e){
+            e.printStackTrace();
+
         }
 
         return normalRangeSeq;
@@ -1133,18 +1158,26 @@ public class SanityChecker {
      *
      * @param rangeBean
      * @param protSeq
-     * @return
-     * @throws SQLException
-     * @throws IntactException
+     * @return rangeSeq
      */
 
-    public String generateRangeSeqIfMRemooved(String protSeq, RangeBean rangeBean, String normalRangeSeq) throws IntactException {
-        IntactHelper helperBis = new IntactHelper();
+    public String generateRangeSeqIfMRemooved(String protSeq, RangeBean rangeBean, String normalRangeSeq) /*throws IntactException*/ {
+
         boolean updatedNeeded = false;
         String rangeSeq = new String();
         String rangeSeqStored = rangeBean.getSequence();
         try{
-        Range range = (Range) helperBis.getObjectByAc(Range.class,rangeBean.getAc());
+            IntactHelper helperBis = new IntactHelper();
+
+         Range range = (Range) helperBis.getObjectByAc(Range.class,rangeBean.getAc());
+          System.out.println("\n------ Range"+range.getSequence());
+         if(range.getSequence()==null){
+                        System.out.println("METHOD");
+                        System.out.println("Range ac = "+ rangeBean.getAc()+" was null from the beginning");
+                        System.out.println("range Bean ac "+rangeBean.getAc());
+                        System.out.println("&&&&&&&&&&");
+
+                    }
         if(protSeq!=null){
 
             String fromFuzzyTypeAc = rangeBean.getFromfuzzytype_ac();
@@ -1157,24 +1190,28 @@ public class SanityChecker {
                 if(protSeq.length()<100){
                     rangeSeq="M"+protSeq;
                     if(rangeSeq.equals(rangeSeqStored)){
+                        System.out.println("1");
                         System.out.println("I'm updating range : "+rangeBean.getAc());
                         System.out.println("previous seq "+range.getSequence());
-                        System.out.println("replace by   "+normalRangeSeq);
-                        range.setSequence(normalRangeSeq);
+                        System.out.println("replace by   "+ normalRangeSeq);
+                        range.setSequence(protSeq);//normalRangeSeq);
                         //helper.update(range);
                         System.out.println("now seq is   "+range.getSequence());
+                        System.out.println("eval seq is  "+normalRangeSeq);
                         updatedNeeded=true;
                     }
                 }else{
                     rangeSeq="M"+ protSeq.substring(0,99);
                     if(rangeSeq.equals(rangeSeqStored)){
+                        System.out.println("2");
                         System.out.println("I'm updating range : "+rangeBean.getAc());
                         System.out.println("previous seq "+range.getSequence());
                         System.out.println("replace by   "+normalRangeSeq);
-                        range.setSequence(normalRangeSeq);
+                        range.setSequence(protSeq);//normalRangeSeq);
                         //helper.update(range);
                          updatedNeeded=true;
                         System.out.println("now seq is   "+range.getSequence());
+                        System.out.println("eval seq is  "+normalRangeSeq);
                     }
                 }
             }
@@ -1185,24 +1222,28 @@ public class SanityChecker {
                 if(protSeq.length()<100){
                     rangeSeq="M"+protSeq;
                     if(rangeSeq.equals(rangeSeqStored)){
+                        System.out.println("3");
                         System.out.println("I'm updating range : "+rangeBean.getAc());
                         System.out.println("previous seq "+range.getSequence());
                         System.out.println("replace by   "+normalRangeSeq);
-                        range.setSequence(normalRangeSeq);
+                        range.setSequence(protSeq);//normalRangeSeq);
                         //helper.update(range);
                          updatedNeeded=true;
                         System.out.println("now seq is   "+range.getSequence());
+                        System.out.println("eval seq is  "+normalRangeSeq);
                     }
                 }else{
                     rangeSeq=protSeq.substring(protSeq.length()-100,protSeq.length());
                     if(rangeSeqStored.equals(rangeSeq)){
+                        System.out.println("4");
                         System.out.println("I'm updating range : "+rangeBean.getAc());
                         System.out.println("previous seq "+range.getSequence());
                         System.out.println("replace by   "+normalRangeSeq);
-                        range.setSequence(normalRangeSeq);
+                        range.setSequence(protSeq);//normalRangeSeq);
                         //helper.update(range);
                          updatedNeeded=true;
                         System.out.println("now seq is   "+range.getSequence());
+                        System.out.println("eval seq is  "+normalRangeSeq);
                     }
                 }
             }
@@ -1225,32 +1266,39 @@ public class SanityChecker {
                     if(fromIntervalStart==0){
                         rangeSeq = "M"+protSeq.substring(0,protSeq.length()); //protSeq.substring();
                         if(rangeSeq.equals(rangeSeqStored)){
+                            System.out.println("5");
                             System.out.println("I'm updating range : "+rangeBean.getAc());
                             System.out.println("previous seq "+range.getSequence());
                             System.out.println("replace by   "+normalRangeSeq);
-                            range.setSequence(normalRangeSeq);
+                            range.setSequence(protSeq);//normalRangeSeq);
                             //helper.update(range);
                              updatedNeeded=true;
                             System.out.println("now seq is   "+range.getSequence());
+                            System.out.println("eval seq is  "+normalRangeSeq);
                         }
                     } else {
                         rangeSeq = protSeq.substring(fromIntervalStart-1,protSeq.length());
                         if(rangeSeq==rangeSeqStored){
-
+                            System.out.println("6");
                             System.out.println("I'm updating range : "+rangeBean.getAc());
                             System.out.println("previous seq "+range.getSequence());
                             System.out.println("replace by   "+normalRangeSeq);
-                            range.setSequence(normalRangeSeq);
+                            range.setFromIntervalStart(fromIntervalStart-1);
+                            range.setFromIntervalEnd(range.getFromIntervalEnd()-1);
+                            range.setToIntervalStart(range.getToIntervalStart()-1);
+                            range.setToIntervalEnd(range.getToIntervalEnd()-1);
+                            range.setSequence(protSeq);//normalRangeSeq);
                             System.out.println("now seq is   "+range.getSequence());
+                            System.out.println("eval seq is  "+normalRangeSeq);
 
                             System.out.println("updating fromIntervalStart");
                             System.out.println("previous value :"+range.getFromIntervalStart());
                             System.out.println("replace by     " + (fromIntervalStart-1));
-                            range.setFromIntervalStart(fromIntervalStart-1);
+                            /*range.setFromIntervalStart(fromIntervalStart-1);
 
                             range.setFromIntervalEnd(range.getFromIntervalEnd()-1);
                             range.setToIntervalStart(range.getToIntervalStart()-1);
-                            range.setToIntervalEnd(range.getToIntervalEnd()-1);
+                            range.setToIntervalEnd(range.getToIntervalEnd()-1);*/
                             //helper.update(range);
                              updatedNeeded=true;
                             System.out.println("now fromIS   is ="+range.getFromIntervalStart());
@@ -1261,24 +1309,35 @@ public class SanityChecker {
                     if(fromIntervalStart==0){
                         rangeSeq = "M"+protSeq.substring(fromIntervalStart,fromIntervalStart+99);
                         if(rangeSeq.equals(rangeSeqStored)){
-                            range.setSequence(normalRangeSeq);
+                            System.out.println("7");
+                            System.out.println("I'm updating range : "+rangeBean.getAc());
+                            System.out.println("previous seq "+range.getSequence());
+                            System.out.println("replace by   "+normalRangeSeq);
+                            range.setSequence(protSeq);//normalRangeSeq);
+                            System.out.println("now seq is   "+range.getSequence());
+                            System.out.println("eval seq is  "+normalRangeSeq);
                             //helper.update(range);
                              updatedNeeded=true;
                         }
                     }else{
                         rangeSeq = protSeq.substring(fromIntervalStart-1,fromIntervalStart-1+100);
                         if(rangeSeq.equals(rangeSeqStored)){
-
+                            System.out.println("8");
                             System.out.println("I'm updating range : "+rangeBean.getAc());
                             System.out.println("previous seq "+range.getSequence());
                             System.out.println("replace by   "+normalRangeSeq);
-                            range.setSequence(normalRangeSeq);
-                            System.out.println("now seq is   "+range.getSequence());
-
                             range.setFromIntervalStart(fromIntervalStart-1);
                             range.setFromIntervalEnd(range.getFromIntervalEnd()-1);
                             range.setToIntervalStart(range.getToIntervalStart()-1);
                             range.setToIntervalEnd(range.getToIntervalEnd()-1);
+                            range.setSequence(protSeq);//normalRangeSeq);
+                            System.out.println("now seq is   "+range.getSequence());
+                            System.out.println("eval seq is  "+normalRangeSeq);
+
+                            /*range.setFromIntervalStart(fromIntervalStart-1);
+                            range.setFromIntervalEnd(range.getFromIntervalEnd()-1);
+                            range.setToIntervalStart(range.getToIntervalStart()-1);
+                            range.setToIntervalEnd(range.getToIntervalEnd()-1);*/
                             //helper.update(range);
                              updatedNeeded=true;
                         }
@@ -1286,14 +1345,14 @@ public class SanityChecker {
                 }
             }
             if(updatedNeeded=true){
-                helperBis.update(range);
+               // helperBis.update(range);
             }
-
+           helperBis.closeStore();
         }
         }catch(IntactException e){
             e.printStackTrace();
         }
-        helperBis.closeStore();
+
         return rangeSeq;
 
     }
@@ -1322,18 +1381,25 @@ public class SanityChecker {
      *
      * @param rangeBean
      * @param protSeq
-     * @return
-     * @throws SQLException
-     * @throws IntactException
+     * @return rangeSeq
      */
 
-    public String generateRangeSeqIfMAdded(String protSeq, RangeBean rangeBean, String normalRangeSeq) throws IntactException, SQLException {
-        IntactHelper helperBis = new IntactHelper();
+    public String generateRangeSeqIfMAdded(String protSeq, RangeBean rangeBean, String normalRangeSeq)/* throws IntactException, SQLException*/ {
+
+
         boolean  updatedNeeded=false;
         String rangeSeq = new String();
         String rangeSeqStored = rangeBean.getSequence();
         try{
+            IntactHelper helperBis = new IntactHelper();
         Range range = (Range) helperBis.getObjectByAc(Range.class,rangeBean.getAc());
+        System.out.println("\n------ Range"+range.getSequence());
+            if(range.getSequence()==null){
+                        System.out.println("METHOD");
+                        System.out.println("Range ac = "+ rangeBean.getAc()+" was null from the beginning");
+                        System.out.println("range Bean ac "+rangeBean.getAc());
+                        System.out.println("&&&&&&&&&&");
+                    }
         if(protSeq!=null){
 
             String fromFuzzyTypeAc=  rangeBean.getFromfuzzytype_ac();
@@ -1346,12 +1412,14 @@ public class SanityChecker {
                 if(protSeq.length()<100){
                     rangeSeq = protSeq.substring(1,protSeq.length());
                     if(rangeSeqStored.equals(rangeSeq)){
+                        System.out.println("9");
                         //Range range = (Range) helper.getObjectByAc(Range.class,rangeBean.getAc());
                         System.out.println("I'm updating range : "+rangeBean.getAc());
                             System.out.println("previous seq "+range.getSequence());
                             System.out.println("replace by   "+normalRangeSeq);
-                            range.setSequence(normalRangeSeq);
+                            range.setSequence(protSeq);//normalRangeSeq);
                             System.out.println("now seq is   "+range.getSequence());
+                        System.out.println("eval seq is  "+normalRangeSeq);
                         //helper.update(range);
                          updatedNeeded=true;
                     }
@@ -1359,12 +1427,14 @@ public class SanityChecker {
                     if(protSeq.length()>=101){
                         rangeSeq = protSeq.substring(1,101);
                         if(rangeSeqStored.equals(rangeSeq)){
+                            System.out.println("10");
                             //Range range = (Range) helper.getObjectByAc(Range.class,rangeBean.getAc());
                             System.out.println("I'm updating range : "+rangeBean.getAc());
                             System.out.println("previous seq "+range.getSequence());
                             System.out.println("replace by   "+normalRangeSeq);
-                            range.setSequence(normalRangeSeq);
+                            range.setSequence(protSeq);//normalRangeSeq);
                             System.out.println("now seq is   "+range.getSequence());
+                            System.out.println("eval seq is  "+normalRangeSeq);
                             //helper.update(range);
                              updatedNeeded=true;
                         }
@@ -1372,12 +1442,14 @@ public class SanityChecker {
                     else{
                         rangeSeq = protSeq.substring(1,protSeq.length());
                         if(rangeSeqStored.equals(rangeSeq)){
+                            System.out.println("11");
                             //Range range = (Range) helper.getObjectByAc(Range.class,rangeBean.getAc());
                             System.out.println("I'm updating range : "+rangeBean.getAc());
                             System.out.println("previous seq "+range.getSequence());
                             System.out.println("replace by   "+normalRangeSeq);
-                            range.setSequence(normalRangeSeq);
+                            range.setSequence(protSeq);//normalRangeSeq);
                             System.out.println("now seq is   "+range.getSequence());
+                            System.out.println("eval seq is  "+normalRangeSeq);
                             //helper.update(range);
                              updatedNeeded=true;
                         }
@@ -1391,12 +1463,14 @@ public class SanityChecker {
                 if(protSeq.length()<100){
                     rangeSeq=protSeq.substring(1,protSeq.length());
                     if(rangeSeqStored.equals(rangeSeq)){
+                        System.out.println("12");
                         //Range range = (Range) helper.getObjectByAc(Range.class,rangeBean.getAc());
                         System.out.println("I'm updating range : "+rangeBean.getAc());
                             System.out.println("previous seq "+range.getSequence());
                             System.out.println("replace by   "+normalRangeSeq);
-                            range.setSequence(normalRangeSeq);
+                            range.setSequence(protSeq);//normalRangeSeq);
                             System.out.println("now seq is   "+range.getSequence());
+                        System.out.println("eval seq is  "+normalRangeSeq);
                         //helper.update(range);
                          updatedNeeded=true;
                     }
@@ -1404,12 +1478,14 @@ public class SanityChecker {
                     //System.out.println("I'm updating range : "+range.getAc());
                     rangeSeq=protSeq.substring(protSeq.length()-100,protSeq.length());
                     if(rangeSeqStored.equals(rangeSeq)){
+                        System.out.println("13");
                         //Range range = (Range) helper.getObjectByAc(Range.class,rangeBean.getAc());
                         System.out.println("I'm updating range : "+rangeBean.getAc());
                             System.out.println("previous seq "+range.getSequence());
                             System.out.println("replace by   "+normalRangeSeq);
-                            range.setSequence(normalRangeSeq);
+                            range.setSequence(protSeq);//normalRangeSeq);
                             System.out.println("now seq is   "+range.getSequence());
+                        System.out.println("eval seq is  "+normalRangeSeq);
                         //helper.update(range);
                          updatedNeeded=true;
                     }
@@ -1433,15 +1509,21 @@ public class SanityChecker {
                     */
                     rangeSeq =  protSeq.substring(fromIntervalStart,protSeq.length());
                     if(rangeSeqStored.equals(rangeSeq)){
+                        System.out.println("14");
                         System.out.println("I'm updating range : "+rangeBean.getAc());
                             System.out.println("previous seq "+range.getSequence());
                             System.out.println("replace by   "+normalRangeSeq);
-                            range.setSequence(normalRangeSeq);
-                            System.out.println("now seq is   "+range.getSequence());
                         range.setFromIntervalStart(fromIntervalStart+1);
                         range.setFromIntervalEnd(range.getFromIntervalEnd()+1);
                         range.setToIntervalStart(range.getToIntervalStart()+1);
                         range.setToIntervalEnd(range.getToIntervalEnd()+1);
+                            range.setSequence(protSeq);//normalRangeSeq);
+                            System.out.println("now seq is   "+range.getSequence());
+                        System.out.println("eval seq is  "+normalRangeSeq);
+                        /*range.setFromIntervalStart(fromIntervalStart+1);
+                        range.setFromIntervalEnd(range.getFromIntervalEnd()+1);
+                        range.setToIntervalStart(range.getToIntervalStart()+1);
+                        range.setToIntervalEnd(range.getToIntervalEnd()+1);*/
                         //helper.update(range);
                          updatedNeeded=true;
                     }
@@ -1451,15 +1533,21 @@ public class SanityChecker {
                     if(fromIntervalStart==0){
                         rangeSeq = protSeq.substring(1, fromIntervalStart+101);
                         if(rangeSeqStored.equals(rangeSeq)){
+                            System.out.println("15");
                             System.out.println("I'm updating range : "+rangeBean.getAc());
                             System.out.println("previous seq "+range.getSequence());
                             System.out.println("replace by   "+normalRangeSeq);
-                            range.setSequence(normalRangeSeq);
-                            System.out.println("now seq is   "+range.getSequence());
                             range.setFromIntervalStart(fromIntervalStart+1);
                             range.setFromIntervalEnd(range.getFromIntervalEnd()+1);
                             range.setToIntervalStart(range.getToIntervalStart()+1);
                             range.setToIntervalEnd(range.getToIntervalEnd()+1);
+                            range.setSequence(protSeq);//normalRangeSeq);
+                            System.out.println("eval seq is  "+normalRangeSeq);
+                            System.out.println("now seq is   "+range.getSequence());
+                            /*range.setFromIntervalStart(fromIntervalStart+1);
+                            range.setFromIntervalEnd(range.getFromIntervalEnd()+1);
+                            range.setToIntervalStart(range.getToIntervalStart()+1);
+                            range.setToIntervalEnd(range.getToIntervalEnd()+1);*/
                             //helper.update(range);
                              updatedNeeded=true;
                         }
@@ -1467,15 +1555,21 @@ public class SanityChecker {
                     }else{
                         rangeSeq =protSeq.substring(fromIntervalStart, fromIntervalStart+100);
                         if(rangeSeqStored.equals(rangeSeq)){
+                            System.out.println("16");
                             System.out.println("I'm updating range : "+rangeBean.getAc());
                             System.out.println("previous seq "+range.getSequence());
-                            System.out.println("replace by   "+normalRangeSeq);
-                            range.setSequence(normalRangeSeq);
-                            System.out.println("now seq is   "+range.getSequence());
+                            //System.out.println("replace by   "+normalRangeSeq);
                             range.setFromIntervalStart(fromIntervalStart+1);
                             range.setFromIntervalEnd(range.getFromIntervalEnd()+1);
                             range.setToIntervalStart(range.getToIntervalStart()+1);
                             range.setToIntervalEnd(range.getToIntervalEnd()+1);
+                            range.setSequence(protSeq);//normalRangeSeq);
+                            System.out.println("now seq is   "+range.getSequence());
+                            System.out.println("eval seq is  "+normalRangeSeq);
+                            /*range.setFromIntervalStart(fromIntervalStart+1);
+                            range.setFromIntervalEnd(range.getFromIntervalEnd()+1);
+                            range.setToIntervalStart(range.getToIntervalStart()+1);
+                            range.setToIntervalEnd(range.getToIntervalEnd()+1);*/
                             //helper.update(range);
                              updatedNeeded=true;
                         }
@@ -1483,13 +1577,14 @@ public class SanityChecker {
                 }
             }
             if(updatedNeeded=true){
-                helperBis.update(range);
+                //helperBis.update(range);
             }
+            helperBis.closeStore();
         }
         }catch(IntactException e){
             e.printStackTrace();
         }
-        helperBis.closeStore();
+
 
         return rangeSeq;
 
@@ -1500,7 +1595,7 @@ public class SanityChecker {
 
 
 
-    public void checkRangeSeqBis(List interactorBeans) throws SQLException, IntactException {
+    public void checkRangeSeqBis(List interactorBeans) throws SQLException, IntactException, CloneNotSupportedException {
         /*int savedByM=0;
         int mSupp=0;
         int mAdded=0;
@@ -1517,74 +1612,91 @@ public class SanityChecker {
             String protSeq=getProteinSequence(interactorBean.getAc());
             if(protSeq!=null){
                 for (int j = 0; j < rangeBeans.size(); j++) {
-                    
+
                     RangeBean rangeBean = (RangeBean) rangeBeans.get(j);
+                    if(rangeBean.getSequence()==null){
+                        System.out.println("&&&&&&&&&&");
+                        System.out.println("RangeBean ac = "+ rangeBean.getAc()+" was null from the beginning");
+                        System.out.println("&&&&&&&&&&");
+                    }
                     Range range = (Range) helper.getObjectByAc(Range.class,rangeBean.getAc());
-
-                    //Evaluating the 3 different kind of sequence
-                    String evaluatedRangeSeq=generateNormalRangeSeq(protSeq,rangeBean);
-                    System.out.println("\n");
-                    String ifMAdded=generateRangeSeqIfMAdded(protSeq,rangeBean,evaluatedRangeSeq);
-                    System.out.println("\n");
-                    String ifMRemooved=generateRangeSeqIfMRemooved(protSeq,rangeBean,evaluatedRangeSeq);
-
-                    // Searching the Interaction_ac in which this interactor is involved, because to edit a feature
-                    // via the Editor you need the interaction
-                    List componentBeans = rangeSeqSch.getBeans(ComponentBean.class,rangeBean.getComponent_ac());
-                    String interaction_ac=new String();
-                    for (int k = 0; k < componentBeans.size(); k++) {
-                        ComponentBean componentBean =  (ComponentBean) componentBeans.get(k);
-                        interaction_ac=componentBean.getInteraction_ac();
+                    if(range.getSequence()==null){
+                        System.out.println("&&&&&&&&&&");
+                        System.out.println("Range ac = "+ rangeBean.getAc()+" was null from the beginning");
+                        System.out.println("&&&&&&&&&&");
                     }
 
+                    String rangeSeqTest=range.getSequence();
+                    //Evaluating the 3 different kind of sequence
+                    Range rangeToGetSeq = (Range) range.clone();
+                           rangeToGetSeq.setSequence(protSeq);
+                    String evaluatedRangeSeq=rangeToGetSeq.getSequence();//;generateNormalRangeSeq(protSeq,rangeBean);
+                    if(evaluatedRangeSeq!= null && !evaluatedRangeSeq.equals(rangeSeqTest)) {
+                        //System.out.println("\n");
+                        //Range rangeBis=(Range) helper.getObjectByAc(Range.class,rangeBean.getAc());
+                        evaluatedRangeSeq=range.getSequence();
+                        String ifMAdded=generateRangeSeqIfMAdded(protSeq,rangeBean,evaluatedRangeSeq);
+                        //System.out.println("\n");
+                        String ifMRemooved=generateRangeSeqIfMRemooved(protSeq,rangeBean,evaluatedRangeSeq);
 
-                    List interactionBeans = rangeSeqSch.getBeans(InteractorBean.class, interaction_ac);
-                    //System.out.println("We are going to search for the interacion ac = "+interaction_ac);
-                    InteractorBean interactionBean = new InteractorBean();
-                    interactionBean = (InteractorBean) interactionBeans.get(0);
-
-                    String rangeSeq=rangeBean.getSequence();
-
-                    if(rangeSeq!=null){
-                        if(rangeBean.getSequence().equals(evaluatedRangeSeq)){
-                            //equal++;
-                        } else if(rangeBean.getSequence().equals(ifMAdded)){
-                            //mSupp++;
-
-                            String mAddedErrorMessage = "\tInteractor ac : "+interactorBean.getAc() + "\tComponent ac : "+rangeBean.getComponent_ac()+"\tFeature ac : "+rangeBean.getFeature_ac();
-                            if(rangeBean.getFromfuzzytype_ac()==null){
-                                mAddedErrorMessage = mAddedErrorMessage + "\tNo From Fuzzy Type";
-                            }else{
-                                mAddedErrorMessage = mAddedErrorMessage + "\tFuzzy Type : "+rangeBean.getFromfuzzytype_ac();
-                            }
-                            mAddedErrorMessage = mAddedErrorMessage + "\tFrom Interval Start : "+range.getFromIntervalStart();
-
-                            messageSender.addMessage(ReportTopic.RANGE_SEQUENCE_SAVED_BY_ADDING_THE_M,interactionBean, mAddedErrorMessage);
+                        // Searching the Interaction_ac in which this interactor is involved, because to edit a feature
+                        // via the Editor you need the interaction
+                        List componentBeans = rangeSeqSch.getBeans(ComponentBean.class,rangeBean.getComponent_ac());
+                        String interaction_ac=new String();
+                        for (int k = 0; k < componentBeans.size(); k++) {
+                            ComponentBean componentBean =  (ComponentBean) componentBeans.get(k);
+                            interaction_ac=componentBean.getInteraction_ac();
                         }
-                        else if(rangeBean.getSequence().equals(ifMRemooved)){
-                            //mAdded++;
-                            String mSuppErrorMessage = "\tInteractor ac : "+interactorBean.getAc() + "\tComponent ac : "+rangeBean.getComponent_ac()+"\tFeature ac : "+rangeBean.getFeature_ac();
-                            if(rangeBean.getFromfuzzytype_ac()==null){
-                                mSuppErrorMessage = mSuppErrorMessage + "\tNo From Fuzzy Type";
-                            }else{
-                                mSuppErrorMessage = mSuppErrorMessage + "\tFuzzy Type : "+rangeBean.getFromfuzzytype_ac();
-                            }
-                            mSuppErrorMessage = mSuppErrorMessage + "\tFrom Interval Start : "+range.getFromIntervalStart();
-                            messageSender.addMessage(ReportTopic.RANGE_SEQUENCE_SAVED_BY_SUPPRESSING_THE_M,interactionBean, mSuppErrorMessage);
 
-                        }
-                        else{
-                            //notEqual++;
-                            //fileNumber++;
-                            String notEqualErrorMessage = "\tInteractor ac : "+interactorBean.getAc() + "\tComponent ac : "+rangeBean.getComponent_ac()+"\tFeature ac : "+rangeBean.getFeature_ac();
-                            if(rangeBean.getFromfuzzytype_ac()==null){
-                                notEqualErrorMessage = notEqualErrorMessage + "\tNo From Fuzzy Type";
-                            }else{
-                                notEqualErrorMessage = notEqualErrorMessage + "\tFuzzy Type : "+rangeBean.getFromfuzzytype_ac();
+
+                        List interactionBeans = rangeSeqSch.getBeans(InteractorBean.class, interaction_ac);
+                        //System.out.println("We are going to search for the interacion ac = "+interaction_ac);
+                        InteractorBean interactionBean = new InteractorBean();
+                        interactionBean = (InteractorBean) interactionBeans.get(0);
+
+                        String rangeSeq=rangeBean.getSequence();
+
+                        if(rangeSeq!=null){
+                            if(rangeBean.getSequence().equals(evaluatedRangeSeq)){
+                                //equal++;
+                            } else if(rangeBean.getSequence().equals(ifMAdded)){
+                                //mSupp++;
+
+                                String mAddedErrorMessage = "\tInteractor ac : "+interactorBean.getAc() + "\tComponent ac : "+rangeBean.getComponent_ac()+"\tFeature ac : "+rangeBean.getFeature_ac();
+                                if(rangeBean.getFromfuzzytype_ac()==null){
+                                    mAddedErrorMessage = mAddedErrorMessage + "\tNo From Fuzzy Type";
+                                }else{
+                                    mAddedErrorMessage = mAddedErrorMessage + "\tFuzzy Type : "+rangeBean.getFromfuzzytype_ac();
+                                }
+                                mAddedErrorMessage = mAddedErrorMessage + "\tFrom Interval Start : "+range.getFromIntervalStart();
+
+                                messageSender.addMessage(ReportTopic.RANGE_SEQUENCE_SAVED_BY_ADDING_THE_M,interactionBean, mAddedErrorMessage);//, editorUrlBuilder.getEditorUrl(interactionBean));
                             }
-                            notEqualErrorMessage = notEqualErrorMessage + "\tFrom Interval Start : "+range.getFromIntervalStart();
-                            notEqualErrorMessage = notEqualErrorMessage + "\nRange sequence stored in zpro : "+rangeSeq +"\n";
-                            messageSender.addMessage(ReportTopic.RANGE_SEQUENCE_NOT_EQUAL_TO_PROTEIN_SEQ,interactionBean, notEqualErrorMessage);
+                            else if(rangeBean.getSequence().equals(ifMRemooved)){
+                                //mAdded++;
+                                String mSuppErrorMessage = "\tInteractor ac : "+interactorBean.getAc() + "\tComponent ac : "+rangeBean.getComponent_ac()+"\tFeature ac : "+rangeBean.getFeature_ac();
+                                if(rangeBean.getFromfuzzytype_ac()==null){
+                                    mSuppErrorMessage = mSuppErrorMessage + "\tNo From Fuzzy Type";
+                                }else{
+                                    mSuppErrorMessage = mSuppErrorMessage + "\tFuzzy Type : "+rangeBean.getFromfuzzytype_ac();
+                                }
+                                mSuppErrorMessage = mSuppErrorMessage + "\tFrom Interval Start : "+range.getFromIntervalStart();
+                                messageSender.addMessage(ReportTopic.RANGE_SEQUENCE_SAVED_BY_SUPPRESSING_THE_M,interactionBean, mSuppErrorMessage);//;, editorUrlBuilder.getEditorUrl(interactionBean));
+
+                            }
+                            else{
+                                //notEqual++;
+                                //fileNumber++;
+                                String notEqualErrorMessage = "\tInteractor ac : "+interactorBean.getAc() + "\tComponent ac : "+rangeBean.getComponent_ac()+"\tFeature ac : "+rangeBean.getFeature_ac();
+                                if(rangeBean.getFromfuzzytype_ac()==null){
+                                    notEqualErrorMessage = notEqualErrorMessage + "\tNo From Fuzzy Type";
+                                }else{
+                                    notEqualErrorMessage = notEqualErrorMessage + "\tFuzzy Type : "+rangeBean.getFromfuzzytype_ac();
+                                }
+                                notEqualErrorMessage = notEqualErrorMessage + "\tFrom Interval Start : "+range.getFromIntervalStart();
+                                notEqualErrorMessage = notEqualErrorMessage + "\nRange sequence stored in zpro : "+rangeSeq +"\n";
+                                messageSender.addMessage(ReportTopic.RANGE_SEQUENCE_NOT_EQUAL_TO_PROTEIN_SEQ,interactionBean, notEqualErrorMessage);//, editorUrlBuilder.getEditorUrl(interactionBean));
+                            }
                         }
                     }
                 }
@@ -1647,6 +1759,10 @@ public class SanityChecker {
 
         for (int i = 0; i < xrefBeans.size(); i++) {
             XrefBean xrefBean =  (XrefBean) xrefBeans.get(i);
+            if (xrefBean.getPrimaryid().equals("MA:1234")){
+                String temporaryBreak = "";
+            }
+
 
             //Get the annotationBean containing the regular expression wich describe the primaryid of the database ac
             List annotationBeans = hasValidPrimaryIdSch.getBeans(AnnotationBean.class,xrefBean.getDatabase_ac());
@@ -1678,61 +1794,61 @@ public class SanityChecker {
             }
         }
     }
-    public void checkAnnotations (List annotatedBeans, String annotatedType,List usableTopic) throws SQLException {
+    public void checkAnnotations (List annotatedBeans, String annotatedType,List usableTopic) throws SQLException, IntactException {
         for (int i = 0; i < annotatedBeans.size(); i++) {
             AnnotatedBean annotatedBean =  (AnnotatedBean) annotatedBeans.get(i);
 
-            if(EditorMenuFactory.PROTEIN.equals(annotatedType)){
+            if(Protein.class.getName().equals(annotatedType)){
                 annotationTopic.addMapping(AnnotationBean.class,  "select a.ac, a.topic_ac, a.timestamp, a.userstamp " +
                                                                   "from ia_annotation a, " +
                                                                   "ia_int2annot i2a " +
                                                                   "where a.ac=i2a.annotation_ac and "+
                                                                   "i2a.interactor_ac=?");
                 List annotationBeans = annotationTopic.getBeans(AnnotationBean.class, annotatedBean.getAc());
-                checkAnnotationTopic(annotationBeans, annotatedBean, EditorMenuFactory.PROTEIN,usableTopic);
+                checkAnnotationTopic(annotationBeans, annotatedBean, Protein.class.getName(),usableTopic);
             }
-            else if(EditorMenuFactory.INTERACTION.equals(annotatedType)){
+            else if(Interaction.class.getName().equals(annotatedType)){
                 annotationTopic.addMapping(AnnotationBean.class,  "select a.ac, a.topic_ac, a.timestamp, a.userstamp " +
                                                                   "from ia_annotation a, " +
                                                                   "ia_int2annot i2a " +
                                                                   "where a.ac=i2a.annotation_ac and "+
                                                                   "i2a.interactor_ac=?");
                 List annotationBeans = annotationTopic.getBeans(AnnotationBean.class, annotatedBean.getAc());
-                checkAnnotationTopic(annotationBeans, annotatedBean, EditorMenuFactory.INTERACTION,usableTopic);
+                checkAnnotationTopic(annotationBeans, annotatedBean, Interaction.class.getName(),usableTopic);
             }
-            else if (EditorMenuFactory.EXPERIMENT.equals(annotatedType)){
+            else if (Experiment.class.getName().equals(annotatedType)){
                 annotationTopic.addMapping(AnnotationBean.class,  "select a.ac, a.topic_ac, a.timestamp, a.userstamp " +
                                                                   "from ia_annotation a, " +
                                                                   "ia_exp2annot e2a " +
                                                                   "where a.ac=e2a.annotation_ac and "+
                                                                   "e2a.experiment_ac=?");
                 List annotationBeans = annotationTopic.getBeans(AnnotationBean.class, annotatedBean.getAc());
-                checkAnnotationTopic(annotationBeans, annotatedBean, EditorMenuFactory.EXPERIMENT,usableTopic);
+                checkAnnotationTopic(annotationBeans, annotatedBean, Experiment.class.getName(),usableTopic);
             }
-            else if (EditorMenuFactory.BIOSOURCE_PAGE.equals(annotatedType)){
+            else if (BioSource.class.getName().equals(annotatedType)){
                 annotationTopic.addMapping(AnnotationBean.class,  "select a.ac, a.topic_ac, a.timestamp, a.userstamp " +
                                                                   "from ia_annotation a, " +
                                                                   "ia_biosource2annot bs2a " +
                                                                   "where a.ac=bs2a.annotation_ac and "+
                                                                   "bs2a.biosource_ac=?");
                 List annotationBeans = annotationTopic.getBeans(AnnotationBean.class, annotatedBean.getAc());
-                checkAnnotationTopic(annotationBeans, annotatedBean, EditorMenuFactory.BIOSOURCE_PAGE,usableTopic);
+                checkAnnotationTopic(annotationBeans, annotatedBean, BioSource.class.getName(),usableTopic);
 
-            } if (EditorMenuFactory.CV_PAGE.equals(annotatedType)){
+            } if (CvObject.class.getName().equals(annotatedType)){
                 annotationTopic.addMapping(AnnotationBean.class,  "select a.ac, a.topic_ac, a.timestamp, a.userstamp " +
                                                                   "from ia_annotation a, " +
                                                                   "ia_cvobject2annot cv2a " +
                                                                   "where a.ac=cv2a.annotation_ac and "+
                                                                   "cv2a.cvobject_ac=?");
                 List annotationBeans = annotationTopic.getBeans(AnnotationBean.class, annotatedBean.getAc());
-                checkAnnotationTopic(annotationBeans, annotatedBean, EditorMenuFactory.CV_PAGE,usableTopic);
+                checkAnnotationTopic(annotationBeans, annotatedBean, CvObject.class.getName(),usableTopic);
             }
 
         }
     }
 
 
-    public void checkAnnotationTopic (List annotations, AnnotatedBean annotatedBean, String annotatedType, List usableTopic){
+    public void checkAnnotationTopic (List annotations, AnnotatedBean annotatedBean, String annotatedType, List usableTopic) throws SQLException, IntactException {
 
         for (int i = 0; i < annotations.size(); i++) {
             AnnotationBean annotationBean =  (AnnotationBean) annotations.get(i);
@@ -1744,20 +1860,21 @@ public class SanityChecker {
             }
 
             if(!usableTopic.contains(topicShortlabel)){
-                messageSender.addMessage(ReportTopic.TOPICAC_NOT_VALID,annotationBean, annotatedBean, annotatedType, topicShortlabel);
+                //messageSender.addMessage(ReportTopic.TOPICAC_NOT_VALID,annotationBean, annotatedBean, annotatedType, topicShortlabel);//, editorUrlBuilder.getEditorUrl(annotatedBean));
+                messageSender.addMessage(ReportTopic.TOPICAC_NOT_VALID,annotationBean, topicShortlabel);//, editorUrlBuilder.getEditorUrl(annotatedBean));
 
             }
         }
     }
 
-    public void checkDeletionFeature(List rangeBeans ) throws SQLException {
+    public void checkDeletionFeature(List rangeBeans ) throws SQLException, IntactException {
         for (int i = 0; i < rangeBeans.size(); i++) {
             RangeBean rangeBean =  (RangeBean) rangeBeans.get(i);
             messageSender.addMessage(ReportTopic.DELETION_INTERVAL_TO_LONG_TO_BE_CARACTERIZED_BY_DELETION_ANALYSIS_FEATURE_TYPE, rangeBean);
         }
     }
 
-    public static void main(String[] args) throws SQLException, IntactException, LookupException {
+    public static void main(String[] args) throws SQLException, IntactException, LookupException, CloneNotSupportedException {
 
 
         SanityChecker scn = new SanityChecker();
@@ -1772,23 +1889,24 @@ public class SanityChecker {
 
 
 
-//        List expUsableTopic = scn.annotationSection.getUsableTopics(EditorMenuFactory.EXPERIMENT);
-  //      expUsableTopic.add(CvTopic.ACCEPTED);
-    //    expUsableTopic.add(CvTopic.TO_BE_REVIEWED);
+        List expUsableTopic = scn.annotationSection.getUsableTopics(Experiment.class.getName());
+        expUsableTopic.add(CvTopic.ACCEPTED);
+        expUsableTopic.add(CvTopic.TO_BE_REVIEWED);
 
-        //List intUsableTopic = scn.annotationSection.getUsableTopics(EditorMenuFactory.INTERACTION);
-        //List protUsableTopic = scn.annotationSection.getUsableTopics(EditorMenuFactory.PROTEIN);
-        //List cvUsableTopic=scn.annotationSection.getUsableTopics(EditorMenuFactory.CV_PAGE);
-        //List bsUsableTopic=scn.annotationSection.getUsableTopics(EditorMenuFactory.BIOSOURCE_PAGE);
+        List intUsableTopic = scn.annotationSection.getUsableTopics(Interaction.class.getName());
+        List protUsableTopic = scn.annotationSection.getUsableTopics(Protein.class.getName());
+        List cvUsableTopic=scn.annotationSection.getUsableTopics(CvObject.class.getName());
+        List bsUsableTopic=scn.annotationSection.getUsableTopics(BioSource.class.getName());
 
         /*
         *     Check on interactor
         */
+
         SanityCheckerHelper schIntAc = new SanityCheckerHelper(scn.helper);
         schIntAc.addMapping(InteractorBean.class,"SELECT ac, shortlabel, userstamp, timestamp, objclass "+
                                                  "FROM ia_interactor "+
-                                                 "WHERE objclass = '"+InteractionImpl.class.getName()+
-                                                 "' AND ac like ?");
+                                                 "WHERE objclass = '"+InteractionImpl.class.getName()+ "'"  +
+                                                " AND ac like ?");
 
 
         List interactorBeans = schIntAc.getBeans(InteractorBean.class, "EBI-%");
@@ -1797,9 +1915,7 @@ public class SanityChecker {
         scn.checkInteractionsBaitAndPrey(interactorBeans);
         scn.checkComponentOfInteractions(interactorBeans);
         scn.checkOneIntOneExp();
-        //scn.checkAnnotations(interactorBeans, EditorMenuFactory.INTERACTION_TYPE,intUsableTopic);
-
-
+       scn.checkAnnotations(interactorBeans, Interaction.class.getName(),intUsableTopic);
 
         /*
         *     Check on xref
@@ -1816,7 +1932,7 @@ public class SanityChecker {
 
         List xrefBeans = schIntAc.getBeans(XrefBean.class,"uniprot");
 
-        scn.sch.addMapping(InteractorBean.class,"SELECT i.ac, i.shortlabel, i.biosource_ac, i.userstamp, i.timestamp "+
+        scn.sch.addMapping(InteractorBean.class,"SELECT i.ac,i.objclass, i.shortlabel, i.biosource_ac, i.userstamp, i.timestamp "+
                                                 "FROM ia_interactor i, ia_xref x "+
                                                 "WHERE i.ac = x.parent_ac AND " +
                                                 "0 = ( SELECT count(1) " +
@@ -1827,27 +1943,33 @@ public class SanityChecker {
                                                 "topic.shortlabel = 'no-uniprot-update' ) AND "+
                                                 "x.qualifier_ac = '" +identityXrefQualifierCvBean.getAc()+"' AND "+
                                                 "x.primaryid=?");
+
         //scn.duplicatedProtein(xrefBeans);
         for (int i = 0; i < xrefBeans.size(); i++) {
             XrefBean xrefBean =  (XrefBean) xrefBeans.get(i);
             scn.duplicatedProtein(xrefBean);
         }
 
-        schIntAc.addMapping(XrefBean.class,"select ac, userstamp, timestamp, database_ac, primaryid "+
+        schIntAc.addMapping(XrefBean.class,"select ac, userstamp, timestamp, database_ac, primaryid,parent_ac "+
                                            "from ia_xref "+
-                                           "where ac like ?");
+                                            "where ac like ?");
+                                            //"where ac ='EBI-695273' and ac like ?");
         xrefBeans = schIntAc.getBeans(XrefBean.class, "%");
         scn.hasValidPrimaryId(xrefBeans);
 
         /*
         *     Check on Experiment
         */
+       List experimentBeans = scn.sch.getBeans(ExperimentBean.class,"EBI-%");
 
-        List experimentBeans = scn.sch.getBeans(ExperimentBean.class,"EBI-%");
         scn.checkReviewed(experimentBeans);
+
         scn.checkExperiment(experimentBeans);
+
         scn.checkExperimentsPubmedIds(experimentBeans);
-       // scn.checkAnnotations(experimentBeans, EditorMenuFactory.EXPERIMENT, expUsableTopic);
+
+        scn.checkAnnotations(experimentBeans, Experiment.class.getName(), expUsableTopic);
+
         scn.experimentNotSuperCurated();
 
         /*
@@ -1858,20 +1980,22 @@ public class SanityChecker {
         System.out.println("The size of bioSource list is " + bioSourceBeans.size());
         scn.checkBioSource(bioSourceBeans);
         scn.checkNewt(bioSourceBeans);
-        //scn.checkAnnotations(bioSourceBeans, EditorMenuFactory.BIOSOURCE_PAGE,bsUsableTopic);
+        //to be tested
+        scn.checkAnnotations(bioSourceBeans, BioSource.class.getName(),bsUsableTopic);
 
         /*
         *     Check on protein
         */
+//right now not actual using, as concerning checks appear to commented out
+
         schIntAc.addMapping(InteractorBean.class,"SELECT ac, crc64, shortlabel, userstamp, timestamp, objclass "+
                                                  "FROM ia_interactor "+
                                                  "WHERE objclass = '"+ProteinImpl.class.getName()+
                                                  "' AND ac like ?");
 
         List proteinBeans = schIntAc.getBeans(InteractorBean.class,"%");
-
-        /*System.out.println("This/those Range(s) were created when the first Methionine was there, since then the Methionine had been remooved from the Protein Sequence. The Range Sequence has been remapped");
-        schIntAc.addMapping(InteractorBean.class,"SELECT ac, crc64, shortlabel, userstamp, timestamp, objclass "+
+        System.out.println("This/those Range(s) were created when the first Methionine was there, since then the Methionine had been remooved from the Protein Sequence. The Range Sequence has been remapped");
+        /*schIntAc.addMapping(InteractorBean.class,"SELECT ac, crc64, shortlabel, userstamp, timestamp, objclass "+
                                                  "FROM ia_interactor "+
                                                  "WHERE objclass = ? "+
                                                  " AND ac in ('EBI-349787','EBI-375446','EBI-397048','EBI-515331','EBI-632461','EBI-527215')");
@@ -1889,9 +2013,9 @@ public class SanityChecker {
 
         scn.checkProtein(proteinBeans);
         scn.checkCrc64(proteinBeans);
-        //scn.checkAnnotations(proteinBeans, EditorMenuFactory.PROTEIN,protUsableTopic);
+        scn.checkAnnotations(proteinBeans, EditorMenuFactory.PROTEIN,protUsableTopic);
 
-
+        //already working
         List ranges = scn.deletionFeatureSch.getBeans(RangeBean.class,"2");
         scn.checkDeletionFeature(ranges);
 
@@ -1899,22 +2023,24 @@ public class SanityChecker {
         *     Check on annotation
         */
 
-         schIntAc.addMapping(AnnotationBean.class, "SELECT ac, description, timestamp, userstamp "+
-                                                   "FROM ia_annotation "+
-                                                   "WHERE topic_ac = 'EBI-18' and ac like ?");
+            //tested
+             schIntAc.addMapping(AnnotationBean.class, "SELECT ac, description, timestamp, userstamp "+
+                                                       "FROM ia_annotation "+
+                                                       "WHERE topic_ac = 'EBI-18' and ac like ?"   // + " and ac='EBI-375752'"
+                                                        );
 
-        List annotationBeans = schIntAc.getBeans(AnnotationBean.class,"EBI-%");
-        System.out.println("There is " + annotationBeans.size() + "annotations");
-        scn.checkURL(annotationBeans);
-
-        /*
-        *    Check on controlledvocab
-        */
-
-         schIntAc.addMapping(ControlledvocabBean.class,"SELECT ac, shortlabel, timestamp, userstamp "+
-                                                       "FROM ia_controlledvocab "+
-                                                       "WHERE ac = ?");
-        List controlledvocabBeans = schIntAc.getBeans(ControlledvocabBean.class, "%");
+            List annotationBeans = schIntAc.getBeans(AnnotationBean.class,"EBI-%");
+            System.out.println("There is " + annotationBeans.size() + "annotations");
+            scn.checkURL(annotationBeans);
+    //
+    //        /*
+    //        *    Check on controlledvocab
+    //        */
+    //
+             schIntAc.addMapping(ControlledvocabBean.class,"SELECT ac, objclass, shortlabel, timestamp, userstamp "+
+                                                           "FROM ia_controlledvocab "+
+                                                           "WHERE ac = ?");
+            List controlledvocabBeans = schIntAc.getBeans(ControlledvocabBean.class, "%");
 
         //scn.checkAnnotations(controlledvocabBeans, EditorMenuFactory.CV_PAGE,cvUsableTopic);
 
@@ -1930,6 +2056,8 @@ public class SanityChecker {
 
 
         schIntAc=null;
+
+        scn.helper.closeStore();
         scn=null;
     }
 
