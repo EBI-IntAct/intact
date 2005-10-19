@@ -1,0 +1,83 @@
+/*
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
+in the root directory of this distribution.
+*/
+package uk.ac.ebi.intact.util.sanityChecker;
+
+import uk.ac.ebi.intact.util.sanityChecker.model.*;
+import uk.ac.ebi.intact.model.*;
+
+/**
+ * TODO comment it.
+ *
+ * @author Catherine Leroy (cleroy@ebi.ac.uk)
+ * @version $Id$
+ */
+public class EditorUrlBuilder {
+
+    private static final String editorUrl = "http://www.ebi.ac.uk/interpro/internal-tools/intacttest/editor/do/secure/edit?";
+
+    public String getEditorUrl(IntactBean intactBean){
+
+        String url = new String();
+
+        if(intactBean instanceof ExperimentBean){
+            url = editorUrl+"ac="+intactBean.getAc()+"&type=Experiment";
+        }
+        else if(intactBean instanceof InteractorBean){
+            InteractorBean interactorBean = (InteractorBean) intactBean;
+            String objclass = interactorBean.getObjclass();
+
+            if(ProteinImpl.class.getName().equals(objclass)){
+                url = editorUrl+"ac="+intactBean.getAc()+"&type=Protein";
+            }else if ( InteractionImpl.class.getName().equals(objclass)){
+                url = editorUrl+"ac="+intactBean.getAc()+"&type=Interaction";
+            }
+        }
+        else if ( intactBean instanceof BioSourceBean ){
+            url = editorUrl + "ac="+intactBean.getAc()+"&type=BioSource";
+        }
+        else if ( intactBean instanceof ControlledvocabBean ){
+
+            ControlledvocabBean cvBean = (ControlledvocabBean) intactBean;
+
+            String objclass = cvBean.getObjclass();
+
+            if(CvTopic.class.getName().equals(objclass)){
+                url = editorUrl + "ac=" + intactBean.getAc() + "&type=CvTopic";
+            }
+            else if(CvAliasType.class.getName().equals(objclass)){
+                url = editorUrl +  "ac=" + intactBean.getAc()+"&type=CvAliasType";
+            }
+            else if(CvCellType.class.getName().equals(objclass)){
+                url = editorUrl +  "ac=" + intactBean.getAc() + "&type=CvCellTYpe";
+            }
+            else if(CvComponentRole.class.getName().equals(objclass)){
+                url = editorUrl + "ac=" + intactBean.getAc() + "&type=CvComponentRole";
+            }
+            else if(CvDatabase.class.getName().equals(objclass)){
+                url = editorUrl + "ac=" + intactBean.getAc() + "&type=CvDatabase";
+            }
+            else if(CvFuzzyType.class.getName().equals(objclass)){
+                url = editorUrl  + "ac=" + intactBean.getAc() + "&type=CvFuzzyType";
+            }
+            else if(CvTissue.class.getName().equals(objclass)){
+                url = editorUrl + "ac=" + intactBean.getAc() + "&type=CvTissue";
+            }
+            else if(CvXrefQualifier.class.getName().equals(objclass)){
+                url = editorUrl + "ac=" + intactBean.getAc() + "&type=CvXrefQualifier";
+            }
+
+
+        }
+
+        return url;
+    }
+
+    public String getEditorUrl(String type, String ac){
+        String url = editorUrl + "ac=" + ac + "&type=" + type;
+        return url;
+    }
+
+}
