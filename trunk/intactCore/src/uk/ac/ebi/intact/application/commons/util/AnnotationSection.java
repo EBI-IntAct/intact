@@ -7,8 +7,7 @@ package uk.ac.ebi.intact.application.commons.util;
 
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.CvTopic;
-import uk.ac.ebi.intact.model.Annotation;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 
 import java.util.*;
@@ -89,13 +88,13 @@ public class AnnotationSection {
                                       ===> CvTissue
                                       ===> CvTopic
                                       ===> CvXrefQualifier
-            EditorMenuFactory.BIOSOURCE_PAGE ===> Editor - BioSource
+            BioSource.class.getName() ===> Editor - BioSource
         */
-        annotationSection.put(EditorMenuFactory.EXPERIMENT,new ArrayList());
-        annotationSection.put(EditorMenuFactory.INTERACTION,new ArrayList());
-        annotationSection.put(EditorMenuFactory.PROTEIN,new ArrayList());
-        annotationSection.put(EditorMenuFactory.CV_PAGE,new ArrayList());
-        annotationSection.put(EditorMenuFactory.BIOSOURCE_PAGE, new ArrayList());
+        annotationSection.put(Experiment.class.getName(),new ArrayList());
+        annotationSection.put(Interaction.class.getName(),new ArrayList());
+        annotationSection.put(Protein.class.getName(),new ArrayList());
+        annotationSection.put(CvObject.class.getName(),new ArrayList());
+        annotationSection.put(BioSource.class.getName(), new ArrayList());
 
         List usableTopics = new ArrayList();
 
@@ -143,7 +142,7 @@ public class AnnotationSection {
                 System.out.println("\t"+cvTopicShortLabel+" ");
             }
         }
-        List bioSourceList = annotationSection.getUsableTopics(EditorMenuFactory.BIOSOURCE_PAGE);
+        List bioSourceList = annotationSection.getUsableTopics(BioSource.class.getName());
         for (int i = 0; i < bioSourceList.size(); i++) {
             String o =  (String) bioSourceList.get(i);
             System.out.println("topic for bisource "+o);
