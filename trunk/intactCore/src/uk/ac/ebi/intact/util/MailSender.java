@@ -79,7 +79,7 @@ public class MailSender {
 
         // Setting the Subject and Content Type
         msg.setSubject( subject );
-        msg.setContent( message, "text/plain" );
+        msg.setContent( message, "text/html" );
         Transport.send( msg );
     }
 
