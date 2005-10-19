@@ -9,9 +9,7 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.util.sanityChecker.model.BioSourceBean;
-import uk.ac.ebi.intact.util.sanityChecker.model.InteractorBean;
-import uk.ac.ebi.intact.util.sanityChecker.model.Int2AnnotBean;
+import uk.ac.ebi.intact.util.sanityChecker.model.*;
 import uk.ac.ebi.intact.model.InteractionImpl;
 
 import java.sql.Connection;
@@ -69,13 +67,212 @@ public class SanityCheckerHelper {
             throw new IllegalArgumentException("The beanClass :" + beanClass.getName() + " does not have known sql association");
         }
 
+        List resultList = null;
+        try {
+            resultList= (List) queryRunner.query(conn,
+                    (String) bean2sql.get(beanClass),
+                    param,
+                    new BeanListHandler(beanClass));
+        } catch ( OutOfMemoryError aome ) {
+
+            aome.printStackTrace();
+
+            System.err.println( "" );
+            System.err.println( "SanityCheckerHelper ran out of memory." );
+            System.err.println( "Please run it again and change the JVM configuration." );
+            System.err.println( "Here are some the options: http://java.sun.com/docs/hotspot/VMOptions.html" );
+            System.err.println( "Hint: You can use -Xms -Xmx to specify respectively the minimum and maximum" );
+            System.err.println( "      amount of memory that the JVM is allowed to allocate." );
+            System.err.println( "      eg. java -Xms128m -Xmx512m <className>" );
+            System.err.println( "      you can set it up in scripts/javaRun.sh" );
+
+            System.exit( 1 );
+
+        } catch ( Exception e ) {
+
+            e.printStackTrace();
+
+            Throwable t = e;
+            while ( t.getCause() != null ) {
+
+                t = e.getCause();
+
+                System.err.println( "" );
+                System.err.println( "================== ROOT CAUSE ==========================" );
+                System.err.println( "" );
+
+                t.printStackTrace( System.err );
+            }
+
+            System.exit( 1 );
+        }
+
+        return resultList;
+    }
+
+    public IntactBean getFirstBean(Class beanClass, String param) throws SQLException {
+        IntactBean intactBean = null;
+
+        if (beanClass == null) {
+            throw new IllegalArgumentException("beanClass should not be null");
+        }
+
+        if (false == bean2sql.containsKey(beanClass)) {
+            throw new IllegalArgumentException("The beanClass :" + beanClass.getName() + " does not have known sql association");
+        }
+
         List resultList = (List) queryRunner.query(conn,
                 (String) bean2sql.get(beanClass),
                 param,
                 new BeanListHandler(beanClass));
 
-        return resultList;
+        if( false == resultList.isEmpty() ){
+            intactBean = (IntactBean) resultList.get(0);
+        }
+
+        return intactBean;
     }
+
+
+
+    public static AnnotatedBean getAnnotatedBeanFromAnnotation(String annotationAc) throws IntactException, SQLException {
+
+        AnnotatedBean annotatedBean = null;
+
+        IntactHelper intactHelper = new IntactHelper();
+
+        SanityCheckerHelper sch = new SanityCheckerHelper(intactHelper);
+        sch.addMapping(Int2AnnotBean.class, "select interactor_ac "+
+                                            "from ia_int2annot "+
+                                            "where annotation_ac = ?");
+        List annotatedBeans = sch.getBeans(Int2AnnotBean.class, annotationAc);
+        if(annotatedBeans.isEmpty()){
+            sch.addMapping(Exp2AnnotBean.class, "select experiment_ac "+
+                                                "from ia_exp2annot "+
+                                                "where annotation_ac = ?");
+            annotatedBeans = sch.getBeans(Exp2AnnotBean.class, annotationAc);
+            if(annotatedBeans.isEmpty()){
+                sch.addMapping(CvObject2AnnotBean.class, "select cvobject_ac "+
+                                                         "from ia_cvobject2annot "+
+                                                         "where annotation_ac = ?");
+                annotatedBeans = sch.getBeans(CvObject2AnnotBean.class, annotationAc);
+                if(annotatedBeans.isEmpty()){
+                    sch.addMapping(Bs2AnnotBean.class, "select biosource_ac "+
+                                                       "from ia_biosource2annot "+
+                                                       "where annotation_ac = ?");
+                    annotatedBeans = sch.getBeans(Bs2AnnotBean.class, annotationAc);
+                    if(annotatedBeans.isEmpty()){
+                        sch.addMapping(Feature2AnnotBean.class, "select feature_ac "+
+                                                                "from ia_feature2annot "+
+                                                                "where annotation_ac = ?");
+                        annotatedBeans = sch.getBeans(Feature2AnnotBean.class, annotationAc);
+                        if(annotatedBeans.isEmpty()){
+                            System.err.println("Annotation having ac equal to " + annotationAc + " is not annotated any object int the database.");
+                        }else{//The annotation is on a Feature
+                            Feature2AnnotBean feature2AnnotBean = (Feature2AnnotBean) annotatedBeans.get(0);
+                            annotatedBean = sch.getFeatureBeanFromAc(feature2AnnotBean.getFeature_ac());
+                        }
+                    }else{//The annotation is on a BioSource
+                        Bs2AnnotBean bs2AnnotBean = (Bs2AnnotBean) annotatedBeans.get(0);
+                        annotatedBean = sch.getBioSourceBeanFromAc(bs2AnnotBean.getBiosource_ac());
+                    }
+                }else{//The annotation is on a CvObject
+                    CvObject2AnnotBean cvObject2AnnotBean = (CvObject2AnnotBean) annotatedBeans.get(0);
+                    annotatedBean = sch.getCvBeanFromAc(cvObject2AnnotBean.getCvobject_ac());
+                }
+            }else{ //The annotation is on an Experiment
+                Exp2AnnotBean exp2AnnotBean = (Exp2AnnotBean) annotatedBeans.get(0);
+                annotatedBean = sch.getExperimentBeanFromAc(exp2AnnotBean.getExperiment_ac());
+            }
+        }else{//The Annotation is on an Interactor
+            Int2AnnotBean int2AnnotBean = (Int2AnnotBean) annotatedBeans.get(0);
+            annotatedBean = sch.getInteractorBeanFromAc(int2AnnotBean.getInteractor_ac());
+        }
+
+        intactHelper.closeStore();
+
+        return annotatedBean;
+    }
+
+    public static IntactBean getXreferencedObject(XrefBean xrefBean) throws SQLException, IntactException {
+        IntactHelper intactHelper = new IntactHelper();
+        SanityCheckerHelper sch = new SanityCheckerHelper(intactHelper);
+
+        IntactBean intactBean = null;
+
+        String parentAc = xrefBean.getParent_ac();
+
+        intactBean = sch.getInteractorBeanFromAc( parentAc );
+        if( intactBean == null ){
+            intactBean = sch.getCvBeanFromAc( parentAc );
+            if (intactBean == null){
+                intactBean = sch.getBioSourceBeanFromAc( parentAc );
+            }
+            if (intactBean == null){
+                intactBean = sch.getExperimentBeanFromAc( parentAc );
+            }
+            if (intactBean == null ){
+                intactBean = sch.getFeatureBeanFromAc( parentAc);
+            }
+        }
+
+        return intactBean;
+    }
+
+    public InteractorBean getInteractorBeanFromAc(String ac) throws IntactException, SQLException {
+        IntactHelper intactHelper = new IntactHelper();
+        SanityCheckerHelper sch = new SanityCheckerHelper(intactHelper);
+        sch.addMapping(InteractorBean.class,"select ac, objclass, timestamp, userstamp, crc64, biosource_ac, fullname, interactiontype_ac, shortlabel " +
+                                            "from ia_interactor " +
+                                            "where ac=?");
+        InteractorBean interactorBean = (InteractorBean) sch.getFirstBean(InteractorBean.class,ac);
+        intactHelper.closeStore();
+        return interactorBean;
+    }
+
+    public ControlledvocabBean getCvBeanFromAc(String ac) throws IntactException, SQLException {
+        IntactHelper intactHelper = new IntactHelper();
+        SanityCheckerHelper sch = new SanityCheckerHelper(intactHelper);
+        sch.addMapping(ControlledvocabBean.class,"select ac, objclass, timestamp, userstamp, fullname, shortlabel " +
+                                            "from ia_controlledvocab " +
+                                            "where ac=?");
+        ControlledvocabBean cvBean = (ControlledvocabBean) sch.getFirstBean(ControlledvocabBean.class,ac);
+        intactHelper.closeStore();
+        return cvBean;
+    }
+
+    public BioSourceBean getBioSourceBeanFromAc(String ac) throws IntactException, SQLException {
+        IntactHelper intactHelper = new IntactHelper();
+        SanityCheckerHelper sch = new SanityCheckerHelper(intactHelper);
+        sch.addMapping(BioSourceBean.class,"select ac, taxid, tissue_ac, celltype_ac, timestamp, userstamp, fullname, shortlabel " +
+                                            "from ia_biosource " +
+                                            "where ac=?");
+        BioSourceBean bsBean = (BioSourceBean) sch.getFirstBean(BioSourceBean.class,ac);
+        intactHelper.closeStore();
+        return bsBean;
+    }
+    public ExperimentBean getExperimentBeanFromAc(String ac) throws IntactException, SQLException {
+        IntactHelper intactHelper = new IntactHelper();
+        SanityCheckerHelper sch = new SanityCheckerHelper(intactHelper);
+        sch.addMapping(ExperimentBean.class,"select ac, biosource_ac, detectmethod_ac, identmethod_ac, relatedexperiment_ac, timestamp, userstamp, fullname, shortlabel " +
+                                            "from ia_experiment " +
+                                            "where ac=?");
+        ExperimentBean expBean = (ExperimentBean) sch.getFirstBean(ExperimentBean.class,ac);
+        intactHelper.closeStore();
+        return expBean;
+    }
+
+    public FeatureBean getFeatureBeanFromAc(String ac) throws IntactException, SQLException {
+           IntactHelper intactHelper = new IntactHelper();
+           SanityCheckerHelper sch = new SanityCheckerHelper(intactHelper);
+           sch.addMapping(FeatureBean.class,"select ac, component_ac, identification_ac, featuretype_ac, linkedfeature_ac, timestamp, userstamp, fullname, shortlabel " +
+                                               "from ia_feature " +
+                                               "where ac=?");
+           FeatureBean featureBean = (FeatureBean) sch.getFirstBean(FeatureBean.class,ac);
+           intactHelper.closeStore();
+           return featureBean;
+       }
+
 
     public List getBeans(Class beanClass, List params) throws SQLException {
 
@@ -96,6 +293,7 @@ public class SanityCheckerHelper {
                                                  new BeanListHandler(beanClass));
             resultList.addAll(list);
         }
+
         return resultList;
     }
 
