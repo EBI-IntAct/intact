@@ -15,7 +15,6 @@ import uk.ac.ebi.intact.model.*;
 import javax.mail.MessagingException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.sql.ResultSet;
 
 import java.util.*;
 import java.text.SimpleDateFormat;
@@ -28,6 +27,8 @@ import java.text.SimpleDateFormat;
  */
 public class MessageSender {
 
+    private EditorUrlBuilder editorUrlBuilder = new EditorUrlBuilder();
+
 
     public static final String TIME;
 
@@ -36,14 +37,13 @@ public class MessageSender {
      */
     private static Map usersEmails = new HashMap();
 
-
-    private static final String NEW_LINE = System.getProperty( "line.separator" );
+    private static final String NEW_LINE = "<BR>";//System.getProperty( "line.separator" );
 
     /**
      * Contains individual errors of curators as Map( user, Map( topic, Collection( message ) ) )
      */
     private Map allUsersReport = new HashMap();
-
+    //private Map reportHeaderMaper
     /**
      * Contains all error for admin as Map( Topic, Collection(Message) )
      */
@@ -110,91 +110,77 @@ public class MessageSender {
         TIME = formatter.format( date );
     }
 
-    public void addMessage( ReportTopic topic, IntactBean intactBean, List intactBeans ) throws SQLException {
 
-        String user = intactBean.getUserstamp();
-        Timestamp date = intactBean.getTimestamp();
+    /**
+     * This addMessage method is used to send the message corresponding to the ReportTopic INTERACTION_LINKED_TO_MORE_
+     * THEN_ONE_EXPERIMENT.
+     * The build message error we look like that :
+     *
+     *          Interaction linked to more then one experiment
+     *          AC:EBI-1234     Shortlabel:foo     When: 10 jul 2005
+     *              AC:EBI-2345         Shortlabel:foo     When:
+     *              AC:EBI-3456         Shortlabel:foo     When:
+     *              ...etc
+     *
+     * Therefore the first line should link to an Interaction page and the other lines to an Experiment page
+     *
+     * @param topic
+     * @param interactionBean
+     * @param experimentBeans
+     * @throws SQLException
+     */
 
-        String userMessageReport="";
-        String adminMessageReport="";
-        // Build users report
-        if(intactBean instanceof InteractorBean){
-            InteractorBean interactorBean = (InteractorBean) intactBean;
-            userMessageReport = "AC: " + interactorBean.getAc() +
-                    "\t Shortlabel: " + interactorBean.getShortlabel() +
-                    "\t When: " + date;
-            adminMessageReport = "AC: " + interactorBean.getAc() +
-                    "\t Shortlabel: " + interactorBean.getShortlabel() +
-                    "\t User: " + user +
-                    "\t When: " + date;
-        }
+    public void addMessage( ReportTopic topic, InteractorBean interactionBean, List experimentBeans ) throws SQLException {
 
-        for (int i = 0; i < intactBeans.size(); i++) {
-            Object o =  intactBeans.get(i);
+        String user = interactionBean.getUserstamp();
+        Timestamp date = interactionBean.getTimestamp();
+
+//        String userMessageReport="";
+//        String adminMessageReport="";
+        StringBuffer sbUserMessageReport = new StringBuffer();
+        StringBuffer sbAdminMessageReport = new StringBuffer();
+
+        String interactionEditorUrl = editorUrlBuilder.getEditorUrl(interactionBean);
+        String[] rowValues = new String[4];
+        rowValues[0] ="<a href="+ interactionEditorUrl + ">"+  interactionBean.getAc() + "</a>";
+        rowValues[1] =interactionBean.getShortlabel();
+        rowValues[2] = "" + date;
+        rowValues[3] = user;
+        sbUserMessageReport.append(formatRow("html",rowValues,"values","userReport",true));
+        sbAdminMessageReport.append(formatRow("html",rowValues,"values","adminReport",true));
+
+        for (int i = 0; i < experimentBeans.size(); i++) {
+            Object o =  experimentBeans.get(i);
             if(o instanceof ExperimentBean){
 
                 ExperimentBean experimentBean = (ExperimentBean) o;
+
+                String experimentEditorUrl = editorUrlBuilder.getEditorUrl(experimentBean);
+
                 String experimentUser = experimentBean.getUserstamp();
                 Timestamp experimentDate = experimentBean.getTimestamp();
-                userMessageReport = userMessageReport +
-                        "\n\tAC: " + experimentBean.getAc() +
-                        "\t\t Shortlabel: " + experimentBean.getShortlabel() +
-                        "\t\t When: " + experimentDate;
-                adminMessageReport =adminMessageReport +
-                        "\n\tAC: " + experimentBean.getAc() +
-                        "\t\t Shortlabel: " + experimentBean.getShortlabel() +
-                        "\t\t User: " + experimentUser +
-                        "\t\t When: " + experimentDate;
+                String[] rowValues2 = new String[4];
+                rowValues2[0] ="<a href="+ experimentEditorUrl + ">"+  experimentBean.getAc() + "</a>";
+                rowValues2[1] =experimentBean.getShortlabel();
+                rowValues2[2] = "" + experimentDate;
+                rowValues2[3] = experimentUser;
+                sbUserMessageReport.append(formatRow("html",rowValues2,"values","userReport",false));
+                sbAdminMessageReport.append(formatRow("html",rowValues2,"values","adminReport",false));
             }
 
 
         }
-
-        if ( user != null && !( user.trim().length() == 0 ) ) {
-
-            // add new message to the user
-            Map userReport = (Map) allUsersReport.get( user );
-            if ( userReport == null ) {
-                userReport = new HashMap();
-            }
-
-            Collection topicMessages = (Collection) userReport.get( topic );
-            if ( topicMessages == null ) {
-                topicMessages = new ArrayList();
-
-                // add the messages to the topic
-                userReport.put( topic, topicMessages );
-            }
-
-            // add the message to the topic
-            topicMessages.add( userMessageReport );
-
-            // add the user's messages
-            allUsersReport.put( user, userReport );
-        } else {
-
-            System.err.println( "No user found for object: " + userMessageReport );
+        //add empty row to seperate the different blocks of an interaction and its linked experiments
+        for (int i=0; i < 4; i++)  {
+            rowValues[i]="";
         }
+        sbUserMessageReport.append(formatRow("html",rowValues,"values","userReport",false));
+        sbAdminMessageReport.append(formatRow("html",rowValues,"values","adminReport",false));
 
-
-        /*  // build admin admin report
-        String adminMessageReport = "AC: " + obj.getAc() +
-        "\t Shortlabel: " + obj.getShortLabel() +
-        "\t User: " + user +
-        "\t When: " + date;
-        */
-        Collection topicMessages = (Collection) adminReport.get( topic );
-        if ( topicMessages == null ) {
-            topicMessages = new ArrayList();
-
-            // add the messages to the topic
-            adminReport.put( topic, topicMessages );
-        }
-
-        // add the message to the topic
-        topicMessages.add( adminMessageReport );
-
+        addUserMessage(topic, user, sbUserMessageReport.toString(), sbAdminMessageReport.toString());
+        addAdminMessage(topic, sbAdminMessageReport.toString());
     }
+
 
 
     /**
@@ -204,9 +190,10 @@ public class MessageSender {
      * @param topic the type of error we have dicovered for the given AnnotatedObject.
      * @param intactBean   The Intact object that user info is required for.
      *
-     * @throws java.sql.SQLException thrown if there were DB problems
-     */
-    public void addMessage( ReportTopic topic, IntactBean intactBean ) {
+    */
+    public void addMessage( ReportTopic topic, IntactBean intactBean ) throws SQLException, IntactException {
+
+        String editorUrl;// = editorUrlBuilder.getEditorUrl(intactBean);
 
         String user = intactBean.getUserstamp();
         Timestamp date = intactBean.getTimestamp();
@@ -214,9 +201,6 @@ public class MessageSender {
 
         String userMessageReport="";
         String adminMessageReport="";
-        // Build users report
-
-
 
         if(intactBean instanceof RangeBean){
             RangeBean rangeBean = (RangeBean) intactBean;
@@ -225,25 +209,21 @@ public class MessageSender {
                 helper = new IntactHelper();
                 Range range = (Range) helper.getObjectByAc(Range.class, rangeBean.getAc());
 
-                userMessageReport ="Intercation Ac: "+rangeBean.getInteraction_ac() +
-                        "\t Interactor Ac : "+rangeBean.getInteractor_ac() +
-                        "\t Feature Ac : "+rangeBean.getFeature_ac() +
-                        "\t FromIntervalStart: "+range.getFromIntervalEnd() +
-                        "\t ToIntervalEnd: "+range.getToIntervalStart() +
-                        "\t Deletion Size " + (range.getToIntervalStart()-range.getFromIntervalEnd()) +
-                        "\t Range Ac: " + rangeBean.getAc() +
-                        "\t Shortlabel: " + rangeBean.getShortlabel() +
-                        "\t When: " + date + "/n";
-                adminMessageReport = "Intercation Ac: "+rangeBean.getInteraction_ac() +
-                        "\t Interactor Ac : "+rangeBean.getInteractor_ac() +
-                        "\t Feature Ac : "+rangeBean.getFeature_ac() +
-                        "\t FromIntervalStart: "+range.getFromIntervalEnd() +
-                        "\t ToIntervalEnd: "+range.getToIntervalStart() +
-                        "\t Deletion Size " + (range.getFromIntervalEnd() - range.getToIntervalStart()) +
-                        "\t Range Ac: " + rangeBean.getAc() +
-                        "\t Shortlabel: " + rangeBean.getShortlabel() +
-                        "\t When: " + date +
-                        "\t User: " + user + "\n";
+                editorUrl = editorUrlBuilder.getEditorUrl("Interaction",rangeBean.getInteraction_ac());
+                String[] rowValues = new String[10];
+                rowValues[0] ="<a href="+ editorUrl + ">"+ rangeBean.getInteraction_ac() + "</a>";
+                rowValues[1] = rangeBean.getInteractor_ac();
+                rowValues[2] = rangeBean.getFeature_ac(); // "" + date;
+                rowValues[3] = String.valueOf(range.getFromIntervalEnd());
+                rowValues[4] = String.valueOf(range.getToIntervalStart());
+                rowValues[5] = String.valueOf((range.getToIntervalStart()-range.getFromIntervalEnd()));
+                rowValues[6] = rangeBean.getAc();
+                rowValues[7] = rangeBean.getShortlabel();
+                rowValues[8] = "" + date;
+                rowValues[9] =  user;
+                userMessageReport =  formatRow("html",rowValues,"values","userReport",false);
+                adminMessageReport = formatRow("html",rowValues,"values","adminReport",false);
+
             } catch (IntactException e) {
                 e.printStackTrace();
             }
@@ -251,105 +231,52 @@ public class MessageSender {
         }else if(intactBean instanceof AnnotatedBean){
             AnnotatedBean annotatedBean = (AnnotatedBean) intactBean;
 
+            editorUrl = editorUrlBuilder.getEditorUrl(annotatedBean);
+            String[] rowValues = new String[4];
+            rowValues[0] ="<a href="+ editorUrl + ">"+ annotatedBean.getAc() + "</a>";
+            rowValues[1] =annotatedBean.getShortlabel();
+            rowValues[2] = "" + date;
+            rowValues[3] = user;
 
-            userMessageReport = "AC: " + annotatedBean.getAc() +
-                    "\t Shortlabel: " + annotatedBean.getShortlabel() +
-                    "\t When: " + date;
-
-            adminMessageReport = "AC: " + annotatedBean.getAc() +
-                    "\t Shortlabel: " + annotatedBean.getShortlabel() +
-                    "\t User: " + user +
-                    "\t When: " + date;
+            userMessageReport =  formatRow("html",rowValues,"values","userReport",false);
+            adminMessageReport = formatRow("html",rowValues,"values","adminReport",false);
 
         }else if(intactBean instanceof XrefBean ){
+            //XREF_WITH_NON_VALID_PRIMARY_ID
             XrefBean xrefBean = (XrefBean) intactBean;
-            userMessageReport = "AC: " + xrefBean.getAc() +
-                    "\t PrimaryId: " + xrefBean.getPrimaryid() +
-                    "\t Database_ac: " + xrefBean.getDatabase_ac()+
-                    "\t When: " + date;
-            adminMessageReport = "AC: " + xrefBean.getAc() +
-                    "\t PrimaryId: " + xrefBean.getPrimaryid() +
-                    "\t Database_ac: " + xrefBean.getDatabase_ac()+
-                    "\t User: " + user +
-                    "\t When: " + date;
-        }
-        /*else if(intactBean instanceof ExperimentBean){
-        ExperimentBean experimentBean = (ExperimentBean) intactBean;
-
-
-        userMessageReport = "AC: " + experimentBean.getAc() +
-        "\t Shortlabel: " + experimentBean.getShortlabel() +
-        "\t When: " + date;
-        adminMessageReport = "AC: " + experimentBean.getAc() +
-        "\t Shortlabel: " + experimentBean.getShortlabel() +
-        "\t User: " + user +
-        "\t When: " + date;
-
-        }else if (intactBean instanceof BioSourceBean){
-        BioSourceBean bioSourceBean = (BioSourceBean) intactBean;
-
-        userMessageReport = "AC: " + bioSourceBean.getAc() +
-        "\t Shortlabel: " + bioSourceBean.getShortlabel() +
-        "\t When: " + date;
-        adminMessageReport = "AC: " + bioSourceBean.getAc() +
-        "\t Shortlabel: " + bioSourceBean.getShortlabel() +
-        "\t User: " + user +
-        "\t When: " + date;
-
-        }*/
-
-
-        if ( user != null && !( user.trim().length() == 0 ) /*&& false==ReportTopic.EXPERIMENT_NOT_ACCEPTED_NOT_TO_BE_REVIEWED.equals(topic)*/) {
-
-            // add new message to the user
-
-            Map userReport = (Map) allUsersReport.get( user );
-            if ( userReport == null ) {
-                userReport = new HashMap();
+            IntactBean xreferencedBean = SanityCheckerHelper.getXreferencedObject(xrefBean);
+             String[] rowValues = new String[8];
+            if(xreferencedBean instanceof FeatureBean){
+                FeatureBean featureBean = (FeatureBean) xreferencedBean;
+                InteractorBean relatedInteraction = getFeaturedInteraction(featureBean.getAc());
+                editorUrl = editorUrlBuilder.getEditorUrl(relatedInteraction);
+                  //still to test
+                rowValues[0] ="<a href="+ editorUrl + ">"+ relatedInteraction.getAc() + "</a>";
+                rowValues[1] =featureBean.getAc() ;
+                rowValues[2]="";
             }
-
-            Collection topicMessages = (Collection) userReport.get( topic );
-            if ( topicMessages == null ) {
-                topicMessages = new ArrayList();
-
-                // add the messages to the topic
-                if(false==ReportTopic.EXPERIMENT_NOT_ACCEPTED_NOT_TO_BE_REVIEWED.equals(topic)){
-                    userReport.put( topic, topicMessages );
-                }
+            else{
+                String type = getTypeFromIntactBean(xreferencedBean);
+                editorUrl = editorUrlBuilder.getEditorUrl(xreferencedBean);
+                //tested
+                //!!! put in an extra column with type?!
+                rowValues[0] ="<a href="+ editorUrl + ">"+ xreferencedBean.getAc() + "</a>";
+                rowValues[1] ="";
+                rowValues[2] = getTypeFromIntactBean(xreferencedBean);
             }
-
-            // add the message to the topic
-            topicMessages.add( userMessageReport );
-
-            // add the user's messages
-            if(false==ReportTopic.EXPERIMENT_NOT_ACCEPTED_NOT_TO_BE_REVIEWED.equals(topic)){
-                allUsersReport.put( user, userReport );
-            }
-        } else {
-
-            System.err.println( "No user found for object: " + userMessageReport );
+            rowValues[3] =xrefBean.getAc() ;
+            rowValues[4] =xrefBean.getPrimaryid();
+            rowValues[5] =xrefBean.getDatabase_ac();
+            rowValues[6] ="" + date;
+            rowValues[7] =  user;
+            userMessageReport =  formatRow("html",rowValues,"values","userReport",false);
+            adminMessageReport = formatRow("html",rowValues,"values","adminReport",false);
+            addUserMessage(topic, user, userMessageReport, adminMessageReport);
+            addAdminMessage(topic, adminMessageReport);
         }
 
 
-        /*  // build admin admin report
-        String adminMessageReport = "AC: " + obj.getAc() +
-        "\t Shortlabel: " + obj.getShortLabel() +
-        "\t User: " + user +
-        "\t When: " + date;
-        */
-        Collection topicMessages = (Collection) adminReport.get( topic );
-        if ( topicMessages == null ) {
-            topicMessages = new ArrayList();
-
-            // add the messages to the topic
-            adminReport.put( topic, topicMessages );
-        }
-
-        // add the message to the topic
-        topicMessages.add( adminMessageReport );
     }
-
-
 
 
      public void addMessage( ReportTopic topic, IntactBean intactBean, String message ) throws SQLException {
@@ -365,68 +292,43 @@ public class MessageSender {
         if(intactBean instanceof AnnotatedBean){
             AnnotatedBean annotatedBean = (AnnotatedBean) intactBean;
 
-            userMessageReport = "Interaction AC: " + annotatedBean.getAc() +
-                    "\t When: " + date +
-                    "\n " + message + "\n";
+            String editorUrl = editorUrlBuilder.getEditorUrl(annotatedBean);
+                 //still to test
+                String[] rowValues = new String[4];
+                rowValues[0] ="<a href="+ editorUrl + ">"+ annotatedBean.getAc() + "</a>";
+                rowValues[1] = message;
+                rowValues[2] = "" + date;
+                rowValues[3] = user;
 
-            adminMessageReport = "Interaction AC: " + annotatedBean.getAc() +
-                    "\t User: " + user +
-                    "\t When: " + date +
-                    "\n" + message + "\n";
+                userMessageReport =  formatRow("html",rowValues,"values","userReport",false);
+                adminMessageReport = formatRow("html",rowValues,"values","adminReport",false);
+
+              //use for formatting header
+//            adminMessageReport = "Interaction AC: " + annotatedBean.getAc() +
+//                    "\n" + message +
+//                    "\t When: " +  +
+//                    "\t User: " +  + "\n";
 
 
         }
-
-
-        if ( user != null && !( user.trim().length() == 0 ) ) {
-
-            // add new message to the user
-            Map userReport = (Map) allUsersReport.get( user );
-            if ( userReport == null ) {
-                userReport = new HashMap();
-            }
-
-            Collection topicMessages = (Collection) userReport.get( topic );
-            if ( topicMessages == null ) {
-                topicMessages = new ArrayList();
-
-                // add the messages to the topic
-                userReport.put( topic, topicMessages );
-            }
-
-            // add the message to the topic
-            topicMessages.add( userMessageReport );
-
-            // add the user's messages
-            allUsersReport.put( user, userReport );
-        } else {
-
-            System.err.println( "No user found for object: " + userMessageReport );
-        }
-
-
-        /*  // build admin admin report
-        String adminMessageReport = "AC: " + obj.getAc() +
-        "\t Shortlabel: " + obj.getShortLabel() +
-        "\t User: " + user +
-        "\t When: " + date;
-        */
-        Collection topicMessages = (Collection) adminReport.get( topic );
-        if ( topicMessages == null ) {
-            topicMessages = new ArrayList();
-
-            // add the messages to the topic
-            adminReport.put( topic, topicMessages );
-        }
-
-        // add the message to the topic
-        topicMessages.add( adminMessageReport );
+          addUserMessage(topic, user, userMessageReport, adminMessageReport);
+          addAdminMessage(topic, adminMessageReport);
     }
 
 
     /**
-     * Helper method to obtain userstamp info from a given record, and then if it has any to append the details to a
-     * result buffer.
+     *
+     * This method is used to build the message error corresponding to the ReportTopic DUPLICATED_PROTEIN. The message
+     * will look like that :
+     *
+     *              Those proteins are duplicated :
+     *              Protein List :
+     *                  AC:EBI-1234      Shortlabel:foo      When:foo
+     *                  AC:EBI-1234      Shortlabel:foo      When:foo
+     *                  AC:EBI-1234      Shortlabel:foo      When:foo
+     *                  AC:EBI-1234      Shortlabel:foo      When:foo
+     *
+     * Therefore, each line should be linked to a Protein Editor page.
      *
      * @param topic the type of error we have dicovered for the given AnnotatedObject.
      * @param intactBeans   The Intact object that user info is required for.
@@ -434,315 +336,133 @@ public class MessageSender {
      * @throws java.sql.SQLException thrown if there were DB problems
      */
     public void addMessage( ReportTopic topic, List intactBeans ) throws SQLException {
-
-        String userMessageReport="Protein List : \n";
-        String adminMessageReport="Protein List : \n";
+        //DUPLICATED_PROTEIN
+        StringBuffer sbUserMessageReport = new StringBuffer();
+        StringBuffer sbAdminMessageReport = new StringBuffer();
+//        sbUserMessageReport.append("Protein List :").append(NEW_LINE);
+//        sbAdminMessageReport.append("Protein List :").append(NEW_LINE);
 
         List users = new ArrayList();
-
+        String[] rowValues = new String[4];
         for (int i = 0; i < intactBeans.size(); i++) {
             IntactBean intactBean =  (IntactBean) intactBeans.get(i);
 
-
             // Build users report
-
             if(intactBean instanceof InteractorBean){
                 InteractorBean interactorBean = (InteractorBean) intactBean;
-
                 String user = intactBean.getUserstamp();
                 Timestamp date = intactBean.getTimestamp();
-
                 if(!users.contains(user)){
                     users.add(user);
                 }
 
-                userMessageReport = userMessageReport +
-                        "\t AC: " + interactorBean.getAc() +
-                        "\t Shortlabel: " + interactorBean.getShortlabel() +
-                        "\t When: " + date + "\n";
-                adminMessageReport =  adminMessageReport +
-                        "\t AC: " + interactorBean.getAc() +
-                        "\t Shortlabel: " + interactorBean.getShortlabel() +
-                        "\t User: " + user +
-                        "\t When: " + date + "\n";
+                String editorUrl= editorUrlBuilder.getEditorUrl(interactorBean);
+                rowValues[0] ="<a href="+ editorUrl + ">"+ interactorBean.getAc() + "</a>";
+                rowValues[1] = interactorBean.getShortlabel();
+                rowValues[2] = "" + date;
+                rowValues[3] = user;
 
+                sbUserMessageReport.append(formatRow("html",rowValues,"values","userReport",false));
+                sbAdminMessageReport.append(formatRow("html",rowValues,"values","adminReport",false));
             }
-
         }
-
-
-
+        //add empty row to seperate the different blocks of proteins which have duplicated reference to UnitProt
+        for (int i=0; i < 4; i++)  {
+            rowValues[i]="";
+        }
+        sbUserMessageReport.append(formatRow("html",rowValues,"values","userReport",false));
+        sbAdminMessageReport.append(formatRow("html",rowValues,"values","adminReport",false));
         for (int i = 0; i < users.size(); i++) {
             String user = (String) users.get(i);
-
-            if ( user != null && !( user.trim().length() == 0 ) ) {
-
-                // add new message to the user
-                Map userReport = (Map) allUsersReport.get( user );
-                if ( userReport == null ) {
-                    userReport = new HashMap();
-                }
-
-                Collection topicMessages = (Collection) userReport.get( topic );
-                if ( topicMessages == null ) {
-                    topicMessages = new ArrayList();
-
-                    // add the messages to the topic
-                    userReport.put( topic, topicMessages );
-                }
-
-                // add the message to the topic
-                topicMessages.add( userMessageReport );
-
-                // add the user's messages
-                allUsersReport.put( user, userReport );
-            } else {
-
-                System.err.println( "No user found for object: " + userMessageReport );
-            }
+             addUserMessage(topic, user, sbUserMessageReport.toString(), sbAdminMessageReport.toString());
         }
-        /*  // build admin admin report
-        String adminMessageReport = "AC: " + obj.getAc() +
-        "\t Shortlabel: " + obj.getShortLabel() +
-        "\t User: " + user +
-        "\t When: " + date;
-        */
-        Collection topicMessages = (Collection) adminReport.get( topic );
-        if ( topicMessages == null ) {
-            topicMessages = new ArrayList();
-
-            // add the messages to the topic
-            adminReport.put( topic, topicMessages );
-        }
-
-        // add the message to the topic
-        topicMessages.add( adminMessageReport );
+         addAdminMessage(topic, sbAdminMessageReport.toString());
     }
 
-    public void addMessage( ReportTopic topic, AnnotationBean annotationBean, AnnotatedBean annotatedBean, String annotatedType, String topicShortlabel){
+    /**
+     * @param topic
+     * @param annotationBean
+     * @param topicShortlabel
+     */
+    public void addMessage( ReportTopic topic, AnnotationBean annotationBean,  String topicShortlabel) throws SQLException, IntactException {//( ReportTopic topic, AnnotationBean annotationBean, AnnotatedBean annotatedBean, String annotatedType, String topicShortlabel) throws SQLException, IntactException {
+       //TOPICAC_NOT_VALID
         String user = annotationBean.getUserstamp();
         Timestamp date = annotationBean.getTimestamp();
 
+        AnnotatedBean annotatedBean = SanityCheckerHelper.getAnnotatedBeanFromAnnotation(annotationBean.getAc());
 
+        String editorUrl = null;//editorUrlBuilder.getEditorUrl(annotatedBean);
+        String annotatedBeanType = getTypeFromIntactBean(annotatedBean);
         String userMessageReport="";
         String adminMessageReport="";
+        String[] rowValues = new String[8];
         // Build users report
-
-        //if(annotatedBean instanceof AnnotatedBean){
-        //    AnnotatedBean annotatedBean = (AnnotatedBean) intactBean;
-
-            //userMessageReport =
-            userMessageReport = "Annotation AC: " + annotationBean.getAc() +
-                    "\t Topic Shortlabel: " + topicShortlabel+//annotationBean.getTopic_ac() +
-                    "\t When: " + date +
-                    "\n" + annotatedType + "Ac: " + annotatedBean.getAc() +
-                    "\t Shortlabel: " + annotatedBean.getShortlabel()+"\n";
-
-            adminMessageReport = "Annotation AC: " + annotationBean.getAc() +
-                    "\t TopicAc: " + topicShortlabel +//annotationBean.getTopic_ac() +
-                    "\t When: " + date +
-                    "\t User: " + user +
-                    "\n" + annotatedType + "Ac: " + annotatedBean.getAc() +
-                    "\t Shortlabel: " + annotatedBean.getShortlabel()+"\n";
-
-        /*}else if(intactBean instanceof XrefBean ){
-            XrefBean xrefBean = (XrefBean) intactBean;
-            userMessageReport = "AC: " + xrefBean.getAc() +
-                    "\t PrimaryId: " + xrefBean.getPrimaryid() +
-                    "\t Database_ac: " + xrefBean.getDatabase_ac()+
-                    "\t When: " + date;
-            adminMessageReport = "AC: " + xrefBean.getAc() +
-                    "\t PrimaryId: " + xrefBean.getPrimaryid() +
-                    "\t Database_ac: " + xrefBean.getDatabase_ac()+
-                    "\t User: " + user +
-                    "\t When: " + date;
-        }*/
-        /*else if(intactBean instanceof ExperimentBean){
-        ExperimentBean experimentBean = (ExperimentBean) intactBean;
-
-
-        userMessageReport = "AC: " + experimentBean.getAc() +
-        "\t Shortlabel: " + experimentBean.getShortlabel() +
-        "\t When: " + date;
-        adminMessageReport = "AC: " + experimentBean.getAc() +
-        "\t Shortlabel: " + experimentBean.getShortlabel() +
-        "\t User: " + user +
-        "\t When: " + date;
-
-        }else if (intactBean instanceof BioSourceBean){
-        BioSourceBean bioSourceBean = (BioSourceBean) intactBean;
-
-        userMessageReport = "AC: " + bioSourceBean.getAc() +
-        "\t Shortlabel: " + bioSourceBean.getShortlabel() +
-        "\t When: " + date;
-        adminMessageReport = "AC: " + bioSourceBean.getAc() +
-        "\t Shortlabel: " + bioSourceBean.getShortlabel() +
-        "\t User: " + user +
-        "\t When: " + date;
-
-        }*/
-
-
-        if ( user != null && !( user.trim().length() == 0 ) ) {
-
-            // add new message to the user
-            Map userReport = (Map) allUsersReport.get( user );
-            if ( userReport == null ) {
-                userReport = new HashMap();
-            }
-
-            Collection topicMessages = (Collection) userReport.get( topic );
-            if ( topicMessages == null ) {
-                topicMessages = new ArrayList();
-
-                // add the messages to the topic
-                userReport.put( topic, topicMessages );
-            }
-
-            // add the message to the topic
-            topicMessages.add( userMessageReport );
-
-            // add the user's messages
-            allUsersReport.put( user, userReport );
+        if(annotatedBean instanceof FeatureBean){
+            FeatureBean featureBean = (FeatureBean) annotatedBean;
+            InteractorBean interaction = getFeaturedInteraction(featureBean.getAc());
+            editorUrl = editorUrlBuilder.getEditorUrl(interaction);
+            //still to test
+            rowValues[0] = featureBean.getAc();
+            rowValues[1] =annotatedBeanType;
+            rowValues[2] ="<a href="+ editorUrl + ">"+ interaction.getAc() + "</a>";
         } else {
-
-            System.err.println( "No user found for object: " + userMessageReport );
+            editorUrl = editorUrlBuilder.getEditorUrl(annotatedBean);
+            rowValues[0] ="<a href="+ editorUrl + ">"+ annotatedBean.getAc() + "</a>";
+            rowValues[1] =annotatedBeanType;
+            rowValues[2] = "";
         }
+        rowValues[3] =annotationBean.getAc();
+        rowValues[4] =topicShortlabel;
+        rowValues[5] =annotatedBean.getShortlabel();
+        rowValues[6] ="" +  date;
+        rowValues[7] =user;
 
-
-        /*  // build admin admin report
-        String adminMessageReport = "AC: " + obj.getAc() +
-        "\t Shortlabel: " + obj.getShortLabel() +
-        "\t User: " + user +
-        "\t When: " + date;
-        */
-        Collection topicMessages = (Collection) adminReport.get( topic );
-        if ( topicMessages == null ) {
-            topicMessages = new ArrayList();
-
-            // add the messages to the topic
-            adminReport.put( topic, topicMessages );
-        }
-
-        // add the message to the topic
-        topicMessages.add( adminMessageReport );
-
+        userMessageReport =  formatRow("html",rowValues,"values","userReport",false);
+        adminMessageReport = formatRow("html",rowValues,"values","adminReport",false);
+        addUserMessage(topic, user, userMessageReport, adminMessageReport);
+        addAdminMessage(topic, adminMessageReport);
     }
-    /**
-     *   This method create the adminReportMessage and the userReportMessage for a not valide URI.
-     *
-     * @param toAnnotBeans ResultSet containing the ac of object annotated by the annotation given in parameter
-     * @param annotationBean
-     */
-    public void annotationMessage (List toAnnotBeans, AnnotationBean annotationBean) throws IntactException, SQLException {
 
-        String annotatedBeanType = null;
-        String user = null;
-        Timestamp date = null;
+    public void addMessage (AnnotationBean annotationBean) throws IntactException, SQLException {
+
+        //URL_NOT_VALID
+
         String userMessageReport = null;
         String adminMessageReport = null;
-        IntactHelper helper = new IntactHelper();
-        SanityCheckerHelper sch = new SanityCheckerHelper(helper);
 
-        sch.addMapping(ExperimentBean.class,"SELECT ac, userstamp, timestamp, shortlabel " +
-                                            "FROM ia_experiment " +
-                                            "WHERE ac = ?");
-        sch.addMapping(BioSourceBean.class,"SELECT ac, userstamp, timestamp, shortlabel " +
-                                           "FROM ia_biosource " +
-                                           "WHERE ac = ?");
-        sch.addMapping(InteractorBean.class,"SELECT ac, userstamp, timestamp, shortlabel "+
-                                            "FROM ia_interactor " +
-                                            "where ac = ?");
-        sch.addMapping(FeatureBean.class,"SELECT ac, userstamp, timestamp, shortlabel " +
-                                         "FROM ia_feature " +
-                                         "WHERE ac = ?");
-        sch.addMapping(ControlledvocabBean.class,"SELECT ac, userstamp, timestamp, shortlabel "+
-                                                 "FROM ia_controlledvocab " +
-                                                 "WHERE ac = ?");
+        AnnotatedBean annotatedBean = SanityCheckerHelper.getAnnotatedBeanFromAnnotation(annotationBean.getAc());
+        String annotatedBeanType = getTypeFromIntactBean(annotatedBean);
 
-        //for (int i = 0; i < toAnnotBeans.size(); i++) {
-        if(!toAnnotBeans.isEmpty()){
-            IntactBean intactBean =  (IntactBean) toAnnotBeans.get(0);
-            List annotatedBeans = new ArrayList();
-            if(intactBean instanceof Exp2AnnotBean){
-                annotatedBeans = sch.getBeans(ExperimentBean.class,((Exp2AnnotBean)intactBean).getExperiment_ac());
-                annotatedBeanType = "Experiment";
-            } else if (intactBean instanceof Bs2AnnotBean){
-                annotatedBeans = sch.getBeans(BioSourceBean.class,((Bs2AnnotBean)intactBean).getBiosource_ac());
-                annotatedBeanType = "Biosource" ;
-            } else if (intactBean instanceof Int2AnnotBean){
-                annotatedBeans = sch.getBeans(InteractorBean.class,((Int2AnnotBean)intactBean).getInteractor_ac());
-                annotatedBeanType = "Interactor";
-            } else if (intactBean instanceof Feature2AnnotBean){
-                annotatedBeans = sch.getBeans(FeatureBean.class,((Feature2AnnotBean)intactBean).getFeature_ac());
-                annotatedBeanType = "Feature";
-            } else if (intactBean instanceof CvObject2AnnotBean){
-                annotatedBeans = sch.getBeans(ControlledvocabBean.class,((CvObject2AnnotBean)intactBean).getCvobject_ac());
-                annotatedBeanType = "Controlledvocab";
-            }
+        String user = annotatedBean.getUserstamp();
+        Timestamp date = annotatedBean.getTimestamp();
 
-            //for (int j = 0; j < annotatedBeans.size(); j++) {
-            if(!annotatedBeans.isEmpty()){
-                AnnotatedBean annotatedBean =  (AnnotatedBean) annotatedBeans.get(0);
-
-                user = annotatedBean.getUserstamp();
-                date = annotatedBean.getTimestamp();
-
-                userMessageReport =     "Annotation Description (URI): " + annotationBean.getDescription() +
-                        "\t Annotation AC: " + annotationBean.getAc()+
-                        "\t This uri is used to annotate the " + annotatedBeanType + " with ac = " + annotatedBean.getAc() +
-                        "\t Date: " + date +
-                        "\n";
-
-                adminMessageReport =     "Annotation Description (URI): " + annotationBean.getDescription()+
-                        "\t Annotation AC: " + annotationBean.getAc()+
-                        "\t This uri is used to annotate the " + annotatedBeanType + " with ac = " + annotatedBean.getAc() +
-                        "\t User: " + user +
-                        "\t Date: " + date +
-                        "\n";
-                if ( user != null && !( user.trim().length() == 0 ) ) {
-
-                    // add new message to the user
-                    Map userReport = (Map) allUsersReport.get( user );
-                    if ( userReport == null ) {
-                        userReport = new HashMap();
-                    }
-
-                    Collection topicMessages = (Collection) userReport.get( ReportTopic.URL_NOT_VALID );
-                    if ( topicMessages == null ) {
-                        topicMessages = new ArrayList();
-
-                        // add the messages to the topic
-                        userReport.put( ReportTopic.URL_NOT_VALID, topicMessages );
-                    }
-
-                    // add the message to the topic
-                    topicMessages.add( userMessageReport );
-
-                    // add the user's messages
-                    allUsersReport.put( user, userReport );
-                } else {
-                    System.err.println( "No user found for object: " + userMessageReport );
-                }
-
-
-                Collection topicMessages = (Collection) adminReport.get( ReportTopic.URL_NOT_VALID );
-                if ( topicMessages == null ) {
-                    topicMessages = new ArrayList();
-
-                    // add the messages to the topic
-                    adminReport.put( ReportTopic.URL_NOT_VALID, topicMessages );
-                }
-
-                // add the message to the topic
-                topicMessages.add( adminMessageReport );
-            }
+        String[] rowValues = new String[7];
+        if(annotatedBean instanceof FeatureBean){
+            FeatureBean featureBean = (FeatureBean) annotatedBean;
+            InteractorBean interaction = getFeaturedInteraction(featureBean.getAc());
+            //still to test
+            String editorUrl=editorUrlBuilder.getEditorUrl(interaction);
+            rowValues[0] = featureBean.getAc();
+            rowValues[1] = annotatedBeanType;
+            rowValues[2] ="<a href="+ editorUrl + ">"+  interaction.getAc() + "</a>";
+        }else{
+            //still to test
+            String editorUrl=editorUrlBuilder.getEditorUrl(annotatedBean);
+            rowValues[0] ="<a href="+ editorUrl + ">"+ annotatedBean.getAc() + "</a>";
+            rowValues[1] = annotatedBeanType;
+            rowValues[2] = "";
         }
+        rowValues[3] = annotationBean.getDescription();
+        rowValues[4] = annotationBean.getAc();
+        rowValues[5] = "" + date;
+        rowValues[6] = user;
 
+        userMessageReport =  formatRow("html",rowValues,"values","userReport",false);
+        adminMessageReport = formatRow("html",rowValues,"values","adminReport",false);
 
+         addUserMessage(ReportTopic.URL_NOT_VALID, user, userMessageReport, adminMessageReport);
+         addAdminMessage(ReportTopic.URL_NOT_VALID, adminMessageReport);
     }
-
-
 
 
     /**
@@ -766,17 +486,21 @@ public class MessageSender {
                 ReportTopic topic = (ReportTopic) iterator1.next();
 
                 fullReport.append( topic.getUnderlinedTitle() ).append( NEW_LINE );
+                fullReport.append("<table>");
+                String header = getHeader(topic,"userReport");
+                fullReport.append( header );
                 Collection messages = (Collection) reportMessages.get( topic );
+
 
                 // write individual messages of that topic.
                 for ( Iterator iterator2 = messages.iterator(); iterator2.hasNext(); ) {
                     String message = (String) iterator2.next();
 
-                    fullReport.append( message ).append( NEW_LINE );
+                    fullReport.append( message );
                     errorCount++;
                 } // messages in the topic
 
-                fullReport.append( NEW_LINE );
+                fullReport.append("</table>").append(NEW_LINE);
             } // topics
 
             // don't send mail to curator if no errors
@@ -847,13 +571,16 @@ public class MessageSender {
 
                 Collection messages = (Collection) adminReport.get( topic );
                 fullReport.append( topic.getUnderlinedTitle() ).append( NEW_LINE );
+                fullReport.append("<table>");
+                String header = getHeader(topic,"adminReport");
+                fullReport.append( header );
                 for ( Iterator iterator1 = messages.iterator(); iterator1.hasNext(); ) {
                     String message = (String) iterator1.next();
-                    fullReport.append( message ).append( NEW_LINE );
+                    fullReport.append( message );
                     errorCount++;
                 } // messages
 
-                fullReport.append( NEW_LINE );
+                fullReport.append("</table>").append(NEW_LINE);
             } // topics
 
         } else {
@@ -934,6 +661,269 @@ public class MessageSender {
                 }
             }
         }
+    }
+
+
+    /**
+     * Given an IntactBean in parameter it will return a string corresponding to the type of the bean :
+     * If the bean is an ExperimentBean it will return the string "Experiment".
+     * Here is the mapping of done :
+     *
+     *                            I N T A C T B E A N    C L A S S    ==>   T Y P E
+     *
+     *      uk.ac.ebi.intact.util.sanityChecker.model.ExperimentBean  ==> "Experiment"
+     *      uk.ac.ebi.intact.util.sanityChecker.model.InteractorBean  ==> "Protein" (if objclass is equal to uk.ac.ebi.intact.model.Protein)
+     *                                                                ==> "Interaction" (if objclass is equal to uk.ac.ebi.intact.model.Interaction)
+     *      uk.ac.ebi.intact.util.sanityChecker.model.BioSource       ==> "BioSource"
+     *      uk.ac.ebi.intact.util.sanityChecker.model.Feature         ==> "Feature"
+     *      uk.ac.ebi.intact.util.sanityChecker.model.Controlledvocab ==> "CvTopic" (if objclass is equal to uk.ac.ebi.intact.model.CvTopic)
+     *                                                                ==> "CvCellType" (if objclass is equal to uk.ac.ebi.intact.model.CvCellType
+     *                                                                ==> "CvDatabase" (if objclass is equal to uk.ac.ebi.intact.model.CvCellType
+     *                                                                ==> "CvAliasType" (if objclass is equal to uk.ac.ebi.intact.model.CvCellType
+     *                                                                ==> "CvTissue" (if objclass is equal to uk.ac.ebi.intact.model.CvCellType
+     *                                                                ==> "CvFuzzyType" (if objclass is equal to uk.ac.ebi.intact.model.CvCellType
+     *                                                                ==> "CvXrefQualifier" (if objclass is equal to uk.ac.ebi.intact.model.CvCellType
+     *
+     *      Protein
+     * @param intactBean
+     * @return type
+     */
+     public String getTypeFromIntactBean(IntactBean intactBean){
+
+        String type = new String();
+        int i_cor =0;
+
+        if(intactBean instanceof ExperimentBean){
+            type = "Experiment";
+        }
+        else if(intactBean instanceof InteractorBean){
+            InteractorBean interactorBean = (InteractorBean) intactBean;
+            String objclass = interactorBean.getObjclass();
+
+            if(ProteinImpl.class.getName().equals(objclass)){
+                type = "Protein";
+            }else if ( InteractionImpl.class.getName().equals(objclass)){
+                type = "Interaction";
+            }
+        }
+        else if ( intactBean instanceof BioSourceBean ){
+            type = "BioSource";
+        }
+        else if ( intactBean instanceof ControlledvocabBean ){
+
+            ControlledvocabBean cvBean = (ControlledvocabBean) intactBean;
+
+            String objclass = cvBean.getObjclass();
+
+            if(CvTopic.class.getName().equals(objclass)){
+                type = "CvTopic";
+            }
+            else if(CvAliasType.class.getName().equals(objclass)){
+                type = "CvAliasType";
+            }
+            else if(CvCellType.class.getName().equals(objclass)){
+                type = "CvCellTYpe";
+            }
+            else if(CvComponentRole.class.getName().equals(objclass)){
+                type = "CvComponentRole";
+            }
+            else if(CvDatabase.class.getName().equals(objclass)){
+                type = "CvDatabase";
+            }
+            else if(CvFuzzyType.class.getName().equals(objclass)){
+                type = "CvFuzzyType";
+            }
+            else if(CvTissue.class.getName().equals(objclass)){
+                type = "CvTissue";
+            }
+            else if(CvXrefQualifier.class.getName().equals(objclass)){
+                type = "CvXrefQualifier";
+            }
+        }
+
+        return type;
+    }
+
+    public void addUserMessage (ReportTopic topic, String user, String userMessageReport, String adminMessageReport){
+        if ( user != null && !( user.trim().length() == 0 ) ) {
+
+            // add new message to the user
+            Map userReport = (Map) allUsersReport.get( user );
+            if ( userReport == null ) {
+                userReport = new HashMap();
+            }
+
+            Collection topicMessages = (Collection) userReport.get( topic );
+            if ( topicMessages == null ) {
+                topicMessages = new ArrayList();
+
+                // add the messages to the topic
+                userReport.put( topic, topicMessages );
+            }
+
+            // add the message to the topic
+            topicMessages.add( userMessageReport );
+
+            // add the user's messages
+            allUsersReport.put( user, userReport );
+
+        } else {
+
+            System.err.println( "No user found for object: " + userMessageReport );
+        }
+    }
+
+
+    public void addAdminMessage (ReportTopic topic, String adminMessageReport){
+        Collection topicMessages = (Collection) adminReport.get( topic );
+        if ( topicMessages == null ) {
+            topicMessages = new ArrayList();
+
+            // add the messages to the topic
+            adminReport.put( topic, topicMessages );
+        }
+
+        // add the message to the topic
+        topicMessages.add( adminMessageReport );
+
+    }
+
+    /**
+     * Given a featureAc it returns an InteractorBean representing the Interaction where this Feature can be found.
+     * @param featureAc
+     * @return interactorBean
+     * @throws IntactException
+     * @throws SQLException
+     */
+
+    public InteractorBean getFeaturedInteraction (String featureAc) throws IntactException, SQLException {
+         InteractorBean interactionBean = null;
+
+         IntactHelper intactHelper = new IntactHelper();
+         SanityCheckerHelper sch = new SanityCheckerHelper(intactHelper);
+
+         sch.addMapping(Interactor.class,"select i.ac, i.objclass, i.userstamp, i.timestamp, i.fullname, i.shortlabel "+
+                                         "from ia_interactor i, ia_component c, ia_feature f "+
+                                         "where i.ac=c.interaction_ac and c.ac=f.component_ac and f.ac=?");
+
+         List featuredInteractions = sch.getBeans(Interactor.class,featureAc);
+
+         interactionBean = (InteractorBean) featuredInteractions.get(0);
+
+         intactHelper.closeStore();
+
+         return interactionBean;
+     }
+
+        private String formatRow(String format, String[] rowValues, String rowType, String reportType, boolean italic){
+        String columnCode="";
+        if (rowType.equals("headers")) {
+            columnCode = "th";
+        }
+        else if (rowType.equals("values")){
+            columnCode = "td";
+        }
+
+        StringBuffer rowText = new StringBuffer();
+        if (format.equalsIgnoreCase("html"))  {
+            rowText.append("<tr>");
+
+            int numberOfField=0;
+            if (reportType.equals("userReport")) numberOfField=rowValues.length-1; //lastfield is filled with user
+            else if (reportType.equals("adminReport")) numberOfField=rowValues.length;
+            for (int i=0; i < numberOfField;i++) {
+               rowText.append("<" + columnCode + " align=\"left\">");
+               if (italic) rowText.append("<i>");
+               rowText.append(rowValues[i] + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp"); // put in spaces when ready: );
+               rowText.append("</"+ columnCode + ">");
+               if (italic) rowText.append("</i>");
+            }
+
+            rowText.append("</tr>");
+        }
+        return rowText.toString();
+    };
+
+    private String getHeader(ReportTopic topic, String reportType) {
+
+        String header="";
+            if (topic.equals(ReportTopic.RANGE_SEQUENCE_NOT_EQUAL_TO_PROTEIN_SEQ)) {
+//                String[] rowValues = new String[.];
+//                rowValues[0] ="";
+//                rowValues[1] ="";
+//                rowValues[2] ="";
+//                rowValues[3] ="";
+//                header = formatRow("html", rowValues, "headers");
+//               ;
+            }
+            else if (topic.equals(ReportTopic.RANGE_SEQUENCE_SAVED_BY_ADDING_THE_M)) {
+               ;
+            }
+            else if (topic.equals(ReportTopic.DELETION_INTERVAL_TO_LONG_TO_BE_CARACTERIZED_BY_DELETION_ANALYSIS_FEATURE_TYPE)){
+                String[] rowValues = new String[10];
+                rowValues[0] ="Interaction Ac";
+                rowValues[1] ="Interactor Ac";
+                rowValues[2] = "Feature Ac"; // "" + date;
+                rowValues[3] = "FromIntervalStart";
+                rowValues[4] = "ToIntervalEnd";
+                rowValues[5] = "Deletion Size";
+                rowValues[6] = "Range Ac";
+                rowValues[7] = "Shortlabel";
+                rowValues[8] = "When";
+                rowValues[9] = "User";
+                header = formatRow("html", rowValues, "headers",reportType,false);
+            }
+            else if (topic.equals(ReportTopic.URL_NOT_VALID)){
+                 // in case of feature it the extra column is filled
+                String[] rowValues = new String[7];
+                rowValues[0] ="AnnotatedBean Ac";
+                rowValues[1] = "AnnotatedBean Type";
+                rowValues[2] ="Interaction AC";  //only be filled in case of featureBean
+                rowValues[3] = "Annotation Description (URI)";
+                rowValues[4] = "Annotation AC";
+                rowValues[5] = "When";
+                rowValues[6] = "User";
+                header = formatRow("html", rowValues, "headers",reportType,false);
+            }
+             else if (topic.equals(ReportTopic.TOPICAC_NOT_VALID)){
+              String[] rowValues = new String[8];
+                rowValues[0] ="AnnotatedBean AC";
+                rowValues[1] ="AnnotatedBeanType";
+                rowValues[2] ="Interaction Ac";
+                rowValues[3] ="Annotation AC";
+                rowValues[4] ="TopicAc";
+                rowValues[5] ="Shortlabel";
+                rowValues[6] ="When";
+                rowValues[7] ="User";
+                header = formatRow("html", rowValues, "headers",reportType,false);
+            }
+            else if (topic.equals(ReportTopic.XREF_WITH_NON_VALID_PRIMARYID)){
+                String[] rowValues = new String[8];
+                rowValues[0] ="Interaction/type Ac";
+                rowValues[1] ="Feature/ Ref Ac";
+                rowValues[2] ="Type";
+                rowValues[3] ="Xref AC" ;
+                rowValues[4] ="PrimaryId";
+                rowValues[5] ="Database_ac";
+                rowValues[6] ="When";
+                rowValues[7] ="User";
+                header = formatRow("html", rowValues, "headers",reportType,false);
+            }
+            else {
+                String[] rowValues = new String[4];
+                rowValues[0] ="AC";
+                rowValues[1] ="Shortlabel";
+                rowValues[2] ="When";
+                rowValues[3] ="User";
+                header = formatRow("html", rowValues, "headers",reportType,false);
+            }
+
+//(topic.equals(ReportTopic.DUPLICATED_PROTEIN)) has default structure
+
+
+        //RANGE_SEQUENCE_SAVED_BY_SUPPRESSING_THE_M  out of order
+        //PROTEIN_SEQUENCE_AND_RANGE_SEQUENCE_NOT_EQUAL out of order
+        return header;
     }
 
 }
