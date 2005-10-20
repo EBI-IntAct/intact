@@ -499,7 +499,7 @@ public class
                         } else {
                             // neutral
                             if ( neutralCount == 1 ) {
-                                if ( neutralStoichiometry < 2 ) {
+                                if ( neutralStoichiometry < 1 ) {
                                     System.out.println("Interaction  " +interactionAc + "  with only one neutral");
                                     messageSender.addMessage( ReportTopic.INTERACTION_WITH_ONLY_ONE_NEUTRAL, interactionBean);//, editorUrlBuilder.getEditorUrl(interactionBean));
                                 }

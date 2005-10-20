@@ -71,7 +71,7 @@ public class ReportTopic {
         public static final ReportTopic INTERACTION_WITH_NO_PREY = new ReportTopic( "Interactions with no prey" );
         public static final ReportTopic INTERACTION_WITH_NO_ENZYME_TARGET = new ReportTopic( "Interactions with no enzymeTarget" );
         public static final ReportTopic INTERACTION_WITH_NO_ENZYME = new ReportTopic( "Interactions with no enzyme" );
-        public static final ReportTopic INTERACTION_WITH_ONLY_ONE_NEUTRAL = new ReportTopic( "Interactions with only one neutral component" );
+        public static final ReportTopic INTERACTION_WITH_ONLY_ONE_NEUTRAL = new ReportTopic( "Interactions with only one neutral component and stoichiometry 1" );
         public static final ReportTopic INTERACTION_WITH_PROTEIN_COUNT_LOWER_THAN_2 = new ReportTopic( "Interactions with less than 2 proteins (Role = complex)" );
         public static final ReportTopic INTERACTION_WITH_SELF_PROTEIN_AND_STOICHIOMETRY_LOWER_THAN_2 = new ReportTopic( "Interactions with protein having their role set to self and its stoichiometry lower than 2.0" );
         public static final ReportTopic INTERACTION_WITH_MORE_THAN_2_SELF_PROTEIN = new ReportTopic( "Interactions with more than one protein having their role set to self" );
