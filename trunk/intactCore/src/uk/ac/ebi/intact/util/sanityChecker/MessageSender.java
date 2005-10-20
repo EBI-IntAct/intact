@@ -230,14 +230,12 @@ public class MessageSender {
 
         }else if(intactBean instanceof AnnotatedBean){
             AnnotatedBean annotatedBean = (AnnotatedBean) intactBean;
-
             editorUrl = editorUrlBuilder.getEditorUrl(annotatedBean);
             String[] rowValues = new String[4];
             rowValues[0] ="<a href="+ editorUrl + ">"+ annotatedBean.getAc() + "</a>";
             rowValues[1] =annotatedBean.getShortlabel();
             rowValues[2] = "" + date;
             rowValues[3] = user;
-
             userMessageReport =  formatRow("html",rowValues,"values","userReport",false);
             adminMessageReport = formatRow("html",rowValues,"values","adminReport",false);
 
@@ -271,11 +269,9 @@ public class MessageSender {
             rowValues[7] =  user;
             userMessageReport =  formatRow("html",rowValues,"values","userReport",false);
             adminMessageReport = formatRow("html",rowValues,"values","adminReport",false);
-            addUserMessage(topic, user, userMessageReport, adminMessageReport);
-            addAdminMessage(topic, adminMessageReport);
         }
-
-
+        addUserMessage(topic, user, userMessageReport, adminMessageReport);
+        addAdminMessage(topic, adminMessageReport);
     }
 
 
