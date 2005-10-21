@@ -405,7 +405,7 @@ public class
      */
 
     public void checkInteractionsBaitAndPrey( List interactorBeans ) throws IntactException, SQLException {
-        System.out.println( "Checking on Interactions (rule 6) ..." );
+        //System.out.println( "Checking on Interactions (rule 6) ..." );
 
         for (int i = 0; i < interactorBeans.size(); i++) {
             InteractorBean interactionBean =  (InteractorBean) interactorBeans.get(i);
@@ -457,7 +457,7 @@ public class
                 switch ( categoryCount ) {
                     case 0:
                         // none of those categories
-                        System.out.println("Interaction " +interactionAc + " with no categories");
+                        //System.out.println("Interaction " +interactionAc + " with no categories");
                         messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_CATEGORIES, interactionBean);//, editorUrlBuilder.getEditorUrl(interactionBean));//, editorUrlBuilder.getEditorUrl(interationBean));
                         break;
 
@@ -466,32 +466,32 @@ public class
                         if ( baitPrey == 1 ) {
                             // bait-prey
                             if ( baitCount == 0 ) {
-                                System.out.println("Interaction " +interactionAc + "  with no bait");
+                                //System.out.println("Interaction " +interactionAc + "  with no bait");
                                 messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_BAIT, interactionBean);//, editorUrlBuilder.getEditorUrl(interactionBean) );
                             } else if ( preyCount == 0 ) {
-                                System.out.println("Interaction " +interactionAc + "  with no prey");
+                                //System.out.println("Interaction " +interactionAc + "  with no prey");
                                 messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_PREY, interactionBean);//, editorUrlBuilder.getEditorUrl(interactionBean) );
                             }
 
                         } else if ( enzymeTarget == 1 ) {
                             // enzyme - enzymeTarget
                             if ( enzymeCount == 0 ) {
-                                System.out.println("Interaction  " +interactionAc + " with no enzyme");
+                                //System.out.println("Interaction  " +interactionAc + " with no enzyme");
 
                                 messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_ENZYME, interactionBean);//, editorUrlBuilder.getEditorUrl(interactionBean));
                             } else if ( enzymeTargetCount == 0 ) {
-                                System.out.println("Interaction " +interactionAc + "  with no enzyme target");
+                                //System.out.println("Interaction " +interactionAc + "  with no enzyme target");
                                 messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_ENZYME_TARGET, interactionBean);//, editorUrlBuilder.getEditorUrl(interactionBean));
                             }
 
                         } else if ( self == 1 ) {
                             // it has to be > 1
                             if ( selfCount > 1 ) {
-                                System.out.println("Interaction " +interactionAc + "  with more then 2 self protein");
+                                //System.out.println("Interaction " +interactionAc + "  with more then 2 self protein");
                                 messageSender.addMessage( ReportTopic.INTERACTION_WITH_MORE_THAN_2_SELF_PROTEIN, interactionBean);//,editorUrlBuilder.getEditorUrl(interactionBean));
                             } else { // = 1
                                 if ( selfStoichiometry < 1F ) {
-                                    System.out.println("Interaction " +interactionAc + "  self protein and stoichiometry lower than 2");
+                                    //System.out.println("Interaction " +interactionAc + "  self protein and stoichiometry lower than 2");
                                     //  messageSender.addMessage( ReportTopic.INTERACTION_WITH_SELF_PROTEIN_AND_STOICHIOMETRY_LOWER_THAN_2, interactionBean);
                                 }
                             }
@@ -499,8 +499,8 @@ public class
                         } else {
                             // neutral
                             if ( neutralCount == 1 ) {
-                                if ( neutralStoichiometry < 1 ) {
-                                    System.out.println("Interaction  " +interactionAc + "  with only one neutral");
+                                if ( neutralStoichiometry == 1 ) {
+                                    //System.out.println("Interaction  " +interactionAc + "  with only one neutral");
                                     messageSender.addMessage( ReportTopic.INTERACTION_WITH_ONLY_ONE_NEUTRAL, interactionBean);//, editorUrlBuilder.getEditorUrl(interactionBean));
                                 }
                             }
@@ -509,7 +509,7 @@ public class
 
                     default:
                         // > 1 : mixed up categories !
-                        System.out.println("Interaction  " +interactionAc + "  with mixed component categories");
+                        //System.out.println("Interaction  " +interactionAc + "  with mixed component categories");
                         messageSender.addMessage( ReportTopic.INTERACTION_WITH_MIXED_COMPONENT_CATEGORIES, interactionBean);//, editorUrlBuilder.getEditorUrl(interactionBean));
                 } // switch
             }
@@ -533,7 +533,7 @@ public class
      * @throws SQLException
      */
     public void checkComponentOfInteractions( List interactorBeans ) throws SQLException, IntactException {
-        System.out.println( "Checking on Components (rules 5 and 6) ..." );
+        //System.out.println( "Checking on Components (rules 5 and 6) ..." );
 
         for (int i = 0; i < interactorBeans.size(); i++) {
             InteractorBean interactionBean =  (InteractorBean) interactorBeans.get(i);
@@ -545,7 +545,7 @@ public class
 
                 if ( componentBeans.size() == 0 ) {
                     //Interaction has no Components!! This is in fact test 5...
-                    System.out.println("Interaction has no component");
+                    //System.out.println("Interaction has no component");
                     messageSender.addMessage( ReportTopic.NO_PROTEIN_CHECK, interactionBean);//, editorUrlBuilder.getEditorUrl(interactionBean) );
                 }
             }
@@ -607,7 +607,7 @@ public class
      */
 
     public void checkInteractionsComplete(List interactorBeans) throws SQLException, IntactException {
-        System.out.println( "Checking on Interactions (rule 7) ..." );
+        //System.out.println( "Checking on Interactions (rule 7) ..." );
 
         for (int i = 0; i < interactorBeans.size(); i++) {
             InteractorBean interactionBean =  (InteractorBean) interactorBeans.get(i);
@@ -618,12 +618,12 @@ public class
                 //check 7
                 if ( sch.getBeans(Int2ExpBean.class,interactionAc).isEmpty() ) {
                     //record it.....
-                    System.out.println("Interaction "+interactionAc + " with no experiment");
+                    //System.out.println("Interaction "+interactionAc + " with no experiment");
                     messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_EXPERIMENT, interactionBean);//, editorUrlBuilder.getEditorUrl(interactionBean) );
                 }
                 //check 9
                 if (false == sch.getBeans(InteractorBean.class, interactionAc).isEmpty() ) {
-                    System.out.println("Interaction "+interactionAc + " has no interaction type");
+                    //System.out.println("Interaction "+interactionAc + " has no interaction type");
 
                     messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_CVINTERACTIONTYPE, interactionBean);//, editorUrlBuilder.getEditorUrl(interactionBean) );
                 }
@@ -694,9 +694,9 @@ public class
                 List xrefBeans = sch.getBeans(XrefBean.class,experimentBean.getAc());
                 for (int j = 0; j < xrefBeans.size(); j++) {
                     XrefBean xrefBean = (XrefBean) xrefBeans.get(j);
-                    System.out.println("xref cvDb = " + xrefBean.getDatabase_ac());
-                    System.out.println("xref qualifier = " + xrefBean.getQualifier_ac());
-                    System.out.println();
+                    //System.out.println("xref cvDb = " + xrefBean.getDatabase_ac());
+                    //System.out.println("xref qualifier = " + xrefBean.getQualifier_ac());
+                    //System.out.println();
 
                     if ( pubmedDatabaseCvBean.getAc().equals( xrefBean.getDatabase_ac() ) ) {
                         pubmedCount++;
@@ -765,7 +765,7 @@ public class
             InteractorBean interactorBean =  (InteractorBean) interactorBeans.get(i);
             if(bioSourceAc.contains(interactorBean.getBiosource_ac())){
                 duplicatedInteractorBeans.add(interactorBean);
-                System.out.println("Duplicated prot, interactor_ac = " + interactorBean.getAc());
+                //System.out.println("Duplicated prot, interactor_ac = " + interactorBean.getAc());
             }else{
                 bioSourceAc.add(interactorBean.getBiosource_ac());
             }
@@ -949,7 +949,7 @@ public class
      */
     public void checkNewt(List bioSourceBeans) throws IntactException, SQLException {
 
-        System.out.println("Checking bioSource (existing newt identity xref) :");
+        //System.out.println("Checking bioSource (existing newt identity xref) :");
 
         for (int i = 0; i < bioSourceBeans.size(); i++) {
             boolean hasNewtXref = false;
@@ -1170,12 +1170,12 @@ public class
             IntactHelper helperBis = new IntactHelper();
 
          Range range = (Range) helperBis.getObjectByAc(Range.class,rangeBean.getAc());
-          System.out.println("\n------ Range"+range.getSequence());
+         // System.out.println("\n------ Range"+range.getSequence());
          if(range.getSequence()==null){
-                        System.out.println("METHOD");
-                        System.out.println("Range ac = "+ rangeBean.getAc()+" was null from the beginning");
-                        System.out.println("range Bean ac "+rangeBean.getAc());
-                        System.out.println("&&&&&&&&&&");
+//                        System.out.println("METHOD");
+//                        System.out.println("Range ac = "+ rangeBean.getAc()+" was null from the beginning");
+//                        System.out.println("range Bean ac "+rangeBean.getAc());
+//                        System.out.println("&&&&&&&&&&");
 
                     }
         if(protSeq!=null){
@@ -1190,28 +1190,28 @@ public class
                 if(protSeq.length()<100){
                     rangeSeq="M"+protSeq;
                     if(rangeSeq.equals(rangeSeqStored)){
-                        System.out.println("1");
-                        System.out.println("I'm updating range : "+rangeBean.getAc());
-                        System.out.println("previous seq "+range.getSequence());
-                        System.out.println("replace by   "+ normalRangeSeq);
+//                        System.out.println("1");
+//                        System.out.println("I'm updating range : "+rangeBean.getAc());
+//                        System.out.println("previous seq "+range.getSequence());
+//                        System.out.println("replace by   "+ normalRangeSeq);
                         range.setSequence(protSeq);//normalRangeSeq);
                         //helper.update(range);
-                        System.out.println("now seq is   "+range.getSequence());
-                        System.out.println("eval seq is  "+normalRangeSeq);
+//                        System.out.println("now seq is   "+range.getSequence());
+//                        System.out.println("eval seq is  "+normalRangeSeq);
                         updatedNeeded=true;
                     }
                 }else{
                     rangeSeq="M"+ protSeq.substring(0,99);
                     if(rangeSeq.equals(rangeSeqStored)){
-                        System.out.println("2");
-                        System.out.println("I'm updating range : "+rangeBean.getAc());
-                        System.out.println("previous seq "+range.getSequence());
-                        System.out.println("replace by   "+normalRangeSeq);
+//                        System.out.println("2");
+//                        System.out.println("I'm updating range : "+rangeBean.getAc());
+//                        System.out.println("previous seq "+range.getSequence());
+//                        System.out.println("replace by   "+normalRangeSeq);
                         range.setSequence(protSeq);//normalRangeSeq);
                         //helper.update(range);
                          updatedNeeded=true;
-                        System.out.println("now seq is   "+range.getSequence());
-                        System.out.println("eval seq is  "+normalRangeSeq);
+//                        System.out.println("now seq is   "+range.getSequence());
+//                        System.out.println("eval seq is  "+normalRangeSeq);
                     }
                 }
             }
@@ -1222,28 +1222,28 @@ public class
                 if(protSeq.length()<100){
                     rangeSeq="M"+protSeq;
                     if(rangeSeq.equals(rangeSeqStored)){
-                        System.out.println("3");
-                        System.out.println("I'm updating range : "+rangeBean.getAc());
-                        System.out.println("previous seq "+range.getSequence());
-                        System.out.println("replace by   "+normalRangeSeq);
+//                        System.out.println("3");
+//                        System.out.println("I'm updating range : "+rangeBean.getAc());
+//                        System.out.println("previous seq "+range.getSequence());
+//                        System.out.println("replace by   "+normalRangeSeq);
                         range.setSequence(protSeq);//normalRangeSeq);
                         //helper.update(range);
                          updatedNeeded=true;
-                        System.out.println("now seq is   "+range.getSequence());
-                        System.out.println("eval seq is  "+normalRangeSeq);
+//                        System.out.println("now seq is   "+range.getSequence());
+//                        System.out.println("eval seq is  "+normalRangeSeq);
                     }
                 }else{
                     rangeSeq=protSeq.substring(protSeq.length()-100,protSeq.length());
                     if(rangeSeqStored.equals(rangeSeq)){
-                        System.out.println("4");
-                        System.out.println("I'm updating range : "+rangeBean.getAc());
-                        System.out.println("previous seq "+range.getSequence());
-                        System.out.println("replace by   "+normalRangeSeq);
+//                        System.out.println("4");
+//                        System.out.println("I'm updating range : "+rangeBean.getAc());
+//                        System.out.println("previous seq "+range.getSequence());
+//                        System.out.println("replace by   "+normalRangeSeq);
                         range.setSequence(protSeq);//normalRangeSeq);
                         //helper.update(range);
                          updatedNeeded=true;
-                        System.out.println("now seq is   "+range.getSequence());
-                        System.out.println("eval seq is  "+normalRangeSeq);
+//                        System.out.println("now seq is   "+range.getSequence());
+//                        System.out.println("eval seq is  "+normalRangeSeq);
                     }
                 }
             }
@@ -1266,34 +1266,34 @@ public class
                     if(fromIntervalStart==0){
                         rangeSeq = "M"+protSeq.substring(0,protSeq.length()); //protSeq.substring();
                         if(rangeSeq.equals(rangeSeqStored)){
-                            System.out.println("5");
-                            System.out.println("I'm updating range : "+rangeBean.getAc());
-                            System.out.println("previous seq "+range.getSequence());
-                            System.out.println("replace by   "+normalRangeSeq);
+//                            System.out.println("5");
+//                            System.out.println("I'm updating range : "+rangeBean.getAc());
+//                            System.out.println("previous seq "+range.getSequence());
+//                            System.out.println("replace by   "+normalRangeSeq);
                             range.setSequence(protSeq);//normalRangeSeq);
                             //helper.update(range);
                              updatedNeeded=true;
-                            System.out.println("now seq is   "+range.getSequence());
-                            System.out.println("eval seq is  "+normalRangeSeq);
+//                            System.out.println("now seq is   "+range.getSequence());
+//                            System.out.println("eval seq is  "+normalRangeSeq);
                         }
                     } else {
                         rangeSeq = protSeq.substring(fromIntervalStart-1,protSeq.length());
                         if(rangeSeq==rangeSeqStored){
-                            System.out.println("6");
-                            System.out.println("I'm updating range : "+rangeBean.getAc());
-                            System.out.println("previous seq "+range.getSequence());
-                            System.out.println("replace by   "+normalRangeSeq);
+//                            System.out.println("6");
+//                            System.out.println("I'm updating range : "+rangeBean.getAc());
+//                            System.out.println("previous seq "+range.getSequence());
+//                            System.out.println("replace by   "+normalRangeSeq);
                             range.setFromIntervalStart(fromIntervalStart-1);
                             range.setFromIntervalEnd(range.getFromIntervalEnd()-1);
                             range.setToIntervalStart(range.getToIntervalStart()-1);
                             range.setToIntervalEnd(range.getToIntervalEnd()-1);
                             range.setSequence(protSeq);//normalRangeSeq);
-                            System.out.println("now seq is   "+range.getSequence());
-                            System.out.println("eval seq is  "+normalRangeSeq);
-
-                            System.out.println("updating fromIntervalStart");
-                            System.out.println("previous value :"+range.getFromIntervalStart());
-                            System.out.println("replace by     " + (fromIntervalStart-1));
+//                            System.out.println("now seq is   "+range.getSequence());
+//                            System.out.println("eval seq is  "+normalRangeSeq);
+//
+//                            System.out.println("updating fromIntervalStart");
+//                            System.out.println("previous value :"+range.getFromIntervalStart());
+//                            System.out.println("replace by     " + (fromIntervalStart-1));
                             /*range.setFromIntervalStart(fromIntervalStart-1);
 
                             range.setFromIntervalEnd(range.getFromIntervalEnd()-1);
@@ -1301,7 +1301,7 @@ public class
                             range.setToIntervalEnd(range.getToIntervalEnd()-1);*/
                             //helper.update(range);
                              updatedNeeded=true;
-                            System.out.println("now fromIS   is ="+range.getFromIntervalStart());
+//                            System.out.println("now fromIS   is ="+range.getFromIntervalStart());
                         }
                     }
                 }
@@ -1309,30 +1309,30 @@ public class
                     if(fromIntervalStart==0){
                         rangeSeq = "M"+protSeq.substring(fromIntervalStart,fromIntervalStart+99);
                         if(rangeSeq.equals(rangeSeqStored)){
-                            System.out.println("7");
-                            System.out.println("I'm updating range : "+rangeBean.getAc());
-                            System.out.println("previous seq "+range.getSequence());
-                            System.out.println("replace by   "+normalRangeSeq);
+//                            System.out.println("7");
+//                            System.out.println("I'm updating range : "+rangeBean.getAc());
+//                            System.out.println("previous seq "+range.getSequence());
+//                            System.out.println("replace by   "+normalRangeSeq);
                             range.setSequence(protSeq);//normalRangeSeq);
-                            System.out.println("now seq is   "+range.getSequence());
-                            System.out.println("eval seq is  "+normalRangeSeq);
+//                            System.out.println("now seq is   "+range.getSequence());
+//                            System.out.println("eval seq is  "+normalRangeSeq);
                             //helper.update(range);
                              updatedNeeded=true;
                         }
                     }else{
                         rangeSeq = protSeq.substring(fromIntervalStart-1,fromIntervalStart-1+100);
                         if(rangeSeq.equals(rangeSeqStored)){
-                            System.out.println("8");
-                            System.out.println("I'm updating range : "+rangeBean.getAc());
-                            System.out.println("previous seq "+range.getSequence());
-                            System.out.println("replace by   "+normalRangeSeq);
+                            //System.out.println("8");
+                            //System.out.println("I'm updating range : "+rangeBean.getAc());
+                            //System.out.println("previous seq "+range.getSequence());
+                            //System.out.println("replace by   "+normalRangeSeq);
                             range.setFromIntervalStart(fromIntervalStart-1);
                             range.setFromIntervalEnd(range.getFromIntervalEnd()-1);
                             range.setToIntervalStart(range.getToIntervalStart()-1);
                             range.setToIntervalEnd(range.getToIntervalEnd()-1);
                             range.setSequence(protSeq);//normalRangeSeq);
-                            System.out.println("now seq is   "+range.getSequence());
-                            System.out.println("eval seq is  "+normalRangeSeq);
+                            //System.out.println("now seq is   "+range.getSequence());
+                            //System.out.println("eval seq is  "+normalRangeSeq);
 
                             /*range.setFromIntervalStart(fromIntervalStart-1);
                             range.setFromIntervalEnd(range.getFromIntervalEnd()-1);
@@ -1393,12 +1393,12 @@ public class
         try{
             IntactHelper helperBis = new IntactHelper();
         Range range = (Range) helperBis.getObjectByAc(Range.class,rangeBean.getAc());
-        System.out.println("\n------ Range"+range.getSequence());
+        //System.out.println("\n------ Range"+range.getSequence());
             if(range.getSequence()==null){
-                        System.out.println("METHOD");
-                        System.out.println("Range ac = "+ rangeBean.getAc()+" was null from the beginning");
-                        System.out.println("range Bean ac "+rangeBean.getAc());
-                        System.out.println("&&&&&&&&&&");
+                        //System.out.println("METHOD");
+                        //System.out.println("Range ac = "+ rangeBean.getAc()+" was null from the beginning");
+                        //System.out.println("range Bean ac "+rangeBean.getAc());
+                        //System.out.println("&&&&&&&&&&");
                     }
         if(protSeq!=null){
 
@@ -1412,14 +1412,14 @@ public class
                 if(protSeq.length()<100){
                     rangeSeq = protSeq.substring(1,protSeq.length());
                     if(rangeSeqStored.equals(rangeSeq)){
-                        System.out.println("9");
+                        //System.out.println("9");
                         //Range range = (Range) helper.getObjectByAc(Range.class,rangeBean.getAc());
-                        System.out.println("I'm updating range : "+rangeBean.getAc());
-                            System.out.println("previous seq "+range.getSequence());
-                            System.out.println("replace by   "+normalRangeSeq);
+                        //System.out.println("I'm updating range : "+rangeBean.getAc());
+                            //System.out.println("previous seq "+range.getSequence());
+                            //System.out.println("replace by   "+normalRangeSeq);
                             range.setSequence(protSeq);//normalRangeSeq);
-                            System.out.println("now seq is   "+range.getSequence());
-                        System.out.println("eval seq is  "+normalRangeSeq);
+                            //System.out.println("now seq is   "+range.getSequence());
+                        //System.out.println("eval seq is  "+normalRangeSeq);
                         //helper.update(range);
                          updatedNeeded=true;
                     }
@@ -1427,14 +1427,14 @@ public class
                     if(protSeq.length()>=101){
                         rangeSeq = protSeq.substring(1,101);
                         if(rangeSeqStored.equals(rangeSeq)){
-                            System.out.println("10");
+                            //System.out.println("10");
                             //Range range = (Range) helper.getObjectByAc(Range.class,rangeBean.getAc());
-                            System.out.println("I'm updating range : "+rangeBean.getAc());
-                            System.out.println("previous seq "+range.getSequence());
-                            System.out.println("replace by   "+normalRangeSeq);
+                            //System.out.println("I'm updating range : "+rangeBean.getAc());
+                            //System.out.println("previous seq "+range.getSequence());
+                            //System.out.println("replace by   "+normalRangeSeq);
                             range.setSequence(protSeq);//normalRangeSeq);
-                            System.out.println("now seq is   "+range.getSequence());
-                            System.out.println("eval seq is  "+normalRangeSeq);
+                            //System.out.println("now seq is   "+range.getSequence());
+                            //System.out.println("eval seq is  "+normalRangeSeq);
                             //helper.update(range);
                              updatedNeeded=true;
                         }
@@ -1442,14 +1442,14 @@ public class
                     else{
                         rangeSeq = protSeq.substring(1,protSeq.length());
                         if(rangeSeqStored.equals(rangeSeq)){
-                            System.out.println("11");
+                            //System.out.println("11");
                             //Range range = (Range) helper.getObjectByAc(Range.class,rangeBean.getAc());
-                            System.out.println("I'm updating range : "+rangeBean.getAc());
-                            System.out.println("previous seq "+range.getSequence());
-                            System.out.println("replace by   "+normalRangeSeq);
+                            //System.out.println("I'm updating range : "+rangeBean.getAc());
+                            //System.out.println("previous seq "+range.getSequence());
+                            //System.out.println("replace by   "+normalRangeSeq);
                             range.setSequence(protSeq);//normalRangeSeq);
-                            System.out.println("now seq is   "+range.getSequence());
-                            System.out.println("eval seq is  "+normalRangeSeq);
+                            //System.out.println("now seq is   "+range.getSequence());
+                            //System.out.println("eval seq is  "+normalRangeSeq);
                             //helper.update(range);
                              updatedNeeded=true;
                         }
@@ -1463,29 +1463,29 @@ public class
                 if(protSeq.length()<100){
                     rangeSeq=protSeq.substring(1,protSeq.length());
                     if(rangeSeqStored.equals(rangeSeq)){
-                        System.out.println("12");
+                        //System.out.println("12");
                         //Range range = (Range) helper.getObjectByAc(Range.class,rangeBean.getAc());
-                        System.out.println("I'm updating range : "+rangeBean.getAc());
-                            System.out.println("previous seq "+range.getSequence());
-                            System.out.println("replace by   "+normalRangeSeq);
+                        //System.out.println("I'm updating range : "+rangeBean.getAc());
+                            //System.out.println("previous seq "+range.getSequence());
+                            //System.out.println("replace by   "+normalRangeSeq);
                             range.setSequence(protSeq);//normalRangeSeq);
-                            System.out.println("now seq is   "+range.getSequence());
-                        System.out.println("eval seq is  "+normalRangeSeq);
+                            //System.out.println("now seq is   "+range.getSequence());
+                        //System.out.println("eval seq is  "+normalRangeSeq);
                         //helper.update(range);
                          updatedNeeded=true;
                     }
                 }else{
-                    //System.out.println("I'm updating range : "+range.getAc());
+                    ////System.out.println("I'm updating range : "+range.getAc());
                     rangeSeq=protSeq.substring(protSeq.length()-100,protSeq.length());
                     if(rangeSeqStored.equals(rangeSeq)){
-                        System.out.println("13");
+                        //System.out.println("13");
                         //Range range = (Range) helper.getObjectByAc(Range.class,rangeBean.getAc());
-                        System.out.println("I'm updating range : "+rangeBean.getAc());
-                            System.out.println("previous seq "+range.getSequence());
-                            System.out.println("replace by   "+normalRangeSeq);
+                        //System.out.println("I'm updating range : "+rangeBean.getAc());
+                            //System.out.println("previous seq "+range.getSequence());
+                            //System.out.println("replace by   "+normalRangeSeq);
                             range.setSequence(protSeq);//normalRangeSeq);
-                            System.out.println("now seq is   "+range.getSequence());
-                        System.out.println("eval seq is  "+normalRangeSeq);
+                            //System.out.println("now seq is   "+range.getSequence());
+                        //System.out.println("eval seq is  "+normalRangeSeq);
                         //helper.update(range);
                          updatedNeeded=true;
                     }
@@ -1509,17 +1509,17 @@ public class
                     */
                     rangeSeq =  protSeq.substring(fromIntervalStart,protSeq.length());
                     if(rangeSeqStored.equals(rangeSeq)){
-                        System.out.println("14");
-                        System.out.println("I'm updating range : "+rangeBean.getAc());
-                            System.out.println("previous seq "+range.getSequence());
-                            System.out.println("replace by   "+normalRangeSeq);
+                        //System.out.println("14");
+                        //System.out.println("I'm updating range : "+rangeBean.getAc());
+                            //System.out.println("previous seq "+range.getSequence());
+                            //System.out.println("replace by   "+normalRangeSeq);
                         range.setFromIntervalStart(fromIntervalStart+1);
                         range.setFromIntervalEnd(range.getFromIntervalEnd()+1);
                         range.setToIntervalStart(range.getToIntervalStart()+1);
                         range.setToIntervalEnd(range.getToIntervalEnd()+1);
                             range.setSequence(protSeq);//normalRangeSeq);
-                            System.out.println("now seq is   "+range.getSequence());
-                        System.out.println("eval seq is  "+normalRangeSeq);
+                            //System.out.println("now seq is   "+range.getSequence());
+                        //System.out.println("eval seq is  "+normalRangeSeq);
                         /*range.setFromIntervalStart(fromIntervalStart+1);
                         range.setFromIntervalEnd(range.getFromIntervalEnd()+1);
                         range.setToIntervalStart(range.getToIntervalStart()+1);
@@ -1533,17 +1533,17 @@ public class
                     if(fromIntervalStart==0){
                         rangeSeq = protSeq.substring(1, fromIntervalStart+101);
                         if(rangeSeqStored.equals(rangeSeq)){
-                            System.out.println("15");
-                            System.out.println("I'm updating range : "+rangeBean.getAc());
-                            System.out.println("previous seq "+range.getSequence());
-                            System.out.println("replace by   "+normalRangeSeq);
+                            //System.out.println("15");
+                            //System.out.println("I'm updating range : "+rangeBean.getAc());
+                            //System.out.println("previous seq "+range.getSequence());
+                            //System.out.println("replace by   "+normalRangeSeq);
                             range.setFromIntervalStart(fromIntervalStart+1);
                             range.setFromIntervalEnd(range.getFromIntervalEnd()+1);
                             range.setToIntervalStart(range.getToIntervalStart()+1);
                             range.setToIntervalEnd(range.getToIntervalEnd()+1);
                             range.setSequence(protSeq);//normalRangeSeq);
-                            System.out.println("eval seq is  "+normalRangeSeq);
-                            System.out.println("now seq is   "+range.getSequence());
+                            //System.out.println("eval seq is  "+normalRangeSeq);
+                            //System.out.println("now seq is   "+range.getSequence());
                             /*range.setFromIntervalStart(fromIntervalStart+1);
                             range.setFromIntervalEnd(range.getFromIntervalEnd()+1);
                             range.setToIntervalStart(range.getToIntervalStart()+1);
@@ -1555,17 +1555,17 @@ public class
                     }else{
                         rangeSeq =protSeq.substring(fromIntervalStart, fromIntervalStart+100);
                         if(rangeSeqStored.equals(rangeSeq)){
-                            System.out.println("16");
-                            System.out.println("I'm updating range : "+rangeBean.getAc());
-                            System.out.println("previous seq "+range.getSequence());
-                            //System.out.println("replace by   "+normalRangeSeq);
+                            //System.out.println("16");
+                            //System.out.println("I'm updating range : "+rangeBean.getAc());
+                            //System.out.println("previous seq "+range.getSequence());
+                            ////System.out.println("replace by   "+normalRangeSeq);
                             range.setFromIntervalStart(fromIntervalStart+1);
                             range.setFromIntervalEnd(range.getFromIntervalEnd()+1);
                             range.setToIntervalStart(range.getToIntervalStart()+1);
                             range.setToIntervalEnd(range.getToIntervalEnd()+1);
                             range.setSequence(protSeq);//normalRangeSeq);
-                            System.out.println("now seq is   "+range.getSequence());
-                            System.out.println("eval seq is  "+normalRangeSeq);
+                            //System.out.println("now seq is   "+range.getSequence());
+                            //System.out.println("eval seq is  "+normalRangeSeq);
                             /*range.setFromIntervalStart(fromIntervalStart+1);
                             range.setFromIntervalEnd(range.getFromIntervalEnd()+1);
                             range.setToIntervalStart(range.getToIntervalStart()+1);
@@ -1615,15 +1615,15 @@ public class
 
                     RangeBean rangeBean = (RangeBean) rangeBeans.get(j);
                     if(rangeBean.getSequence()==null){
-                        System.out.println("&&&&&&&&&&");
-                        System.out.println("RangeBean ac = "+ rangeBean.getAc()+" was null from the beginning");
-                        System.out.println("&&&&&&&&&&");
+                        //System.out.println("&&&&&&&&&&");
+                        //System.out.println("RangeBean ac = "+ rangeBean.getAc()+" was null from the beginning");
+                        //System.out.println("&&&&&&&&&&");
                     }
                     Range range = (Range) helper.getObjectByAc(Range.class,rangeBean.getAc());
                     if(range.getSequence()==null){
-                        System.out.println("&&&&&&&&&&");
-                        System.out.println("Range ac = "+ rangeBean.getAc()+" was null from the beginning");
-                        System.out.println("&&&&&&&&&&");
+                        //System.out.println("&&&&&&&&&&");
+                        //System.out.println("Range ac = "+ rangeBean.getAc()+" was null from the beginning");
+                        //System.out.println("&&&&&&&&&&");
                     }
 
                     String rangeSeqTest=range.getSequence();
@@ -1632,11 +1632,11 @@ public class
                            rangeToGetSeq.setSequence(protSeq);
                     String evaluatedRangeSeq=rangeToGetSeq.getSequence();//;generateNormalRangeSeq(protSeq,rangeBean);
                     if(evaluatedRangeSeq!= null && !evaluatedRangeSeq.equals(rangeSeqTest)) {
-                        //System.out.println("\n");
+                        ////System.out.println("\n");
                         //Range rangeBis=(Range) helper.getObjectByAc(Range.class,rangeBean.getAc());
                         evaluatedRangeSeq=range.getSequence();
                         String ifMAdded=generateRangeSeqIfMAdded(protSeq,rangeBean,evaluatedRangeSeq);
-                        //System.out.println("\n");
+                        ////System.out.println("\n");
                         String ifMRemooved=generateRangeSeqIfMRemooved(protSeq,rangeBean,evaluatedRangeSeq);
 
                         // Searching the Interaction_ac in which this interactor is involved, because to edit a feature
@@ -1650,7 +1650,7 @@ public class
 
 
                         List interactionBeans = rangeSeqSch.getBeans(InteractorBean.class, interaction_ac);
-                        //System.out.println("We are going to search for the interacion ac = "+interaction_ac);
+                        ////System.out.println("We are going to search for the interacion ac = "+interaction_ac);
                         InteractorBean interactionBean = new InteractorBean();
                         interactionBean = (InteractorBean) interactionBeans.get(0);
 
@@ -1704,18 +1704,18 @@ public class
 
         }
 
-        /*System.out.println("\n\n\n\n\n\n\n\n\n\n");
-        System.out.println("M added sequence ");
-        System.out.println(mAddedSequences);
-        System.out.println("\n\n\n\n\n\n\n\n\n\n");
-        System.out.println("M sup sequence ");
-        System.out.println(mSuppSequences);
-        System.out.println("");
-        System.out.println("saved by M "+ savedByM);
-        System.out.println("madd "+mAdded);
-        System.out.println("msup "+mSupp);
-        System.out.println("equal "+equal);
-        System.out.println("not equal "+notEqual);*/
+        /*//System.out.println("\n\n\n\n\n\n\n\n\n\n");
+        //System.out.println("M added sequence ");
+        //System.out.println(mAddedSequences);
+        //System.out.println("\n\n\n\n\n\n\n\n\n\n");
+        //System.out.println("M sup sequence ");
+        //System.out.println(mSuppSequences);
+        //System.out.println("");
+        //System.out.println("saved by M "+ savedByM);
+        //System.out.println("madd "+mAdded);
+        //System.out.println("msup "+mSupp);
+        //System.out.println("equal "+equal);
+        //System.out.println("not equal "+notEqual);*/
 
 
     }
@@ -1853,10 +1853,10 @@ public class
         for (int i = 0; i < annotations.size(); i++) {
             AnnotationBean annotationBean =  (AnnotationBean) annotations.get(i);
             String topicShortlabel = (String) cvTopics.get(annotationBean.getTopic_ac());
-            System.out.println("topicShortLabel " + topicShortlabel);
+            //System.out.println("topicShortLabel " + topicShortlabel);
             for (int j = 0; j < usableTopic.size(); j++) {
                 String s = (String) usableTopic.get(j);
-                System.out.println("usable topic " +j + " = "+ s);
+                //System.out.println("usable topic " +j + " = "+ s);
             }
 
             if(!usableTopic.contains(topicShortlabel)){
@@ -1881,9 +1881,9 @@ public class
         Set key = scn.cvTopics.keySet();
         for (Iterator iterator = key.iterator(); iterator.hasNext();) {
             String o =  (String) iterator.next();
-            System.out.println("Key = "+o + " Value = " + scn.cvTopics.get(o));
+            //System.out.println("Key = "+o + " Value = " + scn.cvTopics.get(o));
         }
-        System.out.println( "Helper created (User: " + scn.helper.getDbUserName() + " " +
+        //System.out.println( "Helper created (User: " + scn.helper.getDbUserName() + " " +
                             "Database: " + scn.helper.getDbName() + ")" );
 
 
@@ -1910,7 +1910,7 @@ public class
 
 
         List interactorBeans = schIntAc.getBeans(InteractorBean.class, "EBI-%");
-        System.out.println("The size of the list is :"+interactorBeans.size());
+        //System.out.println("The size of the list is :"+interactorBeans.size());
         scn.checkInteractionsComplete(interactorBeans);
         scn.checkInteractionsBaitAndPrey(interactorBeans);
         scn.checkComponentOfInteractions(interactorBeans);
@@ -1977,7 +1977,7 @@ public class
         */
 
         List bioSourceBeans = scn.sch.getBeans(BioSourceBean.class,"EBI-%");
-        System.out.println("The size of bioSource list is " + bioSourceBeans.size());
+        //System.out.println("The size of bioSource list is " + bioSourceBeans.size());
         scn.checkBioSource(bioSourceBeans);
         scn.checkNewt(bioSourceBeans);
         //to be tested
@@ -1994,7 +1994,7 @@ public class
                                                  "' AND ac like ?");
 
         List proteinBeans = schIntAc.getBeans(InteractorBean.class,"%");
-        System.out.println("This/those Range(s) were created when the first Methionine was there, since then the Methionine had been remooved from the Protein Sequence. The Range Sequence has been remapped");
+        //System.out.println("This/those Range(s) were created when the first Methionine was there, since then the Methionine had been remooved from the Protein Sequence. The Range Sequence has been remapped");
         /*schIntAc.addMapping(InteractorBean.class,"SELECT ac, crc64, shortlabel, userstamp, timestamp, objclass "+
                                                  "FROM ia_interactor "+
                                                  "WHERE objclass = ? "+
@@ -2002,7 +2002,7 @@ public class
         List proteinBeans = schIntAc.getBeans(InteractorBean.class, ProteinImpl.class.getName());
         scn.checkRangeSeqBis(proteinBeans);
 
-        System.out.println("\n\nThis/those Range(s) were created when the first Methionine was not there, since then the Methionine had been added");
+        //System.out.println("\n\nThis/those Range(s) were created when the first Methionine was not there, since then the Methionine had been added");
         schIntAc.addMapping(InteractorBean.class,"SELECT ac, crc64, shortlabel, userstamp, timestamp, objclass "+
                                                  "FROM ia_interactor "+
                                                  "WHERE objclass = ? "+
@@ -2030,7 +2030,7 @@ public class
                                                         );
 
             List annotationBeans = schIntAc.getBeans(AnnotationBean.class,"EBI-%");
-            System.out.println("There is " + annotationBeans.size() + "annotations");
+            //System.out.println("There is " + annotationBeans.size() + "annotations");
             scn.checkURL(annotationBeans);
     //
     //        /*
