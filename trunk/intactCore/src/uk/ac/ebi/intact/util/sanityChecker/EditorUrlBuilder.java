@@ -7,6 +7,9 @@ package uk.ac.ebi.intact.util.sanityChecker;
 
 import uk.ac.ebi.intact.util.sanityChecker.model.*;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.util.PropertyLoader;
+import java.util.*;
+
 
 /**
  * TODO comment it.
@@ -15,8 +18,17 @@ import uk.ac.ebi.intact.model.*;
  * @version $Id$
  */
 public class EditorUrlBuilder {
-
-    private static final String editorUrl = "http://www.ebi.ac.uk/interpro/internal-tools/intacttest/editor/do/secure/edit?";
+        public static final String SANITYCHECK_CONFIG_FILE = "/config/sanitycheck.properties";
+        private static String EDITOR_BASIC_URL = null;
+        static {
+        Properties props = PropertyLoader.load( SANITYCHECK_CONFIG_FILE );
+        if (props != null) {
+            EDITOR_BASIC_URL = props.getProperty ("editor_basic_url");
+        } else {
+            System.err.println ("Unable to open the properties file: " + SANITYCHECK_CONFIG_FILE);
+        }
+    }
+    private static final String editorUrl = EDITOR_BASIC_URL + "/editor/do/secure/edit?";
 
     public String getEditorUrl(IntactBean intactBean){
 
