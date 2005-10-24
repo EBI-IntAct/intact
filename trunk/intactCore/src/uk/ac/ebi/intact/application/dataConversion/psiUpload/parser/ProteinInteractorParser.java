@@ -15,6 +15,8 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.application.dataConversion.util.DOMUtil;
 
+import java.util.Collection;
+
 /**
  * That class .
  *
@@ -37,27 +39,22 @@ public class ProteinInteractorParser {
      * Extract data from a <code>proteinInteractor</code> Element and produce an Intact <code>Protein</code>
      * <p/>
      * <pre>
-     *  <proteinInteractor id="hGHR">
-     *      <names>
-     *         <shortLabel>hGHR</shortLabel>
-     * <p/>
-     *         <fullName>Human growth hormone receptor</fullName>
-     *      </names>
-     * <p/>
-     *      <xref>
-     *         <primaryRef db="Swiss-Prot" id="P10912"/>
-     *      </xref>
-     * <p/>
-     *      <organism ncbiTaxId="9606">
-     *         <names>
-     *            <shortLabel>Human</shortLabel>
-     * <p/>
-     *            <fullName>Homo sapiens</fullName>
-     *         </names>
-     *      </organism>
-     * <p/>
-     *      <sequence>MDLWQLLLTLALAGSSDAFSGSEATAAILSRAPWSLQSVNPGLKTNSSKEPKFTKCRSPERETFSCHWTDEVHHGTKNLGPIQLFYTRRNTQEWTQEWKECPDYVSAGENSCYFNSSFTSIWIPYCIKLTSNGGTVDEKCFSVDEIVQPDPPIALNWTLLNVSLTGIHADIQVRWEAPRNADIQKGWMVLEYELQYKEVNETKWKMMDPILTTSVPVYSLKVDKEYEVRVRSKQRNSGNYGEFSEVLYVTLPQMSQFTCEEDFYFPWLLIIIFGIFGLTVMLFVFLFSKQQRIKMLILPPVPVPKIKGIDPDLLKEGKLEEVNTILAIHDSYKPEFHSDDSWVEFIELDIDEPDEKTEESDTDRLLSSDHEKSHSNLGVKDGDSGRTSCCEPDILETDFNANDIHEGTSEVAQPQRLKGEADLLCLDQKNQNNSPYHDACPATQQPSVIQAEKNKPQPLPTEGAESTHQAAHIQLSNPSSLSNIDFYAQVSDITPAGSVVLSPGQKNKAGMSQCDMHPEMVSLCQENFLMDNAYFCEADAKKCIPVAPHIKVESHIQPSLNQEDIYITTESLTTAAGRPGTGEHVPGSEMPVPDYTSIHIVQSPQGLILNATALPLPDKEFLSSCGYVSTDQLNKIMP</sequence>
-     *  </proteinInteractor>
+     *  &lt;proteinInteractor id="hGHR"&gt;
+     *      &lt;names&gt;
+     *         &lt;shortLabel&gt;hGHR&lt;/shortLabel&gt;
+     *         &lt;fullName&gt;Human growth hormone receptor&lt;/fullName&gt;
+     *      &lt;/names&gt;
+     *      &lt;xref&gt;
+     *         &lt;primaryRef db="Swiss-Prot" id="P10912"/&gt;
+     *      &lt;/xref&gt;
+     *      &lt;organism ncbiTaxId="9606"&gt;
+     *         &lt;names&gt;
+     *            &lt;shortLabel&gt;Human&lt;/shortLabel&gt;
+     *            &lt;fullName&gt;Homo sapiens&lt;/fullName&gt;
+     *         &lt;/names&gt;
+     *      &lt;/organism&gt;
+     *      &lt;sequence&gt;MDLWQLLLTLALAGSSDAFSGSEATAAILSRAPWSLQSVNPGLKTNSSKEPKFTKCRSPERETFSCHWTDEVHHGTKNLGPIQLFYTRRNTQEWTQEWKECPDYVSAGENSCYFNSSFTSIWIPYCIKLTSNGGTVDEKCFSVDEIVQPDPPIALNWTLLNVSLTGIHADIQVRWEAPRNADIQKGWMVLEYELQYKEVNETKWKMMDPILTTSVPVYSLKVDKEYEVRVRSKQRNSGNYGEFSEVLYVTLPQMSQFTCEEDFYFPWLLIIIFGIFGLTVMLFVFLFSKQQRIKMLILPPVPVPKIKGIDPDLLKEGKLEEVNTILAIHDSYKPEFHSDDSWVEFIELDIDEPDEKTEESDTDRLLSSDHEKSHSNLGVKDGDSGRTSCCEPDILETDFNANDIHEGTSEVAQPQRLKGEADLLCLDQKNQNNSPYHDACPATQQPSVIQAEKNKPQPLPTEGAESTHQAAHIQLSNPSSLSNIDFYAQVSDITPAGSVVLSPGQKNKAGMSQCDMHPEMVSLCQENFLMDNAYFCEADAKKCIPVAPHIKVESHIQPSLNQEDIYITTESLTTAAGRPGTGEHVPGSEMPVPDYTSIHIVQSPQGLILNATALPLPDKEFLSSCGYVSTDQLNKIMP&lt;/sequence&gt;
+     *  &lt;/proteinInteractor&gt;
      * </pre>
      *
      * @return an intact <code>Protein</code> or null if something goes wrong.
@@ -97,15 +94,38 @@ public class ProteinInteractorParser {
             }
         }
 
+        // TODO we could optimize by checking if the primaryRef is UniProt, if so we can shortcut the data loading
+
+        // CAUTION - MAY NOT BE THERE
+        final Element names = DOMUtil.getFirstElement( root, "names" );
+        String shortlabel = null;
+        String fullname = null;
+        if ( names != null ) {
+            shortlabel = DOMUtil.getShortLabel( names );
+            // CAUTION - if names present, IT MAY NOT BE THERE
+            fullname = DOMUtil.getFullName( names );
+        }
 
         // CAUTION - MAY NOT BE THERE
         final Element xrefElement = DOMUtil.getFirstElement( root, "xref" );
         final XrefTag xref = XrefParser.processPrimaryRef( xrefElement );
+        final Collection secondaryXrefs = XrefParser.processSecondaryRef( xrefElement );
 
+        final Collection aliases = null;
+
+        // CAUTION - MAY NOT BE THERE
+        final Element sequenceElement = DOMUtil.getFirstElement( root, "sequence" );
+        String sequence = null;
+        if( sequenceElement != null ) {
+            sequence = DOMUtil.getSimpleElementText( sequenceElement );
+        }
+
+        // Will contain the map: id ---> Protein definition
         LabelValueBean lvb = null;
 
         try {
-            lvb = new LabelValueBean( id, new ProteinInteractorTag( xref, hostOrganism ) );
+//            lvb = new LabelValueBean( id, new ProteinInteractorTag( xref, hostOrganism ) );
+            lvb = new LabelValueBean( id, new ProteinInteractorTag( shortlabel, fullname, xref, secondaryXrefs, aliases, hostOrganism, sequence ) );
         } catch ( IllegalArgumentException e ) {
             MessageHolder.getInstance().addParserMessage( new Message( root, e.getMessage() ) );
         }
