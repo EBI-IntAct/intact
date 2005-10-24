@@ -163,6 +163,9 @@
                 <exclude name="warning.jsp"/>
                 <exclude name="results.jsp"/>
                 <exclude name="sidebarInput.jsp"/>
+                <exclude name="binaryTest.jsp"/>
+                <exclude name="empty.jsp"/>
+                <exclude name="confirmBinTest.jsp"/>
                 <!-- these are the new JSPs and HTML files (for search mockups Aug 2004)-->
                 <exclude name="jscript.html"/>
                 <exclude name="buttonBar.html"/>
@@ -178,9 +181,17 @@
                 <!-- these are advanced search specific JSPs -->
                 <exclude name="advancedSearch.jsp"/>
                 <exclude name="advTooLarge.jsp"/>
-                <exclude name="cvBrowser.jsp"/>
+                <exclude name="cvIdGraph.jsp"/>
+                <exclude name="cvIntGraph.jsp"/>
+                <exclude name="cvIntTypeGraph.jsp"/>
                 <exclude name="noIndexError.jsp"/>
                 <exclude name="sidebarFooter.jsp"/>
+
+                <exclude name="interactionSearch.jsp"/>
+                <exclude name="multipleInteraction.jsp" />
+                <exclude name="noCommonInteraction.jsp"/>
+                <exclude name="noProteinsPresent.jsp" />
+                <exclude name="noData.jsp" />
 
             </fileset>
         </delete>
@@ -248,6 +259,38 @@
     </target>
 
     <!-- =================================================================== -->
+
+    <!-- The Lexer file -->
+    <property name="antlr.lexer.file" value="${basedir}/antlr/valuelexer.g"/>
+
+    <!-- The grammar file -->
+    <property name="antlr.grammar.file" value="${basedir}/antlr/iql2lucene.g"/>
+
+    <!-- Where the ANTLR auto-generated file should be put in -->
+    <property name="antlr.output.dir" value="${intact.root}/src/uk/ac/ebi/intact/application/search3/advancedSearch/powerSearch/parser/iql2luceneParser"/>
+
+    <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
+    <target name="antlr2java" description="Generates Java handlers from ANTLR lexer/grammar files">
+
+        <echo message="The output directory will be: ${antlr.output.dir}"/>
+
+        <echo message="Converting ANTLR Lexer (${antlr.lexer.file}) to Java..."/>
+        <java classname="antlr.Tool" fork="yes">
+            <arg line="-o ${antlr.output.dir}"/>
+            <arg value="${antlr.lexer.file}"/>
+            <classpath refid="project.class.path"/>
+        </java>
+
+        <echo message="Converting ANTLR Grammar (${antlr.grammar.file}) to Java..."/>
+        <java classname="antlr.Tool" fork="yes">
+            <arg line="-o ${antlr.output.dir}"/>
+            <arg value="${antlr.grammar.file}"/>
+            <classpath refid="project.class.path"/>
+        </java>
+
+    </target>
+
+     <!-- =================================================================== -->
 
     <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
     <target name="compile">
