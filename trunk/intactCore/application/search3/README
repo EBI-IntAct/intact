@@ -67,5 +67,46 @@ NOTES
         ../../lib       - application common jar files (only a subset).
         WEB-INF/classes - search class files.
 
+MORE NOTES (anout ANTLR)
+
+    If you only want to generate the Java Handler from the ANTLR file, you only need to
+    run the Ant task: antlr2java, if you want more information, it's just below ...
+
+    IQL's ANTLR grammar
+    -------------------
+
+    The ANTLR grammar is composed of 2 files
+
+        * valuelexer.g
+        * iql2lucene.g
+
+    They are currently located in intactCore\src\uk\ac\ebi\intact\application\search3\advancedSearch\powerSearch\parser\iql2luceneParser
+    and the resulting Java classes are in the package uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.parser.iql2luceneParser
+    How to convert *.g into .java
+
+    ANTLR provide a Tool that does that job: antlr.Tool
+    The ANTLR jar file is located in intactCore\application\lib\antlr.jar
+
+    Here is how to generate the code:
+
+    java -cp lib/antlr.jar antlr.Tool valuelexer.g
+
+        generates:
+             ValLexer.java
+             valtagTokenTypes.java
+             valtagTokenTypes.txt
+
+    (!) Note: the command below uses some file generated previously
+    java -cp lib/antlr.jar antlr.Tool iql2lucene.g
+
+        generates:
+             Iql2LuceneLexer.java
+             Iql2LuceneParser.java
+             Iql2LuceneParserTokenTypes.java
+             Iql2LuceneParserTokenTypes.txt
+             Iql2LuceneTreeWalker.java
+
+
+
 COMMENTS
     Send any comments/feedback to skerrien@ebi.ac.uk
