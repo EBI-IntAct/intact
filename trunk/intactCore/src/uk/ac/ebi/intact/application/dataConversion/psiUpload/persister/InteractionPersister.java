@@ -155,7 +155,7 @@ public final class InteractionPersister {
             Interaction interaction = new InteractionImpl( myExperiments,
                                                            components,
                                                            cvInteractionType,
-                                                           InteractionChecker.getCvInteractionType(), 
+                                                           InteractionChecker.getCvInteractionType(),
                                                            shortlabel,
                                                            helper.getInstitution() );
 
@@ -338,10 +338,15 @@ public final class InteractionPersister {
                 baits.add( geneName );
             } else if ( role.equals( "neutral component" ) ) {
                 neutrals.add( geneName );
+            } else if ( role.equals( "neutral" ) ) {
+                // we have changed the name of that CV, from neutral to 'neutral component'
+                // for the time being allow both ... PSI 1.0 allow only neutral
+                // TODO program a switch, if the database contain only 'neutral component'
+                neutrals.add( geneName );
             } else {
                 // we should never get in here if RoleChecker plays its role !
                 throw new IllegalStateException( "Found role: " + role + " which is not supported at the moment (" +
-                                                 "so far only bait, prey and neutral are). abort." );
+                                                 "so far only bait, prey and 'neutral component' are). abort." );
 
             }
         } // for proteins
