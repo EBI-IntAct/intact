@@ -5,6 +5,7 @@
 package uk.ac.ebi.intact.application.dataConversion.util;
 
 import org.apache.xerces.dom.DOMImplementationImpl;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.w3c.dom.*;
 
 import java.io.IOException;
@@ -27,36 +28,13 @@ public class DisplayXML {
      * @return the given string in which we have escaped special characters
      */
     private static String escapeXML( String s ) {
-        StringBuffer str = new StringBuffer();
-        int len = ( s != null ) ? s.length() : 0;
 
-        for ( int i = 0; i < len; i++ ) {
-            char ch = s.charAt( i );
-            switch ( ch ) {
-                case '<':
-                    str.append( "&lt;" );
-                    break;
-                case '>':
-                    str.append( "&gt;" );
-                    break;
-                case '&':
-                    str.append( "&amp;" );
-                    break;
-                case '"':
-                    str.append( "&quot;" );
-                    break;
-                case '\'':
-                    str.append( "&apos;" );
-                    break;
-                default:
-                    str.append( ch );
-            }
+        if( s == null ) {
+            return "";
         }
 
-        return str.toString();
+        return StringEscapeUtils.escapeXml( s );
     }
-
-    // TODO implements public static void print( Node node, PrintStream out, String indent ) {
 
     public static void print( Node node ) {
         print( node, System.out );
