@@ -14,10 +14,7 @@ import uk.ac.ebi.intact.model.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
@@ -166,6 +163,7 @@ public class PsiDataBuilder implements DataBuilder {
 
         try {
             File f = new File( fileName );
+            System.out.println( "writing output to " + f.getAbsolutePath() );
             DOMSource source = null;
 
             //decide what is to be written
@@ -176,12 +174,10 @@ public class PsiDataBuilder implements DataBuilder {
             }
 
             // Use a Transformer for output
-            TransformerFactory tFactory =
-                    TransformerFactory.newInstance();
+            TransformerFactory tFactory = TransformerFactory.newInstance();
             Transformer transformer = tFactory.newTransformer();
-            transformer.setOutputProperty( javax.xml.transform.OutputKeys.INDENT, "yes" );
+            transformer.setOutputProperty( OutputKeys.INDENT, "yes" );
             //transformer.setOutputProperty(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
-
 
             StreamResult result = new StreamResult( f );
             transformer.transform( source, result );
@@ -191,9 +187,7 @@ public class PsiDataBuilder implements DataBuilder {
 
         } catch ( TransformerException te ) {
             throw new DataConversionException( "Could not generate file - Transformer error", te );
-
         }
-
     }
 
 
@@ -221,11 +215,8 @@ public class PsiDataBuilder implements DataBuilder {
      * @param sourceFullName
      *
      * @return DOM-Object, representing an <entry>
-     *
-     * @throws uk.ac.ebi.intact.application.graph2MIF.exception.ElementNotParseableException
-     *          if PSIrequired Elements are missing within the object graph
      */
-    private Element psiEntry( String sourceShortLabel, String sourceFullName ) throws ElementNotParseableException {
+    private Element psiEntry( String sourceShortLabel, String sourceFullName ) {
 
         //generate DOM-Element
         Element psiEntry = null;
@@ -402,9 +393,8 @@ public class PsiDataBuilder implements DataBuilder {
      * @throws ElementNotParseableException thrown if the Document could not be created.
      * @throws DataConversionException      thrown if the parameter size is tooo big to be processed in one chunk.
      */
-    public Element buildInteractionsOnly( Collection interactions, int limit ) throws
-                                                                               DataConversionException,
-                                                                               ElementNotParseableException {
+    public Element buildInteractionsOnly( Collection interactions, int limit ) throws DataConversionException,
+                                                                                      ElementNotParseableException {
 
         if( interactions.size() > limit )
             throw new DataConversionException( "Too many interactions to process!" );
