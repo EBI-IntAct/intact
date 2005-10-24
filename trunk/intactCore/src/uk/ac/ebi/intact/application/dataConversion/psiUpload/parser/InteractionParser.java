@@ -173,6 +173,7 @@ public class InteractionParser {
                 }
 
             } else {
+
                 // process the proteinInteractor as no Ref was found - mandatory to find it.
                 final Element proteinElement = DOMUtil.getFirstElement( participantElement, "proteinInteractor" );
                 if ( proteinElement != null ) {
@@ -202,7 +203,7 @@ public class InteractionParser {
             if ( roleElement != null ) {
                 role = DOMUtil.getSimpleElementText( roleElement );
             } else {
-                final String msg = "ERROR - No ole under that participant, abort that interaction.";
+                final String msg = "ERROR - No role found under that participant, abort that interaction.";
                 MessageHolder.getInstance().addParserMessage( new Message( root, msg ) );
 
                 return null; // TODO enhance that ! not really good to send back null.
