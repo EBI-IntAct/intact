@@ -43,6 +43,9 @@ public class AllJUnitTests extends TestCase {
     public static Test suite() {
         final TestSuite suite = new TestSuite();
 
+        // add psiDownload package
+        suite.addTest( uk.ac.ebi.intact.application.dataConversion.psiDownload.test.AllJUnitTests.suite() );
+
         // add psiUpload package
         suite.addTest( uk.ac.ebi.intact.application.dataConversion.psiUpload.test.AllJUnitTests.suite() );
 
