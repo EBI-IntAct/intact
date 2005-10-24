@@ -426,157 +426,187 @@ public final class ProteinInteractorChecker {
             OrganismChecker.check( organism, helper, bioSourceFactory );
         }
 
-        final XrefTag uniprotDef = proteinInteractor.getUniprotXref();
-        XrefChecker.check( uniprotDef, helper );
-
-        final String uniprotId = uniprotDef.getId();
-        final String cacheId = buildID( uniprotId, taxId );
-
         /**
-         * -STATEGY-
+         * We have to deal with two different cases:
          *
-         * 2 cases: the user can have requested
-         *              (1) to reuse existing protein in which case the UpdateProtein
-         *                  is only called if the protein is not found in the IntAct node.
-         *              (2) to force update, in whilch case the UpdateProteins is called
-         *                  for every single ID in order to have up-to-date data.
+         *  (1) the protein has a UniProt Xref in which case we use the UpdateProteins
+         *      to do the job.
          *
-         * BEWARE: the uniprot ID given in the XML file can refer to either a protein or a splice variant
-         *         and we link that ID to the relevant objects.
-         */
-
-        /**
-         * 1. retreive either protein or splice variant from IntAct
-         *    getIntactObject( Object[2] prot_and_sv,  )
-         *    1a. if something as been found, cache it and finish
-         *    1b. if not, use UpdateProteins to get the data and search again.
-         *
-         * 2. do as in 1. 
-         *    2a. if found ok
-         *    2b. if not, error.
-         *
-         *
-         *
-         * 1. details
-         * ----------
-         *
-         * ID could be P12345 (Protein) or Q87264-2 (Splice variant)
-         *
-         * if (ID is splice variant) {
-         *     search by shortlabel (lowercase(ID))
-         *     get also the master protein using the xref to its AC.
-         * } else {
-         *    search by xref
-         * }
-         *
+         *  (2) The protein doesn't have a UniProt ID and we create it by hand using
+         *      the data found in the XML file (Xrefs, Aliases, shorltabel, fullName)
          */
 
 
-        if ( DEBUG ) {
-            System.out.println( "\nChecking on " + cacheId );
-        }
+        if ( ! proteinInteractor.hasUniProtXref() ) {
 
-        if ( !cache.keySet().contains( cacheId ) ) {
+            // check the CvDatabases of the primary and secondary Xrefs
+            XrefTag primary = proteinInteractor.getPrimaryXref();
+            XrefChecker.check( primary, helper );
 
-            // cache:  [uniprotID, taxid] -> [protein, spliceVariant] or [protein, null]
-
-            String source = null;
-            ProteinHolder result = null;
-
-            // WARNING:
-            // if we ask for reuse of protein, and let's say a Protein A is already in IntAct but the entry
-            // in SRS has now 2 proteins (A and B). If no taxid is specified and reuseProtein requested, we might
-            // happily take A instead of throwing an error because of the existence of B that make the case ambiguous.
-            // Hence, reuse protein must be used only if taxid is not null !
-            if ( CommandLineOptions.getInstance().reuseProtein() && taxId != null ) {
-                // check if the proteins are in IntAct
-                source = "IntAct";
-
-                if ( DEBUG ) {
-                    System.out.println( "Searching in Intact..." );
-                }
-
-                // taxid is not null here so no exception can be thrown.
-                try {
-                    result = getIntactProtein( uniprotId, taxId, helper );
-                } catch ( AmbiguousBioSourceException e ) {
-                    // we should never get here ! but just in case ...
-                    MessageHolder.getInstance().addCheckerMessage( new Message( e.getMessage() ) );
-                    System.out.println( e.getMessage() );
-                }
+            Collection secondaries = proteinInteractor.getSecondaryXrefs();
+            for ( Iterator iterator = secondaries.iterator(); iterator.hasNext(); ) {
+                XrefTag secondaryRef = (XrefTag) iterator.next();
+                XrefChecker.check( secondaryRef, helper );
             }
 
-            // retreived by ID having different taxid
+        } else {
 
-            if ( result == null ) { // always null if taxId == null or no reuseProtein requested.
-                // Update database
-                if ( DEBUG ) {
-                    System.out.println( "Protein not found in intact, updating..." );
-                }
-                source = "UpdateProteins";
-                Collection tmp = proteinFactory.insertSPTrProteins( uniprotId, taxId, true ); // taxId can be null !
+            // it has a UniProt Xref
+            final XrefTag uniprotDef = proteinInteractor.getUniprotXref();
+            XrefChecker.check( uniprotDef, helper );
 
-                Map exceptions = proteinFactory.getParsingExceptions();
-                if ( !exceptions.isEmpty() ) {
-                    // there was exception during update, the proteins hasn't been updated.
-                    StringBuffer messageBuffer = new StringBuffer( 128 );
-                    messageBuffer.append( "Could not update the protein " ).append( uniprotId );
-                    messageBuffer.append( " using UpdateProteins, a parsing error occured." );
+            final String uniprotId = uniprotDef.getId();
+            final String cacheId = buildID( uniprotId, taxId );
 
-                    // get stacktraces
-                    for ( Iterator iterator = exceptions.values().iterator(); iterator.hasNext(); ) {
-                        Throwable t = (Throwable) iterator.next();
-                        messageBuffer.append( ExceptionUtils.getStackTrace( t ) );
-                        messageBuffer.append( LINE_SEPARATOR ).append( "============================================" );
-                    }
+            /**
+             * -STATEGY-
+             *
+             * 2 cases: the user can have requested
+             *              (1) to reuse existing protein in which case the UpdateProtein
+             *                  is only called if the protein is not found in the IntAct node.
+             *              (2) to force update, in which case the UpdateProteins is called
+             *                  for every single ID in order to have up-to-date data.
+             *
+             * BEWARE: the uniprot ID given in the XML file can refer to either a protein or a splice variant
+             *         and we link that ID to the relevant objects.
+             */
 
-                    String msg = messageBuffer.toString();
-                    MessageHolder.getInstance().addCheckerMessage( new Message( msg ) );
-                    System.err.println( msg );
-                } else {
+            /**
+             * 1. retreive either protein or splice variant from IntAct
+             *    getIntactObject( Object[2] prot_and_sv,  )
+             *    1a. if something as been found, cache it and finish
+             *    1b. if not, use UpdateProteins to get the data and search again.
+             *
+             * 2. do as in 1.
+             *    2a. if found ok
+             *    2b. if not, error.
+             *
+             *
+             *
+             * 1. details
+             * ----------
+             *
+             * ID could be P12345 (Protein) or Q87264-2 (Splice variant)
+             *
+             * if (ID is splice variant) {
+             *     search by shortlabel (lowercase(ID))
+             *     get also the master protein using the xref to its AC.
+             * } else {
+             *    search by xref
+             * }
+             *
+             */
+
+
+            if ( DEBUG ) {
+                System.out.println( "\nChecking on " + cacheId );
+            }
+
+            if ( !cache.keySet().contains( cacheId ) ) {
+
+                // cache:  [uniprotID, taxid] -> [protein, spliceVariant] or [protein, null]
+
+                String source = null;
+                ProteinHolder result = null;
+
+                // WARNING:
+                // if we ask for reuse of protein, and let's say a Protein A is already in IntAct but the entry
+                // in SRS has now 2 proteins (A and B). If no taxid is specified and reuseProtein requested, we might
+                // happily take A instead of throwing an error because of the existence of B that make the case ambiguous.
+                // Hence, reuse protein must be used only if taxid is not null !
+                if ( CommandLineOptions.getInstance().reuseProtein() && taxId != null ) {
+                    // check if the proteins are in IntAct
+                    source = "IntAct";
 
                     if ( DEBUG ) {
-                        System.out.println( tmp.size() + " Protein created/updated." );
+                        System.out.println( "Searching in Intact..." );
                     }
 
-                    // search against updated database
+                    // taxid is not null here so no exception can be thrown.
                     try {
                         result = getIntactProtein( uniprotId, taxId, helper );
                     } catch ( AmbiguousBioSourceException e ) {
+                        // we should never get here ! but just in case ...
                         MessageHolder.getInstance().addCheckerMessage( new Message( e.getMessage() ) );
                         System.out.println( e.getMessage() );
                     }
                 }
-            }
+
+                // retreived by ID having different taxid
+
+                if ( result == null ) { // always null if taxId == null or no reuseProtein requested.
+                    // Update database
+                    if ( DEBUG ) {
+                        System.out.println( "Protein not found in intact, updating..." );
+                    }
+                    source = "UpdateProteins";
+                    Collection tmp = proteinFactory.insertSPTrProteins( uniprotId, taxId, true ); // taxId can be null !
+
+                    Map exceptions = proteinFactory.getParsingExceptions();
+                    if ( !exceptions.isEmpty() ) {
+                        // there was exception during update, the proteins hasn't been updated.
+                        StringBuffer messageBuffer = new StringBuffer( 128 );
+                        messageBuffer.append( "Could not update the protein " ).append( uniprotId );
+                        messageBuffer.append( " using UpdateProteins, a parsing error occured." );
+
+                        // get stacktraces
+                        for ( Iterator iterator = exceptions.values().iterator(); iterator.hasNext(); ) {
+                            Throwable t = (Throwable) iterator.next();
+                            messageBuffer.append( ExceptionUtils.getStackTrace( t ) );
+                            messageBuffer.append( LINE_SEPARATOR ).append( "============================================" );
+                        }
+
+                        String msg = messageBuffer.toString();
+                        MessageHolder.getInstance().addCheckerMessage( new Message( msg ) );
+                        System.err.println( msg );
+                    } else {
+
+                        if ( DEBUG ) {
+                            System.out.println( tmp.size() + " Protein created/updated." );
+                        }
+
+                        // search against updated database
+                        try {
+                            result = getIntactProtein( uniprotId, taxId, helper );
+                        } catch ( AmbiguousBioSourceException e ) {
+                            MessageHolder.getInstance().addCheckerMessage( new Message( e.getMessage() ) );
+                            System.out.println( e.getMessage() );
+                        }
+                    }
+                }
 
 
-            if ( result == null ) {
-                // error
-                final String msg = "Could not find Protein for uniprot ID: " + uniprotId + " and BioSource " + taxId;
-                MessageHolder.getInstance().addCheckerMessage( new Message( msg ) );
-                System.err.println( msg );
+                if ( result == null ) {
+                    // error
+                    final String msg = "Could not find Protein for uniprot ID: " + uniprotId + " and BioSource " + taxId;
+                    MessageHolder.getInstance().addCheckerMessage( new Message( msg ) );
+                    System.err.println( msg );
 
-            } else {
-
-                if ( result.isSpliceVariantExisting() ) {
-
-                    String svLabel = result.getSpliceVariant().getShortLabel();
-                    String pLabel = result.getProtein().getShortLabel();
-                    System.out.println( "Found 1 splice variant (" + svLabel + ") and its master protein (" + pLabel +
-                                        ") for uniprot ID: " + uniprotId + " (" + source + ")" );
                 } else {
 
-                    String pLabel = result.getProtein().getShortLabel();
-                    System.out.println( "Found 1 protein (" + pLabel + ") for uniprot ID: " +
-                                        uniprotId + " (" + source + ")" );
+                    if ( result.isSpliceVariantExisting() ) {
+
+                        String svLabel = result.getSpliceVariant().getShortLabel();
+                        String pLabel = result.getProtein().getShortLabel();
+                        System.out.println( "Found 1 splice variant (" + svLabel + ") and its master protein (" + pLabel +
+                                            ") for uniprot ID: " + uniprotId + " (" + source + ")" );
+                    } else {
+
+                        String pLabel = result.getProtein().getShortLabel();
+                        System.out.println( "Found 1 protein (" + pLabel + ") for uniprot ID: " +
+                                            uniprotId + " (" + source + ")" );
+                    }
+                }
+
+                cache.put( cacheId, result );
+            } else {
+                if ( DEBUG ) {
+                    System.out.println( "Found from cache ... " );
                 }
             }
 
-            cache.put( cacheId, result );
-        } else {
-            if ( DEBUG ) {
-                System.out.println( "Found from cache ... " );
-            }
         }
+
+
     } // check
 }
