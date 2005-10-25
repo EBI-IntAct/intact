@@ -10,11 +10,14 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.AbstractXref2Xml;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Annotation2xml;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi25.Xref2xmlPSI2;
 import uk.ac.ebi.intact.model.Institution;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.HashMap;
 
 /**
  * TODO document this ;o)
@@ -61,29 +64,29 @@ public class PsiDocumentFactory {
         // Extracting shortlabel and fullname...
 //        String shortlabel = null;
 //        String fullname = null;
-//        HashMap info = new HashMap();
-//        if ( institution == null ) {
-//
+        HashMap info = new HashMap();
+        if ( institution == null ) {
+
 //            shortlabel = "IntAct";
-//            info.put( "url", "http://www.ebi.ac.uk" );
-//            info.put( "postalAddress", "Wellcome Trust Genome Campus, Hinxton, Cambridge, CB10 1SD, United Kingdom" );
-//
-//        } else {
-//
+            info.put( "url", "http://www.ebi.ac.uk" );
+            info.put( "postalAddress", "Wellcome Trust Genome Campus, Hinxton, Cambridge, CB10 1SD, United Kingdom" );
+
+        } else {
+
 //            shortlabel = institution.getShortLabel();
-//
+
 //            if ( institution.getFullName() != null && !"".equals( institution.getFullName().trim() ) ) {
 //                fullname = institution.getFullName();
 //            }
-//
-//            if ( institution.getUrl() != null && !"".equals( institution.getUrl().trim() ) ) {
-//                info.put( "url", institution.getUrl() );
-//            }
-//
-//            if ( institution.getPostalAddress() != null && !"".equals( institution.getPostalAddress().trim() ) ) {
-//                info.put( "postalAddress", institution.getPostalAddress() );
-//            }
-//        }
+
+            if ( institution.getUrl() != null && !"".equals( institution.getUrl().trim() ) ) {
+                info.put( "url", institution.getUrl() );
+            }
+
+            if ( institution.getPostalAddress() != null && !"".equals( institution.getPostalAddress().trim() ) ) {
+                info.put( "postalAddress", institution.getPostalAddress() );
+            }
+        }
 
         // creating shortlabel
         Element names = document.createElement( "names" );
@@ -144,23 +147,23 @@ public class PsiDocumentFactory {
             primaryref.setAttribute( Xref2xmlPSI2.XREF_REFTYPE_AC, "MI:0358" );
         }
 
-//        // generate attributes if any...
-//        if ( false == info.isEmpty() ) {
-//            Element attributeListElement = document.createElement( Annotation2xml.ATTRIBUTE_LIST_NODE_NAME );
-//            source.appendChild( attributeListElement );
-//
-//            for ( Iterator iterator = info.keySet().iterator(); iterator.hasNext(); ) {
-//                String key = (String) iterator.next();
-//
-//                Element attributeElement = document.createElement( Annotation2xml.ATTRIBUTE_NODE_NAME );
-//                attributeListElement.appendChild( attributeElement );
-//
-//                // fill in the data
-//                attributeElement.setAttribute( Annotation2xml.NAME, key );
-//                Text attributeText = document.createTextNode( (String) info.get( key ) );
-//                attributeElement.appendChild( attributeText );
-//            }
-//        }
+        // generate attributes if any...
+        if ( false == info.isEmpty() ) {
+            Element attributeListElement = document.createElement( Annotation2xml.ATTRIBUTE_LIST_NODE_NAME );
+            source.appendChild( attributeListElement );
+
+            for ( Iterator iterator = info.keySet().iterator(); iterator.hasNext(); ) {
+                String key = (String) iterator.next();
+
+                Element attributeElement = document.createElement( Annotation2xml.ATTRIBUTE_NODE_NAME );
+                attributeListElement.appendChild( attributeElement );
+
+                // fill in the data
+                attributeElement.setAttribute( Annotation2xml.NAME, key );
+                Text attributeText = document.createTextNode( (String) info.get( key ) );
+                attributeElement.appendChild( attributeText );
+            }
+        }
 
         return source;
     }
