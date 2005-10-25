@@ -71,7 +71,7 @@ public class ReadOnlySetTest extends TestCase {
             ros.add( null );
             fail( "ReadOnlySet should not allow add()" );
         } catch ( UnsupportedOperationException e ) {
-            e.printStackTrace();
+            // ok
         }
     }
 
@@ -83,7 +83,7 @@ public class ReadOnlySetTest extends TestCase {
             ros.retainAll( null );
             fail( "ReadOnlySet should not allow retainAll()" );
         } catch ( UnsupportedOperationException e ) {
-            e.printStackTrace();
+            // ok
         }
     }
 
@@ -95,7 +95,7 @@ public class ReadOnlySetTest extends TestCase {
             ros.removeAll( null );
             fail( "ReadOnlySet should not allow removeAll()" );
         } catch ( UnsupportedOperationException e ) {
-            e.printStackTrace();
+            // ok
         }
     }
 
@@ -107,7 +107,7 @@ public class ReadOnlySetTest extends TestCase {
             ros.remove( null );
             fail( "ReadOnlySet should not allow remove()" );
         } catch ( UnsupportedOperationException e ) {
-            e.printStackTrace();
+            // ok
         }
     }
 
@@ -119,7 +119,7 @@ public class ReadOnlySetTest extends TestCase {
             ros.clear();
             fail( "ReadOnlySet should not allow clear()" );
         } catch ( UnsupportedOperationException e ) {
-            e.printStackTrace();
+            // ok
         }
     }
 
@@ -131,7 +131,7 @@ public class ReadOnlySetTest extends TestCase {
             ros.addAll( null );
             fail( "ReadOnlySet should not allow addAll()" );
         } catch ( UnsupportedOperationException e ) {
-            e.printStackTrace();
+            // ok
         }
     }
 }

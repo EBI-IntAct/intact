@@ -178,7 +178,8 @@ public class Protein2xmlPSI1Test extends PsiDownloadTest {
         // Checking xref...
         Element xref = (Element) element.getElementsByTagName( "xref" ).item( 0 );
         assertNotNull( xref );
-        assertEquals( 8, xref.getChildNodes().getLength() );
+
+        assertEquals( 9, xref.getChildNodes().getLength() );
         assertHasPrimaryRef( xref, "P47068", "uniprot", null, null );
         assertHasSecondaryRef( xref, "P47067", "uniprot", null, null );
         assertHasSecondaryRef( xref, "Q8X1F4", "uniprot", null, null );

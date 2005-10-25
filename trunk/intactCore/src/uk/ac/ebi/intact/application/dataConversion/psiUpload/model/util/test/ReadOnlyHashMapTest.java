@@ -76,7 +76,7 @@ public class ReadOnlyHashMapTest extends TestCase {
             rohm.clear();
             fail( "ReadOnlyHashMap should not allow clear()" );
         } catch ( UnsupportedOperationException e ) {
-            e.printStackTrace();
+            // ok
         }
     }
 
@@ -88,7 +88,7 @@ public class ReadOnlyHashMapTest extends TestCase {
             rohm.put( null, null );
             fail( "ReadOnlyHashMap should not allow put()" );
         } catch ( UnsupportedOperationException e ) {
-            e.printStackTrace();
+            // ok
         }
     }
 
@@ -100,7 +100,7 @@ public class ReadOnlyHashMapTest extends TestCase {
             rohm.putAll( null );
             fail( "ReadOnlyHashMap should not allow putAll()" );
         } catch ( UnsupportedOperationException e ) {
-            e.printStackTrace();
+            // ok
         }
     }
 
@@ -112,7 +112,7 @@ public class ReadOnlyHashMapTest extends TestCase {
             rohm.remove( null );
             fail( "ReadOnlyHashMap should not allow remove()" );
         } catch ( UnsupportedOperationException e ) {
-            e.printStackTrace();
+            // ok
         }
     }
 }

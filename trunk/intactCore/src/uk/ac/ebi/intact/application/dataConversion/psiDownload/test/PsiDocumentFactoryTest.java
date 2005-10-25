@@ -67,17 +67,14 @@ public class PsiDocumentFactoryTest extends PsiDownloadTest {
         Element names = (Element) list.item( 0 );
         assertNotNull( names );
 
-        assertEquals( 2, names.getChildNodes().getLength() );
+        assertEquals( 1, names.getChildNodes().getLength() );
 
-        assertHasShortlabel( names, "EBI" );
-        assertHasFullname( names, "European Bioinformatics Institute" );
+        assertHasShortlabel( names, "European Bioinformatics Institute" );
 
         // check attributeList
-        Element attributeListElement =
-                (Element) source.getElementsByTagName( Annotation2xml.ATTRIBUTE_LIST_NODE_NAME ).item( 0 );
+        Element attributeListElement = (Element) source.getElementsByTagName( Annotation2xml.ATTRIBUTE_LIST_NODE_NAME ).item( 0 );
         assertHasAttribute( attributeListElement, "url", institution.getUrl() );
         assertHasAttribute( attributeListElement, "postalAddress", institution.getPostalAddress() );
-
     }
 
     public void testBuildPsiDocument() throws Exception {
@@ -112,7 +109,7 @@ public class PsiDocumentFactoryTest extends PsiDownloadTest {
 
         assertEquals( 1, names.getChildNodes().getLength() );
 
-        assertHasShortlabel( names, "IntAct" );
+        assertHasShortlabel( names, "European Bioinformatics Institute" );
     }
 
     public void testBuildPsiDocument1() throws Exception {

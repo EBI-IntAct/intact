@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * That class .
+ * That class Test the behaviour of the ReadOnlyCollection.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
@@ -71,7 +71,7 @@ public class ReadOnlyCollectionTest extends TestCase {
             roc.add( null );
             fail( "ReadOnlyCollection should not allow add()" );
         } catch ( UnsupportedOperationException e ) {
-            e.printStackTrace();
+            // ok
         }
     }
 
@@ -83,7 +83,7 @@ public class ReadOnlyCollectionTest extends TestCase {
             roc.retainAll( null );
             fail( "ReadOnlyCollection should not allow retainAll()" );
         } catch ( UnsupportedOperationException e ) {
-            e.printStackTrace();
+            // ok
         }
     }
 
@@ -95,7 +95,7 @@ public class ReadOnlyCollectionTest extends TestCase {
             roc.removeAll( null );
             fail( "ReadOnlyCollection should not allow removeAll()" );
         } catch ( UnsupportedOperationException e ) {
-            e.printStackTrace();
+            // ok
         }
     }
 
@@ -107,7 +107,7 @@ public class ReadOnlyCollectionTest extends TestCase {
             roc.remove( null );
             fail( "ReadOnlyCollection should not allow remove()" );
         } catch ( UnsupportedOperationException e ) {
-            e.printStackTrace();
+            // ok
         }
     }
 
@@ -119,7 +119,7 @@ public class ReadOnlyCollectionTest extends TestCase {
             roc.clear();
             fail( "ReadOnlyCollection should not allow clear()" );
         } catch ( UnsupportedOperationException e ) {
-            e.printStackTrace();
+            // ok
         }
     }
 
@@ -131,7 +131,7 @@ public class ReadOnlyCollectionTest extends TestCase {
             roc.addAll( null );
             fail( "ReadOnlyCollection should not allow addAll()" );
         } catch ( UnsupportedOperationException e ) {
-            e.printStackTrace();
+            // ok
         }
     }
 }

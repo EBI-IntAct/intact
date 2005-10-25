@@ -13,7 +13,6 @@ import uk.ac.ebi.intact.application.dataConversion.psiDownload.test.PsiDownloadT
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.test.model.TestableExperiment;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Experiment2xmlFactory;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Experiment2xmlI;
-import uk.ac.ebi.intact.application.dataConversion.util.DisplayXML;
 import uk.ac.ebi.intact.model.*;
 
 /**
@@ -132,8 +131,6 @@ public class Experiment2xmlPSI25Test extends PsiDownloadTest {
         // generating the PSI element...
         element = e.create( session, parent, experiment );
 
-        DisplayXML.print( element );
-
         // starting the checks...
         assertNotNull( element );
         assertEquals( "" + session.getExperimentIdentifier( experiment ), element.getAttribute( "id" ) );
@@ -160,8 +157,9 @@ public class Experiment2xmlPSI25Test extends PsiDownloadTest {
         // Checking xref...
         Element xref = (Element) element.getElementsByTagName( "xref" ).item( 1 ); // index 0 is the one from bibref
         assertNotNull( xref );
-        assertEquals( 1, xref.getChildNodes().getLength() );
-        assertHasPrimaryRef( xref, "EBI-xxxxxx", "intact", null, "jan05" );
+        assertEquals( 2, xref.getChildNodes().getLength() );
+        assertHasPrimaryRef( xref, "EBI-1234", "intact", "experiment-2005-1", null );
+        assertHasSecondaryRef( xref, "EBI-xxxxxx", "intact", null, "jan05" );
 
         // Checking hostOrganism...
         Element hostOrganism = (Element) element.getElementsByTagName( "hostOrganism" ).item( 0 );
