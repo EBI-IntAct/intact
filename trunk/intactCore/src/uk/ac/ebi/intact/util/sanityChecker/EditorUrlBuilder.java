@@ -18,7 +18,7 @@ import java.util.*;
  * @version $Id$
  */
 public class EditorUrlBuilder {
-        public static final String SANITYCHECK_CONFIG_FILE = "/config/sanitycheck.properties";
+        public static final String SANITYCHECK_CONFIG_FILE = "/config/sanityCheck.properties";
         private static String EDITOR_BASIC_URL = null;
         static {
         Properties props = PropertyLoader.load( SANITYCHECK_CONFIG_FILE );
