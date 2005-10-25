@@ -175,7 +175,8 @@ public class Interactor2xmlPSI25Test extends PsiDownloadTest {
         // Checking xref...
         Element xref = (Element) element.getElementsByTagName( "xref" ).item( 0 );
         assertNotNull( xref );
-        assertEquals( 8, xref.getChildNodes().getLength() );
+
+        assertEquals( 9, xref.getChildNodes().getLength() );
         assertHasPrimaryRef( xref, "P47068", "uniprot", null, null );
         assertHasSecondaryRef( xref, "P47067", "uniprot", null, null );
         assertHasSecondaryRef( xref, "Q8X1F4", "uniprot", null, null );
@@ -185,6 +186,7 @@ public class Interactor2xmlPSI25Test extends PsiDownloadTest {
         assertHasSecondaryRef( xref, "GO:0017024", "go", "F:myosin I binding", null );
         assertHasSecondaryRef( xref, "GO:0030036", "go", "P:actin cytoskeleton organizat", null );
         assertHasSecondaryRef( xref, "GO:0007010", "go", "P:cytoskeleton organization an", null );
+        assertHasSecondaryRef( xref, "EBI-333333", "intact", "bbc1_yeast", null );
 
         // Checking organism...
         Element hostOrganism = (Element) element.getElementsByTagName( "organism" ).item( 0 );
