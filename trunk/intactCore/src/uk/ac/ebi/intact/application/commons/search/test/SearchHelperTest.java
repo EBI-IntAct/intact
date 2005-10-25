@@ -16,7 +16,6 @@ import org.apache.ojb.broker.query.ReportQueryByCriteria;
 import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
@@ -124,7 +123,7 @@ public class SearchHelperTest extends TestCase {
 
     private void doTestGetExperiments() throws IntactException {
         // Any valid logger will do fine here.
-        Logger logger = Logger.getLogger(EditorConstants.LOGGER);
+        Logger logger = Logger.getLogger( getClass().getName() );
         SearchHelperI searchHelper = new SearchHelper(logger);
 
         ResultWrapper rw = searchHelper.searchByQuery(Experiment.class,"ac", "*", 20);
@@ -141,7 +140,7 @@ public class SearchHelperTest extends TestCase {
     }
 
     private void doTestGetInteractions() throws IntactException {
-        Logger logger = Logger.getLogger(EditorConstants.LOGGER);
+        Logger logger = Logger.getLogger( getClass().getName() );
         SearchHelperI searchHelper = new SearchHelper(logger);
 
         // within max size
@@ -181,7 +180,7 @@ public class SearchHelperTest extends TestCase {
     }
 
     private void doTestGetInteractions2(IntactHelper helper) throws IntactException {
-        Logger logger = Logger.getLogger(EditorConstants.LOGGER);
+        Logger logger = Logger.getLogger( getClass().getName() );
         SearchHelperI searchHelper = new SearchHelper(logger);
 
         // within max size
@@ -231,7 +230,7 @@ public class SearchHelperTest extends TestCase {
     }
 
     private void doTestGetProteins() throws IntactException {
-        Logger logger = Logger.getLogger(EditorConstants.LOGGER);
+        Logger logger = Logger.getLogger( getClass().getName() );
         SearchHelperI searchHelper = new SearchHelper(logger);
 
         // within max size
@@ -276,7 +275,7 @@ public class SearchHelperTest extends TestCase {
             helper = new IntactHelper();
 
             // Any valid logger will do fine here.
-            Logger logger = Logger.getLogger(EditorConstants.LOGGER);
+            Logger logger = Logger.getLogger( getClass().getName() );
             SearchHelperI searchHelper = new SearchHelper(logger);
 
             // Calling the method which closes the internal helper.
