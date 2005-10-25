@@ -160,8 +160,9 @@ public class Experiment2xmlPSI1Test extends PsiDownloadTest {
         // Checking xref...
         Element xref = (Element) element.getElementsByTagName( "xref" ).item( 1 ); // index 0 is the one from bibref
         assertNotNull( xref );
-        assertEquals( 1, xref.getChildNodes().getLength() );
-        assertHasPrimaryRef( xref, "EBI-xxxxxx", "intact", null, "jan05" );
+        assertEquals( 2, xref.getChildNodes().getLength() );
+        assertHasPrimaryRef( xref, "EBI-1234", "intact", "experiment-2005-1", null );
+        assertHasSecondaryRef( xref, "EBI-xxxxxx", "intact", null, "jan05" );
 
         // Checking hostOrganism...
         Element hostOrganism = (Element) element.getElementsByTagName( "hostOrganism" ).item( 0 );

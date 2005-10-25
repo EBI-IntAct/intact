@@ -12,7 +12,6 @@ import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownlo
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.test.PsiDownloadTest;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.BioSource2xmlFactory;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.BioSource2xmlI;
-import uk.ac.ebi.intact.application.dataConversion.util.DisplayXML;
 
 /**
  * Test the behaviour of the Biosource2xmlFactory
@@ -45,14 +44,6 @@ public class BioSource2xmCommonsTest extends PsiDownloadTest {
         Element b = BioSource2xmlFactory.getInstance( session ).createHostOrganism( session, parent, human );
         BioSource2xmlFactory.getInstance( session ).createHostOrganism( session, parent2, human );
         parent3.appendChild( b.cloneNode( true ) );
-
-        System.out.println( "=================================" );
-        DisplayXML.print( parent );
-        System.out.println( "=================================" );
-        DisplayXML.print( parent2 );
-        System.out.println( "=================================" );
-        DisplayXML.print( parent3 );
-        System.out.println( "=================================" );
 
 //        session.getExperimentListElement().appendChild( parent );
 //        session.getExperimentListElement().appendChild( parent2 );
