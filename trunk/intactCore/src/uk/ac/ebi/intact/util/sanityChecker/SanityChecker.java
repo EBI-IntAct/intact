@@ -2122,7 +2122,7 @@ public class
                                             "having count(primaryId) > 1");
 
 
-        List xrefBeans = schIntAc.getBeans(XrefBean.class,"uniprot");
+        List xrefBeans = schIntAc.getBeans(XrefBean.class,CvDatabase.UNIPROT);
 
         scn.sch.addMapping(InteractorBean.class,"SELECT i.ac,i.objclass, i.shortlabel, i.biosource_ac, i.userstamp, i.timestamp "+
                                                 "FROM ia_interactor i, ia_xref x "+
