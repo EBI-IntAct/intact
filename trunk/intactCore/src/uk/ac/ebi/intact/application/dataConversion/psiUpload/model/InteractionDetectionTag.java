@@ -5,6 +5,8 @@
  */
 package uk.ac.ebi.intact.application.dataConversion.psiUpload.model;
 
+import uk.ac.ebi.intact.model.CvDatabase;
+
 /**
  * That class reflects what is needed to create an IntAct <code>CvInteraction</code>.
  * <p/>
@@ -43,7 +45,7 @@ public final class InteractionDetectionTag {
             throw new IllegalArgumentException( "You must give a non null psi definition for an interactionDetection" );
         }
 
-        if ( !Constants.PSI_DB_SHORTLABEL.equals( psiDefinition.getDb() ) ) {
+        if ( !CvDatabase.PSI_MI.equals( psiDefinition.getDb() ) ) {
             throw new IllegalArgumentException( "You must give a pubmed Xref, not " + psiDefinition.getDb() +
                                                 " for an InteractionDetection" );
         }
@@ -62,7 +64,7 @@ public final class InteractionDetectionTag {
 
     ////////////////////////
     // Equality
-    
+
     public boolean equals( final Object o ) {
         if ( this == o ) {
             return true;

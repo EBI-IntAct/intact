@@ -6,6 +6,7 @@
 package uk.ac.ebi.intact.application.dataConversion.psiUpload.model;
 
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.util.ReadOnlyCollection;
+import uk.ac.ebi.intact.model.CvDatabase;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -113,7 +114,7 @@ public final class ExperimentDescriptionTag {
             throw new IllegalArgumentException( "You must give a non null bibRef for an experimentDescription" );
         }
 
-        if ( !Constants.PUBMED_DB_SHORTLABEL.equals( bibRef.getDb() ) ) {
+        if ( !CvDatabase.PUBMED.equals( bibRef.getDb() ) ) {
             throw new IllegalArgumentException( "You must give a pubmed Xref, not " + bibRef.getDb() +
                                                 " for an experimentDescription" );
         }

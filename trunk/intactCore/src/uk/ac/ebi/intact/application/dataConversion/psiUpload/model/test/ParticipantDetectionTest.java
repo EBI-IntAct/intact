@@ -11,6 +11,7 @@ import junit.framework.TestSuite;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.Constants;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.ParticipantDetectionTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.XrefTag;
+import uk.ac.ebi.intact.model.CvDatabase;
 
 /**
  * That class .
@@ -39,7 +40,7 @@ public class ParticipantDetectionTest extends TestCase {
 
     public void testProcess_ok() {
 
-        XrefTag xref = new XrefTag( XrefTag.PRIMARY_REF, "id", Constants.PSI_DB_SHORTLABEL );
+        XrefTag xref = new XrefTag( XrefTag.PRIMARY_REF, "id", CvDatabase.PSI_MI );
         ParticipantDetectionTag participantDetection = new ParticipantDetectionTag( xref );
         assertNotNull( participantDetection );
         assertEquals( xref, participantDetection.getPsiDefinition() );

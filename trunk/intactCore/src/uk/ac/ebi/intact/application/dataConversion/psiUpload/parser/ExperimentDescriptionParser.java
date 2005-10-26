@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.LabelValueBean
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.application.dataConversion.util.DOMUtil;
+import uk.ac.ebi.intact.model.CvDatabase;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -152,7 +153,7 @@ public class ExperimentDescriptionParser {
             final Element interactionDetectionXrefElement = DOMUtil.getFirstElement( interactionDetectionElement, "xref" );
             if ( null != interactionDetectionXrefElement ) {
                 XrefTag interactionXref = XrefParser.getXrefByDb( interactionDetectionXrefElement,
-                                                                  Constants.PSI_DB_SHORTLABEL );
+                                                                  CvDatabase.PSI_MI );
                 try {
                     interactionDetection = new InteractionDetectionTag( interactionXref );
                 } catch ( IllegalArgumentException e ) {
@@ -171,7 +172,7 @@ public class ExperimentDescriptionParser {
             final Element participantDetectionXrefElement = DOMUtil.getFirstElement( participantDetectionElement, "xref" );
             if ( null != participantDetectionXrefElement ) {
                 XrefTag participantXref = XrefParser.getXrefByDb( participantDetectionXrefElement,
-                                                                  Constants.PSI_DB_SHORTLABEL );
+                                                                  CvDatabase.PSI_MI );
                 try {
                     participantDetection = new ParticipantDetectionTag( participantXref );
                 } catch ( IllegalArgumentException e ) {

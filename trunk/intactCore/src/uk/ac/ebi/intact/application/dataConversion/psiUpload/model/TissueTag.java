@@ -46,7 +46,7 @@ public class TissueTag {
 //            throw new IllegalArgumentException( "You must give a non null psi definition for a tissue" );
 //        }
 //
-//        if( !Constants.PSI_DB_SHORTLABEL.equals( psiDefinition.getDb() ) ) {
+//        if( !CvDatabase.PSI_MI.equals( psiDefinition.getDb() ) ) {
 //            throw new IllegalArgumentException( "You must give a psi-mi Xref, not " + psiDefinition.getDb() +
 //                                                " for a tissue" );
 //        }

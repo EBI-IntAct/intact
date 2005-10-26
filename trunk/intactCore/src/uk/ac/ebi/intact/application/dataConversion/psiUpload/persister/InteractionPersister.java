@@ -649,7 +649,7 @@ public final class InteractionPersister {
 
             // TODO shouldn't they be CvXrefQualifier = identity ?
 
-            if ( Constants.PSI_DB_SHORTLABEL.equals( xref.getCvDatabase().getShortLabel() ) ) {
+            if ( CvDatabase.PSI_MI.equals( xref.getCvDatabase().getShortLabel() ) ) {
                 return xref.getPrimaryId();
             }
         }

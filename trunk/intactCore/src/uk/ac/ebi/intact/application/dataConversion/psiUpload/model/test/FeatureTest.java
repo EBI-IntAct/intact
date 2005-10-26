@@ -10,6 +10,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.*;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.util.ReadOnlyCollection;
+import uk.ac.ebi.intact.model.CvDatabase;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,7 +50,7 @@ public class FeatureTest extends TestCase {
         xrefs.add( xref2 );
         xrefs.add( xref3 );
 
-        XrefTag xrefFeatureType = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", Constants.PSI_DB_SHORTLABEL );
+        XrefTag xrefFeatureType = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", CvDatabase.PSI_MI );
         FeatureTypeTag featureType = new FeatureTypeTag( xrefFeatureType );
 
         // location
@@ -57,7 +58,7 @@ public class FeatureTest extends TestCase {
         LocationIntervalTag to = new LocationIntervalTag( 3, 8 );
         LocationTag location = new LocationTag( from, to );
 
-        XrefTag fd = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", Constants.PSI_DB_SHORTLABEL );
+        XrefTag fd = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", CvDatabase.PSI_MI );
         FeatureDetectionTag featureDetection = new FeatureDetectionTag( fd );
 
         FeatureTag feature = new FeatureTag( "shortlabel", "fullname", featureType,
@@ -94,7 +95,7 @@ public class FeatureTest extends TestCase {
         xrefs.add( xref2 );
         xrefs.add( xref3 );
 
-        XrefTag xrefFeatureType = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", Constants.PSI_DB_SHORTLABEL );
+        XrefTag xrefFeatureType = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", CvDatabase.PSI_MI );
         FeatureTypeTag featureType = new FeatureTypeTag( xrefFeatureType );
 
         // location
@@ -102,7 +103,7 @@ public class FeatureTest extends TestCase {
         LocationIntervalTag to = new LocationIntervalTag( 3, 8 );
         LocationTag location = new LocationTag( from, to );
 
-        XrefTag fd = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", Constants.PSI_DB_SHORTLABEL );
+        XrefTag fd = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", CvDatabase.PSI_MI );
         FeatureDetectionTag featureDetection = new FeatureDetectionTag( fd );
 
         FeatureTag feature = null;

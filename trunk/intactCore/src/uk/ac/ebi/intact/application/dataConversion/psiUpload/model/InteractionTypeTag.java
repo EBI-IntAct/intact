@@ -5,6 +5,8 @@
  */
 package uk.ac.ebi.intact.application.dataConversion.psiUpload.model;
 
+import uk.ac.ebi.intact.model.CvDatabase;
+
 /**
  * That class reflects what is needed to create an IntAct <code>Experiment</code>.
  * <p/>
@@ -39,7 +41,7 @@ public final class InteractionTypeTag {
             throw new IllegalArgumentException( "You must give a non null psi definition for an interactionType" );
         }
 
-        if ( !Constants.PSI_DB_SHORTLABEL.equals( psiDefinition.getDb() ) ) {
+        if ( !CvDatabase.PSI_MI.equals( psiDefinition.getDb() ) ) {
             throw new IllegalArgumentException( "You must give a psi-mi Xref, not " + psiDefinition.getDb() +
                                                 " for an InteractionType" );
         }
@@ -58,7 +60,7 @@ public final class InteractionTypeTag {
 
     ////////////////////////
     // Equality
-    
+
     public boolean equals( final Object o ) {
         if ( this == o ) {
             return true;
