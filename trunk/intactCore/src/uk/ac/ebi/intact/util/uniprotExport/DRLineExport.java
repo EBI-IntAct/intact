@@ -573,8 +573,8 @@ public class DRLineExport extends LineExport {
                      "       p.ac = x.parent_ac and\n" +
                      "       x.database_ac = db.ac and\n" +
                      "       x.qualifier_ac = q.ac and\n" +
-                     "       db.shortlabel = 'uniprot' and\n" +
-                     "       q.shortlabel = 'identity' and\n" +
+                     "       db.shortlabel = 'uniprotkb' and\n" +
+                     "       q.shortlabel = '"+CvXrefQualifier.IDENTITY + "' and\n" +
 
                      // filtering TREMBL entries: AAF.., BAA..., ...
                      "       x.primaryId not like 'A%' and \n" +

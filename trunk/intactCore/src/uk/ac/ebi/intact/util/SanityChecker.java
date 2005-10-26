@@ -394,7 +394,7 @@ public class SanityChecker {
 
             //check 15
             if ( bioSource.getTaxId() == null || "".equals( bioSource.getTaxId() ) ) {
-                addMessage( BIOSOURCE_WITH_NO_TAXID, bioSource );
+                addMessage( BIOSOURCE_WITH_NO_TAXID, bioSource, false );
             }
         }
     }
@@ -417,22 +417,22 @@ public class SanityChecker {
                 //check 8
                 if ( exp.getInteractions().size() < 1 ) {
                     //record it.....
-                    addMessage( EXPERIMENT_WITHOUT_INTERACTIONS, exp );
+                    addMessage( EXPERIMENT_WITHOUT_INTERACTIONS, exp, false );
                 }
 
                 //check 11
                 if ( exp.getBioSource() == null ) {
-                    addMessage( EXPERIMENT_WITHOUT_ORGANISM, exp );
+                    addMessage( EXPERIMENT_WITHOUT_ORGANISM, exp, false );
                 }
 
                 //check 12
                 if ( exp.getCvInteraction() == null ) {
-                    addMessage( EXPERIMENT_WITHOUT_CVINTERACTION, exp );
+                    addMessage( EXPERIMENT_WITHOUT_CVINTERACTION, exp, false );
                 }
 
                 //check 13
                 if ( exp.getCvIdentification() == null ) {
-                    addMessage( EXPERIMENT_WITHOUT_CVIDENTIFICATION, exp );
+                    addMessage( EXPERIMENT_WITHOUT_CVIDENTIFICATION, exp, false );
                 }
             } // if
         } // for
@@ -469,12 +469,12 @@ public class SanityChecker {
 
                 if ( pubmedCount == 0 ) {
                     //record it.....
-                    addMessage( EXPERIMENT_WITHOUT_PUBMED, exp );
+                    addMessage( EXPERIMENT_WITHOUT_PUBMED, exp, false );
                 }
 
                 if ( pubmedPrimaryCount < 1 ) {
                     //record it.....
-                    addMessage( EXPERIMENT_WITHOUT_PUBMED_PRIMARY_REFERENCE, exp );
+                    addMessage( EXPERIMENT_WITHOUT_PUBMED_PRIMARY_REFERENCE, exp, false );
                 }
             } // if not on hold
         } // experiments
@@ -498,12 +498,12 @@ public class SanityChecker {
                 //check 7
                 if ( interaction.getExperiments().size() < 1 ) {
                     //record it.....
-                    addMessage( INTERACTION_WITH_NO_EXPERIMENT, interaction );
+                    addMessage( INTERACTION_WITH_NO_EXPERIMENT, interaction, false );
                 }
 
                 //check 9
                 if ( interaction.getCvInteractionType() == null ) {
-                    addMessage( INTERACTION_WITH_NO_CVINTERACTIONTYPE, interaction );
+                    addMessage( INTERACTION_WITH_NO_CVINTERACTIONTYPE, interaction, false );
                 }
 
                 //check 10
@@ -544,6 +544,7 @@ public class SanityChecker {
                 for ( Iterator iterator = components.iterator(); iterator.hasNext(); ) {
                     Component component = (Component) iterator.next();
                     //record it.....
+
 
                     if ( bait.equals( component.getCvComponentRole() ) ) {
                         baitCount++;
@@ -586,7 +587,7 @@ public class SanityChecker {
                 switch ( categoryCount ) {
                     case 0:
                         // none of those categories
-                        addMessage( INTERACTION_WITH_NO_CATEGORIES, interaction );
+                        addMessage( INTERACTION_WITH_NO_CATEGORIES, interaction, false );
                         break;
 
                     case 1:
@@ -594,26 +595,26 @@ public class SanityChecker {
                         if ( baitPrey == 1 ) {
                             // bait-prey
                             if ( baitCount == 0 ) {
-                                addMessage( INTERACTION_WITH_NO_BAIT, interaction );
+                                addMessage( INTERACTION_WITH_NO_BAIT, interaction, false );
                             } else if ( preyCount == 0 ) {
-                                addMessage( INTERACTION_WITH_NO_PREY, interaction );
+                                addMessage( INTERACTION_WITH_NO_PREY, interaction, false );
                             }
 
                         } else if ( enzymeTarget == 1 ) {
                             // enzyme - enzymeTarget
                             if ( enzymeCount == 0 ) {
-                                addMessage( INTERACTION_WITH_NO_ENZYME, interaction );
+                                addMessage( INTERACTION_WITH_NO_ENZYME, interaction, false );
                             } else if ( enzymeTargetCount == 0 ) {
-                                addMessage( INTERACTION_WITH_NO_ENZYME_TARGET, interaction );
+                                addMessage( INTERACTION_WITH_NO_ENZYME_TARGET, interaction, false );
                             }
 
                         } else if ( self == 1 ) {
                             // it has to be > 1
                             if ( selfCount > 1 ) {
-                                addMessage( INTERACTION_WITH_MORE_THAN_2_SELF_PROTEIN, interaction );
+                                addMessage( INTERACTION_WITH_MORE_THAN_2_SELF_PROTEIN, interaction, false );
                             } else { // = 1
                                 if ( selfStoichiometry < 1F ) {
-                                    addMessage( INTERACTION_WITH_SELF_PROTEIN_AND_STOICHIOMETRY_LOWER_THAN_2, interaction );
+                                    addMessage( INTERACTION_WITH_SELF_PROTEIN_AND_STOICHIOMETRY_LOWER_THAN_2, interaction, false );
                                 }
                             }
 
@@ -621,7 +622,7 @@ public class SanityChecker {
                             // neutral
                             if ( neutralCount == 1 ) {
                                 if ( neutralStoichiometry < 2 ) {
-                                    addMessage( INTERACTION_WITH_ONLY_ONE_NEUTRAL, interaction );
+                                    addMessage( INTERACTION_WITH_ONLY_ONE_NEUTRAL, interaction, false );
                                 }
                             }
                         }
@@ -629,7 +630,7 @@ public class SanityChecker {
 
                     default:
                         // > 1 : mixed up categories !
-                        addMessage( INTERACTION_WITH_MIXED_COMPONENT_CATEGORIES, interaction );
+                        addMessage( INTERACTION_WITH_MIXED_COMPONENT_CATEGORIES, interaction, false );
 
                 } // switch
 
@@ -662,7 +663,7 @@ public class SanityChecker {
 
                     if ( firstOne.getInteractor() instanceof Protein ) {
                         proteinToCheck = (Protein) firstOne.getInteractor();
-                        components.remove( firstOne ); //don't check it twice!!
+                        //components.remove( firstOne ); //don't check it twice!!
                     } else {
                         //not interested (for now) in Interactions that have
                         //interactors other than Proteins (for now)...
@@ -680,12 +681,12 @@ public class SanityChecker {
                     //now compare the count and the original - if they are the
                     //same then we have found one that needs to be flagged..
                     if ( matchCount == originalSize ) {
-                        addMessage( SINGLE_PROTEIN_CHECK, interaction );
+                        addMessage( SINGLE_PROTEIN_CHECK, interaction, false );
                     }
 
                 } else {
                     //Interaction has no Components!! This is in fact test 5...
-                    addMessage( NO_PROTEIN_CHECK, interaction );
+                    addMessage( NO_PROTEIN_CHECK, interaction, false );
                 }
             } // if not on hold
         } // interactions
@@ -717,7 +718,7 @@ public class SanityChecker {
         return needsUpdate;
     }
 
-    public void checkProteins( Collection proteins ) throws SQLException {
+    public void checkProteins( Collection proteins ) throws SQLException, IntactException {
 
         System.out.println( "Checking on Proteins (rules 14 and 16) ..." );
 
@@ -739,9 +740,9 @@ public class SanityChecker {
                 } // xrefs
 
                 if ( count == 0 ) {
-                    addMessage( PROTEIN_WITH_NO_UNIPROT_IDENTITY, protein );
+                    addMessage( PROTEIN_WITH_NO_UNIPROT_IDENTITY, protein, false );
                 } else if ( count > 1 ) {
-                    addMessage( PROTEIN_WITH_MORE_THAN_ONE_UNIPROT_IDENTITY, protein );
+                    addMessage( PROTEIN_WITH_MORE_THAN_ONE_UNIPROT_IDENTITY, protein, false );
                 }
 
             } else {
@@ -756,7 +757,7 @@ public class SanityChecker {
                 } // xrefs
 
                 if ( count == 0 ) {
-                    addMessage( NON_UNIPROT_PROTEIN_WITH_NO_UNIPROT_IDENTITY, protein );
+                    addMessage( NON_UNIPROT_PROTEIN_WITH_NO_UNIPROT_IDENTITY, protein, false );
                 }
             }
         } // proteins
@@ -879,39 +880,47 @@ public class SanityChecker {
      *
      * @throws SQLException thrown if there were DB problems
      */
-    private void addMessage( ReportTopic topic, BasicObject obj/*AnnotatedObject obj*/ ) throws SQLException {
+    private void addMessage( ReportTopic topic, BasicObject obj, boolean isCheckReviewed/*AnnotatedObject obj*/ ) throws SQLException, IntactException {
 
         String user = null;
         Timestamp date = null;
         ResultSet results = null;
 
-        if ( obj instanceof Experiment ) {
-            experimentStatement.setString( 1, obj.getAc() );
-            results = experimentStatement.executeQuery();
+        if(isCheckReviewed==false){
+            if ( obj instanceof Experiment ) {
+                experimentStatement.setString( 1, obj.getAc() );
+                results = experimentStatement.executeQuery();
 
-        } else if ( obj instanceof Interaction ) {
-            interationStatement.setString( 1, obj.getAc() );
-            results = interationStatement.executeQuery();
+            } else if ( obj instanceof Interaction ) {
+                interationStatement.setString( 1, obj.getAc() );
+                results = interationStatement.executeQuery();
 
-        } else if ( obj instanceof Protein ) {
-            proteinStatement.setString( 1, obj.getAc() );
-            results = proteinStatement.executeQuery();
+            } else if ( obj instanceof Protein ) {
+                proteinStatement.setString( 1, obj.getAc() );
+                results = proteinStatement.executeQuery();
 
-        } else if ( obj instanceof BioSource ) {
-            bioSourceStatement.setString( 1, obj.getAc() );
-            results = bioSourceStatement.executeQuery();
-        }else if (obj instanceof Annotation ) {
-            annotationStatement.setString(1,obj.getAc());
-            results = annotationStatement.executeQuery();
+            } else if ( obj instanceof BioSource ) {
+                bioSourceStatement.setString( 1, obj.getAc() );
+                results = bioSourceStatement.executeQuery();
+            }else if (obj instanceof Annotation ) {
+                annotationStatement.setString(1,obj.getAc());
+                results = annotationStatement.executeQuery();
+            }
+
+
+            if ( results.next() ) {
+                user = results.getString( "userstamp" );
+                date = results.getTimestamp( "timestamp" );
+            }
+            results.close();
+        }
+        else{
+            HashMap map = retrieveTimeUserFromAudit(obj.getAc());
+            user = (String) map.get("userstamp");
+            date =  (Timestamp) map.get("timestamp");
         }
 
 
-        if ( results.next() ) {
-            user = results.getString( "userstamp" );
-            date = results.getTimestamp( "timestamp" );
-        }
-
-        results.close();
         String userMessageReport="";
         String adminMessageReport="";
         // Build users report
@@ -1159,42 +1168,47 @@ public class SanityChecker {
 
 
             //get the Annotation corresponding to url (i.e. having topic_ac equal to EBI-18
-            //Collection annotations = helper.search( Annotation.class.getName(), "topic_ac", "EBI-18" );
-            //System.out.println(annotations.size() + "annotation loaded.");
-            //checker.checkURL(annotations);
-            //annotations = null;
-            //Runtime.getRuntime().gc();
+            Collection annotations = helper.search( Annotation.class.getName(), "topic_ac", "EBI-18" );
+            System.out.println(annotations.size() + "annotation loaded.");
+            checker.checkURL(annotations);
+            annotations = null;
+            Runtime.getRuntime().gc();
 
 
             //get the Experiment and Interaction info from the DB for later use.
             Collection bioSources = helper.search( BioSource.class.getName(), "ac", "*" );
             System.out.println( bioSources.size() + " biosources loaded." );
-            //checker.checkBioSource( bioSources );
+            checker.checkBioSource( bioSources );
             checker.checkNewt(bioSources);
             bioSources = null;
             Runtime.getRuntime().gc(); // free memory before to carry on.
 
             //get the Experiment and Interaction info from the DB for later use.
-            //Collection experiments = helper.search( Experiment.class.getName(), "ac", "*" );
-            //System.out.println( experiments.size() + " experiments loaded." );
-            //checker.checkExperiments( experiments );
-            //checker.checkExperimentsPubmedIds( experiments );
-            //experiments = null;
-            //Runtime.getRuntime().gc(); // free memory before to carry on.
+            Collection experiments = helper.search( Experiment.class.getName(), "ac", "*" );
+            System.out.println( experiments.size() + " experiments loaded." );
+            checker.checkExperiments( experiments );
+            checker.checkReviewed(experiments);
+            checker.checkExperimentsPubmedIds( experiments );
+            experiments = null;
+            Runtime.getRuntime().gc(); // free memory before to carry on.
+             
+            //System.out.println("Something is working");
+            Collection interactions = helper.search( Interaction.class.getName(), "ac", "EBI-1*" );
+            System.out.println( interactions.size() + " interactions loaded." );
+            //System.out.println("After, helper.search() I am going to sleep 30 seconds");
+            //Thread.sleep(30000);
+            //checker.catherine(interactions);
+            checker.checkInteractions( interactions );
+            checker.checkInteractionsBaitAndPrey( interactions );
+            checker.checkComponentOfInteractions( interactions );
+            interactions = null;
+            Runtime.getRuntime().gc(); // free memory before to carry on.
 
-            //Collection interactions = helper.search( Interaction.class.getName(), "ac", "*" );
-            //System.out.println( interactions.size() + " interactions loaded." );
-            //checker.checkInteractions( interactions );
-            //checker.checkInteractionsBaitAndPrey( interactions );
-            //checker.checkComponentOfInteractions( interactions );
-            //interactions = null;
-            //Runtime.getRuntime().gc(); // free memory before to carry on.
+            Collection proteins = helper.search( Protein.class.getName(), "ac", "*" );
+            System.out.println( proteins.size() + " proteins loaded." );
+            checker.checkProteins( proteins );
 
-            //Collection proteins = helper.search( Protein.class.getName(), "ac", "*" );
-            //System.out.println( proteins.size() + " proteins loaded." );
-            ///checker.checkProteins( proteins );
-
-            //checker.checkCrc64(proteins);
+            checker.checkCrc64(proteins);
 
             long end = System.currentTimeMillis();
             long total = end - start;
@@ -1270,7 +1284,6 @@ public class SanityChecker {
                 checker.cleanUp();
             }
         }
-
         System.exit( 0 );
     }
 
@@ -1515,7 +1528,7 @@ public class SanityChecker {
         }
     }
 
-    public void checkCrc64(Collection proteins) throws SQLException {
+    public void checkCrc64(Collection proteins) throws SQLException, IntactException {
         for (Iterator iterator = proteins.iterator(); iterator.hasNext();) {
             Protein protein = (Protein) iterator.next();
 
@@ -1524,28 +1537,28 @@ public class SanityChecker {
             if(sequence!=null && false==sequence.trim().equals("")){
                 String crc64Calculated=Crc64.getCrc64(sequence);
                 if(!crc64Calculated.equals(crc64Stored)){
-                    addMessage(PROTEIN_WITH_WRONG_CRC64, protein);
+                    addMessage(PROTEIN_WITH_WRONG_CRC64, protein, false);
                 }
             }
             else{
                 if(crc64Stored!=null){
-                    addMessage(PROTEIN_WITHOUT_A_SEQUENCE_BUT_WITH_AN_CRC64,protein);
+                    addMessage(PROTEIN_WITHOUT_A_SEQUENCE_BUT_WITH_AN_CRC64,protein, false);
                     System.out.println("Sequence"+sequence);
                 }
             }
         }
     }
 
-    public void checkReviewed(Collection experiments) throws SQLException {
+    public void checkReviewed(Collection experiments) throws SQLException, IntactException {
 
         for (Iterator iterator = experiments.iterator(); iterator.hasNext();) {
             Experiment experiment =  (Experiment) iterator.next();
-            Collection annotations=experiment.getInteractions();
+            Collection annotations=experiment.getAnnotations();
             for (Iterator iterator1 = annotations.iterator(); iterator1.hasNext();) {
                 Annotation annotation =  (Annotation) iterator1.next();
                 CvTopic cvTopic = annotation.getCvTopic();
                 if("to-be-reviewed".equals(cvTopic.getShortLabel())){
-                    addMessage( EXPERIMENT_TO_BE_REVIEWED,experiment);
+                    addMessage( EXPERIMENT_TO_BE_REVIEWED,experiment, true);
                 }
             }
         }
@@ -1588,10 +1601,319 @@ public class SanityChecker {
             if(false==hasNewtXref){
                 int taxid = Integer.parseInt(bioSource.getTaxId());
                 if(taxid>=1){
-                    addMessage(BIOSOURCE_WITH_NO_NEWT_XREF,bioSource);
+                    addMessage(BIOSOURCE_WITH_NO_NEWT_XREF,bioSource, false);
                 }
             }
         }
     }
+
+    public void catherine( Collection interactions ) throws IntactException, SQLException, InterruptedException {
+
+        for ( Iterator it = interactions.iterator(); it.hasNext(); ) {
+            Interaction interaction = (Interaction) it.next();
+            if ( !isOnHold( interaction ) ) {
+                Collection components = interaction.getComponents();
+                for ( Iterator itComp = components.iterator();itComp.hasNext();){
+                    Component component = (Component) itComp.next();
+
+
+                    if ( component.getInteractor() instanceof Protein) {
+                        //search for the sequence of the protein search if the
+                        //componant is linked to a feature with a range and
+                        //if the sequence are the same
+                        //System.out.println("Component number " +j + " is a protein");
+
+                        Protein protein =(Protein)component.getInteractor();
+                        String protSeq = protein.getSequence();
+
+                        System.out.println("Prot Ac : "+ protein.getAc());
+                        //System.out.println("Seq Prot : "+ protSeq );
+
+                        // todo ""
+                        if(protSeq!=null && false==protSeq.trim().equals("")){ // the protein seq is not null
+                            Collection features = component.getBindingDomains();
+
+                            for( Iterator itFeat = features.iterator();itFeat.hasNext();){
+                                Feature feature = (Feature)itFeat.next();
+                                if(feature!=null){
+                                    Collection ranges = feature.getRanges();
+
+                                    for(Iterator itRange = ranges.iterator();itRange.hasNext();){
+                                        Range range = (Range)itRange.next();
+                                        String rangeSeq = range.getSequence();
+                                        int fromStart = range.getFromIntervalStart();
+                                        //int maxSequenceSize=Range.getMaxSequenceSize();
+                                        //     if(fromStart!=0 && false==("M".equals(protein.getSequence().substring(0,1)))){
+                                        //         fromStart=fromStart-1;
+                                        //maxSequenceSize=maxSequenceSize-1;
+                                        //     }
+
+                                        if(rangeSeq!=null && false==rangeSeq.trim().equals("") ){ //range got a sequence
+                                            //verify if for intact the first letter in a sequence is the
+                                            //letter number 0 or it it is the number 1 , do the same for
+                                            // string.
+
+                                            String protSubSeq=null;
+                                            CvFuzzyType fuzzyType = range.getFromCvFuzzyType();
+                                            if (fuzzyType!=null){
+                                                //System.out.println("Cv Fuzzy type = "+fuzzyType.getShortLabel());
+                                                String fuzzyTypeLabel = fuzzyType.getShortLabel();
+                                                if(CvFuzzyType.C_TERMINAL.equals(fuzzyTypeLabel)){
+                                                    if(protSeq.length()<Range.getMaxSequenceSize()){
+                                                        protSubSeq=protSeq.substring(0, protSeq.length());
+                                                    }
+                                                    else{
+                                                        protSubSeq=protSeq.substring(protSeq.length()-Range.getMaxSequenceSize(),protSeq.length());
+                                                    }
+                                                }else{
+                                                    if(CvFuzzyType.N_TERMINAL.equals(fuzzyTypeLabel)){
+                                                        if(protSeq.length()<Range.getMaxSequenceSize()){
+                                                            protSubSeq=protSeq.substring(0,protSeq.length());
+                                                        }
+                                                        else{
+                                                            protSubSeq=protSeq.substring(0,Range.getMaxSequenceSize());
+                                                        }
+                                                    }
+                                                    else{
+                                                        if(protSeq.length()<fromStart+Range.getMaxSequenceSize()){
+                                                            //if(protSeq.length()<range.getFromIntervalStart()+Range.getMaxSequenceSize()){
+                                                            //protSubSeq=protSeq.substring(range.getFromIntervalStart(), protSeq.length());
+                                                            protSubSeq=protSeq.substring(fromStart, protSeq.length());
+
+                                                        }
+                                                        else{
+                                                            //protSubSeq=protSeq.substring(range.getFromIntervalStart(), range.getFromIntervalStart()+Range.getMaxSequenceSize());
+                                                            protSubSeq=protSeq.substring(fromStart, fromStart+Range.getMaxSequenceSize());
+                                                            //System.out.println("Taking subseq form : "+fromStart+" to "+ fromStart+Range.getMaxSequenceSize());
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            else{
+                                                if(protSeq.length()<fromStart+Range.getMaxSequenceSize()){
+                                                    protSubSeq=protSeq.substring(fromStart, protSeq.length());
+                                                }
+                                                else{
+                                                    //System.out.println("Taking subseq form : "+fromStart+" to "+ fromStart+Range.getMaxSequenceSize());
+                                                    protSubSeq=protSeq.substring(fromStart, fromStart+Range.getMaxSequenceSize());
+                                                }
+                                            }
+
+                                            //System.out.println("Sub seq of prot "+j+" is "+protSubSeq);
+
+                                            if(!rangeSeq.equals(protSubSeq)){
+                                                //error : the sequence in the range and the subsequence of the
+                                                // protein are not equal
+                                                System.out.println("NOT EQUAL");
+                                                addRangeMessage( PROTEIN_SEQUENCE_AND_RANGE_SEQUENCE_NOT_EQUAL, interaction, protein,range );
+                                                System.out.println(rangeSeq);
+                                                System.out.println(protSubSeq);
+                                                System.out.println();
+
+                                                String rangeSeqM = "M"+rangeSeq.substring(0,rangeSeq.length()-1);
+
+
+                                                String protSubSeqM = "M"+protSubSeq.substring(0,protSubSeq.length()-1);
+                                                if(rangeSeqM.equals(protSubSeq)){
+                                                    System.out.println("The seq were not equal but, adding M in front of rangeSeq...");
+                                                }
+                                                else if(protSubSeqM.equals(rangeSeq)){
+                                                    System.out.println("The seq were not equal but, adding M in front of protSeq...");
+
+                                                }
+                                                rangeSeqM=null;
+                                                protSubSeqM=null;
+                                            }
+                                            else{
+                                                System.out.println("Both sequence are equals");
+
+                                            }
+                                            rangeSeq=null;
+                                            protSubSeq=null;
+                                        }
+                                        /* else{  //range does not have a seq but protein got one
+                                        System.out.println("To protein " + j + " corresponds a range with no sequence.");
+
+                                        addRangeMessage (RANGE_HAS_NO_SEQUENCE_WHEN_PROTEIN_HAS_A_SEQUENCE, interaction, protein, range);
+                                        }*/
+                                    }
+
+                                }
+                            }
+                       /* }else{ //the protein seq is null
+                            Collection features = component.getBindingDomains();
+                            for (Iterator iterator = features.iterator(); iterator.hasNext();) {
+                                Feature feature =(Feature)  iterator.next();
+                                Collection ranges = feature.getRanges();
+
+                                for (Iterator iterator1 = ranges.iterator(); iterator1.hasNext();) {
+                                    Range range = (Range) iterator1.next();
+
+                                    if(range.getSequence()!=null){
+                                        //THE RANGE HAS A SEQUENCE BUT THE PROTEIN HAS NO SEQUENCE
+                                        addRangeMessage (RANGE_HAS_A_SEQUENCE_BUT_THE_PROTEIN_DOES_NOT_HAVE_ONE,interaction, protein, range);
+                                    }
+
+                                    CvFuzzyType fuzzyType = range.getFromCvFuzzyType();
+                                    String fuzzyTypeLabel;
+                                    if(fuzzyType!=null)
+                                        fuzzyTypeLabel=null;
+                                    else
+                                        fuzzyTypeLabel = fuzzyType.getShortLabel();
+                                    if(false == (CvFuzzyType.N_TERMINAL.equals(fuzzyTypeLabel) ||
+                                            CvFuzzyType.C_TERMINAL.equals(fuzzyTypeLabel) ||
+                                            CvFuzzyType.UNDETERMINED.equals(fuzzyTypeLabel))){
+                                        addRangeMessage(FUZZY_TYPE_NOT_APPROPRIATE,interaction,protein,range);
+                                    }
+                                    else if (range.getFromIntervalStart()!=0 || range.getFromIntervalEnd()!=0 || range.getToIntervalEnd()!=0 || range.getToIntervalStart()!=0){
+                                        addRangeMessage(INTERVAL_VALUE_NOT_APPROPRIATE, interaction,protein,range);
+                                    }
+
+
+                                }
+                            } */
+                        }
+                    }
+                    System.out.println();
+                    System.out.println();
+                } //if interactor is a protein
+            } // if not on hold
+
+        } // interactions
+    }
+
+
+
+
+
+    private void addRangeMessage( ReportTopic topic, Interaction interaction, Protein protein, Range range ) throws SQLException {
+
+            String interactionUser = null;
+            Timestamp interactionDate = null;
+
+            String proteinUser = null;
+            Timestamp proteinDate = null;
+
+            String rangeUser=null;
+            Timestamp rangeDate=null;
+
+            ResultSet interactionResults = null;
+            ResultSet proteinResults=null;
+            ResultSet rangeResults=null;
+
+
+            interationStatement.setString( 1, interaction.getAc() );
+            interactionResults = interationStatement.executeQuery();
+
+            proteinStatement.setString( 1, protein.getAc() );
+            proteinResults = proteinStatement.executeQuery();
+
+            rangeStatement.setString( 1, range.getAc());
+            rangeResults = rangeStatement.executeQuery();
+
+            if ( interactionResults.next() ) {
+                interactionUser = interactionResults.getString( "userstamp" );
+                interactionDate = interactionResults.getTimestamp( "timestamp" );
+            }
+            interactionResults.close();
+
+            if ( proteinResults.next() ) {
+                proteinUser = proteinResults.getString( "userstamp" );
+                proteinDate = proteinResults.getTimestamp( "timestamp" );
+            }
+            proteinResults.close();
+
+            if ( rangeResults.next() ) {
+                rangeUser = rangeResults.getString( "userstamp" );
+                rangeDate = rangeResults.getTimestamp( "timestamp" );
+            }
+            rangeResults.close();
+
+            // Build users report
+            String userMessageReport = "INTERACTION AC: " + interaction.getAc() +
+                                       "\t Shortlabel: " + interaction.getShortLabel() +
+                                       "\t When: " + interactionDate +
+                                       "\n PROTEIN AC: " + protein.getAc()+
+                                       "\t Shortlabel: " + protein.getShortLabel()+
+                                       "\t When :" + proteinDate +
+                                       "\n RANGE AC: " + range.getAc()+
+                                       "\t When :" + rangeDate;
+
+            if ( rangeUser != null && !( rangeUser.trim().length() == 0 ) ) {
+
+                // add new message to the user
+                Map userReport = (Map) allUsersReport.get( rangeUser );
+                if ( userReport == null ) {
+                    userReport = new HashMap();
+                }
+
+                Collection topicMessages = (Collection) userReport.get( topic );
+                if ( topicMessages == null ) {
+                    topicMessages = new ArrayList();
+
+                    // add the messages to the topic
+                    userReport.put( topic, topicMessages );
+                }
+
+                // add the message to the topic
+                topicMessages.add( userMessageReport );
+
+                // add the user's messages
+                allUsersReport.put( rangeUser, userReport );
+            } else {
+
+                System.err.println( "No user found for object: " + userMessageReport );
+            }
+
+
+
+            // build admin admin report
+            String adminMessageReport = "INTERACTION AC: " + interaction.getAc() +
+                                       "\tShortlabel: " + interaction.getShortLabel() +
+                                       "\tWhen: " + interactionDate +
+                                       "\nPROTEIN AC: " + protein.getAc()+
+                                       "\tShortlabel: " + protein.getShortLabel()+
+                                       "\tWhen :" + proteinDate +
+                                       "\nRANGE AC: " + range.getAc()+
+                                       "\tWhen :" + rangeDate+
+                                       "\n";
+
+            Collection topicMessages = (Collection) adminReport.get( topic );
+            if ( topicMessages == null ) {
+                topicMessages = new ArrayList();
+
+                // add the messages to the topic
+                adminReport.put( topic, topicMessages );
+            }
+
+            // add the message to the topic
+            topicMessages.add( adminMessageReport );
+        }
+
+    public HashMap retrieveTimeUserFromAudit(String ac) throws IntactException, SQLException {
+        String userstamp="";
+        Timestamp timestamp=null;
+        IntactHelper helper =  new IntactHelper();
+        Connection conn = helper.getJDBCConnection();
+
+        ResultSet results=null;
+        PreparedStatement getCuratorName;
+
+        getCuratorName = conn.prepareStatement("select userstamp, timestamp from ia_experiment_audit where ac=? order by updated");
+        getCuratorName.setString( 1, ac );
+        results = getCuratorName.executeQuery();
+        if(results.next()){
+            userstamp = results.getString( "userstamp" );
+            timestamp = results.getTimestamp( "timestamp" );
+        }
+        HashMap map = new HashMap();
+        map.put("userstamp",userstamp);
+        System.out.println("The name found is : "+userstamp);
+        map.put("timestamp", timestamp);
+        return map;
+    }
+
+
+
 }
 

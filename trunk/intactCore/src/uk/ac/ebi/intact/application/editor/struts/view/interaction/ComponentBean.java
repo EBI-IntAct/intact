@@ -33,6 +33,9 @@ import java.util.List;
  */
 public class ComponentBean extends AbstractEditKeyBean {
 
+
+    static final String PROTEIN = "Protein";
+    static final String NUCLEIC_ACID = "Nucleic Acid";
     // Class Data
 
     /**
@@ -43,7 +46,7 @@ public class ComponentBean extends AbstractEditKeyBean {
     static final String SAVE_NEW = "saveNew";
 
     // Instance Data
-
+    private String myType;
     /**
      * The interaction this protein belongs to.
      */
@@ -119,6 +122,7 @@ public class ComponentBean extends AbstractEditKeyBean {
         mySPAc = getSPAc();
         setOrganism();
         setEditState(SAVE_NEW);
+        setType(PROTEIN);
         try {
             setGeneName();
         }
@@ -128,12 +132,32 @@ public class ComponentBean extends AbstractEditKeyBean {
         }
     }
 
+    public ComponentBean(NucleicAcid nucleicAcid){
+        myInteractor = (Interactor) IntactHelper.getRealIntactObject(nucleicAcid);
+        setOrganism();
+        setEditState(SAVE_NEW);
+        setType(NUCLEIC_ACID);
+
+        try{
+            setGeneName();
+        }
+        catch (IntactException ex) {
+            // Error in setting the Gene name for display
+            Logger.getLogger(EditorConstants.LOGGER).error("Gene Name", ex);
+        }
+    }
     /**
      * Instantiate an object of this class from a Component instance.
      * @param component the <code>Component</code> object.
      */
     public ComponentBean(Component component) {
         initialize(component);
+        if(component.getInteractor() instanceof Protein){
+            setType(PROTEIN);
+        }
+        else if (component.getInteractor() instanceof NucleicAcid ){
+            setType(NUCLEIC_ACID);
+        }
 
         // Set the feature for this bean.
         for (Iterator iter = myComponent.getBindingDomains().iterator(); iter.hasNext();) {
@@ -141,6 +165,8 @@ public class ComponentBean extends AbstractEditKeyBean {
             myFeatures.add(new FeatureBean(feature));
         }
     }
+
+
 
     // Read only properties.
 
@@ -181,6 +207,14 @@ public class ComponentBean extends AbstractEditKeyBean {
         myComponent.setExpressedIn(expressedIn);
 
         return myComponent;
+    }
+
+    public String getType(){
+        return myType;
+    }
+
+    public void setType(String type){
+        myType=type;
     }
 
     public String getAc() {
@@ -450,7 +484,7 @@ public class ComponentBean extends AbstractEditKeyBean {
         for (Iterator iter = myInteractor.getXrefs().iterator(); iter.hasNext();) {
             Xref xref = (Xref) iter.next();
             // Only consider SwissProt database entries.
-            if (xref.getCvDatabase().getShortLabel().equals("uniprot")) {
+            if (xref.getCvDatabase().getShortLabel().equals(CvDatabase.UNIPROT)) {
                 return xref.getPrimaryId();
             }
         }

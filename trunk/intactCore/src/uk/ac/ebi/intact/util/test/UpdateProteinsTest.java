@@ -123,9 +123,9 @@ public class UpdateProteinsTest extends TestCase {
             fail( "Could not load CvDatabase: sgd" );
         }
 
-        uniprotDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "uniprot" );
+        uniprotDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, CvDatabase.UNIPROT );
         if( uniprotDatabase == null ) {
-            fail( "Could not load CvDatabase: uniprot" );
+            fail( "Could not load CvDatabase: uniprotkb" );
         }
 
         intactDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "intact" );
