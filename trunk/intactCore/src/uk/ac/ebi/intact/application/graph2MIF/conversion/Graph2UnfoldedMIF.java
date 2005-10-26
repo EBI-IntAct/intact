@@ -933,7 +933,7 @@ public class Graph2UnfoldedMIF {
 
             final CvDatabase db = xref.getCvDatabase();
             if( db != null) {
-                if( "uniprot".equals( db.getShortLabel() ) ) {
+                if( CvDatabase.UNIPROT.equals( db.getShortLabel() ) ) {
                     final CvXrefQualifier cvXrefQualifier = xref.getCvXrefQualifier();
                     if( cvXrefQualifier != null ) {
                         if( "identity".equals( cvXrefQualifier.getShortLabel() ) ) {
