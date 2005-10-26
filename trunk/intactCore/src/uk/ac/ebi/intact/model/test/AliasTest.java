@@ -51,7 +51,8 @@ public class AliasTest extends TestCase {
     public void testConstructor_ok() {
 
         try {
-            Protein protein = new TestableProtein( "", owner, yeast, "proteinTest", "AAAAAAAAAAAAAAAAAA" );
+            CvInteractorType type = new CvInteractorType( owner, "protein" );
+            Protein protein = new TestableProtein( "", owner, yeast, "proteinTest", type, "AAAAAAAAAAAAAAAAAA" );
             Alias alias = new Alias( owner, protein, type1, "anAlias" );
             assertNotNull( alias );
             assertEquals( protein.getAc(), alias.getParentAc() );
@@ -66,7 +67,8 @@ public class AliasTest extends TestCase {
     public void testConstructor3_missingInstitution() {
 
         try {
-            Protein protein = new TestableProtein( "", owner, yeast, "proteinTest", "AAAAAAAAAAAAAAAAAA" );
+            CvInteractorType type = new CvInteractorType( owner, "protein" );
+            Protein protein = new TestableProtein( "", owner, yeast, "proteinTest", type, "AAAAAAAAAAAAAAAAAA" );
             new Alias( null, protein, type1, "anAlias" );
             fail( "Null Institution should not be allowed." );
 
@@ -78,7 +80,8 @@ public class AliasTest extends TestCase {
 
     public void testSetName() {
 
-        Protein protein = new TestableProtein( "", owner, yeast, "proteinTest", "AAAAAAAAAAAAAAAAAA" );
+        CvInteractorType type = new CvInteractorType( owner, "protein" );
+        Protein protein = new TestableProtein( "", owner, yeast, "proteinTest", type, "AAAAAAAAAAAAAAAAAA" );
         String name = "anAlias";
         Alias alias = new Alias( owner, protein, type1, name );
         assertEquals( name.trim(), alias.getName() );
