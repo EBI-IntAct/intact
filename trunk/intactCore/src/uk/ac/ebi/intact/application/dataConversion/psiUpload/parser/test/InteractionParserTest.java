@@ -174,7 +174,7 @@ public class InteractionParserTest extends TestCase {
 
         xref = protein.getUniprotXref();
         assertNotNull( xref );
-        assertEquals( "uniprot", xref.getDb() );
+        assertEquals( "uniprotkb", xref.getDb() );
         assertEquals( "P12345", xref.getId() );
         assertEquals( "blablabla", xref.getSecondary() );
         assertEquals( "2.46", xref.getVersion() );
@@ -205,7 +205,7 @@ public class InteractionParserTest extends TestCase {
 
         xref = protein.getUniprotXref();
         assertNotNull( xref );
-        assertEquals( "uniprot", xref.getDb() );
+        assertEquals( "uniprotkb", xref.getDb() );
         assertEquals( "Q12522", xref.getId() );
         assertEquals( "if6_yeast", xref.getSecondary() );
         assertEquals( "", xref.getVersion() );
