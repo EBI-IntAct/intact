@@ -5,6 +5,8 @@
  */
 package uk.ac.ebi.intact.application.dataConversion.psiUpload.model;
 
+import uk.ac.ebi.intact.model.CvDatabase;
+
 import java.util.Collection;
 import java.util.Collections;
 
@@ -109,8 +111,12 @@ public final class ProteinInteractorTag {
                                  final OrganismTag organism,
                                  final String sequence ) {
 
-        //  as of june 2005 we have proteins without UniProt Xrefs.
-        if ( Constants.UNIPROT_DB_SHORTLABEL.equals( primaryXref.getDb() ) ) {
+        // as of june 2005 we have proteins without UniProt Xrefs.
+        // as of 2005-10-24 uniprot became uniprotkb, so for backward compatibility, we support both the
+        //                  old and new UniProt shortlabel
+        if ( Constants.UNIPROT_DB_SHORTLABEL.equals( primaryXref.getDb() )
+             ||
+             CvDatabase.UNIPROT.equals( primaryXref.getDb() ) ) {
 
             this.uniprotXref = primaryXref;
 
