@@ -47,7 +47,7 @@ public class CellTypeTag {
 //            throw new IllegalArgumentException( "You must give a non null psi definition for a cellType" );
 //        }
 
-//        if( !Constants.PSI_DB_SHORTLABEL.equals( psiDefinition.getDb() ) ) {
+//        if( !CvDatabase.PSI_MI.equals( psiDefinition.getDb() ) ) {
 //            throw new IllegalArgumentException( "You must give a psi-mi Xref, not " + psiDefinition.getDb() +
 //                                                " for a cellType" );
 //        }

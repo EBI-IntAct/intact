@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.XrefTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.application.dataConversion.util.DOMUtil;
+import uk.ac.ebi.intact.model.CvDatabase;
 
 /**
  * That class .
@@ -49,7 +50,7 @@ public class CellTypeParser {
         // Look at either primaryRef and secondaryRef
         XrefTag xref = null;
         if ( null != cellTypeXref ) {
-            xref = XrefParser.getXrefByDb( cellTypeXref, Constants.PSI_DB_SHORTLABEL );
+            xref = XrefParser.getXrefByDb( cellTypeXref, CvDatabase.PSI_MI );
         }
 
         CellTypeTag cellType = null;

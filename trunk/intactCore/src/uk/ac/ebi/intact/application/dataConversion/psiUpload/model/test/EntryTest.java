@@ -11,6 +11,7 @@ import junit.framework.TestSuite;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.*;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.util.ReadOnlyCollection;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.util.ReadOnlyHashMap;
+import uk.ac.ebi.intact.model.CvDatabase;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,7 +47,7 @@ public class EntryTest extends TestCase {
 
     private ExperimentDescriptionTag getExperimentDescription( String id, String pudmed ) {
 
-        XrefTag bibRef = new XrefTag( XrefTag.PRIMARY_REF, pudmed, Constants.PUBMED_DB_SHORTLABEL );
+        XrefTag bibRef = new XrefTag( XrefTag.PRIMARY_REF, pudmed, CvDatabase.PUBMED );
 
         XrefTag xref1 = new XrefTag( XrefTag.SECONDARY_REF, "id1" + id, "interpro" );
         XrefTag xref3 = new XrefTag( XrefTag.SECONDARY_REF, "id3" + id, "intact" );
@@ -62,10 +63,10 @@ public class EntryTest extends TestCase {
 
         HostOrganismTag hostOrganism = new HostOrganismTag( "1234" );
 
-        XrefTag psiInteractionDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", Constants.PSI_DB_SHORTLABEL );
+        XrefTag psiInteractionDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", CvDatabase.PSI_MI );
         InteractionDetectionTag interactionDetection = new InteractionDetectionTag( psiInteractionDetection );
 
-        XrefTag psiParticipantDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", Constants.PSI_DB_SHORTLABEL );
+        XrefTag psiParticipantDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", CvDatabase.PSI_MI );
         ParticipantDetectionTag participantDetection = new ParticipantDetectionTag( psiParticipantDetection );
 
         ExperimentDescriptionTag experimentDescription = new ExperimentDescriptionTag( "shortlabel", "fullname",
@@ -103,7 +104,7 @@ public class EntryTest extends TestCase {
         participants.add( getProteinParticipant( "P12345", "bait" ) );
         participants.add( getProteinParticipant( "P87F87", "prey" ) );
 
-        XrefTag xref = new XrefTag( XrefTag.PRIMARY_REF, "id", Constants.PSI_DB_SHORTLABEL );
+        XrefTag xref = new XrefTag( XrefTag.PRIMARY_REF, "id", CvDatabase.PSI_MI );
         InteractionTypeTag interactionType = new InteractionTypeTag( xref );
 
         Collection xrefs = new ArrayList( 2 );

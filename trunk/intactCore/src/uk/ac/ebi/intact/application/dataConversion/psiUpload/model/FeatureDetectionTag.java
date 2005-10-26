@@ -5,6 +5,8 @@
  */
 package uk.ac.ebi.intact.application.dataConversion.psiUpload.model;
 
+import uk.ac.ebi.intact.model.CvDatabase;
+
 /**
  * That class reflects what is needed to create an IntAct <code>CvFeatureIdentification</code>.
  * <pre>
@@ -36,7 +38,7 @@ public class FeatureDetectionTag {
             throw new IllegalArgumentException( "You must give a non null psi definition for an feature detection" );
         }
 
-        if ( !Constants.PSI_DB_SHORTLABEL.equals( psiDefinition.getDb() ) ) {
+        if ( !CvDatabase.PSI_MI.equals( psiDefinition.getDb() ) ) {
             throw new IllegalArgumentException( "You must give a psi-mi Xref, not " + psiDefinition.getDb() +
                                                 " for a FeatureDetection" );
         }

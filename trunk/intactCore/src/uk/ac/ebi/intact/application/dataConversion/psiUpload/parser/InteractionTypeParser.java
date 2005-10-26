@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.XrefTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.application.dataConversion.util.DOMUtil;
+import uk.ac.ebi.intact.model.CvDatabase;
 
 /**
  * That class converts the XML DOM to an object.
@@ -40,7 +41,7 @@ public class InteractionTypeParser {
         final Element interactionTypeXref = DOMUtil.getFirstElement( element, "xref" );
 
         // Look at either primaryRef and secondaryRef
-        final XrefTag xref = XrefParser.getXrefByDb( interactionTypeXref, Constants.PSI_DB_SHORTLABEL );
+        final XrefTag xref = XrefParser.getXrefByDb( interactionTypeXref, CvDatabase.PSI_MI );
 
         InteractionTypeTag interactionType = null;
         try {

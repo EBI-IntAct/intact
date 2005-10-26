@@ -10,6 +10,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.*;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.util.ReadOnlyCollection;
+import uk.ac.ebi.intact.model.CvDatabase;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,10 +42,10 @@ public class ExperimentDescriptionTest extends TestCase {
 
     public void testProcess_ok_all_param() {
 
-        XrefTag bibRef = new XrefTag( XrefTag.PRIMARY_REF, "123456789", Constants.PUBMED_DB_SHORTLABEL );
+        XrefTag bibRef = new XrefTag( XrefTag.PRIMARY_REF, "123456789", CvDatabase.PUBMED );
 
-        XrefTag bibRef2 = new XrefTag( XrefTag.SECONDARY_REF, "123006789", Constants.PUBMED_DB_SHORTLABEL );
-        XrefTag bibRef3 = new XrefTag( XrefTag.SECONDARY_REF, "123456700", Constants.PUBMED_DB_SHORTLABEL );
+        XrefTag bibRef2 = new XrefTag( XrefTag.SECONDARY_REF, "123006789", CvDatabase.PUBMED );
+        XrefTag bibRef3 = new XrefTag( XrefTag.SECONDARY_REF, "123456700", CvDatabase.PUBMED );
         Collection otherBibRef = new ArrayList( 2 );
         otherBibRef.add( bibRef2 );
         otherBibRef.add( bibRef3 );
@@ -65,10 +66,10 @@ public class ExperimentDescriptionTest extends TestCase {
 
         HostOrganismTag hostOrganism = new HostOrganismTag( "1234" );
 
-        XrefTag psiInteractionDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", Constants.PSI_DB_SHORTLABEL );
+        XrefTag psiInteractionDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", CvDatabase.PSI_MI );
         InteractionDetectionTag interactionDetection = new InteractionDetectionTag( psiInteractionDetection );
 
-        XrefTag psiParticipantDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", Constants.PSI_DB_SHORTLABEL );
+        XrefTag psiParticipantDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", CvDatabase.PSI_MI );
         ParticipantDetectionTag participantDetection = new ParticipantDetectionTag( psiParticipantDetection );
 
         ExperimentDescriptionTag experimentDescription = new ExperimentDescriptionTag( "shortlabel", "fullname",
@@ -105,14 +106,14 @@ public class ExperimentDescriptionTest extends TestCase {
 
     public void testProcess_ok_minimum_param() {
 
-        XrefTag bibRef = new XrefTag( XrefTag.PRIMARY_REF, "123456789", Constants.PUBMED_DB_SHORTLABEL );
+        XrefTag bibRef = new XrefTag( XrefTag.PRIMARY_REF, "123456789", CvDatabase.PUBMED );
 
         HostOrganismTag hostOrganism = new HostOrganismTag( "1234" );
 
-        XrefTag psiInteractionDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", Constants.PSI_DB_SHORTLABEL );
+        XrefTag psiInteractionDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", CvDatabase.PSI_MI );
         InteractionDetectionTag interactionDetection = new InteractionDetectionTag( psiInteractionDetection );
 
-        XrefTag psiParticipantDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", Constants.PSI_DB_SHORTLABEL );
+        XrefTag psiParticipantDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", CvDatabase.PSI_MI );
         ParticipantDetectionTag participantDetection = new ParticipantDetectionTag( psiParticipantDetection );
 
         ExperimentDescriptionTag experimentDescription = new ExperimentDescriptionTag( "shortlabel", "fullname",
@@ -156,14 +157,14 @@ public class ExperimentDescriptionTest extends TestCase {
 
     public void testProcess_error_no_shortlabel() {
 
-        XrefTag bibRef = new XrefTag( XrefTag.PRIMARY_REF, "123456789", Constants.PUBMED_DB_SHORTLABEL );
+        XrefTag bibRef = new XrefTag( XrefTag.PRIMARY_REF, "123456789", CvDatabase.PUBMED );
 
         HostOrganismTag hostOrganism = new HostOrganismTag( "1234" );
 
-        XrefTag psiInteractionDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", Constants.PSI_DB_SHORTLABEL );
+        XrefTag psiInteractionDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", CvDatabase.PSI_MI );
         InteractionDetectionTag interactionDetection = new InteractionDetectionTag( psiInteractionDetection );
 
-        XrefTag psiParticipantDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", Constants.PSI_DB_SHORTLABEL );
+        XrefTag psiParticipantDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", CvDatabase.PSI_MI );
         ParticipantDetectionTag participantDetection = new ParticipantDetectionTag( psiParticipantDetection );
 
         ExperimentDescriptionTag experimentDescription = null;
@@ -202,14 +203,14 @@ public class ExperimentDescriptionTest extends TestCase {
 
     public void testProcess_error_no_fullname() {
 
-        XrefTag bibRef = new XrefTag( XrefTag.PRIMARY_REF, "123456789", Constants.PUBMED_DB_SHORTLABEL );
+        XrefTag bibRef = new XrefTag( XrefTag.PRIMARY_REF, "123456789", CvDatabase.PUBMED );
 
         HostOrganismTag hostOrganism = new HostOrganismTag( "1234" );
 
-        XrefTag psiInteractionDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", Constants.PSI_DB_SHORTLABEL );
+        XrefTag psiInteractionDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", CvDatabase.PSI_MI );
         InteractionDetectionTag interactionDetection = new InteractionDetectionTag( psiInteractionDetection );
 
-        XrefTag psiParticipantDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", Constants.PSI_DB_SHORTLABEL );
+        XrefTag psiParticipantDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", CvDatabase.PSI_MI );
         ParticipantDetectionTag participantDetection = new ParticipantDetectionTag( psiParticipantDetection );
 
         ExperimentDescriptionTag experimentDescription = null;
@@ -252,10 +253,10 @@ public class ExperimentDescriptionTest extends TestCase {
 
         HostOrganismTag hostOrganism = new HostOrganismTag( "1234" );
 
-        XrefTag psiInteractionDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", Constants.PSI_DB_SHORTLABEL );
+        XrefTag psiInteractionDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", CvDatabase.PSI_MI );
         InteractionDetectionTag interactionDetection = new InteractionDetectionTag( psiInteractionDetection );
 
-        XrefTag psiParticipantDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", Constants.PSI_DB_SHORTLABEL );
+        XrefTag psiParticipantDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", CvDatabase.PSI_MI );
         ParticipantDetectionTag participantDetection = new ParticipantDetectionTag( psiParticipantDetection );
 
         ExperimentDescriptionTag experimentDescription = null;
@@ -277,14 +278,14 @@ public class ExperimentDescriptionTest extends TestCase {
 
     public void testProcess_error_no_organism() {
 
-        XrefTag bibRef = new XrefTag( XrefTag.PRIMARY_REF, "123456789", Constants.PUBMED_DB_SHORTLABEL );
+        XrefTag bibRef = new XrefTag( XrefTag.PRIMARY_REF, "123456789", CvDatabase.PUBMED );
 
         HostOrganismTag hostOrganism = null;
 
-        XrefTag psiInteractionDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", Constants.PSI_DB_SHORTLABEL );
+        XrefTag psiInteractionDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", CvDatabase.PSI_MI );
         InteractionDetectionTag interactionDetection = new InteractionDetectionTag( psiInteractionDetection );
 
-        XrefTag psiParticipantDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", Constants.PSI_DB_SHORTLABEL );
+        XrefTag psiParticipantDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", CvDatabase.PSI_MI );
         ParticipantDetectionTag participantDetection = new ParticipantDetectionTag( psiParticipantDetection );
 
         ExperimentDescriptionTag experimentDescription = null;
@@ -306,13 +307,13 @@ public class ExperimentDescriptionTest extends TestCase {
 
     public void testProcess_error_no_interactionDetection() {
 
-        XrefTag bibRef = new XrefTag( XrefTag.PRIMARY_REF, "123456789", Constants.PUBMED_DB_SHORTLABEL );
+        XrefTag bibRef = new XrefTag( XrefTag.PRIMARY_REF, "123456789", CvDatabase.PUBMED );
 
         HostOrganismTag hostOrganism = new HostOrganismTag( "1234" );
 
         InteractionDetectionTag interactionDetection = null;
 
-        XrefTag psiParticipantDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", Constants.PSI_DB_SHORTLABEL );
+        XrefTag psiParticipantDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", CvDatabase.PSI_MI );
         ParticipantDetectionTag participantDetection = new ParticipantDetectionTag( psiParticipantDetection );
 
         ExperimentDescriptionTag experimentDescription = null;
@@ -334,11 +335,11 @@ public class ExperimentDescriptionTest extends TestCase {
 
     public void testProcess_error_no_participantDetection() {
 
-        XrefTag bibRef = new XrefTag( XrefTag.PRIMARY_REF, "123456789", Constants.PUBMED_DB_SHORTLABEL );
+        XrefTag bibRef = new XrefTag( XrefTag.PRIMARY_REF, "123456789", CvDatabase.PUBMED );
 
         HostOrganismTag hostOrganism = new HostOrganismTag( "1234" );
 
-        XrefTag psiInteractionDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", Constants.PSI_DB_SHORTLABEL );
+        XrefTag psiInteractionDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", CvDatabase.PSI_MI );
         InteractionDetectionTag interactionDetection = new InteractionDetectionTag( psiInteractionDetection );
 
         ParticipantDetectionTag participantDetection = null;
@@ -370,10 +371,10 @@ public class ExperimentDescriptionTest extends TestCase {
 
         HostOrganismTag hostOrganism = new HostOrganismTag( "1234" );
 
-        XrefTag psiInteractionDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", Constants.PSI_DB_SHORTLABEL );
+        XrefTag psiInteractionDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", CvDatabase.PSI_MI );
         InteractionDetectionTag interactionDetection = new InteractionDetectionTag( psiInteractionDetection );
 
-        XrefTag psiParticipantDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", Constants.PSI_DB_SHORTLABEL );
+        XrefTag psiParticipantDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", CvDatabase.PSI_MI );
         ParticipantDetectionTag participantDetection = new ParticipantDetectionTag( psiParticipantDetection );
 
         ExperimentDescriptionTag experimentDescription = null;
@@ -395,14 +396,14 @@ public class ExperimentDescriptionTest extends TestCase {
 
     public void testProcess_error_xrefs_contains_something_else_than_XrefTag() {
 
-        XrefTag bibRef = new XrefTag( XrefTag.PRIMARY_REF, "123456789", Constants.PUBMED_DB_SHORTLABEL );
+        XrefTag bibRef = new XrefTag( XrefTag.PRIMARY_REF, "123456789", CvDatabase.PUBMED );
 
         HostOrganismTag hostOrganism = new HostOrganismTag( "1234" );
 
-        XrefTag psiInteractionDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", Constants.PSI_DB_SHORTLABEL );
+        XrefTag psiInteractionDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", CvDatabase.PSI_MI );
         InteractionDetectionTag interactionDetection = new InteractionDetectionTag( psiInteractionDetection );
 
-        XrefTag psiParticipantDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", Constants.PSI_DB_SHORTLABEL );
+        XrefTag psiParticipantDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", CvDatabase.PSI_MI );
         ParticipantDetectionTag participantDetection = new ParticipantDetectionTag( psiParticipantDetection );
 
         XrefTag xref1 = new XrefTag( XrefTag.SECONDARY_REF, "id1", "interpro" );
@@ -433,14 +434,14 @@ public class ExperimentDescriptionTest extends TestCase {
 
     public void testProcess_error_annotations_contains_something_else_than_AnnotationTag() {
 
-        XrefTag bibRef = new XrefTag( XrefTag.PRIMARY_REF, "123456789", Constants.PUBMED_DB_SHORTLABEL );
+        XrefTag bibRef = new XrefTag( XrefTag.PRIMARY_REF, "123456789", CvDatabase.PUBMED );
 
         HostOrganismTag hostOrganism = new HostOrganismTag( "1234" );
 
-        XrefTag psiInteractionDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", Constants.PSI_DB_SHORTLABEL );
+        XrefTag psiInteractionDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", CvDatabase.PSI_MI );
         InteractionDetectionTag interactionDetection = new InteractionDetectionTag( psiInteractionDetection );
 
-        XrefTag psiParticipantDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", Constants.PSI_DB_SHORTLABEL );
+        XrefTag psiParticipantDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", CvDatabase.PSI_MI );
         ParticipantDetectionTag participantDetection = new ParticipantDetectionTag( psiParticipantDetection );
 
         AnnotationTag annotation1 = new AnnotationTag( "comment", "blababla" );
@@ -469,18 +470,18 @@ public class ExperimentDescriptionTest extends TestCase {
 
     public void testProcess_error_additionalBibRef_contains_something_else_than_XrefTag() {
 
-        XrefTag bibRef = new XrefTag( XrefTag.PRIMARY_REF, "123456789", Constants.PUBMED_DB_SHORTLABEL );
+        XrefTag bibRef = new XrefTag( XrefTag.PRIMARY_REF, "123456789", CvDatabase.PUBMED );
 
         HostOrganismTag hostOrganism = new HostOrganismTag( "1234" );
 
-        XrefTag psiInteractionDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", Constants.PSI_DB_SHORTLABEL );
+        XrefTag psiInteractionDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", CvDatabase.PSI_MI );
         InteractionDetectionTag interactionDetection = new InteractionDetectionTag( psiInteractionDetection );
 
-        XrefTag psiParticipantDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", Constants.PSI_DB_SHORTLABEL );
+        XrefTag psiParticipantDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", CvDatabase.PSI_MI );
         ParticipantDetectionTag participantDetection = new ParticipantDetectionTag( psiParticipantDetection );
 
-        XrefTag bibRef2 = new XrefTag( XrefTag.SECONDARY_REF, "123006789", Constants.PUBMED_DB_SHORTLABEL );
-        XrefTag bibRef3 = new XrefTag( XrefTag.SECONDARY_REF, "123456700", Constants.PUBMED_DB_SHORTLABEL );
+        XrefTag bibRef2 = new XrefTag( XrefTag.SECONDARY_REF, "123006789", CvDatabase.PUBMED );
+        XrefTag bibRef3 = new XrefTag( XrefTag.SECONDARY_REF, "123456700", CvDatabase.PUBMED );
         Collection otherBibRef = new ArrayList( 2 );
         otherBibRef.add( bibRef2 );
         otherBibRef.add( new Integer( 1 ) );

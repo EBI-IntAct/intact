@@ -10,6 +10,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.*;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.util.ReadOnlyCollection;
+import uk.ac.ebi.intact.model.CvDatabase;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,14 +44,14 @@ public class InteractionTest extends TestCase {
 
     private ExperimentDescriptionTag getExperimentDescription1() {
 
-        XrefTag bibRef = new XrefTag( XrefTag.PRIMARY_REF, "123456789", Constants.PUBMED_DB_SHORTLABEL );
+        XrefTag bibRef = new XrefTag( XrefTag.PRIMARY_REF, "123456789", CvDatabase.PUBMED );
 
         HostOrganismTag hostOrganism = new HostOrganismTag( "1234" );
 
-        XrefTag psiInteractionDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", Constants.PSI_DB_SHORTLABEL );
+        XrefTag psiInteractionDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", CvDatabase.PSI_MI );
         InteractionDetectionTag interactionDetection = new InteractionDetectionTag( psiInteractionDetection );
 
-        XrefTag psiParticipantDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", Constants.PSI_DB_SHORTLABEL );
+        XrefTag psiParticipantDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", CvDatabase.PSI_MI );
         ParticipantDetectionTag participantDetection = new ParticipantDetectionTag( psiParticipantDetection );
 
         ExperimentDescriptionTag experimentDescription = new ExperimentDescriptionTag( "shortlabel", "fullname",
@@ -66,10 +67,10 @@ public class InteractionTest extends TestCase {
 
     private ExperimentDescriptionTag getExperimentDescription2() {
 
-        XrefTag bibRef = new XrefTag( XrefTag.PRIMARY_REF, "123456789", Constants.PUBMED_DB_SHORTLABEL );
+        XrefTag bibRef = new XrefTag( XrefTag.PRIMARY_REF, "123456789", CvDatabase.PUBMED );
 
-        XrefTag bibRef2 = new XrefTag( XrefTag.SECONDARY_REF, "123006789", Constants.PUBMED_DB_SHORTLABEL );
-        XrefTag bibRef3 = new XrefTag( XrefTag.SECONDARY_REF, "123456700", Constants.PUBMED_DB_SHORTLABEL );
+        XrefTag bibRef2 = new XrefTag( XrefTag.SECONDARY_REF, "123006789", CvDatabase.PUBMED );
+        XrefTag bibRef3 = new XrefTag( XrefTag.SECONDARY_REF, "123456700", CvDatabase.PUBMED );
         Collection otherBibRef = new ArrayList( 2 );
         otherBibRef.add( bibRef2 );
         otherBibRef.add( bibRef3 );
@@ -90,10 +91,10 @@ public class InteractionTest extends TestCase {
 
         HostOrganismTag hostOrganism = new HostOrganismTag( "1234" );
 
-        XrefTag psiInteractionDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", Constants.PSI_DB_SHORTLABEL );
+        XrefTag psiInteractionDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:xxxx", CvDatabase.PSI_MI );
         InteractionDetectionTag interactionDetection = new InteractionDetectionTag( psiInteractionDetection );
 
-        XrefTag psiParticipantDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", Constants.PSI_DB_SHORTLABEL );
+        XrefTag psiParticipantDetection = new XrefTag( XrefTag.PRIMARY_REF, "MI:yyyy", CvDatabase.PSI_MI );
         ParticipantDetectionTag participantDetection = new ParticipantDetectionTag( psiParticipantDetection );
 
         ExperimentDescriptionTag experimentDescription = new ExperimentDescriptionTag( "shortlabel", "fullname",
@@ -154,7 +155,7 @@ public class InteractionTest extends TestCase {
         participants.add( getProteinParticipant1() );
         participants.add( getProteinParticipant2() );
 
-        XrefTag xref = new XrefTag( XrefTag.PRIMARY_REF, "id", Constants.PSI_DB_SHORTLABEL );
+        XrefTag xref = new XrefTag( XrefTag.PRIMARY_REF, "id", CvDatabase.PSI_MI );
         InteractionTypeTag interactionType = new InteractionTypeTag( xref );
 
         Collection xrefs = new ArrayList( 4 );
@@ -213,7 +214,7 @@ public class InteractionTest extends TestCase {
         participants.add( getProteinParticipant1() );
         participants.add( getProteinParticipant2() );
 
-        XrefTag xref = new XrefTag( XrefTag.PRIMARY_REF, "id", Constants.PSI_DB_SHORTLABEL );
+        XrefTag xref = new XrefTag( XrefTag.PRIMARY_REF, "id", CvDatabase.PSI_MI );
         InteractionTypeTag interactionType = new InteractionTypeTag( xref );
 
         InteractionTag interaction = new InteractionTag( null, null,
@@ -255,7 +256,7 @@ public class InteractionTest extends TestCase {
         participants.add( getProteinParticipant1() );
         participants.add( getProteinParticipant2() );
 
-        XrefTag xref = new XrefTag( XrefTag.PRIMARY_REF, "id", Constants.PSI_DB_SHORTLABEL );
+        XrefTag xref = new XrefTag( XrefTag.PRIMARY_REF, "id", CvDatabase.PSI_MI );
         InteractionTypeTag interactionType = new InteractionTypeTag( xref );
 
         InteractionTag interaction = null; // confidence
@@ -283,7 +284,7 @@ public class InteractionTest extends TestCase {
         participants.add( getProteinParticipant1() );
         participants.add( getProteinParticipant2() );
 
-        XrefTag xref = new XrefTag( XrefTag.PRIMARY_REF, "id", Constants.PSI_DB_SHORTLABEL );
+        XrefTag xref = new XrefTag( XrefTag.PRIMARY_REF, "id", CvDatabase.PSI_MI );
         InteractionTypeTag interactionType = new InteractionTypeTag( xref );
 
         InteractionTag interaction = null; // confidence
@@ -309,7 +310,7 @@ public class InteractionTest extends TestCase {
         experiments.add( getExperimentDescription1() );
         experiments.add( getExperimentDescription2() );
 
-        XrefTag xref = new XrefTag( XrefTag.PRIMARY_REF, "id", Constants.PSI_DB_SHORTLABEL );
+        XrefTag xref = new XrefTag( XrefTag.PRIMARY_REF, "id", CvDatabase.PSI_MI );
         InteractionTypeTag interactionType = new InteractionTypeTag( xref );
 
         InteractionTag interaction = null; // confidence
@@ -337,7 +338,7 @@ public class InteractionTest extends TestCase {
 
         Collection participants = new ArrayList( 0 );
 
-        XrefTag xref = new XrefTag( XrefTag.PRIMARY_REF, "id", Constants.PSI_DB_SHORTLABEL );
+        XrefTag xref = new XrefTag( XrefTag.PRIMARY_REF, "id", CvDatabase.PSI_MI );
         InteractionTypeTag interactionType = new InteractionTypeTag( xref );
 
         InteractionTag interaction = null; // confidence
@@ -368,7 +369,7 @@ public class InteractionTest extends TestCase {
         participants.add( getProteinParticipant1() );
         participants.add( getProteinParticipant2() );
 
-        XrefTag xref = new XrefTag( XrefTag.PRIMARY_REF, "id", Constants.PSI_DB_SHORTLABEL );
+        XrefTag xref = new XrefTag( XrefTag.PRIMARY_REF, "id", CvDatabase.PSI_MI );
         InteractionTypeTag interactionType = new InteractionTypeTag( xref );
 
         InteractionTag interaction = null; // confidence
@@ -399,7 +400,7 @@ public class InteractionTest extends TestCase {
         participants.add( new Integer( 2 ) );          // !!!!!!
         participants.add( getProteinParticipant2() );
 
-        XrefTag xref = new XrefTag( XrefTag.PRIMARY_REF, "id", Constants.PSI_DB_SHORTLABEL );
+        XrefTag xref = new XrefTag( XrefTag.PRIMARY_REF, "id", CvDatabase.PSI_MI );
         InteractionTypeTag interactionType = new InteractionTypeTag( xref );
 
         InteractionTag interaction = null; // confidence

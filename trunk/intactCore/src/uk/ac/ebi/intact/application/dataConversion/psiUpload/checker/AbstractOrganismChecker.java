@@ -14,10 +14,7 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.model.CvCellType;
-import uk.ac.ebi.intact.model.CvTissue;
-import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.BioSourceFactory;
 
 import java.util.Collection;
@@ -317,7 +314,7 @@ public abstract class AbstractOrganismChecker {
 
                 for ( Iterator iterator = bsTissue.getXrefs().iterator(); iterator.hasNext() && null == intactId; ) {
                     Xref xref = (Xref) iterator.next();
-                    if ( Constants.PSI_DB_SHORTLABEL.equals( xref.getCvDatabase().getShortLabel() ) ) {
+                    if ( CvDatabase.PSI_MI.equals( xref.getCvDatabase().getShortLabel() ) ) {
                         if ( ControlledVocabularyRepository.getPrimaryXrefQualifier().equals( xref.getCvXrefQualifier() ) ) {
                             // found it !
                             intactId = xref.getPrimaryId(); // PSI ID
@@ -386,7 +383,7 @@ public abstract class AbstractOrganismChecker {
                 String intactId = null;
                 for ( Iterator iterator = bsCellType.getXrefs().iterator(); iterator.hasNext() && null == intactId; ) {
                     Xref xref = (Xref) iterator.next();
-                    if ( Constants.PSI_DB_SHORTLABEL.equals( xref.getCvDatabase().getShortLabel() ) ) {
+                    if ( CvDatabase.PSI_MI.equals( xref.getCvDatabase().getShortLabel() ) ) {
                         if ( ControlledVocabularyRepository.getPrimaryXrefQualifier().equals( xref.getCvXrefQualifier() ) ) {
                             // found it !
                             intactId = xref.getPrimaryId();
