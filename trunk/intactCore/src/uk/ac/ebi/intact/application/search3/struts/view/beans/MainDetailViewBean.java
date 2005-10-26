@@ -370,7 +370,7 @@ public class MainDetailViewBean extends AbstractViewBean {
         Collection xrefs = protein.getXrefs();
         for (Iterator it = xrefs.iterator(); it.hasNext();) {
             Xref xref = (Xref) it.next();
-            if (xref.getCvDatabase().getShortLabel().equals("uniprot")) {
+            if (xref.getCvDatabase().getShortLabel().equals(CvDatabase.UNIPROT)) {
                 uniprotLabel = xref.getPrimaryId();
                 break;  //done
             }
@@ -680,7 +680,7 @@ public class MainDetailViewBean extends AbstractViewBean {
         String uniprotURL = "-";
         for (Iterator it = xrefs.iterator(); it.hasNext();) {
             Xref xref = (Xref) it.next();
-            if (xref.getCvDatabase().getShortLabel().equals("uniprot")) {
+            if (xref.getCvDatabase().getShortLabel().equals(CvDatabase.UNIPROT)) {
                 uniprotURL = this.getPrimaryIdURL(xref);
                 break;  //done
             }
