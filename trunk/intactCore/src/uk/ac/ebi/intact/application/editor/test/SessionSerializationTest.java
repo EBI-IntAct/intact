@@ -133,7 +133,7 @@ public class SessionSerializationTest extends TestCase  {
 
             // Database and Xref qualifier for Xrefs.
             CvDatabase uniprot = (CvDatabase) myHelper.getObjectByLabel(
-                    CvDatabase.class, "uniprot");
+                    CvDatabase.class, CvDatabase.UNIPROT);
             CvXrefQualifier xqualifier = (CvXrefQualifier)
                     myHelper.getObjectByLabel(CvXrefQualifier.class, "identity");
 

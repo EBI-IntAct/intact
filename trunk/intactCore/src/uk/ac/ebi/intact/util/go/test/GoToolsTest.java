@@ -213,7 +213,7 @@ public class GoToolsTest extends TestCase {
 
     private void doTestCvDatabaseDef() throws IntactException {
         CvDatabase database = (CvDatabase) myHelper.getObjectByLabel(
-                CvDatabase.class, "uniprot");
+                CvDatabase.class, CvDatabase.UNIPROT);
         assertNotNull(database);
         assertEquals(database.getFullName(), "UniProt protein sequence database");
         // No xrefs.

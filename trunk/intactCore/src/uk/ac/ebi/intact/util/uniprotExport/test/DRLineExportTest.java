@@ -83,7 +83,7 @@ public class DRLineExportTest extends TestCase {
         uniprotDrExport = new CvTopic( institution, "uniprot-dr-export" );
         authorConfidence = new CvTopic( institution, "author-confidence" );
         negative = new CvTopic( institution, "negative" );
-        uniprot = new CvDatabase( institution, "uniprot" );
+        uniprot = new CvDatabase( institution, CvDatabase.UNIPROT );
         intact = new CvDatabase( institution, "intact" );
         identityCvXrefQualifier = new CvXrefQualifier( institution, "identity" );
         isoformParentXrefQualifier = new CvXrefQualifier( institution, "isoform-parent" );
