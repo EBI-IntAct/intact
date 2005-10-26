@@ -95,6 +95,9 @@ public final class XrefTag {
         return version;
     }
 
+    public short getType() {
+        return type;
+    }
 
     ////////////////////////
     // Equality
