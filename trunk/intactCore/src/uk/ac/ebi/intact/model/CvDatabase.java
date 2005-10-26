@@ -57,7 +57,7 @@ public class CvDatabase extends CvObject implements Editable {
     public static final String SGD = "sgd";
     public static final String SGD_MI_REF = "MI:0484";
 
-    public static final String UNIPROT = "uniprot";
+    public static final String UNIPROT = "uniprotkb";
     public static final String UNIPROT_MI_REF = "MI:0486";
 
     public static final String IMEX = "imex";
