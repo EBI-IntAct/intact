@@ -261,7 +261,7 @@ public class AdvancedSearchAction extends IntactBaseAction {
             searchKeys = this.estimateResults(iqlStatement);
             logger.info("got " + searchKeys.size() + " searchKeys");
         } catch (IntactException e) {
-            logger.error("Problems with getting the results by IQL: " + iqlStatement);
+            logger.error("Problems with getting the results by IQL: " + iqlStatement,e);
             session.setAttribute(SearchConstants.ERROR_MESSAGE, "Sorry your specified query can't be searched!");
             return mapping.findForward(SearchConstants.FORWARD_ERROR);
         } catch (BooleanQuery.TooManyClauses be) {

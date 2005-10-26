@@ -543,7 +543,7 @@ public class PartnersViewBean extends AbstractViewBean {
         Collection xrefs = protein.getXrefs();
         for (Iterator it = xrefs.iterator(); it.hasNext();) {
             Xref xref = (Xref) it.next();
-            if (xref.getCvDatabase().getShortLabel().equals("uniprot")) {
+            if (xref.getCvDatabase().getShortLabel().equals(CvDatabase.UNIPROT)) {
                 //done - cache it and return
                 return xref;
             }
