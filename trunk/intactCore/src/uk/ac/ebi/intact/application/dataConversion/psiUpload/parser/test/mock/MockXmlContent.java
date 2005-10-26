@@ -86,7 +86,7 @@ public class MockXmlContent {
             "                        secondary=\"C:nucleus\" version=\"\"/>" + NEW_LINE +
             "                    <secondaryRef db=\"go\" id=\"GO:0000282\"" + NEW_LINE +
             "                        secondary=\"P:bud site selection\" version=\"\"/>" + NEW_LINE +
-            "                    <secondaryRef db=\"uniprot\" id=\"Q08004\"" + NEW_LINE +
+            "                    <secondaryRef db=\"uniprotkb\" id=\"Q08004\"" + NEW_LINE +
             "                        secondary=\"q08004\" version=\"\"/>" + NEW_LINE +
             "                    <secondaryRef db=\"interpro\" id=\"IPR007087\"" + NEW_LINE +
             "                        secondary=\"Znf_C2H2\" version=\"\"/>" + NEW_LINE +
@@ -119,7 +119,7 @@ public class MockXmlContent {
             "                        secondary=\"P:processing of 27S pre-rRNA\" version=\"\"/>" + NEW_LINE +
             "                    <secondaryRef db=\"go\" id=\"GO:0042273\"" + NEW_LINE +
             "                        secondary=\"P:ribosomal large subunit biog\" version=\"\"/>" + NEW_LINE +
-            "                    <secondaryRef db=\"uniprot\" id=\"Q12522\"" + NEW_LINE +
+            "                    <secondaryRef db=\"uniprotkb\" id=\"Q12522\"" + NEW_LINE +
             "                        secondary=\"if6_yeast\" version=\"\"/>" + NEW_LINE +
             "                </xref>" + NEW_LINE +
             "                <organism ncbiTaxId=\"4932\">" + NEW_LINE +
@@ -147,7 +147,7 @@ public class MockXmlContent {
             "                        secondary=\"C:nucleus\" version=\"\"/>" + NEW_LINE +
             "                    <secondaryRef db=\"go\" id=\"GO:0042273\"" + NEW_LINE +
             "                        secondary=\"P:ribosomal large subunit biog\" version=\"\"/>" + NEW_LINE +
-            "                    <secondaryRef db=\"uniprot\" id=\"P40078\"" + NEW_LINE +
+            "                    <secondaryRef db=\"uniprotkb\" id=\"P40078\"" + NEW_LINE +
             "                        secondary=\"yev6_yeast\" version=\"\"/>" + NEW_LINE +
             "                </xref>" + NEW_LINE +
             "                <organism ncbiTaxId=\"4932\">" + NEW_LINE +
@@ -613,7 +613,7 @@ public class MockXmlContent {
             "        <fullName>Chromosome XII reading frame ORF YLR074C</fullName>" + NEW_LINE +
             "    </names>" + NEW_LINE +
             "    <xref>" + NEW_LINE +
-            "        <primaryRef db=\"uniprot\" id=\"P12345\"" + NEW_LINE +
+            "        <primaryRef db=\"uniprotkb\" id=\"P12345\"" + NEW_LINE +
             "            secondary=\"blablabla\" version=\"2.46\"/>" + NEW_LINE +
             "        <secondaryRef db=\"sgd\" id=\"S0004064\"" + NEW_LINE +
             "            secondary=\"BUD20\" version=\"\"/>" + NEW_LINE +
@@ -637,7 +637,7 @@ public class MockXmlContent {
             "        <fullName>Eukaryotic translation initiation factor 6</fullName>" + NEW_LINE +
             "    </names>" + NEW_LINE +
             "    <xref>" + NEW_LINE +
-            "        <primaryRef db=\"uniprot\" id=\"Q12522\"" + NEW_LINE +
+            "        <primaryRef db=\"uniprotkb\" id=\"Q12522\"" + NEW_LINE +
             "            secondary=\"if6_yeast\" version=\"\"/>" + NEW_LINE +
             "        <secondaryRef db=\"interpro\" id=\"IPR002769\"" + NEW_LINE +
             "            secondary=\"eIF6\" version=\"\"/>" + NEW_LINE +
@@ -668,7 +668,7 @@ public class MockXmlContent {
             "        <fullName>Eukaryotic translation initiation factor 6</fullName>" + NEW_LINE +
             "    </names>" + NEW_LINE +
             "    <xref>" + NEW_LINE +
-            "        <primaryRef db=\"uniprot\" id=\"P12345\"" + NEW_LINE +
+            "        <primaryRef db=\"uniprotkb\" id=\"P12345\"" + NEW_LINE +
             "            secondary=\"blablabla\" version=\"2.46\"/>" + NEW_LINE +
             "        <secondaryRef db=\"go\" id=\"GO:0042273\"" + NEW_LINE +
             "            secondary=\"P:ribosomal large subunit biog\" version=\"\"/>" + NEW_LINE +
