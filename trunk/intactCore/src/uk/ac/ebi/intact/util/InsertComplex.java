@@ -118,7 +118,7 @@ public final class InsertComplex {
 //                    "identity".equals( xref.getCvXrefQualifier().getShortLabel() )&&
 //                    spAc.equals(xref.getPrimaryId() )
 //            ) {
-            if( "uniprot".equals( xref.getCvDatabase().getShortLabel() ) &&
+            if( CvDatabase.UNIPROT.equals( xref.getCvDatabase().getShortLabel() ) &&
                 spAc.equals( xref.getPrimaryId() )
             ) {
                 return true;

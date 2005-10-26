@@ -60,9 +60,9 @@ public class ProteinExport {
         }
 
         CvDatabase uniprotDatabase = null;
-        uniprotDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "uniprot" );
+        uniprotDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, CvDatabase.UNIPROT );
         if ( uniprotDatabase == null ) {
-            throw new SearchException( "Could not find the UNIPROT database in the current intact node." );
+            throw new SearchException( "Could not find the UNIPROTKB database in the current intact node." );
         }
 
         // collect proteins
