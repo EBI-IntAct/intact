@@ -46,7 +46,8 @@ public class UserSessionDownloadTest extends PsiDownloadTest {
 
     public void testIsProteinAlreadyDefined() {
 
-        Protein protein = new TestableProtein( "EBI-111", owner, yeast, "prot", proteinType, null );
+        //Protein protein = new TestableProtein( "EBI-111", owner, yeast, "prot", proteinType, null );
+        Protein protein = new TestableProtein( "EBI-111", owner, yeast, "prot", null );
         UserSessionDownload session = new UserSessionDownload( PsiVersion.VERSION_1 );
 
         assertFalse( session.isAlreadyDefined( protein ) );
