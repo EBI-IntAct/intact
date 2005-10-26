@@ -104,9 +104,9 @@ public class InsertComplexMerck {
             throw new IntactException( "Could not find the Institution: EBI. Stop processing." );
         }
 
-        uniprot = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "uniprot" );
+        uniprot = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, CvDatabase.UNIPROT );
         if( uniprot == null ) {
-            throw new IntactException( "Could not find the CvDatabase: uniprot. Stop processing." );
+            throw new IntactException( "Could not find the CvDatabase: uniprotkb. Stop processing." );
         }
 
         pubmed = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "pubmed" );
