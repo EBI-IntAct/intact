@@ -105,7 +105,7 @@ public final class ProteinInteractorTag {
      */
     public ProteinInteractorTag( final String shortlabel,
                                  final String fullname,
-                                 final XrefTag primaryXref,
+                                       XrefTag primaryXref,
                                  final Collection secondaryXrefs,
                                  final Collection aliases,
                                  final OrganismTag organism,
@@ -114,9 +114,17 @@ public final class ProteinInteractorTag {
         // as of june 2005 we have proteins without UniProt Xrefs.
         // as of 2005-10-24 uniprot became uniprotkb, so for backward compatibility, we support both the
         //                  old and new UniProt shortlabel
-        if ( Constants.UNIPROT_DB_SHORTLABEL.equals( primaryXref.getDb() )
-             ||
-             CvDatabase.UNIPROT.equals( primaryXref.getDb() ) ) {
+        if ( Constants.UNIPROT_DB_SHORTLABEL.equals( primaryXref.getDb() ) ) {
+
+            primaryXref = new XrefTag( primaryXref.getType(),
+                                       primaryXref.getId(),
+                                       CvDatabase.UNIPROT,            // use the IntAct definition
+                                       primaryXref.getSecondary(),
+                                       primaryXref.getVersion() );
+
+            this.uniprotXref = primaryXref;
+
+        } else if ( CvDatabase.UNIPROT.equals( primaryXref.getDb() ) ) {
 
             this.uniprotXref = primaryXref;
 
