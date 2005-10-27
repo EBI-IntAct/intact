@@ -94,7 +94,7 @@ public class Xref2xmlPSI2Test extends PsiDownloadTest {
         // check content of the tag
         assertEquals( "primaryRef", primaryRef.getNodeName() );
         assertEquals( "P12345", primaryRef.getAttribute( "id" ) );
-        assertEquals( "uniprot", primaryRef.getAttribute( "db" ) );
+        assertEquals( "uniprotkb", primaryRef.getAttribute( "db" ) );
         assertEquals( "", primaryRef.getAttribute( "secondary" ) );
         assertEquals( "", primaryRef.getAttribute( "version" ) );
     }
@@ -121,7 +121,7 @@ public class Xref2xmlPSI2Test extends PsiDownloadTest {
         // check content of the tag
         assertEquals( "secondaryRef", primaryRef.getNodeName() );
         assertEquals( "P12345", primaryRef.getAttribute( "id" ) );
-        assertEquals( "uniprot", primaryRef.getAttribute( "db" ) );
+        assertEquals( "uniprotkb", primaryRef.getAttribute( "db" ) );
         assertEquals( "", primaryRef.getAttribute( "secondary" ) );
         assertEquals( "", primaryRef.getAttribute( "version" ) );
     }
