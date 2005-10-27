@@ -177,9 +177,9 @@ public class Interactor2xmlPSI25Test extends PsiDownloadTest {
         assertNotNull( xref );
 
         assertEquals( 9, xref.getChildNodes().getLength() );
-        assertHasPrimaryRef( xref, "P47068", "uniprot", null, null );
-        assertHasSecondaryRef( xref, "P47067", "uniprot", null, null );
-        assertHasSecondaryRef( xref, "Q8X1F4", "uniprot", null, null );
+        assertHasPrimaryRef( xref, "P47068", "uniprotkb", null, null );
+        assertHasSecondaryRef( xref, "P47067", "uniprotkb", null, null );
+        assertHasSecondaryRef( xref, "Q8X1F4", "uniprotkb", null, null );
         assertHasSecondaryRef( xref, "S000003557", "sgd", "BBC1", null );
         // NOTE: the Xref.secondaryId are truncated to 30 characters
         assertHasSecondaryRef( xref, "GO:0030479", "go", "C:actin cortical patch (sensu ", null );
