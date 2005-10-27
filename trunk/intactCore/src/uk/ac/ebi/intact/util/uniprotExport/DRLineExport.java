@@ -566,6 +566,7 @@ public class DRLineExport extends LineExport {
         Statement statement = connection.createStatement();
 
         // select the protein ordered by Uniprot identity.
+        // TODO update that query so that it uses the MI references of uniprot and identity.
         String sql = "SELECT distinct P.ac, x.primaryId\n" +
                      "FROM   ia_interactor P, ia_component C, ia_xref x, ia_controlledvocab q, ia_controlledvocab db\n" +
                      "WHERE  P.objclass like '%Protein%' and\n" +
@@ -573,8 +574,8 @@ public class DRLineExport extends LineExport {
                      "       p.ac = x.parent_ac and\n" +
                      "       x.database_ac = db.ac and\n" +
                      "       x.qualifier_ac = q.ac and\n" +
-                     "       db.shortlabel = 'uniprotkb' and\n" +
-                     "       q.shortlabel = '"+CvXrefQualifier.IDENTITY + "' and\n" +
+                     "       db.shortlabel = '"+ CvDatabase.UNIPROT +"' and\n" +
+                     "       q.shortlabel = '"+ CvXrefQualifier.IDENTITY +"' and\n" +
 
                      // filtering TREMBL entries: AAF.., BAA..., ...
                      "       x.primaryId not like 'A%' and \n" +

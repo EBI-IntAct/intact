@@ -32,22 +32,8 @@ public class LineExport {
         formatter = null;
     }
 
-
     //////////////////////////
     // Constants
-
-    protected static final String UNIPROT_DR_EXPORT = "uniprot-dr-export";
-    protected static final String UNIPROT_CC_EXPORT = "uniprot-cc-note";
-    protected static final String AUTHOR_CONFIDENCE = "author-confidence";
-    protected static final String GENE_NAME = "gene name";
-    protected static final String LOCUS_NAME = "locus name";
-    protected static final String ORF_NAME = "orf name";
-    protected static final String NEGATIVE = "negative";
-    protected static final String CC_NOTE = "uniprot-cc-note";
-    protected static final String UNIPROT = "uniprot";
-    protected static final String INTACT = "intact";
-    protected static final String IDENTITY = "identity";
-    protected static final String ISOFORM_PARENT = "isoform-parent";
 
     protected static final String METHOD_EXPORT_KEYWORK_EXPORT = "yes";
     protected static final String METHOD_EXPORT_KEYWORK_DO_NOT_EXPORT = "no";
@@ -57,7 +43,6 @@ public class LineExport {
 
     protected static final String NEW_LINE = System.getProperty( "line.separator" );
     protected static final char TABULATION = '\t';
-
 
     ////////////////////////////
     // Inner Class
@@ -354,14 +339,15 @@ public class LineExport {
      */
     public void init( IntactHelper helper ) throws IntactException, DatabaseContentException {
 
-        uniprotDatabase = (CvDatabase) getCvObject( helper, CvDatabase.class, CvDatabase.UNIPROT );
-        intactDatabase = (CvDatabase) getCvObject( helper, CvDatabase.class, CvDatabase.INTACT );
-        pubmedDatabase = (CvDatabase) getCvObject( helper, CvDatabase.class, CvDatabase.PUBMED );
+        uniprotDatabase = (CvDatabase) getCvObject( helper, CvDatabase.class, CvDatabase.UNIPROT_MI_REF, CvDatabase.UNIPROT );
+        intactDatabase = (CvDatabase) getCvObject( helper, CvDatabase.class, CvDatabase.INTACT_MI_REF, CvDatabase.INTACT );
+        pubmedDatabase = (CvDatabase) getCvObject( helper, CvDatabase.class, CvDatabase.PUBMED_MI_REF, CvDatabase.PUBMED );
 
-        identityXrefQualifier = (CvXrefQualifier) getCvObject( helper, CvXrefQualifier.class, CvXrefQualifier.IDENTITY );
-        isoformParentQualifier = (CvXrefQualifier) getCvObject( helper, CvXrefQualifier.class, CvXrefQualifier.ISOFORM_PARENT );
-        primaryReferenceQualifier = (CvXrefQualifier) getCvObject( helper, CvXrefQualifier.class, CvXrefQualifier.PRIMARY_REFERENCE );
+        identityXrefQualifier = (CvXrefQualifier) getCvObject( helper, CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF, CvXrefQualifier.IDENTITY );
+        isoformParentQualifier = (CvXrefQualifier) getCvObject( helper, CvXrefQualifier.class, CvXrefQualifier.ISOFORM_PARENT_MI_REF, CvXrefQualifier.ISOFORM_PARENT );
+        primaryReferenceQualifier = (CvXrefQualifier) getCvObject( helper, CvXrefQualifier.class, CvXrefQualifier.PRIMARY_REFERENCE_MI_REF, CvXrefQualifier.PRIMARY_REFERENCE );
 
+        // note: CvTopic do not have MI references.
         uniprotDR_Export = (CvTopic) getCvObject( helper, CvTopic.class, CvTopic.UNIPROT_DR_EXPORT );
         uniprotCC_Export = (CvTopic) getCvObject( helper, CvTopic.class, CvTopic.UNIPROT_CC_EXPORT );
         authorConfidenceTopic = (CvTopic) getCvObject( helper, CvTopic.class, CvTopic.AUTHOR_CONFIDENCE );
@@ -369,14 +355,15 @@ public class LineExport {
         ccNoteTopic = (CvTopic) getCvObject( helper, CvTopic.class, CvTopic.CC_NOTE );
         noUniprotUpdate = (CvTopic) getCvObject( helper, CvTopic.class, CvTopic.NON_UNIPROT );
 
-        geneNameAliasType = (CvAliasType) getCvObject( helper, CvAliasType.class, CvAliasType.GENE_NAME );
-        locusNameAliasType = (CvAliasType) getCvObject( helper, CvAliasType.class, CvAliasType.LOCUS_NAME );
-        orfNameAliasType = (CvAliasType) getCvObject( helper, CvAliasType.class, CvAliasType.ORF_NAME );
+        geneNameAliasType = (CvAliasType) getCvObject( helper, CvAliasType.class, CvAliasType.GENE_NAME_MI_REF, CvAliasType.GENE_NAME );
+        locusNameAliasType = (CvAliasType) getCvObject( helper, CvAliasType.class, CvAliasType.LOCUS_NAME_MI_REF, CvAliasType.LOCUS_NAME );
+        orfNameAliasType = (CvAliasType) getCvObject( helper, CvAliasType.class, CvAliasType.ORF_NAME_MI_REF, CvAliasType.ORF_NAME );
     }
 
     /**
      * Get a CvObject based on its class name and its shortlabel.
      *
+     * @param helper     database access
      * @param clazz      the Class we are looking for
      * @param shortlabel the shortlabel of the object we are looking for
      *
@@ -389,12 +376,54 @@ public class LineExport {
             throws IntactException,
                    DatabaseContentException {
 
-        CvObject cv = (CvObject) helper.getObjectByLabel( clazz, shortlabel );
+        return getCvObject( helper, clazz, null, shortlabel );
+    }
+
+    /**
+     * Get a CvObject based on its class name and its shortlabel. <br>
+     * If specified, the MI reference will be used first, then only the shortlabel.
+     *
+     * @param helper     database access
+     * @param clazz      the Class we are looking for
+     * @param mi         the mi reference of the CvObject (if any, otherwise: null)
+     * @param shortlabel the shortlabel of the object we are looking for
+     *
+     * @return the CvObject of type <code>clazz</code> and having the shortlabel <code>shorltabel<code>.
+     *
+     * @throws IntactException          if the search failed
+     * @throws DatabaseContentException if the object is not found.
+     */
+    private CvObject getCvObject( IntactHelper helper, Class clazz, String mi, String shortlabel )
+            throws IntactException,
+                   DatabaseContentException {
+
+        if( mi == null && shortlabel == null ) {
+            throw new IllegalArgumentException( "You must give at least a MI reference or a shortlabel of the CV you are looking for." );
+        }
+
+        CvObject cv = null;
+
+        if( mi != null ) {
+            cv = (CvObject) helper.getObjectByPrimaryId( clazz, mi );
+            if( cv == null ) {
+                System.err.println( "The MI reference you gave doesn't exists. Using the shortlabel instead." );
+            }
+        }
+
+        if( cv == null ) {
+            cv = (CvObject) helper.getObjectByLabel( clazz, shortlabel );
+        }
+
         if ( cv == null ) {
             StringBuffer sb = new StringBuffer( 128 );
-            sb.append( shortlabel );
-            sb.append( ' ' );
+            sb.append( "Could not find " );
             sb.append( clazz.getName() );
+            sb.append( ' ' );
+            sb.append( shortlabel );
+            if( mi != null ) {
+                sb.append( ' ' );
+                sb.append( '(' ).append( mi ).append( ')' );
+            }
             sb.append( " in your IntAct node" );
 
             throw new DatabaseContentException( sb.toString() );
@@ -684,7 +713,7 @@ public class LineExport {
 
                         if ( true == found ) {
                             multipleAnnotationFound = true;
-                            System.err.println( "There are multiple annotation having Topic:" + UNIPROT_DR_EXPORT +
+                            System.err.println( "There are multiple annotation having Topic:" + CvTopic.UNIPROT_DR_EXPORT +
                                                 " in CvInteraction: " + cvInteraction.getShortLabel() +
                                                 ". \nWe do not export." );
                         } else {
@@ -736,7 +765,7 @@ public class LineExport {
 
                                 } else if ( i == 1 ) {
 
-                                    String err = cvInteraction.getShortLabel() + " having annotation (" + UNIPROT_DR_EXPORT +
+                                    String err = cvInteraction.getShortLabel() + " having annotation (" + CvTopic.UNIPROT_DR_EXPORT +
                                                  ") has an annotationText like <integer value>. Value was: " + i +
                                                  ", We consider it as to be exported.";
                                     log( err );
@@ -747,7 +776,7 @@ public class LineExport {
                                 } else {
                                     // i < 1
 
-                                    String err = cvInteraction.getShortLabel() + " having annotation (" + UNIPROT_DR_EXPORT +
+                                    String err = cvInteraction.getShortLabel() + " having annotation (" + CvTopic.UNIPROT_DR_EXPORT +
                                                  ") has an annotationText like <integer value>. Value was: " + i +
                                                  " However, having a value < 1 is not valid, We consider it as to be NOT exported.";
                                     System.err.println( err );
@@ -758,7 +787,7 @@ public class LineExport {
 
                             } catch ( NumberFormatException e ) {
                                 // not an integer !
-                                System.err.println( cvInteraction.getShortLabel() + " having annotation (" + UNIPROT_DR_EXPORT +
+                                System.err.println( cvInteraction.getShortLabel() + " having annotation (" + CvTopic.UNIPROT_DR_EXPORT +
                                                     ") has an annotationText different from yes/no/<integer value> !!!" +
                                                     " value was: '" + text + "'." );
                                 log( logPrefix + "\t\t\t not an integer:(" + text + ") found: do not export " );
@@ -769,7 +798,7 @@ public class LineExport {
                     } else {
                         // no annotation implies NO EXPORT !
                         System.err.println( cvInteraction.getShortLabel() +
-                                            " doesn't have an annotation: " + UNIPROT_DR_EXPORT );
+                                            " doesn't have an annotation: " + CvTopic.UNIPROT_DR_EXPORT );
                         log( logPrefix + "\t\t\t not annotation found: do not export " );
 
                         status = new CvInteractionStatus( CvInteractionStatus.DO_NOT_EXPORT );
@@ -1133,9 +1162,9 @@ public class LineExport {
     }
 
     /**
-     * Checks if the protein has been annotated with the no-uniprot-update CvTopic, if so, return false,
-     * otherwise true. That flag is added to a protein when created via the editor. As some protein may
-     * have a UniProt ID as identity we don't want those to be overwitten.
+     * Checks if the protein has been annotated with the no-uniprot-update CvTopic, if so, return false, otherwise true.
+     * That flag is added to a protein when created via the editor. As some protein may have a UniProt ID as identity we
+     * don't want those to be overwitten.
      *
      * @param protein the protein to check
      *
@@ -1145,7 +1174,7 @@ public class LineExport {
 
         boolean needsUpdate = true;
 
-        if( null == noUniprotUpdate ) {
+        if ( null == noUniprotUpdate ) {
             // in case the term hasn't been created, assume there are no proteins created via editor.
             return true;
         }
@@ -1153,7 +1182,7 @@ public class LineExport {
         for ( Iterator iterator = protein.getAnnotations().iterator(); iterator.hasNext() && true == needsUpdate; ) {
             Annotation annotation = (Annotation) iterator.next();
 
-            if( noUniprotUpdate.equals( annotation.getCvTopic() ) ) {
+            if ( noUniprotUpdate.equals( annotation.getCvTopic() ) ) {
                 needsUpdate = false;
             }
         }
