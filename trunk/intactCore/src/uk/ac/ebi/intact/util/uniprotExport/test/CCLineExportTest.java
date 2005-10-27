@@ -37,12 +37,12 @@ public class CCLineExportTest extends TestCase {
 
         // Note: ASCII( 'a' )=65, and ASCII( 'A' )=97
 
-        ccLines.add( new CcLine( "blablabla", "abCDef" ) );
-        ccLines.add( new CcLine( "blablabla", "abcdef" ) );
-        ccLines.add( new CcLine( "blablabla", "Self" ) );
-        ccLines.add( new CcLine( "blablabla", "fedcba" ) );
-        ccLines.add( new CcLine( "blablabla", "aBcdEf" ) );
-        ccLines.add( new CcLine( "blablabla", "aBCdef" ) );
+        ccLines.add( new CcLine( "blablabla", "abCDef", "" ) );
+        ccLines.add( new CcLine( "blablabla", "abcdef", "" ) );
+        ccLines.add( new CcLine( "blablabla", "Self", "" ) );
+        ccLines.add( new CcLine( "blablabla", "fedcba", "" ) );
+        ccLines.add( new CcLine( "blablabla", "aBcdEf", "" ) );
+        ccLines.add( new CcLine( "blablabla", "aBCdef", "" ) );
 
         assertEquals( 6, ccLines.size() );
 
@@ -80,11 +80,11 @@ public class CCLineExportTest extends TestCase {
 
         // Note: ASCII( 'a' )=65, and ASCII( 'A' )=97
 
-        ccLines.add( new CcLine( "blablabla", "abCDef" ) );
-        ccLines.add( new CcLine( "blablabla", "abcdef" ) );
-        ccLines.add( new CcLine( "blablabla", "fedcba" ) );
-        ccLines.add( new CcLine( "blablabla", "aBcdEf" ) );
-        ccLines.add( new CcLine( "blablabla", "aBCdef" ) );
+        ccLines.add( new CcLine( "blablabla", "abCDef", "" ) );
+        ccLines.add( new CcLine( "blablabla", "abcdef", "" ) );
+        ccLines.add( new CcLine( "blablabla", "fedcba", "" ) );
+        ccLines.add( new CcLine( "blablabla", "aBcdEf", "" ) );
+        ccLines.add( new CcLine( "blablabla", "aBCdef", "" ) );
 
         assertEquals( 5, ccLines.size() );
 
@@ -110,5 +110,60 @@ public class CCLineExportTest extends TestCase {
         assertEquals( "aBcdEf", ( (CcLine) ccLines.get( 2 ) ).getGeneName() );
         assertEquals( "aBCdef", ( (CcLine) ccLines.get( 3 ) ).getGeneName() );
         assertEquals( "fedcba", ( (CcLine) ccLines.get( 4 ) ).getGeneName() );
+    }
+
+    public void testCCLinesOrdering_3() {
+
+        // create a collection of CC Lines to order
+        List ccLines = new LinkedList();
+
+
+        // Note: ASCII( 'a' )=65, and ASCII( 'A' )=97
+
+//        AC   P24343
+//        CC   -!- INTERACTION:
+//        CC       Q90888:-; NbExp=1; IntAct=EBI-445651, EBI-445772;
+//        CC       Q92171:-; NbExp=2; IntAct=EBI-445651, EBI-445622;
+//        CC       P18870:JUN; NbExp=1; IntAct=EBI-445651, EBI-445826;
+//        CC       Q90595:MAFF; NbExp=1; IntAct=EBI-445651, EBI-445786;
+//        CC       Q90889:MAFG; NbExp=1; IntAct=EBI-445651, EBI-445799;
+//        CC       Q90596:MAFK; NbExp=1; IntAct=EBI-445651, EBI-445812;
+//        CC       P23091:V-MAF (xeno); NbExp=1; IntAct=EBI-445651, EBI-445752;
+
+
+        ccLines.add( new CcLine( "blablabla", "V-MAF", "P23091" ) );
+        ccLines.add( new CcLine( "blablabla", "MAFF", "Q90595" ) );
+        ccLines.add( new CcLine( "blablabla", "JUN", "P18870" ) );
+        ccLines.add( new CcLine( "blablabla", "-", "Q90888" ) );
+        ccLines.add( new CcLine( "blablabla", "MAFK", "Q90596" ) );
+        ccLines.add( new CcLine( "blablabla", "MAFG", "Q90889" ) );
+        ccLines.add( new CcLine( "blablabla", "-", "Q92171" ) );
+
+        assertEquals( 7, ccLines.size() );
+
+        System.out.println( "Before:" );
+        for( Iterator iterator = ccLines.iterator(); iterator.hasNext(); ) {
+            CcLine ccLine = (CcLine) iterator.next();
+            System.out.println( ccLine.getGeneName() );
+        }
+
+        Collections.sort( ccLines );
+
+        assertEquals( 7, ccLines.size() );
+
+        System.out.println( "After:" );
+        for( Iterator iterator = ccLines.iterator(); iterator.hasNext(); ) {
+            CcLine ccLine = (CcLine) iterator.next();
+            System.out.println( ccLine.getGeneName() );
+        }
+
+        // check the ordering
+        assertEquals( "-", ( (CcLine) ccLines.get( 0 ) ).getGeneName() );
+        assertEquals( "-", ( (CcLine) ccLines.get( 1 ) ).getGeneName() );
+        assertEquals( "JUN", ( (CcLine) ccLines.get( 2 ) ).getGeneName() );
+        assertEquals( "MAFF", ( (CcLine) ccLines.get( 3 ) ).getGeneName() );
+        assertEquals( "MAFG", ( (CcLine) ccLines.get( 4 ) ).getGeneName() );
+        assertEquals( "MAFK", ( (CcLine) ccLines.get( 5 ) ).getGeneName() );
+        assertEquals( "V-MAF", ( (CcLine) ccLines.get( 6 ) ).getGeneName() );
     }
 }

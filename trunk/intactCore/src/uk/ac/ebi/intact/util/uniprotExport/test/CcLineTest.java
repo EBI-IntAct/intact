@@ -47,12 +47,12 @@ public class CcLineTest extends TestCase {
 
         // Note: ASCII( 'a' )=65, and ASCII( 'A' )=97
 
-        ccLines.add( new CcLine( "blablabla", "abCDef" ) );
-        ccLines.add( new CcLine( "blablabla", "abcdef" ) );
-        ccLines.add( new CcLine( "blablabla", "Self" ) );
-        ccLines.add( new CcLine( "blablabla", "fedcba" ) );
-        ccLines.add( new CcLine( "blablabla", "aBcdEf" ) );
-        ccLines.add( new CcLine( "blablabla", "aBCdef" ) );
+        ccLines.add( new CcLine( "blablabla", "abCDef", "" ) );
+        ccLines.add( new CcLine( "blablabla", "abcdef", "" ) );
+        ccLines.add( new CcLine( "blablabla", "Self", "" ) );
+        ccLines.add( new CcLine( "blablabla", "fedcba", "" ) );
+        ccLines.add( new CcLine( "blablabla", "aBcdEf", "" ) );
+        ccLines.add( new CcLine( "blablabla", "aBCdef", "" ) );
 
         assertEquals( 6, ccLines.size() );
 
@@ -82,11 +82,11 @@ public class CcLineTest extends TestCase {
 
         // Note: ASCII( 'a' )=65, and ASCII( 'A' )=97
 
-        ccLines.add( new CcLine( "blablabla", "abCDef" ) );
-        ccLines.add( new CcLine( "blablabla", "abcdef" ) );
-        ccLines.add( new CcLine( "blablabla", "fedcba" ) );
-        ccLines.add( new CcLine( "blablabla", "aBcdEf" ) );
-        ccLines.add( new CcLine( "blablabla", "aBCdef" ) );
+        ccLines.add( new CcLine( "blablabla", "abCDef", "" ) );
+        ccLines.add( new CcLine( "blablabla", "abcdef", "" ) );
+        ccLines.add( new CcLine( "blablabla", "fedcba", "" ) );
+        ccLines.add( new CcLine( "blablabla", "aBcdEf", "" ) );
+        ccLines.add( new CcLine( "blablabla", "aBCdef", "" ) );
 
         assertEquals( 5, ccLines.size() );
 

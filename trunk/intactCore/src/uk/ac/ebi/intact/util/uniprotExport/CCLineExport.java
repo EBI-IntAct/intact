@@ -329,7 +329,7 @@ public class CCLineExport extends LineExport {
 
         buffer.append( NEW_LINE );
 
-        return new CcLine( buffer.toString(), geneName );
+        return new CcLine( buffer.toString(), geneName, uniprotID2 );
     }
 
     public Set getPumedIds( Set experiments ) {
