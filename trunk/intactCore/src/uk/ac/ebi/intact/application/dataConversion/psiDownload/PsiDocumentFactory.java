@@ -13,6 +13,8 @@ import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Abst
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Annotation2xml;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi25.Xref2xmlPSI2;
 import uk.ac.ebi.intact.model.Institution;
+import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.CvXrefQualifier;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -116,16 +118,16 @@ public class PsiDocumentFactory {
         if ( session.getPsiVersion().equals( PsiVersion.VERSION_1 ) ||
              session.getPsiVersion().equals( PsiVersion.VERSION_2 ) ) {
 
-            primarybib.setAttribute( AbstractXref2Xml.XREF_DB, "pubmed" );
+            primarybib.setAttribute( AbstractXref2Xml.XREF_DB, CvDatabase.PUBMED );
             primarybib.setAttribute( AbstractXref2Xml.XREF_ID, "14681455" );
 
         } else if ( session.getPsiVersion().equals( PsiVersion.VERSION_25 ) ) {
 
-            primarybib.setAttribute( Xref2xmlPSI2.XREF_DB, "pubmed" );
-            primarybib.setAttribute( Xref2xmlPSI2.XREF_DB_AC, "MI:0446" );
+            primarybib.setAttribute( Xref2xmlPSI2.XREF_DB, CvDatabase.PUBMED );
+            primarybib.setAttribute( Xref2xmlPSI2.XREF_DB_AC, CvDatabase.PUBMED_MI_REF );
             primarybib.setAttribute( Xref2xmlPSI2.XREF_ID, "14681455" );
-            primarybib.setAttribute( Xref2xmlPSI2.XREF_REFTYPE, "primary-reference" );
-            primarybib.setAttribute( Xref2xmlPSI2.XREF_REFTYPE_AC, "MI:0358" );
+            primarybib.setAttribute( Xref2xmlPSI2.XREF_REFTYPE, CvXrefQualifier.PRIMARY_REFERENCE );
+            primarybib.setAttribute( Xref2xmlPSI2.XREF_REFTYPE_AC, CvXrefQualifier.PRIMARY_REFERENCE_MI_REF );
         }
 
         // creating xref
@@ -137,16 +139,16 @@ public class PsiDocumentFactory {
         if ( session.getPsiVersion().equals( PsiVersion.VERSION_1 ) ||
              session.getPsiVersion().equals( PsiVersion.VERSION_2 ) ) {
 
-            primaryref.setAttribute( AbstractXref2Xml.XREF_DB, "psi-mi" );
-            primaryref.setAttribute( AbstractXref2Xml.XREF_ID, "MI:0469" );
+            primaryref.setAttribute( AbstractXref2Xml.XREF_DB, CvDatabase.PSI_MI );
+            primaryref.setAttribute( AbstractXref2Xml.XREF_ID, CvDatabase.INTACT_MI_REF );
 
         } else if ( session.getPsiVersion().equals( PsiVersion.VERSION_25 ) ) {
 
-            primaryref.setAttribute( Xref2xmlPSI2.XREF_DB, "psi-mi" );
-            primaryref.setAttribute( Xref2xmlPSI2.XREF_DB_AC, "MI:0488" );
-            primaryref.setAttribute( Xref2xmlPSI2.XREF_ID, "MI:0469" );
-            primaryref.setAttribute( Xref2xmlPSI2.XREF_REFTYPE, "primary-reference" );
-            primaryref.setAttribute( Xref2xmlPSI2.XREF_REFTYPE_AC, "MI:0358" );
+            primaryref.setAttribute( Xref2xmlPSI2.XREF_DB, CvDatabase.PSI_MI );
+            primaryref.setAttribute( Xref2xmlPSI2.XREF_DB_AC, CvDatabase.PSI_MI_MI_REF );
+            primaryref.setAttribute( Xref2xmlPSI2.XREF_ID, CvDatabase.INTACT_MI_REF );
+            primaryref.setAttribute( Xref2xmlPSI2.XREF_REFTYPE, CvXrefQualifier.PRIMARY_REFERENCE );
+            primaryref.setAttribute( Xref2xmlPSI2.XREF_REFTYPE_AC, CvXrefQualifier.PRIMARY_REFERENCE_MI_REF );
         }
 
         // generate attributes if any...
