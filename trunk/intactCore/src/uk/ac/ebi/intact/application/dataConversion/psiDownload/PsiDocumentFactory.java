@@ -108,8 +108,10 @@ public class PsiDocumentFactory {
         // creating bibRef
         Element bibref = document.createElement( "bibref" );
         source.appendChild( bibref );
+        Element bibxref = document.createElement( "xref" );
+        bibref.appendChild( bibxref );
         Element primarybib = document.createElement( AbstractXref2Xml.PRIMARY_REF );
-        bibref.appendChild( primarybib );
+        bibxref.appendChild( primarybib );
 
         if ( session.getPsiVersion().equals( PsiVersion.VERSION_1 ) ||
              session.getPsiVersion().equals( PsiVersion.VERSION_2 ) ) {
