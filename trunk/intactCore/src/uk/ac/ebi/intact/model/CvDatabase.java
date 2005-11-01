@@ -21,6 +21,9 @@ public class CvDatabase extends CvObject implements Editable {
     public static final String CABRI = "cabri";
     public static final String CABRI_MI_REF = "MI:0246";
 
+    public static final String CHEBI = "chebi";
+    public static final String CHEBI_MI_REF = "MI:0474";
+
     public static final String FLYBASE = "flybase";
     public static final String FLYBASE_MI_REF = "MI:0478";
 
@@ -57,8 +60,17 @@ public class CvDatabase extends CvObject implements Editable {
     public static final String SGD = "sgd";
     public static final String SGD_MI_REF = "MI:0484";
 
+    public static final String SO = "so";
+    public static final String SO_MI_REF = "MI:0601";
+
     public static final String UNIPROT = "uniprotkb";
     public static final String UNIPROT_MI_REF = "MI:0486";
+
+    public static final String UNIPARC = "uniparc";
+    public static final String UNIPARC_MI_REF = "MI:0485";
+
+    public static final String REFSEQ = "refseq";
+    public static final String REFSEQ_MI_REF = "MI:0481";
 
     public static final String IMEX = "imex";
 
