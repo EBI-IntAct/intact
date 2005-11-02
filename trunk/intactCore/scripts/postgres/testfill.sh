@@ -200,8 +200,12 @@ fi
 
 
 
-#echo "Stop the script before to insert proteins and complexes ... "
-#exit 0
+echo ""
+echo "Update CVs using the latest PSI-MI CV definition"
+scripts/javaRun.sh controlledVocab.UpdateCVs data/controlledVocab/intact.obo \
+                                             data/controlledVocab/CvObject-annotation-update.txt
+
+
 
 if [ "$3" = "onlyCV" ]
 then
@@ -228,5 +232,4 @@ else
 fi
 
 #end
-
 exit 0
