@@ -33,6 +33,8 @@ public class CvAliasType extends CvObject implements Editable {
     public static final String LOCUS_NAME = "locus name";
     public static final String LOCUS_NAME_MI_REF = "MI:0305";
 
+    public static final String GO_SYNONYM = "go synonym";
+    public static final String GO_SYNONYM_MI_REF = "MI:0303";
 
 
     /**
