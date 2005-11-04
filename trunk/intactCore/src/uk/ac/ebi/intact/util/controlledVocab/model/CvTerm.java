@@ -59,6 +59,8 @@ public class CvTerm {
         this.definition = definition;
     }
 
+
+
     //////////////////////
     // Getters
 
@@ -208,10 +210,35 @@ public class CvTerm {
         sb.append( ", shortName='" ).append( shortName ).append( '\'' );
         sb.append( ", fullName='" ).append( fullName ).append( '\'' );
         sb.append( ", definition='" ).append( definition ).append( '\'' );
-        sb.append( ", xrefs=" ).append( xrefs );
+        sb.append( ", xrefs=" );
+        for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
+            CvTermXref xref = (CvTermXref) iterator.next();
+            sb.append( xref.getDatabase() ).append( ':' ).append( xref.getId() );
+            if( iterator.hasNext() ) {
+                sb.append( ", ");
+            }
+        }
+
         sb.append( ", synonyms=" ).append( synonyms );
-        sb.append( ", parents=" ).append( parents );
-        sb.append( ", children=" ).append( children );
+
+        sb.append( ", parents=" );
+        for ( Iterator iterator = parents.iterator(); iterator.hasNext(); ) {
+            CvTerm cvTerm = (CvTerm) iterator.next();
+            sb.append( cvTerm.getShortName() ).append( "(" ).append( cvTerm.getId() ).append( ")" );
+            if( iterator.hasNext() ) {
+                sb.append( ", ");
+            }
+        }
+
+        sb.append( ", children=" );
+        for ( Iterator iterator = children.iterator(); iterator.hasNext(); ) {
+            CvTerm cvTerm = (CvTerm) iterator.next();
+            sb.append( cvTerm.getShortName() ).append( "(" ).append( cvTerm.getId() ).append( ")" );
+            if( iterator.hasNext() ) {
+                sb.append( ", ");
+            }
+        }
+
         sb.append( ", obsolete=" ).append( obsolete );
         sb.append( ", obsoleteMessage='" ).append( obsoleteMessage ).append( '\'' );
         sb.append( ", annotations=" ).append( annotations );
