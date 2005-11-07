@@ -376,3 +376,7 @@ UNION
        'alias' as type
        FROM ia_controlledvocab CV, ia_alias A
 
+
+-- TO UPGRADE TO 1.1.0 see directory version_1_1_0 for scripts
+
+
