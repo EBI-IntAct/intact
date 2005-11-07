@@ -17,7 +17,7 @@ public class IntactBean {
 
     private String ac;
 
-    private Timestamp timestamp;
+    private Timestamp updated;
 
     private String userstamp;
 
@@ -32,12 +32,12 @@ public class IntactBean {
         this.ac = ac;
     }
 
-    public Timestamp getTimestamp() {
-        return timestamp;
+    public Timestamp getUpdated() {
+        return updated;
     }
 
-    public void setTimestamp(Timestamp timestamp) {
-        this.timestamp = timestamp;
+    public void setUpdated(Timestamp updated) {
+        this.updated = updated;
     }
 
     public String getUserstamp() {
