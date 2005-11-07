@@ -78,7 +78,7 @@ public class BioSourceStatistics implements Comparable {
     }
 
     public final int compareTo(Object o) {
-        //  final Timestamp t = ( (BioSourceStatistics) o ).getTimestamp();
+        //  final Timestamp t = ( (BioSourceStatistics) o ).getUpdated();
 
         BioSourceStatistics bs = null;
         if( o instanceof BioSourceStatistics ) {
