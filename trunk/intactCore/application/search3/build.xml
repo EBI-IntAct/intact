@@ -186,6 +186,7 @@
                 <exclude name="cvIntTypeGraph.jsp"/>
                 <exclude name="noIndexError.jsp"/>
                 <exclude name="sidebarFooter.jsp"/>
+                <exclude name="cvBrowser.jsp"/>  <!--ajoute-->
 
                 <exclude name="interactionSearch.jsp"/>
                 <exclude name="multipleInteraction.jsp" />
@@ -373,6 +374,7 @@
         <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
             <fileset dir="${basedir}">
                 <include name="*.jsp"/>
+                <!--<include name="cvBrowser.jsp"/>-->
                 <include name="*.jpg"/>
                 <include name="*.css"/>
                 <include name="*.xsl"/>
