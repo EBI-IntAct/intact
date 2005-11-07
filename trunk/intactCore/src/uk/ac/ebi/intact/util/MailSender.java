@@ -48,10 +48,10 @@ public class MailSender {
         if( null != SMTP_HOST ) {
             props.put( "mail.smtp.host", SMTP_HOST );
         }
-        props.put("mail.debug", "true"); //!!! temporarily
+        //props.put("mail.debug", "true"); //!!! temporarily
         // create some properties and get the default Session
         Session session = Session.getDefaultInstance( props, null );
-        session.setDebug( debug );
+       // session.setDebug( debug );
     }
 
     /**

@@ -419,6 +419,33 @@ public class MessageSender {
         addAdminMessage(topic, adminMessageReport);
     }
 
+
+    public void addMessage (AnnotatedBean annotatedBean, ReportTopic reportTopic) throws IntactException, SQLException {
+
+        //FEATURE_WITHOUT_A_RANGE
+
+        String userMessageReport = null;
+        String adminMessageReport = null;
+
+        String user = annotatedBean.getUserstamp();
+        Timestamp date = annotatedBean.getUpdated();
+
+        String[] rowValues = new String[4];
+        FeatureBean featureBean = (FeatureBean) annotatedBean;
+        InteractorBean interaction = getFeaturedInteraction(featureBean.getAc());
+        String editorUrl=editorUrlBuilder.getEditorUrl(interaction);
+        rowValues[0] = featureBean.getAc();
+        rowValues[1] ="<a href="+ editorUrl + ">"+  interaction.getAc() + "</a>";
+        rowValues[2] = "" + date;
+        rowValues[3] = user;
+
+        userMessageReport =  formatRow("html",rowValues,"values","userReport",false);
+        adminMessageReport = formatRow("html",rowValues,"values","adminReport",false);
+
+        addUserMessage(reportTopic, user, userMessageReport, adminMessageReport);
+        addAdminMessage(reportTopic, adminMessageReport);
+    }
+
     public void addMessage (AnnotationBean annotationBean) throws IntactException, SQLException {
 
         //URL_NOT_VALID
@@ -798,14 +825,15 @@ public class MessageSender {
          IntactHelper intactHelper = new IntactHelper();
          SanityCheckerHelper sch = new SanityCheckerHelper(intactHelper);
 
-         sch.addMapping(Interactor.class,"select i.ac, i.objclass, i.userstamp, i.updated, i.fullname, i.shortlabel "+
+         sch.addMapping(InteractorBean.class,"select i.ac, i.objclass, i.userstamp, i.updated, i.fullname, i.shortlabel "+
                                          "from ia_interactor i, ia_component c, ia_feature f "+
                                          "where i.ac=c.interaction_ac and c.ac=f.component_ac and f.ac=?");
 
-         List featuredInteractions = sch.getBeans(Interactor.class,featureAc);
+         List featuredInteractions = sch.getBeans(InteractorBean.class,featureAc);
 
-         interactionBean = (InteractorBean) featuredInteractions.get(0);
-
+         if(!featuredInteractions.isEmpty()){
+            interactionBean = (InteractorBean) featuredInteractions.get(0);
+         }
          intactHelper.closeStore();
 
          return interactionBean;
@@ -904,6 +932,14 @@ public class MessageSender {
                 rowValues[6] ="When";
                 rowValues[7] ="User";
                 header = formatRow("html", rowValues, "headers",reportType,false);
+            } else if(topic.equals(ReportTopic.FEATURE_WITHOUT_A_RANGE)){
+                String[] rowValues = new String[4];
+                rowValues[0] ="FeatureBean Ac";
+                rowValues[1] = "Interaction Ac";
+                rowValues[2] ="When";
+                rowValues[3] = "User";
+                header = formatRow("html", rowValues, "headers",reportType,false);
+
             }
             else {
                 String[] rowValues = new String[4];

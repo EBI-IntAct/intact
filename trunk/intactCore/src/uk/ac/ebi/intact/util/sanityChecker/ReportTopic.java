@@ -19,12 +19,19 @@ public class ReportTopic {
     /**
          * Report topics
          */
+        //
+        // F E A T U R E
+        //
+        public static final ReportTopic FEATURE_WITHOUT_A_RANGE = new ReportTopic ("This/those Features(s) are not associated to a Range");
+
 
         //
         // R A N G E
         //
+
+
         //special format
-        public static final ReportTopic RANGE_SEQUENCE_NOT_EQUAL_TO_PROTEIN_SEQ = new ReportTopic ("This/those Range(s) are associated to a sequence which does not corresponds to the protein sequence. And the Range Sequence couldn't be remapped");
+        public static final ReportTopic RANGE_SEQUENCE_NOT_EQUAL_TO_PROTEIN_SEQ = new ReportTopic ("This/those Range(s) are associated to a sequence which does not corresponds to the protein sequence. And the Range Sequence couldn't be remapped automatically");
         //special format
         public static final ReportTopic RANGE_SEQUENCE_SAVED_BY_ADDING_THE_M = new ReportTopic("This/those Range(s) were created when the first Methionine was not there, since then the Methionine had been added to the Protein Sequence. The Range Sequence has been remapped. ");
         //special format
