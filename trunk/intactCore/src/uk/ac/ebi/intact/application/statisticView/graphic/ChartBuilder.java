@@ -234,7 +234,7 @@ public class ChartBuilder {
         }
 
         public final int compareTo( Object o ) {
-            //  final Timestamp t = ( (BioSourceStatistics) o ).getTimestamp();
+            //  final Timestamp t = ( (BioSourceStatistics) o ).getUpdated();
 
             Item _item = null;
             if ( o instanceof Item ) {
