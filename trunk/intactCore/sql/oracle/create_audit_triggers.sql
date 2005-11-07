@@ -1,5 +1,8 @@
+--  IN AUDIT TABLES JUST COPY OF THE OLD VALUES OF THE RECORD WHIICH IS CHANGED OR DELETED MAIN TABLE
 
-spool &spoolFile
+set serveroutput on
+
+spool cr_audit_triggers.sql
 set term off
 set doc off
 
@@ -7,8 +10,12 @@ begin
 
    dbms_output.enable(1000000000000);
 
-   for r_tab in (select lower(table_name) table_name 
-                 from   user_tables 
+   dbms_output.put_line('set serveroutput on');
+   dbms_output.put_line('spool cr_audit_triggers.sql');
+   dbms_output.put_line (chr(10));
+
+   for r_tab in (select lower(table_name) table_name
+                 from   user_tables
                  where  table_name not like '%AUDIT'
                  and    table_name not in
                         ( 'IA_GODENS_BINARY'
@@ -26,8 +33,11 @@ begin
                          ,'IA_STATISTICS'
                          ,'IA_EXPSTATISTICS'
                          ,'IA_BIOSOURCESTATISTICS'
+                         ,'IA_DETECTIONMETHODSSTATISTICS'
+
 
                          ,'IA_SEARCH'
+                         ,'PLAN_TABLE'
                         )
    ) loop
       dbms_output.put_line ('PROMPT Creating audit trigger for '||r_tab.table_name);
@@ -53,31 +63,18 @@ begin
                         order  by column_id)
       loop
         if  r_tabcols.col = 'updated' then
-          dbms_output.put_line (chr(9)||chr(9)||':new.timestamp := sysdate; '); 
+          dbms_output.put_line (chr(9)||chr(9)||':new.updated := sysdate; ');
         else
-          dbms_output.put_line (chr(9)||chr(9)||':new.userstamp := user;  '); 
+          dbms_output.put_line (chr(9)||chr(9)||':new.userstamp := user;  ');
         end if;
       end loop;
 
-      dbms_output.put_line (chr(9)||'end if ;  '); 
-      dbms_output.put_line (chr(9)||''); 
-      dbms_output.put_line (chr(9)||''); 
+      dbms_output.put_line (chr(9)||'end if ;  ');
+      dbms_output.put_line (chr(9)||'');
+      dbms_output.put_line (chr(9)||'');
 
       dbms_output.put_line (chr(9)||'insert into '||r_tab.table_name||'_audit ');
       dbms_output.put_line (chr(9)||chr(9)||'( event ');
-
---      for r_tabcols in (select lower(column_name) col
---                        from   user_tab_columns
---                        where  table_name = upper(r_tab.table_name)
---                        and    lower(column_name) in ('updated', 'userstamp')
---                        order  by column_id)
---      loop
---        if  r_tabcols.col = 'updated' then
---           dbms_output.put_line (chr(9)||chr(9)||' ,updated   ');
---        else
---           dbms_output.put_line (chr(9)||chr(9)||' ,userstamp ');
---        end if;
---      end loop;
 
       for r_tabcols in (select lower(column_name) column_name
                         from   user_tab_columns
@@ -90,19 +87,6 @@ begin
       dbms_output.put_line (chr(9)||chr(9)||')');
       dbms_output.put_line (chr(9)||'values');
       dbms_output.put_line (chr(9)||chr(9)||'( l_event ');
-
---      for r_tabcols in (select lower(column_name) col
---                        from   user_tab_columns
---                        where  table_name = upper(r_tab.table_name)
---                        and    lower(column_name) in ('updated', 'userstamp')
---                        order  by column_id)
---      loop
---        if  r_tabcols.col = 'updated' then
---           dbms_output.put_line (chr(9)||chr(9)||', sysdate ');
---        else
---           dbms_output.put_line (chr(9)||chr(9)||', user    ');
---        end if;
---      end loop;
 
       for r_tabcols in (select lower(column_name) column_name
                               ,data_type
@@ -122,9 +106,10 @@ begin
       dbms_output.put_line (chr(10));
 
    end loop;
+
+   dbms_output.put_line('spool off');
 end;
 /
 
 spool off
 set term on
-@&spoolFile ;
