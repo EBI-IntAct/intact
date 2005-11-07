@@ -25,13 +25,13 @@ CREATE TABLE IA_Institution
     , deprecated              NUMBER(1)       DEFAULT  0       NOT NULL
     , created                 DATE            DEFAULT  SYSDATE NOT NULL
     , updated                 DATE            DEFAULT  SYSDATE NOT NULL
-    , timestamp               DATE            DEFAULT  SYSDATE NOT NULL
     , userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
     , owner_ac                VARCHAR2(30)    CONSTRAINT fk_Institution$owner REFERENCES IA_Institution(ac)
     , shortLabel              VARCHAR2(20)
     , fullName                VARCHAR2(250)
     , postalAddress           VARCHAR2(2000)
     , url                     VARCHAR2(255)
+    , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
 )
 TABLESPACE &&intactMainTablespace
 PCTFREE    15
@@ -56,8 +56,6 @@ set term off
     'Date of the creation of the row.';
     COMMENT ON COLUMN IA_Institution.updated IS
     'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_Institution.timestamp IS
-    'Date of the last update of the column.';
     COMMENT ON COLUMN IA_Institution.userstamp IS
     'Database user who has performed the last update of the column.';
 set term on
@@ -75,12 +73,12 @@ CREATE TABLE IA_ControlledVocab
      ,  deprecated              NUMBER(1)       DEFAULT  0       NOT NULL
      ,  created                 DATE            DEFAULT  SYSDATE NOT NULL
      ,  updated                 DATE            DEFAULT  SYSDATE NOT NULL
-     ,  timestamp               DATE            DEFAULT  SYSDATE NOT NULL
      ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
      ,  owner_ac                VARCHAR2(30)    CONSTRAINT fk_ControlledVocab$owner REFERENCES IA_Institution(ac)
      ,  objClass                VARCHAR2(255)
      ,  shortLabel              VARCHAR2(20)
      ,  fullName                VARCHAR2(250)
+     , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
 )
 TABLESPACE &&intactMainTablespace
 ;
@@ -107,8 +105,6 @@ set term off
     'Date of the creation of the row.';
     COMMENT ON COLUMN IA_ControlledVocab.updated IS
     'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_ControlledVocab.timestamp IS
-    'Date of the last update of the column.';
     COMMENT ON COLUMN IA_ControlledVocab.userstamp IS
     'Database user who has performed the last update of the column.';
 set term on
@@ -121,7 +117,6 @@ CREATE TABLE IA_BioSource
         , deprecated              NUMBER(1)       DEFAULT  0       NOT NULL
         , created                 DATE            DEFAULT  SYSDATE NOT NULL
         , updated                 DATE            DEFAULT  SYSDATE NOT NULL
-        , timestamp               DATE            DEFAULT  SYSDATE NOT NULL
         , userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
         , taxId                   VARCHAR2(30)     			 NOT NULL
         , owner_ac                VARCHAR2(30)    CONSTRAINT fk_BioSource$owner REFERENCES IA_Institution(ac)
@@ -129,6 +124,7 @@ CREATE TABLE IA_BioSource
         , fullName                VARCHAR2(250)
         , tissue_ac               VARCHAR2(30)    CONSTRAINT fk_Biosource$tissue REFERENCES IA_ControlledVocab(ac)
         , celltype_ac             VARCHAR2(30)    CONSTRAINT fk_Biosource$celltype REFERENCES IA_ControlledVocab(ac)
+     , created_user               VARCHAR2(30)    DEFAULT  USER    NOT NULL
 )
 TABLESPACE &&intactMainTablespace
 ;
@@ -146,8 +142,6 @@ set term off
     'Date of the creation of the row.';
     COMMENT ON COLUMN IA_BioSource.updated IS
     'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_BioSource.timestamp IS
-    'Date of the last update of the column.';
     COMMENT ON COLUMN IA_BioSource.userstamp IS
     'Database user who has performed the last update of the column.';
     COMMENT ON COLUMN IA_BioSource.tissue_ac IS
@@ -173,7 +167,6 @@ CREATE TABLE IA_Interactor
         , deprecated            NUMBER(1)       DEFAULT  0       NOT NULL
         , created               DATE            DEFAULT  SYSDATE NOT NULL
         , updated               DATE            DEFAULT  SYSDATE NOT NULL
-        , timestamp             DATE            DEFAULT  SYSDATE NOT NULL
         , userstamp             VARCHAR2(30)    DEFAULT  USER    NOT NULL
         /* Column belonging to Interaction */
         , kD                    FLOAT
@@ -190,6 +183,7 @@ CREATE TABLE IA_Interactor
         , fullName              VARCHAR2(250)
         /* Colums belonging to BasicObject */
         , owner_ac              VARCHAR2(30)    CONSTRAINT fk_Interactor$owner REFERENCES IA_Institution(ac)
+     , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
 )
 TABLESPACE &&intactMainTablespace
 ;
@@ -227,8 +221,6 @@ set term off
     'Date of the creation of the row.';
     COMMENT ON COLUMN IA_Interactor.updated IS
     'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_Interactor.timestamp IS
-    'Date of the last update of the column.';
     COMMENT ON COLUMN IA_Interactor.userstamp IS
     'Database user who has performed the last update of the column.';
 set term on
@@ -244,13 +236,15 @@ CREATE TABLE IA_Sequence_Chunk
 (       ac                      VARCHAR (30)    NOT NULL
                                                 CONSTRAINT pk_Sequence_Chunk
                                                 PRIMARY KEY  USING INDEX TABLESPACE &&intactIndexTablespace
-     ,  timestamp               DATE            DEFAULT  SYSDATE   NOT NULL
      ,  userstamp               VARCHAR (30)    DEFAULT  USER    NOT NULL
      ,  parent_ac               VARCHAR (30)    NOT NULL
                                                 CONSTRAINT fk_Sequence_chunk_parent_ac REFERENCES IA_Interactor(ac)
                                                 ON DELETE CASCADE
      ,  sequence_chunk          VARCHAR (1000)
      ,  sequence_index          DECIMAL (3)
+     ,  updated                 DATE            DEFAULT SYSDATE NOT NULL;
+     ,  created                 DATE            DEFAULT SYSDATE NOT NULL;
+     , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
 )
 TABLESPACE &&intactMainTablespace
 ;
@@ -264,14 +258,15 @@ set term off
     'chunk unique identifier.';
     COMMENT ON COLUMN IA_Sequence_Chunk.parent_ac IS
     'Refers to the Interactor to which this bit of sequence belongs.';
-    COMMENT ON COLUMN IA_Sequence_Chunk.timestamp IS
-    'Date of the last update of the column.';
     COMMENT ON COLUMN IA_Sequence_Chunk.userstamp IS
     'Database user who has performed the last update of the column.';
     COMMENT ON COLUMN IA_Sequence_Chunk.sequence_chunk IS
     '1000 charcacters max size Sequence chunk';
     COMMENT ON COLUMN IA_Sequence_Chunk.sequence_index IS
     'Order of the chunk within the sequence of the Interactor.';
+    COMMENT ON COLUMN IA_Sequence_Chunk.updated IS
+    'Date of the last update of the column.';
+
 set term on
 
 
@@ -284,7 +279,6 @@ CREATE TABLE IA_Component
         , deprecated              NUMBER(1)       DEFAULT  0       NOT NULL
         , created                 DATE            DEFAULT  SYSDATE NOT NULL
         , updated                 DATE            DEFAULT  SYSDATE NOT NULL
-        , timestamp               DATE            DEFAULT  SYSDATE NOT NULL
         , userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
         , interactor_ac           VARCHAR2(30)    CONSTRAINT fk_Component$interactor REFERENCES IA_Interactor(ac)  ON DELETE CASCADE
         , interaction_ac          VARCHAR2(30)    CONSTRAINT fk_Component$interaction REFERENCES IA_Interactor(ac) ON DELETE CASCADE
@@ -292,6 +286,7 @@ CREATE TABLE IA_Component
         , expressedIn_ac          VARCHAR2(30)    CONSTRAINT fk_Component$expressedIn REFERENCES IA_BioSource(ac)
         , owner_ac                VARCHAR2(30)    CONSTRAINT fk_Component$owner REFERENCES IA_Institution(ac)
         , stoichiometry           NUMBER(4,1)
+     , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
 )
 TABLESPACE &&intactMainTablespace
 ;
@@ -320,8 +315,6 @@ set term off
     'Date of the creation of the row.';
     COMMENT ON COLUMN IA_Component.updated IS
     'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_Component.timestamp IS
-    'Date of the last update of the column.';
     COMMENT ON COLUMN IA_Component.userstamp IS
     'Database user who has performed the last update of the column.';
 set term off
@@ -336,11 +329,11 @@ CREATE TABLE IA_Annotation
         , deprecated              NUMBER(1)       DEFAULT  0       NOT NULL
         , created                 DATE            DEFAULT  SYSDATE NOT NULL
         , updated                 DATE            DEFAULT  SYSDATE NOT NULL
-        , timestamp               DATE            DEFAULT  SYSDATE NOT NULL
         , userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
         , topic_ac                VARCHAR2(30)    CONSTRAINT fk_Annotation$topic REFERENCES IA_ControlledVocab(ac)
         , owner_ac                VARCHAR2(30)    CONSTRAINT fk_Annotation$owner REFERENCES IA_Institution(ac)
         , description             VARCHAR2(4000)
+     , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
 )
 TABLESPACE &&intactMainTablespace
 ;
@@ -362,8 +355,6 @@ set term off
     'Date of the creation of the row.';
     COMMENT ON COLUMN IA_Annotation.updated IS
     'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_Annotation.timestamp IS
-    'Date of the last update of the column.';
     COMMENT ON COLUMN IA_Annotation.userstamp IS
     'Database user who has performed the last update of the column.';
 set term on
@@ -377,7 +368,6 @@ CREATE TABLE IA_Experiment
       , deprecated              NUMBER(1)       DEFAULT  0       NOT NULL
       , created                 DATE            DEFAULT  SYSDATE NOT NULL
       , updated                 DATE            DEFAULT  SYSDATE NOT NULL
-      , timestamp               DATE            DEFAULT  SYSDATE NOT NULL
       , userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
       , bioSource_ac            VARCHAR2(30)    CONSTRAINT fk_Experiment$bioSource REFERENCES IA_BioSource(ac)
       , detectMethod_ac         VARCHAR2(30)    CONSTRAINT fk_Experiment$detectMethod REFERENCES IA_ControlledVocab(ac)
@@ -386,6 +376,7 @@ CREATE TABLE IA_Experiment
       , owner_ac                VARCHAR2(30)    CONSTRAINT fk_Experiment$owner REFERENCES IA_Institution(ac)
       , shortLabel              VARCHAR2(20)
       , fullName                VARCHAR2(250)
+      , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
 )
 TABLESPACE &&intactMainTablespace
 ;
@@ -415,8 +406,6 @@ set term off
     'Date of the creation of the row.';
     COMMENT ON COLUMN IA_Experiment.updated IS
     'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_Experiment.timestamp IS
-    'Date of the last update of the column.';
     COMMENT ON COLUMN IA_Experiment.userstamp IS
     'Database user who has performed the last update of the column.';
 set term on
@@ -432,7 +421,6 @@ CREATE TABLE IA_Xref
      ,  deprecated              NUMBER(1)       DEFAULT  0       NOT NULL
      ,  created                 DATE            DEFAULT  SYSDATE NOT NULL
      ,  updated                 DATE            DEFAULT  SYSDATE NOT NULL
-     ,  timestamp               DATE            DEFAULT  SYSDATE NOT NULL
      ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
      ,  qualifier_ac            VARCHAR2(30)    CONSTRAINT fk_Xref$qualifier REFERENCES IA_ControlledVocab(ac)
      ,  database_ac             VARCHAR2(30)    CONSTRAINT fk_Xref$database  REFERENCES IA_ControlledVocab(ac)
@@ -441,6 +429,7 @@ CREATE TABLE IA_Xref
      ,  primaryId               VARCHAR2(30)
      ,  secondaryId             VARCHAR2(30)
      ,  dbRelease               VARCHAR2(10)
+     , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
 )
 TABLESPACE &&intactMainTablespace
 ;
@@ -470,8 +459,6 @@ set term on
     'Date of the creation of the row.';
     COMMENT ON COLUMN IA_Xref.updated IS
     'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_Xref.timestamp IS
-    'Date of the last update of the column.';
     COMMENT ON COLUMN IA_Xref.userstamp IS
     'Database user who has performed the last update of the column.';
 set term off
@@ -491,7 +478,6 @@ CREATE TABLE IA_IntactNode
       , rejected                    NUMBER(1)      DEFAULT  0              NOT NULL
       , created                     DATE           DEFAULT  SYSDATE        NOT NULL
       , updated                     DATE           DEFAULT  SYSDATE        NOT NULL
-      , timestamp                   DATE           DEFAULT  SYSDATE        NOT NULL
       , userstamp                   VARCHAR2(30)   DEFAULT  USER           NOT NULL
       , deprecated                  NUMBER(1)      DEFAULT  0              NOT NULL
       , ownerPrefix                 VARCHAR2(30)   DEFAULT  USER           NOT NULL
@@ -500,6 +486,7 @@ CREATE TABLE IA_IntactNode
       , ftpLogin                    VARCHAR2(255)
       , ftpPassword                 VARCHAR2(255)
       , ftpDirectory                VARCHAR2(255)
+      , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
 )
 TABLESPACE &&intactMainTablespace
 ;
@@ -515,7 +502,7 @@ CREATE TABLE IA_Int2Exp
       , created                 DATE            DEFAULT    SYSDATE NOT NULL
       , userstamp               VARCHAR2(30)    DEFAULT    USER    NOT NULL
       , updated                 DATE            DEFAULT    SYSDATE NOT NULL
-      , timestamp               DATE            DEFAULT    SYSDATE NOT NULL
+      , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
 )
 TABLESPACE &&intactMainTablespace
 ;
@@ -543,8 +530,6 @@ set term off
     'Database user who has performed the last update of the column.';
     COMMENT ON COLUMN IA_Int2Exp.updated IS
     'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_Int2Exp.timestamp IS
-    'Date of the last update of the column.';
 set term on
 
 
@@ -557,7 +542,7 @@ CREATE TABLE IA_Int2Annot
      ,  created                 DATE            DEFAULT  SYSDATE NOT NULL
      ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
      ,  updated                 DATE            DEFAULT  SYSDATE NOT NULL
-     ,  timestamp               DATE            DEFAULT  SYSDATE NOT NULL
+      , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
 )
 TABLESPACE &&intactMainTablespace
 ;
@@ -584,8 +569,6 @@ set term off
     'Database user who has performed the last update of the column.';
     COMMENT ON COLUMN IA_Int2Annot.updated IS
     'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_Int2Annot.timestamp IS
-    'Date of the last update of the column.';
 set term on
 
 
@@ -597,7 +580,7 @@ CREATE TABLE IA_Exp2Annot
      ,  created                 DATE            DEFAULT  SYSDATE NOT NULL
      ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
      ,  updated                 DATE            DEFAULT  SYSDATE NOT NULL
-     ,  timestamp               DATE            DEFAULT  SYSDATE NOT NULL
+      , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
 )
 TABLESPACE &&intactMainTablespace
 ;
@@ -624,8 +607,6 @@ set term off
     'Database user who has performed the last update of the column.';
     COMMENT ON COLUMN IA_Exp2Annot.updated IS
     'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_Exp2Annot.timestamp IS
-    'Date of the last update of the column.';
 set term on
 
 
@@ -638,7 +619,7 @@ CREATE TABLE IA_cvobject2Annot
      ,  created                 DATE            DEFAULT  SYSDATE NOT NULL
      ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
      ,  updated                 DATE            DEFAULT  SYSDATE NOT NULL
-     ,  timestamp               DATE            DEFAULT  SYSDATE NOT NULL
+      , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
 )
 TABLESPACE &&intactMainTablespace
 ;
@@ -665,8 +646,6 @@ set term off
     'Database user who has performed the last update of the column.';
     COMMENT ON COLUMN IA_cvobject2Annot.updated IS
     'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_cvobject2Annot.timestamp IS
-    'Date of the last update of the column.';
 set term on
 
 
@@ -678,7 +657,7 @@ CREATE TABLE IA_Biosource2Annot
      ,  created                 DATE            DEFAULT  SYSDATE NOT NULL
      ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
      ,  updated                 DATE            DEFAULT  SYSDATE NOT NULL
-     ,  timestamp               DATE            DEFAULT  SYSDATE NOT NULL
+      , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
 )
 TABLESPACE &&intactMainTablespace
 ;
@@ -705,8 +684,6 @@ set term off
     'Database user who has performed the last update of the column.';
     COMMENT ON COLUMN IA_Biosource2Annot.updated IS
     'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_Biosource2Annot.timestamp IS
-    'Date of the last update of the column.';
 set term on
 
 
@@ -720,8 +697,8 @@ CREATE TABLE IA_Cv2Cv
      ,  deprecated                  NUMBER(1)       DEFAULT  0       NOT NULL
 	 ,  created			            DATE		    DEFAULT  sysdate NOT NULL
 	 ,  updated			            DATE		    DEFAULT  sysdate NOT NULL
-	 ,  timestamp		            DATE		    DEFAULT  sysdate NOT NULL
 	 ,  userstamp		            VARCHAR2(30)	DEFAULT	 USER	 NOT NULL
+      , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
 )
 TABLESPACE &&intactMainTablespace
 ;
@@ -749,8 +726,6 @@ COMMENT ON COLUMN IA_Cv2Cv.created IS
 'Date of the creation of the row.';
 COMMENT ON COLUMN IA_Cv2Cv.updated IS
 'Date of the last update of the row.';
-COMMENT ON COLUMN IA_Cv2Cv.timestamp IS
-'Date of the last update of the column.';
 COMMENT ON COLUMN IA_Cv2Cv.userstamp IS
 'Database user who has performed the last update of the column.';
 
@@ -928,12 +903,12 @@ CREATE TABLE IA_alias
     ,  deprecated              NUMBER(1)       DEFAULT  0       NOT NULL
     ,  created                 DATE            DEFAULT  SYSDATE NOT NULL
     ,  updated                 DATE            DEFAULT  SYSDATE NOT NULL
-    ,  timestamp               DATE            DEFAULT  SYSDATE NOT NULL
     ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
     ,  aliastype_ac            VARCHAR2(30)    CONSTRAINT fk_alias$qualifier REFERENCES IA_ControlledVocab(ac)
     ,  parent_ac               VARCHAR2(30)    -- eh missing constraint here??
     ,  owner_ac                VARCHAR2(30)    CONSTRAINT fk_alias$owner REFERENCES IA_Institution(ac)
     ,  name                    VARCHAR2(30)
+    , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
 )
 TABLESPACE &&intactIndexTablespace
 ;
@@ -958,8 +933,6 @@ set term off
     'Date of the creation of the row.';
     COMMENT ON COLUMN IA_Alias.updated IS
     'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_Alias.timestamp IS
-    'Date of the last update of the column.';
     COMMENT ON COLUMN IA_Alias.userstamp IS
     'Database user who has performed the last update of the column.';
 set term on
@@ -978,7 +951,6 @@ CREATE TABLE IA_Feature
         , deprecated            NUMBER(1)       DEFAULT  0       NOT NULL
         , created               DATE            DEFAULT  SYSDATE NOT NULL
         , updated               DATE            DEFAULT  SYSDATE NOT NULL
-        , timestamp             DATE            DEFAULT  SYSDATE NOT NULL
         , userstamp             VARCHAR2(30)    DEFAULT  USER    NOT NULL
         , component_ac          VARCHAR2(30)    NOT NULL CONSTRAINT fk_Feature$component REFERENCES IA_Component(ac) ON DELETE CASCADE
         , identification_ac     VARCHAR2(30)    CONSTRAINT fk_Feature$identification_ac REFERENCES IA_ControlledVocab(ac)
@@ -987,6 +959,7 @@ CREATE TABLE IA_Feature
         , shortLabel            VARCHAR2(20)
         , fullName              VARCHAR2(250)
         , owner_ac              VARCHAR2(30)    CONSTRAINT fk_Feature$owner REFERENCES IA_Institution(ac)
+      , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
 )
 TABLESPACE &&intactMainTablespace
 ;
@@ -1007,8 +980,6 @@ set term off
     'Date of the creation of the row.';
     COMMENT ON COLUMN IA_Feature.updated IS
     'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_Feature.timestamp IS
-    'Date of the last update of the column.';
     COMMENT ON COLUMN IA_Feature.userstamp IS
     'Database user who has performed the last update of the column.';
     COMMENT ON COLUMN IA_Feature.fullName IS
@@ -1033,7 +1004,6 @@ CREATE TABLE IA_Range
         , deprecated            NUMBER(1)       DEFAULT  0       NOT NULL
         , created               DATE            DEFAULT  SYSDATE NOT NULL
         , updated               DATE            DEFAULT  SYSDATE NOT NULL
-        , timestamp             DATE            DEFAULT  SYSDATE NOT NULL
         , userstamp             VARCHAR2(30)    DEFAULT  USER    NOT NULL
         , undetermined          CHAR            NOT NULL CHECK ( undetermined IN ('N','Y') )
         , link                  CHAR            NOT NULL CHECK ( link IN ('N','Y') )
@@ -1046,6 +1016,7 @@ CREATE TABLE IA_Range
         , toIntervalEnd         NUMBER(5)
         , toFuzzyType_ac        VARCHAR2(30)    CONSTRAINT fk_Range$toFuzzyType_ac REFERENCES IA_ControlledVocab(ac)
         , sequence              VARCHAR(100)
+      , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
 )
 TABLESPACE &&intactMainTablespace
 ;
@@ -1065,8 +1036,6 @@ set term off
     'Date of the creation of the row.';
     COMMENT ON COLUMN IA_Range.updated IS
     'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_Range.timestamp IS
-    'Date of the last update of the column.';
     COMMENT ON COLUMN IA_Range.userstamp IS
     'Database user who has performed the last update of the column.';
     COMMENT ON COLUMN IA_Range.fromIntervalStart IS
@@ -1100,7 +1069,7 @@ CREATE TABLE IA_Feature2Annot
      ,  created                 DATE            DEFAULT  SYSDATE NOT NULL
      ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
      ,  updated                 DATE            DEFAULT  SYSDATE NOT NULL
-     ,  timestamp               DATE            DEFAULT  SYSDATE NOT NULL
+      , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
 )
 TABLESPACE &&intactMainTablespace
 ;
@@ -1127,8 +1096,6 @@ set term off
     'Database user who has performed the last update of the column.';
     COMMENT ON COLUMN IA_Feature2Annot.updated IS
     'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_Feature2Annot.timestamp IS
-    'Date of the last update of the column.';
 set term on
 
 
@@ -1230,6 +1197,7 @@ CREATE TABLE IA_PubMed
      ,  primaryid               VARCHAR2(30)
      ,  status                  VARCHAR2(30)
      ,  description             VARCHAR2(100)
+      , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
 )
 TABLESPACE &&intactMainTablespace
 ;
@@ -1312,3 +1280,32 @@ set term on
     COMMENT ON COLUMN ia_interactions.graphid IS
     'Graph in which that interraction takes place.';
 set term off
+
+CREATE TABLE IA_DB_INFO (
+	 dbi_key		    VARCHAR2(20)	NOT NULL PRIMARY KEY
+	,value			    VARCHAR2(20)	NOT NULL
+	,created_date		DATE		    DEFAULT  SYSDATE 	NOT NULL
+	,created_user		VARCHAR2(30)	DEFAULT  USER    	NOT NULL
+	,updated_date		DATE		    DEFAULT  SYSDATE 	NOT NULL
+	,updated_user		VARCHAR2(30)	DEFAULT  USER    	NOT NULL
+);
+
+
+CREATE TABLE IA_DB_INFO_AUDIT (
+	event			    CHAR(1)
+	,dbi_key		    VARCHAR2(20)
+	,value			    VARCHAR2(20)
+	,created_date		DATE		 NOT NULL
+	,created_user		VARCHAR2(30) NOT NULL
+	,updated_date		DATE		 NOT NULL
+	,updated_user		VARCHAR2(30) NOT NULL
+);
+
+INSERT INTO IA_DB_INFO (
+	 dbi_key
+	,value
+)
+VALUES
+(	 'schema_version'
+	,'1.1.0'
+);
