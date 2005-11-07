@@ -117,12 +117,12 @@ public class
         helper = new IntactHelper();
 
         objectFromAc = new SanityCheckerHelper(helper);
-        objectFromAc.addMapping(ExperimentBean.class, "select ac, shortlabel, fullname, timestamp, userstamp, detectmethod_ac, identmethod_ac, biosource_ac from ia_experiment where ac = ?");
-        objectFromAc.addMapping(InteractorBean.class, "select ac, shortlabel, fullname, crc64, timestamp, userstamp, biosource_ac, interactiontype_ac, objclass from ia_interactor where ac = ? ");
+        objectFromAc.addMapping(ExperimentBean.class, "select ac, shortlabel, fullname, updated, userstamp, detectmethod_ac, identmethod_ac, biosource_ac from ia_experiment where ac = ?");
+        objectFromAc.addMapping(InteractorBean.class, "select ac, shortlabel, fullname, crc64, updated, userstamp, biosource_ac, interactiontype_ac, objclass from ia_interactor where ac = ? ");
 
 
         deletionFeatureSch = new SanityCheckerHelper(helper);
-        deletionFeatureSch.addMapping(RangeBean.class, " select i.userstamp, i.timestamp, c.interaction_ac, c.interactor_ac, r.feature_ac , r.ac , r.fromintervalend, r.tointervalstart "+
+        deletionFeatureSch.addMapping(RangeBean.class, " select i.userstamp, i.updated, c.interaction_ac, c.interactor_ac, r.feature_ac , r.ac , r.fromintervalend, r.tointervalstart "+
                                                        " from ia_interactor i, ia_feature f, ia_range r, ia_controlledvocab ident, ia_component c, ia_controlledvocab type "+
                                                        " where i.ac = c.interaction_ac and "+
                                                              " c.ac=f.component_ac and " +
@@ -143,7 +143,7 @@ public class
                                                "i.ac = ?");
 
         rangeSeqSch.addMapping(ComponentBean.class, "select interaction_ac from ia_component where ac=?");
-        rangeSeqSch.addMapping(InteractorBean.class, "select ac, userstamp, timestamp, objclass from ia_interactor where ac=?");
+        rangeSeqSch.addMapping(InteractorBean.class, "select ac, userstamp, updated, objclass from ia_interactor where ac=?");
 
         this.retrieveObjectSch = new SanityCheckerHelper(helper);
 
@@ -178,10 +178,10 @@ public class
                                                      "having count(experiment_ac) > 1)");
 
         //oneIntOneExpSch.addMapping(Int2ExpBean.class, )
-        oneIntOneExpSch.addMapping(ExperimentBean.class, "select ac, shortlabel, timestamp, userstamp "+
+        oneIntOneExpSch.addMapping(ExperimentBean.class, "select ac, shortlabel, updated, userstamp "+
                                                          "from ia_experiment "+
                                                          "where ac = ? ");
-        oneIntOneExpSch.addMapping(InteractorBean.class, "select ac, objclass, shortlabel, timestamp, userstamp "+
+        oneIntOneExpSch.addMapping(InteractorBean.class, "select ac, objclass, shortlabel, updated, userstamp "+
                                                          "from ia_interactor "+
                                                          "where ac = ? ");
 
@@ -290,7 +290,7 @@ public class
                                           "FROM ia_int2exp " +
                                           "WHERE interaction_ac = ?");
 
-        sch.addMapping(InteractorBean.class, "SELECT ac, objclass, userstamp, timestamp " +
+        sch.addMapping(InteractorBean.class, "SELECT ac, objclass, userstamp, updated " +
                                              "FROM ia_interactor " +
                                              "WHERE ac = ? " +
                                              "AND interactiontype_ac IS NULL");
@@ -299,15 +299,15 @@ public class
                                            "FROM ia_component " +
                                            "WHERE interaction_ac = ? ");
 
-        sch.addMapping(ExperimentBean.class,"SELECT biosource_ac, ac, shortlabel, userstamp, timestamp " +
+        sch.addMapping(ExperimentBean.class,"SELECT biosource_ac, ac, shortlabel, userstamp, updated " +
                                             "FROM ia_experiment " +
                                             "WHERE ac like ?");
 
-        sch.addMapping(XrefBean.class, "SELECT ac, database_ac, qualifier_ac, userstamp, timestamp "+
+        sch.addMapping(XrefBean.class, "SELECT ac, database_ac, qualifier_ac, userstamp, updated "+
                                        "FROM ia_xref "+
                                        "WHERE parent_ac = ?");
 
-        sch.addMapping(BioSourceBean.class,"SELECT ac, shortlabel, taxid, userstamp, timestamp " +
+        sch.addMapping(BioSourceBean.class,"SELECT ac, shortlabel, taxid, userstamp, updated " +
                                            "FROM ia_biosource " +
                                            "WHERE ac like ?");
 
@@ -317,7 +317,7 @@ public class
                                                 "order by sequence_index");
 
         superCuratedSch = new SanityCheckerHelper(helper);
-        superCuratedSch.addMapping(ExperimentBean.class,"select ac, userstamp, timestamp, shortlabel from ia_experiment where ac not in " +
+        superCuratedSch.addMapping(ExperimentBean.class,"select ac, userstamp, updated, shortlabel from ia_experiment where ac not in " +
 	                                                        "(select e.ac " +
 	                                                            "from ia_experiment e, ia_exp2annot e2a, ia_annotation a " +
 	                                                            "where e.ac=e2a.experiment_ac and " +
@@ -1799,7 +1799,7 @@ public class
             AnnotatedBean annotatedBean =  (AnnotatedBean) annotatedBeans.get(i);
 
             if(Protein.class.getName().equals(annotatedType)){
-                annotationTopic.addMapping(AnnotationBean.class,  "select a.ac, a.topic_ac, a.timestamp, a.userstamp " +
+                annotationTopic.addMapping(AnnotationBean.class,  "select a.ac, a.topic_ac, a.updated, a.userstamp " +
                                                                   "from ia_annotation a, " +
                                                                   "ia_int2annot i2a " +
                                                                   "where a.ac=i2a.annotation_ac and "+
@@ -1808,7 +1808,7 @@ public class
                 checkAnnotationTopic(annotationBeans, annotatedBean, Protein.class.getName(),usableTopic);
             }
             else if(Interaction.class.getName().equals(annotatedType)){
-                annotationTopic.addMapping(AnnotationBean.class,  "select a.ac, a.topic_ac, a.timestamp, a.userstamp " +
+                annotationTopic.addMapping(AnnotationBean.class,  "select a.ac, a.topic_ac, a.updated, a.userstamp " +
                                                                   "from ia_annotation a, " +
                                                                   "ia_int2annot i2a " +
                                                                   "where a.ac=i2a.annotation_ac and "+
@@ -1817,7 +1817,7 @@ public class
                 checkAnnotationTopic(annotationBeans, annotatedBean, Interaction.class.getName(),usableTopic);
             }
             else if (Experiment.class.getName().equals(annotatedType)){
-                annotationTopic.addMapping(AnnotationBean.class,  "select a.ac, a.topic_ac, a.timestamp, a.userstamp " +
+                annotationTopic.addMapping(AnnotationBean.class,  "select a.ac, a.topic_ac, a.updated, a.userstamp " +
                                                                   "from ia_annotation a, " +
                                                                   "ia_exp2annot e2a " +
                                                                   "where a.ac=e2a.annotation_ac and "+
@@ -1826,7 +1826,7 @@ public class
                 checkAnnotationTopic(annotationBeans, annotatedBean, Experiment.class.getName(),usableTopic);
             }
             else if (BioSource.class.getName().equals(annotatedType)){
-                annotationTopic.addMapping(AnnotationBean.class,  "select a.ac, a.topic_ac, a.timestamp, a.userstamp " +
+                annotationTopic.addMapping(AnnotationBean.class,  "select a.ac, a.topic_ac, a.updated, a.userstamp " +
                                                                   "from ia_annotation a, " +
                                                                   "ia_biosource2annot bs2a " +
                                                                   "where a.ac=bs2a.annotation_ac and "+
@@ -1835,7 +1835,7 @@ public class
                 checkAnnotationTopic(annotationBeans, annotatedBean, BioSource.class.getName(),usableTopic);
 
             } if (CvObject.class.getName().equals(annotatedType)){
-                annotationTopic.addMapping(AnnotationBean.class,  "select a.ac, a.topic_ac, a.timestamp, a.userstamp " +
+                annotationTopic.addMapping(AnnotationBean.class,  "select a.ac, a.topic_ac, a.updated, a.userstamp " +
                                                                   "from ia_annotation a, " +
                                                                   "ia_cvobject2annot cv2a " +
                                                                   "where a.ac=cv2a.annotation_ac and "+
@@ -1903,7 +1903,7 @@ public class
         */
 
         SanityCheckerHelper schIntAc = new SanityCheckerHelper(scn.helper);
-        schIntAc.addMapping(InteractorBean.class,"SELECT ac, shortlabel, userstamp, timestamp, objclass "+
+        schIntAc.addMapping(InteractorBean.class,"SELECT ac, shortlabel, userstamp, updated, objclass "+
                                                  "FROM ia_interactor "+
                                                  "WHERE objclass = '"+InteractionImpl.class.getName()+ "'"  +
                                                 " AND ac like ?");
@@ -1932,7 +1932,7 @@ public class
 
         List xrefBeans = schIntAc.getBeans(XrefBean.class,CvDatabase.UNIPROT);
 
-        scn.sch.addMapping(InteractorBean.class,"SELECT i.ac,i.objclass, i.shortlabel, i.biosource_ac, i.userstamp, i.timestamp "+
+        scn.sch.addMapping(InteractorBean.class,"SELECT i.ac,i.objclass, i.shortlabel, i.biosource_ac, i.userstamp, i.updated "+
                                                 "FROM ia_interactor i, ia_xref x "+
                                                 "WHERE i.ac = x.parent_ac AND " +
                                                 "0 = ( SELECT count(1) " +
@@ -1950,7 +1950,7 @@ public class
             scn.duplicatedProtein(xrefBean);
         }
 
-        schIntAc.addMapping(XrefBean.class,"select ac, userstamp, timestamp, database_ac, primaryid,parent_ac "+
+        schIntAc.addMapping(XrefBean.class,"select ac, userstamp, updated, database_ac, primaryid,parent_ac "+
                                            "from ia_xref "+
                                             "where ac like ?");
                                             //"where ac ='EBI-695273' and ac like ?");
@@ -1988,14 +1988,14 @@ public class
         */
 //right now not actual using, as concerning checks appear to commented out
 
-        schIntAc.addMapping(InteractorBean.class,"SELECT ac, crc64, shortlabel, userstamp, timestamp, objclass "+
+        schIntAc.addMapping(InteractorBean.class,"SELECT ac, crc64, shortlabel, userstamp, updated, objclass "+
                                                  "FROM ia_interactor "+
                                                  "WHERE objclass = '"+ProteinImpl.class.getName()+
                                                  "' AND ac like ?");
 
         List proteinBeans = schIntAc.getBeans(InteractorBean.class,"%");
         System.out.println("This/those Range(s) were created when the first Methionine was there, since then the Methionine had been remooved from the Protein Sequence. The Range Sequence has been remapped");
-        /*schIntAc.addMapping(InteractorBean.class,"SELECT ac, crc64, shortlabel, userstamp, timestamp, objclass "+
+        /*schIntAc.addMapping(InteractorBean.class,"SELECT ac, crc64, shortlabel, userstamp, updated, objclass "+
                                                  "FROM ia_interactor "+
                                                  "WHERE objclass = ? "+
                                                  " AND ac in ('EBI-349787','EBI-375446','EBI-397048','EBI-515331','EBI-632461','EBI-527215')");
@@ -2003,7 +2003,7 @@ public class
         scn.checkRangeSeqBis(proteinBeans);
 
         System.out.println("\n\nThis/those Range(s) were created when the first Methionine was not there, since then the Methionine had been added");
-        schIntAc.addMapping(InteractorBean.class,"SELECT ac, crc64, shortlabel, userstamp, timestamp, objclass "+
+        schIntAc.addMapping(InteractorBean.class,"SELECT ac, crc64, shortlabel, userstamp, updated, objclass "+
                                                  "FROM ia_interactor "+
                                                  "WHERE objclass = ? "+
                                                  " AND ac in ('EBI-10022','EBI-10218','EBI-101537','EBI-103438','EBI-106786','EBI-108311')");*/
@@ -2024,7 +2024,7 @@ public class
         */
 
             //tested
-             schIntAc.addMapping(AnnotationBean.class, "SELECT ac, description, timestamp, userstamp "+
+             schIntAc.addMapping(AnnotationBean.class, "SELECT ac, description, updated, userstamp "+
                                                        "FROM ia_annotation "+
                                                        "WHERE topic_ac = 'EBI-18' and ac like ?"   // + " and ac='EBI-375752'"
                                                         );
@@ -2037,7 +2037,7 @@ public class
     //        *    Check on controlledvocab
     //        */
     //
-             schIntAc.addMapping(ControlledvocabBean.class,"SELECT ac, objclass, shortlabel, timestamp, userstamp "+
+             schIntAc.addMapping(ControlledvocabBean.class,"SELECT ac, objclass, shortlabel, updated, userstamp "+
                                                            "FROM ia_controlledvocab "+
                                                            "WHERE ac = ?");
             List controlledvocabBeans = schIntAc.getBeans(ControlledvocabBean.class, "%");
