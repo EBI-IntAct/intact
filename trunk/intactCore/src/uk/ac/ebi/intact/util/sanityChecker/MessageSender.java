@@ -133,7 +133,7 @@ public class MessageSender {
     public void addMessage( ReportTopic topic, InteractorBean interactionBean, List experimentBeans ) throws SQLException {
 
         String user = interactionBean.getUserstamp();
-        Timestamp date = interactionBean.getTimestamp();
+        Timestamp date = interactionBean.getUpdated();
 
 //        String userMessageReport="";
 //        String adminMessageReport="";
@@ -158,7 +158,7 @@ public class MessageSender {
                 String experimentEditorUrl = editorUrlBuilder.getEditorUrl(experimentBean);
 
                 String experimentUser = experimentBean.getUserstamp();
-                Timestamp experimentDate = experimentBean.getTimestamp();
+                Timestamp experimentDate = experimentBean.getUpdated();
                 String[] rowValues2 = new String[4];
                 rowValues2[0] ="<a href="+ experimentEditorUrl + ">"+  experimentBean.getAc() + "</a>";
                 rowValues2[1] =experimentBean.getShortlabel();
@@ -196,7 +196,7 @@ public class MessageSender {
         String editorUrl;// = editorUrlBuilder.getEditorUrl(intactBean);
 
         String user = intactBean.getUserstamp();
-        Timestamp date = intactBean.getTimestamp();
+        Timestamp date = intactBean.getUpdated();
 
 
         String userMessageReport="";
@@ -278,7 +278,7 @@ public class MessageSender {
      public void addMessage( ReportTopic topic, IntactBean intactBean, String message ) throws SQLException {
 
         String user = intactBean.getUserstamp();
-        Timestamp date = intactBean.getTimestamp();
+        Timestamp date = intactBean.getUpdated();
 
 
         String userMessageReport="";
@@ -347,7 +347,7 @@ public class MessageSender {
             if(intactBean instanceof InteractorBean){
                 InteractorBean interactorBean = (InteractorBean) intactBean;
                 String user = intactBean.getUserstamp();
-                Timestamp date = intactBean.getTimestamp();
+                Timestamp date = intactBean.getUpdated();
                 if(!users.contains(user)){
                     users.add(user);
                 }
@@ -383,7 +383,7 @@ public class MessageSender {
     public void addMessage( ReportTopic topic, AnnotationBean annotationBean,  String topicShortlabel) throws SQLException, IntactException {//( ReportTopic topic, AnnotationBean annotationBean, AnnotatedBean annotatedBean, String annotatedType, String topicShortlabel) throws SQLException, IntactException {
        //TOPICAC_NOT_VALID
         String user = annotationBean.getUserstamp();
-        Timestamp date = annotationBean.getTimestamp();
+        Timestamp date = annotationBean.getUpdated();
 
         AnnotatedBean annotatedBean = SanityCheckerHelper.getAnnotatedBeanFromAnnotation(annotationBean.getAc());
 
@@ -430,7 +430,7 @@ public class MessageSender {
         String annotatedBeanType = getTypeFromIntactBean(annotatedBean);
 
         String user = annotatedBean.getUserstamp();
-        Timestamp date = annotatedBean.getTimestamp();
+        Timestamp date = annotatedBean.getUpdated();
 
         String[] rowValues = new String[7];
         if(annotatedBean instanceof FeatureBean){
@@ -798,7 +798,7 @@ public class MessageSender {
          IntactHelper intactHelper = new IntactHelper();
          SanityCheckerHelper sch = new SanityCheckerHelper(intactHelper);
 
-         sch.addMapping(Interactor.class,"select i.ac, i.objclass, i.userstamp, i.timestamp, i.fullname, i.shortlabel "+
+         sch.addMapping(Interactor.class,"select i.ac, i.objclass, i.userstamp, i.updated, i.fullname, i.shortlabel "+
                                          "from ia_interactor i, ia_component c, ia_feature f "+
                                          "where i.ac=c.interaction_ac and c.ac=f.component_ac and f.ac=?");
 

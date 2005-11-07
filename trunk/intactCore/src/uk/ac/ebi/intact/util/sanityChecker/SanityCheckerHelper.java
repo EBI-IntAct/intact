@@ -222,7 +222,7 @@ public class SanityCheckerHelper {
     public InteractorBean getInteractorBeanFromAc(String ac) throws IntactException, SQLException {
         IntactHelper intactHelper = new IntactHelper();
         SanityCheckerHelper sch = new SanityCheckerHelper(intactHelper);
-        sch.addMapping(InteractorBean.class,"select ac, objclass, timestamp, userstamp, crc64, biosource_ac, fullname, interactiontype_ac, shortlabel " +
+        sch.addMapping(InteractorBean.class,"select ac, objclass, updated, userstamp, crc64, biosource_ac, fullname, interactiontype_ac, shortlabel " +
                                             "from ia_interactor " +
                                             "where ac=?");
         InteractorBean interactorBean = (InteractorBean) sch.getFirstBean(InteractorBean.class,ac);
@@ -233,7 +233,7 @@ public class SanityCheckerHelper {
     public ControlledvocabBean getCvBeanFromAc(String ac) throws IntactException, SQLException {
         IntactHelper intactHelper = new IntactHelper();
         SanityCheckerHelper sch = new SanityCheckerHelper(intactHelper);
-        sch.addMapping(ControlledvocabBean.class,"select ac, objclass, timestamp, userstamp, fullname, shortlabel " +
+        sch.addMapping(ControlledvocabBean.class,"select ac, objclass, updated, userstamp, fullname, shortlabel " +
                                             "from ia_controlledvocab " +
                                             "where ac=?");
         ControlledvocabBean cvBean = (ControlledvocabBean) sch.getFirstBean(ControlledvocabBean.class,ac);
@@ -244,7 +244,7 @@ public class SanityCheckerHelper {
     public BioSourceBean getBioSourceBeanFromAc(String ac) throws IntactException, SQLException {
         IntactHelper intactHelper = new IntactHelper();
         SanityCheckerHelper sch = new SanityCheckerHelper(intactHelper);
-        sch.addMapping(BioSourceBean.class,"select ac, taxid, tissue_ac, celltype_ac, timestamp, userstamp, fullname, shortlabel " +
+        sch.addMapping(BioSourceBean.class,"select ac, taxid, tissue_ac, celltype_ac, updated, userstamp, fullname, shortlabel " +
                                             "from ia_biosource " +
                                             "where ac=?");
         BioSourceBean bsBean = (BioSourceBean) sch.getFirstBean(BioSourceBean.class,ac);
@@ -254,7 +254,7 @@ public class SanityCheckerHelper {
     public ExperimentBean getExperimentBeanFromAc(String ac) throws IntactException, SQLException {
         IntactHelper intactHelper = new IntactHelper();
         SanityCheckerHelper sch = new SanityCheckerHelper(intactHelper);
-        sch.addMapping(ExperimentBean.class,"select ac, biosource_ac, detectmethod_ac, identmethod_ac, relatedexperiment_ac, timestamp, userstamp, fullname, shortlabel " +
+        sch.addMapping(ExperimentBean.class,"select ac, biosource_ac, detectmethod_ac, identmethod_ac, relatedexperiment_ac, updated, userstamp, fullname, shortlabel " +
                                             "from ia_experiment " +
                                             "where ac=?");
         ExperimentBean expBean = (ExperimentBean) sch.getFirstBean(ExperimentBean.class,ac);
@@ -265,7 +265,7 @@ public class SanityCheckerHelper {
     public FeatureBean getFeatureBeanFromAc(String ac) throws IntactException, SQLException {
            IntactHelper intactHelper = new IntactHelper();
            SanityCheckerHelper sch = new SanityCheckerHelper(intactHelper);
-           sch.addMapping(FeatureBean.class,"select ac, component_ac, identification_ac, featuretype_ac, linkedfeature_ac, timestamp, userstamp, fullname, shortlabel " +
+           sch.addMapping(FeatureBean.class,"select ac, component_ac, identification_ac, featuretype_ac, linkedfeature_ac, updated, userstamp, fullname, shortlabel " +
                                                "from ia_feature " +
                                                "where ac=?");
            FeatureBean featureBean = (FeatureBean) sch.getFirstBean(FeatureBean.class,ac);
@@ -325,7 +325,7 @@ public class SanityCheckerHelper {
         }
 
 
-        sch.addMapping(InteractorBean.class,"SELECT ac, shortlabel, userstamp, timestamp, objclass "+
+        sch.addMapping(InteractorBean.class,"SELECT ac, shortlabel, userstamp, updated, objclass "+
                                                 "FROM ia_interactor "+
                                                 "WHERE objclass = '"+InteractionImpl.class.getName()+
                                                 "' AND ac like ?");
