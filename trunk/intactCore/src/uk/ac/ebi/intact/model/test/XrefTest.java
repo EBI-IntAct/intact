@@ -34,7 +34,7 @@ public class XrefTest extends TestCase {
 
     public void testSetSecondaryId() {
 
-        CvDatabase go = new CvDatabase( owner, "uniprot" );
+        CvDatabase go = new CvDatabase( owner, "uniprotkb" );
         Xref xref = null;
 
         String id = "GO:0000001";
@@ -62,7 +62,7 @@ public class XrefTest extends TestCase {
 
     public void testSetPrimaryId() {
 
-        CvDatabase go = new CvDatabase( owner, "uniprot" );
+        CvDatabase go = new CvDatabase( owner, "uniprotkb" );
         Xref xref = null;
 
         String id = "GO:0000001";
@@ -97,7 +97,7 @@ public class XrefTest extends TestCase {
      */
     public void testHasValidPrimaryId() {
 
-        CvDatabase go = new CvDatabase( owner, "uniprot" );
+        CvDatabase go = new CvDatabase( owner, "uniprotkb" );
 
         go.addAnnotation( new Annotation( owner, comment, "an interresting comment." ) );
         go.addAnnotation( new Annotation( owner, comment, "an other very interresting comment." ) );
