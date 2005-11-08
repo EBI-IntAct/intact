@@ -34,6 +34,7 @@ public class ExportToTrEMBL {
     public static final String R_LINE_REFERENCE_LINE = "${REFERENCE_LINE}";
 
     public static final String NCBI_TAXID = "${NCBI_TAXID}";
+    public static final String ORGANISM_NAME = "${ORGANISM NAME}";
 
     public static final String PROTEIN_AC = "${PROTEIN_AC}";
     public static final String PROTEIN_FULLNAME = "${PROTEIN_FULLNAME}";
@@ -46,12 +47,12 @@ public class ExportToTrEMBL {
     public static final SimpleDateFormat DATE_FORMATER = new SimpleDateFormat( "dd-MMM-yyyy" );
 
     public static final String
-            TREMBL_TEMPLATE = "ID   XXXX_XXXX     PRELIMINARY;   PRT;  " + PROTEIN_SEQUENCE_LENGTH + " AA." + NEW_LINE +
+            TREMBL_TEMPLATE = "ID   XXXX_"+ ORGANISM_NAME +"     PRELIMINARY;   PRT;  " + PROTEIN_SEQUENCE_LENGTH + " AA." + NEW_LINE +
                               "AC   ;" + NEW_LINE +
                               "DT   " + TREMBL_RELEASE_DATE + " (TrEMBLrel. " + TREMBL_RELEASE_NUMBER + ", Created)" + NEW_LINE +
                               "DT   " + TREMBL_RELEASE_DATE + " (TrEMBLrel. " + TREMBL_RELEASE_NUMBER + ", Last sequence update)" + NEW_LINE +
                               "DT   " + TREMBL_RELEASE_DATE + " (TrEMBLrel. " + TREMBL_RELEASE_NUMBER + ", Last annotation update)" + NEW_LINE +
-                              "DE   " + PROTEIN_FULLNAME + "." + NEW_LINE +
+                              "DE   " + PROTEIN_FULLNAME + "{EI1}." + NEW_LINE +
                               "OX   NCBI_TaxID=" + NCBI_TAXID + "." + NEW_LINE +
                               "RN   [1]{EI1}" + NEW_LINE +
                               "RP   " + R_LINE_REFERENCE_POSITION + "." + NEW_LINE +
@@ -62,7 +63,7 @@ public class ExportToTrEMBL {
                               "**" + NEW_LINE +
                               "**   #################    INTERNAL SECTION    ##################" + NEW_LINE +
                               "**EV EI1; IntAct; -; " + PROTEIN_AC + "; " + PROTEIN_CREATION_DATE + "." + NEW_LINE +
-                              "SQ   SEQUENCE   " + PROTEIN_SEQUENCE_LENGTH + " AA;  0 MW;   " + PROTEIN_CRC64 + " CRC64;" + NEW_LINE +
+                              "SQ   SEQUENCE   " + PROTEIN_SEQUENCE_LENGTH + " AA;  1 MW;   " + PROTEIN_CRC64 + " CRC64;" + NEW_LINE +
                               "     " + PROTEIN_SEQUENCE + NEW_LINE +
                               "//";
 
@@ -89,6 +90,7 @@ public class ExportToTrEMBL {
      * @return the TrEMBL representation of the given IntAct protein.
      */
     public static String formatTremblEntry( Protein protein,
+                                            String organismName,
                                             String tremblReleaseDate,
                                             String tremblReleaseNumber,
                                             String referencePosition,
@@ -99,6 +101,7 @@ public class ExportToTrEMBL {
 
         String tremblEntry = SearchReplace.replace( TREMBL_TEMPLATE, PROTEIN_SEQUENCE_LENGTH, "" + protein.getSequence().length() );
 
+        tremblEntry = SearchReplace.replace( tremblEntry, ORGANISM_NAME, organismName );
         tremblEntry = SearchReplace.replace( tremblEntry, TREMBL_RELEASE_DATE, tremblReleaseDate );
         tremblEntry = SearchReplace.replace( tremblEntry, TREMBL_RELEASE_NUMBER, tremblReleaseNumber );
 
@@ -178,18 +181,20 @@ public class ExportToTrEMBL {
 
             // TODO rt rc rx are not mandatory ... if the user input is empty, then remove those lines.
 
+            String organismName = "MOUSE";
             String tremblReleaseDate = "24-JAN-2006";
             String tremblReleaseNumber = "32";
             String rp = "NUCLEOTIDE SEQUENCE [MRNA]";
             String rx = "B-cell";
             String ra = "Papin J., Subramaniam S.";
             String rt = "Bioinformatics and cellular signaling";
-            String rl = "Curr Opin Biotechnol. 15:78-81(2004)";
+            String rl = "Curr. Opin. Biotechnol. 15:78-81(2004)";
 
             for ( Iterator iterator = proteins.iterator(); iterator.hasNext(); ) {
                 Protein protein = (Protein) iterator.next();
 
                 System.out.println( formatTremblEntry( protein,
+                                                       organismName,
                                                        tremblReleaseDate,
                                                        tremblReleaseNumber,
                                                        rp,
