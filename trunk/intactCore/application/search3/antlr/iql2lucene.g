@@ -1,7 +1,3 @@
-/*
- * Version: $Id$
- */
-
 header
 {
 package uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.parser.iql2luceneParser;
@@ -145,7 +141,7 @@ predicate throws ANTLRException
 // the term specifies the search term
 // the term is a leaf in the tree built by ANTLR
 term throws ANTLRException
-     {String str = "";}
+      {String str = "";}
      : (AC
      |  SHORTLABEL
      |  FULLNAME
@@ -164,10 +160,13 @@ term throws ANTLRException
      | CVINTERACTION_TYPE_FULLNAME
 
 // CvDatabases
+     |  AFCS
      |  CABRI
+     |  ENSEMBL
      |  FLYBASE
      |  GO
      |  HUGE
+     |  IMEX
      |  INTACT
      |  INTERPRO
      |  NEWT
@@ -175,22 +174,36 @@ term throws ANTLRException
      |  PDB
      |  PSIMI
      |  PUBMED
-     |  REACTOME
+     |  REACTOMECOMPLEX
+     |  REACTOMEPROTEIN
      |  RESID
      |  SGD
-     |  UNIPROT
+     |  UNIPARC
+     |  UNIPROTKB
 
 //CvTopics
+     |  THREEDRFACTORS
+     |  THREEDRESOLUTION
+     |  THREEDSTRUCTURE
+     |  ACCEPTED
      |  AGONIST
      |  ANTAGONIST
      |  AUTHORCONFIDENCE
+     |  AUTHORLIST
      |  CAUTION
      |  COMMENT
+     |  COMPLEXPROPERTIES
      |  CONFIDENCEMAPPING
+     |  CONTACTCOMMENT
+     |  CONTACTEMAIL
+     |  COPYRIGHT
+     |  DATAPROCESSING
+     |  DATASET
      |  DEFINITION
      |  DISEASE
      |  EXAMPLE
      |  EXPMODIFICATION
+     |  FIGURELEGEND
      |  FUNCTION
      |  INHIBITION
      |  ISOFORMCOMMENT
@@ -205,17 +218,21 @@ term throws ANTLRException
      |  SEARCHURLASCII
      |  STIMULATION
      |  SUBMITTED
+     |  TOBEREVIEWED
      |  UNIPROTCCNOTE
      |  UNIPROTDREXPORT
      |  URL
+     |  USEDINCLASS
 
 //CvAliasType
+     |  AUTHORASSIGNEDNAME
      |  GENENAME
      |  GENENAMESYNONYM
      |  GOSYNONYM
      |  ISOFORMSYNONYM
      |  LOCUSNAME
      |  ORFNAME
+
        )
 
      ;
@@ -328,10 +345,13 @@ tokens {
     CVINTERACTION_TYPE_FULLNAME = "interactiontype_fullname";
 
 // CvDatabases
+    AFCS = "afcs";
     CABRI = "cabri";
+    ENSEMBL = "ensembl";
     FLYBASE = "flybase";
     GO = "go";
     HUGE = "huge";
+    IMEX = "imex";
     INTACT = "intact";
     INTERPRO = "interpro";
     NEWT = "newt";
@@ -339,29 +359,44 @@ tokens {
     PDB = "pdb";
     PSIMI = "psi-mi";
     PUBMED = "pubmed";
-    REACTOME = "reactome";
+    REACTOMECOMPLEX = "reactome-complex";
+    REACTOMEPROTEIN = "reactome-protein";
     RESID = "resid";
     SGD = "sgd";
-    UNIPROT = "uniprot";
+    UNIPARC = "uniparc";
+    UNIPROTKB = "uniprotkb";
 
 //CvTopics
+    THREEDRFACTORS = "3d-r-factors";
+    THREEDRESOLUTION = "3d-resolution";
+    THREEDSTRUCTURE = "3d-structure";
+    ACCEPTED = "accepted";
     AGONIST = "agonist";
     ANTAGONIST = "antagonist";
     AUTHORCONFIDENCE = "author-confidence";
+    AUTHORLIST = "author-list";
     CAUTION = "caution";
     COMMENT = "comment";
+    COMPLEXPROPERTIES = "complex-properties";
     CONFIDENCEMAPPING = "confidence-mapping";
+    CONTACTCOMMENT = "contact-comment";
+    CONTACTEMAIL = "contact-email";
+    COPYRIGHT = "copyright";
+    DATAPROCESSING = "data-processing";
     DATASET = "dataset";
     DEFINITION = "definition";
     DISEASE = "disease";
     EXAMPLE = "example";
     EXPMODIFICATION = "exp-modification";
+    FIGURELEGEND = "figure-legend";
     FUNCTION = "function";
     INHIBITION = "inhibition";
     ISOFORMCOMMENT = "isoform-comment";
     KINETICS = "kinetics";
     NEGATIVE = "negative";
-    ONHOLD = "onhold";
+    NOUNIPROTUPDATE = "no-uniprot-update";
+    OBSOLETETERM = "obsolete term";
+    ONHOLD = "on-hold";
     PATHWAY = "pathway";
     PREREQUISITEPTM = "prerequisite-ptm";
     REMARKINTERNAL = "remark-internal";
@@ -370,17 +405,20 @@ tokens {
     SEARCHURLASCII = "search-url-ascii";
     STIMULATION = "stimulation";
     SUBMITTED = "submitted";
+    TOBEREVIEWED = "to-be-reviewed";
     UNIPROTCCNOTE = "uniprot-cc-note";
     UNIPROTDREXPORT = "uniprot-dr-export";
     URL = "url";
+    USEDINCLASS = "used-in-class";
 
 //CvAliasType
-    GENENAME = "gene-name";
-    GENENAMESYNONYM = "gene-name-synonym";
-    GOSYNONYM = "go-synonym";
-    ISOFORMSYNONYM = "isoform-synonym";
-    LOCUSNAME = "locus-name";
-    ORFNAME = "orf-name";
+    AUTHORASSIGNEDNAME = "author assigned-name";
+    GENENAME = "gene name";
+    GENENAMESYNONYM = "gene name synonym";
+    GOSYNONYM = "go synonym";
+    ISOFORMSYNONYM = "isoform synonym";
+    LOCUSNAME = "locus name";
+    ORFNAME = "orf name";
 
 }
 
@@ -502,14 +540,20 @@ predicate returns [String pred]
            {str = itfull.getText();}
 
 // CvDatabases:
+     |   af:AFCS
+           {str = af.getText();}
      |   ca:CABRI
            {str = ca.getText();}
+     |   en:ENSEMBL
+           {str = en.getText();}
      |   f:FLYBASE
             {str = f.getText();}
      |   g:GO
            {str = g.getText();}
      |   h:HUGE
            {str = h.getText();}
+     |   im:IMEX
+           {str = im.getText();}
      |   i:INTACT
            {str = i.getText();}
      |   in:INTERPRO
@@ -524,27 +568,53 @@ predicate returns [String pred]
            {str = ps.getText();}
      |   pu:PUBMED
            {str = pu.getText();}
-     |   r:REACTOME
-           {str = r.getText();}
+     |   rc:REACTOMECOMPLEX
+           {str = rc.getText();}
+     |   rp:REACTOMEPROTEIN
+           {str = rp.getText();}
      |   re:RESID
            {str = re.getText();}
      |   sg:SGD
            {str = sg.getText();}
-     |   u:UNIPROT
+     |   upc:UNIPARC
+            {str = upc.getText();}
+     |   u:UNIPROTKB
            {str = u.getText();}
 // CvTopics:
+     |   df:THREEDFACTORS
+           {str = df.getText();}
+     |   dr:THREEDRESOLUTION
+           {str = dr.getText();}
+     |   ds:THREEDSTRUCTURE
+           {str = ds.getText();}
+     |   acc:ACCEPTED
+           {str = acc.getText();}
      |   ag:AGONIST
            {str = ag.getText();}
      |   an:ANTAGONIST
            {str = an.getText();}
-     |   au:AUTHORCONFIDENCE
-           {str = au.getText();}
+     |   auc:AUTHORCONFIDENCE
+           {str = auc.getText();}
+     |   aul:AUTHORLIST
+           {str = aul.getText();}
      |   cau:CAUTION
            {str = cau.getText();}
      |   co:COMMENT
            {str = co.getText();}
-     |   con:CONFIDENCEMAPPING
-           {str = con.getText();}
+     |   cp:COMPLEXPROPERTIES
+           {str = cp.getText();}
+     |   com:CONFIDENCEMAPPING
+           {str = com.getText();}
+     |   coc:CONTACTCOMMENT
+           {str = coc.getText();}
+     |   coe:CONTACTEMAIL
+           {str = coe.getText();}
+     |   cor:COPYRIGHT
+           {str = cor.getText();}
+     |   dtp:DATAPROCESSING
+           {str = dtp.getText();}
+     |   dts:DATASET
+           {str = dts.getText();}
      |   de:DEFINITION
            {str = de.getText();}
      |   di:DISEASE
@@ -553,6 +623,8 @@ predicate returns [String pred]
            {str = exa.getText();}
      |   exp:EXPMODIFICATION
            {str = exp.getText();}
+     |   fl:FIGURELEGEND
+           {str = fl.getText();}
      |   fu:FUNCTION
            {str = fu.getText();}
      |   inh:INHIBITION
@@ -583,10 +655,12 @@ predicate returns [String pred]
            {str = su.getText();}
      |   cc:UNIPROTCCNOTE
            {str = cc.getText();}
-     |   dr:UNIPROTDREXPORT
-           {str = dr.getText();}
+     |   udr:UNIPROTDREXPORT
+           {str = udr.getText();}
      |   url:URL
            {str = url.getText();}
+     |   uic:USEDINCLASS
+           {str = uic.getText();}
 
 //CvAliasType
      |   ge:GENENAME

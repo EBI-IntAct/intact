@@ -1,7 +1,6 @@
 /*
- * Version: $Id$
+ * $Id: valuelexer.g
  */
- 
 header {
 package uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.parser.iql2luceneParser;
 
