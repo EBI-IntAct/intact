@@ -294,7 +294,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <%-- <td width="20%" nowrap="nowrap" class="headerdarkmid"> --%>
             <td nowrap="nowrap" class="headerdarkmid">
                 <a href="<%= bean.getHelpLink() + "CVINTERACTION_HELP_SECTION"%>" target="new"
-                   class="tdlink">Interaction identification
+                   class="tdlink">Interaction detection
                 </a>
             </td>
 
@@ -832,7 +832,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
             is to split things up into sub-tables - this then gets very messy!
             --%>
             <%-- not linked again --%>
-            <td nowrap="nowrap" class="headerlight">UniProt description<br></td>
+            <td nowrap="nowrap" class="headerlight">UniProtKB description<br></td>
 
 
             <!-- 'expression system' title cell -->
@@ -841,7 +841,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
 
             <!-- 'uniprot ac' title cell -->
             <%-- again seems to NOT be linked to help --%>
-            <td class="headerlight">UniProt Ac<br></td>
+            <td class="headerlight">UniProtKB Ac<br></td>
 
             <!-- 'gene name' title cell -->
             <%-- again NOT linked to help --%>
