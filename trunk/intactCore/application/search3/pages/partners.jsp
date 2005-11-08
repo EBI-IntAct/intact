@@ -123,7 +123,7 @@
                    <nobr><a href="<%=bean.getHelpLink() + "search.TableLayout"%>" target="new" class="tdlink">Number of interactions<br></a></nobr>
                 </td>
 
-                <td nowrap="nowrap" class="headerlight" colspan="1">UniProt Ac<br></td>
+                <td nowrap="nowrap" class="headerlight" colspan="1">UniProtKB Ac<br></td>
 
                 <td nowrap="nowrap" class="headerlight"colspan="1">Gene name<br></td>
 
