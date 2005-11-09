@@ -74,13 +74,13 @@ public class AnnotationSection {
 
 
     public AnnotationSection () throws IntactException {
-
+            IntactHelper intactHelper = new IntactHelper();
         /*
-            EditorMenuFactory.EXPERIMENT ===> Editor - Experiment
-            EditorMenuFactory.INTERACTION ===> Editor - Interaction
-            EditorMenuFactory.PROTEIN ===> Editor - Protein
+            Experiment.class.getName() ===> Editor - Experiment
+            Interaction.class.getName() ===> Editor - Interaction
+            Protein.class.getName() ===> Editor - Protein
                                       ===> Editor - NucleicAcid
-            EditorMenuFactory.CV_PAGE ===> Editor - CvAlliasType
+            CvObject.class.getName() ===> Editor - CvAlliasType
                                       ===> CvCellType
                                       ===> CvComponentRole
                                       ===> CvDatabase
@@ -90,17 +90,19 @@ public class AnnotationSection {
                                       ===> CvXrefQualifier
             BioSource.class.getName() ===> Editor - BioSource
         */
+
         annotationSection.put(Experiment.class.getName(),new ArrayList());
         annotationSection.put(Interaction.class.getName(),new ArrayList());
         annotationSection.put(Protein.class.getName(),new ArrayList());
         annotationSection.put(CvObject.class.getName(),new ArrayList());
         annotationSection.put(BioSource.class.getName(), new ArrayList());
+        Object object = annotationSection.get(Experiment.class.getName());
 
         List usableTopics = new ArrayList();
 
-        IntactHelper helper = new IntactHelper();
+        //IntactHelper helper = new IntactHelper();
 
-        Collection cvTopics = helper.search(CvTopic.class,"ac","%");
+        Collection cvTopics = intactHelper.search(CvTopic.class,"ac","%");
 
         for (Iterator iterator = cvTopics.iterator(); iterator.hasNext();) {
 
@@ -113,24 +115,32 @@ public class AnnotationSection {
 
                 if(CvTopic.USED_IN_CLASS.equals(annotation.getCvTopic().getShortLabel())){
                     String usedInClass=annotation.getAnnotationText();
+                    if(usedInClass!=null){
+                        Pattern pattern = Pattern.compile(",");
+                        String[] classes = pattern.split(usedInClass);
 
-                    Pattern pattern = Pattern.compile(",");
-                    String[] classes = pattern.split(usedInClass);
-
-                    for (int i=0; i<classes.length; i++){
-                        String editorPageName=classes[i].trim();
-                        usableTopics =(List) annotationSection.get(editorPageName);
-                        usableTopics.add(cvTopic.getShortLabel());
-                        annotationSection.put(editorPageName,usableTopics);
-
+                        for (int i=0; i<classes.length; i++){
+                            String editorPageName=classes[i].trim();
+                            usableTopics =(List) annotationSection.get(editorPageName);
+                            if(usableTopics!=null){
+                                usableTopics.add(cvTopic.getShortLabel());
+                                //usableTopics.add(cvTopic.getShortLabel());
+                                annotationSection.put(editorPageName,usableTopics);
+                            }
+                        }
                     }
                }
             }
         }
+        intactHelper.closeStore();
     }
 
     public static void main(String[] args) throws IntactException {
+        IntactHelper helper = new IntactHelper();
         AnnotationSection annotationSection = new AnnotationSection();
+        annotationSection.getAnnotationSection();
+
+
         Set keySet = annotationSection.annotationSection.keySet();
         for (Iterator iterator = keySet.iterator(); iterator.hasNext();) {
             String editorPage =  (String) iterator.next();
@@ -147,6 +157,7 @@ public class AnnotationSection {
             String o =  (String) bioSourceList.get(i);
             System.out.println("topic for bisource "+o);
         }
+        helper.closeStore();
     }
 
 }
