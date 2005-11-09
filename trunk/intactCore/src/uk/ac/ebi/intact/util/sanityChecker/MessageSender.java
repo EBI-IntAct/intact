@@ -181,7 +181,47 @@ public class MessageSender {
         addAdminMessage(topic, sbAdminMessageReport.toString());
     }
 
+    public void addMessage (ReportTopic topic, RangeBean rangeBean){
+        String editorUrl;// = editorUrlBuilder.getEditorUrl(intactBean);
 
+        String user = rangeBean.getUserstamp();
+        Timestamp date = rangeBean.getUpdated();
+
+
+        String userMessageReport="";
+        String adminMessageReport="";
+
+
+
+        IntactHelper helper = null;
+        try {
+            helper = new IntactHelper();
+            Range range = (Range) helper.getObjectByAc(Range.class, rangeBean.getAc());
+
+            editorUrl = editorUrlBuilder.getEditorUrl("Interaction",rangeBean.getInteraction_ac());
+            String[] rowValues = new String[8];
+            rowValues[0] ="<a href="+ editorUrl + ">"+ rangeBean.getInteraction_ac() + "</a>";
+            rowValues[1] = rangeBean.getInteractor_ac();
+            rowValues[2] = rangeBean.getFeature_ac(); // "" + date;
+            rowValues[3] = String.valueOf(range.getToIntervalStart());
+            rowValues[4] = String.valueOf(range.getFromIntervalEnd());
+            //rowValues[5] = String.valueOf((range.getToIntervalStart()-range.getFromIntervalEnd()));
+            rowValues[5] = rangeBean.getAc();
+            //rowValues[7] = rangeBean.getShortlabel();
+            rowValues[6] = "" + date;
+            rowValues[7] =  user;
+            userMessageReport =  formatRow("html",rowValues,"values","userReport",false);
+            adminMessageReport = formatRow("html",rowValues,"values","adminReport",false);
+
+        } catch (IntactException e) {
+            e.printStackTrace();
+        }
+
+
+        addUserMessage(topic, user, userMessageReport, adminMessageReport);
+        addAdminMessage(topic, adminMessageReport);
+
+    }
 
     /**
      * Helper method to obtain userstamp info from a given record, and then if it has any to append the details to a
@@ -493,7 +533,7 @@ public class MessageSender {
      *
      * @throws javax.mail.MessagingException
      */
-    public void postEmails() throws MessagingException, IntactException {
+    public void postEmails(String mailObject) throws MessagingException, IntactException {
 
         MailSender mailer = new MailSender();
 
@@ -538,7 +578,7 @@ public class MessageSender {
 
                     // send mail
                     mailer.postMail( recipients,
-                                     "SANITY CHECK - " + TIME + " (" + errorCount + " error" + ( errorCount > 1 ? "s" : "" ) + ")",
+                                     mailObject + " - " + TIME + " (" + errorCount + " error" + ( errorCount > 1 ? "s" : "" ) + ")",
                                      fullReport.toString(),
                                      "cleroy@ebi.ac.uk" );
                     System.out.println("FULL REPORT for User : " + fullReport.toString());
@@ -622,7 +662,7 @@ public class MessageSender {
 
         // always send mail to admin, even if no errors
         mailer.postMail( recipients,
-                         "SANITY CHECK (ADMIN) - " + TIME + " (" + errorCount + " error" + ( errorCount > 1 ? "s" : "" ) + ")",
+                         mailObject + " (ADMIN) - " + TIME + " (" + errorCount + " error" + ( errorCount > 1 ? "s" : "" ) + ")",
                          fullReport.toString(),
                          "cleroy@ebi.ac.uk" );
         System.out.println("FULL REPORT for Admin : " + fullReport.toString());
@@ -871,19 +911,8 @@ public class MessageSender {
     private String getHeader(ReportTopic topic, String reportType) {
 
         String header="";
-            if (topic.equals(ReportTopic.RANGE_SEQUENCE_NOT_EQUAL_TO_PROTEIN_SEQ)) {
-//                String[] rowValues = new String[.];
-//                rowValues[0] ="";
-//                rowValues[1] ="";
-//                rowValues[2] ="";
-//                rowValues[3] ="";
-//                header = formatRow("html", rowValues, "headers");
-//               ;
-            }
-            else if (topic.equals(ReportTopic.RANGE_SEQUENCE_SAVED_BY_ADDING_THE_M)) {
-               ;
-            }
-            else if (topic.equals(ReportTopic.DELETION_INTERVAL_TO_LONG_TO_BE_CARACTERIZED_BY_DELETION_ANALYSIS_FEATURE_TYPE)){
+
+            if (topic.equals(ReportTopic.DELETION_INTERVAL_TO_LONG_TO_BE_CARACTERIZED_BY_DELETION_ANALYSIS_FEATURE_TYPE)){
                 String[] rowValues = new String[10];
                 rowValues[0] ="Interaction Ac";
                 rowValues[1] ="Interactor Ac";
@@ -940,6 +969,19 @@ public class MessageSender {
                 rowValues[3] = "User";
                 header = formatRow("html", rowValues, "headers",reportType,false);
 
+            } else if (ReportTopic.RANGE_SEQUENCE_NOT_EQUAL_TO_PROTEIN_SEQ.equals(topic) ||
+                       ReportTopic.RANGE_SEQUENCE_SAVED_BY_ADDING_THE_M.equals(topic) ||
+                       ReportTopic.RANGE_SEQUENCE_SAVED_BY_SUPPRESSING_THE_M.equals(topic)){
+                String[] rowValues = new String[8];
+                rowValues[0] ="Interaction Ac";
+                rowValues[1] = "Protein Ac";
+                rowValues[2] ="Feature Ac";
+                rowValues[3] = "ToIntervalStart";
+                rowValues[4] = "FromIntervalEnd";
+                rowValues[5] = "RangeBean Ac";
+                rowValues[6] = "Date";
+                rowValues[7] = "User";
+                header = formatRow("html", rowValues, "headers",reportType,false);
             }
             else {
                 String[] rowValues = new String[4];
