@@ -135,8 +135,6 @@ public class MessageSender {
         String user = interactionBean.getUserstamp();
         Timestamp date = interactionBean.getUpdated();
 
-//        String userMessageReport="";
-//        String adminMessageReport="";
         StringBuffer sbUserMessageReport = new StringBuffer();
         StringBuffer sbAdminMessageReport = new StringBuffer();
 
@@ -182,7 +180,7 @@ public class MessageSender {
     }
 
     public void addMessage (ReportTopic topic, RangeBean rangeBean){
-        String editorUrl;// = editorUrlBuilder.getEditorUrl(intactBean);
+        String editorUrl;
 
         String user = rangeBean.getUserstamp();
         Timestamp date = rangeBean.getUpdated();
@@ -202,12 +200,10 @@ public class MessageSender {
             String[] rowValues = new String[8];
             rowValues[0] ="<a href="+ editorUrl + ">"+ rangeBean.getInteraction_ac() + "</a>";
             rowValues[1] = rangeBean.getInteractor_ac();
-            rowValues[2] = rangeBean.getFeature_ac(); // "" + date;
+            rowValues[2] = rangeBean.getFeature_ac();
             rowValues[3] = String.valueOf(range.getToIntervalStart());
             rowValues[4] = String.valueOf(range.getFromIntervalEnd());
-            //rowValues[5] = String.valueOf((range.getToIntervalStart()-range.getFromIntervalEnd()));
             rowValues[5] = rangeBean.getAc();
-            //rowValues[7] = rangeBean.getShortlabel();
             rowValues[6] = "" + date;
             rowValues[7] =  user;
             userMessageReport =  formatRow("html",rowValues,"values","userReport",false);
