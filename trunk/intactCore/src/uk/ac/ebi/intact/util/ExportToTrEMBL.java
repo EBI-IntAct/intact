@@ -53,7 +53,7 @@ public class ExportToTrEMBL {
                               "DT   " + TREMBL_RELEASE_DATE + " (TrEMBLrel. " + TREMBL_RELEASE_NUMBER + ", Last sequence update)" + NEW_LINE +
                               "DT   " + TREMBL_RELEASE_DATE + " (TrEMBLrel. " + TREMBL_RELEASE_NUMBER + ", Last annotation update)" + NEW_LINE +
                               "DE   " + PROTEIN_FULLNAME + "{EI1}." + NEW_LINE +
-                              "OX   NCBI_TaxID=" + NCBI_TAXID + "." + NEW_LINE +
+                              "OX   NCBI_TaxID=" + NCBI_TAXID + ";" + NEW_LINE +
                               "RN   [1]{EI1}" + NEW_LINE +
                               "RP   " + R_LINE_REFERENCE_POSITION + "." + NEW_LINE +
                               "RC   TISSUE=" + R_LINE_TISSUE + "{EI1};" + NEW_LINE +
@@ -63,7 +63,7 @@ public class ExportToTrEMBL {
                               "**" + NEW_LINE +
                               "**   #################    INTERNAL SECTION    ##################" + NEW_LINE +
                               "**EV EI1; IntAct; -; " + PROTEIN_AC + "; " + PROTEIN_CREATION_DATE + "." + NEW_LINE +
-                              "SQ   SEQUENCE   " + PROTEIN_SEQUENCE_LENGTH + " AA;  1 MW;   " + PROTEIN_CRC64 + " CRC64;" + NEW_LINE +
+                              "SQ   SEQUENCE   " + PROTEIN_SEQUENCE_LENGTH + " AA;  1 MW;  " + PROTEIN_CRC64 + " CRC64;" + NEW_LINE +
                               "     " + PROTEIN_SEQUENCE + NEW_LINE +
                               "//";
 
