@@ -1329,7 +1329,7 @@ public class
 
         // try to send emails
         try {
-            scn.messageSender.postEmails();
+            scn.messageSender.postEmails("SANITY CHECK");
 
         } catch ( MessagingException e ) {
             // scould not send emails, then how error ...
