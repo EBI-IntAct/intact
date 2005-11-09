@@ -10,9 +10,7 @@ import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Protein;
 
 import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * Batch convertion of IntAct protein into TrEMBL flat file.
@@ -23,11 +21,11 @@ import java.util.Iterator;
  */
 public class ExportToTrEMBL {
 
-
     public static final String TREMBL_RELEASE_DATE = "${TREMBL_RELEASE_DATE}";
     public static final String TREMBL_RELEASE_NUMBER = "${TREMBL_RELEASE_NUMBER}";
 
     public static final String R_LINE_REFERENCE_POSITION = "${REFERENCE_POSITION}";
+    public static final String R_LINE_PUBMED = "${PUBMED_ID}";
     public static final String R_LINE_TISSUE = "${TISSUE}";
     public static final String R_LINE_REFERENCE_AUTHOR = "${REFERENCE_AUTHORS}";
     public static final String R_LINE_REFERENCE_TITLE = "${REFERENCE_TITLE}";
@@ -37,6 +35,7 @@ public class ExportToTrEMBL {
     public static final String ORGANISM_NAME = "${ORGANISM NAME}";
 
     public static final String PROTEIN_AC = "${PROTEIN_AC}";
+    public static final String PROTEIN_ID = "${PROTEIN_ID}";
     public static final String PROTEIN_FULLNAME = "${PROTEIN_FULLNAME}";
     public static final String PROTEIN_CREATION_DATE = "${PROTEIN_CREATION_DATE}";
     public static final String PROTEIN_SEQUENCE = "${SEQUENCE}";
@@ -47,16 +46,21 @@ public class ExportToTrEMBL {
     public static final SimpleDateFormat DATE_FORMATER = new SimpleDateFormat( "dd-MMM-yyyy" );
 
     public static final String
-            TREMBL_TEMPLATE = "ID   XXXX_"+ ORGANISM_NAME +"     PRELIMINARY;   PRT;  " + PROTEIN_SEQUENCE_LENGTH + " AA." + NEW_LINE +
-                              "AC   ;" + NEW_LINE +
+            TREMBL_TEMPLATE = "ID   "+PROTEIN_ID+"_"+ ORGANISM_NAME +"     PRELIMINARY;   PRT;  " + PROTEIN_SEQUENCE_LENGTH + " AA." + NEW_LINE +
+                              "AC   "+PROTEIN_ID+";" + NEW_LINE +
                               "DT   " + TREMBL_RELEASE_DATE + " (TrEMBLrel. " + TREMBL_RELEASE_NUMBER + ", Created)" + NEW_LINE +
                               "DT   " + TREMBL_RELEASE_DATE + " (TrEMBLrel. " + TREMBL_RELEASE_NUMBER + ", Last sequence update)" + NEW_LINE +
                               "DT   " + TREMBL_RELEASE_DATE + " (TrEMBLrel. " + TREMBL_RELEASE_NUMBER + ", Last annotation update)" + NEW_LINE +
                               "DE   " + PROTEIN_FULLNAME + "{EI1}." + NEW_LINE +
+                              "OS   Mus musculus (Mouse)." + NEW_LINE +
+                              "OC   Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;" + NEW_LINE +
+                              "OC   Mammalia; Eutheria; Euarchontoglires; Glires; Rodentia; Sciurognathi;" + NEW_LINE +
+                              "OC   Muroidea; Muridae; Murinae; Mus."  + NEW_LINE +
                               "OX   NCBI_TaxID=" + NCBI_TAXID + ";" + NEW_LINE +
                               "RN   [1]{EI1}" + NEW_LINE +
                               "RP   " + R_LINE_REFERENCE_POSITION + "." + NEW_LINE +
                               "RC   TISSUE=" + R_LINE_TISSUE + "{EI1};" + NEW_LINE +
+                              "RX   PubMed="+ R_LINE_PUBMED +";" + NEW_LINE +
                               "RA   " + R_LINE_REFERENCE_AUTHOR + ";" + NEW_LINE +
                               "RT   \"" + R_LINE_REFERENCE_TITLE + ".\";" + NEW_LINE +
                               "RL   " + R_LINE_REFERENCE_LINE + "." + NEW_LINE +
@@ -94,13 +98,16 @@ public class ExportToTrEMBL {
                                             String tremblReleaseDate,
                                             String tremblReleaseNumber,
                                             String referencePosition,
+                                            String pubmedId,
                                             String referenceTissue,
                                             String referenceAuthor,
                                             String referenceTitle,
-                                            String referenceLine ) {
+                                            String referenceLine,
+                                            String proteinID) {
 
         String tremblEntry = SearchReplace.replace( TREMBL_TEMPLATE, PROTEIN_SEQUENCE_LENGTH, "" + protein.getSequence().length() );
 
+        tremblEntry = SearchReplace.replace( tremblEntry, PROTEIN_ID, proteinID );
         tremblEntry = SearchReplace.replace( tremblEntry, ORGANISM_NAME, organismName );
         tremblEntry = SearchReplace.replace( tremblEntry, TREMBL_RELEASE_DATE, tremblReleaseDate );
         tremblEntry = SearchReplace.replace( tremblEntry, TREMBL_RELEASE_NUMBER, tremblReleaseNumber );
@@ -111,6 +118,7 @@ public class ExportToTrEMBL {
         tremblEntry = SearchReplace.replace( tremblEntry, NCBI_TAXID, protein.getBioSource().getTaxId() );
 
         tremblEntry = SearchReplace.replace( tremblEntry, R_LINE_REFERENCE_POSITION, referencePosition );
+        tremblEntry = SearchReplace.replace( tremblEntry, R_LINE_PUBMED, pubmedId );
         tremblEntry = SearchReplace.replace( tremblEntry, R_LINE_TISSUE, referenceTissue );
         tremblEntry = SearchReplace.replace( tremblEntry, R_LINE_REFERENCE_AUTHOR, referenceAuthor );
         tremblEntry = SearchReplace.replace( tremblEntry, R_LINE_REFERENCE_TITLE, referenceTitle );
@@ -185,23 +193,61 @@ public class ExportToTrEMBL {
             String tremblReleaseDate = "24-JAN-2006";
             String tremblReleaseNumber = "32";
             String rp = "NUCLEOTIDE SEQUENCE [MRNA]";
+            String pubmedId = "15102471";
             String rx = "B-cell";
             String ra = "Papin J., Subramaniam S.";
             String rt = "Bioinformatics and cellular signaling";
             String rl = "Curr. Opin. Biotechnol. 15:78-81(2004)";
 
+            // TODO flat file loader
+            List proteinIDs = new ArrayList( );
+            proteinIDs.add( "P8R4B7");
+            proteinIDs.add( "P8R4B6");
+            proteinIDs.add( "P8R4B5");
+            proteinIDs.add( "P8R4B4");
+            proteinIDs.add( "P8R4B3");
+            proteinIDs.add( "P8R4B2");
+            proteinIDs.add( "P8R4B1");
+            proteinIDs.add( "P8R4B0");
+            proteinIDs.add( "P8R4A9");
+            proteinIDs.add( "P8R4A8");
+            proteinIDs.add( "P8R4A7");
+            proteinIDs.add( "P8R4A6");
+            proteinIDs.add( "P8R4A5");
+            proteinIDs.add( "P8R4A4");
+            proteinIDs.add( "P8R4A3");
+            proteinIDs.add( "P8R4A2");
+            proteinIDs.add( "P8R4A1");
+            proteinIDs.add( "P8R4A0");
+            proteinIDs.add( "P8R499");
+            proteinIDs.add( "P8R498");
+            proteinIDs.add( "P8R497");
+            proteinIDs.add( "P8R496");
+            proteinIDs.add( "P8R495");
+            proteinIDs.add( "P8R494");
+            proteinIDs.add( "P8R493");
+
             for ( Iterator iterator = proteins.iterator(); iterator.hasNext(); ) {
                 Protein protein = (Protein) iterator.next();
+
+                String proteinID = "";
+                if( ! proteinIDs.isEmpty() ) {
+                    Iterator it = proteinIDs.iterator();
+                    proteinID = (String) it.next();
+                    it.remove();
+                }
 
                 System.out.println( formatTremblEntry( protein,
                                                        organismName,
                                                        tremblReleaseDate,
                                                        tremblReleaseNumber,
                                                        rp,
+                                                       pubmedId,
                                                        rx,
                                                        ra,
                                                        rt,
-                                                       rl ) );
+                                                       rl,
+                                                       proteinID ) );
             }
         } finally {
             if ( helper != null ) {
