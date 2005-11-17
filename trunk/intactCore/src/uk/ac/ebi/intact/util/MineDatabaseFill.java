@@ -47,17 +47,42 @@ public class MineDatabaseFill {
 
     // SQL statement to insert data in the MiNe database table
     private static final String INSERT_QUERY = "INSERT INTO "
-            + Constants.INTERACTION_TABLE + " (" + Constants.COLUMN_protein1_ac
-            + ", " + Constants.COLUMN_shortlabel1 + ", "
-            + Constants.COLUMN_protein2_ac + ", "
-            + Constants.COLUMN_shortlabel2 + ", " + Constants.COLUMN_taxid
-            + ", " + Constants.COLUMN_interaction_ac + ", "
-            + Constants.COLUMN_weight + ", " + Constants.COLUMN_graphid + ")"
-            + " VALUES (?, ?, ?, ?, ?, ?, 1, null)";
+            + Constants.INTERACTION_TABLE
+            + " (" + Constants.COLUMN_protein1_ac
+            + ", " + Constants.COLUMN_shortlabel1
+            + ", " + Constants.COLUMN_protein2_ac
+            + ", " + Constants.COLUMN_shortlabel2
+            + ", " + Constants.COLUMN_taxid
+            + ", " + Constants.COLUMN_interaction_ac
+            +  ", "+ "experiment_ac"
+            +  ", "+ "detectmethod_ac"
+            +  ", "+ "pubmed_id"
+            + ", " + Constants.COLUMN_weight
+            + ", " + Constants.COLUMN_graphid
+            + ")"
+            + " VALUES (?, ?, ?, ?, ?, ?,?,?,?, 1, null)";
 
     // SQL statement to select all interactions
-    private static final String SELECT_INTERACTIONS = "SELECT ac "
-            + "FROM ia_interactor " + "WHERE objclass LIKE '%Interaction%'";
+    private static final String SELECT_INTERACTIONS = " SELECT INTR.ac interaction_ac   "
+          + "      ,EXP.ac              experiment_ac  "
+          + "      ,EXP.detectmethod_ac detectmethod_ac"
+          + "      ,XRF.primaryid       pubmed_id   "
+          + "  FROM IA_INTERACTOR       INTR   "
+         + "        ,IA_INT2EXP         I2E 	"
+         + "        ,IA_EXPERIMENT		 EXP	"
+         + "        ,IA_XREF			 XRF    "     // -- to get the pub med id
+         + "        ,IA_CONTROLLEDVOCAB CNT1     "    //-- define the ac of the database
+         + "        ,IA_CONTROLLEDVOCAB CNT2    "     //-- define the qualifier for xref, ic primary-reference
+         + "   WHERE UPPER(INTR.objclass) 	 = 'UK.AC.EBI.INTACT.MODEL.INTERACTIONIMPL'  "
+         + "   AND   INTR.AC 		  	 	 = I2E.INTERACTION_AC  "
+         + "   AND   I2E.EXPERIMENT_AC  	 = EXP.AC             "
+         + "   AND   XRF.PARENT_AC	  	 	 = EXP.AC             "
+         + "   AND   XRF.database_AC	 	 = CNT1.AC            "
+         + "   AND	  UPPER(CNT1.OBJCLASS)   =  'UK.AC.EBI.INTACT.MODEL.CVDATABASE'  "
+         + "   AND   UPPER(CNT1.SHORTLABEL)  = 'PUBMED'   "
+         + "   AND   XRF.qualifier_AC	 	 = CNT2.AC   "
+         + "   AND   UPPER(CNT2.OBJCLASS)	 = 'UK.AC.EBI.INTACT.MODEL.CVXREFQUALIFIER'  "
+         + "   AND	  UPPER(CNT2.SHORTLABEL) = 'PRIMARY-REFERENCE'       " ;
 
     // SQL statement to select all negativ annotated interactions
     private static final String DELETE_NEGATIV_ANNOTATION = "SELECT I.ac "
@@ -119,7 +144,7 @@ public class MineDatabaseFill {
 
     /**
      * Fills the database needed for the MiNe project. <br>
-     * 
+     *
      * @throws SQLException when something failed with the database connection
      * @throws IntactException if the initiation of the intact helper failed
      */
@@ -178,7 +203,7 @@ public class MineDatabaseFill {
         // because it can happen that we want to insert an element at a
         // specific position an arraylist is taken
         List interactors = new ArrayList();
-        String interactionAC, taxID;
+        String interactionAc, taxID, experimentAc,detectmethodAc,publicmedId;
         InteractorData bait;
         ResultSet taxIDSet;
         Collection taxIDs = new HashSet();
@@ -187,7 +212,10 @@ public class MineDatabaseFill {
         // goes through every interactor which is an interaction
         while ( interactionSet.next() ) {
             // the interaction ac is stored
-            interactionAC = interactionSet.getString( "ac" ).toUpperCase();
+            interactionAc = interactionSet.getString( "interaction_ac" ).toUpperCase();
+            experimentAc = interactionSet.getString( "experiment_ac" ).toUpperCase();
+            detectmethodAc= interactionSet.getString( "detectmethod_ac" ).toUpperCase();
+            publicmedId  = interactionSet.getString( "pubmed_id" ).toUpperCase();
             if ( j++ % 100 == 0 ) {
                 System.out.print( "." );
                 System.out.flush();
@@ -198,7 +226,7 @@ public class MineDatabaseFill {
             interactors.clear();
 
             // all interactors for the given interaction_ac are fetched
-            getInteractors( interactors , baits , interactionAC ,
+            getInteractors( interactors , baits , interactionAc ,
                     interactorSelect );
 
             // the number indicates at which position in the interactors list
@@ -238,7 +266,11 @@ public class MineDatabaseFill {
             insertDataStatement.setString( 1 , bait.ac );
             insertDataStatement.setString( 2 , bait.shortLabel );
             insertDataStatement.setString( 5 , taxID );
-            insertDataStatement.setString( 6 , interactionAC );
+            insertDataStatement.setString( 6 , interactionAc );
+
+            insertDataStatement.setString( 7 ,experimentAc);
+            insertDataStatement.setString( 8 , detectmethodAc);
+            insertDataStatement.setString( 9 , publicmedId);
 
             // for every interactor an interaction between bait and the
             // interactor is added to the table
