@@ -797,38 +797,59 @@ public abstract class AbstractEditViewBean implements Serializable {
      * @return  The new menu list
      */
 
+   /**
+     * This method is in charge to remove from the Topic menu list of annotation all the topics which are not relevant
+     * for the considered  Editor page. For exemple, it wouldn't be correct to add to an experiment an annotation with
+     * the topic equal to "isoform-annotation". This topic can only fit for a protein so it shouldn't appear in the
+     * Experiment - Editor page.
+     *
+     * @param menu The general menu containing all the cvTopic
+     * @param editorPageName The editor page name. This parameter is taken from EditorMenuFactory :
+     *          Editor - Interaction =====> EditorMenuFactory.INTERACTION
+     *          Editor - Experiment  =====> EditorMenuFactory.EXPERIMENT
+     *          Editor - Cv?         =====> EditorMenuFactory.TOPIC
+     *          Editor - Protein     =====> EditorMenuFactory.PROTEIN
+     * @return  The new menu list
+     */
+
     protected List removeFromCvMenu(List menu, String editorPageName) throws IntactException {
 
         //  The annotationSection object contains 5 Maps associating each of the editor page to a List. Those lists
         //  contains the relevant cvTopics that can be used to annotate the considered edited object.
+
         AnnotationSection annotationSection = new AnnotationSection();
+        if(annotationSection!=null){
+            List newMenulist = new ArrayList();
+            List cvTopicRessources= new ArrayList();
 
-        List newMenulist = new ArrayList();
-        List cvTopicRessources= new ArrayList();
+            // This method return a list containing all the cvTopic that can be used to annotate the Edited object.
+            // For expemple if you are in the BioSource Editor the returned list will contained : 'caution', 'remark-internal'
+            // and 'url'
+            cvTopicRessources=annotationSection.getUsableTopics(editorPageName);
+            if(cvTopicRessources!=null){
 
-        // This method return a list containing all the cvTopic that can be used to annotate the Edited object.
-        // For expemple if you are in the BioSource Editor the returned list will contained : 'caution', 'remark-internal'
-        // and 'url'
-        cvTopicRessources=annotationSection.getUsableTopics(editorPageName);
+                for (int i = 0; i < menu.size(); i++) {
 
+                    String menuElement= ((String) menu.get(i)).trim().toLowerCase();
+                    boolean removeElement=true;
+                    for (int j = 0; j < cvTopicRessources.size(); j++) {
+                        String ressourceElement = (String) cvTopicRessources.get(j);
+                        ressourceElement = ressourceElement.trim().toLowerCase();
+                        if(ressourceElement.equals(menuElement)){
+                            removeElement=false;
+                        }
+                    }
+                    if(false==removeElement){
+                        newMenulist.add(menu.get(i));
+                    }
 
-        for (int i = 0; i < menu.size(); i++) {
-
-            String menuElement= ((String) menu.get(i)).trim().toLowerCase();
-            boolean removeElement=true;
-            for (int j = 0; j < cvTopicRessources.size(); j++) {
-                String ressourceElement = (String) cvTopicRessources.get(j);
-                ressourceElement = ressourceElement.trim().toLowerCase();
-                if(ressourceElement.equals(menuElement)){
-                    removeElement=false;
                 }
+                return newMenulist;
             }
-            if(false==removeElement){
-                newMenulist.add(menu.get(i));
-            }
+            else return menu;
 
-        }
-        return newMenulist;
+        }else return menu;
+
     }
 
     // Abstract method
