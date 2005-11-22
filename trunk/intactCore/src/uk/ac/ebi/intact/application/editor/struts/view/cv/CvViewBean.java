@@ -93,7 +93,7 @@ public class CvViewBean extends AbstractEditViewBean {
 
 
         //LOGGER.info("help tag : " + this.getHelpTag());
-
-        myMenus = super.getMenus(EditorMenuFactory.CV_PAGE);//EditorMenuFactory.TOPIC);
+       //myMenus = super.getMenus();
+        myMenus = super.getMenus(CvObject.class.getName());//EditorMenuFactory.TOPIC);
     }
 }
