@@ -13,10 +13,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditVie
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.model.CvInteractorType;
-import uk.ac.ebi.intact.model.Polymer;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.PolymerFactory;
 import uk.ac.ebi.intact.util.Crc64;
 
@@ -134,7 +131,8 @@ public abstract class SequenceViewBean extends AbstractEditViewBean {
         // The map containing the menus.
         Map map = new HashMap();
 
-        map.putAll(super.getMenus(EditorMenuFactory.PROTEIN));
+        //map.putAll(super.getMenus());
+        map.putAll(super.getMenus(Protein.class.getName()));
 
         String name = EditorMenuFactory.ORGANISM;
         int mode = (myOrganism == null) ? 1 : 0;
