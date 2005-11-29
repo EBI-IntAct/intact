@@ -199,7 +199,7 @@
                             the <a href="http://sourceforge.net/cvs/?group_id=62732">CVS repository</a>.
                             <p>Additional software developed within the IntAct project: </p>
                           <ul>
-                            <li><a href="doc/html/proviz/proviz.html">ProViz</a> graph visualisation system.</li>
+                            <li><a href="http://cbi.labri.fr/eng/proviz.htm ">ProViz</a> graph visualisation system.</li>
                             <li><a href="targets/">Targets</a> application to predict targets for pull-down experiments</li>
                             <li><a href="mine/">MiNe</a> application computes minimal connecting network for protein sets.<br>
                               <span class="psmall"> <span style="text-decoration: underline;">Example</span>: <a href="mine/display.jsp?AC=EBI-1389,EBI-1765">Q12277 and Q08491</a></span><span class="psmall">.</span></li>
