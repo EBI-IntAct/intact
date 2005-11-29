@@ -534,15 +534,6 @@
 
     <!-- =================================================================== -->
 
-    <!-- Compiles the search module. -->
-    <target name="compile-dataConversion-upload" depends="compile-core"
-        description="Compiles the data conversion module (only Psi Upload)">
-
-        <ant dir="${app.dir}/dataConversion" inheritAll="false" target="compile-upload"/>
-    </target>
-
-    <!-- =================================================================== -->
-
     <!-- Compiles all the sources. -->
     <target name="compile-all" description="Compiles all the sources for Intact"
         depends="compile-core, compile-hv, compile-editor, compile-search, compile-dataConversion">
