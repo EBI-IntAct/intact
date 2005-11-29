@@ -194,7 +194,7 @@
     <!-- Remove 'dest' and docs directories of search module for clean build -->
     <target name="clean-search"
         description="Prepare search (2 and 3) module for a clean build">
-        <ant dir="${app.dir}/search2" inheritAll="false" target="clean"/>
+        <!--<ant dir="${app.dir}/search2" inheritAll="false" target="clean"/>-->
         <ant dir="${app.dir}/search3" inheritAll="false" target="clean"/>
     </target>
 
@@ -288,6 +288,19 @@
             <replacefilter token="@AUTO_COMMIT@" value="0"/>
         </replace>
 
+        <property file="${pg.props.file}"/>
+
+        <echo message=""/>
+        <echo message="----------------- Database ----------------"/>
+        <echo message="RDBMS:    PostgreSQL"/>
+        <echo message="JAR file: lib/${postgresql.jar}"/>
+        <echo message="Driver:   ${postgresql.driver.classname}"/>
+        <echo message="URL:      ${subprotocol}"/>
+        <echo message="Instance: ${dbalias}"/>
+        <echo message="Username: ${username}"/>
+        <echo message="-------------------------------------------"/>
+        <echo message=""/>
+
         <!-- Copy the template to config directory -->
         <!--        <copy file="${ojb.template.file}" tofile="${ojb.dest.file}"/> -->
 
@@ -346,6 +359,19 @@
             <replacefilter token="@AUTO_COMMIT@" value="1"/>
         </replace>
 
+        <property file="${ora.props.file}"/>
+
+        <echo message=""/>
+        <echo message="----------------- Database ----------------"/>
+        <echo message="RDBMS:    Oracle"/>
+        <echo message="JAR file: lib/${oracle.jar}"/>
+        <echo message="Driver:   ${oracle.driver.classname}"/>
+        <echo message="URL:      ${subprotocol}"/>
+        <echo message="Instance: ${dbalias}"/>
+        <echo message="Username: ${username}"/>
+        <echo message="-------------------------------------------"/>
+        <echo message=""/>
+
         <!-- Copy the template to config directory -->
         <!--       <copy file="${ojb.template.file}" tofile="${ojb.dest.file}"/>
 
@@ -387,19 +413,22 @@
          are not included.
     -->
     <target name="jar-core"
-        description="Creates the Intact core jar file in the distribution directory">
+            description="Creates the Intact core jar file in the distribution directory">
 
-        <echo message=
-                "Building core JAR - NOTE: This will first remove any compiled core classes
-        before recompiling..."/>
+        <echo message="Building core JAR - NOTE: This will first remove any compiled core classes before recompiling..."/>
 
         <!-- Delete the class directory. -->
         <delete dir="${dest.dir}"/>
 
         <!-- Just compile without copying config files to the class dir; exclude tests. -->
         <mkdir dir="${dest.dir}"/>
-        <javac srcdir="${src.dir}" destdir="${dest.dir}" debug="on" deprecation="on"
-            source="1.4" excludes="${non.core.files}, **/test/**">
+        <javac srcdir="${src.dir}"
+               destdir="${dest.dir}"
+               debug="on"
+               deprecation="on"
+               source="1.4"
+               includes="uk/**"
+               excludes="${non.core.files}, **/test/**">
             <classpath refid="project.class.path"/>
         </javac>
 
@@ -495,6 +524,15 @@
     </target>
 
      <!-- =================================================================== -->
+
+    <!-- Compiles the search module. -->
+    <target name="compile-dataConversion-upload" depends="compile-core"
+        description="Compiles the data conversion module (only Psi Upload)">
+
+        <ant dir="${app.dir}/dataConversion" inheritAll="false" target="compile-upload"/>
+    </target>
+
+    <!-- =================================================================== -->
 
     <!-- Compiles the search module. -->
     <target name="compile-dataConversion-upload" depends="compile-core"
