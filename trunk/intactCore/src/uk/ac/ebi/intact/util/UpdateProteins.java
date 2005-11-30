@@ -133,6 +133,18 @@ import java.util.*;
  */
 public class UpdateProteins extends UpdateProteinsI {
 
+    /**
+     * <pre>
+     * Version of the UpdateProteins
+     * -----------------------------
+     * How to use it ?
+     *  - On bugfix, update the 3rd digit
+     *  - On new feature, update the 2nd digit and bring the 3rd back to zero
+     *  - On major update, update the 1st digit and bring the 2md and 3rd back to zero
+     * </pre>
+     */
+    public static final String VERSION = "1.0.1";
+
     // TODO if the SRS server doesn't reply, handle it nicely.
 
     private static final String NEW_LINE = System.getProperty( "line.separator" );
@@ -514,7 +526,7 @@ public class UpdateProteins extends UpdateProteinsI {
         logInfo( primaryAC + " was found " + countSecondaryAC + " time(s) as secondary AC in " + sourceUrl );
 
         if ( countSecondaryAC > 1 ) {
-            logInfo( "Hence we have here a protein eligible for demerge." );
+            logInfo( "Hence we have found a protein eligible for demerge." );
             isDemerged = true;
         }
 
@@ -591,9 +603,9 @@ public class UpdateProteins extends UpdateProteinsI {
     }
 
     /**
-     * Checks if the protein has been annotated with the no-uniprot-update CvTopic, if so, return false,
-     * otherwise true. That flag is added to a protein when created via the editor. As some protein may
-     * have a UniProt ID as identity we don't want those to be overwitten.
+     * Checks if the protein has been annotated with the no-uniprot-update CvTopic, if so, return false, otherwise true.
+     * That flag is added to a protein when created via the editor. As some protein may have a UniProt ID as identity we
+     * don't want those to be overwitten.
      *
      * @param protein the protein to check
      *
@@ -605,7 +617,7 @@ public class UpdateProteins extends UpdateProteinsI {
 
         boolean needsUpdate = true;
 
-        if( null == noUniprotUpdate ) {
+        if ( null == noUniprotUpdate ) {
             // in case the term hasn't been created, assume there are no proteins created via editor.
             return true;
         }
@@ -613,7 +625,7 @@ public class UpdateProteins extends UpdateProteinsI {
         for ( Iterator iterator = protein.getAnnotations().iterator(); iterator.hasNext() && true == needsUpdate; ) {
             Annotation annotation = (Annotation) iterator.next();
 
-            if( noUniprotUpdate.equals( annotation.getCvTopic() ) ) {
+            if ( noUniprotUpdate.equals( annotation.getCvTopic() ) ) {
                 needsUpdate = false;
             }
         }
@@ -638,7 +650,7 @@ public class UpdateProteins extends UpdateProteinsI {
         Protein selectedProtein = null;
 
         try {
-            // according to the SPTR entry, get the corresponding proteins in IntAct
+            // according to the SPTR entry's primary AC, get the corresponding proteins in IntAct
             // we don't activate the taxid filter here. Can throw IntactException
             Collection proteins = getProteinsFromSPTrAC( sptrEntry, identityXrefQualifier, null, PRIMARY_AC, helper );
 
@@ -649,7 +661,6 @@ public class UpdateProteins extends UpdateProteinsI {
             // on the web site the same entry 4 gives multiple flat files
             // what happens is that is a share secondary AC to many proteins
             // eg. 4 as P02248 -> 11 proteins
-
 
             // Select which taxid to consider in the process.
             Collection taxids = getTaxids( sptrEntry );
@@ -662,9 +673,7 @@ public class UpdateProteins extends UpdateProteinsI {
                 generateProteinShortlabelUsingBiosource = true;
             }
 
-            /**
-             * Process all collected taxids
-             */
+            // Process all collected taxids
             for ( Iterator iteratorTaxid = taxids.iterator(); iteratorTaxid.hasNext(); ) {
                 String sptrTaxid = (String) iteratorTaxid.next();
                 logInfo( "" );
@@ -677,15 +686,15 @@ public class UpdateProteins extends UpdateProteinsI {
                 logInfo( "selected biosource: " + sptrBioSource );
 
                 selectedProtein = null;
-                // look for a protein in the set (retreived from primary AC) which has that taxid
-                // there should be only one.
+                // look for a protein in the set (retreived by primary AC) which has that
+                // taxid there should be only one.
                 for ( Iterator iterator = proteins.iterator(); iterator.hasNext() && selectedProtein == null; ) {
                     Protein p = (Protein) iterator.next();
                     BioSource bs = p.getBioSource();
 
                     if ( bs.equals( sptrBioSource ) ) {
                         // found it.
-                        if( needsUniprotUpdate( p ) ) {
+                        if ( needsUniprotUpdate( p ) ) {
 
                             // that protein should be updated.
                             selectedProtein = p;
@@ -700,7 +709,7 @@ public class UpdateProteins extends UpdateProteinsI {
                             this.proteins.add( p );
                         }
                     }
-                }
+                } // for
 
                 // allow to know, while we are processing the splice variant, if the master was demerged.
                 boolean masterWasDemerged = false;
@@ -717,12 +726,13 @@ public class UpdateProteins extends UpdateProteinsI {
                      *
                      *     1) If we find one or more (it could confirm that it was a demerge)
                      *        For each of those proteins:
-                     *             get that protein Xref( uniprot, identity ) and query SRS
+                     *             get that protein Xref( uniprot, identity ) and get the corresponding Flat File
                      *                 a) if MORE THAN ONE Entry have that AC as secondary, it means that this
                      *                    is a demerge. => we update that protein to be the demerged one
                      *                    (!) Related splice variant (if any) have to be updated too.
                      *
-                     *                 b) if not, (hence, it was not a demerge) create a new protein.
+                     *                 b) if not (ie. only one Entry) => it was not a demerge,
+                     *                    then create a new protein.
                      *
                      *     2) If we didn't find it, we create a new protein.
                      */
@@ -739,7 +749,7 @@ public class UpdateProteins extends UpdateProteinsI {
                     for ( Iterator iterator = secondaryProteins.iterator(); iterator.hasNext(); ) {
                         Protein protein = (Protein) iterator.next();
 
-                        if( false == needsUniprotUpdate( protein ) ) {
+                        if ( false == needsUniprotUpdate( protein ) ) {
 
                             logInfo( "A protein was found (secondaryId) but 'no-uniprot-update' was requested: " + protein );
                             // add that protein to the list that will be returned to the user.
@@ -752,6 +762,7 @@ public class UpdateProteins extends UpdateProteinsI {
 
                     boolean doUpdate = false;
                     boolean doCreate = false;
+                    boolean isDemerged = false;
 
                     if ( secondaryProteins.isEmpty() ) {
                         // no protein found, then create it
@@ -762,19 +773,17 @@ public class UpdateProteins extends UpdateProteinsI {
 
                         logInfo( "found " + secondaryProteins.size() + " protein(s) by secondary AC." );
 
-                        // found proteins
-                        boolean isDemerged = false;
-
                         // There should be only one protein as we applied a filter on taxid.
-
-                        logInfo( "Check if one of those proteins is to be demerged." );
+                        logInfo( "Check if one of these proteins is to be demerged." );
                         for ( Iterator iterator = secondaryProteins.iterator(); iterator.hasNext() && !isDemerged; ) {
                             Protein secondaryProtein = (Protein) iterator.next();
 
                             isDemerged = isDemerged( secondaryProtein ); // leave the procedure if an IntactException is thrown
 
-                            // select the protein to be updated.
-                            selectedProtein = secondaryProtein;
+                            if ( isDemerged ) {
+                                // select the protein to be updated.
+                                selectedProtein = secondaryProtein;
+                            }
                         }
 
                         if ( isDemerged ) {
@@ -786,10 +795,7 @@ public class UpdateProteins extends UpdateProteinsI {
                         } else {
                             // create the protein
                             doCreate = true;
-
-                            // TODO how can we get there ?!?!
                         }
-
                     } // else
 
                     if ( localTransactionControl ) {
@@ -801,7 +807,8 @@ public class UpdateProteins extends UpdateProteinsI {
 
                         if ( ( selectedProtein = createNewProtein( sptrEntry,
                                                                    sptrBioSource,
-                                                                   generateProteinShortlabelUsingBiosource ) ) != null ) {
+                                                                   generateProteinShortlabelUsingBiosource ) ) != null )
+                        {
                             logInfo( "creation sucessfully done: " + selectedProtein.getShortLabel() );
                         }
                     }
@@ -809,10 +816,15 @@ public class UpdateProteins extends UpdateProteinsI {
                     if ( doUpdate ) {
                         logInfo( "Call updateProtein with parameter BioSource.taxId=" + sptrBioSource.getTaxId() );
 
+                        boolean forceUpdate = false;
+                        if ( isDemerged ) {
+                            forceUpdate = true;
+                        }
+
                         if ( updateExistingProtein( selectedProtein,
                                                     sptrEntry,
                                                     sptrBioSource,
-                                                    generateProteinShortlabelUsingBiosource ) ) {
+                                                    generateProteinShortlabelUsingBiosource, forceUpdate ) ) {
                             logInfo( "update sucessfully done" );
                         }
                     }
@@ -837,10 +849,12 @@ public class UpdateProteins extends UpdateProteinsI {
                             helper.startTransaction( BusinessConstants.JDBC_TX );
                         }
 
+                        boolean forceUpdate = false;
                         if ( updateExistingProtein( selectedProtein,
                                                     sptrEntry,
                                                     sptrBioSource,
-                                                    generateProteinShortlabelUsingBiosource ) ) {
+                                                    generateProteinShortlabelUsingBiosource,
+                                                    forceUpdate ) ) {
                             logInfo( "update sucessfully done" );
                         }
 
@@ -855,7 +869,6 @@ public class UpdateProteins extends UpdateProteinsI {
                     }
 
                 } // selectedProtein != null
-
 
                 ///////////////////////////////////////
                 // Management of the splice variant
@@ -873,7 +886,7 @@ public class UpdateProteins extends UpdateProteinsI {
                 for ( Iterator iterator = spliceVariants.iterator(); iterator.hasNext(); ) {
                     Protein protein = (Protein) iterator.next();
 
-                    if( false == needsUniprotUpdate( protein ) ) {
+                    if ( false == needsUniprotUpdate( protein ) ) {
 
                         logInfo( "A splice variant was found but 'no-uniprot-update' was requested: " + protein );
                         // add that protein to the list that will be returned to the user.
@@ -883,7 +896,6 @@ public class UpdateProteins extends UpdateProteinsI {
                         iterator.remove();
                     }
                 }
-
 
                 // retrieve the comments of that entry
                 SPTRComment[] comments = sptrEntry.getComments( Factory.COMMENT_ALTERNATIVE_SPLICING );
@@ -924,7 +936,8 @@ public class UpdateProteins extends UpdateProteinsI {
                             // Search for an existing splice variant from IntAct corresponding to the ID found in the entry.
                             Protein spliceVariant = null;
                             boolean spliceVariantFound = false;
-                            for ( Iterator iterator = spliceVariants.iterator(); iterator.hasNext() && !spliceVariantFound; ) {
+                            for ( Iterator iterator = spliceVariants.iterator(); iterator.hasNext() && !spliceVariantFound; )
+                            {
                                 Protein sv = (Protein) iterator.next();
 
                                 /* How to spot and select the right splice variant ?
@@ -935,7 +948,8 @@ public class UpdateProteins extends UpdateProteinsI {
                                 if ( sv.getBioSource().equals( sptrBioSource ) ) {
 
                                     // check for Xref( uniprot, identity )
-                                    for ( Iterator iterator1 = sv.getXrefs().iterator(); iterator1.hasNext() && !spliceVariantFound; ) {
+                                    for ( Iterator iterator1 = sv.getXrefs().iterator(); iterator1.hasNext() && !spliceVariantFound; )
+                                    {
                                         Xref xref = (Xref) iterator1.next();
                                         if ( identityXrefQualifier.equals( xref.getCvXrefQualifier() )
                                              &&
@@ -1025,7 +1039,8 @@ public class UpdateProteins extends UpdateProteinsI {
                                 }
                                 if ( ( spliceVariant = createNewSpliceVariant( isoForm, spliceVariantID, master,
                                                                                sptrEntry, sptrBioSource,
-                                                                               generateProteinShortlabelUsingBiosource ) ) != null ) {
+                                                                               generateProteinShortlabelUsingBiosource ) ) != null )
+                                {
                                     logInfo( "creation sucessfully done" );
                                 }
                                 if ( localTransactionControl ) {
@@ -1036,7 +1051,7 @@ public class UpdateProteins extends UpdateProteinsI {
                         } // if (ids.length > 0)
                     } //for isoforms
                 } //for comments
-            } // for each taxid
+            } // for each taxid of the SPTRentry
 
             /*
             * Check if the protein list is empty, if not, that means we have in IntAct some
@@ -1551,7 +1566,6 @@ public class UpdateProteins extends UpdateProteinsI {
                 aliases.add( alias );
             }
 
-
             // create synonyms
             String[] synonyms = genes[ i ].getSynonyms();
             for ( int ii = 0; ii < synonyms.length; ii++ ) {
@@ -1569,7 +1583,6 @@ public class UpdateProteins extends UpdateProteinsI {
                 }
             } // Gene name synonyms
 
-
             // create locus names
             String[] locus = genes[ i ].getLocusNames();
             for ( int ii = 0; ii < locus.length; ii++ ) {
@@ -1586,7 +1599,6 @@ public class UpdateProteins extends UpdateProteinsI {
                     aliases.add( alias );
                 }
             } // Locus names
-
 
             // create ORF names
             String[] ORFs = genes[ i ].getORFNames();
@@ -1866,7 +1878,8 @@ public class UpdateProteins extends UpdateProteinsI {
     private boolean updateExistingProtein( Protein protein,
                                            SPTREntry sptrEntry,
                                            BioSource bioSource,
-                                           boolean generateProteinShortlabelUsingBiosource )
+                                           boolean generateProteinShortlabelUsingBiosource,
+                                           boolean forceUpdate )
             throws SPTRException,
                    IntactException {
 
@@ -1881,9 +1894,17 @@ public class UpdateProteins extends UpdateProteinsI {
 
 
         boolean needUpdate = false;
+        boolean skipAnnotationUpdate = false;
+        if ( !forceUpdate ) {
+            skipAnnotationUpdate = needAnnotationUpdate( sptrEntry, protein );
+            logInfo( "Force Update was NOT requested, needAnnotationUpdate = " + skipAnnotationUpdate + "." );
+        } else {
+            // this happens for instance when a entry demerge has been detected.
+            logInfo( "Force Update was requested." );
+        }
 
         // get the current version of annotationUpdate and compare it to the one stored in the Uniprot Xref
-        if ( needAnnotationUpdate( sptrEntry, protein ) ) {
+        if ( ! skipAnnotationUpdate ) {
 
             // get the protein info we need
             String fullName = sptrEntry.getProteinName();
@@ -1902,7 +1923,7 @@ public class UpdateProteins extends UpdateProteinsI {
 
             if ( !protein.getShortLabel().equals( shortLabel ) ) {
                 protein.setShortLabel( shortLabel );
-                logInfo( "shorltabel is different" );
+                logInfo( "shortlabel is different" );
                 needUpdate = true;
             }
 
@@ -1926,7 +1947,6 @@ public class UpdateProteins extends UpdateProteinsI {
             Collection aliases = getProteinAliasesFromSPTR( sptrEntry, protein );
             needUpdate = needUpdate | updateAliasCollection( protein, aliases );
         }
-
 
         // the sequence update is not optimized yet. We could use the version of the sequence in the SPTREntry to do that.
 
@@ -2259,7 +2279,6 @@ public class UpdateProteins extends UpdateProteinsI {
                 }
             }
         } // annotation update.
-
 
         // sequence update.
         String sequence = null;
@@ -3001,13 +3020,15 @@ public class UpdateProteins extends UpdateProteinsI {
 
         IntactHelper helper = null;
 
+        System.out.println( "UpdateProteins version " + VERSION );
+
         try {
             String url = null;
 
             if ( args.length >= 1 ) {
                 url = args[ 0 ];
             } else {
-                System.out.println( "Usage: javaRun.sh UpdateProteins <URL>|<-all>" );
+                System.out.println( "Usage: javaRun.sh UpdateProteins <URL>|<-all> [-version]" );
                 System.exit( 1 );
             }
 
@@ -3048,7 +3069,7 @@ public class UpdateProteins extends UpdateProteinsI {
             aome.printStackTrace();
 
             System.err.println( "" );
-            System.err.println( "UpdateProteins ran out of memory." );
+            System.err.println( "UpdateProteins (version "+ VERSION +") ran out of memory." );
             System.err.println( "Please run it again and change the JVM configuration." );
             System.err.println( "Here are some the options: http://java.sun.com/docs/hotspot/VMOptions.html" );
             System.err.println( "Hint: You can use -Xms -Xmx to specify respectively the minimum and maximum" );
