@@ -124,16 +124,12 @@ public class UserSessionDownload {
      */
     private Set annotationFilters;
 
-    public static final long FIRST_EXPERIMENT_ID = 1;
-    public static final long FIRST_INTERACTOR_ID = 1;
-    public static final long FIRST_INTERACTION_ID = 1;
-    public static final long FIRST_FEATURE_ID = 1;
-    public static final long FIRST_PARTICIPANT_ID = 1;
+    public static final long FIRST_ID = 1;
 
     /**
-     * Experiment id in the scope of the whole document.
+     * Object id in the scope of the whole document. That covers experiment, interaction, interactor, feature
      */
-    private long experimentIdentifier = FIRST_EXPERIMENT_ID;
+    private long identifier = FIRST_ID;
 
     /**
      * Maps an Interaction component to participant ID.
@@ -141,19 +137,9 @@ public class UserSessionDownload {
     private Map experimentIdMap = new HashMap();
 
     /**
-     * interactor id in the scope of the whole document.
-     */
-    private long interactorIdentifier = FIRST_INTERACTOR_ID;
-
-    /**
      * Maps an Interactor component to participant ID.
      */
     private Map interactorIdMap = new HashMap();
-
-    /**
-     * interactor id in the scope of the whole document.
-     */
-    private long interactionIdentifier = FIRST_INTERACTION_ID;
 
     /**
      * Maps an Interaction component to participant ID.
@@ -161,27 +147,11 @@ public class UserSessionDownload {
     private Map interactionIdMap = new HashMap();
 
     /**
-     * feature id in the scope of an interaction.
-     */
-    private long featureIdentifier = FIRST_FEATURE_ID;
-
-    /**
      * Maps an Feature to feature ID.
      */
     private Map featureIdMap = new HashMap();
 
-    /**
-     * Participant id in the scope of the whole document.
-     */
-    private long participantIdentifier = FIRST_PARTICIPANT_ID;
-
-    /**
-     * Maps an Interaction component to participant ID.
-     */
-    private Map component2participantId = new HashMap();
-
     CvMapping cvMapping = null;
-
 
     private List messages = new ArrayList();
 
@@ -387,189 +357,148 @@ public class UserSessionDownload {
 
     //////////////////////////////////////////////
     // Methods related to identifier management
-    // TODO synch ?!
+
+    /**
+     * Return the next unique identifier required by most PSI-MI objects
+     *
+     * @return a new integer.
+     */
+    private synchronized long getNextObjectIdentifier() {
+        return identifier++;
+    }
 
     // Experiment IDs
 
-    public long getNextExperimentIdentifier( Experiment experiment ) {
-
-        if ( experiment == null ) {
-            throw new IllegalArgumentException( "You must give a non null experiment." );
-        }
-
-        if ( experimentIdMap.containsKey( experiment ) ) {
-            Long id = (Long) experimentIdMap.get( experiment );
-            throw new IllegalArgumentException( "An id has already been given to that experiment (" + experiment.getAc() + "): " + id );
-        }
-
-        experimentIdMap.put( experiment, new Long( experimentIdentifier ) );
-
-        return experimentIdentifier++;
-    }
-
+    /**
+     * Get a specific identifier for the given experiemnt. If an identifier had already been affected for that
+     * experiment, the same is given again,
+     *
+     * @param experiment the object for which we want an id or a ref.
+     *
+     * @return a long corresponding to the given object.
+     */
     public long getExperimentIdentifier( Experiment experiment ) {
 
         if ( experiment == null ) {
             throw new IllegalArgumentException( "You must give a non null experiment." );
         }
 
-        if ( false == experimentIdMap.containsKey( experiment ) ) {
+        if ( experimentIdMap.containsKey( experiment ) ) {
 
-            throw new IllegalArgumentException( "Could not find an Identifier for that experiment (" + experiment.getAc() + ")." );
+            Long id = (Long) experimentIdMap.get( experiment );
+            return id.longValue();
+
+        } else {
+
+            long id = getNextObjectIdentifier();
+            experimentIdMap.put( experiment, new Long( id ) );
+            return id;
         }
-
-        Long id = (Long) experimentIdMap.get( experiment );
-        return id.longValue();
     }
 
     // Interactor IDs
 
-    public long getNextInteractorIdentifier( Interactor interactor ) {
-
-        if ( interactor == null ) {
-            throw new IllegalArgumentException( "You must give a non null interactor." );
-        }
-
-        if ( interactorIdMap.containsKey( interactor ) ) {
-            Long id = (Long) interactorIdMap.get( interactor );
-            String message = "An id has already been given to that interactor (" + interactor.getAc() + "): " + id;
-//            throw new IllegalArgumentException( message );
-            addMessage( message );
-        }
-
-        interactorIdMap.put( interactor, new Long( interactorIdentifier ) );
-
-        return interactorIdentifier++;
-    }
-
+    /**
+     * Get a specific identifier for the given interactor. If an identifier had already been affected for that
+     * interactor, the same is given again,
+     *
+     * @param interactor the object for which we want an id or a ref.
+     *
+     * @return a long corresponding to the given object.
+     */
     public long getInteractorIdentifier( Interactor interactor ) {
 
         if ( interactor == null ) {
             throw new IllegalArgumentException( "You must give a non null interactor." );
         }
 
-        if ( false == interactorIdMap.containsKey( interactor ) ) {
+        if ( interactorIdMap.containsKey( interactor ) ) {
 
-            throw new IllegalArgumentException( "Could not find an Identifier for that interactor (" + interactor.getAc() + ")." );
+            Long id = (Long) interactorIdMap.get( interactor );
+            return id.longValue();
+
+        } else {
+
+            long id = getNextObjectIdentifier();
+            interactorIdMap.put( interactor, new Long( id ) );
+            return id;
         }
-
-        Long id = (Long) interactorIdMap.get( interactor );
-        return id.longValue();
     }
 
     // Interaction IDs
 
-    public long getNextInteractionIdentifier( Interaction interaction ) {
-
-        if ( interaction == null ) {
-            throw new IllegalArgumentException( "You must give a non null interaction." );
-        }
-
-        if ( interactionIdMap.containsKey( interaction ) ) {
-            Long id = (Long) interactionIdMap.get( interaction );
-            System.err.println( "An id has already been given to that interaction (" + interaction.getAc() + "): " + id );
-            String message = "An id has already been given to that interaction (" + interaction.getAc() + "): " + id;
-//            throw new IllegalArgumentException( message );
-            addMessage( message );
-        }
-
-        interactionIdMap.put( interaction, new Long( interactionIdentifier ) );
-
-        return interactionIdentifier++;
-    }
-
+    /**
+     * Get a specific identifier for the given interaction. If an identifier had already been affected for that
+     * interaction, the same is given again,
+     *
+     * @param interaction the object for which we want an id or a ref.
+     *
+     * @return a long corresponding to the given object.
+     */
     public long getInteractionIdentifier( Interaction interaction ) {
 
         if ( interaction == null ) {
             throw new IllegalArgumentException( "You must give a non null interaction." );
         }
 
-        if ( false == interactionIdMap.containsKey( interaction ) ) {
-            throw new IllegalArgumentException( "Could not find an Identifier for that interaction (" + interaction.getAc() + ")." );
-        }
+        if ( interactionIdMap.containsKey( interaction ) ) {
 
-        Long id = (Long) interactionIdMap.get( interaction );
-        return id.longValue();
+            Long id = (Long) interactionIdMap.get( interaction );
+            return id.longValue();
+
+        } else {
+
+            long id = getNextObjectIdentifier();
+            interactionIdMap.put( interaction, new Long( id ) );
+            return id;
+        }
     }
 
     // Participant IDs
 
-    public long getNextParticipantIdentifier( Component component ) {
-
-        if ( component == null ) {
-            throw new IllegalArgumentException( "You must give a non null component." );
-        }
-
-        if ( component2participantId.containsKey( component ) ) {
-            Long id = (Long) component2participantId.get( component );
-            String message = "An id has already been given to that component (" + component.getAc() + "): " + id;
-//            throw new IllegalArgumentException( message );
-            addMessage( message );
-        }
-
-        component2participantId.put( component, new Long( participantIdentifier ) );
-
-        return participantIdentifier++;
-    }
-
+    /**
+     * Get a specific identifier for the given component.
+     *
+     * @param component the object for which we want an id.
+     *
+     * @return a long corresponding to the given object.
+     */
     public long getParticipantIdentifier( Component component ) {
 
         if ( component == null ) {
             throw new IllegalArgumentException( "You must give a non null component." );
         }
 
-        if ( false == component2participantId.containsKey( component ) ) {
-
-            throw new IllegalArgumentException( "Could not find an Identifier for that component (" + component.getAc() + ")." );
-        }
-
-        Long id = (Long) component2participantId.get( component );
-        return id.longValue();
-    }
-
-    public void resetParticipantIdentifier() {
-        participantIdentifier = FIRST_PARTICIPANT_ID;
-        component2participantId.clear();
+        return getNextObjectIdentifier();
     }
 
     // Feature IDs
 
-    public long getNextFeatureIdentifier( Feature feature ) {
-
-        if ( feature == null ) {
-            throw new IllegalArgumentException( "You must give a non null feature." );
-        }
-
-        if ( featureIdMap.containsKey( feature ) ) {
-            Long id = (Long) featureIdMap.get( feature );
-            String message = "An id has already been given to that feature (" + feature.getAc() + "): " + id;
-//            throw new IllegalArgumentException( message );
-            addMessage( message );
-        }
-
-        featureIdMap.put( feature, new Long( featureIdentifier ) );
-
-        return featureIdentifier++;
-    }
-
+    /**
+     * Get a specific identifier for the given feature. If an identifier had already been affected for that feature, the
+     * same is given again,
+     *
+     * @param feature the object for which we want an id or a ref.
+     *
+     * @return a long corresponding to the given object.
+     */
     public long getFeatureIdentifier( Feature feature ) {
 
         if ( feature == null ) {
             throw new IllegalArgumentException( "You must give a non null feature." );
         }
 
-        if ( false == featureIdMap.containsKey( feature ) ) {
+        if ( featureIdMap.containsKey( feature ) ) {
 
-            throw new IllegalArgumentException( "Could not find an Identifier for that feature (" + feature.getAc() + ")." );
+            Long id = (Long) featureIdMap.get( feature );
+            return id.longValue();
+
+        } else {
+
+            long id = getNextObjectIdentifier();
+            featureIdMap.put( feature, new Long( id ) );
+            return id;
         }
-
-        Long id = (Long) featureIdMap.get( feature );
-        return id.longValue();
-    }
-
-    public void resetFeatureIdentifier() {
-        featureIdentifier = FIRST_FEATURE_ID;
-        featureIdMap.clear();
     }
 
     /////////////////////////////////
@@ -784,5 +713,4 @@ public class UserSessionDownload {
     public Text createTextNode( String text ) {
         return getPsiDocument().createTextNode( text );
     }
-
 }

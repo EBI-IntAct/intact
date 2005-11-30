@@ -150,7 +150,7 @@ public class Feature2xmlPSI2 extends AnnotatedObject2xmlPSI2 implements Feature2
 
         // 2. Initialising the element...
         Element element = session.createElement( FEATURE_TAG_NAME );
-        element.setAttribute( "id", "" + session.getNextFeatureIdentifier( feature ) );
+        element.setAttribute( "id", "" + session.getFeatureIdentifier( feature ) );
 
         // 3. Generating names...
         createNames( session, element, feature );

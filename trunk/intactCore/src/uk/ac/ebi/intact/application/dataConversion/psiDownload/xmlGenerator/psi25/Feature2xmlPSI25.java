@@ -5,6 +5,7 @@
 package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi25;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.CvObject2xmlFactory;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Feature2xmlCommons;
@@ -83,7 +84,10 @@ public class Feature2xmlPSI25 extends AnnotatedObject2xmlPSI25 implements Featur
 
         // 2. Initialising the element...
         Element element = session.createElement( PARTICIPANT_FEATURE_REF_NAME );
-        element.setAttribute( "ref", "" + session.getFeatureIdentifier( feature ) );
+        Text refText = session.createTextNode( "" + session.getFeatureIdentifier( feature ) );
+        element.appendChild( refText );
+
+//        element.setAttribute( "ref", "" + session.getFeatureIdentifier( feature ) );
 
         // 3. Attaching the newly created element to the parent...
         parent.appendChild( element );
@@ -130,7 +134,7 @@ public class Feature2xmlPSI25 extends AnnotatedObject2xmlPSI25 implements Featur
 
         // 2. Initialising the element...
         Element element = session.createElement( FEATURE_TAG_NAME );
-        element.setAttribute( "id", "" + session.getNextFeatureIdentifier( feature ) );
+        element.setAttribute( "id", "" + session.getFeatureIdentifier( feature ) );
 
         // 3. Generating names...
         createNames( session, element, feature );

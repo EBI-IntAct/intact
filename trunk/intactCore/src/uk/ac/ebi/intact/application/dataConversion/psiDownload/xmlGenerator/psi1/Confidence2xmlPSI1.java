@@ -143,21 +143,8 @@ public class Confidence2xmlPSI1 extends AnnotatedObject2xmlPSI2 implements Confi
             // Sort the values alphanumerically (non case sensitive) and pick the first one.
             Object[] names = authorConfidences.toArray();
 
-            // TODO remove logging message for the sorting of the confidence values.
-//            System.out.println( "Before sorting:" );
-//            for ( int i = 0; i < names.length; i++ ) {
-//                Object name = names[ i ];
-//                System.out.println( i + ") " + name );
-//            }
-
             Arrays.sort( names, new StringComparator() );
             confidenceValue = (String) names[ 0 ];
-
-//            System.out.println( "After sorting:" );
-//            for ( int i = 0; i < names.length; i++ ) {
-//                Object name = names[ i ];
-//                System.out.println( i + ") " + name );
-//            }
 
         } else if ( authorConfidences.size() == 1 ) {
 

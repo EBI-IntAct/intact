@@ -49,13 +49,7 @@ public class Component2xmlPSI2 implements Component2xmlI {
      */
     private String getParticipantId( UserSessionDownload session, Component component ) {
 
-        long id;
-        try {
-            id = session.getNextParticipantIdentifier( component );
-        } catch ( Exception e ) {
-            id = session.getParticipantIdentifier( component );
-        }
-
+        long id = session.getParticipantIdentifier( component );
         return "" + id;
     }
 
@@ -85,7 +79,7 @@ public class Component2xmlPSI2 implements Component2xmlI {
 
         // 3. Generating proteinInteractorRef and proteinInteractor...
         Protein protein = (Protein) component.getInteractor();
-        if ( false == session.isAlreadyDefined( protein ) ) {
+        if ( ! session.isAlreadyDefined( protein ) ) {
 
             // get the global list of proteins
             Element interactorList = session.getInteractorListElement();
@@ -100,7 +94,7 @@ public class Component2xmlPSI2 implements Component2xmlI {
         // 4. Generating featureList...
         // TODO necessary to check the Tags here ?
         boolean isTagged = false;
-        if ( false == component.getBindingDomains().isEmpty() ) {
+        if ( ! component.getBindingDomains().isEmpty() ) {
             Element featureListElement = session.createElement( "featureList" );
 
             for ( Iterator iterator = component.getBindingDomains().iterator(); iterator.hasNext(); ) {
@@ -109,7 +103,7 @@ public class Component2xmlPSI2 implements Component2xmlI {
                 Feature2xmlFactory.getInstance( session ).create( session, featureListElement, feature );
 
                 // check if that feature has a type Tag
-                if ( false == isTagged ) {
+                if ( ! isTagged ) {
                     // check it...
                     isTagged = isTaggedFeature( feature.getCvFeatureType() );
                 }

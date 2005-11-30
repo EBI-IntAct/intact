@@ -64,12 +64,12 @@ public class UserSessionDownloadTest extends PsiDownloadTest {
         assertTrue( session.isAlreadyDefined( experiment ) );
     }
 
-    public void testGetNextExperimentIdentifier() {
+    public void testgetExperimentIdentifier() {
 
         UserSessionDownload session = new UserSessionDownload( PsiVersion.VERSION_1 );
 
         try {
-            session.getNextExperimentIdentifier( null );
+            session.getExperimentIdentifier( null );
             fail( "null is not allowed." );
         } catch ( Exception e ) {
             // ok
@@ -79,13 +79,13 @@ public class UserSessionDownloadTest extends PsiDownloadTest {
         Experiment experiment2 = new Experiment( owner, "exp2", human );
         Experiment experiment3 = new Experiment( owner, "exp3", yeast );
 
-        long id = session.getNextExperimentIdentifier( experiment );
+        long id = session.getExperimentIdentifier( experiment );
         assertEquals( id, session.getExperimentIdentifier( experiment ) );
 
-        long id2 = session.getNextExperimentIdentifier( experiment2 );
+        long id2 = session.getExperimentIdentifier( experiment2 );
         assertEquals( id2, session.getExperimentIdentifier( experiment2 ) );
 
-        long id3 = session.getNextExperimentIdentifier( experiment3 );
+        long id3 = session.getExperimentIdentifier( experiment3 );
         assertEquals( id3, session.getExperimentIdentifier( experiment3 ) );
 
         assertFalse( id == id2 );
@@ -93,18 +93,18 @@ public class UserSessionDownloadTest extends PsiDownloadTest {
         assertFalse( id2 == id3 );
 
         try {
-            id = session.getNextExperimentIdentifier( experiment ); // already generated
+            id = session.getExperimentIdentifier( experiment ); // already generated
         } catch ( Exception e ) {
             //ok
         }
     }
 
-    public void testGetNextParticipantIdentifier() {
+    public void testgetParticipantIdentifier() {
 
         UserSessionDownload session = new UserSessionDownload( PsiVersion.VERSION_1 );
 
         try {
-            session.getNextParticipantIdentifier( null );
+            session.getParticipantIdentifier( null );
             fail( "null is not allowed." );
         } catch ( Exception e ) {
             // ok
@@ -121,59 +121,25 @@ public class UserSessionDownloadTest extends PsiDownloadTest {
         Component component2 = new Component( owner, interaction, protein, prey );
         Component component3 = new Component( owner, interaction, protein2, prey );
 
-        long id = session.getNextParticipantIdentifier( component );
-        assertEquals( id, session.getParticipantIdentifier( component ) );
+        long id1 = session.getParticipantIdentifier( component );
+        assertTrue( id1 != session.getParticipantIdentifier( component ) );
 
-        long id2 = session.getNextParticipantIdentifier( component2 );
-        assertEquals( id2, session.getParticipantIdentifier( component2 ) );
+        long id2 = session.getParticipantIdentifier( component2 );
+        assertTrue( id2 != session.getParticipantIdentifier( component2 ) );
+        assertTrue( id1 != id2 );
 
-        long id3 = session.getNextParticipantIdentifier( component3 );
-        assertEquals( id3, session.getParticipantIdentifier( component3 ) );
-
-        assertFalse( id == id2 );
-        assertFalse( id == id3 );
-        assertFalse( id2 == id3 );
-
-        try {
-            id = session.getNextParticipantIdentifier( component ); // already generated
-        } catch ( Exception e ) {
-            //ok
-        }
+        long id3 = session.getParticipantIdentifier( component3 );
+        assertTrue( id3 != session.getParticipantIdentifier( component3 ) );
+        assertTrue( id1 != id3 );
+        assertTrue( id2 != id3 );
     }
 
-    public void testResetParticipantIdentifier() {
-
-        UserSessionDownload session = new UserSessionDownload( PsiVersion.VERSION_1 );
-
-        Experiment experiment = new Experiment( owner, "exp", human );
-        Collection experiments = new ArrayList( 1 );
-        experiments.add( experiment );
-        Interaction interaction = new InteractionImpl( experiments, aggregation, interactionType, "interaction", owner );
-        Protein protein = new ProteinImpl( owner, yeast, "bbc1_yeast", proteinType );
-        Protein protein2 = new ProteinImpl( owner, yeast, "cdc42_yeast", proteinType );
-
-        Component component = new Component( owner, interaction, protein, bait );
-        Component component2 = new Component( owner, interaction, protein, prey );
-        Component component3 = new Component( owner, interaction, protein2, prey );
-
-        long id = session.getNextParticipantIdentifier( component );
-        assertEquals( id, session.getParticipantIdentifier( component ) );
-
-        long id2 = session.getNextParticipantIdentifier( component2 );
-        assertEquals( id2, session.getParticipantIdentifier( component2 ) );
-
-        session.resetParticipantIdentifier();
-
-        // start from the beginning again
-        assertEquals( id, session.getNextParticipantIdentifier( component3 ) );
-    }
-
-    public void testGetNextFeatureIdentifier() {
+    public void testgetFeatureIdentifier() {
 
         UserSessionDownload session = new UserSessionDownload( PsiVersion.VERSION_1 );
 
         try {
-            session.getNextFeatureIdentifier( null );
+            session.getFeatureIdentifier( null );
             fail( "null is not allowed." );
         } catch ( Exception e ) {
             // ok
@@ -194,13 +160,13 @@ public class UserSessionDownloadTest extends PsiDownloadTest {
         Feature feature2 = new Feature( owner, "region", component2, formylation );
         Feature feature3 = new Feature( owner, "region", component3, hydroxylation );
 
-        long id = session.getNextFeatureIdentifier( feature );
+        long id = session.getFeatureIdentifier( feature );
         assertEquals( id, session.getFeatureIdentifier( feature ) );
 
-        long id2 = session.getNextFeatureIdentifier( feature2 );
+        long id2 = session.getFeatureIdentifier( feature2 );
         assertEquals( id2, session.getFeatureIdentifier( feature2 ) );
 
-        long id3 = session.getNextFeatureIdentifier( feature3 );
+        long id3 = session.getFeatureIdentifier( feature3 );
         assertEquals( id3, session.getFeatureIdentifier( feature3 ) );
 
         assertFalse( id == id2 );
@@ -208,46 +174,18 @@ public class UserSessionDownloadTest extends PsiDownloadTest {
         assertFalse( id2 == id3 );
 
         try {
-            id = session.getNextFeatureIdentifier( feature ); // already generated
+            id = session.getFeatureIdentifier( feature ); // already generated
         } catch ( Exception e ) {
             //ok
         }
     }
 
-    public void testResetFeatureIdentifier() {
-
-        UserSessionDownload session = new UserSessionDownload( PsiVersion.VERSION_1 );
-
-        Experiment experiment = new Experiment( owner, "exp", human );
-        Collection experiments = new ArrayList( 1 );
-        experiments.add( experiment );
-        Interaction interaction = new InteractionImpl( experiments, aggregation, interactionType, "interaction", owner );
-        Protein protein = new ProteinImpl( owner, yeast, "bbc1_yeast", proteinType );
-
-        Component component = new Component( owner, interaction, protein, bait );
-        Component component2 = new Component( owner, interaction, protein, prey );
-
-        Feature feature = new Feature( owner, "region", component, formylation );
-        Feature feature2 = new Feature( owner, "region", component2, formylation );
-
-        long id = session.getNextFeatureIdentifier( feature );
-        assertEquals( id, session.getFeatureIdentifier( feature ) );
-
-        long id2 = session.getNextFeatureIdentifier( feature2 );
-        assertEquals( id2, session.getFeatureIdentifier( feature2 ) );
-
-        session.resetFeatureIdentifier();
-
-        // start from the beginning again
-        assertEquals( id, session.getNextFeatureIdentifier( feature2 ) );
-    }
-
-    public void testGetNextInteractorIdentifier() {
+    public void testgetInteractorIdentifier() {
 
         UserSessionDownload session = new UserSessionDownload( PsiVersion.VERSION_1 );
 
         try {
-            session.getNextInteractorIdentifier( null );
+            session.getInteractorIdentifier( null );
             fail( "null is not allowed." );
         } catch ( Exception e ) {
             // ok
@@ -261,13 +199,13 @@ public class UserSessionDownloadTest extends PsiDownloadTest {
         Interaction interaction = new InteractionImpl( experiments, aggregation, interactionType, "interaction", owner );
 
 
-        long id = session.getNextInteractorIdentifier( protein );
+        long id = session.getInteractorIdentifier( protein );
         assertEquals( id, session.getInteractorIdentifier( protein ) );
 
-        long id2 = session.getNextInteractorIdentifier( protein2 );
+        long id2 = session.getInteractorIdentifier( protein2 );
         assertEquals( id2, session.getInteractorIdentifier( protein2 ) );
 
-        long id3 = session.getNextInteractorIdentifier( interaction );
+        long id3 = session.getInteractorIdentifier( interaction );
         assertEquals( id3, session.getInteractorIdentifier( interaction ) );
 
         assertFalse( id == id2 );
@@ -275,18 +213,18 @@ public class UserSessionDownloadTest extends PsiDownloadTest {
         assertFalse( id2 == id3 );
 
         try {
-            id = session.getNextExperimentIdentifier( experiment ); // already generated
+            id = session.getExperimentIdentifier( experiment ); // already generated
         } catch ( Exception e ) {
             //ok
         }
     }
 
-    public void testGetNextInteractionIdentifier() {
+    public void testgetInteractionIdentifier() {
 
         UserSessionDownload session = new UserSessionDownload( PsiVersion.VERSION_1 );
 
         try {
-            session.getNextInteractionIdentifier( null );
+            session.getInteractionIdentifier( null );
             fail( "null is not allowed." );
         } catch ( Exception e ) {
             // ok
@@ -300,13 +238,13 @@ public class UserSessionDownloadTest extends PsiDownloadTest {
         Interaction interaction3 = new InteractionImpl( experiments, aggregation, interactionType, "interaction3", owner );
 
 
-        long id = session.getNextInteractionIdentifier( interaction );
+        long id = session.getInteractionIdentifier( interaction );
         assertEquals( id, session.getInteractionIdentifier( interaction ) );
 
-        long id2 = session.getNextInteractionIdentifier( interaction2 );
+        long id2 = session.getInteractionIdentifier( interaction2 );
         assertEquals( id2, session.getInteractionIdentifier( interaction2 ) );
 
-        long id3 = session.getNextInteractionIdentifier( interaction3 );
+        long id3 = session.getInteractionIdentifier( interaction3 );
         assertEquals( id3, session.getInteractionIdentifier( interaction3 ) );
 
         assertFalse( id == id2 );
@@ -314,7 +252,7 @@ public class UserSessionDownloadTest extends PsiDownloadTest {
         assertFalse( id2 == id3 );
 
         try {
-            id = session.getNextInteractorIdentifier( interaction3 ); // already generated
+            id = session.getInteractorIdentifier( interaction3 ); // already generated
         } catch ( Exception e ) {
             //ok
         }
