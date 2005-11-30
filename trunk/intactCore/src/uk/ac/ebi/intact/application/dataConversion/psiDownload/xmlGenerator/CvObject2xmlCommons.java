@@ -190,17 +190,6 @@ public class CvObject2xmlCommons {
     ///////////////////////
     // Cache management
 
-    private void displayCache( Map map ) {
-
-        System.out.println( "-------------------------------------------------------------------" );
-        for ( Iterator iterator = map.keySet().iterator(); iterator.hasNext(); ) {
-            CvObject key = (CvObject) iterator.next();
-
-            System.out.println( key + " -> " + map.get( key ) );
-        }
-
-    }
-
     /**
      * Checks if the given CvObject has already been generated as XML content. <br> If so, that content is cloned which
      * is faster than recreating it.

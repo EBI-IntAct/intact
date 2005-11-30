@@ -165,7 +165,7 @@ public class Interaction2xmlPSI2 extends AnnotatedObject2xmlPSI2 implements Inte
         }
 
         // we start participant id from scratch again
-        session.resetParticipantIdentifier();
+//        session.resetParticipantIdentifier();
 
         // NOTE: names
         //       xref
@@ -181,7 +181,7 @@ public class Interaction2xmlPSI2 extends AnnotatedObject2xmlPSI2 implements Inte
 
         // 2. Initialising the element...
         Element element = session.createElement( INTERACTION_TAG_NAME );
-        element.setAttribute( "id", "" + session.getNextInteractionIdentifier( interaction ) );
+        element.setAttribute( "id", "" + session.getInteractionIdentifier( interaction ) );
 
         // 3. Generating names...
         createNames( session, element, interaction );

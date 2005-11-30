@@ -5,6 +5,7 @@
 package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi25;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.BioSource2xmlFactory;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.CvObject2xmlFactory;
@@ -107,15 +108,8 @@ public class Experiment2xmlPSI25 extends AnnotatedObject2xmlPSI25 implements Exp
      */
     private String getExperimentId( UserSessionDownload session, Experiment experiment ) {
 
-        long id;
-        try {
-            id = session.getExperimentIdentifier( experiment );
-        } catch ( Exception e ) {
-            id = session.getNextExperimentIdentifier( experiment );
-        }
-
+        long id = session.getExperimentIdentifier( experiment );
         return "" + id;
-//        return Experiment2xmlCommons.getInstance().getExperimentId( experiment );
     }
 
     /////////////////////
@@ -137,10 +131,10 @@ public class Experiment2xmlPSI25 extends AnnotatedObject2xmlPSI25 implements Exp
             for ( Iterator iterator = PARENT_TERM_NAMES.iterator(); iterator.hasNext(); ) {
                 String name = (String) iterator.next();
 
-                sb.append( "<" + name + ">" );
+                sb.append( '<' ).append( name ).append( '>' );
 
                 if ( iterator.hasNext() ) {
-                    sb.append( "," ).append( " " );
+                    sb.append( ',' ).append( ' ' );
                 }
             }
 
@@ -184,7 +178,8 @@ public class Experiment2xmlPSI25 extends AnnotatedObject2xmlPSI25 implements Exp
 
         // 2. Initialising the element...
         Element element = session.createElement( EXPERIMENT_REF_TAG_NAME );
-        element.setAttribute( "ref", getExperimentId( session, experiment ) );
+        Text refText = session.createTextNode( getExperimentId( session, experiment ) );
+        element.appendChild( refText );
 
         // 3. Attaching the newly created element to the parent...
         parent.appendChild( element );
@@ -279,7 +274,7 @@ public class Experiment2xmlPSI25 extends AnnotatedObject2xmlPSI25 implements Exp
         createConfidence( session, element, experiment );
 
         // 11. Generating attributeList (if any)...
-        if ( false == experiment.getAnnotations().isEmpty() ) {
+        if ( ! experiment.getAnnotations().isEmpty() ) {
             createAttributeList( session, element, experiment, attributeListFilter );
         }
 

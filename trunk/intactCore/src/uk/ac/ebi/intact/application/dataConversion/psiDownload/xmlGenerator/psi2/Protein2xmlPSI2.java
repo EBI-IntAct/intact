@@ -44,15 +44,8 @@ public class Protein2xmlPSI2 extends AnnotatedObject2xmlPSI2 implements Protein2
      */
     private String getProteinId( UserSessionDownload session, Protein protein ) {
 
-        long id;
-        try {
-            id = session.getInteractorIdentifier( protein );
-        } catch ( Exception e ) {
-            id = session.getNextInteractorIdentifier( protein );
-        }
-
+        long id = session.getInteractorIdentifier( protein );
         return "" + id;
-//        return Protein2xmlCommons.getInstance().getProteinId( protein );
     }
 
     /**

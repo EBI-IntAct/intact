@@ -143,11 +143,6 @@ public class Interaction2xmlPSI1Test extends PsiDownloadTest {
         // generating the PSI element...
         element = i.create( session, parent, interaction );
 
-        for ( Iterator iterator = session.getMessages().iterator(); iterator.hasNext(); ) {
-            String s = (String) iterator.next();
-            System.out.println( s );
-        }
-
         // starting the checks...
         assertNotNull( element );
 

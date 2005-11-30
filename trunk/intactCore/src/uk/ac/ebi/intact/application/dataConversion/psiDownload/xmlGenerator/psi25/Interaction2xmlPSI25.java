@@ -165,8 +165,9 @@ public class Interaction2xmlPSI25 extends AnnotatedObject2xmlPSI25 implements In
         }
 
         // we start participant/feature id from scratch again
-        session.resetParticipantIdentifier();
-        session.resetFeatureIdentifier();
+        // nope we do not do that anymore in the context of PSI 2.5 release candidate
+        // session.resetParticipantIdentifier();
+        // session.resetFeatureIdentifier();
 
         // NOTE: names
         //       xref
@@ -196,7 +197,7 @@ public class Interaction2xmlPSI25 extends AnnotatedObject2xmlPSI25 implements In
 
         // 2. Initialising the element...
         Element element = session.createElement( INTERACTION_TAG_NAME );
-        element.setAttribute( "id", "" + session.getNextInteractionIdentifier( interaction ) );
+        element.setAttribute( "id", "" + session.getInteractionIdentifier( interaction ) );
 
         // imexId
         String imexId = null;

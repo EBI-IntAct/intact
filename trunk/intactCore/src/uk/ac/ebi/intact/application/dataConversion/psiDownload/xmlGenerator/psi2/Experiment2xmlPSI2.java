@@ -106,15 +106,8 @@ public class Experiment2xmlPSI2 extends AnnotatedObject2xmlPSI2 implements Exper
      */
     private String getExperimentId( UserSessionDownload session, Experiment experiment ) {
 
-        long id;
-        try {
-            id = session.getExperimentIdentifier( experiment );
-        } catch ( Exception e ) {
-            id = session.getNextExperimentIdentifier( experiment );
-        }
-
+        long id = session.getExperimentIdentifier( experiment );
         return "" + id;
-//        return Experiment2xmlCommons.getInstance().getExperimentId( experiment );
     }
 
     /////////////////////

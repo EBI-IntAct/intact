@@ -6,9 +6,7 @@ package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator;
 
 import org.w3c.dom.Element;
 import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.model.CvObject;
 
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -33,17 +31,6 @@ public class BioSource2xmlCommons {
 
     ///////////////////////
     // Cache management
-
-    private void displayCache( Map map ) {
-
-        System.out.println( "-------------------------------------------------------------------" );
-        for ( Iterator iterator = map.keySet().iterator(); iterator.hasNext(); ) {
-            CvObject key = (CvObject) iterator.next();
-
-            System.out.println( key + " -> " + map.get( key ) );
-        }
-
-    }
 
     /**
      * Checks if the given BioSource has already been generated as XML content. <br> If so, that content is cloned which

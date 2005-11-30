@@ -54,13 +54,7 @@ public class Interactor2xmlPSI25 extends AnnotatedObject2xmlPSI25 {
      */
     private String getInteractorId( UserSessionDownload session, Interactor interactor ) {
 
-        long id;
-        try {
-            id = session.getInteractorIdentifier( interactor );
-        } catch ( Exception e ) {
-            id = session.getNextInteractorIdentifier( interactor );
-        }
-
+        long id = session.getInteractorIdentifier( interactor );
         return "" + id;
     }
 
@@ -167,7 +161,8 @@ public class Interactor2xmlPSI25 extends AnnotatedObject2xmlPSI25 {
 
         // 2. Initialising the element...
         Element element = session.createElement( INTERACTOR_REF_TAG_NAME );
-        element.setAttribute( "ref", getInteractorId( session, interactor ) );
+        Text refText = session.createTextNode( getInteractorId( session, interactor ) );
+        element.appendChild( refText );
 
         // 3. Attaching the newly created element to the parent...
         parent.appendChild( element );
@@ -302,10 +297,14 @@ public class Interactor2xmlPSI25 extends AnnotatedObject2xmlPSI25 {
         // 7. Generating sequence... (for Polymers only, ie. Protein and NucleicAcid)
         if ( interactor instanceof Polymer ) {
             Polymer polymer = (Polymer) interactor;
-            Element sequence = session.createElement( "sequence" );
-            Text sequenceText = session.createTextNode( polymer.getSequence() );
-            sequence.appendChild( sequenceText );
-            element.appendChild( sequence );
+
+            // Do not create a sequence element if no sequence available
+            if( polymer.getSequence() != null && polymer.getSequence().length() > 0 ) {
+                Element sequence = session.createElement( "sequence" );
+                Text sequenceText = session.createTextNode( polymer.getSequence() );
+                sequence.appendChild( sequenceText );
+                element.appendChild( sequence );
+            }
         }
 
         // 8. Generating the attributeList

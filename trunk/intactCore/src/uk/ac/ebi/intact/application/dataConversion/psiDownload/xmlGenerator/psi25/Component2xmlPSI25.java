@@ -51,13 +51,7 @@ public class Component2xmlPSI25 implements Component2xmlI {
      */
     private String getParticipantId( UserSessionDownload session, Component component ) {
 
-        long id;
-        try {
-            id = session.getNextParticipantIdentifier( component );
-        } catch ( Exception e ) {
-            id = session.getParticipantIdentifier( component );
-        }
-
+        long id = session.getParticipantIdentifier( component );
         return "" + id;
     }
 
@@ -86,7 +80,6 @@ public class Component2xmlPSI25 implements Component2xmlI {
         //    names
         //    xref
         //    interactorRef interactor interactionRef
-        //    interactorType
         //    biologicalRole
         //    experimentalRoleList
         //    experimentalFormList
@@ -125,10 +118,7 @@ public class Component2xmlPSI25 implements Component2xmlI {
         Interactor2xmlPSI25 interactor2xml = Interactor2xmlPSI25.getInstance();
         interactor2xml.createInteracorReference( session, element, interactor );
 
-        // 6. Generating interactorType ...
-        CvObject2xmlFactory.getInstance( session ).create( session, element, interactor.getCvInteractorType() );
-
-        // 7. Generating biologicalRole ...
+        // 6. Generating biologicalRole ...
         // TODO do we filter on CvComponentRole ? allowed: neutral, bait and prey ?
         // That will fall into places when we migrate IntAct to PSI CV v2
         if ( component.getCvComponentRole() != null ) {
@@ -136,7 +126,7 @@ public class Component2xmlPSI25 implements Component2xmlI {
             cv2xml.createBiologicalRole( session, element, component.getCvComponentRole() );
         }
 
-        // 8. Generating experimentalRoleList ...
+        // 7. Generating experimentalRoleList ...
         if ( component.getCvComponentRole() != null ) {
             CvObject2xmlPSI2 cv2xml = (CvObject2xmlPSI2) CvObject2xmlFactory.getInstance( session );
             Element experimentalRoleList = session.createElement( "experimentalRoleList" );
@@ -144,15 +134,15 @@ public class Component2xmlPSI25 implements Component2xmlI {
             cv2xml.createExperimentalRole( session, experimentalRoleList, component.getCvComponentRole() );
         }
 
-        // 9. Generating experimentalFormList ...
+        // 8. Generating experimentalFormList ...
         // could be digging into the Features and bring some tagged-protein thingy
 
-        // 10. Generating experimentalPreparationList ...
+        // 9. Generating experimentalPreparationList ...
 
-        // 11. Generating experimentalInteractorList ...
+        // 10. Generating experimentalInteractorList ...
         // leave it for now...
 
-        // 12. Generating featureList...
+        // 11. Generating featureList...
         // TODO necessary to check the Tags here ?
         boolean isTagged = false;
         if ( false == component.getBindingDomains().isEmpty() ) {
@@ -174,17 +164,17 @@ public class Component2xmlPSI25 implements Component2xmlI {
             element.appendChild( featureListElement );
         }
 
-        // 13. Generating hostOrganismList ...
+        // 12. Generating hostOrganismList ...
         if ( component.getExpressedIn() != null ) {
             Element hostOrganismList = session.createElement( "hostOrganismList" );
             element.appendChild( hostOrganismList );
             BioSource2xmlFactory.getInstance( session ).createHostOrganism( session, hostOrganismList, interactor.getBioSource() );
         }
 
-        // 14. Generating confidenceList...
+        // 13. Generating confidenceList...
         // TODO export confidence list here ! but from what object ? Component ? in the documentation it is meant to be the confidence of the participant detection
 
-        // 15. Attaching the newly created element to the parent...
+        // 14. Attaching the newly created element to the parent...
         parent.appendChild( element );
 
         return element;
@@ -199,7 +189,7 @@ public class Component2xmlPSI25 implements Component2xmlI {
      */
     public boolean isTaggedFeature( CvFeatureType featureType ) {
 
-        // TODO that method is now public to allow its testing. Use JUnit plugin to test provate method to fix that.
+        // TODO that method is now public to allow its testing. Use JUnit plugin to test private method to fix that.
 
         // get the PSI MI reference of that feature.
         String mi = null;
@@ -421,7 +411,6 @@ public class Component2xmlPSI25 implements Component2xmlI {
      * @param session       the user session.
      * @param parent        the Element to which we will add the experimentalForm.
      * @param component     the component from which we get the experimentalForm information.
-     * @param participantId the id of the related participant.
      *
      * @return the created experimentalForm.
      */
