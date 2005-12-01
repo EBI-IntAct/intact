@@ -7,6 +7,7 @@ package uk.ac.ebi.intact.util.sanityChecker;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
+import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.util.sanityChecker.model.*;
@@ -24,6 +25,8 @@ import java.util.*;
  * @version $Id$
  */
 public class SanityCheckerHelper {
+
+//    protected static final Logger LOGGER = Logger.getLogger("sanitycheck");
 
     private Connection conn;
 
@@ -45,9 +48,13 @@ public class SanityCheckerHelper {
         }
 
         if (bean2sql.containsKey(beanClass)) {
-            System.err.println("The beanClass: " + beanClass.getName() + ", has already been mapped");
-            System.err.println("The previous associated sql request was : " + bean2sql.get(beanClass));
-            System.err.println("The new associated sql request will be : " + sql);
+//            LOGGER.info("The beanClass: " + beanClass.getName() + ", has already been mapped");
+//            LOGGER.info("The previous associated sql request was : " + bean2sql.get(beanClass));
+//            LOGGER.info("The new associated sql request will be : " + sql);
+
+//            System.err.println("The beanClass: " + beanClass.getName() + ", has already been mapped");
+//            System.err.println("The previous associated sql request was : " + bean2sql.get(beanClass));
+//            System.err.println("The new associated sql request will be : " + sql);
         }
 
         // We test that the sql is valid.
@@ -76,15 +83,23 @@ public class SanityCheckerHelper {
         } catch ( OutOfMemoryError aome ) {
 
             aome.printStackTrace();
+//            LOGGER.info( "" );
+//            LOGGER.info( "SanityCheckerHelper ran out of memory." );
+//            LOGGER.info( "Please run it again and change the JVM configuration." );
+//            LOGGER.info( "Here are some the options: http://java.sun.com/docs/hotspot/VMOptions.html" );
+//            LOGGER.info( "Hint: You can use -Xms -Xmx to specify respectively the minimum and maximum" );
+//            LOGGER.info( "      amount of memory that the JVM is allowed to allocate." );
+//            LOGGER.info( "      eg. java -Xms128m -Xmx512m <className>" );
+//            LOGGER.info( "      you can set it up in scripts/javaRun.sh" );
 
-            System.err.println( "" );
-            System.err.println( "SanityCheckerHelper ran out of memory." );
-            System.err.println( "Please run it again and change the JVM configuration." );
-            System.err.println( "Here are some the options: http://java.sun.com/docs/hotspot/VMOptions.html" );
-            System.err.println( "Hint: You can use -Xms -Xmx to specify respectively the minimum and maximum" );
-            System.err.println( "      amount of memory that the JVM is allowed to allocate." );
-            System.err.println( "      eg. java -Xms128m -Xmx512m <className>" );
-            System.err.println( "      you can set it up in scripts/javaRun.sh" );
+//            System.err.println( "" );
+//            System.err.println( "SanityCheckerHelper ran out of memory." );
+//            System.err.println( "Please run it again and change the JVM configuration." );
+//            System.err.println( "Here are some the options: http://java.sun.com/docs/hotspot/VMOptions.html" );
+//            System.err.println( "Hint: You can use -Xms -Xmx to specify respectively the minimum and maximum" );
+//            System.err.println( "      amount of memory that the JVM is allowed to allocate." );
+//            System.err.println( "      eg. java -Xms128m -Xmx512m <className>" );
+//            System.err.println( "      you can set it up in scripts/javaRun.sh" );
 
             System.exit( 1 );
 
@@ -97,9 +112,13 @@ public class SanityCheckerHelper {
 
                 t = e.getCause();
 
-                System.err.println( "" );
-                System.err.println( "================== ROOT CAUSE ==========================" );
-                System.err.println( "" );
+//                LOGGER.info( "" );
+//                LOGGER.info( "================== ROOT CAUSE ==========================" );
+//                LOGGER.info( "" );
+
+//                System.err.println( "" );
+//                System.err.println( "================== ROOT CAUSE ==========================" );
+//                System.err.println( "" );
 
                 t.printStackTrace( System.err );
             }
@@ -167,7 +186,8 @@ public class SanityCheckerHelper {
                                                                 "where annotation_ac = ?");
                         annotatedBeans = sch.getBeans(Feature2AnnotBean.class, annotationAc);
                         if(annotatedBeans.isEmpty()){
-                            System.err.println("Annotation having ac equal to " + annotationAc + " is not annotated any object int the database.");
+//                           LOGGER.info("Annotation having ac equal to " + annotationAc + " is not annotated any object int the database.");
+//                            System.err.println("Annotation having ac equal to " + annotationAc + " is not annotated any object int the database.");
                         }else{//The annotation is on a Feature
                             Feature2AnnotBean feature2AnnotBean = (Feature2AnnotBean) annotatedBeans.get(0);
                             annotatedBean = sch.getFeatureBeanFromAc(feature2AnnotBean.getFeature_ac());
