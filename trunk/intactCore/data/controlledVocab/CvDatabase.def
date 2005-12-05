@@ -136,7 +136,7 @@ search-url-ascii: http://www.ebi.uniprot.org/entry/${ac}?format=text&ascii
 search-url: http://www.ebi.uniprot.org/entry/${ac}
 definition_reference: PMID:14681372
 
-term: uniprot: UniProt protein sequence database
+term: uniprotkb: UniProt protein sequence database
 id: MI:0486
 search-url: http://www.ebi.uniprot.org/entry/${ac}
 search-url-ascii: http://www.ebi.uniprot.org/entry/${ac}?format=text&ascii
