@@ -20,7 +20,11 @@ import java.util.*;
 import java.util.Date;
 
 /**
- * TODO comment this
+ * <pre>
+ * Generates a classified list of experiments based on :
+ *  - their count of interaction,
+ *  - the fact that they contain negative interaction.
+ * </pre>
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
@@ -28,11 +32,25 @@ import java.util.Date;
  */
 public class ExperimentListGenerator {
 
+    /**
+     * Current time
+     */
+    protected static String TIME;
+
+    static {
+        SimpleDateFormat formatter = new SimpleDateFormat( "yyyy-MM-dd@HH.mm" );
+        TIME = formatter.format( new Date() );
+        formatter = null;
+    }
+
     // if an experiment has more than this many interactions it is considered to be large scale.
     //NB changed for testing - usually 100
     public static final int SMALLSCALELIMIT = 500;
     public static final int LARGESCALESIZE = 2500;
     public static final int MAX_EXPERIMENT_PER_FILE = 300;
+
+    public static final String SMALL = "small";
+    public static final String LARGE = "large";
 
     public static final String NEW_LINE = System.getProperty( "line.separator" );
 
@@ -101,16 +119,16 @@ public class ExperimentListGenerator {
             // fully initialize the data structure for a new BioSource
             if ( null == allExp.get( source ) ) {
                 HashMap speciesMap = new HashMap();
-                speciesMap.put( "small", new ArrayList() );
-                speciesMap.put( "large", new ArrayList() );
+                speciesMap.put( SMALL, new HashSet() );
+                speciesMap.put( LARGE, new HashSet() );
                 allExp.put( source, speciesMap );
             }
 
             // Sort experiment into appropriate bin
             if ( size > SMALLSCALELIMIT ) {
-                ( (ArrayList) ( (HashMap) allExp.get( source ) ).get( "large" ) ).add( exp );
+                ( (Set) ( (HashMap) allExp.get( source ) ).get( LARGE ) ).add( exp );
             } else {
-                ( (ArrayList) ( (HashMap) allExp.get( source ) ).get( "small" ) ).add( exp );
+                ( (Set) ( (HashMap) allExp.get( source ) ).get( SMALL ) ).add( exp );
             }
         }
 
@@ -137,19 +155,38 @@ public class ExperimentListGenerator {
     private static void classifyNegatives() throws IntactException {
 
         //query to get at the Experiment ACs containing negative interaction annotations
-        String sql = "select experiment_ac from ia_int2exp where interaction_ac in " +
-                     "(select interactor_ac from ia_int2annot where annotation_ac in " +
-                     "(select ac from ia_annotation where topic_ac in " +
-                     "(select ac from ia_controlledvocab where shortlabel='negative')))";
+        String sql = "SELECT experiment_ac " +
+                     "FROM ia_int2exp " +
+                     "WHERE interaction_ac in " +
+                     "   (SELECT interactor_ac " +
+                     "    FROM ia_int2annot " +
+                     "    WHERE annotation_ac in " +
+                     "       (SELECT ac " +
+                     "        FROM ia_annotation " +
+                     "        WHERE topic_ac in " +
+                     "            (SELECT ac " +
+                     "             FROM ia_controlledvocab " +
+                     "             WHERE shortlabel='"+ CvTopic.NEGATIVE +"'" +
+                     "            )" +
+                     "        )" +
+                     "    )";
 
         //query to obtain Experiment ACs by searching for an Annotation for the
         //Experiment classified as 'negative' itself
-        String expSql = "select experiment_ac from ia_exp2annot where annotation_ac in " +
-                        "(select ac from ia_annotation where topic_ac in " +
-                        "(select ac from ia_controlledvocab where shortlabel='negative'))";
+        String expSql = "SELECT experiment_ac " +
+                        "FROM ia_exp2annot " +
+                        "WHERE annotation_ac in " +
+                        "     (SELECT ac " +
+                        "      FROM ia_annotation " +
+                        "      WHERE topic_ac in " +
+                        "            (SELECT ac " +
+                        "             FROM ia_controlledvocab " +
+                        "             WHERE shortlabel = '"+ CvTopic.NEGATIVE +"'" +
+                        "            )" +
+                        "     )";
 
         IntactHelper helper = new IntactHelper();
-        Set expAcs = new HashSet(); //used to collect ACs from a query - Set avoids duplicates
+        Set expAcs = new HashSet( 1024 ); //used to collect ACs from a query - Set avoids duplicates
 
         Connection conn = null;
         Statement stmt = null;  //ordinary Statement will do - won't be reused
@@ -215,6 +252,23 @@ public class ExperimentListGenerator {
         }
     }
 
+    /**
+     * Sort a collection of Objects. The given collection is not modified, a new one is returned.
+     * @param l collection to sort.
+     * @return the sorted collection.
+     */
+    private static List getSortedShortlabel( Collection l ) {
+
+        List sorted = new ArrayList( l.size() );
+
+        for ( Iterator iterator = l.iterator(); iterator.hasNext(); ) {
+            Experiment experiment = (Experiment) iterator.next();
+            sorted.add( experiment.getShortLabel() );
+        }
+
+        Collections.sort( sorted );
+        return sorted;
+    }
 
     /**
      * Output the experiment classification, suitable for scripting
@@ -227,39 +281,39 @@ public class ExperimentListGenerator {
         for ( Iterator iterator = allExp.keySet().iterator(); iterator.hasNext(); ) {
             BioSource bioSource = (BioSource) iterator.next();
 
-            ArrayList smallScaleExp = (ArrayList) ( (HashMap) allExp.get( bioSource ) ).get( "small" );
-            System.out.println( bioSource.getShortLabel() + "(small) -> " + smallScaleExp.size() );
+            Set smallScaleExp = (Set) ( (HashMap) allExp.get( bioSource ) ).get( SMALL );
+            System.out.println( bioSource.getShortLabel() + "("+ SMALL +") -> " + smallScaleExp.size() );
 
-            ArrayList largeScaleExp = (ArrayList) ( (HashMap) allExp.get( bioSource ) ).get( "large" );
-            System.out.println( bioSource.getShortLabel() + "(large) -> " + largeScaleExp.size() );
+            Set largeScaleExp = (Set) ( (HashMap) allExp.get( bioSource ) ).get( LARGE );
+            System.out.println( bioSource.getShortLabel() + "("+LARGE+") -> " + largeScaleExp.size() );
         }
 
 
         for ( Iterator iterator = allExp.keySet().iterator(); iterator.hasNext(); ) {
 
             BioSource bioSource = (BioSource) iterator.next();
-            ArrayList smallScaleExp = (ArrayList) ( (HashMap) allExp.get( bioSource ) ).get( "small" );
+            Set smallScaleExp = (Set) ( (HashMap) allExp.get( bioSource ) ).get( SMALL );
 
             String fileNameRoot = bioSource.getShortLabel().replace( ' ', '-' );
             //create two filenames, one for usual exps and one for any 'negatives'
-            String smallFile = fileNameRoot + "_small.xml";
-            String negFile = fileNameRoot + "_small_negative.xml";
+            String smallFile = fileNameRoot + "_"+ SMALL +".xml";
+            String negFile = fileNameRoot + "_"+ SMALL +"_negative.xml";
 
             //buffers to hold the labels for small and negative small exps
             StringBuffer negPattern = new StringBuffer( 128 );
             StringBuffer pattern = new StringBuffer( 128 );
 
-            String label = null;
-            for ( int i = 0; i < smallScaleExp.size(); i++ ) {
-                Experiment experiment = (Experiment) smallScaleExp.get( i );
-                label = experiment.getShortLabel();
+            // sort the collection by alphabetical order
+            List shortlabels = getSortedShortlabel( smallScaleExp );
+            for ( Iterator iterator1 = shortlabels.iterator(); iterator1.hasNext(); ) {
+                String shortlabel = (String) iterator1.next();
 
                 //put the Experiment label in the correct place, depending upon
                 //its sub-classification (ie negative or not)
-                if ( negExpLabels.contains( label ) ) {
-                    negPattern.append( label + "," );
+                if ( negExpLabels.contains( shortlabel ) ) {
+                    negPattern.append( shortlabel ).append( "," );
                 } else {
-                    pattern.append( label + "," );
+                    pattern.append( shortlabel ).append( "," );
                 }
             }
 
@@ -293,21 +347,20 @@ public class ExperimentListGenerator {
 
             //Now do the large ones...
             //NB these are classified into single files, one for each shortLabel
-            ArrayList largeScaleExp = (ArrayList) ( (HashMap) allExp.get( bioSource ) ).get( "large" );
+            Set largeScaleExp = (Set) ( (HashMap) allExp.get( bioSource ) ).get( LARGE );
             String fileName = fileNameRoot;
-            for ( int i = 0; i < largeScaleExp.size(); i++ ) {
-                Experiment experiment = (Experiment) largeScaleExp.get( i );
+            shortlabels = getSortedShortlabel( largeScaleExp );
+            for ( Iterator iterator1 = shortlabels.iterator(); iterator1.hasNext(); ) {
+                String shortlabel = (String) iterator1.next();
 
-                label = experiment.getShortLabel();
-
-                if ( negExpLabels.contains( label ) ) {
-                    fileName = fileName + "_" + label + "_negative";
+                if ( negExpLabels.contains( shortlabel ) ) {
+                    fileName = fileName + "_" + shortlabel + "_negative";
                 } else {
-                    fileName = fileName + "_" + label;
+                    fileName = fileName + "_" + shortlabel;
                 }
 
                 //dump out the generated <filename> <label> pair
-                String line = fileName + ".xml" + " " + label;
+                String line = fileName + ".xml" + " " + shortlabel;
                 System.out.println( line );
                 writer.write( line );
                 writer.write( NEW_LINE );
@@ -315,7 +368,6 @@ public class ExperimentListGenerator {
             }
         }
     }
-
 
     private static void displayUsage( Options options ) {
         // automatically generate the help statement
@@ -326,14 +378,13 @@ public class ExperimentListGenerator {
                              options );
     }
 
-    protected static String TIME;
-
-    static {
-        SimpleDateFormat formatter = new SimpleDateFormat( "yyyy-MM-dd@HH.mm" );
-        TIME = formatter.format( new Date() );
-        formatter = null;
-    }
-
+    /**
+     * Run the program that create a flat file containing the classification of IntAct experiment for PSI download.
+     *
+     * @param args -output <filename> -pattern <shortlabel pattern>
+     * @throws IntactException
+     * @throws IOException
+     */
     public static void main( String[] args ) throws IntactException, IOException {
 
         // if only one argument, then dump the matching experiment classified by specied into a file
