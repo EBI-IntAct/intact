@@ -122,7 +122,7 @@
                                <li> AC </li>
                                <li> shortlabel </li>
                                <li> fullname </li>
-                               <li> Xref (UniProtKb, GO, FlyBase, SGD, Interpro...) </li>
+                               <li> Xref (UniProtKB, GO, FlyBase, SGD, Interpro...) </li>
                                <li> Alias (gene name, locus, orf ...) </li>
                             </ul>
                             <!--
