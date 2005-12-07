@@ -673,11 +673,11 @@ public class UpdateCVs {
                     primaryId = cvTermXref.getId();
                     // we set the qualifier to primary-refrence to the first pubmed id we encounter.
                     if ( !seenPubmed ) {
-                        CvXrefQualifier primaryRef = (CvXrefQualifier) getCvObject( helper, CvXrefQualifier.class,
-                                                                                    CvXrefQualifier.PRIMARY_REFERENCE,
-                                                                                    CvXrefQualifier.PRIMARY_REFERENCE_MI_REF );
-                        if ( primaryRef != null ) {
-                            qualifier = primaryRef;
+                        CvXrefQualifier goDefRef = (CvXrefQualifier) getCvObject( helper, CvXrefQualifier.class,
+                                                                                    CvXrefQualifier.GO_DEFINITION_REF,
+                                                                                    CvXrefQualifier.GO_DEFINITION_REF_MI_REF );
+                        if ( goDefRef != null ) {
+                            qualifier = goDefRef;
                         }
 
                         seenPubmed = true;
