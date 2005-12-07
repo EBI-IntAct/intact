@@ -258,10 +258,10 @@ public class GoUtils {
     public CvXrefQualifier getGoDefinitionQualifier() throws IntactException {
 
         if ( goDefinition == null ) {
-            goDefinition = (CvXrefQualifier) getCvObjectViaMI( CvXrefQualifier.class, "MI:0242" ); // go-definition-ref
+            goDefinition = (CvXrefQualifier) getCvObjectViaMI( CvXrefQualifier.class, CvXrefQualifier.GO_DEFINITION_REF_MI_REF ); // go-definition-ref
 
             if ( goDefinition == null ) {
-                throw new IntactException( "Could not find CvXrefQualifier using MI:0242" );
+                throw new IntactException( "Could not find CvXrefQualifier(go-definition-ref) using " + CvXrefQualifier.GO_DEFINITION_REF_MI_REF );
             }
         }
 
@@ -271,10 +271,10 @@ public class GoUtils {
     public CvXrefQualifier getIdentityQualifier() throws IntactException {
 
         if ( identity == null ) {
-            identity = (CvXrefQualifier) getCvObjectViaMI( CvXrefQualifier.class, "MI:0356" ); // go-definition-ref
+            identity = (CvXrefQualifier) getCvObjectViaMI( CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF ); // go-definition-ref
 
             if ( identity == null ) {
-                throw new IntactException( "Could not find CvXrefQualifier using MI:0356" );
+                throw new IntactException( "Could not find CvXrefQualifier(identity) using " + CvXrefQualifier.IDENTITY_MI_REF );
             }
         }
 
@@ -284,10 +284,10 @@ public class GoUtils {
     public CvDatabase getPubmedDatabase() throws IntactException {
 
         if ( pubmed == null ) {
-            pubmed = (CvDatabase) getCvObjectViaMI( CvDatabase.class, "MI:0446" ); // go-definition-ref
+            pubmed = (CvDatabase) getCvObjectViaMI( CvDatabase.class, CvDatabase.PUBMED_MI_REF ); // go-definition-ref
 
             if ( pubmed == null ) {
-                throw new IntactException( "Could not find CvDatabase using MI:0446" );
+                throw new IntactException( "Could not find CvDatabase using " + CvDatabase.PUBMED_MI_REF );
             }
         }
 
@@ -297,10 +297,10 @@ public class GoUtils {
     public CvDatabase getResidDatabase() throws IntactException {
 
         if ( resid == null ) {
-            resid = (CvDatabase) getCvObjectViaMI( CvDatabase.class, "MI:0248" ); // go-definition-ref
+            resid = (CvDatabase) getCvObjectViaMI( CvDatabase.class, CvDatabase.RESID_MI_REF ); // go-definition-ref
 
             if ( resid == null ) {
-                throw new IntactException( "Could not find CvDatabase using MI:0248" );
+                throw new IntactException( "Could not find CvDatabase using " + CvDatabase.RESID_MI_REF );
             }
         }
 
@@ -373,10 +373,7 @@ public class GoUtils {
      * @return the string after normalizing <code>label</code>.
      */
     public static String normalizeShortLabel( String label ) {
-        if ( label.length() > AnnotatedObject.MAX_SHORT_LABEL_LEN ) {
-            return label.substring( 0, Math.min( label.length(),
-                                                 AnnotatedObject.MAX_SHORT_LABEL_LEN ) ).toLowerCase();
-        }
+
         return label.toLowerCase();
     }
 
@@ -433,8 +430,7 @@ public class GoUtils {
         // Try with Go id
         CvObject current = (CvObject) myHelper.getObjectByXref( myTargetClass, goid );
         if ( null != current ) {
-            Collection xref = current.getXrefs();
-            for ( Iterator iterator = xref.iterator(); iterator.hasNext(); ) {
+            for ( Iterator iterator = current.getXrefs().iterator(); iterator.hasNext(); ) {
                 Xref x = (Xref) iterator.next();
                 if ( x.getCvDatabase().getShortLabel().equals( myGoIdDatabase )
                      && x.getPrimaryId().equals( goid ) ) {
@@ -458,11 +454,11 @@ public class GoUtils {
      *
      * @throws IntactException for errors in accessing persistent system.
      */
-    public CvObject insertDefinition( String goId, String goTerm,
-                                      String goShortLabel, boolean deleteold )
-            throws IntactException {
-        return insertDefinition( new GoRecord( goId, goTerm, goShortLabel ), deleteold );
-    }
+//    public CvObject insertDefinition( String goId, String goTerm,
+//                                      String goShortLabel, boolean deleteold )
+//            throws IntactException {
+//        return insertDefinition( new GoRecord( goId, goTerm, goShortLabel ), deleteold );
+//    }
 
 
     /**
@@ -521,12 +517,10 @@ public class GoUtils {
                 CvObject cv = insertDefinition( goRecord, false );
                 terms.put( goRecord, cv );
 
-
                 if ( ( ++count % 10 ) == 0 ) {
                     System.out.print( count + " " );
                     System.out.flush();
                 }
-
 
             } catch ( IntactException e ) {
                 System.err.println( "Error storing GO record " + ( count - 1 ) );
@@ -551,7 +545,7 @@ public class GoUtils {
 
                 if ( cv != null ) {
 
-                    UpdateAnnotations( cv, goRecord );
+                    updateAnnotations( cv, goRecord );
 
                     if ( ( ++count % 10 ) == 0 ) {
                         System.out.print( count + " " );
@@ -766,8 +760,7 @@ public class GoUtils {
             //of constructor. Thus do it further down after getting a shortLabel...
             current = createCvObject( myTargetClass );
             if ( current == null ) {
-                throw new IntactException( "failed to create new CvObject of type "
-                                           + myTargetClass.getName() );
+                throw new IntactException( "failed to create new CvObject of type " + myTargetClass.getName());
             }
             current.setOwner( inst );
             myHelper.create( current );
@@ -801,7 +794,7 @@ public class GoUtils {
     }
 
 
-    private void UpdateAnnotations( CvObject current, GoRecord goRec ) throws IntactException {
+    private void updateAnnotations( CvObject current, GoRecord goRec ) throws IntactException {
 
         // Cache the institution.
         Institution inst = myHelper.getInstitution();
@@ -812,13 +805,13 @@ public class GoUtils {
             CvTopic cvtopic = (CvTopic) myHelper.getObjectByLabel( CvTopic.class, topic );
             if ( cvtopic == null ) {
                 // Topic is not found, continue with the next.
-                if ( !"definition_reference".equals( topic ) ) {
+                if ( ! "definition_reference".equals( topic ) ) {
                     System.err.println( "Warning! An annotation could not be added to the term " +
                                         current.getShortLabel() + " as the CvTopic( " + topic + " ) could not be found." );
                 }
                 continue;
             } else {
-                CvTopic definition = (CvTopic) myHelper.getObjectByLabel( CvTopic.class, "definition" );
+                CvTopic definition = (CvTopic) myHelper.getObjectByLabel( CvTopic.class, CvTopic.DEFINITION );
                 // There should be only one definition
                 if ( cvtopic.equals( definition ) ) {
                     handleDefinition( goRec, current );
@@ -842,11 +835,11 @@ public class GoUtils {
             }
         }
 
-        // add xref to goidDatabase if it does not yet exist.
+        // add xref to goidDatabase if it does not exist yet.
 
         // TODO check that upfront in GoTools.
         CvDatabase goidDB = null;
-        if ( !myGoIdDatabase.equals( "-" ) ) {
+        if ( ! myGoIdDatabase.equals( "-" ) ) {
             goidDB = (CvDatabase) myHelper.getObjectByLabel( CvDatabase.class, myGoIdDatabase );
 
             if ( goidDB == null ) {
@@ -859,7 +852,7 @@ public class GoUtils {
 
             CvXrefQualifier identity = getIdentityQualifier();
             Xref xref = new Xref( inst, goidDB, goRec.getGoId(), null, null, identity );
-            if ( !current.getXrefs().contains( xref ) ) {
+            if ( ! current.getXrefs().contains( xref ) ) {
                 current.addXref( xref );
                 myHelper.create( xref );
             }
@@ -875,7 +868,7 @@ public class GoUtils {
                 CvXrefQualifier goDefRef = getGoDefinitionQualifier();
                 CvDatabase pubmedDB = getPubmedDatabase();
                 Xref xref = new Xref( inst, pubmedDB, m.group( 1 ), null, null, goDefRef );
-                if ( !current.getXrefs().contains( xref ) ) {
+                if ( ! current.getXrefs().contains( xref ) ) {
                     current.addXref( xref );
                     myHelper.create( xref );
                 }
@@ -891,13 +884,14 @@ public class GoUtils {
                     CvXrefQualifier goDefRef = getGoDefinitionQualifier();
                     CvDatabase residDB = getResidDatabase();
                     Xref xref = new Xref( inst, residDB, token.trim(), null, null, goDefRef );
-                    if ( !current.getXrefs().contains( xref ) ) {
+                    if ( ! current.getXrefs().contains( xref ) ) {
                         current.addXref( xref );
                         myHelper.create( xref );
                     }
                 }
             }
         }
+        
         // Update main object
         if ( myHelper.isPersistent( current ) ) {
             myHelper.update( current );
@@ -945,6 +939,7 @@ public class GoUtils {
      */
     private static CvObject createCvObject( Class clazz ) {
 
+        // TODO could be written giving as params institution + shortlabel
         Constructor[] constructors = clazz.getDeclaredConstructors();
         Constructor noArgs = null;
         for ( int i = 0; i < constructors.length; i++ ) {
@@ -1035,7 +1030,7 @@ public class GoUtils {
         StringBuffer sb = new StringBuffer();
 
         CvDatabase pubmedDB = (CvDatabase) myHelper.getObjectByLabel( CvDatabase.class, ourPubMedDB );
-
+        int n=0;
         Collection xref = cvobj.getXrefs();
         for ( Iterator iterator = xref.iterator(); iterator.hasNext(); ) {
             Xref x = (Xref) iterator.next();
@@ -1046,6 +1041,8 @@ public class GoUtils {
                 sb.append( "definition_reference: PMID:" );
                 sb.append( x.getPrimaryId() );
                 sb.append( nl );
+                n++;
+                System.out.println("n = " + n);
             }
         }
         return sb.length() > 0 ? sb.toString() : null;

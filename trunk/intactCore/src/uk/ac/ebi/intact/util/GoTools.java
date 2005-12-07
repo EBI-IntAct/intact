@@ -147,8 +147,12 @@ public class GoTools {
 
                 // That flag will allow the creation of the PSI MI Xref after checking that the CvDatabase exists.
                 identityCreated = true;
+                if (identityCreated){
+                    System.out.println("identity has been created");
+                }
             }
         }
+
 
         // 2. check that the CvDatabase 'psi-mi'/'MI:0356' is present...
         boolean psiAlreadyExists = false;
@@ -193,6 +197,99 @@ public class GoTools {
             // identity already existed, check that it has the right PSI Xref.
             updatePsiXref( identity, IDENTITY_MI_REFERENCE, helper, psi, identity );
         }
+
+
+        // 3. check that the CvDatabase 'pubmed'/'MI:0446' is present...
+        boolean pubmedAlreadyExists = false;
+        CvDatabase pubmed = (CvDatabase) helper.getObjectByXref( CvDatabase.class,
+                                                              CvDatabase.PUBMED_MI_REF );
+        if ( pubmed == null ) {
+            // then look for shortlabel
+            pubmed = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, CvDatabase.PUBMED );
+
+            if ( pubmed == null ) {
+
+                System.out.println( "CvDatabase( " + CvDatabase.PUBMED + " ) doesn't exists, create it." );
+
+                // not there, then create it manually
+                pubmed = new CvDatabase( helper.getInstitution(), CvDatabase.PUBMED );
+                helper.create( pubmed );
+
+                Xref xref = new Xref( helper.getInstitution(), psi, CvDatabase.PUBMED_MI_REF, null, null, identity );
+                pubmed.addXref( xref );
+
+                helper.create( xref );
+            } else {
+                pubmedAlreadyExists = true;
+            }
+        } else {
+            pubmedAlreadyExists = true;
+        }
+
+        if ( pubmedAlreadyExists ) {
+            // check that it has the right MI reference.
+            updatePsiXref( pubmed, CvDatabase.PUBMED_MI_REF, helper, psi, identity );
+        }
+
+
+
+        // 4. check that the CvDatabase 'go-definition-ref'/'MI:0242' is present...
+        boolean goDefRefAlreadyExists = false;
+        CvXrefQualifier goDefRef = (CvXrefQualifier) helper.getObjectByXref( CvXrefQualifier.class,
+                                                                             CvXrefQualifier.GO_DEFINITION_REF_MI_REF );
+        if ( goDefRef == null ) {
+            // then look for shortlabel
+            goDefRef = (CvXrefQualifier) helper.getObjectByLabel( CvXrefQualifier.class, CvXrefQualifier.GO_DEFINITION_REF );
+
+            if ( goDefRef == null ) {
+
+                System.out.println( "CvXrefQualifier( " + CvXrefQualifier.GO_DEFINITION_REF + " ) doesn't exists, create it." );
+
+                // not there, then create it manually
+                goDefRef = new CvXrefQualifier( helper.getInstitution(), CvXrefQualifier.GO_DEFINITION_REF );
+                helper.create( goDefRef );
+
+                Xref xref = new Xref( helper.getInstitution(), psi, CvXrefQualifier.GO_DEFINITION_REF_MI_REF, null, null, identity );
+                goDefRef.addXref( xref );
+
+                helper.create( xref );
+            } else {
+                goDefRefAlreadyExists = true;
+            }
+        } else {
+            goDefRefAlreadyExists = true;
+        }
+
+        if ( goDefRefAlreadyExists ) {
+            // check that it has the right MI reference.
+            updatePsiXref( goDefRef, CvXrefQualifier.GO_DEFINITION_REF_MI_REF, helper, psi, identity );
+        }
+        
+
+//        if ( pubmedCreated ) {
+//
+//            // add the psi reference to the identity term.
+//            Xref xref = new Xref( helper.getInstitution(), psi, CvDatabase.PUBMED_MI_REF, null, null, identity );
+//            pubmed.addXref( xref );
+//
+//            helper.create( xref );
+//        } else {
+//            // identity already existed, check that it has the right PSI Xref.
+//            updatePsiXref( pubmed, CvDatabase.PUBMED_MI_REF, helper, psi, identity );
+//        }
+//
+//        if ( goDefRefCreated ) {
+//
+//            // add the psi reference to the identity term.
+//            Xref xref = new Xref( helper.getInstitution(), psi, CvXrefQualifier.GO_DEFINITION_REF_MI_REF, null, null, identity );
+//            goDefRef.addXref( xref );
+//
+//            helper.create( xref );
+//        } else {
+//            // identity already existed, check that it has the right PSI Xref.
+//            updatePsiXref( goDefRef, CvXrefQualifier.GO_DEFINITION_REF_MI_REF, helper, psi, identity );
+//        }
+
     }
 
     /**
