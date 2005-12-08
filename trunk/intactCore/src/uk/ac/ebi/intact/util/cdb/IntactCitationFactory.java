@@ -5,9 +5,12 @@
  */
 package uk.ac.ebi.intact.util.cdb;
 
+//import HTTPClient.*;
+//import org.apache.soap.transport.*;
+//import oracle.soap.transport.*;
 import uk.ac.ebi.cdb.webservice.proxy.WSCitationProxy;
-import uk.ac.ebi.citation.map.Author;
-import uk.ac.ebi.citation.map.Citation;
+import uk.ac.ebi.cdb.bean.Author;
+import uk.ac.ebi.cdb.bean.Citation;
 
 import java.util.Iterator;
 import java.util.List;
@@ -120,7 +123,7 @@ public class IntactCitationFactory {
 
         // retreive information
 
-        int year = c.getJournalIssue().getYearOfPublication();
+        int year = (c.getJournalIssue().getYearOfPublication()).intValue();
         String title = c.getTitle();
         String email = getEmail( c );
 
@@ -141,7 +144,7 @@ public class IntactCitationFactory {
             Author author = (Author) authorList.iterator().next();
 
             // it has to be lowercase
-            authorLastName = author.getLastname().toLowerCase();
+            authorLastName = author.getLastName().toLowerCase();
 
             // 11 characters maximum
             authorLastName = authorLastName.substring( 0, Math.min( 11, authorLastName.length() ) );
@@ -167,7 +170,7 @@ public class IntactCitationFactory {
                 for ( Iterator iterator = authorList.iterator(); iterator.hasNext(); ) {
                     Author anAuthor = (Author) iterator.next();
 
-                    authorsBuffer.append( anAuthor.getLastname() ).append( ' ' ).append( anAuthor.getInitials() ).append( '.' );
+                    authorsBuffer.append( anAuthor.getLastName() ).append( ' ' ).append( anAuthor.getInitials() ).append( '.' );
 
                     if( iterator.hasNext() ) {
                         authorsBuffer.append( ',' ).append( ' ' );
