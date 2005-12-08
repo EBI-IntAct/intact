@@ -41,11 +41,14 @@ public class FileGenerator {
      *
      * @throws IntactException thrown if there was a search problem
      */
-    public Collection getDbData( String searchPattern ) throws IntactException {
+    public HashSet getDbData( String searchPattern ) throws IntactException {
 
         //try this for now, but it may be better to use SQL and get the ACs,
         //then cycle through them and generate PSI one by one.....
-        ArrayList searchResults = new ArrayList();
+        //The searchResults is a HashSet to avoid the redundancy of the same
+        //Experiment
+        HashSet searchResults = new HashSet();
+
         System.out.print( "Retrieving data from DB store..." );
         System.out.flush();
 
