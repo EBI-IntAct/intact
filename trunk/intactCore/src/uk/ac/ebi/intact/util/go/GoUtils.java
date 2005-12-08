@@ -1030,7 +1030,6 @@ public class GoUtils {
         StringBuffer sb = new StringBuffer();
 
         CvDatabase pubmedDB = (CvDatabase) myHelper.getObjectByLabel( CvDatabase.class, ourPubMedDB );
-        int n=0;
         Collection xref = cvobj.getXrefs();
         for ( Iterator iterator = xref.iterator(); iterator.hasNext(); ) {
             Xref x = (Xref) iterator.next();
@@ -1041,8 +1040,6 @@ public class GoUtils {
                 sb.append( "definition_reference: PMID:" );
                 sb.append( x.getPrimaryId() );
                 sb.append( nl );
-                n++;
-                System.out.println("n = " + n);
             }
         }
         return sb.length() > 0 ? sb.toString() : null;
