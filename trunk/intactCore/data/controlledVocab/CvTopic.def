@@ -3,14 +3,17 @@ definition: R-factors are measures of the quality of a crystallographic model.
 During refinement of a crystal structure a small test set of refinement data may be set aside and used to assess the quality of the refinement process.
 The R-factor that is calculated using such a test set of data is the free R-factor whilst the R-factor calculated for the data that is used in refinement is the working R-factor. If no test set was used in refinement, the single, overall R-factor is given.
 example: working 24.4%, free 28.4%
+used-in-class: uk.ac.ebi.intact.model.Interaction
 definition_reference: PMID:INTACT
 
 term: 3d-resolution: Resolution of the 3D structure
 definition: The effective resolution of the structure. This value is only applicable to structures which have been solved with certain experimental methods, most commonly by single crystal X-ray crystallography.
+used-in-class: uk.ac.ebi.intact.model.Interaction
 definition_reference: PMID:INTACT
 
 term: 3d-structure: Comments on the 3D structure
 definition: any comments on the 3D structure
+used-in-class: uk.ac.ebi.intact.model.Interaction
 definition_reference: PMID:INTACT
 
 term: accepted: Annotation to indicate that this entry has been checked and accepted by a senior curator.
@@ -21,90 +24,163 @@ definition_reference: PMID:INTACT
 term: agonist: Activator of an interactor.
 definition: Acts on an external cell receptor or other upstream molecule to stimulate a downstream interaction, potentially by modification of one or more of the interactors. For example cells are treated with the agonist IL-2 causing initiation of a kinase cascade and phosphorylation of cellular proteins, leading to interaction formation.
 example: EBI-448589: pretreatment of IRAK1 with agonist IL-1 beta required for interaction.
+used-in-class: uk.ac.ebi.intact.model.Interaction
 definition_reference: PMID:INTACT
 
 term: antagonist: Inactivator of an interactor.
 definition: Opposes the effect of a natural ligand by binding at the
 same receptor or alters the state of an upstream molecule to inhibit a downstream interaction.
 example: An interaction is dependent on a prerequisite phosphorylation of an amino acid, a phosphatase inhibitor e.g. vanadate, will add as an antagonist.
+used-in-class: uk.ac.ebi.intact.model.Interaction
 definition_reference: PMID:INTACT
+
+term: attribute name
+id: MI:0590
+definition: Collection of topic describing the free text stored as an attribute value.
+definition_reference: PMID:14755292
 
 term: author-confidence: Confidence classification assigned by the author of the publication
 definition: A confidence value assigned to an interaction by the author of a paper. This may be a numerical value or a classification into groups. There may be more than one author-confidence for an interaction if the author uses different systems to assign them.
 example: In the Giot dataset (giot-2003-ex1), one interaction can have one author-confidence "0.43" and one author-confidence "low", because the authors chose 0.5 as a cutoff for high-confidence interactions.
+used-in-class: uk.ac.ebi.intact.model.Interaction
+definition_reference: PMID:INTACT
+
+term: author-list: List of authors associated to a publication
+used-in-class: uk.ac.ebi.intact.model.Experiment
 definition_reference: PMID:INTACT
 
 term: caution: warning about errors/ grounds for confusion.
+used-in-class: uk.ac.ebi.intact.model.Interaction, uk.ac.ebi.intact.model.Experiment, uk.ac.ebi.intact.model.CvObject, uk.ac.ebi.intact.model.Protein
 definition_reference: PMID:INTACT
 
 term: comment: Comment for public view
+used-in-class: uk.ac.ebi.intact.model.Interaction, uk.ac.ebi.intact.model.Experiment, uk.ac.ebi.intact.model.CvObject, uk.ac.ebi.intact.model.Protein, uk.ac.ebi.intact.model.BioSource
 definition_reference: PMID:INTACT
 
 term: complex-properties: Information on the complex being annotated.
+used-in-class: uk.ac.ebi.intact.model.Interaction,uk.ac.ebi.intact.model.Experiment
+definition_reference: PMID:INTACT
+
+term: complex-synonyms: Collection of alternative names to describe a complex
+comment: List of synonyms, separated by a semicolon.
+example: MCM2-7; mini-chromosome maintenance complex;
+used-in-class: uk.ac.ebi.intact.model.Interaction
 definition_reference: PMID:INTACT
 
 term: confidence-mapping: Description of confidence mappings in the experiment
 definition: Description of author-confidence mappings in the experiment. If more than one system of confidence mappings are used by the author, these will be described here.
+used-in-class: uk.ac.ebi.intact.model.Experiment
 definition_reference: PMID:INTACT
 
 term: contact-comment: Free text notes on how to contact the author organisation which has produced the data.
 definition: The original address given in the publication was john@doe.com. This address is now invalid and has been replaced by the one given in contact-email. May also be used to give a postal address but this is not mandatory..
 no-export: Will be excluded from export to the public.
+used-in-class: uk.ac.ebi.intact.model.Experiment
 definition_reference: PMID:INTACT
 
 term: contact-email: E-mail address to contact the author/organisation which has produced the data
 definition: Valid e-mail address to contact the data producer. Usually the contact given in the publication, unless this has been replaced with a more up to date one. Must be a valid e-mail only, no comments, postal address etc.
 example: john@doe.com
+used-in-class: uk.ac.ebi.intact.model.Experiment
 definition_reference: PMID:INTACT
 
 term: copyright: Description of the copyright under which the data is distributed.
 definition: Individual experiments or interactions might have specific copyright statements attached to them. A copyright statement on experiment level applies to all interactions which are part of the experiment. Copyright statements attached to individual interactions override the statements inherited from the experiment.
+used-in-class: uk.ac.ebi.intact.model.Experiment
+definition_reference: PMID:INTACT
+
+term: curated-complex: Curated complex
+used-in-class: uk.ac.ebi.intact.model.Interaction
 definition_reference: PMID:INTACT
 
 term: data-processing: Information about how the data was processed- mainly for large scale data.
 definition: Include here the steps taken in processing this data as well as the original number of interactions quoted by the author and the corresponding number in IntAct database.
+used-in-class: uk.ac.ebi.intact.model.Experiment
+definition_reference: PMID:INTACT
+
+term: dataset: Dataset of experiments
+definition: Targeted curation dataset grouping experiments by topic or dataset origin.
+example: Dataset on Cyanobacteria and related species
+used-in-class: uk.ac.ebi.intact.model.Experiment
 definition_reference: PMID:INTACT
 
 term: definition: Definition of the controlled vocabulary term
+used-in-class: uk.ac.ebi.intact.model.CvObject
 definition_reference: PMID:INTACT
 
 term: disease: The interaction has a disease association.
 comment: The interaction is shown to have a disease association OR
+used-in-class: uk.ac.ebi.intact.model.Interaction
 definition_reference: PMID:INTACT
 
 term: example: Example
 definition: Comment topic used to mark examples, normally used for the explanation of controlled vocabulary terms.
+used-in-class: uk.ac.ebi.intact.model.CvObject
 definition_reference: PMID:INTACT
 
 term: exp-modification: Modifications of an existing experimental method.
 definition: Modifications of experimental method/s described in the controlled vocabulary.
+used-in-class: uk.ac.ebi.intact.model.Experiment
 definition_reference: PMID:INTACT
 
+term: experiment descripti: experiment description
+id: MI:0591
+definition: The experimental condition text description, should contain information about the organisms hosting the interaction.
+definition_reference: PMID:14755292
+
+term: experimental form de: experimental form description
+id: MI:0596
+definition: Free text description of all the tags and artificial process undergone by a molecule during an experiment
+definition_reference: PMID:14755292
+
+term: feature constrain
+id: MI:0598
+definition: The feature constrain free text will specifiy whether a biological feature is shown to be possible (just observed) or required (experimentally demonstrated to be necessary for an interaction).
+definition_reference: PMID:14755292
+
+term: feature description
+id: MI:0597
+definition: The feature text description may include information about the feature detection method.
+definition_reference: PMID:14755292
+
 term: figure-legend: Figure legend(s) associated with an experiment
-definition_reference: PMID:INTACT
+id: MI:0599
+used-in-class: uk.ac.ebi.intact.model.Interaction, uk.ac.ebi.intact.model.Experiment
+definition_reference: PMID:14755292
 
 term: function: Biological Function of the Object
 definition: Describes the biological function of the Object.
+used-in-class: uk.ac.ebi.intact.model.Protein, uk.ac.ebi.intact.model.Interaction
+definition_reference: PMID:INTACT
+
+term: hidden
+definition: Controlled vocabulary term that should not be shown in the drop down list
+no-export: null
 definition_reference: PMID:INTACT
 
 term: id-validation-regexp: Regular Expression used to check the validity of cross references' identifier.
+used-in-class: uk.ac.ebi.intact.model.CvObject
 definition_reference: PMID:INTACT
 
 term: inhibition: Inhibitor of an interaction.
 definition: The interaction between the proteins or the formation of a  complex is disrupted by this biological entity or by this modification of the interactors.
 example: EBI-447320: 'Interaction between ep300 and hif1a is disrupted by chetomin'. The information will be added under annotation topic 'inhibition' in interaction.
 example: EBI-447720 'Autophosphorylation of IRAK-1 inhibits the interaction between IRAK-1 and MYD88' This information is added under annotation topic 'inhibition'
+used-in-class: uk.ac.ebi.intact.model.Interaction
 definition_reference: PMID:INTACT
 
 term: isoform-comment: Protein isoform's comment for public view
+used-in-class: uk.ac.ebi.intact.model.Interaction, uk.ac.ebi.intact.model.Protein
 definition_reference: PMID:INTACT
 
 term: kinetics: Data related to kinetics of enzymes.
 definition: Data with the rates of change in the concentration of reactants in a enzymatic reaction should be entered here.
+used-in-class: uk.ac.ebi.intact.model.Interaction
 definition_reference: PMID:INTACT
 
 term: negative: One or more of the  interactions described in this experiment are not observed under these experimental conditions.
 definition: It was demonstrated in this paper that one or more of these interactions do not occur under the experimental conditions described. The annotation topic Negative will be added at both the Experiment and Interaction level to those Interactions which have been specifically shown not to occur.
+used-in-class: uk.ac.ebi.intact.model.Interaction, uk.ac.ebi.intact.model.Experiment
 definition_reference: PMID:INTACT
 
 term: no-export: Do not export annotation which has a topic annotated with this topic.
@@ -113,53 +189,64 @@ example: The annotation topic remark-internal is annotated with the no-export to
 definition_reference: PMID:INTACT
 
 term: no-uniprot-update: An amino acid sequence which is not represented in UniProt
+used-in-class: uk.ac.ebi.intact.model.Protein
 definition_reference: PMID:INTACT
 
 term: obsolete term: Flag for controlled vocabulary terms that become obsolete
+used-in-class: uk.ac.ebi.intact.model.CvObject
 definition_reference: PMID:INTACT
 
 term: on-hold: Experiment on hold until a defined date
 definition: Experiment on hold until a certain date. The date is shown in UniProt style as dd-MMM-yyyy as the first item of the line. Additional comments may be added in the same annotation. An experiment is only released if the on-hold comment has been DELETED, not automatically when it is exceeded.
 example: 30-JUL-2004: Authors expect publication in JBC in July 2004.
 no-export: Annotation with this topic should be deleted before release of the entry. But to make sure, this topic will not be expoted.
+used-in-class: uk.ac.ebi.intact.model.Experiment,uk.ac.ebi.intact.model.Interaction
 definition_reference: PMID:INTACT
 
 term: pathway: refers to the metabolic pathway that the interaction/complex is involved in.
 obsolete term: null
+used-in-class: uk.ac.ebi.intact.model.Interaction
 definition_reference: PMID:INTACT
 
 term: prerequisite-ptm: PTM required for an interaction to occur.
 obsolete term: PTMs are added as feature on the protein being modified
+used-in-class: uk.ac.ebi.intact.model.Interaction
 definition_reference: PMID:INTACT
 
 term: remark-internal: Internal remark
 definition: Internal remark. Will normally not be shown to the public.
 no-export: Will be excluded from export to the public.
+used-in-class: uk.ac.ebi.intact.model.Experiment, uk.ac.ebi.intact.model.Interaction, uk.ac.ebi.intact.model.CvObject, uk.ac.ebi.intact.model.Protein
 definition_reference: PMID:INTACT
 
 term: resulting-ptm: PTM occurs subsequent to interaction occuring
+used-in-class: uk.ac.ebi.intact.model.Interaction
 definition: PTM occuring to one protein within the complex as a result of the complex formation.
 definition_reference: PMID:INTACT
 
 term: search-url: Search engine URL.
 definition: Normally used for CvDatabase. The URL of a search engine which will retrieve an object by its primary  identifier.
+used-in-class: uk.ac.ebi.intact.model.CvObject
 example: http://www.expasy.org/cgi-bin/niceprot.pl?${ac} is the search url for the database uniprot. If ${ac} is replaced by an SPTR accession number, the resulting URL http://www.expasy.org/cgi-bin/niceprot.pl?P12345 will retrieve the corresponding database object.
 definition_reference: PMID:INTACT
 
 term: search-url-ascii: Search URL to retrieve an external entry in ASCII format
 definition: Normally used for CvDatabase objects. A URL to retrieve an external object by its accession number. Same as search-url, but the URL retrieves the external object as ASCII text.
+used-in-class: uk.ac.ebi.intact.model.CvObject
 definition_reference: PMID:INTACT
 
 term: stimulation: Stimulator of an interaction.
 definition: Reaction occurs at a faster rate in the presence of this compound or molecule i.e. the molecule directly physically co-operates with the interaction. Reaction may not occur at all in the absence of this molecule.
 example: EBI-445573: Over-expression of the kinase domain of LIMK1 stimulates the cofillin/14-3-3 association, potentially by phosphorylating cofillin
+used-in-class: uk.ac.ebi.intact.model.Interaction
 definition_reference: PMID:INTACT
 
 term: submitted: Data submitted by author/s directly to IntAct.
 definition: Additional data relating to an existing interaction submitted by author/s directly to IntAct. This data will not in future be part of an publication.
+used-in-class: uk.ac.ebi.intact.model.Experiment
 definition_reference: PMID:INTACT
 
-term: to-be-reviewed: This entry has been checked by a senior curator and need to be reviewed.
+term: to-be-reviewed: This entry has been checked by a senior curator and needs to be reviewed.
 definition: This entry has been checked and rejected by a senior curator. The annotation text should have the defined format as shown in the short example, but can be extended by additional comments as shown in the extended example.
 example: 30-JUL-2004: Rejected by JYOTI.
 example: 30-JUL-2004: Rejected by JYOTI. The identification method should be mass-spec, the figure reference 2a needs to be added, and the interactions from box 3 are missing entirely.
@@ -168,17 +255,27 @@ definition_reference: PMID:INTACT
 
 term: uniprot-cc-note: Text which is exported into UniProt as a "note" in the CC INTERACTION block.
 no-export: Will be excluded from export to the public.
+used-in-class: uk.ac.ebi.intact.model.Interaction, uk.ac.ebi.intact.model.Experiment
 definition_reference: PMID:INTACT
 
 term: uniprot-dr-export: Determines if the experiment is to be exported to UniProt DR lines.
 definition: Determines whether the interactions of an experiment should be exported to UniProt DR lines. This can be according to a setting in the CvInteraction controlled vocabulary, or by an explicit setting for an experiment.
 comment: For experiments: If set in an experiment, the setting overrides any setting derived from the CvInteraction controlled vocabulary. If this topic is set to value set by "author-confidence", e.g. "high", then this means only interactions with that author-confidence are to be exported to UniProt.
 no-export: Will be excluded from export to the public.
+used-in-class: uk.ac.ebi.intact.model.Experiment
 definition_reference: PMID:INTACT
 
 term: url: URL/Web address
 definition: The URL (Web address) at which to find more information on the object.
 example: Normally crossreferences will be entered as crossreference object with the appropriate accession number and database from the list of defined databases. However, in some cases the database many not be defined in IntAct, or the reference is to a web page, not a database with search by accession number. In this case, the appropriate URL can be inserted as a URL object.
 example: The home page of a database in a CvDatabase object, e.g. http://www.uniprot.org
+used-in-class: uk.ac.ebi.intact.model.Experiment, uk.ac.ebi.intact.model.Interaction, uk.ac.ebi.intact.model.CvObject, uk.ac.ebi.intact.model.BioSource
+definition_reference: PMID:INTACT
+
+term: used-in-class: null
+used-in-class: uk.ac.ebi.intact.model.CvObject
+no-export: null
+example: If you consider the cvTopic author-list it has a used-in-class annotation with cvTopic description equals to uk.ac.ebi.intact.model.Experiment. This means that author-list cvTopic is can be used to annotate an experiment only.
+definition: This cvTopic is used to annotate the cvTopics. It permits to define for which object each cvTopic can be used.
 definition_reference: PMID:INTACT
 
