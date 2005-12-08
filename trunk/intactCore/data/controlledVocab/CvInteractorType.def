@@ -1,3 +1,8 @@
+term: biopolymer
+id: MI:0383
+definition: Molecule consisting of a specific sequence of amino acidic or nucleotidic monomers strung together through chemical bonds.
+definition_reference: PMID:14577292
+
 term: complex
 id: MI:0314
 definition: A stable set of interacting molecules that can be copurified and operate as a functional unit. This term and its children should be use only at PARTICIPANT level.
@@ -13,9 +18,14 @@ id: MI:0319
 definition: Polymer formed by the deoxyribose sugar group, and the nucleotides bases adenine, guanine, thymine and cytosine
 definition_reference: PMID:14755292
 
+term: gene
+id: MI:0250
+definition: interactor for genetic interaction
+definition_reference: PMID:14755292
+
 term: grna: guide rna
 id: MI:0322
-definition: Small RNA molecules that hybridize to specific mRNAs and direct their RNA editing.\n
+definition: Small RNA molecules that hybridize to specific mRNAs and direct their RNA editing.
 definition_reference: PMID:14755292
 
 term: hnrna: heterogeneous nuclear ribonucleic acid
@@ -47,11 +57,6 @@ term: peptide
 id: MI:0327
 definition: Chains of amino acids joined by peptide bonds. Distinction between peptides, oligopeptides and polypeptides is arbitrarily by length; a polypeptide is perhaps more than 15 residues.
 definition_reference: PMID:14755292
-
-term: polymer
-id: MI:0383
-definition: A polymer is a generic term used to describe a substantially long molecule. This long molecule consists of structural units and repeating units strung together through chemical bonds. These units consist of monomers, which are typically small molecules of low molecular weight. The monomers can be identical, or they can have one or more substituted chemical groups.
-definition_reference: PMID:14577292
 
 term: protein
 id: MI:0326

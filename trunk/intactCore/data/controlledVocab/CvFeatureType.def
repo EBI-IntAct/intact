@@ -283,9 +283,14 @@ id: MI:0117
 definition: A sequence range within a protein identified as involved in an interaction.
 definition_reference: PMID:14755292
 
+term: biological feature
+id: MI:0252
+definition: Property of a subsequence that may interfere with the binding of a molecule and are supported by experimental evidences.
+definition_reference: PMID:14755292
+
 term: biotin tagged
 id: MI:0239
-definition: Biotin, a 244 Dalton vitamin found in tissue and blood, binds with high affinity to avidin and  streptavidin protein. Since biotin is a relatively small molecule, it can be conjugated to many proteins or nucleic acids without significantly altering their biological activity. Biotinylation reagents are available for targeting a variety of specific functional groups, including primary amines, sulfhydryls, carboxyls and carbohydrates that lead to nucleotides or amino acid biotinilation. \n
+definition: Biotin, a 244 Dalton vitamin found in tissue and blood, binds with high affinity to avidin and  streptavidin protein. Since biotin is a relatively small molecule, it can be conjugated to many proteins or nucleic acids without significantly altering their biological activity. Biotinylation reagents are available for targeting a variety of specific functional groups, including primary amines, sulfhydryls, carboxyls and carbohydrates that lead to nucleotides or amino acid biotinilation.
 definition_reference: PMID:14755292
 
 term: biotinyllysine: n6-biotinyl-lysine
@@ -342,11 +347,21 @@ id: MI:0365
 definition: Protein is fused to an enzyme, for example alkaline phosphatase, and measure of enzyme activity can be taken as indicative of presence of protein
 definition_reference: PMID:10935637
 
+term: experimental feature
+id: MI:0505
+definition: The form of a molecule that was actually used to experimentally demonstrate the interaction, that may differ from the sequence described by the identifying accession number.
+definition_reference: PMID:14755292
+
 term: farnesylcysteine: s-farnesyl-cysteine
 id: MI:0151
 definition: residue modification
 definition_reference: PMID:11125103
 definition_reference: RESID:AA0102
+
+term: feature type
+id: MI:0116
+definition: Property of a subsequence that may interfere with the binding of a molecule
+definition_reference: PMID:14755292
 
 term: fitc labelled: fluorescein isothiocyanate labelled
 id: MI:0377
@@ -356,7 +371,7 @@ definition_reference: PMID:14577292
 term: flag tagged
 id: MI:0518
 definition: The protein of interest is expressed as a fusion to the peptide DYKDDDDKV for which antibodies are commercially available. Sometimes multiple copies of the peptide are fused in tandem.
-definition_reference: PMID:INTACT
+definition_reference: PMID:14755292
 
 term: formylated residue
 id: MI:0146
@@ -371,7 +386,7 @@ definition_reference: RESID:AA0021
 
 term: fusion proteins
 id: MI:0240
-definition: The protein under study  is expressed as a fusion with a labelling protein, having either fluorescence properties or an enzymatic activity that facilitates its identification, localisation or quantification. \n
+definition: The protein under study  is expressed as a fusion with a labelling protein, having either fluorescence properties or an enzymatic activity that facilitates its identification, localisation or quantification.
 definition_reference: PMID:14755292
 
 term: geranylgeranylcys: s-geranylgeranyl-cysteine
@@ -469,8 +484,8 @@ definition_reference: RESID:AA0164
 
 term: gst tagged
 id: MI:0519
-definition: The protein is expressed and purified as a fusion to the gluthathione S-tranferase protein.
-definition_reference: PMID:INTACT
+definition: The protein is expressed and purified as a fusion to the glutathione S-tranferase protein.
+definition_reference: PMID:14755292
 
 term: ha tagged
 id: MI:0520
@@ -498,10 +513,21 @@ definition: residue modification
 definition_reference: PMID:11125103
 definition_reference: RESID:AA0116
 
+term: isotope labelled
+id: MI:0253
+definition: isotope
+definition_reference: PMID:14755292
+
 term: lipid modification
 id: MI:0150
 definition: residue modification
 definition_reference: PMID:11125103
+
+term: mbp tagged: maltose binding protein tagged
+id: MI:0578
+definition: The protein is expressed and purified as a fusion to the glutathione maltose-
+binding protein (MBP). The MBP-fusion protein can be purifed by affinity chromatography using an amylose resin.
+definition_reference: PMID:14755292
 
 term: methylalanine: n-methyl-alanine
 id: MI:0158
@@ -578,7 +604,12 @@ definition_reference: PMID:14755292
 
 term: mutation decreasing: mutation decreasing interaction
 id: MI:0119
-definition: Residue of a protein whose identity modifies significantly interaction properties
+definition: Residue of a protein whose identity mutation or deletion decreases significantly interaction strength.
+definition_reference: PMID:14755292
+
+term: mutation disrupting : mutation disrupting interaction
+id: MI:0573
+definition: Residue of a protein whose identity mutation or deletion totally disrupt an interaction
 definition_reference: PMID:14755292
 
 term: mutation increasing: mutation increasing interaction
@@ -589,7 +620,7 @@ definition_reference: PMID:14577292
 term: myc tagged
 id: MI:0522
 definition: The protein of interest is expressed as a fusion to the peptide EUKLISEED (a fragment of the Myc oncogene protein) for which antibodies are commercially available. Sometimes multiple copies of the peptide are fused in tandem.
-definition_reference: PMID:INTACT
+definition_reference: PMID:14755292
 
 term: myristoylated aa: myristoylated residue
 id: MI:0560
@@ -625,6 +656,11 @@ id: MI:0134
 definition: residue modification
 definition_reference: PMID:11125103
 definition_reference: RESID:AA0055
+
+term: neddylated lysine
+id: MI:0565
+definition: Residue modification due to a cross-link between a lysine and a glycine from the Nedd8 protein family.
+definition_reference: PMID:111
 
 term: nitro-tyrosine
 id: MI:0551
@@ -755,7 +791,7 @@ definition_reference: PMID:11125103
 
 term: sufficient to bind: sufficient binding site
 id: MI:0442
-definition: Binding will occur when this sequence range is present. within a protein
+definition: Binding will occur when this sequence range is present within a protein
 definition_reference: PMID:14755292
 
 term: sulfotyrosine: o4'-sulfo-tyrosine
@@ -776,7 +812,7 @@ definition_reference: PMID:14755292
 
 term: tagged molecule
 id: MI:0507
-definition: Proteins are engineered to include a tag, generally at the N-terminal, which aids in isolation and detection
+definition: Molecules are engineered to include a tag, which aids identification isolation and monitoring.
 definition_reference: PMID:14755292
 
 term: tap tagged
@@ -798,7 +834,7 @@ definition_reference: RESID:AA0074
 
 term: ubiquitinated lysine
 id: MI:0189
-definition: residue modification
+definition: Residue modification due to a cross-link between a lysine and a glycine from the ubiquitine protein.
 definition_reference: PMID:11125103
 definition_reference: RESID:AA0125
 

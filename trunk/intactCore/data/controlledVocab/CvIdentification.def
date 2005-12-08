@@ -5,7 +5,7 @@ definition_reference: PMID:14755292
 
 term: edman degradation
 id: MI:0039
-definition: In this procedure the N-terminus amino acid is cleaved from a polypeptide and identified by high-pressure liquid chromatography. The cycle is repeated on the evershortening polypeptide until all the residues are identified. On average only 20-30 consecutive cycles can be performed and lead to amino acid identification. Longer polypeptides or full length proteins must be cleaved by specific protease before Edman degradation and their sequences built by fragment overlapping.
+definition: In this procedure the N-terminus amino acid is cleaved from a polypeptide and identified by high-pressure liquid chromatography. The cycle is repeated on the ever-shortening polypeptide until all the residues are identified. On average only 20-30 consecutive cycles can be performed and lead to amino acid identification. Longer polypeptides or full length proteins must be cleaved by specific protease before Edman degradation and their sequences built by fragment overlapping.
 definition_reference: PMID:14755292
 
 term: elisa: enzyme linked immunosorbent assay
@@ -18,10 +18,12 @@ id: MI:0082
 definition: This approach leads to protein identification by matching peptide masses, as measured by mass spectrometry, to the ones calculated from in silico fragmentation of a protein sequence database. A peptide mixture from a tryptic digest is analysed by MALDI-MS (Matrix-assisted laser desorption ionization mass spectrometry). The list of peptide masses obtained by MALDI MS is automatically compared to the calculated masses of the predicted peptide fragments for each entry in the database. High mass accuracy is very important in order to obtain a statistically significant and unambiguous match This method is best applied to completely sequenced genomes and well characterised proteomes. However, depending on the data quality, proteins that are highly homologous to already characterised proteins (greater than 80 to 90% sequence identity) can also be identified. The retrieved sequence are evaluated by mass accuracy of the peptides, matching of additional peptide masses in the MALDI spectrum after accounting for common modifications such as oxidation, acrylamidation of cysteine and missed cleavages and the use of secondary information (apparent isoelectric point and molecular weight). If any ambiguity about the identification by MALDI-MS still exists, the results must verified by an other identification method. Peptide mass fingerprint is generally carried out with a MALDI-TOF (Matrix-assisted laser desorption ionization time-of-flight ) instrument but can also be achieved ESI-TOF (Electrospray Ionisation time-of-flight) or LC-MS (Liquid Chromatography-Mass Spectrometry) mass spectrometer.
 definition_reference: PMID:10967324
 definition_reference: PMID:11752590
+definition_reference: PMID:11805826
 
 term: full dna sequence: full identification by sequencing
 id: MI:0056
-definition: sequencing occurs during the course of the experiment.\nThe DNA to be sequenced is used as template for the in vitro synthesis, by DNA polymerase, of a set of partial replicas, all beginning at the same place, but terminating at different points along the DNA chain. The key to this method is the use of dideoxyribonucleoside triphosphates in which the deoxyribose 3'-OH group present in normal nucleotides is missing; when such a modified nucleotide is incorporated into a DNA chain, it blocks the elongation of the chain. To determine the full sequence, the four different chain-terminating dideoxyribonucleosides are used in competition with an excess of deoxyribonucleosides in separate DNA synthesis reactions on the same DNA template. When the products of these four reactions are analysed by electrophoresis in four parallel lanes of a denaturing polyacrylamide gel, the DNA sequence can be derived. Every lane displays a family of DNA fragments of different lengths, reflecting the different sites at which a specific residue occurs in the original DNA.
+definition: sequencing occurs during the course of the experiment.
+The DNA to be sequenced is used as template for the in vitro synthesis, by DNA polymerase, of a set of partial replicas, all beginning at the same place, but terminating at different points along the DNA chain. The key to this method is the use of dideoxyribonucleoside triphosphates in which the deoxyribose 3'-OH group present in normal nucleotides is missing; when such a modified nucleotide is incorporated into a DNA chain, it blocks the elongation of the chain. To determine the full sequence, the four different chain-terminating dideoxyribonucleosides are used in competition with an excess of deoxyribonucleosides in separate DNA synthesis reactions on the same DNA template. When the products of these four reactions are analysed by electrophoresis in four parallel lanes of a denaturing polyacrylamide gel, the DNA sequence can be derived. Every lane displays a family of DNA fragments of different lengths, reflecting the different sites at which a specific residue occurs in the original DNA.
 definition_reference: PMID:14755292
 
 term: immunostaining
@@ -36,7 +38,7 @@ definition_reference: PMID:14755292
 
 term: monoclonal antibody
 id: MI:0072
-definition: monoclonal antibodies are monospecific antibodies produced in the supernatant of a cell line obtained by fusing a lymphocyte B to a myeloma cell line or selected by phage display technology.
+definition: Monoclonal antibodies are monospecific antibodies produced in the supernatant of a cell line obtained by fusing a lymphocyte B to a myeloma cell line or selected by phage display technology.
 definition_reference: PMID:14755292
 
 term: ms protein sequence: de novo protein sequencing by mass spectrometry
@@ -46,7 +48,8 @@ definition_reference: PMID:10984529
 
 term: nucleotide sequence: nucleotide sequence identification
 id: MI:0078
-definition: Identification of a nucleotide sequence.
+definition: Identification of a nucleotide sequence. Depending on the experimental design, nucleotide sequence can be determined before the interaction detection while building a collection of clones or after the selection of
+randomly generated clones.
 definition_reference: PMID:14755292
 
 term: partial dna sequence: partial dna sequence identification by hybridization
@@ -57,6 +60,11 @@ definition_reference: PMID:14755292
 term: partial id prot seq: partial identification of protein sequence
 id: MI:0433
 definition: partial protein sequence identification
+definition_reference: PMID:14755292
+
+term: participant identif: participant identification method
+id: MI:0002
+definition: Method to determine the proteins involved in the interaction.
 definition_reference: PMID:14755292
 
 term: peptide synthesis
@@ -90,6 +98,7 @@ id: MI:0102
 definition: This approach leads to protein identification by combining mass measurement and short amino acid sequence information obtained by tandem mass spectrometry. This information is then used to automatically find the best match in a sequence database. A mixture of peptides derived from a protease digestion is analysed by nanoelectrospray LC-MS/MS (Liquid Chromatography Tandem Mass Spectrometer or nanoESI MS/MS) mass spectrometry. Electrospray mass spectrometry cannot be applied to dilute samples and is affected by high salt. As a consequence peptides, normally extracted from acrylamide gels by in situ proteolysis, are desalted and concentrated on a microcolumn followed by elution into a capillary used for nanoelectrospray tandem mass spectrometry. A first mass spectrum ("Normal mass spectrum" or "Q1 mass spectrum") gives information about the masses of all the peptides. Peptides observed in the normal mass spectrum are isolated in turn and dissociated into fragments by collision with gas molecules within the mass spectrometer. Some of the fragments obtained from a peptide constitute a nested set, differing by one amino acid, and the mass difference between them allows assignment of a partial sequence. The masses of the fragments define the position of the partial sequence in the peptide. Together with the cleavage specificity of the protease used to cleave the protein, and mass information such sequence tag provides much higher search specificity to match the a database entry. The procedure is repeated with several peptides from the digest, resulting in multiple identifications of the same protein or identification of several proteins from the peptide mixture. Unknown proteins can easily be identified by using the high specificity of the peptide sequence tag for searches in most sequence databases including EST or genome databases.
 definition_reference: PMID:10967324
 definition_reference: PMID:11752590
+definition_reference: PMID:11805837
 
 term: southern blot
 id: MI:0103
