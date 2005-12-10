@@ -130,7 +130,7 @@ public final class InteractionTag {
                 for ( Iterator iterator = participants.iterator(); iterator.hasNext(); ) {
                     Object o = (Object) iterator.next();
                     if ( o instanceof ProteinParticipantTag ) {
-                        uniprotID = ( (ProteinParticipantTag) o ).getProteinInteractor().getUniprotXref().getId();
+                        uniprotID = ( (ProteinParticipantTag) o ).getProteinInteractor().getPrimaryXref().getId();
                     }
                 }
                 throw new IllegalArgumentException( "You must give a minimum of " + MIN_PARTICIPANTS + " participants " +

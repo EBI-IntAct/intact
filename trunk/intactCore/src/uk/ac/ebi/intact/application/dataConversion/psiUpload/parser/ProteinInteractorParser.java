@@ -108,8 +108,14 @@ public class ProteinInteractorParser {
 
         // CAUTION - MAY NOT BE THERE
         final Element xrefElement = DOMUtil.getFirstElement( root, "xref" );
-        final XrefTag xref = XrefParser.processPrimaryRef( xrefElement );
-        final Collection secondaryXrefs = XrefParser.processSecondaryRef( xrefElement );
+        XrefTag xref = null;
+        Collection secondaryXrefs = null;
+        if( xrefElement != null ) {
+            xref = XrefParser.processPrimaryRef( xrefElement );
+            secondaryXrefs = XrefParser.processSecondaryRef( xrefElement );
+        } else {
+
+        }
 
         final Collection aliases = null;
 
@@ -124,7 +130,6 @@ public class ProteinInteractorParser {
         LabelValueBean lvb = null;
 
         try {
-//            lvb = new LabelValueBean( id, new ProteinInteractorTag( xref, hostOrganism ) );
             lvb = new LabelValueBean( id, new ProteinInteractorTag( shortlabel, fullname, xref, secondaryXrefs, aliases, hostOrganism, sequence ) );
         } catch ( IllegalArgumentException e ) {
             MessageHolder.getInstance().addParserMessage( new Message( root, e.getMessage() ) );

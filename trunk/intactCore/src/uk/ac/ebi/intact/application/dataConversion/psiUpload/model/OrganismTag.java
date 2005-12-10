@@ -118,14 +118,16 @@ public final class OrganismTag {
         final StringBuffer buf = new StringBuffer();
         buf.append( "HostOrganismTag" );
         buf.append( "{taxId=" ).append( taxId );
+
         buf.append( ", tissue=" );
-        if ( null == tissue ) {
+        if ( null == tissue || tissue.getPsiDefinition() == null) {
             buf.append( '-' );
         } else {
             buf.append( tissue.getPsiDefinition().getId() );
         }
+
         buf.append( ", cellType=" );
-        if ( null == cellType ) {
+        if ( null == cellType || cellType.getPsiDefinition() == null) {
             buf.append( '-' );
         } else {
             buf.append( cellType.getPsiDefinition().getId() );
