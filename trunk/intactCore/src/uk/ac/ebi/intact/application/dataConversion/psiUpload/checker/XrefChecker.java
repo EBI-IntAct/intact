@@ -34,6 +34,7 @@ public final class XrefChecker {
                               final IntactHelper helper ) {
 
         final String db = xref.getDb();
+
         if ( !cache.keySet().contains( db ) ) {
             CvDatabase cvDatabase = null;
             try {

@@ -7,7 +7,6 @@ package uk.ac.ebi.intact.application.dataConversion.psiUpload.persister;
 
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.*;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.*;
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.Constants;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.CommandLineOptions;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
@@ -32,7 +31,6 @@ public final class InteractionPersister {
 
     private static boolean DEBUG = CommandLineOptions.getInstance().isDebugEnabled();
     private static final String NEW_LINE = System.getProperty( "line.separator" );
-
 
     ////////////////////////////////
     // Private classes
@@ -73,7 +71,6 @@ public final class InteractionPersister {
                    "}";
         }
     }
-
 
     /////////////////////////////
     // Methods
@@ -126,7 +123,6 @@ public final class InteractionPersister {
             }
         }
 
-
         // LOOP HERE OVER THE RESULT COLLECTION(shortlabel, experiment)
         for ( Iterator iterator = experiments.iterator(); iterator.hasNext(); ) {
             ExperimentWrapper experimentWrapper = (ExperimentWrapper) iterator.next();
@@ -139,12 +135,11 @@ public final class InteractionPersister {
 
             final String shortlabel = experimentWrapper.getShortlabel();
 
-
             /* Components
-             * The way to create an Interaction is NOT TRIVIAL: we have firstly to create an
-             * Interaction Object with an empty collection of Component. and Then we have to
-             * use the interaction.addComponent( Component c ) to fill it up.
-             */
+            * The way to create an Interaction is NOT TRIVIAL: we have firstly to create an
+            * Interaction Object with an empty collection of Component. and Then we have to
+            * use the interaction.addComponent( Component c ) to fill it up.
+            */
             final Collection components = new ArrayList( interactionTag.getParticipants().size() );
 
             // CvInteractionType
@@ -246,7 +241,6 @@ public final class InteractionPersister {
         return interactions;
     }
 
-
     private static class GeneNameIgnoreCaseComparator implements Comparator {
 
         ////////////////////////////////////////////////
@@ -279,7 +273,6 @@ public final class InteractionPersister {
         }
 
     }
-
 
     /**
      * Create an IntAct shortlabel for a given interaction (ie. a set of [protein, role] ).
@@ -329,7 +322,7 @@ public final class InteractionPersister {
             final ProteinHolder proteinHolder = getProtein( proteinParticipant );
 
             // the gene name is held in the master protein, not the splice variant.
-            final String geneName = getGeneName( proteinHolder.getProtein() );
+            final String geneName = getGeneName( proteinHolder );
 
             // TODO load default CVs via MI reference and use the CvObject.equals() !!!!
             if ( role.equals( "prey" ) ) { // most numerous role, cut down the number of test
@@ -353,7 +346,6 @@ public final class InteractionPersister {
 
         // we can have either 1..n bait with 1..n prey
         // or 2..n neutral
-
         String baitShortlabel = null;
         String preyShortlabel = null;
 
@@ -385,7 +377,6 @@ public final class InteractionPersister {
         // that updates the experiment collection and only leaves those for which we have to create a new interaction
         createInteractionShortLabels( interaction, experiments, baitShortlabel, preyShortlabel, helper );
     }
-
 
     /**
      * Search for the first string (in alphabetical order).
@@ -428,7 +419,6 @@ public final class InteractionPersister {
 
         return shortlabel;
     }
-
 
     /**
      * Create an interaction shortlabel out of two shortlabels. <br> Take care about the maximum length of the field.
@@ -513,7 +503,8 @@ public final class InteractionPersister {
                 // could create new gaps if some already exists.
                 boolean atLeastOneInteractionWithoutShortlabel = false;
                 boolean oneExperimentHasAlreadyBeenUpdated = false;
-                for ( Iterator iterator = experiments.iterator(); iterator.hasNext() && !atLeastOneInteractionWithoutShortlabel; ) {
+                for ( Iterator iterator = experiments.iterator(); iterator.hasNext() && !atLeastOneInteractionWithoutShortlabel; )
+                {
                     ExperimentWrapper experimentWrapper = (ExperimentWrapper) iterator.next();
                     // we want to associate only one shortlabel per loop and check if there is at least one
                     // more experiment to update.
@@ -592,7 +583,6 @@ public final class InteractionPersister {
         } // while
     }
 
-
     /**
      * compare two ranges.
      *
@@ -607,7 +597,7 @@ public final class InteractionPersister {
                            range.getFromIntervalEnd() == location.getFromIntervalEnd() &&
                            range.getToIntervalStart() == location.getToIntervalStart() &&
                            range.getToIntervalEnd() == location.getToIntervalEnd()
-                         );
+        );
 
         if ( DEBUG ) {
             System.out.print( "RANGE from    " + range.getFromIntervalStart() + ".." + range.getFromIntervalEnd() );
@@ -625,7 +615,6 @@ public final class InteractionPersister {
 
         return equals;
     }
-
 
     /**
      * Retreive (if any) the PSI ID (MI:xxxx) of a Controlled Vocabulary item.
@@ -656,7 +645,6 @@ public final class InteractionPersister {
 
         return null;
     }
-
 
     /**
      * Assess if a IntAct Component's feature 'equals' a PSI definition.
@@ -840,7 +828,8 @@ public final class InteractionPersister {
                         }
 
                         boolean rangeFound = false;
-                        for ( Iterator iterator3 = intactFeature.getRanges().iterator(); iterator3.hasNext() && rangeFound == false; ) {
+                        for ( Iterator iterator3 = intactFeature.getRanges().iterator(); iterator3.hasNext() && rangeFound == false; )
+                        {
                             Range range = (Range) iterator3.next();
 
                             // compare the content of Location Vs Range
@@ -894,7 +883,6 @@ public final class InteractionPersister {
 
         return found;
     }
-
 
     /**
      * Allows to check if the data carried by an InteractionTag are already existing in the IntAct node.
@@ -1033,16 +1021,17 @@ public final class InteractionPersister {
                         sb.append( "WARNING" ).append( NEW_LINE );
                         sb.append( "An interaction having the shortlabel " ).append( intactInteraction.getShortLabel() );
                         sb.append( NEW_LINE );
-                        sb.append( "and involving as components: " );
+                        sb.append( "and involving the following components: " );
                         for ( Iterator iterator2 = psi.getParticipants().iterator(); iterator2.hasNext(); ) {
                             ProteinParticipantTag psiComponent = (ProteinParticipantTag) iterator2.next();
                             sb.append( NEW_LINE ).append( '[' );
-                            sb.append( psiComponent.getProteinInteractor().getUniprotXref().getId() );
-                            sb.append( ',' );
+                            sb.append( psiComponent.getProteinInteractor().getPrimaryXref().getId() );
+                            sb.append( ", " );
                             sb.append( psiComponent.getRole() );
                             if ( psiComponent.hasFeature() ) {
                                 sb.append( ", Feature[" );
-                                for ( Iterator iterator3 = psiComponent.getFeatures().iterator(); iterator3.hasNext(); ) {
+                                for ( Iterator iterator3 = psiComponent.getFeatures().iterator(); iterator3.hasNext(); )
+                                {
                                     FeatureTag feature = (FeatureTag) iterator3.next();
                                     sb.append( "type=" ).append( feature.getFeatureType().getPsiDefinition().getId() );
                                     sb.append( ',' );
@@ -1084,7 +1073,7 @@ public final class InteractionPersister {
                                 found = true;
                             }
                         }
-                        if ( found == true ) {
+                        if ( found ) {
                             experiments.remove( experimentWrapper );
                         }
                     }
@@ -1101,7 +1090,6 @@ public final class InteractionPersister {
 
         // no instance of that interaction have been found in intact.
     }
-
 
     /**
      * Search in IntAct for an Annotation having the a specific type and annotationText.
@@ -1132,28 +1120,40 @@ public final class InteractionPersister {
         return annotation;
     }
 
-
     /**
-     * introspect a Protein object and pick up it's gene name.
+     * introspect a Protein object and pick up it's gene name. <br> If it is not a UniProt protein, we use the
+     * shortlabel instead.
      *
-     * @param protein the protein for which we want the gene name.
+     * @param proteinHolder container holding either a UniProt protein of an XML definition of the protein.
      *
      * @return the Protein's gene name.
      */
-    private static String getGeneName( final Protein protein ) {
+    private static String getGeneName( final ProteinHolder proteinHolder ) {
 
+        if ( ! proteinHolder.isUniprot() ) {
+            // if the protein is NOT a UniProt one, then use the shortlabel as we won't get a gene name.
+            return proteinHolder.getProteinInteractor().getShortlabel();
+        }
+
+        // we have a uniprot Protein attached.
+        Protein protein = proteinHolder.getProtein();
+
+        // the gene name we want to extract from the protein.
         String geneName = null;
 
-        final Collection aliases = protein.getAliases();
-        for ( Iterator iterator = aliases.iterator(); iterator.hasNext() && geneName == null; ) {
-            final Alias alias = (Alias) iterator.next();
-            // TODO load default CVs via MI reference and use the CvObject.equals() !!!!
-            if ( alias.getCvAliasType().getShortLabel().equals( "gene name" ) ) {
-                geneName = alias.getName();
+        CvAliasType geneNameAliasType = ControlledVocabularyRepository.getGeneNameAliasType();
+        if ( geneNameAliasType != null ) {
+            for ( Iterator iterator = protein.getAliases().iterator(); iterator.hasNext() && geneName == null; ) {
+                final Alias alias = (Alias) iterator.next();
+
+                if ( geneNameAliasType.equals( alias.getCvAliasType() ) ) {
+                    geneName = alias.getName();
+                }
             }
         }
 
         if ( geneName == null ) {
+
             geneName = protein.getShortLabel();
 
             // remove any _organism in case it exists
@@ -1162,13 +1162,12 @@ public final class InteractionPersister {
                 geneName = geneName.substring( 0, index );
             }
 
-            System.err.println( "NOTICE: protein " + protein.getShortLabel() +
+            System.out.println( "NOTICE: protein " + protein.getShortLabel() +
                                 " does not have a gene name, we will use it's SPTR ID: " + geneName );
         }
 
         return geneName;
     }
-
 
     /**
      * Get an Intact Protein out of a ProteinInteractorTag.
@@ -1187,8 +1186,12 @@ public final class InteractionPersister {
             bioSource = OrganismChecker.getBioSource( proteinInteractor.getOrganism() );
         }
 
-        final String proteinId = proteinInteractor.getUniprotXref().getId();
+        String proteinId = proteinInteractor.getPrimaryXref().getId();
+        String db = proteinInteractor.getPrimaryXref().getDb();
 
-        return ProteinInteractorChecker.getProtein( proteinId, bioSource );
+//        System.out.println( "Search interactor (" + proteinInteractor.getShortlabel() + ") from cache(" +
+//                            proteinId + ", " + db + ", " + bioSource.getShortLabel() + ")" );
+
+        return ProteinInteractorChecker.getProtein( proteinId, db, bioSource );
     }
 }

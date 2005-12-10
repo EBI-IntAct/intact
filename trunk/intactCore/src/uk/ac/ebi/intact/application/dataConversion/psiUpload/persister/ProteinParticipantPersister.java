@@ -5,10 +5,7 @@
  */
 package uk.ac.ebi.intact.application.dataConversion.psiUpload.persister;
 
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.ExpressedInChecker;
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.OrganismChecker;
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.ProteinInteractorChecker;
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.RoleChecker;
+import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.*;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.*;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
@@ -30,24 +27,31 @@ public class ProteinParticipantPersister {
                                 final Interaction interaction,
                                 final IntactHelper helper ) throws IntactException {
 
-        final ProteinInteractorTag proteinInteractor = proteinParticipant.getProteinInteractor();
+        ProteinInteractorTag proteinInteractor = proteinParticipant.getProteinInteractor();
 
         final BioSource bioSource = OrganismChecker.getBioSource( proteinInteractor.getOrganism() );
-        final String proteinId = proteinInteractor.getUniprotXref().getId();
-        final ProteinHolder proteinHolder = ProteinInteractorChecker.getProtein( proteinId, bioSource );
+        final String proteinId = proteinInteractor.getPrimaryXref().getId();
+        final String db = proteinInteractor.getPrimaryXref().getDb();
+        final ProteinHolder proteinHolder = ProteinInteractorChecker.getProtein( proteinId, db, bioSource );
         final CvComponentRole role = RoleChecker.getCvComponentRole( proteinParticipant.getRole() );
 
-        final Protein protein;
-        if ( proteinHolder.isSpliceVariantExisting() ) {
-            protein = proteinHolder.getSpliceVariant();
+        Protein protein = null;
+        if ( proteinHolder.isUniprot() ) {
+
+            if ( proteinHolder.isSpliceVariantExisting() ) {
+                protein = proteinHolder.getSpliceVariant();
+            } else {
+                protein = proteinHolder.getProtein();
+            }
+
         } else {
+
             protein = proteinHolder.getProtein();
+
         }
 
-        final Component component = new Component( helper.getInstitution(),
-                                                   interaction,
-                                                   protein,
-                                                   role );
+
+        final Component component = new Component( helper.getInstitution(), interaction, protein, role );
         helper.create( component );
 
         // add expressedIn if it is available.

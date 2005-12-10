@@ -15,27 +15,30 @@ import uk.ac.ebi.intact.model.Protein;
  */
 public final class ProteinHolder {
 
-    private final Protein protein;
+    private Protein protein;
     private Protein spliceVariant;
-
+    private ProteinInteractorTag proteinInteractor;
 
     ////////////////////////
     // Constructors
 
-    public ProteinHolder( Protein protein ) {
-
-        if ( protein == null ) {
-            throw new IllegalArgumentException( "You must give a non null protein" );
+    public ProteinHolder( ProteinInteractorTag proteinInteractor ) {
+        if( proteinInteractor == null ) {
+            throw new IllegalArgumentException( "You must give the definition of the protein." );
         }
-
-        this.protein = protein;
+        this.proteinInteractor = proteinInteractor;
     }
 
-    public ProteinHolder( Protein protein, Protein spliceVariant ) {
-        this( protein );
+    public ProteinHolder( Protein protein, Protein spliceVariant, ProteinInteractorTag proteinInteractor ) {
+        this(proteinInteractor);
+        this.protein = protein;
         this.spliceVariant = spliceVariant;
     }
 
+    public ProteinHolder( Protein protein, ProteinInteractorTag proteinInteractor ) {
+        this(proteinInteractor);
+        this.protein = protein;
+    }
 
     /////////////////////
     // Getters
@@ -52,6 +55,21 @@ public final class ProteinHolder {
         return spliceVariant;
     }
 
+    /**
+     * a protein is from uniprot only if the attached ProteinInteractorTag answers true to that question.
+     * @return
+     */
+    public boolean isUniprot() {
+        if( proteinInteractor != null ) {
+            return proteinInteractor.hasUniProtXref();
+        }
+
+        return false;
+    }
+
+    public ProteinInteractorTag getProteinInteractor() {
+        return proteinInteractor;
+    }
 
     //////////////////////////
     // Equality
@@ -60,16 +78,19 @@ public final class ProteinHolder {
         if ( this == o ) {
             return true;
         }
-        if ( !( o instanceof ProteinHolder ) ) {
+        if ( o == null || getClass() != o.getClass() ) {
             return false;
         }
 
-        final ProteinHolder proteinHolder = (ProteinHolder) o;
+        final ProteinHolder that = (ProteinHolder) o;
 
-        if ( !protein.equals( proteinHolder.protein ) ) {
+        if ( protein != null ? !protein.equals( that.protein ) : that.protein != null ) {
             return false;
         }
-        if ( spliceVariant != null ? !spliceVariant.equals( proteinHolder.spliceVariant ) : proteinHolder.spliceVariant != null ) {
+        if ( !proteinInteractor.equals( that.proteinInteractor ) ) {
+            return false;
+        }
+        if ( spliceVariant != null ? !spliceVariant.equals( that.spliceVariant ) : that.spliceVariant != null ) {
             return false;
         }
 
@@ -78,20 +99,27 @@ public final class ProteinHolder {
 
     public int hashCode() {
         int result;
-        result = protein.hashCode();
+        result = ( protein != null ? protein.hashCode() : 0 );
         result = 29 * result + ( spliceVariant != null ? spliceVariant.hashCode() : 0 );
+        result = 29 * result + proteinInteractor.hashCode();
         return result;
     }
-
 
     /////////////////////
     // toString
 
     public String toString() {
-        return "ProteinHolder{" +
-               "protein=" + protein +
-               ", spliceVariant=" + spliceVariant +
-               "}";
+        final StringBuffer sb = new StringBuffer();
+        sb.append( "ProteinHolder" );
+        sb.append( "{protein=" ).append( protein );
+        sb.append( ", spliceVariant=" ).append( spliceVariant );
+        sb.append( ", proteinInteractorTag=" ).append( proteinInteractor );
+        sb.append( '}' );
+
+        return sb.toString();
     }
 
+    public void setProtein( Protein protein ) {
+        this.protein = protein;
+    }
 }

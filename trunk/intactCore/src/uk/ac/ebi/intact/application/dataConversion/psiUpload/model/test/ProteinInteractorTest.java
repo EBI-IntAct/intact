@@ -50,7 +50,7 @@ public class ProteinInteractorTest extends TestCase {
 
 
         assertNotNull( proteinInteractor );
-        assertEquals( xrefUniprot, proteinInteractor.getUniprotXref() );
+        assertEquals( xrefUniprot, proteinInteractor.getPrimaryXref() );
         assertEquals( organism, proteinInteractor.getOrganism() );
     }
 
@@ -62,14 +62,14 @@ public class ProteinInteractorTest extends TestCase {
         ProteinInteractorTag proteinInteractor = new ProteinInteractorTag( xrefUniprot, null );
 
         assertNotNull( proteinInteractor );
-        assertEquals( xrefUniprot, proteinInteractor.getUniprotXref() );
+        assertEquals( xrefUniprot, proteinInteractor.getPrimaryXref() );
         assertEquals( null, proteinInteractor.getOrganism() );
     }
 
 
-    public void testProcess_error_no_uniprot_xref() {
+    public void testProcess_no_uniprot_xref() {
 
-        XrefTag xrefUniprot = new XrefTag( XrefTag.PRIMARY_REF, "blabla", "fake" );
+        XrefTag xrefUniprot = new XrefTag( XrefTag.PRIMARY_REF, "uniparc", "UPI:00000000000000012" );
 
         ProteinInteractorTag proteinInteractor = null;
         try {

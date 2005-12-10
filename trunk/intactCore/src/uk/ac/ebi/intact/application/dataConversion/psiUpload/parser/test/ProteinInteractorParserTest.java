@@ -80,7 +80,7 @@ public class ProteinInteractorParserTest extends TestCase {
         assertNotNull( organism );
         assertEquals( "4932", organism.getTaxId() );
 
-        XrefTag xref = protein.getUniprotXref();
+        XrefTag xref = protein.getPrimaryXref();
         assertNotNull( xref );
         assertEquals( "uniprotkb", xref.getDb() );
         assertEquals( "P12345", xref.getId() );
@@ -107,7 +107,7 @@ public class ProteinInteractorParserTest extends TestCase {
         OrganismTag organism = protein.getOrganism();
         assertNull( organism );
 
-        XrefTag xref = protein.getUniprotXref();
+        XrefTag xref = protein.getPrimaryXref();
         assertNotNull( xref );
         assertEquals( "uniprotkb", xref.getDb() );
         assertEquals( "P12345", xref.getId() );

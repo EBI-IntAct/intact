@@ -45,10 +45,9 @@ public final class ProteinInteractorTag {
     // Attribute related to a UniProt Protein
 
     /**
-     * the UniProt Xref if available. if used, we don't need primaryXref and secondaryXrefs as they will be populated
-     * from UniProt
+     * true is the UniProt Xref if available.
      */
-    private final XrefTag uniprotXref;
+    private boolean hasUniprotXref = false;
 
     ///////////////////////////////////////////////
     // Attribute related to a non UniProt Protein
@@ -75,7 +74,6 @@ public final class ProteinInteractorTag {
 
     private final OrganismTag organism;
 
-
     /////////////////////////
     // Constructor
 
@@ -86,14 +84,18 @@ public final class ProteinInteractorTag {
             throw new IllegalArgumentException( "You must give a non null uniprotXref for a proteinInteractor" );
         }
 
-        //  as of june 2005 we have proteins without UniProt Xrefs.
-        if ( !Constants.UNIPROT_DB_SHORTLABEL.equals( uniprotXref.getDb() ) ) {
+        //  as of june 2005 we can have proteins without UniProt Xrefs.
+        if ( ! Constants.UNIPROT_DB_SHORTLABEL.equals( uniprotXref.getDb() )
+             &&
+             ! CvDatabase.UNIPROT.equals( uniprotXref.getDb() ) ) {
+
             throw new IllegalArgumentException( "You must give a uniprot Xref, not " + uniprotXref.getDb() +
                                                 " for a ProteinInteractor" );
         }
 
         this.organism = organism;
-        this.uniprotXref = uniprotXref;
+        this.primaryXref = uniprotXref;
+        hasUniprotXref = true;
     }
 
     /**
@@ -105,28 +107,38 @@ public final class ProteinInteractorTag {
      */
     public ProteinInteractorTag( final String shortlabel,
                                  final String fullname,
-                                       XrefTag primaryXref,
+                                 XrefTag primaryXref,
                                  final Collection secondaryXrefs,
                                  final Collection aliases,
                                  final OrganismTag organism,
                                  final String sequence ) {
+
+        if ( primaryXref == null ) {
+            throw new IllegalArgumentException( "You must give a primaryRef to a ProteinInteractor " );
+        }
 
         // as of june 2005 we have proteins without UniProt Xrefs.
         // as of 2005-10-24 uniprot became uniprotkb, so for backward compatibility, we support both the
         //                  old and new UniProt shortlabel
         if ( Constants.UNIPROT_DB_SHORTLABEL.equals( primaryXref.getDb() ) ) {
 
-            primaryXref = new XrefTag( primaryXref.getType(),
-                                       primaryXref.getId(),
-                                       CvDatabase.UNIPROT,            // use the IntAct definition
-                                       primaryXref.getSecondary(),
-                                       primaryXref.getVersion() );
+            this.primaryXref = new XrefTag( primaryXref.getType(),
+                                            primaryXref.getId(),
+                                            CvDatabase.UNIPROT,            // use the IntAct definition
+                                            primaryXref.getSecondary(),
+                                            primaryXref.getVersion() );
 
-            this.uniprotXref = primaryXref;
+            hasUniprotXref = true;
 
         } else if ( CvDatabase.UNIPROT.equals( primaryXref.getDb() ) ) {
 
-            this.uniprotXref = primaryXref;
+            this.primaryXref = new XrefTag( primaryXref.getType(),
+                                            primaryXref.getId(),
+                                            CvDatabase.UNIPROT,            // use the IntAct definition
+                                            primaryXref.getSecondary(),
+                                            primaryXref.getVersion() );
+
+            hasUniprotXref = true;
 
         } else {
 
@@ -135,23 +147,23 @@ public final class ProteinInteractorTag {
                 throw new IllegalArgumentException( "You must give a non null/empty shortlabel for a ProteinInteractor " );
             }
 
-            // this is not a UniProt Protein.
-            this.uniprotXref = null;
-
             this.shortlabel = shortlabel;
             this.fullname = fullname;
 
             this.primaryXref = primaryXref;
             this.secondaryXrefs = Collections.unmodifiableCollection( secondaryXrefs );
 
-            this.aliases = Collections.unmodifiableCollection( aliases );
+            if ( aliases != null ) {
+                this.aliases = Collections.unmodifiableCollection( aliases );
+            } else {
+                this.aliases = Collections.EMPTY_LIST;
+            }
 
             this.sequence = sequence;
         }
 
         this.organism = organism;
     }
-
 
     ////////////////////////
     // Getters
@@ -160,12 +172,8 @@ public final class ProteinInteractorTag {
         return organism;
     }
 
-    public XrefTag getUniprotXref() {
-        return uniprotXref;
-    }
-
     public boolean hasUniProtXref() {
-        return uniprotXref != null;
+        return hasUniprotXref;
     }
 
     public XrefTag getPrimaryXref() {
@@ -205,27 +213,28 @@ public final class ProteinInteractorTag {
 
         final ProteinInteractorTag proteinInteractorTag = (ProteinInteractorTag) o;
 
-        if ( organism != null ? !organism.equals( proteinInteractorTag.organism ) : proteinInteractorTag.organism != null ) {
+        if ( organism != null ? !organism.equals( proteinInteractorTag.organism ) : proteinInteractorTag.organism != null )
+        {
             return false;
         }
 
-        if ( uniprotXref != null ? !uniprotXref.equals( proteinInteractorTag.uniprotXref ) : proteinInteractorTag.uniprotXref != null ) {
+        if ( shortlabel != null ? !shortlabel.equals( proteinInteractorTag.shortlabel ) : proteinInteractorTag.shortlabel != null )
+        {
             return false;
         }
 
-        if ( !shortlabel.equals( proteinInteractorTag.shortlabel ) ) {
+        if ( fullname != null ? !fullname.equals( proteinInteractorTag.fullname ) : proteinInteractorTag.fullname != null )
+        {
             return false;
         }
 
-        if ( fullname != null ? !fullname.equals( proteinInteractorTag.fullname ) : proteinInteractorTag.fullname != null ) {
+        if ( primaryXref != null ? !primaryXref.equals( proteinInteractorTag.primaryXref ) : proteinInteractorTag.primaryXref != null )
+        {
             return false;
         }
 
-        if ( primaryXref != null ? !primaryXref.equals( proteinInteractorTag.primaryXref ) : proteinInteractorTag.primaryXref != null ) {
-            return false;
-        }
-
-        if ( sequence != null ? !sequence.equals( proteinInteractorTag.sequence ) : proteinInteractorTag.sequence != null ) {
+        if ( sequence != null ? !sequence.equals( proteinInteractorTag.sequence ) : proteinInteractorTag.sequence != null )
+        {
             return false;
         }
 
@@ -246,9 +255,7 @@ public final class ProteinInteractorTag {
 
         result = 29 * result + ( organism != null ? organism.hashCode() : 0 );
 
-        result = 29 * result + ( uniprotXref != null ? uniprotXref.hashCode() : 0 );
-
-        result = 29 * result + shortlabel.hashCode();
+        result = 29 * result + ( shortlabel != null ? shortlabel.hashCode() : 0 );
         result = 29 * result + ( fullname != null ? fullname.hashCode() : 0 );
         result = 29 * result + ( primaryXref != null ? primaryXref.hashCode() : 0 );
         result = 29 * result + ( sequence != null ? sequence.hashCode() : 0 );
@@ -263,11 +270,11 @@ public final class ProteinInteractorTag {
         if ( hasUniProtXref() ) {
             s = "ProteinInteractorTag{" +
                 "organism=" + organism +
-                ", uniprotXref=" + uniprotXref +
+                ", uniprotXref=" + primaryXref +
                 "}";
 
         } else {
-            
+
             s = "ProteinInteractorTag{" +
                 "shortlabel='" + shortlabel + "'" +
                 ", fullname='" + fullname + "'" +

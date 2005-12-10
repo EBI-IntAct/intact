@@ -63,8 +63,8 @@ public final class EntryChecker {
                 String uniprotID = null;
                 String taxid = null;
 
-                if ( proteinInteractor != null && proteinInteractor.getUniprotXref() != null ) {
-                    uniprotID = proteinInteractor.getUniprotXref().getId();
+                if ( proteinInteractor != null && proteinInteractor.getPrimaryXref() != null ) {
+                    uniprotID = proteinInteractor.getPrimaryXref().getId();
                 }
                 if ( proteinInteractor != null && proteinInteractor.getOrganism() != null ) {
                     taxid = proteinInteractor.getOrganism().getTaxId();
