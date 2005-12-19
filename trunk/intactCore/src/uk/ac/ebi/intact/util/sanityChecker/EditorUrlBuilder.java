@@ -63,7 +63,7 @@ public class EditorUrlBuilder {
                 url = editorUrl +  "ac=" + intactBean.getAc()+"&type=CvAliasType";
             }
             else if(CvCellType.class.getName().equals(objclass)){
-                url = editorUrl +  "ac=" + intactBean.getAc() + "&type=CvCellTYpe";
+                url = editorUrl +  "ac=" + intactBean.getAc() + "&type=CvCellType";
             }
             else if(CvComponentRole.class.getName().equals(objclass)){
                 url = editorUrl + "ac=" + intactBean.getAc() + "&type=CvComponentRole";
