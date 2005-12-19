@@ -13,8 +13,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.model.ProteinImpl;
+import uk.ac.ebi.intact.model.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -84,8 +83,8 @@ public class ProteinSearchAction extends AbstractEditorAction {
         // Error if all three fields are empty.
         if ((acLen == 0) && (spAcLen == 0) && (shortLabelLen == 0)) {
             ActionErrors errors = new ActionErrors();
-            errors.add("int.prot.search",
-                    new ActionError("error.int.protein.search.input"));
+            errors.add("int.interact.search",
+                    new ActionError("error.int.interact.search.input"));
             saveErrors(request, errors);
             setAnchor(request, intform);
             return mapping.getInputForward();
@@ -98,8 +97,8 @@ public class ProteinSearchAction extends AbstractEditorAction {
             Matcher matcher = ourIntactAcPat.matcher(ac);
             if (!matcher.matches()) {
                 ActionErrors errors = new ActionErrors();
-                errors.add("int.prot.search",
-                        new ActionError("error.int.protein.search.ac"));
+                errors.add("int.interact.search",
+                        new ActionError("error.int.interact.search.ac"));
                 saveErrors(request, errors);
                 setAnchor(request, intform);
                 return mapping.getInputForward();
@@ -111,8 +110,8 @@ public class ProteinSearchAction extends AbstractEditorAction {
             Matcher matcher = ourSpAcPat.matcher(spAc);
             if (!matcher.matches()) {
                 ActionErrors errors = new ActionErrors();
-                errors.add("int.prot.search",
-                        new ActionError("error.int.protein.search.sp"));
+                errors.add("int.interact.search",
+                        new ActionError("error.int.interact.search.sp"));
                 saveErrors(request, errors);
                 setAnchor(request, intform);
                 return mapping.getInputForward();
@@ -135,6 +134,9 @@ public class ProteinSearchAction extends AbstractEditorAction {
         else {
             try {
                 rw = user.lookup(ProteinImpl.class, param, value, max);
+                if(rw.isEmpty()){
+                    rw = user.lookup(NucleicAcidImpl.class, param, value,max);
+                }
             }
             catch (IntactException ie) {
                 // This can only happen when problems with creating an internal helper
@@ -148,7 +150,7 @@ public class ProteinSearchAction extends AbstractEditorAction {
         // Check the size
         if (rw.isTooLarge()) {
             ActionErrors errors = new ActionErrors();
-            errors.add("int.prot.search", new ActionError("error.int.protein.search.many",
+            errors.add("int.interact.search", new ActionError("error.int.interact.search.many",
                     Integer.toString(rw.getPossibleResultSize()), param, Integer.toString(max)));
             saveErrors(request, errors);
             setAnchor(request, intform);
@@ -164,12 +166,12 @@ public class ProteinSearchAction extends AbstractEditorAction {
             Exception exp = user.getProteinParseException();
             if (exp != null) {
                 LOGGER.error("", exp);
-                errors.add("int.prot.search",
-                        new ActionError("error.int.protein.search.empty.parse", param));
+                errors.add("int.interact.search",
+                        new ActionError("error.int.interact.search.empty.parse", param + " : " + ac));
             }
             else {
-                errors.add("int.prot.search",
-                        new ActionError("error.int.protein.search.empty", param));
+                errors.add("int.interact.search",
+                        new ActionError("error.int.interact.search.empty", param + " : " + ac));
             }
             saveErrors(request, errors);
             setAnchor(request, intform);
@@ -179,8 +181,10 @@ public class ProteinSearchAction extends AbstractEditorAction {
         InteractionViewBean view = (InteractionViewBean) user.getView();
 
         for (Iterator iter = rw.getResult().iterator(); iter.hasNext();) {
-            view.addProtein((Protein) iter.next());
+            Polymer polymer = (Polymer) iter.next();
+            view.addPolymer(polymer);
         }
+        
         // The anchor is set via the Search protein button.
         setAnchor(request, intform);
         return mapping.getInputForward();

@@ -93,9 +93,9 @@ public class InteractionSubmitAction extends AbstractSubmitAction {
         ourButtonToAction.put(rb.getString("int.exp.button.search"), "int.exp.search");
 
         // Actions related to edit/save/delete of proteins.
-        ourButtonToAction.put(rb.getString("int.proteins.button.edit"), "int.prot");
-        ourButtonToAction.put(rb.getString("int.proteins.button.save"), "int.prot");
-        ourButtonToAction.put(rb.getString("int.proteins.button.delete"), "int.prot");
+        ourButtonToAction.put(rb.getString("int.interactors.button.edit"), "int.prot");
+        ourButtonToAction.put(rb.getString("int.interactors.button.save"), "int.prot");
+        ourButtonToAction.put(rb.getString("int.interactors.button.delete"), "int.prot");
 
         // Related to add/edit feature.
         ourButtonToAction.put(rb.getString("int.proteins.button.feature.add"), "int.feature");
@@ -107,7 +107,7 @@ public class InteractionSubmitAction extends AbstractSubmitAction {
         ourButtonToAction.put(rb.getString("int.proteins.button.feature.unlink"), "int.feature.link");
 
         // Actions related protein search.
-        ourButtonToAction.put(rb.getString("int.proteins.button.search"), "int.prot.search");
+        ourButtonToAction.put(rb.getString("int.interactors.button.search"), "int.interact.search");
     }
 
     public ActionForward execute(ActionMapping mapping,

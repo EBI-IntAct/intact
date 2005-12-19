@@ -363,7 +363,7 @@
         redirect="false"
       />
       <forward
-        name="int.prot.search"
+        name="int.interact.search"
         path="/do/int/prot/search"
         redirect="false"
       />
