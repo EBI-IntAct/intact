@@ -517,8 +517,8 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         // Handler to the menu factory.
         EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
 
-        //myMenus.putAll(super.getMenus());
-        myMenus.putAll(super.getMenus(Experiment.class.getName()));
+        myMenus.putAll(super.getMenus());
+//        myMenus.putAll(super.getMenus(Experiment.class.getName()));
 
         // The organism menu
         String name = EditorMenuFactory.ORGANISM;

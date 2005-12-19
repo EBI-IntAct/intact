@@ -469,15 +469,19 @@ public class InteractionViewBean extends AbstractEditViewBean {
     /**
      * Adds an Protein.
      *
-     * @param protein the Protein to add.
+     * @param polymer the Protein to add.
      * <p/>
      * <pre>
      * post: myComponents = myComponents@pre + 1
      * </pre>
      */
-    public void addProtein(Protein protein) {
-        // Add to the view.
-        myComponents.add(new ComponentBean(protein));
+    public void addPolymer(Polymer polymer) {
+        //Add to the view.
+        if(polymer instanceof Protein ){
+            myComponents.add(new ComponentBean((Protein)polymer));
+        }else if (polymer instanceof NucleicAcid){
+            myComponents.add(new ComponentBean((NucleicAcid)polymer));
+        }
     }
 
     /**
@@ -490,7 +494,8 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * post: myComponents = myComponents@pre - 1
      * </pre>
      */
-    public void delProtein(int pos) {
+    
+   public void delPolymer(int pos) {
         // The component bean at position 'pos'.
         ComponentBean cb = (ComponentBean) myComponents.get(pos);
 
@@ -521,7 +526,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * post: myComponents = myComponents@pre
      * </pre>
      */
-    public void addProteinToUpdate(ComponentBean cb) {
+    public void addPolymerToUpdate(ComponentBean cb) {
         myComponentsToUpdate.add(cb);
     }
 
@@ -623,7 +628,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
         if (featureBean == null) {
             featureBean = new FeatureBean(feature);
             // Update this component for it to persist correctly.
-            addProteinToUpdate(compBean);
+            addPolymerToUpdate(compBean);
         }
         else {
             // The flag is based on the short label of the bean and updated Feature
@@ -669,7 +674,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
         comp.delFeature(bean);
 
         // Update this component for it to persist correctly.
-        addProteinToUpdate(comp);
+        addPolymerToUpdate(comp);
     }
 
     /**
@@ -940,8 +945,8 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
         // Clear any existing menus first.
         myMenus.clear();
-        //myMenus.putAll(super.getMenus());
-        myMenus.putAll(super.getMenus(Interaction.class.getName()));
+        myMenus.putAll(super.getMenus());
+//        myMenus.putAll(super.getMenus(Interaction.class.getName()));
 
         // The organism menu
         name = EditorMenuFactory.ORGANISM;
