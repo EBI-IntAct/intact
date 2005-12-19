@@ -47,15 +47,15 @@
     function setProteinDispatch(label) {
         if (label == 'edit') {
             document.forms[0].dispatchProtein.value='<%=msgres.getMessage(
-                    "int.proteins.button.edit")%>';
+                    "int.interactors.button.edit")%>';
         }
         else if (label == 'save') {
             document.forms[0].dispatchProtein.value='<%=msgres.getMessage(
-                    "int.proteins.button.save")%>';
+                    "int.interactors.button.save")%>';
         }
         else {
             document.forms[0].dispatchProtein.value='<%=msgres.getMessage(
-                    "int.proteins.button.delete")%>';
+                    "int.interactors.button.delete")%>';
         }
         //window.alert(document.forms[0].dispatchProtein.value);
     }
@@ -82,7 +82,7 @@
     }
 </script>
 
-<h3>Proteins</h3>
+<h3>Interactors</h3>
 
 <c:if test="${not empty intForm.components}">
 
@@ -91,7 +91,7 @@
         <tr class="tableRowHeader">
             <th class="tableCellHeader" width="2%" rowspan="2"></th>
             <th class="tableCellHeader" width="2%" rowspan="2"></th>
-            <th class="tableCellHeader" width="10%" rowspan="2">Proteins</th>
+            <th class="tableCellHeader" width="10%" rowspan="2">Interactors</th>
             <th class="tableCellHeader" width="10%">
                 <bean:message key="label.shortlabel"/>
             </th>
@@ -100,7 +100,7 @@
                 <bean:message key="label.ac"/>
             </th>
             <th class="tableCellHeader" width="10%">Gene Name</th>
-            <th class="tableCellHeader" width="50%" rowspan="2">
+            <th class="tableCellHeader" width="50%">
                 <bean:message key="label.fullname"/>
             </th>
         </tr>
@@ -109,6 +109,7 @@
             <th class="tableCellHeader">Stoichiometry</th>
             <th class="tableCellHeader">ExpressedIn</th>
             <th class="tableCellHeader">Organism</th>
+            <th class="tableCellHeader">Interactor Type</th>
         </tr>
 
         <%-- Feature headings --%>
@@ -173,7 +174,7 @@
                     <html:submit indexed="true" property="protCmd"
                         onclick="setProteinDispatch('delete');"
                         titleKey="int.proteins.button.delete.titleKey">
-                        <bean:message key="int.proteins.button.delete"/>
+                        <bean:message key="int.interactors.button.delete"/>
                     </html:submit>
                 </td>
 
@@ -190,7 +191,7 @@
                 <td class="tableCell">
                     <nested:write property="geneName"/>
                 </td>
-                <td class="tableCell" rowspan="2">
+                <td class="tableCell">
                     <nested:write property="fullName"/>
                 </td>
             </tr>
@@ -216,7 +217,7 @@
                         <html:submit indexed="true" property="protCmd"
                             onclick="setProteinDispatch('edit');"
                             titleKey="int.proteins.button.edit.titleKey">
-                            <bean:message key="int.proteins.button.edit"/>
+                            <bean:message key="int.interactors.button.edit"/>
                         </html:submit>
                     </c:if>
 
@@ -224,7 +225,7 @@
                         <html:submit indexed="true" property="protCmd"
                             onclick="setProteinDispatch('save');"
                             titleKey="int.proteins.button.save.titleKey">
-                            <bean:message key="int.proteins.button.save"/>
+                            <bean:message key="int.interactors.button.save"/>
                         </html:submit>
                     </c:if>
                 </td>
@@ -273,6 +274,9 @@
                 </c:if>
                 <td class="tableCell">
                     <nested:write property="organism"/>
+                </td>
+                <td class="tableCell">
+                    <nested:write property="type"/>
                 </td>
             </tr>
 

@@ -35,9 +35,9 @@ public class ProteinDispatchAction extends AbstractEditorDispatchAction {
 
     protected Map getKeyMethodMap() {
         Map map = new HashMap();
-        map.put("int.proteins.button.edit", "edit");
-        map.put("int.proteins.button.save", "save");
-        map.put("int.proteins.button.delete", "delete");
+        map.put("int.interactors.button.edit", "edit");
+        map.put("int.interactors.button.save", "save");
+        map.put("int.interactors.button.delete", "delete");
         return map;
     }
 
@@ -94,7 +94,7 @@ public class ProteinDispatchAction extends AbstractEditorDispatchAction {
         if (cb.getRole() == null) {
             ActionErrors errors = new ActionErrors();
             errors.add("int.prot.role",
-                    new ActionError("error.int.protein.edit.role"));
+                    new ActionError("error.int.interact.edit.role"));
             saveErrors(request, errors);
             cb.setEditState(AbstractEditBean.ERROR);
 
@@ -105,7 +105,7 @@ public class ProteinDispatchAction extends AbstractEditorDispatchAction {
             return mapping.getInputForward();
         }
         // The protein to update.
-        view.addProteinToUpdate(cb);
+        view.addPolymerToUpdate(cb);
 
         // Back to the view mode.
         cb.setEditState(AbstractEditBean.VIEW);
@@ -133,7 +133,7 @@ public class ProteinDispatchAction extends AbstractEditorDispatchAction {
                 (InteractionViewBean) getIntactUser(request).getView();
 
         // Delete this Protein from the view.
-        view.delProtein(intform.getDispatchIndex());
+        view.delPolymer(intform.getDispatchIndex());
 
         // Update the form.
         return updateForm(mapping, intform, request, view);
