@@ -131,8 +131,8 @@ public abstract class SequenceViewBean extends AbstractEditViewBean {
         // The map containing the menus.
         Map map = new HashMap();
 
-        //map.putAll(super.getMenus());
-        map.putAll(super.getMenus(Protein.class.getName()));
+        map.putAll(super.getMenus());
+//        map.putAll(super.getMenus(Protein.class.getName()));
 
         String name = EditorMenuFactory.ORGANISM;
         int mode = (myOrganism == null) ? 1 : 0;

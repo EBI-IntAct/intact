@@ -208,8 +208,8 @@ public class BioSourceViewBean extends AbstractEditViewBean {
         // Clear any existing menus first.
         //myMenus.clear();
 
-        myMenus.putAll(super.getMenus(BioSource.class.getName()));
-        //myMenus.putAll(super.getMenus());
+//        myMenus.putAll(super.getMenus(BioSource.class.getName()));
+        myMenus.putAll(super.getMenus());
 
         // The cell type menu
         String name = EditorMenuFactory.CELL;
