@@ -584,7 +584,12 @@ public class LineExport {
     }
 
     /**
-     * Tells us if an Interaction is binary or not
+     * Tells us if an Interaction is binary or not.<br>
+     * <pre>
+     *      Rules:
+     *         - the sum of the stoichiometry of the components must be 2 (2*1 or 1*2)
+     *         - the interacting partner must be UniProt proteins
+     * </pre>
      *
      * @param interaction the interaction we are interrested in.
      *
@@ -640,6 +645,44 @@ public class LineExport {
                      " component(s)), we don't export it." );
                 isBinaryInteraction = false;
             }
+        }
+
+        if ( isBinaryInteraction ) {
+            // then test if all interactors are UniProt Proteins
+            for ( Iterator iterator = interaction.getComponents().iterator(); iterator.hasNext()
+                                                                              && isBinaryInteraction; ) {
+                Component component = (Component) iterator.next();
+
+                Interactor interactor = component.getInteractor();
+                if ( interactor instanceof Protein ) {
+
+                    Protein protein = (Protein) interactor;
+
+                    // check that the protein is a UniProt protein
+                    String uniprotID = getUniprotID( protein );
+                    if ( uniprotID == null ) {
+                        isBinaryInteraction = false; // stop the loop, involve a protein without uniprot ID
+
+                        log( "\t\t\t Interaction is binary but doesn't involve only UniProt proteins (eg. "+
+                             protein.getAc() +" / "+ protein.getShortLabel() +"). " );
+                    } else {
+
+                        // check that the protein doesn't have a no-uniprot-update annotation
+                        if( ! needsUniprotUpdate( protein ) ) {
+                            isBinaryInteraction = false; // stop the loop, Protein having no-uniprot-update involved
+
+                            log( "\t\t\t Interaction is binary but at least one UniProt protein is flagged '"+
+                                 CvTopic.NON_UNIPROT +"' (eg. "+ protein.getAc() +" / "+ protein.getShortLabel() +"). " );
+                        }
+                    }
+
+                } else {
+                    isBinaryInteraction = false; // stop the loop, that component doesn't involve a Protein
+
+                    log( "\t\t\t Interaction is binary but at least one partner is not a Protein (ie. "+
+                         interactor.getAc() +" / "+ interactor.getShortLabel() + " / " + component.getClass() +"). " );
+                }
+            } // components
         }
 
         return isBinaryInteraction;
