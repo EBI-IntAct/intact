@@ -46,8 +46,30 @@ public final class RoleChecker {
                     MessageHolder.getInstance().addCheckerMessage( new Message( msg ) );
                 }
 
+                if( "neutral".equals( role ) ) {
+                    // we may have either 'neutral' or 'neutral component' in the database ...
+                    // handle it !!
 
-                cvComponentRole = (CvComponentRole) helper.getObjectByLabel( CvComponentRole.class, role );
+                    cvComponentRole = (CvComponentRole) helper.getObjectByLabel( CvComponentRole.class, role );
+
+                    if( cvComponentRole == null ) {
+
+                        // it was not found, try the other possibility
+
+                        cvComponentRole = (CvComponentRole) helper.getObjectByLabel( CvComponentRole.class,
+                                                                                     CvComponentRole.NEUTRAL );
+                        if( cvComponentRole == null ) {
+                            // neither worked, there is a problem of data integrity
+                            System.out.println( "ERROR: neither " + role + " nor " + CvComponentRole.NEUTRAL +
+                                                " could be found in the database (CvComponentRole).");
+                        }
+                    }
+
+                } else {
+
+                    // any other role is search simply by shorltabel.
+                    cvComponentRole = (CvComponentRole) helper.getObjectByLabel( CvComponentRole.class, role );
+                }
 
                 if ( cvComponentRole != null ) {
                     System.out.println( "Found CvComponentRole with shortlabel: " + role );
