@@ -101,7 +101,7 @@ public class Component2xmlPSI25 implements Component2xmlI {
         // 5. Generating choice of [ interactorRef | interactor | interactionRef ]
         // currently we don't have interaction as interactor ... will be implemented later
         // we always generate here a interactorRef.
-        Interactor interactor = (Protein) component.getInteractor();
+        Interactor interactor = component.getInteractor();
 
         if ( false == session.isAlreadyDefined( interactor ) ) {
 
