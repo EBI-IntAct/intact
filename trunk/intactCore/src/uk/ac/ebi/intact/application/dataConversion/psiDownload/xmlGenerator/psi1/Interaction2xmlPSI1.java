@@ -7,10 +7,7 @@ package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi
 import org.w3c.dom.Element;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.*;
-import uk.ac.ebi.intact.model.Component;
-import uk.ac.ebi.intact.model.CvTopic;
-import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.model.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -160,44 +157,65 @@ public class Interaction2xmlPSI1 extends AnnotatedObject2xmlPSI1 implements Inte
             Experiment2xmlFactory.getInstance( session ).createReference( session, localExperimentList, experiment );
         }
 
-        // 6. Generating participantList...
-        if ( false == interaction.getComponents().isEmpty() ) {
 
-            // create the parent
-            Element participantListElement = session.createElement( "participantList" );
+        // If one of the interactor of the interaction is a NucleicAcid as this is not accepted in psi1 format
+        // we just skip the interaction.
+        boolean interactionContainNucleicAcid = false;
+
+        if ( false == interaction.getComponents().isEmpty() ) {
 
             for ( Iterator iterator = interaction.getComponents().iterator(); iterator.hasNext(); ) {
                 Component component = (Component) iterator.next();
-
-                // take care of the stoichiometry
-                for ( int i = 0; i < component.getStoichiometry(); i++ ) {
-                    Component2xmlFactory.getInstance( session ).create( session, participantListElement, component );
+                Interactor interactor = component.getInteractor();
+                if ( interactor instanceof NucleicAcid ) {
+                    interactionContainNucleicAcid = true;
                 }
             }
 
-            element.appendChild( participantListElement );
+
         }
 
-        // 7. Generating interactionType...
-        // CvInteractionType is optional in the intact model.
-        if ( interaction.getCvInteractionType() != null ) {
-            CvObject2xmlFactory.getInstance( session ).create( session, element, interaction.getCvInteractionType() );
+        if(interactionContainNucleicAcid == false){
+
+            // 6. Generating participantList...
+            if ( false == interaction.getComponents().isEmpty() ) {
+
+                // create the parent
+                Element participantListElement = session.createElement( "participantList" );
+
+                for ( Iterator iterator = interaction.getComponents().iterator(); iterator.hasNext(); ) {
+                    Component component = (Component) iterator.next();
+
+                    // take care of the stoichiometry
+                    for ( int i = 0; i < component.getStoichiometry(); i++ ) {
+                        Component2xmlFactory.getInstance( session ).create( session, participantListElement, component );
+                    }
+                }
+
+                element.appendChild( participantListElement );
+            }
+
+            // 7. Generating interactionType...
+            // CvInteractionType is optional in the intact model.
+            if ( interaction.getCvInteractionType() != null ) {
+                CvObject2xmlFactory.getInstance( session ).create( session, element, interaction.getCvInteractionType() );
+            }
+
+            // 8. Generating confidence...
+            createConfidence( session, element, interaction );
+
+            // 9. Generating xref (if any)...
+            createInteractionXrefs( session, element, interaction );
+
+            // 10. Generating attributeList...
+            createAttributeList( session, element, interaction, attributeListFilter );
+
+            // 11. Generating dissociation constant (if any)...
+            createDissociationConstant( session, element, interaction );
+
+            // 11. Attaching the newly created element to the parent...
+            parent.appendChild( element );
         }
-
-        // 8. Generating confidence...
-        createConfidence( session, element, interaction );
-
-        // 9. Generating xref (if any)...
-        createInteractionXrefs( session, element, interaction );
-
-        // 10. Generating attributeList...
-        createAttributeList( session, element, interaction, attributeListFilter );
-
-        // 11. Generating dissociation constant (if any)...
-        createDissociationConstant( session, element, interaction );
-
-        // 11. Attaching the newly created element to the parent...
-        parent.appendChild( element );
 
 
         return element;
