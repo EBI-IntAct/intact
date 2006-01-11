@@ -10,7 +10,9 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
+import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureActionForm;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 
 import java.util.ResourceBundle;
 
@@ -50,6 +52,7 @@ public class FeatureActionFormTest extends TestCase {
             doMutationValidation();
         }
         catch (Exception ex) {
+            Logger.getLogger(EditorConstants.LOGGER).error("", ex);
             ex.printStackTrace();
             fail(ex.getMessage());
         }

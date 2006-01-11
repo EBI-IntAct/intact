@@ -137,7 +137,7 @@ public class EditorService {
         // we want the Experiment to be at the top.
         moveToFront(getTopic(Interaction.class));
         moveToFront(getTopic(Experiment.class));
-
+                    
         // Initialize the institution.
         IntactHelper helper = new IntactHelper();
         try {

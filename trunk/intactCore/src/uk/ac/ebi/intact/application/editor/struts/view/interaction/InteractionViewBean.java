@@ -184,6 +184,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
                 user.rollback();
             }
             catch (IntactException ie2) {
+                Logger.getLogger(EditorConstants.LOGGER).error("Problem trying to rollback", ie2);
                 // Oops! Problems with rollback; ignore this as this
                 // error is reported via the main exception (ie1).
             }
@@ -207,6 +208,8 @@ public class InteractionViewBean extends AbstractEditViewBean {
                 user.rollback();
             }
             catch (IntactException ie2) {
+                 Logger.getLogger(EditorConstants.LOGGER).error("Problem trying to rollback", ie2);
+
                 // Oops! Problems with rollback; ignore this as this
                 // error is reported via the main exception (ie1).
             }

@@ -8,10 +8,12 @@ package uk.ac.ebi.intact.application.editor.struts.view.feature;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.struts.tiles.ComponentContext;
+import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
@@ -330,11 +332,13 @@ public class FeatureViewBean extends AbstractEditViewBean {
             user.commit();
         }
         catch (IntactException ie1) {
+            Logger.getLogger(EditorConstants.LOGGER).error("", ie1);
             ie1.printStackTrace();
             try {
                 user.rollback();
             }
             catch (IntactException ie2) {
+                Logger.getLogger(EditorConstants.LOGGER).error("", ie2);
                 // Oops! Problems with rollback; ignore this as this
                 // error is reported via the main exception (ie1).
             }

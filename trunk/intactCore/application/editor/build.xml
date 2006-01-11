@@ -241,7 +241,10 @@
             debug="on" source="1.4"
             includes="**/application/editor/**,
                       **/application/commons/**"
-            excludes="**/test/**">
+            excludes="**/test/**,
+                     **/application/search3/**,
+                     **/application/search2/**,
+                     **/application/search3/business/**">
             <classpath refid="project.class.path"/>
         </javac>
 
@@ -584,6 +587,7 @@
                 <include name="layouts/**"/>
                 <include name="js/**"/>
                 <include name="editor.html"/>
+                
             </fileset>
 
             <webinf dir="${temp.web}/WEB-INF"/>

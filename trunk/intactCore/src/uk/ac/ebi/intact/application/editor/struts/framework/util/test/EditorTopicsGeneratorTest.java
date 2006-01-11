@@ -10,6 +10,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorTopicsGenerator;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -17,6 +18,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Properties;
 import java.util.Set;
+
+import org.apache.log4j.Logger;
 
 /**
  * Test class for EditorTopicsGenerator class.
@@ -58,15 +61,17 @@ public class EditorTopicsGeneratorTest extends TestCase {
             gen.doIt();
         }
         catch (ClassNotFoundException clnfe) {
+            Logger.getLogger(EditorConstants.LOGGER).error("", clnfe);
             fail(clnfe.getMessage());
         }
         catch (IOException ioe) {
+            Logger.getLogger(EditorConstants.LOGGER).error("", ioe);
             fail(ioe.getMessage());
         }
         // The expected Intact Types resource file.
         String expResource = resPath + "ExpectedEditorTopics.properties";
         assertTrue("Didn't generate EditorTopcis resource files correctly",
-                compareProperties(expResource, testResource));
+                   compareProperties(expResource, testResource));
     }
 
     private boolean compareProperties(String propName1, String propName2) {
@@ -76,6 +81,7 @@ public class EditorTopicsGeneratorTest extends TestCase {
             prop1 = loadProperties(propName1);
         }
         catch (IOException ioex) {
+            Logger.getLogger(EditorConstants.LOGGER).error("", ioex);
             ioex.printStackTrace();
             return false;
         }
@@ -86,6 +92,7 @@ public class EditorTopicsGeneratorTest extends TestCase {
             prop2 = loadProperties(propName2);
         }
         catch (IOException ioex) {
+            Logger.getLogger(EditorConstants.LOGGER).error("", ioex);
             ioex.printStackTrace();
             return false;
         }
@@ -141,6 +148,7 @@ public class EditorTopicsGeneratorTest extends TestCase {
                     in.close();
                 }
                 catch (IOException ioex) {
+                    Logger.getLogger(EditorConstants.LOGGER).error("", ioex);
                 }
             }
         }

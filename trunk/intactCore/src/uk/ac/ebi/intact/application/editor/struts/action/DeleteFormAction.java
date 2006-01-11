@@ -68,15 +68,16 @@ public class DeleteFormAction extends AbstractEditorAction {
             user.commit();
         }
         catch (IntactException ie1) {
+            // Log the stack trace.
+            LOGGER.error("", ie1);
             try {
                 user.rollback();
             }
             catch (IntactException ie2) {
+                LOGGER.error("Error trying to do a rollback", ie2);
                 // Oops! Problems with rollback; ignore this as this
                 // error is reported via the main exception (ie1).
             }
-            // Log the stack trace.
-            LOGGER.error("", ie1);
             // Error with deleting the object.
             ActionErrors errors = new ActionErrors();
             errors.add(EDITOR_ERROR, new ActionError("error.delete",

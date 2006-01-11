@@ -90,7 +90,7 @@ public class FeatureDispatchAction extends CommonDispatchAction {
             }
             catch (IntactException ie) {
                 // Log the stack trace.
-                LOGGER.error(ie);
+                LOGGER.error("Problem in persisting mutations : ",ie);
                 // Error with updating.
                 ActionErrors errors = new ActionErrors();
                 errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("error.update",
@@ -196,6 +196,7 @@ public class FeatureDispatchAction extends CommonDispatchAction {
                     helper.undoTransaction();
                 }
                 catch (IntactException ie1) {
+                    LOGGER.error("Problem trying to do the rollback", ie);
                     // Oops! Problems with rollback.
                 }
                 throw ie;
@@ -220,6 +221,7 @@ public class FeatureDispatchAction extends CommonDispatchAction {
                     helper.undoTransaction();
                 }
                 catch (IntactException ie1) {
+                    LOGGER.error("Problem trying to do the rollback", ie);
                     // Oops! Problems with rollback.
                 }
                 // Rethrow it again for logging the exception.

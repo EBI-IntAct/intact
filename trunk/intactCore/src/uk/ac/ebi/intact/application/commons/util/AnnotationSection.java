@@ -73,8 +73,8 @@ public class AnnotationSection {
 
 
 
-    public AnnotationSection () throws IntactException {
-            IntactHelper intactHelper = new IntactHelper();
+    public AnnotationSection (IntactHelper intactHelper) throws IntactException {
+         //   IntactHelper intactHelper = new IntactHelper();
         /*
             Experiment.class.getName() ===> Editor - Experiment
             Interaction.class.getName() ===> Editor - Interaction
@@ -132,12 +132,12 @@ public class AnnotationSection {
                }
             }
         }
-        intactHelper.closeStore();
+        //intactHelper.closeStore();
     }
 
     public static void main(String[] args) throws IntactException {
         IntactHelper helper = new IntactHelper();
-        AnnotationSection annotationSection = new AnnotationSection();
+        AnnotationSection annotationSection = new AnnotationSection(helper);
         annotationSection.getAnnotationSection();
 
 
