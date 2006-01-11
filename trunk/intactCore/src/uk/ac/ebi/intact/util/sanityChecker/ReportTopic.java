@@ -76,6 +76,10 @@ public class ReportTopic {
         public static final ReportTopic INTERACTION_WITH_MIXED_COMPONENT_CATEGORIES = new ReportTopic( "Interactions with mixed categories (bait-prey, enzyme-enzymeTarget, neutral, complex, self, unspecified)" );
         public static final ReportTopic INTERACTION_WITH_NO_BAIT = new ReportTopic( "Interactions with no bait" );
         public static final ReportTopic INTERACTION_WITH_NO_PREY = new ReportTopic( "Interactions with no prey" );
+        public static final ReportTopic INTERACTION_WITH_NO_FLUOROPHORE_ACCEPTOR = new ReportTopic( "Interactions with fluorophore acceptor" );
+        public static final ReportTopic INTERACTION_WITH_NO_FLUOROPHORE_DONOR = new ReportTopic( "Interactions with fluorophore donor" );
+        public static final ReportTopic INTERACTION_WITH_NO_ELECTRON_ACCEPTOR = new ReportTopic( "Interactions with electron acceptor" );
+        public static final ReportTopic INTERACTION_WITH_NO_ELECTRON_DONOR = new ReportTopic( "Interactions with electron donor" );
         public static final ReportTopic INTERACTION_WITH_NO_ENZYME_TARGET = new ReportTopic( "Interactions with no enzymeTarget" );
         public static final ReportTopic INTERACTION_WITH_NO_ENZYME = new ReportTopic( "Interactions with no enzyme" );
         public static final ReportTopic INTERACTION_WITH_ONLY_ONE_NEUTRAL = new ReportTopic( "Interactions with only one neutral component and stoichiometry 1" );
