@@ -10,7 +10,6 @@ import org.apache.log4j.PropertyConfigurator;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -69,4 +68,3 @@ public class LoggingInitServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse res) {
     }
 }
-
