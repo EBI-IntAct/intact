@@ -74,6 +74,10 @@ public class
 
     private static ControlledvocabBean neutralCvBean;
     private static ControlledvocabBean baitCvBean;
+    private static ControlledvocabBean fluorophoreAcceptorCvBean;
+    private static ControlledvocabBean fluorophoreDonorCvBean;
+    private static ControlledvocabBean electronAcceptorCvBean;
+    private static ControlledvocabBean electronDonorCvBean;
     private static ControlledvocabBean preyCvBean;
     private static ControlledvocabBean enzymeCvBean;
     private static ControlledvocabBean enzymeTargetCvBean;
@@ -240,6 +244,10 @@ public class
         neutralCvBean = (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, "MI:0497").get(0);
         baitCvBean = (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, "MI:0496" ).get(0);
         preyCvBean = (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, "MI:0498" ).get(0);
+        fluorophoreAcceptorCvBean =(ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, "MI:0584" ).get(0);
+        fluorophoreDonorCvBean =(ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, "MI:0583" ).get(0);
+        electronAcceptorCvBean =(ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, "MI:0580" ).get(0);
+        electronDonorCvBean =(ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, "MI:0579" ).get(0);
         enzymeCvBean = (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, "MI:0501" ).get(0);
         enzymeTargetCvBean = (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, "MI:0502" ).get(0);
         selfCvBean = (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, "MI:0503" ).get(0);
@@ -446,7 +454,11 @@ public class
                         enzymeTargetCount = 0,
                         neutralCount = 0,
                         selfCount = 0,
-                        unspecifiedCount = 0;
+                        unspecifiedCount = 0,
+                        fluorophoreAcceptorCount = 0,
+                        fluorophoreDonorCount = 0,
+                        electronAcceptorCount = 0,
+                        electronDonorCount = 0;
                 float selfStoichiometry = 0;
                 float neutralStoichiometry = 0;
 
@@ -469,6 +481,14 @@ public class
                         selfStoichiometry = componentBean.getStoichiometry();
                     } else if ( unspecifiedCvBean.getAc().equals( componentBean.getRole()  ) ) {
                         unspecifiedCount++;
+                    } else if ( fluorophoreDonorCvBean.getAc().equals( componentBean.getRole() )){
+                        fluorophoreDonorCount++;
+                    } else if (fluorophoreAcceptorCvBean.getAc().equals( componentBean.getRole() )){
+                        fluorophoreAcceptorCount++;
+                    } else if ( electronDonorCvBean.getAc().equals( componentBean.getRole() )){
+                        electronDonorCount++;
+                    } else if (electronAcceptorCvBean.getAc().equals( componentBean.getRole() )){
+                        electronAcceptorCount++;
                     }
                 }
 
@@ -477,9 +497,10 @@ public class
                 int neutral = ( neutralCount > 0 ? 1 : 0 );
                 int self = ( selfCount > 0 ? 1 : 0 );
                 int unspecified = ( unspecifiedCount > 0 ? 1 : 0 );
-
+                int fluorophoreAcceptorDonor = ( fluorophoreAcceptorCount + fluorophoreDonorCount > 0 ? 1 : 0);
+                int electronAcceptorDonor = ( electronAcceptorCount + electronDonorCount > 0 ? 1 : 0);
                 // count the number of categories used.
-                int categoryCount = baitPrey + neutral + enzymeTarget + self + unspecified;
+                int categoryCount = baitPrey + neutral + enzymeTarget + self + unspecified + fluorophoreAcceptorDonor + electronAcceptorDonor;
 
                 switch ( categoryCount ) {
                     case 0:
@@ -500,7 +521,20 @@ public class
                                 messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_PREY, interactionBean);
                             }
 
-                        } else if ( enzymeTarget == 1 ) {
+                        }else if ( fluorophoreAcceptorDonor == 1 ) {
+                            if ( fluorophoreAcceptorCount == 0){
+                                messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_FLUOROPHORE_ACCEPTOR, interactionBean);
+                            }else if (fluorophoreDonorCount == 0 ){
+                                messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_FLUOROPHORE_DONOR, interactionBean);
+                            }
+                        }else if ( electronAcceptorDonor == 1 ) {
+                            if ( electronAcceptorCount == 0){
+                                messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_ELECTRON_ACCEPTOR, interactionBean);
+                            }else if (electronDonorCount == 0 ){
+                                messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_ELECTRON_DONOR, interactionBean);
+                            }
+                        }
+                        else if ( enzymeTarget == 1 ) {
                             // enzyme - enzymeTarget
                             if ( enzymeCount == 0 ) {
                                 //System.out.println("Interaction  " +interactionAc + " with no enzyme");
@@ -1205,7 +1239,7 @@ public class
         /*
         *     Check on feature
         */
-        scn.featureWithoutRange();
+//        scn.featureWithoutRange();
 
         /*
         *     Check on interactor
@@ -1218,112 +1252,112 @@ public class
 
 
         List interactorBeans = schIntAc.getBeans(InteractorBean.class, "EBI-%");
-        scn.checkInteractionsComplete(interactorBeans);
+//        scn.checkInteractionsComplete(interactorBeans);
         scn.checkInteractionsBaitAndPrey(interactorBeans);
-        scn.checkComponentOfInteractions(interactorBeans);
-        scn.checkOneIntOneExp();
-        scn.checkAnnotations(interactorBeans, Interaction.class.getName(),intUsableTopic);
+//        scn.checkComponentOfInteractions(interactorBeans);
+//        scn.checkOneIntOneExp();
+//        scn.checkAnnotations(interactorBeans, Interaction.class.getName(),intUsableTopic);
 
         /*
         *     Check on xref
         */
-        schIntAc.addMapping(XrefBean.class, "select distinct primaryId "+
-                                            "from ia_xref, ia_controlledvocab db, ia_controlledvocab q " +
-                                            "where database_ac = db.ac and " +
-                                            "db.shortlabel = ? and "+
-                                            "qualifier_ac = q.ac and "+
-                                            "q.shortlabel = 'identity' "+
-                                            "group by primaryId "+
-                                            "having count(primaryId) > 1");
-
-
-        List xrefBeans = schIntAc.getBeans(XrefBean.class,CvDatabase.UNIPROT);
-
-        scn.sch.addMapping(InteractorBean.class,"SELECT i.ac,i.objclass, i.shortlabel, i.biosource_ac, i.userstamp, i.updated "+
-                                                "FROM ia_interactor i, ia_xref x "+
-                                                "WHERE i.ac = x.parent_ac AND " +
-                                                "0 = ( SELECT count(1) " +
-                                                "FROM ia_annotation a, ia_int2annot i2a, ia_controlledvocab topic "+
-                                                "WHERE i.ac = i2a.interactor_ac AND "+
-                                                "i2a.annotation_ac = a.ac AND " +
-                                                "a.topic_ac = topic.ac AND " +
-                                                "topic.shortlabel = 'no-uniprot-update' ) AND "+
-                                                "x.qualifier_ac = '" +identityXrefQualifierCvBean.getAc()+"' AND "+
-                                                "x.primaryid=?");
-
-        for (int i = 0; i < xrefBeans.size(); i++) {
-            XrefBean xrefBean =  (XrefBean) xrefBeans.get(i);
-            scn.duplicatedProtein(xrefBean);
-        }
-
-        schIntAc.addMapping(XrefBean.class,"select ac, userstamp, updated, database_ac, primaryid,parent_ac "+
-                                           "from ia_xref "+
-                                            "where ac like ?");
-                                            //"where ac ='EBI-695273' and ac like ?");
-        xrefBeans = schIntAc.getBeans(XrefBean.class, "%");
-        scn.hasValidPrimaryId(xrefBeans);
+//        schIntAc.addMapping(XrefBean.class, "select distinct primaryId "+
+//                                            "from ia_xref, ia_controlledvocab db, ia_controlledvocab q " +
+//                                            "where database_ac = db.ac and " +
+//                                            "db.shortlabel = ? and "+
+//                                            "qualifier_ac = q.ac and "+
+//                                            "q.shortlabel = 'identity' "+
+//                                            "group by primaryId "+
+//                                            "having count(primaryId) > 1");
+//
+//
+//        List xrefBeans = schIntAc.getBeans(XrefBean.class,CvDatabase.UNIPROT);
+//
+//        scn.sch.addMapping(InteractorBean.class,"SELECT i.ac,i.objclass, i.shortlabel, i.biosource_ac, i.userstamp, i.updated "+
+//                                                "FROM ia_interactor i, ia_xref x "+
+//                                                "WHERE i.ac = x.parent_ac AND " +
+//                                                "0 = ( SELECT count(1) " +
+//                                                "FROM ia_annotation a, ia_int2annot i2a, ia_controlledvocab topic "+
+//                                                "WHERE i.ac = i2a.interactor_ac AND "+
+//                                                "i2a.annotation_ac = a.ac AND " +
+//                                                "a.topic_ac = topic.ac AND " +
+//                                                "topic.shortlabel = 'no-uniprot-update' ) AND "+
+//                                                "x.qualifier_ac = '" +identityXrefQualifierCvBean.getAc()+"' AND "+
+//                                                "x.primaryid=?");
+//
+//        for (int i = 0; i < xrefBeans.size(); i++) {
+//            XrefBean xrefBean =  (XrefBean) xrefBeans.get(i);
+//            scn.duplicatedProtein(xrefBean);
+//        }
+//
+//        schIntAc.addMapping(XrefBean.class,"select ac, userstamp, updated, database_ac, primaryid,parent_ac "+
+//                                           "from ia_xref "+
+//                                            "where ac like ?");
+//                                            //"where ac ='EBI-695273' and ac like ?");
+//        xrefBeans = schIntAc.getBeans(XrefBean.class, "%");
+//        scn.hasValidPrimaryId(xrefBeans);
 
         /*
         *     Check on Experiment
         */
-        List experimentBeans = scn.sch.getBeans(ExperimentBean.class,"EBI-%");
-        scn.checkReviewed(experimentBeans);
-        scn.checkExperiment(experimentBeans);
-        scn.checkExperimentsPubmedIds(experimentBeans);
-        scn.checkAnnotations(experimentBeans, Experiment.class.getName(), expUsableTopic);
-        scn.experimentNotSuperCurated();
+//        List experimentBeans = scn.sch.getBeans(ExperimentBean.class,"EBI-%");
+//        scn.checkReviewed(experimentBeans);
+//        scn.checkExperiment(experimentBeans);
+//        scn.checkExperimentsPubmedIds(experimentBeans);
+//        scn.checkAnnotations(experimentBeans, Experiment.class.getName(), expUsableTopic);
+//        scn.experimentNotSuperCurated();
 
         /*
         *     Check on BioSource
         */
 
-        List bioSourceBeans = scn.sch.getBeans(BioSourceBean.class,"EBI-%");
+//        List bioSourceBeans = scn.sch.getBeans(BioSourceBean.class,"EBI-%");
         //System.out.println("The size of bioSource list is " + bioSourceBeans.size());
-        scn.checkBioSource(bioSourceBeans);
-        scn.checkNewt(bioSourceBeans);
-        scn.checkAnnotations(bioSourceBeans, BioSource.class.getName(),bsUsableTopic);
+//        scn.checkBioSource(bioSourceBeans);
+//        scn.checkNewt(bioSourceBeans);
+//        scn.checkAnnotations(bioSourceBeans, BioSource.class.getName(),bsUsableTopic);
 
         /*
         *     Check on protein
         */
        //right now not actual using, as concerning checks appear to commented out
 
-        schIntAc.addMapping(InteractorBean.class,"SELECT ac, crc64, shortlabel, userstamp, updated, objclass "+
-                                                 "FROM ia_interactor "+
-                                                 "WHERE objclass = '"+ProteinImpl.class.getName()+
-                                                 "' AND ac like ?");
-
-        List proteinBeans = schIntAc.getBeans(InteractorBean.class,"%");
-
-        scn.checkProtein(proteinBeans);
-        scn.checkCrc64(proteinBeans);
-        scn.checkAnnotations(proteinBeans, EditorMenuFactory.PROTEIN,protUsableTopic);
-
-        //already working
-        List ranges = scn.deletionFeatureSch.getBeans(RangeBean.class,"2");
-        scn.checkDeletionFeature(ranges);
+//        schIntAc.addMapping(InteractorBean.class,"SELECT ac, crc64, shortlabel, userstamp, updated, objclass "+
+//                                                 "FROM ia_interactor "+
+//                                                 "WHERE objclass = '"+ProteinImpl.class.getName()+
+//                                                 "' AND ac like ?");
+//
+//        List proteinBeans = schIntAc.getBeans(InteractorBean.class,"%");
+//
+//        scn.checkProtein(proteinBeans);
+//        scn.checkCrc64(proteinBeans);
+//        scn.checkAnnotations(proteinBeans, EditorMenuFactory.PROTEIN,protUsableTopic);
+//
+//        //already working
+//        List ranges = scn.deletionFeatureSch.getBeans(RangeBean.class,"2");
+//        scn.checkDeletionFeature(ranges);
 
         /*
         *     Check on annotation
         */
 
             //tested
-             schIntAc.addMapping(AnnotationBean.class, "SELECT ac, description, updated, userstamp "+
-                                                       "FROM ia_annotation "+
-                                                       "WHERE topic_ac = 'EBI-18' and ac like ?"
-                                                        );
-
-            List annotationBeans = schIntAc.getBeans(AnnotationBean.class,"EBI-%");
-            scn.checkURL(annotationBeans);
+//             schIntAc.addMapping(AnnotationBean.class, "SELECT ac, description, updated, userstamp "+
+//                                                       "FROM ia_annotation "+
+//                                                       "WHERE topic_ac = 'EBI-18' and ac like ?"
+//                                                        );
+//
+//            List annotationBeans = schIntAc.getBeans(AnnotationBean.class,"EBI-%");
+//            scn.checkURL(annotationBeans);
 
             /*
             *    Check on controlledvocab
             */
 
-             schIntAc.addMapping(ControlledvocabBean.class,"SELECT ac, objclass, shortlabel, updated, userstamp "+
-                                                           "FROM ia_controlledvocab "+
-                                                           "WHERE ac = ?");
-            List controlledvocabBeans = schIntAc.getBeans(ControlledvocabBean.class, "%");
+//             schIntAc.addMapping(ControlledvocabBean.class,"SELECT ac, objclass, shortlabel, updated, userstamp "+
+//                                                           "FROM ia_controlledvocab "+
+//                                                           "WHERE ac = ?");
+//            List controlledvocabBeans = schIntAc.getBeans(ControlledvocabBean.class, "%");
 
 //        scn.checkAnnotations(controlledvocabBeans, CvObject.class.getName(),cvUsableTopic);
 
