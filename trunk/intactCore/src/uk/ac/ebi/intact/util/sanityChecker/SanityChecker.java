@@ -334,7 +334,7 @@ public class
 
         messageSender = new MessageSender();
 
-        annotationSection = new AnnotationSection();
+        annotationSection = new AnnotationSection(helper);
 
 
     }
