@@ -369,11 +369,9 @@ public class SearchHelper implements SearchHelperI {
             }
             catch (IntactException e) {
                 connected = new Boolean(false);
-
             }
             catch (SQLException e) {
                 connected = new Boolean(false);
-
             }
             finally {
                 if (rs != null) {
@@ -558,11 +556,11 @@ public class SearchHelper implements SearchHelperI {
                 logger.info(se.getSQLState());
                 logger.info("SQL: Error Code: " + se.getErrorCode());
             }
-            throw new IntactException("SQL errors, see the log out for more info");
+            throw new IntactException("SQL errors, see the log out for more info ",se);
 
         }
         catch (ClassNotFoundException e) {
-            throw new IntactException("Received an intact typ which is not valid, see the log out for more info");
+            throw new IntactException("Received an intact typ which is not valid, see the log out for more info ",e);
         }
         finally {
             //  close all database connections
@@ -577,7 +575,7 @@ public class SearchHelper implements SearchHelperI {
                 }
             }
             catch (SQLException se) {
-                throw new IntactException("Problems with closing the JDBC Resource");
+                throw new IntactException("Problems with closing the JDBC Resource ",se);
             }
         }
     }   // end searchFast
