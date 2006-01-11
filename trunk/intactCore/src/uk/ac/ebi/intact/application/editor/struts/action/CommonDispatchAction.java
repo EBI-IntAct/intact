@@ -353,7 +353,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         }
         catch (IntactException ie) {
             // Log the stack trace.
-            LOGGER.error("", ie);
+            LOGGER.error("Exception trying to persist the view ", ie);
             // Error with updating.
             ActionErrors errors = new ActionErrors();
             // The error message.

@@ -9,8 +9,10 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.struts.action.ActionErrors;
+import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.RangeBean;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvFuzzyType;
@@ -63,6 +65,7 @@ public class RangeBeanTest extends TestCase {
             doTestConstructor1(helper);
         }
         catch (Exception ex) {
+            Logger.getLogger(EditorConstants.LOGGER).error("", ex);
             ex.printStackTrace();
             fail(ex.getMessage());
         }
@@ -357,6 +360,7 @@ public class RangeBeanTest extends TestCase {
             copy = (RangeBean) bean.clone();
         }
         catch (CloneNotSupportedException cnse) {
+            Logger.getLogger(EditorConstants.LOGGER).error("", cnse);
             assertTrue(true);
             return;
         }
@@ -431,6 +435,7 @@ public class RangeBeanTest extends TestCase {
             doTestGetRange(helper);
         }
         catch (Exception ex) {
+            Logger.getLogger(EditorConstants.LOGGER).error("", ex);
             ex.printStackTrace();
             fail(ex.getMessage());
         }
@@ -439,7 +444,9 @@ public class RangeBeanTest extends TestCase {
                 try {
                     helper.closeStore();
                 }
-                catch (IntactException e) {}
+                catch (IntactException e) {
+                    Logger.getLogger(EditorConstants.LOGGER).error("", e);
+                }
             }
         }
     }

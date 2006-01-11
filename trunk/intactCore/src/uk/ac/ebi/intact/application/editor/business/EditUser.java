@@ -269,6 +269,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
             myViewStack = new Stack();
         }
         catch (IntactException ie) {
+            getLogger().error("", ie);
             throw new IOException(ie.getMessage());
         }
     }
@@ -618,6 +619,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
             return doGetNextAvailableShortLabel(clazz, label);
         }
         catch (IntactException ie) {
+            getLogger().error("", ie);
             // Error in searching, just return the original name for user to
             // decide.
         }
@@ -636,7 +638,8 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
             catch (MalformedURLException murle) {
                 // This should never happen because default constructor has a
                 // valid URL.
-                getLogger().info(murle);
+                getLogger().info("Problem trying to create a NewtServerProxy, this shouldn't have happen has the " + "" +
+                        "default constructor has a valid url (http://www.ebi.ac.uk/newt/display) :", murle);
             }
         }
         return myNewtServer;
@@ -695,6 +698,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
             myProteinFactory = new UpdateProteins(helper);
         }
         catch (UpdateProteinsI.UpdateException e) {
+            getLogger().error("", e);
             throw new IntactException("Unable to create the Protein factory");
         }
         finally {

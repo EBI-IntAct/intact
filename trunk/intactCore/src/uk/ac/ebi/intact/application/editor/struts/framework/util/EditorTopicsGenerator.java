@@ -15,6 +15,8 @@ import java.io.*;
 import java.lang.reflect.Modifier;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 /**
  * This utility class generates EditorTopics.properties file using the
  * classes in the AnnotatedObject package. An editiable class must follow
@@ -233,6 +235,7 @@ public class EditorTopicsGenerator {
                     out.close();
                 }
                 catch (IOException ioe) {
+                    Logger.getLogger(EditorConstants.LOGGER).error("", ioe);
                 }
             }
         }
@@ -252,6 +255,7 @@ public class EditorTopicsGenerator {
             System.out.println("Wrote to " + args[1]);
         }
         catch (Exception ex) {
+            Logger.getLogger(EditorConstants.LOGGER).error("", ex);
             ex.printStackTrace();
         }
     }

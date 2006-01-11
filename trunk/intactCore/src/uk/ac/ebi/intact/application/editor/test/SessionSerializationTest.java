@@ -10,10 +10,12 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.commons.lang.SerializationUtils;
+import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.business.IntactException;
@@ -48,7 +50,9 @@ public class SessionSerializationTest extends TestCase  {
         try {
             myHelper.closeStore();
         }
-        catch (IntactException ie) {}
+        catch (IntactException ie) {
+            Logger.getLogger(EditorConstants.LOGGER).error("", ie);
+        }
     }
 
     /**
@@ -99,6 +103,7 @@ public class SessionSerializationTest extends TestCase  {
             assertEquals(preUser, postUser);
         }
         catch (IntactException ie) {
+           Logger.getLogger(EditorConstants.LOGGER).error("", ie);
            fail(ie.getMessage());
         }
     }
@@ -183,6 +188,7 @@ public class SessionSerializationTest extends TestCase  {
             assertEquals(preUser, postUser);
         }
         catch (IntactException ie) {
+           Logger.getLogger(EditorConstants.LOGGER).error("", ie);
            fail(ie.getMessage());
         }
     }
@@ -269,6 +275,7 @@ public class SessionSerializationTest extends TestCase  {
             assertEquals(preUser, postUser);
         }
         catch (IntactException ie) {
+           Logger.getLogger(EditorConstants.LOGGER).error("", ie);
            fail(ie.getMessage());
         }
     }
@@ -374,6 +381,7 @@ public class SessionSerializationTest extends TestCase  {
             assertEquals(preUser, postUser);
         }
         catch (IntactException ie) {
+           Logger.getLogger(EditorConstants.LOGGER).error("", ie);
            fail(ie.getMessage());
         }
     }
@@ -449,6 +457,7 @@ public class SessionSerializationTest extends TestCase  {
             assertTrue(postUser3.isEditing());
         }
         catch (IntactException ie) {
+           Logger.getLogger(EditorConstants.LOGGER).error("", ie); 
            fail(ie.getMessage());
         }
     }

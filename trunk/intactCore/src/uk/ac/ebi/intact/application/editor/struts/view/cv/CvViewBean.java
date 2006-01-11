@@ -67,18 +67,23 @@ public class CvViewBean extends AbstractEditViewBean {
             }
             catch (NoSuchMethodException ne) {
                 // Shouldn't happen.
+                Logger.getLogger(EditorConstants.LOGGER).error("", new IntactException(ne.getMessage()));
                 throw new IntactException(ne.getMessage());
             }
             catch (SecurityException se) {
+                Logger.getLogger(EditorConstants.LOGGER).error("", new IntactException(se.getMessage()) );
                 throw new IntactException(se.getMessage());
             }
             catch (InstantiationException ie) {
+                Logger.getLogger(EditorConstants.LOGGER).error("", new IntactException(ie.getMessage()) );
                 throw new IntactException(ie.getMessage());
             }
             catch (IllegalAccessException le) {
+                Logger.getLogger(EditorConstants.LOGGER).error("", new IntactException(le.getMessage()) );
                 throw new IntactException(le.getMessage());
             }
             catch (InvocationTargetException te) {
+                Logger.getLogger(EditorConstants.LOGGER).error("", new IntactException(te.getMessage()) );
                 throw new IntactException(te.getMessage());
             }
             setAnnotatedObject(cvobj);

@@ -8,7 +8,9 @@ package uk.ac.ebi.intact.application.editor.struts.view.feature;
 
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
+import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
@@ -246,6 +248,7 @@ public class RangeBean extends AbstractEditKeyBean {
             }
         }
         catch (IllegalArgumentException iae) {
+            Logger.getLogger(EditorConstants.LOGGER).error("", iae);
             errors = new ActionErrors();
             errors.add(prefix + ".fromRange",
                     new ActionError("error.feature.range.invalid"));
@@ -275,6 +278,7 @@ public class RangeBean extends AbstractEditKeyBean {
             }
         }
         catch (IllegalArgumentException iae) {
+            Logger.getLogger(EditorConstants.LOGGER).error("", iae);
             errors = new ActionErrors();
             errors.add(prefix + ".toRange", new ActionError("error.feature.range.invalid"));
         }

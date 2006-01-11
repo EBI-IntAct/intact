@@ -102,6 +102,7 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
                                   HttpServletResponse response)
             throws Exception {
         // Handler to the Intact User.
+
         EditUserI user = getIntactUser(request);
         //user.getUserName();
         //user.getIntactHelper();
@@ -277,13 +278,13 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
             view.copyPropertiesTo(editorForm);
 
         }catch (NumberFormatException e){  //If the pubmed Id do not have the good format
-            LOGGER.error("", e);
+            LOGGER.error("The given pubmed id is not an integer : ", e);
             ActionErrors errors = new ActionErrors();
             errors.add("autocomp", new ActionError("error.exp.autocomp.wrong.format"));
             saveErrors(request, errors);
             return mapping.findForward(FAILURE);
         }catch (PublicationNotFoundException e){  //If the publication is not found
-            LOGGER.error("", e);
+            LOGGER.error(" The publication corresponding to pubmedId " + pubmedId + "couldn't be found : ", e);
             ActionErrors errors = new ActionErrors();
             errors.add("autocomp", new ActionError("error.exp.autocomp.publication.not.found",e.getMessage()));
             saveErrors(request, errors);

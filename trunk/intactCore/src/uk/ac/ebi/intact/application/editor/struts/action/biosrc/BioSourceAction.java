@@ -83,6 +83,7 @@ public class BioSourceAction extends AbstractEditorAction {
             Integer.parseInt(taxid);
         }
         catch (NumberFormatException nfe) {
+            LOGGER.error("The given taxid was not an integer value : ",nfe);
             errors = new ActionErrors();
             errors.add("bs.taxid", new ActionError("error.taxid.mask", taxid));
             saveErrors(request, errors);
@@ -176,12 +177,14 @@ public class BioSourceAction extends AbstractEditorAction {
         }
         catch (IOException ioe) {
             // Error in communcating with the server.
+            LOGGER.error(" Error in communicating with the server : ",ioe);
             errors = new ActionErrors();
             errors.add("bs.taxid",
                     new ActionError("error.newt.connection", ioe.getMessage()));
             saveErrors(request, errors);
         }
         catch (NewtServerProxy.TaxIdNotFoundException ex) {
+            LOGGER.error("The taxid " + taxid + " couldn't be found in Newt", ex);
             errors = new ActionErrors();
             errors.add("bs.taxid", new ActionError("error.newt.search", taxid));
             saveErrors(request, errors);

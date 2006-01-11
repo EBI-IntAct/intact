@@ -556,10 +556,12 @@ public abstract class AbstractEditViewBean implements Serializable {
             user.commit();
         }
         catch (IntactException ie1) {
+            Logger.getLogger(EditorConstants.LOGGER).error("", ie1);
             try {
                 user.rollback();
             }
             catch (IntactException ie2) {
+                Logger.getLogger(EditorConstants.LOGGER).error("Problem trying to rollback", ie2);
                 // Oops! Problems with rollback; ignore this as this
                 // error is reported via the main exception (ie1).
             }
@@ -816,8 +818,8 @@ public abstract class AbstractEditViewBean implements Serializable {
 
         //  The annotationSection object contains 5 Maps associating each of the editor page to a List. Those lists
         //  contains the relevant cvTopics that can be used to annotate the considered edited object.
-
-        AnnotationSection annotationSection = new AnnotationSection();
+        IntactHelper intactHelper = IntactHelperUtil.getIntactHelper();
+        AnnotationSection annotationSection = new AnnotationSection(intactHelper);
         if(annotationSection!=null){
             List newMenulist = new ArrayList();
             List cvTopicRessources= new ArrayList();
