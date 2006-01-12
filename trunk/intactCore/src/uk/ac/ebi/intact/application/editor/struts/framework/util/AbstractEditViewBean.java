@@ -765,7 +765,7 @@ public abstract class AbstractEditViewBean implements Serializable {
         String name = EditorMenuFactory.TOPIC;
         List menu = menuFactory.getMenu(name, 0);
         //Remove the non relevant terms from topic menu
-        menu = removeFromCvMenu(menu,editorPageName);
+        //menu = removeFromCvMenu(menu,editorPageName);
         map.put(name, menu);
         map.put(name + "_", menuFactory.convertToAddMenu(menu));
 
@@ -828,6 +828,7 @@ public abstract class AbstractEditViewBean implements Serializable {
             // For expemple if you are in the BioSource Editor the returned list will contained : 'caution', 'remark-internal'
             // and 'url'
             cvTopicRessources=annotationSection.getUsableTopics(editorPageName);
+
             if(cvTopicRessources!=null){
 
                 for (int i = 0; i < menu.size(); i++) {
