@@ -110,6 +110,224 @@ public class MessageSender {
         TIME = formatter.format( date );
     }
 
+    /**
+     * This addMessage is used by the checkHiddenAndObsoleteCv() method from the SanityChecked it permit to obtain a
+     * message that look like that :
+     *
+     * This/those Cvs are annotated as hidden or obsolete but are actualy in used in ia_range as fromfuzzytype_ac
+     *  ----------------------------------------------------------------------------------------------------------
+     * Interaction Ac     	Interactor Ac     	Feature Ac     	Range Ac     	When     	User     	Cv Ac     	Cv Shortlabel
+     * EBI-457078     	EBI-374862     	EBI-457085     	EBI-457086     	2005-12-19 16:05:51.0     	CLEROY     	EBI-769179     	cv-test
+     *
+     * @param topic
+     * @param rangeBean
+     * @param cv
+     */
+
+    public void addMessage (ReportTopic topic, RangeBean rangeBean, ControlledvocabBean cv ){
+        String editorUrl;
+
+        String user = rangeBean.getUserstamp();
+        Timestamp date = rangeBean.getUpdated();
+
+
+        String userMessageReport="";
+        String adminMessageReport="";
+
+
+
+        IntactHelper helper = null;
+        try {
+            helper = new IntactHelper();
+            Range range = (Range) helper.getObjectByAc(Range.class, rangeBean.getAc());
+
+            editorUrl = editorUrlBuilder.getEditorUrl("Interaction",rangeBean.getInteraction_ac());
+            String[] rowValues = new String[8];
+            rowValues[0] ="<a href="+ editorUrl + ">"+ rangeBean.getInteraction_ac() + "</a>";
+            rowValues[1] = rangeBean.getInteractor_ac();
+            rowValues[2] = rangeBean.getFeature_ac();
+            rowValues[3] = rangeBean.getAc();
+            rowValues[4] = "" + date;
+            rowValues[5] =  user;
+            rowValues[6] = cv.getAc();
+            rowValues[7] = cv.getShortlabel();
+            userMessageReport =  formatRow("html",rowValues,"values","userReport",false);
+            adminMessageReport = formatRow("html",rowValues,"values","adminReport",false);
+
+        } catch (IntactException e) {
+            e.printStackTrace();
+        }
+
+
+        addUserMessage(topic, user, userMessageReport, adminMessageReport);
+        addAdminMessage(topic, adminMessageReport);
+
+    }
+
+    /**
+     * This addMessage is used by the checkHiddenAndObsoleteCv() method from the SanityChecked it permit to obtain a
+     * message that look like that :
+     *
+     *  This/those Cvs are annotated as hidden or obsolete but are actualy in used in a xref as Reference Qualifier
+     *  -----------------------------------------------------------------------------------------------------------
+     * XreferencedBean     	FeatureBean Ac     	Type     	Xref Ac     	Xref primaryId     	Database Ac     	Cv Ac     	Cv Shortlabel     	When     	User
+    *  EBI-476945     	     	Experiment     	EBI-769158     	111     	EBI-705816     	EBI-769160
+     * @param topic
+     * @param intactBean
+     * @param cv
+     * @throws SQLException
+     * @throws IntactException
+     */
+    public void addMessage( ReportTopic topic, IntactBean intactBean, ControlledvocabBean cv ) throws SQLException, IntactException {
+
+        String editorUrl;// = editorUrlBuilder.getEditorUrl(intactBean);
+
+        String user = intactBean.getUserstamp();
+        Timestamp date = intactBean.getUpdated();
+
+
+        String userMessageReport="";
+        String adminMessageReport="";
+
+        if (intactBean instanceof AliasBean){
+            AliasBean aliasBean = (AliasBean) intactBean;
+            String[] rowValues = new String[7];
+            rowValues[0] = aliasBean.getAc();
+            rowValues[1] = aliasBean.getParent_ac();
+            rowValues[2] = aliasBean.getName();
+            rowValues[3] = cv.getAc();
+            rowValues[4] = cv.getShortlabel();
+            rowValues[5] = "" + date;
+            rowValues[6] = user;
+            userMessageReport =  formatRow("html",rowValues,"values","userReport",false);
+            adminMessageReport = formatRow("html",rowValues,"values","adminReport",false);
+        }
+        if (intactBean instanceof AnnotationBean){
+            AnnotationBean annotationBean = (AnnotationBean) intactBean;
+            IntactBean annotatedBean = SanityCheckerHelper.getAnnotatedBeanFromAnnotation(annotationBean.getAc());
+            if (annotatedBean != null){
+                editorUrl = editorUrlBuilder.getEditorUrl(annotatedBean);
+                String[] rowValues = new String[6];
+                rowValues[0] = "<a href="+ editorUrl + ">"+ annotatedBean.getAc()+ "</a>";
+                rowValues[1] = getTypeFromIntactBean(annotatedBean);
+                rowValues[2] = cv.getAc();
+                rowValues[3] = cv.getShortlabel();
+                rowValues[4] = "" + date;
+                rowValues[5] = user;
+                userMessageReport =  formatRow("html",rowValues,"values","userReport",false);
+                adminMessageReport = formatRow("html",rowValues,"values","adminReport",false);   }
+            else{
+                System.out.println("annotationBean.getAc() = " + annotationBean.getAc());}
+        }
+        if (intactBean instanceof ExperimentBean){
+            ExperimentBean experimentBean = (ExperimentBean) intactBean;
+            editorUrl = editorUrlBuilder.getEditorUrl(experimentBean);
+            String[] rowValues = new String[6];
+            rowValues[0] = "<a href="+ editorUrl + ">"+ experimentBean.getAc()+ "</a>";
+            rowValues[1] = experimentBean.getShortlabel();
+            rowValues[2] = cv.getAc();
+            rowValues[3] = cv.getShortlabel();
+            rowValues[4] = "" + date;
+            rowValues[5] = user;
+            userMessageReport =  formatRow("html",rowValues,"values","userReport",false);
+            adminMessageReport = formatRow("html",rowValues,"values","adminReport",false);
+        }
+        if (intactBean instanceof BioSourceBean) {
+            BioSourceBean biosourceBean = (BioSourceBean) intactBean;
+            editorUrl = editorUrlBuilder.getEditorUrl(biosourceBean);
+            String[] rowValues = new String[7];
+            rowValues[0] = "<a href="+ editorUrl + ">"+ biosourceBean.getAc()+ "</a>";
+            rowValues[1] = biosourceBean.getShortlabel();
+            rowValues[2] = cv.getAc();
+            rowValues[3] = cv.getShortlabel();
+            rowValues[4] = "" + date;
+            rowValues[5] = user;
+            userMessageReport =  formatRow("html",rowValues,"values","userReport",false);
+            adminMessageReport = formatRow("html",rowValues,"values","adminReport",false);
+
+        }
+        if (intactBean instanceof ComponentBean) {
+            ComponentBean componentBean = (ComponentBean) intactBean;
+            editorUrl = editorUrlBuilder.getEditorUrl(componentBean);
+            String[] rowValues = new String[7];
+            rowValues[0] = "<a href="+ editorUrl + ">"+ componentBean.getInteraction_ac() + "</a>";
+            rowValues[1] = componentBean.getAc();
+            rowValues[2] = componentBean.getInteractor_ac();
+            rowValues[3] = cv.getAc();
+            rowValues[4] = cv.getShortlabel();
+            rowValues[5] = "" + date;
+            rowValues[6] = user;
+            userMessageReport =  formatRow("html",rowValues,"values","userReport",false);
+            adminMessageReport = formatRow("html",rowValues,"values","adminReport",false);
+        }
+        if (intactBean instanceof InteractorBean){
+            InteractorBean interactorBean = (InteractorBean) intactBean;
+            editorUrl = editorUrlBuilder.getEditorUrl(interactorBean);
+            String[] rowValues = new String[6];
+            rowValues[0] = "<a href="+ editorUrl + ">"+ interactorBean.getAc() + "</a>";
+            rowValues[1] = interactorBean.getShortlabel();
+            rowValues[2] = cv.getAc();
+            rowValues[3] = cv.getShortlabel();
+            rowValues[4] = "" + date;
+            rowValues[5] = user;
+            userMessageReport =  formatRow("html",rowValues,"values","userReport",false);
+            adminMessageReport = formatRow("html",rowValues,"values","adminReport",false);
+
+        }
+        if(intactBean instanceof FeatureBean){
+            FeatureBean featureBean = (FeatureBean) intactBean;
+            InteractorBean relatedInteraction = getFeaturedInteraction(featureBean.getAc());
+            editorUrl = editorUrlBuilder.getEditorUrl(relatedInteraction);
+            String[] rowValues = new String[7];
+            rowValues[0] = "<a href="+ editorUrl + ">"+ relatedInteraction.getAc() + "</a>";
+            rowValues[1] = featureBean.getAc();
+            rowValues[2] = featureBean.getShortlabel();
+            rowValues[3] = cv.getAc();
+            rowValues[4] = cv.getShortlabel();
+            rowValues[5] = "" + date;
+            rowValues[6] = "" + user;
+            userMessageReport =  formatRow("html",rowValues,"values","userReport",false);
+            adminMessageReport = formatRow("html",rowValues,"values","adminReport",false);
+
+
+        }
+
+        if(intactBean instanceof XrefBean ){
+            //XREF_WITH_NON_VALID_PRIMARY_ID
+            XrefBean xrefBean = (XrefBean) intactBean;
+            IntactBean xreferencedBean = SanityCheckerHelper.getXreferencedObject(xrefBean);
+            String[] rowValues = new String[9];
+            if(xreferencedBean instanceof FeatureBean){
+                FeatureBean featureBean = (FeatureBean) xreferencedBean;
+                InteractorBean relatedInteraction = getFeaturedInteraction(featureBean.getAc());
+                editorUrl = editorUrlBuilder.getEditorUrl(relatedInteraction);
+                //still to test
+                rowValues[0] ="<a href="+ editorUrl + ">"+ relatedInteraction.getAc() + "</a>";
+                rowValues[1] =featureBean.getAc() ;
+                rowValues[2]="";
+            }
+            else{
+                String type = getTypeFromIntactBean(xreferencedBean);
+                editorUrl = editorUrlBuilder.getEditorUrl(xreferencedBean);
+                //tested
+                //!!! put in an extra column with type?!
+                rowValues[0] ="<a href="+ editorUrl + ">"+ xreferencedBean.getAc() + "</a>";
+                rowValues[1] ="";
+                rowValues[2] = getTypeFromIntactBean(xreferencedBean);
+            }
+            rowValues[3] =xrefBean.getAc() ;
+            rowValues[4] =xrefBean.getPrimaryid();
+            rowValues[5] = cv.getAc();
+            rowValues[6] = cv.getShortlabel();
+            rowValues[7] ="" + date;
+            rowValues[8] =  user;
+            userMessageReport =  formatRow("html",rowValues,"values","userReport",false);
+            adminMessageReport = formatRow("html",rowValues,"values","adminReport",false);
+        }
+        addUserMessage(topic, user, userMessageReport, adminMessageReport);
+        addAdminMessage(topic, adminMessageReport);
+    }
+
 
     /**
      * This addMessage method is used to send the message corresponding to the ReportTopic INTERACTION_LINKED_TO_MORE_
@@ -978,6 +1196,106 @@ public class MessageSender {
                 rowValues[6] = "Date";
                 rowValues[7] = "User";
                 header = formatRow("html", rowValues, "headers",reportType,false);
+            }  else if (ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_DATABASE_AC_IN_XREF.equals(topic) ||
+                       ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_QUALIFIER_AC_IN_XREF.equals(topic)){
+                String[] rowValues = new String[10];
+                rowValues[0] ="XreferencedBean";
+                rowValues[1] = "FeatureBean Ac";
+                rowValues[2] ="Type";
+                rowValues[3] ="Xref Ac";
+                rowValues[4] = "Xref primaryId";
+                //rowValues[5] ="Database Ac";
+                rowValues[5] = "Cv Ac";
+                rowValues[6] = "Cv Shortlabel";
+                rowValues[7] ="When";
+                rowValues[8] = "User";
+                header = formatRow("html", rowValues, "headers",reportType,false);
+            } else if (ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_IDENTIFICATION_AC_IN_FEATURE.equals(topic) ||
+                       ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_FEATURETYPE_AC_IN_FEATURE.equals(topic)){
+                String[] rowValues = new String[7];
+                rowValues[0] = "Interaction Ac";
+                rowValues[1] = "Feature Ac";
+                rowValues[2] = "Feature Shortlabel";
+                rowValues[3] = "Cv Ac";
+                rowValues[4] = "Cv ShortLabel";
+                rowValues[5] = "When";
+                rowValues[6] = "User";
+                header = formatRow("html", rowValues, "headers",reportType,false);
+            } else if (ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_FROMFUZZYTYPE_AC_IN_RANGE.equals(topic) ||
+                       ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_TOFUZZYTYPE_AC_IN_RANGE.equals(topic)){
+
+                String[] rowValues = new String[8];
+
+                rowValues[0] = "Interaction Ac";
+                rowValues[1] = "Interactor Ac";
+                rowValues[2] = "Feature Ac";
+                rowValues[3] = "Range Ac";
+                rowValues[4] = "Cv Ac";
+                rowValues[5] = "Cv Shortlabel";
+                rowValues[6] = "When";
+                rowValues[7] = "User";
+                header = formatRow("html", rowValues, "headers",reportType,false);
+            } else if (ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_ROLE_IN_COMPONENT.equals(topic)){
+                String[] rowValues = new String[7];
+                rowValues[0] = "Interaction Ac";
+                rowValues[1] = "Component Ac";
+                rowValues[2] = "Interactor Ac";
+                rowValues[3] = "Cv Ac";
+                rowValues[4] = "Cv Shortlabel";
+                rowValues[5] = "When";
+                rowValues[6] = "User";
+                header = formatRow("html", rowValues, "headers",reportType,false);
+            } else if (ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_INTERACTORTYPE_IN_INTERACTOR.equals(topic) ||
+                       ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_INTERACTIONTYPE_IN_INTERACTOR.equals(topic) ||
+                       ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_PROTEINFORM_IN_INTERACTOR.equals(topic) ){
+                String[] rowValues = new String[6];
+                rowValues[0] = "Interaction/Protein Ac";
+                rowValues[1] = "Interaction/Protein Shortlabel";
+                rowValues[2] = "Cv Ac";
+                rowValues[3] = "Cv Shortlabel";
+                rowValues[4] ="When";
+                rowValues[5] = "User";
+                header = formatRow("html", rowValues, "headers",reportType,false);
+            } else if (ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_CELLTYPEAC_IN_BIOSOURCE.equals(topic) ||
+                       ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_TISSUEAC_IN_BIOSOURCE.equals(topic) ){
+                String[] rowValues = new String[6];
+                rowValues[0] = "BioSource Ac";
+                rowValues[1] = "BioSource Shortlabel";
+                rowValues[2] = "Cv Ac";
+                rowValues[3] = "Cv Shortlabel";
+                rowValues[4] = "When";
+                rowValues[5] = "User";
+                header = formatRow("html", rowValues, "headers",reportType,false);
+            } else if (ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_DETECTMETHODAC_IN_EXPERIMENT.equals(topic) ||
+                       ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_IDENTMETHODAC_IN_EXPERIMENT.equals(topic) ){
+                String[] rowValues = new String[6];
+                rowValues[0] = "Experiment Ac";
+                rowValues[1] = "Experiment Shortlabel";
+                rowValues[2] = "Cv Ac";
+                rowValues[3] = "Cv Shortlabel";
+                rowValues[4] = "When";
+                rowValues[5] = "User";
+                header = formatRow("html", rowValues, "headers",reportType,false);
+            } else if (ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_TOPICAC_IN_ANNOTATION.equals(topic)){
+                String[] rowValues = new String[6];
+                rowValues[0] = "AnnotatedObject Ac ";
+                rowValues[1] = "AnnotatedObject type";
+                rowValues[2] = "Cv Ac";
+                rowValues[3] = "Cv Shortlabel";
+                rowValues[4] ="When";
+                rowValues[5] = "User";
+                header = formatRow("html", rowValues, "headers",reportType,false);
+            }else if (ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_ALIASTYPEAC_IN_ALIAS.equals(topic)){
+                String[] rowValues = new String[7];
+                rowValues[0] = "Alias Ac";
+                rowValues[1] = "Alias ParentAc";
+                rowValues[2] = "Alias Name";
+                rowValues[3] = "Cv Ac";
+                rowValues[4] = "Cv Shortlabel";
+                rowValues[5] = "When";
+                rowValues[6] = "User";
+                header = formatRow("html", rowValues, "headers",reportType,false);
+
             }
             else {
                 String[] rowValues = new String[4];
