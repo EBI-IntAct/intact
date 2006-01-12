@@ -386,7 +386,7 @@ public class RangeChecker {
                             System.out.println("range.getSequence before = " +range.getSequence());
                             range.setSequence(proteinSeq);
 
-                            //intactHelper.update(range);
+                            intactHelper.update(range);
                             mSuppChangeReport = mSuppChangeReport +
                                     "\nPrevious range: " + rangeSeqStored +
                                     "\nNew range     : " + range.getSequence() + "\n\n";
@@ -432,7 +432,7 @@ public class RangeChecker {
                                     range.setToIntervalEnd(toIntervalEnd+1);
                                 }
                                 range.setSequence(proteinSeq);
-                                //intactHelper.update(range);
+                                intactHelper.update(range);
 
                                 mAddedChangeReport = mAddedChangeReport +
                                         "\nPrevious range: " + rangeSeqStored +
