@@ -52,6 +52,7 @@ public class
     * If the name of the sanityCheckHelper is onHoldSch if means that it is used in the method ExperimentIsOnHold and
     * InteractionIsOnHold. If the name is sch12 it means that it is used to check the rule 12.
     */
+    private SanityCheckerHelper hiddenObsoleteNotInUsed;
     private SanityCheckerHelper featureSch;
     private SanityCheckerHelper superCuratedSch;
     private SanityCheckerHelper deletionFeatureSch;
@@ -67,6 +68,8 @@ public class
     private SanityCheckerHelper rangeSeqSch;
     private SanityCheckerHelper objectFromAc;
     /* ControlledvocabBean */
+    private static ControlledvocabBean hiddenCvBean;
+    private static ControlledvocabBean obsoleteCvBean;
     private static ControlledvocabBean onHoldCvBean;
     private static ControlledvocabBean toBeReviewedCvBean;
     private static ControlledvocabBean acceptedCvBean;
@@ -225,20 +228,17 @@ public class
 
         this.sch = new SanityCheckerHelper(helper);
         sch.addMapping(ControlledvocabBean.class, "SELECT ac, objclass FROM ia_controlledvocab WHERE shortlabel = ?");
-        List cvs = sch.getBeans(ControlledvocabBean.class,CvTopic.ON_HOLD);
-        this.onHoldCvBean = (ControlledvocabBean) cvs.get(0);
+        this.onHoldCvBean = (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class,CvTopic.ON_HOLD).get(0);
 
-        cvs = sch.getBeans(ControlledvocabBean.class,CvTopic.TO_BE_REVIEWED);
-        toBeReviewedCvBean = (ControlledvocabBean) cvs.get(0);
+        toBeReviewedCvBean = (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class,CvTopic.TO_BE_REVIEWED).get(0);
 
-        cvs = sch.getBeans(ControlledvocabBean.class,CvTopic.ACCEPTED);
-        acceptedCvBean = (ControlledvocabBean) cvs.get(0);
+        acceptedCvBean = (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class,CvTopic.ACCEPTED).get(0);
 
-        cvs = sch.getBeans(ControlledvocabBean.class,CvDatabase.NEWT);
-        newtDatabaseCvBean = (ControlledvocabBean) cvs.get(0);
+        newtDatabaseCvBean = (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class,CvDatabase.NEWT).get(0);
 
-        cvs = sch.getBeans(ControlledvocabBean.class,CvTopic.NON_UNIPROT);
-        noUniprotUpdateCvBean = (ControlledvocabBean) cvs.get(0);
+        noUniprotUpdateCvBean = (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class,CvTopic.NON_UNIPROT).get(0);
+        hiddenCvBean =  (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, CvTopic.HIDDEN).get(0);
+        obsoleteCvBean =  (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, CvTopic.OBSOLETE).get(0);
 
         sch.addMapping(ControlledvocabBean.class, "SELECT ac, objclass FROM ia_controlledvocab WHERE ac IN ( SELECT parent_ac FROM ia_xref WHERE primaryid = ? )" );
         neutralCvBean = (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, "MI:0497").get(0);
@@ -267,6 +267,14 @@ public class
 
         undeterminedCvBean=(ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, "MI:0339" ).get(0);
 
+        hiddenObsoleteNotInUsed = new SanityCheckerHelper(helper);
+        hiddenObsoleteNotInUsed.addMapping(ControlledvocabBean.class,
+                                          "select c.ac, c.updated, c.userstamp, c.shortlabel, c.objclass " +
+                                          "from ia_controlledvocab c, ia_cvobject2annot c2a, ia_annotation a " +
+                                          "where c.ac=c2a.cvobject_ac " +
+                                          "and c2a.annotation_ac=a.ac " +
+                                          "and a.topic_ac in ('" + hiddenCvBean.getAc() + "','" +obsoleteCvBean.getAc() + "')" +
+                                          "and c.ac like ? ");
 
         this.onHoldSch = new SanityCheckerHelper(helper);
         onHoldSch.addMapping(Exp2AnnotBean.class, "SELECT experiment_ac "+
@@ -392,6 +400,316 @@ public class
             onHold=true;
         }
         return onHold;
+    }
+
+
+    /**
+     * This method checks that none of the controlled vocabulary term being hidden or obsolete are used in intact as :
+     *  as database_ac in ia_xref
+     *  as identification_ac of featuretype_ac in ia_feature
+     *  as fromfuzzytype_ac or tofuaaytype_ac in ia_range
+     *  as role in ia_component
+     *  as interactortype_ac, interactiontype_ac, proteinform_ac in ia_interactor
+     *  as tissue_ac or celltype_ac in ia_biosource
+     *  as detectmethod_ac or identmethod_ac in ia_experiment
+     *  as topic_ac in ia_annotation
+     *  as aliastype_ac in ia_alias
+     * @throws SQLException
+     * @throws IntactException
+     */
+        public void checkHiddenAndObsoleteCv() throws SQLException, IntactException {
+        Collection hiddenObsoleteCvs = hiddenObsoleteNotInUsed.getBeans(ControlledvocabBean.class, "EBI-%");
+        //We first check that the hidden or obsolete Cv is not found in the filed database_ac of ia_xref
+        System.out.println("hiddenObsoleteCvs.s = " + hiddenObsoleteCvs.size());
+
+        //---------------------------------------------------------------------------------
+        //Make sure that the obsolete or hidden cv ac is not used as a database_ac in xref
+        //---------------------------------------------------------------------------------
+        hiddenObsoleteNotInUsed.addMapping(XrefBean.class,
+                                           "SELECT ac, database_ac, qualifier_ac, primaryid, parent_ac, userstamp, updated "+
+                                           "FROM ia_xref "+
+                                           "WHERE database_ac = ? ");
+        for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
+
+            ControlledvocabBean hiddenOrObsoleteCv =  (ControlledvocabBean) iterator.next();
+            Collection xrefBeans = hiddenObsoleteNotInUsed.getBeans( XrefBean.class, hiddenOrObsoleteCv.getAc());
+
+            for (Iterator iterator1 = xrefBeans.iterator(); iterator1.hasNext();) {
+                XrefBean xrefBean =  (XrefBean) iterator1.next();
+                messageSender.addMessage(ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_DATABASE_AC_IN_XREF, xrefBean,hiddenOrObsoleteCv);
+            }
+        }
+        //---------------------------------------------------------------------------------
+        //Make sure that the obsolete or hidden cv ac is not used as a qualifier_ac in xref
+        //---------------------------------------------------------------------------------
+        hiddenObsoleteNotInUsed.addMapping(XrefBean.class,
+                                           "SELECT ac, database_ac, qualifier_ac, primaryid, parent_ac, userstamp, updated "+
+                                           "FROM ia_xref "+
+                                           "WHERE qualifier_ac = ? ");
+       for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
+
+            ControlledvocabBean hiddenOrObsoleteCv =  (ControlledvocabBean) iterator.next();
+            Collection xrefBeans = hiddenObsoleteNotInUsed.getBeans( XrefBean.class, hiddenOrObsoleteCv.getAc());
+
+            for (Iterator iterator1 = xrefBeans.iterator(); iterator1.hasNext();) {
+                XrefBean xrefBean =  (XrefBean) iterator1.next();
+                messageSender.addMessage(ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_QUALIFIER_AC_IN_XREF,  xrefBean, hiddenOrObsoleteCv );
+            }
+        }
+
+        //----------------------------------------------------------------------------------------------
+        // Make sure that the obsolete or hidden cv ac is not used as a identification_ac in ia_feature
+        //----------------------------------------------------------------------------------------------
+        hiddenObsoleteNotInUsed.addMapping(FeatureBean.class,
+                                           "SELECT ac, shortlabel, fullname, userstamp, updated, identification_ac, featuretype_ac "+
+                                           "FROM ia_feature "+
+                                           "WHERE identification_ac = ? ");
+        for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
+
+            ControlledvocabBean hiddenOrObsoleteCv =  (ControlledvocabBean) iterator.next();
+            Collection featureBeans = hiddenObsoleteNotInUsed.getBeans( FeatureBean.class, hiddenOrObsoleteCv.getAc());
+
+            for (Iterator iterator1 = featureBeans.iterator(); iterator1.hasNext();) {
+                FeatureBean featureBean =  (FeatureBean) iterator1.next();
+                messageSender.addMessage(ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_IDENTIFICATION_AC_IN_FEATURE,featureBean, hiddenOrObsoleteCv);
+                //messageSender.addMessage(ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_IDENTIFICATION_AC_IN_FEATURE, hiddenOrObsoleteCv, featureBean.getAc() );
+            }
+        }
+
+        //----------------------------------------------------------------------------------------------
+        // Make sure that the obsolete or hidden cv ac is not used as a featuretype_ac in ia_feature
+        //----------------------------------------------------------------------------------------------
+        hiddenObsoleteNotInUsed.addMapping(FeatureBean.class,
+                                           "SELECT ac, shortlabel, fullname, userstamp, updated, identification_ac, featuretype_ac "+
+                                           "FROM ia_feature "+
+                                           "WHERE featuretype_ac = ? ");
+        for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
+
+            ControlledvocabBean hiddenOrObsoleteCv =  (ControlledvocabBean) iterator.next();
+            Collection featureBeans = hiddenObsoleteNotInUsed.getBeans( FeatureBean.class, hiddenOrObsoleteCv.getAc());
+
+            for (Iterator iterator1 = featureBeans.iterator(); iterator1.hasNext();) {
+                FeatureBean featureBean =  (FeatureBean) iterator1.next();
+                messageSender.addMessage(ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_FEATURETYPE_AC_IN_FEATURE,featureBean, hiddenOrObsoleteCv);
+            }
+        }
+
+        //----------------------------------------------------------------------------------------------
+        // Make sure that the obsolete or hidden cv ac is not used as fromFuzzyTypeAc in IA_RANGE
+        //----------------------------------------------------------------------------------------------
+        hiddenObsoleteNotInUsed.addMapping(RangeBean.class,
+                                           "SELECT r.ac, r.feature_ac,c.interactor_ac, c.interaction_ac, r.userstamp, r.updated, r.fromfuzzytype_ac, r.tofuzzytype_ac "+
+                                           "FROM ia_range r, ia_feature f, ia_component c "+
+                                           "WHERE r.fromfuzzytype_ac = ? " +
+                                           "AND f.ac = r.feature_ac " +
+                                           "AND f.component_ac = c.ac ");
+       for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
+
+            ControlledvocabBean hiddenOrObsoleteCv =  (ControlledvocabBean) iterator.next();
+            Collection featureBeans = hiddenObsoleteNotInUsed.getBeans( RangeBean.class, hiddenOrObsoleteCv.getAc());
+
+            for (Iterator iterator1 = featureBeans.iterator(); iterator1.hasNext();) {
+                RangeBean rangeBean =  (RangeBean) iterator1.next();
+                messageSender.addMessage(ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_FROMFUZZYTYPE_AC_IN_RANGE, rangeBean, hiddenOrObsoleteCv );
+            }
+        }
+        //----------------------------------------------------------------------------------------------
+        // Make sure that the obsolete or hidden cv ac is not used as ToFuzzyTypeAc in IA_RANGE
+        //----------------------------------------------------------------------------------------------
+        hiddenObsoleteNotInUsed.addMapping(RangeBean.class,
+                                           "SELECT r.ac, r.feature_ac,c.interactor_ac, c.interaction_ac, r.userstamp, r.updated, r.fromfuzzytype_ac, r.tofuzzytype_ac "+
+                                           "FROM ia_range r, ia_feature f, ia_component c "+
+                                           "WHERE r.tofuzzytype_ac = ? " +
+                                           "AND f.ac = r.feature_ac " +
+                                           "AND f.component_ac = c.ac ");
+        for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
+
+            ControlledvocabBean hiddenOrObsoleteCv =  (ControlledvocabBean) iterator.next();
+            Collection featureBeans = hiddenObsoleteNotInUsed.getBeans( RangeBean.class, hiddenOrObsoleteCv.getAc());
+
+            for (Iterator iterator1 = featureBeans.iterator(); iterator1.hasNext();) {
+                RangeBean rangeBean =  (RangeBean) iterator1.next();
+                messageSender.addMessage(ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_TOFUZZYTYPE_AC_IN_RANGE, rangeBean, hiddenOrObsoleteCv );
+            }
+        }
+         //----------------------------------------------------------------------------------------------
+        // Make sure that the obsolete or hidden cv ac is not used as role in IA_COMPONENT
+        //----------------------------------------------------------------------------------------------
+        hiddenObsoleteNotInUsed.addMapping(ComponentBean.class, "SELECT ac, interaction_ac, interactor_ac, role, stoichiometry, userstamp, updated " +
+                                                                "FROM ia_component " +
+                                                                "WHERE role = ? ");
+        for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
+
+            ControlledvocabBean hiddenOrObsoleteCv =  (ControlledvocabBean) iterator.next();
+            Collection componentBeans = hiddenObsoleteNotInUsed.getBeans( ComponentBean.class, hiddenOrObsoleteCv.getAc());
+
+            for (Iterator iterator1 = componentBeans.iterator(); iterator1.hasNext();) {
+                ComponentBean componentBean =  (ComponentBean) iterator1.next();
+                messageSender.addMessage(ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_ROLE_IN_COMPONENT, componentBean, hiddenOrObsoleteCv );
+            }
+        }
+
+        //----------------------------------------------------------------------------------------------
+        // Make sure that the obsolete or hidden cv ac is not used as interactortype in IA_INTERACTOR
+        //----------------------------------------------------------------------------------------------
+        hiddenObsoleteNotInUsed.addMapping(InteractorBean.class,
+                                           "select ac,  shortlabel, fullname, userstamp, updated, objclass, interactortype_ac, interactiontype_ac " +
+                                           "from ia_interactor " +
+                                           "where interactortype_ac = ? ");
+        for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
+
+            ControlledvocabBean hiddenOrObsoleteCv =  (ControlledvocabBean) iterator.next();
+            Collection interactorBeans = hiddenObsoleteNotInUsed.getBeans( InteractorBean.class, hiddenOrObsoleteCv.getAc());
+
+            for (Iterator iterator1 = interactorBeans.iterator(); iterator1.hasNext();) {
+                InteractorBean interactorBean =  (InteractorBean) iterator1.next();
+                messageSender.addMessage(ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_INTERACTORTYPE_IN_INTERACTOR, interactorBean, hiddenOrObsoleteCv );
+            }
+        }
+        //----------------------------------------------------------------------------------------------
+        // Make sure that the obsolete or hidden cv ac is not used as interactiontype in IA_INTERACTOR
+        //----------------------------------------------------------------------------------------------
+        hiddenObsoleteNotInUsed.addMapping(InteractorBean.class,
+                                           "select ac,  shortlabel, fullname, userstamp, updated, objclass, interactortype_ac, interactiontype_ac " +
+                                           "from ia_interactor " +
+                                           "where interactiontype_ac = ? ");
+        for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
+
+            ControlledvocabBean hiddenOrObsoleteCv =  (ControlledvocabBean) iterator.next();
+            Collection interactorBeans = hiddenObsoleteNotInUsed.getBeans( InteractorBean.class, hiddenOrObsoleteCv.getAc());
+
+            for (Iterator iterator1 = interactorBeans.iterator(); iterator1.hasNext();) {
+                InteractorBean interactorBean =  (InteractorBean) iterator1.next();
+                messageSender.addMessage(ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_INTERACTIONTYPE_IN_INTERACTOR, interactorBean, hiddenOrObsoleteCv );
+            }
+        }
+        //----------------------------------------------------------------------------------------------
+        // Make sure that the obsolete or hidden cv ac is not used as proteinform in IA_INTERACTOR
+        //----------------------------------------------------------------------------------------------
+        hiddenObsoleteNotInUsed.addMapping(InteractorBean.class,
+                                           "select ac, shortlabel, fullname, userstamp, updated, objclass, interactortype_ac, interactiontype_ac, proteinform_ac " +
+                                           "from ia_interactor " +
+                                           "where proteinform_ac = ? ");
+        for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
+
+            ControlledvocabBean hiddenOrObsoleteCv =  (ControlledvocabBean) iterator.next();
+            Collection interactorBeans = hiddenObsoleteNotInUsed.getBeans( InteractorBean.class, hiddenOrObsoleteCv.getAc());
+
+            for (Iterator iterator1 = interactorBeans.iterator(); iterator1.hasNext();) {
+                InteractorBean interactorBean =  (InteractorBean) iterator1.next();
+                messageSender.addMessage(ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_PROTEINFORM_IN_INTERACTOR, interactorBean, hiddenOrObsoleteCv );
+            }
+        }
+        //----------------------------------------------------------------------------------------------
+        // Make sure that the obsolete or hidden cv ac is not used as tissue_ac in IA_BIOSOURCE
+        //----------------------------------------------------------------------------------------------
+
+        hiddenObsoleteNotInUsed.addMapping(BioSourceBean.class,
+                                           "select ac, shortlabel, fullname, tissue_ac, celltype_ac, userstamp, updated " +
+                                           "from ia_biosource " +
+                                           "where tissue_ac = ? ");
+        for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
+
+            ControlledvocabBean hiddenOrObsoleteCv =  (ControlledvocabBean) iterator.next();
+            Collection biosourceBeans = hiddenObsoleteNotInUsed.getBeans( BioSourceBean.class, hiddenOrObsoleteCv.getAc());
+
+            for (Iterator iterator1 = biosourceBeans.iterator(); iterator1.hasNext();) {
+                BioSourceBean biosourceBean =  (BioSourceBean) iterator1.next();
+                messageSender.addMessage(ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_TISSUEAC_IN_BIOSOURCE, biosourceBean, hiddenOrObsoleteCv );
+            }
+        }
+
+        //----------------------------------------------------------------------------------------------
+        // Make sure that the obsolete or hidden cv ac is not used as celltype_ac in IA_BIOSOURCE
+        //----------------------------------------------------------------------------------------------
+
+        hiddenObsoleteNotInUsed.addMapping(BioSourceBean.class,
+                                           "select ac, shortlabel, fullname, tissue_ac, celltype_ac, userstamp, updated " +
+                                           "from ia_biosource " +
+                                           "where celltype_ac = ? ");
+        for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
+
+            ControlledvocabBean hiddenOrObsoleteCv =  (ControlledvocabBean) iterator.next();
+            Collection biosourceBeans = hiddenObsoleteNotInUsed.getBeans( BioSourceBean.class, hiddenOrObsoleteCv.getAc());
+
+            for (Iterator iterator1 = biosourceBeans.iterator(); iterator1.hasNext();) {
+                BioSourceBean biosourceBean =  (BioSourceBean) iterator1.next();
+                messageSender.addMessage(ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_CELLTYPEAC_IN_BIOSOURCE, biosourceBean, hiddenOrObsoleteCv );
+            }
+        }
+
+         //----------------------------------------------------------------------------------------------
+        // Make sure that the obsolete or hidden cv ac is not used as detectmethod_ac in IA_EXPERIMENT
+        //----------------------------------------------------------------------------------------------
+        hiddenObsoleteNotInUsed.addMapping(ExperimentBean.class,
+                                           "select ac, shortlabel, fullname, detectmethod_ac, identmethod_ac, userstamp, updated " +
+                                           "from ia_experiment " +
+                                           "where detectmethod_ac = ? ");
+        for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
+
+            ControlledvocabBean hiddenOrObsoleteCv =  (ControlledvocabBean) iterator.next();
+            Collection experimentBeans = hiddenObsoleteNotInUsed.getBeans( ExperimentBean.class, hiddenOrObsoleteCv.getAc());
+
+            for (Iterator iterator1 = experimentBeans.iterator(); iterator1.hasNext();) {
+                ExperimentBean experimentBean =  (ExperimentBean) iterator1.next();
+                messageSender.addMessage(ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_DETECTMETHODAC_IN_EXPERIMENT, experimentBean, hiddenOrObsoleteCv );
+            }
+        }
+
+        //----------------------------------------------------------------------------------------------
+        // Make sure that the obsolete or hidden cv ac is not used as identmethod_ac in IA_EXPERIMENT
+        //----------------------------------------------------------------------------------------------
+        hiddenObsoleteNotInUsed.addMapping(ExperimentBean.class,
+                                           "select ac, shortlabel, fullname, detectmethod_ac, identmethod_ac, userstamp, updated " +
+                                           "from ia_experiment " +
+                                           "where identmethod_ac = ? ");
+        for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
+
+            ControlledvocabBean hiddenOrObsoleteCv =  (ControlledvocabBean) iterator.next();
+            Collection experimentBeans = hiddenObsoleteNotInUsed.getBeans( ExperimentBean.class, hiddenOrObsoleteCv.getAc());
+
+            for (Iterator iterator1 = experimentBeans.iterator(); iterator1.hasNext();) {
+                ExperimentBean experimentBean =  (ExperimentBean) iterator1.next();
+                messageSender.addMessage(ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_IDENTMETHODAC_IN_EXPERIMENT, experimentBean, hiddenOrObsoleteCv );
+            }
+        }
+
+        //----------------------------------------------------------------------------------------------
+        // Make sure that the obsolete or hidden cv ac is not used as topic_ac in IA_ANNOTATION
+        //----------------------------------------------------------------------------------------------
+
+        hiddenObsoleteNotInUsed.addMapping(AnnotationBean.class,
+                                           "select ac, description, topic_ac, userstamp, updated " +
+                                           "from ia_annotation " +
+                                           "where topic_ac = ? ");
+        for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
+
+            ControlledvocabBean hiddenOrObsoleteCv =  (ControlledvocabBean) iterator.next();
+            Collection annotationBeans = hiddenObsoleteNotInUsed.getBeans( AnnotationBean.class, hiddenOrObsoleteCv.getAc());
+
+            for (Iterator iterator1 = annotationBeans.iterator(); iterator1.hasNext();) {
+                AnnotationBean annotationBean =  (AnnotationBean) iterator1.next();
+                messageSender.addMessage(ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_TOPICAC_IN_ANNOTATION, annotationBean, hiddenOrObsoleteCv );
+            }
+        }
+
+        //----------------------------------------------------------------------------------------------
+        // Make sure that the obsolete or hidden cv ac is not used as aliastype_ac in IA_ALIAS
+        //----------------------------------------------------------------------------------------------
+        hiddenObsoleteNotInUsed.addMapping(AliasBean.class,
+                                           "select ac, parent_ac, name, userstamp, updated " +
+                                           "from ia_alias " +
+                                           "where aliastype_ac = ? ");
+        for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
+
+            ControlledvocabBean hiddenOrObsoleteCv =  (ControlledvocabBean) iterator.next();
+            Collection aliasBeans = hiddenObsoleteNotInUsed.getBeans( AliasBean.class, hiddenOrObsoleteCv.getAc());
+
+            for (Iterator iterator1 = aliasBeans.iterator(); iterator1.hasNext();) {
+                AliasBean aliasBean =  (AliasBean) iterator1.next();
+                messageSender.addMessage(ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_ALIASTYPEAC_IN_ALIAS, aliasBean, hiddenOrObsoleteCv );
+            }
+        }
     }
 
     /**
@@ -1237,9 +1555,14 @@ public class
         List bsUsableTopic=scn.annotationSection.getUsableTopics(BioSource.class.getName());
 
         /*
+        *     Check on Controlled Vocabullary
+        */
+        scn.checkHiddenAndObsoleteCv();
+
+        /*
         *     Check on feature
         */
-//        scn.featureWithoutRange();
+        scn.featureWithoutRange();
 
         /*
         *     Check on interactor
@@ -1252,114 +1575,114 @@ public class
 
 
         List interactorBeans = schIntAc.getBeans(InteractorBean.class, "EBI-%");
-//        scn.checkInteractionsComplete(interactorBeans);
+        scn.checkInteractionsComplete(interactorBeans);
         scn.checkInteractionsBaitAndPrey(interactorBeans);
-//        scn.checkComponentOfInteractions(interactorBeans);
-//        scn.checkOneIntOneExp();
-//        scn.checkAnnotations(interactorBeans, Interaction.class.getName(),intUsableTopic);
+        scn.checkComponentOfInteractions(interactorBeans);
+        scn.checkOneIntOneExp();
+        scn.checkAnnotations(interactorBeans, Interaction.class.getName(),intUsableTopic);
 
         /*
         *     Check on xref
         */
-//        schIntAc.addMapping(XrefBean.class, "select distinct primaryId "+
-//                                            "from ia_xref, ia_controlledvocab db, ia_controlledvocab q " +
-//                                            "where database_ac = db.ac and " +
-//                                            "db.shortlabel = ? and "+
-//                                            "qualifier_ac = q.ac and "+
-//                                            "q.shortlabel = 'identity' "+
-//                                            "group by primaryId "+
-//                                            "having count(primaryId) > 1");
-//
-//
-//        List xrefBeans = schIntAc.getBeans(XrefBean.class,CvDatabase.UNIPROT);
-//
-//        scn.sch.addMapping(InteractorBean.class,"SELECT i.ac,i.objclass, i.shortlabel, i.biosource_ac, i.userstamp, i.updated "+
-//                                                "FROM ia_interactor i, ia_xref x "+
-//                                                "WHERE i.ac = x.parent_ac AND " +
-//                                                "0 = ( SELECT count(1) " +
-//                                                "FROM ia_annotation a, ia_int2annot i2a, ia_controlledvocab topic "+
-//                                                "WHERE i.ac = i2a.interactor_ac AND "+
-//                                                "i2a.annotation_ac = a.ac AND " +
-//                                                "a.topic_ac = topic.ac AND " +
-//                                                "topic.shortlabel = 'no-uniprot-update' ) AND "+
-//                                                "x.qualifier_ac = '" +identityXrefQualifierCvBean.getAc()+"' AND "+
-//                                                "x.primaryid=?");
-//
-//        for (int i = 0; i < xrefBeans.size(); i++) {
-//            XrefBean xrefBean =  (XrefBean) xrefBeans.get(i);
-//            scn.duplicatedProtein(xrefBean);
-//        }
-//
-//        schIntAc.addMapping(XrefBean.class,"select ac, userstamp, updated, database_ac, primaryid,parent_ac "+
-//                                           "from ia_xref "+
-//                                            "where ac like ?");
-//                                            //"where ac ='EBI-695273' and ac like ?");
-//        xrefBeans = schIntAc.getBeans(XrefBean.class, "%");
-//        scn.hasValidPrimaryId(xrefBeans);
+        schIntAc.addMapping(XrefBean.class, "select distinct primaryId "+
+                                            "from ia_xref, ia_controlledvocab db, ia_controlledvocab q " +
+                                            "where database_ac = db.ac and " +
+                                            "db.shortlabel = ? and "+
+                                            "qualifier_ac = q.ac and "+
+                                            "q.shortlabel = 'identity' "+
+                                            "group by primaryId "+
+                                            "having count(primaryId) > 1");
+
+
+        List xrefBeans = schIntAc.getBeans(XrefBean.class,CvDatabase.UNIPROT);
+
+        scn.sch.addMapping(InteractorBean.class,"SELECT i.ac,i.objclass, i.shortlabel, i.biosource_ac, i.userstamp, i.updated "+
+                                                "FROM ia_interactor i, ia_xref x "+
+                                                "WHERE i.ac = x.parent_ac AND " +
+                                                "0 = ( SELECT count(1) " +
+                                                "FROM ia_annotation a, ia_int2annot i2a, ia_controlledvocab topic "+
+                                                "WHERE i.ac = i2a.interactor_ac AND "+
+                                                "i2a.annotation_ac = a.ac AND " +
+                                                "a.topic_ac = topic.ac AND " +
+                                                "topic.shortlabel = 'no-uniprot-update' ) AND "+
+                                                "x.qualifier_ac = '" +identityXrefQualifierCvBean.getAc()+"' AND "+
+                                                "x.primaryid=?");
+
+        for (int i = 0; i < xrefBeans.size(); i++) {
+            XrefBean xrefBean =  (XrefBean) xrefBeans.get(i);
+            scn.duplicatedProtein(xrefBean);
+        }
+
+        schIntAc.addMapping(XrefBean.class,"select ac, userstamp, updated, database_ac, primaryid,parent_ac "+
+                                           "from ia_xref "+
+                                            "where ac like ?");
+                                            //"where ac ='EBI-695273' and ac like ?");
+        xrefBeans = schIntAc.getBeans(XrefBean.class, "%");
+        scn.hasValidPrimaryId(xrefBeans);
 
         /*
         *     Check on Experiment
         */
-//        List experimentBeans = scn.sch.getBeans(ExperimentBean.class,"EBI-%");
-//        scn.checkReviewed(experimentBeans);
-//        scn.checkExperiment(experimentBeans);
-//        scn.checkExperimentsPubmedIds(experimentBeans);
-//        scn.checkAnnotations(experimentBeans, Experiment.class.getName(), expUsableTopic);
-//        scn.experimentNotSuperCurated();
+        List experimentBeans = scn.sch.getBeans(ExperimentBean.class,"EBI-%");
+        scn.checkReviewed(experimentBeans);
+        scn.checkExperiment(experimentBeans);
+        scn.checkExperimentsPubmedIds(experimentBeans);
+        scn.checkAnnotations(experimentBeans, Experiment.class.getName(), expUsableTopic);
+        scn.experimentNotSuperCurated();
 
         /*
         *     Check on BioSource
         */
 
-//        List bioSourceBeans = scn.sch.getBeans(BioSourceBean.class,"EBI-%");
+        List bioSourceBeans = scn.sch.getBeans(BioSourceBean.class,"EBI-%");
         //System.out.println("The size of bioSource list is " + bioSourceBeans.size());
-//        scn.checkBioSource(bioSourceBeans);
-//        scn.checkNewt(bioSourceBeans);
-//        scn.checkAnnotations(bioSourceBeans, BioSource.class.getName(),bsUsableTopic);
+        scn.checkBioSource(bioSourceBeans);
+        scn.checkNewt(bioSourceBeans);
+        scn.checkAnnotations(bioSourceBeans, BioSource.class.getName(),bsUsableTopic);
 
         /*
         *     Check on protein
         */
        //right now not actual using, as concerning checks appear to commented out
 
-//        schIntAc.addMapping(InteractorBean.class,"SELECT ac, crc64, shortlabel, userstamp, updated, objclass "+
-//                                                 "FROM ia_interactor "+
-//                                                 "WHERE objclass = '"+ProteinImpl.class.getName()+
-//                                                 "' AND ac like ?");
-//
-//        List proteinBeans = schIntAc.getBeans(InteractorBean.class,"%");
-//
-//        scn.checkProtein(proteinBeans);
-//        scn.checkCrc64(proteinBeans);
-//        scn.checkAnnotations(proteinBeans, EditorMenuFactory.PROTEIN,protUsableTopic);
-//
-//        //already working
-//        List ranges = scn.deletionFeatureSch.getBeans(RangeBean.class,"2");
-//        scn.checkDeletionFeature(ranges);
+        schIntAc.addMapping(InteractorBean.class,"SELECT ac, crc64, shortlabel, userstamp, updated, objclass "+
+                                                 "FROM ia_interactor "+
+                                                 "WHERE objclass = '"+ProteinImpl.class.getName()+
+                                                 "' AND ac like ?");
+
+        List proteinBeans = schIntAc.getBeans(InteractorBean.class,"%");
+
+        scn.checkProtein(proteinBeans);
+        scn.checkCrc64(proteinBeans);
+        scn.checkAnnotations(proteinBeans, EditorMenuFactory.PROTEIN,protUsableTopic);
+
+        //already working
+        List ranges = scn.deletionFeatureSch.getBeans(RangeBean.class,"2");
+        scn.checkDeletionFeature(ranges);
 
         /*
         *     Check on annotation
         */
 
             //tested
-//             schIntAc.addMapping(AnnotationBean.class, "SELECT ac, description, updated, userstamp "+
-//                                                       "FROM ia_annotation "+
-//                                                       "WHERE topic_ac = 'EBI-18' and ac like ?"
-//                                                        );
-//
-//            List annotationBeans = schIntAc.getBeans(AnnotationBean.class,"EBI-%");
-//            scn.checkURL(annotationBeans);
+             schIntAc.addMapping(AnnotationBean.class, "SELECT ac, description, updated, userstamp "+
+                                                       "FROM ia_annotation "+
+                                                       "WHERE topic_ac = 'EBI-18' and ac like ?"
+                                                        );
+
+            List annotationBeans = schIntAc.getBeans(AnnotationBean.class,"EBI-%");
+            scn.checkURL(annotationBeans);
 
             /*
             *    Check on controlledvocab
             */
 
-//             schIntAc.addMapping(ControlledvocabBean.class,"SELECT ac, objclass, shortlabel, updated, userstamp "+
-//                                                           "FROM ia_controlledvocab "+
-//                                                           "WHERE ac = ?");
-//            List controlledvocabBeans = schIntAc.getBeans(ControlledvocabBean.class, "%");
+             schIntAc.addMapping(ControlledvocabBean.class,"SELECT ac, objclass, shortlabel, updated, userstamp "+
+                                                           "FROM ia_controlledvocab "+
+                                                           "WHERE ac = ?");
+            List controlledvocabBeans = schIntAc.getBeans(ControlledvocabBean.class, "%");
 
-//        scn.checkAnnotations(controlledvocabBeans, CvObject.class.getName(),cvUsableTopic);
+        scn.checkAnnotations(controlledvocabBeans, CvObject.class.getName(),cvUsableTopic);
 
         // try to send emails
         try {
