@@ -20,6 +20,30 @@ public class ReportTopic {
          * Report topics
          */
         //
+        // C V O B J E C T
+        //
+    public static final ReportTopic HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_DATABASE_AC_IN_XREF = new ReportTopic ("This/those Cvs are annotated as hidden or obsolete but are actualy in used in  a xref as database");
+    public static final ReportTopic HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_QUALIFIER_AC_IN_XREF = new ReportTopic ("This/those Cvs are annotated as hidden or obsolete but are actualy in used in a xref as Reference Qualifier");
+    public static final ReportTopic HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_IDENTIFICATION_AC_IN_FEATURE = new ReportTopic ("This/those Cvs are annotated as hidden or obsolete but are actualy in used in a feature as CvFeatureIdentification");
+    public static final ReportTopic HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_FEATURETYPE_AC_IN_FEATURE = new ReportTopic ("This/those Cvs are annotated as hidden or obsolete but are actualy in used in a feature as CvFeatureType");
+    public static final ReportTopic HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_FROMFUZZYTYPE_AC_IN_RANGE = new ReportTopic ("This/those Cvs are annotated as hidden or obsolete but are actualy in used in a range as fromfuzzytype_ac");
+
+    public static final ReportTopic HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_TOFUZZYTYPE_AC_IN_RANGE = new ReportTopic ("This/those Cvs are annotated as hidden or obsolete but are actualy in used in a range as tofuzzytype_ac");
+    public static final ReportTopic  HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_ROLE_IN_COMPONENT = new ReportTopic ("This/those Cvs are annotated as hidden or obsolete but are actualy in used as role of a component");
+    public static final ReportTopic  HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_INTERACTORTYPE_IN_INTERACTOR = new ReportTopic ("This/those Cvs are annotated as hidden or obsolete but are actualy in used for a Protein as Interactor Type");
+    public static final ReportTopic  HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_INTERACTIONTYPE_IN_INTERACTOR = new ReportTopic ("This/those Cvs are annotated as hidden or obsolete but are actualy in used for an Interaction as Interaction Type");
+    public static final ReportTopic  HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_PROTEINFORM_IN_INTERACTOR = new ReportTopic ("This/those Cvs are annotated as hidden or obsolete but are actualy in used as Protein Form Type for a Protein");
+
+    public static final ReportTopic  HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_TISSUEAC_IN_BIOSOURCE = new ReportTopic ("This/those Cvs are annotated as hidden or obsolete but are actualy in used as a Tissue for this/those Biosource(s)");
+    public static final ReportTopic  HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_CELLTYPEAC_IN_BIOSOURCE = new ReportTopic ("This/those Cvs are annotated as hidden or obsolete but are actualy in used as a Celltype for this/those Biosource(s)");
+    public static final ReportTopic  HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_DETECTMETHODAC_IN_EXPERIMENT = new ReportTopic ("This/those Cvs are annotated as hidden or obsolete but are actualy in used as a Detection Method for this/those Experiment(s)");
+    public static final ReportTopic  HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_IDENTMETHODAC_IN_EXPERIMENT = new ReportTopic ("This/those Cvs are annotated as hidden or obsolete but are actualy in used as a Identification Method for this/those Experiment(s)");
+    public static final ReportTopic  HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_TOPICAC_IN_ANNOTATION = new ReportTopic ("This/those object(s) have annotation using CvTopic which are hidden or obsolete Cvs");
+
+    public static final ReportTopic  HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_ALIASTYPEAC_IN_ALIAS = new ReportTopic ("This/those alias have an alias type corresponding to a hidden or obsolete Cv");
+
+
+    //
         // F E A T U R E
         //
         public static final ReportTopic FEATURE_WITHOUT_A_RANGE = new ReportTopic ("This/those Features(s) are not associated to a Range");
