@@ -165,6 +165,7 @@ public abstract class SequenceViewBean extends AbstractEditViewBean {
         // Set the sequence in the persistOthers method we can safely delete
         // unused sequences.
         if (getSequence().length() > 0) {
+            polymer.setSequence(getSequence());
             polymer.setCrc64(Crc64.getCrc64(getSequence()));
         }
     }
