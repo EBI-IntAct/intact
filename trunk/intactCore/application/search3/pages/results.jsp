@@ -9,13 +9,13 @@
 <%@ page buffer="none"    %>
 <%@ page autoFlush="true" %>
 
-<%@ page import="uk.ac.ebi.intact.application.search3.struts.framework.util.SearchConstants,
-                 uk.ac.ebi.intact.application.search3.business.IntactServiceIF,
+<%@ page import="uk.ac.ebi.intact.application.search3.business.IntactServiceIF,
                  uk.ac.ebi.intact.application.search3.struts.view.beans.AbstractViewBean,
                  uk.ac.ebi.intact.model.Protein"%>
 
 <!-- Import util classes -->
 <%@ page import="java.util.*"%>
+ <%@ page import="uk.ac.ebi.intact.application.search3.struts.util.SearchConstants"%>
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean" %>
