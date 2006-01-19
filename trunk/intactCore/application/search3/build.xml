@@ -62,11 +62,11 @@
     <!-- Build working classpath -->
     <path id="project.class.path">
 
-<!--         Currently no JAR file use in search -->
-<!--         Project specific jar files. -->
-<!--                <fileset dir="${lib.dir}">-->
-<!--                    <include name="**/*.jar"/>-->
-<!--                </fileset>-->
+        <!--         Currently no JAR file use in search -->
+        <!--         Project specific jar files. -->
+        <!--                <fileset dir="${lib.dir}">-->
+        <!--                    <include name="**/*.jar"/>-->
+        <!--                </fileset>-->
 
         <!-- Where the classes are compiled to. -->
         <pathelement path="${dest.dir}"/>
@@ -100,7 +100,7 @@
         <pathelement path="${intact.app.dir}/lib/lucene-1.4.3.jar"/>
         <pathelement path="${intact.app.dir}/lib/jimi.jar"/>
         <pathelement path="${intact.app.dir}/lib/antlr.jar"/>
-        
+
 
         <fileset dir="${root.lib.dir}">
             <include name="junit.jar"/>
@@ -149,6 +149,8 @@
                 NB these are only needed because search now uses a different stylesheet
                 to everything else in Intact
                 -->
+                <exclude name="overLIB/*"/>
+                <exclude name="overLIB/Mini/*"/>
                 <exclude name="sidebar.jsp"/>
                 <exclude name="sidebarLayout.jsp"/>
                 <exclude name="${styles.dir}/intact.css"/>
@@ -186,13 +188,16 @@
                 <exclude name="cvIntTypeGraph.jsp"/>
                 <exclude name="noIndexError.jsp"/>
                 <exclude name="sidebarFooter.jsp"/>
-                <exclude name="cvBrowser.jsp"/>  <!--ajoute-->
+                <exclude name="cvBrowser.jsp"/>
+                <!--ajoute-->
 
                 <exclude name="interactionSearch.jsp"/>
-                <exclude name="multipleInteraction.jsp" />
+                <exclude name="multipleInteraction.jsp"/>
                 <exclude name="noCommonInteraction.jsp"/>
-                <exclude name="noProteinsPresent.jsp" />
-                <exclude name="noData.jsp" />
+                <exclude name="noProteinsPresent.jsp"/>
+                <exclude name="noData.jsp"/>
+                <exclude name="waiting.jsp"/>
+
 
             </fileset>
         </delete>
@@ -211,10 +216,15 @@
                 <exclude name="expExample.png"/>
                 <exclude name="interExample.png"/>
                 <exclude name="protExample.png"/>
+                <!--  Do not remove InterProSearch specific files-->
+                <exclude name="check.gif"/>
+                <exclude name="greencheck-bullet.gif"/>
+                <exclude name="warning.gif"/>
+                <exclude name="wait_ball_green.gif"/>
             </fileset>
         </delete>
 
-  <!-- images commons files -->
+        <!-- images commons files -->
         <delete quiet="true">
             <fileset dir="${tld.dir}">
                 <exclude name="cvGraph.tld"/>
@@ -268,7 +278,8 @@
     <property name="antlr.grammar.file" value="${basedir}/antlr/iql2lucene.g"/>
 
     <!-- Where the ANTLR auto-generated file should be put in -->
-    <property name="antlr.output.dir" value="${intact.root}/src/uk/ac/ebi/intact/application/search3/advancedSearch/powerSearch/parser/iql2luceneParser"/>
+    <property name="antlr.output.dir"
+              value="${intact.root}/src/uk/ac/ebi/intact/application/search3/advancedSearch/powerSearch/parser/iql2luceneParser"/>
 
     <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
     <target name="antlr2java" description="Generates Java handlers from ANTLR lexer/grammar files">
@@ -291,7 +302,7 @@
 
     </target>
 
-     <!-- =================================================================== -->
+    <!-- =================================================================== -->
 
     <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
     <target name="compile">
@@ -301,9 +312,9 @@
 
         <!-- Only compile search sources only. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-            includes="**/application/search3/**,
+               includes="**/application/search3/**,
                       **/application/commons/**"
-            debug="on" source="1.4">
+               debug="on" source="1.4">
             <classpath refid="project.class.path"/>
         </javac>
 
@@ -316,14 +327,14 @@
     <!-- Builds a war file using the current database setup. -->
 
     <target name="war" description="Builds a war file"
-        depends="set-tstamp, set-db-type, war-postgres, war-oracle"/>
+            depends="set-tstamp, set-db-type, war-postgres, war-oracle"/>
 
     <!-- =================================================================== -->
 
     <!-- Builds a war file. The database to include is specified as a parameter. -->
 
     <target name="build-war" depends="compile, make-jar, gen-last-modified-file"
-        description="Builds a war file">
+            description="Builds a war file">
         <echo message="Generating ${war.file} file"/>
 
         <!-- Create the distribution dir if it doesn't exist. -->
@@ -367,7 +378,7 @@
             <fileset dir="${intact.app.dir}/tld">
                 <include name="*.tld"/>
                 <!-- Don't need intact.tld for this application -->
-<!--                <exclude name="intact.tld"/>-->
+                <!--                <exclude name="intact.tld"/>-->
             </fileset>
         </copy>
 
@@ -482,19 +493,19 @@
         </ant>
 
         <!-- Copy context files in the Tomcat's webapps directory -->
-	  <!--
+        <!--
+          <copy file="${dist.dir}/${search-context-file}"
+              todir="${tomcat.conf.dir}" overwrite="yes"/>
+        -->
         <copy file="${dist.dir}/${search-context-file}"
-            todir="${tomcat.conf.dir}" overwrite="yes"/>
-	  -->
-        <copy file="${dist.dir}/${search-context-file}"
-            todir="${webapps.dir}" overwrite="yes"/>
+              todir="${webapps.dir}" overwrite="yes"/>
     </target>
 
     <!-- =================================================================== -->
 
     <!-- Undeploys the war file from the Tomcat server. -->
     <target name="undeploy"
-        description="Undeploys the WAR file from the Tomcat server">
+            description="Undeploys the WAR file from the Tomcat server">
         <ant dir=".." inheritAll="false" target="undeploy">
             <property name="war" value="search3"/>
         </ant>
@@ -508,10 +519,10 @@
 
     <!-- Runs the JUnit tester directly. The output is redirected to std out -->
     <target name="junit-test" depends="compile"
-        description="Runs JUnit directly with output directed to stdout">
+            description="Runs JUnit directly with output directed to stdout">
         <java classname="junit.textui.TestRunner">
             <arg value=
-                "uk.ac.ebi.intact.application.search3.test.AllJUnitTests"/>
+                    "uk.ac.ebi.intact.application.search3.test.AllJUnitTests"/>
             <classpath refid="project.class.path"/>
         </java>
     </target>
@@ -521,10 +532,10 @@
 
     <!-- Runs the HttpJUnit tester directly. The output is redirected to std out -->
     <target name="httpunit-test" depends="compile"
-        description="Runs JUnit directly with output directed to stdout">
+            description="Runs JUnit directly with output directed to stdout">
         <java classname="junit.textui.TestRunner">
             <arg value=
-                "uk.ac.ebi.intact.application.search3.test.HttpUnitTests"/>
+                    "uk.ac.ebi.intact.application.search3.test.HttpUnitTests"/>
             <classpath refid="project.class.path"/>
         </java>
     </target>
@@ -580,16 +591,16 @@
 
         <!-- Copy the template file -->
         <copy todir="${dist.dir}"
-            file="${intact.context.dir}/${search-context-file}"
-            overwrite="true"/>
+              file="${intact.context.dir}/${search-context-file}"
+              overwrite="true"/>
 
         <!-- Customize the context file -->
         <replace file="${dist.dir}/${search-context-file}"
-            token="[WAR.FILE.NAME]"
-            value="${war.file}"/>
+                 token="[WAR.FILE.NAME]"
+                 value="${war.file}"/>
         <replace file="${dist.dir}/${search-context-file}"
-            token="[server.name]"
-            value="${server.name}"/>
+                 token="[server.name]"
+                 value="${server.name}"/>
     </target>
 
 </project>
