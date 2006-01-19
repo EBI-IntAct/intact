@@ -60,6 +60,9 @@ public class ObjectBridgeQueryFactory {
         // Filter out obsolete items
         crit.addNotIn("ac", getObsoleteQuery(clazz));
 
+        // Filter out hidden items
+        crit.addNotIn("ac", getHiddenQuery(clazz));
+
         ReportQueryByCriteria query = QueryFactory.newReportQuery(clazz, crit);
         // Limit to ac, shortlabel and fullname
         query.setAttributes(new String[] { "ac", "shortlabel", "fullname" });
@@ -76,6 +79,22 @@ public class ObjectBridgeQueryFactory {
         Criteria crit = new Criteria();
         // We only need obsolete items
         crit.addEqualTo("annotations.cvTopic.shortLabel", CvTopic.OBSOLETE );
+
+        ReportQueryByCriteria query = QueryFactory.newReportQuery(clazz, crit);
+        // Limit to shortlabel
+        query.setAttributes(new String[] { "ac" });
+        return query;
+    }
+
+    /**
+     * Returns a query to get a list of hidden ACs
+     * @param clazz the returned hidden terms are related to this class.
+     * @return a list of hidden ACs
+     */
+    public Query getHiddenQuery(Class clazz) {
+        Criteria crit = new Criteria();
+        // We only need obsolete items
+        crit.addEqualTo("annotations.cvTopic.shortLabel", CvTopic.HIDDEN );
 
         ReportQueryByCriteria query = QueryFactory.newReportQuery(clazz, crit);
         // Limit to shortlabel
