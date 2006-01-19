@@ -47,6 +47,14 @@ Version: $Id$
     </definition>
 
     <!-- Search page description  -->
+    <definition name="search.wait.layout" path="/pages/waiting.jsp">
+        <put name="title" value="Please wait while we are processing your request..."/>
+        <put name="sidebar" value="search.sidebar.layout"/>
+        <put name="header" value="header.layout"/>
+        <put name="footer" value="/pages/footer.jsp"/>
+    </definition>
+
+    <!-- Search page description  -->
     <definition name="search.layout" path="/layouts/intactLayout.jsp">
         <put name="title" value="Database Search"/>
         <put name="sidebar" value="search.sidebar.layout"/>
@@ -184,6 +192,11 @@ Version: $Id$
     <!-- too large layout for the advanced search -->
     <definition name="adv.too.large.layout" extends="search.layout">
         <put name="content" value="/pages/advTooLarge.jsp"/>
+    </definition>
+
+    <!-- Waiting page, displayed during processing the user input-->
+    <definition name="waiting.page.layout" extends="search.wait.layout">
+        <put name="content" value="/pages/waiting.jsp"/>
     </definition>
 
 
