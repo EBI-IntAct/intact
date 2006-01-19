@@ -103,7 +103,7 @@ public class ShowCvGraphAction extends IntactBaseAction {
                 // cache it
                 requestedCVs.put( cvName, cvClass );
             } catch ( ClassNotFoundException e ) {
-                return mapping.findForward( SearchConstants.FORWARD_ERROR );
+                return mapping.findForward( SearchConstants.FORWARD_FAILURE );
             }
         }
 
@@ -121,7 +121,6 @@ public class ShowCvGraphAction extends IntactBaseAction {
             try {
                 imageBean.setImageData( (BufferedImage) imageProducer.createImage( cvClass ) );
             } catch ( IntactException e ) {
-                e.printStackTrace();
                 logger.error( "Could not produce image for " + cvClass, e );
                 return mapping.findForward( SearchConstants.FORWARD_ERROR );
             }
@@ -146,8 +145,7 @@ public class ShowCvGraphAction extends IntactBaseAction {
         getServlet().getServletContext().setAttribute( Constants.IMAGE_BEAN, imageBean );
 
         // forward to the corresponding jsp page, dependent on the cvName
-
         logger.info( "forward to display of " + imageBean.getCvName() );
-        return mapping.findForward( "showCvDag" );
+        return mapping.findForward( SearchConstants.FORWARD_SHOW_CV_DAG );
     }
 }

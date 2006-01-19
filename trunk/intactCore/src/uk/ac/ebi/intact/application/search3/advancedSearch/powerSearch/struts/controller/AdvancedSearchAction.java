@@ -7,7 +7,6 @@ package uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.c
 
 import org.apache.commons.collections.IterableMap;
 import org.apache.commons.collections.MapIterator;
-import org.apache.log4j.Logger;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -16,11 +15,11 @@ import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.parser.IQLParserImpl;
 import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.business.QueryBuilder;
 import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
-import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
-import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.application.search3.searchEngine.business.SearchEngineImpl;
 import uk.ac.ebi.intact.application.search3.searchEngine.business.dao.SearchDAOImpl;
 import uk.ac.ebi.intact.application.search3.searchEngine.lucene.IntactAnalyzer;
+import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
+import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
@@ -44,8 +43,6 @@ import java.util.*;
  * @version $id$
  */
 public class AdvancedSearchAction extends IntactBaseAction {
-
-//    private static Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
 
     private String indexPath;
 
@@ -101,22 +98,22 @@ public class AdvancedSearchAction extends IntactBaseAction {
         String helpLink = relativePath.concat(relativeHelpLink);
         user.setHelpLink(helpLink);
 
-        //todo define the indexpath in the config!
         // build the path for the Lucene index
         indexPath = null;
 
-        Properties props = PropertyLoader.load ("/config/advancedSearch.properties");
+        final String configFilename = "/config/advancedSearch.properties";
+        Properties props = PropertyLoader.load (configFilename);
         if (props != null) {
             indexPath = props.getProperty ("lucene.index.directory");
 
             File directory = new File( indexPath );
             if( !(directory.isDirectory() && directory.canRead()) ) {
-                System.out.println("Error, " + indexPath + " is not a directory or is not readable.");
+                logger.error( indexPath + " is not a directory or is not readable.");
                 return mapping.findForward(SearchConstants.FORWARD_INDEX_ERROR);
             }
 
         } else {
-            System.out.println ("Unable to open the properties file.");
+            logger.error ("Unable to open the properties file: " + configFilename);
             return mapping.findForward(SearchConstants.FORWARD_INDEX_ERROR);
         }
 
@@ -324,12 +321,10 @@ public class AdvancedSearchAction extends IntactBaseAction {
             value = (ArrayList) it.getValue();
             for (Iterator iterator = value.iterator(); iterator.hasNext();) {
                 obj = (AnnotatedObject) iterator.next();
-//                System.out.println("Object: " + obj.getShortLabel());
                 if( obj != null){
                     labelList.add(obj.getShortLabel());
                     logger.info("Search result: " + obj.getShortLabel());
                 }else{
-                    System.out.println("null object? ");
                     logger.error("null object?");
                 }
             }
@@ -348,7 +343,6 @@ public class AdvancedSearchAction extends IntactBaseAction {
         session.setAttribute(SearchConstants.LAST_VALID_SEARCH, iqlStatement);
 
         return mapping.findForward(SearchConstants.FORWARD_ADV_DISPATCHER_ACTION);
-
     }
 
     /**
@@ -402,5 +396,4 @@ public class AdvancedSearchAction extends IntactBaseAction {
         }
         return results;
     }
-
 }

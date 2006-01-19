@@ -6,16 +6,15 @@ All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 
-import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.Constants;
-import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.business.CvLists;
 import uk.ac.ebi.intact.application.commons.search.SearchHelper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
+import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.Constants;
+import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.business.CvLists;
 import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
-import uk.ac.ebi.intact.application.search3.struts.framework.util.SearchConstants;
+import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.business.IntactException;
 
 import javax.servlet.ServletException;
@@ -32,8 +31,6 @@ import java.util.Collection;
  * @version $Id$
  */
 public final class InitAction extends IntactBaseAction {
-
-    private static Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
 
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
@@ -61,17 +58,15 @@ public final class InitAction extends IntactBaseAction {
         //all we need to do here is set up a valid user if possible
         if (super.setupUser(request) == null) {
             // not possible to set up an user, forward to errorpage
-            return mapping.findForward(uk.ac.ebi.intact.application.search3.struts.util.SearchConstants.FORWARD_FAILURE);
+            return mapping.findForward(SearchConstants.FORWARD_FAILURE);
 
         } else if (!helper.connected()) {
             // the database is not connected forward to errorpage
-            return mapping.findForward(uk.ac.ebi.intact.application.search3.struts.util.SearchConstants.FORWARD_NO_RESOURCE);
+            return mapping.findForward(SearchConstants.FORWARD_NO_RESOURCE);
 
         } else {
 
             //// end of the copied part
-
-
             CvLists lists = new CvLists();
             // the following collections contain information about all cv object for the specific cv
             Collection cvDatabases = null;
@@ -93,6 +88,7 @@ public final class InitAction extends IntactBaseAction {
                 cvInteractionTypes = lists.initCVInteractionTypeList();
 
             } catch (IntactException e) {
+                logger.error( "Error while loading CV lists.", e );
                 e.printStackTrace();
             }
 
@@ -106,6 +102,7 @@ public final class InitAction extends IntactBaseAction {
             session.setAttribute(Constants.ERROR_MESSAGE, "");
 
             // these collections are used later to be displayed in the drop down list in the JSP
+            // TODO create contants for these fields !!!
             getServlet().getServletContext().setAttribute("cvDatabases", cvDatabases);
             getServlet().getServletContext().setAttribute("cvTopics", cvTopics);
             getServlet().getServletContext().setAttribute("cvInteractions", cvInteractions);
@@ -118,13 +115,9 @@ public final class InitAction extends IntactBaseAction {
                 return mapping.findForward(SearchConstants.FORWARD_FAILURE);
             }
 
-            logger.info("init");
+            logger.info("init done.");
             // Forward control to the specified success URI
-            return (mapping.findForward("success"));
+            return (mapping.findForward( SearchConstants.FORWARD_SUCCESS ));
         }
     }
 }
-
-
-
-
