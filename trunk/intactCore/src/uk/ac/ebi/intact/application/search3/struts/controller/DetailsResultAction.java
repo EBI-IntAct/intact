@@ -60,8 +60,7 @@ public class DetailsResultAction extends AbstractResultAction {
             if ( bean != null ) {
                 bean.setInteractionPage( Integer.parseInt( selectedPage ) );
                 logger.debug( "bean index set OK" );
-                //TODO use a Constant here 
-                return "detailPage";   //done
+                return SearchConstants.FORWARD_DETAIL_PAGE;
             }
             //something wrong here - no viewbean present to modify...
             return SearchConstants.FORWARD_FAILURE;
@@ -75,7 +74,7 @@ public class DetailsResultAction extends AbstractResultAction {
         }
 
         logger.info( "DetailAction: result Collection contains " + results.size() + " items." );
-        List beanList = null;
+
         
         // String appPath = getServlet().getServletContext().getInitParameter("searchLink");
         // String searchURL = request.getContextPath().concat(appPath);
@@ -97,6 +96,7 @@ public class DetailsResultAction extends AbstractResultAction {
             experiments = results;  //got Experiments in the first place
         }
 
+        List beanList;
         if ( experiments != null ) {
             beanList = new ArrayList();
             for ( Iterator it = experiments.iterator(); it.hasNext(); ) {
@@ -113,8 +113,7 @@ public class DetailsResultAction extends AbstractResultAction {
             request.setAttribute( SearchConstants.VIEW_BEAN_LIST, beanList );
             //send to the detail view JSP
             logger.info( "detailsAction: forwarding to 'details' JSP.." );
-            // TODO use a Constant here
-            return "detailPage";
+            return SearchConstants.FORWARD_DETAIL_PAGE;
         } else {
             //something is wrong here - forward to error page 
             return SearchConstants.FORWARD_FAILURE;

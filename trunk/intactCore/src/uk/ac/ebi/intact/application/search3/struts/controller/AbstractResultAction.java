@@ -11,7 +11,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
-import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

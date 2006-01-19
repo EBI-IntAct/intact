@@ -69,10 +69,9 @@ public class AdvSimpleResultAction extends AbstractResultAction {
         // (protein, experiment, interaction, cv or biosource) and the corresponding value is a collection containing all
         // intact objects of the type of the key
         MapIterator it = resultMap.mapIterator();
-        Collection temp = null;
+        Collection temp;
         while (it.hasNext()) {
 
-            String key = (String) it.next();
             Collection results = (ArrayList) it.getValue();
             temp = new ArrayList(results.size());
             //now add in the sublists to the in the partitionlist
@@ -89,5 +88,4 @@ public class AdvSimpleResultAction extends AbstractResultAction {
         request.setAttribute(SearchConstants.VIEW_BEAN_LIST, partitionList);
         return SearchConstants.FORWARD_SIMPLE_RESULTS;
     }
-
 }
