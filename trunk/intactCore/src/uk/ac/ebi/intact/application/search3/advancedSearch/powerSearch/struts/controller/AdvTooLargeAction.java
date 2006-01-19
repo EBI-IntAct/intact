@@ -66,7 +66,6 @@ public class AdvTooLargeAction extends IntactBaseAction {
         String key = null;
         String className = null;
         while (it.hasNext()) {
-            key = (String) it.next();
             className = (String) it.getValue();
             className = className.trim();
             logger.info("tooLarge action: searching for class" + className);
@@ -74,13 +73,13 @@ public class AdvTooLargeAction extends IntactBaseAction {
             try {
                 clazz = Class.forName(className);
                 if (Protein.class.isAssignableFrom(clazz)) {
-                    proteinCount += 1;
+                    proteinCount++;
                 } else if (Experiment.class.isAssignableFrom(clazz)) {
-                    experimentCount += 1;
+                    experimentCount++;
                 } else if (Interaction.class.isAssignableFrom(clazz)) {
-                    interactionCount += 1;
+                    interactionCount++;
                 } else if (CvObject.class.isAssignableFrom(clazz)) {
-                    cvCount += 1;
+                    cvCount++;
                 } else {
                     logger.error("in tooLarge: unknown key");
                     return mapping.findForward(SearchConstants.FORWARD_FAILURE);
@@ -135,6 +134,4 @@ public class AdvTooLargeAction extends IntactBaseAction {
         request.setAttribute(SearchConstants.VIEW_BEAN, tooLargeViewBean);
         return mapping.findForward(SearchConstants.FORWARD_RESULTS);
     }
-
-
 }

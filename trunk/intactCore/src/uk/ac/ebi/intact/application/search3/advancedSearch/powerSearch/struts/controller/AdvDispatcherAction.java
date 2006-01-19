@@ -33,9 +33,6 @@ import java.util.Collection;
  */
 public class AdvDispatcherAction extends IntactBaseAction {
 
-//    private static Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
-
-
     /**
      * Process the specified HTTP request, and create the corresponding HTTP response (or forward to
      * another web component that will create it). Return an ActionForward instance describing where
@@ -134,7 +131,7 @@ public class AdvDispatcherAction extends IntactBaseAction {
                 return mapping.findForward(SearchConstants.FORWARD_SIMPLE_ACTION);
             }
         }
-        // resultsize is bigger than 1, it can only be simple request for the simple
+        // result size is bigger than 1, it can only be simple request for the simple
         else if ((resultMap.size() > 1)) {
             // it's a  multiple requst
             logger.info("Dispatcher ask forward to AdvSimpleResultAction");
@@ -145,5 +142,4 @@ public class AdvDispatcherAction extends IntactBaseAction {
         logger.info("Something went wrong here, forward to error page");
         return mapping.findForward(SearchConstants.FORWARD_FAILURE);
     }
-
 }

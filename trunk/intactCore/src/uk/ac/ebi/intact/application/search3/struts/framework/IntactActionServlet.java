@@ -10,7 +10,7 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.struts.action.ActionServlet;
 import uk.ac.ebi.intact.application.search3.business.IntactServiceIF;
 import uk.ac.ebi.intact.application.search3.business.IntactServiceImpl;
-import uk.ac.ebi.intact.application.search3.struts.framework.util.SearchConstants;
+import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;

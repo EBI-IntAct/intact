@@ -7,7 +7,6 @@ import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.SingleResultViewBean;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.TooLargeViewBean;
-import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
@@ -67,7 +66,7 @@ public class TooLargeAction extends IntactBaseAction {
         for (Iterator iterator = someKeys.iterator(); iterator.hasNext();) {
             String className = (String) iterator.next();
             logger.info("tooLarge action: searching for class" + className);
-            Class clazz = null;
+            Class clazz;
             try {
                 clazz = Class.forName(className);
                 if (Protein.class.isAssignableFrom(clazz)) {

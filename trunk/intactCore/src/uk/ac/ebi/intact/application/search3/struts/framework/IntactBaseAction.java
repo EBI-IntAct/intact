@@ -15,7 +15,7 @@ import uk.ac.ebi.intact.application.search3.business.Constants;
 import uk.ac.ebi.intact.application.search3.business.IntactServiceIF;
 import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search3.business.IntactUserImpl;
-import uk.ac.ebi.intact.application.search3.struts.framework.util.SearchConstants;
+import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.business.IntactException;
 
@@ -33,7 +33,7 @@ import java.util.HashMap;
  */
 public abstract class IntactBaseAction extends Action {
 
-    protected transient static final Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
+    protected transient static final Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
 
     /**
      * The global Intact error key.
@@ -47,11 +47,12 @@ public abstract class IntactBaseAction extends Action {
 
     /**
      * Returns the only instance of Intact Service instance.
+     *
      * @return only instance of the <code>IntactServiceImpl</code> class.
      */
     protected IntactServiceIF getIntactService() {
         IntactServiceIF service = (IntactServiceIF)
-            getApplicationObject(SearchConstants.INTACT_SERVICE);
+                getApplicationObject(SearchConstants.INTACT_SERVICE);
         return service;
     }
 
@@ -60,11 +61,11 @@ public abstract class IntactBaseAction extends Action {
      *
      * @param session the session to access the Intact user object.
      * @return an instance of <code>IntactUserImpl</code> stored in
-     * <code>session</code>
+     *         <code>session</code>
      */
     protected IntactUserIF getIntactUser(HttpSession session) {
         IntactUserIF service = (IntactUserIF)
-            session.getAttribute(SearchConstants.INTACT_USER);
+                session.getAttribute(SearchConstants.INTACT_USER);
         return service;
     }
 
@@ -72,9 +73,10 @@ public abstract class IntactBaseAction extends Action {
      * Returns the session from given request. If there is no current session
      * then a new one will be created - as there is no login for search it is
      * not necessary to prevent new session creation.
+     *
      * @param request the request to get the session from.
      * @return session associated with given request - either the current session
-     * or a new one.
+     *         or a new one.
      */
     protected HttpSession getSession(HttpServletRequest request) {
         return request.getSession();
@@ -93,7 +95,7 @@ public abstract class IntactBaseAction extends Action {
      * Adds an error with given key.
      *
      * @param key the error key. This value is looked up in the
-     * IntactResources.properties bundle.
+     *            IntactResources.properties bundle.
      */
     protected void addError(String key) {
         myErrors.add(INTACT_ERROR, new ActionError(key));
@@ -102,10 +104,10 @@ public abstract class IntactBaseAction extends Action {
     /**
      * Adds an error with given key and value.
      *
-     * @param key the error key. This value is looked up in the
-     * IntactResources.properties bundle.
+     * @param key   the error key. This value is looked up in the
+     *              IntactResources.properties bundle.
      * @param value the value to substitute for the first place holder in the
-     * IntactResources.properties bundle.
+     *              IntactResources.properties bundle.
      */
     protected void addError(String key, String value) {
         myErrors.add(INTACT_ERROR, new ActionError(key, value));
@@ -124,6 +126,7 @@ public abstract class IntactBaseAction extends Action {
 
     /**
      * A convenient method to retrieve an application object from a session.
+     *
      * @param attrName the attribute name.
      * @return an application object stored in a session under <tt>attrName</tt>.
      */
@@ -138,6 +141,7 @@ public abstract class IntactBaseAction extends Action {
      * it to the session. If the process fails then struts errors will be logged and
      * null will be returned to the caller. Typically a subclass would call
      * this method upon finding that the request session has no User object.
+     *
      * @param request The HTTP request object from which the session should be obtained
      * @return IntactUserIF the new User object, or null if the creation failed.
      */
@@ -175,7 +179,7 @@ public abstract class IntactBaseAction extends Action {
             super.saveErrors(request, errors);
             return null;
         }
-        catch(Exception e) {
+        catch (Exception e) {
             logger.info("failed to create user - unexpected error!!");
             logger.info(ExceptionUtils.getStackTrace(e));
         }
@@ -190,6 +194,5 @@ public abstract class IntactBaseAction extends Action {
 
         //creation succeeded - return the new user object
         return user;
-
     }
 }
