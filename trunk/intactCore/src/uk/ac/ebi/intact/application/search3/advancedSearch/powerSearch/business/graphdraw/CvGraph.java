@@ -7,6 +7,8 @@ package uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.business
 
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.business.graphdraw.graph.*;
+import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.business.CvLists;
+import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.view.bean.CvBean;
 import uk.ac.ebi.intact.application.search3.business.Constants;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
@@ -99,24 +101,37 @@ public class CvGraph {
             try {
                 helper = new IntactHelper();
                 // collection that holds all cv objects as nodes
-                Collection nodes = null;
-                Map cvobjectToNode = new HashMap();
+                Collection nodes = new ArrayList( 64 );
+                Map cvobjectToNode = new HashMap( 64 );
 
                 // get all CvObjects of the specified Cv out of the database
-                nodes = helper.search( cvClass, "ac", null );
+                CvLists cvList = new CvLists();
+                cvList.addMenuListItem(cvClass, nodes);
+
+                // convert a list of CvBeans into CvDagObjects
+                Collection cvObjects = new ArrayList( nodes.size() );
+                for (Iterator iterator = nodes.iterator(); iterator.hasNext();) {
+                    CvBean cvBean = (CvBean) iterator.next();
+                    CvDagObject cdo = (CvDagObject) helper.getObjectByAc( CvObject.class, cvBean.getAc() );
+                    cvObjects.add( cdo );
+                }
+
+                // lose the CvBean list to allow garbage collection
+                nodes.clear();
+                nodes = null;
 
                 // create for all cvDagObject a node and add these to the graph
-                for ( Iterator iterator = nodes.iterator(); iterator.hasNext(); ) {
-                    CvDagObject o = (CvDagObject) iterator.next();
-                    RectangularNode node = new RectangularNode( 40, 40, o.getFullName(), "javascript:SendInfo('" + o.getShortLabel() + "')", null, o.getShortLabel(), Color.white, Color.blue, thinStroke );
+                for ( Iterator iterator = cvObjects.iterator(); iterator.hasNext(); ) {
+                    CvDagObject cv = (CvDagObject) iterator.next();
+                    RectangularNode node = new RectangularNode( 40, 40, cv.getFullName(), "javascript:SendInfo('" + cv.getAc() + "')", null, cv.getShortLabel(), Color.white, Color.blue, thinStroke );
                     g.nodes.add( node );
-                    cvobjectToNode.put( o, node );
+                    cvobjectToNode.put( cv, node );
                 }
 
                 // find all parent-relations between the cvDagObjects
-                for ( Iterator iterator = nodes.iterator(); iterator.hasNext(); ) {
-                    CvDagObject o = (CvDagObject) iterator.next();
-                    findParentRelations( o, cvobjectToNode, g );
+                for ( Iterator iterator = cvObjects.iterator(); iterator.hasNext(); ) {
+                    CvDagObject cv = (CvDagObject) iterator.next();
+                    findParentRelations( cv, cvobjectToNode, g );
                 }
 
                 HierarchicalLayout layout = new HierarchicalLayout( g, HierarchicalLayout.PARENT_TOP );
@@ -174,7 +189,7 @@ public class CvGraph {
                 logger.info( "maximum heap size: " + heapMaxSize );
                 logger.info( "free heap size: " + heapFreeSize );
             }
-
+            
             // put the image into cache
             imageCache.put( cvClass, image );
             // put the imageMap into cache
@@ -189,7 +204,7 @@ public class CvGraph {
     }
 
     /**
-     * this method find the parent relations between the nodes
+     * this method find the parent relations between the nodes and add edges between terms.
      *
      * @param cv             cv object to find the parents for
      * @param cvobjectToNode Map with all nodes to get the nodes corresponding to the cv object

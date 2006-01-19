@@ -44,7 +44,12 @@ public class CvLists {
     // collection holding per CvIdentification object one CvBean
     private Collection CVIdentification = null;
 
-    private void addMenuListItem( Class clazz, Collection list ) {
+    /**
+     * Collects all objects of the specified type and filter out hidden and obsolete terms.
+     * @param clazz the class we want to get all instances of.
+     * @param list the list to populate.
+     */
+    public void addMenuListItem( Class clazz, Collection list ) {
 
         IntactHelper helper = null;
         try {
@@ -64,13 +69,13 @@ public class CvLists {
             }
 
         } catch ( IntactException e ) {
-            e.printStackTrace();
+            logger.error("Error while loading CV terms", e);
         } finally {
             if ( helper != null ) {
                 try {
                     helper.closeStore();
                 } catch ( IntactException e ) {
-                    e.printStackTrace();
+                    logger.error("Error while closing IntactHelper", e);
                 }
             }
         }
@@ -85,6 +90,12 @@ public class CvLists {
      * @throws IntactException
      */
     public Collection initCVDatabaseList() throws IntactException {
+
+        if( this.CVDatabase != null ){
+            // use cache.
+            return this.CVDatabase;
+        }
+
         logger.info( "in initCVDatabaseList" );
         this.CVDatabase = new ArrayList();
         // add an empty CV bean for the default case
@@ -105,6 +116,12 @@ public class CvLists {
      * @throws IntactException
      */
     public Collection initCVTopicList() throws IntactException {
+
+        if( this.CVTopic != null ){
+            // use cache.
+            return this.CVTopic;
+        }
+
         Collection topics = null;
         this.CVTopic = new ArrayList();
         // add an empty CV bean for the default case
@@ -120,6 +137,7 @@ public class CvLists {
             for ( Iterator iterator = topics.iterator(); iterator.hasNext(); ) {
                 CvTopic cvTo = (CvTopic) iterator.next();
 
+                // remove 'no-export' CvTopic
                 if( false == AnnotationFilter.getInstance().isFilteredOut( cvTo ) ) {
 
                     // do not insert the topic 'remark-interal', it should not be seen from outside
@@ -129,12 +147,13 @@ public class CvLists {
             }
 
         } catch ( IntactException e ) {
-            e.printStackTrace();
+            logger.error( "Error while loading CvTopics.", e );
         } finally {
             if ( helper != null ) {
                 try {
                     helper.closeStore();
                 } catch ( IntactException e ) {
+                    logger.error( "Error while closing helper.", e );
                 }
             }
         }
@@ -150,6 +169,12 @@ public class CvLists {
      * @throws IntactException
      */
     public Collection initCVInteractionList() throws IntactException {
+
+        if( this.CVInteraction != null ){
+            // use cache.
+            return this.CVInteraction;
+        }
+
         this.CVInteraction = new ArrayList();
         // add an empty CV bean for the default case
         CvBean emptyBean = new CvBean( null, "-no CvInteraction-", "no interaction selected" );
@@ -169,6 +194,12 @@ public class CvLists {
      * @throws IntactException
      */
     public Collection initCVInteractionTypeList() throws IntactException {
+
+        if( this.CVInteractionType != null ){
+            // use cache.
+            return this.CVInteractionType;
+        }
+
         this.CVInteractionType = new ArrayList();
         // add an empty CV bean for the default case
         CvBean emptyBean = new CvBean( null, "-no CvInteractionType-", "no CvInteractionType selected" );
@@ -188,6 +219,12 @@ public class CvLists {
      * @throws IntactException
      */
     public Collection initCVIdentificationList() throws IntactException {
+
+        if( this.CVIdentification != null ){
+            // use cache.
+            return this.CVIdentification;
+        }
+
         this.CVIdentification = new ArrayList();
         // add an empty CV bean for the default case
         CvBean emptyBean = new CvBean( null, "-no CvIdentification-", "no identification selected" );
