@@ -16,6 +16,7 @@ import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentActionForm;
 import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
+import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
@@ -294,6 +295,22 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
                 return mapping.getInputForward();
             }
         }
+
+        // We test that the xref has a valid primaryId, has the hasValidPrimaryId is already implemented in
+        // uk.ac.ebi.intact.model.Xref, out of the XreferenceBean we create an xref and use its method hasValidPrimaryId
+        // If if return false we display the error.
+        Xref xref = createXref(xb);
+        if(!xref.hasValidPrimaryId()){
+            ActionErrors errors = new ActionErrors();
+            errors.add("new.xref", new ActionError("error.xref.pid.not.valid"));
+            saveErrors(request, errors);
+
+            // Set the anchor
+            setAnchor(request, editorForm);
+            // Display the error in the edit page.
+            return mapping.getInputForward();
+        }
+
         // Add the bean to the view.
         view.addXref((XreferenceBean) xb.clone());
 
@@ -301,6 +318,22 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         setAnchor(request, editorForm);
 
         return mapping.getInputForward();
+    }
+
+    /**
+     * Given a XreferenceBean it creates a Xref and return it
+     * @param xb
+     * @return
+     * @throws IntactException
+     */
+
+    public Xref createXref(XreferenceBean xb) throws IntactException {
+        Institution institution = new Institution("ebi");
+        IntactHelper helper = IntactHelperUtil.getDefaultIntactHelper();
+        CvDatabase cvDatabase = (CvDatabase) helper.getObjectByLabel(CvDatabase.class , xb.getDatabase());
+        CvXrefQualifier cvXrefQualifier = new CvXrefQualifier(institution, xb.getQualifier());
+        Xref xref = new Xref(institution,cvDatabase,xb.getPrimaryId(),xb.getSecondaryId(),xb.getReleaseNumber(),cvXrefQualifier);
+        return xref;
     }
 
     /**
