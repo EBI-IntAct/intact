@@ -139,7 +139,7 @@ public class QueryBuilder {
 
         // set up the condition by parsing all textfields
         // check if there is a AC number specified
-        if (!((ac == null) || (ac.equals("")))) {
+        if ( ! ( (ac == null) || "".equals(ac) || "\"\"".equals(ac) )) {
             // insert a connection if there is already a search condition, to combine them
             if (conditionCount != 0) {
                 condition += " " + connection + " ";
@@ -149,7 +149,7 @@ public class QueryBuilder {
             conditionCount += 1;
         }
         // check if there is a description specified
-        if (!((description == null) || (description.equals("")))) {
+        if ( ! ((description == null) || ("".equals(description))  || "\"\"".equals(description) )) {
             // insert a connection, if there is already a search condition,
             // to combine them
             if (conditionCount != 0) {
@@ -159,7 +159,7 @@ public class QueryBuilder {
             conditionCount += 1;
         }
         // check if there is a shortlabel specified
-        if (!((shortlabel == null) || (shortlabel.equals("")))) {
+        if ( !((shortlabel == null) || "".equals(shortlabel) || ("\"\"".equals(shortlabel)))) {
             // insert a connection, if there is already a search condition,
             // to combine them
             if (conditionCount != 0) {
@@ -170,7 +170,7 @@ public class QueryBuilder {
         }
 
         // check if there is a fulltext search specified
-        if (!((fulltext == null) || (fulltext.equals("")))) {
+        if (!((fulltext == null) || "".equals(fulltext) || "\"\"".equals(fulltext) ))  {
             // insert a connection, if there is already a search condition,
             // to combine them
             if (conditionCount != 0) {
@@ -181,7 +181,7 @@ public class QueryBuilder {
         }
 
         // check if there is a xref specified
-        if (!((xref == null) || (xref.equals("")))) {
+        if ( !( (xref == null) ||  "".equals(xref) || "\"\"".equals(xref)) ) {
             // insert a connection, if there is already a search condition,
             // to combine them
             if (conditionCount != 0) {
@@ -192,7 +192,7 @@ public class QueryBuilder {
         }
 
         // check if there is a annotation specified
-        if (!((annotation == null) || (annotation.equals("")))) {
+        if ( !((annotation == null) || "".equals(annotation) || "\"\"".equals(annotation) ) ) {
             // insert a connection, if there is already a search condition,
             // to combine them
             if (conditionCount != 0) {
@@ -203,101 +203,108 @@ public class QueryBuilder {
         }
 
         // check if there is a CvInteraction specified
-        if ((!(cvInteraction.equals("-no CvInteraction-"))) && (searchClass.equalsIgnoreCase("any") || searchClass.equalsIgnoreCase("experiment"))) {
-            // insert a connection, if there is already a search condition,
-            // to combine them
-            if (conditionCount != 0) {
-                condition += " " + connection + " ";
-            }
-            // check if the checkbox to search all Interaciton Detection children is checked
-            if(interDetChildren.equals("true")){
-                logger.info("interDetChildren: " + interDetChildren);
-                String subcondition = this.buildConditionCvWithChildren(cvInteraction, "interaction_ac");
-                // the parent is already in the condition string, so we always need a OR-connection
-                // subcondition could be null if there is no child node
-                if (subcondition != null) {
-                    // put quotes around the cvInteraction shortlabel to get exact that one,
-                    // ohterwise lucene will split a term with two words into two term connected with or
-                    condition +=  "(" + this.buildCondition(CV_INTERACTION, "\"" + cvInteraction + "\"");
-                    condition += " or " +  subcondition + ")";
-                    conditionCount += 1;
-                } else{
-                    // put quotes around the cvInteraction shortlabel to get exact that one,
-                    // ohterwise lucene will split a term with two words into two term connected with or
+
+        if(!((cvInteraction == null) || "".equals(cvInteraction) || "\"\"".equals(cvInteraction))){
+            if ((!(cvInteraction.equals("-no CvInteraction-"))) && (searchClass.equalsIgnoreCase("any") || searchClass.equalsIgnoreCase("experiment"))) {
+                // insert a connection, if there is already a search condition,
+                // to combine them
+                if (conditionCount != 0) {
+                    condition += " " + connection + " ";
+                }
+                // check if the checkbox to search all Interaciton Detection children is checked
+                if(interDetChildren.equals("true")){
+                    logger.info("interDetChildren: " + interDetChildren);
+                    String subcondition = this.buildConditionCvWithChildren(cvInteraction, "interaction_ac");
+                    // the parent is already in the condition string, so we always need a OR-connection
+                    // subcondition could be null if there is no child node
+                    if (subcondition != null) {
+                        // put quotes around the cvInteraction shortlabel to get exact that one,
+                        // ohterwise lucene will split a term with two words into two term connected with or
+                        condition +=  "(" + this.buildCondition(CV_INTERACTION, "\"" + cvInteraction + "\"");
+                        condition += " or " +  subcondition + ")";
+                        conditionCount += 1;
+                    } else{
+                        // put quotes around the cvInteraction shortlabel to get exact that one,
+                        // ohterwise lucene will split a term with two words into two term connected with or
+                        condition += this.buildCondition(CV_INTERACTION, "\"" + cvInteraction + "\"");
+                        conditionCount += 1;
+                    }
+                }else{
                     condition += this.buildCondition(CV_INTERACTION, "\"" + cvInteraction + "\"");
                     conditionCount += 1;
                 }
-            }else{
-                condition += this.buildCondition(CV_INTERACTION, "\"" + cvInteraction + "\"");
-                conditionCount += 1;
             }
         }
 
         // check if there is a CvIdentification specified
-        if (!(cvIdentification.equals("-no CvIdentification-")) && (searchClass.equalsIgnoreCase("any") || searchClass.equalsIgnoreCase("experiment"))) {
-            // insert a connection, if there is already a search condition,
-            // to combine them
-            if (conditionCount != 0) {
-                condition += " " + connection + " ";
-            }
+        if(!((cvIdentification == null) || "".equals(cvIdentification) || "\"\"".equals(cvIdentification))){
+            if (!(cvIdentification.equals("-no CvIdentification-")) && (searchClass.equalsIgnoreCase("any") || searchClass.equalsIgnoreCase("experiment"))) {
+                // insert a connection, if there is already a search condition,
+                // to combine them
+                if (conditionCount != 0) {
+                    condition += " " + connection + " ";
+                }
 
-            // check if the checkbox to search all Participant Detection children is checked
-            if(partDetChildren.equals("true")){
-                logger.info("partDetChildren: " + partDetChildren);
-                logger.info("parent: " + cvIdentification);
-                String subcondition = this.buildConditionCvWithChildren(cvIdentification, "identification_ac");
-                // the parent is already in the condition string, so we always need a OR-connection
-                // subcondition could be null if there is no child node
-                if (subcondition != null) {
-                    condition += "(" + this.buildCondition(CV_IDENTIFICATION, "\"" + cvIdentification + "\"");
-                    condition += " or " +  subcondition + ")";
-                    conditionCount += 1;
+                // check if the checkbox to search all Participant Detection children is checked
+                if(partDetChildren.equals("true")){
+                    logger.info("partDetChildren: " + partDetChildren);
+                    logger.info("parent: " + cvIdentification);
+                    String subcondition = this.buildConditionCvWithChildren(cvIdentification, "identification_ac");
+                    // the parent is already in the condition string, so we always need a OR-connection
+                    // subcondition could be null if there is no child node
+                    if (subcondition != null) {
+                        condition += "(" + this.buildCondition(CV_IDENTIFICATION, "\"" + cvIdentification + "\"");
+                        condition += " or " +  subcondition + ")";
+                        conditionCount += 1;
+                    }else{
+                        // put quotes around the cvIdentification shortlabel to get exact that one,
+                        // ohterwise lucene will split a term with two words into two term connected with or
+                        condition += this.buildCondition(CV_IDENTIFICATION, "\"" + cvIdentification + "\"");
+                        conditionCount += 1;
+                    }
                 }else{
                     // put quotes around the cvIdentification shortlabel to get exact that one,
                     // ohterwise lucene will split a term with two words into two term connected with or
                     condition += this.buildCondition(CV_IDENTIFICATION, "\"" + cvIdentification + "\"");
                     conditionCount += 1;
                 }
-            }else{
-                // put quotes around the cvIdentification shortlabel to get exact that one,
-                // ohterwise lucene will split a term with two words into two term connected with or
-                condition += this.buildCondition(CV_IDENTIFICATION, "\"" + cvIdentification + "\"");
-                conditionCount += 1;
             }
         }
-
         // check if there is a CvInteractionType specified
-        if (!(cvInteractionType.equals("-no CvInteractionType-")) && (searchClass.equalsIgnoreCase("any") || searchClass.equalsIgnoreCase("interaction"))) {
-            // insert a connection, if there is already a search condition,
-            // to combine them
-            if (conditionCount != 0) {
-                condition += " " + connection + " ";
-            }
-            // check if the checkbox to search all CvInteracitonType children is checked
-            if(interTypeChildren.equals("true")){
-                logger.info("interTypeChildren: " + interTypeChildren);
-                String subcondition = this.buildConditionCvWithChildren(cvInteractionType, "interactiontype_ac");
-                // the parent is already in the condition string, so we always need a OR-connection
-                // subcondition could be null if there is no child node
-                if (subcondition != null) {
-                    // put quotes around the cvInteractionType shortlabel to get exact that one,
-                    // ohterwise lucene will split a term with two words into two term connected with or
-                    condition +=  "(" + this.buildCondition(CV_INTERACTIONTYPE, "\"" + cvInteractionType + "\"");
-                    condition += " or " +  subcondition +")";
-                    conditionCount += 1;
+        if(!((cvInteractionType == null) || "".equals(cvInteractionType) || "\"\"".equals(cvInteractionType))){
+
+            if (!(cvInteractionType.equals("-no CvInteractionType-")) && (searchClass.equalsIgnoreCase("any") || searchClass.equalsIgnoreCase("interaction"))) {
+                // insert a connection, if there is already a search condition,
+                // to combine them
+                if (conditionCount != 0) {
+                    condition += " " + connection + " ";
+                }
+                // check if the checkbox to search all CvInteracitonType children is checked
+                if(interTypeChildren.equals("true")){
+                    logger.info("interTypeChildren: " + interTypeChildren);
+                    String subcondition = this.buildConditionCvWithChildren(cvInteractionType, "interactiontype_ac");
+                    // the parent is already in the condition string, so we always need a OR-connection
+                    // subcondition could be null if there is no child node
+                    if (subcondition != null) {
+                        // put quotes around the cvInteractionType shortlabel to get exact that one,
+                        // ohterwise lucene will split a term with two words into two term connected with or
+                        condition +=  "(" + this.buildCondition(CV_INTERACTIONTYPE, "\"" + cvInteractionType + "\"");
+                        condition += " or " +  subcondition +")";
+                        conditionCount += 1;
+                    }else{
+                        // put quotes around the cvInteractionType shortlabel to get exact that one,
+                        // ohterwise lucene will split a term with two words into two term connected with or
+                        condition += this.buildCondition(CV_INTERACTIONTYPE, "\"" + cvInteractionType + "\"");
+                        conditionCount += 1;
+                    }
+
                 }else{
+
                     // put quotes around the cvInteractionType shortlabel to get exact that one,
                     // ohterwise lucene will split a term with two words into two term connected with or
                     condition += this.buildCondition(CV_INTERACTIONTYPE, "\"" + cvInteractionType + "\"");
                     conditionCount += 1;
                 }
-
-            }else{
-
-                // put quotes around the cvInteractionType shortlabel to get exact that one,
-                // ohterwise lucene will split a term with two words into two term connected with or
-                condition += this.buildCondition(CV_INTERACTIONTYPE, "\"" + cvInteractionType + "\"");
-                conditionCount += 1;
             }
         }
 
