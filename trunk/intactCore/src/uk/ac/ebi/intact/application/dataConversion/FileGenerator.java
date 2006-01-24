@@ -16,23 +16,18 @@ import uk.ac.ebi.intact.model.Interaction;
 import java.io.*;
 import java.util.*;
 
-
 /**
  * This class is the main application class for generating a flat file format from the contents of a database. Currently
  * the file format is PSI, and the DBs are postgres or oracle, though the DB details are hidden behind the
  * IntactHelper/persistence layer as usual.
  *
- * @author Chris Lewington
- * @version $id$
+ * @author Samuel Kerrien, Chris Lewington
+ * @version $Id$
  */
 public class FileGenerator {
 
-    private IntactHelper helper;
-
-
-    public FileGenerator( IntactHelper helper ) {
-        this.helper = helper;
-    }
+    /////////////////////
+    // Private methods
 
     /**
      * Obtains the data from the dataSource, in preparation for the flat file generation.
@@ -41,7 +36,7 @@ public class FileGenerator {
      *
      * @throws IntactException thrown if there was a search problem
      */
-    public HashSet getDbData( String searchPattern ) throws IntactException {
+    private static HashSet getExperiments( IntactHelper helper, String searchPattern ) throws IntactException {
 
         //try this for now, but it may be better to use SQL and get the ACs,
         //then cycle through them and generate PSI one by one.....
@@ -56,7 +51,6 @@ public class FileGenerator {
 
         while ( patterns.hasMoreTokens() ) {
             String experimentShortlabel = patterns.nextToken().trim();
-//            System.out.println( "Searching for: '" + experimentShortlabel + "'" );
             searchResults.addAll( helper.search( Experiment.class, "shortLabel", experimentShortlabel ) );
         }
 
@@ -67,72 +61,6 @@ public class FileGenerator {
     }
 
     /**
-     * Generates a PSI MI formatted file for a searchPattern. Large scale Experiments will typically be a searchpattern
-     * of a single shortlabel, and these are processed as chunks. Small scale ones will generally have a searchpattern
-     * consisting of multiple shortlabels, and these will be placed into a single file.
-     *
-     * @param searchPattern a comma separated list of experiment's shortlabel.
-     * @param fileName      the file in which we will store the generated XML.
-     * @param version       the PSI version of the generated XML output.
-     *
-     * @throws Exception
-     */
-    public static void generatePsiData( String searchPattern, String fileName, PsiVersion version, File reverseCvFilename ) throws Exception {
-
-        IntactHelper helper = null;
-
-        try {
-            helper = new IntactHelper();
-            CvMapping mapping = null;
-
-            if ( reverseCvFilename != null ) {
-                // try to load the reverse mapping
-                mapping = new CvMapping();
-                mapping.loadFile( reverseCvFilename, helper );
-            }
-
-            FileGenerator generator = new FileGenerator( helper );
-
-            //get all of the Experiment shortlabels and process them according
-            //to the size of their interaction list..
-            //NB this currently means that if the search result size
-            //is one and the number of interactions is large then we process seperately.
-            Collection searchResults = generator.getDbData( searchPattern );
-
-
-            if ( searchResults.size() == 1 ) {
-                //may be a large experiment - check and process if necessary
-                Experiment exp = (Experiment) searchResults.iterator().next();
-
-                if ( exp.getInteractions().size() > ExperimentListGenerator.LARGESCALESIZE ) {
-                    System.out.println( "processing large experiment " + exp.getShortLabel() + " ...." );
-
-                    FileGenerator.processLargeExperiment( exp, fileName, version, mapping );
-
-                    return;     //done
-                }
-            }
-
-            //not a large experiment - may be a single small one or a set of small ones,
-            //so process 'normally' into a single file...
-
-            UserSessionDownload session = new UserSessionDownload( version );
-            if( mapping != null ) {
-                session.setReverseCvMapping( mapping );
-            }
-
-            Document psiDoc = generator.generateData( searchResults, session );
-            session.printMessageReport( System.err );
-            write( psiDoc.getDocumentElement(), new File( fileName ) );
-
-        } finally {
-            if ( helper != null ) {
-                helper.closeStore();
-            }
-        }
-    }
-
-    /**
      * Convert a list of experiment into PSI XML
      *
      * @param experiments a list of experiment to export in PSI XML
@@ -140,7 +68,7 @@ public class FileGenerator {
      *
      * @return the generated XML Document
      */
-    public Document generateData( Collection experiments, UserSessionDownload session ) {
+    private static Document generateData( Collection experiments, UserSessionDownload session ) {
 
         Interaction2xmlI interaction2xml = Interaction2xmlFactory.getInstance( session );
 
@@ -179,17 +107,16 @@ public class FileGenerator {
         return session.getPsiDocument();
     }
 
-    public static void processLargeExperiment( Experiment exp, String fileName, PsiVersion version, CvMapping mapping ) throws Exception {
-
-        PsiDataBuilder builder = new PsiDataBuilder();
+    private static void processLargeExperiment( Experiment exp, String fileName, int chunkSize,
+                                               PsiVersion version, CvMapping mapping ) throws Exception {
 
         // Need to process the big ones chunk by chunk -
-        // do this by splitting the Interactions into manageable pieces (LARGESCALESIZE each),
+        // do this by splitting the Interactions into manageable pieces (LARGE_SCALE_CHUNK_SIZE each),
         // then building and writing some XML to seperate files....
         int startIndex = 0;
-        int endIndex = ExperimentListGenerator.LARGESCALESIZE; //NB END INDEX IS EXCLUSIVE!!
-        int chunkCount = 1;                                    // used to distinguish files
-        String mainFileName = null;                            // filename in which the chunk will be saved
+        int endIndex = chunkSize;   //NB END INDEX IS EXCLUSIVE!!
+        int chunkCount = 1;         // used to distinguish files
+        String mainFileName = null; // filename in which the chunk will be saved
         List itemsToProcess = null;
 
         System.out.println( "generating Interaction files for experiment " + exp.getShortLabel() + ": Blocks completed: " );
@@ -253,7 +180,7 @@ public class FileGenerator {
 
                 chunkCount++;
                 startIndex = endIndex;
-                endIndex = endIndex + ExperimentListGenerator.LARGESCALESIZE;
+                endIndex = endIndex + chunkSize;
             }
         } else {
             //This will only NOT be a List if someone changes the model
@@ -264,7 +191,13 @@ public class FileGenerator {
         }
     }
 
-    public static void write( Element root, File file ) throws IOException {
+    /**
+     * Write an Element (supposingly the root of a document) into a file.
+     * @param root the root of the XML Document.
+     * @param file the file in which we are supposed to write the content.
+     * @throws IOException if an error occur while writting.
+     */
+    private static void write( Element root, File file ) throws IOException {
 
         System.out.print( "\nWriting DOM to " + file.getAbsolutePath() + " ... " );
         System.out.flush();
@@ -294,6 +227,74 @@ public class FileGenerator {
                              options );
     }
 
+    ///////////////////
+    // Public methods
+
+    /**
+     * Generates a PSI MI formatted file for a searchPattern. Large scale Experiments will typically be a searchpattern
+     * of a single shortlabel, and these are processed as chunks. Small scale ones will generally have a searchpattern
+     * consisting of multiple shortlabels, and these will be placed into a single file.
+     *
+     * @param searchPattern a comma separated list of experiment's shortlabel.
+     * @param fileName      the file in which we will store the generated XML.
+     * @param version       the PSI version of the generated XML output.
+     *
+     * @throws Exception
+     */
+    public static void generatePsiData( String searchPattern, String fileName, int chunkSize,
+                                        PsiVersion version, File reverseCvFilename ) throws Exception {
+
+        IntactHelper helper = null;
+
+        try {
+            helper = new IntactHelper();
+            CvMapping mapping = null;
+
+            if ( reverseCvFilename != null ) {
+                // try to load the reverse mapping
+                mapping = new CvMapping();
+                mapping.loadFile( reverseCvFilename, helper );
+            }
+
+            //get all of the Experiment shortlabels and process them according
+            //to the size of their interaction list..
+            //NB this currently means that if the search result size
+            //is one and the number of interactions is large then we process seperately.
+            Collection searchResults = getExperiments( helper, searchPattern );
+
+            if ( searchResults.size() == 1 && chunkSize != -1 ) {
+                //may be a large experiment - check and process if necessary
+                Experiment exp = (Experiment) searchResults.iterator().next();
+
+                if ( exp.getInteractions().size() > chunkSize ) {
+                    System.out.println( "processing large experiment " + exp.getShortLabel() + " ...." );
+
+                    FileGenerator.processLargeExperiment( exp, fileName, chunkSize, version, mapping );
+
+                    return;     //done
+                }
+            }
+
+            //not a large experiment - may be a single small one or a set of small ones,
+            //so process 'normally' into a single file...
+
+            UserSessionDownload session = new UserSessionDownload( version );
+            if ( mapping != null ) {
+                session.setReverseCvMapping( mapping );
+            }
+
+            Document psiDoc = generateData( searchResults, session );
+            session.printMessageReport( System.err );
+            write( psiDoc.getDocumentElement(), new File( fileName ) );
+
+        } finally {
+            if ( helper != null ) {
+                helper.closeStore();
+            }
+        }
+    }
+
+    ////////////////////
     // Main method
 
     /**
@@ -347,7 +348,6 @@ public class FileGenerator {
             options.addOption( versionOpt );
             options.addOption( mappingOpt );
 
-
             // create the parser
             CommandLineParser parser = new BasicParser();
             CommandLine line = null;
@@ -370,7 +370,7 @@ public class FileGenerator {
             }
 
             // Process arguments
-            final String fileName = line.getOptionValue( "output" );
+            String fileName = line.getOptionValue( "output" );
             System.out.println( "FileName: " + fileName );
 
             final String searchPattern = line.getOptionValue( "pattern" );
@@ -407,26 +407,58 @@ public class FileGenerator {
 
             if ( cvMapping != null ) {
 
-                if ( false == cvMapping.exists() ) {
+                if ( ! cvMapping.exists() ) {
                     System.err.println( "The given file doesn't exist. ignore it." );
                     cvMapping = null;
                 }
 
-                if ( false == cvMapping.canRead() ) {
+                if ( ! cvMapping.canRead() ) {
                     System.err.println( "The given file is not readable. ignore it." );
                     cvMapping = null;
                 }
             }
 
             if ( fileName == null ) {
-
+                throw new IllegalArgumentException( "You must provide the filename of the PSI file to generate." );
             }
 
+            // check if filename contains [integer], if so, remove it and use the integer value to split the unique
+            // experiment into chunks of that size.
+            int startIdx = fileName.indexOf( '[' );
+            int stopIdx = fileName.indexOf( ']' );
+            int chunkSize = -1;
+
+            if ( startIdx != -1 && stopIdx != -1 ) {
+                // found [ and ]
+                String chunkSizeStr = fileName.substring( startIdx + 1, stopIdx );
+
+                try {
+                    chunkSize = Integer.parseInt( chunkSizeStr );
+                    if ( chunkSize < 1 ) {
+                        System.err.println( "Chunk size (" + chunkSize + ") was incorrect, set it to default (" + 2500 + ")" );
+                        chunkSize = 2500;
+                    }
+
+                    // replace the original filename from which we remove the [123]
+                    String tmp = fileName.substring( 0, startIdx ) + fileName.substring( stopIdx + 1, fileName.length() );
+                    System.out.println( "Replacing filename: '" + fileName + "' -> '" + tmp + "'" );
+                    fileName = tmp;
+
+                    System.out.println( "chunkSize = " + chunkSize );
+
+                } catch ( NumberFormatException e ) {
+                    throw new IllegalArgumentException( "filename " + fileName + " has a specified chunk size that is not of type integer: " + chunkSizeStr + "" );
+                }
+
+            } else if ( startIdx != -1 || stopIdx != -1 ) {
+                // found [ xor ]
+                throw new IllegalArgumentException( "filename " + fileName + " has an incorrect format (eg. abc[11])." );
+            }
 
             long start = System.currentTimeMillis();
 
-
-            generatePsiData( searchPattern, fileName, psiVersion, cvMapping );
+            // Generate PSI data
+            generatePsiData( searchPattern, fileName, chunkSize, psiVersion, cvMapping );
 
             long end = System.currentTimeMillis();
             long total = end - start;
