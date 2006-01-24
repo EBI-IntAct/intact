@@ -7,7 +7,6 @@ package uk.ac.ebi.intact.application.dataConversion.psiUpload.checker;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.CellTypeTag;
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.Constants;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.TissueTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.CommandLineOptions;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
@@ -260,7 +259,7 @@ public abstract class AbstractOrganismChecker {
                         sb.append( ", CellType: " ).append( cellType );
                         sb.append( ", Tissue: " ).append( tissue );
                         sb.append( " Reason " ).append( e.getMessage() );
-                        sb.append( ExceptionUtils.getFullStackTrace( e ) );
+                        sb.append( ExceptionUtils.getStackTrace( e ) );
 
                         MessageHolder.getInstance().addCheckerMessage( new Message( sb.toString() ) );
                     }
