@@ -142,7 +142,7 @@ public class Interactor2xmlPSI25 extends AnnotatedObject2xmlPSI25 {
      *
      * @return the generated interactorRef Element.
      */
-    public Element createInteracorReference( UserSessionDownload session, Element parent, Interactor interactor ) {
+    public Element createInteractorReference( UserSessionDownload session, Element parent, Interactor interactor ) {
 
         // TODO test that.
 
