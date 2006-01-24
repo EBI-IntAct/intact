@@ -230,7 +230,7 @@ public class Interaction2xmlPSI25 extends AnnotatedObject2xmlPSI25 implements In
             Experiment experiment = (Experiment) iterator.next();
 
             // only generate it if the definition doesn't exist.
-            if ( false == session.isAlreadyDefined( experiment ) ) {
+            if ( !session.isAlreadyDefined( experiment ) ) {
                 // add the experiment definition to the global list of experiments
                 Experiment2xmlFactory.getInstance( session ).create( session, experimentList, experiment );
                 session.declareAlreadyDefined( experiment );
@@ -247,26 +247,19 @@ public class Interaction2xmlPSI25 extends AnnotatedObject2xmlPSI25 implements In
         }
 
         // 7. Generating participantList...
-        if ( false == interaction.getComponents().isEmpty() ) {
+        if ( !interaction.getComponents().isEmpty() ) {
 
             // create the parents
             Element participantListElement = session.createElement( "participantList" );
-//            Element experimentalFormListElement = session.createElement( "experimentalFormList" );
 
             for ( Iterator iterator = interaction.getComponents().iterator(); iterator.hasNext(); ) {
                 Component component = (Component) iterator.next();
 
                 // create the participant
                 Component2xmlFactory.getInstance( session ).create( session, participantListElement, component );
-
-                // create the experimentalForm
-
-//                Component2xmlPSI2 c2psi = (Component2xmlPSI2) Component2xmlFactory.getInstance( session );
-//                c2psi.createExperimentalForm( session, experimentalFormListElement, component );
             }
 
             element.appendChild( participantListElement );
-//            element.appendChild( experimentalFormListElement );
         }
 
         // 8. Generating experimentalFormList...
