@@ -32,6 +32,58 @@ import java.util.Date;
  */
 public class ExperimentListGenerator {
 
+    public static class ExperimentClassification {
+
+        /**
+         * Classification of experiments by pubmedId
+         */
+        private Map pubmed2experimentSet = new HashMap();
+
+        /**
+         * Classification of experiments by species
+         */
+        private Map specie2experimentSet = new HashMap();
+
+        /**
+         * Holds the shortLabels of any Experiments found to contain Interactions with 'negative' information. It has to
+         * be a static because the method used for writing the classifications is a static...
+         */
+        private Set negativeExperiments = new HashSet();
+
+        ////////////////////////////////
+        // Constructors
+
+        public ExperimentClassification() {
+        }
+
+        /////////////////////////////////
+        // Getters and Setters
+
+        public Map getPubmed2experimentSet() {
+            return pubmed2experimentSet;
+        }
+
+        public void setPubmed2experimentSet( Map pubmed2experimentSet ) {
+            this.pubmed2experimentSet = pubmed2experimentSet;
+        }
+
+        public Map getSpecie2experimentSet() {
+            return specie2experimentSet;
+        }
+
+        public void setSpecie2experimentSet( Map specie2experimentSet ) {
+            this.specie2experimentSet = specie2experimentSet;
+        }
+
+        public Set getNegativeExperiments() {
+            return negativeExperiments;
+        }
+
+        public void setNegativeExperiments( Set negativeExperiments ) {
+            this.negativeExperiments = negativeExperiments;
+        }
+    }
+
     /**
      * Current time
      */
@@ -43,24 +95,51 @@ public class ExperimentListGenerator {
         formatter = null;
     }
 
-    // if an experiment has more than this many interactions it is considered to be large scale.
-    //NB changed for testing - usually 100
-    public static final int SMALLSCALELIMIT = 500;
-    public static final int LARGESCALESIZE = 2500;
-    public static final int MAX_EXPERIMENT_PER_FILE = 300;
+    /**
+     * Maximum count of interaction for
+     */
+    public static final int SMALL_SCALE_LIMIT = 500;
+
+    /**
+     * if an experiment has more than this many interactions it is considered to be large scale.
+     */
+    public static final int LARGE_SCALE_CHUNK_SIZE = 2000;
 
     public static final String SMALL = "small";
     public static final String LARGE = "large";
 
     public static final String NEW_LINE = System.getProperty( "line.separator" );
 
-    // in the end the sum of small scale interaction coun should be under LARGESCALESIZE, otherwise, split.
+    //////////////////////////////////////
+    // Public methods
 
     /**
-     * Holds the shortLabels of any Experiments found to contain Interactions with 'negative' information. It has to be
-     * a static because the method used for writing the classifications is a static...
+     * Obtains the data from the dataSource, in preparation for the flat file generation.
+     *
+     * @param searchPattern for search by shortLabel. May be a comma-separated list.
+     *
+     * @throws IntactException thrown if there was a search problem
      */
-    private static List negExpLabels = new ArrayList();
+    public static Collection getExperiments( IntactHelper helper, String searchPattern ) throws IntactException {
+
+        //try this for now, but it may be better to use SQL and get the ACs,
+        //then cycle through them and generate PSI one by one.....
+        ArrayList searchResults = new ArrayList();
+        System.out.print( "Retrieving data from DB store..." );
+        System.out.flush();
+
+        StringTokenizer patterns = new StringTokenizer( searchPattern, "," );
+
+        while ( patterns.hasMoreTokens() ) {
+            String experimentShortlabel = patterns.nextToken().trim();
+            searchResults.addAll( helper.search( Experiment.class, "shortLabel", experimentShortlabel ) );
+        }
+
+        int resultSize = searchResults.size();
+        System.out.println( "done (found " + resultSize + " experiment" + ( resultSize > 1 ? "s" : "" ) + ")" );
+
+        return searchResults;
+    }
 
     /**
      * Classify experiments matching searchPattern into a data structure according to species and experiment size.
@@ -72,73 +151,198 @@ public class ExperimentListGenerator {
      * @throws uk.ac.ebi.intact.business.IntactException
      *
      */
-    public static HashMap classifyExperiments( String searchPattern ) throws IntactException {
-        IntactHelper helper = new IntactHelper();
+    public static ExperimentClassification classifyExperiments( String searchPattern ) throws IntactException {
 
-        //obtain data, probably experiment by experiment, build
-        //PSI data for it then write it to a file....
-        FileGenerator generator = new FileGenerator( helper );
-        Collection searchResults = generator.getDbData( searchPattern );
+        ExperimentClassification classification = new ExperimentClassification();
+        IntactHelper helper = null;
 
-        HashMap allExp = new HashMap();
+        try {
+            helper = new IntactHelper();
 
-        // Split the list of experiments into species- and size-specific files
-        for ( Iterator iterator = searchResults.iterator(); iterator.hasNext(); ) {
-            Experiment exp = (Experiment) iterator.next();
+            // Obtain data, probably experiment by experiment, build
+            // PSI data for it then write it to a file....
+            Collection searchResults = getExperiments( helper, searchPattern );
 
-            // Get the species of one of the interactors of the experiment.
-            // The bioSource of the Experiment is irrelevant, as it may be an
-            // auxiliary experimental system.
-            BioSource source = null;
-            int size = 0;
-            try {
+            // Split the list of experiments into species- and size-specific files
+            for ( Iterator iterator = searchResults.iterator(); iterator.hasNext(); ) {
+                Experiment experiment = (Experiment) iterator.next();
 
-                Collection interactions = exp.getInteractions();
-                size = interactions.size();
-                System.out.println( "Classifying " + exp.getShortLabel() + " (" + size + " interaction" + ( size > 1 ? "s" : "" ) + ")" );
+                // Skip empty experiments and give a warning about'em
+                if ( experiment.getInteractions().isEmpty() ) {
+                    System.out.println( "ERROR: experiment " + experiment.getShortLabel() + " (" + experiment.getAc() + ") has no interaction." );
+                    continue;
+                }
 
-                //THIS is where OJB loads ALL the Interactions - a call to Iterator..
-                Interaction interaction = (Interaction) interactions.iterator().next();
-                Collection components = interaction.getComponents();
-                Interactor protein = ( (Component) components.iterator().next() ).getInteractor();
-                // TODO find out if this is the right way of doing it ! experiment.hostOrganism
-                source = protein.getBioSource();
+                // 1. Get the species of one of the interactors of the experiment.
+                //    The bioSource of the Experiment is irrelevant, as it may be an auxiliary experimental system.
+                Collection sources = getTargetSpecies( experiment, helper );
+                int size = experiment.getInteractions().size();
+                System.out.println( "Classifying " + experiment.getShortLabel() + " (" + size + " interaction" + ( size > 1 ? "s" : "" ) + ")" );
 
-                size = interactions.size();
-            } catch ( Exception e ) {
-                /* If anything goes wrong in determining the source,
-                experiments without interactions etc are the most likely cause.
-                Just ignore these in the classification and therefore in the output.
-                */
+                // 2. get the pubmedId (primary-ref)
+                String pubmedId = getPrimaryId( experiment );
 
-                e.printStackTrace();
+                // 3. create the classification by publication
+                if ( pubmedId != null ) {
 
-                continue;
+                    Set experimentSet = null;
+                    Map pubmed2experimentSet = classification.getPubmed2experimentSet();
+
+                    if ( ! pubmed2experimentSet.containsKey( pubmedId ) ) {
+                        // create an empty set
+                        experimentSet = new HashSet();
+                        pubmed2experimentSet.put( pubmedId, experimentSet );
+                    } else {
+                        // retreive the existing set
+                        experimentSet = (Set) pubmed2experimentSet.get( pubmedId );
+                    }
+
+                    // add the experiment to the set of experiments.
+                    experimentSet.add( experiment );
+                } else {
+                    System.out.println( "ERROR: Could not find a pubmed ID for experiment: " + experiment.getShortLabel() + "(" + experiment.getAc() + ")" );
+                }
+
+                // 4. create the classification by species
+                Map specie2experimentSet = classification.getSpecie2experimentSet();
+
+                // if multiple target-species have been found, that experiment will be associated redundantly
+                // to each BioSource. only the publication classification is non redundant.
+                for ( Iterator iterator1 = sources.iterator(); iterator1.hasNext(); ) {
+                    BioSource source = (BioSource) iterator1.next();
+
+                    if ( ! specie2experimentSet.containsKey( source ) ) {
+                        // not yet in the structure, create an entry
+                        Collection experiments = new HashSet();
+                        specie2experimentSet.put( source, experiments );
+                    }
+
+                    // associate experiment to the source
+                    Collection experiments = (Collection) specie2experimentSet.get( source );
+                    experiments.add( experiment );
+                }
             }
 
-            // fully initialize the data structure for a new BioSource
-            if ( null == allExp.get( source ) ) {
-                HashMap speciesMap = new HashMap();
-                speciesMap.put( SMALL, new HashSet() );
-                speciesMap.put( LARGE, new HashSet() );
-                allExp.put( source, speciesMap );
-            }
+            // 5. Now all experiments have been sorted, check for those containing 'negative' results...
+            classifyNegatives( classification );
 
-            // Sort experiment into appropriate bin
-            if ( size > SMALLSCALELIMIT ) {
-                ( (Set) ( (HashMap) allExp.get( source ) ).get( LARGE ) ).add( exp );
-            } else {
-                ( (Set) ( (HashMap) allExp.get( source ) ).get( SMALL ) ).add( exp );
+        } finally {
+            if ( helper != null ) {
+                helper.closeStore();
             }
         }
 
-        // Now all experiments have been sorted into allExp - check for those containing
-        //'negative' results...
-        classifyNegatives();
-        return allExp;
+        return classification;
     }
 
-    //----------------------- private helper methods -------------------------------------
+    /**
+     * Output the experiment classification, suitable for scripting
+     *
+     * @param allExp HashMap of HashMap of ArrayLists of Experiments: {species}{scale}[n]
+     */
+    public static void writeExperimentsClassificationBySpecies( Map allExp,
+                                                                Collection negExpLabels,
+                                                                Writer writer ) throws IOException {
+
+        for ( Iterator iterator = allExp.keySet().iterator(); iterator.hasNext(); ) {
+
+            BioSource bioSource = (BioSource) iterator.next();
+            Collection smallScaleExp = (Collection) allExp.get( bioSource );
+
+            // split the set into subset of size under SMALL_SCALE_LIMIT
+            String filePrefixGlobal = bioSource.getShortLabel().replace( ' ', '-' );
+            Map filename2experimentList = splitExperiment( smallScaleExp,
+                                                           filePrefixGlobal + "_" + SMALL, // small scale
+                                                           filePrefixGlobal );             // large scale
+
+            writeLines( filename2experimentList, negExpLabels, writer );
+        }
+    }
+
+    ///////////////////////////////////
+    // private helper methods
+
+    /**
+     * Fetch publication primaryId from experiment.
+     *
+     * @param experiment the experiment for which we want the primary pubmed ID.
+     *
+     * @return a pubmed Id or null if none found.
+     */
+    private static String getPrimaryId( Experiment experiment ) {
+        String pubmedId = null;
+
+        for ( Iterator iterator1 = experiment.getXrefs().iterator(); iterator1.hasNext() && null == pubmedId; ) {
+            Xref xref = (Xref) iterator1.next();
+
+            if ( CvDatabase.PUBMED.equals( xref.getCvDatabase().getShortLabel() ) ) {
+
+                if ( xref.getCvXrefQualifier() != null
+                     &&
+                     CvXrefQualifier.PRIMARY_REFERENCE.equals( xref.getCvXrefQualifier().getShortLabel() ) ) {
+
+                    try {
+
+                        Integer.parseInt( xref.getPrimaryId() );
+                        pubmedId = xref.getPrimaryId();
+
+                    } catch ( NumberFormatException e ) {
+                        System.out.println( experiment.getShortLabel() + " has pubmedId(" + xref.getPrimaryId() + ") which  is not an integer value, skip it." );
+                    }
+                }
+            }
+        }
+
+        return pubmedId;
+    }
+
+    /**
+     * Retreive BioSources corresponding ot the target-species assigned to the given experiment.
+     *
+     * @param experiment The experiment for which we want to get all target-species.
+     * @param helper     Data source.
+     *
+     * @return A collection of BioSource, or empty if non is found.
+     *
+     * @throws IntactException if an error occurs.
+     */
+    private static Collection getTargetSpecies( Experiment experiment, IntactHelper helper ) throws IntactException {
+        Collection species = new ArrayList( 4 );
+
+        for ( Iterator iterator = experiment.getXrefs().iterator(); iterator.hasNext(); ) {
+            Xref xref = (Xref) iterator.next();
+            if ( CvXrefQualifier.TARGET_SPECIES.equals( xref.getCvXrefQualifier().getShortLabel() ) ) {
+                String taxid = xref.getPrimaryId();
+                Collection bioSources = helper.search( BioSource.class, "taxid", taxid );
+
+                if ( bioSources.isEmpty() ) {
+                    throw new IntactException( "Experiment(" + experiment.getAc() + ", " + experiment.getShortLabel() +
+                                               ") has a target-species:" + taxid +
+                                               " but we cannot find the corresponding BioSource." );
+                }
+
+                // if choice given, get the less specific one (without tissue, cell type...)
+                BioSource selectedBioSource = null;
+                for ( Iterator iterator1 = bioSources.iterator(); iterator1.hasNext() && selectedBioSource == null; ) {
+                    BioSource bioSource = (BioSource) iterator1.next();
+                    if ( bioSource.getCvCellType() == null && bioSource.getCvTissue() == null
+                         &&
+                         bioSource.getCvCellCycle() == null && bioSource.getCvCompartment() == null ) {
+                        selectedBioSource = bioSource;
+                    }
+                }
+
+                if ( selectedBioSource != null ) {
+                    species.add( selectedBioSource );
+                } else {
+                    // add the first one we find
+                    species.add( bioSources.iterator().next() );
+                }
+            }
+        }
+
+        return species;
+    }
 
     /**
      * Checks for a negative interaction. NB This will have to be done using SQL otherwise we end up materializing all
@@ -152,9 +356,11 @@ public class ExperimentListGenerator {
      * 'negative' (not the Experiment), and so these should be checked also, with duplicate matches being ignored. </p>
      * This method has to be static because it is called by the static 'classifyExperiments'.
      */
-    private static void classifyNegatives() throws IntactException {
+    private static void classifyNegatives( ExperimentClassification classification ) throws IntactException {
 
-        //query to get at the Experiment ACs containing negative interaction annotations
+        Collection negExpLabels = classification.getNegativeExperiments();
+
+        // Query to get at the Experiment ACs containing negative interaction annotations
         String sql = "SELECT experiment_ac " +
                      "FROM ia_int2exp " +
                      "WHERE interaction_ac in " +
@@ -166,13 +372,13 @@ public class ExperimentListGenerator {
                      "        WHERE topic_ac in " +
                      "            (SELECT ac " +
                      "             FROM ia_controlledvocab " +
-                     "             WHERE shortlabel='"+ CvTopic.NEGATIVE +"'" +
+                     "             WHERE shortlabel='" + CvTopic.NEGATIVE + "'" +
                      "            )" +
                      "        )" +
                      "    )";
 
-        //query to obtain Experiment ACs by searching for an Annotation for the
-        //Experiment classified as 'negative' itself
+        // Query to obtain Experiment ACs by searching for an Annotation for the
+        // Experiment classified as 'negative' itself
         String expSql = "SELECT experiment_ac " +
                         "FROM ia_exp2annot " +
                         "WHERE annotation_ac in " +
@@ -181,20 +387,24 @@ public class ExperimentListGenerator {
                         "      WHERE topic_ac in " +
                         "            (SELECT ac " +
                         "             FROM ia_controlledvocab " +
-                        "             WHERE shortlabel = '"+ CvTopic.NEGATIVE +"'" +
+                        "             WHERE shortlabel = '" + CvTopic.NEGATIVE + "'" +
                         "            )" +
                         "     )";
 
-        IntactHelper helper = new IntactHelper();
         Set expAcs = new HashSet( 1024 ); //used to collect ACs from a query - Set avoids duplicates
 
         Connection conn = null;
         Statement stmt = null;  //ordinary Statement will do - won't be reused
         PreparedStatement labelStmt = null; //needs a parameter
         ResultSet rs = null;
+        IntactHelper helper = null;
+
         try {
-            //safest way to do this is directly through the Connection.....
+            helper = new IntactHelper();
+
+            // Safest way to do this is directly through the Connection.....
             conn = helper.getJDBCConnection();
+
             stmt = conn.createStatement();
             rs = stmt.executeQuery( expSql );
             while ( rs.next() ) {
@@ -203,9 +413,8 @@ public class ExperimentListGenerator {
             }
             rs.close();
             stmt.close();
-            //System.out.println("DEBUG: size of AC List: " + expAcs.size());
 
-            //now query via the Interactions...
+            // Now query via the Interactions...
             stmt = conn.createStatement();
             rs = stmt.executeQuery( sql );
             while ( rs.next() ) {
@@ -214,15 +423,14 @@ public class ExperimentListGenerator {
             }
             rs.close();
             stmt.close();
+            // do not close the connexion ... helper.closeStore() takes care of giving it back to the connexion pool.
 
-            //now get the shortlabels of the Experiments as these are what we need...
+            // Now get the Experiments by AC as these are what we need...
             for ( Iterator it = expAcs.iterator(); it.hasNext(); ) {
-                labelStmt = conn.prepareStatement( "SELECT shortlabel FROM ia_experiment WHERE ac= ?" );
-                labelStmt.setString( 1, (String) it.next() );
-                rs = labelStmt.executeQuery();
-                while ( rs.next() ) {
-                    negExpLabels.add( rs.getString( "shortlabel" ) );
-                }
+
+                String ac = (String) it.next();
+                Experiment experiment = (Experiment) helper.getObjectByAc( Experiment.class, ac );
+                negExpLabels.add( experiment );
             }
 
         } catch ( SQLException se ) {
@@ -230,11 +438,13 @@ public class ExperimentListGenerator {
             System.out.println( se.getSQLState() );
             System.out.println( se.getErrorCode() );
             se.printStackTrace();
+
             while ( ( se.getNextException() ) != null ) {
                 System.out.println( se.getSQLState() );
                 System.out.println( se.getErrorCode() );
                 se.printStackTrace();
             }
+
         } finally {
             try {
                 if ( stmt != null ) {
@@ -243,8 +453,9 @@ public class ExperimentListGenerator {
                 if ( labelStmt != null ) {
                     labelStmt.close();
                 }
-                if ( conn != null ) {
-                    conn.close();
+
+                if ( helper != null ) {
+                    helper.closeStore();
                 }
             } catch ( SQLException se ) {
                 se.printStackTrace();
@@ -253,8 +464,10 @@ public class ExperimentListGenerator {
     }
 
     /**
-     * Sort a collection of Objects. The given collection is not modified, a new one is returned.
+     * Sort a collection of String (shorltabel). The given collection is not modified, a new one is returned.
+     *
      * @param l collection to sort.
+     *
      * @return the sorted collection.
      */
     private static List getSortedShortlabel( Collection l ) {
@@ -271,109 +484,233 @@ public class ExperimentListGenerator {
     }
 
     /**
-     * Output the experiment classification, suitable for scripting
+     * Split a set of experiment into (if necessary) subsets so that each subset has not more interaction than
+     * LARGE_SCALE_CHUNK_SIZE.
      *
-     * @param allExp HashMap of HashMap of ArrayLists of Experiments: {species}{scale}[n]
+     * @param experiments      the set of experiments.
+     * @param smallScalePrefix the prefix for small scale files.
+     * @param largeScalePrefix the prefix for large scale files.
+     *
+     * @return a map (filename_prefix -> subset)
      */
-    public static void writeExperimentsClassification( HashMap allExp, Writer writer ) throws IOException {
+    private static Map splitExperiment( Collection experiments, String smallScalePrefix, String largeScalePrefix ) {
 
-        // display the content of the map
-        for ( Iterator iterator = allExp.keySet().iterator(); iterator.hasNext(); ) {
-            BioSource bioSource = (BioSource) iterator.next();
+        final Collection smallScaleChunks = new ArrayList();
 
-            Set smallScaleExp = (Set) ( (HashMap) allExp.get( bioSource ) ).get( SMALL );
-            System.out.println( bioSource.getShortLabel() + "("+ SMALL +") -> " + smallScaleExp.size() );
+        final Map name2smallScale = new HashMap();
+        final Map name2largeScale = new HashMap();
 
-            Set largeScaleExp = (Set) ( (HashMap) allExp.get( bioSource ) ).get( LARGE );
-            System.out.println( bioSource.getShortLabel() + "("+LARGE+") -> " + largeScaleExp.size() );
+        Collection subset = null;
+
+        int sum = 0;
+
+        // 1. Go through the list of experiments and separate the small scale from the large scale.
+        //    The filename prefix of the large scale get generated here, though the small scales' get
+        //    generated later.
+        for ( Iterator iterator = experiments.iterator(); iterator.hasNext(); ) {
+
+            Experiment experiment = (Experiment) iterator.next();
+            final int size = experiment.getInteractions().size();
+
+            if ( size >= LARGE_SCALE_CHUNK_SIZE ) {
+                // Process large scale dataset appart from the small ones.
+
+                // generate the large scale format: filePrefix[chunkSize]
+                Collection largeScale = new ArrayList( 1 );
+                largeScale.add( experiment );
+                // [LARGE_SCALE_CHUNK_SIZE] should be interpreted when producing XML as split that experiment into
+                // chunks of size LARGE_SCALE_CHUNK_SIZE.
+                String prefix = largeScalePrefix + "_" + experiment.getShortLabel() + "[" + LARGE_SCALE_CHUNK_SIZE + "]";
+
+                // put it in the map
+                name2largeScale.put( prefix, largeScale );
+
+            } else {
+                // that experiment is not large scale.
+
+                if ( size > SMALL_SCALE_LIMIT ) {
+
+                    // that experiment by itself is a chunk.
+                    // we do not alter the current subset being processed, whether there is one or not.
+                    Collection subset2 = new ArrayList( 1 );
+                    subset2.add( experiment );
+
+                    smallScaleChunks.add( subset2 );
+
+
+                } else if ( ( sum + size ) >= SMALL_SCALE_LIMIT ) {
+
+                    // that experiment would overload that chunk ... then store the subset.
+
+                    if ( subset == null ) {
+
+                        // that experiment will be a small chunk by itself
+                        subset = new ArrayList();
+                    }
+
+                    // add the current experiment
+                    subset.add( experiment );
+
+                    // put it in the list
+                    smallScaleChunks.add( subset );
+
+                    // re-init
+                    subset = null;
+                    sum = 0;
+
+                } else {
+
+                    // ( sum + size ) < SMALL_SCALE_LIMIT
+                    sum += size;
+
+                    if ( subset == null ) {
+                        subset = new ArrayList();
+                    }
+
+                    subset.add( experiment );
+                }
+
+            } // else
+        } // experiments
+
+        if ( subset != null && ( ! subset.isEmpty() ) ) {
+
+            // put it in the list
+            smallScaleChunks.add( subset );
         }
 
+        // 2. Look at the list of small scale chunks and generate their filename prefixes
+        //    Note: no index if only one chunk
+        boolean hasMoreThanOneChunk = ( smallScaleChunks.size() > 1 );
+        int index = 1;
+        String prefix = null;
+        for ( Iterator iterator = smallScaleChunks.iterator(); iterator.hasNext(); ) {
+            Collection chunk = (Collection) iterator.next();
 
-        for ( Iterator iterator = allExp.keySet().iterator(); iterator.hasNext(); ) {
+            // generate a prefix
+            if ( hasMoreThanOneChunk ) {
+                // other prefix in use, use the next chunk id
+                prefix = smallScalePrefix + "-" + index;
+                index++;
+            } else {
+                // if no other subset have been stored, we don't bother with chunk id.
+                prefix = smallScalePrefix;
+            }
 
-            BioSource bioSource = (BioSource) iterator.next();
-            Set smallScaleExp = (Set) ( (HashMap) allExp.get( bioSource ) ).get( SMALL );
+            // add to the map
+            name2smallScale.put( prefix, chunk );
+        }
 
-            String fileNameRoot = bioSource.getShortLabel().replace( ' ', '-' );
-            //create two filenames, one for usual exps and one for any 'negatives'
-            String smallFile = fileNameRoot + "_"+ SMALL +".xml";
-            String negFile = fileNameRoot + "_"+ SMALL +"_negative.xml";
+        // 3. merge both maps
+        name2smallScale.putAll( name2largeScale );
+
+        // return merged result
+        return name2smallScale;
+    }
+
+
+    /**
+     * Build the classification by pubmed id.<br> we keep the negative experiment separated from the non negative.
+     *
+     * @param pubmed2experimentSet
+     * @param negExpLabels
+     * @param writer
+     *
+     * @throws IOException
+     */
+    private static void writeExperimentsClassificationByPubmed( Map pubmed2experimentSet,
+                                                                Collection negExpLabels,
+                                                                Writer writer ) throws IOException {
+
+        List pubmedOrderedList = new ArrayList( pubmed2experimentSet.keySet() );
+        Collections.sort( pubmedOrderedList );
+
+        // Go through all clusters and split if needs be.
+        for ( Iterator iterator = pubmedOrderedList.iterator(); iterator.hasNext(); ) {
+            String pubmedid = (String) iterator.next();
+
+            // get experiments associated to that pubmed ID.
+            Collection experiments = (Set) pubmed2experimentSet.get( pubmedid );
+
+            // split the set into subset of size under SMALL_SCALE_LIMIT
+            Map file2experimentSet = splitExperiment( experiments,
+                                                      pubmedid,   // small scale
+                                                      pubmedid ); // large scale
+
+            writeLines( file2experimentSet, negExpLabels, writer );
+
+        } // pubmeds
+
+    }
+
+    /**
+     * Given a Map containing the following associations: filename -> List of Experiment, generate a flat file
+     * representing these associations for later processing.
+     *
+     * @param file2experimentSet the map upon which we generate the file.
+     * @param negExpLabels       a collection of known negative experiment.
+     * @param writer             the writer to the output file.
+     *
+     * @throws IOException
+     */
+    private static void writeLines( Map file2experimentSet, Collection negExpLabels, Writer writer ) throws IOException {
+
+        // write each subset into the classification file
+        List orderedFilenames = new ArrayList( file2experimentSet.keySet() );
+        Collections.sort( orderedFilenames );
+
+        for ( Iterator iterator1 = orderedFilenames.iterator(); iterator1.hasNext(); ) {
+            String filePrefix = (String) iterator1.next();
+            Collection chunk = (Collection) file2experimentSet.get( filePrefix );
 
             //buffers to hold the labels for small and negative small exps
-            StringBuffer negPattern = new StringBuffer( 128 );
-            StringBuffer pattern = new StringBuffer( 128 );
+            StringBuffer negPattern = new StringBuffer( 20 ); // AVG 1 experiment
+            StringBuffer pattern = new StringBuffer( 100 );   // AVG 5 experiments
 
             // sort the collection by alphabetical order
-            List shortlabels = getSortedShortlabel( smallScaleExp );
-            for ( Iterator iterator1 = shortlabels.iterator(); iterator1.hasNext(); ) {
-                String shortlabel = (String) iterator1.next();
+            List shortlabels = getSortedShortlabel( chunk );
+            for ( Iterator iterator2 = shortlabels.iterator(); iterator2.hasNext(); ) {
+                String shortlabel = (String) iterator2.next();
 
                 //put the Experiment label in the correct place, depending upon
                 //its sub-classification (ie negative or not)
                 if ( negExpLabels.contains( shortlabel ) ) {
-                    negPattern.append( shortlabel ).append( "," );
+                    negPattern.append( shortlabel );
                 } else {
-                    pattern.append( shortlabel ).append( "," );
+                    pattern.append( shortlabel );
+                }
+
+                if ( iterator2.hasNext() ) {
+                    pattern.append( "," );
                 }
             }
 
-            //strip off trailing comma - can't do this in advance as we don't
-            //know how big the buffers can be now!
-            if ( pattern.length() > 0 ) {
-                pattern.deleteCharAt( pattern.length() - 1 );
-            }
-
-            if ( negPattern.length() > 0 ) {
-                negPattern.deleteCharAt( negPattern.length() - 1 );
-            }
-
-            //classification for this BioSource is output as:
-            //'<filename> <comma-seperated shortLabel list>'
-            //only print patterns if they are non-empty
+            // classification for this BioSource is output as:
+            // '<filename> <comma-seperated shortLabel list>'
+            // only print patterns if they are non-empty
             if ( pattern.length() != 0 ) {
-                String line = smallFile + " " + pattern.toString();
+                String smallFilename = filePrefix + ".xml";
+                String line = smallFilename + " " + pattern.toString();
                 System.out.println( line );
                 writer.write( line );
                 writer.write( NEW_LINE );
             }
 
             if ( negPattern.length() != 0 ) {
-                String line = negFile + " " + negPattern.toString();
+                String negativeFilename = filePrefix + "_negative.xml";
+                String line = negativeFilename + " " + negPattern.toString();
                 System.out.println( line );
                 writer.write( line );
                 writer.write( NEW_LINE );
             }
-
-
-            //Now do the large ones...
-            //NB these are classified into single files, one for each shortLabel
-            Set largeScaleExp = (Set) ( (HashMap) allExp.get( bioSource ) ).get( LARGE );
-            String fileName = fileNameRoot;
-            shortlabels = getSortedShortlabel( largeScaleExp );
-            for ( Iterator iterator1 = shortlabels.iterator(); iterator1.hasNext(); ) {
-                String shortlabel = (String) iterator1.next();
-
-                if ( negExpLabels.contains( shortlabel ) ) {
-                    fileName = fileName + "_" + shortlabel + "_negative";
-                } else {
-                    fileName = fileName + "_" + shortlabel;
-                }
-
-                //dump out the generated <filename> <label> pair
-                String line = fileName + ".xml" + " " + shortlabel;
-                System.out.println( line );
-                writer.write( line );
-                writer.write( NEW_LINE );
-                fileName = fileNameRoot;    //reset to Biosource for the next Experiment
-            }
-        }
+        } // chunk of experiments
     }
 
     private static void displayUsage( Options options ) {
         // automatically generate the help statement
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp( "ExperimentListGenerator " +
-                             "-output <filename> " +
+                             "-outputFilePrefix <filename> " +
                              "-pattern <shortlabel pattern> ",
                              options );
     }
@@ -382,6 +719,7 @@ public class ExperimentListGenerator {
      * Run the program that create a flat file containing the classification of IntAct experiment for PSI download.
      *
      * @param args -output <filename> -pattern <shortlabel pattern>
+     *
      * @throws IntactException
      * @throws IOException
      */
@@ -392,10 +730,10 @@ public class ExperimentListGenerator {
         // create Option objects
         Option helpOpt = new Option( "help", "print this message." );
 
-        Option outputOpt = OptionBuilder.withArgName( "outputFilename" )
+        Option outputOpt = OptionBuilder.withArgName( "outputFilenamePrefix" )
                 .hasArg()
-                .withDescription( "output filename" )
-                .create( "output" );
+                .withDescription( "output filename prefix" )
+                .create( "outputFilePrefix" );
         outputOpt.setRequired( false );
 
         Option patternOpt = OptionBuilder.withArgName( "experimentPattern" )
@@ -431,32 +769,61 @@ public class ExperimentListGenerator {
         }
 
         // Process arguments
-        String filename = line.getOptionValue( "output" );
-        File file = null;
+        String filenamePrefix = line.getOptionValue( "outputFilePrefix" );
+        File fileSpecies = null;
+        File filePublication = null;
 
-        if ( filename != null ) {
+        if ( filenamePrefix != null ) {
+            // handle species file name
             try {
-                file = new File( filename );
-                if ( file.exists() ) {
-                    System.err.println( "Please give a new file name for the output file: " + file.getAbsoluteFile() );
+                fileSpecies = new File( filenamePrefix );
+                if ( fileSpecies.exists() ) {
+                    System.err.println( "Please give a new file name for the output file: " + fileSpecies.getAbsoluteFile() );
                     System.err.println( "We will use the default filename instead (instead of overwritting the existing file)." );
-                    filename = null;
-                    file = null;
+                    filenamePrefix = null;
+                    fileSpecies = null;
+                }
+            } catch ( Exception e ) {
+                // nothing, the default filename will be given
+            }
+
+            // handle publication file name
+            try {
+                filePublication = new File( filenamePrefix );
+                if ( filePublication.exists() ) {
+                    System.err.println( "Please give a new file name for the output file: " + filePublication.getAbsoluteFile() );
+                    System.err.println( "We will use the default filename instead (instead of overwritting the existing file)." );
+                    filenamePrefix = null;
+                    filePublication = null;
                 }
             } catch ( Exception e ) {
                 // nothing, the default filename will be given
             }
         }
 
-        if ( filename == null || file == null ) {
-            filename = "experimentList_" + TIME + ".txt";
-            System.out.println( "Using default filename for the export: " + filename );
-            file = new File( filename );
+        if ( fileSpecies == null | filePublication == null ) {
+            if ( filenamePrefix == null ) {
+                filenamePrefix = "classification_" + TIME;
+            }
+
+            if ( fileSpecies == null ) {
+                String filename = filenamePrefix + "_by_species.txt";
+                System.out.println( "Using default filename for the export by species: " + filename );
+                fileSpecies = new File( filename );
+            }
+
+            if ( filePublication == null ) {
+                String filename = filenamePrefix + "_by_publication.txt";
+                System.out.println( "Using default filename for the export by publications: " + filename );
+                filePublication = new File( filename );
+            }
         }
 
-        Writer writer = new FileWriter( file );
+        Writer writerSpecies = new FileWriter( fileSpecies );
+        Writer writerPublication = new FileWriter( filePublication );
 
-        System.out.println( "FileName: " + file.getAbsolutePath() );
+        System.out.println( "Species fileName:     " + fileSpecies.getAbsolutePath() );
+        System.out.println( "Publication fileName: " + filePublication.getAbsolutePath() );
 
         String pattern = line.getOptionValue( "pattern" );
         if ( pattern == null || pattern.trim().equals( "" ) ) {
@@ -465,10 +832,18 @@ public class ExperimentListGenerator {
 
         System.err.println( "Pattern: " + pattern );
 
-        HashMap exps = classifyExperiments( pattern );
-        writeExperimentsClassification( exps, writer );
+        ExperimentClassification classification = classifyExperiments( pattern );
 
-        writer.flush();
-        writer.close();
+        writeExperimentsClassificationBySpecies( classification.getSpecie2experimentSet(),
+                                                 classification.getNegativeExperiments(),
+                                                 writerSpecies );
+        writerSpecies.flush();
+        writerSpecies.close();
+
+        writeExperimentsClassificationByPubmed( classification.getPubmed2experimentSet(),
+                                                classification.getNegativeExperiments(),
+                                                writerPublication );
+        writerPublication.flush();
+        writerPublication.close();
     }
 }
