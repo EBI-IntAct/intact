@@ -26,6 +26,11 @@ import java.util.*;
  */
 public class FileGenerator {
 
+    /**
+     * System independant value representing the file separator.
+     */
+    public static final String FILE_SEPARATOR = System.getProperty( "file.separator" );
+
     /////////////////////
     // Private methods
 
@@ -108,7 +113,7 @@ public class FileGenerator {
     }
 
     private static void processLargeExperiment( Experiment exp, String fileName, int chunkSize,
-                                               PsiVersion version, CvMapping mapping ) throws Exception {
+                                                PsiVersion version, CvMapping mapping ) throws Exception {
 
         // Need to process the big ones chunk by chunk -
         // do this by splitting the Interactions into manageable pieces (LARGE_SCALE_CHUNK_SIZE each),
@@ -193,8 +198,10 @@ public class FileGenerator {
 
     /**
      * Write an Element (supposingly the root of a document) into a file.
+     *
      * @param root the root of the XML Document.
      * @param file the file in which we are supposed to write the content.
+     *
      * @throws IOException if an error occur while writting.
      */
     private static void write( Element root, File file ) throws IOException {
@@ -225,6 +232,75 @@ public class FileGenerator {
                              "[-psiVersion <1 or 2 or 2.5>] " +
                              "[-cvMapping <filename>] ",
                              options );
+    }
+
+    /**
+     * Make sure that the parent directories of the given filename exist.
+     *
+     * @param filename      The filename for which we want to make sure that the parent directories are created.
+     * @param fileSeparator The file separator in use in that filename.
+     *
+     * @return true if the parent directories exist, false otherwise.
+     */
+    private static boolean createParentDirectories( String filename, String fileSeparator ) {
+        boolean success = true;
+
+        int index = filename.lastIndexOf( fileSeparator );
+        String path = filename.substring( 0, index );
+
+        // create all parent directories
+        File pathFile = new File( path );
+
+        if ( ! pathFile.exists() ) {
+            System.out.println( path + " doesn't exist yet, creating it..." );
+            success = new File( path ).mkdirs();
+            if ( ! success ) {
+                System.out.println( "ERROR: Could not create " + path );
+            } else {
+                System.out.println( path + " was created successfully." );
+            }
+        }
+
+        return success;
+    }
+
+    private static Options setupCommandLineOptions() {
+        // create Option objects
+        Option helpOpt = new Option( "help", "print this message." );
+
+        Option outputOpt = OptionBuilder.withArgName( "outputFilename" )
+                .hasArg()
+                .withDescription( "output filename" )
+                .create( "output" );
+        outputOpt.setRequired( true );
+
+        Option patternOpt = OptionBuilder.withArgName( "list" )
+                .hasArg()
+                .withDescription( "comma separated list of experiment's shortlabel" )
+                .create( "pattern" );
+        patternOpt.setRequired( true );
+
+        Option versionOpt = OptionBuilder.withArgName( "version" )
+                .hasArg()
+                .withDescription( "PSI version to export (1 or 2 or 2.5)" )
+                .create( "psiVersion" );
+        patternOpt.setRequired( false );
+
+        Option mappingOpt = OptionBuilder.withArgName( "mappingFilename" )
+                .hasArg()
+                .withDescription( "File containing eventual CV mapping" )
+                .create( "cvMapping" );
+        mappingOpt.setRequired( false );
+
+        Options options = new Options();
+
+        options.addOption( helpOpt );
+        options.addOption( outputOpt );
+        options.addOption( patternOpt );
+        options.addOption( versionOpt );
+        options.addOption( mappingOpt );
+
+        return options;
     }
 
     ///////////////////
@@ -313,40 +389,8 @@ public class FileGenerator {
     public static void main( String[] args ) throws Exception {
 
         try {
-            // create Option objects
-            Option helpOpt = new Option( "help", "print this message." );
 
-            Option outputOpt = OptionBuilder.withArgName( "outputFilename" )
-                    .hasArg()
-                    .withDescription( "output filename" )
-                    .create( "output" );
-            outputOpt.setRequired( true );
-
-            Option patternOpt = OptionBuilder.withArgName( "list" )
-                    .hasArg()
-                    .withDescription( "comma separated list of experiment's shortlabel" )
-                    .create( "pattern" );
-            patternOpt.setRequired( true );
-
-            Option versionOpt = OptionBuilder.withArgName( "version" )
-                    .hasArg()
-                    .withDescription( "PSI version to export (1 or 2 or 2.5)" )
-                    .create( "psiVersion" );
-            patternOpt.setRequired( false );
-
-            Option mappingOpt = OptionBuilder.withArgName( "mappingFilename" )
-                    .hasArg()
-                    .withDescription( "File containing eventual CV mapping" )
-                    .create( "cvMapping" );
-            mappingOpt.setRequired( false );
-
-            Options options = new Options();
-
-            options.addOption( helpOpt );
-            options.addOption( outputOpt );
-            options.addOption( patternOpt );
-            options.addOption( versionOpt );
-            options.addOption( mappingOpt );
+            Options options = setupCommandLineOptions();
 
             // create the parser
             CommandLineParser parser = new BasicParser();
@@ -456,6 +500,27 @@ public class FileGenerator {
             }
 
             long start = System.currentTimeMillis();
+
+            // check that all parent directory exist in the given filename
+            // 1, change SLASH by the
+            if ( fileName.indexOf( ExperimentListGenerator.SLASH ) != -1 ) {
+
+                // 2. replace all slash by plateform specific file separator (if necessary)
+                final String separator = System.getProperty( "file.separator" );
+                if ( ! ExperimentListGenerator.SLASH.equals( separator ) ) {
+                    StringBuffer sb = new StringBuffer( fileName );
+
+                    int idx;
+                    while ( ( idx = sb.indexOf( ExperimentListGenerator.SLASH ) ) != -1 ) {
+                        sb.replace( idx, idx + 1, separator );
+                    }
+
+                    fileName = sb.toString();
+                }
+
+                // 3. make sure that the parent directories exists before to create the file.
+                createParentDirectories( fileName, separator );
+            }
 
             // Generate PSI data
             generatePsiData( searchPattern, fileName, chunkSize, psiVersion, cvMapping );
