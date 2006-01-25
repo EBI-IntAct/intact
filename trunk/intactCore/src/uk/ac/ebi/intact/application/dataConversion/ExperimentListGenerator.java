@@ -32,7 +32,10 @@ import java.util.Date;
  */
 public class ExperimentListGenerator {
 
-    public static class ExperimentClassification {
+    /**
+     * Holder for the experiment classification by species and by publication as well as the negative experiments.
+     */
+    private static class ExperimentClassification {
 
         /**
          * Classification of experiments by pubmedId
@@ -85,9 +88,14 @@ public class ExperimentListGenerator {
     }
 
     /**
-     * Current time
+     * File separator, will be converted to a plateform specific separator later.
      */
-    protected static String TIME;
+    public static final String SLASH = "/";
+
+    /**
+     * Current time.
+     */
+    private static String TIME;
 
     static {
         SimpleDateFormat formatter = new SimpleDateFormat( "yyyy-MM-dd@HH.mm" );
@@ -96,7 +104,7 @@ public class ExperimentListGenerator {
     }
 
     /**
-     * Maximum count of interaction for
+     * Maximum count of interaction for a small scale experiment.
      */
     public static final int SMALL_SCALE_LIMIT = 500;
 
@@ -609,6 +617,18 @@ public class ExperimentListGenerator {
     }
 
 
+    private static String getCreatedYear( Experiment exp ) {
+
+        Timestamp created = exp.getCreated();
+        java.sql.Date d = new java.sql.Date( created.getTime() );
+        Calendar c = new GregorianCalendar();
+        c.setTime( d );
+
+        int year = c.get( Calendar.YEAR );
+
+        return String.valueOf( year );
+    }
+
     /**
      * Build the classification by pubmed id.<br> we keep the negative experiment separated from the non negative.
      *
@@ -632,15 +652,21 @@ public class ExperimentListGenerator {
             // get experiments associated to that pubmed ID.
             Collection experiments = (Set) pubmed2experimentSet.get( pubmedid );
 
+            // all experiment under that pubmed if should have the same year
+            Experiment exp = (Experiment) experiments.iterator().next();
+
+            String year = getCreatedYear( exp );
+            String prefix = year + SLASH;
+
+
             // split the set into subset of size under SMALL_SCALE_LIMIT
             Map file2experimentSet = splitExperiment( experiments,
-                                                      pubmedid,   // small scale
-                                                      pubmedid ); // large scale
+                                                      prefix + pubmedid,   // small scale
+                                                      prefix + pubmedid ); // large scale
 
             writeLines( file2experimentSet, negExpLabels, writer );
 
         } // pubmeds
-
     }
 
     /**
@@ -730,21 +756,28 @@ public class ExperimentListGenerator {
         // create Option objects
         Option helpOpt = new Option( "help", "print this message." );
 
-        Option outputOpt = OptionBuilder.withArgName( "outputFilenamePrefix" )
+        Option outputSpeciesOpt = OptionBuilder.withArgName( "outputSpeciesFilenamePrefix" )
                 .hasArg()
                 .withDescription( "output filename prefix" )
-                .create( "outputFilePrefix" );
-        outputOpt.setRequired( false );
+                .create( "speciesFile" );
+        outputSpeciesOpt.setRequired( false );
+
+        Option outputPublicationOpt = OptionBuilder.withArgName( "outputPublicationFilenamePrefix" )
+                .hasArg()
+                .withDescription( "output filename prefix" )
+                .create( "publicationsFile" );
+        outputPublicationOpt.setRequired( false );
 
         Option patternOpt = OptionBuilder.withArgName( "experimentPattern" )
                 .hasArg()
                 .withDescription( "experiment shortlabel pattern" )
                 .create( "pattern" );
-        outputOpt.setRequired( false );
+        patternOpt.setRequired( false );
 
         Options options = new Options();
         options.addOption( helpOpt );
-        options.addOption( outputOpt );
+        options.addOption( outputSpeciesOpt );
+        options.addOption( outputPublicationOpt );
         options.addOption( patternOpt );
 
         // create the parser
@@ -762,38 +795,40 @@ public class ExperimentListGenerator {
             System.exit( 1 );
         }
 
-
         if ( line.hasOption( "help" ) ) {
             displayUsage( options );
             System.exit( 0 );
         }
 
         // Process arguments
-        String filenamePrefix = line.getOptionValue( "outputFilePrefix" );
+        String speciesFilename = line.getOptionValue( "speciesFile" );
+        String publicationsFilename = line.getOptionValue( "publicationsFile" );
         File fileSpecies = null;
         File filePublication = null;
 
-        if ( filenamePrefix != null ) {
+        if ( speciesFilename != null ) {
             // handle species file name
             try {
-                fileSpecies = new File( filenamePrefix );
+                fileSpecies = new File( speciesFilename );
                 if ( fileSpecies.exists() ) {
                     System.err.println( "Please give a new file name for the output file: " + fileSpecies.getAbsoluteFile() );
                     System.err.println( "We will use the default filename instead (instead of overwritting the existing file)." );
-                    filenamePrefix = null;
+                    speciesFilename = null;
                     fileSpecies = null;
                 }
             } catch ( Exception e ) {
                 // nothing, the default filename will be given
             }
+        }
 
+        if ( publicationsFilename != null ) {
             // handle publication file name
             try {
-                filePublication = new File( filenamePrefix );
+                filePublication = new File( publicationsFilename );
                 if ( filePublication.exists() ) {
                     System.err.println( "Please give a new file name for the output file: " + filePublication.getAbsoluteFile() );
                     System.err.println( "We will use the default filename instead (instead of overwritting the existing file)." );
-                    filenamePrefix = null;
+                    publicationsFilename = null;
                     filePublication = null;
                 }
             } catch ( Exception e ) {
@@ -802,18 +837,16 @@ public class ExperimentListGenerator {
         }
 
         if ( fileSpecies == null | filePublication == null ) {
-            if ( filenamePrefix == null ) {
-                filenamePrefix = "classification_" + TIME;
-            }
+            String detaultPrefix = "classification_" + TIME;
 
             if ( fileSpecies == null ) {
-                String filename = filenamePrefix + "_by_species.txt";
+                String filename = detaultPrefix + "_by_species.txt";
                 System.out.println( "Using default filename for the export by species: " + filename );
                 fileSpecies = new File( filename );
             }
 
             if ( filePublication == null ) {
-                String filename = filenamePrefix + "_by_publication.txt";
+                String filename = detaultPrefix + "_by_publication.txt";
                 System.out.println( "Using default filename for the export by publications: " + filename );
                 filePublication = new File( filename );
             }
