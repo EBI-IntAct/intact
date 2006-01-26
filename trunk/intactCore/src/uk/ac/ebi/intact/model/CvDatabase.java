@@ -42,10 +42,10 @@ public class CvDatabase extends CvObject implements Editable {
     public static final String NEWT = "newt";
     public static final String NEWT_MI_REF = "MI:0247";
 
-    public static final String REACTOME_COMPLEX = "reactome-complex";
+    public static final String REACTOME_COMPLEX = "reactome complex";
     public static final String REACTOME_COMPLEX_PSI_REF = "MI:0244";
 
-    public static final String REACTOME_PROTEIN = "reactome-protein";
+    public static final String REACTOME_PROTEIN = "reactome protein";
     public static final String REACTOME_PROTEIN_PSI_REF = "MI:0245";
 
     public static final String PUBMED = "pubmed";
