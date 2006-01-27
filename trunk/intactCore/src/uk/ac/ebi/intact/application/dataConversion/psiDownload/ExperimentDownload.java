@@ -25,31 +25,23 @@ import java.util.Iterator;
 import java.util.StringTokenizer;
 
 /**
- * TODO document this ;o)
+ * That class is not meant to be used in production but rather as a playground for PSI file generation.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
 public class ExperimentDownload {
 
+    public static final String OUTPUT_DIRECTORY = "";
+
     /**
      * @param root
      * @param file
-     *
-     * @throws javax.xml.transform.TransformerException
-     *
      */
     public static void write( Element root, File file ) throws IOException {
 
         System.out.print( "\nWriting DOM to " + file.getAbsolutePath() + " ... " );
         System.out.flush();
-
-        // doesn't do any indentation !!
-//        DOMSource source = new DOMSource( document );
-//        TransformerFactory tFactory = TransformerFactory.newInstance();
-//        Transformer transformer = tFactory.newTransformer();
-//        StreamResult result = new StreamResult( file );
-//        transformer.transform( source, result );
 
         // prepare a file writer.
         Writer writer = new BufferedWriter( new FileWriter( file ) );
@@ -143,7 +135,7 @@ public class ExperimentDownload {
         }
 
 
-        File file = new File( "C:/psi/" + experiment.getShortLabel() + ".PSI" + version.getVersion() + ".xml" );
+        File file = new File( OUTPUT_DIRECTORY + "/" + experiment.getShortLabel() + ".PSI" + version.getVersion() + ".xml" );
         write( session.getPsiDocument().getDocumentElement(), file );
 
         DataBuilder builder = new PsiDataBuilder();
@@ -176,12 +168,12 @@ public class ExperimentDownload {
 
             System.out.print( "Searching for all experiment: " );
 
-            String human_small = "attera-2004-1,fribourg-2003-2,kung-2004-1,mattera-2004-2,mattera-2004-3,";
+            String experimentShortlabels = "rual-2005-1";
 
             Collection experiments = new ArrayList();
             Collection experimentsLabel = new ArrayList();
 
-            StringTokenizer st = new StringTokenizer( human_small, "," );
+            StringTokenizer st = new StringTokenizer( experimentShortlabels, "," );
             while ( st.hasMoreTokens() ) {
                 experimentsLabel.add( st.nextToken() );
             }
@@ -210,9 +202,9 @@ public class ExperimentDownload {
 //                }
                 long start;
 
-                start = System.currentTimeMillis();
-                exportExperiment( experiment, PsiVersion.VERSION_1 );
-                timePsi1 += System.currentTimeMillis() - start;
+//                start = System.currentTimeMillis();
+//                exportExperiment( experiment, PsiVersion.VERSION_1 );
+//                timePsi1 += System.currentTimeMillis() - start;
 
 //                start = System.currentTimeMillis();
 //                exportExperiment( experiment, PsiVersion.VERSION_2 );
