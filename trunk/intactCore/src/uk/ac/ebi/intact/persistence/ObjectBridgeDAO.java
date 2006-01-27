@@ -1801,8 +1801,8 @@ public class ObjectBridgeDAO implements DAO {
 
     private void printCriteria(Criteria crit) {
         System.out.println("Criteria:");
-        for(Enumeration enum = crit.getElements(); enum.hasMoreElements();) {
-            Object elem = enum.nextElement();
+        for(Enumeration e = crit.getElements(); e.hasMoreElements();) {
+            Object elem = e.nextElement();
             if(elem instanceof Criteria) {
                 //sub-criteria - print them..
                 System.out.println("nested criteria:");
