@@ -140,7 +140,7 @@ public class Component2xmlPSI25 implements Component2xmlI {
 
         // 8. Generating experimentalFormList ...
         //    Dig into the Features and export all 'tagged-protein' Feature.
-        createExperimentalFormList(session, element, component );
+//        createExperimentalFormList(session, element, component );
 
         // 9. Generating experimentalPreparationList ...
 
