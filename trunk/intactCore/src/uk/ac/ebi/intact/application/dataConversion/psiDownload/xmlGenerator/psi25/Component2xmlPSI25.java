@@ -156,11 +156,12 @@ public class Component2xmlPSI25 implements Component2xmlI {
 
             for ( Iterator iterator = component.getBindingDomains().iterator(); iterator.hasNext(); ) {
                 Feature feature = (Feature) iterator.next();
-                if( ! isTaggedFeature( feature.getCvFeatureType() ) ) {
+                // TODO we output all feature here, as well as the tags !!
+//                if( ! isTaggedFeature( feature.getCvFeatureType() ) ) {
                     // tags are exported under experimentalForm so far...
                     // TODO cache the result of the method : isTaggedFeature
                     Feature2xmlFactory.getInstance( session ).create( session, featureListElement, feature );
-                }
+//                }
             }
 
             if( featureListElement.hasChildNodes() ) {
