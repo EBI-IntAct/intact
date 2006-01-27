@@ -103,7 +103,7 @@ public class CvObject2xmlCommons {
         associationsPSI2only.put( new CvClass2Source( CvInteraction.class ), INTERACTION_DETECTION_METHOD_NODE_NAME );
         associationsPSI2only.put( new CvClass2Source( CvFeatureIdentification.class ), FEATURE_DETECTION_METHOD_NODE_NAME );
         associationsPSI2only.put( new CvClass2Source( CvFeatureType.class, "feature" ), FEATURE_TYPE_NODE_NAME );
-        associationsPSI2only.put( new CvClass2Source( CvFeatureType.class, "proteinExperimentalForm" ), EXPERIMENTAL_FORM_NAME );
+        associationsPSI2only.put( new CvClass2Source( CvFeatureType.class, "experimentalFormList" ), EXPERIMENTAL_FORM_NAME );
 
         // PSI version 2.5 (but still attached to the PSI 2 mapping)
         associationsPSI2only.put( new CvClass2Source( CvInteractorType.class ), INTERACTOR_TYPE_NAME );
