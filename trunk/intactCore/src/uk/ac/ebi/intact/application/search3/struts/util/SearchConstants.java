@@ -129,7 +129,7 @@ public interface SearchConstants {
     /**
      * Maximum size for the initial request of objects
      */
-    public static final int MAXIMUM_RESULT_SIZE = 50;
+    public static final int MAXIMUM_RESULT_SIZE = 60;
 
     /////////////////////
     // Misc constants
