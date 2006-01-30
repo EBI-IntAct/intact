@@ -454,7 +454,7 @@ response.setDateHeader ("Expires", 0);          //prevents caching at the proxy 
                     Database<br>
 
                    <html:select property="cvDB" style="width: 200">
-                        <html:options collection="cvDatabases" property="ac" labelProperty="shortlabel" />
+                        <html:options collection="cvDatabases" property="shortlabel" labelProperty="shortlabel" />
                    </html:select>
                    <br>
                    <img src="<%=request.getContextPath()%>/images/spacer.gif" width="100" height="5" border="0"><br>
@@ -472,7 +472,7 @@ response.setDateHeader ("Expires", 0);          //prevents caching at the proxy 
 
                       Topic<br>
                       <html:select property="cvTopic" style="width: 200">
-                          <html:options collection="cvTopics" property="ac" labelProperty="shortlabel" />
+                          <html:options collection="cvTopics" property="shortlabel" labelProperty="shortlabel" />
                       </html:select><br>
                       <img src="<%=request.getContextPath()%>/images/spacer.gif" width="100" height="5" border="0"><br>
                       <html:text property="annotation" size="40" />
@@ -486,7 +486,7 @@ response.setDateHeader ("Expires", 0);          //prevents caching at the proxy 
             <td class="headerlight" style="vertical-align: top;">
                       Interaction Detection<br>
                       <html:select property="cvInteraction" style="width: 200">
-                          <html:options collection="cvInteractions" property="ac" labelProperty="shortlabel" />
+                          <html:options collection="cvInteractions" property="shortlabel" labelProperty="shortlabel" />
                       </html:select><br>
                        <img src="<%=request.getContextPath()%>/images/spacer.gif" width="100" height="5" border="0"><br>
                       <input type="button" name="button1" value="Interaction Detection Browser" style="width: 200" onclick="openCvBrowser('<%= CvInteraction.class.getName() %>', '<%=request.getContextPath()%>', 'cvInteraction')">
@@ -501,7 +501,7 @@ response.setDateHeader ("Expires", 0);          //prevents caching at the proxy 
             <td class="headerlight" style="vertical-align: middle;">
             Participant Detection<br>
                       <html:select property="cvIdentification" style="width: 200">
-                          <html:options collection="cvIdentifications" property="ac" labelProperty="shortlabel" />
+                          <html:options collection="cvIdentifications" property="shortlabel" labelProperty="shortlabel" />
                       </html:select><br>
                        <img src="<%=request.getContextPath()%>/images/spacer.gif" width="100" height="5" border="0"><br>
                       <input type="button" name="button2" value="Participant Detection Browser" style="width: 200" onclick="openCvBrowser('<%= CvIdentification.class.getName() %>', '<%=request.getContextPath()%>', 'cvIdentification')">
@@ -516,7 +516,7 @@ response.setDateHeader ("Expires", 0);          //prevents caching at the proxy 
             <td class="headerlight" style="vertical-align: top;">
                       Interaction Type<br>
                       <html:select property="cvInteractionType" style="width: 200">
-                          <html:options collection="cvInteractionTypes" property="ac" labelProperty="shortlabel" />
+                          <html:options collection="cvInteractionTypes" property="shortlabel" labelProperty="shortlabel" />
                       </html:select><br>
                        <img src="<%=request.getContextPath()%>/images/spacer.gif" width="100" height="5" border="0"><br>
 
