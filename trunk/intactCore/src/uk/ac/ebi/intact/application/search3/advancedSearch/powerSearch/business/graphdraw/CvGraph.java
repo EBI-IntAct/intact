@@ -27,7 +27,6 @@ import java.util.*;
  */
 public class CvGraph {
 
-    // TODO cache image on the hard drive
 
     private static Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
 
@@ -35,6 +34,9 @@ public class CvGraph {
      * string that holds the imageMap corresponding to the image
      */
     private String imageMap;
+
+    // TODO caching image on the hard drive may be useful
+    // TODO making use of SoftReference here would be a good thing instead of home grown caching !!
 
     // Basic Caching parameters
     private static final long CACHE_TIMEOUT = 2 * 60 * 1000; // 2 minutes (in milliseconds)
@@ -123,7 +125,7 @@ public class CvGraph {
                 // create for all cvDagObject a node and add these to the graph
                 for ( Iterator iterator = cvObjects.iterator(); iterator.hasNext(); ) {
                     CvDagObject cv = (CvDagObject) iterator.next();
-                    RectangularNode node = new RectangularNode( 40, 40, cv.getFullName(), "javascript:SendInfo('" + cv.getAc() + "')", null, cv.getShortLabel(), Color.white, Color.blue, thinStroke );
+                    RectangularNode node = new RectangularNode( 40, 40, cv.getFullName(), "javascript:SendInfo('" + cv.getShortLabel() + "')", null, cv.getShortLabel(), Color.white, Color.blue, thinStroke );
                     g.nodes.add( node );
                     cvobjectToNode.put( cv, node );
                 }
