@@ -348,16 +348,17 @@
                         </div>
                         <span class="pbold"><a name="ack"></a>Acknowledgements:</span><br>
                         <ul>
-                          <br>
-                          <li class="greenboldsmalllist">
-                             <span class="text">
-                                <a href="http://www.cordis.lu/life/"> <img src="http://iims.ebi.ac.uk/euroflag.gif" valign="middle" align="left" border="0"></a>
+                            <li class="greenboldsmalllist">
+                                <span class="text">
+                                    <a href="http://www.cordis.lu/life/"> <img src="http://iims.ebi.ac.uk/euroflag.gif" alt="Fundings" align="left" border="0"></a>
                                     IntAct is funded by EU grant number QLRI-CT-2001-00015
                                     under the RTD programme "Quality of Life and Management of Living
-                                    Resources"</span><br clear="all">
-                          </li>
-                          <li class="greenboldsmalllist"><span class="text"><a href="http://sourceforge.net"> <img src="http://sourceforge.net/sflogo.php?group_id=62732&amp;type=5" valign="middle" alt="SourceForge" align="left" border="0" height="36"></a>
-                                Hosted by Sourceforge.net</span></li>
+                                    Resources"</span>
+                            </li>
+                            <br/>
+                            <li class="greenboldsmalllist"><span class="text"><a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=62732&amp;type=5" alt="SourceForge" align="left" border="0" height="36"></a>Hosted by Sourceforge.net</span></li>
+                            <br/>
+                            <li class="greenboldsmalllist"><span class="text"><a href="http://www.yourkit.com"><img src="images/yourkit.gif" alt="YouKit" align="left" border="0" height="36"></a></span></li>
                         </ul>
                         <div align="right"><a href="#a0"><img src="http://www.ebi.ac.uk/Information/images/arrow_up2.gif" border="0" height="21" width="19"></a><br>
                         </div>
