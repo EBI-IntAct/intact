@@ -77,9 +77,12 @@ public class IntactHelperUtil {
      */
     public static void closeIntactHelper() throws IntactException {
         IntactHelper helper = (IntactHelper) ourThreadHelper.get();
-        if (helper != null) {
-            helper.closeStore();
+        try {
+            if (helper != null) {
+                helper.closeStore();
+            }
+        } finally {
+            ourThreadHelper.set(null);
         }
-        ourThreadHelper.set(null);
     }
 }
