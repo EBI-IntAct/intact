@@ -10,20 +10,20 @@ import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvDagObject;
 
 import java.sql.Connection;
-import java.sql.Statement;
-import java.sql.SQLException;
 import java.sql.ResultSet;
-import java.util.Collection;
-import java.util.Iterator;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 
 /**
- * This class provides method to transform a DAG into a tree, to store these tree information
- * into the database and to retrieve the children for one specific node.
+ * Provides method to transform a DAG into a tree, to store these tree information into the database and to retrieve the
+ * children for one specific node.
  *
  * @author Anja Friedrichsen
- * @version $id$
+ * @version $Id$
  */
 public class CvDagObjectUtils {
 
@@ -33,40 +33,40 @@ public class CvDagObjectUtils {
     private Connection conn;
 
 
-    public CvDagObjectUtils(IntactHelper helper) {
+    public CvDagObjectUtils( IntactHelper helper ) {
         // build a connection to the database
         this.aHelper = helper;
         try {
             this.conn = aHelper.getJDBCConnection();
-        } catch (IntactException e) {
+        } catch ( IntactException e ) {
             //todo throw exception
             e.printStackTrace();
         }
     }
 
     /**
-     * This method constructs the left and right bound for every single cvDagobject
-     * in the whole tree of elements, starting from the given instance.
-     * The cvDagObject has to be inserted directly into the database because it could get later on another
-     * left and rightBound if it has multiple parents
+     * Constructs the left and right bound for every single cvDagobject in the whole tree of elements, starting from the
+     * given instance. The cvDagObject has to be inserted directly into the database because it could get later on
+     * another left and rightBound if it has multiple parents
      *
      * @param newLeftBound int with the left bound to start from.
+     *
      * @return int with the last used right bound + 1.
      */
-    public int buildBounds(CvDagObject dag, int newLeftBound) {
+    public int buildBounds( CvDagObject dag, int newLeftBound ) {
         int result = newLeftBound;
 
         // Init the left bound we received on this instance.
         this.iLeftBound = result++;
         // set the left bound to the CvDagObject just for testing
-        dag.setLeftBound(iLeftBound);
+        dag.setLeftBound( iLeftBound );
 
         // Check for children, and if they are found, iterate them.
-        if (dag.hasChildren()) {
+        if ( dag.hasChildren() ) {
             Collection children = dag.getChildren();
-            for (Iterator lIterator = children.iterator(); lIterator.hasNext();) {
+            for ( Iterator lIterator = children.iterator(); lIterator.hasNext(); ) {
                 CvDagObject lTemp = (CvDagObject) lIterator.next();
-                result = this.buildBounds(lTemp, result);
+                result = this.buildBounds( lTemp, result );
             }
         }
 
@@ -74,72 +74,80 @@ public class CvDagObjectUtils {
         // its new right bound.
         iRightBound = result;
         // set the rightbound to the CvDagObject
-        dag.setRightBound(iRightBound);
+        dag.setRightBound( iRightBound );
         // insert that dag information directly into the database
-        this.transferTreeNodeToDB(dag);
+        this.transferTreeNodeToDB( dag );
         // Return the last-used right bound + 1 (to be used as a new left bound).
         return ++result;
     }
 
     /**
      * This method inserts a CvDagObject with its left and rightBounds into the database.
-     * @param node   the CvDagObject to be inserted into the database
+     *
+     * @param node the CvDagObject to be inserted into the database.
      */
-    private void transferTreeNodeToDB(CvDagObject node) {
+    private void transferTreeNodeToDB( CvDagObject node ) {
         Statement stmt = null;
-        String insertStatement = "INSERT INTO IA_TreeHierarchie (cvObjectAc, type, leftBound, rightBound)";
-        insertStatement += "VALUES ('" + node.getAc() + "', '" + node.getClass() + "', "
-                + node.getLeftBound() + ", " + node.getRightBound() + ");";
-        System.out.println(insertStatement);
+        StringBuffer sqlBuffer = new StringBuffer( 256 );
+        sqlBuffer.append( "INSERT INTO IA_TreeHierarchie (cvObjectAc, type, leftBound, rightBound)" );
+        sqlBuffer.append( "VALUES ('" ).append( node.getAc() ).append( "', '" ).append( node.getClass() ).append( "', " ).append( node.getLeftBound() ).append( ", " ).append( node.getRightBound() ).append( ");" );
+
+        final String insertStatement = sqlBuffer.toString();
+        System.out.println( insertStatement );
         try {
             stmt = conn.createStatement();
-            stmt.execute(insertStatement);
-        } catch (SQLException e) {
+            stmt.execute( insertStatement );
+        } catch ( SQLException e ) {
             e.printStackTrace();
         } finally {
             try {
-                if( stmt != null) {
+                if ( stmt != null ) {
                     stmt.close();
                 }
-            } catch (SQLException e) {
+            } catch ( SQLException e ) {
             }
         }
     }
 
     /**
-     * This method takes a class which should inherit from the CvDagObject.
-     * It determines the root node of that class and inserts the whole DAG as a tree into the database.
-     * @param cvClass      Cv class to be inserted into the database
-     * @throws IntactException
+     * Determines the root node of that class and inserts the whole DAG as a tree into the database. Takes a class which
+     * should inherit from the CvDagObject.
+     *
+     * @param cvClass Cv class to be inserted into the database.
+     *
+     * @throws IntactException if an error occur.
      */
-    public void insertCVs(Class cvClass) throws IntactException {
-        if(!CvDagObject.class.isAssignableFrom(cvClass)){ throw new IntactException("invalid class!");}
+    public void insertCVs( Class cvClass ) throws IntactException {
+        if ( !CvDagObject.class.isAssignableFrom( cvClass ) ) {
+            throw new IntactException( "invalid class!" );
+        }
 
-        Collection cvDagObjects = aHelper.search(cvClass, "ac", null);
+        Collection cvDagObjects = aHelper.search( cvClass, "ac", null );
         // take any object out of the list to get the root
         CvDagObject aDagObject = (CvDagObject) cvDagObjects.iterator().next();
         // get the root of the specified class
         CvDagObject root = aDagObject.getRoot();
 
         // build the bounds of the root and all its children and insert them into the database
-        this.buildBounds(root, 1);
-
+        this.buildBounds( root, 1 );
     }
 
 
     /**
-     * this method returns all children of a specific CvDagObject, provided that the DAG
-     * information is stored in the database.
-     * @param aCv  CvDagObject to find all its children
-     * @return  collection containing all children ACs
+     * Returns all children of a specific CvDagObject. Provided that the DAG information is stored in the database.
+     *
+     * @param aCv CvDagObject to find all its children.
+     *
+     * @return collection containing all children ACs.
      */
-    public Collection getCvWithChildren(CvDagObject aCv){
+    public Collection getCvWithChildren( CvDagObject aCv ) {
         Collection cvWithChildren = null;
         int leftBound;
         int rightBound;
         // SQL statement to get the right and leftBound from the parentCv
-        String queryStatement1 = "SELECT leftbound, rightbound FROM ia_TreeHierarchie WHERE cvObjectac = '" +
-                aCv.getAc() + "'";
+        final String queryStatement1 = "SELECT leftbound, rightbound " +
+                                       "FROM ia_TreeHierarchie " +
+                                       "WHERE cvObjectac = '" + aCv.getAc() + "'";
 
         String queryStatement2 = null;
         Statement stmt = null;
@@ -147,44 +155,47 @@ public class CvDagObjectUtils {
 
         try {
             stmt = conn.createStatement();
-            result = stmt.executeQuery(queryStatement1);
+            result = stmt.executeQuery( queryStatement1 );
 
             // in case the CvDagObject has more than one parent, the resultSet has more than one result.
             // Anyway the children should be the same, so we can take just the first one.
             result.next();
-            leftBound = Integer.parseInt(result.getString(1));
-            rightBound = Integer.parseInt(result.getString(2));
+            leftBound = Integer.parseInt( result.getString( 1 ) );
+            rightBound = Integer.parseInt( result.getString( 2 ) );
 
-            queryStatement2 = "SELECT cvObjectAc FROM ia_TreeHierarchie WHERE leftbound >" + leftBound + " AND " +
-                    "rightbound < " + rightBound + " AND type = '" + aCv.getClass().toString() + "'";
-            result = stmt.executeQuery(queryStatement2);
+            queryStatement2 = "SELECT cvObjectAc " +
+                              "FROM ia_TreeHierarchie " +
+                              "WHERE leftbound >" + leftBound + " AND " +
+                              "      rightbound < " + rightBound + " AND " +
+                              "      type = '" + aCv.getClass().toString() + "'";
+            result = stmt.executeQuery( queryStatement2 );
 
             // just instantiate an new ArrayList, if the resultSet is not empty,
             // otherwise return an empty list
-            if(result.next()){
+            if ( result.next() ) {
                 cvWithChildren = new ArrayList();
-            }else {
+            } else {
                 return Collections.EMPTY_LIST;
             }
-            do{
+            do {
                 // put all found children into the collection
-                cvWithChildren.add(result.getString(1));
-            }while(result.next());
+                cvWithChildren.add( result.getString( 1 ) );
+            } while ( result.next() );
 
-        } catch (SQLException e) {
+        } catch ( SQLException e ) {
             e.printStackTrace();
-        }finally{
-            if(stmt != null){
+        } finally {
+            if ( stmt != null ) {
                 try {
                     stmt.close();
-                } catch (SQLException e) {
+                } catch ( SQLException e ) {
                     e.printStackTrace();
                 }
             }
-            if(result != null){
+            if ( result != null ) {
                 try {
                     result.close();
-                } catch (SQLException e) {
+                } catch ( SQLException e ) {
                     e.printStackTrace();
                 }
             }
@@ -194,25 +205,31 @@ public class CvDagObjectUtils {
 
     /**
      * This method retrieves all children of a specific parent CV given by the AC number.
-     * @param cvAc   AC number of the parent CV
-     * @return   a collection with all children
-     * @throws IntactException
+     *
+     * @param cvAc AC number of the parent CV.
+     *
+     * @return a collection with all children.
+     *
+     * @throws IntactException if an error occur.
      */
-      public Collection getCvWithChildren(String cvAc) throws IntactException {
+    public Collection getCvWithChildren( String cvAc ) throws IntactException {
         // collection to be returned
         Collection cvWithChildren = null;
         int leftBound;
         int rightBound;
-         System.out.println("cvAC: " + cvAc);
+        System.out.println( "cvAC: " + cvAc );
         // get the CVDagObject with the given AC number out of the database
-        CvDagObject aCv = (CvDagObject) aHelper.getObjectByAc(CvDagObject.class, cvAc);
+        CvDagObject aCv = (CvDagObject) aHelper.getObjectByAc( CvDagObject.class, cvAc );
 
         // check if that parent CV really exists
-        if(aCv== null) throw new IntactException("invalid AC: " + cvAc);
+        if ( aCv == null ) {
+            throw new IntactException( "invalid AC: " + cvAc );
+        }
 
         // get the left and right bounds of the parent AC out of the database
-        String queryStatement1 = "SELECT leftbound, rightbound FROM ia_TreeHierarchie WHERE cvObjectAc = '" +
-                aCv.getAc() + "'";
+        String queryStatement1 = "SELECT leftbound, rightbound " +
+                                 "FROM ia_TreeHierarchie " +
+                                 "WHERE cvObjectAc = '" + aCv.getAc() + "'";
 
         String queryStatement2 = null;
         Statement stmt = null;
@@ -220,50 +237,52 @@ public class CvDagObjectUtils {
 
         try {
             stmt = conn.createStatement();
-            result = stmt.executeQuery(queryStatement1);
+            result = stmt.executeQuery( queryStatement1 );
 
             // in case the CvDagObject has more than one parent, the resultSet has more than one result.
             // Anyway the children should be the same, so we can take just the first one.
             result.next();
-            leftBound = Integer.parseInt(result.getString(1));
-            rightBound = Integer.parseInt(result.getString(2));
+            leftBound = Integer.parseInt( result.getString( 1 ) );
+            rightBound = Integer.parseInt( result.getString( 2 ) );
 
-            queryStatement2 = "SELECT cvObjectAc FROM ia_TreeHierarchie WHERE leftbound >" + leftBound + " AND " +
-                    "rightbound < " + rightBound + " AND type = '" + aCv.getClass().toString() + "'";
-            result = stmt.executeQuery(queryStatement2);
+            queryStatement2 = "SELECT cvObjectAc " +
+                              "FROM ia_TreeHierarchie " +
+                              "WHERE leftbound >" + leftBound + " AND " +
+                              "      rightbound < " + rightBound + " AND " +
+                              "      type = '" + aCv.getClass().toString() + "'";
+            result = stmt.executeQuery( queryStatement2 );
 
             // just instantiate an new ArrayList, if the resultSet is not empty,
             // otherwise return an empty list
-            if(result.next()){
+            if ( result.next() ) {
                 cvWithChildren = new ArrayList();
-            }else {
+            } else {
                 return Collections.EMPTY_LIST;
             }
-            do{
+            do {
                 // put all found children into the collection
-                cvWithChildren.add(result.getString(1));
-            }while(result.next());
+                cvWithChildren.add( result.getString( 1 ) );
+            } while ( result.next() );
 
-        } catch (SQLException e) {
+        } catch ( SQLException e ) {
             e.printStackTrace();
-        }finally{
+        } finally {
             // close the statement and the resultSet
-            if(stmt != null){
+            if ( stmt != null ) {
                 try {
                     stmt.close();
-                } catch (SQLException e) {
+                } catch ( SQLException e ) {
                     e.printStackTrace();
                 }
             }
-            if(result != null){
+            if ( result != null ) {
                 try {
                     result.close();
-                } catch (SQLException e) {
+                } catch ( SQLException e ) {
                     e.printStackTrace();
                 }
             }
         }
         return cvWithChildren;
     }
-
 }
