@@ -71,6 +71,8 @@ public class AdvSimpleResultAction extends AbstractResultAction {
         MapIterator it = resultMap.mapIterator();
         Collection temp;
         while (it.hasNext()) {
+            // go to the next key->value pair.
+            it.next();
 
             Collection results = (ArrayList) it.getValue();
             temp = new ArrayList(results.size());
