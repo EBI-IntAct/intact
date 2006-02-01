@@ -6,13 +6,11 @@ import java.util.Map;
 import java.util.regex.Matcher;
 
 /**
- * <p>
- * Represents types of &quot;fuzzy&quot; Range start and end positions. Examples are
- * &quot;less than&quot;, &quot;greater than&quot;, &quot;undetermined&quot;.
- * </p>
+ * <p/>
+ * Represents types of &quot;fuzzy&quot; Range start and end positions. Examples are &quot;less than&quot;,
+ * &quot;greater than&quot;, &quot;undetermined&quot;. </p>
  *
- * @author Chris Lewington
- * $Id$
+ * @author Chris Lewington $Id$
  */
 public class CvFuzzyType extends CvObject implements Editable {
 
@@ -69,12 +67,12 @@ public class CvFuzzyType extends CvObject implements Editable {
         private static Map ourNormalMap = new HashMap();
 
         static {
-            ourNormalMap.put(LESS_THAN, "<");
-            ourNormalMap.put(GREATER_THAN, ">");
-            ourNormalMap.put(UNDETERMINED, "?");
-            ourNormalMap.put(C_TERMINAL, "c");
-            ourNormalMap.put(N_TERMINAL, "n");
-            ourNormalMap.put(RANGE, "..");
+            ourNormalMap.put( LESS_THAN, "<" );
+            ourNormalMap.put( GREATER_THAN, ">" );
+            ourNormalMap.put( UNDETERMINED, "?" );
+            ourNormalMap.put( C_TERMINAL, "c" );
+            ourNormalMap.put( N_TERMINAL, "n" );
+            ourNormalMap.put( RANGE, ".." );
         }
 
         /**
@@ -86,54 +84,58 @@ public class CvFuzzyType extends CvObject implements Editable {
 
         /**
          * Returns the display value for given short label value.
+         *
          * @param shortLabel the short label to return the corresponding display value.
-         * @return the display value for given short label or an empty string if there
-         * is no mapping for <code>label</code> (as with the case of no fuzzy type).
+         *
+         * @return the display value for given short label or an empty string if there is no mapping for
+         *         <code>label</code> (as with the case of no fuzzy type).
          */
-        public String getDisplayValue(String shortLabel) {
-            if (ourNormalMap.containsKey(shortLabel)) {
-                return (String) ourNormalMap.get(shortLabel);
+        public String getDisplayValue( String shortLabel ) {
+            if ( ourNormalMap.containsKey( shortLabel ) ) {
+                return (String) ourNormalMap.get( shortLabel );
             }
             return "";
         }
 
         /**
          * Returns the corresponding CvFuzzy short label for given display value.
+         *
          * @param value the display value.
-         * @return the fuzzy label if there is a matching found <code>matcher</code>
-         * object or an empty string to denote for no fuzzy or unknown type.
+         *
+         * @return the fuzzy label if there is a matching found <code>matcher</code> object or an empty string to denote
+         *         for no fuzzy or unknown type.
          */
-        public String getFuzzyShortLabel(String value) {
-            if (ourNormalMap.containsValue(value)) {
-                return (String) getKey(value);
+        public String getFuzzyShortLabel( String value ) {
+            if ( ourNormalMap.containsValue( value ) ) {
+                return (String) getKey( value );
             }
             return null;
         }
 
         /**
          * Returns the corresponding CvFuzzy short label using given matcher object.
+         *
          * @param matcher the Matcher object to analyse
-         * @return the fuzzy label if there is a matching found <code>matcher</code>
-         * object or else an empty string (for a normal range).
+         *
+         * @return the fuzzy label if there is a matching found <code>matcher</code> object or else an empty string (for
+         *         a normal range).
          */
-        public String getFuzzyShortLabel(Matcher matcher) {
-            if (!matcher.matches()) {
-                throw new IllegalArgumentException("No match found");
+        public String getFuzzyShortLabel( Matcher matcher ) {
+            if ( !matcher.matches() ) {
+                throw new IllegalArgumentException( "No match found" );
             }
             // The short label to return.
             String shortLabel = "";
 
             // for ? or c or n types
-            if (matcher.group(1) != null) {
-                shortLabel = (String) getKey(matcher.group(1));
-            }
-            else if (matcher.group(4) != null) {
-                if (matcher.group(2) != null) {
+            if ( matcher.group( 1 ) != null ) {
+                shortLabel = (String) getKey( matcher.group( 1 ) );
+            } else if ( matcher.group( 4 ) != null ) {
+                if ( matcher.group( 2 ) != null ) {
                     // For < or > types
-                    shortLabel = (String) getKey(matcher.group(2));
+                    shortLabel = (String) getKey( matcher.group( 2 ) );
                 }
-            }
-            else {
+            } else {
                 // Range type
                 shortLabel = CvFuzzyType.RANGE;
             }
@@ -144,19 +146,23 @@ public class CvFuzzyType extends CvObject implements Editable {
 
         /**
          * Returns a key for given value.
+         *
          * @param value the value to search for the key.
+         *
          * @return the corresponding key for given <code>value</code>.
          */
-        private static Object getKey(Object value) {
-            for (Iterator iter = ourNormalMap.entrySet().iterator(); iter.hasNext();) {
+        private static Object getKey( Object value ) {
+            for ( Iterator iter = ourNormalMap.entrySet().iterator(); iter.hasNext(); ) {
                 Map.Entry entry = (Map.Entry) iter.next();
-                if (entry.getValue().equals(value)) {
+                if ( entry.getValue().equals( value ) ) {
                     return entry.getKey();
                 }
             }
-            assert false;
+//            assert false;
+
             // Should never happen.
-            return null;
+            throw new IllegalArgumentException( "Value(" + value + ") cannot be found in the map." );
+//            return null;
         }
     }
 
@@ -164,17 +170,18 @@ public class CvFuzzyType extends CvObject implements Editable {
 
     /**
      * @param type the CvFuzzy label to compare
-     * @return true if <code>type</code> is of Untermined or C or N terminal types.
-     * False is returned for all other instances.
+     *
+     * @return true if <code>type</code> is of Untermined or C or N terminal types. False is returned for all other
+     *         instances.
      */
-    public static final boolean isSingleType(String type) {
-        return type.equals(UNDETERMINED) || type.equals(C_TERMINAL) || type.equals(N_TERMINAL);
+    public static final boolean isSingleType( String type ) {
+        return type.equals( UNDETERMINED ) || type.equals( C_TERMINAL ) || type.equals( N_TERMINAL );
     }
 
     /**
-     * This constructor should <b>not</b> be used as it could
-     * result in objects with invalid state. It is here for object mapping
-     * purposes only and if possible will be made private.
+     * This constructor should <b>not</b> be used as it could result in objects with invalid state. It is here for
+     * object mapping purposes only and if possible will be made private.
+     *
      * @deprecated Use the full constructor instead
      */
     private CvFuzzyType() {
@@ -183,35 +190,36 @@ public class CvFuzzyType extends CvObject implements Editable {
     }
 
     /**
-     * Creates a valid CvFuzzyType instance. Requires at least a shortLabel and an
-     * owner to be specified.
+     * Creates a valid CvFuzzyType instance. Requires at least a shortLabel and an owner to be specified.
+     *
      * @param shortLabel The memorable label to identify this CvFuzzyType
-     * @param owner The Institution which owns this CvFuzzyType
-     * @exception NullPointerException thrown if either parameters are not specified
+     * @param owner      The Institution which owns this CvFuzzyType
+     *
+     * @throws NullPointerException thrown if either parameters are not specified
      */
-    public CvFuzzyType(Institution owner, String shortLabel) {
+    public CvFuzzyType( Institution owner, String shortLabel ) {
         //super call sets up a valid CvObject
-        super(owner, shortLabel);
+        super( owner, shortLabel );
     }
 
     /**
      * @return true if this current type is of c_terminal type.
      */
     public final boolean isCTerminal() {
-        return getShortLabel().equals(C_TERMINAL);
+        return getShortLabel().equals( C_TERMINAL );
     }
 
     /**
      * @return true if this current type is of n_terminal type.
      */
     public final boolean isNTerminal() {
-        return getShortLabel().equals(N_TERMINAL);
+        return getShortLabel().equals( N_TERMINAL );
     }
 
     /**
      * @return true if this current type is of undetermined type.
      */
     public final boolean isUndetermined() {
-        return getShortLabel().equals(UNDETERMINED);
+        return getShortLabel().equals( UNDETERMINED );
     }
 }
