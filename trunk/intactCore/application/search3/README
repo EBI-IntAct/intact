@@ -67,7 +67,11 @@ NOTES
         ../../lib       - application common jar files (only a subset).
         WEB-INF/classes - search class files.
 
-MORE NOTES (anout ANTLR)
+
+Advanced Search
+*******************************************************
+
+couple of words about ANTLR:
 
     If you only want to generate the Java Handler from the ANTLR file, you only need to
     run the Ant task: antlr2java, if you want more information, it's just below ...
@@ -106,6 +110,22 @@ MORE NOTES (anout ANTLR)
              Iql2LuceneParserTokenTypes.txt
              Iql2LuceneTreeWalker.java
 
+
+Also, before using the advanced search:
+
+create the index:
+    call the script createLuceneIndex.sh (located in /scripts) with the target directory of the index as an argument
+
+set the index path:
+    set the name of the index directory in the file advancedSearch.properties (located in /config)
+
+insert the CV for search3
+    if the table 'treehierarchie' is not jet created in the database:
+        run the script createTableOracle.sh/createTablePostgres (located in /scripts/cv2tree) respectivley,
+        depending on your database
+    if the tabel 'treehierarchie' exists in the database:
+        run the script insertSearch3CVs.sh (located in /scripts/cv2tree)
+        this script will insert the 3 CVs (CvInteraction, CvIdentification, CvInteractionType) into the database
 
 
 COMMENTS
