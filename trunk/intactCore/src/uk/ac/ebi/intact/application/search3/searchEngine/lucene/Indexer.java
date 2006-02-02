@@ -30,13 +30,20 @@ import java.util.Iterator;
  * first, which speeds the indexing up in comparison to the trivial index.
  *
  * @author Anja Friedrichsen
- * @version $id$
+ * @version $Id$
  */
 public class Indexer {
 
     private SearchDAO dao;
     private SearchObjectIndexer soi;
 
+
+    /**
+     * Constructs an Indexer object.
+     *
+     * @param dao a SearchDAO object
+     * @param soi a SearchObjectIndexer object
+     */
 
     public Indexer( SearchDAO dao, SearchObjectIndexer soi ) {
         this.dao = dao;
@@ -49,6 +56,9 @@ public class Indexer {
      * stored into RAM and when the creation is finished the whole index is written into the given file
      *
      * @param dir file to write the index
+     *
+     * @throws IOException     ...
+     * @throws IntactException ...
      */
     public void createIndex( File dir ) throws IOException, IntactException {
         // writer to write the index on scratch disk
@@ -94,7 +104,7 @@ public class Indexer {
         }
 
         // write the index from the RAM into the file on scratch
-        fsWriter.addIndexes( new Directory[]{ramDir} );
+        fsWriter.addIndexes( new Directory[]{ ramDir } );
 
         fsWriter.close();
         ramWriter.close();
@@ -105,6 +115,8 @@ public class Indexer {
      * returns a list of these documents. There is one document per search object.
      *
      * @return collection holding all documents to be inserted into the index
+     *
+     * @throws IntactException
      */
     public Collection getAllDocuments() throws IntactException {
         // collection of all searchable IntAct objects
@@ -135,9 +147,10 @@ public class Indexer {
     /**
      * The main method expects one argument, which defines the location where to store the index.
      *
-     * @param args
+     * @param args [0] the directory in which to put the lucene index.
      *
      * @throws IOException
+     * @throws IntactException
      */
     public static void main( String[] args ) throws IOException, IntactException {
         IntactHelper helper = null;

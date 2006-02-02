@@ -16,7 +16,6 @@ public interface SearchConstants {
 
     ////////////////////////////////////////////////////
     // Configuration keys (web.xml, properties files)
-    ////////////////////////////////////////////////////
 
     /**
      * The name of the hierarchView properties file.
@@ -27,6 +26,7 @@ public interface SearchConstants {
      * The key to access configuration directory.
      */
     String CONFIG_DIR = "configdir";
+
     /**
      * Used as a key to identify a datasource class - its value is deifned in the web.xml file as a
      * servlet context parameter
@@ -35,7 +35,6 @@ public interface SearchConstants {
 
     //////////////////////////
     // Session/Request keys
-    //////////////////////////
 
     /**
      * URL to which the waiting page should redirect.
@@ -236,8 +235,6 @@ public interface SearchConstants {
      */
     public static final String FORWARD_NO_MATCHES = "noMatch";
 
-    public static final String FORWARD_WARNING = "warning";
-
     /**
      * Used as a key to identify the binary protein action
      */
@@ -273,7 +270,6 @@ public interface SearchConstants {
     public static final String FORWARD_CVOBJECT = "cvObject";
     public static final String FORWARD_PROTEIN = "singleProtein";
     public static final String FORWARD_NO_RESOURCE = "noResource";
-    public static final String FORWARD_SHOW_INTERACTION_TYPE_GRAPH = "showIntTypeGraph";
     public static final String FORWARD_INDEX_ERROR = "indexError";
 
     /**

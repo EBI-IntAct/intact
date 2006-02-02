@@ -21,6 +21,10 @@ import java.util.*;
  * <p/>
  * The following documentation assumes orientation is PARENT_TOP, in which case the parent nodes are at the top and a
  * level is a horizontal group of nodes. Normally the magic field values should be left at their default values. </p>
+ *
+ * @author EGO
+ * @version $Id$
+ * @since 27.04.2005
  */
 public class HierarchicalLayout {
 

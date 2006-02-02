@@ -28,7 +28,7 @@ import java.util.Iterator;
  * TODO comment that ...
  *
  * @author Anja Friedrichsen
- * @version $id$
+ * @version $Id$
  */
 public class SearchBioSourceTest extends TestCase {
 

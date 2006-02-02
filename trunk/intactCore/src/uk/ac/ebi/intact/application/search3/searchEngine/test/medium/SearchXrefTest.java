@@ -26,7 +26,7 @@ import java.util.Collection;
  * TODO comment that ...
  *
  * @author Anja Friedrichsen
- * @version $id$
+ * @version $Id$
  */
 public class SearchXrefTest extends TestCase {
 

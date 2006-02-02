@@ -13,17 +13,19 @@ import java.io.Serializable;
 import java.util.Set;
 
 /**
- * Abstract class containing some basic operations useful to display beans for Intact.
- * Subclasses might for example be based around requirements for particular
- * Intact types (eg BasicObjects) or perhaps concrete type requiring specific functionality
- * (eg Proteins).
+ * Abstract class containing some basic operations useful to display beans for Intact. Subclasses might for example be
+ * based around requirements for particular Intact types (eg BasicObjects) or perhaps concrete type requiring specific
+ * functionality (eg Proteins).
  *
  * @author Chris Lewington
  * @version $Id$
  */
 public abstract class AbstractViewBean implements Serializable {
 
-    protected transient static final Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
+    /**
+     * Logger for that class.
+     */
+    protected transient static final Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
 
     /**
      * The default link to help pages (to localhost). Typically used in stylesheets.
@@ -43,9 +45,10 @@ public abstract class AbstractViewBean implements Serializable {
     /**
      * Construst an instance of this class with help link.
      *
-     * @param link the link to help page.
+     * @param link        the link to help page.
+     * @param contextPath the path of the application.
      */
-    public AbstractViewBean(String link, String contextPath) {
+    public AbstractViewBean( String link, String contextPath ) {
         helpLink = link;
         this.contextPath = contextPath;
     }
@@ -54,20 +57,29 @@ public abstract class AbstractViewBean implements Serializable {
      * Returns the higlight map.
      *
      * @return map consists of short labels for the current bean.
+     *
+     * @see #setHighlightMap
      */
     public Set getHighlightMap() {
-        if (highlightMap == null) {
+        if ( highlightMap == null ) {
             initHighlightMap();
         }
         return highlightMap;
     }
 
-    public void setHighlightMap(Set highlightMap) {
+    /**
+     * Specifies the highlight map value.
+     *
+     * @param highlightMap set the value of the highlight map.
+     *
+     * @see #getHighlightMap
+     */
+    public void setHighlightMap( Set highlightMap ) {
         this.highlightMap = highlightMap;
     }
 
     /**
-     * Returns the url based link to the help section based on the servlet context path
+     * Returns the url based link to the help section based on the servlet context path.
      *
      * @return String which represents the url based link to the intact help section
      */
@@ -76,7 +88,7 @@ public abstract class AbstractViewBean implements Serializable {
     }
 
     /**
-     * Returns the context path as string based on the servlet context path
+     * Returns the context path as string based on the servlet context path.
      *
      * @return String which represents the context path
      */
@@ -85,8 +97,7 @@ public abstract class AbstractViewBean implements Serializable {
     }
 
     /**
-     * The graph buttons are not displayed by default.
-     * Subclasses needs to overwrite it to change that behaviour.
+     * The graph buttons are not displayed by default. Subclasses needs to overwrite it to change that behaviour.
      *
      * @return whether or not the graph buttons are displayed
      */
@@ -95,12 +106,14 @@ public abstract class AbstractViewBean implements Serializable {
     }
 
     /**
-     * Performance the initialisation of HighlightMap
+     * Performs the initialisation of HighlightMap.
      */
     public abstract void initHighlightMap();
 
     /**
-     * Returns the help section.
+     * Returns the help section value.
+     *
+     * @return a String representing the help section value
      */
     public abstract String getHelpSection();
 }

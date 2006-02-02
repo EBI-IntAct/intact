@@ -3,17 +3,21 @@ package uk.ac.ebi.intact.application.search3.searchEngine.lucene.model;
 import java.util.Map;
 
 /**
- * This class provides a possibility to store the attributes of an Interaction to create an index
+ * Provides a possibility to store the attributes of an Interaction to create an index.
  *
  * @author Anja Friedrichsen
- * @version $id$
+ * @version $Id$
  */
 public class InteractionSearchObject extends SearchObject {
 
-    // object that stores the information about the interaction type
-    CvSearchObject cvInteractionsType;
+    /**
+     * Stores the information about the interaction type.
+     */
+    private CvSearchObject cvInteractionsType;
 
     /**
+     * Constructs an InteractionSearchObject object.
+     *
      * @param ac                 accession number
      * @param shortLabel         shortlabel of the interaction
      * @param fullName           fullname/description of the interaction
@@ -35,28 +39,8 @@ public class InteractionSearchObject extends SearchObject {
         this.cvInteractionsType = cvInteractionsType;
     }
 
-//    public InteractionSearchObject(final String ac, final String shortLabel,
-//                                   final String fullName, final String objClass) {
-//
-//        super(ac, shortLabel, fullName, objClass, null, null, null);
-//    }
-//
-//    public InteractionSearchObject(final String ac, final String shortLabel,
-//                                   final String fullName, final String objClass, final Map xrefs) {
-//
-//        super(ac, shortLabel, fullName, objClass, xrefs, null, null);
-//    }
-//
-//    public InteractionSearchObject(final String ac, final String shortLabel,
-//                                   final String fullName, final String objClass,
-//                                   final Map xrefs, final Map annotations) {
-//
-//        super(ac, shortLabel, fullName, objClass, xrefs, annotations, null);
-//    }
-
-
     /**
-     * Getter for cvInteractionType, which holds information about the interaction type
+     * Getter for cvInteractionType, which holds information about the interaction type.
      *
      * @return object storing interaction type information
      */

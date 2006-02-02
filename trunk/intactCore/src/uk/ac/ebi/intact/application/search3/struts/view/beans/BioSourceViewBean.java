@@ -17,7 +17,8 @@ import java.util.Iterator;
 
 
 /**
- * This view bean is used to provide the information for JSP display relating to a particular BioSource Object.
+ * Used to provide the information for JSP display relating to a particular BioSource Object.
+ * <p/>
  * Its main purpose is to provide very simple beans for display in an initial search result page.
  *
  * @author Michael Kleen, Samuel Kerrien (skerrien@ebi.ac.uk)
@@ -31,8 +32,7 @@ public class BioSourceViewBean extends AbstractViewBean {
     private final BioSource obj;
 
     /**
-     * Holds the URL to perform subsequent searches from JSPs - used to build 'complete' URLs for
-     * use by JSPs
+     * Holds the URL to perform subsequent searches from JSPs - used to build 'complete' URLs for use by JSPs
      */
     private final String searchURL;
 
@@ -42,25 +42,24 @@ public class BioSourceViewBean extends AbstractViewBean {
     private String objSearchURL;
 
     /**
-     * The intact type of the wrapped BioSource Object. Note that only the interface types are
-     * relevant for display purposes - thus any concrete 'Impl' types will be considered to be their
-     * interface types.
+     * The intact type of the wrapped BioSource Object. Note that only the interface types are relevant for display
+     * purposes - thus any concrete 'Impl' types will be considered to be their interface types.
      */
     private String intactType;
 
 
     /**
-     * The bean constructor requires an BioSource Object to wrap, plus beans on the context path to
-     * the search application and the help link.
+     * The bean constructor requires an BioSource Object to wrap, plus beans on the context path to the search
+     * application and the help link.
      *
      * @param obj         The BioSource whose beans are to be displayed
      * @param link        The link to the help pages
      * @param searchURL   The general URL to be used for searching (can be filled in later).
      * @param contextPath The path to the search application.
      */
-    public BioSourceViewBean(final BioSource obj, final String link, final String searchURL,
-                             final String contextPath) {
-        super(link, contextPath);
+    public BioSourceViewBean( final BioSource obj, final String link, final String searchURL,
+                              final String contextPath ) {
+        super( link, contextPath );
         this.searchURL = searchURL;
         this.obj = obj;
     }
@@ -70,12 +69,13 @@ public class BioSourceViewBean extends AbstractViewBean {
      * not used ! just here to satified the AbstractViewBean
      */
     public void initHighlightMap() {
-
     }
 
 
     /**
      * Returns the help section. Needs to be reviewed.
+     *
+     * @return a string representation of the help section
      */
     public String getHelpSection() {
         return "protein.single.view";
@@ -88,7 +88,7 @@ public class BioSourceViewBean extends AbstractViewBean {
      * @return String the object's Intact name.
      */
     public String getObjIntactName() {
-        if (this.obj.getShortLabel() != null) {
+        if ( this.obj.getShortLabel() != null ) {
             return this.obj.getShortLabel();
         }
         return "-";
@@ -100,7 +100,7 @@ public class BioSourceViewBean extends AbstractViewBean {
      * @return String the AC of the wrapped object.
      */
     public String getObjAc() {
-        if (this.obj.getAc() != null) {
+        if ( this.obj.getAc() != null ) {
             return this.obj.getAc();
         }
         return "-";
@@ -112,20 +112,21 @@ public class BioSourceViewBean extends AbstractViewBean {
      * @return String a description of the BioSource, or a "-" if there is none.
      */
     public String getObjDescription() {
-        if (this.obj.getFullName() != null) return this.obj.getFullName();
+        if ( this.obj.getFullName() != null ) {
+            return this.obj.getFullName();
+        }
         return "-";
     }
 
 
     /**
-     * Provides a String representation of a URL to perform a search on this AnnotatedObject's beans
-     * (curently via AC)
+     * Provides a String representation of a URL to perform a search on this AnnotatedObject's beans (curently via AC)
      *
      * @return String a String representation of a search URL link for the wrapped AnnotatedObject
      */
     public String getObjSearchURL() {
 
-        if (objSearchURL == null) {
+        if ( objSearchURL == null ) {
             //set it on the first call
             //NB need to get the correct intact type of the wrapped object
             objSearchURL = searchURL + this.obj.getAc() + "&amp;searchClass=" + getIntactType();
@@ -145,8 +146,8 @@ public class BioSourceViewBean extends AbstractViewBean {
 
 
     /**
-     * Convenience method to provide a filtered list of Annotations for a given BioSource Object.
-     * Useful in JSP display to apply the same filters of the wrapped BioSource Object.
+     * Convenience method to provide a filtered list of Annotations for a given BioSource Object. Useful in JSP display
+     * to apply the same filters of the wrapped BioSource Object.
      *
      * @return Collection the filtered List of Annotations (empty if there are none)
      */
@@ -155,12 +156,12 @@ public class BioSourceViewBean extends AbstractViewBean {
         // get all Annotations
         Collection someAnnotations = this.obj.getAnnotations();
         // looks what is in it
-        for (Iterator it = someAnnotations.iterator(); it.hasNext();) {
+        for ( Iterator it = someAnnotations.iterator(); it.hasNext(); ) {
             Annotation annotation = (Annotation) it.next();
             //run through the filter
             if ( false == AnnotationFilter.getInstance().isFilteredOut( annotation ) ) {
                 // if it's not in the filter get them
-                AnnotationViewBean anAnnotationViewBean = new AnnotationViewBean(annotation, this.searchURL );
+                AnnotationViewBean anAnnotationViewBean = new AnnotationViewBean( annotation, this.searchURL );
                 result.add( anAnnotationViewBean );
             }
         }
@@ -170,8 +171,8 @@ public class BioSourceViewBean extends AbstractViewBean {
 
 
     /**
-     * Provides access to Annotations of the CVTopics of the  wrraped BioSource stored in
-     * SingleViewBeans for the prasentation in the jsp
+     * Provides access to Annotations of the CVTopics of the  wrraped BioSource stored in SingleViewBeans for the
+     * prasentation in the jsp
      *
      * @return Collection with all XrefsViewBeans which  wrapped all Xrefs from the given Object
      */
@@ -180,30 +181,30 @@ public class BioSourceViewBean extends AbstractViewBean {
         // first get all Xrefs
         final Collection someXrefs = this.obj.getXrefs();
         // then create a collection of XrefViewBean
-        for (Iterator iterator = someXrefs.iterator(); iterator.hasNext();) {
-            final Xref aXref = ((Xref) iterator.next());
-            result.add(new XrefViewBean(aXref, this.getHelpLink(), this.searchURL));
+        for ( Iterator iterator = someXrefs.iterator(); iterator.hasNext(); ) {
+            final Xref aXref = ( (Xref) iterator.next() );
+            result.add( new XrefViewBean( aXref, this.getHelpLink(), this.searchURL ) );
 
         }
         return result;
     }
 
     /**
-     * Provides the basic Intact type of the wrapped BioSource (ie no java package beans).
-     * NOTE: only the INTERFACE types are provided as these are the only ones of interest in the
-     * model - display pages are not interested in objects of type XXXImpl.
+     * Provides the basic Intact type of the wrapped BioSource (ie no java package beans). NOTE: only the INTERFACE
+     * types are provided as these are the only ones of interest in the model - display pages are not interested in
+     * objects of type XXXImpl.
      *
      * @return String The intact type of the wrapped object
      */
     public String getIntactType() {
 
-        if (intactType == null) {
+        if ( intactType == null ) {
 
             final String className = obj.getClass().getName();
-            final String basicType = className.substring(className.lastIndexOf(".") + 1);
+            final String basicType = className.substring( className.lastIndexOf( "." ) + 1 );
 
-            intactType = ((basicType.indexOf("Impl") == -1) ?
-                    basicType : basicType.substring(0, basicType.indexOf("Impl")));
+            intactType = ( ( basicType.indexOf( "Impl" ) == -1 ) ?
+                           basicType : basicType.substring( 0, basicType.indexOf( "Impl" ) ) );
 
         }
         return intactType;
@@ -211,56 +212,62 @@ public class BioSourceViewBean extends AbstractViewBean {
     }
 
     /**
-     * @param anAnnotatedObject
+     * Get the Search URL for the given object.
+     *
+     * @param anAnnotatedObject the object for which we want the search URL
+     *
      * @return the SearchUrl to the given AnnotatadObject
      */
-    public String getSearchUrl(final AnnotatedObject anAnnotatedObject) {
+    public String getSearchUrl( final AnnotatedObject anAnnotatedObject ) {
 
-        final String aSearchURL = this.searchURL + anAnnotatedObject.getAc() + "&amp;searchClass=" + getIntactType(anAnnotatedObject);
+        final String aSearchURL = this.searchURL + anAnnotatedObject.getAc() + "&amp;searchClass=" + getIntactType( anAnnotatedObject );
         return aSearchURL;
 
     }
 
     /**
-     * Returns a Url based Search Query to the givevn BioSource Object
+     * Returns a Url based Search Query to the givevn BioSource Object.
      *
      * @return the SearchUrl to the given BioSource Object
      */
     public String getSearchUrl() {
 
-        final String aSearchURL = this.searchURL + this.obj.getAc() + "&amp;searchClass=" + getIntactType(this.obj);
+        final String aSearchURL = this.searchURL + this.obj.getAc() + "&amp;searchClass=" + getIntactType( this.obj );
         return aSearchURL;
 
     }
 
     /**
-     * Returns the Fullname to the givevn BioSource Object
+     * Returns the Fullname to the givevn BioSource Object.
      *
      * @return the FullName to the given BioSource Object
      */
     public String getFullname() {
-        if (this.obj.getFullName() != null) {
+        if ( this.obj.getFullName() != null ) {
             return this.obj.getFullName();
         }
         return "-";
     }
 
     /**
+     * String representation of the type of an AnnotatedObject.
+     *
      * @param anAnnotatedObject
+     *
      * @return String  the intact type of  the annotedObject
      */
-    private String getIntactType(final AnnotatedObject anAnnotatedObject) {
+    private String getIntactType( final AnnotatedObject anAnnotatedObject ) {
 
+        // TODO move that method to a higher level: AbstractViewBean ?
+        
         final String objectIntactType;
         final String className = anAnnotatedObject.getClass().getName();
-        final String basicType = className.substring(className.lastIndexOf(".") + 1);
+        final String basicType = className.substring( className.lastIndexOf( "." ) + 1 );
 
-        objectIntactType = ((basicType.indexOf("Impl") == -1) ?
-                basicType : basicType.substring(0, basicType.indexOf("Impl")));
+        objectIntactType = ( ( basicType.indexOf( "Impl" ) == -1 ) ?
+                             basicType : basicType.substring( 0, basicType.indexOf( "Impl" ) ) );
 
 
         return objectIntactType;
-
     }
 }
-

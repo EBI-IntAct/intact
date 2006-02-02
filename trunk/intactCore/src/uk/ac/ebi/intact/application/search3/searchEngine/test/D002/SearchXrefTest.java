@@ -26,7 +26,7 @@ import java.util.Collection;
  * This class tests the indexing of the Xrefs for all the searchobject.
  *
  * @author Anja Friedrichsen
- * @version $id$
+ * @version $Id$
  */
 public class SearchXrefTest extends TestCase {
 

@@ -14,9 +14,9 @@ import uk.ac.ebi.intact.util.SearchReplace;
 import java.util.*;
 
 /**
- * This view bean is used to access the information relating to Features for display by JSPs. For
- * every Component of an Interaction that contains feature information, the will be a feature view
- * bean related to it. TODO: The ranges need handling - a Feature can have more than one...
+ * This view bean is used to access the information relating to Features for display by JSPs. For every Component of an
+ * Interaction that contains feature information, the will be a feature view bean related to it. TODO: The ranges need
+ * handling - a Feature can have more than one...
  *
  * @author Chris Lewington
  * @version $Id$
@@ -29,8 +29,7 @@ public class FeatureViewBean extends AbstractViewBean {
     private Feature feature;
 
     /**
-     * Holds the URL to perform subsequent searches from JSPs - used to build 'complete' URLs for
-     * use by JSPs
+     * Holds the URL to perform subsequent searches from JSPs - used to build 'complete' URLs for use by JSPs
      */
     private String searchURL;
 
@@ -45,8 +44,8 @@ public class FeatureViewBean extends AbstractViewBean {
     private String cvFeatureIdentSearchURL = "";
 
     /**
-     * Map of retrieved DB URLs already retrieved from the DB. This is basically a cache to avoid
-     * recomputation every time a CvDatabase URL is requested.
+     * Map of retrieved DB URLs already retrieved from the DB. This is basically a cache to avoid recomputation every
+     * time a CvDatabase URL is requested.
      */
     private Map dbUrls;
 
@@ -59,21 +58,21 @@ public class FeatureViewBean extends AbstractViewBean {
      * @param searchURL   The standard search URL
      * @param contextPath The platform context path for the application
      */
-    public FeatureViewBean(Feature feature, String link, String searchURL, String contextPath) {
-        super(link, contextPath);
+    public FeatureViewBean( Feature feature, String link, String searchURL, String contextPath ) {
+        super( link, contextPath );
         this.searchURL = searchURL;
         this.feature = feature;
         dbUrls = new HashMap();
     }
 
     /**
-     * Adds the shortLabel of the Feature to an internal list used later for highlighting in a
-     * display. NOT SURE IF WE STILL NEED THIS!!
+     * Adds the shortLabel of the Feature to an internal list used later for highlighting in a display. NOT SURE IF WE
+     * STILL NEED THIS!!
      */
     public void initHighlightMap() {
-        Set set = new HashSet(1);
-        set.add(feature.getShortLabel());
-        setHighlightMap(set);
+        Set set = new HashSet( 1 );
+        set.add( feature.getShortLabel() );
+        setHighlightMap( set );
     }
 
     /**
@@ -105,13 +104,12 @@ public class FeatureViewBean extends AbstractViewBean {
     /**
      * Provides a view bean for any bound Feature.
      *
-     * @return featureViewBean a view bean for the Feature bound to this one, or null if there is no
-     *         bound feature
+     * @return featureViewBean a view bean for the Feature bound to this one, or null if there is no bound feature
      */
     public FeatureViewBean getBoundFeatureView() {
-        if (feature.getBoundDomain() != null) {
-            return new FeatureViewBean(feature.getBoundDomain(),
-                                       getHelpLink(), searchURL, getContextPath());
+        if ( feature.getBoundDomain() != null ) {
+            return new FeatureViewBean( feature.getBoundDomain(),
+                                        getHelpLink(), searchURL, getContextPath() );
         }
         return null;
     }
@@ -123,15 +121,15 @@ public class FeatureViewBean extends AbstractViewBean {
      */
     public String getFeatureType() {
 
-        if (feature.getCvFeatureType() != null) {
+        if ( feature.getCvFeatureType() != null ) {
             // get the complete result
             String label = feature.getCvFeatureType().getShortLabel();
             // get the first char
-            String begin = label.substring(0, 1);
+            String begin = label.substring( 0, 1 );
             // put it to uppercase
             begin = begin.toUpperCase();
             // get the rest and add it to the beginning
-            String rest = label.substring(1, label.length());
+            String rest = label.substring( 1, label.length() );
             return begin + rest;
 
 
@@ -143,12 +141,11 @@ public class FeatureViewBean extends AbstractViewBean {
     /**
      * Provides the short label of the feature identification.
      *
-     * @return String the CvFeatureIdentification shortLabel, or '-' if the identification object
-     *         itself is null
+     * @return String the CvFeatureIdentification shortLabel, or '-' if the identification object itself is null
      */
     public String getFeatureIdentificationName() {
 
-        if (feature.getCvFeatureIdentification() != null) {
+        if ( feature.getCvFeatureIdentification() != null ) {
             return feature.getCvFeatureIdentification().getShortLabel();
         }
         return "-";
@@ -163,13 +160,13 @@ public class FeatureViewBean extends AbstractViewBean {
     /**
      * Provides the full name of the feature identification.
      *
-     * @return String the CvFeatureIdentification full name, or '-' if the identification object
-     *         itself or its full name are null
+     * @return String the CvFeatureIdentification full name, or '-' if the identification object itself or its full name
+     *         are null
      */
     public String getFeatureIdentFullName() {
 
-        if ((feature.getCvFeatureIdentification() != null) &&
-                (feature.getCvFeatureIdentification().getFullName() != null)) {
+        if ( ( feature.getCvFeatureIdentification() != null ) &&
+             ( feature.getCvFeatureIdentification().getFullName() != null ) ) {
             return feature.getCvFeatureIdentification().getFullName();
         }
         return "-";
@@ -192,11 +189,11 @@ public class FeatureViewBean extends AbstractViewBean {
      */
     public String getCvFeatureTypeSearchURL() {
 
-        if ((cvFeatureTypeSearchURL == "") && (feature.getCvFeatureType() != null)) {
+        if ( ( cvFeatureTypeSearchURL == "" ) && ( feature.getCvFeatureType() != null ) ) {
             //set it on the first call
             //get the CvInteraction object and pull out its AC
             cvFeatureTypeSearchURL = searchURL + feature.getCvFeatureType().getAc()
-                    + "&amp;searchClass=CvFeatureType" + "&filter=ac";
+                                     + "&amp;searchClass=CvFeatureType" + "&filter=ac";
         }
         return cvFeatureTypeSearchURL;
     }
@@ -212,35 +209,35 @@ public class FeatureViewBean extends AbstractViewBean {
      */
     public String getCvFeatureIdentSearchURL() {
 
-        if ((cvFeatureIdentSearchURL == "") && (feature.getCvFeatureIdentification() != null)) {
+        if ( ( cvFeatureIdentSearchURL == "" ) && ( feature.getCvFeatureIdentification() != null ) ) {
             //set it on the first call
             //get the CvInteraction object and pull out its AC
             cvFeatureIdentSearchURL = searchURL + feature.getCvFeatureIdentification().getAc()
-                    + "&amp;searchClass=CvFeatureIdentification" + "&filter=ac";
+                                      + "&amp;searchClass=CvFeatureIdentification" + "&filter=ac";
         }
         return cvFeatureIdentSearchURL;
     }
 
     /**
-     * Provides a String representation of a URL to provide acces to an Xrefs' database (curently
-     * via AC). The URL is at present stored via an Annotation for the Xref in the Intact DB
-     * itself.
+     * Provides a String representation of a URL to provide acces to an Xrefs' database (curently via AC). The URL is at
+     * present stored via an Annotation for the Xref in the Intact DB itself.
      *
      * @param xref The Xref for which the DB URL is required
-     * @return String a String representation of a DB URL link for the Xref, or a '-' if there is no
-     *         stored URL link for this Xref
+     *
+     * @return String a String representation of a DB URL link for the Xref, or a '-' if there is no stored URL link for
+     *         this Xref
      */
-    public String getPrimaryIdURL(Xref xref) {
+    public String getPrimaryIdURL( Xref xref ) {
 
         // Check if the id can be hyperlinked
-        String searchUrl = (String) dbUrls.get(xref.getCvDatabase());
-        if (searchUrl == null) {
+        String searchUrl = (String) dbUrls.get( xref.getCvDatabase() );
+        if ( searchUrl == null ) {
             //not yet requested - do it now and cache it..
             Collection annotations = xref.getCvDatabase().getAnnotations();
             Annotation annot = null;
-            for (Iterator it = annotations.iterator(); it.hasNext();) {
+            for ( Iterator it = annotations.iterator(); it.hasNext(); ) {
                 annot = (Annotation) it.next();
-                if (annot.getCvTopic().getShortLabel().equals("search-url")) {
+                if ( annot.getCvTopic().getShortLabel().equals( "search-url" ) ) {
                     //found one - we are done
                     searchUrl = annot.getAnnotationText();
                     break;
@@ -249,13 +246,13 @@ public class FeatureViewBean extends AbstractViewBean {
 
             //cache it - even if the URL is null, because it may be
             //requested again
-            dbUrls.put(xref.getCvDatabase(), searchUrl);
+            dbUrls.put( xref.getCvDatabase(), searchUrl );
         }
 
         //if it isn't null, fill it in properly and return
-        if (searchUrl != null) {
+        if ( searchUrl != null ) {
             //An Xref's primary can't be null - the constructor doesn't allow it..
-            searchUrl = SearchReplace.replace(searchUrl, "${ac}", xref.getPrimaryId());
+            searchUrl = SearchReplace.replace( searchUrl, "${ac}", xref.getPrimaryId() );
 
         }
         return searchUrl;

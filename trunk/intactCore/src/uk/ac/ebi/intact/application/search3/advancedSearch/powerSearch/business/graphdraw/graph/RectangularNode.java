@@ -10,6 +10,10 @@ import java.util.Map;
 
 /**
  * LayoutNode with methods to render as a rectangle containing text and obtain an HTML image map.
+ *
+ * @author EGO
+ * @version $Id$
+ * @since 27.04.2005
  */
 public class RectangularNode implements LayoutNode {
 

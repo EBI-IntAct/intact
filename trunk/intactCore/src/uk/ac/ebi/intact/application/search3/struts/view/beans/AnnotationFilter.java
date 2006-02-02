@@ -5,20 +5,20 @@
  */
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
-import org.apache.ojb.broker.accesslayer.LookupException;
 import org.apache.log4j.Logger;
+import org.apache.ojb.broker.accesslayer.LookupException;
+import uk.ac.ebi.intact.application.search3.business.Constants;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.CvTopic;
-import uk.ac.ebi.intact.application.search3.business.Constants;
 
 import java.sql.SQLException;
 import java.util.*;
 
 /**
- * Uses the current Database connexion to create a list of Annotations' Topic not to be
- * displayed in the public interface. Those CvTopics are annotated with the term 'no-export'.
+ * Uses the current Database connexion to create a list of Annotations' Topic not to be displayed in the public
+ * interface. Those CvTopics are annotated with the term 'no-export'.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
@@ -26,6 +26,9 @@ import java.util.*;
  */
 public class AnnotationFilter {
 
+    /**
+     * Logger for that class.
+     */
     protected transient static final Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
 
     /**
@@ -35,6 +38,11 @@ public class AnnotationFilter {
 
     private static AnnotationFilter ourInstance = new AnnotationFilter();
 
+    /**
+     * Returns the instance value.
+     *
+     * @return the unique instance of that singleton class.
+     */
     public static AnnotationFilter getInstance() {
         return ourInstance;
     }
@@ -97,7 +105,7 @@ public class AnnotationFilter {
         } catch ( IntactException e ) {
             logger.error( "Could not load the CvTopic to filter out on the public view.", e );
         } finally {
-            if( helper != null ) {
+            if ( helper != null ) {
                 try {
                     helper.closeStore();
                 } catch ( IntactException e ) {
@@ -128,10 +136,10 @@ public class AnnotationFilter {
      */
     public boolean isFilteredOut( Annotation annotation ) {
 
-        if( annotation != null ) {
+        if ( annotation != null ) {
 
             // an annotation must have a CvTopic (non null)
-            if( filteredTopics.contains( annotation.getCvTopic() ) ) {
+            if ( filteredTopics.contains( annotation.getCvTopic() ) ) {
                 return true;
             }
         }

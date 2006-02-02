@@ -16,8 +16,8 @@ public class TooLargeViewBean {
         this.someSingleResultViewBeans = new ArrayList();
     }
 
-    public void add(final SingleResultViewBean aSingleResultViewBean) {
-        this.someSingleResultViewBeans.add(aSingleResultViewBean);
+    public void add( final SingleResultViewBean aSingleResultViewBean ) {
+        this.someSingleResultViewBeans.add( aSingleResultViewBean );
     }
 
     public Collection getSingleResults() {
@@ -31,9 +31,9 @@ public class TooLargeViewBean {
      */
     public boolean isSelectable() {
         boolean result = false;
-        for (Iterator iterator = someSingleResultViewBeans.iterator(); iterator.hasNext();) {
+        for ( Iterator iterator = someSingleResultViewBeans.iterator(); iterator.hasNext(); ) {
             SingleResultViewBean singleResultViewBean = (SingleResultViewBean) iterator.next();
-            if (singleResultViewBean.isSearchable()) {
+            if ( singleResultViewBean.isSearchable() ) {
                 result = true;
             }
         }

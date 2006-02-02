@@ -15,9 +15,11 @@ import java.util.*;
  * @author Christian Kohler (ckohler@ebi.ac.uk)
  * @version $Id$
  */
-
 public class InterproSearch implements Serializable {
 
+    /**
+     * Logger for that class.
+     */
     protected transient static Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
 
     /**
@@ -28,7 +30,7 @@ public class InterproSearch implements Serializable {
 
 
     /**
-     * Finds all the XRefs-primary IDs of a specified Protein out of the UniProt Database
+     * Finds all the XRefs-primary IDs of a specified Protein out of the UniProt Database.
      *
      * @param p                     <code>Protein</code> to get the UniprotKB ID from.
      * @param mappedProteins        stores the found UniProtKB IDs (as <code>String</code>) of Proteins.

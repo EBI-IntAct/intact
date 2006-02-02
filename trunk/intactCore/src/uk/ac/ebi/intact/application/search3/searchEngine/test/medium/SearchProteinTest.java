@@ -30,7 +30,7 @@ import java.util.Iterator;
  * be in the index are found.
  *
  * @author Anja Friedrichsen
- * @version $id$
+ * @version $Id$
  */
 public class SearchProteinTest extends TestCase {
 

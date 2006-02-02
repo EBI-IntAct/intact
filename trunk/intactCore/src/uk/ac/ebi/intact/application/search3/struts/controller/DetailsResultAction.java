@@ -19,8 +19,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Performs the beans view for the Experiement View
- * <p/>
+ * Performs the beans view for the Experiement View.
+ * <p>
  * This Action can be called in case of a Experiement or an Interaction
  *
  * @author Michael Kleen
@@ -29,7 +29,9 @@ import java.util.List;
 public class DetailsResultAction extends AbstractResultAction {
 
     /**
-     * This method overrides the parent one to process the request more effectively. It avoids making any assumptions
+     * Overrides the parent one to process the request more effectively.
+     * <p>
+     * It avoids making any assumptions
      * about the beans or the size of search result list and keep all of the processing in a single place for each
      * Action type.
      *
@@ -75,7 +77,6 @@ public class DetailsResultAction extends AbstractResultAction {
 
         logger.info( "DetailAction: result Collection contains " + results.size() + " items." );
 
-        
         // String appPath = getServlet().getServletContext().getInitParameter("searchLink");
         // String searchURL = request.getContextPath().concat(appPath);
         String searchURL = super.getSearchURL();
@@ -119,5 +120,4 @@ public class DetailsResultAction extends AbstractResultAction {
             return SearchConstants.FORWARD_FAILURE;
         }
     }
-
 }

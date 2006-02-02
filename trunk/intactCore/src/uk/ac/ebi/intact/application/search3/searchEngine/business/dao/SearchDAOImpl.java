@@ -23,29 +23,27 @@ import java.util.logging.Logger;
  * database to create an index on.
  *
  * @author Anja Friedrichsen
- * @version $id$
+ * @version $Id$
  */
 public class SearchDAOImpl implements SearchDAO {
 
     private SearchObjectProvider soProvider;
 
+    /**
+     * Logger for this class.
+     */
     private static Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
 
+    /**
+     * Constructs a SearchDAOImpl object.
+     *
+     * @param helper an IntactHelper object
+     */
     public SearchDAOImpl( IntactHelper helper ) {
         this.soProvider = new SqlSearchObjectProvider( helper );
     }
 
-    /**
-     * This method gets the Intact object with the specific AC number out of the database. It is used to update a single
-     * search object
-     *
-     * @param ac    Ac number of the searched Intact object
-     * @param clazz class name of the object to search for
-     *
-     * @return Intact Object
-     *
-     * @throws IntactException
-     */
+
     public Object findObjectsbyAC( String ac, Class clazz ) throws IntactException {
         final IntactHelper helper = new IntactHelper();
         final Object result = helper.getObjectByAc( clazz, ac );
@@ -57,17 +55,6 @@ public class SearchDAOImpl implements SearchDAO {
         return result;
     }
 
-    /**
-     * This method is used to get the Intact object out of the database, corresponding to the Map of Acs. The key of the
-     * Map (someAcs) is the AC number and the value to that key is the corresponding objclass The Map which will be
-     * returned has the class names as keys and the value is a collection of the found IntAct objects.
-     *
-     * @param someACs Map of Acs to find the corresponding IntAct objects
-     *
-     * @return a Map with the objectclasses as keys and the value is a collection containing the located IntAct objects
-     *
-     * @throws IntactException
-     */
     public Map findObjectsbyACs( Map someACs ) throws IntactException {
 
         final IntactHelper helper = new IntactHelper();
@@ -163,15 +150,6 @@ public class SearchDAOImpl implements SearchDAO {
         return someResults;
     }
 
-
-    /**
-     * This method collects all intact objects, which should be searchable, out of the database and merges them into one
-     * collection. This collection is later used to create the index
-     *
-     * @return a collection with all search objects
-     *
-     * @throws IntactException
-     */
     public Collection getAllSearchObjects() throws IntactException {
 
         // join the collections of the different search object together to one collection
@@ -191,16 +169,6 @@ public class SearchDAOImpl implements SearchDAO {
         return searchObjects;
     }
 
-    /**
-     * This method searches for one Object specified with the AC and the objectClass. It is used to update the index
-     *
-     * @param ac       AC number of the object to search for
-     * @param objClass class of the object to search for
-     *
-     * @return the object retrieved from the search
-     *
-     * @throws IntactException
-     */
     public SearchObject getSearchObject( String ac, String objClass ) throws IntactException {
         return soProvider.getSearchObject( ac, objClass );
     }

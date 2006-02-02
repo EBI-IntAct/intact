@@ -13,7 +13,6 @@ import uk.ac.ebi.intact.application.commons.search.SearchHelper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
 import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
-import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -21,8 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Performs the required initialisations for a user search session when they have been through the
- * welcome page.
+ * Performs the required initialisations for a user search session when they have been through the welcome page.
  *
  * @author Chris Lewington
  * @version $Id$
@@ -30,42 +28,38 @@ import java.io.IOException;
 public class WelcomeAction extends IntactBaseAction {
 
     /**
-     * Process the specified HTTP request, and create the corresponding HTTP response (or forward to
-     * another web component that will create it). Return an <code>ActionForward</code> instance
-     * describing where and how control should be forwarded, or <code>null</code> if the response
-     * has already been completed.
+     * Process the specified HTTP request, and create the corresponding HTTP response (or forward to another web
+     * component that will create it). Return an <code>ActionForward</code> instance describing where and how control
+     * should be forwarded, or <code>null</code> if the response has already been completed.
      *
      * @param mapping  The ActionMapping used to select this instance
      * @param form     The optional ActionForm bean for this request (if any)
      * @param request  The HTTP request we are processing
      * @param response The HTTP response we are creating
+     *
+     * @return an ActionForward object
+     *
      * @throws IOException      if an input/output error occurs
      * @throws ServletException if a servlet exception occurs
      */
-    public ActionForward execute(ActionMapping mapping, ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
+    public ActionForward execute( ActionMapping mapping, ActionForm form,
+                                  HttpServletRequest request,
+                                  HttpServletResponse response )
             throws IOException, ServletException {
 
-        SearchHelperI helper = new SearchHelper(logger);
+        SearchHelperI helper = new SearchHelper( logger );
         //all we need to do here is set up a valid user if possible
-        if (super.setupUser(request) == null) {
+        if ( super.setupUser( request ) == null ) {
             // not possible to set up an user, forward to errorpage
-            return mapping.findForward(SearchConstants.FORWARD_FAILURE);
+            return mapping.findForward( SearchConstants.FORWARD_FAILURE );
 
-        }
-        else if (!helper.connected()) {
+        } else if ( !helper.connected() ) {
             // the database is not connected forward to errorpage
-            return mapping.findForward(SearchConstants.FORWARD_NO_RESOURCE);
+            return mapping.findForward( SearchConstants.FORWARD_NO_RESOURCE );
 
-        }
-        else {
+        } else {
             // everything is fine, forward to initial page
-            return mapping.findForward(SearchConstants.FORWARD_SUCCESS);
+            return mapping.findForward( SearchConstants.FORWARD_SUCCESS );
         }
     }
 }
-
-
-
-

@@ -26,7 +26,7 @@ import java.util.Collection;
  * This class tests if the indexing of the annotation went right.
  *
  * @author Anja Friedrichsen
- * @version $id$
+ * @version $Id$
  */
 public class SearchAnnotationTest extends TestCase {
 

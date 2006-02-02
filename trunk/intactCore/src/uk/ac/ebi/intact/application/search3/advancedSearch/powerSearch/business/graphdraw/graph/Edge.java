@@ -1,21 +1,23 @@
 package uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.business.graphdraw.graph;
 
-
-
-
 /**
- * General graph edge
+ * General graph edge.
+ *
+ * @author EGO
+ * @version $Id$
+ * @since 27.04.2005
  */
 public interface Edge {
 
     /**
-     * Parent
+     * Returns the parent value.
+     * @return a Node object representing the parent value
      */
     Node getParent();
 
     /**
-     * Child
+     * Returns the child value.
+     * @return a Node object representing the child value
      */
     Node getChild();
-
 }

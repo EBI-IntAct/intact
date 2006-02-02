@@ -16,7 +16,7 @@ import uk.ac.ebi.intact.business.IntactException;
  * TODO comment that ...
  *
  * @author Anja Friedrichsen
- * @version $id$
+ * @version $Id$
  */
 public class QueryBuilderTest extends TestCase {
 

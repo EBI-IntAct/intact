@@ -28,7 +28,7 @@ import java.util.Iterator;
  * This class tests if the experiment search works.
  *
  * @author Anja Friedrichsen
- * @version $id$
+ * @version $Id$
  */
 public class SearchExperimentsTest extends TestCase {
 

@@ -18,9 +18,8 @@ import java.util.Iterator;
  */
 
 /**
- * This class provides JSP view information for a particular AnnotatedObject. Its main purpose is to
- * provide very simple beans for display in an initial search result page. Currenty the types that
- * may be displayed with this bean are
+ * This class provides JSP view information for a particular AnnotatedObject. Its main purpose is to provide very simple
+ * beans for display in an initial search result page. Currenty the types that may be displayed with this bean are
  */
 public class SingleViewBean extends AbstractViewBean {
 
@@ -30,8 +29,7 @@ public class SingleViewBean extends AbstractViewBean {
     private final AnnotatedObject obj;
 
     /**
-     * Holds the URL to perform subsequent searches from JSPs - used to build 'complete' URLs for
-     * use by JSPs
+     * Holds the URL to perform subsequent searches from JSPs - used to build 'complete' URLs for use by JSPs
      */
     private final String searchURL;
 
@@ -41,27 +39,27 @@ public class SingleViewBean extends AbstractViewBean {
     private String objSearchURL;
 
     /**
-     * The intact type of the wrapped AnnotatedObject. Note that only the interface types are
-     * relevant for display purposes - thus any concrete 'Impl' types will be considered to be their
-     * interface types in this case (eg a wrapped ProteinImpl will have the intact type of
-     * 'Protein'). Would be nice to get rid of the proxies one day ...:-)
+     * The intact type of the wrapped AnnotatedObject. Note that only the interface types are relevant for display
+     * purposes - thus any concrete 'Impl' types will be considered to be their interface types in this case (eg a
+     * wrapped ProteinImpl will have the intact type of 'Protein'). Would be nice to get rid of the proxies one day
+     * ...:-)
      */
     private String intactType;
 
 
     /**
-     * The bean constructor requires an AnnotatedObject to wrap, plus beans on the context path to
-     * the search application and the help link. The object itself can be any one of Experiment,
-     * Protein, Interaction or CvObject type.
+     * The bean constructor requires an AnnotatedObject to wrap, plus beans on the context path to the search
+     * application and the help link. The object itself can be any one of Experiment, Protein, Interaction or CvObject
+     * type.
      *
      * @param obj         The AnnotatedObject whose beans are to be displayed
      * @param link        The link to the help pages
      * @param searchURL   The general URL to be used for searching (can be filled in later).
      * @param contextPath The path to the search application.
      */
-    public SingleViewBean(final AnnotatedObject obj, final String link, final String searchURL,
-                          final String contextPath) {
-        super(link, contextPath);
+    public SingleViewBean( final AnnotatedObject obj, final String link, final String searchURL,
+                           final String contextPath ) {
+        super( link, contextPath );
         this.searchURL = searchURL;
         this.obj = obj;
     }
@@ -85,9 +83,10 @@ public class SingleViewBean extends AbstractViewBean {
     /**
      * This is left over from the earlier version - will be removed. It does nothing here.
      */
-    public void getHTML(java.io.Writer writer) {
-    };
+    public void getHTML( java.io.Writer writer ) {
+    }
 
+    ;
 
 
     /**
@@ -114,20 +113,21 @@ public class SingleViewBean extends AbstractViewBean {
      * @return String a description of the AnnotatedObject, or a "-" if there is none.
      */
     public String getObjDescription() {
-        if (this.obj.getFullName() != null) return this.obj.getFullName();
+        if ( this.obj.getFullName() != null ) {
+            return this.obj.getFullName();
+        }
         return "-";
     }
 
 
     /**
-     * Provides a String representation of a URL to perform a search on this AnnotatedObject's beans
-     * (curently via AC)
+     * Provides a String representation of a URL to perform a search on this AnnotatedObject's beans (curently via AC)
      *
      * @return String a String representation of a search URL link for the wrapped AnnotatedObject
      */
     public String getObjSearchURL() {
 
-        if (objSearchURL == null) {
+        if ( objSearchURL == null ) {
             //set it on the first call
             //NB need to get the correct intact type of the wrapped object
             objSearchURL = searchURL + this.obj.getAc() + "&amp;searchClass=" + getIntactType();
@@ -146,8 +146,8 @@ public class SingleViewBean extends AbstractViewBean {
     }
 
     /**
-     * Provides access to Annotations of the CVTopics of the  wrraped AnnotadObject stored in
-     * SingleViewBeans for the prasentation in the jsp
+     * Provides access to Annotations of the CVTopics of the  wrraped AnnotadObject stored in SingleViewBeans for the
+     * prasentation in the jsp
      *
      * @return Collection of all Anotations wrapped in a SingleViewBean
      */
@@ -155,8 +155,8 @@ public class SingleViewBean extends AbstractViewBean {
         final ArrayList result = new ArrayList();
         Collection someAnnotations = this.obj.getAnnotations();
 
-        for (Iterator iterator = someAnnotations.iterator(); iterator.hasNext();) {
-            CvTopic aCvTopic = ((Annotation) iterator.next()).getCvTopic();
+        for ( Iterator iterator = someAnnotations.iterator(); iterator.hasNext(); ) {
+            CvTopic aCvTopic = ( (Annotation) iterator.next() ).getCvTopic();
             // TODO REFACTORING
             // THIS BEAN IS NOT NEEDED ANY MORE
             /**
@@ -170,8 +170,8 @@ public class SingleViewBean extends AbstractViewBean {
 
 
     /**
-     * Provides access to Annotations of the CVTopics of the  wrraped AnnotadObject stored in
-     * SingleViewBeans for the prasentation in the jsp
+     * Provides access to Annotations of the CVTopics of the  wrraped AnnotadObject stored in SingleViewBeans for the
+     * prasentation in the jsp
      *
      * @return Collection with all Xrefs wrapped in a SingleViewBean
      */
@@ -179,8 +179,8 @@ public class SingleViewBean extends AbstractViewBean {
         final ArrayList result = new ArrayList();
         final Collection someXrefs = this.obj.getXrefs();
 
-        for (Iterator iterator = someXrefs.iterator(); iterator.hasNext();) {
-            final Xref aXref = ((Xref) iterator.next());
+        for ( Iterator iterator = someXrefs.iterator(); iterator.hasNext(); ) {
+            final Xref aXref = ( (Xref) iterator.next() );
             final CvDatabase aCvDatabase = aXref.getCvDatabase();
 
         }
@@ -188,22 +188,21 @@ public class SingleViewBean extends AbstractViewBean {
     }
 
     /**
-     * Provides the basic Intact type of the wrapped AnnotatedObject (ie no java package beans).
-     * NOTE: only the INTERFACE types are provided as these are the only ones of interest in the
-     * model - display pages are not interested in objects of type XXXImpl. For subclasses of
-     * CvObject we only need 'CvObject' for display purposes.
+     * Provides the basic Intact type of the wrapped AnnotatedObject (ie no java package beans). NOTE: only the
+     * INTERFACE types are provided as these are the only ones of interest in the model - display pages are not
+     * interested in objects of type XXXImpl. For subclasses of CvObject we only need 'CvObject' for display purposes.
      *
      * @return String The intact type of the wrapped object (eg 'Experiment')
      */
     public String getIntactType() {
 
-        if (intactType == null) {
+        if ( intactType == null ) {
 
             final String className = obj.getClass().getName();
-            final String basicType = className.substring(className.lastIndexOf(".") + 1);
+            final String basicType = className.substring( className.lastIndexOf( "." ) + 1 );
 
-            intactType = ((basicType.indexOf("Impl") == -1) ?
-                    basicType : basicType.substring(0, basicType.indexOf("Impl")));
+            intactType = ( ( basicType.indexOf( "Impl" ) == -1 ) ?
+                           basicType : basicType.substring( 0, basicType.indexOf( "Impl" ) ) );
 
         }
         return intactType;
@@ -212,12 +211,13 @@ public class SingleViewBean extends AbstractViewBean {
 
     /**
      * @param anAnnotatedObject
+     *
      * @return the SearchUrl to the given AnnotatadObject
      */
-    public String getSearchUrl(final AnnotatedObject anAnnotatedObject) {
+    public String getSearchUrl( final AnnotatedObject anAnnotatedObject ) {
 
         final String aSearchURL = this.searchURL + anAnnotatedObject.getAc() + "&amp;searchClass=" + getIntactType(
-                anAnnotatedObject);
+                anAnnotatedObject );
         return aSearchURL;
 
     }
@@ -228,7 +228,7 @@ public class SingleViewBean extends AbstractViewBean {
     public String getSearchUrl() {
 
         final String aSearchURL = this.searchURL + this.obj.getAc() + "&amp;searchClass=" + getIntactType(
-                this.obj);
+                this.obj );
         return aSearchURL;
 
     }
@@ -242,16 +242,17 @@ public class SingleViewBean extends AbstractViewBean {
 
     /**
      * @param anAnnotatedObject
+     *
      * @return String  the intact type of  the annotedObject
      */
-    private String getIntactType(final AnnotatedObject anAnnotatedObject) {
+    private String getIntactType( final AnnotatedObject anAnnotatedObject ) {
 
         final String objectIntactType;
         final String className = anAnnotatedObject.getClass().getName();
-        final String basicType = className.substring(className.lastIndexOf(".") + 1);
+        final String basicType = className.substring( className.lastIndexOf( "." ) + 1 );
 
-        objectIntactType = ((basicType.indexOf("Impl") == -1) ?
-                basicType : basicType.substring(0, basicType.indexOf("Impl")));
+        objectIntactType = ( ( basicType.indexOf( "Impl" ) == -1 ) ?
+                             basicType : basicType.substring( 0, basicType.indexOf( "Impl" ) ) );
 
         return objectIntactType;
 
