@@ -20,29 +20,36 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * This class provides method to retrieve the list of shortlabel for different CVs
+ * This class provides method to retrieve the list of shortlabel for different CVs.
  *
  * @author Anja Friedrichsen
- * @version $id$
+ * @version $Id$
  */
 public class CvLists {
 
+    /**
+     * Logger for that class.
+     */
     private static Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
 
     // collection holding per CvDatabase object one CvBean
-    private Collection CVDatabase = null;
+    private Collection cvDatabase = null;
 
     // collection holding per CvTopic object one CvBean
-    private Collection CVTopic = null;
+    private Collection cvTopic = null;
 
     // collection holding per CvInteraction object one CvBean
-    private Collection CVInteraction = null;
+    private Collection cvInteraction = null;
 
     // collection holding per CvInteractionType object one CvBean
-    private Collection CVInteractionType = null;
+    private Collection cvInteractionType = null;
 
     // collection holding per CvIdentification object one CvBean
-    private Collection CVIdentification = null;
+    private Collection cvIdentification = null;
+
+
+    public CvLists() {
+    }
 
     /**
      * Collects all objects of the specified type and filter out hidden and obsolete terms.
@@ -55,10 +62,10 @@ public class CvLists {
         try {
             helper = new IntactHelper();
             Query query = ObjectBridgeQueryFactory.getInstance().getMenuBuildQuery( clazz );
-            Iterator i = helper.getIteratorByReportQuery( query );
+            Iterator it = helper.getIteratorByReportQuery( query );
 
-            while ( i.hasNext() ) {
-                Object[] o = (Object[]) i.next();
+            while ( it.hasNext() ) {
+                Object[] o = (Object[]) it.next();
 
                 String ac = (String) o[ 0 ];
                 String shortlabel = (String) o[ 1 ];
@@ -91,20 +98,20 @@ public class CvLists {
      */
     public Collection initCVDatabaseList() throws IntactException {
 
-        if( this.CVDatabase != null ){
+        if( this.cvDatabase != null ){
             // use cache.
-            return this.CVDatabase;
+            return this.cvDatabase;
         }
 
         logger.info( "in initCVDatabaseList" );
-        this.CVDatabase = new ArrayList();
+        this.cvDatabase = new ArrayList();
         // add an empty CV bean for the default case
         CvBean emptyBean = new CvBean( null, "-all databases-", "all databases selected" );
-        this.CVDatabase.add( emptyBean );
+        this.cvDatabase.add( emptyBean );
 
-        addMenuListItem( CvDatabase.class, this.CVDatabase );
+        addMenuListItem( CvDatabase.class, this.cvDatabase );
 
-        return this.CVDatabase;
+        return this.cvDatabase;
     }
 
     /**
@@ -117,16 +124,16 @@ public class CvLists {
      */
     public Collection initCVTopicList() throws IntactException {
 
-        if( this.CVTopic != null ){
+        if( this.cvTopic != null ){
             // use cache.
-            return this.CVTopic;
+            return this.cvTopic;
         }
 
         Collection topics = null;
-        this.CVTopic = new ArrayList();
+        this.cvTopic = new ArrayList();
         // add an empty CV bean for the default case
         CvBean emptyBean = new CvBean( null, "-all topics-", "all topics selected" );
-        this.CVTopic.add( emptyBean );
+        this.cvTopic.add( emptyBean );
 
         CvBean bean;
         IntactHelper helper = null;
@@ -142,7 +149,7 @@ public class CvLists {
 
                     // do not insert the topic 'remark-interal', it should not be seen from outside
                     bean = new CvBean( cvTo.getAc(), cvTo.getShortLabel(), cvTo.getFullName() );
-                    this.CVTopic.add( bean );
+                    this.cvTopic.add( bean );
                 }
             }
 
@@ -157,7 +164,7 @@ public class CvLists {
                 }
             }
         }
-        return this.CVTopic;
+        return this.cvTopic;
     }
 
     /**
@@ -170,19 +177,19 @@ public class CvLists {
      */
     public Collection initCVInteractionList() throws IntactException {
 
-        if( this.CVInteraction != null ){
+        if( this.cvInteraction != null ){
             // use cache.
-            return this.CVInteraction;
+            return this.cvInteraction;
         }
 
-        this.CVInteraction = new ArrayList();
+        this.cvInteraction = new ArrayList();
         // add an empty CV bean for the default case
         CvBean emptyBean = new CvBean( null, "-no CvInteraction-", "no interaction selected" );
-        this.CVInteraction.add( emptyBean );
+        this.cvInteraction.add( emptyBean );
 
-        addMenuListItem( CvInteraction.class, this.CVInteraction );
+        addMenuListItem( CvInteraction.class, this.cvInteraction );
 
-        return this.CVInteraction;
+        return this.cvInteraction;
     }
 
     /**
@@ -195,19 +202,19 @@ public class CvLists {
      */
     public Collection initCVInteractionTypeList() throws IntactException {
 
-        if( this.CVInteractionType != null ){
+        if( this.cvInteractionType != null ){
             // use cache.
-            return this.CVInteractionType;
+            return this.cvInteractionType;
         }
 
-        this.CVInteractionType = new ArrayList();
+        this.cvInteractionType = new ArrayList();
         // add an empty CV bean for the default case
         CvBean emptyBean = new CvBean( null, "-no CvInteractionType-", "no CvInteractionType selected" );
-        this.CVInteractionType.add( emptyBean );
+        this.cvInteractionType.add( emptyBean );
 
-        addMenuListItem( CvInteractionType.class, this.CVInteractionType );
+        addMenuListItem( CvInteractionType.class, this.cvInteractionType );
 
-        return this.CVInteractionType;
+        return this.cvInteractionType;
     }
 
     /**
@@ -220,18 +227,18 @@ public class CvLists {
      */
     public Collection initCVIdentificationList() throws IntactException {
 
-        if( this.CVIdentification != null ){
+        if( this.cvIdentification != null ){
             // use cache.
-            return this.CVIdentification;
+            return this.cvIdentification;
         }
 
-        this.CVIdentification = new ArrayList();
+        this.cvIdentification = new ArrayList();
         // add an empty CV bean for the default case
         CvBean emptyBean = new CvBean( null, "-no CvIdentification-", "no identification selected" );
-        this.CVIdentification.add( emptyBean );
+        this.cvIdentification.add( emptyBean );
 
-        addMenuListItem( CvIdentification.class, this.CVIdentification );
+        addMenuListItem( CvIdentification.class, this.cvIdentification );
 
-        return this.CVIdentification;
+        return this.cvIdentification;
     }
 }

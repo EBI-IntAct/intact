@@ -3,7 +3,7 @@ package uk.ac.ebi.intact.application.search3.business.interpro;
 /**
  * This <code>Exception</code> is thrown if the maximum number of displayable Proteins is exceeded.
  * (default value is set to InterproSearch#MAXIMUM_NUMBER_OF_SELECTED_PROTEINS).
- * <br/>
+ * <br>
  * Note: that exception is never propagated outside the scope of the InterproAction, that's why we do not bother
  * collecting the stack trace (performance reason).
  *

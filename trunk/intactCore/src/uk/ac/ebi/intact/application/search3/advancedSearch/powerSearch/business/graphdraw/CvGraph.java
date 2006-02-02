@@ -16,17 +16,16 @@ import uk.ac.ebi.intact.model.*;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.*;
 
 /**
- * This class provides methods to create graph images for the controlled vocabulary
+ * This class provides methods to create graph images for the controlled vocabulary.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk), Anja Friedrichsen, Michael Kleen
- * @version $id$
+ * @since 27.04.2005
+ * @version $Id$
  */
 public class CvGraph {
-
 
     private static Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
 
@@ -70,9 +69,9 @@ public class CvGraph {
      *
      * @return image showing the DAG of the CVs
      *
-     * @throws IOException
+     * @throws IntactException if a data access error occurs.
      */
-    public synchronized Image createImage( Class cvClass ) throws IOException, IntactException {
+    public synchronized Image createImage( Class cvClass ) throws IntactException {
 
         // check if the given CV is allowed
         if( !SUPPORTED_CV.contains( cvClass ) ) {
@@ -206,11 +205,11 @@ public class CvGraph {
     }
 
     /**
-     * this method find the parent relations between the nodes and add edges between terms.
+     * Find the parent relations between the nodes and add edges between terms.
      *
-     * @param cv             cv object to find the parents for
-     * @param cvobjectToNode Map with all nodes to get the nodes corresponding to the cv object
-     * @param graph          graph to generate
+     * @param cv             cv object to find the parents for.
+     * @param cvobjectToNode Map with all nodes to get the nodes corresponding to the cv object.
+     * @param graph          graph to generate.
      */
     public void findParentRelations( CvDagObject cv, Map cvobjectToNode, Graph graph ) {
 
@@ -235,18 +234,22 @@ public class CvGraph {
     }
 
     /**
-     * getter method for the imageMap
+     * Get the imageMap value.
      *
-     * @return string with the imageMap corresponding to the image
+     * @return string with the imageMap corresponding to the image.
+     *
+     * @see #setImageMap
      */
     public String getImageMap() {
         return imageMap;
     }
 
     /**
-     * setter method for the imageMap
+     * Defines the imageMap.
      *
-     * @param imageMap image map to define
+     * @param imageMap image map to define.
+     *
+     * @see #getImageMap
      */
     public void setImageMap( String imageMap ) {
         this.imageMap = imageMap;

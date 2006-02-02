@@ -25,7 +25,13 @@ public interface InterproConstants {
      */
     public static final String PROTEIN_ID_SEPARATOR = "%2C";
 
+    /**
+     * The label of the Continue button.
+     */
     public static final String CONTINUE_BUTTON_LABEL = "Continue";
-    public static final String NEW_SEARCH_BUTTON_LABEL = "New search";
 
+    /**
+     * The label of the 'new search' button.
+     */
+    public static final String NEW_SEARCH_BUTTON_LABEL = "New search";
 }

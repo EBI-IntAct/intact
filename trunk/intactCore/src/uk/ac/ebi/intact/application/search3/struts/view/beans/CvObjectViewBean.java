@@ -22,8 +22,8 @@ import java.util.Iterator;
 
 
 /**
- * This view bean is used to provide the information for JSP display relating to a particular CvObject.
- * Its main purpose is to provide very simple beans for display in an initial search result page.
+ * This view bean is used to provide the information for JSP display relating to a particular CvObject. Its main purpose
+ * is to provide very simple beans for display in an initial search result page.
  */
 public class CvObjectViewBean extends AbstractViewBean {
 
@@ -33,8 +33,7 @@ public class CvObjectViewBean extends AbstractViewBean {
     private final CvObject obj;
 
     /**
-     * Holds the URL to perform subsequent searches from JSPs - used to build 'complete' URLs for
-     * use by JSPs
+     * Holds the URL to perform subsequent searches from JSPs - used to build 'complete' URLs for use by JSPs
      */
     private final String searchURL;
 
@@ -44,26 +43,24 @@ public class CvObjectViewBean extends AbstractViewBean {
     private String objSearchURL;
 
     /**
-     * The intact type of the wrapped CvObject. Note that only the interface types are
-     * relevant for display purposes - thus any concrete 'Impl' types will be considered to be their
-     * interface types in this case (eg a wrapped ProteinImpl will have the intact type of
-     * 'Protein'). Would be nice to get rid of the proxies one day ...:-)
+     * The intact type of the wrapped CvObject. Note that only the interface types are relevant for display purposes -
+     * thus any concrete 'Impl' types will be considered to be their interface types in this case (eg a wrapped
+     * ProteinImpl will have the intact type of 'Protein'). Would be nice to get rid of the proxies one day ...:-)
      */
     private String intactType;
 
     /**
-     * The bean constructor requires an CvObject to wrap, plus beans on the context path to
-     * the search application and the help link. The object itself can be any one of Experiment,
-     * Protein, Interaction or CvObject type.
+     * The bean constructor requires an CvObject to wrap, plus beans on the context path to the search application and
+     * the help link. The object itself can be any one of Experiment, Protein, Interaction or CvObject type.
      *
      * @param obj         The CvObject whose beans are to be displayed
      * @param link        The link to the help pages
      * @param searchURL   The general URL to be used for searching (can be filled in later).
      * @param contextPath The path to the search application.
      */
-    public CvObjectViewBean(final CvObject obj, final String link, final String searchURL,
-                            final String contextPath) {
-        super(link, contextPath);
+    public CvObjectViewBean( final CvObject obj, final String link, final String searchURL,
+                             final String contextPath ) {
+        super( link, contextPath );
         this.searchURL = searchURL;
         this.obj = obj;
 
@@ -71,7 +68,7 @@ public class CvObjectViewBean extends AbstractViewBean {
 
 
     /**
-     * not used ! just here to satified the AbstractViewBean
+     * not used ! just here to satified the AbstractViewBean.
      */
     public void initHighlightMap() {
 
@@ -80,6 +77,8 @@ public class CvObjectViewBean extends AbstractViewBean {
 
     /**
      * Returns the help section. Needs to be reviewed.
+     *
+     * @return a string representation of the help section
      */
     public String getHelpSection() {
         return "protein.single.view";
@@ -110,24 +109,25 @@ public class CvObjectViewBean extends AbstractViewBean {
      * @return String a description of the CvObject, or a "-" if there is none.
      */
     public String getObjDescription() {
-        if (this.obj.getFullName() != null) return this.obj.getFullName();
+        if ( this.obj.getFullName() != null ) {
+            return this.obj.getFullName();
+        }
         return "-";
     }
 
 
     /**
-     * Provides a String representation of a URL to perform a search on this CvObject's beans
-     * (curently via AC)
+     * Provides a String representation of a URL to perform a search on this CvObject's beans (curently via AC).
      *
      * @return String a String representation of a search URL link for the wrapped CvObject
      */
     public String getObjSearchURL() {
 
-        if (objSearchURL == null) {
+        if ( objSearchURL == null ) {
             //set it on the first call
             //NB need to get the correct intact type of the wrapped object
             objSearchURL = searchURL + this.obj.getAc() + "&amp;searchClass=" + getIntactType() +
-                    "&filter=ac";
+                           "&filter=ac";
         }
         return objSearchURL;
     }
@@ -143,8 +143,8 @@ public class CvObjectViewBean extends AbstractViewBean {
     }
 
     /**
-     * Provides access to Annotations of the CVTopics of the  wrraped AnnotadObject stored in
-     * SingleViewBeans for the prasentation in the jsp
+     * Provides access to Annotations of the CVTopics of the  wrraped AnnotadObject stored in SingleViewBeans for the
+     * prasentation in the jsp.
      *
      * @return Collection of all Anotations wrapped in a SingleViewBean
      */
@@ -155,17 +155,17 @@ public class CvObjectViewBean extends AbstractViewBean {
         final ArrayList result = new ArrayList();
         Collection someAnnotations = this.obj.getAnnotations();
 
-        for (Iterator iterator = someAnnotations.iterator(); iterator.hasNext();) {
-            Annotation anAnnotation = ((Annotation) iterator.next());
-            AnnotationViewBean anAnnotationViewBean = new AnnotationViewBean(anAnnotation, "");
-            result.add(anAnnotationViewBean);
+        for ( Iterator iterator = someAnnotations.iterator(); iterator.hasNext(); ) {
+            Annotation anAnnotation = ( (Annotation) iterator.next() );
+            AnnotationViewBean anAnnotationViewBean = new AnnotationViewBean( anAnnotation, "" );
+            result.add( anAnnotationViewBean );
         }
         return result;
     }
 
     /**
-     * Convenience method to provide a filtered list of Annotations for a given BioSource Object.
-     * Useful in JSP display to apply the same filters of the wrapped BioSource Object
+     * Convenience method to provide a filtered list of Annotations for a given BioSource Object. Useful in JSP display
+     * to apply the same filters of the wrapped BioSource Object.
      *
      * @return Collection the filtered List of Annotations (empty if there are none)
      */
@@ -173,12 +173,12 @@ public class CvObjectViewBean extends AbstractViewBean {
         final ArrayList result = new ArrayList();
         Collection someAnnotations = this.obj.getAnnotations();
 
-        for (Iterator it = someAnnotations.iterator(); it.hasNext();) {
+        for ( Iterator it = someAnnotations.iterator(); it.hasNext(); ) {
             Annotation annotation = (Annotation) it.next();
             //run through the filter
             if ( false == AnnotationFilter.getInstance().isFilteredOut( annotation ) ) {
                 // if it's not in the filter get them
-                AnnotationViewBean anAnnotationViewBean = new AnnotationViewBean(annotation, this.searchURL );
+                AnnotationViewBean anAnnotationViewBean = new AnnotationViewBean( annotation, this.searchURL );
                 result.add( anAnnotationViewBean );
             }
         }
@@ -188,8 +188,8 @@ public class CvObjectViewBean extends AbstractViewBean {
 
 
     /**
-     * Provides access to Annotations of the CVTopics of the  wrraped AnnotadObject stored in
-     * SingleViewBeans for the prasentation in the jsp
+     * Provides access to Annotations of the CVTopics of the wrraped AnnotadObject stored in SingleViewBeans for the
+     * prasentation in the jsp.
      *
      * @return Collection with all Xrefs wrapped in a SingleViewBean
      */
@@ -198,9 +198,9 @@ public class CvObjectViewBean extends AbstractViewBean {
         final ArrayList result = new ArrayList();
         final Collection someXrefs = this.obj.getXrefs();
 
-        for (Iterator iterator = someXrefs.iterator(); iterator.hasNext();) {
-            final Xref aXref = ((Xref) iterator.next());
-            result.add(new XrefViewBean(aXref, this.getHelpLink(), this.searchURL));
+        for ( Iterator iterator = someXrefs.iterator(); iterator.hasNext(); ) {
+            final Xref aXref = ( (Xref) iterator.next() );
+            result.add( new XrefViewBean( aXref, this.getHelpLink(), this.searchURL ) );
 
         }
 
@@ -208,22 +208,21 @@ public class CvObjectViewBean extends AbstractViewBean {
     }
 
     /**
-     * Provides the basic Intact type of the wrapped CvObject (ie no java package beans).
-     * NOTE: only the INTERFACE types are provided as these are the only ones of interest in the
-     * model - display pages are not interested in objects of type XXXImpl. For subclasses of
-     * CvObject we only need 'CvObject' for display purposes.
+     * Provides the basic Intact type of the wrapped CvObject (ie no java package beans). NOTE: only the INTERFACE types
+     * are provided as these are the only ones of interest in the model - display pages are not interested in objects of
+     * type XXXImpl. For subclasses of CvObject we only need 'CvObject' for display purposes.
      *
      * @return String The intact type of the wrapped object (eg 'Experiment')
      */
     public String getIntactType() {
 
-        if (intactType == null) {
+        if ( intactType == null ) {
 
             final String className = obj.getClass().getName();
-            final String basicType = className.substring(className.lastIndexOf(".") + 1);
+            final String basicType = className.substring( className.lastIndexOf( "." ) + 1 );
 
-            intactType = ((basicType.indexOf("Impl") == -1) ?
-                    basicType : basicType.substring(0, basicType.indexOf("Impl")));
+            intactType = ( ( basicType.indexOf( "Impl" ) == -1 ) ?
+                           basicType : basicType.substring( 0, basicType.indexOf( "Impl" ) ) );
 
         }
         return intactType;
@@ -231,27 +230,34 @@ public class CvObjectViewBean extends AbstractViewBean {
     }
 
     /**
-     * @param anAnnotatedObject
+     * Get the search URL.
+     *
+     * @param anAnnotatedObject an annotated object.
+     *
      * @return the SearchUrl to the given AnnotatadObject
      */
-    public String getSearchUrl(final AnnotatedObject anAnnotatedObject) {
+    public String getSearchUrl( final AnnotatedObject anAnnotatedObject ) {
 
-        final String aSearchURL = this.searchURL + anAnnotatedObject.getAc() + "&amp;searchClass=" + getIntactType(anAnnotatedObject) + "&filter=ac";
+        final String aSearchURL = this.searchURL + anAnnotatedObject.getAc() + "&amp;searchClass=" + getIntactType( anAnnotatedObject ) + "&filter=ac";
         return aSearchURL;
 
     }
 
     /**
+     * Get the search URL.
+     *
      * @return the SearchUrl to the given AnnotatadObject
      */
     public String getSearchUrl() {
 
-        final String aSearchURL = this.searchURL + this.obj.getAc() + "&amp;searchClass=" + getIntactType(this.obj) + "&filter=ac";
+        final String aSearchURL = this.searchURL + this.obj.getAc() + "&amp;searchClass=" + getIntactType( this.obj ) + "&filter=ac";
         return aSearchURL;
 
     }
 
     /**
+     * Get the fullname.
+     *
      * @return the FullName to the given CvObject
      */
     public String getFullname() {
@@ -260,19 +266,20 @@ public class CvObjectViewBean extends AbstractViewBean {
 
     /**
      * @param anAnnotatedObject
+     *
      * @return String  the intact type of  the annotedObject
      */
-    private String getIntactType(final AnnotatedObject anAnnotatedObject) {
+    private String getIntactType( final AnnotatedObject anAnnotatedObject ) {
+
+        // TODO move that method to a higher level: AbstractViewBean ?
 
         final String objectIntactType;
         final String className = anAnnotatedObject.getClass().getName();
-        final String basicType = className.substring(className.lastIndexOf(".") + 1);
+        final String basicType = className.substring( className.lastIndexOf( "." ) + 1 );
 
-        objectIntactType = ((basicType.indexOf("Impl") == -1) ?
-                basicType : basicType.substring(0, basicType.indexOf("Impl")));
+        objectIntactType = ( ( basicType.indexOf( "Impl" ) == -1 ) ?
+                             basicType : basicType.substring( 0, basicType.indexOf( "Impl" ) ) );
 
         return objectIntactType;
-
     }
 }
-

@@ -31,18 +31,20 @@ import javax.servlet.http.HttpSession;
  * copied and configured from the TooLargeAction in search3
  *
  * @author Anja Friedrichsen
- * @version $id$
+ * @version $Id$
  */
 public class AdvTooLargeAction extends IntactBaseAction {
 
     /**
      * counts the complete result information in 4 different categories this is necessary because
-     * all controlled vocabulary terms should count in the same category
+     * all controlled vocabulary terms should count in the same category.
      *
      * @param mapping  The ActionMapping used to select this instance
      * @param form     The optional ActionForm bean for this request (if any)
      * @param request  The HTTP request we are processing
      * @param response The HTTP response we are creating
+     *
+     * @return an ActionForward object
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form,
                                  HttpServletRequest request,

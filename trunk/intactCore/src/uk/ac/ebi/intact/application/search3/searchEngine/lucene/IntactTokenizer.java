@@ -10,59 +10,64 @@ import org.apache.lucene.analysis.WhitespaceTokenizer;
 import java.io.Reader;
 
 /**
- * The main part of this class I copied from the MedlineTokenizer.
- * This Tokenizer defines that characters where the Analyzer should stop.
+ * The main part of this class I copied from the MedlineTokenizer. This Tokenizer defines that characters where the
+ * Analyzer should stop.
  *
  * @author Anja Friedrichsen, Mark R. (markr@ebi.ac.uk)
- * @version $id$
+ * @version $Id$
  */
 public class IntactTokenizer extends WhitespaceTokenizer {
 
-    public IntactTokenizer(Reader in) {
-        super(in);
+    /**
+     * Constructs an IntactTokenizer object.
+     *
+     * @param in a Reader object
+     */
+    public IntactTokenizer( Reader in ) {
+        super( in );
     }
 
     /**
      * this method defines the characters where the tokenizer should stop.
      *
-     * @param c 
-     * @return
+     * @param c the char to check upon.
+     *
+     * @return true if the given character is a simple character.
      */
-    protected boolean isTokenChar(char c) {
-        boolean x = super.isTokenChar(c);
+    protected boolean isTokenChar( char c ) {
+        boolean x = super.isTokenChar( c );
         boolean y = !(
-                (c == '?') ||
-                (c == '!') ||
-                (c == ';') ||
-                (c == '.') ||
-                (c == '\'') ||
-                (c == '\\') ||
-                (c == '/') ||
-                (c == ',') ||
-                (c == '"') ||
-                (c == '~') ||
-                (c == '{') ||
-                (c == '}') ||
-                (c == '>') ||
-                (c == '<') ||
-                (c == '+') ||
-                (c == ':') ||
-                (c == '%') ||
-                (c == '&') ||
-                (c == '+') ||
-                (c == ')') ||
-                (c == '(') ||
-                (c == '[') ||
-                (c == ']') ||
-                (c == '#') ||
-                (c == '|') ||
-                (c == '^') ||
-                (c == '@'));
+                ( c == '?' ) ||
+                ( c == '!' ) ||
+                ( c == ';' ) ||
+                ( c == '.' ) ||
+                ( c == '\'' ) ||
+                ( c == '\\' ) ||
+                ( c == '/' ) ||
+                ( c == ',' ) ||
+                ( c == '"' ) ||
+                ( c == '~' ) ||
+                ( c == '{' ) ||
+                ( c == '}' ) ||
+                ( c == '>' ) ||
+                ( c == '<' ) ||
+                ( c == '+' ) ||
+                ( c == ':' ) ||
+                ( c == '%' ) ||
+                ( c == '&' ) ||
+                ( c == '+' ) ||
+                ( c == ')' ) ||
+                ( c == '(' ) ||
+                ( c == '[' ) ||
+                ( c == ']' ) ||
+                ( c == '#' ) ||
+                ( c == '|' ) ||
+                ( c == '^' ) ||
+                ( c == '@' ) );
 
-                // % & * ( ) [ ] # | ^
+        // % & * ( ) [ ] # | ^
 
         return x & y;
 
     }
-
 }

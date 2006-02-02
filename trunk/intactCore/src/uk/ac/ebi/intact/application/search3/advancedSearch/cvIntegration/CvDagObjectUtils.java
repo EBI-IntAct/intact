@@ -32,7 +32,11 @@ public class CvDagObjectUtils {
     IntactHelper aHelper;
     private Connection conn;
 
-
+    /**
+     * Constructs a CvDagObjectUtils object.
+     *
+     * @param helper an IntactHelper object
+     */
     public CvDagObjectUtils( IntactHelper helper ) {
         // build a connection to the database
         this.aHelper = helper;
@@ -50,6 +54,7 @@ public class CvDagObjectUtils {
      * another left and rightBound if it has multiple parents
      *
      * @param newLeftBound int with the left bound to start from.
+     * @param dag          a CvDagObject object
      *
      * @return int with the last used right bound + 1.
      */

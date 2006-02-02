@@ -8,12 +8,11 @@ package uk.ac.ebi.intact.application.search3.business;
 
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 
-import java.io.IOException;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
- * Implments the IntactService interface.
+ * Implements the IntactService interface.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
@@ -29,17 +28,29 @@ public class IntactServiceImpl implements IntactServiceIF {
      * Constructs an instance with given resource file.
      *
      * @param configdir the configuartion directory.
-     * @throws IOException              if the method fails to load the properties file.
+     *
      * @throws MissingResourceException unable to load a resource file.
      */
-    public IntactServiceImpl(String configdir) throws IOException,
-                                                      MissingResourceException {
-        myHvProps = ResourceBundle.getBundle(configdir + SearchConstants.HV_PROPS);
+    public IntactServiceImpl( String configdir ) throws MissingResourceException {
+        myHvProps = ResourceBundle.getBundle( configdir + SearchConstants.HV_PROPS );
+    }
+
+    /**
+     * no arg constructor disabled.
+     */
+    private IntactServiceImpl() {
     }
 
     // Implements business methods
 
-    public String getHierarchViewProp(String key) {
-        return myHvProps.getString(key);
+    /**
+     * Get the HierarchView property from the given key.
+     *
+     * @param key the key giving access to the property.
+     *
+     * @return a hierarchView property.
+     */
+    public String getHierarchViewProp( String key ) {
+        return myHvProps.getString( key );
     }
 }

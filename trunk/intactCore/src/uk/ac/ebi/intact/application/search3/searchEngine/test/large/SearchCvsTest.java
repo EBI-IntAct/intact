@@ -27,7 +27,7 @@ import java.util.Iterator;
  * TODO comment that ...
  *
  * @author Anja Friedrichsen
- * @version $id$
+ * @version $Id$
  */
 public class SearchCvsTest extends TestCase {
 
@@ -50,7 +50,7 @@ public class SearchCvsTest extends TestCase {
 
     SearchEngineImpl engine;
     IterableMap result;
-
+    
     /**
      * Sets up the test fixture. Called before every test case method.
      */

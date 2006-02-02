@@ -28,7 +28,7 @@ import java.util.Iterator;
  * This class test the CvIdentification, CvInteraction and CvInteractionType against the index
  *
  * @author Anja Friedrichsen
- * @version $id$
+ * @version $Id$
  */
 public class SearchCvsTest extends TestCase {
 

@@ -6,12 +6,12 @@
 package uk.ac.ebi.intact.application.search3.searchEngine;
 
 /**
- * This class contains several constants, that aer used in the SearchEngine package.
+ * Contains several constants, that aer used in the SearchEngine package.
  *
  * @author Anja Friedrichsen
- * @version $id$
+ * @version $Id$
  */
-public class SearchEngineConstants {
+public interface SearchEngineConstants {
 
     // names of the search objects
     public static final String INTERACTION = "interaction";

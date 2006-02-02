@@ -17,33 +17,136 @@ import uk.ac.ebi.intact.business.IntactHelper;
 public interface IntactUserIF
         extends uk.ac.ebi.intact.application.commons.business.IntactUserI {
 
-    public void setHelpLink(String link);
+    /**
+     * Specifies the help link value.
+     *
+     * @param link a String specifying the help link value
+     *
+     * @see #getHelpLink
+     */
+    public void setHelpLink( String link );
 
+    /**
+     * Returns the help link value.
+     *
+     * @return a String representing the help link value
+     *
+     * @see #setHelpLink
+     */
     public String getHelpLink();
 
-    public void setSearchValue(String value);
+    /**
+     * Sets this object's search value.
+     *
+     * @param value a String specifying the search value value
+     *
+     * @see #getSearchValue
+     */
+    public void setSearchValue( String value );
 
+    /**
+     * Gets this object's search value.
+     *
+     * @return a String representing the search value value
+     *
+     * @see #setSearchValue
+     */
     public String getSearchValue();
 
-    public void setSearchClass(String searchClass);
+    /**
+     * Specifies the search class value.
+     *
+     * @param searchClass a String specifying the search class value
+     *
+     * @see #getSearchClass
+     */
+    public void setSearchClass( String searchClass );
 
+    /**
+     * Returns the search class value.
+     *
+     * @return a String representing the search class value
+     *
+     * @see #setSearchClass
+     */
     public String getSearchClass();
 
+    /**
+     * Returns the selected chunk value.
+     *
+     * @return an int representing the selected chunk value
+     *
+     * @see #setSelectedChunk
+     */
     public int getSelectedChunk();
 
-    public void setSelectedChunk(int selectedChunk);
+    /**
+     * Specifies the selected chunk value.
+     *
+     * @param selectedChunk an int specifying the selected chunk value
+     *
+     * @see #getSelectedChunk
+     */
+    public void setSelectedChunk( int selectedChunk );
 
+    /**
+     * Gets this object's binary value.
+     *
+     * @return a String representing the binary value value
+     *
+     * @see #setBinaryValue
+     */
     public String getBinaryValue();
 
+    /**
+     * Sets this object's binary value.
+     *
+     * @param binaryValue a String specifying the binary value value
+     *
+     * @see #getBinaryValue
+     */
+    public void setBinaryValue( String binaryValue );
+
+    /**
+     * Returns the intact helper value.
+     *
+     * @return an IntactHelper object representing the intact helper value
+     */
     public IntactHelper getIntactHelper();
 
-    public void setBinaryValue(String binaryValue);
-
+    /**
+     * Returns the view value.
+     *
+     * @return a String representing the view value
+     *
+     * @see #setView
+     */
     public String getView();
 
-    public void setView(String viewValue);
+    /**
+     * Specifies the view value.
+     *
+     * @param viewValue a String specifying the view value
+     *
+     * @see #getView
+     */
+    public void setView( String viewValue );
 
+    /**
+     * Returns the filter value.
+     *
+     * @return a String representing the filter value
+     *
+     * @see #setFilter
+     */
     public String getFilter();
 
-    public void setFilter(String filterValue);
+    /**
+     * Specifies the filter value.
+     *
+     * @param filterValue a String specifying the filter value
+     *
+     * @see #getFilter
+     */
+    public void setFilter( String filterValue );
 }

@@ -21,7 +21,7 @@ import java.util.Map;
  * this information in the corresponding search objetcs.
  *
  * @author Anja Friedrichsen
- * @version $id$
+ * @version $Id$
  */
 public class SqlSearchObjectProvider implements SearchObjectProvider {
 
@@ -30,11 +30,23 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
      */
     public static final int MAX_FETCH_SIZE = 128;
 
-
+    /**
+     * Data access object.
+     */
     private IntactHelper helper;
-    // database connection
+
+
+    // TODO redisign that class so that the connection is not held in the instance but released after every call.
+    /**
+     * Database connection.
+     */
     private Connection conn;
 
+    /**
+     * Constructs a SqlSearchObjectProvider object.
+     *
+     * @param helper an IntactHelper object
+     */
     public SqlSearchObjectProvider( IntactHelper helper ) {
         this.helper = helper;
         try {
@@ -44,16 +56,31 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         }
     }
 
-    /**
-     * This method selects all experiment (with ac, shortlabel, fullname , objclass, xref, alias and annotation) out of
-     * the database and creates a new ExperimentSearchObject for each Experiment. Every Experiment is going to be a
-     * document in the lucene index. Additional to the basic attributes (ac, shortlabel, fullname, objclass, xref, alias
-     * and annotation) the CvInteraction and the CvIdentification is selected for every experiment.
-     *
-     * @return a collection containing all ExperimentSearchObjects to create a lucene index of
-     *
-     * @throws IntactException
-     */
+    ////////////////////////////////////////////
+    // Implementation of SearchObjectProvider
+
+    public SearchObject getSearchObject( String ac, String objClass ) throws IntactException {
+        if ( objClass.equalsIgnoreCase( "uk.ac.ebi.intact.model.ProteinImpl" ) ) {
+            String sqlQuery = SearchEngineConstants.PROTEIN_QUERY + " AND I.ac = '" + ac + "'";
+
+            return (SearchObject) getAllProteins( sqlQuery ).iterator().next();
+        } else if ( objClass.equalsIgnoreCase( "uk.ac.ebi.intact.model.InteractionImpl" ) ) {
+            String sqlQuery = SearchEngineConstants.INTERACTION_QUERY + " AND I.ac = '" + ac + "'";
+            return (SearchObject) getAllInteractions( sqlQuery ).iterator().next();
+        } else if ( objClass.equalsIgnoreCase( "uk.ac.ebi.intact.model.Experiment" ) ) {
+            String sqlQuery = SearchEngineConstants.EXPERIMENT_QUERY + " WHERE E.ac = '" + ac + "'";
+            return (SearchObject) getAllExperiments( sqlQuery ).iterator().next();
+        } else if ( objClass.equalsIgnoreCase( "uk.ac.ebi.intact.model.CvObject" ) ) {
+            String sqlQuery = SearchEngineConstants.CV_OBJECT_QUERY + " WHERE CV.ac = '" + ac + "'";
+            return (SearchObject) getAllCvObjects( sqlQuery ).iterator().next();
+        } else if ( objClass.equalsIgnoreCase( "uk.ac.ebi.intact.model.BioSource" ) ) {
+            String sqlQuery = SearchEngineConstants.BIOSOURCE_QUERY + " WHERE B.ac = '" + ac + "'";
+            return (SearchObject) getAllBioSources( sqlQuery ).iterator().next();
+        } else {
+            throw new IntactException( "Problems with the search object class" );
+        }
+    }
+
     public Collection getAllExperiments( String sqlQuery ) throws IntactException {
         // collection to be returned
         Collection expSet = null;
@@ -163,16 +190,6 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         return expSet;
     }
 
-    /**
-     * This method selects all Interactions (with: ac, shortlabel, fullname, objclass, xref, alias and annotation) out
-     * of the database and creates a new InteractionSearchObject for every Interaction. Every InteractionSearchObject is
-     * going to be a single lucene document. Additional to the basic attributes the interaction type belonging to the
-     * specific Interaction is fetched out of the database.
-     *
-     * @return a collection of InteractionSearchObjects to be inserted into the lucene index
-     *
-     * @throws IntactException
-     */
     public Collection getAllInteractions( String sqlQuery ) throws IntactException {
         // collection to be returned
         Collection interactionSet = null;
@@ -279,15 +296,6 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         return interactionSet;
     }
 
-    /**
-     * This method selects all Proteins (with: ac, shortlabel, fullname, objclass, xref, alias and annotation) out of
-     * the database and creates a new ProteinSearchObject for every Protein. Every ProteinSearchObject is going to be a
-     * single lucene document.
-     *
-     * @return a collection containing all proteins to be indexed with lucene
-     *
-     * @throws IntactException
-     */
     public Collection getAllProteins( String sqlQuery ) throws IntactException {
         // collection with the set of protein searchObjects
         Collection proteinSet = null;
@@ -383,16 +391,6 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         return proteinSet;
     }
 
-
-    /**
-     * This method selects all CvObjects (with: ac, shortlabel, fullname, objclass, xref, alias and annotation) out of
-     * the database and creates a new CvSearchObject for every CvObject. Every CvSearchObject is going to be a single
-     * lucene document.
-     *
-     * @return a collection of CvSearchObject which are going to be indexed with lucene
-     *
-     * @throws IntactException
-     */
     public Collection getAllCvObjects( String sqlQuery ) throws IntactException {
         // collection with CvSearchObjects to be returned
         Collection cvSet = null;
@@ -484,16 +482,6 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         return cvSet;
     }
 
-
-    /**
-     * This method selects all Biosources (with: ac, shortlabel, fullname, objclass, xref, alias and annotation) out of
-     * the database and creates a new BiosourceSearchObject for every Biosource. Every BiosourceSearchObject is going to
-     * be a single lucene document.
-     *
-     * @return
-     *
-     * @throws IntactException
-     */
     public Collection getAllBioSources( String sqlQuery ) throws IntactException {
         // collection with BioSourceSearchObjects to be returned
         Collection bioSoSet = null;
@@ -531,20 +519,20 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
                 fullname = resultSet.getString( 3 );
                 objclass = resultSet.getString( 4 );
                 // get out the xrefs of the specific BioSourceObject
-                final String xref_query = "SELECT CV.shortlabel, X.primaryid FROM ia_xref X, ia_controlledvocab CV " +
-                                          "WHERE parent_ac = '" + ac + "' and CV.ac = X.database_ac";
-                xrefs = this.getResultMapBySQL( xref_query );
+                final String xrefQuery = "SELECT CV.shortlabel, X.primaryid FROM ia_xref X, ia_controlledvocab CV " +
+                                         "WHERE parent_ac = '" + ac + "' and CV.ac = X.database_ac";
+                xrefs = this.getResultMapBySQL( xrefQuery );
                 // SQL query to get out the annotations for a specific BioSourceObject
-                String annot_query = "SELECT CV.shortlabel, A.description FROM ia_biosource2annot BA, ia_annotation A, ia_controlledvocab CV " +
-                                     "WHERE BA.biosource_ac = '" + ac + "' AND BA.annotation_ac = A.ac AND CV.ac = A.topic_ac";
+                String annotQuery = "SELECT CV.shortlabel, A.description FROM ia_biosource2annot BA, ia_annotation A, ia_controlledvocab CV " +
+                                    "WHERE BA.biosource_ac = '" + ac + "' AND BA.annotation_ac = A.ac AND CV.ac = A.topic_ac";
                 // get out the annotation
-                annotations = this.getResultMapBySQL( annot_query );
+                annotations = this.getResultMapBySQL( annotQuery );
 
                 // SQL query to get the alias for the specific object
-                String alias_query = "SELECT cv.shortlabel, a.name FROM ia_alias A, ia_controlledvocab CV  " +
-                                     "WHERE CV.ac = A.aliastype_ac AND A.parent_ac = '" + ac + "'";
+                String aliasQuery = "SELECT cv.shortlabel, a.name FROM ia_alias A, ia_controlledvocab CV  " +
+                                    "WHERE CV.ac = A.aliastype_ac AND A.parent_ac = '" + ac + "'";
                 // get the alias out
-                alias = this.getResultMapBySQL( alias_query );
+                alias = this.getResultMapBySQL( aliasQuery );
 
                 // create a BioSourceSearchObject with the retrieved attributes
                 BioSourceSearchObject so = new BioSourceSearchObject( ac, shortlabel, fullname, objclass, xrefs, annotations, alias );
@@ -582,6 +570,8 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         return bioSoSet;
     }
 
+    /////////////////////////////////////////
+    // private methods
 
     /**
      * This method returns the result of the given SQL query. The query should select two colums, the first is planned
@@ -662,13 +652,13 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
      * This method creates CvSearchObjects out of the information it got from the database querying the SQL query, that
      * is given as an argument.
      *
-     * @param sql_query SQL statement to query the database
+     * @param sqlQuery SQL statement to query the database
      *
      * @return CvSearchObject holding the information fetched out of the database
      *
      * @throws IntactException
      */
-    private CvSearchObject getCvObjectBySqlQuery( String sql_query ) throws IntactException {
+    private CvSearchObject getCvObjectBySqlQuery( String sqlQuery ) throws IntactException {
         //  CvSearchObject to be returned
         CvSearchObject cvso = null;
 
@@ -678,7 +668,7 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
             stmt = conn.createStatement();
             stmt.setFetchSize( MAX_FETCH_SIZE );
 
-            resultSet = stmt.executeQuery( sql_query );
+            resultSet = stmt.executeQuery( sqlQuery );
 
             String ac = null;
             String shortlabel = null;
@@ -710,38 +700,4 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         }
         return cvso;
     }
-
-    /**
-     * This method searches the database for a specific object with the given accession number and object class. It is
-     * used to update the index.
-     *
-     * @param ac       accession number of the object to be found
-     * @param objClass class of the object to be found
-     *
-     * @return the fetched IntAct object
-     *
-     * @throws IntactException
-     */
-    public SearchObject getSearchObject( String ac, String objClass ) throws IntactException {
-        if ( objClass.equalsIgnoreCase( "uk.ac.ebi.intact.model.ProteinImpl" ) ) {
-            String sqlQuery = SearchEngineConstants.PROTEIN_QUERY + " AND I.ac = '" + ac + "'";
-
-            return (SearchObject) getAllProteins( sqlQuery ).iterator().next();
-        } else if ( objClass.equalsIgnoreCase( "uk.ac.ebi.intact.model.InteractionImpl" ) ) {
-            String sqlQuery = SearchEngineConstants.INTERACTION_QUERY + " AND I.ac = '" + ac + "'";
-            return (SearchObject) getAllInteractions( sqlQuery ).iterator().next();
-        } else if ( objClass.equalsIgnoreCase( "uk.ac.ebi.intact.model.Experiment" ) ) {
-            String sqlQuery = SearchEngineConstants.EXPERIMENT_QUERY + " WHERE E.ac = '" + ac + "'";
-            return (SearchObject) getAllExperiments( sqlQuery ).iterator().next();
-        } else if ( objClass.equalsIgnoreCase( "uk.ac.ebi.intact.model.CvObject" ) ) {
-            String sqlQuery = SearchEngineConstants.CV_OBJECT_QUERY + " WHERE CV.ac = '" + ac + "'";
-            return (SearchObject) getAllCvObjects( sqlQuery ).iterator().next();
-        } else if ( objClass.equalsIgnoreCase( "uk.ac.ebi.intact.model.BioSource" ) ) {
-            String sqlQuery = SearchEngineConstants.BIOSOURCE_QUERY + " WHERE B.ac = '" + ac + "'";
-            return (SearchObject) getAllBioSources( sqlQuery ).iterator().next();
-        } else {
-            throw new IntactException( "Problems with the search object class" );
-        }
-    }
-
 }

@@ -55,6 +55,9 @@ public class ShowCvGraphAction extends IntactBaseAction {
      * @return - represents a destination to which the controller servlet, <code>ActionServlet</code>, might be directed
      *         to perform a RequestDispatcher.forward() or HttpServletResponse.sendRedirect() to, as a result of
      *         processing activities of an <code>Action</code> class
+     *
+     * @throws IOException      ...
+     * @throws ServletException ...
      */
     public ActionForward execute( ActionMapping mapping,
                                   ActionForm form,

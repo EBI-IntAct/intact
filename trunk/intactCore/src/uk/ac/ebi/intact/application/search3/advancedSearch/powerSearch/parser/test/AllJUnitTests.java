@@ -11,7 +11,7 @@ import junit.framework.TestSuite;
 
 /**
  * @author Anja Friedrichsen
- * @version $id$
+ * @version $Id$
  */
 public class AllJUnitTests extends TestCase {
 

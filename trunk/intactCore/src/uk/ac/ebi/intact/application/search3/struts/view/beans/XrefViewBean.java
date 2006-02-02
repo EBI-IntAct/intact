@@ -14,8 +14,8 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * This class provides JSP view information for a particular Xref.
- * It is used in the CvObject View and in the BioSource View.
+ * This class provides JSP view information for a particular Xref. It is used in the CvObject View and in the BioSource
+ * View.
  *
  * @author Michael Kleen, Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version XrefViewBean.java Date: Nov 24, 2004 Time: 12:50:50 PM
@@ -27,7 +27,7 @@ public class XrefViewBean {
     private String searchURL;
 
 
-    public XrefViewBean(final Xref obj, final String link, final String searchURL) {
+    public XrefViewBean( final Xref obj, final String link, final String searchURL ) {
 
 
         this.obj = obj;
@@ -65,17 +65,17 @@ public class XrefViewBean {
         String searchUrl = null;
         String id = this.obj.getPrimaryId();
 
-        if (id != null) {
+        if ( id != null ) {
 
             Collection dbAnnotation = obj.getCvDatabase().getAnnotations();
-            if (null != dbAnnotation) {
+            if ( null != dbAnnotation ) {
                 Iterator i = dbAnnotation.iterator();
-                while (i.hasNext()) {
+                while ( i.hasNext() ) {
                     Annotation annot = (Annotation) i.next();
-                    if (annot.getCvTopic().getShortLabel().equals("search-url")) {
+                    if ( annot.getCvTopic().getShortLabel().equals( "search-url" ) ) {
                         searchUrl = annot.getAnnotationText();
                         // replace it, then its linkable 
-                        searchUrl = SearchReplace.replace(searchUrl, "${ac}", id);
+                        searchUrl = SearchReplace.replace( searchUrl, "${ac}", id );
                         return searchUrl;
                     }
                 }
@@ -89,32 +89,29 @@ public class XrefViewBean {
     }
 
     public String getXrefQualifierName() {
-        if (null != this.obj.getCvXrefQualifier()) {
+        if ( null != this.obj.getCvXrefQualifier() ) {
             return this.obj.getCvXrefQualifier().getShortLabel();
-        }
-        else {
+        } else {
             return "-";
         }
     }
 
     public String getPrimaryId() {
 
-        if (null != this.obj.getPrimaryId()) {
+        if ( null != this.obj.getPrimaryId() ) {
             return this.obj.getPrimaryId();
-        }
-        else {
+        } else {
             return "-";
         }
     }
 
     public String getPrimaryIdSearchUrl() {
 
-        if (null != this.obj.getPrimaryId()) {
+        if ( null != this.obj.getPrimaryId() ) {
 
             //TODO
             return null;
-        }
-        else {
+        } else {
             return "-";
         }
 
@@ -122,11 +119,10 @@ public class XrefViewBean {
 
     public String getSecondaryId() {
 
-        if (null != this.obj.getSecondaryId()) {
+        if ( null != this.obj.getSecondaryId() ) {
             return this.obj.getSecondaryId();
 
-        }
-        else {
+        } else {
             return "-";
         }
 
@@ -134,12 +130,11 @@ public class XrefViewBean {
 
     public String getSecondaryIdSearchUrl() {
 
-        if (null != this.obj.getSecondaryId()) {
+        if ( null != this.obj.getSecondaryId() ) {
             //TODO
             return null;
 
-        }
-        else {
+        } else {
             return "-";
         }
 

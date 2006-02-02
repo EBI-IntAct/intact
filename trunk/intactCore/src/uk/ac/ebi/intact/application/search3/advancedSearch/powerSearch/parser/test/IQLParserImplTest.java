@@ -16,7 +16,7 @@ import uk.ac.ebi.intact.business.IntactException;
  * that parses an IQL statement into an lucene query statement
  *
  * @author Anja Friedrichsen
- * @version $id$
+ * @version $Id$
  */
 public class IQLParserImplTest extends TestCase {
 

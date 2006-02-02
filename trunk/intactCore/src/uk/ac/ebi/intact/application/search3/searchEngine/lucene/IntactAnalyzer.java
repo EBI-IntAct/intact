@@ -14,7 +14,7 @@ import java.util.Set;
  * This class classifies an Analyzer specific for IntAct. It is a modification of the lucene StandardAnalyzer.
  *
  * @author Anja Friedrichsen
- * @version $id$
+ * @version $Id$
  */
 public class IntactAnalyzer extends Analyzer {
 
@@ -22,15 +22,14 @@ public class IntactAnalyzer extends Analyzer {
     private Set stopSet;
 
     /**
-     * An array containing some common English words that
-     * are usually not useful for searching.
+     * An array containing some common English words that are usually not useful for searching.
      */
     public static final String[] STOP_WORDS = {
-        "a", "an", "and", "are", "as", "at", "be", "but", "by",
-        "for", "if", "in", "into", "is", "it",
-        "not", "of", "on", "or", "s", "such",
-        "t", "that", "the", "their", "then", "there", "these",
-        "they", "this", "to", "was", "will", "with"
+            "a", "an", "and", "are", "as", "at", "be", "but", "by",
+            "for", "if", "in", "into", "is", "it",
+            "not", "of", "on", "or", "s", "such",
+            "t", "that", "the", "their", "then", "there", "these",
+            "they", "this", "to", "was", "will", "with"
     };
 
     /**
@@ -38,13 +37,13 @@ public class IntactAnalyzer extends Analyzer {
      */
     // TODO load those terms from the database, you may hardCode the CvObject (CvTopic & CvAliasType) name, but not the shortlabel as they can change without notice.
     private static final String[] TEXT_FIELDS = {
-        "annotation", "agonist", "author-confidence", "caution",
-        "comment", "confidence-mapping", "definition", "disease",
-        "example", "exp-modification", "function", "fullname", "inhibition",
-        "isoform-comment", "kinetics", "negative", "on-hold", "pathway",
-        "prerequisite-ptm", "remark-internal", "resulting-ptm", "stimulation",
-        "submitted", "uniprot-cc-note", "uniprot-dr-export", "interaction_fulllname",
-        "interactiontype_fullname", "identification_fullname"
+            "annotation", "agonist", "author-confidence", "caution",
+            "comment", "confidence-mapping", "definition", "disease",
+            "example", "exp-modification", "function", "fullname", "inhibition",
+            "isoform-comment", "kinetics", "negative", "on-hold", "pathway",
+            "prerequisite-ptm", "remark-internal", "resulting-ptm", "stimulation",
+            "submitted", "uniprot-cc-note", "uniprot-dr-export", "interaction_fulllname",
+            "interactiontype_fullname", "identification_fullname"
     };
 
 
@@ -52,37 +51,39 @@ public class IntactAnalyzer extends Analyzer {
      * Builds an analyzer.
      */
     public IntactAnalyzer() {
-        this(STOP_WORDS);
+        this( STOP_WORDS );
     }
 
     /**
      * Builds an analyzer with the given stop words.
+     * @param stopWords an array of stop word
      */
-    public IntactAnalyzer(String[] stopWords) {
-        stopSet = StopFilter.makeStopSet(stopWords);
+    public IntactAnalyzer( String[] stopWords ) {
+        stopSet = StopFilter.makeStopSet( stopWords );
     }
 
     /**
-     * This method accomplishes the analyzing. It takes the fieldName and distingiushes
-     * if the field should be analyzed with the IntactTokenizer, which stops at stopwords and
-     * at the specific characters, or with the WhitespaceTokenizer which stops only at whitespaces.
+     * This method accomplishes the analyzing. It takes the fieldName and distingiushes if the field should be analyzed
+     * with the IntactTokenizer, which stops at stopwords and at the specific characters, or with the
+     * WhitespaceTokenizer which stops only at whitespaces.
      *
-     * @param fieldName
-     * @param reader
-     * @return
+     * @param fieldName the field name
+     * @param reader a reader
+     *
+     * @return a tokenStream.
      */
-    public TokenStream tokenStream(String fieldName, Reader reader) {
+    public TokenStream tokenStream( String fieldName, Reader reader ) {
 
         // analyze the fields that contains text with the IntActTokenizer
-        if (this.isTextField(fieldName)) {
-            TokenStream result = new IntactTokenizer(reader);
-            result = new LowerCaseFilter(result);
-            result = new StopFilter(result, stopSet);
+        if ( this.isTextField( fieldName ) ) {
+            TokenStream result = new IntactTokenizer( reader );
+            result = new LowerCaseFilter( result );
+            result = new StopFilter( result, stopSet );
             return result;
-        // analyze the fields that contain keywords with the WhitespaceTokenizer
+            // analyze the fields that contain keywords with the WhitespaceTokenizer
         } else {
-            TokenStream result = new WhitespaceTokenizer(reader);
-            result = new LowerCaseFilter(result);
+            TokenStream result = new WhitespaceTokenizer( reader );
+            result = new LowerCaseFilter( result );
             return result;
         }
     }
@@ -91,13 +92,15 @@ public class IntactAnalyzer extends Analyzer {
      * check if the field name is one of the textfield names
      *
      * @param fieldName
+     *
      * @return 'true' if the field contains text, 'false' if it contains a keyword
      */
-    private boolean isTextField(String fieldName) {
-        for (int i = 0; i < TEXT_FIELDS.length; i++) {
-            if (fieldName.equalsIgnoreCase(TEXT_FIELDS[i])) return true;
+    private boolean isTextField( String fieldName ) {
+        for ( int i = 0; i < TEXT_FIELDS.length; i++ ) {
+            if ( fieldName.equalsIgnoreCase( TEXT_FIELDS[ i ] ) ) {
+                return true;
+            }
         }
         return false;
     }
-
 }

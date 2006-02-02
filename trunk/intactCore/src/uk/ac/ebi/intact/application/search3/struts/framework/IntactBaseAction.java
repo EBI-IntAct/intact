@@ -33,6 +33,9 @@ import java.util.HashMap;
  */
 public abstract class IntactBaseAction extends Action {
 
+    /**
+     * Logger for that class.
+     */
     protected transient static final Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
 
     /**
@@ -114,7 +117,7 @@ public abstract class IntactBaseAction extends Action {
     }
 
     /**
-     * Saves the errors in given request for <struts:errors> tag.
+     * Saves the errors in given request for &lt;struts:errors&gt; tag.
      *
      * @param request the request to save errors.
      */
@@ -122,6 +125,7 @@ public abstract class IntactBaseAction extends Action {
         super.saveErrors(request, myErrors);
     }
 
+    ///////////////////////
     // Helper methods.
 
     /**

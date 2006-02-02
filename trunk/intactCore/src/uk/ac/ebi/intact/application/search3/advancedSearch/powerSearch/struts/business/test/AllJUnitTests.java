@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
  * TODO comment that ...
  *
  * @author Anja Friedrichsen
- * @version $id$
+ * @version $Id$
  */
 public class AllJUnitTests extends TestCase {
 

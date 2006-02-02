@@ -27,7 +27,7 @@ import java.io.IOException;
  * Be carefull to delete that directory before indexing, otherwise the existing index is extended.
  *
  * @author Anja Friedrichsen
- * @version $id$
+ * @version $Id$
  */
 public class CreateD002IndexTest extends TestCase {
 

@@ -24,7 +24,7 @@ import java.io.IOException;
  * Thas class provides a method to create an Image on the fly.
  *
  * @author Anja Friedrichsen
- * @version $id$
+ * @version $Id$
  */
 public class ImageServlet extends HttpServlet {
 

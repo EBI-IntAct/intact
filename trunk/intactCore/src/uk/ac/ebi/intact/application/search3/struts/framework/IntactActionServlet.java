@@ -6,7 +6,6 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search3.struts.framework;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.struts.action.ActionServlet;
 import uk.ac.ebi.intact.application.search3.business.IntactServiceIF;
 import uk.ac.ebi.intact.application.search3.business.IntactServiceImpl;
@@ -14,13 +13,11 @@ import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This is Intact specific action servlet class. This class provides our own
- * initialization.
+ * This is Intact specific action servlet class. This class provides our own initialization.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
@@ -35,30 +32,25 @@ public class IntactActionServlet extends ActionServlet {
         ServletContext ctx = super.getServletContext();
 
         // The configuration dir.
-        String configDir = ctx.getInitParameter(SearchConstants.CONFIG_DIR);
+        String configDir = ctx.getInitParameter( SearchConstants.CONFIG_DIR );
         // Create an instance of IntactService.
         IntactServiceIF service = null;
-        try {
-            // Load the Intact Types resources.
-            service = new IntactServiceImpl(configDir);
-        }
-        catch (IOException ioe) {
-            // Unable to load the properties file.
-            super.log(ExceptionUtils.getStackTrace(ioe));
-            throw new ServletException();
-        }
+
+        // Load the Intact Types resources.
+        service = new IntactServiceImpl( configDir );
+
         // Store the service into the session scope.
-        ctx.setAttribute(SearchConstants.INTACT_SERVICE, service);
+        ctx.setAttribute( SearchConstants.INTACT_SERVICE, service );
 
         //now set the map defining the maximum number of items that can be displayed
         //for given intact types (currently Protein, Experiment, Interaction
         //and CvObject)
         Map sizeMap = new HashMap();
-        sizeMap.put("Experiment", Integer.toString(SearchConstants.MAXIMUM_DISPLAYABLE_EXPERIMENTS));
-        sizeMap.put("Interaction", Integer.toString(SearchConstants.MAXIMUM_DISPLAYABLE_INTERACTION));
-        sizeMap.put("CvObject", Integer.toString(SearchConstants.MAXIMUM_DISPLAYABLE_CVOBJECTS));
-        sizeMap.put("Protein", Integer.toString(SearchConstants.MAXIMUM_DISPLAYABLE_PROTEIN));
-        ctx.setAttribute(SearchConstants.MAX_ITEMS_MAP, sizeMap);
+        sizeMap.put( "Experiment", Integer.toString( SearchConstants.MAXIMUM_DISPLAYABLE_EXPERIMENTS ) );
+        sizeMap.put( "Interaction", Integer.toString( SearchConstants.MAXIMUM_DISPLAYABLE_INTERACTION ) );
+        sizeMap.put( "CvObject", Integer.toString( SearchConstants.MAXIMUM_DISPLAYABLE_CVOBJECTS ) );
+        sizeMap.put( "Protein", Integer.toString( SearchConstants.MAXIMUM_DISPLAYABLE_PROTEIN ) );
 
+        ctx.setAttribute( SearchConstants.MAX_ITEMS_MAP, sizeMap );
     }
 }

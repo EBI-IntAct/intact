@@ -4,7 +4,11 @@ package uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.business
 import java.awt.*;
 
 /**
- * LayoutEdge which has a render method to draw onto a canvas
+ * LayoutEdge which has a render method to draw onto a canvas.
+ *
+ * @author EGO
+ * @version $Id$
+ * @since 27.04.2005
  */
 public class StrokeEdge implements LayoutEdge {
 
@@ -33,7 +37,6 @@ public class StrokeEdge implements LayoutEdge {
         this.route = route;
     }
 
-
     /**
      * Draw the edge.
      *
@@ -49,4 +52,3 @@ public class StrokeEdge implements LayoutEdge {
 
     }
 }
-
