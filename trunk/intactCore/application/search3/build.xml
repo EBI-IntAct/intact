@@ -191,8 +191,8 @@
                 <exclude name="noIndexError.jsp"/>
                 <exclude name="sidebarFooter.jsp"/>
                 <exclude name="cvBrowser.jsp"/>
-                <!--ajoute-->
 
+                <!-- interaction search pages -->
                 <exclude name="interactionSearch.jsp"/>
                 <exclude name="multipleInteraction.jsp"/>
                 <exclude name="noCommonInteraction.jsp"/>
@@ -223,6 +223,9 @@
                 <exclude name="greencheck-bullet.gif"/>
                 <exclude name="warning.gif"/>
                 <exclude name="wait_ball_green.gif"/>
+                <!-- PSI 1 & 2.5 buttons -->
+                <exclude name="psi10.png"/>
+                <exclude name="psi25.png"/>
             </fileset>
         </delete>
 
