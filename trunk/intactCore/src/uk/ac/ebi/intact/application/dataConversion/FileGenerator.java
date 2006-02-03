@@ -17,19 +17,15 @@ import java.io.*;
 import java.util.*;
 
 /**
- * This class is the main application class for generating a flat file format from the contents of a database. Currently
- * the file format is PSI, and the DBs are postgres or oracle, though the DB details are hidden behind the
+ * This class is the main application class for generating a flat file format from the contents of a database.
+ * <p>
+ * Currently the file format is PSI, and the DBs are postgres or oracle, though the DB details are hidden behind the
  * IntactHelper/persistence layer as usual.
  *
  * @author Samuel Kerrien, Chris Lewington
  * @version $Id$
  */
 public class FileGenerator {
-
-    /**
-     * System independant value representing the file separator.
-     */
-    public static final String FILE_SEPARATOR = System.getProperty( "file.separator" );
 
     /////////////////////
     // Private methods
@@ -112,8 +108,11 @@ public class FileGenerator {
         return session.getPsiDocument();
     }
 
-    private static void processLargeExperiment( Experiment exp, String fileName, int chunkSize,
-                                                PsiVersion version, CvMapping mapping ) throws Exception {
+    private static void processLargeExperiment( Experiment exp,
+                                                String fileName,
+                                                int chunkSize,
+                                                PsiVersion version,
+                                                CvMapping mapping ) throws Exception {
 
         // Need to process the big ones chunk by chunk -
         // do this by splitting the Interactions into manageable pieces (LARGE_SCALE_CHUNK_SIZE each),
@@ -223,6 +222,14 @@ public class FileGenerator {
         System.out.println( "done." );
     }
 
+    ////////////////////////////
+    // Specific Common Cli
+
+    /**
+     * Displays usage for the program.
+     *
+     * @param options the options (common-cli).
+     */
     private static void displayUsage( Options options ) {
         // automatically generate the help statement
         HelpFormatter formatter = new HelpFormatter();
@@ -235,35 +242,10 @@ public class FileGenerator {
     }
 
     /**
-     * Make sure that the parent directories of the given filename exist.
+     * Setup the command line options.
      *
-     * @param filename      The filename for which we want to make sure that the parent directories are created.
-     * @param fileSeparator The file separator in use in that filename.
-     *
-     * @return true if the parent directories exist, false otherwise.
+     * @return the options (common-cli).
      */
-    private static boolean createParentDirectories( String filename, String fileSeparator ) {
-        boolean success = true;
-
-        int index = filename.lastIndexOf( fileSeparator );
-        String path = filename.substring( 0, index );
-
-        // create all parent directories
-        File pathFile = new File( path );
-
-        if ( ! pathFile.exists() ) {
-            System.out.println( path + " doesn't exist yet, creating it..." );
-            success = new File( path ).mkdirs();
-            if ( ! success ) {
-                System.out.println( "ERROR: Could not create " + path );
-            } else {
-                System.out.println( path + " was created successfully." );
-            }
-        }
-
-        return success;
-    }
-
     private static Options setupCommandLineOptions() {
         // create Option objects
         Option helpOpt = new Option( "help", "print this message." );
@@ -317,8 +299,11 @@ public class FileGenerator {
      *
      * @throws Exception
      */
-    public static void generatePsiData( String searchPattern, String fileName, int chunkSize,
-                                        PsiVersion version, File reverseCvFilename ) throws Exception {
+    public static void generatePsiData( String searchPattern,
+                                        String fileName,
+                                        int chunkSize,
+                                        PsiVersion version,
+                                        File reverseCvFilename ) throws Exception {
 
         IntactHelper helper = null;
 
@@ -466,40 +451,16 @@ public class FileGenerator {
                 throw new IllegalArgumentException( "You must provide the filename of the PSI file to generate." );
             }
 
-            // check if filename contains [integer], if so, remove it and use the integer value to split the unique
-            // experiment into chunks of that size.
-            int startIdx = fileName.indexOf( '[' );
-            int stopIdx = fileName.indexOf( ']' );
-            int chunkSize = -1;
+            // remove eventual
+            FileHelper.ChunkSize parsedChunkSize = FileHelper.removeChunkFlag( fileName );
 
-            if ( startIdx != -1 && stopIdx != -1 ) {
-                // found [ and ]
-                String chunkSizeStr = fileName.substring( startIdx + 1, stopIdx );
-
-                try {
-                    chunkSize = Integer.parseInt( chunkSizeStr );
-                    if ( chunkSize < 1 ) {
-                        System.err.println( "Chunk size (" + chunkSize + ") was incorrect, set it to default (" + 2500 + ")" );
-                        chunkSize = 2500;
-                    }
-
-                    // replace the original filename from which we remove the [123]
-                    String tmp = fileName.substring( 0, startIdx ) + fileName.substring( stopIdx + 1, fileName.length() );
-                    System.out.println( "Replacing filename: '" + fileName + "' -> '" + tmp + "'" );
-                    fileName = tmp;
-
-                    System.out.println( "chunkSize = " + chunkSize );
-
-                } catch ( NumberFormatException e ) {
-                    throw new IllegalArgumentException( "filename " + fileName + " has a specified chunk size that is not of type integer: " + chunkSizeStr + "" );
-                }
-
-            } else if ( startIdx != -1 || stopIdx != -1 ) {
-                // found [ xor ]
-                throw new IllegalArgumentException( "filename " + fileName + " has an incorrect format (eg. abc[11])." );
-            }
+            fileName = parsedChunkSize.getCleanedString();
+            int chunkSize = parsedChunkSize.getChunkSize();
 
             long start = System.currentTimeMillis();
+
+            // Check and create all missing parent directory.
+            FileHelper.checkParentDirectory( fileName );
 
             // check that all parent directory exist in the given filename
             // 1, change SLASH by the
@@ -519,7 +480,7 @@ public class FileGenerator {
                 }
 
                 // 3. make sure that the parent directories exists before to create the file.
-                createParentDirectories( fileName, separator );
+                FileHelper.createParentDirectories( fileName, separator );
             }
 
             // Generate PSI data
