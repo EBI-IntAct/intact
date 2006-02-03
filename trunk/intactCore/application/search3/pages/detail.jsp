@@ -378,7 +378,6 @@ Displaying <b><%= firstDisplayIndex %></b> to
               <!-- linked to BioSource search -->
                 <td colspan="2" class="lefttop">
                     <nobr><%= bean.getExperimentBioSourceName() %></nobr>
-                    </a>
                 </td>
             <% }  else { %>
                 <td colspan="2" class="lefttop">
@@ -563,19 +562,16 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <!-- first cell - title plus checkbox -->
             <%-- <td width="10%" rowspan="2" class="headermid"> --%>
             <td rowspan="2" class="headermid">
-              <nobr><input name="<%= interaction.getAc() %>" type="checkbox"  class="text">
-                  <span class="whiteheadertext">Interaction</span>
-                <a href="<%= bean.getHelpLink() + "Interaction"%>"
-                    target="new" class="whitelink">
-                    <sup>?</sup></nobr>
-                </a>
+                <nobr><input name="<%= interaction.getAc() %>" type="checkbox" class="text">
+                    <span class="whiteheadertext">Interaction</span>
+                    <a href="<%= bean.getHelpLink() + "Interaction"%>" target="new" class="whitelink"><sup>?</sup></a>
+                </nobr>
             </td>
 
             <!-- 'name' title cell, linked to help -->
             <%-- <td width="10%" class="headerlight"> --%>
             <td class="headerlight">
-                <a href="<%= bean.getHelpLink() + "AnnotatedObject.shortLabel"%>"
-                    target="new" class="tdlink">
+                <a href="<%= bean.getHelpLink() + "AnnotatedObject.shortLabel"%>" target="new" class="tdlink">
                     Name
                 </a>
             </td>
@@ -987,7 +983,6 @@ Displaying <b><%= firstDisplayIndex %></b> to
 
                 <td class="data">
                    -
-                    </a>
                 </td>
            <%  }  %>
         </tr>
