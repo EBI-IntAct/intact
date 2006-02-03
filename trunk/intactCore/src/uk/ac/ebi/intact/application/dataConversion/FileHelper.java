@@ -54,7 +54,8 @@ public class FileHelper {
     public static String fixFileSeparator( String filename ) {
 
         String currentSystem = File.separator;
-        String otherSystem = ( currentSystem == "/" ? "\\" : "/" ); // if unix, give windows and vice versa.
+        // using == for String comparison doesn't work under Linux !!!
+        String otherSystem = ( currentSystem.equals( "/" ) ? "\\" : "/" ); // if unix, give windows and vice versa.
 
         if ( filename.indexOf( otherSystem ) != -1 ) {
 
