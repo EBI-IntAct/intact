@@ -4,6 +4,7 @@ import uk.ac.ebi.intact.application.search3.business.Constants;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.SearchReplace;
 
+import java.sql.Timestamp;
 import java.util.*;
 
 /**
@@ -68,12 +69,6 @@ public class MainDetailViewBean extends AbstractViewBean {
     private String bioSourceName;
 
     /**
-     * List of Annotation topics which should be filtered on. The values are set in the bean's
-     * constructor.
-     */
-//    private List annotationFilters;
-
-    /**
      * Holds a list of Annotations that may be publicly displayed, ie a filtered list removing those to be excluded
      * (currently rrmakrs and uiprot exports)
      */
@@ -118,6 +113,21 @@ public class MainDetailViewBean extends AbstractViewBean {
      */
     int maxPages;
 
+    private static final String PMID_PARAM = "${pmid}";
+    private static final String YEAR_PARAM = "${year}";
+    private static final String FTP_CURRENT_RELEASE = "ftp://ftp.ebi.ac.uk/pub/databases/intact/current";
+    private static final String PSI1_URL  = FTP_CURRENT_RELEASE + "/psi1/pmid/" + YEAR_PARAM + "/" + PMID_PARAM + ".zip";
+    private static final String PSI25_URL = FTP_CURRENT_RELEASE + "/psi25/pmid/" + YEAR_PARAM + "/" + PMID_PARAM + ".zip";
+
+    private static boolean hasYearParam = ( PSI1_URL.indexOf( YEAR_PARAM ) != -1 );
+    private static boolean hasPubmedParam = ( PSI1_URL.indexOf( PMID_PARAM ) != -1 );
+
+    private String psi1Url;
+    private String psi25Url;
+
+    private boolean hasPsi1URL = false;
+    private boolean hasPsi25URL = false;
+
     /**
      * The bean constructor requires an Experiment to wrap, plus beans on the context path to the search application and
      * the help link.
@@ -159,13 +169,36 @@ public class MainDetailViewBean extends AbstractViewBean {
             interactionList = obj.getInteractions();
         }
 
-//        //now set up the Annotation filter list
-//        annotationFilters = new ArrayList();
-//        annotationFilters.add("remark");
-//        annotationFilters.add("remark-internal");
-//        annotationFilters.add("uniprot-dr-export");
-//        annotationFilters.add("uniprot-cc-export");
+        // TODO centralize where the PSI links are created.
+        psi1Url = PSI1_URL;
+        psi25Url = PSI25_URL;
 
+        if ( hasPubmedParam ) {
+            String pubmedId = getPubmedId( obj );
+
+            if ( pubmedId != null ) {
+                // create PSI 1 URL
+                psi1Url = SearchReplace.replace( psi1Url, PMID_PARAM, pubmedId );
+                hasPsi1URL = true;
+
+                // create PSI 2.5 URL
+                psi25Url = SearchReplace.replace( psi25Url, PMID_PARAM, pubmedId );
+                hasPsi25URL = true;
+            }
+        }
+
+        if ( hasYearParam ) {
+            String year = getCreatedYear( obj );
+            if( year != null ) {
+                  // create PSI 1 URL
+                psi1Url = SearchReplace.replace( psi1Url, YEAR_PARAM, year );
+                hasPsi1URL = true;
+
+                // create PSI 2.5 URL
+                psi25Url = SearchReplace.replace( psi25Url, YEAR_PARAM, year );
+                hasPsi25URL = true;
+            }
+        }
     }
 
     /**
@@ -893,5 +926,53 @@ public class MainDetailViewBean extends AbstractViewBean {
     public String getProteinPartnerURL( Protein prot ) {
 
         return searchURL + prot.getAc() + "&amp;searchClass=Protein&amp;view=partner&filter=ac";
+    }
+
+    //////////////////////////
+    // PSI links
+
+    private static String getCreatedYear( Experiment exp ) {
+
+        Timestamp created = exp.getCreated();
+        java.sql.Date d = new java.sql.Date( created.getTime() );
+        Calendar c = new GregorianCalendar();
+        c.setTime( d );
+
+        int year = c.get( Calendar.YEAR );
+
+        return String.valueOf( year );
+    }
+
+    private String getPubmedId( Experiment experiment ) {
+
+        for ( Iterator iterator = experiment.getXrefs().iterator(); iterator.hasNext(); ) {
+            Xref xref = (Xref) iterator.next();
+
+            if ( xref.getCvDatabase().getShortLabel().equals( CvDatabase.PUBMED ) ) {
+                CvXrefQualifier qualifier = xref.getCvXrefQualifier();
+
+                if ( qualifier != null && qualifier.getShortLabel().equals( CvXrefQualifier.PRIMARY_REFERENCE ) ) {
+                    // found it
+                    return xref.getPrimaryId();
+                }
+            }
+        }
+        return null;
+    }
+
+    public String getPsi1Url() {
+        return psi1Url;
+    }
+
+    public String getPsi25Url() {
+        return psi25Url;
+    }
+
+    public boolean hasPsi1URL() {
+        return hasPsi1URL;
+    }
+
+    public boolean hasPsi25URL() {
+        return hasPsi25URL;
     }
 }
