@@ -266,12 +266,35 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <!-- 'Experiment' title cell plus checkbox -->
             <!-- <td width="10%" rowspan="2" class="headerdark"> -->
             <td rowspan="2" class="headerdark">
+                <table  width="100%" border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td valign="top">
+                            <nobr><span class="whiteheadertext">Experiment</span>
+                                <a href="<%= bean.getHelpLink() + "Experiment"%>" target="new" class="whitelink"><sup>
+                                    ?</sup></a>
 
-
-                    <nobr><span class="whiteheadertext">Experiment</span>
-                <a href="<%= bean.getHelpLink() + "Experiment"%>" target="new"
-                   class="whitelink"><sup>?</sup></nobr>
-                </a>
+                            </nobr>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="bottom" align="center">
+                            <nobr>
+                                <% if ( bean.hasPsi1URL() ) { %>
+                                <a href="<%= bean.getPsi1Url() %>"><img src="<%= request.getContextPath() %>/images/psi10.png"
+                                                                        alt="PSI-MI 1.0 Download"
+                                                                        onmouseover="return overlib('Download data from publication in PSI-MI XML 1.0', DELAY, 150, TEXTCOLOR, '#FFFFFF', FGCOLOR, '#EA8323', BGCOLOR, '#FFFFFF');"
+                                                                        onmouseout="return nd();"></a>
+                                <% } %>
+                                <% if ( bean.hasPsi25URL() ) { %>
+                                <a href="<%= bean.getPsi25Url() %>"><img src="<%= request.getContextPath() %>/images/psi25.png"
+                                                                         alt="PSI-MI 2.5 Download"
+                                                                         onmouseover="return overlib('Download data from publication in PSI-MI XML 2.5', DELAY, 150, TEXTCOLOR, '#FFFFFF', FGCOLOR, '#EA8323', BGCOLOR, '#FFFFFF');"
+                                                                         onmouseout="return nd();"></a>
+                                <% } %>
+                            </nobr>
+                        </td>
+                    </tr>
+                </table>
             </td>
 
             <!-- 'name' title, linked to help -->
