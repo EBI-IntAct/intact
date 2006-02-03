@@ -10,10 +10,7 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -66,24 +63,12 @@ public class ExperimentListGenerator {
             return pubmed2experimentSet;
         }
 
-        public void setPubmed2experimentSet( Map pubmed2experimentSet ) {
-            this.pubmed2experimentSet = pubmed2experimentSet;
-        }
-
         public Map getSpecie2experimentSet() {
             return specie2experimentSet;
         }
 
-        public void setSpecie2experimentSet( Map specie2experimentSet ) {
-            this.specie2experimentSet = specie2experimentSet;
-        }
-
         public Set getNegativeExperiments() {
             return negativeExperiments;
-        }
-
-        public void setNegativeExperiments( Set negativeExperiments ) {
-            this.negativeExperiments = negativeExperiments;
         }
     }
 
@@ -95,11 +80,11 @@ public class ExperimentListGenerator {
     /**
      * Current time.
      */
-    private static String TIME;
+    private static String CURRENT_TIME;
 
     static {
         SimpleDateFormat formatter = new SimpleDateFormat( "yyyy-MM-dd@HH.mm" );
-        TIME = formatter.format( new Date() );
+        CURRENT_TIME = formatter.format( new Date() );
         formatter = null;
     }
 
@@ -157,7 +142,6 @@ public class ExperimentListGenerator {
      * @return HashMap of HashMap of ArrayLists of Experiments: {species}{scale}[n]
      *
      * @throws uk.ac.ebi.intact.business.IntactException
-     *
      */
     public static ExperimentClassification classifyExperiments( String searchPattern ) throws IntactException {
 
@@ -650,7 +634,7 @@ public class ExperimentListGenerator {
             String pubmedid = (String) iterator.next();
 
             // get experiments associated to that pubmed ID.
-            Collection experiments = (Set) pubmed2experimentSet.get( pubmedid );
+            Set experiments = (Set) pubmed2experimentSet.get( pubmedid );
 
             // all experiment under that pubmed if should have the same year
             Experiment exp = (Experiment) experiments.iterator().next();
@@ -658,14 +642,13 @@ public class ExperimentListGenerator {
             String year = getCreatedYear( exp );
             String prefix = year + SLASH;
 
-
             // split the set into subset of size under SMALL_SCALE_LIMIT
             Map file2experimentSet = splitExperiment( experiments,
                                                       prefix + pubmedid,   // small scale
                                                       prefix + pubmedid ); // large scale
 
+            // write the line in the pubmed classification file
             writeLines( file2experimentSet, negExpLabels, writer );
-
         } // pubmeds
     }
 
@@ -690,8 +673,8 @@ public class ExperimentListGenerator {
             Collection chunk = (Collection) file2experimentSet.get( filePrefix );
 
             //buffers to hold the labels for small and negative small exps
-            StringBuffer negPattern = new StringBuffer( 20 ); // AVG 1 experiment
-            StringBuffer pattern = new StringBuffer( 100 );   // AVG 5 experiments
+            StringBuffer negPattern = new StringBuffer( 20 );  // AVG 1 experiment
+            StringBuffer pattern = new StringBuffer( 5 * 20 ); // AVG 5 experiments
 
             // sort the collection by alphabetical order
             List shortlabels = getSortedShortlabel( chunk );
@@ -715,7 +698,7 @@ public class ExperimentListGenerator {
             // '<filename> <comma-seperated shortLabel list>'
             // only print patterns if they are non-empty
             if ( pattern.length() != 0 ) {
-                String smallFilename = filePrefix + ".xml";
+                String smallFilename = filePrefix + FileHelper.XML_FILE_EXTENSION;
                 String line = smallFilename + " " + pattern.toString();
                 System.out.println( line );
                 writer.write( line );
@@ -723,7 +706,7 @@ public class ExperimentListGenerator {
             }
 
             if ( negPattern.length() != 0 ) {
-                String negativeFilename = filePrefix + "_negative.xml";
+                String negativeFilename = filePrefix + "_negative" + FileHelper.XML_FILE_EXTENSION;
                 String line = negativeFilename + " " + negPattern.toString();
                 System.out.println( line );
                 writer.write( line );
@@ -837,7 +820,7 @@ public class ExperimentListGenerator {
         }
 
         if ( fileSpecies == null | filePublication == null ) {
-            String detaultPrefix = "classification_" + TIME;
+            String detaultPrefix = "classification_" + CURRENT_TIME;
 
             if ( fileSpecies == null ) {
                 String filename = detaultPrefix + "_by_species.txt";
