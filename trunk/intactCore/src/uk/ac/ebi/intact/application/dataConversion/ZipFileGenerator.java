@@ -29,7 +29,7 @@ public class ZipFileGenerator {
     /**
      * Pattern matching the filename of PSI-XML file generated using the pubmed classification.
      */
-    public static final String XML_FILE_PATTERN = "([0-9]+).+";
+    public static final String XML_FILE_PATTERN = "([0-9]+).+\\.xml"; // add .xml
 
     /**
      * Compiled pattern.
@@ -49,7 +49,7 @@ public class ZipFileGenerator {
      *
      * @param directory the directory to process.
      */
-    private static void clusterAllXmlFilesFromDirectory( File directory, boolean processSubdirectory ) {
+    private static void clusterAllXmlFilesFromDirectory( File directory, boolean processSubdirectories ) {
 
         // TODO remove recursivity, should be easy.
 
@@ -84,7 +84,7 @@ public class ZipFileGenerator {
 
             if ( file.isDirectory() ) {
 
-                if ( processSubdirectory ) {
+                if ( processSubdirectories ) {
                     // put recursive call on hold, we process one directory at a time.
                     subdirectories.push( file );
                 }
@@ -98,19 +98,19 @@ public class ZipFileGenerator {
                 if ( matchFound ) {
                     // Get group for this match
                     pmid = matcher.group( 1 );
-                }
 
-                Collection filenames = null;
-                if ( pmid2files.containsKey( pmid ) ) {
-                    // get existing collection
-                    filenames = (Collection) pmid2files.get( pmid );
-                } else {
-                    // not there yet, create it.
-                    filenames = new ArrayList( 2 );
-                    pmid2files.put( pmid, filenames );
-                }
+                    Collection filenames = null;
+                    if ( pmid2files.containsKey( pmid ) ) {
+                        // get existing collection
+                        filenames = (Collection) pmid2files.get( pmid );
+                    } else {
+                        // not there yet, create it.
+                        filenames = new ArrayList( 2 );
+                        pmid2files.put( pmid, filenames );
+                    }
 
-                filenames.add( file );
+                    filenames.add( file );
+                }
             }
 
             files[ i ] = null; // free resource as we go
@@ -133,7 +133,7 @@ public class ZipFileGenerator {
                 }
             } else {
                 try {
-                    ZipBuilder.createZipFile( zipFile, xmlFiles );
+                    ZipBuilder.createZipFile( zipFile, xmlFiles, VERBOSE );
                 } catch ( IOException e ) {
                     e.printStackTrace();
                 }
@@ -145,16 +145,16 @@ public class ZipFileGenerator {
         // process all subdirectories
         while ( ! subdirectories.isEmpty() ) {
             File subdirectory = (File) subdirectories.pop();
-            clusterAllXmlFilesFromDirectory( subdirectory, processSubdirectory );
+            clusterAllXmlFilesFromDirectory( subdirectory, processSubdirectories );
         }
     }
-
 
     ////////////////////////////
     // Specific Common Cli
 
     /**
      * Displays usage for the program.
+     *
      * @param options the options (common-cli).
      */
     private static void displayUsage( Options options ) {
@@ -169,6 +169,7 @@ public class ZipFileGenerator {
 
     /**
      * Setup the command line options.
+     *
      * @return the options (common-cli).
      */
     private static Options setupCommandLineOptions() {
