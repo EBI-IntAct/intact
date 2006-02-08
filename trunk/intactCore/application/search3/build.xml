@@ -176,7 +176,7 @@
                 <exclude name="detail.jsp"/>
                 <exclude name="simple.jsp"/>
                 <exclude name="partners.jsp"/>
-                <exclude name="singleProtein.jsp"/>
+                <exclude name="singleInteractor.jsp"/>
                 <!-- these are the new JSPs and HTML files (for search mockups Dec 2004)-->
                 <exclude name="binaryProtein.jsp"/>
                 <exclude name="tooLarge.jsp"/>
@@ -199,6 +199,13 @@
                 <exclude name="noProteinsPresent.jsp"/>
                 <exclude name="noData.jsp"/>
                 <exclude name="waiting.jsp"/>
+
+                <exclude name="noInteractor.jsp"/>
+                <exclude name="noRessource.jsp"/>
+                <exclude name="single.jsp"/>
+                <exclude name="tooManyInteractors.jsp"/>
+                <exclude name="noInteraction.jsp"/>
+                
 
 
             </fileset>

@@ -141,7 +141,7 @@
 
                 <!-- shortlabel with link: seems to be back to this page (!!)... -->
                  <td nowrap="nowrap" style="vertical-align: top; background-color: rgb(255, 255, 255);">           
-                    <code><a href="<%= bean.getProteinPartnerURL()%>">
+                    <code><a href="<%= bean.getInteractorPartnerURL()%>">
                         <% if(highlightList.contains(bean.getIntactName())) { %>
                             <b><span style="color: rgb(255, 0, 0);"><%= bean.getIntactName()%></span></b>
                         <%
@@ -158,7 +158,7 @@
 
                 <!-- AC, with link to single Protein details page -->
                  <td nowrap="nowrap" style="vertical-align: top; background-color: rgb(255, 255, 255);">
-                    <a href="<%= bean.getProteinSearchURL()%>"><%= bean.getAc()%></a><br>
+                    <a href="<%= bean.getInteractorSearchURL()%>"><%= bean.getAc()%></a><br>
                 </td>
 
                 <!-- number of Interactions, link to a'simple' result page for the Interactions
@@ -179,7 +179,7 @@
                     <% if( null == bean.getUniprotAc() ) { %>
                        -
                     <% } else { %>
-                       <a href="<%= bean.getUniprotURL() %>"><%= bean.getUniprotAc() %></a>
+                       <a href="<%= bean.getIdentityXrefURL() %>"><%= bean.getUniprotAc() %></a>
                     <% } %>
                 </td>
 
@@ -243,12 +243,12 @@
 
                     <!-- shortlabel, linked back to this view for the partner instead -->
                 <td nowrap="nowrap" style="vertical-align: top; background-color: rgb(255, 255, 255);">
-                    <code><a href="<%= partner.getProteinPartnerURL()%>"><nobr><%= partner.getIntactName() %></nobr></a></code>
+                    <code><a href="<%= partner.getInteractorPartnerURL()%>"><nobr><%= partner.getIntactName() %></nobr></a></code>
                 </td>
 
                 <!-- AC, linked to single Protein details page -->
                 <td nowrap="nowrap" style="vertical-align: top; background-color: rgb(255, 255, 255);">
-                    <a href="<%= partner.getProteinSearchURL()%>"><%= partner.getAc()%></a><br>
+                    <a href="<%= partner.getInteractorSearchURL()%>"><%= partner.getAc()%></a><br>
                 </td>
 
                 <!-- number of Interactions, linked new detail page -->
@@ -266,7 +266,7 @@
                     <% if( null == partner.getUniprotAc() ) { %>
                        -
                     <% } else { %>
-                       <a href="<%= partner.getUniprotURL()%>"><%= partner.getUniprotAc() %></a>
+                       <a href="<%= partner.getIdentityXrefURL()%>"><%= partner.getUniprotAc() %></a>
                     <% } %>
                 </td>
 

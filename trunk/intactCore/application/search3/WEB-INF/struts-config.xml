@@ -134,7 +134,7 @@ Query     _________       ____________      |     _________      _____________
             <forward name="dispatcher" path="/do/dispatcher"/>
             <!--<forward name="binary" path="binary.layout"/>-->
             <!--<forward name="pairwise" path="pairwise.layout"/>-->
-            <forward name="noProtein" path="no.protein.layout"/>
+            <forward name="noInteractor" path="no.interactor.layout"/>
             <forward name="false" path="no.resource.layout"/>
         </action>
 
@@ -148,7 +148,7 @@ Query     _________       ____________      |     _________      _____________
             <forward name="binary" path="/do/binary"/>
             <forward name="details" path="/do/details"/>
             <forward name="simple" path="/do/simple"/>
-            <forward name="binaryProtein" path="/do/binaryProtein"/>
+            <forward name="binaryInteractor" path="/do/binaryInteractor"/>
         </action>
 
         <!-- ========== View Actions ================================== -->
@@ -167,7 +167,7 @@ Query     _________       ____________      |     _________      _____________
                 type="uk.ac.ebi.intact.application.search3.struts.controller.SingleResultAction"
                 scope="session">
             <forward name="noMatch" path="no.match.layout"/>
-            <forward name="singleProtein" path="singleProtein.layout"/>
+            <forward name="singleInteractor" path="singleInteractor.layout"/>
             <forward name="cvObject" path="cvObject.layout"/>
             <forward name="bioSource" path="bioSource.layout"/>
             <forward name="sessionLost" path="/do/welcome"/>
@@ -189,12 +189,12 @@ Query     _________       ____________      |     _________      _____________
             <forward name="simpleResults" path="simple.layout"/>
         </action>
 
-        <action path="/binaryProtein"
+        <action path="/binaryInteractor"
                 type="uk.ac.ebi.intact.application.search3.struts.controller.BinaryProteinAction"
                 scope="session">
             <forward name="noMatch" path="no.match.layout"/>    <!-- IT DOESN'T SEEM TO BE USED -->
             <forward name="noInteractions" path="no.interactions.layout"/>
-            <forward name="tooManyProteins" path="too.many.proteins.layout"/>
+            <forward name="tooManyInteractors" path="too.many.interactors.layout"/>
             <forward name="simple" path="/do/simple"/>
             <forward name="partner" path="partners.layout"/>
         </action>
@@ -253,7 +253,7 @@ Query     _________       ____________      |     _________      _____________
             <forward name="binary" path="/do/binary"/>
             <forward name="details" path="/do/details"/>
             <forward name="simple" path="/do/advSimple"/>
-            <forward name="binaryProtein" path="/do/binaryProtein"/>
+            <forward name="binaryInteractor" path="/do/binaryInteractor"/>
         </action>
 
         <action path="/advSimple"

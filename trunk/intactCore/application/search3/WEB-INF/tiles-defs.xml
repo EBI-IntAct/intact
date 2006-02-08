@@ -68,8 +68,8 @@ Version: $Id$
     </definition>
 
     <!-- single Protein view description. -->
-    <definition name="singleProtein.layout" extends="search.layout">
-        <put name="content" value="/pages/singleProtein.jsp"/>
+    <definition name="singleInteractor.layout" extends="search.layout">
+        <put name="content" value="/pages/singleInteractor.jsp"/>
     </definition>
 
     <!-- single AnnotatedObject view description. Used for eg CvObjects, BioSource-->
@@ -140,13 +140,13 @@ Version: $Id$
     </definition>
 
     <!-- No Protein available -->
-    <definition name="no.protein.layout" extends="search.layout">
-        <put name="content" value="/pages/noProtein.jsp"/>
+    <definition name="no.interactor.layout" extends="search.layout">
+        <put name="content" value="/pages/noInteractor.jsp"/>
     </definition>
 
     <!-- No Protein available -->
-    <definition name="too.many.proteins.layout" extends="search.layout">
-        <put name="content" value="/pages/tooManyProteins.jsp"/>
+    <definition name="too.many.interactors.layout" extends="search.layout">
+        <put name="content" value="/pages/tooManyInteractors.jsp"/>
     </definition>
 
     <!-- =============== advanced search specific layouts ====================================== -->

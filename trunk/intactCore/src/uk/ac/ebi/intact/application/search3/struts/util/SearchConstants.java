@@ -179,7 +179,7 @@ public interface SearchConstants {
      */
     public static final String FORWARD_TOO_LARGE = "tooLarge";
 
-    public static final String FORWARD_NO_PROTEIN_FOUND = "noProtein";
+    public static final String FORWARD_NO_INTERACTOR_FOUND = "noInteractor";
 
     /**
      * Key to the dispatcher action.
@@ -238,13 +238,13 @@ public interface SearchConstants {
     /**
      * Used as a key to identify the binary protein action
      */
-    public static final String FORWARD_BINARYPROTEIN_ACTION = "binaryProtein";
+    public static final String FORWARD_BINARYINTERACTOR_ACTION = "binaryInteractor";
 
 
     /**
      * If we got more than 2 proteins forward to errorpage.
      */
-    public static final String FORWARD_TOO_MANY_PROTEINS = "tooManyProteins";
+    public static final String FORWARD_TOO_MANY_INTERACTORS = "tooManyInteractors";
 
     /**
      * forward when no interaction found in BinaryProteinAction.
@@ -268,7 +268,7 @@ public interface SearchConstants {
     public static final String FORWARD_ERROR = "error";
     public static final String FORWARD_BIOSOURCE = "bioSource";
     public static final String FORWARD_CVOBJECT = "cvObject";
-    public static final String FORWARD_PROTEIN = "singleProtein";
+    public static final String FORWARD_INTERACTOR = "singleInteractor";
     public static final String FORWARD_NO_RESOURCE = "noResource";
     public static final String FORWARD_INDEX_ERROR = "indexError";
 

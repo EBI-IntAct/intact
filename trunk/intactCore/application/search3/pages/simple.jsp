@@ -169,8 +169,8 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
                    <nobr>  <span class="whiteheadertext">Controlled Vocabulary Terms</span>
 
                 <a href="<%=firstItem.getHelpUrl()%>" target="new"
-                   class="whitelink"><sup>?</sup></nobr>
-                </a>
+                   class="whitelink"><sup>?</sup>
+                </a></nobr>
             </td>
 
             <%

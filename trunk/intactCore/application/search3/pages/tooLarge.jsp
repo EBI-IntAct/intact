@@ -54,14 +54,14 @@
 
             </td>
             <td class="headerdarkmid">
-                   <nobr>  <span class="whiteheadertext">Count</span>
+                   <nobr>  <span class="whiteheadertext">Count</span>  </nobr>
             </td>
 
               <%
                  if(bean.isSelectable()) {
         %>
              <td class="headerdarkmid">
-                   <nobr>  <span class="whiteheadertext">&nbsp</span>
+                   <nobr>  <span class="whiteheadertext">&nbsp</span> </nobr>
             </td>
 
             <% } %>

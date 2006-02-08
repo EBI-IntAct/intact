@@ -329,7 +329,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
             </td>
 
             <!-- 'host' title, linked to help -->
-            <td colspan="2" nowrap="nowrap" class="headerdarkmid">
+            <td colspan="3" nowrap="nowrap" class="headerdarkmid">
                 <a href="<%= bean.getHelpLink() + "Interactor.bioSource"%>" target="new"
                    class="tdlink">Host
                 </a>
@@ -376,11 +376,11 @@ Displaying <b><%= firstDisplayIndex %></b> to
 
             <% if(bean.getExperimentBioSourceName().equalsIgnoreCase("-"))  { %>
               <!-- linked to BioSource search -->
-                <td colspan="2" class="lefttop">
+                <td colspan="4" class="lefttop">
                     <nobr><%= bean.getExperimentBioSourceName() %></nobr>
                 </td>
             <% }  else { %>
-                <td colspan="2" class="lefttop">
+                <td colspan="3" class="lefttop">
                     <a href="<%= bean.getBioSourceSearchURL() %>">
                         <nobr><%= bean.getExperimentBioSourceName() %></nobr>
                     </a>
@@ -399,7 +399,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
             </td>
 
             <!-- the description itself -->
-            <td colspan="7" class="lefttop"><%= bean.getObjDescription() %></td>
+            <td colspan="8" class="lefttop"><%= bean.getObjDescription() %></td>
         </tr>
 
         <!-- Experiment Annotation row  -->
@@ -445,7 +445,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
             </td>
 
             <!-- annotation text cell -->
-            <td class="data" style="vertical-align: top;" rowspan="1" colspan="6">
+            <td class="data" style="vertical-align: top;" rowspan="1" colspan="7">
                 <%
                     //need to check for a 'url' annotation and hyperlink them if so...
                     if( annot.getCvTopic().getShortLabel().equals( CvTopic.URL ) ) {
@@ -534,7 +534,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
             </td>
 
             <%-- CvXrefQualifier, linked to search for CV --%>
-            <td style="vertical-align: top;" rowspan="1" colspan="4">
+            <td style="vertical-align: top;" rowspan="1" colspan="5">
                 <a href="<%= bean.getHelpLink() + "AnnotatedObject.Xref"%>" target="new">
                     Type:</a>
                 &nbsp;
@@ -597,7 +597,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <!-- 'dissociation constant' header cell, linked to help -->
             <%-- ** NB: make sure the text is 'Kd' and not 'kD' ** --%>
             <%-- <td style="vertical-align: top;" rowspan="1" colspan="4">  --%>
-            <td style="vertical-align: top;" class="headerlight" rowspan="1" colspan="4">
+            <td style="vertical-align: top;" class="headerlight" rowspan="1" colspan="5">
                 <a href="<%= bean.getHelpLink() + "Interaction.kD"%>"
                     target="new" class="tdlink">
                     Dissociation constant (Kd)</a><br>
@@ -650,7 +650,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
             </td>
 
             <!-- dissociation constant -->
-            <td class="data" style="vertical-align: top;" rowspan="1" colspan="4">
+            <td class="data" style="vertical-align: top;" rowspan="1" colspan="5">
                 <%= (interaction.getKD() != null) ? interaction.getKD().toString() : "-" %>
             </td>
         </tr>
@@ -666,7 +666,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
                  Description
                 </a>
             </td>
-            <td colspan="7" class="lefttop">
+            <td colspan="8" class="lefttop">
                 <%= (interaction.getFullName() != null) ? interaction.getFullName() : "-" %>
             </td>
 
@@ -721,7 +721,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
                     //need to check for a 'url' annotation and hyperlink them if so...
                     if(annot.getCvTopic().getShortLabel().equals( CvTopic.URL )) {
             %>
-            <td style="vertical-align: top;" rowspan="1" colspan="6">
+            <td style="vertical-align: top;" rowspan="1" colspan="7">
                 <a href="<%= annot.getAnnotationText() %>" class="tdlink" target="_blank">
                     <%= annot.getAnnotationText() %>
                 </a><br>
@@ -729,7 +729,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
                     }
                     else {
             %>
-            <td style="vertical-align: top;" rowspan="1" colspan="6" class="data">
+            <td style="vertical-align: top;" rowspan="1" colspan="7" class="data">
                 <%= annot.getAnnotationText() %><br>
                 <%
                     }
@@ -804,7 +804,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
             </td>
 
             <%-- CvXrefQualifier, linked to search for CV --%>
-            <td style="vertical-align: top;" rowspan="1" colspan="4">
+            <td style="vertical-align: top;" rowspan="1" colspan="5">
                 <a href="<%= bean.getHelpLink() + "Xref.cvXrefType"%>" target="new">
                     Type:</a>
                 &nbsp;
@@ -842,6 +842,8 @@ Displaying <b><%= firstDisplayIndex %></b> to
                     target="new" class="tdlink">Ac</a>
             </td>
 
+            <td nowrap="nowrap" class="headerlight">Interactor type<br></td>
+
             <!-- 'uniprot description' title cell -->
             <%-- *** NOTE ***
             This has been SWAPPED in position compared to the specification as it is not
@@ -851,7 +853,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
             is to split things up into sub-tables - this then gets very messy!
             --%>
             <%-- not linked again --%>
-            <td nowrap="nowrap" class="headerlight">UniProtKB description<br></td>
+            <td nowrap="nowrap" class="headerlight">Interactor description<br></td>
 
 
             <!-- 'expression system' title cell -->
@@ -860,7 +862,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
 
             <!-- 'uniprot ac' title cell -->
             <%-- again seems to NOT be linked to help --%>
-            <td class="headerlight">UniProtKB Ac<br></td>
+            <td class="headerlight">Identifier<br></td>
 
             <!-- 'gene name' title cell -->
             <%-- again NOT linked to help --%>
@@ -890,8 +892,8 @@ Displaying <b><%= firstDisplayIndex %></b> to
         for (Iterator iterator = interaction.getComponents().iterator(); iterator.hasNext();) {
             Component component = (Component) iterator.next();
             Interactor interactor =  component.getInteractor();
-            if (interactor instanceof Protein) {
-                Protein protein = (Protein) interactor;
+//            if (interactor instanceof Protein) {
+//                Protein protein = (Protein) interactor;
                 BioSource bioSource =  component.getExpressedIn();
 
         %>
@@ -902,21 +904,29 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <!-- shortlabel, linked to protein partners search -->
             <td class="data">
                 <nobr>
-                <input name="<%=protein.getAc()%>" type="checkbox" class="text">
-                <a href="<%= bean.getProteinPartnerURL(protein)%>"><%=protein.getShortLabel()%></a></nobr>
+                <input name="<%=interactor.getAc()%>" type="checkbox" class="text">
+                <a href="<%= bean.getInteractorPartnerURL(interactor)%>"><%=interactor.getShortLabel()%></a></nobr>
                 <br>
             </td>
 
             <!-- ac, linked to protein details view -->
             <td class="data">
-                <a href="<%= bean.getProteinSearchURL(protein)%>"><%=protein.getAc()%></a>
+                <a href="<%= bean.getInteractorSearchURL(interactor)%>"><%=interactor.getAc()%></a>
+            </td>
+
+            <!--interator type-->
+            <td class="data">
+                <%= bean.getInteractorType(interactor)%>
             </td>
 
             <!-- uniprot description -->
             <%-- ASSUME this is the same as the Protein fullName --%>
             <%-- *** ROW POSITION SWAPPED - SEE 'UNIPROT DESCRIPTION' COMMENT *** --%>
-            <td class="data"><%= protein.getFullName() %></td>
-
+            <% if (interactor.getFullName() == null ){ %>
+            <td class="data">-</td>
+            <% } else { %>
+            <td class="data"><%= interactor.getFullName() %></td>
+            <% } %>
             <!-- expression system, (ie the BioSource Full Name), with a search link -->
            <%   if(!bean.getBiosourceURL(bioSource).equalsIgnoreCase("-")) { %>
             <td class="data">
@@ -932,16 +942,16 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <%-- This is actually an Xref of the Protein, ie its uniprot Xref... --%>
             <td class="data">
             <%
-                    if(bean.getUniprotLabel(protein) != "-") {
+                    if(bean.getPrimaryIdFromXrefIdentity(interactor) != "-") {
                         //link it
             %>
-                <a href="<%= bean.getUniprotSearchURL(protein)%>"><%= bean.getUniprotLabel(protein) %></a>
+                    <a href="<%= bean.getIdentityXrefSearchURL(interactor)%>"><%= bean.getPrimaryIdFromXrefIdentity(interactor) %></a>
                 <%
                     }
                     else {
                         //don't
                 %>
-                    <%= bean.getUniprotLabel(protein) %>
+                    <%= bean.getPrimaryIdFromXrefIdentity(interactor) %>
                 <%
                     }
                 %>
@@ -951,7 +961,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
                 <td class="data"><%// bean.getGeneNames(protein)%>
 
                 <%
-                    Collection somePartnerGeneNames = bean.getGeneNames(protein);
+                    Collection somePartnerGeneNames = bean.getGeneNames(interactor);
 
                     for (Iterator iteratorGene =  somePartnerGeneNames.iterator(); iteratorGene.hasNext();) {
                         String aGeneName =  (String) iteratorGene.next();
@@ -987,7 +997,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
            <%  }  %>
         </tr>
         <%
-             } // end if
+//             } // end if
            }   //end of the proteins loop
 
         %>
