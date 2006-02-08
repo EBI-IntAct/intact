@@ -5,6 +5,7 @@ import uk.ac.ebi.intact.application.search3.struts.util.ProteinUtils;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.PartnersViewBean;
 import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.model.Interactor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -40,10 +41,10 @@ public class BinaryProteinAction extends AbstractResultAction {
 
         logger.info("binary protein action");
 
-        final Collection someProteins = (Collection) request.getAttribute(SearchConstants.SEARCH_RESULTS);
+        final Collection someInteractors = (Collection) request.getAttribute(SearchConstants.SEARCH_RESULTS);
         Collection results = Collections.EMPTY_LIST;
 
-        logger.info("resultset size " + someProteins.size());
+        logger.info("resultset size " + someInteractors.size());
         HttpSession session = super.getSession(request);
 
         // first check for self interactions
@@ -52,11 +53,11 @@ public class BinaryProteinAction extends AbstractResultAction {
 //        String searchURL = request.getContextPath().concat(appPath);
         String searchURL = super.getSearchURL();
 
-        if (someProteins.size() == 1) {
+        if (someInteractors.size() == 1) {
             Collection beanList = new ArrayList(1);
             logger.info("Binary Protein Action: one 1 Protein");
 
-            final Protein selfInteractor = (Protein) someProteins.iterator().next();
+            final Interactor selfInteractor = (Interactor) someInteractors.iterator().next();
             results = ProteinUtils.getSelfInteractions(selfInteractor);
 
             boolean hasSelfInteraction = results.size() > 0;
@@ -71,12 +72,12 @@ public class BinaryProteinAction extends AbstractResultAction {
             }
 
         }
-        else if (someProteins.size() == 2) {
+        else if (someInteractors.size() == 2) {
             logger.info("binary interactions");
 
             // we got more than 1 protein, so check for binary Interactions between them
 //            try {
-            results = ProteinUtils.getBinaryInteractions(someProteins);
+            results = ProteinUtils.getBinaryInteractions(someInteractors);
             logger.info("results interactions size : " + results.size());
 //            }
 //            catch (IntactException e) {
@@ -89,7 +90,7 @@ public class BinaryProteinAction extends AbstractResultAction {
 
             // If we got more than 2 proteins forward to errorpage
             logger.info("more than 2 Proteins, forward to errorpage");
-            return SearchConstants.FORWARD_TOO_MANY_PROTEINS;
+            return SearchConstants.FORWARD_TOO_MANY_INTERACTORS;
         }
 
         if (!results.isEmpty()) {
