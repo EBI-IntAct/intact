@@ -9,11 +9,8 @@ package uk.ac.ebi.intact.application.search3.struts.controller;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.BioSourceViewBean;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.CvObjectViewBean;
-import uk.ac.ebi.intact.application.search3.struts.view.beans.ProteinViewBean;
-import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
-import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.application.search3.struts.view.beans.InteractorViewBean;
+import uk.ac.ebi.intact.model.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
@@ -49,13 +46,13 @@ public class SingleResultAction extends AbstractResultAction {
         final String searchURL = super.getSearchURL();
         final Object result = results.iterator().next();
 
-        if (Protein.class.isAssignableFrom(result.getClass())) {
-            logger.info("Creating a new ProteinViewBean");
-            ProteinViewBean bean = new ProteinViewBean((Protein) result, helpLink, searchURL,
-                                                       request.getContextPath());
+        if (Interactor.class.isAssignableFrom(result.getClass())) {
+            logger.info("Creating a new InteractorViewBean");
+            InteractorViewBean bean = new InteractorViewBean((Interactor) result, helpLink, searchURL,
+                                                             request.getContextPath());
             logger.info("Forward to single Protein View");
             request.getSession().setAttribute(SearchConstants.VIEW_BEAN, bean);
-            return SearchConstants.FORWARD_PROTEIN;
+            return SearchConstants.FORWARD_INTERACTOR;
 
         }
         else if (BioSource.class.isAssignableFrom(result.getClass())) {
