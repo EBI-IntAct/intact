@@ -26,6 +26,7 @@ public class CvTopic extends CvObject implements Editable {
     public static final String AUTHOR_CONFIDENCE = "author-confidence";
     public static final String CONFIDENCE_MAPPING = "confidence-mapping";
     public static final String SEARCH_URL_ASCII = "search-url-ascii";
+    public static final String SEARCH_URL = "search-url";
     public static final String ISOFORM_COMMENT = "isoform-comment";
     public static final String NON_UNIPROT = "no-uniprot-update";
     public static final String CC_NOTE = "uniprot-cc-note";
