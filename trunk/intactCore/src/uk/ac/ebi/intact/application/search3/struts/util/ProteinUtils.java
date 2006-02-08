@@ -4,6 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.model.Interactor;
 
 import java.util.*;
 
@@ -24,21 +25,21 @@ public class ProteinUtils {
     /**
      * Returns a collection of binary interactions in which both proteins are involved.
      *
-     * @param firstProtein  the first protein, must no be null
-     * @param secondProtein the second protein, must no be null
+     * @param firstInteractor  the first protein, must no be null
+     * @param secondInteractor the second protein, must no be null
      *
      * @return a collection of binary interactions in which both proteins are involved
      */
-    public static Collection getBinaryInteractions( final Protein firstProtein,
-                                                    final Protein secondProtein ) {
+    public static Collection getBinaryInteractions( final Interactor firstInteractor,
+                                                    final Interactor secondInteractor ) {
 
         // getting all Interactions from firstProtein
-        final Collection protein1Interactions = getNnaryInteractions( firstProtein );
+        final Collection interactor1Interactions = getNnaryInteractions( firstInteractor );
         // getting all Interactions from secondProtein
-        final Collection protein2Interactions = getNnaryInteractions( secondProtein );
+        final Collection interactor2Interactions = getNnaryInteractions( secondInteractor );
         // get only these Interactions in which both are involved
-        final Collection intersectionInteractions = CollectionUtils.intersection( protein1Interactions,
-                                                                                  protein2Interactions );
+        final Collection intersectionInteractions = CollectionUtils.intersection( interactor1Interactions,
+                                                                                  interactor2Interactions );
 
         final Collection result = new HashSet();
 
@@ -140,13 +141,13 @@ public class ProteinUtils {
     /**
      * Returns a collection containing the n-ary interactions of the give protein.
      *
-     * @param aProtein a protein, must no be null
+     * @param anInteractor a protein, must no be null
      *
      * @return a collection containing the n-ary interactions of the given protein.
      */
-    public static Collection getNnaryInteractions( final Protein aProtein ) {
+    public static Collection getNnaryInteractions( final Interactor anInteractor ) {
         // first get all Components
-        final Collection componentSet = aProtein.getActiveInstances();
+        final Collection componentSet = anInteractor.getActiveInstances();
         final Set someInteractions = new HashSet();
         // now get all Interactions from the Components
         for ( Iterator iterator = componentSet.iterator(); iterator.hasNext(); ) {
@@ -166,10 +167,11 @@ public class ProteinUtils {
      *
      * @return a collection containing the self interactions of the given protein.
      */
-    public static Collection getSelfInteractions( final Protein aProtein ) {
+//    public static Collection getSelfInteractions( final Protein aProtein ) {      // 4 usage 1 in BinaryPorteinAction, 3 in PartnerViewBean
+    public static Collection getSelfInteractions( final Interactor anInteractor ) {
 
         final Set result = new HashSet();
-        final Collection someInteractions = getNnaryInteractions( aProtein );
+        final Collection someInteractions = getNnaryInteractions( anInteractor );
 
         // now check for every interaction
         for ( Iterator iterator = someInteractions.iterator(); iterator.hasNext(); ) {
@@ -183,7 +185,7 @@ public class ProteinUtils {
                 for ( Iterator iterator1 = someComponents.iterator(); iterator1.hasNext(); ) {
                     final Component aComponent = (Component) iterator1.next();
 
-                    if ( aProtein.equals( aComponent.getInteractor() ) ) {
+                    if ( anInteractor.equals( aComponent.getInteractor() ) ) {
                         stoichiometry = stoichiometry + (int) aComponent.getStoichiometry();
                     }
                 } // for
@@ -205,18 +207,19 @@ public class ProteinUtils {
     /**
      * Returns a collection containing the intersection of n-ary interactions from 2 give proteins.
      *
-     * @param firstProtein  a protein, must no be null
-     * @param secondProtein a protein, must no be null
+     * @param firstInteractor  a protein, must no be null
+     * @param secondInteractor a protein, must no be null
      *
      * @return a collection containing all n-nary  interactions of the 2 given proteins.
      */
-    public static Collection getNnaryInteractions( final Protein firstProtein,
-                                                   final Protein secondProtein ) {
+//    public static Collection getNnaryInteractions( final Protein firstProtein,   // 2 usage in PartnersViewBean
+    public static Collection getNnaryInteractions( final Interactor firstInteractor,
+                                                   final Interactor secondInteractor ) {
         // getting all Interactions from firstProtein
-        final Collection protein1Interactions = getNnaryInteractions( firstProtein );
+        final Collection interactor1Interactions = getNnaryInteractions( firstInteractor );
         // getting all Interactions from secondProtein
-        final Collection protein2Interactions = getNnaryInteractions( secondProtein );
+        final Collection interactor2Interactions = getNnaryInteractions( secondInteractor );
         // get only these Interactions in which both are involved
-        return CollectionUtils.intersection( protein1Interactions, protein2Interactions );
+        return CollectionUtils.intersection( interactor1Interactions, interactor2Interactions );
     }
 }

@@ -109,7 +109,7 @@ public class SimpleViewBean extends AbstractViewBean {
     public String getHelpUrl() {
         String helpUrl = this.getHelpLink();
 
-        if ( Protein.class.isAssignableFrom( obj.getClass() ) ) {
+        if ( Interactor.class.isAssignableFrom( obj.getClass() ) ) {
             return helpUrl + "Interactor";
         } else {
             if ( Experiment.class.isAssignableFrom( obj.getClass() ) ) {
@@ -161,14 +161,15 @@ public class SimpleViewBean extends AbstractViewBean {
     /**
      * Provides a String representation of the the Number of particapting interactions of a Protein
      *
-     * @param aProtein a Intact Protein
+     * @param anInteractor a Intact Interactor
      *
      * @return String a String representation of a s Number of particapting interactions
      */
-    public String getNumberOfInteractions( Protein aProtein ) {
+//    public String getNumberOfInteractions( Protein aProtein ) {   //   1 usage in simple.jsp
+    public String getNumberOfInteractions( Interactor anInteractor ) {
 
         //TODO Remoove this with ProteinUtils
-        Set someComponents = new HashSet( aProtein.getActiveInstances() );
+        Set someComponents = new HashSet( anInteractor.getActiveInstances() );
         Collection uniqueInteractions = new HashSet();
 
         for ( Iterator iterator = someComponents.iterator(); iterator.hasNext(); ) {
@@ -237,7 +238,7 @@ public class SimpleViewBean extends AbstractViewBean {
                 Interaction interaction = (Interaction) obj;
 
                 //this should check for complexes also....
-                size = countProteins( interaction.getComponents() );
+                size = countInteractors( interaction.getComponents() );
                 relatedItemsSize = Integer.toString( size );
             }
         }
@@ -257,17 +258,19 @@ public class SimpleViewBean extends AbstractViewBean {
     /**
      * Return a protein's gene name.
      *
-     * @param protein the protein for which we want the gene name.
+     * @param interactor the interactor for which we want the gene name.
      *
      * @return gene name of the given protein.
      */
-    public Collection getGeneNames( Protein protein ) {
+
+//    public Collection getGeneNames( Protein protein ) {    //1 usage in simple.jsp
+    public Collection getGeneNames( Interactor interactor ) {
 
         Collection geneNames = new HashSet();
         //geneNames = new StringBuffer();
         //the gene names are obtained from the Aliases for the Protein
         //which are of type 'gene name'...
-        Collection aliases = protein.getAliases();
+        Collection aliases = interactor.getAliases();
         for ( Iterator it = aliases.iterator(); it.hasNext(); ) {
             Alias alias = (Alias) it.next();
 
@@ -342,7 +345,8 @@ public class SimpleViewBean extends AbstractViewBean {
      *
      * @return int the number or Proteins present in the Component List.
      */
-    private int countProteins( Collection components ) {
+//    private int countProteins( Collection components ) { //2 usage in SimpleViewBean
+    private int countInteractors( Collection components ) {
 
         Interactor interactor = null;
         int count = 0;
@@ -354,7 +358,7 @@ public class SimpleViewBean extends AbstractViewBean {
             //go deeper until we get to some Proteins.....
             if ( interactor instanceof Interaction ) {
                 Interaction interaction = (Interaction) interactor;
-                count = count + countProteins( interaction.getComponents() );
+                count = count + countInteractors( interaction.getComponents() );
             } else {
                 count = count + 1;
             }

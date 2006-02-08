@@ -396,22 +396,41 @@ public class MainDetailViewBean extends AbstractViewBean {
     /**
      * Convenience method for obtaining the uniprot ID for a given Protein.
      *
-     * @param protein The protein we want the uniprot ID for
+     * @param interactor The protein we want the uniprot ID for
      *
      * @return String the uniprot ID of the Protein, or '-' if none found.
      */
-    public String getUniprotLabel( Protein protein ) {
+    //public String getUniprotLabel( Protein protein ) { //used 3 times in detail.jsp
+    public String getPrimaryIdFromXrefIdentity( Interactor interactor ) {
 
-        String uniprotLabel = "-";  //default for display
-        Collection xrefs = protein.getXrefs();
+        String primaryId = "-";  //default for display
+        Collection xrefs = interactor.getXrefs();
         for ( Iterator it = xrefs.iterator(); it.hasNext(); ) {
             Xref xref = (Xref) it.next();
-            if ( xref.getCvDatabase().getShortLabel().equals( CvDatabase.UNIPROT ) ) {
-                uniprotLabel = xref.getPrimaryId();
-                break;  //done
+            if(xref.getCvXrefQualifier() != null ){
+                if (CvXrefQualifier.IDENTITY.equals(xref.getCvXrefQualifier().getShortLabel())){
+                    primaryId = xref.getPrimaryId();
+                    break;  //done
+                }
             }
         }
-        return uniprotLabel;
+        return primaryId;
+    }
+
+    public String getInteractorType(Interactor interactor){
+        CvInteractorType cvInteractorType = interactor.getCvInteractorType();
+        if(cvInteractorType != null && cvInteractorType.getShortLabel() != null){
+            return cvInteractorType.getShortLabel();
+        }
+        else {
+            if(interactor instanceof Protein ){
+                return "Protein";
+            }else if (interactor instanceof NucleicAcid) {
+                return "Nucleic Acid";
+            }else{
+                return "-";
+            }
+        }
     }
 
     /**
@@ -574,7 +593,8 @@ public class MainDetailViewBean extends AbstractViewBean {
      *
      * @return Collection a List of the Interaction's Proteins, or empty if none found
      */
-    public Collection getProteins( Interaction interaction ) {
+//    public Collection getProteins( Interaction interaction ) {// method not used
+    public Collection getInteractors( Interaction interaction ) {// method not used
 
         // sort here with Collections.sort() with the Protein Comparator as
         // so that we get in that the baits before the preys
@@ -583,9 +603,9 @@ public class MainDetailViewBean extends AbstractViewBean {
         for ( Iterator it = interaction.getComponents().iterator(); it.hasNext(); ) {
             Component comp = (Component) it.next();
             Interactor interactor = comp.getInteractor();
-            if ( interactor instanceof Protein ) {
+//            if ( interactor instanceof Protein ) {
                 results.add( interactor );
-            }
+//            }
         }
 
         return results;
@@ -595,15 +615,16 @@ public class MainDetailViewBean extends AbstractViewBean {
      * Provides the Component that holds a Protein for a given Interaction. Assumes that a Protein only appears ONCE as
      * a Component of an Interaction.
      *
-     * @param protein     The Protein we are interested in
+     * @param interactor     The Protein we are interested in
      * @param interaction The Interaction for which the Protein is of relevance
      *
      * @return Component the Component of the Interaction which holds the Protein, or null if it is not present.
      */
-    public Component getComponent( Protein protein, Interaction interaction ) {
+//    public Component getComponent( Protein protein, Interaction interaction ) { // no usage
+    public Component getComponent( Interactor interactor, Interaction interaction ) {
 
         //go through the Components holding the Protein and pull out the Interaction match...
-        for ( Iterator it = protein.getActiveInstances().iterator(); it.hasNext(); ) {
+        for ( Iterator it = interactor.getActiveInstances().iterator(); it.hasNext(); ) {
             Component comp = (Component) it.next();
             if ( comp.getInteraction().equals( interaction ) ) {
                 return comp;
@@ -617,17 +638,18 @@ public class MainDetailViewBean extends AbstractViewBean {
     /**
      * Convenience method to obtain all Gene Names of a Proteins
      *
-     * @param protein The Protein we are interested in
+     * @param interactor The Protein we are interested in
      *
      * @return Collection a Set of Gene Names as Strings, empty if none found
      */
-    public Collection getGeneNames( Protein protein ) {
+//    public Collection getGeneNames( Protein protein ) {  //1 usage in detail.jsp
+    public Collection getGeneNames( Interactor interactor ) {  //1 usage in detail.jsp
 
         Collection geneNames = new HashSet();
         //geneNames = new StringBuffer();
         //the gene names are obtained from the Aliases for the Protein
         //which are of type 'gene name'...
-        Collection aliases = protein.getAliases();
+        Collection aliases = interactor.getAliases();
         for ( Iterator it = aliases.iterator(); it.hasNext(); ) {
             Alias alias = (Alias) it.next();
 
@@ -670,6 +692,19 @@ public class MainDetailViewBean extends AbstractViewBean {
                  "&amp;searchClass=CvXrefQualifier&amp;" );
     }
 
+    public String getCvDatabaseSearchUrl(CvDatabase cvDatabase){
+        String searchUrl = null;
+        Collection annotations = cvDatabase.getAnnotations();
+        for (Iterator iterator = annotations.iterator(); iterator.hasNext();) {
+            Annotation annotation =  (Annotation) iterator.next();
+            if(annotation.getCvTopic().getShortLabel().equals(CvTopic.SEARCH_URL)){
+                searchUrl = annotation.getAnnotationText();
+                break;
+            }
+        }
+        return searchUrl;
+    }
+
     /**
      * Provides a String representation of a URL to provide acces to an Xrefs' database (curently via AC). The URL is at
      * present stored via an Annotation for the Xref in the Intact DB itself.
@@ -684,20 +719,7 @@ public class MainDetailViewBean extends AbstractViewBean {
         // Check if the id can be hyperlinked
         String searchUrl = (String) dbUrls.get( xref.getCvDatabase() );
         if ( searchUrl == null ) {
-            //not yet requested - do it now and cache it..
-            Collection annotations = xref.getCvDatabase().getAnnotations();
-            Annotation annot = null;
-            for ( Iterator it = annotations.iterator(); it.hasNext(); ) {
-                annot = (Annotation) it.next();
-                if ( annot.getCvTopic().getShortLabel().equals( "search-url" ) ) {
-                    //found one - we are done
-                    searchUrl = annot.getAnnotationText();
-                    break;
-                }
-            }
-
-            //cache it - even if the URL is null, because it may be
-            //requested again
+            searchUrl = getCvDatabaseSearchUrl(xref.getCvDatabase());
             dbUrls.put( xref.getCvDatabase(), searchUrl );
         }
 
@@ -713,22 +735,26 @@ public class MainDetailViewBean extends AbstractViewBean {
     /**
      * Provides a serahc URL for the Uniprot databse entry of the specified Protein.
      *
-     * @param protein The Protein we are interested in
+     * @param interactor The Protein we are interested in
      *
      * @return String a uniprot search URL for the Protein, or '-' if none found
      */
-    public String getUniprotSearchURL( Protein protein ) {
+//    public String getUniprotSearchURL( Protein protein ) { // 1 usage in detail.jsp
+    public String getIdentityXrefSearchURL( Interactor interactor ) { // 1 usage in detail.jsp
 
-        Collection xrefs = protein.getXrefs();
-        String uniprotURL = "-";
+        Collection xrefs = interactor.getXrefs();
+        String url = "-";
         for ( Iterator it = xrefs.iterator(); it.hasNext(); ) {
             Xref xref = (Xref) it.next();
-            if ( xref.getCvDatabase().getShortLabel().equals( CvDatabase.UNIPROT ) ) {
-                uniprotURL = this.getPrimaryIdURL( xref );
-                break;  //done
+            if (xref.getCvXrefQualifier() != null){
+                if ( CvXrefQualifier.IDENTITY.equals( xref.getCvXrefQualifier().getShortLabel()) ) {
+                    url = this.getPrimaryIdURL( xref );
+                    break;  //done
+                }
             }
         }
-        return uniprotURL;
+        logger.info("Interactor " +  interactor.getAc() + " has url " + url);
+        return url;
 
     }
 
@@ -821,12 +847,13 @@ public class MainDetailViewBean extends AbstractViewBean {
     /**
      * Provides a String representation of URL to perform a search to the BioSource Object from the give Protein
      *
-     * @param protein the Protein in which we are interested in
+     * @param interactor the Protein in which we are interested in
      *
      * @return String contains the URL
      */
-    public String getProteinBiosourceURL( Protein protein ) {
-        return searchURL + protein.getBioSource().getAc() + "&amp;searchClass=BioSource";
+//    public String getProteinBiosourceURL( Protein protein ) { // no usage
+    public String getInteractorBiosourceURL( Interactor interactor ) {
+        return searchURL + interactor.getBioSource().getAc() + "&amp;searchClass=BioSource";
     }
 
     /**
@@ -906,26 +933,37 @@ public class MainDetailViewBean extends AbstractViewBean {
      * Convenience method to provide a String representation of a URL to perform a search on Protein. This method will
      * provide a Protein 'detail' view.
      *
-     * @param prot The Protein we want a search URL for
+     * @param interactor The interactor we want a search URL for
      *
      * @return String a String representation of a search URL link for Protein.
      */
-    public String getProteinSearchURL( Protein prot ) {
 
-        return searchURL + prot.getAc() + "&amp;searchClass=Protein&amp;view=single&filter=ac";
+    //public String getProteinSearchURL( Protein prot ) { // 1 usage in detail.jsp
+    public String getInteractorSearchURL( Interactor interactor ) {
+
+        // TRY TO MODIFY FROM PROTEIN TO INTERACTOR
+
+        if(interactor instanceof Protein)
+            return searchURL + interactor.getAc() + "&amp;searchClass=Protein&amp;view=single&filter=ac";
+        else return searchURL + interactor.getAc() + "&amp;searchClass=NucleicAcid&amp;view=single&filter=ac";
     }
 
     /**
      * Convenience method to provide a String representation of a URL to perform a search on Protein. This method will
      * provide a Protein 'partners' view.
      *
-     * @param prot The Protein we want a search URL for
+     * @param interactor The Protein we want a search URL for
      *
      * @return String a String representation of a search URL link for Protein.
      */
-    public String getProteinPartnerURL( Protein prot ) {
+//    public String getProteinPartnerURL( Protein prot ) {  // 1 usage in detail.jsp
+    public String getInteractorPartnerURL( Interactor interactor ) {  // 1 usage in detail.jsp
 
-        return searchURL + prot.getAc() + "&amp;searchClass=Protein&amp;view=partner&filter=ac";
+        // TRY TO MODIFY FROM PROTEIN TO INTERACTOR
+        if(interactor instanceof Protein)
+            return searchURL + interactor.getAc() + "&amp;searchClass=Protein&amp;view=partner&filter=ac";
+        else return searchURL + interactor.getAc() + "&amp;searchClass=NucleicAcid&amp;view=partner&filter=ac";
+
     }
 
     //////////////////////////
