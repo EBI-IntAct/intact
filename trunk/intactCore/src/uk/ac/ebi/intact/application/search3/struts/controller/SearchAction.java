@@ -177,7 +177,7 @@ public class SearchAction extends IntactBaseAction {
                     // having splice variant. That would pull the master + all splice variants
                     ResultWrapper subResults = this.getResults( searchHelper, "Protein", criteria, "ac",
                                                                 user );
-
+                   
                     if ( subResults.isEmpty() ) {
                         // then look for all fields if nothing has been found.
                         //finished all current options, and still nothing - return a failure
@@ -195,7 +195,7 @@ public class SearchAction extends IntactBaseAction {
                     if ( subResults.isEmpty() ) {
                         // no protein found
                         logger.info( "result is empty" );
-                        return mapping.findForward( SearchConstants.FORWARD_NO_PROTEIN_FOUND );
+                        return mapping.findForward( SearchConstants.FORWARD_NO_INTERACTOR_FOUND );
                     }
 
                     // search was a sucess

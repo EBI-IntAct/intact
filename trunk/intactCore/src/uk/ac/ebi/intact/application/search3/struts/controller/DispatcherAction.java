@@ -103,7 +103,7 @@ public class DispatcherAction extends IntactBaseAction {
                     if ( binaryValue != null && !binaryValue.equals( "" ) ) {
                         // it's a self interactions from outside
                         logger.info( "It's a Protein,  forwarding to BinaryProteinAction" );
-                        return mapping.findForward( SearchConstants.FORWARD_BINARYPROTEIN_ACTION );
+                        return mapping.findForward( SearchConstants.FORWARD_BINARYINTERACTOR_ACTION );
                     } else {
                         // it's a request from inside the jsp
                         logger.info( "It's a Protein, forwarding to  PartnerResultAction" );
@@ -112,6 +112,25 @@ public class DispatcherAction extends IntactBaseAction {
                 }
                 // we want the single Protein View
                 logger.info( "It's a Protein, ask forward to SingleResultAction" );
+                return mapping.findForward( SearchConstants.FORWARD_SINGLE_ACTION );
+
+            } // check if it's NucleicAcid
+            else if ( ( NucleicAcid.class.isAssignableFrom( resultItem.getClass() ) ) ) {
+
+                // now we got different choices
+                if ( ( viewSource != null ) && ( viewSource.equals( "partner" ) ) ) {
+                    if ( binaryValue != null && !binaryValue.equals( "" ) ) {
+                        // it's a self interactions from outside
+                        logger.info( "It's a NucleicAcid,  forwarding to BinaryProteinAction" );
+                        return mapping.findForward( SearchConstants.FORWARD_BINARYINTERACTOR_ACTION );
+                    } else {
+                        // it's a request from inside the jsp
+                        logger.info( "It's a NucleicAcid, forwarding to  PartnerResultAction" );
+                        return mapping.findForward( SearchConstants.FORWARD_BINARY_ACTION );
+                    }
+                }
+                // we want the single Protein View
+                logger.info( "It's a NucleicAcid, ask forward to SingleResultAction" );
                 return mapping.findForward( SearchConstants.FORWARD_SINGLE_ACTION );
 
             } // now it can only be a CvObject or a BioSource
@@ -137,7 +156,7 @@ public class DispatcherAction extends IntactBaseAction {
             if ( binaryValue != null && !binaryValue.equals( "" ) ) {
                 // it's a binary interaction request
                 logger.info( "Dispatcher ask forwarding to BinaryProteinAction" );
-                return mapping.findForward( SearchConstants.FORWARD_BINARYPROTEIN_ACTION );
+                return mapping.findForward( SearchConstants.FORWARD_BINARYINTERACTOR_ACTION );
 
             } else {
                 // it's a  multiple requst
