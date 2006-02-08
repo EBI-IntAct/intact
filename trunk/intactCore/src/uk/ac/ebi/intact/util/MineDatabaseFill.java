@@ -8,6 +8,8 @@ import org.apache.ojb.broker.accesslayer.LookupException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.application.mine.business.Constants;
+import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.model.Interaction;
 
 import java.sql.*;
 import java.util.*;
@@ -226,6 +228,7 @@ public class MineDatabaseFill {
             interactors.clear();
 
             // all interactors for the given interaction_ac are fetched
+
             getInteractors( interactors , baits , interactionAc ,
                     interactorSelect );
 
@@ -356,6 +359,8 @@ public class MineDatabaseFill {
         System.out.println();
     }
 
+
+    private static Map classCache = new HashMap(8);
     /**
      * Gets all interactors which take part in the same interaction identified
      * by the interaction_ac. <br>
@@ -373,7 +378,7 @@ public class MineDatabaseFill {
      */
     private static void getInteractors( List preys, List baits,
             String interactionAC, PreparedStatement selectInteractionStm )
-            throws SQLException {
+            throws SQLException, IntactException {
         // set the current interaction_ac of the select statement
         selectInteractionStm.setString( 1 , interactionAC );
         ResultSet resultSet = selectInteractionStm.executeQuery();
@@ -388,7 +393,25 @@ public class MineDatabaseFill {
             interactor_ac = resultSet.getString( "interactor_ac" )
                     .toUpperCase();
             // if the objclass of the interactor is protein
-            if ( objClass.indexOf( "Protein" ) != -1 ) {
+            Class aClass = null;
+            if(classCache.containsKey(objClass)){
+                aClass = (Class) classCache.get(objClass);
+
+            } else {
+                try {
+                    aClass = Class.forName(objClass);
+                } catch (ClassNotFoundException e) {
+                    throw new IntactException("Found as objectclass " + objClass + "this is not an intactClass ");
+                }
+                classCache.put(objClass, aClass);
+            }
+            if ( Interaction.class.isAssignableFrom( aClass ) ){
+                // the interactor is an interaction and therefore all
+                // interactors of this interaction are fetched into the current
+                // lists.
+                getInteractors( preys , baits , interactor_ac , selectInteractionStm );
+            }else if ( Interactor.class.isAssignableFrom(aClass)){
+//            if ( objClass.indexOf( "Protein" ) != -1 ) {
                 // if the interactor is a bait
                 interactorData = new InteractorData( interactor_ac, resultSet
                         .getString( "shortLabel" ) );
@@ -398,13 +421,15 @@ public class MineDatabaseFill {
                 else {
                     preys.add( interactorData );
                 }
+            } else {
+                throw new IllegalArgumentException("Unsupported class " + objClass );
             }
-            else {
-                // the interactor is an interaction and therefore all
-                // interactors of this interaction are fetched into the current
-                // lists.
-                getInteractors( preys , baits , interactor_ac , selectInteractionStm );
-            }
+//            else {
+//                // the interactor is an interaction and therefore all
+//                // interactors of this interaction are fetched into the current
+//                // lists.
+//                getInteractors( preys , baits , interactor_ac , selectInteractionStm );
+//            }
         }
         resultSet.close();
     }
