@@ -9,6 +9,7 @@ package uk.ac.ebi.intact.application.search3.struts.controller;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.PartnersViewBean;
 import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.model.Interactor;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -51,11 +52,11 @@ public class BinaryResultAction extends AbstractResultAction {
         String searchURL = super.getSearchURL();
 
         // check first for if we got the correct type and then build a collection of resulttypes
-        if ( Protein.class.isAssignableFrom( results.iterator().next().getClass() ) ) {
+        if ( Interactor.class.isAssignableFrom( results.iterator().next().getClass() ) ) {
             beanList = new ArrayList( results.size() );
 
             for ( Iterator it = results.iterator(); it.hasNext(); ) {
-                beanList.add( new PartnersViewBean( (Protein) it.next(), helpLink, searchURL,
+                beanList.add( new PartnersViewBean( (Interactor) it.next(), helpLink, searchURL,
                                                     request.getContextPath() ) );
             }
 
