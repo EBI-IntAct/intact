@@ -1,5 +1,6 @@
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
+import uk.ac.ebi.intact.application.commons.util.UrlCheckerThread;
 import uk.ac.ebi.intact.application.search3.business.Constants;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.SearchReplace;
@@ -113,10 +114,13 @@ public class MainDetailViewBean extends AbstractViewBean {
      */
     int maxPages;
 
+    // TODO remove these constants so taht they become available through CVs on CvDatabase( intact ).
     private static final String PMID_PARAM = "${pmid}";
     private static final String YEAR_PARAM = "${year}";
+
     private static final String FTP_CURRENT_RELEASE = "ftp://ftp.ebi.ac.uk/pub/databases/intact/current";
-    private static final String PSI1_URL  = FTP_CURRENT_RELEASE + "/psi1/pmid/" + YEAR_PARAM + "/" + PMID_PARAM + ".zip";
+
+    private static final String PSI1_URL = FTP_CURRENT_RELEASE + "/psi1/pmid/" + YEAR_PARAM + "/" + PMID_PARAM + ".zip";
     private static final String PSI25_URL = FTP_CURRENT_RELEASE + "/psi25/pmid/" + YEAR_PARAM + "/" + PMID_PARAM + ".zip";
 
     private static boolean hasYearParam = ( PSI1_URL.indexOf( YEAR_PARAM ) != -1 );
@@ -125,8 +129,8 @@ public class MainDetailViewBean extends AbstractViewBean {
     private String psi1Url;
     private String psi25Url;
 
-    private boolean hasPsi1URL = false;
-    private boolean hasPsi25URL = false;
+    private UrlCheckerThread urlCheckerPsi1;
+    private UrlCheckerThread urlCheckerPsi25;
 
     /**
      * The bean constructor requires an Experiment to wrap, plus beans on the context path to the search application and
@@ -179,26 +183,29 @@ public class MainDetailViewBean extends AbstractViewBean {
             if ( pubmedId != null ) {
                 // create PSI 1 URL
                 psi1Url = SearchReplace.replace( psi1Url, PMID_PARAM, pubmedId );
-                hasPsi1URL = true;
 
                 // create PSI 2.5 URL
                 psi25Url = SearchReplace.replace( psi25Url, PMID_PARAM, pubmedId );
-                hasPsi25URL = true;
             }
         }
 
         if ( hasYearParam ) {
             String year = getCreatedYear( obj );
-            if( year != null ) {
-                  // create PSI 1 URL
+            if ( year != null ) {
+                // create PSI 1 URL
                 psi1Url = SearchReplace.replace( psi1Url, YEAR_PARAM, year );
-                hasPsi1URL = true;
 
                 // create PSI 2.5 URL
                 psi25Url = SearchReplace.replace( psi25Url, YEAR_PARAM, year );
-                hasPsi25URL = true;
             }
         }
+
+        // Check if the URLs are present
+        urlCheckerPsi1 = new UrlCheckerThread( psi1Url );
+        urlCheckerPsi1.start();
+
+        urlCheckerPsi25 = new UrlCheckerThread( psi25Url );
+        urlCheckerPsi25.start();
     }
 
     /**
@@ -407,8 +414,8 @@ public class MainDetailViewBean extends AbstractViewBean {
         Collection xrefs = interactor.getXrefs();
         for ( Iterator it = xrefs.iterator(); it.hasNext(); ) {
             Xref xref = (Xref) it.next();
-            if(xref.getCvXrefQualifier() != null ){
-                if (CvXrefQualifier.IDENTITY.equals(xref.getCvXrefQualifier().getShortLabel())){
+            if ( xref.getCvXrefQualifier() != null ) {
+                if ( CvXrefQualifier.IDENTITY.equals( xref.getCvXrefQualifier().getShortLabel() ) ) {
                     primaryId = xref.getPrimaryId();
                     break;  //done
                 }
@@ -417,17 +424,16 @@ public class MainDetailViewBean extends AbstractViewBean {
         return primaryId;
     }
 
-    public String getInteractorType(Interactor interactor){
+    public String getInteractorType( Interactor interactor ) {
         CvInteractorType cvInteractorType = interactor.getCvInteractorType();
-        if(cvInteractorType != null && cvInteractorType.getShortLabel() != null){
+        if ( cvInteractorType != null && cvInteractorType.getShortLabel() != null ) {
             return cvInteractorType.getShortLabel();
-        }
-        else {
-            if(interactor instanceof Protein ){
+        } else {
+            if ( interactor instanceof Protein ) {
                 return "Protein";
-            }else if (interactor instanceof NucleicAcid) {
+            } else if ( interactor instanceof NucleicAcid ) {
                 return "Nucleic Acid";
-            }else{
+            } else {
                 return "-";
             }
         }
@@ -604,7 +610,7 @@ public class MainDetailViewBean extends AbstractViewBean {
             Component comp = (Component) it.next();
             Interactor interactor = comp.getInteractor();
 //            if ( interactor instanceof Protein ) {
-                results.add( interactor );
+            results.add( interactor );
 //            }
         }
 
@@ -615,7 +621,7 @@ public class MainDetailViewBean extends AbstractViewBean {
      * Provides the Component that holds a Protein for a given Interaction. Assumes that a Protein only appears ONCE as
      * a Component of an Interaction.
      *
-     * @param interactor     The Protein we are interested in
+     * @param interactor  The Protein we are interested in
      * @param interaction The Interaction for which the Protein is of relevance
      *
      * @return Component the Component of the Interaction which holds the Protein, or null if it is not present.
@@ -692,12 +698,12 @@ public class MainDetailViewBean extends AbstractViewBean {
                  "&amp;searchClass=CvXrefQualifier&amp;" );
     }
 
-    public String getCvDatabaseSearchUrl(CvDatabase cvDatabase){
+    public String getCvDatabaseSearchUrl( CvDatabase cvDatabase ) {
         String searchUrl = null;
         Collection annotations = cvDatabase.getAnnotations();
-        for (Iterator iterator = annotations.iterator(); iterator.hasNext();) {
-            Annotation annotation =  (Annotation) iterator.next();
-            if(annotation.getCvTopic().getShortLabel().equals(CvTopic.SEARCH_URL)){
+        for ( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
+            Annotation annotation = (Annotation) iterator.next();
+            if ( annotation.getCvTopic().getShortLabel().equals( CvTopic.SEARCH_URL ) ) {
                 searchUrl = annotation.getAnnotationText();
                 break;
             }
@@ -719,7 +725,7 @@ public class MainDetailViewBean extends AbstractViewBean {
         // Check if the id can be hyperlinked
         String searchUrl = (String) dbUrls.get( xref.getCvDatabase() );
         if ( searchUrl == null ) {
-            searchUrl = getCvDatabaseSearchUrl(xref.getCvDatabase());
+            searchUrl = getCvDatabaseSearchUrl( xref.getCvDatabase() );
             dbUrls.put( xref.getCvDatabase(), searchUrl );
         }
 
@@ -746,14 +752,14 @@ public class MainDetailViewBean extends AbstractViewBean {
         String url = "-";
         for ( Iterator it = xrefs.iterator(); it.hasNext(); ) {
             Xref xref = (Xref) it.next();
-            if (xref.getCvXrefQualifier() != null){
-                if ( CvXrefQualifier.IDENTITY.equals( xref.getCvXrefQualifier().getShortLabel()) ) {
+            if ( xref.getCvXrefQualifier() != null ) {
+                if ( CvXrefQualifier.IDENTITY.equals( xref.getCvXrefQualifier().getShortLabel() ) ) {
                     url = this.getPrimaryIdURL( xref );
                     break;  //done
                 }
             }
         }
-        logger.info("Interactor " +  interactor.getAc() + " has url " + url);
+        logger.info( "Interactor " + interactor.getAc() + " has url " + url );
         return url;
 
     }
@@ -943,9 +949,11 @@ public class MainDetailViewBean extends AbstractViewBean {
 
         // TRY TO MODIFY FROM PROTEIN TO INTERACTOR
 
-        if(interactor instanceof Protein)
+        if ( interactor instanceof Protein ) {
             return searchURL + interactor.getAc() + "&amp;searchClass=Protein&amp;view=single&filter=ac";
-        else return searchURL + interactor.getAc() + "&amp;searchClass=NucleicAcid&amp;view=single&filter=ac";
+        } else {
+            return searchURL + interactor.getAc() + "&amp;searchClass=NucleicAcid&amp;view=single&filter=ac";
+        }
     }
 
     /**
@@ -960,9 +968,11 @@ public class MainDetailViewBean extends AbstractViewBean {
     public String getInteractorPartnerURL( Interactor interactor ) {  // 1 usage in detail.jsp
 
         // TRY TO MODIFY FROM PROTEIN TO INTERACTOR
-        if(interactor instanceof Protein)
+        if ( interactor instanceof Protein ) {
             return searchURL + interactor.getAc() + "&amp;searchClass=Protein&amp;view=partner&filter=ac";
-        else return searchURL + interactor.getAc() + "&amp;searchClass=NucleicAcid&amp;view=partner&filter=ac";
+        } else {
+            return searchURL + interactor.getAc() + "&amp;searchClass=NucleicAcid&amp;view=partner&filter=ac";
+        }
 
     }
 
@@ -1007,10 +1017,18 @@ public class MainDetailViewBean extends AbstractViewBean {
     }
 
     public boolean hasPsi1URL() {
-        return hasPsi1URL;
+        if ( ! urlCheckerPsi1.hasFinished( 100 ) ) {
+            logger.error( "The checking of PSI 1.0 URL (" + urlCheckerPsi1.getUrl() + ") could not complete on time." );
+        }
+
+        return urlCheckerPsi1.isValidUrl();
     }
 
     public boolean hasPsi25URL() {
-        return hasPsi25URL;
+        if ( ! urlCheckerPsi25.hasFinished( 100 ) ) {
+            logger.error( "The checking of PSI 2.5 URL (" + urlCheckerPsi25.getUrl() + ") could not complete on time." );
+        }
+
+        return urlCheckerPsi25.isValidUrl();
     }
 }
