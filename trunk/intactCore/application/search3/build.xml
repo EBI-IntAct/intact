@@ -84,6 +84,10 @@
         <pathelement path="${root.lib.dir}/commons-dbcp-1.1.jar"/>
         <pathelement path="${root.lib.dir}/xercesImpl.jar"/>
 
+        <!-- Needed for URL check -->
+        <pathelement path="${root.lib.dir}/commons-httpclient-3.0-rc2.jar"/>
+        <pathelement path="${root.lib.dir}/commons-codec-1.4-dev.jar"/>
+
         <!-- NB these probably need upgrading from the intact lib directory.. -->
         <pathelement path="${intact.app.dir}/lib/struts.jar"/>
         <pathelement path="${root.lib.dir}/commons-collections-3.0.jar"/>
@@ -205,7 +209,6 @@
                 <exclude name="single.jsp"/>
                 <exclude name="tooManyInteractors.jsp"/>
                 <exclude name="noInteraction.jsp"/>
-                
 
 
             </fileset>
@@ -396,8 +399,6 @@
                 <exclude name="**/search3/searchEngine/**"/>
 
 
-
-
                 <!-- Test packages -->
                 <exclude name="**/test/**"/>
             </packageset>
@@ -505,6 +506,9 @@
                 <include name="commons-pool-1.1.jar"/>
                 <include name="commons-dbcp-1.1.jar"/>
                 <include name="commons-collections-3.0.jar"/>
+                <include name="commons-httpclient-3.0-rc2.jar"/>
+                <include name="commons-codec-1.4-dev.jar"/>
+
             </lib>
 
             <!-- search specific classes -->
