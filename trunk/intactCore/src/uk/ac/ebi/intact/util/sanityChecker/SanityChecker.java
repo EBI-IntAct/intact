@@ -88,7 +88,7 @@ public class SanityChecker {
     private static ControlledvocabBean cTerminalCvBean;
     private static ControlledvocabBean nTerminalCvBean;
     private static ControlledvocabBean undeterminedCvBean;
-
+    private static ControlledvocabBean inferredByCuratorCvBean;
     /**
      * Xref databases
      */
@@ -251,6 +251,7 @@ public class SanityChecker {
         enzymeTargetCvBean = (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, "MI:0502" ).get(0);
         selfCvBean = (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, "MI:0503" ).get(0);
         unspecifiedCvBean = (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, "MI:0499" ).get(0);
+        inferredByCuratorCvBean =  (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, "MI:0364" ).get(0);
 
         uniprotDatabaseCvBean = (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class,"MI:0486" ).get(0);
 
@@ -320,7 +321,7 @@ public class SanityChecker {
                                            "FROM ia_component " +
                                            "WHERE interaction_ac = ? ");
 
-        sch.addMapping(ExperimentBean.class,"SELECT biosource_ac, ac, shortlabel, userstamp, updated " +
+        sch.addMapping(ExperimentBean.class,"SELECT biosource_ac, ac, detectmethod_ac, shortlabel, userstamp, updated " +
                                             "FROM ia_experiment " +
                                             "WHERE ac like ?");
 
@@ -1064,33 +1065,38 @@ public class SanityChecker {
 
         for (int i = 0; i < experimentBeans.size(); i++) {
             ExperimentBean experimentBean =  (ExperimentBean) experimentBeans.get(i);
-            if ( !experimentIsOnHold(experimentBean.getAc()) ) {
-                int pubmedCount = 0;
-                int pubmedPrimaryCount = 0;
-                List xrefBeans = sch.getBeans(XrefBean.class,experimentBean.getAc());
-                for (int j = 0; j < xrefBeans.size(); j++) {
-                    XrefBean xrefBean = (XrefBean) xrefBeans.get(j);
-//                    System.out.println("xref cvDb = " + xrefBean.getDatabase_ac());
-//                    System.out.println("xref qualifier = " + xrefBean.getQualifier_ac());
-//                    System.out.println();
 
-                    if ( pubmedDatabaseCvBean.getAc().equals( xrefBean.getDatabase_ac() ) ) {
-                        pubmedCount++;
-                        if ( primaryReferenceXrefQualifierCvBean.getAc().equals( xrefBean.getQualifier_ac() ) ) {
-                            pubmedPrimaryCount++;
+            // Some of the experiment are manually curated complexes. It means that a curator has
+            // unify all his knowledge about a particular complex and put it into intact. This
+            // knowledge come from different articles, studies... and not from on article in particular
+            // so those manually curated complexes have no xref to pubmed and as detection method
+            // 'inferred by curator'. So we don't check if those experiment have a pubmed Id.
+            if(!inferredByCuratorCvBean.getAc().equals(experimentBean.getDetectmethod_ac())){
+                if ( !experimentIsOnHold(experimentBean.getAc()) ) {
+                    int pubmedCount = 0;
+                    int pubmedPrimaryCount = 0;
+                    List xrefBeans = sch.getBeans(XrefBean.class,experimentBean.getAc());
+                    for (int j = 0; j < xrefBeans.size(); j++) {
+                        XrefBean xrefBean = (XrefBean) xrefBeans.get(j);
+
+                        if ( pubmedDatabaseCvBean.getAc().equals( xrefBean.getDatabase_ac() ) ) {
+                            pubmedCount++;
+                            if ( primaryReferenceXrefQualifierCvBean.getAc().equals( xrefBean.getQualifier_ac() ) ) {
+                                pubmedPrimaryCount++;
+                            }
                         }
                     }
-                }
-                if ( pubmedCount == 0 ) {
-                    //record it.....
-                    messageSender.addMessage( ReportTopic.EXPERIMENT_WITHOUT_PUBMED, experimentBean);//, editorUrlBuilder.getEditorUrl(experimentBean) );
-                }
+                    if ( pubmedCount == 0 ) {
+                        //record it.....
+                        messageSender.addMessage( ReportTopic.EXPERIMENT_WITHOUT_PUBMED, experimentBean);//, editorUrlBuilder.getEditorUrl(experimentBean) );
+                    }
 
-                if ( pubmedPrimaryCount < 1 ) {
-                    //record it.....
-                    messageSender.addMessage( ReportTopic.EXPERIMENT_WITHOUT_PUBMED_PRIMARY_REFERENCE, experimentBean);//, editorUrlBuilder.getEditorUrl(experimentBean) );
-                }
-            }// experimentIsOnHold
+                    if ( pubmedPrimaryCount < 1 ) {
+                        //record it.....
+                        messageSender.addMessage( ReportTopic.EXPERIMENT_WITHOUT_PUBMED_PRIMARY_REFERENCE, experimentBean);//, editorUrlBuilder.getEditorUrl(experimentBean) );
+                    }
+                }// experimentIsOnHold
+            }
         }
 
     }
@@ -1532,6 +1538,8 @@ public class SanityChecker {
         }
     }
 
+
+
     public static void main(String[] args) throws SQLException, IntactException, LookupException {
 
 
@@ -1697,5 +1705,6 @@ public class SanityChecker {
         scn.helper.closeStore();
         scn=null;
     }
+
 
 }
