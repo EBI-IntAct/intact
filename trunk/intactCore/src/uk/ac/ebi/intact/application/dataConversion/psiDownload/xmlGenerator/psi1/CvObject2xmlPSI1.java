@@ -64,31 +64,6 @@ public class CvObject2xmlPSI1 extends AnnotatedObject2xmlPSI1 implements CvObjec
         CvObject2xmlCommons.getInstance().updateCache( cache, new Cv2Source( cvObject, parent.getNodeName() ), element );
     }
 
-    ////////////////////////////
-    // Encapsulated mehods
-
-    /**
-     * Create PSI Xrefs from an IntAct cvObject. <br> Put Xref(psi-mi, identity) as primaryRef, any other as
-     * secondaryRef. <br> If not psi-mi available, take randomly an other one.
-     *
-     * @param session
-     * @param parent   the DOM element to which we will add the newly generated PSI Xref.
-     * @param cvObject the cvObject from which we get the Xref to generate.
-     */
-    private void createCvObjectXrefs( UserSessionDownload session, Element parent, CvObject cvObject ) {
-
-        // if the user requested a mapping of the CVs to be applied, then do it here.
-        if ( session.hasCvMapping() ) {
-            CvObject toCvObject = session.getReverseCvMapping().getPSI2toPSI1( cvObject );
-            if ( toCvObject != null && toCvObject != cvObject ) {
-                System.out.println( "NOTE: '" + cvObject.getShortLabel() + "' remapped to '" + toCvObject.getShortLabel() + "'." );
-                cvObject = toCvObject;
-            }
-        }
-
-        CvObject2xmlCommons.getInstance().createCvObjectXrefs( session, parent, cvObject );
-    }
-
     ///////////////////////////
     // Public methods
 
@@ -96,8 +71,8 @@ public class CvObject2xmlPSI1 extends AnnotatedObject2xmlPSI1 implements CvObjec
      * Generic call that generates the XML representation of the given CvObject.
      *
      * @param session
-     * @param parent   the parent to which we wil attach the generated XML document.
-     * @param cvObject the CvObject of which we generate the XML representation.
+     * @param parent  the parent to which we wil attach the generated XML document.
+     * @param cv      the CvObject of which we generate the XML representation.
      *
      * @return the XML representation of the given CvObject.
      */
@@ -113,37 +88,49 @@ public class CvObject2xmlPSI1 extends AnnotatedObject2xmlPSI1 implements CvObjec
         }
 
         if ( cvObject == null ) {
-            throw new IllegalArgumentException( "You must give a non null cvObject." );
+            throw new IllegalArgumentException( "You must give a non null cv." );
         }
 
-        Element element = getXmlFromCache( session, parent, cvObject );
+        CvObject cv = cvObject;
+
+        // if the user requested a mapping of the CVs to be applied, then do it here.
+        if ( session.hasCvMapping() ) {
+            CvObject toCvObject = session.getReverseCvMapping().getPSI2toPSI1( cv );
+            if ( toCvObject != null && ! toCvObject.equals( cv ) ) {
+                String msg = "NOTE: '" + cv.getShortLabel() + "' remapped to '" + toCvObject.getShortLabel() + "'.";
+                session.addMessage( msg );
+                cv = toCvObject;
+            }
+        }
+
+        Element element = getXmlFromCache( session, parent, cv );
 
         if ( element == null ) {
 
             // get the tag name corresponding to the given instance of CvObject.
-            String tagName = CvObject2xmlCommons.getInstance().getNodeName( session, parent, cvObject.getClass() );
+            String tagName = CvObject2xmlCommons.getInstance().getNodeName( session, parent, cv.getClass() );
 
             if ( tagName == null ) {
-                throw new IllegalArgumentException( "The CvObject type: " + cvObject.getClass() + " is not supported." );
+                throw new IllegalArgumentException( "The CvObject type: " + cv.getClass() + " is not supported." );
             }
 
             // creating the root element...
             element = session.createElement( tagName );
 
             // generating names...
-            createNames( session, element, cvObject );
+            createNames( session, element, cv );
 
             // generating xrefs...
             Element xrefElement = session.createElement( "xref" );
 
-            createCvObjectXrefs( session, xrefElement, cvObject );
+            CvObject2xmlCommons.getInstance().createCvObjectXrefs( session, xrefElement, cv );
 
             if ( xrefElement.hasChildNodes() ) {
                 element.appendChild( xrefElement );
             }
 
             // updating the cache
-            updateCache( session, parent, cvObject, element );
+            updateCache( session, parent, cv, element );
         }
 
         // attaching the element to the given parent...
