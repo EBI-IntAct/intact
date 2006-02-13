@@ -119,4 +119,14 @@ public class UrlCheckerThreadTest extends TestCase {
             assertTrue( urlCheckerThread.isValidUrl() );
         }
     }
+
+    public void testWait() {
+        UrlCheckerThread urlCheckerThread = new UrlCheckerThread( "http://www.ebi.ac.uk" );
+        urlCheckerThread.start();
+        long start = System.currentTimeMillis();
+        final int wait = 30 * 1000;
+        urlCheckerThread.hasFinished( wait );
+        long stop = System.currentTimeMillis();
+        assertTrue( ( start - stop ) < wait );
+    }
 }
