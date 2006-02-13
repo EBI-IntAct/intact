@@ -37,8 +37,7 @@ import org.apache.ojb.broker.accesslayer.LookupException;
  * @author Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id$
  */
-public class
-        SanityChecker {
+public class SanityChecker {
     private int duplicProt = 0;
     private SanityCheckerHelper sch;
 
@@ -838,11 +837,9 @@ public class
                                 //System.out.println("Interaction " +interactionAc + "  with no prey");
                                 messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_PREY, interactionBean);
                             }
-
+                        //if can be only a fluorophore but no donor
                         }else if ( fluorophoreAcceptorDonor == 1 ) {
-                            if ( fluorophoreAcceptorCount == 0){
-                                messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_FLUOROPHORE_ACCEPTOR, interactionBean);
-                            }else if (fluorophoreDonorCount == 0 ){
+                            if (fluorophoreDonorCount == 0 ){
                                 messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_FLUOROPHORE_DONOR, interactionBean);
                             }
                         }else if ( electronAcceptorDonor == 1 ) {
