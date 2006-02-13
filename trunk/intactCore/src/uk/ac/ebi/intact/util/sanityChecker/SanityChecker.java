@@ -1225,6 +1225,28 @@ public class SanityChecker {
     }
 
 
+    public void cvInteractionChecker(SanityCheckerHelper sch) throws SQLException, IntactException {
+        sch.addMapping(ControlledvocabBean.class, "select ac, updated, userstamp, shortlabel, objclass " +
+                                                  "from ia_controlledvocab " +
+                                                  "where objclass='" + CvInteraction.class.getName() + "' " +
+                                                  "minus " +
+                                                  "select cv.ac, cv.updated, cv.userstamp, cv.shortlabel, cv.objclass " +
+                                                  "from ia_controlledvocab cv, ia_cvobject2annot cv2a, ia_annotation a " +
+                                                  "where cv.objclass ='" + CvInteraction.class.getName() + "' " +
+                                                  "and a.ac=cv2a.annotation_ac " +
+                                                  "and cv.ac=cv2a.cvobject_ac " +
+                                                  "and a.topic_ac=(select ac " +
+                                                  "from ia_controlledvocab " +
+                                                  "where shortlabel = ? ) " );
+        Collection cvInteractionBeans = sch.getBeans(ControlledvocabBean.class, CvTopic.UNIPROT_DR_EXPORT);
+
+        for (Iterator iterator = cvInteractionBeans.iterator(); iterator.hasNext();) {
+            ControlledvocabBean cv =  (ControlledvocabBean) iterator.next();
+            messageSender.addMessage(ReportTopic.CVINTERACTION_WITHOUT_ANNOTATION_UNIPROT_DR_EXPORT, cv );
+        }
+
+    }
+
     /**
      * This function retrieve all the sequence chunk corresponding to a protein and associate them in the good order to
      * rebuild the sequence
@@ -1539,8 +1561,7 @@ public class SanityChecker {
     }
 
 
-
-    public static void main(String[] args) throws SQLException, IntactException, LookupException {
+   public static void main(String[] args) throws SQLException, IntactException, LookupException {
 
 
         SanityChecker scn = new SanityChecker();
@@ -1559,10 +1580,6 @@ public class SanityChecker {
         List cvUsableTopic=scn.annotationSection.getUsableTopics(CvObject.class.getName());
         List bsUsableTopic=scn.annotationSection.getUsableTopics(BioSource.class.getName());
 
-        /*
-        *     Check on Controlled Vocabullary
-        */
-        scn.checkHiddenAndObsoleteCv();
 
         /*
         *     Check on feature
@@ -1585,6 +1602,12 @@ public class SanityChecker {
         scn.checkComponentOfInteractions(interactorBeans);
         scn.checkOneIntOneExp();
         scn.checkAnnotations(interactorBeans, Interaction.class.getName(),intUsableTopic);
+
+        /*
+        *     Check on Controlled Vocabullary
+        */
+        scn.checkHiddenAndObsoleteCv();
+        scn.cvInteractionChecker(scn.hiddenObsoleteNotInUsed);
 
         /*
         *     Check on xref

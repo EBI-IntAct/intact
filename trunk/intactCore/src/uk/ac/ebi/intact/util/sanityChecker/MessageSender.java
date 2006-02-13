@@ -485,11 +485,24 @@ public class MessageSender {
         }else if(intactBean instanceof AnnotatedBean){
             AnnotatedBean annotatedBean = (AnnotatedBean) intactBean;
             editorUrl = editorUrlBuilder.getEditorUrl(annotatedBean);
-            String[] rowValues = new String[4];
-            rowValues[0] ="<a href="+ editorUrl + ">"+ annotatedBean.getAc() + "</a>";
-            rowValues[1] =annotatedBean.getShortlabel();
-            rowValues[2] = "" + date;
-            rowValues[3] = user;
+            String[] rowValues;
+            // If the intact term is a CvInteraction then we can not link it to the editor, as the editor can not edit
+            // CvInteraction. So we do not put any href on the ac.
+            if( intactBean instanceof ControlledvocabBean && CvInteraction.class.getName().equals(((ControlledvocabBean)intactBean).getObjclass())){
+                rowValues = new String[5];
+                rowValues[0] = annotatedBean.getAc();
+                rowValues[1] =annotatedBean.getShortlabel();
+                rowValues[2] = new String("CvInteraction");
+                rowValues[3] = "" + date;
+                rowValues[4] = user;
+            }
+            else{
+                rowValues = new String[4];
+                rowValues[0] ="<a href="+ editorUrl + ">"+ annotatedBean.getAc() + "</a>";
+                rowValues[1] =annotatedBean.getShortlabel();
+                rowValues[2] = "" + date;
+                rowValues[3] = user;
+            }
             userMessageReport =  formatRow("html",rowValues,"values","userReport",false);
             adminMessageReport = formatRow("html",rowValues,"values","adminReport",false);
 
@@ -503,6 +516,7 @@ public class MessageSender {
                 InteractorBean relatedInteraction = getFeaturedInteraction(featureBean.getAc());
                 editorUrl = editorUrlBuilder.getEditorUrl(relatedInteraction);
                   //still to test
+
                 rowValues[0] ="<a href="+ editorUrl + ">"+ relatedInteraction.getAc() + "</a>";
                 rowValues[1] =featureBean.getAc() ;
                 rowValues[2]="";
@@ -1295,7 +1309,14 @@ public class MessageSender {
                 rowValues[5] = "When";
                 rowValues[6] = "User";
                 header = formatRow("html", rowValues, "headers",reportType,false);
-
+            }else if (ReportTopic.CVINTERACTION_WITHOUT_ANNOTATION_UNIPROT_DR_EXPORT.equals(topic)){
+                String[] rowValues = new String[5];
+                rowValues[0] = "Ac";
+                rowValues[1] = "Shortlabel ";
+                rowValues[2] = "ObjClass";
+                rowValues[3] = "When";
+                rowValues[4] = "User";
+                header = formatRow("html", rowValues, "headers",reportType,false);
             }
             else {
                 String[] rowValues = new String[4];

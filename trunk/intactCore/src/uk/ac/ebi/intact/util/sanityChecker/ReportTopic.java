@@ -42,6 +42,7 @@ public class ReportTopic {
 
     public static final ReportTopic  HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_ALIASTYPEAC_IN_ALIAS = new ReportTopic ("This/those alias have an alias type corresponding to a hidden or obsolete Cv");
 
+    public static final ReportTopic  CVINTERACTION_WITHOUT_ANNOTATION_UNIPROT_DR_EXPORT = new ReportTopic ("This/those alias have an alias type corresponding to a hidden or obsolete Cv");
 
     //
         // F E A T U R E
