@@ -10,7 +10,10 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -142,6 +145,7 @@ public class ExperimentListGenerator {
      * @return HashMap of HashMap of ArrayLists of Experiments: {species}{scale}[n]
      *
      * @throws uk.ac.ebi.intact.business.IntactException
+     *
      */
     public static ExperimentClassification classifyExperiments( String searchPattern ) throws IntactException {
 
@@ -150,6 +154,7 @@ public class ExperimentListGenerator {
 
         try {
             helper = new IntactHelper();
+            System.out.println( "Database: " + helper.getDbName() );
 
             // Obtain data, probably experiment by experiment, build
             // PSI data for it then write it to a file....
@@ -383,7 +388,7 @@ public class ExperimentListGenerator {
                         "            )" +
                         "     )";
 
-        Set expAcs = new HashSet( 1024 ); //used to collect ACs from a query - Set avoids duplicates
+        Set expShortlabels = new HashSet( 32 ); //used to collect ACs from a query - Set avoids duplicates
 
         Connection conn = null;
         Statement stmt = null;  //ordinary Statement will do - won't be reused
@@ -401,7 +406,7 @@ public class ExperimentListGenerator {
             rs = stmt.executeQuery( expSql );
             while ( rs.next() ) {
                 //stick them into the Set of ACs
-                expAcs.add( rs.getString( "experiment_ac" ) );
+                expShortlabels.add( rs.getString( "experiment_ac" ) );
             }
             rs.close();
             stmt.close();
@@ -411,15 +416,16 @@ public class ExperimentListGenerator {
             rs = stmt.executeQuery( sql );
             while ( rs.next() ) {
                 //stick them into the Set of ACs
-                expAcs.add( rs.getString( "experiment_ac" ) );
+                expShortlabels.add( rs.getString( "experiment_ac" ) );
             }
             rs.close();
             stmt.close();
             // do not close the connexion ... helper.closeStore() takes care of giving it back to the connexion pool.
 
             // Now get the Experiments by AC as these are what we need...
-            for ( Iterator it = expAcs.iterator(); it.hasNext(); ) {
+            for ( Iterator it = expShortlabels.iterator(); it.hasNext(); ) {
 
+                // TODO we have actually stored the Experiment, not the AC or the Shortlabel !!!!!
                 String ac = (String) it.next();
                 Experiment experiment = (Experiment) helper.getObjectByAc( Experiment.class, ac );
                 negExpLabels.add( experiment );
@@ -446,6 +452,8 @@ public class ExperimentListGenerator {
                     labelStmt.close();
                 }
 
+                // Do not close the connection ... closeStore hands it back to the pool !
+
                 if ( helper != null ) {
                     helper.closeStore();
                 }
@@ -453,20 +461,22 @@ public class ExperimentListGenerator {
                 se.printStackTrace();
             }
         }
+
+        System.out.println( negExpLabels.size() + " negative experiment found." );
     }
 
     /**
      * Sort a collection of String (shorltabel). The given collection is not modified, a new one is returned.
      *
-     * @param l collection to sort.
+     * @param experiments collection to sort.
      *
      * @return the sorted collection.
      */
-    private static List getSortedShortlabel( Collection l ) {
+    private static List getSortedShortlabel( Collection experiments ) {
 
-        List sorted = new ArrayList( l.size() );
+        List sorted = new ArrayList( experiments.size() );
 
-        for ( Iterator iterator = l.iterator(); iterator.hasNext(); ) {
+        for ( Iterator iterator = experiments.iterator(); iterator.hasNext(); ) {
             Experiment experiment = (Experiment) iterator.next();
             sorted.add( experiment.getShortLabel() );
         }
@@ -653,16 +663,35 @@ public class ExperimentListGenerator {
     }
 
     /**
+     * Answers the following question: "Is the given shortlabel refering to a negative experiment ?".
+     *
+     * @param negativeExperiments a list of negative experiment
+     * @param experimentLabel     the experiment shortlabel.
+     *
+     * @return true if the label refers to a negative experiment, false otherwise.
+     */
+    private static boolean isNegative( Collection negativeExperiments, String experimentLabel ) {
+
+        for ( Iterator iterator = negativeExperiments.iterator(); iterator.hasNext(); ) {
+            Experiment experiment = (Experiment) iterator.next();
+            if ( experiment.getShortLabel().equals( experimentLabel ) ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Given a Map containing the following associations: filename -> List of Experiment, generate a flat file
      * representing these associations for later processing.
      *
-     * @param file2experimentSet the map upon which we generate the file.
-     * @param negExpLabels       a collection of known negative experiment.
-     * @param writer             the writer to the output file.
+     * @param file2experimentSet  the map upon which we generate the file.
+     * @param negativeExperiments a collection of known negative experiment.
+     * @param writer              the writer to the output file.
      *
      * @throws IOException
      */
-    private static void writeLines( Map file2experimentSet, Collection negExpLabels, Writer writer ) throws IOException {
+    private static void writeLines( Map file2experimentSet, Collection negativeExperiments, Writer writer ) throws IOException {
 
         // write each subset into the classification file
         List orderedFilenames = new ArrayList( file2experimentSet.keySet() );
@@ -683,14 +712,20 @@ public class ExperimentListGenerator {
 
                 //put the Experiment label in the correct place, depending upon
                 //its sub-classification (ie negative or not)
-                if ( negExpLabels.contains( shortlabel ) ) {
+                // TODO bug here ... the collection contains ACs
+                boolean negative = isNegative( negativeExperiments, shortlabel );
+                if ( negative ) {
                     negPattern.append( shortlabel );
                 } else {
                     pattern.append( shortlabel );
                 }
 
                 if ( iterator2.hasNext() ) {
-                    pattern.append( "," );
+                    if ( negative ) {
+                        negPattern.append( ',' );
+                    } else {
+                        pattern.append( ',' );
+                    }
                 }
             }
 
@@ -800,6 +835,8 @@ public class ExperimentListGenerator {
                     fileSpecies = null;
                 }
             } catch ( Exception e ) {
+                e.printStackTrace();
+                System.out.println( "We will use the default value instead..." );
                 // nothing, the default filename will be given
             }
         }
@@ -815,6 +852,8 @@ public class ExperimentListGenerator {
                     filePublication = null;
                 }
             } catch ( Exception e ) {
+                e.printStackTrace();
+                System.out.println( "We will use the default value instead..." );
                 // nothing, the default filename will be given
             }
         }
