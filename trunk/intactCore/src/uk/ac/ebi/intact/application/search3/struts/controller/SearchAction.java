@@ -150,14 +150,13 @@ public class SearchAction extends IntactBaseAction {
             SearchHelper searchHelper = new SearchHelper( logger );
 
             // TODO this should probably move to the dispatcher action
-            // TODO This should go to a dedicated action
 
             // if it's a binary request first look for this one
             if ( binaryValue != null && !binaryValue.equals( "" ) ) {
                 logger.info( "calculate binary Value with : " + binaryValue );
                 session.setAttribute( "binary", binaryValue );
                 // it's an binary request
-                // convert to binary query to a normal one 
+                // convert to binary query to a normal one
                 binaryValue = binaryValue.replaceAll( "\\,%20", "," );
                 session.setAttribute( SearchConstants.SEARCH_CRITERIA, "'" + binaryValue + "'" );
 
@@ -177,7 +176,7 @@ public class SearchAction extends IntactBaseAction {
                     // having splice variant. That would pull the master + all splice variants
                     ResultWrapper subResults = this.getResults( searchHelper, "Protein", criteria, "ac",
                                                                 user );
-                   
+
                     if ( subResults.isEmpty() ) {
                         // then look for all fields if nothing has been found.
                         //finished all current options, and still nothing - return a failure
@@ -231,7 +230,7 @@ public class SearchAction extends IntactBaseAction {
 
             if ( results.isTooLarge() ) {
 
-                logger.info( "Results set is too Large for the specified search criteeria" );
+                logger.info( "Results set is too Large for the specified search criteria" );
                 request.setAttribute( SearchConstants.SEARCH_CRITERIA, "'" + searchValue + "'" );
                 request.setAttribute( SearchConstants.RESULT_INFO, results.getInfo() );
                 return mapping.findForward( SearchConstants.FORWARD_TOO_LARGE );
@@ -256,7 +255,6 @@ public class SearchAction extends IntactBaseAction {
                 obj = (AnnotatedObject) iterator.next();
                 logger.info( "Search result: " + obj.getShortLabel() );
                 labelList.add( obj.getShortLabel() );
-                logger.info( "Search result: " + obj.getShortLabel() );
             }
 
             //put both the results and also a list of the shortlabels for highlighting into the request
@@ -281,19 +279,15 @@ public class SearchAction extends IntactBaseAction {
 
         }
         catch ( IntactException se ) {
-            logger.info( "something went wrong ..." );
+
             // Something failed during search...
-            logger.info( se );
+            logger.error( "Error occured in SearchAction ...", se );
 
-            if ( se.getNestedMessage() != null ) {
-                logger.info( se.getNestedMessage() );
+            Throwable t = se.getCause();
+            while ( t != null ) {
+                logger.error( "Caused by:", t );
+                t = t.getCause();
             }
-
-            if ( se.getRootCause() != null ) {
-                logger.info( "Root cause", se.getRootCause() );
-            }
-
-            logger.info( se.getLocalizedMessage() );
 
             // clear in case there is some old errors in there.
             super.clearErrors();
@@ -331,9 +325,7 @@ public class SearchAction extends IntactBaseAction {
             logger.info( "SearchAction: searchfast: " + searchValue + " searchClass: " + searchClass );
             IntactHelper intactHelper = user.getIntactHelper();
             result = helper.searchFast( searchValue, searchClass, filterValue, intactHelper, SearchConstants.MAXIMUM_RESULT_SIZE );
-        }
-
-        else {
+        } else {
             // this is a normal request from the servlet, we know the class, we know the value.
             Collection temp = new ArrayList();
             logger.info( "SearchAction: doLookup: " + searchValue + " searchClass: " + searchClass );
