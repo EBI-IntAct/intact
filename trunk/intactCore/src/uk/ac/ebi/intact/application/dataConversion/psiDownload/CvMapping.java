@@ -5,20 +5,18 @@
  */
 package uk.ac.ebi.intact.application.dataConversion.psiDownload;
 
-import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.Xref;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 /**
- * TODO comment this
+ * Holds a Controlled Vocabulary Mapping.
+ * <p/>
+ * The mapping is loaded from a file and the CvMapping is then queried in order to get a remapped CV.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
@@ -26,16 +24,14 @@ import java.util.*;
  */
 public class CvMapping {
 
+    public static final String FILENAME = "CvMapping.ser";
+
     public static final String TABULATION = "\t";
     public static final String STAR = "*";
 
     private Map map = new HashMap();
 
     public CvMapping() {
-
-//        IntactHelper helper = new IntactHelper();
-//        map = loadFile( new File( "C:/reverseMapping.txt" ), helper );
-//        System.out.println( map.size() + " association" + ( map.size() > 1 ? "s" : "" ) + " loaded." );
     }
 
     private String getPsiReference( CvObject cv ) {
@@ -100,7 +96,37 @@ public class CvMapping {
      */
     public Map loadFile( File file, IntactHelper helper ) {
 
-        Map map = new HashMap();
+        map = new HashMap();
+
+        File serializeFile = new File( file.getName() + ".ser" );
+
+        try {
+            if ( serializeFile.exists() ) {
+
+                System.out.println( "Loading mapping from serialized cache (" + serializeFile.getAbsolutePath() + ")" );
+
+                FileInputStream in = new FileInputStream( serializeFile );
+                ObjectInputStream ois = new ObjectInputStream( in );
+
+                Integer count = (Integer) ois.readObject();
+
+                for ( int i = 0; i < count.intValue(); i++ ) {
+
+                    CvObject from = (CvObject) ois.readObject();
+                    CvObject to = (CvObject) ois.readObject();
+
+                    map.put( from, to );
+                }
+
+                ois.close();
+
+                System.out.println( map.size() + " association loaded." );
+                return map;
+            }
+        } catch ( Exception e ) {
+            map.clear(); // in case of error, clear the cache.
+            e.printStackTrace();
+        }
 
         try {
             BufferedReader in = new BufferedReader( new FileReader( file ) );
@@ -257,17 +283,45 @@ public class CvMapping {
             e.printStackTrace();
         }
 
+        // try to cache the map on disk for later use.
+
+        FileOutputStream out = null;
+        try {
+            if ( ! map.isEmpty() ) {
+                System.out.println( "Caching " + map.size() + " associations into " + serializeFile.getAbsolutePath() );
+                out = new FileOutputStream( serializeFile );
+                ObjectOutputStream oos = new ObjectOutputStream( out );
+
+                // write the count of associations
+                oos.writeObject( new Integer( map.size() ) );
+
+                for ( Iterator iterator = map.keySet().iterator(); iterator.hasNext(); ) {
+                    CvObject from = (CvObject) iterator.next();
+                    CvObject to = (CvObject) map.get( from );
+
+                    oos.writeObject( from );
+                    oos.writeObject( to );
+                }
+                oos.flush();
+                oos.close();
+            }
+        } catch ( Exception e ) {
+            e.printStackTrace();
+        }
+
         return map;
     }
 
+    /**
+     * If there is a mapping available, replace the given CV by an other one.
+     *
+     * @param fromCvObject CvObject to remap.
+     *
+     * @return a CvObject, it can be different if specified in the mapping.
+     */
     public CvObject getPSI2toPSI1( CvObject fromCvObject ) {
         CvObject toCvObject = (CvObject) map.get( fromCvObject );
         return ( toCvObject == null ? fromCvObject : toCvObject );
     }
 
-
-    public static void main( String[] args ) throws IntactException {
-
-//        new CvMapping();
-    }
 }
