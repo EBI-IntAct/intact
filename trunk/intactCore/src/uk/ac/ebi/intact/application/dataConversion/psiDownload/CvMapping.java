@@ -30,9 +30,19 @@ public class CvMapping {
 
     private Map map = new HashMap();
 
+    /**
+     * Construct a CvMapping object.
+     */
     public CvMapping() {
     }
 
+    /**
+     * Extract from the given CV term its PSI-MI id (if any).
+     *
+     * @param cv the CV term.
+     *
+     * @return a psi id or the shortlabel of the CV if not found.
+     */
     private String getPsiReference( CvObject cv ) {
 
         if ( cv == null ) {
@@ -50,6 +60,13 @@ public class CvMapping {
         return cv.getShortLabel();
     }
 
+    /**
+     * Get the simple name of a Class Object.
+     *
+     * @param clazz the class
+     *
+     * @return the simple name of the given class (ie. without the package)
+     */
     private String getSimpleName( Class clazz ) {
 
         String name = clazz.getName();
@@ -62,23 +79,16 @@ public class CvMapping {
         return name;
     }
 
-    public static void main( String[] args ) throws IntactException {
-
-        CvMapping mapping = new CvMapping();
-        IntactHelper helper = null;
-        try {
-            helper = new IntactHelper();
-            System.out.println( "Database: " + helper.getDbName() );
-            mapping.loadFile( new File( "C:\\cygwin\\home\\Samuel\\intactCore\\application\\dataConversion\\controlledvocab\\reverseMapping.txt" ), helper );
-
-        } finally {
-            if ( helper == null ) {
-                helper.closeStore();
-            }
-        }
-
-    }
-
+    /**
+     * Add an association into the map.
+     * <p/>
+     * It takes care of : <ul> <li> circular mapping (a term to itself)</li> <li> mapping to uncompatible type (ie. both
+     * from and to have to have the same type)</li> <li> overwritting existing mapping.</li> </ul>
+     *
+     * @param map
+     * @param from
+     * @param to
+     */
     private void addMapping( Map map, CvObject from, CvObject to ) {
 
         String mapping = getPsiReference( from ) + " --> " + getPsiReference( to );
@@ -108,6 +118,112 @@ public class CvMapping {
         map.put( from, to );
     }
 
+    //////////////////////////////////////
+    // Map serialization
+
+    /**
+     * Load mapping from a serialized file. The format is as follow:
+     * <pre>
+     * &lt;Integer&gt; count of associations
+     * &lt;CvObject&gt; from
+     * &lt;CvObject&gt; to
+     * &lt;CvObject&gt; from
+     * &lt;CvObject&gt; to
+     * &lt;CvObject&gt; from
+     * &lt;CvObject&gt; to
+     * ...
+     * </pre>
+     *
+     * @param serializedFile
+     *
+     * @return
+     */
+    private Map loadSerializedMap( File serializedFile ) {
+
+        Map aMap = null;
+
+        try {
+            if ( serializedFile.exists() && serializedFile.canRead() ) {
+
+                System.out.println( "Loading mapping from serialized cache (" + serializedFile.getAbsolutePath() + ")" );
+
+                FileInputStream in = new FileInputStream( serializedFile );
+                ObjectInputStream ois = new ObjectInputStream( in );
+
+                Integer count = (Integer) ois.readObject();
+
+                if ( count.intValue() > 0 ) {
+                    aMap = new HashMap( count.intValue() ); // initialise with the exact size.
+                }
+
+                for ( int i = 0; i < count.intValue(); i++ ) {
+
+                    CvObject from = (CvObject) ois.readObject();
+                    CvObject to = (CvObject) ois.readObject();
+
+                    addMapping( aMap, from, to );
+                }
+
+                ois.close();
+
+                System.out.println( map.size() + " association loaded." );
+            }
+        } catch ( Exception e ) {
+            aMap = null;
+            e.printStackTrace();
+        }
+
+        return aMap;
+    }
+
+    /**
+     * Serialize the CV mapping into a file.
+     * <pre>
+     * &lt;Integer&gt; count of associations
+     * &lt;CvObject&gt; from
+     * &lt;CvObject&gt; to
+     * &lt;CvObject&gt; from
+     * &lt;CvObject&gt; to
+     * &lt;CvObject&gt; from
+     * &lt;CvObject&gt; to
+     * ...
+     * </pre>
+     *
+     * @param aMap           the aMap to serialize.
+     * @param serializedFile the file in which we want to serialize the aMap.
+     *
+     * @see #loadSerializedMap(java.io.File)
+     */
+    private void serializeMapping( Map aMap, File serializedFile ) {
+
+        FileOutputStream out = null;
+        try {
+            if ( ! aMap.isEmpty() ) {
+                System.out.println( "Caching " + aMap.size() + " associations into " + serializedFile.getAbsolutePath() );
+                out = new FileOutputStream( serializedFile );
+                ObjectOutputStream oos = new ObjectOutputStream( out );
+
+                // write the count of associations
+                oos.writeObject( new Integer( aMap.size() ) );
+
+                for ( Iterator iterator = aMap.keySet().iterator(); iterator.hasNext(); ) {
+                    CvObject from = (CvObject) iterator.next();
+                    CvObject to = (CvObject) aMap.get( from );
+
+                    oos.writeObject( from );
+                    oos.writeObject( to );
+                }
+                oos.flush();
+                oos.close();
+            }
+        } catch ( Exception e ) {
+            e.printStackTrace();
+        }
+    }
+
+    /////////////////////////////////////
+    // Public methods - CV Loading
+
     /**
      * Load a tabulation separated flat file having the following format:
      * <pre>
@@ -132,36 +248,22 @@ public class CvMapping {
      */
     public Map loadFile( File file, IntactHelper helper ) {
 
-        map = new HashMap();
+        if ( map == null ) {
+            // initialise it
+            map = new HashMap();
+        } else {
+            // clear any existing data
+            map.clear();
+        }
 
-        File serializeFile = new File( file.getName() + ".ser" );
+        File serializedFile = new File( file.getName() + ".ser" );
+        Map loadedMap = loadSerializedMap( serializedFile );
 
-        try {
-            if ( serializeFile.exists() ) {
+        if ( loadedMap != null ) {
+            map.putAll( loadedMap );
 
-                System.out.println( "Loading mapping from serialized cache (" + serializeFile.getAbsolutePath() + ")" );
-
-                FileInputStream in = new FileInputStream( serializeFile );
-                ObjectInputStream ois = new ObjectInputStream( in );
-
-                Integer count = (Integer) ois.readObject();
-
-                for ( int i = 0; i < count.intValue(); i++ ) {
-
-                    CvObject from = (CvObject) ois.readObject();
-                    CvObject to = (CvObject) ois.readObject();
-
-                    map.put( from, to );
-                }
-
-                ois.close();
-
-                System.out.println( map.size() + " association loaded." );
-                return map;
-            }
-        } catch ( Exception e ) {
-            map.clear(); // in case of error, clear the cache.
-            e.printStackTrace();
+            // we stop loading here
+            return map;
         }
 
         try {
@@ -212,9 +314,6 @@ public class CvMapping {
                         }
                     }
                 }
-
-//                System.out.println( "from: " + fromMI );
-//                System.out.println( "to: " + toMI );
 
                 try {
 
@@ -320,33 +419,11 @@ public class CvMapping {
         }
 
         // try to cache the map on disk for later use.
-
-        FileOutputStream out = null;
-        try {
-            if ( ! map.isEmpty() ) {
-                System.out.println( "Caching " + map.size() + " associations into " + serializeFile.getAbsolutePath() );
-                out = new FileOutputStream( serializeFile );
-                ObjectOutputStream oos = new ObjectOutputStream( out );
-
-                // write the count of associations
-                oos.writeObject( new Integer( map.size() ) );
-
-                for ( Iterator iterator = map.keySet().iterator(); iterator.hasNext(); ) {
-                    CvObject from = (CvObject) iterator.next();
-                    CvObject to = (CvObject) map.get( from );
-
-                    oos.writeObject( from );
-                    oos.writeObject( to );
-                }
-                oos.flush();
-                oos.close();
-            }
-        } catch ( Exception e ) {
-            e.printStackTrace();
-        }
+        serializeMapping( map, serializedFile );
 
         return map;
     }
+
 
     /**
      * If there is a mapping available, replace the given CV by an other one.
@@ -360,4 +437,26 @@ public class CvMapping {
         return ( toCvObject == null ? fromCvObject : toCvObject );
     }
 
+    /////////////////////////////
+    // M A I N
+
+    public static void main( String[] args ) throws IntactException {
+
+        CvMapping mapping = new CvMapping();
+        IntactHelper helper = null;
+        try {
+            helper = new IntactHelper();
+            System.out.println( "Database: " + helper.getDbName() );
+            long start = System.currentTimeMillis();
+            mapping.loadFile( new File( args[ 0 ] ), helper );
+            long stop = System.currentTimeMillis();
+
+            System.out.println( "Loading time: " + ( stop - start ) + "ms" );
+
+        } finally {
+            if ( helper == null ) {
+                helper.closeStore();
+            }
+        }
+    }
 }
