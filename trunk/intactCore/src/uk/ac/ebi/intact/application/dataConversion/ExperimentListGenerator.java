@@ -127,8 +127,8 @@ public class ExperimentListGenerator {
         StringTokenizer patterns = new StringTokenizer( searchPattern, "," );
 
         while ( patterns.hasMoreTokens() ) {
-            String experimentShortlabel = patterns.nextToken().trim();
-            searchResults.addAll( helper.search( Experiment.class, "shortLabel", experimentShortlabel ) );
+            String shortlabel = patterns.nextToken().trim();
+            searchResults.addAll( helper.search( Experiment.class, "shortLabel", shortlabel ) );
         }
 
         int resultSize = searchResults.size();
@@ -147,7 +147,7 @@ public class ExperimentListGenerator {
      * @throws uk.ac.ebi.intact.business.IntactException
      *
      */
-    public static ExperimentClassification classifyExperiments( String searchPattern ) throws IntactException {
+    public static ExperimentClassification classifyExperiments( String searchPattern, boolean forcePubmed ) throws IntactException {
 
         ExperimentClassification classification = new ExperimentClassification();
         IntactHelper helper = null;
@@ -160,9 +160,16 @@ public class ExperimentListGenerator {
             // PSI data for it then write it to a file....
             Collection searchResults = getExperiments( helper, searchPattern );
 
+            Set experimentFilter = getExperimentWithoutPubmedId( helper, forcePubmed );
+
             // Split the list of experiments into species- and size-specific files
             for ( Iterator iterator = searchResults.iterator(); iterator.hasNext(); ) {
                 Experiment experiment = (Experiment) iterator.next();
+
+                if ( experimentFilter.contains( experiment.getAc() ) ) {
+                    System.out.println( "Skipping " + experiment.getShortLabel() );
+                    continue;
+                }
 
                 // Skip empty experiments and give a warning about'em
                 if ( experiment.getInteractions().isEmpty() ) {
@@ -230,6 +237,64 @@ public class ExperimentListGenerator {
         }
 
         return classification;
+    }
+
+    private static Set getExperimentWithoutPubmedId( IntactHelper helper, boolean forcePubmed ) throws IntactException {
+
+        Set filter = null;
+
+        if ( forcePubmed == false ) {
+            filter = Collections.EMPTY_SET;
+        } else {
+
+            Statement statement = null;
+            ResultSet resultSet = null;
+            try {
+                filter = new HashSet();
+                Connection connection = helper.getJDBCConnection();
+                statement = connection.createStatement();
+                final String sql = "SELECT e.ac, e.shortlabel\n" +
+                                   "FROM ia_experiment e\n" +
+                                   "MINUS \n" +
+                                   "SELECT e.ac, e.shortlabel\n" +
+                                   "FROM ia_experiment e,\n" +
+                                   "     ia_xref x,\n" +
+                                   "     ia_controlledvocab q, \n" +
+                                   "     ia_controlledvocab db\n" +
+                                   "WHERE     e.ac = x.parent_ac    \n" +
+                                   "      AND x.database_ac = db.ac\n" +
+                                   "      AND db.shortlabel = '" + CvDatabase.PUBMED + "' \n" +
+                                   "      AND x.qualifier_ac = q.ac\n" +
+                                   "      AND q.shortlabel = '" + CvXrefQualifier.PRIMARY_REFERENCE + "'";
+
+                resultSet = statement.executeQuery( sql );
+
+                while ( resultSet.next() ) {
+                    String ac = resultSet.getString( 1 );
+                    String shortlabel = resultSet.getString( 2 );
+
+                    System.out.println( "Filter out: " + shortlabel + " (" + ac + ")" );
+                    filter.add( ac );
+                }
+
+                System.out.println( filter.size() + " experiment filtered out." );
+
+            } catch ( SQLException e ) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if ( resultSet != null ) {
+                        resultSet.close();
+                    }
+
+                    if ( statement != null ) {
+                        statement.close();
+                    }
+                } catch ( SQLException e1 ) {
+                }
+            }
+        }
+        return filter;
     }
 
     /**
@@ -592,7 +657,14 @@ public class ExperimentListGenerator {
             // generate a prefix
             if ( hasMoreThanOneChunk ) {
                 // other prefix in use, use the next chunk id
-                prefix = smallScalePrefix + "-" + index;
+
+                // prefix index with a zero if lower than 10, so we get 01, 02, ..., 10, 11 ...
+                String indexPrefix = "-";
+                if ( index < 10 ) {
+                    indexPrefix = "-0";
+                }
+
+                prefix = smallScalePrefix + indexPrefix + index;
                 index++;
             } else {
                 // if no other subset have been stored, we don't bother with chunk id.
@@ -754,24 +826,16 @@ public class ExperimentListGenerator {
         // automatically generate the help statement
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp( "ExperimentListGenerator " +
-                             "-outputFilePrefix <filename> " +
-                             "-pattern <shortlabel pattern> ",
+                             "-speciesFile <filename> " +
+                             "-publicationsFile <filename> " +
+                             "-pattern <shortlabel pattern> " +
+                             "-" + ONLY_PUBMED_ID_OPTION + "",
                              options );
     }
 
-    /**
-     * Run the program that create a flat file containing the classification of IntAct experiment for PSI download.
-     *
-     * @param args -output <filename> -pattern <shortlabel pattern>
-     *
-     * @throws IntactException
-     * @throws IOException
-     */
-    public static void main( String[] args ) throws IntactException, IOException {
+    public static final String ONLY_PUBMED_ID_OPTION = "onlyWithPmid";
 
-        // if only one argument, then dump the matching experiment classified by specied into a file
-
-        // create Option objects
+    public static Options buildOptions() {
         Option helpOpt = new Option( "help", "print this message." );
 
         Option outputSpeciesOpt = OptionBuilder.withArgName( "outputSpeciesFilenamePrefix" )
@@ -792,11 +856,36 @@ public class ExperimentListGenerator {
                 .create( "pattern" );
         patternOpt.setRequired( false );
 
+        Option patternPmid = OptionBuilder
+                .hasArg( false )
+                .withDescription( "Select only experiments having a PubMed ID" )
+                .create( ONLY_PUBMED_ID_OPTION );
+        patternPmid.setRequired( false );
+
         Options options = new Options();
         options.addOption( helpOpt );
         options.addOption( outputSpeciesOpt );
         options.addOption( outputPublicationOpt );
         options.addOption( patternOpt );
+        options.addOption( patternPmid );
+
+        return options;
+    }
+
+    /**
+     * Run the program that create a flat file containing the classification of IntAct experiment for PSI download.
+     *
+     * @param args -output <filename> -pattern <shortlabel pattern>
+     *
+     * @throws IntactException
+     * @throws IOException
+     */
+    public static void main( String[] args ) throws IntactException, IOException {
+
+        // if only one argument, then dump the matching experiment classified by specied into a file
+
+        // create Option objects
+        Options options = buildOptions();
 
         // create the parser
         CommandLineParser parser = new BasicParser();
@@ -887,7 +976,15 @@ public class ExperimentListGenerator {
 
         System.err.println( "Pattern: " + pattern );
 
-        ExperimentClassification classification = classifyExperiments( pattern );
+        boolean forcePmid = line.hasOption( ONLY_PUBMED_ID_OPTION );
+        if ( forcePmid ) {
+            System.out.println( "NOTICE: all experiment without a PubMed ID (primary-reference) will be filtered out." );
+        } else {
+            System.out.println( "NOTICE: you can use the option -" + ONLY_PUBMED_ID_OPTION +
+                                " to restrict the dataset to experiment having a pubmed ID as primary-reference." );
+        }
+
+        ExperimentClassification classification = classifyExperiments( pattern, forcePmid );
 
         writeExperimentsClassificationBySpecies( classification.getSpecie2experimentSet(),
                                                  classification.getNegativeExperiments(),
