@@ -46,7 +46,8 @@ public class Cv2Source {
         if ( !cvObject.equals( cvClass2Source.cvObject ) ) {
             return false;
         }
-        if ( parentNodeName != null ? !parentNodeName.equals( cvClass2Source.parentNodeName ) : cvClass2Source.parentNodeName != null ) {
+        if ( parentNodeName != null ? !parentNodeName.equals( cvClass2Source.parentNodeName ) : cvClass2Source.parentNodeName != null )
+        {
             return false;
         }
 
@@ -58,5 +59,15 @@ public class Cv2Source {
         result = cvObject.hashCode();
         result = 29 * result + ( parentNodeName != null ? parentNodeName.hashCode() : 0 );
         return result;
+    }
+
+    public String toString() {
+        final StringBuffer sb = new StringBuffer();
+        sb.append( "Cv2Source" );
+        sb.append( "{cvObject=" ).append( cvObject.getShortLabel() );
+        sb.append( " Type=" ).append( cvObject.getClass() );
+        sb.append( ", parentNodeName='" ).append( parentNodeName ).append( '\'' );
+        sb.append( '}' );
+        return sb.toString();
     }
 }
