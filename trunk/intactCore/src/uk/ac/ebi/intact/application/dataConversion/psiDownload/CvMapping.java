@@ -5,6 +5,7 @@
  */
 package uk.ac.ebi.intact.application.dataConversion.psiDownload;
 
+import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvObject;
@@ -23,8 +24,6 @@ import java.util.*;
  * @since <pre>25-Jun-2005</pre>
  */
 public class CvMapping {
-
-    public static final String FILENAME = "CvMapping.ser";
 
     public static final String TABULATION = "\t";
     public static final String STAR = "*";
@@ -51,25 +50,62 @@ public class CvMapping {
         return cv.getShortLabel();
     }
 
+    private String getSimpleName( Class clazz ) {
+
+        String name = clazz.getName();
+
+        int idx = name.lastIndexOf( "." );
+        if ( idx != -1 ) {
+            name = name.substring( idx + 1, name.length() );
+        }
+
+        return name;
+    }
+
+    public static void main( String[] args ) throws IntactException {
+
+        CvMapping mapping = new CvMapping();
+        IntactHelper helper = null;
+        try {
+            helper = new IntactHelper();
+            System.out.println( "Database: " + helper.getDbName() );
+            mapping.loadFile( new File( "C:\\cygwin\\home\\Samuel\\intactCore\\application\\dataConversion\\controlledvocab\\reverseMapping.txt" ), helper );
+
+        } finally {
+            if ( helper == null ) {
+                helper.closeStore();
+            }
+        }
+
+    }
+
     private void addMapping( Map map, CvObject from, CvObject to ) {
 
         String mapping = getPsiReference( from ) + " --> " + getPsiReference( to );
+
         if ( from.equals( to ) ) {
             System.out.println( "WARNING: skip unuseful mapping, " + mapping );
             return;
         }
 
-        if ( map.containsKey( from ) ) {
+        if ( ! from.getClass().equals( to.getClass() ) ) {
+            String fromCls = getSimpleName( from.getClass() );
+            String toCls = getSimpleName( to.getClass() );
+            String msg = fromCls + "->" + toCls;
 
+            System.out.println( "ERROR: skip mapping involving incompatible class type (" + msg + "), " + mapping );
+            return;
+        }
+
+        if ( map.containsKey( from ) ) {
             String existing = getPsiReference( from ) + " --> " + getPsiReference( (CvObject) map.get( from ) );
             System.err.println( "WARNING: mapping " + mapping + " is conflicting with " + existing );
             System.err.println( "Skip it." );
-
-        } else {
-
-            System.out.println( "ADD: " + mapping );
-            map.put( from, to );
+            return;
         }
+
+        System.out.println( "ADD: " + mapping );
+        map.put( from, to );
     }
 
     /**
