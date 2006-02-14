@@ -85,15 +85,25 @@ public abstract class CvObject extends AnnotatedObjectImpl {
         return false;
     }
 
+
     /**
      * This class overwrites equals. To ensure proper functioning of HashTable, hashCode must be overwritten, too.
      *
      * @return hash code of the object.
      */
     public int hashCode() {
+        int result = getClass().hashCode();
+
         Xref idXref = getIdentityXref();
-        return idXref != null ? 29 * idXref.getPrimaryId().hashCode()
-               : 29 * getShortLabel().hashCode();
+
+        //need check as we still have no-arg constructor...
+        if ( idXref != null ) {
+            result = 29 * result + idXref.getPrimaryId().hashCode();
+        } else {
+            result = 29 * result + getShortLabel().hashCode();
+        }
+
+        return result;
     }
 
     /**
