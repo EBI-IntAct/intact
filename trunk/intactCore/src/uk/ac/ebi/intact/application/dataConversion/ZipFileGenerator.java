@@ -28,8 +28,10 @@ public class ZipFileGenerator {
 
     /**
      * Pattern matching the filename of PSI-XML file generated using the pubmed classification.
+     * <p/>
+     * It matches 12345.xml, 12345_author-2006-1.xml
      */
-    public static final String XML_FILE_PATTERN = "([0-9]+).+\\.xml"; // add .xml
+    public static final String XML_FILE_PATTERN = "([0-9]+)\\D.*xml";
 
     /**
      * Compiled pattern.
@@ -61,6 +63,8 @@ public class ZipFileGenerator {
             throw new IllegalArgumentException( directory.getAbsolutePath() + " is not a directory." );
         }
 
+        boolean isCurrentDirectoryWriteable = directory.canWrite();
+
         System.out.println( "Processing directory: " + directory.getAbsolutePath() );
 
         if ( ! directory.canRead() ) {
@@ -91,13 +95,8 @@ public class ZipFileGenerator {
 
             } else {
 
-                Matcher matcher = FILENAME_PATTERN.matcher( file.getName() );
-                boolean matchFound = matcher.find();
-
-                String pmid = null;
-                if ( matchFound ) {
-                    // Get group for this match
-                    pmid = matcher.group( 1 );
+                String pmid = extractPubmedId( file.getName() );
+                if ( pmid != null ) {
 
                     Collection filenames = null;
                     if ( pmid2files.containsKey( pmid ) ) {
@@ -110,6 +109,8 @@ public class ZipFileGenerator {
                     }
 
                     filenames.add( file );
+                } else {
+                    System.out.println( "ERROR: Could not extract a pubmed id from filename: " + file.getName() );
                 }
             }
 
@@ -119,27 +120,31 @@ public class ZipFileGenerator {
         files = null; // free resource
 
         // Process the map and produce ZIP files
-        for ( Iterator iterator = pmid2files.keySet().iterator(); iterator.hasNext(); ) {
-            String pmid = (String) iterator.next();
-            Collection xmlFiles = (Collection) pmid2files.get( pmid );
+        if ( isCurrentDirectoryWriteable ) {
+            for ( Iterator iterator = pmid2files.keySet().iterator(); iterator.hasNext(); ) {
+                String pmid = (String) iterator.next();
+                Collection xmlFiles = (Collection) pmid2files.get( pmid );
 
-            // build plateform specific filename
-            String zipFullpath = directory.getAbsolutePath() + File.separator + pmid + FileHelper.ZIP_FILE_EXTENSION;
+                // build plateform specific filename
+                String zipFullpath = directory.getAbsolutePath() + File.separator + pmid + FileHelper.ZIP_FILE_EXTENSION;
 
-            File zipFile = new File( zipFullpath );
-            if ( zipFile.exists() ) {
-                if ( VERBOSE ) {
-                    System.out.println( zipFile.getName() + " already exists, skip." );
+                File zipFile = new File( zipFullpath );
+                if ( zipFile.exists() ) {
+                    if ( VERBOSE ) {
+                        System.out.println( zipFile.getName() + " already exists, skip." );
+                    }
+                } else {
+                    try {
+                        ZipBuilder.createZipFile( zipFile, xmlFiles, VERBOSE );
+                    } catch ( IOException e ) {
+                        e.printStackTrace();
+                    }
                 }
-            } else {
-                try {
-                    ZipBuilder.createZipFile( zipFile, xmlFiles, VERBOSE );
-                } catch ( IOException e ) {
-                    e.printStackTrace();
-                }
+
+                iterator.remove(); // free resource as we go
             }
-
-            iterator.remove(); // free resource as we go
+        } else {
+            System.out.println( "ERROR: the current directory is not writable: " + directory.getAbsolutePath() );
         }
 
         // process all subdirectories
@@ -204,6 +209,20 @@ public class ZipFileGenerator {
         return options;
     }
 
+    public static String extractPubmedId( String filename ) {
+
+        String pmid = null;
+
+        Matcher matcher = FILENAME_PATTERN.matcher( filename );
+        boolean matchFound = matcher.find();
+
+        if ( matchFound ) {
+            // Get group for this match
+            pmid = matcher.group( 1 );
+        }
+
+        return pmid;
+    }
 
     ///////////////////////////
     // M A I N
