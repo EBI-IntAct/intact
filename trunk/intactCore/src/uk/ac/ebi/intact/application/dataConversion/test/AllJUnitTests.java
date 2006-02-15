@@ -33,12 +33,12 @@ public class AllJUnitTests extends TestCase {
      * @return a suite containing tests.
      *         <p/>
      *         <pre>
-     *
-     *               post: return != null
-     *
-     *               post: return->forall(obj : Object | obj.oclIsTypeOf(TestSuite))
-     *
-     *               </pre>
+     *         <p/>
+     *                       post: return != null
+     *         <p/>
+     *                       post: return->forall(obj : Object | obj.oclIsTypeOf(TestSuite))
+     *         <p/>
+     *                       </pre>
      */
     public static Test suite() {
         final TestSuite suite = new TestSuite();
@@ -48,6 +48,9 @@ public class AllJUnitTests extends TestCase {
 
         // add psiUpload package
         suite.addTest( uk.ac.ebi.intact.application.dataConversion.psiUpload.test.AllJUnitTests.suite() );
+
+        // add all test suite of the current package
+        suite.addTest( uk.ac.ebi.intact.application.dataConversion.test.ZipFileGeneratorTest.suite() );
 
         return suite;
     }
