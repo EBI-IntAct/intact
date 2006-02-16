@@ -20,22 +20,19 @@ import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
 import uk.ac.ebi.intact.simpleGraph.Node;
 
-// import javax.print.DocFlavor;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.TagSupport;
-
-// import java.lang.reflect.Array;
 import java.util.*;
 
 
 /**
- * That class allow to initialize properly in the session the sources to display
- * according to the current central protein.
- * 
+ * That class allow to initialize properly in the session the sources to display according to the current central
+ * protein.
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -51,7 +48,7 @@ public class DisplaySourceTag extends TagSupport {
         return SKIP_BODY;
     } // doStartTag
 
-    private Collection getXRefFromCentralNodes(List centrals) {
+    private Collection getXRefFromCentralNodes( List centrals ) {
         Collection xRefs = null;
 
         /*
@@ -66,23 +63,22 @@ public class DisplaySourceTag extends TagSupport {
             xRefs = new ArrayList( 1 );
             BasicGraphI centralProtein;
             Map sourceMap = new Hashtable();
-            for (int i = 0; i < GraphHelper.SOURCES.size(); i++) {
+            for ( int i = 0; i < GraphHelper.SOURCES.size(); i++ ) {
                 String source = (String) GraphHelper.SOURCES.get( i );
                 sourceMap.put( source, new ArrayList() );
-                for (int j = 0; j < centrals.size(); j++) {
+                for ( int j = 0; j < centrals.size(); j++ ) {
                     centralProtein = (BasicGraphI) centrals.get( j );
                     Collection sources = (Collection) sourceMap.get( source );
                     sources.addAll( (Collection) centralProtein.get( source ) );
                 }
             }
             xRefs.add( sourceMap );
-        }
-        else {
+        } else {
             xRefs = new ArrayList( 50 );
             int max = centrals.size();
             Interactor interactor;
             Node centralNode;
-            for (int x = 0; x < max; x++) {
+            for ( int x = 0; x < max; x++ ) {
                 // union of disctinct xref
                 centralNode = (Node) centrals.get( x );
                 interactor = centralNode.getInteractor();
@@ -100,8 +96,7 @@ public class DisplaySourceTag extends TagSupport {
     }
 
     /**
-     * Called when the JSP encounters the end of a tag. This will create the
-     * option list.
+     * Called when the JSP encounters the end of a tag. This will create the option list.
      */
     public int doEndTag() throws JspException {
         HttpSession session = pageContext.getSession();
@@ -123,8 +118,8 @@ public class DisplaySourceTag extends TagSupport {
             ArrayList centrals = in.getCentralProteins();
             // logger.info( "Central protein AC: " + interactor.getAc() );
             logger.info( centrals.size()
-                    + " central protein(s) referenced in the"
-                    + " interaction network." );
+                         + " central protein(s) referenced in the"
+                         + " interaction network." );
 
             // collect the xrefs from the central node
             Collection xRefs = getXRefFromCentralNodes( centrals );
@@ -144,10 +139,9 @@ public class DisplaySourceTag extends TagSupport {
                     logger
                             .error( "Error when trying to load the source class: "
                                     + method_class );
-                }
-                else {
+                } else {
                     logger.info( "Display highlight source items for query = "
-                            + queryString + " SourceClass = " + method_class );
+                                 + queryString + " SourceClass = " + method_class );
 
                     List urls = null;
 
@@ -176,23 +170,30 @@ public class DisplaySourceTag extends TagSupport {
                         String selectedKeysType = user.getSelectedKeyType();
                         String tabType = (String) session.getAttribute( "tabType" );
                         logger.info( "selectedKeys=" + selectedKeys + " | theClickedKeys=" + theClickedKeys
-                                    + " | selectedKeysType=" + selectedKeysType + " | tabType=" + tabType );
+                                     + " | selectedKeysType=" + selectedKeysType + " | tabType=" + tabType );
 
                         Collection allSelectedKeys = new ArrayList();
 
-                        if ( ( selectedKeys != null ) && ( ( tabType.equals("All") ) || ( selectedKeysType.toLowerCase().equals(tabType.toLowerCase()) ) ) ) {
+                        if ( selectedKeys != null &&
+                             selectedKeysType != null
+                             && tabType != null
+                             && ( ( "All".equals( tabType ) ) || ( selectedKeysType.toLowerCase().equals( tabType.toLowerCase() ) ) ) )
+                        {
                             allSelectedKeys.addAll( selectedKeys );
-                        }
-                        else {
+                        } else {
                             user.setKeys( null );
                             user.setSelectedKey( "null" );
                             user.setSelectedKeyType( "null" );
                         }
 
-                        if ( ( theClickedKeys != null ) && ( ( tabType.equals("All") ) || ( selectedKeysType.toLowerCase().equals(tabType.toLowerCase()) ) ) ) {
+                        if ( theClickedKeys != null
+                             && tabType != null
+                             && selectedKeysType != null
+                             && ( ( "All".equals( tabType ) )
+                                  ||
+                                  ( selectedKeysType.toLowerCase().equals( tabType.toLowerCase() ) ) ) ) {
                             allSelectedKeys.add( theClickedKeys );
-                        }
-                        else {
+                        } else {
                             user.setKeys( null );
                             user.setSelectedKey( "null" );
                             user.setSelectedKeyType( "null" );
@@ -219,8 +220,7 @@ public class DisplaySourceTag extends TagSupport {
                         SourceBean url = (SourceBean) urls.get( 0 );
                         String absoluteUrl = url.getSourceBrowserGraphUrl(); // Value();
                         user.setSourceURL( absoluteUrl );
-                    }
-                    else {
+                    } else {
                         user.setSourceURL( null );
                     }
                 } // else
@@ -229,7 +229,7 @@ public class DisplaySourceTag extends TagSupport {
         }
         catch ( Exception ioe ) {
             ioe.printStackTrace();
-            throw new JspException( "Fatal error: could not display protein associated source. <em>" + ioe + "</em>.");
+            throw new JspException( "Fatal error: could not display protein associated source. <em>" + ioe + "</em>." );
         }
         return EVAL_PAGE;
     } // doEndTag
