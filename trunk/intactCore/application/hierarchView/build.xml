@@ -58,9 +58,9 @@ Verison: $Id$
 
     <!-- Properties related to Tulip server -->
     <property name="ws.tulip.server.pkg"
-        value="uk.ac.ebi.intact.application.hierarchView.business.tulip.webService"/>
+              value="uk.ac.ebi.intact.application.hierarchView.business.tulip.webService"/>
     <property name="ws.tulip.server.dir"
-        value="uk/ac/ebi/intact/application/hierarchView/business/tulip/webService"/>
+              value="uk/ac/ebi/intact/application/hierarchView/business/tulip/webService"/>
     <property name="ws.tulip.jar.name" value="tulipService.jar"/>
     <property name="ws.tulip.jar" value="${ws.dir}/${ws.tulip.jar.name}"/>
     <property name="ws.props.file" value="WebService.properties"/>
@@ -69,9 +69,9 @@ Verison: $Id$
 
     <!-- Properties related to Tulip client -->
     <property name="ws.tulip.client.pkg"
-        value="uk.ac.ebi.intact.application.hierarchView.business.tulip.client"/>
+              value="uk.ac.ebi.intact.application.hierarchView.business.tulip.client"/>
     <property name="ws.tulip.client.dir"
-        value="uk/ac/ebi/intact/application/hierarchView/business/tulip/client"/>
+              value="uk/ac/ebi/intact/application/hierarchView/business/tulip/client"/>
 
     <property name="ws.session.type" value="Application"/>
 
@@ -107,6 +107,11 @@ Verison: $Id$
         <pathelement path="${root.lib.dir}/commons-lang-2.0.jar"/>
         <pathelement path="${root.lib.dir}/junit.jar"/>
         <pathelement path="${root.lib.dir}/commons-logging.jar"/>
+        <pathelement path="${root.lib.dir}/commons-pool-1.2.jar"/>
+        <pathelement path="${root.lib.dir}/commons-dbcp-1.1.jar"/>
+        <pathelement path="${root.lib.dir}/commons-collections-3.0.jar"/>
+        <pathelement path="${root.lib.dir}/jdbc_oracle9i_thin_9.2.0.jar"/>
+
 
         <pathelement path="${intact.app.dir}/lib/struts.jar"/>
 
@@ -119,7 +124,7 @@ Verison: $Id$
         The build process is stopped if smething goes wrong.
     -->
     <target name="all-config-test" depends="test-config"
-        description="Performs configuration test and describes eventual problem.">
+            description="Performs configuration test and describes eventual problem.">
         <antcall target="webService-hostname-result"/>
         <antcall target="console-location-result"/>
         <antcall target="console-location-available-result"/>
@@ -290,7 +295,7 @@ Verison: $Id$
 
     <!-- Remove some directories/files for clean build. -->
     <target name="clean"
-        description="Prepare for clean build; removes api docs and classes dirs">
+            description="Prepare for clean build; removes api docs and classes dirs">
         <delete dir="${dest.dir}"/>
         <delete dir="${dist.dir}"/>
         <delete dir="${jdoc.dir}"/>
@@ -326,13 +331,14 @@ Verison: $Id$
                 <exclude name="sourceListFrame.jsp"/>
                 <exclude name="selectedSourceFrame.jsp"/>
                 <exclude name="hvHeaderLayout.jsp"/>
+                <exclude name="styles/**"/>
             </fileset>
         </delete>
 
         <delete>
             <fileset dir="${layouts.styles.dir}">
                 <!-- Do not remove hv specific files -->
-                <exclude name="hv.css" />
+                <exclude name="hv.css"/>
             </fileset>
         </delete>
 
@@ -355,9 +361,9 @@ Verison: $Id$
                 <exclude name="highlight.jsp"/>
                 <exclude name="selectedSource.jsp"/>
                 <exclude name="warning.jsp"/>
-                <exclude name="allTab.jsp" />
-                <exclude name="goTab.jsp" />
-                <exclude name="interproTab.jsp" />
+                <exclude name="allTab.jsp"/>
+                <exclude name="goTab.jsp"/>
+                <exclude name="interproTab.jsp"/>
             </fileset>
         </delete>
 
@@ -369,6 +375,7 @@ Verison: $Id$
                 <exclude name="select-chk.gif"/>
                 <exclude name="ok-grey.png"/>
                 <exclude name="ok-red.png"/>
+                <exclude name="graph.png"/>
             </fileset>
         </delete>
     </target>
@@ -411,19 +418,19 @@ Verison: $Id$
 
     <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
     <target name="compile"
-        description="Compile the source tree and copy the configuration files"
-        depends="prepare">
+            description="Compile the source tree and copy the configuration files"
+            depends="prepare">
         <mkdir dir="${dest.dir}"/>
 
 
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-            source="1.4"
-            includes="**/application/hierarchView/**,
+               source="1.4"
+               includes="**/application/hierarchView/**,
                       **/application/commons/**,
                       **/util/PropertyLoader*,
                       **/util/SearchReplace*"
 
-            debug="on">
+               debug="on">
             <classpath refid="project.class.path"/>
         </javac>
 
@@ -517,14 +524,14 @@ Verison: $Id$
         <!-- Compile the client generated files -->
         <echo message="Compiling client generated files"/>
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-            includes="${ws.tulip.client.dir}/generated/**" debug="on">
+               includes="${ws.tulip.client.dir}/generated/**" debug="on">
             <classpath refid="project.class.path"/>
         </javac>
 
         <!-- Copy the configuration file to the current directory. -->
         <echo message="Copying configuration file to the ${root.dest.dir} dir"/>
         <copy file="${config.dir}/${ws.props.file}" todir="${root.dest.dir}"
-            overwrite="true"/>
+              overwrite="true"/>
 
         <!-- Create the web service jar file (which will be deployed later on Axis). -->
         <!-- First delete the jar file if it exists. -->
@@ -547,8 +554,8 @@ Verison: $Id$
         <echo message=""/>
         <echo message=""/>
         <input message="Do you want the web service to use Tulip or the Graph Visualization Framework ? "
-            validargs="T,GVF"
-            addproperty="choosen.layout.engine"/>
+               validargs="T,GVF"
+               addproperty="choosen.layout.engine"/>
 
         <condition property="use.gvf">
             <equals arg1="GVF" arg2="${choosen.layout.engine}"/>
@@ -573,12 +580,12 @@ Verison: $Id$
         </tar>
 
         <echo>
-               The web service archive has been built under ${webService.archive.path}
-               Now, you have to :
-                 (1) copy that archive to your server
-                 (2) decompress it (tar zxvf ${webService.archive.filename})
-                 (3) enter the ${ws.dir} directory and read the README file to
-                     know how to install and manage the web service.
+            The web service archive has been built under ${webService.archive.path}
+            Now, you have to :
+            (1) copy that archive to your server
+            (2) decompress it (tar zxvf ${webService.archive.filename})
+            (3) enter the ${ws.dir} directory and read the README file to
+            know how to install and manage the web service.
         </echo>
 
     </target>
@@ -616,14 +623,15 @@ Verison: $Id$
         <!-- Replace the SoapBinding generated class name by the implementation one -->
         <echo message="Replace the SoapBinding name by the implementation one"/>
         <replace file="${ws.deploy.file}" token="TulipSoapBindingImpl"
-            value="TulipAccessImpl"/>
+                 value="TulipAccessImpl"/>
     </target>
 
     <!-- =================================================================== -->
 
     <!-- Tests the web service  -->
     <target name="test-ws"
-        description="Test the web service and display results on the screen">
+            description="Test the web service and display results on the screen"
+            depends="compile">
 
         <echo message="Testing the web service"/>
         <echo message="End point: ${webService.adress}"/>
@@ -638,7 +646,7 @@ Verison: $Id$
     <!-- Builds a war file using the current database setup. -->
 
     <target name="war" description="Builds a war file"
-        depends="all-config-test, set-tstamp, set-db-type,
+            depends="all-config-test, set-tstamp, set-db-type,
                  war-postgres, war-oracle"/>
 
     <!-- =================================================================== -->
@@ -658,7 +666,8 @@ Verison: $Id$
         <!-- Common layouts -->
         <copy todir="${layouts.dir}">
             <fileset dir="${commons.layouts.dir}">
-                <exclude name="headerLayout.jsp"/> <!-- has been replaced by hvHeaderLayout.jsp -->
+                <exclude name="headerLayout.jsp"/>
+                <!-- has been replaced by hvHeaderLayout.jsp -->
             </fileset>
         </copy>
 
@@ -722,7 +731,7 @@ Verison: $Id$
                 <include name="log4j-1.2.8.jar"/>
                 <include name="${db}"/>
                 <include name="commons-lang-2.0.jar"/>
-		<include name="commons-collections-3.0.jar"/>
+                <include name="commons-collections-3.0.jar"/>
                 <include name="commons-pool-1.1.jar"/>
             </lib>
 
@@ -802,14 +811,14 @@ Verison: $Id$
 
         <!-- Copy context files in the Tomcat's webapps directory -->
         <copy file="${dist.dir}/${hierarchView.context.file}"
-            todir="${webapps.dir}" overwrite="yes"/>
+              todir="${webapps.dir}" overwrite="yes"/>
     </target>
 
     <!-- =================================================================== -->
 
     <!-- Undeploys the war file from the Tomcat server. Also stops the web service. -->
     <target name="undeploy"
-        description="Undeploys the WAR file from the Tomcat server">
+            description="Undeploys the WAR file from the Tomcat server">
         <ant dir=".." inheritAll="false" target="undeploy">
             <property name="war" value="hierarchView"/>
         </ant>
@@ -853,23 +862,23 @@ Verison: $Id$
 
         <!-- Copy the template file -->
         <copy todir="${dist.dir}"
-            file="${intact.context.dir}/${hierarchView.context.file}"
-            overwrite="true"/>
+              file="${intact.context.dir}/${hierarchView.context.file}"
+              overwrite="true"/>
 
         <!-- Customize the context file -->
         <replace file="${dist.dir}/${hierarchView.context.file}"
-            token="[WAR.FILE.NAME]"
-            value="${war.file}"/>
+                 token="[WAR.FILE.NAME]"
+                 value="${war.file}"/>
         <replace file="${dist.dir}/${hierarchView.context.file}"
-            token="[server.name]"
-            value="${server.name}"/>
+                 token="[server.name]"
+                 value="${server.name}"/>
     </target>
 
     <!-- =================================================================== -->
 
     <!-- Runs the JUnit tester directly. The output is redirected to std out -->
     <target name="junit" depends="compile"
-        description="Runs JUnit directly with output directed to stdout">
+            description="Runs JUnit directly with output directed to stdout">
         <java classname="junit.textui.TestRunner" fork="true">
             <arg value="uk.ac.ebi.intact.application.hierarchView.business.graph.test.AllJUnitTests"/>
             <classpath refid="project.class.path"/>
