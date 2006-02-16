@@ -9,13 +9,13 @@
     <property name="project.title" value="statisticView"/>
 
     <!-- Intact core locations -->
-    <property name="intact.root"     value="../.."/>
-    <property name="root.lib.dir"    value="${intact.root}/lib"/>
-    <property name="root.src.dir"    value="${intact.root}/src"/>
-    <property name="root.dest.dir"   value="${intact.root}/classes"/>
+    <property name="intact.root" value="../.."/>
+    <property name="root.lib.dir" value="${intact.root}/lib"/>
+    <property name="root.src.dir" value="${intact.root}/src"/>
+    <property name="root.dest.dir" value="${intact.root}/classes"/>
     <property name="root.config.dir" value="${intact.root}/config"/>
-    <property name="root.dist.dir"   value="${intact.root}/dist"/>
-    <property name="root.jar.file"   value="${root.dist.dir}/intact-core.jar"/>
+    <property name="root.dist.dir" value="${intact.root}/dist"/>
+    <property name="root.jar.file" value="${root.dist.dir}/intact-core.jar"/>
 
 
     <!--<property name="root.util.dir" value="${root.src.dir}/uk/ac/ebi/intact/util"/>-->
@@ -186,7 +186,8 @@
 
         <copy todir="${dest.dir}/config">
             <fileset dir="${config.dir}">
-                <include name="repository_user.xml"/> <!-- Specific mapping for statisticView -->
+                <include name="repository_user.xml"/>
+                <!-- Specific mapping for statisticView -->
                 <include name="biosourceFilter.txt"/>
             </fileset>
         </copy>
@@ -206,20 +207,19 @@
 
     <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
     <target name="compile"
-        description="Compile the source tree and copy the configuration files"
-        depends="prepare">
+            description="Compile the source tree and copy the configuration files"
+            depends="prepare">
 
         <!-- Create the dest dir if it doesn't exist. -->
         <mkdir dir="${dest.dir}"/>
 
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-            debug="on" source="1.4"
-            includes="**/application/statisticView/**,
-                      **/application/commons/**,
+               debug="on" source="1.4"
+               includes="**/application/statisticView/**,
                       **/intact/util/StatisticsDataSet*,
                       **/intact/util/StatisticsSet*,
                       **/intact/util/IntactStatistics*"
-            excludes="**/test/**">
+               excludes="**/test/**    ">
             <classpath refid="project.class.path"/>
         </javac>
 
@@ -232,7 +232,7 @@
     <!-- Builds a war file using the current database setup. -->
 
     <target name="war" description="Builds a war file"
-        depends="set-db-type, set-tstamp, war-postgres, war-oracle"/>
+            depends="set-db-type, set-tstamp, war-postgres, war-oracle"/>
 
 
     <!-- =================================================================== -->
@@ -240,7 +240,7 @@
     <!-- Builds a war file. The database to include is specified as a parameter. -->
 
     <target name="build-war" depends="compile, gen-last-modified-file, make-jar"
-        description="Builds a war file">
+            description="Builds a war file">
 
         <!-- Delete the generated files -->
         <delete dir="${dist.dir}" quiet="true"/>
@@ -286,7 +286,7 @@
         </copy>
 
         <!-- Copy log4j properties file -->
-        <copy todir="${dest.dir}/config">
+        <copy todir="${dest.dir}">
             <fileset dir="${root.config.dir}">
                 <include name="log4j.properties"/>
             </fileset>
@@ -402,11 +402,9 @@
         </ant>
 
 
-
-
         <!-- Copy context files in the Tomcat's webapps directory -->
         <copy file="${dist.dir}/${statisticView-context-file}"
-            todir="${webapps.dir}" overwrite="yes"/>
+              todir="${webapps.dir}" overwrite="yes"/>
     </target>
 
     <!-- =================================================================== -->
@@ -458,16 +456,16 @@
 
         <!-- Copy the template file -->
         <copy todir="${dist.dir}"
-            file="${intact.context.dir}/${statisticView-context-file}"
-            overwrite="true"/>
+              file="${intact.context.dir}/${statisticView-context-file}"
+              overwrite="true"/>
 
         <!-- Customize the context file -->
         <replace file="${dist.dir}/${statisticView-context-file}"
-            token="[WAR.FILE.NAME]"
-            value="${war.name}"/>
+                 token="[WAR.FILE.NAME]"
+                 value="${war.name}"/>
         <replace file="${dist.dir}/${statisticView-context-file}"
-            token="[server.name]"
-            value="${server.name}"/>
+                 token="[server.name]"
+                 value="${server.name}"/>
     </target>
 
 </project>
