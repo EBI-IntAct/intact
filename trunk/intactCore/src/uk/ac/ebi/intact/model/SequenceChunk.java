@@ -5,13 +5,15 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import java.io.Serializable;
+
 /**
  * Represents a crossreference to another database.
  *
  * @author hhe
  * @version $Id$
  */
-public class SequenceChunk {
+public class SequenceChunk implements Serializable {
 
     ///////////////////////////////////////
     //attributes
@@ -41,7 +43,7 @@ public class SequenceChunk {
     public SequenceChunk() {
     }
 
-    public SequenceChunk(int aSequenceIndex, String aSequenceChunk) {
+    public SequenceChunk( int aSequenceIndex, String aSequenceChunk ) {
         this.sequenceIndex = aSequenceIndex;
         this.sequenceChunk = aSequenceChunk;
     }
@@ -53,7 +55,7 @@ public class SequenceChunk {
         return ac;
     }
 
-    public void setAc(String ac) {
+    public void setAc( String ac ) {
         this.ac = ac;
     }
 
@@ -63,7 +65,7 @@ public class SequenceChunk {
         return parentAc;
     }
 
-    public void setParentAc(String parentAc) {
+    public void setParentAc( String parentAc ) {
         this.parentAc = parentAc;
     }
 
@@ -71,7 +73,7 @@ public class SequenceChunk {
         return sequenceChunk;
     }
 
-    public void setSequenceChunk(String sequenceChunk) {
+    public void setSequenceChunk( String sequenceChunk ) {
         this.sequenceChunk = sequenceChunk;
     }
 
@@ -79,11 +81,11 @@ public class SequenceChunk {
         return sequenceIndex;
     }
 
-    public void setSequenceIndex(int sequenceIndex) {
+    public void setSequenceIndex( int sequenceIndex ) {
         this.sequenceIndex = sequenceIndex;
     }
 
- } // end Xref
+} // end Xref
 
 
 
