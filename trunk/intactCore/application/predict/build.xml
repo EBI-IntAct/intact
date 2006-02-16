@@ -31,7 +31,7 @@
 
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
-    
+
     <!-- The jdbc properties.. -->
     <property file="${intact.root}/config/jdbc.properties"/>
 
@@ -148,7 +148,7 @@
 
         <!-- Copy proxy properties file. -->
         <copy todir="${dest.dir}/config"
-            file="${root.config.dir}/proxy.properties"/>
+              file="${root.config.dir}/proxy.properties"/>
 
         <!-- Copy property files to the predict pkg root -->
         <copy todir="${dest.dir}/${predict.pkg.root}">
@@ -166,17 +166,16 @@
 
     <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
     <target name="compile" depends="make-jar"
-        description="Compiles non test source files">
+            description="Compiles non test source files">
 
         <!-- Create the dest dir if it doesn't exist. -->
         <mkdir dir="${dest.dir}"/>
 
         <!-- Only compile predict sources only. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-            debug="on" source="1.4"
-            includes="**/application/predict/**,
-                      **/application/commons/**"
-            excludes="**/test/**">
+               debug="on" source="1.4"
+               includes="**/application/predict/**"
+               excludes="**/test/**">
             <classpath refid="project.class.path"/>
         </javac>
 
@@ -189,7 +188,7 @@
     <!-- Builds a war file using the current database setup. -->
 
     <target name="war" description="Builds a war file"
-        depends="set-tstamp, set-db-type, war-postgres, war-oracle"/>
+            depends="set-tstamp, set-db-type, war-postgres, war-oracle"/>
 
     <!-- =================================================================== -->
 
@@ -378,7 +377,7 @@
 
     <!-- Runs the Postgres data fill program -->
     <target name="payg-pg" depends="compile"
-        description="Runs utility to create PAYG tables for Postgres database">
+            description="Runs utility to create PAYG tables for Postgres database">
         <java classname="uk.ac.ebi.intact.application.predict.util.PredictPg" fork="true">
             <classpath refid="project.run.class.path"/>
         </java>
@@ -388,9 +387,9 @@
 
     <!-- Runs the Oracle data fill program -->
     <target name="payg-ora" depends="compile"
-        description="Runs utility to create PAYG tables for Oracle database">
+            description="Runs utility to create PAYG tables for Oracle database">
         <java classname="uk.ac.ebi.intact.application.predict.util.PredictOra"
-            fork="true" maxmemory="1024m">
+              fork="true" maxmemory="1024m">
             <classpath refid="project.run.class.path"/>
         </java>
     </target>
@@ -405,15 +404,15 @@
 
         <!-- Copy context files in the Tomcat's webapps directory -->
         <copy file="${dist.dir}/${predict-context-file}"
-            todir="${webapps.dir}"
-            overwrite="yes"/>
+              todir="${webapps.dir}"
+              overwrite="yes"/>
     </target>
 
     <!-- =================================================================== -->
 
     <!-- Undeploys the war file from the Tomcat server. -->
     <target name="undeploy"
-        description="Undeploys the WAR file from the Tomcat server">
+            description="Undeploys the WAR file from the Tomcat server">
         <ant dir=".." inheritAll="false" target="undeploy">
             <property name="war" value="${ant.project.name}"/>
         </ant>
@@ -447,16 +446,16 @@
 
         <!-- Copy the template file -->
         <copy todir="${dist.dir}"
-            file="${intact.context.dir}/${predict-context-file}"
-            overwrite="true"/>
+              file="${intact.context.dir}/${predict-context-file}"
+              overwrite="true"/>
 
         <!-- Customize the context file -->
         <replace file="${dist.dir}/${predict-context-file}"
-            token="[WAR.FILE.NAME]"
-            value="${war.file}"/>
+                 token="[WAR.FILE.NAME]"
+                 value="${war.file}"/>
         <replace file="${dist.dir}/${predict-context-file}"
-            token="[server.name]"
-            value="${server.name}"/>
+                 token="[server.name]"
+                 value="${server.name}"/>
     </target>
 
 </project>
