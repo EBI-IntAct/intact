@@ -1,7 +1,7 @@
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
-import uk.ac.ebi.intact.application.commons.util.UrlCheckerThread;
 import uk.ac.ebi.intact.application.search3.business.Constants;
+import uk.ac.ebi.intact.application.search3.util.UrlCheckerThread;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.SearchReplace;
 
@@ -1017,7 +1017,7 @@ public class MainDetailViewBean extends AbstractViewBean {
     }
 
     public boolean hasPsi1URL() {
-        if ( ! urlCheckerPsi1.hasFinished( 100 ) ) {
+        if ( ! urlCheckerPsi1.hasFinished( 500 ) ) {
             logger.error( "The checking of PSI 1.0 URL (" + urlCheckerPsi1.getUrl() + ") could not complete on time." );
         }
 
@@ -1025,7 +1025,7 @@ public class MainDetailViewBean extends AbstractViewBean {
     }
 
     public boolean hasPsi25URL() {
-        if ( ! urlCheckerPsi25.hasFinished( 100 ) ) {
+        if ( ! urlCheckerPsi25.hasFinished( 500 ) ) {
             logger.error( "The checking of PSI 2.5 URL (" + urlCheckerPsi25.getUrl() + ") could not complete on time." );
         }
 
