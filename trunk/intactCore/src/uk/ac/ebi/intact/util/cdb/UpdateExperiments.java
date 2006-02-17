@@ -10,6 +10,7 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.SearchReplace;
+import uk.ac.ebi.intact.util.HttpProxyManager;
 
 import java.io.*;
 import java.sql.Connection;
@@ -305,6 +306,12 @@ public class UpdateExperiments {
                                                     IOException,
                                                     SQLException {
 
+        try{
+            HttpProxyManager.setup();
+        }
+        catch(HttpProxyManager.ProxyConfigurationNotFound e){
+            System.err.println(e.getMessage());
+        }
         IntactHelper helper = null;
         SimpleDateFormat formatter = new SimpleDateFormat( "yyyy.MM.dd@HH.mm" );
         String time = formatter.format( new Date() );
