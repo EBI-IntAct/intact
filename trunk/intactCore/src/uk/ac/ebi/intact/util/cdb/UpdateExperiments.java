@@ -307,6 +307,7 @@ public class UpdateExperiments {
                                                     SQLException {
 
         try{
+            //See intactCore/config/proxy.properties
             HttpProxyManager.setup();
         }
         catch(HttpProxyManager.ProxyConfigurationNotFound e){
