@@ -995,7 +995,9 @@ public class GoUtils {
             Annotation a = (Annotation) iterator.next();
             String topic = a.getCvTopic().getShortLabel();
             // do not print internal remark.
-            if ( false == CvTopic.INTERNAL_REMARK.equals( topic ) ) {
+            if ( false == CvTopic.INTERNAL_REMARK.equals( topic ) &&
+                 false == CvTopic.UNIPROT_DR_EXPORT.equals( topic ) &&
+                 false == CvTopic.HIDDEN.equals( topic )   ) {    
                 out.print( topic + ": " );
                 out.println( a.getAnnotationText() );
             }
