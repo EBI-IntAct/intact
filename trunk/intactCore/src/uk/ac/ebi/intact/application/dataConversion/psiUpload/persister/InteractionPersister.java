@@ -907,188 +907,197 @@ public final class InteractionPersister {
      */
     public static void alreadyExistsInIntact( final InteractionTag psi,
                                               final Collection experiments,
-                                              final Interaction intactInteraction ) {
+                                              final Interaction intactInteraction ) throws IntactException {
 
         // this is in theory a pretty heavy computation but in practice an interaction rarely have many experiments
         // and few interaction have a lot of components.
-
+        IntactHelper helper = new IntactHelper();
         if ( DEBUG ) {
             System.out.println( "Compare interactions: " + psi + "\n and " + intactInteraction );
         }
+        if(psi.getParticipants().size() == intactInteraction.getComponents().size() ){
+            Collection psiExperiments = psi.getExperiments();
+            for ( Iterator iterator = psiExperiments.iterator(); iterator.hasNext(); ) {
+                ExperimentDescriptionTag psiExperiment = (ExperimentDescriptionTag) iterator.next();
 
-        Collection psiExperiments = psi.getExperiments();
-        for ( Iterator iterator = psiExperiments.iterator(); iterator.hasNext(); ) {
-            ExperimentDescriptionTag psiExperiment = (ExperimentDescriptionTag) iterator.next();
-
-            Collection intactExperiments = intactInteraction.getExperiments();
-            for ( Iterator iterator1 = intactExperiments.iterator(); iterator1.hasNext(); ) {
-                Experiment intactExperiment = (Experiment) iterator1.next();
-
-                if ( DEBUG ) {
-                    System.out.println( "Check their experiment: psi(" +
-                                        psiExperiment.getShortlabel() +
-                                        ") and intact(" +
-                                        intactExperiment.getShortLabel() + ")" );
-                }
-
-                // compare two experiments using their shortlabel as they should be unique.
-
-                if ( intactExperiment.getShortLabel().equals( psiExperiment.getShortlabel() ) ) {
-                    // they are the same ... check on the conponents
+                Collection intactExperiments = intactInteraction.getExperiments();
+                for ( Iterator iterator1 = intactExperiments.iterator(); iterator1.hasNext(); ) {
+                    Experiment intactExperiment = (Experiment) iterator1.next();
 
                     if ( DEBUG ) {
-                        System.out.println( "They are equals ! Check on their participants..." );
+                        System.out.println( "Check their experiment: psi(" +
+                                psiExperiment.getShortlabel() +
+                                ") and intact(" +
+                                intactExperiment.getShortLabel() + ")" );
                     }
 
-                    Collection psiComponents = psi.getParticipants();
-                    boolean allComponentFound = true;
-                    for ( Iterator iterator2 = psiComponents.iterator(); iterator2.hasNext() && allComponentFound; ) {
-                        ProteinParticipantTag psiComponent = (ProteinParticipantTag) iterator2.next();
+                    // compare two experiments using their shortlabel as they should be unique.
 
-                        ProteinHolder holder = getProtein( psiComponent );
-                        final Protein psiProtein;
-                        if ( holder.isSpliceVariantExisting() ) {
-                            psiProtein = holder.getSpliceVariant();
-                        } else {
-                            psiProtein = holder.getProtein();
-                        }
-
-                        final CvComponentRole psiRole = RoleChecker.getCvComponentRole( psiComponent.getRole() );
+                    if ( intactExperiment.getShortLabel().equals( psiExperiment.getShortlabel() ) ) {
+                        // they are the same ... check on the conponents
 
                         if ( DEBUG ) {
-                            System.out.println( "PSI: " + psiProtein.getShortLabel() + " (" + psiRole.getShortLabel() + ")" );
+                            System.out.println( "They are equals ! Check on their participants..." );
                         }
 
-                        Collection intactComponents = intactInteraction.getComponents();
-                        boolean found = false;
-                        for ( Iterator iterator3 = intactComponents.iterator(); iterator3.hasNext() && !found; ) {
-                            Component intactComponent = (Component) iterator3.next();
+                        Collection psiComponents = psi.getParticipants();
+                        boolean allComponentFound = true;
+                        for ( Iterator iterator2 = psiComponents.iterator(); iterator2.hasNext() && allComponentFound; ) {
+                            ProteinParticipantTag psiComponent = (ProteinParticipantTag) iterator2.next();
+
+                            ProteinHolder holder = getProtein( psiComponent );
+                            final Protein psiProtein;
+                            if ( holder.isSpliceVariantExisting() ) {
+                                psiProtein = holder.getSpliceVariant();
+                            } else {
+                                psiProtein = holder.getProtein();
+                            }
+
+                            final CvComponentRole psiRole = RoleChecker.getCvComponentRole( psiComponent.getRole() );
 
                             if ( DEBUG ) {
-                                System.out.print( "\tINTACT: " + intactComponent.getInteractor().getShortLabel() +
-                                                  " (" + intactComponent.getCvComponentRole().getShortLabel() + "): " );
+                                System.out.println( "PSI: " + psiProtein.getShortLabel() + " (" + psiRole.getShortLabel() + ")" );
                             }
 
-                            if ( psiRole.equals( intactComponent.getCvComponentRole() ) &&
-                                 psiProtein.equals( intactComponent.getInteractor() ) ) {
+                            Collection intactComponents = intactInteraction.getComponents();
+                            boolean found = false;
+                            for ( Iterator iterator3 = intactComponents.iterator(); iterator3.hasNext() && !found; ) {
+                                Component intactComponent = (Component) iterator3.next();
+
+                                 System.out.println("Before intactComponent.getBindingDomains().size() = " + intactComponent.getBindingDomains().size());
+                                //WARNING : if we do not reload the Component using the helper, it does not find
+                                // the feature on the component (intactComponent.getBindingDomains.size() return null)
+                                // even if in the dabase the Component is associated to a Feature
+                                // Todo : Find why is that
+                                intactComponent = (Component) helper.getObjectByAc(Component.class, intactComponent.getAc());
 
                                 if ( DEBUG ) {
-                                    System.out.println( "protein are EQUALS" );
+                                    System.out.print( "\tINTACT: " + intactComponent.getInteractor().getShortLabel() +
+                                            " (" + intactComponent.getCvComponentRole().getShortLabel() + "): " );
                                 }
 
-                                // checking the feature's...
-                                if ( featureAreEquals( intactComponent, psiComponent ) ) {
+                                if ( psiRole.equals( intactComponent.getCvComponentRole() ) &&
+                                        psiProtein.equals( intactComponent.getInteractor() ) ) {
 
                                     if ( DEBUG ) {
-                                        System.out.println( "features are EQUALS" );
+                                        System.out.println( "protein are EQUALS" );
                                     }
 
-                                    found = true;
-                                } else {
+                                    // checking the feature's...
+                                    if ( featureAreEquals( intactComponent, psiComponent ) ) {
 
-                                    if ( DEBUG ) {
-                                        System.out.println( "feature are DIFFERENT" );
-                                    }
-                                }
+                                        if ( DEBUG ) {
+                                            System.out.println( "features are EQUALS" );
+                                        }
 
-                            } else {
-                                // special case, a same protein can be bait and prey in the same interaction.
-                                // Hence, we have to browse the whole intact Component set until we find the
-                                // component or all have been checked.
-                                if ( DEBUG ) {
-                                    System.out.println( "protein are DIFFERENT" );
-                                }
-                            }
-                        } // intact components
-
-                        if ( !found ) {
-                            // no need to carry on to check the psi component set because now, we know that
-                            // at least one is not found.
-                            allComponentFound = false;
-                        }
-
-                    } // psi components
-
-                    if ( allComponentFound ) {
-                        // there is already an instance of that interaction in intact
-                        if ( DEBUG ) {
-                            System.out.println( "All component(protein+role+feature) have been found, hence there " +
-                                                "is an instance of that interaction in intact" );
-                        }
-
-                        // create a warning message
-                        StringBuffer sb = new StringBuffer( 256 );
-                        sb.append( "WARNING" ).append( NEW_LINE );
-                        sb.append( "An interaction having the shortlabel " ).append( intactInteraction.getShortLabel() );
-                        sb.append( NEW_LINE );
-                        sb.append( "and involving the following components: " );
-                        for ( Iterator iterator2 = psi.getParticipants().iterator(); iterator2.hasNext(); ) {
-                            ProteinParticipantTag psiComponent = (ProteinParticipantTag) iterator2.next();
-                            sb.append( NEW_LINE ).append( '[' );
-                            sb.append( psiComponent.getProteinInteractor().getPrimaryXref().getId() );
-                            sb.append( ", " );
-                            sb.append( psiComponent.getRole() );
-                            if ( psiComponent.hasFeature() ) {
-                                sb.append( ", Feature[" );
-                                for ( Iterator iterator3 = psiComponent.getFeatures().iterator(); iterator3.hasNext(); )
-                                {
-                                    FeatureTag feature = (FeatureTag) iterator3.next();
-                                    sb.append( "type=" ).append( feature.getFeatureType().getPsiDefinition().getId() );
-                                    sb.append( ',' );
-                                    sb.append( "detection=" );
-                                    if ( null != feature.getFeatureDetection() ) {
-                                        sb.append( feature.getFeatureDetection().getPsiDefinition().getId() );
+                                        found = true;
                                     } else {
-                                        sb.append( "none" );
+
+                                        if ( DEBUG ) {
+                                            System.out.println( "feature are DIFFERENT" );
+                                        }
                                     }
-                                    sb.append( ',' );
 
-                                    LocationTag location = feature.getLocation();
-                                    sb.append( " range from=" ).append( location.getFromIntervalEnd() );
-                                    sb.append( ".." );
-                                    sb.append( location.getFromIntervalStart() );
-                                    sb.append( ".." );
-                                    sb.append( "range to=" ).append( location.getToIntervalStart() );
-                                    sb.append( ".." );
-                                    sb.append( location.getToIntervalEnd() );
+                                } else {
+                                    // special case, a same protein can be bait and prey in the same interaction.
+                                    // Hence, we have to browse the whole intact Component set until we find the
+                                    // component or all have been checked.
+                                    if ( DEBUG ) {
+                                        System.out.println( "protein are DIFFERENT" );
+                                    }
                                 }
-                                sb.append( ']' );
+                            } // intact components
+
+                            if ( !found ) {
+                                // no need to carry on to check the psi component set because now, we know that
+                                // at least one is not found.
+                                allComponentFound = false;
                             }
 
-                            sb.append( ']' ).append( ' ' );
-                        }
-                        sb.append( NEW_LINE );
-                        sb.append( "already exists in IntAct under the experiment " );
-                        sb.append( intactExperiment.getShortLabel() );
-                        sb.append( NEW_LINE );
+                        } // psi components
 
-                        System.out.println( sb.toString() );
+                        if ( allComponentFound ) {
+                            // there is already an instance of that interaction in intact
+                            if ( DEBUG ) {
+                                System.out.println( "All component(protein+role+feature) have been found, hence there " +
+                                        "is an instance of that interaction in intact" );
+                            }
 
-                        // update the experiment collection (remove the corresponding item).
-                        ExperimentWrapper experimentWrapper = null;
-                        boolean found = false;
-                        for ( Iterator iterator2 = experiments.iterator(); iterator2.hasNext() && !found; ) {
-                            experimentWrapper = (ExperimentWrapper) iterator2.next();
-                            if ( experimentWrapper.getExperiment().equals( psiExperiment ) ) {
-                                found = true;
+                            // create a warning message
+                            StringBuffer sb = new StringBuffer( 256 );
+                            sb.append( "WARNING" ).append( NEW_LINE );
+                            sb.append( "An interaction having the shortlabel " ).append( intactInteraction.getShortLabel() );
+                            sb.append( NEW_LINE );
+                            sb.append( "and involving the following components: " );
+                            for ( Iterator iterator2 = psi.getParticipants().iterator(); iterator2.hasNext(); ) {
+                                ProteinParticipantTag psiComponent = (ProteinParticipantTag) iterator2.next();
+                                sb.append( NEW_LINE ).append( '[' );
+                                sb.append( psiComponent.getProteinInteractor().getPrimaryXref().getId() );
+                                sb.append( ", " );
+                                sb.append( psiComponent.getRole() );
+                                if ( psiComponent.hasFeature() ) {
+                                    sb.append( ", Feature[" );
+                                    for ( Iterator iterator3 = psiComponent.getFeatures().iterator(); iterator3.hasNext(); )
+                                    {
+                                        FeatureTag feature = (FeatureTag) iterator3.next();
+                                        sb.append( "type=" ).append( feature.getFeatureType().getPsiDefinition().getId() );
+                                        sb.append( ',' );
+                                        sb.append( "detection=" );
+                                        if ( null != feature.getFeatureDetection() ) {
+                                            sb.append( feature.getFeatureDetection().getPsiDefinition().getId() );
+                                        } else {
+                                            sb.append( "none" );
+                                        }
+                                        sb.append( ',' );
+
+                                        LocationTag location = feature.getLocation();
+                                        sb.append( " range from=" ).append( location.getFromIntervalEnd() );
+                                        sb.append( ".." );
+                                        sb.append( location.getFromIntervalStart() );
+                                        sb.append( ".." );
+                                        sb.append( "range to=" ).append( location.getToIntervalStart() );
+                                        sb.append( ".." );
+                                        sb.append( location.getToIntervalEnd() );
+                                    }
+                                    sb.append( ']' );
+                                }
+
+                                sb.append( ']' ).append( ' ' );
+                            }
+                            sb.append( NEW_LINE );
+                            sb.append( "already exists in IntAct under the experiment " );
+                            sb.append( intactExperiment.getShortLabel() );
+                            sb.append( NEW_LINE );
+
+                            System.out.println( sb.toString() );
+
+                            // update the experiment collection (remove the corresponding item).
+                            ExperimentWrapper experimentWrapper = null;
+                            boolean found = false;
+                            for ( Iterator iterator2 = experiments.iterator(); iterator2.hasNext() && !found; ) {
+                                experimentWrapper = (ExperimentWrapper) iterator2.next();
+                                if ( experimentWrapper.getExperiment().equals( psiExperiment ) ) {
+                                    found = true;
+                                }
+                            }
+                            if ( found ) {
+                                experiments.remove( experimentWrapper );
                             }
                         }
-                        if ( found ) {
-                            experiments.remove( experimentWrapper );
+
+                        // else ... just carry on searching.
+
+                    } else {
+                        if ( DEBUG ) {
+                            System.out.println( "Experiment shortlabel are different ... don't check the components" );
                         }
                     }
+                } // intact experiments
+            } // psi experiments
 
-                    // else ... just carry on searching.
-
-                } else {
-                    if ( DEBUG ) {
-                        System.out.println( "Experiment shortlabel are different ... don't check the components" );
-                    }
-                }
-            } // intact experiments
-        } // psi experiments
-
-        // no instance of that interaction have been found in intact.
+            // no instance of that interaction have been found in intact.
+        }
+        helper.closeStore();
     }
 
     /**
