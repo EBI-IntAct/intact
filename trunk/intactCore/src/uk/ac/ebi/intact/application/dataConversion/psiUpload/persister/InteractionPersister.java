@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.application.dataConversion.psiUpload.persister;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.*;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.*;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.CommandLineOptions;
+import uk.ac.ebi.intact.application.commons.go.GoXrefHelper;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
@@ -197,6 +198,30 @@ public final class InteractionPersister {
                 }
 
                 // no need for an else, the additional annotation topic have been controlled by the checker.
+            }
+
+
+            //Xref
+            Collection xrefs = interactionTag.getXrefs();
+            for (Iterator iterator1 = xrefs.iterator(); iterator1.hasNext();) {
+                final XrefTag xrefTag =  (XrefTag) iterator1.next();
+                final CvDatabase cvDatabase = XrefChecker.getCvDatabase( xrefTag.getDb() );
+                if ( cvDatabase != null ) {
+                    CvXrefQualifier cvXrefQualifier = null;
+                    String secondaryId = new String();
+                    if(cvDatabase.getShortLabel().equals(CvDatabase.GO)){
+                        GoXrefHelper goXrefHelper = new GoXrefHelper(xrefTag.getId());
+                        if ( goXrefHelper.getQualifier() != null )
+                            cvXrefQualifier = (CvXrefQualifier) helper.getObjectByLabel(CvXrefQualifier.class, goXrefHelper.getQualifier());
+                        if( goXrefHelper.getSecondaryId() != null )
+                            secondaryId = goXrefHelper.getSecondaryId();
+                    }
+
+                    Xref xref = new Xref(helper.getInstitution(), cvDatabase, xrefTag.getId(), secondaryId, new String(),cvXrefQualifier);
+                    xref.setParentAc(interaction.getAc());
+                    helper.create( xref );
+                    interaction.addXref( xref );
+                }
             }
 
             // TODO clean that thing. Right now we are most of the time stuffing the author confidence as annotation 
