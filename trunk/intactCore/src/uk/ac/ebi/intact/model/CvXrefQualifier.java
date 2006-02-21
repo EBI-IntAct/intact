@@ -40,6 +40,15 @@ public class CvXrefQualifier extends CvObject implements Editable {
 
     public static final String TARGET_SPECIES = "target-species";
 
+    public static final String COMPONENT = "component";
+    public static final String COMPONENT_MI_REF = "MI:0354";
+
+    public static final String FUNCTION = "function";
+    public static final String FUNCTION_MI_REF = "MI:0355";
+
+    public static final String PROCESS = "process";
+    public static final String PROCESS_MI_REF = "MI:0359";
+
 
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus.
