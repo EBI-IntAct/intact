@@ -12,6 +12,8 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.model.Component;
+import uk.ac.ebi.intact.model.NucleicAcid;
 
 import java.io.*;
 import java.util.*;
@@ -62,6 +64,28 @@ public class FileGenerator {
     }
 
     /**
+     * It take an interactions Collection and remove from it all the interactions having a NucleicAcid as component.
+     * This is used in case psi version is psi1 as psi1 do not allow Nucleic Acid as Interaction's participant.
+     * @param interactions Collection of interactions
+     */
+
+    public static void filterInteractions(Collection interactions){
+
+        for (Iterator iterator = interactions.iterator(); iterator.hasNext();) {
+            Interaction interaction =  (Interaction) iterator.next();
+            Collection components = interaction.getComponents();
+            for (Iterator iterator1 = components.iterator(); iterator1.hasNext();) {
+                Component component =  (Component) iterator1.next();
+                if ( component.getInteractor() instanceof NucleicAcid ){
+                    iterator.remove();
+                    break;
+                }
+            }
+        }
+
+    }
+
+    /**
      * Convert a list of experiment into PSI XML
      *
      * @param experiments a list of experiment to export in PSI XML
@@ -77,31 +101,50 @@ public class FileGenerator {
 
             Experiment experiment = (Experiment) iterator.next();
 
-            System.out.println( "Processing: " + experiment.getShortLabel() + ", has " +
-                                experiment.getInteractions().size() + " interaction(s)." );
-
-            // in order to have them in that order, experimentList, then interactorList, at last interactionList.
-            session.getExperimentListElement();
-            session.getInteractorListElement();
-
             Collection interactions = experiment.getInteractions();
-            int count = 0;
-            for ( Iterator iterator1 = interactions.iterator(); iterator1.hasNext(); ) {
 
-                Interaction interaction = (Interaction) iterator1.next();
-                interaction2xml.create( session, session.getInteractionListElement(), interaction );
 
-                System.out.print( "." );
-                System.out.flush();
-                count++;
+            // Psi 1 do not tolerate Nucleic Acid as Participant of an Interaction. So if psi verstion is psi1 we
+            // filter out all the Interactions having a Nucleic Acid as a participant. Then we check, if there is no
+            // any more interactions linked to the experiment, we do not process it.
 
-                if ( ( count % 50 ) == 0 ) {
+            if ( PsiVersion.getVersion1().getVersion().equals(session.getPsiVersion().getVersion()) ){
+                /*interactions = */filterInteractions(interactions);
+            }
+
+            if( interactions.size() != 0 ) {
+
+                System.out.println( "Processing: " + experiment.getShortLabel() + ", has " +
+                        experiment.getInteractions().size() + " interaction(s)." );
+
+                // in order to have them in that order, experimentList, then interactorList, at last interactionList.
+                session.getExperimentListElement();
+                session.getInteractorListElement();
+
+                int count = 0;
+                for ( Iterator iterator1 = interactions.iterator(); iterator1.hasNext(); ) {
+
+                    Interaction interaction = (Interaction) iterator1.next();
+                    interaction2xml.create( session, session.getInteractionListElement(), interaction );
+
+                    System.out.print( "." );
+                    System.out.flush();
+                    count++;
+
+                    if ( ( count % 50 ) == 0 ) {
+                        System.out.println( " " + count );
+                    }
+                }
+                // interactions
+
+                if ( ( count % 50 ) != 0 ) {
                     System.out.println( " " + count );
                 }
-            } // interactions
+            }
+            else {
+                System.out.println( "Experiment: " + experiment.getShortLabel() + ", won't be processed has it has no " +
+                        "interactions ");
 
-            if ( ( count % 50 ) != 0 ) {
-                System.out.println( " " + count );
             }
         } // experiments
 
@@ -346,7 +389,15 @@ public class FileGenerator {
 
             Document psiDoc = generateData( searchResults, session );
             session.printMessageReport( System.err );
-            write( psiDoc.getDocumentElement(), new File( fileName ) );
+
+            // When generating psi1 xml files, we remove all the interactions having a Nucleic Acid as participant
+            // we can end up in having a psiDocument containing no experimentList tag as all the Experiments where
+            // only composed of interactions having Nucleic Acid as Participants. In this case we don't want to print
+            // out and xml file without any experimentList tag, therefore we do this check on the count of experimentList
+            // element.
+            if (psiDoc.getElementsByTagName("experimentList").getLength() != 0 ){
+                write( psiDoc.getDocumentElement(), new File( fileName ) );
+            }
 
         } finally {
             if ( helper != null ) {
