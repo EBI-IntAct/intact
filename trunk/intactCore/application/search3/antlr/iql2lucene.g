@@ -138,6 +138,8 @@ predicate throws ANTLRException
         throw new ANTLRException("this was an invalid IQL statement");
      }
 
+
+
 // the term specifies the search term
 // the term is a leaf in the tree built by ANTLR
 term throws ANTLRException
@@ -158,91 +160,99 @@ term throws ANTLRException
      | CVINTERACTION_TYPE_AC
      | CVINTERACTION_TYPE_SHORTLABEL
      | CVINTERACTION_TYPE_FULLNAME
-
+// CvTopics
+     | THREEDRFACTORS
+     | THREEDRESOLUTION
+     | THREEDSTRUCTURE
+     | ACCEPTED
+     | AGONIST
+     | ANTAGONIST
+     | ANTIBODIES
+     | AUTHORCONFIDENCE
+     | AUTHORLIST
+     | CAUTION
+     | COMMENT
+     | COMPLEXPROPERTIES
+     | COMPLEXSYNONYM
+     | CONFIDENCEMAPPING
+     | CONTACTCOMMENT
+     | CONTACTEMAIL
+     | COPYRIGHT
+     | CURATEDCOMPLEX
+     | DATAPROCESSING
+     | DATASET
+     | DEFINITION
+     | DELIVERYMETHOD
+     | DISEASE
+     | EXAMPLE
+     | EXPMODIFICATION
+     | EXPRESSIONLEVEL
+     | FIGURELEGEND
+     | FUNCTION
+     | HIDDEN
+     | IDVALIDATIONREGEXP
+     | INHIBITION
+     | ISOFORMCOMMENT
+     | KINETICS
+     | LIBRARYUSED
+     | NEGATIVE
+     | NOEXPORT
+     | NOUNIPROTUPDATE
+     | OBSOLETETERM
+     | ONHOLD
+     | REMARKINTERNAL
+     | RESULTINGPTM
+     | SAMPLEPROCESS
+     | SEARCHURL
+     | SEARCHURLASCII
+     | STIMULATION
+     | SUBMITTED
+     | TOBEREVIEWED
+     | UNIPROTCCNOTE
+     | UNIPROTDREXPORT
+     | URL
+     | USEDINCLASS
 // CvDatabases
-     |  AFCS
-     |  CABRI
-     |  ENSEMBL
-     |  FLYBASE
-     |  GO
-     |  HUGE
-     |  IMEX
-     |  INTACT
-     |  INTERPRO
-     |  NEWT
-     |  OMIM
-     |  PDB
-     |  PSIMI
-     |  PUBMED
-     |  REACTOMECOMPLEX
-     |  REACTOMEPROTEIN
-     |  RESID
-     |  SGD
-     |  UNIPARC
-     |  UNIPROTKB
-
-//CvTopics
-     |  THREEDRFACTORS
-     |  THREEDRESOLUTION
-     |  THREEDSTRUCTURE
-     |  ACCEPTED
-     |  AGONIST
-     |  ANTAGONIST
-     |  AUTHORCONFIDENCE
-     |  AUTHORLIST
-     |  CAUTION
-     |  COMMENT
-     |  COMPLEXPROPERTIES
-     |  CONFIDENCEMAPPING
-     |  CONTACTCOMMENT
-     |  CONTACTEMAIL
-     |  COPYRIGHT
-     |  DATAPROCESSING
-     |  DATASET
-     |  DEFINITION
-     |  DISEASE
-     |  EXAMPLE
-     |  EXPMODIFICATION
-     |  FIGURELEGEND
-     |  FUNCTION
-     |  INHIBITION
-     |  ISOFORMCOMMENT
-     |  KINETICS
-     |  NEGATIVE
-     |  ONHOLD
-     |  PATHWAY
-     |  PREREQUISITEPTM
-     |  REMARKINTERNAL
-     |  RESULTINGPTM
-     |  SEARCHURL
-     |  SEARCHURLASCII
-     |  STIMULATION
-     |  SUBMITTED
-     |  TOBEREVIEWED
-     |  UNIPROTCCNOTE
-     |  UNIPROTDREXPORT
-     |  URL
-     |  USEDINCLASS
-
-//CvAliasType
-     |  AUTHORASSIGNEDNAME
-     |  GENENAME
-     |  GENENAMESYNONYM
-     |  GOSYNONYM
-     |  ISOFORMSYNONYM
-     |  LOCUSNAME
-     |  ORFNAME
-
+     | AFCS
+     | CABRI
+     | CYGD
+     | DDBJ_EMBL_GENBANK
+     | ENSEMBL
+     | FLYBASE
+     | GO
+     | HUGE
+     | IMEX
+     | INTACT
+     | INTENZ
+     | INTERPRO
+     | NEWT
+     | OMIM
+     | PDB
+     | PSIMI
+     | PUBMED
+     | REACTOMECOMPLEX
+     | REACTOMEPROTEIN
+     | RESID
+     | SGD
+     | SO
+     | UNIPARC
+     | UNIPROTKB
+// CvAliasTypes
+     | AUTHORASSIGNEDNAME
+     | GENENAME
+     | GENENAMESYNONYM
+     | GOSYNONYM
+     | ISOFORMSYNONYM
+     | LOCUSNAME
+     | ORFNAME
        )
-
-     ;
+;
      exception
      catch [ANTLRException ex] {
         reportError(ex.toString());
         isCorrectStatement = false;
         throw new ANTLRException("this was an invalid IQL statement");
      }
-
 // the value specifies the value to search for
 // it is also a leaf in the ANTLR tree
 value throws ANTLRException
@@ -261,7 +271,7 @@ value throws ANTLRException
     ;
 
 // the searchObject is the search class where to search
-// the variable 'searchObject' is set here
+ // the variable 'searchObject' is set here
 searchObject throws ANTLRException
     {String str = "";}
     : ( p:PROTEIN
@@ -287,20 +297,18 @@ searchObject throws ANTLRException
         isCorrectStatement = false;
         throw new ANTLRException("this was an invalid IQL statement");
      }
-
 // the from clause always starts with 'FROM' followed by the database where to search in
-// the value 'database' is set here
-fromClause throws ANTLRException
-    : FROM i:INTACT
-    { database = i.getText().toLowerCase();}
-    ;
-     exception
-     catch [ANTLRException ex] {
-        reportError(ex.toString());
-        isCorrectStatement = false;
-        throw new ANTLRException("this was an invalid IQL statement");
-     }
-
+ // the value 'database' is set here
+ fromClause throws ANTLRException
+     : FROM i:INTACT
+     { database = i.getText().toLowerCase();}
+     ;
+      exception
+      catch [ANTLRException ex] {
+         reportError(ex.toString());
+         isCorrectStatement = false;
+         throw new ANTLRException("this was an invalid IQL statement");
+      }
 
 // LEXER *********************************************************************************
 
@@ -333,7 +341,6 @@ tokens {
     SHORTLABEL = "shortlabel";
     WHERE = "where" ;
     XREF = "xref";
-
     CVINTERACTION_AC = "interaction_ac";
     CVINTERACTION_SHORTLABEL = "interaction_shortlabel";
     CVINTERACTION_FULLNAME = "interaction_fullname";
@@ -343,64 +350,74 @@ tokens {
     CVINTERACTION_TYPE_AC = "interactiontype_ac";
     CVINTERACTION_TYPE_SHORTLABEL = "interactiontype_shortlabel";
     CVINTERACTION_TYPE_FULLNAME = "interactiontype_fullname";
-
 // CvDatabases
     AFCS = "afcs";
     CABRI = "cabri";
+    CYGD = "cygd";
+    DDBJ_EMBL_GENBANK = "ddbj_embl_genbank";
     ENSEMBL = "ensembl";
     FLYBASE = "flybase";
     GO = "go";
     HUGE = "huge";
     IMEX = "imex";
     INTACT = "intact";
+    INTENZ = "intenz";
     INTERPRO = "interpro";
     NEWT = "newt";
     OMIM = "omim";
     PDB = "pdb";
     PSIMI = "psi-mi";
     PUBMED = "pubmed";
-    REACTOMECOMPLEX = "reactome-complex";
-    REACTOMEPROTEIN = "reactome-protein";
+    REACTOMECOMPLEX = "reactome complex";
+    REACTOMEPROTEIN = "reactome protein";
     RESID = "resid";
     SGD = "sgd";
+    SO = "so";
     UNIPARC = "uniparc";
     UNIPROTKB = "uniprotkb";
-
-//CvTopics
+// CvTopics
     THREEDRFACTORS = "3d-r-factors";
     THREEDRESOLUTION = "3d-resolution";
     THREEDSTRUCTURE = "3d-structure";
     ACCEPTED = "accepted";
     AGONIST = "agonist";
     ANTAGONIST = "antagonist";
+    ANTIBODIES = "antibodies";
     AUTHORCONFIDENCE = "author-confidence";
     AUTHORLIST = "author-list";
     CAUTION = "caution";
     COMMENT = "comment";
     COMPLEXPROPERTIES = "complex-properties";
+    COMPLEXSYNONYM = "complex-synonym";
     CONFIDENCEMAPPING = "confidence-mapping";
     CONTACTCOMMENT = "contact-comment";
     CONTACTEMAIL = "contact-email";
     COPYRIGHT = "copyright";
+    CURATEDCOMPLEX = "curated-complex";
     DATAPROCESSING = "data-processing";
     DATASET = "dataset";
     DEFINITION = "definition";
+    DELIVERYMETHOD = "delivery-method";
     DISEASE = "disease";
     EXAMPLE = "example";
     EXPMODIFICATION = "exp-modification";
+    EXPRESSIONLEVEL = "expression-level";
     FIGURELEGEND = "figure-legend";
     FUNCTION = "function";
+    HIDDEN = "hidden";
+    IDVALIDATIONREGEXP = "id-validation-regexp";
     INHIBITION = "inhibition";
     ISOFORMCOMMENT = "isoform-comment";
     KINETICS = "kinetics";
+    LIBRARYUSED = "library-used";
     NEGATIVE = "negative";
+    NOEXPORT = "no-export";
     NOUNIPROTUPDATE = "no-uniprot-update";
     OBSOLETETERM = "obsolete term";
     ONHOLD = "on-hold";
-    PATHWAY = "pathway";
-    PREREQUISITEPTM = "prerequisite-ptm";
     REMARKINTERNAL = "remark-internal";
     RESULTINGPTM = "resulting-ptm";
+    SAMPLEPROCESS = "sample-process";
     SEARCHURL = "search-url";
     SEARCHURLASCII = "search-url-ascii";
     STIMULATION = "stimulation";
@@ -410,16 +427,14 @@ tokens {
     UNIPROTDREXPORT = "uniprot-dr-export";
     URL = "url";
     USEDINCLASS = "used-in-class";
-
-//CvAliasType
-    AUTHORASSIGNEDNAME = "author assigned-name";
+// CvAliasTypes
+    AUTHORASSIGNEDNAME = "author assigned name";
     GENENAME = "gene name";
     GENENAMESYNONYM = "gene name synonym";
     GOSYNONYM = "go synonym";
     ISOFORMSYNONYM = "isoform synonym";
     LOCUSNAME = "locus name";
     ORFNAME = "orf name";
-
 }
 
 // Operators
@@ -455,7 +470,6 @@ Identifier
     options { testLiterals = true; }
     : (Letter|Digit)+
     ;
-
 
 // TreeParser **************************************************************************
 
@@ -507,199 +521,228 @@ predicate returns [String pred]
  // returns a String with the name of the term
  term returns [String str]
      {str = "";}
-     : ( a:AC
-           {str = a.getText();}
-     |   s:SHORTLABEL
-           {str = s.getText();}
-     |   d:FULLNAME
-           {str = d.getText();}
-     |   al:ALIAS
-           {str = al.getText();}
-     |   ann:ANNOTATION
-           {str = ann.getText();}
-     |   x:XREF
-           {str = x.getText();}
+        : ( a:AC
+              {str = a.getText();}
+        |   s:SHORTLABEL
+              {str = s.getText();}
+        |   d:FULLNAME
+              {str = d.getText();}
+        |   al:ALIAS
+              {str = al.getText();}
+        |   ann:ANNOTATION
+              {str = ann.getText();}
+        |   x:XREF
+              {str = x.getText();}
 
-     | intac:CVINTERACTION_AC
-           {str = intac.getText();}
-     | intsh:CVINTERACTION_SHORTLABEL
-           {str = intsh.getText();}
-     | intfull:CVINTERACTION_FULLNAME
-           {str = intfull.getText();}
-     | idac:CVIDENTIFICATION_AC
-           {str = idac.getText();}
-     | idsh:CVIDENTIFICATION_SHORTLABEL
-           {str = idsh.getText();}
-     | idfull:CVIDENTIFICATION_FULLNAME
-           {str = idfull.getText();}
-     | itac:CVINTERACTION_TYPE_AC
-           {str = itac.getText();}
-     | itsh:CVINTERACTION_TYPE_SHORTLABEL
-           {str = itsh.getText();}
-     | itfull:CVINTERACTION_TYPE_FULLNAME
-           {str = itfull.getText();}
-
+        | intac:CVINTERACTION_AC
+              {str = intac.getText();}
+        | intsh:CVINTERACTION_SHORTLABEL
+              {str = intsh.getText();}
+        | intfull:CVINTERACTION_FULLNAME
+              {str = intfull.getText();}
+        | idac:CVIDENTIFICATION_AC
+              {str = idac.getText();}
+        | idsh:CVIDENTIFICATION_SHORTLABEL
+              {str = idsh.getText();}
+        | idfull:CVIDENTIFICATION_FULLNAME
+              {str = idfull.getText();}
+        | itac:CVINTERACTION_TYPE_AC
+              {str = itac.getText();}
+        | itsh:CVINTERACTION_TYPE_SHORTLABEL
+              {str = itsh.getText();}
+        | itfull:CVINTERACTION_TYPE_FULLNAME
+              {str = itfull.getText();}
+// CvTopics:
+     |   df:THREEDRFACTORS
+          {str = df.getText();}
+     |   dr:THREEDRESOLUTION
+          {str = dr.getText();}
+     |   ds:THREEDSTRUCTURE
+          {str = ds.getText();}
+     |   ac:ACCEPTED
+          {str = ac.getText();}
+     |   ag:AGONIST
+          {str = ag.getText();}
+     |   an:ANTAGONIST
+          {str = an.getText();}
+     |   ant:ANTIBODIES
+          {str = ant.getText();}
+     |   au:AUTHORCONFIDENCE
+          {str = au.getText();}
+     |   aut:AUTHORLIST
+          {str = aut.getText();}
+     |   c:CAUTION
+          {str = c.getText();}
+     |   co:COMMENT
+          {str = co.getText();}
+     |   com:COMPLEXPROPERTIES
+          {str = com.getText();}
+     |   cym:COMPLEXSYNONYM
+          {str = cym.getText();}
+     |   con:CONFIDENCEMAPPING
+          {str = con.getText();}
+     |   cnt:CONTACTCOMMENT
+          {str = cnt.getText();}
+     |   cil:CONTACTEMAIL
+          {str = cil.getText();}
+     |   cop:COPYRIGHT
+          {str = cop.getText();}
+     |   cu:CURATEDCOMPLEX
+          {str = cu.getText();}
+     |   da:DATAPROCESSING
+          {str = da.getText();}
+     |   dat:DATASET
+          {str = dat.getText();}
+     |   de:DEFINITION
+          {str = de.getText();}
+     |   del:DELIVERYMETHOD
+          {str = del.getText();}
+     |   di:DISEASE
+          {str = di.getText();}
+     |   e:EXAMPLE
+          {str = e.getText();}
+     |   exp:EXPMODIFICATION
+          {str = exp.getText();}
+     |   eel:EXPRESSIONLEVEL
+          {str = eel.getText();}
+     |   f:FIGURELEGEND
+          {str = f.getText();}
+     |   fu:FUNCTION
+          {str = fu.getText();}
+     |   h:HIDDEN
+          {str = h.getText();}
+     |   i:IDVALIDATIONREGEXP
+          {str = i.getText();}
+     |   in:INHIBITION
+          {str = in.getText();}
+     |   is:ISOFORMCOMMENT
+          {str = is.getText();}
+     |   k:KINETICS
+          {str = k.getText();}
+     |   l:LIBRARYUSED
+          {str = l.getText();}
+     |   n:NEGATIVE
+          {str = n.getText();}
+     |   no:NOEXPORT
+          {str = no.getText();}
+     |   nou:NOUNIPROTUPDATE
+          {str = nou.getText();}
+     |   o:OBSOLETETERM
+          {str = o.getText();}
+     |   on:ONHOLD
+          {str = on.getText();}
+     |   r:REMARKINTERNAL
+          {str = r.getText();}
+     |   re:RESULTINGPTM
+          {str = re.getText();}
+     |   sa:SAMPLEPROCESS
+          {str = sa.getText();}
+     |   se:SEARCHURL
+          {str = se.getText();}
+     |   sea:SEARCHURLASCII
+          {str = sea.getText();}
+     |   st:STIMULATION
+          {str = st.getText();}
+     |   su:SUBMITTED
+          {str = su.getText();}
+     |   t:TOBEREVIEWED
+          {str = t.getText();}
+     |   u:UNIPROTCCNOTE
+          {str = u.getText();}
+     |   un:UNIPROTDREXPORT
+          {str = un.getText();}
+     |   ur:URL
+          {str = ur.getText();}
+     |   us:USEDINCLASS
+          {str = us.getText();}
 // CvDatabases:
      |   af:AFCS
-           {str = af.getText();}
+          {str = af.getText();}
      |   ca:CABRI
-           {str = ca.getText();}
+          {str = ca.getText();}
+     |   cy:CYGD
+          {str = cy.getText();}
+     |   dd:DDBJ_EMBL_GENBANK
+          {str = dd.getText();}
      |   en:ENSEMBL
-           {str = en.getText();}
-     |   f:FLYBASE
-            {str = f.getText();}
+          {str = en.getText();}
+     |   fl:FLYBASE
+          {str = fl.getText();}
      |   g:GO
-           {str = g.getText();}
-     |   h:HUGE
-           {str = h.getText();}
+          {str = g.getText();}
+     |   hu:HUGE
+          {str = hu.getText();}
      |   im:IMEX
-           {str = im.getText();}
-     |   i:INTACT
-           {str = i.getText();}
-     |   in:INTERPRO
-           {str = in.getText();}
-     |   n:NEWT
-           {str = n.getText();}
-     |   o:OMIM
-           {str = o.getText();}
+          {str = im.getText();}
+     |   ina:INTACT
+          {str = ina.getText();}
+     |   inz:INTENZ
+          {str = inz.getText();}
+     |   iro:INTERPRO
+          {str = iro.getText();}
+     |   ne:NEWT
+          {str = ne.getText();}
+     |   om:OMIM
+          {str = om.getText();}
      |   p:PDB
-           {str = p.getText();}
+          {str = p.getText();}
      |   ps:PSIMI
-           {str = ps.getText();}
+          {str = ps.getText();}
      |   pu:PUBMED
-           {str = pu.getText();}
-     |   rc:REACTOMECOMPLEX
-           {str = rc.getText();}
-     |   rp:REACTOMEPROTEIN
-           {str = rp.getText();}
-     |   re:RESID
-           {str = re.getText();}
+          {str = pu.getText();}
+     |   rea:REACTOMECOMPLEX
+          {str = rea.getText();}
+     |   rin:REACTOMEPROTEIN
+          {str = rin.getText();}
+     |   res:RESID
+          {str = res.getText();}
      |   sg:SGD
-           {str = sg.getText();}
-     |   upc:UNIPARC
-            {str = upc.getText();}
-     |   u:UNIPROTKB
-           {str = u.getText();}
-// CvTopics:
-     |   df:THREEDFACTORS
-           {str = df.getText();}
-     |   dr:THREEDRESOLUTION
-           {str = dr.getText();}
-     |   ds:THREEDSTRUCTURE
-           {str = ds.getText();}
-     |   acc:ACCEPTED
-           {str = acc.getText();}
-     |   ag:AGONIST
-           {str = ag.getText();}
-     |   an:ANTAGONIST
-           {str = an.getText();}
-     |   auc:AUTHORCONFIDENCE
-           {str = auc.getText();}
-     |   aul:AUTHORLIST
-           {str = aul.getText();}
-     |   cau:CAUTION
-           {str = cau.getText();}
-     |   co:COMMENT
-           {str = co.getText();}
-     |   cp:COMPLEXPROPERTIES
-           {str = cp.getText();}
-     |   com:CONFIDENCEMAPPING
-           {str = com.getText();}
-     |   coc:CONTACTCOMMENT
-           {str = coc.getText();}
-     |   coe:CONTACTEMAIL
-           {str = coe.getText();}
-     |   cor:COPYRIGHT
-           {str = cor.getText();}
-     |   dtp:DATAPROCESSING
-           {str = dtp.getText();}
-     |   dts:DATASET
-           {str = dts.getText();}
-     |   de:DEFINITION
-           {str = de.getText();}
-     |   di:DISEASE
-           {str = di.getText();}
-     |   exa:EXAMPLE
-           {str = exa.getText();}
-     |   exp:EXPMODIFICATION
-           {str = exp.getText();}
-     |   fl:FIGURELEGEND
-           {str = fl.getText();}
-     |   fu:FUNCTION
-           {str = fu.getText();}
-     |   inh:INHIBITION
-           {str = inh.getText();}
-     |   iso:ISOFORMCOMMENT
-           {str = iso.getText();}
-     |   ki:KINETICS
-           {str = ki.getText();}
-     |   ne:NEGATIVE
-           {str = ne.getText();}
-     |   on:ONHOLD
-           {str = on.getText();}
-     |   pa:PATHWAY
-           {str = pa.getText();}
-     |   pr:PREREQUISITEPTM
-           {str = pr.getText();}
-     |   rem:REMARKINTERNAL
-           {str = rem.getText();}
-     |   res:RESULTINGPTM
-           {str = res.getText();}
-     |   se:SEARCHURL
-           {str = se.getText();}
-     |   sea:SEARCHURLASCII
-           {str = sea.getText();}
-     |   st:STIMULATION
-           {str = st.getText();}
-     |   su:SUBMITTED
-           {str = su.getText();}
-     |   cc:UNIPROTCCNOTE
-           {str = cc.getText();}
-     |   udr:UNIPROTDREXPORT
-           {str = udr.getText();}
-     |   url:URL
-           {str = url.getText();}
-     |   uic:USEDINCLASS
-           {str = uic.getText();}
-
-//CvAliasType
+          {str = sg.getText();}
+     |   so:SO
+          {str = so.getText();}
+     |   uni:UNIPARC
+          {str = uni.getText();}
+     |   ukb:UNIPROTKB
+          {str = ukb.getText();}
+// CvAliasType:
+     |   ame:AUTHORASSIGNEDNAME
+          {str = ame.getText();}
      |   ge:GENENAME
-            {str = ge.getText();}
+          {str = ge.getText();}
      |   gen:GENENAMESYNONYM
-           {str = gen.getText();}
+          {str = gen.getText();}
      |   go:GOSYNONYM
-           {str = go.getText();}
-     |   is:ISOFORMSYNONYM
-           {str = is.getText();}
+          {str = go.getText();}
+     |   iso:ISOFORMSYNONYM
+          {str = iso.getText();}
      |   lo:LOCUSNAME
-           {str = lo.getText();}
+          {str = lo.getText();}
      |   or:ORFNAME
-           {str = or.getText();}
-       )
-     ;
+          {str = or.getText();}
+)
+;
+// returns a String containing the value
+value returns [String val]
+    {val = "";}
+    :
+    (
+      QUOTE
+    {selector.push("valuelexer");}
+      v:VALUE
+    {  val = v.getText();
+    // escape some lucene syntax characters
+       val = SearchReplace.replace(val, "\\\\", "\\\\\\\\");
+       val = SearchReplace.replace(val, ":", "\\\\:");
+       val = SearchReplace.replace(val, ")", "\\\\)");
+       val = SearchReplace.replace(val, "(", "\\\\(");
+       val = SearchReplace.replace(val, "+", "\\\\+");
+       val = SearchReplace.replace(val, "-", "\\\\-");
+       val = SearchReplace.replace(val, "!", "\\\\!");
+       val = SearchReplace.replace(val, "&&", "\\\\&&");
+       val = SearchReplace.replace(val, "||", "\\\\||");
+    }
+    )
 
- // returns a String containing the value
- value returns [String val]
-     {val = "";}
-     :
-     (
-       QUOTE
-     {selector.push("valuelexer");}
-       v:VALUE
-     {  val = v.getText();
-     // escape some lucene syntax characters
-        val = SearchReplace.replace(val, "\\\\", "\\\\\\\\");
-        val = SearchReplace.replace(val, ":", "\\\\:");
-        val = SearchReplace.replace(val, ")", "\\\\)");
-        val = SearchReplace.replace(val, "(", "\\\\(");
-        val = SearchReplace.replace(val, "+", "\\\\+");
-        val = SearchReplace.replace(val, "-", "\\\\-");
-        val = SearchReplace.replace(val, "!", "\\\\!");
-        val = SearchReplace.replace(val, "&&", "\\\\&&");
-        val = SearchReplace.replace(val, "||", "\\\\||");
-     }
-     )
-
-     {selector.pop();}
-       QUOTE
-     ;
+    {selector.pop();}
+      QUOTE
+    ;
