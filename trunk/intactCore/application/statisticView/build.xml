@@ -75,14 +75,18 @@
         <pathelement path="${dest.dir}"/>
 
         <!-- JFreeChart -->
-        <pathelement path="${lib.dir}/jcommon-1.0.0-pre2.jar"/>
-        <pathelement path="${lib.dir}/jfreechart-1.0.0-pre2.jar"/>
+        <pathelement path="${lib.dir}/jcommon-1.0.0.jar"/>
+        <pathelement path="${lib.dir}/jfreechart-1.0.0.jar"/>
+
+        <!--<pathelement path="${lib.dir}/jcommon-1.0.0-pre2.jar"/>-->
+        <!--<pathelement path="${lib.dir}/jfreechart-1.0.0-pre2.jar"/>-->
 
         <!-- Display Tag lib -->
         <pathelement path="${lib.dir}/display.jar"/>
 
         <pathelement path="${intact.app.dir}/lib/struts.jar"/>
 
+        <pathelement path="${root.lib.dir}/commons-dbutils-1.0.jar"/>
         <pathelement path="${root.lib.dir}/db-ojb-1.0.rc6.jar"/>
         <pathelement path="${root.lib.dir}/junit.jar"/>
         <pathelement path="${root.lib.dir}/commons-dbcp-1.1.jar"/>
