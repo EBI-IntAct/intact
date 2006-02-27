@@ -24,6 +24,25 @@
         <section title="Recent changes" name="new">
 
             <blockquote>
+                <u>Changes up to February 28, 2006</u>
+                :
+                <ul>
+                    <li>New
+                        <a href="http://www.ebi.ac.uk/intact/search/do/initAdvSearch">Advanced search</a>
+                        added.
+                    </li>
+                    <li>New
+                        <a href="#interpro.search">InterPro search</a>
+                        added.
+                    </li>
+                    <li>In addition to the user manual, a dedicated
+                        <a href="http://www.ebi.ac.uk/intact/doc/html/curation/IntActAnnotationRules.pdf">curation
+                            manual</a>
+                        has been released.
+                    </li>
+                </ul>
+            </blockquote>
+            <blockquote>
                 <u>Changes up to January 01, 2005</u>
                 :
                 <ul>
@@ -42,7 +61,9 @@
                     <li>Integration of IntAct data into
                         <a href="http://www.ebi.uniprot.org/">UniProt</a>
                     </li>
-                    <li>IntAct takes part in the IMEx (link) consortium</li>
+                    <li>IntAct takes part in the
+                        <a href="http://imex.sourceforge.net/">IMEx consortium</a>
+                    </li>
                     <li>New application (
                         <a href="http://www.ebi.ac.uk/intact/mine">MiNe</a>
                         ) allowing to find the
@@ -54,7 +75,6 @@
                         for pull-down experiments.
                     </li>
                 </ul>
-
             </blockquote>
             <blockquote>
                 <u>Changes up to February 01, 2004</u>
@@ -70,7 +90,6 @@
                         crosslinking to UniProt, GO, InterPro, and FlyBase.
                     </li>
                 </ul>
-
             </blockquote>
         </section>
 
@@ -822,7 +841,8 @@
                                 <li>a
                                     <b>Interpro</b>
                                     button to show the InterPro domain architecture for selected Proteins (using
-                                    <a href="#interpro.search">InterProSearch</a>).
+                                    <a href="#interpro.search">InterProSearch</a>
+                                    ).
                                 </li>
 
 
@@ -2202,6 +2222,7 @@
             <!-- end targets -->
         </section>
         <!-- applications -->
+
     </division>
 
 </page>
