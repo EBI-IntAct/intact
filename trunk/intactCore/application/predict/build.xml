@@ -389,7 +389,7 @@
     <target name="payg-ora" depends="compile"
             description="Runs utility to create PAYG tables for Oracle database">
         <java classname="uk.ac.ebi.intact.application.predict.util.PredictOra"
-              fork="true" maxmemory="1024m">
+              fork="true" maxmemory="1536m">
             <classpath refid="project.run.class.path"/>
         </java>
     </target>
