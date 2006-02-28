@@ -220,9 +220,10 @@
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
                debug="on" source="1.4"
                includes="**/application/statisticView/**,
-                      **/intact/util/StatisticsDataSet*,
-                      **/intact/util/StatisticsSet*,
-                      **/intact/util/IntactStatistics*"
+                         **/application/commons/util/LoggingInitServlet*,
+                         **/intact/util/StatisticsDataSet*,
+                         **/intact/util/StatisticsSet*,
+                         **/intact/util/IntactStatistics*"
                excludes="**/test/**    ">
             <classpath refid="project.class.path"/>
         </javac>
