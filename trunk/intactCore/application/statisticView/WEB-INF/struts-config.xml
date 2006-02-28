@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
 <!DOCTYPE struts-config PUBLIC
-          "-//Apache Software Foundation//DTD Struts Configuration 1.0//EN"
-          "http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
+        "-//Apache Software Foundation//DTD Struts Configuration 1.1//EN"
+        "http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
 
 <!--
 This is the Struts configuration file for the statisticView  application,
-Author: Michael Kleen
+Author: Samuel Kerrien, Michael Kleen
 -->
 
 <struts-config>
@@ -15,7 +15,7 @@ Author: Michael Kleen
 
     <form-beans>
         <form-bean name="filterForm"
-            type="uk.ac.ebi.intact.application.statisticView.struts.view.FilterForm"/>
+                   type="uk.ac.ebi.intact.application.statisticView.struts.view.FilterForm"/>
     </form-beans>
 
     <!-- ========== Global Forward Definitions ============================== -->
@@ -28,14 +28,18 @@ Author: Michael Kleen
 
     <action-mappings>
         <action path="/statistics"
-            type="uk.ac.ebi.intact.application.statisticView.struts.controller.IntactStatisticsAction"
-            name="filterForm"
-            validate="false"
-            scope="request">
+                type="uk.ac.ebi.intact.application.statisticView.struts.controller.IntactStatisticsAction"
+                name="filterForm"
+                validate="false"
+                scope="request">
             <forward name="sucess" path="intact.chart.layout"/>
             <forward name="error" path="intact.chart.layout"/>
         </action>
     </action-mappings>
+
+    <!-- ========== Message Resources Definitions =========================== -->
+
+    <message-resources parameter="uk.ac.ebi.intact.application.statisticView.MessageResources"/>
 
     <!-- ========== Plug Ins Configuration ================================== -->
 
@@ -44,8 +48,4 @@ Author: Michael Kleen
         <set-property property="moduleAware" value="true"/>
     </plug-in>
 
-    <!-- ========== Message Resources Definitions =========================== -->
-
-    <message-resources
-        parameter="uk.ac.ebi.intact.application.statisticView.MessageResources"/>
 </struts-config>
