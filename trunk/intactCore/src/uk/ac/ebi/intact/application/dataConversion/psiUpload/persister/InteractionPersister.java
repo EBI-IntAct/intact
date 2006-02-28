@@ -5,10 +5,10 @@
  */
 package uk.ac.ebi.intact.application.dataConversion.psiUpload.persister;
 
+import uk.ac.ebi.intact.application.commons.go.GoXrefHelper;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.*;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.*;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.CommandLineOptions;
-import uk.ac.ebi.intact.application.commons.go.GoXrefHelper;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
@@ -155,7 +155,7 @@ public final class InteractionPersister {
                                                            shortlabel,
                                                            helper.getInstitution() );
 
-            // no other choice in PSI 
+            // no other choice in PSI
             interaction.setBioSource( intactExperiment.getBioSource() );
 
             interaction.setFullName( interactionTag.getFullname() );
@@ -200,31 +200,32 @@ public final class InteractionPersister {
                 // no need for an else, the additional annotation topic have been controlled by the checker.
             }
 
-
             //Xref
             Collection xrefs = interactionTag.getXrefs();
-            for (Iterator iterator1 = xrefs.iterator(); iterator1.hasNext();) {
-                final XrefTag xrefTag =  (XrefTag) iterator1.next();
+            for ( Iterator iterator1 = xrefs.iterator(); iterator1.hasNext(); ) {
+                final XrefTag xrefTag = (XrefTag) iterator1.next();
                 final CvDatabase cvDatabase = XrefChecker.getCvDatabase( xrefTag.getDb() );
                 if ( cvDatabase != null ) {
                     CvXrefQualifier cvXrefQualifier = null;
                     String secondaryId = new String();
-                    if(cvDatabase.getShortLabel().equals(CvDatabase.GO)){
-                        GoXrefHelper goXrefHelper = new GoXrefHelper(xrefTag.getId());
-                        if ( goXrefHelper.getQualifier() != null )
-                            cvXrefQualifier = (CvXrefQualifier) helper.getObjectByLabel(CvXrefQualifier.class, goXrefHelper.getQualifier());
-                        if( goXrefHelper.getSecondaryId() != null )
+                    if ( cvDatabase.getShortLabel().equals( CvDatabase.GO ) ) {
+                        GoXrefHelper goXrefHelper = new GoXrefHelper( xrefTag.getId() );
+                        if ( goXrefHelper.getQualifier() != null ) {
+                            cvXrefQualifier = (CvXrefQualifier) helper.getObjectByLabel( CvXrefQualifier.class, goXrefHelper.getQualifier() );
+                        }
+                        if ( goXrefHelper.getSecondaryId() != null ) {
                             secondaryId = goXrefHelper.getSecondaryId();
+                        }
                     }
 
-                    Xref xref = new Xref(helper.getInstitution(), cvDatabase, xrefTag.getId(), secondaryId, new String(),cvXrefQualifier);
-                    xref.setParentAc(interaction.getAc());
+                    Xref xref = new Xref( helper.getInstitution(), cvDatabase, xrefTag.getId(), secondaryId, new String(), cvXrefQualifier );
+                    xref.setParentAc( interaction.getAc() );
                     helper.create( xref );
                     interaction.addXref( xref );
                 }
             }
 
-            // TODO clean that thing. Right now we are most of the time stuffing the author confidence as annotation 
+            // TODO clean that thing. Right now we are most of the time stuffing the author confidence as annotation
             // Confidence data
             final ConfidenceTag confidence = interactionTag.getConfidence();
             if ( confidence != null ) {
@@ -354,6 +355,8 @@ public final class InteractionPersister {
                 preys.add( geneName );
             } else if ( role.equals( "bait" ) ) {
                 baits.add( geneName );
+            } else if ( role.equals( "unspecified" ) ) {
+                neutrals.add( geneName );
             } else if ( role.equals( "neutral component" ) ) {
                 neutrals.add( geneName );
             } else if ( role.equals( "neutral" ) ) {
@@ -940,7 +943,7 @@ public final class InteractionPersister {
         if ( DEBUG ) {
             System.out.println( "Compare interactions: " + psi + "\n and " + intactInteraction );
         }
-        if(psi.getParticipants().size() == intactInteraction.getComponents().size() ){
+        if ( psi.getParticipants().size() == intactInteraction.getComponents().size() ) {
             Collection psiExperiments = psi.getExperiments();
             for ( Iterator iterator = psiExperiments.iterator(); iterator.hasNext(); ) {
                 ExperimentDescriptionTag psiExperiment = (ExperimentDescriptionTag) iterator.next();
@@ -951,9 +954,9 @@ public final class InteractionPersister {
 
                     if ( DEBUG ) {
                         System.out.println( "Check their experiment: psi(" +
-                                psiExperiment.getShortlabel() +
-                                ") and intact(" +
-                                intactExperiment.getShortLabel() + ")" );
+                                            psiExperiment.getShortlabel() +
+                                            ") and intact(" +
+                                            intactExperiment.getShortLabel() + ")" );
                     }
 
                     // compare two experiments using their shortlabel as they should be unique.
@@ -967,7 +970,8 @@ public final class InteractionPersister {
 
                         Collection psiComponents = psi.getParticipants();
                         boolean allComponentFound = true;
-                        for ( Iterator iterator2 = psiComponents.iterator(); iterator2.hasNext() && allComponentFound; ) {
+                        for ( Iterator iterator2 = psiComponents.iterator(); iterator2.hasNext() && allComponentFound; )
+                        {
                             ProteinParticipantTag psiComponent = (ProteinParticipantTag) iterator2.next();
 
                             ProteinHolder holder = getProtein( psiComponent );
@@ -989,20 +993,20 @@ public final class InteractionPersister {
                             for ( Iterator iterator3 = intactComponents.iterator(); iterator3.hasNext() && !found; ) {
                                 Component intactComponent = (Component) iterator3.next();
 
-                                 System.out.println("Before intactComponent.getBindingDomains().size() = " + intactComponent.getBindingDomains().size());
+                                System.out.println( "Before intactComponent.getBindingDomains().size() = " + intactComponent.getBindingDomains().size() );
                                 //WARNING : if we do not reload the Component using the helper, it does not find
                                 // the feature on the component (intactComponent.getBindingDomains.size() return null)
                                 // even if in the dabase the Component is associated to a Feature
                                 // Todo : Find why is that
-                                intactComponent = (Component) helper.getObjectByAc(Component.class, intactComponent.getAc());
+                                intactComponent = (Component) helper.getObjectByAc( Component.class, intactComponent.getAc() );
 
                                 if ( DEBUG ) {
                                     System.out.print( "\tINTACT: " + intactComponent.getInteractor().getShortLabel() +
-                                            " (" + intactComponent.getCvComponentRole().getShortLabel() + "): " );
+                                                      " (" + intactComponent.getCvComponentRole().getShortLabel() + "): " );
                                 }
 
                                 if ( psiRole.equals( intactComponent.getCvComponentRole() ) &&
-                                        psiProtein.equals( intactComponent.getInteractor() ) ) {
+                                     psiProtein.equals( intactComponent.getInteractor() ) ) {
 
                                     if ( DEBUG ) {
                                         System.out.println( "protein are EQUALS" );
@@ -1045,7 +1049,7 @@ public final class InteractionPersister {
                             // there is already an instance of that interaction in intact
                             if ( DEBUG ) {
                                 System.out.println( "All component(protein+role+feature) have been found, hence there " +
-                                        "is an instance of that interaction in intact" );
+                                                    "is an instance of that interaction in intact" );
                             }
 
                             // create a warning message
