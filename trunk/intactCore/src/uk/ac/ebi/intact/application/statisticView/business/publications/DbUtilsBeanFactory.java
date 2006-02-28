@@ -38,6 +38,8 @@ public class DbUtilsBeanFactory {
                                    Connection connection,
                                    String sql ) throws SQLException {
 
+        System.out.println( sql );
+
         return (List) queryRunner.query( connection,
                                          sql,
                                          new BeanListHandler( beanClass ) );

@@ -33,7 +33,7 @@ import java.util.List;
  */
 public class ChartBuilder {
     // all titles of the different intact charts
-    
+
     private static final String IDENTIFICATION_CHART_TITLE = "IntAct interactions by identification method";
     private static final String BIN_INTERACTION_CHART_TITLE = "IntAct binary interactions";
     private static final String INTERACTION_CHART_TITLE = "IntAct interactions";
@@ -252,15 +252,15 @@ public class ChartBuilder {
 
     static {
         // todo load that from a properties file.
-        taxidFilter.add( new Item( "Human", new String[]{"9606"} ) );
-        taxidFilter.add( new Item( "Mouse", new String[]{"10090"} ) );
-        taxidFilter.add( new Item( "C. elegans", new String[]{"6239"} ) );
-        taxidFilter.add( new Item( "D. melanogaster", new String[]{"7227"} ) );
-        taxidFilter.add( new Item( "A. thaliana", new String[]{"3702"} ) );
-        taxidFilter.add( new Item( "S. cerevisiae", new String[]{"4932"} ) );
-        taxidFilter.add( new Item( "S. pombe", new String[]{"4896"} ) );
-        taxidFilter.add( new Item( "E. coli", new String[]{"562"} ) );
-        taxidFilter.add( new Item( "Rice (O. sativa)", new String[]{"4530"} ) );
+        taxidFilter.add( new Item( "Human", new String[]{ "9606" } ) );
+        taxidFilter.add( new Item( "Mouse", new String[]{ "10090" } ) );
+        taxidFilter.add( new Item( "C. elegans", new String[]{ "6239" } ) );
+        taxidFilter.add( new Item( "D. melanogaster", new String[]{ "7227" } ) );
+        taxidFilter.add( new Item( "A. thaliana", new String[]{ "3702" } ) );
+        taxidFilter.add( new Item( "S. cerevisiae", new String[]{ "4932" } ) );
+        taxidFilter.add( new Item( "S. pombe", new String[]{ "4896" } ) );
+        taxidFilter.add( new Item( "E. coli", new String[]{ "562" } ) );
+        taxidFilter.add( new Item( "Rice (O. sativa)", new String[]{ "4530" } ) );
     }
 
     /**
@@ -284,7 +284,7 @@ public class ChartBuilder {
         if ( false == listInitialized ) {
             // this will be done only once.
 
-            Item others = new Item( "Others", new String[]{""} );
+            Item others = new Item( "Others", new String[]{ "" } );
 
             for ( Iterator iterator = someBioSourceStatistics.iterator(); iterator.hasNext(); ) {
 
@@ -376,7 +376,7 @@ public class ChartBuilder {
      * Creates a piechart graph which represents the interactions based on the identifications  based on  the given
      * intactstatistic objects.
      *
-     * @param someIntactStatistics a collection of IntactStatistics must not be null
+     * @param identificationStatistics a collection of IntactStatistics must not be null
      *
      * @return a JfreeChart diagramm which represents a timeseries graph of the increase of interactions over a specific
      *         period
@@ -388,6 +388,7 @@ public class ChartBuilder {
         if ( identificationStatistics == null ) {
             throw new IntactException( "DataSource of identificationStatistics must no be null" );
         }
+
         // sort the data, to have a nicer chart
         Collections.sort( (List) identificationStatistics, new IdentificationComparator() );
         final DefaultPieDataset dataSet = new DefaultPieDataset();
@@ -417,13 +418,12 @@ public class ChartBuilder {
         ( (org.jfree.chart.plot.PiePlot) chart.getPlot() ).setSectionPaint( 2, Color.green );
 
         return chart;
-
     }
 
     /**
      * Creates a time series graph over experiments based on the given intactstatistic objects.
      *
-     * @param someIntactStatistics a collection of IntactStatistics must not be null
+     * @param someEvidenceExperiments a collection of IntactStatistics must not be null
      *
      * @return a JfreeChart diagramm which represents a timeseries graph of the increase of interactions over a specific
      *         period
