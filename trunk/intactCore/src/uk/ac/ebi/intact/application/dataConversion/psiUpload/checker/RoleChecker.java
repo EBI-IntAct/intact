@@ -39,29 +39,30 @@ public final class RoleChecker {
 
                 if ( !( "bait".equals( role ) ||
                         "prey".equals( role ) ||
+                        "unspecified".equals( role ) ||
                         "neutral".equals( role ) ) ) {
 
                     final String msg = "The role: " + role +
-                                       " is not supported by PSI. It should be either bait, pery or neutral";
+                                       " is not supported by PSI. It should be either bait, prey, neutral or unspecified";
                     MessageHolder.getInstance().addCheckerMessage( new Message( msg ) );
                 }
 
-                if( "neutral".equals( role ) ) {
+                if ( "neutral".equals( role ) ) {
                     // we may have either 'neutral' or 'neutral component' in the database ...
                     // handle it !!
 
                     cvComponentRole = (CvComponentRole) helper.getObjectByLabel( CvComponentRole.class, role );
 
-                    if( cvComponentRole == null ) {
+                    if ( cvComponentRole == null ) {
 
                         // it was not found, try the other possibility
 
                         cvComponentRole = (CvComponentRole) helper.getObjectByLabel( CvComponentRole.class,
                                                                                      CvComponentRole.NEUTRAL );
-                        if( cvComponentRole == null ) {
+                        if ( cvComponentRole == null ) {
                             // neither worked, there is a problem of data integrity
                             System.out.println( "ERROR: neither " + role + " nor " + CvComponentRole.NEUTRAL +
-                                                " could be found in the database (CvComponentRole).");
+                                                " could be found in the database (CvComponentRole)." );
                         }
                     }
 
