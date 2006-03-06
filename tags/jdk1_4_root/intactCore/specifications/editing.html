@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+<title>IntAct project component specification: Editing tool</title>
+</head>
+
+<body>
+<h1>IntAct project component specification: Editing tool</h1>
+This specification will gradually be completed. It describes the
+desired features of the editing tool for IntActCore. The features
+should be tested with IntAct Test, then applied to the full model.
+
+<ol>
+  <li><h4>Technical requirements</h4>
+      <ol>
+        <li>The tool should be a web-based application, using Servlet
+            technology. 
+        <li>The system should use HTML 4.0.
+        <li>Javascript may be used only for optional features, the
+            system should be functional with Javascript turned off.
+        <li>As a persistence mechanism, the IntAct API should be used,
+            avoiding direct SQL table access.
+      </ol>
+  <li><h4>Data volume</h4>
+      <ol>
+        <li>One submission can comprise up to 1000 objects, from all
+            of the externally visible IntAct classes.
+      </ol>
+  <li><h4>Functionality</h4>
+      <ol>
+        <li>One submission may be the result of a complex editing
+            process, but should only be made persistent on activation
+            of a final "submit" button.
+        <li>At the beginning of the editing process, the user should
+            get a session ID on screen and by email. Alternatively,
+            incomplete submissions could be saved attached to the
+            submitter login, and the submitter could get a list of all
+            his recent or incomplete submissions.
+        <li>At any point in the editing process, an interruption of
+            the process, through server or client failure, or
+            timeouts, should only loose the data collected since the
+            last server interaction, and should usually not represent
+            more than ca. 10 minutes of lost work. Planned suspension of
+            the editing process, and restart much later, should also
+            be available. Any interrupted or suspended session should
+            be retrievable by the session ID (see <a href="http://www2.ebi.ac.uk/~sp/intern/projects/intact/consortium/doc/usecases/index.html#uc49">use case 49</a>.
+        <li>A graphical view of the submission, it's complete and
+            incomplete components, is highly desirable.
+        <li>Use cases
+            <a href="http://www2.ebi.ac.uk/~sp/intern/projects/intact/consortium/doc/usecases/index.html#uc46">46</a>, 
+            <a href="http://www2.ebi.ac.uk/~sp/intern/projects/intact/consortium/doc/usecases/index.html#uc47">47</a>, 
+            <a href="http://www2.ebi.ac.uk/~sp/intern/projects/intact/consortium/doc/usecases/index.html#uc48">48</a>, 
+            <a href="http://www2.ebi.ac.uk/~sp/intern/projects/intact/consortium/doc/usecases/index.html#uc50">50</a>, 
+            <a href="http://www2.ebi.ac.uk/~sp/intern/projects/intact/consortium/doc/usecases/index.html#uc51">51</a>, 
+        <li>Retrieve existing objects by query, then include them into
+            the current submission. Example: Use an existing protein
+            object in a new interaction.
+      </ol>
+</ol>
+
+
+<hr>
+<address>Henning Hermjakob, 8-JUL-2002</address>
+<!-- hhmts start -->
+<!-- hhmts end -->
+</body> </html>

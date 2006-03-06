@@ -1,0 +1,314 @@
+term: acetylation: acetylation reaction
+id: MI:0192
+definition: Reaction, that can affect K,C,A,D,E,Q,G,I,K,M,P,S,T,Y,V residues.
+definition_reference: RESID:AA0055 , AA0056 , AA0041 , AA0042 , AA0043 , AA0044 , AA0045 , AA0046 , AA0047 , AA0048 , AA0049 , AA0050 , AA0051 , AA0052 , AA0053 , AA0054
+
+term: adp ribosylation: adp ribosylation reaction
+id: MI:0557
+definition: Reaction that can affect Arg, Cys, Glu, Arg and Asn residues.
+definition_reference: RESID:AA0168 , AA0169 , AA0295 , AA0237 , AA0231
+
+term: aggregation
+id: MI:0191
+definition: Binding interaction or association mediated by non-covalent bound.
+obsolete term: OBSOLETE - since too non-specific. Consider using  physical interaction (MI:0218 )instead.
+definition_reference: PMID:INTACT
+
+term: amidation: amidation reaction
+id: MI:0193
+definition: Irreversible reaction that can affect A,R,N,D,C,Q,E,G,H,I,L,K,M,F,P,S,T,W,Y or V residues.
+definition_reference: RESID:AA0081 , AA0082 , AA0083 , AA0084 , AA0085 , AA0086 , AA0087 , AA0088 , AA0089 , AA0090 , AA0091 , AA0092 , AA0093 , AA0094 , AA0095 , AA0096 , AA0097 , AA0098 , AA0099 , AA0100
+
+term: cleavage: cleavage reaction
+id: MI:0194
+definition: Covalent bond breakage in a molecule leading to the formation of smaller molecules.
+definition_reference: PMID:14755292
+
+term: colocalization
+id: MI:0403
+definition: co-occurrence of interactors in a limited  subcellular location or similar distribution in various regions of a cell
+definition_reference: PMID:14755292
+
+term: cond syntetic lethal: conditional synthetic lethal
+id: MI:0270
+definition: Two silent mutations  show a conditional synthetic lethal phenotype when  they co-occur on the same cell.
+definition_reference: PMID:15608217
+
+term: covalent binding
+id: MI:0195
+definition: Interaction leading to the formation of covalent bond within an autocatalytic molecule or between partners.
+definition_reference: PMID:14755292
+
+term: covalent interaction
+id: MI:0196
+definition: Physical interaction mediated by covalent bond rearrangement.
+obsolete term: OBSOLETE use covalent binding (MI:0195) instead
+definition_reference: PMID:INTACT
+
+term: deacetylation: deacetylation reaction
+id: MI:0197
+definition: N6-acetyl-L-lysine or S-acetyl-L-cysteine are cleaved and return K or C residues.
+definition_reference: RESID:AA0055 , AA0056
+
+term: defarnesylation: defarnesylation reaction
+id: MI:0198
+definition: S-farnesyl-L-cysteined is cleaved and returns a C residue.
+definition_reference: RESID:AA0102
+
+term: deformylation: deformylation reaction
+id: MI:0199
+definition: N6-formyl-L-lysine is cleaved and returns a K residue.
+definition_reference: RESID:AA0211
+
+term: degeranylation: degeranylation reaction
+id: MI:0200
+definition: S-geranylgeranyl-L-cysteine is cleaved and returns a C residue.
+definition_reference: RESID:AA0104
+
+term: deglycosylation: deglycosylation reaction
+id: MI:0558
+definition: Reaction catalyzed by PNGase, a deglycosylating enzyme that promotes the hydrolysis of the beta-aspartylglycosylamine bond of aspargine-linked glycopeptides and glycoproteins.
+definition_reference: PMID:15670854
+
+term: demyristoylation: demyristoylation reaction
+id: MI:0201
+definition: N6-myristoyl-L-lysine is cleaved and returns a K residue.
+definition_reference: RESID:AA0078
+
+term: deneddylation: deneddylation reaction
+id: MI:0569
+definition: Cleavage of the G-K bond and release of the NEDD8 ubiquitin like proteins. Deneddylation, which removes the NEDD8 moiety, requires the isopeptidase activity of the COP9 signalosome.
+definition_reference: PMID:16127432
+
+term: depalmitoylation: depalmitoylation reaction
+id: MI:0202
+definition: S-palmitoyl-L-cysteine, N6-palmitoyl-L-lysine, O-palmitoyl-L-threonine or O-palmitoyl-L-serine are cleaved and return C,K,T or S residues
+definition_reference: RESID:AA0106 , AA0060 , AA0077 , AA0079 , AA0080
+
+term: dephosphorylation: dephosphorylation reaction
+id: MI:0203
+definition: Phosphoresidues are cleaved and return D,C,H,S,T,Y or R residues.
+definition_reference: RESID:AA0033 , AA0034 , AA0035 , AA0036 , AA0037 , AA0038 , AA0039 , AA0222
+
+term: desumoylation: desumoylation reaction
+id: MI:0568
+definition: Cleavage of the G-K bond and release of  the SUMO ubiquitin like proteins.
+definition_reference: PMID:15985640
+
+term: deubiquitination: deubiquitination reaction
+id: MI:0204
+definition: Cleavage of the G-K bond and release of ubiquitin or ubiquitin like proteins.
+definition_reference: PMID:11583613
+definition_reference: RESID:AA0125
+
+term: direct interaction
+id: MI:0407
+definition: Interaction that is proven to involve only its interactors.
+definition_reference: PMID:14755292
+
+term: disaggregation
+id: MI:0205
+definition: Dissociation of partners interacting via non-covalent bound.
+obsolete term: OBSOLETE because considered misleading.
+definition_reference: PMID:INTACT
+
+term: disulfide bond
+id: MI:0408
+definition: Covalent bond mediated by 2 sulfur atoms.
+definition_reference: PMID:14755292
+
+term: dna cleavage
+id: MI:0572
+definition: Covalent bond breakage of a DNA molecule leading to the formation of smaller fragements
+definition_reference: PMID:14755292
+
+term: enzymatic reaction
+id: MI:0414
+definition: terms aiming to represent biochemical reactions referring to their resulting product modifications.
+definition_reference: PMID:14755292
+
+term: farnesylation: farnesylation reaction
+id: MI:0206
+definition: Reversible reaction that can affect C residue.
+definition_reference: RESID:AA0102
+
+term: formylation: formylation reaction
+id: MI:0207
+definition: Reaction that can affect K or G residues.
+definition_reference: RESID:AA0211 , AA0057
+
+term: genetic interaction
+id: MI:0208
+definition: Functional relationship among genes revealed by the phenotype of cells carrying combined mutations of those genes.
+definition_reference: PMID:14755292
+
+term: geranylgeranylation: geranylgeranylation reaction
+id: MI:0209
+definition: Reversible reaction that can affect C residue.
+definition_reference: RESID:AA0104
+
+term: glycosylation: glycosylation reaction
+id: MI:0559
+definition: The covalent attachment of a glycosyl residue to one or more monomeric units in a polypeptide, polynucleotide, polysaccharide, or other biological polymer.
+Reaction that can affect Ser, Thr, Cys, Arg, and Asn residues.  This reaction is known to be reversible in the case of  Asn substrate.
+definition_reference: RESID:AA0154 , AA0155 , AA0122 , AA0327 , AA0151
+
+term: hydroxylation: hydroxylation reaction
+id: MI:0210
+definition: Irreversible reaction that can affect K,P,Y  or R residues.
+definition_reference: RESID:AA0028 , AA0029 , AA0030 , AA0146 , AA0215
+
+term: interaction type
+id: MI:0190
+definition: Connection between molecule
+definition_reference: PMID:14755292
+
+term: lipid addition
+id: MI:0211
+definition: Covalent or non covalent binding of lipid group on a protein residue.
+definition_reference: PMID:14755292
+
+term: lipid cleavage
+id: MI:0212
+definition: Cleavage of a lipid group covalently bound to a protein residue.
+definition_reference: PMID:14755292
+
+term: methylation: methylation reaction
+id: MI:0213
+definition: The covalent attachment of a methyl residue to one or more monomeric units in a polypeptide, polynucleotide, polysaccharide, or other biological polymer.
+Irreversible reaction that can affect A,G,M,F,P,C,R,N,Q,E,H,or K residues.
+definition_reference: RESID:AA0061 , AA0062 , AA0063 , AA0064 , AA0234 , AA0065 , AA0066 , AA0272 , AA0067 , AA0068 , AA0069 , AA0070 , AA0071 , AA0072 , AA0073 , AA0074 , AA0075 , AA0076
+
+term: mrna cleavage
+id: MI:0571
+definition: Any process by which a pre-mRNA or mRNA molecule is cleaved at specific sites or in a regulated manner.
+definition_reference: PMID:14681407
+
+term: myristoylation: myristoylation reaction
+id: MI:0214
+definition: Reaction that can affect K or G residues.
+definition_reference: RESID:AA0078 , AA0059
+
+term: neddylation: neddylation reaction
+id: MI:0567
+definition: Reversible reaction that create a covalent bond between a  Glycine residue of an ubiquitine like  NEDD8 protein and a lysine residue of the target.
+definition_reference: PMID:16127432
+
+term: non covalent interac: non covalent interaction
+id: MI:0215
+definition: Interaction mediated by non-covalent, weak forces rearrangement.
+obsolete term: OBSOLETE use physical interaction (MI:0218) instead.
+definition_reference: PMID:INTACT
+
+term: nutrition synt letal: conditional synthetic lethal nutrition-sensitivity
+id: MI:0600
+definition: Two silent mutations  show a nutrition sensitive lethal phenotype  when  they co-occur on the same cell.
+definition_reference: PMID:15608217
+
+term: palmitoylation: palmitoylation reaction
+id: MI:0216
+definition: Reversible reaction that can affect C,K,T or S residues.
+definition_reference: RESID:AA0106 , AA0060 , AA0077 , AA0079 , AA0080
+
+term: phosphorylation: phosphorylation reaction
+id: MI:0217
+definition: Reversible reaction that can affect D,C,H,S,T,Y,R residues.
+definition_reference: RESID:AA0033 , AA0034 , AA0035 , AA0036 , AA0037 , AA0038 , AA0039 , AA0222
+
+term: physical interaction
+id: MI:0218
+definition: Interaction that requires atoms proximity.
+definition_reference: PMID:14755292
+
+term: protein cleavage
+id: MI:0570
+definition: Covalent modification of a polypeptide occuring during its maturation or its proteolytic degradation.
+definition_reference: PMID:14744292
+
+term: sumoylation: sumoylation reaction
+id: MI:0566
+definition: Reversible reaction that create a covalent bond between a C-terminus G of an ubiquitine like  sumo protein and a K residue of the target.
+definition_reference: PMID:15985640
+
+term: suppress  knockout: suppression knockout
+id: MI:0263
+definition: Knocked out gene is the suppressor of a phenotype
+definition_reference: PMID:15608217
+
+term: suppress expression: suppression expression alteration
+id: MI:0265
+definition: An altered expression is the suppressor of a phenotype
+definition_reference: PMID:15608217
+
+term: suppress overexpress: suppression overexpression
+id: MI:0266
+definition: Overexpression is the suppressor of a phenotpe
+definition_reference: PMID:15608217
+
+term: suppress underexpres: suppression underexpression
+id: MI:0268
+definition: Underexpression is the suppressor of a phenotype
+definition_reference: PMID:15608217
+
+term: suppression
+id: MI:0261
+definition: A supressed gene mutation cause of an altered phenotype that is reverted to wild type phenotype when cell also carry a suppressor gene with a specific mutation or altered expression level.
+definition_reference: PMID:15608217
+
+term: suppression mutation
+id: MI:0262
+definition: a given (suppressed) mutation phenotype is reverted by a supressor gene mutation
+definition_reference: PMID:15608217
+
+term: suppression partial: suppression partial alteration
+id: MI:0264
+definition: A mutation is the partial suppressor of a mutant phenotype
+definition_reference: PMID:15608217
+
+term: suppression scalable
+id: MI:0267
+definition: Level of over/underexpression scales the 'extend' of a phenotype.
+definition_reference: PMID:15608217
+
+term: synt growth defect: synthetic growth defect
+id: MI:0274
+definition: Two silent mutations  show growth defect  when  they co-occur on the same cell.
+definition_reference: PMID:15608217
+
+term: synt growth effect: synthetic growth effect
+id: MI:0273
+definition: Two silent mutations  show  altered growth effect  when  they co-occur on the same cell.
+definition_reference: PMID:15608217
+
+term: synt growth increase: synthetic growth increase
+id: MI:0275
+definition: Two silent mutations  show growth increase  when  they co-occur on the same cell.
+definition_reference: PMID:15608217
+
+term: synthetic lethal
+id: MI:0219
+definition: Death phenotype observed on cells carrying combination of  two independently silent  mutations.
+.
+definition_reference: PMID:15608217
+
+term: synthetic phenotype
+id: MI:0269
+definition: Two  silent mutations  show an altered phenotype when  they co-occur on the same cell.
+definition_reference: PMID:15608217
+
+term: temprtr  synt lethal: conditional synthetic lethal temperature-sensitivity
+id: MI:0271
+definition: Two silent mutations  show a temperature sensitive lethal phenotype  when  they co-occur on the same cell.
+definition_reference: PMID:15608217
+
+term: transglutamination: transglutamination reaction
+id: MI:0556
+definition: Gln-Lys cross-link catalyzed by a transglutaminase.
+definition_reference: RESID:AA0124
+
+term: ubiquitination: ubiquitination reaction
+id: MI:0220
+definition: Reversible reaction that create a covalent bond between a C-terminus G of ubiquitin and a K residue of the target.
+definition_reference: PMID:11583613
+definition_reference: RESID:AA0125
+
