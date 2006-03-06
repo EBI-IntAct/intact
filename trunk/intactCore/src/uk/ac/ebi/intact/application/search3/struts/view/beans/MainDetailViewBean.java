@@ -131,6 +131,7 @@ public class MainDetailViewBean extends AbstractViewBean {
 
     private UrlCheckerThread urlCheckerPsi1;
     private UrlCheckerThread urlCheckerPsi25;
+    private static final String SPACE = "&nbsp;";
 
     /**
      * The bean constructor requires an Experiment to wrap, plus beans on the context path to the search application and
@@ -591,6 +592,281 @@ public class MainDetailViewBean extends AbstractViewBean {
         return singleFeatures;
     }
 
+    private boolean hasPsiReference( final AnnotatedObject ao, final String psiRef ) {
+        for ( Iterator iterator = ao.getXrefs().iterator(); iterator.hasNext(); ) {
+            Xref xref = (Xref) iterator.next();
+
+            if ( CvDatabase.PSI_MI.equals( xref.getCvDatabase().getShortLabel() ) ) {
+                // found a PSI Xref
+                if ( xref.getCvXrefQualifier() != null
+                     &&
+                     CvXrefQualifier.IDENTITY.equals( xref.getCvXrefQualifier().getShortLabel() ) ) {
+                    // found identity
+                    if ( psiRef.equals( xref.getPrimaryId() ) ) {
+                        // found it.
+                        // System.out.println( "Found PSI identity: " + xref.getPrimaryId() );
+                        return true;
+                    } else {
+                        // we should have only one PSI Reference as Identity, we can stop here
+                        // System.out.println( "Found PSI identity: " + xref.getPrimaryId() );
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isExperimentalFeature( Feature feature ) {
+
+        if ( feature == null ) {
+            throw new IllegalArgumentException();
+        }
+
+        CvFeatureType type = feature.getCvFeatureType();
+        if ( type == null ) {
+            return false;
+        }
+
+        // Stack to handle recursive call
+        Stack stack = new Stack();
+        stack.push( type );
+        while ( ! stack.empty() ) {
+            CvDagObject term = (CvDagObject) stack.pop();
+
+            if ( hasPsiReference( term, CvFeatureType.EXPERIMENTAL_FEATURE_MI_REF ) ) {
+                return true;
+            }
+
+            // add all children to the stack
+            for ( Iterator iterator = term.getParents().iterator(); iterator.hasNext(); ) {
+                CvDagObject parent = (CvDagObject) iterator.next();
+                stack.push( parent );
+            }
+        }
+
+        return false;
+    }
+
+    public Collection getFeaturesSummary( final Interaction interaction ) {
+
+        Collection lines = new ArrayList( 4 );
+
+        Collection linkedFeatures = getLinkedFeatures( interaction );
+        Collection singleFeatures = getSingleFeatures( interaction );
+
+        int featureCount = linkedFeatures.size() + singleFeatures.size();
+
+        if ( featureCount > 0 ) {
+
+            //  sequence features' title cell, linked to help (spans all feature's rows)
+            // The rowspan of this cell is equal to the sum of linked + unlinked Features
+
+            boolean firstItem = true;
+            while ( linkedFeatures.size() + singleFeatures.size() > 0 ) {
+
+
+                boolean islinked = false;
+                Iterator iterator = null;
+
+                if ( ! linkedFeatures.isEmpty() ) {
+                    // process lnked feature first
+                    iterator = linkedFeatures.iterator();
+                    islinked = true;
+                } else {
+                    iterator = singleFeatures.iterator();
+                }
+
+                FeatureViewBean firstFeature = (FeatureViewBean) iterator.next();
+                iterator.remove(); // take it out of the collection.
+
+                if ( ! firstItem ) {
+                    firstItem = false;
+                }
+                // display that row
+
+                StringBuffer buffer = null;
+
+                if ( islinked ) {
+
+                    buffer = new StringBuffer( 1000 ); // where the current line is stored
+
+                    // check for experimental feature
+                    if ( isExperimentalFeature( firstFeature.getFeature() ) ) {
+                        buffer.append( "Experimental modification: " );
+                    }
+
+                    buffer.append( "<a href=\"" ).append( firstFeature.getCvFeatureTypeSearchURL() );
+                    buffer.append( "\">" ).append( firstFeature.getFeatureType( true ) ).append( "</a>" ).append( SPACE );
+                    buffer.append( firstFeature.getFeatureName() ).append( " of " ).append( firstFeature.getProteinName() );
+                    buffer.append( SPACE );
+
+                    // Now do the Ranges...
+                    buffer.append( generateRange( firstFeature.getFeature() ) );
+
+                    //only need some brackets if we have Xrefs to display..
+                    if ( !firstFeature.getFeatureXrefs().isEmpty() ) {
+
+                        buffer.append( SPACE ).append( '(' );
+
+                        // link 2
+                        for ( Iterator iter1 = firstFeature.getFeatureXrefs().iterator(); iter1.hasNext(); ) {
+                            Xref xref = (Xref) iter1.next();
+
+                            buffer.append( "<a href=\"" ).append( firstFeature.getPrimaryIdURL( xref ) ).append( "\">" );
+                            buffer.append( xref.getPrimaryId() ).append( "</a>" );
+
+                            if ( iter1.hasNext() ) {
+                                buffer.append( ',' ).append( SPACE );
+                            }
+
+                        }   //end of Feature Xref loop
+
+                        buffer.append( ')' );
+
+                    }  //end of Xref check
+
+                    if ( firstFeature.hasCvFeatureIdentification() ) {
+
+                        // only display detected by XXX if there is a method
+                        buffer.append( " detected by " );
+                        buffer.append( "<a href=\"" ).append( firstFeature.getCvFeatureIdentSearchURL() ).append( "\">" );
+                        buffer.append( firstFeature.getFeatureIdentificationName() ).append( "</a>" );
+                    }
+
+                    //there must be one as we are dealing with linked Features here
+                    FeatureViewBean firstBoundFeature = firstFeature.getBoundFeatureView();
+
+                    buffer.append( ", interacts with " );
+                    buffer.append( "<a href=\"" ).append( firstBoundFeature.getCvFeatureTypeSearchURL() ).append( "\">" );
+                    buffer.append( firstBoundFeature.getFeatureType( false ) ).append( "</a>" ).append( SPACE );
+                    buffer.append( firstBoundFeature.getFeatureName() );
+                    buffer.append( " of " );
+                    buffer.append( firstBoundFeature.getProteinName() );
+                    buffer.append( SPACE );
+
+                    //now do the Ranges for the linked Feature (may reuse the other vars)...
+                    buffer.append( generateRange( firstBoundFeature.getFeature() ) );
+
+                    //only need brackets if we have Xrefs to display..
+                    if ( ! firstBoundFeature.getFeatureXrefs().isEmpty() ) {
+
+                        buffer.append( SPACE ).append( "(" );
+
+                        for ( Iterator iter1 = firstBoundFeature.getFeatureXrefs().iterator(); iter1.hasNext(); ) {
+                            Xref xref = (Xref) iter1.next();
+
+                            buffer.append( "<a href=\"" ).append( firstBoundFeature.getPrimaryIdURL( xref ) ).append( "\">" );
+                            buffer.append( xref.getPrimaryId() ).append( "</a>" );
+
+                            if ( iter1.hasNext() ) {
+                                buffer.append( ',' ).append( SPACE );
+                            }
+
+                        }   //end of Feature Xref loop
+
+                        buffer.append( ')' );
+
+                    }  //end of Xref check
+
+                    if ( firstFeature.hasCvFeatureIdentification() ) {
+                        // only display detected by XXX if there is a method
+
+                        buffer.append( " detected by " );
+                        buffer.append( "<a href=\"" ).append( firstFeature.getCvFeatureIdentSearchURL() ).append( "\">" );
+                        buffer.append( firstFeature.getFeatureIdentificationName() ).append( "</a>" );
+
+                    }
+
+                    buffer.append( '.' );
+
+                    // end of linked feature
+                } else {
+
+                    // not a linked feature
+                    buffer = new StringBuffer( 400 ); // where the current line is stored
+
+                    if ( isExperimentalFeature( firstFeature.getFeature() ) ) {
+                        buffer.append( "Experimental modification: " );
+                    }
+
+                    buffer.append( "<a href=\"" ).append( firstFeature.getCvFeatureTypeSearchURL() ).append( "\">" );
+                    buffer.append( firstFeature.getFeatureType( true ) ).append( "</a>" ).append( SPACE );
+                    buffer.append( firstFeature.getFeatureName() );
+                    buffer.append( " of " );
+                    buffer.append( firstFeature.getProteinName() ).append( SPACE );
+
+                    //now do the Ranges...
+                    buffer.append( generateRange( firstFeature.getFeature() ) );
+
+                    if ( ! firstFeature.getFeatureXrefs().isEmpty() ) {
+
+                        buffer.append( SPACE ).append( "(" );
+
+                        for ( Iterator iter1 = firstFeature.getFeatureXrefs().iterator(); iter1.hasNext(); ) {
+                            Xref xref = (Xref) iter1.next();
+
+                            buffer.append( "<a href=\"" ).append( firstFeature.getPrimaryIdURL( xref ) ).append( "\">" );
+                            buffer.append( xref.getPrimaryId() ).append( "</a>" );
+
+                            if ( iter1.hasNext() ) {
+                                buffer.append( ',' ).append( SPACE );
+                            }
+
+                        }   //end of Feature Xref loop
+
+                        buffer.append( ')' );
+
+                    }  //end of Xref check
+
+                    //it seems sometimes the detection beans are not present!
+                    if ( ! firstFeature.getCvFeatureIdentSearchURL().equals( "" ) ) {
+
+                        buffer.append( SPACE );
+                        buffer.append( "<a href=\"" ).append( firstFeature.getCvFeatureIdentSearchURL() ).append( "\">" );
+                        buffer.append( firstFeature.getFeatureIdentFullName() ).append( "</a>" );
+                    }
+
+                    buffer.append( '.' );
+
+                }  // end of simple feature (no related feature)
+
+                lines.add( buffer.toString() );
+
+            } // while more feature to display
+        } // if any feature
+
+        return lines;
+    }
+
+    private String generateRange( Feature feature ) {
+
+        Collection ranges = feature.getRanges();
+        String rangeString = "";   //will hold the result (if there is one)
+        if ( !ranges.isEmpty() ) {
+
+            StringBuffer buf = new StringBuffer();
+            buf.append( "[" );
+
+            for ( Iterator it1 = ranges.iterator(); it1.hasNext(); ) {
+                buf.append( it1.next().toString() );  //The toString of Range does the display format for us
+                if ( it1.hasNext() ) {
+                    buf.append( ( "," ) );
+                }
+            }
+
+            buf.append( "]" );
+            rangeString = buf.toString();
+
+            if ( rangeString.equalsIgnoreCase( "[?-?]" ) ) {
+                rangeString = "[range undetermined]";
+            }
+        }
+
+        return rangeString;
+    }
+
     /**
      * Convenience method to obtain all of the Proteins for a given Interaction. Note that this method will only return
      * the Proteins, NOT complexes that might be a Component's Interactor.
@@ -652,9 +928,9 @@ public class MainDetailViewBean extends AbstractViewBean {
     public Collection getGeneNames( Interactor interactor ) {  //1 usage in detail.jsp
 
         Collection geneNames = new HashSet();
-        //geneNames = new StringBuffer();
-        //the gene names are obtained from the Aliases for the Protein
-        //which are of type 'gene name'...
+//geneNames = new StringBuffer();
+//the gene names are obtained from the Aliases for the Protein
+//which are of type 'gene name'...
         Collection aliases = interactor.getAliases();
         for ( Iterator it = aliases.iterator(); it.hasNext(); ) {
             Alias alias = (Alias) it.next();
@@ -944,7 +1220,7 @@ public class MainDetailViewBean extends AbstractViewBean {
      * @return String a String representation of a search URL link for Protein.
      */
 
-    //public String getProteinSearchURL( Protein prot ) { // 1 usage in detail.jsp
+//public String getProteinSearchURL( Protein prot ) { // 1 usage in detail.jsp
     public String getInteractorSearchURL( Interactor interactor ) {
 
         // TRY TO MODIFY FROM PROTEIN TO INTERACTOR
