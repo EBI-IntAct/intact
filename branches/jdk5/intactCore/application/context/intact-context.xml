@@ -1,0 +1,6 @@
+<!--
+        Template of the context configuration for intact static pages war file
+        version : $Id$
+  -->
+
+<Context path="/[server.name]" docBase="app-dir/[WAR.FILE.NAME]" />

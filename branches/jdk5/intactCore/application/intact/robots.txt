@@ -1,0 +1,9 @@
+# Diallow any robots to visit dynamic content
+# more documentation about syntax at: http://www.robotstxt.org/wc/norobots.html
+
+User-agent: *
+Disallow: /intact/search/
+Disallow: /intact/hierarchView/
+Disallow: /intact/mine/
+Disallow: /intact/graph2MIF/
+Disallow: /intact/statisticView
