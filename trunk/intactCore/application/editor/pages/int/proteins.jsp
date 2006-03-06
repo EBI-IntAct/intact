@@ -186,7 +186,7 @@
                     <nested:write property="spAc"/>
                 </td>
                 <td class="tableCell">
-                    <nested:write property="ac"/>
+                    <nested:write property="interactorAc"/> 
                 </td>
                 <td class="tableCell">
                     <nested:write property="geneName"/>
