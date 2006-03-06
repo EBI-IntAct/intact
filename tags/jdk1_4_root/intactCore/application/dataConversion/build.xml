@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+     ANT build configuration file for dataConversion application.
+     Author: Sugath Mudali, smudali@ebi.ac.uk.
+     Version: $Id$
+-->
+
+<project name="dataConversion" basedir="." default="compile">
+    <property name="project.version" value="1.0"/>
+
+    <!-- Intact core locations -->
+    <property name="intact.root" value="../.."/>
+    <property name="root.lib.dir" value="${intact.root}/lib"/>
+    <property name="root.src.dir" value="${intact.root}/src"/>
+    <property name="root.dest.dir" value="${intact.root}/classes"/>
+    <property name="root.config.dir" value="${intact.root}/config"/>
+    <property name="root.dist.dir" value="${intact.root}/dist"/>
+    <property name="root.jar.file" value="${root.dist.dir}/intact-core.jar"/>
+
+    <!-- Intact application location. -->
+    <property name="intact.app.dir" value=".."/>
+
+    <property environment="env"/>
+
+    <!-- The jdbc properties. -->
+    <property file="../../config/jdbc.properties"/>
+    <property name="ora.props.file" value="../../config/oracle.properties"/>
+    <property name="pg.props.file" value="../../config/postgres.properties"/>
+
+    <!-- The build properties. -->
+    <property file="${intact.root}/config/build.properties"/>
+
+    <!-- The jdbc properties. -->
+    <property file="${intact.root}/config/jdbc.properties"/>
+
+    <property name="dist.dir" value="dist"/>
+
+    <!-- This project specific paths. -->
+    <property name="src.dir" value="src"/>
+    <property name="lib.dir" value="lib"/>
+
+    <property name="dest.dir" value="classes"/>
+    <property name="docs.dir" value="doc/api"/>
+
+    <!-- dataConversion package root. -->
+    <property name="dataConversion.pkg.root" value="uk/ac/ebi/intact/application/dataConversion"/>
+
+    <!-- The name of the last modified file -->
+    <property name="last.modified.file" value="last-modified.txt"/>
+
+    <property name="ant.dir" value="${root.lib.dir}/ant"/>
+
+    <!-- Build working classpath -->
+    <path id="project.class.path">
+        <!-- Project specific jar files. -->
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <!-- Where the classes are compiled to. -->
+        <pathelement path="${dest.dir}"/>
+
+        <!-- Intact core at root. -->
+        <pathelement path="${root.jar.file}"/>
+
+        <!-- Common jar files. -->
+        <pathelement path="${root.lib.dir}/db-ojb-1.0.rc6.jar"/>
+        <pathelement path="${root.lib.dir}/commons-dbcp-1.1.jar"/>
+        <pathelement path="${root.lib.dir}/commons-cli-1.0.jar"/>
+        <pathelement path="${root.lib.dir}/yasp.jar"/>
+        <pathelement path="${root.lib.dir}/aristotle.jar"/>
+        <pathelement path="${root.lib.dir}/sptr-interfaces.jar"/>
+        <pathelement path="${root.lib.dir}/jakarta-regexp-1.3.jar"/>
+        <pathelement path="${root.lib.dir}/log4j-1.2.8.jar"/>
+        <pathelement path="${root.lib.dir}/junit.jar"/>
+        <pathelement path="${root.lib.dir}/commons-collections-3.0.jar"/>
+        <pathelement path="${root.lib.dir}/commons-lang-2.0.jar"/>
+    </path>
+
+    <path id="project.test.class.path">
+        <!-- The project class path. -->
+        <path refid="project.class.path"/>
+
+        <!-- Runtime jar files. -->
+        <fileset dir="${root.lib.dir}">
+            <include name="junit.jar"/>
+        </fileset>
+    </path>
+
+    <!-- =================================================================== -->
+
+    <!-- Sets the time stamp and various 'present' properties. -->
+    <target name="prepare">
+        <mkdir dir="${basedir}/${lib.dir}"/>
+        <available file="${root.jar.file}" type="file" property="intact.jar.present"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Sets the time stamp. -->
+    <target name="set-tstamp">
+        <tstamp>
+            <format property="TODAY" pattern="yyyy-MM-dd" locale="en"/>
+        </tstamp>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Creates the 'docs' directory. -->
+    <target name="mk-docs">
+        <mkdir dir="${docs.dir}"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Remove 'dest' and docs directories for clean build -->
+    <target name="clean" description="Prepare for clean build">
+        <!-- Delete directories first -->
+        <delete dir="${dest.dir}"/>
+        <delete dir="${dist.dir}"/>
+        <delete dir="${docs.dir}"/>
+        <delete dir="${lib.dir}"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Calls the jar task from core build file if intact core jar file
+         is missing.
+    -->
+    <target name="make-jar" depends="prepare" unless="intact.jar.present">
+        <ant dir="${intact.root}" target="jar-core" inheritAll="false"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Copy configuration files. -->
+    <target name="cp-config-files">
+        <!-- Copy repository files -->
+        <copy todir="${dest.dir}/config">
+            <fileset dir="${root.config.dir}">
+                <include name="repository*.xml"/>
+                <include name="repository.dtd"/>
+                <include name="Institution.properties"/>
+            </fileset>
+        </copy>
+
+        <!-- Copy proxy properties file. -->
+        <copy todir="${dest.dir}/config" file="${root.config.dir}/proxy.properties"/>
+
+        <!--  Copy the reverse mapping from PSI2 to PSI1  -->
+        <copy todir="${dest.dir}/config" file="controlledvocab/reverseMapping.txt"/>
+
+        <!-- the OJB and log4J properties files should be at the top level in 'dest' -->
+        <copy todir="${dest.dir}" file="${root.config.dir}/OJB.properties"/>
+        <copy todir="${dest.dir}" file="${root.config.dir}/log4j.properties"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
+    <target name="compile" depends="make-jar, set-db-type"
+        description="Compiles non test source files">
+
+        <!-- Create the dest dir if it doesn't exist. -->
+        <mkdir dir="${dest.dir}"/>
+
+        <!-- now make sure the correct DB driver is copied -->
+        <antcall target="cp-postgres"/>
+        <antcall target="cp-oracle"/>
+
+        <!-- Only compile sources. -->
+        <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
+            debug="on" source="1.4"
+            includes="**/application/dataConversion/**"
+            excludes="**/test/**">
+
+            <classpath refid="project.class.path"/>
+        </javac>
+
+        <!-- Copy configuration files -->
+        <antcall target="cp-config-files"/>
+
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
+    <target name="compile-upload" depends="make-jar, set-db-type"
+        description="Compiles non test source files">
+
+        <!-- Create the dest dir if it doesn't exist. -->
+        <mkdir dir="${dest.dir}"/>
+
+        <!-- now make sure the correct DB driver is copied -->
+        <antcall target="cp-postgres"/>
+        <antcall target="cp-oracle"/>
+
+        <!-- Only compile sources. -->
+        <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
+            debug="on" source="1.4"
+            includes="**/application/dataConversion/psiUpload/**,
+                      **/application/dataConversion/util/**,
+                      **/application/dataConversion/PsiDataLoader.java,
+                      **/application/dataConversion/PsiCosntants.java"
+            excludes="**/test/**">
+
+            <classpath refid="project.class.path"/>
+        </javac>
+
+        <!-- Copy configuration files -->
+        <antcall target="cp-config-files"/>
+
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Compile the test source tree. -->
+    <target name="compile-test" depends="compile" description="Compiles test source files">
+
+        <!-- Only compile test sources. -->
+        <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
+            debug="on" source="1.4"
+            includes="**/application/dataConversion/psiUpload/test/**">
+
+            <classpath refid="project.class.path"/>
+        </javac>
+
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
+    <target name="compile-all" depends="compile" description="Compiles all the source files">
+
+        <!-- Only compile dataConversion sources only. -->
+        <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
+            debug="on" source="1.4"
+            includes="**/application/dataConversion/**">
+
+            <classpath refid="project.class.path"/>
+        </javac>
+
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Copies jar files. The database to include is specified as a parameter. -->
+    <target name="copy-lib" depends="gen-last-modified-file">
+
+        <!-- Create the lib dir if it doesn't exist. -->
+        <mkdir dir="${lib.dir}"/>
+
+        <!-- Copy jar files -->
+        <copy todir="lib">
+            <!-- Inlcude the intact core -->
+            <fileset dir="${root.dist.dir}"/>
+            <!-- Inlcude application common jar files. -->
+            <!--fileset dir="${intact.app.dir}/lib"/ -->
+            <!-- Include required jar files from intact core. -->
+            <fileset dir="${root.lib.dir}">
+
+                <include name="${db}"/>
+
+                <include name="db-ojb-1.0.rc6.jar"/>
+                <include name="commons-dbcp-1.1.jar"/>
+                <include name="commons-cli-1.0.jar"/>
+                <include name="yasp.jar"/>
+                <include name="aristotle.jar"/>
+                <include name="antlr.jar"/>
+                <include name="sptr-interfaces.jar"/>
+                <include name="log4j-1.2.8.jar"/>
+                <include name="commons-pool.jar"/>
+                <include name="xercesImpl.jar"/>
+                <include name="xml-apis.jar"/>
+                <include name="gnu-regexp-1.1.2.jar"/>
+                <include name="jakarta-regexp-1.3.jar"/>
+                <include name="commons-collections-3.0.jar"/>
+                <include name="commons-lang-2.0.jar"/>
+                <include name="commons-pool-1.1.jar"/>
+            </fileset>
+        </copy>
+
+        <available file="${basedir}/dev-mode" property="dev.mode"/>
+
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Sets the database type using the values given in build.properties. -->
+
+    <target name="set-db-type">
+        <condition property="postgres">
+            <contains string="${target.env}" substring="-postgres-"/>
+        </condition>
+        <condition property="oracle">
+            <contains string="${target.env}" substring="-oracle-"/>
+        </condition>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!--
+         copies postgres DB driver;
+         should be called only after calling set-db-type.
+      -->
+
+    <target name="cp-postgres" if="postgres">
+
+        <condition property="pg.property.missing">
+            <not>
+                <available file="${pg.props.file}"/>
+            </not>
+        </condition>
+
+
+        <fail if="pg.property.missing">
+              Unable to find ${pg.props.file} file;
+              see template/postgres.template file for the format.
+        </fail>
+
+        <condition property="pg.jdbc.driver.missing">
+            <not>
+                <available file="${root.lib.dir}/${postgresql.jar}"/>
+            </not>
+        </condition>
+
+        <fail if="pg.jdbc.driver.missing">
+             Unable to find your postgres jdbc driver !
+              see /config/jdbc.properties file for the format.
+        </fail>
+
+        <!-- Load postgres properties. -->
+        <antcall target="copy-lib">
+            <param name="db" value="${postgresql.jar}"/>
+        </antcall>
+
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!--
+        copies oracle database driver;
+        should be called only after calling set-db-type.
+      -->
+
+    <target name="cp-oracle" description="copies driver for oracle" if="oracle">
+
+        <condition property="oracle.property.missing">
+            <not>
+                <available file="${ora.props.file}"/>
+            </not>
+        </condition>
+
+        <fail if="oracle.property.missing">
+              Unable to find ${ora.props.file} file;
+              see template/oracle.template file for the format.
+        </fail>
+
+        <condition property="oracle.jdbc.driver.missing">
+            <not>
+                <available file="${root.lib.dir}/${oracle.jar}"/>
+            </not>
+        </condition>
+
+        <fail if="oracle.jdbc.driver.missing">
+             Unable to find your oracle jdbc driver !
+              see /config/jdbc.properties file for the format.
+        </fail>
+
+        <!-- Load oracle properties. -->
+        <antcall target="copy-lib">
+            <param name="db" value="${oracle.jar}"/>
+        </antcall>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Generates the last modified date file. -->
+
+    <target name="gen-last-modified-file">
+        <ant dir=".." inheritAll="false" target="gen-last-modified-file">
+            <property name="file" value="dataConversion/${last.modified.file}"/>
+        </ant>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Runs the JUnit tester directly. The output is redirected to std out -->
+
+    <target name="junit-test-stdout" depends="compile-test"
+        description="Runs JUnit directly with output directed to stdout">
+        <java classname="junit.textui.TestRunner" fork="true">
+            <arg value="uk.ac.ebi.intact.application.dataConversion.psiUpload.test.AllJUnitTests"/>
+            <classpath refid="project.class.path"/>
+        </java>
+    </target>
+
+</project>

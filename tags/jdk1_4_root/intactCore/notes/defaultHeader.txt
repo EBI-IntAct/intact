@@ -1,0 +1,4 @@
+Copyright (c) 2002 The European Bioinformatics Institute, and others.  
+All rights reserved.
+
+@author

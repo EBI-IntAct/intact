@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This is a sample metadata repository for the ObJectBridge System.
+     Use this file as a template for building your own mappings-->
+
+<!-- defining entities for include-files -->
+<!DOCTYPE descriptor-repository SYSTEM "repository.dtd" [
+<!ENTITY user SYSTEM "repository_user.xml">
+<!ENTITY junit SYSTEM "repository_junit.xml">
+<!ENTITY internal SYSTEM "repository_internal.xml">
+]>
+
+
+<descriptor-repository version="0.9.6" isolation-level="read-uncommitted">
+<!-- The Default JDBC Connection. If a class-descriptor does not specify its own JDBC Connection,
+     the Connection specified here will be used.
+
+   jdbc-connection-descriptor
+   		platform="@DBMS_NAME@"
+   		jdbc-level="@JDBC_LEVEL@"
+   		driver="@DRIVER_NAME@"
+   		protocol="@URL_PROTOCOL@"
+   		subprotocol="@URL_SUBPROTOCOL@"
+   		dbalias="@URL_DBALIAS@"
+   		username="@USER_NAME@"
+   		password="@USER_PASSWD@"
+
+-->
+<!-- Connection descriptor for locally running Postgres server -->
+<jdbc-connection-descriptor
+   		platform="PostgreSQL"
+   		jdbc-level="2.0"
+   		driver="org.postgresql.Driver"
+   		protocol="jdbc"
+   		subprotocol="postgresql"
+        eager-release="false"
+		dbalias="DATABASE"
+   		username="USER"
+   		password="PASSWORD"
+        />
+<!-- Connection descriptor for remote Oracle database -->
+<!--jdbc-connection-descriptor
+   		platform="Oracle"
+   		jdbc-level="2.0"
+   		driver="oracle.jdbc.pool.OracleConnectionCacheImpl"
+   		protocol="jdbc"
+   		subprotocol="oracle:thin:@MACHINE:PORT"
+		dbalias="DATABASE"
+   		username="USER"
+   		password="PASSWORD"
+   />
+-->
+
+
+    <!-- include user defined mappings here -->
+    &user;
+
+    <!-- include ojb internal mappings here -->
+    &internal;
+
+</descriptor-repository>

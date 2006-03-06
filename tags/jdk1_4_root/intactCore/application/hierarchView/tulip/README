@@ -1,0 +1,136 @@
+-----------------------------------
+HOW-TO create the Tulip Web Service
+-----------------------------------
+
+
+    (1) Writing interface and implementation (package tulip)
+	  uk/ac/ebi/intact/application/hierarchView/business/tulip/webService/TulipAccess.java
+	  uk/ac/ebi/intact/application/hierarchView/business/tulip/webService/TulipAccessImpl.java
+	  uk/ac/ebi/intact/application/hierarchView/business/tulip/webService/ProteinCoordinate.java
+
+
+    (2) Generated a WSDL file (here : tulip.wsdl)
+
+	java org.apache.axis.wsdl.Java2WSDL
+	     -o tulip.wsdl -l"http://localhost:8080/axis/services/tulip" -n urn:tulip
+	     -p"uk.ac.ebi.intact.application.hierarchView.business.tulip.webService"
+	     urn:uk.ac.ebi.intact.application.hierarchView.business.tulip.webService
+	     uk.ac.ebi.intact.application.hierarchView.business.tulip.webService.TulipAccess
+
+
+    (3) Generated WSDD files (the only thing we'll kept), Stub ...
+	
+	java org.apache.axis.wsdl.WSDL2Java 
+	     -o . 
+	     -d Session 
+	     -s 
+	     -p uk.ac.ebi.intact.application.hierarchView.business.tulip.webService.generated 
+	     tulip.wsdl
+
+
+
+        I keep only WSDD files and modify deploy.wsdd to make it use my own implementation of the service.
+
+
+
+
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from TulipAccessService WSDL service -->
+
+  <service name="tulip" provider="java:RPC">
+
+* REMOVE *     <parameter name="className" value="uk.ac.ebi.intact.application.hierarchView.business.tulip.webService.generated.TulipSoapBindingImpl"/>
+
+* REPLACE BY * <parameter name="className" value="uk.ac.ebi.intact.application.hierarchView.business.tulip.webService.TulipAccessImpl"/>
+
+      <operation name="getComputedTlpContent" returnQName="return" >
+        <parameter name="in0" type="tns:string" xmlns:tns="http://schemas.xmlsoap.org/soap/encoding/"/>
+        <parameter name="in1" type="tns:string" xmlns:tns="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </operation>
+      <parameter name="allowedMethods" value="getComputedTlpContent"/>
+      <parameter name="scope" value="Session"/>
+
+      <typeMapping
+        xmlns:ns="urn:uk.ac.ebi.intact.application.hierarchView.business.tulip.webService"
+        qname="ns:ProteinCoordinate"
+        
+* REMOVE *       type="java:uk.ac.ebi.intact.application.hierarchView.business.tulip.webService.generated.ProteinCoordinate"
+
+* REPLACE BY *   type="java:uk.ac.ebi.intact.application.hierarchView.business.tulip.webService.ProteinCoordinate"
+
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="urn:tulip"
+        qname="ns:ArrayOf_tns1_ProteinCoordinate"
+
+* REMOVE *       type="java:uk.ac.ebi.intact.application.hierarchView.business.tulip.webService.generated.ProteinCoordinate[]"
+
+* REPLACE BY *   type="java:uk.ac.ebi.intact.application.hierarchView.business.tulip.webService.ProteinCoordinate[]"
+
+
+        serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+  </service>
+</deployment>
+
+
+
+
+
+
+    (4) Created a jar file with inside my class files : interface and implementation in a package 
+	(uk/ac/ebi/intact/application/hierarchView/business/tulip/webService/*.class).
+
+
+    (5) Then I copy this jar file in the proper directory (${AXIS_HOME/WEB-INF/lib}),
+
+
+    (6) Restart tomcat,
+
+
+    (7) Deploy the service with deploy.wsdd, (my 2 wsdd file are in the wsdd directory)
+
+                java org.apache.axis.client.AdminClient wsdd/deploy.wsdd
+		or use the script:
+					startService.sh
+
+
+    (8) Eventually, you can try to access the service via a web browser by using the following URL :
+
+		http://localhost:8080/axis/services/tulip?wsdl
+                -----------------------------------------
+
+	In fact the underlined part is the one you had used to generate the WSDL and source files.
+	You will be able to read the wsdl content if the service is working properly.
+
+
+    (9) Wrote a client with Stub
+
+	The code is really cleaner with that method ...
+
+        (9a) Generate the client stub (without the -s option which create the server-side code and the WSDD files)
+
+		java org.apache.axis.wsdl.WSDL2Java 
+		     -o . 
+		     -d Session 
+		     -p uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated 
+		     tulip.wsdl
+
+        (9b) It create a new directory with the java file you have now to compile
+
