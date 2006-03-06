@@ -101,6 +101,12 @@ public class FeatureViewBean extends AbstractViewBean {
         return feature;
     }
 
+    public String getFeatureSummary() {
+
+
+        return null;
+    }
+
     /**
      * Provides a view bean for any bound Feature.
      *
@@ -119,23 +125,25 @@ public class FeatureViewBean extends AbstractViewBean {
      *
      * @return String the CvFeatureType shortLabel, or '-' if the feature type itself is null.
      */
-    public String getFeatureType() {
+    public String getFeatureType( boolean capitalizeFirstLetter ) {
+
+        String type = "-";
 
         if ( feature.getCvFeatureType() != null ) {
             // get the complete result
-            String label = feature.getCvFeatureType().getShortLabel();
-            // get the first char
-            String begin = label.substring( 0, 1 );
-            // put it to uppercase
-            begin = begin.toUpperCase();
-            // get the rest and add it to the beginning
-            String rest = label.substring( 1, label.length() );
-            return begin + rest;
+            type = feature.getCvFeatureType().getShortLabel();
 
-
+            if ( capitalizeFirstLetter ) {
+                // get the first char
+                String begin = type.substring( 0, 1 );
+                // put it to uppercase
+                begin = begin.toUpperCase();
+                // get the rest and add it to the beginning
+                String rest = type.substring( 1, type.length() );
+                type = begin + rest;
+            }
         }
-        return "-";
-
+        return type;
     }
 
     /**
