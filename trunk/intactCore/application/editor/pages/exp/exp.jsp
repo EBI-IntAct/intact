@@ -58,6 +58,10 @@
 
 
     <c:choose>
+    <c:when test="${user == 'davet'}" >
+        <p></p>
+        <jsp:include page="../reviewAccept.jsp"/>
+    </c:when>
     <c:when test="${user == 'krobbe'}" >
         <p></p>
         <jsp:include page="../reviewAccept.jsp" />
