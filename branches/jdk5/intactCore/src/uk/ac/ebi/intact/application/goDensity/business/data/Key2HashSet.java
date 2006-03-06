@@ -135,11 +135,11 @@ public class Key2HashSet {
     public String toString() {
         StringBuffer result = new StringBuffer();
         Hashtable ht = this.getAll();
-        Enumeration enum = ht.keys();
+        Enumeration enumer = ht.keys();
         Collection values = ht.values();
         for (Iterator iterator = values.iterator(); iterator.hasNext();) {
             HashSet o = (HashSet) iterator.next();
-            result.append("\n\nkey: " + enum.nextElement().toString());
+            result.append("\n\nkey: " + enumer.nextElement().toString());
             Iterator col = o.iterator();
             while (col.hasNext()) {
                 Object obj = col.next();
