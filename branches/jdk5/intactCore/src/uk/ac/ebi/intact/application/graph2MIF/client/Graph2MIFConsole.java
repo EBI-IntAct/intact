@@ -171,7 +171,7 @@ public class Graph2MIFConsole {
         String mif = "";
         Graph graph = new Graph();
         // retrieve Graph
-        graph = GraphFactory.getGraph(ac, depth); //NoGraphRetrievedExceptioni, IntactException and NoInteractorFoundException possible
+        graph = GraphFactory.getGraph(helper, ac, depth); //NoGraphRetrievedExceptioni, IntactException and NoInteractorFoundException possible
         //convert graph to DOM Object
         Graph2FoldedMIF convert = new Graph2FoldedMIF(strictmif);
         Document mifDOM = null;
