@@ -11,7 +11,6 @@ package uk.ac.ebi.intact.application.editor.struts.framework.util.test;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import uk.ac.ebi.intact.application.editor.test.SessionSerializationTest;
 
 /**
  * Testsuite that is composed of the individual test classes. Any new test
@@ -38,7 +37,6 @@ public class AllJUnitTests extends TestCase {
     public static Test suite() {
         TestSuite suite = new TestSuite();
 //        suite.addTest(EditorTopicsGeneratorTest.suite());
-        suite.addTest(SessionSerializationTest.suite());
         return suite;
     }
 }
