@@ -1,0 +1,32 @@
+ORACLE VERSION 1.1.5
+
+* To prevent problem of mutating tables in case of delete of Interactor (via cascade delete fires triggers Component)
+ there is added
+     1) package Pck_Mutating_Tables_Component
+     2) triggers (TRG_COMPONENT_AR, TRG_COMPONENT_AS en TRG_COMPONENT_BS)
+     3) procedure Process_Array_Interactor.
+ * Renamed
+    1) package Pck_Mutating_Tables into Pck_Mutating_Tables_Interactor,
+    2) Procedure process_array into process_array_interactor
+    3) TRG_BS_INTERACTOR into  TRG_INTERACTOR_BS
+    4) TRG_AR_INTERACTOR into  TRG_INTERACTOR_AR
+    5) TRG_AS_INTERACTOR into  TRG_INTERACTOR_AS
+* because of the renamed package, the code of the triggers on Interactor was also adjusted
+* Add additional comments ,  removed remaining dbms_output statements and convert tabs in spaces.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

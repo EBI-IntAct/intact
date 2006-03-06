@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>uk.ac.ebi.intact.synchron package</title>
+
+</head>
+<body bgcolor="white">
+
+This package provides a capability for different IntAct servers (nodes) to exchange data entries.
+<p>
+The package uses both Castor and OJB object-relational mapping tool to provide
+an object view of a backend relational database: OJB provides the capability to map the persistent entries contains in the database
+into java Objects, and Castor the one to map the Objects into a XML file.
+
+
+<h3>Configuration and mapping files requirements</h3>
+
+This package requires the configuration and mapping files for Castor and OJB, and the file Properties.pro containing
+the name of the directories where the XML files have to be downloaded and from where they can be uploaded, and the prefix
+used for the node (those three files should be placed into the config directory).
+About the node prefix: this prefix is used to identify which of the nodes described in the database (table intactnode)
+is the local one, and to recognize data entries that have been created by this node, as their accession number start with
+this prefix (e.g. EBI for the EBI local node).
+
+<h3>Dumping data: class XmlDumper</h3>
+
+This executable class fetches in the database all data entries which ac is prefixed by the node's prefix using OJB and
+dump it into a XML file using Castor.
+
+
+<h3>Loading data: class XmlLoader</h3>
+
+This second executable class parses an XML file by using Castor and loads the data entries contained in this file into
+the database with OJB.
+
+
+<h3>Collecting files: class Collector</h3>
+
+This class collects the XML files provided by the other Intact nodes (those that are not set as rejected by the node).
+
+
+<h2>Package Specification</h2>
+
+ (none)
+
+
+<h2>Related Documentation </h2>
+
+  <a href="../../../../../../howto-synchron.html">how to add a new attribute in intact model and keep it usable by synchron</a>
+
+@since JDK1.1
+
+</body>
+</html>
