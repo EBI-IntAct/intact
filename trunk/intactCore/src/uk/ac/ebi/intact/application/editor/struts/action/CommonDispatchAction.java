@@ -194,6 +194,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
                                   HttpServletRequest request,
                                   HttpServletResponse response)
             throws Exception {
+
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
         String userName = user.getUserName();
@@ -229,15 +230,24 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
                 // Display the error in the edit page.
                 return mapping.getInputForward();
             }
+
             // Add the bean to the view.
-            view.addAnnotation((CommentBean) cb.clone());
+            CommentBean clonedCb = (CommentBean) cb.clone();
+            // We set a new Key because if not as the CommentBean is cloned all the new CommentBean added to the view
+            // will have the same key and will be considered as equal according to the equals method defined in
+            // AbstractEditKeyBean.
+            clonedCb.setKey();
+            view.addAnnotation( clonedCb );
 
             // Set anchor if necessary.
             setAnchor(request, editorForm);
 
             return mapping.getInputForward();
         }
-        //setAnchor(request, editorForm);
+        //Annotation BUG
+        //editorForm.resetDispatch();
+
+        setAnchor(request, editorForm);
         return mapping.getInputForward();
     }
 
@@ -312,7 +322,12 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         }
 
         // Add the bean to the view.
-        view.addXref((XreferenceBean) xb.clone());
+        XreferenceBean cloneXb = (XreferenceBean) xb.clone();
+        // We set a new Key because if not, as the XrefenceBean is cloned all new XreferenceBean added to the view will
+        // have the same key and will be considered as equal according to the equals method defined in
+        // AbstractEditKeyBean.
+        cloneXb.setKey();
+        view.addXref(cloneXb);
 
         // Set anchor if necessary.
         setAnchor(request, editorForm);
