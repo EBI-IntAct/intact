@@ -232,12 +232,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
             }
 
             // Add the bean to the view.
-            CommentBean clonedCb = (CommentBean) cb.clone();
-            // We set a new Key because if not as the CommentBean is cloned all the new CommentBean added to the view
-            // will have the same key and will be considered as equal according to the equals method defined in
-            // AbstractEditKeyBean.
-            clonedCb.setKey();
-            view.addAnnotation( clonedCb );
+            view.addAnnotation( (CommentBean) cb.clone() );
 
             // Set anchor if necessary.
             setAnchor(request, editorForm);
@@ -322,12 +317,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         }
 
         // Add the bean to the view.
-        XreferenceBean cloneXb = (XreferenceBean) xb.clone();
-        // We set a new Key because if not, as the XrefenceBean is cloned all new XreferenceBean added to the view will
-        // have the same key and will be considered as equal according to the equals method defined in
-        // AbstractEditKeyBean.
-        cloneXb.setKey();
-        view.addXref(cloneXb);
+        view.addXref((XreferenceBean) xb.clone());
 
         // Set anchor if necessary.
         setAnchor(request, editorForm);
