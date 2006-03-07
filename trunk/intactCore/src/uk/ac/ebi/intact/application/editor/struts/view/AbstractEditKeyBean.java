@@ -97,7 +97,9 @@ public abstract class AbstractEditKeyBean extends AbstractEditBean implements Cl
      * @throws CloneNotSupportedException for errors in cloning.
      */
     public Object clone() throws CloneNotSupportedException {
-        return super.clone();
+        AbstractEditKeyBean abstractEditKeyBean =  (AbstractEditKeyBean) super.clone();
+        abstractEditKeyBean.setKey();
+        return abstractEditKeyBean;
     }
 
     /**
@@ -106,6 +108,13 @@ public abstract class AbstractEditKeyBean extends AbstractEditBean implements Cl
      */
     public long getKey() {
         return myKey;
+    }
+
+    /**
+     * Set the Key with using the next UniqueID.get method.
+     */
+    private void setKey() {
+        myKey = UniqueID.get();
     }
 
     // Protected methods
