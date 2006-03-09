@@ -39,8 +39,7 @@ public class IntactCitation {
     // Instance variables
 
     private int year;
-    private String journalTitle;
-    private String journalShortname;
+    private String journal;
     private String title;
     private String authorLastName;
     private String authorList;
@@ -51,8 +50,7 @@ public class IntactCitation {
 
     public IntactCitation( String authorLastName,
                            int year,
-                           String journalTitle,
-                           String journalShortname,
+                           String journal,
                            String title,
                            String authorList,
                            String email ) {
@@ -98,8 +96,7 @@ public class IntactCitation {
 
         this.authorList = authorList;
 
-        this.journalTitle = journalTitle;
-        this.journalShortname = journalShortname;
+        this.journal = journal;
     }
 
     /////////////////////
@@ -137,12 +134,8 @@ public class IntactCitation {
         return authorList != null;
     }
 
-    public String getJournalTitle() {
-        return journalTitle;
-    }
-
-    public String getJournalShortname() {
-        return journalShortname;
+    public String getJournal() {
+        return journal;
     }
 
 
@@ -150,8 +143,7 @@ public class IntactCitation {
         final StringBuffer sb = new StringBuffer();
         sb.append( "IntactCitation" );
         sb.append( "{year=" ).append( year );
-        sb.append( ", journalTitle='" ).append( journalTitle ).append( '\'' );
-        sb.append( ", journalShortname='" ).append( journalShortname ).append( '\'' );
+        sb.append( ", journal='" ).append( journal ).append( '\'' );
         sb.append( ", title='" ).append( title ).append( '\'' );
         sb.append( ", authorLastName='" ).append( authorLastName ).append( '\'' );
         sb.append( ", authorList='" ).append( authorList ).append( '\'' );
