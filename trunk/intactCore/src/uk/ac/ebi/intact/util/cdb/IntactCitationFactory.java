@@ -8,9 +8,10 @@ package uk.ac.ebi.intact.util.cdb;
 //import HTTPClient.*;
 //import org.apache.soap.transport.*;
 //import oracle.soap.transport.*;
-import uk.ac.ebi.cdb.webservice.proxy.WSCitationProxy;
+
 import uk.ac.ebi.cdb.bean.Author;
 import uk.ac.ebi.cdb.bean.Citation;
+import uk.ac.ebi.cdb.webservice.proxy.WSCitationProxy;
 
 import java.util.Iterator;
 import java.util.List;
@@ -37,7 +38,6 @@ public class IntactCitationFactory {
 
     private IntactCitationFactory() {
     }
-
 
     ///////////////////////////
     // Business
@@ -101,7 +101,9 @@ public class IntactCitationFactory {
      * Based upon a pubmed Id, collect from CitExplore a subset of the information related to that publication.
      *
      * @param pubmedId the pubmed ID of the publication we want information on.
+     *
      * @return
+     *
      * @throws Exception
      */
     public IntactCitation buildCitation( String pubmedId ) throws UnexpectedException,
@@ -110,20 +112,23 @@ public class IntactCitationFactory {
         Citation c = null;
         try {
             c = citProxy.getMedlineCitation( new Integer( pubmedId ) );
-        } catch( Exception e ) {
+        } catch ( Exception e ) {
 
-            if( e.getMessage().indexOf( "uk.ac.ebi.cdb.webservice.DataNotFoundException" ) != -1 ) {
-                throw new PublicationNotFoundException( "The PubMed ID "+ pubmedId +" could not be found." );
+            if ( e.getMessage().indexOf( "uk.ac.ebi.cdb.webservice.DataNotFoundException" ) != -1 ) {
+                throw new PublicationNotFoundException( "The PubMed ID " + pubmedId + " could not be found." );
             }
 
             // otherwise throw the original exception
-            e.printStackTrace( );
-            throw new UnexpectedException( "An unexpected error occured (ie. "+ e.getMessage() +").", e );
+            e.printStackTrace();
+            throw new UnexpectedException( "An unexpected error occured (ie. " + e.getMessage() + ").", e );
         }
 
         // retreive information
 
-        int year = (c.getJournalIssue().getYearOfPublication()).intValue();
+        int year = ( c.getJournalIssue().getYearOfPublication() ).intValue();
+        String journalShortname = c.getJournalIssue().getJournal().getMedlineAbbreviation();
+        String journalTitle = c.getJournalIssue().getJournal().getTitle();
+
         String title = c.getTitle();
         String email = getEmail( c );
 
@@ -135,11 +140,7 @@ public class IntactCitationFactory {
 
         List authorList = c.getAuthorCollection();
 
-        if ( authorList.isEmpty() ) {
-
-//            System.err.println( experiment.getShortLabel() + ", " + pubmedId + ": Could not find an author name." );
-
-        } else {
+        if ( ! authorList.isEmpty() ) {
 
             Author author = (Author) authorList.iterator().next();
 
@@ -163,7 +164,7 @@ public class IntactCitationFactory {
             authorLastName = sb.toString();
 
             // build the list of authors
-            if( authorList.size() > 1 ) {
+            if ( authorList.size() > 1 ) {
 
                 StringBuffer authorsBuffer = new StringBuffer( 128 );
 
@@ -172,7 +173,7 @@ public class IntactCitationFactory {
 
                     authorsBuffer.append( anAuthor.getLastName() ).append( ' ' ).append( anAuthor.getInitials() ).append( '.' );
 
-                    if( iterator.hasNext() ) {
+                    if ( iterator.hasNext() ) {
                         authorsBuffer.append( ',' ).append( ' ' );
                     }
                 }
@@ -182,6 +183,6 @@ public class IntactCitationFactory {
 
         }
 
-        return new IntactCitation( authorLastName, year, title, authors, email );
+        return new IntactCitation( authorLastName, year, journalTitle, journalShortname, title, authors, email );
     }
 }
