@@ -1,0 +1,47 @@
+ORACLE VERSION 1.1.2
+
+
+
+FUNCTIONAL CHANGES
+* propagation of being updated towards the experiment field updated, in the following cases
+
+I when the number of "children" changes in the hierachy below
+
+II) In the given situations
+In the following cases, the following letters mean
+A: Alias
+An: Annotation
+X: Xref
+
+experiment  (1.attr ) (2.A ,3. An, 4. X)
+/ 5
+interaction (6. attr) (7.A,8. An,9. X)
+/ 10		     12                                 16
+Component (11. attr) ->  Feature (13. A, 14. An, 15. X) -> R (17. attr)
+/ 
+Protein (18. Only if annotation changes from non-uniprot to uniprot)
+
+CHANGE REQUEST 6-12-2005
+ 18. On protein any adding, updating and/or deleting will lead to propagation. 
+These will prevent the technical problem of “mutating table” when record is deleted from IA_ANNOTATION. Namely via the foreign key constraint cascade delete, the trigger on IA_INT2ANNOT will fire. If this trigger than goes back to the IA_ANNOTATION to select for the type of annotation, it runs in the table is mutating problem.
+
+19. Propagation in case of update of the field CRC64 in the protein record
+20. propagation in case of adding, changing  of removing of XREF for proteins
+21. propagation in case of adding, changing of removing Alias for proteins
+
+TECHNICAL CHANGES
+* Adding triggers to propagate the updates towards the field updated of the table ia_experiment
+* To avoid the problem of "mutating tables" while propagating changes from protein (table ia_interactor) towards the interaction (also table ia_interactor) a package, a procedure and three triggers were created. In the package there is a variable id_array, which holds specific changed ac's from the table ia_interactor.in case of proteins the updated ac's are added to this package variable, in case of 
+1) update of the field CRC64
+2) if the field updated is changed, but none of the attributes . This allows for propagation towards protein, f.e. adding an alias, to be propagated further to interaction and in the end experiment. Processing start in the trigger TRG_AS_INTERACTOR, which used the procedure Process_Array. In the trigger TRG_BS_INTERACTOR, the array is initiated.
+
+
+
+
+
+
+
+
+
+
+

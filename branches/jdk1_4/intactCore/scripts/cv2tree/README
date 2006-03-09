@@ -1,0 +1,13 @@
+this package contains 5 different scripts to handle the cv2tree database insertion.
+
+createTableOracle.sh:    creates a table 'treehierarchie' on a Oracle database where the tree information of the CVs are inserted
+                         It takes two argument, the first one is the username and the second one is the database name.
+createTablePostgres.sh:  creates a table 'treehierarchie' on a postgres database where the tree information of the CVs are inserted
+                         It takes two argument, the first one is the username and the second one is the database name.
+dropTable.sh:            delets the whole table 'treehierarchie' with all its terms
+                         It takes two argument, the first one is the username and the second one is the database name.
+insertCv.sh:             inserts one Cv that is specified in the argument.
+                         It expects one argument, which is the name of the Cv that should be inserted. If the table
+                         'treehierarchie' does not exist, it has to be created first.
+insertSearch3CVs.sh      insert the three CVs (CvInteraction, CvIdentification, CvInteractionType) into the database.
+                         it expects no argument, but it implies that the table already exist.                              

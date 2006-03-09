@@ -1,0 +1,62 @@
+$interaction type ; MI:0190
+ @is_a@physical interaction ; MI:0218 ; synonym:aggregation
+  @is_a@direct interaction ; MI:0407
+   @is_a@covalent binding ; MI:0195 @is_a@ covalent interaction ; MI:0196
+    @is_a@disulfide bond ; MI:0408
+    @is_a@transglutamination\: transglutamination reaction ; MI:0556
+   @is_a@enzymatic reaction ; MI:0414 ; synonym:Biochemical reaction
+    @is_a@acetylation\: acetylation reaction ; MI:0192
+    @is_a@amidation\: amidation reaction ; MI:0193
+    @is_a@cleavage\: cleavage reaction ; MI:0194 @is_a@ covalent interaction ; MI:0196
+     @is_a@lipid cleavage ; MI:0212 @is_a@ enzymatic reaction ; MI:0414
+      @is_a@defarnesylation\: defarnesylation reaction ; MI:0198
+      @is_a@depalmitoylation\: depalmitoylation reaction ; MI:0202
+      @is_a@demyristoylation\: demyristoylation reaction ; MI:0201
+      @is_a@degeranylation\: degeranylation reaction ; MI:0200
+     @is_a@protein cleavage ; MI:0570
+     @is_a@dna cleavage ; MI:0572
+     @is_a@mrna cleavage ; MI:0571
+    @is_a@deacetylation\: deacetylation reaction ; MI:0197
+    @is_a@deformylation\: deformylation reaction ; MI:0199
+    @is_a@dephosphorylation\: dephosphorylation reaction ; MI:0203
+    @is_a@deubiquitination\: deubiquitination reaction ; MI:0204
+    @is_a@formylation\: formylation reaction ; MI:0207
+    @is_a@hydroxylation\: hydroxylation reaction ; MI:0210
+    @is_a@lipid addition ; MI:0211
+     @is_a@farnesylation\: farnesylation reaction ; MI:0206
+     @is_a@geranylgeranylation\: geranylgeranylation reaction ; MI:0209
+     @is_a@myristoylation\: myristoylation reaction ; MI:0214
+     @is_a@palmitoylation\: palmitoylation reaction ; MI:0216
+    @is_a@lipid cleavage ; MI:0212 @is_a@ cleavage\: cleavage reaction ; MI:0194
+     @is_a@defarnesylation\: defarnesylation reaction ; MI:0198
+     @is_a@depalmitoylation\: depalmitoylation reaction ; MI:0202
+     @is_a@demyristoylation\: demyristoylation reaction ; MI:0201
+     @is_a@degeranylation\: degeranylation reaction ; MI:0200
+    @is_a@methylation\: methylation reaction ; MI:0213
+    @is_a@phosphorylation\: phosphorylation reaction ; MI:0217
+    @is_a@ubiquitination\: ubiquitination reaction ; MI:0220
+    @is_a@adp ribosylation\: adp ribosylation reaction ; MI:0557
+    @is_a@deglycosylation\: deglycosylation reaction ; MI:0558
+    @is_a@glycosylation\: glycosylation reaction ; MI:0559
+    @is_a@sumoylation\: sumoylation reaction ; MI:0566
+    @is_a@deneddylation\: deneddylation reaction ; MI:0569
+    @is_a@desumoylation\: desumoylation reaction ; MI:0568
+    @is_a@neddylation\: neddylation reaction ; MI:0567
+ @is_a@colocalization ; MI:0403
+ @is_a@genetic interaction ; MI:0208
+  @is_a@synthetic phenotype ; MI:0269
+   @is_a@synt growth effect\: synthetic growth effect ; MI:0273
+    @is_a@synt growth increase\: synthetic growth increase ; MI:0275
+    @is_a@synt growth defect\: synthetic growth defect ; MI:0274
+   @is_a@synthetic lethal ; MI:0219
+   @is_a@cond syntetic lethal\: conditional synthetic lethal ; MI:0270
+    @is_a@nutrition synt letal\: conditional synthetic lethal nutrition-sensitivity ; MI:0600
+    @is_a@temprtr  synt lethal\: conditional synthetic lethal temperature-sensitivity ; MI:0271
+  @is_a@suppression ; MI:0261
+   @is_a@suppression mutation ; MI:0262
+    @is_a@suppress  knockout\: suppression knockout ; MI:0263
+    @is_a@suppression partial\: suppression partial alteration ; MI:0264
+   @is_a@suppress expression\: suppression expression alteration ; MI:0265
+    @is_a@suppress underexpres\: suppression underexpression ; MI:0268
+    @is_a@suppress overexpress\: suppression overexpression ; MI:0266
+    @is_a@suppression scalable ; MI:0267
