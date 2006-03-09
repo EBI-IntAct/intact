@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+     ANT build configuration file for intact root module.
+     Author: Henning Hermjakob, hhe@ebi.ac.uk
+     Version: $Id$
+-->
+
+<project name="intact" basedir="." default="war">
+
+    <property name="project.title" value="intact"/>
+    <property name="project.version" value="1.0"/>
+
+    <property name="intact.root" value="../.."/>
+    <property name="root.src.dir" value="${intact.root}/src"/>
+    <property name="root.lib.dir" value="${intact.root}/lib"/>
+
+    <property name="dist.dir" value="dist"/>
+    <property name="dest.dir" value="dest"/>
+    <property name="war.file" value="intact.war"/>
+
+    <!-- The build properties. -->
+    <property file="${intact.root}/config/build.properties"/>
+
+    <!-- The jdbc properties. -->
+    <property file="${intact.root}/config/jdbc.properties"/>
+
+    <!-- Intact application location. -->
+    <property name="intact.app.dir" value=".."/>
+
+    <!-- Context path -->
+    <property name="intact.context.dir" value="${intact.app.dir}/context"/>
+    <property name="intact-context-file" value="intact-context.xml"/>
+
+    <property environment="env"/>
+    <property name="tomcat.home" value="${env.CATALINA_HOME}"/>
+    <property name="webapps.dir" value="${tomcat.home}/webapps"/>
+   
+    <!-- Documentation related -->
+    <property name="doc.dir" value="doc"/>
+    <property name="xml.dir" value="${doc.dir}/xml"/>
+    <property name="xsl.dir" value="${doc.dir}/xsl"/>
+    <property name="css.dir" value="${doc.dir}/css"/>
+    <property name="html.dir" value="${doc.dir}/html"/>
+    <property name="images.dir" value="${doc.dir}/images"/>
+    <property name="lib.dir" value="${doc.dir}/lib"/>
+
+    <!-- include project specific additional documentation -->
+    <property name="misc.dir" value="${doc.dir}/misc"/>
+
+    <property name="xml.documentation" value="${xml.dir}/intact.xml"/>
+    <property name="xsl.tableOfContent" value="${xsl.dir}/contents.xsl"/>
+    <property name="xsl.content" value="${xsl.dir}/contentonly.xsl"/>
+    <property name="html.tableOfContent" value="${html.dir}/tableOfContent.html"/>
+    <property name="html.content" value="${html.dir}/documentation.html"/>
+
+
+
+
+    <!-- Build working classpath -->
+    <path id="project.class.path">
+        <pathelement path="${root.lib.dir}/servlet.jar"/>
+
+        <!-- XSLT processor for the documentation -->
+        <pathelement path="${lib.dir}/xalan-2.5.D1.jar"/>
+    </path>
+
+    <!-- =================================================================== -->
+
+    <!-- Remove 'dest' and docs directories for clean build -->
+
+    <target name="clean" description="Prepare for clean build">
+        <!-- Delete directories first -->
+        <delete dir="${dist.dir}"/>
+        <delete dir="${html.dir}"/>
+        <delete dir="${dest.dir}"/>
+
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
+    <target name="compile" description="Compile the source tree and copy the configuration files">
+
+        <mkdir dir="${dest.dir}"/>
+
+        <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
+            includes="**/intact/util/DocumentationIntegrityChecker*"
+            debug="on">
+        </javac>
+
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Builds a war file. -->
+
+    <target name="war" description="Builds a war file" depends="build-doc, gen-context-file">
+
+        <!-- Create the distribution dir if it doesn't exist. -->
+        <mkdir dir="${dist.dir}"/>
+
+        <!-- Delete the war file or else it will keep the old one -->
+        <delete file="${dist.dir}/${war.file}" quiet="true"/>
+
+        <!-- misc.dir transfered to html for additional documentation -->
+        <copy overwrite="true" todir="${html.dir}">
+            <fileset dir="${misc.dir}"/>
+        </copy>
+
+        <!-- html.dir is created in the build-doc target -->
+        <copy overwrite="true" file="${css.dir}/stylesheet.css" todir="${html.dir}"/>
+
+        <copy overwrite="true" todir="${html.dir}/images">
+            <fileset dir="${images.dir}"/>
+        </copy>
+
+        <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
+            <fileset dir="${basedir}">
+                <include name="*.jpg"/>
+                <include name="*.css"/>
+                <include name="*.xsl"/>
+                <include name="*.html"/>
+
+                <!-- doc related -->
+                <include name="*.jsp"/>
+                <include name="doc/html/**"/>
+
+                <!-- static html images -->
+                <include name="images/**"/> 
+
+                <!-- static publications -->
+                <include name="publications/**"/>
+            </fileset>
+        </war>
+
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Create the context file. -->
+
+    <target name="gen-context-file">
+        <echo message="Creating the context file..."/>
+
+        <!-- Copy the template file -->
+        <copy todir="${dist.dir}"
+            file="${intact.context.dir}/${intact-context-file}"
+            overwrite="true"/>
+
+        <!-- Customize the context file -->
+        <replace file="${dist.dir}/${intact-context-file}"
+            token="[WAR.FILE.NAME]"
+            value="${war.file}"/>
+        <replace file="${dist.dir}/${intact-context-file}"
+            token="[server.name]"
+            value="${server.name}"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Check documentation integrity by verifying if a section name is used only once. -->
+
+    <target name="check-doc" depends="compile"
+        description="Check documentation integrity (section's name uniqueness)">
+
+        <echo message="Checking documentation integrity ..."/>
+
+        <java classname="uk.ac.ebi.intact.util.DocumentationIntegrityChecker"
+            fork="yes"
+            failonerror="true">
+            <arg line="${xml.documentation}"/>
+            <classpath>
+                <pathelement path="${dest.dir}"/>
+            </classpath>
+        </java>
+
+        <echo message="Documentation integrity check successfully done."/>
+
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Build static pages for IntAct documentation. -->
+
+    <target name="build-doc" depends="check-doc"
+        description="Build static pages for IntAct documentation">
+
+        <mkdir dir="${html.dir}"/>
+
+        <echo message="Build the IntAct documentation static pages ... "/>
+
+        <echo message="Build table of content"/>
+        <java classname="org.apache.xalan.xslt.Process" fork="yes" failonerror="true">
+            <arg line="-IN  ${xml.documentation}"/>
+            <arg line="-XSL ${xsl.tableOfContent}"/>
+            <arg line="-OUT ${html.tableOfContent}"/>
+            <classpath refid="project.class.path"/>
+        </java>
+
+        <echo message="Build content"/>
+        <java classname="org.apache.xalan.xslt.Process" fork="yes" failonerror="true">
+            <arg line="-IN  ${xml.documentation}"/>
+            <arg line="-XSL ${xsl.content}"/>
+            <arg line="-OUT ${html.content}"/>
+            <classpath refid="project.class.path"/>
+        </java>
+
+        <echo message="Generation process finished"/>
+    </target>
+
+
+
+    <!-- =================================================================== -->
+
+    <!-- Deploys the war file on the Tomcat server. -->
+
+    <target name="deploy" description="Deploys the WAR file on the Tomcat server">
+        <!-- Copy the war file in the webapps dir. -->
+        <copy file="${dist.dir}/${war.file}" todir="${webapps.dir}" overwrite="yes"/>
+
+        <echo message="Please start Tomcat to take effect (ant start-tomcat)"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Undeploys the war file from the Tomcat server. -->
+
+    <target name="undeploy"
+        description="Undeploys the WAR file from the Tomcat server">
+        <ant dir=".." inheritAll="false" target="undeploy">
+            <property name="war" value="intact"/>
+        </ant>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Starts the Tomcat server. -->
+
+    <target name="start-tomcat">
+        <ant dir=".." inheritAll="false" target="start-tomcat"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Stops the Tomcat server. -->
+
+    <target name="stop-tomcat">
+        <ant dir=".." inheritAll="false" target="stop-tomcat"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Restarts the Tomcat server. -->
+
+    <target name="restart-tomcat">
+        <ant dir=".." inheritAll="false" target="restart-tomcat"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Displays the status of Tomcat server. -->
+
+    <target name="status-tomcat">
+        <ant dir=".." inheritAll="false" target="status-tomcat"/>
+    </target>
+
+</project>
