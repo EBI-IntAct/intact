@@ -126,8 +126,11 @@ public class IntactCitationFactory {
         // retreive information
 
         int year = ( c.getJournalIssue().getYearOfPublication() ).intValue();
-        String journalShortname = c.getJournalIssue().getJournal().getMedlineAbbreviation();
-        String journalTitle = c.getJournalIssue().getJournal().getTitle();
+
+        // build journal name as 'isoname (issn)' or 'isoname' if the issn is not available.
+        String isoAbreviation = c.getJournalIssue().getJournal().getISOAbbreviation();
+        String issn = c.getJournalIssue().getJournal().getISSN();
+        String journal = isoAbreviation + ( issn != null && issn.trim().length() > 0 ? " (" + issn + ")" : "" );
 
         String title = c.getTitle();
         String email = getEmail( c );
@@ -183,6 +186,6 @@ public class IntactCitationFactory {
 
         }
 
-        return new IntactCitation( authorLastName, year, journalTitle, journalShortname, title, authors, email );
+        return new IntactCitation( authorLastName, year, journal, title, authors, email );
     }
 }
