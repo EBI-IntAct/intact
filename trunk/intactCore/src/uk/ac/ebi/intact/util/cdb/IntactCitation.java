@@ -5,9 +5,9 @@
  */
 package uk.ac.ebi.intact.util.cdb;
 
-import java.util.Set;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Keeps hold of a subset of a PubMed publication.
@@ -35,24 +35,30 @@ public class IntactCitation {
         TITLE_SEPARATORS.add( ". " );
     }
 
-
     ///////////////////////
     // Instance variables
 
     private int year;
+    private String journalTitle;
+    private String journalShortname;
     private String title;
     private String authorLastName;
     private String authorList;
     private String email;
 
-
     //////////////////////
     // Constructors
 
-    public IntactCitation( String authorLastName, int year, String title, String authorList, String email ) {
+    public IntactCitation( String authorLastName,
+                           int year,
+                           String journalTitle,
+                           String journalShortname,
+                           String title,
+                           String authorList,
+                           String email ) {
         this.year = year;
 
-        if( title != null ) {
+        if ( title != null ) {
             title = title.trim();
         }
 
@@ -75,24 +81,26 @@ public class IntactCitation {
         }
         this.title = title;
 
-        if( authorLastName != null ) {
+        if ( authorLastName != null ) {
             authorLastName = authorLastName.trim();
         }
         // truncate it if required
-        if( authorLastName.length() > AUTHOR_NAME_MAX_LENGTH ) {
+        if ( authorLastName.length() > AUTHOR_NAME_MAX_LENGTH ) {
             // truncate then
             authorLastName = authorLastName.substring( 1, AUTHOR_NAME_MAX_LENGTH );
         }
         this.authorLastName = authorLastName;
 
-        if( email != null ) {
+        if ( email != null ) {
             email = email.trim();
         }
         this.email = email;
 
         this.authorList = authorList;
-    }
 
+        this.journalTitle = journalTitle;
+        this.journalShortname = journalShortname;
+    }
 
     /////////////////////
     // Getters
@@ -118,7 +126,7 @@ public class IntactCitation {
     }
 
     public boolean hasEmail() {
-        return email != null ;
+        return email != null;
     }
 
     public String getAuthorList() {
@@ -126,6 +134,29 @@ public class IntactCitation {
     }
 
     public boolean hasAuthorList() {
-        return authorList != null ;
+        return authorList != null;
+    }
+
+    public String getJournalTitle() {
+        return journalTitle;
+    }
+
+    public String getJournalShortname() {
+        return journalShortname;
+    }
+
+
+    public String toString() {
+        final StringBuffer sb = new StringBuffer();
+        sb.append( "IntactCitation" );
+        sb.append( "{year=" ).append( year );
+        sb.append( ", journalTitle='" ).append( journalTitle ).append( '\'' );
+        sb.append( ", journalShortname='" ).append( journalShortname ).append( '\'' );
+        sb.append( ", title='" ).append( title ).append( '\'' );
+        sb.append( ", authorLastName='" ).append( authorLastName ).append( '\'' );
+        sb.append( ", authorList='" ).append( authorList ).append( '\'' );
+        sb.append( ", email='" ).append( email ).append( '\'' );
+        sb.append( '}' );
+        return sb.toString();
     }
 }
