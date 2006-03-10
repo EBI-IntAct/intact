@@ -9,8 +9,8 @@ import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.util.SearchReplace;
 import uk.ac.ebi.intact.util.HttpProxyManager;
+import uk.ac.ebi.intact.util.SearchReplace;
 
 import java.io.*;
 import java.sql.Connection;
@@ -44,7 +44,6 @@ public class UpdateExperiments {
     public static final String NEW_LINE = System.getProperty( "line.separator" );
 
     private static ExperimentShortlabelGenerator suffixGenerator = new ExperimentShortlabelGenerator();
-
 
     ////////////////////////
     // Private methods
@@ -96,34 +95,37 @@ public class UpdateExperiments {
      * @param out             where to write the report
      */
     public static void updateExperiment( IntactHelper helper,
+                                         CvTopic yearOfPublication,
+                                         CvTopic journalName,
                                          CvTopic contactTopic,
                                          CvTopic authorListTopic,
                                          Experiment experiment,
                                          Writer out ) throws IOException {
-        String experimentShortlabel = null;
+
+        System.out.println( "=======================================================================================" );
+        System.out.println( "Updating experiment: " + experiment.getAc() + " " + experiment.getShortLabel() );
 
         // find experiment pubmed id
         String pubmedId = getPubmedId( experiment );
 
         if ( pubmedId == null ) {
             System.err.println( experiment.getShortLabel() + " doesn't have a primary-reference pubmed id." );
-            return ;
+            return;
         }
 
         try {
 
-            IntactCitation c = IntactCitationFactory.getInstance().buildCitation( pubmedId );
+            IntactCitation citation = IntactCitationFactory.getInstance().buildCitation( pubmedId );
 
             // get the year of publication
-            int year = c.getYear();
+            int year = citation.getYear();
 
             // get the first author last name
             String authorLastName = null;
-            if ( false == c.hasAuthorLastName() ) {
-                System.err.println( experiment.getShortLabel() + ", " + pubmedId + ": Could not find an author name." );
-                throw new Exception();
+            if ( false == citation.hasAuthorLastName() ) {
+                throw new Exception( experiment.getShortLabel() + ", " + pubmedId + ": Could not find an author name." );
             } else {
-                authorLastName = c.getAuthorLastName();
+                authorLastName = citation.getAuthorLastName();
             }
 
             // generate a suffix based upon the author name, the year and the pubmed ID
@@ -132,38 +134,50 @@ public class UpdateExperiments {
             // Build the shortlabel
             // Here we don't care (yet) about the suffixes ... but keeping a list of all already generated
             // shortlabel in the scope of the experimentList should allow us to generate it easily.
-            experimentShortlabel = authorLastName + "-" + year + suffix;
+            String experimentShortlabel = authorLastName + "-" + year + suffix;
 
             String current = experiment.getShortLabel();
 
             Annotation mailAnnot = null;
-            if ( contactTopic != null ) {
-                mailAnnot = new Annotation( helper.getInstitution(), contactTopic, c.getEmail() );
+            if ( citation.hasEmail() && contactTopic != null ) {
+                mailAnnot = new Annotation( helper.getInstitution(), contactTopic, citation.getEmail() );
             }
 
             Annotation authorListAnnot = null;
-            if ( c.hasAuthorList() && null != authorListTopic ) {
-                authorListAnnot = new Annotation( helper.getInstitution(), authorListTopic, c.getAuthorList() );
+            if ( citation.hasAuthorList() && null != authorListTopic ) {
+                authorListAnnot = new Annotation( helper.getInstitution(), authorListTopic, citation.getAuthorList() );
             }
 
-            if ( false == current.startsWith( experimentShortlabel ) ||
-                 false == experiment.getAnnotations().contains( mailAnnot ) ||
-                 false == experiment.getAnnotations().contains( authorListAnnot ) ) {
+            Annotation yearOfPubAnnot = null;
+            if ( null != yearOfPublication ) {
+                yearOfPubAnnot = new Annotation( helper.getInstitution(), yearOfPublication, Integer.toString( year ) );
+            }
+
+            Annotation journalAnnotation = null;
+            String journal = citation.getJournal();
+            if ( null != journalName ) {
+                journalAnnotation = new Annotation( helper.getInstitution(), journalName, journal );
+            }
+
+            // todo create a method updateUniqueAnnotation (Experiment, Annotation)
+
+            // check if the intact experiment matches the shortlabel prefix (author-year[suffix])
+            if ( current.startsWith( experimentShortlabel ) ) {
 
                 //////////////////////////////
-                // update the intact object
+                // update the experiment
 
                 boolean updated = false;
-                StringBuffer status = new StringBuffer( 64 );
-                if ( false == experiment.getShortLabel().equals( experimentShortlabel ) ) {
+                StringBuffer status = new StringBuffer( 128 );
+                if ( ! experiment.getShortLabel().equals( experimentShortlabel ) ) {
                     experiment.setShortLabel( experimentShortlabel );
                     status.append( "shortlabel" );
                     updated = true;
                 }
 
-                String title = c.getTitle();
+                String title = citation.getTitle();
 
-                if ( false == title.equals( experiment.getFullName() ) ) {
+                if ( ! title.equals( experiment.getFullName() ) ) {
                     experiment.setFullName( title );
                     if ( status.length() > 0 ) {
                         status.append( " &amp; " );
@@ -172,61 +186,42 @@ public class UpdateExperiments {
                     updated = true;
                 }
 
-                if ( contactTopic != null && c.hasEmail() ) {
-                    if ( false == experiment.getAnnotations().contains( mailAnnot ) ) {
 
-                        // persist the annotation
-                        helper.create( mailAnnot );
-
-                        experiment.addAnnotation( mailAnnot );
-                        if ( status.length() > 0 ) {
-                            status.append( " &amp; " );
-                        }
-                        status.append( "email" );
-                        updated = true;
+                if ( updateUniqueAnnotation( helper, experiment, mailAnnot ) ) {
+                    if ( status.length() > 0 ) {
+                        status.append( " &amp; " );
                     }
+                    status.append( "email" );
+                    updated = true;
                 }
 
-                if ( authorListTopic != null && c.hasAuthorList() ) {
-                    if ( false == experiment.getAnnotations().contains( authorListAnnot ) ) {
-
-                        // if it contains already one, re-use it. we consider here that there is only one.
-                        boolean found = false;
-                        for ( Iterator iterator = experiment.getAnnotations().iterator(); iterator.hasNext() &&
-                                                                                          false == found; ) {
-                            Annotation annotation = (Annotation) iterator.next();
-                            if ( CvTopic.AUTHOR_LIST.equals( annotation.getCvTopic().getShortLabel() ) ) {
-                                found = true;
-
-                                annotation.setAnnotationText( c.getAuthorList() );
-                                helper.update( annotation );
-
-                                if ( status.length() > 0 ) {
-                                    status.append( " &amp; " );
-                                }
-                                status.append( "author list" );
-                                updated = true;
-                            }
-                        }
-
-                        if ( false == found ) {
-                            // persist the annotation
-                            helper.create( authorListAnnot );
-
-                            experiment.addAnnotation( authorListAnnot );
-                            if ( status.length() > 0 ) {
-                                status.append( " &amp; " );
-                            }
-                            status.append( "author list" );
-                            updated = true;
-                        }
+                if ( updateUniqueAnnotation( helper, experiment, authorListAnnot ) ) {
+                    if ( status.length() > 0 ) {
+                        status.append( " &amp; " );
                     }
+                    status.append( "author list" );
+                    updated = true;
+                }
+
+                if ( updateUniqueAnnotation( helper, experiment, yearOfPubAnnot ) ) {
+                    if ( status.length() > 0 ) {
+                        status.append( " &amp; " );
+                    }
+                    status.append( "year of publication" );
+                    updated = true;
+                }
+
+                if ( updateUniqueAnnotation( helper, experiment, journalAnnotation ) ) {
+                    if ( status.length() > 0 ) {
+                        status.append( " &amp; " );
+                    }
+                    status.append( "journal" );
+                    updated = true;
                 }
 
                 if ( updated ) {
                     helper.update( experiment );
                 }
-
 
                 ////////////////////////////////
                 // Write report.
@@ -239,10 +234,10 @@ public class UpdateExperiments {
                 out.write( "    <td " + bodyStyle + "><a href=\"" + generateCitexploreUrl( pubmedId ) + "\" target=\"_blank\">" +
                            pubmedId +
                            "</a></td>" + NEW_LINE );
-                String email = c.getEmail();
+                String email = citation.getEmail();
                 out.write( "    <td " + bodyStyle + ">" + ( email == null ? "-" : "<code>" + email + "</code>" ) + "</td>" + NEW_LINE );
 
-                System.out.println( "\n" + StringUtils.rightPad( experiment.getAc(), 15 ) +
+                System.out.println( StringUtils.rightPad( experiment.getAc(), 15 ) +
                                     StringUtils.rightPad( current + " / " + experimentShortlabel, 50 ) +
                                     pubmedId + "   " + generateCitexploreUrl( pubmedId ) );
 
@@ -275,7 +270,7 @@ public class UpdateExperiments {
 
             // email ...
             out.write( "<td " + bodyStyle + "> &nbsp; </td>" + NEW_LINE );
-            System.out.println( "\n" + StringUtils.rightPad( experiment.getAc(), 15 ) +
+            System.out.println( StringUtils.rightPad( experiment.getAc(), 15 ) +
                                 StringUtils.rightPad( experiment.getShortLabel(), 23 ) +
                                 pubmedId + "   " + generateCitexploreUrl( pubmedId ) );
 
@@ -298,23 +293,93 @@ public class UpdateExperiments {
         }
     }
 
+    private static boolean updateUniqueAnnotation( IntactHelper helper, Experiment experiment, Annotation annotation ) throws IntactException {
+        boolean updated = false;
+        if ( annotation != null ) {
+
+            if ( annotation.getCvTopic() == null ) {
+                throw new IllegalArgumentException( "Your annotation must have a non null CvTopic." );
+            }
+
+            if ( annotation.getAnnotationText() == null ) {
+                throw new IllegalArgumentException( "Your annotation must have a non null annotationText." );
+            }
+
+            boolean found = false;
+            for ( Iterator iterator = experiment.getAnnotations().iterator(); iterator.hasNext() && ! found; ) {
+                Annotation expAnnot = (Annotation) iterator.next();
+
+                CvTopic topic = annotation.getCvTopic();
+                CvTopic eTopic = expAnnot.getCvTopic();
+
+                if ( topic.equals( eTopic ) ) {
+                    found = true;
+
+                    if ( ! annotation.getAnnotationText().equals( expAnnot.getAnnotationText() ) ) {
+                        expAnnot.setAnnotationText( annotation.getAnnotationText() );
+                        helper.update( expAnnot );
+                        updated = true;
+
+                        System.out.println( "Updated Annotation( " + annotation.getCvTopic().getShortLabel() + ", " +
+                                            annotation.getAnnotationText() + " ) on experiment " + experiment.getShortLabel() );
+                    }
+
+                }
+            } // for
+
+            if ( ! found ) {
+                // add the annotation in the experiment
+                helper.create( annotation );
+                experiment.addAnnotation( annotation );
+                helper.update( experiment );
+                System.out.println( "Added Annotation( " + annotation.getCvTopic().getShortLabel() + ", " +
+                                    annotation.getAnnotationText() + " ) to experiment " + experiment.getShortLabel() );
+                updated = true;
+            }
+        }
+
+        return updated;
+    }
+
+
+    private static Date getPastDate( int days, Date d ) {
+        Calendar calendar = new GregorianCalendar();
+
+        calendar.setTime( d );
+
+        Date now = calendar.getTime();
+
+        // back of X days
+        calendar.roll( Calendar.DAY_OF_YEAR, days );
+
+        // set to beginning of the day
+        calendar.set( Calendar.HOUR_OF_DAY, 0 );
+        calendar.set( Calendar.MINUTE, 0 );
+        calendar.set( Calendar.SECOND, 1 );
+
+        Date from = calendar.getTime();
+        return from;
+    }
 
     ////////////////////////
     // M A I N
+
+    public static final String DATE_FORMAT = "yyyy.MM.dd_HH:mm:ss";
 
     public static void main( String[] args ) throws IntactException,
                                                     IOException,
                                                     SQLException {
 
-        try{
-            //See intactCore/config/proxy.properties
+        try {
+            // setup HTTP proxy, cf. intactCore/config/proxy.properties
             HttpProxyManager.setup();
+        } catch ( HttpProxyManager.ProxyConfigurationNotFound e ) {
+            System.err.println( e.getMessage() );
         }
-        catch(HttpProxyManager.ProxyConfigurationNotFound e){
-            System.err.println(e.getMessage());
-        }
+
+        SimpleDateFormat formatter = new SimpleDateFormat( DATE_FORMAT );
+
         IntactHelper helper = null;
-        SimpleDateFormat formatter = new SimpleDateFormat( "yyyy.MM.dd@HH.mm" );
         String time = formatter.format( new Date() );
         File file = new File( "ExperimentReport-" + time + ".html" );
         System.out.println( "Output saved in " + file.getAbsolutePath() );
@@ -366,17 +431,34 @@ public class UpdateExperiments {
 
             System.out.println( experimentAcs.size() + " experiment's AC loaded." );
 
+            /**
+             * EBI-878362                     publication-year
+             * EBI-878360                     journal
+             */
+
             // search for the Cv to attach to author's email
             CvTopic authorEmail = (CvTopic) helper.getObjectByLabel( CvTopic.class, CvTopic.CONTACT_EMAIL );
             if ( authorEmail == null ) {
-                System.err.println( "Could not find CvTopic(" + CvTopic.CONTACT_EMAIL +
-                                    ")... no email will be attached/updated to the experiments." );
+                throw new IllegalStateException( "Could not find CvTopic(" + CvTopic.CONTACT_EMAIL +
+                                                 ")... no email will be attached/updated to the experiments." );
             }
 
             CvTopic authorList = (CvTopic) helper.getObjectByLabel( CvTopic.class, CvTopic.AUTHOR_LIST );
             if ( authorList == null ) {
-                System.err.println( "Could not find CvTopic(" + CvTopic.AUTHOR_LIST +
-                                    ")... no author list will be attached/updated to the experiment." );
+                throw new IllegalStateException( "Could not find CvTopic(" + CvTopic.AUTHOR_LIST +
+                                                 ")... no author list will be attached/updated to the experiment." );
+            }
+
+            CvTopic journalName = (CvTopic) helper.getObjectByLabel( CvTopic.class, "journal" );
+            if ( journalName == null ) {
+                throw new IllegalStateException( "Could not find CvTopic(" + "journal" +
+                                                 ")... no journal name will be attached/updated to the experiment." );
+            }
+
+            CvTopic yearOfPublication = (CvTopic) helper.getObjectByLabel( CvTopic.class, "publication-year" );
+            if ( yearOfPublication == null ) {
+                throw new IllegalStateException( "Could not find CvTopic(" + "year" +
+                                                 ")... no year of publication will be attached/updated to the experiment." );
             }
 
 
@@ -388,7 +470,7 @@ public class UpdateExperiments {
                 Experiment experiment = (Experiment) experiments.iterator().next();
                 experiments = null;
 
-                updateExperiment( helper, authorEmail, authorList, experiment, out );
+                updateExperiment( helper, yearOfPublication, journalName, authorEmail, authorList, experiment, out );
 
                 iterator.remove(); // empty the collection as we go
             }
