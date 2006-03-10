@@ -97,17 +97,30 @@ public class IntactCitationFactory {
         return null;
     }
 
+    private String lastPubmedId = null;
+    private IntactCitation lastCitation = null;
+
     /**
      * Based upon a pubmed Id, collect from CitExplore a subset of the information related to that publication.
      *
      * @param pubmedId the pubmed ID of the publication we want information on.
      *
-     * @return
+     * @return a citation corresponding to the given pubmed id.
      *
-     * @throws Exception
+     * @throws PublicationNotFoundException
+     * @throws UnexpectedException
      */
     public IntactCitation buildCitation( String pubmedId ) throws UnexpectedException,
                                                                   PublicationNotFoundException {
+
+        if ( pubmedId == null ) {
+            throw new IllegalArgumentException( "You must give a non null pubmed id." );
+        }
+
+        // shortcut in case we keep asking for the same pubmed id.
+        if ( pubmedId.equals( lastPubmedId ) ) {
+            return lastCitation;
+        }
 
         Citation c = null;
         try {
@@ -129,6 +142,10 @@ public class IntactCitationFactory {
 
         // build journal name as 'isoname (issn)' or 'isoname' if the issn is not available.
         String isoAbreviation = c.getJournalIssue().getJournal().getISOAbbreviation();
+        if ( isoAbreviation == null ) {
+            System.out.println( "ERROR - pubmed id " + pubmedId + "'s journal doesn't have an isoAbreviation. Use Title instead." );
+            isoAbreviation = c.getJournalIssue().getJournal().getTitle();
+        }
         String issn = c.getJournalIssue().getJournal().getISSN();
         String journal = isoAbreviation + ( issn != null && issn.trim().length() > 0 ? " (" + issn + ")" : "" );
 
@@ -186,6 +203,14 @@ public class IntactCitationFactory {
 
         }
 
-        return new IntactCitation( authorLastName, year, journal, title, authors, email );
+        IntactCitation citation = new IntactCitation( authorLastName, year, journal, title, authors, email );
+
+        // cache last request.
+        lastPubmedId = pubmedId;
+        lastCitation = citation;
+
+        return citation;
+
+
     }
 }
