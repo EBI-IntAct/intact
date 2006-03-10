@@ -226,6 +226,61 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
                 }
             }
 
+            /*********************************************************************************************
+            C r e a t i n g   j o u r n a l   a n n o t a t i o n   a n d   a d d i n g   i t
+            **********************************************************************************************/
+            String journal = eaf.getJournal();
+            if(!("".equals(journal) || null==journal)){
+                Annotation journalAnnotation = createJournalAnnotation(journal, helper);
+                CommentBean journalCb = new CommentBean(journalAnnotation);
+
+
+
+                /*
+                Work to do on the view :
+                If the view already contains an author-list CommentBean we have to update its description  with the new
+                list of author
+                */
+                boolean annotationUpdated=false;
+                List annotsAlreadyInView=view.getAnnotations();
+                for (int i = 0; i < annotsAlreadyInView.size(); i++) {
+                    CommentBean cb =  (CommentBean) annotsAlreadyInView.get(i);
+                    /*
+                    If cb's cvTopic is authorList cvTopic and if the list of authors is not the one corresponding to the
+                    pubmed Id just entered then set the description of cb with the new author list
+                    */
+                    if(CvTopic.JOURNAL.equals(cb.getTopic()) && false==journalCb.getDescription().equals(cb.getDescription())){
+                        cb.setDescription(journalCb.getDescription());
+                        annotationUpdated=true;
+                    }
+                }
+
+                /*
+                Work to do on the database :
+                If this experiment is already attached to an author-list annotation which is in the database, we
+                update the annotationText of the annotation with the new list of author.
+                */
+                if(false=="".equals(expAc) && null != expAc){
+                    Experiment exp =(Experiment) helper.getObjectByAc(Experiment.class, expAc);
+                    //get all the annotations contained in the database linked to this experiment
+                    Collection annotations = exp.getAnnotations();
+                    for (Iterator iterator = annotations.iterator(); iterator.hasNext();) {
+                        Annotation annot =  (Annotation) iterator.next();
+                        if(CvTopic.JOURNAL.equals(annot.getCvTopic().getShortLabel()) && false==journalCb.getDescription().equals(annot.getAnnotationText())){
+                            if(helper.isPersistent(annot)){
+                                annot.setAnnotationText(journalCb.getDescription());
+                                helper.update(annot);
+                            }
+                        }
+                    }
+                }
+
+                if(!view.annotationExists(journalCb) && annotationUpdated==false){
+                    view.addAnnotation(journalCb);
+                }
+
+            }
+
             /******************************************************************************
             C r e a t i n g   p u b m e d   x r e f e r e n ce   a n d   a d d i n g   i t
             ******************************************************************************/
@@ -330,6 +385,30 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
 
         return authorListAnnot;
     }
+
+
+    /**
+         * Given an authorList and an intact helper, it creates an "author-list" Annotation
+         *
+         * @param journal a String containing the name of the journ
+         * @param helper an IntactHelper object
+         * @return The journal Annotation
+         * @throws IntactException
+         */
+        public Annotation createJournalAnnotation(String journal, IntactHelper helper) throws IntactException {
+
+            Annotation journalAnnot;
+
+            CvTopic authorListTopic = (CvTopic) helper.getObjectByLabel( CvTopic.class, CvTopic.JOURNAL );
+            if ( authorListTopic == null ) {
+                System.err.println( "Could not find CvTopic(" + CvTopic.JOURNAL +
+                                    ")... no author list will be attached/updated to the experiment." );
+            }
+
+            journalAnnot = new Annotation(getService().getOwner(), authorListTopic ,journal);
+
+            return journalAnnot;
+        }
 
     /**
      * Given an authorEmail and an intact helper, it creates an "contact-email" Annotation
