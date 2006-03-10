@@ -141,13 +141,15 @@ public class IntactCitationFactory {
         int year = ( c.getJournalIssue().getYearOfPublication() ).intValue();
 
         // build journal name as 'isoname (issn)' or 'isoname' if the issn is not available.
-        String isoAbreviation = c.getJournalIssue().getJournal().getISOAbbreviation();
-        if ( isoAbreviation == null ) {
-            System.out.println( "ERROR - pubmed id " + pubmedId + "'s journal doesn't have an isoAbreviation. Use Title instead." );
-            isoAbreviation = c.getJournalIssue().getJournal().getTitle();
+        String journalName = c.getJournalIssue().getJournal().getISOAbbreviation();
+        if ( journalName == null ) {
+            journalName = c.getJournalIssue().getJournal().getMedlineAbbreviation();
+            if ( journalName == null ) {
+                throw new UnexpectedException( "PubMed id " + pubmedId + "'s journal doesn't have an isoAbreviation or medlineAbreviation.", null );
+            }
         }
         String issn = c.getJournalIssue().getJournal().getISSN();
-        String journal = isoAbreviation + ( issn != null && issn.trim().length() > 0 ? " (" + issn + ")" : "" );
+        String journal = journalName + ( issn != null && issn.trim().length() > 0 ? " (" + issn + ")" : "" );
 
         String title = c.getTitle();
         String email = getEmail( c );
