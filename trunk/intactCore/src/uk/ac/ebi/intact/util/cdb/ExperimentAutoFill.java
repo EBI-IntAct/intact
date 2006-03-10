@@ -16,7 +16,7 @@ import java.util.*;
 
 /**
  * Module used to collect information from CitExplore in order to prefill an Experiment (shortlabel, fullname, Xref,
- * Annotation). 
+ * Annotation).
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
@@ -45,19 +45,16 @@ public class ExperimentAutoFill {
         }
     };
 
-
     ////////////////////
     // Constants
 
     // set to true will display debugging message on STDOUT.
     private static final boolean _DEBUG_ = false;
 
-
     ////////////////////////
     // Instance variable
 
     private String pubmedID = null;
-
 
     //////////////////////
     // Constructor
@@ -88,7 +85,6 @@ public class ExperimentAutoFill {
             throw new UnexpectedException( "An unexpected error occured (ie. " + e.getMessage() + ")", e );
         }
     }
-
 
     ////////////////////////////
     // Private methods
@@ -139,7 +135,6 @@ public class ExperimentAutoFill {
 
         return pubmedId;
     }
-
 
     ////////////////////////////
     // Getters
@@ -208,7 +203,6 @@ public class ExperimentAutoFill {
 
         Collections.sort( allExperiments, creationDateComparator );
 
-
         // (4) add then to the Suffix generator as context
         if ( _DEBUG_ ) {
             System.out.println( "Initialise the current context" );
@@ -229,7 +223,6 @@ public class ExperimentAutoFill {
             }
         }
 
-
         // (5) get the suffix for the new experiment
         String suffix = suffixGenerator.getSuffix( authorLastName, year, pubmedID );
 
@@ -242,9 +235,7 @@ public class ExperimentAutoFill {
     }
 
     /**
-     * return a well sized fullname.
-     * <br>
-     * IntAct's experiment have constraint on the size of their fullname.
+     * return a well sized fullname. <br> IntAct's experiment have constraint on the size of their fullname.
      *
      * @return the experiment fullname.
      */
@@ -264,6 +255,13 @@ public class ExperimentAutoFill {
         return citation.getAuthorList();
     }
 
+    public String getJournal() {
+        return citation.getJournal();
+    }
+
+    public int getYear() {
+        return citation.getYear();
+    }
 
     /////////////////////////
     // D E M O
