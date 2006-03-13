@@ -6,6 +6,7 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
+import uk.ac.ebi.intact.application.commons.util.AnnotationFilter;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.BioSource;
@@ -259,7 +260,7 @@ public class BioSourceViewBean extends AbstractViewBean {
     private String getIntactType( final AnnotatedObject anAnnotatedObject ) {
 
         // TODO move that method to a higher level: AbstractViewBean ?
-        
+
         final String objectIntactType;
         final String className = anAnnotatedObject.getClass().getName();
         final String basicType = className.substring( className.lastIndexOf( "." ) + 1 );

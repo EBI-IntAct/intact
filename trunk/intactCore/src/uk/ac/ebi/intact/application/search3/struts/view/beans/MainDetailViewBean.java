@@ -1,5 +1,6 @@
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
+import uk.ac.ebi.intact.application.commons.util.AnnotationFilter;
 import uk.ac.ebi.intact.application.search3.business.Constants;
 import uk.ac.ebi.intact.application.search3.util.UrlCheckerThread;
 import uk.ac.ebi.intact.model.*;
