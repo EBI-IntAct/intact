@@ -41,7 +41,7 @@ public class CvTopic extends CvObject implements Editable {
     public static final String USED_IN_CLASS = "used-in-class";
     public static final String DEFINITION = "definition";
     public static final String HIDDEN = "hidden";
-
+    public static final String JOURNAL = "journal";
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus. This should not be here as it has no model
      * functionality but is related to eg user interfaces.
