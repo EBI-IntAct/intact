@@ -431,11 +431,6 @@ public class UpdateExperiments {
 
             System.out.println( experimentAcs.size() + " experiment's AC loaded." );
 
-            /**
-             * EBI-878362                     publication-year
-             * EBI-878360                     journal
-             */
-
             // search for the Cv to attach to author's email
             CvTopic authorEmail = (CvTopic) helper.getObjectByLabel( CvTopic.class, CvTopic.CONTACT_EMAIL );
             if ( authorEmail == null ) {
@@ -449,15 +444,15 @@ public class UpdateExperiments {
                                                  ")... no author list will be attached/updated to the experiment." );
             }
 
-            CvTopic journalName = (CvTopic) helper.getObjectByLabel( CvTopic.class, "journal" );
+            CvTopic journalName = (CvTopic) helper.getObjectByLabel( CvTopic.class, CvTopic.JOURNAL );
             if ( journalName == null ) {
-                throw new IllegalStateException( "Could not find CvTopic(" + "journal" +
+                throw new IllegalStateException( "Could not find CvTopic(" + CvTopic.JOURNAL +
                                                  ")... no journal name will be attached/updated to the experiment." );
             }
 
-            CvTopic yearOfPublication = (CvTopic) helper.getObjectByLabel( CvTopic.class, "publication-year" );
+            CvTopic yearOfPublication = (CvTopic) helper.getObjectByLabel( CvTopic.class, CvTopic.PUBLICATION_YEAR );
             if ( yearOfPublication == null ) {
-                throw new IllegalStateException( "Could not find CvTopic(" + "year" +
+                throw new IllegalStateException( "Could not find CvTopic(" + CvTopic.PUBLICATION_YEAR +
                                                  ")... no year of publication will be attached/updated to the experiment." );
             }
 
