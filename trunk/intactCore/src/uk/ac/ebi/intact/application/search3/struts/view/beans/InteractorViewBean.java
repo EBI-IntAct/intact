@@ -27,7 +27,7 @@ import java.util.*;
  * @author Chris Lewington
  * @version $Id$
  */
-public class    InteractorViewBean extends AbstractViewBean {
+public class InteractorViewBean extends AbstractViewBean {
 
     /**
      * The Protein for which the view is required.
@@ -126,18 +126,17 @@ public class    InteractorViewBean extends AbstractViewBean {
         return interactor.getShortLabel();
     }
 
-    public String getInteractorType(){
+    public String getInteractorType() {
         CvInteractorType cvInteractorType = interactor.getCvInteractorType();
-        if(cvInteractorType != null && cvInteractorType.getShortLabel() != null){
+        if ( cvInteractorType != null && cvInteractorType.getShortLabel() != null ) {
             return cvInteractorType.getShortLabel();
-        }
-        else {
-            logger.error("Interactor " + interactor.getAc() + " having no interactorType.");
-            if(interactor instanceof Protein ){
+        } else {
+            logger.error( "Interactor " + interactor.getAc() + " having no interactorType." );
+            if ( interactor instanceof Protein ) {
                 return "Protein";
-            }else if (interactor instanceof NucleicAcid) {
+            } else if ( interactor instanceof NucleicAcid ) {
                 return "Nucleic Acid";
-            }else{
+            } else {
                 return "Interactor";
             }
         }
@@ -337,27 +336,33 @@ public class    InteractorViewBean extends AbstractViewBean {
      * @return String The length of the Protein sequence, as a String
      */
     public String getSeqLength() {
-        if(interactor instanceof Polymer)
-        return Integer.toString( ((Polymer)interactor).getSequence().length() );
-        else return "no sequence";
+        if ( interactor instanceof Polymer ) {
+            return Integer.toString( ( (Polymer) interactor ).getSequence().length() );
+        } else {
+            return "no sequence";
+        }
     }
 
     /**
      * @return String the Protein's sequence.
      */
     public String getSequence() {
-        if (interactor instanceof Polymer){
-        return ((Polymer)interactor).getSequence();
-        }else return null;
+        if ( interactor instanceof Polymer ) {
+            return ( (Polymer) interactor ).getSequence();
+        } else {
+            return null;
+        }
     }
 
     /**
      * @return String the Protein's sequence checksum
      */
     public String getCheckSum() {
-        if (interactor instanceof Polymer){
-            return ((Polymer)interactor).getCrc64();
-        }else return "";
+        if ( interactor instanceof Polymer ) {
+            return ( (Polymer) interactor ).getCrc64();
+        } else {
+            return "";
+        }
     }
 
     /**
