@@ -124,17 +124,17 @@ public class SanityChecker {
         helper = new IntactHelper();
 
         featureSch = new SanityCheckerHelper(helper);
-        featureSch.addMapping(FeatureBean.class, "select ac, shortlabel, fullname, userstamp, updated from ia_feature where ac like ? ");
+        featureSch.addMapping(FeatureBean.class, "select ac, shortlabel, fullname, created_user, created from ia_feature where ac like ? ");
         featureSch.addMapping(RangeBean.class, "select ac from ia_range where feature_ac = ? ");
 
 
         objectFromAc = new SanityCheckerHelper(helper);
-        objectFromAc.addMapping(ExperimentBean.class, "select ac, shortlabel, fullname, updated, userstamp, detectmethod_ac, identmethod_ac, biosource_ac from ia_experiment where ac = ?");
-        objectFromAc.addMapping(InteractorBean.class, "select ac, shortlabel, fullname, crc64, updated, userstamp, biosource_ac, interactiontype_ac, objclass from ia_interactor where ac = ? ");
+        objectFromAc.addMapping(ExperimentBean.class, "select ac, shortlabel, fullname, created, created_user, detectmethod_ac, identmethod_ac, biosource_ac from ia_experiment where ac = ?");
+        objectFromAc.addMapping(InteractorBean.class, "select ac, shortlabel, fullname, crc64, created, created_user, biosource_ac, interactiontype_ac, objclass from ia_interactor where ac = ? ");
 
 
         deletionFeatureSch = new SanityCheckerHelper(helper);
-        deletionFeatureSch.addMapping(RangeBean.class, " select i.userstamp, i.updated, c.interaction_ac, c.interactor_ac, r.feature_ac , r.ac , r.fromintervalend, r.tointervalstart "+
+        deletionFeatureSch.addMapping(RangeBean.class, " select i.created_user, i.created, c.interaction_ac, c.interactor_ac, r.feature_ac , r.ac , r.fromintervalend, r.tointervalstart "+
                                                        " from ia_interactor i, ia_feature f, ia_range r, ia_controlledvocab ident, ia_component c, ia_controlledvocab type "+
                                                        " where i.ac = c.interaction_ac and "+
                                                              " c.ac=f.component_ac and " +
@@ -155,7 +155,7 @@ public class SanityChecker {
                                                "i.ac = ?");
 
         rangeSeqSch.addMapping(ComponentBean.class, "select interaction_ac from ia_component where ac=?");
-        rangeSeqSch.addMapping(InteractorBean.class, "select ac, userstamp, updated, objclass from ia_interactor where ac=?");
+        rangeSeqSch.addMapping(InteractorBean.class, "select ac, created_user, created, objclass from ia_interactor where ac=?");
 
         this.retrieveObjectSch = new SanityCheckerHelper(helper);
 
@@ -190,10 +190,10 @@ public class SanityChecker {
                                                      "having count(experiment_ac) > 1)");
 
         //oneIntOneExpSch.addMapping(Int2ExpBean.class, )
-        oneIntOneExpSch.addMapping(ExperimentBean.class, "select ac, shortlabel, updated, userstamp "+
+        oneIntOneExpSch.addMapping(ExperimentBean.class, "select ac, shortlabel, created, created_user "+
                                                          "from ia_experiment "+
                                                          "where ac = ? ");
-        oneIntOneExpSch.addMapping(InteractorBean.class, "select ac, objclass, shortlabel, updated, userstamp "+
+        oneIntOneExpSch.addMapping(InteractorBean.class, "select ac, objclass, shortlabel, created, created_user "+
                                                          "from ia_interactor "+
                                                          "where ac = ? ");
 
@@ -269,7 +269,7 @@ public class SanityChecker {
 
         hiddenObsoleteNotInUsed = new SanityCheckerHelper(helper);
         hiddenObsoleteNotInUsed.addMapping(ControlledvocabBean.class,
-                                          "select c.ac, c.updated, c.userstamp, c.shortlabel, c.objclass " +
+                                          "select c.ac, c.created, c.created_user, c.shortlabel, c.objclass " +
                                           "from ia_controlledvocab c, ia_cvobject2annot c2a, ia_annotation a " +
                                           "where c.ac=c2a.cvobject_ac " +
                                           "and c2a.annotation_ac=a.ac " +
@@ -312,7 +312,7 @@ public class SanityChecker {
                                           "FROM ia_int2exp " +
                                           "WHERE interaction_ac = ?");
 
-        sch.addMapping(InteractorBean.class, "SELECT ac, objclass, userstamp, updated " +
+        sch.addMapping(InteractorBean.class, "SELECT ac, objclass, created_user, created " +
                                              "FROM ia_interactor " +
                                              "WHERE ac = ? " +
                                              "AND interactiontype_ac IS NULL");
@@ -321,15 +321,15 @@ public class SanityChecker {
                                            "FROM ia_component " +
                                            "WHERE interaction_ac = ? ");
 
-        sch.addMapping(ExperimentBean.class,"SELECT biosource_ac, ac, detectmethod_ac, shortlabel, userstamp, updated " +
+        sch.addMapping(ExperimentBean.class,"SELECT biosource_ac, ac, detectmethod_ac, shortlabel, created_user, created " +
                                             "FROM ia_experiment " +
                                             "WHERE ac like ?");
 
-        sch.addMapping(XrefBean.class, "SELECT ac, database_ac, qualifier_ac, userstamp, updated "+
+        sch.addMapping(XrefBean.class, "SELECT ac, database_ac, qualifier_ac, created_user, created "+
                                        "FROM ia_xref "+
                                        "WHERE parent_ac = ?");
 
-        sch.addMapping(BioSourceBean.class,"SELECT ac, shortlabel, taxid, userstamp, updated " +
+        sch.addMapping(BioSourceBean.class,"SELECT ac, shortlabel, taxid, created_user, created " +
                                            "FROM ia_biosource " +
                                            "WHERE ac like ?");
 
@@ -339,7 +339,7 @@ public class SanityChecker {
                                                 "order by sequence_index");
 
         superCuratedSch = new SanityCheckerHelper(helper);
-        superCuratedSch.addMapping(ExperimentBean.class,"select ac, userstamp, updated, shortlabel from ia_experiment where ac not in " +
+        superCuratedSch.addMapping(ExperimentBean.class,"select ac, created_user, created, shortlabel from ia_experiment where ac not in " +
 	                                                        "(select e.ac " +
 	                                                            "from ia_experiment e, ia_exp2annot e2a, ia_annotation a " +
 	                                                            "where e.ac=e2a.experiment_ac and " +
@@ -426,7 +426,7 @@ public class SanityChecker {
         //Make sure that the obsolete or hidden cv ac is not used as a database_ac in xref
         //---------------------------------------------------------------------------------
         hiddenObsoleteNotInUsed.addMapping(XrefBean.class,
-                                           "SELECT ac, database_ac, qualifier_ac, primaryid, parent_ac, userstamp, updated "+
+                                           "SELECT ac, database_ac, qualifier_ac, primaryid, parent_ac, created_user, created "+
                                            "FROM ia_xref "+
                                            "WHERE database_ac = ? ");
         for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
@@ -443,7 +443,7 @@ public class SanityChecker {
         //Make sure that the obsolete or hidden cv ac is not used as a qualifier_ac in xref
         //---------------------------------------------------------------------------------
         hiddenObsoleteNotInUsed.addMapping(XrefBean.class,
-                                           "SELECT ac, database_ac, qualifier_ac, primaryid, parent_ac, userstamp, updated "+
+                                           "SELECT ac, database_ac, qualifier_ac, primaryid, parent_ac, created_user, created "+
                                            "FROM ia_xref "+
                                            "WHERE qualifier_ac = ? ");
        for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
@@ -461,7 +461,7 @@ public class SanityChecker {
         // Make sure that the obsolete or hidden cv ac is not used as a identification_ac in ia_feature
         //----------------------------------------------------------------------------------------------
         hiddenObsoleteNotInUsed.addMapping(FeatureBean.class,
-                                           "SELECT ac, shortlabel, fullname, userstamp, updated, identification_ac, featuretype_ac "+
+                                           "SELECT ac, shortlabel, fullname, created_user, created, identification_ac, featuretype_ac "+
                                            "FROM ia_feature "+
                                            "WHERE identification_ac = ? ");
         for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
@@ -480,7 +480,7 @@ public class SanityChecker {
         // Make sure that the obsolete or hidden cv ac is not used as a featuretype_ac in ia_feature
         //----------------------------------------------------------------------------------------------
         hiddenObsoleteNotInUsed.addMapping(FeatureBean.class,
-                                           "SELECT ac, shortlabel, fullname, userstamp, updated, identification_ac, featuretype_ac "+
+                                           "SELECT ac, shortlabel, fullname, created_user, created, identification_ac, featuretype_ac "+
                                            "FROM ia_feature "+
                                            "WHERE featuretype_ac = ? ");
         for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
@@ -498,7 +498,7 @@ public class SanityChecker {
         // Make sure that the obsolete or hidden cv ac is not used as fromFuzzyTypeAc in IA_RANGE
         //----------------------------------------------------------------------------------------------
         hiddenObsoleteNotInUsed.addMapping(RangeBean.class,
-                                           "SELECT r.ac, r.feature_ac,c.interactor_ac, c.interaction_ac, r.userstamp, r.updated, r.fromfuzzytype_ac, r.tofuzzytype_ac "+
+                                           "SELECT r.ac, r.feature_ac,c.interactor_ac, c.interaction_ac, r.created_user, r.created, r.fromfuzzytype_ac, r.tofuzzytype_ac "+
                                            "FROM ia_range r, ia_feature f, ia_component c "+
                                            "WHERE r.fromfuzzytype_ac = ? " +
                                            "AND f.ac = r.feature_ac " +
@@ -517,7 +517,7 @@ public class SanityChecker {
         // Make sure that the obsolete or hidden cv ac is not used as ToFuzzyTypeAc in IA_RANGE
         //----------------------------------------------------------------------------------------------
         hiddenObsoleteNotInUsed.addMapping(RangeBean.class,
-                                           "SELECT r.ac, r.feature_ac,c.interactor_ac, c.interaction_ac, r.userstamp, r.updated, r.fromfuzzytype_ac, r.tofuzzytype_ac "+
+                                           "SELECT r.ac, r.feature_ac,c.interactor_ac, c.interaction_ac, r.created_user, r.created, r.fromfuzzytype_ac, r.tofuzzytype_ac "+
                                            "FROM ia_range r, ia_feature f, ia_component c "+
                                            "WHERE r.tofuzzytype_ac = ? " +
                                            "AND f.ac = r.feature_ac " +
@@ -535,7 +535,7 @@ public class SanityChecker {
          //----------------------------------------------------------------------------------------------
         // Make sure that the obsolete or hidden cv ac is not used as role in IA_COMPONENT
         //----------------------------------------------------------------------------------------------
-        hiddenObsoleteNotInUsed.addMapping(ComponentBean.class, "SELECT ac, interaction_ac, interactor_ac, role, stoichiometry, userstamp, updated " +
+        hiddenObsoleteNotInUsed.addMapping(ComponentBean.class, "SELECT ac, interaction_ac, interactor_ac, role, stoichiometry, created_user, created " +
                                                                 "FROM ia_component " +
                                                                 "WHERE role = ? ");
         for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
@@ -553,7 +553,7 @@ public class SanityChecker {
         // Make sure that the obsolete or hidden cv ac is not used as interactortype in IA_INTERACTOR
         //----------------------------------------------------------------------------------------------
         hiddenObsoleteNotInUsed.addMapping(InteractorBean.class,
-                                           "select ac,  shortlabel, fullname, userstamp, updated, objclass, interactortype_ac, interactiontype_ac " +
+                                           "select ac,  shortlabel, fullname, created_user, created, objclass, interactortype_ac, interactiontype_ac " +
                                            "from ia_interactor " +
                                            "where interactortype_ac = ? ");
         for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
@@ -570,7 +570,7 @@ public class SanityChecker {
         // Make sure that the obsolete or hidden cv ac is not used as interactiontype in IA_INTERACTOR
         //----------------------------------------------------------------------------------------------
         hiddenObsoleteNotInUsed.addMapping(InteractorBean.class,
-                                           "select ac,  shortlabel, fullname, userstamp, updated, objclass, interactortype_ac, interactiontype_ac " +
+                                           "select ac,  shortlabel, fullname, created_user, created, objclass, interactortype_ac, interactiontype_ac " +
                                            "from ia_interactor " +
                                            "where interactiontype_ac = ? ");
         for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
@@ -587,7 +587,7 @@ public class SanityChecker {
         // Make sure that the obsolete or hidden cv ac is not used as proteinform in IA_INTERACTOR
         //----------------------------------------------------------------------------------------------
         hiddenObsoleteNotInUsed.addMapping(InteractorBean.class,
-                                           "select ac, shortlabel, fullname, userstamp, updated, objclass, interactortype_ac, interactiontype_ac, proteinform_ac " +
+                                           "select ac, shortlabel, fullname, created_user, created, objclass, interactortype_ac, interactiontype_ac, proteinform_ac " +
                                            "from ia_interactor " +
                                            "where proteinform_ac = ? ");
         for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
@@ -605,7 +605,7 @@ public class SanityChecker {
         //----------------------------------------------------------------------------------------------
 
         hiddenObsoleteNotInUsed.addMapping(BioSourceBean.class,
-                                           "select ac, shortlabel, fullname, tissue_ac, celltype_ac, userstamp, updated " +
+                                           "select ac, shortlabel, fullname, tissue_ac, celltype_ac, created_user, created " +
                                            "from ia_biosource " +
                                            "where tissue_ac = ? ");
         for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
@@ -624,7 +624,7 @@ public class SanityChecker {
         //----------------------------------------------------------------------------------------------
 
         hiddenObsoleteNotInUsed.addMapping(BioSourceBean.class,
-                                           "select ac, shortlabel, fullname, tissue_ac, celltype_ac, userstamp, updated " +
+                                           "select ac, shortlabel, fullname, tissue_ac, celltype_ac, created_user, created " +
                                            "from ia_biosource " +
                                            "where celltype_ac = ? ");
         for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
@@ -642,7 +642,7 @@ public class SanityChecker {
         // Make sure that the obsolete or hidden cv ac is not used as detectmethod_ac in IA_EXPERIMENT
         //----------------------------------------------------------------------------------------------
         hiddenObsoleteNotInUsed.addMapping(ExperimentBean.class,
-                                           "select ac, shortlabel, fullname, detectmethod_ac, identmethod_ac, userstamp, updated " +
+                                           "select ac, shortlabel, fullname, detectmethod_ac, identmethod_ac, created_user, created " +
                                            "from ia_experiment " +
                                            "where detectmethod_ac = ? ");
         for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
@@ -660,7 +660,7 @@ public class SanityChecker {
         // Make sure that the obsolete or hidden cv ac is not used as identmethod_ac in IA_EXPERIMENT
         //----------------------------------------------------------------------------------------------
         hiddenObsoleteNotInUsed.addMapping(ExperimentBean.class,
-                                           "select ac, shortlabel, fullname, detectmethod_ac, identmethod_ac, userstamp, updated " +
+                                           "select ac, shortlabel, fullname, detectmethod_ac, identmethod_ac, created_user, created " +
                                            "from ia_experiment " +
                                            "where identmethod_ac = ? ");
         for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
@@ -679,7 +679,7 @@ public class SanityChecker {
         //----------------------------------------------------------------------------------------------
 
         hiddenObsoleteNotInUsed.addMapping(AnnotationBean.class,
-                                           "select ac, description, topic_ac, userstamp, updated " +
+                                           "select ac, description, topic_ac, created_user, created " +
                                            "from ia_annotation " +
                                            "where topic_ac = ? ");
         for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
@@ -697,7 +697,7 @@ public class SanityChecker {
         // Make sure that the obsolete or hidden cv ac is not used as aliastype_ac in IA_ALIAS
         //----------------------------------------------------------------------------------------------
         hiddenObsoleteNotInUsed.addMapping(AliasBean.class,
-                                           "select ac, parent_ac, name, userstamp, updated " +
+                                           "select ac, parent_ac, name, created_user, created " +
                                            "from ia_alias " +
                                            "where aliastype_ac = ? ");
         for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
@@ -1226,11 +1226,11 @@ public class SanityChecker {
 
 
     public void cvInteractionChecker(SanityCheckerHelper sch) throws SQLException, IntactException {
-        sch.addMapping(ControlledvocabBean.class, "select ac, updated, userstamp, shortlabel, objclass " +
+        sch.addMapping(ControlledvocabBean.class, "select ac, created, created_user, shortlabel, objclass " +
                                                   "from ia_controlledvocab " +
                                                   "where objclass='" + CvInteraction.class.getName() + "' " +
                                                   "minus " +
-                                                  "select cv.ac, cv.updated, cv.userstamp, cv.shortlabel, cv.objclass " +
+                                                  "select cv.ac, cv.created, cv.created_user, cv.shortlabel, cv.objclass " +
                                                   "from ia_controlledvocab cv, ia_cvobject2annot cv2a, ia_annotation a " +
                                                   "where cv.objclass ='" + CvInteraction.class.getName() + "' " +
                                                   "and a.ac=cv2a.annotation_ac " +
@@ -1486,7 +1486,7 @@ public class SanityChecker {
             AnnotatedBean annotatedBean =  (AnnotatedBean) annotatedBeans.get(i);
 
             if(Protein.class.getName().equals(annotatedType)){
-                annotationTopic.addMapping(AnnotationBean.class,  "select a.ac, a.topic_ac, a.updated, a.userstamp " +
+                annotationTopic.addMapping(AnnotationBean.class,  "select a.ac, a.topic_ac, a.created, a.created_user " +
                                                                   "from ia_annotation a, " +
                                                                   "ia_int2annot i2a " +
                                                                   "where a.ac=i2a.annotation_ac and "+
@@ -1495,7 +1495,7 @@ public class SanityChecker {
                 checkAnnotationTopic(annotationBeans, annotatedBean, Protein.class.getName(),usableTopic);
             }
             else if(Interaction.class.getName().equals(annotatedType)){
-                annotationTopic.addMapping(AnnotationBean.class,  "select a.ac, a.topic_ac, a.updated, a.userstamp " +
+                annotationTopic.addMapping(AnnotationBean.class,  "select a.ac, a.topic_ac, a.created, a.created_user " +
                                                                   "from ia_annotation a, " +
                                                                   "ia_int2annot i2a " +
                                                                   "where a.ac=i2a.annotation_ac and "+
@@ -1504,7 +1504,7 @@ public class SanityChecker {
                 checkAnnotationTopic(annotationBeans, annotatedBean, Interaction.class.getName(),usableTopic);
             }
             else if (Experiment.class.getName().equals(annotatedType)){
-                annotationTopic.addMapping(AnnotationBean.class,  "select a.ac, a.topic_ac, a.updated, a.userstamp " +
+                annotationTopic.addMapping(AnnotationBean.class,  "select a.ac, a.topic_ac, a.created, a.created_user " +
                                                                   "from ia_annotation a, " +
                                                                   "ia_exp2annot e2a " +
                                                                   "where a.ac=e2a.annotation_ac and "+
@@ -1513,7 +1513,7 @@ public class SanityChecker {
                 checkAnnotationTopic(annotationBeans, annotatedBean, Experiment.class.getName(),usableTopic);
             }
             else if (BioSource.class.getName().equals(annotatedType)){
-                annotationTopic.addMapping(AnnotationBean.class,  "select a.ac, a.topic_ac, a.updated, a.userstamp " +
+                annotationTopic.addMapping(AnnotationBean.class,  "select a.ac, a.topic_ac, a.created, a.created_user " +
                                                                   "from ia_annotation a, " +
                                                                   "ia_biosource2annot bs2a " +
                                                                   "where a.ac=bs2a.annotation_ac and "+
@@ -1522,7 +1522,7 @@ public class SanityChecker {
                 checkAnnotationTopic(annotationBeans, annotatedBean, BioSource.class.getName(),usableTopic);
 
             } if (CvObject.class.getName().equals(annotatedType)){
-                annotationTopic.addMapping(AnnotationBean.class,  "select a.ac, a.topic_ac, a.updated, a.userstamp " +
+                annotationTopic.addMapping(AnnotationBean.class,  "select a.ac, a.topic_ac, a.created, a.created_user " +
                                                                   "from ia_annotation a, " +
                                                                   "ia_cvobject2annot cv2a " +
                                                                   "where a.ac=cv2a.annotation_ac and "+
@@ -1590,7 +1590,7 @@ public class SanityChecker {
         *     Check on interactor
         */
         SanityCheckerHelper schIntAc = new SanityCheckerHelper(scn.helper);
-        schIntAc.addMapping(InteractorBean.class,"SELECT ac, shortlabel, userstamp, updated, objclass "+
+        schIntAc.addMapping(InteractorBean.class,"SELECT ac, shortlabel, created_user, created, objclass "+
                                                  "FROM ia_interactor "+
                                                  "WHERE objclass = '"+InteractionImpl.class.getName()+ "'"  +
                                                 " AND ac like ?");
@@ -1624,7 +1624,7 @@ public class SanityChecker {
 
         List xrefBeans = schIntAc.getBeans(XrefBean.class,CvDatabase.UNIPROT);
 
-        scn.sch.addMapping(InteractorBean.class,"SELECT i.ac,i.objclass, i.shortlabel, i.biosource_ac, i.userstamp, i.updated "+
+        scn.sch.addMapping(InteractorBean.class,"SELECT i.ac,i.objclass, i.shortlabel, i.biosource_ac, i.created_user, i.created "+
                                                 "FROM ia_interactor i, ia_xref x "+
                                                 "WHERE i.ac = x.parent_ac AND " +
                                                 "0 = ( SELECT count(1) " +
@@ -1641,7 +1641,7 @@ public class SanityChecker {
             scn.duplicatedProtein(xrefBean);
         }
 
-        schIntAc.addMapping(XrefBean.class,"select ac, userstamp, updated, database_ac, primaryid,parent_ac "+
+        schIntAc.addMapping(XrefBean.class,"select ac, created_user, created, database_ac, primaryid,parent_ac "+
                                            "from ia_xref "+
                                             "where ac like ?");
                                             //"where ac ='EBI-695273' and ac like ?");
@@ -1673,7 +1673,7 @@ public class SanityChecker {
         */
        //right now not actual using, as concerning checks appear to commented out
 
-        schIntAc.addMapping(InteractorBean.class,"SELECT ac, crc64, shortlabel, userstamp, updated, objclass "+
+        schIntAc.addMapping(InteractorBean.class,"SELECT ac, crc64, shortlabel, created_user, created, objclass "+
                                                  "FROM ia_interactor "+
                                                  "WHERE objclass = '"+ProteinImpl.class.getName()+
                                                  "' AND ac like ?");
@@ -1693,7 +1693,7 @@ public class SanityChecker {
         */
 
             //tested
-             schIntAc.addMapping(AnnotationBean.class, "SELECT ac, description, updated, userstamp "+
+             schIntAc.addMapping(AnnotationBean.class, "SELECT ac, description, created, created_user "+
                                                        "FROM ia_annotation "+
                                                        "WHERE topic_ac = 'EBI-18' and ac like ?"
                                                         );
@@ -1705,7 +1705,7 @@ public class SanityChecker {
             *    Check on controlledvocab
             */
 
-             schIntAc.addMapping(ControlledvocabBean.class,"SELECT ac, objclass, shortlabel, updated, userstamp "+
+             schIntAc.addMapping(ControlledvocabBean.class,"SELECT ac, objclass, shortlabel, created, created_user "+
                                                            "FROM ia_controlledvocab "+
                                                            "WHERE ac = ?");
             List controlledvocabBeans = schIntAc.getBeans(ControlledvocabBean.class, "%");

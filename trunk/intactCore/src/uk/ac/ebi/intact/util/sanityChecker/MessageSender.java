@@ -127,8 +127,8 @@ public class MessageSender {
     public void addMessage (ReportTopic topic, RangeBean rangeBean, ControlledvocabBean cv ){
         String editorUrl;
 
-        String user = rangeBean.getUserstamp();
-        Timestamp date = rangeBean.getUpdated();
+        String user = rangeBean.getCreated_user();
+        Timestamp date = rangeBean.getCreated();
 
 
         String userMessageReport="";
@@ -182,8 +182,8 @@ public class MessageSender {
 
         String editorUrl;// = editorUrlBuilder.getEditorUrl(intactBean);
 
-        String user = intactBean.getUserstamp();
-        Timestamp date = intactBean.getUpdated();
+        String user = intactBean.getCreated_user();
+        Timestamp date = intactBean.getCreated();
 
 
         String userMessageReport="";
@@ -350,8 +350,8 @@ public class MessageSender {
 
     public void addMessage( ReportTopic topic, InteractorBean interactionBean, List experimentBeans ) throws SQLException {
 
-        String user = interactionBean.getUserstamp();
-        Timestamp date = interactionBean.getUpdated();
+        String user = interactionBean.getCreated_user();
+        Timestamp date = interactionBean.getCreated();
 
         StringBuffer sbUserMessageReport = new StringBuffer();
         StringBuffer sbAdminMessageReport = new StringBuffer();
@@ -373,8 +373,8 @@ public class MessageSender {
 
                 String experimentEditorUrl = editorUrlBuilder.getEditorUrl(experimentBean);
 
-                String experimentUser = experimentBean.getUserstamp();
-                Timestamp experimentDate = experimentBean.getUpdated();
+                String experimentUser = experimentBean.getCreated_user();
+                Timestamp experimentDate = experimentBean.getCreated();
                 String[] rowValues2 = new String[4];
                 rowValues2[0] ="<a href="+ experimentEditorUrl + ">"+  experimentBean.getAc() + "</a>";
                 rowValues2[1] =experimentBean.getShortlabel();
@@ -400,8 +400,8 @@ public class MessageSender {
     public void addMessage (ReportTopic topic, RangeBean rangeBean){
         String editorUrl;
 
-        String user = rangeBean.getUserstamp();
-        Timestamp date = rangeBean.getUpdated();
+        String user = rangeBean.getCreated_user();
+        Timestamp date = rangeBean.getCreated();
 
 
         String userMessageReport="";
@@ -449,8 +449,8 @@ public class MessageSender {
 
         String editorUrl;// = editorUrlBuilder.getEditorUrl(intactBean);
 
-        String user = intactBean.getUserstamp();
-        Timestamp date = intactBean.getUpdated();
+        String user = intactBean.getCreated_user();
+        Timestamp date = intactBean.getCreated();
 
 
         String userMessageReport="";
@@ -545,8 +545,8 @@ public class MessageSender {
 
      public void addMessage( ReportTopic topic, IntactBean intactBean, String message ) throws SQLException {
 
-        String user = intactBean.getUserstamp();
-        Timestamp date = intactBean.getUpdated();
+        String user = intactBean.getCreated_user();
+        Timestamp date = intactBean.getCreated();
 
 
         String userMessageReport="";
@@ -614,8 +614,8 @@ public class MessageSender {
             // Build users report
             if(intactBean instanceof InteractorBean){
                 InteractorBean interactorBean = (InteractorBean) intactBean;
-                String user = intactBean.getUserstamp();
-                Timestamp date = intactBean.getUpdated();
+                String user = intactBean.getCreated_user();
+                Timestamp date = intactBean.getCreated();
                 if(!users.contains(user)){
                     users.add(user);
                 }
@@ -650,8 +650,8 @@ public class MessageSender {
      */
     public void addMessage( ReportTopic topic, AnnotationBean annotationBean,  String topicShortlabel) throws SQLException, IntactException {//( ReportTopic topic, AnnotationBean annotationBean, AnnotatedBean annotatedBean, String annotatedType, String topicShortlabel) throws SQLException, IntactException {
        //TOPICAC_NOT_VALID
-        String user = annotationBean.getUserstamp();
-        Timestamp date = annotationBean.getUpdated();
+        String user = annotationBean.getCreated_user();
+        Timestamp date = annotationBean.getCreated();
 
         AnnotatedBean annotatedBean = SanityCheckerHelper.getAnnotatedBeanFromAnnotation(annotationBean.getAc());
 
@@ -695,8 +695,8 @@ public class MessageSender {
         String userMessageReport = null;
         String adminMessageReport = null;
 
-        String user = annotatedBean.getUserstamp();
-        Timestamp date = annotatedBean.getUpdated();
+        String user = annotatedBean.getCreated_user();
+        Timestamp date = annotatedBean.getCreated();
 
         String[] rowValues = new String[4];
         FeatureBean featureBean = (FeatureBean) annotatedBean;
@@ -724,8 +724,8 @@ public class MessageSender {
         AnnotatedBean annotatedBean = SanityCheckerHelper.getAnnotatedBeanFromAnnotation(annotationBean.getAc());
         String annotatedBeanType = getTypeFromIntactBean(annotatedBean);
 
-        String user = annotatedBean.getUserstamp();
-        Timestamp date = annotatedBean.getUpdated();
+        String user = annotatedBean.getCreated_user();
+        Timestamp date = annotatedBean.getCreated();
 
         String[] rowValues = new String[7];
         if(annotatedBean instanceof FeatureBean){
@@ -1093,7 +1093,7 @@ public class MessageSender {
          IntactHelper intactHelper = new IntactHelper();
          SanityCheckerHelper sch = new SanityCheckerHelper(intactHelper);
 
-         sch.addMapping(InteractorBean.class,"select i.ac, i.objclass, i.userstamp, i.updated, i.fullname, i.shortlabel "+
+         sch.addMapping(InteractorBean.class,"select i.ac, i.objclass, i.created_user, i.created, i.fullname, i.shortlabel "+
                                          "from ia_interactor i, ia_component c, ia_feature f "+
                                          "where i.ac=c.interaction_ac and c.ac=f.component_ac and f.ac=?");
 
