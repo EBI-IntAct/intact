@@ -7,17 +7,15 @@ package uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.b
 
 import org.apache.log4j.Logger;
 import org.apache.ojb.broker.query.Query;
+import uk.ac.ebi.intact.application.commons.util.AnnotationFilter;
 import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.view.bean.CvBean;
 import uk.ac.ebi.intact.application.search3.business.Constants;
-import uk.ac.ebi.intact.application.search3.struts.view.beans.AnnotationFilter;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.ObjectBridgeQueryFactory;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * This class provides method to retrieve the list of shortlabel for different CVs.
@@ -53,8 +51,9 @@ public class CvLists {
 
     /**
      * Collects all objects of the specified type and filter out hidden and obsolete terms.
+     *
      * @param clazz the class we want to get all instances of.
-     * @param list the list to populate.
+     * @param list  the list to populate.
      */
     public void addMenuListItem( Class clazz, Collection list ) {
 
@@ -76,13 +75,13 @@ public class CvLists {
             }
 
         } catch ( IntactException e ) {
-            logger.error("Error while loading CV terms", e);
+            logger.error( "Error while loading CV terms", e );
         } finally {
             if ( helper != null ) {
                 try {
                     helper.closeStore();
                 } catch ( IntactException e ) {
-                    logger.error("Error while closing IntactHelper", e);
+                    logger.error( "Error while closing IntactHelper", e );
                 }
             }
         }
@@ -98,7 +97,7 @@ public class CvLists {
      */
     public Collection initCVDatabaseList() throws IntactException {
 
-        if( this.cvDatabase != null ){
+        if ( this.cvDatabase != null ) {
             // use cache.
             return this.cvDatabase;
         }
@@ -114,6 +113,27 @@ public class CvLists {
         return this.cvDatabase;
     }
 
+    private Collection sortCvBeanAlphabeticaly( Collection list ) {
+
+        if ( list == null ) {
+            return Collections.EMPTY_LIST;
+        }
+
+        ArrayList toSort = new ArrayList( list );
+
+        // sort alphabetically on shortlabel.
+        Collections.sort( toSort, new Comparator() {
+            public int compare( Object o1, Object o2 ) {
+                CvBean cv1 = (CvBean) o1;
+                CvBean cv2 = (CvBean) o2;
+
+                return cv1.getShortlabel().compareTo( cv2.getShortlabel() );
+            }
+        } );
+
+        return toSort;
+    }
+
     /**
      * this method retrieves all CvTopic objects and creates one Bean per object. These beans store information (ac,
      * shortlabel, fullname) about the object and are all added into a collection
@@ -124,12 +144,13 @@ public class CvLists {
      */
     public Collection initCVTopicList() throws IntactException {
 
-        if( this.cvTopic != null ){
+        if ( this.cvTopic != null ) {
             // use cache.
             return this.cvTopic;
         }
 
         Collection topics = null;
+
         this.cvTopic = new ArrayList();
         // add an empty CV bean for the default case
         CvBean emptyBean = new CvBean( null, "-all topics-", "all topics selected" );
@@ -140,13 +161,12 @@ public class CvLists {
 
         try {
             helper = new IntactHelper();
-            topics = helper.search( CvTopic.class.getName(), "ac", null );
+            topics = helper.search( CvTopic.class, "ac", null );
             for ( Iterator iterator = topics.iterator(); iterator.hasNext(); ) {
                 CvTopic cvTo = (CvTopic) iterator.next();
 
                 // remove 'no-export' CvTopic
-                if( false == AnnotationFilter.getInstance().isFilteredOut( cvTo ) ) {
-
+                if ( ! AnnotationFilter.getInstance().isFilteredOut( cvTo ) ) {
                     // do not insert the topic 'remark-interal', it should not be seen from outside
                     bean = new CvBean( cvTo.getAc(), cvTo.getShortLabel(), cvTo.getFullName() );
                     this.cvTopic.add( bean );
@@ -164,6 +184,10 @@ public class CvLists {
                 }
             }
         }
+
+        // sort the list by shortlabel
+        this.cvTopic = sortCvBeanAlphabeticaly( this.cvTopic );
+
         return this.cvTopic;
     }
 
@@ -177,7 +201,7 @@ public class CvLists {
      */
     public Collection initCVInteractionList() throws IntactException {
 
-        if( this.cvInteraction != null ){
+        if ( this.cvInteraction != null ) {
             // use cache.
             return this.cvInteraction;
         }
@@ -188,6 +212,9 @@ public class CvLists {
         this.cvInteraction.add( emptyBean );
 
         addMenuListItem( CvInteraction.class, this.cvInteraction );
+
+        // sort the list by shortlabel
+        this.cvInteraction = sortCvBeanAlphabeticaly( this.cvInteraction );
 
         return this.cvInteraction;
     }
@@ -202,7 +229,7 @@ public class CvLists {
      */
     public Collection initCVInteractionTypeList() throws IntactException {
 
-        if( this.cvInteractionType != null ){
+        if ( this.cvInteractionType != null ) {
             // use cache.
             return this.cvInteractionType;
         }
@@ -212,6 +239,7 @@ public class CvLists {
         CvBean emptyBean = new CvBean( null, "-no CvInteractionType-", "no CvInteractionType selected" );
         this.cvInteractionType.add( emptyBean );
 
+        // sort the list by shortlabel
         addMenuListItem( CvInteractionType.class, this.cvInteractionType );
 
         return this.cvInteractionType;
@@ -227,7 +255,7 @@ public class CvLists {
      */
     public Collection initCVIdentificationList() throws IntactException {
 
-        if( this.cvIdentification != null ){
+        if ( this.cvIdentification != null ) {
             // use cache.
             return this.cvIdentification;
         }
@@ -238,6 +266,9 @@ public class CvLists {
         this.cvIdentification.add( emptyBean );
 
         addMenuListItem( CvIdentification.class, this.cvIdentification );
+
+        // sort the list by shortlabel
+        this.cvIdentification = sortCvBeanAlphabeticaly( this.cvIdentification );
 
         return this.cvIdentification;
     }
