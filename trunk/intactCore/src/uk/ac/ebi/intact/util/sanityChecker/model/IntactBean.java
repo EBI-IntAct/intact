@@ -21,6 +21,27 @@ public class IntactBean {
 
     private String userstamp;
 
+    private Timestamp created;
+
+    public Timestamp getCreated() {
+        return created;
+    }
+
+    public void setCreated(Timestamp created) {
+        this.created = created;
+    }
+
+    public String getCreated_user() {
+        return created_user;
+    }
+
+    public void setCreated_user(String created_user) {
+        this.created_user = created_user;
+    }
+
+    private String created_user;
+
+
     public IntactBean() {
     }
 
