@@ -93,7 +93,6 @@
             </blockquote>
         </section>
 
-
         <section name="data" title="Data">
 
             <section name="download" title="Download">
@@ -538,6 +537,101 @@
 
                     <blockquote>
                     </blockquote>
+
+                </section>
+
+                <section title="External linking to IntAct" name="external.linking">
+
+                    <ul>
+                        <li>
+                            <b>general search</b>
+                            <br/>
+                            <p>
+                                http://www.ebi.ac.uk/intact/search/do/search?searchString=
+                                <b>
+                                    <font color="blue">&lt;query.string&gt;</font>
+                                </b>
+                                <!--[&searchClass=<b><font color="red">&lt;object.name&gt;</font></b>]-->
+                            </p>
+                            <b>
+                                <font color="blue">&lt;query.string&gt;</font>
+                            </b>
+                            is the user query that the searched object should match.
+                            <br/>
+                            Wildcards are supported.
+                            <br/>
+                            it can be either:
+                            <ul>
+                                <li>AC</li>
+                                <li>shortlabel</li>
+                                <li>fullname</li>
+                                <li>Xref (UniProt, GO, FlyBase, SGD, Interpro...)</li>
+                                <li>Alias (gene name, locus, orf ...)</li>
+                            </ul>
+                            <br/>
+
+                        </li>
+
+                        <li>
+                            <b>Known partners of a protein</b>
+                            <br/>
+                            <p>
+                                http://www.ebi.ac.uk/intact/search/do/search?searchString=
+                                <b>
+                                    <font color="blue">&lt;protein&gt;</font>
+                                </b>
+                            </p>
+                            <b>
+                                <font color="blue">&lt;protein&gt;</font>
+                            </b>
+                            should be either the AC, shortlabel,
+                            alias or Xref (eg. UniProt ID) of a Protein.
+                            <br/>
+                            Wildcards are supported.
+                            <br/>
+                            <br/>
+                        </li>
+
+                        <li>
+                            <b>Binary interactions</b>
+                            <br/>
+                            <p>
+                                http://www.ebi.ac.uk/intact/search/do/search?binary=
+                                <b>
+                                    <font color="red">&lt;protein1&gt;</font>
+                                </b>
+                                ,
+                                <b>
+                                    <font color="blue">&lt;protein2&gt;</font>
+                                </b>
+                            </p>
+                            This URL will give you all the binary interactions for two given proteins contained within
+                            IntAct.
+                            There are cases when
+                            <b>
+                                <font color="red">&lt;protein1&gt;</font>
+                            </b>
+                            and
+                            <b>
+                                <font color="blue">&lt;protein2&gt;</font>
+                            </b>
+                            will be the same, for example in the case of a homodimer or when an interaction is
+                            demonstrated between different modified forms of the same protein (e.g. Flag-tagged and
+                            wild-type).
+                            <br/>
+                            <b>
+                                <font color="red">&lt;protein1&gt;</font>
+                            </b>
+                            and
+                            <b>
+                                <font color="blue">&lt;protein2&gt;</font>
+                            </b>
+                            should be either the AC, shortlabel, alias or Xref (eg. UniProt ID) of a Protein.
+                            <br/>
+                            Wildcards are supported but we encourage you to give a specific protein descriptor.
+                        </li>
+
+                    </ul>
 
                 </section>
 
