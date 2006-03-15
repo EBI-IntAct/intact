@@ -243,16 +243,17 @@ The following mailing lists have been set up:
     <tr><td align="right">
         <a href="http://www.cordis.lu/life/">
             <img src="http://iims.ebi.ac.uk/euroflag.gif" width=75 height=50 alt="Fundings"
-                 align="left" border="0"></a>
-    </td><td align="left">
+                 border="0"></a>
+    </td>
+        <td align="left">
                 <span class="text">Funded by EU grant number QLRI-CT-2001-00015
                 under the RTD programme "Quality of Life and Management of Living
                 Resources".</span>
-    </td></tr>
+        </td></tr>
     <tr><td align="right">
         <a href="http://www.ebi.ac.uk/proteomics/">
             <img src="http://www.ebi.ac.uk/Groups/images/logo_proteomics_small.gif"
-                 width=75 height=50 alt="Proteomics Services Team" align="left" border="0"></a>
+                 width=75 height=50 alt="Proteomics Services Team" border="0"></a>
     </td><td align="left">
         <span class="text">Part of the Proteomics Services Team.</span>
     </td></tr>
@@ -265,8 +266,15 @@ The following mailing lists have been set up:
         <span class="text">Hosted by Sourceforge.net.</span>
     </td></tr>
     <tr><td align="right">
+        <a href="http://www.jetbrains.com/idea/" target="_blank"><img border="0" alt="Developed with IntelliJ IDEA"
+                                                                      title="Developed with IntelliJ IDEA"
+                                                                      src="http://www.jetbrains.com/img/linklogos/idea125x37_1.gif"/></a>
+    </td><td align="left">
+        <span class="text">Developed with IntelliJ IDEA</span>
+    </td></tr>
+    <tr><td align="right">
         <a href="http://www.yourkit.com"><img src="http://www.ebi.ac.uk/intact/images/yourkit.gif"
-                                              alt="YourKit" width=100 align="left" border="0" height="36">
+                                              alt="YourKit" width=100 border="0" height="36">
         </a>
     </td><td align="left">
         <span class="text">Profiled by YourKit Java Profiler.</span>
