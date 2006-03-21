@@ -40,18 +40,18 @@ DETAILED INSTALLATION NOTES
 To install and run the intact software you must have the following installed in your
 environment (or, for the DBs, at least have access to them over the network):
 
-	- java JDK 1.4
+	- java JDK 5.0
 	  see http://java.sun.com/j2se/downloads.html
 	- ant 1.6.5 or above (all the intact build process relies on ant)
 	  see http://ant.apache.org/bindownload.cgi
-	- Tomcat Light Edition, for JDK 1.4 (preferably 4.1.1.8 LE)
-        see http://jakarta.apache.org/builds/jakarta-tomcat-4.0/release/v4.1.18/bin/
-	- either Postgres 7.2 or Oracle 8.1.6 (or higher)
+	- Tomcat 5.5.x
+        see http://tomcat.apache.org/download-55.cgi
+	- either Postgres 8.x or Oracle 9i (or higher)
         for postgres see http://www.postgresql.org/mirrors-ftp.html
 
 For hierarchView:
 
-	- Apache Axis web application (1.0beta2) for web services (for use with the HierarchView application)
+	- Apache Axis web application (1.x) for web services (for use with the HierarchView application)
 	  see http://ws.apache.org/axis/
 	- Tulip, the graph rendering library which is needed by HierarchView
 	  see http://www.tulip-software.org/
@@ -84,7 +84,7 @@ remote postgres databases as well as a remote oracle DB. Thus intact is based ar
 have Windows then everything can still be used provided you have cygwin installed.
 
 
-For postgres 7.x:
+For postgres 8.x:
     To allow all computer in the local network to connect to the database you have to configure the file 'pg_hba.conf'
     in your postgres directory.
     e.g:
@@ -92,8 +92,8 @@ For postgres 7.x:
     # TYPE  DATABASE    USER        IP-ADDRESS        IP-MASK           METHOD
     host    all         all         127.0.0.0         255.0.0.0         trust
 
-    See also http://www.postgresql.org/docs/7.x/interactive/client-authentication.html#AUTH-PG-HBA-CONF
-    (replace the '7.x' in the URL with your postgres version)
+    See also http://www.postgresql.org/docs/8.x/interactive/client-authentication.html#AUTH-PG-HBA-CONF
+    (replace the '8.x' in the URL with your postgres version)
 
     
 2. Setup
@@ -110,7 +110,7 @@ c.) You have to download the relevant jdbc driver for your database and store th
 
     Here are locations from which you can download JDBC drivers for wither PostgreSQL and Oracle:
 
-        - Postgres users should download the relevant jdbc-driver for your postgres version from
+        - Postgres users should download the relevant jdbc-driver (JDBC 2 EE if using pooling) for your postgres version from
           http://jdbc.postgresql.org/download.html#jars
 
         - Oracle users should download the relevant jdbc-driver for your oracle version from
