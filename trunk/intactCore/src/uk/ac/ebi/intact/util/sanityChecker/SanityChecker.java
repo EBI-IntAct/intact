@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.sql.SQLException;
 import java.io.IOException;
+import java.math.BigDecimal;
 
 import org.apache.commons.httpclient.HttpURL;
 import org.apache.commons.httpclient.URIException;
@@ -38,6 +39,8 @@ import org.apache.ojb.broker.accesslayer.LookupException;
  * @version $Id$
  */
 public class SanityChecker {
+
+
     private int duplicProt = 0;
     private SanityCheckerHelper sch;
 
@@ -793,10 +796,16 @@ public class SanityChecker {
                         enzymeTargetCount++;
                     } else if ( neutralCvBean.getAc().equals( componentBean.getRole()  ) ) {
                         neutralCount++;
-                        neutralStoichiometry = componentBean.getStoichiometry();
+                        BigDecimal value = componentBean.getStoichiometry();
+                        if(value != null){
+                            neutralStoichiometry = value.intValue();
+                        }
                     } else if ( selfCvBean.getAc().equals( componentBean.getRole()  ) ) {
                         selfCount++;
-                        selfStoichiometry = componentBean.getStoichiometry();
+                        BigDecimal value = componentBean.getStoichiometry();
+                        if(value != null){
+                            neutralStoichiometry = value.intValue();
+                        }
                     } else if ( unspecifiedCvBean.getAc().equals( componentBean.getRole()  ) ) {
                         unspecifiedCount++;
                     } else if ( fluorophoreDonorCvBean.getAc().equals( componentBean.getRole() )){
@@ -900,8 +909,10 @@ public class SanityChecker {
         List ExperimentBeans = superCuratedSch.getBeans(ExperimentBean.class, "%" );
         for (int i = 0; i < ExperimentBeans.size(); i++) {
             ExperimentBean experimentBean =  (ExperimentBean) ExperimentBeans.get(i);
-            messageSender.addMessage(ReportTopic.EXPERIMENT_NOT_ACCEPTED_NOT_TO_BE_REVIEWED,experimentBean);//, editorUrlBuilder.getEditorUrl(experimentBean));
-    }
+            if(experimentIsOnHold(experimentBean.getAc())){
+                messageSender.addMessage(ReportTopic.EXPERIMENT_NOT_ACCEPTED_NOT_TO_BE_REVIEWED,experimentBean);//, editorUrlBuilder.getEditorUrl(experimentBean));
+            }
+        }
     }
 
     /**
@@ -1714,7 +1725,7 @@ public class SanityChecker {
 
         // try to send emails
         try {
-            scn.messageSender.postEmails("SANITY CHECK");
+            scn.messageSender.postEmails(MessageSender.SANITY_CHECK);
 
         } catch ( MessagingException e ) {
             // scould not send emails, then how error ...
