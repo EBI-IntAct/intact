@@ -57,6 +57,14 @@
             <html:text property="fullName" size="100" maxlength="250" name="bsForm"/>
         </td>
     </tr>
+    <tr class="tableRowEven">
+        <td class="tableCell" colspan="2">
+            <bean:message key="label.creation"/> <bean:write property="created" name="bsForm" /> by <bean:write property="creator" name="bsForm" />.
+        </td>
+        <td class="tableCell" colspan="2">
+            <bean:message key="label.update"/> <bean:write property="updated" name="bsForm" /> by <bean:write property="updator" name="bsForm" />.
+        </td>
+    </tr>
 </table>
 <html:errors property="shortLabel"/>
 

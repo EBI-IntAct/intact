@@ -22,6 +22,8 @@
 <html:form action="/featureDispatch" onsubmit="return validateFeatureForm(this)">
     <html:hidden property="anchor" />
 
+    <jsp:include page="creation_info.jsp"/>
+    </p>
     <jsp:include page="parent_protein.jsp" />
     <jsp:include page="defined_features.jsp" />
     </p>

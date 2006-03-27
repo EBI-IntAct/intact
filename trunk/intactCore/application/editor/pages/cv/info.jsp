@@ -44,5 +44,13 @@
             <html:text property="fullName" size="100" maxlength="250" name="cvForm"/>
         </td>
     </tr>
+    <tr class="tableRowEven">
+        <td class="tableCell" colspan="2">
+            <bean:message key="label.creation"/> <bean:write property="created" name="cvForm" /> by <bean:write property="creator" name="cvForm" />.
+        </td>
+        <td class="tableCell" colspan="2">
+            <bean:message key="label.update"/> <bean:write property="updated" name="cvForm" /> by <bean:write property="updator" name="cvForm" />.
+        </td>
+    </tr>
 </table>
 <html:errors property="shortLabel"/>

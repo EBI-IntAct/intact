@@ -54,6 +54,14 @@
             <html:text property="fullName" size="100" maxlength="250" name="expForm"/>
         </td>
     </tr>
+    <tr class="tableRowEven">
+        <td class="tableCell" colspan="2">
+            <bean:message key="label.creation"/> <bean:write property="created" name="expForm" /> by <bean:write property="creator" name="expForm" />.
+        </td>
+        <td class="tableCell" colspan="2">
+            <bean:message key="label.update"/> <bean:write property="updated" name="expForm" /> by <bean:write property="updator" name="expForm" />.
+        </td>
+    </tr>
 </table>
 <html:errors property="shortLabel"/>
 <%----%>
