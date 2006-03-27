@@ -72,8 +72,19 @@ public class CvTopic extends CvObject implements Editable {
     public static final String HIDDEN = "hidden";
 
     public static final String JOURNAL = "journal";
-
     public static final String PUBLICATION_YEAR = "publication-year";
+    public static final String REVIEWER = "reviewer";
+    /**
+     * Cache a Vector of all shortLabels of the class, e.g. for menus. This should not be here as it has no model
+     * functionality but is related to eg user interfaces.
+     * <p/>
+     * This constructor should <b>not</b> be used as it could result in objects with invalid state. It is here for
+     * object mapping purposes only and if possible will be made private.
+     *
+     * @deprecated Use the full constructor instead
+     */
+//    protected static Vector menuList = null;
+
 
     /**
      * This constructor should <b>not</b> be used as it could result in objects with invalid state. It is here for
@@ -101,3 +112,5 @@ public class CvTopic extends CvObject implements Editable {
     }
 
 } // end CvTopic
+
+
