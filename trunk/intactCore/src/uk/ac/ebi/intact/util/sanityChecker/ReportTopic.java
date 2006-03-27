@@ -16,12 +16,16 @@ package uk.ac.ebi.intact.util.sanityChecker;
  */
 public class ReportTopic {
 
+
+    public static final ReportTopic EXPERIMENT_TO_CORRECT = new ReportTopic("Experiment(s) to review");
     /**
          * Report topics
          */
         //
         // C V O B J E C T
         //
+
+
     public static final ReportTopic HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_DATABASE_AC_IN_XREF = new ReportTopic ("This/those Cvs are annotated as hidden or obsolete but are actualy in used in  a xref as database");
     public static final ReportTopic HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_QUALIFIER_AC_IN_XREF = new ReportTopic ("This/those Cvs are annotated as hidden or obsolete but are actualy in used in a xref as Reference Qualifier");
     public static final ReportTopic HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_IDENTIFICATION_AC_IN_FEATURE = new ReportTopic ("This/those Cvs are annotated as hidden or obsolete but are actualy in used in a feature as CvFeatureIdentification");

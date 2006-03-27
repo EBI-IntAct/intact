@@ -27,6 +27,9 @@ import java.text.SimpleDateFormat;
  */
 public class MessageSender {
 
+    public static final String SANITY_CHECK = "SANITY CHECK";
+    public static final String CORRECTION_ASSIGNMENT = "CORRECTION ASSIGNMENT";
+
     private EditorUrlBuilder editorUrlBuilder = new EditorUrlBuilder();
 
 
@@ -542,6 +545,48 @@ public class MessageSender {
         addAdminMessage(topic, adminMessageReport);
     }
 
+    /**
+     *
+     * This method is used by te class correctionAssigner.Assigner to send the message to the super curators with the
+     * experiments ac they have to correct and to the administrator to tell them to which personn each experiments has
+     * been assigned.
+     *
+     *
+     * @param experimentBeans Collection of experimentBeans having to be corrected by the same reviewer or superCurator.
+     * @param reviewer String representing the name of the super curator who should correct it the experiments
+     * represented in by the experimentBean contained in the experimentBeans collection.
+     */
+
+    public void addMessage (Collection experimentBeans, String reviewer){
+
+        for (Iterator iterator = experimentBeans.iterator(); iterator.hasNext();) {
+            ExperimentBean experimentBean =  (ExperimentBean) iterator.next();
+            String editorUrl = editorUrlBuilder.getEditorUrl(experimentBean);
+
+            String user = experimentBean.getCreated_user();
+            Timestamp date = experimentBean.getCreated();
+
+
+            String userMessageReport="";
+            String adminMessageReport="";
+            String[] rowValues = new String[6];
+            rowValues[0] ="<a href="+ editorUrl + ">"+ experimentBean.getAc() + "</a>";
+            rowValues[1] = experimentBean.getShortlabel();
+            rowValues[2] = experimentBean.getPubmedId();
+            rowValues[3] = user;
+            rowValues[4] = "" + date;
+            rowValues[5] = reviewer;
+
+
+            userMessageReport =  formatRow("html",rowValues,"values","userReport",false);
+            adminMessageReport = formatRow("html",rowValues,"values","adminReport",false);
+
+            addUserMessage(ReportTopic.EXPERIMENT_TO_CORRECT, reviewer, userMessageReport, adminMessageReport);
+            addAdminMessage(ReportTopic.EXPERIMENT_TO_CORRECT, adminMessageReport);
+        }
+
+    }
+
 
      public void addMessage( ReportTopic topic, IntactBean intactBean, String message ) throws SQLException {
 
@@ -566,13 +611,6 @@ public class MessageSender {
 
                 userMessageReport =  formatRow("html",rowValues,"values","userReport",false);
                 adminMessageReport = formatRow("html",rowValues,"values","adminReport",false);
-
-              //use for formatting header
-//            adminMessageReport = "Interaction AC: " + annotatedBean.getAc() +
-//                    "\n" + message +
-//                    "\t When: " +  +
-//                    "\t User: " +  + "\n";
-
 
         }
           addUserMessage(topic, user, userMessageReport, adminMessageReport);
@@ -765,13 +803,20 @@ public class MessageSender {
 
         MailSender mailer = new MailSender();
 
+        String countType = new String();
+        if(MessageSender.SANITY_CHECK.equals(mailObject)){
+            countType="error";
+        }else if (MessageSender.CORRECTION_ASSIGNMENT.equals(mailObject)){
+            countType="correction assignment";
+        }
+
         // send individual mail to curators
         for ( Iterator iterator = allUsersReport.keySet().iterator(); iterator.hasNext(); ) {
             String user = (String) iterator.next();
 
             Map reportMessages = (Map) allUsersReport.get( user );
             StringBuffer fullReport = new StringBuffer( 256 );
-            int errorCount = 0;
+            int count = 0;
 
             for ( Iterator iterator1 = reportMessages.keySet().iterator(); iterator1.hasNext(); ) {
                 ReportTopic topic = (ReportTopic) iterator1.next();
@@ -788,14 +833,14 @@ public class MessageSender {
                     String message = (String) iterator2.next();
 
                     fullReport.append( message );
-                    errorCount++;
+                    count++;
                 } // messages in the topic
 
                 fullReport.append("</table>").append(NEW_LINE);
             } // topics
 
             // don't send mail to curator if no errors
-            if ( errorCount > 0 ) {
+            if ( count > 0 ) {
 
                 System.out.println( "Send individual report to " + user + "( " + user + ")" );
                 String email = (String) usersEmails.get( user.toLowerCase() );
@@ -806,7 +851,7 @@ public class MessageSender {
 
                     // send mail
                     mailer.postMail( recipients,
-                                     mailObject + " - " + TIME + " (" + errorCount + " error" + ( errorCount > 1 ? "s" : "" ) + ")",
+                                     mailObject + " - " + TIME + " (" + count + " " +countType + ( count > 1 ? "s" : "" ) + ")",
                                      fullReport.toString(),
                                      "cleroy@ebi.ac.uk" );
                     System.out.println("FULL REPORT for User : " + fullReport.toString());
@@ -875,8 +920,12 @@ public class MessageSender {
             } // topics
 
         } else {
-
-            fullReport.append( "No curation error to report." );
+            if (mailObject.equals(MessageSender.SANITY_CHECK)){
+                fullReport.append( "No curation error to report." );
+            }
+            else if (mailObject.equals(MessageSender.CORRECTION_ASSIGNMENT)){
+                fullReport.append( "No correction to assign." );
+            }
 
         }
 
@@ -889,8 +938,10 @@ public class MessageSender {
         }
 
         // always send mail to admin, even if no errors
+
+
         mailer.postMail( recipients,
-                         mailObject + " (ADMIN) - " + TIME + " (" + errorCount + " error" + ( errorCount > 1 ? "s" : "" ) + ")",
+                         mailObject + " (ADMIN) - " + TIME + " (" + errorCount + " " + countType + ( errorCount > 1 ? "s" : "" ) + ")",
                          fullReport.toString(),
                          "cleroy@ebi.ac.uk" );
         System.out.println("FULL REPORT for Admin : " + fullReport.toString());
@@ -1317,8 +1368,16 @@ public class MessageSender {
                 rowValues[3] = "When";
                 rowValues[4] = "User";
                 header = formatRow("html", rowValues, "headers",reportType,false);
-            }
-            else {
+            } else if (ReportTopic.EXPERIMENT_TO_CORRECT.equals(topic)){
+                String[] rowValues = new String[6];
+                rowValues[0] ="AC";
+                rowValues[1] ="Shortlabel";
+                rowValues[2] ="PubmedId";
+                rowValues[3] ="User";
+                rowValues[4] ="When";
+                rowValues[5] ="Reviewer";
+                header = formatRow("html", rowValues, "headers",reportType,false);
+            } else {
                 String[] rowValues = new String[4];
                 rowValues[0] ="AC";
                 rowValues[1] ="Shortlabel";
