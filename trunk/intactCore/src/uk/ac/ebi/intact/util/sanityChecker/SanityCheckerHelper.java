@@ -236,6 +236,8 @@ public class SanityCheckerHelper {
             }
         }
 
+        intactHelper.closeStore();
+
         return intactBean;
     }
 
