@@ -114,7 +114,6 @@ public class DispatchActionForm extends ValidatorForm {
                 myNameToMethod.put(methodName, method);
             }
             catch (NoSuchMethodException e) {
-                Logger.getLogger(EditorConstants.LOGGER).error("No validation method found : ", e);
                 // No validation method found. This could that we don't need validation
                 return null;
             }
@@ -130,11 +129,9 @@ public class DispatchActionForm extends ValidatorForm {
         }
         catch (IllegalAccessException e) {
             // Swallow it as we are returning a null object.
-            Logger.getLogger(EditorConstants.LOGGER).error("", e);
         }
         catch (InvocationTargetException e) {
             // Swallow it as we are returning a null object.
-            Logger.getLogger(EditorConstants.LOGGER).error("", e);
         }
         return errors;
     }

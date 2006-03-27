@@ -10,6 +10,7 @@ import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 
 import java.util.List;
+import java.sql.Timestamp;
 
 /**
  * The methods common to all the editor forms.
@@ -21,6 +22,22 @@ public interface EditorFormI {
     void setShortLabel(String label);
 
     String getShortLabel();
+
+    void setCreator(String creator);
+
+    String getCreator();
+
+    void setUpdator(String updator);
+
+    String getUpdator();
+
+    void setCreated(Timestamp created);
+
+    String getCreated();
+
+    void setUpdated(Timestamp updated);
+
+    String getUpdated();
 
     void setFullName(String fullname);
 
