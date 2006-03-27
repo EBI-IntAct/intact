@@ -254,6 +254,37 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
                         annotationUpdated=true;
                     }
                 }
+            }
+
+            /***************************************************************************************************
+            C r e a t i n g   p u b l i c a t i o n   y e a r   a n n o t a t i o n   a n d   a d d i n g   i t
+            ****************************************************************************************************/
+
+            String pubYear = Integer.toString(eaf.getYear());
+            if(!("".equals(pubYear) || null==pubYear)){
+                Annotation pubYearAnnotation = createPubYearAnnotation(pubYear, helper);
+                CommentBean pubYearCb = new CommentBean(pubYearAnnotation);
+
+
+
+                /*
+                Work to do on the view :
+                If the view already contains an author-list CommentBean we have to update its description  with the new
+                list of author
+                */
+                boolean annotationUpdated=false;
+                List annotsAlreadyInView=view.getAnnotations();
+                for (int i = 0; i < annotsAlreadyInView.size(); i++) {
+                    CommentBean cb =  (CommentBean) annotsAlreadyInView.get(i);
+                    /*
+                    If cb's cvTopic is authorList cvTopic and if the list of authors is not the one corresponding to the
+                    pubmed Id just entered then set the description of cb with the new author list
+                    */
+                    if(CvTopic.PUBLICATION_YEAR.equals(cb.getTopic()) && false==pubYearCb.getDescription().equals(cb.getDescription())){
+                        cb.setDescription(pubYearCb.getDescription());
+                        annotationUpdated=true;
+                    }
+                }
 
                 /*
                 Work to do on the database :
@@ -266,17 +297,17 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
                     Collection annotations = exp.getAnnotations();
                     for (Iterator iterator = annotations.iterator(); iterator.hasNext();) {
                         Annotation annot =  (Annotation) iterator.next();
-                        if(CvTopic.JOURNAL.equals(annot.getCvTopic().getShortLabel()) && false==journalCb.getDescription().equals(annot.getAnnotationText())){
+                        if(CvTopic.PUBLICATION_YEAR.equals(annot.getCvTopic().getShortLabel()) && false==pubYearCb.getDescription().equals(annot.getAnnotationText())){
                             if(helper.isPersistent(annot)){
-                                annot.setAnnotationText(journalCb.getDescription());
+                                annot.setAnnotationText(pubYearCb.getDescription());
                                 helper.update(annot);
                             }
                         }
                     }
                 }
 
-                if(!view.annotationExists(journalCb) && annotationUpdated==false){
-                    view.addAnnotation(journalCb);
+                if(!view.annotationExists(pubYearCb) && annotationUpdated==false){
+                    view.addAnnotation(pubYearCb);
                 }
 
             }
@@ -386,6 +417,28 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
         return authorListAnnot;
     }
 
+    /**
+     * Given an publication year String and an intact helper, it creates an "author-list" Annotation
+     *
+     * @param pubYear a String containing the year of publication of the article
+     * @param helper an IntactHelper object
+     * @return The publication-year Annotation
+     * @throws IntactException
+     */
+    public Annotation createPubYearAnnotation (String pubYear, IntactHelper helper) throws IntactException {
+        Annotation pubYearAnnot;
+
+        CvTopic authorListTopic = (CvTopic) helper.getObjectByLabel( CvTopic.class, CvTopic.PUBLICATION_YEAR );
+        if ( authorListTopic == null ) {
+            System.err.println( "Could not find CvTopic(" + CvTopic.PUBLICATION_YEAR +
+                                ")... no author list will be attached/updated to the experiment." );
+        }
+
+        pubYearAnnot = new Annotation(getService().getOwner(), authorListTopic ,pubYear);
+
+        return pubYearAnnot;
+
+    }
 
     /**
          * Given an authorList and an intact helper, it creates an "author-list" Annotation
