@@ -479,6 +479,8 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         Object[] row = (Object[])userstamps.next();
         userstamp=(String)row[0];
 
+        CommentBean cb1 = expForm.getNewAnnotation();
+
 
         // If the user who is trying to Accept or Review the experiment is the user who has curated the experiment
         // display the error : "You can not Accept or Review your own curated experiment"d
@@ -495,16 +497,26 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
             int year = cal.get(Calendar.YEAR);
             int month = cal.get(Calendar.MONTH)+1;
             int day = cal.get(Calendar.DAY_OF_MONTH);
+
             CvTopic cvTopic;
+            String description = new String();
+            String date = year + "-" + getMonth(month) + "-" + day;
 
             if(dispatch.equals(acceptButtonLabel)){ // if the button press is "Accept"
+                description = description + "Accepted " + date + " by " + userName.toUpperCase() + ".";
                 // The topic for new annotation.
                 cvTopic = (CvTopic) helper.getObjectByLabel(CvTopic.class, "accepted");
             }else{ // if the button press is "Review"
+                description = description + "Rejected " + date + " by " + userName.toUpperCase() + ".";
+
                 // The topic for new annotation.
                 cvTopic = (CvTopic) helper.getObjectByLabel(CvTopic.class, "to-be-reviewed");
             }
-            Annotation annotation=new Annotation(getService().getOwner(), cvTopic,cvTopic.getFullName());
+            if (cb1 != null){
+                description = description + " " + cb1.getDescription();
+            }
+            Annotation annotation=new Annotation(getService().getOwner(), cvTopic, description);
+
             CommentBean cb = new CommentBean(annotation);
             AbstractEditViewBean view = getIntactUser(request).getView();
             view.addAnnotation(cb);
@@ -515,5 +527,28 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         setAnchor(request, editorForm);
 
         return mapping.getInputForward();
+    }
+
+    
+
+    String getMonth(int monthNumber){
+        String monthName = new String();
+        switch (monthNumber) {
+            case 1:  monthName = "JAN"; break;
+            case 2:  monthName = "FEB"; break;
+            case 3:  monthName = "MAR"; break;
+            case 4:  monthName = "APR"; break;
+            case 5:  monthName = "MAY"; break;
+            case 6:  monthName = "JUN"; break;
+            case 7:  monthName = "JUL"; break;
+            case 8:  monthName = "AUG"; break;
+            case 9:  monthName = "SEP"; break;
+            case 10: monthName = "OCT"; break;
+            case 11: monthName = "NOV"; break;
+            case 12: monthName = "DEC"; break;
+            default: monthName = "Not a month!";break;
+        }
+
+        return monthName;
     }
 }
