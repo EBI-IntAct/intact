@@ -88,13 +88,21 @@ public class AnnotatedObjectProxy  extends BasicObjectProxy implements Annotated
         realSubject().removeAnnotation( annotation );
     }
 
-    public Person getCurator () {
-        return realSubject().getCurator();
+    public String getCreator () {
+        return realSubject().getCreator();
     }
 
-    public void setCurator ( Person person ) {
-        realSubject().setCurator( person );
+//    public void setCreator ( String person ) {
+//        realSubject().setCreator( person );
+//    }
+
+    public String getUpdator () {
+        return realSubject().getUpdator();
     }
+
+//    public void setUpdator ( String person ) {
+//        realSubject().setUpdator( person );
+//    }
 
     ///////////////////
     // Xref related
@@ -158,14 +166,6 @@ public class AnnotatedObjectProxy  extends BasicObjectProxy implements Annotated
     public void setCuratorAc ( String ac ) {
         realSubject().setCuratorAc( ac );
     }
-
-//    public AnnotatedObject update ( IntactHelper helper ) throws IntactException {
-//        return realSubject().update( helper );
-//    }
-//
-//    public Annotation updateUniqueAnnotation ( CvTopic topic, String description, Institution owner ) {
-//        return realSubject().updateUniqueAnnotation( topic, description, owner );
-//    }
 
     public boolean equals ( Object o ) {
         return realSubject().equals( o );

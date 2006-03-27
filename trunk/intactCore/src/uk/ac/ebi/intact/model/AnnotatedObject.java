@@ -42,9 +42,9 @@ public interface AnnotatedObject extends BasicObject {
 
     public void removeAnnotation(Annotation annotation);
 
-    public Person getCurator();
+    public String getCreator();
 
-    public void setCurator(Person person);
+    public String getUpdator();
 
     ///////////////////
     // Xref related
