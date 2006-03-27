@@ -55,6 +55,14 @@
             <html:text property="fullName" size="100" maxlength="250" name="intForm"/>
         </td>
     </tr>
+    <tr class="tableRowEven">
+        <td class="tableCell" colspan="2">
+            <bean:message key="label.creation"/> <bean:write property="created" name="intForm" /> by <bean:write property="creator" name="intForm" />.
+        </td>
+        <td class="tableCell" colspan="2">
+            <bean:message key="label.update"/> <bean:write property="updated" name="intForm" /> by <bean:write property="updator" name="intForm" />.
+        </td>
+    </tr>
 </table>
 <html:errors property="shortLabel"/>
 

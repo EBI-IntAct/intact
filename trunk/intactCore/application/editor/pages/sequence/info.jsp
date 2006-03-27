@@ -80,4 +80,12 @@
             <html:errors property="sequence"/>
         </td>
     </tr>
+    <tr class="tableRowEven">
+        <td class="tableCell" colspan="2">
+            <bean:message key="label.creation"/> <bean:write property="created" name="seqForm" /> by <bean:write property="creator" name="seqForm" />.
+        </td>
+        <td class="tableCell" colspan="2">
+            <bean:message key="label.update"/> <bean:write property="updated" name="seqForm" /> by <bean:write property="updator" name="seqForm" />.
+        </td>
+    </tr>
 </table>
