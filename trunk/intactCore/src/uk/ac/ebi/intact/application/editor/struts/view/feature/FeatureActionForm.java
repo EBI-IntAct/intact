@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.sql.Timestamp;
 
 /**
  * The action form for the Feature editor. This form wraps around an EditorActionForm
@@ -33,7 +34,7 @@ import java.util.regex.Pattern;
  *
  * @struts.form name="featureForm"
  */
-public class FeatureActionForm extends DispatchActionForm implements EditorFormI {
+public class    FeatureActionForm extends DispatchActionForm implements EditorFormI {
 
     /**
      * The pattern to match for a mutation entry.
@@ -45,6 +46,26 @@ public class FeatureActionForm extends DispatchActionForm implements EditorFormI
      * Delegator for EditorFormI methods.
      */
     private EditorActionForm myDelegate = new EditorActionForm();
+
+    /**
+     * The creator name.
+     */
+    private String myCreator;
+
+    /**
+     * The updator name.
+     */
+    private String myUpdator;
+
+    /**
+     * The time of creation.
+     */
+    private Timestamp myCreated;
+
+    /**
+     * The time of last update
+     */
+    private Timestamp myUpdated;
 
     /**
      * The parent ac
@@ -114,6 +135,38 @@ public class FeatureActionForm extends DispatchActionForm implements EditorFormI
 
     public String getFullName() {
         return myDelegate.getFullName();
+    }
+
+    public String getCreator() {
+        return myCreator;
+    }
+
+    public void setCreator(String creator) {
+        this.myCreator = creator;
+    }
+
+    public String getUpdator() {
+        return myUpdator;
+    }
+
+    public void setUpdator(String updator) {
+        this.myUpdator = updator;
+    }
+
+    public String getCreated() {
+        return formatDate(this.myCreated);
+    }
+
+    public void setCreated(Timestamp created) {
+        this.myCreated = created;
+    }
+
+    public String getUpdated() {
+        return formatDate(this.myUpdated);
+    }
+
+    public void setUpdated(Timestamp updated) {
+        this.myUpdated = updated;
     }
 
     public void setAc(String ac) {
@@ -307,7 +360,7 @@ public class FeatureActionForm extends DispatchActionForm implements EditorFormI
             if (myRanges.isEmpty()) {
                 errors = new ActionErrors();
                 errors.add("feature.range.empty",
-                        new ActionError("error.feature.range.empty"));
+                           new ActionError("error.feature.range.empty"));
             }
             else {
                 // Check for unsaved ranges.
@@ -350,7 +403,7 @@ public class FeatureActionForm extends DispatchActionForm implements EditorFormI
             if (!rb.getEditState().equals(AbstractEditBean.VIEW)) {
                 errors = new ActionErrors();
                 errors.add("feature.range.unsaved",
-                        new ActionError("error.feature.range.unsaved"));
+                           new ActionError("error.feature.range.unsaved"));
                 break;
             }
         }
@@ -383,7 +436,7 @@ public class FeatureActionForm extends DispatchActionForm implements EditorFormI
             // No Features given in the full name.
             errors = new ActionErrors();
             errors.add("feature.mutation.empty",
-                    new ActionError("error.feature.mutation.empty"));
+                       new ActionError("error.feature.mutation.empty"));
             return errors;
         }
         // Found some features.
@@ -425,15 +478,15 @@ public class FeatureActionForm extends DispatchActionForm implements EditorFormI
             if (matcher.group(1).equals(matcher.group(3))) {
                 errors = new ActionErrors();
                 errors.add("feature.mutation.invalid",
-                        new ActionError("error.feature.mutation.same", matcher.group(1),
-                                matcher.group(3)));
+                           new ActionError("error.feature.mutation.same", matcher.group(1),
+                                           matcher.group(3)));
             }
             // A valid element. Check if the range value was seen before or not.
             if (seen.contains(matcher.group(2))) {
                 errors = new ActionErrors();
                 errors.add("feature.mutation.invalid",
-                        new ActionError("error.feature.mutation.range", element,
-                                matcher.group(2)));
+                           new ActionError("error.feature.mutation.range", element,
+                                           matcher.group(2)));
             }
             else {
                 // Not seen. Add it to the seen collection.
@@ -444,8 +497,43 @@ public class FeatureActionForm extends DispatchActionForm implements EditorFormI
             // Invalid entry.
             errors = new ActionErrors();
             errors.add("feature.mutation.invalid",
-                    new ActionError("error.feature.mutation.format", element));
+                       new ActionError("error.feature.mutation.format", element));
         }
         return errors;
+    }
+
+    String getMonth(int monthNumber){
+        String monthName = new String();
+        switch (monthNumber) {
+            case 1:  monthName = "JAN"; break;
+            case 2:  monthName = "FEB"; break;
+            case 3:  monthName = "MAR"; break;
+            case 4:  monthName = "APR"; break;
+            case 5:  monthName = "MAY"; break;
+            case 6:  monthName = "JUN"; break;
+            case 7:  monthName = "JUL"; break;
+            case 8:  monthName = "AUG"; break;
+            case 9:  monthName = "SEP"; break;
+            case 10: monthName = "OCT"; break;
+            case 11: monthName = "NOV"; break;
+            case 12: monthName = "DEC"; break;
+            default: monthName = "Not a month!";break;
+        }
+
+        return monthName;
+    }
+
+    public String formatDate(Timestamp date){
+        if(date == null){
+            return null;
+        }
+        String newDate = date.toString().substring(0,10);
+        int monthNumber =  Integer.parseInt(newDate.substring(5, 7) );
+        String monthName = getMonth(monthNumber);
+        String year = newDate.substring(0,4);
+        String day = newDate.substring(8,10);
+        newDate = year + "-" + monthName + "-" + day;
+        newDate = newDate.trim();
+        return newDate;
     }
 }
