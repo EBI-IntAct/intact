@@ -235,9 +235,9 @@ public abstract class AbstractEditorDispatchAction extends LookupDispatchAction
             // Extract the search parameter.
             String searchParam = null;
 
-            for (Enumeration enum = queries[1].getCriteria().getElements();
-                 enum.hasMoreElements();) {
-                Object nextCritera = enum.nextElement();
+            for (Enumeration e = queries[1].getCriteria().getElements();
+                 e.hasMoreElements();) {
+                Object nextCritera = e.nextElement();
                 if (LikeCriteria.class.isAssignableFrom(nextCritera.getClass())) {
                     LikeCriteria crit = (LikeCriteria) nextCritera;
                     searchParam = (String) crit.getValue();
