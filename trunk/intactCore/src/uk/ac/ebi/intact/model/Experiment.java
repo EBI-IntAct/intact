@@ -117,7 +117,6 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
                                         experiment.getBioSource() );
         ex.ac = ( experiment.getAc() );
         ex.setAnnotation( experiment.getAnnotations() );
-        ex.setCurator( experiment.getCurator() );
         ex.setCvInteraction( experiment.getCvInteraction() );
         ex.setCvIdentification( experiment.getCvIdentification() );
         ex.setEvidences( experiment.getEvidences() );

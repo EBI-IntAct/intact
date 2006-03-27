@@ -47,7 +47,12 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
     /**
      * The curator who has last edited the object.
      */
-    public Person curator;
+    public String updator;
+
+    /**
+     * The curator who has created the edited object
+     */
+    public String creator;
 
     /**
      *
@@ -155,14 +160,13 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
         this.annotations.remove( annotation );
     }
 
-    public Person getCurator() {
-        return curator;
+    public String getCreator() {
+        return creator;
     }
 
-    public void setCurator( Person person ) {
-        this.curator = person;
+    public String getUpdator() {
+        return updator;
     }
-
 
     ///////////////////
     // Xref related
