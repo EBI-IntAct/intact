@@ -125,7 +125,15 @@ public class LoginAction extends AbstractEditorAction {
         }
 
         // log the time needed to login
-        loginLogger.info("Login time: "+username+", "+(System.currentTimeMillis()-timeOnStartLogin));
+        long loginTime = System.currentTimeMillis()-timeOnStartLogin;
+
+        String warning = "";
+        if (loginTime >= 30000)
+        {
+            warning = " - /!\\";
+        }
+
+        loginLogger.info("Login time: "+username+", "+loginTime+" ms, "+request.getRemoteAddr()+warning);
 
         return mapping.findForward(SUCCESS);
     }
