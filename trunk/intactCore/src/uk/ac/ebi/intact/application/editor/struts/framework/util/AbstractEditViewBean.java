@@ -23,6 +23,7 @@ import uk.ac.ebi.intact.model.*;
 
 import java.io.Serializable;
 import java.util.*;
+import java.sql.Timestamp;
 
 /**
  * This super bean encapsulates behaviour for a common editing session. This
@@ -43,6 +44,25 @@ public abstract class AbstractEditViewBean implements Serializable {
      */
     private Class myEditClass;
 
+    /**
+     * The name of the curator who created the current edit object.
+     */
+    private String myCreator;
+
+    /**
+     * The name of the curator who updated the current edit object.
+     */
+    private String myUpdator;
+
+    /**
+     * The time of creation of the current edit object.
+     */
+    private Timestamp myCreated;
+
+    /**
+     * The time of last update of the current edit object.
+     */
+    private Timestamp myUpdated;
     /**
      * The short label of the current edit object.
      */
@@ -139,8 +159,24 @@ public abstract class AbstractEditViewBean implements Serializable {
         if (!equals(myShortLabel, other.myShortLabel)) {
             return false;
         }
+        // Creators must match.
+        if(!equals(myCreator, other.myCreator)){
+            return false;
+        }
+        // Updator must match.
+        if(!equals(myUpdator, other.myUpdator)){
+            return false;
+        }
         // Fullname must match.
         if (!equals(myFullName, other.myFullName)) {
+            return false;
+        }
+        // Created must match
+        if(!equals(myCreated, other.myCreated)){
+            return false;
+        }
+        //Updated must match
+        if(!equals(myUpdated,other.myUpdated)){
             return false;
         }
         // Annotations must equal.
@@ -188,6 +224,10 @@ public abstract class AbstractEditViewBean implements Serializable {
         setAnnotatedObject(null);
         setShortLabel(null);
         setFullName(null);
+        setCreator(null);
+        setUpdator(null);
+        setCreated(null);
+        setUpdated(null);
 
         // editclass is not set to null because passivateObject (EditViewBeanFactory)
         // method relies on this value (key in the object pool).
@@ -213,6 +253,10 @@ public abstract class AbstractEditViewBean implements Serializable {
         // reset() methid is called before passivating the object and hence
         // no need to call it from here.
         setShortLabel(annobj.getShortLabel());
+        setCreator(annobj.getCreator());
+        setUpdator(annobj.getUpdator());
+        setCreated(annobj.getCreated());
+        setUpdated(annobj.getUpdated());
         resetAnnotatedObject(annobj);
         // Cache the annotations and xrefs here to save it from loading
         // multiple times with each invocation to getAnnotations()
@@ -249,7 +293,7 @@ public abstract class AbstractEditViewBean implements Serializable {
 
         // Set it with most likely next short label from the database.
         String newSL = user.getNextAvailableShortLabel(copy.getClass(),
-                    copy.getShortLabel());
+                                                       copy.getShortLabel());
         setShortLabel(newSL);
 
         // Reset the cloned object with values given by parameter.
@@ -330,6 +374,67 @@ public abstract class AbstractEditViewBean implements Serializable {
     }
 
     /**
+     * Sets the creator.
+     * @param creator the creator to set.
+     */
+    public final void setCreator(String creator) {
+        myCreator = creator;
+    }
+
+    /**
+     * Returns the creator.
+     * @return the creator as a <code>String</code> instance.
+     */
+    public final String getCreator() {
+        return myCreator;
+    }
+
+    /**
+     * Sets the updator.
+     * @param updator the updator to set.
+     */
+    public final void setUpdator(String updator) {
+        myUpdator = updator;
+    }
+
+    /**
+     * Returns the updator.
+     * @return the updator as a <code>String</code> instance.
+     */
+    public final String getUpdator() {
+        return myUpdator;
+    }
+
+    /**
+     * Returns the created timestamp.
+     * @return the created as a <code>Timestamp<code> instance
+     */
+    public Timestamp getCreated() {
+        return myCreated;
+    }
+    /**
+     * Sets the updator.
+     * @param created the created to set.
+     */
+    public void setCreated(Timestamp created) {
+        this.myCreated = created;
+    }
+    /**
+     * Returns the updated timestamp.
+     * @return the updated as a <code>Timestamp<code> instance
+     */
+    public Timestamp getUpdated() {
+        return myUpdated;
+    }
+   /**
+     * Sets the updator.
+     * @param updated the updated to set.
+     */
+    public void setUpdated(Timestamp updated) {
+        this.myUpdated = updated;
+    }
+
+    /**
      * Sets the full name.
      * @param fullName the full name to set for the current edit object.
      * An empty name (set by tag library when submitting the form) is set
@@ -352,7 +457,6 @@ public abstract class AbstractEditViewBean implements Serializable {
     public String getFullName() {
         return myFullName;
     }
-
 
     public String getAnchor() {
         return myAnchor;
@@ -597,6 +701,8 @@ public abstract class AbstractEditViewBean implements Serializable {
     public void copyPropertiesFrom(EditorFormI form) {
         setShortLabel(form.getShortLabel());
         setFullName(form.getFullName());
+        setCreator(form.getCreator());
+        setUpdator(form.getUpdator());
     }
 
     /**
@@ -606,9 +712,15 @@ public abstract class AbstractEditViewBean implements Serializable {
     public void copyPropertiesTo(EditorFormI form) {
         form.setAc(getAcLink());
         form.setShortLabel(getShortLabel());
+
         form.setFullName(getFullName());
         form.setAnnotations(getAnnotations());
         form.setXrefs(getXrefs());
+        form.setCreator(getCreator());
+        form.setUpdator(getUpdator());
+        form.setUpdated(getUpdated());
+        form.setCreated(getCreated());
+
     }
 
     // Empty methods to be overriden by sub classes.
@@ -869,7 +981,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      * </pre>
      */
     protected abstract void updateAnnotatedObject(IntactHelper helper) throws
-            IntactException;
+                                                                       IntactException;
 
     // Helper Methods
 
