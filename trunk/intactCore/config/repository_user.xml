@@ -149,6 +149,20 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         jdbc-type="VARCHAR"
         />
     <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
         name="created"
         column="created"
         jdbc-type="TIMESTAMP"
@@ -436,6 +450,20 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         jdbc-type="VARCHAR"
         />
     <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
         name="created"
         column="created"
         jdbc-type="TIMESTAMP"
@@ -606,6 +634,20 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         jdbc-type="VARCHAR"
         />
     <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
         name="created"
         column="created"
         jdbc-type="TIMESTAMP"
@@ -754,6 +796,20 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         name="ownerAc"
         column="owner_ac"
         jdbc-type="VARCHAR"
+        />
+    <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="created"
@@ -941,6 +997,20 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 
         />
     <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
         name="created"
         column="created"
         jdbc-type="TIMESTAMP"
@@ -1093,7 +1163,20 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         column="owner_ac"
         jdbc-type="VARCHAR"
         />
-
+    <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
     <field-descriptor
         name="shortLabel"
         column="shortLabel"
@@ -1728,6 +1811,20 @@ to AnnotatedObject and Experiment
         jdbc-type="VARCHAR"
         />
     <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
         name="created"
         column="created"
         jdbc-type="TIMESTAMP"
@@ -1835,6 +1932,20 @@ to AnnotatedObject and Experiment
             column="owner_ac"
             jdbc-type="VARCHAR"
             />
+    <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
         <field-descriptor
             name="created"
             column="created"
@@ -1945,6 +2056,20 @@ to AnnotatedObject and Experiment
             column="owner_ac"
             jdbc-type="VARCHAR"
             />
+    <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
         <field-descriptor
             name="created"
             column="created"
@@ -2052,6 +2177,20 @@ to AnnotatedObject and Experiment
             column="owner_ac"
             jdbc-type="VARCHAR"
             />
+    <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
         <field-descriptor
             name="created"
             column="created"
@@ -2151,6 +2290,20 @@ to AnnotatedObject and Experiment
             column="owner_ac"
             jdbc-type="VARCHAR"
             />
+    <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
         <field-descriptor
             name="created"
             column="created"
@@ -2249,6 +2402,20 @@ to AnnotatedObject and Experiment
             column="owner_ac"
             jdbc-type="VARCHAR"
             />
+    <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
         <field-descriptor
             name="created"
             column="created"
@@ -2348,6 +2515,20 @@ to AnnotatedObject and Experiment
             column="owner_ac"
             jdbc-type="VARCHAR"
             />
+     <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
         <field-descriptor
             name="created"
             column="created"
@@ -2445,6 +2626,16 @@ to AnnotatedObject and Experiment
             column="owner_ac"
             jdbc-type="VARCHAR"
             />
+        <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        />
         <field-descriptor
             name="created"
             column="created"
@@ -2544,6 +2735,20 @@ to AnnotatedObject and Experiment
             jdbc-type="VARCHAR"
             />
         <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+        <field-descriptor
             name="created"
             column="created"
             jdbc-type="TIMESTAMP"
@@ -2640,6 +2845,20 @@ to AnnotatedObject and Experiment
             column="owner_ac"
             jdbc-type="VARCHAR"
             />
+    <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
         <field-descriptor
             name="created"
             column="created"
@@ -2741,6 +2960,20 @@ to AnnotatedObject and Experiment
             jdbc-type="VARCHAR"
             />
         <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+        <field-descriptor
             name="created"
             column="created"
             jdbc-type="TIMESTAMP"
@@ -2838,6 +3071,20 @@ to AnnotatedObject and Experiment
             column="owner_ac"
             jdbc-type="VARCHAR"
             />
+        <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
         <field-descriptor
             name="created"
             column="created"
@@ -2937,6 +3184,20 @@ to AnnotatedObject and Experiment
             jdbc-type="VARCHAR"
             />
         <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+        <field-descriptor
             name="created"
             column="created"
             jdbc-type="TIMESTAMP"
@@ -3034,6 +3295,20 @@ to AnnotatedObject and Experiment
             column="owner_ac"
             jdbc-type="VARCHAR"
             />
+        <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
         <field-descriptor
             name="created"
             column="created"
@@ -3140,6 +3415,20 @@ this is because the CvTopic linked to an Annotation is a better home for it...
             jdbc-type="VARCHAR"
             />
         <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+        <field-descriptor
             name="created"
             column="created"
             jdbc-type="TIMESTAMP"
@@ -3237,6 +3526,20 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         name="ownerAc"
         column="owner_ac"
         jdbc-type="VARCHAR"
+        />
+    <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="created"
@@ -3365,6 +3668,20 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         jdbc-type="VARCHAR"
         />
     <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+            />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
         name="created"
         column="created"
         jdbc-type="TIMESTAMP"
@@ -3489,6 +3806,20 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         name="ownerAc"
         column="owner_ac"
         jdbc-type="VARCHAR"
+        />
+    <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="created"
@@ -3616,6 +3947,16 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         jdbc-type="VARCHAR"
         />
     <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor
         name="created"
         column="created"
         jdbc-type="TIMESTAMP"
@@ -3717,6 +4058,20 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         name="ownerAc"
         column="owner_ac"
         jdbc-type="VARCHAR"
+        />
+    <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="created"
@@ -3943,6 +4298,20 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         jdbc-type="VARCHAR"
         />
     <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
         name="created"
         column="created"
         jdbc-type="TIMESTAMP"
@@ -4070,6 +4439,20 @@ this is because the CvTopic linked to an Annotation is a better home for it...
             jdbc-type="VARCHAR"
             />
         <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+        <field-descriptor
             name="created"
             column="created"
             jdbc-type="TIMESTAMP"
@@ -4169,6 +4552,20 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         name="ownerAc"
         column="owner_ac"
         jdbc-type="VARCHAR"
+        />
+    <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="created"
@@ -4293,6 +4690,20 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         name="ownerAc"
         column="owner_ac"
         jdbc-type="VARCHAR"
+        />
+    <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="created"
