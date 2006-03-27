@@ -5,6 +5,8 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.util.sanityChecker.model;
 
+import java.math.BigDecimal;
+
 /**
  * TODO comment it.
  *
@@ -16,7 +18,7 @@ public class ComponentBean extends IntactBean {
     private String interactor_ac;
     private String interaction_ac;
     private String role;
-    private float stoichiometry;
+    private BigDecimal stoichiometry;
 
     public ComponentBean() {
     }
@@ -45,11 +47,11 @@ public class ComponentBean extends IntactBean {
         this.role = role;
     }
 
-    public float getStoichiometry() {
+    public BigDecimal getStoichiometry() {
         return stoichiometry;
     }
 
-    public void setStoichiometry(float stoichiometry) {
+    public void setStoichiometry(BigDecimal stoichiometry) {
         this.stoichiometry = stoichiometry;
     }
 }
