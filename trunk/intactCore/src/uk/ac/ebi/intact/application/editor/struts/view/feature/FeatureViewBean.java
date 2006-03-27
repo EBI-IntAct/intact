@@ -525,7 +525,7 @@ public class FeatureViewBean extends AbstractEditViewBean {
         Feature feature = (Feature) getAnnotatedObject();
 
         // The sequence to set in Ranges.
-        String sequence = ((Protein) myComponent.getInteractor()).getSequence();
+        String sequence = ((Polymer) myComponent.getInteractor()).getSequence();
 
         // Add new ranges.
         for (Iterator iter = getRangesToAdd().iterator(); iter.hasNext();) {
