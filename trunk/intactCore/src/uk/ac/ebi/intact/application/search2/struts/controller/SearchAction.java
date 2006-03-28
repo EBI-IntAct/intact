@@ -12,6 +12,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.application.commons.search.CriteriaBean;
 import uk.ac.ebi.intact.application.commons.search.SearchHelper;
+import uk.ac.ebi.intact.application.commons.util.UrlUtil;
 import uk.ac.ebi.intact.application.search2.business.Constants;
 import uk.ac.ebi.intact.application.search2.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search2.struts.framework.IntactBaseAction;
@@ -247,8 +248,7 @@ public class SearchAction extends IntactBaseAction {
             String relativeHelpLink = getServlet().getServletContext().getInitParameter( "helpLink" );
 
             //build the help link out of the context path - strip off the 'search' bit...
-            String ctxtPath = request.getContextPath();
-            String relativePath = ctxtPath.substring( 0, ctxtPath.lastIndexOf( "search" ) );
+            String relativePath = UrlUtil.absolutePathWithoutContext(request);
             String helpLink = relativePath.concat( relativeHelpLink );
             user.setHelpLink( helpLink );
             return mapping.findForward( SearchConstants.FORWARD_DISPATCHER_ACTION );

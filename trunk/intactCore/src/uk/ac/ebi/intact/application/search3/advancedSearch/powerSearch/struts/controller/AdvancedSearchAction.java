@@ -20,6 +20,7 @@ import uk.ac.ebi.intact.application.search3.searchEngine.business.dao.SearchDAOI
 import uk.ac.ebi.intact.application.search3.searchEngine.lucene.IntactAnalyzer;
 import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
+import uk.ac.ebi.intact.application.commons.util.UrlUtil;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
@@ -95,7 +96,7 @@ public class AdvancedSearchAction extends IntactBaseAction {
         //build the help link out of the context path - strip off the 'search' bit...
         String ctxtPath = request.getContextPath();
         logger.info( "contextPath: " + ctxtPath );
-        String relativePath = ctxtPath.substring( 0, ctxtPath.lastIndexOf( "search" ) );
+        String relativePath = UrlUtil.absolutePathWithoutContext(request);
         String helpLink = relativePath.concat( relativeHelpLink );
         user.setHelpLink( helpLink );
 
