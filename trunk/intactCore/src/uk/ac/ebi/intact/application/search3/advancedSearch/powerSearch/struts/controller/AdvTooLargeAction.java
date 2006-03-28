@@ -106,7 +106,7 @@ public class AdvTooLargeAction extends IntactBaseAction {
         final String helpLink = relativePath.concat(relativeHelpLink);
 
         final String appPath = getServlet().getServletContext().getInitParameter("searchLink");
-        final String searchURL = ctxtPath.concat(appPath);
+        final String searchURL = request.getContextPath().concat(appPath);
         HttpSession session = super.getSession(request);
         String query = (String) session.getAttribute(SearchConstants.SEARCH_CRITERIA);
 
