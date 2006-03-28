@@ -666,13 +666,10 @@ public class IntactHelper implements SearchI, Externalizable {
          }
          */
 
-        Collection<T> resultList = null;
+        Collection<T> resultList = this.search( clazz, "shortLabel", label );
 
-        resultList = this.search( clazz, "shortLabel", label );
-
-        if ( resultList.isEmpty() ) {
-            result = null;
-        } else {
+        if (!resultList.isEmpty() )
+         {
             Iterator<T> i = resultList.iterator();
             result = i.next();
             if ( i.hasNext() ) {
@@ -698,13 +695,10 @@ public class IntactHelper implements SearchI, Externalizable {
 
         T result = null;
 
-        Collection<T> resultList = null;
+        Collection<T> resultList = this.search( clazz, "ac", ac );
 
-        resultList = this.search( clazz, "ac", ac );
-
-        if ( resultList.isEmpty() ) {
-            result = null;
-        } else {
+        if (!resultList.isEmpty() )
+         {
             Iterator<T> i = resultList.iterator();
             result = i.next();
             if ( i.hasNext() ) {
