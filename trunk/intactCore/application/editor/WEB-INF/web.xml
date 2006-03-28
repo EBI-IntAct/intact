@@ -32,6 +32,12 @@
       <filter-class>uk.ac.ebi.intact.application.editor.util.IntactHelperFilter</filter-class>
     </filter>
 
+    <!-- This filter is to ensure that ExternalContext is correctly loaded -->
+    <filter>
+      <filter-name>ExternalContextFilter</filter-name>
+      <filter-class>uk.ac.ebi.intact.application.commons.util.ExternalContextFilter</filter-class>
+   </filter>
+
     <!-- map all requests to the SecurityFilter, control what it does with configuration settings -->
     <filter-mapping>
       <filter-name>Security Filter</filter-name>
@@ -43,6 +49,11 @@
       <filter-name>IntactHelper Filter</filter-name>
         <url-pattern>/do/*</url-pattern>
     </filter-mapping>
+
+    <filter-mapping>
+      <filter-name>ExternalContextFilter</filter-name>
+      <url-pattern>/*</url-pattern>
+   </filter-mapping>
 
     <!-- Action Servlet Configuration -->
     <servlet>
