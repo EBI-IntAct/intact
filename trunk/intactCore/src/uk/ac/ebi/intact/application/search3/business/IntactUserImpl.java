@@ -17,6 +17,7 @@ import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.io.Serializable;
 
 /**
  * Stores information about an Intact Web user session. Instead of binding multiple objects, only an object of this
@@ -27,7 +28,7 @@ import java.util.Collection;
  * @author Chris Lewington, Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener {
+public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener, Serializable {
 
     /**
      * Reference to the DAO.
