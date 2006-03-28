@@ -5,20 +5,18 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.util.sanityChecker;
 
-import uk.ac.ebi.intact.util.sanityChecker.model.*;
-import uk.ac.ebi.intact.util.MailSender;
-import uk.ac.ebi.intact.util.PropertyLoader;
-import uk.ac.ebi.intact.util.correctionAssigner.ComparableExperimentBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.util.MailSender;
+import uk.ac.ebi.intact.util.PropertyLoader;
+import uk.ac.ebi.intact.util.sanityChecker.model.*;
 
 import javax.mail.MessagingException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-
-import java.util.*;
 import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * TODO comment it.
