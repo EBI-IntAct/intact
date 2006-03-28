@@ -8,6 +8,8 @@
 <project name="editor" basedir="." default="compile">
     <property name="project.version" value="1.0"/>
 
+    <property name="jdk.version" value="1.5"/>
+
     <!-- Intact core locations -->
     <property name="intact.root" value="../.."/>
     <property name="root.lib.dir" value="${intact.root}/lib"/>
@@ -238,7 +240,7 @@
 
         <!-- Only compile editor sources only. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-            debug="on" source="1.4"
+            debug="on" source="${jdk.version}"
             includes="**/application/editor/**,
                       **/application/commons/**"
             excludes="**/test/**,
