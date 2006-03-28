@@ -33,6 +33,7 @@
 
 <!-- Standard Java imports -->
 <%@ page import="java.util.*"%>
+<%@ page import="uk.ac.ebi.intact.application.commons.util.*"%>
 
 <!-- taglibs: maybe make use of these later to tidy up the JSP -->
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
@@ -45,12 +46,11 @@
     //build the absolute path out of the context path for 'search'
     //NB for eg HV and help pages, we have to use the relative path because the
     //ctxt path includes search
-    String ctxtPath = (request.getContextPath());
-    String relativePath = ctxtPath.substring(0, ctxtPath.lastIndexOf("search"));
+    String absPathWithoutContext = UrlUtil.absolutePathWithoutContext(request);
 
     //build the URL for hierarchView from the absolute path and the relative beans..
-    String hvPath = relativePath.concat(service.getHierarchViewProp("hv.url"));
-    String minePath = relativePath.concat("mine/display.jsp");
+    String hvPath = absPathWithoutContext.concat(service.getHierarchViewProp("hv.url"));
+    String minePath = absPathWithoutContext.concat("mine/display.jsp");
 
     //The view bean used to provide the data for this JSP. Could probably use
     //the jsp:useBean tag instead, but do it simply for now...

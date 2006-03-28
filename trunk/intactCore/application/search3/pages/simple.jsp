@@ -44,6 +44,7 @@ to identify the source page of the request to the Action classes.
 
 <%-- Standard Java classes --%>
 <%@ page import="java.util.*"%>
+<%@ page import="uk.ac.ebi.intact.application.commons.util.*"%>
 
 <%-- may make use of these later to tidy up the JSP a little --%>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
@@ -56,12 +57,11 @@ to identify the source page of the request to the Action classes.
             SearchConstants.INTACT_SERVICE);
 
     //build the absolute path out of the context path for 'search'
-    String ctxtPath = (request.getContextPath());
-    String relativePath = ctxtPath.substring(0, ctxtPath.lastIndexOf("search"));
+    String absPathWithoutContext = UrlUtil.absolutePathWithoutContext(request);
 
     //build the URL for hierarchView from the absolute path and the relative beans..
-    String hvPath = relativePath.concat(service.getHierarchViewProp("hv.url"));
-    String minePath = relativePath.concat("mine/display.jsp");
+    String hvPath = absPathWithoutContext.concat(service.getHierarchViewProp("hv.url"));
+    String minePath = absPathWithoutContext.concat("mine/display.jsp");
 
     //The List of view beans used to provide the data for this JSP. This is in fact
     //a List of sublists, partitioned by result type.

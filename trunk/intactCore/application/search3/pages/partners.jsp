@@ -19,7 +19,8 @@
 <%@ page import="uk.ac.ebi.intact.application.search3.struts.util.SearchConstants,
                  uk.ac.ebi.intact.application.search3.business.IntactServiceIF,
                  uk.ac.ebi.intact.application.search3.struts.view.beans.PartnersViewBean,
-                 uk.ac.ebi.intact.application.search3.struts.util.SearchConstants"%>
+                 uk.ac.ebi.intact.application.search3.struts.util.SearchConstants,
+                 uk.ac.ebi.intact.application.commons.util.*"%>
 
 <!-- Standard Java classes -->
 <%@ page import="java.util.*"%>
@@ -36,11 +37,11 @@
 
     //build the absolute path out of the context path for 'search'
     String ctxtPath = (request.getContextPath());
-    String relativePath = ctxtPath.substring(0, ctxtPath.lastIndexOf("search"));
+    String absPathWithoutContext = UrlUtil.absolutePathWithoutContext(request);
 
     //build the URL for hierarchView from the absolute path and the relative beans..
-    String hvPath = relativePath.concat(service.getHierarchViewProp("hv.url"));
-    String minePath = relativePath.concat("mine/display.jsp");
+    String hvPath = absPathWithoutContext.concat(service.getHierarchViewProp("hv.url"));
+    String minePath = absPathWithoutContext.concat("mine/display.jsp");
 
     //The List of view beans used to provide the data for this JSP. Each
     //bean in the List should be an instance of SummaryViewBean, and corresponds to
