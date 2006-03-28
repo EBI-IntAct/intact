@@ -9,6 +9,8 @@
     <property name="project.title" value="Intact Core"/>
     <property name="project.version" value="0.1.0"/>
 
+     <property name="jdk.version" value="1.5"/>
+
     <property name="src.dir" value="src"/>
     <property name="dest.dir" value="classes"/>
     <property name="jdoc.dir" value="doc/api"/>
@@ -443,7 +445,7 @@
                destdir="${dest.dir}"
                debug="on"
                deprecation="on"
-               source="1.4"
+               source="${jdk.version}"
                includes="uk/**"
                excludes="${non.core.files}, **/test/**">
             <classpath refid="project.class.path"/>
