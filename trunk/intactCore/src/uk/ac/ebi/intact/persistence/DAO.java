@@ -182,7 +182,7 @@ public interface DAO {
      *
      * @exception SearchException - thrown if there were problems during the search process itself
      */
-     public Collection find(Class type, String col, String val) throws SearchException;
+     public <T> Collection<T> find(Class<T> type, String col, String val) throws SearchException;
 
     /**
      * <p>This method performs a simple search based on the object type to search over,

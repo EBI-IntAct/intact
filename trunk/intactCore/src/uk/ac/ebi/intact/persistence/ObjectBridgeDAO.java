@@ -840,7 +840,7 @@ public class ObjectBridgeDAO implements DAO {
      * @exception NullPointerException thrown if the type is not specified
      *
      */
-    public Collection find(Class searchClass, String col, String val) throws SearchException {
+    public <T> Collection<T> find(Class<T> searchClass, String col, String val) throws SearchException {
         Collection results = new ArrayList();
 
         //debug info..

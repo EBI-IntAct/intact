@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 /**
  * Implements the logic to authenticate a user for the editor application.
@@ -49,6 +50,8 @@ import java.io.IOException;
  */
 public class LoginAction extends AbstractEditorAction {
 
+    private Logger loginLogger = Logger.getLogger("uk.co.intact.LoginEditor");
+
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
      * response (or forward to another web component that will create it).
@@ -67,6 +70,9 @@ public class LoginAction extends AbstractEditorAction {
     public ActionForward execute(ActionMapping mapping, ActionForm form,
                                  HttpServletRequest request, HttpServletResponse response)
             throws Exception {
+
+        long timeOnStartLogin = System.currentTimeMillis();
+
         // Get the user's login name and password. They should have already
         // validated by the ActionForm.
         LoginForm theForm = (LoginForm) form;
@@ -117,6 +123,18 @@ public class LoginAction extends AbstractEditorAction {
             // Set the topic for editor to load the correct page.
             return mapping.findForward("redirect");
         }
+
+        // log the time needed to login
+        long loginTime = System.currentTimeMillis()-timeOnStartLogin;
+
+        String warning = "";
+        if (loginTime >= 30000)
+        {
+            warning = " - /!\\";
+        }
+
+        loginLogger.info("Login time: "+username+", "+loginTime+" ms, "+request.getRemoteAddr()+warning);
+
         return mapping.findForward(SUCCESS);
     }
 }

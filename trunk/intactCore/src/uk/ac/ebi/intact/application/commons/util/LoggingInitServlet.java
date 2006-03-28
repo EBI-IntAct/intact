@@ -13,6 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.business.IntactException;
+
 /**
  * Inititialize the Logger with the log4J properties file.
  * <p/>
@@ -55,6 +58,11 @@ public class LoggingInitServlet extends HttpServlet {
         } else {
             System.out.println( "LOGGING INIT: could not load logging properties file " + configFile );
         }
+
+        // configure ExternalContext
+        ExternalContext.newInstance(getServletContext());
+        // initialize the CvContext, which contains the constant CvObjects
+        CvContext.getCurrentInstance();
 
         /* For eventual later use, allow to reload the config at regular interval of time */
         // configureAndWatch(String configFilename, long delay_in_milliseconds)
