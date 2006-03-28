@@ -783,8 +783,9 @@ public class IntactHelper implements SearchI, Externalizable {
      */
     public void deleteAllElements( Collection aCollection ) throws IntactException {
         try {
-            for ( Iterator i = aCollection.iterator(); i.hasNext(); ) {
-                dao.remove( i.next() );
+            for (Object obj : aCollection)
+            {
+                dao.remove(obj);
             }
         }
         catch ( TransactionException te ) {
