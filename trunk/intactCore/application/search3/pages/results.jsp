@@ -16,6 +16,7 @@
 <!-- Import util classes -->
 <%@ page import="java.util.*"%>
  <%@ page import="uk.ac.ebi.intact.application.search3.struts.util.SearchConstants"%>
+ <%@ page import="uk.ac.ebi.intact.application.commons.util.*"%>
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean" %>
@@ -27,12 +28,11 @@
     IntactServiceIF service = (IntactServiceIF) application.getAttribute( SearchConstants.INTACT_SERVICE);
 
     //build the absolute path out of the context path for 'search'
-    String ctxtPath = (request.getContextPath());
-    String relativePath = ctxtPath.substring(0, ctxtPath.lastIndexOf("search"));
+    String absPathWithoutContext = UrlUtil.absolutePathWithoutContext(request);
 
     //build the URL for hierarchView from the absolute path and the relative beans..
-    String hvPath = relativePath.concat(service.getHierarchViewProp("hv.url"));
-    String minePath = relativePath.concat("mine/display.jsp");
+    String hvPath = absPathWithoutContext.concat(service.getHierarchViewProp("hv.url"));
+    String minePath = absPathWithoutContext.concat("mine/display.jsp");
 %>
 
 <script language="JavaScript" type="text/javascript">
