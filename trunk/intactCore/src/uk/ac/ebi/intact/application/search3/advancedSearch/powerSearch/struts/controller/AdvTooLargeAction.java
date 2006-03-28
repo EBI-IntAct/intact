@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.SingleResultViewBean;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.TooLargeViewBean;
+import uk.ac.ebi.intact.application.commons.util.UrlUtil;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
@@ -101,8 +102,7 @@ public class AdvTooLargeAction extends IntactBaseAction {
         // get the helplink count the results and create with them  a couple of viewbeans for the jsp
 
         final String relativeHelpLink = getServlet().getServletContext().getInitParameter("helpLink");
-        final String ctxtPath = request.getContextPath();
-        final String relativePath = ctxtPath.substring(0, ctxtPath.lastIndexOf("search"));
+        String relativePath = UrlUtil.absolutePathWithoutContext(request);
         final String helpLink = relativePath.concat(relativeHelpLink);
 
         final String appPath = getServlet().getServletContext().getInitParameter("searchLink");

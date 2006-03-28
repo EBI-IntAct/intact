@@ -13,6 +13,7 @@ import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import uk.ac.ebi.intact.application.editor.exception.EmptyTopicsException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.application.commons.util.UrlUtil;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.Institution;
@@ -188,8 +189,7 @@ public class EditorService {
      */
     public String getSearchURL(HttpServletRequest request) {
         if (mySearchUrl == null) {
-            String ctxtPath = request.getContextPath();
-            String relativePath = ctxtPath.substring(0, ctxtPath.lastIndexOf("editor"));
+            String relativePath = UrlUtil.absolutePathWithoutContext(request);
             mySearchUrl = relativePath.concat(myResources.getString("search.url"));
         }
         return mySearchUrl;
@@ -204,8 +204,7 @@ public class EditorService {
      */
     public String getHelpURL(HttpServletRequest request) {
         if (myHelpUrl == null) {
-            String ctxtPath = request.getContextPath();
-            String relativePath = ctxtPath.substring(0, ctxtPath.lastIndexOf("editor"));
+            String relativePath = UrlUtil.absolutePathWithoutContext(request);
             myHelpUrl = relativePath.concat(myResources.getString("help.url"));
         }
         return myHelpUrl;

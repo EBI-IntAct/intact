@@ -20,6 +20,7 @@ import uk.ac.ebi.intact.application.search3.struts.util.SearchValidator;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.application.commons.util.UrlUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -271,9 +272,8 @@ public class SearchAction extends IntactBaseAction {
             String relativeHelpLink = getServlet().getServletContext().getInitParameter( "helpLink" );
 
             //build the help link out of the context path - strip off the 'search' bit...
-            String ctxtPath = request.getContextPath();
-            String relativePath = ctxtPath.substring( 0, ctxtPath.lastIndexOf( "search" ) );
-            String helpLink = relativePath.concat( relativeHelpLink );
+            String absPathWithoutContext = UrlUtil.absolutePathWithoutContext(request);
+            String helpLink = absPathWithoutContext.concat( relativeHelpLink );
             user.setHelpLink( helpLink );
             return mapping.findForward( SearchConstants.FORWARD_DISPATCHER_ACTION );
 

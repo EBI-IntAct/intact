@@ -6,6 +6,8 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.predict.business;
 
+import uk.ac.ebi.intact.application.commons.util.UrlUtil;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -30,8 +32,7 @@ public class PredictService {
      */
     public String getSearchURL(HttpServletRequest request) {
         if (mySearchUrl == null) {
-            String ctxtPath = request.getContextPath();
-            String relativePath = ctxtPath.substring(0, ctxtPath.lastIndexOf("targets"));
+            String relativePath = UrlUtil.absolutePathWithoutContext(request);
             // Hard coded link; this could move to a resource file as with the editor.
             // Since we have only a single property, we can get away by hard coding.
             mySearchUrl = relativePath.concat("search/do/hvWelcome");
