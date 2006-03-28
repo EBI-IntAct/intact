@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.util.sanityChecker;
 import uk.ac.ebi.intact.util.sanityChecker.model.*;
 import uk.ac.ebi.intact.util.MailSender;
 import uk.ac.ebi.intact.util.PropertyLoader;
+import uk.ac.ebi.intact.util.correctionAssigner.ComparableExperimentBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
@@ -545,47 +546,51 @@ public class MessageSender {
         addAdminMessage(topic, adminMessageReport);
     }
 
-    /**
-     *
-     * This method is used by te class correctionAssigner.Assigner to send the message to the super curators with the
-     * experiments ac they have to correct and to the administrator to tell them to which personn each experiments has
-     * been assigned.
-     *
-     *
-     * @param experimentBeans Collection of experimentBeans having to be corrected by the same reviewer or superCurator.
-     * @param reviewer String representing the name of the super curator who should correct it the experiments
-     * represented in by the experimentBean contained in the experimentBeans collection.
-     */
+//    /**
+//     *
+//     * This method is used by te class correctionAssigner.Assigner to send the message to the super curators with the
+//     * experiments ac they have to correct and to the administrator to tell them to which personn each experiments has
+//     * been assigned.
+//     *
+//     *
+//     * @param comparableExperimentBeans Collection of experimentBeans having to be corrected by the same reviewer or superCurator.
+//     * @param reviewer String representing the name of the super curator who should correct it the experiments
+//     * represented in by the experimentBean contained in the experimentBeans collection.
+//     */
 
-    public void addMessage (Collection experimentBeans, String reviewer){
-
-        for (Iterator iterator = experimentBeans.iterator(); iterator.hasNext();) {
-            ExperimentBean experimentBean =  (ExperimentBean) iterator.next();
-            String editorUrl = editorUrlBuilder.getEditorUrl(experimentBean);
-
-            String user = experimentBean.getCreated_user();
-            Timestamp date = experimentBean.getCreated();
-
-
-            String userMessageReport="";
-            String adminMessageReport="";
-            String[] rowValues = new String[6];
-            rowValues[0] ="<a href="+ editorUrl + ">"+ experimentBean.getAc() + "</a>";
-            rowValues[1] = experimentBean.getShortlabel();
-            rowValues[2] = experimentBean.getPubmedId();
-            rowValues[3] = user;
-            rowValues[4] = "" + date;
-            rowValues[5] = reviewer;
-
-
-            userMessageReport =  formatRow("html",rowValues,"values","userReport",false);
-            adminMessageReport = formatRow("html",rowValues,"values","adminReport",false);
-
-            addUserMessage(ReportTopic.EXPERIMENT_TO_CORRECT, reviewer, userMessageReport, adminMessageReport);
-            addAdminMessage(ReportTopic.EXPERIMENT_TO_CORRECT, adminMessageReport);
-        }
-
-    }
+//    public void addMessage (Collection comparableExperimentBeans, String reviewer){
+//
+//        for (Iterator iterator = comparableExperimentBeans.iterator(); iterator.hasNext();) {
+//
+//            ComparableExperimentBean comparableExperimentBean =  (ComparableExperimentBean) iterator.next();
+//
+//            ExperimentBean experimentBean = new ExperimentBean();
+//            experimentBean.setAc(comparableExperimentBean.getAc());
+//            String editorUrl = editorUrlBuilder.getEditorUrl(experimentBean);
+//
+//            String user = comparableExperimentBean.getCreated_user();
+//            Timestamp date = comparableExperimentBean.getCreated();
+//
+//
+//            String userMessageReport="";
+//            String adminMessageReport="";
+//            String[] rowValues = new String[6];
+//            rowValues[0] ="<a href="+ editorUrl + ">"+ comparableExperimentBean.getAc() + "</a>";
+//            rowValues[1] = comparableExperimentBean.getShortlabel();
+//            rowValues[2] = comparableExperimentBean.getPubmedId();
+//            rowValues[3] = user;
+//            rowValues[4] = "" + date;
+//            rowValues[5] = reviewer;
+//
+//
+//            userMessageReport =  formatRow("html",rowValues,"values","userReport",false);
+//            adminMessageReport = formatRow("html",rowValues,"values","adminReport",false);
+//
+//            addUserMessage(ReportTopic.EXPERIMENT_TO_CORRECT, reviewer, userMessageReport, adminMessageReport);
+//            addAdminMessage(ReportTopic.EXPERIMENT_TO_CORRECT, adminMessageReport);
+//        }
+//
+//    }
 
 
      public void addMessage( ReportTopic topic, IntactBean intactBean, String message ) throws SQLException {
@@ -1368,15 +1373,15 @@ public class MessageSender {
                 rowValues[3] = "When";
                 rowValues[4] = "User";
                 header = formatRow("html", rowValues, "headers",reportType,false);
-            } else if (ReportTopic.EXPERIMENT_TO_CORRECT.equals(topic)){
-                String[] rowValues = new String[6];
-                rowValues[0] ="AC";
-                rowValues[1] ="Shortlabel";
-                rowValues[2] ="PubmedId";
-                rowValues[3] ="User";
-                rowValues[4] ="When";
-                rowValues[5] ="Reviewer";
-                header = formatRow("html", rowValues, "headers",reportType,false);
+//            } else if (ReportTopic.EXPERIMENT_TO_CORRECT.equals(topic)){
+//                String[] rowValues = new String[6];
+//                rowValues[0] ="AC";
+//                rowValues[1] ="Shortlabel";
+//                rowValues[2] ="PubmedId";
+//                rowValues[3] ="User";
+//                rowValues[4] ="When";
+//                rowValues[5] ="Reviewer";
+//                header = formatRow("html", rowValues, "headers",reportType,false);
             } else {
                 String[] rowValues = new String[4];
                 rowValues[0] ="AC";
