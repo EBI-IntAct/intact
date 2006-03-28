@@ -11,11 +11,14 @@ import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.application.commons.util.CvContext;
 
+import static uk.ac.ebi.intact.application.commons.util.CvContext.CvName;
+
+import javax.servlet.ServletContext;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 
@@ -29,16 +32,12 @@ public abstract class UpdateProteinsI {
 
     protected static Logger logger = Logger.getLogger( "updateProtein" );
 
-    private final static String CV_TOPIC_SEARCH_URL_ASCII = "search-url-ascii";
-
-
-    public static class UpdateException extends Exception {
+    public static class UpdateException extends RuntimeException {
 
         public UpdateException( String message ) {
             super( message );
         }
     }
-
 
     // cache useful object to avoid redoing queries
 
@@ -98,7 +97,8 @@ public abstract class UpdateProteinsI {
     //////////////////////////////////
     // Constructors
 
-    public UpdateProteinsI( boolean setOutputOn ) {
+    public UpdateProteinsI( boolean setOutputOn )
+    {
         try {
             if ( setOutputOn ) {
                 HttpProxyManager.setup();
@@ -149,19 +149,25 @@ public abstract class UpdateProteinsI {
      *
      * @throws UpdateException
      */
-    public UpdateProteinsI( IntactHelper helper ) throws UpdateException {
-        this( helper, true );
+    public UpdateProteinsI( IntactHelper helper) throws UpdateException {
+        this( helper, true);
     }
 
 
     //////////////////////////////////
     // Methods
 
-    private void collectDefaultObject( IntactHelper helper ) throws UpdateException {
+    private void collectDefaultObject( IntactHelper helper ) {
 
-        try {
+        try
+        {
             myInstitution = helper.getInstitution();
-            // Sugath: I commented out this code because getInstitution() shouldn't return
+        }
+        catch (IntactException e)
+        {
+            e.printStackTrace();
+        }
+        // Sugath: I commented out this code because getInstitution() shouldn't return
             // a null instutition. It may throw an IntactException which should be captured
             // by the try block. 
 //            if( myInstitution == null ) {
@@ -172,141 +178,41 @@ public abstract class UpdateProteinsI {
 //                throw new UpdateException( msg );
 //            }
 
-            /**
-             * Load CVs
-             */
+            CvContext cvContext = CvContext.getCurrentInstance();
 
-            sgdDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, CvDatabase.SGD_MI_REF ); // sgd
-            uniprotDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, CvDatabase.UNIPROT_MI_REF ); // uniprot
+            /**
+             * Load CVs from the context
+             */
+            sgdDatabase = (CvDatabase) cvContext.getCvObject(CvName.SGD_DB); // sgd
+            uniprotDatabase = (CvDatabase) cvContext.getCvObject(CvName.UNIPROT_DB); // uniprot
 
             // search for the SRS link.
-            Collection annotations = uniprotDatabase.getAnnotations();
-            if ( annotations != null ) {
-                // find the CvTopic search-url-ascii
-                Annotation searchedAnnotation = null;
-                for ( Iterator iterator = annotations.iterator(); iterator.hasNext() && searchedAnnotation == null; ) {
-                    Annotation annotation = (Annotation) iterator.next();
-                    if ( CV_TOPIC_SEARCH_URL_ASCII.equals( annotation.getCvTopic().getShortLabel() ) ) {
-                        searchedAnnotation = annotation;
-                    }
-                }
+            srsUrl = cvContext.getSrsUrl();
 
-                if ( searchedAnnotation != null ) {
-                    srsUrl = searchedAnnotation.getAnnotationText();
-                    if ( logger != null ) {
-                        logger.info( "Found UniProt URL in the Uniprot CvDatabase: " + srsUrl );
-                    }
-                } else {
-                    String msg = "Unable to find an annotation having a CvTopic: " + CV_TOPIC_SEARCH_URL_ASCII +
-                                 " in the UNIPROT database";
-                    if ( logger != null ) {
-                        logger.error( msg );
-                    }
-                    throw new UpdateException( msg );
-                }
-            } else {
-                String msg = "No Annotation in the UNIPROT database, could not get the UniProt URL.";
-                if ( logger != null ) {
-                    logger.error( msg );
-                }
-                throw new UpdateException( msg );
-            }
+            intactDatabase = (CvDatabase) cvContext.getCvObject(CvName.INTACT_DB);
+            goDatabase = (CvDatabase) cvContext.getCvObject(CvName.GO_DB);
+            interproDatabase = (CvDatabase) cvContext.getCvObject(CvName.INTERPRO_DB);
+            flybaseDatabase = (CvDatabase) cvContext.getCvObject(CvName.FLYBASE_DB);
+            reactomeDatabase = (CvDatabase) cvContext.getCvObject(CvName.REACTOME_DB);
+            hugeDatabase = (CvDatabase) cvContext.getCvObject(CvName.HUGE_DB);
 
-            intactDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, CvDatabase.INTACT_MI_REF );
-            goDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, CvDatabase.GO_MI_REF );
-            interproDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, CvDatabase.INTERPRO_MI_REF );
-            flybaseDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, CvDatabase.FLYBASE_MI_REF );
-            reactomeDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, CvDatabase.REACTOME_PROTEIN_PSI_REF );
-            hugeDatabase = (CvDatabase) getCvObjectViaMI( CvDatabase.class, CvDatabase.HUGE_MI_REF );
-
-            identityXrefQualifier = (CvXrefQualifier) getCvObjectViaMI( CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF );
-            secondaryXrefQualifier = (CvXrefQualifier) getCvObjectViaMI( CvXrefQualifier.class, CvXrefQualifier.SECONDARY_AC_MI_REF );
-            isoFormParentXrefQualifier = (CvXrefQualifier) getCvObjectViaMI( CvXrefQualifier.class, CvXrefQualifier.ISOFORM_PARENT_MI_REF );
+            identityXrefQualifier = (CvXrefQualifier) cvContext.getCvObject(CvName.IDENTITY_XREF_QUALIFIER);
+            secondaryXrefQualifier = (CvXrefQualifier) cvContext.getCvObject(CvName.SECONDARY_XREF_QUALIFIER);
+            isoFormParentXrefQualifier = (CvXrefQualifier) cvContext.getCvObject(CvName.ISOFORM_PARENT_XREF_QUALIFIER);
 
             // only one search by shortlabel as it still doesn't have MI number.
-            isoformComment = (CvTopic) getCvObject( CvTopic.class, CvTopic.ISOFORM_COMMENT );
-            noUniprotUpdate = (CvTopic) getCvObject( CvTopic.class, CvTopic.NON_UNIPROT);
+            isoformComment = (CvTopic) cvContext.getCvObject(CvName.ISOFORM_COMMENT);
+            noUniprotUpdate = (CvTopic) cvContext.getCvObject(CvName.NO_UNIPROT_UPDATE);
 
 
-            geneNameAliasType = (CvAliasType) getCvObjectViaMI( CvAliasType.class, CvAliasType.GENE_NAME_MI_REF );
-            geneNameSynonymAliasType = (CvAliasType) getCvObjectViaMI( CvAliasType.class, CvAliasType.GENE_NAME_SYNONYM_MI_REF );
-            isoformSynonym = (CvAliasType) getCvObjectViaMI( CvAliasType.class, CvAliasType.ISOFORM_SYNONYM_MI_REF );
-            locusNameAliasType = (CvAliasType) getCvObjectViaMI( CvAliasType.class, CvAliasType.LOCUS_NAME_MI_REF );
-            orfNameAliasType = (CvAliasType) getCvObjectViaMI( CvAliasType.class, CvAliasType.ORF_NAME_MI_REF );
+            geneNameAliasType = (CvAliasType) cvContext.getCvObject(CvName.GENE_NAME_ALIAS_TYPE);
+            geneNameSynonymAliasType = (CvAliasType) cvContext.getCvObject(CvName.GENE_NAME_SYNONYM_ALIAS_TYPE);
+            isoformSynonym = (CvAliasType) cvContext.getCvObject(CvName.ISOFORM_SYNONYM);
+            locusNameAliasType = (CvAliasType) cvContext.getCvObject(CvName.LOCUS_NAME_ALIAS_TYPE);
+            orfNameAliasType = (CvAliasType) cvContext.getCvObject(CvName.ORF_NAME_ALIAS_TYPE);
 
-            proteinType = (CvInteractorType) getCvObjectViaMI( CvInteractorType.class, CvInteractorType.getProteinMI() );
+            proteinType = (CvInteractorType) cvContext.getCvObject(CvName.PROTEIN_TYPE);
 
-        } catch ( IntactException e ) {
-            if ( logger != null ) {
-                logger.error( e );
-            }
-            throw new UpdateException( "Couldn't find needed object in IntAct, cause: " + e.getMessage() );
-        }
-    }
-
-    /**
-     * Get a CvObject based on its class name and its shortlabel.
-     *
-     * @param clazz      the Class we are looking for
-     * @param shortlabel the shortlabel of the object we are looking for
-     *
-     * @return the CvObject of type <code>clazz</code> and having the shortlabel <code>shorltabel<code>.
-     *
-     * @throws IntactException if the search failed
-     * @throws UpdateException if the object is not found.
-     */
-    private CvObject getCvObject( Class clazz, String shortlabel ) throws IntactException,
-                                                                          UpdateException {
-
-        CvObject cv = (CvObject) helper.getObjectByLabel( clazz, shortlabel );
-        if ( cv == null ) {
-            StringBuffer sb = new StringBuffer( 128 );
-            sb.append( "Could not find " );
-            sb.append( shortlabel );
-            sb.append( ' ' );
-            sb.append( clazz.getName() );
-            sb.append( " in your IntAct node" );
-
-            if ( logger != null ) {
-                logger.error( sb.toString() );
-            }
-            throw new UpdateException( sb.toString() );
-        }
-
-        return cv;
-    }
-
-    /**
-     * Get a CvObject based on its class name and its shortlabel.
-     *
-     * @param clazz the Class we are looking for
-     * @param miRef the PSI-MI reference of the object we are looking for
-     *
-     * @return the CvObject of type <code>clazz</code> and having the PSI-MI reference.
-     *
-     * @throws IntactException if the search failed
-     * @throws UpdateException if the object is not found.
-     */
-    private CvObject getCvObjectViaMI( Class clazz, String miRef ) throws IntactException,
-                                                                          UpdateException {
-
-        CvObject cv = (CvObject) helper.getObjectByXref( clazz, miRef );
-
-        if ( cv == null ) {
-            StringBuffer sb = new StringBuffer( 128 );
-            sb.append( "Could not find " );
-            sb.append( miRef );
-            sb.append( ' ' );
-            sb.append( clazz.getName() );
-            sb.append( " in your IntAct node" );
-
-            if ( logger != null ) {
-                logger.error( sb.toString() );
-            }
-            throw new UpdateException( sb.toString() );
-        }
-
-        return cv;
     }
 
     /**
@@ -468,7 +374,7 @@ public abstract class UpdateProteinsI {
     /**
      * Gives the count of protein which gaves us errors during the processing.
      *
-     * @return
+     * @return protein skipped count
      */
     public abstract int getProteinSkippedCount();
 
@@ -504,7 +410,7 @@ public abstract class UpdateProteinsI {
     /**
      * Gives the count of splice variant which gaves us errors during the processing.
      *
-     * @return
+     * @return splice variant skipped count
      */
     public abstract int getSpliceVariantSkippedCount();
 
