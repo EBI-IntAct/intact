@@ -17,6 +17,7 @@ specifications/ : specifications, mainly screen mockups, for IntAct applications
 sql/            : sql scripts for Oracle and Postgres
 src/            : Java sources
 template/       : template files for configuration etc.
+test/           : contains JUNIT 4.0 tests for the IntAct model
 uml/            : UML modeling files
 
 Other directories under intactCore not mentioned above are currently not relevant to installing/running intact.
