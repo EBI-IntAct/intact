@@ -29,8 +29,8 @@ public class IntactException extends Exception {
 
     public IntactException(String msg, Exception e) {
 
-        super(msg);
-
+        super(msg,e);
+        /*
         if (e != null) {
             e.fillInStackTrace();
             nestedMessage = e.getMessage();
@@ -42,7 +42,7 @@ public class IntactException extends Exception {
             else {
                 rootCause = e;
             }
-        }
+        }  */
     }
 
     public String getNestedMessage() {

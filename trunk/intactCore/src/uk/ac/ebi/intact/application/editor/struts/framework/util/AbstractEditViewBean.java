@@ -17,6 +17,7 @@ import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
 import uk.ac.ebi.intact.application.commons.util.AnnotationSection;
+import uk.ac.ebi.intact.application.commons.util.CvContext;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
@@ -33,6 +34,8 @@ import java.sql.Timestamp;
  * @version $Id$
  */
 public abstract class AbstractEditViewBean implements Serializable {
+
+    private static final Logger logger = Logger.getLogger(EditorConstants.LOGGER);
 
     /**
      * The Annotated object to wrap this bean around.
@@ -1213,6 +1216,15 @@ public abstract class AbstractEditViewBean implements Serializable {
             else {
                 // Ordinary update
                 helper.update(myAnnotObject);
+            }
+
+            // update the cvObject in the cvContext (application scope)
+            if (myAnnotObject instanceof CvObject)
+            {
+                 boolean cvObjectUpdated = CvContext.getCurrentInstance().updateCvObject((CvObject)myAnnotObject);
+
+                if (cvObjectUpdated)
+                    logger.info("CvObject updated: "+myAnnotObject);
             }
         }
     }

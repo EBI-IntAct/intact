@@ -126,6 +126,10 @@ public class IntactHelper implements SearchI, Externalizable {
     }
 
     public Logger getLogger() {
+        if ( pr == null && dataSource != null ) {
+            pr = dataSource.getLogger();
+        }
+
         return pr;
     }
 
@@ -466,6 +470,7 @@ public class IntactHelper implements SearchI, Externalizable {
 
             long tmp = System.currentTimeMillis();
             timer = tmp - timer;
+            pr = getLogger();
             pr.info( "**************************************************" );
             pr.info( "intact helper: time spent in DAO find (ms): " + timer );
             pr.info( "**************************************************" );
@@ -490,7 +495,7 @@ public class IntactHelper implements SearchI, Externalizable {
      *
      * @throws IntactException - thrown if problems are encountered during the search process
      */
-    public Collection search( Class searchClass, String searchParam, String searchValue ) throws IntactException {
+    public <T> Collection<T> search( Class<T> searchClass, String searchParam, String searchValue ) throws IntactException {
         //now retrieve an object...
         try {
             return dao.find( searchClass, searchParam, searchValue );
@@ -635,7 +640,7 @@ public class IntactHelper implements SearchI, Externalizable {
      * Return an Object by classname and shortLabel. For efficiency, classes which are subclasses of CvObject are cached
      * if the label is unique.
      */
-    public Object getObjectByLabel( Class clazz,
+    public <T> T getObjectByLabel( Class<T> clazz,
                                     String label ) throws IntactException {
 
         /** Algorithm sketch:
@@ -647,7 +652,7 @@ public class IntactHelper implements SearchI, Externalizable {
          *  return element from search;
          */
 
-        Object result = null;
+        T result = null;
 
         /*
         if (isCachedClass(clazz)){
@@ -658,14 +663,14 @@ public class IntactHelper implements SearchI, Externalizable {
          }
          */
 
-        Collection resultList = null;
+        Collection<T> resultList = null;
 
         resultList = this.search( clazz, "shortLabel", label );
 
         if ( resultList.isEmpty() ) {
             result = null;
         } else {
-            Iterator i = resultList.iterator();
+            Iterator<T> i = resultList.iterator();
             result = i.next();
             if ( i.hasNext() ) {
                 IntactException ie = new DuplicateLabelException( label, clazz.getName() );
@@ -685,19 +690,19 @@ public class IntactHelper implements SearchI, Externalizable {
     /**
      * Return an Object by classname and ac.
      */
-    public Object getObjectByAc( Class clazz,
+    public <T> T getObjectByAc( Class<T> clazz,
                                  String ac ) throws IntactException {
 
-        Object result = null;
+        T result = null;
 
-        Collection resultList = null;
+        Collection<T> resultList = null;
 
-        resultList = this.search( clazz.getName(), "ac", ac );
+        resultList = this.search( clazz, "ac", ac );
 
         if ( resultList.isEmpty() ) {
             result = null;
         } else {
-            Iterator i = resultList.iterator();
+            Iterator<T> i = resultList.iterator();
             result = i.next();
             if ( i.hasNext() ) {
                 IntactException ie = new DuplicateLabelException( ac, clazz.getName() );

@@ -297,7 +297,7 @@ public abstract class AbstractObjectBridgeDAO implements DAO {
      * @throws SearchException -  thrown for errors during the search process, eg query problems
      * @throws NullPointerException thrown if the type is not specified
      */
-    public Collection find(Class searchClass, String col, String val) throws SearchException {
+    public <T> Collection<T> find(Class<T> searchClass, String col, String val) throws SearchException {
         Collection results = new ArrayList();
 
         //debug info..
