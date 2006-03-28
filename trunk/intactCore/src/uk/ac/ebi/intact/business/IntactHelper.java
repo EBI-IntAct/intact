@@ -515,17 +515,17 @@ public class IntactHelper implements SearchI, Externalizable {
      *
      * @return a Collection of object of type clazz for which a Xref having the given primaryId has been found.
      */
-    public Collection getObjectsByXref( Class clazz,
+    public <T> Collection<T> getObjectsByXref( Class<T> clazz,
                                         String aPrimaryId ) throws IntactException {
 
         // get the Xref from the database
-        Collection xrefs = this.search( Xref.class.getName(), "primaryId", aPrimaryId );
-        Collection results = new ArrayList();
+        Collection<Xref> xrefs = this.search( Xref.class, "primaryId", aPrimaryId );
+        Collection<T> results = new ArrayList<T>();
 
         // add all referenced objects of the searched class
-        for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
-            Xref xref = (Xref) iterator.next();
-            results.addAll( this.search( clazz.getName(), "ac", xref.getParentAc() ) );
+        for (Xref xref : xrefs)
+        {
+            results.addAll(this.search(clazz, "ac", xref.getParentAc()));
         }
         return results;
     }
@@ -540,22 +540,23 @@ public class IntactHelper implements SearchI, Externalizable {
      * @return a Collection of object of type clazz for which a Xref having the given primaryId and CvDatabase has been
      *         found.
      */
-    public Collection getObjectsByXref( Class clazz,
+    public <T> Collection<T> getObjectsByXref( Class<T> clazz,
                                         CvDatabase database,
                                         String aPrimaryId ) throws IntactException {
 
         // get the Xref from the database
-        Collection xrefs = this.search( Xref.class.getName(), "primaryId", aPrimaryId );
-        Collection results = new ArrayList();
+        Collection<Xref> xrefs = this.search( Xref.class, "primaryId", aPrimaryId );
+        Collection<T> results = new ArrayList<T>();
 
         // add all referenced objects of the searched class
-        for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
-            Xref xref = (Xref) iterator.next();
+        for (Xref xref : xrefs)
+        {
             // if the CvDatabase are the same (null or not), we add the parent.
-            if ( ( null != database && database.equals( xref.getCvDatabase() ) )
-                 ||
-                 ( null == database && null == xref.getCvDatabase() ) ) {
-                results.addAll( this.search( clazz.getName(), "ac", xref.getParentAc() ) );
+            if ((null != database && database.equals(xref.getCvDatabase()))
+                    ||
+                    (null == database && null == xref.getCvDatabase()))
+            {
+                results.addAll(this.search(clazz, "ac", xref.getParentAc()));
             }
         }
         return results;
@@ -572,28 +573,30 @@ public class IntactHelper implements SearchI, Externalizable {
      * @return a Collection of object of type clazz for which a Xref having the given primaryId and CvDatabase has been
      *         found.
      */
-    public Collection getObjectsByXref( Class clazz,
+    public <T> Collection<T> getObjectsByXref( Class<T> clazz,
                                         CvDatabase database,
                                         CvXrefQualifier qualifier,
                                         String aPrimaryId ) throws IntactException {
 
         // get the Xref from the database
-        Collection xrefs = this.search( Xref.class.getName(), "primaryId", aPrimaryId );
-        Collection results = new ArrayList();
+        Collection<Xref> xrefs = this.search( Xref.class, "primaryId", aPrimaryId );
+        Collection<T> results = new ArrayList<T>();
 
         // add all referenced objects of the searched class
-        for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
-            Xref xref = (Xref) iterator.next();
+        for (Xref xref : xrefs)
+        {
             // if the CvDatabase are the same (null or not), we add the parent.
-            if ( ( null != database && database.equals( xref.getCvDatabase() ) )
-                 ||
-                 ( null == database && null == xref.getCvDatabase() ) ) {
+            if ((null != database && database.equals(xref.getCvDatabase()))
+                    ||
+                    (null == database && null == xref.getCvDatabase()))
+            {
 
-                if ( ( null != qualifier && qualifier.equals( xref.getCvXrefQualifier() ) )
-                     ||
-                     ( null == qualifier && null == xref.getCvXrefQualifier() ) ) {
+                if ((null != qualifier && qualifier.equals(xref.getCvXrefQualifier()))
+                        ||
+                        (null == qualifier && null == xref.getCvXrefQualifier()))
+                {
 
-                    results.addAll( this.search( clazz.getName(), "ac", xref.getParentAc() ) );
+                    results.addAll(this.search(clazz, "ac", xref.getParentAc()));
                 }
             }
         }
@@ -604,10 +607,10 @@ public class IntactHelper implements SearchI, Externalizable {
      * Searches for a unique Object by classname and Xref. Currently this searches only by primaryId. Should search by
      * database and primaryId.
      */
-    public Object getObjectByXref( Class clazz,
+    public <T> T getObjectByXref( Class<T> clazz,
                                    String aPrimaryId ) throws IntactException {
 
-        Collection results = getObjectsByXref( clazz, aPrimaryId );
+        Collection<T> results = getObjectsByXref( clazz, aPrimaryId );
 
         //should be unique...
         if ( results.size() > 1 ) {
@@ -617,7 +620,7 @@ public class IntactHelper implements SearchI, Externalizable {
             if ( results.isEmpty() ) {
                 return null;
             }
-            Iterator it = results.iterator();
+            Iterator<T> it = results.iterator();
             return it.next();
         }
     }
@@ -630,10 +633,10 @@ public class IntactHelper implements SearchI, Externalizable {
      *
      * @return the object for given primary id or null if there is no object found.
      */
-    public Object getObjectByPrimaryId( Class clazz, String primaryId ) {
+    public <T> T getObjectByPrimaryId( Class<T> clazz, String primaryId ) {
         Criteria crit = new Criteria();
         crit.addEqualTo( "xrefs.primaryId", primaryId );
-        return getObjectByQuery( QueryFactory.newQuery( clazz, crit ) );
+        return (T) getObjectByQuery( QueryFactory.newQuery( clazz, crit ) );
     }
 
     /**
@@ -727,13 +730,14 @@ public class IntactHelper implements SearchI, Externalizable {
     public BioSource getBioSourceByTaxId( String taxId ) throws IntactException {
 
         //List of biosurce objects for given tax id
-        Collection results = search( BioSource.class.getName(), "taxId", taxId );
+        Collection<BioSource> results = search( BioSource.class, "taxId", taxId );
 
         // Get the biosource with null values for cell type and tisse
         //  (there is only one of them exists).
-        for ( Iterator iter = results.iterator(); iter.hasNext(); ) {
-            BioSource biosrc = (BioSource) iter.next();
-            if ( ( biosrc.getCvCellType() == null ) && ( biosrc.getCvTissue() == null ) ) {
+        for (BioSource biosrc : results)
+        {
+            if ((biosrc.getCvCellType() == null) && (biosrc.getCvTissue() == null))
+            {
                 return biosrc;
             }
         }
@@ -757,7 +761,7 @@ public class IntactHelper implements SearchI, Externalizable {
      *                                  <p/>
      *                                  NB Not tested yet - BioSource data in DB required
      */
-    public Collection getInteractorBySource( Class clazz, BioSource source ) throws IntactException {
+    public Collection<Interactor> getInteractorBySource( Class<? extends Interactor> clazz, BioSource source ) throws IntactException {
 
         if ( source == null ) {
             throw new NullPointerException( "Need a BioSource to search by BioSource!" );
@@ -770,7 +774,7 @@ public class IntactHelper implements SearchI, Externalizable {
                                                 + clazz.getName() + "is not a subclass of Interactor" );
         }
 
-        return ( this.search( Interactor.class.getName(), "bioSource_ac", source.getAc() ) );
+        return ( this.search( Interactor.class, "bioSource_ac", source.getAc() ) );
 
     }
 
@@ -840,7 +844,7 @@ public class IntactHelper implements SearchI, Externalizable {
 
             // search for it (force it for LC as short labels must be in LC).
             shortlabel = shortlabel.trim();
-            Collection result = search( Institution.class.getName(), "shortLabel", shortlabel );
+            Collection<Institution> result = search( Institution.class, "shortLabel", shortlabel );
 
             if ( result.size() == 0 ) {
                 // doesn't exist, create it
@@ -914,7 +918,7 @@ public class IntactHelper implements SearchI, Externalizable {
 
             } else {
                 // return the object found
-                institution = (Institution) result.iterator().next();
+                institution = result.iterator().next();
             }
 
         } else {
@@ -947,9 +951,9 @@ public class IntactHelper implements SearchI, Externalizable {
      *
      * @throws IllegalStateException if the uderlying DAO is not the ObjectBridge DAO
      */
-    public Object getObjectByQuery( Query query ) {
+    public <T> T getObjectByQuery( Query query ) {
         verifyObjectBridgeDAO();
-        return ( (ObjectBridgeDAO) dao ).getObjectByQuery( query );
+        return (T) ( (ObjectBridgeDAO) dao ).getObjectByQuery( query );
     }
 
     /**

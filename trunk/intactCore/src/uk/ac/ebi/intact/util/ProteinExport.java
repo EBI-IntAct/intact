@@ -53,30 +53,29 @@ public class ProteinExport {
 
         BioSource bioSource = null;
         if ( bioSourceShortLabel != null ) {
-            bioSource = (BioSource) helper.getObjectByLabel( BioSource.class, bioSourceShortLabel );
+            bioSource =  helper.getObjectByLabel( BioSource.class, bioSourceShortLabel );
             if ( bioSource == null ) {
                 throw new SearchException( "The requested bioSource ("+ bioSourceShortLabel +") could not be found." );
             }
         }
 
-        CvDatabase uniprotDatabase = null;
-        uniprotDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, CvDatabase.UNIPROT );
+        CvDatabase uniprotDatabase = helper.getObjectByLabel( CvDatabase.class, CvDatabase.UNIPROT );
         if ( uniprotDatabase == null ) {
             throw new SearchException( "Could not find the UNIPROTKB database in the current intact node." );
         }
 
         // collect proteins
-        Collection proteins = null;
+        Collection<Protein> proteins = null;
         if ( bioSource == null) {
-            proteins = helper.search( Protein.class.getName(), "ac", null); // all proteins
+            proteins = helper.search( Protein.class, "ac", null); // all proteins
         } else {
-            Collection interactors = helper.getInteractorBySource( Protein.class, bioSource );
+            Collection<Interactor> interactors = helper.getInteractorBySource( Protein.class, bioSource );
             // keep only instances of Protein.
             proteins = new ArrayList( interactors.size() );
             for ( Iterator iterator = interactors.iterator (); iterator.hasNext (); ) {
                 Interactor interactor = (Interactor) iterator.next ();
                 if ( interactor instanceof Protein ) {
-                    proteins.add( interactor );
+                    proteins.add((Protein) interactor );
                 }
             }
         }
@@ -92,29 +91,36 @@ public class ProteinExport {
 
         // export found proteins
         String uniprotAc    = null;
-        Collection xrefs = null;
-        for ( Iterator iterator = proteins.iterator (); iterator.hasNext (); ) {
-            Protein protein = (Protein) iterator.next ();
-
+        Collection<Xref> xrefs = null;
+        for (Protein protein : proteins)
+        {
             xrefs = protein.getXrefs();
-            for ( Iterator iterator2 = xrefs.iterator (); iterator2.hasNext () && uniprotAc == null; ) {
-                Xref xref = (Xref) iterator2.next ();
-                if ( xref.getCvDatabase().equals( uniprotDatabase ) ) {
-                   uniprotAc = xref.getPrimaryId();
+            for (Iterator<Xref> iterator2 = xrefs.iterator(); iterator2.hasNext() && uniprotAc == null;)
+            {
+                Xref xref = iterator2.next();
+                if (xref.getCvDatabase().equals(uniprotDatabase))
+                {
+                    uniprotAc = xref.getPrimaryId();
                 }
             } // xrefs loop
 
-            if ( uniprotAc != null ) {
+            if (uniprotAc != null)
+            {
                 // write the UNIPROT AC in the output file
-                try {
-                    out.write( uniprotAc + NEW_LINE );
-                } catch ( IOException e ) {
-                    throw new IntactException( "Could not write in the output file: " + outputFile, e );
+                try
+                {
+                    out.write(uniprotAc + NEW_LINE);
+                }
+                catch (IOException e)
+                {
+                    throw new IntactException("Could not write in the output file: " + outputFile, e);
                 }
 
                 uniprotAc = null; // in order to make the second loop test valid.
-            } else {
-                System.out.println ( "no UNIPROT AC for protein " + protein );
+            }
+            else
+            {
+                System.out.println("no UNIPROT AC for protein " + protein);
             }
         } // proteins loop
 
