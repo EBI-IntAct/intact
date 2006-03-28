@@ -6,6 +6,8 @@
 
 <web-app>
 
+    <distributable/>
+
     <!--  NB XML config files for the DB MUST be referred to here relative
           to the WEB-INF/classes directory as that is where the class loader
           will start to look. The leading "/" MUST be present if the config

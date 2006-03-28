@@ -8,7 +8,7 @@
 <project name="search" basedir="." default="compile">
     <property name="project.version" value="3.0"/>
 
-    <property name="jdk.version" value="1.4"/>
+    <property name="jdk.version" value="1.5"/>
 
     <!-- Intact core locations -->
     <property name="intact.root" value="../.."/>
@@ -21,6 +21,10 @@
 
     <!-- Intact application location. -->
     <property name="intact.app.dir" value=".."/>
+
+    <!-- Tomcat specific properties, to be able to deploy/undeploy using the manager -->
+    <property file="${intact.app.dir}/deployment.local.properties"/>
+    <property file="${intact.app.dir}/deployment.properties"/>
 
     <!-- Context path for search -->
     <property name="intact.context.dir" value="${intact.app.dir}/context"/>
@@ -481,6 +485,7 @@
                 <include name="pages/**"/>
                 <include name="layouts/**"/>
                 <include name="${last.modified.file}"/>
+                <include name="META-INF/*.xml"/>
             </fileset>
 
 
@@ -574,9 +579,17 @@
     <!-- =================================================================== -->
 
     <!-- Deploys the war file on the Tomcat server. -->
-    <target name="deploy" description="Deploys the WAR file on the Tomcat server">
+    <target name="deploy" description="Deploys the WAR file on the Tomcat server" depends="war">
+        <!--  OLD DEPLOYMENT
         <ant dir=".." inheritAll="false" target="deploy">
             <property name="war" value="search3/${dist.dir}/${war.name}"/>
+        </ant>
+        -->
+         <ant dir=".." inheritAll="false" target="deploy-using-manager">
+            <property name="context.path" value="/${server.name}/search"/>
+            <property name="dist.dir.absolute.path" value="${basedir}/${dist.dir}"/>
+            <property name="context.file.name" value="${search-context-file}" />
+            <property name="war.file.name" value="${war.name}"/>
         </ant>
 
         <!-- Copy context files in the Tomcat's webapps directory -->
@@ -593,8 +606,13 @@
     <!-- Undeploys the war file from the Tomcat server. -->
     <target name="undeploy"
             description="Undeploys the WAR file from the Tomcat server">
+        <!--  OLD DEPLOYMENT
         <ant dir=".." inheritAll="false" target="undeploy">
             <property name="war" value="search3"/>
+        </ant>
+        -->
+        <ant dir=".." inheritAll="false" target="undeploy-using-manager">
+            <property name="context.path" value="/${server.name}/search"/>
         </ant>
 
         <!-- Delete context files from the Tomcat's webapps directory -->
@@ -680,12 +698,20 @@
               overwrite="true"/>
 
         <!-- Customize the context file -->
+        <ant dir=".." inheritall="false" target="customize-context-file">
+            <property name="dist.dir.absolute.path" value="${basedir}/${dist.dir}"/>
+            <property name="context.file.name" value="${search-context-file}" />
+            <property name="war.file.name" value="${war.name}"/>
+         </ant>
+
+        <!-- Customize the context file
         <replace file="${dist.dir}/${search-context-file}"
-                 token="[WAR.FILE.NAME]"
-                 value="${war.file}"/>
+                 token="[WAR.ABSOLUTE.PATH]"
+                 value="${scp.destination.dir}/${war.file}"/>
         <replace file="${dist.dir}/${search-context-file}"
                  token="[server.name]"
                  value="${server.name}"/>
+                 -->
     </target>
 
 </project>
