@@ -24,7 +24,7 @@
 
     <!-- Context path for search -->
     <property name="cluster.context.dir" value="${intact.app.dir}/context"/>
-    <property name="cluster-context-file" value="cluster-context.xml"/>
+    <property name="cluster-context-file" value="intact#cluster-test.xml"/>
 
     <property environment="env"/>
     <property name="tomcat.home" value="${env.CATALINA_HOME}"/>
@@ -193,8 +193,10 @@
         <!-- Copy the template file -->
         <copy todir="${dist.dir}" file="${cluster.context.dir}/${cluster-context-file}" overwrite="true"/>
 
+        <property name="dist.dir.absolute.path" value="${basedir}/${dist.dir}"/>
+
         <!-- Customize the context file -->
-        <replace file="${dist.dir}/${cluster-context-file}" token="[WAR.FILE.NAME]" value="${war.file}"/>
+        <replace file="${dist.dir}/${cluster-context-file}" token="[WAR.ABSOLUTE.PATH]" value="${dist.dir.absolute.path}/${war.file}"/>
         <replace file="${dist.dir}/${cluster-context-file}" token="[server.name]"   value="${server.name}"/>
     </target>
 
