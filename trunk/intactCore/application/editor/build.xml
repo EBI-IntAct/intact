@@ -265,7 +265,7 @@
 
         <!-- Only compile editor sources only. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-            debug="on" source="1.4"
+            debug="on" source="1.5"
             includes="**/application/editor/**,
                       **/application/commons/**">
             <classpath refid="project.test.class.path"/>

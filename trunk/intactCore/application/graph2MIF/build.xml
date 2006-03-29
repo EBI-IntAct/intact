@@ -209,7 +209,7 @@
 
         <!-- Only compile graph2MIF sources only. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-            debug="on" source="1.4"
+            debug="on" source="1.5"
             includes="**/application/graph2MIF/**"
             excludes="**/graph2MIF/client/**">
             <classpath refid="project.class.path"/>
@@ -230,7 +230,7 @@
 
         <!-- Only compile graph2MIF sources only. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-            debug="on" source="1.4"
+            debug="on" source="1.5"
             includes="**/application/graph2MIF/**">
             <classpath refid="project.class.path"/>
         </javac>
@@ -424,7 +424,7 @@
     <target name="wsclient"
         description="Builds the example webservice client for Graph2MIF">
         <javac srcdir="${root.src.dir}" destdir="${root.dest.dir}" deprecation="on"
-            debug="on" source="1.4"
+            debug="on" source="1.5"
             includes=" **/graph2MIF/client/Graph2MIFWSClient.java">
             <classpath refid="project.class.path"/>
         </javac>
@@ -454,7 +454,7 @@
         description="Builds the example console for Graph2MIF">
         <ant target="displayClientParameter"/>
         <javac srcdir="${root.src.dir}" destdir="${root.dest.dir}" deprecation="on"
-            debug="on" source="1.4"
+            debug="on" source="1.5"
             includes=" **/graph2MIF/client/Graph2MIFConsole.java">
             <classpath refid="project.class.path"/>
         </javac>

@@ -170,7 +170,7 @@
 
         <!-- Only compile sources. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-            debug="on" source="1.4"
+            debug="on" source="1.5"
             includes="**/application/dataConversion/**"
             excludes="**/test/**">
 
@@ -197,7 +197,7 @@
 
         <!-- Only compile sources. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-            debug="on" source="1.4"
+            debug="on" source="1.5"
             includes="**/application/dataConversion/psiUpload/**,
                       **/application/dataConversion/util/**,
                       **/application/dataConversion/PsiDataLoader.java,
@@ -219,7 +219,7 @@
 
         <!-- Only compile test sources. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-            debug="on" source="1.4"
+            debug="on" source="1.5"
             includes="**/application/dataConversion/psiUpload/test/**">
 
             <classpath refid="project.class.path"/>
@@ -234,7 +234,7 @@
 
         <!-- Only compile dataConversion sources only. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-            debug="on" source="1.4"
+            debug="on" source="1.5"
             includes="**/application/dataConversion/**">
 
             <classpath refid="project.class.path"/>

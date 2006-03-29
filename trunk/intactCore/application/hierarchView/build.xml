@@ -424,7 +424,7 @@ Verison: $Id$
 
 
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-               source="1.4"
+               source="1.5"
                includes="**/application/hierarchView/**,
                       **/application/commons/**,
                       **/util/PropertyLoader*,

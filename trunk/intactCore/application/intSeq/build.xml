@@ -194,7 +194,7 @@
         <mkdir dir="${dest.dir}"/>
 
         <!-- Only compile intSeq sources only. -->
-        <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on" debug="on" source="1.4"
+        <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on" debug="on" source="1.5"
             includes="**/application/intSeq/**,
                       **/intact/util/SearchReplace*">
             <classpath refid="project.class.path"/>
