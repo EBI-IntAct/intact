@@ -201,7 +201,7 @@ public interface EditUserI extends IntactUserI, Serializable {
      * pre: results->forall(obj: Object | obj.oclIsTypeOf(AnnotatedObjects))
      * </pre>
      */
-    public void addToSearchCache(Collection results);
+    public void addToSearchCache(Collection<AnnotatedObject> results);
 
     /**
      * Clears existing search cache and replace it with given bean.
@@ -230,7 +230,7 @@ public interface EditUserI extends IntactUserI, Serializable {
      * access other similar objects. Null is returned if <code>label</code> has
      * invalid format.
      */
-    public String getNextAvailableShortLabel(Class clazz, String label);
+    public String getNextAvailableShortLabel(Class<? extends AnnotatedObject> clazz, String label);
 
     /**
      * Returns the search result as a list.
@@ -289,7 +289,7 @@ public interface EditUserI extends IntactUserI, Serializable {
      * post: results->forall(obj: Object | obj.oclIsTypeOf(ExperimentRowData))
      * </pre>
      */
-    public Set getCurrentExperiments();
+    public Set<ExperimentRowData> getCurrentExperiments();
 
     /**
      * Adds the AC as the currently edited/added interaction.
@@ -314,7 +314,7 @@ public interface EditUserI extends IntactUserI, Serializable {
      * post: results->forall(obj: Object | obj.oclIsTypeOf(InteractionRowData))
      * </pre>
      */
-    public Set getCurrentInteractions();
+    public Set<InteractionRowData> getCurrentInteractions();
 
     /**
      * Allows access to Intact helper.

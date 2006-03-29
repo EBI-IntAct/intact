@@ -54,7 +54,7 @@ public class EditorService {
      * The topics already sorted in an alphebetical order;
      * cached to save recompuation.
      */
-    private List myTopicsCache = new ArrayList();
+    private List<String> myTopicsCache = new ArrayList<String>();
 
     /**
      * The search server URL.
