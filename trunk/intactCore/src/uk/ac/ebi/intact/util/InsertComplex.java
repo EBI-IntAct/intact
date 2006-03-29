@@ -41,7 +41,7 @@ public final class InsertComplex {
     /**
      * All proteins which have been created for the current complex.
      */
-    private HashMap createdProteins = null;
+    private HashMap<String,Collection<Protein>> createdProteins = null;
 
     /**
      * Newt Server class - used to get a valid BioSource given a taxID
@@ -111,16 +111,16 @@ public final class InsertComplex {
 
         // as long as the BioSource of the protein is checked, we don't need to
         // filter on 'identity' Xref.
-        for( Iterator iterator = protein.getXrefs().iterator(); iterator.hasNext(); ) {
-            Xref xref = (Xref) iterator.next();
-
+        for (Xref xref : protein.getXrefs())
+        {
 //            if( "uniprot".equals( xref.getCvDatabase().getShortLabel() ) &&
 //                    "identity".equals( xref.getCvXrefQualifier().getShortLabel() )&&
 //                    spAc.equals(xref.getPrimaryId() )
 //            ) {
-            if( CvDatabase.UNIPROT.equals( xref.getCvDatabase().getShortLabel() ) &&
-                spAc.equals( xref.getPrimaryId() )
-            ) {
+            if (CvDatabase.UNIPROT.equals(xref.getCvDatabase().getShortLabel()) &&
+                    spAc.equals(xref.getPrimaryId())
+                    )
+            {
                 return true;
             }
         }
@@ -141,12 +141,12 @@ public final class InsertComplex {
                                        String spAc,
                                        CvComponentRole role ) throws IntactException {
 
-        Collection proteins = null;
+        Collection<Protein> proteins;
 
         // The relevant proteins might already have been created for the current complex.
         if( createdProteins.containsKey( spAc ) ) {
 
-            proteins = (Collection) createdProteins.get( spAc );
+            proteins = createdProteins.get( spAc );
 
         } else {
 
@@ -161,7 +161,7 @@ public final class InsertComplex {
 
                 // if it looks like an sgd protein, create it with an xref to sgd
                 if( ( 0 == proteins.size() ) && ( spAc.substring( 0, 1 ).equals( "S" ) ) ) {
-                    CvDatabase sgd = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "sgd" );
+                    CvDatabase sgd = helper.getObjectByLabel( CvDatabase.class, "sgd" );
                     Protein protein = proteinFactory.insertSimpleProtein( spAc, sgd, bioSource.getTaxId() );
                     proteins.add( protein );
                 }
@@ -175,19 +175,21 @@ public final class InsertComplex {
         Protein targetProtein = null;
 
         // Filter for the correct protein - the filter is done on taxid and uniprot identity (needed to distinguish protein from splice variant)
-        Set uniqProteins = new HashSet( proteins.size() );
-        uniqProteins.addAll( proteins );
+        Set<Protein> uniqProteins = new HashSet<Protein>(proteins);
 
-        for( Iterator i = uniqProteins.iterator(); i.hasNext(); ) {
-            Protein tmp = (Protein) i.next();
-
+        for (Protein tmp : uniqProteins)
+        {
             // hasIdentity checks that the protein has a Uniprot Xref with spAc (primary or secondary)
-            if( tmp.getBioSource().getTaxId().equals( bioSource.getTaxId() ) && hasIdentity( tmp, spAc ) ) {
-                if( null == targetProtein ) {
+            if (tmp.getBioSource().getTaxId().equals(bioSource.getTaxId()) && hasIdentity(tmp, spAc))
+            {
+                if (null == targetProtein)
+                {
                     targetProtein = tmp;
-                } else {
-                    System.err.println( tmp.getAc() + " and " + targetProtein.getAc() + " were found !!!!!!!!!!" );
-                    throw new IntactException( "More than one target protein found for: " + spAc );
+                }
+                else
+                {
+                    System.err.println(tmp.getAc() + " and " + targetProtein.getAc() + " were found !!!!!!!!!!");
+                    throw new IntactException("More than one target protein found for: " + spAc);
                 }
             }
         }
@@ -214,7 +216,7 @@ public final class InsertComplex {
 
         // Get experiment from the local node
         logger.debug( "looking for an Experiment in the DB with label " + experimentLabel + " ...." );
-        Experiment ex = (Experiment) helper.getObjectByLabel( Experiment.class, experimentLabel );
+        Experiment ex = helper.getObjectByLabel( Experiment.class, experimentLabel );
         if( null == ex ) {
             // create it - NB under the new model the Experiment needs
             //a non-null owner, shortLabel and BioSource....
@@ -225,7 +227,7 @@ public final class InsertComplex {
 
             helper.create( ex );
             logger.debug( "checking it was persisted....." );
-            Experiment dummy = (Experiment) helper.getObjectByLabel( Experiment.class, experimentLabel );
+            Experiment dummy =  helper.getObjectByLabel( Experiment.class, experimentLabel );
             if( dummy == null ) logger.debug( "Error: new Experiment not created; may be nested TX problem..." );
         }
 
@@ -307,7 +309,7 @@ public final class InsertComplex {
         CvInteractionType cvType = null;
         if( typeLabel != null ) {
             try {
-                cvType = (CvInteractionType) helper.getObjectByLabel( CvInteractionType.class, typeLabel );
+                cvType = helper.getObjectByLabel( CvInteractionType.class, typeLabel );
                 if( cvType == null ) {
                     // TODO: Problem if type is unknown - do what??
                     logger.debug( typeLabel + " is not known as a CvInteractionType shortLabel." );
@@ -345,7 +347,7 @@ public final class InsertComplex {
         //Interaction interaction = (Interaction) helper.getObjectByLabel(Interaction.class, actLabel);
         //if (null == interaction) {
 
-        Collection experiments = new ArrayList();
+        Collection<Experiment> experiments = new ArrayList<Experiment>();
         //Experiment experiment = getExperiment(experimentLabel);
         experiments.add( experiment );
 
@@ -353,7 +355,7 @@ public final class InsertComplex {
         CvInteractionType cvInteractionType = getInteractionType( interactionTypeLabel );
 
         // Get the default interactor type for an interaction.
-        CvInteractorType cvInteractorType = (CvInteractorType) helper.getObjectByPrimaryId(
+        CvInteractorType cvInteractorType = helper.getObjectByPrimaryId(
                 CvInteractorType.class, CvInteractorType.getInteractionMI());
 
         //got our data - now build the new Interaction (with an empty component Collection)
@@ -366,11 +368,11 @@ public final class InsertComplex {
         helper.create( interaction );
 
         // Initialise list of proteins created
-        createdProteins = new HashMap();
+        createdProteins = new HashMap<String,Collection<Protein>>();
 
         // add bait
-        CvComponentRole cvBait = (CvComponentRole) helper.getObjectByLabel( CvComponentRole.class, "bait" );
-        CvComponentRole cvPrey = (CvComponentRole) helper.getObjectByLabel( CvComponentRole.class, "prey" );
+        CvComponentRole cvBait = helper.getObjectByLabel( CvComponentRole.class, "bait" );
+        CvComponentRole cvPrey = helper.getObjectByLabel( CvComponentRole.class, "prey" );
 
         insertComponent( interaction, bait, cvBait );
 
@@ -424,7 +426,7 @@ public final class InsertComplex {
         //now get a valid BioSource - has to be done via newt,
         //and we don't want to go to get one every time a line
         //is processed so do it here....
-        NewtServerProxy.NewtResponse response = null;
+        NewtServerProxy.NewtResponse response;
         try {
             System.out.println( "Attempting to get BioSource info from Newt server....." );
             response = newtServer.query( Integer.parseInt( taxId ) );
@@ -435,7 +437,7 @@ public final class InsertComplex {
             logger.debug( "IO Error - failed to access newt server to obtain BioSource" );
             throw new Exception( "IO Error trying to get BioSource - cannot proceed with data loading!" );
         }
-        String bioLabel = null;
+        String bioLabel;
         if( response == null ) throw new Exception( "No response from Newt server!!" );
         if( response.hasShortLabel() ) {
             bioLabel = response.getShortLabel();
@@ -498,14 +500,14 @@ public final class InsertComplex {
                 StringTokenizer st = new StringTokenizer( line );
                 String interactionNumber = st.nextToken();
                 String bait = st.nextToken();
-                Vector preys = new Vector();
+                Vector<String> preys = new Vector<String>();
 
                 while( st.hasMoreTokens() ) {
                     preys.add( st.nextToken() );
                 }
 
                 // remove last element from preys vector, it is the experiment identifier.
-                String experimentLabel = (String) preys.lastElement();
+                String experimentLabel = preys.lastElement();
                 preys.removeElement( preys.lastElement() );
 
                 //Process the Complex data...
@@ -514,11 +516,11 @@ public final class InsertComplex {
                 //then we need some transactions but if not, just print the
                 //legend to say the Complex already exists.....
                 String actLabel = experimentLabel.substring( 0, 2 ) + "-" + interactionNumber;
-                Interaction interaction = (Interaction) helper.getObjectByLabel( Interaction.class, actLabel );
+                Interaction interaction = helper.getObjectByLabel( Interaction.class, actLabel );
                 if( interaction == null ) {
 
                     //Doesn't already exist - so need to do some Transactions...
-                    Experiment experiment = null;
+                    Experiment experiment;
                     try {
                         //must persist the Experiment first (if necessary) as the Complexes
                         //need it to be 'fully' defined before they can be persisted
@@ -561,12 +563,14 @@ public final class InsertComplex {
                 try {
                     file.close();
                 } catch ( IOException ioe ) {
+                    ioe.printStackTrace();
                 }
             }
             if( fr != null ) {
                 try {
                     fr.close();
                 } catch ( IOException ioe ) {
+                    ioe.printStackTrace();
                 }
             }
         }

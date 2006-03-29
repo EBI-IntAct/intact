@@ -119,22 +119,27 @@ public class BioSourceFactory {
      *
      * @throws IntactException if several of such BioSource are found
      */
-    private BioSource getOriginalBioSource( Collection biosources ) throws IntactException {
+    private BioSource getOriginalBioSource( Collection<BioSource> bioSources ) throws IntactException {
         BioSource original = null;
 
-        for ( Iterator iterator = biosources.iterator(); iterator.hasNext(); ) {
-            final BioSource bioSource = (BioSource) iterator.next();
-            if ( bioSource.getCvTissue() == null &&
-                 bioSource.getCvCellType() == null ) {
-                if ( original == null ) {
+        for (BioSource bioSource : bioSources)
+        {
+             if (bioSource.getCvTissue() == null &&
+                    bioSource.getCvCellType() == null)
+            {
+                if (original == null)
+                {
                     // first on is found
                     original = bioSource;
-                } else {
+                }
+                else
+                {
                     // multiple bioSource, error.
-                    if ( logger != null ) {
-                        logger.error( "More than one BioSource with this taxId found: " + original.getTaxId() );
+                    if (logger != null)
+                    {
+                        logger.error("More than one BioSource with this taxId found: " + original.getTaxId());
                     }
-                    throw new IntactException( "More than one BioSource with this taxId found: " + original.getTaxId() );
+                    throw new IntactException("More than one BioSource with this taxId found: " + original.getTaxId());
                 }
             }
         }
@@ -142,12 +147,12 @@ public class BioSourceFactory {
     }
 
     private CvDatabase getNewt() throws IntactException {
-        CvDatabase newt = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, CvDatabase.NEWT );
+        CvDatabase newt =  helper.getObjectByLabel( CvDatabase.class, CvDatabase.NEWT );
         return newt;
     }
 
     private CvXrefQualifier getIdentity() throws IntactException {
-        CvXrefQualifier identity = (CvXrefQualifier) helper.getObjectByLabel( CvXrefQualifier.class, CvXrefQualifier.IDENTITY );
+        CvXrefQualifier identity =  helper.getObjectByLabel( CvXrefQualifier.class, CvXrefQualifier.IDENTITY );
         return identity;
     }
 
@@ -219,7 +224,7 @@ public class BioSourceFactory {
 
                 // both were found but different taxid, ie. taxid was obsolete.
                 final String newTaxid = validBioSource.getTaxId();
-                Collection bioSources = helper.search( BioSource.class.getName(), "taxId", newTaxid );
+                Collection<BioSource> bioSources = helper.search( BioSource.class, "taxId", newTaxid );
 
                 switch ( bioSources.size() ) {
                     case 0:
@@ -277,7 +282,7 @@ public class BioSourceFactory {
                     // in intact with the new taxid. In which case, we can't just update or two BioSources
                     // will have the same taxid.
                     final String newTaxid = validBioSource.getTaxId();
-                    Collection bioSources = helper.search( BioSource.class.getName(), "taxId", newTaxid );
+                    Collection<BioSource> bioSources = helper.search( BioSource.class, "taxId", newTaxid );
 
                     switch ( bioSources.size() ) {
                         case 0:

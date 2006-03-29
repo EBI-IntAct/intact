@@ -32,6 +32,7 @@ public class Chrono {
         return ( ( start != NO_TIME_SET ) && ( stop != NO_TIME_SET ) );
     }
 
+    @Override
     public String toString() {
         if( hasTime() ) {
             return printTime( stop - start );
@@ -45,21 +46,21 @@ public class Chrono {
         StringBuffer sb = new StringBuffer();
 
         if( delay < 1000 ) {
-            sb.append( delay + " ms" );
+            sb.append(delay).append(" ms");
         } else {
             long d1 = delay / 1000;
             long ms = ( delay - d1 * 1000 );
             if( d1 < 60 ) {
-                sb.append( d1 + " s " + ms + " ms" );
+                sb.append(d1).append(" s ").append(ms).append(" ms");
             } else {
                 long mins = d1 / 60;
                 long secs = d1 - mins * 60;
                 if( mins < 60 ) {
-                    sb.append( mins + " min. " + secs + " s" );
+                    sb.append(mins).append(" min. ").append(secs).append(" s");
                 } else {
                     long hours = mins / 60;
                     mins = mins - hours * 60;
-                    sb.append( hours + " h " + mins + " min. " + secs + " s" );
+                    sb.append(hours).append(" h ").append(mins).append(" min. ").append(secs).append(" s");
                 }
             }
         }
@@ -69,14 +70,14 @@ public class Chrono {
     public String printTimeInMinutes( long delay ) {
         StringBuffer sb = new StringBuffer();
         double d1 = delay / 60000;
-        sb.append( d1 + " min." );
+        sb.append(d1).append(" min.");
         return sb.toString();
     }
 
     public String printTimeInSeconds( long delay ) {
         StringBuffer sb = new StringBuffer();
         double d1 = delay / 1000;
-        sb.append( d1 + " sec." );
+        sb.append(d1).append(" sec.");
         return sb.toString();
     }
 

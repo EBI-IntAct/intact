@@ -30,7 +30,7 @@ import java.io.IOException;
 public class DocumentationIntegrityChecker {
 
     static Document document;
-    private HashMap sections = null; // hold section name count
+    private HashMap<String,Integer> sections = null; // hold section name count
 
     /**
      * Update the section names list by traversing the DOM tree.
@@ -40,7 +40,7 @@ public class DocumentationIntegrityChecker {
      */
     private void traverse (Node node) {
 
-        sections = new HashMap ();
+        sections = new HashMap<String,Integer>();
         int type = node.getNodeType();
 
         // check if element
@@ -53,10 +53,10 @@ public class DocumentationIntegrityChecker {
                     if ("name".equals(attributeName)) {
                         String name = AttributesList.item(j).getNodeValue();
 
-                        Integer count = (Integer) sections.get (name);
+                        Integer count = sections.get (name);
                         if (count != null) {
                             // was already in ...
-                            count = new Integer (count.intValue() + 1);
+                            count = count + 1;
                         } else {
                             count = new Integer ("1");
                         }
@@ -90,18 +90,19 @@ public class DocumentationIntegrityChecker {
         if (sections == null) return 0;
 
         boolean ok = true;
-        Set sectionNames = sections.keySet();
+        Set<String> sectionNames = sections.keySet();
 
-        for (Iterator iterator = sectionNames.iterator(); iterator.hasNext();) {
-            String name = (String) iterator.next();
-            int count = ((Integer) sections.get(name)).intValue();
-            if (count > 1) {
-                System.out.println (name + " is used " + count + " times.");
+        for (String name : sectionNames)
+        {
+            int count = sections.get(name);
+            if (count > 1)
+            {
+                System.out.println(name + " is used " + count + " times.");
                 ok = false;
             }
         }
 
-        if (ok == true) return 0;
+        if (ok) return 0;
         else return 1;
     }
 

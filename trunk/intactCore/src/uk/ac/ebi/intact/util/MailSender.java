@@ -50,7 +50,7 @@ public class MailSender {
         }
         //props.put("mail.debug", "true"); //!!! temporarily
         // create some properties and get the default Session
-        Session session = Session.getDefaultInstance( props, null );
+         session = Session.getDefaultInstance( props, null );
        // session.setDebug( debug );
     }
 
@@ -100,7 +100,7 @@ public class MailSender {
                p = new PrintStream( out );
                p.print("Recipients: " + NEW_LINE);
                 for( int i = 0; i < recipients.length; i++ ) {
-                   p.print(recipients[i].toString());
+                   p.print(recipients[i]);
                 }
                p.print(NEW_LINE + NEW_LINE);
                p.print("Subject: " + NEW_LINE + subject.toString() + NEW_LINE + NEW_LINE);

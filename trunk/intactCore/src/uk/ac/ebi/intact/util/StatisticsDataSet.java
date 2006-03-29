@@ -37,7 +37,7 @@ public final class StatisticsDataSet {
     public static final long DATA_NOT_LOADED = -1;
     public static final long NONE = -1;
 
-    public static final long MAXIMUM_DATA_AVAILABILITY = 1000 * 60 * 60 * 24 * 1; // one days in ms.
+    public static final long MAXIMUM_DATA_AVAILABILITY = 1000 * 60 * 60 * 24; // one days in ms.
 
     public static final SimpleDateFormat dateFormater = new SimpleDateFormat ( "dd-MMM-yyyy" );
 
@@ -60,7 +60,7 @@ public final class StatisticsDataSet {
     /**
      * the statistics
      */
-    private static ArrayList statistics;
+    private static List<IntactStatistics> statistics;
 
     /**
      * Information related to the origin of the loaded data
@@ -84,7 +84,7 @@ public final class StatisticsDataSet {
         if ( ourInstance == null ) {
             ourInstance = new StatisticsDataSet ( loggerName);
         } else {
-            if ( dataOutDated() == true ) {
+            if (dataOutDated()) {
                 try {
                     collectStatistics( );
                 } catch ( IntactException e ) {
@@ -159,7 +159,7 @@ public final class StatisticsDataSet {
             // null parameter means no restrictive criteria.
             logger.info( "Look for statistics..." );
 
-            final Collection intactStatistics = helper.search( IntactStatistics.class.getName(), "ac", null );
+            final Collection<IntactStatistics> intactStatistics = helper.search( IntactStatistics.class, "ac", null );
 
             logger.info( "closing IntactHelper..." );
             helper.closeStore();
@@ -168,34 +168,25 @@ public final class StatisticsDataSet {
             timestamp = System.currentTimeMillis();
 
             logger.info ("Content of the table before sorting");
-            for (Iterator iterator = intactStatistics.iterator(); iterator.hasNext();) {
-
-                // return the next IntactStatistics object
-                final IntactStatistics singleItem = (IntactStatistics) iterator.next();
-                logger.info ( singleItem );
+            for (IntactStatistics singleItem : intactStatistics)
+            {
+                logger.info(singleItem);
             }
 
 
             if (intactStatistics.size() > 0) {
-                final Object[] array = intactStatistics.toArray();
-                Arrays.sort( array );
+                statistics = new ArrayList<IntactStatistics>( intactStatistics );
+                Collections.sort(statistics);
 
-                statistics = new ArrayList( intactStatistics.size() );
-                for ( int i = 0; i < array.length; i++ ) {
-                    final Object o = array[ i ];
-                    statistics.add( o );
-                }
             } else {
                 // empty collection.
-                statistics = new ArrayList( 1 );
+                statistics = Collections.EMPTY_LIST;
             }
 
             logger.info ("Content of the table after sorting");
-            for (Iterator iterator = statistics.iterator(); iterator.hasNext();) {
-
-                // return the next IntactStatistics object
-                final IntactStatistics singleItem = (IntactStatistics) iterator.next();
-                logger.info ( singleItem );
+            for (IntactStatistics singleItem : statistics)
+            {
+                logger.info(singleItem);
             }
         }
         catch (IntactException ie) {
@@ -260,20 +251,32 @@ public final class StatisticsDataSet {
 
         if ( start != NONE || stop != NONE ) {
             // filter
-            final ArrayList filteredStatistics = new ArrayList();
-            for ( Iterator iterator = statistics.iterator (); iterator.hasNext (); ) {
-                final IntactStatistics statistics = (IntactStatistics) iterator.next ();
-                final long timestamp = statistics.getTimestamp().getTime();
+            final List<IntactStatistics> filteredStatistics = new ArrayList<IntactStatistics>();
+            for (IntactStatistics statistic : statistics)
+            {
+                final long timestamp = statistic.getTimestamp().getTime();
                 boolean keepIt = true;
 
-                if ( start != NONE )
-                    if (timestamp < start) keepIt = false;
+                if (start != NONE)
+                {
+                    if (timestamp < start)
+                    {
+                        keepIt = false;
+                    }
+                }
 
-                if ( stop != NONE )
-                    if (timestamp > stop) keepIt = false;
+                if (stop != NONE)
+                {
+                    if (timestamp > stop)
+                    {
+                        keepIt = false;
+                    }
+                }
 
-                if ( keepIt )
-                    filteredStatistics.add( statistics );
+                if (keepIt)
+                {
+                    filteredStatistics.add(statistic);
+                }
             } // for
 
         return new StatisticsBean( filteredStatistics, databaseName, userName );

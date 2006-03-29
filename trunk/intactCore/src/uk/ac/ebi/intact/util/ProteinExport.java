@@ -65,24 +65,18 @@ public class ProteinExport {
         }
 
         // collect proteins
-        Collection<Protein> proteins = null;
+        Collection<Protein> proteins;
         if ( bioSource == null) {
             proteins = helper.search( Protein.class, "ac", null); // all proteins
         } else {
-            Collection<Interactor> interactors = helper.getInteractorBySource( Protein.class, bioSource );
+            Collection<Protein> interactors = helper.getInteractorBySource( Protein.class, bioSource );
             // keep only instances of Protein.
-            proteins = new ArrayList( interactors.size() );
-            for ( Iterator iterator = interactors.iterator (); iterator.hasNext (); ) {
-                Interactor interactor = (Interactor) iterator.next ();
-                if ( interactor instanceof Protein ) {
-                    proteins.add((Protein) interactor );
-                }
-            }
+            proteins = new ArrayList<Protein>(interactors);
         }
         System.out.println ( proteins.size() + " proteins found." );
 
         // init output file.
-        BufferedWriter out = null;
+        BufferedWriter out;
         try {
             out = new BufferedWriter(new FileWriter( outputFile ), 8192);
         } catch (IOException e) {
@@ -91,7 +85,7 @@ public class ProteinExport {
 
         // export found proteins
         String uniprotAc    = null;
-        Collection<Xref> xrefs = null;
+        Collection<Xref> xrefs;
         for (Protein protein : proteins)
         {
             xrefs = protein.getXrefs();

@@ -755,7 +755,7 @@ public class IntactHelper implements SearchI, Externalizable {
      *                                  <p/>
      *                                  NB Not tested yet - BioSource data in DB required
      */
-    public Collection<Interactor> getInteractorBySource( Class<? extends Interactor> clazz, BioSource source ) throws IntactException {
+    public <T extends Interactor> Collection<T> getInteractorBySource( Class<T> clazz, BioSource source ) throws IntactException {
 
         if ( source == null ) {
             throw new NullPointerException( "Need a BioSource to search by BioSource!" );
@@ -768,7 +768,7 @@ public class IntactHelper implements SearchI, Externalizable {
                                                 + clazz.getName() + "is not a subclass of Interactor" );
         }
 
-        return ( this.search( Interactor.class, "bioSource_ac", source.getAc() ) );
+        return (Collection<T>) this.search( Interactor.class, "bioSource_ac", source.getAc() ) ;
 
     }
 

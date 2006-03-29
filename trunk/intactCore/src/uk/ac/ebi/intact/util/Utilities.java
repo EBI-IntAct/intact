@@ -14,7 +14,9 @@ import java.util.*;
  */
 public class Utilities {
 
-    public Utilities() {};
+    private Utilities() {
+        // no instantiable
+    };
 
     /** Initialise parameters from the properties file.
 	@param aParameterName The file name of the properties file

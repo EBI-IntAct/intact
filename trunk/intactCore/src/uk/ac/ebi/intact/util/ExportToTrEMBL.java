@@ -74,6 +74,11 @@ public class ExportToTrEMBL {
     public static final int COLUMN_LENGTH = 10;
     public static final int COLUMN_COUNT = 6;
 
+    private ExportToTrEMBL()
+    {
+        // so this class is never instantiated
+    }
+
     //////////////////////////
     // public methods
 
@@ -182,7 +187,7 @@ public class ExportToTrEMBL {
         IntactHelper helper = null;
         try {
             helper = new IntactHelper();
-            Collection proteins = helper.search( Protein.class, "shortlabel", "*afcs*" );
+            Collection<Protein> proteins = helper.search( Protein.class, "shortlabel", "*afcs*" );
 
             System.out.println( proteins.size() + " protein(s) found." );
 
@@ -200,7 +205,7 @@ public class ExportToTrEMBL {
             String rl = "Curr. Opin. Biotechnol. 15:78-81(2004)";
 
             // TODO flat file loader
-            List proteinIDs = new ArrayList( );
+            List<String> proteinIDs = new ArrayList<String>( );
             proteinIDs.add( "P8R4B7");
             proteinIDs.add( "P8R4B6");
             proteinIDs.add( "P8R4B5");
@@ -227,27 +232,27 @@ public class ExportToTrEMBL {
             proteinIDs.add( "P8R494");
             proteinIDs.add( "P8R493");
 
-            for ( Iterator iterator = proteins.iterator(); iterator.hasNext(); ) {
-                Protein protein = (Protein) iterator.next();
-
+            for (Protein protein : proteins)
+            {
                 String proteinID = "";
-                if( ! proteinIDs.isEmpty() ) {
+                if (! proteinIDs.isEmpty())
+                {
                     Iterator it = proteinIDs.iterator();
                     proteinID = (String) it.next();
                     it.remove();
                 }
 
-                System.out.println( formatTremblEntry( protein,
-                                                       organismName,
-                                                       tremblReleaseDate,
-                                                       tremblReleaseNumber,
-                                                       rp,
-                                                       pubmedId,
-                                                       rx,
-                                                       ra,
-                                                       rt,
-                                                       rl,
-                                                       proteinID ) );
+                System.out.println(formatTremblEntry(protein,
+                                                     organismName,
+                                                     tremblReleaseDate,
+                                                     tremblReleaseNumber,
+                                                     rp,
+                                                     pubmedId,
+                                                     rx,
+                                                     ra,
+                                                     rt,
+                                                     rl,
+                                                     proteinID));
             }
         } finally {
             if ( helper != null ) {

@@ -30,6 +30,11 @@ public class UpdateTargetSpecies {
     public static CvDatabase newt = null;
     public static CvXrefQualifier targetSpeciesQualifier = null;
 
+    private UpdateTargetSpecies()
+    {
+        // no instantiable
+    }
+
 
     /**
      * Collect required CVs. Throws a RuntimeException if one of the object is not found.
@@ -41,7 +46,7 @@ public class UpdateTargetSpecies {
     public static void init( IntactHelper helper ) throws IntactException {
 
         // loading required CVs
-        noUniprotUpdate = (CvTopic) helper.getObjectByLabel( CvTopic.class, CvTopic.NON_UNIPROT );
+        noUniprotUpdate = helper.getObjectByLabel( CvTopic.class, CvTopic.NON_UNIPROT );
         if ( noUniprotUpdate == null ) {
             throw new IllegalStateException( "The IntAct database should contain a CvTopic( " +
                                              CvTopic.NON_UNIPROT + " ). abort." );
@@ -50,7 +55,7 @@ public class UpdateTargetSpecies {
         }
 
 
-        newt = (CvDatabase) helper.getObjectByPrimaryId( CvDatabase.class, CvDatabase.NEWT_MI_REF );
+        newt =  helper.getObjectByPrimaryId( CvDatabase.class, CvDatabase.NEWT_MI_REF );
         if ( newt == null ) {
             throw new IllegalStateException( "The IntAct database should contain a CvDatabase( " + CvDatabase.NEWT +
                                              " ) having an Xref( " + CvDatabase.NEWT_MI_REF + " ). abort." );
@@ -58,7 +63,7 @@ public class UpdateTargetSpecies {
             System.out.println( "CvDatabase( " + CvDatabase.NEWT + " )." );
         }
 
-        targetSpeciesQualifier = (CvXrefQualifier) helper.getObjectByLabel( CvXrefQualifier.class, CvXrefQualifier.TARGET_SPECIES );
+        targetSpeciesQualifier = helper.getObjectByLabel( CvXrefQualifier.class, CvXrefQualifier.TARGET_SPECIES );
         if ( targetSpeciesQualifier == null ) {
             throw new IllegalStateException( "The IntAct database should contain a CvXrefQualifier( " +
                                              CvXrefQualifier.TARGET_SPECIES + " ). abort." );
@@ -107,11 +112,12 @@ public class UpdateTargetSpecies {
      */
     public static Collection getTargetSpeciesXrefs( Experiment experiment ) {
 
-        Collection targets = new ArrayList();
-        for ( Iterator iterator = experiment.getXrefs().iterator(); iterator.hasNext(); ) {
-            Xref xref = (Xref) iterator.next();
-            if ( targetSpeciesQualifier.equals( xref.getCvXrefQualifier() ) ) {
-                targets.add( xref );
+        Collection<Xref> targets = new ArrayList<Xref>();
+        for (Xref xref : experiment.getXrefs())
+        {
+            if (targetSpeciesQualifier.equals(xref.getCvXrefQualifier()))
+            {
+                targets.add(xref);
             }
         }
         return targets;

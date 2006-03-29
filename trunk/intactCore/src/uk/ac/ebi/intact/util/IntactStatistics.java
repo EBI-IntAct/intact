@@ -165,6 +165,7 @@ public class IntactStatistics implements Comparable {
         this.termNumber = termNumb;
     }
 
+    @Override
     public final String toString(){
         return " Timestamp: " + this.getTimestamp()
                 + "; Number of proteins: " + this.getNumberOfProteins()

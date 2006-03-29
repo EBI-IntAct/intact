@@ -67,6 +67,7 @@ public class GoaTools {
             return goCategory;
         }
 
+        @Override
         public String toString() {
             StringBuffer sb = new StringBuffer(256);
 
@@ -145,6 +146,7 @@ public class GoaTools {
                 currentLine = goaBufferedReader.readLine();
                 goaLineCount++;
             } catch (IOException ioe) {
+                ioe.printStackTrace();
             }
         }
 
@@ -179,6 +181,7 @@ public class GoaTools {
                 currentLine = goaBufferedReader.readLine();
                 goaLineCount++;
             } catch (IOException ioe) {
+                ioe.printStackTrace();
             }
 
             return goaItem;
@@ -241,24 +244,26 @@ public class GoaTools {
         return goaBrowser;
     }
 
-    private boolean isXrefAlreadyExisting( Collection xrefs, String primaryId, CvDatabase database) {
+    private boolean isXrefAlreadyExisting( Collection<Xref> xrefs, String primaryId, CvDatabase database) {
 
-        for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
-            Xref xref = (Xref) iterator.next ();
-
-            if ( xref!= null && xref.getPrimaryId().equals( primaryId ) &&
-                    database != null && database.equals( xref.getCvDatabase() ) )
+        for (Xref xref : xrefs)
+        {
+            if (xref != null && xref.getPrimaryId().equals(primaryId) &&
+                    database != null && database.equals(xref.getCvDatabase()))
+            {
                 return true;
+            }
         }
         return false;
     }
 
     public void addNewXref (AnnotatedObject current, final Xref xref)  {
         // Make sure the xref does not yet exist in the object
-        Collection xrefs = current.getXrefs();
-        for (Iterator iterator = xrefs.iterator(); iterator.hasNext();) {
-            Xref anXref = (Xref) iterator.next();
-            if (anXref.equals(xref)) {
+        Collection<Xref> xrefs = current.getXrefs();
+        for (Xref anXref : xrefs)
+        {
+            if (anXref.equals(xref))
+            {
                 return; // already in, exit
             }
         }
@@ -281,12 +286,12 @@ public class GoaTools {
 
     private void updateGoXref ( Institution institution, Protein protein, GoaItem goaItem, CvDatabase database ) {
 
-        Collection xrefs = protein.getXrefs();
+        Collection<Xref> xrefs = protein.getXrefs();
         if ( ! isXrefAlreadyExisting( xrefs, goaItem.getGoId(), database ) ) {
             // add a new Xref
             String goId = goaItem.getGoId();
 
-            GoServerProxy.GoResponse goResponse = null;
+            GoServerProxy.GoResponse goResponse;
             try {
                 goResponse = goServerProxy.query( goId );
             } catch ( IOException e ) {
@@ -334,7 +339,7 @@ public class GoaTools {
         }
 
         IntactHelper helper = new IntactHelper();
-        CvDatabase goDatabase = (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "go");
+        CvDatabase goDatabase = helper.getObjectByLabel(CvDatabase.class, "go");
 
         if ( goDatabase == null ){
             throw new IntactException ( "Could not find the CvDatabase: go. Stop processing." );
@@ -349,7 +354,7 @@ public class GoaTools {
 
         GoaTools goaTools = new GoaTools( args[0], helper );
         GoaCollection goaCollection = goaTools.getGoaBrowser();
-        Collection proteins;
+        Collection<Protein> proteins;
         Protein protein;
         long count = 0;
         for ( Iterator goaIterator = goaCollection.iterator (); goaIterator.hasNext () ; ) {
@@ -361,9 +366,9 @@ public class GoaTools {
             proteins = helper.getObjectsByXref( Protein.class, goaItem.getAc() );
             if (proteins.size() != 0) {
                 System.out.println ( proteins.size() + " Protein found by Xref: " + goaItem.getAc() );
-                for ( Iterator iterator = proteins.iterator (); iterator.hasNext (); ) {
-                    protein = (Protein) iterator.next ();
-                    goaTools.updateGoXref( institution, protein, goaItem, goDatabase );
+                for (Protein prot : proteins)
+                {
+                    goaTools.updateGoXref(institution, prot, goaItem, goDatabase);
                 }
                 continue;
             } else {
@@ -371,7 +376,7 @@ public class GoaTools {
 
                 String symbol = goaItem.getSymbol();
                 if ( ! goaItem.getAc().equals( symbol ) ) {
-                    protein = (Protein) helper.getObjectByLabel( Protein.class, symbol );
+                    protein = helper.getObjectByLabel( Protein.class, symbol );
                     if (protein != null) {
                         System.out.println ( "Protein found by Label: " + symbol );
                         goaTools.updateGoXref( institution, protein, goaItem, goDatabase );
