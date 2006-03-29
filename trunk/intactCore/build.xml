@@ -476,7 +476,7 @@
         <mkdir dir="${dest.dir}"/>
 
         <javac srcdir="${src.dir}" destdir="${dest.dir}" debug="on" deprecation="on"
-               source="1.4" excludes="${non.core.files}">
+               source="1.5" excludes="${non.core.files}">
             <classpath refid="project.class.path"/>
         </javac>
 
@@ -581,7 +581,7 @@
         <javadoc destdir="${jdoc.dir}" author="true" version="true" use="true"
                  windowtitle="Intact core API Documentation"
                  doctitle="&lt;h1&gt;${project.title} Documentation (Version ${project.version})&lt;/h1&gt;"
-                 bottom="&lt;i&gt;Samuel Kerrien EMBL-EBI 2006 - skerrien@ebi.ac.uk&lt;/i&gt;" source="1.4">
+                 bottom="&lt;i&gt;Samuel Kerrien EMBL-EBI 2006 - skerrien@ebi.ac.uk&lt;/i&gt;" source="1.5">
 
             <!-- Exclude javadoc for test packages. -->
             <packageset dir="${src.dir}">
