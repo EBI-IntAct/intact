@@ -36,7 +36,7 @@ public class AuthenticationEvent {
     }
 
     // Override equals property and clone methods.
-
+    @Override
     public boolean equals(Object object) {
         if (this == object) {
             // x.equals(x)
@@ -50,6 +50,7 @@ public class AuthenticationEvent {
         return false;
     }
 
+    @Override
     public int hashCode() {
         return 17 * myUserName.hashCode();
     }

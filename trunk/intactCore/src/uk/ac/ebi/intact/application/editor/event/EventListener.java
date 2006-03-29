@@ -26,7 +26,7 @@ public class EventListener extends Observable {
         /**
          * Maintains a list of authenticate events
          */
-        private Set myAuthenticateEvents = new HashSet();
+        private Set<AuthenticationEvent> myAuthenticateEvents = new HashSet();
 
         // Implement the Observer interface
 
@@ -36,7 +36,7 @@ public class EventListener extends Observable {
                 return;
             }
             if (arg instanceof LoginEvent) {
-                myAuthenticateEvents.add(arg);
+                myAuthenticateEvents.add((AuthenticationEvent)arg);
             }
             else {
                 // Must be a logout event.
@@ -50,7 +50,7 @@ public class EventListener extends Observable {
          * @return returns the current list of authenticate events (cloning is
          *         not necessary as set items are immutable).
          */
-        private Set getAuthenticationEvents() {
+        private Set<AuthenticationEvent> getAuthenticationEvents() {
             return myAuthenticateEvents;
         }
     }
@@ -65,7 +65,7 @@ public class EventListener extends Observable {
     /**
      * @return the only instance of this class.
      */
-    public static final EventListener getInstance() {
+    public static EventListener getInstance() {
         return ourInstance;
     }
 
@@ -86,6 +86,7 @@ public class EventListener extends Observable {
      * Notifies registered observers about the change.
      * @param event the event to notify the observers with.
      */
+    @Override
     public void notifyObservers(Object event) {
         // Otherwise it won't propagate changes:
         setChanged();
@@ -98,7 +99,7 @@ public class EventListener extends Observable {
      * @return returns the current set of authenticate events (cloning is
      *         not necessary as set items are immutable).
      */
-    public Set getAuthenticationEvents() {
+    public Set<AuthenticationEvent> getAuthenticationEvents() {
         return myAuthenticateObserver.getAuthenticationEvents();
     }
 }

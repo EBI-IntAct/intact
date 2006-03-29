@@ -126,7 +126,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
             }
             // Loop from the second item.
             for (int i = 1; i < stop; i++) {
-                sb.append("-" + myLabelComps[i]);
+                sb.append("-").append(myLabelComps[i]);
             }
             return sb.toString();
         }
@@ -221,17 +221,17 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     /**
      * A set of currently edited/added experiments.
      */
-    private transient Set myCurrentExperiments = new HashSet();
+    private transient Set<ExperimentRowData> myCurrentExperiments = new HashSet<ExperimentRowData>();
 
     /**
      * A set of currently edited/added interactions.
      */
-    private transient Set myCurrentInteractions = new HashSet();
+    private transient Set<InteractionRowData> myCurrentInteractions = new HashSet<InteractionRowData>();
 
     /**
      * Contains views when the user navigates from one editor to another.
      */
-    private transient Stack myViewStack = new Stack();
+    private transient Stack<AbstractEditViewBean> myViewStack = new Stack<AbstractEditViewBean>();
 
     // ------------------------------------------------------------------------
 
@@ -322,6 +322,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * @return true only if <code>obj</code> is an instance of this class
      * and the user name is same. For all other instances, false is returned.
      */
+    @Override
     public boolean equals(Object obj) {
         // Identical to this?
         if (this == obj) {
@@ -433,14 +434,14 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     public AbstractEditViewBean popPreviousView() {
         if (hasPreviousView()) {
-            return (AbstractEditViewBean) myViewStack.pop();
+            return myViewStack.pop();
         }
         return null;
     }
 
     public AbstractEditViewBean peekPreviousView() {
         if (hasPreviousView()) {
-            return (AbstractEditViewBean) myViewStack.peek();
+            return myViewStack.peek();
         }
         return null;
     }
@@ -551,7 +552,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return null;
     }
 
-    public void addToSearchCache(Collection results) {
+    public void addToSearchCache(Collection<AnnotatedObject> results) {
         // Clear previous results.
         mySearchCache.clear();
         mySearchCache.addAll(results);
@@ -614,7 +615,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * access other similar objects. Null is returned if <code>label</code> has
      * invalid format.
      */
-    public String getNextAvailableShortLabel(Class clazz, String label) {
+    public String getNextAvailableShortLabel(Class<? extends AnnotatedObject> clazz, String label) {
         try {
             return doGetNextAvailableShortLabel(clazz, label);
         }
@@ -667,7 +668,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         myCurrentExperiments.remove(row);
     }
 
-    public Set getCurrentExperiments() {
+    public Set<ExperimentRowData> getCurrentExperiments() {
         return myCurrentExperiments;
     }
 
@@ -679,7 +680,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         myCurrentInteractions.remove(row);
     }
 
-    public Set getCurrentInteractions() {
+    public Set<InteractionRowData> getCurrentInteractions() {
         return myCurrentInteractions;
     }
 
@@ -733,13 +734,13 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         myEditState = false;
     }
 
-    private String doGetNextAvailableShortLabel(Class clazz, String label)
+    private String doGetNextAvailableShortLabel(Class<? extends AnnotatedObject> clazz, String label)
             throws IntactException {
         // The formatter to analyse the short label.
         ShortLabelFormatter formatter = new ShortLabelFormatter(label);
 
         // Holds the result from the search.
-        Collection results = null;
+        Collection<? extends AnnotatedObject> results = null;
 
         // The prefix for the proposed short label;
         String prefix = null;
@@ -775,23 +776,28 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         // AT this point: no success with incrementing the branch number.
 
         // Get all the short labels with the prefix.
-        results = helper.search(clazz.getName(), "shortLabel", prefix + "-*");
+        results = helper.search(clazz, "shortLabel", prefix + "-*");
         if (results.isEmpty()) {
             // No matches found for the longest match. The first clone entry.
             return prefix + "-1";
         }
         // Found at least one entry. Need to find out the largest number.
         int number = 2;
-        for (Iterator iter = results.iterator(); iter.hasNext();) {
-            String shortLabel = ((AnnotatedObject) iter.next()).getShortLabel();
+
+        for (AnnotatedObject result : results)
+        {
+            String shortLabel = result.getShortLabel();
             // Need to split the short label to extract the number.
             Matcher matcher1 = ourClonedSLPattern.matcher(shortLabel);
-            if (matcher1.matches()) {
+            if (matcher1.matches())
+            {
                 // Only consider a short label matching the prefix.
-                if (matcher1.group(1).equals(prefix)) {
+                if (matcher1.group(1).equals(prefix))
+                {
                     // They should match; the search returns only the matching one.
                     int digit = Integer.parseInt(matcher1.group(2));
-                    if (digit >= number) {
+                    if (digit >= number)
+                    {
                         number = digit + 1;
                     }
                 }
