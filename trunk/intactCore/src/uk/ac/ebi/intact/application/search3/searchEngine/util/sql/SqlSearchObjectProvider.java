@@ -1,6 +1,5 @@
 package uk.ac.ebi.intact.application.search3.searchEngine.util.sql;
 
-import org.apache.commons.collections.map.HashedMap;
 import uk.ac.ebi.intact.application.search3.searchEngine.SearchEngineConstants;
 import uk.ac.ebi.intact.application.search3.searchEngine.lucene.model.*;
 import uk.ac.ebi.intact.application.search3.searchEngine.util.SearchObjectProvider;
@@ -11,10 +10,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class provides methods which fetch the information about IntAct object out of the database (via SQL) and store
@@ -63,27 +59,27 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         if ( objClass.equalsIgnoreCase( "uk.ac.ebi.intact.model.ProteinImpl" ) ) {
             String sqlQuery = SearchEngineConstants.PROTEIN_QUERY + " AND I.ac = '" + ac + "'";
 
-            return (SearchObject) getAllProteins( sqlQuery ).iterator().next();
+            return getAllProteins( sqlQuery ).iterator().next();
         } else if ( objClass.equalsIgnoreCase( "uk.ac.ebi.intact.model.InteractionImpl" ) ) {
             String sqlQuery = SearchEngineConstants.INTERACTION_QUERY + " AND I.ac = '" + ac + "'";
-            return (SearchObject) getAllInteractions( sqlQuery ).iterator().next();
+            return getAllInteractions( sqlQuery ).iterator().next();
         } else if ( objClass.equalsIgnoreCase( "uk.ac.ebi.intact.model.Experiment" ) ) {
             String sqlQuery = SearchEngineConstants.EXPERIMENT_QUERY + " WHERE E.ac = '" + ac + "'";
-            return (SearchObject) getAllExperiments( sqlQuery ).iterator().next();
+            return getAllExperiments( sqlQuery ).iterator().next();
         } else if ( objClass.equalsIgnoreCase( "uk.ac.ebi.intact.model.CvObject" ) ) {
             String sqlQuery = SearchEngineConstants.CV_OBJECT_QUERY + " WHERE CV.ac = '" + ac + "'";
-            return (SearchObject) getAllCvObjects( sqlQuery ).iterator().next();
+            return getAllCvObjects( sqlQuery ).iterator().next();
         } else if ( objClass.equalsIgnoreCase( "uk.ac.ebi.intact.model.BioSource" ) ) {
             String sqlQuery = SearchEngineConstants.BIOSOURCE_QUERY + " WHERE B.ac = '" + ac + "'";
-            return (SearchObject) getAllBioSources( sqlQuery ).iterator().next();
+            return getAllBioSources( sqlQuery ).iterator().next();
         } else {
             throw new IntactException( "Problems with the search object class" );
         }
     }
 
-    public Collection getAllExperiments( String sqlQuery ) throws IntactException {
+    public Collection<ExperimentSearchObject> getAllExperiments( String sqlQuery ) throws IntactException {
         // collection to be returned
-        Collection expSet = null;
+        Collection<ExperimentSearchObject> expSet = null;
         Statement stmt = null;
         ResultSet resultSet = null;
         try {
@@ -105,7 +101,7 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
             // checks if the resultset is empty,
             // if so return an EMPTY_LIST
             if ( resultSet.next() ) {
-                expSet = new ArrayList();
+                expSet = new ArrayList<ExperimentSearchObject>();
             } else {
                 return Collections.EMPTY_LIST;
             }
@@ -190,9 +186,9 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         return expSet;
     }
 
-    public Collection getAllInteractions( String sqlQuery ) throws IntactException {
+    public Collection<InteractionSearchObject> getAllInteractions( String sqlQuery ) throws IntactException {
         // collection to be returned
-        Collection interactionSet = null;
+        Collection<InteractionSearchObject> interactionSet = null;
         Statement stmt = null;
         ResultSet resultSet = null;
         try {
@@ -213,7 +209,7 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
             // checks if the resultset is empty,
             // if so return an EMPTY_LIST
             if ( resultSet.next() ) {
-                interactionSet = new ArrayList();
+                interactionSet = new ArrayList<InteractionSearchObject>();
             } else {
                 return Collections.EMPTY_LIST;
             }
@@ -296,9 +292,9 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         return interactionSet;
     }
 
-    public Collection getAllProteins( String sqlQuery ) throws IntactException {
+    public Collection<ProteinSearchObject> getAllProteins( String sqlQuery ) throws IntactException {
         // collection with the set of protein searchObjects
-        Collection proteinSet = null;
+        Collection<ProteinSearchObject> proteinSet = null;
         Statement stmt = null;
         ResultSet resultSet = null;
         try {
@@ -318,7 +314,7 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
             // checks if the resultset is empty,
             // if so return an EMPTY_LIST
             if ( resultSet.next() ) {
-                proteinSet = new ArrayList();
+                proteinSet = new ArrayList<ProteinSearchObject>();
             } else {
                 return Collections.EMPTY_LIST;
             }
@@ -391,9 +387,9 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         return proteinSet;
     }
 
-    public Collection getAllCvObjects( String sqlQuery ) throws IntactException {
+    public Collection<CvSearchObject> getAllCvObjects( String sqlQuery ) throws IntactException {
         // collection with CvSearchObjects to be returned
-        Collection cvSet = null;
+        Collection<CvSearchObject> cvSet = null;
         Statement stmt = null;
         ResultSet resultSet = null;
         try {
@@ -413,7 +409,7 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
             // checks if the resultset is empty,
             // if so return an EMPTY_LIST
             if ( resultSet.next() ) {
-                cvSet = new ArrayList();
+                cvSet = new ArrayList<CvSearchObject>();
             } else {
                 return Collections.EMPTY_LIST;
             }
@@ -482,9 +478,9 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         return cvSet;
     }
 
-    public Collection getAllBioSources( String sqlQuery ) throws IntactException {
+    public Collection<BioSourceSearchObject> getAllBioSources( String sqlQuery ) throws IntactException {
         // collection with BioSourceSearchObjects to be returned
-        Collection bioSoSet = null;
+        Collection<BioSourceSearchObject> bioSoSet = null;
         Statement stmt = null;
         ResultSet resultSet = null;
         try {
@@ -504,7 +500,7 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
             // checks if the resultset is empty,
             // if so return an EMPTY_LIST
             if ( resultSet.next() ) {
-                bioSoSet = new ArrayList();
+                bioSoSet = new ArrayList<BioSourceSearchObject>();
             } else {
                 return Collections.EMPTY_LIST;
             }
@@ -584,11 +580,11 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
      *
      * @return a Map with the fieldname for the lucene index as key and a Collection with the found entries as value
      */
-    private Map getResultMapBySQL( String sqlQuery ) throws IntactException {
+    private Map<String,Collection<String>> getResultMapBySQL( String sqlQuery ) throws IntactException {
         // map to be returned
-        Map results = null;
+        Map<String,Collection<String>> results = null;
         // collection to store the values for one key
-        Collection values;
+        Collection<String> values;
         // key of the map
         String key = null;
         // value to add to the values collection
@@ -606,7 +602,7 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
             // checks if the resultset is empty,
             // if so return an EMPTY_LIST
             if ( resultSet.next() ) {
-                results = new HashedMap();
+                results = new HashMap<String,Collection<String>>();
             } else {
                 return Collections.EMPTY_MAP;
             }
@@ -616,10 +612,10 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
                 value = resultSet.getString( 2 );
                 // if the key is already in the map, take out the corresponding collection
                 if ( results.containsKey( key ) ) {
-                    values = (Collection) results.get( key );
+                    values = results.get( key );
                     // if the key not jet in the result Map, create a new collection
                 } else {
-                    values = new ArrayList();
+                    values = new ArrayList<String>();
                 }
                 // add the new value to the collection if it not null
                 if ( value != null ) {
@@ -643,6 +639,7 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
                     stmt.close();
                 }
             } catch ( SQLException e ) {
+                e.printStackTrace();
             }
         }
         return results;
@@ -696,6 +693,7 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
                     stmt.close();
                 }
             } catch ( SQLException e ) {
+                e.printStackTrace();
             }
         }
         return cvso;
