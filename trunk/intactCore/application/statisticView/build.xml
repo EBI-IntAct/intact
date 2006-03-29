@@ -218,7 +218,7 @@
         <mkdir dir="${dest.dir}"/>
 
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-               debug="on" source="1.4"
+               debug="on" source="1.5"
                includes="**/application/statisticView/**,
                          **/application/commons/util/LoggingInitServlet*,
                          **/intact/util/StatisticsDataSet*,

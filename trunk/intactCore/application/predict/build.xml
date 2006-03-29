@@ -173,7 +173,7 @@
 
         <!-- Only compile predict sources only. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-               debug="on" source="1.4"
+               debug="on" source="1.5"
                includes="**/application/predict/**"
                excludes="**/test/**">
             <classpath refid="project.class.path"/>

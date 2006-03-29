@@ -141,7 +141,7 @@
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
             includes="**/application/goDensity/**,
                       **/application/commons/**"
-            debug="on" source="1.4">
+            debug="on" source="1.5">
             <classpath refid="project.class.path"/>
         </javac>
 
