@@ -483,7 +483,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      * post: return->forall(obj : Object | obj.oclIsTypeOf(CommentBean))
      * </pre>
      */
-    public List getAnnotations() {
+    public List<CommentBean> getAnnotations() {
         return myAnnotations;
     }
 
