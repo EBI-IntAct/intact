@@ -42,7 +42,7 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
     /**
      *
      */
-    public Collection annotations = new ArrayList();
+    public Collection<Annotation> annotations = new ArrayList<Annotation>();
 
     /**
      * The curator who has last edited the object.
@@ -57,7 +57,7 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
     /**
      *
      */
-    public Collection xrefs = new ArrayList();
+    public Collection<Xref> xrefs = new ArrayList();
 
     /**
      * Hold aliases of an Annotated object.
@@ -144,11 +144,11 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
 
     ///////////////////////////////////////
     // access methods for associations
-    public void setAnnotation( Collection someAnnotation ) {
+    public void setAnnotation( Collection<Annotation> someAnnotation ) {
         this.annotations = someAnnotation;
     }
 
-    public Collection getAnnotations() {
+    public Collection<Annotation> getAnnotations() {
         return annotations;
     }
 
@@ -171,11 +171,11 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
     ///////////////////
     // Xref related
     ///////////////////
-    public void setXrefs( Collection someXrefs ) {
+    public void setXrefs( Collection<Xref> someXrefs ) {
         this.xrefs = someXrefs;
     }
 
-    public Collection getXrefs() {
+    public Collection<Xref> getXrefs() {
         return xrefs;
     }
 
@@ -371,16 +371,18 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
 
         // Clone annotations; can't use annotations.clone here as annoatations
         // type is shown as a ListProxy (ClassCastException)
-        copy.annotations = new ArrayList( annotations.size() );
-        for( Iterator iter = annotations.iterator(); iter.hasNext(); ) {
-            copy.annotations.add( ( (Annotation) iter.next() ).clone() );
+        copy.annotations = new ArrayList<Annotation>( annotations.size() );
+        for (Annotation annotation : annotations)
+        {
+            copy.annotations.add((Annotation) annotation.clone());
         }
 
         // Clone xrefs.
-        copy.xrefs = new ArrayList( xrefs.size() );
+        copy.xrefs = new ArrayList<Xref>( xrefs.size() );
         // Make deep copies.
-        for( Iterator iter = xrefs.iterator(); iter.hasNext(); ) {
-            copy.xrefs.add( ( (Xref) iter.next() ).clone() );
+        for (Xref xref : xrefs)
+        {
+            copy.xrefs.add((Xref)xref.clone());
         }
 
         return copy;

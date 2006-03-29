@@ -121,7 +121,7 @@ public class EditorMenuFactory {
     /**
      * Maps: Menu Name -> Menu type. Common to all the users and it is immutable.
      */
-    private static final Map ourNameToType = new HashMap();
+    private static final Map<String,Class> ourNameToType = new HashMap<String,Class>();
 
     /**
      * The criteria to retrieve nucleic acid types
@@ -186,9 +186,9 @@ public class EditorMenuFactory {
      * @return converted menu; {@link #SELECT_LIST_ITEM} is added as the first
      * item to the list.
      */
-    public List convertToAddMenu(List menu) {
+    public List<String> convertToAddMenu(List<String> menu) {
         // The menu to return.
-        List modMenu = new LinkedList(menu);
+        List<String> modMenu = new LinkedList<String>(menu);
         // The default value for add menu.
         String  defvalue = SELECT_LIST_ITEM;
         // Add as the first item in the list.
@@ -208,10 +208,10 @@ public class EditorMenuFactory {
      * @throws IntactException for errors in contructing the menu or unable to
      * create an Intact helper to access persistent system.
      */
-    public List getMenu(String key, int mode) throws IntactException {
+    public List<String> getMenu(String key, int mode) throws IntactException {
         // The class associated with the key.
-        Class clazz = (Class) ourNameToType.get(key);
-        List menu = getMenuList(clazz);
+        Class clazz = ourNameToType.get(key);
+        List<String> menu = getMenuList(clazz);
         if (menu.isEmpty()) {
             // Special list when we don't have any menu items.
             menu.add(SELECT_LIST_ITEM);
@@ -243,7 +243,7 @@ public class EditorMenuFactory {
      * @throws IntactException for errors in contructing the menu or unable to
      * create an Intact helper to access persistent system.
      */
-    public List getProteinMenu(int mode) throws IntactException {
+    public List<String> getProteinMenu(int mode) throws IntactException {
         return getPolymerMenu(mode, ourProteinCriteria);
     }
 
@@ -263,20 +263,20 @@ public class EditorMenuFactory {
      *
      * @return a List of short labels as Strings.
      */
-    private List getMenuList(Class targetClass) throws IntactException {
+    private List<String> getMenuList(Class targetClass) throws IntactException {
         // The menu to return.
-        List menu = new ArrayList();
+        List<String> menu = new ArrayList<String>();
 
         // The query factory to get a query.
         ObjectBridgeQueryFactory qf = ObjectBridgeQueryFactory.getInstance();
 
         Query query = qf.getMenuBuildQuery(targetClass);
 
-        Iterator iter = IntactHelperUtil.getDefaultIntactHelper().getIteratorByReportQuery(query);
+        Iterator<Object[]> iter = IntactHelperUtil.getDefaultIntactHelper().getIteratorByReportQuery(query);
         
         while (iter.hasNext()) {
-            Object[] row = (Object[])iter.next();
-            menu.add(row[1]);
+            Object[] row = iter.next();
+            menu.add(row[1].toString());
         }
         return menu;
     }
@@ -289,9 +289,9 @@ public class EditorMenuFactory {
      * @throws IntactException for errors in contructing the menu or unable to
      * create an Intact helper to access persistent system.
      */
-    private List getPolymerMenu(int mode, Criteria criteria) throws IntactException {
+    private List<String> getPolymerMenu(int mode, Criteria criteria) throws IntactException {
         // The menu to return.
-        List menu = new ArrayList();
+        List<String> menu = new ArrayList<String>();
 
         ReportQueryByCriteria query = QueryFactory.newReportQuery(
                 CvInteractorType.class, criteria);
@@ -299,11 +299,11 @@ public class EditorMenuFactory {
         query.setAttributes(new String[] { "shortlabel" });
         query.addOrderByAscending("shortLabel");
 
-        Iterator iter = IntactHelperUtil.getDefaultIntactHelper().getIteratorByReportQuery(query);
+        Iterator<Object[]> iter = IntactHelperUtil.getDefaultIntactHelper().getIteratorByReportQuery(query);
 
         while (iter.hasNext()) {
-            Object[] row = (Object[])iter.next();
-            menu.add(row[0]);
+            Object[] row = iter.next();
+            menu.add(row[0].toString());
         }
         if (menu.isEmpty()) {
             // Special list when we don't have any menu items.

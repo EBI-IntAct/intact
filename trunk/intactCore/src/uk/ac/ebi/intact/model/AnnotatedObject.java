@@ -34,9 +34,9 @@ public interface AnnotatedObject extends BasicObject {
 
     ///////////////////////////////////////
     // access methods for associations
-    public void setAnnotation(Collection someAnnotation);
+    public void setAnnotation(Collection<Annotation> someAnnotation);
 
-    public Collection getAnnotations();
+    public Collection<Annotation> getAnnotations();
 
     public void addAnnotation(Annotation annotation);
 
@@ -49,9 +49,9 @@ public interface AnnotatedObject extends BasicObject {
     ///////////////////
     // Xref related
     ///////////////////
-    public void setXrefs(Collection someXrefs);
+    public void setXrefs(Collection<Xref> someXrefs);
 
-    public Collection getXrefs();
+    public Collection<Xref> getXrefs();
 
     public void addXref(Xref aXref);
 
