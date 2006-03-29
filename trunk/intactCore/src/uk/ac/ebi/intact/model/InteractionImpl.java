@@ -68,6 +68,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
      *
      * @deprecated Use the full constructor instead
      */
+    @Deprecated
     private InteractionImpl() {
         //super call sets creation time data
         super();
@@ -106,6 +107,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
      * instead.
      *
      */
+    @Deprecated
     public InteractionImpl( Collection experiments, Collection components,
                             CvInteractionType type, String shortLabel,
                             Institution owner ) {

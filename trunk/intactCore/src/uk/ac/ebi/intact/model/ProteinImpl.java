@@ -24,6 +24,7 @@ public class ProteinImpl extends PolymerImpl implements Protein, Editable {
      *
      * @deprecated Use the full constructor instead
      */
+    @Deprecated
     private ProteinImpl() {
         //super call sets creation time data
         super();
@@ -42,6 +43,7 @@ public class ProteinImpl extends PolymerImpl implements Protein, Editable {
      * @deprecated Please use {@link #ProteinImpl(Institution, BioSource, String, CvInteractorType)}
      * instead.
      */
+    @Deprecated
     public ProteinImpl( Institution owner, BioSource source, String shortLabel ) {
         //TODO Q: what about crc64, fullName, formOf - they are all indexed...
         //ALSO..A Protein can have an interaction type IF it is an Interactor,
