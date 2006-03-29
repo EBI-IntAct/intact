@@ -25,7 +25,7 @@ public class IntactHelperUtil {
     /**
      * Holds the current IntactHelper if one has been created.
      */
-    private static final ThreadLocal ourThreadHelper = new ThreadLocal();
+    private static final ThreadLocal<IntactHelper> ourThreadHelper = new ThreadLocal<IntactHelper>();
 
     /**
      * Returns an IntactHelper instance for given user and password or default
@@ -76,7 +76,7 @@ public class IntactHelperUtil {
      * @throws IntactException for problems in closing the helper.
      */
     public static void closeIntactHelper() throws IntactException {
-        IntactHelper helper = (IntactHelper) ourThreadHelper.get();
+        IntactHelper helper = ourThreadHelper.get();
         try {
             if (helper != null) {
                 helper.closeStore();
