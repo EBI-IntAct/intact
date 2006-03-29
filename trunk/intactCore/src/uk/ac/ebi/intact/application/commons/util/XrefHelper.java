@@ -46,7 +46,7 @@ public class XrefHelper {
      * Maps: Short label of CV database -> url. Need a common map to store db
      * urls.
      */
-    private static Map ourCvDbToUrl = new HashMap();
+    private static Map<String,String> ourCvDbToUrl = new HashMap<String,String>();
 
     // No instantiation from outside.
 
@@ -72,17 +72,18 @@ public class XrefHelper {
         String dbname = xref.getCvDatabase().getShortLabel();
 
         // Set it to the value from the cache.
-        String searchUrl = (String) ourCvDbToUrl.get(dbname);
+        String searchUrl = ourCvDbToUrl.get(dbname);
 
         // Is it in the cache?
         if (searchUrl == null) {
             // Not in the cache; create it and store in the cache.
 
             // Loop through annotations looking for search-url.
-            Collection annots = xref.getCvDatabase().getAnnotations();
-            for (Iterator iter = annots.iterator(); iter.hasNext();) {
-                Annotation annot = (Annotation) iter.next();
-                if (annot.getCvTopic().getShortLabel().equals("search-url")) {
+            Collection<Annotation> annots = xref.getCvDatabase().getAnnotations();
+            for (Annotation annot : annots)
+            {
+                if (annot.getCvTopic().getShortLabel().equals("search-url"))
+                {
                     // save searchUrl for future use
                     searchUrl = annot.getAnnotationText();
                     break;

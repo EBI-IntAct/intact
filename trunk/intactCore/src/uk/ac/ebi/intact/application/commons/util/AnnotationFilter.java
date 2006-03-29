@@ -31,7 +31,7 @@ public class AnnotationFilter {
     /**
      * Keeps all CvTopics to be filtered out.
      */
-    private Set filteredTopics = null;
+    private Set<CvTopic> filteredTopics = null;
 
     private static AnnotationFilter ourInstance = new AnnotationFilter();
 
@@ -56,27 +56,27 @@ public class AnnotationFilter {
                           "Database: " + helper.getDbName() + ")" );
 
             // search for the CvTopic no-export
-            CvTopic noExport = (CvTopic) helper.getObjectByLabel( CvTopic.class, CvTopic.NO_EXPORT );
+            CvTopic noExport = helper.getObjectByLabel( CvTopic.class, CvTopic.NO_EXPORT );
 
             if ( noExport != null ) {
 
                 // load all CvTopics
-                Collection cvTopics = helper.search( CvTopic.class, "ac", null );
+                Collection<CvTopic> cvTopics = helper.search( CvTopic.class, "ac", null );
 
                 // select those that have an Annotation( no-export )
-                for ( Iterator iterator = cvTopics.iterator(); iterator.hasNext(); ) {
-                    CvTopic cvTopic = (CvTopic) iterator.next();
-
-                    for ( Iterator iterator1 = cvTopic.getAnnotations().iterator(); iterator1.hasNext(); ) {
-                        Annotation annotation = (Annotation) iterator1.next();
-
-                        if ( noExport.equals( annotation.getCvTopic() ) ) {
-                            if ( filteredTopics == null ) {
-                                filteredTopics = new HashSet( 8 );
+                for (CvTopic cvTopic : cvTopics)
+                {
+                    for (Annotation annotation : cvTopic.getAnnotations())
+                    {
+                        if (noExport.equals(annotation.getCvTopic()))
+                        {
+                            if (filteredTopics == null)
+                            {
+                                filteredTopics = new HashSet<CvTopic>(8);
                             }
 
-                            logger.debug( "CvTopic( " + cvTopic.getShortLabel() + " )" );
-                            filteredTopics.add( cvTopic );
+                            logger.debug("CvTopic( " + cvTopic.getShortLabel() + " )");
+                            filteredTopics.add(cvTopic);
                         }
                     }
                 }
@@ -145,10 +145,10 @@ public class AnnotationFilter {
 
     public Set getFilters() {
         Set result = new HashSet( filteredTopics.size() );
-        for ( Iterator iterator = filteredTopics.iterator(); iterator.hasNext(); ) {
-            CvTopic cvTopic = (CvTopic) iterator.next();
 
-            result.add( cvTopic );
+        for (CvTopic cvTopic : filteredTopics)
+        {
+            result.add(cvTopic);
         }
 
         return result;
