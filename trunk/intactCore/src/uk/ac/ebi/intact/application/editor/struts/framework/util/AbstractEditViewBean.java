@@ -84,48 +84,48 @@ public abstract class AbstractEditViewBean implements Serializable {
     /**
      * The annotations to display.
      */
-    private List myAnnotations = new ArrayList();
+    private List<CommentBean> myAnnotations = new ArrayList<CommentBean>();
 
     /**
      * The Xreferences to display.
      */
-    private List myXrefs = new ArrayList();
+    private List<XreferenceBean> myXrefs = new ArrayList<XreferenceBean>();
 
     /**
      * List of annotations to add. This collection is cleared once the user
      * commits the transaction.
      */
-    private List myAnnotsToAdd = new ArrayList();
+    private List<CommentBean> myAnnotsToAdd = new ArrayList<CommentBean>();
 
     /**
      * List of annotations to del. This collection is cleared once the user
      * commits the transaction.
      */
-    private List myAnnotsToDel = new ArrayList();
+    private List<CommentBean> myAnnotsToDel = new ArrayList<CommentBean>();
 
     /**
      * Set of annotations to update. This collection is cleared once the user
      * commits the transaction.
      */
-    private Set myAnnotsToUpdate = new HashSet();
+    private Set<CommentBean> myAnnotsToUpdate = new HashSet<CommentBean>();
 
     /**
      * List of xrefs to add. This collection is cleared once the user commits
      * the transaction.
      */
-    private List myXrefsToAdd = new ArrayList();
+    private List<XreferenceBean> myXrefsToAdd = new ArrayList<XreferenceBean>();
 
     /**
      * List of xrefs to del. This collection is cleared once the user commits
      * the transaction.
      */
-    private List myXrefsToDel = new ArrayList();
+    private List<XreferenceBean> myXrefsToDel = new ArrayList<XreferenceBean>();
 
     /**
      * Set of xrefs to update. This collection is cleared once the user
      * commits the transaction.
      */
-    private Set myXrefsToUpdate = new HashSet();
+    private Set<XreferenceBean> myXrefsToUpdate = new HashSet<XreferenceBean>();
 
     // Override Objects's equal method.
 
@@ -303,8 +303,9 @@ public abstract class AbstractEditViewBean implements Serializable {
         resetAnnotatedObject(copy);
 
         // Add the annotations in the cloned as new annotations to add.
-        for (Iterator iter = copy.getAnnotations().iterator(); iter.hasNext();) {
-            addAnnotation(new CommentBean((Annotation) iter.next()));
+        for (Annotation annotation : copy.getAnnotations())
+        {
+            addAnnotation(new CommentBean(annotation));
         }
         // This is not persisted yet and there aren't any previous annots or
         // xrefs. Annotations need to be cleared or else deleting an annotation
@@ -312,8 +313,9 @@ public abstract class AbstractEditViewBean implements Serializable {
         copy.getAnnotations().clear();
 
         // Add the xrefs in the cloned as new xrefs to add.
-        for (Iterator iter = copy.getXrefs().iterator(); iter.hasNext();) {
-            addXref(new XreferenceBean((Xref) iter.next()));
+        for (Xref xref : copy.getXrefs())
+        {
+            addXref(new XreferenceBean(xref));
         }
         copy.getXrefs().clear();
     }
@@ -546,7 +548,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      * post: return->forall(obj: Object | obj.oclIsTypeOf(XreferenceBean))
      * </pre>
      */
-    public List getXrefs() {
+    public List<XreferenceBean> getXrefs() {
         return myXrefs;
     }
 
@@ -590,13 +592,15 @@ public abstract class AbstractEditViewBean implements Serializable {
      * @see XreferenceBean#isEquivalent(XreferenceBean)
      */
     public boolean xrefExists(XreferenceBean bean) {
-        for (Iterator iter = myXrefs.iterator(); iter.hasNext();) {
-            XreferenceBean xb = (XreferenceBean) iter.next();
+        for (XreferenceBean xb : myXrefs)
+        {
             // Avoid comparing to itself.
-            if (xb.getKey() == bean.getKey()) {
+            if (xb.getKey() == bean.getKey())
+            {
                 continue;
             }
-            if (xb.isEquivalent(bean)) {
+            if (xb.isEquivalent(bean))
+            {
                 return true;
             }
         }
@@ -831,16 +835,16 @@ public abstract class AbstractEditViewBean implements Serializable {
      * and Qualifiers.
      * @throws IntactException for errors in accessing the persistent system.
      */
-    protected Map getMenus() throws IntactException {
+    protected Map<String,List<String>> getMenus() throws IntactException {
         // The map containing the menus.
-        Map map = new HashMap();
+        Map<String,List<String>> map = new HashMap<String,List<String>>();
 
         // Handler to the menu factory.
         EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
 
         // The topic edit/add menu
         String name = EditorMenuFactory.TOPIC;
-        List menu = menuFactory.getMenu(name, 0);
+        List<String> menu = menuFactory.getMenu(name, 0);
         map.put(name, menu);
         map.put(name + "_", menuFactory.convertToAddMenu(menu));
 
@@ -869,16 +873,16 @@ public abstract class AbstractEditViewBean implements Serializable {
      * @return
      * @throws IntactException
      */
-    protected Map getMenus(String editorPageName) throws IntactException {
+    protected Map<String,List<String>> getMenus(String editorPageName) throws IntactException {
         // The map containing the menus.
-        Map map = new HashMap();
+        Map<String,List<String>> map = new HashMap<String,List<String>>();
 
         // Handler to the menu factory.
         EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
 
         // The topic edit/add menu
         String name = EditorMenuFactory.TOPIC;
-        List menu = menuFactory.getMenu(name, 0);
+        List<String> menu = menuFactory.getMenu(name, 0);
         //Remove the non relevant terms from topic menu
         //menu = removeFromCvMenu(menu,editorPageName);
         map.put(name, menu);
@@ -937,12 +941,11 @@ public abstract class AbstractEditViewBean implements Serializable {
         AnnotationSection annotationSection = new AnnotationSection(intactHelper);
         if(annotationSection!=null){
             List newMenulist = new ArrayList();
-            List cvTopicRessources= new ArrayList();
 
             // This method return a list containing all the cvTopic that can be used to annotate the Edited object.
             // For expemple if you are in the BioSource Editor the returned list will contained : 'caution', 'remark-internal'
             // and 'url'
-            cvTopicRessources=annotationSection.getUsableTopics(editorPageName);
+             List cvTopicRessources = annotationSection.getUsableTopics(editorPageName);
 
             if(cvTopicRessources!=null){
 
@@ -957,7 +960,7 @@ public abstract class AbstractEditViewBean implements Serializable {
                             removeElement=false;
                         }
                     }
-                    if(false==removeElement){
+                    if(!removeElement){
                         newMenulist.add(menu.get(i));
                     }
 
@@ -1025,9 +1028,9 @@ public abstract class AbstractEditViewBean implements Serializable {
      * post: return->forall(obj: Object | obj.oclIsTypeOf(CommentBean)
      * </pre>
      */
-    private Collection getAnnotationsToAdd() {
+    private Collection<CommentBean> getAnnotationsToAdd() {
         // Annotations common to both add and delete.
-        Collection common = CollectionUtils.intersection(myAnnotsToAdd, myAnnotsToDel);
+        Collection<CommentBean> common = CollectionUtils.intersection(myAnnotsToAdd, myAnnotsToDel);
         // All the annotations only found in annotations to add collection.
         return CollectionUtils.subtract(myAnnotsToAdd, common);
     }
@@ -1041,9 +1044,9 @@ public abstract class AbstractEditViewBean implements Serializable {
      * post: return->forall(obj: Object | obj.oclIsTypeOf(CommentBean)
      * </pre>
      */
-    private Collection getAnnotationsToDel() {
+    private Collection<CommentBean> getAnnotationsToDel() {
         // Annotations common to both add and delete.
-        Collection common = CollectionUtils.intersection(myAnnotsToAdd, myAnnotsToDel);
+        Collection<CommentBean> common = CollectionUtils.intersection(myAnnotsToAdd, myAnnotsToDel);
         // All the annotations only found in annotations to delete collection.
         return CollectionUtils.subtract(myAnnotsToDel, common);
     }
@@ -1057,7 +1060,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      * post: return->forall(obj: Object | obj.oclIsTypeOf(CommentBean)
      * </pre>
      */
-    private Collection getAnnotationsToUpdate() {
+    private Collection<CommentBean> getAnnotationsToUpdate() {
         return myAnnotsToUpdate;
     }
 
@@ -1070,9 +1073,9 @@ public abstract class AbstractEditViewBean implements Serializable {
      * post: return->forall(obj: Object | obj.oclIsTypeOf(XreferenceBean))
      * </pre>
      */
-    private Collection getXrefsToAdd() {
+    private Collection<XreferenceBean> getXrefsToAdd() {
         // Xrefs common to both add and delete.
-        Collection common = CollectionUtils.intersection(myXrefsToAdd, myXrefsToDel);
+        Collection<XreferenceBean> common = CollectionUtils.intersection(myXrefsToAdd, myXrefsToDel);
         // All the xrefs only found in xrefs to add collection.
         return CollectionUtils.subtract(myXrefsToAdd, common);
     }
@@ -1086,9 +1089,9 @@ public abstract class AbstractEditViewBean implements Serializable {
      * post: return->forall(obj: Object | obj.oclIsTypeOf(XreferenceBean))
      * </pre>
      */
-    private Collection getXrefsToDel() {
+    private Collection<XreferenceBean> getXrefsToDel() {
         // Xrefs common to both add and delete.
-        Collection common = CollectionUtils.intersection(myXrefsToAdd, myXrefsToDel);
+        Collection<XreferenceBean> common = CollectionUtils.intersection(myXrefsToAdd, myXrefsToDel);
         // All the xrefs only found in xrefs to delete collection.
         return CollectionUtils.subtract(myXrefsToDel, common);
     }
@@ -1102,7 +1105,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      * post: return->forall(obj: Object | obj.oclIsTypeOf(XreferenceBean)
      * </pre>
      */
-    private Collection getXrefsToUpdate() {
+    private Collection<XreferenceBean> getXrefsToUpdate() {
         return myXrefsToUpdate;
     }
 
@@ -1136,9 +1139,10 @@ public abstract class AbstractEditViewBean implements Serializable {
             return;
         }
         // The map of menus to iterate.
-        for (Iterator iter = getMenus().values().iterator(); iter.hasNext();) {
+        for (List<String> strings : getMenus().values())
+        {
             // Remove my short label to avoid circular reference.
-            ((List) iter.next()).remove(getShortLabel());
+            strings.remove(getShortLabel());
         }
     }
 
@@ -1162,24 +1166,27 @@ public abstract class AbstractEditViewBean implements Serializable {
         // need an AC in the annotation table.
 
         // Create annotations and add them to CV object.
-        for (Iterator iter = getAnnotationsToAdd().iterator(); iter.hasNext();) {
-            Annotation annot = ((CommentBean) iter.next()).getAnnotation(helper);
+        for (CommentBean commentBean : getAnnotationsToAdd())
+        {
+            Annotation annot = commentBean.getAnnotation(helper);
             // Need this to generate the PK for the indirection table.
             helper.create(annot);
             myAnnotObject.addAnnotation(annot);
             changed = true;
         }
         // Delete annotations and remove them from CV object.
-        for (Iterator iter = getAnnotationsToDel().iterator(); iter.hasNext();) {
-            Annotation annot = ((CommentBean) iter.next()).getAnnotation(helper);
+        for (CommentBean commentBean : getAnnotationsToDel())
+        {
+            Annotation annot = commentBean.getAnnotation(helper);
             helper.delete(annot);
             myAnnotObject.removeAnnotation(annot);
             changed = true;
         }
         // Update annotations; update the object with values from the bean.
         // The update of annotated object ensures the sub objects are updated as well.
-        for (Iterator iter = getAnnotationsToUpdate().iterator(); iter.hasNext();) {
-            Annotation annot = ((CommentBean) iter.next()).getAnnotation(helper);
+        for (CommentBean commentBean : getAnnotationsToUpdate())
+        {
+            Annotation annot = commentBean.getAnnotation(helper);
             helper.update(annot);
             changed = true;
         }
@@ -1190,20 +1197,23 @@ public abstract class AbstractEditViewBean implements Serializable {
         }
 
         // Create xrefs and add them to CV object.
-        for (Iterator iter = getXrefsToAdd().iterator(); iter.hasNext();) {
-            Xref xref = ((XreferenceBean) iter.next()).getXref(helper);
+        for (XreferenceBean xreferenceBean : getXrefsToAdd())
+        {
+            Xref xref = xreferenceBean.getXref(helper);
             helper.create(xref);
             myAnnotObject.addXref(xref);
         }
         // Delete xrefs and remove them from CV object.
-        for (Iterator iter = getXrefsToDel().iterator(); iter.hasNext();) {
-            Xref xref = ((XreferenceBean) iter.next()).getXref(helper);
+        for (XreferenceBean xreferenceBean : getXrefsToDel())
+        {
+            Xref xref = xreferenceBean.getXref(helper);
             helper.delete(xref);
             myAnnotObject.removeXref(xref);
         }
         // Update xrefs; see the comments for annotation update above.
-        for (Iterator iter = getXrefsToUpdate().iterator(); iter.hasNext();) {
-            Xref xref = ((XreferenceBean) iter.next()).getXref(helper);
+        for (XreferenceBean xreferenceBean : getXrefsToUpdate())
+        {
+            Xref xref = xreferenceBean.getXref(helper);
             helper.update(xref);
         }
         // Update the cv object only for an object already persisted.
