@@ -91,7 +91,7 @@ public abstract class UpdateProteinsI {
     protected static boolean localTransactionControl = true;
 
     // Keeps eventual parsing error while the processing is carried on
-    protected Map parsingExceptions = new HashMap();
+    protected Map<Integer,Exception> parsingExceptions = new HashMap<Integer,Exception>();
 
 
     //////////////////////////////////
@@ -473,5 +473,5 @@ public abstract class UpdateProteinsI {
      *
      * @param proteins a Collection of protein.
      */
-    public abstract int updateAllProteins( Collection proteins ) throws IntactException;
+    public abstract int updateAllProteins( Collection<Protein> proteins ) throws IntactException;
 }

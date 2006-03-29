@@ -83,7 +83,7 @@ public class GoServerProxy {
             throws IOException,
                    GoIdNotFoundException {
 
-        GoResponse goRes = null;
+        GoResponse goRes;
 
         // Query the ego server.
         GoHandler goHandler ; // = getGoResponse( goId );
@@ -120,10 +120,10 @@ public class GoServerProxy {
             throws IOException,
                    GoIdNotFoundException {
 
-        GoResponse goRes = null;
+        GoResponse goRes;
 
         // Query the ego server.
-        GoHandler goHandler = null;
+        GoHandler goHandler;
         try {
             goHandler = getGoResponse( is );
         } catch( SAXException e ) {
@@ -170,6 +170,7 @@ public class GoServerProxy {
                 try {
                     inputStream.close();
                 } catch( IOException ioe ) {
+                    ioe.printStackTrace();
                 }
             }
         }
@@ -225,6 +226,7 @@ public class GoServerProxy {
             return category;
         }
 
+        @Override
         public String toString() {
             StringBuffer sb = new StringBuffer( 128 );
 

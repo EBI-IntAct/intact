@@ -29,6 +29,11 @@ public class HttpProxyManager {
 
     public static final String PROXY_PROPERTIES_FILE = "/config/proxy.properties";
 
+    private HttpProxyManager()
+    {
+        // never instantiated
+    }
+
     public static class ProxyConfigurationNotFound extends Exception {
         public ProxyConfigurationNotFound ( String message ) {
             super ( message );

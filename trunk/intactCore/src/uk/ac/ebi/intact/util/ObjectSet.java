@@ -9,16 +9,16 @@ import java.util.*;
  * 
  * @author Henning Hermjakob
  */
-public class ObjectSet {
+public class ObjectSet<T> {
 
 /**
  * 
  */
-    public Vector objects = null;
+    public Vector<T> objects = null;
 
     // * Constructor
     public ObjectSet(){
-	this.objects = new Vector();
+	this.objects = new Vector<T>();
     }
 
    ///////////////////////////////////////
@@ -28,16 +28,16 @@ public class ObjectSet {
         return objects;
     }
 
-    public void setObjects(Vector someObjects) {
+    public void setObjects(Vector<T> someObjects) {
         this.objects = someObjects;
     }
 
-    public void addObject(Object anObject) {
+    public void addObject(T anObject) {
         if (! this.objects.contains(anObject)) {     
             this.objects.addElement(anObject);  
         }
     }
-    public void removeObject(Object anObject) {
+    public void removeObject(T anObject) {
         boolean removed = this.objects.removeElement(anObject);
     }
 

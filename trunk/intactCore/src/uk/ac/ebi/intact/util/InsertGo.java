@@ -108,14 +108,13 @@ public class InsertGo {
 
         Protein protein = null;
         // TODO: why do we need that for ?
-        Xref spXref = null;
-        spXref = new Xref(helper.getInstitution(),
-                          (CvDatabase) helper.getObjectByLabel(CvDatabase.class, CvDatabase.UNIPROT),
-                          spAc,
-                          null, null, null);
+        //Xref spXref = new Xref(helper.getInstitution(),
+        //                  helper.getObjectByLabel(CvDatabase.class, CvDatabase.UNIPROT),
+        //                  spAc,
+        //                  null, null, null);
 
         try {
-            protein = (Protein) helper.getObjectByXref(Protein.class, spAc);
+            protein = helper.getObjectByXref(Protein.class, spAc);
         }
         catch (IntactException e) {
             System.err.println("Error retrieving Protein object for " + spAc
@@ -143,7 +142,7 @@ public class InsertGo {
 
         addNewXref(protein,
                    new Xref(helper.getInstitution(),
-                            (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "sgd"),
+                            helper.getObjectByLabel(CvDatabase.class, "sgd"),
                             sgdAc,
                             null, null, null));
         // Get GO term
@@ -155,7 +154,7 @@ public class InsertGo {
 
         addNewXref(protein,
                    new Xref(helper.getInstitution(),
-                            (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "go"),
+                            helper.getObjectByLabel(CvDatabase.class, "go"),
                             goAc,
                             goTerm, null, null));
         if (dao.isPersistent(protein)){
@@ -171,7 +170,7 @@ public class InsertGo {
 
         String goId = null;
         String goTerm = null;
-        HashMap goMap = new HashMap();
+        HashMap<String,String> goMap = new HashMap<String,String>();
         BufferedReader in     = null;
         InputStreamReader isr = null;
 
@@ -233,12 +232,16 @@ public class InsertGo {
             if(isr != null) {
                 try {
                     isr.close();
-                } catch( IOException ioe) {}
+                } catch( IOException ioe) {
+                    ioe.printStackTrace();
+                }
             }
             if( in != null ){
                 try {
                     in.close();
-                } catch( IOException ioe) {}
+                } catch( IOException ioe) {
+                    ioe.printStackTrace();
+                }
             }
         }
 
@@ -285,16 +288,18 @@ public class InsertGo {
                 String label = st.nextToken();
                 String goAc = st.nextToken();
                 String bibReference = st.nextToken();
-                String pubmedId = null;
+                //String pubmedId = null;
 
                 // Parse the bibliographic reference
                 StringTokenizer bibTokenizer = new StringTokenizer( bibReference, "|", false );
                 bibTokenizer.nextToken();
+
+                /*
                 if (bibTokenizer.hasMoreTokens()) {
                     pubmedId = bibTokenizer.nextToken();
                 } else {
                     pubmedId = null;
-                }
+                } */
 
                 // Insert results into database
                 app.updateProtein(label, spAc, sgdAc, goAc, null);
@@ -311,12 +316,16 @@ public class InsertGo {
             if(file != null) {
                 try {
                     file.close();
-                } catch( IOException ioe) {}
+                } catch( IOException ioe) {
+                    ioe.printStackTrace();
+                }
             }
             if( fr != null ){
                 try {
                     fr.close();
-                } catch( IOException ioe) {}
+                } catch( IOException ioe) {
+                    ioe.printStackTrace();
+                }
             }
         }
     }

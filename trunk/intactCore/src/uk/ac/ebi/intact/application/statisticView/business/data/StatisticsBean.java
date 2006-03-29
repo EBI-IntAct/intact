@@ -32,7 +32,7 @@ public final class StatisticsBean {
     /**
      * the statistics
      */
-    private final ArrayList statistics;
+    private final List<IntactStatistics> statistics;
 
     /**
      * Information related to the origin of the loaded data
@@ -40,7 +40,7 @@ public final class StatisticsBean {
     private final String databaseName;
     private final String userName;
 
-    public StatisticsBean ( final ArrayList statistics,
+    public StatisticsBean ( final List<IntactStatistics> statistics,
                             final String databaseName,
                             final String userName ) {
         this.statistics = statistics;
@@ -48,7 +48,7 @@ public final class StatisticsBean {
         this.userName = userName;
     }
 
-    public final ArrayList getStatistics () {
+    public final List<IntactStatistics> getStatistics () {
         return statistics;
     }
 
@@ -87,7 +87,7 @@ public final class StatisticsBean {
         final int size = statistics.size ();
         if ( size > 0 ) {
             logger.info ( "last row found" );
-            return (IntactStatistics) statistics.get ( size - 1 );
+            return statistics.get ( size - 1 );
         } else {
             logger.info ( "No data found" );
             throw new NoDataException ( );
@@ -105,7 +105,7 @@ public final class StatisticsBean {
         final int size = statistics.size ();
         if ( size > 0 ) {
             logger.info ( "last row found" );
-            return (IntactStatistics) statistics.get ( 0 );
+            return statistics.get ( 0 );
         } else {
             logger.info ( "No data found" );
             throw new NoDataException ( );

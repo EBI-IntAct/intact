@@ -27,6 +27,11 @@ public class GoTools {
 
     public static final String NEW_LINE = System.getProperty( "line.separator" );
 
+    private GoTools()
+    {
+        // this is a util class, so it can never be instantiated
+    }
+
     /**
      * Load or unload Controlled Vocabularies in GO format. Usage: GoTools upload   IntAct_classname goid_db
      * Go_DefinitionFile [Go_DagFile] | GoTools download[v14] IntAct_classname goid_db Go_DefinitionFile [Go_DagFile]

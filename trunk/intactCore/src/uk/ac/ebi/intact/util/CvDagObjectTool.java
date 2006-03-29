@@ -18,6 +18,11 @@ import uk.ac.ebi.intact.model.CvDagObject;
  */
 public class CvDagObjectTool {
 
+    private CvDagObjectTool()
+    {
+        // so this util class is never instantiated
+    }
+
     /**
      * this main method expects one argument, which is the name of the CvDagObject class which should be
      * inserted into the database.

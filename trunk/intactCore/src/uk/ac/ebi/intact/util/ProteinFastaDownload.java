@@ -141,7 +141,7 @@ public class ProteinFastaDownload {
 
         try {
             //Process returned to the JVM
-            final String command = FORMAT_COMMAND_LINE.concat(this.INTACT_FASTA_FILE_NAME);
+            final String command = FORMAT_COMMAND_LINE.concat(INTACT_FASTA_FILE_NAME);
             System.out.println("Execute: " + command);
             Process child = rt.exec (command);
 
@@ -305,7 +305,7 @@ public class ProteinFastaDownload {
             }
         }
 
-        File proteinFastaFile = new File (PATH_INTACT_FORMAT_FILE.concat(this.INTACT_FASTA_FILE_NAME));
+        File proteinFastaFile = new File (PATH_INTACT_FORMAT_FILE.concat(INTACT_FASTA_FILE_NAME));
         boolean result = storeContent (proteinFastaFile, filecontent);
 
         return result;

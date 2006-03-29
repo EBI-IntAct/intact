@@ -19,6 +19,11 @@ import java.io.*;
  */
 public class Serializer {
 
+    private Serializer()
+    {
+        // no instantiation allowed
+    }
+
     /**
      * performs serialization and then deserialization. If it fails,
      * a runtime exception is thrown - otherwise the original object is returned.

@@ -21,6 +21,11 @@ public final class SearchReplace {
      */
     private static Pattern escaper = Pattern.compile( "([^a-zA-z0-9])" );
 
+    private SearchReplace()
+    {
+        // no instantiation allowed
+    }
+
 
     /**
      * Escape all non alphabetical caracters.
