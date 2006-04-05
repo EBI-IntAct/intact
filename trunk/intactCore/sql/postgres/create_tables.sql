@@ -48,6 +48,7 @@ CREATE TABLE IA_Institution
     , fullName                VARCHAR  (250)
     , postalAddress           VARCHAR  (2000)
     , url                     VARCHAR  (255)
+    , created_user            VARCHAR  (30)    DEFAULT  USER    NOT NULL
 )
 ;
 CREATE INDEX i_InstitutionShortLabel on IA_Institution(shortLabel);
@@ -93,6 +94,7 @@ CREATE TABLE IA_ControlledVocab
      ,  objClass                VARCHAR (255)
      ,  shortLabel              VARCHAR (20)
      ,  fullName                VARCHAR (250)
+     , created_user             VARCHAR (30)    DEFAULT  USER    NOT NULL
 )
 ;
 
@@ -138,6 +140,7 @@ CREATE TABLE IA_BioSource
         , fullName                VARCHAR (250)
         , tissue_ac               VARCHAR (30)    CONSTRAINT fk_Biosource_tissue REFERENCES IA_ControlledVocab(ac)
         , celltype_ac             VARCHAR (30)    CONSTRAINT fk_Biosource_celltype REFERENCES IA_ControlledVocab(ac)
+        , created_user            VARCHAR (30)    DEFAULT  USER    NOT NULL
 )
 ;
 
@@ -192,7 +195,8 @@ CREATE TABLE IA_Interactor
         /* Colums belonging to BasicObject */
         , owner_ac              VARCHAR (30)    CONSTRAINT fk_Interactor_owner REFERENCES IA_Institution(ac)
         /* Colums belonging to InteractorType */
-        , interactorType_ac       VARCHAR (30)    CONSTRAINT fk_Interactor_type_ac REFERENCES IA_ControlledVocab(ac)
+        , interactorType_ac     VARCHAR (30)    CONSTRAINT fk_Interactor_type_ac REFERENCES IA_ControlledVocab(ac)
+        , created_user          VARCHAR  (30)   DEFAULT  USER    NOT NULL
 )
 ;
 
@@ -251,6 +255,7 @@ CREATE TABLE IA_Sequence_Chunk
                                                 ON DELETE CASCADE
      ,  sequence_chunk          VARCHAR (1000)
      ,  sequence_index          DECIMAL (3)
+     ,  created_user            VARCHAR (30)    DEFAULT  USER    NOT NULL
 )
 ;
 
@@ -289,6 +294,7 @@ CREATE TABLE IA_Component
         , expressedIn_ac          VARCHAR (30)    CONSTRAINT fk_Component_expressedIn REFERENCES IA_BioSource(ac)
         , owner_ac                VARCHAR (30)    CONSTRAINT fk_Component_owner REFERENCES IA_Institution(ac)
         , stoichiometry           DECIMAL (4,1)
+        , created_user            VARCHAR (30)    DEFAULT  USER    NOT NULL
 );
 
 CREATE index i_Component_interaction_ac on IA_Component(interaction_ac) ;
@@ -336,6 +342,7 @@ CREATE TABLE IA_Annotation
         , topic_ac                VARCHAR (30)    CONSTRAINT fk_Annotation_topic REFERENCES IA_ControlledVocab(ac)
         , owner_ac                VARCHAR (30)    CONSTRAINT fk_Annotation_owner REFERENCES IA_Institution(ac)
         , description             VARCHAR (4000)
+        , created_user            VARCHAR (30)    DEFAULT  USER    NOT NULL
 )
 ;
 
@@ -379,6 +386,7 @@ CREATE TABLE IA_Experiment
       , owner_ac                VARCHAR (30)    CONSTRAINT fk_Experiment_owner REFERENCES IA_Institution(ac)
       , shortLabel              VARCHAR (20)
       , fullName                VARCHAR (250)
+      , created_user            VARCHAR (30)    DEFAULT  USER    NOT NULL
 )
 ;
 
@@ -414,21 +422,22 @@ COMMENT ON COLUMN IA_Experiment.userstamp IS
 
 
 CREATE TABLE IA_Xref
-(       ac                      VARCHAR (30)    NOT NULL
-                                                CONSTRAINT pk_Xref
-                                                PRIMARY KEY
-     ,  deprecated              DECIMAL(1)      DEFAULT  0       NOT NULL
-     ,  created                 TIMESTAMP       DEFAULT  now()   NOT NULL
-     ,  updated                 TIMESTAMP       DEFAULT  now()   NOT NULL
-     ,  timestamp               TIMESTAMP       DEFAULT  now()   NOT NULL
-     ,  userstamp               VARCHAR (30)    DEFAULT  USER    NOT NULL
-     ,  qualifier_ac            VARCHAR (30)    CONSTRAINT fk_Xref_qualifier REFERENCES IA_ControlledVocab(ac)
-     ,  database_ac             VARCHAR (30)    CONSTRAINT fk_Xref_database  REFERENCES IA_ControlledVocab(ac)
-     ,  parent_ac               VARCHAR (30)    -- checked via trigger
-     ,  owner_ac                VARCHAR (30)    CONSTRAINT fk_Xref_owner REFERENCES IA_Institution(ac)
-     ,  primaryId               VARCHAR (30)
-     ,  secondaryId             VARCHAR (30)
-     ,  dbRelease               VARCHAR (10)
+(       ac                 VARCHAR (30)    NOT NULL
+                                           CONSTRAINT pk_Xref
+                                           PRIMARY KEY
+     ,  deprecated         DECIMAL(1)      DEFAULT  0       NOT NULL
+     ,  created            TIMESTAMP       DEFAULT  now()   NOT NULL
+     ,  updated            TIMESTAMP       DEFAULT  now()   NOT NULL
+     ,  timestamp          TIMESTAMP       DEFAULT  now()   NOT NULL
+     ,  userstamp          VARCHAR (30)    DEFAULT  USER    NOT NULL
+     ,  qualifier_ac       VARCHAR (30)    CONSTRAINT fk_Xref_qualifier REFERENCES IA_ControlledVocab(ac)
+     ,  database_ac        VARCHAR (30)    CONSTRAINT fk_Xref_database  REFERENCES IA_ControlledVocab(ac)
+     ,  parent_ac          VARCHAR (30)    -- checked via trigger
+     ,  owner_ac           VARCHAR (30)    CONSTRAINT fk_Xref_owner REFERENCES IA_Institution(ac)
+     ,  primaryId          VARCHAR (30)
+     ,  secondaryId        VARCHAR (30)
+     ,  dbRelease          VARCHAR (10)
+     ,  created_user       VARCHAR  (30)    DEFAULT  USER    NOT NULL
 )
 ;
 
@@ -468,24 +477,25 @@ storing informations about servers. */
 
 
 CREATE TABLE IA_IntactNode
-(       ac                          VARCHAR (30) NOT NULL
-                                    CONSTRAINT pk_IntactNode
-                                    PRIMARY KEY
-      , lastCheckId                 DECIMAL(5)     DEFAULT  0              NOT NULL
-      , lastProvidedId              DECIMAL(5)     DEFAULT  0              NOT NULL
-      , lastProvidedDate            Date           DEFAULT  TIMESTAMP '1970-01-01'  NOT NULL
-      , rejected                    DECIMAL(1)     DEFAULT  0              NOT NULL
-      , created                     TIMESTAMP      DEFAULT  now()          NOT NULL
-      , updated                     TIMESTAMP      DEFAULT  now()          NOT NULL
-      , timestamp                   TIMESTAMP      DEFAULT  now()          NOT NULL
-      , userstamp                   VARCHAR (30)   DEFAULT  USER           NOT NULL
-      , deprecated                  DECIMAL(1)     DEFAULT  0              NOT NULL
-      , ownerPrefix                 VARCHAR (30)   DEFAULT  USER           NOT NULL
-      , owner_ac                    VARCHAR (30)   CONSTRAINT fk_IntactNode_owner REFERENCES IA_Institution(ac)
-      , ftpAddress                  VARCHAR (255)
-      , ftpLogin                    VARCHAR (255)
-      , ftpPassword                 VARCHAR (255)
-      , ftpDirectory                VARCHAR (255)
+(       ac                     VARCHAR (30) NOT NULL
+                               CONSTRAINT pk_IntactNode
+                               PRIMARY KEY
+      , lastCheckId            DECIMAL(5)     DEFAULT  0              NOT NULL
+      , lastProvidedId         DECIMAL(5)     DEFAULT  0              NOT NULL
+      , lastProvidedDate       Date           DEFAULT  TIMESTAMP '1970-01-01'  NOT NULL
+      , rejected               DECIMAL(1)     DEFAULT  0              NOT NULL
+      , created                TIMESTAMP      DEFAULT  now()          NOT NULL
+      , updated                TIMESTAMP      DEFAULT  now()          NOT NULL
+      , timestamp              TIMESTAMP      DEFAULT  now()          NOT NULL
+      , userstamp              VARCHAR (30)   DEFAULT  USER           NOT NULL
+      , deprecated             DECIMAL(1)     DEFAULT  0              NOT NULL
+      , ownerPrefix            VARCHAR (30)   DEFAULT  USER           NOT NULL
+      , owner_ac               VARCHAR (30)   CONSTRAINT fk_IntactNode_owner REFERENCES IA_Institution(ac)
+      , ftpAddress             VARCHAR (255)
+      , ftpLogin               VARCHAR (255)
+      , ftpPassword            VARCHAR (255)
+      , ftpDirectory           VARCHAR (255)
+      , created_user           VARCHAR  (30)    DEFAULT  USER    NOT NULL
 )
 ;
 
@@ -499,6 +509,7 @@ CREATE TABLE IA_Int2Exp
       , userstamp               VARCHAR (30)    DEFAULT    USER    NOT NULL
       , updated                 TIMESTAMP       DEFAULT    now()   NOT NULL
       , timestamp               TIMESTAMP       DEFAULT    now()   NOT NULL
+      , created_user            VARCHAR (30)    DEFAULT    USER    NOT NULL
       , PRIMARY KEY             (interaction_ac, experiment_ac)
 )
 ;
@@ -529,6 +540,7 @@ CREATE TABLE IA_Int2Annot
      ,  userstamp               VARCHAR (30)    DEFAULT  USER    NOT NULL
      ,  updated                 TIMESTAMP       DEFAULT  now()   NOT NULL
      ,  timestamp               TIMESTAMP       DEFAULT  now()   NOT NULL
+     ,  created_user            VARCHAR (30)    DEFAULT  USER    NOT NULL
      ,  PRIMARY KEY             (interactor_ac, annotation_ac)
 )
 ;
@@ -558,6 +570,7 @@ CREATE TABLE IA_Exp2Annot
      ,  userstamp               VARCHAR (30)    DEFAULT  USER    NOT NULL
      ,  updated                 TIMESTAMP       DEFAULT  now()   NOT NULL
      ,  timestamp               TIMESTAMP       DEFAULT  now()   NOT NULL
+     ,  created_user            VARCHAR (30)    DEFAULT  USER    NOT NULL
      ,  PRIMARY KEY             (experiment_ac, annotation_ac)
 )
 ;
@@ -589,6 +602,7 @@ CREATE TABLE IA_cvobject2Annot
      ,  userstamp               VARCHAR (30)    DEFAULT  USER    NOT NULL
      ,  updated                 TIMESTAMP       DEFAULT  now()   NOT NULL
      ,  timestamp               TIMESTAMP       DEFAULT  now()   NOT NULL
+     ,  created_user            VARCHAR (30)    DEFAULT  USER    NOT NULL
      ,  PRIMARY KEY             (cvobject_ac, annotation_ac)
 )
 ;
@@ -615,11 +629,12 @@ COMMENT ON COLUMN IA_cvobject2Annot.timestamp IS
 CREATE TABLE IA_Biosource2Annot
 (       biosource_ac            VARCHAR(30)    NOT NULL CONSTRAINT fk_bio2Annot_biosource   REFERENCES IA_Biosource(ac)  ON DELETE CASCADE
      ,  annotation_ac           VARCHAR(30)    NOT NULL CONSTRAINT fk_bio2Annot_annotation  REFERENCES IA_Annotation(ac) ON DELETE CASCADE
-     ,  deprecated              DECIMAL(1)      DEFAULT  0       NOT NULL
-     ,  created                 TIMESTAMP       DEFAULT  now()   NOT NULL
+     ,  deprecated              DECIMAL(1)     DEFAULT  0       NOT NULL
+     ,  created                 TIMESTAMP      DEFAULT  now()   NOT NULL
      ,  userstamp               VARCHAR(30)    DEFAULT  USER    NOT NULL
-     ,  updated                 TIMESTAMP       DEFAULT  now()   NOT NULL
-     ,  timestamp               TIMESTAMP       DEFAULT  now()   NOT NULL
+     ,  updated                 TIMESTAMP      DEFAULT  now()   NOT NULL
+     ,  timestamp               TIMESTAMP      DEFAULT  now()   NOT NULL
+     ,  created_user            VARCHAR (30)   DEFAULT  USER    NOT NULL
      ,  PRIMARY KEY             (biosource_ac, annotation_ac)
 )
 ;
@@ -650,6 +665,7 @@ CREATE TABLE IA_Cv2Cv
     ,  updated                 TIMESTAMP        DEFAULT  now()   NOT NULL
     ,  timestamp               TIMESTAMP        DEFAULT  now()   NOT NULL
     ,  userstamp               VARCHAR(30)      DEFAULT  USER    NOT NULL
+    ,  created_user            VARCHAR (30)     DEFAULT  USER    NOT NULL
     ,  PRIMARY KEY             (parent_ac, child_ac)
 )
 ;
@@ -674,6 +690,8 @@ COMMENT ON COLUMN IA_Cv2Cv.userstamp IS
 -- Sequences
 
 CREATE SEQUENCE Intact_ac start 10;
+
+CREATE SEQUENCE cvobject_id MINVALUE 1 INCREMENT 1 START WITH 51;
 
 
 
@@ -718,18 +736,19 @@ COMMENT ON COLUMN IA_Statistics.term_number IS
 /* Alias */
  
 CREATE TABLE IA_alias
-(       ac                     VARCHAR(30)    NOT NULL
-                                              CONSTRAINT pk_alias
-                                              PRIMARY KEY
-    ,  deprecated              DECIMAL(1)     DEFAULT  0       NOT NULL
-    ,  created                 TIMESTAMP      DEFAULT  now()   NOT NULL
-    ,  updated                 TIMESTAMP      DEFAULT  now()   NOT NULL
-    ,  timestamp               TIMESTAMP      DEFAULT  now()   NOT NULL
-    ,  userstamp               VARCHAR(30)    DEFAULT  USER    NOT NULL
-    ,  aliastype_ac            VARCHAR(30)    CONSTRAINT fk_alias_qualifier REFERENCES IA_ControlledVocab(ac)
-    ,  parent_ac               VARCHAR(30)    -- constraint managed by trigger.
-    ,  owner_ac                VARCHAR(30)    CONSTRAINT fk_alias_owner REFERENCES IA_Institution(ac)
-    ,  name                    VARCHAR(30)
+(       ac                VARCHAR(30)    NOT NULL
+                                         CONSTRAINT pk_alias
+                                         PRIMARY KEY
+    ,  deprecated         DECIMAL(1)     DEFAULT  0       NOT NULL
+    ,  created            TIMESTAMP      DEFAULT  now()   NOT NULL
+    ,  updated            TIMESTAMP      DEFAULT  now()   NOT NULL
+    ,  timestamp          TIMESTAMP      DEFAULT  now()   NOT NULL
+    ,  userstamp          VARCHAR(30)    DEFAULT  USER    NOT NULL
+    ,  aliastype_ac       VARCHAR(30)    CONSTRAINT fk_alias_qualifier REFERENCES IA_ControlledVocab(ac)
+    ,  parent_ac          VARCHAR(30)    -- constraint managed by trigger.
+    ,  owner_ac           VARCHAR(30)    CONSTRAINT fk_alias_owner REFERENCES IA_Institution(ac)
+    ,  name               VARCHAR(30)
+    ,  created_user       VARCHAR (30)   DEFAULT  USER    NOT NULL
 )
 ;
  
@@ -778,6 +797,7 @@ CREATE TABLE IA_Feature
         , owner_ac              VARCHAR(30)    CONSTRAINT fk_Feature_owner REFERENCES IA_Institution(ac)
         , shortLabel            VARCHAR(20)
         , fullName              VARCHAR(250)
+        ,  created_user         VARCHAR(30)    DEFAULT  USER    NOT NULL
 )
 ;
 
@@ -832,6 +852,7 @@ CREATE TABLE IA_Range
         , toIntervalEnd         DECIMAL(5)
         , toFuzzyType_ac        VARCHAR(30)    CONSTRAINT fk_Range_toFuzzyType_ac REFERENCES IA_ControlledVocab(ac)
         , sequence              VARCHAR(100)
+        , created_user          VARCHAR(30)    DEFAULT  USER    NOT NULL
 )
 ;
 
@@ -882,6 +903,7 @@ CREATE TABLE IA_Feature2Annot
      ,  userstamp               VARCHAR(30)    DEFAULT  USER  NOT NULL
      ,  updated                 TIMESTAMP      DEFAULT  now() NOT NULL
      ,  timestamp               TIMESTAMP      DEFAULT  now() NOT NULL
+     ,  created_user            VARCHAR  (30)    DEFAULT  USER    NOT NULL
      ,  PRIMARY KEY             ( feature_ac, annotation_ac )
 )
 ;
