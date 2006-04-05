@@ -8,17 +8,21 @@ package uk.ac.ebi.intact.util.cdb;
 import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.CvXrefQualifier;
+import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.util.HttpProxyManager;
 import uk.ac.ebi.intact.util.SearchReplace;
 
-import java.io.*;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Updates all Experiments found in the database. <br> it updates: <li> <ul> shortlabel </ul> <ul> fullname </ul> <ul>
@@ -37,9 +41,6 @@ public class UpdateExperiments {
 
     public static final String PUBMED_ID_FLAG = "${PUBMED}";
     public static final String CITEXPLORE_URL = "http://www.ebi.ac.uk/citations/citationDetails.do?externalId=" + PUBMED_ID_FLAG + "&dataSource=MED";
-
-    public static final String headerStyle = "style=\"color: rgb(255, 255, 255);\" bgcolor=\"#3366FF\" class=\"data\"";
-    public static final String bodyStyle = "align=\"center\" valign=\"middle\" class=\"data\"";
 
     public static final String NEW_LINE = System.getProperty( "line.separator" );
 
@@ -61,6 +62,8 @@ public class UpdateExperiments {
         if ( experiment == null ) {
             return null;
         }
+
+        // TODO use the helper to get the real CV term instead of comparing shortlabel.
 
         String pubmedId = null;
         for ( Iterator iterator = experiment.getXrefs().iterator(); iterator.hasNext() && pubmedId == null; ) {
@@ -94,13 +97,7 @@ public class UpdateExperiments {
      * @param experiment      the experiemnt to update
      * @param out             where to write the report
      */
-    public static void updateExperiment( IntactHelper helper,
-                                         CvTopic yearOfPublication,
-                                         CvTopic journalName,
-                                         CvTopic contactTopic,
-                                         CvTopic authorListTopic,
-                                         Experiment experiment,
-                                         Writer out ) throws IOException {
+    public static void updateExperiment( IntactHelper helper, Experiment experiment ) {
 
         System.out.println( "=======================================================================================" );
         System.out.println( "Updating experiment: " + experiment.getAc() + " " + experiment.getShortLabel() );
@@ -138,237 +135,87 @@ public class UpdateExperiments {
 
             String current = experiment.getShortLabel();
 
-            Annotation mailAnnot = null;
-            if ( citation.hasEmail() && contactTopic != null ) {
-                mailAnnot = new Annotation( helper.getInstitution(), contactTopic, citation.getEmail() );
-            }
-
-            Annotation authorListAnnot = null;
-            if ( citation.hasAuthorList() && null != authorListTopic ) {
-                authorListAnnot = new Annotation( helper.getInstitution(), authorListTopic, citation.getAuthorList() );
-            }
-
-            Annotation yearOfPubAnnot = null;
-            if ( null != yearOfPublication ) {
-                yearOfPubAnnot = new Annotation( helper.getInstitution(), yearOfPublication, Integer.toString( year ) );
-            }
-
-            Annotation journalAnnotation = null;
-            String journal = citation.getJournal();
-            if ( null != journalName ) {
-                journalAnnotation = new Annotation( helper.getInstitution(), journalName, journal );
-            }
-
-            // todo create a method updateUniqueAnnotation (Experiment, Annotation)
-
             // check if the intact experiment matches the shortlabel prefix (author-year[suffix])
-            if ( current.startsWith( experimentShortlabel ) ) {
-
-                //////////////////////////////
-                // update the experiment
-
-                boolean updated = false;
-                StringBuffer status = new StringBuffer( 128 );
-                if ( ! experiment.getShortLabel().equals( experimentShortlabel ) ) {
-                    experiment.setShortLabel( experimentShortlabel );
-                    status.append( "shortlabel" );
-                    updated = true;
-                }
-
-                String title = citation.getTitle();
-
-                if ( ! title.equals( experiment.getFullName() ) ) {
-                    experiment.setFullName( title );
-                    if ( status.length() > 0 ) {
-                        status.append( " &amp; " );
-                    }
-                    status.append( "fullname" );
-                    updated = true;
-                }
-
-
-                if ( updateUniqueAnnotation( helper, experiment, mailAnnot ) ) {
-                    if ( status.length() > 0 ) {
-                        status.append( " &amp; " );
-                    }
-                    status.append( "email" );
-                    updated = true;
-                }
-
-                if ( updateUniqueAnnotation( helper, experiment, authorListAnnot ) ) {
-                    if ( status.length() > 0 ) {
-                        status.append( " &amp; " );
-                    }
-                    status.append( "author list" );
-                    updated = true;
-                }
-
-                if ( updateUniqueAnnotation( helper, experiment, yearOfPubAnnot ) ) {
-                    if ( status.length() > 0 ) {
-                        status.append( " &amp; " );
-                    }
-                    status.append( "year of publication" );
-                    updated = true;
-                }
-
-                if ( updateUniqueAnnotation( helper, experiment, journalAnnotation ) ) {
-                    if ( status.length() > 0 ) {
-                        status.append( " &amp; " );
-                    }
-                    status.append( "journal" );
-                    updated = true;
-                }
-
-                if ( updated ) {
-                    helper.update( experiment );
-                }
-
-                ////////////////////////////////
-                // Write report.
-
-                out.write( "  <tr>" + NEW_LINE );
-                out.write( "    <td " + bodyStyle + ">" + experiment.getAc() + "</td>" + NEW_LINE );
-                out.write( "    <td " + bodyStyle + ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>" + NEW_LINE );
-                out.write( "    <td " + bodyStyle + "><code>" + current + "</code></td>" + NEW_LINE );
-                out.write( "    <td " + bodyStyle + "><code>" + experimentShortlabel + "</code></td>" + NEW_LINE );
-                out.write( "    <td " + bodyStyle + "><a href=\"" + generateCitexploreUrl( pubmedId ) + "\" target=\"_blank\">" +
-                           pubmedId +
-                           "</a></td>" + NEW_LINE );
-                String email = citation.getEmail();
-                out.write( "    <td " + bodyStyle + ">" + ( email == null ? "-" : "<code>" + email + "</code>" ) + "</td>" + NEW_LINE );
-
-                System.out.println( StringUtils.rightPad( experiment.getAc(), 15 ) +
-                                    StringUtils.rightPad( current + " / " + experimentShortlabel, 50 ) +
-                                    pubmedId + "   " + generateCitexploreUrl( pubmedId ) );
-
-                if ( updated ) {
-                    out.write( "    <td " + bodyStyle + "> <font color=\"green\"><b>UPDATED</b> (" + status.toString() +
-                               ")</font> </td>" + NEW_LINE );
-                } else {
-                    out.write( "    <td " + bodyStyle + "> <font color=\"black\">UP TO DATE</font> </td>" + NEW_LINE );
-                }
-
-                out.write( "  </tr>" + NEW_LINE );
-                out.flush();
+            if ( ! current.startsWith( experimentShortlabel ) ) {
+                System.out.println( "WARNING - the current shortlabel is " + current +
+                                    " though we were expecting it to start with " + experimentShortlabel );
             }
+
+            //////////////////////////////
+            // update the experiment
+
+            boolean updated = false;
+            if ( ! experiment.getShortLabel().equals( experimentShortlabel ) ) {
+                experiment.setShortLabel( experimentShortlabel );
+                System.out.println( "shortlabel updated." );
+                updated = true;
+            }
+
+            String title = citation.getTitle();
+
+            if ( ! title.equals( experiment.getFullName() ) ) {
+                experiment.setFullName( title );
+                System.out.println( "Fullname updated" );
+                updated = true;
+            }
+
+            printReport( UpdateExperimentAnnotationsFromPudmed.update( helper, experiment, pubmedId ) );
+
+            ////////////////////////////////
+            // Write report.
+            System.out.println( StringUtils.rightPad( experiment.getAc(), 15 ) +
+                                StringUtils.rightPad( current + " / " + experimentShortlabel, 50 ) +
+                                pubmedId + "   " + generateCitexploreUrl( pubmedId ) );
+
 
         } catch ( Exception e ) {
 
-            out.write( "  <tr>" + NEW_LINE );
-            out.write( "    <td " + bodyStyle + ">" + experiment.getAc() + "</td>" + NEW_LINE );
-            out.write( "    <td " + bodyStyle + ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>" + NEW_LINE );
-            out.write( "    <td " + bodyStyle + "><code>" + experiment.getShortLabel() + "</code></td>" + NEW_LINE );
-            out.write( "    <td " + bodyStyle + "> - </td>" + NEW_LINE );
-
-            if ( pubmedId != null ) {
-                out.write( "    <td " + bodyStyle + "><a href=\"" + generateCitexploreUrl( pubmedId ) + "\" target=\"_blank\">" +
-                           pubmedId +
-                           "</a></td>" + NEW_LINE );
-            } else {
-                out.write( "<td " + bodyStyle + "> No pubmed ID available </td>" + NEW_LINE );
-            }
-
-            // email ...
-            out.write( "<td " + bodyStyle + "> &nbsp; </td>" + NEW_LINE );
+            System.out.println( "An exception was thrown diring the update process of:" );
             System.out.println( StringUtils.rightPad( experiment.getAc(), 15 ) +
                                 StringUtils.rightPad( experiment.getShortLabel(), 23 ) +
                                 pubmedId + "   " + generateCitexploreUrl( pubmedId ) );
 
-            out.write( "    <td " + bodyStyle + "> <font color=\"red\"><b>ERROR</b><br><small><small>" );
-            e.printStackTrace( new PrintWriter( out ) );
-            out.write( "</small></small></font> </td>" + NEW_LINE );
-
-            System.err.println( "Message: " + e.getMessage() );
-
-            e.printStackTrace();
-
-            // display causes (if any)
-            Throwable t = e.getCause();
+            // display exception and causes (if any)
+            Throwable t = (Throwable) e;
             while ( t != null ) {
-                System.err.println( "============================ CAUSED BY  ========================" );
-                System.err.println( "Message: " + t.getMessage() );
+
                 t.printStackTrace();
+
                 t = t.getCause();
-            }
-        }
-    }
-
-    private static boolean updateUniqueAnnotation( IntactHelper helper, Experiment experiment, Annotation annotation ) throws IntactException {
-        boolean updated = false;
-        if ( annotation != null ) {
-
-            if ( annotation.getCvTopic() == null ) {
-                throw new IllegalArgumentException( "Your annotation must have a non null CvTopic." );
-            }
-
-            if ( annotation.getAnnotationText() == null ) {
-                throw new IllegalArgumentException( "Your annotation must have a non null annotationText." );
-            }
-
-            boolean found = false;
-            for ( Iterator iterator = experiment.getAnnotations().iterator(); iterator.hasNext() && ! found; ) {
-                Annotation expAnnot = (Annotation) iterator.next();
-
-                CvTopic topic = annotation.getCvTopic();
-                CvTopic eTopic = expAnnot.getCvTopic();
-
-                if ( topic.equals( eTopic ) ) {
-                    found = true;
-
-                    if ( ! annotation.getAnnotationText().equals( expAnnot.getAnnotationText() ) ) {
-                        expAnnot.setAnnotationText( annotation.getAnnotationText() );
-                        helper.update( expAnnot );
-                        updated = true;
-
-                        System.out.println( "Updated Annotation( " + annotation.getCvTopic().getShortLabel() + ", " +
-                                            annotation.getAnnotationText() + " ) on experiment " + experiment.getShortLabel() );
-                    }
-
+                if ( t != null ) {
+                    System.err.println( "============================ CAUSED BY  ========================" );
                 }
-            } // for
-
-            if ( ! found ) {
-                // add the annotation in the experiment
-                helper.create( annotation );
-                experiment.addAnnotation( annotation );
-                helper.update( experiment );
-                System.out.println( "Added Annotation( " + annotation.getCvTopic().getShortLabel() + ", " +
-                                    annotation.getAnnotationText() + " ) to experiment " + experiment.getShortLabel() );
-                updated = true;
             }
         }
-
-        return updated;
     }
 
+    /**
+     * Prints update report to System.out.
+     *
+     * @param report
+     */
+    private static void printReport( UpdateExperimentAnnotationsFromPudmed.UpdateReport report ) {
+        if ( report.isAuthorListUpdated() ) {
+            System.out.println( "author list updated" );
+        }
 
-    private static Date getPastDate( int days, Date d ) {
-        Calendar calendar = new GregorianCalendar();
+        if ( report.isContactUpdated() ) {
+            System.out.println( "contact updated" );
+        }
 
-        calendar.setTime( d );
+        if ( report.isJournalUpdated() ) {
+            System.out.println( "journal updated" );
+        }
 
-        Date now = calendar.getTime();
-
-        // back of X days
-        calendar.roll( Calendar.DAY_OF_YEAR, days );
-
-        // set to beginning of the day
-        calendar.set( Calendar.HOUR_OF_DAY, 0 );
-        calendar.set( Calendar.MINUTE, 0 );
-        calendar.set( Calendar.SECOND, 1 );
-
-        Date from = calendar.getTime();
-        return from;
+        if ( report.isYearUpdated() ) {
+            System.out.println( "year of publication updated" );
+        }
     }
 
     ////////////////////////
     // M A I N
 
-    public static final String DATE_FORMAT = "yyyy.MM.dd_HH:mm:ss";
-
-    public static void main( String[] args ) throws IntactException,
-                                                    IOException,
-                                                    SQLException {
+    public static void main( String[] args ) throws IntactException, SQLException {
 
         try {
             // setup HTTP proxy, cf. intactCore/config/proxy.properties
@@ -377,33 +224,7 @@ public class UpdateExperiments {
             System.err.println( e.getMessage() );
         }
 
-        SimpleDateFormat formatter = new SimpleDateFormat( DATE_FORMAT );
-
         IntactHelper helper = null;
-        String time = formatter.format( new Date() );
-        File file = new File( "ExperimentReport-" + time + ".html" );
-        System.out.println( "Output saved in " + file.getAbsolutePath() );
-
-        BufferedWriter out = new BufferedWriter( new FileWriter( file ) );
-
-        // header of the HTML report
-        out.write( "<html>" + NEW_LINE );
-        out.write( "<head>" + NEW_LINE );
-        out.write( "<title>Experiment's shortlabel checking</title>" + NEW_LINE );
-        out.write( "<link rel=\"stylesheet\" type=\"text/css\" href =\"http://www.ebi.ac.uk/intact/search/layouts/styles/intact.css\"/>" + NEW_LINE );
-        out.write( "</head>" + NEW_LINE );
-        out.write( "<body>" + NEW_LINE );
-        out.write( "<table border=\"1\" cellspacing=\"0\">" + NEW_LINE );
-        out.write( "  <tr>" + NEW_LINE );
-
-        out.write( "    <td " + headerStyle + ">Experiment AC</td>" + NEW_LINE );
-        out.write( "    <td " + headerStyle + ">Valid ?</td>" + NEW_LINE );
-        out.write( "    <td " + headerStyle + ">Current Shortlabel</td>" + NEW_LINE );
-        out.write( "    <td " + headerStyle + ">Generated</td>" + NEW_LINE );
-        out.write( "    <td " + headerStyle + ">CitExplore</td>" + NEW_LINE );
-        out.write( "    <td " + headerStyle + ">author's email</td>" + NEW_LINE );
-        out.write( "    <td " + headerStyle + ">status</td>" + NEW_LINE );
-        out.write( "  </tr>" + NEW_LINE );
 
         try {
             helper = new IntactHelper();
@@ -431,32 +252,6 @@ public class UpdateExperiments {
 
             System.out.println( experimentAcs.size() + " experiment's AC loaded." );
 
-            // search for the Cv to attach to author's email
-            CvTopic authorEmail = (CvTopic) helper.getObjectByLabel( CvTopic.class, CvTopic.CONTACT_EMAIL );
-            if ( authorEmail == null ) {
-                throw new IllegalStateException( "Could not find CvTopic(" + CvTopic.CONTACT_EMAIL +
-                                                 ")... no email will be attached/updated to the experiments." );
-            }
-
-            CvTopic authorList = (CvTopic) helper.getObjectByLabel( CvTopic.class, CvTopic.AUTHOR_LIST );
-            if ( authorList == null ) {
-                throw new IllegalStateException( "Could not find CvTopic(" + CvTopic.AUTHOR_LIST +
-                                                 ")... no author list will be attached/updated to the experiment." );
-            }
-
-            CvTopic journalName = (CvTopic) helper.getObjectByLabel( CvTopic.class, CvTopic.JOURNAL );
-            if ( journalName == null ) {
-                throw new IllegalStateException( "Could not find CvTopic(" + CvTopic.JOURNAL +
-                                                 ")... no journal name will be attached/updated to the experiment." );
-            }
-
-            CvTopic yearOfPublication = (CvTopic) helper.getObjectByLabel( CvTopic.class, CvTopic.PUBLICATION_YEAR );
-            if ( yearOfPublication == null ) {
-                throw new IllegalStateException( "Could not find CvTopic(" + CvTopic.PUBLICATION_YEAR +
-                                                 ")... no year of publication will be attached/updated to the experiment." );
-            }
-
-
             for ( Iterator iterator = experimentAcs.iterator(); iterator.hasNext(); ) {
                 String ac = (String) iterator.next();
 
@@ -465,24 +260,15 @@ public class UpdateExperiments {
                 Experiment experiment = (Experiment) experiments.iterator().next();
                 experiments = null;
 
-                updateExperiment( helper, yearOfPublication, journalName, authorEmail, authorList, experiment, out );
+                updateExperiment( helper, experiment );
 
                 iterator.remove(); // empty the collection as we go
             }
-
-            out.write( "</table>" + NEW_LINE );
-            out.write( "</body>" + NEW_LINE );
-            out.write( "</html>" + NEW_LINE );
-            out.flush();
 
         } finally {
             if ( helper != null ) {
                 System.out.println( "Datasource closed." );
                 helper.closeStore();
-            }
-
-            if ( out != null ) {
-                out.close();
             }
         }
     }
