@@ -5,6 +5,9 @@
  */
 package uk.ac.ebi.intact.application.commons.util;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import javax.servlet.ServletContext;
 
 /**
@@ -18,6 +21,8 @@ import javax.servlet.ServletContext;
  */
 public class ExternalContext
 {
+
+    private static final Log log = LogFactory.getLog(ExternalContext.class);
 
     private ServletContext servletContext;
 
@@ -50,7 +55,11 @@ public class ExternalContext
 
         if (context == null)
         {
-            throw new NullPointerException("No current instance of ExternalContext");
+            context = new ExternalContext(new DummyServletContext());
+            currentInstance.set(context);
+
+            if (log.isWarnEnabled())
+                log.warn("Created ExternalContext not using ServletContext");
         }
         return context;
     }
