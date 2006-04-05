@@ -28,6 +28,7 @@ public class CvJournal extends CvObject {
      * purposes only and if possible will be made private.
      * @deprecated Use the full constructor instead
      */
+    @Deprecated
     private CvJournal() {
         //super call sets creation time data
         super();

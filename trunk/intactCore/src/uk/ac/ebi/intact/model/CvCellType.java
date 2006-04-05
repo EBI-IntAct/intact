@@ -19,6 +19,7 @@ public class CvCellType extends CvObject implements Editable {
      * purposes only and if possible will be made private.
      * @deprecated Use the full constructor instead
      */
+    @Deprecated
     private CvCellType() {
         //super call sets creation time data
         super();

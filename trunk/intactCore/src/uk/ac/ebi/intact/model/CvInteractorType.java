@@ -30,14 +30,14 @@ public class CvInteractorType extends CvDagObject {
     /**
      * A list of MI numbers for Nucleic acid type
      */
-    private static final List ourNucleicAcidMIs = Arrays.asList(new String[] {
+    private static final List<String> ourNucleicAcidMIs = Arrays.asList(new String[] {
         "MI:0318", "MI:0319", "MI:0320", "MI:0321", "MI:0322", "MI:0323",
         "MI:0324", "MI:0325"});
 
     /**
      * A list of MI numbers for a Protein type.
      */
-    private static final List ourProteinMIs = Arrays.asList(new String[] {
+    private static final List<String> ourProteinMIs = Arrays.asList(new String[] {
         ourProteinMI, "MI:0327"});
 
     /**
@@ -63,7 +63,7 @@ public class CvInteractorType extends CvDagObject {
     /**
      * @return returns an unmodifiable list consists of NucleicAcid MIs as strings.
      */
-    public static List getNucleicAcidMIs() {
+    public static List<String> getNucleicAcidMIs() {
         return Collections.unmodifiableList(ourNucleicAcidMIs);
     }
 
@@ -77,7 +77,7 @@ public class CvInteractorType extends CvDagObject {
     /**
      * @return returns an unmodifiable list consists of Protein MIs as strings.
      */
-    public static List getProteinMIs() {
+    public static List<String> getProteinMIs() {
         return Collections.unmodifiableList(ourProteinMIs);
     }
 
@@ -94,6 +94,7 @@ public class CvInteractorType extends CvDagObject {
      * purposes only and if possible will be made private.
      * @deprecated Use the full constructor instead
      */
+    @Deprecated
     private CvInteractorType() {
         //super call sets creation time data
         super();

@@ -45,6 +45,7 @@ public class Annotation extends BasicObjectImpl {
      *
      * @deprecated Use the full constructor instead
      */
+    @Deprecated
     private Annotation() {
         //super call sets creation time data
         super();
@@ -136,6 +137,7 @@ public class Annotation extends BasicObjectImpl {
      * @return true if the parameter equals this object, false otherwise
      * @see uk.ac.ebi.intact.model.CvTopic
      */
+    @Override
     public boolean equals( Object o ) {
         if( this == o ) {
             return true;
@@ -180,6 +182,7 @@ public class Annotation extends BasicObjectImpl {
      *
      * @return hash code of the object.
      */
+    @Override
     public int hashCode() {
 
         int code = 29;
@@ -198,6 +201,7 @@ public class Annotation extends BasicObjectImpl {
         return code;
     }
 
+    @Override
     public String toString() {
         return "Annotation[type: " + ( cvTopic != null ? cvTopic.getShortLabel() : "" ) +
                ", text: " + annotationText + "]";

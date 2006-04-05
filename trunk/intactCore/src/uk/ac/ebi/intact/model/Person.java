@@ -60,6 +60,7 @@ public class Person extends BasicObjectImpl {
      * purposes only and if possible will be made private.
      * @deprecated Use the full constructor instead
      */
+    @Deprecated
     public Person() {
         super();
     }
@@ -106,6 +107,7 @@ public class Person extends BasicObjectImpl {
 
 
     // TODO needs to be refines
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Person)) return false;
@@ -121,6 +123,7 @@ public class Person extends BasicObjectImpl {
         return true;
     }
 
+    @Override
     public int hashCode() {
         int result;
         result = (firstNames != null ? firstNames.hashCode() : 0);

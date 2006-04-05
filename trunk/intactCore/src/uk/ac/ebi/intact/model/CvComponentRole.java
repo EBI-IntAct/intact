@@ -49,6 +49,7 @@ public class CvComponentRole extends CvObject implements Editable {
      *
      * @deprecated Use the full constructor instead
      */
+    @Deprecated
     private CvComponentRole() {
         //super call sets creation time data
         super();

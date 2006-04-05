@@ -64,6 +64,7 @@ public class BioSource extends AnnotatedObjectImpl implements Editable {
      *
      * @deprecated Use the full constructor instead
      */
+    @Deprecated
     private BioSource() {
         //super call sets creation time data
         super();
@@ -210,6 +211,7 @@ public class BioSource extends AnnotatedObjectImpl implements Editable {
      *
      * @see uk.ac.ebi.intact.model.AnnotatedObjectImpl
      */
+    @Override
     public boolean equals( Object o ) {
         if ( this == o ) {
             return true;
@@ -234,6 +236,7 @@ public class BioSource extends AnnotatedObjectImpl implements Editable {
         //return true;
     }
 
+    @Override
     public int hashCode() {
 
         //YUK AGAIN!! This ends up calling the java Object hashcode -

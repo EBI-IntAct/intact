@@ -56,11 +56,11 @@ public class InteractionProxy extends InteractorProxy implements Interaction {
         realSubject().setKD( kD);
     }
 
-    public void setComponents ( Collection someComponent ) {
+    public void setComponents ( Collection<Component> someComponent ) {
         realSubject().setComponents( someComponent );
     }
 
-    public Collection getComponents () {
+    public Collection<Component> getComponents () {
         return realSubject().getComponents();
     }
 
@@ -72,11 +72,11 @@ public class InteractionProxy extends InteractorProxy implements Interaction {
         realSubject().removeComponent( component );
     }
 
-    public void setReleased ( Collection someReleased ) {
+    public void setReleased ( Collection<Product> someReleased ) {
         realSubject().setReleased( someReleased );
     }
 
-    public Collection getReleased () {
+    public Collection<Product> getReleased () {
         return realSubject().getReleased();
     }
 
@@ -88,11 +88,11 @@ public class InteractionProxy extends InteractorProxy implements Interaction {
         realSubject().removeReleased( product );
     }
 
-    public void setExperiments ( Collection someExperiment ) {
+    public void setExperiments ( Collection<Experiment> someExperiment ) {
         realSubject().setExperiments( someExperiment );
     }
 
-    public Collection getExperiments () {
+    public Collection<Experiment> getExperiments () {
         return realSubject().getExperiments();
     }
 

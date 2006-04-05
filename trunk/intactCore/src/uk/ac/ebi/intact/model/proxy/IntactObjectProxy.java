@@ -87,10 +87,12 @@ public class IntactObjectProxy  extends VirtualProxy implements IntactObject {
         realSubject().setUpdated( updated );
     }
 
+    @Override
     public boolean equals ( Object o ) {
         return realSubject().equals( o );
     }
 
+    @Override
     public int hashCode () {
         return realSubject().hashCode();
     }
@@ -99,6 +101,7 @@ public class IntactObjectProxy  extends VirtualProxy implements IntactObject {
      * A call to this method should materialize the real object.
      * @return String representation of the proxied object.
      */
+    @Override
     public String toString() {
         return realSubject().toString();
 

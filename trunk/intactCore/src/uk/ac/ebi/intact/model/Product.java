@@ -52,6 +52,7 @@ public class Product extends BasicObjectImpl {
      * purposes only and if possible will be made private.
      * @deprecated Use the full constructor instead (when it exists)
      */
+    @Deprecated
     public Product() {
         super();
     }
@@ -110,6 +111,7 @@ public class Product extends BasicObjectImpl {
      * @param o The object to check
      * @return true if the parameter equlas this object, false otherwise
      */
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Product)) return false;
@@ -126,6 +128,7 @@ public class Product extends BasicObjectImpl {
         return true;
     }
 
+    @Override
     public int hashCode() {
         int result;
 

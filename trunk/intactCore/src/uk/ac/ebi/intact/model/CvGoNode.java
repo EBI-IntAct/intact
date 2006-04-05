@@ -37,7 +37,7 @@ public class CvGoNode extends CvDagObject {
      * record nodes that have been visited during graph exploration.<br>
      * Used by "getAllChilds"
      */
-    private HashSet visited;
+    private HashSet<CvGoNode> visited;
 
     /**
      * level of hierarchy in dag. Level 0 is the original node (this).
@@ -66,11 +66,11 @@ public class CvGoNode extends CvDagObject {
      * @return The GO id, which belongs to this unique CvGoNode Object
      */
     public String getGoId() {
-        Collection someXrefs = this.getXrefs();
+        Collection<Xref> someXrefs = this.getXrefs();
         if (someXrefs.size() != 1) {
             System.out.println("warning: a CvGoNode can only have one specific Xref");
         }
-        Xref xref = (Xref) someXrefs.iterator().next();
+        Xref xref = someXrefs.iterator().next();
         return xref.getPrimaryId();
     }
 
@@ -81,9 +81,9 @@ public class CvGoNode extends CvDagObject {
      * that means also the children of the children of the children etc.
      * @return all possible children of this node as a Collection of CvGoNodes
      */
-    public Collection getAllChilds() {
-        visited = new HashSet();
-        Collection childs = new ArrayList();
+    public Collection<CvGoNode> getAllChilds() {
+        visited = new HashSet<CvGoNode>();
+        Collection<CvGoNode> childs = new ArrayList<CvGoNode>();
         childs = this.calculateAllChilds(this, childs);
         return childs; // Collection of CvGoNodes
     }
@@ -91,8 +91,8 @@ public class CvGoNode extends CvDagObject {
     /**
      * @return Collection of Interactors, which were associated with this GO term / id
      */
-    public Collection getInteractors(IntactHelper helper) throws IntactException {
-        Collection interactors = new ArrayList();
+    public Collection<Interactor> getInteractors(IntactHelper helper) throws IntactException {
+        Collection<Interactor> interactors = new ArrayList<Interactor>();
         try {
             interactors.addAll(helper.getObjectsByXref(Interactor.class, this.getGoId()));
         } catch (IntactException e) {
@@ -106,14 +106,15 @@ public class CvGoNode extends CvDagObject {
     /**
      * @return String represention of this node
      */
+    @Override
     public String toString() {
         StringBuffer string = new StringBuffer();
         string.append("\nCvGoNode object for " + this.getGoId());
         string.append("\n      -> childs: ");
-        Iterator itChilds = this.getChildren().iterator();
-        while (itChilds.hasNext()) {
-            CvGoNode aCvGoNode = (CvGoNode) itChilds.next();
-            string.append(aCvGoNode.getGoId() + ", ");
+        for (CvDagObject cvDagObject : this.getChildren())
+        {
+            CvGoNode cvGoNode = (CvGoNode) cvDagObject;
+            string.append(cvGoNode.getGoId()).append(", ");
         }
         return string.toString();
     }
@@ -128,14 +129,14 @@ public class CvGoNode extends CvDagObject {
      * @param collection - to call method with an empty collection - it is used internally for recursive call.
      * @return all children and subchildren as CvGoNode objects
      */
-    private Collection calculateAllChilds(CvGoNode aParent, Collection collection) {
+    private Collection<CvGoNode> calculateAllChilds(CvGoNode aParent, Collection<CvGoNode> collection) {
         if (!visited.contains(aParent)) {
             // Iterate over children to add subtrees.
             level++; // Hierarchylevel
-            Iterator itChilds = aParent.getChildren().iterator();
-            while (itChilds.hasNext()) {
+            for (CvDagObject cvDagObject : aParent.getChildren())
+            {
                 // For each child recursive call
-                CvGoNode node = (CvGoNode) itChilds.next();
+                CvGoNode node = (CvGoNode) cvDagObject;
                 collection = calculateAllChilds(node, collection);
             }
             level--;

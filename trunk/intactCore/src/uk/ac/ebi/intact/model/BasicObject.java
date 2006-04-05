@@ -16,9 +16,9 @@ import java.util.Collection;
  */
 public interface BasicObject extends IntactObject {
 
-    public void setEvidences(Collection someEvidence);
+    public void setEvidences(Collection<Evidence> someEvidence);
 
-    public Collection getEvidences();
+    public Collection<Evidence> getEvidences();
 
     public void addEvidence(Evidence evidence);
 

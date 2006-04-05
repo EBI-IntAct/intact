@@ -57,18 +57,18 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
     /**
      *
      */
-    public Collection<Xref> xrefs = new ArrayList();
+    public Collection<Xref> xrefs = new ArrayList<Xref>();
 
     /**
      * Hold aliases of an Annotated object.
      * ie. alternative name for the current object.
      */
-    private Collection aliases = new ArrayList();
+    private Collection<Alias> aliases = new ArrayList<Alias>();
 
     /**
      *
      */
-    public Collection references = new ArrayList();
+    public Collection<Reference> references = new ArrayList<Reference>();
 
     /**
      * no-arg constructor provided for compatibility with subclasses
@@ -223,11 +223,11 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
     }
 
 
-    public void setReferences( Collection someReferences ) {
+    public void setReferences( Collection<Reference> someReferences ) {
         this.references = someReferences;
     }
 
-    public Collection getReferences() {
+    public Collection<Reference> getReferences() {
         return references;
     }
 
@@ -308,6 +308,7 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
      * @return true if the parameter equals this object, false otherwise
      * @see uk.ac.ebi.intact.model.Xref
      */
+    @Override
     public boolean equals( Object o ) {
         // TODO: the reviewed version of the intact model will provide a better implementation
         if( this == o ) return true;
@@ -344,6 +345,7 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
      *
      * @return hash code of the object.
      */
+    @Override
     public int hashCode() {
 
         //YUK AGAIN! ends up as a call to Object's hashcode, which is
@@ -363,6 +365,7 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
         return code;
     }
 
+    @Override
     public Object clone() throws CloneNotSupportedException {
         AnnotatedObjectImpl copy = (AnnotatedObjectImpl) super.clone();
 
@@ -388,6 +391,7 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
         return copy;
     }
 
+    @Override
     public String toString() {
         return this.getAc() + "; owner=" + this.getOwner().getAc()
                + "; name=" + this.shortLabel + "; fullname=" + fullName;

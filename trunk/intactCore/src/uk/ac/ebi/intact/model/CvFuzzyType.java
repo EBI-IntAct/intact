@@ -64,7 +64,7 @@ public class CvFuzzyType extends CvObject implements Editable {
         /**
          * Maps: CvFuzzy Labels -> Display labels.
          */
-        private static Map ourNormalMap = new HashMap();
+        private static Map<String,String> ourNormalMap = new HashMap<String,String>();
 
         static {
             ourNormalMap.put( LESS_THAN, "<" );
@@ -92,7 +92,7 @@ public class CvFuzzyType extends CvObject implements Editable {
          */
         public String getDisplayValue( String shortLabel ) {
             if ( ourNormalMap.containsKey( shortLabel ) ) {
-                return (String) ourNormalMap.get( shortLabel );
+                return ourNormalMap.get( shortLabel );
             }
             return "";
         }
@@ -107,7 +107,7 @@ public class CvFuzzyType extends CvObject implements Editable {
          */
         public String getFuzzyShortLabel( String value ) {
             if ( ourNormalMap.containsValue( value ) ) {
-                return (String) getKey( value );
+                return getKey( value );
             }
             return null;
         }
@@ -129,11 +129,11 @@ public class CvFuzzyType extends CvObject implements Editable {
 
             // for ? or c or n types
             if ( matcher.group( 1 ) != null ) {
-                shortLabel = (String) getKey( matcher.group( 1 ) );
+                shortLabel = getKey( matcher.group( 1 ) );
             } else if ( matcher.group( 4 ) != null ) {
                 if ( matcher.group( 2 ) != null ) {
                     // For < or > types
-                    shortLabel = (String) getKey( matcher.group( 2 ) );
+                    shortLabel = getKey( matcher.group( 2 ) );
                 }
             } else {
                 // Range type
@@ -151,10 +151,11 @@ public class CvFuzzyType extends CvObject implements Editable {
          *
          * @return the corresponding key for given <code>value</code>.
          */
-        private static Object getKey( Object value ) {
-            for ( Iterator iter = ourNormalMap.entrySet().iterator(); iter.hasNext(); ) {
-                Map.Entry entry = (Map.Entry) iter.next();
-                if ( entry.getValue().equals( value ) ) {
+        private static String getKey( String value ) {
+            for (Map.Entry<String, String> entry : ourNormalMap.entrySet())
+            {
+                if (entry.getValue().equals(value))
+                {
                     return entry.getKey();
                 }
             }
@@ -174,7 +175,7 @@ public class CvFuzzyType extends CvObject implements Editable {
      * @return true if <code>type</code> is of Untermined or C or N terminal types. False is returned for all other
      *         instances.
      */
-    public static final boolean isSingleType( String type ) {
+    public static boolean isSingleType( String type ) {
         return type.equals( UNDETERMINED ) || type.equals( C_TERMINAL ) || type.equals( N_TERMINAL );
     }
 
@@ -184,6 +185,7 @@ public class CvFuzzyType extends CvObject implements Editable {
      *
      * @deprecated Use the full constructor instead
      */
+    @Deprecated
     private CvFuzzyType() {
         //super call sets creation time data
         super();

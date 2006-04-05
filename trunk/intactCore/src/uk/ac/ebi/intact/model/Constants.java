@@ -14,6 +14,10 @@ package uk.ac.ebi.intact.model;
 
 public final class Constants {
 
+    private Constants()
+    {
+    }
+
     /**
      * The session scope attribute under which the User object
      * for the currently logged in user is stored.

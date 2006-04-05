@@ -41,7 +41,7 @@ public class Reference extends BasicObjectImpl {
     /**
      * TODO COMMENTS
      */
-    private Collection annotatedObjects = new ArrayList();
+    private Collection<AnnotatedObject> annotatedObjects = new ArrayList<AnnotatedObject>();
 
     /**
      * TODO COMMENTS
@@ -93,7 +93,7 @@ public class Reference extends BasicObjectImpl {
     ///////////////////////////////////////
     // access methods for associations
 
-    public Collection getAnnotatedObjects() {
+    public Collection<? extends AnnotatedObject> getAnnotatedObjects() {
         return annotatedObjects;
     }
     public void addAnnotatedObject(AnnotatedObject annotatedObject) {
@@ -124,6 +124,7 @@ public class Reference extends BasicObjectImpl {
      * @param o The object to check
      * @return true if the parameter equals this object, false otherwise
      */
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Reference)) return false;
@@ -139,6 +140,7 @@ public class Reference extends BasicObjectImpl {
         return true;
     }
 
+    @Override
     public int hashCode() {
         int result;
 

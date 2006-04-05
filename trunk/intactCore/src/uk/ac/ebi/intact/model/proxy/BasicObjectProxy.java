@@ -54,11 +54,11 @@ public class BasicObjectProxy  extends IntactObjectProxy implements BasicObject 
      * Implements BasicObject's methods
      */
 
-    public void setEvidences ( Collection someEvidence ) {
+    public void setEvidences ( Collection<Evidence> someEvidence ) {
         realSubject().setEvidences( someEvidence );
     }
 
-    public Collection getEvidences () {
+    public Collection<Evidence> getEvidences () {
         return realSubject().getEvidences();
     }
 
@@ -86,10 +86,12 @@ public class BasicObjectProxy  extends IntactObjectProxy implements BasicObject 
         realSubject().setOwnerAc( ac );
     }
 
+    @Override
     public boolean equals ( Object o ) {
         return realSubject().equals( o );
     }
 
+    @Override
     public int hashCode () {
         return realSubject().hashCode();
     }

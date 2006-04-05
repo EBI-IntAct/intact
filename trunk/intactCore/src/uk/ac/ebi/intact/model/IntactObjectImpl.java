@@ -79,6 +79,7 @@ public abstract class IntactObjectImpl implements IntactObject, Serializable,
      * @param ac
      * @deprecated No replacement - should not be used by applications
      */
+    @Deprecated
     public void setAc(String ac) {
         this.ac = ac;
     }
@@ -130,6 +131,7 @@ public abstract class IntactObjectImpl implements IntactObject, Serializable,
      * @throws CloneNotSupportedException to indicate that an instance cannot be
      * cloned.
      */
+    @Override
     public Object clone() throws CloneNotSupportedException {
         IntactObjectImpl copy =  (IntactObjectImpl) super.clone();
         // Reset the AC.
@@ -144,7 +146,7 @@ public abstract class IntactObjectImpl implements IntactObject, Serializable,
 
     ///////////////////////////////////////
     // instance methods
-
+    @Override
     public String toString() {
         return this.ac;
     }

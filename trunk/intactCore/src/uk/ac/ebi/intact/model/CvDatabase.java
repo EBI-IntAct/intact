@@ -89,6 +89,7 @@ public class CvDatabase extends CvObject implements Editable {
      *
      * @deprecated Use the full constructor instead
      */
+    @Deprecated
     private CvDatabase() {
         //super call sets creation time data
         super();

@@ -80,6 +80,7 @@ public class Xref extends BasicObjectImpl {
      *
      * @deprecated Use the full constructor instead
      */
+    @Deprecated
     private Xref() {
         //super call sets creation time data
         super();
@@ -276,7 +277,7 @@ public class Xref extends BasicObjectImpl {
 
     ///////////////////////////////////////
     // instance methods
-
+    @Override
     public boolean equals( Object o ) {
         if( this == o ) return true;
         if( !( o instanceof Xref ) ) return false;
@@ -292,6 +293,7 @@ public class Xref extends BasicObjectImpl {
         return true;
     }
 
+    @Override
     public int hashCode() {
         int result;
         result = primaryId.hashCode();
@@ -301,6 +303,7 @@ public class Xref extends BasicObjectImpl {
         return result;
     }
 
+    @Override
     public String toString() {
 
         if(getOwner() == null) {
@@ -323,6 +326,7 @@ public class Xref extends BasicObjectImpl {
      *         xref qualifier are not cloned (shared). The parent AC is set to null.
      * @throws CloneNotSupportedException for errors in cloning this object.
      */
+    @Override
     public Object clone() throws CloneNotSupportedException {
         Xref copy = (Xref) super.clone();
         // Reset the parent ac.

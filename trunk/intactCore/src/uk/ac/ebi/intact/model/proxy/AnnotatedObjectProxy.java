@@ -72,11 +72,11 @@ public class AnnotatedObjectProxy  extends BasicObjectProxy implements Annotated
 
     ///////////////////////////////////////
     // access methods for associations
-    public void setAnnotation ( Collection someAnnotation ) {
+    public void setAnnotation ( Collection<Annotation> someAnnotation ) {
         realSubject().setAnnotation( someAnnotation );
     }
 
-    public Collection getAnnotations () {
+    public Collection<Annotation> getAnnotations () {
         return realSubject().getAnnotations();
     }
 
@@ -107,11 +107,11 @@ public class AnnotatedObjectProxy  extends BasicObjectProxy implements Annotated
     ///////////////////
     // Xref related
     ///////////////////
-    public void setXrefs ( Collection someXrefs ) {
+    public void setXrefs ( Collection<Xref> someXrefs ) {
         realSubject().setXrefs( someXrefs );
     }
 
-    public Collection getXrefs () {
+    public Collection<Xref> getXrefs () {
         return realSubject().getXrefs();
     }
 
@@ -126,11 +126,11 @@ public class AnnotatedObjectProxy  extends BasicObjectProxy implements Annotated
     ///////////////////
     // Alias related
     ///////////////////
-    public void setAliases ( Collection someAliases ) {
+    public void setAliases ( Collection<Alias> someAliases ) {
         realSubject().setAliases( someAliases );
     }
 
-    public Collection getAliases () {
+    public Collection<Alias> getAliases () {
         return realSubject().getAliases();
     }
 
@@ -142,11 +142,11 @@ public class AnnotatedObjectProxy  extends BasicObjectProxy implements Annotated
         realSubject().removeAlias( alias );
     }
 
-    public void setReferences ( Collection someReferences ) {
+    public void setReferences ( Collection<Reference> someReferences ) {
         realSubject().setReferences( someReferences );
     }
 
-    public Collection getReferences () {
+    public Collection<Reference> getReferences () {
         return realSubject().getReferences();
     }
 
@@ -167,10 +167,12 @@ public class AnnotatedObjectProxy  extends BasicObjectProxy implements Annotated
         realSubject().setCuratorAc( ac );
     }
 
+    @Override
     public boolean equals ( Object o ) {
         return realSubject().equals( o );
     }
 
+    @Override
     public int hashCode () {
         return realSubject().hashCode();
     }

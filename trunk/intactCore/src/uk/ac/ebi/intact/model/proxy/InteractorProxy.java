@@ -57,11 +57,11 @@ public class InteractorProxy  extends AnnotatedObjectProxy implements Interactor
         realSubject().setBioSource( bioSource );
     }
 
-    public void setActiveInstances ( Collection someActiveInstance ) {
+    public void setActiveInstances ( Collection<Component> someActiveInstance ) {
         realSubject().setActiveInstances( someActiveInstance );
     }
 
-    public Collection getActiveInstances () {
+    public Collection<Component> getActiveInstances () {
         return realSubject().getActiveInstances();
     }
 
@@ -73,11 +73,11 @@ public class InteractorProxy  extends AnnotatedObjectProxy implements Interactor
         realSubject().removeActiveInstance( component );
     }
 
-    public void setProducts ( Collection someProduct ) {
+    public void setProducts ( Collection<Product> someProduct ) {
         realSubject().setProducts( someProduct );
     }
 
-    public Collection getProducts () {
+    public Collection<Product> getProducts () {
         return realSubject().getProducts();
     }
 
