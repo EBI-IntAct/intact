@@ -105,8 +105,6 @@ public abstract class CvContext
 
                 if (log.isInfoEnabled())
                     log.info("New CvContext instance created");
-
-                System.out.println("New CvContext instance created");
             }
             catch (IntactException e)
             {
@@ -119,8 +117,6 @@ public abstract class CvContext
         {
             if (log.isInfoEnabled())
                 log.info("CvContext already exists");
-
-            System.out.println("CvContext already exists");
         }
 
         return cvContext;
