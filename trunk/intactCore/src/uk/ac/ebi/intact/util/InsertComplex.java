@@ -161,7 +161,7 @@ public final class InsertComplex {
 
                 // if it looks like an sgd protein, create it with an xref to sgd
                 if( ( 0 == proteins.size() ) && ( spAc.substring( 0, 1 ).equals( "S" ) ) ) {
-                    CvDatabase sgd = helper.getObjectByLabel( CvDatabase.class, "sgd" );
+                    CvDatabase sgd = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, CvDatabase.SGD );
                     Protein protein = proteinFactory.insertSimpleProtein( spAc, sgd, bioSource.getTaxId() );
                     proteins.add( protein );
                 }
@@ -238,14 +238,14 @@ public final class InsertComplex {
             logger.debug( "Oops, an Experiment in the DB does not have a CvInteraction!" );
             logger.debug( "Setting one for it now...." );
             // Give that experiment a default CvInteraction
-            Collection result = helper.search( CvInteraction.class.getName(), "shortlabel", "experimental" );
+            Collection result = helper.search( CvInteraction.class.getName(), "shortlabel", CvInteraction.EXPERIMENTAL_INTERACTION );
             if( result.size() == 1 ) {
                 CvInteraction cvInteraction = (CvInteraction) result.iterator().next();
                 ex.setCvInteraction( cvInteraction );
             } else {
-                logger.debug( "ERROR! Found " + result.size() + "  CvInteraction by shortlabel: experimental" );
+                logger.debug( "ERROR! Found " + result.size() + "  CvInteraction by shortlabel: " + CvInteraction.EXPERIMENTAL_INTERACTION );
                 throw new IntactException( "failed to add CvInteraction to Experiment - " +
-                                           "multiple object found by shortlabel: experimental." );
+                                           "multiple object found by shortlabel: " + CvInteraction.EXPERIMENTAL_INTERACTION + "." );
             }
         }
 
@@ -255,14 +255,14 @@ public final class InsertComplex {
             logger.debug( "Oops, an Experiment in the DB does not have a CvIdentification!" );
             logger.debug( "Setting one for it now...." );
             // Give that experiment a default CvIdentification
-            Collection result = helper.search( CvIdentification.class.getName(), "shortlabel", "western blot" );
+            Collection result = helper.search( CvIdentification.class.getName(), "shortlabel", CvIdentification.WESTERN_BLOT );
             if( result.size() == 1 ) {
                 CvIdentification cvIdentification = (CvIdentification) result.iterator().next();
                 ex.setCvIdentification( cvIdentification );
             } else {
-                logger.debug( "ERROR! Found " + result.size() + " CvIdentification by shortlabel: experimental" );
-                throw new IntactException( "failed to add CvInteraction to Experiment - " +
-                                           "multiple object found by shortlabel: experimental." );
+                logger.debug( "ERROR! Found " + result.size() + " CvIdentification by shortlabel: " +  CvIdentification.WESTERN_BLOT );
+                throw new IntactException( "failed to add CvIdentification to Experiment - " +
+                                           "multiple object found by shortlabel: " +  CvIdentification.WESTERN_BLOT + "." );
             }
 
         }
@@ -371,8 +371,8 @@ public final class InsertComplex {
         createdProteins = new HashMap<String,Collection<Protein>>();
 
         // add bait
-        CvComponentRole cvBait = helper.getObjectByLabel( CvComponentRole.class, "bait" );
-        CvComponentRole cvPrey = helper.getObjectByLabel( CvComponentRole.class, "prey" );
+        CvComponentRole cvBait = (CvComponentRole) helper.getObjectByLabel( CvComponentRole.class, CvComponentRole.BAIT );
+        CvComponentRole cvPrey = (CvComponentRole) helper.getObjectByLabel( CvComponentRole.class, CvComponentRole.PREY );
 
         insertComponent( interaction, bait, cvBait );
 
