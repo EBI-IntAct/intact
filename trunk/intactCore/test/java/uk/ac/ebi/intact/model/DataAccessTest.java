@@ -27,8 +27,9 @@ public class DataAccessTest
     }
 
     @After
-    public void afterTest()
+    public void afterTest() throws IntactException
     {
+        helper.closeStore();
         helper = null;
     }
 
