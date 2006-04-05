@@ -79,6 +79,8 @@ drop table ia_institution cascade ;
 
 drop sequence intact_ac ;
 
+drop sequence cvobject_id ;
+
 
 
 drop table ia_statistics ;
