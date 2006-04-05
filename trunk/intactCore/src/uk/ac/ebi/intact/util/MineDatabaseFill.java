@@ -151,6 +151,9 @@ public class MineDatabaseFill {
      * @throws IntactException if the initiation of the intact helper failed
      */
     private static void buildDatabase() throws SQLException, IntactException {
+
+        MemoryMonitor memoryMonitor = new MemoryMonitor();
+
         // the helper and the database connection is fetched
         IntactHelper helper = new IntactHelper();
 
