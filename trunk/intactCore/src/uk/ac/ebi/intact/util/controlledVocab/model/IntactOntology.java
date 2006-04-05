@@ -20,17 +20,7 @@ import java.util.*;
 public class IntactOntology {
 
     ///////////////////////////////
-    // Instance variables
-
-    /**
-     * Pool of all term contained in that ontology (contains CvTerm)
-     */
-    private Collection cvTerms = new ArrayList( 1024 );
-
-    /**
-     * Mapping of all CvTerm by their ID (String -> CvTerm).
-     */
-    private static Map mi2cvTerm = new HashMap( 1024 );
+    // Static variable
 
     private static Map mi2name = new HashMap();
 
@@ -42,7 +32,6 @@ public class IntactOntology {
     static {
 
         // Initialising the mapping of IntAct CV Class to CvTerm IDs.
-        // class2mi.put( CvObject.class, new Object[]{ "MI:0000" } );
 
         // DAG
         class2mi.put( CvInteraction.class, new String[]{ "MI:0001" } );
@@ -60,6 +49,13 @@ public class IntactOntology {
         class2mi.put( CvAliasType.class, new String[]{ "MI:0300" } );
         class2mi.put( CvTopic.class, new String[]{ "MI:0590" } );
 
+        // we map here all CVs that are not supported in PSI-MI
+        // we use the range IA:0001 to IA:0050 for these
+        class2mi.put( CvCellType.class, new String[]{ "IA:0001" } );
+        class2mi.put( CvTissue.class, new String[]{ "IA:0002" } );
+
+        // TODO what about CvCellType, CvTissue ???
+
         // mapping of the non DAG term to their shortlabel
         mi2name.put( "MI:0300", "alias type" );
         mi2name.put( "MI:0333", "feature range status" );
@@ -68,7 +64,30 @@ public class IntactOntology {
         mi2name.put( "MI:0495", "experimental role" );
         mi2name.put( "MI:0500", "biological role" );
         mi2name.put( "MI:0590", "attribute name" );
+
+        mi2name.put( "IA:0001", "cell type" );
+        mi2name.put( "IA:0002", "tissue" );
     }
+
+    ///////////////////////////////
+    // Instance variables
+
+    private String definition;
+
+    /**
+     * Pool of all term contained in that ontology (contains CvTerm)
+     */
+    private Collection cvTerms = new ArrayList( 1024 );
+
+    /**
+     * Collection of term having no parent or children.
+     */
+    private Collection orphanTerms = new ArrayList( 64 );
+
+    /**
+     * Mapping of all CvTerm by their ID (String -> CvTerm).
+     */
+    private Map mi2cvTerm = new HashMap( 1024 );
 
     /**
      * Maps IntAct CV Class to Ontology Terms. node One IntAct CV can have multiple roots.
@@ -89,7 +108,9 @@ public class IntactOntology {
         Collection c = new ArrayList( ids.length );
         for ( int i = 0; i < ids.length; i++ ) {
             Object o = ids[ i ];
-            c.add( o );
+            if ( o != null ) {
+                c.add( o );
+            }
         }
         return c;
     }
@@ -99,27 +120,31 @@ public class IntactOntology {
 
     /**
      * CvObject --> Collection( "MI:xxx" )
+     *
      * @return a copy of the Mapping IntAct CV to MI roots
      */
     public static Map getTypeMapping() {
-         return new HashMap( class2mi );
+        return new HashMap( class2mi );
     }
 
     /**
-     * CvObject --> Collection( "MI:xxx" ).
-     * If includeDags is false, we take out all concrete class of CvDagObject.
+     * CvObject --> Collection( "MI:xxx" ). If includeDags is false, we take out all concrete class of CvDagObject.
+     *
      * @return a copy of the Mapping IntAct CV to MI roots
      */
     public static Map getTypeMapping( boolean includeDags ) {
         Map map = getTypeMapping();
-        if( !includeDags ) {
+
+        // if requested, filter out CvDagObject
+        if ( ! includeDags ) {
             for ( Iterator iterator = map.keySet().iterator(); iterator.hasNext(); ) {
                 Class clazzKey = (Class) iterator.next();
-                if( CvDagObject.class.isAssignableFrom( clazzKey ) ) {
-                     iterator.remove();
+                if ( CvDagObject.class.isAssignableFrom( clazzKey ) ) {
+                    iterator.remove();
                 }
             }
         }
+
         return map;
     }
 
@@ -154,10 +179,27 @@ public class IntactOntology {
     public void addLink( String parentId, String childId ) {
 
         CvTerm child = (CvTerm) mi2cvTerm.get( childId );
+
+        if ( child == null ) {
+            throw new IllegalArgumentException( "Cannot find child term: " + childId );
+        }
+
         CvTerm parent = (CvTerm) mi2cvTerm.get( parentId );
+
+        if ( parent == null ) {
+            throw new IllegalArgumentException( "Cannot find parent term: " + parentId );
+        }
 
         child.addParent( parent );
         parent.addChild( child );
+    }
+
+    public void setDefinition( String definition ) {
+        this.definition = definition;
+    }
+
+    public String getDefinition() {
+        return definition;
     }
 
     /**
@@ -191,7 +233,7 @@ public class IntactOntology {
      */
     public void updateMapping() {
 
-        if ( !intact2psi.isEmpty() ) {
+        if ( ! intact2psi.isEmpty() ) {
             System.out.println( "WARNING: UpdateMapping requested, clearing existing mapping." );
             intact2psi.clear();
         }
@@ -217,6 +259,15 @@ public class IntactOntology {
 
                 // add mapping entry
                 intact2psi.put( clazz, createCollection( cvTerms.toArray() ) );
+            }
+        }
+
+        // update the list of orphan terms
+        for ( Iterator iterator = cvTerms.iterator(); iterator.hasNext(); ) {
+            CvTerm cvTerm = (CvTerm) iterator.next();
+            if ( cvTerm.getChildren().isEmpty() && cvTerm.getParents().isEmpty() ) {
+                System.out.println( "Term " + cvTerm.getId() + " (" + cvTerm.getShortName() + ") is orphan." );
+                orphanTerms.add( cvTerm );
             }
         }
     }
@@ -257,6 +308,9 @@ public class IntactOntology {
 
         for ( Iterator iterator = roots.iterator(); iterator.hasNext(); ) {
             CvTerm root = (CvTerm) iterator.next();
+            if ( root == null ) {
+                throw new IllegalStateException();
+            }
             terms.addAll( root.getAllChildren() );
         }
 
@@ -270,6 +324,16 @@ public class IntactOntology {
      */
     public Collection getCvTerms() {
         return Collections.unmodifiableCollection( cvTerms );
+    }
+
+    /**
+     * Returns all CvTerm that are not linked to an IntAct type.
+     *
+     * @return
+     */
+    public Collection getOrphanTerms() {
+
+        return orphanTerms;
     }
 
     /**
@@ -292,25 +356,36 @@ public class IntactOntology {
         return obsoleteTerms;
     }
 
+    public Collection getIdentities() {
+        return new ArrayList( mi2cvTerm.keySet() );
+    }
+
     /////////////////////////////////
     // Utility - Display methods
 
     public void print() {
 
         System.out.println( cvTerms.size() + " terms to display." );
-        System.out.println( intact2psi.size() + " categories." );
+        System.out.println( intact2psi.size() + " CV types." );
 
         for ( Iterator iterator = intact2psi.keySet().iterator(); iterator.hasNext(); ) {
             Class aClass = (Class) iterator.next();
-            Collection roots = (Collection) intact2psi.get( aClass );
+            Collection root = (Collection) intact2psi.get( aClass );
 
-            System.out.println( "======================================================" );
-            System.out.println( aClass );
-            System.out.println( "======================================================" );
-            for ( Iterator iterator1 = roots.iterator(); iterator1.hasNext(); ) {
+            int count = 0;
+            if ( ! root.isEmpty() ) {
+                for ( Iterator iterator1 = root.iterator(); iterator1.hasNext(); ) {
+                    CvTerm cvTerm = (CvTerm) iterator1.next();
+                    count += cvTerm.getAllChildren().size();
+                }
+            }
+
+            System.out.println( aClass + " ( " + count + " )" );
+            for ( Iterator iterator1 = root.iterator(); iterator1.hasNext(); ) {
                 CvTerm cvTerm = (CvTerm) iterator1.next();
                 print( cvTerm );
             }
+            System.out.println( "" );
         }
     }
 

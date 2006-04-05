@@ -15,6 +15,10 @@ import java.util.*;
  * @since <pre>28-Sep-2005</pre>
  */
 public class CvTerm {
+
+    ///////////////////////
+    // Instance variables
+
     private String id;
 
     private String shortName;
@@ -35,31 +39,13 @@ public class CvTerm {
     /////////////////////////////
     // Constructor
 
-    public CvTerm() {
+    private CvTerm() {
+    } // not allowed
+
+    public CvTerm( String id, String shortname ) {
+        setId( id );
+        setShortName( shortname );
     }
-
-    public CvTerm( String id ) {
-
-        if ( id == null ) {
-            throw new IllegalArgumentException( "ID can't be null" );
-        }
-
-        this.id = id;
-    }
-
-    public CvTerm( String id, String shortname, String definition ) {
-
-        this( id );
-
-        if ( shortname == null ) {
-            throw new IllegalArgumentException( "shortname can't be null (id: " + id + ")" );
-        }
-
-        this.shortName = shortname;
-        this.definition = definition;
-    }
-
-
 
     //////////////////////
     // Getters
@@ -112,14 +98,17 @@ public class CvTerm {
     // Setters
 
     public void setId( String id ) {
+        if ( id == null ) {
+            throw new IllegalArgumentException( "ID can't be null" );
+        }
         this.id = id;
     }
 
     public void setShortName( String shortName ) {
-        if ( shortName != null ) {
-            shortName = shortName.trim();
+        if ( shortName == null ) {
+            throw new IllegalArgumentException( "shortname can't be null (id: " + id + ")" );
         }
-        this.shortName = shortName;
+        this.shortName = shortName.trim();
     }
 
     public void setFullName( String fullName ) {
@@ -130,9 +119,6 @@ public class CvTerm {
     }
 
     public void setDefinition( String definition ) {
-        if ( definition != null ) {
-            definition = definition.trim();
-        }
         this.definition = definition;
     }
 
@@ -140,7 +126,10 @@ public class CvTerm {
         xrefs.add( xref );
     }
 
-    public void addSynonym( String synonym ) {
+    public void addSynonym( CvTermSynonym synonym ) {
+        if ( synonym == null ) {
+            throw new IllegalArgumentException( "You must give a non null synonym." );
+        }
         synonyms.add( synonym );
     }
 
@@ -152,14 +141,11 @@ public class CvTerm {
         children.add( child );
     }
 
-    public void addAnnotation( String topic, String annotation ) {
-        if( topic != null ) {
-            topic = topic.trim();
+    public void addAnnotation( CvTermAnnotation annotation ) {
+        if ( annotation == null ) {
+            throw new IllegalArgumentException( "You must give a non null annotation." );
         }
-        if( annotation != null ) {
-            annotation = annotation.trim();
-        }
-        annotations.add( new CvTermAnnotation( topic, annotation ) );
+        annotations.add( annotation );
     }
 
     public void setObsolete( boolean obsolete ) {
@@ -170,84 +156,8 @@ public class CvTerm {
         this.obsoleteMessage = obsoleteMessage;
     }
 
-    /////////////////////////
-    // Equals / hashCode
-
-    public boolean equals( Object o ) {
-        if ( this == o ) {
-            return true;
-        }
-        if ( !( o instanceof CvTerm ) ) {
-            return false;
-        }
-
-        final CvTerm cvTerm = (CvTerm) o;
-
-        if ( !id.equals( cvTerm.id ) ) {
-            return false;
-        }
-        if ( !shortName.equals( cvTerm.shortName ) ) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public int hashCode() {
-        int result;
-        result = id.hashCode();
-        result = 29 * result + shortName.hashCode();
-        return result;
-    }
-
-    //////////////////////////
-    // Display
-
-    public String toString() {
-        final StringBuffer sb = new StringBuffer( 128 );
-        sb.append( "CvTerm" );
-        sb.append( "{id='" ).append( id ).append( '\'' );
-        sb.append( ", shortName='" ).append( shortName ).append( '\'' );
-        sb.append( ", fullName='" ).append( fullName ).append( '\'' );
-        sb.append( ", definition='" ).append( definition ).append( '\'' );
-        sb.append( ", xrefs=" );
-        for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
-            CvTermXref xref = (CvTermXref) iterator.next();
-            sb.append( xref.getDatabase() ).append( ':' ).append( xref.getId() );
-            if( iterator.hasNext() ) {
-                sb.append( ", ");
-            }
-        }
-
-        sb.append( ", synonyms=" ).append( synonyms );
-
-        sb.append( ", parents=" );
-        for ( Iterator iterator = parents.iterator(); iterator.hasNext(); ) {
-            CvTerm cvTerm = (CvTerm) iterator.next();
-            sb.append( cvTerm.getShortName() ).append( "(" ).append( cvTerm.getId() ).append( ")" );
-            if( iterator.hasNext() ) {
-                sb.append( ", ");
-            }
-        }
-
-        sb.append( ", children=" );
-        for ( Iterator iterator = children.iterator(); iterator.hasNext(); ) {
-            CvTerm cvTerm = (CvTerm) iterator.next();
-            sb.append( cvTerm.getShortName() ).append( "(" ).append( cvTerm.getId() ).append( ")" );
-            if( iterator.hasNext() ) {
-                sb.append( ", ");
-            }
-        }
-
-        sb.append( ", obsolete=" ).append( obsolete );
-        sb.append( ", obsoleteMessage='" ).append( obsoleteMessage ).append( '\'' );
-        sb.append( ", annotations=" ).append( annotations );
-        sb.append( '}' );
-        return sb.toString();
-    }
-
     ////////////////////////////
-    // Utility
+    // DAG Utility
 
     /**
      * @param term
@@ -267,5 +177,140 @@ public class CvTerm {
         Set children = new HashSet();
         getAllChildren( this, children );
         return children;
+    }
+
+    /////////////////////////
+    // Object
+
+    public boolean equals( Object o ) {
+        if ( this == o ) {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() ) {
+            return false;
+        }
+
+        final CvTerm cvTerm = (CvTerm) o;
+
+        if ( annotations != null ? !annotations.equals( cvTerm.annotations ) : cvTerm.annotations != null ) {
+            return false;
+        }
+        if ( definition != null ? !definition.equals( cvTerm.definition ) : cvTerm.definition != null ) {
+            return false;
+        }
+        if ( fullName != null ? !fullName.equals( cvTerm.fullName ) : cvTerm.fullName != null ) {
+            return false;
+        }
+        if ( !id.equals( cvTerm.id ) ) {
+            return false;
+        }
+        if ( !shortName.equals( cvTerm.shortName ) ) {
+            return false;
+        }
+        if ( synonyms != null ? !synonyms.equals( cvTerm.synonyms ) : cvTerm.synonyms != null ) {
+            return false;
+        }
+        if ( xrefs != null ? !xrefs.equals( cvTerm.xrefs ) : cvTerm.xrefs != null ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public List diff( CvTerm cvTerm ) {
+        if ( this == cvTerm ) {
+            return Collections.EMPTY_LIST;
+        }
+        if ( cvTerm == null ) {
+            throw new NullPointerException();
+        }
+
+        List diffs = new LinkedList();
+
+        if ( annotations != null ? !annotations.equals( cvTerm.annotations ) : cvTerm.annotations != null ) {
+            diffs.add( "annotations" );
+        }
+        if ( definition != null ? !definition.equals( cvTerm.definition ) : cvTerm.definition != null ) {
+            diffs.add( "definition" );
+        }
+        if ( fullName != null ? !fullName.equals( cvTerm.fullName ) : cvTerm.fullName != null ) {
+            diffs.add( "fullname" );
+        }
+        if ( !id.equals( cvTerm.id ) ) {
+            diffs.add( "id" );
+        }
+        if ( !shortName.equals( cvTerm.shortName ) ) {
+            diffs.add( "shortlabel" );
+        }
+        if ( synonyms != null ? !synonyms.equals( cvTerm.synonyms ) : cvTerm.synonyms != null ) {
+            diffs.add( "synonyms" );
+        }
+        if ( xrefs != null ? !xrefs.equals( cvTerm.xrefs ) : cvTerm.xrefs != null ) {
+            diffs.add( "xrefs" );
+        }
+
+        return diffs;
+    }
+
+    public int hashCode() {
+        int result;
+        result = id.hashCode();
+        result = 29 * result + shortName.hashCode();
+        result = 29 * result + ( fullName != null ? fullName.hashCode() : 0 );
+        result = 29 * result + ( definition != null ? definition.hashCode() : 0 );
+        result = 29 * result + ( xrefs != null ? xrefs.hashCode() : 0 );
+        result = 29 * result + ( synonyms != null ? synonyms.hashCode() : 0 );
+        result = 29 * result + ( annotations != null ? annotations.hashCode() : 0 );
+        return result;
+    }
+
+    public String toString() {
+
+        String NEW_LINE = System.getProperty( "line.separator" );
+
+        final StringBuffer sb = new StringBuffer( 128 );
+        sb.append( "CvTerm" );
+        sb.append( "{id='" ).append( id ).append( '\'' );
+        sb.append( ", shortName='" ).append( shortName ).append( '\'' );
+        sb.append( ", fullName='" ).append( fullName ).append( '\'' ).append( NEW_LINE );
+
+        sb.append( "       definition='" ).append( definition ).append( '\'' ).append( NEW_LINE );
+
+        sb.append( "xrefs=" ).append( NEW_LINE );
+        for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
+            CvTermXref xref = (CvTermXref) iterator.next();
+            sb.append( "\t" ).append( xref ).append( NEW_LINE );
+
+        }
+
+        sb.append( "synonyms=" ).append( NEW_LINE );
+        for ( Iterator iterator = synonyms.iterator(); iterator.hasNext(); ) {
+            CvTermSynonym syn = (CvTermSynonym) iterator.next();
+            sb.append( "\t" ).append( syn ).append( NEW_LINE );
+        }
+
+        sb.append( "annotations=" ).append( NEW_LINE );
+        for ( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
+            CvTermAnnotation annot = (CvTermAnnotation) iterator.next();
+            sb.append( "\t" ).append( annot ).append( NEW_LINE );
+        }
+
+        sb.append( "parents=" );
+        for ( Iterator iterator = parents.iterator(); iterator.hasNext(); ) {
+            CvTerm cvTerm = (CvTerm) iterator.next();
+            sb.append( "\t" ).append( cvTerm.getShortName() ).append( "(" ).append( cvTerm.getId() ).append( ")" ).append( NEW_LINE );
+        }
+
+        sb.append( "children=" );
+        for ( Iterator iterator = children.iterator(); iterator.hasNext(); ) {
+            CvTerm cvTerm = (CvTerm) iterator.next();
+            sb.append( "\t" ).append( cvTerm.getShortName() ).append( "(" ).append( cvTerm.getId() ).append( ")" ).append( NEW_LINE );
+        }
+
+        sb.append( ", obsolete=" ).append( obsolete );
+        sb.append( ", obsoleteMessage='" ).append( obsoleteMessage ).append( '\'' );
+        sb.append( '}' );
+
+        return sb.toString();
     }
 }
