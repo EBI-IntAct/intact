@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.Chrono;
+import uk.ac.ebi.intact.util.MemoryMonitor;
 
 import java.io.*;
 import java.sql.Connection;
@@ -734,6 +735,8 @@ public class DRLineExport extends LineExport {
 
     public static void main( String[] args ) throws IntactException, SQLException, LookupException,
                                                     DatabaseContentException {
+
+        MemoryMonitor memoryMonitor = new MemoryMonitor();
 
         // create Option objects
         Option helpOpt = new Option( "help", "print this message" );

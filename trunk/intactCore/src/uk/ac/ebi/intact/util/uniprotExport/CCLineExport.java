@@ -10,6 +10,7 @@ import org.apache.ojb.broker.accesslayer.LookupException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.util.MemoryMonitor;
 
 import java.io.*;
 import java.sql.SQLException;
@@ -1072,6 +1073,8 @@ public class CCLineExport extends LineExport {
     public static void main( String[] args ) throws IntactException, SQLException, IOException,
                                                     DatabaseContentException {
 
+        MemoryMonitor memoryMonitor = new MemoryMonitor();
+        
         // create Option objects
         Option helpOpt = new Option( "help", "print this message" );
 
