@@ -51,6 +51,8 @@
 
     <!-- The IntAct node properties. -->
     <property file="config/Institution.properties"/>
+                           
+    <property file="config/correctionAssigner.properties"/>
 
     <!-- Tutorial specific properties -->
     <property name="tutorial.src.dir" value="src/uk/ac/ebi/intact/tutorial"/>
@@ -417,6 +419,7 @@
                 <include name="smtp.properties"/>
                 <include name="sanityCheck.properties"/>
                 <include name="Institution.properties"/>
+		        <include name="correctionAssigner.properties"/>
             </fileset>
         </copy>
 
@@ -491,10 +494,10 @@
         <mkdir dir="${dest.dir}"/>
 
         <javac srcdir="${src.dir}"
-               destdir="${dest.dir}"
-               debug="on"
-               deprecation="on"
-               excludes="${non.core.files}">
+        destdir="${dest.dir}"
+        debug="on"
+        deprecation="on"
+        excludes="${non.core.files}">
             <classpath refid="project.class.path"/>
         </javac>
 
