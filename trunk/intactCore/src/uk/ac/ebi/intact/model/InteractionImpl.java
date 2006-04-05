@@ -44,17 +44,17 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
     /**
      * TODO comments
      */
-    private Collection components;
+    private Collection<Component> components;
 
     /**
      * TODO comments
      */
-    private Collection released = new ArrayList();
+    private Collection<Product> released = new ArrayList<Product>();
 
     /**
      * TODO comments
      */
-    private Collection experiments;
+    private Collection<Experiment> experiments;
 
     /**
      * TODO comments
@@ -246,7 +246,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
     ///////////////////////////////////////
     // access methods for associations
 
-    public void setComponents( Collection someComponent ) {
+    public void setComponents( Collection<Component> someComponent ) {
         if( someComponent == null ) {
             throw new NullPointerException( "Cannot create an Interaction without any Components!" );
         }
@@ -254,7 +254,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         this.components = someComponent;
     }
 
-    public Collection getComponents() {
+    public Collection<Component> getComponents() {
         return components;
     }
 
@@ -270,11 +270,11 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         if( removed ) component.setInteraction( null );
     }
 
-    public void setReleased( Collection someReleased ) {
+    public void setReleased( Collection<Product> someReleased ) {
         this.released = someReleased;
     }
 
-    public Collection getReleased() {
+    public Collection<Product> getReleased() {
         return released;
     }
 
@@ -290,7 +290,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         if( removed ) product.setInteraction( null );
     }
 
-    public void setExperiments( Collection someExperiment ) {
+    public void setExperiments( Collection<Experiment> someExperiment ) {
 
         if( someExperiment == null ) {
             throw new NullPointerException( "Cannot create an Interaction without an Experiment!" );
@@ -303,7 +303,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         this.experiments = someExperiment;
     }
 
-    public Collection getExperiments() {
+    public Collection<Experiment> getExperiments() {
         return experiments;
     }
 
@@ -346,13 +346,15 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
      * @return The first components marked as bait, otherwise null.
      */
     public Component getBait() {
-        for( Iterator iterator = components.iterator(); iterator.hasNext(); ) {
-            Component component = (Component) iterator.next();
+        for (Component component : components)
+        {
             CvComponentRole role = component.getCvComponentRole();
-            if( null == role ) {
+            if (null == role)
+            {
                 return null;
             }
-            if( role.getShortLabel().equals( "bait" ) ) {
+            if (role.getShortLabel().equals("bait"))
+            {
                 return component;
             }
         }
@@ -370,6 +372,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
      * @see uk.ac.ebi.intact.model.Component
      * @see uk.ac.ebi.intact.model.CvInteractionType
      */
+    @Override
     public boolean equals( Object o ) {
         if( this == o ) return true;
         if( !( o instanceof Interaction ) ) return false;
@@ -392,7 +395,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         return CollectionUtils.isEqualCollection( getComponents(), interaction.getComponents() );
     }
 
-
+    @Override
     public int hashCode() {
         int code = super.hashCode();
 
@@ -419,30 +422,32 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
      *         </ul>
      * @throws CloneNotSupportedException
      */
+    @Override
     public Object clone() throws CloneNotSupportedException {
         InteractionImpl copy = (InteractionImpl) super.clone();
 
         // Not copying any experiments.
-        copy.experiments = new ArrayList();
+        copy.experiments = new ArrayList<Experiment>();
 
         // New components, will contain same number of componets. Can't use
         // clone here as components are OJB list proxies if an interation
         // is loaded from the database.
-        copy.components = new ArrayList( components.size() );
+        copy.components = new ArrayList<Component>( components.size() );
 
         // Make deep copies.
-        for( Iterator iter = components.iterator(); iter.hasNext(); ) {
-            Component comp = (Component) iter.next();
+        for (Component comp : components)
+        {
             // The cloned component.
             Component copyComp = (Component) comp.clone();
             // Set the interactor as the current cloned interactions.
-            copyComp.setInteractionForClone( copy );
+            copyComp.setInteractionForClone(copy);
             copyComp.setInteractorForClone((Interactor) comp.getInteractor());
             copy.components.add(copyComp);
         }
         return copy;
     }
 
+    @Override
     public String toString() {
         String result = "Interaction: " + getAc() + " Label: " + getShortLabel()
                 + " [" + NEW_LINE;

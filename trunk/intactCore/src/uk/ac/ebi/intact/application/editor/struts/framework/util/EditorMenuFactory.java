@@ -231,7 +231,7 @@ public class EditorMenuFactory {
      * @throws IntactException for errors in contructing the menu or unable to
      * create an Intact helper to access persistent system.
      */
-    public List getNucleicAcidMenu(int mode) throws IntactException {
+    public List<String> getNucleicAcidMenu(int mode) throws IntactException {
         return getPolymerMenu(mode, ourNucleicAcidCriteria);
     }
 

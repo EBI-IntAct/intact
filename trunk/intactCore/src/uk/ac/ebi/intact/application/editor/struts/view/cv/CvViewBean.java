@@ -19,6 +19,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -30,40 +31,41 @@ import org.apache.log4j.Logger;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class CvViewBean extends AbstractEditViewBean {
+public class CvViewBean extends AbstractEditViewBean<CvObject> {
 
     protected static final Logger LOGGER = Logger.getLogger(EditorConstants.LOGGER);
 
     /**
      * The map of menus for this view.
      */
-    private transient Map myMenus = new HashMap();
+    private transient Map<String, List<String>> myMenus = new HashMap<String, List<String>>();
 
     /**
      * Override to provide the menus for this view.
      * @return a map of menus for this view. It consists of common menus for
      * annotation/xref.
      */
-    public Map getMenus() throws IntactException {
+    @Override
+    public Map<String, List<String>> getMenus() throws IntactException {
         return myMenus;
     }
 
     // --------------------- Protected Methods ---------------------------------
 
     // Implements abstract methods
-
+    @Override
     protected void updateAnnotatedObject(IntactHelper helper) throws IntactException {
         // The current CV object.
-        CvObject cvobj = (CvObject) getAnnotatedObject();
+        CvObject cvobj = getAnnotatedObject();
 
         // Have we set the annotated object for the view?
         if (cvobj == null) {
             // Not persisted; create a new cv object.
             try {
                 Constructor ctr = getEditClass().getDeclaredConstructor(
-                        new Class[]{Institution.class, String.class});
+                        Institution.class, String.class);
                 cvobj = (CvObject) ctr.newInstance(
-                        new Object[]{getService().getOwner(), getShortLabel()});
+                        getService().getOwner(), getShortLabel());
             }
             catch (NoSuchMethodException ne) {
                 // Shouldn't happen.
@@ -93,6 +95,7 @@ public class CvViewBean extends AbstractEditViewBean {
     /**
      * Override to load the menus for this view.
      */
+    @Override
     public void loadMenus() throws IntactException {
         myMenus.clear();
 

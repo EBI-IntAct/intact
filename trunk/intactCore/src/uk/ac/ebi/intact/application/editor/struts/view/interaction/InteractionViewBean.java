@@ -33,7 +33,7 @@ import java.util.*;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class InteractionViewBean extends AbstractEditViewBean {
+public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
 
     /**
      * The KD.
@@ -54,52 +54,52 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * The collection of Experiments. Transient as it is only valid for the
      * current display.
      */
-    private transient List myExperiments = new ArrayList();
+    private transient List<ExperimentRowData> myExperiments = new ArrayList<ExperimentRowData>();
 
     /**
      * Holds Experiments to add. This collection is cleared once the user
      * commits the transaction.
      */
-    private transient List myExperimentsToAdd = new ArrayList();
+    private transient List<ExperimentRowData> myExperimentsToAdd = new ArrayList<ExperimentRowData>();
 
     /**
      * Holds Experiments to del. This collection is cleared once the user
      * commits the transaction.
      */
-    private transient List myExperimentsToDel = new ArrayList();
+    private transient List<ExperimentRowData> myExperimentsToDel = new ArrayList<ExperimentRowData>();
 
     /**
      * Holds Experiments to not yet added. Only valid for the current session.
      */
-    private transient List myExperimentsToHold = new ArrayList();
+    private transient List<ExperimentRowData> myExperimentsToHold = new ArrayList<ExperimentRowData>();
 
     /**
      * The collection of Components. Transient as it is only valid for the
      * current display.
      */
-    private transient List myComponents = new ArrayList();
+    private transient List<ComponentBean> myComponents = new ArrayList<ComponentBean>();
 
     /**
      * Holds Components to del. This collection is cleared once the user
      * commits the transaction.
      */
-    private transient List myComponentsToDel = new ArrayList();
+    private transient List<ComponentBean> myComponentsToDel = new ArrayList<ComponentBean>();
 
     /**
      * Holds Components to update. This collection is cleared once the user
      * commits the transaction.
      */
-    private transient Set myComponentsToUpdate = new HashSet();
+    private transient Set<ComponentBean> myComponentsToUpdate = new HashSet<ComponentBean>();
 
     /**
      * Keeps a track of features to link
      */
-    private List myLinkFeatures = new ArrayList();
+    private List<FeatureBean> myLinkFeatures = new ArrayList<FeatureBean>();
 
     /**
      * Keeps a track of features to unlink
      */
-    private List myUnlinkFeatures = new ArrayList();
+    private List<FeatureBean> myUnlinkFeatures = new ArrayList<FeatureBean>();
 
     /**
      * Handler to sort link features.
@@ -109,9 +109,10 @@ public class InteractionViewBean extends AbstractEditViewBean {
     /**
      * The map of menus for this view.
      */
-    private transient Map myMenus = new HashMap();
+    private transient Map<String,List<String>> myMenus = new HashMap<String,List<String>>();
 
     // Override super method to clear experiments and componets.
+    @Override
     public void reset() {
         super.reset();
 
@@ -126,11 +127,9 @@ public class InteractionViewBean extends AbstractEditViewBean {
         myComponents.clear();
     }
 
-    public void reset(AnnotatedObject annobj) {
-        super.reset(annobj);
-
-        // Must be an Interaction; can cast it safely.
-        Interaction intact = (Interaction) annobj;
+    @Override
+    public void reset(Interaction intact) {
+        super.reset(intact);
 
         // Reset the current interaction with the argument interaction.
         resetInteraction(intact);
@@ -142,10 +141,9 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
     // Reset the fields to null if we don't have values to set. Failure
     // to do so will display the previous edit object's values as current.
-    public void resetClonedObject(AnnotatedObject copy, EditUserI user) {
-        super.resetClonedObject(copy, user);
-
-        Interaction interaction = (Interaction) copy;
+    @Override
+    public void resetClonedObject(Interaction interaction, EditUserI user) {
+        super.resetClonedObject(interaction, user);
 
         // Clear existing exps and comps.
         myExperiments.clear();
@@ -155,9 +153,10 @@ public class InteractionViewBean extends AbstractEditViewBean {
         resetInteraction(interaction);
 
         // Add cloned proteins as new proteins.
-        for (Iterator iter = interaction.getComponents().iterator(); iter.hasNext();) {
+        for (Component component : interaction.getComponents())
+        {
             ComponentBean cb = new ComponentBean();
-            cb.setFromClonedObject((Component) iter.next());
+            cb.setFromClonedObject(component);
             // Add to the view.
             myComponents.add(cb);
             // The componen needs to be updated as well.
@@ -166,6 +165,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
     }
 
     // Override the super to persist others.
+    @Override
     public void persistOthers(EditUserI user) throws IntactException {
         // First transaction for
         try {
@@ -220,29 +220,33 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
     // Override the super method as the current interaction is added to the
     // recent interaction list.
+    @Override
     public void addToRecentList(EditUserI user) {
-        InteractionRowData row = new InteractionRowData(
-                (Interaction) getAnnotatedObject());
+        InteractionRowData row = new InteractionRowData(getAnnotatedObject());
         user.addToCurrentInteraction(row);
     }
 
     // Override to remove the current interaction from the recent list.
+    @Override
     public void removeFromRecentList(EditUserI user) {
         InteractionRowData row = new InteractionRowData(getAc());
         user.removeFromCurrentInteraction(row);
     }
 
     // Override to provide Experiment layout.
+    @Override
     public void setLayout(ComponentContext context) {
         context.putAttribute("content", "edit.int.layout");
     }
 
     // Override to provide Interaction help tag.
+    @Override
     public String getHelpTag() {
         return "editor.interaction";
     }
 
     // Override to copy data from the form.
+    @Override
     public void copyPropertiesFrom(EditorFormI editorForm) {
         // Set the common values by calling super first.
         super.copyPropertiesFrom(editorForm);
@@ -255,6 +259,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
     }
 
     // Override to copy Interaction data.
+    @Override
     public void copyPropertiesTo(EditorFormI form) {
         super.copyPropertiesTo(form);
 
@@ -270,13 +275,15 @@ public class InteractionViewBean extends AbstractEditViewBean {
         intform.setComponents(getComponents());
     }
 
+    @Override
     public void sanityCheck() throws ValidationException, IntactException {
         // Look for any unsaved or error proteins.
-        for (Iterator iter = myComponents.iterator(); iter.hasNext();) {
-            ComponentBean pb = (ComponentBean) iter.next();
-            if (!pb.getEditState().equals(AbstractEditBean.VIEW)) {
+        for (ComponentBean pb : myComponents)
+        {
+            if (!pb.getEditState().equals(AbstractEditBean.VIEW))
+            {
                 throw new InteractionException("int.unsaved.prot",
-                        "error.int.sanity.unsaved.prot");
+                                               "error.int.sanity.unsaved.prot");
             }
         }
 
@@ -292,7 +299,8 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * @return a map of menus for this view. It consists of common menus for
      * annotation/xref, organism (add), interaction type and role (add & edit).
      */
-    public Map getMenus() throws IntactException {
+    @Override
+    public Map<String,List<String>> getMenus() throws IntactException {
         return myMenus;
     }
 
@@ -381,11 +389,12 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * pre:  forall(obj : Object | obj.oclIsTypeOf(Experiment))
      * </pre>
      */
-    public void addExperimentToHold(Collection exps) {
-        for (Iterator iter = exps.iterator(); iter.hasNext();) {
-            ExperimentRowData expRow = (ExperimentRowData) iter.next();
+    public void addExperimentToHold(Collection<ExperimentRowData> exps) {
+        for (ExperimentRowData expRow : exps)
+        {
             // Avoid duplicates.
-            if (!myExperimentsToHold.contains(expRow) && !myExperiments.contains(expRow)) {
+            if (!myExperimentsToHold.contains(expRow) && !myExperiments.contains(expRow))
+            {
                 myExperimentsToHold.add(expRow);
             }
         }
@@ -419,7 +428,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * post: return->forall(obj : Object | obj.oclIsTypeOf(ExperimentRowData))
      * </pre>
      */
-    public List getExperiments() {
+    public List<ExperimentRowData> getExperiments() {
         return myExperiments;
     }
 
@@ -431,7 +440,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * post: return->forall(obj : Object | obj.oclIsTypeOf(ExperimentRowData))
      * </pre>
      */
-    public List getHoldExperiments() {
+    public List<ExperimentRowData> getHoldExperiments() {
         return myExperimentsToHold;
     }
 
@@ -448,7 +457,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * </pre>
      */
     public ExperimentRowData getExperiment(int index) {
-        return (ExperimentRowData) myExperiments.get(index);
+        return myExperiments.get(index);
     }
 
     /**
@@ -466,7 +475,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * </pre>
      */
     public ExperimentRowData getHoldExperiment(int index) {
-        return (ExperimentRowData) myExperimentsToHold.get(index);
+        return myExperimentsToHold.get(index);
     }
 
     /**
@@ -500,15 +509,16 @@ public class InteractionViewBean extends AbstractEditViewBean {
     
    public void delPolymer(int pos) {
         // The component bean at position 'pos'.
-        ComponentBean cb = (ComponentBean) myComponents.get(pos);
+        ComponentBean cb =  myComponents.get(pos);
 
         // Avoid creating an empty list if the comp has no features.
         if (!cb.getFeatures().isEmpty()) {
             // Collects features to delete (to get around concurrent modification prob)
-            List featuresToDel = new ArrayList(cb.getFeatures());
+            List<FeatureBean> featuresToDel = new ArrayList<FeatureBean>(cb.getFeatures());
             // Delete all the Features belonging to this component.
-            for (Iterator iter = featuresToDel.iterator(); iter.hasNext();) {
-                delFeature((FeatureBean) iter.next());
+            for (FeatureBean featureToDel : featuresToDel)
+            {
+                delFeature(featureToDel);
             }
         }
         // Remove it from the view.
@@ -555,6 +565,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
     }
 
     // Override super to add extra.
+    @Override
     public void clearTransactions() {
         super.clearTransactions();
 
@@ -572,8 +583,9 @@ public class InteractionViewBean extends AbstractEditViewBean {
         myUnlinkFeatures.clear();
 
         // Clear any transactions associated with component beans.
-        for (Iterator iter = myComponents.iterator(); iter.hasNext();) {
-            ((ComponentBean) iter.next()).clearTransactions();
+        for (ComponentBean myComponent : myComponents)
+        {
+            myComponent.clearTransactions();
         }
     }
 
@@ -583,6 +595,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * @return true for all the persistent interactions (i.e., false for a
      *         new interaction not yet persisted).
      */
+    @Override
     public boolean getCloneState() {
         return getAc() != null;
     }
@@ -602,9 +615,10 @@ public class InteractionViewBean extends AbstractEditViewBean {
         String compAc = feature.getComponent().getAc();
 
         // Find the component bean this feature bean belongs to.
-        for (Iterator iter = myComponents.iterator(); iter.hasNext();) {
-            ComponentBean cb = (ComponentBean) iter.next();
-            if (cb.getAc().equals(compAc)) {
+        for (ComponentBean cb : myComponents)
+        {
+            if (cb.getAc().equals(compAc))
+            {
                 compBean = cb;
                 break;
             }
@@ -617,9 +631,10 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
         // Get corresponding feature bean among this component bean.
         FeatureBean featureBean = null;
-        for (Iterator iter = compBean.getFeatures().iterator(); iter.hasNext();) {
-            FeatureBean fb = (FeatureBean) iter.next();
-            if (fb.getAc().equals(featureAc)) {
+        for (FeatureBean fb : compBean.getFeatures())
+        {
+            if (fb.getAc().equals(featureAc))
+            {
                 featureBean = fb;
                 break;
             }
@@ -760,17 +775,17 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * @return a list of selected features beans. The list is empty if no items
      * were selected.
      */
-    public List getFeaturesToDelete() {
+    public List<FeatureBean> getFeaturesToDelete() {
         // The array to collect features to delete.
-        List fbs = new ArrayList();
+        List<FeatureBean> fbs = new ArrayList<FeatureBean>();
 
         // Loop through components collecting checked features.
-        for (Iterator iter0 = myComponents.iterator(); iter0.hasNext();) {
-            ComponentBean compBean = (ComponentBean) iter0.next();
-            for (Iterator iter1 = compBean.getFeatures().iterator();
-                 iter1.hasNext();) {
-                FeatureBean featureBean = (FeatureBean) iter1.next();
-                if (featureBean.isChecked()) {
+        for (ComponentBean compBean : myComponents)
+        {
+            for (FeatureBean featureBean : compBean.getFeatures())
+            {
+                if (featureBean.isChecked())
+                {
                     fbs.add(featureBean);
                 }
             }
@@ -792,13 +807,13 @@ public class InteractionViewBean extends AbstractEditViewBean {
         int idx = 0;
 
         // Loop through components until we found two items.
-        for (Iterator iter0 = myComponents.iterator(); iter0.hasNext()
+        for (Iterator<ComponentBean> iter0 = myComponents.iterator(); iter0.hasNext()
                 && fbs[1] == null;) {
-            ComponentBean compBean = (ComponentBean) iter0.next();
-            for (Iterator iter1 = compBean.getFeatures().iterator(); iter1
+            ComponentBean compBean = iter0.next();
+            for (Iterator<FeatureBean> iter1 = compBean.getFeatures().iterator(); iter1
                     .hasNext()
                     && fbs[1] == null;) {
-                FeatureBean featureBean = (FeatureBean) iter1.next();
+                FeatureBean featureBean = iter1.next();
                 if (featureBean.isChecked()) {
                     fbs[idx] = featureBean;
                     ++idx;
@@ -814,12 +829,12 @@ public class InteractionViewBean extends AbstractEditViewBean {
      */
     public FeatureBean getFeatureForUnlink() {
         // Loop till we found the selected feature.
-        for (Iterator iter0 = myComponents.iterator(); iter0.hasNext();) {
-            ComponentBean compBean = (ComponentBean) iter0.next();
-            for (Iterator iter1 = compBean.getFeatures().iterator();
-                 iter1.hasNext();) {
-                FeatureBean fb = (FeatureBean) iter1.next();
-                if (fb.isChecked()) {
+        for (ComponentBean compBean : myComponents)
+        {
+            for (FeatureBean fb : compBean.getFeatures())
+            {
+                if (fb.isChecked())
+                {
                     return fb;
                 }
             }
@@ -841,11 +856,12 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * </pre>
      */
     public FeatureBean getSelectedFeature() {
-        for (Iterator iter1 = myComponents.iterator(); iter1.hasNext();) {
-            ComponentBean cb = (ComponentBean) iter1.next();
-            for (Iterator iter2 = cb.getFeatures().iterator(); iter2.hasNext();) {
-                FeatureBean fb = (FeatureBean) iter2.next();
-                if (fb.isSelected()) {
+        for (ComponentBean cb : myComponents)
+        {
+            for (FeatureBean fb : cb.getFeatures())
+            {
+                if (fb.isSelected())
+                {
                     fb.unselect();
                     return fb;
                 }
@@ -863,11 +879,13 @@ public class InteractionViewBean extends AbstractEditViewBean {
      */
     public FeatureBean getFeatureBean(String ac) {
         // Look in the componets.
-        for (Iterator iter0 = myComponents.iterator(); iter0.hasNext();) {
-            List features = ((ComponentBean) iter0.next()).getFeatures();
-            for (Iterator iter1 = features.iterator(); iter1.hasNext();) {
-                FeatureBean fb = (FeatureBean) iter1.next();
-                if (fb.getAc().equals(ac)) {
+        for (ComponentBean myComponent : myComponents)
+        {
+            List<FeatureBean> features = myComponent.getFeatures();
+            for (FeatureBean fb : features)
+            {
+                if (fb.getAc().equals(ac))
+                {
                     return fb;
                 }
             }
@@ -879,29 +897,30 @@ public class InteractionViewBean extends AbstractEditViewBean {
     // --------------------- Protected Methods ---------------------------------
 
     // Implements abstract methods
-
+    @Override
     protected void updateAnnotatedObject(IntactHelper helper) throws IntactException {
         // The cv interaction type for the interaction.
-        CvInteractionType type = (CvInteractionType) helper.getObjectByLabel(
+        CvInteractionType type = helper.getObjectByLabel(
                 CvInteractionType.class, myInteractionType);
 
         // The current Interaction.
-        Interaction intact = (Interaction) getAnnotatedObject();
+        Interaction intact = getAnnotatedObject();
 
         // Have we set the annotated object for the view?
         if (intact == null) {
             // Collect experiments from beans.
-            List exps = new ArrayList();
-            for (Iterator iter = getExperimentsToAdd().iterator(); iter.hasNext();) {
-                ExperimentRowData row = (ExperimentRowData) iter.next();
+            List<Experiment> exps = new ArrayList<Experiment>();
+            for (ExperimentRowData row : getExperimentsToAdd())
+            {
                 Experiment exp = row.getExperiment();
-                if (exp == null) {
-                    exp = (Experiment) helper.getObjectByAc(Experiment.class, row.getAc());
+                if (exp == null)
+                {
+                    exp =  helper.getObjectByAc(Experiment.class, row.getAc());
                 }
                 exps.add(exp);
             }
             // The interactor type.
-            CvInteractorType intType = (CvInteractorType) helper.getObjectByPrimaryId(
+            CvInteractorType intType = helper.getObjectByPrimaryId(
                     CvInteractorType.class, CvInteractorType.getInteractionMI());
 
             // Not persisted. Create a new Interaction.
@@ -916,18 +935,19 @@ public class InteractionViewBean extends AbstractEditViewBean {
         }
         // Get the objects using their short label.
         if (myOrganism != null) {
-            BioSource biosource = (BioSource) helper.getObjectByLabel(
+            BioSource biosource = helper.getObjectByLabel(
                     BioSource.class, myOrganism);
             intact.setBioSource(biosource);
         }
         intact.setKD(myKD);
 
         // Delete experiments.
-        for (Iterator iter = getExperimentsToDel().iterator(); iter.hasNext();) {
-            ExperimentRowData row = (ExperimentRowData) iter.next();
+        for (ExperimentRowData row : getExperimentsToDel())
+        {
             Experiment exp = row.getExperiment();
-            if (exp == null) {
-                exp = (Experiment) helper.getObjectByAc(Experiment.class, row.getAc());
+            if (exp == null)
+            {
+                exp = helper.getObjectByAc(Experiment.class, row.getAc());
             }
             intact.removeExperiment(exp);
         }
@@ -936,12 +956,13 @@ public class InteractionViewBean extends AbstractEditViewBean {
     /**
      * Override to load the menus for this view.
      */
+    @Override
     public void loadMenus() throws IntactException {
         // Holds the menu name.
         String name;
 
         // Temp variable to hold a menu.
-        List menu;
+        List<String> menu;
 
         // Handler to the menu factory.
         EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
@@ -967,22 +988,22 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
         // Add the Role add menu.
         name = EditorMenuFactory.ROLE;
-        menu = (List) myMenus.get(name);
+        menu = myMenus.get(name);
         myMenus.put(name + "_", menuFactory.convertToAddMenu(menu));
     }
 
-    private void makeProteinBeans(Collection components) {
+    private void makeProteinBeans(Collection<Component> components) {
         myComponents.clear();
-        for (Iterator iter = components.iterator(); iter.hasNext();) {
-            Component comp = (Component) iter.next();
+        for (Component comp : components)
+        {
             myComponents.add(new ComponentBean(comp));
         }
     }
 
-    private void makeExperimentRows(Collection exps) {
+    private void makeExperimentRows(Collection<Experiment> exps) {
         myExperiments.clear();
-        for (Iterator iter = exps.iterator(); iter.hasNext();) {
-            Experiment exp = (Experiment) iter.next();
+        for (Experiment exp : exps)
+        {
             myExperiments.add(new ExperimentRowData(exp));
         }
     }
@@ -999,9 +1020,9 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * post: return->forall(obj: Object | obj.oclIsTypeOf(ExperimentRowData)
      * </pre>
      */
-    private Collection getExperimentsToAdd() {
+    private Collection<ExperimentRowData> getExperimentsToAdd() {
         // Experiments common to both add and delete.
-        Collection common = CollectionUtils.intersection(myExperimentsToAdd,
+        Collection<ExperimentRowData> common = CollectionUtils.intersection(myExperimentsToAdd,
                 myExperimentsToDel);
         // All the experiments only found in experiments to add collection.
         return CollectionUtils.subtract(myExperimentsToAdd, common);
@@ -1017,9 +1038,9 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * post: return->forall(obj: Object | obj.oclIsTypeOf(ExperimentRowData)
      * </pre>
      */
-    private Collection getExperimentsToDel() {
+    private Collection<ExperimentRowData> getExperimentsToDel() {
         // Experiments common to both add and delete.
-        Collection common = CollectionUtils.intersection(myExperimentsToAdd,
+        Collection<ExperimentRowData> common = CollectionUtils.intersection(myExperimentsToAdd,
                 myExperimentsToDel);
         // All the experiments only found in experiments to delete collection.
         return CollectionUtils.subtract(myExperimentsToDel, common);
@@ -1056,7 +1077,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
         IntactHelper helper = IntactHelperUtil.getIntactHelper();
         // Keeps a track of Features to update. This avoids multiple updates to the
         // same feature.
-        Set featuresToUpdate = new HashSet();
+        Set<Feature> featuresToUpdate = new HashSet<Feature>();
 
         // Handler to the link sorter and sort links.
         ItemLinkSorter sorter = getFeatureSorter();
@@ -1069,31 +1090,34 @@ public class InteractionViewBean extends AbstractEditViewBean {
         unlinkFeatures(featuresToUpdate, sorter.getItemsToUnLink().iterator());
 
         // Update the feature in the Set.
-        for (Iterator iter = featuresToUpdate.iterator(); iter.hasNext();) {
-            helper.update(iter.next());
+        for (Feature featureToUpdate : featuresToUpdate)
+        {
+            helper.update(featureToUpdate);
         }
 
-        for (Iterator iter1 = myComponentsToUpdate.iterator(); iter1.hasNext();) {
-            ComponentBean cb = (ComponentBean) iter1.next();
+        for (ComponentBean cb : myComponentsToUpdate)
+        {
             Component comp = cb.getComponent(helper);
 
             // Process features deleted from the current component.
-            for (Iterator iter2 = cb.getFeaturesToDelete().iterator(); iter2.hasNext();) {
-                FeatureBean fb1 = (FeatureBean) iter2.next();
-                Feature featureToDel = fb1.getUpdatedFeature(helper);
+            for (FeatureBean fb : (Iterable<FeatureBean>) cb.getFeaturesToDelete())
+            {
+                Feature featureToDel = fb.getUpdatedFeature(helper);
                 // Remove from the component and delete the feature
                 comp.removeBindingDomain(featureToDel);
                 helper.delete(featureToDel);
 
                 // No further action if this feature is not linked.
-                if (!fb1.hasBoundDomain()) {
+                if (!fb.hasBoundDomain())
+                {
                     continue;
                 }
                 // The linked feature bean.
-                FeatureBean fb2 = getFeatureBean(fb1.getBoundDomainAc());
+                FeatureBean fb2 = getFeatureBean(fb.getBoundDomainAc());
 
                 // Linked feature may have already been deleted.
-                if (fb2 == null) {
+                if (fb2 == null)
+                {
                     continue;
                 }
                 // The linked feature.
@@ -1129,9 +1153,10 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * is no matching component exists for <code>fb</code>.
      */
     private ComponentBean getComponentBean(FeatureBean fb) {
-        for (Iterator iterator = myComponents.iterator(); iterator.hasNext();) {
-            ComponentBean cb = (ComponentBean) iterator.next();
-            if (cb.getFeatures().contains(fb)) {
+        for (ComponentBean cb : myComponents)
+        {
+            if (cb.getFeatures().contains(fb))
+            {
                 return cb;
             }
         }
@@ -1141,10 +1166,12 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
     private FeatureBean getFeatureBean(FeatureBean fb) {
         // Look in the componets.
-        for (Iterator iter0 = myComponents.iterator(); iter0.hasNext();) {
-            List features = ((ComponentBean) iter0.next()).getFeatures();
-            if (features.contains(fb)) {
-                return (FeatureBean) features.get(features.indexOf(fb));
+        for (ComponentBean myComponent : myComponents)
+        {
+            List<FeatureBean> features = myComponent.getFeatures();
+            if (features.contains(fb))
+            {
+                return features.get(features.indexOf(fb));
             }
         }
         // Not found the bean, return null.
@@ -1153,16 +1180,17 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
     /**
      * Deletes added featues from given collection.
-     * @param componets the components to search for Features
+     * @param components the components to search for Features
      * @param helper the helper to delete added features.
      * @throws IntactException for errors in deleting a Feature.
      */
-    private void deleteFeaturesAdded(Collection componets, IntactHelper helper)
+    private void deleteFeaturesAdded(Collection<ComponentBean> components, IntactHelper helper)
             throws IntactException {
-        for (Iterator iter0 = componets.iterator(); iter0.hasNext();) {
-            ComponentBean cb = (ComponentBean) iter0.next();
-            for (Iterator iter1 = cb.getFeaturesAdded().iterator(); iter1.hasNext();) {
-                helper.delete(((FeatureBean) iter1.next()).getFeature());
+        for (ComponentBean cb : components)
+        {
+            for (FeatureBean featureBean : cb.getFeaturesAdded())
+            {
+                helper.delete(featureBean.getFeature());
             }
         }
     }
@@ -1174,12 +1202,13 @@ public class InteractionViewBean extends AbstractEditViewBean {
      */
     private void deleteComponents(Interaction intact) throws IntactException {
         IntactHelper helper = IntactHelperUtil.getIntactHelper();
-        for (Iterator iter = myComponentsToDel.iterator(); iter.hasNext();) {
-            ComponentBean cb = (ComponentBean) iter.next();
+        for (ComponentBean cb : myComponentsToDel)
+        {
             Component comp = cb.getComponent(helper);
             // No need to delete from persistent storage if the link to this
             // Protein is not persisted.
-            if ((comp == null) || (comp.getAc() == null)) {
+            if ((comp == null) || (comp.getAc() == null))
+            {
                 continue;
             }
             // Disconnect any links between features in the component.
@@ -1198,9 +1227,9 @@ public class InteractionViewBean extends AbstractEditViewBean {
     private void updateComponents(Interaction intact) throws IntactException {
         IntactHelper helper = IntactHelperUtil.getIntactHelper();
         // Update components.
-        for (Iterator iter1 = myComponentsToUpdate.iterator(); iter1.hasNext();) {
-            ComponentBean cb = (ComponentBean) iter1.next();
-            cb.setInteraction((Interaction) getAnnotatedObject());
+        for (ComponentBean cb : myComponentsToUpdate)
+        {
+            cb.setInteraction(getAnnotatedObject());
 
             // Disconnect any links between features in the component which are
             disconnectLinkedFeatures(cb, helper);
@@ -1208,16 +1237,19 @@ public class InteractionViewBean extends AbstractEditViewBean {
             Component comp = cb.getComponent(helper);
 
             // Add features
-            for (Iterator iter2 = cb.getFeaturesToAdd().iterator(); iter2.hasNext();) {
-                Feature feature = ((FeatureBean) iter2.next()).getUpdatedFeature(helper);
+            for (FeatureBean featureBean : cb.getFeaturesToAdd())
+            {
+                Feature feature = featureBean.getUpdatedFeature(helper);
                 // Feature AC is null for a cloned interaction.
-                if (feature.getAc() == null) {
+                if (feature.getAc() == null)
+                {
                     // Create a new Feature.
                     helper.create(feature);
 
                     // Create ranges for the feature.
-                    for (Iterator iter3 = feature.getRanges().iterator(); iter3.hasNext();) {
-                        helper.create((Range) iter3.next());
+                    for (Range range : feature.getRanges())
+                    {
+                        helper.create(range);
                     }
                 }
                 // Add to the component.
@@ -1225,10 +1257,12 @@ public class InteractionViewBean extends AbstractEditViewBean {
             }
             intact.addComponent(comp);
 
-            if (helper.isPersistent(comp)) {
+            if (helper.isPersistent(comp))
+            {
                 helper.update(comp);
             }
-            else {
+            else
+            {
                 helper.create(comp);
             }
         }
@@ -1241,7 +1275,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * @param iter an iterator to iterate throgh feature beans.
      * @throws IntactException error in accessing a Feature.
      */
-    private void linkFeatures(IntactHelper helper, Set set, Iterator iter)
+    private void linkFeatures(IntactHelper helper, Set<Feature> set, Iterator iter)
             throws IntactException {
         while (iter.hasNext()) {
             // The feature bean to link.
@@ -1272,7 +1306,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * Unlinks features.
      * @param set collects Features to update.
      */
-    private void unlinkFeatures(Set set, Iterator iter) {
+    private void unlinkFeatures(Set<Feature> set, Iterator iter) {
         while (iter.hasNext()) {
             // The Feature to unlink.
             Feature feature = ((FeatureBean) iter.next()).getFeature();
@@ -1296,12 +1330,15 @@ public class InteractionViewBean extends AbstractEditViewBean {
         // Delete any links among features to delete. This should be done
         // first before deleting a feature. Actual deleting a feature is
         // done in a separate transaction.
-        for (Iterator iter = cb.getFeaturesToDelete().iterator(); iter.hasNext();) {
-            Feature feature = ((FeatureBean) iter.next()).getUpdatedFeature(helper);
+        for (FeatureBean featureBean : cb.getFeaturesToDelete())
+        {
+            Feature feature = featureBean.getUpdatedFeature(helper);
             // Remove any links if this feature is linked to another feature.
-            if (feature.getBoundDomain() != null) {
+            if (feature.getBoundDomain() != null)
+            {
                 Feature toFeature = feature.getBoundDomain();
-                if (toFeature.getBoundDomain() == null) {
+                if (toFeature.getBoundDomain() == null)
+                {
                     continue;
                 }
                 // Disconnect the links between two features.

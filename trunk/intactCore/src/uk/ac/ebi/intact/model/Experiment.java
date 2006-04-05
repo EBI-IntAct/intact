@@ -38,7 +38,7 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
      * TODO comments
      * TODO would be easier/meaningful to have plural
      */
-    private Collection interactions = new ArrayList();
+    private Collection<Interaction> interactions = new ArrayList<Interaction>();
     /**
      * One experiment should group all interactions from a publication
      * which have been performed under the same conditions.
@@ -74,6 +74,7 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
      *
      * @deprecated Use the full constructor instead
      */
+    @Deprecated
     private Experiment() {
         //super call sets creation time data
         super();
@@ -133,11 +134,11 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
 
     // TODO could wipe all existing interaction ... maybe dangerous.
     // TODO shold also allow to have no interaction if the collection is null or empty.
-    public void setInteractions( Collection someInteraction ) {
+    public void setInteractions( Collection<Interaction> someInteraction ) {
         this.interactions = someInteraction;
     }
 
-    public Collection getInteractions() {
+    public Collection<Interaction> getInteractions() {
         return interactions;
     }
 
@@ -236,6 +237,7 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
      * @return true if the parameter equals this object, false otherwise
      * @see uk.ac.ebi.intact.model.AnnotatedObject
      */
+    @Override
     public boolean equals( Object o ) {
         if( this == o ) return true;
         if( !( o instanceof Experiment ) ) return false;
@@ -257,6 +259,7 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
          */
     }
 
+    @Override
     public int hashCode() {
         int result = super.hashCode();
 
@@ -278,6 +281,7 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
      *         </ul>
      * @throws CloneNotSupportedException
      */
+    @Override
     public Object clone() throws CloneNotSupportedException {
         Experiment copy = (Experiment) super.clone();
 
@@ -290,6 +294,7 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
     ///////////////////////////////////////
     // instance methods
 
+    @Override
     public String toString() {
         StringBuffer result = new StringBuffer( 128 );
 

@@ -27,7 +27,7 @@ import java.util.*;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class FeatureViewBean extends AbstractEditViewBean {
+public class FeatureViewBean extends AbstractEditViewBean<Feature> {
 
     // Class Data
 
@@ -62,25 +62,25 @@ public class FeatureViewBean extends AbstractEditViewBean {
      * commits the transaction.This represents the current view of ranges for
      * the feature.
      */
-    private List myRanges = new ArrayList();
+    private List<RangeBean> myRanges = new ArrayList<RangeBean>();
 
     /**
      * List of new ranges to add to the feature. This collection is cleared
      * once the user commits the transaction.
      */
-    private Set myRangesToAdd = new HashSet();
+    private Set<RangeBean> myRangesToAdd = new HashSet<RangeBean>();
 
     /**
      * List of ranges to delete from the feature. This collection is cleared
      * once the user commits the transaction.
      */
-    private Set myRangesToDel = new HashSet();
+    private Set<RangeBean> myRangesToDel = new HashSet<RangeBean>();
 
     /**
      * List of ranges to update for the current feature. This collection is
      * cleared once the user commits the transaction.
      */
-    private Set myRangesToUpdate = new HashSet();
+    private Set<RangeBean> myRangesToUpdate = new HashSet<RangeBean>();
 
     /**
      * True if this is a new feature (as a result of selecting Add Feature). Once
@@ -101,19 +101,22 @@ public class FeatureViewBean extends AbstractEditViewBean {
     /**
      * The map of menus for this view.
      */
-    private transient Map myMenus = new HashMap();
+    private transient Map<String,List<String>> myMenus = new HashMap<String,List<String>>();
 
     // Override to provide the Feature layout.
+    @Override
     public void setLayout(ComponentContext context) {
         context.putAttribute("content", myCurrentLayoutName);
     }
 
     // Override to provide Experiment help tag.
+    @Override
     public String getHelpTag() {
         return "editor.int.features";
     }
 
     // Override to provide set feature from the form.
+    @Override
     public void copyPropertiesFrom(EditorFormI form) {
         // Set the common values by calling super first.
         super.copyPropertiesFrom(form);
@@ -125,6 +128,7 @@ public class FeatureViewBean extends AbstractEditViewBean {
     }
 
     // Override to copy Feature data.
+    @Override
     public void copyPropertiesTo(EditorFormI form) {
         super.copyPropertiesTo(form);
 
@@ -146,11 +150,13 @@ public class FeatureViewBean extends AbstractEditViewBean {
     }
 
     // Override to not to display the Delete button.
+    @Override
     public boolean getDeleteState() {
         return false;
     }
 
     // Override to not to display for a mutation entry.
+    @Override
     public boolean getSaveState() {
         return !myMutationMode;
     }
@@ -224,6 +230,7 @@ public class FeatureViewBean extends AbstractEditViewBean {
     }
 
     // Override super to add extra.
+    @Override
     public void clearTransactions() {
         super.clearTransactions();
 
@@ -238,7 +245,8 @@ public class FeatureViewBean extends AbstractEditViewBean {
      * @return a map of menus for this view. It consists of common menus for
      * annotation/xref, feature type (add or edit), feature identification (add).
      */
-    public Map getMenus() throws IntactException {
+    @Override
+    public Map<String,List<String>> getMenus() throws IntactException {
         return myMenus;
     }
 
@@ -305,13 +313,15 @@ public class FeatureViewBean extends AbstractEditViewBean {
      * @see RangeBean#isEquivalent(RangeBean)
      */
     public boolean rangeExists(RangeBean bean) {
-        for (Iterator iter = myRanges.iterator(); iter.hasNext();) {
-            RangeBean rb = (RangeBean) iter.next();
+        for (RangeBean rb : myRanges)
+        {
             // Avoid comparing to itself.
-            if (rb.getKey() == bean.getKey()) {
+            if (rb.getKey() == bean.getKey())
+            {
                 continue;
             }
-            if (rb.isEquivalent(bean)) {
+            if (rb.isEquivalent(bean))
+            {
                 return true;
             }
         }
@@ -320,6 +330,7 @@ public class FeatureViewBean extends AbstractEditViewBean {
     }
 
     // Override the super to persist others.
+    @Override
     public void persistOthers(EditUserI user) throws IntactException {
         try {
             // Begin the transaction.
@@ -362,6 +373,7 @@ public class FeatureViewBean extends AbstractEditViewBean {
     }
 
     // Override the super method to initialize this class specific resetting.
+    @Override
     public void reset() {
         super.reset();
 
@@ -377,7 +389,8 @@ public class FeatureViewBean extends AbstractEditViewBean {
     }
 
     // Override the super method to initialize this class specific resetting.
-    public void reset(Class clazz) {
+    @Override
+    public void reset(Class<Feature> clazz) {
         super.reset(clazz);
         // Mark it as a new feature.
         myNewFeature = true;
@@ -385,11 +398,9 @@ public class FeatureViewBean extends AbstractEditViewBean {
 
     // Reset the fields to null if we don't have values to set. Failure
     // to do so will display the previous edit object's values as current.
-    public void reset(AnnotatedObject annobj) {
-        super.reset(annobj);
-
-        // Must be a feature.
-        Feature feature = (Feature) annobj;
+    @Override
+    public void reset(Feature feature) {
+        super.reset(feature);
 
         // Reset the view with the given feature.
         setComponent(feature.getComponent());
@@ -412,14 +423,14 @@ public class FeatureViewBean extends AbstractEditViewBean {
     // --------------------- Protected Methods ---------------------------------
 
     // Implements abstract methods
-
+    @Override
     protected void updateAnnotatedObject(IntactHelper helper) throws IntactException {
         // The feature type for the current feature.
-        CvFeatureType featureType = (CvFeatureType) helper.getObjectByLabel(
+        CvFeatureType featureType = helper.getObjectByLabel(
                 CvFeatureType.class, getCvFeatureType());
 
         // The current feature.
-        Feature feature = (Feature) getAnnotatedObject();
+        Feature feature = getAnnotatedObject();
 
         // null if creating a new Feature.
         if (feature == null) {
@@ -435,6 +446,7 @@ public class FeatureViewBean extends AbstractEditViewBean {
         feature.setCvFeatureIdentification(getCvFeatureIndent(helper));
     }
 
+    @Override
     public void loadMenus() throws IntactException {
         // Handler to the menu factory.
         EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
@@ -467,11 +479,11 @@ public class FeatureViewBean extends AbstractEditViewBean {
         return myComponent.getInteractor().getFullName();
     }
 
-    private void setRanges(Collection ranges) {
+    private void setRanges(Collection<Range> ranges) {
         // Clear any previous ranges.
         myRanges.clear();
-        for (Iterator iterator = ranges.iterator(); iterator.hasNext();) {
-            Range range = (Range) iterator.next();
+        for (Range range : ranges)
+        {
             myRanges.add(new RangeBean(range));
         }
     }
@@ -481,7 +493,7 @@ public class FeatureViewBean extends AbstractEditViewBean {
         if (myCvFeatureIdent == null) {
             return null;
         }
-        return (CvFeatureIdentification) helper.getObjectByLabel(
+        return helper.getObjectByLabel(
                 CvFeatureIdentification.class, myCvFeatureIdent);
     }
 
@@ -494,9 +506,9 @@ public class FeatureViewBean extends AbstractEditViewBean {
      * post: return->forall(obj: Object | obj.oclIsTypeOf(RangeBean)
      * </pre>
      */
-    private Collection getRangesToAdd() {
+    private Collection<RangeBean> getRangesToAdd() {
         // Ranges common to both add and delete.
-        Collection common = CollectionUtils.intersection(myRangesToAdd, myRangesToDel);
+        Collection<RangeBean> common = CollectionUtils.intersection(myRangesToAdd, myRangesToDel);
         // All the ranges only found in 'ranges to add' collection.
         return CollectionUtils.subtract(myRangesToAdd, common);
     }
@@ -510,9 +522,9 @@ public class FeatureViewBean extends AbstractEditViewBean {
      * post: return->forall(obj: Object | obj.oclIsTypeOf(RangeBean)
      * </pre>
      */
-    private Collection getRangesToDel() {
+    private Collection<RangeBean> getRangesToDel() {
         // Ranges common to both add and delete.
-        Collection common = CollectionUtils.intersection(myRangesToAdd, myRangesToDel);
+        Collection<RangeBean> common = CollectionUtils.intersection(myRangesToAdd, myRangesToDel);
         // All the ranges only found in 'ranges to delete' collection.
         return CollectionUtils.subtract(myRangesToDel, common);
     }
@@ -522,19 +534,21 @@ public class FeatureViewBean extends AbstractEditViewBean {
         IntactHelper helper = IntactHelperUtil.getIntactHelper();
 
         // The current feature.
-        Feature feature = (Feature) getAnnotatedObject();
+        Feature feature =  getAnnotatedObject();
 
         // The sequence to set in Ranges.
         String sequence = ((Polymer) myComponent.getInteractor()).getSequence();
 
         // Add new ranges.
-        for (Iterator iter = getRangesToAdd().iterator(); iter.hasNext();) {
+        for (RangeBean rangeBean : getRangesToAdd())
+        {
             // Create the updated range.
-            Range range = ((RangeBean) iter.next()).getUpdatedRange();
+            Range range = rangeBean.getUpdatedRange();
             // Set the sequence for the range.
             range.setSequence(sequence);
             // Avoid creating duplicate Ranges.
-            if (feature.getRanges().contains(range)) {
+            if (feature.getRanges().contains(range))
+            {
                 continue;
             }
             helper.create(range);
@@ -542,16 +556,18 @@ public class FeatureViewBean extends AbstractEditViewBean {
         }
         
         // Delete ranges.
-        for (Iterator iter = getRangesToDel().iterator(); iter.hasNext();) {
-            Range range = ((RangeBean) iter.next()).getRange();
+        for (RangeBean rangeBean : getRangesToDel())
+        {
+            Range range = rangeBean.getRange();
             helper.delete(range);
             feature.removeRange(range);
         }
 
         // Update existing ranges.
-        for (Iterator iter = myRangesToUpdate.iterator(); iter.hasNext();) {
+        for (RangeBean myRangeToUpdate : myRangesToUpdate)
+        {
             // Update the 'updated' range.
-            Range range = ((RangeBean) iter.next()).getUpdatedRange();
+            Range range = myRangeToUpdate.getUpdatedRange();
             range.setSequence(sequence);
             helper.update(range);
         }

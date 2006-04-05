@@ -90,7 +90,7 @@ public class ComponentBean extends AbstractEditKeyBean {
     /**
      * Contains features associated with this component.
      */
-    private List myFeatures = new ArrayList();
+    private List<FeatureBean> myFeatures = new ArrayList<FeatureBean>();
 
     /**
      * The gene names for display
@@ -100,12 +100,12 @@ public class ComponentBean extends AbstractEditKeyBean {
     /**
      * A list of features to add.
      */
-    private transient List myFeaturesToAdd = new ArrayList();
+    private transient List<FeatureBean> myFeaturesToAdd = new ArrayList<FeatureBean>();
 
     /**
      * A list of features to delete.
      */
-    private transient List myFeaturesToDel = new ArrayList();
+    private transient List<FeatureBean> myFeaturesToDel = new ArrayList<FeatureBean>();
 
     /**
      * Default constructor. Need this construtor to set from a cloned
@@ -118,7 +118,7 @@ public class ComponentBean extends AbstractEditKeyBean {
      * @param protein the <code>Protein</code> object.
      */
     public ComponentBean(Protein protein) {
-        myInteractor = (Interactor) IntactHelper.getRealIntactObject(protein);
+        myInteractor = IntactHelper.getRealIntactObject(protein);
         mySPAc = getSPAc();
         setOrganism();
         setEditState(SAVE_NEW);
@@ -133,7 +133,7 @@ public class ComponentBean extends AbstractEditKeyBean {
     }
 
     public ComponentBean(NucleicAcid nucleicAcid){
-        myInteractor = (Interactor) IntactHelper.getRealIntactObject(nucleicAcid);
+        myInteractor = IntactHelper.getRealIntactObject(nucleicAcid);
         setOrganism();
         setEditState(SAVE_NEW);
         setType(NUCLEIC_ACID);
@@ -160,8 +160,8 @@ public class ComponentBean extends AbstractEditKeyBean {
         }
 
         // Set the feature for this bean.
-        for (Iterator iter = myComponent.getBindingDomains().iterator(); iter.hasNext();) {
-            Feature feature = (Feature) iter.next();
+        for (Feature feature : myComponent.getBindingDomains())
+        {
             myFeatures.add(new FeatureBean(feature));
         }
     }
@@ -201,7 +201,7 @@ public class ComponentBean extends AbstractEditKeyBean {
         // The expressed in to set in the component.
         BioSource expressedIn = null;
         if (myExpressedIn != null) {
-            expressedIn = (BioSource) helper.getObjectByLabel(BioSource.class,
+            expressedIn = helper.getObjectByLabel(BioSource.class,
                     myExpressedIn);
         }
         myComponent.setExpressedIn(expressedIn);
@@ -302,7 +302,7 @@ public class ComponentBean extends AbstractEditKeyBean {
      * post: return->forall(obj : Object | obj.oclIsTypeOf(FeatureBean))
      * </pre>
      */
-    public List getFeatures() {
+    public List<FeatureBean> getFeatures() {
         return myFeatures;
     }
 
@@ -327,7 +327,7 @@ public class ComponentBean extends AbstractEditKeyBean {
      * post: return->forall(obj : Object | obj.oclIsTypeOf(FeatureBean))
      * </pre>
      */
-    public Collection getFeaturesToDelete() {
+    public Collection<FeatureBean> getFeaturesToDelete() {
         return myFeaturesToDel;
     }
 
@@ -339,7 +339,7 @@ public class ComponentBean extends AbstractEditKeyBean {
      * post: return->forall(obj : Object | obj.oclIsTypeOf(FeatureBean))
      * </pre>
      */
-    public Collection getFeaturesAdded() {
+    public Collection<FeatureBean> getFeaturesAdded() {
         return myFeaturesToAdd;
     }
 
@@ -351,9 +351,9 @@ public class ComponentBean extends AbstractEditKeyBean {
      * post: return->forall(obj : Object | obj.oclIsTypeOf(FeatureBean))
      * </pre>
      */
-    public Collection getFeaturesToAdd() {
+    public Collection<FeatureBean> getFeaturesToAdd() {
         // Features common to both add and delete.
-        Collection common = CollectionUtils.intersection(myFeaturesToAdd, myFeaturesToDel);
+        Collection<FeatureBean> common = CollectionUtils.intersection(myFeaturesToAdd, myFeaturesToDel);
         // All the features only found in 'features to add' collection.
         return CollectionUtils.subtract(myFeaturesToAdd, common);
     }
@@ -394,11 +394,10 @@ public class ComponentBean extends AbstractEditKeyBean {
         myFeatures.clear();
 
         // All the Features need to be added.
-        for (Iterator iter = myComponent.getBindingDomains().iterator(); iter.hasNext();) {
-            Feature feature = (Feature) iter.next();
-
+        for (Feature feature : myComponent.getBindingDomains())
+        {
             FeatureBean fb = new FeatureBean(feature,
-                    stripCloneSuffix(feature.getShortLabel()));
+                                             stripCloneSuffix(feature.getShortLabel()));
             // Add to the view.
             myFeatures.add(fb);
             // Features need to be added to the component.
@@ -414,9 +413,9 @@ public class ComponentBean extends AbstractEditKeyBean {
      */
     private void initialize(Component component) {
         myComponent = component;
-        myInteraction = (Interaction) IntactHelper.getRealIntactObject(
+        myInteraction = IntactHelper.getRealIntactObject(
                 component.getInteraction());
-        myInteractor = (Interactor) IntactHelper.getRealIntactObject(
+        myInteractor = IntactHelper.getRealIntactObject(
                 component.getInteractor());
         mySPAc = getSPAc();
         myRole = component.getCvComponentRole().getShortLabel();
@@ -443,8 +442,8 @@ public class ComponentBean extends AbstractEditKeyBean {
         StringBuffer sb = new StringBuffer();
 
         // The alias AC.
-        String ac = ((AnnotatedObject) helper.getObjectByLabel(
-                CvAliasType.class, "gene name")).getAc();
+        String ac = helper.getObjectByLabel(
+                CvAliasType.class, "gene name").getAc();
         Query query = qf.getGeneNameQuery(ac, myInteractor.getAc());
 
         // The flag to say that we are processing the first gene name.
@@ -460,7 +459,7 @@ public class ComponentBean extends AbstractEditKeyBean {
                 first = false;
             }
             else {
-                sb.append(", " + name);
+                sb.append(", ").append(name);
             }
         }
         myGeneNames = sb.toString();
@@ -481,10 +480,11 @@ public class ComponentBean extends AbstractEditKeyBean {
     }
 
     private String getSPAc() {
-        for (Iterator iter = myInteractor.getXrefs().iterator(); iter.hasNext();) {
-            Xref xref = (Xref) iter.next();
+        for (Xref xref : myInteractor.getXrefs())
+        {
             // Only consider SwissProt database entries.
-            if (xref.getCvDatabase().getShortLabel().equals(CvDatabase.UNIPROT)) {
+            if (xref.getCvDatabase().getShortLabel().equals(CvDatabase.UNIPROT))
+            {
                 return xref.getPrimaryId();
             }
         }
@@ -493,7 +493,7 @@ public class ComponentBean extends AbstractEditKeyBean {
 
     private CvComponentRole getCvRole(IntactHelper helper) throws IntactException  {
         if (myRole != null) {
-            return (CvComponentRole) helper.getObjectByLabel(
+            return helper.getObjectByLabel(
                     CvComponentRole.class, myRole);
         }
         return null;

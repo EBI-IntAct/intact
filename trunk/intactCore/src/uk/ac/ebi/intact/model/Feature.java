@@ -56,7 +56,7 @@ public class Feature extends AnnotatedObjectImpl {
      * of type:
      * @see Range
      */
-    private Collection ranges = new ArrayList();
+    private Collection<Range> ranges = new ArrayList<Range>();
 
     /**
      *  TODO comments
@@ -78,6 +78,7 @@ public class Feature extends AnnotatedObjectImpl {
      * purposes only and if possible will be made private.
      * @deprecated Use the full constructor instead
      */
+    @Deprecated
     private Feature() {
         super();
     }
@@ -149,7 +150,7 @@ public class Feature extends AnnotatedObjectImpl {
      * Provides the List of Range objects related to  a Feature instance.
      * @return A List of Ranges (expected to be non-empty)
      */
-    public Collection getRanges() {
+    public Collection<Range> getRanges() {
         return ranges;
     }
 
@@ -184,6 +185,7 @@ public class Feature extends AnnotatedObjectImpl {
      * @param o The object to check
      * @return true if the parameter equals this object, false otherwise
      */
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Feature)) return false;
@@ -211,6 +213,7 @@ public class Feature extends AnnotatedObjectImpl {
      * collection such as HashMap...
      *
      */
+    @Override
     public int hashCode() {
 
         int code = super.hashCode();
@@ -232,6 +235,7 @@ public class Feature extends AnnotatedObjectImpl {
      * </ul>
      * @throws CloneNotSupportedException for errors in cloning this object.
      */
+    @Override
     public Object clone() throws CloneNotSupportedException {
         Feature copy = (Feature) super.clone();
 
@@ -243,10 +247,11 @@ public class Feature extends AnnotatedObjectImpl {
         
         // binds is still pointing to the original feature.
 
-        copy.ranges = new ArrayList(ranges.size());
+        copy.ranges = new ArrayList<Range>(ranges.size());
         // Make deep copies of range.
-        for (Iterator iter = ranges.iterator(); iter.hasNext(); ) {
-            copy.ranges.add(((Range) iter.next()).clone());
+        for (Range range : ranges)
+        {
+            copy.ranges.add((Range)range.clone());
         }
 
         // Need to do more here.
