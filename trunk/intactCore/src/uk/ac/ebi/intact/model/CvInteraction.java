@@ -29,6 +29,7 @@ public class CvInteraction extends CvDagObject {
      * purposes only and if possible will be made private.
      * @deprecated Use the full constructor instead
      */
+    @Deprecated
     private CvInteraction() {
         //super call sets creation time data
         super();

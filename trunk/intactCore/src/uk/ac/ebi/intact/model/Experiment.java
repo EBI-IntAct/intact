@@ -286,7 +286,7 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
         Experiment copy = (Experiment) super.clone();
 
         // Not copying any interactions.
-        copy.interactions = new ArrayList();
+        copy.interactions = new ArrayList<Interaction>();
 
         return copy;
     }

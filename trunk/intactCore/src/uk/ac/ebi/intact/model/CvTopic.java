@@ -92,6 +92,7 @@ public class CvTopic extends CvObject implements Editable {
      *
      * @deprecated Use the full constructor instead
      */
+    @Deprecated
     private CvTopic() {
         //super call sets creation time data
         super();

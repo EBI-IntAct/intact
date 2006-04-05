@@ -21,6 +21,8 @@ import java.util.List;
  */
 public class TestDataUtil
 {
+    private TestDataUtil(){}
+
     public static BioSource createBioSource(IntactHelper helper, String shortLabel, String taxID) throws IntactException {
         BioSource organism = new BioSource(helper.getInstitution(), shortLabel, taxID);
         organism.setFullName("Organism created for JUnit testing purposes");

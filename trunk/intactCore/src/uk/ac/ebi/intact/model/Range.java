@@ -184,6 +184,7 @@ public class Range extends BasicObjectImpl {
      * purposes only and if possible will be made private.
      * @deprecated Use the full constructor instead
      */
+    @Deprecated
     private Range() {
         super();
     }
@@ -372,6 +373,7 @@ public class Range extends BasicObjectImpl {
      * @param o The object to check
      * @return true if the parameter equlas this object, false otherwise
      */
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Range)) return false;
@@ -412,6 +414,7 @@ public class Range extends BasicObjectImpl {
         return true;
     }
 
+    @Override
     public int hashCode() {
         int result;
         result = fromIntervalStart;
@@ -428,6 +431,7 @@ public class Range extends BasicObjectImpl {
         return result;
     }
 
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
 

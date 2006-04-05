@@ -18,6 +18,8 @@ import java.util.Iterator;
  */
 public class PolymerFactory {
 
+    private PolymerFactory(){}
+
     /**
      * Creats an instance of Polymer type based on type.
      * @param owner The Institution which owns this instance
@@ -57,9 +59,10 @@ public class PolymerFactory {
      * @return xref with MI or null if no xref found whose primaryid starts with 'MI:'.
      */
     private static Xref getMIXref(CvInteractorType cvobj) {
-        for (Iterator iter = cvobj.getXrefs().iterator(); iter.hasNext(); ) {
-            Xref xref = (Xref) iter.next();
-            if (xref.getPrimaryId().startsWith("MI:")) {
+        for (Xref xref : cvobj.getXrefs())
+        {
+            if (xref.getPrimaryId().startsWith("MI:"))
+            {
                 return xref;
             }
         }

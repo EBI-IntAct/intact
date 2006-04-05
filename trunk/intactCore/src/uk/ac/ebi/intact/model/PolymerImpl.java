@@ -40,7 +40,7 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
      * The protein sequence. If the protein is present in a public database,
      * the sequence should not be repeated.
      */
-    private List sequenceChunks = new ArrayList();
+    private List<SequenceChunk> sequenceChunks = new ArrayList<SequenceChunk>();
 
     // Static methods
 
@@ -97,34 +97,34 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
         // The correct ordering is done during retrieval from the database.
         // It relies on the OJB setting (mapping)
         StringBuffer sequence = new StringBuffer();
-        for (Iterator iterator = sequenceChunks.iterator(); iterator.hasNext();) {
-            SequenceChunk sequenceChunk = (SequenceChunk) iterator.next();
+        for (SequenceChunk sequenceChunk : sequenceChunks)
+        {
             sequence.append(sequenceChunk.getSequenceChunk());
         }
         return sequence.toString();
     }
 
-    public List setSequence(String aSequence) {
+    public List<SequenceChunk> setSequence(String aSequence) {
         // Save work if the new sequence is identical to the old one.
         if (aSequence.equals(getSequence())) {
             return Collections.EMPTY_LIST;
         }
         // The container to hold redundant chunks.
-        ArrayList chunkPool = null;
+        ArrayList<SequenceChunk> chunkPool = null;
 
         // All old data are kept, we try to recycle as much chunk as possible
         if (sequenceChunks == null) {
-            sequenceChunks = new ArrayList();
+            sequenceChunks = new ArrayList<SequenceChunk>();
         }
         else if (!sequenceChunks.isEmpty()) {
             // There is existing chunk ... prepare them for recycling.
-            chunkPool = new ArrayList(sequenceChunks.size());
+            chunkPool = new ArrayList<SequenceChunk>(sequenceChunks.size());
             chunkPool.addAll(sequenceChunks);
             int count = chunkPool.size();
 
             // clean chunk to recycle
             for (int i = 0; i < count; i++) {
-                SequenceChunk sc = (SequenceChunk) chunkPool.get(i);
+                SequenceChunk sc = chunkPool.get(i);
                 removeSequenceChunk(sc);
             }
         }
@@ -141,7 +141,7 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
 
             if (chunkPool != null && chunkPool.size() > 0) {
                 // recycle chunk
-                SequenceChunk sc = (SequenceChunk) chunkPool.remove(0);
+                SequenceChunk sc = chunkPool.remove(0);
                 sc.setSequenceChunk(chunk);
                 sc.setSequenceIndex(i);
                 addSequenceChunk(sc);
@@ -178,23 +178,23 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
             return;
         }
 
-        ArrayList chunkPool = null;
-        SequenceChunk s = null;
-        String chunk = null;
+        ArrayList<SequenceChunk> chunkPool = null;
+        SequenceChunk s;
+        String chunk;
 
         // All old data are kept, we try to recycle as much chunk as possible
         if (sequenceChunks == null) {
-            sequenceChunks = new ArrayList();
+            sequenceChunks = new ArrayList<SequenceChunk>();
         }
         else if (false == sequenceChunks.isEmpty()) {
             // There is existing chunk ... prepare them for recycling.
-            chunkPool = new ArrayList(sequenceChunks.size());
+            chunkPool = new ArrayList<SequenceChunk>(sequenceChunks.size());
             chunkPool.addAll(sequenceChunks);
             int count = chunkPool.size();
 
             // clean chunk to recycle
             for (int i = 0; i < count; i++) {
-                s = (SequenceChunk) chunkPool.get(i);
+                s = chunkPool.get(i);
                 removeSequenceChunk(s);
             }
         }
@@ -211,7 +211,7 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
 
             if (chunkPool != null && chunkPool.size() > 0) {
                 // recycle chunk
-                s = (SequenceChunk) chunkPool.remove(0);
+                s = chunkPool.remove(0);
                 s.setSequenceChunk(chunk);
                 s.setSequenceIndex(i);
                 addSequenceChunk(s);
@@ -229,7 +229,7 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
 
         // Delete non recyclable chunk
         while (chunkPool != null && chunkPool.size() > 0) {
-            s = (SequenceChunk) chunkPool.remove(0);
+            s = chunkPool.remove(0);
             helper.delete(s);
         }
     }
@@ -267,6 +267,7 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
      * @return true if the parameter equals this object, false otherwise
      * @see InteractorImpl
      */
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -307,6 +308,7 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
      * Unless it could break consistancy when storing object in a hash-based
      * collection such as HashMap...
      */
+    @Override
     public int hashCode() {
         int code = super.hashCode();
         if (getSequence() != null) code = code * 29 + getSequence().hashCode();
@@ -314,6 +316,7 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
         return code;
     }
 
+    @Override
     public String toString() {
         return super.toString() + " [ CRC64: " + getCrc64() + " Sequence: " + getSequence() + "]";
     }

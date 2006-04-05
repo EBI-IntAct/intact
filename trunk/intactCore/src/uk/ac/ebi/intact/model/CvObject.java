@@ -51,6 +51,7 @@ public abstract class CvObject extends AnnotatedObjectImpl {
      *
      * @see Xref
      */
+    @Override
     public boolean equals( Object obj ) {
         if ( this == obj ) {
             return true;
@@ -91,6 +92,7 @@ public abstract class CvObject extends AnnotatedObjectImpl {
      *
      * @return hash code of the object.
      */
+    @Override
     public int hashCode() {
         int result = getClass().hashCode();
 
@@ -112,10 +114,11 @@ public abstract class CvObject extends AnnotatedObjectImpl {
      * @return the Identity xref or null if there is no Identity xref found.
      */
     public Xref getIdentityXref() {
-        for ( Iterator iter = getXrefs().iterator(); iter.hasNext(); ) {
-            Xref xref = (Xref) iter.next();
-            CvXrefQualifier xq = (CvXrefQualifier) xref.getCvXrefQualifier();
-            if ( ( xq != null ) && CvXrefQualifier.IDENTITY.equals( xq.getShortLabel() ) ) {
+        for (Xref xref : getXrefs())
+        {
+            CvXrefQualifier xq = xref.getCvXrefQualifier();
+            if ((xq != null) && CvXrefQualifier.IDENTITY.equals(xq.getShortLabel()))
+            {
                 return xref;
             }
         }

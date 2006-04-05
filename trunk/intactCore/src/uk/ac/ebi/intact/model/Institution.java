@@ -51,6 +51,7 @@ public class Institution extends IntactObjectImpl implements Serializable {
      *
      * @deprecated Use the full constructor instead
      */
+    @Deprecated
     private Institution() {
         super();
     }
@@ -137,6 +138,7 @@ public class Institution extends IntactObjectImpl implements Serializable {
      * @param o The object to check
      * @return true if the parameter equlas this object, false otherwise
      */
+    @Override
     public boolean equals( Object o ) {
         if( this == o ) return true;
         if( !( o instanceof Institution ) ) return false;
@@ -160,6 +162,7 @@ public class Institution extends IntactObjectImpl implements Serializable {
      *
      * @return hash code of the object.
      */
+    @Override
     public int hashCode() {
 
         int code = 29;
@@ -171,6 +174,7 @@ public class Institution extends IntactObjectImpl implements Serializable {
         return code;
     }
 
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer( 64 );
 

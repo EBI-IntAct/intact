@@ -40,6 +40,7 @@ public class ReferenceQualifier {
      * purposes only and if possible will be made private.
      * @deprecated Use the full constructor instead
      */
+    @Deprecated
     private ReferenceQualifier() {
         super();
     }
@@ -79,6 +80,7 @@ public class ReferenceQualifier {
      * @param o The object to check
      * @return true if the parameter equals this object, false otherwise
      */
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof ReferenceQualifier)) return false;
@@ -92,6 +94,7 @@ public class ReferenceQualifier {
         return true;
     }
 
+    @Override
     public int hashCode() {
         int result;
 

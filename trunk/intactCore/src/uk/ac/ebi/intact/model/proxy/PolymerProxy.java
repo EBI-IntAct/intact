@@ -9,6 +9,7 @@ import org.apache.ojb.broker.PBKey;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Polymer;
+import uk.ac.ebi.intact.model.SequenceChunk;
 
 import java.lang.reflect.InvocationHandler;
 import java.util.List;
@@ -45,7 +46,7 @@ public class PolymerProxy extends InteractorProxy implements Polymer {
         return realSubject().getSequence();
     }
 
-    public List setSequence( String aSequence ) {
+    public List<SequenceChunk> setSequence( String aSequence ) {
         return realSubject().setSequence( aSequence );
     }
 
@@ -61,14 +62,16 @@ public class PolymerProxy extends InteractorProxy implements Polymer {
         realSubject().setCrc64( crc64 );
     }
 
-    public List getSequenceChunks() {
+    public List<SequenceChunk> getSequenceChunks() {
        return realSubject().getSequenceChunks();
     }
 
+    @Override
     public boolean equals( Object o ) {
         return realSubject().equals( o );
     }
 
+    @Override
     public int hashCode() {
         return realSubject().hashCode();
     }

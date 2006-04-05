@@ -49,6 +49,7 @@ public class Alias extends BasicObjectImpl {
      *
      * @deprecated Use the full constructor instead
      */
+    @Deprecated
     private Alias() {
         super();
     }

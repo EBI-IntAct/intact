@@ -31,7 +31,7 @@ public interface Polymer extends Interactor {
      * only when the current sequence is longer than the new sequence
      * (i.e, <code>aSequence</code>).
      */
-    public List setSequence(String aSequence);
+    public List<SequenceChunk> setSequence(String aSequence);
 
     /**
      * Sets the current sequence. Use the method {@link #setSequence(String)} instead.
@@ -56,5 +56,5 @@ public interface Polymer extends Interactor {
      * This method is mainly for testing purposes to examine the chunks array
      * @return unmodifiable list of sequence chunks.
      */
-    public List getSequenceChunks();
+    public List<SequenceChunk> getSequenceChunks();
 }

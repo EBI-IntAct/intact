@@ -22,17 +22,17 @@ public interface Interactor extends AnnotatedObject {
 
     ///////////////////////////////////////
     // access methods for associations
-    public void setActiveInstances(Collection someActiveInstance);
+    public void setActiveInstances(Collection<Component> someActiveInstance);
 
-    public Collection getActiveInstances();
+    public Collection<Component> getActiveInstances();
 
     public void addActiveInstance(Component component);
 
     public void removeActiveInstance(Component component);
 
-    public void setProducts(Collection someProduct);
+    public void setProducts(Collection<Product> someProduct);
 
-    public Collection getProducts();
+    public Collection<Product> getProducts();
 
     public void addProduct(Product product);
 

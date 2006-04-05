@@ -47,12 +47,12 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
     /**
      * TODO comments
      */
-    private Collection activeInstances = new ArrayList();
+    private Collection<Component> activeInstances = new ArrayList<Component>();
 
     /**
      * TODO comments
      */
-    private Collection products = new ArrayList();
+    private Collection<Product> products = new ArrayList<Product>();
 
 
     /**
@@ -76,6 +76,7 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
      *
      * @deprecated Use {@link #InteractorImpl(String, Institution, CvInteractorType)} instead
      */
+    @Deprecated
     protected InteractorImpl( String shortLabel, Institution owner ) {
         this( shortLabel, owner, null );
     }
@@ -113,11 +114,11 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
 
     ///////////////////////////////////////
     // access methods for associations
-    public void setActiveInstances( Collection someActiveInstance ) {
+    public void setActiveInstances( Collection<Component> someActiveInstance ) {
         this.activeInstances = someActiveInstance;
     }
 
-    public Collection getActiveInstances() {
+    public Collection<Component> getActiveInstances() {
         return activeInstances;
     }
 
@@ -133,11 +134,11 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
         if( removed ) component.setInteractor( null );
     }
 
-    public void setProducts( Collection someProduct ) {
+    public void setProducts( Collection<Product> someProduct ) {
         this.products = someProduct;
     }
 
-    public Collection getProducts() {
+    public Collection<Product> getProducts() {
         return products;
     }
 
@@ -163,7 +164,7 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
 
     ///////////////////////////////////////
     // instance methods
-
+    @Override
     public String toString() {
         String result;
         Iterator i;
@@ -189,6 +190,7 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
      * @return true if the parameter equlas this object, false otherwise
      * @see uk.ac.ebi.intact.model.AnnotatedObject
      */
+    @Override
     public boolean equals( Object o ) {
         if( this == o ) return true;
         if( !( o instanceof Interactor ) ) return false;
@@ -214,6 +216,7 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
         return CollectionUtils.isEqualCollection( interactor.getProducts(), products );
     }
 
+    @Override
     public int hashCode() {
 
         int code = 29 * super.hashCode();

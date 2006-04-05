@@ -60,17 +60,17 @@ public interface AnnotatedObject extends BasicObject {
     ///////////////////
     // Alias related
     ///////////////////
-    public void setAliases(Collection someAliases);
+    public void setAliases(Collection<Alias> someAliases);
 
-    public Collection getAliases();
+    public Collection<Alias> getAliases();
 
     public void addAlias( Alias alias );
 
     public void removeAlias( Alias alias );
 
-    public void setReferences(Collection someReferences);
+    public void setReferences(Collection<Reference> someReferences);
 
-    public Collection getReferences();
+    public Collection<Reference> getReferences();
 
     public void addReference(Reference reference);
 

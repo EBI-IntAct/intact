@@ -25,13 +25,13 @@ public abstract class CvDagObject extends CvObject {
      * TODO comments
      * Children are unique
      */
-    private Collection children = new ArrayList(); // of type CvDagObject
+    private Collection<CvDagObject> children = new ArrayList<CvDagObject>(); // of type CvDagObject
 
     /**
      * TODO comments
      * Parents are unique
      */
-    private Collection parents = new ArrayList(); // of type CvDagObject
+    private Collection<CvDagObject> parents = new ArrayList<CvDagObject>(); // of type CvDagObject
 
     ///////////////////////////
     // start modification (afrie)
@@ -74,7 +74,7 @@ public abstract class CvDagObject extends CvObject {
 
     ///////////////////////////////////////
     // access methods for associations
-    public Collection getChildren() {
+    public Collection<CvDagObject> getChildren() {
         return children;
     }
 
@@ -88,7 +88,7 @@ public abstract class CvDagObject extends CvObject {
 
     /**
      * this method returns 'true' when children are present 'false' otherwise
-     * @return
+     * @return result
      */
     public boolean hasChildren(){
         boolean result = false;
@@ -155,7 +155,7 @@ public abstract class CvDagObject extends CvObject {
         boolean removed = children.remove(cvDagObject);
         if (removed) cvDagObject.removeParent(this);
     }
-    public Collection getParents() {
+    public Collection<CvDagObject> getParents() {
         return parents;
     }
     public void addParent(CvDagObject cvDagObject) {
@@ -181,9 +181,9 @@ public abstract class CvDagObject extends CvObject {
      * @param currentAncestors Ancestors collected so far.
      * @return currentAncestors, with all the ancestors of the current node added.
      */
-    private Collection ancestors(Collection currentAncestors) {
-        for (Iterator i = getParents().iterator(); i.hasNext();) {
-            CvDagObject current = (CvDagObject) i.next();
+    private Collection<CvDagObject> ancestors(Collection<CvDagObject> currentAncestors) {
+        for (CvDagObject current : getParents())
+        {
             currentAncestors = current.ancestors(currentAncestors); // recursive call
         }
         currentAncestors.add(this);
@@ -195,8 +195,8 @@ public abstract class CvDagObject extends CvObject {
      *
      * @return All ancestors of the current object. Each node is listed only once.
      */
-    public Collection ancestors(){
-        return this.ancestors(new ArrayList());
+    public Collection<CvDagObject> ancestors(){
+        return this.ancestors(new ArrayList<CvDagObject>());
     }
 
     /**
@@ -206,8 +206,8 @@ public abstract class CvDagObject extends CvObject {
      */
     public CvDagObject getRoot(){
         if (parents.size()>0){
-            Iterator i = parents.iterator();
-            return ((CvDagObject) i.next()).getRoot();
+            Iterator<CvDagObject> i = parents.iterator();
+            return i.next().getRoot();
         } else {
             return this;
         }

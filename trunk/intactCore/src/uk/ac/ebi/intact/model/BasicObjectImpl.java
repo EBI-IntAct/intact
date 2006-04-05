@@ -22,7 +22,7 @@ public abstract class BasicObjectImpl extends IntactObjectImpl implements BasicO
     /**
      * TODO comments + plural name
      */
-    private Collection evidences = new ArrayList();
+    private Collection<Evidence> evidences = new ArrayList<Evidence>();
 
     /**
      * TODO comments
@@ -47,11 +47,11 @@ public abstract class BasicObjectImpl extends IntactObjectImpl implements BasicO
     ///////////////////////////////////////
     // access methods for associations
 
-    public void setEvidences( Collection someEvidence ) {
+    public void setEvidences( Collection<Evidence> someEvidence ) {
         this.evidences = someEvidence;
     }
 
-    public Collection getEvidences() {
+    public Collection<Evidence> getEvidences() {
         return evidences;
     }
 
@@ -92,7 +92,7 @@ public abstract class BasicObjectImpl extends IntactObjectImpl implements BasicO
 
     ///////////////////////////////////////
     // instance methods
-
+    @Override
     public String toString() {
         return super.toString() + "; owner=" + owner.getAc();
     }
