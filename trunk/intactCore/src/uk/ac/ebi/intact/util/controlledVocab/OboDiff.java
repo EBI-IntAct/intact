@@ -16,7 +16,9 @@ import java.io.File;
 import java.util.*;
 
 /**
- * TODO comment this
+ * Script comparing 2 OBO files.
+ * <p/>
+ * Shows the terms appearing in one OBO file and not in the other (and vice versa).
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
@@ -79,33 +81,8 @@ public class OboDiff {
                              options );
     }
 
-    //////////////////////
-    // M A I N
-
-    public static void main( String[] args ) throws PsiLoaderException {
-
-        CommandLine commandLine = setupCommandLine( args );
-
-        String intactFilename = commandLine.getOptionValue( "intact" );
-        String psiFilename = commandLine.getOptionValue( "psi" );
-
-        PSILoader loader1 = new PSILoader();
-        PSILoader loader2 = new PSILoader();
-
-        System.out.println( "Loading IntAct ontology: " + intactFilename );
-        IntactOntology intactOntology = loader1.parseOboFile( new File( intactFilename ) );
-        intactOntology.setDefinition( "IntAct Ontology" );
-        System.out.println( "IntAct Ontology loaded (" + intactFilename + ")" );
-
-        System.out.println( "Loading PSI ontology: " + psiFilename );
-        IntactOntology psiOntology = loader2.parseOboFile( new File( psiFilename ) );
-        psiOntology.setDefinition( "PSI Ontology" );
-        System.out.println( "PSI Ontology loaded (" + psiFilename + ")" );
-
-        showMissingTerms( intactOntology, psiOntology );
-
-//        compareOntologyStructure( intactOntology, psiOntology );
-    }
+    ///////////////////////////
+    // Private methods
 
     private static Collection collectIdentities( Collection cvTerms ) {
         Set identities = new HashSet( cvTerms.size() );
@@ -132,6 +109,18 @@ public class OboDiff {
         return CollectionUtils.subtract( ontology1.getIdentities(), filter );
     }
 
+    private static Collection sortAlphabetically( Collection c ) {
+        List list = new ArrayList( c );
+        Collections.sort( list, new Comparator() {
+            public int compare( Object o1, Object o2 ) {
+                String s1 = (String) o1;
+                String s2 = (String) o2;
+                return s1.compareTo( s2 );
+            }
+        } );
+        return list;
+    }
+
     private static void showMissingTerms( IntactOntology ontology1, IntactOntology ontology2 ) {
 
         // term not to be taken into account.
@@ -141,7 +130,7 @@ public class OboDiff {
         Collection ont1 = collectIdentities( ontology1, filters );
         Collection ont2 = collectIdentities( ontology2, filters );
 
-        Collection minus = CollectionUtils.subtract( ont1, ont2 );
+        Collection minus = sortAlphabetically( CollectionUtils.subtract( ont1, ont2 ) );
 
         System.out.println( "Term(s) found in " + ontology1.getDefinition() + " but not in " + ontology2.getDefinition() + ":" );
         System.out.println( "---------------------------------------------------------------------------------------------------" );
@@ -153,7 +142,7 @@ public class OboDiff {
 
         System.out.println();
         System.out.println();
-        minus = CollectionUtils.subtract( ont2, ont1 );
+        minus = sortAlphabetically( CollectionUtils.subtract( ont2, ont1 ) );
         System.out.println( "Term(s) found in " + ontology2.getDefinition() + " but not in " + ontology1.getDefinition() + ":" );
         System.out.println( "---------------------------------------------------------------------------------------------------" );
         for ( Iterator iterator = minus.iterator(); iterator.hasNext(); ) {
@@ -251,5 +240,32 @@ public class OboDiff {
             }
         }
         return null;
+    }
+
+    //////////////////////
+    // M A I N
+    public static void main( String[] args ) throws PsiLoaderException {
+
+        CommandLine commandLine = setupCommandLine( args );
+
+        String intactFilename = commandLine.getOptionValue( "intact" );
+        String psiFilename = commandLine.getOptionValue( "psi" );
+
+        PSILoader loader1 = new PSILoader();
+        PSILoader loader2 = new PSILoader();
+
+        System.out.println( "Loading IntAct ontology: " + intactFilename );
+        IntactOntology intactOntology = loader1.parseOboFile( new File( intactFilename ) );
+        intactOntology.setDefinition( "IntAct Ontology" );
+        System.out.println( "IntAct Ontology loaded (" + intactFilename + ")" );
+
+        System.out.println( "Loading PSI ontology: " + psiFilename );
+        IntactOntology psiOntology = loader2.parseOboFile( new File( psiFilename ) );
+        psiOntology.setDefinition( "PSI Ontology" );
+        System.out.println( "PSI Ontology loaded (" + psiFilename + ")" );
+
+        showMissingTerms( intactOntology, psiOntology );
+
+//        compareOntologyStructure( intactOntology, psiOntology );
     }
 }
