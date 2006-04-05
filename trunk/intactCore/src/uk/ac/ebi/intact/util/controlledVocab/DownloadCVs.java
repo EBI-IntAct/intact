@@ -185,23 +185,6 @@ public class DownloadCVs {
 
         String id = getIdentifier( cvObject );
 
-        if ( id == null ) {
-            // neither an IA:xxxx or MI:xxxx available ...
-            try {
-                String localId = SequenceManager.getNextId( helper );
-
-                Xref xref = new Xref( helper.getInstitution(), intact, localId, null, null, identity );
-                cvObject.addXref( xref );
-                helper.create( xref );
-
-                id = localId;
-                System.out.println( "Added new Xref to '" + cvObject.getShortLabel() + "': " + id );
-
-            } catch ( IntactException e ) {
-                e.printStackTrace();
-            }
-        }
-
         System.out.println( "Processing " + cvObject.getShortLabel() + " (" + id + ")" );
         if ( id == null ) {
             System.out.println( "\tWARNING: That term (" + cvObject.getShortLabel() + ") doesn't have an id, skip it." );
@@ -841,10 +824,35 @@ public class DownloadCVs {
             }
         }
 
+        // 6. Process terms that don't have an MI reference
         System.out.println( "--------------------------------------------------" );
         System.out.println( "Processing term having no MI reference." );
 
-        // TODO sort terms by identity
+        // update all terms having no IA:xxxx so they get one.
+        for ( Iterator iterator = noMiTerms.iterator(); iterator.hasNext(); ) {
+            CvObject cvObject = (CvObject) iterator.next();
+
+            String id = getIdentifier( cvObject );
+
+            if ( id == null ) {
+                // neither an IA:xxxx or MI:xxxx available ...
+                try {
+                    String localId = SequenceManager.getNextId( helper );
+
+                    Xref xref = new Xref( helper.getInstitution(), intact, localId, null, null, identity );
+                    cvObject.addXref( xref );
+                    helper.create( xref );
+
+                    id = localId;
+                    System.out.println( "Added new Xref to '" + cvObject.getShortLabel() + "': " + id );
+
+                } catch ( IntactException e ) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        // Sort terms by identity
         List sortedCVs = new ArrayList( noMiTerms );
         Collections.sort( sortedCVs, new Comparator() {
             public int compare( Object o1, Object o2 ) {
@@ -858,7 +866,7 @@ public class DownloadCVs {
             }
         } );
 
-        // 6. Process terms that don't have an MI reference
+        // export terms
         for ( Iterator iterator = sortedCVs.iterator(); iterator.hasNext(); ) {
             CvObject cvObject = (CvObject) iterator.next();
 
