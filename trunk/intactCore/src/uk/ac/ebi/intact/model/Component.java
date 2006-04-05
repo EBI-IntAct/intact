@@ -66,7 +66,7 @@ public class Component extends BasicObjectImpl {
     /**
      * The domain a Substrate binds by.
      */
-    private Collection bindingDomains = new ArrayList();
+    private Collection<Feature> bindingDomains = new ArrayList<Feature>();
 
     /**
      * TODO comments
@@ -192,7 +192,7 @@ public class Component extends BasicObjectImpl {
     public void setBindingDomains(Collection someBindingDomain) {
         this.bindingDomains = someBindingDomain;
     }
-    public Collection getBindingDomains() {
+    public Collection<Feature> getBindingDomains() {
         return bindingDomains;
     }
     public void addBindingDomain(Feature feature) {
@@ -222,6 +222,7 @@ public class Component extends BasicObjectImpl {
      * @param o The object to check
      * @return true if the parameter equals this object, false otherwise
      */
+    @Override
     public boolean equals(Object o){
         /* TODO: Take features into account when they are implemented. */
         if (this == o) return true;
@@ -242,6 +243,7 @@ public class Component extends BasicObjectImpl {
      * hashCode must be overwritten, too.
      * @return  hash code of the object.
      */
+    @Override
     public int hashCode(){
         /* TODO: Take features into account when they are implemented. */
         int code = 29;
@@ -261,6 +263,7 @@ public class Component extends BasicObjectImpl {
      * interactor and interaction are set to null. Features are deep cloned.
      * @throws CloneNotSupportedException
      */
+    @Override
     public Object clone() throws CloneNotSupportedException {
         Component copy = (Component) super.clone();
 
@@ -269,9 +272,9 @@ public class Component extends BasicObjectImpl {
         copy.interactor = null;
 
         // Make deep copies of Features.
-        copy.bindingDomains = new ArrayList(bindingDomains.size());
-        for (Iterator iter = bindingDomains.iterator(); iter.hasNext(); ) {
-            Feature feature = (Feature) iter.next();
+        copy.bindingDomains = new ArrayList<Feature>(bindingDomains.size());
+        for (Feature feature : bindingDomains)
+        {
             Feature copyFeature = (Feature) feature.clone();
             // Set the copy component as the component for feature copy.
             copyFeature.setComponentForClone(copy);

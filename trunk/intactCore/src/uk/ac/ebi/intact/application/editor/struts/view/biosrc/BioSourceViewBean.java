@@ -22,6 +22,7 @@ import uk.ac.ebi.intact.model.CvTissue;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 /**
  * BioSource edit view bean.
@@ -29,7 +30,7 @@ import java.util.Map;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class BioSourceViewBean extends AbstractEditViewBean {
+public class BioSourceViewBean extends AbstractEditViewBean<BioSource> {
 
     //private String myBioSourceXref;
 
@@ -54,7 +55,7 @@ public class BioSourceViewBean extends AbstractEditViewBean {
     /**
      * The map of menus for this view.
      */
-    private transient Map myMenus = new HashMap();
+    private transient Map<String, List<String>> myMenus = new HashMap<String, List<String>>();
 
     // Override the super method to initialize this class specific resetting.
     public void reset() {
@@ -67,12 +68,9 @@ public class BioSourceViewBean extends AbstractEditViewBean {
     }
 
     // Override the super method to set the tax id.
-    public void reset(AnnotatedObject annobj) {
-        super.reset(annobj);
-
-        // Must be a BioSource.
-        BioSource bio = (BioSource) annobj;
-
+    @Override
+    public void reset(BioSource bio) {
+        super.reset(bio);
 
         //For javascript
         //setBioSourceXref();
@@ -88,6 +86,7 @@ public class BioSourceViewBean extends AbstractEditViewBean {
     }
 
     // Override to copy biosource from the form to the bean.
+    @Override
     public void copyPropertiesFrom(EditorFormI editorForm) {
         // Set the common values by calling super first.
         super.copyPropertiesFrom(editorForm);
@@ -103,6 +102,7 @@ public class BioSourceViewBean extends AbstractEditViewBean {
 
 
     // Override to copy BS data to given form.
+    @Override
     public void copyPropertiesTo(EditorFormI form) {
         super.copyPropertiesTo(form);
 
@@ -116,16 +116,19 @@ public class BioSourceViewBean extends AbstractEditViewBean {
     }
 
     // Override to provide BioSource layout.
+    @Override
     public void setLayout(ComponentContext context) {
         context.putAttribute("content", "edit.biosrc.layout");
     }
 
     // Override to provide BioSource help tag.
+    @Override
     public String getHelpTag() {
         return "editor.biosource";
     }
 
     // Override to provide biosource specific sanity checking.
+    @Override
     public void sanityCheck() throws ValidationException, IntactException {
         // There should be one unique bisosurce.
         if ((getCellType() == null) && (getTissue() == null)) {
@@ -136,7 +139,7 @@ public class BioSourceViewBean extends AbstractEditViewBean {
                 if (!bs.getAc().equals(getAc())) {
                     // Different biosources.
                     throw new BioSourceException("bs.sanity.taxid.dup",
-                         "error.bs.sanity.taxid.dup");
+                                                 "error.bs.sanity.taxid.dup");
                 }
             }
         }
@@ -173,15 +176,16 @@ public class BioSourceViewBean extends AbstractEditViewBean {
      * @return a map of menus for this view. It consists of common menus for
      * annotation/xref, cell (add) and tissue (add).
      */
+    @Override
     public Map getMenus() throws IntactException {
         return myMenus;
     }
 
     // Implements abstract methods
-
+    @Override
     protected void updateAnnotatedObject(IntactHelper helper) throws IntactException {
         // The current biosource.
-        BioSource bs = (BioSource) getAnnotatedObject();
+        BioSource bs = getAnnotatedObject();
 
         // Have we set the annotated object for the view?
         if (bs == null) {
@@ -201,6 +205,7 @@ public class BioSourceViewBean extends AbstractEditViewBean {
     /**
      * Override to load the menus for this view.
      */
+    @Override
     public void loadMenus() throws IntactException {
         // Handler to the menu factory.
         EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
@@ -230,7 +235,7 @@ public class BioSourceViewBean extends AbstractEditViewBean {
         if (myTissue == null) {
             return null;
         }
-        return (CvTissue) helper.getObjectByLabel(CvTissue.class, myTissue);
+        return helper.getObjectByLabel(CvTissue.class, myTissue);
     }
 
     /**
@@ -243,6 +248,6 @@ public class BioSourceViewBean extends AbstractEditViewBean {
         if (myCellType == null) {
             return null;
         }
-        return (CvCellType) helper.getObjectByLabel(CvCellType.class, myCellType);
+        return helper.getObjectByLabel(CvCellType.class, myCellType);
     }
 }

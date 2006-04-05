@@ -167,9 +167,9 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
                 list of author
                 */
                 boolean annotationUpdated=false;
-                List annotsAlreadyInView=view.getAnnotations();
+                List<CommentBean> annotsAlreadyInView=view.getAnnotations();
                 for (int i = 0; i < annotsAlreadyInView.size(); i++) {
-                    CommentBean cb =  (CommentBean) annotsAlreadyInView.get(i);
+                    CommentBean cb =  annotsAlreadyInView.get(i);
                     /*
                     If cb's cvTopic is authorList cvTopic and if the list of authors is not the one corresponding to the
                     pubmed Id just entered then set the description of cb with the new author list
@@ -186,7 +186,7 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
                 update the annotationText of the annotation with the new list of author.
                 */
                 if(false=="".equals(expAc) && null != expAc){
-                    Experiment exp =(Experiment) helper.getObjectByAc(Experiment.class, expAc);
+                    Experiment exp = helper.getObjectByAc(Experiment.class, expAc);
                     //get all the annotations contained in the database linked to this experiment
                     Collection annotations = exp.getAnnotations();
                     for (Iterator iterator = annotations.iterator(); iterator.hasNext();) {
@@ -242,9 +242,8 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
                 list of author
                 */
                 boolean annotationUpdated=false;
-                List annotsAlreadyInView=view.getAnnotations();
-                for (int i = 0; i < annotsAlreadyInView.size(); i++) {
-                    CommentBean cb =  (CommentBean) annotsAlreadyInView.get(i);
+                List<CommentBean> annotsAlreadyInView=view.getAnnotations();
+                for (CommentBean cb : annotsAlreadyInView) {
                     /*
                     If cb's cvTopic is authorList cvTopic and if the list of authors is not the one corresponding to the
                     pubmed Id just entered then set the description of cb with the new author list
@@ -253,6 +252,10 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
                         cb.setDescription(journalCb.getDescription());
                         annotationUpdated=true;
                     }
+                }
+
+                if(!view.annotationExists(journalCb) && annotationUpdated==false){
+                    view.addAnnotation(journalCb);
                 }
             }
 
@@ -292,11 +295,10 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
                 update the annotationText of the annotation with the new list of author.
                 */
                 if(false=="".equals(expAc) && null != expAc){
-                    Experiment exp =(Experiment) helper.getObjectByAc(Experiment.class, expAc);
+                    Experiment exp = helper.getObjectByAc(Experiment.class, expAc);
                     //get all the annotations contained in the database linked to this experiment
-                    Collection annotations = exp.getAnnotations();
-                    for (Iterator iterator = annotations.iterator(); iterator.hasNext();) {
-                        Annotation annot =  (Annotation) iterator.next();
+                    Collection<Annotation> annotations = exp.getAnnotations();
+                    for (Annotation annot : annotations){
                         if(CvTopic.PUBLICATION_YEAR.equals(annot.getCvTopic().getShortLabel()) && false==pubYearCb.getDescription().equals(annot.getAnnotationText())){
                             if(helper.isPersistent(annot)){
                                 annot.setAnnotationText(pubYearCb.getDescription());
@@ -324,15 +326,14 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
             XreferenceBean pubmedXb = new XreferenceBean(pubmedXref);
 
             //The list of all the XreferenceBean contained in the view
-            List xrefsAlreadyInView = view.getXrefs();
+            List<XreferenceBean> xrefsAlreadyInView = view.getXrefs();
 
             /*
             Work to do on the view :
             If the view already contains an xreferenceBean with database=pubmed and qualifier=primary-reference but with
             primaryId !=pubmedId we update its primaryid  with the new pubmed Id
             */
-            for (int i = 0; i < xrefsAlreadyInView.size(); i++) {
-                XreferenceBean xrefBean  =  (XreferenceBean) xrefsAlreadyInView.get(i);
+            for (XreferenceBean xrefBean : xrefsAlreadyInView) {
                 if(CvDatabase.PUBMED.equals(xrefBean.getDatabase()) && CvXrefQualifier.PRIMARY_REFERENCE.equals(xrefBean.getQualifier()) && false==pubmedId.equals(xrefBean.getPrimaryId())){
                     xrefBean.setPrimaryId(pubmedId);
                     xrefUpdated=true;
@@ -344,10 +345,10 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
             in the database, we update the primaryId with the new one.
             */
             if(false=="".equals(expAc) && null != expAc){
-                Experiment exp =(Experiment) helper.getObjectByAc(Experiment.class, expAc);                
-                Collection xrefs = exp.getXrefs();
-                for (Iterator iterator = xrefs.iterator(); iterator.hasNext();) {
-                    Xref xref =  (Xref) iterator.next();
+                Experiment exp = helper.getObjectByAc(Experiment.class, expAc);
+                Collection<Xref> xrefs = exp.getXrefs();
+
+                for (Xref xref : xrefs) {
                     if(CvDatabase.PUBMED.equals(xref.getCvDatabase().getShortLabel()) && CvXrefQualifier.PRIMARY_REFERENCE.equals(xref.getCvXrefQualifier().getShortLabel()) && false==pubmedId.equals(xref.getPrimaryId())){
                         if(helper.isPersistent(xref)){
                             xref.setPrimaryId(pubmedId);
@@ -406,7 +407,7 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
 
         Annotation authorListAnnot;
 
-        CvTopic authorListTopic = (CvTopic) helper.getObjectByLabel( CvTopic.class, CvTopic.AUTHOR_LIST );
+        CvTopic authorListTopic = helper.getObjectByLabel( CvTopic.class, CvTopic.AUTHOR_LIST );
         if ( authorListTopic == null ) {
             System.err.println( "Could not find CvTopic(" + CvTopic.AUTHOR_LIST +
                                 ")... no author list will be attached/updated to the experiment." );
@@ -428,7 +429,7 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
     public Annotation createPubYearAnnotation (String pubYear, IntactHelper helper) throws IntactException {
         Annotation pubYearAnnot;
 
-        CvTopic authorListTopic = (CvTopic) helper.getObjectByLabel( CvTopic.class, CvTopic.PUBLICATION_YEAR );
+        CvTopic authorListTopic = helper.getObjectByLabel( CvTopic.class, CvTopic.PUBLICATION_YEAR );
         if ( authorListTopic == null ) {
             System.err.println( "Could not find CvTopic(" + CvTopic.PUBLICATION_YEAR +
                                 ")... no author list will be attached/updated to the experiment." );
@@ -452,7 +453,7 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
 
             Annotation journalAnnot;
 
-            CvTopic authorListTopic = (CvTopic) helper.getObjectByLabel( CvTopic.class, CvTopic.JOURNAL );
+            CvTopic authorListTopic = helper.getObjectByLabel( CvTopic.class, CvTopic.JOURNAL );
             if ( authorListTopic == null ) {
                 System.err.println( "Could not find CvTopic(" + CvTopic.JOURNAL +
                                     ")... no author list will be attached/updated to the experiment." );
@@ -475,7 +476,7 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
 
         Annotation authorEmailAnnot;
 
-        CvTopic authorEmailTopic = (CvTopic) helper.getObjectByLabel( CvTopic.class, CvTopic.CONTACT_EMAIL );
+        CvTopic authorEmailTopic = helper.getObjectByLabel( CvTopic.class, CvTopic.CONTACT_EMAIL );
         if ( authorEmailTopic == null ) {
             System.err.println( "Could not find CvTopic(" + CvTopic.CONTACT_EMAIL +
                                 ")... no email will be attached/updated to the experiments." );
@@ -495,8 +496,8 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
 
     public Xref pubmedXref (String pubmedId, IntactHelper helper) throws IntactException {
         Xref pubmedXref;
-        CvXrefQualifier primaryRefQualifier = (CvXrefQualifier) helper.getObjectByLabel( CvXrefQualifier.class, CvXrefQualifier.PRIMARY_REFERENCE );
-        CvDatabase pubmedDatabase=(CvDatabase)helper.getObjectByLabel(CvDatabase.class, CvDatabase.PUBMED);
+        CvXrefQualifier primaryRefQualifier = helper.getObjectByLabel( CvXrefQualifier.class, CvXrefQualifier.PRIMARY_REFERENCE );
+        CvDatabase pubmedDatabase= helper.getObjectByLabel(CvDatabase.class, CvDatabase.PUBMED);
         pubmedXref=new Xref(getService().getOwner(),pubmedDatabase,pubmedId,"","",primaryRefQualifier);
         return pubmedXref;
     }

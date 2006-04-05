@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.business.IntactException;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 /**
  * Protein view bean.
@@ -23,17 +24,19 @@ public class ProteinViewBean extends SequenceViewBean {
     /**
      * The map of menus for this view.
      */
-    private transient Map myMenus = new HashMap();
+    private transient Map<String, List<String>> myMenus = new HashMap<String, List<String>>();
 
     /**
      * Override to provide menus for this view.
      * @return a map of menus for this view. It consists of common menus for
      * annotation/xref, biosource and interactor type
      */
-    public Map getMenus() throws IntactException {
+    @Override
+    public Map<String, List<String>> getMenus() throws IntactException {
         return myMenus;
     }
 
+    @Override
     public void loadMenus() throws IntactException {
         myMenus.clear();
         myMenus.putAll(super.getMenus());

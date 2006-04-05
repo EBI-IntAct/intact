@@ -27,7 +27,7 @@ import java.util.Map;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public abstract class SequenceViewBean extends AbstractEditViewBean {
+public abstract class SequenceViewBean extends AbstractEditViewBean<Polymer> {
 
     /**
      * The sequence
@@ -45,6 +45,7 @@ public abstract class SequenceViewBean extends AbstractEditViewBean {
     private String myOrganism;
 
     // Override the super method to initialize this class specific resetting.
+    @Override
     public void reset() {
         super.reset();
         // Set fields to null.
@@ -54,11 +55,9 @@ public abstract class SequenceViewBean extends AbstractEditViewBean {
     }
 
     // Override the super method to set the tax id.
-    public void reset(AnnotatedObject annobj) {
-        super.reset(annobj);
-
-        // Cast to the new abstract super.
-        Polymer polymer = (Polymer) annobj;
+    @Override
+    public void reset(Polymer polymer) {
+        super.reset(polymer);
 
         // Set the bean data
         myInteractorType = polymer.getCvInteractorType().getShortLabel();
@@ -67,6 +66,7 @@ public abstract class SequenceViewBean extends AbstractEditViewBean {
     }
 
     // Override to copy sequence data from the form to the bean.
+    @Override
     public void copyPropertiesFrom(EditorFormI editorForm) {
         // Set the common values by calling super first.
         super.copyPropertiesFrom(editorForm);
@@ -80,6 +80,7 @@ public abstract class SequenceViewBean extends AbstractEditViewBean {
     }
 
     // Override to copy sequence data to given form.
+    @Override
     public void copyPropertiesTo(EditorFormI form) {
         super.copyPropertiesTo(form);
 
@@ -92,11 +93,13 @@ public abstract class SequenceViewBean extends AbstractEditViewBean {
     }
 
     // Override to provide Sequence layout.
+    @Override
     public void setLayout(ComponentContext context) {
         context.putAttribute("content", "edit.sequence.layout");
     }
 
     // Override to provide Sequence help tag.
+    @Override
     public String getHelpTag() {
         return "editor.sequence";
     }
@@ -107,11 +110,12 @@ public abstract class SequenceViewBean extends AbstractEditViewBean {
         return mySequence;
     }
 
+    @Override
     public void persistOthers(EditUserI user) throws IntactException {
         // Set the sequence here, so it will create sequence records.
         if (getSequence().length() > 0) {
             // The current protein.
-            Polymer polymer = (Polymer) getAnnotatedObject();
+            Polymer polymer = getAnnotatedObject();
             // Only set the sequence for when we have a seq.
             List emptyChunks = polymer.setSequence(getSequence());
             if (!emptyChunks.isEmpty()) {
@@ -127,9 +131,10 @@ public abstract class SequenceViewBean extends AbstractEditViewBean {
      * @return a map of menus for this view. It consists of common menus for
      * annotation/xref and organism (add or edit).
      */
-    protected Map getMenus() throws IntactException {
+    @Override
+    protected Map<String,List<String>> getMenus() throws IntactException {
         // The map containing the menus.
-        Map map = new HashMap();
+        Map<String,List<String>> map = new HashMap<String,List<String>>();
 
         map.putAll(super.getMenus());
 //        map.putAll(super.getMenus(Protein.class.getName()));
@@ -141,15 +146,15 @@ public abstract class SequenceViewBean extends AbstractEditViewBean {
     }
 
     // Implements abstract methods
-
+    @Override
     protected void updateAnnotatedObject(IntactHelper helper) throws IntactException {
         // Get the objects using their short label.
-        BioSource biosrc = (BioSource) helper.getObjectByLabel(BioSource.class,
+        BioSource biosrc = helper.getObjectByLabel(BioSource.class,
                 myOrganism);
-        CvInteractorType intType = (CvInteractorType) helper.getObjectByLabel(
+        CvInteractorType intType = helper.getObjectByLabel(
                 CvInteractorType.class, myInteractorType);
         // The current polymer
-        Polymer polymer = (Polymer) getAnnotatedObject();
+        Polymer polymer = getAnnotatedObject();
 
         // Have we set the annotated object for the view?
         if (polymer == null) {

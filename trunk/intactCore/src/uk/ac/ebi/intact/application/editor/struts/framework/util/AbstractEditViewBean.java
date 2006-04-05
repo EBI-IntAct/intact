@@ -33,19 +33,19 @@ import java.sql.Timestamp;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public abstract class AbstractEditViewBean implements Serializable {
+public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implements Serializable {
 
     private static final Logger logger = Logger.getLogger(EditorConstants.LOGGER);
 
     /**
      * The Annotated object to wrap this bean around.
      */
-    private AnnotatedObject myAnnotObject;
+    private T myAnnotObject;
 
     /**
      * The class we are editing.
      */
-    private Class myEditClass;
+    private Class<T> myEditClass;
 
     /**
      * The name of the curator who created the current edit object.
@@ -138,6 +138,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      * and all non transient fields are equal to given object's non tranient
      * fields. For all other instances, false is returned.
      */
+    @Override
     public boolean equals(Object obj) {
         // Identical to this?
         if (this == obj) {
@@ -242,7 +243,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      * that time).
      * @param clazz the Class of the new annotated object.
      */
-    public void reset(Class clazz) {
+    public void reset(Class<T> clazz) {
         // reset() methid is called before passivating the object and hence
         // no need to call it from here. See EditViewBeanFactory#passivateObject()
         myEditClass = clazz;
@@ -252,7 +253,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      * Resets with the bean using an existing Annotated object.
      * @param annobj <code>AnnotatedObject</code> object to set this bean.
      */
-    public void reset(AnnotatedObject annobj) {
+    public void reset(T annobj) {
         // reset() methid is called before passivating the object and hence
         // no need to call it from here.
         setShortLabel(annobj.getShortLabel());
@@ -286,7 +287,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      * annotations and xrefs will be created).
      * @param user the handler to the user to set the available short label.
      */
-    public void resetClonedObject(AnnotatedObject copy, EditUserI user) {
+    public void resetClonedObject(T copy, EditUserI user) {
         // Clear previous transactions.
         clearTransactions();
 
@@ -324,7 +325,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      * Returns the Annotated object. Could be null if the object is not persisted.
      * @return <code>AnnotatedObject</code> this instace is wrapped around.
      */
-    public final AnnotatedObject getAnnotatedObject() {
+    public final T getAnnotatedObject() {
         return myAnnotObject;
     }
 
@@ -358,7 +359,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      * Returns the edit class.
      * @return the class name of the current edit object.
      */
-    public final Class getEditClass() {
+    public final Class<T> getEditClass() {
         return myEditClass;
     }
 
@@ -488,6 +489,18 @@ public abstract class AbstractEditViewBean implements Serializable {
     }
 
     /**
+     * Returns a collection of <code>CommentBean</code> objects.
+     *
+     * <pre>
+     * post: return != null
+     * post: return->forall(obj : Object | obj.oclIsTypeOf(CommentBean))
+     * </pre>
+     */
+    public List<CommentBean> getRefreshedAnnotations() {
+        return myAnnotations;
+    }
+
+    /**
      * Adds an annotation.
      * @param cb the bean to add.
      *
@@ -527,8 +540,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      * @see CommentBean#isEquivalent(CommentBean)
      */
     public boolean annotationExists(CommentBean bean) {
-        for (Iterator iter = myAnnotations.iterator(); iter.hasNext();) {
-            CommentBean cb = (CommentBean) iter.next();
+        for (CommentBean cb : myAnnotations) {
             // Avoid comparing to itself.
             if (cb.getKey() == bean.getKey()) {
                 continue;
@@ -816,7 +828,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      * Sets the annotated object for the bean.
      * @param annot AnnotatedObject to set the bean.
      */
-    protected void setAnnotatedObject(AnnotatedObject annot) {
+    protected void setAnnotatedObject(T annot) {
         myAnnotObject = annot;
     }
 
@@ -933,35 +945,34 @@ public abstract class AbstractEditViewBean implements Serializable {
      * @return  The new menu list
      */
 
-    protected List removeFromCvMenu(List menu, String editorPageName) throws IntactException {
+    protected List removeFromCvMenu(List<String> menu, String editorPageName) throws IntactException {
 
         //  The annotationSection object contains 5 Maps associating each of the editor page to a List. Those lists
         //  contains the relevant cvTopics that can be used to annotate the considered edited object.
         IntactHelper intactHelper = IntactHelperUtil.getIntactHelper();
         AnnotationSection annotationSection = new AnnotationSection(intactHelper);
         if(annotationSection!=null){
-            List newMenulist = new ArrayList();
+            List<String> newMenulist = new ArrayList<String>();
 
             // This method return a list containing all the cvTopic that can be used to annotate the Edited object.
             // For expemple if you are in the BioSource Editor the returned list will contained : 'caution', 'remark-internal'
             // and 'url'
-             List cvTopicRessources = annotationSection.getUsableTopics(editorPageName);
+             List<String> cvTopicRessources = annotationSection.getUsableTopics(editorPageName);
 
             if(cvTopicRessources!=null){
 
-                for (int i = 0; i < menu.size(); i++) {
-
-                    String menuElement= ((String) menu.get(i)).trim().toLowerCase();
+                for (String menuElement : menu) {
+                    menuElement= menuElement.trim().toLowerCase();
                     boolean removeElement=true;
-                    for (int j = 0; j < cvTopicRessources.size(); j++) {
-                        String ressourceElement = (String) cvTopicRessources.get(j);
-                        ressourceElement = ressourceElement.trim().toLowerCase();
-                        if(ressourceElement.equals(menuElement)){
-                            removeElement=false;
+                    for (String ressourceElement : cvTopicRessources) {
+                         ressourceElement = ressourceElement.trim().toLowerCase();
+                        if (ressourceElement.equals(menuElement))
+                        {
+                            removeElement = false;
                         }
                     }
                     if(!removeElement){
-                        newMenulist.add(menu.get(i));
+                        newMenulist.add(menuElement);
                     }
 
                 }
@@ -996,11 +1007,10 @@ public abstract class AbstractEditViewBean implements Serializable {
      * collection of annotations.
      * @param annotations a collection of <code>Annotation</code> objects.
      */
-    private void makeCommentBeans(Collection annotations) {
+    private void makeCommentBeans(Collection<Annotation> annotations) {
         // Clear previous annotations.
         myAnnotations.clear();
-        for (Iterator iter = annotations.iterator(); iter.hasNext();) {
-            Annotation annot = (Annotation) iter.next();
+        for (Annotation annot : annotations) {
             myAnnotations.add(new CommentBean(annot));
         }
     }
@@ -1010,11 +1020,10 @@ public abstract class AbstractEditViewBean implements Serializable {
      * collection of xreferences.
      * @param xrefs a collection of <code>Xref</code> objects.
      */
-    private void makeXrefBeans(Collection xrefs) {
+    private void makeXrefBeans(Collection<Xref> xrefs) {
         // Clear previous xrefs.
         myXrefs.clear();
-        for (Iterator iter = xrefs.iterator(); iter.hasNext();) {
-            Xref xref = (Xref) iter.next();
+        for (Xref xref : xrefs) {
             myXrefs.add(new XreferenceBean(xref));
         }
     }
@@ -1239,15 +1248,15 @@ public abstract class AbstractEditViewBean implements Serializable {
         }
     }
 
-    private void resetAnnotatedObject(AnnotatedObject annobj) {
+    private void resetAnnotatedObject(T annobj) {
         // Need to get the real object for a proxy type.
         if (Polymer.class.isAssignableFrom(annobj.getClass())) {
             IntactHelper helper = IntactHelperUtil.getIntactHelper();
-            setAnnotatedObject((AnnotatedObject) helper.materializeIntactObject(annobj));
-            myEditClass = getAnnotatedObject().getClass();
+            setAnnotatedObject( helper.materializeIntactObject(annobj));
+            myEditClass = (Class<T>)getAnnotatedObject().getClass();
         }
         else {
-            setAnnotatedObject((AnnotatedObject) IntactHelper.getRealIntactObject(annobj));
+            setAnnotatedObject(IntactHelper.getRealIntactObject(annobj));
             myEditClass = IntactHelper.getRealClassName(annobj);
         }
         setFullName(annobj.getFullName());

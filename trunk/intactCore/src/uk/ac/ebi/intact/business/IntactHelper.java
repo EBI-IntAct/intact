@@ -988,11 +988,11 @@ public class IntactHelper implements SearchI, Externalizable {
      *
      * @throws IllegalStateException if the uderlying DAO is not the ObjectBridge DAO
      */
-    public IntactObject materializeIntactObject( IntactObject obj ) {
+    public <T extends IntactObject> T materializeIntactObject( T obj ) {
         verifyObjectBridgeDAO();
         PersistenceBroker broker = ( (ObjectBridgeDAO) dao ).getBroker();
         Identity oid = new Identity( obj, broker );
-        return (IntactObject) broker.getObjectByIdentity( oid );
+        return (T) broker.getObjectByIdentity( oid );
     }
 
     /**
@@ -1021,9 +1021,9 @@ public class IntactHelper implements SearchI, Externalizable {
      * @return the real object wrapped around the proxy for given object of IntactObjectProxy type; otherwise,
      *         <code>obj</code> is returned.
      */
-    public static IntactObject getRealIntactObject( IntactObject obj ) {
+    public static <T extends IntactObject> T getRealIntactObject( T obj ) {
         if ( IntactObjectProxy.class.isAssignableFrom( obj.getClass() ) ) {
-            return (IntactObject) ( (IntactObjectProxy) obj ).getRealSubject();
+            return (T) ( (IntactObjectProxy) obj ).getRealSubject();
         }
         return obj;
     }
@@ -1037,7 +1037,7 @@ public class IntactHelper implements SearchI, Externalizable {
      *
      * @see org.apache.ojb.broker.VirtualProxy
      */
-    public static Class getRealClassName( Object obj ) {
+    public static <T> Class<T> getRealClassName( T obj ) {
         Class name = null;
 
         if ( obj instanceof VirtualProxy ) {

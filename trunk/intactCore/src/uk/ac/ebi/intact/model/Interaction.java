@@ -20,25 +20,25 @@ public interface Interaction extends Interactor {
 
     public void setKD(Float kD);
 
-    public void setComponents(Collection someComponent);
+    public void setComponents(Collection<Component> someComponent);
 
-    public Collection getComponents();
+    public Collection<Component> getComponents();
 
     public void addComponent(Component component);
 
     public void removeComponent(Component component);
 
-    public void setReleased(Collection someReleased);
+    public void setReleased(Collection<Product> someReleased);
 
-    public Collection getReleased();
+    public Collection<Product> getReleased();
 
     public void addReleased(Product product);
 
     public void removeReleased(Product product);
 
-    public void setExperiments(Collection someExperiment);
+    public void setExperiments(Collection<Experiment> someExperiment);
 
-    public Collection getExperiments();
+    public Collection<Experiment> getExperiments();
 
     public void addExperiment(Experiment experiment);
 

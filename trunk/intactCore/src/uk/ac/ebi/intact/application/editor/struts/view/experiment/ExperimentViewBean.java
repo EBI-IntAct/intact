@@ -26,7 +26,7 @@ import java.util.*;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class ExperimentViewBean extends AbstractEditViewBean {
+public class ExperimentViewBean extends AbstractEditViewBean<Experiment> {
 
     private String myPubmedId;
 
@@ -60,25 +60,26 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      * The collection of Interactions. Transient as it is only valid for the
      * current display.
      */
-    private transient List myInteractions = new ArrayList();
+    private transient List<InteractionRowData> myInteractions = new ArrayList<InteractionRowData>();
 
     /**
      * Holds ACs of Interactions to delete. This collection is cleared once the user
      * commits the transaction.
      */
-    private transient List myInteractionsToDel = new ArrayList();
+    private transient List<String> myInteractionsToDel = new ArrayList<String>();
 
     /**
      * Holds Interaction to not yet added. Only valid for the current session.
      */
-    private transient List myInteractionsToHold = new ArrayList();
+    private transient List<InteractionRowData> myInteractionsToHold = new ArrayList<InteractionRowData>();
 
     /**
      * The map of menus for this view.
      */
-    private transient Map myMenus = new HashMap();
+    private transient Map<String, List<String>> myMenus = new HashMap<String, List<String>>();
 
     // Override the super method to clear this object.
+    @Override
     public void reset() {
         super.reset();
         // Set fields to null.
@@ -96,11 +97,9 @@ public class ExperimentViewBean extends AbstractEditViewBean {
 
     // Reset the fields to null if we don't have values to set. Failure
     // to do so will display the previous edit object's values as current.
-    public void reset(AnnotatedObject annobj) {
-        super.reset(annobj);
-
-        // Must be an experiment.
-        Experiment exp = (Experiment) annobj;
+    @Override
+    public void reset(Experiment exp) {
+        super.reset(exp);
 
         // Reset the experiment view.
         resetExperiment(exp);
@@ -126,36 +125,42 @@ public class ExperimentViewBean extends AbstractEditViewBean {
 
     // Reset the fields to null if we don't have values to set. Failure
     // to do so will display the previous edit object's values as current.
-    public void resetClonedObject(AnnotatedObject copy, EditUserI user) {
+    @Override
+    public void resetClonedObject(Experiment copy, EditUserI user) {
         super.resetClonedObject(copy, user);
         // Reset the experiment view with the copy.
-        resetExperiment((Experiment) copy);
+        resetExperiment(copy);
     }
 
     // Override the super method as the current experiment is added to the
     // recent experiment list.
+    @Override
     public void addToRecentList(EditUserI user) {
-        ExperimentRowData row = new ExperimentRowData((Experiment) getAnnotatedObject());
+        ExperimentRowData row = new ExperimentRowData(getAnnotatedObject());
         user.addToCurrentExperiment(row);
     }
 
     // Override to remove the current experiment from the recent list.
+    @Override
     public void removeFromRecentList(EditUserI user) {
         ExperimentRowData row = new ExperimentRowData(getAc());
         user.removeFromCurrentExperiment(row);
     }
 
     // Override to provide Experiment layout.
+    @Override
     public void setLayout(ComponentContext context) {
         context.putAttribute("content", "edit.exp.layout");
     }
 
     // Override to provide Experiment help tag.
+    @Override
     public String getHelpTag() {
         return "editor.experiment";
     }
 
     // Override to provide set experiment from the form.
+    @Override
     public void copyPropertiesFrom(EditorFormI editorForm) {
         // Set the common values by calling super first.
         super.copyPropertiesFrom(editorForm);
@@ -170,6 +175,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     }
 
     // Override to copy Experiment data.
+    @Override
     public void copyPropertiesTo(EditorFormI form) {
         super.copyPropertiesTo(form);
 
@@ -183,10 +189,12 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     }
 
     // Override to check for a large experiment.
+    @Override
     public Boolean getReadOnly() {
         return myHasLargeInts ? Boolean.TRUE : Boolean.FALSE;
     }
 
+    @Override
     public void sanityCheck() throws ValidationException, IntactException {
         // COMMENTED OUT these checks as they need to be warning!
 
@@ -220,7 +228,8 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      * annotation/xref, organism (add or edit), CV interaction (add or edit) and
      * CV identification (add or edit).
      */
-    public Map getMenus() throws IntactException {
+    @Override
+    public Map<String,List<String>> getMenus() throws IntactException {
         return myMenus;
     }
 
@@ -315,13 +324,14 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      * pre:  forall(obj : Object | obj.oclIsTypeOf(ResultRowData))
      * </pre>
      */
-    public void addInteractionToHold(Collection ints) {
-        for (Iterator iter = ints.iterator(); iter.hasNext();) {
-            ResultRowData rowData = (ResultRowData) iter.next();
+    public void addInteractionToHold(Collection<ResultRowData> ints) {
+        for (ResultRowData rowData : ints)
+        {
             InteractionRowData row = InteractionRowData.makeSearchRow(rowData);
             // Avoid duplicates.
             if (!myInteractionsToHold.contains(row)
-                    && !interactionExists(row.getAc())) {
+                    && !interactionExists(row.getAc()))
+            {
                 myInteractionsToHold.add(row);
             }
         }
@@ -335,7 +345,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      * post: return->forall(obj : Object | obj.oclIsTypeOf(InteractionSearchRowData))
      * </pre>
      */
-    public List getHoldInteractions() {
+    public List<InteractionRowData> getHoldInteractions() {
         return myInteractionsToHold;
     }
 
@@ -357,7 +367,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         InteractionRowData dummy = new InteractionRowData(ac);
         int pos = myInteractionsToHold.indexOf(dummy);
         if (pos != -1) {
-            return (InteractionRowData) myInteractionsToHold.get(pos);
+            return myInteractionsToHold.get(pos);
         }
         return null;
     }
@@ -382,6 +392,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     }
 
     // Override super to add extra.
+    @Override
     public void clearTransactions() {
         super.clearTransactions();
 
@@ -404,6 +415,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      * @return true for all the persistent experiments  (i.e., false for a
      * new experiment not yet persisted).
      */
+    @Override
     public boolean getCloneState() {
         return getAc() != null;
     }
@@ -451,14 +463,14 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     }
 
     // Implements abstract methods
-
+    @Override
     protected void updateAnnotatedObject(IntactHelper helper) throws IntactException {
         // Get the objects using their short label.
-        BioSource biosource = (BioSource) helper.getObjectByLabel(
+        BioSource biosource = helper.getObjectByLabel(
                 BioSource.class, myOrganism);
-        CvInteraction interaction = (CvInteraction) helper.getObjectByLabel(
+        CvInteraction interaction =  helper.getObjectByLabel(
                 CvInteraction.class, myInter);
-        CvIdentification ident = (CvIdentification) helper.getObjectByLabel(
+        CvIdentification ident = helper.getObjectByLabel(
                 CvIdentification.class, myIdent);
 
         // The current experiment.
@@ -485,8 +497,8 @@ public class ExperimentViewBean extends AbstractEditViewBean {
             // from interactions.
             for (Iterator iter = myInteractionsToDel.iterator(); iter.hasNext();) {
                 String ac = (String) iter.next();
-                Interaction intact = (Interaction) helper.getObjectByAc(Interaction.class, ac);
-                exp.removeInteraction((Interaction) IntactHelper.getRealIntactObject(intact));
+                Interaction intact = helper.getObjectByAc(Interaction.class, ac);
+                exp.removeInteraction(IntactHelper.getRealIntactObject(intact));
             }
 
             // --------------------------------------------------------------------
@@ -495,15 +507,16 @@ public class ExperimentViewBean extends AbstractEditViewBean {
             exp.getInteractions().clear();
 
             // 2. Now add the interaction as real objects.
-            for (Iterator iter = myInteractions.iterator(); iter.hasNext();) {
-                InteractionRowData row = (InteractionRowData) iter.next();
+            for (InteractionRowData row : myInteractions)
+            {
                 Interaction inter = row.getInteraction();
                 // could be null for an interaction added from the 'hold' area.
-                if (inter == null) {
-                    inter = (Interaction) helper.getObjectByAc(Interaction.class,
-                            row.getAc());
+                if (inter == null)
+                {
+                    inter = helper.getObjectByAc(Interaction.class,
+                                                               row.getAc());
                 }
-                exp.addInteraction((Interaction) IntactHelper.getRealIntactObject(
+                exp.addInteraction(IntactHelper.getRealIntactObject(
                         inter));
             }
             // --------------------------------------------------------------------
@@ -513,6 +526,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     /**
      * Override to load the menus for this view.
      */
+    @Override
     public void loadMenus() throws IntactException {
         // Handler to the menu factory.
         EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
@@ -538,9 +552,9 @@ public class ExperimentViewBean extends AbstractEditViewBean {
 
     // Helper methods
 
-    private void makeInteractionRows(Collection ints) {
-        for (Iterator iter = ints.iterator(); iter.hasNext();) {
-            Interaction inter = (Interaction) iter.next();
+    private void makeInteractionRows(Collection<Interaction> ints) {
+        for (Interaction inter : ints)
+        {
             InteractionRowData row = new InteractionRowData(inter);
             myInteractions.add(row);
         }
@@ -564,17 +578,20 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         myInteractions.clear();
     }
     
-    private List extractExperimentACs(Collection exps) {
-        List list = new ArrayList();
-        for (Iterator iter = exps.iterator(); iter.hasNext(); ) {
-            list.add(((Experiment) iter.next()).getAc());
+    private List<String> extractExperimentACs(Collection<Experiment> exps) {
+        List<String> list = new ArrayList<String>();
+        for (Experiment exp : exps)
+        {
+            list.add(exp.getAc());
         }
         return list;
     }
 
     private boolean interactionExists(String ac) {
-        for (Iterator iter = myInteractions.iterator(); iter.hasNext();) {
-            if (((InteractionRowData) iter.next()).getAc().equals(ac)) {
+        for (InteractionRowData myInteraction : myInteractions)
+        {
+            if (myInteraction.getAc().equals(ac))
+            {
                 return true;
             }
         }

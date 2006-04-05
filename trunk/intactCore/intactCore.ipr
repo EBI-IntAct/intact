@@ -1,45 +1,422 @@
-<?xml version="1.0"?>
-
-<project version="2">
-  <component class="com.intellij.ant.AntConfiguration">
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4" relativePaths="false">
+  <component name="AntConfiguration">
+    <defaultAnt bundledAnt="true" />
     <buildFile url="file://$PROJECT_DIR$/build.xml">
-      <useEmacsModeOutput value="true" />
-      <useCustomJdk value="false" />
-      <useJavaw value="false" />
-      <includeProjectClasspath value="false" />
+      <additionalClassPath>
+        <entry path="file://$PROJECT_DIR$/application/lib/deploy/catalina-ant.jar" />
+        <entry path="file:///homes/baranda/projects/intact/intactCore/application/lib/deploy/jsch-0.1.25.jar" />
+      </additionalClassPath>
+      <antReference projectDefault="true" />
+      <customJdkName value="" />
       <maximumHeapSize value="128" />
+      <properties />
     </buildFile>
+    <buildFile url="file://$PROJECT_DIR$/application/build.xml">
+      <additionalClassPath />
+      <antReference projectDefault="true" />
+      <customJdkName value="" />
+      <maximumHeapSize value="128" />
+      <properties>
+        <property name="CATALINA_HOME" value="/scratch/baranda/tomcat" />
+      </properties>
+    </buildFile>
+    <buildFile url="file://$PROJECT_DIR$/application/search3/build.xml">
+      <additionalClassPath />
+      <antReference projectDefault="true" />
+      <customJdkName value="" />
+      <maximumHeapSize value="128" />
+      <properties />
+    </buildFile>
+  </component>
+  <component name="CodeStyleSettingsManager">
+    <option name="PER_PROJECT_SETTINGS" />
+    <option name="USE_PER_PROJECT_SETTINGS" value="false" />
+  </component>
+  <component name="CompilerConfiguration">
+    <option name="DEFAULT_COMPILER" value="Javac" />
+    <option name="CLEAR_OUTPUT_DIRECTORY" value="false" />
+    <option name="DEPLOY_AFTER_MAKE" value="0" />
+    <resourceExtensions>
+      <entry name=".+\.(properties|xml|html|dtd|tld)" />
+      <entry name=".+\.(gif|png|jpeg|jpg)" />
+    </resourceExtensions>
+    <wildcardResourcePatterns>
+      <entry name="?*.properties" />
+      <entry name="?*.xml" />
+      <entry name="?*.gif" />
+      <entry name="?*.png" />
+      <entry name="?*.jpeg" />
+      <entry name="?*.jpg" />
+      <entry name="?*.html" />
+      <entry name="?*.dtd" />
+      <entry name="?*.tld" />
+    </wildcardResourcePatterns>
+  </component>
+  <component name="DataSourceManagerImpl" />
+  <component name="DependenciesAnalyzeManager">
+    <option name="myForwardDirection" value="false" />
+  </component>
+  <component name="DependencyValidationManager" />
+  <component name="EntryPointsManager">
+    <entry_points />
+  </component>
+  <component name="ExportToHTMLSettings">
+    <option name="PRINT_LINE_NUMBERS" value="false" />
+    <option name="OPEN_IN_BROWSER" value="false" />
+    <option name="OUTPUT_DIRECTORY" />
+  </component>
+  <component name="GUI Designer component loader factory" />
+  <component name="JavacSettings">
+    <option name="DEBUGGING_INFO" value="true" />
+    <option name="GENERATE_NO_WARNINGS" value="false" />
+    <option name="DEPRECATION" value="true" />
+    <option name="ADDITIONAL_OPTIONS_STRING" value="" />
+    <option name="MAXIMUM_HEAP_SIZE" value="128" />
+  </component>
+  <component name="JavadocGenerationManager">
+    <option name="OUTPUT_DIRECTORY" />
+    <option name="OPTION_SCOPE" />
+    <option name="OPTION_HIERARCHY" value="false" />
+    <option name="OPTION_NAVIGATOR" value="false" />
+    <option name="OPTION_INDEX" value="false" />
+    <option name="OPTION_SEPARATE_INDEX" value="false" />
+    <option name="OPTION_DOCUMENT_TAG_USE" value="false" />
+    <option name="OPTION_DOCUMENT_TAG_AUTHOR" value="false" />
+    <option name="OPTION_DOCUMENT_TAG_VERSION" value="false" />
+    <option name="OPTION_DOCUMENT_TAG_DEPRECATED" value="false" />
+    <option name="OPTION_DEPRECATED_LIST" value="false" />
+    <option name="OTHER_OPTIONS" />
+    <option name="HEAP_SIZE" />
+    <option name="OPEN_IN_BROWSER" value="false" />
+  </component>
+  <component name="JikesSettings">
+    <option name="JIKES_PATH" value="" />
+    <option name="DEBUGGING_INFO" value="true" />
+    <option name="DEPRECATION" value="true" />
+    <option name="GENERATE_NO_WARNINGS" value="false" />
+    <option name="IS_EMACS_ERRORS_MODE" value="true" />
+    <option name="ADDITIONAL_OPTIONS_STRING" value="" />
+  </component>
+  <component name="Monitor.Log4jWindowPlugin" />
+  <component name="Palette2">
+    <group name="Swing">
+      <item class="com.intellij.uiDesigner.HSpacer" tooltip-text="Horizontal Spacer" icon="/com/intellij/uiDesigner/icons/hspacer.png" removable="false">
+        <default-constraints vsize-policy="1" hsize-policy="6" anchor="0" fill="1" />
+      </item>
+      <item class="com.intellij.uiDesigner.VSpacer" tooltip-text="Vertical Spacer" icon="/com/intellij/uiDesigner/icons/vspacer.png" removable="false">
+        <default-constraints vsize-policy="6" hsize-policy="1" anchor="0" fill="2" />
+      </item>
+      <item class="javax.swing.JPanel" icon="/com/intellij/uiDesigner/icons/panel.png" removable="false">
+        <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="3" />
+      </item>
+      <item class="javax.swing.JScrollPane" icon="/com/intellij/uiDesigner/icons/scrollPane.png" removable="false">
+        <default-constraints vsize-policy="7" hsize-policy="7" anchor="0" fill="3" />
+      </item>
+      <item class="javax.swing.JButton" icon="/com/intellij/uiDesigner/icons/button.png" removable="false">
+        <default-constraints vsize-policy="0" hsize-policy="3" anchor="0" fill="1" />
+        <initial-values>
+          <property name="text" value="Button" />
+        </initial-values>
+      </item>
+      <item class="javax.swing.JRadioButton" icon="/com/intellij/uiDesigner/icons/radioButton.png" removable="false">
+        <default-constraints vsize-policy="0" hsize-policy="3" anchor="8" fill="0" />
+        <initial-values>
+          <property name="text" value="RadioButton" />
+        </initial-values>
+      </item>
+      <item class="javax.swing.JCheckBox" icon="/com/intellij/uiDesigner/icons/checkBox.png" removable="false">
+        <default-constraints vsize-policy="0" hsize-policy="3" anchor="8" fill="0" />
+        <initial-values>
+          <property name="text" value="CheckBox" />
+        </initial-values>
+      </item>
+      <item class="javax.swing.JLabel" icon="/com/intellij/uiDesigner/icons/label.png" removable="false">
+        <default-constraints vsize-policy="0" hsize-policy="0" anchor="8" fill="0" />
+        <initial-values>
+          <property name="text" value="Label" />
+        </initial-values>
+      </item>
+      <item class="javax.swing.JTextField" icon="/com/intellij/uiDesigner/icons/textField.png" removable="false">
+        <default-constraints vsize-policy="0" hsize-policy="6" anchor="8" fill="1">
+          <preferred-size width="150" height="-1" />
+        </default-constraints>
+      </item>
+      <item class="javax.swing.JPasswordField" icon="/com/intellij/uiDesigner/icons/passwordField.png" removable="false">
+        <default-constraints vsize-policy="0" hsize-policy="6" anchor="8" fill="1">
+          <preferred-size width="150" height="-1" />
+        </default-constraints>
+      </item>
+      <item class="javax.swing.JFormattedTextField" icon="/com/intellij/uiDesigner/icons/formattedTextField.png" removable="false">
+        <default-constraints vsize-policy="0" hsize-policy="6" anchor="8" fill="1">
+          <preferred-size width="150" height="-1" />
+        </default-constraints>
+      </item>
+      <item class="javax.swing.JTextArea" icon="/com/intellij/uiDesigner/icons/textArea.png" removable="false">
+        <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3">
+          <preferred-size width="150" height="50" />
+        </default-constraints>
+      </item>
+      <item class="javax.swing.JTextPane" icon="/com/intellij/uiDesigner/icons/textPane.png" removable="false">
+        <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3">
+          <preferred-size width="150" height="50" />
+        </default-constraints>
+      </item>
+      <item class="javax.swing.JEditorPane" icon="/com/intellij/uiDesigner/icons/editorPane.png" removable="false">
+        <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3">
+          <preferred-size width="150" height="50" />
+        </default-constraints>
+      </item>
+      <item class="javax.swing.JComboBox" icon="/com/intellij/uiDesigner/icons/comboBox.png" removable="false">
+        <default-constraints vsize-policy="0" hsize-policy="2" anchor="8" fill="1" />
+      </item>
+      <item class="javax.swing.JTable" icon="/com/intellij/uiDesigner/icons/table.png" removable="false">
+        <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3">
+          <preferred-size width="150" height="50" />
+        </default-constraints>
+      </item>
+      <item class="javax.swing.JList" icon="/com/intellij/uiDesigner/icons/list.png" removable="false">
+        <default-constraints vsize-policy="6" hsize-policy="2" anchor="0" fill="3">
+          <preferred-size width="150" height="50" />
+        </default-constraints>
+      </item>
+      <item class="javax.swing.JTree" icon="/com/intellij/uiDesigner/icons/tree.png" removable="false">
+        <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3">
+          <preferred-size width="150" height="50" />
+        </default-constraints>
+      </item>
+      <item class="javax.swing.JTabbedPane" icon="/com/intellij/uiDesigner/icons/tabbedPane.png" removable="false">
+        <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="3">
+          <preferred-size width="200" height="200" />
+        </default-constraints>
+      </item>
+      <item class="javax.swing.JSplitPane" icon="/com/intellij/uiDesigner/icons/splitPane.png" removable="false">
+        <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="3">
+          <preferred-size width="200" height="200" />
+        </default-constraints>
+      </item>
+      <item class="javax.swing.JSpinner" icon="/com/intellij/uiDesigner/icons/spinner.png" removable="false">
+        <default-constraints vsize-policy="0" hsize-policy="6" anchor="8" fill="1" />
+      </item>
+      <item class="javax.swing.JSlider" icon="/com/intellij/uiDesigner/icons/slider.png" removable="false">
+        <default-constraints vsize-policy="0" hsize-policy="6" anchor="8" fill="1" />
+      </item>
+    </group>
+  </component>
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/intactCore.iml" filepath="$PROJECT_DIR$/intactCore.iml" />
+    </modules>
+  </component>
+  <component name="ProjectRootManager" version="2" assert-keyword="true" jdk-15="true" project-jdk-name="1.5" />
+  <component name="RmicSettings">
+    <option name="IS_EANABLED" value="false" />
+    <option name="DEBUGGING_INFO" value="true" />
+    <option name="GENERATE_NO_WARNINGS" value="false" />
+    <option name="GENERATE_IIOP_STUBS" value="false" />
+    <option name="ADDITIONAL_OPTIONS_STRING" value="" />
+  </component>
+  <component name="WebServicesPlugin" />
+  <component name="com.sixrr.metrics.MetricsReloaded">
+    <option name="selectedProfile" value="Default" />
+    <option name="autoscroll" value="false" />
+    <option name="calculateMetrics" value="true" />
+    <option name="includeTestClasses" value="false" />
+    <option name="flattenInnerClasses" value="true" />
+    <option name="cycleTableSpecificationString" value="" />
+    <option name="shortCycleTableSpecificationString" value="" />
+  </component>
+  <component name="libraryTable">
+    <library name="all intact">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/antlr.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/commons-pool-1.1.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/soap.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/p6spy.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/commons-logging.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/aristotle.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/commons-pool-1.2.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/xercesImpl.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/oboedit-beta8.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/activation-1.0.2.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/commons-httpclient-3.0-rc2.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/org.geneontology-beta8.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/junit.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/db-ojb-1.0.rc6.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/junit-4.0.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/xml-apis.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/commons-lang-2.0.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/commons-beanutils.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/jakarta-regexp-1.3.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/oracle_soap.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/msv.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/commons-cli-1.0.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/cdbWebservices.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/sptr-interfaces.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/jdbc-se2.0.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/servlet.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/commons-dbcp-1.1.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/jdbc_oracle9i_thin_9.2.0.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/http_client.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/commons-digester.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/commons-codec-1.4-dev.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/yasp.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/commons-dbutils-1.0.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/gnu-regexp-1.1.2.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/ols-1.0beta.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/commons-collections-3.0.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/jaxrpc.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/log4j-1.2.8.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/postgresql-8.1-405.jdbc2ee.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/proteomics-common-1.0.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/javamail-1.3.2.jar!/" />
+        <root url="jar://$PROJECT_DIR$/application/lib/jimi.jar!/" />
+        <root url="jar://$PROJECT_DIR$/application/lib/lucene-1.4.3.jar!/" />
+        <root url="jar://$PROJECT_DIR$/application/lib/jstl.jar!/" />
+        <root url="jar://$PROJECT_DIR$/application/lib/jdbc2_0-stdext.jar!/" />
+        <root url="jar://$PROJECT_DIR$/application/lib/commons-lang.jar!/" />
+        <root url="jar://$PROJECT_DIR$/application/lib/commons-validator.jar!/" />
+        <root url="jar://$PROJECT_DIR$/application/lib/commons-fileupload.jar!/" />
+        <root url="jar://$PROJECT_DIR$/application/lib/commons-logging.jar!/" />
+        <root url="jar://$PROJECT_DIR$/application/lib/standard.jar!/" />
+        <root url="jar://$PROJECT_DIR$/application/lib/commons-beanutils.jar!/" />
+        <root url="jar://$PROJECT_DIR$/application/lib/struts.jar!/" />
+        <root url="jar://$PROJECT_DIR$/application/lib/jakarta-oro.jar!/" />
+        <root url="jar://$PROJECT_DIR$/application/lib/concurrent.jar!/" />
+        <root url="jar://$PROJECT_DIR$/application/lib/commons-digester.jar!/" />
+        <root url="jar://$PROJECT_DIR$/application/lib/struts-legacy.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="editor_basic">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/application/lib/struts-legacy.jar!/" />
+        <root url="jar://$PROJECT_DIR$/application/lib/commons-fileupload.jar!/" />
+        <root url="jar://$PROJECT_DIR$/application/lib/antlr.jar!/" />
+        <root url="jar://$PROJECT_DIR$/application/lib/commons-logging.jar!/" />
+        <root url="jar://$PROJECT_DIR$/application/lib/struts.jar!/" />
+        <root url="jar://$PROJECT_DIR$/application/lib/jakarta-oro.jar!/" />
+        <root url="jar://$PROJECT_DIR$/application/lib/jdbc2_0-stdext.jar!/" />
+        <root url="jar://$PROJECT_DIR$/application/lib/concurrent.jar!/" />
+        <root url="jar://$PROJECT_DIR$/application/lib/commons-lang.jar!/" />
+        <root url="jar://$PROJECT_DIR$/application/lib/commons-validator.jar!/" />
+        <root url="jar://$PROJECT_DIR$/application/lib/commons-digester.jar!/" />
+        <root url="jar://$PROJECT_DIR$/application/editor/WEB-INF/lib/display.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/cdbWebservices.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/sptr-interfaces.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/soap.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/aristotle.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/commons-dbcp-1.1.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/jdbc_oracle9i_thin_9.2.0.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/http_client.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/commons-pool-1.2.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/commons-digester.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/xercesImpl.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/yasp.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/gnu-regexp-1.1.2.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/db-ojb-1.0.rc6.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/commons-collections-3.0.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/xml-apis.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/log4j-1.2.8.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/jakarta-regexp-1.3.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/javamail-1.3.2.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/oracle_soap.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/antlr.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/commons-beanutils.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/activation-1.0.2.jar!/" />
+        <root url="jar://$PROJECT_DIR$/application/lib/jstl.jar!/" />
+        <root url="jar://$PROJECT_DIR$/application/lib/standard.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+  </component>
+  <component name="uidesigner-configuration">
+    <option name="INSTRUMENT_CLASSES" value="true" />
+    <option name="COPY_FORMS_RUNTIME_TO_OUTPUT" value="true" />
+  </component>
+  <component class="com.intellij.codeInsight.CodeInsightManager">
+    <disable_hints />
+  </component>
+  <component class="com.intellij.ide.impl.ProjectWorkspace" />
+  <component class="com.intellij.debugger.Debugger">
+    <line_breakpoints />
+    <exception_breakpoints>
+      <breakpoint_any>
+        <option name="ENABLED" value="false" />
+        <option name="SUSPEND_VM" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="false" />
+        <option name="CONDITION" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="LOG_MESSAGE" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INVERSE_CLASS_FILLTERS" value="false" />
+        <option name="NOTIFY_CAUGHT" value="false" />
+        <option name="NOTIFY_UNCAUGHT" value="true" />
+      </breakpoint_any>
+    </exception_breakpoints>
+    <field_breakpoints />
+    <method_breakpoints />
   </component>
   <component class="com.intellij.ant.AntManager">
     <option name="OPEN_IN_TEXT_VIEW" value="false" />
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
   </component>
-  <component class="com.intellij.codeInsight.CodeInsightManager">
-    <disable_hints />
-  </component>
-  <component class="com.intellij.compiler.Compiler">
-    <option name="DEFAULT_COMPILER" value="Javac" />
-    <option name="COMPILE_IN_BACKGROUND" value="false" />
-    <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
-    <option name="HIDE_WARNINGS" value="false" />
-  </component>
-  <component class="com.intellij.compiler.JavacSettings">
-    <option name="DEBUGGING_INFO" value="true" />
-    <option name="GENERATE_NO_WARNINGS" value="false" />
-    <option name="DEPRECATION" value="true" />
-    <option name="ADDITIONAL_OPTIONS_STRING" value="" />
-    <option name="MAXIMUM_HEAP_SIZE" value="128" />
-  </component>
-  <component class="com.intellij.compiler.JikesSettings">
-    <option name="DEBUGGING_INFO" value="true" />
-    <option name="DEPRECATION" value="true" />
-    <option name="GENERATE_NO_WARNINGS" value="false" />
-    <option name="GENERATE_MAKE_FILE_DEPENDENCIES" value="false" />
-    <option name="DO_FULL_DEPENDENCE_CHECK" value="false" />
-    <option name="IS_INCREMENTAL_MODE" value="false" />
-    <option name="IS_EMACS_ERRORS_MODE" value="true" />
-    <option name="ADDITIONAL_OPTIONS_STRING" value="" />
-    <option name="MAXIMUM_HEAP_SIZE" value="128" />
+  <component class="com.intellij.debugger.settings.DebuggerSettings">
+    <option name="TRACING_FILTERS_ENABLED" value="true" />
+    <option name="VALUE_LOOKUP_DELAY" value="700" />
+    <option name="DEBUGGER_TRANSPORT" value="0" />
+    <option name="FORCE_CLASSIC_VM" value="true" />
+    <option name="HIDE_DEBUGGER_ON_PROCESS_TERMINATION" value="false" />
+    <option name="SKIP_SYNTHETIC_METHODS" value="true" />
+    <option name="SKIP_CONSTRUCTORS" value="false" />
+    <default_breakpoint_settings>
+      <option name="ENABLED" value="true" />
+      <option name="SUSPEND_VM" value="true" />
+      <option name="COUNT_FILTER_ENABLED" value="false" />
+      <option name="COUNT_FILTER" value="0" />
+      <option name="CONDITION_ENABLED" value="false" />
+      <option name="CONDITION" />
+      <option name="LOG_ENABLED" value="false" />
+      <option name="LOG_EXPRESSION_ENABLED" value="false" />
+      <option name="LOG_MESSAGE" />
+      <option name="CLASS_FILTERS_ENABLED" value="false" />
+      <option name="INVERSE_CLASS_FILLTERS" value="false" />
+      <option name="NOTIFY_CAUGHT" value="true" />
+      <option name="NOTIFY_UNCAUGHT" value="true" />
+      <option name="WATCH_MODIFICATION" value="true" />
+      <option name="WATCH_ACCESS" value="true" />
+      <option name="WATCH_ENTRY" value="true" />
+      <option name="WATCH_EXIT" value="true" />
+    </default_breakpoint_settings>
+    <filter>
+      <option name="PATTERN" value="com.sun.*" />
+      <option name="ENABLED" value="true" />
+    </filter>
+    <filter>
+      <option name="PATTERN" value="java.*" />
+      <option name="ENABLED" value="true" />
+    </filter>
+    <filter>
+      <option name="PATTERN" value="javax.*" />
+      <option name="ENABLED" value="true" />
+    </filter>
+    <filter>
+      <option name="PATTERN" value="org.omg.*" />
+      <option name="ENABLED" value="true" />
+    </filter>
+    <filter>
+      <option name="PATTERN" value="sun.*" />
+      <option name="ENABLED" value="true" />
+    </filter>
+    <filter>
+      <option name="PATTERN" value="junit.*" />
+      <option name="ENABLED" value="true" />
+    </filter>
   </component>
   <component class="com.intellij.cvsSupport.CvsConfiguration">
     <Checkout>
@@ -129,153 +506,6 @@
     <option name="HIDE_MISSING_FILES" value="false" />
     <option name="HIDE_UP_TO_DATE_FILES" value="false" />
   </component>
-  <component class="com.intellij.cvsSupport.CvsManager">
-    <expanded_paths />
-  </component>
-  <component class="com.intellij.debugger.Debugger">
-    <line_breakpoints />
-    <exception_breakpoints>
-      <breakpoint_any>
-        <option name="ENABLED" value="false" />
-        <option name="SUSPEND_VM" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="false" />
-        <option name="CONDITION" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="LOG_MESSAGE" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INVERSE_CLASS_FILLTERS" value="false" />
-        <option name="NOTIFY_CAUGHT" value="false" />
-        <option name="NOTIFY_UNCAUGHT" value="true" />
-      </breakpoint_any>
-    </exception_breakpoints>
-    <field_breakpoints />
-    <method_breakpoints />
-  </component>
-  <component class="com.intellij.debugger.settings.DebuggerSettings">
-    <option name="TRACING_FILTERS_ENABLED" value="true" />
-    <option name="VALUE_LOOKUP_DELAY" value="700" />
-    <option name="DEBUGGER_TRANSPORT" value="0" />
-    <option name="FORCE_CLASSIC_VM" value="true" />
-    <option name="HIDE_DEBUGGER_ON_PROCESS_TERMINATION" value="false" />
-    <option name="SKIP_SYNTHETIC_METHODS" value="true" />
-    <option name="SKIP_CONSTRUCTORS" value="false" />
-    <default_breakpoint_settings>
-      <option name="ENABLED" value="true" />
-      <option name="SUSPEND_VM" value="true" />
-      <option name="COUNT_FILTER_ENABLED" value="false" />
-      <option name="COUNT_FILTER" value="0" />
-      <option name="CONDITION_ENABLED" value="false" />
-      <option name="CONDITION" />
-      <option name="LOG_ENABLED" value="false" />
-      <option name="LOG_EXPRESSION_ENABLED" value="false" />
-      <option name="LOG_MESSAGE" />
-      <option name="CLASS_FILTERS_ENABLED" value="false" />
-      <option name="INVERSE_CLASS_FILLTERS" value="false" />
-      <option name="NOTIFY_CAUGHT" value="true" />
-      <option name="NOTIFY_UNCAUGHT" value="true" />
-      <option name="WATCH_MODIFICATION" value="true" />
-      <option name="WATCH_ACCESS" value="true" />
-      <option name="WATCH_ENTRY" value="true" />
-      <option name="WATCH_EXIT" value="true" />
-    </default_breakpoint_settings>
-    <filter>
-      <option name="PATTERN" value="com.sun.*" />
-      <option name="ENABLED" value="true" />
-    </filter>
-    <filter>
-      <option name="PATTERN" value="java.*" />
-      <option name="ENABLED" value="true" />
-    </filter>
-    <filter>
-      <option name="PATTERN" value="javax.*" />
-      <option name="ENABLED" value="true" />
-    </filter>
-    <filter>
-      <option name="PATTERN" value="org.omg.*" />
-      <option name="ENABLED" value="true" />
-    </filter>
-    <filter>
-      <option name="PATTERN" value="sun.*" />
-      <option name="ENABLED" value="true" />
-    </filter>
-    <filter>
-      <option name="PATTERN" value="junit.*" />
-      <option name="ENABLED" value="true" />
-    </filter>
-  </component>
-  <component class="com.intellij.debugger.ui.DebuggerUI" />
-  <component class="com.intellij.execution.RunManager">
-    <option name="SHOW_SETTINGS_BEFORE_RUNNING" value="true" />
-    <option name="COMPILE_BEFORE_RUNNING" value="true" />
-    <activeType name="Application" />
-    <configuration name="&lt;template&gt;" type="Application" default="true" selected="false">
-      <option name="MAIN_CLASS_NAME" />
-      <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-    </configuration>
-    <configuration name="&lt;template&gt;" type="Applet" default="true" selected="false">
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/config/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-    </configuration>
-    <configuration name="&lt;template&gt;" type="JUnit" default="true" selected="false">
-      <option name="MAIN_CLASS_NAME" />
-      <option name="VM_PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="TEST_RUNNER" />
-    </configuration>
-    <configuration name="&lt;template&gt;" type="Remote" default="true" selected="false">
-      <option name="USE_SOCKET_TRANSPORT" value="true" />
-      <option name="SHMEM_ADDRESS" value="javadebug" />
-      <option name="HOST" value="localhost" />
-      <option name="PORT" value="5000" />
-    </configuration>
-    <configuration name="InsertGo" type="Application" default="false" selected="true">
-      <option name="MAIN_CLASS_NAME" value="uk.ac.ebi.intact.util.InsertGo" />
-      <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" value="data/go_small.dat" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-    </configuration>
-  </component>
-  <component class="com.intellij.ide.SelectInManager" />
-  <component class="com.intellij.ide.bookmarks.BookmarkManager" />
-  <component class="com.intellij.ide.commander.Commander">
-    <leftPanel view="Project" active="true" />
-    <rightPanel view="Project" active="false" />
-    <splitter proportion="0.5" />
-  </component>
-  <component class="com.intellij.ide.desktop.IdeDocumentManager">
-    <recent_files>
-      <file_info url="file://$PROJECT_DIR$/config/struts-config.xml" column="0" line="0" />
-      <file_info url="file://$PROJECT_DIR$/config/repository_user.xml" column="0" line="427" />
-      <file_info url="file://$PROJECT_DIR$/config/ApplicationResources.properties" column="0" line="0" />
-      <file_info url="file://$PROJECT_DIR$/config/log4j.properties" column="0" line="0" />
-      <file_info url="file://$PROJECT_DIR$/src/uk/ac/ebi/intact/application/hierarchView/business/graph/ImageDimension.java" column="13" line="3" />
-      <file_info url="file://$PROJECT_DIR$/config/OJB.properties" column="0" line="0" />
-      <file_info url="file://$PROJECT_DIR$/README" column="44" line="51" />
-      <file_info url="file://$PROJECT_DIR$/config/repository.xml" column="5" line="28" />
-    </recent_files>
-    <open_files>
-      <file_info url="file://$PROJECT_DIR$/README" column="44" line="51" />
-      <file_info url="file://$PROJECT_DIR$/config/repository.xml" column="5" line="28" />
-      <active_file url="file://$PROJECT_DIR$/config/repository.xml" />
-      <file_info url="file://$PROJECT_DIR$/config/OJB.properties" column="0" line="0" />
-    </open_files>
-  </component>
-  <component class="com.intellij.ide.hierarchy.HierarchyBrowserManager">
-    <option name="SHOW_PACKAGES" value="false" />
-    <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
-    <option name="SORT_ALPHABETICALLY" value="false" />
-  </component>
-  <component class="com.intellij.ide.impl.ProjectWorkspace" />
   <component class="com.intellij.ide.navigator.impl.ProjectNavigatorSettings">
     <navigator id="ClasspathNavigator" flattenPackages="false" showMembers="false" />
     <navigator id="ProjectNavigator" flattenPackages="false" showMembers="false">
@@ -297,185 +527,33 @@
     </navigator>
     <navigator id="SourcepathNavigator" flattenPackages="false" showMembers="false" />
   </component>
-  <component class="com.intellij.ide.structureView.StructureViewFactory">
-    <option name="SORT_MODE" value="0" />
-    <option name="GROUP_OVERRIDINGS" value="true" />
-    <option name="GROUP_IMPLEMENTINGS" value="true" />
-    <option name="AUTOSCROLL_MODE" value="true" />
-    <option name="SHOW_METHODS" value="true" />
-    <option name="SHOW_FIELDS" value="true" />
+  <component class="com.intellij.ide.desktop.IdeDocumentManager">
+    <recent_files>
+      <file_info url="file://$PROJECT_DIR$/config/struts-config.xml" column="0" line="0" />
+      <file_info url="file://$PROJECT_DIR$/config/repository_user.xml" column="0" line="427" />
+      <file_info url="file://$PROJECT_DIR$/config/ApplicationResources.properties" column="0" line="0" />
+      <file_info url="file://$PROJECT_DIR$/config/log4j.properties" column="0" line="0" />
+      <file_info url="file://$PROJECT_DIR$/src/uk/ac/ebi/intact/application/hierarchView/business/graph/ImageDimension.java" column="13" line="3" />
+      <file_info url="file://$PROJECT_DIR$/config/OJB.properties" column="0" line="0" />
+      <file_info url="file://$PROJECT_DIR$/README" column="44" line="51" />
+      <file_info url="file://$PROJECT_DIR$/config/repository.xml" column="5" line="28" />
+    </recent_files>
+    <open_files>
+      <file_info url="file://$PROJECT_DIR$/README" column="44" line="51" />
+      <file_info url="file://$PROJECT_DIR$/config/repository.xml" column="5" line="28" />
+      <active_file url="file://$PROJECT_DIR$/config/repository.xml" />
+      <file_info url="file://$PROJECT_DIR$/config/OJB.properties" column="0" line="0" />
+    </open_files>
   </component>
-  <component class="com.intellij.ide.util.PropertiesComponent" />
-  <component class="com.intellij.javadoc.JavadocGenerationManager">
-    <option name="OUTPUT_DIRECTORY" />
-    <option name="OPTION_SCOPE" />
-    <option name="OPTION_HIERARCHY" value="false" />
-    <option name="OPTION_NAVIGATOR" value="false" />
-    <option name="OPTION_INDEX" value="false" />
-    <option name="OPTION_SEPARATE_INDEX" value="false" />
-    <option name="OPTION_USE_1_1" value="false" />
-    <option name="OPTION_DOCUMENT_TAG_USE" value="false" />
-    <option name="OPTION_DOCUMENT_TAG_AUTHOR" value="false" />
-    <option name="OPTION_DOCUMENT_TAG_VERSION" value="false" />
-    <option name="OPTION_DOCUMENT_TAG_DEPRECATED" value="false" />
-    <option name="OPTION_DEPRECATED_LIST" value="false" />
-    <option name="OTHER_OPTIONS" />
-    <option name="HEAP_SIZE" />
-    <option name="OPEN_IN_BROWSER" value="false" />
+  <component class="com.intellij.debugger.ui.DebuggerUI" />
+  <component class="com.intellij.cvsSupport.CvsManager">
+    <expanded_paths />
   </component>
-  <component class="com.intellij.projectRoots.ProjectRootContainer">
-    <jdk name="java version &quot;1.3.1_01&quot;" />
-    <root file="file://$PROJECT_DIR$/classes">
-      <property name="type" value="outputPath" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/ant.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/antlr.debug.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/antlr.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/antlr_compiletime.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/axis.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/castor-0.9.3.9-xml.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/castor-0.9.3.9.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/commons-beanutils.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/commons-collections-2.0.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/commons-digester.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/commons-lang-0.1-dev.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/commons-logging.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/ftp.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/hsqldb.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/j2ee.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/jakarta-ant-1.4.1-optional.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/jakarta-ojb-0.9.2.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/jakarta-regexp-1.2.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/jaxrpc.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/jca1.0.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/jdbc-se2.0.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/jdbc2_0-stdext.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/jdbc_oracle8i_thin_8.1.6.2.0.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/jdo.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/jdori.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/jmxri.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/jndi.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/jta-spec1_0_1.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/jta1.0.1.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/junit.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/log4j-1.2.5.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/optional.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/optit.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/p6spy.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/PngEncoder.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/proxy.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/request.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/servlet.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/struts.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/torque-3.0-b3-dev.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/tt-bytecode.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/wsdl4j.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/xalan.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/xercesImpl.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar:///homes/hhe/intact/intactCore/lib/xml-apis.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="file://$PROJECT_DIR$">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="jar://$PROJECT_DIR$/lib/pgjdbc2.jar!/">
-      <property name="type" value="classPathEntry" />
-    </root>
-    <root file="file://$PROJECT_DIR$">
-      <property name="type" value="projectFiles" />
-    </root>
-    <root file="file://$PROJECT_DIR$/src">
-      <property name="type" value="sourcePathEntry" />
-    </root>
-    <assert_keyword enabled="no" />
+  <component class="com.intellij.compiler.Compiler">
+    <option name="DEFAULT_COMPILER" value="Javac" />
+    <option name="COMPILE_IN_BACKGROUND" value="false" />
+    <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
+    <option name="HIDE_WARNINGS" value="false" />
   </component>
   <component class="com.intellij.usageView.impl.UsageViewSettings">
     <option name="EXPORT_FILE_NAME" value="$PROJECT_DIR$/report.txt" />
@@ -484,53 +562,6 @@
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
     <option name="IS_FILTER_DUPLICATED_LINE" value="false" />
   </component>
-  <component class="com.intellij.vssSupport.VssConfiguration">
-    <CheckoutOptions>
-      <option name="COMMENT" value="" />
-      <option name="DO_NOT_GET_LATEST_VERSION" value="false" />
-      <option name="REPLACE_WRITABLE" value="false" />
-      <option name="RECURSIVE" value="false" />
-    </CheckoutOptions>
-    <CheckinOptions>
-      <option name="COMMENT" value="" />
-      <option name="KEEP_CHECKED_OUT" value="false" />
-      <option name="RECURSIVE" value="false" />
-    </CheckinOptions>
-    <AddOptions>
-      <option name="COMMENT" value="" />
-      <option name="STORE_ONLY_LATEST_VERSION" value="false" />
-      <option name="CHECK_OUT_IMMEDIATELY" value="false" />
-      <option name="FILE_TYPE" value="0" />
-    </AddOptions>
-    <UndocheckoutOptions>
-      <option name="MAKE_WRITABLE" value="false" />
-      <option name="REPLACE_LOCAL_COPY" value="0" />
-      <option name="RECURSIVE" value="false" />
-    </UndocheckoutOptions>
-    <DiffOptions>
-      <option name="IGNORE_WHITE_SPACE" value="false" />
-      <option name="IGNORE_CASE" value="false" />
-    </DiffOptions>
-    <GetOptions>
-      <option name="REPLACE_WRITABLE" value="0" />
-      <option name="MAKE_WRITABLE" value="false" />
-      <option name="RECURSIVE" value="false" />
-    </GetOptions>
-    <option name="ENABLED" value="false" />
-    <option name="CLIENT_PATH" value="" />
-    <option name="SRCSAFEINI_PATH" value="" />
-    <option name="USER_NAME" value="" />
-    <option name="PWD" value="" />
-    <option name="SHOW_CHECKOUT_OPTIONS" value="true" />
-    <option name="SHOW_CHECKIN_OPTIONS" value="true" />
-    <option name="SHOW_ADD_OPTIONS" value="true" />
-    <option name="SHOW_UNDOCHECKOUT_OPTIONS" value="true" />
-    <option name="SHOW_DIFF_OPTIONS" value="true" />
-    <option name="SHOW_GET_OPTIONS" value="true" />
-    <option name="USE_EXTERNAL_DIFF" value="false" />
-    <option name="EXTERNAL_DIFF_PATH" value="" />
-    <option name="REUSE_LAST_COMMENT" value="false" />
-    <option name="PUT_FOCUS_INTO_COMMENT" value="false" />
-  </component>
+  <UsedPathMacros />
 </project>
 
