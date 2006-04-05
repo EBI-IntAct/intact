@@ -16,6 +16,8 @@ package uk.ac.ebi.intact.model;
  */
 public class CvIdentification extends CvDagObject {
 
+    public static final String WESTERN_BLOT = "western blot";
+    
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus.
      * This should not be here as it has no model functionality but is
