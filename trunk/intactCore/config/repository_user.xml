@@ -3950,11 +3950,15 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         name="updator"
         column="userstamp"
         jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="creator"
         column="created_user"
         jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
         />
     <field-descriptor
         name="created"
