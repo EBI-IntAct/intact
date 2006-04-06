@@ -30,7 +30,7 @@ import java.util.*;
 public class MessageSender {
 
     public static final String SANITY_CHECK = "SANITY CHECK";
-    public static final String CORRECTION_ASSIGNMENT = "CORRECTION ASSIGNMENT";
+    public static final String CORRECTION_ASSIGNMENT = "CORRECTION ASSIGNMENT AND/OR LISTED EXPERIMENT";
 
     private EditorUrlBuilder editorUrlBuilder = new EditorUrlBuilder();
 
@@ -803,12 +803,21 @@ public class MessageSender {
         MailSender mailer = new MailSender();
 
         String countType = "";
+        System.out.println("");
+        System.out.println("");
+        System.out.println("MAIL OBJECT " + mailObject);
+        System.out.println(MessageSender.SANITY_CHECK);
+        System.out.println(MessageSender.CORRECTION_ASSIGNMENT);
+
+
         if(MessageSender.SANITY_CHECK.equals(mailObject)){
             countType="error";
         }else if (MessageSender.CORRECTION_ASSIGNMENT.equals(mailObject)){
-            countType="correction assignment";
+            countType="correction assignment and/or listed experiment";
         }
-
+        System.out.println("Count type" + countType);
+        System.out.println("");
+        System.out.println("");
         // send individual mail to curators
         for ( Iterator iterator = allUsersReport.keySet().iterator(); iterator.hasNext(); ) {
             String user = (String) iterator.next();
@@ -846,6 +855,11 @@ public class MessageSender {
                     recipients[ 0 ] = email;
 
                     // send mail
+                    //if(MessageSender.SANITY_CHECK.equals(mailObject)){
+                    //    mailObject = mailObject + " - " + TIME + " (" + count + " " +countType + ( count > 1 ? "s" : "" ) + ")";
+                    //}else if (MessageSender.CORRECTION_ASSIGNMENT.equals(mailObject)){
+                    //    mailObject = mailObject + " - " + TIME ;
+                    //}
                     mailer.postMail( recipients,
                                      mailObject + " - " + TIME + " (" + count + " " +countType + ( count > 1 ? "s" : "" ) + ")",
                                      fullReport.toString(),
@@ -1366,15 +1380,15 @@ public class MessageSender {
                 rowValues[3] = "When";
                 rowValues[4] = "User";
                 header = formatRow("html", rowValues, "headers",reportType,false);
-//            } else if (ReportTopic.EXPERIMENT_TO_CORRECT.equals(topic)){
-//                String[] rowValues = new String[6];
-//                rowValues[0] ="AC";
-//                rowValues[1] ="Shortlabel";
-//                rowValues[2] ="PubmedId";
-//                rowValues[3] ="User";
-//                rowValues[4] ="When";
-//                rowValues[5] ="Reviewer";
-//                header = formatRow("html", rowValues, "headers",reportType,false);
+            } else if (ReportTopic.EXPERIMENT_TO_CORRECT.equals(topic)){
+                String[] rowValues = new String[6];
+                rowValues[0] ="AC";
+                rowValues[1] ="Shortlabel";
+                rowValues[2] ="PubmedId";
+                rowValues[3] ="User";
+                rowValues[4] ="When";
+                rowValues[5] ="Reviewer";
+                header = formatRow("html", rowValues, "headers",reportType,false);
             } else {
                 String[] rowValues = new String[4];
                 rowValues[0] ="AC";
