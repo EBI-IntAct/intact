@@ -10,6 +10,7 @@ import uk.ac.ebi.intact.util.sanityChecker.MessageSender;
 import uk.ac.ebi.intact.util.sanityChecker.ReportTopic;
 import uk.ac.ebi.intact.util.sanityChecker.SanityCheckerHelper;
 import uk.ac.ebi.intact.util.sanityChecker.model.AnnotationBean;
+import uk.ac.ebi.intact.util.sanityChecker.model.ExperimentBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Annotation;
@@ -310,7 +311,7 @@ public class Assigner {
      * Go though the collection of superCurators and for each experiments to be corrected, add a message to the global
      * email which is going to be sent to the concerned super-curator.
      */
-    public void addMessage(){
+    public void addMessage() throws SQLException, IntactException {
         Collection superCurators = superCuratorsGetter.getSuperCurators();
         for (Iterator iterator = superCurators.iterator(); iterator.hasNext();) {
             SuperCurator sc =  (SuperCurator) iterator.next();
@@ -320,6 +321,25 @@ public class Assigner {
             // is going to be sent.
             messageSender.addMessage(exps, sc.getName());
         }
+
+        Collection experiments = lister.getOnHoldExperiments();
+        for (Iterator iterator = experiments.iterator(); iterator.hasNext();) {
+            ExperimentBean experimentBean  =  (ExperimentBean) iterator.next();
+            messageSender.addMessage(ReportTopic.EXPERIMENT_ON_HOLD,experimentBean);
+        }
+
+        experiments = lister.getToBeReviewedExperiments();
+        for (Iterator iterator = experiments.iterator(); iterator.hasNext();) {
+            ExperimentBean experimentBean  =  (ExperimentBean) iterator.next();
+            messageSender.addMessage(ReportTopic.EXPERIMENT_TO_BE_REVIEWED,experimentBean);
+        }
+
+        experiments = lister.getNotAcceptedNotToBeReviewed();
+        for (Iterator iterator = experiments.iterator(); iterator.hasNext();) {
+            ExperimentBean experimentBean  =  (ExperimentBean) iterator.next();
+            messageSender.addMessage(ReportTopic.EXPERIMENT_NOT_ACCEPTED_NOT_TO_BE_REVIEWED,experimentBean);
+        }
+
     }
 
 
