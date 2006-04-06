@@ -79,6 +79,8 @@ public class SanityChecker {
 
     private static ControlledvocabBean neutralCvBean;
     private static ControlledvocabBean baitCvBean;
+    private static ControlledvocabBean inhibitedCvBean;
+    private static ControlledvocabBean inhibitorCvBean;
     private static ControlledvocabBean fluorophoreAcceptorCvBean;
     private static ControlledvocabBean fluorophoreDonorCvBean;
     private static ControlledvocabBean electronAcceptorCvBean;
@@ -243,9 +245,11 @@ public class SanityChecker {
         obsoleteCvBean =  (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, CvTopic.OBSOLETE).get(0);
 
         sch.addMapping(ControlledvocabBean.class, "SELECT ac, objclass FROM ia_controlledvocab WHERE ac IN ( SELECT parent_ac FROM ia_xref WHERE primaryid = ? )" );
-        neutralCvBean = (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, "MI:0497").get(0);
-        baitCvBean = (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, "MI:0496" ).get(0);
-        preyCvBean = (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, "MI:0498" ).get(0);
+        neutralCvBean = (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, CvComponentRole.NEUTRAL_PSI_REF).get(0);
+        baitCvBean = (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, CvComponentRole.BAIT_PSI_REF ).get(0);
+        preyCvBean = (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, CvComponentRole.PREY_PSI_REF ).get(0);
+        inhibitedCvBean = (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, CvComponentRole.INHIBITED_PSI_REF ).get(0);
+        inhibitorCvBean = (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, CvComponentRole.INHIBITOR_PSI_REF ).get(0);
         fluorophoreAcceptorCvBean =(ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, "MI:0584" ).get(0);
         fluorophoreDonorCvBean =(ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, "MI:0583" ).get(0);
         electronAcceptorCvBean =(ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, "MI:0580" ).get(0);
@@ -779,7 +783,9 @@ public class SanityChecker {
                         fluorophoreAcceptorCount = 0,
                         fluorophoreDonorCount = 0,
                         electronAcceptorCount = 0,
-                        electronDonorCount = 0;
+                        electronDonorCount = 0,
+                        inhibitorCount = 0,
+                        inhibitedCount = 0;
                 float selfStoichiometry = 0;
                 float neutralStoichiometry = 0;
 
@@ -816,6 +822,10 @@ public class SanityChecker {
                         electronDonorCount++;
                     } else if (electronAcceptorCvBean.getAc().equals( componentBean.getRole() )){
                         electronAcceptorCount++;
+                    } else if (inhibitedCvBean.getAc().equals(componentBean.getRole() )){
+                        inhibitedCount++;
+                    } else if (inhibitorCvBean.getAc().equals(componentBean.getRole())){
+                        inhibitorCount++;
                     }
                 }
 
@@ -826,8 +836,10 @@ public class SanityChecker {
                 int unspecified = ( unspecifiedCount > 0 ? 1 : 0 );
                 int fluorophoreAcceptorDonor = ( fluorophoreAcceptorCount + fluorophoreDonorCount > 0 ? 1 : 0);
                 int electronAcceptorDonor = ( electronAcceptorCount + electronDonorCount > 0 ? 1 : 0);
+                int inhibitedInhibitor = ( inhibitorCount + inhibitedCount > 0 ? 1 : 0);
                 // count the number of categories used.
                 int categoryCount = baitPrey + neutral + enzymeTarget + self + unspecified + fluorophoreAcceptorDonor + electronAcceptorDonor;
+
 
                 switch ( categoryCount ) {
                     case 0:
@@ -882,9 +894,10 @@ public class SanityChecker {
                                 }
                             }
 
-                        } else {
+                        }
+                        else {
                             // neutral
-                            if ( neutralCount == 1 ) {
+                            if ( neutralCount == 1 && inhibitedInhibitor == 0) {
                                 if ( neutralStoichiometry == 1 ) {
                                     //System.out.println("Interaction  " +interactionAc + "  with only one neutral");
                                     messageSender.addMessage( ReportTopic.INTERACTION_WITH_ONLY_ONE_NEUTRAL, interactionBean);//, editorUrlBuilder.getEditorUrl(interactionBean));
