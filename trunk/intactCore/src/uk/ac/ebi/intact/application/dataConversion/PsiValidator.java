@@ -7,14 +7,23 @@ package uk.ac.ebi.intact.application.dataConversion;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
+import org.xml.sax.InputSource;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.xerces.parsers.SAXParser;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.FileReader;
+import java.io.FileNotFoundException;
+import java.io.StringReader;
 
 public class PsiValidator {
+
+    private static final Log log = LogFactory.getLog(PsiValidator.class);
 
     private static class MyErrorHandler extends DefaultHandler {
 
@@ -59,37 +68,60 @@ public class PsiValidator {
 
         public void warning( SAXParseException e ) throws SAXException {
             warning = true;
-            System.out.println( "Warning: " );
+            //System.out.println( "Warning: " );
+            log.warn("SAX Warning", e);
             printInfo( e );
         }
 
         public void error( SAXParseException e ) throws SAXException {
             error = true;
-            System.out.println( "Error: " );
+            //System.out.println( "Error: " );
+            log.error("SAX Error", e);
             printInfo( e );
         }
 
         public void fatalError( SAXParseException e ) throws SAXException {
             fatal = true;
-            System.out.println( "Fattal error: " );
+            //System.out.println( "Fattal error: " );
+            log.error("SAX Fatal error", e);
             printInfo( e );
         }
 
         private void printInfo( SAXParseException e ) {
-            out.println( "   Public ID: " + e.getPublicId() );
-            out.println( "   System ID: " + e.getSystemId() );
-            out.println( "   Line number: " + e.getLineNumber() );
-            out.println( "   Column number: " + e.getColumnNumber() );
-            out.println( "   Message: " + e.getMessage() );
+            StringBuffer sb = new StringBuffer();
+            sb.append( "   Public ID: " + e.getPublicId()).append("\n");
+            sb.append( "   System ID: " + e.getSystemId() ).append("\n");;
+            sb.append( "   Line number: " + e.getLineNumber() ).append("\n");;
+            sb.append( "   Column number: " + e.getColumnNumber() ).append("\n");;
+            sb.append( "   Message: " + e.getMessage() );
+
+            log.debug(sb.toString());
+
+            out.print(sb.toString());
         }
     }
 
-    ///////////////////////////
-    // D E M O
 
-    public static boolean validate( File file ) {
+    public static boolean validate(File file) throws FileNotFoundException {
+       String filename = file.getAbsolutePath();
 
-        String parserClass = "org.apache.xerces.parsers.SAXParser";
+       log.debug( "Validating " + filename );
+
+       InputSource inputSource = new InputSource(new FileReader(filename));
+
+       return validate(inputSource);
+    }
+
+    public static boolean validate(String xmlString) {
+
+       InputSource inputSource = new InputSource(new StringReader(xmlString));
+
+       return validate(inputSource);
+    }
+
+    public static boolean validate(InputSource inputSource) {
+
+        String parserClass = SAXParser.class.getName();
         String validationFeature = "http://xml.org/sax/features/validation";
         String schemaFeature = "http://apache.org/xml/features/validation/schema";
 
@@ -97,34 +129,30 @@ public class PsiValidator {
 
         try {
 
-            String filename = file.getAbsolutePath();
-
-            System.out.println( "Validating " + filename );
-
             XMLReader r = XMLReaderFactory.createXMLReader( parserClass );
             r.setFeature( validationFeature, true );
             r.setFeature( schemaFeature, true );
 
             r.setErrorHandler( handler );
-            r.parse( filename );
+            r.parse( inputSource );
 
         } catch ( SAXException e ) {
-            System.out.println( e.toString() );
+            e.printStackTrace();
 
         } catch ( IOException e ) {
-            System.out.println( e.toString() );
+            e.printStackTrace();
         }
 
-        System.out.println( "Validation completed." );
+        log.info( "Validation completed." );
 
         if( handler.hasError() == false &&
             handler.hasFatal() == false &&
             handler.hasWarning() == false ) {
-            System.out.println( "The document is valid." );
+            log.info( "The document is valid." );
             return true;
         }
 
-        System.out.println( "The document is not valid." );
+        log.error( "The document is not valid." );
         return false;
     }
 }

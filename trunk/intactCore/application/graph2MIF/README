@@ -46,7 +46,7 @@ OTHER USEFUL COMMANDS
 	
     ant run-wsclient
 	    starts the client and retrieves a MIF Document of the interactor and depth
-		specified at the top of build.xml ( ${test-ac}, ${test-depth}, ${test-strictmif} )
+		specified at the top of build.xml 
 
 	ant clean
 		deletes temp-web and temp-doc. Also deletes the API-documentation.

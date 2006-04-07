@@ -418,6 +418,7 @@
         <echo message="Interactor AC         : ${client.AC}"/>
         <echo message="Graph depth           : ${client.depth}"/>
         <echo message="Strict MIF compliance : ${client.strictMIF}"/>
+        <echo message="PSI Version           : ${client.psiVersion}"/>
     </target>
 
     <!-- =================================================================== -->
@@ -456,7 +457,7 @@
         description="Builds the example console for Graph2MIF">
         <ant target="displayClientParameter"/>
         <javac srcdir="${root.src.dir}" destdir="${root.dest.dir}" deprecation="on"
-            debug="on" source="1.5"
+            debug="on" source="1.4"
             includes=" **/graph2MIF/client/Graph2MIFConsole.java">
             <classpath refid="project.class.path"/>
         </javac>
@@ -470,6 +471,7 @@
             <arg line="-ac ${client.AC}"/>
             <arg line="-depth ${client.depth}"/>
             <arg line="-strict ${client.strictMIF}"/>
+            <arg line="-version ${client.psiVersion}"/>
             <classpath refid="intact.class.path"/>
             <classpath refid="project.class.path"/>
         </java>

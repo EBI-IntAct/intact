@@ -80,6 +80,18 @@
                 </td>
             </tr>
             <tr>
+                <td align="right">
+                    <b>PSI Version</b> :
+                </td>
+                <td>
+                    <select name="version" size="3">
+                       <option value="1" selected>1.0</option>
+                       <option value="2">2.0</option>
+                       <option value="2.5">2.5</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
                 <td>
                     <input type="submit" value="extract XML" title="Get XML in PSI format.">
                 </td>
