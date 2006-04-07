@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.util.sanityChecker.model.ControlledvocabBean;
 //import uk.ac.ebi.intact.util.sanityChecker.model.ExperimentBean;
 import uk.ac.ebi.intact.util.sanityChecker.model.AnnotationBean;
 import uk.ac.ebi.intact.util.sanityChecker.model.Int2ExpBean;
+import uk.ac.ebi.intact.util.sanityChecker.model.ExperimentBean;
 import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
@@ -48,6 +49,12 @@ public class ExperimentLister {
      In other words, experiment not yet corrected but already assigned to a super-curator for correction.
      **/
     private Collection assignedExperiments = new ArrayList();
+
+    private Collection onHoldExperiments = new ArrayList();
+
+    private Collection toBeReviewedExperiments = new ArrayList();
+
+    private Collection notAcceptedNotToBeReviewed = new ArrayList();
 
     /**
      * HashMap permiting to map pubmed String to the corresponding Collection of ExperimentBean
@@ -103,6 +110,8 @@ public class ExperimentLister {
 
         fillPmid2CreatorMaps();
         fillPmid2expColl();
+        fillNotAcceptedNotToBeReviewedExperiments();
+        fillOnHoldAndToBeReviewedExperiments();
         helper.closeStore();
 
     }
@@ -137,6 +146,18 @@ public class ExperimentLister {
      */
     public HashMap getNotAssignedPmid2creator() {
         return notAssignedPmid2creator;
+    }
+
+    public Collection getOnHoldExperiments() {
+        return onHoldExperiments;
+    }
+
+    public Collection getToBeReviewedExperiments() {
+        return toBeReviewedExperiments;
+    }
+
+    public Collection getNotAcceptedNotToBeReviewed() {
+        return notAcceptedNotToBeReviewed;
     }
 
     /**
@@ -250,6 +271,37 @@ public class ExperimentLister {
 
 
         }
+
+    private void fillOnHoldAndToBeReviewedExperiments() throws IntactException, SQLException {
+        IntactHelper helper = new IntactHelper();
+        SanityCheckerHelper sch = new SanityCheckerHelper(helper);
+
+        sch.addMapping(ExperimentBean.class, "select e.ac, e.created_user, e.created, e.shortlabel " +
+                                             "from ia_experiment e, ia_exp2annot e2a, ia_annotation a " +
+                                             "where e2a.annotation_ac = a.ac " +
+                                             "and e2a.experiment_ac = e.ac " +
+                                             "and a.topic_ac = ? " +
+                                             "order by e.shortlabel");
+        onHoldExperiments = sch.getBeans(ExperimentBean.class,cvHolder.onHold.getAc());
+        toBeReviewedExperiments = sch.getBeans(ExperimentBean.class, cvHolder.toBeReviewed.getAc());
+        helper.closeStore();
+
+    }
+
+    private void fillNotAcceptedNotToBeReviewedExperiments() throws IntactException, SQLException {
+        IntactHelper helper = new IntactHelper();
+        SanityCheckerHelper sch = new SanityCheckerHelper(helper);
+
+        sch.addMapping(ExperimentBean.class, "select ac, created_user, created, shortlabel from ia_experiment where ac not in " +
+	                                                        "(select e.ac " +
+	                                                            "from ia_experiment e, ia_exp2annot e2a, ia_annotation a " +
+	                                                            "where e.ac=e2a.experiment_ac and " +
+	                                                            "e2a.annotation_ac=a.ac and " +
+	                                                            "a.topic_ac in ('"+cvHolder.accepted.getAc()+"','"+cvHolder.toBeReviewed.getAc()+"')) "+
+                                                                "and to_date(created,'DD-MON-YYYY HH24:MI:SS') >  to_date('01-Sep-2005:00:00:00','DD-MON-YYYY:HH24:MI:SS') and ac like ? ");
+        notAcceptedNotToBeReviewed = sch.getBeans(ExperimentBean.class,"%");
+        helper.closeStore();
+    }
 
     /**
      *
