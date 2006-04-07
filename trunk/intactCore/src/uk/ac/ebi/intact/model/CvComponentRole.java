@@ -18,6 +18,12 @@ public class CvComponentRole extends CvObject implements Editable {
     //////////////////////
     // Constants
 
+    public static final String INHIBITOR = "inhibitor";
+    public static final String INHIBITOR_PSI_REF = "MI:0586";
+
+    public static final String INHIBITED = "inhibited";
+    public static final String INHIBITED_PSI_REF = "MI:0587";
+
     public static final String BAIT = "bait";
     public static final String BAIT_PSI_REF = "MI:0496";
 
