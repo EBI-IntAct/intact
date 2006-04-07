@@ -63,21 +63,31 @@ public class Graph2MIFWSClient {
                         .withDescription("accession number")
                         .create("ac");
                 acOpt.setRequired(true);
+
                 Option depthOpt = OptionBuilder.withArgName("depth")
                         .hasArg()
                         .withDescription("depth to expand")
                         .create("depth");
                 depthOpt.setRequired(true);
+
                 Option strictOpt = OptionBuilder.withArgName("strict")
                         .hasArg()
                         .withDescription("true or false for getting only strict MIF Default: false")
                         .create("strict");
                 strictOpt.setRequired(false);
+
+                Option psiVersionOpt = OptionBuilder.withArgName("version")
+                        .hasArg()
+                        .withDescription("possible values are 1, 2 or 2.5  Default: 1")
+                        .create("version");
+                psiVersionOpt.setRequired(false);
+
                 Options options = new Options();
                 options.addOption(helpOpt);
                 options.addOption(acOpt);
                 options.addOption(depthOpt);
                 options.addOption(strictOpt);
+                options.addOption(psiVersionOpt);
                 // create the parser
                 CommandLineParser parser = new BasicParser();
                 try {
@@ -91,12 +101,8 @@ public class Graph2MIFWSClient {
 
                     // These argument are mandatory.
                     ac = line.getOptionValue("ac");
-                    Boolean strictmif;
-                    if (line.getOptionValue("strict").equals("true")) {
-                        strictmif = new Boolean(true);
-                    } else {
-                        strictmif = new Boolean(false);
-                    }
+                    Boolean strictmif = new Boolean(line.getOptionValue("strict").equals("true"));
+                    String psiVersion = line.getOptionValue("version");
 
                     try {
                         Integer depth = new Integer(line.getOptionValue("depth"));
@@ -108,7 +114,9 @@ public class Graph2MIFWSClient {
                         // call  getMIF  & give out with params to retrieve data
                         call.setMaintainSession(false);
                         call.setOperationName("getMIF");
-                        System.out.println(call.invoke(new Object[]{ac, depth, strictmif}));
+
+                        String mif = (String) call.invoke(new Object[]{ac, depth, strictmif, psiVersion});
+                        System.out.println(mif);
                     } catch (NumberFormatException e) {
                         System.err.println("depth sould be an integer");
                         System.exit(1);
@@ -136,14 +144,8 @@ public class Graph2MIFWSClient {
             } else if (e.toString().equals(GraphNotConvertableException.class.getName())) {
                 System.err.println("ERROR: Graph failed requirements of MIF. (" + e.toString() + ")");
                 System.exit(1);
-            } else if (e.toString().equals(NoGraphRetrievedException.class.getName())) {
-                System.err.println("ERROR: Could not retrieve graph from interactor (" + e.toString() + ")");
-                System.exit(1);
             } else if (e.toString().equals(MIFSerializeException.class.getName())) {
                 System.err.println("ERROR: DOM-Object could not be serialized (" + e.toString() + ")");
-                System.exit(1);
-            } else if (e.toString().equals(DataSourceException.class.getName())) {
-                System.err.println("ERROR: IntactHelper could not be created (" + e.toString() + ")");
                 System.exit(1);
             } else if (e.toString().equals(NoInteractorFoundException.class.getName())) {
                 System.err.println("ERROR: No Interactor found for this ac (" + e.toString() + ")");

@@ -62,6 +62,33 @@ public final class PsiVersion {
         return version;
     }
 
+    /**
+     * Gets the correspondent <code>PsiVersion</code> instance using the version String
+     * @param version accepted values are '1','2' and '2.5'
+     * @return the PsiVersion object for that value
+     * @throws IllegalArgumentException if the version passed is not valid
+     */
+    public static PsiVersion valueOf(String version) throws IllegalArgumentException
+    {
+        PsiVersion psiVersionFromValue = new PsiVersion(version);
+
+        if (psiVersionFromValue.equals(getVersion1()))
+        {
+            return getVersion1();
+        }
+        else if (psiVersionFromValue.equals(getVersion2()))
+        {
+           return getVersion2();
+        }
+        else if (psiVersionFromValue.equals(getVersion25()))
+        {
+            return getVersion25();
+        }
+
+        throw new IllegalArgumentException("Invalid PSI version: "+version);
+
+    }
+
     /////////////////////////
     // Equality
 
@@ -75,11 +102,8 @@ public final class PsiVersion {
 
         final PsiVersion psiVersion = (PsiVersion) o;
 
-        if ( version != psiVersion.version ) {
-            return false;
-        }
+        return version.equals(psiVersion.getVersion());
 
-        return true;
     }
 
     public int hashCode() {
