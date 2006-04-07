@@ -91,8 +91,8 @@ public class ReportTopic {
         public static final ReportTopic EXPERIMENT_WITHOUT_ORGANISM = new ReportTopic( "Experiments with no organism" );
         public static final ReportTopic EXPERIMENT_WITHOUT_CVIDENTIFICATION = new ReportTopic( "Experiments with no CvIdentification" );
         public static final ReportTopic EXPERIMENT_WITHOUT_CVINTERACTION = new ReportTopic( "Experiments with no CvInteraction" );
-        public static final ReportTopic EXPERIMENT_TO_BE_REVIEWED = new ReportTopic( "Experiments to be reviewed" );
-        public static final ReportTopic EXPERIMENT_ON_HOLD = new ReportTopic( "Experiments is on hold" );
+        public static final ReportTopic EXPERIMENT_TO_BE_REVIEWED = new ReportTopic( "Experiments having an annotation to-be-reviewed" );
+        public static final ReportTopic EXPERIMENT_ON_HOLD = new ReportTopic( "Experiments having an annotation on-hold" );
         public static final ReportTopic EXPERIMENT_NOT_ACCEPTED_NOT_TO_BE_REVIEWED = new ReportTopic("Experiment(s) without annotation 'to-be-reviewed' or 'accepted'");
 
         //
@@ -111,6 +111,8 @@ public class ReportTopic {
         public static final ReportTopic INTERACTION_WITH_NO_ELECTRON_DONOR = new ReportTopic( "Interactions with electron donor" );
         public static final ReportTopic INTERACTION_WITH_NO_ENZYME_TARGET = new ReportTopic( "Interactions with no enzymeTarget" );
         public static final ReportTopic INTERACTION_WITH_NO_ENZYME = new ReportTopic( "Interactions with no enzyme" );
+        public static final ReportTopic INTERACTION_WITH_NO_INHIBITED = new ReportTopic( "Interactions with no inhibited" );
+        public static final ReportTopic INTERACTION_WITH_NO_INHIBITOR = new ReportTopic( "Interactions with no inhibitor" );
         public static final ReportTopic INTERACTION_WITH_ONLY_ONE_NEUTRAL = new ReportTopic( "Interactions with only one neutral component and stoichiometry 1" );
         public static final ReportTopic INTERACTION_WITH_PROTEIN_COUNT_LOWER_THAN_2 = new ReportTopic( "Interactions with less than 2 proteins (Role = complex)" );
         public static final ReportTopic INTERACTION_WITH_SELF_PROTEIN_AND_STOICHIOMETRY_LOWER_THAN_2 = new ReportTopic( "Interactions with protein having their role set to self and its stoichiometry lower than 2.0" );
