@@ -23,8 +23,6 @@ import uk.ac.ebi.intact.business.IntactException;
  */
 public interface Graph2MIFWS {
 
-    String sayHello();
-
     /**
 	 * getMIF is the only method which is necessary.
 	 * @param ac String ac in IntAct

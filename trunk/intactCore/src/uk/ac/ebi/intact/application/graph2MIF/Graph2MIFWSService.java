@@ -14,14 +14,12 @@ import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Interaction2xmlFactory;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Interaction2xmlI;
-import uk.ac.ebi.intact.application.graph2MIF.exception.GraphNotConvertableException;
 import uk.ac.ebi.intact.application.graph2MIF.exception.MIFSerializeException;
 import uk.ac.ebi.intact.application.graph2MIF.exception.NoGraphRetrievedException;
 import uk.ac.ebi.intact.application.graph2MIF.exception.NoInteractorFoundException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.simpleGraph.EdgeI;
 import uk.ac.ebi.intact.simpleGraph.Graph;
 
@@ -45,12 +43,6 @@ import java.util.Set;
 public class Graph2MIFWSService implements Graph2MIFWS
 {
     private static Logger logger = Logger.getLogger("graph2MIF");
-
-    public String sayHello()
-    {
-        return "hello";
-    }
-
 
     public String getMIF(String ac, Integer depth, Boolean strictmif) throws IntactException,
                                                                              NoGraphRetrievedException,
