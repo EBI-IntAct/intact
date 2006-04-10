@@ -5,22 +5,27 @@
 package uk.ac.ebi.intact.model;
 
 
-
 /**
- * he method by which the Interaction has been determined.
- * example co-immunoprecipitation
+ * he method by which the Interaction has been determined. example co-immunoprecipitation
  *
  * @author hhe
  * @version $Id$
  */
 public class CvInteraction extends CvDagObject {
 
+    public static final String INFERRED_BY_CURATOR = "inferred by curator";
+    public static final String INFERRED_BY_CURATOR_MI_REF = "MI:0364";
+
     public static final String EXPERIMENTAL_INTERACTION = "experimental interac";
 
     /**
-     * Cache a Vector of all shortLabels of the class, e.g. for menus.
-     * This should not be here as it has no model functionality but is
-     * related to eg user interfaces.
+     * Cache a Vector of all shortLabels of the class, e.g. for menus. This should not be here as it has no model
+     * functionality but is related to eg user interfaces.
+     * <p/>
+     * This constructor should <b>not</b> be used as it could result in objects with invalid state. It is here for
+     * object mapping purposes only and if possible will be made private.
+     *
+     * @deprecated Use the full constructor instead
      */
     // TODO should be moved away
 //    protected static Vector menuList = null;
@@ -38,16 +43,17 @@ public class CvInteraction extends CvDagObject {
     }
 
     /**
-     * Creates a valid CvInteraction instance. Requires at least a shortLabel and an
-     * owner to be specified.
+     * Creates a valid CvInteraction instance. Requires at least a shortLabel and an owner to be specified.
+     *
      * @param shortLabel The memorable label to identify this CvInteraction
-     * @param owner The Institution which owns this CvInteraction
-     * @exception NullPointerException thrown if either parameters are not specified
+     * @param owner      The Institution which owns this CvInteraction
+     *
+     * @throws NullPointerException thrown if either parameters are not specified
      */
-    public CvInteraction(Institution owner, String shortLabel) {
+    public CvInteraction( Institution owner, String shortLabel ) {
 
         //super call sets up a valid CvObject
-        super(owner, shortLabel);
+        super( owner, shortLabel );
     }
 
 } // end CvInteraction
