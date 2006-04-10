@@ -46,6 +46,11 @@ public class Graph2MIFWSService implements Graph2MIFWS
 {
     private static Logger logger = Logger.getLogger("graph2MIF");
 
+    public String sayHello()
+    {
+        return "hello";
+    }
+
 
     public String getMIF(String ac, Integer depth, Boolean strictmif) throws IntactException,
                                                                              NoGraphRetrievedException,
@@ -66,7 +71,7 @@ public class Graph2MIFWSService implements Graph2MIFWS
     /**
      *  Gets the MIF using a PsiVersion object
      */
-    public String getMIF(String ac, Integer depth, Boolean strictmif, PsiVersion psiVersion) throws IntactException,
+    private String getMIF(String ac, Integer depth, Boolean strictmif, PsiVersion psiVersion) throws IntactException,
                                                                                                      NoGraphRetrievedException,
                                                                                                      MIFSerializeException,
                                                                                                      NoInteractorFoundException

@@ -115,7 +115,7 @@ public class Graph2MIFWSClient {
                         call.setMaintainSession(false);
                         call.setOperationName("getMIF");
 
-                        String mif = (String) call.invoke(new Object[]{ac, depth, strictmif, psiVersion});
+                        String mif = (String) call.invoke(new Object[]{ac, depth, strictmif,psiVersion});
                         System.out.println(mif);
                     } catch (NumberFormatException e) {
                         System.err.println("depth sould be an integer");

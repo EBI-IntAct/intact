@@ -76,7 +76,7 @@ public class Graph2MIFWSServlet extends HttpServlet {
                 String mif = null;
                 try
                 {
-                    mif = ws.getMIF(ac, depth, strictmif, PsiVersion.valueOf(psiVersion));
+                    mif = ws.getMIF(ac, depth, strictmif, psiVersion);
                 }
                 catch (MIFSerializeException e)
                 {
