@@ -94,6 +94,7 @@ public class SanityChecker {
     private static ControlledvocabBean nTerminalCvBean;
     private static ControlledvocabBean undeterminedCvBean;
     private static ControlledvocabBean inferredByCuratorCvBean;
+    private static ControlledvocabBean interactionCvBean;
     /**
      * Xref databases
      */
@@ -273,15 +274,16 @@ public class SanityChecker {
         nTerminalCvBean=(ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, "MI:0340" ).get(0);
 
         undeterminedCvBean=(ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, "MI:0339" ).get(0);
-
+        interactionCvBean = (ControlledvocabBean) sch.getBeans(ControlledvocabBean.class, CvInteractorType.INTERACTION_MI_REF ).get(0);
         hiddenObsoleteNotInUsed = new SanityCheckerHelper(helper);
         hiddenObsoleteNotInUsed.addMapping(ControlledvocabBean.class,
                                           "select c.ac, c.created, c.created_user, c.shortlabel, c.objclass " +
                                           "from ia_controlledvocab c, ia_cvobject2annot c2a, ia_annotation a " +
                                           "where c.ac=c2a.cvobject_ac " +
                                           "and c2a.annotation_ac=a.ac " +
-                                          "and a.topic_ac in ('" + hiddenCvBean.getAc() + "','" +obsoleteCvBean.getAc() + "')" +
-                                          "and c.ac like ? ");
+                                          "and a.topic_ac in ('" + hiddenCvBean.getAc() + "','" +obsoleteCvBean.getAc() +"')" +
+                                          "and c.ac like ? " +
+                                          "and c.ac != " + interactionCvBean.getAc());
 
         this.onHoldSch = new SanityCheckerHelper(helper);
         onHoldSch.addMapping(Exp2AnnotBean.class, "SELECT experiment_ac "+
@@ -564,7 +566,6 @@ public class SanityChecker {
                                            "from ia_interactor " +
                                            "where interactortype_ac = ? ");
         for (Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext();) {
-
             ControlledvocabBean hiddenOrObsoleteCv =  (ControlledvocabBean) iterator.next();
             Collection interactorBeans = hiddenObsoleteNotInUsed.getBeans( InteractorBean.class, hiddenOrObsoleteCv.getAc());
 
