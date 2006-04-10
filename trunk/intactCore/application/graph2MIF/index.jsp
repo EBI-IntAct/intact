@@ -84,10 +84,9 @@
                     <b>PSI Version</b> :
                 </td>
                 <td>
-                    <select name="version" size="3">
-                       <option value="1" selected>1.0</option>
-                       <option value="2">2.0</option>
-                       <option value="2.5">2.5</option>
+                    <select name="version" size="2">
+                       <option value="1">1.0</option>
+                       <option value="2.5" selected>2.5</option>
                     </select>
                 </td>
             </tr>
@@ -102,7 +101,7 @@
     <hr>
 
     <p>
-      <a href="<%= request.getContextPath() %>/axis">See AxisServlet</a>
+      <a href="<%= request.getContextPath() %>/services">See AxisServlet</a>
     </p>
 
 </body>

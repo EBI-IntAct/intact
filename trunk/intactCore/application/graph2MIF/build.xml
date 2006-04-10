@@ -88,7 +88,8 @@
         <pathelement path="${root.lib.dir}/log4j-1.2.8.jar"/>
         <pathelement path="${root.lib.dir}/servlet.jar"/>
         <pathelement path="${root.lib.dir}/commons-logging.jar"/>
-        <pathelement path="${root.lib.dir}/jaxrpc.jar"/>
+        <pathelement path="${root.lib.dir}/jaxrpc-api.jar"/>
+        <pathelement path="${root.lib.dir}/jaxrpc-impl.jar"/>
         <pathelement path="${root.lib.dir}/commons-lang-2.0.jar"/>
         <pathelement path="${root.lib.dir}/commons-cli-1.0.jar"/>
         <pathelement path="${root.lib.dir}/commons-pool-1.1.jar"/>
@@ -280,7 +281,8 @@
             <fileset dir="${root.dist.dir}"/>
             <!-- Include required jar files from intact core. -->
             <fileset dir="${root.lib.dir}">
-                <include name="jaxrpc.jar"/>
+                <include name="jaxrpc-api.jar"/>
+                <include name="jaxrpc-impl.jar"/>
                 <include name="commons-lang-2.0.jar"/>
                 <include name="commons-pool-1.1.jar"/>
                 <include name="commons-collections-3.0.jar"/>
@@ -446,6 +448,7 @@
             <arg line="-ac ${client.AC}"/>
             <arg line="-depth ${client.depth}"/>
             <arg line="-strict ${client.strictMIF}"/>
+            <arg line="-version ${client.psiVersion}"/>
             <classpath refid="intact.class.path"/>
             <classpath refid="project.class.path"/>
         </java>
