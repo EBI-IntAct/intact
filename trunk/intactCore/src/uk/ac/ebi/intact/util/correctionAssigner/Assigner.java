@@ -74,8 +74,10 @@ public class Assigner {
                 // programm, therefore, we throw an Exception, this can be due to the fact that the reviewer is not
                 // defined in the correctionAssigner.properties file, or because it was a problem initializing the
                 // SuperCuratorGetter object.
-                throw new Exception("The experiment[" + exp.getAc() + "," + exp.getShortlabel() + "] was assigned to " +
-                        exp.getReviewer() + "but we couldn't get the superCurator corresponding to this reviewer" );
+                throw new Exception( "The experiment[" + exp.getAc() + "," + exp.getShortlabel() + "] was assigned to " +
+                        exp.getReviewer() + "but we couldn't get the superCurator corresponding to this reviewer, we " +
+                        " he was on holyday we assign to somebody else." );
+
             }
             pubmedPreviouslyAssigned.put(exp.getPubmedId(), exp.getReviewer().toLowerCase());
         }
@@ -152,36 +154,39 @@ public class Assigner {
         // For each superCurator :
         for (Iterator iterator = superCurators.iterator(); iterator.hasNext();) {
             SuperCurator superCurator =  (SuperCurator) iterator.next();
-            // Get the number of pubmedIds this superCurator should be affected.
-            int numberOfPubmeds =  getNumberOfPubmed(superCurator.getPercentage(),lister.getNotAssignedPmid2creator().size());
+            if (superCurator.getPercentage() != 0 ) {
 
-            int i = 0;
-            // For each not assigned pubmedId (pmid) and while the number of affected pubmedId is smaller then the number
-            // pubmedId this superCurator should be assigned :
-            Iterator it = notAssignedPmid2creator.entrySet().iterator();
-            while (it.hasNext() && i < numberOfPubmeds) {
+                // Get the number of pubmedIds this superCurator should be affected.
+                int numberOfPubmeds =  getNumberOfPubmed(superCurator.getPercentage(),lister.getNotAssignedPmid2creator().size());
 
-                Map.Entry pairs = (Map.Entry)it.next();
-                // Check that the superCurator name is not the creator of the pubmedId. As a curator can not correct
-                // its own data.
-                if(!superCurator.getName().toLowerCase().equals(((String)pairs.getValue()).toLowerCase())){
-                    Collection expToAdd = (Collection) pubmedToExp.get(pairs.getKey());
-                    //For each experiment corresponding to this pubmed we just assigned.
-                    for (Iterator iterator1 = expToAdd.iterator(); iterator1.hasNext();) {
-                        ComparableExperimentBean exp =  (ComparableExperimentBean) iterator1.next();
-                        //Add the experiment the Collection of experiments to correct of the superCurator.
-                        superCurator.addExperiment(exp);
-                        //remove the experiment from the Collection of not assigned experiments.
-                        notAssignedExperiments.remove(exp);
-                        //Add the annotation reviewer to the experiment.
-                        addReviewerAnnotation(exp.getAc(),superCurator.getName());
+                int i = 0;
+                // For each not assigned pubmedId (pmid) and while the number of affected pubmedId is smaller then the number
+                // pubmedId this superCurator should be assigned :
+                Iterator it = notAssignedPmid2creator.entrySet().iterator();
+                while (it.hasNext() && i < numberOfPubmeds) {
+
+                    Map.Entry pairs = (Map.Entry)it.next();
+                    // Check that the superCurator name is not the creator of the pubmedId. As a curator can not correct
+                    // its own data.
+                    if(!superCurator.getName().toLowerCase().equals(((String)pairs.getValue()).toLowerCase())){
+                        Collection expToAdd = (Collection) pubmedToExp.get(pairs.getKey());
+                        //For each experiment corresponding to this pubmed we just assigned.
+                        for (Iterator iterator1 = expToAdd.iterator(); iterator1.hasNext();) {
+                            ComparableExperimentBean exp =  (ComparableExperimentBean) iterator1.next();
+                            //Add the experiment the Collection of experiments to correct of the superCurator.
+                            superCurator.addExperiment(exp);
+                            //remove the experiment from the Collection of not assigned experiments.
+                            notAssignedExperiments.remove(exp);
+                            //Add the annotation reviewer to the experiment.
+                            addReviewerAnnotation(exp.getAc(),superCurator.getName());
+                        }
+                        //remove the key/value pubmedId/creator from the map notAssignedPmid2creator.
+                        it.remove();
+                        //increment i to show that one more pubmedId has been assigned to this superCreator.
+                        i++;
                     }
-                    //remove the key/value pubmedId/creator from the map notAssignedPmid2creator.
-                    it.remove();
-                    //increment i to show that one more pubmedId has been assigned to this superCreator.
-                    i++;
-                }
 
+                }
             }
         }
     }
@@ -212,6 +217,7 @@ public class Assigner {
                 //Iterate on the collection of SuperCurators
                 for (Iterator iterator = superCurators.iterator(); iterator.hasNext();) {
                     SuperCurator superCurator =  (SuperCurator) iterator.next();
+                    if (superCurator.getPercentage() != 0 ){
                         //If the superCurator is not the curator who entered this pubmed into the database we affect it to him.
                         if(!superCurator.getName().toLowerCase().equals(pairs.getValue())){
                             //Affect all the experiment corresponding to this pubmed Id to the superCurator.
@@ -231,6 +237,7 @@ public class Assigner {
                             //try with an other SuperCurator. So break the iteration on the SuperCurators collection.
                             break;
                         }
+                    }
                 }
             }
         }

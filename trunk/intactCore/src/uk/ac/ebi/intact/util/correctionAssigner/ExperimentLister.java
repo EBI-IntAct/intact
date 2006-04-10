@@ -13,9 +13,8 @@ import uk.ac.ebi.intact.util.sanityChecker.model.ControlledvocabBean;
 import uk.ac.ebi.intact.util.sanityChecker.model.AnnotationBean;
 import uk.ac.ebi.intact.util.sanityChecker.model.Int2ExpBean;
 import uk.ac.ebi.intact.util.sanityChecker.model.ExperimentBean;
-import uk.ac.ebi.intact.model.CvTopic;
-import uk.ac.ebi.intact.model.CvDatabase;
-import uk.ac.ebi.intact.model.CvXrefQualifier;
+import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.html.Helper;
 //import uk.ac.ebi.intact.model.Experiment;
 
 import java.util.*;
@@ -71,6 +70,10 @@ public class ExperimentLister {
      */
     private HashMap assignedPmid2creator = new HashMap();
 
+//    public void removeElementFromAssignedPmid2creator(String pmid){
+//        assignedPmid2creator.remove(pmid);
+//    }
+
     /**
      * Constructor of ExperimentLister.
      *
@@ -99,14 +102,13 @@ public class ExperimentLister {
         helper = getIntactHelper();
         cvHolder = getCvHolder();
 
+        removeCorrectionForSuperCuratorAway();
+
         fillNotAssignedExpCollection();
         removeExpOnHoldAndWithNoInteraction(notAssignedExperiments);
-        System.out.println(" number of not assigned Exp " + notAssignedExperiments.size());
 
         fillAssignedExpCollection();
         removeExpOnHoldAndWithNoInteraction(assignedExperiments);
-        System.out.println(" number of  assigned Exp " + assignedExperiments.size());
-
 
         fillPmid2CreatorMaps();
         fillPmid2expColl();
@@ -148,6 +150,10 @@ public class ExperimentLister {
         return notAssignedPmid2creator;
     }
 
+//    public void addElementInNotAssignedPmid2creator(String pmid, String creator){
+//        notAssignedPmid2creator.put(pmid, creator.toLowerCase());
+//    }
+
     public Collection getOnHoldExperiments() {
         return onHoldExperiments;
     }
@@ -160,6 +166,9 @@ public class ExperimentLister {
         return notAcceptedNotToBeReviewed;
     }
 
+//    public void addExp2NotAcceptedNotToBeReviewed(ComparableExperimentBean exp){
+//        notAcceptedNotToBeReviewed.add(exp);
+//    }
     /**
          * Via the sanityCheckerHelper this method is using the dbUtils library to get the Collection notAssignedExperiments
          * of experimentBeans being to assigned to a reviewer for correction.
@@ -167,8 +176,7 @@ public class ExperimentLister {
          * @throws IntactException
          * @throws SQLException
          */
-        private void fillNotAssignedExpCollection() throws Exception, SQLException {
-
+    private void fillNotAssignedExpCollection() throws Exception, SQLException {
             IntactHelper intactHelper = getIntactHelper();
             CvHolder holder = getCvHolder();
 
@@ -207,7 +215,6 @@ public class ExperimentLister {
          */
 
         private void fillAssignedExpCollection() throws Exception, SQLException {
-
             CvHolder holder = getCvHolder();
             IntactHelper intactHelper = getIntactHelper();
 
@@ -228,6 +235,67 @@ public class ExperimentLister {
         }
 
 
+    /**
+     * If a superCurator is away we should re-assigne its corrections to somebody else and stoppe assigning him new
+     * corrections. The fact that a superCurator is away can be seen in the fact that it's method getPercentage return 0
+     * .
+     * To re-assign it's correction to somebody else we just remove all the annotation on experiment having as topic_ac
+     * the ac of the reviewer controlled vocabulary and as description the name of the superCurator being away.
+     * Then the assigner will automatically detect its former-assigned experiments as not assigned experiments and will
+     * automatically re-assign them.
+     *
+     *
+     * @throws Exception
+     */
+    public void removeCorrectionForSuperCuratorAway() throws Exception {
+
+        SuperCuratorsGetter superCurotorsGetter = new SuperCuratorsGetter();
+        Collection superCurators = superCurotorsGetter.getSuperCurators();
+
+        for (Iterator iterator = superCurators.iterator(); iterator.hasNext();) {
+            SuperCurator sc =  (SuperCurator) iterator.next();
+            if( sc.getPercentage() == 0 ){
+                IntactHelper intactHelper = getIntactHelper();
+                SanityCheckerHelper sch = new SanityCheckerHelper(intactHelper);
+                sch.addMapping(ComparableExperimentBean.class, "select e.ac, e.shortlabel, e.created, e.created_user " +
+                        "from ia_experiment e, ia_exp2annot e2a , ia_annotation a " +
+                        "where e.ac = e2a.experiment_ac " +
+                        "and a.ac = e2a.annotation_ac " +
+                        "and a.topic_ac = '" + cvHolder.reviewer.getAc() + "' " +
+                        "and a.description = ? ");
+                Collection experiments = sch.getBeans(ComparableExperimentBean.class, sc.getName().toLowerCase());
+                for (Iterator iterator1 = experiments.iterator(); iterator1.hasNext();) {
+                    ComparableExperimentBean comparableExperimentBean =  (ComparableExperimentBean) iterator1.next();
+                    removeReviewerAnnotation(comparableExperimentBean.getAc());
+                }
+            }
+        }
+    }
+
+    /**
+     * Remove the reviewer annotation linked to this experiment having the ac given in paremeter.
+     * @param expAc ac of the experiment from which we need to remove the reviewer annotation(s).
+     * @throws IntactException
+     */
+    public void removeReviewerAnnotation(String expAc) throws IntactException {
+
+        IntactHelper helper = new IntactHelper();
+        //Get the util.model.Experiment object corresponding to this experiment ac.
+        Experiment experiment = (Experiment) helper.getObjectByAc(Experiment.class, expAc);
+
+        Collection annotations = experiment.getAnnotations();
+        for (Iterator iterator = annotations.iterator(); iterator.hasNext();) {
+            Annotation annotation =  (Annotation) iterator.next();
+            if(annotation.getCvTopic().getShortLabel().equals(CvTopic.REVIEWER)){
+                iterator.remove();
+                helper.delete(annotation);
+                experiment.removeAnnotation(annotation);
+
+            }
+        }
+
+        helper.update(experiment);
+    }
 
     /**
      * From the Collection of not yet asseigned ExperimentBean, build a the hashMap pmid2expColl.
@@ -255,7 +323,6 @@ public class ExperimentLister {
          *      notAssignedPmid2creator
          */
         private void fillPmid2CreatorMaps(){
-
             for (Iterator iterator = assignedExperiments.iterator(); iterator.hasNext();) {
                 ComparableExperimentBean exp =  (ComparableExperimentBean) iterator.next();
                 assignedPmid2creator.put(exp.getPubmedId(), exp.getCreated_user().toLowerCase());
@@ -273,7 +340,7 @@ public class ExperimentLister {
         }
 
     private void fillOnHoldAndToBeReviewedExperiments() throws IntactException, SQLException {
-        IntactHelper helper = new IntactHelper();
+        IntactHelper helper = getIntactHelper();
         SanityCheckerHelper sch = new SanityCheckerHelper(helper);
 
         sch.addMapping(ExperimentBean.class, "select e.ac, e.created_user, e.created, e.shortlabel " +
@@ -284,12 +351,11 @@ public class ExperimentLister {
                                              "order by e.shortlabel");
         onHoldExperiments = sch.getBeans(ExperimentBean.class,cvHolder.onHold.getAc());
         toBeReviewedExperiments = sch.getBeans(ExperimentBean.class, cvHolder.toBeReviewed.getAc());
-        helper.closeStore();
 
     }
 
     private void fillNotAcceptedNotToBeReviewedExperiments() throws IntactException, SQLException {
-        IntactHelper helper = new IntactHelper();
+        IntactHelper helper = getIntactHelper();
         SanityCheckerHelper sch = new SanityCheckerHelper(helper);
 
         sch.addMapping(ExperimentBean.class, "select ac, created_user, created, shortlabel from ia_experiment where ac not in " +
@@ -300,7 +366,7 @@ public class ExperimentLister {
 	                                                            "a.topic_ac in ('"+cvHolder.accepted.getAc()+"','"+cvHolder.toBeReviewed.getAc()+"')) "+
                                                                 "and to_date(created,'DD-MON-YYYY HH24:MI:SS') >  to_date('01-Sep-2005:00:00:00','DD-MON-YYYY:HH24:MI:SS') and ac like ? ");
         notAcceptedNotToBeReviewed = sch.getBeans(ExperimentBean.class,"%");
-        helper.closeStore();
+
     }
 
     /**
@@ -323,10 +389,7 @@ public class ExperimentLister {
                 "and e2a.experiment_ac = ? ");
         Collection annotations = sch.getBeans(AnnotationBean.class, experiment.getAc());
         if(annotations.isEmpty()){
-            System.out.println(experiment.getAc() + " is not on-hold");
             onHold = false;
-        }else{
-            System.out.println(experiment.getAc() + " is on hold");
         }
         return onHold;
     }
@@ -341,9 +404,8 @@ public class ExperimentLister {
                                           "where experiment_ac = ? ");
         Collection int2exps = sch.getBeans(Int2ExpBean.class, experiment.getAc());
         if(int2exps.isEmpty()){
-            System.out.println(experiment.getAc() + " has no interactions");
             hasNoInteractions = true;
-        } else System.out.println(experiment.getAc() + " has interactions");
+        }
         return hasNoInteractions;
     }
 
