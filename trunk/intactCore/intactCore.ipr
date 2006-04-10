@@ -28,6 +28,20 @@
       <maximumHeapSize value="128" />
       <properties />
     </buildFile>
+    <buildFile url="file://$PROJECT_DIR$/application/hierarchView/build.xml">
+      <additionalClassPath />
+      <antReference projectDefault="true" />
+      <customJdkName value="" />
+      <maximumHeapSize value="128" />
+      <properties />
+    </buildFile>
+    <buildFile url="file://$PROJECT_DIR$/application/hierarchView/ws/build.xml">
+      <additionalClassPath />
+      <antReference projectDefault="true" />
+      <customJdkName value="" />
+      <maximumHeapSize value="128" />
+      <properties />
+    </buildFile>
   </component>
   <component name="CodeStyleSettingsManager">
     <option name="PER_PROJECT_SETTINGS" />

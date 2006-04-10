@@ -13,6 +13,15 @@
             <listener-class>org.apache.axis.transport.http.AxisHTTPSessionListener</listener-class>
       </listener>
 
+    <servlet>
+        <servlet-name>Servlet</servlet-name>
+        <display-name>getXML</display-name>
+        <servlet-class>
+            uk.ac.ebi.intact.application.graph2MIF.Graph2MIFWSServlet
+        </servlet-class>
+        <load-on-startup>100</load-on-startup>
+    </servlet>
+
       <servlet>
         <servlet-name>AxisServlet</servlet-name>
         <display-name>Apache-Axis Servlet</display-name>
@@ -42,6 +51,11 @@
         </init-param>
         <load-on-startup>100</load-on-startup>
       </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Servlet</servlet-name>
+        <url-pattern>/getXML</url-pattern>
+    </servlet-mapping>
 
       <servlet-mapping>
         <servlet-name>AxisServlet</servlet-name>

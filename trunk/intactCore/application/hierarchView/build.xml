@@ -101,6 +101,9 @@ Verison: $Id$
 
         <pathelement path="${root.dest.dir}"/>
         <pathelement path="${dest.dir}"/>
+        <pathelement path="${root.lib.dir}/jaxrpc-impl.jar"/>
+        <pathelement path="${root.lib.dir}/jaxrpc-api.jar"/>
+        <pathelement path="${root.lib.dir}/jax-1_1-fr-qname-class.jar"/>
         <pathelement path="${root.lib.dir}/db-ojb-1.0.rc6.jar"/>
         <pathelement path="${root.lib.dir}/log4j-1.2.8.jar"/>
         <pathelement path="${root.lib.dir}/servlet.jar"/>
@@ -428,7 +431,8 @@ Verison: $Id$
                includes="**/application/hierarchView/**,
                       **/application/commons/**,
                       **/util/PropertyLoader*,
-                      **/util/SearchReplace*"
+                      **/util/SearchReplace*,
+                      **/util/logging/**"
 
                debug="on">
             <classpath refid="project.class.path"/>
@@ -470,15 +474,40 @@ Verison: $Id$
         The variable ${webService.adress} come from WebService.properties file.
         -->
         <echo message="Generating WSDL file..."/>
-        <java classname="org.apache.axis.wsdl.Java2WSDL" fork="yes">
-            <arg line="-o ${ws.tulip.wsdl}"/>
-            <arg value="-l${webService.adress}"/>
-            <arg line="-n urn:tulip"/>
-            <arg value="-p ${ws.tulip.server.pkg}"/>
-            <arg value="urn:${ws.tulip.server.pkg}"/>
-            <arg value="${ws.tulip.server.pkg}.TulipAccess"/>
-            <classpath refid="project.class.path"/>
-        </java>
+
+        <taskdef name="java2Wsdl"
+             classname="org.apache.axis.tools.ant.wsdl.Java2WsdlAntTask"
+             classpathref="project.class.path" />
+        <taskdef name="wsdl2Java"
+             classname="org.apache.axis.tools.ant.wsdl.Wsdl2javaAntTask"
+             classpathref="project.class.path" />
+
+        <!-- Generate WSDL -->
+        <java2Wsdl output="${ws.tulip.wsdl}"
+            className="${ws.tulip.server.pkg}.TulipAccess"
+            implClass="${ws.tulip.server.pkg}.TulipAccessImpl"
+            namespace="urn:tulip"
+            style="RPC" use="ENCODED"
+            extraClasses="${ws.tulip.server.pkg}.ProteinCoordinate"
+            typeMappingVersion="1.1"
+            location="${webService.adress}">
+            <mapping namespace="urn:tulip" package="${ws.tulip.server.pkg}"/>
+            <classpath>
+                <path refid="project.class.path"/>
+                <pathelement location="${dest.dir}"/>
+            </classpath>
+        </java2Wsdl>
+
+        <!-- Generate server side files.  (Commented because it does not generate the WSDD files)
+        <wsdl2Java
+            output="."
+            helpergen="false"
+            url="${ws.tulip.wsdl}"
+            deployscope="${ws.session.type}"
+            typeMappingVersion="1.1">
+            <mapping namespace="urn:tulip" package="${root.src.dir}/${ws.tulip.client.dir}.generated"/>
+        </wsdl2Java>
+        -->
 
         <!-- Generate server side files. -->
         <echo message="Generating Server side files..."/>
@@ -488,6 +517,7 @@ Verison: $Id$
             <arg value="-s"/>
             <arg line="-p ${ws.tulip.server.pkg}.generated"/>
             <arg value="${ws.tulip.wsdl}"/>
+
             <classpath refid="project.class.path"/>
         </java>
 
