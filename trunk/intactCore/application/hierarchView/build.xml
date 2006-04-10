@@ -103,7 +103,6 @@ Verison: $Id$
         <pathelement path="${dest.dir}"/>
         <pathelement path="${root.lib.dir}/jaxrpc-impl.jar"/>
         <pathelement path="${root.lib.dir}/jaxrpc-api.jar"/>
-        <pathelement path="${root.lib.dir}/jax-1_1-fr-qname-class.jar"/>
         <pathelement path="${root.lib.dir}/db-ojb-1.0.rc6.jar"/>
         <pathelement path="${root.lib.dir}/log4j-1.2.8.jar"/>
         <pathelement path="${root.lib.dir}/servlet.jar"/>
