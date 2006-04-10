@@ -48,6 +48,18 @@ public class CvComponentRole extends CvObject implements Editable {
     public static final String SELF = "self";
     public static final String SELF_PSI_REF = "MI:0503";
 
+    public static final String ELECTRON_DONOR = "electron donor";
+    public static final String ELECTRON_DONOR_MI_REF = "MI:0579";
+
+    public static final String ELECTRON_ACCEPTOR = "electron acceptor";
+    public static final String ELECTRON_ACCEPTOR_MI_REF = "MI:0580";
+
+    public static final String FLUROPHORE_DONOR = "donor fluorophore";
+    public static final String FLUROPHORE_DONOR_MI_REF = "MI:0583";
+
+    public static final String FLUROPHORE_ACCEPTOR = "acceptor fluorophore";
+    public static final String FLUROPHORE_ACCEPTOR_MI_REF = "MI:0584";
+
 
     /**
      * This constructor should <b>not</b> be used as it could result in objects with invalid state. It is here for
