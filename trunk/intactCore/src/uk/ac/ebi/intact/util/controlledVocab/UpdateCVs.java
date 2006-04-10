@@ -1190,6 +1190,8 @@ public class UpdateCVs {
 
         Annotation myAnnotation = null;
 
+        Collection<Annotation> toDelete = new ArrayList<Annotation>();
+
         for ( Iterator iterator = cvObject.getAnnotations().iterator(); iterator.hasNext(); ) {
             Annotation annotation = (Annotation) iterator.next();
 
@@ -1198,11 +1200,19 @@ public class UpdateCVs {
                 if ( myAnnotation == null ) {
                     myAnnotation = annotation; // we keep the first one and delete all others
                 } else {
-                    iterator.remove();
-                    helper.delete( annotation );
+                    toDelete.add( annotation ); // keep track for later deletion
                 }
             }
         } // for all annotations
+
+
+        for ( Annotation annotation : toDelete ) {
+            System.out.println( "Removing extra annotation: Annotation(" + annotation.getCvTopic().getShortLabel() + ", '" +
+                                annotation.getAnnotationText() + "')" );
+            cvObject.removeAnnotation( annotation );
+            helper.update( cvObject );
+            helper.delete( annotation );
+        }
 
         return myAnnotation;
     }
@@ -1340,7 +1350,7 @@ public class UpdateCVs {
                     if ( mi != null && mi.startsWith( "MI:" ) ) {
                         cv = (CvObject) helper.getObjectByPrimaryId( clazz, mi );
                         if ( cv == null ) {
-
+                            System.out.println( "Could not find the object by the given reference: '" + mi + "'." );
                         }
                     }
 
@@ -1356,16 +1366,17 @@ public class UpdateCVs {
                     }
 
                     if ( cv != null ) {
-
-                        System.out.println( "Checking on " + cv.getShortLabel() + "..." );
+                        System.out.println( "-------------------------------------------------------------------------" );
+                        System.out.println( "Read line " + lineCount + ": " + cv.getShortLabel() + "..." );
 
                         // if childrenToApply is true and the term is not a CvDagObject, skip and report error
                         if ( applyToChildren ) {
                             if ( ! CvDagObject.class.isAssignableFrom( cv.getClass() ) ) {
                                 // error, CvObject that is not CvDagObject doesn't have children terms.
-                                throw new Exception( "Line " + lineCount + ": The specified type (" + cv.getClass() + ") is " +
-                                                     "not hierarchical, though you have requested an updated on children " +
-                                                     "term. Skip line." );
+                                applyToChildren = false;
+                                System.out.println( "Line " + lineCount + ": The specified type (" + cv.getClass() + ") is " +
+                                                    "not hierarchical, though you have requested an updated on children " +
+                                                    "term. set not to apply to children." );
                             }
                         }
 
@@ -1375,49 +1386,51 @@ public class UpdateCVs {
                             throw new Exception( "Line " + lineCount + ": Could not find CvTopic( " + topic + " ). Skip line." );
                         }
 
-                        Collection termsToUpdate = new ArrayList();
+                        Set<CvObject> termsToUpdate = new HashSet<CvObject>();
 
+                        // add the term itself
+                        termsToUpdate.add( cv );
+
+                        // if requested, its children
                         if ( applyToChildren ) {
                             // traverse the sub DAG and fill up the collection
                             collectAllChildren( (CvDagObject) cv, termsToUpdate );
-                        } else {
-                            termsToUpdate.add( cv );
                         }
 
                         // start the update the selected collection of CVs
-                        for ( Iterator iterator = termsToUpdate.iterator(); iterator.hasNext(); ) {
-                            CvObject aTermToUpdate = (CvObject) iterator.next();
+                        for ( CvObject aTermToUpdate : termsToUpdate ) {
 
+                            String termMi = getPsiId( aTermToUpdate );
+                            if ( cv.equals( aTermToUpdate ) ) {
+                                System.out.println( "Updating term: " + aTermToUpdate.getShortLabel() + " (" + termMi + ")" );
+                            } else {
+                                System.out.println( "Updating child: " + aTermToUpdate.getShortLabel() + " (" + termMi + ")" );
+                            }
                             // now update that single term
                             Annotation annot = getUniqueAnnotation( helper, aTermToUpdate, cvTopic );
 
+
                             Annotation newAnnotation = new Annotation( helper.getInstitution(), cvTopic, reason );
                             if ( annot == null ) {
-
                                 // then add the new one
                                 helper.create( newAnnotation );
-                                cv.addAnnotation( newAnnotation );
-                                helper.update( cv );
-                                String myClassName = type.substring( type.lastIndexOf( "." ) + 1, type.length() );
-                                System.out.println( "\tCREATED new Annotation( " + cvTopic.getShortLabel() + ", '" + reason + "' )" +
-                                                    " on " + myClassName + "( " + shorltabel + " / " + mi + " )." );
+                                aTermToUpdate.addAnnotation( newAnnotation );
+                                helper.update( aTermToUpdate );
+                                System.out.println( "\tCREATED new Annotation( " + cvTopic.getShortLabel() + ", '" + reason + "' )" );
 
                             } else {
 
                                 // then try to update it
                                 if ( ! newAnnotation.equals( annot ) ) {
 
-
                                     System.out.println( "\tOLD: " + annot );
-
                                     System.out.println( "\tNEW: " + newAnnotation );
 
                                     // do the update.
                                     annot.setAnnotationText( reason );
                                     helper.update( annot );
                                     String myClassName = type.substring( type.lastIndexOf( "." ) + 1, type.length() );
-                                    System.out.println( "\tUPDATED Annotation( " + cvTopic.getShortLabel() + ", '" + reason + "' )" +
-                                                        " on " + myClassName + "( " + shorltabel + " / " + mi + " )." );
+                                    System.out.println( "\tUPDATED Annotation( " + cvTopic.getShortLabel() + ", '" + reason + "' )" );
                                 }
                             }
                         } // update terms
@@ -1425,11 +1438,11 @@ public class UpdateCVs {
 
                 } catch ( ClassNotFoundException e ) {
 
-                    System.err.println( "Line " + lineCount + ": Object Type not supported: " + type );
+                    System.err.println( "Line " + lineCount + ": Object Type not supported: '" + type + "'. skipping." );
 
                 } catch ( Exception e ) {
 
-                    System.err.println( e.getMessage() );
+                    e.printStackTrace();
                 }
 
             } // while - reading line by line
@@ -1481,14 +1494,15 @@ public class UpdateCVs {
             annotFilename = args[ 1 ];
         }
 
-        /////////////////
-        // 1. Parsing
-        PSILoader psi = new PSILoader();
-        IntactOntology ontology = psi.parseOboFile( new File( oboFilename ) );
-
-        ontology.print();
-
-        System.out.println( "====================================================================" );
+//        /////////////////
+//        // 1. Parsing
+//
+//        PSILoader psi = new PSILoader();
+//        IntactOntology ontology = psi.parseOboFile( new File( oboFilename ) );
+//
+//        ontology.print();
+//
+//        System.out.println( "====================================================================" );
 
         ////////////////////
         // 2. Updating
@@ -1499,23 +1513,22 @@ public class UpdateCVs {
         System.out.println( "Database: " + instanceName );
         System.out.println( "User: " + helper.getDbUserName() );
 
-        // 2.2 Check that we don't touch a production instance.
-        if ( instanceName.equalsIgnoreCase( "ZPRO" ) || instanceName.equalsIgnoreCase( "IWEB" ) ) {
-            helper.closeStore();
-            System.err.println( "This is an alpha version, you cannot edit " + instanceName + ". abort." );
-            System.exit( 1 );
-        }
+//        // 2.2 Check that we don't touch a production instance.
+//        if ( instanceName.equalsIgnoreCase( "ZPRO" ) || instanceName.equalsIgnoreCase( "IWEB" ) ) {
+//            helper.closeStore();
+//            System.err.println( "This is an alpha version, you cannot edit " + instanceName + ". abort." );
+//            System.exit( 1 );
+//        }
 
         // 2.3 Create required vocabulary terms
         createNecessaryCvTerms( helper );
         helper.closeStore();
 
-        // 2.4 update the CVs
-        update( ontology );
-//        update( ontology, CvInteraction.class );
+//        // 2.4 update the CVs
+//        update( ontology );
 
-        // 2.5 Update obsolete terms
-        listOrphanObsoleteTerms( ontology );
+//        // 2.5 Update obsolete terms
+//        listOrphanObsoleteTerms( ontology );
 
         if ( annotFilename != null ) {
             try {
