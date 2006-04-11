@@ -30,6 +30,11 @@ public class ProteinCoordinate implements java.io.Serializable {
 
   /** -------------------------------------------------------- Constructors */
 
+  public ProteinCoordinate()
+  {
+      // default constructor with no args to follow bean conventions
+  }
+
   public ProteinCoordinate (int id, float x, float y) {
     this.id = id;
     this.x  = x;

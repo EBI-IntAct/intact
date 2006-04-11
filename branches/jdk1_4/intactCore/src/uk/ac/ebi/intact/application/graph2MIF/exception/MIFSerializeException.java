@@ -13,9 +13,13 @@ package uk.ac.ebi.intact.application.graph2MIF.exception;
  */
 public class MIFSerializeException extends Exception {
     public MIFSerializeException() {
-    };
+    }
 
     public MIFSerializeException(String message) {
         super(message);
-    };
+    }
+
+    public MIFSerializeException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

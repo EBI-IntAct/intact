@@ -80,6 +80,17 @@
                 </td>
             </tr>
             <tr>
+                <td align="right">
+                    <b>PSI Version</b> :
+                </td>
+                <td>
+                    <select name="version" size="2">
+                       <option value="1">1.0</option>
+                       <option value="2.5" selected>2.5</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
                 <td>
                     <input type="submit" value="extract XML" title="Get XML in PSI format.">
                 </td>
@@ -90,7 +101,7 @@
     <hr>
 
     <p>
-      <a href="<%= request.getContextPath() %>/axis">See AxisServlet</a>
+      <a href="<%= request.getContextPath() %>/services">See AxisServlet</a>
     </p>
 
 </body>

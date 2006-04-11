@@ -11,7 +11,6 @@ import uk.ac.ebi.intact.application.graph2MIF.exception.MIFSerializeException;
 import uk.ac.ebi.intact.application.graph2MIF.exception.NoGraphRetrievedException;
 import uk.ac.ebi.intact.application.graph2MIF.exception.NoInteractorFoundException;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.persistence.DataSourceException;
 
 /**
  *  Graph2MIFWS Interface
@@ -24,22 +23,39 @@ import uk.ac.ebi.intact.persistence.DataSourceException;
  */
 public interface Graph2MIFWS {
 
+    String sayHello();
+
     /**
 	 * getMIF is the only method which is necessary.
 	 * @param ac String ac in IntAct
 	 * @param depth Integer of the depth the graph should be expanded
+     * @param strictmif
 	 * @return String including a XML-Document in PSI-MIF-Format
 	 * @exception IntactException thrown if search for interactor failed
-	 * @exception uk.ac.ebi.intact.application.graph2MIF.exception.GraphNotConvertableException thrown if Graph failed requirements of MIF.
-	 * @exception DataSourceException thrown if could not retrieve graph from interactor
 	 * @exception uk.ac.ebi.intact.application.graph2MIF.exception.NoGraphRetrievedException thrown if DOM-Object could not be serialized
 	 * @exception uk.ac.ebi.intact.application.graph2MIF.exception.MIFSerializeException thrown if IntactHelper could not be created
 	 * @exception uk.ac.ebi.intact.application.graph2MIF.exception.NoInteractorFoundException thrown if no Interactor found for ac
 	 */
-    abstract String getMIF(String ac, Integer depth, Boolean strictmif)
+    String getMIF(String ac, Integer depth, Boolean strictmif)
             throws IntactException,
-                   GraphNotConvertableException,
-                   DataSourceException,
+                   NoGraphRetrievedException,
+                   MIFSerializeException,
+                   NoInteractorFoundException;
+
+    /**
+	 * getMIF is the only method which is necessary.
+	 * @param ac String ac in IntAct
+	 * @param depth Integer of the depth the graph should be expanded
+     * @param strictmif
+     * @param psiVersion version of PSI to use
+	 * @return String including a XML-Document in PSI-MIF-Format
+	 * @exception IntactException thrown if search for interactor failed
+	 * @exception uk.ac.ebi.intact.application.graph2MIF.exception.GraphNotConvertableException thrown if Graph failed requirements of MIF.
+	 * @exception uk.ac.ebi.intact.application.graph2MIF.exception.MIFSerializeException thrown if IntactHelper could not be created
+	 * @exception uk.ac.ebi.intact.application.graph2MIF.exception.NoInteractorFoundException thrown if no Interactor found for ac
+	 */
+    String getMIF(String ac, Integer depth, Boolean strictmif, String psiVersion)
+            throws IntactException,
                    NoGraphRetrievedException,
                    MIFSerializeException,
                    NoInteractorFoundException;
