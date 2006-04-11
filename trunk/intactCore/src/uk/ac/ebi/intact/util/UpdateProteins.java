@@ -8,6 +8,8 @@ package uk.ac.ebi.intact.util;
 import org.apache.commons.collections.CollectionUtils;
 import uk.ac.ebi.aristotle.model.sptr.AristotleSPTRException;
 import uk.ac.ebi.aristotle.util.interfaces.AlternativeSplicingAdapter;
+import uk.ac.ebi.intact.application.commons.util.DummyServletContext;
+import uk.ac.ebi.intact.application.commons.util.ExternalContext;
 import uk.ac.ebi.intact.business.BusinessConstants;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
@@ -127,6 +129,10 @@ import java.util.*;
  * <p/>
  * </pre>
  * </p>
+ * <p/>
+ * Version history:
+ * <p/>
+ * version 1.0.3: do not alter Xref( CvDatabase( intact ), CvXrefQualifier( intact-secondary ) )
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
@@ -143,7 +149,7 @@ public class UpdateProteins extends UpdateProteinsI {
      *  - On major update, update the 1st digit and bring the 2md and 3rd back to zero
      * </pre>
      */
-    public static final String VERSION = "1.0.2";
+    public static final String VERSION = "1.0.3";
 
     // TODO if the SRS server doesn't reply, handle it nicely.
 
@@ -333,11 +339,9 @@ public class UpdateProteins extends UpdateProteinsI {
             return false;
         }
 
-        for (Xref xref : xrefs)
-        {
+        for ( Xref xref : xrefs ) {
             CvXrefQualifier qualifier = xref.getCvXrefQualifier();
-            if (qualifier != null && qualifier.equals(isoFormParentXrefQualifier))
-            {
+            if ( qualifier != null && qualifier.equals( isoFormParentXrefQualifier ) ) {
                 return true;
             }
         }
@@ -360,10 +364,10 @@ public class UpdateProteins extends UpdateProteinsI {
      * @return An collection of Intact protein or null if an error occur.
      */
     private Collection<Protein> getProteinsFromSPTrAC( SPTREntry sptrEntry,
-                                              CvXrefQualifier qualifier,
-                                              String taxid,
-                                              int acType,
-                                              IntactHelper helper )
+                                                       CvXrefQualifier qualifier,
+                                                       String taxid,
+                                                       int acType,
+                                                       IntactHelper helper )
             throws SPTRException, IntactException {
 
         if ( PRIMARY_AC != acType &&
@@ -401,15 +405,12 @@ public class UpdateProteins extends UpdateProteinsI {
             logInfo( "look for " + ac );
             logInfo( tmp.size() + " proteins found" );
 
-            for (Protein p : tmp)
-            {
+            for ( Protein p : tmp ) {
                 // keep the protein only if no taxid is specified OR the taxid is the same.
-                if (taxid == null || p.getBioSource().getTaxId().equals(taxid))
-                {
-                    if (!isSpliceVariant(p))
-                    {
+                if ( taxid == null || p.getBioSource().getTaxId().equals( taxid ) ) {
+                    if ( ! isSpliceVariant( p ) ) {
                         // insert only non splice variant
-                        proteins.add(p);
+                        proteins.add( p );
                     }
                 }
             }
@@ -1191,7 +1192,7 @@ public class UpdateProteins extends UpdateProteinsI {
 
         // Make sure the alias does not yet exist in the object
         Collection<Annotation> annotations = current.getAnnotations();
-        for ( Annotation anAnnotation : annotations) {
+        for ( Annotation anAnnotation : annotations ) {
             if ( anAnnotation.equals( annotation ) ) {
                 return; // already in, exit
             }
@@ -1236,33 +1237,29 @@ public class UpdateProteins extends UpdateProteinsI {
         // create a list of new xrefs
         Collection<Xref> xrefs = new ArrayList<Xref>( cr.length );
 
-        for (SPTRCrossReference sptrXref : cr)
-        {
+        for ( SPTRCrossReference sptrXref : cr ) {
             String ac = sptrXref.getAccessionNumber();
             String id = null;
 
-            try
-            {
+            try {
 
-                id = sptrXref.getPropertyValue(SPTRCrossReference.SECONDARY_PROPERTY);
+                id = sptrXref.getPropertyValue( SPTRCrossReference.SECONDARY_PROPERTY );
 
             }
-            catch (AristotleSPTRException e)
-            {
+            catch ( AristotleSPTRException e ) {
                 // there was no description, we don't fail for that.
-                if (logger != null)
-                {
-                    logger.warn("Entry(sptrId=" + sptrEntry.getAccessionNumbers()[0] + "), Xref(id=" + ac +
-                            ") has no description and a AristotleSPTRException was thrown", e);
+                if ( logger != null ) {
+                    logger.warn( "Entry(sptrId=" + sptrEntry.getAccessionNumbers()[ 0 ] + "), Xref(id=" + ac +
+                                 ") has no description and a AristotleSPTRException was thrown", e );
                 }
             }
 
-            xrefs.add(new Xref(myInstitution,
-                               cvDatabase,
-                               ac,
-                               id,
-                               null,
-                               null));
+            xrefs.add( new Xref( myInstitution,
+                                 cvDatabase,
+                                 ac,
+                                 id,
+                                 null,
+                                 null ) );
         }
 
         // update the protein
@@ -1287,33 +1284,27 @@ public class UpdateProteins extends UpdateProteinsI {
 
         Gene[] genes = sptrEntry.getGenes();
         Collection<Xref> kiaas = null;
-        for (Gene gene : genes)
-        {
+        for ( Gene gene : genes ) {
             String geneName = gene.getName();
-            if (geneName.startsWith("KIAA"))
-            {
+            if ( geneName.startsWith( "KIAA" ) ) {
 
-                if (kiaas == null)
-                {
-                    kiaas = new ArrayList<Xref>(1);
+                if ( kiaas == null ) {
+                    kiaas = new ArrayList<Xref>( 1 );
                 }
 
-                kiaas.add(new Xref(myInstitution, hugeDatabase, geneName, null, null, null));
+                kiaas.add( new Xref( myInstitution, hugeDatabase, geneName, null, null, null ) );
             }
 
             // get KIAAs from synonyms (if any)
             String[] synonyms = gene.getSynonyms();
-            for (String syn : synonyms)
-            {
-                if (syn != null && syn.startsWith("KIAA"))
-                {
+            for ( String syn : synonyms ) {
+                if ( syn != null && syn.startsWith( "KIAA" ) ) {
 
-                    if (kiaas == null)
-                    {
-                        kiaas = new ArrayList<Xref>(1);
+                    if ( kiaas == null ) {
+                        kiaas = new ArrayList<Xref>( 1 );
                     }
 
-                    kiaas.add(new Xref(myInstitution, hugeDatabase, syn, null, null, null));
+                    kiaas.add( new Xref( myInstitution, hugeDatabase, syn, null, null, null ) );
                 }
             } // Gene name synonyms
         } // genes
@@ -1443,15 +1434,12 @@ public class UpdateProteins extends UpdateProteinsI {
         Collection<Xref> currentXrefs = null;
 
         // select only the xref of the given database
-        for (Xref xref : protein.getXrefs())
-        {
-            if (database.equals(xref.getCvDatabase()))
-            {
-                if (currentXrefs == null)
-                {
+        for ( Xref xref : protein.getXrefs() ) {
+            if ( database.equals( xref.getCvDatabase() ) ) {
+                if ( currentXrefs == null ) {
                     currentXrefs = new ArrayList<Xref>();
                 }
-                currentXrefs.add(xref);
+                currentXrefs.add( xref );
             }
         }
 
@@ -1463,28 +1451,24 @@ public class UpdateProteins extends UpdateProteinsI {
         Collection<Xref> toCreate = CollectionUtils.subtract( newXrefs, currentXrefs );
 
         Iterator toDeleteIterator = toDelete.iterator();
-        for (Xref xref : toCreate)
-        {
-            if (toDeleteIterator.hasNext())
-            {
+        for ( Xref xref : toCreate ) {
+            if ( toDeleteIterator.hasNext() ) {
                 // in order to avoid wasting ACs, we overwrite attributes of an outdated xref.
                 Xref recycledXref = (Xref) toDeleteIterator.next();
 
                 // note: parent_ac was already set before as the object was persistent
-                recycledXref.setPrimaryId(xref.getPrimaryId());
-                recycledXref.setSecondaryId(xref.getSecondaryId());
-                recycledXref.setCvDatabase(xref.getCvDatabase());
-                recycledXref.setCvXrefQualifier(xref.getCvXrefQualifier());
-                recycledXref.setDbRelease(xref.getDbRelease());
+                recycledXref.setPrimaryId( xref.getPrimaryId() );
+                recycledXref.setSecondaryId( xref.getSecondaryId() );
+                recycledXref.setCvDatabase( xref.getCvDatabase() );
+                recycledXref.setCvXrefQualifier( xref.getCvXrefQualifier() );
+                recycledXref.setDbRelease( xref.getDbRelease() );
 
-                helper.update(recycledXref);
+                helper.update( recycledXref );
                 updated = true;
 
-            }
-            else
-            {
+            } else {
 
-                updated = updated | addNewXref(protein, xref);
+                updated = updated | addNewXref( protein, xref );
             }
         }
 
@@ -1533,25 +1517,21 @@ public class UpdateProteins extends UpdateProteinsI {
         Collection<Alias> toCreate = CollectionUtils.subtract( newAliases, currentAliases );
 
         Iterator toDeleteIterator = toDelete.iterator();
-        for (Alias alias : toCreate)
-        {
-            if (toDeleteIterator.hasNext())
-            {
+        for ( Alias alias : toCreate ) {
+            if ( toDeleteIterator.hasNext() ) {
                 // in order to avoid wasting ACs, we overwrite attributes of an outdated xref.
                 Alias recycledAlias = (Alias) toDeleteIterator.next();
 
                 // note: parent_ac was already set before as the object was persistent
-                recycledAlias.setName(alias.getName());
-                recycledAlias.setCvAliasType(alias.getCvAliasType());
+                recycledAlias.setName( alias.getName() );
+                recycledAlias.setCvAliasType( alias.getCvAliasType() );
 
-                helper.update(recycledAlias);
+                helper.update( recycledAlias );
                 updated = true;
 
-            }
-            else
-            {
+            } else {
 
-                updated = updated | addNewAlias(protein, alias);
+                updated = updated | addNewAlias( protein, alias );
             }
         }
 
@@ -1582,73 +1562,61 @@ public class UpdateProteins extends UpdateProteinsI {
         Gene[] genes = sptrEntry.getGenes();
         Alias alias = null;
 
-        for (Gene gene : genes)
-        {
+        for ( Gene gene : genes ) {
             String geneName = gene.getName();
 
-            if (geneName != null && (false == "".equals(geneName.trim())))
-            {
+            if ( geneName != null && ( false == "".equals( geneName.trim() ) ) ) {
 
-                alias = new Alias(myInstitution, protein, geneNameAliasType, geneName);
+                alias = new Alias( myInstitution, protein, geneNameAliasType, geneName );
 
-                if (aliases == null)
-                {
-                    aliases = new ArrayList(8);
+                if ( aliases == null ) {
+                    aliases = new ArrayList( 8 );
                 }
-                aliases.add(alias);
+                aliases.add( alias );
             }
 
             // create synonyms
             String[] synonyms = gene.getSynonyms();
-            for (int ii = 0; ii < synonyms.length; ii++)
-            {
+            for ( int ii = 0; ii < synonyms.length; ii++ ) {
 
-                String syn = synonyms[ii];
+                String syn = synonyms[ ii ];
 
-                if (syn != null && (false == "".equals(syn.trim())))
-                {
+                if ( syn != null && ( false == "".equals( syn.trim() ) ) ) {
 
-                    alias = new Alias(myInstitution, protein, geneNameSynonymAliasType, syn);
+                    alias = new Alias( myInstitution, protein, geneNameSynonymAliasType, syn );
 
-                    if (aliases == null)
-                    {
-                        aliases = new ArrayList<Alias>(8);
+                    if ( aliases == null ) {
+                        aliases = new ArrayList<Alias>( 8 );
                     }
-                    aliases.add(alias);
+                    aliases.add( alias );
                 }
             } // Gene name synonyms
 
             // create locus names
             String[] locus = gene.getLocusNames();
-            for (String locusName : locus)
-            {
-                if (locusName != null && (false == "".equals(locusName.trim())))
-                {
+            for ( String locusName : locus ) {
+                if ( locusName != null && ( false == "".equals( locusName.trim() ) ) ) {
 
-                    alias = new Alias(myInstitution, protein, locusNameAliasType, locusName);
+                    alias = new Alias( myInstitution, protein, locusNameAliasType, locusName );
 
-                    if (aliases == null)
-                    {
-                        aliases = new ArrayList<Alias>(8);
+                    if ( aliases == null ) {
+                        aliases = new ArrayList<Alias>( 8 );
                     }
-                    aliases.add(alias);
+                    aliases.add( alias );
                 }
             } // Locus names
 
             // create ORF names
             String[] ORFs = gene.getORFNames();
-            for (String orfName : ORFs)
-            {
-                if (orfName != null && (false == "".equals(orfName.trim())))
-                {
+            for ( String orfName : ORFs ) {
+                if ( orfName != null && ( false == "".equals( orfName.trim() ) ) ) {
 
-                    alias = new Alias(myInstitution, protein, orfNameAliasType, orfName);
+                    alias = new Alias( myInstitution, protein, orfNameAliasType, orfName );
 
-                    if (aliases == null)
-                    {
-                        aliases = new ArrayList<Alias>(8);
+                    if ( aliases == null ) {
+                        aliases = new ArrayList<Alias>( 8 );
                     }
-                    aliases.add(alias);
+                    aliases.add( alias );
                 }
             } // ORFs
         } // Genes
@@ -1669,7 +1637,7 @@ public class UpdateProteins extends UpdateProteinsI {
 
             aliases = new ArrayList<Alias>( isoSynonyms.length );
 
-            for ( String isoSynonym : isoSynonyms) {
+            for ( String isoSynonym : isoSynonyms ) {
 
                 // create a new alias
                 Alias alias = new Alias( myInstitution, spliceVariant, isoformSynonym, isoSynonym );
@@ -1993,7 +1961,8 @@ public class UpdateProteins extends UpdateProteinsI {
             needUpdate = true;
         }
 
-        if ( !protein.getSequence().equals( sequence ) ) {
+        // beware, some protein sequence might be null...
+        if ( ! sequence.equals( protein.getSequence() ) ) {
             protein.setSequence( helper, sequence );
             logInfo( "sequence is different" );
             needUpdate = true;
@@ -2447,7 +2416,7 @@ public class UpdateProteins extends UpdateProteinsI {
 
         Collection<Protein> filteredProteins = null;
 
-        for ( Protein protein : filteredProteins ) {
+        for ( Protein protein : c ) {
 
             if ( protein.getBioSource().getTaxId().equals( taxid ) ) { // NullPointerException
 
@@ -2532,21 +2501,16 @@ public class UpdateProteins extends UpdateProteinsI {
 
         // Filter for exactly one entry with appropriate taxId
         Protein targetProtein = null;
-        for (Protein tmpProtein : newProteins)
-        {
-            if (tmpProtein.getBioSource().getTaxId().equals(validBioSource.getTaxId()))
-            {
-                if (null == targetProtein)
-                {
+        for ( Protein tmpProtein : newProteins ) {
+            if ( tmpProtein.getBioSource().getTaxId().equals( validBioSource.getTaxId() ) ) {
+                if ( null == targetProtein ) {
                     targetProtein = tmpProtein;
-                }
-                else
-                {
-                    throw new IntactException("More than one Protein with AC "
-                            + anAc
-                            + " and taxid "
-                            + aTaxId
-                            + " found.");
+                } else {
+                    throw new IntactException( "More than one Protein with AC "
+                                               + anAc
+                                               + " and taxid "
+                                               + aTaxId
+                                               + " found." );
                 }
             }
         }
@@ -3086,6 +3050,7 @@ public class UpdateProteins extends UpdateProteinsI {
                 System.exit( 1 );
             }
 
+            ExternalContext.newInstance( new DummyServletContext() );
 
             UpdateProteinsI update = new UpdateProteins( helper );
             Chrono chrono = new Chrono();
@@ -3112,7 +3077,7 @@ public class UpdateProteins extends UpdateProteinsI {
             aome.printStackTrace();
 
             System.err.println( "" );
-            System.err.println( "UpdateProteins (version "+ VERSION +") ran out of memory." );
+            System.err.println( "UpdateProteins (version " + VERSION + ") ran out of memory." );
             System.err.println( "Please run it again and change the JVM configuration." );
             System.err.println( "Here are some the options: http://java.sun.com/docs/hotspot/VMOptions.html" );
             System.err.println( "Hint: You can use -Xms -Xmx to specify respectively the minimum and maximum" );
