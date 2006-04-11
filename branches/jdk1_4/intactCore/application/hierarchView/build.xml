@@ -743,6 +743,12 @@ Verison: $Id$
             <!-- Include jar files for hv. -->
             <lib dir="${lib.dir}"/>
 
+            <!-- JAXRPC files from the root lib folder -->
+            <lib dir="${root.lib.dir}">
+                <include name="jaxpc*.jar"/>
+                 <include name="jax-1_1-fr-qname-class.jar"/>
+            </lib>
+
             <!-- Include the intact core  -->
             <lib dir="${root.dist.dir}">
                 <include name="intact-core.jar"/>
