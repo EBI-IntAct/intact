@@ -19,6 +19,7 @@
                  java.util.Collection,
                  java.util.Iterator,
                  java.util.ArrayList"%>
+<%@ page import="org.apache.taglibs.standard.lang.jpath.encoding.HtmlEncoder"%>
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
@@ -52,6 +53,8 @@
        String url = graph2mif  + "?ac=" +  ac.toString()
                                + "&depth=" + user.getCurrentDepth()
                                + "&strict=false";
+       String url10 = url+"&version=1";
+       String url25 = url+"&version="+ HtmlEncoder.encode("2.5");
 %>
 
 <hr>
@@ -66,12 +69,26 @@
           </th>
         </tr>
 
+        <tr>
+            <td valign="bottom" align="center">
+                    <nobr>
+                        <a href="<%= url10 %>"><img border="0" src="<%= request.getContextPath() %>/images/psi10.png"
+                                                                alt="PSI-MI 1.0 Download"
+                                                                onmouseover="return overlib('Download data from publication in PSI-MI XML 1.0', DELAY, 150, TEXTCOLOR, '#FFFFFF', FGCOLOR, '#EA8323', BGCOLOR, '#FFFFFF');"
+                                                                onmouseout="return nd();"></a>
+                    </nobr>
+             </td>
         </tr>
-            <td>
-                <input type="button"
-                       value="Download"
-                       onClick="w=window.open('<%= url %>', 'graph2mif');w.focus();">
-            </td>
+        <tr>
+            <td valign="bottom" align="center">
+                    <nobr>
+                        <a href="<%= url25 %>"><img border="0" src="<%= request.getContextPath() %>/images/psi25.png"
+                                                                 alt="PSI-MI 2.5 Download"
+                                                                 onmouseover="return overlib('Download data from publication in PSI-MI XML 2.5', DELAY, 150, TEXTCOLOR, '#FFFFFF', FGCOLOR, '#EA8323', BGCOLOR, '#FFFFFF');"
+                                                                 onmouseout="return nd();"></a>
+                    </nobr>
+             </td>
+
         </tr>
     </table>
 
