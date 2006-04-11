@@ -18,7 +18,7 @@ import uk.ac.ebi.intact.model.*;
 import java.util.Iterator;
 
 /**
- * That class .
+ * That class persists a feature and its ranges if any.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
@@ -28,12 +28,10 @@ public class FeaturePersister {
     public static void persist( final FeatureTag featureTag,
                                 final Component component,
                                 final Protein protein,
-                                final IntactHelper helper )
-            throws IntactException {
+                                final IntactHelper helper ) throws IntactException {
 
         String typeId = featureTag.getFeatureType().getPsiDefinition().getId();
         CvFeatureType featureType = FeatureChecker.getCvFeatureType( typeId );
-
 
         Feature feature = new Feature( helper.getInstitution(),
                                        featureTag.getShortlabel(),
@@ -51,7 +49,6 @@ public class FeaturePersister {
 
         // persist the object
         helper.create( feature );
-
 
         // add xrefs if any
         for ( Iterator iterator1 = featureTag.getXrefs().iterator(); iterator1.hasNext(); ) {
@@ -72,18 +69,15 @@ public class FeaturePersister {
             helper.create( xref );
         }
 
-
         LocationTag location = featureTag.getLocation();
         if ( location != null ) {
             // create a range
 
-            // extract the associated subsequence
+            // extract the associated subsequence from the protein
             String sequence = null;
-            
-//            String sequence = protein.getSequence();
-//            if ( sequence.length() > Range.MAX_SEQ_SIZE ) {
-//                sequence = sequence.substring( 0, Range.MAX_SEQ_SIZE );
-//            }
+            if ( protein != null ) {
+                sequence = protein.getSequence();
+            }
 
             Range range = new Range( helper.getInstitution(),
                                      (int) location.getFromIntervalStart(),
@@ -92,11 +86,8 @@ public class FeaturePersister {
                                      (int) location.getToIntervalEnd(),
                                      sequence );
 
-
-
-            // TODO right now we are dealing with simple feature, they don't interact together
+            // right now we are dealing with simple feature, they don't interact together
             range.setLink( false );
-
 
             // this must be done after setting the fyzzy types
             range.setUndetermined();
@@ -105,10 +96,6 @@ public class FeaturePersister {
             feature.addRange( range );
 
             helper.create( range );
-
-            // update the feature with the newly created range.
-
-//            helper.update( feature );
         }
     }
 }
