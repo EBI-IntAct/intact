@@ -7,16 +7,11 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.graph2MIF;
 
 import org.apache.log4j.Logger;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.XMLSerializer;
-import org.w3c.dom.Document;
-import uk.ac.ebi.intact.application.graph2MIF.conversion.Graph2FoldedMIF;
-import uk.ac.ebi.intact.application.graph2MIF.exception.GraphNotConvertableException;
+import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
+import uk.ac.ebi.intact.application.graph2MIF.exception.MIFSerializeException;
 import uk.ac.ebi.intact.application.graph2MIF.exception.NoGraphRetrievedException;
 import uk.ac.ebi.intact.application.graph2MIF.exception.NoInteractorFoundException;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.simpleGraph.Graph;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -24,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 
 
 /**
@@ -76,48 +70,25 @@ public class Graph2MIFWSServlet extends HttpServlet {
 
                 Integer depth = new Integer( aRequest.getParameter( "depth" ) );
 
-                //create helper
-                IntactHelper helper = null;
-                try {
-                    helper = new IntactHelper();
-                    logger.info( "Helper created" );
+                String psiVersion = aRequest.getParameter("version");
 
-                    // call getMIF to retrieve and convert
-                    Graph graph = GraphFactory.getGraph( helper, ac, depth ); //NoGraphRetrievedExceptioni, IntactException and NoInteractorFoundException possible
-                    logger.info( "got graph:" );
-                    logger.info( graph );
-
-                    //convert graph to DOM Object
-                    logger.info( "Start creating the MIF folded version of that graph." );
-                    Graph2FoldedMIF convert = new Graph2FoldedMIF( strictmif );
-                    Document mifDOM = convert.getMIF( graph ); // GraphNotConvertableException possible
-                    logger.info( "Convertion finished." );
-
-                    // serialize the DOMObject
-                    StringWriter w = new StringWriter( 4096 );
-                    OutputFormat of = new OutputFormat( mifDOM, "UTF-8", true ); //(true|false) for (un)formated  output
-                    XMLSerializer xmls = new XMLSerializer( w, of );
-                    try {
-                        xmls.serialize( mifDOM );
-                    } catch ( IOException e ) {
-                        logger.warn( "IOException while serialize" + e.getMessage() );
-                        giveErrorMsg( "ERROR: DOM-Object could not be serialized (" + e.toString() + ")", aResponse );
-                    }
-                    String mif = w.toString();
-
-                    logger.info( "Set MIME type to: text/xml" );
-                    aResponse.setContentType( "text/xml" );
-
-                    logger.info( "Printing XML data on the output." );
-                    out = aResponse.getWriter();
-                    out.println( mif );
-                    //or get errors and give back.
-                } finally {
-                    if( helper != null ) {
-                        helper.closeStore();
-                        logger.info( "Helper closed." );
-                    }
+                Graph2MIFWSService ws = new Graph2MIFWSService();
+                String mif = null;
+                try
+                {
+                    mif = ws.getMIF(ac, depth, strictmif, psiVersion);
                 }
+                catch (MIFSerializeException e)
+                {
+                    e.printStackTrace();
+                }
+
+                logger.info( "Set MIME type to: text/xml" );
+                aResponse.setContentType( "text/xml" );
+
+                logger.info( "Printing XML data on the output." );
+                out = aResponse.getWriter();
+                out.println( mif );
             }
         } catch ( NumberFormatException e ) {
             giveErrorMsg( "depth should be an integer", aResponse );
@@ -130,9 +101,6 @@ public class Graph2MIFWSServlet extends HttpServlet {
             logger.error( e );
         } catch ( NoGraphRetrievedException e ) {
             giveErrorMsg( "ERROR: Could not retrieve graph from interactor (" + e.toString() + ")", aResponse );
-            logger.error( e );
-        } catch ( GraphNotConvertableException e ) {
-            giveErrorMsg( "ERROR: Graph failed requirements of MIF. (" + e.toString() + ")", aResponse );
             logger.error( e );
         } catch ( NullPointerException e ) {
             giveErrorMsg( "ERROR: wrong parameters:\n usage is: <host>/graph2mif/getXML?ac=<ac>&amp;depth=<int>&amp;strict=(true|false)\n" +

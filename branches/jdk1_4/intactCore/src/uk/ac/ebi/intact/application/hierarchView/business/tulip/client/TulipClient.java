@@ -80,7 +80,7 @@ public class TulipClient {
             URL tulipUrl = new URL( tulipAdress );
 
             // Now use the service to get a stub
-            tulip = service.getTulip( tulipUrl );
+            tulip = service.gettulip( tulipUrl );
 
         } catch ( MalformedURLException e ) {
             logger.error( "The Tulip web service URL is malformed", e );
