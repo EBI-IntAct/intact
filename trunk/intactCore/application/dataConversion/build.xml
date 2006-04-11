@@ -8,6 +8,9 @@
 <project name="dataConversion" basedir="." default="compile">
     <property name="project.version" value="1.0"/>
 
+    <property name="jdk.version" value="1.5"/>
+
+
     <!-- Intact core locations -->
     <property name="intact.root" value="../.."/>
     <property name="root.lib.dir" value="${intact.root}/lib"/>
@@ -75,6 +78,16 @@
         <pathelement path="${root.lib.dir}/junit.jar"/>
         <pathelement path="${root.lib.dir}/commons-collections-3.0.jar"/>
         <pathelement path="${root.lib.dir}/commons-lang-2.0.jar"/>
+
+        <!-- CitExplore Web Service jars -->
+        <pathelement path="${root.lib.dir}/soap.jar"/>
+        <pathelement path="${root.lib.dir}/oracle_soap.jar"/>
+        <pathelement path="${root.lib.dir}/cdbWebservices.jar"/>
+        <pathelement path="${root.lib.dir}/activation-1.0.2.jar"/>
+        <pathelement path="${root.lib.dir}/javamail-1.3.2.jar"/>
+        <pathelement path="${root.lib.dir}/http_client.jar"/>
+
+        <pathelement path="${root.lib.dir}/servlet.jar"/>
     </path>
 
     <path id="project.test.class.path">
@@ -158,8 +171,7 @@
     <!-- =================================================================== -->
 
     <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
-    <target name="compile" depends="make-jar, set-db-type"
-        description="Compiles non test source files">
+    <target name="compile" depends="make-jar, set-db-type" description="Compiles non test source files">
 
         <!-- Create the dest dir if it doesn't exist. -->
         <mkdir dir="${dest.dir}"/>
@@ -170,9 +182,10 @@
 
         <!-- Only compile sources. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-            debug="on" source="1.5"
-            includes="**/application/dataConversion/**"
-            excludes="**/test/**">
+               debug="on" source="${jdk.version}"
+               includes="**/application/dataConversion/**,
+                         **/application/commons/util/**"
+               excludes="**/test/**">
 
             <classpath refid="project.class.path"/>
         </javac>
@@ -186,7 +199,7 @@
 
     <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
     <target name="compile-upload" depends="make-jar, set-db-type"
-        description="Compiles non test source files">
+            description="Compiles non test source files">
 
         <!-- Create the dest dir if it doesn't exist. -->
         <mkdir dir="${dest.dir}"/>
@@ -197,12 +210,13 @@
 
         <!-- Only compile sources. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-            debug="on" source="1.5"
-            includes="**/application/dataConversion/psiUpload/**,
+               debug="on" source="${jdk.version}"
+               includes="**/application/dataConversion/psiUpload/**,
                       **/application/dataConversion/util/**,
+                      **/intact/util/cdb/**,
                       **/application/dataConversion/PsiDataLoader.java,
-                      **/application/dataConversion/PsiCosntants.java"
-            excludes="**/test/**">
+                      **/application/dataConversion/PsiConstants.java"
+               excludes="**/test/**">
 
             <classpath refid="project.class.path"/>
         </javac>
@@ -219,8 +233,8 @@
 
         <!-- Only compile test sources. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-            debug="on" source="1.5"
-            includes="**/application/dataConversion/psiUpload/test/**">
+               debug="on" source="${jdk.version}"
+               includes="**/application/dataConversion/psiUpload/test/**">
 
             <classpath refid="project.class.path"/>
         </javac>
@@ -234,8 +248,8 @@
 
         <!-- Only compile dataConversion sources only. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-            debug="on" source="1.5"
-            includes="**/application/dataConversion/**">
+               debug="on" source="${jdk.version}"
+               includes="**/application/dataConversion/**">
 
             <classpath refid="project.class.path"/>
         </javac>
@@ -277,6 +291,15 @@
                 <include name="commons-collections-3.0.jar"/>
                 <include name="commons-lang-2.0.jar"/>
                 <include name="commons-pool-1.1.jar"/>
+
+                <include name="soap.jar"/>
+                <include name="oracle_soap.jar"/>
+                <include name="cdbWebservices.jar"/>
+                <include name="activation-1.0.2.jar"/>
+                <include name="javamail-1.3.2.jar"/>
+                <include name="http_client.jar"/>
+
+                <include name="servlet.jar"/>
             </fileset>
         </copy>
 
@@ -314,8 +337,8 @@
 
 
         <fail if="pg.property.missing">
-              Unable to find ${pg.props.file} file;
-              see template/postgres.template file for the format.
+            Unable to find ${pg.props.file} file;
+            see template/postgres.template file for the format.
         </fail>
 
         <condition property="pg.jdbc.driver.missing">
@@ -325,8 +348,8 @@
         </condition>
 
         <fail if="pg.jdbc.driver.missing">
-             Unable to find your postgres jdbc driver !
-              see /config/jdbc.properties file for the format.
+            Unable to find your postgres jdbc driver !
+            see /config/jdbc.properties file for the format.
         </fail>
 
         <!-- Load postgres properties. -->
@@ -352,8 +375,8 @@
         </condition>
 
         <fail if="oracle.property.missing">
-              Unable to find ${ora.props.file} file;
-              see template/oracle.template file for the format.
+            Unable to find ${ora.props.file} file;
+            see template/oracle.template file for the format.
         </fail>
 
         <condition property="oracle.jdbc.driver.missing">
@@ -363,8 +386,8 @@
         </condition>
 
         <fail if="oracle.jdbc.driver.missing">
-             Unable to find your oracle jdbc driver !
-              see /config/jdbc.properties file for the format.
+            Unable to find your oracle jdbc driver !
+            see /config/jdbc.properties file for the format.
         </fail>
 
         <!-- Load oracle properties. -->
@@ -388,7 +411,7 @@
     <!-- Runs the JUnit tester directly. The output is redirected to std out -->
 
     <target name="junit-test-stdout" depends="compile-test"
-        description="Runs JUnit directly with output directed to stdout">
+            description="Runs JUnit directly with output directed to stdout">
         <java classname="junit.textui.TestRunner" fork="true">
             <arg value="uk.ac.ebi.intact.application.dataConversion.psiUpload.test.AllJUnitTests"/>
             <classpath refid="project.class.path"/>
