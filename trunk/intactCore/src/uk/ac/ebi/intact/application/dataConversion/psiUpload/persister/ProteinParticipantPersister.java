@@ -5,7 +5,10 @@
  */
 package uk.ac.ebi.intact.application.dataConversion.psiUpload.persister;
 
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.*;
+import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.ExpressedInChecker;
+import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.OrganismChecker;
+import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.ProteinInteractorChecker;
+import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.RoleChecker;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.*;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
@@ -15,8 +18,11 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * That class make the data persitent in the Intact database. <br> That class takes care of a Component for a specific
- * Interaction. <br> It assumes that the data are already parsed and passed the validity check successfully.
+ * That class make the data persitent in the Intact database.
+ * <p/>
+ * That class takes care of a Component for a specific Interaction.
+ * <p/>
+ * It assumes that the data are already parsed and passed the validity check successfully.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
@@ -47,7 +53,6 @@ public class ProteinParticipantPersister {
         } else {
 
             protein = proteinHolder.getProtein();
-
         }
 
 
@@ -69,10 +74,7 @@ public class ProteinParticipantPersister {
         for ( Iterator iterator = features.iterator(); iterator.hasNext(); ) {
             FeatureTag featureTag = (FeatureTag) iterator.next();
 
-            FeaturePersister.persist( featureTag,
-                                      component,
-                                      protein,
-                                      helper );
+            FeaturePersister.persist( featureTag, component, protein, helper );
         }
     }
 }
