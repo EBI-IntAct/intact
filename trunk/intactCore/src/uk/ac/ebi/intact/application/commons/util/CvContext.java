@@ -5,37 +5,31 @@
  */
 package uk.ac.ebi.intact.application.commons.util;
 
-import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.business.IntactHelper;
+import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.business.IntactException;
-
-import java.util.Map;
-import java.util.HashMap;
-
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
+import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.model.CvObject;
 
 import javax.servlet.ServletContext;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * ThreadLocal Singleton that contains the Controlled Vocabularies,
- * so they only have to be loaded once.
+ * ThreadLocal Singleton that contains the Controlled Vocabularies, so they only have to be loaded once.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  * @since <pre>27-Mar-2006</pre>
  */
-public abstract class CvContext
-{
+public abstract class CvContext {
     public static final String CONTEXT_KEY = CvContext.class.getName();
 
-    private static final Log log = LogFactory.getLog(CvContext.class);
+    public static final Logger log = Logger.getLogger( CvContext.class );
 
     private String srsUrl;
 
     // enumeration of the possible keys for the constant CvObjects
-    public enum CvName
-    {
+    public enum CvName {
         // Xref Databases
         UNIPROT_DB,
         INTACT_DB,
@@ -70,7 +64,6 @@ public abstract class CvContext
         cvMap = new HashMap<CvName, CvObject>();
     }
 
-
     // ThreadLocal pattern
     /*
     private static ThreadLocal<CvContext> currentInstance = new ThreadLocal()
@@ -85,38 +78,35 @@ public abstract class CvContext
 
     /**
      * Gets the current instance of the CvContext
+     *
      * @return the current instance of the CvContext
      */
-    public static synchronized CvContext getCurrentInstance()
-    {
+    public static synchronized CvContext getCurrentInstance() {
         ServletContext servletContext = ExternalContext.getCurrentInstance().getServletContext();
 
-        if (servletContext == null) {
-            throw new NullPointerException("ServletContext null in CvContext");
+        if ( servletContext == null ) {
+            throw new NullPointerException( "ServletContext null in CvContext" );
         }
 
-        CvContext cvContext = (CvContext) servletContext.getAttribute(CONTEXT_KEY);
+        CvContext cvContext = (CvContext) servletContext.getAttribute( CONTEXT_KEY );
 
-        if (cvContext == null)
-        {
-            try
-            {
-                cvContext = CvContextFactory.createCvContext(new IntactHelper());
+        if ( cvContext == null ) {
+            try {
+                cvContext = CvContextFactory.createCvContext( new IntactHelper() );
 
-                if (log.isInfoEnabled())
-                    log.info("New CvContext instance created");
+                if ( log.isInfoEnabled() ) {
+                    log.info( "New CvContext instance created" );
+                }
             }
-            catch (IntactException e)
-            {
+            catch ( IntactException e ) {
                 e.printStackTrace();
             }
 
-            servletContext.setAttribute(CvContext.CONTEXT_KEY, cvContext);
-        }
-        else
-        {
-            if (log.isInfoEnabled())
-                log.info("CvContext already exists");
+            servletContext.setAttribute( CvContext.CONTEXT_KEY, cvContext );
+        } else {
+            if ( log.isInfoEnabled() ) {
+                log.info( "CvContext already exists" );
+            }
         }
 
         return cvContext;
@@ -124,33 +114,35 @@ public abstract class CvContext
 
     /**
      * Puts a CvObject in the map, using one of the enumeration values
-     * @param cvName The enumeration value with will serve as map key
+     *
+     * @param cvName   The enumeration value with will serve as map key
      * @param cvObject The cvObject to store
      */
-    public void putCvObject(CvName cvName, CvObject cvObject){
-        cvMap.put(cvName, cvObject);
+    public void putCvObject( CvName cvName, CvObject cvObject ) {
+        cvMap.put( cvName, cvObject );
     }
 
     /**
      * Gets the CvObject from the map, using a CvName key
+     *
      * @param cvName the key to use (from the enumeration)
+     *
      * @return the object stored with that key
      */
-    public CvObject getCvObject(CvName cvName){
-        return cvMap.get(cvName);
+    public CvObject getCvObject( CvName cvName ) {
+        return cvMap.get( cvName );
     }
 
     /**
      * Gets the key for a CvObject of the map
+     *
      * @param cvObject The object to search the key for
+     *
      * @return the key if the map contains de CvObject. Otherwise it returns <code>null</code>
      */
-    public CvName getKeyForCvObject(CvObject cvObject)
-    {
-        for (Map.Entry<CvName,CvObject> entry : cvMap.entrySet())
-        {
-            if (entry.getValue().equals(cvObject))
-            {
+    public CvName getKeyForCvObject( CvObject cvObject ) {
+        for ( Map.Entry<CvName, CvObject> entry : cvMap.entrySet() ) {
+            if ( entry.getValue().equals( cvObject ) ) {
                 return entry.getKey();
             }
         }
@@ -160,39 +152,39 @@ public abstract class CvContext
 
     /**
      * Updates a CvObject already present in the context
-     * @param cvObject The new value for the cvObject. Note that it must be equal to the existing one
-     * in order to be updated
+     *
+     * @param cvObject The new value for the cvObject. Note that it must be equal to the existing one in order to be
+     *                 updated
+     *
      * @return returns true if an object in the map has been updated. Otherwise it returns false.
      */
-    public boolean updateCvObject(CvObject cvObject)
-    {
-        CvName cvName = getKeyForCvObject(cvObject);
+    public boolean updateCvObject( CvObject cvObject ) {
+        CvName cvName = getKeyForCvObject( cvObject );
 
-        if (cvName == null)
-        {
+        if ( cvName == null ) {
             return false;
         }
 
-        cvMap.put(cvName, cvObject);
+        cvMap.put( cvName, cvObject );
 
         return true;
     }
 
     /**
      * The SRS url
+     *
      * @return The SRS url
      */
-    public String getSrsUrl()
-    {
+    public String getSrsUrl() {
         return srsUrl;
     }
 
     /**
      * Sets a new value for the SRS url
+     *
      * @param srsUrl the SRS url value
      */
-    public void setSrsUrl(String srsUrl)
-    {
+    public void setSrsUrl( String srsUrl ) {
         this.srsUrl = srsUrl;
     }
 }
