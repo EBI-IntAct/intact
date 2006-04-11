@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.XrefTag;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.util.cdb.UpdateExperimentAnnotationsFromPudmed;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -55,13 +56,12 @@ public class ExperimentDescriptionPersister {
         // (1) check if the experiment is not existing in IntAct, if so, reuse it
         experiment = ExperimentDescriptionChecker.getIntactExperiment( shortlabel );
         if ( experiment != null ) {
-            // we made the choice to trust the IntAct database content, hence not to alter it.
+            // we made the choice to trust the IntAct database content, hence, not to alter it.
             // altimately, this can be manually edited through the editor afterward.
             return experiment;
         }
 
-        
-        // (2) check if it has been made paersistent already, if so, reuse it.
+        // (2) check if it has been made persistent already, if so, reuse it.
         experiment = (Experiment) cache.get( shortlabel );
 
         if ( experiment != null ) {
@@ -69,30 +69,23 @@ public class ExperimentDescriptionPersister {
             return experiment;
         }
 
-
         // (3) Create a new Experiment
         final BioSource biosource = HostOrganismChecker.getBioSource( experimentDescription.getHostOrganism() );
 
-        experiment = new Experiment( helper.getInstitution(),
-                                     shortlabel,
-                                     biosource );
+        experiment = new Experiment( helper.getInstitution(), shortlabel, biosource );
 
         helper.create( experiment );
 
         experiment.setFullName( experimentDescription.getFullname() );
 
         // CvIdentification
-        final String participantDetectionId =
-                experimentDescription.getParticipantDetection().getPsiDefinition().getId();
-        final CvIdentification cvIdentification =
-                ParticipantDetectionChecker.getCvIdentification( participantDetectionId );
+        final String participantDetectionId = experimentDescription.getParticipantDetection().getPsiDefinition().getId();
+        final CvIdentification cvIdentification = ParticipantDetectionChecker.getCvIdentification( participantDetectionId );
         experiment.setCvIdentification( cvIdentification );
 
         // CvInteraction
-        final String interactionDetectionId =
-                experimentDescription.getInteractionDetection().getPsiDefinition().getId();
-        final CvInteraction cvInteraction =
-                InteractionDetectionChecker.getCvInteraction( interactionDetectionId );
+        final String interactionDetectionId = experimentDescription.getInteractionDetection().getPsiDefinition().getId();
+        final CvInteraction cvInteraction = InteractionDetectionChecker.getCvInteraction( interactionDetectionId );
         experiment.setCvInteraction( cvInteraction );
 
         // Primary Xrefs: pubmed
@@ -107,7 +100,13 @@ public class ExperimentDescriptionPersister {
         experiment.addXref( primaryXref );
         helper.create( primaryXref );
 
-        
+        // based on that primary-reference, retreive information from CDB and update experiment's annotations.
+        String pubmedId = primaryXref.getPrimaryId();
+        System.out.print( "Updating experiment details from CitExplore..." );
+        System.out.flush();
+        UpdateExperimentAnnotationsFromPudmed.update( helper, experiment, pubmedId );
+        System.out.println( "done." );
+
         // BibRefs: primary and secondary.
         final Collection secondaryPubmedXrefs = experimentDescription.getAdditionalBibRef();
         for ( Iterator iterator = secondaryPubmedXrefs.iterator(); iterator.hasNext(); ) {
@@ -122,7 +121,6 @@ public class ExperimentDescriptionPersister {
             experiment.addXref( seeAlsoXref );
             helper.create( seeAlsoXref );
         }
-
 
         // annotations
         final Collection annotations = experimentDescription.getAnnotations();
@@ -142,7 +140,6 @@ public class ExperimentDescriptionPersister {
 
             experiment.addAnnotation( annotation );
         }
-
 
         // other xrefs
         final Collection xrefs = experimentDescription.getXrefs();
