@@ -501,7 +501,6 @@ public class GoUtils {
 
         System.out.println( count + " term" + ( count > 1 ? "s" : "" ) );
 
-
         // 2. Insert all the CVs first without Xrefs nor Annotations
         // to keep track of what Intact Object has been created from what GO record.
         Map terms = new HashMap( goTerms.size() );
@@ -529,7 +528,6 @@ public class GoUtils {
         }
 
         System.out.println( ( ( count % 10 ) != 0 ? count + "" : "" ) );
-
 
         // 3. Insert the Annotations now
         count = 0;
@@ -736,7 +734,6 @@ public class GoUtils {
         // Cache the institution.
         Institution inst = myHelper.getInstitution();
 
-
         // Update shortLabel. Label has to be unique!
         String goTerm = goRec.getGoTerm();
 
@@ -760,7 +757,7 @@ public class GoUtils {
             //of constructor. Thus do it further down after getting a shortLabel...
             current = createCvObject( myTargetClass );
             if ( current == null ) {
-                throw new IntactException( "failed to create new CvObject of type " + myTargetClass.getName());
+                throw new IntactException( "failed to create new CvObject of type " + myTargetClass.getName() );
             }
             current.setOwner( inst );
             myHelper.create( current );
@@ -784,7 +781,6 @@ public class GoUtils {
         current.setFullName( goTerm.substring( 0, Math.min( goTerm.length(), ourMaxNameLen ) ) );
 
         myHelper.update( current );
-
 
         // Update main object
         if ( myHelper.isPersistent( current ) ) {
@@ -891,7 +887,7 @@ public class GoUtils {
                 }
             }
         }
-        
+
         // Update main object
         if ( myHelper.isPersistent( current ) ) {
             myHelper.update( current );
@@ -952,7 +948,7 @@ public class GoUtils {
         if ( ( noArgs != null ) & CvObject.class.isAssignableFrom( clazz ) ) {
             noArgs.setAccessible( true );
             try {
-                return (CvObject) noArgs.newInstance( null );
+                return (CvObject) noArgs.newInstance();
             } catch ( InstantiationException e ) {
                 e.printStackTrace();
             } catch ( IllegalAccessException e ) {
@@ -997,7 +993,7 @@ public class GoUtils {
             // do not print internal remark.
             if ( false == CvTopic.INTERNAL_REMARK.equals( topic ) &&
                  false == CvTopic.UNIPROT_DR_EXPORT.equals( topic ) &&
-                 false == CvTopic.HIDDEN.equals( topic )   ) {    
+                 false == CvTopic.HIDDEN.equals( topic ) ) {
                 out.print( topic + ": " );
                 out.println( a.getAnnotationText() );
             }
