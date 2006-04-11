@@ -9,6 +9,7 @@ package uk.ac.ebi.intact.application.editor.struts.action.interaction;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
@@ -16,7 +17,9 @@ import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.ComponentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.model.Feature;
+import uk.ac.ebi.intact.business.IntactHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -75,7 +78,10 @@ public class FeatureDispatchAction extends CommonDispatchAction {
 
         // The feature we are about to edit.
         FeatureBean fb = ((InteractionViewBean) user.getView()).getSelectedFeature();
+        IntactHelper helper = user.getIntactHelper();
+
         Feature feature = fb.getFeature();
+        feature = helper.getObjectByAc(Feature.class, feature.getAc());
 
         // Set the new object as the current edit object, don't release the pre view
         user.setView(feature, false);
