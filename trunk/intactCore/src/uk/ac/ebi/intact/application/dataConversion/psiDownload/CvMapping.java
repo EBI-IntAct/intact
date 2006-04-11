@@ -318,6 +318,13 @@ public class CvMapping {
                 try {
 
                     if ( fromMI != null && toMI != null ) {
+
+                        if ( fromMI.equals( toMI ) ) {
+                            // self mapping, skip quietly
+                            System.out.println( "SKIP self mapping of " + fromMI );
+                            continue;
+                        }
+
                         // either they are both MI, or one of them is MI and the orher a STAR.
                         if ( ( fromMI.startsWith( "MI:" ) || fromMI.equals( STAR ) )
                              && ( toMI.startsWith( "MI:" ) || toMI.equals( STAR ) )
