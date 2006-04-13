@@ -45,6 +45,12 @@
 
 
     <property name="dist.dir" value="dist"/>
+    <property name="temp.dir" value="${dist.dir}/temp-web"/>
+    <property name="temp.dir.web-inf" value="${temp.dir}/WEB-INF"/>
+    <property name="temp.dir.lib" value="${temp.dir.web-inf}/lib"/>
+    <property name="temp.dir.classes" value="${temp.dir.web-inf}/classes"/>
+    <property name="temp.dir.meta-inf" value="${temp.dir}/META-INF"/>
+
     <property name="pg.war.file" value="${ant.project.name}.war"/>
 
     <!-- This project specific paths. -->
@@ -129,6 +135,19 @@
 
     <!-- =================================================================== -->
 
+    <!-- Creates the temporary folder where the application will be built. -->
+    <target name="prepare-temp-dir">
+        <!-- Create temporary folders -->
+        <mkdir dir="${dist.dir}" />
+        <mkdir dir="${temp.dir}" />
+        <mkdir dir="${temp.dir.web-inf}" />
+        <mkdir dir="${temp.dir.lib}" />
+        <mkdir dir="${temp.dir.classes}" />
+        <mkdir dir="${temp.dir.meta-inf}" />
+    </target>
+
+    <!-- =================================================================== -->
+
     <!-- Sets the time stamp. -->
     <target name="set-tstamp">
         <tstamp>
@@ -152,104 +171,6 @@
         <delete dir="${docs.dir}"/>
         <delete dir="${dist.dir}"/>
 
-        <!-- layout commons files -->
-        <delete>
-            <fileset dir="${layouts.dir}">
-                <!-- Do not remove search specific files
-                NB these are only needed because search now uses a different stylesheet
-                to everything else in Intact
-                -->
-                <exclude name="overLIB/*"/>
-                <exclude name="overLIB/Mini/*"/>
-                <exclude name="sidebar.jsp"/>
-                <exclude name="sidebarLayout.jsp"/>
-                <exclude name="${styles.dir}/intact.css"/>
-            </fileset>
-        </delete>
-
-        <!-- pages commons files -->
-        <delete>
-            <fileset dir="${pages.dir}">
-                <!-- Do not remove search specific files -->
-                <exclude name="noMatch.jsp"/>
-                <exclude name="warning.jsp"/>
-                <exclude name="results.jsp"/>
-                <exclude name="sidebarInput.jsp"/>
-                <exclude name="binaryTest.jsp"/>
-                <exclude name="empty.jsp"/>
-                <exclude name="confirmBinTest.jsp"/>
-                <!-- these are the new JSPs and HTML files (for search mockups Aug 2004)-->
-                <exclude name="jscript.html"/>
-                <exclude name="buttonBar.html"/>
-                <exclude name="detail.jsp"/>
-                <exclude name="simple.jsp"/>
-                <exclude name="partners.jsp"/>
-                <exclude name="singleInteractor.jsp"/>
-                <!-- these are the new JSPs and HTML files (for search mockups Dec 2004)-->
-                <exclude name="binaryProtein.jsp"/>
-                <exclude name="tooLarge.jsp"/>
-                <exclude name="bioSource.jsp"/>
-                <exclude name="cvObject.jsp"/>
-                <!-- these are advanced search specific JSPs -->
-                <exclude name="advancedSearch.jsp"/>
-                <exclude name="advTooLarge.jsp"/>
-                <exclude name="cvIdGraph.jsp"/>
-                <exclude name="cvIntGraph.jsp"/>
-                <exclude name="cvIntTypeGraph.jsp"/>
-                <exclude name="noIndexError.jsp"/>
-                <exclude name="sidebarFooter.jsp"/>
-                <exclude name="cvBrowser.jsp"/>
-
-                <!-- interaction search pages -->
-                <exclude name="interactionSearch.jsp"/>
-                <exclude name="multipleInteraction.jsp"/>
-                <exclude name="noCommonInteraction.jsp"/>
-                <exclude name="noProteinsPresent.jsp"/>
-                <exclude name="noData.jsp"/>
-                <exclude name="waiting.jsp"/>
-
-                <exclude name="noInteractor.jsp"/>
-                <exclude name="noRessource.jsp"/>
-                <exclude name="single.jsp"/>
-                <exclude name="tooManyInteractors.jsp"/>
-                <exclude name="noInteraction.jsp"/>
-
-
-            </fileset>
-        </delete>
-
-        <!-- images commons files -->
-        <delete>
-            <fileset dir="${images.dir}">
-                <!-- Do not remove search specific files -->
-                <exclude name="image23F.JPG"/>
-                <exclude name="imageE0A.JPG"/>
-                <exclude name="imageGKH.JPG"/>
-                <exclude name="imageV3F.JPG"/>
-                <!-- Do not remove advanced search specific files -->
-                <exclude name="anyExample.png"/>
-                <exclude name="cvExample.png"/>
-                <exclude name="expExample.png"/>
-                <exclude name="interExample.png"/>
-                <exclude name="protExample.png"/>
-                <!--  Do not remove InterProSearch specific files-->
-                <exclude name="check.gif"/>
-                <exclude name="greencheck-bullet.gif"/>
-                <exclude name="warning.gif"/>
-                <exclude name="wait_ball_green.gif"/>
-                <!-- PSI 1 & 2.5 buttons -->
-                <exclude name="psi10.png"/>
-                <exclude name="psi25.png"/>
-            </fileset>
-        </delete>
-
-        <!-- images commons files -->
-        <delete quiet="true">
-            <fileset dir="${tld.dir}">
-                <exclude name="cvGraph.tld"/>
-            </fileset>
-        </delete>
-
         <delete file="${last.modified.file}" quiet="true"/>
     </target>
 
@@ -267,7 +188,7 @@
     <!-- Copy configuration files. -->
     <target name="cpConfigFiles">
         <!-- Copy repository files -->
-        <copy todir="${dest.dir}/config">
+        <copy todir="${temp.dir.classes}/config">
             <fileset dir="${root.config.dir}">
                 <include name="repository*.xml"/>
                 <include name="repository.dtd"/>
@@ -276,7 +197,7 @@
         </copy>
 
         <!-- Copy search property files and XML mapping file-->
-        <copy todir="${dest.dir}/config">
+        <copy todir="${temp.dir.classes}/config">
             <fileset dir="WEB-INF/config">
                 <include name="*.properties"/>
                 <include name="*.xml"/>
@@ -284,8 +205,8 @@
         </copy>
 
         <!-- the OJB and log4J properties files should be at the top level in 'dest' -->
-        <copy todir="${dest.dir}" file="${root.config.dir}/OJB.properties"/>
-        <copy todir="${dest.dir}" file="${root.config.dir}/log4j.properties"/>
+        <copy todir="${temp.dir.classes}" file="${root.config.dir}/OJB.properties"/>
+        <copy todir="${temp.dir.classes}" file="${root.config.dir}/log4j.properties"/>
     </target>
 
     <!-- =================================================================== -->
@@ -331,7 +252,7 @@
 
         <!-- Only compile search sources only. -->
         <javac srcdir="${root.src.dir}"
-               destdir="${dest.dir}"
+               destdir="${temp.dir.classes}"
                deprecation="on"
                includes="**/application/search3/**,
                          **/application/commons/**"
@@ -421,20 +342,46 @@
 
     <!-- Builds a war file. The database to include is specified as a parameter. -->
 
-    <target name="build-war" depends="compile, make-jar, gen-last-modified-file"
+    <target name="build-war" depends="prepare-temp-dir ,compile, make-jar, gen-last-modified-file"
             description="Builds a war file">
         <echo message="Generating ${war.file} file"/>
 
-        <!-- Create the distribution dir if it doesn't exist. -->
-        <mkdir dir="${dist.dir}"/>
-
         <!-- Create local directories to copy common files. -->
-        <mkdir dir="${layouts.dir}/styles"/>
-        <mkdir dir="${images.dir}"/>
-        <mkdir dir="${basedir}/${tld.dir}"/>
+        <property name="temp.dir.layouts" value="${temp.dir}/layouts"/>
+        <property name="temp.dir.styles" value="${temp.dir.layouts}/styles"/>
+        <property name="temp.dir.images" value="${temp.dir}/images"/>
+        <property name="temp.dir.pages" value="${temp.dir}/pages"/>
+        <property name="temp.dir.tld" value="${temp.dir.web-inf}/tld"/>
+
+
+        <mkdir dir="${temp.dir.layouts}"/>
+        <mkdir dir="${temp.dir.styles}"/>
+        <mkdir dir="${temp.dir.images}"/>
+        <mkdir dir="${temp.dir.pages}"/>
+        <mkdir dir="${temp.dir.tld}"/>
+
+        <!-- files -->
+        <copy todir="${temp.dir}">
+            <fileset dir="${basedir}">
+                <include name="*.jsp"/>
+                <!--<include name="cvBrowser.jsp"/>-->
+                <include name="*.jpg"/>
+                <include name="*.css"/>
+                <include name="*.xsl"/>
+                <include name="*.html"/>
+                <exclude name="WEB-INF/**"/>
+                <include name="${tld.dir}/**"/>
+                <include name="images/*"/>
+                <exclude name="pages/**"/>
+                <exclude name="layouts/**"/>
+                <include name="${last.modified.file}"/>
+                <include name="META-INF/*.xml"/>
+            </fileset>
+        </copy>
 
         <!-- Common layouts -->
-        <copy todir="${layouts.dir}">
+        <copy todir="${temp.dir.layouts}">
+            <fileset dir="${layouts.dir}"/>
             <fileset dir="${intact.app.dir}/layouts">
                 <!-- Don't need any frame layouts for this application -->
                 <exclude name="*Frame.jsp"/>
@@ -446,15 +393,24 @@
         </copy>
 
         <!-- Common images -->
-        <copy todir="${images.dir}">
+        <copy todir="${temp.dir.images}">
+            <fileset dir="${images.dir}"/>
             <fileset dir="${intact.app.dir}/images"/>
         </copy>
 
         <!-- Common jsp files -->
-        <copy todir="${pages.dir}">
+        <copy todir="${temp.dir.pages}">
+            <fileset dir="${pages.dir}"/>
             <fileset dir="${intact.app.dir}/pages">
                 <!-- Don't need error frame JSP -->
                 <exclude name="errorFrame.jsp"/>
+            </fileset>
+        </copy>
+
+        <!-- WEB-INF conf giles -->
+        <copy todir="${temp.dir.web-inf}">
+            <fileset dir="WEB-INF">
+                <include name="*.xml"/>
             </fileset>
         </copy>
 
@@ -462,7 +418,8 @@
         <delete file="${dist.dir}/${war.file}" quiet="true"/>
 
         <!-- Copy struts standard tld files -->
-        <copy todir="${tld.dir}">
+        <copy todir="${temp.dir.tld}">
+            <fileset dir="${tld.dir}"/>
             <fileset dir="${intact.app.dir}/tld">
                 <include name="*.tld"/>
                 <!-- Don't need intact.tld for this application -->
@@ -470,41 +427,18 @@
             </fileset>
         </copy>
 
-        <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
-            <fileset dir="${basedir}">
-                <include name="*.jsp"/>
-                <!--<include name="cvBrowser.jsp"/>-->
-                <include name="*.jpg"/>
-                <include name="*.css"/>
-                <include name="*.xsl"/>
-                <include name="*.html"/>
-                <include name="WEB-INF/struts-config.xml"/>
-                <include name="WEB-INF/tiles-defs.xml"/>
-                <include name="${tld.dir}/**"/>
-                <include name="images/*"/>
-                <include name="pages/**"/>
-                <include name="layouts/**"/>
-                <include name="${last.modified.file}"/>
-                <include name="META-INF/*.xml"/>
-            </fileset>
-
-
-            <!-- Currently no JAR file use in search -->
-            <!-- Include search specific jar files. -->
-            <!--            <lib dir="${lib.dir}">-->
-            <!--                <include name="*.jar"/>-->
-            <!--            </lib>-->
-
-            <!-- Inlcude the intact core -->
-            <lib dir="${root.dist.dir}"/>
+        <!-- Copy jars to lib temp folder -->
+        <copy todir="${temp.dir.lib}">
+             <!-- Inlcude the intact core -->
+            <fileset dir="${root.dist.dir}"/>
 
             <!-- Include application common jar files but exclude test files -->
-            <lib dir="${intact.app.dir}/lib">
+            <fileset dir="${intact.app.dir}/lib">
                 <exclude name="test/**"/>
-            </lib>
+            </fileset>
 
             <!-- Include common jar files from intact core. -->
-            <lib dir="${root.lib.dir}">
+            <fileset dir="${root.lib.dir}">
                 <include name="db-ojb-1.0.rc6.jar"/>
                 <include name="log4j-1.2.8.jar"/>
                 <include name="${db}"/>
@@ -513,11 +447,22 @@
                 <include name="commons-collections-3.0.jar"/>
                 <include name="commons-httpclient-3.0-rc2.jar"/>
                 <include name="commons-codec-1.4-dev.jar"/>
+            </fileset>
+        </copy>
 
-            </lib>
+        <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
+            <fileset dir="${temp.dir}">
+                <exclude name="WEB-INF/classes/**"/>
+                <exclude name="WEB-INF/lib/**"/>
+                <exclude name="WEB-INF/web.xml"/>
+            </fileset>
+
+
+            <!-- Inlcude the libs -->
+            <lib dir="${temp.dir.lib}"/>
 
             <!-- search specific classes -->
-            <classes dir="${dest.dir}"/>
+            <classes dir="${temp.dir.classes}"/>
         </war>
 
         <antcall target="gen-context-file"/>
