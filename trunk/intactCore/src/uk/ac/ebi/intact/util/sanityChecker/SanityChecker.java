@@ -1621,10 +1621,10 @@ public class SanityChecker {
         }
     }
 
-    public void checkDeletionFeature( List rangeBeans ) throws SQLException, IntactException {
+    public void checkDeletionFeature( IntactHelper helper, List rangeBeans ) throws SQLException, IntactException {
         for ( int i = 0; i < rangeBeans.size(); i++ ) {
             RangeBean rangeBean = (RangeBean) rangeBeans.get( i );
-            messageSender.addMessage( ReportTopic.DELETION_INTERVAL_TO_LONG_TO_BE_CARACTERIZED_BY_DELETION_ANALYSIS_FEATURE_TYPE, rangeBean );
+            messageSender.addMessage( helper, ReportTopic.DELETION_INTERVAL_TO_LONG_TO_BE_CARACTERIZED_BY_DELETION_ANALYSIS_FEATURE_TYPE, rangeBean );
         }
     }
 
@@ -1762,7 +1762,7 @@ public class SanityChecker {
 
         //already working
         List ranges = scn.deletionFeatureSch.getBeans( helper, RangeBean.class, "2" );
-        scn.checkDeletionFeature( ranges );
+        scn.checkDeletionFeature( helper, ranges );
 
         /*
         *     Check on annotation
