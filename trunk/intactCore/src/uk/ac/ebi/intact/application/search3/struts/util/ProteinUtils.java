@@ -145,14 +145,15 @@ public class ProteinUtils {
      *
      * @return a collection containing the n-ary interactions of the given protein.
      */
-    public static Collection getNnaryInteractions( final Interactor anInteractor ) {
+    public static Collection<Interaction> getNnaryInteractions( final Interactor anInteractor ) {
         // first get all Components
-        final Collection componentSet = anInteractor.getActiveInstances();
-        final Set someInteractions = new HashSet();
+        //TODO (BA) This needs to be paginated to avoid potential OutOfMemoryExceptions
+        final Collection<Component> componentSet = anInteractor.getActiveInstances();
+        final Set<Interaction> someInteractions = new HashSet<Interaction>();
         // now get all Interactions from the Components
-        for ( Iterator iterator = componentSet.iterator(); iterator.hasNext(); ) {
-            final Component component = (Component) iterator.next();
-            someInteractions.add( component.getInteraction() );
+        for (Component component : componentSet)
+        {
+            someInteractions.add(component.getInteraction());
         }
         return someInteractions;
     }
@@ -163,36 +164,36 @@ public class ProteinUtils {
      * <p>
      * A Self Interaction is an Interaction which got 2 or lesser Compoenents and the sum of the stoichemetry is 2.
      *
-     * @param aProtein a protein, must no be null
      *
      * @return a collection containing the self interactions of the given protein.
      */
 //    public static Collection getSelfInteractions( final Protein aProtein ) {      // 4 usage 1 in BinaryPorteinAction, 3 in PartnerViewBean
-    public static Collection getSelfInteractions( final Interactor anInteractor ) {
+    public static Collection<Interaction> getSelfInteractions( final Interactor anInteractor ) {
 
-        final Set result = new HashSet();
-        final Collection someInteractions = getNnaryInteractions( anInteractor );
+        final Set<Interaction> result = new HashSet<Interaction>();
+        final Collection<Interaction> someInteractions = getNnaryInteractions( anInteractor );
 
         // now check for every interaction
-        for ( Iterator iterator = someInteractions.iterator(); iterator.hasNext(); ) {
-
-            final Interaction anInteraction = (Interaction) iterator.next();
-            final Collection someComponents = anInteraction.getComponents();
+        for (Interaction anInteraction : someInteractions)
+        {
+            final Collection<Component> someComponents = anInteraction.getComponents();
             //TODO it should work with someComponents.size == 1
-            if ( someComponents.size() <= 2 ) {
+            if (someComponents.size() <= 2)
+            {
                 int stoichiometry = 0;
 
-                for ( Iterator iterator1 = someComponents.iterator(); iterator1.hasNext(); ) {
-                    final Component aComponent = (Component) iterator1.next();
-
-                    if ( anInteractor.equals( aComponent.getInteractor() ) ) {
+                for (Component aComponent : someComponents)
+                {
+                    if (anInteractor.equals(aComponent.getInteractor()))
+                    {
                         stoichiometry = stoichiometry + (int) aComponent.getStoichiometry();
                     }
                 } // for
 
-                if ( stoichiometry == 2 ) {
+                if (stoichiometry == 2)
+                {
                     // it's a self interaction
-                    result.add( anInteraction );
+                    result.add(anInteraction);
                 }
             }
         } // for
@@ -213,12 +214,12 @@ public class ProteinUtils {
      * @return a collection containing all n-nary  interactions of the 2 given proteins.
      */
 //    public static Collection getNnaryInteractions( final Protein firstProtein,   // 2 usage in PartnersViewBean
-    public static Collection getNnaryInteractions( final Interactor firstInteractor,
+    public static Collection<Interaction> getNnaryInteractions( final Interactor firstInteractor,
                                                    final Interactor secondInteractor ) {
         // getting all Interactions from firstProtein
-        final Collection interactor1Interactions = getNnaryInteractions( firstInteractor );
+        final Collection<Interaction> interactor1Interactions = getNnaryInteractions( firstInteractor );
         // getting all Interactions from secondProtein
-        final Collection interactor2Interactions = getNnaryInteractions( secondInteractor );
+        final Collection<Interaction> interactor2Interactions = getNnaryInteractions( secondInteractor );
         // get only these Interactions in which both are involved
         return CollectionUtils.intersection( interactor1Interactions, interactor2Interactions );
     }
