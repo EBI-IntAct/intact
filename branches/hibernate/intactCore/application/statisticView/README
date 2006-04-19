@@ -1,0 +1,72 @@
+$Id$
+**********************************************************************
+README for StatisticView (intactCore/application/StatisticView)
+**********************************************************************
+
+DIRECTORIES:
+/ (root)        : JSP and css files.
+WEB-INF/lib     : Library files for web. All the files in this location are
+                  included in the WAR file.
+WEB-INF/classes : search specific (non Intact core) class files.
+WEB-INF/tld     : The tag libraries.
+WEB-INF/config  : Configuration/Property files for the application.
+dist/           : Where the WAR file is created.
+
+
+INSTALLATION
+	Read the README file in the intact home directory to know how to configure the database access.
+	
+DEPENDENCIES:
+       - Make sure that the table in the database are created and the scripts created the data
+
+       - BE CAREFUL, statisticView got his OWN repository_user.xml OJB config file.
+         everything is done by ant, but be carefull with modification. it stored under
+         /application/statisticView/WEB-INF/config/repository_user.xml
+
+    ORACLE:
+	- The script sql/oracle/statistics/create_all_statistics.psql
+	  creates the tables and  the fills it with data.
+
+	POSTGRES: 
+       	- The scripts sql/postgres/insert_count_statistics.sql
+                      sql/postgres/insert_biosource_statistics.sql
+	                  sql/postgres/insert_exp_statistics.sql
+	      must run seperatly. postgres is not fully supported at the moment.
+
+TODOS:
+    - better postgres support
+    - generation of the other charts with the update method as statistics are generated
+    - the exception model could be a little bit more detailed, at the moment everything throws
+      just an intact exception.
+		   
+		     
+BUILD
+
+    ant war
+        prepares a WAR file to be deployed in a WEB container. The WAR file is
+        created in the dist/ directory.
+
+OTHER USEFUL COMMANDS
+
+    ant deploy (Tomcat specific)
+        deploys the WAR file in the dist/ location to the CATALINA_HOME/webapps. The
+        environment variable CATALINA_HOME must be set for this command to work
+        correctly.
+
+    ant undeploy (Tomcat specific)
+        reverses the effects of 'ant deploy' command. In addition to that, this
+        command also stops the WEB server (Tomcat) if it is running. As with
+        deploy command, the environment variable CATALINA_HOME must be set for
+        this command to work correctly. An error message, displayed when trying
+        to shutdown the WEB server if it is not running, can be safely ignored. In
+        addition to removing the WAR file, this command also removes the
+        expanded directory as well. For example, CATALINA_HOME/webapps/search
+        directory is removed in addition to CATALINA_HOME/webapps/search.war file.
+
+    ant undeploy war deploy (Tomcat specific)
+        runs all three targets in the specified order. Undeploys the last deployment,
+        creates a new war file and deploy it again.
+    
+
+COMMENTS
+    Send any comments/feedback to Michael Kleen (mkleen@ebi.ac.uk)

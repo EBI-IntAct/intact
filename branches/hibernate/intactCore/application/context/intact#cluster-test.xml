@@ -1,0 +1,11 @@
+<!--
+        Template of the context configuration for search
+        version : $Id$
+  -->
+
+<Context displayName="clusterTest"
+         path="/[server.name]/cluster-test"
+         docBase="[WAR.ABSOLUTE.PATH]"
+         distributable="true">
+</Context>
+

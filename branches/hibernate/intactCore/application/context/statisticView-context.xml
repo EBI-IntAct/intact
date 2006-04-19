@@ -1,0 +1,6 @@
+<!--
+        Context configuration for statisticView
+        version : $Id$
+    -->
+
+<Context path="/[server.name]/statisticView" docBase="app-dir/[WAR.FILE.NAME]" />

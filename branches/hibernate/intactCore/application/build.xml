@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+     ANT master build configuration file for applications
+     Authors: Sugath Mudali (smudali@ebi.ac.uk), Samuel Kerrien (skerrien@ebi.ac.uk)
+-->
+
+<project name="application" basedir="." default="compile">
+
+    <!-- Tomcat specific properties, to be able to deploy/undeploy using the manager -->
+    <property file="${basedir}/deployment.local.properties"/>
+    <property file="${basedir}/deployment.properties"/>
+
+    <property name="project.title" value="application"/>
+
+    <property environment="env"/>
+
+    <property name="tomcat.home" value="${env.CATALINA_HOME}"/>
+    <property name="webapps.dir" value="${tomcat.home}/webapps"/>
+    <property name="webapps.war.dir" value="${webapps.dir}/app-dir"/>
+    <property name="axis.home" value="${webapps.dir}/axis"/>
+
+    <property name="start-tomcat" value="${tomcat.home}/bin/startup.sh"/>
+    <property name="stop-tomcat" value="${tomcat.home}/bin/shutdown.sh"/>
+
+    <property name="manager.url" value="http://${manager.host}:${manager.port}/manager"/>
+
+    <!-- Configure the custom Ant tasks for the Manager application -->
+    <path id="catalina.ant.class.path">
+        <pathelement path="lib/deploy/catalina-ant.jar"/>
+    </path>
+
+    <taskdef name="deploy"    classname="org.apache.catalina.ant.DeployTask"    classpathref="catalina.ant.class.path"/>
+    <taskdef name="list"      classname="org.apache.catalina.ant.ListTask"      classpathref="catalina.ant.class.path"/>
+    <taskdef name="reload"    classname="org.apache.catalina.ant.ReloadTask"    classpathref="catalina.ant.class.path"/>
+    <taskdef name="resources" classname="org.apache.catalina.ant.ResourcesTask" classpathref="catalina.ant.class.path"/>
+    <taskdef name="roles"     classname="org.apache.catalina.ant.RolesTask"     classpathref="catalina.ant.class.path"/>
+    <taskdef name="start"     classname="org.apache.catalina.ant.StartTask"     classpathref="catalina.ant.class.path"/>
+    <taskdef name="stop"      classname="org.apache.catalina.ant.StopTask"      classpathref="catalina.ant.class.path"/>
+    <taskdef name="undeploy"  classname="org.apache.catalina.ant.UndeployTask"  classpathref="catalina.ant.class.path"/>
+
+    <!--
+    <path id="scp.class.path">
+        <pathelement path="lib/deploy/jsch-0.1.25.jar"/>
+    </path>
+
+    <taskdef name="scp"  classname="org.apache.tools.ant.taskdefs.optional.ssh.Scp" classpathref="scp.class.path"/>
+    -->
+
+    <!-- =================================================================== -->
+
+    <!-- Ensures that tomcat.present property is called only once to avoid
+         error from Ant.
+    -->
+
+    <target name="run-once" unless="tomcat.present">
+        <available file="${tomcat.home}/conf/server.xml" property="tomcat.present"/>
+        <available file="${axis.home}/WEB-INF/web.xml" property="axis.present"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Displays a message to indicate that tomcat is not available. -->
+
+    <target name="check-tomcat" depends="run-once" unless="tomcat.present">
+        <echo message=
+            "Tomcat is not available on your system or CATALINA_HOME is not set"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Displays a message to indicate that axis is not available. -->
+
+    <target name="check-axis" depends="run-once" unless="axis.present">
+        <echo message=
+            "Axis is not available on your system or AXIS_HOME is not set"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Starts the Tomcat server. -->
+
+    <target name="start-tomcat" depends="check-tomcat" if="tomcat.present"
+        description="Starts Tomcat server">
+        <exec executable="${start-tomcat}" dir="${basedir}" vmlauncher="false" os="Linux"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Stops the Tomcat server. -->
+
+    <target name="stop-tomcat" depends="check-tomcat" if="tomcat.present"
+        description="Stops Tomcat server">
+        <exec executable="${stop-tomcat}" dir="${basedir}" vmlauncher="false" os="Linux"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Deploys the war file on the Tomcat server. -->
+
+    <target name="deploy" depends="check-tomcat" if="tomcat.present"
+        description="Deploys the WAR file on the Tomcat server">
+
+        <!-- Create the war repository directory -->
+        <mkdir dir="${webapps.war.dir}"/>
+
+        <!-- Copy the file across to the deploy dir. -->
+        <copy file="${war}" todir="${webapps.war.dir}" overwrite="yes"/>
+
+        <echo message="Please start Tomcat to take effect (ant start-tomcat)"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Undeploys the war file from the Tomcat server. -->
+
+    <target name="undeploy" depends="check-tomcat" if="tomcat.present"
+        description="Removes the WAR file and the directory from the Tomcat server">
+
+        <!-- Stop the tomcat completely. -->
+        <antcall target="stop-tomcat"/>
+
+        <!-- Remove the war file. -->
+        <delete file="${webapps.war.dir}/${war}.war" quiet="true"/>
+
+        <!-- Delete the directory. -->
+        <delete dir="${webapps.war.dir}/${war}" quiet="true"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Deploys a war to tomcat using a context file
+        Tomcat Manager properties are defined in a file called deployment.properties in this same folder
+    -->
+
+    <target name="deploy-using-manager"
+            description="Deploys the WAR file on the Tomcat server using the manager"
+            depends="deploy-confirm, set-context-and-war-dir,deploy-scp"
+            if="deploy.proceed">
+        <echo message="Deploying application with context file ${context.file.name} and path ${context.path}"/>
+
+        <deploy url="${manager.url}" username="${manager.username}" password="${manager.password}"
+                path="${context.path}" config="file:${context.and.war.dir}/${context.file.name}" />
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- We want the user to be sure of what is deploying and the Tomcat manager used.
+    We require a confirmation.
+    -->
+    <target name="deploy-confirm" >
+        <echo message="Application to deploy:"/>
+        <echo message="- Path: ${context.path}"/>
+        <echo message="- Context file: ${context.file.url.path}"/>
+
+        <echo message=""/>
+        <input message="Do you want to deploy the application using the Tomcat manager ${manager.url} (user: ${manager.username}) ? "
+               validargs="y,n"
+               addproperty="deploy.confirmation"/>
+
+        <condition property="deploy.proceed">
+            <equals arg1="y" arg2="${deploy.confirmation}" casesensitive="false"/>
+        </condition>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- In deployment, copies the files to a remote computer using scp
+    -->
+    <target name="deploy-scp" unless="deployment.localhost"
+            depends="deploy-check-localhost,deploy-check-scp-password"
+            if="deploy.proceed">
+
+        <scp file="${dist.dir.absolute.path}/${context.file.name}" remoteTodir="${scp.username}:${scp.password}@${manager.host}:${scp.destination.dir}" port="${scp.port}"/>
+        <scp file="${dist.dir.absolute.path}/${war.file.name}"     remoteTodir="${scp.username}:${scp.password}@${manager.host}:${scp.destination.dir}" port="${scp.port}"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Checks if the deployment is being done in localhost -->
+
+    <target name="deploy-check-localhost">
+        <condition property="deployment.localhost">
+            <equals arg1="localhost" arg2="${manager.host}" casesensitive="false"/>
+        </condition>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Asks for a password if scp.password is not provided -->
+
+    <target name="deploy-check-scp-password" unless="deployment.localhost">
+         <fail unless="scp.username"
+              message="No username for scp has been provided. The property scp.username property has not been set"/>
+
+        <echo message=""/>
+        <input message="Which is the password for ${scp.username}@${manager.host} ? " addproperty="scp.password" />
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Undeploys a war to tomcat using the Tomcat Manager
+        Tomcat Manager properties are defined in a file called deployment.properties in this same folder
+    -->
+
+    <target name="undeploy-using-manager"
+            description="Undeploys an application using the Tomcat manager"
+            depends="undeploy-confirm"
+            if="undeploy.proceed">
+
+        <undeploy url="${manager.url}" username="${manager.username}" password="${manager.password}"
+                path="${context.path}" />
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- We want the user to be sure of what is undeploying and the Tomcat manager used.
+    We require a confirmation.
+    -->
+    <target name="undeploy-confirm" >
+        <echo message="Application to undeploy:"/>
+        <echo message="- Path: ${context.path}"/>
+
+        <echo message=""/>
+        <input message="Do you want to undeploy the application using the Tomcat manager ${manager.url} (user: ${manager.username}) ? "
+               validargs="y,n"
+               addproperty="undeploy.confirmation"/>
+
+        <condition property="undeploy.proceed">
+            <equals arg1="y" arg2="${undeploy.confirmation}" casesensitive="false"/>
+        </condition>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Customize the context file -->
+
+    <target name="customize-context-file" depends="set-context-and-war-dir">
+        <replace file="${dist.dir.absolute.path}/${context.file.name}"
+                 token="[WAR.ABSOLUTE.PATH]"
+                 value="${context.and.war.dir}/${war.file.name}"/>
+        <replace file="${dist.dir.absolute.path}/${context.file.name}"
+                 token="[server.name]"
+                 value="${server.name}"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Sets the directory where the war will be situated (in the local or the remote computer) -->
+
+    <target name="set-context-and-war-dir" depends="deploy-check-localhost,set-context-and-war-dir-local, set-context-and-war-dir-remote"/>
+
+    <target name="set-context-and-war-dir-remote" unless="deployment.localhost">
+        <property name="context.and.war.dir" value="${scp.destination.dir}"/>
+    </target>
+
+    <target name="set-context-and-war-dir-local" if="deployment.localhost">
+        <property name="context.and.war.dir" value="${dist.dir.absolute.path}"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Generates the last modified file. -->
+
+    <target name="gen-last-modified-file">
+        <tstamp>
+            <format property="TODAY_UK" pattern="dd-MMMM-yyyy hh:mm aa" locale="en"/>
+        </tstamp>
+        <echo message="${TODAY_UK} by ${env.USER}" file="${file}"/>
+    </target>
+
+</project>
