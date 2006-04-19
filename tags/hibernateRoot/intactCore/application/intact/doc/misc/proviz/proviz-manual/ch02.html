@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><head><meta content="text/html; charset=ISO-8859-1" http-equiv="Content-Type"><title>Chapter 2. ProViz interface</title><meta name="generator" content="DocBook XSL Stylesheets V1.50.0"><meta name="keywords" content="Protein interactions"><link rel="home" href="proviz-manual.html" title="ProViz User Manual"><link rel="up" href="proviz-manual.html" title="ProViz User Manual"><link rel="previous" href="ch01.html" title="Chapter 1. What is ProViz"><link rel="next" href="ch03.html" title="Chapter 3. Credits and License"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 2. ProViz interface</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch01.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch03.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><h2 class="title"><a name="interface"></a>Chapter 2. ProViz interface</h2></div><div><p class="releaseinfo">1.0</p></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><a href="ch02.html#interface-mainwindow">The main window</a></dt><dt><a href="ch02.html#interface-graphwindow">The graph view window</a></dt><dd><dl><dt><a href="ch02.html#interface-graphwindow-zoom">Zooming in and out</a></dt><dt><a href="ch02.html#interface-graphwindow-move">Moving in the view</a></dt><dt><a href="ch02.html#interface-graphwindow-scale">Scaling elements</a></dt><dt><a href="ch02.html#interface-graphwindow-choseelement">Chosing an element</a></dt><dt><a href="ch02.html#interface-graphwindow-zoomBox">The zoom box mouse mode</a></dt></dl></dd><dt><a href="ch02.html#interface-views">The Views tab</a></dt><dd><dl><dt><a href="ch02.html#interface-views-tree">The views tree</a></dt><dt><a href="ch02.html#interface-views-options">View options</a></dt></dl></dd><dt><a href="ch02.html#interface-menutoolbar">The menu and the toolbar</a></dt><dd><dl><dt><a href="ch02.html#interface-menutoolbar-open">Opening a file</a></dt><dt><a href="ch02.html#interface-menutoolbar-import">Importing PSI data files</a></dt><dt><a href="ch02.html#interface-menutoolbar-save">Saving files</a></dt><dt><a href="ch02.html#interface-menutoolbar-RFL">The recent file list</a></dt><dt><a href="ch02.html#interface-menutoolbar-image">Printing and saving images</a></dt><dt><a href="ch02.html#interface-menutoolbar-help">Obtaining help</a></dt><dt><a href="ch02.html#interface-menutoolbar-centerview">Center view</a></dt><dt><a href="ch02.html#interface-menutoolbar-layout">Changing the layout of a view</a></dt></dl></dd><dt><a href="ch02.html#interface-cv">The controlled vocabulary tree</a></dt><dd><dl><dt><a href="ch02.html#interface-cv-colorcode">Color code</a></dt><dt><a href="ch02.html#interface-cv-selection">Selection mecanisms</a></dt><dt><a href="ch02.html#interface-cv-usingtermselection">Using term selection</a></dt><dt><a href="ch02.html#interface-cv-find">Finding CV terms in the tree</a></dt></dl></dd><dt><a href="ch02.html#interface-properties">The properties tab</a></dt><dd><dl><dt><a href="ch02.html#interface-properties-list">The property list</a></dt><dt><a href="ch02.html#interface-properties-links">Links to external information</a></dt><dt><a href="ch02.html#interface-properties-comment">Using the comment field</a></dt><dt><a href="ch02.html#interface-properties-find">Finding proteins with the properties panel</a></dt></dl></dd></dl></div><a name="proviz-interface"></a><p>Nodes and edges are elements of a graph. This is their meaning in ProViz:
+</p><div class="variablelist"><dl><dt><span class="term">node</span></dt><dd>a protein or complex or small molecule...</dd><dt><span class="term">edge</span></dt><dd>interaction</dd></dl></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="interface-mainwindow"></a>The main window</h2></div></div><p>Two main parts can be distinguished in this window:
+</p><div class="screenshot"><div class="mediaobject"><img src="screenshots/full-window.png" alt="ProViz's main window with a file loaded"></div></div><div class="itemizedlist"><ul type="disc"><li><p>1: <a href="ch02.html#interface-views" title="The Views tab">View tree</a>, <a href="ch02.html#interface-cv" title="The controlled vocabulary tree">Controlled vocabulary
+trees</a> and <a href="ch02.html#interface-properties" title="The properties tab">the element property tab</a></p></li><li><p>2: <a href="ch02.html#interface-graphwindow" title="The graph view window">The graph view window</a></p></li></ul></div></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="interface-graphwindow"></a>The graph view window</h2></div></div><p>This is the window that displays the graph representing protein interactions. Two mouse modes are proposed for 
+interacting with this window. These modes can be switched in the toolbar In normal mouse mode, it is possible to <a href="ch02.html#interface-graphwindow-zoom" title="Zooming in and out">zoom in and out</a> and to <a href="ch02.html#interface-graphwindow-move" title="Moving in the view">move in
+the view</a>.</p><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="interface-graphwindow-zoom"></a>Zooming in and out</h3></div></div><p>Using the mouse wheel it is possible to zoom and navigate very efficiently in the
+graph. Moving up the mouse wheel will zoom in and will bring the item designated
+by the mouse cursor towards the center of the view. Moving down the mouse wheel will do
+exactly the opposite: zoom out and move the item away from the center of the view.
+</p><p>One good example to understand this feature is to think of it applied to a map: simply point to a region on it
+and it will zoom in the direction of that region; once that region occupies the entire view one may want to see another
+region in the direction of, say, north-east: just move the mouse in the north-east (up-right in the view) and zoom out.
+</p></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="interface-graphwindow-move"></a>Moving in the view</h3></div></div><p>It is also possible to pan the view without changing the zoom level.
+ puts the mouse in move mode, the graph will move as mouse moves. Release
+the key and the button to stop.
+</p></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="interface-graphwindow-scale"></a>Scaling elements</h3></div></div><p>The slider &quot;Scale nodes&quot; allows adjusting in real time the size of the nodes on the current
+view (which is different from the current graph view) and all of its descendants. The scaling factor may vary between
+-100 and 100 by step of 1. 0 is the original size. When a satisfying scale has been set, this one can be saved by
+clicking the &quot;Save&quot; button. This has the effect of setting the new size has the new &quot;normal&quot;
+size, and the scale value returns to 0. So, if 100 isn't enough simply save and scale larger again. </p><div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Warning</h3>This does
+not save to the file, just values in memory.</div><p>
+</p></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="interface-graphwindow-choseelement"></a>Chosing an element</h3></div></div><p> Left clicking on an element will select it for
+<a href="ch02.html#interface-properties" title="The properties tab">viewing properties</a>.
+</p></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="interface-graphwindow-zoomBox"></a>The zoom box mouse mode</h3></div></div><p>In this mode all normal mouse and keyboard functions are disabled. This mode allows you to zoom forward on an area 
+
+
+of the graph view. In order to achieve this just Left-click on the graph view and hold the mouse button down while 
+moving the mouse. The area is drawn while moving the mouse so that you can see on what you intend to zoom on. Release 
+the button to perform the zoom. If you begin drawing the area but want to abort the operation, you can hit 
+Esc key or Right-click (do not release the mouse Left button before).
+</p></div></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="interface-views"></a>The Views tab</h2></div></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="interface-views-tree"></a>The views tree</h3></div></div><p>This is the tree of the views. A view is a subset of elements of the root graph. It can be created by selection 
+from another view (see <a href="ch02.html#interface-cv" title="The controlled vocabulary tree">controlled vocabulary tree</a>). Clicking on a view will show it 
+in the current graph view. A Right click on a view opens a pop-up menu allowing to:
+</p><div class="itemizedlist"><ul type="disc"><li><p>Remove the view, preserving its descendant</p></li><li><p>Remove All: destroys the view and its descendants</p></li><li><p>Rename the view</p></li></ul></div><p>
+
+</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>The root graph cannot be removed</div><p>
+</p></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="interface-views-options"></a>View options</h3></div></div><p>The view options are shared by all graphs views.
+</p><p>The Background Color button allows changing the background color of the graphs views. Its
+own background color is the actual background color. When clicked, it opens a standard color selection dialog,
+Ok validates the color.
+</p><p>The &quot;Display labels&quot; checkbox allows displaying of the proteins labels when checked.
+</p></div></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="interface-menutoolbar"></a>The menu and the toolbar</h2></div></div><div class="screenshot"><div class="mediaobject"><img src="screenshots/toolbar.png" alt="ProViz's toolbar"></div></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="interface-menutoolbar-open"></a>Opening a file</h3></div></div><p>A file in tlp format can be opened with 
+File-&gt;Open(<img src="icons/fileopen.png">). If the file loading is a success, the <a href="ch02.html#interface-views" title="The Views tab">View
+tab</a> presents the hierarchy of views, all <a href="ch02.html#interface-graphwindow" title="The graph view window">graph views</a> are destroyed
+but one showing the root view; the <a href="ch02.html#interface-cv" title="The controlled vocabulary tree">controlled vocabulary trees</a> are updated and
+corresponds to the current graph. If the file is the first loaded in that session, then all interface elements are
+enabled.
+</p></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="interface-menutoolbar-import"></a>Importing PSI data files</h3></div></div><p>PSI canonical form files (*.xml; *.xml.gz) can be imported into ProViz; use
+File-&gt;Import. The rest of the operation acts just
+as <a href="ch02.html#interface-menutoolbar-open" title="Opening a file">opening a normal file</a>.
+</p></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="interface-menutoolbar-save"></a>Saving files</h3></div></div><p>The current file can be saved with File-&gt;Save
+(<img src="icons/filesave.png">). It can be saved under a new name, possibly
+compressed by appending &quot;.gz&quot; to its name, with File-&gt;Save
+As.
+</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>PSI files are to be saved under ProViz's native file format; although the
+Save menu is enabled, it will open the Save As 
+dialog.</p></div><p>
+</p></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="interface-menutoolbar-RFL"></a>The recent file list</h3></div></div><p>The last entries in the File menu are filenames found in the most recent files opened. This 
+list of recently opened files is currently limited to 4 items. Since PSI files are imported datas, they are not taken in 
+
+
+account in this list.
+</p></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="interface-menutoolbar-image"></a>Printing and saving images</h3></div></div><p>In the File menu, Print(<img src="icons/print.png">) and Save PNG image will respectively print and save as
+
+a PNG image the current graph view</p></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="interface-menutoolbar-help"></a>Obtaining help</h3></div></div><p>Two help mecanism are availaible in ProViz: this manual, browsable within the application 
+Help-&gt;Index(<img src="icons/help.png">), and &quot;What's this&quot; contextual help, which provides 
+more a detailed description of an interface element than tooltips'.
+</p></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="interface-menutoolbar-centerview"></a>Center view</h3></div></div><p>Sometimes it can be annoying to zoom backward to see the whole graph. 
+View-&gt;Center view(<img src="icons/restoreView.png">) will reset the graph displaying so that all elements of the 
+current view can be seen in the graph view tab.
+</p></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="interface-menutoolbar-layout"></a>Changing the layout of a view</h3></div></div><p>ProViz offers the possibility to apply some predefined layouts to a view. It is important to remember that each 
+view inherits the layout of its parent, unless it has its own. An inherited layout change whenever the parent's
+layout is changed. When a child view is applied a particular layout, the parent's one is left unchanged. Those layouts
+are available in the toolbar or in View-&gt;Layouts.
+</p><p>As of ProViz 1.0, three layouts are available:
+</p><div class="variablelist"><dl><dt><span class="term"><img src="icons/layout-GEM.png">GEM</span></dt><dd>GEM layout. Help in finding key points in a network of interactions. Be warned that the speed of 
+computing decreases as the graph size increases</dd><dt><span class="term"><img src="icons/layout-hierarchical.png">Hierarchical</span></dt><dd>Hierarchical layout. Can help in detecting metabolic pathways or gene regulation networks</dd><dt><span class="term"><img src="icons/layout-circular.png">Circular</span></dt><dd>Circular. A simple, yet neutral layout</dd></dl></div><p>
+</p></div></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="interface-cv"></a>The controlled vocabulary tree</h2></div></div><p>Controlled vocabulary terms are associated with interaction graph elements by means of element properties. A term
+describing the function of a protein is indicated in the &#8220;intact_go_ac&#8221; property of an element.
+</p><p>Both type of controlled vocabulary are represented in Proviz as trees, and are presented on the screen with the
+same conventions.
+</p><div class="screenshot"><div class="mediaobject"><img src="screenshots/ontologyPanel.png" alt="The protein ontology"></div></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="interface-cv-colorcode"></a>Color code</h3></div></div><p>Items in the graphical tree are controlled vocabulary terms, and elements are elements of the graph, i.e
+nodes or edges.</p><p>
+Items in the controlled vocabulary list have different color depending on their meaning:
+</p><div class="variablelist"><dl><dt><span class="term">Gray (disabled color)</span></dt><dd><p>thie term is not associated with any element.
+  </p></dd><dt><span class="term">Black (normal color)</span></dt><dd><p>If the whole graph is viewed, this term has no corresponding element in the graph, but at
+least one of its descendant has. Using it in a selection gives a non empty graph. If the current graph is a
+selection of the whole graph, this color means that this term or one of its descendant could possibly have an element 
+associated with it.
+  </p></dd><dt><span class="term">Cyan</span></dt><dd><p>this term is associated at least one element in the current graph</p></dd><dt><span class="term">Blue</span></dt><dd><p>this item was selected for creating the current view. The only exception is when viewing the root
+graph where we consider that no item was selected to create it.</p></dd></dl></div></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="interface-cv-selection"></a>Selection mecanisms</h3></div></div><p>It is possible to select a number of GO-terms in the list and to add a filter based on the GO-evidence. Terms are
+selected or deselected simply by a  click on a term. All of its children are
+selected (or deselected, respectively) in turn. Subsets of them can be chosen by selecting a filter using one of
+the Radio Buttons in the Evidence filter group.
+</p></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="interface-cv-usingtermselection"></a>Using term selection</h3></div></div><p>
+Once a set of terms has been selected, several actions are possible on the current graph on the set of elements
+corresponding to the selected terms. We will refer to this set of elements as the selection in the current graph.
+</p><div class="variablelist"><dl><dt><span class="term">Select</span></dt><dd><p>selects proteins and their interactions in the current graph according to the selected 
+terms</p></dd><dt><span class="term">View</span></dt><dd><p>the graph in the current view is replaced by a new graph containing only the selected elements.
+  </p></dd><dt><span class="term">View in new tab</span></dt><dd><p>Same as above, except that the resulting graph is placed in a new tab</p></dd></dl></div></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="interface-cv-find"></a>Finding CV terms in the tree</h3></div></div><p>It is possible to lookup for CV terms by search on a regular expression. The Find group
+presents a text field and a Next button. The search is perform on the CV description, not its
+code. The expected regular expression are like shell's one:
+</p><div class="variablelist"><dl><dt><span class="term">normal characters</span></dt><dd>exact match</dd><dt><span class="term">*</span></dt><dd>matches zero or more of any characters</dd><dt><span class="term">?</span></dt><dd>matches any single character</dd><dt><span class="term">[...]</span></dt><dd>set of characters</dd></dl></div><p>
+
+</p><div class="example"><p class="title"><b>Example 2.1. </b></p>the string &quot;*foo?abe&quot; matches &quot;blahfoolabe&quot; but not &quot;blahfoolmabe&quot;</div><p>
+</p><p>
+Each time the Next is pushed, the cursor in the CV tree is moved to next matching occurence. When 
+
+
+there's no more matching term, the status bar displays &quot;No more occurences&quot;. The search automatically restart from the 
+beginning whenever the search expression is changed.
+</p></div></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="interface-properties"></a>The properties tab</h2></div></div><p>When an element has been <a href="ch02.html#interface-graphwindow-choseelement" title="Chosing an element">selected</a>, its
+properties are displayed in that tab.
+</p><div class="screenshot"><div class="mediaobject"><img src="screenshots/propertiesPanel.png" longdesc="ld-id2834466.html"><div class="longdesc-link" align="right"><br clear="all"><span style="font-size: 8pt;">[<a href="ld-id2834466.html" target="longdesc">D</a>]</span></div></div></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="interface-properties-list"></a>The property list</h3></div></div><p>This is the list of all properties found for the selected protein or interactions. Proteins and interaction share 
+the same set of properties. A property is a key (the property name) with an associated value (the field 
+Value in the list).
+</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>This list does not allow editing the properties values.</p></div><p>
+</p><p>The Selected checkbox reflects the actual state of the element: whether it is included in the 
+
+
+current selection or not. This state can be changed.
+</p></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="interface-properties-links"></a>Links to external information</h3></div></div><p>Sometimes external information source is available. The Links group presents a list of links.
+The WebBrowser Mozilla is launched upon a click on those links.
+</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>ProViz does not guess the links, they are provided by the graph datas</div><p>
+</p></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="interface-properties-comment"></a>Using the comment field</h3></div></div><p>The comment text fied can be used to annotate an element. To annotate or modify a comment simply select the
+text field and type in. The comment will be automatically saved in memory.
+</p></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="interface-properties-find"></a>Finding proteins with the properties panel</h3></div></div><p>The property panel presents a Find group which works just like for the controlled
+vocabulary panels. The only variant is the presence of a combo-box which allows to choose on what property ProViz will
+perform the search. Properties which are not of type &quot;string&quot; (i.e. numerical for example) are not present in this list. 
+
+
+Each time the Next button is pressed the next matching protein is selected in the properties
+panel.
+</p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch01.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="proviz-manual.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch03.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 1. What is ProViz </td><td width="20%" align="center"><a accesskey="h" href="proviz-manual.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 3. Credits and License</td></tr></table></div></body></html>
