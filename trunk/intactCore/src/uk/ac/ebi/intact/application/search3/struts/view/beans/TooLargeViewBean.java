@@ -2,7 +2,6 @@ package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * @author Michael Kleen
@@ -10,17 +9,17 @@ import java.util.Iterator;
  */
 public class TooLargeViewBean {
 
-    private Collection someSingleResultViewBeans;
+    private Collection<SingleResultViewBean> someSingleResultViewBeans;
 
     public TooLargeViewBean() {
-        this.someSingleResultViewBeans = new ArrayList();
+        this.someSingleResultViewBeans = new ArrayList<SingleResultViewBean>();
     }
 
     public void add( final SingleResultViewBean aSingleResultViewBean ) {
         this.someSingleResultViewBeans.add( aSingleResultViewBean );
     }
 
-    public Collection getSingleResults() {
+    public Collection<SingleResultViewBean> getSingleResults() {
         return this.someSingleResultViewBeans;
     }
 
@@ -31,9 +30,10 @@ public class TooLargeViewBean {
      */
     public boolean isSelectable() {
         boolean result = false;
-        for ( Iterator iterator = someSingleResultViewBeans.iterator(); iterator.hasNext(); ) {
-            SingleResultViewBean singleResultViewBean = (SingleResultViewBean) iterator.next();
-            if ( singleResultViewBean.isSearchable() ) {
+        for (SingleResultViewBean singleResultViewBean : someSingleResultViewBeans)
+        {
+            if (singleResultViewBean.isSearchable())
+            {
                 result = true;
             }
         }

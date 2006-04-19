@@ -6,11 +6,14 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.commons.search;
 
+import uk.ac.ebi.intact.model.AnnotatedObject;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.HashMap;
 
 /**
  * This class wraps a search result and provides extra information.
@@ -23,9 +26,11 @@ public class ResultWrapper implements Serializable {
     /**
      * The result.
      */
-    private List myResults;
+    private List<Collection<AnnotatedObject>> myResults;
 
-    private Map myInfo;
+    private Map<String,Integer> myInfo;
+
+    private int totalResultsCount = 0;
 
     /**
      * The actual number of records that could be retrieved by the search.
@@ -51,14 +56,20 @@ public class ResultWrapper implements Serializable {
      * @param results the list of search results
      * @param maxSize the maximum size for the search result.
      */
-    public ResultWrapper(Collection results, int maxSize) {
+    public ResultWrapper(Collection<Collection<AnnotatedObject>> results, int maxSize) {
         this(results, results.size(), maxSize);
+        this.totalResultsCount = results.size();
     }
 
-    public ResultWrapper(Collection results, int maxSize, Map info) {
-            this(results, results.size(), maxSize);
-            this.myInfo = info; 
-        }
+    public ResultWrapper(Collection<Collection<AnnotatedObject>> results, int maxSize, Map<String,Integer> info) {
+        this(results, results.size(), info, maxSize);
+    }
+
+    public ResultWrapper(Collection<Collection<AnnotatedObject>> results, int maxSize, Map<String,Integer> info, int totalResultsCount) {
+        this(results, results.size(), maxSize);
+        this.myInfo = info;
+        this.totalResultsCount = totalResultsCount;
+    }
 
 
     /**
@@ -79,9 +90,10 @@ public class ResultWrapper implements Serializable {
      * @param possibleSize the possible size of the returned set.
      * @param maxSize      maximum number of records allowed.
      */
-    public ResultWrapper(int possibleSize, int maxSize, Map info) {
+    public ResultWrapper(int possibleSize, int maxSize, Map<String,Integer> info) {
         this(null, possibleSize, maxSize);
         this.myInfo = info;
+        this.totalResultsCount = possibleSize;
     }
 
     /**
@@ -89,7 +101,7 @@ public class ResultWrapper implements Serializable {
      *
      * @return can be empty if the result set is too large or no matches.
      */
-    public List getResult() {
+    public List<Collection<AnnotatedObject>> getResult() {
         if (myResults == null) {
             return Collections.EMPTY_LIST;
         }
@@ -97,7 +109,7 @@ public class ResultWrapper implements Serializable {
     }
 
     public boolean isEmpty() {
-        return this.getResult().isEmpty(); 
+        return this.getResult().isEmpty();
     }
 
     // Read only methods.
@@ -110,15 +122,19 @@ public class ResultWrapper implements Serializable {
         return myPossibleSize;
     }
 
-    public Map getInfo() {
+    public Map<String,Integer> getInfo() {
             return myInfo;
-        }
+    }
 
+    public int getTotalResultsCount()
+    {
+        return totalResultsCount;
+    }
 
     // Helper methods.
 
-    private ResultWrapper(Collection results, int potentialSize, int maxSize) {
-        myResults = (List) results;
+    private ResultWrapper(Collection<Collection<AnnotatedObject>> results, int potentialSize, int maxSize) {
+        myResults = (List<Collection<AnnotatedObject>>) results;
         myPossibleSize = potentialSize;
         myMaxAllowedSize = maxSize;
     }

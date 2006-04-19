@@ -54,6 +54,7 @@ public class SearchAction extends IntactBaseAction {
      *
      * @throws Exception ...
      */
+    @Override
     public ActionForward execute( ActionMapping mapping, ActionForm form,
                                   HttpServletRequest request,
                                   HttpServletResponse response ) throws Exception {
@@ -61,6 +62,17 @@ public class SearchAction extends IntactBaseAction {
         logger.info( "search action" );
         // Clear any previous errors.
         super.clearErrors();
+
+        // Get the page to search, if using paginated search
+        String strPage = request.getParameter("page");
+        int page = 0;
+        boolean paginatedSearch = false;
+
+        if (strPage != null)
+        {
+            paginatedSearch = true;
+            page = Integer.valueOf(strPage);
+        }
 
         // Session to access various session objects. This will create
         //a new session if one does not exist.
@@ -78,9 +90,9 @@ public class SearchAction extends IntactBaseAction {
 
         //set up a highlight list - needs to exist in ALL cases to avoid
         //JSPs having to check for 'null' all the time...
-        List labelList = (List) request.getAttribute( SearchConstants.HIGHLIGHT_LABELS_LIST );
+        List<String> labelList = (List<String>) request.getAttribute( SearchConstants.HIGHLIGHT_LABELS_LIST );
         if ( labelList == null ) {
-            labelList = new ArrayList();
+            labelList = new ArrayList<String>();
         } else {
             labelList.clear();     //set one up or wipe out an existing one
         }
@@ -162,74 +174,86 @@ public class SearchAction extends IntactBaseAction {
                 session.setAttribute( SearchConstants.SEARCH_CRITERIA, "'" + binaryValue + "'" );
 
                 // split query in single criterias
-                Collection queries = new LinkedList();
+                Collection<String> queries = new LinkedList<String>();
                 StringTokenizer st = new StringTokenizer( binaryValue, "," );
                 while ( st.hasMoreTokens() ) {
                     queries.add( st.nextToken().trim() );
                 }
 
-                for ( Iterator iterator = queries.iterator(); iterator.hasNext(); ) {
-                    String criteria = (String) iterator.next();
-                    logger.info( "criteria : " + criteria );
+                for (String criteria : queries)
+                {
+                    logger.info("criteria : " + criteria);
 
                     // first check for ac only
                     // that takes care of a potential bug when searching for a protein AC
                     // having splice variant. That would pull the master + all splice variants
-                    ResultWrapper subResults = this.getResults( searchHelper, "Protein", criteria, "ac",
-                                                                user );
+                    ResultWrapper subResults = this.getResults(searchHelper, "Protein", criteria, "ac",
+                                                               user, paginatedSearch, page);
 
-                    if ( subResults.isEmpty() ) {
+                    if (subResults.isEmpty())
+                    {
                         // then look for all fields if nothing has been found.
                         //finished all current options, and still nothing - return a failure
                         subResults =
-                                this.getResults( searchHelper, "Protein", criteria, "all", user );
+                                this.getResults(searchHelper, "Protein", criteria, "all", user, paginatedSearch, page);
                     }
 
-                    if ( subResults.isTooLarge() ) {
-                        // resultset too large, forward to statistic page
+                    if ( subResults.isTooLarge() && !paginatedSearch) {
+                    // resultset too large, forward to statistic page
                         logger.info( "subresult is too large" );
                         request.setAttribute( SearchConstants.RESULT_INFO, subResults.getInfo() );
                         return mapping.findForward( SearchConstants.FORWARD_TOO_LARGE );
                     }
 
-                    if ( subResults.isEmpty() ) {
+                    if (subResults.isEmpty())
+                    {
                         // no protein found
-                        logger.info( "result is empty" );
-                        return mapping.findForward( SearchConstants.FORWARD_NO_INTERACTOR_FOUND );
+                        logger.info("result is empty");
+                        return mapping.findForward(SearchConstants.FORWARD_NO_INTERACTOR_FOUND);
                     }
 
                     // search was a sucess
 
-                    if ( results == null ) {
+                    if (results == null)
+                    {
                         results = subResults;
-                    } else {
+                    }
+                    else
+                    {
                         // merge both results together
-                        Set mergedResults = new HashSet();
-                        mergedResults.addAll( subResults.getResult() );
-                        mergedResults.addAll( results.getResult() );
-                        logger.info( "mergedResults : " + mergedResults );
+                        Set<Collection<AnnotatedObject>> mergedResults = new HashSet<Collection<AnnotatedObject>>();
+                        mergedResults.addAll(subResults.getResult());
+                        mergedResults.addAll(results.getResult());
+
+                        int totalResultsCount = subResults.getTotalResultsCount()+results.getTotalResultsCount();
+                        request.setAttribute(SearchConstants.TOTAL_RESULTS_ATT_NAME, totalResultsCount);
+
+                        logger.info("mergedResults : " + mergedResults);
                         // create a new ResultInfo
-                        Map resultInfo = new HashMap();
-                        resultInfo.put( "uk.ac.ebi.intact.model.ProteinImpl",
-                                        new Integer( mergedResults.size() ) );
-                        logger.info( "create statistic : " + resultInfo );
+                        Map<String, Integer> resultInfo = new HashMap<String, Integer>();
+                        resultInfo.put("uk.ac.ebi.intact.model.ProteinImpl",
+                                       mergedResults.size());
+
+                        logger.info("create statistic : " + resultInfo);
                         // create a new resultWerapper
-                        Collection temp = new ArrayList();
-                        temp.addAll( mergedResults );
+                        List<Collection<AnnotatedObject>> temp = new ArrayList<Collection<AnnotatedObject>>();
+                        temp.addAll(mergedResults);
                         results =
-                                new ResultWrapper( temp,
-                                                   SearchConstants.MAXIMUM_RESULT_SIZE, resultInfo );
+                                new ResultWrapper(temp,
+                                                  SearchConstants.MAXIMUM_RESULT_SIZE, resultInfo, totalResultsCount);
 
                     }
                 } // for
             } // binary value
             else {
-                //try now the specified String case first
+               //try now the specified String case first
                 results =
-                        this.getResults( searchHelper, searchClass, searchValue, filterValue, user );
+                        this.getResults( searchHelper, searchClass, searchValue, filterValue, user, paginatedSearch, page);
+
+                request.setAttribute(SearchConstants.TOTAL_RESULTS_ATT_NAME, results.getTotalResultsCount());
             }
 
-            if ( results.isTooLarge() ) {
+            if ( results.isTooLarge() && !paginatedSearch) {
 
                 logger.info( "Results set is too Large for the specified search criteria" );
                 request.setAttribute( SearchConstants.SEARCH_CRITERIA, "'" + searchValue + "'" );
@@ -317,14 +341,24 @@ public class SearchAction extends IntactBaseAction {
      * @throws IntactException Thrown if there was a searching problem
      */
     private ResultWrapper getResults( SearchHelper helper, String searchClass,
-                                      String searchValue, String filterValue, IntactUserIF user )
+                                      String searchValue, String filterValue, IntactUserIF user, boolean paginatedSearch, int page)
             throws IntactException {
 
         ResultWrapper result = null;
+
+        int firstResult = 0;
+        int maxResults = SearchConstants.MAXIMUM_RESULT_SIZE;
+
+        if (paginatedSearch)
+        {
+            firstResult = (page-1)*SearchConstants.RESULTS_PER_PAGE;
+            maxResults = SearchConstants.RESULTS_PER_PAGE;
+        }
+
         if ( SearchValidator.isSearchable( searchClass ) || searchClass.equals( "" ) || searchClass == null ) {
             logger.info( "SearchAction: searchfast: " + searchValue + " searchClass: " + searchClass );
             IntactHelper intactHelper = user.getIntactHelper();
-            result = helper.searchFast( searchValue, searchClass, filterValue, intactHelper, SearchConstants.MAXIMUM_RESULT_SIZE );
+            result = helper.searchFast( searchValue, searchClass, filterValue, intactHelper, maxResults, firstResult, paginatedSearch);
         } else {
             // this is a normal request from the servlet, we know the class, we know the value.
             Collection temp = new ArrayList();

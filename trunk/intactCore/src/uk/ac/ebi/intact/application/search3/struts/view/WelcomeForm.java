@@ -32,6 +32,7 @@ public class WelcomeForm extends ActionForm {
      * no errors are found, <tt>null</tt> or an empty <tt>ActionErrors</tt>
      * object is returned.
      */
+    @Override
     public ActionErrors validate(ActionMapping mapping,
                                  HttpServletRequest request) {
 
@@ -44,6 +45,7 @@ public class WelcomeForm extends ActionForm {
      * @param mapping the mapping used to select this instance
      * @param request the servlet request we are processing
      */
+    @Override
     public void reset(ActionMapping mapping, HttpServletRequest request) {
 
     }

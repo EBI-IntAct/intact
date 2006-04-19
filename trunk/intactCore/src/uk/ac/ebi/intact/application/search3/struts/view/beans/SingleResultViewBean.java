@@ -61,9 +61,10 @@ public class SingleResultViewBean {
 
     public String getSearchLink() {
         if ( count < SearchConstants.MAXIMUM_RESULT_SIZE ) {
-            return this.searchLink + this.searchString + "&searchClass=" + this.getSearchType();
+            return this.searchLink + this.searchString + "&searchClass=" + this.getSearchType()+"&page=";
         } else {
-            return "-";
+            return this.searchLink + this.searchString + "&searchClass=" + this.getSearchType()+"&page=1";
+            //return "-";
         }
     }
 
@@ -103,10 +104,10 @@ public class SingleResultViewBean {
     }
 
     public boolean isSearchable() {
-        if ( count < SearchConstants.MAXIMUM_RESULT_SIZE ) {
+        //if ( count < SearchConstants.MAXIMUM_RESULT_SIZE ) {
             return true;
-        } else {
-            return false;
-        }
+        //} else {
+        //    return false;
+        //}
     }
 }

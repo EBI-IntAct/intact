@@ -41,7 +41,7 @@
 <%-- may make use of these later to tidy up the JSP a little --%>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/tld/c.tld" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 
 <%
     // To allow access hierarchView properties. Used only by the javascript.
@@ -138,111 +138,13 @@
             session.setAttribute( SearchConstants.LARGE_EXPERIMENT_BEAN, bean );
 
             int currentPage = 1;    //the 'real' page number - default is first page
-            String pageParam = request.getParameter( "selectedChunk" );    //the String representation of it from the Request
 
-            if ( ( pageParam != null ) && ( !pageParam.equals( "" ) ) ) {
-                currentPage = Integer.parseInt( pageParam );  //got one in request - use it
+            request.setAttribute(SearchConstants.TOTAL_RESULTS_ATT_NAME, bean.getObject().getInteractions().size());
+
+            if (request.getParameter("selectedChunk") == null)
+            {
+                request.getParameterMap().put("selectedChunk", currentPage);
             }
-
-            //work out the page numbers to display in the list...
-            //NB currently work with a maximum offset of 10 pages either side of the
-            //currently displayed page number
-            int pageOffset = 10;
-
-            // first page number of the page list (bounded below by 1)
-            int firstPage = Math.max( ( currentPage - pageOffset ), 1 );
-
-            // last page number of the page list (bounded above by the largest possible page no.)
-            int lastPage = Math.min( ( currentPage + pageOffset ), bean.getMaxPage() );
-
-            //now calculate the List indexes of the Interactions to be displayed in this page..
-            //SOME MATHS:
-            //To Calculate the Interaction DISPLAY indexes from the page number and page size:
-
-            //  index of last Interaction on page = MIN((page number * page size), max list size)
-            //  index of first Interaction on page = (index of last Interaction - page size) + 1
-
-            //The REAL indexes are ONE LESS than these because the java Lists start at zero.
-            int maxListSize = bean.getObject().getInteractions().size();
-            int displayPageSize = Constants.MAX_PAGE_SIZE;  //the default size to display
-            int pageSizeNeeded = bean.getInteractions().size(); //the size we have to display
-
-            //check to see if we have less than the default page size left (eg on some
-            //last pages)
-            if ( pageSizeNeeded < displayPageSize ) {
-                displayPageSize = pageSizeNeeded;
-            }
-
-            int lastDisplayIndex = Math.min( ( currentPage * Constants.MAX_PAGE_SIZE ), maxListSize );
-            int firstDisplayIndex = ( lastDisplayIndex - displayPageSize ) + 1;
-%>
-
-<!-- The summary message of pages of Interactions for the 'large' Experiment -->
-<p>
-    <center>
-        Displaying <b><%= firstDisplayIndex %></b> to
-        <b><%= lastDisplayIndex %></b> of
-        <b><%= bean.getObject().getInteractions().size() %></b> Interactions <br>
-    </center>
-    <!-- the list of pages itself -->
-    <table width="100%" border="1">
-        <tr>
-            <td width="100%" align="center">
-                <%
-                    //display 'previous' and 'first' if the current page is in range...
-                    if ( currentPage > 1 ) {
-                %>
-                <a href="<%= bean.getObjSearchURL() +
-                        "&selectedChunk=1" + "&"+ SearchConstants.PAGE_SOURCE + "=partner" %>">
-                    <strong>&lt;First</strong>
-                </a>
-                &nbsp;&nbsp;
-                <a href="<%= bean.getObjSearchURL() +
-                        "&selectedChunk=" + (currentPage -1) +
-                        "&"+ SearchConstants.PAGE_SOURCE + "=partner" %>">
-                    <strong>&lt;&lt;Previous</strong>
-                </a>&nbsp;
-                <%
-                    }
-                    //now do the list itself...
-                    for ( int i = firstPage; i <= lastPage; i++ ) {
-                        if ( i == currentPage ) {
-                            //don't link it
-                %>
-                <font color="red"><strong><%= i%></strong></font>&nbsp;
-
-                <%
-                } else {
-                %>
-                <a href="<%= bean.getObjSearchURL() + "&selectedChunk=" + i +
-                                "&"+ SearchConstants.PAGE_SOURCE + "=partner" %>"><%= i%></a>&nbsp;
-
-
-                <%
-                        }
-                    }   //end of loop to display the list
-
-                    //display 'next' and 'last' if the current page is in range...
-                    if ( currentPage < ( bean.getMaxPage() ) ) {
-                %>
-                <a href="<%= bean.getObjSearchURL() + "&selectedChunk=" + (currentPage +1) +
-                                "&"+ SearchConstants.PAGE_SOURCE + "=partner" %>">
-                    <strong>Next&gt;&gt;</strong>
-                </a>
-                &nbsp;&nbsp;
-                <a href="<%= bean.getObjSearchURL() + "&selectedChunk=" + bean.getMaxPage() +
-                                "&"+ SearchConstants.PAGE_SOURCE + "=partner" %>">
-                    <strong>Last&gt;</strong>
-                </a>
-                <%
-                    }   //end of 'next' check
-                %>
-            </td>
-        </tr>
-    </table>
-</p>
-
-<%
     }   //end of 'large' Exp size check
 %>
 
@@ -251,6 +153,8 @@
 
 <!-- button bar for the table -->
 <%@ include file="buttonBar.html" %>
+
+<%@include file="tablePagination.jspf"%>
 
 <!-- main results tables -->
 <%--<table style="width: 100%; background-color: rgb(241, 245, 248);"--%>
@@ -1054,7 +958,9 @@
 </table>
 
 <!-- END of the main display table -->
-<br>
+
+<%@include file="tablePagination.jspf"%>
+
 <!-- button bar for the table -->
 <%@ include file="buttonBar.html" %>
 
