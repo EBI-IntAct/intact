@@ -79,13 +79,13 @@ public class PartnersViewBean extends AbstractViewBean {
     /**
      * The Set of this Protein's Interaction partners
      */
-    private Set interactionPartners;
+    private Set<PartnersViewBean> interactionPartners;
 
     /**
      * Assumed a List of these, as that is what is in the single Protein view. BUT the 'summary' web page only has ONE
      * gene name. NEEDS TO BE CLARIFIED
      */
-    private Collection geneNames;
+    private Collection<String> geneNames;
 
     /**
      * A String representation of the number of Interactions this Protein takes part in.
@@ -99,7 +99,7 @@ public class PartnersViewBean extends AbstractViewBean {
     /**
      * Filter to provide filtering on GeneNames
      */
-    private static ArrayList geneNameFilter = new ArrayList();
+    private static ArrayList<String> geneNameFilter = new ArrayList<String>();
 
     // nested implementation for providing the gene filter
     static {
@@ -180,11 +180,13 @@ public class PartnersViewBean extends AbstractViewBean {
      *
      * @return whether or not the graph buttons are displayed
      */
+    @Override
     public boolean showGraphButtons() {
         return true;
     }
 
     // Just honouring the contract.
+    @Override
     public String getHelpSection() {
         return "interaction.beans.view";
     }
@@ -195,8 +197,9 @@ public class PartnersViewBean extends AbstractViewBean {
      * Adds the shortLabel of the Protein to an internal list used later for highlighting in a display. NOT SURE IF WE
      * STILL NEED THIS!!
      */
+    @Override
     public void initHighlightMap() {
-        Set set = new HashSet( 1 );
+        Set<String> set = new HashSet<String>( 1 );
         set.add( interactor.getShortLabel() );
         setHighlightMap( set );
     }
@@ -247,19 +250,19 @@ public class PartnersViewBean extends AbstractViewBean {
      *
      * @return String al list of gene names as a String.
      */
-    public Collection getGeneNames() {
+    public Collection<String> getGeneNames() {
         //populate on first request
         if ( geneNames == null ) {
-            this.geneNames = new HashSet();
+            this.geneNames = new HashSet<String>();
             //geneNames = new StringBuffer();
             //the gene names are obtained from the Aliases for the Protein
             //which are of type 'gene name'...
-            Collection aliases = interactor.getAliases();
-            for ( Iterator it = aliases.iterator(); it.hasNext(); ) {
-                Alias alias = (Alias) it.next();
-
-                if ( geneNameFilter.contains( alias.getCvAliasType().getShortLabel() ) ) {
-                    geneNames.add( alias.getName() );
+            Collection<Alias> aliases = interactor.getAliases();
+            for (Alias alias : aliases)
+            {
+                if (geneNameFilter.contains(alias.getCvAliasType().getShortLabel()))
+                {
+                    geneNames.add(alias.getName());
                 }
             }
             //now strip off trailing comma - if there are any names....
@@ -314,7 +317,7 @@ public class PartnersViewBean extends AbstractViewBean {
      */
     public String getInteractionsSearchURL() {
 
-        Collection interactions = null;
+        Collection<Interaction> interactions = null;
 
         if ( partner != null ) {
 
@@ -352,17 +355,22 @@ public class PartnersViewBean extends AbstractViewBean {
      *
      * @return Set a Set of SummaryViewBeans for each interaction partner, or empty if there are none.
      */
-    public Collection getInteractionPartners() {
+    public Collection<PartnersViewBean> getInteractionPartners() {
 
-        Collection interactions = null;
+        Collection<Interaction> interactions;
         if ( partner == null ) {
 
             // this protein got no partner in the view, just grab all interactions
             // and that's it
+
+
+            //TODO (BA) This query need to be paginated
             interactions = ProteinUtils.getNnaryInteractions( interactor );
+
+
             //TODO unefficent, find better way for that
 
-            interactionPartners = new HashSet( interactions.size() );
+            interactionPartners = new HashSet<PartnersViewBean>( interactions.size() );
             if ( selfInteraction ) {
 
                 interactionPartners.add( new PartnersViewBean( interactor, interactor, getHelpLink(), searchURL,
@@ -371,40 +379,28 @@ public class PartnersViewBean extends AbstractViewBean {
 
                 boolean hasNoSelfInteraction = ProteinUtils.getSelfInteractions( interactor ).isEmpty();
 
-                for ( Iterator iterator = interactions.iterator(); iterator.hasNext(); ) {
-                    Interaction anInteraction = (Interaction) iterator.next();
+                for (Interaction interaction : interactions)
+                {
+                    Collection<Component> someComponents = interaction.getComponents();
 
-                    Collection someComponents = anInteraction.getComponents();
-
-                    for ( Iterator iterator1 = someComponents.iterator(); iterator1.hasNext(); ) {
-                        Component aComponent = (Component) iterator1.next();
+                    for (Component aComponent : someComponents)
+                    {
                         Interactor anInteractor = aComponent.getInteractor();
 
                         //TODO this can write much clearer and easier
-                        if ( hasNoSelfInteraction ) {
-                            if ( ! interactor.equals( anInteractor ) ) {
-                                try {
-                                    interactionPartners.add( new PartnersViewBean( anInteractor, interactor, getHelpLink(), searchURL,
-                                                                                   getContextPath() ) );
-                                } catch ( ClassCastException e ) {
-
-                                    // Only here for debugging purpose ...
-                                    System.out.println( "[" + anInteractor.getShortLabel() + "] Trying to cast " + anInteractor.getClass().getName() + " to Protein." );
-
-                                    for ( int i = 0; i < anInteractor.getClass().getInterfaces().length; i++ ) {
-                                        Class clazz = (Class) anInteractor.getClass().getInterfaces()[ i ];
-                                        System.out.println( "Interface " + i + ": " + clazz.getName() );
-                                    }
-
-                                    e.printStackTrace();
-
-                                    throw e;
-                                }
+                        if (hasNoSelfInteraction)
+                        {
+                            if (! interactor.equals(anInteractor))
+                            {
+                                    interactionPartners.add(new PartnersViewBean(anInteractor, interactor, getHelpLink(), searchURL,
+                                                                                 getContextPath()));
                             }
-                        } else {
+                        }
+                        else
+                        {
                             // we got a self interaction here
-                            interactionPartners.add( new PartnersViewBean( anInteractor, interactor, getHelpLink(), searchURL,
-                                                                           getContextPath() ) );
+                            interactionPartners.add(new PartnersViewBean(anInteractor, interactor, getHelpLink(), searchURL,
+                                                                         getContextPath()));
                         }
                     }
                 }
@@ -456,16 +452,17 @@ public class PartnersViewBean extends AbstractViewBean {
             Xref xref = getIdentityXref();
             if ( xref != null ) {
 
-                Collection annotations = xref.getCvDatabase().getAnnotations();
-                Annotation annot = null;
+                Collection<Annotation> annotations = xref.getCvDatabase().getAnnotations();
+
                 String searchUrl = null;
-                for ( Iterator it = annotations.iterator(); it.hasNext(); ) {
-                    annot = (Annotation) it.next();
-                    if ( annot.getCvTopic().getShortLabel().equals( "search-url" ) ) {
+                for (Annotation annot : annotations)
+                {
+                    if (annot.getCvTopic().getShortLabel().equals("search-url"))
+                    {
                         //found it - we are done
                         searchUrl = annot.getAnnotationText();
                         identityXrefURL =
-                                SearchReplace.replace( searchUrl, "${ac}", xref.getPrimaryId() );
+                                SearchReplace.replace(searchUrl, "${ac}", xref.getPrimaryId());
                         break;
                     }
                 }
