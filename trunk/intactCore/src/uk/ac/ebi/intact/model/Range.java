@@ -541,7 +541,7 @@ public class Range extends BasicObjectImpl {
             if ( start == 0 ) {
                 seq = sequence;
             } else {
-                seq = sequence.substring( start );
+                seq = sequence.substring( Math.max( 0, start - 1 ) ); // we make sure that we don't request index < 0.
             }
             return seq;
         }
