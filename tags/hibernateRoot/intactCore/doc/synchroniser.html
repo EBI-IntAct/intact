@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+<title>Synchroniser notes</title>
+</head>
+
+<body>
+<h1>Synchroniser notes</h1>
+
+The IntAct software should allow the installation of local nodes
+and the propagation of updates to the local data to all partner
+sites.
+<p>
+<h4>Ownership</h4>
+To be able to synchronise updates, each data item needs an owner and a
+"last updated" timestamp. Only the owner is allowed to update a data
+item. A mechanism needs to be set up for the maintenance of controlled
+vocabularies.   
+<h4>Technology options for database synchronisation</h4>
+<dl>
+  <dt>Corba
+  <dd>Corba technology is still relatively complex to install
+      and maintain. Internet-based communication via Corba also
+      needs specific ports, which might cause problems with
+      firewalls. 
+  <dt>Data synchronisation on database level
+  <dd>Oracle and other vendors offer proprietary database
+      synchronisation technologies. The Oracle version did not
+      work too well when tested in the InterPro project. As
+      IntAct should be able to use different database backends,
+      use of proprietary synchronisation technology would be
+      nearly impossible.
+	<dt>XML file exchange
+	<dd>The favoured synchronisation method is by
+	    exchange of XML flat files. We need to be able to dump
+	    flat files anyway, so "only" the XML loader would need to be
+	    written. If the data is subdivided into
+	    <em>datasets</em>, only updated datasets from partner
+	    sites need to be loaded. To automatically retrieve
+	    datasets, http can be used. 
+      </dl>
+
+</ol>
+A synchronisation system based on XML files is currently (Aug 2002) under construction. 
+
+<hr>
+<address>
+<!-- hhmts start -->
+Last modified: Thu Aug 29 16:30:14 GMT 2002
+<!-- hhmts end -->
+by Henning Hermjakob, hhe@ebi.ac.uk
+</address>
+</body> </html>

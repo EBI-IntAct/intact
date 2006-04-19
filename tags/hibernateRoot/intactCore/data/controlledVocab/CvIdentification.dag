@@ -1,0 +1,24 @@
+$participant identif\: participant identification method ; MI:0002 ; synonym:participant detection
+ @is_a@predetermined\: predetermined participant ; MI:0396
+ @is_a@antibody detection\: identification by antibody ; MI:0421
+  @is_a@elisa\: enzyme linked immunosorbent assay ; MI:0411 ; synonym:ELISA
+  @is_a@immunostaining ; MI:0422
+  @is_a@western blot ; MI:0113 ; synonym:Immuno blot
+   @is_a@monoclonal antibody ; MI:0072
+   @is_a@polyclonal antibody ; MI:0086
+ @is_a@mass spectrometry ; MI:0427
+  @is_a@fingerprinting\: peptide massfingerprinting ; MI:0082 @is_a@ partial id prot seq\: partial identification of protein sequence ; MI:0433
+  @is_a@sequence tag\: sequence tag identification ; MI:0102 @is_a@ partial id prot seq\: partial identification of protein sequence ; MI:0433
+  @is_a@ms protein sequence\: de novo protein sequencing by mass spectrometry ; MI:0032 @is_a@ protein sequence\: protein sequence identification ; MI:0093
+ @is_a@protein sequence\: protein sequence identification ; MI:0093
+  @is_a@partial id prot seq\: partial identification of protein sequence ; MI:0433
+   @is_a@fingerprinting\: peptide massfingerprinting ; MI:0082 @is_a@ mass spectrometry ; MI:0427
+   @is_a@sequence tag\: sequence tag identification ; MI:0102 @is_a@ mass spectrometry ; MI:0427
+   @is_a@edman degradation ; MI:0039
+  @is_a@peptide synthesis ; MI:0083
+  @is_a@ms protein sequence\: de novo protein sequencing by mass spectrometry ; MI:0032 @is_a@ mass spectrometry ; MI:0427
+ @is_a@nucleotide sequence\: nucleotide sequence identification ; MI:0078 ; synonym:sequence cloning
+  @is_a@full dna sequence\: full identification by sequencing ; MI:0056
+  @is_a@partial dna sequence\: partial dna sequence identification by hybridization ; MI:0080
+   @is_a@primer specific pcr ; MI:0088
+   @is_a@southern blot ; MI:0103
