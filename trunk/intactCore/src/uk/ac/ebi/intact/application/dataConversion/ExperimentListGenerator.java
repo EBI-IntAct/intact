@@ -9,6 +9,7 @@ import org.apache.commons.cli.*;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.util.MemoryMonitor;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -682,18 +683,36 @@ public class ExperimentListGenerator {
         return name2smallScale;
     }
 
+    /**
+     * Given a set of Experiments, it returns the year of the date of creation of the oldest experiment.
+      * @param experiments
+     * @return an int corresponding to the year.
+     */
 
-    private static String getCreatedYear( Experiment exp ) {
+    private static String getCreatedYear( Set experiments ) {
 
-        Timestamp created = exp.getCreated();
-        java.sql.Date d = new java.sql.Date( created.getTime() );
-        Calendar c = new GregorianCalendar();
-        c.setTime( d );
+        if (experiments.isEmpty()){
+            throw new IllegalArgumentException("The given Set of Experiments is empty");
+        }
 
-        int year = c.get( Calendar.YEAR );
+        int year = Integer.MAX_VALUE;
+
+        for (Iterator iterator = experiments.iterator(); iterator.hasNext();) {
+            Experiment exp =  (Experiment) iterator.next();
+            Timestamp created = exp.getCreated();
+
+            java.sql.Date d = new java.sql.Date( created.getTime() );
+            Calendar c = new GregorianCalendar();
+            c.setTime( d );
+
+            if( year > c.get( Calendar.YEAR ) ){
+                year = c.get( Calendar.YEAR );
+            }
+        }
 
         return String.valueOf( year );
     }
+
 
     /**
      * Build the classification by pubmed id.<br> we keep the negative experiment separated from the non negative.
@@ -721,7 +740,7 @@ public class ExperimentListGenerator {
             // all experiment under that pubmed if should have the same year
             Experiment exp = (Experiment) experiments.iterator().next();
 
-            String year = getCreatedYear( exp );
+            String year = getCreatedYear( experiments );
             String prefix = year + SLASH;
 
             // split the set into subset of size under SMALL_SCALE_LIMIT
@@ -882,6 +901,9 @@ public class ExperimentListGenerator {
      */
     public static void main( String[] args ) throws IntactException, IOException {
 
+
+        MemoryMonitor memoryMonitor = new MemoryMonitor();
+        
         // if only one argument, then dump the matching experiment classified by specied into a file
 
         // create Option objects
