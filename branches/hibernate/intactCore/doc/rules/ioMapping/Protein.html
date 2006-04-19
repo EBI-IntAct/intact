@@ -1,0 +1,77 @@
+<!DOCTYPE doctype PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+      
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+      
+  <meta name="GENERATOR"
+ content="Mozilla/4.77 [en] (X11; U; Linux 2.4.19-xfs i686) [Netscape]">
+  <title>Mapping of External Data to Protein objects</title>
+</head>
+<body background="http://www.ebi.ac.uk/intact/images/intact_bkg.jpg">
+<img src="http://www.ebi.ac.uk/intact/images/logo_intact.gif"
+ alt="IntAct logo" align="right">
+<h1>Mapping of External data to Protein objects</h1>
+<br clear="all">
+This document describes how external protein data is mapped into the Protein
+object. <br>
+<br>
+<h3>SPTR &nbsp;to IntAct Protein</h3>
+<table cellpadding="2" cellspacing="2" border="1" width="100%">
+  <tbody>
+    <tr>
+      <td valign="top"><b>IntAct attribute in Protein<br>
+      </b></td>
+      <td valign="top"><b>SPTr data element<br>
+      </b></td>
+    </tr>
+    <tr>
+      <td valign="top">shortLabel       </td>
+      <td valign="top">ID       </td>
+    </tr>
+    <tr>
+      <td valign="top">fullName       </td>
+      <td valign="top">      DE line, if necessary truncated at the end<br>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top">BioSource: If BioSource with the appropriate taxid
+exists, use it, otherwise create it using the NEWT system. <br>
+      </td>
+      <td valign="top">taxid       </td>
+    </tr>
+    <tr>
+      <td valign="top">crc64<br>
+      </td>
+      <td valign="top">CRC64<br>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top">new xref: <br>
+Database = sptr, primaryIdentifier = spAc, secondaryIdentifier = spId   
+   </td>
+      <td valign="top">-       </td>
+    </tr>
+    <tr>
+      <td valign="top">new xref: <br>
+Database = sgd, primaryIdentifier = sgdAc, secondaryIdentifier = sgdId</td>
+      <td valign="top">SGD xref<br>
+(if present)<br>
+      </td>
+    </tr>
+  
+  </tbody>
+</table>
+<br>
+Notes:<br>
+IntAct Protein objects represent an amino acid sequence in a specific organism.
+This means that SPTR proteins with multiple species will be split into separate
+IntAct entries. These entries will only differ by their BioSource object.<br>
+<br>
+<hr width="100%" size="2"><br>
+<address>Henning Hermjakob, 7-Mar-2003</address>
+<br>
+<br>
+</body>
+</html>

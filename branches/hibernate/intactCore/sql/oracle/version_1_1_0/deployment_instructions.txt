@@ -1,0 +1,10 @@
+0) Login as schema-owner
+
+run the following scripts:
+
+01_disable_triggers.sql
+02_cr_column.sql
+03_run_update.sql
+04_drop_column.sql
+05_enable_triggers.sql
+06_replace_triggers.sql

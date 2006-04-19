@@ -1,0 +1,159 @@
+$feature type ; MI:0116
+ @is_a@biological feature ; MI:0252
+  @is_a@binding site ; MI:0117
+   @is_a@required to bind\: necessary binding site ; MI:0429
+   @is_a@sufficient to bind\: sufficient binding site ; MI:0442
+  @is_a@mutation ; MI:0118
+   @is_a@mutation decreasing\: mutation decreasing interaction ; MI:0119 ; synonym:hotspot
+    @is_a@mutation disrupting \: mutation disrupting interaction ; MI:0573
+   @is_a@mutation increasing\: mutation increasing interaction ; MI:0382
+  @is_a@ptm\: post translation modification ; MI:0120
+   @is_a@acetylated residue ; MI:0121
+    @is_a@acetylalanine\: n-acetyl-alanine ; MI:0122 ; synonym:(S)-2-(acetylamino)propanoic a ; synonym:N-acetyl-L-alanine ; synonym:[[A\\:ac]] ; synonym:acetylalanine ; synonym:AAC ; synonym:[A\:ac] ; synonym:[[A\:ac]]
+    @is_a@acetylaspartate\: n-acetyl-aspartic acid ; MI:0125 ; synonym:N-acetyl-L-aspartic acid ; synonym:[[D\\:ac]] ; synonym:acetylaspartic acid ; synonym:(S)-2-(acetylamino)butanedioic ; synonym:DAC ; synonym:[D\:ac] ; synonym:[[D\:ac]]
+    @is_a@acetylglutamate\: n-acetyl-glutamic acid ; MI:0128 ; synonym:(S)-2-(acetylamino)pentanedioi ; synonym:N-acetyl-L-glutamic acid ; synonym:[[E\\:ac]] ; synonym:acetylglutamic acid ; synonym:EAC ; synonym:[E\:ac] ; synonym:[[E\:ac]]
+    @is_a@acetylglutamine\: n-acetyl-glutamine ; MI:0127 ; synonym:(S)-2-acetylamino-5-pentanedia ; synonym:N-acetyl-L-glutamine ; synonym:[[Q\\:ac]] ; synonym:acetylglutamine ; synonym:QAC ; synonym:[Q\:ac] ; synonym:[[Q\:ac]]
+    @is_a@acetylisoleucine\: n-acetyl-isoleucine ; MI:0131 ; synonym:(2S\,3S)-2-acetylamino-3-methy ; synonym:N-acetyl-L-isoleucine ; synonym:[[I\\:ac]] ; synonym:acetylisoleucine ; synonym:IAC ; synonym:[I\:ac] ; synonym:[[I\:ac]]
+    @is_a@acetylproline\: n-acetyl-proline ; MI:0137 ; synonym:(2S)-1-acetyl-2-pyrrolidinecar ; synonym:N-acetyl-L-proline ; synonym:[[P\\:ac]] ; synonym:acetylproline ; synonym:PAC ; synonym:[P\:ac] ; synonym:[[P\:ac]]
+    @is_a@acetylmethionine\: n-acetyl-methionine ; MI:0135 ; synonym:(S)-2-acetylamino-4-(methylsul ; synonym:2-acetylamino-4-(methylthio)bu ; synonym:N-acetyl-L-methionine ; synonym:[[M\\:ac]] ; synonym:acetylmethionine ; synonym:methionamine ; synonym:MAC ; synonym:[M\:ac] ; synonym:[[M\:ac]]
+    @is_a@acetylarginine\: n2-acetyl-arginine ; MI:0123 ; synonym:N2-acetyl-L-arginine ; synonym:[[R\\:ac]] ; synonym:acetylarginine ; synonym:alpha-acetylamino-delta-guanid ; synonym:RAC ; synonym:[R\:ac] ; synonym:[[R\:ac]]
+    @is_a@acetylasparagine\: n-acetyl-asparagine ; MI:0124 ; synonym:N-acetyl-L-asparagine ; synonym:[[N\\:ac]] ; synonym:NAC ; synonym:[N\:ac] ; synonym:[[N\:ac]]
+    @is_a@acetylhistidine\: n-acetyl-histidine ; MI:0130 ; synonym:N-acetyl-L-histidine ; synonym:[[H\\:ac]] ; synonym:HAC ; synonym:[H\:ac] ; synonym:[[H\:ac]]
+    @is_a@acetylleucine\: n-acetyl-leucine ; MI:0132 ; synonym:N-acetyl-L-leucine ; synonym:[[L\\:ac]] ; synonym:LAC ; synonym:[L\:ac] ; synonym:[[L\:ac]]
+    @is_a@acetylcysteine\: n-acetyl-cysteine ; MI:0126 ; synonym:(R)-2-acetylamino-3-sulfanylpr ; synonym:2-acetylamino-3-mercaptopropan ; synonym:N-acetyl-L-cysteine ; synonym:N-acetylcysteine ; synonym:[[C\\:ac]] ; synonym:CAC ; synonym:[C\:ac] ; synonym:[[C\:ac]]
+    @is_a@acetylglycine\: n-acetylglycine ; MI:0129 ; synonym:2-(acetylamino)ethanoic acid ; synonym:N-acetylglycine ; synonym:[[G\\:ac]] ; synonym:aceturic acid ; synonym:GAC ; synonym:[G\:ac] ; synonym:[[G\:ac]]
+    @is_a@acetylphenylalanine\: n-acetyl-phenylalanine ; MI:0136 ; synonym:N-acetyl-L-phenylalanine ; synonym:[[F\\:ac]] ; synonym:FAC ; synonym:[F\:ac] ; synonym:[[F\:ac]]
+    @is_a@acetylserine\: n-acetyl-serine ; MI:0138 ; synonym:(S)-2-acetylamino-3-hydroxypro ; synonym:N-acetyl-L-serine ; synonym:N-acetylserine ; synonym:[[S\\:ac]] ; synonym:SAC ; synonym:[S\:ac] ; synonym:[[S\:ac]]
+    @is_a@acetylthreonine\: n-acetyl-threonine ; MI:0139 ; synonym:(2S\,3R)-2-acetylamino-3-hydro ; synonym:N-acetyl-L-threonine ; synonym:N-acetylthreonine ; synonym:[[T\\:ac]] ; synonym:TAC ; synonym:[T\:ac] ; synonym:[[T\:ac]]
+    @is_a@acetyltryptophan\: n-acetyl-tryptophan ; MI:0140 ; synonym:N-acetyl-L-tryptophan ; synonym:[[W\\:ac]] ; synonym:WAC ; synonym:[W\:ac] ; synonym:[[W\:ac]]
+    @is_a@acetyltyrosine\: n-acetyl-tyrosine ; MI:0141 ; synonym:(S)-2-acetylamino-3-(4-hydoxyp ; synonym:N-acetyl-L-tyrosine ; synonym:N-acetyltyrosine ; synonym:[[Y\\:ac]] ; synonym:YAC ; synonym:[Y\:ac] ; synonym:[[Y\:ac]]
+    @is_a@acetylvaline\: n-acetyl-valine ; MI:0142 ; synonym:(S)-2-acetylamino-3-methylbuta ; synonym:N-acetyl-L-valine ; synonym:N-acetylvaline ; synonym:[[V\\:ac]] ; synonym:VAC ; synonym:[V\:ac] ; synonym:[[V\:ac]]
+    @is_a@acetyllysine\: n-acetyl-lysine ; MI:0526
+     @is_a@n2-acetyllysine\: n2-acetyl-lysine ; MI:0133 ; synonym:(S)-2-acetylamino-6-aminohexan ; synonym:N2-acetyl-L-lysine ; synonym:N2-acetyllysine ; synonym:[[K\\:ac]] ; synonym:KAC ; synonym:[K\:ac] ; synonym:[[K\:ac]]
+     @is_a@n6-acetyllysine\: n6-acetyl-lysine ; MI:0134 ; synonym:(S)-2-amino-6-(acetylamino)hex ; synonym:N(zeta)-acetyllysine ; synonym:N6-acetyl-L-lysine ; synonym:[[K\\:N6ac]] ; synonym:epsilon-acetyllysine ; synonym:KA6 ; synonym:[K\:N6ac] ; synonym:[[K\:N6ac]]
+   @is_a@amidated residue ; MI:0143
+    @is_a@alanineamide\: alanine amide ; MI:0144 ; synonym:(S)-2-aminopropanamide ; synonym:L-alanine amide ; synonym:[[A\\:am]] ; synonym:alaninamide ; synonym:AAM ; synonym:[A\:am] ; synonym:[[A\:am]]
+    @is_a@arginineamide\: arginine amide ; MI:0145 ; synonym:(S)-2-amino-5-guanidinopentana ; synonym:L-arginine amide ; synonym:[[R\\:am]] ; synonym:argininamide ; synonym:RAM ; synonym:[R\:am] ; synonym:[[R\:am]]
+   @is_a@formylated residue ; MI:0146
+    @is_a@formylmethionine\: n-formyl-methionine ; MI:0147 ; synonym:(S)-2-formylamino-4-(methylsul ; synonym:2-formylamino-4-(methylthio)bu ; synonym:N-formyl-L-methionine ; synonym:[[M\\:form]] ; synonym:MFM ; synonym:[M\:form] ; synonym:[[M\:form]]
+   @is_a@hydroxylated residue ; MI:0148
+    @is_a@4hydroxyproline\: 4-hydroxy-proline ; MI:0149 ; synonym:4-hydroxy-L-proline ; synonym:[[P\\:hy_g]] ; synonym:HYP ; synonym:[P\:hy_g] ; synonym:[[P\:hy_g]]
+   @is_a@lipid modification ; MI:0150
+    @is_a@gpi anchor residue ; MI:0539
+     @is_a@gpi-alanine\: gpi-anchor amidated alanine ; MI:0540 ; synonym:N-alanyl-glycosylphosphatidyli
+     @is_a@gpi-asparagine\: gpi-anchor amidated asparagine ; MI:0541 ; synonym:N-asparaginyl-glycosylphosphat
+     @is_a@gpi-aspartate\: gpi-anchor amidated aspartate ; MI:0542 ; synonym:N-aspartyl-glycosylphosphatidy
+     @is_a@gpi-cysteine\: gpi-anchor amidated cysteine ; MI:0543 ; synonym:N-cysteinyl-glycosylphosphatid
+     @is_a@gpi-glycine\: gpi-anchor amidated glycine ; MI:0544 ; synonym:N-glycyl-glycosylphosphatidyli
+     @is_a@gpi-serine\: gpi-anchor amidated serine ; MI:0545 ; synonym:N-seryl-glycosylphosphatidylin
+     @is_a@gpi-threonine\: gpi-anchor amidated threonine ; MI:0546 ; synonym:N-threonyl-glycosylphosphatidy
+    @is_a@myristoylated aa\: myristoylated residue ; MI:0560
+     @is_a@myristoylglycine\: n-myristoyl-glycine ; MI:0155 ; synonym:N-myristoyl-glycine ; synonym:[[G\\:myr]] ; synonym:GMY ; synonym:[G\:myr] ; synonym:[[G\:myr]]
+     @is_a@myristoyllysine\: n6-myristoyl-lysine ; MI:0156 ; synonym:(S)-2-amino-6-(tetradecanoylam ; synonym:N(zeta)-myristoyllysine ; synonym:N6-(1-oxotetradecyl)-L-lysine ; synonym:N6-myristoyl-L-lysine ; synonym:[[K\\:myr]] ; synonym:epsilon-myristoyllysine ; synonym:KMY ; synonym:[K\:myr] ; synonym:[[K\:myr]]
+    @is_a@palmitoylated aa\: palmitoylated residue ; MI:0561
+     @is_a@n-palmitoylcysteine\: n-palmitoyl-cysteine ; MI:0153 ; synonym:(R)-2-hexadecanoylamino-3-sulf ; synonym:2-hexadecanoylamino-3-mercapto ; synonym:N-(1-oxahexadecyl)-L-cysteine ; synonym:N-palmitoyl-L-cysteine ; synonym:[[C\\:palm_n]] ; synonym:CPN ; synonym:[C\:palm_n] ; synonym:[[C\:palm_n]]
+     @is_a@s-palmitoylcysteine\: s-palmitoyl-cysteine ; MI:0154 ; synonym:(R)-2-amino-3-(hexadecanoylsul ; synonym:2-amino-3-(hexadecanoylthio)pr ; synonym:S-palmitoyl-L-cysteine ; synonym:[[C\\:palm_s]] ; synonym:cysteine hexadecanoate thioest ; synonym:cysteine palmitate thioester ; synonym:CPS ; synonym:[C\:palm_s] ; synonym:[[C\:palm_s]]
+    @is_a@prenylcysteine\: s-prenyl-cysteine ; MI:0547
+     @is_a@farnesylcysteine\: s-farnesyl-cysteine ; MI:0151 ; synonym:(R\,E\,E)-2-amino-3-(3\,7\,11- ; synonym:2-amino-3-(3\,7\,11-trimethyl- ; synonym:S-farnesyl-L-cysteine ; synonym:[[C\\:farn]] ; synonym:CFN ; synonym:[C\:farn] ; synonym:[[C\:farn]]
+     @is_a@geranylgeranylcys\: s-geranylgeranyl-cysteine ; MI:0152 ; synonym:(R\,E\,E\,E)-2-amino-3-(3\,7\, ; synonym:2-amino-3-(3\,7\,11\,15-tetram ; synonym:S-geranylgeranyl-L-cysteine ; synonym:[[C\\:ger]] ; synonym:CGR ; synonym:[C\:ger] ; synonym:[[C\:ger]]
+   @is_a@methylated residue ; MI:0157
+    @is_a@methylthioaspartate\: beta-methylthioaspartic acid ; MI:0161 ; synonym:(2R\,3Xi)-2-amino-3-methylsulf ; synonym:3-carboxy-S-methyl-cysteine ; synonym:3-methylthio-aspartic acid ; synonym:L-beta-methylthioaspartic acid ; synonym:[[D\\:meth_b]] ; synonym:beta-methylthio-aspartic acid ; synonym:DM2 ; synonym:[D\:meth_b] ; synonym:[[D\:meth_b]]
+    @is_a@glutamatemethylester\: glutamic acid 5-methyl ester ; MI:0163 ; synonym:(S)-2-aminopentanedioic acid 5 ; synonym:5-methyl-L-glutamate ; synonym:L-glutamic acid 5-methyl ester ; synonym:[[E\\:meth_o5]] ; synonym:glutamic acid gamma-methyl est ; synonym:EM5 ; synonym:[E\:meth_o5] ; synonym:[[E\:meth_o5]]
+    @is_a@methylglutamine\: n5-methyl-glutamine ; MI:0162 ; synonym:(S)-2-amino-N5-methylpentanedi ; synonym:N(delta)-methylglutamine ; synonym:N-methylglutamine ; synonym:N5-methyl-L-glutamine ; synonym:[[Q\\:meth_n5]] ; synonym:gamma-methylglutamine ; synonym:QM5 ; synonym:[Q\:meth_n5] ; synonym:[[Q\:meth_n5]]
+    @is_a@methylmethionine\: n-methyl-methionine ; MI:0168 ; synonym:(S)-2-methylamino-4-(methylsul ; synonym:2-methylamino-4-(methylthio)bu ; synonym:N-methyl-L-methionine ; synonym:N-methylmethionine ; synonym:[[M\\:meth]] ; synonym:MMT ; synonym:[M\:meth] ; synonym:[[M\:meth]]
+    @is_a@methylphenylalanine\: n-methyl-phenylalanine ; MI:0169 ; synonym:(S)-2-methylamino-3-phenylprop ; synonym:N-methyl-L-phenylalanine ; synonym:N-methylphenylalanine ; synonym:[[F\\:meth]] ; synonym:FMT ; synonym:[F\:meth] ; synonym:[[F\:meth]]
+    @is_a@methylhistidine\: 3'-methyl-histidine ; MI:0164 ; synonym:(S)-2-amino-3-(3-methyl-3H-imi ; synonym:1-methylhistidine [misnomer] ; synonym:3'-methyl-L-histidine ; synonym:N(delta)-methylhistidine ; synonym:[[H\\:meth_n4]] ; synonym:pi-methylhistidine ; synonym:pros-methylhistidine ; synonym:MHS ; synonym:[H\:meth_n4] ; synonym:[[H\:meth_n4]]
+    @is_a@methylated alanine ; MI:0562
+     @is_a@trimethylalanine\: n,n,n-trimethyl-alanine ; MI:0159 ; synonym:(S)-1-carboxy-N\,N\,N-trimethy ; synonym:(S)-2-(trimethylammonio)propan ; synonym:N\,N\,N-trimethyl-L-alanine ; synonym:[[A\\:meth_n3]] ; synonym:AM3 ; synonym:[A\:meth_n3] ; synonym:N,N,N-trimethyl-L-alanine ; synonym:[[A\:meth_n3]]
+     @is_a@methylalanine\: n-methyl-alanine ; MI:0158 ; synonym:(S)-2-methylaminopropanoic aci ; synonym:N-methyl-L-alanine ; synonym:N-methylalanine ; synonym:[[A\\:meth_n]] ; synonym:AMT ; synonym:[A\:meth_n] ; synonym:[[A\:meth_n]]
+    @is_a@methylated arginine ; MI:0563
+     @is_a@dimethylarginine\: omega-n,omega-n-dimethyl-arginine ; MI:0160 ; synonym:(S)-2-amino-5-[((dimethylamino ; synonym:NG\,NG-dimethylarginine ; synonym:[[R\\:meth_n7]] ; synonym:asymmetric dimethylarginine ; synonym:omega-N\,omega-N-dimethyl-L-ar ; synonym:RM2 ; synonym:[R\:meth_n7] ; synonym:NG,NG-dimethylarginine ; synonym:[[R\:meth_n7]]
+     @is_a@methylarginine\: omega-n-methyl-arginine ; MI:0564 ; synonym:(S)-2-amino-5-[(imino(methylam ; synonym:NG-methylarginine\ ; synonym:omega-N-methyl-L-arginine ; synonym:NG-methylarginine
+    @is_a@methylatedlysine\: methylated-lysine ; MI:0548
+     @is_a@trimethyllysine\: n6,n6,n6-trimethyl-lysine ; MI:0167 ; synonym:(S)-2-amino-6-(trimethylammoni ; synonym:(S)-5-amino-5-carboxy-N\,N\,N- ; synonym:N(zeta)-trimethyllysine ; synonym:N6\,N6\,N6-trimethyl-L-lysine ; synonym:[[K\\:meth_3]] ; synonym:epsilon-trimethyllysine ; synonym:M3L ; synonym:[K\:meth_3] ; synonym:[[K\:meth_3]] ; synonym:N6,N6,N6-trimethyl-L-lysine
+     @is_a@dimethyllysine\: n6,n6-dimethyl-lysine ; MI:0166 ; synonym:(S)-2-amino-6-dimethylaminohex ; synonym:N(zeta)-dimethyllysine ; synonym:N6\,N6-dimethyl-L-lysine ; synonym:[[K\\:meth_2]] ; synonym:epsilon-dimethyllysine ; synonym:lysine derivative Lys(y) ; synonym:MLY ; synonym:[K\:meth_2] ; synonym:N6,N6-dimethyl-L-lysine ; synonym:[[K\:meth_2]]
+     @is_a@methyllysine\: n6-methyl-lysine ; MI:0165 ; synonym:(S)-2-amino-6-methylaminohexan ; synonym:N(zeta)-methyllysine ; synonym:N6-methyl-L-lysine ; synonym:[[K\\:meth_1]] ; synonym:epsilon-methyllysine ; synonym:MLZ ; synonym:[K\:meth_1] ; synonym:[[K\:meth_1]]
+   @is_a@other modification ; MI:0179
+    @is_a@diphthamide\: 2'-[3-carboxamido-3-(trimethylammonio)propyl]-histidine ; MI:0185 ; synonym:alpha-(aminocarbonyl)-4-(2-ami ; synonym:diphthamide ; synonym:2'-[3-carboxamido-3-(trimethyl ; synonym:2-[(Xi)-3-carboxamido-3-(trime ; synonym:2-[3-carboxamido-3-(trimethyla ; synonym:2-amino-3-[[2-(3-amino-3-carba ; synonym:2-amino-4-[[5-(2-amino-2-carbo ; synonym:[[H\\:diph]] ; synonym:HDP ; synonym:[H\:diph] ; synonym:[[H\:diph]]
+    @is_a@hypusine\: n6-(4-amino-2-hydroxybutyl)-lysine ; MI:0187 ; synonym:(S\,R)-2-amino-6-(4-amino-2-hy ; synonym:N6-(4-amino-2-hydroxybutyl)-L- ; synonym:[[K\\:hypu]] ; synonym:hypusine ; synonym:KHY ; synonym:[K\:hypu] ; synonym:[[K\:hypu]]
+    @is_a@oxoalanine\: 3-oxoalanine ; MI:0182 ; synonym:(S)-2-amino-3-oxopropanoic aci ; synonym:2-amino-3-oxopropionic acid ; synonym:L-3-oxoalanine ; synonym:L-alpha-formylglycine ; synonym:L-amino-malonic acid semialdeh ; synonym:L-aminomalonaldehydic acid ; synonym:L-serinesemialdehyde [misnomer ; synonym:[[S\\:oxal]] ; synonym:SOX ; synonym:[S\:oxal] ; synonym:[[S\:oxal]]
+    @is_a@glycerylpo4etohamine\: glutamyl 5-glycerylphosphorylethanolamine ; MI:0184 ; synonym:(S)-2-amino-5-[2-([([2\,3-dihy ; synonym:L-glutamyl 5-glycerophosphoeth ; synonym:L-glutamyl 5-glycerophosphoryl ; synonym:L-glutamyl 5-glycerylphosphory ; synonym:[[E\\:gpe]] ; synonym:EGE ; synonym:[E\:gpe] ; synonym:[[E\:gpe]]
+    @is_a@selenocysteine ; MI:0180 ; synonym:3-selenylalanine ; synonym:L-selenocysteine ; synonym:[[C\\:sel]] ; synonym:selenium cysteine ; synonym:CSE ; synonym:[C\:sel] ; synonym:[[C\:sel]]
+    @is_a@selenomethionine ; MI:0181 ; synonym:L-selenomethionine ; synonym:[[M\\:sel]] ; synonym:MSE ; synonym:[M\:sel] ; synonym:[[M\:sel]]
+    @is_a@biotinyllysine\: n6-biotinyl-lysine ; MI:0186 ; synonym:(3aS-(3aalpha\,4beta\,6aalpha) ; synonym:(S)-2-amino-6-[5-((3aS\,4S\,6a ; synonym:N6-[5-((3aS\,4S\,6aR)-hexahydr ; synonym:N6-biotinyl-L-lysine ; synonym:N6-biotinyllysine ; synonym:[[K\\:biotin]] ; synonym:biocytin ; synonym:epsilon-N-biotinyllysine ; synonym:KBT ; synonym:[K\:biotin] ; synonym:[[K\:biotin]]
+    @is_a@retinallysine\: n6-retinal-lysine ; MI:0188 ; synonym:(S)-2-amino-6-[(2E\,4E\,6E\,8E ; synonym:N6-retinal-L-lysine ; synonym:N6-retinyl-lysine ; synonym:N6-retinylidene-L-lysine ; synonym:[[K\\:retin]] ; synonym:KRT ; synonym:[K\:retin] ; synonym:[[K\:retin]]
+    @is_a@pyroglutamic acid\: 2-pyrrolidone-5-carboxylic acid ; MI:0183 ; synonym:(S)-5-oxo-2-pyrrolidinecarboxy ; synonym:2-oxopyrrolidine-5-carboxylic  ; synonym:5-oxoproline ; synonym:5-oxopyrrolidine-2-carboxylic  ; synonym:[[E\\:pyro]] ; synonym:pyroglutamic acid ; synonym:PCA ; synonym:[E\:pyro] ; synonym:[[E\:pyro]]
+    @is_a@ubiquitinated lysine ; MI:0189 ; synonym:N6-glycyl-L-lysine ; synonym:N6-glycyllysine ; synonym:[[K\\:ub]] ; synonym:KUB ; synonym:[K\:ub] ; synonym:[[K\:ub]]
+    @is_a@alkylated cysteine ; MI:0549
+    @is_a@carboxyglutamic acid\: gamma-carboxyglutamic acid ; MI:0550 ; synonym:(S)-3-amino-1\,1\,3-propanetri ; synonym:1-carboxyglutamic acid [misnom ; synonym:4-carboxyglutamic acid ; synonym:L-gamma-carboxyglutamic acid
+    @is_a@nitro-tyrosine ; MI:0551 ; synonym:nitrated tyrosine
+    @is_a@nitrosylcysteine\: s-nitrosyl-cysteine ; MI:0552 ; synonym:(R)-2-amino-3-nitrososulfanyl- ; synonym:L-cysteine nitrite ester ; synonym:S-nitrosocysteine ; synonym:S-nitrosyl-L-cysteine
+    @is_a@sulfotyrosine\: o4'-sulfo-tyrosine ; MI:0553 ; synonym:(S)-2-amino-3-(4-sulfooxypheny ; synonym:2-amino-3-(4-hydroxyphenyl)pro ; synonym:O4'-sulfo-L-tyrosine ; synonym:O4-sulfotyrosine ; synonym:tyrosine sulfate
+    @is_a@sumoylated lysine ; MI:0554 ; synonym:(S)-2-amino-6-[(aminoacetyl)am ; synonym:N6-glycyl-L-lysine ; synonym:N6-glycyllysine
+    @is_a@neddylated lysine ; MI:0565
+   @is_a@phosphorylated\: phosphorylated residue ; MI:0170
+    @is_a@phosphoserine\: o-phospho-serine ; MI:0176 ; synonym:(S)-2-amino-3-(phosphonooxy)pr ; synonym:2-amino-3-hydroxypropanoic aci ; synonym:O-phospho-L-serine ; synonym:O-phosphonoserine ; synonym:O3-phosphoserine ; synonym:[[S\\:po]] ; synonym:serine phosphate ester ; synonym:[S\:po] ; synonym:[[S\:po]] ; synonym:SPO
+    @is_a@phosphothreonine\: o-phospho-threonine ; MI:0177 ; synonym:(2S\,3R)-2-amino-3-phosphonoox ; synonym:2-amino-3-hydroxybutanoic acid ; synonym:O-phospho-L-threonine ; synonym:O3-phosphothreonine ; synonym:[[T\\:po]] ; synonym:threonine phosphate ester ; synonym:TPO ; synonym:[T\:po] ; synonym:[[T\:po]]
+    @is_a@phosphoarginine\: omega-n-phospho-arginine ; MI:0171 ; synonym:(S)-2-amino-5-[imino(phosphono ; synonym:N5-[imino(phosphonoamino)methy ; synonym:[[R\\:po]] ; synonym:alpha-amino-delta-phosphonogua ; synonym:omega-N-phospho-L-arginine ; synonym:RPO ; synonym:[R\:po] ; synonym:[[R\:po]]
+    @is_a@phosphoaspartic acid\: aspartic 4-phosphoric anhydride ; MI:0172 ; synonym:[[D\\:po]] ; synonym:beta-aspartyl phosphate ; synonym:phosphoaspartic acid ; synonym:(S)-2-aminobutanedioic 4-phosp ; synonym:L-aspartic 4-phosphoric anhydr ; synonym:DPO ; synonym:[D\:po] ; synonym:[[D\:po]]
+    @is_a@phosphocysteine\: s-phospho-cysteine ; MI:0173 ; synonym:(R)-2-amino-3-(phosphonosulfan ; synonym:S-phospho-L-cysteine ; synonym:S-phosphonocysteine ; synonym:S3-phosphocysteine ; synonym:[[C\\:po]] ; synonym:cysteine phosphate thioester ; synonym:CPO ; synonym:[C\:po] ; synonym:[[C\:po]]
+    @is_a@phosphotyrosine\: o4'-phospho-tyrosine ; MI:0178 ; synonym:(S)-2-amino-3-(4-phosphonooxyp ; synonym:2-amino-3-(4-hydroxyphenyl)pro ; synonym:O4'-phospho-L-tyrosine ; synonym:O4-phosphotyrosine ; synonym:[[Y\\:po]] ; synonym:tyrosine phosphate ; synonym:YPO ; synonym:[Y\:po] ; synonym:[[Y\:po]]
+    @is_a@phosphoshistidine\: phospho-histidine ; MI:0555
+     @is_a@3-phosphohistidine\: 3'-phospho-histidine ; MI:0175 ; synonym:(S)-2-amino-3-(3-phosphono-3H- ; synonym:[[H\\:po_d]] ; synonym:histidine-1-phosphate [misnome ; synonym:histidine-N(delta)-phosphate ; synonym:histidine-N3'-phosphate ; synonym:pi-phosphohistidine ; synonym:pros-phosphohistidine ; synonym:HPD ; synonym:[H\:po_d] ; synonym:[[H\:po_d]]
+     @is_a@1-phosphohistidine\: 1'-phospho-histidine ; MI:0174 ; synonym:(S)-2-amino-3-(1-phosphono-1H- ; synonym:1'-phospho-L-histidine ; synonym:[[H\\:po_e]] ; synonym:histidine-3-phosphate [misnome ; synonym:histidine-N(epsilon)-phosphate ; synonym:histidine-N1'-phosphate ; synonym:tau-phosphohistidine ; synonym:tele-phosphohistidine ; synonym:HPE ; synonym:[H\:po_e] ; synonym:[[H\:po_e]]
+   @is_a@adp-ribosylated\: adp ribosylated residue ; MI:0527
+    @is_a@adp-ribosylarginine\: omega-n-(adp-ribosyl)-arginine ; MI:0528 ; synonym:(S)-2-amino-5-([imino([adenosi ; synonym:N(omega)-[alpha-D-ribofuranosi ; synonym:N(omega)-alpha-D-ribofuranosyl ; synonym:omega-N-(ADP-ribosyl)-L-argini
+    @is_a@adp-ribosylcysteine\: s-(adp-ribosyl)-cysteine ; MI:0529 ; synonym:(R)-2-amino-3-([adenosine 5'-( ; synonym:S-(ADP-ribosyl)-L-cysteine ; synonym:S-L-cysteine alpha-D-ribofuran ; synonym:S-alpha-D-ribofuranosyl-L-cyst
+    @is_a@adp-ribosylglutamate\: glutamyl-5-poly(adp-ribose) ; MI:0530 ; synonym:(S)-2-amino-5-poly[2'-adenosin ; synonym:L-glutamyl-5-poly(ADP-ribose) ; synonym:L-isoglutamyl-poly(ADP-ribose)
+    @is_a@adp-ribosylserine\: o-(adp-ribosyl)-serine ; MI:0531 ; synonym:(S)-2-amino-3-([adenosine 5'-( ; synonym:O-(ADP-ribosyl)-L-serine ; synonym:O3-(ADP-ribosyl)-L-serine ; synonym:O3-[alpha-D-ribofuranoside 5'- ; synonym:O3-alpha-D-ribofuranosyl-L-ser
+    @is_a@adpribosylasparagine\: n4-(adp-ribosyl)-asparagine ; MI:0532 ; synonym:(S)-2-amino-4-([adenosine 5'-( ; synonym:N4-(ADP-ribosyl)-L-asparagine ; synonym:N4-[alpha-D-ribofuranoside 5'- ; synonym:N4-alpha-D-ribofuranosyl-L-asp
+   @is_a@glycosylated residue ; MI:0533
+    @is_a@glycosyl-cysteine ; MI:0534 ; synonym:S-glycosyl-L-cysteine
+    @is_a@glycosyl-serine ; MI:0535 ; synonym:O-glycosyl-L-serine ; synonym:O3-glycosyl-L-serine
+    @is_a@glycosyl-threonine ; MI:0536 ; synonym:O-glycosyl-L-threonine ; synonym:O3-glycosyl-L-threonine
+    @is_a@glycosylarginine\: omega-n-glycosyl-arginine ; MI:0537 ; synonym:omega-N-glycosyl-L-arginine
+    @is_a@glycosylasparagine\: n4-glycosyl-asparagine ; MI:0538 ; synonym:N4-glycosyl-L-asparagine
+ @is_a@experimental feature ; MI:0505
+  @is_a@tagged molecule ; MI:0507
+   @is_a@flag tagged ; MI:0518 ; synonym:FLAG-tagged ; synonym:FLAG
+   @is_a@gst tagged ; MI:0519 ; synonym:glutathione S-tranferase tag @is_a@ fusion proteins ; MI:0240
+   @is_a@ha tagged ; MI:0520
+   @is_a@his tagged ; MI:0521 ; synonym:6-His-tagged ; synonym:Hexa-His-tagged ; synonym:Histidine-tagged
+   @is_a@myc tagged ; MI:0522
+   @is_a@t7 tagged ; MI:0523
+   @is_a@tap tagged ; MI:0524
+   @is_a@v5 tagged ; MI:0525
+   @is_a@biotin tagged ; MI:0239
+   @is_a@fusion proteins ; MI:0240
+    @is_a@gst tagged ; MI:0519 ; synonym:glutathione S-tranferase tag @is_a@ tagged molecule ; MI:0507
+    @is_a@enzyme tagged ; MI:0365
+     @is_a@alk phosphatase tag\: alkaline phosphatase tagged ; MI:0366
+     @is_a@hrp tagged\: horseradish peroxidase tagged ; MI:0241
+    @is_a@gfp tagged ; MI:0367 ; synonym:green fluorescent protein ; synonym:green fluorescent protein tag
+    @is_a@yfp tagged ; MI:0368 ; synonym:yellow fluorescent protein ; synonym:yellow fluorescent protein tag
+    @is_a@mbp tagged\: maltose binding protein tagged ; MI:0578 ; synonym:maltose binding protein tag
+  @is_a@dye labelled\: dye labelled molecule ; MI:0373
+   @is_a@alexa labelled ; MI:0384
+    @is_a@alexa 350 labelled ; MI:0385
+    @is_a@alexa 430 labelled ; MI:0386
+    @is_a@alexa 488 labelled ; MI:0387
+    @is_a@alexa 532 labelled ; MI:0388
+    @is_a@alexa 546 labelled ; MI:0389
+    @is_a@alexa 568 labelled ; MI:0390
+    @is_a@alexa 594 labelled ; MI:0391
+   @is_a@cyanine labelled ; MI:0374
+    @is_a@cy3 labelled ; MI:0375
+    @is_a@cy5 labelled ; MI:0376
+   @is_a@fitc labelled\: fluorescein isothiocyanate labelled ; MI:0377 ; synonym:FITC labelled ; synonym:fluorescein isothiocyanate lab
+  @is_a@isotope labelled ; MI:0253
+   @is_a@radiolabelled\: radiolabelled molecule ; MI:0517 ; synonym:radiolabeled
+    @is_a@131i radiolabelled ; MI:0234 ; synonym:131I ; synonym:I131
+    @is_a@14c radiolabelled ; MI:0235 ; synonym:14C ; synonym:C14
+    @is_a@32p radiolabelled ; MI:0236 ; synonym:32P ; synonym:P32
+    @is_a@33p radiolabelled ; MI:0237 ; synonym:33P ; synonym:P33
+    @is_a@35s radiolabelled ; MI:0371 ; synonym:35S ; synonym:S35 ; synonym:s35 radiolabelled
+    @is_a@3h radiolabelled ; MI:0238 ; synonym:3H ; synonym:H3 ; synonym:tritium
+   @is_a@rare isotope label\: rare isotope labelled molecule ; MI:0378
+    @is_a@13c labelled ; MI:0379 ; synonym:13C ; synonym:C13
+    @is_a@15n labelled ; MI:0380 ; synonym:15N ; synonym:N15
+    @is_a@2h labelled ; MI:0381 ; synonym:2H2 ; synonym:D2 ; synonym:deuterium
