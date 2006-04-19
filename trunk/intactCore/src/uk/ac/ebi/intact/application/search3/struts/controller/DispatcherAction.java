@@ -45,6 +45,7 @@ public class DispatcherAction extends IntactBaseAction {
      *
      * @throws Exception
      */
+    @Override
     public ActionForward execute( ActionMapping mapping, ActionForm form,
                                   HttpServletRequest request,
                                   HttpServletResponse response ) throws Exception {
@@ -71,7 +72,7 @@ public class DispatcherAction extends IntactBaseAction {
         }
 
         //not an exisiting page request, so get the search results from the request
-        final Collection results = (Collection) request.getAttribute( SearchConstants.SEARCH_RESULTS );
+        final Collection<? extends AnnotatedObject> results = (Collection<? extends AnnotatedObject>) request.getAttribute( SearchConstants.SEARCH_RESULTS );
 
         final String binaryValue = user.getBinaryValue();
         final String viewSource = user.getView();

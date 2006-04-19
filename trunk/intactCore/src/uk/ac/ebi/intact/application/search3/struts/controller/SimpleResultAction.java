@@ -3,7 +3,6 @@ package uk.ac.ebi.intact.application.search3.struts.controller;
 import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.SimpleViewBean;
-import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.model.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,6 +35,7 @@ public class SimpleResultAction extends AbstractResultAction {
      * @param helpLink The help link to use
      * @return String the return code for forwarding use by the execute method
      */
+    @Override
     protected String processResults(HttpServletRequest request, String helpLink) {
 
         logger.info("enter simple action");
@@ -46,7 +46,7 @@ public class SimpleResultAction extends AbstractResultAction {
         IntactUserIF user = super.getIntactUser(session);
 
         //get the search results from the request
-        Collection results = (Collection) request.getAttribute(SearchConstants.SEARCH_RESULTS);
+        Collection<? extends AnnotatedObject> results = (Collection<? extends AnnotatedObject>) request.getAttribute(SearchConstants.SEARCH_RESULTS);
 
         logger.info("SimpleAction: Collection contains " + results.size() + " items.");
 
@@ -58,30 +58,33 @@ public class SimpleResultAction extends AbstractResultAction {
         //in the JSP. That way the JSP only ever gets things to display, unless
         //there are too many items to display for a particular type...
 
-        List expList = new ArrayList(results.size());
-        List interactionList = new ArrayList(results.size());
-        List proteinList = new ArrayList(results.size());
-        List cvObjectList = new ArrayList(results.size());
-        ;
-        List partitionList = new ArrayList(results.size());   //this will hold the seperate lists as items
+        List<SimpleViewBean> expList = new ArrayList<SimpleViewBean>(results.size());
+        List<SimpleViewBean> interactionList = new ArrayList<SimpleViewBean>(results.size());
+        List<SimpleViewBean> proteinList = new ArrayList<SimpleViewBean>(results.size());
+        List<SimpleViewBean> cvObjectList = new ArrayList<SimpleViewBean>(results.size());
 
-        for (Iterator it = results.iterator(); it.hasNext();) {
+        List<List<SimpleViewBean>> partitionList = new ArrayList<List<SimpleViewBean>>(results.size());   //this will hold the seperate lists as items
 
-            AnnotatedObject obj = (AnnotatedObject) it.next();
-            //now create a relevant view bean for each type in the result set...
-            if (Experiment.class.isAssignableFrom(obj.getClass())) {
+        for (AnnotatedObject obj : results)
+        {
+             //now create a relevant view bean for each type in the result set...
+            if (Experiment.class.isAssignableFrom(obj.getClass()))
+            {
                 expList.add(new SimpleViewBean(obj, user.getHelpLink(), searchURL, contextPath));
             }
 
-            if (Interaction.class.isAssignableFrom(obj.getClass())) {
+            if (Interaction.class.isAssignableFrom(obj.getClass()))
+            {
                 interactionList.add(new SimpleViewBean(obj, user.getHelpLink(), searchURL, contextPath));
             }
 
-            if (Protein.class.isAssignableFrom(obj.getClass())) {
+            if (Protein.class.isAssignableFrom(obj.getClass()))
+            {
                 proteinList.add(new SimpleViewBean(obj, user.getHelpLink(), searchURL, contextPath));
             }
 
-            if (CvObject.class.isAssignableFrom(obj.getClass())) {
+            if (CvObject.class.isAssignableFrom(obj.getClass()))
+            {
                 cvObjectList.add(new SimpleViewBean(obj, user.getHelpLink(), searchURL, contextPath));
             }
         } // for

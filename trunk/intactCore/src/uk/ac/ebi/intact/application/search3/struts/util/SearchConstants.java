@@ -49,7 +49,7 @@ public interface SearchConstants {
     /**
      * This value indicates how long should the waiting page wait before to fire redirect.
      */
-    public static final Integer DEFAULT_WAITING_TIME = new Integer(1);
+    public static final Integer DEFAULT_WAITING_TIME = 1;
 
     /**
      * This value indicates how long should the waiting page wait before to fire redirect.
@@ -283,4 +283,8 @@ public interface SearchConstants {
     int MAXIMUM_DISPLAYABLE_PROTEIN = 30;
     int MAXIMUM_DISPLAYABLE_CVOBJECTS = 30;
     int MAXIMUM_DISPLAYABLE_EXPERIMENTS = 30;
+
+    public static final int RESULTS_PER_PAGE = 30;
+    public static final String DATA_PAGE_INDEX_ATT_NAME = "uk.ac.ebi.intact.PAGE_INDEX";
+    public static final String TOTAL_RESULTS_ATT_NAME = "uk.ac.ebi.intact.TOTAL_RESULTS";
 }

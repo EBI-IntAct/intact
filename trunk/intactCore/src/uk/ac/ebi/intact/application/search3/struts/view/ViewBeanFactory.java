@@ -53,7 +53,7 @@ public class ViewBeanFactory {
     /**
      * Mapping related to the single object view
      */
-    private static Map ourBeanToSingleItemView = new HashMap();
+    private static Map<Class,Class<BioSourceViewBean>> ourBeanToSingleItemView = new HashMap<Class, Class<BioSourceViewBean>>();
 
     /**
      * Maps: Model class -> binary view bean
@@ -138,11 +138,11 @@ public class ViewBeanFactory {
     public AbstractViewBean getBinaryViewBean( Collection objects, String link, String contextPath ) {
 
         Object firstItem = objects.iterator().next();
-        Class objsClass = firstItem.getClass();
+        Class<? extends Object> objsClass = firstItem.getClass();
 
         logger.info( objsClass );
 
-        Class clazz = (Class) ourBeanToBinaryView.get( objsClass );
+        Class<BioSourceViewBean> clazz = (Class<BioSourceViewBean>) ourBeanToBinaryView.get( objsClass );
         return getViewBean( clazz, objects, link, contextPath );
     }
 
@@ -169,11 +169,11 @@ public class ViewBeanFactory {
         }
 
         Object firstItem = objects.iterator().next();
-        Class objsClass = firstItem.getClass();
+        Class<? extends Object> objsClass = firstItem.getClass();
 
         logger.info( objsClass );
 
-        Class clazz = (Class) ourBeanToDetailsView.get( objsClass );
+        Class<BioSourceViewBean> clazz = (Class<BioSourceViewBean>) ourBeanToDetailsView.get( objsClass );
 
         return getViewBean( clazz, objects, link, contextPath );
     }
@@ -194,7 +194,7 @@ public class ViewBeanFactory {
             return null;
         }
         logger.info( object.getClass() );
-        Class beanClass = (Class) ourBeanToSingleItemView.get( object.getClass() );
+        Class<BioSourceViewBean> beanClass = ourBeanToSingleItemView.get( object.getClass() );
         return getViewBean( beanClass, object, link, contextPath );
     }
 
@@ -219,7 +219,7 @@ public class ViewBeanFactory {
             return null;
         }
         logger.info( object.getClass() );
-        Class beanClass = (Class) ourBeanToChunkedView.get( object.getClass() );
+        Class<? extends AbstractViewBean> beanClass = (Class<? extends AbstractViewBean>) ourBeanToChunkedView.get( object.getClass() );
 
         return getViewBean( beanClass, object, link, contextPath, maxChunk, selectedChunk );
     }
@@ -238,7 +238,7 @@ public class ViewBeanFactory {
      *
      * @return an AbstractViewBean.
      */
-    private AbstractViewBean getViewBean( Class beanClazz,
+    private AbstractViewBean getViewBean( Class<? extends AbstractViewBean> beanClazz,
                                           Object objectToWrap,
                                           String link,
                                           String contextPath,
@@ -254,7 +254,7 @@ public class ViewBeanFactory {
         }
 
         try {
-            Class classToWrap = null;
+            Class<? extends Object> classToWrap = null;
 
             /* TODO: would be nice to get rid of it
              * If an Experiment (ArrayList) is given, it's not automatically
@@ -277,11 +277,11 @@ public class ViewBeanFactory {
             logger.info( "Param4: " + Integer.class.getName() + " value: " + maxChunk );
             logger.info( "Param5: " + Integer.class.getName() + " value: " + selectedChunk );
 
-            Constructor constructor = beanClazz.getConstructor(
-                    new Class[]{ classToWrap, String.class, String.class, Integer.class, Integer.class } );
+            Constructor<? extends AbstractViewBean> constructor = beanClazz.getConstructor(
+                    classToWrap, String.class, String.class, Integer.class, Integer.class  );
 
-            return (AbstractViewBean) constructor.newInstance(
-                    new Object[]{ objectToWrap, link, contextPath, new Integer( maxChunk ), new Integer( selectedChunk ) } );
+            return constructor.newInstance(
+                    objectToWrap, link, contextPath, new Integer( maxChunk ), new Integer( selectedChunk ) );
         } catch ( InstantiationException e ) {
             e.printStackTrace();
         } catch ( IllegalAccessException e ) {
@@ -307,7 +307,7 @@ public class ViewBeanFactory {
      * @return the appropriate view for <code>object</code>; null is returned if there is no mapping or an error in
      *         creating an instance of the view.
      */
-    private AbstractViewBean getViewBean( Class beanClazz,
+    private AbstractViewBean getViewBean( Class<BioSourceViewBean> beanClazz,
                                           Object objectToWrap,
                                           String link,
                                           String contextPath ) {
@@ -321,7 +321,7 @@ public class ViewBeanFactory {
         }
 
         try {
-            Class classToWrap = null;
+            Class<? extends Object> classToWrap = null;
 
             /* TODO: would be nice to get rid of it
              * If an Experiment (ArrayList) is given, it's not automatically
@@ -342,10 +342,10 @@ public class ViewBeanFactory {
             logger.info( "Param2: " + String.class.getName() + " value: " + link );
             logger.info( "Param3: " + String.class.getName() + " value: " + contextPath );
 
-            Constructor constructor = beanClazz.getConstructor(
-                    new Class[]{ classToWrap, String.class, String.class } );
-            return (AbstractViewBean) constructor.newInstance(
-                    new Object[]{ objectToWrap, link, contextPath } );
+            Constructor<BioSourceViewBean> constructor = beanClazz.getConstructor(
+                     classToWrap, String.class, String.class );
+            return constructor.newInstance(
+                    objectToWrap, link, contextPath );
 
         } catch ( InstantiationException e ) {
             e.printStackTrace();

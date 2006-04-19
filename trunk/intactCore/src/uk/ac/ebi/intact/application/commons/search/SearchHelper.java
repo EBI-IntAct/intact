@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.model.Alias;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.persistence.ObjectBridgeQueryFactory;
+import uk.ac.ebi.intact.util.DatabaseUtil;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -417,22 +418,17 @@ public class SearchHelper implements SearchHelperI {
      * @param query       the user-specified value
      * @param searchClass String which represents the name of the class  to search on.
      * @param type        String  the filter type (ac, shortlabel, xref etc.) if type is null it will be 'all'
-     * @param user        f uk.ac.ebi.intact.application.commons.business.IntactUserI for getting the IntactHelper
      * @return the result wrapper which contains the result of the search
      * @throws uk.ac.ebi.intact.business.IntactException
      *          thrown if there were any search problems
      */
-    private ResultWrapper search(String query, String searchClass, String type, IntactHelper helper, int maximumResultSize)
+    private ResultWrapper search(String query, String searchClass, String type, IntactHelper helper, int maximumResultSize, int firstResult, boolean paginatedSearch)
             throws IntactException {
 
         // first check if we got a type, we have to search for a type if the type is not null
         // and not "all"
         boolean hasType = (type != null) && (!type.trim().equals("")) && !type.equals("all");
         boolean hasSearchClass = (searchClass != null) && (!searchClass.trim().equals(""));
-
-        // now check for the search Class
-
-
 
         logger.info("search with value with query : " + query + " searchClass :" + searchClass);
         // replace  the "*" with "%"
@@ -494,14 +490,14 @@ public class SearchHelper implements SearchHelperI {
 
             int count = 0;
             String className = null;
-            Map resultInfo = new HashMap();
+            Map<String,Integer> resultInfo = new HashMap<String,Integer>();
 
             while (rs.next()) {
                 int classCount = rs.getInt(1);
                 logger.info("classCount " + classCount);
                 className = rs.getString(2);
                 logger.info("ClassName : " + className);
-                resultInfo.put(className, new Integer(classCount));
+                resultInfo.put(className, classCount);
                 count += classCount;
                 logger.info("Count summ : " + count);
             }
@@ -511,8 +507,9 @@ public class SearchHelper implements SearchHelperI {
                 rs = null;
             }
             logger.info("Count = " + count);
+
             // check the result size if the result is too large return an empty ResultWrapper
-            if (count > maximumResultSize) {
+            if (count > maximumResultSize && !paginatedSearch) {
                 logger.info("Result too Large return an empty result Wrapper");
                 return new ResultWrapper(count, maximumResultSize, resultInfo);
             }
@@ -528,6 +525,9 @@ public class SearchHelper implements SearchHelperI {
             if (hasSearchClass) {
                 sql = sql + "AND objclass LIKE " + "'%" + searchClass + "%'";
             }
+
+            // limit query
+            sql = DatabaseUtil.wrapWithLimitSql(sql, firstResult, maximumResultSize, conn);
 
 
             logger.info(sql);
@@ -548,7 +548,7 @@ public class SearchHelper implements SearchHelperI {
                 clazz = Class.forName(className);
                 searchResult.add(helper.getObjectByAc(clazz, ac));
             }
-            return new ResultWrapper(searchResult, maximumResultSize, resultInfo);
+            return new ResultWrapper(searchResult, maximumResultSize, resultInfo, count);
 
         }
         catch (SQLException se) {
@@ -590,14 +590,14 @@ public class SearchHelper implements SearchHelperI {
      * @throws uk.ac.ebi.intact.business.IntactException
      *          thrown if there were any search problems
      */
-    private ResultWrapper getInteractors(final String searchValue, String type, IntactHelper helper, int numberOfResults)
+    private ResultWrapper getInteractors(final String searchValue, String type, IntactHelper helper, int numberOfResults, int firstResult, boolean paginatedSearch)
             throws IntactException {
 
         logger.info("search Interactor");
 
         // getting all results for proteins and interactions
-        ResultWrapper proteins = this.search(searchValue, "Protein", type, helper, numberOfResults);
-        ResultWrapper interactions = this.search(searchValue, "Interaction", type, helper, numberOfResults);
+        ResultWrapper proteins = this.search(searchValue, "Protein", type, helper, numberOfResults, firstResult, paginatedSearch);
+        ResultWrapper interactions = this.search(searchValue, "Interaction", type, helper, numberOfResults, firstResult, paginatedSearch);
 
         // now check whats going on with the results and calculate the summ of both
         if (proteins.isTooLarge() || interactions.isTooLarge()) {
@@ -606,21 +606,21 @@ public class SearchHelper implements SearchHelperI {
             int count = 0;
             int proteinCount = 0;
             int interactionCount = 0;
-            Map resultInfo = new HashMap();
+            Map<String,Integer> resultInfo = new HashMap<String,Integer>();
 
             // the result is too large just getting the info a return an empty resultwrapper
             if (proteins.isTooLarge()) {
-                Map proteinInfo = proteins.getInfo();
+                Map<String,Integer> proteinInfo = proteins.getInfo();
                 proteinCount =
-                        ((Integer) proteinInfo.get("uk.ac.ebi.intact.model.ProteinImpl")).intValue();
-                resultInfo.put("uk.ac.ebi.intact.model.ProteinImpl", new Integer(proteinCount));
+                        proteinInfo.get("uk.ac.ebi.intact.model.ProteinImpl");
+                resultInfo.put("uk.ac.ebi.intact.model.ProteinImpl", proteinCount);
             }
 
             if (interactions.isTooLarge()) {
-                Map interactionInfo = interactions.getInfo();
-                interactionCount = ((Integer) interactionInfo.get("uk.ac.ebi.intact.model.InteractionImpl")).intValue();
+                Map<String,Integer> interactionInfo = interactions.getInfo();
+                interactionCount = interactionInfo.get("uk.ac.ebi.intact.model.InteractionImpl");
                 resultInfo.put("uk.ac.ebi.intact.model.InteractionImpl",
-                               new Integer(interactionCount));
+                               interactionCount);
             }
 
             count = proteinCount + interactionCount;
@@ -654,14 +654,14 @@ public class SearchHelper implements SearchHelperI {
      *          thrown if there were any search problems
      */
     public ResultWrapper searchFast(String query, String searchClass, String type,
-                                    IntactHelper helper, int numberOfResults)
+                                    IntactHelper helper, int numberOfResults, int firstResult, boolean paginatedSearch)
             throws IntactException {
 
         if (searchClass.equalsIgnoreCase("Interactor")) {
-            return this.getInteractors(query, type, helper, numberOfResults);
+            return this.getInteractors(query, type, helper, numberOfResults, firstResult, paginatedSearch);
         }
         else {
-            return this.search(query, searchClass, type, helper, numberOfResults);
+            return this.search(query, searchClass, type, helper, numberOfResults, firstResult, paginatedSearch);
         }
     }
 
