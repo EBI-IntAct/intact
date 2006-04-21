@@ -103,6 +103,8 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
             throws Exception {
         // Handler to the Intact User.
 
+        EditorFormI editorForm = (EditorFormI) form;
+
         EditUserI user = getIntactUser(request);
         //user.getUserName();
         //user.getIntactHelper();
@@ -126,7 +128,7 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
 
 
         try{
-            
+
             ExperimentAutoFill eaf = new ExperimentAutoFill(pubmedId);
 
             IntactHelper helper = user.getIntactHelper();
@@ -258,7 +260,6 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
                     view.addAnnotation(journalCb);
                 }
             }
-
             /***************************************************************************************************
             C r e a t i n g   p u b l i c a t i o n   y e a r   a n n o t a t i o n   a n d   a d d i n g   i t
             ****************************************************************************************************/
@@ -361,7 +362,6 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
                 view.addXref(pubmedXb);
             }
 
-            EditorFormI editorForm = (EditorFormI) form;
             view.copyPropertiesTo(editorForm);
 
         }catch (NumberFormatException e){  //If the pubmed Id do not have the good format
@@ -369,26 +369,33 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
             ActionErrors errors = new ActionErrors();
             errors.add("autocomp", new ActionError("error.exp.autocomp.wrong.format"));
             saveErrors(request, errors);
-            return mapping.findForward(FAILURE);
+            setAnchor(request, editorForm);
+            // Display the error in the edit page.
+            return mapping.getInputForward();
         }catch (PublicationNotFoundException e){  //If the publication is not found
             LOGGER.error(" The publication corresponding to pubmedId " + pubmedId + "couldn't be found : ", e);
             ActionErrors errors = new ActionErrors();
-            errors.add("autocomp", new ActionError("error.exp.autocomp.publication.not.found",e.getMessage()));
+            errors.add("autocomp", new ActionError("error.exp.autocomp.publication.not.found"));
             saveErrors(request, errors);
-            return mapping.findForward(FAILURE);
+            setAnchor(request, editorForm);
+            // Display the error in the edit page.
+            return mapping.getInputForward();
         }catch(UnexpectedException e){ //Unexpected exception
             LOGGER.error("", e);
             ActionErrors errors = new ActionErrors();
-            errors.add("autocomp", new ActionError("error.exp.autocomp",e.getMessage()));
+            errors.add("autocomp", new ActionError("error.exp.autocomp"));
             saveErrors(request, errors);
-            return mapping.findForward(FAILURE);
+            setAnchor(request, editorForm);
+            // Display the error in the edit page.
+            return mapping.getInputForward();
         }catch(Throwable t){ //Any other kind of exception
-            t.printStackTrace();
             LOGGER.error("",t);
             ActionErrors errors = new ActionErrors();
-            errors.add("autocomp", new ActionError("error.exp.autocomp",t.getMessage()));
+            errors.add("autocomp", new ActionError("error.exp.autocomp"));
             saveErrors(request, errors);
-            return mapping.findForward(FAILURE);
+            setAnchor(request, editorForm);
+            // Display the error in the edit page.
+            return mapping.getInputForward();
         }
 
         return mapping.getInputForward();
