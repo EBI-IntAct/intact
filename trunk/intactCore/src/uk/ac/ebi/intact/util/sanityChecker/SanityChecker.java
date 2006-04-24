@@ -121,6 +121,8 @@ public class SanityChecker {
 
     public SanityChecker( IntactHelper helper ) throws IntactException, SQLException {
 
+        this.helper = helper;
+
         editorUrlBuilder = new EditorUrlBuilder();
 
         featureSch = new SanityCheckerHelper();
