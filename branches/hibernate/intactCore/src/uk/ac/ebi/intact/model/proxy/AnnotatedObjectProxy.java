@@ -7,8 +7,6 @@ package uk.ac.ebi.intact.model.proxy;
 
 import org.apache.ojb.broker.Identity;
 import org.apache.ojb.broker.PBKey;
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 
 import java.lang.reflect.InvocationHandler;
@@ -72,8 +70,8 @@ public class AnnotatedObjectProxy  extends BasicObjectProxy implements Annotated
 
     ///////////////////////////////////////
     // access methods for associations
-    public void setAnnotation ( Collection<Annotation> someAnnotation ) {
-        realSubject().setAnnotation( someAnnotation );
+    public void setAnnotations ( Collection<Annotation> someAnnotation ) {
+        realSubject().setAnnotations( someAnnotation );
     }
 
     public Collection<Annotation> getAnnotations () {
@@ -156,15 +154,6 @@ public class AnnotatedObjectProxy  extends BasicObjectProxy implements Annotated
 
     public void removeReference ( Reference reference ) {
         realSubject().removeReference( reference );
-    }
-
-    //attributes used for mapping BasicObjects - project synchron
-    public String getCuratorAc () {
-        return realSubject().getCuratorAc();
-    }
-
-    public void setCuratorAc ( String ac ) {
-        realSubject().setCuratorAc( ac );
     }
 
     @Override

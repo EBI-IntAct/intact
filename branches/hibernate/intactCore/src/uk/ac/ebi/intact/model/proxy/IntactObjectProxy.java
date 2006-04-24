@@ -11,7 +11,6 @@ import org.apache.ojb.broker.VirtualProxy;
 import uk.ac.ebi.intact.model.IntactObject;
 
 import java.lang.reflect.InvocationHandler;
-import java.sql.Timestamp;
 import java.util.Date;
 
 /**
@@ -71,7 +70,7 @@ public class IntactObjectProxy  extends VirtualProxy implements IntactObject {
         realSubject().setAc( ac );
     }
 
-    public Timestamp getCreated () {
+    public Date getCreated () {
         return realSubject().getCreated();
     }
 
@@ -79,7 +78,7 @@ public class IntactObjectProxy  extends VirtualProxy implements IntactObject {
         realSubject().setCreated( created );
     }
 
-    public Timestamp getUpdated () {
+    public Date getUpdated () {
         return realSubject().getUpdated();
     }
 

@@ -699,7 +699,7 @@ public class ExperimentListGenerator {
 
         for (Iterator iterator = experiments.iterator(); iterator.hasNext();) {
             Experiment exp =  (Experiment) iterator.next();
-            Timestamp created = exp.getCreated();
+            Date created = exp.getCreated();
 
             java.sql.Date d = new java.sql.Date( created.getTime() );
             Calendar c = new GregorianCalendar();

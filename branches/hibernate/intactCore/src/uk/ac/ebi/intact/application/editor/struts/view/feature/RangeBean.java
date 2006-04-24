@@ -133,7 +133,7 @@ public class RangeBean extends AbstractEditKeyBean {
         // Construct a range and set fuzzy types.
         Range range = new Range(getService().getOwner(),fromRanges[0],
                 fromRanges[1], toRanges[0], toRanges[1], null);
-        range.setLink(linked);
+        range.setLinked(linked);
 
         // Set the from and to fuzzy types.
         range.setFromCvFuzzyType(getFuzzyType(fromFuzzyType));
@@ -391,7 +391,7 @@ public class RangeBean extends AbstractEditKeyBean {
 
         myRange.setFromCvFuzzyType(getFuzzyType(fromType));
         myRange.setToCvFuzzyType(getFuzzyType(toType));
-        myRange.setLink(myLink);
+        myRange.setLinked(myLink);
         myRange.setUndetermined();
 
         return myRange;

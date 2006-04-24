@@ -5,6 +5,9 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.Entity;
+import javax.persistence.DiscriminatorValue;
+
 
 /**
  * Terms in this controlled vocabulary class qualify the association
@@ -15,6 +18,8 @@ package uk.ac.ebi.intact.model;
  * @author hhe
  * @version $Id$
  */
+@Entity
+@DiscriminatorValue("uk.ac.ebi.intact.model.CvXrefQualifier")
 public class CvXrefQualifier extends CvObject implements Editable {
 
     /////////////////////////////

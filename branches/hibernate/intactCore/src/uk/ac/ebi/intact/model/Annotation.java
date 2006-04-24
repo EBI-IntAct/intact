@@ -5,6 +5,13 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Column;
+import javax.persistence.Transient;
+import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
+
 
 /**
  * Funtional description of an object.
@@ -12,17 +19,9 @@ package uk.ac.ebi.intact.model;
  * @author hhe
  * @version $Id$
  */
+@Entity()
+@Table(name="ia_annotation")
 public class Annotation extends BasicObjectImpl {
-
-    ///////////////////////////////////////
-    //attributes
-
-    //attributes used for mapping BasicObjects - project synchron
-    // TODO: should be move out of the model.
-    private String cvTopicAc;
-
-    // replaced by cvTopicAc conform to synchron specifications
-    private String topicAc;
 
     /**
      * Text describing one aspect of the annotation of
@@ -89,7 +88,7 @@ public class Annotation extends BasicObjectImpl {
 
     ///////////////////////////////////////
     //access methods for attributes
-
+    @Column(name = "description")
     public String getAnnotationText() {
         return annotationText;
     }
@@ -106,7 +105,8 @@ public class Annotation extends BasicObjectImpl {
 
     ///////////////////////////////////////
     // access methods for associations
-
+    @ManyToOne
+    @JoinColumn(name = "topic_ac")
     public CvTopic getCvTopic() {
         return cvTopic;
     }
@@ -118,15 +118,6 @@ public class Annotation extends BasicObjectImpl {
         }
 
         this.cvTopic = cvTopic;
-    }
-
-    //attributes used for mapping BasicObjects - project synchron
-    public String getCvTopicAc() {
-        return this.cvTopicAc;
-    }
-
-    public void setCvTopicAc( String ac ) {
-        this.cvTopicAc = ac;
     }
 
     /**

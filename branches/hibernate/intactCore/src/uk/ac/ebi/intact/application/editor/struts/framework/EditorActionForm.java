@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Date;
 import java.sql.Timestamp;
 
 /**
@@ -51,12 +52,12 @@ public class EditorActionForm extends DispatchActionForm implements EditorFormI 
     /**
      * The time of creation.
      */
-    private Timestamp myCreated;
+    private Date myCreated;
 
     /**
      * The time of last update.
      */
-    private Timestamp myUpdated;
+    private Date myUpdated;
     /**
      * The accession number.
      */
@@ -128,7 +129,7 @@ public class EditorActionForm extends DispatchActionForm implements EditorFormI 
         return formatDate(this.myCreated);
     }
 
-    public void setCreated(Timestamp created) {
+    public void setCreated(Date created) {
         this.myCreated = created;
     }
 
@@ -136,7 +137,7 @@ public class EditorActionForm extends DispatchActionForm implements EditorFormI 
         return formatDate(this.myUpdated);
     }
 
-    public void setUpdated(Timestamp updated) {
+    public void setUpdated(Date updated) {
         this.myUpdated = updated;
     }
 
@@ -296,7 +297,7 @@ public class EditorActionForm extends DispatchActionForm implements EditorFormI 
         return monthName;
     }
 
-    public String formatDate(Timestamp date){
+    public String formatDate(Date date){
         if(date == null){
             return null;
         }

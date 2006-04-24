@@ -7,6 +7,14 @@ package uk.ac.ebi.intact.model;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.DiscriminatorValue;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -24,6 +32,8 @@ import java.util.Iterator;
  * @author hhe
  * @version $Id$
  */
+@Entity
+@DiscriminatorValue("uk.ac.ebi.intact.model.InteractionImpl")
 public class InteractionImpl extends InteractorImpl implements Editable, Interaction {
 
     ///////////////////////////////////////
@@ -49,7 +59,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
     /**
      * TODO comments
      */
-    private Collection<Product> released = new ArrayList<Product>();
+    private Collection<Product> released;
 
     /**
      * TODO comments
@@ -254,6 +264,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         this.components = someComponent;
     }
 
+    @OneToMany
     public Collection<Component> getComponents() {
         return components;
     }
@@ -274,6 +285,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         this.released = someReleased;
     }
 
+    @Transient
     public Collection<Product> getReleased() {
         return released;
     }
@@ -303,6 +315,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         this.experiments = someExperiment;
     }
 
+    @ManyToMany(mappedBy = "interactions")
     public Collection<Experiment> getExperiments() {
         return experiments;
     }
@@ -319,6 +332,8 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         if( removed ) experiment.removeInteraction( this );
     }
 
+    @ManyToOne
+    @JoinColumn(name = "interactiontype_ac")
     public CvInteractionType getCvInteractionType() {
         return cvInteractionType;
     }
@@ -328,6 +343,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
     }
 
     //attributes used for mapping BasicObjects - project synchron
+    @Column(name = "interactiontype_ac", insertable = false, updatable = false)
     public String getCvInteractionTypeAc() {
         return this.cvInteractionTypeAc;
     }
@@ -345,6 +361,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
      *
      * @return The first components marked as bait, otherwise null.
      */
+    @Transient
     public Component getBait() {
         for (Component component : components)
         {

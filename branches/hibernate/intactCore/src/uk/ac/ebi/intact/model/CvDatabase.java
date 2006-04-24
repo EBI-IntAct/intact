@@ -5,6 +5,11 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorValue;
+
 
 /**
  * Represents an external database and contains all the information necessary to retrieve an object from it by a given
@@ -13,6 +18,8 @@ package uk.ac.ebi.intact.model;
  * @author hhe
  * @version $Id$
  */
+@Entity
+@DiscriminatorValue("uk.ac.ebi.intact.model.CvDatabase")
 public class CvDatabase extends CvObject implements Editable {
 
     ////////////////////////////////

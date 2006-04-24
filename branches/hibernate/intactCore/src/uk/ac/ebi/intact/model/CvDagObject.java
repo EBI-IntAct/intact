@@ -4,6 +4,13 @@
  */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -16,6 +23,7 @@ import java.util.Iterator;
  * @author hhe
  * @version $Id$
  */
+@Entity
 public abstract class CvDagObject extends CvObject {
 
     ///////////////////////////////////////
@@ -25,13 +33,12 @@ public abstract class CvDagObject extends CvObject {
      * TODO comments
      * Children are unique
      */
-    private Collection<CvDagObject> children = new ArrayList<CvDagObject>(); // of type CvDagObject
-
+    private Collection<CvDagObject> children;
     /**
      * TODO comments
      * Parents are unique
      */
-    private Collection<CvDagObject> parents = new ArrayList<CvDagObject>(); // of type CvDagObject
+    private Collection<CvDagObject> parents;
 
     ///////////////////////////
     // start modification (afrie)
@@ -74,6 +81,12 @@ public abstract class CvDagObject extends CvObject {
 
     ///////////////////////////////////////
     // access methods for associations
+    @ManyToMany
+    @JoinTable(
+        name="ia_cv2cv",
+        joinColumns={@JoinColumn(name="parent_ac")},
+        inverseJoinColumns={@JoinColumn(name="child_ac")}
+    )
     public Collection<CvDagObject> getChildren() {
         return children;
     }
@@ -107,6 +120,7 @@ public abstract class CvDagObject extends CvObject {
        * @return int with the left bound, or '-1' if the
        *         bounds have not yet been calculated.
        */
+      @Transient
       public long getLeftBound() {
           return leftBound;
       }
@@ -127,6 +141,7 @@ public abstract class CvDagObject extends CvObject {
        * @return int with the right bound, or '-1' if the
        *         bounds have not yet been calculated.
        */
+      @Transient
       public long getRightBound() {
           return rightBound;
       }
@@ -153,8 +168,18 @@ public abstract class CvDagObject extends CvObject {
     }
     public void removeChild(CvDagObject cvDagObject) {
         boolean removed = children.remove(cvDagObject);
-        if (removed) cvDagObject.removeParent(this);
+        if (removed)
+        {
+            cvDagObject.removeParent(this);
+        }
     }
+
+    @ManyToMany
+    @JoinTable(
+        name="ia_cv2cv",
+        joinColumns={@JoinColumn(name="child_ac", referencedColumnName = "ac")},
+        inverseJoinColumns={@JoinColumn(name="parent_ac", referencedColumnName = "ac")}
+    )
     public Collection<CvDagObject> getParents() {
         return parents;
     }
@@ -167,9 +192,21 @@ public abstract class CvDagObject extends CvObject {
     }
     public void removeParent(CvDagObject cvDagObject) {
         boolean removed = parents.remove(cvDagObject);
-        if (removed) cvDagObject.removeChild(this);
+        if (removed)
+        {
+            cvDagObject.removeChild(this);
+        }
     }
 
+    protected void setChildren(Collection<CvDagObject> children)
+    {
+        this.children = children;
+    }
+
+    protected void setParents(Collection<CvDagObject> parents)
+    {
+        this.parents = parents;
+    }
 
     //////////////////////////////
     // * Specific DAG methods
@@ -204,6 +241,7 @@ public abstract class CvDagObject extends CvObject {
      *
      * @return the root node of the current term
      */
+    @Transient
     public CvDagObject getRoot(){
         if (parents.size()>0){
             Iterator<CvDagObject> i = parents.iterator();

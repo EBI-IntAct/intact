@@ -1,5 +1,8 @@
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.Entity;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Transient;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -12,6 +15,8 @@ import java.util.regex.Matcher;
  *
  * @author Chris Lewington $Id$
  */
+@Entity
+@DiscriminatorValue("uk.ac.ebi.intact.model.CvFuzzyType")
 public class CvFuzzyType extends CvObject implements Editable {
 
     /**
@@ -90,6 +95,7 @@ public class CvFuzzyType extends CvObject implements Editable {
          * @return the display value for given short label or an empty string if there is no mapping for
          *         <code>label</code> (as with the case of no fuzzy type).
          */
+        @Transient
         public String getDisplayValue( String shortLabel ) {
             if ( ourNormalMap.containsKey( shortLabel ) ) {
                 return ourNormalMap.get( shortLabel );
@@ -105,6 +111,7 @@ public class CvFuzzyType extends CvObject implements Editable {
          * @return the fuzzy label if there is a matching found <code>matcher</code> object or an empty string to denote
          *         for no fuzzy or unknown type.
          */
+        @Transient
         public String getFuzzyShortLabel( String value ) {
             if ( ourNormalMap.containsValue( value ) ) {
                 return getKey( value );
@@ -120,6 +127,7 @@ public class CvFuzzyType extends CvObject implements Editable {
          * @return the fuzzy label if there is a matching found <code>matcher</code> object or else an empty string (for
          *         a normal range).
          */
+        @Transient
         public String getFuzzyShortLabel( Matcher matcher ) {
             if ( !matcher.matches() ) {
                 throw new IllegalArgumentException( "No match found" );
@@ -175,6 +183,7 @@ public class CvFuzzyType extends CvObject implements Editable {
      * @return true if <code>type</code> is of Untermined or C or N terminal types. False is returned for all other
      *         instances.
      */
+    @Transient
     public static boolean isSingleType( String type ) {
         return type.equals( UNDETERMINED ) || type.equals( C_TERMINAL ) || type.equals( N_TERMINAL );
     }
@@ -207,6 +216,7 @@ public class CvFuzzyType extends CvObject implements Editable {
     /**
      * @return true if this current type is of c_terminal type.
      */
+    @Transient
     public final boolean isCTerminal() {
         return getShortLabel().equals( C_TERMINAL );
     }
@@ -214,6 +224,7 @@ public class CvFuzzyType extends CvObject implements Editable {
     /**
      * @return true if this current type is of n_terminal type.
      */
+    @Transient
     public final boolean isNTerminal() {
         return getShortLabel().equals( N_TERMINAL );
     }
@@ -221,6 +232,7 @@ public class CvFuzzyType extends CvObject implements Editable {
     /**
      * @return true if this current type is of undetermined type.
      */
+    @Transient
     public final boolean isUndetermined() {
         return getShortLabel().equals( UNDETERMINED );
     }

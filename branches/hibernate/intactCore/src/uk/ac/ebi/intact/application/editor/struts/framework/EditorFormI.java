@@ -10,6 +10,7 @@ import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 
 import java.util.List;
+import java.util.Date;
 import java.sql.Timestamp;
 
 /**
@@ -31,11 +32,11 @@ public interface EditorFormI {
 
     String getUpdator();
 
-    void setCreated(Timestamp created);
+    void setCreated(Date created);
 
     String getCreated();
 
-    void setUpdated(Timestamp updated);
+    void setUpdated(Date updated);
 
     String getUpdated();
 

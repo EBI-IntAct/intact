@@ -7,6 +7,13 @@ package uk.ac.ebi.intact.model;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -17,6 +24,9 @@ import java.util.Iterator;
  * @author hhe
  * @version $Id$
  */
+@Entity
+@Table(name = "ia_interactor")
+@DiscriminatorColumn(name="objclass")
 public abstract class InteractorImpl extends AnnotatedObjectImpl implements Interactor {
 
     ///////////////////////////////////////
@@ -101,6 +111,8 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
     ///////////////////////////////////////
     //access methods for attributes
 
+    @ManyToOne
+    @JoinColumn(name = "biosource_ac")
     public BioSource getBioSource() {
         return bioSource;
     }
@@ -118,6 +130,7 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
         this.activeInstances = someActiveInstance;
     }
 
+    @OneToMany
     public Collection<Component> getActiveInstances() {
         return activeInstances;
     }
@@ -138,6 +151,7 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
         this.products = someProduct;
     }
 
+    @Transient
     public Collection<Product> getProducts() {
         return products;
     }
@@ -158,6 +172,8 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
         interactorType = type;
     }
 
+    @ManyToOne
+    @JoinColumn(name = "interactortype_ac")
     public CvInteractorType getCvInteractorType() {
         return interactorType;
     }

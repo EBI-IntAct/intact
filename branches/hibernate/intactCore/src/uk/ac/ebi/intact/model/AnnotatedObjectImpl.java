@@ -1,21 +1,28 @@
-/*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.
-All rights reserved. Please see the file LICENSE
-in the root directory of this distribution.
-*/
+/**
+ * Copyright (c) 2002-2006 The European Bioinformatics Institute, and others.
+ * All rights reserved. Please see the file LICENSE
+ * in the root directory of this distribution.
+ */
 package uk.ac.ebi.intact.model;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import java.util.ArrayList;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
+import javax.persistence.Column;
+import javax.persistence.Basic;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.ArrayList;
 
 /**
  * Represents an object with biological annotation.
  *
  * @author hhe
  */
+@MappedSuperclass
 public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements AnnotatedObject {
 
 
@@ -57,13 +64,13 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
     /**
      *
      */
-    public Collection<Xref> xrefs = new ArrayList<Xref>();
+    public Collection<Xref> xrefs;
 
     /**
      * Hold aliases of an Annotated object.
      * ie. alternative name for the current object.
      */
-    private Collection<Alias> aliases = new ArrayList<Alias>();
+    private Collection<Alias> aliases;
 
     /**
      *
@@ -144,28 +151,46 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
 
     ///////////////////////////////////////
     // access methods for associations
-    public void setAnnotation( Collection<Annotation> someAnnotation ) {
+    public void setAnnotations( Collection<Annotation> someAnnotation ) {
         this.annotations = someAnnotation;
     }
 
+    @Transient
     public Collection<Annotation> getAnnotations() {
         return annotations;
     }
 
     public void addAnnotation( Annotation annotation ) {
-        if( !this.annotations.contains( annotation ) ) this.annotations.add( annotation );
+        if (!this.annotations.contains(annotation))
+        {
+            this.annotations.add(annotation);
+        }
     }
 
     public void removeAnnotation( Annotation annotation ) {
         this.annotations.remove( annotation );
     }
 
+    @Basic(fetch = FetchType.LAZY)
+    @Column(name="created_user")
     public String getCreator() {
         return creator;
     }
 
+    @Basic(fetch = FetchType.LAZY)
+    @Column(name="userstamp")
     public String getUpdator() {
         return updator;
+    }
+
+    public void setUpdator(String updator)
+    {
+        this.updator = updator;
+    }
+
+    public void setCreator(String creator)
+    {
+        this.creator = creator;
     }
 
     ///////////////////
@@ -175,6 +200,9 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
         this.xrefs = someXrefs;
     }
 
+    @OneToMany
+    @JoinColumn(name = "parent_ac", referencedColumnName = "ac", insertable = false, updatable = false)
+    //@Transient
     public Collection<Xref> getXrefs() {
         return xrefs;
     }
@@ -198,11 +226,12 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
     ///////////////////
     // Alias related
     ///////////////////
-    public void setAliases( Collection someAliases ) {
+    public void setAliases( Collection<Alias> someAliases ) {
         this.aliases = someAliases;
     }
 
-    public Collection getAliases() {
+    @Transient
+    public Collection<Alias> getAliases() {
         return aliases;
     }
 
@@ -227,6 +256,7 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
         this.references = someReferences;
     }
 
+    @Transient
     public Collection<Reference> getReferences() {
         return references;
     }
@@ -240,18 +270,11 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
 
     public void removeReference( Reference reference ) {
         boolean removed = this.references.remove( reference );
-        if( removed ) reference.removeAnnotatedObject( this );
+        if (removed)
+        {
+            reference.removeAnnotatedObject(this);
+        }
     }
-
-    //attributes used for mapping BasicObjects - project synchron
-    public String getCuratorAc() {
-        return this.curatorAc;
-    }
-
-    public void setCuratorAc( String ac ) {
-        this.curatorAc = ac;
-    }
-
 
     ///////////////////////////////////////
     // instance methods
@@ -311,8 +334,14 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
     @Override
     public boolean equals( Object o ) {
         // TODO: the reviewed version of the intact model will provide a better implementation
-        if( this == o ) return true;
-        if( !( o instanceof AnnotatedObject ) ) return false;
+        if (this == o)
+        {
+            return true;
+        }
+        if (!(o instanceof AnnotatedObject))
+        {
+            return false;
+        }
 
         //YUK! This ends up calling the java Object 'equals', which compares
         //on identity - NOT what we want....
@@ -324,15 +353,27 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
 
         //short label and full name (if it exists) must be equal also..
         if( shortLabel != null ) {
-            if( !shortLabel.equals( annotatedObject.getShortLabel() ) ) return false;
+            if (!shortLabel.equals(annotatedObject.getShortLabel()))
+            {
+                return false;
+            }
         } else {
-            if( annotatedObject.getShortLabel() != null ) return false;
+            if (annotatedObject.getShortLabel() != null)
+            {
+                return false;
+            }
         }
 
         if( fullName != null ) {
-            if( !fullName.equals( annotatedObject.getFullName() ) ) return false;
+            if (!fullName.equals(annotatedObject.getFullName()))
+            {
+                return false;
+            }
         } else {
-            if( annotatedObject.getFullName() != null ) return false;
+            if (annotatedObject.getFullName() != null)
+            {
+                return false;
+            }
             ;
         }
 
@@ -354,13 +395,19 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
 
         int code = 29;
 
-        for( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
-            Xref xref = (Xref) iterator.next();
+        for (Xref xref : xrefs)
+        {
             code = 29 * code + xref.hashCode();
         }
 
-        if( null != shortLabel ) code = 29 * code + shortLabel.hashCode();
-        if( null != fullName ) code = 29 * code + fullName.hashCode();
+        if (null != shortLabel)
+        {
+            code = 29 * code + shortLabel.hashCode();
+        }
+        if (null != fullName)
+        {
+            code = 29 * code + fullName.hashCode();
+        }
 
         return code;
     }
@@ -398,6 +445,7 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
     }
 
 } // end AnnotatedObject
+
 
 
 

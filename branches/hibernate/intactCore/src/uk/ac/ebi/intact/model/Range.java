@@ -5,6 +5,13 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.Column;
+import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
+
 /**
  * <p/>
  * Represents a location on a sequence. </p>
@@ -35,6 +42,8 @@ package uk.ac.ebi.intact.model;
  * @author Chris Lewington, hhe
  * @version $Id$
  */
+@Entity
+@Table(name = "ia_range")
 public class Range extends BasicObjectImpl {
 
     //------------ attributes ------------------------------------
@@ -100,12 +109,12 @@ public class Range extends BasicObjectImpl {
      * TODO Comments
      */
     private CvFuzzyType fromCvFuzzyType;
-    private String fromCvFuzzyTypeAc;  //get rid of this later with OJB 'anonymous'
     /**
      * TODO Comments
      */
     private CvFuzzyType toCvFuzzyType;
-    private String toCvFuzzyTypeAc;  //get rid of this later with OJB 'anonymous'
+
+    private Feature feature;
 
 
     /**
@@ -282,14 +291,22 @@ public class Range extends BasicObjectImpl {
         }
     }
 
+    public void setUndetermined(String undetermined)
+    {
+        this.undetermined = undetermined;
+    }
+
+    @Column(name = "link")
     public boolean isLinked() {
         return charToBoolean( link );
     }
 
-    public void setLink( boolean isLinked ) {
+    public void setLinked( boolean isLinked ) {
         link = booleanToChar( isLinked );
     }
 
+    @ManyToOne
+    @JoinColumn(name = "fromfuzzytype_ac")
     public CvFuzzyType getFromCvFuzzyType() {
         return fromCvFuzzyType;
     }
@@ -304,6 +321,8 @@ public class Range extends BasicObjectImpl {
         fromCvFuzzyType = type;
     }
 
+    @ManyToOne
+    @JoinColumn(name = "tofuzzytype_ac")
     public CvFuzzyType getToCvFuzzyType() {
         return toCvFuzzyType;
     }
@@ -474,10 +493,11 @@ public class Range extends BasicObjectImpl {
      *
      * @throws CloneNotSupportedException for errors in cloning this object.
      */
+    @Override
     public Object clone() throws CloneNotSupportedException {
         Range copy = (Range) super.clone();
         // Reset the parent ac.
-        copy.featureAc = null;
+       // copy.featureAc = null;
         return copy;
     }
 
@@ -518,6 +538,18 @@ public class Range extends BasicObjectImpl {
      */
     private static String getSequenceStartingFrom( String sequence, int start ) {
         return getSequence( sequence, start, true );
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "feature_ac")
+    public Feature getFeature()
+    {
+        return feature;
+    }
+
+    public void setFeature(Feature feature)
+    {
+        this.feature = feature;
     }
 
     /**
@@ -596,10 +628,7 @@ public class Range extends BasicObjectImpl {
      * @return true if the String is "Y", false otherwise
      */
     private boolean charToBoolean( String st ) {
-        if ( st.equals( "N" ) ) {
-            return false;
-        }
-        return true;
+        return !st.equals("N");
     }
 }
 

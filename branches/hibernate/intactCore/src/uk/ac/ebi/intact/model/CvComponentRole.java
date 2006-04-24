@@ -5,6 +5,11 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorValue;
+
 /**
  * The role of the specific substrate in the interaction.
  * <p/>
@@ -13,6 +18,8 @@ package uk.ac.ebi.intact.model;
  * @author hhe
  * @version $Id$
  */
+@Entity
+@DiscriminatorValue("uk.ac.ebi.intact.model.CvObject")
 public class CvComponentRole extends CvObject implements Editable {
 
     //////////////////////

@@ -4,6 +4,11 @@
  */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 
 /**
  * he method by which the Interaction has been determined. example co-immunoprecipitation
@@ -11,6 +16,8 @@ package uk.ac.ebi.intact.model;
  * @author hhe
  * @version $Id$
  */
+@Entity
+@DiscriminatorValue("uk.ac.ebi.intact.model.CvInteraction")
 public class CvInteraction extends CvDagObject {
 
     public static final String INFERRED_BY_CURATOR = "inferred by curator";

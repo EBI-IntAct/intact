@@ -5,6 +5,11 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 
 /**
  * Controlled vocabulary for description topics.
@@ -12,6 +17,8 @@ package uk.ac.ebi.intact.model;
  * @author hhe
  * @version $Id$
  */
+@Entity
+@DiscriminatorValue("uk.ac.ebi.intact.model.CvTopic")
 public class CvTopic extends CvObject implements Editable {
 
     //////////////////////////
