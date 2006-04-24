@@ -254,6 +254,18 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
         this.bioSourceAc = ac;
     }
 
+    @ManyToMany
+    @JoinTable(
+        name="IA_EXP2ANNOT",
+        joinColumns={@JoinColumn(name="experiment_ac")},
+        inverseJoinColumns={@JoinColumn(name="annotation_ac")}
+    )
+    @Override
+    public Collection<Annotation> getAnnotations()
+    {
+        return super.getAnnotations();
+    }
+
 
     /**
      * Equality for Experiments is currently based on equality for

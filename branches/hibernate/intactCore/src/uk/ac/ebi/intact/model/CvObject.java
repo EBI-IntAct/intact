@@ -10,7 +10,11 @@ import javax.persistence.Transient;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.DiscriminatorColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.JoinTable;
+import javax.persistence.JoinColumn;
 import java.util.Iterator;
+import java.util.Collection;
 
 /**
  * Represents a controlled vocabulary object. CvObject is derived from AnnotatedObject to allow to store annotation of
@@ -45,6 +49,18 @@ public abstract class CvObject extends AnnotatedObjectImpl {
         //super call sets up a valid AnnotatedObject (and also CvObject, as there is
         //nothing more to add)
         super( shortLabel, owner );
+    }
+
+    @ManyToMany
+    @JoinTable(
+        name="IA_CVOBJECT2ANNOT",
+        joinColumns={@JoinColumn(name="cvobject_ac")},
+        inverseJoinColumns={@JoinColumn(name="annotation_ac")}
+    )
+    @Override
+    public Collection<Annotation> getAnnotations()
+    {
+        return super.getAnnotations();
     }
 
     /**

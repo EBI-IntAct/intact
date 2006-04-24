@@ -1,6 +1,7 @@
 package uk.ac.ebi.intact.model;
 
 import org.hibernate.FetchMode;
+import org.hibernate.validator.NotNull;
 
 import javax.persistence.ManyToOne;
 import javax.persistence.JoinColumn;
@@ -74,7 +75,8 @@ public abstract class BasicObjectImpl extends IntactObjectImpl implements BasicO
     }
 
     @ManyToOne
-    @JoinColumn(name="owner_ac")
+    @JoinColumn(name="owner_ac", nullable = false)
+    @NotNull    
     public Institution getOwner() {
         return owner;
     }
