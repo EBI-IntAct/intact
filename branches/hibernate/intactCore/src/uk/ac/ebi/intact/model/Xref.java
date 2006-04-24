@@ -5,6 +5,13 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Id;
+import javax.persistence.Column;
+import javax.persistence.Transient;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,6 +22,8 @@ import java.util.regex.Pattern;
  * @author hhe
  * @version $Id$
  */
+@Entity
+@Table(name = "ia_xref")
 public class Xref extends BasicObjectImpl {
 
     ///////////////////////////////////////
@@ -125,7 +134,6 @@ public class Xref extends BasicObjectImpl {
     
     ///////////////////////////////////////
     //access methods for attributes
-
     public String getPrimaryId() {
         return primaryId;
     }
@@ -172,6 +180,7 @@ public class Xref extends BasicObjectImpl {
         return dbRelease;
     }
 
+
     public void setDbRelease( String aDbRelease ) {
 
         if( aDbRelease != null && aDbRelease.length() >= MAX_DB_RELEASE_LEN ) {
@@ -181,6 +190,7 @@ public class Xref extends BasicObjectImpl {
         this.dbRelease = aDbRelease;
     }
 
+    @Column(name = "parent_ac")
     public String getParentAc() {
         return parentAc;
     }
@@ -191,7 +201,8 @@ public class Xref extends BasicObjectImpl {
 
     ///////////////////////////////////////
     // access methods for associations
-
+    @ManyToOne
+    @JoinColumn(name = "qualifier_ac")
     public CvXrefQualifier getCvXrefQualifier() {
         return cvXrefQualifier;
     }
@@ -200,6 +211,8 @@ public class Xref extends BasicObjectImpl {
         this.cvXrefQualifier = cvXrefQualifier;
     }
 
+    @ManyToOne
+    @JoinColumn(name = "database_ac")
     public CvDatabase getCvDatabase() {
         return cvDatabase;
     }
@@ -207,24 +220,6 @@ public class Xref extends BasicObjectImpl {
     public void setCvDatabase( CvDatabase cvDatabase ) {
         if( cvDatabase == null ) throw new NullPointerException( "valid Xref must have non-null database details!" );
         this.cvDatabase = cvDatabase;
-    }
-
-    //attributes used for mapping BasicObjects - project synchron
-    // TODO: should be move out of the model.
-    public String getCvXrefQualifierAc() {
-        return cvXrefQualifierAc;
-    }
-
-    public void setCvXrefQualifierAc( String ac ) {
-        this.cvXrefQualifierAc = ac;
-    }
-
-    public String getCvDatabaseAc() {
-        return cvDatabaseAc;
-    }
-
-    public void setCvDatabaseAc( String ac ) {
-        this.cvDatabaseAc = ac;
     }
 
 

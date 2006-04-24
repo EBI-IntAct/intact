@@ -1258,7 +1258,7 @@ public class MainDetailViewBean extends AbstractViewBean {
 
     private static String getCreatedYear( Experiment exp ) {
 
-        Timestamp created = exp.getCreated();
+        Date created = exp.getCreated();
         java.sql.Date d = new java.sql.Date( created.getTime() );
         Calendar c = new GregorianCalendar();
         c.setTime( d );

@@ -5,6 +5,9 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.Entity;
+import javax.persistence.DiscriminatorValue;
+
 
 /**
  * TODO comments
@@ -12,6 +15,8 @@ package uk.ac.ebi.intact.model;
  * @author hhe
  * @version $Id$
  */
+@Entity
+@DiscriminatorValue("uk.ac.ebi.intact.model.CvFeatureType")
 public class CvFeatureType extends CvDagObject {
 
     public static final String EXPERIMENTAL_FEATURE = "experimental feature";

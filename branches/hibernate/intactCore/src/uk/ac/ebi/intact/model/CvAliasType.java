@@ -5,6 +5,11 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorValue;
+
 /**
  * The type of the alias.
  * example "common name"
@@ -13,11 +18,13 @@ package uk.ac.ebi.intact.model;
  * @author hhe
  * @version $Id$
  */
+@Entity
+@DiscriminatorValue("uk.ac.ebi.intact.model.CvAliasType")
 public class CvAliasType extends CvObject implements Editable {
 
     ////////////////////////////
     // Constants
-    
+
     public static final String ISOFORM_SYNONYM = "isoform synonym";
     public static final String ISOFORM_SYNONYM_MI_REF = "MI:0304";
 

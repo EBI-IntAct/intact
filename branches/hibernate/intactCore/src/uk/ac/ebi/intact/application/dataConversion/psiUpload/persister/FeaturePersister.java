@@ -87,7 +87,7 @@ public class FeaturePersister {
                                      sequence );
 
             // right now we are dealing with simple feature, they don't interact together
-            range.setLink( false );
+            range.setLinked( false );
 
             // this must be done after setting the fyzzy types
             range.setUndetermined();

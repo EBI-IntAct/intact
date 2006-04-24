@@ -8,6 +8,12 @@ package uk.ac.ebi.intact.model;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 
+import javax.persistence.Entity;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Transient;
+import javax.persistence.OneToMany;
+import javax.persistence.JoinTable;
+import javax.persistence.JoinColumn;
 import java.util.*;
 
 /**
@@ -16,6 +22,8 @@ import java.util.*;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
+@Entity
+@DiscriminatorValue("uk.ac.ebi.intact.model.PolymerImpl")
 public abstract class PolymerImpl extends InteractorImpl implements Polymer {
 
     //Constants
@@ -40,7 +48,7 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
      * The protein sequence. If the protein is present in a public database,
      * the sequence should not be repeated.
      */
-    private List<SequenceChunk> sequenceChunks = new ArrayList<SequenceChunk>();
+    private List<SequenceChunk> sequenceChunks;
 
     // Static methods
 
@@ -88,7 +96,7 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
     }
 
     // access methods for attributes
-
+    @Transient
     public String getSequence() {
         if ((null == sequenceChunks) || 0 == (sequenceChunks.size())) {
             return null;
@@ -243,8 +251,19 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
         this.crc64 = crc64;
     }
 
-    public List getSequenceChunks() {
+    @OneToMany
+    @JoinTable(
+            name="ia_sequence_chunk",
+            joinColumns = { @JoinColumn( name="ac") },
+            inverseJoinColumns = @JoinColumn( name="parent_ac")
+    )
+    public List<SequenceChunk> getSequenceChunks() {
         return Collections.unmodifiableList(sequenceChunks);
+    }
+
+    public void setSequenceChunks(List<SequenceChunk> sequenceChunks)
+    {
+        this.sequenceChunks = sequenceChunks;
     }
 
     protected void addSequenceChunk(SequenceChunk sequenceChunk) {
@@ -256,7 +275,10 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
 
     protected void removeSequenceChunk(SequenceChunk sequenceChunk) {
         boolean removed = this.sequenceChunks.remove(sequenceChunk);
-        if (removed) sequenceChunk.setParentAc(null);
+        if (removed)
+        {
+            sequenceChunk.setParentAc(null);
+        }
     }
 
     /**
@@ -311,8 +333,14 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
     @Override
     public int hashCode() {
         int code = super.hashCode();
-        if (getSequence() != null) code = code * 29 + getSequence().hashCode();
-        if (crc64 != null) code = code * 29 + crc64.hashCode();
+        if (getSequence() != null)
+        {
+            code = code * 29 + getSequence().hashCode();
+        }
+        if (crc64 != null)
+        {
+            code = code * 29 + crc64.hashCode();
+        }
         return code;
     }
 

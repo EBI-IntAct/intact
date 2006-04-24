@@ -5,6 +5,14 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.Table;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import javax.persistence.JoinTable;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
+import javax.persistence.Column;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -20,15 +28,15 @@ import java.util.Iterator;
  * @author hhe
  * @version $Id$
  */
+@Entity
+@Table(name = "ia_experiment")
 public class Experiment extends AnnotatedObjectImpl implements Editable {
 
     ///////////////////////////////////////
     // associations
 
     //attributes used for mapping BasicObjects - project synchron
-    // TODO: should be move out of the model.
-    private String detectionMethodAc;
-    private String identMethodAc;
+
     private String relatedExperimentAc;
     private String cvIdentificationAc;
     private String cvInteractionAc;
@@ -38,7 +46,7 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
      * TODO comments
      * TODO would be easier/meaningful to have plural
      */
-    private Collection<Interaction> interactions = new ArrayList<Interaction>();
+    private Collection<Interaction> interactions;
     /**
      * One experiment should group all interactions from a publication
      * which have been performed under the same conditions.
@@ -117,7 +125,7 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
                                         experiment.getShortLabel(),
                                         experiment.getBioSource() );
         ex.ac = ( experiment.getAc() );
-        ex.setAnnotation( experiment.getAnnotations() );
+        ex.setAnnotations( experiment.getAnnotations() );
         ex.setCvInteraction( experiment.getCvInteraction() );
         ex.setCvIdentification( experiment.getCvIdentification() );
         ex.setEvidences( experiment.getEvidences() );
@@ -138,6 +146,12 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
         this.interactions = someInteraction;
     }
 
+    @ManyToMany (targetEntity = InteractionImpl.class )
+    @JoinTable(
+        name="ia_int2exp",
+        joinColumns={@JoinColumn(name="experiment_ac")},
+        inverseJoinColumns={@JoinColumn(name="interaction_ac")}
+    )
     public Collection<Interaction> getInteractions() {
         return interactions;
     }
@@ -155,6 +169,8 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
         if( removed ) interaction.removeExperiment( this );
     }
 
+    @OneToOne
+    @JoinColumn(name = "relatedexperiment_ac", referencedColumnName = "ac")
     public Experiment getRelatedExperiment() {
         return relatedExperiment;
     }
@@ -163,6 +179,8 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
         this.relatedExperiment = experiment;
     }
 
+    @ManyToOne
+    @JoinColumn(name = "indentmethod_ac")
     public CvIdentification getCvIdentification() {
         return cvIdentification;
     }
@@ -171,6 +189,8 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
         this.cvIdentification = cvIdentification;
     }
 
+    @ManyToOne
+    @JoinColumn(name = "detectmethod_ac")
     public CvInteraction getCvInteraction() {
         return cvInteraction;
     }
@@ -179,6 +199,8 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
         this.cvInteraction = cvInteraction;
     }
 
+    @ManyToOne
+    @JoinColumn(name = "biosource_ac")
     public BioSource getBioSource() {
         return bioSource;
     }
@@ -196,6 +218,7 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
 
     //attributes used for mapping BasicObjects - project synchron
     // TODO: should be move out of the model.
+    @Column(name = "relatedexperiment_ac", insertable = false, updatable = false)
     public String getRelatedExperimentAc() {
         return this.relatedExperimentAc;
     }
@@ -204,6 +227,7 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
         this.relatedExperimentAc = ac;
     }
 
+    @Column(name = "identmethod_ac", insertable = false, updatable = false)
     public String getCvIdentificationAc() {
         return this.cvIdentificationAc;
     }
@@ -212,6 +236,7 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
         this.cvIdentificationAc = ac;
     }
 
+    @Column(name = "detectmethod_ac", insertable = false, updatable = false)
     public String getCvInteractionAc() {
         return this.cvInteractionAc;
     }
@@ -220,6 +245,7 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
         this.cvInteractionAc = ac;
     }
 
+    @Column(name = "biosource_ac", insertable = false, updatable = false)
     public String getBioSourceAc() {
         return this.bioSourceAc;
     }

@@ -5,6 +5,11 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.DiscriminatorColumn;
 import java.util.Iterator;
 
 /**
@@ -14,6 +19,9 @@ import java.util.Iterator;
  * @author Henning Hermjakob
  * @version $Id$
  */
+@Entity
+@Table(name = "ia_controlledvocab")
+@DiscriminatorColumn(name="objclass")
 public abstract class CvObject extends AnnotatedObjectImpl {
 
     /**
@@ -113,6 +121,7 @@ public abstract class CvObject extends AnnotatedObjectImpl {
      *
      * @return the Identity xref or null if there is no Identity xref found.
      */
+    @Transient
     public Xref getIdentityXref() {
         for (Xref xref : getXrefs())
         {
