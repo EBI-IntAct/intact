@@ -14,6 +14,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
+import javax.persistence.ManyToMany;
+import javax.persistence.JoinTable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -176,6 +178,18 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
     @JoinColumn(name = "interactortype_ac")
     public CvInteractorType getCvInteractorType() {
         return interactorType;
+    }
+    
+    @ManyToMany
+    @JoinTable(
+        name="IA_INT2ANNOT",
+        joinColumns={@JoinColumn(name="interactor_ac")},
+        inverseJoinColumns={@JoinColumn(name="annotation_ac")}
+    )
+    @Override
+    public Collection<Annotation> getAnnotations()
+    {
+        return super.getAnnotations();
     }
 
     ///////////////////////////////////////
