@@ -1,10 +1,16 @@
 package uk.ac.ebi.intact.persistence.util;
 
-import org.hibernate.*;
-import org.hibernate.cfg.*;
-import org.apache.commons.logging.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.EmptyInterceptor;
+import org.hibernate.Interceptor;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.AnnotationConfiguration;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.Environment;
 
-import javax.naming.*;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 /**
  * Basic Hibernate helper class for Hibernate configuration and startup.

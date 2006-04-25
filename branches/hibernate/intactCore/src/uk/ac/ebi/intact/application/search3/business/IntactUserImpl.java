@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.persistence.DAOFactory;
 import uk.ac.ebi.intact.persistence.DAOSource;
 import uk.ac.ebi.intact.persistence.DataSourceException;
+import uk.ac.ebi.intact.model.IntactObject;
 
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
@@ -28,7 +29,7 @@ import java.io.Serializable;
  * @author Chris Lewington, Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener, Serializable {
+public class IntactUserImpl<T extends IntactObject> implements IntactUserIF<T>, HttpSessionBindingListener, Serializable {
 
     /**
      * Reference to the DAO.
@@ -39,7 +40,7 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener,
 
     private String searchValue;
 
-    private String searchClass;
+    private Class<T> searchClass;
 
     private String binaryValue;
 
@@ -145,7 +146,7 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener,
 //        return this.searchCriteria;
 //    }
 
-    public Collection search( String objectType, String searchParam,
+    public <T> Collection<T> search( Class<T> objectType, String searchParam,
                               String searchValue ) throws IntactException {
         // Set the search criteria.
         // TODO remove it if not needed
@@ -155,11 +156,11 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener,
         return helper.search( objectType, searchParam, searchValue );
     }
 
-    public String getSearchClass() {
+    public Class<T> getSearchClass() {
         return searchClass;
     }
 
-    public void setSearchClass( String searchClass ) {
+    public void setSearchClass( Class<T> searchClass ) {
         this.searchClass = searchClass;
     }
 

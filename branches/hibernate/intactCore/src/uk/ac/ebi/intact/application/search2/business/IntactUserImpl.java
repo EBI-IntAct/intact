@@ -9,17 +9,15 @@ package uk.ac.ebi.intact.application.search2.business;
 import org.apache.ojb.broker.accesslayer.LookupException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.Constants;
 import uk.ac.ebi.intact.persistence.DAOFactory;
 import uk.ac.ebi.intact.persistence.DAOSource;
 import uk.ac.ebi.intact.persistence.DataSourceException;
+import uk.ac.ebi.intact.model.IntactObject;
 
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This class stores information about an Intact Web user session. Instead of
@@ -32,7 +30,7 @@ import java.util.Map;
  * @author Chris Lewington, Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener {
+public class IntactUserImpl<T extends IntactObject> implements IntactUserIF<T>, HttpSessionBindingListener {
 
     /**
      * Reference to the DAO.
@@ -43,7 +41,7 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
 
     private String searchValue;
 
-    private String searchClass;
+    private Class<T> searchClass;
 
     /**
      * Managment of the object chunk - Chunk to display
@@ -136,8 +134,8 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
 //        return this.searchCriteria;
 //    }
 
-    public Collection search(String objectType, String searchParam,
-                              String searchValue) throws IntactException {
+    public <T> Collection<T> search(Class<T> objectType, String searchParam,
+                                String searchValue) throws IntactException {
         // Set the search criteria.
         // TODO remove it if not needed
 //        this.searchCriteria = searchParam;
@@ -146,11 +144,11 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         return helper.search(objectType, searchParam, searchValue);
     }
 
-    public String getSearchClass () {
+    public Class<T> getSearchClass () {
         return searchClass;
     }
 
-    public void setSearchClass ( String searchClass ) {
+    public void setSearchClass ( Class<T> searchClass ) {
         this.searchClass = searchClass;
     }
 

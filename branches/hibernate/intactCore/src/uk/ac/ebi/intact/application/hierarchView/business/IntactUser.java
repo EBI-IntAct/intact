@@ -542,7 +542,7 @@ public class IntactUser implements IntactUserI {
 
     // Implementation of IntactUserI interface.
 
-    public Collection search(String objectType, String searchParam,
+    public <T> Collection<T> search(Class<T> objectType, String searchParam,
             String searchValue) throws IntactException {
         return intactHelper.search( objectType, searchParam, searchValue );
     }

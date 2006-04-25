@@ -33,7 +33,7 @@ public interface IntactUserI {
      * @exception uk.ac.ebi.intact.business.IntactException thrown if problems are encountered during the
      * search process.
      */
-    public Collection search( String objectType,
+    public <T> Collection<T> search( Class<T> objectType,
                               String searchParam,
                               String searchValue ) throws IntactException;
 
