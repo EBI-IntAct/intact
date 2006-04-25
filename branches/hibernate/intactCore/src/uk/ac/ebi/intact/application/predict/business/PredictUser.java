@@ -159,7 +159,7 @@ public abstract class PredictUser implements IntactUserI,
         return null;
     }
 
-    public Collection search(String objectType, String searchParam,
+    public <T> Collection<T> search(Class<T> objectType, String searchParam,
                              String searchValue) throws IntactException {
         return myHelper.search(objectType, searchParam, searchValue);
     }

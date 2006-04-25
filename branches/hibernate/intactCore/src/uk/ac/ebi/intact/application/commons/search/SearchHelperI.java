@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.application.commons.search;
 import org.apache.ojb.broker.query.Query;
 import uk.ac.ebi.intact.application.commons.business.IntactUserI;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.model.IntactObject;
 
 import java.util.Collection;
 import java.util.List;
@@ -30,7 +31,7 @@ public interface SearchHelperI {
      * @return A collection of Intact objects of the type <i>searchClass</i>.
      * @throws IntactException if an erro occurs when searching in the database.
      */
-    public Collection doLookup(String searchClass, String value, IntactUserI user)
+    public <T extends IntactObject> Collection<T> doLookup(SearchClass searchClass, String value, IntactUserI user)
             throws IntactException;
 
     /**
@@ -44,7 +45,7 @@ public interface SearchHelperI {
      * @return A collection of Intact objects of the type <i>searchClass</i>.
      * @throws IntactException if an erro occurs when searching in the database.
      */
-    public Collection doLookup(List searchClasses, String value, IntactUserI user)
+    public Collection<IntactObject> doLookup(List<SearchClass> searchClasses, String value, IntactUserI user)
             throws IntactException;
 
     /**
@@ -67,7 +68,7 @@ public interface SearchHelperI {
      * @throws IntactException for errors in searching for persistent system. This is not thrown if
      *                         the search produces no output.
      */
-    public ResultWrapper searchByQuery(Class searchClass, String searchParam, String searchValue,
+    public ResultWrapper searchByQuery(SearchClass searchClass, String searchParam, String searchValue,
                                        int max) throws IntactException;
 
     /**

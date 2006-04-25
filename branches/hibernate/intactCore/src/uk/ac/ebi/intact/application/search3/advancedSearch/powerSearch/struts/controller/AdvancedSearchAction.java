@@ -24,6 +24,7 @@ import uk.ac.ebi.intact.application.commons.util.UrlUtil;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.util.PropertyLoader;
 
 import javax.servlet.ServletException;
@@ -133,7 +134,7 @@ public class AdvancedSearchAction extends IntactBaseAction {
 
 
         DynaActionForm dyForm = (DynaActionForm) form;
-        String searchClass = (String) dyForm.get( "searchObject" );
+        Class<? extends IntactObject> searchClass = (Class<? extends IntactObject>) dyForm.get( "searchObject" );
         String ac = (String) dyForm.get( "acNumber" );
         String shortlabel = (String) dyForm.get( "shortlabel" );
         String description = (String) dyForm.get( "description" );

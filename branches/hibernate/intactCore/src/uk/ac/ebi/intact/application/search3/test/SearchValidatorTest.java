@@ -4,6 +4,12 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchValidator;
+import uk.ac.ebi.intact.model.ProteinImpl;
+import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.InteractionImpl;
+import uk.ac.ebi.intact.model.CvObject;
+import uk.ac.ebi.intact.model.BioSource;
+import uk.ac.ebi.intact.model.Annotation;
 
 
 /**
@@ -19,22 +25,22 @@ public class SearchValidatorTest extends TestCase {
     public void testIsSearchable() {
 
         // check if the searchable classes are valid
-        assertTrue(SearchValidator.isSearchable("Protein"));
-        assertTrue(SearchValidator.isSearchable("Experiment"));
-        assertTrue(SearchValidator.isSearchable("Interaction"));
-        assertTrue(SearchValidator.isSearchable("CvObject"));
+        assertTrue(SearchValidator.isSearchable(ProteinImpl.class));
+        assertTrue(SearchValidator.isSearchable(Experiment.class));
+        assertTrue(SearchValidator.isSearchable(InteractionImpl.class));
+        assertTrue(SearchValidator.isSearchable(CvObject.class));
 
         // check if
-        assertFalse(SearchValidator.isSearchable("foo"));
-        assertFalse(SearchValidator.isSearchable("blub"));
+        //assertFalse(SearchValidator.isSearchable(Object.class));
+        //assertFalse(SearchValidator.isSearchable(String.class));
 
-        assertFalse(SearchValidator.isSearchable("Complex"));
-        assertFalse(SearchValidator.isSearchable("BioSource"));
-        assertFalse(SearchValidator.isSearchable("Annotation"));
+        //assertFalse(SearchValidator.isSearchable("Complex"));
+        assertFalse(SearchValidator.isSearchable(BioSource.class));
+        assertFalse(SearchValidator.isSearchable(Annotation.class));
 
         // check if
-        assertFalse(SearchValidator.isSearchable("foo"));
-        assertFalse(SearchValidator.isSearchable("blub"));
+        //assertFalse(SearchValidator.isSearchable("foo"));
+        //assertFalse(SearchValidator.isSearchable("blub"));
 
 
     }

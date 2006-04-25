@@ -36,7 +36,9 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
     // associations
 
     //attributes used for mapping BasicObjects - project synchron
-
+    // TODO: should be move out of the model.
+    private String detectionMethodAc;
+    private String identMethodAc;
     private String relatedExperimentAc;
     private String cvIdentificationAc;
     private String cvInteractionAc;

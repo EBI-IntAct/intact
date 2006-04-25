@@ -54,6 +54,9 @@
                            
     <property file="config/correctionAssigner.properties"/>
 
+     <!-- Hibernate config -->
+    <property name="hibernate.cfg.file" value="${src.dir}/hibernate.cfg.xml"/>
+
     <!-- Tutorial specific properties -->
     <property name="tutorial.src.dir" value="src/uk/ac/ebi/intact/tutorial"/>
     <property name="tutorial.dest.dir" value="classes/uk/ac/ebi/intact/tutorial"/>
@@ -458,6 +461,8 @@
 
         <!-- Delete the existing jar file. -->
         <delete file="${dist.dir}/${intact.core.jar}" quiet="true"/>
+
+        <copy file="${hibernate.cfg.file}" todir="${dest.dir}"/>
 
         <jar destfile="${dist.dir}/${intact.core.jar}" basedir="${basedir}/${dest.dir}"/>
 

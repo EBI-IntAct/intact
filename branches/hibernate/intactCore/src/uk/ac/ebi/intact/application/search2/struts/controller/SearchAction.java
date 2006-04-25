@@ -12,6 +12,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.application.commons.search.CriteriaBean;
 import uk.ac.ebi.intact.application.commons.search.SearchHelper;
+import uk.ac.ebi.intact.application.commons.search.SearchClass;
 import uk.ac.ebi.intact.application.commons.util.UrlUtil;
 import uk.ac.ebi.intact.application.search2.business.Constants;
 import uk.ac.ebi.intact.application.search2.business.IntactUserIF;
@@ -27,6 +28,7 @@ import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * This class provides the actions required to carry out search operations
@@ -48,11 +50,11 @@ public class SearchAction extends IntactBaseAction {
     /**
      * The search order. The search is done in this order.
      */
-    public static final ArrayList SEARCH_CLASSES = new ArrayList(3);
+    public static final  List<SearchClass> SEARCH_CLASSES = new ArrayList<SearchClass>(3);
     static {
-        SEARCH_CLASSES.add( "Protein" );
-        SEARCH_CLASSES.add( "Interaction" );
-        SEARCH_CLASSES.add( "Experiment" );
+        SEARCH_CLASSES.add( SearchClass.PROTEIN );
+        SEARCH_CLASSES.add( SearchClass.INTERACTION );
+        SEARCH_CLASSES.add( SearchClass.EXPERIMENT);
     }
 
     /**
@@ -92,7 +94,7 @@ public class SearchAction extends IntactBaseAction {
 
         DynaActionForm dyForm = (DynaActionForm) form;
         String searchValue   = (String) dyForm.get( "searchString") ;
-        String searchClass   = (String) dyForm.get( "searchClass" );
+        SearchClass searchClass = SearchClass.valueOfShortName((String)dyForm.get( "searchClass" ));
         String selectedChunk = (String) dyForm.get( "selectedChunk" );
 
         int selectedChunkInt = Constants.NO_CHUNK_SELECTED;
@@ -104,7 +106,7 @@ public class SearchAction extends IntactBaseAction {
         }
 
         user.setSearchValue( searchValue );
-        user.setSearchClass( searchClass );
+        user.setSearchClass( searchClass.getMappedClass() );
         user.setSelectedChunk( selectedChunkInt );
 
         logger.info( "searchValue: " + searchValue);
@@ -119,7 +121,7 @@ public class SearchAction extends IntactBaseAction {
         session.setAttribute( SearchConstants.VIEW_BEAN, null );
 
         // Holds the result from the initial search.
-        Collection results = null;
+        Collection<? extends IntactObject> results = null;
 
         //now need to try searches based on AC, label or name (only
         //ones we will accept for now) and return as soon as we get a result
@@ -129,7 +131,7 @@ public class SearchAction extends IntactBaseAction {
         try {
             SearchHelper searchHelper = new SearchHelper( logger );
             boolean noClass = false;
-            if (searchClass == null || searchClass.length() == 0) {
+            if (!searchClass.isSpecified()) {
                 results = searchHelper.doLookup( SEARCH_CLASSES, searchValue, user );
                 noClass = true;
             } else {

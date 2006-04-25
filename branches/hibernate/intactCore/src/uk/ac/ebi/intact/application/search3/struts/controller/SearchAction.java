@@ -12,6 +12,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelper;
+import uk.ac.ebi.intact.application.commons.search.SearchClass;
 import uk.ac.ebi.intact.application.search3.business.Constants;
 import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
@@ -20,6 +21,8 @@ import uk.ac.ebi.intact.application.search3.struts.util.SearchValidator;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.IntactObject;
+import uk.ac.ebi.intact.model.ProteinImpl;
 import uk.ac.ebi.intact.application.commons.util.UrlUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -109,7 +112,7 @@ public class SearchAction extends IntactBaseAction {
         DynaActionForm dyForm = (DynaActionForm) form;
 
         String searchValue = (String) dyForm.get( "searchString" );
-        String searchClass = (String) dyForm.get( "searchClass" );
+        SearchClass searchClass = SearchClass.valueOfShortName((String)dyForm.get( "searchClass" ));
         String selectedChunk = (String) dyForm.get( "selectedChunk" );
         String binaryValue = (String) dyForm.get( "binary" );
         String viewValue = (String) dyForm.get( "view" );
@@ -129,7 +132,7 @@ public class SearchAction extends IntactBaseAction {
 
         //set a few useful user beans
         user.setSearchValue( searchValue );
-        user.setSearchClass( searchClass );
+        user.setSearchClass( searchClass.getMappedClass() );
         user.setSelectedChunk( selectedChunkInt );
         user.setBinaryValue( binaryValue );
         user.setView( viewValue );
@@ -149,7 +152,7 @@ public class SearchAction extends IntactBaseAction {
 
         // Holds the result from the initial search.
         ResultWrapper results = null;
-        logger.info( "Classname = " + searchClass );
+        logger.info( "Classname = " + searchClass.getMappedClass() );
 
         try {
 
@@ -187,7 +190,7 @@ public class SearchAction extends IntactBaseAction {
                     // first check for ac only
                     // that takes care of a potential bug when searching for a protein AC
                     // having splice variant. That would pull the master + all splice variants
-                    ResultWrapper subResults = this.getResults(searchHelper, "Protein", criteria, "ac",
+                    ResultWrapper subResults = this.getResults(searchHelper, SearchClass.PROTEIN, criteria, "ac",
                                                                user, paginatedSearch, page);
 
                     if (subResults.isEmpty())
@@ -195,7 +198,7 @@ public class SearchAction extends IntactBaseAction {
                         // then look for all fields if nothing has been found.
                         //finished all current options, and still nothing - return a failure
                         subResults =
-                                this.getResults(searchHelper, "Protein", criteria, "all", user, paginatedSearch, page);
+                                this.getResults(searchHelper, SearchClass.PROTEIN, criteria, "all", user, paginatedSearch, page);
                     }
 
                     if ( subResults.isTooLarge() && !paginatedSearch) {
@@ -303,6 +306,7 @@ public class SearchAction extends IntactBaseAction {
 
         }
         catch ( IntactException se ) {
+            se.printStackTrace();
 
             // Something failed during search...
             logger.error( "Error occured in SearchAction ...", se );
@@ -340,7 +344,7 @@ public class SearchAction extends IntactBaseAction {
      *
      * @throws IntactException Thrown if there was a searching problem
      */
-    private ResultWrapper getResults( SearchHelper helper, String searchClass,
+    private ResultWrapper getResults( SearchHelper helper, SearchClass searchClass,
                                       String searchValue, String filterValue, IntactUserIF user, boolean paginatedSearch, int page)
             throws IntactException {
 
@@ -355,7 +359,7 @@ public class SearchAction extends IntactBaseAction {
             maxResults = SearchConstants.RESULTS_PER_PAGE;
         }
 
-        if ( SearchValidator.isSearchable( searchClass ) || searchClass.equals( "" ) || searchClass == null ) {
+        if ( !searchClass.isSpecified() || SearchValidator.isSearchable( searchClass )) {
             logger.info( "SearchAction: searchfast: " + searchValue + " searchClass: " + searchClass );
             IntactHelper intactHelper = user.getIntactHelper();
             result = helper.searchFast( searchValue, searchClass, filterValue, intactHelper, maxResults, firstResult, paginatedSearch);

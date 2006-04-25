@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
+import uk.ac.ebi.intact.application.commons.search.SearchClass;
 import uk.ac.ebi.intact.application.editor.event.EventListener;
 import uk.ac.ebi.intact.application.editor.event.LogoutEvent;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
@@ -347,7 +348,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return myDatabaseName;
     }
 
-    public Collection search(String objectType, String searchParam,
+    public <T> Collection<T> search(Class<T> objectType, String searchParam,
                              String searchValue) throws IntactException {
         throw new IntactException("Not implemented");
     }
@@ -571,7 +572,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
         // The result to return.
         try {
-            return helper.searchByQuery(clazz, param, value, max);
+            return helper.searchByQuery(SearchClass.valueOfMappedClass(clazz), param, value, max);
         }
         catch (IntactException e) {
             // This is an internal error. Log it.

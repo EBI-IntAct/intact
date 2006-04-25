@@ -7,6 +7,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.search3.business;
 
 import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.model.IntactObject;
 
 /**
  * This interface represents an Intact user.
@@ -14,7 +15,7 @@ import uk.ac.ebi.intact.business.IntactHelper;
  * @author Sugath Mudali (smudali@ebi.ac.uk), modified by Chris Lewington
  * @version $Id$
  */
-public interface IntactUserIF
+public interface IntactUserIF<T extends IntactObject>
         extends uk.ac.ebi.intact.application.commons.business.IntactUserI {
 
     /**
@@ -60,16 +61,16 @@ public interface IntactUserIF
      *
      * @see #getSearchClass
      */
-    public void setSearchClass( String searchClass );
+    public void setSearchClass( Class<T> searchClass );
 
     /**
      * Returns the search class value.
      *
-     * @return a String representing the search class value
+     * @return a Class representing the search class value
      *
      * @see #setSearchClass
      */
-    public String getSearchClass();
+    public Class<T> getSearchClass();
 
     /**
      * Returns the selected chunk value.
