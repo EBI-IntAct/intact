@@ -117,6 +117,11 @@
         <pathelement path="${intact.app.dir}/lib/jimi.jar"/>
         <pathelement path="${intact.app.dir}/lib/antlr.jar"/>
 
+        <!-- hibernate -->
+        <fileset dir="${root.lib.dir}/hibernate">
+            <include name="**/*.jar"/>
+        </fileset>
+
 
         <fileset dir="${root.lib.dir}">
             <include name="junit.jar"/>
@@ -448,6 +453,15 @@
                 <include name="commons-httpclient-3.0-rc2.jar"/>
                 <include name="commons-codec-1.4-dev.jar"/>
             </fileset>
+
+             <!-- hibernate -->
+            <fileset dir="${root.lib.dir}/hibernate">
+                <include name="*.jar"/>
+            </fileset>
+            <fileset dir="${root.lib.dir}/hibernate/transitive-deps">
+                <include name="*.jar"/>
+            </fileset>
+
         </copy>
 
         <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
