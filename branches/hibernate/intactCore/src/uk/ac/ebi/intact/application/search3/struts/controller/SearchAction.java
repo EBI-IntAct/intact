@@ -224,7 +224,7 @@ public class SearchAction extends IntactBaseAction {
                     else
                     {
                         // merge both results together
-                        Set<Collection<AnnotatedObject>> mergedResults = new HashSet<Collection<AnnotatedObject>>();
+                        Set<AnnotatedObject> mergedResults = new HashSet<AnnotatedObject>();
                         mergedResults.addAll(subResults.getResult());
                         mergedResults.addAll(results.getResult());
 
@@ -239,7 +239,7 @@ public class SearchAction extends IntactBaseAction {
 
                         logger.info("create statistic : " + resultInfo);
                         // create a new resultWerapper
-                        List<Collection<AnnotatedObject>> temp = new ArrayList<Collection<AnnotatedObject>>();
+                        List<AnnotatedObject> temp = new ArrayList<AnnotatedObject>();
                         temp.addAll(mergedResults);
                         results =
                                 new ResultWrapper(temp,

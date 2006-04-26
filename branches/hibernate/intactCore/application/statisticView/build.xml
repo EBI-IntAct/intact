@@ -90,7 +90,7 @@
         <pathelement path="${root.lib.dir}/db-ojb-1.0.rc6.jar"/>
         <pathelement path="${root.lib.dir}/junit.jar"/>
         <pathelement path="${root.lib.dir}/commons-dbcp-1.1.jar"/>
-        <pathelement path="${root.lib.dir}/log4j-1.2.8.jar"/>
+        <pathelement path="${root.lib.dir}/log4j-1.2.11.jar"/>
         <pathelement path="${root.lib.dir}/servlet.jar"/>
         <pathelement path="${root.lib.dir}/commons-collections-3.0.jar"/>
         <pathelement path="${root.lib.dir}/commons-pool-1.1.jar"/>
@@ -321,7 +321,7 @@
             <lib dir="${root.lib.dir}">
                 <include name="db-ojb-1.0.rc6.jar"/>
                 <include name="commons-dbcp-1.1.jar"/>
-                <include name="log4j-1.2.8.jar"/>
+                <include name="log4j-1.2.11.jar"/>
                 <include name="commons-pool-1.1.jar"/>
                 <include name="commons-lang-2.0.jar"/>
                 <include name="${db}"/>

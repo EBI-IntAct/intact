@@ -7,13 +7,13 @@ package uk.ac.ebi.intact.persistence.dao;
 
 import org.hibernate.Session;
 import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.SimpleExpression;
+import org.hibernate.criterion.Restrictions;
 
 import java.util.Collection;
+
+import uk.ac.ebi.intact.model.IntactObject;
 
 /**
  * TODO comment this
@@ -23,79 +23,17 @@ import java.util.Collection;
  * @since <pre>24-Apr-2006</pre>
  */
 @SuppressWarnings({"unchecked"})
-public class IntactObjectDao<T> extends HibernateDao
+public class IntactObjectDao<T extends IntactObject> extends HibernateDao<T>
 {
-    private Class<T> entityClass;
-
     public IntactObjectDao(Class<T> entityClass, Session session)
     {
-        super(session);
-        this.entityClass = entityClass;
+        super(entityClass, session);
     }
 
     public T getByAc(String ac)
     {
-       return (T) getSession().get(entityClass, ac);
+       return (T) getSession().get(getEntityClass(), ac);
     }
 
-    public T getByShortLabel(String value)
-    {
-        return getByShortLabel(value, true);
-    }
-
-    public T getByShortLabel(String value, boolean ignoreCase)
-    {
-        return getByShortLabel(value, ignoreCase);
-    }
-
-    public Collection<T> getByShortLabelLike(String value, boolean ignoreCase, MatchMode matchMode)
-    {
-       return getByPropertyNameLike("shortLabel", value, ignoreCase, matchMode);
-    }
-
-    protected T getByPropertyName(String propertyName, String value)
-    {
-       return getByPropertyName(propertyName, value, true);
-    }
-
-    protected T getByPropertyName(String propertyName, String value, boolean ignoreCase)
-    {
-       Criteria criteria = getSession().createCriteria(entityClass);
-
-        SimpleExpression restriction = Restrictions.eq(propertyName, value);
-
-        if (ignoreCase)
-        {
-           restriction.ignoreCase();
-        }
-
-        criteria.add(restriction);
-
-        return (T) criteria.uniqueResult();
-    }
-
-    protected Collection<T> getByPropertyNameLike(String propertyName, String value)
-    {
-        Criteria criteria = getSession().createCriteria(entityClass)
-                .add(Restrictions.like(propertyName, value).ignoreCase());
-
-        return criteria.list();
-    }
-
-    protected Collection<T> getByPropertyNameLike(String propertyName, String value,  boolean ignoreCase, MatchMode matchMode)
-    {
-       Criteria criteria = getSession().createCriteria(entityClass);
-
-        SimpleExpression restriction = Restrictions.like(propertyName, value, matchMode);
-
-        if (ignoreCase)
-        {
-           restriction.ignoreCase();
-        }
-
-        criteria.add(restriction);
-
-        return criteria.list();
-    }
 
 }

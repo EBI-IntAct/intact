@@ -7,20 +7,17 @@ package uk.ac.ebi.intact.application.commons.search;
 
 import org.apache.log4j.Logger;
 import org.apache.ojb.broker.query.Query;
-import org.hibernate.criterion.MatchMode;
 import uk.ac.ebi.intact.application.commons.business.IntactUserI;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Alias;
-import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.model.IntactObject;
-import uk.ac.ebi.intact.model.InteractorImpl;
-import uk.ac.ebi.intact.model.ProteinImpl;
-import uk.ac.ebi.intact.model.InteractionImpl;
+import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.persistence.ObjectBridgeQueryFactory;
-import uk.ac.ebi.intact.persistence.dao.AliasDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
+import uk.ac.ebi.intact.persistence.dao.SearchItemDao;
 import uk.ac.ebi.intact.persistence.dao.IntactObjectDao;
 import uk.ac.ebi.intact.util.DatabaseUtil;
 
@@ -271,9 +268,9 @@ public class SearchHelper implements SearchHelperI {
     private <T extends IntactObject> Collection<T> doSearch(SearchClass searchClass, String value, IntactUserI user)
             throws IntactException {
 
-        Class<? extends IntactObject> mappedClass = searchClass.getMappedClass();
+        Class<? extends AnnotatedObject> mappedClass = searchClass.getMappedClass();
 
-        IntactObjectDao dao = DaoFactory.getGenericDao(mappedClass);
+        AnnotatedObjectDao dao = DaoFactory.getAnnotatedObjectDao(mappedClass);
 
         //try search on AC first...
         Collection results = user.search(mappedClass, "ac", value);
@@ -461,161 +458,67 @@ public class SearchHelper implements SearchHelperI {
         sqlValue = sqlValue.toLowerCase();
         logger.info(sqlValue);
 
-        // if we want to search for CvObjects, it's not referenced as such in ia_search,
-        // but as its implementation (eg. CvTopic).
-
-        //if (searchClass.equalsIgnoreCase("cvobject")) {
-        //    searchClass = "Cv";
-        //}
-
         // split the query
-        Collection someSearchValues = this.splitQuery(sqlValue);
+        Collection<String> someSearchValues = this.splitQuery(sqlValue);
+        String[] values = someSearchValues.toArray(new String[someSearchValues.size()]);
 
-        // create the tail of the sql query
-        StringBuffer sb = new StringBuffer(128);
-        String value = null;
 
-        for (Iterator iterator = someSearchValues.iterator(); iterator.hasNext();) {
-            value = (String) iterator.next();
-            sb.append("(value LIKE '");
-            sb.append(value);
-            sb.append("')");
-            if (iterator.hasNext()) {
-                sb.append(" OR ");
-            }  // end if
-        } // end for
+        SearchItemDao searchItemDao = DaoFactory.getSearchItemDao();
 
-        String sqlCount = "SELECT COUNT(distinct(ac)), objclass FROM " + SEARCH_TABLE + " WHERE " +
-                sb.toString();
+        //  type and objClass have to be null if they are not to be used in the query
+        if (!hasType) type = null;
+        String objClass = (searchClass.isSpecified())? searchClass.getMappedClass().getName() : null;
 
-        // if we are looking for a type expand the query
-        if (hasType) {
-            sqlCount = sqlCount + " AND type='" + type + "'";
+        logger.info("Executing count query - type: " + type+" objClass: "+objClass);
+
+        Map<String,Integer> resultInfo = searchItemDao.countGroupsByValuesLike(values, objClass, type);
+
+        // count the results, iterating the groups and adding each subtotal
+        int count = 0;
+
+        for (Map.Entry<String,Integer> entry : resultInfo.entrySet())
+        {
+            logger.info("Class: "+entry.getKey()+" - count: "+entry.getValue());
+            count = count + entry.getValue();
         }
-        // if we are looking for a specific searchclass exapnd the query
-        if (searchClass.isSpecified()) {
-            if (searchClass == SearchClass.CVOBJECT)
+
+        logger.info("Count = " + count);
+
+        // check the result size if the result is too large return an empty ResultWrapper
+
+        if (count > maximumResultSize && !paginatedSearch) {
+            logger.info("Result too Large return an empty result Wrapper");
+            return new ResultWrapper(count, maximumResultSize, resultInfo);
+        }
+
+        // we got an result, and it's in the limit, so now we need the ac's
+        Map<String,String> acResults = searchItemDao.getDistinctAc(values, objClass, type, firstResult, maximumResultSize);
+
+        // get the result from the resultset and query the objects using its AC and
+        // put the data in a ResultWrapper
+        List<AnnotatedObject> searchResult = new ArrayList<AnnotatedObject>();
+
+        for (Map.Entry<String,String> entry : acResults.entrySet())
+        {
+            try
             {
-               sqlCount = sqlCount + "AND objclass LIKE '%Cv%'"; 
+                String ac = entry.getKey();
+                Class<? extends AnnotatedObject> clazz = (Class<? extends AnnotatedObject>) Class.forName(entry.getValue());
+
+                AnnotatedObject annObject = DaoFactory.getAnnotatedObjectDao(clazz).getByAc(ac);
+                searchResult.add(annObject);
             }
-            else
+            catch (ClassNotFoundException e)
             {
-                sqlCount = sqlCount + " AND objclass = '" + searchClass.getMappedClass().getName() + "'";
+                e.printStackTrace();
             }
         }
 
-        sqlCount = sqlCount + " GROUP BY objclass";
-
-        logger.info(sqlCount);
-        Connection conn = null;
-        Statement stmt = null;
-        ResultSet rs = null;
-
-        // Access the Connection via the helper.
-        try {
-
-            conn = helper.getJDBCConnection();
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery(sqlCount);
-
-            int count = 0;
-            String className = null;
-            Map<String,Integer> resultInfo = new HashMap<String,Integer>();
-
-            while (rs.next()) {
-                int classCount = rs.getInt(1);
-                logger.info("classCount " + classCount);
-                className = rs.getString(2);
-                logger.info("ClassName : " + className);
-                resultInfo.put(className, classCount);
-                count += classCount;
-                logger.info("Count summ : " + count);
-            }
-
-            if (rs != null) {
-                rs.close();
-                rs = null;
-            }
-            logger.info("Count = " + count);
-
-            // check the result size if the result is too large return an empty ResultWrapper
-            if (count > maximumResultSize && !paginatedSearch) {
-                logger.info("Result too Large return an empty result Wrapper");
-                return new ResultWrapper(count, maximumResultSize, resultInfo);
-            }
-
-            // we got an result, and it's in the limit, so now we need the ac's
-            String sql = "SELECT distinct(ac), objclass from " + SEARCH_TABLE + " where " +
-                    sb.toString();
-
-            if (hasType) {
-                sql = sql + " and type='" + type + "'";
-            }
-
-            if (searchClass.isSpecified()) {
-                if (searchClass == SearchClass.CVOBJECT)
-                {
-                   sql = sql + "AND objclass LIKE '%Cv%'";
-                }
-                else
-                {
-                    sql = sql + "AND objclass = '" + searchClass.getMappedClass().getName()+"'";
-                }
-            }
-
-            // limit query
-            sql = DatabaseUtil.wrapWithLimitSql(sql, firstResult, maximumResultSize, conn);
+        return new ResultWrapper(searchResult, maximumResultSize, resultInfo, count);
 
 
-            logger.info(sql);
-            //stmt = conn.createStatement();
-            rs = stmt.executeQuery(sql);
-
-            // get the result from the resultset and query via the intacthelper the objects and
-            // put the data in a ResultWrapper
-
-            String ac = null;
-            className = null;
-            Class clazz = null;
-            ArrayList searchResult = new ArrayList(count);
-
-            while (rs.next()) {
-                ac = rs.getString(1);
-                className = rs.getString(2);
-                clazz = Class.forName(className);
-                searchResult.add(helper.getObjectByAc(clazz, ac));
-            }
-            return new ResultWrapper(searchResult, maximumResultSize, resultInfo, count);
-
-        }
-        catch (SQLException se) {
-            while ((se.getNextException()) != null) {
-                logger.info(se.getSQLState());
-                logger.info("SQL: Error Code: " + se.getErrorCode());
-            }
-            throw new IntactException("SQL errors, see the log out for more info ",se);
-
-        }
-        catch (ClassNotFoundException e) {
-            throw new IntactException("Received an intact typ which is not valid, see the log out for more info ",e);
-        }
-        finally {
-            //  close all database connections
-            try {
-
-                if (rs != null) {
-                    rs.close();
-                }
-
-                if (stmt != null) {
-                    stmt.close();
-                }
-            }
-            catch (SQLException se) {
-                throw new IntactException("Problems with closing the JDBC Resource ",se);
-            }
-        }
     }   // end searchFast
+
 
     /**
      * Workaround to provide an Interactor search with the ia_search table.

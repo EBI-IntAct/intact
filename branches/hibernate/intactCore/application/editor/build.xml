@@ -100,7 +100,7 @@
 
 
         <pathelement path="${root.lib.dir}/jakarta-regexp-1.3.jar"/>
-        <pathelement path="${root.lib.dir}/log4j-1.2.8.jar"/>
+        <pathelement path="${root.lib.dir}/log4j-1.2.11.jar"/>
         <pathelement path="${intact.app.lib.dir}/struts.jar"/>
 
         <!-- Could not we use the one in the root lib dir ??? -->
@@ -469,7 +469,7 @@
                 <include name="db-ojb-1.0.rc6.jar"/>
                 <include name="commons-dbcp-1.1.jar"/>
                 <include name="commons-collections-3.0.jar"/>
-                <include name="log4j-1.2.8.jar"/>
+                <include name="log4j-1.2.11.jar"/>
                 <include name="${db}"/>
                 <include name="commons-pool-1.2.jar"/>
                 <!-- All the following files are required for ProteinUpdate to work -->

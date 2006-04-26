@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.model.ProteinImpl;
 import uk.ac.ebi.intact.model.InteractorImpl;
 import uk.ac.ebi.intact.model.InteractionImpl;
 import uk.ac.ebi.intact.model.CvObject;
+import uk.ac.ebi.intact.model.AnnotatedObject;
 
 /**
  * Enumeration used to map between the class to search as String (it comes from the GUI beans) to the
@@ -27,12 +28,12 @@ public enum SearchClass
     INTERACTOR("Interactor", InteractorImpl.class),
     INTERACTION("Interaction", InteractionImpl.class),
     CVOBJECT("CvObject", CvObject.class),
-    NOSPECIFIED("No specified", IntactObject.class);
+    NOSPECIFIED("No specified", AnnotatedObject.class);
 
-    private Class<? extends IntactObject> mappedClass;
+    private Class<? extends AnnotatedObject> mappedClass;
     private String shortName;
 
-    SearchClass(String shortName, Class<? extends IntactObject> mappedClass)
+    SearchClass(String shortName, Class<? extends AnnotatedObject> mappedClass)
     {
         this.shortName = shortName;
         this.mappedClass = mappedClass;
@@ -80,7 +81,7 @@ public enum SearchClass
         throw new IllegalArgumentException("There is no SearchClass with class: "+mappedClass);
     }
 
-    public Class<? extends IntactObject> getMappedClass()
+    public Class<? extends AnnotatedObject> getMappedClass()
     {
         return mappedClass;
     }
