@@ -5,19 +5,18 @@
  */
 package uk.ac.ebi.intact.persistence.util;
 
-import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.model.Institution;
-import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.model.Annotation;
-import uk.ac.ebi.intact.model.Xref;
-import uk.ac.ebi.intact.model.CvTopic;
-import uk.ac.ebi.intact.model.CvInteraction;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.persistence.Entity;
-import java.util.List;
-import java.util.ArrayList;
-import java.net.URL;
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  * TODO comment this
@@ -28,52 +27,119 @@ import java.io.File;
  */
 public class IntactAnnotator
 {
+
+    public static final Log log = LogFactory.getLog(IntactAnnotator.class);
+
+    private IntactAnnotator()
+    {
+    }
+
     /**
      * Retrieves a list of the annotated classes to use. This methods look for classes annotated with
      * <code>@javax.persistence.Entity</code> in the uk.ac.ebi.intact.model package
      * @return  The list of hibernate annotated classes
      */
     public static List<Class> getAnnotatedClasses() {
-        List<Class> classes = new ArrayList<Class>();
+        List<Class> annotatedClasses = new ArrayList<Class>();
 
-        String packageName = "uk.ac.ebi.intact.model";
-
-         // Translate the package name into an absolute path
-        String name = packageName ;
-        if (!name.startsWith("/")) {
-            name = "/" + name;
-        }
-
-        name = name.replace('.','/');
+        String packageName = "/uk/ac/ebi/intact/model";
 
         // Get a File object for the package
-        URL url = IntactAnnotator.class.getResource(name);
+        URL url = IntactAnnotator.class.getResource(packageName);
         File directory = new File(url.getFile());
 
         if (directory.exists()) {
+            log.debug("Reading annotated classes from directory: "+directory);
+
             // Get the list of the files contained in the package
             for (String file : directory.list()) {
+                Class clazz = getAnnotatedClass(file);
 
-                // we are only interested in .class files
-                if (file.endsWith(".class")) {
-                    // removes the .class extension
-                    String classname = file.substring(0,file.length()-6);
-                    try {
-                        // Try to create an instance of the object
-                        Class clazz = Class.forName(packageName+"."+classname);
+                if (clazz != null)
+                {
 
-                        // check for the @Entity annotation
-                        if (clazz.isAnnotationPresent(Entity.class)) {
-                            classes.add(clazz);
-                        }
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    annotatedClasses.add(clazz);
                 }
             }
         }
+        else
+        {
+            log.error("Directory not found: "+directory);
 
-        return classes;
+            // probably directory points inside a jar file, we get the jar name
+            // and will look for annotated classes inside
+            String jarPath = directory.toString().substring(5, directory.toString().indexOf(".jar")+4);
+
+            log.info("Searching classes in jar: "+jarPath);
+            try
+            {
+                annotatedClasses.addAll(getAnnotatedClasses(jarPath));
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+
+        return annotatedClasses;
     }
+
+    private static List<Class> getAnnotatedClasses(String jarPath) throws IOException
+    {
+        List<Class> annotatedClasses = new ArrayList<Class>();
+
+        JarFile jarFile = new JarFile(jarPath);
+
+        Enumeration<JarEntry> e = jarFile.entries();
+
+        while (e.hasMoreElements())
+        {
+            JarEntry entry = e.nextElement();
+
+            Class clazz = getAnnotatedClass(entry.getName());
+
+            if (clazz != null)
+            {
+                annotatedClasses.add(clazz);
+            }
+        }
+
+        jarFile.close();
+
+        return annotatedClasses;
+    }
+
+
+    private static Class getAnnotatedClass(String classFilename)
+    {
+        if (classFilename.endsWith(".class")) {
+
+            String fileDir = classFilename.substring(0, classFilename.lastIndexOf("/"));
+            String className = classFilename.substring(classFilename.lastIndexOf("/")+1,classFilename.indexOf(".class") );
+
+            String packageName = fileDir.replaceAll("/",".");
+
+            if (packageName.startsWith("."))
+                    packageName = packageName.substring(1, fileDir.length());
+
+            //log.info("Classname: "+className+" package: "+packageName);
+
+           // removes the .class extension
+            try {
+                // Try to create an instance of the object
+                Class clazz = Class.forName(packageName+"."+className);
+
+                // check for the @Entity annotation
+                if (clazz.isAnnotationPresent(Entity.class)) {
+                    return clazz;
+                }
+
+            } catch (Throwable e) {
+                log.debug("Error loading class "+packageName+"."+className+": "+e);
+            }
+        }
+
+        return null;
+    }
+
 }

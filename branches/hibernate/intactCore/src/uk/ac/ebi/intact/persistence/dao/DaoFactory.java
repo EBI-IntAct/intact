@@ -6,6 +6,7 @@
 package uk.ac.ebi.intact.persistence.dao;
 
 import uk.ac.ebi.intact.model.IntactObject;
+import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 import org.hibernate.Session;
 
@@ -20,11 +21,18 @@ public class DaoFactory
 {
     private DaoFactory(){}
 
-    public static <T extends IntactObject> IntactObjectDao<T> getGenericDao(Class<T> entityType)
+    public static <T extends IntactObject> IntactObjectDao<T> getIntactObjectDao(Class<T> entityType)
     {
         HibernateDao.validateEntity(entityType);
 
         return new IntactObjectDao<T>(entityType, getCurrentSession());
+    }
+
+    public static <T extends AnnotatedObject> AnnotatedObjectDao<T> getAnnotatedObjectDao(Class<T> entityType)
+    {
+        HibernateDao.validateEntity(entityType);
+
+        return new AnnotatedObjectDao<T>(entityType, getCurrentSession());
     }
 
     public static AliasDao getAliasDao()
@@ -32,8 +40,14 @@ public class DaoFactory
         return new AliasDao(getCurrentSession());
     }
 
+    public static SearchItemDao getSearchItemDao()
+    {
+        return new SearchItemDao(getCurrentSession());
+    }
+
     private static Session getCurrentSession()
     {
         return HibernateUtil.getSessionFactory().getCurrentSession();
     }
+
 }

@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.Interceptor;
 import org.hibernate.SessionFactory;
+import org.hibernate.HibernateException;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
@@ -45,6 +46,7 @@ import javax.naming.NamingException;
  * for example). You could then lookup a <tt>SessionFactory</tt> by its name.
  *
  * @author christian@hibernate.org
+ * @author Bruno Aranda (baranda@ebi.ac.uk)
  */
 public class HibernateUtil {
 
@@ -55,40 +57,42 @@ public class HibernateUtil {
     private static Configuration configuration;
     private static SessionFactory sessionFactory;
 
+    private HibernateUtil()
+    {
+    }
+
     static {
         // Create the initial SessionFactory from the default configuration files
         try {
-
-            // Replace with Configuration() if you don't use annotations or JDK 5.0
-            configuration = new AnnotationConfiguration();
+               // Replace with Configuration() if you don't use annotations or JDK 5.0
+                configuration = new AnnotationConfiguration();
 //            configuration = new Configuration();
 
-            for (Class clazz : IntactAnnotator.getAnnotatedClasses())
-            {
-                ((AnnotationConfiguration)configuration).addAnnotatedClass(clazz);
-            }
+                for (Class clazz : IntactAnnotator.getAnnotatedClasses())
+                {
+                    log.debug("Adding annotated class to hibernate: "+clazz.getName());
+                    ((AnnotationConfiguration)configuration).addAnnotatedClass(clazz);
+                }
 
-            // This custom entity resolver supports entity placeholders in XML mapping files
-            // and tries to resolve them on the classpath as a resource
-            configuration.setEntityResolver(new ImportFromClasspathEntityResolver());
+                // This custom entity resolver supports entity placeholders in XML mapping files
+                // and tries to resolve them on the classpath as a resource
+                configuration.setEntityResolver(new ImportFromClasspathEntityResolver());
 
-            // Read not only hibernate.properties, but also hibernate.cfg.xml
-            configuration.configure();
+                // Read not only hibernate.properties, but also hibernate.cfg.xml
+                configuration.configure();
 
-            // Set global interceptor from configuration
-            setInterceptor(configuration, null);
+                // Set global interceptor from configuration
+                setInterceptor(configuration, null);
 
-            if (configuration.getProperty(Environment.SESSION_FACTORY_NAME) != null) {
-                // Let Hibernate bind the factory to JNDI
-                configuration.buildSessionFactory();
-            } else {
-                // or use static variable handling
-                sessionFactory = configuration.buildSessionFactory();
-            }
+                if (configuration.getProperty(Environment.SESSION_FACTORY_NAME) != null) {
+                    // Let Hibernate bind the factory to JNDI
+                    configuration.buildSessionFactory();
+                } else {
+                    // or use static variable handling
+                    sessionFactory = configuration.buildSessionFactory();
+                }
 
-        } catch (Throwable ex) {
-            // We have to catch Throwable, otherwise we will miss
-            // NoClassDefFoundError and other subclasses of Error
+        } catch (HibernateException ex) {
             log.error("Building SessionFactory failed.", ex);
             throw new ExceptionInInitializerError(ex);
         }

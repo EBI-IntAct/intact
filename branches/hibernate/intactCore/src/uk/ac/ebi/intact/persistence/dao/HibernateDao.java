@@ -6,9 +6,15 @@
 package uk.ac.ebi.intact.persistence.dao;
 
 import org.hibernate.Session;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.SimpleExpression;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Disjunction;
 import org.apache.ojb.broker.accesslayer.LookupException;
 
 import java.sql.SQLException;
+import java.util.Collection;
 
 import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.model.NotAnEntityException;
@@ -22,12 +28,14 @@ import javax.persistence.Entity;
  * @version $Id$
  * @since <pre>24-Apr-2006</pre>
  */
-public abstract class HibernateDao
+public abstract class HibernateDao<T>
 {
+    private Class<T> entityClass;
     private Session session;
 
-    public HibernateDao(Session session)
+    public HibernateDao(Class<T> entityClass, Session session)
     {
+        this.entityClass = entityClass;
        this.session = session;
     }
 
@@ -62,11 +70,109 @@ public abstract class HibernateDao
      * If not, this methods throws a <code>NotAnEntityException</code>
      * @param entity The entity to validate
      */
-    public static <T extends IntactObject> void validateEntity(Class<T> entity)
+    public static void validateEntity(Class<? extends IntactObject> entity)
     {
         if (entity.getAnnotation(Entity.class) == null)
         {
             throw new NotAnEntityException(entity);
         }
+    }
+
+     protected T getByPropertyName(String propertyName, String value)
+    {
+       return getByPropertyName(propertyName, value, true);
+    }
+
+    protected T getByPropertyName(String propertyName, String value, boolean ignoreCase)
+    {
+       Criteria criteria = getSession().createCriteria(entityClass);
+
+        SimpleExpression restriction = Restrictions.eq(propertyName, value);
+
+        if (ignoreCase)
+        {
+           restriction.ignoreCase();
+        }
+
+        criteria.add(restriction);
+
+        return (T) criteria.uniqueResult();
+    }
+
+    protected <T> Collection<T> getByPropertyNameLike(String propertyName, String value)
+    {
+        Criteria criteria = getSession().createCriteria(entityClass)
+                .add(Restrictions.like(propertyName, value).ignoreCase());
+
+        return criteria.list();
+    }
+
+    protected <T> Collection<T> getByPropertyNameLike(String propertyName, String value,  boolean ignoreCase, MatchMode matchMode)
+    {
+       Criteria criteria = getSession().createCriteria(entityClass);
+
+        SimpleExpression restriction = Restrictions.like(propertyName, value, matchMode);
+
+        if (ignoreCase)
+        {
+           restriction.ignoreCase();
+        }
+
+        criteria.add(restriction);
+
+        return criteria.list();
+    }
+
+    protected Disjunction disjunctionForArray(String propertyName, String[] values)
+    {
+        Disjunction disj = Restrictions.disjunction();
+
+        for (String value : values)
+        {
+            if (value.contains("%"))
+            {
+                disj.add(Restrictions.like(propertyName, value));
+            }
+            else
+            {
+                disj.add(Restrictions.eq(propertyName, value));
+            }
+        }
+
+        return disj;
+    }
+
+    protected MatchMode matchModeForValue(String value, boolean removeWildcardFromValue)
+    {
+        MatchMode mode;
+
+        if (value.startsWith("%") && value.endsWith("%"))
+        {
+            mode = MatchMode.ANYWHERE;
+        }
+        else if (value.startsWith("%") && !value.endsWith("%"))
+        {
+            mode = MatchMode.START;
+        }
+        else if (!value.startsWith("%") && value.endsWith("%"))
+        {
+            mode = MatchMode.END;
+        }
+        else
+        {
+            mode = MatchMode.EXACT;
+        }
+
+        if (removeWildcardFromValue)
+        {
+            value = value.replaceAll("%", "");
+        }
+
+        return mode;
+    }
+
+    public Class<T> getEntityClass()
+    {
+        return entityClass;
     }
 }
