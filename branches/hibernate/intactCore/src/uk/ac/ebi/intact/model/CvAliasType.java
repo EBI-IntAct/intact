@@ -51,7 +51,7 @@ public class CvAliasType extends CvObject implements Editable {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private CvAliasType() {
+    public CvAliasType() {
         //super call sets creation time data
         super();
     }

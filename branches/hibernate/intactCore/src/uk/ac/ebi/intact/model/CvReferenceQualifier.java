@@ -40,7 +40,7 @@ public class CvReferenceQualifier extends CvObject {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private CvReferenceQualifier() {
+    public CvReferenceQualifier() {
         //super call sets creation time data
         super();
     }

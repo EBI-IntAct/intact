@@ -34,7 +34,7 @@ public class CvProductRole extends CvObject {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private CvProductRole() {
+    public CvProductRole() {
         //super call sets creation time data
         super();
     }

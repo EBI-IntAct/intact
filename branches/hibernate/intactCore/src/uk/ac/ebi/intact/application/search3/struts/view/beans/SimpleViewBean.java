@@ -7,6 +7,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.*;
 
@@ -52,7 +54,7 @@ public class SimpleViewBean extends AbstractViewBean {
      */
     private String intactType;
 
-    private static ArrayList geneNameFilter = new ArrayList();
+    private static ArrayList<String> geneNameFilter = new ArrayList<String>();
 
     static {
         // TODO somehow find a way to use MI references that are stable
@@ -83,8 +85,9 @@ public class SimpleViewBean extends AbstractViewBean {
      * Adds the shortLabel of the AnnotatedObject to an internal list used later for highlighting in a display. NOT SURE
      * IF WE STILL NEED THIS!!
      */
+    @Override
     public void initHighlightMap() {
-        Set set = new HashSet( 1 );
+        Set<String> set = new HashSet<String>( 1 );
         set.add( obj.getShortLabel() );
         setHighlightMap( set );
     }
@@ -97,6 +100,8 @@ public class SimpleViewBean extends AbstractViewBean {
      *
      * @deprecated use getHelpUrl instead
      */
+    @Deprecated
+    @Override
     public String getHelpSection() {
         return "protein.single.view";
     }
@@ -168,18 +173,8 @@ public class SimpleViewBean extends AbstractViewBean {
 //    public String getNumberOfInteractions( Protein aProtein ) {   //   1 usage in simple.jsp
     public String getNumberOfInteractions( Interactor anInteractor ) {
 
-        //TODO Remoove this with ProteinUtils
-        Set someComponents = new HashSet( anInteractor.getActiveInstances() );
-        Collection uniqueInteractions = new HashSet();
-
-        for ( Iterator iterator = someComponents.iterator(); iterator.hasNext(); ) {
-            Component aComponent = (Component) iterator.next();
-            Interaction anInteraction = aComponent.getInteraction();
-            uniqueInteractions.add( anInteraction );
-
-        }
-
-        return Integer.toString( uniqueInteractions.size() );
+       return String.valueOf(
+               DaoFactory.getInteractorDao().countInteractionsForInteractorWithAc(anInteractor.getAc()));
     }
 
 
@@ -226,10 +221,10 @@ public class SimpleViewBean extends AbstractViewBean {
         if ( relatedItemsSize == " " ) {
             //obtain the number of its related 'items'...
             Class clazz = obj.getClass();
-            int size = 0;
+
             if ( Experiment.class.isAssignableFrom( clazz ) ) {
-                Experiment exp = (Experiment) obj;
-                size = exp.getInteractions().size();
+                int size = DaoFactory.getExperimentDao().countInteractionsForExperimentWithAc(getObjAc());
+                logger.info("Counting interactions for experiment with AC "+getObjAc()+": "+size);
                 relatedItemsSize = Integer.toString( size );
             }
 
@@ -238,7 +233,7 @@ public class SimpleViewBean extends AbstractViewBean {
                 Interaction interaction = (Interaction) obj;
 
                 //this should check for complexes also....
-                size = countInteractors( interaction.getComponents() );
+                int size = countInteractors( interaction.getComponents() );
                 relatedItemsSize = Integer.toString( size );
             }
         }
@@ -264,18 +259,18 @@ public class SimpleViewBean extends AbstractViewBean {
      */
 
 //    public Collection getGeneNames( Protein protein ) {    //1 usage in simple.jsp
-    public Collection getGeneNames( Interactor interactor ) {
+    public Collection<String> getGeneNames( Interactor interactor ) {
 
-        Collection geneNames = new HashSet();
+        Collection<String> geneNames = new HashSet<String>();
         //geneNames = new StringBuffer();
         //the gene names are obtained from the Aliases for the Protein
         //which are of type 'gene name'...
-        Collection aliases = interactor.getAliases();
-        for ( Iterator it = aliases.iterator(); it.hasNext(); ) {
-            Alias alias = (Alias) it.next();
-
-            if ( geneNameFilter.contains( alias.getCvAliasType().getShortLabel() ) ) {
-                geneNames.add( alias.getName() );
+        Collection<Alias> aliases = interactor.getAliases();
+        for (Alias alias : aliases)
+        {
+            if (geneNameFilter.contains(alias.getCvAliasType().getShortLabel()))
+            {
+                geneNames.add(alias.getName());
             }
         }
         //now strip off trailing comma - if there are any names....

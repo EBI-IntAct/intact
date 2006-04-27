@@ -11,22 +11,28 @@ import uk.ac.ebi.intact.application.commons.business.IntactUserI;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Alias;
-import uk.ac.ebi.intact.model.Xref;
-import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.IntactObject;
+import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.persistence.ObjectBridgeQueryFactory;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.SearchItemDao;
-import uk.ac.ebi.intact.persistence.dao.IntactObjectDao;
-import uk.ac.ebi.intact.util.DatabaseUtil;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 /**
  * Performs an intelligent search on the intact database.
@@ -443,7 +449,7 @@ public class SearchHelper implements SearchHelperI {
      * @throws uk.ac.ebi.intact.business.IntactException
      *          thrown if there were any search problems
      */
-    private ResultWrapper search(String query, SearchClass searchClass, String type, IntactHelper helper, int maximumResultSize, int firstResult, boolean paginatedSearch)
+    private ResultWrapper search(String query, SearchClass searchClass, String type, int maximumResultSize, int firstResult, boolean paginatedSearch)
             throws IntactException {
 
         // first check if we got a type, we have to search for a type if the type is not null
@@ -461,7 +467,6 @@ public class SearchHelper implements SearchHelperI {
         // split the query
         Collection<String> someSearchValues = this.splitQuery(sqlValue);
         String[] values = someSearchValues.toArray(new String[someSearchValues.size()]);
-
 
         SearchItemDao searchItemDao = DaoFactory.getSearchItemDao();
 
@@ -491,22 +496,27 @@ public class SearchHelper implements SearchHelperI {
             return new ResultWrapper(count, maximumResultSize, resultInfo);
         }
 
-        // we got an result, and it's in the limit, so now we need the ac's
-        Map<String,String> acResults = searchItemDao.getDistinctAc(values, objClass, type, firstResult, maximumResultSize);
-
         // get the result from the resultset and query the objects using its AC and
         // put the data in a ResultWrapper
         List<AnnotatedObject> searchResult = new ArrayList<AnnotatedObject>();
 
-        for (Map.Entry<String,String> entry : acResults.entrySet())
+        // We get all the possible classes and do a query to retrieve the distinct ACs for each class
+        for (String className : resultInfo.keySet())
         {
+            // the query is paginated, so if there is more than a certain number of results, pagination will appear
+            List<String> acList = searchItemDao.getDistinctAc(values, className, type, firstResult, maximumResultSize);
+            String[] acs = acList.toArray(new String[acList.size()]);
+
+            Class<AnnotatedObject> clazzToSearch = null;
             try
             {
-                String ac = entry.getKey();
-                Class<? extends AnnotatedObject> clazz = (Class<? extends AnnotatedObject>) Class.forName(entry.getValue());
+                clazzToSearch = (Class<AnnotatedObject>) Class.forName(className);
 
-                AnnotatedObject annObject = DaoFactory.getAnnotatedObjectDao(clazz).getByAc(ac);
-                searchResult.add(annObject);
+                // we perform a query for all the ACs. This kind of query is limited in oracle to 1000 items,
+                // far from our situation now, so no problem
+                List<AnnotatedObject> res = DaoFactory.getAnnotatedObjectDao(clazzToSearch).getByAc(acs);
+
+                searchResult.addAll(res);
             }
             catch (ClassNotFoundException e)
             {
@@ -536,8 +546,8 @@ public class SearchHelper implements SearchHelperI {
         logger.info("search Interactor");
 
         // getting all results for proteins and interactions
-        ResultWrapper proteins = this.search(searchValue, SearchClass.PROTEIN, type, helper, numberOfResults, firstResult, paginatedSearch);
-        ResultWrapper interactions = this.search(searchValue, SearchClass.INTERACTION, type, helper, numberOfResults, firstResult, paginatedSearch);
+        ResultWrapper proteins = this.search(searchValue, SearchClass.PROTEIN, type,  numberOfResults, firstResult, paginatedSearch);
+        ResultWrapper interactions = this.search(searchValue, SearchClass.INTERACTION, type, numberOfResults, firstResult, paginatedSearch);
 
         // now check whats going on with the results and calculate the summ of both
         if (proteins.isTooLarge() || interactions.isTooLarge()) {
@@ -601,7 +611,7 @@ public class SearchHelper implements SearchHelperI {
             return this.getInteractors(query, type, helper, numberOfResults, firstResult, paginatedSearch);
         }
         else {
-            return this.search(query, searchClass, type, helper, numberOfResults, firstResult, paginatedSearch);
+            return this.search(query, searchClass, type, numberOfResults, firstResult, paginatedSearch);
         }
     }
 

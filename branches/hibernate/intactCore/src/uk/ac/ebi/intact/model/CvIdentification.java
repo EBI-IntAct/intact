@@ -36,7 +36,7 @@ public class CvIdentification extends CvDagObject {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private CvIdentification() {
+    public CvIdentification() {
         //super call sets creation time data
         super();
     }

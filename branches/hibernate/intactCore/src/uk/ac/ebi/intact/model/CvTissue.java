@@ -33,7 +33,7 @@ public class CvTissue extends CvObject implements Editable {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private CvTissue() {
+    public CvTissue() {
         //super call sets creation time data
         super();
     }

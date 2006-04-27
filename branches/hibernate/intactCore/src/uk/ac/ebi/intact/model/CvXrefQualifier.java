@@ -70,7 +70,7 @@ public class CvXrefQualifier extends CvObject implements Editable {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private CvXrefQualifier() {
+    public CvXrefQualifier() {
         //super call sets creation time data
         super();
     }

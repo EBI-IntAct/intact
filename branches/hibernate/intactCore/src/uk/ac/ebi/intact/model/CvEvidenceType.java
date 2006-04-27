@@ -33,7 +33,7 @@ public class CvEvidenceType extends CvObject {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private CvEvidenceType() {
+    public CvEvidenceType() {
         //super call sets creation time data
         super();
     }

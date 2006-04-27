@@ -33,7 +33,7 @@ public class CvJournal extends CvObject {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private CvJournal() {
+    public CvJournal() {
         //super call sets creation time data
         super();
     }

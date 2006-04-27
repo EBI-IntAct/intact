@@ -155,6 +155,10 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
         this.annotations = someAnnotation;
     }
 
+    /**
+     * This property must be overriden so it can have proper mappings
+     * @return
+     */
     @Transient
     public Collection<Annotation> getAnnotations() {
         return annotations;
@@ -230,7 +234,8 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
         this.aliases = someAliases;
     }
 
-    @Transient
+    @OneToMany
+    @JoinColumn (name = "parent_ac", referencedColumnName = "ac")
     public Collection<Alias> getAliases() {
         return aliases;
     }

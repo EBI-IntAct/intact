@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.FetchType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -79,7 +80,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private InteractionImpl() {
+    public InteractionImpl() {
         //super call sets creation time data
         super();
     }
@@ -264,7 +265,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         this.components = someComponent;
     }
 
-    @OneToMany
+    @OneToMany(mappedBy = "interaction")
     public Collection<Component> getComponents() {
         return components;
     }
@@ -332,7 +333,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         if( removed ) experiment.removeInteraction( this );
     }
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "interactiontype_ac")
     public CvInteractionType getCvInteractionType() {
         return cvInteractionType;
@@ -458,7 +459,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
             Component copyComp = (Component) comp.clone();
             // Set the interactor as the current cloned interactions.
             copyComp.setInteractionForClone(copy);
-            copyComp.setInteractorForClone((Interactor) comp.getInteractor());
+            copyComp.setInteractorForClone(comp.getInteractor());
             copy.components.add(copyComp);
         }
         return copy;

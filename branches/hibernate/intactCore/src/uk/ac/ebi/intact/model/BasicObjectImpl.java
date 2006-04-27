@@ -43,7 +43,7 @@ public abstract class BasicObjectImpl extends IntactObjectImpl implements BasicO
     /**
      * Protected constructor for use by subclasses
      */
-    protected BasicObjectImpl() {
+    public BasicObjectImpl() {
         super();
     }
 
@@ -74,7 +74,7 @@ public abstract class BasicObjectImpl extends IntactObjectImpl implements BasicO
         this.evidences.remove( evidence );
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="owner_ac", nullable = false)
     @NotNull    
     public Institution getOwner() {

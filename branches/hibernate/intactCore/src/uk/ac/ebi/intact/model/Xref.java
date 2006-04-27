@@ -12,6 +12,7 @@ import javax.persistence.Column;
 import javax.persistence.Transient;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.FetchType;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -90,7 +91,7 @@ public class Xref extends BasicObjectImpl {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private Xref() {
+    public Xref() {
         //super call sets creation time data
         super();
     }
@@ -201,7 +202,7 @@ public class Xref extends BasicObjectImpl {
 
     ///////////////////////////////////////
     // access methods for associations
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "qualifier_ac")
     public CvXrefQualifier getCvXrefQualifier() {
         return cvXrefQualifier;
@@ -211,7 +212,7 @@ public class Xref extends BasicObjectImpl {
         this.cvXrefQualifier = cvXrefQualifier;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "database_ac")
     public CvDatabase getCvDatabase() {
         return cvDatabase;

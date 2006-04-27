@@ -60,7 +60,7 @@ public class Reference extends BasicObjectImpl {
      * the general rule as this is the only concrete class which itself is already
      * subclassed.
      */
-    protected Reference() {
+    public Reference() {
         super();
     }
 

@@ -27,7 +27,7 @@ public class CvCellCycle extends CvObject {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private CvCellCycle() {
+    public CvCellCycle() {
         //super call sets creation time data
         super();
     }

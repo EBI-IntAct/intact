@@ -10,6 +10,7 @@ import javax.persistence.Table;
 import javax.persistence.Column;
 import javax.persistence.ManyToOne;
 import javax.persistence.JoinColumn;
+import javax.persistence.FetchType;
 
 /**
  * An alternative name for the object.
@@ -23,7 +24,7 @@ import javax.persistence.JoinColumn;
  * @see uk.ac.ebi.intact.model.CvAliasType
  */
 @Entity
-@Table(name = "IA_ALIAS")
+@Table(name = "ia_alias")
 public class Alias extends BasicObjectImpl {
 
     private static final int MAX_ALIAS_NAME_LEN = 30;
@@ -58,7 +59,7 @@ public class Alias extends BasicObjectImpl {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private Alias() {
+    public Alias() {
         super();
     }
 
@@ -118,7 +119,7 @@ public class Alias extends BasicObjectImpl {
     ///////////////////////////////////////
     // access methods for associations
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "aliastype_ac")
     public CvAliasType getCvAliasType() {
         return cvAliasType;

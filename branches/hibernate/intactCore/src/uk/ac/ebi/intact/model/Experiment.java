@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.ManyToOne;
 import javax.persistence.Column;
+import javax.persistence.FetchType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -85,7 +86,7 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private Experiment() {
+    public Experiment() {
         //super call sets creation time data
         super();
     }
@@ -171,7 +172,7 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
         if( removed ) interaction.removeExperiment( this );
     }
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "relatedexperiment_ac", referencedColumnName = "ac")
     public Experiment getRelatedExperiment() {
         return relatedExperiment;
@@ -181,8 +182,8 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
         this.relatedExperiment = experiment;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "indentmethod_ac")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "identmethod_ac")
     public CvIdentification getCvIdentification() {
         return cvIdentification;
     }
@@ -191,7 +192,7 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
         this.cvIdentification = cvIdentification;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "detectmethod_ac")
     public CvInteraction getCvInteraction() {
         return cvInteraction;
@@ -201,7 +202,7 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
         this.cvInteraction = cvInteraction;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "biosource_ac")
     public BioSource getBioSource() {
         return bioSource;
@@ -258,7 +259,7 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
 
     @ManyToMany
     @JoinTable(
-        name="IA_EXP2ANNOT",
+        name="ia_exp2annot",
         joinColumns={@JoinColumn(name="experiment_ac")},
         inverseJoinColumns={@JoinColumn(name="annotation_ac")}
     )

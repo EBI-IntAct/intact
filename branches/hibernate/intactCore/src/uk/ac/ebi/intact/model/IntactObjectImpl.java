@@ -52,7 +52,7 @@ public abstract class IntactObjectImpl implements IntactObject, Serializable,
     /**
      * Protected constructor for use by subclasses - used to set the creation data for instances
      */
-    protected IntactObjectImpl() {
+    public IntactObjectImpl() {
         ojbConcreteClass = this.getClass().getName();
     }
 

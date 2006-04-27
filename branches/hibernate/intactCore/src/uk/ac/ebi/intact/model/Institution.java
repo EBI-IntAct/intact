@@ -56,7 +56,7 @@ public class Institution extends IntactObjectImpl implements Serializable {
      *
      * @deprecated Use the full constructor instead
      */
-    private Institution() {
+    public Institution() {
         super();
     }
 

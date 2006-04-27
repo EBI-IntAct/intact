@@ -65,7 +65,7 @@ to identify the source page of the request to the Action classes.
 
     //The List of view beans used to provide the data for this JSP. This is in fact
     //a List of sublists, partitioned by result type.
-    List partitionList = (List)request.getAttribute(SearchConstants.VIEW_BEAN_LIST);
+    List<List<SimpleViewBean>> partitionList = (List<List<SimpleViewBean>>)request.getAttribute(SearchConstants.VIEW_BEAN_LIST);
 
     //get the maximum size beans from the context for later use
     Map sizeMap = (Map)session.getServletContext().getAttribute(SearchConstants.MAX_ITEMS_MAP);
@@ -133,12 +133,12 @@ table.....
 partitioned list to do this --%>
 
 <%
-    List displayList = null;     //use this as each iteration holder
-    for(Iterator it1 = partitionList.iterator(); it1.hasNext();) {
-        displayList = (List)it1.next();
+    List<SimpleViewBean> displayList = null;     //use this as each iteration holder
+    for(Iterator<List<SimpleViewBean>> it1 = partitionList.iterator(); it1.hasNext();) {
+        displayList = it1.next();
 
-        //need a handle on this to write out some header info and typecheck...
-        SimpleViewBean firstItem = (SimpleViewBean)displayList.iterator().next();
+    //need a handle on this to write out some header info and typecheck...
+    SimpleViewBean firstItem = displayList.iterator().next();
 %>
 
 <%-- If we get to here we know we have something to show, so we need a button bar...
@@ -245,10 +245,10 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
         //Each table is roughly the same format - but for eg Experiments and Interactions
         //we display some extra info. Simplest way is to iterate through a List, swapping
         //the List over after each partitioned List has been processed.
-        for(Iterator it = displayList.iterator(); it.hasNext();) {
+        for(Iterator<SimpleViewBean> it = displayList.iterator(); it.hasNext();) {
 
             //know it is the correct type by the time we get here
-            SimpleViewBean bean = (SimpleViewBean)it.next();
+            SimpleViewBean bean = it.next();
 
             //set up the searchURL - this is different depending upon the display type,
             //so for Experiments and Interactions this should link to 'detail-blue',
@@ -409,7 +409,7 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
 
     </tbody>
 
-</table>
+</table> <br>
 
 <%
 

@@ -31,7 +31,7 @@ public abstract class CvObject extends AnnotatedObjectImpl {
     /**
      * no-arg constructor provided for compatibility with subclasses that have no-arg constructors.
      */
-    protected CvObject() {
+    public CvObject() {
         //super call sets creation time data
         super();
     }
@@ -53,7 +53,7 @@ public abstract class CvObject extends AnnotatedObjectImpl {
 
     @ManyToMany
     @JoinTable(
-        name="IA_CVOBJECT2ANNOT",
+        name="ia_cvobject2annot",
         joinColumns={@JoinColumn(name="cvobject_ac")},
         inverseJoinColumns={@JoinColumn(name="annotation_ac")}
     )

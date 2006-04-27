@@ -53,7 +53,7 @@ public class IntactAnnotator
 
             // Get the list of the files contained in the package
             for (String file : directory.list()) {
-                Class clazz = getAnnotatedClass(file);
+                Class clazz = getAnnotatedClass(packageName+"/"+file);
 
                 if (clazz != null)
                 {

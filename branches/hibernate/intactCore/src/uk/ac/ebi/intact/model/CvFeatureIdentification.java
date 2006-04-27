@@ -33,7 +33,7 @@ public class CvFeatureIdentification extends CvDagObject {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private CvFeatureIdentification() {
+    public CvFeatureIdentification() {
         //super call sets creation time data
         super();
     }

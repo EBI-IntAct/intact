@@ -34,7 +34,7 @@ public class CvModificationType extends CvObject {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private CvModificationType() {
+    public CvModificationType() {
         //super call sets creation time data
         super();
     }

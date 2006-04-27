@@ -15,7 +15,7 @@ import java.util.Collection;
  * @version $id$
  */
 @Entity
-@Table(name = "IA_BIOSOURCE")
+@Table(name = "ia_biosource")
 @AssociationOverride(name = "annotations",
                      joinColumns = {@JoinColumn(name="annotation_ac")} )
 public class BioSource extends AnnotatedObjectImpl implements Editable {
@@ -72,7 +72,7 @@ public class BioSource extends AnnotatedObjectImpl implements Editable {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private BioSource() {
+    public BioSource() {
         //super call sets creation time data
         super();
     }
@@ -102,7 +102,7 @@ public class BioSource extends AnnotatedObjectImpl implements Editable {
 
     @ManyToMany
     @JoinTable(
-        name="IA_BIOSOURCE2ANNOT",
+        name="ia_biosource2annot",
         joinColumns={@JoinColumn(name="biosource_ac")},
         inverseJoinColumns={@JoinColumn(name="annotation_ac")}
     )
@@ -153,7 +153,7 @@ public class BioSource extends AnnotatedObjectImpl implements Editable {
         this.cvDevelopmentalStage = cvDevelopmentalStage;
     }
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "tissue_ac")
     public CvTissue getCvTissue() {
         return cvTissue;
@@ -163,7 +163,7 @@ public class BioSource extends AnnotatedObjectImpl implements Editable {
         this.cvTissue = cvTissue;
     }
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "celltype_ac")
     public CvCellType getCvCellType() {
         return cvCellType;

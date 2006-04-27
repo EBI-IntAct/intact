@@ -74,7 +74,7 @@ public class MainDetailViewBean extends AbstractViewBean {
      * Holds a list of Annotations that may be publicly displayed, ie a filtered list removing those to be excluded
      * (currently rrmakrs and uiprot exports)
      */
-    private Collection annotationsForDisplay = new ArrayList();
+    private Collection<Annotation> annotationsForDisplay = new ArrayList<Annotation>();
 
     /**
      * Map of retrieved DB URLs already retrieved from the DB. This is basically a cache to avoid recomputation every
@@ -87,7 +87,7 @@ public class MainDetailViewBean extends AbstractViewBean {
      * Interactions this is a sublist that is dynamically changed upon different user requests. This is marked as
      * transient because it seems that the java subList is not serializable.
      */
-    private transient Collection interactionList = new ArrayList();
+    private transient Collection<Interaction> interactionList = new ArrayList<Interaction>();
 
     /**
      * This is only defined for 'Interaction context' views and holds the Interaction that is to be viewed in the
@@ -214,8 +214,9 @@ public class MainDetailViewBean extends AbstractViewBean {
      * Adds the shortLabel of the AnnotatedObject to an internal list used later for highlighting in a display. NOT SURE
      * IF WE STILL NEED THIS!!
      */
+    @Override
     public void initHighlightMap() {
-        Set set = new HashSet( 1 );
+        Set<String> set = new HashSet<String>( 1 );
         set.add( obj.getShortLabel() );
         setHighlightMap( set );
     }
@@ -223,6 +224,7 @@ public class MainDetailViewBean extends AbstractViewBean {
     /**
      * Returns the help section. Needs to be reviewed.
      */
+    @Override
     public String getHelpSection() {
         return "protein.single.view";
     }
@@ -333,16 +335,16 @@ public class MainDetailViewBean extends AbstractViewBean {
      *
      * @return Collection the list of Annotation objects for the wrapped instance.
      */
-    public Collection getFilteredAnnotations() {
+    public Collection<Annotation> getFilteredAnnotations() {
 
         if ( annotationsForDisplay.isEmpty() ) {
             //set on first call
-            for ( Iterator it = obj.getAnnotations().iterator(); it.hasNext(); ) {
-                Annotation annotation = (Annotation) it.next();
-
+            for (Annotation annotation : obj.getAnnotations())
+            {
                 //run through the filter
-                if ( false == AnnotationFilter.getInstance().isFilteredOut( annotation ) ) {
-                    annotationsForDisplay.add( annotation );
+                if (!AnnotationFilter.getInstance().isFilteredOut(annotation))
+                {
+                    annotationsForDisplay.add(annotation);
                 }
             }
         }
@@ -356,16 +358,16 @@ public class MainDetailViewBean extends AbstractViewBean {
      *
      * @return Collection the filtered List of Annotations (empty if there are none)
      */
-    public Collection getFilteredAnnotations( Interaction interaction ) {
+    public Collection<Annotation> getFilteredAnnotations( Interaction interaction ) {
 
-        Collection filteredAnnots = new ArrayList();
+        Collection<Annotation> filteredAnnots = new ArrayList<Annotation>();
 
-        for ( Iterator it = interaction.getAnnotations().iterator(); it.hasNext(); ) {
-            Annotation annotation = (Annotation) it.next();
-
+        for (Annotation annotation : interaction.getAnnotations())
+        {
             //run through the filter
-            if ( false == AnnotationFilter.getInstance().isFilteredOut( annotation ) ) {
-                filteredAnnots.add( annotation );
+            if (!AnnotationFilter.getInstance().isFilteredOut(annotation))
+            {
+                filteredAnnots.add(annotation);
             }
         }
 
@@ -380,13 +382,14 @@ public class MainDetailViewBean extends AbstractViewBean {
      *
      * @return Collection a list of the 'comment' Annotations, or empty if there are none.
      */
-    public Collection getComments( Collection annots ) {
+    public Collection<Annotation> getComments( Collection<Annotation> annots ) {
 
-        Collection comments = new ArrayList();
-        for ( Iterator it = annots.iterator(); it.hasNext(); ) {
-            Annotation annot = (Annotation) it.next();
-            if ( annot.getCvTopic().getShortLabel().equals( "comment" ) ) {
-                comments.add( annot );
+        Collection<Annotation> comments = new ArrayList<Annotation>();
+        for (Annotation annot : annots)
+        {
+            if (annot.getCvTopic().getShortLabel().equals("comment"))
+            {
+                comments.add(annot);
             }
         }
         return comments;
@@ -398,7 +401,7 @@ public class MainDetailViewBean extends AbstractViewBean {
      *
      * @return Collection the list of xrefs for the wrapped object.
      */
-    public Collection getXrefs() {
+    public Collection<Xref> getXrefs() {
         return obj.getXrefs();
     }
 
@@ -450,9 +453,9 @@ public class MainDetailViewBean extends AbstractViewBean {
      *
      * @return Collection a list of Interactions - either all of them or a chunk (of pre-defined size).
      */
-    public Collection getInteractions() {
+    public Collection<Interaction> getInteractions() {
 
-        Collection result = new ArrayList();
+        Collection<Interaction> result = new ArrayList<Interaction>();
         //first check for an 'Interaction context' view - if so then return that one only
         if ( isInteractionView() ) {
             result.add( wrappedInteraction );
@@ -494,10 +497,10 @@ public class MainDetailViewBean extends AbstractViewBean {
 
         //'fromIndex' inclusive, 'toIndex' exclusive for subList method!
         if ( List.class.isAssignableFrom( obj.getInteractions().getClass() ) ) {
-            interactionList = ( (List) obj.getInteractions() ).subList( fromIndex, toIndex );
+            interactionList = ( (List<Interaction>) obj.getInteractions() ).subList( fromIndex, toIndex );
         } else {
             // copy the collection in a List
-            List tmpList = new ArrayList( obj.getInteractions() );
+            List<Interaction> tmpList = new ArrayList<Interaction>( obj.getInteractions() );
             interactionList = tmpList.subList( fromIndex, toIndex );
         }
 
@@ -520,37 +523,38 @@ public class MainDetailViewBean extends AbstractViewBean {
      *
      * @return Collection a List of FeatureViewBeans providing a view on each linked Feature of the Interaction.
      */
-    public Collection getLinkedFeatures( Interaction interaction ) {
+    public Collection<FeatureViewBean> getLinkedFeatures( Interaction interaction ) {
 
         //TODO: needs refactoring - perhaps cache some beans for Interactions done...
-        Collection linkedFeatures = new ArrayList();
+        Collection<FeatureViewBean> linkedFeatures = new ArrayList<FeatureViewBean>();
 
         // while we populate the collection of feature to display, we keep track of those are are already going to
         // be display. eg. F1 interacts with F2, when F2 comes again, we don't create a bean for it.
-        Collection seen = new ArrayList();
+        Collection<Feature> seen = new ArrayList<Feature>();
 
         //Go through the Features and for each linked one, build a view bean and save it...
         //NB The Feature beans are held inside Collections within each Component of the
         //Interaction - they are called 'binding domains'...
-        Collection components = interaction.getComponents();
+        Collection<Component> components = interaction.getComponents();
 
-        for ( Iterator it = components.iterator(); it.hasNext(); ) {
-            Component component = (Component) it.next();
+        for (Component component : components)
+        {
+            Collection<Feature> features = component.getBindingDomains();
 
-            Collection features = component.getBindingDomains();
+            for (Feature feature : features)
+            {
+                if (feature.getBoundDomain() != null)
+                {
+                    if (!seen.contains(feature))
+                    {
+                        linkedFeatures.add(new FeatureViewBean(feature, getHelpLink(), searchURL, this.getContextPath()));
 
-            for ( Iterator it1 = features.iterator(); it1.hasNext(); ) {
-                Feature feature = (Feature) it1.next();
+                        seen.add(feature);
 
-                if ( feature.getBoundDomain() != null ) {
-                    if ( false == seen.contains( feature ) ) {
-                        linkedFeatures.add( new FeatureViewBean( feature, getHelpLink(), searchURL, this.getContextPath() ) );
-
-                        seen.add( feature );
-
-                        if ( feature.getBoundDomain().getBoundDomain() == feature ) {
+                        if (feature.getBoundDomain().getBoundDomain() == feature)
+                        {
                             // if the features relate to each other
-                            seen.add( feature.getBoundDomain() );
+                            seen.add(feature.getBoundDomain());
                         }
                     }
                 }
@@ -568,24 +572,24 @@ public class MainDetailViewBean extends AbstractViewBean {
      *
      * @return Collection a List of FeatureViewBeans for the INteraction's unlinked Features.
      */
-    public Collection getSingleFeatures( Interaction interaction ) {
+    public Collection<FeatureViewBean> getSingleFeatures( Interaction interaction ) {
 
         //TODO: Needs refactoring - see above....
-        Collection singleFeatures = new ArrayList();
+        Collection<FeatureViewBean> singleFeatures = new ArrayList<FeatureViewBean>();
         //Go through the Features and for each single one, build a view bean and save it...
         //NB The Feature beans are held inside Collections within each Component of the
         //Interaction - they are called 'binding domains'...
-        Collection components = interaction.getComponents();
+        Collection<Component> components = interaction.getComponents();
 
-        for ( Iterator it = components.iterator(); it.hasNext(); ) {
-            Component component = (Component) it.next();
-            Collection features = component.getBindingDomains();
+        for (Component component : components)
+        {
+            Collection<Feature> features = component.getBindingDomains();
 
-            for ( Iterator it1 = features.iterator(); it1.hasNext(); ) {
-                Feature feature = (Feature) it1.next();
-
-                if ( feature.getBoundDomain() == null ) {
-                    singleFeatures.add( new FeatureViewBean( feature, getHelpLink(), searchURL, this.getContextPath() ) );
+            for (Feature feature : features)
+            {
+                if (feature.getBoundDomain() == null)
+                {
+                    singleFeatures.add(new FeatureViewBean(feature, getHelpLink(), searchURL, this.getContextPath()));
                 }
             }
         } //
@@ -594,24 +598,17 @@ public class MainDetailViewBean extends AbstractViewBean {
     }
 
     private boolean hasPsiReference( final AnnotatedObject ao, final String psiRef ) {
-        for ( Iterator iterator = ao.getXrefs().iterator(); iterator.hasNext(); ) {
-            Xref xref = (Xref) iterator.next();
-
-            if ( CvDatabase.PSI_MI.equals( xref.getCvDatabase().getShortLabel() ) ) {
+        for (Xref xref : ao.getXrefs())
+        {
+            if (CvDatabase.PSI_MI.equals(xref.getCvDatabase().getShortLabel()))
+            {
                 // found a PSI Xref
-                if ( xref.getCvXrefQualifier() != null
-                     &&
-                     CvXrefQualifier.IDENTITY.equals( xref.getCvXrefQualifier().getShortLabel() ) ) {
+                if (xref.getCvXrefQualifier() != null
+                        &&
+                        CvXrefQualifier.IDENTITY.equals(xref.getCvXrefQualifier().getShortLabel()))
+                {
                     // found identity
-                    if ( psiRef.equals( xref.getPrimaryId() ) ) {
-                        // found it.
-                        // System.out.println( "Found PSI identity: " + xref.getPrimaryId() );
-                        return true;
-                    } else {
-                        // we should have only one PSI Reference as Identity, we can stop here
-                        // System.out.println( "Found PSI identity: " + xref.getPrimaryId() );
-                        return false;
-                    }
+                    return psiRef.equals(xref.getPrimaryId());
                 }
             }
         }
@@ -631,31 +628,31 @@ public class MainDetailViewBean extends AbstractViewBean {
         }
 
         // Stack to handle recursive call
-        Stack stack = new Stack();
+        Stack<CvDagObject> stack = new Stack<CvDagObject>();
         stack.push( type );
         while ( ! stack.empty() ) {
-            CvDagObject term = (CvDagObject) stack.pop();
+            CvDagObject term = stack.pop();
 
             if ( hasPsiReference( term, CvFeatureType.EXPERIMENTAL_FEATURE_MI_REF ) ) {
                 return true;
             }
 
             // add all children to the stack
-            for ( Iterator iterator = term.getParents().iterator(); iterator.hasNext(); ) {
-                CvDagObject parent = (CvDagObject) iterator.next();
-                stack.push( parent );
+            for (CvDagObject parent : term.getParents())
+            {
+                stack.push(parent);
             }
         }
 
         return false;
     }
 
-    public Collection getFeaturesSummary( final Interaction interaction ) {
+    public Collection<String> getFeaturesSummary( final Interaction interaction ) {
 
-        Collection lines = new ArrayList( 4 );
+        Collection<String> lines = new ArrayList<String>( 4 );
 
-        Collection linkedFeatures = getLinkedFeatures( interaction );
-        Collection singleFeatures = getSingleFeatures( interaction );
+        Collection<FeatureViewBean> linkedFeatures = getLinkedFeatures( interaction );
+        Collection<FeatureViewBean> singleFeatures = getSingleFeatures( interaction );
 
         int featureCount = linkedFeatures.size() + singleFeatures.size();
 
@@ -682,9 +679,6 @@ public class MainDetailViewBean extends AbstractViewBean {
                 FeatureViewBean firstFeature = (FeatureViewBean) iterator.next();
                 iterator.remove(); // take it out of the collection.
 
-                if ( ! firstItem ) {
-                    firstItem = false;
-                }
                 // display that row
 
                 StringBuffer buffer = null;
