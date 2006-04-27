@@ -7,6 +7,7 @@ package uk.ac.ebi.intact.persistence.dao;
 
 import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 import org.hibernate.Session;
 
@@ -21,11 +22,9 @@ public class DaoFactory
 {
     private DaoFactory(){}
 
-    public static <T extends IntactObject> IntactObjectDao<T> getIntactObjectDao(Class<T> entityType)
+    public static AliasDao getAliasDao()
     {
-        HibernateDao.validateEntity(entityType);
-
-        return new IntactObjectDao<T>(entityType, getCurrentSession());
+        return new AliasDao(getCurrentSession());
     }
 
     public static <T extends AnnotatedObject> AnnotatedObjectDao<T> getAnnotatedObjectDao(Class<T> entityType)
@@ -35,9 +34,21 @@ public class DaoFactory
         return new AnnotatedObjectDao<T>(entityType, getCurrentSession());
     }
 
-    public static AliasDao getAliasDao()
+    public static ExperimentDao getExperimentDao()
     {
-        return new AliasDao(getCurrentSession());
+        return new ExperimentDao(getCurrentSession());
+    }
+
+    public static <T extends IntactObject> IntactObjectDao<T> getIntactObjectDao(Class<T> entityType)
+    {
+        HibernateDao.validateEntity(entityType);
+
+        return new IntactObjectDao<T>(entityType, getCurrentSession());
+    }
+
+    public static InteractorDao getInteractorDao()
+    {
+        return new InteractorDao<Interactor>(Interactor.class, getCurrentSession());
     }
 
     public static SearchItemDao getSearchItemDao()

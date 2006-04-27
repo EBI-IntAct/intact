@@ -26,7 +26,7 @@ public class CvCompartment extends CvObject {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private CvCompartment() {
+    public CvCompartment() {
         //super call sets creation time data
         super();
     }

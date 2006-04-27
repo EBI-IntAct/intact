@@ -101,7 +101,7 @@ public class CvInteractorType extends CvDagObject {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private CvInteractorType() {
+    public CvInteractorType() {
         //super call sets creation time data
         super();
     }

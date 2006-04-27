@@ -46,7 +46,7 @@ public class JournalRef extends Reference {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private JournalRef() {
+    public JournalRef() {
         super();
     }
 

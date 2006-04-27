@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import javax.persistence.ManyToMany;
 import javax.persistence.JoinTable;
+import javax.persistence.FetchType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -71,7 +72,7 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
      * no-arg constructor provided for compatibility with subclasses
      * that have no-arg constructors.
      */
-    protected InteractorImpl() {
+    public InteractorImpl() {
         //super call sets creation time data
         super();
     }
@@ -113,7 +114,7 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
     ///////////////////////////////////////
     //access methods for attributes
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "biosource_ac")
     public BioSource getBioSource() {
         return bioSource;
@@ -132,7 +133,7 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
         this.activeInstances = someActiveInstance;
     }
 
-    @OneToMany
+    @OneToMany (mappedBy = "interactor")
     public Collection<Component> getActiveInstances() {
         return activeInstances;
     }
@@ -174,7 +175,7 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
         interactorType = type;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "interactortype_ac")
     public CvInteractorType getCvInteractorType() {
         return interactorType;
@@ -182,7 +183,7 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
     
     @ManyToMany
     @JoinTable(
-        name="IA_INT2ANNOT",
+        name="ia_int2annot",
         joinColumns={@JoinColumn(name="interactor_ac")},
         inverseJoinColumns={@JoinColumn(name="annotation_ac")}
     )

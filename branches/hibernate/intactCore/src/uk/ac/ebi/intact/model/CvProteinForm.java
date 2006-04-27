@@ -33,7 +33,7 @@ public class CvProteinForm extends CvObject {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private CvProteinForm() {
+    public CvProteinForm() {
         //super call sets creation time data
         super();
     }

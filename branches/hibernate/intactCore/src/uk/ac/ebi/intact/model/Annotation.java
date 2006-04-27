@@ -11,6 +11,7 @@ import javax.persistence.Column;
 import javax.persistence.Transient;
 import javax.persistence.ManyToOne;
 import javax.persistence.JoinColumn;
+import javax.persistence.FetchType;
 
 
 /**
@@ -22,6 +23,16 @@ import javax.persistence.JoinColumn;
 @Entity()
 @Table(name="ia_annotation")
 public class Annotation extends BasicObjectImpl {
+
+    ///////////////////////////////////////
+    //attributes
+
+    //attributes used for mapping BasicObjects - project synchron
+    // TODO: should be move out of the model.
+    private String cvTopicAc;
+
+    // replaced by cvTopicAc conform to synchron specifications
+    private String topicAc;
 
     /**
      * Text describing one aspect of the annotation of
@@ -45,7 +56,7 @@ public class Annotation extends BasicObjectImpl {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private Annotation() {
+    public Annotation() {
         //super call sets creation time data
         super();
     }
@@ -105,7 +116,7 @@ public class Annotation extends BasicObjectImpl {
 
     ///////////////////////////////////////
     // access methods for associations
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "topic_ac")
     public CvTopic getCvTopic() {
         return cvTopic;

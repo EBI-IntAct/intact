@@ -170,7 +170,7 @@ public class Range extends BasicObjectImpl {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private Range() {
+    public Range() {
         super();
     }
 

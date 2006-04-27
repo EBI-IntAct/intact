@@ -5,12 +5,14 @@
  */
 package uk.ac.ebi.intact.model;
 
+import org.hibernate.annotations.Index;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Id;
 
 /**
- * For an item in the ia_search table
+ * For an item in the ia_search table, which is a materialized view
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -18,6 +20,11 @@ import javax.persistence.Id;
  */
 @Entity
 @Table(name = "ia_search")
+@org.hibernate.annotations.Table(appliesTo="ia_search",
+		indexes = {
+				@Index(name="i_ia_search", columnNames={"value", "objclass"} )
+		}
+	)
 public class SearchItem extends IntactObjectImpl
 {
 

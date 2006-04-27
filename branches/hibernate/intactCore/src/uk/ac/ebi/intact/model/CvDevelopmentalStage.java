@@ -36,7 +36,7 @@ public class CvDevelopmentalStage extends CvObject {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private CvDevelopmentalStage() {
+    public CvDevelopmentalStage() {
         //super call sets creation time data
         super();
     }

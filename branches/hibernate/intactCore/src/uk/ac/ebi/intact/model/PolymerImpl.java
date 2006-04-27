@@ -75,7 +75,7 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
      * no-arg constructor provided for compatibility with subclasses
      * that have no-arg constructors.
      */
-    protected PolymerImpl() {
+    public PolymerImpl() {
         //super call sets creation time data
         super();
     }
@@ -304,6 +304,19 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
         final Polymer other = (Polymer) obj;
 
         // TODO do we need to check sequence and CRC64
+        if (crc64 != null) {
+            if (!crc64.equals(other.getCrc64()))
+            {
+                return false;
+            }
+        }
+        else {
+            if (other.getCrc64() != null)
+            {
+                return false;
+            }
+        }
+
         if (getSequence() != null) {
             if (!getSequence().equals(other.getSequence())) {
                 return false;
@@ -315,12 +328,7 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
             }
         }
 
-        if (crc64 != null) {
-            return crc64.equals(other.getCrc64());
-        }
-        else {
-            return other.getCrc64() == null;
-        }
+        return true;
     }
 
     /**

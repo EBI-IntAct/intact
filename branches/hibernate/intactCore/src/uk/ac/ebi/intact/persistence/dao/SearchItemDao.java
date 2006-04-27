@@ -49,7 +49,18 @@ public class SearchItemDao extends IntactObjectDao<SearchItem>
         return results;
     }
 
-    public Map<String, String> getDistinctAc(String[] values, String objClass, String type, int firstResult, int maxResults){
+    public List<String> getDistinctAc(String[] values, String objClass, String type, int firstResult, int maxResults){
+
+         return criteriaByValues(values, objClass, type)
+                                    .setFirstResult(firstResult)
+                                    .setMaxResults(maxResults)
+                                    .setProjection(
+                                        Projections.distinct(Projections.property("ac"))).list();
+
+    }
+
+
+    public Map<String, String> getDistinctAcGroupingByObjClass(String[] values, String objClass, String type, int firstResult, int maxResults){
 
         Map<String,String> results = new HashMap<String,String>();
 

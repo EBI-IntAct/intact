@@ -20,7 +20,7 @@ public class NucleicAcidImpl extends PolymerImpl implements NucleicAcid, Editabl
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private NucleicAcidImpl() {}
+    public NucleicAcidImpl() {}
 
     /**
      * A valid NucleicAcid must have at least an onwer, a biological source, a

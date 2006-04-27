@@ -13,6 +13,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.OneToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.FetchType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -83,7 +84,7 @@ public class Feature extends AnnotatedObjectImpl {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private Feature() {
+    public Feature() {
         super();
     }
 
@@ -118,7 +119,7 @@ public class Feature extends AnnotatedObjectImpl {
 
     //----------------------- public methods ------------------------------
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "featuretype_ac")
     public CvFeatureType getCvFeatureType() {
         return cvFeatureType;
@@ -128,7 +129,7 @@ public class Feature extends AnnotatedObjectImpl {
         this.cvFeatureType = cvFeatureType;
     }
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "component_ac")
     public Component getComponent() {
         return component;
@@ -158,7 +159,7 @@ public class Feature extends AnnotatedObjectImpl {
      * @return The Feature that the current Feature binds, or null if no such
      * Feature exists.
      */
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "linkedfeature_ac", referencedColumnName = "ac")
     public Feature getBoundDomain() {
         return binds;
@@ -198,7 +199,7 @@ public class Feature extends AnnotatedObjectImpl {
         this.ranges.remove(range);
     }
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "identification_ac")
     public CvFeatureIdentification getCvFeatureIdentification() {
         return cvFeatureIdentification;

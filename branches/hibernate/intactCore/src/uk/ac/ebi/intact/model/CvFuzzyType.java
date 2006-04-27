@@ -195,7 +195,7 @@ public class CvFuzzyType extends CvObject implements Editable {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private CvFuzzyType() {
+    public CvFuzzyType() {
         //super call sets creation time data
         super();
     }
