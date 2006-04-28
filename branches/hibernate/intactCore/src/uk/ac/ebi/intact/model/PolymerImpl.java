@@ -257,12 +257,12 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
     @OneToMany
     @JoinTable(
             name="ia_sequence_chunk",
-            joinColumns = { @JoinColumn( name="ac") },
-            inverseJoinColumns = @JoinColumn( name="parent_ac")
+            joinColumns = { @JoinColumn( name="parent_ac") },
+            inverseJoinColumns = @JoinColumn( name="ac")
     )
     @OrderBy (value = "sequence_index")
     public List<SequenceChunk> getSequenceChunks() {
-        return Collections.unmodifiableList(sequenceChunks);
+        return sequenceChunks;
     }
 
     public void setSequenceChunks(List<SequenceChunk> sequenceChunks)
