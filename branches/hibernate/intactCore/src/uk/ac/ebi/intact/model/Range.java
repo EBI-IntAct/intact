@@ -5,12 +5,16 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import org.hibernate.annotations.Type;
+import org.hibernate.type.BooleanType;
+import org.hibernate.type.YesNoType;
+
 import javax.persistence.Column;
-import javax.persistence.ManyToOne;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 /**
  * <p/>
@@ -85,7 +89,7 @@ public class Range extends BasicObjectImpl {
      * TODO Comments This is really a boolean but we need to use a character for it because Oracle does not support
      * boolean types NB JDBC spec has no JDBC type for char, only Strings!
      */
-    private String undetermined = "N";
+    private boolean undetermined = false;
 
     /**
      * <p/>
@@ -96,7 +100,7 @@ public class Range extends BasicObjectImpl {
      * This is really a boolena but we need to use a character for it because Oracle does not support boolean types NB
      * JDBC spec has no JDBC type for char, only Strings!
      */
-    private String link = "N";
+    private boolean link = true;
 
     /**
      * Only needed by OJB to get a handle to an inverse FK from Feature
@@ -273,8 +277,9 @@ public class Range extends BasicObjectImpl {
         toIntervalEnd = posTo;
     }
 
+    @Type(type = "yes_no")
     public boolean isUndetermined() {
-        return charToBoolean( undetermined );
+        return undetermined ;
     }
 
     /**
@@ -283,29 +288,30 @@ public class Range extends BasicObjectImpl {
     public void setUndetermined() {
         // Set only when we have fuzzy types.
         if ( ( fromCvFuzzyType != null ) && ( toCvFuzzyType != null ) ) {
-            undetermined = booleanToChar( fromCvFuzzyType.getShortLabel().equals(
+            undetermined = fromCvFuzzyType.getShortLabel().equals(
                     CvFuzzyType.UNDETERMINED ) && toCvFuzzyType.getShortLabel().equals(
-                    CvFuzzyType.UNDETERMINED ) );
+                    CvFuzzyType.UNDETERMINED ) ;
         } else {
-            undetermined = booleanToChar( false );
+            undetermined = false ;
         }
     }
 
-    public void setUndetermined(String undetermined)
+    public void setUndetermined(boolean undetermined)
     {
         this.undetermined = undetermined;
     }
 
     @Column(name = "link")
+    @Type(type = "yes_no")
     public boolean isLinked() {
-        return charToBoolean( link );
+        return  link ;
     }
 
     public void setLinked( boolean isLinked ) {
-        link = booleanToChar( isLinked );
+        link = isLinked ;
     }
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "fromfuzzytype_ac")
     public CvFuzzyType getFromCvFuzzyType() {
         return fromCvFuzzyType;
@@ -321,7 +327,7 @@ public class Range extends BasicObjectImpl {
         fromCvFuzzyType = type;
     }
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "tofuzzytype_ac")
     public CvFuzzyType getToCvFuzzyType() {
         return toCvFuzzyType;

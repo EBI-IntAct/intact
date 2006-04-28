@@ -799,8 +799,8 @@ public class MainDetailViewBean extends AbstractViewBean {
 
                         buffer.append( SPACE ).append( "(" );
 
-                        for ( Iterator iter1 = firstFeature.getFeatureXrefs().iterator(); iter1.hasNext(); ) {
-                            Xref xref = (Xref) iter1.next();
+                        for ( Iterator<Xref> iter1 = firstFeature.getFeatureXrefs().iterator(); iter1.hasNext(); ) {
+                            Xref xref = iter1.next();
 
                             buffer.append( "<a href=\"" ).append( firstFeature.getPrimaryIdURL( xref ) ).append( "\">" );
                             buffer.append( xref.getPrimaryId() ).append( "</a>" );
@@ -920,18 +920,18 @@ public class MainDetailViewBean extends AbstractViewBean {
      * @return Collection a Set of Gene Names as Strings, empty if none found
      */
 //    public Collection getGeneNames( Protein protein ) {  //1 usage in detail.jsp
-    public Collection getGeneNames( Interactor interactor ) {  //1 usage in detail.jsp
+    public Collection<String> getGeneNames( Interactor interactor ) {  //1 usage in detail.jsp
 
-        Collection geneNames = new HashSet();
-//geneNames = new StringBuffer();
-//the gene names are obtained from the Aliases for the Protein
-//which are of type 'gene name'...
-        Collection aliases = interactor.getAliases();
-        for ( Iterator it = aliases.iterator(); it.hasNext(); ) {
-            Alias alias = (Alias) it.next();
-
-            if ( geneNameFilter.contains( alias.getCvAliasType().getShortLabel() ) ) {
-                geneNames.add( alias.getName() );
+        Collection<String> geneNames = new HashSet<String>();
+        //geneNames = new StringBuffer();
+        //the gene names are obtained from the Aliases for the Protein
+        //which are of type 'gene name'...
+        Collection<Alias> aliases = interactor.getAliases();
+        for (Alias alias : aliases)
+        {
+            if (geneNameFilter.contains(alias.getCvAliasType().getShortLabel()))
+            {
+                geneNames.add(alias.getName());
             }
         }
         //now strip off trailing comma - if there are any names....

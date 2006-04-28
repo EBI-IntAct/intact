@@ -141,6 +141,7 @@ public class Feature extends AnnotatedObjectImpl {
      * @param component The component relevant to this Feature
      */
     public void setComponent(Component component) {
+        /*
         if (this.component != component) {
             if (this.component != null)
             {
@@ -152,6 +153,8 @@ public class Feature extends AnnotatedObjectImpl {
                 component.addBindingDomain(this);
             }
         }
+        */
+        this.component = component;
     }
     /**
      * Provides access to the other Feature to which the current Feature object
@@ -173,7 +176,7 @@ public class Feature extends AnnotatedObjectImpl {
      * Provides the List of Range objects related to  a Feature instance.
      * @return A List of Ranges (expected to be non-empty)
      */
-    @OneToMany
+    @OneToMany (mappedBy = "feature")
     public Collection<Range> getRanges() {
         return ranges;
     }
