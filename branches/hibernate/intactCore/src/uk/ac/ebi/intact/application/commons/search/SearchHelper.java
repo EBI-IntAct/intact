@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.model.Alias;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.persistence.ObjectBridgeQueryFactory;
 import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
@@ -33,6 +34,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.Set;
 
 /**
  * Performs an intelligent search on the intact database.
@@ -472,11 +474,23 @@ public class SearchHelper implements SearchHelperI {
 
         //  type and objClass have to be null if they are not to be used in the query
         if (!hasType) type = null;
-        String objClass = (searchClass.isSpecified())? searchClass.getMappedClass().getName() : null;
 
-        logger.info("Executing count query - type: " + type+" objClass: "+objClass);
+        logger.info("Executing count query - type: " + type+" objClass: "+searchClass.getMappedClass());
 
-        Map<String,Integer> resultInfo = searchItemDao.countGroupsByValuesLike(values, objClass, type);
+        // We create the array of classes to use in the query for the IA_SEARCH table
+        // If it is a unspecific CvObject, we need to subclass for all the CvObject subclasses
+        String[] objClasses = null;
+
+        if (searchClass == SearchClass.CV_OBJECT) {
+            objClasses = SearchClass.cvObjectClassesAsStringArray();
+        }
+        else if (searchClass.isSpecified())
+        {
+            objClasses = new String[] { searchClass.getMappedClass().getName()};
+        }
+
+
+        Map<String,Integer> resultInfo = searchItemDao.countGroupsByValuesLike(values, objClasses, type);
 
         // count the results, iterating the groups and adding each subtotal
         int count = 0;
@@ -500,28 +514,52 @@ public class SearchHelper implements SearchHelperI {
         // put the data in a ResultWrapper
         List<AnnotatedObject> searchResult = new ArrayList<AnnotatedObject>();
 
-        // We get all the possible classes and do a query to retrieve the distinct ACs for each class
+        boolean searchedForCvObject = false;
+
         for (String className : resultInfo.keySet())
         {
-            // the query is paginated, so if there is more than a certain number of results, pagination will appear
-            List<String> acList = searchItemDao.getDistinctAc(values, className, type, firstResult, maximumResultSize);
-            String[] acs = acList.toArray(new String[acList.size()]);
 
-            Class<AnnotatedObject> clazzToSearch = null;
+            String[] classesToSearch = new String[] { className };
+
+            // we determine the class to use in the search
+            Class<? extends AnnotatedObject> clazzToSearch = null;
             try
             {
-                clazzToSearch = (Class<AnnotatedObject>) Class.forName(className);
-
-                // we perform a query for all the ACs. This kind of query is limited in oracle to 1000 items,
-                // far from our situation now, so no problem
-                List<AnnotatedObject> res = DaoFactory.getAnnotatedObjectDao(clazzToSearch).getByAc(acs);
-
-                searchResult.addAll(res);
+                clazzToSearch = (Class<? extends AnnotatedObject>) Class.forName(className);
             }
-            catch (ClassNotFoundException e)
+            catch (Exception e)
             {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
+
+            // if we have many different subclasses of CvObject to search, it is better to do only
+            // one search for all the cvObjects. If this query has been already done in the iteration
+            // it is not done again
+            if (CvObject.class.isAssignableFrom(clazzToSearch))
+            {
+                clazzToSearch = CvObject.class;
+                classesToSearch = SearchClass.cvObjectClassesAsStringArray();
+
+                if (searchedForCvObject)
+                {
+                    continue;
+                }
+                else
+                {
+                    searchedForCvObject = true;
+                }
+            }
+
+            // the query is paginated, so if there is more than a certain number of results, pagination will appear
+            List<String> acList = searchItemDao.getDistinctAc(values, classesToSearch, type, firstResult, maximumResultSize);
+            String[] acs = acList.toArray(new String[acList.size()]);
+
+            // we perform a query for all the ACs. This kind of query is limited in oracle to 1000 items,
+            // far from our situation now, so no problem
+            List<? extends AnnotatedObject> res = DaoFactory.getAnnotatedObjectDao(clazzToSearch).getByAc(acs);
+
+            searchResult.addAll(res);
+
         }
 
         return new ResultWrapper(searchResult, maximumResultSize, resultInfo, count);

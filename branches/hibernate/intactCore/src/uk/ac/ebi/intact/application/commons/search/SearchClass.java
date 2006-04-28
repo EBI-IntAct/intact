@@ -12,6 +12,24 @@ import uk.ac.ebi.intact.model.InteractorImpl;
 import uk.ac.ebi.intact.model.InteractionImpl;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.CvXrefQualifier;
+import uk.ac.ebi.intact.model.CvAliasType;
+import uk.ac.ebi.intact.model.CvFeatureIdentification;
+import uk.ac.ebi.intact.model.CvCellType;
+import uk.ac.ebi.intact.model.CvInteractionType;
+import uk.ac.ebi.intact.model.CvFuzzyType;
+import uk.ac.ebi.intact.model.CvTopic;
+import uk.ac.ebi.intact.model.CvIdentification;
+import uk.ac.ebi.intact.model.CvInteractorType;
+import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.CvTissue;
+import uk.ac.ebi.intact.model.CvComponentRole;
+import uk.ac.ebi.intact.model.CvInteraction;
+import uk.ac.ebi.intact.model.CvFeatureType;
+
+import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Enumeration used to map between the class to search as String (it comes from the GUI beans) to the
@@ -27,7 +45,23 @@ public enum SearchClass
     PROTEIN("Protein", ProteinImpl.class),
     INTERACTOR("Interactor", InteractorImpl.class),
     INTERACTION("Interaction", InteractionImpl.class),
-    CVOBJECT("CvObject", CvObject.class),
+
+    CV_OBJECT("CvObject", CvObject.class),
+    CV_ALIAS_TYPE("CvAliasType", CvAliasType.class),
+    CV_CELL_TYPE("CvCellType", CvCellType.class),
+    CV_COMPONENT_ROLE("CvComponentRole", CvComponentRole.class),
+    CV_DATABASE("CvDatabase", CvDatabase.class),
+    CV_FEATURE_IDENTIFICATION("CvFeatureIdentification", CvFeatureIdentification.class),
+    CV_FEATURE_TYPE("CvFeatureType", CvFeatureType.class),
+    CV_FUZZY_TYPE("CvFuzzyType", CvFuzzyType.class),
+    CV_IDENTIFICATION("CvIdentification", CvIdentification.class),
+    CV_INTERACTION("CvInteraction", CvInteraction.class),
+    CV_INTERACTION_TYPE("CvInteractionType", CvInteractionType.class),
+    CV_INTERACTOR_TYPE("CvInteractorType", CvInteractorType.class),
+    CV_TISSUE("CvTissue", CvTissue.class),
+    CV_TOPIC("CvTopic", CvTopic.class),
+    CV_XREF_QUALIFIER("CvXrefQualifier", CvXrefQualifier.class),
+
     NOSPECIFIED("No specified", AnnotatedObject.class);
 
     private Class<? extends AnnotatedObject> mappedClass;
@@ -95,4 +129,42 @@ public enum SearchClass
     {
         return this != NOSPECIFIED;
     }
+
+    public boolean isCvObjectSubclass()
+    {
+        return CvObject.class.isAssignableFrom(mappedClass);
+    }
+
+    public static SearchClass[] cvObjectClasses()
+    {
+        List<SearchClass> cvClasses = new ArrayList<SearchClass>();
+
+        for (SearchClass sc : SearchClass.values())
+        {
+           if (sc.getShortName().startsWith("Cv"))
+           {
+               cvClasses.add(sc);
+           }
+        }
+
+        return cvClasses.toArray(new SearchClass[cvClasses.size()]);
+
+    }
+
+    public static String[] cvObjectClassesAsStringArray()
+    {
+        List<String> cvClasses = new ArrayList<String>();
+
+        for (SearchClass sc : SearchClass.values())
+        {
+           if (sc.getShortName().startsWith("Cv"))
+           {
+               cvClasses.add(sc.getMappedClass().getName());
+           }
+        }
+
+        return cvClasses.toArray(new String[cvClasses.size()]);
+
+    }
+
 }

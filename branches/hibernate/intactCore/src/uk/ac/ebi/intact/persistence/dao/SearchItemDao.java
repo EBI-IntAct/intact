@@ -32,11 +32,11 @@ public class SearchItemDao extends IntactObjectDao<SearchItem>
         super(SearchItem.class, session);
     }
 
-    public Map<String,Integer> countGroupsByValuesLike(String[] values, String objClass, String type)
+    public Map<String,Integer> countGroupsByValuesLike(String[] values, String[] objClasses, String type)
     {
         Map<String,Integer> results = new HashMap<String,Integer>();
 
-        List<Object[]> critRes = criteriaByValues(values, objClass, type)
+        List<Object[]> critRes = criteriaByValues(values, objClasses, type)
                                      .setProjection(Projections.projectionList()
                                              .add(Projections.countDistinct("ac"))
                                              .add(Projections.groupProperty("objClass"))).list();
@@ -49,9 +49,9 @@ public class SearchItemDao extends IntactObjectDao<SearchItem>
         return results;
     }
 
-    public List<String> getDistinctAc(String[] values, String objClass, String type, int firstResult, int maxResults){
+    public List<String> getDistinctAc(String[] values, String[] objClasses, String type, int firstResult, int maxResults){
 
-         return criteriaByValues(values, objClass, type)
+         return criteriaByValues(values, objClasses, type)
                                     .setFirstResult(firstResult)
                                     .setMaxResults(maxResults)
                                     .setProjection(
@@ -60,11 +60,11 @@ public class SearchItemDao extends IntactObjectDao<SearchItem>
     }
 
 
-    public Map<String, String> getDistinctAcGroupingByObjClass(String[] values, String objClass, String type, int firstResult, int maxResults){
+    public Map<String, String> getDistinctAcGroupingByObjClass(String[] values, String[] objClasses, String type, int firstResult, int maxResults){
 
         Map<String,String> results = new HashMap<String,String>();
 
-        List<Object[]> critRes = criteriaByValues(values, objClass, type)
+        List<Object[]> critRes = criteriaByValues(values, objClasses, type)
                                     .setFirstResult(firstResult)
                                     .setMaxResults(maxResults)
                                     .setProjection(Projections.projectionList()
@@ -79,7 +79,7 @@ public class SearchItemDao extends IntactObjectDao<SearchItem>
         return results;
     }
 
-    private Criteria criteriaByValues(String[] values, String objClass, String type)
+    private Criteria criteriaByValues(String[] values, String[] objClasses, String type)
     {
         Criteria crit = getSession().createCriteria(SearchItem.class);
 
@@ -89,9 +89,17 @@ public class SearchItemDao extends IntactObjectDao<SearchItem>
             crit.add(disjunctionForArray("value", values));
         }
 
-        if (objClass != null)
+        if (objClasses != null)
         {
-            crit.add(Restrictions.eq("objClass", objClass));
+            if (objClasses.length > 1)
+            {
+                crit.add(disjunctionForArray("objClass", objClasses));
+            }
+            else
+            {
+                if (objClasses[0] != null)
+                    crit.add(Restrictions.eq("objClass", objClasses[0]));
+            }
         }
 
         if (type != null)
