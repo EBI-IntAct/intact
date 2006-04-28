@@ -14,7 +14,10 @@ import javax.persistence.Transient;
 import javax.persistence.OneToMany;
 import javax.persistence.JoinTable;
 import javax.persistence.JoinColumn;
+import javax.persistence.OrderBy;
 import java.util.*;
+
+import org.hibernate.annotations.Sort;
 
 /**
  * This is the super class for Protein and Nucleic Acid types.
@@ -145,7 +148,7 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
 
         for (int i = 0; i < chunkCount; i++) {
             String chunk = aSequence.substring(i * ourMaxSeqLength,
-                    Math.min((i + 1) * ourMaxSeqLength, aSequence.length()));
+                                               Math.min((i + 1) * ourMaxSeqLength, aSequence.length()));
 
             if (chunkPool != null && chunkPool.size() > 0) {
                 // recycle chunk
@@ -215,7 +218,7 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
 
         for (int i = 0; i < chunkCount; i++) {
             chunk = aSequence.substring(i * ourMaxSeqLength,
-                    Math.min((i + 1) * ourMaxSeqLength, aSequence.length()));
+                                        Math.min((i + 1) * ourMaxSeqLength, aSequence.length()));
 
             if (chunkPool != null && chunkPool.size() > 0) {
                 // recycle chunk
@@ -257,6 +260,7 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
             joinColumns = { @JoinColumn( name="ac") },
             inverseJoinColumns = @JoinColumn( name="parent_ac")
     )
+    @OrderBy (value = "sequence_index")
     public List<SequenceChunk> getSequenceChunks() {
         return Collections.unmodifiableList(sequenceChunks);
     }

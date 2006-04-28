@@ -235,7 +235,7 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
     }
 
     @OneToMany
-    @JoinColumn (name = "parent_ac", referencedColumnName = "ac")
+    @JoinColumn (name = "parent_ac", referencedColumnName = "ac", insertable = false, updatable = false)
     public Collection<Alias> getAliases() {
         return aliases;
     }
@@ -247,8 +247,6 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
     public void addAlias( Alias alias ) {
         if( !this.aliases.contains( alias ) ) {
             this.aliases.add( alias );
-            // TODO this seems to be redondant with the Alias constructor !!
-            alias.setParentAc( this.getAc() );
         }
     }
 
