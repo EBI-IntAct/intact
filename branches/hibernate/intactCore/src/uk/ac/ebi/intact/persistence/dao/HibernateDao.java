@@ -44,6 +44,11 @@ public abstract class HibernateDao<T>
         return session;
     }
 
+    public void flushCurrentSession()
+    {
+        session.flush();
+    }
+
     /**
      * Provides the database name that is being connected to.
      *

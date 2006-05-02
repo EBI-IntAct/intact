@@ -26,7 +26,7 @@ public class Constants {
 
     // Mine parameters
     // Maximum number 
-    public static final int MAX_NUMBER_RESULTS = 20;
+    public static final int MAX_NUMBER_RESULTS = 30;
 
     public static final int MAX_INTERACTION_SIZE = 5;
 

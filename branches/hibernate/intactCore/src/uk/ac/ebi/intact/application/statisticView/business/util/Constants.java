@@ -26,9 +26,9 @@ public interface Constants {
 
     public static final String VIEWBEAN = "viewbean";
 
-    public static final int MIN_DISPLAY_PROTEINS = 20;
+    public static final int MIN_DISPLAY_PROTEINS = 30;
 
-    public static final int MIN_BINARY_INTERACTIONS = 20;
+    public static final int MIN_BINARY_INTERACTIONS = 30;
 
     public static final int MIN_DETECTION_METHODS = 50;
 
