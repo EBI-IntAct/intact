@@ -55,8 +55,6 @@ public class TooLargeAction extends IntactBaseAction {
         logger.info( resultInfo );
         final Collection someKeys = resultInfo.keySet();
 
-        logger.info( someKeys );
-
         int cvCount = 0;
         int proteinCount = 0;
         int experimentCount = 0;

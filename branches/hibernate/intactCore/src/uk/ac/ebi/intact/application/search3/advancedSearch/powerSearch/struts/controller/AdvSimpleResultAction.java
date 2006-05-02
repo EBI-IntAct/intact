@@ -63,24 +63,24 @@ public class AdvSimpleResultAction extends AbstractResultAction {
         //we can build a List, partitioned by type, here inseatd of
         //in the JSP. That way the JSP only ever gets things to display, unless
         //there are too many items to display for a particular type...
-        List partitionList = new ArrayList();   //this will hold the seperate lists as items
+        List<Collection<SimpleViewBean>> partitionList = new ArrayList<Collection<SimpleViewBean>>();   //this will hold the seperate lists as items
 
         // the resultMap has the structure that the keys are the names of the search objects
         // (protein, experiment, interaction, cv or biosource) and the corresponding value is a collection containing all
         // intact objects of the type of the key
         MapIterator it = resultMap.mapIterator();
-        Collection temp;
+        Collection<SimpleViewBean> temp;
         while (it.hasNext()) {
             // go to the next key->value pair.
             it.next();
 
-            Collection results = (ArrayList) it.getValue();
-            temp = new ArrayList(results.size());
+            Collection<AnnotatedObject> results = (ArrayList<AnnotatedObject>) it.getValue();
+            temp = new ArrayList<SimpleViewBean>(results.size());
             //now add in the sublists to the in the partitionlist
-            for (Iterator iterator = results.iterator(); iterator.hasNext();) {
-                AnnotatedObject obj = (AnnotatedObject) iterator.next();
-                temp.add(new SimpleViewBean(obj, user.getHelpLink(), searchURL, contextPath));
-                logger.info("add " + obj.getShortLabel());
+            for (AnnotatedObject result : results)
+            {
+                temp.add(new SimpleViewBean(result, user.getHelpLink(), searchURL, contextPath));
+                logger.info("add " + result.getShortLabel());
             }
 
             logger.info("List size: " + partitionList.size());

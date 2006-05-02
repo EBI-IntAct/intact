@@ -16,6 +16,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.FetchType;
+import javax.persistence.JoinTable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -308,15 +309,20 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         if( someExperiment == null ) {
             throw new NullPointerException( "Cannot create an Interaction without an Experiment!" );
         }
-
+        /*
         if( ( someExperiment.isEmpty() ) || ( !( someExperiment.iterator().next() instanceof Experiment ) ) ) {
             throw new IllegalArgumentException( "must have at least one VALID Experiment to create an Interaction" );
-        }
+        } */
 
         this.experiments = someExperiment;
     }
 
-    @ManyToMany(mappedBy = "interactions")
+    @ManyToMany
+    @JoinTable(
+        name="ia_int2exp",
+        joinColumns={@JoinColumn(name="interaction_ac")},
+        inverseJoinColumns={@JoinColumn(name="experiment_ac")}
+    )
     public Collection<Experiment> getExperiments() {
         return experiments;
     }

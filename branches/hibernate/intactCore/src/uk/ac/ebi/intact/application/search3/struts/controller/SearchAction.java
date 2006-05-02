@@ -287,7 +287,7 @@ public class SearchAction extends IntactBaseAction {
 
             //put both the results and also a list of the shortlabels for highlighting into the request
 
-            Collection searchResult = results.getResult();
+            Collection<? extends AnnotatedObject> searchResult = results.getResult();
             request.setAttribute( SearchConstants.SEARCH_RESULTS, searchResult );
             request.setAttribute( SearchConstants.HIGHLIGHT_LABELS_LIST, labelList );
 

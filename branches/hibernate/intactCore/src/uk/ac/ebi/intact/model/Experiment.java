@@ -149,12 +149,7 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
         this.interactions = someInteraction;
     }
 
-    @ManyToMany (targetEntity = InteractionImpl.class )
-    @JoinTable(
-        name="ia_int2exp",
-        joinColumns={@JoinColumn(name="experiment_ac")},
-        inverseJoinColumns={@JoinColumn(name="interaction_ac")}
-    )
+    @ManyToMany (targetEntity = InteractionImpl.class, mappedBy = "experiments")
     public Collection<Interaction> getInteractions() {
         return interactions;
     }
@@ -346,15 +341,17 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
         result.append( NEW_LINE );
         result.append( "CvInteraction: " + ( cvInteraction == null ? "NOT SPECIFIED" : cvInteraction.getShortLabel() ) );
         result.append( NEW_LINE );
-        result.append( "Interactions (" );
-        if( null != getInteractions() ) {
-            for( Iterator iterator = interactions.iterator(); iterator.hasNext(); ) {
-                Interaction interaction = (Interaction) iterator.next();
-                result.append( interaction.getShortLabel() ).append( ", " );
-            }
-        }
-        result.append( ')' );
-        result.append( NEW_LINE );
+
+        // TODO in experiments with many interactions this can throw OutOfMemoryErrors
+//        result.append( "Interactions (" );
+//        if( null != getInteractions() ) {
+//            for( Iterator iterator = interactions.iterator(); iterator.hasNext(); ) {
+//                Interaction interaction = (Interaction) iterator.next();
+//                result.append( interaction.getShortLabel() ).append( ", " );
+//            }
+//        }
+//        result.append( ')' );
+//        result.append( NEW_LINE );
         result.append( ']' );
 
         return result.toString();

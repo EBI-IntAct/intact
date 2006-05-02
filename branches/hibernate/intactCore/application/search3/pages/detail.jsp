@@ -35,6 +35,7 @@
                  uk.ac.ebi.intact.application.search3.struts.view.beans.MainDetailViewBean,
                  uk.ac.ebi.intact.model.*,
                  java.util.*" %>
+<%@ page import="uk.ac.ebi.intact.persistence.dao.DaoFactory"%>
 
 <%-- Standard Java classes --%>
 
@@ -126,7 +127,9 @@
         //first thing is to check for a 'large' Experiment view - if it is, then need to display
         //a table with tabbed pages...
         //NB Use the REAL size of the Interaction list here - the BEAN holds a SUBLIST
-        if ( ( bean.getObject().getInteractions().size() > Constants.MAX_PAGE_SIZE ) &
+        int interactionsCount = DaoFactory.getExperimentDao().countInteractionsForExperimentWithAc(bean.getObject().getAc());
+
+        if ( ( interactionsCount > Constants.MAX_PAGE_SIZE ) &
              ( !bean.isInteractionView() ) ) {
 
             //put this particular viewbean into the SESSION (because the next tabbed

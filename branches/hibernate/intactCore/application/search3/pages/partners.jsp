@@ -24,6 +24,7 @@
 
 <!-- Standard Java classes -->
 <%@ page import="java.util.*"%>
+<%@ page import="uk.ac.ebi.intact.model.AnnotatedObject"%>
 
 <!-- may make use of these later to tidy up the JSP a little -->
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
@@ -36,7 +37,6 @@
             SearchConstants.INTACT_SERVICE);
 
     //build the absolute path out of the context path for 'search'
-    String ctxtPath = (request.getContextPath());
     String absPathWithoutContext = UrlUtil.absolutePathWithoutContext(request);
 
     //build the URL for hierarchView from the absolute path and the relative beans..
@@ -44,14 +44,14 @@
     String minePath = absPathWithoutContext.concat("mine/display.jsp");
 
     //The List of view beans used to provide the data for this JSP. Each
-    //bean in the List should be an instance of SummaryViewBean, and corresponds to
+    //bean in the List should be an instance of PartnersViewBean, and corresponds to
     //a single search result.
     //List viewBeans = (List)session.getAttribute(SearchConstants.VIEW_BEAN_LIST);
-    List viewBeans = (List)request.getAttribute(SearchConstants.VIEW_BEAN_LIST);
+    List<PartnersViewBean> viewBeans = (List<PartnersViewBean>)request.getAttribute(SearchConstants.VIEW_BEAN_LIST);
 
     //the list of shortlabels for the search matches - need to be highlighted
     //NB the SearchAction ensures this will never be null
-    List highlightList = (List)request.getAttribute(SearchConstants.HIGHLIGHT_LABELS_LIST);
+    List<String> highlightList = (List<String>)request.getAttribute(SearchConstants.HIGHLIGHT_LABELS_LIST);
 %>
 
 <%-- The javascript for the button bars.... --%>
@@ -73,7 +73,7 @@
 
     <%
         boolean hasPartners = true;  //decide whether or not to display button bar
-        for(Iterator it = viewBeans.iterator(); it.hasNext();) {
+        for(Iterator<PartnersViewBean> it = viewBeans.iterator(); it.hasNext();) {
 
             Object item = it.next();
             if(item instanceof PartnersViewBean) {
@@ -187,10 +187,10 @@
                 <!-- gene name, not linked -->
                 <td class="data" style="vertical-align: top; background-color: rgb(255, 255, 255);"
                     rowspan="1" colspan="1">
-                    <% Collection someGeneNames = bean.getGeneNames();
+                    <% Collection<String> someGeneNames = bean.getGeneNames();
                     
-                       for (Iterator iterator =  someGeneNames.iterator(); iterator.hasNext();) {
-                           String aGeneName =  (String) iterator.next();
+                       for (Iterator<String> iterator =  someGeneNames.iterator(); iterator.hasNext();) {
+                           String aGeneName =  iterator.next();
                            out.write( aGeneName );
                            if( iterator.hasNext() ) {
                                out.write( ", " );
@@ -231,9 +231,10 @@
 
             -->
             <%
-                Collection partners = bean.getInteractionPartners();
-                for(Iterator iter = partners.iterator(); iter.hasNext();) {
-                    PartnersViewBean partner = (PartnersViewBean)iter.next();
+                Collection<PartnersViewBean> partners = bean.getInteractionPartners();
+
+                for( PartnersViewBean partner : partners) {
+
             %>
             <tr>
 
@@ -312,8 +313,8 @@
             //need button bar underneath too IF this is the last one to be processed...
             if((!it.hasNext()) & hasPartners) {
     %>
-        <!-- line break before the bottom button bar -->
-        <br>
+
+
         <!-- same buttons as at the top of the page -->
         <%@ include file="buttonBar.html" %>
     <%

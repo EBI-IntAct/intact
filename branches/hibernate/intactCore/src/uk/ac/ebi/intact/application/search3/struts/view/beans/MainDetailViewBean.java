@@ -5,8 +5,8 @@ import uk.ac.ebi.intact.application.search3.business.Constants;
 import uk.ac.ebi.intact.application.search3.util.UrlCheckerThread;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.SearchReplace;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
-import java.sql.Timestamp;
 import java.util.*;
 
 /**
@@ -80,7 +80,7 @@ public class MainDetailViewBean extends AbstractViewBean {
      * Map of retrieved DB URLs already retrieved from the DB. This is basically a cache to avoid recomputation every
      * time a CvDatabase URL is requested.
      */
-    private Map dbUrls;
+    private Map<CvObject,String> dbUrls;
 
     /**
      * The List of Interations for display. For Experiments of 'small' size this is the whole list - for 'large'
@@ -99,7 +99,7 @@ public class MainDetailViewBean extends AbstractViewBean {
     /**
      * ArrayList to provide a Filter on Gene Names
      */
-    private static ArrayList geneNameFilter = new ArrayList( 4 );
+    private static ArrayList<String> geneNameFilter = new ArrayList<String>( 4 );
 
     static {
         // TODO somehow find a way to use MI references that are stable
@@ -147,26 +147,26 @@ public class MainDetailViewBean extends AbstractViewBean {
      * @throws IllegalArgumentException thrown if the parameter is not an Experiment
      */
     public MainDetailViewBean( Experiment obj, String link, String searchURL, String contextPath ) {
-
         super( link, contextPath );
+
         if ( obj == null ) {
             throw new NullPointerException( "MainDetailViewBean: can't display null object!" );
         }
-        if ( !( obj instanceof Experiment ) ) {
-            throw new IllegalArgumentException( "MainDetailViewBean: Wrong object passed to view bean: type is " +
-                                                obj.getClass().getName() );
-        }
+
         this.searchURL = searchURL;
         this.obj = obj;
-        dbUrls = new HashMap();
+        dbUrls = new HashMap<CvObject, String>();
+
+        int interactionsCount = DaoFactory.getExperimentDao().countInteractionsForExperimentWithAc(obj.getAc());
+        logger.info("Interactions for experiment with AC "+obj.getAc()+": "+interactionsCount);
 
         //now calculate the largest page size possible (only for large Experiments)
-        if ( obj.getInteractions().size() > Constants.MAX_PAGE_SIZE ) {
+        if ( interactionsCount > Constants.MAX_PAGE_SIZE ) {
 
             // calculate the maximum number of pages (either size/page size, or
             //size/page size + 1 if it does not divide exactly)
-            maxPages = obj.getInteractions().size() / Constants.MAX_PAGE_SIZE;
-            if ( obj.getInteractions().size() % Constants.MAX_PAGE_SIZE > 0 ) {
+            maxPages = interactionsCount / Constants.MAX_PAGE_SIZE;
+            if ( interactionsCount % Constants.MAX_PAGE_SIZE > 0 ) {
                 maxPages++;
             }
             //set the initial page of Interactions
@@ -416,9 +416,9 @@ public class MainDetailViewBean extends AbstractViewBean {
     public String getPrimaryIdFromXrefIdentity( Interactor interactor ) {
 
         String primaryId = "-";  //default for display
-        Collection xrefs = interactor.getXrefs();
-        for ( Iterator it = xrefs.iterator(); it.hasNext(); ) {
-            Xref xref = (Xref) it.next();
+        Collection<Xref> xrefs = interactor.getXrefs();
+        for ( Iterator<Xref> it = xrefs.iterator(); it.hasNext(); ) {
+            Xref xref = it.next();
             if ( xref.getCvXrefQualifier() != null ) {
                 if ( CvXrefQualifier.IDENTITY.equals( xref.getCvXrefQualifier().getShortLabel() ) ) {
                     primaryId = xref.getPrimaryId();
@@ -490,19 +490,7 @@ public class MainDetailViewBean extends AbstractViewBean {
         //  index of first Interaction in sublist = (page size)*(page number - 1)
         int fromIndex = Constants.MAX_PAGE_SIZE * ( page - 1 );
 
-        //The 'toIndex' has to be the smallest of either a 'page size' offset from the
-        //startIndex, or the last index (ie size) of the whole List (ie if we are at the end)
-        int toIndex = Math.min( fromIndex + Constants.MAX_PAGE_SIZE,
-                                obj.getInteractions().size() );
-
-        //'fromIndex' inclusive, 'toIndex' exclusive for subList method!
-        if ( List.class.isAssignableFrom( obj.getInteractions().getClass() ) ) {
-            interactionList = ( (List<Interaction>) obj.getInteractions() ).subList( fromIndex, toIndex );
-        } else {
-            // copy the collection in a List
-            List<Interaction> tmpList = new ArrayList<Interaction>( obj.getInteractions() );
-            interactionList = tmpList.subList( fromIndex, toIndex );
-        }
+        interactionList = DaoFactory.getExperimentDao().getInteractionsForExpereimentWithAc(obj.getAc(), fromIndex, Constants.MAX_PAGE_SIZE);
 
     }
 
@@ -666,7 +654,7 @@ public class MainDetailViewBean extends AbstractViewBean {
 
 
                 boolean islinked = false;
-                Iterator iterator = null;
+                Iterator<FeatureViewBean> iterator = null;
 
                 if ( ! linkedFeatures.isEmpty() ) {
                     // process lnked feature first
@@ -676,7 +664,7 @@ public class MainDetailViewBean extends AbstractViewBean {
                     iterator = singleFeatures.iterator();
                 }
 
-                FeatureViewBean firstFeature = (FeatureViewBean) iterator.next();
+                FeatureViewBean firstFeature = iterator.next();
                 iterator.remove(); // take it out of the collection.
 
                 // display that row
@@ -706,8 +694,8 @@ public class MainDetailViewBean extends AbstractViewBean {
                         buffer.append( SPACE ).append( '(' );
 
                         // link 2
-                        for ( Iterator iter1 = firstFeature.getFeatureXrefs().iterator(); iter1.hasNext(); ) {
-                            Xref xref = (Xref) iter1.next();
+                        for ( Iterator<Xref> iter1 = firstFeature.getFeatureXrefs().iterator(); iter1.hasNext(); ) {
+                            Xref xref = iter1.next();
 
                             buffer.append( "<a href=\"" ).append( firstFeature.getPrimaryIdURL( xref ) ).append( "\">" );
                             buffer.append( xref.getPrimaryId() ).append( "</a>" );
@@ -749,8 +737,8 @@ public class MainDetailViewBean extends AbstractViewBean {
 
                         buffer.append( SPACE ).append( "(" );
 
-                        for ( Iterator iter1 = firstBoundFeature.getFeatureXrefs().iterator(); iter1.hasNext(); ) {
-                            Xref xref = (Xref) iter1.next();
+                        for ( Iterator<Xref> iter1 = firstBoundFeature.getFeatureXrefs().iterator(); iter1.hasNext(); ) {
+                            Xref xref = iter1.next();
 
                             buffer.append( "<a href=\"" ).append( firstBoundFeature.getPrimaryIdURL( xref ) ).append( "\">" );
                             buffer.append( xref.getPrimaryId() ).append( "</a>" );
@@ -837,14 +825,14 @@ public class MainDetailViewBean extends AbstractViewBean {
 
     private String generateRange( Feature feature ) {
 
-        Collection ranges = feature.getRanges();
+        Collection<? extends Range> ranges = feature.getRanges();
         String rangeString = "";   //will hold the result (if there is one)
         if ( !ranges.isEmpty() ) {
 
             StringBuffer buf = new StringBuffer();
             buf.append( "[" );
 
-            for ( Iterator it1 = ranges.iterator(); it1.hasNext(); ) {
+            for ( Iterator<? extends Range> it1 = ranges.iterator(); it1.hasNext(); ) {
                 buf.append( it1.next().toString() );  //The toString of Range does the display format for us
                 if ( it1.hasNext() ) {
                     buf.append( ( "," ) );
@@ -871,14 +859,14 @@ public class MainDetailViewBean extends AbstractViewBean {
      * @return Collection a List of the Interaction's Proteins, or empty if none found
      */
 //    public Collection getProteins( Interaction interaction ) {// method not used
-    public Collection getInteractors( Interaction interaction ) {// method not used
+    public Collection<? extends Interactor> getInteractors( Interaction interaction ) {// method not used
 
         // sort here with Collections.sort() with the Protein Comparator as
         // so that we get in that the baits before the preys
 
-        Collection results = new ArrayList();
-        for ( Iterator it = interaction.getComponents().iterator(); it.hasNext(); ) {
-            Component comp = (Component) it.next();
+        Collection<Interactor> results = new ArrayList<Interactor>();
+        for ( Iterator<Component> it = interaction.getComponents().iterator(); it.hasNext(); ) {
+            Component comp = it.next();
             Interactor interactor = comp.getInteractor();
 //            if ( interactor instanceof Protein ) {
             results.add( interactor );
@@ -901,8 +889,8 @@ public class MainDetailViewBean extends AbstractViewBean {
     public Component getComponent( Interactor interactor, Interaction interaction ) {
 
         //go through the Components holding the Protein and pull out the Interaction match...
-        for ( Iterator it = interactor.getActiveInstances().iterator(); it.hasNext(); ) {
-            Component comp = (Component) it.next();
+        for ( Iterator<Component> it = interactor.getActiveInstances().iterator(); it.hasNext(); ) {
+            Component comp = it.next();
             if ( comp.getInteraction().equals( interaction ) ) {
                 return comp;
             }
@@ -971,9 +959,9 @@ public class MainDetailViewBean extends AbstractViewBean {
 
     public String getCvDatabaseSearchUrl( CvDatabase cvDatabase ) {
         String searchUrl = null;
-        Collection annotations = cvDatabase.getAnnotations();
-        for ( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
-            Annotation annotation = (Annotation) iterator.next();
+        Collection<Annotation> annotations = cvDatabase.getAnnotations();
+        for ( Iterator<Annotation> iterator = annotations.iterator(); iterator.hasNext(); ) {
+            Annotation annotation = iterator.next();
             if ( annotation.getCvTopic().getShortLabel().equals( CvTopic.SEARCH_URL ) ) {
                 searchUrl = annotation.getAnnotationText();
                 break;
@@ -994,7 +982,7 @@ public class MainDetailViewBean extends AbstractViewBean {
     public String getPrimaryIdURL( Xref xref ) {
 
         // Check if the id can be hyperlinked
-        String searchUrl = (String) dbUrls.get( xref.getCvDatabase() );
+        String searchUrl = dbUrls.get( xref.getCvDatabase() );
         if ( searchUrl == null ) {
             searchUrl = getCvDatabaseSearchUrl( xref.getCvDatabase() );
             dbUrls.put( xref.getCvDatabase(), searchUrl );
@@ -1019,10 +1007,10 @@ public class MainDetailViewBean extends AbstractViewBean {
 //    public String getUniprotSearchURL( Protein protein ) { // 1 usage in detail.jsp
     public String getIdentityXrefSearchURL( Interactor interactor ) { // 1 usage in detail.jsp
 
-        Collection xrefs = interactor.getXrefs();
+        Collection<Xref> xrefs = interactor.getXrefs();
         String url = "-";
-        for ( Iterator it = xrefs.iterator(); it.hasNext(); ) {
-            Xref xref = (Xref) it.next();
+        for ( Iterator<Xref> it = xrefs.iterator(); it.hasNext(); ) {
+            Xref xref = it.next();
             if ( xref.getCvXrefQualifier() != null ) {
                 if ( CvXrefQualifier.IDENTITY.equals( xref.getCvXrefQualifier().getShortLabel() ) ) {
                     url = this.getPrimaryIdURL( xref );
@@ -1264,8 +1252,8 @@ public class MainDetailViewBean extends AbstractViewBean {
 
     private String getPubmedId( Experiment experiment ) {
 
-        for ( Iterator iterator = experiment.getXrefs().iterator(); iterator.hasNext(); ) {
-            Xref xref = (Xref) iterator.next();
+        for ( Iterator<Xref> iterator = experiment.getXrefs().iterator(); iterator.hasNext(); ) {
+            Xref xref = iterator.next();
 
             if ( xref.getCvDatabase().getShortLabel().equals( CvDatabase.PUBMED ) ) {
                 CvXrefQualifier qualifier = xref.getCvXrefQualifier();
