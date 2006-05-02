@@ -142,7 +142,7 @@
 
             int currentPage = 1;    //the 'real' page number - default is first page
 
-            request.setAttribute(SearchConstants.TOTAL_RESULTS_ATT_NAME, bean.getObject().getInteractions().size());
+            request.setAttribute(SearchConstants.TOTAL_RESULTS_ATT_NAME, interactionsCount);
 
             if (request.getParameter("selectedChunk") == null)
             {

@@ -24,9 +24,9 @@ public class InterproSearch implements Serializable {
 
     /**
      * Indicates the maximum number of selectable Proteins, forwarded to the InterPro Website and displayed
-     * in the Waiting Message respectively. Default value is 20.
+     * in the Waiting Message respectively. Default value is 30.
      */
-    public static final int MAXIMUM_NUMBER_OF_SELECTED_PROTEINS = 20;
+    public static final int MAXIMUM_NUMBER_OF_SELECTED_PROTEINS = 30;
 
 
     /**

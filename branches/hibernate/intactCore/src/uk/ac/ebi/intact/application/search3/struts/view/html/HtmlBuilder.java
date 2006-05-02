@@ -1124,6 +1124,8 @@ public class HtmlBuilder {
         htmlViewAnnotation(ex);
         htmlViewXref(ex);
 
+        logger.info("Getting interactions for experiment: "+ex.getAc());
+
         Iterator i = ex.getInteractions().iterator();
 
         int count = 0;
@@ -1144,7 +1146,7 @@ public class HtmlBuilder {
         endTable(ex);
     }
 
-    public static final int MAX_CHUNK_IN_INDEX = 20;
+    public static final int MAX_CHUNK_IN_INDEX = 30;
 
     /**
      * Display the chunk index.
