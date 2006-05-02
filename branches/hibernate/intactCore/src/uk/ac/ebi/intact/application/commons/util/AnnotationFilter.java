@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.application.search3.business.Constants;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -44,70 +45,41 @@ public class AnnotationFilter {
      */
     private AnnotationFilter() {
 
-        IntactHelper helper = null;
+   logger.debug( "Initializing which CvTopic should be filtered out." );
 
-        try {
+        // search for the CvTopic no-export
+        CvTopic noExport = DaoFactory.getAnnotatedObjectDao(CvTopic.class).getByShortLabel( CvTopic.NO_EXPORT );
 
-            logger.debug( "Initializing which CvTopic should be filtered out." );
+        if ( noExport != null ) {
 
-            helper = new IntactHelper();
+            // load all CvTopics
+            Collection<CvTopic> cvTopics = DaoFactory.getCvObjectDao(CvTopic.class).getAll();
 
-            logger.debug( "Helper created (User: " + helper.getDbUserName() + " " +
-                          "Database: " + helper.getDbName() + ")" );
-
-            // search for the CvTopic no-export
-            CvTopic noExport = helper.getObjectByLabel( CvTopic.class, CvTopic.NO_EXPORT );
-
-            if ( noExport != null ) {
-
-                // load all CvTopics
-                Collection<CvTopic> cvTopics = helper.search( CvTopic.class, "ac", null );
-
-                // select those that have an Annotation( no-export )
-                for (CvTopic cvTopic : cvTopics)
+            // select those that have an Annotation( no-export )
+            for (CvTopic cvTopic : cvTopics)
+            {
+                for (Annotation annotation : cvTopic.getAnnotations())
                 {
-                    for (Annotation annotation : cvTopic.getAnnotations())
+                    if (noExport.equals(annotation.getCvTopic()))
                     {
-                        if (noExport.equals(annotation.getCvTopic()))
+                        if (filteredTopics == null)
                         {
-                            if (filteredTopics == null)
-                            {
-                                filteredTopics = new HashSet<CvTopic>(8);
-                            }
-
-                            logger.debug("CvTopic( " + cvTopic.getShortLabel() + " )");
-                            filteredTopics.add(cvTopic);
+                            filteredTopics = new HashSet<CvTopic>(8);
                         }
+
+                        logger.debug("CvTopic( " + cvTopic.getShortLabel() + " )");
+                        filteredTopics.add(cvTopic);
                     }
                 }
             }
-
-            if ( filteredTopics == null ) {
-                filteredTopics = Collections.EMPTY_SET;
-            }
-
-            logger.debug( filteredTopics.size() + " CvTopic" + ( filteredTopics.size() > 1 ? "s" : "" ) + " filtered." );
-
-        } catch ( IntactException e ) {
-            logger.error( "Could not load the CvTopic to filter out on the public view.", e );
-        } catch ( SQLException e ) {
-            e.printStackTrace();
-        } catch ( LookupException e ) {
-            e.printStackTrace();
-        } finally {
-            if( helper != null ) {
-                try {
-                    helper.closeStore();
-                } catch ( IntactException e ) {
-                    logger.error( "Could not close the IntactHeper.", e );
-                }
-            }
-
-            // if the connection to the database failed, the set is still null.
-            if( filteredTopics == null ) {
-                filteredTopics = Collections.EMPTY_SET;
-            }
         }
+
+        if ( filteredTopics == null ) {
+            filteredTopics = Collections.EMPTY_SET;
+        }
+
+        logger.debug( filteredTopics.size() + " CvTopic" + ( filteredTopics.size() > 1 ? "s" : "" ) + " filtered." );
+
     }
 
     /**

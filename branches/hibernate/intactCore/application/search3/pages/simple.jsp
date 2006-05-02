@@ -409,7 +409,7 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
 
     </tbody>
 
-</table> <br>
+</table> 
 
 <%
 

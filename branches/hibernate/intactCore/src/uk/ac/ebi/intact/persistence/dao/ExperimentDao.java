@@ -10,6 +10,9 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.InteractionImpl;
+import uk.ac.ebi.intact.model.Interaction;
+
+import java.util.List;
 
 /**
  * TODO comment this
@@ -18,6 +21,7 @@ import uk.ac.ebi.intact.model.InteractionImpl;
  * @version $Id$
  * @since <pre>26-Apr-2006</pre>
  */
+@SuppressWarnings({"unchecked"})
 public class ExperimentDao extends AnnotatedObjectDao<Experiment>
 {
     public ExperimentDao(Session session)
@@ -37,5 +41,14 @@ public class ExperimentDao extends AnnotatedObjectDao<Experiment>
                     .createAlias("experiments", "exp")
                     .add(Restrictions.eq("exp.ac", ac))
                     .setProjection(Projections.rowCount()).uniqueResult();
+    }
+
+    public List<Interaction> getInteractionsForExpereimentWithAc(String ac, int firstResult, int maxResults)
+    {
+        return getSession().createCriteria(InteractionImpl.class)
+                .setFirstResult(firstResult)
+                .setMaxResults(maxResults)
+                .createCriteria("experiments")
+                .add(Restrictions.idEq(ac)).list();
     }
 }

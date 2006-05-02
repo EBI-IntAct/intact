@@ -556,6 +556,7 @@ public class SearchHelper implements SearchHelperI {
 
             // we perform a query for all the ACs. This kind of query is limited in oracle to 1000 items,
             // far from our situation now, so no problem
+            logger.info("Class to search: "+clazzToSearch+" ACs: "+acList);
             List<? extends AnnotatedObject> res = DaoFactory.getAnnotatedObjectDao(clazzToSearch).getByAc(acs);
 
             searchResult.addAll(res);

@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.persistence.dao;
 import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 import org.hibernate.Session;
 
@@ -32,6 +33,11 @@ public class DaoFactory
         HibernateDao.validateEntity(entityType);
 
         return new AnnotatedObjectDao<T>(entityType, getCurrentSession());
+    }
+
+    public static <T extends CvObject> CvObjectDao<T> getCvObjectDao(Class<T> entityType)
+    {
+        return new CvObjectDao<T>(entityType, getCurrentSession());
     }
 
     public static ExperimentDao getExperimentDao()

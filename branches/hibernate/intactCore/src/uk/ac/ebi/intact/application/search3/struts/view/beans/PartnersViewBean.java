@@ -363,19 +363,17 @@ public class PartnersViewBean extends AbstractViewBean {
             // this protein got no partner in the view, just grab all interactions
             // and that's it
 
-
-            //TODO (BA) This query need to be paginated
-            interactions = ProteinUtils.getNnaryInteractions( interactor );
-
-
             //TODO unefficent, find better way for that
 
-            interactionPartners = new HashSet<PartnersViewBean>( interactions.size() );
+            interactionPartners = new HashSet<PartnersViewBean>();
             if ( selfInteraction ) {
 
                 interactionPartners.add( new PartnersViewBean( interactor, interactor, getHelpLink(), searchURL,
                                                                getContextPath() ) );
             } else {
+
+                //TODO (BA) This query need to be paginated
+                interactions = ProteinUtils.getNnaryInteractions( interactor );
 
                 boolean hasNoSelfInteraction = ProteinUtils.getSelfInteractions( interactor ).isEmpty();
 

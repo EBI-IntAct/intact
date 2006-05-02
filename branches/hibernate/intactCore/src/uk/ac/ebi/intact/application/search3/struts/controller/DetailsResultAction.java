@@ -40,6 +40,7 @@ public class DetailsResultAction extends AbstractResultAction {
      *
      * @return String the forward code for the parent execute method to return.
      */
+    @Override
     protected String processResults( HttpServletRequest request, String helpLink ) {
 
         // Session to access various session objects. This will create
@@ -84,29 +85,35 @@ public class DetailsResultAction extends AbstractResultAction {
         //regardless of the result size, just build a viewbean for each result and put into
         //a Collection for use by the JSP - but first check we have the correct type for this
         //Action to process..
-        Class resultType = results.iterator().next().getClass();
+        Class<?> resultType = results.iterator().next().getClass();
 
-        Collection experiments = null;
+        Collection<Experiment> experiments = null;
         Interaction interactionResult = null;   //used to tell the viewbean what needs displaying
 
         if ( ( Interaction.class.isAssignableFrom( resultType ) ) ) {
             interactionResult = (Interaction) results.iterator().next();
+
             experiments = interactionResult.getExperiments();
 
         } else if ( Experiment.class.isAssignableFrom( resultType ) ) {
             experiments = results;  //got Experiments in the first place
         }
 
-        List beanList;
+        List<MainDetailViewBean> beanList;
         if ( experiments != null ) {
-            beanList = new ArrayList();
-            for ( Iterator it = experiments.iterator(); it.hasNext(); ) {
-                MainDetailViewBean bean = new MainDetailViewBean( (Experiment) it.next(), helpLink,
-                                                                  searchURL, request.getContextPath() );
-                if ( interactionResult != null ) {
-                    bean.setWrappedInteraction( interactionResult );   //tell bean display info
+            beanList = new ArrayList<MainDetailViewBean>();
+
+            for (Experiment experiment : experiments)
+            {
+                logger.info( "\tExperiment: "+experiment.getShortLabel()+" "+experiment.getAc() );
+
+                MainDetailViewBean bean = new MainDetailViewBean(experiment, helpLink,
+                                                                 searchURL, request.getContextPath());
+                if (interactionResult != null)
+                {
+                    bean.setWrappedInteraction(interactionResult);   //tell bean display info
                 }
-                beanList.add( bean );
+                beanList.add(bean);
             }
             logger.info( "DetailAction: Collection of " + beanList.iterator().next().getClass() +
                          " created" );

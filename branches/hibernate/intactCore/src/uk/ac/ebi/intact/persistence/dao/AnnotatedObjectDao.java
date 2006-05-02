@@ -40,7 +40,7 @@ public class AnnotatedObjectDao<T extends AnnotatedObject> extends IntactObjectD
 
     public T getByShortLabel(String value, boolean ignoreCase)
     {
-        return getByShortLabel(value, ignoreCase);
+        return getByPropertyName("shortLabel", value, ignoreCase);
     }
 
     public Collection<T> getByShortLabelLike(String value, boolean ignoreCase, MatchMode matchMode)

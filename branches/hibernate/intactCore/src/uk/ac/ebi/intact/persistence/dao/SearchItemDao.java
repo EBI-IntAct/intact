@@ -84,7 +84,7 @@ public class SearchItemDao extends IntactObjectDao<SearchItem>
         Criteria crit = getSession().createCriteria(SearchItem.class);
 
         // no restriction (WHERE) necessary if only one value is passed and it is a wildcard
-        if (values.length == 1 && !values[0].equals("%"))
+        if (!(values.length == 1 && values[0].equals("%")))
         {
             crit.add(disjunctionForArray("value", values));
         }

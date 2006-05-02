@@ -10,6 +10,7 @@ import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.PartnersViewBean;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.model.AnnotatedObject;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ public class BinaryResultAction extends AbstractResultAction {
 
         logger.info( "binary result  action" );
 
-        Collection results = (Collection) request.getAttribute( SearchConstants.SEARCH_RESULTS );
+        Collection<AnnotatedObject> results = (Collection<AnnotatedObject>) request.getAttribute( SearchConstants.SEARCH_RESULTS );
 
         //initial sanity check - empty results should be just ignored
         if ( results.isEmpty() ) {
@@ -47,17 +48,18 @@ public class BinaryResultAction extends AbstractResultAction {
 
         logger.info( "BinaryAction: result Collection contains " + results.size() + " items." );
 
-        List beanList = null;
+        List<PartnersViewBean> beanList = null;
         //useful URL info
         String searchURL = super.getSearchURL();
 
         // check first for if we got the correct type and then build a collection of resulttypes
         if ( Interactor.class.isAssignableFrom( results.iterator().next().getClass() ) ) {
-            beanList = new ArrayList( results.size() );
+            beanList = new ArrayList<PartnersViewBean>( results.size() );
 
-            for ( Iterator it = results.iterator(); it.hasNext(); ) {
-                beanList.add( new PartnersViewBean( (Interactor) it.next(), helpLink, searchURL,
-                                                    request.getContextPath() ) );
+            for (AnnotatedObject result : results)
+            {
+                beanList.add(new PartnersViewBean((Interactor) result, helpLink, searchURL,
+                                                  request.getContextPath()));
             }
 
             request.setAttribute( SearchConstants.VIEW_BEAN_LIST, beanList );
