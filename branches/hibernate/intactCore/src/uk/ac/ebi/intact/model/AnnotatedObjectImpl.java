@@ -207,7 +207,7 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
     }
 
     @OneToMany
-    @JoinColumn(name = "parent_ac", referencedColumnName = "ac", insertable = false, updatable = false)
+    @JoinColumn(name = "parent_ac", referencedColumnName = "ac")
     public Collection<Xref> getXrefs() {
         return xrefs;
     }

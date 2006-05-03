@@ -191,7 +191,9 @@ public class Xref extends BasicObjectImpl {
         this.dbRelease = aDbRelease;
     }
 
-    @Column(name = "parent_ac")
+    // TODO (BA) Important: this does not allow to persist or update this field, which is undesired behaviour
+    // Has been put like this to avoid an unwanted update after loading the protein binary interactions.
+    @Column(name = "parent_ac", insertable = false, updatable = false)
     public String getParentAc() {
         return parentAc;
     }
