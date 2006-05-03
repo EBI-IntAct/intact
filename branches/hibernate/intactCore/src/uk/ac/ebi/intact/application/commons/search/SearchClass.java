@@ -104,6 +104,21 @@ public enum SearchClass
 
     public static SearchClass valueOfMappedClass(Class<? extends IntactObject> mappedClass)
     {
+        // remove any potential subclass/proxy (due to the use of cglib)
+        if (mappedClass.getName().contains("$$"))
+        {
+            String className = mappedClass.getName();
+            String trimmedClass = className.substring(0, className.indexOf("$$"));
+            try
+            {
+                mappedClass = (Class<? extends IntactObject>) Class.forName(trimmedClass);
+            }
+            catch (ClassNotFoundException e)
+            {
+                e.printStackTrace();
+            }
+        }
+
         for (SearchClass sc : SearchClass.values())
         {
             if (sc.getMappedClass().equals(mappedClass))
