@@ -74,8 +74,8 @@ in the root directory of this distribution.
 
 <%  // get all Xrefs
     // find out which size the table have to be
-    Collection someXrefBeans =  bean.getXrefs();
-    Collection someAnnotations = bean.getFilteredAnnotations();
+    Collection<XrefViewBean> someXrefBeans =  bean.getXrefs();
+    Collection<AnnotationViewBean> someAnnotations = bean.getFilteredAnnotations();
     // put in a extra field in the table
     if(someXrefBeans.size() != 0 || someAnnotations.size() != 0)  {  %>
                     <td class="headerdarkmid" colspan="2">
@@ -104,7 +104,7 @@ in the root directory of this distribution.
     //get the first one and process it on its own - it seems we need it to put a search
     //link for it into the first cell of the row, then process the others as per
     //'usual'
-    AnnotationViewBean firstAnnotation = (AnnotationViewBean) someAnnotations.iterator().next();
+    AnnotationViewBean firstAnnotation = someAnnotations.iterator().next();
 %>
      <tr bgcolor="white">
 
@@ -115,9 +115,7 @@ in the root directory of this distribution.
                 </td>
 
         <%
-        for(Iterator it = someAnnotations.iterator(); it.hasNext();) {
-
-            AnnotationViewBean anAnnotation = (AnnotationViewBean) it.next();
+        for(AnnotationViewBean anAnnotation : someAnnotations) {
 
             if( ! anAnnotation.equals( firstAnnotation ) ) {
             //we need to have new rows for each Annotations OTHER THAN the first..
@@ -161,7 +159,7 @@ in the root directory of this distribution.
         //get the first one and process it on its own - it seems we need it to put a search
         //link for it into the first cell of the row, then process the others as per
         //'usual'
-        XrefViewBean firstXref = (XrefViewBean) someXrefBeans.iterator().next();
+        XrefViewBean firstXref = someXrefBeans.iterator().next();
 %>
 
      <tr bgcolor="white">
@@ -172,8 +170,7 @@ in the root directory of this distribution.
                 </a>
             </td>
     <%  // now go on with all the other xrefs
-        for(Iterator it1 = someXrefBeans.iterator(); it1.hasNext();) {
-            XrefViewBean aXref = (XrefViewBean) it1.next();
+        for(XrefViewBean aXref : someXrefBeans) {
 %>
 
 <%

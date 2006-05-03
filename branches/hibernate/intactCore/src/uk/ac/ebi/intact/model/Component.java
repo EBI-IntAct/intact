@@ -163,10 +163,12 @@ public class Component extends BasicObjectImpl {
         //Need to check for Proxies - callers should
         //not expect a Proxy back since Component only holds
         //a single interactor, hence no need for a Proxy
+        /*
         if((interactor !=  null) & (interactor instanceof InteractorProxy)){
             InteractorProxy proxy = (InteractorProxy)interactor;
             return (Interactor)proxy.getRealSubject();
         }
+        */
         return interactor;
     }
 

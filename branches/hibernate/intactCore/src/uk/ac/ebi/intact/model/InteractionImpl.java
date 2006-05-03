@@ -280,7 +280,10 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
 
     public void removeComponent( Component component ) {
         boolean removed = this.components.remove( component );
-        if( removed ) component.setInteraction( null );
+        if (removed)
+        {
+            component.setInteraction(null);
+        }
     }
 
     public void setReleased( Collection<Product> someReleased ) {
@@ -301,7 +304,10 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
 
     public void removeReleased( Product product ) {
         boolean removed = this.released.remove( product );
-        if( removed ) product.setInteraction( null );
+        if (removed)
+        {
+            product.setInteraction(null);
+        }
     }
 
     public void setExperiments( Collection<Experiment> someExperiment ) {
@@ -336,7 +342,10 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
 
     public void removeExperiment( Experiment experiment ) {
         boolean removed = this.experiments.remove( experiment );
-        if( removed ) experiment.removeInteraction( this );
+        if (removed)
+        {
+            experiment.removeInteraction(this);
+        }
     }
 
     @ManyToOne (fetch = FetchType.LAZY)
@@ -358,7 +367,21 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
     public void setCvInteractionTypeAc( String ac ) {
         this.cvInteractionTypeAc = ac;
     }
+    /*
+    @Transient
+    @Override
+    public BioSource getBioSource()
+    {
+        // Override method to not throw an exception when setting the biosource...
+        return null;
+    }
 
+    @Override
+    public void setBioSource(BioSource bioSource)
+    {
+        // nothing
+    }
+    */
     ///////////////////////////////////////
     // instance methods
 
@@ -398,22 +421,43 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
      */
     @Override
     public boolean equals( Object o ) {
-        if( this == o ) return true;
-        if( !( o instanceof Interaction ) ) return false;
-        if( !super.equals( o ) ) return false;
+        if (this == o)
+        {
+            return true;
+        }
+        if (!(o instanceof Interaction))
+        {
+            return false;
+        }
+        if (!super.equals(o))
+        {
+            return false;
+        }
 
         final Interaction interaction = (Interaction) o;
 
         if( cvInteractionType != null ) {
-            if( !cvInteractionType.equals( interaction.getCvInteractionType() ) ) return false;
+            if (!cvInteractionType.equals(interaction.getCvInteractionType()))
+            {
+                return false;
+            }
         } else {
-            if( interaction.getCvInteractionType() != null ) return false;
+            if (interaction.getCvInteractionType() != null)
+            {
+                return false;
+            }
         }
 
         if( kD != null ) {
-            if( !kD.equals( interaction.getKD() ) ) return false;
+            if (!kD.equals(interaction.getKD()))
+            {
+                return false;
+            }
         } else {
-            if( interaction.getKD() != null ) return false;
+            if (interaction.getKD() != null)
+            {
+                return false;
+            }
         }
 
         return CollectionUtils.isEqualCollection( getComponents(), interaction.getComponents() );
@@ -423,8 +467,14 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
     public int hashCode() {
         int code = super.hashCode();
 
-        if( cvInteractionType != null ) code = 29 * code + cvInteractionType.hashCode();
-        if( kD != null ) code = 29 * code + kD.hashCode();
+        if (cvInteractionType != null)
+        {
+            code = 29 * code + cvInteractionType.hashCode();
+        }
+        if (kD != null)
+        {
+            code = 29 * code + kD.hashCode();
+        }
 //        for (Iterator iterator = components.iterator(); iterator.hasNext();) {
 //            Component components = (Component) iterator.next();
 //            code = 29 * code + components.hashCode();

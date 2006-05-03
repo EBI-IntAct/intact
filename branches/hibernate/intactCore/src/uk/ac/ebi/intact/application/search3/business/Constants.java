@@ -22,7 +22,7 @@ public interface Constants {
      * Number of items to display when the display is tabbed. ie. count of interactions per page when an experiment
      * contains too many of them.
      */
-    public static final int MAX_PAGE_SIZE = 30;
+    public static final int MAX_PAGE_SIZE = 20;
 
     /**
      * Default value of a chunk when none is selected.

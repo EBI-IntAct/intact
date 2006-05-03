@@ -173,7 +173,6 @@ public class PartnersViewBean extends AbstractViewBean {
     public void getHTML( java.io.Writer writer ) {
     }
 
-    ;
 
     /**
      * Graph buttons are shown.

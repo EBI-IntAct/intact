@@ -311,7 +311,7 @@ public class Xref extends BasicObjectImpl {
 
         return " Xref: " + getAc()
                + "; Owner: " + getOwner().getShortLabel()
-               + "; DB: " + cvDatabase.getShortLabel()
+               + "; DB: " + cvDatabaseAc
                + "; PrimaryId: " + primaryId;
     }
 

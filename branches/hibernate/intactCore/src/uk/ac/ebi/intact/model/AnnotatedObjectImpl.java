@@ -6,6 +6,7 @@
 package uk.ac.ebi.intact.model;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.validator.Length;
 
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
@@ -107,6 +108,7 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
     ///////////////////////////////////////
     //access methods for attributes
 
+    @Length(min = 1, max = MAX_SHORT_LABEL_LEN)
     public String getShortLabel() {
         return shortLabel;
     }
@@ -206,7 +208,6 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
 
     @OneToMany
     @JoinColumn(name = "parent_ac", referencedColumnName = "ac", insertable = false, updatable = false)
-    //@Transient
     public Collection<Xref> getXrefs() {
         return xrefs;
     }
@@ -377,7 +378,6 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
             {
                 return false;
             }
-            ;
         }
 
         return CollectionUtils.isEqualCollection( xrefs, annotatedObject.getXrefs() );

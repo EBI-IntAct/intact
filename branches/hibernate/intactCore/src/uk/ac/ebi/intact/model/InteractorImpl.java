@@ -121,9 +121,9 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
     }
 
     public void setBioSource( BioSource bioSource ) {
-        if( bioSource == null ) {
-            throw new NullPointerException( "valid Interactor must have a BioSource!" );
-        }
+//        if( bioSource == null ) {
+//            throw new NullPointerException( "valid Interactor must have a BioSource!" );
+//        }
         this.bioSource = bioSource;
     }
 
