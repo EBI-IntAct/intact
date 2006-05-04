@@ -28,7 +28,6 @@ import javax.persistence.Id;
 public class SearchItem extends IntactObjectImpl
 {
 
-    private String ac;
     private String value;
     private String objClass;
     private String type;

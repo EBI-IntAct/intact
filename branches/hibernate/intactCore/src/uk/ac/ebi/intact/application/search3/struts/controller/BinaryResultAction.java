@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.application.search3.struts.controller;
 
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.PartnersViewBean;
+import uk.ac.ebi.intact.application.search3.struts.view.beans.PartnersView;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.model.AnnotatedObject;
@@ -18,6 +19,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Performs the construction of view beans that will be used for a the partner view. It will calculate the interactions
  * and give back the code to forward to the coresponding JSP site for the representation of the results.
@@ -26,6 +30,8 @@ import java.util.List;
  * @version $Id$
  */
 public class BinaryResultAction extends AbstractResultAction {
+
+    private static final Log log = LogFactory.getLog(BinaryResultAction.class);
 
     /**
      * Implements abstract method AbstractResultAction.processResults.
@@ -48,21 +54,21 @@ public class BinaryResultAction extends AbstractResultAction {
 
         logger.info( "BinaryAction: result Collection contains " + results.size() + " items." );
 
-        List<PartnersViewBean> beanList = null;
         //useful URL info
         String searchURL = super.getSearchURL();
 
         // check first for if we got the correct type and then build a collection of resulttypes
         if ( Interactor.class.isAssignableFrom( results.iterator().next().getClass() ) ) {
-            beanList = new ArrayList<PartnersViewBean>( results.size() );
 
-            for (AnnotatedObject result : results)
+            PartnersView view = null;
+
+            for (AnnotatedObject interactor : results)
             {
-                beanList.add(new PartnersViewBean((Interactor) result, helpLink, searchURL,
-                                                  request.getContextPath()));
+                view = new PartnersView((Interactor)interactor, helpLink, searchURL, request.getContextPath());
             }
 
-            request.setAttribute( SearchConstants.VIEW_BEAN_LIST, beanList );
+            // We store the PartnersView in the request, and it will be accessed from the jsp page
+            request.setAttribute( SearchConstants.VIEW_BEAN, view );
             //send to the protein partners view JSP
             return SearchConstants.FORWARD_PARTNER_VIEW;
 

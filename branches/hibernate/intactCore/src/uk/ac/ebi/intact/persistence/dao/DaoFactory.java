@@ -9,6 +9,7 @@ import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.model.CvObject;
+import uk.ac.ebi.intact.model.InteractorImpl;
 import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 import org.hibernate.Session;
 
@@ -52,14 +53,29 @@ public class DaoFactory
         return new IntactObjectDao<T>(entityType, getCurrentSession());
     }
 
-    public static InteractorDao getInteractorDao()
+    public static InteractionDao getInteractionDao()
     {
-        return new InteractorDao<Interactor>(Interactor.class, getCurrentSession());
+        return new InteractionDao(getCurrentSession());
+    }
+
+    public static InteractorDao<InteractorImpl> getInteractorDao()
+    {
+        return new InteractorDao<InteractorImpl>(InteractorImpl.class, getCurrentSession());
+    }
+
+    public static ProteinDao getProteinDao()
+    {
+        return new ProteinDao(getCurrentSession());
     }
 
     public static SearchItemDao getSearchItemDao()
     {
         return new SearchItemDao(getCurrentSession());
+    }
+
+    public static XrefDao getXrefDao()
+    {
+        return new XrefDao(getCurrentSession());
     }
 
     private static Session getCurrentSession()
