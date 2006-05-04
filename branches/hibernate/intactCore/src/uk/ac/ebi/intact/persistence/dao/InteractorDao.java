@@ -10,6 +10,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.model.InteractorImpl;
 
 import java.util.Collection;
 
@@ -20,7 +21,7 @@ import java.util.Collection;
  * @version $Id$
  * @since <pre>27-Apr-2006</pre>
  */
-public class InteractorDao<T extends Interactor> extends AnnotatedObjectDao<T>
+public class InteractorDao<T extends InteractorImpl> extends AnnotatedObjectDao<T>
 {
     public InteractorDao(Class<T> entityClass, Session session)
     {

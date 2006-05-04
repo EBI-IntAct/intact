@@ -283,50 +283,6 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
     ///////////////////////////////////////
     // instance methods
 
-    /** Update an annotated object in the database.
-     * Ensure subobjects are updated appropriately.
-     */
-//    public AnnotatedObject update(IntactHelper helper) throws IntactException {
-//
-//        // Update dependent objects
-//        for (Iterator i = xrefs.iterator(); i.hasNext();) {
-//            Xref xref = (Xref) i.next();
-//
-//            helper.update(xref);
-//        }
-//        for (Iterator i = annotations.iterator(); i.hasNext();) {
-//            Annotation annotation = (Annotation) i.next();
-//            helper.update(annotation);
-//        }
-//
-//        helper.update(this);
-//
-//        return this;
-//    }
-
-    /** Create or update an annotation. The anntation topic may only occur once in the object.
-     *
-     */
-//    public Annotation updateUniqueAnnotation(CvTopic topic, String description, Institution owner){
-//
-//        Annotation annotation = null;
-//         for (Iterator iterator = getAnnotations().iterator(); iterator.hasNext();) {
-//             Annotation a = (Annotation) iterator.next();
-//             if (a.getCvTopic().equals(topic)){
-//                 annotation = a;
-//                 break;
-//             }
-//         }
-//         if (null == annotation){
-//             annotation = new Annotation(owner, topic);
-//             addAnnotation(annotation);
-//         }
-//         // Now annotation is a valid object, (re-) set the text
-//	 annotation.setAnnotationText(description);
-//
-//	 return annotation;
-//    }
-
     /**
      * Equality for AnnotatedObjects is currently based on equality for
      * <code>Xrefs</code>, shortLabels and fullNames.

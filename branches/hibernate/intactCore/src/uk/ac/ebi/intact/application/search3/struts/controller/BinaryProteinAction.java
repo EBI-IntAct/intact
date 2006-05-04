@@ -49,8 +49,6 @@ public class BinaryProteinAction extends AbstractResultAction {
 
         // first check for self interactions
 
-        // String appPath = getServlet().getServletContext().getInitParameter("searchLink");
-//        String searchURL = request.getContextPath().concat(appPath);
         String searchURL = super.getSearchURL();
 
         if (someInteractors.size() == 1) {

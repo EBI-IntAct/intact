@@ -25,11 +25,12 @@
 <!-- Standard Java classes -->
 <%@ page import="java.util.*"%>
 <%@ page import="uk.ac.ebi.intact.model.AnnotatedObject"%>
+<%@ page import="uk.ac.ebi.intact.application.search3.struts.view.beans.PartnersView"%>
 
 <!-- may make use of these later to tidy up the JSP a little -->
-<%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/tld/c.tld" prefix="c"%>
+<%@ taglib uri="http://jakarta.apache.org/struts/tags-html" prefix="html"%>
+<%@ taglib uri="http://jakarta.apache.org/struts/tags-bean" prefix="bean" %>
+<%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 
 <%
     // To allow access hierarchView properties. Used only by the javascript.
@@ -47,7 +48,8 @@
     //bean in the List should be an instance of PartnersViewBean, and corresponds to
     //a single search result.
     //List viewBeans = (List)session.getAttribute(SearchConstants.VIEW_BEAN_LIST);
-    List<PartnersViewBean> viewBeans = (List<PartnersViewBean>)request.getAttribute(SearchConstants.VIEW_BEAN_LIST);
+    //List<PartnersViewBean> viewBeans = (List<PartnersViewBean>)request.getAttribute(SearchConstants.VIEW_BEAN_LIST);
+    PartnersView partnersView = (PartnersView) request.getAttribute(SearchConstants.VIEW_BEAN);
 
     //the list of shortlabels for the search matches - need to be highlighted
     //NB the SearchAction ensures this will never be null
@@ -73,23 +75,20 @@
 
     <%
         boolean hasPartners = true;  //decide whether or not to display button bar
-        for(Iterator<PartnersViewBean> it = viewBeans.iterator(); it.hasNext();) {
 
-            Object item = it.next();
-            if(item instanceof PartnersViewBean) {
                 //OK to carry one - otherwise skip the bean
-                PartnersViewBean bean = (PartnersViewBean)item;
+                PartnersViewBean bean = partnersView.getInteractorCandidate();
 
                 //first check for 'orphan' Proteins and display an appropriate message...
                 //(NB multiple Protein matches are handled by the 'main' view, but a single
                 //match will come through to here so we need the check)
-                if(bean.getInteractionPartners().isEmpty()) {
+                if(partnersView.getInteractionPartners().isEmpty()) {
                     hasPartners = false;
                     %>
                     <br>
                      <h4>The Protein with Intact name
-                        <b><span style="color: rgb(255, 0, 0);"><%= bean.getIntactName() %></span></b>
-                        and AC <%= bean.getAc()%> has no Interaction partners </h4>
+                        <b><span style="color: rgb(255, 0, 0);"><%= bean.getMainInteractor().getShortLabel() %></span></b>
+                        and AC <%= bean.getMainInteractor().getAc()%> has no Interaction partners </h4>
                      <br>
                     <%
                 }
@@ -137,20 +136,20 @@
 
                 <!-- checkbox: NB search results to be checked by default -->
                 <td class="headermid">
-                    <code><input type="checkbox" name="<%= bean.getAc()%>" ></code>
+                    <code><input type="checkbox" name="<%= bean.getMainInteractor().getAc()%>" ></code>
                 </td>
 
                 <!-- shortlabel with link: seems to be back to this page (!!)... -->
                  <td nowrap="nowrap" style="vertical-align: top; background-color: rgb(255, 255, 255);">           
                     <code><a href="<%= bean.getInteractorPartnerURL()%>">
-                        <% if(highlightList.contains(bean.getIntactName())) { %>
-                            <b><span style="color: rgb(255, 0, 0);"><%= bean.getIntactName()%></span></b>
+                        <% if(highlightList.contains(bean.getMainInteractor().getShortLabel())) { %>
+                            <b><span style="color: rgb(255, 0, 0);"><%= bean.getMainInteractor().getShortLabel()%></span></b>
                         <%
                             }
                             else {
                                 //no highlighting
                         %>
-                            <%= bean.getIntactName()%>
+                            <%= bean.getMainInteractor().getShortLabel()%>
                         <%
                             }
                         %>
@@ -159,7 +158,7 @@
 
                 <!-- AC, with link to single Protein details page -->
                  <td nowrap="nowrap" style="vertical-align: top; background-color: rgb(255, 255, 255);">
-                    <a href="<%= bean.getInteractorSearchURL()%>"><%= bean.getAc()%></a><br>
+                    <a href="<%= bean.getInteractorSearchURL()%>"><%= bean.getMainInteractor().getAc()%></a><br>
                 </td>
 
                 <!-- number of Interactions, link to a'simple' result page for the Interactions
@@ -201,7 +200,7 @@
 
                 <!-- description, not linked -->
                 <td class="data" style="vertical-align: top; background-color: rgb(255, 255, 255);">
-                    <%= bean.getDescription()%><br>
+                    <%= bean.getMainInteractor().getFullName()%><br>
                 </td>
 
             </tr>
@@ -231,7 +230,7 @@
 
             -->
             <%
-                Collection<PartnersViewBean> partners = bean.getInteractionPartners();
+                Collection<PartnersViewBean> partners = partnersView.getInteractionPartners();
 
                 for( PartnersViewBean partner : partners) {
 
@@ -240,17 +239,17 @@
 
                 <!-- checkbox -->
                 <td class="headermid">
-                    <code><input type="checkbox" name="<%= partner.getAc()%>"></code>
+                    <code><input type="checkbox" name="<%= partner.getMainInteractor().getAc()%>"></code>
                 </td>
 
                     <!-- shortlabel, linked back to this view for the partner instead -->
                 <td nowrap="nowrap" style="vertical-align: top; background-color: rgb(255, 255, 255);">
-                    <code><a href="<%= partner.getInteractorPartnerURL()%>"><nobr><%= partner.getIntactName() %></nobr></a></code>
+                    <code><a href="<%= partner.getInteractorPartnerURL()%>"><nobr><%= partner.getMainInteractor().getShortLabel() %></nobr></a></code>
                 </td>
 
                 <!-- AC, linked to single Protein details page -->
                 <td nowrap="nowrap" style="vertical-align: top; background-color: rgb(255, 255, 255);">
-                    <a href="<%= partner.getInteractorSearchURL()%>"><%= partner.getAc()%></a><br>
+                    <a href="<%= partner.getInteractorSearchURL()%>"><%= partner.getMainInteractor().getAc()%></a><br>
                 </td>
 
                 <!-- number of Interactions, linked new detail page -->
@@ -291,7 +290,7 @@
 
                 <!-- description, not linked -->
                 <td class="data" style="vertical-align: top; background-color: rgb(255, 255, 255);">
-                    <%= partner.getDescription() %>
+                    <%= partner.getMainInteractor().getFullName() %>
                 </td>
 
             </tr>
@@ -304,14 +303,13 @@
 
     <%
                 }   //done 'orphan' check
-            } //done one result
     %>
 
              <!-- line break before next table match...... -->
     <br>
     <%
             //need button bar underneath too IF this is the last one to be processed...
-            if((!it.hasNext()) & hasPartners) {
+            if(hasPartners) {
     %>
 
 
@@ -319,7 +317,6 @@
         <%@ include file="buttonBar.html" %>
     <%
             } //ends button bar check
-        }   //ends the loop
     %>  
 
 </form>

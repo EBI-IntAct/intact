@@ -55,6 +55,11 @@ public class IntactObjectDao<T extends IntactObject> extends HibernateDao<T>
                     .addOrder(Order.asc("ac")).list();
     }
 
+    public List<T> getByAc(Collection<String> acs)
+    {
+        return getByAc(acs.toArray(new String[acs.size()]));
+    }
+
     public List<T> getAll()
     {
         return getSession().createCriteria(getEntityClass()).list();

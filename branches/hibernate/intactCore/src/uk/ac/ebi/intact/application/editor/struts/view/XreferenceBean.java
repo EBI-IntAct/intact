@@ -123,9 +123,9 @@ public class XreferenceBean extends AbstractEditKeyBean {
      */
     public Xref getXref(IntactHelper helper) throws IntactException {
         // The CV objects to set.
-        CvDatabase db = (CvDatabase) helper.getObjectByLabel(
+        CvDatabase db = helper.getObjectByLabel(
                 CvDatabase.class, myDatabaseName);
-        CvXrefQualifier xqual = (CvXrefQualifier) helper.getObjectByLabel(
+        CvXrefQualifier xqual = helper.getObjectByLabel(
                 CvXrefQualifier.class, myReferenceQualifer);
 
         // Create a new xref (true if this object was cloned).
