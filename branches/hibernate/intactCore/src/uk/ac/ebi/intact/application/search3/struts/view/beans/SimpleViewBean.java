@@ -302,13 +302,9 @@ public class SimpleViewBean extends AbstractViewBean {
 
         int interactorsIncInteractionsCount = dao.countInteractorsByInteractionAc(interactionAc);
 
-        logger.info("Interactors count: "+interactorsIncInteractionsCount);
-
         List<String> interactionsAcForInteraction = dao.getNestedInteractionAcsByInteractionAc(interactionAc);
 
         int interactions = interactorsIncInteractionsCount-interactionsAcForInteraction.size();
-
-        logger.info("Interactors subtotal count: "+interactorsIncInteractionsCount+ "-"+interactionsAcForInteraction.size());
 
         count = count+interactions;
 
