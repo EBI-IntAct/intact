@@ -44,43 +44,9 @@ public class ProteinDao extends InteractorDao<ProteinImpl>
 
     private static Log log = LogFactory.getLog(ProteinDao.class);
 
-    /**
-     * Filter to provide filtering on GeneNames
-     */
-    private static List<String> geneNameFilter = new ArrayList<String>();
-
-    // nested implementation for providing the gene filter
-    static {
-        // TODO somehow find a way to use MI references that are stable
-        geneNameFilter.add( "gene name" );
-        geneNameFilter.add( "gene name-synonym" );
-        geneNameFilter.add( "orf name" );
-        geneNameFilter.add( "locus name" );
-    }
-
     public ProteinDao(Session session)
     {
         super(ProteinImpl.class, session);
-    }
-
-    public List<String> getGeneNamesByProteinAc(String proteinAc)
-    {
-        //the gene names are obtained from the Aliases for the Protein
-        //which are of type 'gene name'...
-        Criteria crit = getSession().createCriteria(ProteinImpl.class)
-                .add(Restrictions.idEq(proteinAc))
-                .createAlias("aliases", "alias")
-                .createAlias("alias.cvAliasType", "aliasType")
-                .add(Restrictions.in("aliasType.shortLabel", geneNameFilter))
-                .setProjection(Property.forName("alias.name"));
-
-        List<String> geneNames = crit.list();
-
-        if ( geneNames.isEmpty() ) {
-            geneNames.add( "-" );
-        }
-
-        return geneNames;
     }
 
     /**

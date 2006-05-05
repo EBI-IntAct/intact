@@ -17,6 +17,7 @@ import javax.persistence.Transient;
 import javax.persistence.ManyToMany;
 import javax.persistence.JoinTable;
 import javax.persistence.FetchType;
+import javax.persistence.Column;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -38,6 +39,8 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
     //attributes used for mapping BasicObjects - project synchron
     // TODO: should be move out of the model.
     private String bioSourceAc;
+
+    private String objClass;
 
     /**
      * The biological source of the Interactor.
@@ -147,7 +150,10 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
 
     public void removeActiveInstance( Component component ) {
         boolean removed = this.activeInstances.remove( component );
-        if( removed ) component.setInteractor( null );
+        if (removed)
+        {
+            component.setInteractor(null);
+        }
     }
 
     public void setProducts( Collection<Product> someProduct ) {
@@ -168,7 +174,10 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
 
     public void removeProduct( Product product ) {
         boolean removed = this.products.remove( product );
-        if( removed ) product.setInteractor( null );
+        if (removed)
+        {
+            product.setInteractor(null);
+        }
     }
 
     public void setCvInteractorType(CvInteractorType type) {
@@ -191,6 +200,17 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
     public Collection<Annotation> getAnnotations()
     {
         return super.getAnnotations();
+    }
+
+    @Column(insertable = false, updatable = false)
+    public String getObjClass()
+    {
+        return objClass;
+    }
+
+    public void setObjClass(String objClass)
+    {
+        this.objClass = objClass;
     }
 
     ///////////////////////////////////////
@@ -223,9 +243,18 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
      */
     @Override
     public boolean equals( Object o ) {
-        if( this == o ) return true;
-        if( !( o instanceof Interactor ) ) return false;
-        if( !super.equals( o ) ) return false;
+        if (this == o)
+        {
+            return true;
+        }
+        if (!(o instanceof Interactor))
+        {
+            return false;
+        }
+        if (!super.equals(o))
+        {
+            return false;
+        }
 
         final Interactor interactor = (Interactor) o;
 

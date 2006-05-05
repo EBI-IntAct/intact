@@ -654,6 +654,9 @@ public class SearchHelper implements SearchHelperI {
         }
     }
 
+    /**
+     * Checks if there is only one value, and then if this value is an accession returns true
+     */
     private static boolean isQuerySearchingOnlyOneAc(String[] values)
     {
         if (values.length > 1 || values.length == 0)

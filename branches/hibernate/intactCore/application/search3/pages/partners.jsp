@@ -24,7 +24,6 @@
 
 <!-- Standard Java classes -->
 <%@ page import="java.util.*"%>
-<%@ page import="uk.ac.ebi.intact.model.AnnotatedObject"%>
 <%@ page import="uk.ac.ebi.intact.application.search3.struts.view.beans.PartnersView"%>
 
 <!-- may make use of these later to tidy up the JSP a little -->
@@ -97,7 +96,9 @@
     %>
 
     <!-- we need the buttons at the top as well as the bottom now -->
-    <%@ include file="buttonBar.html" %>   
+    <%@ include file="buttonBar.html" %>
+
+    <br>
 
     <!-- the main data table -->
     <table style="width: 100%; background-color: rgb(51, 102, 102);" width="100%"  cellpadding="5">

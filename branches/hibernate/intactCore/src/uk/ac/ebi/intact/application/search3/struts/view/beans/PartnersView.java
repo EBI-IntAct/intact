@@ -98,10 +98,10 @@ public class PartnersView
 
     private PartnersViewBean createPartnersViewBean(Interactor interactor, String helpLink, String searchUrl, String contextPath, Collection<String> interactionAcs)
     {
-         PartnersViewBean bean = new PartnersViewBean(interactor,helpLink, searchUrl, contextPath);
+         PartnersViewBean bean = new PartnersViewBean(interactor,helpLink, contextPath);
 
         // Bean creation
-        List<String> geneNames = DaoFactory.getProteinDao().getGeneNamesByProteinAc(interactor.getAc());
+        List<String> geneNames = DaoFactory.getInteractorDao().getGeneNamesByInteractorAc(interactor.getAc());
         bean.setGeneNames(geneNames);
 
         // All this setters set the information necessary for the view
