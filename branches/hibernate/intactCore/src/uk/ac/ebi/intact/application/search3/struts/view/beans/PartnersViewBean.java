@@ -29,6 +29,7 @@ import java.util.Set;
  * <p/>
  *
  * @author Chris Lewington
+ * @author Bruno Aranda (conversion to real bean)
  * @version $Id$
  */
 public class PartnersViewBean extends AbstractViewBean {
@@ -52,11 +53,6 @@ public class PartnersViewBean extends AbstractViewBean {
     private String interactorSearchURL;
 
     /**
-     * The general form of search URL to be used.
-     */
-    private String searchURL;
-
-    /**
      * The search URL for all of the Interactions containing this Protein.
      */
     private String interactionsSearchURL;
@@ -75,7 +71,6 @@ public class PartnersViewBean extends AbstractViewBean {
     /**
      * if true, the bean will only show self interaction. if false (default), the been will show all interactions.
      */
-    private boolean selfInteraction = false;
     private String uniprotAc;
     private String interactorPartnerUrl;
 
@@ -85,36 +80,13 @@ public class PartnersViewBean extends AbstractViewBean {
      *
      * @param interactor        The Interactor whose beans are to be displayed
      * @param helpLink    The link to the help pages
-     * @param searchURL   The general URL to be used for searching (can be filled in later).
      * @param contextPath The path to the search application.
      */
 
 //    public PartnersViewBean( Protein prot, String helpLink, String searchURL, String contextPath ) {  // 1 usage in BinaryResultAction
-    public PartnersViewBean( Interactor interactor, String helpLink, String searchURL, String contextPath ) {
+    public PartnersViewBean( Interactor interactor, String helpLink, String contextPath ) {
         super( helpLink, contextPath );
         this.interactor = interactor;
-        this.searchURL = searchURL;
-    }
-
-
-    /**
-     * The bean constructor requires a Protein to wrap, plus beans on the context path to the search application, a
-     * general searchURL and the help link.
-     *
-     * @param interactor            The Protein whose beans are to be displayed
-     * @param selfInteraction define if we limit the bean to self interactions.
-     * @param helpLink        The link to the help pages
-     * @param searchURL       The general URL to be used for searching (can be filled in later).
-     * @param contextPath     The path to the search application.
-     */
-
-//    public PartnersViewBean( Protein prot, boolean selfInteraction, String helpLink,    // 1 usage in BinaryProteinAction
-    public PartnersViewBean( Interactor interactor, boolean selfInteraction, String helpLink,
-                             String searchURL, String contextPath ) {
-        super( helpLink, contextPath );
-        this.interactor = interactor;
-        this.searchURL = searchURL;
-        this.selfInteraction = selfInteraction;
     }
 
 
