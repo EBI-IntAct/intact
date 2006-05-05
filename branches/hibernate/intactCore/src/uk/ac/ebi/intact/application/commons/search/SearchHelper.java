@@ -278,8 +278,6 @@ public class SearchHelper implements SearchHelperI {
 
         Class<? extends AnnotatedObject> mappedClass = searchClass.getMappedClass();
 
-        AnnotatedObjectDao dao = DaoFactory.getAnnotatedObjectDao(mappedClass);
-
         //try search on AC first...
         Collection results = user.search(mappedClass, "ac", value);
         String currentCriteria = "ac";
@@ -448,11 +446,8 @@ public class SearchHelper implements SearchHelperI {
      * @param searchClass String which represents the name of the class  to search on.
      * @param type        String  the filter type (ac, shortlabel, xref etc.) if type is null it will be 'all'
      * @return the result wrapper which contains the result of the search
-     * @throws uk.ac.ebi.intact.business.IntactException
-     *          thrown if there were any search problems
      */
-    private ResultWrapper search(String query, SearchClass searchClass, String type, int maximumResultSize, int firstResult, boolean paginatedSearch)
-            throws IntactException {
+    private ResultWrapper search(String query, SearchClass searchClass, String type, int maximumResultSize, int firstResult, boolean paginatedSearch) {
 
         // first check if we got a type, we have to search for a type if the type is not null
         // and not "all"
@@ -469,6 +464,18 @@ public class SearchHelper implements SearchHelperI {
         // split the query
         Collection<String> someSearchValues = this.splitQuery(sqlValue);
         String[] values = someSearchValues.toArray(new String[someSearchValues.size()]);
+
+
+        // in this variable the results of the search will be stored
+        List<AnnotatedObject> searchResult = new ArrayList<AnnotatedObject>();
+
+        // If only one accession is in the query and the object type is specified
+        // there is no need to go to the search table. We can retrieve the object directly
+        if (isQuerySearchingOnlyOneAc(values) && searchClass.isSpecified())
+        {
+            logger.info("Search is for only one AC, and search class is specified. No need to go through ia_search");
+            searchResult.add(DaoFactory.getAnnotatedObjectDao(searchClass.getMappedClass()).getByAc(values[0]));
+        }
 
         SearchItemDao searchItemDao = DaoFactory.getSearchItemDao();
 
@@ -509,10 +516,6 @@ public class SearchHelper implements SearchHelperI {
             logger.info("Result too Large return an empty result Wrapper");
             return new ResultWrapper(count, maximumResultSize, resultInfo);
         }
-
-        // get the result from the resultset and query the objects using its AC and
-        // put the data in a ResultWrapper
-        List<AnnotatedObject> searchResult = new ArrayList<AnnotatedObject>();
 
         boolean searchedForCvObject = false;
 
@@ -574,13 +577,10 @@ public class SearchHelper implements SearchHelperI {
      *
      * @param searchValue the user-specified search value
      * @param type        type String  the filter type (ac, shortlabel, xref etc.) if type is null it will be 'all'
-     * @param helper      user f uk.ac.ebi.intact.application.commons.business.IntactUserI for getting the IntactHelper
      * @return the result wrapper which contains the result of the search
-     * @throws uk.ac.ebi.intact.business.IntactException
-     *          thrown if there were any search problems
      */
-    private ResultWrapper getInteractors(final String searchValue, String type, IntactHelper helper, int numberOfResults, int firstResult, boolean paginatedSearch)
-            throws IntactException {
+    private ResultWrapper getInteractors(final String searchValue, String type, int numberOfResults, int firstResult, boolean paginatedSearch)
+    {
 
         logger.info("search Interactor");
 
@@ -647,11 +647,28 @@ public class SearchHelper implements SearchHelperI {
             throws IntactException {
 
         if (searchClass == SearchClass.INTERACTOR) {
-            return this.getInteractors(query, type, helper, numberOfResults, firstResult, paginatedSearch);
+            return this.getInteractors(query, type, numberOfResults, firstResult, paginatedSearch);
         }
         else {
             return this.search(query, searchClass, type, numberOfResults, firstResult, paginatedSearch);
         }
     }
+
+    private static boolean isQuerySearchingOnlyOneAc(String[] values)
+    {
+        if (values.length > 1 || values.length == 0)
+        {
+            return false;
+        }
+
+        String value = values[0];
+
+        String institutionPrefix = "EBI";
+
+        return (value.startsWith(institutionPrefix+"-") && !value.endsWith("%"));
+
+    }
+
+
 
 }

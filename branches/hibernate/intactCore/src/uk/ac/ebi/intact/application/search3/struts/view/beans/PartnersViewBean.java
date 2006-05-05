@@ -27,9 +27,6 @@ import java.util.Set;
  * Name</li> <li>Description</li> </ul> After a row for the primary result, the Interaction partners are lisetd, with
  * the same information. </p>
  * <p/>
- * NOTE: If a JSP wishes to display multiple search results then a SummaryViewBean should be created for each result and
- * displayed in turn. This avoids unnecessary complications in the code itself and leaves the display decisions to the
- * JSP, where it belongs. </p>
  *
  * @author Chris Lewington
  * @version $Id$
