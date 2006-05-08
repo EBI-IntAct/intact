@@ -1,6 +1,7 @@
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
+import uk.ac.ebi.intact.application.commons.search.SearchClass;
 
 /**
  * @author Michael Kleen
@@ -69,16 +70,19 @@ public class SingleResultViewBean {
     }
 
     public String getSearchName() {
-        if ( intactType.equalsIgnoreCase( "Protein" ) ) {
+        if ( intactType.equalsIgnoreCase( SearchClass.PROTEIN.getShortName() ) ) {
             return "Select by Protein";
         }
-        if ( intactType.equalsIgnoreCase( "Interaction" ) ) {
+        if ( intactType.equalsIgnoreCase( SearchClass.NUCLEIC_ACID.getShortName() ) ) {
+            return "Select by Nucleic Acid";
+        }
+        if ( intactType.equalsIgnoreCase( SearchClass.INTERACTION.getShortName() ) ) {
             return "Select by Interaction";
         }
-        if ( intactType.equalsIgnoreCase( "Experiment" ) ) {
+        if ( intactType.equalsIgnoreCase( SearchClass.EXPERIMENT.getShortName() ) ) {
             return "Select by Experiment";
         }
-        if ( intactType.equalsIgnoreCase( "Controlled vocabulary term" ) ) {
+        if ( intactType.equalsIgnoreCase( SearchClass.CV_OBJECT.getShortName() ) ) {
             return "Select by Controlled vocabulary";
         } else {
             return "-";
@@ -87,27 +91,23 @@ public class SingleResultViewBean {
 
     // inserted the following method (afrie)
     public String getSearchObject() {
-        if ( intactType.equalsIgnoreCase( "Protein" ) ) {
+        if ( intactType.equalsIgnoreCase( SearchClass.PROTEIN.getShortName()) ) {
             return "protein";
         }
-        if ( intactType.equalsIgnoreCase( "Interaction" ) ) {
+        else if ( intactType.equalsIgnoreCase( SearchClass.NUCLEIC_ACID.getShortName()) ) {
+            return "nucleicAcid";
+        }
+        else if ( intactType.equalsIgnoreCase( SearchClass.INTERACTION.getShortName() ) ) {
             return "interaction";
         }
-        if ( intactType.equalsIgnoreCase( "Experiment" ) ) {
+        else if ( intactType.equalsIgnoreCase( SearchClass.EXPERIMENT.getShortName() ) ) {
             return "experiment";
         }
-        if ( intactType.equalsIgnoreCase( "Controlled vocabulary term" ) ) {
+        else if ( intactType.equalsIgnoreCase( SearchClass.CV_OBJECT.getShortName() ) ) {
             return "cv";
-        } else {
+        }
+        else {
             return "-";
         }
-    }
-
-    public boolean isSearchable() {
-        //if ( count < SearchConstants.MAXIMUM_RESULT_SIZE ) {
-            return true;
-        //} else {
-        //    return false;
-        //}
     }
 }

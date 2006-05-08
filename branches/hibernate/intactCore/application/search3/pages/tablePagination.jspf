@@ -38,7 +38,7 @@
         int pageCount = 0;
         int totalResults = 0;
 
-        if (strPage != null)
+        if (strPage != null && strPage.length() != 0)
         {
             currentPage = Integer.valueOf(strPage);
             totalResults = (Integer)request.getAttribute(SearchConstants.TOTAL_RESULTS_ATT_NAME);

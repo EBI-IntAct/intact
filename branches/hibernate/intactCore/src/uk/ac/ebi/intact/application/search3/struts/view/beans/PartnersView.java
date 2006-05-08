@@ -129,7 +129,14 @@ public class PartnersView
      */
     private String getIdentityXrefUrl(Interactor interactor)
     {
-        return SearchReplace.replace(uniprotUrlTemplate, "${ac}", getPrimaryIdXrefIdentity(interactor));
+        String primaryIdXrefIdentity = getPrimaryIdXrefIdentity(interactor);
+
+        if (uniprotUrlTemplate == null || primaryIdXrefIdentity == null)
+        {
+            return "#";
+        }
+
+        return SearchReplace.replace(uniprotUrlTemplate, "${ac}", primaryIdXrefIdentity);
     }
 
     private String getPrimaryIdXrefIdentity(Interactor interactor)

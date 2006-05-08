@@ -5,12 +5,17 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
 /**
  * An implementation of nucleic acid sequence.
  * 
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
+@Entity
+@DiscriminatorValue("uk.ac.ebi.intact.model.NucleicAcidImpl")
 public class NucleicAcidImpl extends PolymerImpl implements NucleicAcid, Editable {
 
     /**
