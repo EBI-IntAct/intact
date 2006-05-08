@@ -26,6 +26,7 @@ import uk.ac.ebi.intact.model.CvTissue;
 import uk.ac.ebi.intact.model.CvComponentRole;
 import uk.ac.ebi.intact.model.CvInteraction;
 import uk.ac.ebi.intact.model.CvFeatureType;
+import uk.ac.ebi.intact.model.NucleicAcidImpl;
 
 import java.util.Set;
 import java.util.List;
@@ -43,6 +44,7 @@ public enum SearchClass
 {
     EXPERIMENT("Experiment", Experiment.class),
     PROTEIN("Protein", ProteinImpl.class),
+    NUCLEIC_ACID("NucleicAcid", NucleicAcidImpl.class),
     INTERACTOR("Interactor", InteractorImpl.class),
     INTERACTION("Interaction", InteractionImpl.class),
 

@@ -71,7 +71,7 @@ public class SearchAction extends IntactBaseAction {
         int page = 0;
         boolean paginatedSearch = false;
 
-        if (strPage != null)
+        if (strPage != null && strPage.length() != 0)
         {
             paginatedSearch = true;
             page = Integer.valueOf(strPage);
