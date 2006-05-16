@@ -7,9 +7,7 @@ package uk.ac.ebi.intact.model;
 
 
 /**
- * Terms in this controlled vocabulary class qualify the association
- * between AnnotatedObject and Xref.
- * example identical
+ * Terms in this controlled vocabulary class qualify the association between AnnotatedObject and Xref. example identical
  * example homologue
  *
  * @author hhe
@@ -49,11 +47,18 @@ public class CvXrefQualifier extends CvObject implements Editable {
     public static final String PROCESS = "process";
     public static final String PROCESS_MI_REF = "MI:0359";
 
+    public static final String IMEX_PRIMARY = "imex-primary";
+    public static final String IMEX_PRIMARY_MI_REF = "MI:0662";
+
 
     /**
-     * Cache a Vector of all shortLabels of the class, e.g. for menus.
-     * This should not be here as it has no model functionality but is
-     * related to eg user interfaces.
+     * Cache a Vector of all shortLabels of the class, e.g. for menus. This should not be here as it has no model
+     * functionality but is related to eg user interfaces.
+     * <p/>
+     * This constructor should <b>not</b> be used as it could result in objects with invalid state. It is here for
+     * object mapping purposes only and if possible will be made private.
+     *
+     * @deprecated Use the full constructor instead
      */
 //    protected static Vector menuList = null;
 
@@ -71,11 +76,11 @@ public class CvXrefQualifier extends CvObject implements Editable {
     }
 
     /**
-     * Creates a valid CvXrefQualifier instance. Requires at least a shortLabel and an
-     * owner to be specified.
+     * Creates a valid CvXrefQualifier instance. Requires at least a shortLabel and an owner to be specified.
      *
      * @param shortLabel The memorable label to identify this CvXrefQualifier
      * @param owner      The Institution which owns this CvXrefQualifier
+     *
      * @throws NullPointerException thrown if either parameters are not specified
      */
     public CvXrefQualifier( Institution owner, String shortLabel ) {
