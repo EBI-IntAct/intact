@@ -40,7 +40,10 @@ public class CvTopic extends CvObject implements Editable {
     public static final String CONFIDENCE_MAPPING_MI_REF = "MI:0622";
 
     public static final String SEARCH_URL_ASCII = "search-url-ascii";
+
     public static final String SEARCH_URL = "search-url";
+    public static final String SEARCH_URL_MI_REF = "MI:0615";
+
     public static final String ISOFORM_COMMENT = "isoform-comment";
 
     public static final String NON_UNIPROT = "no-uniprot-update";
@@ -74,6 +77,11 @@ public class CvTopic extends CvObject implements Editable {
     public static final String JOURNAL = "journal";
     public static final String PUBLICATION_YEAR = "publication-year";
     public static final String REVIEWER = "reviewer";
+
+    public static final String IMEX_RANGE_REQUESTED = "imex-range-requested";
+
+    public static final String IMEX_RANGE_ASSIGNED = "imex-range-assigned";
+
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus. This should not be here as it has no model
      * functionality but is related to eg user interfaces.
@@ -84,7 +92,6 @@ public class CvTopic extends CvObject implements Editable {
      * @deprecated Use the full constructor instead
      */
 //    protected static Vector menuList = null;
-
 
     /**
      * This constructor should <b>not</b> be used as it could result in objects with invalid state. It is here for
