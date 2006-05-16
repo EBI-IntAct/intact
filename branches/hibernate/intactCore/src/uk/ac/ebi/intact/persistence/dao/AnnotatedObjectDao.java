@@ -5,49 +5,24 @@
  */
 package uk.ac.ebi.intact.persistence.dao;
 
-import org.hibernate.Session;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
-import org.hibernate.criterion.SimpleExpression;
 
 import java.util.Collection;
 
 import uk.ac.ebi.intact.model.AnnotatedObject;
 
 /**
- * TODO comment this
- *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
- * @since <pre>24-Apr-2006</pre>
+ * @since <pre>08-May-2006</pre>
  */
-@SuppressWarnings({"unchecked"})
-public class AnnotatedObjectDao<T extends AnnotatedObject> extends IntactObjectDao<T>
+public interface AnnotatedObjectDao<T extends AnnotatedObject> extends IntactObjectDao<T>
 {
+    T getByShortLabel(String value);
 
-    public AnnotatedObjectDao(Class<T> entityClass, Session session)
-    {
-        super(entityClass, session);
-    }
+    T getByShortLabel(String value, boolean ignoreCase);
 
-    public T getByShortLabel(String value)
-    {
-        return getByShortLabel(value, true);
-    }
+    Collection<T> getByShortLabelLike(String value);
 
-    public T getByShortLabel(String value, boolean ignoreCase)
-    {
-        return getByPropertyName("shortLabel", value, ignoreCase);
-    }
-
-    public Collection<T> getByShortLabelLike(String value, boolean ignoreCase, MatchMode matchMode)
-    {
-       return getByPropertyNameLike("shortLabel", value, ignoreCase, matchMode);
-    }
-
-   
-
+    Collection<T> getByShortLabelLike(String value, boolean ignoreCase);
 }

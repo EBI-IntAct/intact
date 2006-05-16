@@ -7,14 +7,24 @@ package uk.ac.ebi.intact.persistence.dao;
 
 import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.InteractorImpl;
 import uk.ac.ebi.intact.persistence.util.HibernateUtil;
+import uk.ac.ebi.intact.persistence.dao.impl.AliasDaoImpl;
+import uk.ac.ebi.intact.persistence.dao.impl.AnnotatedObjectDaoImpl;
+import uk.ac.ebi.intact.persistence.dao.impl.CvObjectDaoImpl;
+import uk.ac.ebi.intact.persistence.dao.impl.ExperimentDaoImpl;
+import uk.ac.ebi.intact.persistence.dao.impl.HibernateBaseDaoImpl;
+import uk.ac.ebi.intact.persistence.dao.impl.IntactObjectDaoImpl;
+import uk.ac.ebi.intact.persistence.dao.impl.InteractionDaoImpl;
+import uk.ac.ebi.intact.persistence.dao.impl.InteractorDaoImpl;
+import uk.ac.ebi.intact.persistence.dao.impl.ProteinDaoImpl;
+import uk.ac.ebi.intact.persistence.dao.impl.SearchItemDaoImpl;
+import uk.ac.ebi.intact.persistence.dao.impl.XrefDaoImpl;
 import org.hibernate.Session;
 
 /**
- * Factory for all the intact DAOs
+ * Factory for all the intact DAOs using Hibernate
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -26,56 +36,56 @@ public class DaoFactory
 
     public static AliasDao getAliasDao()
     {
-        return new AliasDao(getCurrentSession());
+        return new AliasDaoImpl(getCurrentSession());
     }
 
-    public static <T extends AnnotatedObject> AnnotatedObjectDao<T> getAnnotatedObjectDao(Class<T> entityType)
+    public static <T extends AnnotatedObject> AnnotatedObjectDaoImpl<T> getAnnotatedObjectDao(Class<T> entityType)
     {
-        HibernateDao.validateEntity(entityType);
+        HibernateBaseDaoImpl.validateEntity(entityType);
 
-        return new AnnotatedObjectDao<T>(entityType, getCurrentSession());
+        return new AnnotatedObjectDaoImpl<T>(entityType, getCurrentSession());
     }
 
     public static <T extends CvObject> CvObjectDao<T> getCvObjectDao(Class<T> entityType)
     {
-        return new CvObjectDao<T>(entityType, getCurrentSession());
+        return new CvObjectDaoImpl<T>(entityType, getCurrentSession());
     }
 
     public static ExperimentDao getExperimentDao()
     {
-        return new ExperimentDao(getCurrentSession());
+        return new ExperimentDaoImpl(getCurrentSession());
     }
 
     public static <T extends IntactObject> IntactObjectDao<T> getIntactObjectDao(Class<T> entityType)
     {
-        HibernateDao.validateEntity(entityType);
+        HibernateBaseDaoImpl.validateEntity(entityType);
 
-        return new IntactObjectDao<T>(entityType, getCurrentSession());
+        return new IntactObjectDaoImpl<T>(entityType, getCurrentSession());
     }
 
     public static InteractionDao getInteractionDao()
     {
-        return new InteractionDao(getCurrentSession());
+        return new InteractionDaoImpl(getCurrentSession());
     }
 
     public static InteractorDao<InteractorImpl> getInteractorDao()
     {
-        return new InteractorDao<InteractorImpl>(InteractorImpl.class, getCurrentSession());
+        return new InteractorDaoImpl<InteractorImpl>(InteractorImpl.class, getCurrentSession());
     }
 
     public static ProteinDao getProteinDao()
     {
-        return new ProteinDao(getCurrentSession());
+        return new ProteinDaoImpl(getCurrentSession());
     }
 
     public static SearchItemDao getSearchItemDao()
     {
-        return new SearchItemDao(getCurrentSession());
+        return new SearchItemDaoImpl(getCurrentSession());
     }
 
     public static XrefDao getXrefDao()
     {
-        return new XrefDao(getCurrentSession());
+        return new XrefDaoImpl(getCurrentSession());
     }
 
     private static Session getCurrentSession()

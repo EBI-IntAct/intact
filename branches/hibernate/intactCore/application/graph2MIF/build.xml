@@ -96,6 +96,13 @@
         <pathelement path="${root.lib.dir}/commons-collections-3.0.jar"/>
         <pathelement path="${root.lib.dir}/xercesImpl.jar"/>
         <pathelement path="${root.lib.dir}/xml-apis.jar"/>
+
+        <pathelement path="${root.lib.dir}/commons-logging-1.0.4.jar"/>
+
+        <!-- hibernate -->
+        <fileset dir="${root.lib.dir}/hibernate">
+            <include name="**/*.jar"/>
+        </fileset>
     </path>
 
     <!-- =================================================================== -->

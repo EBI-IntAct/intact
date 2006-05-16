@@ -5,63 +5,19 @@
  */
 package uk.ac.ebi.intact.persistence.dao;
 
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Projections;
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
+import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.InteractionImpl;
 
 import java.util.List;
 
 /**
- * TODO comment this
- *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
- * @since <pre>03-May-2006</pre>
+ * @since <pre>08-May-2006</pre>
  */
-@SuppressWarnings({"unchecked"})
-public class InteractionDao extends InteractorDao<InteractionImpl>
+public interface InteractionDao extends InteractorDao<InteractionImpl>
 {
-    private static final Log log = LogFactory.getLog(InteractionDao.class);
+    Integer countInteractorsByInteractionAc(String interactionAc);
 
-    public InteractionDao(Session session)
-    {
-        super(InteractionImpl.class, session);
-    }
-
-    /**
-     * Counts the interactors for an interaction
-     * @param interactionAc The interaction accession number to use
-     * @return number of distinct interactors
-     */
-    public int countInteractorsByInteractionAc(String interactionAc)
-    {
-        if (log.isDebugEnabled())
-        {
-            log.debug("Counting interactors for interaction with ac: "+interactionAc);
-        }
-
-        return (Integer) getSession().createCriteria(InteractionImpl.class)
-                .add(Restrictions.idEq(interactionAc))
-                .createAlias("components", "comp")
-                .createAlias("comp.interactor", "interactor")
-                .setProjection(Projections.count("interactor.ac")).uniqueResult();
-    }
-
-    public List<String> getNestedInteractionAcsByInteractionAc(String interactionAc)
-    {
-        if (log.isDebugEnabled())
-        {
-            log.debug("Getting nested interactions for interaction with ac: "+interactionAc);
-        }
-
-        return getSession().createCriteria(InteractionImpl.class)
-                .add(Restrictions.idEq(interactionAc))
-                .createAlias("components", "comp")
-                .createAlias("comp.interactor", "interactor")
-                .add(Restrictions.eq("interactor.objClass", InteractionImpl.class.getName()))
-                .setProjection(Projections.distinct(Projections.property("interactor.ac"))).list();
-    }
+    List<String> getNestedInteractionAcsByInteractionAc(String interactionAc);
 }

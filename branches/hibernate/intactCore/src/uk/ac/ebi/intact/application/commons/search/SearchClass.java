@@ -27,6 +27,7 @@ import uk.ac.ebi.intact.model.CvComponentRole;
 import uk.ac.ebi.intact.model.CvInteraction;
 import uk.ac.ebi.intact.model.CvFeatureType;
 import uk.ac.ebi.intact.model.NucleicAcidImpl;
+import uk.ac.ebi.intact.model.BioSource;
 
 import java.util.Set;
 import java.util.List;
@@ -43,6 +44,7 @@ import java.util.ArrayList;
 public enum SearchClass
 {
     EXPERIMENT("Experiment", Experiment.class),
+    BIOSOURCE("BioSource", BioSource.class),
     PROTEIN("Protein", ProteinImpl.class),
     NUCLEIC_ACID("NucleicAcid", NucleicAcidImpl.class),
     INTERACTOR("Interactor", InteractorImpl.class),
@@ -86,6 +88,11 @@ public enum SearchClass
         if (shortName == null)
         {
             throw new NullPointerException("shortName");
+        }
+
+        if (shortName.contains("$$"))
+        {
+            shortName = shortName.substring(0, shortName.indexOf("$$"));
         }
 
         if (shortName.trim().equals(""))

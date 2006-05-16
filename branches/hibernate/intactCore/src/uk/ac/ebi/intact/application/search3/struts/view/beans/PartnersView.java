@@ -12,7 +12,10 @@ import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.ProteinDao;
 import uk.ac.ebi.intact.util.SearchReplace;
+import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -50,20 +53,49 @@ public class PartnersView
      */
     private String primaryIdXrefIdentity;
 
+    private Interactor interactor;
+
+    private HttpServletRequest request;
+    private HttpSession session;
+
     /**
      * The partners of the main interactor
      */
     private List<PartnersViewBean> interactionPartners;
 
-    public PartnersView(Interactor interactor, String helpLink, String searchUrl, String contextPath)
+    public PartnersView(HttpServletRequest request, Interactor interactor, String helpLink, String searchUrl, String contextPath)
     {
+        this.request = request;
+        this.session = request.getSession();
+        this.interactor = interactor;
+
         ProteinDao proteinDao = DaoFactory.getProteinDao();
 
         // Using the ac, we retrieve the uniprot url template (by using the identity "Xref")
         uniprotUrlTemplate = proteinDao.getUniprotUrlTemplateByProteinAc(interactor.getAc());
 
+        // pagination preparation here
+        int maxResults = getItemsPerPage();
+        int currentPage = getCurrentPage();
+        int firstResult = (currentPage-1)*getItemsPerPage();
+
+        int totalItems = getTotalItems();
+
+        if (firstResult > totalItems)
+        {
+            throw new RuntimeException("Page out of bounds: "+currentPage+" ("+firstResult+"/"+maxResults+")");
+        }
+
+        if (currentPage == 0)
+        {
+            if (totalItems > getItemsPerPage())
+            {
+                setCurrentPage(1);
+            }
+        }
+
         // Load the list of partners ACs, each partner has a list with the interaction ACs
-        Map<String,List<String>> partnersWithInteractionAcs = proteinDao.getPartnersWithInteractionAcsByProteinAc(interactor.getAc());
+        Map<String,List<String>> partnersWithInteractionAcs = proteinDao.getPartnersWithInteractionAcsByProteinAc(interactor.getAc(), firstResult, maxResults);
 
         // This set will contain all the ACs for the main interactor
         // Iterates throug all the interactions from the previous query, to create a collection with unique ACs
@@ -75,7 +107,7 @@ public class PartnersView
         }
 
         // Creates the main interactor PartnersViewBean
-        interactorCandidate = createPartnersViewBean(interactor, helpLink, searchUrl, contextPath, interactionAcsForMainInteractor);
+        interactorCandidate = createPartnersViewBean(interactor, true, helpLink, searchUrl, contextPath, interactionAcsForMainInteractor);
 
         // We iterate through the map to retrieve all the partners, with their interaction ACs,
         // and create a PArtnerViewBean with each entry
@@ -89,14 +121,14 @@ public class PartnersView
             {
                 // We retrieve each interactor from the database, to create the bean
                 Interactor partnerInteractor = DaoFactory.getInteractorDao().getByAc(partnerInteractorAc);
-                PartnersViewBean bean = createPartnersViewBean(partnerInteractor, helpLink, searchUrl, contextPath, entry.getValue());
+                PartnersViewBean bean = createPartnersViewBean(partnerInteractor, false, helpLink, searchUrl, contextPath, entry.getValue());
                 interactionPartners.add(bean);
             }
         }
 
     }
 
-    private PartnersViewBean createPartnersViewBean(Interactor interactor, String helpLink, String searchUrl, String contextPath, Collection<String> interactionAcs)
+    private PartnersViewBean createPartnersViewBean(Interactor interactor, boolean mainInteractor, String helpLink, String searchUrl, String contextPath, Collection<String> interactionAcs)
     {
          PartnersViewBean bean = new PartnersViewBean(interactor,helpLink, contextPath);
 
@@ -105,7 +137,15 @@ public class PartnersView
         bean.setGeneNames(geneNames);
 
         // All this setters set the information necessary for the view
-        bean.setNumberOfInteractions(interactionAcs.size());
+        if (mainInteractor)
+        {
+            bean.setNumberOfInteractions(getTotalItems());
+        }
+        else
+        {
+            bean.setNumberOfInteractions(interactionAcs.size());
+        }
+
         bean.setUniprotAc(getUniprotAc(interactor));
         bean.setIdentityXrefURL(getIdentityXrefUrl(interactor));
         bean.setInteractorSearchURL(getInteractorSearchURL(searchUrl, interactor));
@@ -232,4 +272,48 @@ public class PartnersView
         this.interactionPartners = interactionPartners;
     }
 
+    public int getCurrentPage(){
+        int currentPage = 0;
+
+        String strPage = request.getParameter("page");
+
+        if (strPage != null && strPage.length() != 0)
+        {
+            currentPage = Integer.valueOf(strPage);
+        }
+
+        return currentPage;
+    }
+
+    public void setCurrentPage(int page){
+        request.getParameterMap().put("page", page);
+    }
+
+    public int getItemsPerPage() {
+        return SearchConstants.RESULTS_PER_PAGE;
+    }
+
+    public int getTotalItems()
+    {
+        String prefix = getClass().getName()+"_";
+
+        String attName = prefix+interactor.getAc();
+
+        int totalItems = 0;
+
+        if (session.getAttribute(attName) == null)
+        {
+            totalItems = DaoFactory.getProteinDao().countPartnersByProteinAc(interactor.getAc());
+
+            session.setAttribute(attName, totalItems);
+        }
+        else
+        {
+            totalItems = (Integer) session.getAttribute(attName);
+        }
+
+        request.setAttribute(SearchConstants.TOTAL_RESULTS_ATT_NAME, totalItems);
+
+        return totalItems;
+    }
 }

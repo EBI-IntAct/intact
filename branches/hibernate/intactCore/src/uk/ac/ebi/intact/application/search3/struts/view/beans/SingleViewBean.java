@@ -188,13 +188,5 @@ public class SingleViewBean extends AbstractViewBean {
         return this.obj.getFullName();
     }
 
-    /**
-     * @param anAnnotatedObject
-     *
-     * @return String  the intact type of  the annotedObject
-     */
-    private String getIntactType( final AnnotatedObject anAnnotatedObject ) {
-         return SearchClass.valueOfMappedClass(anAnnotatedObject.getClass()).getShortName();
-   }
 }
 

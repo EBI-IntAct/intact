@@ -114,6 +114,10 @@ Verison: $Id$
         <pathelement path="${root.lib.dir}/commons-collections-3.0.jar"/>
         <pathelement path="${root.lib.dir}/jdbc_oracle9i_thin_9.2.0.jar"/>
 
+        <!-- hibernate -->
+        <fileset dir="${root.lib.dir}/hibernate">
+            <include name="**/*.jar"/>
+        </fileset>
 
         <pathelement path="${intact.app.dir}/lib/struts.jar"/>
 

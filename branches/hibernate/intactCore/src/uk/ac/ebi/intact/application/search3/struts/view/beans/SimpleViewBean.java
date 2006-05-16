@@ -7,7 +7,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.InteractionDao;
 import uk.ac.ebi.intact.application.commons.search.SearchClass;
@@ -216,9 +215,9 @@ public class SimpleViewBean extends AbstractViewBean {
             Class clazz = obj.getClass();
 
             if ( Experiment.class.isAssignableFrom( clazz ) ) {
-                int size = DaoFactory.getExperimentDao().countInteractionsForExperimentWithAc(getObjAc());
-                logger.info("Counting interactions for experiment with AC "+getObjAc()+": "+size);
-                relatedItemsSize = Integer.toString( size );
+                long size = DaoFactory.getExperimentDao().countInteractionsForExperimentWithAc(getObjAc());
+                logger.debug("Counting interactions for experiment with AC "+getObjAc()+": "+size);
+                relatedItemsSize = String.valueOf( size );
             }
 
             //just check to be sure!!
