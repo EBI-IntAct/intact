@@ -163,7 +163,7 @@ public class SearchAction extends IntactBaseAction {
                 return mapping.findForward( SearchConstants.FORWARD_NO_MATCHES );
             }
 
-            SearchHelper searchHelper = new SearchHelper( logger );
+            SearchHelper searchHelper = new SearchHelper(request, logger );
 
             // TODO this should probably move to the dispatcher action
 
@@ -277,12 +277,11 @@ public class SearchAction extends IntactBaseAction {
             logger.info( "found results - forwarding to relevant Action for processing..." );
 
             //determine the shortlabel highlighting list for display...
-            AnnotatedObject obj = null;
             logger.info( "building highlight list..." );
-            for ( Iterator iterator = results.getResult().iterator(); iterator.hasNext(); ) {
-                obj = (AnnotatedObject) iterator.next();
-                logger.info( "Search result: " + obj.getShortLabel() );
-                labelList.add( obj.getShortLabel() );
+            for (AnnotatedObject annotatedObject : results.getResult())
+            {
+                logger.debug("Search result: " + annotatedObject.getShortLabel());
+                labelList.add(annotatedObject.getShortLabel());
             }
 
             //put both the results and also a list of the shortlabels for highlighting into the request
@@ -359,17 +358,17 @@ public class SearchAction extends IntactBaseAction {
             maxResults = SearchConstants.RESULTS_PER_PAGE;
         }
 
-        if ( !searchClass.isSpecified() || SearchValidator.isSearchable( searchClass )) {
+        //BRUNO changed here
+    //    if ( searchClass.isSpecified() || SearchValidator.isSearchable( searchClass )) {
             logger.info( "SearchAction: searchfast: " + searchValue + " searchClass: " + searchClass );
-            IntactHelper intactHelper = user.getIntactHelper();
-            result = helper.searchFast( searchValue, searchClass, filterValue, intactHelper, maxResults, firstResult, paginatedSearch);
-        } else {
+            result = helper.searchFast( searchValue, searchClass, filterValue, maxResults, firstResult, paginatedSearch);
+   /*     } else {
             // this is a normal request from the servlet, we know the class, we know the value.
             Collection temp = new ArrayList();
             logger.info( "SearchAction: doLookup: " + searchValue + " searchClass: " + searchClass );
             temp.addAll( helper.doLookup( searchClass, searchValue, user ) );
             result = new ResultWrapper( temp, SearchConstants.MAXIMUM_RESULT_SIZE );
-        }
+        }    */
 
         return result;
     }

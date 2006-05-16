@@ -25,6 +25,7 @@
 <!-- Standard Java classes -->
 <%@ page import="java.util.*"%>
 <%@ page import="uk.ac.ebi.intact.application.search3.struts.view.beans.PartnersView"%>
+<%@ page import="uk.ac.ebi.intact.application.commons.search.SearchClass"%>
 
 <!-- may make use of these later to tidy up the JSP a little -->
 <%@ taglib uri="http://jakarta.apache.org/struts/tags-html" prefix="html"%>
@@ -53,6 +54,13 @@
     //the list of shortlabels for the search matches - need to be highlighted
     //NB the SearchAction ensures this will never be null
     List<String> highlightList = (List<String>)request.getAttribute(SearchConstants.HIGHLIGHT_LABELS_LIST);
+
+    // We set the searchClass in the request, if the search comes directly using the search box on the left.
+    // Used for pagination purposes
+    if (request.getParameter("searchClass") == null)
+    {
+        request.getParameterMap().put("searchClass", SearchClass.PROTEIN.getShortName());
+    }
 %>
 
 <%-- The javascript for the button bars.... --%>
@@ -198,7 +206,6 @@
                        }
                    %>
                 </td>
-
                 <!-- description, not linked -->
                 <td class="data" style="vertical-align: top; background-color: rgb(255, 255, 255);">
                     <%= bean.getMainInteractor().getFullName()%><br>
@@ -223,7 +230,23 @@
             </tr>
 
             <!-- 1. Protein is done, now look at the partners -->
-            
+
+            <%
+                if (partnersView.getTotalItems() > partnersView.getItemsPerPage())
+                {
+            %>
+
+            <tr bgcolor="#eeeeee">
+                <td colspan="7">
+                    <%-- pagination --%>
+                    <%@ include file="tablePagination.jspf"%>
+                </td>
+            </tr>
+
+            <%
+                }
+            %>
+
             <!-- partner rows:
                 NB: Each interaction partner needs to be displayed with a summary
                 viewbean format itself - we can get a Set of view beans from the

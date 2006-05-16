@@ -57,7 +57,7 @@ public class SingleResultViewBean {
     }
 
     public String getCount() {
-        return new Integer( count ).toString();
+        return String.valueOf(count);
     }
 
     public String getSearchLink() {

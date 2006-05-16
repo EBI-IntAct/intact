@@ -719,7 +719,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      */
     private SearchHelperI getSearchHelper() {
         if (mySearchHelper == null) {
-            mySearchHelper = new SearchHelper(getLogger());
+            mySearchHelper = new SearchHelper(null, getLogger());
         }
         return mySearchHelper;
     }

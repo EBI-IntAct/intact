@@ -263,12 +263,4 @@ public class CvObjectViewBean extends AbstractViewBean {
         return this.obj.getFullName();
     }
 
-    /**
-     * @param anAnnotatedObject
-     *
-     * @return String  the intact type of  the annotedObject
-     */
-    private static String getIntactType( final AnnotatedObject anAnnotatedObject ) {
-          return SearchClass.valueOfMappedClass(anAnnotatedObject.getClass()).getShortName();
-    }
 }

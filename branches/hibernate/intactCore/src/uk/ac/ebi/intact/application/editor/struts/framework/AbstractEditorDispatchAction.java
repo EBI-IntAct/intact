@@ -201,7 +201,7 @@ public abstract class AbstractEditorDispatchAction extends LookupDispatchAction
     protected List search(Query[] queries, int max, HttpServletRequest request,
                           String errGroup) {
         // The search helper to do the searching.
-        SearchHelperI searchHelper = new SearchHelper(Logger.getLogger(
+        SearchHelperI searchHelper = new SearchHelper(request, Logger.getLogger(
                 EditorConstants.LOGGER));
 
         // The result wrapper returned from the search.

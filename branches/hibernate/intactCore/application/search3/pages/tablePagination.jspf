@@ -37,16 +37,27 @@
 
         int pageCount = 0;
         int totalResults = 0;
+        int resultsPerPage = SearchConstants.RESULTS_PER_PAGE;
 
         if (strPage != null && strPage.length() != 0)
         {
             currentPage = Integer.valueOf(strPage);
             totalResults = (Integer)request.getAttribute(SearchConstants.TOTAL_RESULTS_ATT_NAME);
-            pageCount = totalResults / SearchConstants.RESULTS_PER_PAGE;
+            pageCount = (totalResults / resultsPerPage)+1;
         }
 
         // The url without the page parameter. We use this variable to generate the url for each page
         String urlWithoutPage = request.getQueryString().replaceAll("&"+pageAlias+"="+currentPage, "");
+
+        if (!urlWithoutPage.contains("searchString="))
+        {
+             urlWithoutPage = urlWithoutPage+"&searchString="+request.getParameter("searchString");
+        }
+
+        if (!urlWithoutPage.contains("searchClass="))
+        {
+             urlWithoutPage = urlWithoutPage+"&searchClass="+request.getParameter("searchClass");
+        }
 
         // the variables are put in the request scope so we will be able to use them with the jstl tags
         request.getParameterMap().put("page", currentPage);

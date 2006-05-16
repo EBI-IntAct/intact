@@ -64,7 +64,7 @@ public class BinaryResultAction extends AbstractResultAction {
 
             for (AnnotatedObject interactor : results)
             {
-                view = new PartnersView((Interactor)interactor, helpLink, searchURL, request.getContextPath());
+                view = new PartnersView(request,(Interactor)interactor, helpLink, searchURL, request.getContextPath());
             }
 
             // We store the PartnersView in the request, and it will be accessed from the jsp page

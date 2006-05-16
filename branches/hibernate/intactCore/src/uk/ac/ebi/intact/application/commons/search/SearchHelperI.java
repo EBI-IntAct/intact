@@ -31,7 +31,7 @@ public interface SearchHelperI {
      * @return A collection of Intact objects of the type <i>searchClass</i>.
      * @throws IntactException if an erro occurs when searching in the database.
      */
-    public <T extends IntactObject> Collection<T> doLookup(SearchClass searchClass, String value, IntactUserI user)
+    public Collection<IntactObject> doLookup(SearchClass searchClass, String value, IntactUserI user)
             throws IntactException;
 
     /**

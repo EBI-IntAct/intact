@@ -5,65 +5,25 @@
  */
 package uk.ac.ebi.intact.persistence.dao;
 
-import org.hibernate.Session;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.SimpleExpression;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Order;
-
-import java.util.Collection;
-import java.util.List;
-
 import uk.ac.ebi.intact.model.IntactObject;
 
+import java.util.List;
+import java.util.Collection;
+
 /**
- * Basic queries for IntactObjects
- *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
- * @since <pre>24-Apr-2006</pre>
+ * @since <pre>08-May-2006</pre>
  */
-@SuppressWarnings({"unchecked"})
-public class IntactObjectDao<T extends IntactObject> extends HibernateDao<T>
+public interface IntactObjectDao<T extends IntactObject>
 {
-    public IntactObjectDao(Class<T> entityClass, Session session)
-    {
-        super(entityClass, session);
-    }
+    T getByAc(String ac);
 
-    /**
-     * Get an item using its AC
-     * @param ac the identifier
-     * @return the object
-     */
-    public T getByAc(String ac)
-    {
-       return (T) getSession().get(getEntityClass(), ac);
-    }
+    Collection<T> getByAcLike(String ac);
 
-    /**
-     * Performs a unique query for an array of ACs. Beware that depending on the database used
-     * this query has limitation (for instance, in Oracle it is limited to 1000 items)
-     * @param acs The acs to look for
-     * @return the collection of entities with those ACs
-     */
-    public List<T> getByAc(String[] acs)
-    {
-        return getSession().createCriteria(getEntityClass())
-                    .add(Restrictions.in("ac", acs))
-                    .addOrder(Order.asc("ac")).list();
-    }
+    List<T> getByAc(String[] acs);
 
-    public List<T> getByAc(Collection<String> acs)
-    {
-        return getByAc(acs.toArray(new String[acs.size()]));
-    }
+    List<T> getByAc(Collection<String> acs);
 
-    public List<T> getAll()
-    {
-        return getSession().createCriteria(getEntityClass()).list();
-    }
-
-
+    List<T> getAll();
 }
