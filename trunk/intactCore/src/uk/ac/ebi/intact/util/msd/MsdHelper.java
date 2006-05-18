@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Iterator;
 
 import uk.ac.ebi.intact.util.msd.model.PdbBean;
+import uk.ac.ebi.intact.business.IntactException;
 
 
 /**
@@ -39,10 +40,10 @@ public class MsdHelper {
 
     /**
      * Close the connection to MSD database
-     * @throws SQLException
+     * @throws IntactException
      */
-    public void close() throws SQLException {
-        conn.close();
+    public void close() throws IntactException {
+        MsdConnection.closeConnection();
     }
 
     /**
@@ -97,9 +98,9 @@ public class MsdHelper {
         List resultList = null;
         try {
             resultList= (List) queryRunner.query(conn,
-                    (String) bean2sql.get(beanClass),
-                    param,
-                    new BeanListHandler (beanClass));
+                                                 (String) bean2sql.get(beanClass),
+                                                 param,
+                                                 new BeanListHandler (beanClass));
         } catch ( OutOfMemoryError aome ) {
 
             aome.printStackTrace();
@@ -145,9 +146,9 @@ public class MsdHelper {
         }
 
         List resultList = (List) queryRunner.query(conn,
-                (String) bean2sql.get(beanClass),
-                param,
-                new BeanListHandler(beanClass));
+                                                   (String) bean2sql.get(beanClass),
+                                                   param,
+                                                   new BeanListHandler(beanClass));
         //verify that resultList is not bigger then one, and send back the appropriate error message.
         if( false == resultList.isEmpty() ){
             pdbBean = (PdbBean) resultList.get(0);

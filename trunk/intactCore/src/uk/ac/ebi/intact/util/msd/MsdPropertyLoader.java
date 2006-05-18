@@ -28,9 +28,9 @@ public class MsdPropertyLoader {
      */
     private static final String DRIVER_NAME_PROPERTY = "driver.name";
     /**
-     * String containing the property name of the driver Db Name property
+     * String containing the property name of the Db url  property
      */
-    private static final String DB_NAME_PROPERTY = "db.name";
+    private static final String DB_URL_PROPERTY = "db.url";
     /**
      * String containing the property name of the driver User Name property
      */
@@ -45,9 +45,9 @@ public class MsdPropertyLoader {
      */
     private String driverName;
     /**
-     * String containing the property value of the driver Db Name property
+     * String containing the property value of the driver Db Url property
      */
-    private String dbName;
+    private String dbUrl;
     /**
      * String containing the property value of the driver User Name property
      */
@@ -80,7 +80,7 @@ public class MsdPropertyLoader {
             throw new IntactException("The config file " + MSD_CONFIG_FILE + " was not found");
         }
         driverName = getProperty(props, DRIVER_NAME_PROPERTY);
-        dbName = getProperty(props, DB_NAME_PROPERTY);
+        dbUrl = getProperty(props, DB_URL_PROPERTY);
         userName = getProperty(props,USER_NAME_PROPERTY);
         userPassword = getProperty(props,USER_PASSWORD_PROPERTY);
     }
@@ -110,11 +110,11 @@ public class MsdPropertyLoader {
     }
 
     /**
-     * Getter of the dbName String.
-     * @return the dbName global String variables
+     * Getter of the dbUrl String.
+     * @return the dbUrl global String variables
      */
-    public String getDbName() {
-        return dbName;
+    public String getDbUrl() {
+        return dbUrl;
     }
 
     /**
@@ -135,7 +135,7 @@ public class MsdPropertyLoader {
 
     public static void main(String[] args) throws IntactException {
         MsdPropertyLoader msdPropertyLoader = new MsdPropertyLoader();
-        System.out.println("msdPropertyLoader.getDbName() = " + msdPropertyLoader.getDbName());
+        System.out.println("msdPropertyLoader.getDbName() = " + msdPropertyLoader.getDbUrl());
         System.out.println("msdPropertyLoader.getDriverName() = " + msdPropertyLoader.getDriverName());
         System.out.println("msdPropertyLoader.getUserName() = " + msdPropertyLoader.getUserName());
         System.out.println("msdPropertyLoader.getUserPassword() = " + msdPropertyLoader.getUserPassword());
