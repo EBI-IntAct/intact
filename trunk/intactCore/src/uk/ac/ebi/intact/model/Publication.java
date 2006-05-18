@@ -40,10 +40,6 @@ public class Publication extends AnnotatedObjectImpl implements Editable {
         setPmid( pmid );
     }
 
-    private String getShortlabel() {
-        return null;
-    }
-
     ////////////////////////////
     // Getter and Setter
 
