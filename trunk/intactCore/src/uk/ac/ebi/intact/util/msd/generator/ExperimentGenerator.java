@@ -1,5 +1,12 @@
 package uk.ac.ebi.intact.util.msd.generator;
 
+import uk.ac.ebi.intact.util.msd.MsdHelper;
+import uk.ac.ebi.intact.util.msd.model.PdbBean;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.sql.SQLException;
+
 /**
  * Created by IntelliJ IDEA.
  * User: karine
@@ -8,4 +15,5 @@ package uk.ac.ebi.intact.util.msd.generator;
  * To change this template use File | Settings | File Templates.
  */
 public class ExperimentGenerator {
+
 }

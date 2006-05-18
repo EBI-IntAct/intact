@@ -26,7 +26,7 @@ public class MsdParticipant {
     private BigDecimal expressedIntaxid;//system_tax_id
     private String tissue;//tissue*/
 
-    private MsdInteraction pdb;
+    private MsdInteraction msdInteraction;
     private String pdbCode;
     private String uniprotAc;
     private String uniprotId;
@@ -38,11 +38,11 @@ public class MsdParticipant {
     private String tissue;
 
     public MsdInteraction getPdb() {
-        return pdb;
+        return msdInteraction;
     }
 
-    public void setPdb(MsdInteraction pdb) {
-        this.pdb = pdb;
+    public void setPdb(MsdInteraction msdInteraction) {
+        this.msdInteraction = msdInteraction;
     }
 
     public String getPdbCode() {

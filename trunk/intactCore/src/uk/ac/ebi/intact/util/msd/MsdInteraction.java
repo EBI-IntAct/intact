@@ -11,7 +11,7 @@ import java.util.ArrayList;
  */
 public class MsdInteraction {
     private String pdbCode;
-    private Experiment experiment;
+    private MsdExperiment msdExperiment;
     private String oligomericStateList;
     private String experimentType;
     private String pmid;
@@ -90,12 +90,12 @@ public class MsdInteraction {
         this.pdbCode = pdbCode;
     }
 
-    public Experiment getExperiment() {
-        return experiment;
+    public MsdExperiment getExperiment() {
+        return msdExperiment;
     }
 
-    public void setExperiment(Experiment experiment) {
-        this.experiment = experiment;
+    public void setExperiment(MsdExperiment msdExperiment) {
+        this.msdExperiment = msdExperiment;
     }
 
     public String getPmid() {
