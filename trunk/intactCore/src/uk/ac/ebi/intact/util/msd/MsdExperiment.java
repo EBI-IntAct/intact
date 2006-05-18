@@ -10,7 +10,7 @@ import java.util.HashMap;
  * Time: 15:54:33
  * To change this template use File | Settings | File Templates.
  */
-public class Experiment {
+public class MsdExperiment {
 
 
     private String pmid;
@@ -26,7 +26,7 @@ public class Experiment {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        final Experiment that = (Experiment) o;
+        final MsdExperiment that = (MsdExperiment) o;
 
         if (experimentType != null ? !experimentType.equals(that.experimentType) : that.experimentType != null)
             return false;
@@ -56,18 +56,18 @@ public class Experiment {
         System.out.println("list:"+this.pdbList);
     }
 
-    public void Addpmid(String pmid, Experiment exp){
-        if(Experiment.pmid2exp == null){
-            Experiment.pmid2exp= new HashMap();
+    public void Addpmid(String pmid, MsdExperiment exp){
+        if(MsdExperiment.pmid2exp == null){
+            MsdExperiment.pmid2exp= new HashMap();
         }
         exp=this;
-        Experiment.pmid2exp.put(pmid,exp);
-        System.out.println("exp:"+Experiment.pmid2exp);
-        System.out.println("find"+Experiment.pmid2exp.values());
+        MsdExperiment.pmid2exp.put(pmid,exp);
+        System.out.println("exp:"+MsdExperiment.pmid2exp);
+        System.out.println("find"+MsdExperiment.pmid2exp.values());
     }
 
     public HashMap getPmid2exp() {
-        return Experiment.pmid2exp;
+        return MsdExperiment.pmid2exp;
     }
 
 
@@ -86,13 +86,13 @@ public class Experiment {
 
 
 
-/*     public Experiment(){
+/*     public MsdExperiment(){
 }
 
-*public Experiment(pmid){
+*public MsdExperiment(pmid){
     this.setPmid(pmid);
 }
-public Experiment(pmid,experimentType){
+public MsdExperiment(pmid,experimentType){
     this.setExperimentType(experimentType);
     this.setPmid(pmid);
 }
@@ -118,6 +118,6 @@ public String getExperimentType() {
     }
 
     public static void setPmid2exp(HashMap pmid2exp) {
-        Experiment.pmid2exp = pmid2exp;
+        MsdExperiment.pmid2exp = pmid2exp;
     }
 }
