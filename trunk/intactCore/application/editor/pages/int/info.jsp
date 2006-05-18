@@ -91,9 +91,20 @@
         </td>
 
         <td class="tableCell" align="left" valign="top">
-            <html:select property="interactionType" name="intForm" styleClass="inputRequired">
-                <html:options name="intertypemenu" />
-            </html:select>
+            <table>
+                <tr>
+                    <td>
+                        <a href="javascript:makeNewWindow('http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=MI&termId=MI%3A0190&termName=interaction%20type')"><img
+                                           alt="IntAct" src="<%=request.getContextPath()%>/images/olsLogo.jpg"
+                                           border="0" width="33" align="center" ></a>
+                    </td>
+                    <td>
+                        <html:select property="interactionType" name="intForm" styleClass="inputRequired">
+                        <html:options name="intertypemenu" />
+                        </html:select>
+                    </td>
+                </tr>
+            </table>
             <html:errors property="interactionType"/>
         </td>
 

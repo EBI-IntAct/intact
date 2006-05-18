@@ -368,6 +368,7 @@
         <copy todir="${temp.web}/images">
             <fileset dir="${intact.app.dir}/images">
                 <include name="*.gif"/>
+                <include name="*.jpg"/>
                 <!-- Exclude test images -->
                 <exclude name="*test.*"/>
             </fileset>
@@ -382,6 +383,7 @@
         <copy todir="${temp.web}/images">
             <fileset dir="${intact.app.dir}/images">
                 <include name="*.gif"/>
+                <include name="*.jpg"/>
                 <!-- Exclude intact logo -->
                 <exclude name="logo*"/>
             </fileset>
@@ -552,7 +554,7 @@
         <property name="war.name" value="${ant.project.name}-${dbalias}-${TODAY}.war"/>
 
         <condition property="test.dist">
-            <equals arg1="${dbalias}" arg2="d002"/>
+            <contains string="${dbalias}" substring="d003"></contains>
         </condition>
 
         <antcall target="build-war">

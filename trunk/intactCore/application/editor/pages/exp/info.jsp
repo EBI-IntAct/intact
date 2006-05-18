@@ -90,7 +90,7 @@
         </th>
 
         <th>
-            <a href="javascript:showColumnLink('CvIdentification',
+             <a href="javascript:showColumnLink('CvIdentification',
                 document.forms['expForm'].elements['ident'].value)">
                 Participant Detection
             </a>
@@ -107,16 +107,38 @@
         </td>
 
         <td class="tableCell" align="left" valign="top">
-            <html:select property="inter" name="expForm" styleClass="inputRequired">
-                <html:options name="intermenu"/>
-            </html:select>
+            <table>
+                <tr>
+                    <td>
+                        <a href="javascript:makeNewWindow('http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=MI&termId=MI%3A0045&termName=experimental%20interac')"><img
+                                           alt="IntAct" src="<%=request.getContextPath()%>/images/olsLogo.jpg"
+                                           border="0" width="33" align="center" ></a>
+                    </td>
+                    <td>
+                        <html:select property="inter" name="expForm" styleClass="inputRequired">
+                        <html:options name="intermenu"/>
+                        </html:select>
+                    </td>
+                </tr>
+            </table>
             <html:errors property="inter"/>
         </td>
 
         <td class="tableCell" align="left" valign="top">
-            <html:select property="ident" name="expForm" styleClass="inputRequired">
-                <html:options name="identmenu"/>
-            </html:select>
+            <table>
+                <tr>
+                    <td>
+                        <a href="javascript:makeNewWindow('http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=MI&termId=MI%3A0002&termName=participant%20detection')"><img
+                                           alt="IntAct" src="<%=request.getContextPath()%>/images/olsLogo.jpg"
+                                           border="0" width="33" align="center" ></a>
+                    </td>
+                    <td>
+                        <html:select property="ident" name="expForm" styleClass="inputRequired">
+                        <html:options name="identmenu"/>
+                        </html:select>
+                    </td>
+                </tr>
+            </table>
             <html:errors property="ident"/>
         </td>
     </tr>

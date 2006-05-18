@@ -42,6 +42,7 @@
 
     <jsp:include page="autoCompletion.jsp" />
     <p></p>
+    <%--<jsp:include page="iframe.jsp"/>--%>
     <jsp:include page="info.jsp" />
     <p></p>
     <jsp:include page="ints.jsp" />
@@ -77,6 +78,7 @@
     <c:otherwise>
     </c:otherwise>
     </c:choose>
+
 
     <p></p>
     <jsp:include page="../action.jsp" />
