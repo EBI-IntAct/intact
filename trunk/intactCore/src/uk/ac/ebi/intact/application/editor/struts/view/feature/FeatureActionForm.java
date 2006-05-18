@@ -16,6 +16,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
+import uk.ac.ebi.intact.application.commons.util.DateToolbox;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -154,7 +155,7 @@ public class    FeatureActionForm extends DispatchActionForm implements EditorFo
     }
 
     public String getCreated() {
-        return formatDate(this.myCreated);
+        return DateToolbox.formatDate(this.myCreated);
     }
 
     public void setCreated(Timestamp created) {
@@ -162,7 +163,7 @@ public class    FeatureActionForm extends DispatchActionForm implements EditorFo
     }
 
     public String getUpdated() {
-        return formatDate(this.myUpdated);
+        return DateToolbox.formatDate(this.myUpdated);
     }
 
     public void setUpdated(Timestamp updated) {
@@ -502,38 +503,7 @@ public class    FeatureActionForm extends DispatchActionForm implements EditorFo
         return errors;
     }
 
-    String getMonth(int monthNumber){
-        String monthName = new String();
-        switch (monthNumber) {
-            case 1:  monthName = "JAN"; break;
-            case 2:  monthName = "FEB"; break;
-            case 3:  monthName = "MAR"; break;
-            case 4:  monthName = "APR"; break;
-            case 5:  monthName = "MAY"; break;
-            case 6:  monthName = "JUN"; break;
-            case 7:  monthName = "JUL"; break;
-            case 8:  monthName = "AUG"; break;
-            case 9:  monthName = "SEP"; break;
-            case 10: monthName = "OCT"; break;
-            case 11: monthName = "NOV"; break;
-            case 12: monthName = "DEC"; break;
-            default: monthName = "Not a month!";break;
-        }
 
-        return monthName;
-    }
 
-    public String formatDate(Timestamp date){
-        if(date == null){
-            return null;
-        }
-        String newDate = date.toString().substring(0,10);
-        int monthNumber =  Integer.parseInt(newDate.substring(5, 7) );
-        String monthName = getMonth(monthNumber);
-        String year = newDate.substring(0,4);
-        String day = newDate.substring(8,10);
-        newDate = year + "-" + monthName + "-" + day;
-        newDate = newDate.trim();
-        return newDate;
-    }
+
 }
