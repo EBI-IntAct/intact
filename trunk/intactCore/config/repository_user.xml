@@ -132,8 +132,8 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         <!-- 'normal' classes -->
 
         <!-- class descriptor for Publication -->
-<class-descriptor
-        class="uk.ac.ebi.intact.model.Publication" table="ia_Publication">
+<class-descriptor class="uk.ac.ebi.intact.model.Publication" table="ia_Publication">
+
     <!-- ***************** fields from superclasses ********************* -->
     <!-- fields from BasicObject... -->
     <field-descriptor
@@ -243,12 +243,20 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         <fk-pointing-to-element-class column="annotation_ac"/>
     </collection-descriptor>
 
+    <!-- A Publication may have zero to many Experiments -->
+    <collection-descriptor
+            proxy="true"
+            name="experiments"
+            element-class-ref="uk.ac.ebi.intact.model.Experiment"
+            >
+        <inverse-foreignkey field-ref="publicationAc"/>
+    </collection-descriptor>
+
 </class-descriptor>
 
 
         <!-- class descriptor for Feature -->
-<class-descriptor
-        class="uk.ac.ebi.intact.model.Feature" table="ia_Feature">
+<class-descriptor class="uk.ac.ebi.intact.model.Feature" table="ia_Feature">
     <!-- ***************** fields from superclasses ********************* -->
     <!-- fields from BasicObject... -->
     <field-descriptor
@@ -413,14 +421,12 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         <inverse-foreignkey field-ref="featureAc"/>
     </collection-descriptor>
 
-
 </class-descriptor>
 
 
         <!-- class descriptor for Range
         -->
-<class-descriptor
-        class="uk.ac.ebi.intact.model.Range" table="ia_Range">
+<class-descriptor class="uk.ac.ebi.intact.model.Range" table="ia_Range">
     <!-- ***************** fields from superclasses ********************* -->
     <!-- fields from BasicObject... -->
     <field-descriptor
@@ -546,9 +552,9 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 
         <!-- descriptor for Protein
         -->
-<class-descriptor
-        class="uk.ac.ebi.intact.model.ProteinImpl" table="ia_Interactor"
-        proxy="uk.ac.ebi.intact.model.proxy.ProteinProxy">
+<class-descriptor class="uk.ac.ebi.intact.model.ProteinImpl" table="ia_Interactor"
+                  proxy="uk.ac.ebi.intact.model.proxy.ProteinProxy">
+
     <!-- ***************** fields from superclasses ********************* -->
     <!-- fields from BasicObject... -->
     <field-descriptor
@@ -730,9 +736,8 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 
         <!-- descriptor for NucleicAcid
         -->
-<class-descriptor
-        class="uk.ac.ebi.intact.model.NucleicAcidImpl" table="ia_Interactor"
-        proxy="uk.ac.ebi.intact.model.proxy.NucleicAcidProxy">
+<class-descriptor class="uk.ac.ebi.intact.model.NucleicAcidImpl" table="ia_Interactor"
+                  proxy="uk.ac.ebi.intact.model.proxy.NucleicAcidProxy">
     <!-- ***************** fields from superclasses ********************* -->
     <!-- fields from BasicObject... -->
     <field-descriptor
@@ -1166,6 +1171,11 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
             column="relatedExperiment_ac"
             jdbc-type="VARCHAR"
             />
+    <field-descriptor
+            name="publicationAc"
+            column="publication_ac"
+            jdbc-type="VARCHAR"
+            />
 
     <!-- used for class identification - OJB uses it directly -->
     <reference-descriptor
@@ -1201,6 +1211,13 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
             class-ref="uk.ac.ebi.intact.model.CvInteraction"
             >
         <foreignkey field-ref="detectionMethodAc"/>
+    </reference-descriptor>
+
+    <reference-descriptor
+            name="publication"
+            class-ref="uk.ac.ebi.intact.model.Publication"
+            >
+        <foreignkey field-ref="publicationAc"/>
     </reference-descriptor>
 
     <!-- ******************* fields inherited from AnnotatedObject ************** -->
@@ -1758,8 +1775,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 
 
         <!-- Definitions for Component -->
-<class-descriptor
-        class="uk.ac.ebi.intact.model.Component" table="ia_Component">
+<class-descriptor class="uk.ac.ebi.intact.model.Component" table="ia_Component">
 
     <!-- ***************** inherited from BasicObject ************** -->
     <!-- fields from BasicObject... -->
