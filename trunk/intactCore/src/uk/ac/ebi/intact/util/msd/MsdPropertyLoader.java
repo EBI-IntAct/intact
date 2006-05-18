@@ -135,7 +135,7 @@ public class MsdPropertyLoader {
 
     public static void main(String[] args) throws IntactException {
         MsdPropertyLoader msdPropertyLoader = new MsdPropertyLoader();
-        System.out.println("msdPropertyLoader.getDbName() = " + msdPropertyLoader.getDbUrl());
+        System.out.println("msdPropertyLoader.getDbUrl() = " + msdPropertyLoader.getDbUrl());
         System.out.println("msdPropertyLoader.getDriverName() = " + msdPropertyLoader.getDriverName());
         System.out.println("msdPropertyLoader.getUserName() = " + msdPropertyLoader.getUserName());
         System.out.println("msdPropertyLoader.getUserPassword() = " + msdPropertyLoader.getUserPassword());
