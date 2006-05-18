@@ -1090,6 +1090,8 @@ public class MessageSender {
                 type = "Protein";
             } else if ( InteractionImpl.class.getName().equals( objclass ) ) {
                 type = "Interaction";
+            } else if( NucleicAcidImpl.class.getName().equals(objclass)){
+                type = "Nucleic Acid";
             }
         } else if ( intactBean instanceof BioSourceBean ) {
             type = "BioSource";
