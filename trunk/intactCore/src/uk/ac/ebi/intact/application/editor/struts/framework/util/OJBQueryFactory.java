@@ -73,7 +73,7 @@ public class OJBQueryFactory {
 
         ReportQueryByCriteria query = QueryFactory.newReportQuery(clazz, crit1);
         // Limit to ac and shortlabel
-        query.setAttributes(new String[] {"ac", "shortLabel", "fullName"});
+        query.setAttributes(new String[] {"ac", "shortLabel", "fullName","created_user","userstamp","created","updated" });
         // Sorts on shortlabel
         query.addOrderByAscending("shortLabel");
         return query;
