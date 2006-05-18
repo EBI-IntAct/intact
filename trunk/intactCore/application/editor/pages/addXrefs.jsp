@@ -78,9 +78,20 @@
         </td>
 
         <td class="tableCell" align="left" valign="top">
-            <html:select property="newXref.database">
-                <html:options name="dblist" />
-            </html:select>
+            <table>
+                <tr>
+                    <td>
+                        <a href="javascript:makeNewWindow('http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=MI&termId=MI%3A0444&termName=database%20citation')"><img
+                                           alt="IntAct" src="<%=request.getContextPath()%>/images/olsLogo.jpg"
+                                           border="0" width="33" align="center" ></a>
+                    </td>
+                    <td>
+                        <html:select property="newXref.database">
+                        <html:options name="dblist" />
+                        </html:select>
+                    </td>
+                <tr>
+            </table>
         </td>
 
         <td class="tableCell" align="left" valign="top">
@@ -96,9 +107,20 @@
         </td>
 
         <td class="tableCell" align="left" valign="top">
-            <html:select property="newXref.qualifier" value="<%=defXrefQualifier%>">
-                <html:options name="qlist" />
-            </html:select>
+            <table>
+                <tr>
+                    <td>
+                        <a href="javascript:makeNewWindow('http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=MI&termId=MI%3A0353&termName=xref%20type')"><img
+                                           alt="IntAct" src="<%=request.getContextPath()%>/images/olsLogo.jpg"
+                                           border="0" width="33" align="center" ></a>
+                    </td>
+                    <td>
+                        <html:select property="newXref.qualifier" value="<%=defXrefQualifier%>">
+                        <html:options name="qlist" />
+                        </html:select>
+                    <td>
+                </tr>
+            </table>
         </td>
     </tr>
 </table>

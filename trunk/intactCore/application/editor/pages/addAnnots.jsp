@@ -50,9 +50,20 @@
 
 
         <td class="tableCell" align="left" valign="top">
-            <html:select property="newAnnotation.topic" >
-                <html:options name="topiclist"/>
-            </html:select>
+            <table>
+                <tr>
+                    <td>
+                        <a href="javascript:makeNewWindow('http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=MI&termId=MI%3A0590&termName=attribute%20name')"><img
+                                           alt="IntAct" src="<%=request.getContextPath()%>/images/olsLogo.jpg"
+                                           border="0" width="33" align="center" ></a>
+                    </td>
+                    <td>
+                        <html:select property="newAnnotation.topic" >
+                        <html:options name="topiclist"/>
+                        </html:select>
+                    <td>
+                </tr>
+            </table>
         </td>
         <td class="tableCell" align="left" valign="top">
             <html:textarea property="newAnnotation.description" rows="3" cols="70"

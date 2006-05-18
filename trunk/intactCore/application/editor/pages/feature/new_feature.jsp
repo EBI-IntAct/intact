@@ -84,16 +84,40 @@
         </td>
 
         <td class="tableCell" align="left" valign="top">
-            <html:select property="featureType" name="featureForm" styleClass="inputRequired">
-                <html:options name="type_menu"/>
-            </html:select>
+            <table>
+                <tr>
+                    <td>
+                        <a href="javascript:makeNewWindow('http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=MI&termId=MI%3A0116&termName=feature%20type')"><img
+                                           alt="IntAct" src="<%=request.getContextPath()%>/images/olsLogo.jpg"
+                                           border="0" width="33" align="center" ></a>
+                    </td>
+                    <td>
+                        <html:select property="featureType" name="featureForm" styleClass="inputRequired">
+                        <html:options name="type_menu"/>
+                        </html:select>
+
+                    </td>
+                </tr>
+            </table>
             <html:errors property="feature.type"/>
         </td>
 
+
         <td class="tableCell" align="left" valign="top">
-            <html:select property="featureIdent" name="featureForm">
-                <html:options name="ident_menu"/>
-            </html:select>
+            <table>
+                <tr>
+                    <td>
+                        <a href="javascript:makeNewWindow('http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=MI&termId=MI%3A0659&termName=experimental%20feature%20detection')"><img
+                                           alt="IntAct" src="<%=request.getContextPath()%>/images/olsLogo.jpg"
+                                           border="0" width="33" align="center" ></a>
+                    </td>
+                    <td>
+                        <html:select property="featureIdent" name="featureForm">
+                        <html:options name="ident_menu"/>
+                        </html:select>
+                    </td>
+                </tr>
+            </table>
         </td>
     </tr>
 </table>
