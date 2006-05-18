@@ -158,7 +158,8 @@ public class ExperimentDispatchAction extends AbstractEditorDispatchAction {
         for (Iterator iter = rows.iterator(); iter.hasNext(); ) {
             ResultRowData rrd = (ResultRowData) iter.next();
             ExperimentRowData expRow = new ExperimentRowData(rrd.getAc(),
-                    rrd.getShortLabel(), rrd.getFullName());
+                    rrd.getShortLabel(), rrd.getFullName(), rrd.getCreator(),
+                    rrd.getUpdator(), rrd.getCreated(), rrd.getUpdated());
             Query query = qf.getQualifierXrefQuery(ac, expRow.getAc());
             Xref xref = (Xref) helper.getObjectByQuery(query);
             // Xref is null if no primary reference found for the experiment.

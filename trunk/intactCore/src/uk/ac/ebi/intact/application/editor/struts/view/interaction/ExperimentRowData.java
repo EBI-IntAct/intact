@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Xref;
 
 import java.util.Iterator;
+import java.sql.Timestamp;
 
 /**
  * This class contains data for an Experiment row in the Interaction editor.
@@ -27,7 +28,7 @@ public class ExperimentRowData extends ResultRowData {
      * The underlying Experiment. Could be null if none assigned to it (e.g. search).
      */
     private Experiment myExperiment;
-    
+
     /**
      * This contains HTML script for pubmed link.
      */
@@ -44,7 +45,7 @@ public class ExperimentRowData extends ResultRowData {
      * @param ac the ac is required as it is used for equals method.
      */
     public ExperimentRowData(String ac) {
-        this(ac, null, null);
+        this(ac, null, null, null, null, null, null);
     }
 
     /**
@@ -52,7 +53,8 @@ public class ExperimentRowData extends ResultRowData {
      * @param exp the Experiment to wrap this instance around.
      */
     public ExperimentRowData(Experiment exp) {
-        this(exp.getAc(), exp.getShortLabel(), exp.getFullName());
+        this(exp.getAc(), exp.getShortLabel(), exp.getFullName(), exp.getCreator(),
+             exp.getUpdator(), exp.getCreated(),exp.getUpdated());
         myExperiment = exp;
         for (Iterator iter = exp.getXrefs().iterator(); iter.hasNext(); ) {
             Xref xref = (Xref) iter.next();
@@ -68,8 +70,9 @@ public class ExperimentRowData extends ResultRowData {
      * @param shortlabel
      * @param fullname
      */
-    public ExperimentRowData(String ac, String shortlabel, String fullname) {
-        super(ac, shortlabel, fullname);
+
+     public ExperimentRowData(String ac, String shortlabel, String fullname, String creator, String updator, Timestamp created, Timestamp updated) {
+        super(ac, shortlabel, fullname, creator, updator,created,updated);
         if (shortlabel != null) {
             setShortLabelLink();
         }
