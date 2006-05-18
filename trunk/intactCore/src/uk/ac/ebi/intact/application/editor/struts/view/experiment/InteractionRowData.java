@@ -7,6 +7,7 @@
 package uk.ac.ebi.intact.application.editor.struts.view.experiment;
 
 import java.util.ResourceBundle;
+import java.sql.Timestamp;
 
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
@@ -38,7 +39,8 @@ public class InteractionRowData extends ResultRowData {
      */
     public static InteractionRowData makeSearchRow(ResultRowData rowData) {
         InteractionRowData row = new InteractionRowData(rowData.getAc(),
-               rowData.getShortLabel(), rowData.getFullName());
+               rowData.getShortLabel(), rowData.getFullName(), rowData.getCreator(),
+               rowData.getUpdator(), rowData.getCreated(), rowData.getUpdated());
         row.setSearchActionString();
         return row;
     }
@@ -49,7 +51,7 @@ public class InteractionRowData extends ResultRowData {
      * @param ac the ac is required as it is used for equals method.
      */
     public InteractionRowData(String ac) {
-        this(ac, null, null);
+        this(ac, null, null, null, null, null, null);
     }
 
     /**
@@ -57,7 +59,8 @@ public class InteractionRowData extends ResultRowData {
      * @param inter the interaction to wrap this instance around.
      */
     public InteractionRowData(Interaction inter) {
-        this(inter.getAc(), inter.getShortLabel(), inter.getFullName());
+        this(inter.getAc(), inter.getShortLabel(), inter.getFullName(), inter.getCreator(),
+             inter.getUpdator(), inter.getCreated(), inter.getUpdated());
         myInteraction = inter;
         setActionString();
     }
@@ -68,8 +71,9 @@ public class InteractionRowData extends ResultRowData {
      * @param shortlabel
      * @param fullname
      */
-    private InteractionRowData(String ac, String shortlabel, String fullname) {
-        super(ac, shortlabel, fullname);
+
+    private InteractionRowData(String ac, String shortlabel, String fullname, String updator, String creator, Timestamp created, Timestamp updated) {
+        super(ac, shortlabel, fullname, updator, creator, created, updated);
     }
 
     public Interaction getInteraction() {
