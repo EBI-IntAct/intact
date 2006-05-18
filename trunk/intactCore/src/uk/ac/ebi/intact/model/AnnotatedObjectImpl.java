@@ -18,7 +18,6 @@ import java.util.Iterator;
  */
 public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements AnnotatedObject {
 
-
     /////////////////////////////////
     //attributes
 
@@ -26,8 +25,7 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
     protected String curatorAc;
 
     /**
-     * Short name for the object, not necessarily unique. To be used for example
-     * in minimised displays of the object.
+     * Short name for the object, not necessarily unique. To be used for example in minimised displays of the object.
      */
     protected String shortLabel;
 
@@ -60,8 +58,7 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
     public Collection<Xref> xrefs = new ArrayList<Xref>();
 
     /**
-     * Hold aliases of an Annotated object.
-     * ie. alternative name for the current object.
+     * Hold aliases of an Annotated object. ie. alternative name for the current object.
      */
     private Collection<Alias> aliases = new ArrayList<Alias>();
 
@@ -71,8 +68,7 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
     public Collection<Reference> references = new ArrayList<Reference>();
 
     /**
-     * no-arg constructor provided for compatibility with subclasses
-     * that have no-arg constructors.
+     * no-arg constructor provided for compatibility with subclasses that have no-arg constructors.
      */
     protected AnnotatedObjectImpl() {
         //super call sets creation time data
@@ -80,11 +76,12 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
     }
 
     /**
-     * Constructor for subclass use only. Ensures that AnnotatedObjects cannot be
-     * created without at least a shortLabel and an owner specified.
+     * Constructor for subclass use only. Ensures that AnnotatedObjects cannot be created without at least a shortLabel
+     * and an owner specified.
      *
      * @param shortLabel The memorable label to identify this AnnotatedObject
      * @param owner      The Institution which owns this AnnotatedObject
+     *
      * @throws NullPointerException thrown if either parameters are not specified
      */
     protected AnnotatedObjectImpl( String shortLabel, Institution owner ) {
@@ -106,7 +103,7 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
 
     public void setShortLabel( String shortLabel ) {
 
-        if( shortLabel == null ) {
+        if ( shortLabel == null ) {
 
             throw new NullPointerException( "Must define a non null short label for a " + getClass().getName() );
 
@@ -115,12 +112,12 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
             // delete leading and trailing spaces.
             shortLabel = shortLabel.trim();
 
-            if( "".equals( shortLabel ) ) {
+            if ( "".equals( shortLabel ) ) {
                 throw new IllegalArgumentException(
                         "Must define a non empty short label for a " + getClass().getName() );
             }
 
-            if( shortLabel.length() >= MAX_SHORT_LABEL_LEN ) {
+            if ( shortLabel.length() >= MAX_SHORT_LABEL_LEN ) {
                 shortLabel = shortLabel.substring( 0, MAX_SHORT_LABEL_LEN );
             }
         }
@@ -134,7 +131,7 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
 
     public void setFullName( String fullName ) {
 
-        if( fullName != null ) {
+        if ( fullName != null ) {
             // delete leading and trailing spaces.
             fullName = fullName.trim();
         }
@@ -153,7 +150,9 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
     }
 
     public void addAnnotation( Annotation annotation ) {
-        if( !this.annotations.contains( annotation ) ) this.annotations.add( annotation );
+        if ( !this.annotations.contains( annotation ) ) {
+            this.annotations.add( annotation );
+        }
     }
 
     public void removeAnnotation( Annotation annotation ) {
@@ -180,11 +179,10 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
     }
 
     /**
-     * Adds an xref to the object. The xref will only be added
-     * if an equivalent xref is not yet part of the object.
+     * Adds an xref to the object. The xref will only be added if an equivalent xref is not yet part of the object.
      */
     public void addXref( Xref aXref ) {
-        if( !this.xrefs.contains( aXref ) ) {
+        if ( !this.xrefs.contains( aXref ) ) {
             this.xrefs.add( aXref );
             aXref.setParentAc( this.getAc() );
         }
@@ -207,11 +205,10 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
     }
 
     /**
-     * Adds an alias to the object. The alis will only be added
-     * if an equivalent alias is not yet part of the object.
+     * Adds an alias to the object. The alis will only be added if an equivalent alias is not yet part of the object.
      */
     public void addAlias( Alias alias ) {
-        if( !this.aliases.contains( alias ) ) {
+        if ( !this.aliases.contains( alias ) ) {
             this.aliases.add( alias );
             // TODO this seems to be redondant with the Alias constructor !!
             alias.setParentAc( this.getAc() );
@@ -232,7 +229,7 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
     }
 
     public void addReference( Reference reference ) {
-        if( !this.references.contains( reference ) ) {
+        if ( !this.references.contains( reference ) ) {
             this.references.add( reference );
             reference.addAnnotatedObject( this );
         }
@@ -240,7 +237,9 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
 
     public void removeReference( Reference reference ) {
         boolean removed = this.references.remove( reference );
-        if( removed ) reference.removeAnnotatedObject( this );
+        if ( removed ) {
+            reference.removeAnnotatedObject( this );
+        }
     }
 
     //attributes used for mapping BasicObjects - project synchron
@@ -251,7 +250,6 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
     public void setCuratorAc( String ac ) {
         this.curatorAc = ac;
     }
-
 
     ///////////////////////////////////////
     // instance methods
@@ -277,8 +275,17 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
 //        return this;
 //    }
 
-    /** Create or update an annotation. The anntation topic may only occur once in the object.
+    /**
+     * Create or update an annotation. The anntation topic may only occur once in the object.
+     * <p/>
+     * <p/>
+     * Equality for AnnotatedObjects is currently based on equality for <code>Xrefs</code>, shortLabels and fullNames.
      *
+     * @param o The object to check
+     *
+     * @return true if the parameter equals this object, false otherwise
+     *
+     * @see Xref
      */
 //    public Annotation updateUniqueAnnotation(CvTopic topic, String description, Institution owner){
 //
@@ -311,8 +318,12 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
     @Override
     public boolean equals( Object o ) {
         // TODO: the reviewed version of the intact model will provide a better implementation
-        if( this == o ) return true;
-        if( !( o instanceof AnnotatedObject ) ) return false;
+        if ( this == o ) {
+            return true;
+        }
+        if ( !( o instanceof AnnotatedObject ) ) {
+            return false;
+        }
 
         //YUK! This ends up calling the java Object 'equals', which compares
         //on identity - NOT what we want....
@@ -323,16 +334,24 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
         final AnnotatedObject annotatedObject = (AnnotatedObject) o;
 
         //short label and full name (if it exists) must be equal also..
-        if( shortLabel != null ) {
-            if( !shortLabel.equals( annotatedObject.getShortLabel() ) ) return false;
+        if ( shortLabel != null ) {
+            if ( !shortLabel.equals( annotatedObject.getShortLabel() ) ) {
+                return false;
+            }
         } else {
-            if( annotatedObject.getShortLabel() != null ) return false;
+            if ( annotatedObject.getShortLabel() != null ) {
+                return false;
+            }
         }
 
-        if( fullName != null ) {
-            if( !fullName.equals( annotatedObject.getFullName() ) ) return false;
+        if ( fullName != null ) {
+            if ( !fullName.equals( annotatedObject.getFullName() ) ) {
+                return false;
+            }
         } else {
-            if( annotatedObject.getFullName() != null ) return false;
+            if ( annotatedObject.getFullName() != null ) {
+                return false;
+            }
             ;
         }
 
@@ -340,8 +359,7 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
     }
 
     /**
-     * This class overwrites equals. To ensure proper functioning of HashTable,
-     * hashCode must be overwritten, too.
+     * This class overwrites equals. To ensure proper functioning of HashTable, hashCode must be overwritten, too.
      *
      * @return hash code of the object.
      */
@@ -354,13 +372,17 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
 
         int code = 29;
 
-        for( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
+        for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
             Xref xref = (Xref) iterator.next();
             code = 29 * code + xref.hashCode();
         }
 
-        if( null != shortLabel ) code = 29 * code + shortLabel.hashCode();
-        if( null != fullName ) code = 29 * code + fullName.hashCode();
+        if ( null != shortLabel ) {
+            code = 29 * code + shortLabel.hashCode();
+        }
+        if ( null != fullName ) {
+            code = 29 * code + fullName.hashCode();
+        }
 
         return code;
     }
@@ -375,17 +397,15 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
         // Clone annotations; can't use annotations.clone here as annoatations
         // type is shown as a ListProxy (ClassCastException)
         copy.annotations = new ArrayList<Annotation>( annotations.size() );
-        for (Annotation annotation : annotations)
-        {
-            copy.annotations.add((Annotation) annotation.clone());
+        for ( Annotation annotation : annotations ) {
+            copy.annotations.add( (Annotation) annotation.clone() );
         }
 
         // Clone xrefs.
         copy.xrefs = new ArrayList<Xref>( xrefs.size() );
         // Make deep copies.
-        for (Xref xref : xrefs)
-        {
-            copy.xrefs.add((Xref)xref.clone());
+        for ( Xref xref : xrefs ) {
+            copy.xrefs.add( (Xref) xref.clone() );
         }
 
         return copy;
@@ -393,8 +413,40 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
 
     @Override
     public String toString() {
-        return this.getAc() + "; owner=" + this.getOwner().getAc()
-               + "; name=" + this.shortLabel + "; fullname=" + fullName;
+
+        StringBuffer sb = new StringBuffer( 256 );
+
+        sb.append( this.getAc() + "; owner=" + this.getOwner().getAc() +
+                   "; name=" + this.shortLabel +
+                   "; fullname=" + fullName );
+
+        sb.append( "\n" );
+        sb.append( "Annotations:" );
+        if ( annotations.isEmpty() ) {
+            sb.append( "none.\n" );
+        } else {
+            for ( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
+                Annotation annotation = (Annotation) iterator.next();
+                sb.append( "\n" );
+                sb.append( "\t" + annotation.getCvTopic().getShortLabel() + ":" + annotation.getAnnotationText() );
+            }
+        }
+
+        sb.append( "\nXrefs:" );
+        if ( xrefs.isEmpty() ) {
+            sb.append( "none." );
+        } else {
+            for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
+                Xref xref = (Xref) iterator.next();
+                sb.append( "\n" );
+                sb.append( "\t" + xref.getCvDatabase().getShortLabel() + ":" + xref.getPrimaryId() );
+                if ( null != xref.getCvXrefQualifier() ) {
+                    sb.append( "(" + xref.getCvXrefQualifier().getShortLabel() + ")" );
+                }
+            }
+        }
+
+        return sb.toString();
     }
 
 } // end AnnotatedObject
