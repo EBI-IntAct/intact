@@ -56,46 +56,26 @@ set term off
 set term on
 
 
+-----------------------------------------------------------------------
+-- Altering Experiment table
+-- Modelling the relationship between Publication and experiment
+-- only take to ass an extra column in the IA_Experiment table
+-- and updating dependaEncies, namely: audit table and audit trigger.
+-----------------------------------------------------------------------
 
----------------------------------------------------------------------------
--- Create indirection table necessary to link publication to experiments
----------------------------------------------------------------------------
-PROMPT Creating table "IA_Pub2Exp"
-CREATE TABLE IA_Pub2Exp
-(       publication_ac          VARCHAR2(30)    NOT NULL CONSTRAINT fk_Pub2exp$publication REFERENCES IA_Publication(ac) ON DELETE CASCADE
-     ,  experiment_ac           VARCHAR2(30)    NOT NULL CONSTRAINT fk_Pub2exp$experiment  REFERENCES IA_Experiment(ac)  ON DELETE CASCADE
-     ,  deprecated              NUMBER(1)       DEFAULT  0       NOT NULL
-     ,  created                 DATE            DEFAULT  SYSDATE NOT NULL
-     ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
-     ,  updated                 DATE            DEFAULT  SYSDATE NOT NULL
-     ,  created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
-)
-TABLESPACE &&intactMainTablespace
-;
+-- Add column allowing to model the relationship between publication and experiment.
+PROMPT Adding extra column in IA_EXPERIMENT: publication_ac
+ALTER TABLE IA_EXPERIMENT
+ADD publication_ac VARCHAR2(30) CONSTRAINT fk_experiment$publication_ac REFERENCES IA_Publication(ac);
 
-PROMPT Creating composite primary Key on 'IA_Pub2Exp'
-ALTER TABLE IA_Pub2Exp
- ADD (CONSTRAINT     pk_Pub2exp
-        PRIMARY KEY  (publication_ac, experiment_ac)
-        USING INDEX
-        TABLESPACE   &&intactIndexTablespace
-     )
-;
+-- this will impact a modification on the audit trigger
+PROMPT Adding extra column in IA_EXPERIMENT_AUDIT: publication_ac
+ALTER TABLE IA_EXPERIMENT_AUDIT
+ADD publication_ac VARCHAR2(30);
 
-set term off
-    COMMENT ON TABLE IA_Pub2exp IS
-    'IA_Pub2exp. Link table from experiment to Publication.';
-    COMMENT ON COLUMN IA_Pub2exp.publication_ac IS
-    'Refers to a Publication to which the Experiment is linked.';
-    COMMENT ON COLUMN IA_Pub2exp.experiment_ac IS
-    'Refers to the Experiment object linked to the Publication.';
-    COMMENT ON COLUMN IA_Pub2exp.created IS
-    'Date of the creation of the row.';
-    COMMENT ON COLUMN IA_Pub2exp.userstamp IS
-    'Database user who has performed the last update of the column.';
-    COMMENT ON COLUMN IA_Pub2exp.updated IS
-    'Date of the last update of the row.';
-set term on
+-- new index on foreign key
+PROMPT Adding index on table IA_EXPERIMENT, column publication_ac
+CREATE INDEX i_EXPERIMENT$publication_ac ON IA_EXPERIMENT(publication_ac) TABLESPACE &&intactIndexTablespace;
 
 
 --------------------------------------------------------
@@ -157,7 +137,6 @@ TABLESPACE &&intactMainTablespace
 ;
 
 PROMPT Creating composite primary Key on 'IA_Key_Assigner_Request'
---
 ALTER TABLE IA_Key_Assigner_Request
  ADD (CONSTRAINT     pk_Key_Assigner_Request
         PRIMARY KEY  (service_url, submission)
@@ -184,4 +163,3 @@ set term off
     COMMENT ON COLUMN IA_Key_Assigner_Request.created_user IS
     'User who created the row.';
 set term on
-

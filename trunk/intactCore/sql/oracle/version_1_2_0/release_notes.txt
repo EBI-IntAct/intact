@@ -8,14 +8,13 @@ REQUEST
       ia_pub2annot                  : Indirection table that allow a publication to have annotations
       ia_pub2annot_audit            : Corresponding audit table
 
-      ia_pub2exp                    : Indirection table that allow a publication to have experiments
-      ia_pub2exp_audit              : Corresponding audit table
-
       ia_key_assigner_request       : Log table for Key Assigner request
       ia_key_assigner_request_audit : Corresponding audit table
 
 
 TECHNICAL CHANGES
-    * Added 4 new tables
-    * Added 4 new audit tables
-    * Added 4 new triggers (for audit)
+    * Added 3 new tables
+    * Added 3 new audit tables
+    * Added 3 new triggers (for audit)
+    * 1 new column in IA_EXPERIMENT / IA_EXPERIMENT_AUDIT
+    * Update of audit trigger on IA_Experiment

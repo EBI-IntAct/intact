@@ -104,10 +104,10 @@ show error
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
 
-PROMPT Creating audit trigger for ia_pub2exp
-create or replace trigger trgAud_ia_pub2exp
+PROMPT Creating audit trigger for ia_experiment
+create or replace trigger trgAud_ia_experiment
 	before update or delete
-	on ia_pub2exp
+	on ia_experiment
 	for each row
 
 declare
@@ -118,41 +118,48 @@ begin
 		l_event := 'D';
 	elsif updating then
 		l_event := 'U';
-		:new.userstamp := user;
 		:new.updated := sysdate;
+		:new.userstamp := user;
 	end if ;
 
 
-	insert into ia_pub2exp_audit
+	insert into ia_experiment_audit
 		( event
-		, publication_ac
-		, experiment_ac
+		, ac
 		, deprecated
 		, created
-		, userstamp
 		, updated
+		, userstamp
+		, biosource_ac
+		, detectmethod_ac
+		, identmethod_ac
+		, relatedexperiment_ac
+		, owner_ac
+		, shortlabel
+		, fullname
 		, created_user
+		, publication_ac
 		)
 	values
 		( l_event
-		, :old.publication_ac
-		, :old.experiment_ac
+		, :old.ac
 		, :old.deprecated
 		, :old.created
-		, :old.userstamp
 		, :old.updated
+		, :old.userstamp
+		, :old.biosource_ac
+		, :old.detectmethod_ac
+		, :old.identmethod_ac
+		, :old.relatedexperiment_ac
+		, :old.owner_ac
+		, :old.shortlabel
+		, :old.fullname
 		, :old.created_user
+		, :old.publication_ac
 		);
 end;
 /
 show error
-
-----------------------------------------------------------------------
-----------------------------------------------------------------------
-----------------------------------------------------------------------
-
-
-
 
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
@@ -198,10 +205,3 @@ begin
 end;
 /
 show error
-
-
-
-
-
-
-

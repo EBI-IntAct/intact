@@ -7,9 +7,6 @@
 PROMPT "Creating public synonym IA_Publication"
 create public synonym IA_Publication for INTACT.IA_Publication;
 
-PROMPT "Creating public synonym IA_Pub2exp"
-create public synonym IA_Pub2exp for INTACT.IA_Pub2exp;
-
 PROMPT "Creating public synonym IA_Pub2Annot"
 create public synonym IA_Pub2Annot for INTACT.IA_Pub2Annot;
 
@@ -26,9 +23,6 @@ create public synonym IA_Publication_audit for INTACT.IA_Publication_audit;
 
 PROMPT "Creating public synonym IA_Pub2Annot_audit"
 create public synonym IA_Pub2Annot_audit for INTACT.IA_Pub2Annot_audit;
-
-PROMPT "Creating public synonym IA_Pub2Exp_audit"
-create public synonym IA_Pub2Exp_audit for INTACT.IA_Pub2Exp_audit;
 
 PROMPT "Creating public synonym IA_Key_Assigner_Request_audit"
 create public synonym IA_Key_Assigner_Request_audit for INTACT.IA_Key_Assigner_Request_audit;

@@ -37,20 +37,6 @@ TABLESPACE &&intactAuditTablespace
 ;
 
 
-PROMPT Creating table "IA_pub2exp_audit"
-CREATE TABLE IA_Pub2Exp_audit
-(       event                   CHAR(1)         NOT NULL
-     ,  publication_ac          VARCHAR2(30)    NOT NULL
-     ,  experiment_ac           VARCHAR2(30)    NOT NULL
-     ,  deprecated              NUMBER(1)       NOT NULL
-     ,  created                 DATE            NOT NULL
-     ,  userstamp               VARCHAR2(30)    NOT NULL
-     ,  updated                 DATE            NOT NULL
-     ,  created_user            VARCHAR2(30)    NOT NULL
-)
-TABLESPACE &&intactAuditTablespace
-;
-
 PROMPT Creating table "IA_Key_Assigner_Request_audit"
 CREATE TABLE IA_Key_Assigner_Request_audit
 (
