@@ -10,6 +10,8 @@ import org.apache.taglibs.display.TableDecorator;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
+import uk.ac.ebi.intact.application.commons.util.DateToolbox;
+import uk.ac.ebi.intact.model.Experiment;
 
 import java.text.SimpleDateFormat;
 
@@ -77,6 +79,40 @@ public class ResultDisplayWrapper extends TableDecorator {
      */
     public String getFullName() {
         return ((ResultRowData) getObject()).getFullName();
+    }
+
+    /**
+     * Returns the created information.
+     * @return the full name as a <code>String</code> for the wrapped object.
+     */
+    public String getCreator() {
+        return ((ResultRowData) getObject()).getCreator();
+    }
+
+    /**
+     * Returns the created information.
+     * @return the full name as a <code>String</code> for the wrapped object.
+     */
+    public String getUpdator() {
+        return ((ResultRowData) getObject()).getUpdator();
+    }
+
+    public String getCreated(){
+        return DateToolbox.formatDate(((ResultRowData) getObject()).getCreated());
+    }
+
+    public String getUpdated(){
+        return DateToolbox.formatDate(((ResultRowData) getObject()).getUpdated());
+    }
+
+    public String getCreationInfo(){
+         //Created 2005-JAN-26 by LUISA.
+         return  this.getCreated() + " by " + this.getCreator() + ".";
+    }
+
+    public String getUpdateInfo(){
+         //Created 2005-JAN-26 by LUISA.
+         return this.getCreated() + " by " + this.getCreator() + ".";
     }
 
     /**
