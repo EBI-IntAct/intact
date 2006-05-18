@@ -54,6 +54,8 @@
                            
     <property file="config/correctionAssigner.properties"/>
 
+    <property file="config/msd.properties"/>
+
     <!-- Tutorial specific properties -->
     <property name="tutorial.src.dir" value="src/uk/ac/ebi/intact/tutorial"/>
     <property name="tutorial.dest.dir" value="classes/uk/ac/ebi/intact/tutorial"/>
@@ -420,6 +422,7 @@
                 <include name="sanityCheck.properties"/>
                 <include name="Institution.properties"/>
 		        <include name="correctionAssigner.properties"/>
+		        <include name="msd.properties"/>
             </fileset>
         </copy>
 
