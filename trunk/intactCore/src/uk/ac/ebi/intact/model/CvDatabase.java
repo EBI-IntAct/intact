@@ -73,13 +73,30 @@ public class CvDatabase extends CvObject implements Editable {
     public static final String REFSEQ_MI_REF = "MI:0481";
 
     public static final String IMEX = "imex";
+    public static final String IMEX_MI_REF = "MI:0670";
+
+    public static final String MINT = "mint";
+    public static final String MINT_MI_REF = "MI:0471";
+
+    public static final String BIND = "bind";
+    public static final String BIND_MI_REF = "MI:0462";
+
+    public static final String DIP = "dip";
+    public static final String DIP_MI_REF = "MI:0465";
+
+    public static final String MIPS = "cygd";
+    public static final String MIPS_MI_REF = "MI:0464";
 
 
     /**
-     * Cache a Vector of all shortLabels of the class, e.g. for menus.
-     * This should not be here as it has no model functionality but is
-     * related to eg user interfaces.
+     * Cache a Vector of all shortLabels of the class, e.g. for menus. This should not be here as it has no model
+     * functionality but is related to eg user interfaces.
+     * <p/>
+     * <p/>
+     * This constructor should <b>not</b> be used as it could result in objects with invalid state. It is here for
+     * object mapping purposes only and if possible will be made private.
      *
+     * @deprecated Use the full constructor instead
      */
 //    protected static Vector menuList = null;
 
