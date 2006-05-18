@@ -16,10 +16,12 @@ public class Experiment {
     private String pmid;
     private String experimentType;
     private ArrayList pdbList;
+
     private static HashMap pmid2exp; // pmid ==> collection experiments
-                                     // if(pmid2exps.contains(pmid)){
-                                     //     Collection exps = pmid2exps.get(pmid); ...
-                                     //
+                                     //     if(pmid2exps.contains(pmid)){
+                                     //         Collection exps = pmid2exps.get(pmid); ...
+
+
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -42,7 +44,7 @@ public class Experiment {
     }
 
 
-    public void AddPDB(Pdb pdb){
+    public void AddPDB(MsdInteraction pdb){
         if (this.pdbList == null) {
             this.pdbList = new ArrayList();
         }

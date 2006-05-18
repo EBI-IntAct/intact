@@ -20,10 +20,10 @@ public class ChainCreator {
     public ChainCreator(){
     }
 
-    private Pdb pdb;
+    private MsdInteraction pdb;
 
     
-    public void createChains (Pdb pdb) throws Exception, SQLException {
+    public void createChains (MsdInteraction pdb) throws Exception, SQLException {
 
     if (pdb !=null){
 
@@ -43,11 +43,11 @@ public class ChainCreator {
             PdbChainBean pdbChainBean = (PdbChainBean) iterator.next();
             System.out.println(pdbChainBean.getClass());
             System.out.println("chain: "+ pdbChainBean.getPdbChainCode());
-            System.out.println("Pdb: "+ pdbChainBean.getPdbCode());
+            System.out.println("pdb: "+ pdbChainBean.getPdbCode());
             System.out.println("expressedIntaxid: "+ pdbChainBean.getExpressedIntaxid());
 
             // create the PdbChain instance if it is a nucleic acid
-            //RULE1: find and withdrawn all Pdb involving nucleic acids.
+            //RULE1: find and withdrawn all MsdInteraction involving nucleic acids.
             if (pdbChainBean.getType()=="Nucleic_Acid"){
 
                 PdbChain pdbChain=new PdbChain();
@@ -92,7 +92,7 @@ public class ChainCreator {
                     PdbChainMappingBean pdbChainMappingBean = (PdbChainMappingBean) iterator2.next();
                     System.out.println(pdbChainMappingBean.getClass());
                     System.out.println("chain: "+ pdbChainMappingBean.getPdbChainCode());
-                    System.out.println("Pdb: "+ pdbChainMappingBean.getPdbCode());
+                    System.out.println("pdb: "+ pdbChainMappingBean.getPdbCode());
                     System.out.println("uniprot: "+ pdbChainMappingBean.getUniprotAc());
 
                     // Create the chain if found in the mapping
@@ -140,7 +140,7 @@ public class ChainCreator {
         }
     }
 
-        // create the chain instance and add them to the Pdb instance in an Array.
+        // create the chain instance and add them to the MsdInteraction instance in an Array.
         // For each chain do both mapping
 
     helper.close();
@@ -152,7 +152,7 @@ public class ChainCreator {
     public static void main(String[] args) throws Exception, SQLException {
         PdbAndExpCreator pdbAndExpcreator = new  PdbAndExpCreator();
         ArrayList PDBList=pdbAndExpcreator.createPDBandExp ("1B7R");
-        Pdb pdb=(Pdb)PDBList.get(0);
+        MsdInteraction pdb=(MsdInteraction)PDBList.get(0);
         System.out.println("pdb:"+pdb.getPdbCode());
         System.out.println("exp:"+pdb.getExperiment());
         ChainCreator chainCreator = new ChainCreator();

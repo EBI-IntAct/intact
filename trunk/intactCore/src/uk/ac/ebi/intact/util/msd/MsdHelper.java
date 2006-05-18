@@ -179,7 +179,7 @@ public class MsdHelper {
         MsdHelper helper = new MsdHelper();
 
 
-        helper.addMapping( PdbBean.class, "SELECT entry_id as PDBcode, "+ //title as structureTitle,  " +
+        helper.addMapping( PdbBean.class, "SELECT entry_id as pdbCcode, "+ //title as structureTitle,  " +
                                           "experiment_type as experimentType, res_val as resolution, "+
                                           "r_work as rWork, " +
                                           "comp_list as moleculeList " +
@@ -191,7 +191,7 @@ public class MsdHelper {
             System.out.println(pdbBean);
             System.out.println(pdbBean.getClass());
             System.out.println("experiment:"+pdbBean.getExperimentType());
-            System.out.println("Pdb : "+pdbBean.getPdbCode());
+            System.out.println("pdb : "+pdbBean.getPdbCode());
             System.out.println("resolution : "+pdbBean.getResolution());
             System.out.println("moleculeList : "+pdbBean.getMoleculeList());
             System.out.println("RFactor : " + pdbBean.getrWork());

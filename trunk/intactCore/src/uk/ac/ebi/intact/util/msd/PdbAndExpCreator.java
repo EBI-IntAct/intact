@@ -33,13 +33,13 @@ public class PdbAndExpCreator {
             System.out.println(pdbBean);
             System.out.println(pdbBean.getClass());
             System.out.println("experiment:"+pdbBean.getExperimentType());
-            System.out.println("Pdb : "+pdbBean.getPdbCode());
+            System.out.println("MsdInteraction : "+pdbBean.getPdbCode());
             System.out.println("resolution : "+pdbBean.getResolution());
             System.out.println("moleculeList : "+pdbBean.getMoleculeList());
             System.out.println("RFactor : " + pdbBean.getrWork());
         }
 
-        // LOAD intact_MSD_DATA View into a Pdb Object an an Experiment Object
+        // LOAD intact_MSD_DATA View into a MsdInteraction Object an an Experiment Object
                 helper.addMapping( PdbBean.class, "SELECT entry_id as pdbCode, title,  " +
                                           "experiment_type as experimentType, res_val as resolution, "+
                                           "r_work as rWork, " +"r_free as rFree, "+
@@ -53,13 +53,13 @@ public class PdbAndExpCreator {
             System.out.println(pdbBean);
             System.out.println(pdbBean.getClass());
             System.out.println("experiment:"+pdbBean.getExperimentType());
-            System.out.println("Pdb : "+pdbBean.getPdbCode());
+            System.out.println("MsdInteraction : "+pdbBean.getPdbCode());
             System.out.println("resolution : "+pdbBean.getResolution());
             System.out.println("moleculeList : "+pdbBean.getMoleculeList());
             System.out.println("RFactor : " + pdbBean.getrWork());
 
-            //create the Pdb object
-            Pdb pdb= new Pdb();
+            //create the MsdInteraction object
+            MsdInteraction pdb= new MsdInteraction();
             PDBList.add(pdb);
 
             //set experimentType
@@ -95,10 +95,10 @@ public class PdbAndExpCreator {
             pdb.setOligomericStateList(pdbBean.getOligomericStateList());
 
             //Print test
-            System.out.println("Pdb resolution "+ pdb.getResolution());
-            System.out.println("Pdb rWork "+ pdb.getrWork());
-            System.out.println("Pdb Title "+ pdb.getTitle());
-            System.out.println("Pdb rFree "+ pdb.getrFree());
+            System.out.println("MsdInteraction resolution "+ pdb.getResolution());
+            System.out.println("MsdInteraction rWork "+ pdb.getrWork());
+            System.out.println("MsdInteraction Title "+ pdb.getTitle());
+            System.out.println("MsdInteraction rFree "+ pdb.getrFree());
 
             //create the Experiment Object
             Experiment exp= new Experiment();
@@ -107,7 +107,7 @@ public class PdbAndExpCreator {
             exp.setPmid(pmid);
             System.out.println("EXP pmid "+exp.getPmid());
 
-            //link Experiment object and Pdb
+            //link Experiment object and MsdInteraction
             pdb.setExperiment(exp);
             exp.AddPDB(pdb);
             exp.Addpmid(exp.getPmid(),exp);
@@ -121,7 +121,7 @@ public class PdbAndExpCreator {
     public static void main(String[] args) throws Exception, SQLException {
         PdbAndExpCreator pdbAndExpcreator = new  PdbAndExpCreator();
         ArrayList PDBList=pdbAndExpcreator.createPDBandExp ("1B7R");
-        Pdb pdb=(Pdb)PDBList.get(0);
+        MsdInteraction pdb=(MsdInteraction)PDBList.get(0);
         System.out.println("pdb:"+pdb.getPdbCode());
         System.out.println("exp:"+pdb.getExperiment());
 

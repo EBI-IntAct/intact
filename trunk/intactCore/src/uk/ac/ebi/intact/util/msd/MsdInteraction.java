@@ -9,7 +9,7 @@ import java.util.ArrayList;
  * Time: 15:51:38
  * To change this template use File | Settings | File Templates.
  */
-public class Pdb {
+public class MsdInteraction {
     private String pdbCode;
     private Experiment experiment;
     private String oligomericStateList;

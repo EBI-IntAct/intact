@@ -26,7 +26,7 @@ public class PdbChain {
     private BigDecimal expressedIntaxid;//system_tax_id
     private String tissue;//tissue*/
 
-    private Pdb pdb;
+    private MsdInteraction pdb;
     private String pdbCode;
     private String uniprotAc;
     private String uniprotId;
@@ -37,11 +37,11 @@ public class PdbChain {
     private String expressedIntaxid;
     private String tissue;
 
-    public Pdb getPdb() {
+    public MsdInteraction getPdb() {
         return pdb;
     }
 
-    public void setPdb(Pdb pdb) {
+    public void setPdb(MsdInteraction pdb) {
         this.pdb = pdb;
     }
 
