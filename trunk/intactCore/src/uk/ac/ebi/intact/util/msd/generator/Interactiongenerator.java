@@ -9,3 +9,6 @@ package uk.ac.ebi.intact.util.msd.generator;
  */
 public class Interactiongenerator {
 }
+
+//TODO method formatRWork(BigDecimal rWork)..
+
