@@ -7,7 +7,7 @@ package uk.ac.ebi.intact.util.msd;
  * Time: 20:52:03
  * To change this template use File | Settings | File Templates.
  */
-public class PdbChain {
+public class MsdParticipant {
 
     /*  PdbChainMappingBean
     private String PDBcode;  //entry_id
