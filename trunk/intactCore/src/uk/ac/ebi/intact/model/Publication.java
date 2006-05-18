@@ -8,7 +8,6 @@ package uk.ac.ebi.intact.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Set;
 
 /**
  * Models a scientific paper and its relationship to (potentialy) many intact Experiments.
@@ -74,7 +73,7 @@ public class Publication extends AnnotatedObjectImpl implements Editable {
         experiments.remove( experiment );
     }
 
-    public Set<Experiment> getExperiments() {
+    public Collection<Experiment> getExperiments() {
         return experiments;
     }
 
