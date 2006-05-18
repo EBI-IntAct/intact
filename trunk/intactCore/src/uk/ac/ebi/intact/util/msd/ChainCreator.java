@@ -46,26 +46,26 @@ public class ChainCreator {
             System.out.println("pdb: "+ pdbChainBean.getPdbCode());
             System.out.println("expressedIntaxid: "+ pdbChainBean.getExpressedIntaxid());
 
-            // create the PdbChain instance if it is a nucleic acid
+            // create the MsdParticipant instance if it is a nucleic acid
             //RULE1: find and withdrawn all MsdInteraction involving nucleic acids.
             if (pdbChainBean.getType()=="Nucleic_Acid"){
 
-                PdbChain pdbChain=new PdbChain();
-                    pdbChain.setPdb(pdb);
+                MsdParticipant msdParticipant =new MsdParticipant();
+                    msdParticipant.setPdb(pdb);
 
                 if (pdb.getPdbCode()!=null){
-                    pdbChain.setPdbCode(pdb.getPdbCode());
-                    }else pdbChain.setPdbCode(null);
+                    msdParticipant.setPdbCode(pdb.getPdbCode());
+                    }else msdParticipant.setPdbCode(null);
 
-                pdbChain.setType(pdbChainBean.getType());
+                msdParticipant.setType(pdbChainBean.getType());
                 pdb.setHasNucleicAcid(true);
             }
 
 
             if (pdbChainBean.getType()=="Protein"){
 
-                    PdbChain pdbChain=new PdbChain();
-                    pdbChain.setPdb(pdb);
+                    MsdParticipant msdParticipant =new MsdParticipant();
+                    msdParticipant.setPdb(pdb);
 
 
 
@@ -100,38 +100,38 @@ public class ChainCreator {
 
 
                     if (pdbChainMappingBean.getUniprotAc()!=null){
-                    pdbChain.setUniprotAc(pdbChainMappingBean.getUniprotAc());
-                    } else  pdbChain.setUniprotAc(null);
+                    msdParticipant.setUniprotAc(pdbChainMappingBean.getUniprotAc());
+                    } else  msdParticipant.setUniprotAc(null);
 
                     if (pdbChainMappingBean.getUniprotId()!=null){
-                    pdbChain.setUniprotId(pdbChainMappingBean.getUniprotId());
-                    }else pdbChain.setUniprotId(null);
+                    msdParticipant.setUniprotId(pdbChainMappingBean.getUniprotId());
+                    }else msdParticipant.setUniprotId(null);
 
                     if (pdbChainMappingBean.getTaxid()!=null){
-                    pdbChain.setTaxid(pdbChainMappingBean.getTaxid().toString());
-                        }else pdbChain.setTaxid(null);
+                    msdParticipant.setTaxid(pdbChainMappingBean.getTaxid().toString());
+                        }else msdParticipant.setTaxid(null);
 
                     if (pdbChainBean.getTissue()!=null){
-                    pdbChain.setTissue(pdbChainBean.getTissue());
-                    }else pdbChain.setTissue(null);
+                    msdParticipant.setTissue(pdbChainBean.getTissue());
+                    }else msdParticipant.setTissue(null);
 
-                    pdbChain.setType(pdbChainBean.getType());
+                    msdParticipant.setType(pdbChainBean.getType());
 
                     if (pdbChainBean.getExpressedIntaxid()!=null){
-                    pdbChain.setExpressedIntaxid(pdbChainBean.getExpressedIntaxid().toString());
-                        }else pdbChain.setExpressedIntaxid(null);
+                    msdParticipant.setExpressedIntaxid(pdbChainBean.getExpressedIntaxid().toString());
+                        }else msdParticipant.setExpressedIntaxid(null);
 
                     if (pdb.getPdbCode()!=null){
-                    pdbChain.setPdbCode(pdb.getPdbCode());
-                    }else pdbChain.setPdbCode(null);
+                    msdParticipant.setPdbCode(pdb.getPdbCode());
+                    }else msdParticipant.setPdbCode(null);
 
                     if (pdbChainMappingBean.getUniprotEnd()!=null){
-                    pdbChain.setUniprotEnd(pdbChainMappingBean.getUniprotEnd().toString());
-                        }else pdbChain.setUniprotEnd(null);
+                    msdParticipant.setUniprotEnd(pdbChainMappingBean.getUniprotEnd().toString());
+                        }else msdParticipant.setUniprotEnd(null);
 
                     if (pdbChainMappingBean.getUniprotStart()!=null){
-                    pdbChain.setUniprotStart(pdbChainMappingBean.getUniprotStart().toString());
-                        }else pdbChain.setUniprotEnd(null);
+                    msdParticipant.setUniprotStart(pdbChainMappingBean.getUniprotStart().toString());
+                        }else msdParticipant.setUniprotEnd(null);
 
 
 
