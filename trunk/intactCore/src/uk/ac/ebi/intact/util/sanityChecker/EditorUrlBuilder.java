@@ -45,6 +45,8 @@ public class EditorUrlBuilder {
                 url = editorUrl+"ac="+intactBean.getAc()+"&type=Protein";
             }else if ( InteractionImpl.class.getName().equals(objclass)){
                 url = editorUrl+"ac="+intactBean.getAc()+"&type=Interaction";
+            }else if ( NucleicAcidImpl.class.getName().equals(objclass)){
+                url = editorUrl+"ac="+intactBean.getAc()+"&type=NucleicAcid";
             }
         }
         else if ( intactBean instanceof BioSourceBean ){
