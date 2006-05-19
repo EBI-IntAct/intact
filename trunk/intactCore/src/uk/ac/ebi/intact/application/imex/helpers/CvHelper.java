@@ -112,4 +112,12 @@ public class CvHelper {
         }
         return imexRangeAssigned;
     }
+
+    public static CvTopic getImexExported( IntactHelper helper ) throws IntactException {
+        CvTopic imexExported = helper.getObjectByLabel( CvTopic.class, CvTopic.IMEX_EXPORTED );
+        if ( imexExported == null ) {
+            throw new IllegalStateException( "Could not find CvTopic by name: " + CvTopic.IMEX_EXPORTED );
+        }
+        return imexExported;
+    }
 }

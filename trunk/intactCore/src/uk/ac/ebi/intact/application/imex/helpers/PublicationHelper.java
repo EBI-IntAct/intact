@@ -13,9 +13,9 @@ import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.model.Publication;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Utility methods for a publication.
@@ -25,6 +25,15 @@ import java.util.List;
  * @since <pre>11-May-2006</pre>
  */
 public class PublicationHelper {
+
+    /**
+     * Simple representation of a Date.
+     * <p/>
+     * Will be used to name our IMEx files.
+     */
+    private static final SimpleDateFormat SIMPLE_DATE_FORMATER = new SimpleDateFormat( "yyyy-MM-dd" );
+
+    public static final String IMEX_EXPORT_SEPARATOR = ":";
 
     public static boolean hasImexRange( IntactHelper helper, Publication publication ) {
         return false;
@@ -165,4 +174,145 @@ public class PublicationHelper {
                                 ") to Publication(" + publication.getPmid() + ")" );
         }
     }
+
+    /**
+     * Build a well formatted imex-exported annotation.
+     *
+     * @param helper database access.
+     * @param text   the text to append in the comment (format: YYYY-MM-DD: text).
+     *
+     * @return an annotation.
+     *
+     * @throws IntactException
+     */
+    public static Annotation buildImexExportedAnnotation( IntactHelper helper, String text ) throws IntactException {
+        CvTopic imexExported = CvHelper.getImexExported( helper );
+        Annotation annot = new Annotation( helper.getInstitution(), imexExported );
+        String today = getTodaySimpleDate();
+
+        String annotText = today;
+        if ( text != null ) {
+            annotText += IMEX_EXPORT_SEPARATOR + " " + text.trim();
+        }
+
+        annot.setAnnotationText( annotText );
+        return annot;
+    }
+
+    /**
+     * Return today's date in a simple format.
+     *
+     * @return
+     */
+    public static String getTodaySimpleDate() {
+        return SIMPLE_DATE_FORMATER.format( new Date() ); // YYYY-MM-DD;
+    }
+
+    /**
+     * Get a list of Annotation having CvTopic( imex-exported ) and sort them chonologicaly.
+     *
+     * @param helper      database access.
+     * @param publication the publication of interrest.
+     *
+     * @return a sorted collection of exported date.
+     *
+     * @throws IntactException
+     */
+    public static List<Annotation> getExportHistory( IntactHelper helper, Publication publication ) throws IntactException {
+        CvTopic imexExported = CvHelper.getImexExported( helper );
+
+        List<Annotation> export = new ArrayList<Annotation>( publication.getAnnotations().size() );
+
+        for ( Annotation annotation : publication.getAnnotations() ) {
+            if ( imexExported.equals( annotation.getCvTopic() ) ) {
+                export.add( annotation );
+            }
+        }
+
+        // sort by date
+        Collections.sort( export, new Comparator<Annotation>() {
+            public int compare( Annotation o1, Annotation o2 ) {
+                String t1 = o1.getAnnotationText();
+                String t2 = o2.getAnnotationText();
+
+                int idx1 = t1.indexOf( IMEX_EXPORT_SEPARATOR );
+                if ( idx1 == -1 ) {
+                    idx1 = t1.length();
+                }
+                String dt1 = t1.substring( 0, idx1 );
+
+                int idx2 = t2.indexOf( IMEX_EXPORT_SEPARATOR );
+                if ( idx2 == -1 ) {
+                    idx2 = t2.length();
+                }
+                String dt2 = t2.substring( 0, idx2 );
+
+                Date d1 = null;
+                try {
+                    d1 = SIMPLE_DATE_FORMATER.parse( dt1 );
+                } catch ( ParseException e ) {
+                    e.printStackTrace();
+                }
+                Date d2 = null;
+                try {
+                    d2 = SIMPLE_DATE_FORMATER.parse( dt2 );
+                } catch ( ParseException e ) {
+                    e.printStackTrace();
+                }
+
+                if ( d1 == null ) {
+                    return -1;
+                }
+
+                if ( d2 == null ) {
+                    return 1;
+                }
+
+                return d1.compareTo( d2 );
+            }
+        } );
+
+        return export;
+    }
+
+    public static void showExportHistory( IntactHelper helper, Publication publication ) throws IntactException {
+
+        List<Annotation> export = getExportHistory( helper, publication );
+
+        // display
+        for ( Annotation annotation : export ) {
+            System.out.println( annotation.getAnnotationText() );
+        }
+    }
+
+    public static void main( String[] args ) throws IntactException {
+
+        IntactHelper helper = null;
+        try {
+            helper = new IntactHelper();
+            System.out.println( "Database: " + helper.getDbName() );
+
+            Publication pub = new Publication( helper.getInstitution(), "123" );
+            CvTopic imexExported = CvHelper.getImexExported( helper );
+
+            Annotation a1 = new Annotation( helper.getInstitution(), imexExported, "2005-01-02" );
+            Annotation a2 = new Annotation( helper.getInstitution(), imexExported, "2007-01-02" );
+            Annotation a3 = new Annotation( helper.getInstitution(), imexExported, "2007-01-02: blablabla" );
+            Annotation a4 = new Annotation( helper.getInstitution(), imexExported, "2003-01-02" );
+
+            pub.addAnnotation( a1 );
+            pub.addAnnotation( a2 );
+            pub.addAnnotation( a3 );
+            pub.addAnnotation( a4 );
+
+            showExportHistory( helper, pub );
+
+        } finally {
+            if ( helper != null ) {
+                helper.closeStore();
+            }
+        }
+
+    }
+
 }
