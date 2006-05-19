@@ -174,6 +174,16 @@ public class UpdatePublication {
             Collection<Experiment> experiments = helper.getObjectsByXref( Experiment.class, pubmed, primaryReference, pmid );
             System.out.println( experiments.size() + " experiment(sortedClassifier) found." );
 
+            // update all of these experiment
+            for ( Experiment experiment : experiments ) {
+                if ( experiment.getPublication() == null ) {
+                    System.out.println( "Experiment[ " + experiment.getShortLabel() + " ] doesn't have a publication assigned. Fixing it now ..." );
+                    experiment.setPublication( publication );
+                    helper.update( experiment );
+                    System.out.println( "Done." );
+                }
+            }
+
             // Check that all of these experiments have been accepted
             boolean allAccepted = ExperimentHelper.areAccepted( helper, experiments, true );
 
@@ -438,11 +448,13 @@ public class UpdatePublication {
 
         // First IMEx export
 //        updator.update( "16470656" );
-//        updator.update( "16267818" );
+        updator.update( "16267818" );
 
         // Other Tests
 //        updator.update( "16469704" );
-        updator.update( "16564010" );
-        updator.update( "16564014" );
+//        updator.update( "16564010" );
+//        updator.update( "16564014" );
+//        updator.update( "16294310" );
+
     }
 }
