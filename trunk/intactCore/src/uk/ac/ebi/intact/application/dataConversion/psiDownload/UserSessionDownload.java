@@ -231,6 +231,10 @@ public class UserSessionDownload {
         return rootElement;
     }
 
+    // TODO could add a method that create a new Entry and that becomes the default one.
+    // TODO that way we can ask the session to start putting all upcoming XML into a different entry.
+    // TODO a boolean in the method below would do the trick
+
     /**
      * Return the entry element of the PSI document. If the element doesn't exist, it is created.
      *
@@ -238,8 +242,47 @@ public class UserSessionDownload {
      */
     public Element getEntryElement() {
 
+        return getEntryElement( false );
+    }
+
+    /**
+     * Return the entry element of the PSI document. If the element doesn't exist, it is created.
+     *
+     * @return the source Element.
+     */
+    public Element getEntryElement( boolean createNew ) {
+
         if ( entryElement == null ) {
             entryElement = (Element) getRootElement().getElementsByTagName( "entry" ).item( 0 );
+            return entryElement;
+        }
+
+        if ( createNew ) {
+
+            System.out.println( "Current entry has " + entryElement.getChildNodes().getLength() + " children." );
+
+            // create a new <entry>
+            Document root = getPsiDocument();
+            Element rootElement = root.getDocumentElement();
+
+            Element entry = root.createElement( "entry" );
+
+            // Attach source to the new entry
+            Element source = PsiDocumentFactory.createSource( this, root, this.source );
+            entry.appendChild( source );
+
+            // insert the new entry at the end of the list
+            rootElement.appendChild( entry );
+
+            // make it the default entry
+            entryElement = entry;
+
+            // reset current pointer to the document, they will be set when they are next requested.
+            experimentListElement = null;
+            interactionListElement = null;
+            interactorListElement = null;
+
+            System.out.println( "New entry has " + entryElement.getChildNodes().getLength() + " children." );
         }
 
         return entryElement;
@@ -277,7 +320,19 @@ public class UserSessionDownload {
             experimentListElement = document.createElement( "experimentList" );
 
             Element entry = getEntryElement();
-            entry.appendChild( experimentListElement );
+
+            if ( interactionListElement != null ) {
+
+                entry.insertBefore( experimentListElement, interactionListElement );
+
+            } else if ( interactorListElement != null ) {
+
+                entry.insertBefore( experimentListElement, interactorListElement );
+
+            } else {
+
+                entry.appendChild( experimentListElement );
+            }
         }
 
         return experimentListElement;
@@ -295,9 +350,16 @@ public class UserSessionDownload {
 
             Document document = getPsiDocument();
             interactorListElement = document.createElement( "interactorList" );
-
             Element entry = getEntryElement();
-            entry.appendChild( interactorListElement );
+
+            if ( interactionListElement != null ) {
+
+                entry.insertBefore( interactorListElement, interactionListElement );
+
+            } else {
+
+                entry.appendChild( interactorListElement );
+            }
         }
 
         return interactorListElement;
