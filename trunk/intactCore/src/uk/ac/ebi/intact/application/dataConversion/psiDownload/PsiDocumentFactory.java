@@ -12,14 +12,14 @@ import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.AbstractXref2Xml;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Annotation2xml;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi25.Xref2xmlPSI2;
-import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
+import uk.ac.ebi.intact.model.Institution;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * TODO document this ;o)
@@ -58,7 +58,7 @@ public class PsiDocumentFactory {
      *
      * @return the source.
      */
-    private static Element createSource( UserSessionDownload session, Document document, Institution institution ) {
+    public static Element createSource( UserSessionDownload session, Document document, Institution institution ) {
 
         Element source = document.createElement( "source" );
         source.setAttribute( "releaseDate", getReleaseDate() );
@@ -67,6 +67,7 @@ public class PsiDocumentFactory {
 //        String shortlabel = null;
 //        String fullname = null;
         HashMap info = new HashMap();
+
         if ( institution == null ) {
 
 //            shortlabel = "IntAct";
@@ -255,6 +256,7 @@ public class PsiDocumentFactory {
         // values fixed by the schema
         psiEntrySet.setAttribute( "level", "2" );
         psiEntrySet.setAttribute( "version", "5" );
+        psiEntrySet.setAttribute( "minorVersion", "2" );
 
         Element entry = document.createElement( "entry" );
         psiEntrySet.appendChild( entry );
