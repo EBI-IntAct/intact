@@ -109,8 +109,8 @@ public class PdbAndExpCreator {
 
             //link MsdExperiment object and MsdInteraction
             msdInteraction.setExperiment(exp);
-            exp.AddPdb(msdInteraction);
-            exp.Addpmid(exp.getPmid(),exp);
+            exp.addPdb(msdInteraction);
+            exp.addPmid(exp.getPmid(),exp);
 
         }
         helper.close();
