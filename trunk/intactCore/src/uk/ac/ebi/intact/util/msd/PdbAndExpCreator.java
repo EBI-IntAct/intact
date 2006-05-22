@@ -5,6 +5,7 @@ import uk.ac.ebi.intact.util.msd.model.PdbBean;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.sql.SQLException;
+import java.math.BigDecimal;
 
 
 /**
@@ -20,27 +21,8 @@ public class PdbAndExpCreator {
         ArrayList PDBList= new ArrayList(10);
         MsdHelper helper = new MsdHelper();
 
-        //TEST
-        helper.addMapping( PdbBean.class, "SELECT entry_id as pdbCode, "+ //title as structureTitle,  " +
-                                          "experiment_type as experimentType, res_val as resolution, "+
-                                          "r_work as rWork, " +
-                                          "comp_list as moleculeList " +
-                                          "FROM INTACT_MSD_DATA " +
-                                          "WHERE entry_id =?" );
-
-        for (Iterator iterator = helper.getBeans(PdbBean.class,pdbCode).iterator(); iterator.hasNext();) {
-            PdbBean pdbBean = (PdbBean) iterator.next();
-            System.out.println(pdbBean);
-            System.out.println(pdbBean.getClass());
-            System.out.println("experiment:"+pdbBean.getExperimentType());
-            System.out.println("MsdInteraction : "+pdbBean.getPdbCode());
-            System.out.println("resolution : "+pdbBean.getResolution());
-            System.out.println("moleculeList : "+pdbBean.getMoleculeList());
-            System.out.println("RFactor : " + pdbBean.getrWork());
-        }
-
         // LOAD intact_MSD_DATA View into a MsdInteraction Object an an Experiment Object
-                helper.addMapping( PdbBean.class, "SELECT entry_id as pdbCode, title,  " +
+        helper.addMapping( PdbBean.class, "SELECT entry_id as pdbCode, title,  " +
                                           "experiment_type as experimentType, res_val as resolution, "+
                                           "r_work as rWork, " +"r_free as rFree, "+
                                           "oligomeric_state as oligomericStateList, "+"pubmedid as pmid, "+
@@ -48,74 +30,87 @@ public class PdbAndExpCreator {
                                           "FROM INTACT_MSD_DATA " +
                                           "WHERE entry_id =?");
 
-        for (Iterator iterator = helper.getBeans(PdbBean.class,"1B7R").iterator(); iterator.hasNext();) {
+        for (Iterator iterator = helper.getBeans(PdbBean.class,pdbCode).iterator(); iterator.hasNext();) {
             PdbBean pdbBean = (PdbBean) iterator.next();
-            System.out.println(pdbBean);
-            System.out.println(pdbBean.getClass());
-            System.out.println("experiment:"+pdbBean.getExperimentType());
-            System.out.println("MsdInteraction : "+pdbBean.getPdbCode());
-            System.out.println("resolution : "+pdbBean.getResolution());
-            System.out.println("moleculeList : "+pdbBean.getMoleculeList());
-            System.out.println("RFactor : " + pdbBean.getrWork());
 
-            //create the MsdInteraction object
-            MsdInteraction msdInteraction= new MsdInteraction();
+
+             //create the MsdInteraction object
+             MsdInteraction msdInteraction = createMsdInteraction(pdbBean);
+
+            //create the Experiment Object
+
+
+            //link MsdExperiment object and MsdInteraction
+            MsdExperiment exp = createMsdExperiment(pdbBean, msdInteraction);
+
+            exp.addPmid(exp.getPmid(),exp);
+
+            msdInteraction.setExperiment(exp);
+
             PDBList.add(msdInteraction);
+        }
+        helper.close();
+        return PDBList;
+
+    }
+
+    private MsdInteraction createMsdInteraction(PdbBean pdbBean){
+        //create the MsdInteraction object
+            MsdInteraction msdInteraction= new MsdInteraction();
 
             //set experimentType
             msdInteraction.setExperimentType(pdbBean.getExperimentType());
-            System.out.println(msdInteraction.getExperimentType());
 
             //set PDBcode
             msdInteraction.setPdbCode(pdbBean.getPdbCode());
 
             //set Title
-            if (pdbBean.getResolution()!=null){
-                msdInteraction.setTitle(pdbBean.getTitle().trim());
-            }else msdInteraction.setResolution(null);
+            String title = pdbBean.getTitle();
+            if (title != null){
+                msdInteraction.setTitle(title.trim());
+            } else {
+                msdInteraction.setResolution(null);
+            }
 
             //set Resolution
-            if (pdbBean.getResolution()!=null){
+            BigDecimal resolution = pdbBean.getResolution();
+            if (resolution != null) {
                 msdInteraction.setResolution(pdbBean.getResolution().toString());
-            }else msdInteraction.setResolution(null);
+            } else {
+                msdInteraction.setResolution(null);
+            }
 
 
             //set rWork
-            if (pdbBean.getrWork()!=null){
-            msdInteraction.setrWork(pdbBean.getrWork().toString());
+            BigDecimal rWork = pdbBean.getrWork();
+            if (rWork != null){
+                msdInteraction.setrWork(pdbBean.getrWork().toString());
             }else msdInteraction.setrWork(null);
 
 
             // set rFree
-            if (pdbBean.getrFree()!=null){
-            msdInteraction.setrFree(pdbBean.getrFree().toString());
+            BigDecimal rFree = pdbBean.getrFree();
+            if (rFree != null){
+                msdInteraction.setrFree(pdbBean.getrFree().toString());
             }else msdInteraction.setrFree(null);
 
             // set oligomericStateList
             msdInteraction.setOligomericStateList(pdbBean.getOligomericStateList());
 
-            //Print test
-            System.out.println("MsdInteraction resolution "+ msdInteraction.getResolution());
-            System.out.println("MsdInteraction rWork "+ msdInteraction.getrWork());
-            System.out.println("MsdInteraction Title "+ msdInteraction.getTitle());
-            System.out.println("MsdInteraction rFree "+ msdInteraction.getrFree());
+            return msdInteraction;
+    }
 
-            //create the Experiment Object
-            MsdExperiment exp= new MsdExperiment();
-            exp.setExperimentType(pdbBean.getExperimentType());
+    private MsdExperiment createMsdExperiment(PdbBean pdbBean, MsdInteraction msdInteraction){
+
+        MsdExperiment msdExp= new MsdExperiment();
+        msdExp.setExperimentType(pdbBean.getExperimentType());
+
+        if(pdbBean.getPmid() != null){
             String pmid=pdbBean.getPmid().toString();
-            exp.setPmid(pmid);
-            System.out.println("EXP pmid "+exp.getPmid());
-
-            //link MsdExperiment object and MsdInteraction
-            msdInteraction.setExperiment(exp);
-            exp.addPdb(msdInteraction);
-            exp.addPmid(exp.getPmid(),exp);
-
+            msdExp.setPmid(pmid);
         }
-        helper.close();
-        return PDBList;
-
+        msdExp.addPdb(msdInteraction);
+        return msdExp;
     }
 
     public static void main(String[] args) throws Exception, SQLException {
