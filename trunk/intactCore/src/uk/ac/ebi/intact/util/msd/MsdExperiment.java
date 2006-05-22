@@ -18,33 +18,40 @@ public class MsdExperiment {
     private ArrayList pdbList;
 
     private static HashMap pmid2exp; // pmid ==> collection experiments
-                                     //     if(pmid2exps.contains(pmid)){
+                                     //     if (pmid2exps.contains(pmid)){
                                      //         Collection exps = pmid2exps.get(pmid); ...
 
+    /**public MsdExperiment (String pmid, String interactionType){
 
+  }  **/
+
+
+    /** Equals Method for MsdExperiment
+     A MsdExperiment equals another MsdExperiment only if experimentType and pmid are the same
+     The list of MsdInteraction can be different as the list can grow**/
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
         final MsdExperiment that = (MsdExperiment) o;
-
+        if (pmid != null ? !pmid.equals(that.pmid) : that.pmid != null) return false;
         if (experimentType != null ? !experimentType.equals(that.experimentType) : that.experimentType != null)
             return false;
-        if (pdbList != null ? !pdbList.equals(that.pdbList) : that.pdbList != null) return false;
-        if (pmid != null ? !pmid.equals(that.pmid) : that.pmid != null) return false;
+        //if (pdbList != null ? !pdbList.equals(that.pdbList) : that.pdbList != null) return false;
 
         return true;
     }
 
+    /**
     public int hashCode() {
         int result;
         result = (pmid != null ? pmid.hashCode() : 0);
         result = 29 * result + (experimentType != null ? experimentType.hashCode() : 0);
         return result;
-    }
+    } **/
 
 
-    public void AddPDB(MsdInteraction pdb){
+    public void AddPdb (MsdInteraction pdb){
         if (this.pdbList == null) {
             this.pdbList = new ArrayList();
         }
@@ -86,27 +93,9 @@ public class MsdExperiment {
 
 
 
-/*     public MsdExperiment(){
-}
-
-*public MsdExperiment(pmid){
-    this.setPmid(pmid);
-}
-public MsdExperiment(pmid,experimentType){
-    this.setExperimentType(experimentType);
-    this.setPmid(pmid);
-}
-
-public String getExperimentType() {
-    return experimentType;
-}*/
-
-
     public void setExperimentType(String experimentType) {
         this.experimentType = experimentType;
     }
-
-
 
 
     public String getPmid() {
@@ -121,3 +110,7 @@ public String getExperimentType() {
         MsdExperiment.pmid2exp = pmid2exp;
     }
 }
+
+
+
+
