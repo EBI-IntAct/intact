@@ -2,6 +2,7 @@ package uk.ac.ebi.intact.util.msd;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Collection;
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,7 +16,7 @@ public class MsdExperiment {
 
     private String pmid;
     private String experimentType;
-    private ArrayList pdbList;
+    private Collection pdbList;
 
     private static HashMap pmid2exp; // pmid ==> collection experiments
                                      //     if (pmid2exps.contains(pmid)){
@@ -30,15 +31,19 @@ public class MsdExperiment {
      A MsdExperiment equals another MsdExperiment only if experimentType and pmid are the same
      The list of MsdInteraction can be different as the list can grow**/
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        final MsdExperiment that = (MsdExperiment) o;
-        if (pmid != null ? !pmid.equals(that.pmid) : that.pmid != null) return false;
-        if (experimentType != null ? !experimentType.equals(that.experimentType) : that.experimentType != null)
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()){
             return false;
-        //if (pdbList != null ? !pdbList.equals(that.pdbList) : that.pdbList != null) return false;
-
+        }
+        final MsdExperiment that = (MsdExperiment) o;
+        if (pmid != null ? !pmid.equals(that.pmid) : that.pmid != null){
+            return false;
+        }
+        if (experimentType != null ? !experimentType.equals(that.experimentType) : that.experimentType != null){
+            return false;
+        }
         return true;
     }
 
@@ -51,27 +56,23 @@ public class MsdExperiment {
     } **/
 
 
-    public void AddPdb (MsdInteraction pdb){
+    public void addPdb (MsdInteraction pdb){
         if (this.pdbList == null) {
             this.pdbList = new ArrayList();
         }
-        System.out.println(this.pdbList.getClass());
-        System.out.println("length "+this.pdbList.size());
-        System.out.println("list:"+this.pdbList);
-        this.pdbList.add(pdb);
-        System.out.println("length "+this.pdbList.size());
-        System.out.println("list:"+this.pdbList);
+        pdbList.add(pdb);
     }
 
-    public void Addpmid(String pmid, MsdExperiment exp){
+    public void addPmid(String pmid, MsdExperiment exp){
         if(MsdExperiment.pmid2exp == null){
             MsdExperiment.pmid2exp= new HashMap();
         }
-        exp=this;
-        MsdExperiment.pmid2exp.put(pmid,exp);
-        System.out.println("exp:"+MsdExperiment.pmid2exp);
-        System.out.println("find"+MsdExperiment.pmid2exp.values());
+        if ( pmid2exp.containsKey(pmid)){
+
+        }
+        pmid2exp.put(pmid,exp);
     }
+
 
     public HashMap getPmid2exp() {
         return MsdExperiment.pmid2exp;
@@ -83,7 +84,7 @@ public class MsdExperiment {
     }
 
 
-    public ArrayList getPdbList() {
+    public Collection getPdbList() {
         return pdbList;
     }
 
@@ -106,8 +107,17 @@ public class MsdExperiment {
         this.pmid = pmid;
     }
 
-    public static void setPmid2exp(HashMap pmid2exp) {
+    public static void setPmid2Exp(HashMap pmid2exp) {
         MsdExperiment.pmid2exp = pmid2exp;
+    }
+
+
+    public String toString() {
+        return "MsdExperiment{" +
+                "pmid='" + pmid + '\'' +
+                ", experimentType='" + experimentType + '\'' +
+                ", pdbList=" + pdbList +
+                '}';
     }
 }
 
