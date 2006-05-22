@@ -80,11 +80,35 @@ then
 fi
 
 
+#######################
+# Schema update
+
+# version 1.1.0
+echo "Upgrading schema to version 1.1.0 ..."
+psql $PG_OPTIONS -U $DBUSER -d $DATABASE -f sql/postgres/version_1_1_0/02_add_column.sql
+psql $PG_OPTIONS -U $DBUSER -d $DATABASE -f sql/postgres/version_1_1_0/04_drop_column.sql
+psql $PG_OPTIONS -U $DBUSER -d $DATABASE -f sql/postgres/version_1_1_0/05_create_metadata_table.sql
+
+# version 1.7.0
+echo "Upgrading schema to version 1.7.0 ..."
+psql $PG_OPTIONS -U $DBUSER -d $DATABASE -f sql/postgres/version_1_1_7/add_indexes.sql
+
+# version 1.2.0
+echo "Upgrading schema to version 1.2.0 ..."
+psql $PG_OPTIONS -U $DBUSER -d $DATABASE -f sql/postgres/version_1_2_0/create_tables.sql
+psql $PG_OPTIONS -U $DBUSER -d $DATABASE -f sql/postgres/version_1_2_0/update_privileges.sql
+
+
+##########################
+# Insert CVs
+
 echo ""
 echo "Update CVs using the latest PSI-MI CV definition"
 scripts/javaRun.sh controlledVocab.UpdateCVs data/controlledVocab/intact.obo \
                                              data/controlledVocab/CvObject-annotation-update.txt
 
+#########################
+# Insert test dataset
 
 if [ "$3" = "onlyCV" ]
 then
