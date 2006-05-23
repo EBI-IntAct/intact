@@ -121,4 +121,21 @@ public class MsdInteraction {
     public void setrWork(String rWork) {
         this.rWork = rWork;
     }
+
+
+    public String toString() {
+        return "MsdInteraction{" +
+                "pdbCode='" + pdbCode + '\'' +
+               // ", msdExperiment=" + msdExperiment +
+                ", oligomericStateList='" + oligomericStateList + '\'' +
+                ", experimentType='" + experimentType + '\'' +
+                ", pmid='" + pmid + '\'' +
+                ", resolution='" + resolution + '\'' +
+                ", rWork='" + rWork + '\'' +
+                ", rFree='" + rFree + '\'' +
+                ", chainList=" + chainList +
+                ", title='" + title + '\'' +
+                ", hasNucleicAcid=" + hasNucleicAcid +
+                '}';
+    }
 }
