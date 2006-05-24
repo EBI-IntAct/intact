@@ -154,7 +154,7 @@ public class MsdExperimentGenerator {
         Collection<MsdExperiment> listExp= new ArrayList();
         exp=msdExperimentGenerator.createExp ("1B7R",listExp);
         System.out.println(exp.toString());
-        for (Iterator<MsdInteraction> iter = exp.getPdbList().iterator(); iter.hasNext(); ){
+        for (Iterator<MsdInteraction> iter = exp.getMsdInteractions().iterator(); iter.hasNext(); ){
             MsdInteraction msdInteraction=iter.next();
             System.out.println(msdInteraction.toString());
     }

@@ -18,7 +18,7 @@ public class MsdExperiment {
     private String pmid;
     private String experimentType;
     private CvObject cvIntDetect;
-    private Collection pdbList;
+    private Collection<MsdInteraction> msdInteractions;
 
 
     /** Equals Method for MsdExperiment
@@ -50,11 +50,11 @@ public class MsdExperiment {
     } **/
 
 
-    public void addPdb (MsdInteraction pdb){
-        if (this.pdbList == null) {
-            this.pdbList = new ArrayList();
+    public void addMsdInteraction (MsdInteraction msdInteraction){
+        if (this.msdInteractions == null) {
+            this.msdInteractions = new ArrayList();
         }
-        pdbList.add(pdb);
+        msdInteractions.add(msdInteraction);
     }
 
 
@@ -64,12 +64,12 @@ public class MsdExperiment {
     }
 
 
-    public Collection getPdbList() {
-        return pdbList;
+    public Collection<MsdInteraction> getMsdInteractions() {
+        return msdInteractions;
     }
 
-    public void setPdbList(ArrayList pdbList) {
-        this.pdbList = pdbList;
+    public void setMsdInteractions(Collection msdInteractions) {
+        this.msdInteractions = this.msdInteractions;
     }
 
 
@@ -99,7 +99,7 @@ public class MsdExperiment {
         return "MsdExperiment{" +
                 "pmid='" + pmid + '\'' +
                 ", experimentType='" + experimentType + '\'' +
-                ", pdbList=" + pdbList +
+                ", msdInteractions=" + msdInteractions +
                 '}';
     }
 }
