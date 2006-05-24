@@ -5,14 +5,16 @@ import uk.ac.ebi.intact.util.msd.util.CvMapper;
 import uk.ac.ebi.intact.util.msd.generator.msdGenerator.MsdExperiment;
 import uk.ac.ebi.intact.util.msd.generator.msdGenerator.MsdInteraction;
 import uk.ac.ebi.intact.util.msd.model.PdbBean;
+import uk.ac.ebi.intact.model.CvObject;
+import uk.ac.ebi.intact.business.IntactException;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.HashMap;
 import java.util.Collection;
 import java.sql.SQLException;
 import java.math.BigDecimal;
 import java.util.List;
+import java.io.IOException;
 
 /**
  * Created by IntelliJ IDEA.
@@ -24,12 +26,10 @@ import java.util.List;
 public class MsdExperimentGenerator {
 
 
-    private static CvMapper cvMapper = new CvMapper ();
+
 
 
     public  MsdExperiment createExp (String pdbCode, Collection <MsdExperiment> expList) throws Exception, SQLException{
-
-        Collection <MsdInteraction> InteractionList = new ArrayList <MsdInteraction>();
         MsdExperiment msdExp = new MsdExperiment();
 
         MsdHelper helper = new MsdHelper();
@@ -63,22 +63,23 @@ public class MsdExperimentGenerator {
      **/
 
        String experimentType = pdbBean.getExperimentType();
-       MsdInteraction msdInteraction = new MsdInteraction();
-       String cv = experimentTypeConvertor(pdbBean.getExperimentType());
+       CvObject cv = experimentTypeConvertor(experimentType);
 
        if (cv == null) msdExp = null;else{
        String pmid = pmidConvertor(pdbBean.getPmid());
 
+       // for (MsdExperiment exp : expList {
        for (Iterator<MsdExperiment> iterator = expList.iterator(); iterator.hasNext();){
            MsdExperiment exp =  iterator.next();
-           if (exp.getExperimentType()==cv){
+           if (exp.getCvIntDetect()==cv){
                // if same cv and  pmid use the same experiment
                msdExp=exp;
 
            }else{
 
                msdExp= new MsdExperiment();
-               msdExp.setExperimentType(cv);
+               msdExp.setExperimentType(experimentType);
+               msdExp.setCvIntDetect(cv);
                msdExp.setPmid(pmid);
                MsdInteractionGenerator msdInteractionGenerator = new MsdInteractionGenerator();
                msdInteractionGenerator.createInt (pdbBean, msdExp);
@@ -110,8 +111,16 @@ public class MsdExperimentGenerator {
      * @param experimentType from the MSD table
      * @return experimentType using the CV mapping of the CvMapper
      */
-    public String experimentTypeConvertor (String experimentType){
-        return cvMapper.cvMapping(experimentType);
+    public CvObject experimentTypeConvertor (String experimentType){
+        CvObject cvObject= null;
+        try {
+            cvObject = CvMapper.getCvObjectFromMsdTerm(experimentType);
+        } catch (IntactException e) {
+            System.out.println("Could not find in Intact any cvObject corresponding to the msdTerm " + experimentType);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return cvObject;
         }
 
     /** Due to different assemblies which can have different oligomeric states,

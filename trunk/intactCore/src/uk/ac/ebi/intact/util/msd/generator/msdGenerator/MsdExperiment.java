@@ -1,5 +1,7 @@
 package uk.ac.ebi.intact.util.msd.generator.msdGenerator;
 
+import uk.ac.ebi.intact.model.CvObject;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -15,6 +17,7 @@ public class MsdExperiment {
 
     private String pmid;
     private String experimentType;
+    private CvObject cvIntDetect;
     private Collection pdbList;
 
 
@@ -84,7 +87,13 @@ public class MsdExperiment {
         this.pmid = pmid;
     }
 
+    public CvObject getCvIntDetect() {
+        return cvIntDetect;
+    }
 
+    public void setCvIntDetect(CvObject cvIntDetect) {
+        this.cvIntDetect = cvIntDetect;
+    }
 
     public String toString() {
         return "MsdExperiment{" +
