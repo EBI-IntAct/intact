@@ -28,6 +28,13 @@ public class CvInteractorType extends CvDagObject {
     private static final String ourProteinMI = "MI:0326";
 
     public static final String INTERACTION_MI_REF= "MI:0317";
+    public static final String INTERACTION = "interaction";
+
+    public static final String NUCLEIC_ACID_MI_REF="MI:0318";
+    public static final String NUCLEIC_ACID = "nucleic acid";
+
+    public static final String PROTEIN = "protein";
+    public static final String PROTEIN_MI_REF = "MI:0326";
 
     /**
      * A list of MI numbers for Nucleic acid type
