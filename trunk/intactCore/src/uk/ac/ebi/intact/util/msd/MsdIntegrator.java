@@ -8,6 +8,9 @@ import uk.ac.ebi.intact.util.msd.model.PdbBean;
 import java.util.*;
 import java.sql.SQLException;
 
+import com.intellij.util.Options;
+import org.apache.commons.cli.*;
+
 /**
  * Created by IntelliJ IDEA.
  * User: karine
@@ -33,11 +36,12 @@ public class MsdIntegrator {
         helper.addMapping( PdbBean.class, "SELECT ditinct entry_id as pdbCode "+
                                           "FROM INTACT_MSD_DATA " +
                                           "WHERE pubmedid =?" );
-
+        // for (String pmid : listPmid) {
         for (Iterator<String> iterPmid = listPmid.iterator(); iterPmid.hasNext(); ){
             String pmid=iterPmid.next().toString();
             List ListpdbBean =helper.getBeans(PdbBean.class,pmid);
             listExp.clear();
+            // for (PdbBean pdbBean : ListpdbBean) {
             for (Iterator<PdbBean> iterPdb = ListpdbBean.iterator(); iterPdb.hasNext(); ){
                PdbBean pdbBean=iterPdb.next();
                String pdbCode = pdbBean.getPdbCode();
@@ -57,5 +61,25 @@ public class MsdIntegrator {
             if(listExp == null){listExp= new ArrayList();}
             listExp.add(exp);
             }
+
+        public static void main(String[] args) {
+           MsdIntegrator integrator = new MsdIntegrator();
+           /**Option debugOpt = OptionBuilder.withDescription( "Shows verbose output." ).create( "debug" );
+           Options options = new Options();
+           options.addOption( debugOpt );
+           CommandLineParser parser = new BasicParser();
+           CommandLine line = null;
+           try{
+               line = parser.parse( options, args, true );
+           } catch ( ParseException exp ) {
+                 displayUsage( options );
+                 System.err.println( "Parsing failed.  Reason: " + exp.getMessage() );
+                 System.exit( 1 );
+           }
+           boolean debugEnabled = line.hasOption( "debug" );
+           integrator.setDebugEnabled(debugEnabled); **/
+           //integrator.integrateMsd('12345');
+    }
+
     }
 
