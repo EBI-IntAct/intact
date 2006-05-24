@@ -85,7 +85,7 @@ public class ExperimentGenerator {
             //ADD XREF TO PUBMED
             experiment = addXrefToPubmed(pubmedId, experiment);
 
-            Collection<MsdInteraction> msdInteractions = msdExperiment.getPdbList();
+            Collection<MsdInteraction> msdInteractions = msdExperiment.getMsdInteractions();
 
 
 

@@ -31,7 +31,7 @@ public class MsdInteractionGenerator {
     MsdInteraction msdInteraction= new MsdInteraction();
 
     // add the msdInteraction to the collection of the experiment
-    msdExp.addPdb(msdInteraction);
+    msdExp.addMsdInteraction(msdInteraction);
 
     //set PDBcode
     msdInteraction.setPdbCode(pdbBean.getPdbCode());
