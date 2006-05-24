@@ -7,8 +7,6 @@ import uk.ac.ebi.intact.util.msd.model.PdbBean;
 
 import java.util.*;
 import java.sql.SQLException;
-
-import com.intellij.util.Options;
 import org.apache.commons.cli.*;
 
 /**
@@ -64,7 +62,7 @@ public class MsdIntegrator {
 
         public static void main(String[] args) {
            MsdIntegrator integrator = new MsdIntegrator();
-           /**Option debugOpt = OptionBuilder.withDescription( "Shows verbose output." ).create( "debug" );
+           Option debugOpt = OptionBuilder.withDescription( "Shows verbose output." ).create( "debug" );
            Options options = new Options();
            options.addOption( debugOpt );
            CommandLineParser parser = new BasicParser();
@@ -72,12 +70,12 @@ public class MsdIntegrator {
            try{
                line = parser.parse( options, args, true );
            } catch ( ParseException exp ) {
-                 displayUsage( options );
+                 //displayUsage( options );
                  System.err.println( "Parsing failed.  Reason: " + exp.getMessage() );
                  System.exit( 1 );
            }
            boolean debugEnabled = line.hasOption( "debug" );
-           integrator.setDebugEnabled(debugEnabled); **/
+           //integrator.setDebugEnabled(debugEnabled); 
            //integrator.integrateMsd('12345');
     }
 
