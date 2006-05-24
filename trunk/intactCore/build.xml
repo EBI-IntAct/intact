@@ -15,11 +15,14 @@
     <property name="dest.dir" value="classes"/>
     <property name="jdoc.dir" value="doc/api"/>
     <property name="config.dir" value="config"/>
+    <property name="data.dir" value="data"/>
     <property name="template.dir" value="template"/>
 
     <!-- Application directory -->
     <property name="app.dir" value="application"/>
 
+    <!--msd cvMapping file property-->
+    <property name="msd.mapping.props.file" value="${data.dir}/msdMapping.dat"/>
     <!-- Repository/OJB file properties -->
     <property name="rep.template.file" value="${template.dir}/repository_database.template"/>
     <property name="rep.dest.file" value="${config.dir}/repository_database.xml"/>
@@ -431,6 +434,10 @@
         <copy todir="${dest.dir}" file="${config.dir}/log4j.properties"/>
     </target>
 
+    <target name="copyDataFiles">
+        <copy todir="${dest.dir}/${data.dir}" file="${msd.mapping.props.file}"/>
+    </target>
+
     <!-- =================================================================== -->
 
     <!-- Builds a jar file for intact core including only the core packages.
@@ -468,6 +475,7 @@
             to a 'compiled' state
         -->
         <antcall target="copyConfigFiles"/>
+        <antcall target="copyDataFiles" />
 
     </target>
 
@@ -488,6 +496,7 @@
 
         <!-- Copy any configuration files -->
         <antcall target="copyConfigFiles"/>
+        <antcall target="copyDataFiles"/>
     </target>
 
     <!-- =================================================================== -->
@@ -506,6 +515,7 @@
 
         <!-- Copy any configuration files -->
         <antcall target="copyConfigFiles"/>
+        <antcall target="copyDataFiles"/>
     </target>
 
     <!-- =================================================================== -->
