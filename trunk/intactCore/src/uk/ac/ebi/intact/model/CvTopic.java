@@ -20,6 +20,14 @@ public class CvTopic extends CvObject implements Editable {
     public static final String XREF_VALIDATION_REGEXP = "id-validation-regexp";
     public static final String XREF_VALIDATION_REGEXP_MI_REF = "MI:0628";
 
+    public static final String AGONIST = "agonist";
+
+    public static final String CAUTION = "caution";
+
+    public static final String REMARK_INTERNAL = "remark-internal";
+
+    public static final String RESULTING_PTM= "resulting-ptm";
+    public static final String PREREQUISITE_PTM = "prerequisite-ptm";
     public static final String COMMENT = "comment";
     public static final String COMMENT_MI_REF = "MI:0612";
 
@@ -30,7 +38,7 @@ public class CvTopic extends CvObject implements Editable {
     public static final String UNIPROT_CC_EXPORT = "uniprot-cc-note";
 
     public static final String NEGATIVE = "negative";
-
+    public static final String FUNCTION = "function";
     public static final String COPYRIGHT = "copyright";
 
     public static final String AUTHOR_CONFIDENCE = "author-confidence";
@@ -65,8 +73,10 @@ public class CvTopic extends CvObject implements Editable {
     public static final String URL_MI_REF = "MI:0614";
 
     public static final String CONTACT_EMAIL = "contact-email";
+    public static final String CONTACT_EMAIL_MI_REF = "MI:0634";
 
     public static final String AUTHOR_LIST = "author-list";
+    public static final String AUTHOR_LIST_MI_REF = "MI:0636";
 
     public static final String USED_IN_CLASS = "used-in-class";
 
@@ -95,6 +105,7 @@ public class CvTopic extends CvObject implements Editable {
      */
 //    protected static Vector menuList = null;
 
+
     /**
      * This constructor should <b>not</b> be used as it could result in objects with invalid state. It is here for
      * object mapping purposes only and if possible will be made private.
@@ -122,5 +133,4 @@ public class CvTopic extends CvObject implements Editable {
     }
 
 } // end CvTopic
-
 

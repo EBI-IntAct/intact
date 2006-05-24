@@ -17,6 +17,10 @@ package uk.ac.ebi.intact.model;
 public class CvIdentification extends CvDagObject {
 
     public static final String WESTERN_BLOT = "western blot";
+
+    public static final String PREDETERMINED = "predetermined";
+    public static final String PREDETERMINED_MI_REF = "MI:0396";
+
     
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus.
