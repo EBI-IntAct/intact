@@ -55,7 +55,9 @@ public class MsdInteractionGenerator {
         //set rWork
         BigDecimal rWork = pdbBean.getrWork();
         if (rWork != null){
-            msdInteraction.setrWork(rWork.toString());
+            //rWork=rWork.multiply(100)
+            //PourcenrRwork
+            msdInteraction.setrWork((rWork).toString());
         }else msdInteraction.setrWork(null);
 
         // set rFree
