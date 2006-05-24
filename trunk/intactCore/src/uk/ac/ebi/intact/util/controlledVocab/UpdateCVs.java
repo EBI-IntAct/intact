@@ -1494,15 +1494,15 @@ public class UpdateCVs {
             annotFilename = args[ 1 ];
         }
 
-//        /////////////////
-//        // 1. Parsing
-//
-//        PSILoader psi = new PSILoader();
-//        IntactOntology ontology = psi.parseOboFile( new File( oboFilename ) );
-//
-//        ontology.print();
-//
-//        System.out.println( "====================================================================" );
+        /////////////////
+        // 1. Parsing
+
+        PSILoader psi = new PSILoader();
+        IntactOntology ontology = psi.parseOboFile( new File( oboFilename ) );
+
+        ontology.print();
+
+        System.out.println( "====================================================================" );
 
         ////////////////////
         // 2. Updating
@@ -1524,11 +1524,11 @@ public class UpdateCVs {
         createNecessaryCvTerms( helper );
         helper.closeStore();
 
-//        // 2.4 update the CVs
-//        update( ontology );
+        // 2.4 update the CVs
+        update( ontology );
 
-//        // 2.5 Update obsolete terms
-//        listOrphanObsoleteTerms( ontology );
+        // 2.5 Update obsolete terms
+        listOrphanObsoleteTerms( ontology );
 
         if ( annotFilename != null ) {
             try {
