@@ -1,7 +1,6 @@
 package uk.ac.ebi.intact.util.msd.generator.msdGenerator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Collection;
 
 /**
