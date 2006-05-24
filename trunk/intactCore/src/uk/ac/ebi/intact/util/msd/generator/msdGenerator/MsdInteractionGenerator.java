@@ -55,15 +55,21 @@ public class MsdInteractionGenerator {
         //set rWork
         BigDecimal rWork = pdbBean.getrWork();
         if (rWork != null){
-            //rWork=rWork.multiply(100)
-            //PourcenrRwork
-            msdInteraction.setrWork((rWork).toString());
+            BigDecimal h = new BigDecimal(100);
+            rWork=rWork.multiply(h);
+            rWork=h.subtract(rWork);
+            String rWorkS=rWork.toString();
+            msdInteraction.setrWork(rWorkS);
         }else msdInteraction.setrWork(null);
 
         // set rFree
         BigDecimal rFree = pdbBean.getrFree();
         if (rFree != null){
-            msdInteraction.setrFree(rFree.toString());
+            BigDecimal h = new BigDecimal(100);
+            rFree=rFree.multiply(h);
+            rFree=h.subtract(rFree);
+            String rFreeS=rFree.toString();
+            msdInteraction.setrFree(rFreeS);
         }else msdInteraction.setrFree(null);
 
         // set oligomericStateList
