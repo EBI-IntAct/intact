@@ -17,9 +17,9 @@ public class MsdExperiment {
     private CvObject cvIntDetect;
     private Collection<MsdInteraction> msdInteractions;
 
-        /**
-     * Equals Method for MsdExperiment A MsdExperiment equals another MsdExperiment only if experimentType (thus the cv) and pmid are
-     * the same. The list of MsdInteraction can be different as the list can grow*
+    /**
+     * Equals Method for MsdExperiment A MsdExperiment equals another MsdExperiment only if experimentType (thus the cv)
+     * and pmid are the same. The list of MsdInteraction can be different as the list can grow*
      */
     public boolean equals( Object o ) {
         if ( this == o ) {
@@ -51,8 +51,6 @@ public class MsdExperiment {
         result = 29 * result + ( cvIntDetect != null ? cvIntDetect.hashCode() : 0 );
         return result;
     }
-
-
 
 
     public void addMsdInteraction( MsdInteraction msdInteraction ) {
@@ -102,7 +100,7 @@ public class MsdExperiment {
         return "MsdExperiment{" +
                "pmid='" + pmid + '\'' +
                ", experimentType='" + experimentType + '\'' +
-               ", cv='"+cvIntDetect+'\''+
+               ", cv='" + cvIntDetect + '\'' +
                ", msdInteractions=" + msdInteractions +
                '}';
     }
