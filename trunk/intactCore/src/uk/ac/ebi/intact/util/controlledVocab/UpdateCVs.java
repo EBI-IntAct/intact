@@ -136,9 +136,9 @@ public class UpdateCVs {
                             Throwable t = (Throwable) e;
                             while ( t != null ) {
                                 t.printStackTrace();
-                                if ( t.getCause() != null ) {
+                                t = t.getCause();
+                                if ( t != null ) {
                                     System.out.println( "======================= CAUSED BY =======================" );
-                                    t = t.getCause();
                                 }
                             }
                         } // catch
