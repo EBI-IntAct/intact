@@ -34,7 +34,8 @@ public class MsdInteraction {
         if ( moleculeList != null ? !moleculeList.equals( that.moleculeList ) : that.moleculeList != null ) {
             return false;
         }
-        if ( msdParticipants != null ? !msdParticipants.equals( that.msdParticipants ) : that.msdParticipants != null ) {
+        if ( msdParticipants != null ? !msdParticipants.equals( that.msdParticipants ) : that.msdParticipants != null )
+        {
             return false;
         }
         if ( oligomericStateList != null ? !oligomericStateList.equals( that.oligomericStateList ) : that.oligomericStateList != null )
@@ -91,7 +92,7 @@ public class MsdInteraction {
         this.msdParticipants = msdParticipants;
     }
 
-    public void addChains( MsdParticipant msdParticipant ) {
+    public void addParticipant( MsdParticipant msdParticipant ) {
         if ( this.msdParticipants == null ) { this.msdParticipants = new ArrayList();}
         this.msdParticipants.add( msdParticipant );
     }

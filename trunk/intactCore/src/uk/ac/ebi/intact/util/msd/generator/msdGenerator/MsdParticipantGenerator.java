@@ -49,7 +49,7 @@ public class MsdParticipantGenerator {
                 if ( pdbChainBean.getType() == "Protein" ) {
 
                     MsdParticipant msdParticipant = new MsdParticipant();
-                    msdInteraction.addChains( msdParticipant );
+                    msdInteraction.addParticipant( msdParticipant );
                     //msdParticipant.setPdb(msdInteraction);
 
 /*  private String PDBcode;  //entry_id
