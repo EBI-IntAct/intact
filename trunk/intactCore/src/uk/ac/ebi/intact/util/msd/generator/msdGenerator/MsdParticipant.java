@@ -1,13 +1,8 @@
 package uk.ac.ebi.intact.util.msd.generator.msdGenerator;
 
-import uk.ac.ebi.intact.util.msd.generator.msdGenerator.MsdInteraction;
-
 /**
- * Created by IntelliJ IDEA.
- * User: krobbe
- * Date: 28-Mar-2006
- * Time: 20:52:03
- * To change this template use File | Settings | File Templates.
+ * Created by IntelliJ IDEA. User: krobbe Date: 28-Mar-2006 Time: 20:52:03 To change this template use File | Settings |
+ * File Templates.
  */
 public class MsdParticipant {
 
@@ -43,7 +38,7 @@ public class MsdParticipant {
         return msdInteraction;
     }
 
-    public void setPdb(MsdInteraction msdInteraction) {
+    public void setPdb( MsdInteraction msdInteraction ) {
         this.msdInteraction = msdInteraction;
     }
 
@@ -51,7 +46,7 @@ public class MsdParticipant {
         return pdbCode;
     }
 
-    public void setPdbCode(String pdbCode) {
+    public void setPdbCode( String pdbCode ) {
         this.pdbCode = pdbCode;
     }
 
@@ -59,7 +54,7 @@ public class MsdParticipant {
         return uniprotAc;
     }
 
-    public void setUniprotAc(String uniprotAc) {
+    public void setUniprotAc( String uniprotAc ) {
         this.uniprotAc = uniprotAc;
     }
 
@@ -67,7 +62,7 @@ public class MsdParticipant {
         return uniprotId;
     }
 
-    public void setUniprotId(String uniprotId) {
+    public void setUniprotId( String uniprotId ) {
         this.uniprotId = uniprotId;
     }
 
@@ -75,7 +70,7 @@ public class MsdParticipant {
         return taxid;
     }
 
-    public void setTaxid(String taxid) {
+    public void setTaxid( String taxid ) {
         this.taxid = taxid;
     }
 
@@ -83,7 +78,7 @@ public class MsdParticipant {
         return uniprotStart;
     }
 
-    public void setUniprotStart(String uniprotStart) {
+    public void setUniprotStart( String uniprotStart ) {
         this.uniprotStart = uniprotStart;
     }
 
@@ -91,7 +86,7 @@ public class MsdParticipant {
         return uniprotEnd;
     }
 
-    public void setUniprotEnd(String uniprotEnd) {
+    public void setUniprotEnd( String uniprotEnd ) {
         this.uniprotEnd = uniprotEnd;
     }
 
@@ -99,7 +94,7 @@ public class MsdParticipant {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType( String type ) {
         this.type = type;
     }
 
@@ -107,7 +102,7 @@ public class MsdParticipant {
         return expressedIntaxid;
     }
 
-    public void setExpressedIntaxid(String expressedIntaxid) {
+    public void setExpressedIntaxid( String expressedIntaxid ) {
         this.expressedIntaxid = expressedIntaxid;
     }
 
@@ -115,7 +110,7 @@ public class MsdParticipant {
         return tissue;
     }
 
-    public void setTissue(String tissue) {
+    public void setTissue( String tissue ) {
         this.tissue = tissue;
     }
 
