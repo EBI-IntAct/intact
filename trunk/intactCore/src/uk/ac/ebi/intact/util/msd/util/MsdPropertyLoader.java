@@ -5,8 +5,8 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.util.msd.util;
 
-import uk.ac.ebi.intact.util.PropertyLoader;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.util.PropertyLoader;
 
 import java.util.Properties;
 
@@ -21,7 +21,7 @@ public class MsdPropertyLoader {
     /**
      * Path to the msd.properties file.
      */
-    public static final String MSD_CONFIG_FILE =  "/config/msd.properties";
+    public static final String MSD_CONFIG_FILE = "/config/msd.properties";
 
     /**
      * String containing the property name of the driver Name property
@@ -59,11 +59,11 @@ public class MsdPropertyLoader {
 
 
     /**
-     * Constructor of the MsdPropertyLoader class.
-     * When instantiating this class, it automatically load the properties from the config file.
+     * Constructor of the MsdPropertyLoader class. When instantiating this class, it automatically load the properties
+     * from the config file.
      *
-     * @throws IntactException return an IntactException if the config file is not found or if one of the properties
-     * is not found.
+     * @throws IntactException return an IntactException if the config file is not found or if one of the properties is
+     *                         not found.
      */
     public MsdPropertyLoader() throws IntactException {
         loadPropertyFile();
@@ -71,38 +71,43 @@ public class MsdPropertyLoader {
 
     /**
      * Method that does load the property file msd.properties.
-     * @throws IntactException eturn an IntactException if the config file is not found or if one of the properties
-     * is not found.
+     *
+     * @throws IntactException eturn an IntactException if the config file is not found or if one of the properties is
+     *                         not found.
      */
     private void loadPropertyFile() throws IntactException {
-        Properties props = PropertyLoader.load(MSD_CONFIG_FILE);
-        if(props == null) {
-            throw new IntactException("The config file " + MSD_CONFIG_FILE + " was not found");
+        Properties props = PropertyLoader.load( MSD_CONFIG_FILE );
+        if ( props == null ) {
+            throw new IntactException( "The config file " + MSD_CONFIG_FILE + " was not found" );
         }
-        driverName = getProperty(props, DRIVER_NAME_PROPERTY);
-        dbUrl = getProperty(props, DB_URL_PROPERTY);
-        userName = getProperty(props,USER_NAME_PROPERTY);
-        userPassword = getProperty(props,USER_PASSWORD_PROPERTY);
+        driverName = getProperty( props, DRIVER_NAME_PROPERTY );
+        dbUrl = getProperty( props, DB_URL_PROPERTY );
+        userName = getProperty( props, USER_NAME_PROPERTY );
+        userPassword = getProperty( props, USER_PASSWORD_PROPERTY );
     }
 
     /**
      * Given a Property object and the name of a property it returns a String containing the value of the property.
-     * @param props Properties object corresponding to the msd.properties file.
+     *
+     * @param props        Properties object corresponding to the msd.properties file.
      * @param propertyName Name or the property you want to get the value.
+     *
      * @return
+     *
      * @throws IntactException return an IntactException if the property is not found in the file.
      */
-    private String getProperty(Properties props, String propertyName) throws IntactException {
-        String property = props.getProperty(propertyName);
-        if (property == null) {
-            throw new IntactException("The property " + propertyName + " could not be found in the config file"
-            + MSD_CONFIG_FILE + ".");
+    private String getProperty( Properties props, String propertyName ) throws IntactException {
+        String property = props.getProperty( propertyName );
+        if ( property == null ) {
+            throw new IntactException( "The property " + propertyName + " could not be found in the config file"
+                                       + MSD_CONFIG_FILE + "." );
         }
         return property;
     }
 
     /**
      * Getter of the driverName String.
+     *
      * @return the driverName global String variables
      */
     public String getDriverName() {
@@ -111,6 +116,7 @@ public class MsdPropertyLoader {
 
     /**
      * Getter of the dbUrl String.
+     *
      * @return the dbUrl global String variables
      */
     public String getDbUrl() {
@@ -118,7 +124,8 @@ public class MsdPropertyLoader {
     }
 
     /**
-     *  Getter of the userName String.
+     * Getter of the userName String.
+     *
      * @return the userName global String variables
      */
     public String getUserName() {
@@ -126,18 +133,19 @@ public class MsdPropertyLoader {
     }
 
     /**
-     *  Getter of the userPassword String.
+     * Getter of the userPassword String.
+     *
      * @return the userPassword global String variables
      */
     public String getUserPassword() {
         return userPassword;
     }
 
-    public static void main(String[] args) throws IntactException {
+    public static void main( String[] args ) throws IntactException {
         MsdPropertyLoader msdPropertyLoader = new MsdPropertyLoader();
-        System.out.println("msdPropertyLoader.getDbUrl() = " + msdPropertyLoader.getDbUrl());
-        System.out.println("msdPropertyLoader.getDriverName() = " + msdPropertyLoader.getDriverName());
-        System.out.println("msdPropertyLoader.getUserName() = " + msdPropertyLoader.getUserName());
-        System.out.println("msdPropertyLoader.getUserPassword() = " + msdPropertyLoader.getUserPassword());
+        System.out.println( "msdPropertyLoader.getDbUrl() = " + msdPropertyLoader.getDbUrl() );
+        System.out.println( "msdPropertyLoader.getDriverName() = " + msdPropertyLoader.getDriverName() );
+        System.out.println( "msdPropertyLoader.getUserName() = " + msdPropertyLoader.getUserName() );
+        System.out.println( "msdPropertyLoader.getUserPassword() = " + msdPropertyLoader.getUserPassword() );
     }
 }
