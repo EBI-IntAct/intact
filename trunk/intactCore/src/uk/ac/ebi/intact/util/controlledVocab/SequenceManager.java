@@ -23,6 +23,11 @@ import java.util.Iterator;
  */
 public class SequenceManager {
 
+    /**
+     * Has the existence of the sequence been checked already ?
+     */
+    private static boolean sequenceChecked = false;
+
     // Supported Plateform
     public static final String ORACLE_PLATEFORM = "Oracle";
     public static final String POSTGRESQL_PLATEFORM = "PostgreSQL";
@@ -85,6 +90,24 @@ public class SequenceManager {
         }
     }
 
+    public static void checkIfCvSequenceExists( IntactHelper helper ) throws IntactException, SQLException {
+
+        if ( ! sequenceChecked ) {
+
+            System.out.println( "Checking if the sequence if present..." );
+
+            Connection connection = helper.getJDBCConnection();
+
+            if ( ! sequenceExists( connection, SEQUENCE_NAME ) ) {
+                throw new IllegalStateException( "The sequence " + SEQUENCE_NAME + " doesn't not exist in your database. Please create it." );
+            }
+
+            System.out.println( "Sequence OK." );
+
+            sequenceChecked = true;
+        }
+    }
+
     /**
      * Returns database specific SQL statement for retreiving the next value of a sequence.
      *
@@ -130,7 +153,7 @@ public class SequenceManager {
      *
      * @return the next id.
      *
-     * @throws SQLException if an error occur.
+     * @throws IntactException if an error occur.
      */
     public static long getNextSequenceValue( Connection connection, String sequenceName ) throws IntactException {
 
@@ -192,6 +215,12 @@ public class SequenceManager {
         long id;
         String nextId = null;
         Collection cvObjects;
+
+        try {
+            checkIfCvSequenceExists( helper );
+        } catch ( SQLException e ) {
+            throw new IntactException( "Error while checking if the sequence is present in the database.", e );
+        }
 
         do {
             id = getNextSequenceValue( connection, SEQUENCE_NAME );
