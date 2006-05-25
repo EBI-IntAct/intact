@@ -2,26 +2,21 @@ package uk.ac.ebi.intact.util.msd.util;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.util.msd.model.PdbBean;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.sql.PreparedStatement;
-import java.util.Map;
+import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Iterator;
-
-import uk.ac.ebi.intact.util.msd.model.PdbBean;
-import uk.ac.ebi.intact.util.msd.util.MsdConnection;
-import uk.ac.ebi.intact.business.IntactException;
+import java.util.List;
+import java.util.Map;
 
 
 /**
- * Created by IntelliJ IDEA.
- * User: krobbe
- * Date: 22-Mar-2006
- * Time: 16:39:56
- * To change this template use File | Settings | File Templates.
+ * Created by IntelliJ IDEA. User: krobbe Date: 22-Mar-2006 Time: 16:39:56 To change this template use File | Settings |
+ * File Templates.
  */
 public class MsdHelper {
 
@@ -31,6 +26,7 @@ public class MsdHelper {
 
     /**
      * Call a connection to MSD database and instatiate a queryRunner
+     *
      * @throws Exception
      */
     public MsdHelper() throws Exception {
@@ -41,6 +37,7 @@ public class MsdHelper {
 
     /**
      * Close the connection to MSD database
+     *
      * @throws IntactException
      */
     public void close() throws IntactException {
@@ -48,19 +45,21 @@ public class MsdHelper {
     }
 
     /**
-     * Enable the mapping between a SQL result and a Bean Object
-     * The Bean Class and the sql String need to be added in argument.
+     * Enable the mapping between a SQL result and a Bean Object The Bean Class and the sql String need to be added in
+     * argument.
+     *
      * @param beanClass
      * @param sql
+     *
      * @throws SQLException
      */
-    public void addMapping(Class beanClass, String sql) throws SQLException {
-        if (beanClass == null) {
-            throw new IllegalArgumentException("beanClass should not be null");
+    public void addMapping( Class beanClass, String sql ) throws SQLException {
+        if ( beanClass == null ) {
+            throw new IllegalArgumentException( "beanClass should not be null" );
         }
         //TODO : add a check to make sure sql is not null.
 
-        if (bean2sql.containsKey(beanClass)) {
+        if ( bean2sql.containsKey( beanClass ) ) {
 //            LOGGER.info("The beanClass: " + beanClass.getName() + ", has already been mapped");
 //            LOGGER.info("The previous associated sql request was : " + bean2sql.get(beanClass));
 //            LOGGER.info("The new associated sql request will be : " + sql);
@@ -71,37 +70,38 @@ public class MsdHelper {
         }
 
         // We test that the sql is valid.
-        PreparedStatement preparedStatement = conn.prepareStatement(sql);
+        PreparedStatement preparedStatement = conn.prepareStatement( sql );
         preparedStatement.close();
 
         // Store the association
-        bean2sql.put(beanClass, sql);
-        System.out.println(beanClass+" added");
-        System.out.println(false == bean2sql.containsKey(beanClass));
+        bean2sql.put( beanClass, sql );
+        System.out.println( beanClass + " added" );
+        System.out.println( false == bean2sql.containsKey( beanClass ) );
     }
 
     /**
-     *
      * @param beanClass
      * @param param
+     *
      * @return List
+     *
      * @throws SQLException
      */
-    public List getBeans(Class beanClass, String param) throws SQLException {
-        if (beanClass == null) {
-            throw new IllegalArgumentException("beanClass should not be null");
+    public List getBeans( Class beanClass, String param ) throws SQLException {
+        if ( beanClass == null ) {
+            throw new IllegalArgumentException( "beanClass should not be null" );
         }
 
-        if (false == bean2sql.containsKey(beanClass)) {
-            throw new IllegalArgumentException("The beanClass :" + beanClass.getName() + " does not have known sql association");
+        if ( false == bean2sql.containsKey( beanClass ) ) {
+            throw new IllegalArgumentException( "The beanClass :" + beanClass.getName() + " does not have known sql association" );
         }
 
         List resultList = null;
         try {
-            resultList= (List) queryRunner.query(conn,
-                                                 (String) bean2sql.get(beanClass),
-                                                 param,
-                                                 new BeanListHandler (beanClass));
+            resultList = (List) queryRunner.query( conn,
+                                                   (String) bean2sql.get( beanClass ),
+                                                   param,
+                                                   new BeanListHandler( beanClass ) );
         } catch ( OutOfMemoryError aome ) {
 
             aome.printStackTrace();
@@ -135,24 +135,25 @@ public class MsdHelper {
 
         return resultList;
     }
-    public PdbBean getFirstBean(Class beanClass, String param) throws SQLException {
+
+    public PdbBean getFirstBean( Class beanClass, String param ) throws SQLException {
         PdbBean pdbBean = null;
 
-        if (beanClass == null) {
-            throw new IllegalArgumentException("beanClass should not be null");
+        if ( beanClass == null ) {
+            throw new IllegalArgumentException( "beanClass should not be null" );
         }
 
-        if (false == bean2sql.containsKey(beanClass)) {
-            throw new IllegalArgumentException("The beanClass :" + beanClass.getName() + " does not have known sql association");
+        if ( false == bean2sql.containsKey( beanClass ) ) {
+            throw new IllegalArgumentException( "The beanClass :" + beanClass.getName() + " does not have known sql association" );
         }
 
-        List resultList = (List) queryRunner.query(conn,
-                                                   (String) bean2sql.get(beanClass),
-                                                   param,
-                                                   new BeanListHandler(beanClass));
+        List resultList = (List) queryRunner.query( conn,
+                                                    (String) bean2sql.get( beanClass ),
+                                                    param,
+                                                    new BeanListHandler( beanClass ) );
         //verify that resultList is not bigger then one, and send back the appropriate error message.
-        if( false == resultList.isEmpty() ){
-            pdbBean = (PdbBean) resultList.get(0);
+        if ( false == resultList.isEmpty() ) {
+            pdbBean = (PdbBean) resultList.get( 0 );
         }
 
         return pdbBean;
@@ -175,27 +176,27 @@ public class MsdHelper {
 
     }*/
 
-    public static void main(String[] args) throws Exception, SQLException {
+    public static void main( String[] args ) throws Exception, SQLException {
 
         MsdHelper helper = new MsdHelper();
 
 
-        helper.addMapping( PdbBean.class, "SELECT entry_id as pdbCcode, "+ //title as structureTitle,  " +
-                                          "experiment_type as experimentType, res_val as resolution, "+
+        helper.addMapping( PdbBean.class, "SELECT entry_id as pdbCcode, " + //title as structureTitle,  " +
+                                          "experiment_type as experimentType, res_val as resolution, " +
                                           "r_work as rWork, " +
                                           "comp_list as moleculeList " +
                                           "FROM INTACT_MSD_DATA " +
                                           "WHERE entry_id =?" );
 
-        for (Iterator iterator = helper.getBeans(PdbBean.class,"1B7R").iterator(); iterator.hasNext();) {
+        for ( Iterator iterator = helper.getBeans( PdbBean.class, "1B7R" ).iterator(); iterator.hasNext(); ) {
             PdbBean pdbBean = (PdbBean) iterator.next();
-            System.out.println(pdbBean);
-            System.out.println(pdbBean.getClass());
-            System.out.println("experiment:"+pdbBean.getExperimentType());
-            System.out.println("pdb : "+pdbBean.getPdbCode());
-            System.out.println("resolution : "+pdbBean.getResolution());
-            System.out.println("moleculeList : "+pdbBean.getMoleculeList());
-            System.out.println("RFactor : " + pdbBean.getrWork());
+            System.out.println( pdbBean );
+            System.out.println( pdbBean.getClass() );
+            System.out.println( "experiment:" + pdbBean.getExperimentType() );
+            System.out.println( "pdb : " + pdbBean.getPdbCode() );
+            System.out.println( "resolution : " + pdbBean.getResolution() );
+            System.out.println( "moleculeList : " + pdbBean.getMoleculeList() );
+            System.out.println( "RFactor : " + pdbBean.getrWork() );
 
         }
         helper.close();
