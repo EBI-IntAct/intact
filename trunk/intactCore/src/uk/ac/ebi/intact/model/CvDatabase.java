@@ -87,6 +87,9 @@ public class CvDatabase extends CvObject implements Editable {
     public static final String MIPS = "cygd";
     public static final String MIPS_MI_REF = "MI:0464";
 
+    public static final String PDB = "pdb";
+    public static final String PDB_MI_REF = "MI:0460";
+
 
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus. This should not be here as it has no model
