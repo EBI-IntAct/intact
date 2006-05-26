@@ -30,7 +30,7 @@ public class MsdIntegrator {
     //check not in intact on experiment with primary reference
     //new PMID list
 
-    public void fillPmidMap() throws Exception {
+    public void fillPmidMap() throws Exception, SQLException {
         //select PMID
         //check not in intact on experiment with primary reference
         //new PMID list
@@ -70,17 +70,17 @@ public class MsdIntegrator {
         helper.close();
     }
 
-    public  void fillPmidMap(Collection <String> pmids) throws Exception {
+    public void fillPmidMap( Collection<String> pmids ) throws Exception, SQLException {
 
         MsdHelper helper = new MsdHelper();
 
         helper.addMapping( PdbBean.class, "SELECT distinct entry_id as pdbCode " +
                                           "FROM INTACT_MSD_DATA " +
                                           "WHERE pubmedid =?" );
-        for (String pmid : pmids) {
+        for ( String pmid : pmids ) {
             List<PdbBean> pdbBeans = helper.getBeans( PdbBean.class, pmid );
-            for (PdbBean pdbBean : pdbBeans) {
-                String pdbCode=pdbBean.getPdbCode();
+            for ( PdbBean pdbBean : pdbBeans ) {
+                String pdbCode = pdbBean.getPdbCode();
 
                 if ( !pmidMap.containsKey( pmid ) ) {
                     Collection<String> pdbCodeList = new ArrayList();
@@ -88,7 +88,7 @@ public class MsdIntegrator {
                     pmidMap.put( pmid, pdbCodeList );
                 } else {
                     if ( !pmidMap.get( pmid ).contains( pdbCode ) ) {
-                    pmidMap.get( pmid ).add( pdbCode );
+                        pmidMap.get( pmid ).add( pdbCode );
                     }
                 }
             }
@@ -97,7 +97,7 @@ public class MsdIntegrator {
 
     }
 
-    public void filterAlreadyCuratedPdbCode( Map<String, Collection<String>> pmidMap ) throws IntactException {
+    public void filterAlreadyCuratedPdbCode() throws IntactException {
         IntactHelper intactHelper = new IntactHelper();
         CvDatabase cvPubMed = MsdToolBox.getPubmed();
         CvDatabase cvPdb = MsdToolBox.getPdb();
@@ -105,11 +105,11 @@ public class MsdIntegrator {
         CvXrefQualifier cvIdentity = MsdToolBox.getIdentity();
         for ( String pmid : pmidMap.keySet() ) {
 
-            if ( intactHelper.getObjectsByXref( Experiment.class, cvPubMed, cvPrimaryRef, pmid ) != null ) {
+            if ( !( intactHelper.getObjectsByXref( Experiment.class, cvPubMed, cvPrimaryRef, pmid ).isEmpty() ) ) {
                 pmidMap.remove( pmid );
             }
             for ( String pdbCode : pmidMap.get( pmid ) ) {
-                if ( intactHelper.getObjectsByXref( Interaction.class, cvPdb, cvIdentity, pmid ) != null ) {
+                if ( !( intactHelper.getObjectsByXref( Interaction.class, cvPdb, cvIdentity, pmid ).isEmpty() ) ) {
                     pmidMap.get( pmid ).remove( pdbCode );
                 }
             }
@@ -119,7 +119,7 @@ public class MsdIntegrator {
 
     }
 
-    public void integrateMsd( Map<String, Collection<String>> pmidMap ) throws Exception, SQLException {
+    public void integrateMsd() throws Exception, SQLException {
         ExperimentGenerator experimentGenerator = new ExperimentGenerator();
         //For each PMID
         for ( String pmid : pmidMap.keySet() ) {
@@ -146,7 +146,7 @@ public class MsdIntegrator {
         msdExperiments.add( exp );
     }
 
-    public void setDebugEnabled (boolean debugEnabled){
+    public void setDebugEnabled( boolean debugEnabled ) {
         DEBUG = debugEnabled;
     }
 
@@ -165,7 +165,7 @@ public class MsdIntegrator {
             System.exit( 1 );
         }
         boolean debugEnabled = line.hasOption( "debug" );
-        integrator.setDebugEnabled(debugEnabled);
+        integrator.setDebugEnabled( debugEnabled );
         //Collection <String> pmids =
         //integrator.fillPmidMap( pmids);
         //integrator.filterAlreadyCuratedPdbCode( );
