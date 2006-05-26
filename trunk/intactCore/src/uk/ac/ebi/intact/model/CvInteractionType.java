@@ -17,6 +17,10 @@ package uk.ac.ebi.intact.model;
  */
 public class CvInteractionType extends CvDagObject {
 
+    public static final String DIRECT_INTERACTION = "direct interaction";
+
+    public static final String DIRECT_INTERACTION_MI_REF = "MI:0407";
+
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus.
      * This should not be here as it has no model functionality but is
