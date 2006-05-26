@@ -26,9 +26,11 @@ public class MsdIntegrator {
     static boolean DEBUG = false;
     private Map<String, Collection<String>> pmidMap = new HashMap();
     private static MsdExperimentGenerator msdExperimentGenerator = new MsdExperimentGenerator();
-    //select PMID
-    //check not in intact on experiment with primary reference
-    //new PMID list
+    /**
+     * An intactHelper used to check if pdbCode already in IntAct
+     */
+    private static IntactHelper intactHelper;
+
 
     public void fillPmidMap() throws Exception, SQLException {
         //select PMID
@@ -106,15 +108,39 @@ public class MsdIntegrator {
         for ( String pmid : pmidMap.keySet() ) {
 
             if ( !( intactHelper.getObjectsByXref( Experiment.class, cvPubMed, cvPrimaryRef, pmid ).isEmpty() ) ) {
-                pmidMap.remove( pmid );
-            }
-            for ( String pdbCode : pmidMap.get( pmid ) ) {
-                if ( !( intactHelper.getObjectsByXref( Interaction.class, cvPdb, cvIdentity, pmid ).isEmpty() ) ) {
-                    pmidMap.get( pmid ).remove( pdbCode );
+                if (DEBUG) {
+                System.out.println( "Experiment(s) with the PMID " + pmid + " already in IntAct" );
+                }
+                for ( String pdbCode : pmidMap.get( pmid ) ) {
+                    if ( !( intactHelper.getObjectsByXref( Interaction.class, cvPdb, cvIdentity, pmid ).isEmpty() ) ) {
+                        if (DEBUG) {
+                            System.out.println( "Interaction with the PDB " +pdbCode + " the PMID "+pmid+" are already in IntAct" );
+                            }
+                        pmidMap.get( pmid ).remove( pdbCode );
+                        if (pmidMap.get( pmid ).isEmpty()){
+                            pmidMap.remove( pmid );
+                        }
+                        if (DEBUG) {
+                            System.out.println( "Interaction with the PDB "+pdbCode+"  associated to the PMID "+pmid+" removed from TODO list " );
+                            }
+                    }else{if (DEBUG) {
+                            System.out.println( "Experiment(s) associated to the PMID "+pmid+" already exist in IntAct but not the interaction for the PDB "+pdbCode );
+                            }
+                    }
+                }
+
+            }else{
+                for ( String pdbCode : pmidMap.get( pmid ) ) {
+                    if ( !( intactHelper.getObjectsByXref( Interaction.class, cvPdb, cvIdentity, pmid ).isEmpty() ) ) {
+                        if (DEBUG) {
+                            System.out.println( "Interaction with the PDB " +pdbCode + " already in IntAct but not experiment(s) associated to the PMID "+pmid+"!" );
+                            // Check manualy this entry
+                            // remove PdbCode ?
+                            }
+                    }
                 }
             }
-
-
+        //intactHelper.closeStore();
         }
 
     }
@@ -140,7 +166,12 @@ public class MsdIntegrator {
 
     }
 
-
+    private static IntactHelper getIntactHelper() throws IntactException {
+        if(intactHelper==null){
+            intactHelper = new IntactHelper();
+        }
+        return intactHelper;
+    }
     public void addExp( Collection<MsdExperiment> msdExperiments, MsdExperiment exp ) {
         if ( msdExperiments == null ) {msdExperiments = new ArrayList();}
         msdExperiments.add( exp );
