@@ -30,7 +30,7 @@ public class MsdIntegrator {
     //check not in intact on experiment with primary reference
     //new PMID list
 
-    public Map<String, Collection<String>> fillPmidMap() throws Exception {
+    public void fillPmidMap() throws Exception {
         //select PMID
         //check not in intact on experiment with primary reference
         //new PMID list
@@ -68,7 +68,33 @@ public class MsdIntegrator {
 
         }
         helper.close();
-        return pmidMap;
+    }
+
+    public  void fillPmidMap(Collection <String> pmids) throws Exception {
+
+        MsdHelper helper = new MsdHelper();
+
+        helper.addMapping( PdbBean.class, "SELECT distinct entry_id as pdbCode " +
+                                          "FROM INTACT_MSD_DATA " +
+                                          "WHERE pubmedid =?" );
+        for (String pmid : pmids) {
+            List<PdbBean> pdbBeans = helper.getBeans( PdbBean.class, pmid );
+            for (PdbBean pdbBean : pdbBeans) {
+                String pdbCode=pdbBean.getPdbCode();
+
+                if ( !pmidMap.containsKey( pmid ) ) {
+                    Collection<String> pdbCodeList = new ArrayList();
+                    pdbCodeList.add( pdbCode );
+                    pmidMap.put( pmid, pdbCodeList );
+                } else {
+                    if ( !pmidMap.get( pmid ).contains( pdbCode ) ) {
+                    pmidMap.get( pmid ).add( pdbCode );
+                    }
+                }
+            }
+
+        }
+
     }
 
     public void filterAlreadyCuratedPdbCode( Map<String, Collection<String>> pmidMap ) throws IntactException {
@@ -103,11 +129,12 @@ public class MsdIntegrator {
                 MsdExperiment exp = msdExperimentGenerator.createExp( pdbCode, msdExperiments );
                 if ( exp != null ) {
                     msdExperiments.add( exp );
-                    //add in intact the experiments for this pmid
+
                 }
             }
             for ( MsdExperiment msdExperiment : msdExperiments ) {
                 experimentGenerator.createExperiment( msdExperiment );
+                //persit in intact the experiments for this pmid
             }
         }
 
@@ -139,6 +166,10 @@ public class MsdIntegrator {
         }
         boolean debugEnabled = line.hasOption( "debug" );
         integrator.setDebugEnabled(debugEnabled);
+        //Collection <String> pmids =
+        //integrator.fillPmidMap( pmids);
+        //integrator.filterAlreadyCuratedPdbCode( );
+        //integrator.integrateMsd( );
 
     }
 
