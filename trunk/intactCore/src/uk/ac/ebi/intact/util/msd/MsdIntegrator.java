@@ -1,63 +1,126 @@
 package uk.ac.ebi.intact.util.msd;
 
 import org.apache.commons.cli.*;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.CvXrefQualifier;
+import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.util.msd.generator.intactGenerator.ExperimentGenerator;
 import uk.ac.ebi.intact.util.msd.generator.msdGenerator.MsdExperiment;
 import uk.ac.ebi.intact.util.msd.generator.msdGenerator.MsdExperimentGenerator;
 import uk.ac.ebi.intact.util.msd.model.PdbBean;
 import uk.ac.ebi.intact.util.msd.util.MsdHelper;
+import uk.ac.ebi.intact.util.msd.util.MsdToolBox;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA. User: karine Date: 23 mai 2006 Time: 18:52:06 To change this template use File | Settings |
  * File Templates.
  */
 public class MsdIntegrator {
-    private List listPmid = new ArrayList();
+
+    static boolean DEBUG = false;
+    private Map<String, Collection<String>> pmidMap = new HashMap();
     private static MsdExperimentGenerator msdExperimentGenerator = new MsdExperimentGenerator();
+    //select PMID
+    //check not in intact on experiment with primary reference
+    //new PMID list
 
-    public void integrateMsd( Collection<String> listPmid ) throws Exception, SQLException {
-        Collection<MsdExperiment> listExp = new ArrayList();
-
+    public Map<String, Collection<String>> fillPmidMap() throws Exception {
         //select PMID
         //check not in intact on experiment with primary reference
         //new PMID list
-
-        //For each PMID
-
         MsdHelper helper = new MsdHelper();
 
-        helper.addMapping( PdbBean.class, "SELECT ditinct entry_id as pdbCode " +
-                                          "FROM INTACT_MSD_DATA " +
-                                          "WHERE pubmedid =?" );
-        // for (String pmid : listPmid) {
-        for ( Iterator<String> iterPmid = listPmid.iterator(); iterPmid.hasNext(); ) {
-            String pmid = iterPmid.next().toString();
-            List ListpdbBean = helper.getBeans( PdbBean.class, pmid );
-            listExp.clear();
-            // for (PdbBean pdbBean : ListpdbBean) {
-            for ( Iterator<PdbBean> iterPdb = ListpdbBean.iterator(); iterPdb.hasNext(); ) {
-                PdbBean pdbBean = iterPdb.next();
-                String pdbCode = pdbBean.getPdbCode();
-                // check PdbCode not in intact on an interaction with xref primary reference
-                MsdExperiment exp = msdExperimentGenerator.createExp( pdbCode, listExp );
+        helper.addMapping( PdbBean.class, "select entry_id as pdbCode, distinct pubmedid as pmid " +
+                                          "from  intact_msd_data " +
+
+                                          "where pubmedid is not null " +
+
+                                          "where entry_id not in " +
+                                          "(select  entry_id from  intact_msd_chain_data " +
+                                          "where type = 'Nucleic_Acid')" +
+
+                                          "and entry_id in " +
+                                          "(select entry_id  from intact_msd_unp_data " +
+                                          "group by entry_id having count (distinct sptr_ac) >1)" +
+
+                                          "and entry_id not in " +
+                                          "(select entry_id from  intact_msd_chain_data where system_tax_id is null)" );
+
+        for ( Iterator iterator = helper.getBeans( PdbBean.class, "" ).iterator(); iterator.hasNext(); ) {
+            PdbBean pdbBean = (PdbBean) iterator.next();
+            String pdbCode = pdbBean.getPdbCode();
+            String pmid = pdbBean.getPmid().toString();
+            if ( !pmidMap.containsKey( pmid ) ) {
+                Collection<String> pdbCodeList = new ArrayList();
+                pdbCodeList.add( pdbCode );
+                pmidMap.put( pmid, pdbCodeList );
+            } else {
+                if ( !pmidMap.get( pmid ).contains( pdbCode ) ) {
+                    pmidMap.get( pmid ).add( pdbCode );
+                }
+            }
+
+        }
+        helper.close();
+        return pmidMap;
+    }
+
+    public void filterAlreadyCuratedPdbCode( Map<String, Collection<String>> pmidMap ) throws IntactException {
+        IntactHelper intactHelper = new IntactHelper();
+        CvDatabase cvPubMed = MsdToolBox.getPubmed();
+        CvDatabase cvPdb = MsdToolBox.getPdb();
+        CvXrefQualifier cvPrimaryRef = MsdToolBox.getPrimaryRef();
+        CvXrefQualifier cvIdentity = MsdToolBox.getIdentity();
+        for ( String pmid : pmidMap.keySet() ) {
+
+            if ( intactHelper.getObjectsByXref( Experiment.class, cvPubMed, cvPrimaryRef, pmid ) != null ) {
+                pmidMap.remove( pmid );
+            }
+            for ( String pdbCode : pmidMap.get( pmid ) ) {
+                if ( intactHelper.getObjectsByXref( Interaction.class, cvPdb, cvIdentity, pmid ) != null ) {
+                    pmidMap.get( pmid ).remove( pdbCode );
+                }
+            }
+
+
+        }
+
+    }
+
+    public void integrateMsd( Map<String, Collection<String>> pmidMap ) throws Exception, SQLException {
+        ExperimentGenerator experimentGenerator = new ExperimentGenerator();
+        //For each PMID
+        for ( String pmid : pmidMap.keySet() ) {
+            // For each pdbCode
+            Collection<MsdExperiment> msdExperiments = new ArrayList();
+            for ( String pdbCode : pmidMap.get( pmid ) ) {
+                MsdExperiment exp = msdExperimentGenerator.createExp( pdbCode, msdExperiments );
                 if ( exp != null ) {
-                    addExp( listExp, exp );
+                    msdExperiments.add( exp );
                     //add in intact the experiments for this pmid
                 }
+            }
+            for ( MsdExperiment msdExperiment : msdExperiments ) {
+                experimentGenerator.createExperiment( msdExperiment );
             }
         }
 
     }
 
 
-    public void addExp( Collection<MsdExperiment> listExp, MsdExperiment exp ) {
-        if ( listExp == null ) {listExp = new ArrayList();}
-        listExp.add( exp );
+    public void addExp( Collection<MsdExperiment> msdExperiments, MsdExperiment exp ) {
+        if ( msdExperiments == null ) {msdExperiments = new ArrayList();}
+        msdExperiments.add( exp );
+    }
+
+    public void setDebugEnabled (boolean debugEnabled){
+        DEBUG = debugEnabled;
     }
 
     public static void main( String[] args ) {
@@ -75,8 +138,8 @@ public class MsdIntegrator {
             System.exit( 1 );
         }
         boolean debugEnabled = line.hasOption( "debug" );
-        //integrator.setDebugEnabled(debugEnabled);
-        //integrator.integrateMsd('12345');
+        integrator.setDebugEnabled(debugEnabled);
+
     }
 
 }
