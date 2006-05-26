@@ -1,6 +1,7 @@
 package uk.ac.ebi.intact.util.msd;
 
 import org.apache.commons.cli.*;
+import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvDatabase;
@@ -23,6 +24,7 @@ import java.util.*;
  */
 public class MsdIntegrator {
 
+    protected static final Logger LOGGER = Logger.getLogger("msd");
     static boolean DEBUG = false;
     private Map<String, Collection<String>> pmidMap = new HashMap();
     private static MsdExperimentGenerator msdExperimentGenerator = new MsdExperimentGenerator();
@@ -133,14 +135,13 @@ public class MsdIntegrator {
                 for ( String pdbCode : pmidMap.get( pmid ) ) {
                     if ( !( intactHelper.getObjectsByXref( Interaction.class, cvPdb, cvIdentity, pmid ).isEmpty() ) ) {
                         if (DEBUG) {
-                            System.out.println( "Interaction with the PDB " +pdbCode + " already in IntAct but not experiment(s) associated to the PMID "+pmid+"!" );
+                            System.out.println( "WARNING !! Interaction with the PDB " +pdbCode + " already in IntAct but not experiment(s) associated to the PMID "+pmid+"!" );
                             // Check manualy this entry
-                            // remove PdbCode ?
+                            pmidMap.get( pmid ).remove( pdbCode );
                             }
                     }
                 }
             }
-        //intactHelper.closeStore();
         }
 
     }
@@ -197,10 +198,11 @@ public class MsdIntegrator {
         }
         boolean debugEnabled = line.hasOption( "debug" );
         integrator.setDebugEnabled( debugEnabled );
-        //Collection <String> pmids =
-        //integrator.fillPmidMap( pmids);
-        //integrator.filterAlreadyCuratedPdbCode( );
-        //integrator.integrateMsd( );
+        // Choose a test collection of pmid
+        // Collection <String> pmids =
+        // integrator.fillPmidMap( pmids);
+        // integrator.filterAlreadyCuratedPdbCode( );
+        // integrator.integrateMsd( );
 
     }
 
