@@ -46,6 +46,11 @@ public class DaoFactory
         return new AnnotatedObjectDaoImpl<T>(entityType, getCurrentSession());
     }
 
+    public static BaseDao getBaseDao()
+    {
+        return new ExperimentDaoImpl(getCurrentSession());
+    }
+
     public static <T extends CvObject> CvObjectDao<T> getCvObjectDao(Class<T> entityType)
     {
         return new CvObjectDaoImpl<T>(entityType, getCurrentSession());
