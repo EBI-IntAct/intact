@@ -66,10 +66,21 @@ BEGIN
                     IF( v_parent_found = 0 ) THEN
 
                         --
-                        -- Nothing found, raise a data integrity error
+                        -- Look for publication
                         --
+                        SELECT count(1) INTO v_parent_found
+                        FROM ia_publication
+                        where :new.parent_ac = ac;
 
-                        RAISE_APPLICATION_ERROR( -20001, 'The object having the AC: '||:new.parent_ac||' could not be found amongst interactor, biosource, experiment, feature and controlled vocabulary.' );
+                        IF( v_parent_found = 0 ) THEN
+
+                            --
+                            -- Nothing found, raise a data integrity error
+                            --
+
+                            RAISE_APPLICATION_ERROR( -20001, 'The object having the AC: '||:new.parent_ac||' could not be found amongst interactor, biosource, experiment, feature, publication and controlled vocabulary.' );
+
+                        END IF;
 
                     END IF;
 
