@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.persistence.DAOFactory;
 import uk.ac.ebi.intact.persistence.DAOSource;
 import uk.ac.ebi.intact.persistence.DataSourceException;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.model.IntactObject;
 
 import javax.servlet.http.HttpSessionBindingEvent;
@@ -34,7 +35,7 @@ public class IntactUserImpl<T extends IntactObject> implements IntactUserIF<T>, 
     /**
      * Reference to the DAO.
      */
-    private IntactHelper helper;
+    //private IntactHelper helper;
 
     private String myHelpLink;
 
@@ -69,7 +70,7 @@ public class IntactUserImpl<T extends IntactObject> implements IntactUserIF<T>, 
      */
     public IntactUserImpl( String mapping, String dsClass )
             throws DataSourceException, IntactException {
-        DAOSource ds = DAOFactory.getDAOSource( dsClass );
+        //DAOSource ds = DAOFactory.getDAOSource( dsClass );
 
         // Pass config beans to data source - don't need fast keys as only
         // accessed once
@@ -78,7 +79,7 @@ public class IntactUserImpl<T extends IntactObject> implements IntactUserIF<T>, 
         // ds.setConfig(fileMap);
 
         // build a helper and XmlBuilder for use throughout a session
-        this.helper = new IntactHelper( ds );
+        //this.helper = new IntactHelper( ds );
     }
 
     /**
@@ -88,7 +89,7 @@ public class IntactUserImpl<T extends IntactObject> implements IntactUserIF<T>, 
      */
     public IntactUserImpl() throws IntactException {
 
-        this.helper = new IntactHelper();
+        //this.helper = new IntactHelper();
     }
 
     public int getSelectedChunk() {
@@ -111,34 +112,40 @@ public class IntactUserImpl<T extends IntactObject> implements IntactUserIF<T>, 
      * Will call this method when an object is unbound from a session.
      */
     public void valueUnbound( HttpSessionBindingEvent event ) {
-
+       /*
         try {
             this.helper.closeStore();
         }
         catch ( IntactException ie ) {
             //failed to close the store - not sure what to do here yet....
-        }
+        }  */
     }
 
     // Implementation of IntactUserI interface.
 
     public String getUserName() {
-        if ( this.helper != null ) {
-            try {
-                return this.helper.getDbUserName();
-            }
-            catch ( LookupException e ) {
-            }
-            catch ( SQLException e ) {
-            }
+        try
+        {
+            return DaoFactory.getBaseDao().getDbUserName();
         }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+
         return null;
     }
 
     public String getDatabaseName() {
-        if ( this.helper != null ) {
-            return this.helper.getDbName();
+        try
+        {
+            return DaoFactory.getBaseDao().getDbName();
         }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+
         return null;
     }
 
@@ -148,12 +155,10 @@ public class IntactUserImpl<T extends IntactObject> implements IntactUserIF<T>, 
 
     public <T> Collection<T> search( Class<T> objectType, String searchParam,
                               String searchValue ) throws IntactException {
-        // Set the search criteria.
-        // TODO remove it if not needed
-//        this.searchCriteria = searchParam;
+        //return helper.search( objectType, searchParam, searchValue );
 
-        //now retrieve an object...
-        return helper.search( objectType, searchParam, searchValue );
+        // this method should not be used
+        return null;
     }
 
     public Class<T> getSearchClass() {
@@ -205,7 +210,8 @@ public class IntactUserImpl<T extends IntactObject> implements IntactUserIF<T>, 
     }
 
     public IntactHelper getIntactHelper() {
-        return this.helper;
+        // this method should be removed. No use of IntactHelper
+        return null;
     }
 
 }
