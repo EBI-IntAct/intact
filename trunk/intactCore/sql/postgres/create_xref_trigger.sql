@@ -6,6 +6,7 @@
 --     * ia_biosource
 --     * ia_controlledvocab
 --     * feature
+--     * publication
 --
 -- We raise an error if no corresponding object is found.
 --
@@ -62,10 +63,21 @@ BEGIN
                     IF v_parent_found = 0 THEN
 
                         --
-                        -- Nothing found, raise a data integrity error
+                        -- Look for publication
                         --
+                        SELECT count(1) INTO v_parent_found
+                        FROM ia_publication
+                        where NEW.parent_ac = ac;
 
-                        RAISE EXCEPTION  ''The object having the AC: % could not be found amongst interactor, biosource, experiment, feature and controlled vocabulary.'', NEW.parent_ac;
+                        IF v_parent_found = 0 THEN
+
+                            --
+                            -- Nothing found, raise a data integrity error
+                            --
+
+                            RAISE EXCEPTION  ''The object having the AC: % could not be found amongst interactor, biosource, experiment, feature and controlled vocabulary.'', NEW.parent_ac;
+
+                        END IF;
 
                     END IF;
 
