@@ -87,7 +87,7 @@ public class MainDetailViewBean extends AbstractViewBean {
      * Interactions this is a sublist that is dynamically changed upon different user requests. This is marked as
      * transient because it seems that the java subList is not serializable.
      */
-    private transient Collection<Interaction> interactionList = new ArrayList<Interaction>();
+    private Collection<Interaction> interactionList = new ArrayList<Interaction>();
 
     /**
      * This is only defined for 'Interaction context' views and holds the Interaction that is to be viewed in the
@@ -146,8 +146,9 @@ public class MainDetailViewBean extends AbstractViewBean {
      * @throws NullPointerException     thrown if the object to wrap is null
      * @throws IllegalArgumentException thrown if the parameter is not an Experiment
      */
-    public MainDetailViewBean( Experiment obj, String link, String searchURL, String contextPath ) {
+    public MainDetailViewBean( Experiment obj, List<Interaction> interactionList, String link, String searchURL, String contextPath) {
         super( link, contextPath );
+        this.interactionList = interactionList;
 
         if ( obj == null ) {
             throw new NullPointerException( "MainDetailViewBean: can't display null object!" );
@@ -156,24 +157,6 @@ public class MainDetailViewBean extends AbstractViewBean {
         this.searchURL = searchURL;
         this.obj = obj;
         dbUrls = new HashMap<CvObject, String>();
-
-        int interactionsCount = DaoFactory.getExperimentDao().countInteractionsForExperimentWithAc(obj.getAc());
-        logger.info("Interactions for experiment with AC "+obj.getAc()+": "+interactionsCount);
-
-        //now calculate the largest page size possible (only for large Experiments)
-        if ( interactionsCount > Constants.MAX_PAGE_SIZE ) {
-
-            // calculate the maximum number of pages (either size/page size, or
-            //size/page size + 1 if it does not divide exactly)
-            maxPages = interactionsCount / Constants.MAX_PAGE_SIZE;
-            if ( interactionsCount % Constants.MAX_PAGE_SIZE > 0 ) {
-                maxPages++;
-            }
-            //set the initial page of Interactions
-            setInteractionPage( 1 );
-        } else {
-            interactionList = obj.getInteractions();
-        }
 
         // TODO centralize where the PSI links are created.
         psi1Url = PSI1_URL;
