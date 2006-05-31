@@ -60,7 +60,7 @@
 
         <pathelement path="${root.lib.dir}/servlet.jar"/>
 
-        <pathelement path="${lib.dir}/log4j-1.2.11.jar"/>
+        <pathelement path="${lib.dir}/log4j-1.2.8.jar"/>
         <pathelement path="${lib.dir}/jdbc_oracle9i_thin_9.2.0.jar"/>
 
     </path>
@@ -155,7 +155,7 @@
 
             <!-- Include common jar files from intact core. -->
             <lib dir="${lib.dir}">
-                <include name="log4j-1.2.11.jar"/>
+                <include name="log4j-1.2.8.jar"/>
                 <include name="jdbc_oracle9i_thin_9.2.0.jar"/>
             </lib>
 
