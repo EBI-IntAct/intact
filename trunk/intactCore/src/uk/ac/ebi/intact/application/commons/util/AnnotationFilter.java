@@ -5,20 +5,22 @@
  */
 package uk.ac.ebi.intact.application.commons.util;
 
-import org.apache.ojb.broker.accesslayer.LookupException;
 import org.apache.log4j.Logger;
+import org.apache.ojb.broker.accesslayer.LookupException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.CvTopic;
-import uk.ac.ebi.intact.application.search3.business.Constants;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * Uses the current Database connexion to create a list of Annotations' Topic not to be
- * displayed in the public interface. Those CvTopics are annotated with the term 'no-export'.
+ * Uses the current Database connexion to create a list of Annotations' Topic not to be displayed in the public
+ * interface. Those CvTopics are annotated with the term 'no-export'.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
@@ -26,7 +28,7 @@ import java.util.*;
  */
 public class AnnotationFilter {
 
-    protected transient static final Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
+    protected transient static final Logger logger = Logger.getLogger( AnnotationFilter.class );
 
     /**
      * Keeps all CvTopics to be filtered out.
@@ -64,19 +66,15 @@ public class AnnotationFilter {
                 Collection<CvTopic> cvTopics = helper.search( CvTopic.class, "ac", null );
 
                 // select those that have an Annotation( no-export )
-                for (CvTopic cvTopic : cvTopics)
-                {
-                    for (Annotation annotation : cvTopic.getAnnotations())
-                    {
-                        if (noExport.equals(annotation.getCvTopic()))
-                        {
-                            if (filteredTopics == null)
-                            {
-                                filteredTopics = new HashSet<CvTopic>(8);
+                for ( CvTopic cvTopic : cvTopics ) {
+                    for ( Annotation annotation : cvTopic.getAnnotations() ) {
+                        if ( noExport.equals( annotation.getCvTopic() ) ) {
+                            if ( filteredTopics == null ) {
+                                filteredTopics = new HashSet<CvTopic>( 8 );
                             }
 
-                            logger.debug("CvTopic( " + cvTopic.getShortLabel() + " )");
-                            filteredTopics.add(cvTopic);
+                            logger.debug( "CvTopic( " + cvTopic.getShortLabel() + " )" );
+                            filteredTopics.add( cvTopic );
                         }
                     }
                 }
@@ -95,7 +93,7 @@ public class AnnotationFilter {
         } catch ( LookupException e ) {
             e.printStackTrace();
         } finally {
-            if( helper != null ) {
+            if ( helper != null ) {
                 try {
                     helper.closeStore();
                 } catch ( IntactException e ) {
@@ -104,7 +102,7 @@ public class AnnotationFilter {
             }
 
             // if the connection to the database failed, the set is still null.
-            if( filteredTopics == null ) {
+            if ( filteredTopics == null ) {
                 filteredTopics = Collections.EMPTY_SET;
             }
         }
@@ -131,10 +129,10 @@ public class AnnotationFilter {
      */
     public boolean isFilteredOut( Annotation annotation ) {
 
-        if( annotation != null ) {
+        if ( annotation != null ) {
 
             // an annotation must have a CvTopic (non null)
-            if( filteredTopics.contains( annotation.getCvTopic() ) ) {
+            if ( filteredTopics.contains( annotation.getCvTopic() ) ) {
                 return true;
             }
         }
@@ -146,9 +144,8 @@ public class AnnotationFilter {
     public Set getFilters() {
         Set result = new HashSet( filteredTopics.size() );
 
-        for (CvTopic cvTopic : filteredTopics)
-        {
-            result.add(cvTopic);
+        for ( CvTopic cvTopic : filteredTopics ) {
+            result.add( cvTopic );
         }
 
         return result;
