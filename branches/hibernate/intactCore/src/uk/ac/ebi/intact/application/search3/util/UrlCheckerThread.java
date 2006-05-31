@@ -10,6 +10,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -21,7 +22,7 @@ import java.net.URL;
  * @version $Id$
  * @since <pre>07-Feb-2006</pre>
  */
-public class UrlCheckerThread extends Thread {
+public class UrlCheckerThread extends Thread implements Serializable{
 
     public static final boolean DEBUG = false;
 
