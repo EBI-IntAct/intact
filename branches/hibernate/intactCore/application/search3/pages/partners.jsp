@@ -44,11 +44,7 @@
     String hvPath = absPathWithoutContext.concat(service.getHierarchViewProp("hv.url"));
     String minePath = absPathWithoutContext.concat("mine/display.jsp");
 
-    //The List of view beans used to provide the data for this JSP. Each
-    //bean in the List should be an instance of PartnersViewBean, and corresponds to
-    //a single search result.
-    //List viewBeans = (List)session.getAttribute(SearchConstants.VIEW_BEAN_LIST);
-    //List<PartnersViewBean> viewBeans = (List<PartnersViewBean>)request.getAttribute(SearchConstants.VIEW_BEAN_LIST);
+    //The View object containing the beans to render
     PartnersView partnersView = (PartnersView) request.getAttribute(SearchConstants.VIEW_BEAN);
 
     //the list of shortlabels for the search matches - need to be highlighted

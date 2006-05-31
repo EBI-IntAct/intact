@@ -34,7 +34,7 @@ import java.util.Set;
  * @version $Id$
  * @since <pre>04-May-2006</pre>
  */
-public class PartnersView
+public class PartnersView extends AbstractView
 {
     private static Log log = LogFactory.getLog(PartnersView.class);
 
@@ -55,18 +55,15 @@ public class PartnersView
 
     private Interactor interactor;
 
-    private HttpServletRequest request;
-    private HttpSession session;
 
     /**
      * The partners of the main interactor
      */
     private List<PartnersViewBean> interactionPartners;
 
-    public PartnersView(HttpServletRequest request, Interactor interactor, String helpLink, String searchUrl, String contextPath)
+    public PartnersView(HttpServletRequest request, Interactor interactor, String helpLink, String searchUrl)
     {
-        this.request = request;
-        this.session = request.getSession();
+        super(request);
         this.interactor = interactor;
 
         ProteinDao proteinDao = DaoFactory.getProteinDao();
@@ -75,23 +72,21 @@ public class PartnersView
         uniprotUrlTemplate = proteinDao.getUniprotUrlTemplateByProteinAc(interactor.getAc());
 
         // pagination preparation here
-        int maxResults = getItemsPerPage();
-        int currentPage = getCurrentPage();
-        int firstResult = (currentPage-1)*getItemsPerPage();
-
         int totalItems = getTotalItems();
-
-        if (firstResult > totalItems)
-        {
-            throw new RuntimeException("Page out of bounds: "+currentPage+" ("+firstResult+"/"+maxResults+")");
-        }
-
-        if (currentPage == 0)
+        int maxResults = getItemsPerPage();
+        if (getCurrentPage() == 0)
         {
             if (totalItems > getItemsPerPage())
             {
                 setCurrentPage(1);
             }
+        }
+
+        int firstResult = (getCurrentPage()-1)*getItemsPerPage();
+
+        if (firstResult > totalItems)
+        {
+            throw new RuntimeException("Page out of bounds: "+getCurrentPage()+" ("+firstResult+"/"+maxResults+")");
         }
 
         // Load the list of partners ACs, each partner has a list with the interaction ACs
@@ -107,7 +102,7 @@ public class PartnersView
         }
 
         // Creates the main interactor PartnersViewBean
-        interactorCandidate = createPartnersViewBean(interactor, true, helpLink, searchUrl, contextPath, interactionAcsForMainInteractor);
+        interactorCandidate = createPartnersViewBean(interactor, true, helpLink, searchUrl, request.getContextPath(), interactionAcsForMainInteractor);
 
         // We iterate through the map to retrieve all the partners, with their interaction ACs,
         // and create a PArtnerViewBean with each entry
@@ -121,7 +116,7 @@ public class PartnersView
             {
                 // We retrieve each interactor from the database, to create the bean
                 Interactor partnerInteractor = DaoFactory.getInteractorDao().getByAc(partnerInteractorAc);
-                PartnersViewBean bean = createPartnersViewBean(partnerInteractor, false, helpLink, searchUrl, contextPath, entry.getValue());
+                PartnersViewBean bean = createPartnersViewBean(partnerInteractor, false, helpLink, searchUrl, request.getContextPath(), entry.getValue());
                 interactionPartners.add(bean);
             }
         }
@@ -272,47 +267,28 @@ public class PartnersView
         this.interactionPartners = interactionPartners;
     }
 
-    public int getCurrentPage(){
-        int currentPage = 0;
 
-        String strPage = request.getParameter("page");
-
-        if (strPage != null && strPage.length() != 0)
-        {
-            currentPage = Integer.valueOf(strPage);
-        }
-
-        return currentPage;
-    }
-
-    public void setCurrentPage(int page){
-        request.getParameterMap().put("page", page);
-    }
-
-    public int getItemsPerPage() {
-        return SearchConstants.RESULTS_PER_PAGE;
-    }
-
+    @Override
     public int getTotalItems()
     {
         String prefix = getClass().getName()+"_";
 
         String attName = prefix+interactor.getAc();
 
-        int totalItems = 0;
+        int totalItems;
 
-        if (session.getAttribute(attName) == null)
+        if (getSession().getAttribute(attName) == null)
         {
             totalItems = DaoFactory.getProteinDao().countPartnersByProteinAc(interactor.getAc());
 
-            session.setAttribute(attName, totalItems);
+            getSession().setAttribute(attName, totalItems);
         }
         else
         {
-            totalItems = (Integer) session.getAttribute(attName);
+            totalItems = (Integer) getSession().getAttribute(attName);
         }
 
-        request.setAttribute(SearchConstants.TOTAL_RESULTS_ATT_NAME, totalItems);
+        getRequest().setAttribute(SearchConstants.TOTAL_RESULTS_ATT_NAME, totalItems);
 
         return totalItems;
     }
