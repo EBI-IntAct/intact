@@ -154,16 +154,16 @@ public class SearchDAOImpl implements SearchDAO {
 
         // join the collections of the different search object together to one collection
         // get first all experiments and interactions
-        Collection searchObjects = CollectionUtils.union( soProvider.getAllExperiments( SearchEngineConstants.EXPERIMENT_QUERY ),
-                                                          soProvider.getAllInteractions( SearchEngineConstants.INTERACTION_QUERY ) );
+        Collection searchObjects = soProvider.getAllExperiments( SearchEngineConstants.EXPERIMENT_QUERY );
+        searchObjects.addAll(soProvider.getAllInteractions( SearchEngineConstants.INTERACTION_QUERY ) );
         // ... then add all CVs
-        searchObjects = CollectionUtils.union( searchObjects, soProvider.getAllCvObjects( SearchEngineConstants.CV_OBJECT_QUERY ) );
+        searchObjects.addAll(soProvider.getAllCvObjects( SearchEngineConstants.CV_OBJECT_QUERY ) );
 
         // ... then add all proteins
-        searchObjects = CollectionUtils.union( searchObjects, soProvider.getAllProteins( SearchEngineConstants.PROTEIN_QUERY ) );
+        searchObjects.addAll(soProvider.getAllProteins( SearchEngineConstants.PROTEIN_QUERY ) );
 
         //... and at last add all biosources
-        searchObjects = CollectionUtils.union( searchObjects, soProvider.getAllBioSources( SearchEngineConstants.BIOSOURCE_QUERY ) );
+        searchObjects.addAll(soProvider.getAllBioSources( SearchEngineConstants.BIOSOURCE_QUERY ) );
         System.out.println( "\n\nThe total number of objects indexed: " + searchObjects.size() );
 
         return searchObjects;
