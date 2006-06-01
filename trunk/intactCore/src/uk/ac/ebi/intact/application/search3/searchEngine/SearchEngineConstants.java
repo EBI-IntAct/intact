@@ -5,6 +5,8 @@
 */
 package uk.ac.ebi.intact.application.search3.searchEngine;
 
+import uk.ac.ebi.intact.model.*;
+
 /**
  * Contains several constants, that aer used in the SearchEngine package.
  *
@@ -51,7 +53,7 @@ public interface SearchEngineConstants {
             " SELECT E.ac as ac, " +
             "E.shortlabel as shortlabel, " +
             "E.fullname as fullname, " +
-            "'uk.ac.ebi.intact.model.Experiment' as objclass " +
+            "'" + Experiment.class.getName() +"' as objclass " +
             "FROM ia_experiment E ";
 
     // SQL query to get all interactions out of the database
@@ -61,7 +63,7 @@ public interface SearchEngineConstants {
             "I.fullname as fullname, " +
             "I.objclass as objclass " +
             "FROM ia_interactor I " +
-            "WHERE I.objclass = 'uk.ac.ebi.intact.model.InteractionImpl'";
+            "WHERE I.objclass = '" + InteractionImpl.class.getName() + "'";
 
     // SQL query to get all proteins out of the database
     public static final String PROTEIN_QUERY =
@@ -70,14 +72,14 @@ public interface SearchEngineConstants {
             "I.fullname as fullname, " +
             "I.objclass as objclass " +
             "FROM ia_interactor I " +
-            "WHERE I.objclass = 'uk.ac.ebi.intact.model.ProteinImpl'";
+            "WHERE I.objclass = '" + ProteinImpl.class.getName() + "'";
 
     // SQL query to get all cvObjects out of the database
     public static final String CV_OBJECT_QUERY =
             " SELECT CV.ac as ac, " +
             "CV.shortlabel as shortlabel, " +
             "CV.fullname as fullname, " +
-            "'uk.ac.ebi.intact.model.CvObject' as objclass " +
+            "'" + CvObject.class.getName() + "' as objclass " +
             "FROM ia_controlledvocab CV ";
 
     // SQL query to get all cvObjects out of the database
@@ -85,6 +87,6 @@ public interface SearchEngineConstants {
             "SELECT B.ac as ac, " +
             "B.shortlabel as shortlabel, " +
             "B.fullname as fullname, " +
-            "'uk.ac.ebi.intact.model.BioSource' as objclass " +
+            "'" + BioSource.class.getName() + "' as objclass " +
             "FROM ia_biosource B";
 }
