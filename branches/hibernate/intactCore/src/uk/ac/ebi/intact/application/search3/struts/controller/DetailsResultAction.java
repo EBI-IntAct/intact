@@ -44,10 +44,6 @@ public class DetailsResultAction extends AbstractResultAction {
     @Override
     protected String processResults( HttpServletRequest request, String helpLink ) {
 
-        // Session to access various session objects. This will create
-        //a new session if one does not exist.
-        HttpSession session = super.getSession( request );
-
         //new info to process, so get the search results from the request
         Collection results = (Collection) request.getAttribute( SearchConstants.SEARCH_RESULTS );
         //initial sanity check - empty results should be just ignored

@@ -51,7 +51,6 @@ Query     _________       ____________      |     _________      _____________
             <form-property name="searchString" type="java.lang.String" initial="*"/>
             <form-property name="searchClass" type="java.lang.String"/>
             <form-property name="binary" type="java.lang.String"/>
-            <form-property name="selectedChunk" type="java.lang.String" initial="-1"/>
             <form-property name="view" type="java.lang.String" initial="partner"/>
             <form-property name="filter" type="java.lang.String" initial="all"/>
         </form-bean>

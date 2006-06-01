@@ -130,29 +130,4 @@ public class HtmlBuilderManager {
         }
     }
 
-
-    /**
-     *
-     * @param writer
-     * @param object
-     * @param highlights
-     * @param link
-     * @param contextPath
-     * @param currentChunk
-     * @param maxChunk
-     */
-    public void getChunkIndexHtml ( Writer writer,
-                                    AnnotatedObject object,
-                                    Set highlights,
-                                    String link,
-                                    String contextPath,
-                                    int currentChunk,
-                                    int maxChunk,
-                                    int objectCount,
-                                    String chunkedObjectType) throws IOException {
-
-        HtmlBuilder builder = new HtmlBuilder(writer, highlights, link, contextPath);
-        builder.buildChunkIndex( object, link, currentChunk, maxChunk, objectCount, chunkedObjectType );
-
-    }
 }
