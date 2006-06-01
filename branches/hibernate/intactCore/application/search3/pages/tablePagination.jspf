@@ -41,7 +41,10 @@
 
         if (!urlWithoutPage.contains("searchClass="))
         {
+            if (request.getParameter("searchClass") != null)
+            {
              urlWithoutPage = urlWithoutPage+"&searchClass="+request.getParameter("searchClass");
+            }
         }
 
         // the variables are put in the request scope so we will be able to use them with the jstl tags

@@ -9,6 +9,7 @@ package uk.ac.ebi.intact.application.search3.struts.controller;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.MainDetailViewBean;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.MainDetailView;
+import uk.ac.ebi.intact.application.commons.search.SearchClass;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
 
@@ -86,6 +87,7 @@ public class DetailsResultAction extends AbstractResultAction {
 
             // We store the MainDetailView in the request, and it will be accessed from the jsp page
             request.setAttribute( SearchConstants.VIEW_BEAN, view );
+            request.getParameterMap().put("searchClass", SearchClass.EXPERIMENT.getShortName());
 
              //send to the detail view JSP
             logger.info( "detailsAction: forwarding to 'details' JSP.." );
