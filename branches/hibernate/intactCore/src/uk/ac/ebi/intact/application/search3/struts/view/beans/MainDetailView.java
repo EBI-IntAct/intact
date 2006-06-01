@@ -55,7 +55,7 @@ public class MainDetailView  extends AbstractView
 
         if (firstResult > totalItems)
         {
-            throw new RuntimeException("Page out of bounds: "+getCurrentPage()+" ("+firstResult+"/"+maxResults+")");
+            throw new RuntimeException("Page out of bounds: "+getCurrentPage()+" (Item: "+firstResult+" of "+getTotalItems()+")");
         }
 
         // get the interactions to be shown

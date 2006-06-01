@@ -15,23 +15,8 @@
 <%
     {   // opening block so there is no variable name clash if there is more than one paginator per view
 
-        String strSelectedChunk = request.getParameter("selectedChunk");
-
-        String strPage = null;
-        String pageAlias = null;
-
-        // legacy pagination used "selectedChunk" as parameter name
-        if (strSelectedChunk != null)
-        {
-            strPage = strSelectedChunk;
-            pageAlias = "selectedChunk";
-        }
-        // newer pagination use the parameter "page"
-        else
-        {
-            strPage = request.getParameter("page");
-            pageAlias = "page";
-        }
+        // pagination use the parameter "page"
+        String strPage = request.getParameter("page");
 
         int currentPage = 0;
 
@@ -47,7 +32,7 @@
         }
 
         // The url without the page parameter. We use this variable to generate the url for each page
-        String urlWithoutPage = request.getQueryString().replaceAll("&"+pageAlias+"="+currentPage, "");
+        String urlWithoutPage = request.getQueryString().replaceAll("&page="+currentPage, "");
 
         if (!urlWithoutPage.contains("searchString="))
         {
@@ -61,7 +46,6 @@
 
         // the variables are put in the request scope so we will be able to use them with the jstl tags
         request.getParameterMap().put("page", currentPage);
-        request.getParameterMap().put("pageAlias", pageAlias);
         request.getParameterMap().put("resultsPerPage", SearchConstants.RESULTS_PER_PAGE);
         request.getParameterMap().put("totalResults", totalResults);
         request.getParameterMap().put("pageCount", pageCount);
@@ -75,10 +59,10 @@
         <tr>
           <c:if test="${param.page-1 > 0}">
               <td>
-                  <c:out value="<a href='search?${param.urlWithoutPage}&${param.pageAlias}=1'><b>&lt;&lt;First</b></a>" escapeXml="false"/>
+                  <c:out value="<a href='search?${param.urlWithoutPage}&page=1'><b>&lt;&lt;First</b></a>" escapeXml="false"/>
               </td>
               <td>
-                  <c:out value="<a href='search?${param.urlWithoutPage}&${param.pageAlias}=${param.page-1}'><b>&lt;Previous</b></a>" escapeXml="false"/>
+                  <c:out value="<a href='search?${param.urlWithoutPage}&page=${param.page-1}'><b>&lt;Previous</b></a>" escapeXml="false"/>
               </td>
           </c:if>
 
@@ -90,7 +74,7 @@
                                 <c:out value="${i}"/>
                             </c:when>
                             <c:otherwise>
-                                <c:out value="<a href='search?${param.urlWithoutPage}&${param.pageAlias}=${i}'>${i}</a>" escapeXml="false"/>
+                                <c:out value="<a href='search?${param.urlWithoutPage}&page=${i}'>${i}</a>" escapeXml="false"/>
                             </c:otherwise>
                         </c:choose>
                      </td>
@@ -102,10 +86,10 @@
 
             <c:if test="${param.page+1 <= param.pageCount}">
               <td>
-                  <c:out value="<a href='search?${param.urlWithoutPage}&${param.pageAlias}=${param.page+1}'><b>Next&gt;</b></a>" escapeXml="false"/>
+                  <c:out value="<a href='search?${param.urlWithoutPage}&page=${param.page+1}'><b>Next&gt;</b></a>" escapeXml="false"/>
               </td>
               <td>
-                  <c:out value="<a href='search?${param.urlWithoutPage}&${param.pageAlias}=${param.pageCount}'><b>Last&gt;&gt;</b></a>" escapeXml="false"/>
+                  <c:out value="<a href='search?${param.urlWithoutPage}&page=${param.pageCount}'><b>Last&gt;&gt;</b></a>" escapeXml="false"/>
               </td>
           </c:if>
 

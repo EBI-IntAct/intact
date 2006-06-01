@@ -100,52 +100,23 @@ public class SearchAction extends IntactBaseAction {
             labelList.clear();     //set one up or wipe out an existing one
         }
 
-        //first check for a tabbed page request - no need to search in this case
-        String selectedPage = request.getParameter( "selectedChunk" );
-        if ( ( selectedPage != null ) && ( !selectedPage.equals( "" ) ) ) {
-
-            //the dispatcher can forward to the detail action
-            //and it can process existing view beans...
-            return mapping.findForward( SearchConstants.FORWARD_DISPATCHER_ACTION );
-        }
-
         DynaActionForm dyForm = (DynaActionForm) form;
 
         String searchValue = (String) dyForm.get( "searchString" );
         SearchClass searchClass = SearchClass.valueOfShortName((String)dyForm.get( "searchClass" ));
-        String selectedChunk = (String) dyForm.get( "selectedChunk" );
         String binaryValue = (String) dyForm.get( "binary" );
         String viewValue = (String) dyForm.get( "view" );
         String filterValue = (String) dyForm.get( "filter" );
 
-        //this tabbed stuff is for handling subsequent page requests from tabbed JSPs
-        int selectedChunkInt = Constants.NO_CHUNK_SELECTED;
-        try {
-            if ( null != selectedChunk && !selectedChunk.equals( "" ) ) {
-                selectedChunkInt = Integer.parseInt( selectedChunk );
-
-            }
-        }
-        catch ( NumberFormatException nfe ) {
-            logger.warn( "The selected chunk is not an Integer value, it can't be parsed.", nfe );
-        }
-
         //set a few useful user beans
         user.setSearchValue( searchValue );
         user.setSearchClass( searchClass.getMappedClass() );
-        user.setSelectedChunk( selectedChunkInt );
         user.setBinaryValue( binaryValue );
         user.setView( viewValue );
 
         logger.info( "searchValue: " + searchValue );
         logger.info( "searchClass: " + searchClass );
-        logger.info( "selectedChunk: " +
-                     ( selectedChunkInt == Constants.NO_CHUNK_SELECTED ? "none" : selectedChunk ) );
         logger.info( "binaryValue: " + binaryValue );
-
-        //reset the class string in the form for the next request
-        // dyForm.set("searchString", "");
-        dyForm.set( "selectedChunk", "-1" );
 
         //clean out previous single object views
         session.setAttribute( SearchConstants.VIEW_BEAN, null );

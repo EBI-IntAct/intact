@@ -56,7 +56,7 @@ public class AdvDispatcherAction extends IntactBaseAction {
         logger.info( "Enter Dispatcher action" );
 
         //first check to see if we just need to forward for a tabbed page of an existing result
-        String requestedPage = request.getParameter( "selectedChunk" );
+        String requestedPage = request.getParameter( "page" );
         if ( ( requestedPage != null ) && ( !requestedPage.equals( "" ) ) ) {
             return mapping.findForward( SearchConstants.FORWARD_DETAILS_ACTION );
         }

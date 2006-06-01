@@ -53,10 +53,10 @@ public class DispatcherAction extends IntactBaseAction {
         logger.info( "Enter Dispatcher action" );
 
         //first check to see if we just need to forward for a tabbed page of an existing result
-        String requestedPage = request.getParameter( "selectedChunk" );
-        if ( ( requestedPage != null ) && ( !requestedPage.equals( "" ) ) ) {
-            return mapping.findForward( SearchConstants.FORWARD_DETAILS_ACTION );
-        }
+       // String requestedPage = request.getParameter( "page" );
+       // if ( ( requestedPage != null ) && ( !requestedPage.equals( "" ) ) ) {
+       //     return mapping.findForward( SearchConstants.FORWARD_DETAILS_ACTION );
+       // }
 
         logger.info( "dispatcher action: analysing user's query..." );
 
