@@ -21,6 +21,7 @@ import uk.ac.ebi.intact.application.commons.util.CvContext;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.SearchException;
 
 import java.io.Serializable;
 import java.util.*;
@@ -80,6 +81,10 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
      * The current anchor.
      */
     private String myAnchor;
+
+
+    protected static final Logger LOGGER = Logger.getLogger(EditorConstants.LOGGER);
+
 
     /**
      * The annotations to display.
@@ -1174,29 +1179,47 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
         // Don't care whether annotated object exists or not because we don't
         // need an AC in the annotation table.
 
-        // Create annotations and add them to CV object.
-        for (CommentBean commentBean : getAnnotationsToAdd())
-        {
-            Annotation annot = commentBean.getAnnotation(helper);
-            // Need this to generate the PK for the indirection table.
-            helper.create(annot);
-            myAnnotObject.addAnnotation(annot);
-            changed = true;
-        }
-        // Delete annotations and remove them from CV object.
-        for (CommentBean commentBean : getAnnotationsToDel())
-        {
-            Annotation annot = commentBean.getAnnotation(helper);
-            helper.delete(annot);
-            myAnnotObject.removeAnnotation(annot);
-            changed = true;
-        }
         // Update annotations; update the object with values from the bean.
         // The update of annotated object ensures the sub objects are updated as well.
         for (CommentBean commentBean : getAnnotationsToUpdate())
         {
             Annotation annot = commentBean.getAnnotation(helper);
-            helper.update(annot);
+            if(annotateOtherObject(annot, helper)){
+               LOGGER.info("The annotation " + annot.getAc() + " is shared amongst several other object.");
+                //delAnnotation(commentBean);
+                myAnnotObject.removeAnnotation(annot);
+                Annotation newAnnot = createAnnotation(annot);
+                CommentBean newCb = new CommentBean(newAnnot);
+                addAnnotation(newCb);
+            }else{
+                helper.update(annot);
+            }
+            changed = true;
+        }
+
+        // Delete annotations and remove them from CV object.
+        for (CommentBean commentBean : getAnnotationsToDel())
+        {
+            Annotation annot = commentBean.getAnnotation(helper);
+            if(annotateOtherObject(annot, helper)){
+                LOGGER.info("We are going to unlink, the shared annotation "+ annot.getAc() + " from this annotated object.");
+                myAnnotObject.removeAnnotation(annot);
+            }else{
+                LOGGER.error("Not shared annotation, we delete it.");
+                helper.delete(annot);
+                myAnnotObject.removeAnnotation(annot);
+            }
+            changed = true;
+        }
+
+        // Create annotations and add them to CV object.
+        for (CommentBean commentBean : getAnnotationsToAdd())
+        {
+            Annotation annot = commentBean.getAnnotation(helper);
+            LOGGER.error("Add annot " +  annot.getAnnotationText());
+            // Need this to generate the PK for the indirection table.
+            helper.create(annot);
+            myAnnotObject.addAnnotation(annot);
             changed = true;
         }
         // Xref has a parent_ac column which is not a foreign key. So, the parent needs
@@ -1229,13 +1252,14 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
         if (helper.isPersistent(myAnnotObject)) {
             // If collection sizes are same but modified; force update. Need
             // this OJB update strategy doesn't mark the object as dirty.
-            if ((myAnnotations.size() == initSize) && changed) {
+//            if ((myAnnotations.size() == initSize) && changed) {
+//                LOGGER.error("Force update");
                 helper.forceUpdate(myAnnotObject);
-            }
-            else {
+//            }
+//            else {
                 // Ordinary update
-                helper.update(myAnnotObject);
-            }
+//                helper.update(myAnnotObject);
+//            }
 
             // update the cvObject in the cvContext (application scope)
             if (myAnnotObject instanceof CvObject)
@@ -1270,5 +1294,45 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
             return obj1.equals(obj2);
         }
         return false;
+    }
+
+    /**
+     * It returns true if the annotation given as a paremeter annotated other object false otherwise.
+     * @param annot
+     * @param helper
+     * @return
+     * @throws IntactException
+     */
+    public boolean annotateOtherObject(Annotation annot, IntactHelper helper) throws IntactException {
+
+        if(helper.isPersistent(annot)){
+            String annotationAc = annot.getAc();
+            int num = 0;
+            num = num + helper.getExperimentsByAnnotation(annotationAc).size();
+
+            num = num + helper.getBioSourceByAnnotation(annotationAc).size();
+            num = num + helper.getInteractorByAnnotation(annotationAc).size();
+            num = num + helper.getFeatureByAnnotation(annotationAc).size();
+            num = num + helper.getCvByAnnotation(annotationAc).size();
+
+            if(num > 1){
+                LOGGER.error("Annotation[" + annot.getAc() + "," + annot.getCvTopic().getShortLabel() + "] is " +
+                        "persistant and annotate and annotate an other object");
+                return true;
+            } else {
+                LOGGER.error("Annotation[" + annot.getAc() + "," + annot.getCvTopic().getShortLabel() + "] is " +
+                        "persistant and annotate and do not annotate an other object");
+                return false;
+            }
+
+        }
+
+        LOGGER.error("Annotation[" + annot.getAc() + "," + annot.getCvTopic().getShortLabel() + "] is not " +
+                        "persistant");
+        return false;
+    }
+
+    public Annotation createAnnotation(Annotation annotation){
+        return new Annotation(annotation.getOwner(),annotation.getCvTopic(), annotation.getAnnotationText());
     }
 }
