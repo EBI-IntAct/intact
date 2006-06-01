@@ -431,7 +431,7 @@ public class MainDetailViewBean extends AbstractViewBean {
      * Provides the Interactions for the wrapped Experiment.
      * <p/>
      * NOTE: For Experiments that have a large number of Interactions, this method will provide a page of the total
-     * list, as set by the {@link MainDetailViewBean#setInteractionPage} method. If the Interaction list is small enough
+     * list. If the Interaction list is small enough
      * then the complete list is returned in any case. </p>
      *
      * @return Collection a list of Interactions - either all of them or a chunk (of pre-defined size).
@@ -449,33 +449,6 @@ public class MainDetailViewBean extends AbstractViewBean {
         return result;
     }
 
-    /**
-     * Used for 'large' Experiments. The list of Interactions returned by this viewbean will be reset to the page as
-     * specified by the page parameter. The page size is defined in the {@link Constants} class, and the page number is
-     * bound above by the size of the actual full Interaction list of the large Experiment - that is, the largest index
-     * will be (max size/page size), or (max size/page size) + 1 if it does not divide without remainder.
-     *
-     * @param page The page number to be used.
-     *
-     * @throws IndexOutOfBoundsException thrown is the index is out of range
-     */
-    public void setInteractionPage( int page ) {
-
-        if ( page > maxPages ) {
-            throw new IndexOutOfBoundsException( "interaction page number too large! Got: "
-                                                 + page + " Max: " + maxPages );
-        }
-        if ( page < 1 ) {
-            throw new IndexOutOfBoundsException( "interaction page number < 1!" );
-        }
-
-        //now need to work out the actual start index from the page number itself, as follows:
-        //  index of first Interaction in sublist = (page size)*(page number - 1)
-        int fromIndex = Constants.MAX_PAGE_SIZE * ( page - 1 );
-
-        interactionList = DaoFactory.getExperimentDao().getInteractionsForExpereimentWithAc(obj.getAc(), fromIndex, Constants.MAX_PAGE_SIZE);
-
-    }
 
     /**
      * Can be useful for a JSP to find out how many pages can be displayed for the warpped Experiment.
