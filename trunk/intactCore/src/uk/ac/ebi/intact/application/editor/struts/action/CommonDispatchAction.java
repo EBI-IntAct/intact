@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditVie
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentActionForm;
+import uk.ac.ebi.intact.application.commons.util.DateToolbox;
 import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
 import uk.ac.ebi.intact.business.IntactException;
@@ -473,18 +474,20 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         // Search for the userstamp corresponding to the experiment (name of the curator who has
         // curated the experiment)
         String shortlabel = expForm.getShortLabel();
-        String userstamp="";
-        Query query = getCuratorNameQuery(shortlabel);
-        Iterator userstamps = helper.getIteratorByReportQuery(query);
-        Object[] row = (Object[])userstamps.next();
-        userstamp=(String)row[0];
 
         CommentBean cb1 = expForm.getNewAnnotation();
 
 
+        Experiment experiment = helper.getObjectByLabel(Experiment.class,expForm.getShortLabel());
+        if (experiment == null){
+            LOGGER.error("Experiment is null,  we won't be abble to get the creator.");
+        }
+
+        String creator = experiment.getCreator();
+
         // If the user who is trying to Accept or Review the experiment is the user who has curated the experiment
         // display the error : "You can not Accept or Review your own curated experiment"d
-        if(userName.toUpperCase().trim().equals(userstamp)){
+        if(userName.toUpperCase().trim().equals(creator.toUpperCase())){
             ActionErrors errors = new ActionErrors();
             errors.add("new.annotation", new ActionError("error.curator.accepter"));
             saveErrors(request, errors);
@@ -500,7 +503,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
 
             CvTopic cvTopic;
             String description = new String();
-            String date = year + "-" + getMonth(month) + "-" + day;
+            String date = year + "-" + DateToolbox.getMonth(month) + "-" + day;
 
             if(dispatch.equals(acceptButtonLabel)){ // if the button press is "Accept"
                 description = description + "Accepted " + date + " by " + userName.toUpperCase() + ".";
@@ -529,26 +532,5 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         return mapping.getInputForward();
     }
 
-    
 
-    String getMonth(int monthNumber){
-        String monthName = new String();
-        switch (monthNumber) {
-            case 1:  monthName = "JAN"; break;
-            case 2:  monthName = "FEB"; break;
-            case 3:  monthName = "MAR"; break;
-            case 4:  monthName = "APR"; break;
-            case 5:  monthName = "MAY"; break;
-            case 6:  monthName = "JUN"; break;
-            case 7:  monthName = "JUL"; break;
-            case 8:  monthName = "AUG"; break;
-            case 9:  monthName = "SEP"; break;
-            case 10: monthName = "OCT"; break;
-            case 11: monthName = "NOV"; break;
-            case 12: monthName = "DEC"; break;
-            default: monthName = "Not a month!";break;
-        }
-
-        return monthName;
-    }
 }
