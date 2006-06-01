@@ -10,8 +10,11 @@ import org.apache.ojb.broker.query.Query;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryFactory;
 import org.apache.ojb.broker.query.ReportQueryByCriteria;
+import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
+import uk.ac.ebi.intact.application.editor.util.CvHelper;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.ObjectBridgeQueryFactory;
 
@@ -25,6 +28,8 @@ import java.util.*;
  */
 public class EditorMenuFactory {
 
+
+    protected static final Logger LOGGER = Logger.getLogger(EditorConstants.LOGGER);
     // Those variables are used when a called of the function getMenus(String EditorPageName) from the Class
     // AbstractEditViexBean is done in order to tell for which page this method is called to remove the relevant
     // cvTopic from the annotation section
@@ -152,12 +157,36 @@ public class EditorMenuFactory {
         ourNameToType.put(FEATURE_IDENTIFICATION, CvFeatureIdentification.class);
 
         // Fill the criterias
-        for (Iterator iter = CvInteractorType.getNucleicAcidMIs().iterator();iter.hasNext();) {
-            ourNucleicAcidCriteria.addOrCriteria(buildMICriteria((String) iter.next()));
+        buildProteinAndNucleicAcidCriteria();
+    }
+
+    private static void buildProteinAndNucleicAcidCriteria(){
+        CvHelper cvHelper = null;
+        Collection<String> nucleicAcidMIs = new ArrayList();
+        Collection<String> proteinMIs = new ArrayList();
+        try {
+            cvHelper = new CvHelper(IntactHelperUtil.getDefaultIntactHelper());
+
+            CvInteractorType nucleicAcid = cvHelper.getNucleicAcid();
+            nucleicAcidMIs = cvHelper.getChildrenMiRefs(nucleicAcid, nucleicAcidMIs);
+            nucleicAcidMIs.add(CvInteractorType.NUCLEIC_ACID_MI_REF);
+
+            CvInteractorType protein = cvHelper.getProtein();
+            proteinMIs = cvHelper.getChildrenMiRefs(protein, proteinMIs);
+            proteinMIs.add(CvInteractorType.PROTEIN_MI_REF);
+
+        } catch (IntactException e) {
+            LOGGER.error("Problem trying to load the MI numbers for the CvInteractorType and children of protein " +
+                    "and nucleic acid : ", e);
+            e.printStackTrace();
         }
-        for (Iterator iter = CvInteractorType.getProteinMIs().iterator();iter.hasNext();) {
-            ourProteinCriteria.addOrCriteria(buildMICriteria((String) iter.next()));
+        for (String miRef : nucleicAcidMIs ){//Iterator iter = CvInteractorType.getNucleicAcidMIs().iterator();iter.hasNext();) {
+            ourNucleicAcidCriteria.addOrCriteria(buildMICriteria(miRef));
         }
+        for (String miRef : proteinMIs ){//Iterator iter = CvInteractorType.getProteinMIs().iterator();iter.hasNext();) {
+            ourProteinCriteria.addOrCriteria(buildMICriteria(miRef));
+        }
+
     }
 
     // No instantiation from outside.
@@ -273,12 +302,34 @@ public class EditorMenuFactory {
         Query query = qf.getMenuBuildQuery(targetClass);
 
         Iterator<Object[]> iter = IntactHelperUtil.getDefaultIntactHelper().getIteratorByReportQuery(query);
-        
+
         while (iter.hasNext()) {
             Object[] row = iter.next();
-            menu.add(row[1].toString());
+             menu.add(row[1].toString());
+            LOGGER.error("targetClass is " +  targetClass );
         }
         return menu;
+    }
+
+    private String getMiRef(String ac, Class<CvObject> clazz) throws IntactException {
+
+        IntactHelper helper = IntactHelperUtil.getIntactHelper();
+
+
+        CvObject cvObject;
+
+        try {
+            cvObject = helper.getObjectByAc(clazz, ac);
+        } catch (IntactException e) {
+            throw new IntactException ( "Could not find CvObject for ac : " + ac, e);
+        }
+        Xref identityRef = cvObject.getIdentityXref();
+        if (identityRef != null
+                && identityRef.getCvDatabase().getIdentityXref().getPrimaryId().equals(CvDatabase.PSI_MI_MI_REF)) {
+            return identityRef.getPrimaryId();
+        }
+
+        return null;
     }
 
     /**
