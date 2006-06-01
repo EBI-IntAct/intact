@@ -2,6 +2,7 @@ package uk.ac.ebi.intact.application.search3.searchEngine.lucene;
 
 import org.apache.commons.collections.IterableMap;
 import org.apache.commons.collections.MapIterator;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -409,7 +410,8 @@ public class SearchObjectIndexer {
     private Document addAnnotations( final Document doc, Map annotations ) {
 
         // Map containing all annotations with their topics
-        IterableMap annotMap = (IterableMap) annotations;
+        IterableMap annotMap = new HashedMap();
+        annotMap.putAll( annotations);
         MapIterator it = annotMap.mapIterator();
         // iterate through the map and add the fields to the documents
         while ( it.hasNext() ) {
@@ -442,7 +444,8 @@ public class SearchObjectIndexer {
     private Document addXrefs( final Document doc, Map xrefs ) {
 
         // map containing all xrefs with their database names
-        IterableMap xrefMap = (IterableMap) xrefs;
+        IterableMap xrefMap = new HashedMap();
+        xrefMap.putAll(xrefs);
         MapIterator it = xrefMap.mapIterator();
         // iterate through the map and add the fields to the documents
         while ( it.hasNext() ) {
@@ -475,7 +478,9 @@ public class SearchObjectIndexer {
     private Document addAlias( final Document doc, Map alias ) {
 
         // map containing all alias types with their alias names
-        IterableMap aliasMap = (IterableMap) alias;
+        IterableMap aliasMap = new HashedMap();
+        aliasMap.putAll(alias);
+
         MapIterator it = aliasMap.mapIterator();
         // iterate through the map and add the fields to the documents
         while ( it.hasNext() ) {
