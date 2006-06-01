@@ -1730,11 +1730,12 @@ public class SanityChecker {
         *     Check on Experiment
         */
         List experimentBeans = scn.sch.getBeans( helper, ExperimentBean.class, "EBI-%" );
-        scn.checkReviewed( experimentBeans );
         scn.checkExperiment( experimentBeans );
         scn.checkExperimentsPubmedIds( experimentBeans );
         scn.checkAnnotations( experimentBeans, Experiment.class.getName(), expUsableTopic );
-        scn.experimentNotSuperCurated();
+        //This is now listed in the correctionAssigner
+        //scn.checkReviewed( experimentBeans );
+        //scn.experimentNotSuperCurated();
 
         /*
         *     Check on BioSource
