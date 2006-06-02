@@ -58,6 +58,8 @@ public class MainDetailView  extends AbstractView
             throw new RuntimeException("Page out of bounds: "+getCurrentPage()+" (Item: "+firstResult+" of "+getTotalItems()+")");
         }
 
+        if (totalItems < getItemsPerPage()) firstResult = 0;
+
         // get the interactions to be shown
         List<Interaction> interactions = DaoFactory.getExperimentDao().getInteractionsForExpereimentWithAc(experiment.getAc(), firstResult, maxResults);
 
