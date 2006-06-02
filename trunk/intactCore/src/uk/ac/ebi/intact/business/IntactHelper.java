@@ -6,6 +6,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.business;
 
 import org.apache.log4j.Logger;
+import org.apache.ojb.broker.VirtualProxy;
+import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.Identity;
 import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.VirtualProxy;
@@ -507,6 +509,129 @@ public class IntactHelper implements SearchI, Externalizable {
         }
     }
 
+    public <T> Collection<Experiment> getExperimentsByAnnotation(String annotationAc) throws IntactException {
+        try {
+            Collection<Experiment> experiments = dao.findBySQL(Experiment.class.getName(),
+                                                               "select e.* " +
+                                                               "from ia_exp2annot e2a, ia_annotation a, ia_experiment e " +
+                                                               "where a.ac = e2a.annotation_ac " +
+                                                               "and e.ac = e2a.experiment_ac " +
+                                                               "and a.ac = '" + annotationAc + "'");
+            return experiments;
+        }
+        catch ( SearchException se ){
+            String msg = "intact helper: unable to perform search expereriment by annotation operation.. ";
+            throw new IntactException( msg + "reason: " + se.getMessage(), se );
+        }
+    }
+
+    public <T> Collection<Interactor> getInteractorByAnnotation(String annotationAc) throws IntactException {
+        Collection<Interactor> interactors = new ArrayList();
+        Collection<Interactor> proteins = getInteractor(annotationAc, ProteinImpl.class.getName());
+        interactors.addAll(proteins);
+
+        Collection<Interactor> interactions = getInteractor(annotationAc, InteractionImpl.class.getName());
+        interactors.addAll(interactions);
+
+        return interactors;
+    }
+
+    public Collection <Interactor> getInteractor(String annotationAc, String className) throws IntactException {
+        try {
+        Collection<Interactor> interactors = dao.findBySQL(className,
+                                                           "select i.* " +
+                                                           "from ia_int2annot i2a, ia_annotation a, ia_interactor i " +
+                                                           "where a.ac = i2a.annotation_ac " +
+                                                           "and i.ac = i2a.interactor_ac " +
+                                                           "and a.ac = '" + annotationAc + "' " +
+                                                           "and objclass = '" + className + "'");
+        return interactors;
+        } catch ( SearchException se ){
+            String msg = "intact helper: unable to perform search interactor by annotation operation.. ";
+            throw new IntactException( msg + "reason: " + se.getMessage(), se );
+
+        }
+    }
+
+    public <T> Collection<CvObject> getCvByAnnotation(String annotationAc) throws IntactException {
+        Collection<CvObject> cvObjects = new ArrayList();
+        cvObjects.addAll(getCvObject(annotationAc, CvAliasType.class.getName()));
+        cvObjects.addAll(getCvObject(annotationAc, CvCellCycle.class.getName()));
+        cvObjects.addAll(getCvObject(annotationAc, CvCellType.class.getName()));
+        cvObjects.addAll(getCvObject(annotationAc, CvCompartment.class.getName()));
+        cvObjects.addAll(getCvObject(annotationAc, CvComponentRole.class.getName()));
+        cvObjects.addAll(getCvObject(annotationAc, CvDagObject.class.getName()));
+        cvObjects.addAll(getCvObject(annotationAc, CvDatabase.class.getName()));
+        cvObjects.addAll(getCvObject(annotationAc, CvDevelopmentalStage.class.getName()));
+        cvObjects.addAll(getCvObject(annotationAc, CvEvidenceType.class.getName()));
+        cvObjects.addAll(getCvObject(annotationAc, CvFeatureIdentification.class.getName()));
+        cvObjects.addAll(getCvObject(annotationAc, CvFeatureType.class.getName()));
+        cvObjects.addAll(getCvObject(annotationAc, CvFuzzyType.class.getName()));
+        cvObjects.addAll(getCvObject(annotationAc, CvGoNode.class.getName()));
+        cvObjects.addAll(getCvObject(annotationAc, CvIdentification.class.getName()));
+        cvObjects.addAll(getCvObject(annotationAc, CvInteraction.class.getName()));
+        cvObjects.addAll(getCvObject(annotationAc, CvInteractionType.class.getName()));
+        cvObjects.addAll(getCvObject(annotationAc, CvInteractorType.class.getName()));
+        cvObjects.addAll(getCvObject(annotationAc, CvJournal.class.getName()));
+        cvObjects.addAll(getCvObject(annotationAc, CvModificationType.class.getName()));
+        cvObjects.addAll(getCvObject(annotationAc, CvProductRole.class.getName()));
+        cvObjects.addAll(getCvObject(annotationAc, CvProteinForm.class.getName()));
+        cvObjects.addAll(getCvObject(annotationAc, CvReferenceQualifier.class.getName()));
+        cvObjects.addAll(getCvObject(annotationAc, CvTissue.class.getName()));
+        cvObjects.addAll(getCvObject(annotationAc, CvTopic.class.getName()));
+        cvObjects.addAll(getCvObject(annotationAc, CvXrefQualifier.class.getName()));
+        if(cvObjects.size()==0){
+            System.out.println("size of interactors = 0");
+        }
+        return cvObjects;
+    }
+
+    public Collection<CvObject> getCvObject(String annotationAc, String className) throws IntactException {
+        try{
+            Collection<CvObject> cvs = dao.findBySQL(className,
+                                                     "select cv.* " +
+                                                             "from ia_cvobject2annot cv2a, ia_annotation a, ia_controlledvocab cv " +
+                                                             "where a.ac = cv2a.annotation_ac " +
+                                                             "and cv.ac = cv2a.cvobject_ac " +
+                                                             "and a.ac = '" + annotationAc + "' " +
+                                                             "and cv.objclass = '" + className + "'" );
+            return cvs;
+        }catch ( SearchException se ){
+            String msg = "intact helper: unable to perform search cv by annotation operation.. ";
+            throw new IntactException( msg + "reason: " + se.getMessage(), se );
+        }
+    }
+
+    public <T> Collection<BioSource> getBioSourceByAnnotation(String annotationAc) throws IntactException {
+        try{
+            Collection<BioSource> bioSources = dao.findBySQL(BioSource.class.getName(),
+                                                             "select bs.* " +
+                                                                     "from ia_biosource2annot bs2a, ia_annotation a, ia_biosource bs " +
+                                                                     "where a.ac = bs2a.annotation_ac " +
+                                                                     "and bs.ac = bs2a.biosource_ac " +
+                                                                     "and a.ac = '" + annotationAc + "'");
+            return bioSources;
+        } catch ( SearchException se ){
+            String msg = "intact helper: unable to perform search bioSource by annotation operation.. ";
+            throw new IntactException( msg + "reason: " + se.getMessage(), se );
+        }
+    }
+
+    public <T> Collection<Feature> getFeatureByAnnotation(String annotationAc) throws IntactException {
+        try{
+            Collection<Feature> features = dao.findBySQL(BioSource.class.getName(),
+                                                         "select f.* " +
+                                                                 "from ia_feature2annot f2a, ia_annotation a, ia_feature f " +
+                                                                 "where a.ac = f2a.annotation_ac " +
+                                                                 "and f.ac = f2a.feature_ac " +
+                                                                 "and a.ac = '" + annotationAc + "'");
+            return features;
+        }catch ( SearchException se ){
+            String msg = "intact helper: unable to perform search feature by annotation operation.. ";
+            throw new IntactException( msg + "reason: " + se.getMessage(), se );
+        }
+    }
+
     /**
      * Searches for objects by classname and Xref (primaryId).
      *
@@ -639,9 +764,57 @@ public class IntactHelper implements SearchI, Externalizable {
         return (T) getObjectByQuery( QueryFactory.newQuery( clazz, crit ) );
     }
 
-    /**
-     * Return an Object by classname and shortLabel. For efficiency, classes which are subclasses of CvObject are cached
-     * if the label is unique.
+    public Collection getObjectByAnnotation(String annotationAc) throws SearchException {
+
+        //An annotation can annotate : an Experiment, a BioSource, an Interactor (Polymer, Interaction...), a Feature,
+        // or a ControlledVocab.
+
+        Collection annotatedObjects = new ArrayList();
+
+        //Experiment
+        Collection experiments = dao.findBySQL(Experiment.class.getName(),"select * " +
+                "from ia_experiment e, ia_exp2annot e2a " +
+                "where e2a.experiment_ac = e.ac " +
+                "and e2a.annotation_ac = '" + annotationAc + "'");
+        if(!experiments.isEmpty()) annotatedObjects.addAll(experiments);
+
+        //BioSource
+        Collection bioSources = dao.findBySQL(BioSource.class.getName(),"select * " +
+                "from ia_biosource b, ia_biosource2annot b2a " +
+                "where b2a.biosource_ac = b.ac " +
+                "and b2a.annotation_ac = '" + annotationAc + "'");
+        if(!bioSources.isEmpty()) annotatedObjects.addAll(bioSources);
+
+        //Interactor
+        Collection interactors = dao.findBySQL(Interactor.class.getName(),"select * " +
+                "from ia_interactor i, ia_int2annot i2a " +
+                "where i2a.interactor_ac = i.ac " +
+                "and i2a.annotation_ac = '" + annotationAc + "'");
+        if(!interactors.isEmpty()) annotatedObjects.addAll(interactors);
+
+        //CvObject
+        Collection cvs = dao.findBySQL(CvObject.class.getName(),"select * " +
+                "from ia_controlledvocab cv, ia_cvobject2annot cv2a " +
+                "where cv2a.interactor_ac = cv.ac " +
+                "and cv2a.annotation_ac = '" + annotationAc + "'");
+        if(!cvs.isEmpty()) annotatedObjects.addAll(cvs);
+
+        //Feature
+        Collection features = dao.findBySQL(Feature.class.getName(),"select * " +
+                "from ia_feature f, ia_feature2annot f2a " +
+                "where f2a.feature_ac = f.ac " +
+                "and f2a.annotation_ac = '" + annotationAc + "'");
+        if(!features.isEmpty()) annotatedObjects.addAll(features);
+
+        return annotatedObjects;
+
+    }
+
+
+    /** Return an Object by classname and shortLabel.
+     *  For efficiency, classes which are subclasses of CvObject are cached
+     *  if the label is unique.
+     *
      */
     public <T> T getObjectByLabel( Class<T> clazz,
                                     String label ) throws IntactException {
