@@ -1,0 +1,14 @@
+VERSION 1.2.0
+
+REQUEST
+* add new tables:
+      ia_publication                : Representation of a publication
+
+      ia_pub2annot                  : Indirection table that allow a publication to have annotations
+
+      ia_key_assigner_request       : Log table for Key Assigner request
+
+TECHNICAL CHANGES
+    * Added 3 new tables
+    * 1 new column in IA_EXPERIMENT / IA_EXPERIMENT_AUDIT
+    * Update of audit trigger on IA_Experiment

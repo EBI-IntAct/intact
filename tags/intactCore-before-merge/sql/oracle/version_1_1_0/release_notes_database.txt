@@ -1,0 +1,32 @@
+DATABASE CHANGES
+
+CHANGE REQUEST 1311656
+Date: 7 november 2005
+By  : Cor Lieftink
+
+CHANGES
+
+1) ADD COLUMN CREATED_USER
+a) Adding column created_user to all tables which has aN audit-table. The audit-table get the column as well. Reason: info about original creator is now lost. For example curators don't want this information to get lost, solely because someone put an "accepted" label on it.
+b) also added a new table IA_DB_INFO for meta-data about the database-schema. Inserted the key:value pair: schema_version:1.1.0.
+
+
+2) UPDATE NEW COLUMN CREATED_USER
+a) The value of userstamp in the same record is used if there are no records for this record in the audittable. 
+
+b) The value of userstamp in the earliest record in the audittable is used in case there is one or more records in the audittable. For most tables the earliest record is determined looking at the field updated. This is because mostly this field in the audittable was set to sysdate by the triggers, or the field was copied from the field updated from the main-table, which had been updated in a previous change. 
+
+The earliest record is determined based on the field timestamp in case of the following tables: IA_BIOSOURCE, IA_FEATURE, IA_FEATURE2ANNOT and IA_RANGE. In these cases the field updated cannot be used because the trigger gives in the audit-table the field 'updated'  the old value of the same field in the main-table, in stead of sysdate. Furthermore in the main-table the field 'updated' was not updated in previous changes. However in the main-table the field 'timestamp' was updated and with the next update op this record, this value was copied as old-value into into the field timestamp of the audittable. Therefore in the case of this three tables, the field 'timestamp' contains the history information.
+
+
+3) ADJUSTED TRIGGERS 
+a) For the tables IA_BIOSOURCE, IA_FEATURE, IA_FEATURE2ANNOT and IA_RANGE , the field 'updated' gets now also sysdate in case of update.
+b) In the audittables, the field 'updated' now gets always old values in stead of sysdate (a few tables like ia_biosource already got old-value).
+c) Added filling the field created_user.
+
+4) DROP COLUMN timestamp in main and audittables
+
+
+
+
+
