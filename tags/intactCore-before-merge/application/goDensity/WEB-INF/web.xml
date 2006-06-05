@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE web-app
+  PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+  "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+
+<web-app>
+
+    <description>
+        Go density application
+    </description>
+
+    <!-- =================================================================== -->
+
+    <!-- Action Servlet Configuration for Struts -->
+    <servlet>
+        <servlet-name>action</servlet-name>
+        <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
+
+        <init-param>
+            <param-name>config</param-name>
+            <param-value>/WEB-INF/struts-config.xml</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>debug</param-name>
+            <param-value>2</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>detail</param-name>
+            <param-value>2</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>validate</param-name>
+            <param-value>true</param-value>
+        </init-param>
+
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
+          <servlet-name>init</servlet-name>
+          <servlet-class>uk.ac.ebi.intact.application.goDensity.struts.business.InitFastGoDag</servlet-class>
+          <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
+          <servlet-name>densityServlet</servlet-name>
+          <servlet-class>uk.ac.ebi.intact.application.goDensity.business.image.DensityImageServlet</servlet-class>
+    </servlet>
+
+    <!-- =================================================================== -->
+
+    <servlet-mapping>
+        <servlet-name>action</servlet-name>
+        <url-pattern>*.do</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+          <servlet-name>init</servlet-name>
+          <url-pattern>/init</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+          <servlet-name>densityServlet</servlet-name>
+          <url-pattern>/densityServlet</url-pattern>
+    </servlet-mapping>
+
+
+
+    <!-- =================================================================== -->
+
+</web-app>

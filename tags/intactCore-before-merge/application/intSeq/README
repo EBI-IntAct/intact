@@ -1,0 +1,109 @@
+$Id$
+**********************************************************************
+README for intSeq (intactCore/application/intSeq)
+**********************************************************************
+
+DIRECTORIES:
+/ (root)        : JSP and css files.
+WEB-INF/lib     : Library files for web. All the files in this location are
+                  included in the WAR file.
+WEB-INF/classes : search specific (non Intact core) class files.
+WEB-INF/tld     : The tag libraries.
+WEB-INF/config  : Configuration/Property files for the application.
+dist/           : Where the WAR file is created.
+
+INSTALLATION
+    no need of a database installation
+
+    ------------------------- INTSEQ SPECIFIC COMMANDS AND ACTIONS --------------------------
+
+BIOLOGICAL PROGRAMS:
+
+       -The command line definition of the FASTA program
+       -The URL definition of the WGETZ program (to run SRS)
+
+    must be set up in a properties file of the application in a right way
+    (in the web.xml file for the moment, but it has to be modified later)
+
+FILES NEEDED
+
+    The proteinFastaDownload.fasta file needs to be created
+    This file stores all protein sequences of IntAct in a Fasta format
+    + formatdb is processed so the FASTA program can use it as an input.
+
+    -> the ProteinFastaDownload utility tool (util directory) has to be launched.
+        In this tool, you must specify:
+            - your path where the proteinFastaDownload.fasta file will be stored
+            - the formatdb command line available
+        in the two provided private attributes
+
+DIRECTORIES NEEDED BY BIOLOGICAL PROGRAMS
+
+        These program are expected to create output files. We need to create directories
+        to store them for a while.
+        For the moment, these files have to be defined in the SeqIdConstants class
+        in the Struts/framework directory (src...)
+
+        For the FASTA program:
+            - one directory to store the input files, which contain the query protein sequence.
+                    (for the moment: /ebi/sp/misc1/tmp/shuet/intactblast/fasta_files/)
+            - one directory to store the output files, which contain alignment results and
+              will be parsed afterwards.
+                    (for the moment: /ebi/sp/misc1/tmp/shuet/intactblast/blast_files/)
+            - one directory specified in the ProteinFastaDownload tool where the formatted
+              IntAct FASTA file is.
+
+       For the SRS process:
+            - one directory to store the SRS output files where AC and Description
+              to display it in the SRSSearchResults.jsp page
+                    (for the moment: /ebi/sp/misc1/tmp/shuet/intactsrs/wgetz_files/list_acc/)
+            - one directory to store the SRS output files where the protein sequence are stored
+              in a FASTA format (in order to launch the Similarity Search afterwards)
+                    (for the moment: /ebi/sp/misc1/tmp/shuet/intactsrs/wgetz_files/seq_fasta/)
+
+------------------------------------------------------------------------------------------------------
+
+
+    ------------------------- ANT COMMANDS --------------------------
+
+
+BUILD
+    ant war
+        prepares a WAR file to be deployed in a WEB container. The WAR file is
+        created in the dist/ directory.
+
+OTHER USEFUL COMMANDS
+    ant deploy (Tomcat specific)
+        deploys the WAR file in the dist/ location to the CATALINA_HOME/webapps. The
+        environment variable CATALINA_HOME must be set for this command to work
+        correctly.
+
+    ant undeploy (Tomcat specific)
+        reverses the effects of 'ant deploy' command. In addition to that, this
+        command also stops the WEB server (Tomcat) if it is running. As with
+        deploy command, the environment variable CATALINA_HOME must be set for
+        this command to work correctly. An error message, displayed when trying
+        to shutdown the WEB server if it is not running, can be safely ignored. In
+        addition to removing the WAR file, this command also removes the
+        expanded directory as well. For example, CATALINA_HOME/webapps/search
+        directory is removed in addition to CATALINA_HOME/webapps/search.war file.
+
+    ant undeploy war deploy (Tomcat specific)
+        runs all three targets in the specified order. Undeploys the last deployment,
+        creates a new war file and deploy it again.
+
+------------------------------------------------------------------------------------------------------
+
+
+NOTES
+    The WAR file is being built using jar and class file from various locations.
+    Given below are locations where it looks for these files:
+        / (root)        - jsp and css files.
+        WEB-INF/        - web.xml, struts-config.xml files and tld libraries.
+        WEB-INF/lib     - all the jar files in this location.
+        ../../dist/     - intact-core.jar file.
+        ../../lib       - application common jar files (only a subset).
+        WEB-INF/classes - intSeq class files.
+
+COMMENTS
+    Send any comments/feedback to shuet@ebi.ac.uk

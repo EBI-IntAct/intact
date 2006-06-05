@@ -1,0 +1,35 @@
+CREATE OR REPLACE TRIGGER trgInt2Annot_propagate 	
+	AFTER INSERT OR UPDATE OR DELETE
+	ON IA_INT2ANNOT
+	FOR EACH ROW
+
+DECLARE
+
+BEGIN
+
+  IF INSERTING THEN
+    UPDATE IA_INTERACTOR
+    SET UPDATED = SYSDATE
+    WHERE AC= :NEW.interactor_ac;
+  ELSIF UPDATING THEN
+    UPDATE IA_INTERACTOR
+    SET UPDATED = SYSDATE
+    WHERE AC= :OLD.interactor_ac
+    OR 	  AC =:NEW.interactor_ac;
+  ELSIF DELETING THEN
+	   BEGIN
+      	UPDATE IA_INTERACTOR
+      	SET UPDATED = SYSDATE
+      	WHERE AC= :OLD.interactor_ac;
+		EXCEPTION
+			WHEN OTHERS THEN
+			  IF SQLCODE = -04091 /* because of cascade delete in IA_INTERACTOR   */
+			  THEN NULL;
+			  ELSE
+			  	 RAISE;
+			  END IF;
+ 		END;
+  END IF ;
+
+END;
+/

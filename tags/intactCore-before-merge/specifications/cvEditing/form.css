@@ -1,0 +1,13 @@
+body { margin:40px; background-color:#ccccff; }
+h1 { font-family:Verdana,Arial,Helvetica,sans-serif; font-size:24px; color:#000080; }
+p,td { font-family:Verdana,Arial,Helvetica,sans-serif; font-size:13px; color:#000080; }
+ol,ul,li { font-family:Verdana,Arial,Helvetica,sans-serif; font-size:14px; line-height:20px; color:#000080; }
+.kl { font-size:10px; }
+.tx { font-size:16px; line-height:20px; }
+.hg { background-color: #ccccff; }
+.hbl { background-color: #99CCff; }
+.bl { background-color: #6699FF; }
+.gr { background-color: #81AFD5; }
+a:link { color:#0000ff; }
+a:visited { color:#000080; }
+a:active { color:#00ff00; }
