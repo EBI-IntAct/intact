@@ -5,7 +5,7 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  *
@@ -20,11 +20,11 @@ public interface IntactObject {
 
     public void setAc(String ac);
 
-    public Timestamp getCreated();
+    public Date getCreated();
 
     public void setCreated(java.util.Date created);
 
-    public Timestamp getUpdated();
+    public Date getUpdated();
 
     public void setUpdated(java.util.Date updated);
 

@@ -5,6 +5,7 @@ import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.*;
 
@@ -20,54 +21,6 @@ public class ProteinUtils {
      * ProteinUtils should not be instantiated.
      */
     private ProteinUtils() {
-    }
-
-    /**
-     * Returns a collection of binary interactions in which both proteins are involved.
-     *
-     * @param firstInteractor  the first protein, must no be null
-     * @param secondInteractor the second protein, must no be null
-     *
-     * @return a collection of binary interactions in which both proteins are involved
-     */
-    public static Collection getBinaryInteractions( final Interactor firstInteractor,
-                                                    final Interactor secondInteractor ) {
-
-        // getting all Interactions from firstProtein
-        final Collection interactor1Interactions = getNnaryInteractions( firstInteractor );
-        // getting all Interactions from secondProtein
-        final Collection interactor2Interactions = getNnaryInteractions( secondInteractor );
-        // get only these Interactions in which both are involved
-        final Collection intersectionInteractions = CollectionUtils.intersection( interactor1Interactions,
-                                                                                  interactor2Interactions );
-
-        final Collection result = new HashSet();
-
-        // now check for every interaction if it's a binary Interaction
-        for ( Iterator iterator = intersectionInteractions.iterator(); iterator.hasNext(); ) {
-
-            final Interaction anInteraction = (Interaction) iterator.next();
-            final Collection someComponents = anInteraction.getComponents();
-
-            if ( someComponents.size() <= 2 ) {
-                int stoichiometry = 0;
-
-                for ( Iterator iterator1 = someComponents.iterator(); iterator1.hasNext(); ) {
-                    final Component aComponent = (Component) iterator1.next();
-                    stoichiometry = stoichiometry + (int) aComponent.getStoichiometry();
-                }
-
-                if ( stoichiometry == 2 ) {
-                    result.add( anInteraction );
-                }
-            }
-        } // for
-
-        if ( result.isEmpty() ) {
-            // we found no interactions, so give an empty set back
-            return Collections.EMPTY_SET;
-        }
-        return result;
     }
 
     /**
@@ -155,6 +108,7 @@ public class ProteinUtils {
         {
             someInteractions.add(component.getInteraction());
         }
+
         return someInteractions;
     }
 

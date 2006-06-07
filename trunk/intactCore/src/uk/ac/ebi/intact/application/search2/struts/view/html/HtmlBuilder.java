@@ -1103,7 +1103,7 @@ public class HtmlBuilder {
         endTable(ex);
     }
 
-    public static final int MAX_CHUNK_IN_INDEX = 20;
+    public static final int MAX_CHUNK_IN_INDEX = 30;
 
     /**
      * Display the chunk index.

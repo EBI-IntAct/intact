@@ -76,6 +76,8 @@ UNION
     WHERE CV.ac = A.parent_ac
 );
 
+CREATE INDEX i_search_main ON ia_search(value,objclass);
+
 -- Rights management.
 GRANT select ON ia_search to INTACT_SELECT ;
 GRANT select,insert,update,delete ON ia_search to INTACT_CURATOR ;

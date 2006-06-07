@@ -5,6 +5,8 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.Entity;
+import javax.persistence.DiscriminatorValue;
 
 
 /**
@@ -13,6 +15,8 @@ package uk.ac.ebi.intact.model;
  * @author hhe
  * @version $Id$
  */
+@Entity
+@DiscriminatorValue("uk.ac.ebi.intact.model.CvProteinForm")
 public class CvProteinForm extends CvObject {
 
     /**
@@ -29,7 +33,7 @@ public class CvProteinForm extends CvObject {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private CvProteinForm() {
+    public CvProteinForm() {
         //super call sets creation time data
         super();
     }

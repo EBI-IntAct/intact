@@ -66,13 +66,24 @@
         <pathelement path="${root.lib.dir}/db-ojb-1.0.rc6.jar"/>
         <pathelement path="${root.lib.dir}/junit.jar"/>
         <pathelement path="${root.lib.dir}/servlet.jar"/>
-        <pathelement path="${root.lib.dir}/log4j-1.2.8.jar"/>
+        <pathelement path="${root.lib.dir}/log4j-1.2.11.jar"/>
         <pathelement path="${root.lib.dir}/commons-dbcp-1.1.jar"/>
+        <pathelement path="${root.lib.dir}/commons-logging-1.0.4.jar"/>
 
         <!-- NB these probably need upgrading from the intact lib directory.. -->
         <pathelement path="${intact.app.dir}/lib/struts.jar"/>
         <pathelement path="$${root.lib.dir}/commons-collections-3.0.jar"/>
         <pathelement path="${intact.app.dir}/lib/commons-lang.jar"/>
+
+        <!-- hibernate -->
+        <fileset dir="${root.lib.dir}/hibernate">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <!-- hibernate -->
+        <fileset dir="${root.lib.dir}/hibernate">
+            <include name="**/*.jar"/>
+        </fileset>
 
     </path>
 
@@ -274,6 +285,7 @@
                 <include name="pages/**"/>
                 <include name="layouts/**"/>
                 <include name="${last.modified.file}"/>
+                <exclude name="hibernate.cfg.xml"/>
             </fileset>
 
 
@@ -294,11 +306,17 @@
             <!-- Include common jar files from intact core. -->
             <lib dir="${root.lib.dir}">
                 <include name="db-ojb-1.0.rc6.jar"/>
-                <include name="log4j-1.2.8.jar"/>
+                <include name="log4j-1.2.11.jar"/>
                 <include name="${db}"/>
                 <include name="commons-pool-1.1.jar"/>
                 <include name="commons-dbcp-1.1.jar"/>
+                <include name="commons-logging-1.0.4.jar"/>
+                <include name="commons-collections-3.0.jar"/>
             </lib>
+
+            <!-- hibernate -->
+            <lib dir="${root.lib.dir}/hibernate" />
+            <lib dir="${root.lib.dir}/hibernate/transitive-deps"/>
 
             <!-- mine specific classes -->
             <classes dir="${dest.dir}"/>

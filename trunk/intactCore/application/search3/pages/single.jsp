@@ -16,9 +16,9 @@ in the root directory of this distribution.
 <%@ page import="uk.ac.ebi.intact.application.search3.struts.framework.util.SearchConstants,
                  uk.ac.ebi.intact.application.search3.struts.view.beans.SingleViewBean,
                  java.util.Iterator,
-                 uk.ac.ebi.intact.model.Annotation,
                  uk.ac.ebi.intact.model.Xref"
     %>
+<%@ page import="uk.ac.ebi.intact.application.search3.struts.util.SearchConstants"%>
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>

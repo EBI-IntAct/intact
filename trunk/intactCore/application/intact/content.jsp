@@ -104,7 +104,7 @@
     the <a href="http://sf.net/projects/intact/">IntAct group page</a>,
     the <a href="http://intact.sourceforge.net">IntAct home page</a>, or <a
         href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/intact/intactCore/">browse</a>
-    the <a href="http://sourceforge.net/cvs/?group_id=62732">CVS repository</a>.
+    the <a href="http://sourceforge.net/svn/?group_id=62732">SVN repository</a>.
     <p>Additional software developed within the IntAct project: </p>
     <ul>
         <li><a href="http://cbi.labri.fr/eng/proviz.htm ">ProViz</a> graph visualisation system.</li>
@@ -217,7 +217,7 @@ The following mailing lists have been set up:
 
     <li class="greenboldsmalllist">
                             <span class="text">
-                                ProViz is a tool for the visualization of protein–protein interaction networks,
+                                ProViz is a tool for the visualization of proteinï¿½protein interaction networks,
                                 developed by the IntAct European project. It provides facilities for navigating in large
                                 graphs and exploring biologically relevant features, and adopts emerging standards such
                                 as GO and PSI-MI.<br>

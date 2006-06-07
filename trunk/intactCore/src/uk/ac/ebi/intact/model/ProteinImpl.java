@@ -5,6 +5,8 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.Entity;
+import javax.persistence.DiscriminatorValue;
 
 
 /**
@@ -15,6 +17,8 @@ package uk.ac.ebi.intact.model;
  * @author hhe
  * @version $Id$
  */
+@Entity
+@DiscriminatorValue("uk.ac.ebi.intact.model.ProteinImpl")
 public class ProteinImpl extends PolymerImpl implements Protein, Editable {
 
     /**

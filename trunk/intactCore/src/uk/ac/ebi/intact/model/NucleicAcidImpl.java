@@ -1,16 +1,21 @@
 /*
 Copyright (c) 2002-2005 The European Bioinformatics Institute, and others.
-All rights reserved. Please see the file LICENSE 
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
 /**
  * An implementation of nucleic acid sequence.
- * 
+ *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
+@Entity
+@DiscriminatorValue("uk.ac.ebi.intact.model.NucleicAcidImpl")
 public class NucleicAcidImpl extends PolymerImpl implements NucleicAcid, Editable {
 
     /**
@@ -20,7 +25,7 @@ public class NucleicAcidImpl extends PolymerImpl implements NucleicAcid, Editabl
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private NucleicAcidImpl() {}
+    public NucleicAcidImpl() {}
 
     /**
      * A valid NucleicAcid must have at least an onwer, a biological source, a

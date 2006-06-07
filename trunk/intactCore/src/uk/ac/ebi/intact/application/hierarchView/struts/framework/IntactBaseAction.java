@@ -11,6 +11,7 @@ import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.commons.search.CriteriaBean;
 import uk.ac.ebi.intact.application.commons.search.SearchHelper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
+import uk.ac.ebi.intact.application.commons.search.SearchClass;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
@@ -23,6 +24,7 @@ import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredExcepti
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.model.InteractorImpl;
 import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
@@ -581,13 +583,13 @@ public abstract class IntactBaseAction extends Action {
         Collection results;
 
         //first try search string 'as is' - some DBs allow mixed case....
-        results = searchHelper.doLookup( "Interactor", queryString, user );
+        results = searchHelper.doLookup( SearchClass.INTERACTOR, queryString, user );
 
         if ( results.isEmpty() ) {
             //now try all lower case....
             String lowerCaseValue = queryString.toLowerCase();
             results = searchHelper
-                    .doLookup( "Interactor", lowerCaseValue, user );
+                    .doLookup( SearchClass.INTERACTOR, lowerCaseValue, user );
             if ( results.isEmpty() ) {
                 //finished all current options, and still nothing - return a
                 // failure

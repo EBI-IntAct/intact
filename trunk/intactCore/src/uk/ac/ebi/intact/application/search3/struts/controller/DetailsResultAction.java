@@ -8,6 +8,8 @@ package uk.ac.ebi.intact.application.search3.struts.controller;
 
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.MainDetailViewBean;
+import uk.ac.ebi.intact.application.search3.struts.view.beans.MainDetailView;
+import uk.ac.ebi.intact.application.commons.search.SearchClass;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
 
@@ -40,33 +42,8 @@ public class DetailsResultAction extends AbstractResultAction {
      *
      * @return String the forward code for the parent execute method to return.
      */
+    @Override
     protected String processResults( HttpServletRequest request, String helpLink ) {
-
-        // Session to access various session objects. This will create
-        //a new session if one does not exist.
-        HttpSession session = super.getSession( request );
-
-        //first check for and process a tabbed page request - ROUGHLY....
-        //get the ViewBean (it already should contain the Experiment)
-        //set the index of the Interaction page to that given in the request
-        //send back to detail.jsp.
-        String selectedPage = request.getParameter( "selectedChunk" );
-        if ( ( selectedPage != null ) && ( !selectedPage.equals( "" ) ) ) {
-
-            logger.debug( "doing next page request..next page is " + selectedPage );
-            //got a request for a tabbed page from a detail view -
-            //so use the request info on the specified view bean to change the
-            //Interaction list to be viewed, and go back to the detail JSP afterwards...
-
-            MainDetailViewBean bean = (MainDetailViewBean) session.getAttribute( SearchConstants.LARGE_EXPERIMENT_BEAN );
-            if ( bean != null ) {
-                bean.setInteractionPage( Integer.parseInt( selectedPage ) );
-                logger.debug( "bean index set OK" );
-                return SearchConstants.FORWARD_DETAIL_PAGE;
-            }
-            //something wrong here - no viewbean present to modify...
-            return SearchConstants.FORWARD_FAILURE;
-        }
 
         //new info to process, so get the search results from the request
         Collection results = (Collection) request.getAttribute( SearchConstants.SEARCH_RESULTS );
@@ -84,37 +61,38 @@ public class DetailsResultAction extends AbstractResultAction {
         //regardless of the result size, just build a viewbean for each result and put into
         //a Collection for use by the JSP - but first check we have the correct type for this
         //Action to process..
-        Class resultType = results.iterator().next().getClass();
+        Class<?> resultType = results.iterator().next().getClass();
 
-        Collection experiments = null;
+        Collection<Experiment> experiments = null;
         Interaction interactionResult = null;   //used to tell the viewbean what needs displaying
 
         if ( ( Interaction.class.isAssignableFrom( resultType ) ) ) {
             interactionResult = (Interaction) results.iterator().next();
+
             experiments = interactionResult.getExperiments();
 
         } else if ( Experiment.class.isAssignableFrom( resultType ) ) {
             experiments = results;  //got Experiments in the first place
         }
 
-        List beanList;
-        if ( experiments != null ) {
-            beanList = new ArrayList();
-            for ( Iterator it = experiments.iterator(); it.hasNext(); ) {
-                MainDetailViewBean bean = new MainDetailViewBean( (Experiment) it.next(), helpLink,
-                                                                  searchURL, request.getContextPath() );
-                if ( interactionResult != null ) {
-                    bean.setWrappedInteraction( interactionResult );   //tell bean display info
-                }
-                beanList.add( bean );
-            }
-            logger.info( "DetailAction: Collection of " + beanList.iterator().next().getClass() +
-                         " created" );
+        if ( experiments != null && !experiments.isEmpty()) {
 
-            request.setAttribute( SearchConstants.VIEW_BEAN_LIST, beanList );
-            //send to the detail view JSP
+            if (experiments.size() > 1)
+            {
+                 logger.warn( "DetailAction: only the first experiment will be shown." );
+             }
+
+            Experiment experiment = experiments.iterator().next();
+            MainDetailView view = new MainDetailView(request, experiment, helpLink, searchURL);
+
+            // We store the MainDetailView in the request, and it will be accessed from the jsp page
+            request.setAttribute( SearchConstants.VIEW_BEAN, view );
+            request.getParameterMap().put("searchClass", SearchClass.EXPERIMENT.getShortName());
+
+             //send to the detail view JSP
             logger.info( "detailsAction: forwarding to 'details' JSP.." );
             return SearchConstants.FORWARD_DETAIL_PAGE;
+
         } else {
             //something is wrong here - forward to error page 
             return SearchConstants.FORWARD_FAILURE;

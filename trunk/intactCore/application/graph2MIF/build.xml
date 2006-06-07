@@ -31,7 +31,7 @@
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
 
-    <!-- The jdbc properties. -->
+     <!-- The jdbc properties. -->
     <property file="${intact.root}/config/jdbc.properties"/>
 
     <!-- The logging configuration -->
@@ -85,9 +85,9 @@
         <!-- Common jar files. -->
         <pathelement path="${root.lib.dir}/db-ojb-1.0.rc6.jar"/>
         <pathelement path="${root.lib.dir}/commons-dbcp-1.1.jar"/>
-        <pathelement path="${root.lib.dir}/log4j-1.2.8.jar"/>
+        <pathelement path="${root.lib.dir}/log4j-1.2.11.jar"/>
         <pathelement path="${root.lib.dir}/servlet.jar"/>
-        <pathelement path="${root.lib.dir}/commons-logging.jar"/>
+        <pathelement path="${root.lib.dir}/commons-logging-1.0.4.jar"/>
         <pathelement path="${root.lib.dir}/jaxrpc-api.jar"/>
         <pathelement path="${root.lib.dir}/jaxrpc-impl.jar"/>
         <pathelement path="${root.lib.dir}/commons-lang-2.0.jar"/>
@@ -96,6 +96,18 @@
         <pathelement path="${root.lib.dir}/commons-collections-3.0.jar"/>
         <pathelement path="${root.lib.dir}/xercesImpl.jar"/>
         <pathelement path="${root.lib.dir}/xml-apis.jar"/>
+
+        <pathelement path="${root.lib.dir}/commons-logging-1.0.4.jar"/>
+
+        <!-- hibernate -->
+        <fileset dir="${root.lib.dir}/hibernate">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <!-- hibernate -->
+        <fileset dir="${root.lib.dir}/hibernate">
+            <include name="**/*.jar"/>
+        </fileset>
     </path>
 
     <!-- =================================================================== -->
@@ -185,6 +197,7 @@
 
     <!-- Copy configuration files. -->
     <target name="cp-config-files">
+
         <!-- Copy repository files -->
         <copy todir="${dest.dir}/config">
             <fileset dir="${root.config.dir}">
@@ -212,7 +225,7 @@
         <!-- Only compile graph2MIF sources only. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
             debug="on" source="1.5"
-            includes="**/application/graph2MIF/**"
+            includes="**/graph2MIF/**"
             excludes="**/graph2MIF/client/**">
             <classpath refid="project.class.path"/>
         </javac>
@@ -288,12 +301,21 @@
                 <include name="commons-collections-3.0.jar"/>
                 <include name="db-ojb-1.0.rc6.jar"/>
                 <include name="commons-dbcp-1.1.jar"/>
-                <include name="log4j-1.2.8.jar"/>
+                <include name="log4j-1.2.11.jar"/>
                 <include name="xercesImpl.jar"/>
                 <include name="xml-apis.jar"/>
                 <include name="${db}"/>
             </fileset>
+
+            <!-- hibernate -->
+            <fileset dir="${root.lib.dir}/hibernate">
+                <include name="*.jar"/>
+            </fileset>
+            <fileset dir="${root.lib.dir}/hibernate/transitive-deps">
+                <include name="*.jar"/>
+            </fileset>
         </copy>
+
         <!-- Generate server-config.wsdd from Graph2MIFWS.wsdd -->
         <java classname="org.apache.axis.utils.Admin" fork="yes">
             <arg line="server"/>
@@ -308,6 +330,12 @@
 
         <!-- Delete the war file or else it will keep the old one -->
         <delete file="${dist.dir}/${war.file}" quiet="true"/>
+
+        <delete failonerror="false">
+            <fileset dir="${dest.dir}/uk/ac/ebi/intact/model"/>
+            <fileset dir="${dest.dir}/uk/ac/ebi/intact/application/commons"/>
+            <fileset dir="${dest.dir}/uk/ac/ebi/intact/application/search3"/>
+        </delete>
 
         <!-- Generate Graph2MIF topics -->
         <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">

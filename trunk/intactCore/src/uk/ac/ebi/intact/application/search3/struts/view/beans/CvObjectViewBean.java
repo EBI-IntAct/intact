@@ -7,6 +7,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
 import uk.ac.ebi.intact.application.commons.util.AnnotationFilter;
+import uk.ac.ebi.intact.application.commons.search.SearchClass;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.CvObject;
@@ -71,6 +72,7 @@ public class CvObjectViewBean extends AbstractViewBean {
     /**
      * not used ! just here to satified the AbstractViewBean.
      */
+    @Override
     public void initHighlightMap() {
 
     }
@@ -81,6 +83,7 @@ public class CvObjectViewBean extends AbstractViewBean {
      *
      * @return a string representation of the help section
      */
+    @Override
     public String getHelpSection() {
         return "protein.single.view";
     }
@@ -149,15 +152,15 @@ public class CvObjectViewBean extends AbstractViewBean {
      *
      * @return Collection of all Anotations wrapped in a SingleViewBean
      */
-    public Collection getAnnotations() {
+    public Collection<AnnotationViewBean> getAnnotations() {
 
         // wennn anatations etwas mit if ((label.equals("remark")) || (label.equals("uniprot-dr-export"))) {
         //   return;
-        final ArrayList result = new ArrayList();
-        Collection someAnnotations = this.obj.getAnnotations();
+        final ArrayList<AnnotationViewBean> result = new ArrayList<AnnotationViewBean>();
+        Collection<Annotation> someAnnotations = this.obj.getAnnotations();
 
-        for ( Iterator iterator = someAnnotations.iterator(); iterator.hasNext(); ) {
-            Annotation anAnnotation = ( (Annotation) iterator.next() );
+        for ( Iterator<Annotation> iterator = someAnnotations.iterator(); iterator.hasNext(); ) {
+            Annotation anAnnotation = ( iterator.next() );
             AnnotationViewBean anAnnotationViewBean = new AnnotationViewBean( anAnnotation, "" );
             result.add( anAnnotationViewBean );
         }
@@ -170,17 +173,18 @@ public class CvObjectViewBean extends AbstractViewBean {
      *
      * @return Collection the filtered List of Annotations (empty if there are none)
      */
-    public Collection getFilteredAnnotations() {
-        final ArrayList result = new ArrayList();
-        Collection someAnnotations = this.obj.getAnnotations();
+    public Collection<AnnotationViewBean> getFilteredAnnotations() {
+        final ArrayList<AnnotationViewBean> result = new ArrayList<AnnotationViewBean>();
+        Collection<Annotation> someAnnotations = this.obj.getAnnotations();
 
-        for ( Iterator it = someAnnotations.iterator(); it.hasNext(); ) {
-            Annotation annotation = (Annotation) it.next();
+        for (Annotation annotation : someAnnotations)
+        {
             //run through the filter
-            if ( false == AnnotationFilter.getInstance().isFilteredOut( annotation ) ) {
+            if (false == AnnotationFilter.getInstance().isFilteredOut(annotation))
+            {
                 // if it's not in the filter get them
-                AnnotationViewBean anAnnotationViewBean = new AnnotationViewBean( annotation, this.searchURL );
-                result.add( anAnnotationViewBean );
+                AnnotationViewBean anAnnotationViewBean = new AnnotationViewBean(annotation, this.searchURL);
+                result.add(anAnnotationViewBean);
             }
         }
 
@@ -195,13 +199,13 @@ public class CvObjectViewBean extends AbstractViewBean {
      * @return Collection with all Xrefs wrapped in a SingleViewBean
      */
 
-    public Collection getXrefs() {
-        final ArrayList result = new ArrayList();
-        final Collection someXrefs = this.obj.getXrefs();
+    public Collection<XrefViewBean> getXrefs() {
+        final ArrayList<XrefViewBean> result = new ArrayList<XrefViewBean>();
+        final Collection<Xref> someXrefs = this.obj.getXrefs();
 
-        for ( Iterator iterator = someXrefs.iterator(); iterator.hasNext(); ) {
-            final Xref aXref = ( (Xref) iterator.next() );
-            result.add( new XrefViewBean( aXref, this.getHelpLink(), this.searchURL ) );
+        for (Xref aXref : someXrefs)
+        {
+            result.add(new XrefViewBean(aXref, this.getHelpLink(), this.searchURL));
 
         }
 
@@ -218,13 +222,7 @@ public class CvObjectViewBean extends AbstractViewBean {
     public String getIntactType() {
 
         if ( intactType == null ) {
-
-            final String className = obj.getClass().getName();
-            final String basicType = className.substring( className.lastIndexOf( "." ) + 1 );
-
-            intactType = ( ( basicType.indexOf( "Impl" ) == -1 ) ?
-                           basicType : basicType.substring( 0, basicType.indexOf( "Impl" ) ) );
-
+            intactType = getIntactType(obj);
         }
         return intactType;
 
@@ -265,22 +263,4 @@ public class CvObjectViewBean extends AbstractViewBean {
         return this.obj.getFullName();
     }
 
-    /**
-     * @param anAnnotatedObject
-     *
-     * @return String  the intact type of  the annotedObject
-     */
-    private String getIntactType( final AnnotatedObject anAnnotatedObject ) {
-
-        // TODO move that method to a higher level: AbstractViewBean ?
-
-        final String objectIntactType;
-        final String className = anAnnotatedObject.getClass().getName();
-        final String basicType = className.substring( className.lastIndexOf( "." ) + 1 );
-
-        objectIntactType = ( ( basicType.indexOf( "Impl" ) == -1 ) ?
-                             basicType : basicType.substring( 0, basicType.indexOf( "Impl" ) ) );
-
-        return objectIntactType;
-    }
 }

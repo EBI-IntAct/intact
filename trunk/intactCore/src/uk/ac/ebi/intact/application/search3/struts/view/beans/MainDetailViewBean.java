@@ -5,8 +5,8 @@ import uk.ac.ebi.intact.application.search3.business.Constants;
 import uk.ac.ebi.intact.application.search3.util.UrlCheckerThread;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.SearchReplace;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
-import java.sql.Timestamp;
 import java.util.*;
 
 /**
@@ -74,20 +74,20 @@ public class MainDetailViewBean extends AbstractViewBean {
      * Holds a list of Annotations that may be publicly displayed, ie a filtered list removing those to be excluded
      * (currently rrmakrs and uiprot exports)
      */
-    private Collection annotationsForDisplay = new ArrayList();
+    private Collection<Annotation> annotationsForDisplay = new ArrayList<Annotation>();
 
     /**
      * Map of retrieved DB URLs already retrieved from the DB. This is basically a cache to avoid recomputation every
      * time a CvDatabase URL is requested.
      */
-    private Map dbUrls;
+    private Map<CvObject,String> dbUrls;
 
     /**
      * The List of Interations for display. For Experiments of 'small' size this is the whole list - for 'large'
      * Interactions this is a sublist that is dynamically changed upon different user requests. This is marked as
      * transient because it seems that the java subList is not serializable.
      */
-    private transient Collection interactionList = new ArrayList();
+    private Collection<Interaction> interactionList = new ArrayList<Interaction>();
 
     /**
      * This is only defined for 'Interaction context' views and holds the Interaction that is to be viewed in the
@@ -99,7 +99,7 @@ public class MainDetailViewBean extends AbstractViewBean {
     /**
      * ArrayList to provide a Filter on Gene Names
      */
-    private static ArrayList geneNameFilter = new ArrayList( 4 );
+    private static ArrayList<String> geneNameFilter = new ArrayList<String>( 4 );
 
     static {
         // TODO somehow find a way to use MI references that are stable
@@ -146,34 +146,17 @@ public class MainDetailViewBean extends AbstractViewBean {
      * @throws NullPointerException     thrown if the object to wrap is null
      * @throws IllegalArgumentException thrown if the parameter is not an Experiment
      */
-    public MainDetailViewBean( Experiment obj, String link, String searchURL, String contextPath ) {
-
+    public MainDetailViewBean( Experiment obj, List<Interaction> interactionList, String link, String searchURL, String contextPath) {
         super( link, contextPath );
+        this.interactionList = interactionList;
+
         if ( obj == null ) {
             throw new NullPointerException( "MainDetailViewBean: can't display null object!" );
         }
-        if ( !( obj instanceof Experiment ) ) {
-            throw new IllegalArgumentException( "MainDetailViewBean: Wrong object passed to view bean: type is " +
-                                                obj.getClass().getName() );
-        }
+
         this.searchURL = searchURL;
         this.obj = obj;
-        dbUrls = new HashMap();
-
-        //now calculate the largest page size possible (only for large Experiments)
-        if ( obj.getInteractions().size() > Constants.MAX_PAGE_SIZE ) {
-
-            // calculate the maximum number of pages (either size/page size, or
-            //size/page size + 1 if it does not divide exactly)
-            maxPages = obj.getInteractions().size() / Constants.MAX_PAGE_SIZE;
-            if ( obj.getInteractions().size() % Constants.MAX_PAGE_SIZE > 0 ) {
-                maxPages++;
-            }
-            //set the initial page of Interactions
-            setInteractionPage( 1 );
-        } else {
-            interactionList = obj.getInteractions();
-        }
+        dbUrls = new HashMap<CvObject, String>();
 
         // TODO centralize where the PSI links are created.
         psi1Url = PSI1_URL;
@@ -214,8 +197,9 @@ public class MainDetailViewBean extends AbstractViewBean {
      * Adds the shortLabel of the AnnotatedObject to an internal list used later for highlighting in a display. NOT SURE
      * IF WE STILL NEED THIS!!
      */
+    @Override
     public void initHighlightMap() {
-        Set set = new HashSet( 1 );
+        Set<String> set = new HashSet<String>( 1 );
         set.add( obj.getShortLabel() );
         setHighlightMap( set );
     }
@@ -223,6 +207,7 @@ public class MainDetailViewBean extends AbstractViewBean {
     /**
      * Returns the help section. Needs to be reviewed.
      */
+    @Override
     public String getHelpSection() {
         return "protein.single.view";
     }
@@ -333,16 +318,16 @@ public class MainDetailViewBean extends AbstractViewBean {
      *
      * @return Collection the list of Annotation objects for the wrapped instance.
      */
-    public Collection getFilteredAnnotations() {
+    public Collection<Annotation> getFilteredAnnotations() {
 
         if ( annotationsForDisplay.isEmpty() ) {
             //set on first call
-            for ( Iterator it = obj.getAnnotations().iterator(); it.hasNext(); ) {
-                Annotation annotation = (Annotation) it.next();
-
+            for (Annotation annotation : obj.getAnnotations())
+            {
                 //run through the filter
-                if ( false == AnnotationFilter.getInstance().isFilteredOut( annotation ) ) {
-                    annotationsForDisplay.add( annotation );
+                if (!AnnotationFilter.getInstance().isFilteredOut(annotation))
+                {
+                    annotationsForDisplay.add(annotation);
                 }
             }
         }
@@ -356,16 +341,16 @@ public class MainDetailViewBean extends AbstractViewBean {
      *
      * @return Collection the filtered List of Annotations (empty if there are none)
      */
-    public Collection getFilteredAnnotations( Interaction interaction ) {
+    public Collection<Annotation> getFilteredAnnotations( Interaction interaction ) {
 
-        Collection filteredAnnots = new ArrayList();
+        Collection<Annotation> filteredAnnots = new ArrayList<Annotation>();
 
-        for ( Iterator it = interaction.getAnnotations().iterator(); it.hasNext(); ) {
-            Annotation annotation = (Annotation) it.next();
-
+        for (Annotation annotation : interaction.getAnnotations())
+        {
             //run through the filter
-            if ( false == AnnotationFilter.getInstance().isFilteredOut( annotation ) ) {
-                filteredAnnots.add( annotation );
+            if (!AnnotationFilter.getInstance().isFilteredOut(annotation))
+            {
+                filteredAnnots.add(annotation);
             }
         }
 
@@ -380,13 +365,14 @@ public class MainDetailViewBean extends AbstractViewBean {
      *
      * @return Collection a list of the 'comment' Annotations, or empty if there are none.
      */
-    public Collection getComments( Collection annots ) {
+    public Collection<Annotation> getComments( Collection<Annotation> annots ) {
 
-        Collection comments = new ArrayList();
-        for ( Iterator it = annots.iterator(); it.hasNext(); ) {
-            Annotation annot = (Annotation) it.next();
-            if ( annot.getCvTopic().getShortLabel().equals( "comment" ) ) {
-                comments.add( annot );
+        Collection<Annotation> comments = new ArrayList<Annotation>();
+        for (Annotation annot : annots)
+        {
+            if (annot.getCvTopic().getShortLabel().equals("comment"))
+            {
+                comments.add(annot);
             }
         }
         return comments;
@@ -398,7 +384,7 @@ public class MainDetailViewBean extends AbstractViewBean {
      *
      * @return Collection the list of xrefs for the wrapped object.
      */
-    public Collection getXrefs() {
+    public Collection<Xref> getXrefs() {
         return obj.getXrefs();
     }
 
@@ -413,9 +399,9 @@ public class MainDetailViewBean extends AbstractViewBean {
     public String getPrimaryIdFromXrefIdentity( Interactor interactor ) {
 
         String primaryId = "-";  //default for display
-        Collection xrefs = interactor.getXrefs();
-        for ( Iterator it = xrefs.iterator(); it.hasNext(); ) {
-            Xref xref = (Xref) it.next();
+        Collection<Xref> xrefs = interactor.getXrefs();
+        for ( Iterator<Xref> it = xrefs.iterator(); it.hasNext(); ) {
+            Xref xref = it.next();
             if ( xref.getCvXrefQualifier() != null ) {
                 if ( CvXrefQualifier.IDENTITY.equals( xref.getCvXrefQualifier().getShortLabel() ) ) {
                     primaryId = xref.getPrimaryId();
@@ -445,14 +431,14 @@ public class MainDetailViewBean extends AbstractViewBean {
      * Provides the Interactions for the wrapped Experiment.
      * <p/>
      * NOTE: For Experiments that have a large number of Interactions, this method will provide a page of the total
-     * list, as set by the {@link MainDetailViewBean#setInteractionPage} method. If the Interaction list is small enough
+     * list. If the Interaction list is small enough
      * then the complete list is returned in any case. </p>
      *
      * @return Collection a list of Interactions - either all of them or a chunk (of pre-defined size).
      */
-    public Collection getInteractions() {
+    public Collection<Interaction> getInteractions() {
 
-        Collection result = new ArrayList();
+        Collection<Interaction> result = new ArrayList<Interaction>();
         //first check for an 'Interaction context' view - if so then return that one only
         if ( isInteractionView() ) {
             result.add( wrappedInteraction );
@@ -463,45 +449,6 @@ public class MainDetailViewBean extends AbstractViewBean {
         return result;
     }
 
-    /**
-     * Used for 'large' Experiments. The list of Interactions returned by this viewbean will be reset to the page as
-     * specified by the page parameter. The page size is defined in the {@link Constants} class, and the page number is
-     * bound above by the size of the actual full Interaction list of the large Experiment - that is, the largest index
-     * will be (max size/page size), or (max size/page size) + 1 if it does not divide without remainder.
-     *
-     * @param page The page number to be used.
-     *
-     * @throws IndexOutOfBoundsException thrown is the index is out of range
-     */
-    public void setInteractionPage( int page ) {
-
-        if ( page > maxPages ) {
-            throw new IndexOutOfBoundsException( "interaction page number too large! Got: "
-                                                 + page + " Max: " + maxPages );
-        }
-        if ( page < 1 ) {
-            throw new IndexOutOfBoundsException( "interaction page number < 1!" );
-        }
-
-        //now need to work out the actual start index from the page number itself, as follows:
-        //  index of first Interaction in sublist = (page size)*(page number - 1)
-        int fromIndex = Constants.MAX_PAGE_SIZE * ( page - 1 );
-
-        //The 'toIndex' has to be the smallest of either a 'page size' offset from the
-        //startIndex, or the last index (ie size) of the whole List (ie if we are at the end)
-        int toIndex = Math.min( fromIndex + Constants.MAX_PAGE_SIZE,
-                                obj.getInteractions().size() );
-
-        //'fromIndex' inclusive, 'toIndex' exclusive for subList method!
-        if ( List.class.isAssignableFrom( obj.getInteractions().getClass() ) ) {
-            interactionList = ( (List) obj.getInteractions() ).subList( fromIndex, toIndex );
-        } else {
-            // copy the collection in a List
-            List tmpList = new ArrayList( obj.getInteractions() );
-            interactionList = tmpList.subList( fromIndex, toIndex );
-        }
-
-    }
 
     /**
      * Can be useful for a JSP to find out how many pages can be displayed for the warpped Experiment.
@@ -520,37 +467,38 @@ public class MainDetailViewBean extends AbstractViewBean {
      *
      * @return Collection a List of FeatureViewBeans providing a view on each linked Feature of the Interaction.
      */
-    public Collection getLinkedFeatures( Interaction interaction ) {
+    public Collection<FeatureViewBean> getLinkedFeatures( Interaction interaction ) {
 
         //TODO: needs refactoring - perhaps cache some beans for Interactions done...
-        Collection linkedFeatures = new ArrayList();
+        Collection<FeatureViewBean> linkedFeatures = new ArrayList<FeatureViewBean>();
 
         // while we populate the collection of feature to display, we keep track of those are are already going to
         // be display. eg. F1 interacts with F2, when F2 comes again, we don't create a bean for it.
-        Collection seen = new ArrayList();
+        Collection<Feature> seen = new ArrayList<Feature>();
 
         //Go through the Features and for each linked one, build a view bean and save it...
         //NB The Feature beans are held inside Collections within each Component of the
         //Interaction - they are called 'binding domains'...
-        Collection components = interaction.getComponents();
+        Collection<Component> components = interaction.getComponents();
 
-        for ( Iterator it = components.iterator(); it.hasNext(); ) {
-            Component component = (Component) it.next();
+        for (Component component : components)
+        {
+            Collection<Feature> features = component.getBindingDomains();
 
-            Collection features = component.getBindingDomains();
+            for (Feature feature : features)
+            {
+                if (feature.getBoundDomain() != null)
+                {
+                    if (!seen.contains(feature))
+                    {
+                        linkedFeatures.add(new FeatureViewBean(feature, getHelpLink(), searchURL, this.getContextPath()));
 
-            for ( Iterator it1 = features.iterator(); it1.hasNext(); ) {
-                Feature feature = (Feature) it1.next();
+                        seen.add(feature);
 
-                if ( feature.getBoundDomain() != null ) {
-                    if ( false == seen.contains( feature ) ) {
-                        linkedFeatures.add( new FeatureViewBean( feature, getHelpLink(), searchURL, this.getContextPath() ) );
-
-                        seen.add( feature );
-
-                        if ( feature.getBoundDomain().getBoundDomain() == feature ) {
+                        if (feature.getBoundDomain().getBoundDomain() == feature)
+                        {
                             // if the features relate to each other
-                            seen.add( feature.getBoundDomain() );
+                            seen.add(feature.getBoundDomain());
                         }
                     }
                 }
@@ -568,24 +516,24 @@ public class MainDetailViewBean extends AbstractViewBean {
      *
      * @return Collection a List of FeatureViewBeans for the INteraction's unlinked Features.
      */
-    public Collection getSingleFeatures( Interaction interaction ) {
+    public Collection<FeatureViewBean> getSingleFeatures( Interaction interaction ) {
 
         //TODO: Needs refactoring - see above....
-        Collection singleFeatures = new ArrayList();
+        Collection<FeatureViewBean> singleFeatures = new ArrayList<FeatureViewBean>();
         //Go through the Features and for each single one, build a view bean and save it...
         //NB The Feature beans are held inside Collections within each Component of the
         //Interaction - they are called 'binding domains'...
-        Collection components = interaction.getComponents();
+        Collection<Component> components = interaction.getComponents();
 
-        for ( Iterator it = components.iterator(); it.hasNext(); ) {
-            Component component = (Component) it.next();
-            Collection features = component.getBindingDomains();
+        for (Component component : components)
+        {
+            Collection<Feature> features = component.getBindingDomains();
 
-            for ( Iterator it1 = features.iterator(); it1.hasNext(); ) {
-                Feature feature = (Feature) it1.next();
-
-                if ( feature.getBoundDomain() == null ) {
-                    singleFeatures.add( new FeatureViewBean( feature, getHelpLink(), searchURL, this.getContextPath() ) );
+            for (Feature feature : features)
+            {
+                if (feature.getBoundDomain() == null)
+                {
+                    singleFeatures.add(new FeatureViewBean(feature, getHelpLink(), searchURL, this.getContextPath()));
                 }
             }
         } //
@@ -594,24 +542,17 @@ public class MainDetailViewBean extends AbstractViewBean {
     }
 
     private boolean hasPsiReference( final AnnotatedObject ao, final String psiRef ) {
-        for ( Iterator iterator = ao.getXrefs().iterator(); iterator.hasNext(); ) {
-            Xref xref = (Xref) iterator.next();
-
-            if ( CvDatabase.PSI_MI.equals( xref.getCvDatabase().getShortLabel() ) ) {
+        for (Xref xref : ao.getXrefs())
+        {
+            if (CvDatabase.PSI_MI.equals(xref.getCvDatabase().getShortLabel()))
+            {
                 // found a PSI Xref
-                if ( xref.getCvXrefQualifier() != null
-                     &&
-                     CvXrefQualifier.IDENTITY.equals( xref.getCvXrefQualifier().getShortLabel() ) ) {
+                if (xref.getCvXrefQualifier() != null
+                        &&
+                        CvXrefQualifier.IDENTITY.equals(xref.getCvXrefQualifier().getShortLabel()))
+                {
                     // found identity
-                    if ( psiRef.equals( xref.getPrimaryId() ) ) {
-                        // found it.
-                        // System.out.println( "Found PSI identity: " + xref.getPrimaryId() );
-                        return true;
-                    } else {
-                        // we should have only one PSI Reference as Identity, we can stop here
-                        // System.out.println( "Found PSI identity: " + xref.getPrimaryId() );
-                        return false;
-                    }
+                    return psiRef.equals(xref.getPrimaryId());
                 }
             }
         }
@@ -631,31 +572,31 @@ public class MainDetailViewBean extends AbstractViewBean {
         }
 
         // Stack to handle recursive call
-        Stack stack = new Stack();
+        Stack<CvDagObject> stack = new Stack<CvDagObject>();
         stack.push( type );
         while ( ! stack.empty() ) {
-            CvDagObject term = (CvDagObject) stack.pop();
+            CvDagObject term = stack.pop();
 
             if ( hasPsiReference( term, CvFeatureType.EXPERIMENTAL_FEATURE_MI_REF ) ) {
                 return true;
             }
 
             // add all children to the stack
-            for ( Iterator iterator = term.getParents().iterator(); iterator.hasNext(); ) {
-                CvDagObject parent = (CvDagObject) iterator.next();
-                stack.push( parent );
+            for (CvDagObject parent : term.getParents())
+            {
+                stack.push(parent);
             }
         }
 
         return false;
     }
 
-    public Collection getFeaturesSummary( final Interaction interaction ) {
+    public Collection<String> getFeaturesSummary( final Interaction interaction ) {
 
-        Collection lines = new ArrayList( 4 );
+        Collection<String> lines = new ArrayList<String>( 4 );
 
-        Collection linkedFeatures = getLinkedFeatures( interaction );
-        Collection singleFeatures = getSingleFeatures( interaction );
+        Collection<FeatureViewBean> linkedFeatures = getLinkedFeatures( interaction );
+        Collection<FeatureViewBean> singleFeatures = getSingleFeatures( interaction );
 
         int featureCount = linkedFeatures.size() + singleFeatures.size();
 
@@ -669,7 +610,7 @@ public class MainDetailViewBean extends AbstractViewBean {
 
 
                 boolean islinked = false;
-                Iterator iterator = null;
+                Iterator<FeatureViewBean> iterator = null;
 
                 if ( ! linkedFeatures.isEmpty() ) {
                     // process lnked feature first
@@ -679,12 +620,9 @@ public class MainDetailViewBean extends AbstractViewBean {
                     iterator = singleFeatures.iterator();
                 }
 
-                FeatureViewBean firstFeature = (FeatureViewBean) iterator.next();
+                FeatureViewBean firstFeature = iterator.next();
                 iterator.remove(); // take it out of the collection.
 
-                if ( ! firstItem ) {
-                    firstItem = false;
-                }
                 // display that row
 
                 StringBuffer buffer = null;
@@ -712,8 +650,8 @@ public class MainDetailViewBean extends AbstractViewBean {
                         buffer.append( SPACE ).append( '(' );
 
                         // link 2
-                        for ( Iterator iter1 = firstFeature.getFeatureXrefs().iterator(); iter1.hasNext(); ) {
-                            Xref xref = (Xref) iter1.next();
+                        for ( Iterator<Xref> iter1 = firstFeature.getFeatureXrefs().iterator(); iter1.hasNext(); ) {
+                            Xref xref = iter1.next();
 
                             buffer.append( "<a href=\"" ).append( firstFeature.getPrimaryIdURL( xref ) ).append( "\">" );
                             buffer.append( xref.getPrimaryId() ).append( "</a>" );
@@ -755,8 +693,8 @@ public class MainDetailViewBean extends AbstractViewBean {
 
                         buffer.append( SPACE ).append( "(" );
 
-                        for ( Iterator iter1 = firstBoundFeature.getFeatureXrefs().iterator(); iter1.hasNext(); ) {
-                            Xref xref = (Xref) iter1.next();
+                        for ( Iterator<Xref> iter1 = firstBoundFeature.getFeatureXrefs().iterator(); iter1.hasNext(); ) {
+                            Xref xref = iter1.next();
 
                             buffer.append( "<a href=\"" ).append( firstBoundFeature.getPrimaryIdURL( xref ) ).append( "\">" );
                             buffer.append( xref.getPrimaryId() ).append( "</a>" );
@@ -805,8 +743,8 @@ public class MainDetailViewBean extends AbstractViewBean {
 
                         buffer.append( SPACE ).append( "(" );
 
-                        for ( Iterator iter1 = firstFeature.getFeatureXrefs().iterator(); iter1.hasNext(); ) {
-                            Xref xref = (Xref) iter1.next();
+                        for ( Iterator<Xref> iter1 = firstFeature.getFeatureXrefs().iterator(); iter1.hasNext(); ) {
+                            Xref xref = iter1.next();
 
                             buffer.append( "<a href=\"" ).append( firstFeature.getPrimaryIdURL( xref ) ).append( "\">" );
                             buffer.append( xref.getPrimaryId() ).append( "</a>" );
@@ -843,14 +781,14 @@ public class MainDetailViewBean extends AbstractViewBean {
 
     private String generateRange( Feature feature ) {
 
-        Collection ranges = feature.getRanges();
+        Collection<? extends Range> ranges = feature.getRanges();
         String rangeString = "";   //will hold the result (if there is one)
         if ( !ranges.isEmpty() ) {
 
             StringBuffer buf = new StringBuffer();
             buf.append( "[" );
 
-            for ( Iterator it1 = ranges.iterator(); it1.hasNext(); ) {
+            for ( Iterator<? extends Range> it1 = ranges.iterator(); it1.hasNext(); ) {
                 buf.append( it1.next().toString() );  //The toString of Range does the display format for us
                 if ( it1.hasNext() ) {
                     buf.append( ( "," ) );
@@ -877,14 +815,14 @@ public class MainDetailViewBean extends AbstractViewBean {
      * @return Collection a List of the Interaction's Proteins, or empty if none found
      */
 //    public Collection getProteins( Interaction interaction ) {// method not used
-    public Collection getInteractors( Interaction interaction ) {// method not used
+    public Collection<? extends Interactor> getInteractors( Interaction interaction ) {// method not used
 
         // sort here with Collections.sort() with the Protein Comparator as
         // so that we get in that the baits before the preys
 
-        Collection results = new ArrayList();
-        for ( Iterator it = interaction.getComponents().iterator(); it.hasNext(); ) {
-            Component comp = (Component) it.next();
+        Collection<Interactor> results = new ArrayList<Interactor>();
+        for ( Iterator<Component> it = interaction.getComponents().iterator(); it.hasNext(); ) {
+            Component comp = it.next();
             Interactor interactor = comp.getInteractor();
 //            if ( interactor instanceof Protein ) {
             results.add( interactor );
@@ -907,8 +845,8 @@ public class MainDetailViewBean extends AbstractViewBean {
     public Component getComponent( Interactor interactor, Interaction interaction ) {
 
         //go through the Components holding the Protein and pull out the Interaction match...
-        for ( Iterator it = interactor.getActiveInstances().iterator(); it.hasNext(); ) {
-            Component comp = (Component) it.next();
+        for ( Iterator<Component> it = interactor.getActiveInstances().iterator(); it.hasNext(); ) {
+            Component comp = it.next();
             if ( comp.getInteraction().equals( interaction ) ) {
                 return comp;
             }
@@ -926,18 +864,18 @@ public class MainDetailViewBean extends AbstractViewBean {
      * @return Collection a Set of Gene Names as Strings, empty if none found
      */
 //    public Collection getGeneNames( Protein protein ) {  //1 usage in detail.jsp
-    public Collection getGeneNames( Interactor interactor ) {  //1 usage in detail.jsp
+    public Collection<String> getGeneNames( Interactor interactor ) {  //1 usage in detail.jsp
 
-        Collection geneNames = new HashSet();
-//geneNames = new StringBuffer();
-//the gene names are obtained from the Aliases for the Protein
-//which are of type 'gene name'...
-        Collection aliases = interactor.getAliases();
-        for ( Iterator it = aliases.iterator(); it.hasNext(); ) {
-            Alias alias = (Alias) it.next();
-
-            if ( geneNameFilter.contains( alias.getCvAliasType().getShortLabel() ) ) {
-                geneNames.add( alias.getName() );
+        Collection<String> geneNames = new HashSet<String>();
+        //geneNames = new StringBuffer();
+        //the gene names are obtained from the Aliases for the Protein
+        //which are of type 'gene name'...
+        Collection<Alias> aliases = interactor.getAliases();
+        for (Alias alias : aliases)
+        {
+            if (geneNameFilter.contains(alias.getCvAliasType().getShortLabel()))
+            {
+                geneNames.add(alias.getName());
             }
         }
         //now strip off trailing comma - if there are any names....
@@ -977,9 +915,9 @@ public class MainDetailViewBean extends AbstractViewBean {
 
     public String getCvDatabaseSearchUrl( CvDatabase cvDatabase ) {
         String searchUrl = null;
-        Collection annotations = cvDatabase.getAnnotations();
-        for ( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
-            Annotation annotation = (Annotation) iterator.next();
+        Collection<Annotation> annotations = cvDatabase.getAnnotations();
+        for ( Iterator<Annotation> iterator = annotations.iterator(); iterator.hasNext(); ) {
+            Annotation annotation = iterator.next();
             if ( annotation.getCvTopic().getShortLabel().equals( CvTopic.SEARCH_URL ) ) {
                 searchUrl = annotation.getAnnotationText();
                 break;
@@ -1000,7 +938,7 @@ public class MainDetailViewBean extends AbstractViewBean {
     public String getPrimaryIdURL( Xref xref ) {
 
         // Check if the id can be hyperlinked
-        String searchUrl = (String) dbUrls.get( xref.getCvDatabase() );
+        String searchUrl = dbUrls.get( xref.getCvDatabase() );
         if ( searchUrl == null ) {
             searchUrl = getCvDatabaseSearchUrl( xref.getCvDatabase() );
             dbUrls.put( xref.getCvDatabase(), searchUrl );
@@ -1025,10 +963,10 @@ public class MainDetailViewBean extends AbstractViewBean {
 //    public String getUniprotSearchURL( Protein protein ) { // 1 usage in detail.jsp
     public String getIdentityXrefSearchURL( Interactor interactor ) { // 1 usage in detail.jsp
 
-        Collection xrefs = interactor.getXrefs();
+        Collection<Xref> xrefs = interactor.getXrefs();
         String url = "-";
-        for ( Iterator it = xrefs.iterator(); it.hasNext(); ) {
-            Xref xref = (Xref) it.next();
+        for ( Iterator<Xref> it = xrefs.iterator(); it.hasNext(); ) {
+            Xref xref = it.next();
             if ( xref.getCvXrefQualifier() != null ) {
                 if ( CvXrefQualifier.IDENTITY.equals( xref.getCvXrefQualifier().getShortLabel() ) ) {
                     url = this.getPrimaryIdURL( xref );
@@ -1036,7 +974,7 @@ public class MainDetailViewBean extends AbstractViewBean {
                 }
             }
         }
-        logger.info( "Interactor " + interactor.getAc() + " has url " + url );
+        logger.debug( "Interactor " + interactor.getAc() + " has url " + url );
         return url;
 
     }
@@ -1258,7 +1196,7 @@ public class MainDetailViewBean extends AbstractViewBean {
 
     private static String getCreatedYear( Experiment exp ) {
 
-        Timestamp created = exp.getCreated();
+        Date created = exp.getCreated();
         java.sql.Date d = new java.sql.Date( created.getTime() );
         Calendar c = new GregorianCalendar();
         c.setTime( d );
@@ -1270,8 +1208,8 @@ public class MainDetailViewBean extends AbstractViewBean {
 
     private String getPubmedId( Experiment experiment ) {
 
-        for ( Iterator iterator = experiment.getXrefs().iterator(); iterator.hasNext(); ) {
-            Xref xref = (Xref) iterator.next();
+        for ( Iterator<Xref> iterator = experiment.getXrefs().iterator(); iterator.hasNext(); ) {
+            Xref xref = iterator.next();
 
             if ( xref.getCvDatabase().getShortLabel().equals( CvDatabase.PUBMED ) ) {
                 CvXrefQualifier qualifier = xref.getCvXrefQualifier();

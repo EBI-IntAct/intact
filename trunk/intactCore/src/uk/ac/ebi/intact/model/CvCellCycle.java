@@ -5,12 +5,19 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorValue;
+
 /**
  * TODO comments
  *
  * @author hhe
  * @version $Id$
  */
+@Entity
+@DiscriminatorValue("uk.ac.ebi.intact.model.CvCellCycle")
 public class CvCellCycle extends CvObject {
 
     /**
@@ -20,7 +27,7 @@ public class CvCellCycle extends CvObject {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private CvCellCycle() {
+    public CvCellCycle() {
         //super call sets creation time data
         super();
     }

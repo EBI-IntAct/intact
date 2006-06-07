@@ -5,6 +5,11 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorValue;
+
 /**
  * The type of the alias.
  * example "common name"
@@ -13,18 +18,20 @@ package uk.ac.ebi.intact.model;
  * @author hhe
  * @version $Id$
  */
+@Entity
+@DiscriminatorValue("uk.ac.ebi.intact.model.CvAliasType")
 public class CvAliasType extends CvObject implements Editable {
 
     ////////////////////////////
     // Constants
-    
+
     public static final String ISOFORM_SYNONYM = "isoform synonym";
     public static final String ISOFORM_SYNONYM_MI_REF = "MI:0304";
 
     public static final String GENE_NAME = "gene name";
     public static final String GENE_NAME_MI_REF = "MI:0301";
 
-    public static final String GENE_NAME_SYNONYM = "gene name synonym";
+    public static final String GENE_NAME_SYNONYM = "gene name-synonym";
     public static final String GENE_NAME_SYNONYM_MI_REF = "MI:0302";
 
     public static final String ORF_NAME = "orf name";
@@ -44,7 +51,7 @@ public class CvAliasType extends CvObject implements Editable {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private CvAliasType() {
+    public CvAliasType() {
         //super call sets creation time data
         super();
     }

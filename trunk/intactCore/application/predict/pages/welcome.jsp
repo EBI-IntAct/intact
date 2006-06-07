@@ -1,3 +1,4 @@
+<%@ page import="uk.ac.ebi.intact.application.predict.business.PredictUser"%>
 <!--
    - Copyright (c) 2002-2004 The European Bioinformatics Institute, and others.
    - All rights reserved. Please see the file LICENSE
@@ -18,12 +19,10 @@
 
 <c:set var="species" value="${user.species}" scope="session"/>
 
-<%-- Need this to access the default organism. --%>
-<jsp:useBean id="user" scope="session"
-    class="uk.ac.ebi.intact.application.predict.business.PredictUser"/>
-
 <%-- The context path. --%>
 <%
+    PredictUser user = (PredictUser) session.getAttribute("user");
+
     String ctxpath = request.getContextPath();
 %>
 

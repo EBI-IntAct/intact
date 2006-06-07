@@ -7,6 +7,17 @@ package uk.ac.ebi.intact.model;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+import javax.persistence.ManyToMany;
+import javax.persistence.JoinTable;
+import javax.persistence.FetchType;
+import javax.persistence.Column;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -17,6 +28,9 @@ import java.util.Iterator;
  * @author hhe
  * @version $Id$
  */
+@Entity
+@Table(name = "ia_interactor")
+@DiscriminatorColumn(name="objclass")
 public abstract class InteractorImpl extends AnnotatedObjectImpl implements Interactor {
 
     ///////////////////////////////////////
@@ -25,6 +39,8 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
     //attributes used for mapping BasicObjects - project synchron
     // TODO: should be move out of the model.
     private String bioSourceAc;
+
+    private String objClass;
 
     /**
      * The biological source of the Interactor.
@@ -59,7 +75,7 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
      * no-arg constructor provided for compatibility with subclasses
      * that have no-arg constructors.
      */
-    protected InteractorImpl() {
+    public InteractorImpl() {
         //super call sets creation time data
         super();
     }
@@ -101,14 +117,16 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
     ///////////////////////////////////////
     //access methods for attributes
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "biosource_ac")
     public BioSource getBioSource() {
         return bioSource;
     }
 
     public void setBioSource( BioSource bioSource ) {
-        if( bioSource == null ) {
-            throw new NullPointerException( "valid Interactor must have a BioSource!" );
-        }
+//        if( bioSource == null ) {
+//            throw new NullPointerException( "valid Interactor must have a BioSource!" );
+//        }
         this.bioSource = bioSource;
     }
 
@@ -118,6 +136,7 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
         this.activeInstances = someActiveInstance;
     }
 
+    @OneToMany (mappedBy = "interactor")
     public Collection<Component> getActiveInstances() {
         return activeInstances;
     }
@@ -131,13 +150,17 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
 
     public void removeActiveInstance( Component component ) {
         boolean removed = this.activeInstances.remove( component );
-        if( removed ) component.setInteractor( null );
+        if (removed)
+        {
+            component.setInteractor(null);
+        }
     }
 
     public void setProducts( Collection<Product> someProduct ) {
         this.products = someProduct;
     }
 
+    @Transient
     public Collection<Product> getProducts() {
         return products;
     }
@@ -151,15 +174,43 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
 
     public void removeProduct( Product product ) {
         boolean removed = this.products.remove( product );
-        if( removed ) product.setInteractor( null );
+        if (removed)
+        {
+            product.setInteractor(null);
+        }
     }
 
     public void setCvInteractorType(CvInteractorType type) {
         interactorType = type;
     }
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "interactortype_ac")
     public CvInteractorType getCvInteractorType() {
         return interactorType;
+    }
+
+    @ManyToMany
+    @JoinTable(
+        name="ia_int2annot",
+        joinColumns={@JoinColumn(name="interactor_ac")},
+        inverseJoinColumns={@JoinColumn(name="annotation_ac")}
+    )
+    @Override
+    public Collection<Annotation> getAnnotations()
+    {
+        return super.getAnnotations();
+    }
+
+    @Column(insertable = false, updatable = false)
+    public String getObjClass()
+    {
+        return objClass;
+    }
+
+    public void setObjClass(String objClass)
+    {
+        this.objClass = objClass;
     }
 
     ///////////////////////////////////////
@@ -192,9 +243,18 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
      */
     @Override
     public boolean equals( Object o ) {
-        if( this == o ) return true;
-        if( !( o instanceof Interactor ) ) return false;
-        if( !super.equals( o ) ) return false;
+        if (this == o)
+        {
+            return true;
+        }
+        if (!(o instanceof Interactor))
+        {
+            return false;
+        }
+        if (!super.equals(o))
+        {
+            return false;
+        }
 
         final Interactor interactor = (Interactor) o;
 

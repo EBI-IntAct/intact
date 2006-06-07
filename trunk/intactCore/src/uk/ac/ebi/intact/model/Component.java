@@ -8,6 +8,13 @@ package uk.ac.ebi.intact.model;
 import uk.ac.ebi.intact.model.proxy.InteractorProxy;
 import uk.ac.ebi.intact.model.proxy.InteractionProxy;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Column;
+import javax.persistence.FetchType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -24,6 +31,8 @@ import java.util.Iterator;
  * @author hhe
  * @version $Id$
  */
+@Entity
+@Table(name = "ia_component")
 public class Component extends BasicObjectImpl {
 
     ///////////////////////////////////////
@@ -66,7 +75,7 @@ public class Component extends BasicObjectImpl {
     /**
      * The domain a Substrate binds by.
      */
-    private Collection<Feature> bindingDomains = new ArrayList<Feature>();
+    private Collection<Feature> bindingDomains;
 
     /**
      * TODO comments
@@ -79,7 +88,7 @@ public class Component extends BasicObjectImpl {
      * purposes only.
      * <p/>Made the constructor protected to allow access for subclasses.
      */
-    protected Component() {
+    public Component() {
         //super call sets creation time data
         super();
     }
@@ -134,6 +143,9 @@ public class Component extends BasicObjectImpl {
     public void setStoichiometry(float stoichiometry) {
         this.stoichiometry = stoichiometry;
     }
+
+    @ManyToOne (fetch = FetchType.LAZY)
+    @JoinColumn(name = "expressedin_ac")
     public BioSource getExpressedIn() {
         return expressedIn;
     }
@@ -144,15 +156,19 @@ public class Component extends BasicObjectImpl {
     ///////////////////////////////////////
     // access methods for associations
 
+    @ManyToOne (targetEntity = InteractorImpl.class)
+    @JoinColumn (name = "interactor_ac")
     public Interactor getInteractor() {
 
         //Need to check for Proxies - callers should
         //not expect a Proxy back since Component only holds
         //a single interactor, hence no need for a Proxy
+        /*
         if((interactor !=  null) & (interactor instanceof InteractorProxy)){
             InteractorProxy proxy = (InteractorProxy)interactor;
             return (Interactor)proxy.getRealSubject();
         }
+        */
         return interactor;
     }
 
@@ -161,13 +177,19 @@ public class Component extends BasicObjectImpl {
      * @param interactor
      */
     public void setInteractor(Interactor interactor) {
+        // TODO (BA) IMPORTANT: I have just commented this method at seems to provoke an illegal access
+        // exception to the list of components
+        /*
         if (this.interactor != interactor) {
             if (this.interactor != null) this.interactor.removeActiveInstance(this);
             this.interactor = interactor;
             if (interactor != null) interactor.addActiveInstance(this);
-        }
+        } */
+        this.interactor = interactor;
     }
 
+    @ManyToOne (targetEntity = InteractionImpl.class, fetch = FetchType.LAZY)
+    @JoinColumn (name = "interaction_ac")
     public Interaction getInteraction() {
 
         //Need to check for Proxies - callers should
@@ -182,16 +204,22 @@ public class Component extends BasicObjectImpl {
 
     // TODO document that non obvious method
     public void setInteraction(Interaction interaction) {
+        // TODO (BA) IMPORTANT: I have just commented this method at seems to provoke an illegal access
+        // exception to the list of components
+        /*
         if (this.interaction != interaction) {
             if (this.interaction != null) this.interaction.removeComponent(this);
             this.interaction = interaction;
             if (interaction != null) interaction.addComponent(this);
-        }
+        } */
+        this.interaction = interaction;
     }
 
     public void setBindingDomains(Collection someBindingDomain) {
         this.bindingDomains = someBindingDomain;
     }
+
+    @OneToMany (mappedBy = "component")
     public Collection<Feature> getBindingDomains() {
         return bindingDomains;
     }
@@ -206,6 +234,8 @@ public class Component extends BasicObjectImpl {
         if (removed) feature.setComponent(null);
     }
 
+    @ManyToOne (fetch = FetchType.LAZY)
+    @JoinColumn(name = "role")
     public CvComponentRole getCvComponentRole() {
         return cvComponentRole;
     }
@@ -286,6 +316,7 @@ public class Component extends BasicObjectImpl {
 
     //attributes used for mapping BasicObjects - project synchron
     // TODO: should be move out of the model.
+    @Column(name = "interactor_ac", insertable = false, updatable = false)
     public String getInteractorAc(){
         return this.interactorAc;
     }
@@ -293,6 +324,7 @@ public class Component extends BasicObjectImpl {
         this.interactorAc = ac;
     }
 
+    @Column(name = "interaction_ac", insertable = false, updatable = false)
     public String getInteractionAc(){
         return this.interactionAc;
     }
@@ -300,6 +332,7 @@ public class Component extends BasicObjectImpl {
         this.interactionAc = ac;
     }
 
+    @Column(name = "role", insertable = false, updatable = false)
     public String getCvComponentRoleAc(){
         return this.cvComponentRoleAc;
     }
@@ -307,6 +340,7 @@ public class Component extends BasicObjectImpl {
         this.cvComponentRoleAc = ac;
     }
 
+    @Column(name = "expressedin_ac", insertable = false, updatable = false)
     public String getExpressedInAc(){
         return this.expressedInAc;
     }

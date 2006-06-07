@@ -5,18 +5,32 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.Table;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import javax.persistence.JoinTable;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
+import javax.persistence.Column;
+import javax.persistence.FetchType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * Represents one experiment. Describes the conditions in which the experiment has been performed. The information
- * should allow to classify experiments and make them comparable. The Experiment object does not aim to contain enough
- * information to redo the experiment, it refers to the original publication for this purpose.
+ * Represents one experiment. Describes the conditions in which
+ * the experiment has been performed. The information should allow to
+ * classify experiments and make them comparable.
+ * The Experiment object does not
+ * aim to contain enough information to redo the experiment,
+ * it refers to the original publication for this purpose.
  *
  * @author hhe
  * @version $Id$
  */
+@Entity
+@Table(name = "ia_experiment")
 public class Experiment extends AnnotatedObjectImpl implements Editable {
 
     ///////////////////////////////////////
@@ -33,16 +47,19 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
     private String publicationAc;
 
     /**
-     * TODO comments TODO would be easier/meaningful to have plural
+     * TODO comments
+     * TODO would be easier/meaningful to have plural
      */
-    private Collection<Interaction> interactions = new ArrayList<Interaction>();
-
+    private Collection<Interaction> interactions;
     /**
-     * One experiment should group all interactions from a publication which have been performed under the same
-     * conditions. However, one experiment might explicitely involve different conditions, for example a time series, or
-     * before and after a stimulus. This association can establish this relation.
+     * One experiment should group all interactions from a publication
+     * which have been performed under the same conditions.
+     * However, one experiment might explicitely involve different
+     * conditions, for example a time series, or before and after a stimulus.
+     * This association can establish this relation.
      * <p/>
-     * This might be extended into an association class which could state the type of relationship.
+     * This might be extended into an association class
+     * which could state the type of relationship.
      */
     // TODO not clear, why only one Experiment ?
     private Experiment relatedExperiment;
@@ -68,27 +85,28 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
     private Publication publication;
 
     /**
-     * This constructor should <b>not</b> be used as it could result in objects with invalid state. It is here for
-     * object mapping purposes only and if possible will be made private.
+     * This constructor should <b>not</b> be used as it could
+     * result in objects with invalid state. It is here for object mapping
+     * purposes only and if possible will be made private.
      *
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private Experiment() {
+    public Experiment() {
         //super call sets creation time data
         super();
     }
 
     /**
-     * Creates a valid Experiment instance. A valid Experiment must contain at least a shortLabel that refers to it, an
-     * owner of the Experiment and also the biological source of the experiment data (ie organism). A side-effect of
-     * this constructor is to set the <code>created</code> and <code>updated</code> fields of the instance to the
-     * current time.
+     * Creates a valid Experiment instance. A valid Experiment must contain at least
+     * a shortLabel that refers to it, an owner of the Experiment and also the biological
+     * source of the experiment data (ie organism). A side-effect of this constructor is to
+     * set the <code>created</code> and <code>updated</code> fields of the instance
+     * to the current time.
      *
      * @param owner      The <code>Institution</code> which owns this Experiment (non-null)
      * @param shortLabel A String which can be used to refer to the Experiment (non-null)
      * @param source     The biological source of the experimental data (non-null)
-     *
      * @throws NullPointerException thrown if any of the parameters are not set
      */
     public Experiment( Institution owner, String shortLabel, BioSource source ) {
@@ -99,15 +117,16 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
     }
 
     /**
-     * Builds a SHALLOW copy of the Experiment parameter. This means that a new Experiment instance is returned, but you
-     * should be aware that the object references it contains <b>point to the objects referenced in the original object
-     * </b>.
+     * Builds a SHALLOW copy of the Experiment parameter. This means that a
+     * new Experiment instance is returned, but you should be aware that the
+     * object references it contains <b>point to the objects referenced in the
+     * original object </b>.
      *
      * @param experiment The Experiment you want a shallow copy of
-     *
-     * @return Experiment a new Experiment instance containing new references to the parameter object's attributes.
-     *
-     * @throws NullPointerException thrown if required items are not present in the parameter Experiment instance.
+     * @return Experiment a new Experiment instance containing new references
+     *         to the parameter object's attributes.
+     * @throws NullPointerException thrown if required items are not present
+     *                              in the parameter Experiment instance.
      */
     public static Experiment getShallowCopy( Experiment experiment ) {
 
@@ -115,7 +134,7 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
                                         experiment.getShortLabel(),
                                         experiment.getBioSource() );
         ex.ac = ( experiment.getAc() );
-        ex.setAnnotation( experiment.getAnnotations() );
+        ex.setAnnotations( experiment.getAnnotations() );
         ex.setCvInteraction( experiment.getCvInteraction() );
         ex.setCvIdentification( experiment.getCvIdentification() );
         ex.setEvidences( experiment.getEvidences() );
@@ -127,15 +146,17 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
         return ex;
     }
 
+
     ///////////////////////////////////////
     // access methods for associations
 
     // TODO could wipe all existing interaction ... maybe dangerous.
-    // TODO should also allow to have no interaction if the collection is null or empty.
+    // TODO shold also allow to have no interaction if the collection is null or empty.
     public void setInteractions( Collection<Interaction> someInteraction ) {
         this.interactions = someInteraction;
     }
 
+    @ManyToMany (targetEntity = InteractionImpl.class, mappedBy = "experiments")
     public Collection<Interaction> getInteractions() {
         return interactions;
     }
@@ -146,7 +167,7 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
      * @param interaction
      */
     public void addInteraction( Interaction interaction ) {
-        if ( !this.interactions.contains( interaction ) ) {
+        if( !this.interactions.contains( interaction ) ) {
             this.interactions.add( interaction );
             interaction.addExperiment( this );
         }
@@ -159,11 +180,11 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
      */
     public void removeInteraction( Interaction interaction ) {
         boolean removed = this.interactions.remove( interaction );
-        if ( removed ) {
-            interaction.removeExperiment( this );
-        }
+        if( removed ) interaction.removeExperiment( this );
     }
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "relatedexperiment_ac", referencedColumnName = "ac")
     public Experiment getRelatedExperiment() {
         return relatedExperiment;
     }
@@ -172,6 +193,8 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
         this.relatedExperiment = experiment;
     }
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "identmethod_ac")
     public CvIdentification getCvIdentification() {
         return cvIdentification;
     }
@@ -185,6 +208,8 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
      *
      * @return
      */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "detectmethod_ac")
     public CvInteraction getCvInteraction() {
         return cvInteraction;
     }
@@ -198,6 +223,8 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
         this.cvInteraction = cvInteraction;
     }
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "biosource_ac")
     public BioSource getBioSource() {
         return bioSource;
     }
@@ -209,13 +236,15 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
      */
     public void setBioSource( BioSource bioSource ) {
 
-        if ( bioSource == null ) {
+        if( bioSource == null ) {
             throw new NullPointerException( "valid Experiment must have a BioSource!" );
         }
 
         this.bioSource = bioSource;
     }
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "publication_ac")
     public Publication getPublication() {
         return publication;
     }
@@ -233,40 +262,48 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
 //    public void setRelatedExperimentAc( String ac ) {
 //        this.relatedExperimentAc = ac;
 //    }
-//
-//    public String getCvIdentificationAc() {
-//        return this.cvIdentificationAc;
-//    }
-//
-//    public void setCvIdentificationAc( String ac ) {
-//        this.cvIdentificationAc = ac;
-//    }
-//
-//    public String getCvInteractionAc() {
-//        return this.cvInteractionAc;
-//    }
-//
-//    public void setCvInteractionAc( String ac ) {
-//        this.cvInteractionAc = ac;
-//    }
-//
-//    public String getBioSourceAc() {
-//        return this.bioSourceAc;
-//    }
-//
-//    public void setBioSourceAc( String ac ) {
-//        this.bioSourceAc = ac;
-//    }
+    public void setCvIdentificationAc( String ac ) {
+        this.cvIdentificationAc = ac;
+    }
+
+    @Column(name = "detectmethod_ac", insertable = false, updatable = false)
+    public String getCvInteractionAc() {
+        return this.cvInteractionAc;
+    }
+
+    public void setCvInteractionAc( String ac ) {
+        this.cvInteractionAc = ac;
+    }
+
+    @Column(name = "biosource_ac", insertable = false, updatable = false)
+    public String getBioSourceAc() {
+        return this.bioSourceAc;
+    }
+
+    public void setBioSourceAc( String ac ) {
+        this.bioSourceAc = ac;
+    }
+
+    @ManyToMany
+    @JoinTable(
+        name="ia_exp2annot",
+        joinColumns={@JoinColumn(name="experiment_ac")},
+        inverseJoinColumns={@JoinColumn(name="annotation_ac")}
+    )
+    @Override
+    public Collection<Annotation> getAnnotations()
+    {
+        return super.getAnnotations();
+    }
+
 
     /**
-     * Equality for Experiments is currently based on equality for <code>AnnotatedObjects</code>, BioSources and
-     * Publication.
+     * Equality for Experiments is currently based on equality for
+     * <code>AnnotatedObjects</code> and BioSources only.
      *
      * @param o The object to check
-     *
      * @return true if the parameter equals this object, false otherwise
-     *
-     * @see AnnotatedObject
+     * @see uk.ac.ebi.intact.model.AnnotatedObject
      */
     @Override
     public boolean equals( Object o ) {
@@ -303,10 +340,14 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
     /**
      * Returns a cloned version of the current object.
      *
-     * @return a cloned version of the current Experiment with following exceptions. <ul> <li>Interactions are not
-     *         cloned. The interactions for the cloned experiment is empty</li> <li>New components but with the same
-     *         proteins. The new components has the cloned interaction as their interaction.</li> </ul>
-     *
+     * @return a cloned version of the current Experiment with following
+     *         exceptions.
+     *         <ul>
+     *         <li>Interactions are not cloned. The interactions for the cloned
+     *         experiment is empty</li>
+     *         <li>New components but with the same proteins. The new components has the
+     *         cloned interaction as their interaction.</li>
+     *         </ul>
      * @throws CloneNotSupportedException
      */
     @Override
@@ -333,17 +374,24 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
         result.append( NEW_LINE );
         result.append( "CvInteraction: " + ( cvInteraction == null ? "NOT SPECIFIED" : cvInteraction.getShortLabel() ) );
         result.append( NEW_LINE );
-        result.append( "Interactions (" );
-        if ( null != getInteractions() ) {
-            for ( Iterator iterator = interactions.iterator(); iterator.hasNext(); ) {
-                Interaction interaction = (Interaction) iterator.next();
-                result.append( interaction.getShortLabel() ).append( ", " );
-            }
-        }
-        result.append( ')' );
-        result.append( NEW_LINE );
+
+        // TODO in experiments with many interactions this can throw OutOfMemoryErrors
+//        result.append( "Interactions (" );
+//        if( null != getInteractions() ) {
+//            for( Iterator iterator = interactions.iterator(); iterator.hasNext(); ) {
+//                Interaction interaction = (Interaction) iterator.next();
+//                result.append( interaction.getShortLabel() ).append( ", " );
+//            }
+//        }
+//        result.append( ')' );
+//        result.append( NEW_LINE );
         result.append( ']' );
 
         return result.toString();
     }
+
 } // end Experiment
+
+
+
+

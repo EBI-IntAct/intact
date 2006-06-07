@@ -42,7 +42,7 @@ public class SubmissionRef extends Reference {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private SubmissionRef () {
+    public SubmissionRef () {
         super();
     }
     public SubmissionRef(Institution owner, String title, String authors, Reference reference, Date holdDate) {

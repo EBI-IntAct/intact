@@ -51,9 +51,7 @@ public class ExternalContext {
             context = new ExternalContext( new DummyServletContext() );
             currentInstance.set( context );
 
-            if ( log.isEnabledFor( Priority.WARN ) ) {
-                log.warn( "Created ExternalContext not using ServletContext" );
-            }
+            log.warn( "Created ExternalContext not using ServletContext" );
         }
         return context;
     }

@@ -39,12 +39,13 @@ to identify the source page of the request to the Action classes.
                  uk.ac.ebi.intact.model.Interaction,
                  uk.ac.ebi.intact.model.Protein,
                  uk.ac.ebi.intact.model.CvObject,
-                 uk.ac.ebi.intact.business.IntactException,
                  uk.ac.ebi.intact.application.search3.struts.util.SearchConstants"%>
 
 <%-- Standard Java classes --%>
 <%@ page import="java.util.*"%>
 <%@ page import="uk.ac.ebi.intact.application.commons.util.*"%>
+<%@ page import="uk.ac.ebi.intact.application.commons.search.SearchClass"%>
+<%@ page import="uk.ac.ebi.intact.model.Interactor"%>
 
 <%-- may make use of these later to tidy up the JSP a little --%>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
@@ -65,7 +66,7 @@ to identify the source page of the request to the Action classes.
 
     //The List of view beans used to provide the data for this JSP. This is in fact
     //a List of sublists, partitioned by result type.
-    List partitionList = (List)request.getAttribute(SearchConstants.VIEW_BEAN_LIST);
+    List<List<SimpleViewBean>> partitionList = (List<List<SimpleViewBean>>)request.getAttribute(SearchConstants.VIEW_BEAN_LIST);
 
     //get the maximum size beans from the context for later use
     Map sizeMap = (Map)session.getServletContext().getAttribute(SearchConstants.MAX_ITEMS_MAP);
@@ -133,12 +134,14 @@ table.....
 partitioned list to do this --%>
 
 <%
-    List displayList = null;     //use this as each iteration holder
-    for(Iterator it1 = partitionList.iterator(); it1.hasNext();) {
-        displayList = (List)it1.next();
+    List<SimpleViewBean> displayList = null;     //use this as each iteration holder
+    for(Iterator<List<SimpleViewBean>> it1 = partitionList.iterator(); it1.hasNext();) {
+        displayList = it1.next();
 
-        //need a handle on this to write out some header info and typecheck...
-        SimpleViewBean firstItem = (SimpleViewBean)displayList.iterator().next();
+    //need a handle on this to write out some header info and typecheck...
+    SimpleViewBean firstItem = displayList.iterator().next();
+
+    SearchClass firstItemSearchClass = SearchClass.valueOfMappedClass(firstItem.getObject().getClass());
 %>
 
 <%-- If we get to here we know we have something to show, so we need a button bar...
@@ -163,7 +166,7 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
             <%
                 //just get hold of the intact type and display, UNLESS it is CvObject
                 //in which case we display 'controlled vocabularies'
-                if(CvObject.class.isAssignableFrom(firstItem.getObject().getClass())) {
+                if(firstItemSearchClass.isCvObjectSubclass()) {
             %>
       <!--      <td style="vertical-align: top;">Controlled Vocabulary Terms<br>
             </td> -->
@@ -205,7 +208,7 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
             </td>
 
               <%
-                if(Protein.class.isAssignableFrom(firstItem.getObject().getClass())) {
+                if(firstItemSearchClass == SearchClass.PROTEIN || firstItemSearchClass == SearchClass.NUCLEIC_ACID) {
             %>
             <td class="headerdarkmid">Gene-Name</td>
             <% } %>
@@ -218,7 +221,7 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
 
             <%-- now for Interactions and Experiments we need an extra header.. --%>
             <%
-                if(Experiment.class.isAssignableFrom(firstItem.getObject().getClass())) {
+                if(firstItemSearchClass == SearchClass.EXPERIMENT) {
             %>
             <td class="headerdarkmid">Interactions
             </td>
@@ -232,9 +235,11 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
             <td nowrap="nowrap" class="headerdarkmid">Experiment</td>
             <td nowrap="nowrap" class="headerdarkmid">Proteins</td>
             <%
-                } else if (Protein.class.isAssignableFrom(firstItem.getObject().getClass())) {
+                } else if (firstItemSearchClass == SearchClass.PROTEIN || firstItemSearchClass == SearchClass.NUCLEIC_ACID) {
             %>
-             <td colspan="2" nowrap="nowrap" class="headerdarkmid">Interactions
+             <td nowrap="nowrap" class="headerdarkmid">Interactions
+            </td>
+            <td nowrap="nowrap" class="headerdarkmid">Interactors
             </td>
             <% } %>
         </tr>
@@ -245,16 +250,18 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
         //Each table is roughly the same format - but for eg Experiments and Interactions
         //we display some extra info. Simplest way is to iterate through a List, swapping
         //the List over after each partitioned List has been processed.
-        for(Iterator it = displayList.iterator(); it.hasNext();) {
+        for(Iterator<SimpleViewBean> it = displayList.iterator(); it.hasNext();) {
 
             //know it is the correct type by the time we get here
-            SimpleViewBean bean = (SimpleViewBean)it.next();
+            SimpleViewBean bean = it.next();
 
             //set up the searchURL - this is different depending upon the display type,
             //so for Experiments and Interactions this should link to 'detail-blue',
             //but for Proteins it should go to the partners view and for CvObjects
             //it should do a 'single CVObject' view (ie what is in results.jsp now)
             String searchURL = bean.getObjSearchURL();
+
+
 %>
 
 
@@ -263,9 +270,9 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
 
             <!-- checkbox - presumably checked by default? NOT NEEDED for CvObjects and Experiments -->
             <%
-                if( CvObject.class.isAssignableFrom(firstItem.getObject().getClass())
+                if( firstItemSearchClass.isCvObjectSubclass()
                      ||
-                    Experiment.class.isAssignableFrom(firstItem.getObject().getClass()) ) {
+                    firstItemSearchClass == SearchClass.EXPERIMENT ) {
             %>
             <!-- Single cell padding -->
             <td>
@@ -281,11 +288,11 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
             </td>
             <%
                 }
-            %>          
+            %>
 
 
           <%
-          if((Protein.class.isAssignableFrom(bean.getObject().getClass()))) { %>
+          if(firstItemSearchClass == SearchClass.PROTEIN || firstItemSearchClass == SearchClass.NUCLEIC_ACID) { %>
 
                <%-- name (ie Intact shortlabel), and linked to a suitable view -
                 need to set a value in the request to identify this JSP, so that the struts
@@ -310,10 +317,10 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
                <!-- Gene Name (not linked)  -->
            <td class="lefttop" rowspan="1" colspan="1">
                 <%
-                    Collection somePartnerGeneNames = bean.getGeneNames((Protein)bean.getObject());
+                    Collection<String> somePartnerGeneNames = bean.getGeneNames((Interactor)bean.getObject());
 
-                    for (Iterator iteratorGene =  somePartnerGeneNames.iterator(); iteratorGene.hasNext();) {
-                        String aGeneName =  (String) iteratorGene.next();
+                    for (Iterator<String> iteratorGene =  somePartnerGeneNames.iterator(); iteratorGene.hasNext();) {
+                        String aGeneName =  iteratorGene.next();
                         out.write( aGeneName );
                         if( iteratorGene.hasNext() ) {
                             out.write( ", " );
@@ -354,7 +361,7 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
             <!-- 'number of related items', ie interactions for Experiments,
                     Proteins for Interactions. This is not linked to anything either -->
             <%
-                if ( Interaction.class.isAssignableFrom( bean.getObject().getClass() ) ) {
+                if ( firstItemSearchClass == SearchClass.INTERACTION ) {
             %>
             <td class="data">
                 <%
@@ -379,8 +386,8 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
             <!-- 'number of related items', ie interactions for Experiments,
                     Proteins for Interactions. This is not linked to anything either -->
             <%
-                if((Experiment.class.isAssignableFrom(bean.getObject().getClass())) ||
-                    (Interaction.class.isAssignableFrom(bean.getObject().getClass()))) {
+                if(firstItemSearchClass == SearchClass.EXPERIMENT ||
+                    firstItemSearchClass == SearchClass.INTERACTION) {
             %>
             <td class="data">
                 <nobr><%= bean.getRelatedItemsSize() %><br></nobr>
@@ -390,11 +397,14 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
             %>
 
              <%
-                if((Protein.class.isAssignableFrom(bean.getObject().getClass()))) {
+                if(firstItemSearchClass == SearchClass.PROTEIN || firstItemSearchClass == SearchClass.NUCLEIC_ACID) {
 
             %>
             <td class="data">
-                <nobr><%= bean.getNumberOfInteractions(((Protein)bean.getObject())) %><br></nobr>
+                <nobr><%= bean.getNumberOfInteractions(((Interactor)bean.getObject())) %><br></nobr>
+            </td>
+            <td class="data">
+                <nobr><%= bean.getNumberOfInteractors(((Interactor)bean.getObject())) %><br></nobr>
             </td>
             <%
                 }

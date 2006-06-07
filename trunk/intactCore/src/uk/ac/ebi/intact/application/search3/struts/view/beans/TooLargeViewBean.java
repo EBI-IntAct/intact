@@ -23,20 +23,4 @@ public class TooLargeViewBean {
         return this.someSingleResultViewBeans;
     }
 
-    /**
-     * Information for the view if we got a searchable value in the statistics
-     *
-     * @return boolean is true if a searchable value is in the bean, false if not
-     */
-    public boolean isSelectable() {
-        boolean result = false;
-        for (SingleResultViewBean singleResultViewBean : someSingleResultViewBeans)
-        {
-            if (singleResultViewBean.isSearchable())
-            {
-                result = true;
-            }
-        }
-        return result;
-    }
 }

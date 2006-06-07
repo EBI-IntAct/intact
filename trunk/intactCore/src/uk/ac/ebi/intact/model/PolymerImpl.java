@@ -8,7 +8,16 @@ package uk.ac.ebi.intact.model;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 
+import javax.persistence.Entity;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Transient;
+import javax.persistence.OneToMany;
+import javax.persistence.JoinTable;
+import javax.persistence.JoinColumn;
+import javax.persistence.OrderBy;
 import java.util.*;
+
+import org.hibernate.annotations.Sort;
 
 /**
  * This is the super class for Protein and Nucleic Acid types.
@@ -16,6 +25,8 @@ import java.util.*;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
+@Entity
+@DiscriminatorValue("uk.ac.ebi.intact.model.PolymerImpl")
 public abstract class PolymerImpl extends InteractorImpl implements Polymer {
 
     //Constants
@@ -40,7 +51,7 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
      * The protein sequence. If the protein is present in a public database,
      * the sequence should not be repeated.
      */
-    private List<SequenceChunk> sequenceChunks = new ArrayList<SequenceChunk>();
+    private List<SequenceChunk> sequenceChunks;
 
     // Static methods
 
@@ -67,7 +78,7 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
      * no-arg constructor provided for compatibility with subclasses
      * that have no-arg constructors.
      */
-    protected PolymerImpl() {
+    public PolymerImpl() {
         //super call sets creation time data
         super();
     }
@@ -88,7 +99,7 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
     }
 
     // access methods for attributes
-
+    @Transient
     public String getSequence() {
         if ((null == sequenceChunks) || 0 == (sequenceChunks.size())) {
             return null;
@@ -137,7 +148,7 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
 
         for (int i = 0; i < chunkCount; i++) {
             String chunk = aSequence.substring(i * ourMaxSeqLength,
-                    Math.min((i + 1) * ourMaxSeqLength, aSequence.length()));
+                                               Math.min((i + 1) * ourMaxSeqLength, aSequence.length()));
 
             if (chunkPool != null && chunkPool.size() > 0) {
                 // recycle chunk
@@ -207,7 +218,7 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
 
         for (int i = 0; i < chunkCount; i++) {
             chunk = aSequence.substring(i * ourMaxSeqLength,
-                    Math.min((i + 1) * ourMaxSeqLength, aSequence.length()));
+                                        Math.min((i + 1) * ourMaxSeqLength, aSequence.length()));
 
             if (chunkPool != null && chunkPool.size() > 0) {
                 // recycle chunk
@@ -243,8 +254,20 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
         this.crc64 = crc64;
     }
 
-    public List getSequenceChunks() {
-        return Collections.unmodifiableList(sequenceChunks);
+    @OneToMany
+    @JoinTable(
+            name="ia_sequence_chunk",
+            joinColumns = { @JoinColumn( name="parent_ac") },
+            inverseJoinColumns = @JoinColumn( name="ac")
+    )
+    @OrderBy (value = "sequence_index")
+    public List<SequenceChunk> getSequenceChunks() {
+        return sequenceChunks;
+    }
+
+    public void setSequenceChunks(List<SequenceChunk> sequenceChunks)
+    {
+        this.sequenceChunks = sequenceChunks;
     }
 
     protected void addSequenceChunk(SequenceChunk sequenceChunk) {
@@ -256,7 +279,10 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
 
     protected void removeSequenceChunk(SequenceChunk sequenceChunk) {
         boolean removed = this.sequenceChunks.remove(sequenceChunk);
-        if (removed) sequenceChunk.setParentAc(null);
+        if (removed)
+        {
+            sequenceChunk.setParentAc(null);
+        }
     }
 
     /**
@@ -282,6 +308,19 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
         final Polymer other = (Polymer) obj;
 
         // TODO do we need to check sequence and CRC64
+        if (crc64 != null) {
+            if (!crc64.equals(other.getCrc64()))
+            {
+                return false;
+            }
+        }
+        else {
+            if (other.getCrc64() != null)
+            {
+                return false;
+            }
+        }
+
         if (getSequence() != null) {
             if (!getSequence().equals(other.getSequence())) {
                 return false;
@@ -293,12 +332,7 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
             }
         }
 
-        if (crc64 != null) {
-            return crc64.equals(other.getCrc64());
-        }
-        else {
-            return other.getCrc64() == null;
-        }
+        return true;
     }
 
     /**
@@ -311,8 +345,14 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
     @Override
     public int hashCode() {
         int code = super.hashCode();
-        if (getSequence() != null) code = code * 29 + getSequence().hashCode();
-        if (crc64 != null) code = code * 29 + crc64.hashCode();
+        if (getSequence() != null)
+        {
+            code = code * 29 + getSequence().hashCode();
+        }
+        if (crc64 != null)
+        {
+            code = code * 29 + crc64.hashCode();
+        }
         return code;
     }
 

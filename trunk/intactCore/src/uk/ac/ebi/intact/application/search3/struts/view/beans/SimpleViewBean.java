@@ -7,6 +7,9 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.InteractionDao;
+import uk.ac.ebi.intact.application.commons.search.SearchClass;
 
 import java.util.*;
 
@@ -20,6 +23,8 @@ import java.util.*;
  */
 public class SimpleViewBean extends AbstractViewBean {
 
+    private static String EMPTY_SPACE = " ";
+
     /**
      * The AnnotatedObject (currently Experiment, Interaction, Protein or CvObject) that the view bean provides beans
      * for.
@@ -32,7 +37,7 @@ public class SimpleViewBean extends AbstractViewBean {
      * CvObject and Protein) this should be an empty String (JSPs hate null objects :-)). It will be initialised to that
      * in the constructor.
      */
-    private String relatedItemsSize = " ";
+    private String relatedItemsSize = EMPTY_SPACE;
 
     /**
      * Holds the URL to perform subsequent searches from JSPs - used to build 'complete' URLs for use by JSPs
@@ -51,17 +56,6 @@ public class SimpleViewBean extends AbstractViewBean {
      * ...:-)
      */
     private String intactType;
-
-    private static ArrayList geneNameFilter = new ArrayList();
-
-    static {
-        // TODO somehow find a way to use MI references that are stable
-        geneNameFilter.add( "gene name" );
-        geneNameFilter.add( "gene name-synonym" );
-        geneNameFilter.add( "orf name" );
-        geneNameFilter.add( "locus name" );
-    }
-
 
     /**
      * The bean constructor requires an AnnotatedObject to wrap, plus beans on the context path to the search
@@ -83,8 +77,9 @@ public class SimpleViewBean extends AbstractViewBean {
      * Adds the shortLabel of the AnnotatedObject to an internal list used later for highlighting in a display. NOT SURE
      * IF WE STILL NEED THIS!!
      */
+    @Override
     public void initHighlightMap() {
-        Set set = new HashSet( 1 );
+        Set<String> set = new HashSet<String>( 1 );
         set.add( obj.getShortLabel() );
         setHighlightMap( set );
     }
@@ -97,6 +92,8 @@ public class SimpleViewBean extends AbstractViewBean {
      *
      * @deprecated use getHelpUrl instead
      */
+    @Deprecated
+    @Override
     public String getHelpSection() {
         return "protein.single.view";
     }
@@ -168,18 +165,21 @@ public class SimpleViewBean extends AbstractViewBean {
 //    public String getNumberOfInteractions( Protein aProtein ) {   //   1 usage in simple.jsp
     public String getNumberOfInteractions( Interactor anInteractor ) {
 
-        //TODO Remoove this with ProteinUtils
-        Set someComponents = new HashSet( anInteractor.getActiveInstances() );
-        Collection uniqueInteractions = new HashSet();
+       return String.valueOf(
+               DaoFactory.getInteractorDao().countInteractionsForInteractorWithAc(anInteractor.getAc()));
+    }
 
-        for ( Iterator iterator = someComponents.iterator(); iterator.hasNext(); ) {
-            Component aComponent = (Component) iterator.next();
-            Interaction anInteraction = aComponent.getInteraction();
-            uniqueInteractions.add( anInteraction );
+    /**
+     * Provides a String representation of the the Number of particapting interactors of a Protein
+     *
+     * @param anInteractor a Intact Interactor
+     *
+     * @return String a String representation of a s Number of particapting interactors
+     */
+    public String getNumberOfInteractors( Interactor anInteractor ) {
 
-        }
-
-        return Integer.toString( uniqueInteractions.size() );
+       return String.valueOf(
+               DaoFactory.getProteinDao().countPartnersByProteinAc(anInteractor.getAc()));
     }
 
 
@@ -206,7 +206,7 @@ public class SimpleViewBean extends AbstractViewBean {
      *
      * @return String a String representation of a search URL link for the wrapped AnnotatedObject
      */
-    public String getObjSearchURL( Class clazz, String ac ) {
+    public String getObjSearchURL( Class<? extends IntactObject> clazz, String ac ) {
 
         return searchURL + ac + "&amp;searchClass=" + getIntactType( clazz );
     }
@@ -223,23 +223,21 @@ public class SimpleViewBean extends AbstractViewBean {
     public String getRelatedItemsSize() {
 
         //set on first call
-        if ( relatedItemsSize == " " ) {
+        if ( relatedItemsSize.equals(EMPTY_SPACE) ) {
             //obtain the number of its related 'items'...
             Class clazz = obj.getClass();
-            int size = 0;
+
             if ( Experiment.class.isAssignableFrom( clazz ) ) {
-                Experiment exp = (Experiment) obj;
-                size = exp.getInteractions().size();
-                relatedItemsSize = Integer.toString( size );
+                long size = DaoFactory.getExperimentDao().countInteractionsForExperimentWithAc(getObjAc());
+                logger.debug("Counting interactions for experiment with AC "+getObjAc()+": "+size);
+                relatedItemsSize = String.valueOf( size );
             }
 
             //just check to be sure!!
             if ( Interaction.class.isAssignableFrom( clazz ) ) {
-                Interaction interaction = (Interaction) obj;
-
                 //this should check for complexes also....
-                size = countInteractors( interaction.getComponents() );
-                relatedItemsSize = Integer.toString( size );
+                int interactorCount = countInteractors(obj.getAc());
+                relatedItemsSize = String.valueOf(interactorCount);
             }
         }
         return relatedItemsSize;
@@ -264,25 +262,8 @@ public class SimpleViewBean extends AbstractViewBean {
      */
 
 //    public Collection getGeneNames( Protein protein ) {    //1 usage in simple.jsp
-    public Collection getGeneNames( Interactor interactor ) {
-
-        Collection geneNames = new HashSet();
-        //geneNames = new StringBuffer();
-        //the gene names are obtained from the Aliases for the Protein
-        //which are of type 'gene name'...
-        Collection aliases = interactor.getAliases();
-        for ( Iterator it = aliases.iterator(); it.hasNext(); ) {
-            Alias alias = (Alias) it.next();
-
-            if ( geneNameFilter.contains( alias.getCvAliasType().getShortLabel() ) ) {
-                geneNames.add( alias.getName() );
-            }
-        }
-        //now strip off trailing comma - if there are any names....
-        if ( geneNames.size() == 0 ) {
-            geneNames.add( "-" );
-        }
-        return geneNames;
+    public Collection<String> getGeneNames( Interactor interactor ) {
+        return DaoFactory.getInteractorDao().getGeneNamesByInteractorAc(interactor.getAc());
     }
 
 
@@ -303,8 +284,6 @@ public class SimpleViewBean extends AbstractViewBean {
 
     }
 
-    private static Map typeCache = null;
-
     /**
      * Provides the basic Intact type of the wrapped AnnotatedObject (ie no java package beans). NOTE: only the
      * INTERFACE types are provided as these are the only ones of interest in the model - display pages are not
@@ -314,54 +293,36 @@ public class SimpleViewBean extends AbstractViewBean {
      *
      * @return String The intact type of the wrapped object (eg 'Experiment')
      */
-    public String getIntactType( Class clazz ) {
-
-        if ( typeCache == null ) {
-            typeCache = new HashMap();
-        }
-
-        String type = (String) typeCache.get( clazz );
-
-        if ( type == null ) {
-
-            String className = clazz.getName();
-            String basicType = className.substring( className.lastIndexOf( "." ) + 1 );
-
-            //now check for 'Impl' and ignore it...
-            type = ( ( basicType.indexOf( "Impl" ) == -1 ) ?
-                     basicType : basicType.substring( 0, basicType.indexOf( "Impl" ) ) );
-
-            typeCache.put( clazz, type );
-        }
-
-        return type;
+    public String getIntactType( Class<? extends IntactObject> clazz ) {
+         return SearchClass.valueOfMappedClass(clazz).getShortName();
     }
+
 
     /**
      * This method will count up the number of Proteins that a List of Components contains. It will recurse through all
      * nested Interactions if necessary, and so handle complexes.
      *
-     * @param components The Components to check
+     * @param interactionAc The AC of the interaction to check
      *
      * @return int the number or Proteins present in the Component List.
      */
-//    private int countProteins( Collection components ) { //2 usage in SimpleViewBean
-    private int countInteractors( Collection components ) {
-
-        Interactor interactor = null;
+    private int countInteractors(String interactionAc)
+    {
         int count = 0;
-        for ( Iterator it = components.iterator(); it.hasNext(); ) {
-            Component comp = (Component) it.next();
-            interactor = comp.getInteractor();
 
-            //if the interactor is another Interaction then we need to
-            //go deeper until we get to some Proteins.....
-            if ( interactor instanceof Interaction ) {
-                Interaction interaction = (Interaction) interactor;
-                count = count + countInteractors( interaction.getComponents() );
-            } else {
-                count = count + 1;
-            }
+        InteractionDao dao = DaoFactory.getInteractionDao();
+
+        int interactorsIncInteractionsCount = dao.countInteractorsByInteractionAc(interactionAc);
+
+        List<String> interactionsAcForInteraction = dao.getNestedInteractionAcsByInteractionAc(interactionAc);
+
+        int interactions = interactorsIncInteractionsCount-interactionsAcForInteraction.size();
+
+        count = count+interactions;
+
+        for (String nestedInteractionAc : interactionsAcForInteraction)
+        {
+            count = count+countInteractors(nestedInteractionAc);
         }
 
         return count;

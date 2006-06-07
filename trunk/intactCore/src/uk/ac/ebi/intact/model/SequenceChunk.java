@@ -5,6 +5,10 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Id;
+import javax.persistence.Column;
 import java.io.Serializable;
 
 /**
@@ -13,6 +17,8 @@ import java.io.Serializable;
  * @author hhe
  * @version $Id$
  */
+@Entity
+@Table(name = "ia_sequence_chunk")
 public class SequenceChunk implements Serializable {
 
     ///////////////////////////////////////
@@ -50,7 +56,7 @@ public class SequenceChunk implements Serializable {
 
     ///////////////////////////////////////
     // associations
-
+    @Id
     public String getAc() {
         return ac;
     }
@@ -61,6 +67,7 @@ public class SequenceChunk implements Serializable {
 
     ///////////////////////////////////////
     //access methods for attributes
+    @Column(name = "parent_ac")
     public String getParentAc() {
         return parentAc;
     }
@@ -69,6 +76,7 @@ public class SequenceChunk implements Serializable {
         this.parentAc = parentAc;
     }
 
+    @Column(name = "sequence_chunk")
     public String getSequenceChunk() {
         return sequenceChunk;
     }
@@ -77,6 +85,7 @@ public class SequenceChunk implements Serializable {
         this.sequenceChunk = sequenceChunk;
     }
 
+    @Column(name = "sequence_index")
     public int getSequenceIndex() {
         return sequenceIndex;
     }

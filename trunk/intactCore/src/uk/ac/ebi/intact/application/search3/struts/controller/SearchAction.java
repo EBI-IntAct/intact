@@ -12,6 +12,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelper;
+import uk.ac.ebi.intact.application.commons.search.SearchClass;
 import uk.ac.ebi.intact.application.search3.business.Constants;
 import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
@@ -20,6 +21,8 @@ import uk.ac.ebi.intact.application.search3.struts.util.SearchValidator;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.IntactObject;
+import uk.ac.ebi.intact.model.ProteinImpl;
 import uk.ac.ebi.intact.application.commons.util.UrlUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -68,7 +71,7 @@ public class SearchAction extends IntactBaseAction {
         int page = 0;
         boolean paginatedSearch = false;
 
-        if (strPage != null)
+        if (strPage != null && strPage.length() != 0)
         {
             paginatedSearch = true;
             page = Integer.valueOf(strPage);
@@ -97,59 +100,30 @@ public class SearchAction extends IntactBaseAction {
             labelList.clear();     //set one up or wipe out an existing one
         }
 
-        //first check for a tabbed page request - no need to search in this case
-        String selectedPage = request.getParameter( "selectedChunk" );
-        if ( ( selectedPage != null ) && ( !selectedPage.equals( "" ) ) ) {
-
-            //the dispatcher can forward to the detail action
-            //and it can process existing view beans...
-            return mapping.findForward( SearchConstants.FORWARD_DISPATCHER_ACTION );
-        }
-
         DynaActionForm dyForm = (DynaActionForm) form;
 
         String searchValue = (String) dyForm.get( "searchString" );
-        String searchClass = (String) dyForm.get( "searchClass" );
-        String selectedChunk = (String) dyForm.get( "selectedChunk" );
+        SearchClass searchClass = SearchClass.valueOfShortName((String)dyForm.get( "searchClass" ));
         String binaryValue = (String) dyForm.get( "binary" );
         String viewValue = (String) dyForm.get( "view" );
         String filterValue = (String) dyForm.get( "filter" );
 
-        //this tabbed stuff is for handling subsequent page requests from tabbed JSPs
-        int selectedChunkInt = Constants.NO_CHUNK_SELECTED;
-        try {
-            if ( null != selectedChunk && !selectedChunk.equals( "" ) ) {
-                selectedChunkInt = Integer.parseInt( selectedChunk );
-
-            }
-        }
-        catch ( NumberFormatException nfe ) {
-            logger.warn( "The selected chunk is not an Integer value, it can't be parsed.", nfe );
-        }
-
         //set a few useful user beans
         user.setSearchValue( searchValue );
-        user.setSearchClass( searchClass );
-        user.setSelectedChunk( selectedChunkInt );
+        user.setSearchClass( searchClass.getMappedClass() );
         user.setBinaryValue( binaryValue );
         user.setView( viewValue );
 
         logger.info( "searchValue: " + searchValue );
         logger.info( "searchClass: " + searchClass );
-        logger.info( "selectedChunk: " +
-                     ( selectedChunkInt == Constants.NO_CHUNK_SELECTED ? "none" : selectedChunk ) );
         logger.info( "binaryValue: " + binaryValue );
-
-        //reset the class string in the form for the next request
-        // dyForm.set("searchString", "");
-        dyForm.set( "selectedChunk", "-1" );
 
         //clean out previous single object views
         session.setAttribute( SearchConstants.VIEW_BEAN, null );
 
         // Holds the result from the initial search.
         ResultWrapper results = null;
-        logger.info( "Classname = " + searchClass );
+        logger.info( "Classname = " + searchClass.getMappedClass() );
 
         try {
 
@@ -160,7 +134,7 @@ public class SearchAction extends IntactBaseAction {
                 return mapping.findForward( SearchConstants.FORWARD_NO_MATCHES );
             }
 
-            SearchHelper searchHelper = new SearchHelper( logger );
+            SearchHelper searchHelper = new SearchHelper(request, logger );
 
             // TODO this should probably move to the dispatcher action
 
@@ -187,7 +161,7 @@ public class SearchAction extends IntactBaseAction {
                     // first check for ac only
                     // that takes care of a potential bug when searching for a protein AC
                     // having splice variant. That would pull the master + all splice variants
-                    ResultWrapper subResults = this.getResults(searchHelper, "Protein", criteria, "ac",
+                    ResultWrapper subResults = this.getResults(searchHelper, SearchClass.PROTEIN, criteria, "ac",
                                                                user, paginatedSearch, page);
 
                     if (subResults.isEmpty())
@@ -195,7 +169,7 @@ public class SearchAction extends IntactBaseAction {
                         // then look for all fields if nothing has been found.
                         //finished all current options, and still nothing - return a failure
                         subResults =
-                                this.getResults(searchHelper, "Protein", criteria, "all", user, paginatedSearch, page);
+                                this.getResults(searchHelper, SearchClass.PROTEIN, criteria, "all", user, paginatedSearch, page);
                     }
 
                     if ( subResults.isTooLarge() && !paginatedSearch) {
@@ -221,7 +195,7 @@ public class SearchAction extends IntactBaseAction {
                     else
                     {
                         // merge both results together
-                        Set<Collection<AnnotatedObject>> mergedResults = new HashSet<Collection<AnnotatedObject>>();
+                        Set<AnnotatedObject> mergedResults = new HashSet<AnnotatedObject>();
                         mergedResults.addAll(subResults.getResult());
                         mergedResults.addAll(results.getResult());
 
@@ -236,7 +210,7 @@ public class SearchAction extends IntactBaseAction {
 
                         logger.info("create statistic : " + resultInfo);
                         // create a new resultWerapper
-                        List<Collection<AnnotatedObject>> temp = new ArrayList<Collection<AnnotatedObject>>();
+                        List<AnnotatedObject> temp = new ArrayList<AnnotatedObject>();
                         temp.addAll(mergedResults);
                         results =
                                 new ResultWrapper(temp,
@@ -274,17 +248,16 @@ public class SearchAction extends IntactBaseAction {
             logger.info( "found results - forwarding to relevant Action for processing..." );
 
             //determine the shortlabel highlighting list for display...
-            AnnotatedObject obj = null;
             logger.info( "building highlight list..." );
-            for ( Iterator iterator = results.getResult().iterator(); iterator.hasNext(); ) {
-                obj = (AnnotatedObject) iterator.next();
-                logger.info( "Search result: " + obj.getShortLabel() );
-                labelList.add( obj.getShortLabel() );
+            for (AnnotatedObject annotatedObject : results.getResult())
+            {
+                logger.debug("Search result: " + annotatedObject.getShortLabel());
+                labelList.add(annotatedObject.getShortLabel());
             }
 
             //put both the results and also a list of the shortlabels for highlighting into the request
 
-            Collection searchResult = results.getResult();
+            Collection<? extends AnnotatedObject> searchResult = results.getResult();
             request.setAttribute( SearchConstants.SEARCH_RESULTS, searchResult );
             request.setAttribute( SearchConstants.HIGHLIGHT_LABELS_LIST, labelList );
 
@@ -303,6 +276,7 @@ public class SearchAction extends IntactBaseAction {
 
         }
         catch ( IntactException se ) {
+            se.printStackTrace();
 
             // Something failed during search...
             logger.error( "Error occured in SearchAction ...", se );
@@ -340,7 +314,7 @@ public class SearchAction extends IntactBaseAction {
      *
      * @throws IntactException Thrown if there was a searching problem
      */
-    private ResultWrapper getResults( SearchHelper helper, String searchClass,
+    private ResultWrapper getResults( SearchHelper helper, SearchClass searchClass,
                                       String searchValue, String filterValue, IntactUserIF user, boolean paginatedSearch, int page)
             throws IntactException {
 
@@ -355,17 +329,17 @@ public class SearchAction extends IntactBaseAction {
             maxResults = SearchConstants.RESULTS_PER_PAGE;
         }
 
-        if ( SearchValidator.isSearchable( searchClass ) || searchClass.equals( "" ) || searchClass == null ) {
+        //BRUNO changed here
+    //    if ( searchClass.isSpecified() || SearchValidator.isSearchable( searchClass )) {
             logger.info( "SearchAction: searchfast: " + searchValue + " searchClass: " + searchClass );
-            IntactHelper intactHelper = user.getIntactHelper();
-            result = helper.searchFast( searchValue, searchClass, filterValue, intactHelper, maxResults, firstResult, paginatedSearch);
-        } else {
+            result = helper.searchFast( searchValue, searchClass, filterValue, maxResults, firstResult, paginatedSearch);
+   /*     } else {
             // this is a normal request from the servlet, we know the class, we know the value.
             Collection temp = new ArrayList();
             logger.info( "SearchAction: doLookup: " + searchValue + " searchClass: " + searchClass );
             temp.addAll( helper.doLookup( searchClass, searchValue, user ) );
             result = new ResultWrapper( temp, SearchConstants.MAXIMUM_RESULT_SIZE );
-        }
+        }    */
 
         return result;
     }

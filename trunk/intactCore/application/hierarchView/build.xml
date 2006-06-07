@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 ANT build configuration file for hierarchView module.
-Author: Samuel Kerrien, Sugath Mudali, Alexandre Liban (aliban@ebi.ac.uk)
+Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
 Verison: $Id$
 -->
 <project name="hierarchView" basedir="." default="compile">
@@ -104,16 +104,25 @@ Verison: $Id$
         <pathelement path="${root.lib.dir}/jaxrpc-impl.jar"/>
         <pathelement path="${root.lib.dir}/jaxrpc-api.jar"/>
         <pathelement path="${root.lib.dir}/db-ojb-1.0.rc6.jar"/>
-        <pathelement path="${root.lib.dir}/log4j-1.2.8.jar"/>
+        <pathelement path="${root.lib.dir}/log4j-1.2.11.jar"/>
         <pathelement path="${root.lib.dir}/servlet.jar"/>
         <pathelement path="${root.lib.dir}/commons-lang-2.0.jar"/>
         <pathelement path="${root.lib.dir}/junit.jar"/>
-        <pathelement path="${root.lib.dir}/commons-logging.jar"/>
+        <pathelement path="${root.lib.dir}/commons-logging-1.0.4.jar"/>
         <pathelement path="${root.lib.dir}/commons-pool-1.2.jar"/>
         <pathelement path="${root.lib.dir}/commons-dbcp-1.1.jar"/>
         <pathelement path="${root.lib.dir}/commons-collections-3.0.jar"/>
         <pathelement path="${root.lib.dir}/jdbc_oracle9i_thin_9.2.0.jar"/>
 
+        <!-- hibernate -->
+        <fileset dir="${root.lib.dir}/hibernate">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <!-- hibernate -->
+        <fileset dir="${root.lib.dir}/hibernate">
+            <include name="**/*.jar"/>
+        </fileset>
 
         <pathelement path="${intact.app.dir}/lib/struts.jar"/>
 
@@ -738,6 +747,7 @@ Verison: $Id$
                 <include name="${pages.dir}/**"/>
                 <include name="${layouts.dir}/**"/>
                 <include name="${last.modified.file}"/>
+                <exclude name="hibernate.cfg.xml" />
             </fileset>
 
             <!-- Include jar files for hv. -->
@@ -762,12 +772,16 @@ Verison: $Id$
             <lib dir="${root.lib.dir}">
                 <include name="db-ojb-1.0.rc6.jar"/>
                 <include name="commons-dbcp-1.1.jar"/>
-                <include name="log4j-1.2.8.jar"/>
+                <include name="log4j-1.2.11.jar"/>
                 <include name="${db}"/>
                 <include name="commons-lang-2.0.jar"/>
                 <include name="commons-collections-3.0.jar"/>
                 <include name="commons-pool-1.1.jar"/>
             </lib>
+
+            <!-- hibernate -->
+            <lib dir="${root.lib.dir}/hibernate" />
+            <lib dir="${root.lib.dir}/hibernate/transitive-deps"/>
 
             <!-- HierarchView classes and config files. -->
             <classes dir="${dest.dir}"/>

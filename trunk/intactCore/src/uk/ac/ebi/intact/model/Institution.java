@@ -1,10 +1,12 @@
-/*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.
-All rights reserved. Please see the file LICENSE
-in the root directory of this distribution.
-*/
+/**
+ * Copyright (c) 2002-2006 The European Bioinformatics Institute, and others.
+ * All rights reserved. Please see the file LICENSE
+ * in the root directory of this distribution.
+ */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.io.Serializable;
 
 /**
@@ -14,6 +16,9 @@ import java.io.Serializable;
  * @version $Id$
  */
 // TODO cf. note
+
+@Entity
+@Table(name = "IA_INSTITUTION")
 public class Institution extends IntactObjectImpl implements Serializable {
 
     ///////////////////////////////////////
@@ -51,8 +56,7 @@ public class Institution extends IntactObjectImpl implements Serializable {
      *
      * @deprecated Use the full constructor instead
      */
-    @Deprecated
-    private Institution() {
+    public Institution() {
         super();
     }
 
@@ -184,6 +188,7 @@ public class Institution extends IntactObjectImpl implements Serializable {
         return sb.toString();
     }
 } // end Institution
+
 
 
 

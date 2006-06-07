@@ -62,4 +62,4 @@ UNION
     FROM ia_controlledvocab CV, ia_alias A
     WHERE CV.ac = A.parent_ac);
 
-CREATE INDEX i_search_value on ia_search(value);
+CREATE INDEX i_search_value on ia_search(value,objclass);

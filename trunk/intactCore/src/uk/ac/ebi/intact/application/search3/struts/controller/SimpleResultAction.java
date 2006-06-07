@@ -3,6 +3,7 @@ package uk.ac.ebi.intact.application.search3.struts.controller;
 import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.SimpleViewBean;
+import uk.ac.ebi.intact.application.commons.search.SearchClass;
 import uk.ac.ebi.intact.model.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -61,29 +62,33 @@ public class SimpleResultAction extends AbstractResultAction {
         List<SimpleViewBean> expList = new ArrayList<SimpleViewBean>(results.size());
         List<SimpleViewBean> interactionList = new ArrayList<SimpleViewBean>(results.size());
         List<SimpleViewBean> proteinList = new ArrayList<SimpleViewBean>(results.size());
+        List<SimpleViewBean> nucleicAcidList = new ArrayList<SimpleViewBean>(results.size());
         List<SimpleViewBean> cvObjectList = new ArrayList<SimpleViewBean>(results.size());
 
         List<List<SimpleViewBean>> partitionList = new ArrayList<List<SimpleViewBean>>(results.size());   //this will hold the seperate lists as items
 
         for (AnnotatedObject obj : results)
         {
+            SearchClass searchClass = SearchClass.valueOfMappedClass(obj.getClass());
+
              //now create a relevant view bean for each type in the result set...
-            if (Experiment.class.isAssignableFrom(obj.getClass()))
+            if (searchClass == SearchClass.EXPERIMENT)
             {
                 expList.add(new SimpleViewBean(obj, user.getHelpLink(), searchURL, contextPath));
             }
-
-            if (Interaction.class.isAssignableFrom(obj.getClass()))
+            else if (searchClass == SearchClass.INTERACTION)
             {
                 interactionList.add(new SimpleViewBean(obj, user.getHelpLink(), searchURL, contextPath));
             }
-
-            if (Protein.class.isAssignableFrom(obj.getClass()))
+            else if (searchClass == SearchClass.PROTEIN)
             {
                 proteinList.add(new SimpleViewBean(obj, user.getHelpLink(), searchURL, contextPath));
             }
-
-            if (CvObject.class.isAssignableFrom(obj.getClass()))
+            else if (searchClass == SearchClass.NUCLEIC_ACID)
+            {
+                nucleicAcidList.add(new SimpleViewBean(obj, user.getHelpLink(), searchURL, contextPath));
+            }
+            else if (searchClass.isCvObjectSubclass())
             {
                 cvObjectList.add(new SimpleViewBean(obj, user.getHelpLink(), searchURL, contextPath));
             }
@@ -99,6 +104,9 @@ public class SimpleResultAction extends AbstractResultAction {
         }
         if (!proteinList.isEmpty()) {
             partitionList.add(proteinList);
+        }
+        if (!nucleicAcidList.isEmpty()) {
+            partitionList.add(nucleicAcidList);
         }
         if (!cvObjectList.isEmpty()) {
             partitionList.add(cvObjectList);

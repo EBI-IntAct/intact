@@ -6,6 +6,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.commons.util;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * TODO comment it.
@@ -36,7 +37,7 @@ public class DateToolbox {
         return monthName;
     }
 
-    public static String formatDate(Timestamp date){
+    public static String formatDate(Date date){
         if(date == null){
             return null;
         }

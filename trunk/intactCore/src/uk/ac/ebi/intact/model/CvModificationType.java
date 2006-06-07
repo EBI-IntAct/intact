@@ -5,15 +5,19 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.Entity;
+import javax.persistence.DiscriminatorValue;
 
 
 /**
  * Represents a type of modification.
- * 
+ *
  * example phosphorylation
  * @author hhe
  * @version $Id$
  */
+@Entity
+@DiscriminatorValue("uk.ac.ebi.intact.model.CvModificationType")
 public class CvModificationType extends CvObject {
 
     /**
@@ -30,7 +34,7 @@ public class CvModificationType extends CvObject {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private CvModificationType() {
+    public CvModificationType() {
         //super call sets creation time data
         super();
     }

@@ -1,10 +1,12 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.Entity;
+import javax.persistence.DiscriminatorValue;
 
 
 /**
@@ -13,6 +15,8 @@ package uk.ac.ebi.intact.model;
  * @author hhe
  * @version $Id$
  */
+@Entity
+@DiscriminatorValue("uk.ac.ebi.intact.model.CvTissue")
 public class CvTissue extends CvObject implements Editable {
 
     /**
@@ -29,7 +33,7 @@ public class CvTissue extends CvObject implements Editable {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private CvTissue() {
+    public CvTissue() {
         //super call sets creation time data
         super();
     }

@@ -61,12 +61,12 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
     /**
      * The time of creation of the current edit object.
      */
-    private Timestamp myCreated;
+    private Date myCreated;
 
     /**
      * The time of last update of the current edit object.
      */
-    private Timestamp myUpdated;
+    private Date myUpdated;
     /**
      * The short label of the current edit object.
      */
@@ -420,28 +420,28 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
      * Returns the created timestamp.
      * @return the created as a <code>Timestamp<code> instance
      */
-    public Timestamp getCreated() {
+    public Date getCreated() {
         return myCreated;
     }
     /**
      * Sets the updator.
      * @param created the created to set.
      */
-    public void setCreated(Timestamp created) {
+    public void setCreated(Date created) {
         this.myCreated = created;
     }
     /**
      * Returns the updated timestamp.
      * @return the updated as a <code>Timestamp<code> instance
      */
-    public Timestamp getUpdated() {
+    public Date getUpdated() {
         return myUpdated;
     }
    /**
      * Sets the updator.
      * @param updated the updated to set.
      */
-    public void setUpdated(Timestamp updated) {
+    public void setUpdated(Date updated) {
         this.myUpdated = updated;
     }
 

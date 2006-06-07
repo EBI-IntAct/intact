@@ -41,7 +41,7 @@ public class ReferenceQualifier {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private ReferenceQualifier() {
+    public ReferenceQualifier() {
         super();
     }
     public ReferenceQualifier(Reference reference, CvReferenceQualifier cvReferenceQualifier) {

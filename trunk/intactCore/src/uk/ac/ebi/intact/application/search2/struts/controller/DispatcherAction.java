@@ -14,6 +14,8 @@ import uk.ac.ebi.intact.application.search2.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search2.struts.framework.util.SearchConstants;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.model.IntactObject;
+import uk.ac.ebi.intact.model.ProteinImpl;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -70,12 +72,12 @@ public class DispatcherAction extends IntactBaseAction {
         if(Protein.class.isAssignableFrom(resultItem.getClass())) {
 
             if( ( results.size() == 1 ) ) {
-                String searchClass = user.getSearchClass();
+                Class searchClass = user.getSearchClass();
                 logger.info( "SearchClass: " + searchClass );
 
                 //check to see if the request came from a link on a page
                 //(ie searchClass is non-empty) - if so, do a single view
-                if( searchClass.equals( "Protein" ) || searchClass.equals( "ProteinImpl" ) ) {
+                if( searchClass.isAssignableFrom(ProteinImpl.class) ) {
                     logger.info( "Dispatcher ask forward to SingleResultAction" );
                     return mapping.findForward( SearchConstants.FORWARD_SINGLE_ACTION );
                 }

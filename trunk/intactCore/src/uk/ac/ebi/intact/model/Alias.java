@@ -5,6 +5,13 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Column;
+import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.FetchType;
+
 /**
  * An alternative name for the object.
  * <p/>
@@ -16,6 +23,8 @@ package uk.ac.ebi.intact.model;
  * @version $Id$
  * @see uk.ac.ebi.intact.model.CvAliasType
  */
+@Entity
+@Table(name = "ia_alias")
 public class Alias extends BasicObjectImpl {
 
     private static final int MAX_ALIAS_NAME_LEN = 30;
@@ -50,7 +59,7 @@ public class Alias extends BasicObjectImpl {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private Alias() {
+    public Alias() {
         super();
     }
 
@@ -93,6 +102,7 @@ public class Alias extends BasicObjectImpl {
         this.name = name;
     }
 
+    @Column(name = "parent_ac")
     public String getParentAc() {
         return parentAc;
     }
@@ -109,6 +119,8 @@ public class Alias extends BasicObjectImpl {
     ///////////////////////////////////////
     // access methods for associations
 
+    @ManyToOne (fetch = FetchType.LAZY)
+    @JoinColumn(name = "aliastype_ac")
     public CvAliasType getCvAliasType() {
         return cvAliasType;
     }
@@ -125,6 +137,7 @@ public class Alias extends BasicObjectImpl {
      * @return true if the parameter equals this object, false otherwise
      * @see uk.ac.ebi.intact.model.CvAliasType
      */
+    @Override
     public boolean equals( Object o ) {
         if( this == o ) return true;
         if( !( o instanceof Alias ) ) return false;
@@ -150,6 +163,7 @@ public class Alias extends BasicObjectImpl {
         return true;
     }
 
+    @Override
     public int hashCode() {
         int result = 29;
         if( name != null ) result = 29 * result + name.hashCode();
@@ -157,6 +171,7 @@ public class Alias extends BasicObjectImpl {
         return result;
     }
 
+    @Override
     public String toString() {
         return "Alias[name: " + name + ", type: " +
                ( cvAliasType != null ? cvAliasType.getShortLabel() : "" ) + "]";
