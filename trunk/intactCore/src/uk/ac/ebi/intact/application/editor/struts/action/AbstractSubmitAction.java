@@ -82,7 +82,7 @@ public abstract class AbstractSubmitAction extends AbstractEditorAction {
 //        }
         // Cast the form.
         EditorFormI editorForm = (EditorFormI) form;
-
+        //
         getIntactUser(request).getView().copyPropertiesFrom(editorForm);
         // The dispatch value holds the button label.
         String dispatch = editorForm.getDispatch();
