@@ -292,7 +292,7 @@ Query     _________       ____________      |     _________      _____________
                 scope="request">
             <forward name="waiting_page" path="waiting.page.layout"/>
         </action>
-        
+
     </action-mappings>
 
     <!-- ========== Plug Ins Configuration ================================== -->

@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
@@ -34,7 +34,7 @@ public interface AnnotatedObject extends BasicObject {
 
     ///////////////////////////////////////
     // access methods for associations
-    public void setAnnotation(Collection<Annotation> someAnnotation);
+    public void setAnnotations(Collection<Annotation> someAnnotation);
 
     public Collection<Annotation> getAnnotations();
 
@@ -75,11 +75,6 @@ public interface AnnotatedObject extends BasicObject {
     public void addReference(Reference reference);
 
     public void removeReference(Reference reference);
-
-    //attributes used for mapping BasicObjects - project synchron
-    public String getCuratorAc();
-
-    public void setCuratorAc(String ac);
 
 //    public AnnotatedObject update(IntactHelper helper) throws IntactException;
 //

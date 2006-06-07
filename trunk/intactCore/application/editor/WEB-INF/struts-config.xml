@@ -185,7 +185,7 @@
       name="seqForm"
       scope="session"
       input="edit.layout"
-      unknown="false/expDispatch"
+      unknown="false"
       validate="false"
     >
     </action>

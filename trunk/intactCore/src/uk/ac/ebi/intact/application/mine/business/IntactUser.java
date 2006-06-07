@@ -95,8 +95,8 @@ public class IntactUser implements IntactUserI {
 	 * @see uk.ac.ebi.intact.application.commons.business.IntactUserI#search(java.lang.String,
 	 *      java.lang.String, java.lang.String)
 	 */
-	public Collection search(
-		String objectType,
+	public <T> Collection<T> search(
+		Class<T> objectType,
 		String searchParam,
 		String searchValue)
 		throws IntactException {

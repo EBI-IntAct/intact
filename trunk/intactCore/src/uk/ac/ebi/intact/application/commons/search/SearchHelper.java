@@ -12,16 +12,31 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Alias;
 import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.persistence.ObjectBridgeQueryFactory;
-import uk.ac.ebi.intact.util.DatabaseUtil;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.SearchItemDao;
+import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.Set;
 
 /**
  * Performs an intelligent search on the intact database.
@@ -51,6 +66,8 @@ public class SearchHelper implements SearchHelperI {
      */
     private Boolean connected;
 
+    private HttpServletRequest request;
+
     /**
      * Create a search helper for which all the log message will be written by the provided logger.
      *
@@ -58,78 +75,73 @@ public class SearchHelper implements SearchHelperI {
      */
     public SearchHelper(Logger logger) {
         this.logger = logger;
+        this.request = request;
+    }
+
+    /**
+     * Create a search helper for which all the log message will be written by the provided logger.
+     *
+     * @param logger the user's logger.
+     */
+    public SearchHelper(HttpServletRequest request, Logger logger) {
+        this.logger = logger;
+        this.request = request;
     }
 
     public Collection getSearchCritera() {
         return searchCriteria;
     }
 
-    public Collection doLookup(String searchClass, String values, IntactUserI user)
+    public  Collection<IntactObject> doLookup(SearchClass searchClass, String values, IntactUserI user)
             throws IntactException {
 
-        searchCriteria.clear();
-        Collection queries = splitQuery(values);
+        List<SearchClass> searchClasses = new ArrayList<SearchClass>();
+        searchClasses.add(searchClass);
 
-        // avoid to have duplicate intact object in the dataset.
-        Collection results = new HashSet();
-        String packageName = AnnotatedObject.class.getPackage().getName() + ".";
-
-        logger.info("className supplied in request - going straight to search...");
-        String className = packageName + searchClass;
-        logger.info("attempting search for " + className + " with values " + values);
-        for (Iterator iterator = queries.iterator(); iterator.hasNext();) {
-            String subQuery = (String) iterator.next();
-            logger.info("Search for subquery: " + subQuery);
-            Collection subResult = doSearch(className, subQuery, user);
-
-            if (subResult.isEmpty()) {
-                logger.info("no search results found for class: " + className + ", value: " + values);
-            }
-            else {
-                logger.info("found search match - class: " + className + ", value: " + values);
-            }
-
-            results.addAll(subResult);
-            logger.info("Item count: " + results.size());
-        }
-
-        return results;
+        return doLookup(searchClasses, values, user);
     }
 
-    public Collection doLookup(List searchClasses, String values, IntactUserI user)
+    public Collection<IntactObject> doLookup(List<SearchClass> searchClasses, String values, IntactUserI user)
             throws IntactException {
 
         searchCriteria.clear();
-        Collection queries = splitQuery(values);
+        Collection<String> queries = splitQuery(values);
 
         // avoid to have duplicate intact object in the dataset.
-        Collection results = new HashSet();
-        String packageName = AnnotatedObject.class.getPackage().getName() + ".";
+        Collection<IntactObject> results = new HashSet<IntactObject>();
 
-        String className = null;
+        SearchClass searchClass = null;
         boolean itemFound = false;
-        for (Iterator iterator = queries.iterator(); iterator.hasNext();) {
-            String subQuery = (String) iterator.next();
+        for (String subQuery : queries)
+        {
             logger.info("Search for subquery: " + subQuery);
 
             final int size = searchClasses.size();
-            for (int i = 0; i < size; i++) {
-                if (false == itemFound) {
-                    className = packageName + searchClasses.get(i);
+            for (int i = 0; i < size; i++)
+            {
+                if (false == itemFound)
+                {
+                    searchClass =  searchClasses.get(i);
                 }
-                else {
+                else
+                {
                     // if there is an item found (i.e. only one class to look for)
                     // we need only one iteration.
-                    if (i > 0) break;
+                    if (i > 0)
+                    {
+                        break;
+                    }
                 }
 
-                Collection subResult = doSearch(className, subQuery, user);
+                Collection<? extends IntactObject> subResult = doSearch(searchClass, subQuery, user);
                 logger.info("sub result count: " + subResult.size());
 
-                if (subResult.size() > 0) {
+                if (subResult.size() > 0)
+                {
                     results.addAll(subResult);
-                    className = subResult.iterator().next().getClass().getName();
-                    logger.info("found search match - class: " + className + ", value: " + subQuery);
+
+                    Class<? extends IntactObject> clazz = subResult.iterator().next().getClass();
+                    logger.info("found search match - class: " + clazz + ", value: " + subQuery);
                     itemFound = true;
                     break; // exit the inner for
                 }
@@ -140,10 +152,12 @@ public class SearchHelper implements SearchHelperI {
         return results;
     }
 
-    public ResultWrapper searchByQuery(Class clazz, String searchParam,
+    public ResultWrapper searchByQuery(SearchClass searchClass, String searchParam,
                                        String searchValue, int max) throws IntactException {
         // The helper to run the query against.
         IntactHelper helper = null;
+
+        Class<? extends IntactObject> clazz = searchClass.getMappedClass();
 
         // The query factory to get a query.
         ObjectBridgeQueryFactory qf = ObjectBridgeQueryFactory.getInstance();
@@ -224,8 +238,8 @@ public class SearchHelper implements SearchHelperI {
      * @param query the query string to split
      * @return one to many subquery of the comma separated list.
      */
-    private Collection splitQuery(String query) {
-        Collection queries = new LinkedList();
+    private Collection<String> splitQuery(String query) {
+        Collection<String> queries = new LinkedList<String>();
 
         StringTokenizer st = new StringTokenizer(query, ",");
         while (st.hasMoreTokens()) {
@@ -240,7 +254,7 @@ public class SearchHelper implements SearchHelperI {
      * allows us to change initial strategy if we want to. NB this will probably be refactored out
      * into the IntactHelper class later on.
      *
-     * @param className The class to search on (only comes from a link clink) - useful for
+     * @param searchClass The class to search on (only comes from a link clink) - useful for
      *                  optimizing search
      * @param value     the user-specified value
      * @param user      object holding the IntactHelper for a given user/session (passed as a
@@ -250,53 +264,64 @@ public class SearchHelper implements SearchHelperI {
      * @throws uk.ac.ebi.intact.business.IntactException
      *          thrown if there were any search problems
      */
-    private Collection doSearch(String className, String value, IntactUserI user)
+    private Collection<? extends IntactObject> doSearch(SearchClass searchClass, String value, IntactUserI user)
             throws IntactException {
+
+        Class<? extends AnnotatedObject> mappedClass = searchClass.getMappedClass();
+
+        AnnotatedObjectDao<? extends AnnotatedObject> dao = DaoFactory.getAnnotatedObjectDao(mappedClass);
+
         //try search on AC first...
-        Collection results = user.search(className, "ac", value);
+       Collection results = dao.getByAcLike(value);
+
         String currentCriteria = "ac";
 
         if (results.isEmpty()) {
             // No matches found - try a search by label now...
-            logger.info("no match found for " + className + " with ac= " + value);
-            logger.info("now searching for class " + className + " with label " + value);
-            results = user.search(className, "shortLabel", value);
+            logger.info("no match found for " + mappedClass + " with ac= " + value);
+            logger.info("now searching for class " + mappedClass + " with label " + value);
+
+            results = dao.getByShortLabelLike(value);
+
             currentCriteria = "shortLabel";
 
             if (results.isEmpty()) {
                 //no match on label - try by alias.
-                logger.info("no match on label - looking for: " + className +
+                logger.info("no match on label - looking for: " + mappedClass +
                             " with name alias ID " +
                             value);
-                Collection aliases = user.search(Alias.class.getName(), "name",
-                                                 value.toLowerCase());
+
+                Collection<Alias> aliases = DaoFactory.getAliasDao().getByNameLike(value);
 
                 //could get more than one alias, eg if the name is a wildcard search value -
                 //then need to go through each alias found and accumulate the results...
-                for (Iterator it = aliases.iterator(); it.hasNext();) {
-                    results.addAll(user.search(className, "ac", ((Alias) it.next()).getParentAc()));
+                for (Alias alias : aliases)
+                {
+                    results.add(dao.getByAc(alias.getParentAc()));
                 }
                 currentCriteria = "alias";
             }
 
             if (results.isEmpty()) {
                 //no match on label - try by xref....
-                logger.info("no match on label - looking for: " + className +
+                logger.info("no match on label - looking for: " + mappedClass +
                             " with primary xref ID " +
                             value);
-                Collection xrefs = user.search(Xref.class.getName(), "primaryId", value);
+
+                Collection<Xref> xrefs = DaoFactory.getXrefDao().getByPrimaryIdLike(value);
 
                 //could get more than one xref, eg if the primary id is a wildcard search value -
                 //then need to go through each xref found and accumulate the results...
-                for (Iterator it = xrefs.iterator(); it.hasNext();) {
-                    results.addAll(user.search(className, "ac", ((Xref) it.next()).getParentAc()));
+                for (Xref xref : xrefs)
+                {
+                    results.add(dao.getByAc(xref.getParentAc()));
                 }
                 currentCriteria = "xref";
 
                 if (results.isEmpty()) {
                     //no match by xref - try finally by name....
                     logger.info("no matches found using ac, shortlabel or xref - trying fullname...");
-                    results = user.search(className, "fullName", value);
+                    results = user.search(mappedClass, "fullName", value);
                     currentCriteria = "fullName";
 
                     if (results.isEmpty()) {
@@ -313,32 +338,6 @@ public class SearchHelper implements SearchHelperI {
         return results;
     }  // doSearch
 
-    /**
-     * utility method to handle the logic for a simple lookup, ie trying AC and label only.
-     *
-     * @param clazz The class to search on.
-     * @param value the user-specified value
-     * @return the result wrapper which contains the result of the search
-     * @throws uk.ac.ebi.intact.business.IntactException
-     *          thrown if there were any search problems
-     */
-//    private ResultWrapper doSearchSimple(Class clazz, String value, int max)
-//            throws IntactException {
-//        //try search on AC first...
-//        ResultWrapper rw = searchByQuery(clazz, "ac", value, max);
-//        String currentCriteria = "ac";
-//
-//        if (rw.isEmpty()) {
-//            // No matches found - try a search by label now...
-//            logger.info("no match found for " + clazz + " with ac= " + value);
-//            logger.info("now searching for class " + clazz + " with label " + value);
-//            rw = searchByQuery(clazz, "shortLabel", value, max);
-//            currentCriteria = "shortLabel";
-//        }
-//        CriteriaBean cb = new CriteriaBean(value, currentCriteria);
-//        searchCriteria.add(cb);
-//        return rw;
-//    }
 
     /**
      * Returns true  if a simple count on the ia_search table works, if not false
@@ -346,6 +345,13 @@ public class SearchHelper implements SearchHelperI {
      * @return true if a simple count on the ia_search table works, if not return false
      */
     public boolean connected() {
+
+        logger.info("check if is connected");
+        logger.warn("Current implementation will always return true for connected (BA)");
+
+        return true;
+
+        /*
         logger.info("check if is connected");
         //set up with first call
         if (connected == null) {
@@ -360,19 +366,19 @@ public class SearchHelper implements SearchHelperI {
                 rs = stmt.executeQuery(testQuery);
                 // if we got a result, the search table exists
                 if (rs.next()) {
-                    connected = new Boolean(true);
+                    connected = true;
                 }
                 // if we got no result,the search table exists
                 else {
-                    connected = new Boolean(false);
+                    connected = false;
                 }
                 //  an exception means that something is wrong
             }
             catch (IntactException e) {
-                connected = new Boolean(false);
+                connected = false;
             }
             catch (SQLException e) {
-                connected = new Boolean(false);
+                connected = false;
             }
             finally {
                 if (rs != null) {
@@ -407,6 +413,7 @@ public class SearchHelper implements SearchHelperI {
             }
         }
         return connected.booleanValue();
+        */
     }
 
     /**
@@ -419,18 +426,14 @@ public class SearchHelper implements SearchHelperI {
      * @param searchClass String which represents the name of the class  to search on.
      * @param type        String  the filter type (ac, shortlabel, xref etc.) if type is null it will be 'all'
      * @return the result wrapper which contains the result of the search
-     * @throws uk.ac.ebi.intact.business.IntactException
-     *          thrown if there were any search problems
      */
-    private ResultWrapper search(String query, String searchClass, String type, IntactHelper helper, int maximumResultSize, int firstResult, boolean paginatedSearch)
-            throws IntactException {
+    private ResultWrapper search(String query, SearchClass searchClass, String type, int maximumResultSize, int firstResult, boolean paginatedSearch) {
 
         // first check if we got a type, we have to search for a type if the type is not null
         // and not "all"
         boolean hasType = (type != null) && (!type.trim().equals("")) && !type.equals("all");
-        boolean hasSearchClass = (searchClass != null) && (!searchClass.trim().equals(""));
 
-        logger.info("search with value with query : " + query + " searchClass :" + searchClass);
+        logger.info("search with value with query : " + query + " searchClass :" + searchClass.getMappedClass().getName());
         // replace  the "*" with "%"
 
         String sqlValue = query.replaceAll("\\*", "%");
@@ -438,166 +441,134 @@ public class SearchHelper implements SearchHelperI {
         sqlValue = sqlValue.toLowerCase();
         logger.info(sqlValue);
 
-        // if we want to search for CvObjects, it's not referenced as such in ia_search,
-        // but as its implementation (eg. CvTopic).
-
-        if (searchClass.equalsIgnoreCase("cvobject")) {
-            searchClass = "Cv";
-        }
-
         // split the query
-        Collection someSearchValues = this.splitQuery(sqlValue);
+        Collection<String> someSearchValues = this.splitQuery(sqlValue);
+        String[] values = someSearchValues.toArray(new String[someSearchValues.size()]);
 
-        // create the tail of the sql query
-        StringBuffer sb = new StringBuffer(128);
-        String value = null;
 
-        for (Iterator iterator = someSearchValues.iterator(); iterator.hasNext();) {
-            value = (String) iterator.next();
-            sb.append("(value LIKE '");
-            sb.append(value);
-            sb.append("')");
-            if (iterator.hasNext()) {
-                sb.append(" OR ");
-            }  // end if
-        } // end for
+        // in this variable the results of the search will be stored
+        List<AnnotatedObject> searchResult = new ArrayList<AnnotatedObject>();
 
-        String sqlCount = "SELECT COUNT(distinct(ac)), objclass FROM " + SEARCH_TABLE + " WHERE " +
-                sb.toString();
-
-        // if we are looking for a type expand the query
-        if (hasType) {
-            sqlCount = sqlCount + " AND type='" + type + "'";
-        }
-        // if we are looking for a specific searchclass exapnd the query
-        if (hasSearchClass) {
-            sqlCount = sqlCount + " AND objclass LIKE '%" + searchClass + "%'";
+        // If only one accession is in the query and the object type is specified
+        // there is no need to go to the search table. We can retrieve the object directly
+        if (isQuerySearchingOnlyOneAc(values) && searchClass.isSpecified())
+        {
+            logger.info("Search is for only one AC, and search class is specified. No need to go through ia_search");
+            searchResult.add(DaoFactory.getAnnotatedObjectDao(searchClass.getMappedClass()).getByAc(values[0].toUpperCase()));
+            return new ResultWrapper(searchResult, 1);
         }
 
-        sqlCount = sqlCount + " GROUP BY objclass";
+        SearchItemDao searchItemDao = DaoFactory.getSearchItemDao();
 
-        logger.info(sqlCount);
-        Connection conn = null;
-        Statement stmt = null;
-        ResultSet rs = null;
+        //  type and objClass have to be null if they are not to be used in the query
+        if (!hasType) type = null;
 
-        // Access the Connection via the helper.
-        try {
+        logger.info("Getting counts");
 
-            conn = helper.getJDBCConnection();
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery(sqlCount);
+        // We create the array of classes to use in the query for the IA_SEARCH table
+        // If it is a unspecific CvObject, we need to subclass for all the CvObject subclasses
+        String[] objClasses = null;
 
-            int count = 0;
-            String className = null;
-            Map<String,Integer> resultInfo = new HashMap<String,Integer>();
-
-            while (rs.next()) {
-                int classCount = rs.getInt(1);
-                logger.info("classCount " + classCount);
-                className = rs.getString(2);
-                logger.info("ClassName : " + className);
-                resultInfo.put(className, classCount);
-                count += classCount;
-                logger.info("Count summ : " + count);
-            }
-
-            if (rs != null) {
-                rs.close();
-                rs = null;
-            }
-            logger.info("Count = " + count);
-
-            // check the result size if the result is too large return an empty ResultWrapper
-            if (count > maximumResultSize && !paginatedSearch) {
-                logger.info("Result too Large return an empty result Wrapper");
-                return new ResultWrapper(count, maximumResultSize, resultInfo);
-            }
-
-            // we got an result, and it's in the limit, so now we need the ac's
-            String sql = "SELECT distinct(ac), objclass from " + SEARCH_TABLE + " where " +
-                    sb.toString();
-
-            if (hasType) {
-                sql = sql + " and type='" + type + "'";
-            }
-
-            if (hasSearchClass) {
-                sql = sql + "AND objclass LIKE " + "'%" + searchClass + "%'";
-            }
-
-            // limit query
-            sql = DatabaseUtil.wrapWithLimitSql(sql, firstResult, maximumResultSize, conn);
-
-
-            logger.info(sql);
-            //stmt = conn.createStatement();
-            rs = stmt.executeQuery(sql);
-
-            // get the result from the resultset and query via the intacthelper the objects and
-            // put the data in a ResultWrapper
-
-            String ac = null;
-            className = null;
-            Class clazz = null;
-            ArrayList searchResult = new ArrayList(count);
-
-            while (rs.next()) {
-                ac = rs.getString(1);
-                className = rs.getString(2);
-                clazz = Class.forName(className);
-                searchResult.add(helper.getObjectByAc(clazz, ac));
-            }
-            return new ResultWrapper(searchResult, maximumResultSize, resultInfo, count);
-
+        if (searchClass == SearchClass.CV_OBJECT) {
+            objClasses = SearchClass.cvObjectClassesAsStringArray();
         }
-        catch (SQLException se) {
-            while ((se.getNextException()) != null) {
-                logger.info(se.getSQLState());
-                logger.info("SQL: Error Code: " + se.getErrorCode());
+        else if (searchClass.isSpecified())
+        {
+            objClasses = new String[] { searchClass.getMappedClass().getName()};
+        }
+
+
+        Map<String,Integer> resultInfo = getCountResultsUsingSessionCache(sqlValue, values, objClasses, type);
+
+        // count the results, iterating the groups and adding each subtotal
+        int count = 0;
+
+        for (Map.Entry<String,Integer> entry : resultInfo.entrySet())
+        {
+            logger.info("Class: "+entry.getKey()+" - count: "+entry.getValue());
+            count = count + entry.getValue();
+        }
+
+        logger.info("Count = " + count);
+
+        // check the result size if the result is too large return an empty ResultWrapper
+
+        if (count > maximumResultSize && !paginatedSearch) {
+            logger.info("Result too Large return an empty result Wrapper");
+            return new ResultWrapper(count, maximumResultSize, resultInfo);
+        }
+
+        boolean searchedForCvObject = false;
+
+        for (String className : resultInfo.keySet())
+        {
+
+            String[] classesToSearch = new String[] { className };
+
+            // we determine the class to use in the search
+            Class<? extends AnnotatedObject> clazzToSearch = null;
+            try
+            {
+                clazzToSearch = (Class<? extends AnnotatedObject>) Class.forName(className);
             }
-            throw new IntactException("SQL errors, see the log out for more info ",se);
+            catch (Exception e)
+            {
+                throw new RuntimeException(e);
+            }
 
-        }
-        catch (ClassNotFoundException e) {
-            throw new IntactException("Received an intact typ which is not valid, see the log out for more info ",e);
-        }
-        finally {
-            //  close all database connections
-            try {
+            // if we have many different subclasses of CvObject to search, it is better to do only
+            // one search for all the cvObjects. If this query has been already done in the iteration
+            // it is not done again
+            if (CvObject.class.isAssignableFrom(clazzToSearch))
+            {
+                clazzToSearch = CvObject.class;
+                classesToSearch = SearchClass.cvObjectClassesAsStringArray();
 
-                if (rs != null) {
-                    rs.close();
+                if (searchedForCvObject)
+                {
+                    continue;
                 }
-
-                if (stmt != null) {
-                    stmt.close();
+                else
+                {
+                    searchedForCvObject = true;
                 }
             }
-            catch (SQLException se) {
-                throw new IntactException("Problems with closing the JDBC Resource ",se);
-            }
+
+            // the query is paginated, so if there is more than a certain number of results, pagination will appear
+            logger.info("Getting ACs for class: "+clazzToSearch);
+            List<String> acList = searchItemDao.getDistinctAc(values, classesToSearch, type, firstResult, maximumResultSize);
+            String[] acs = acList.toArray(new String[acList.size()]);
+
+            // we perform a query for all the ACs. This kind of query is limited in oracle to 1000 items,
+            // far from our situation now, so no problem
+            logger.info("\t"+acList);
+            List<? extends AnnotatedObject> res = DaoFactory.getAnnotatedObjectDao(clazzToSearch).getByAc(acs);
+
+            searchResult.addAll(res);
+
         }
+
+        return new ResultWrapper(searchResult, maximumResultSize, resultInfo, count);
+
+
     }   // end searchFast
+
 
     /**
      * Workaround to provide an Interactor search with the ia_search table.
      *
      * @param searchValue the user-specified search value
      * @param type        type String  the filter type (ac, shortlabel, xref etc.) if type is null it will be 'all'
-     * @param helper      user f uk.ac.ebi.intact.application.commons.business.IntactUserI for getting the IntactHelper
      * @return the result wrapper which contains the result of the search
-     * @throws uk.ac.ebi.intact.business.IntactException
-     *          thrown if there were any search problems
      */
-    private ResultWrapper getInteractors(final String searchValue, String type, IntactHelper helper, int numberOfResults, int firstResult, boolean paginatedSearch)
-            throws IntactException {
+    private ResultWrapper getInteractors(final String searchValue, String type, int numberOfResults, int firstResult, boolean paginatedSearch)
+    {
 
         logger.info("search Interactor");
 
         // getting all results for proteins and interactions
-        ResultWrapper proteins = this.search(searchValue, "Protein", type, helper, numberOfResults, firstResult, paginatedSearch);
-        ResultWrapper interactions = this.search(searchValue, "Interaction", type, helper, numberOfResults, firstResult, paginatedSearch);
+        ResultWrapper proteins = this.search(searchValue, SearchClass.PROTEIN, type,  numberOfResults, firstResult, paginatedSearch);
+        ResultWrapper interactions = this.search(searchValue, SearchClass.INTERACTION, type, numberOfResults, firstResult, paginatedSearch);
 
         // now check whats going on with the results and calculate the summ of both
         if (proteins.isTooLarge() || interactions.isTooLarge()) {
@@ -612,14 +583,14 @@ public class SearchHelper implements SearchHelperI {
             if (proteins.isTooLarge()) {
                 Map<String,Integer> proteinInfo = proteins.getInfo();
                 proteinCount =
-                        proteinInfo.get("uk.ac.ebi.intact.model.ProteinImpl");
-                resultInfo.put("uk.ac.ebi.intact.model.ProteinImpl", proteinCount);
+                        proteinInfo.get(SearchClass.PROTEIN.getMappedClass().getName());
+                resultInfo.put(SearchClass.PROTEIN.getMappedClass().getName(), proteinCount);
             }
 
             if (interactions.isTooLarge()) {
                 Map<String,Integer> interactionInfo = interactions.getInfo();
-                interactionCount = interactionInfo.get("uk.ac.ebi.intact.model.InteractionImpl");
-                resultInfo.put("uk.ac.ebi.intact.model.InteractionImpl",
+                interactionCount = interactionInfo.get(SearchClass.INTERACTION.getMappedClass().getName());
+                resultInfo.put(SearchClass.INTERACTION.getMappedClass().getName(),
                                interactionCount);
             }
 
@@ -637,7 +608,11 @@ public class SearchHelper implements SearchHelperI {
             Collection temp = new ArrayList(proteins.getResult().size() + interactions.getResult().size());
             temp.addAll(proteins.getResult());
             temp.addAll(interactions.getResult());
-            return new ResultWrapper(temp, numberOfResults);
+
+            // we convert to a Set, so we are sure that there are only unique elements
+            Set set = new HashSet(temp);
+
+            return new ResultWrapper(new ArrayList(set), numberOfResults);
         }
     }
 
@@ -648,21 +623,87 @@ public class SearchHelper implements SearchHelperI {
      *
      * @param query  the user-specified search value
      * @param type   String the filter type (ac, shortlabel, xref etc.) if type is null it will be 'all'
-     * @param helper user f uk.ac.ebi.intact.application.commons.business.IntactUserI for getting the IntactHelper
      * @return the result wrapper which contains the result of the search
      * @throws uk.ac.ebi.intact.business.IntactException
      *          thrown if there were any search problems
      */
-    public ResultWrapper searchFast(String query, String searchClass, String type,
-                                    IntactHelper helper, int numberOfResults, int firstResult, boolean paginatedSearch)
+    public ResultWrapper searchFast(String query, SearchClass searchClass, String type, int numberOfResults, int firstResult, boolean paginatedSearch)
             throws IntactException {
 
-        if (searchClass.equalsIgnoreCase("Interactor")) {
-            return this.getInteractors(query, type, helper, numberOfResults, firstResult, paginatedSearch);
+        if (searchClass == SearchClass.INTERACTOR) {
+            return this.getInteractors(query, type, numberOfResults, firstResult, paginatedSearch);
         }
         else {
-            return this.search(query, searchClass, type, helper, numberOfResults, firstResult, paginatedSearch);
+            return this.search(query, searchClass, type, numberOfResults, firstResult, paginatedSearch);
         }
     }
+
+    /**
+     * Checks if there is only one value, and then if this value is an accession returns true
+     */
+    private static boolean isQuerySearchingOnlyOneAc(String[] values)
+    {
+        if (values.length > 1 || values.length == 0)
+        {
+            return false;
+        }
+
+        String value = values[0];
+
+        String institutionPrefix = "EBI";
+
+        return (value.toUpperCase().startsWith(institutionPrefix+"-") && !value.endsWith("%"));
+
+    }
+
+    /**
+     * When paginating, it is not necessary to count the results again,
+     * use the same results than the previous query
+     */
+    private Map<String,Integer> getCountResultsUsingSessionCache(String searchValues, String[] values, String[] objClasses, String type)
+    {
+        String attCurrentSearch = "CurrentSearch";
+        String attCounts = "CurrentSearchCounts";
+
+        String firstObjClass = null;
+        if (objClasses != null && objClasses.length > 0)
+        {
+            firstObjClass = objClasses[0];
+        }
+
+        // the value of the attribute is different, to identify the exact search
+        String searchAttValue = searchValues+"_"+firstObjClass+"_"+null;
+
+        Map<String,Integer> resultInfo;
+
+        if (logger.isDebugEnabled())
+        {
+            if (request == null) logger.debug("Request is null, so session cache is disabled for this search");
+        }
+
+         if (request != null &&
+                request.getSession().getAttribute(attCurrentSearch) != null &&
+                request.getSession().getAttribute(attCurrentSearch).equals(searchAttValue))
+        {
+            resultInfo = (Map<String,Integer>) request.getSession().getAttribute(attCounts);
+        }
+        else
+        {
+            logger.info("Executing count query - type: " + type+" objClass: "+firstObjClass);
+
+            resultInfo = DaoFactory.getSearchItemDao().countGroupsByValuesLike(values, objClasses, type);
+
+            if (request != null)
+            {
+                request.getSession().setAttribute(attCurrentSearch, searchAttValue);
+                request.getSession().setAttribute(attCounts, resultInfo);
+            }
+
+        }
+
+        return resultInfo;
+    }
+
+
 
 }

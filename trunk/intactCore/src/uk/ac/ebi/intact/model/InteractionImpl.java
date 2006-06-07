@@ -7,6 +7,16 @@ package uk.ac.ebi.intact.model;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.FetchType;
+import javax.persistence.JoinTable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -24,6 +34,8 @@ import java.util.Iterator;
  * @author hhe
  * @version $Id$
  */
+@Entity
+@DiscriminatorValue("uk.ac.ebi.intact.model.InteractionImpl")
 public class InteractionImpl extends InteractorImpl implements Editable, Interaction {
 
     ///////////////////////////////////////
@@ -49,7 +61,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
     /**
      * TODO comments
      */
-    private Collection<Product> released = new ArrayList<Product>();
+    private Collection<Product> released;
 
     /**
      * TODO comments
@@ -69,7 +81,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private InteractionImpl() {
+    public InteractionImpl() {
         //super call sets creation time data
         super();
     }
@@ -254,6 +266,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         this.components = someComponent;
     }
 
+    @OneToMany(mappedBy = "interaction")
     public Collection<Component> getComponents() {
         return components;
     }
@@ -267,13 +280,17 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
 
     public void removeComponent( Component component ) {
         boolean removed = this.components.remove( component );
-        if( removed ) component.setInteraction( null );
+        if (removed)
+        {
+            component.setInteraction(null);
+        }
     }
 
     public void setReleased( Collection<Product> someReleased ) {
         this.released = someReleased;
     }
 
+    @Transient
     public Collection<Product> getReleased() {
         return released;
     }
@@ -287,7 +304,10 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
 
     public void removeReleased( Product product ) {
         boolean removed = this.released.remove( product );
-        if( removed ) product.setInteraction( null );
+        if (removed)
+        {
+            product.setInteraction(null);
+        }
     }
 
     public void setExperiments( Collection<Experiment> someExperiment ) {
@@ -295,14 +315,20 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         if( someExperiment == null ) {
             throw new NullPointerException( "Cannot create an Interaction without an Experiment!" );
         }
-
+        /*
         if( ( someExperiment.isEmpty() ) || ( !( someExperiment.iterator().next() instanceof Experiment ) ) ) {
             throw new IllegalArgumentException( "must have at least one VALID Experiment to create an Interaction" );
-        }
+        } */
 
         this.experiments = someExperiment;
     }
 
+    @ManyToMany
+    @JoinTable(
+        name="ia_int2exp",
+        joinColumns={@JoinColumn(name="interaction_ac")},
+        inverseJoinColumns={@JoinColumn(name="experiment_ac")}
+    )
     public Collection<Experiment> getExperiments() {
         return experiments;
     }
@@ -316,9 +342,14 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
 
     public void removeExperiment( Experiment experiment ) {
         boolean removed = this.experiments.remove( experiment );
-        if( removed ) experiment.removeInteraction( this );
+        if (removed)
+        {
+            experiment.removeInteraction(this);
+        }
     }
 
+    @ManyToOne (fetch = FetchType.LAZY)
+    @JoinColumn(name = "interactiontype_ac")
     public CvInteractionType getCvInteractionType() {
         return cvInteractionType;
     }
@@ -328,6 +359,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
     }
 
     //attributes used for mapping BasicObjects - project synchron
+    @Column(name = "interactiontype_ac", insertable = false, updatable = false)
     public String getCvInteractionTypeAc() {
         return this.cvInteractionTypeAc;
     }
@@ -335,7 +367,21 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
     public void setCvInteractionTypeAc( String ac ) {
         this.cvInteractionTypeAc = ac;
     }
+    /*
+    @Transient
+    @Override
+    public BioSource getBioSource()
+    {
+        // Override method to not throw an exception when setting the biosource...
+        return null;
+    }
 
+    @Override
+    public void setBioSource(BioSource bioSource)
+    {
+        // nothing
+    }
+    */
     ///////////////////////////////////////
     // instance methods
 
@@ -345,6 +391,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
      *
      * @return The first components marked as bait, otherwise null.
      */
+    @Transient
     public Component getBait() {
         for (Component component : components)
         {
@@ -374,22 +421,43 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
      */
     @Override
     public boolean equals( Object o ) {
-        if( this == o ) return true;
-        if( !( o instanceof Interaction ) ) return false;
-        if( !super.equals( o ) ) return false;
+        if (this == o)
+        {
+            return true;
+        }
+        if (!(o instanceof Interaction))
+        {
+            return false;
+        }
+        if (!super.equals(o))
+        {
+            return false;
+        }
 
         final Interaction interaction = (Interaction) o;
 
         if( cvInteractionType != null ) {
-            if( !cvInteractionType.equals( interaction.getCvInteractionType() ) ) return false;
+            if (!cvInteractionType.equals(interaction.getCvInteractionType()))
+            {
+                return false;
+            }
         } else {
-            if( interaction.getCvInteractionType() != null ) return false;
+            if (interaction.getCvInteractionType() != null)
+            {
+                return false;
+            }
         }
 
         if( kD != null ) {
-            if( !kD.equals( interaction.getKD() ) ) return false;
+            if (!kD.equals(interaction.getKD()))
+            {
+                return false;
+            }
         } else {
-            if( interaction.getKD() != null ) return false;
+            if (interaction.getKD() != null)
+            {
+                return false;
+            }
         }
 
         return CollectionUtils.isEqualCollection( getComponents(), interaction.getComponents() );
@@ -399,8 +467,14 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
     public int hashCode() {
         int code = super.hashCode();
 
-        if( cvInteractionType != null ) code = 29 * code + cvInteractionType.hashCode();
-        if( kD != null ) code = 29 * code + kD.hashCode();
+        if (cvInteractionType != null)
+        {
+            code = 29 * code + cvInteractionType.hashCode();
+        }
+        if (kD != null)
+        {
+            code = 29 * code + kD.hashCode();
+        }
 //        for (Iterator iterator = components.iterator(); iterator.hasNext();) {
 //            Component components = (Component) iterator.next();
 //            code = 29 * code + components.hashCode();
@@ -441,7 +515,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
             Component copyComp = (Component) comp.clone();
             // Set the interactor as the current cloned interactions.
             copyComp.setInteractionForClone(copy);
-            copyComp.setInteractorForClone((Interactor) comp.getInteractor());
+            copyComp.setInteractorForClone(comp.getInteractor());
             copy.components.add(copyComp);
         }
         return copy;

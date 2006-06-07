@@ -1,9 +1,12 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
+
+import javax.persistence.Entity;
+import javax.persistence.DiscriminatorValue;
 
 
 /**
@@ -12,6 +15,8 @@ package uk.ac.ebi.intact.model;
  * @author hhe
  * @version $Id$
  */
+@Entity
+@DiscriminatorValue("uk.ac.ebi.intact.model.CvFeatureType")
 public class CvFeatureType extends CvDagObject {
 
     public static final String EXPERIMENTAL_FEATURE = "experimental feature";
@@ -35,7 +40,7 @@ public class CvFeatureType extends CvDagObject {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private CvFeatureType() {
+    public CvFeatureType() {
         //super call sets creation time data
         super();
     }

@@ -1,6 +1,6 @@
 /*
 Copyright (c) 2002-2004 The European Bioinformatics Institute, and others.
-All rights reserved. Please see the file LICENSE 
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.commons.search.test;
@@ -16,6 +16,7 @@ import org.apache.ojb.broker.query.ReportQueryByCriteria;
 import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
+import uk.ac.ebi.intact.application.commons.search.SearchClass;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
@@ -126,7 +127,7 @@ public class SearchHelperTest extends TestCase {
         Logger logger = Logger.getLogger( getClass().getName() );
         SearchHelperI searchHelper = new SearchHelper(logger);
 
-        ResultWrapper rw = searchHelper.searchByQuery(Experiment.class,"ac", "*", 20);
+        ResultWrapper rw = searchHelper.searchByQuery(SearchClass.EXPERIMENT,"ac", "*", 20);
 
         List results = rw.getResult();
         assertEquals(results.size(), 2);
@@ -144,8 +145,8 @@ public class SearchHelperTest extends TestCase {
         SearchHelperI searchHelper = new SearchHelper(logger);
 
         // within max size
-        ResultWrapper rw = searchHelper.searchByQuery(InteractionImpl.class,
-                "shortLabel", "ga-*", 20);
+        ResultWrapper rw = searchHelper.searchByQuery(SearchClass.INTERACTION,
+                                                      "shortLabel", "ga-*", 20);
 
         List results = rw.getResult();
         assertEquals(results.size(), 8);
@@ -158,7 +159,7 @@ public class SearchHelperTest extends TestCase {
         }
 
         // equals to max size
-        rw = searchHelper.searchByQuery(InteractionImpl.class, "shortLabel", "ga-*", 8);
+        rw = searchHelper.searchByQuery(SearchClass.INTERACTION, "shortLabel", "ga-*", 8);
 
         results = rw.getResult();
         assertEquals(results.size(), 8);
@@ -171,7 +172,7 @@ public class SearchHelperTest extends TestCase {
         }
 
         // greater than max size
-        rw = searchHelper.searchByQuery(InteractionImpl.class, "shortLabel", "ga-*", 5);
+        rw = searchHelper.searchByQuery(SearchClass.INTERACTION, "shortLabel", "ga-*", 5);
         results = rw.getResult();
         assertTrue(results.isEmpty());
         // Too large
@@ -234,8 +235,8 @@ public class SearchHelperTest extends TestCase {
         SearchHelperI searchHelper = new SearchHelper(logger);
 
         // within max size
-        ResultWrapper rw = searchHelper.searchByQuery(ProteinImpl.class,
-                "shortLabel", "y*", 20);
+        ResultWrapper rw = searchHelper.searchByQuery(SearchClass.PROTEIN,
+                                                      "shortLabel", "y*", 20);
         List results = rw.getResult();
         assertEquals(results.size(), 14);
         // Not too large
@@ -247,7 +248,7 @@ public class SearchHelperTest extends TestCase {
         }
 
         // equals to max size
-        rw = searchHelper.searchByQuery(ProteinImpl.class, "shortLabel", "y*", 14);
+        rw = searchHelper.searchByQuery(SearchClass.PROTEIN, "shortLabel", "y*", 14);
         results = rw.getResult();
         assertEquals(results.size(), 14);
         // Not too large
@@ -259,7 +260,7 @@ public class SearchHelperTest extends TestCase {
         }
 
         // greater than max size
-        rw = searchHelper.searchByQuery(ProteinImpl.class, "shortLabel", "y*", 5);
+        rw = searchHelper.searchByQuery(SearchClass.PROTEIN, "shortLabel", "y*", 5);
         results = rw.getResult();
         assertTrue(results.isEmpty());
         // Too large
@@ -279,8 +280,8 @@ public class SearchHelperTest extends TestCase {
             SearchHelperI searchHelper = new SearchHelper(logger);
 
             // Calling the method which closes the internal helper.
-            ResultWrapper rw = searchHelper.searchByQuery(InteractionImpl.class,
-                    "ac", "*", 20);
+            ResultWrapper rw = searchHelper.searchByQuery(SearchClass.INTERACTION,
+                                                          "ac", "*", 20);
 
             // Use the helper (local) to do a query.
             List results = (List) helper.search(Experiment.class, "ac", "*");

@@ -1,6 +1,7 @@
 package uk.ac.ebi.intact.application.search3.struts.util;
 
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.application.commons.search.SearchClass;
 
 /**
  * Provides basic validations for the search3 search struts action class.
@@ -56,15 +57,26 @@ public class SearchValidator {
      *
      * @return a boolean which is true if the searchClass searchable and false if it's not searchable
      */
-    public static boolean isSearchable( String searchClass ) {
-        Class clazz = null;
-        try {
-            clazz = Class.forName( "uk.ac.ebi.intact.model." + searchClass );
+    public static boolean isSearchable( SearchClass searchClass ) {
+        if (searchClass == null)
+        {
+            throw new NullPointerException("searchClass");
         }
-        catch ( ClassNotFoundException e ) {
-            // not a valid className
-            return false;
-        }
+
+        Class clazz = searchClass.getMappedClass();
+
+        return isSearchable(clazz);
+    }
+
+    /**
+     * Returns true if the given class is searchable.
+     *
+     * @param clazz the class to seach.
+     *
+     * @return a boolean which is true if the searchClass searchable and false if it's not searchable
+     */
+    public static boolean isSearchable( Class<? extends IntactObject> clazz ) {
+
         if ( IntactObject.class.isAssignableFrom( clazz ) ) {
 
             if ( Protein.class.isAssignableFrom( clazz ) ) {

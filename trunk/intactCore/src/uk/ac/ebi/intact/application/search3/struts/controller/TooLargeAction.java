@@ -8,6 +8,7 @@ import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.SingleResultViewBean;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.TooLargeViewBean;
 import uk.ac.ebi.intact.application.commons.util.UrlUtil;
+import uk.ac.ebi.intact.application.commons.search.SearchClass;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
@@ -51,49 +52,59 @@ public class TooLargeAction extends IntactBaseAction {
         //TODO use here a iteratable map instead
 
         // get the resultinfo from the initial request from the search action
-        final Map resultInfo = ( (Map) request.getAttribute( SearchConstants.RESULT_INFO ) );
+        final Map<String,Integer> resultInfo = ( (Map<String,Integer>) request.getAttribute( SearchConstants.RESULT_INFO ) );
         logger.info( resultInfo );
-        final Collection someKeys = resultInfo.keySet();
-
-        logger.info( someKeys );
+        final Collection<String> someKeys = resultInfo.keySet();
 
         int cvCount = 0;
         int proteinCount = 0;
+        int nucleicAcidCount = 0;
         int experimentCount = 0;
         int interactionCount = 0;
+
 
         // count for any type of searchable objects in the resultset to generate the statistic
         // this is done by creating from the classname a class and check then for classtype
 
-        for ( Iterator iterator = someKeys.iterator(); iterator.hasNext(); ) {
-            String className = (String) iterator.next();
-            logger.info( "tooLarge action: searching for class" + className );
-            Class clazz;
-            try {
-                clazz = Class.forName( className );
-                if ( Protein.class.isAssignableFrom( clazz ) ) {
-                    proteinCount += ( (Integer) resultInfo.get( className ) ).intValue();
-                } else {
-                    if ( Experiment.class.isAssignableFrom( clazz ) ) {
-                        experimentCount += ( (Integer) resultInfo.get( className ) ).intValue();
-                    } else {
-                        if ( Interaction.class.isAssignableFrom( clazz ) ) {
-                            interactionCount += ( (Integer) resultInfo.get( className ) ).intValue();
-                        } else {
-                            if ( CvObject.class.isAssignableFrom( clazz ) ) {
-                                cvCount += ( (Integer) resultInfo.get( className ) ).intValue();
-                            }
-                        }
-                    }
+        for (String className : someKeys)
+        {
+            logger.info("tooLarge action: searching for class" + className);
+
+            try
+            {
+                Class clazz = Class.forName(className);
+
+                SearchClass searchClass = SearchClass.valueOfMappedClass(clazz);
+
+                if (searchClass == SearchClass.PROTEIN)
+                {
+                    proteinCount += resultInfo.get(className);
+                }
+                 if (searchClass == SearchClass.NUCLEIC_ACID)
+                {
+                    nucleicAcidCount += resultInfo.get(className);
+                }
+                else if (searchClass == SearchClass.EXPERIMENT)
+                {
+                    experimentCount += resultInfo.get(className);
+                }
+                else if (searchClass == SearchClass.INTERACTION)
+                {
+                    interactionCount += resultInfo.get(className);
+                }
+                else if (searchClass.isCvObjectSubclass())
+                {
+                    cvCount += resultInfo.get(className);
                 }
             }
-            catch ( ClassNotFoundException e ) {
+            catch (ClassNotFoundException e)
+            {
 
                 // we got a class which is not part of the the searchable classes.
-                logger.info( "tooLarge action: the resultset contains to an object which is no " +
-                             "assignable from an intactType" );
-                logger.info( "tooLarge action: forward to an errorpage" );
-                return mapping.findForward( SearchConstants.FORWARD_FAILURE );
+                logger.info("tooLarge action: the resultset contains to an object which is no " +
+                        "assignable from an intactType");
+                logger.info("tooLarge action: forward to an errorpage");
+                return mapping.findForward(SearchConstants.FORWARD_FAILURE);
 
             }
         } // for
@@ -113,22 +124,31 @@ public class TooLargeAction extends IntactBaseAction {
         TooLargeViewBean tooLargeViewBean = new TooLargeViewBean();
 
         if ( experimentCount > 0 ) {
-            tooLargeViewBean.add( new SingleResultViewBean( "Experiment", experimentCount,
+            tooLargeViewBean.add( new SingleResultViewBean( SearchClass.EXPERIMENT.getShortName(),
+                                                            experimentCount,
                                                             helpLink, searchURL, query ) );
         }
 
         if ( interactionCount > 0 ) {
-            tooLargeViewBean.add( new SingleResultViewBean( "Interaction", interactionCount,
+            tooLargeViewBean.add( new SingleResultViewBean( SearchClass.INTERACTION.getShortName(),
+                                                            interactionCount,
                                                             helpLink, searchURL, query ) );
         }
 
         if ( proteinCount > 0 ) {
-            tooLargeViewBean.add( new SingleResultViewBean( "Protein", proteinCount,
+            tooLargeViewBean.add( new SingleResultViewBean( SearchClass.PROTEIN.getShortName(),
+                                                            proteinCount,
+                                                            helpLink, searchURL, query ) );
+        }
+
+        if ( nucleicAcidCount > 0 ) {
+            tooLargeViewBean.add( new SingleResultViewBean( SearchClass.NUCLEIC_ACID.getShortName(),
+                                                            nucleicAcidCount,
                                                             helpLink, searchURL, query ) );
         }
 
         if ( cvCount > 0 ) {
-            tooLargeViewBean.add( new SingleResultViewBean( "Controlled vocabulary term", cvCount,
+            tooLargeViewBean.add( new SingleResultViewBean( SearchClass.CV_OBJECT.getShortName(), cvCount,
                                                             helpLink, searchURL, query ) );
         }
 

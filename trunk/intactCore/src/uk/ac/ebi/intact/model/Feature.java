@@ -7,6 +7,13 @@ package uk.ac.ebi.intact.model;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.FetchType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -21,6 +28,8 @@ import java.util.Iterator;
  * example - an InterPro domain
  * example - an experimentally determined binding domain
  */
+@Entity
+@Table(name = "ia_feature")
 public class Feature extends AnnotatedObjectImpl {
 
 
@@ -79,7 +88,7 @@ public class Feature extends AnnotatedObjectImpl {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private Feature() {
+    public Feature() {
         super();
     }
 
@@ -98,8 +107,14 @@ public class Feature extends AnnotatedObjectImpl {
 
         //super call sets up a valid AnnotatedObject
         super(shortLabel, owner);
-        if(type == null) throw new NullPointerException("Must have a CvFeatureType to create a Feature!");
-        if(component == null) throw new NullPointerException("Cannot create Feature without a Component!");
+        if (type == null)
+        {
+            throw new NullPointerException("Must have a CvFeatureType to create a Feature!");
+        }
+        if (component == null)
+        {
+            throw new NullPointerException("Cannot create Feature without a Component!");
+        }
         this.component = component;
         this.cvFeatureType = type;
     }
@@ -108,6 +123,8 @@ public class Feature extends AnnotatedObjectImpl {
 
     //----------------------- public methods ------------------------------
 
+    @ManyToOne (fetch = FetchType.LAZY)
+    @JoinColumn(name = "featuretype_ac")
     public CvFeatureType getCvFeatureType() {
         return cvFeatureType;
     }
@@ -116,6 +133,8 @@ public class Feature extends AnnotatedObjectImpl {
         this.cvFeatureType = cvFeatureType;
     }
 
+    @ManyToOne (fetch = FetchType.LAZY)
+    @JoinColumn(name = "component_ac")
     public Component getComponent() {
         return component;
     }
@@ -126,11 +145,20 @@ public class Feature extends AnnotatedObjectImpl {
      * @param component The component relevant to this Feature
      */
     public void setComponent(Component component) {
+        /*
         if (this.component != component) {
-            if (this.component != null) this.component.removeBindingDomain(this);
+            if (this.component != null)
+            {
+                this.component.removeBindingDomain(this);
+            }
             this.component = component;
-            if (component != null) component.addBindingDomain(this);
+            if (component != null)
+            {
+                component.addBindingDomain(this);
+            }
         }
+        */
+        this.component = component;
     }
     /**
      * Provides access to the other Feature to which the current Feature object
@@ -138,6 +166,8 @@ public class Feature extends AnnotatedObjectImpl {
      * @return The Feature that the current Feature binds, or null if no such
      * Feature exists.
      */
+    @ManyToOne (fetch = FetchType.LAZY)
+    @JoinColumn(name = "linkedfeature_ac", referencedColumnName = "ac")
     public Feature getBoundDomain() {
         return binds;
     }
@@ -150,8 +180,14 @@ public class Feature extends AnnotatedObjectImpl {
      * Provides the List of Range objects related to  a Feature instance.
      * @return A List of Ranges (expected to be non-empty)
      */
+    @OneToMany (mappedBy = "feature")
     public Collection<Range> getRanges() {
         return ranges;
+    }
+
+    public void setRanges(Collection<Range> ranges)
+    {
+        this.ranges = ranges;
     }
 
     /**
@@ -170,6 +206,8 @@ public class Feature extends AnnotatedObjectImpl {
         this.ranges.remove(range);
     }
 
+    @ManyToOne (fetch = FetchType.LAZY)
+    @JoinColumn(name = "identification_ac")
     public CvFeatureIdentification getCvFeatureIdentification() {
         return cvFeatureIdentification;
     }
@@ -187,17 +225,32 @@ public class Feature extends AnnotatedObjectImpl {
      */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Feature)) return false;
-        if (!super.equals(o)) return false;
+        if (this == o)
+        {
+            return true;
+        }
+        if (!(o instanceof Feature))
+        {
+            return false;
+        }
+        if (!super.equals(o))
+        {
+            return false;
+        }
 
         final Feature feature = (Feature) o;
 
         //NB Component should never be null, but check just in case!
         if (component != null) {
-            if (!component.equals(feature.getComponent())) return false;
+            if (!component.equals(feature.getComponent()))
+            {
+                return false;
+            }
         } else {
-            if (feature.getComponent() != null) return false;
+            if (feature.getComponent() != null)
+            {
+                return false;
+            }
         }
 
         //Now check the Ranges...
@@ -217,7 +270,10 @@ public class Feature extends AnnotatedObjectImpl {
     public int hashCode() {
 
         int code = super.hashCode();
-        if (component != null) code = code * 29 + component.hashCode();
+        if (component != null)
+        {
+            code = code * 29 + component.hashCode();
+        }
         //Q: should we use any Ranges also in computing the hashcode?
 
         return code;
@@ -241,10 +297,8 @@ public class Feature extends AnnotatedObjectImpl {
 
         // Unset the existing component and bind feature.
         copy.component = null;
-        copy.componentAc = null;
-        copy.bindsAc = null;
         copy.binds = null;
-        
+
         // binds is still pointing to the original feature.
 
         copy.ranges = new ArrayList<Range>(ranges.size());

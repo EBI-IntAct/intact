@@ -507,20 +507,18 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
             jdbc-type="INTEGER"
             />
 
-    <!-- NB These are booleans when used by application code but they
-    are held as chars internally to the class because oracle has no boolean
-    column type
-    -->
     <field-descriptor
             name="undetermined"
             column="undetermined"
             jdbc-type="CHAR"
+            conversion="uk.ac.ebi.intact.persistence.ObjectBridgeBoolean2YesNoConverter"
             />
 
     <field-descriptor
-            name="link"
+            name="linked"
             column="link"
             jdbc-type="CHAR"
+            conversion="uk.ac.ebi.intact.persistence.ObjectBridgeBoolean2YesNoConverter"
             />
 
 
@@ -898,8 +896,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 
         <!-- descriptor for Interaction.....-->
 <class-descriptor
-        class="uk.ac.ebi.intact.model.InteractionImpl" table="ia_Interactor"
-        proxy="uk.ac.ebi.intact.model.proxy.InteractionProxy">
+        class="uk.ac.ebi.intact.model.InteractionImpl" table="ia_Interactor">
 
     <!-- ***************** fields from superclasses ********************* -->
     <!-- fields from BasicObject... -->

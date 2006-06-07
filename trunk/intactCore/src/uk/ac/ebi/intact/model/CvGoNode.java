@@ -12,6 +12,9 @@ import uk.ac.ebi.intact.model.Editable;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.model.Xref;
 
+import javax.persistence.Entity;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -27,6 +30,8 @@ import java.util.Iterator;
  * @author Markus Brosch (markus @ brosch.cc)
  * @version $Id$
  */
+@Entity
+@DiscriminatorValue("uk.ac.ebi.intact.model.CvGoNode")
 public class CvGoNode extends CvDagObject {
 
     // =======================================================================
@@ -65,6 +70,7 @@ public class CvGoNode extends CvDagObject {
     /**
      * @return The GO id, which belongs to this unique CvGoNode Object
      */
+    @Transient
     public String getGoId() {
         Collection<Xref> someXrefs = this.getXrefs();
         if (someXrefs.size() != 1) {
@@ -81,6 +87,7 @@ public class CvGoNode extends CvDagObject {
      * that means also the children of the children of the children etc.
      * @return all possible children of this node as a Collection of CvGoNodes
      */
+    @Transient
     public Collection<CvGoNode> getAllChilds() {
         visited = new HashSet<CvGoNode>();
         Collection<CvGoNode> childs = new ArrayList<CvGoNode>();
@@ -91,6 +98,7 @@ public class CvGoNode extends CvDagObject {
     /**
      * @return Collection of Interactors, which were associated with this GO term / id
      */
+    @Transient
     public Collection<Interactor> getInteractors(IntactHelper helper) throws IntactException {
         Collection<Interactor> interactors = new ArrayList<Interactor>();
         try {

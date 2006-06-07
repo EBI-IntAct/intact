@@ -7,6 +7,7 @@
 package uk.ac.ebi.intact.application.editor.struts.view.experiment;
 
 import java.util.ResourceBundle;
+import java.util.Date;
 import java.sql.Timestamp;
 
 import uk.ac.ebi.intact.model.Interaction;
@@ -72,7 +73,7 @@ public class InteractionRowData extends ResultRowData {
      * @param fullname
      */
 
-    private InteractionRowData(String ac, String shortlabel, String fullname, String updator, String creator, Timestamp created, Timestamp updated) {
+    private InteractionRowData(String ac, String shortlabel, String fullname, String updator, String creator, Date created, Date updated) {
         super(ac, shortlabel, fullname, updator, creator, created, updated);
     }
 

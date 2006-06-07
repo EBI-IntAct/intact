@@ -5,6 +5,7 @@
  */
 package cluster;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.io.Serializable;
 
@@ -15,7 +16,7 @@ import java.io.Serializable;
  */
 public class MrSingleton implements Serializable
 {
-    private static MrSingleton instance = null;
+    private static final String SINGLETON_ATT = MrSingleton.class.getName();
 
     private Date creationDate;
 
@@ -24,14 +25,14 @@ public class MrSingleton implements Serializable
        creationDate = new Date();
     }
 
-    public static MrSingleton getInstance()
+    public static MrSingleton getInstance(HttpServletRequest request)
     {
-        if (instance == null)
+        if (request.getSession().getAttribute(SINGLETON_ATT) == null)
         {
-            instance = new MrSingleton();
+            request.getSession().setAttribute(SINGLETON_ATT, new MrSingleton());
         }
 
-        return instance;
+        return (MrSingleton) request.getSession().getAttribute(SINGLETON_ATT);
     }
 
     public Date getCreationDate()
@@ -41,5 +42,3 @@ public class MrSingleton implements Serializable
 
 
 }
-
-

@@ -8,6 +8,8 @@ package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.search3.business.Constants;
+import uk.ac.ebi.intact.application.commons.search.SearchClass;
+import uk.ac.ebi.intact.model.AnnotatedObject;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -116,4 +118,14 @@ public abstract class AbstractViewBean implements Serializable {
      * @return a String representing the help section value
      */
     public abstract String getHelpSection();
+
+    /**
+     * String representation of the type of an AnnotatedObject.
+     *
+     * @param anAnnotatedObject
+     * @return String  the intact type of  the annotedObject
+     */
+    protected String getIntactType( final AnnotatedObject anAnnotatedObject ) {
+         return SearchClass.valueOfMappedClass(anAnnotatedObject.getClass()).getShortName();
+    }
 }

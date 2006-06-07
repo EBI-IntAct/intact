@@ -231,10 +231,6 @@ public class UserSessionDownload {
         return rootElement;
     }
 
-    // TODO could add a method that create a new Entry and that becomes the default one.
-    // TODO that way we can ask the session to start putting all upcoming XML into a different entry.
-    // TODO a boolean in the method below would do the trick
-
     /**
      * Return the entry element of the PSI document. If the element doesn't exist, it is created.
      *
@@ -680,8 +676,6 @@ public class UserSessionDownload {
     /**
      * Tells if the given IntAct Protein has already been generated in PSI.
      *
-     * @param protein the protein we want to know if it has already been converted to PSI.
-     *
      * @return true is the protein has already been converted to XML, otherwise false.
      */
     public boolean isAlreadyDefined( Interactor interactor ) {
@@ -691,8 +685,6 @@ public class UserSessionDownload {
 
     /**
      * Declare in the session that the given protein has been already converted in XML.
-     *
-     * @param protein the protein to declare as already converted.
      */
     public void declareAlreadyDefined( Interactor interactor ) {
 

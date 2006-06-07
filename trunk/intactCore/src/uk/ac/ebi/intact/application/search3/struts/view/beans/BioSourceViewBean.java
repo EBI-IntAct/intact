@@ -7,6 +7,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
 import uk.ac.ebi.intact.application.commons.util.AnnotationFilter;
+import uk.ac.ebi.intact.application.commons.search.SearchClass;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.BioSource;
@@ -197,16 +198,17 @@ public class BioSourceViewBean extends AbstractViewBean {
      *
      * @return String The intact type of the wrapped object
      */
+    /**
+     * Provides the basic Intact type of the wrapped AnnotatedObject (ie no java package beans). NOTE: only the
+     * INTERFACE types are provided as these are the only ones of interest in the model - display pages are not
+     * interested in objects of type XXXImpl. For subclasses of CvObject we only need 'CvObject' for display purposes.
+     *
+     * @return String The intact type of the wrapped object (eg 'Experiment')
+     */
     public String getIntactType() {
 
         if ( intactType == null ) {
-
-            final String className = obj.getClass().getName();
-            final String basicType = className.substring( className.lastIndexOf( "." ) + 1 );
-
-            intactType = ( ( basicType.indexOf( "Impl" ) == -1 ) ?
-                           basicType : basicType.substring( 0, basicType.indexOf( "Impl" ) ) );
-
+            intactType = SearchClass.valueOfMappedClass(obj.getClass()).getShortName();
         }
         return intactType;
 
@@ -248,27 +250,5 @@ public class BioSourceViewBean extends AbstractViewBean {
             return this.obj.getFullName();
         }
         return "-";
-    }
-
-    /**
-     * String representation of the type of an AnnotatedObject.
-     *
-     * @param anAnnotatedObject
-     *
-     * @return String  the intact type of  the annotedObject
-     */
-    private String getIntactType( final AnnotatedObject anAnnotatedObject ) {
-
-        // TODO move that method to a higher level: AbstractViewBean ?
-
-        final String objectIntactType;
-        final String className = anAnnotatedObject.getClass().getName();
-        final String basicType = className.substring( className.lastIndexOf( "." ) + 1 );
-
-        objectIntactType = ( ( basicType.indexOf( "Impl" ) == -1 ) ?
-                             basicType : basicType.substring( 0, basicType.indexOf( "Impl" ) ) );
-
-
-        return objectIntactType;
     }
 }

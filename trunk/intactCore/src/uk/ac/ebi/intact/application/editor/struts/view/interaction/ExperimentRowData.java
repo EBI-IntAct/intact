@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Xref;
 
 import java.util.Iterator;
+import java.util.Date;
 import java.sql.Timestamp;
 
 /**
@@ -71,7 +72,7 @@ public class ExperimentRowData extends ResultRowData {
      * @param fullname
      */
 
-     public ExperimentRowData(String ac, String shortlabel, String fullname, String creator, String updator, Timestamp created, Timestamp updated) {
+     public ExperimentRowData(String ac, String shortlabel, String fullname, String creator, String updator, Date created, Date updated) {
         super(ac, shortlabel, fullname, creator, updator,created,updated);
         if (shortlabel != null) {
             setShortLabelLink();

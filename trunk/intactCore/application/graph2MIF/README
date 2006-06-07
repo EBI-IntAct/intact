@@ -24,7 +24,7 @@ NOTE
     BEWARE that if the logging feature isn't set to ERROR,
     it will desacrease considerably the response time of the application.
     Up to now, even the WARN level is generating a huge load of log.
-    cf. the file $INTACT_CORE/config/log4j.properties (section graph2mif).    
+    cf. the file $INTACT_CORE/config/log4j.properties (section graph2mif).
 
 BUILD
     ant war
@@ -33,24 +33,24 @@ BUILD
 
 OTHER USEFUL COMMANDS
     ant console
-	    compiles the console example Graph2MIFConsole to ../../classes, which 
+	    compiles the console example Graph2MIFConsole to ../../classes, which
 		can rerieve a MIF document and print it to STDOUT.
-	
+
     ant run-console
 	    starts the console programm and retrieves a MIF Document of the interactor and depth
 		specified at the top of build.xml ( ${test-ac}, ${test-depth} & ${test-strictmif} )
 
     ant wsclient
-	    compiles the example client Graph2MIFWSClient to ../../classes, which 
+	    compiles the example client Graph2MIFWSClient to ../../classes, which
 		can rerieve a MIF document and print it to STDOUT.
-	
+
     ant run-wsclient
 	    starts the client and retrieves a MIF Document of the interactor and depth
-		specified at the top of build.xml 
+		specified at the top of build.xml
 
 	ant clean
 		deletes temp-web and temp-doc. Also deletes the API-documentation.
-	
+
 	ant clean-all
 	    like clean - but also deletes the compiled clients.
 

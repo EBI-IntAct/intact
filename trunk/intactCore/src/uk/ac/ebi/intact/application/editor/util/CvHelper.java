@@ -180,7 +180,7 @@ public class CvHelper {
         Collection<Annotation> annotations = annotatedObj.getAnnotations();
         for ( Annotation annotation : annotations ){
             if(CvTopic.HIDDEN.equals(annotation.getCvTopic().getShortLabel())
-                    || getObsolete().getAc().equals(annotation.getCvTopicAc())){
+                    || getObsolete().getAc().equals(annotation.getCvTopic().getAc())){
                 hiddenOrObsolete = true;
                 break;
             }
@@ -199,7 +199,7 @@ public class CvHelper {
         boolean psiMiRefFound = false;
         Collection<Xref> xrefs = dag.getXrefs();
         for ( Xref xref : xrefs ){
-            if(getPsiMi().getAc().equals(xref.getCvDatabaseAc()) && getIdentity().getAc().equals(xref.getCvXrefQualifierAc())){
+            if(getPsiMi().getAc().equals(xref.getCvDatabase().getAc()) && getIdentity().getAc().equals(xref.getCvXrefQualifier().getAc())){
                 psiMiRefFound = true;
                 miRef = xref.getPrimaryId();
                 break;

@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.application.commons.util.DateToolbox;
 import uk.ac.ebi.intact.model.Experiment;
 
 import java.text.SimpleDateFormat;
+import java.sql.Timestamp;
 
 /**
  * This class is the wrapper class for the display library to display
@@ -98,11 +99,11 @@ public class ResultDisplayWrapper extends TableDecorator {
     }
 
     public String getCreated(){
-        return DateToolbox.formatDate(((ResultRowData) getObject()).getCreated());
+        return DateToolbox.formatDate(new Timestamp(((ResultRowData) getObject()).getCreated().getTime()));
     }
 
     public String getUpdated(){
-        return DateToolbox.formatDate(((ResultRowData) getObject()).getUpdated());
+        return DateToolbox.formatDate(new Timestamp(((ResultRowData) getObject()).getUpdated().getTime()));
     }
 
     public String getCreationInfo(){

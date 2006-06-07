@@ -146,7 +146,7 @@ public class SessionManagerServlet extends HttpServlet implements Externalizable
         if (session != null)
             sb.append(generateSessionDebugInfo(session));
 
-        sb.append(generateSingletonInfo());
+        sb.append(generateSingletonInfo(request));
 
         response.setContentType( SessionManagerServlet.TEXT_MIME_TYPE );
 
@@ -174,14 +174,22 @@ public class SessionManagerServlet extends HttpServlet implements Externalizable
         while (e.hasMoreElements())
         {
             String attName = e.nextElement();
-            Byte[] value = (Byte[]) session.getAttribute(attName);
-            sb.append(attName+": "+value.length+" bytes.").append(NEW_LINE);
+
+            if (session.getAttribute(attName) instanceof Byte[])
+            {
+                Byte[] value = (Byte[]) session.getAttribute(attName);
+                sb.append(attName+": "+value.length+" bytes.").append(NEW_LINE);
+            }
+            else
+            {
+                sb.append(attName+": "+session.getAttribute(attName)).append(NEW_LINE);
+            }
         }
 
         return sb;
     }
 
-    private StringBuffer generateSingletonInfo()
+    private StringBuffer generateSingletonInfo(HttpServletRequest request)
     {
          StringBuffer sb = new StringBuffer();
 
@@ -189,7 +197,7 @@ public class SessionManagerServlet extends HttpServlet implements Externalizable
         sb.append("Singleton info: ").append(NEW_LINE);
         sb.append( "-----------------------------------------------------------" ).append( NEW_LINE );
 
-        MrSingleton singleton = MrSingleton.getInstance();
+        MrSingleton singleton = MrSingleton.getInstance(request);
 
         sb.append("Creation Date: "+singleton.getCreationDate()).append(NEW_LINE);
         sb.append("Hashcode: "+singleton.hashCode()).append(NEW_LINE);

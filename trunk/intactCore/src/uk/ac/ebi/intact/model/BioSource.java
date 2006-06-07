@@ -1,9 +1,12 @@
-/*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.
-All rights reserved. Please see the file LICENSE
-in the root directory of this distribution.
-*/
+/**
+ * Copyright (c) 2002-2006 The European Bioinformatics Institute, and others.
+ * All rights reserved. Please see the file LICENSE
+ * in the root directory of this distribution.
+ */
 package uk.ac.ebi.intact.model;
+
+import javax.persistence.*;
+import java.util.Collection;
 
 /**
  * Represents a biological source. TODO write a proper comment
@@ -11,6 +14,10 @@ package uk.ac.ebi.intact.model;
  * @author hhe
  * @version $id$
  */
+@Entity
+@Table(name = "ia_biosource")
+@AssociationOverride(name = "annotations",
+                     joinColumns = {@JoinColumn(name="annotation_ac")} )
 public class BioSource extends AnnotatedObjectImpl implements Editable {
 
     ///////////////////////////////////////
@@ -65,7 +72,7 @@ public class BioSource extends AnnotatedObjectImpl implements Editable {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private BioSource() {
+    public BioSource() {
         //super call sets creation time data
         super();
     }
@@ -93,6 +100,18 @@ public class BioSource extends AnnotatedObjectImpl implements Editable {
     ///////////////////////////////////////
     //access methods for attributes
 
+    @ManyToMany
+    @JoinTable(
+        name="ia_biosource2annot",
+        joinColumns={@JoinColumn(name="biosource_ac")},
+        inverseJoinColumns={@JoinColumn(name="annotation_ac")}
+    )
+    @Override
+    public Collection<Annotation> getAnnotations()
+    {
+        return super.getAnnotations();
+    }
+
     public String getTaxId() {
         return taxId;
 
@@ -116,7 +135,7 @@ public class BioSource extends AnnotatedObjectImpl implements Editable {
 
     ///////////////////////////////////////
     // access methods for associations
-
+    @Transient
     public CvCellCycle getCvCellCycle() {
         return cvCellCycle;
     }
@@ -125,6 +144,7 @@ public class BioSource extends AnnotatedObjectImpl implements Editable {
         this.cvCellCycle = cvCellCycle;
     }
 
+    @Transient
     public CvDevelopmentalStage getCvDevelopmentalStage() {
         return cvDevelopmentalStage;
     }
@@ -133,6 +153,8 @@ public class BioSource extends AnnotatedObjectImpl implements Editable {
         this.cvDevelopmentalStage = cvDevelopmentalStage;
     }
 
+    @ManyToOne (fetch = FetchType.LAZY)
+    @JoinColumn(name = "tissue_ac")
     public CvTissue getCvTissue() {
         return cvTissue;
     }
@@ -141,6 +163,8 @@ public class BioSource extends AnnotatedObjectImpl implements Editable {
         this.cvTissue = cvTissue;
     }
 
+    @ManyToOne (fetch = FetchType.LAZY)
+    @JoinColumn(name = "celltype_ac")
     public CvCellType getCvCellType() {
         return cvCellType;
     }
@@ -149,6 +173,7 @@ public class BioSource extends AnnotatedObjectImpl implements Editable {
         this.cvCellType = cvCellType;
     }
 
+    @Transient
     public CvCompartment getCvCompartment() {
         return cvCompartment;
     }
@@ -157,25 +182,7 @@ public class BioSource extends AnnotatedObjectImpl implements Editable {
         this.cvCompartment = cvCompartment;
     }
 
-
-    //attributes used for mapping BasicObjects - project synchron
-    // TODO: should be move out of the model.
-    public String getCvCompartmentAc() {
-        return cvCompartmentAc;
-    }
-
-    public void setCvCompartmentAc( String ac ) {
-        this.cvCompartmentAc = ac;
-    }
-
-    public String getCvCellCycleAc() {
-        return cvCellCycleAc;
-    }
-
-    public void setCvCellCycleAc( String ac ) {
-        this.cvCellCycleAc = ac;
-    }
-
+    @Column(name = "celltype_ac", insertable = false, updatable = false)
     public String getCvCellTypeAc() {
         return cvCellTypeAc;
     }
@@ -184,6 +191,7 @@ public class BioSource extends AnnotatedObjectImpl implements Editable {
         this.cvCellTypeAc = ac;
     }
 
+    @Column(name = "tissue_ac", insertable = false, updatable = false)
     public String getCvTissueAc() {
         return cvTissueAc;
     }
@@ -191,15 +199,6 @@ public class BioSource extends AnnotatedObjectImpl implements Editable {
     public void setCvTissueAc( String ac ) {
         this.cvTissueAc = ac;
     }
-
-    public String getCvDevelopmentalStageAc() {
-        return cvDevelopmentalStageAc;
-    }
-
-    public void setCvDevelopmentalStageAc( String ac ) {
-        this.cvDevelopmentalStageAc = ac;
-    }
-
 
     /**
      * Equality for BioSources is currently based on equality for <code>AnnotatedObjects</code> and taxIds (String
@@ -254,6 +253,7 @@ public class BioSource extends AnnotatedObjectImpl implements Editable {
     // TODO write toString !!
 
 } // end BioSource
+
 
 
 

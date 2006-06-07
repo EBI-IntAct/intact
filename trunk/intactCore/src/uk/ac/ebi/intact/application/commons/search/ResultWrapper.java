@@ -26,7 +26,7 @@ public class ResultWrapper implements Serializable {
     /**
      * The result.
      */
-    private List<Collection<AnnotatedObject>> myResults;
+    private List<? extends AnnotatedObject> myResults;
 
     private Map<String,Integer> myInfo;
 
@@ -56,16 +56,16 @@ public class ResultWrapper implements Serializable {
      * @param results the list of search results
      * @param maxSize the maximum size for the search result.
      */
-    public ResultWrapper(Collection<Collection<AnnotatedObject>> results, int maxSize) {
+    public ResultWrapper(Collection<? extends AnnotatedObject> results, int maxSize) {
         this(results, results.size(), maxSize);
         this.totalResultsCount = results.size();
     }
 
-    public ResultWrapper(Collection<Collection<AnnotatedObject>> results, int maxSize, Map<String,Integer> info) {
+    public ResultWrapper(Collection<? extends AnnotatedObject> results, int maxSize, Map<String,Integer> info) {
         this(results, results.size(), info, maxSize);
     }
 
-    public ResultWrapper(Collection<Collection<AnnotatedObject>> results, int maxSize, Map<String,Integer> info, int totalResultsCount) {
+    public ResultWrapper(Collection<? extends AnnotatedObject> results, int maxSize, Map<String,Integer> info, int totalResultsCount) {
         this(results, results.size(), maxSize);
         this.myInfo = info;
         this.totalResultsCount = totalResultsCount;
@@ -101,7 +101,7 @@ public class ResultWrapper implements Serializable {
      *
      * @return can be empty if the result set is too large or no matches.
      */
-    public List<Collection<AnnotatedObject>> getResult() {
+    public List<? extends AnnotatedObject> getResult() {
         if (myResults == null) {
             return Collections.EMPTY_LIST;
         }
@@ -133,8 +133,8 @@ public class ResultWrapper implements Serializable {
 
     // Helper methods.
 
-    private ResultWrapper(Collection<Collection<AnnotatedObject>> results, int potentialSize, int maxSize) {
-        myResults = (List<Collection<AnnotatedObject>>) results;
+    private ResultWrapper(Collection<? extends AnnotatedObject> results, int potentialSize, int maxSize) {
+        myResults = (List<? extends AnnotatedObject>) results;
         myPossibleSize = potentialSize;
         myMaxAllowedSize = maxSize;
     }

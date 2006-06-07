@@ -5,6 +5,11 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorValue;
+
 
 /**
  * Represents an external database and contains all the information necessary to retrieve an object from it by a given
@@ -13,6 +18,8 @@ package uk.ac.ebi.intact.model;
  * @author hhe
  * @version $Id$
  */
+@Entity
+@DiscriminatorValue("uk.ac.ebi.intact.model.CvDatabase")
 public class CvDatabase extends CvObject implements Editable {
 
     ////////////////////////////////
@@ -92,25 +99,13 @@ public class CvDatabase extends CvObject implements Editable {
 
 
     /**
-     * Cache a Vector of all shortLabels of the class, e.g. for menus. This should not be here as it has no model
-     * functionality but is related to eg user interfaces.
-     * <p/>
-     * <p/>
-     * This constructor should <b>not</b> be used as it could result in objects with invalid state. It is here for
-     * object mapping purposes only and if possible will be made private.
-     *
-     * @deprecated Use the full constructor instead
-     */
-//    protected static Vector menuList = null;
-
-    /**
      * This constructor should <b>not</b> be used as it could result in objects with invalid state. It is here for
      * object mapping purposes only and if possible will be made private.
      *
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private CvDatabase() {
+    public CvDatabase() {
         //super call sets creation time data
         super();
     }

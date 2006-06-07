@@ -7,6 +7,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.application.commons.search.SearchClass;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -68,6 +69,7 @@ public class SingleViewBean extends AbstractViewBean {
     /**
      * not used ! just here to satified the AbstractViewBean
      */
+    @Override
     public void initHighlightMap() {
 
     }
@@ -76,17 +78,10 @@ public class SingleViewBean extends AbstractViewBean {
     /**
      * Returns the help section. Needs to be reviewed.
      */
+    @Override
     public String getHelpSection() {
         return "protein.single.view";
     }
-
-    /**
-     * This is left over from the earlier version - will be removed. It does nothing here.
-     */
-    public void getHTML( java.io.Writer writer ) {
-    }
-
-    ;
 
 
     /**
@@ -145,47 +140,6 @@ public class SingleViewBean extends AbstractViewBean {
         return this.obj;
     }
 
-    /**
-     * Provides access to Annotations of the CVTopics of the  wrraped AnnotadObject stored in SingleViewBeans for the
-     * prasentation in the jsp
-     *
-     * @return Collection of all Anotations wrapped in a SingleViewBean
-     */
-    public Collection getAnnotations() {
-        final ArrayList result = new ArrayList();
-        Collection someAnnotations = this.obj.getAnnotations();
-
-        for ( Iterator iterator = someAnnotations.iterator(); iterator.hasNext(); ) {
-            CvTopic aCvTopic = ( (Annotation) iterator.next() ).getCvTopic();
-            // TODO REFACTORING
-            // THIS BEAN IS NOT NEEDED ANY MORE
-            /**
-             BioSourceViewBean aSingleViewBean = new        BioSourceViewBean(aCvTopic, this.getHelpLink(),
-             this.searchURL, this.getContextPath());
-             result.add(aSingleViewBean);
-             **/
-        }
-        return result;
-    }
-
-
-    /**
-     * Provides access to Annotations of the CVTopics of the  wrraped AnnotadObject stored in SingleViewBeans for the
-     * prasentation in the jsp
-     *
-     * @return Collection with all Xrefs wrapped in a SingleViewBean
-     */
-    public Collection getXrefs() {
-        final ArrayList result = new ArrayList();
-        final Collection someXrefs = this.obj.getXrefs();
-
-        for ( Iterator iterator = someXrefs.iterator(); iterator.hasNext(); ) {
-            final Xref aXref = ( (Xref) iterator.next() );
-            final CvDatabase aCvDatabase = aXref.getCvDatabase();
-
-        }
-        return result;
-    }
 
     /**
      * Provides the basic Intact type of the wrapped AnnotatedObject (ie no java package beans). NOTE: only the
@@ -197,13 +151,7 @@ public class SingleViewBean extends AbstractViewBean {
     public String getIntactType() {
 
         if ( intactType == null ) {
-
-            final String className = obj.getClass().getName();
-            final String basicType = className.substring( className.lastIndexOf( "." ) + 1 );
-
-            intactType = ( ( basicType.indexOf( "Impl" ) == -1 ) ?
-                           basicType : basicType.substring( 0, basicType.indexOf( "Impl" ) ) );
-
+            intactType = SearchClass.valueOfMappedClass(obj.getClass()).getShortName();
         }
         return intactType;
 
@@ -240,22 +188,5 @@ public class SingleViewBean extends AbstractViewBean {
         return this.obj.getFullName();
     }
 
-    /**
-     * @param anAnnotatedObject
-     *
-     * @return String  the intact type of  the annotedObject
-     */
-    private String getIntactType( final AnnotatedObject anAnnotatedObject ) {
-
-        final String objectIntactType;
-        final String className = anAnnotatedObject.getClass().getName();
-        final String basicType = className.substring( className.lastIndexOf( "." ) + 1 );
-
-        objectIntactType = ( ( basicType.indexOf( "Impl" ) == -1 ) ?
-                             basicType : basicType.substring( 0, basicType.indexOf( "Impl" ) ) );
-
-        return objectIntactType;
-
-    }
 }
 

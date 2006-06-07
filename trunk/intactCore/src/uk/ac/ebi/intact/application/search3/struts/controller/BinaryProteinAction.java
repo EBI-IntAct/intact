@@ -49,12 +49,8 @@ public class BinaryProteinAction extends AbstractResultAction {
 
         // first check for self interactions
 
-        // String appPath = getServlet().getServletContext().getInitParameter("searchLink");
-//        String searchURL = request.getContextPath().concat(appPath);
-        String searchURL = super.getSearchURL();
-
         if (someInteractors.size() == 1) {
-            Collection beanList = new ArrayList(1);
+            Collection<PartnersViewBean> beanList = new ArrayList<PartnersViewBean>(1);
             logger.info("Binary Protein Action: one 1 Protein");
 
             final Interactor selfInteractor = (Interactor) someInteractors.iterator().next();
@@ -64,7 +60,7 @@ public class BinaryProteinAction extends AbstractResultAction {
 
             if (hasSelfInteraction) {
                 logger.info("BinaryAction: protein has a self interaction ");
-                beanList.add(new PartnersViewBean(selfInteractor, true, helpLink, searchURL,
+                beanList.add(new PartnersViewBean(selfInteractor, helpLink,
                                                   request.getContextPath()));
                 request.setAttribute(SearchConstants.VIEW_BEAN_LIST, beanList);
                 return SearchConstants.FORWARD_PARTNER_VIEW;

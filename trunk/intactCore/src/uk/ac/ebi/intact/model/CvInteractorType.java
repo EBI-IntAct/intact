@@ -5,6 +5,8 @@
  */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.Entity;
+import javax.persistence.DiscriminatorValue;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -15,6 +17,8 @@ import java.util.List;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
+@Entity
+@DiscriminatorValue("uk.ac.ebi.intact.model.CvInteractorType")
 public class CvInteractorType extends CvDagObject {
 
     /**
@@ -104,7 +108,7 @@ public class CvInteractorType extends CvDagObject {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private CvInteractorType() {
+    public CvInteractorType() {
         //super call sets creation time data
         super();
     }

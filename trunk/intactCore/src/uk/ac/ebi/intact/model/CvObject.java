@@ -5,7 +5,17 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.JoinTable;
+import javax.persistence.JoinColumn;
+import javax.persistence.DiscriminatorValue;
 import java.util.Iterator;
+import java.util.Collection;
 
 /**
  * Represents a controlled vocabulary object. CvObject is derived from AnnotatedObject to allow to store annotation of
@@ -14,12 +24,16 @@ import java.util.Iterator;
  * @author Henning Hermjakob
  * @version $Id$
  */
+@Entity
+@Table(name = "ia_controlledvocab")
+@DiscriminatorColumn(name="objclass")
+@DiscriminatorValue("uk.ac.ebi.intact.model.CvObject")
 public abstract class CvObject extends AnnotatedObjectImpl {
 
     /**
      * no-arg constructor provided for compatibility with subclasses that have no-arg constructors.
      */
-    protected CvObject() {
+    public CvObject() {
         //super call sets creation time data
         super();
     }
@@ -37,6 +51,18 @@ public abstract class CvObject extends AnnotatedObjectImpl {
         //super call sets up a valid AnnotatedObject (and also CvObject, as there is
         //nothing more to add)
         super( shortLabel, owner );
+    }
+
+    @ManyToMany
+    @JoinTable(
+        name="ia_cvobject2annot",
+        joinColumns={@JoinColumn(name="cvobject_ac")},
+        inverseJoinColumns={@JoinColumn(name="annotation_ac")}
+    )
+    @Override
+    public Collection<Annotation> getAnnotations()
+    {
+        return super.getAnnotations();
     }
 
     /**
@@ -113,6 +139,7 @@ public abstract class CvObject extends AnnotatedObjectImpl {
      *
      * @return the Identity xref or null if there is no Identity xref found.
      */
+    @Transient
     public Xref getIdentityXref() {
         for (Xref xref : getXrefs())
         {

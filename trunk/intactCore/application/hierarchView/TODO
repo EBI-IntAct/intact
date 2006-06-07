@@ -325,7 +325,7 @@ The user is free to use it.
 
 + get a list of GO term from AC in the IntAct database
 
-+ put under CVS source code of cli, Serveur and console.
++ put under SVN source code of cli, Serveur and console.
 
 + Allow to read dinamically (in runtime) the URL of the Web Service, instead to have this hardcoded in the
   following class :

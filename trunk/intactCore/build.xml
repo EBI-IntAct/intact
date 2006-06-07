@@ -15,14 +15,11 @@
     <property name="dest.dir" value="classes"/>
     <property name="jdoc.dir" value="doc/api"/>
     <property name="config.dir" value="config"/>
-    <property name="data.dir" value="data"/>
     <property name="template.dir" value="template"/>
 
     <!-- Application directory -->
     <property name="app.dir" value="application"/>
 
-    <!--msd cvMapping file property-->
-    <property name="msd.mapping.props.file" value="${data.dir}/msdMapping.dat"/>
     <!-- Repository/OJB file properties -->
     <property name="rep.template.file" value="${template.dir}/repository_database.template"/>
     <property name="rep.dest.file" value="${config.dir}/repository_database.xml"/>
@@ -54,10 +51,11 @@
 
     <!-- The IntAct node properties. -->
     <property file="config/Institution.properties"/>
-                           
+
     <property file="config/correctionAssigner.properties"/>
 
-    <property file="config/msd.properties"/>
+     <!-- Hibernate config -->
+    <property name="hibernate.cfg.file" value="${src.dir}/hibernate.cfg.xml"/>
 
     <!-- Tutorial specific properties -->
     <property name="tutorial.src.dir" value="src/uk/ac/ebi/intact/tutorial"/>
@@ -425,17 +423,12 @@
                 <include name="sanityCheck.properties"/>
                 <include name="Institution.properties"/>
 		        <include name="correctionAssigner.properties"/>
-		        <include name="msd.properties"/>
             </fileset>
         </copy>
 
         <!-- the OJB and log4J properties files should be at the top level in 'dest' -->
         <copy todir="${dest.dir}" file="${config.dir}/OJB.properties"/>
         <copy todir="${dest.dir}" file="${config.dir}/log4j.properties"/>
-    </target>
-
-    <target name="copyDataFiles">
-        <copy todir="${dest.dir}/${data.dir}" file="${msd.mapping.props.file}"/>
     </target>
 
     <!-- =================================================================== -->
@@ -469,13 +462,14 @@
         <!-- Delete the existing jar file. -->
         <delete file="${dist.dir}/${intact.core.jar}" quiet="true"/>
 
+        <copy file="${hibernate.cfg.file}" todir="${dest.dir}"/>
+
         <jar destfile="${dist.dir}/${intact.core.jar}" basedir="${basedir}/${dest.dir}"/>
 
         <!-- now copy the config files back to the classes directory, to put it back
             to a 'compiled' state
         -->
         <antcall target="copyConfigFiles"/>
-        <antcall target="copyDataFiles" />
 
     </target>
 
@@ -496,7 +490,6 @@
 
         <!-- Copy any configuration files -->
         <antcall target="copyConfigFiles"/>
-        <antcall target="copyDataFiles"/>
     </target>
 
     <!-- =================================================================== -->
@@ -515,7 +508,6 @@
 
         <!-- Copy any configuration files -->
         <antcall target="copyConfigFiles"/>
-        <antcall target="copyDataFiles"/>
     </target>
 
     <!-- =================================================================== -->

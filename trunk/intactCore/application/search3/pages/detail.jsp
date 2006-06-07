@@ -1,3 +1,4 @@
+<!-- detail page -->
 <%--
     Page to display a 'detail' view of search results. Current specification is as per the
     mockups August 2004. Details for both Experiment and Interaction  results are displayed using
@@ -18,11 +19,6 @@
     the actual content for each tab will be provided from the view bean itself.
 --%>
 
-<!--
-@author Chris Lewington, Samuel Kerrien (skerrien@ebi.ac.uk)
-@version $Id$
--->
-
 <%-- need to provide an error page here to catch unhandled failures --%>
 <%@ page language="java" %>
 <%@ page buffer="none" %>
@@ -35,12 +31,13 @@
                  uk.ac.ebi.intact.application.search3.struts.view.beans.MainDetailViewBean,
                  uk.ac.ebi.intact.model.*,
                  java.util.*" %>
+<%@ page import="uk.ac.ebi.intact.application.search3.struts.view.beans.MainDetailView"%>
 
 <%-- Standard Java classes --%>
 
 <%-- may make use of these later to tidy up the JSP a little --%>
-<%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html" %>
-<%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="http://jakarta.apache.org/struts/tags-html" prefix="html"%>
+<%@ taglib uri="http://jakarta.apache.org/struts/tags-bean" prefix="bean" %>
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 
 <%
@@ -107,9 +104,14 @@
 <span class="verysmalltext"><br></span>
 
 <%
+
+    //The View object containing the beans to render
+    MainDetailView detailView = (MainDetailView) request.getAttribute(SearchConstants.VIEW_BEAN);
+
     //first check to see if the bean list is null - if it is then it means that the
     //request is not a new one, but rather a tabbed page request. In this case get the
     //previously saved bean from the session and use that for the rest of this display....
+    /*
     if ( viewBeanList == null ) {
         viewBeanList = new ArrayList();
         MainDetailViewBean existingBean = (MainDetailViewBean) session.getAttribute( SearchConstants.LARGE_EXPERIMENT_BEAN );
@@ -118,34 +120,10 @@
         //(this comes from the request in all cases EXCEPT a tabbed view)
         highlightList.add( existingBean.getObjIntactName() );
     }
+     */
+        MainDetailViewBean bean = detailView.getMainDetailViewBean();
 
-    //now go through the viewbean list and produce a table for each bean.....
-    for ( Iterator it = viewBeanList.iterator(); it.hasNext(); ) {
-        MainDetailViewBean bean = (MainDetailViewBean) it.next();
 
-        //first thing is to check for a 'large' Experiment view - if it is, then need to display
-        //a table with tabbed pages...
-        //NB Use the REAL size of the Interaction list here - the BEAN holds a SUBLIST
-        if ( ( bean.getObject().getInteractions().size() > Constants.MAX_PAGE_SIZE ) &
-             ( !bean.isInteractionView() ) ) {
-
-            //put this particular viewbean into the SESSION (because the next tabbed
-            //page request will be different to the current request) so that subsequent
-            //Action classes can change its contents as per the requested next page
-            //NOTE: ASSUMES THERE IS ONLY LIKELY TO BE A SINGLE LARGE EXPERIMENT PER VIEW -
-            //IF NOT, THIS MAKES OTHER PROCESSING VERY COMPLICATED EG IN TRACKING WHAT
-            //PAGE IS REQUESTED ON WHAT VIEWBEAN!!
-            session.setAttribute( SearchConstants.LARGE_EXPERIMENT_BEAN, bean );
-
-            int currentPage = 1;    //the 'real' page number - default is first page
-
-            request.setAttribute(SearchConstants.TOTAL_RESULTS_ATT_NAME, bean.getObject().getInteractions().size());
-
-            if (request.getParameter("selectedChunk") == null)
-            {
-                request.getParameterMap().put("selectedChunk", currentPage);
-            }
-    }   //end of 'large' Exp size check
 %>
 
 <!-- the main form for the page -->
@@ -154,7 +132,17 @@
 <!-- button bar for the table -->
 <%@ include file="buttonBar.html" %>
 
+
+<%
+    if (detailView.getTotalItems() > detailView.getItemsPerPage())
+    {
+%>
+
 <%@include file="tablePagination.jspf"%>
+
+<%
+    }
+%>
 
 <!-- main results tables -->
 <%--<table style="width: 100%; background-color: rgb(241, 245, 248);"--%>
@@ -959,14 +947,21 @@
 
 <!-- END of the main display table -->
 
+<%
+    if (detailView.getTotalItems() > detailView.getItemsPerPage())
+    {
+%>
+
 <%@include file="tablePagination.jspf"%>
+
+<%
+    }
+%>
 
 <!-- button bar for the table -->
 <%@ include file="buttonBar.html" %>
 
-<%
-    }   //end of viewbean list loop
-%>
+
 <br>
 
 </form>

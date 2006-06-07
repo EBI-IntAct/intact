@@ -8,10 +8,8 @@ package uk.ac.ebi.intact.application.editor.struts.view.wrappers;
 
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.application.editor.struts.view.experiment.InteractionRowData;
 
-import java.sql.Timestamp;
-import java.sql.Date;
+import java.util.Date;
 
 /**
  * An instance of this class contains information for the display library to display
@@ -28,8 +26,8 @@ public class ResultRowData {
     private String myType;
     private String myCreator;
     private String myUpdator;
-    private Timestamp myCreated;
-    private Timestamp myUpdated;
+    private Date myCreated;
+    private Date myUpdated;
 
     public ResultRowData() {
     }
@@ -40,7 +38,7 @@ public class ResultRowData {
      */
     public ResultRowData(Object[] data, Class clazz) {
        this((String) data[0], (String) data[1], (String) data[2], (String) data[3], (String) data[4],
-            new Timestamp(((Date) data[5]).getTime()), new Timestamp(((Date) data[6]).getTime()));
+            (Date) data[5], (Date) data[6]);
         myType = IntactHelper.getDisplayableClassName(clazz);
     }
 //     public ResultRowData(Object[] data, Class clazz) {
@@ -66,7 +64,7 @@ public class ResultRowData {
 //        myUpdator = updator;
 //   }
 
-    public ResultRowData(String ac, String shortlabel, String fullname, String creator, String updator, Timestamp created, Timestamp updated) {
+    public ResultRowData(String ac, String shortlabel, String fullname, String creator, String updator, Date created, Date updated) {
             myAc = ac;
             myShortLabel = shortlabel;
             myFullName = fullname;
@@ -128,11 +126,11 @@ public class ResultRowData {
         return myUpdator;
     }
 
-    public Timestamp getCreated() {
+    public Date getCreated() {
         return myCreated;
     }
 
-    public Timestamp getUpdated() {
+    public Date getUpdated() {
         return myUpdated;
     }
 }

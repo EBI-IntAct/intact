@@ -5,6 +5,14 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Column;
+import javax.persistence.Transient;
+import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.FetchType;
+
 
 /**
  * Funtional description of an object.
@@ -12,6 +20,8 @@ package uk.ac.ebi.intact.model;
  * @author hhe
  * @version $Id$
  */
+@Entity()
+@Table(name="ia_annotation")
 public class Annotation extends BasicObjectImpl {
 
     ///////////////////////////////////////
@@ -46,7 +56,7 @@ public class Annotation extends BasicObjectImpl {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private Annotation() {
+    public Annotation() {
         //super call sets creation time data
         super();
     }
@@ -89,7 +99,7 @@ public class Annotation extends BasicObjectImpl {
 
     ///////////////////////////////////////
     //access methods for attributes
-
+    @Column(name = "description")
     public String getAnnotationText() {
         return annotationText;
     }
@@ -106,7 +116,8 @@ public class Annotation extends BasicObjectImpl {
 
     ///////////////////////////////////////
     // access methods for associations
-
+    @ManyToOne (fetch = FetchType.LAZY)
+    @JoinColumn(name = "topic_ac")
     public CvTopic getCvTopic() {
         return cvTopic;
     }
@@ -118,15 +129,6 @@ public class Annotation extends BasicObjectImpl {
         }
 
         this.cvTopic = cvTopic;
-    }
-
-    //attributes used for mapping BasicObjects - project synchron
-    public String getCvTopicAc() {
-        return this.cvTopicAc;
-    }
-
-    public void setCvTopicAc( String ac ) {
-        this.cvTopicAc = ac;
     }
 
     /**

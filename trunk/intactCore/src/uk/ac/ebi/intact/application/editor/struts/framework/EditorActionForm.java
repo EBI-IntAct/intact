@@ -16,6 +16,7 @@ import uk.ac.ebi.intact.application.commons.util.DateToolbox;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Date;
 import java.sql.Timestamp;
 
 /**
@@ -52,12 +53,12 @@ public class EditorActionForm extends DispatchActionForm implements EditorFormI 
     /**
      * The time of creation.
      */
-    private Timestamp myCreated;
+    private Date myCreated;
 
     /**
      * The time of last update.
      */
-    private Timestamp myUpdated;
+    private Date myUpdated;
     /**
      * The accession number.
      */
@@ -129,7 +130,7 @@ public class EditorActionForm extends DispatchActionForm implements EditorFormI 
         return DateToolbox.formatDate(this.myCreated);
     }
 
-    public void setCreated(Timestamp created) {
+    public void setCreated(Date created) {
         this.myCreated = created;
     }
 
@@ -137,7 +138,7 @@ public class EditorActionForm extends DispatchActionForm implements EditorFormI 
         return DateToolbox.formatDate(this.myUpdated);
     }
 
-    public void setUpdated(Timestamp updated) {
+    public void setUpdated(Date updated) {
         this.myUpdated = updated;
     }
 

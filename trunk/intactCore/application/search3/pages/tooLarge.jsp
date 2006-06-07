@@ -57,14 +57,10 @@
                    <nobr>  <span class="whiteheadertext">Count</span>  </nobr>
             </td>
 
-              <%
-                 if(bean.isSelectable()) {
-        %>
              <td class="headerdarkmid">
                    <nobr>  <span class="whiteheadertext">&nbsp</span> </nobr>
             </td>
 
-            <% } %>
          </tr>
 
          <%  SingleResultViewBean singleResult;
@@ -82,25 +78,12 @@
                         <td>
                             <%=singleResult.getCount() %>
                         </td>
-        <%
-                 if(bean.isSelectable()) {
-        %>
 
-        <% if(singleResult.isSearchable()) { %>
                          <td>
                          <a href="<%=singleResult.getSearchLink()%>"
                          class="tdlink"><%=singleResult.getSearchName() %></a>
                          </td>
 
-
-              <% } else { %>
-
-                             <td>
-                             &nbsp
-                            </td>
-
-                         <%} %>
-                <% } %>
                     </tr>
          <%  } %>
     </tbody>

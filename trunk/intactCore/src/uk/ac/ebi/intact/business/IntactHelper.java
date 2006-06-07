@@ -6,8 +6,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.business;
 
 import org.apache.log4j.Logger;
-import org.apache.ojb.broker.VirtualProxy;
-import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.Identity;
 import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.VirtualProxy;

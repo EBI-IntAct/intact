@@ -86,7 +86,7 @@ This will give a very quick check that the files validate against the PSI DTD.
 
 Here is a note about how to use the PsiDataLoader that will allow you to import PSI-MI file
 into your local installation of IntAct.
-Firstly, please check that you have the latest intact version, you can get an update from CVS.
+Firstly, please check that you have the latest intact version, you can get an update from SVN.
 
 
 2.1. To Build it

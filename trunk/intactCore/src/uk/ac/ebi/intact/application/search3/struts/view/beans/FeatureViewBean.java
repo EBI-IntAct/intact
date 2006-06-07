@@ -9,6 +9,7 @@ package uk.ac.ebi.intact.application.search3.struts.view.beans;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.Feature;
 import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.util.SearchReplace;
 
 import java.util.*;
@@ -47,7 +48,7 @@ public class FeatureViewBean extends AbstractViewBean {
      * Map of retrieved DB URLs already retrieved from the DB. This is basically a cache to avoid recomputation every
      * time a CvDatabase URL is requested.
      */
-    private Map dbUrls;
+    private Map<CvObject,String> dbUrls;
 
 
     /**
@@ -62,15 +63,16 @@ public class FeatureViewBean extends AbstractViewBean {
         super( link, contextPath );
         this.searchURL = searchURL;
         this.feature = feature;
-        dbUrls = new HashMap();
+        dbUrls = new HashMap<CvObject, String>();
     }
 
     /**
      * Adds the shortLabel of the Feature to an internal list used later for highlighting in a display. NOT SURE IF WE
      * STILL NEED THIS!!
      */
+    @Override
     public void initHighlightMap() {
-        Set set = new HashSet( 1 );
+        Set<String> set = new HashSet<String>( 1 );
         set.add( feature.getShortLabel() );
         setHighlightMap( set );
     }
@@ -78,6 +80,7 @@ public class FeatureViewBean extends AbstractViewBean {
     /**
      * Returns the help section.
      */
+    @Override
     public String getHelpSection() {
         return "protein.single.view";
     }
@@ -185,7 +188,7 @@ public class FeatureViewBean extends AbstractViewBean {
      *
      * @return a Collection of String with the shortlabel of the Xref of the wrapped Feature
      */
-    public Collection getFeatureXrefs() {
+    public Collection<Xref> getFeatureXrefs() {
         return feature.getXrefs();
 
     }
@@ -238,13 +241,13 @@ public class FeatureViewBean extends AbstractViewBean {
     public String getPrimaryIdURL( Xref xref ) {
 
         // Check if the id can be hyperlinked
-        String searchUrl = (String) dbUrls.get( xref.getCvDatabase() );
+        String searchUrl = dbUrls.get( xref.getCvDatabase() );
         if ( searchUrl == null ) {
             //not yet requested - do it now and cache it..
-            Collection annotations = xref.getCvDatabase().getAnnotations();
+            Collection<Annotation> annotations = xref.getCvDatabase().getAnnotations();
             Annotation annot = null;
-            for ( Iterator it = annotations.iterator(); it.hasNext(); ) {
-                annot = (Annotation) it.next();
+            for ( Iterator<Annotation> it = annotations.iterator(); it.hasNext(); ) {
+                annot = it.next();
                 if ( annot.getCvTopic().getShortLabel().equals( "search-url" ) ) {
                     //found one - we are done
                     searchUrl = annot.getAnnotationText();
@@ -266,6 +269,7 @@ public class FeatureViewBean extends AbstractViewBean {
         return searchUrl;
     }
 
+    @Override
     public boolean equals( Object o ) {
         if ( this == o ) {
             return true;
@@ -283,6 +287,7 @@ public class FeatureViewBean extends AbstractViewBean {
         return true;
     }
 
+    @Override
     public int hashCode() {
         int result;
         result = ( feature != null ? feature.hashCode() : 0 );

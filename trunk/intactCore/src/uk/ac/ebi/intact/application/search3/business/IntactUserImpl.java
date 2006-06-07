@@ -12,6 +12,8 @@ import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.persistence.DAOFactory;
 import uk.ac.ebi.intact.persistence.DAOSource;
 import uk.ac.ebi.intact.persistence.DataSourceException;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.model.IntactObject;
 
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
@@ -28,18 +30,18 @@ import java.io.Serializable;
  * @author Chris Lewington, Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener, Serializable {
+public class IntactUserImpl<T extends IntactObject> implements IntactUserIF<T>, HttpSessionBindingListener, Serializable {
 
     /**
      * Reference to the DAO.
      */
-    private IntactHelper helper;
+    //private IntactHelper helper;
 
     private String myHelpLink;
 
     private String searchValue;
 
-    private String searchClass;
+    private Class<T> searchClass;
 
     private String binaryValue;
 
@@ -68,7 +70,7 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener,
      */
     public IntactUserImpl( String mapping, String dsClass )
             throws DataSourceException, IntactException {
-        DAOSource ds = DAOFactory.getDAOSource( dsClass );
+        //DAOSource ds = DAOFactory.getDAOSource( dsClass );
 
         // Pass config beans to data source - don't need fast keys as only
         // accessed once
@@ -77,7 +79,7 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener,
         // ds.setConfig(fileMap);
 
         // build a helper and XmlBuilder for use throughout a session
-        this.helper = new IntactHelper( ds );
+        //this.helper = new IntactHelper( ds );
     }
 
     /**
@@ -87,7 +89,7 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener,
      */
     public IntactUserImpl() throws IntactException {
 
-        this.helper = new IntactHelper();
+        //this.helper = new IntactHelper();
     }
 
     public int getSelectedChunk() {
@@ -110,34 +112,40 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener,
      * Will call this method when an object is unbound from a session.
      */
     public void valueUnbound( HttpSessionBindingEvent event ) {
-
+       /*
         try {
             this.helper.closeStore();
         }
         catch ( IntactException ie ) {
             //failed to close the store - not sure what to do here yet....
-        }
+        }  */
     }
 
     // Implementation of IntactUserI interface.
 
     public String getUserName() {
-        if ( this.helper != null ) {
-            try {
-                return this.helper.getDbUserName();
-            }
-            catch ( LookupException e ) {
-            }
-            catch ( SQLException e ) {
-            }
+        try
+        {
+            return DaoFactory.getBaseDao().getDbUserName();
         }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+
         return null;
     }
 
     public String getDatabaseName() {
-        if ( this.helper != null ) {
-            return this.helper.getDbName();
+        try
+        {
+            return DaoFactory.getBaseDao().getDbName();
         }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+
         return null;
     }
 
@@ -145,21 +153,19 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener,
 //        return this.searchCriteria;
 //    }
 
-    public Collection search( String objectType, String searchParam,
+    public <T> Collection<T> search( Class<T> objectType, String searchParam,
                               String searchValue ) throws IntactException {
-        // Set the search criteria.
-        // TODO remove it if not needed
-//        this.searchCriteria = searchParam;
+        //return helper.search( objectType, searchParam, searchValue );
 
-        //now retrieve an object...
-        return helper.search( objectType, searchParam, searchValue );
+        // this method should not be used
+        return null;
     }
 
-    public String getSearchClass() {
+    public Class<T> getSearchClass() {
         return searchClass;
     }
 
-    public void setSearchClass( String searchClass ) {
+    public void setSearchClass( Class<T> searchClass ) {
         this.searchClass = searchClass;
     }
 
@@ -204,7 +210,8 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener,
     }
 
     public IntactHelper getIntactHelper() {
-        return this.helper;
+        // this method should be removed. No use of IntactHelper
+        return null;
     }
 
 }

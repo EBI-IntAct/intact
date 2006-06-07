@@ -12,12 +12,11 @@
 <%@ page language="java" %>
 <%@ page import="uk.ac.ebi.intact.application.mine.struts.view.AmbiguousBean,
 				uk.ac.ebi.intact.application.mine.business.Constants" %>
+<%@ page import="java.util.Collection"%>
 	
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/tld/intact.tld"      prefix="intact"%>
-
-<jsp:useBean id="ambiguous" scope="request" class="java.util.Collection" />
 
 <script language="JavaScript" type="text/javascript">
 
@@ -59,8 +58,10 @@ For each of your input parameters, please select the appropriate IntAct object(s
 
 <hr size="2"><br>
 <form name="mineForm" action="<%=request.getContextPath()%>/do/search" method="post">
-<%	
-	java.util.Iterator iter = ambiguous.iterator();
+<%
+    Collection ambiguous = (Collection) request.getAttribute("ambiguous");
+
+    java.util.Iterator iter = ambiguous.iterator();
 	String path = request.getContextPath();
 	path = path.substring(0, path.lastIndexOf("/"));
 	// each ambiguous result is shown

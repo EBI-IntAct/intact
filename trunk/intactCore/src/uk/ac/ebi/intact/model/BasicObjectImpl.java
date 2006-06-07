@@ -1,5 +1,14 @@
 package uk.ac.ebi.intact.model;
 
+import org.hibernate.FetchMode;
+import org.hibernate.validator.NotNull;
+
+import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
+import javax.persistence.Column;
+import javax.persistence.FetchType;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -11,6 +20,7 @@ import java.util.Collection;
  * @author intact team
  * @version $Id$
  */
+@MappedSuperclass
 public abstract class BasicObjectImpl extends IntactObjectImpl implements BasicObject {
 
     // TODO: synchron? this should moved somewhere else.
@@ -33,7 +43,7 @@ public abstract class BasicObjectImpl extends IntactObjectImpl implements BasicO
     /**
      * Protected constructor for use by subclasses
      */
-    protected BasicObjectImpl() {
+    public BasicObjectImpl() {
         super();
     }
 
@@ -51,6 +61,7 @@ public abstract class BasicObjectImpl extends IntactObjectImpl implements BasicO
         this.evidences = someEvidence;
     }
 
+    @Transient
     public Collection<Evidence> getEvidences() {
         return evidences;
     }
@@ -63,6 +74,9 @@ public abstract class BasicObjectImpl extends IntactObjectImpl implements BasicO
         this.evidences.remove( evidence );
     }
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="owner_ac", nullable = false)
+    @NotNull
     public Institution getOwner() {
         return owner;
     }
@@ -81,6 +95,7 @@ public abstract class BasicObjectImpl extends IntactObjectImpl implements BasicO
     ///////////////////////////////////////
     // access methods for associations
 
+    @Column(name="owner_ac", insertable = false, updatable = false, nullable = false)
     public String getOwnerAc() {
         return ownerAc;
     }

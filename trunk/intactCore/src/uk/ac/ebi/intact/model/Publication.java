@@ -5,6 +5,11 @@
  */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import javax.persistence.JoinTable;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -16,6 +21,7 @@ import java.util.Iterator;
  * @version $Id$
  * @since <pre>11-May-2006</pre>
  */
+@Entity(name = "ia_publication")
 public class Publication extends AnnotatedObjectImpl implements Editable {
 
     /**
@@ -31,7 +37,7 @@ public class Publication extends AnnotatedObjectImpl implements Editable {
     ///////////////////////////
     // Constructors
     @Deprecated
-    private Publication() {
+    public Publication() {
     }
 
     public Publication( Institution owner, String pmid ) {
@@ -73,13 +79,32 @@ public class Publication extends AnnotatedObjectImpl implements Editable {
         experiments.remove( experiment );
     }
 
+    @OneToMany (mappedBy = "publication")
     public Collection<Experiment> getExperiments() {
         return experiments;
     }
 
+    public void setExperiments(Collection<Experiment> experiments)
+    {
+        this.experiments = experiments;
+    }
+
+
+    @ManyToMany
+    @JoinTable(
+        name="ia_pub2annot",
+        joinColumns={@JoinColumn(name="publication_ac")},
+        inverseJoinColumns={@JoinColumn(name="annotation_ac")}
+    )
+    @Override
+    public Collection<Annotation> getAnnotations()
+    {
+        return super.getAnnotations();
+    }
+
     ////////////////////////////
     // Object's override
-
+    @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer();
         sb.append( "Publication" );
@@ -101,6 +126,7 @@ public class Publication extends AnnotatedObjectImpl implements Editable {
         return sb.toString();
     }
 
+    @Override
     public boolean equals( Object o ) {
         if ( this == o ) {
             return true;
@@ -121,6 +147,7 @@ public class Publication extends AnnotatedObjectImpl implements Editable {
         return true;
     }
 
+    @Override
     public int hashCode() {
         int result = super.hashCode();
         result = 29 * result + pmid.hashCode();

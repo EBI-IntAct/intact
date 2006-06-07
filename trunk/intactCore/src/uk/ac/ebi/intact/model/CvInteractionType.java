@@ -5,29 +5,26 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import javax.persistence.Entity;
+import javax.persistence.DiscriminatorValue;
 
 
 /**
  * The type of interaction.
- * 
+ *
  * example binary interaction
  * example phosphorylation
  * @author hhe
  * @version $Id$
  */
+@Entity
+@DiscriminatorValue("uk.ac.ebi.intact.model.CvInteractionType")
 public class CvInteractionType extends CvDagObject {
 
     public static final String DIRECT_INTERACTION = "direct interaction";
 
     public static final String DIRECT_INTERACTION_MI_REF = "MI:0407";
 
-    /**
-     * Cache a Vector of all shortLabels of the class, e.g. for menus.
-     * This should not be here as it has no model functionality but is
-     * related to eg user interfaces.
-     */
-
-//    protected static Vector menuList = null;
 
     /**
      * This constructor should <b>not</b> be used as it could
@@ -36,7 +33,7 @@ public class CvInteractionType extends CvDagObject {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private CvInteractionType() {
+    public CvInteractionType() {
         //super call sets creation time data
         super();
     }
