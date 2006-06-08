@@ -12,7 +12,8 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 
-import static uk.ac.ebi.intact.util.CvContext.CvName;
+import static uk.ac.ebi.intact.core.CvContext.CvName;
+import uk.ac.ebi.intact.core.CvContext;
 
 import java.io.InputStream;
 import java.util.Collection;
