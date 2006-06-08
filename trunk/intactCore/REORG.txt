@@ -2,6 +2,7 @@ REORGANIZATION
 ==============
 
 CYCLIC DEPENDENCIES FIXED (may provoke side effects)
+List of refactorings done to solve the cyclic dependency:
 
 uk.ac.ebi.intact.util.MineDatabaseFill to uk.ac.ebi.intact.application.mine.business.MineDatabaseFill
 uk.ac.ebi.intact.util.StatisticsDataSet to uk.ac.ebi.intact.application.statisticsView.business.data.StatisticsDataSet
