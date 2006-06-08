@@ -62,7 +62,6 @@ public class TooLargeAction extends IntactBaseAction {
         int experimentCount = 0;
         int interactionCount = 0;
 
-
         // count for any type of searchable objects in the resultset to generate the statistic
         // this is done by creating from the classname a class and check then for classtype
 
@@ -72,6 +71,13 @@ public class TooLargeAction extends IntactBaseAction {
 
             try
             {
+                if (className.equals("uk.ac.ebi.intact.model.SmallMoleculeImpl"))
+                {
+                    // TODO remove this check when the new type is implemented
+                    logger.warn("Found SmallMolecule/s. This is not implemented yet, so ignoring it");
+                    continue;
+                }
+
                 Class clazz = Class.forName(className);
 
                 SearchClass searchClass = SearchClass.valueOfMappedClass(clazz);
@@ -102,7 +108,7 @@ public class TooLargeAction extends IntactBaseAction {
 
                 // we got a class which is not part of the the searchable classes.
                 logger.info("tooLarge action: the resultset contains to an object which is no " +
-                        "assignable from an intactType");
+                        "assignable from an intactType: "+className);
                 logger.info("tooLarge action: forward to an errorpage");
                 return mapping.findForward(SearchConstants.FORWARD_FAILURE);
 

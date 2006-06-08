@@ -10,6 +10,8 @@ import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.persistence.DAOFactory;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -485,30 +487,29 @@ public class InterProSearchAction extends AbstractResultAction {
      */
     public AnnotatedObject searchAO( String ac ) throws IntactException {
 
-        AnnotatedObject ao = null;
+        AnnotatedObject ao = DaoFactory.getProteinDao().getByAc(ac);
 
-        IntactHelper helper = null;
-        try {
-            helper = new IntactHelper();
-            Collection aos = helper.search( AnnotatedObject.class, "ac", ac );
-            if ( aos.isEmpty() ) {
-                logger.info( "\t\tSorry, no Annotated Objects found for " + "\"" + ac + "\"" );
-            } else {
-                for ( Iterator iterator = aos.iterator(); iterator.hasNext(); ) {
-                    ao = (AnnotatedObject) iterator.next();
-                }
-            }
-        }
-        catch ( IntactException ie ) {
-            logger.error( "Error when search for Annotated Object", ie );
-        }
-        finally {
-            if ( helper != null ) {
-                helper.closeStore();
-            }
+        if (ao != null)
+        {
+            return ao;
         }
 
-        return ao;
+        ao = DaoFactory.getInteractionDao().getByAc(ac);
+
+        if (ao != null)
+        {
+            return ao;
+        }
+
+        ao = DaoFactory.getExperimentDao().getByAc(ac);
+
+        if (ao != null)
+        {
+            return ao;
+        }
+
+        // should never be reached
+        return null;
     }
 
     /**

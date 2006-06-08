@@ -12,6 +12,7 @@ import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
+import uk.ac.ebi.intact.application.commons.search.SearchClass;
 import uk.ac.ebi.intact.model.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -89,6 +90,9 @@ public class DispatcherAction extends IntactBaseAction {
             } else if ( ( Interaction.class.isAssignableFrom( resultItem.getClass() ) ) ) {
 
                 logger.info( "It's a Interaction, ask forward to SingleResultAction" );
+
+                request.setAttribute("searchClass", SearchClass.INTERACTION.getShortName());
+
                 return mapping.findForward( SearchConstants.FORWARD_DETAILS_ACTION );
                 // check if it's Protein
             } else if ( ( Protein.class.isAssignableFrom( resultItem.getClass() ) ) ) {
