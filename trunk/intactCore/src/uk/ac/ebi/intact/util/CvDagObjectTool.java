@@ -5,7 +5,6 @@
 */
 package uk.ac.ebi.intact.util;
 
-import uk.ac.ebi.intact.application.search3.advancedSearch.cvIntegration.CvDagObjectUtils;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.CvDagObject;

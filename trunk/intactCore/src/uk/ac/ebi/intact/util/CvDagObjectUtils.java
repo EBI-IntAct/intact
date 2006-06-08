@@ -3,7 +3,7 @@
 * All rights reserved. Please see the file LICENSE
 * in the root directory of this distribution.
 */
-package uk.ac.ebi.intact.application.search3.advancedSearch.cvIntegration;
+package uk.ac.ebi.intact.util;
 
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
