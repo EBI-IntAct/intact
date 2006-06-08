@@ -3,13 +3,12 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.util;
+package uk.ac.ebi.intact.core;
 
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.util.CvContextFactory;
 
 import javax.servlet.ServletContext;
 import java.util.HashMap;

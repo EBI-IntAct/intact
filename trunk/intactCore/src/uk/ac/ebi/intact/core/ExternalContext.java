@@ -3,13 +3,11 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.util;
+package uk.ac.ebi.intact.core;
 
 import org.apache.log4j.Logger;
 
 import javax.servlet.ServletContext;
-
-import uk.ac.ebi.intact.util.DummyServletContext;
 
 /**
  * This "singleton" (with ThreadLocal pattern) contains information about the application context. It is a convenience

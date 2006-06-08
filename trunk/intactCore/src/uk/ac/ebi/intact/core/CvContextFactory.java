@@ -3,13 +3,14 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.util;
+package uk.ac.ebi.intact.core;
 
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 
-import static uk.ac.ebi.intact.util.CvContext.CvName;
+import static uk.ac.ebi.intact.core.CvContext.CvName;
+import uk.ac.ebi.intact.core.CvContext;
 
 import java.util.Collection;
 import java.util.Iterator;

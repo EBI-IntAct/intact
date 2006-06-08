@@ -5,7 +5,7 @@
  */
 package uk.ac.ebi.intact.application.commons.util;
 
-import uk.ac.ebi.intact.util.ExternalContext;
+import uk.ac.ebi.intact.core.ExternalContext;
 
 import javax.servlet.*;
 import java.io.IOException;
