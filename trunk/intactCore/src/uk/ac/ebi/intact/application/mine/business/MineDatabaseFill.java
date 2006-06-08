@@ -7,12 +7,23 @@ package uk.ac.ebi.intact.application.mine.business;
 import org.apache.ojb.broker.accesslayer.LookupException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.application.mine.business.Constants;
-import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.model.Interactor;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 
 /**
  * The class <tt>MineDatabaseFill</tt> is a utility class to fill the database
@@ -151,8 +162,6 @@ public class MineDatabaseFill {
      * @throws IntactException if the initiation of the intact helper failed
      */
     private static void buildDatabase() throws SQLException, IntactException {
-
-        MemoryMonitor memoryMonitor = new MemoryMonitor();
 
         // the helper and the database connection is fetched
         IntactHelper helper = new IntactHelper();
