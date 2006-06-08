@@ -44,9 +44,16 @@
 
         if (!urlWithoutPage.contains("searchClass="))
         {
-            if (request.getParameter("searchClass") != null)
+            if (request.getAttribute("searchClass") != null)
             {
-             urlWithoutPage = urlWithoutPage+"&searchClass="+request.getParameter("searchClass");
+                urlWithoutPage = urlWithoutPage+"&searchClass="+request.getAttribute("searchClass");
+            }
+            else
+            {
+                if (request.getParameter("searchClass") != null)
+                {
+                urlWithoutPage = urlWithoutPage+"&searchClass="+request.getParameter("searchClass");
+                }
             }
         }
 
@@ -77,7 +84,9 @@
                     <td>
                         <c:choose>
                             <c:when test="${i == param.page}">
-                                <c:out value="${i}"/>
+                                <span style="color: red">
+                                    <c:out value="${i}" />
+                                </span>
                             </c:when>
                             <c:otherwise>
                                 <c:out value="<a href='search?${param.urlWithoutPage}&page=${i}'>${i}</a>" escapeXml="false"/>

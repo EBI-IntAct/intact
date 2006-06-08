@@ -8,6 +8,7 @@
       <sourceFolder url="file://$MODULE_DIR$/application/cluster/WEB-INF/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test/java" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/src/uk/ac/ebi/intact/application/goDensity" />
       <excludeFolder url="file://$MODULE_DIR$/src/uk/ac/ebi/intact/synchron" />
     </content>
     <orderEntry type="inheritedJdk" />

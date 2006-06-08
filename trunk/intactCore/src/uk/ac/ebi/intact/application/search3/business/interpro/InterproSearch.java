@@ -5,6 +5,7 @@ import uk.ac.ebi.intact.application.search3.business.Constants;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.io.Serializable;
 import java.util.*;
@@ -44,9 +45,27 @@ public class InterproSearch implements Serializable {
                                      Set mappedProteins,
                                      Set unmappedProteins,
                                      Map proteinsWithUniprotKB) throws ThresholdExceededException {
+
+        String uniprotId = DaoFactory.getProteinDao().getUniprotAcByProteinAc(p.getAc());
+
+        if (uniprotId == null) {
+            unmappedProteins.add(p);
+
+        } else {
+            if ((mappedProteins.size() >= MAXIMUM_NUMBER_OF_SELECTED_PROTEINS) && (!mappedProteins.contains(uniprotId))) {
+                throw new ThresholdExceededException();
+            }
+            //add uniprotKB of Protein to List
+            mappedProteins.add(uniprotId);
+
+            proteinsWithUniprotKB.put(p.getShortLabel(), uniprotId);
+        }
+
+
+
         /**
          * the UniProtKB ID of the Protein
-         */
+         *
         String uniProtId = null;
 
 
@@ -115,6 +134,7 @@ public class InterproSearch implements Serializable {
             //add uniprotKB of Protein to List
             mappedProteins.add(uniProtId);
         }
+         */
     }
        
     /**

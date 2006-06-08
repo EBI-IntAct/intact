@@ -116,16 +116,16 @@
 
                 <td nowrap="nowrap" class="headerlight" rowspan="1" colspan="1">
                     <a href="<%= bean.getHelpLink() + "AnnotatedObject.shortLabel"%>"
-                    target="new" class="tdlink" title="Click to see interactors for this molecule">IntAct name<br></a>
+                    target="new" class="tdlink" title="Click to see interactors for this molecule">IntAct name<sup>?</sup><br></a>
                 </td>
 
                 <td nowrap="nowrap" class="headerlight" colspan="1">
                     <a href="<%= bean.getHelpLink() + "BasicObject.ac"%>" target="new"
-                        class="tdlink" title="Click to see molecule details">IntAct Ac<br></a>
+                        class="tdlink" title="Click to see molecule details">IntAct Ac<sup>?</sup><br></a>
                 </td>
 
                  <td  class="headerlight">
-                   <nobr><span title="Click to see interaction details">Number of interactions</span><br></nobr>
+                   <span title="Click to see interaction details">Number of <br>interactions<sup>?</sup></span><br>
                 </td>
 
                 <td nowrap="nowrap" class="headerlight" colspan="1">UniProtKB Ac<br></td>
@@ -146,7 +146,7 @@
 
                 <!-- shortlabel with link: seems to be back to this page (!!)... -->
                  <td nowrap="nowrap" style="vertical-align: top; background-color: rgb(255, 255, 255);">
-                    <code><a href="<%= bean.getInteractorPartnerURL()%>">
+                    <code><a title="Click to see interactors for this molecule" href="<%= bean.getInteractorPartnerURL()%>">
                         <% if(highlightList.contains(bean.getMainInteractor().getShortLabel())) { %>
                             <b><span style="color: rgb(255, 0, 0);"><%= bean.getMainInteractor().getShortLabel()%></span></b>
                         <%
@@ -163,7 +163,8 @@
 
                 <!-- AC, with link to single Protein details page -->
                  <td nowrap="nowrap" style="vertical-align: top; background-color: rgb(255, 255, 255);">
-                    <a href="<%= bean.getInteractorSearchURL()%>"><%= bean.getMainInteractor().getAc()%></a><br>
+                    <a title="Click to see interactors for this molecule"
+                       href="<%= bean.getInteractorSearchURL()%>"><%= bean.getMainInteractor().getAc()%></a><br>
                 </td>
 
                 <!-- number of Interactions, link to a'simple' result page for the Interactions
@@ -176,7 +177,7 @@
                     what detail they want.
                 --%>
                 <td nowrap="nowrap"  align="center" style="vertical-align: top; background-color: rgb(255, 255, 255);">
-                    <a href="<%= bean.getInteractionsSearchURL()%>"><%= bean.getNumberOfInteractions()%></a>
+                       <a title="Click to see interaction details" href="<%= bean.getInteractionsSearchURL()%>"><%= bean.getNumberOfInteractions()%></a>
                 </td>
 
                 <!-- Uniprot AC-->
