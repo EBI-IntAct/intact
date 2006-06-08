@@ -3,7 +3,7 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.application.commons.util;
+package uk.ac.ebi.intact.util;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
