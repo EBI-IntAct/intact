@@ -7,7 +7,7 @@ package uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.b
 
 import org.apache.log4j.Logger;
 import org.apache.struts.action.DynaActionForm;
-import uk.ac.ebi.intact.application.search3.advancedSearch.cvIntegration.CvDagObjectUtils;
+import uk.ac.ebi.intact.util.CvDagObjectUtils;
 import uk.ac.ebi.intact.application.search3.business.Constants;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;

@@ -9,7 +9,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.application.search3.advancedSearch.cvIntegration.CvDagObjectUtils;
+import uk.ac.ebi.intact.util.CvDagObjectUtils;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
 
