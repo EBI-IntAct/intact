@@ -3,17 +3,19 @@ REORGANIZATION
 
 CYCLIC DEPENDENCIES FIXED (may provoke side effects)
 
-MineDatabaseFill: from intact/util to mine/business
-CvDagObjectTool: from search3 to intact/util
-StatisticsDataSet: from intact/util to statisticsView/business/data
-CvContext: from application/commons/util to intact/core
-CvContextFactory: from application/commons/util to intact/core
-DummyServletContext: from application/commons/util to intact/core
-ExternalContext: from application/commons/util to intact/core
+uk.ac.ebi.intact.util.MineDatabaseFill to uk.ac.ebi.intact.application.mine.business.MineDatabaseFill
+uk.ac.ebi.intact.util.StatisticsDataSet to uk.ac.ebi.intact.application.statisticsView.business.data.StatisticsDataSet
+
+uk.ac.ebi.intact.application.commons.util.CvContext to uk.ac.ebi.intact.core.CvContext
+uk.ac.ebi.intact.application.commons.util.CvContextFactory to uk.ac.ebi.intact.core.CvContextFactory
+uk.ac.ebi.intact.application.commons.util.DummyServletContext to uk.ac.ebi.intact.core.DummyServletContext
+uk.ac.ebi.intact.application.commons.util.ExternalContext to uk.ac.ebi.intact.core.ExternalContext
+
+uk.ac.ebi.intact.application.search3.advancedSearch.cvIntegration.CvDagObjectTool to uk.ac.ebi.intact.util.CvDagObjectTool
 
 TODO
 ====
 - SanityChecker packages will be in a new artifact
-   - util/sanityChecker
-   - util/rangeChecker
-   - util/correctionAssigner
+   - uk.ac.ebi.intact.util.sanityChecker
+   - uk.ac.ebi.intact.util.rangeChecker
+   - uk.ac.ebi.intact.util.correctionAssigner
