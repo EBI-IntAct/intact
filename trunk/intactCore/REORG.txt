@@ -10,3 +10,10 @@ CvContext: from application/commons/util to intact/core
 CvContextFactory: from application/commons/util to intact/core
 DummyServletContext: from application/commons/util to intact/core
 ExternalContext: from application/commons/util to intact/core
+
+TODO
+====
+- SanityChecker packages will be in a new artifact
+   - util/sanityChecker
+   - util/rangeChecker
+   - util/correctionAssigner
