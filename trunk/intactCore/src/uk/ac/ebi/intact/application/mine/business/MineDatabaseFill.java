@@ -2,7 +2,7 @@
  * Created on 27.05.2004
  */
 
-package uk.ac.ebi.intact.util;
+package uk.ac.ebi.intact.application.mine.business;
 
 import org.apache.ojb.broker.accesslayer.LookupException;
 import uk.ac.ebi.intact.business.IntactException;
