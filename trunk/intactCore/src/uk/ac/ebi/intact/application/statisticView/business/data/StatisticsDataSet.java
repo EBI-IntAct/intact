@@ -12,14 +12,13 @@ in the root directory of this distribution.
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
-package uk.ac.ebi.intact.util;
+package uk.ac.ebi.intact.application.statisticView.business.data;
 
 import org.apache.log4j.Logger;
 import org.apache.ojb.broker.accesslayer.LookupException;
-import uk.ac.ebi.intact.application.statisticView.business.data.NoDataException;
-import uk.ac.ebi.intact.application.statisticView.business.data.StatisticsBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.util.IntactStatistics;
 
 import java.sql.SQLException;
 import java.text.ParseException;
