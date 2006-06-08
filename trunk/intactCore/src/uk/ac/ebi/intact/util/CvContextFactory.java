@@ -3,20 +3,18 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.application.commons.util;
+package uk.ac.ebi.intact.util;
 
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 
-import static uk.ac.ebi.intact.application.commons.util.CvContext.CvName;
+import static uk.ac.ebi.intact.util.CvContext.CvName;
 
 import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
-
-import javax.servlet.ServletContext;
 
 /**
  * Creates new instances of CvContext

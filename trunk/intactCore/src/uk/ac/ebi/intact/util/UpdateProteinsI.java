@@ -11,11 +11,9 @@ import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.application.commons.util.CvContext;
 
-import static uk.ac.ebi.intact.application.commons.util.CvContext.CvName;
+import static uk.ac.ebi.intact.util.CvContext.CvName;
 
-import javax.servlet.ServletContext;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;

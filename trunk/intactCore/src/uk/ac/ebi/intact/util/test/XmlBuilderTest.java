@@ -8,21 +8,25 @@
  */
 package uk.ac.ebi.intact.util.test;
 
-import java.util.*;
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.w3c.dom.Document;
+import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.model.BasicObject;
+import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.util.Serializer;
+import uk.ac.ebi.intact.util.TestCaseHelper;
+import uk.ac.ebi.intact.util.XmlBuilder;
 
-import uk.ac.ebi.intact.test.*;
-import uk.ac.ebi.intact.util.*;
-import uk.ac.ebi.intact.business.*;
-import uk.ac.ebi.intact.model.*;
-
-//XML classes
-import org.w3c.dom.*;
-import org.w3c.dom.traversal.*;
-import javax.xml.parsers.*;
-import javax.xml.transform.*;
-import javax.xml.transform.stream.*;
-import javax.xml.transform.dom.*;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * This class provides a number of test case to exercise the XmlBuilder

@@ -13,8 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.util.CvContext;
+import uk.ac.ebi.intact.util.ExternalContext;
 
 /**
  * Inititialize the Logger with the log4J properties file.
