@@ -1,0 +1,12 @@
+REORGANIZATION
+==============
+
+CYCLIC DEPENDENCIES FIXED (may provoke side effects)
+
+MineDatabaseFill: from intact/util to mine/business
+CvDagObjectTool: from search3 to intact/util
+StatisticsDataSet: from intact/util to statisticsView/business/data
+CvContext: from application/commons/util to intact/core
+CvContextFactory: from application/commons/util to intact/core
+DummyServletContext: from application/commons/util to intact/core
+ExternalContext: from application/commons/util to intact/core
