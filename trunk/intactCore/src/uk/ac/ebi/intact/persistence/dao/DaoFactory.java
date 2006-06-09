@@ -10,17 +10,7 @@ import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.InteractorImpl;
 import uk.ac.ebi.intact.persistence.util.HibernateUtil;
-import uk.ac.ebi.intact.persistence.dao.impl.AliasDaoImpl;
-import uk.ac.ebi.intact.persistence.dao.impl.AnnotatedObjectDaoImpl;
-import uk.ac.ebi.intact.persistence.dao.impl.CvObjectDaoImpl;
-import uk.ac.ebi.intact.persistence.dao.impl.ExperimentDaoImpl;
-import uk.ac.ebi.intact.persistence.dao.impl.HibernateBaseDaoImpl;
-import uk.ac.ebi.intact.persistence.dao.impl.IntactObjectDaoImpl;
-import uk.ac.ebi.intact.persistence.dao.impl.InteractionDaoImpl;
-import uk.ac.ebi.intact.persistence.dao.impl.InteractorDaoImpl;
-import uk.ac.ebi.intact.persistence.dao.impl.ProteinDaoImpl;
-import uk.ac.ebi.intact.persistence.dao.impl.SearchItemDaoImpl;
-import uk.ac.ebi.intact.persistence.dao.impl.XrefDaoImpl;
+import uk.ac.ebi.intact.persistence.dao.impl.*;
 import org.hibernate.Session;
 
 /**
@@ -49,6 +39,11 @@ public class DaoFactory
     public static BaseDao getBaseDao()
     {
         return new ExperimentDaoImpl(getCurrentSession());
+    }
+
+    public static BioSourceDao getBioSourceDao()
+    {
+        return new BioSourceDaoImpl(getCurrentSession());
     }
 
     public static <T extends CvObject> CvObjectDao<T> getCvObjectDao(Class<T> entityType)

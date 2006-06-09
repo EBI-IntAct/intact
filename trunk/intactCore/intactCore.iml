@@ -10,6 +10,7 @@
       <sourceFolder url="file://$MODULE_DIR$/test/java" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/src/uk/ac/ebi/intact/application/goDensity" />
       <excludeFolder url="file://$MODULE_DIR$/src/uk/ac/ebi/intact/synchron" />
+      <excludeFolder url="file://$MODULE_DIR$/src/uk/ac/ebi/intact/tutorial" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

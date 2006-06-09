@@ -82,14 +82,14 @@ public abstract class BasicObjectImpl extends IntactObjectImpl implements BasicO
     }
 
     public void setOwner( Institution institution ) {
-
+       /*
         if( institution == null ) {
             throw new NullPointerException( "valid " + getClass().getName() + " must have an owner (Institution) !" );
         }
-
+        */
         this.owner = institution;
         // TODO: synchron ?
-        this.ownerAc = institution.getAc();
+        //this.ownerAc = institution.getAc();
     }
 
     ///////////////////////////////////////

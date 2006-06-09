@@ -11,8 +11,8 @@ import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.bu
 import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.view.bean.CvBean;
 import uk.ac.ebi.intact.application.search3.business.Constants;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -95,81 +95,72 @@ public class CvGraph {
 
             Stroke thinStroke = new BasicStroke( 1 );
             Graph g = new Graph();
-            IntactHelper helper = null;
             BufferedImage image;
             StringBuffer sb = null;
 
-            try {
-                helper = new IntactHelper();
-                // collection that holds all cv objects as nodes
-                Collection nodes = new ArrayList( 64 );
-                Map cvobjectToNode = new HashMap( 64 );
+            // collection that holds all cv objects as nodes
+            Collection nodes = new ArrayList( 64 );
+            Map cvobjectToNode = new HashMap( 64 );
 
-                // get all CvObjects of the specified Cv out of the database
-                CvLists cvList = new CvLists();
-                cvList.addMenuListItem(cvClass, nodes);
+            // get all CvObjects of the specified Cv out of the database
+            CvLists cvList = new CvLists();
+            cvList.addMenuListItem(cvClass, nodes);
 
-                // convert a list of CvBeans into CvDagObjects
-                Collection cvObjects = new ArrayList( nodes.size() );
-                for (Iterator iterator = nodes.iterator(); iterator.hasNext();) {
-                    CvBean cvBean = (CvBean) iterator.next();
-                    CvDagObject cdo = (CvDagObject) helper.getObjectByAc( CvObject.class, cvBean.getAc() );
-                    cvObjects.add( cdo );
-                }
+            // convert a list of CvBeans into CvDagObjects
+            Collection cvObjects = new ArrayList( nodes.size() );
+            for (Iterator iterator = nodes.iterator(); iterator.hasNext();) {
+                CvBean cvBean = (CvBean) iterator.next();
+                CvDagObject cdo = DaoFactory.getCvObjectDao(CvDagObject.class).getByAc(cvBean.getAc() );
+                cvObjects.add( cdo );
+            }
 
-                // lose the CvBean list to allow garbage collection
-                nodes.clear();
-                nodes = null;
+            // lose the CvBean list to allow garbage collection
+            nodes.clear();
+            nodes = null;
 
-                // create for all cvDagObject a node and add these to the graph
-                for ( Iterator iterator = cvObjects.iterator(); iterator.hasNext(); ) {
-                    CvDagObject cv = (CvDagObject) iterator.next();
-                    RectangularNode node = new RectangularNode( 40, 40, cv.getFullName(), "javascript:SendInfo('" + cv.getShortLabel() + "')", null, cv.getShortLabel(), Color.white, Color.blue, thinStroke );
-                    g.nodes.add( node );
-                    cvobjectToNode.put( cv, node );
-                }
+            // create for all cvDagObject a node and add these to the graph
+            for ( Iterator iterator = cvObjects.iterator(); iterator.hasNext(); ) {
+                CvDagObject cv = (CvDagObject) iterator.next();
+                RectangularNode node = new RectangularNode( 40, 40, cv.getFullName(), "javascript:SendInfo('" + cv.getShortLabel() + "')", null, cv.getShortLabel(), Color.white, Color.blue, thinStroke );
+                g.nodes.add( node );
+                cvobjectToNode.put( cv, node );
+            }
 
-                // find all parent-relations between the cvDagObjects
-                for ( Iterator iterator = cvObjects.iterator(); iterator.hasNext(); ) {
-                    CvDagObject cv = (CvDagObject) iterator.next();
-                    findParentRelations( cv, cvobjectToNode, g );
-                }
+            // find all parent-relations between the cvDagObjects
+            for ( Iterator iterator = cvObjects.iterator(); iterator.hasNext(); ) {
+                CvDagObject cv = (CvDagObject) iterator.next();
+                findParentRelations( cv, cvobjectToNode, g );
+            }
 
-                HierarchicalLayout layout = new HierarchicalLayout( g, HierarchicalLayout.PARENT_TOP );
-                layout.layout();
+            HierarchicalLayout layout = new HierarchicalLayout( g, HierarchicalLayout.PARENT_TOP );
+            layout.layout();
 
-                final int width = layout.getWidth();
-                final int height = layout.getHeight();
-                image = new BufferedImage( width, height, BufferedImage.TYPE_INT_ARGB );
+            final int width = layout.getWidth();
+            final int height = layout.getHeight();
+            image = new BufferedImage( width, height, BufferedImage.TYPE_INT_ARGB );
 
-                final Graphics2D g2 = image.createGraphics();
+            final Graphics2D g2 = image.createGraphics();
 
-                g2.setColor( Color.white );
-                g2.fillRect( 0, 0, width, height );
-                g2.setColor( Color.black );
+            g2.setColor( Color.white );
+            g2.fillRect( 0, 0, width, height );
+            g2.setColor( Color.black );
 
-                // Set antialising on
-                g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
+            // Set antialising on
+            g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
 
-                for ( Iterator it = g.edges.iterator(); it.hasNext(); ) {
-                    StrokeEdge edge = (StrokeEdge) it.next();
-                    edge.render( g2 );
-                }
+            for ( Iterator it = g.edges.iterator(); it.hasNext(); ) {
+                StrokeEdge edge = (StrokeEdge) it.next();
+                edge.render( g2 );
+            }
 
-                // string that builds the imageMap
-                sb = new StringBuffer( 16384 ); // Starts with a big buffer
+            // string that builds the imageMap
+            sb = new StringBuffer( 16384 ); // Starts with a big buffer
 
-                // iterate through the nodes and build the imageMap
-                for ( Iterator it = g.nodes.iterator(); it.hasNext(); ) {
-                    RectangularNode node = (RectangularNode) it.next();
-                    node.render( g2 );
-                    sb.append( node.getImageMap() ).append( NEW_LINE );
-                }
-
-            } finally {
-                if ( helper != null ) {
-                    helper.closeStore();
-                }
+            // iterate through the nodes and build the imageMap
+            for ( Iterator it = g.nodes.iterator(); it.hasNext(); ) {
+                RectangularNode node = (RectangularNode) it.next();
+                node.render( g2 );
+                sb.append( node.getImageMap() ).append( NEW_LINE );
             }
 
 

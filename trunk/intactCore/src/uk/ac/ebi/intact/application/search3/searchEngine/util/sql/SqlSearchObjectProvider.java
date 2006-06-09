@@ -4,7 +4,7 @@ import uk.ac.ebi.intact.application.search3.searchEngine.SearchEngineConstants;
 import uk.ac.ebi.intact.application.search3.searchEngine.lucene.model.*;
 import uk.ac.ebi.intact.application.search3.searchEngine.util.SearchObjectProvider;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -27,29 +27,10 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
     public static final int MAX_FETCH_SIZE = 128;
 
     /**
-     * Data access object.
-     */
-    private IntactHelper helper;
-
-
-    // TODO redisign that class so that the connection is not held in the instance but released after every call.
-    /**
-     * Database connection.
-     */
-    private Connection conn;
-
-    /**
      * Constructs a SqlSearchObjectProvider object.
-     *
-     * @param helper an IntactHelper object
      */
-    public SqlSearchObjectProvider( IntactHelper helper ) {
-        this.helper = helper;
-        try {
-            this.conn = helper.getJDBCConnection();
-        } catch ( IntactException e ) {
-            e.printStackTrace();
-        }
+    public SqlSearchObjectProvider() {
+
     }
 
     ////////////////////////////////////////////
@@ -83,7 +64,7 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         Statement stmt = null;
         ResultSet resultSet = null;
         try {
-            stmt = conn.createStatement();
+            stmt = getConnection().createStatement();
             stmt.setFetchSize( MAX_FETCH_SIZE );
             resultSet = stmt.executeQuery( sqlQuery );
 
@@ -192,7 +173,7 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         Statement stmt = null;
         ResultSet resultSet = null;
         try {
-            stmt = conn.createStatement();
+            stmt = getConnection().createStatement();
             stmt.setFetchSize( MAX_FETCH_SIZE );
 
             resultSet = stmt.executeQuery( sqlQuery );
@@ -298,7 +279,7 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         Statement stmt = null;
         ResultSet resultSet = null;
         try {
-            stmt = conn.createStatement();
+            stmt = getConnection().createStatement();
             stmt.setFetchSize( MAX_FETCH_SIZE );
 
             resultSet = stmt.executeQuery( sqlQuery );
@@ -393,7 +374,7 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         Statement stmt = null;
         ResultSet resultSet = null;
         try {
-            stmt = conn.createStatement();
+            stmt = getConnection().createStatement();
             stmt.setFetchSize( MAX_FETCH_SIZE );
 
             resultSet = stmt.executeQuery( sqlQuery );
@@ -484,7 +465,7 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         Statement stmt = null;
         ResultSet resultSet = null;
         try {
-            stmt = conn.createStatement();
+            stmt = getConnection().createStatement();
             stmt.setFetchSize( MAX_FETCH_SIZE );
 
             resultSet = stmt.executeQuery( sqlQuery );
@@ -594,7 +575,7 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         ResultSet resultSet = null;
 
         try {
-            stmt = conn.createStatement();
+            stmt = getConnection().createStatement();
             stmt.setFetchSize( MAX_FETCH_SIZE );
 
             resultSet = stmt.executeQuery( sqlQuery );
@@ -662,7 +643,7 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         Statement stmt = null;
         ResultSet resultSet = null;
         try {
-            stmt = conn.createStatement();
+            stmt = getConnection().createStatement();
             stmt.setFetchSize( MAX_FETCH_SIZE );
 
             resultSet = stmt.executeQuery( sqlQuery );
@@ -697,5 +678,10 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
             }
         }
         return cvso;
+    }
+
+    private Connection getConnection()
+    {
+        return HibernateUtil.getSessionFactory().getCurrentSession().connection();
     }
 }

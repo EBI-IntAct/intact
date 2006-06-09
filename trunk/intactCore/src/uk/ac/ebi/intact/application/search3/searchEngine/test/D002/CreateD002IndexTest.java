@@ -12,9 +12,8 @@ import uk.ac.ebi.intact.application.search3.searchEngine.business.SearchEngineIm
 import uk.ac.ebi.intact.application.search3.searchEngine.business.dao.SearchDAO;
 import uk.ac.ebi.intact.application.search3.searchEngine.business.dao.SearchDAOImpl;
 import uk.ac.ebi.intact.application.search3.searchEngine.lucene.IntactAnalyzer;
-import uk.ac.ebi.intact.util.Chrono;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.util.Chrono;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,8 +57,8 @@ public class CreateD002IndexTest extends TestCase {
      */
     protected void setUp() throws IOException, IntactException {
         // create the index
-        IntactHelper helper = new IntactHelper();
-        SearchDAO dao = new SearchDAOImpl(helper);
+
+        SearchDAO dao = new SearchDAOImpl();
         engine = new SearchEngineImpl(new IntactAnalyzer(), new File("indexD002"), dao, null);
 
         Chrono chrono = new Chrono();

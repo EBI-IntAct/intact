@@ -168,7 +168,7 @@ public class Indexer {
             //create a file with the name of the first argument
             File indexFile = new File( args[ 0 ] );
 
-            Indexer test = new Indexer( new SearchDAOImpl( helper ), new SearchObjectIndexer() );
+            Indexer test = new Indexer( new SearchDAOImpl(), new SearchObjectIndexer() );
             Chrono time = new Chrono();
             time.start();
             // create the index

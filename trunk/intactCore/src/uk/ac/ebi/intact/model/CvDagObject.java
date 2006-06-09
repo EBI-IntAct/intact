@@ -84,8 +84,8 @@ public abstract class CvDagObject extends CvObject {
     @ManyToMany
     @JoinTable(
         name="ia_cv2cv",
-        joinColumns={@JoinColumn(name="parent_ac")},
-        inverseJoinColumns={@JoinColumn(name="child_ac")}
+        joinColumns={@JoinColumn(name="parent_ac", referencedColumnName = "ac")},
+        inverseJoinColumns={@JoinColumn(name="child_ac", referencedColumnName = "ac")}
     )
     public Collection<CvDagObject> getChildren() {
         return children;
@@ -174,12 +174,7 @@ public abstract class CvDagObject extends CvObject {
         }
     }
 
-    @ManyToMany
-    @JoinTable(
-        name="ia_cv2cv",
-        joinColumns={@JoinColumn(name="child_ac", referencedColumnName = "ac")},
-        inverseJoinColumns={@JoinColumn(name="parent_ac", referencedColumnName = "ac")}
-    )
+    @ManyToMany(mappedBy = "children")
     public Collection<CvDagObject> getParents() {
         return parents;
     }
