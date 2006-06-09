@@ -159,22 +159,4 @@ public class ProteinUtils {
         return result;
     }
 
-    /**
-     * Returns a collection containing the intersection of n-ary interactions from 2 give proteins.
-     *
-     * @param firstInteractor  a protein, must no be null
-     * @param secondInteractor a protein, must no be null
-     *
-     * @return a collection containing all n-nary  interactions of the 2 given proteins.
-     */
-//    public static Collection getNnaryInteractions( final Protein firstProtein,   // 2 usage in PartnersViewBean
-    public static Collection<Interaction> getNnaryInteractions( final Interactor firstInteractor,
-                                                   final Interactor secondInteractor ) {
-        // getting all Interactions from firstProtein
-        final Collection<Interaction> interactor1Interactions = getNnaryInteractions( firstInteractor );
-        // getting all Interactions from secondProtein
-        final Collection<Interaction> interactor2Interactions = getNnaryInteractions( secondInteractor );
-        // get only these Interactions in which both are involved
-        return CollectionUtils.intersection( interactor1Interactions, interactor2Interactions );
-    }
 }
