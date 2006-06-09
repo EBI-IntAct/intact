@@ -15,19 +15,6 @@ import java.util.Map;
 public interface SearchDAO {
 
     /**
-     * This method gets the Intact object with the specific AC number out of the database. It is used to update a single
-     * search object
-     *
-     * @param ac    Ac number of the searched Intact object
-     * @param clazz class name of the object to search for
-     *
-     * @return Intact Object
-     *
-     * @throws IntactException
-     */
-    public Object findObjectsbyAC( final String ac, final Class clazz ) throws IntactException;
-
-    /**
      * This method is used to get the Intact object out of the database, corresponding to the Map of Acs. The key of the
      * Map (someAcs) is the AC number and the value to that key is the corresponding objclass The Map which will be
      * returned has the class names as keys and the value is a collection of the found IntAct objects.

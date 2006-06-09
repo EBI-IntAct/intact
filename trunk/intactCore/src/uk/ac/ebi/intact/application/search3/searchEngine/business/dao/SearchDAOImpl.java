@@ -1,6 +1,5 @@
 package uk.ac.ebi.intact.application.search3.searchEngine.business.dao;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.IterableMap;
 import org.apache.commons.collections.MapIterator;
 import org.apache.commons.collections.map.HashedMap;
@@ -10,8 +9,8 @@ import uk.ac.ebi.intact.application.search3.searchEngine.lucene.model.SearchObje
 import uk.ac.ebi.intact.application.search3.searchEngine.util.SearchObjectProvider;
 import uk.ac.ebi.intact.application.search3.searchEngine.util.sql.SqlSearchObjectProvider;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,35 +35,21 @@ public class SearchDAOImpl implements SearchDAO {
 
     /**
      * Constructs a SearchDAOImpl object.
-     *
-     * @param helper an IntactHelper object
      */
-    public SearchDAOImpl( IntactHelper helper ) {
-        this.soProvider = new SqlSearchObjectProvider( helper );
+    public SearchDAOImpl( ) {
+        this.soProvider = new SqlSearchObjectProvider( );
     }
 
-
-    public Object findObjectsbyAC( String ac, Class clazz ) throws IntactException {
-        final IntactHelper helper = new IntactHelper();
-        final Object result = helper.getObjectByAc( clazz, ac );
-        try {
-            helper.closeStore();
-        } catch ( IntactException e ) {
-            throw new IntactException( "Problems to close the IntactHelper", e );
-        }
-        return result;
-    }
 
     public Map findObjectsbyACs( Map someACs ) throws IntactException {
 
-        final IntactHelper helper = new IntactHelper();
         // Map to be returned
-        final Map someResults = new HashedMap();
-        final Collection expResults = new ArrayList();
-        final Collection protResults = new ArrayList();
-        final Collection interResults = new ArrayList();
-        final Collection cvResults = new ArrayList();
-        final Collection bioResults = new ArrayList();
+        final Map<String, Collection<? extends IntactObject>> someResults = new HashedMap();
+        final Collection<Experiment> expResults = new ArrayList<Experiment>();
+        final Collection<Protein> protResults = new ArrayList<Protein>();
+        final Collection<Interaction> interResults = new ArrayList<Interaction>();
+        final Collection<CvObject> cvResults = new ArrayList<CvObject>();
+        final Collection<BioSource> bioResults = new ArrayList<BioSource>();
         final IterableMap map = (IterableMap) someACs;
 
         // Iterate throuth the Map holding the ACs and search for the corresponding intact object.
@@ -78,7 +63,7 @@ public class SearchDAOImpl implements SearchDAO {
 
             if ( objclass.equalsIgnoreCase( "uk.ac.ebi.intact.model.ProteinImpl" ) ) {
 
-                Object result = helper.getObjectByAc( Protein.class, ac );
+                Protein result = DaoFactory.getProteinDao().getByAc( ac );
                 if ( result == null ) {
                     // this should not happen unless the Lucene index is not in synch with the database.
                     logger.warning( "Looking for AC:" + ac + " Type: Protein.class and no object was found. Index and database not in synch." );
@@ -87,7 +72,7 @@ public class SearchDAOImpl implements SearchDAO {
                 }
 
             } else if ( objclass.equalsIgnoreCase( "uk.ac.ebi.intact.model.InteractionImpl" ) ) {
-                Object result = helper.getObjectByAc( Interaction.class, ac );
+                Interaction result = DaoFactory.getInteractionDao().getByAc(ac);
                 if ( result == null ) {
                     // this should not happen unless the Lucene index is not in synch with the database.
                     logger.warning( "Looking for AC:" + ac + " Type: Interaction.class and no object was found. Index and database not in synch." );
@@ -95,7 +80,7 @@ public class SearchDAOImpl implements SearchDAO {
                     interResults.add( result );
                 }
             } else if ( objclass.equalsIgnoreCase( "uk.ac.ebi.intact.model.Experiment" ) ) {
-                Object result = helper.getObjectByAc( Experiment.class, ac );
+                Experiment result = DaoFactory.getExperimentDao().getByAc(ac);
                 if ( result == null ) {
                     // this should not happen unless the Lucene index is not in synch with the database.
                     logger.warning( "Looking for AC:" + ac + " Type: Experiment.class and no object was found. Index and database not in synch." );
@@ -103,7 +88,7 @@ public class SearchDAOImpl implements SearchDAO {
                     expResults.add( result );
                 }
             } else if ( objclass.equalsIgnoreCase( "uk.ac.ebi.intact.model.CvObject" ) ) {
-                Object result = helper.getObjectByAc( CvObject.class, ac );
+                CvObject result = DaoFactory.getCvObjectDao(CvObject.class).getByAc(ac);
                 if ( result == null ) {
                     // this should not happen unless the Lucene index is not in synch with the database.
                     logger.warning( "Looking for AC:" + ac + " Type: CvObject.class and no object was found. Index and database not in synch." );
@@ -111,7 +96,7 @@ public class SearchDAOImpl implements SearchDAO {
                     cvResults.add( result );
                 }
             } else if ( objclass.equalsIgnoreCase( "uk.ac.ebi.intact.model.BioSource" ) ) {
-                Object result = helper.getObjectByAc( BioSource.class, ac );
+                BioSource result = DaoFactory.getBioSourceDao().getByAc(ac);
                 if ( result == null ) {
                     // this should not happen unless the Lucene index is not in synch with the database.
                     logger.warning( "Looking for AC:" + ac + " Type: Protein.class and no object was found. Index and database not in synch." );
@@ -140,13 +125,6 @@ public class SearchDAOImpl implements SearchDAO {
             someResults.put( SearchEngineConstants.BIOSOURCE, bioResults );
         }
 
-        try {
-            if ( helper != null ) {
-                helper.closeStore();
-            }
-        } catch ( IntactException e ) {
-            throw new IntactException( "Problems to close the IntactHelper", e );
-        }
         return someResults;
     }
 

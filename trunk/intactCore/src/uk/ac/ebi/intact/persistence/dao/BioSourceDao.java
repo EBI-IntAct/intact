@@ -5,17 +5,14 @@
  */
 package uk.ac.ebi.intact.persistence.dao;
 
-import uk.ac.ebi.intact.model.CvObject;
-
-import java.util.List;
+import uk.ac.ebi.intact.model.BioSource;
 
 /**
+ * To access to biosources
+ *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
- * @since <pre>08-May-2006</pre>
+ * @since <pre>09-Jun-2006</pre>
  */
-public interface CvObjectDao<T extends CvObject> extends AnnotatedObjectDao<T>
-{
-
-    List<T> getAll(boolean excludeObsolete, boolean excludeHidden);
+public interface BioSourceDao extends AnnotatedObjectDao<BioSource> {
 }

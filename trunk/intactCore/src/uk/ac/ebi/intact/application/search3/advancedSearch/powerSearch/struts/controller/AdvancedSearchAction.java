@@ -21,6 +21,7 @@ import uk.ac.ebi.intact.application.search3.searchEngine.lucene.IntactAnalyzer;
 import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.application.commons.util.UrlUtil;
+import uk.ac.ebi.intact.application.commons.search.SearchClass;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
@@ -134,7 +135,7 @@ public class AdvancedSearchAction extends IntactBaseAction {
 
 
         DynaActionForm dyForm = (DynaActionForm) form;
-        Class<? extends IntactObject> searchClass = (Class<? extends IntactObject>) dyForm.get( "searchObject" );
+        String searchClassString = (String) dyForm.get( "searchObject" );
         String ac = (String) dyForm.get( "acNumber" );
         String shortlabel = (String) dyForm.get( "shortlabel" );
         String description = (String) dyForm.get( "description" );
@@ -148,7 +149,7 @@ public class AdvancedSearchAction extends IntactBaseAction {
         cvDB = cvDB.trim();
         cvTopic = cvTopic.trim();
 
-        logger.info( "searchClass: " + searchClass );
+        logger.info( "searchClass: " + searchClassString );
         logger.info( "ac: " + ac );
         logger.info( "shortlabel: " + shortlabel );
         logger.info( "description: " + description );
@@ -161,7 +162,7 @@ public class AdvancedSearchAction extends IntactBaseAction {
         logger.info( "cvIdentification: " + dyForm.get( "cvIdentification" ) );
 
         //set the searchObject to avoid strange html pages (CVs)
-        request.setAttribute( SearchConstants.SEARCH_OBJECT, searchClass );
+        request.setAttribute( SearchConstants.SEARCH_OBJECT, searchClassString );
 
         // todo store the error messages in an errorBean
         // check if the search strings have the right syntax
@@ -254,7 +255,7 @@ public class AdvancedSearchAction extends IntactBaseAction {
         logger.info( "IQL query: " + iqlStatement );
 
         session.setAttribute( SearchConstants.SEARCH_CRITERIA, "\"" + iqlToDisplay + "\"" );
-        session.setAttribute( SearchConstants.SEARCH_CLASS, searchClass );
+        session.setAttribute( SearchConstants.SEARCH_CLASS, searchClassString );
 
         // search with the IQL statement
         try {
@@ -294,7 +295,7 @@ public class AdvancedSearchAction extends IntactBaseAction {
 
         //set a few useful user beans
         user.setSearchValue( iqlStatement );
-        user.setSearchClass( searchClass );
+        //user.setSearchClass(searchClassString);
 
 
         if ( results.isEmpty() ) {
@@ -360,19 +361,12 @@ public class AdvancedSearchAction extends IntactBaseAction {
      */
     public Map estimateResults( String iqlQuery ) throws IntactException {
 
-        IntactHelper helper = new IntactHelper();
         Map searchKeys = null;
-        SearchEngineImpl engine = new SearchEngineImpl( new IntactAnalyzer(), new File( indexPath ), new SearchDAOImpl( helper ), new IQLParserImpl() );
-        try {
-            // get all hits out of the database
-            searchKeys = engine.findObjectByIQL( iqlQuery );
-        } catch ( IntactException e ) {
-            throw new IntactException( "Problems with finding objects by IQL", e );
-        } finally {
-            if ( helper != null ) {
-                helper.closeStore();
-            }
-        }
+        SearchEngineImpl engine = new SearchEngineImpl( new IntactAnalyzer(), new File( indexPath ), new SearchDAOImpl(), new IQLParserImpl() );
+
+        // get all hits out of the database
+        searchKeys = engine.findObjectByIQL( iqlQuery );
+
         return searchKeys;
     }
 
@@ -390,7 +384,7 @@ public class AdvancedSearchAction extends IntactBaseAction {
     public Map getResults( Map searchKeys ) throws IntactException {
         Map results = null;
         IntactHelper helper = new IntactHelper();
-        SearchEngineImpl engine = new SearchEngineImpl( new IntactAnalyzer(), new File( indexPath ), new SearchDAOImpl( helper ), null );
+        SearchEngineImpl engine = new SearchEngineImpl( new IntactAnalyzer(), new File( indexPath ), new SearchDAOImpl(), null );
         try {
             // retrieve the intact search objects in a map
             results = engine.getResult( searchKeys );

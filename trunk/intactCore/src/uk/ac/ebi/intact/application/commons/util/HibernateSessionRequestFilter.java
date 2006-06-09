@@ -46,7 +46,7 @@ public class HibernateSessionRequestFilter implements Filter {
 
             // Call the next filter (continue request processing)
             chain.doFilter(request, response);
-
+        
             // Commit and cleanup
             log.debug("Committing the database transaction");
             sf.getCurrentSession().getTransaction().commit();

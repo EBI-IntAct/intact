@@ -16,7 +16,6 @@ import uk.ac.ebi.intact.application.search3.searchEngine.business.dao.SearchDAO;
 import uk.ac.ebi.intact.application.search3.searchEngine.business.dao.SearchDAOImpl;
 import uk.ac.ebi.intact.application.search3.searchEngine.lucene.IntactAnalyzer;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -56,8 +55,8 @@ public class SearchCvDatabaseTest extends TestCase {
      */
     protected void setUp() throws IntactException {
         // create the index
-        IntactHelper helper = new IntactHelper();
-        SearchDAO dao = new SearchDAOImpl(helper);
+
+        SearchDAO dao = new SearchDAOImpl();
         engine = new SearchEngineImpl(new IntactAnalyzer(), new File("indexMedium"), dao, new IQLParserImpl());
     }
 
