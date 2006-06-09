@@ -13,7 +13,7 @@ import uk.ac.ebi.intact.persistence.SearchException;
  * pass on information.</p>
  */
 
-public class IntactException extends Exception {
+public class IntactException extends RuntimeException {
 
 
     private String nestedMessage;

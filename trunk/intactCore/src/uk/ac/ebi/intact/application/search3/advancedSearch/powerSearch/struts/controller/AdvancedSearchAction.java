@@ -23,7 +23,7 @@ import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.application.commons.util.UrlUtil;
 import uk.ac.ebi.intact.application.commons.search.SearchClass;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
+
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.util.PropertyLoader;
@@ -327,7 +327,7 @@ public class AdvancedSearchAction extends IntactBaseAction {
                 obj = (AnnotatedObject) iterator.next();
                 if ( obj != null ) {
                     labelList.add( obj.getShortLabel() );
-                    logger.info( "Search result: " + obj.getShortLabel() );
+                    logger.debug( "Search result: " + obj.getShortLabel() );
                 } else {
                     logger.error( "null object?" );
                 }
@@ -383,18 +383,11 @@ public class AdvancedSearchAction extends IntactBaseAction {
      */
     public Map getResults( Map searchKeys ) throws IntactException {
         Map results = null;
-        IntactHelper helper = new IntactHelper();
         SearchEngineImpl engine = new SearchEngineImpl( new IntactAnalyzer(), new File( indexPath ), new SearchDAOImpl(), null );
-        try {
-            // retrieve the intact search objects in a map
-            results = engine.getResult( searchKeys );
-        } catch ( IntactException e ) {
-            throw new IntactException( "Problems with finding objects in the database", e );
-        } finally {
-            if ( helper != null ) {
-                helper.closeStore();
-            }
-        }
+
+        // retrieve the intact search objects in a map
+        results = engine.getResult( searchKeys );
+
         return results;
     }
 }

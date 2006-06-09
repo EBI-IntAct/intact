@@ -10,8 +10,11 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.CvDagObjectUtils;
-import uk.ac.ebi.intact.business.IntactHelper;
+
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.persistence.dao.InteractionDao;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -35,7 +38,6 @@ public class CvDagObjectToolTest extends TestCase {
 
     Institution owner;
     CvDagObjectUtils dagUtils;
-    IntactHelper helper;
     /**
      * Returns this test suite. Reflection is used here to add all
      * the testXXX() methods to the suite.
@@ -48,14 +50,12 @@ public class CvDagObjectToolTest extends TestCase {
      * Sets up the test fixture. Called before every test case method.
      */
     protected void setUp() throws IntactException {
-        helper = new IntactHelper();
-        dagUtils = new CvDagObjectUtils(helper);
+        dagUtils = new CvDagObjectUtils();
         owner = new Institution("test");
     }
 
 
      protected void tearDown() throws IntactException {
-         helper.closeStore();
      }
     /**
      * This method will test the creation of a linear model (Collection)
@@ -126,12 +126,13 @@ public class CvDagObjectToolTest extends TestCase {
 
     public void testInsert() throws IntactException {
         dagUtils.insertCVs(CvInteraction.class);
-        CvDagObject aDagObject = (CvDagObject) helper.getObjectByLabel(CvInteraction.class, "anti tag coimmunopre");
-        CvDagObject aChild1 = (CvDagObject) helper.getObjectByLabel(CvInteraction.class, "flag tag");
-        CvDagObject aChild2 = (CvDagObject) helper.getObjectByLabel(CvInteraction.class, "his tag");
-        CvDagObject aChild3 = (CvDagObject) helper.getObjectByLabel(CvInteraction.class, "myc tag");
-        CvDagObject aChild4 = (CvDagObject) helper.getObjectByLabel(CvInteraction.class, "ha tag");
-        CvDagObject aChild5 = (CvDagObject) helper.getObjectByLabel(CvInteraction.class, "tandem affinity puri");
+        CvObjectDao<CvInteraction> dao = DaoFactory.getCvObjectDao(CvInteraction.class);
+        CvDagObject aDagObject = dao.getByShortLabel("anti tag coimmunopre");
+        CvDagObject aChild1 = dao.getByShortLabel("flag tag");
+        CvDagObject aChild2 = dao.getByShortLabel("his tag");
+        CvDagObject aChild3 = dao.getByShortLabel("myc tag");
+        CvDagObject aChild4 = dao.getByShortLabel("ha tag");
+        CvDagObject aChild5 = dao.getByShortLabel("tandem affinity puri");
 
         Collection allChildren = dagUtils.getCvWithChildren(aDagObject);
         for (Iterator iterator = allChildren.iterator(); iterator.hasNext();) {
@@ -147,11 +148,12 @@ public class CvDagObjectToolTest extends TestCase {
         assertEquals(5, allChildren.size());
 
         dagUtils.insertCVs(CvIdentification.class);
-        aDagObject = (CvDagObject) helper.getObjectByLabel(CvIdentification.class, "nucleotide sequence");
-        aChild1 = (CvDagObject) helper.getObjectByLabel(CvIdentification.class, "partial dna sequence");
-        aChild2 = (CvDagObject) helper.getObjectByLabel(CvIdentification.class, "full identification");
-        aChild3 = (CvDagObject) helper.getObjectByLabel(CvIdentification.class, "southern blot");
-        aChild4 = (CvDagObject) helper.getObjectByLabel(CvIdentification.class, "primer specific pcr");
+        CvObjectDao<CvIdentification> dao2 = DaoFactory.getCvObjectDao(CvIdentification.class);
+        aDagObject = dao2.getByShortLabel("nucleotide sequence");
+        aChild1 = dao2.getByShortLabel("partial dna sequence");
+        aChild2 = dao2.getByShortLabel("full identification");
+        aChild3 = dao2.getByShortLabel("southern blot");
+        aChild4 = dao2.getByShortLabel("primer specific pcr");
 
         allChildren = dagUtils.getCvWithChildren(aDagObject);
         assertTrue(allChildren.contains(aChild1.getAc()));
@@ -161,11 +163,12 @@ public class CvDagObjectToolTest extends TestCase {
         assertEquals(4, allChildren.size());
 
         dagUtils.insertCVs(CvInteractionType.class);
-        aDagObject = (CvDagObject) helper.getObjectByLabel(CvInteractionType.class, "lipid cleavage");
-        aChild1 = (CvDagObject) helper.getObjectByLabel(CvInteractionType.class, "degeranylation");
-        aChild2 = (CvDagObject) helper.getObjectByLabel(CvInteractionType.class, "defarnesylation reac");
-        aChild3 = (CvDagObject) helper.getObjectByLabel(CvInteractionType.class, "demyristoylation");
-        aChild4 = (CvDagObject) helper.getObjectByLabel(CvInteractionType.class, "depalmitoylation");
+        CvObjectDao<CvInteractionType> dao3 = DaoFactory.getCvObjectDao(CvInteractionType.class);
+        aDagObject = dao3.getByShortLabel("lipid cleavage");
+        aChild1 = dao3.getByShortLabel("degeranylation");
+        aChild2 = dao3.getByShortLabel("defarnesylation reac");
+        aChild3 = dao3.getByShortLabel("demyristoylation");
+        aChild4 = dao3.getByShortLabel("depalmitoylation");
 
         allChildren = dagUtils.getCvWithChildren(aDagObject);
         assertTrue(allChildren.contains(aChild1.getAc()));

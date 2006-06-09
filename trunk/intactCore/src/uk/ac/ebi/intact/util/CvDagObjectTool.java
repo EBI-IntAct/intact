@@ -36,7 +36,7 @@ public class CvDagObjectTool {
         try {
             helper = new IntactHelper();
 
-            CvDagObjectUtils dagUtil = new CvDagObjectUtils(helper);
+            CvDagObjectUtils dagUtil = new CvDagObjectUtils();
             String usage = "Usage CvDagObjectTools <aCvDagObjectClassName>";
             // first check the number of arguments
             if(args.length != 1){

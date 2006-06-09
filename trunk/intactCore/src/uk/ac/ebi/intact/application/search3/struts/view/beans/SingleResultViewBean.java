@@ -84,6 +84,10 @@ public class SingleResultViewBean {
         }
         if ( intactType.equalsIgnoreCase( SearchClass.CV_OBJECT.getShortName() ) ) {
             return "Select by Controlled vocabulary";
+        }
+        // HACK: this is neeeded by the advance search to work properly
+        else if ( intactType.equalsIgnoreCase( "Controlled vocabulary term" ) ) {
+            return "cv";
         } else {
             return "-";
         }
@@ -106,8 +110,20 @@ public class SingleResultViewBean {
         else if ( intactType.equalsIgnoreCase( SearchClass.CV_OBJECT.getShortName() ) ) {
             return "cv";
         }
+        // HACK: this is neeeded by the advance search to work properly
+        else if ( intactType.equalsIgnoreCase( "Controlled vocabulary term" ) ) {
+            return "cv";
+        }
         else {
             return "-";
+        }
+    }
+
+    public boolean isSearchable() {
+        if ( count < SearchConstants.MAXIMUM_RESULT_SIZE ) {
+            return true;
+        } else {
+            return false;
         }
     }
 }

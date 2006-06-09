@@ -8,8 +8,9 @@ package uk.ac.ebi.intact.application.search3.servlet;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.search3.business.Constants;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
+
 import uk.ac.ebi.intact.util.SearchReplace;
+import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -101,12 +102,9 @@ public class ExternalServiceSearchServlet extends HttpServlet implements Externa
             operator = "LIKE";
         }
 
-        IntactHelper helper = null;
         try {
-            helper = new IntactHelper();
 
-            Connection connection = helper.getJDBCConnection();
-            PreparedStatement statement = connection.prepareStatement( "SELECT distinct ac " +
+            PreparedStatement statement = getConnection().prepareStatement( "SELECT distinct ac " +
                                                                        "FROM IA_SEARCH " +
                                                                        "WHERE value " + operator + " ?" );
             statement.setString( 1, query );
@@ -129,21 +127,14 @@ public class ExternalServiceSearchServlet extends HttpServlet implements Externa
 
             return count + NEW_LINE + sb.toString();
 
-        } catch ( IntactException e ) {
-            logger.error( "An error occured while searching the IA_SEARCH table", e );
-            return NO_RESULT_OUTPUT;
         } catch ( SQLException e ) {
             logger.error( "An error occured while searching the IA_SEARCH table", e );
             return NO_RESULT_OUTPUT;
-        } finally {
-            if ( helper != null ) {
-                try {
-                    helper.closeStore();
-                } catch ( IntactException e ) {
-                    logger.error( "An error occured while closing IntactHelper", e );
-                    return NO_RESULT_OUTPUT;
-                }
-            }
-        }
+        } 
+    }
+
+    private static Connection getConnection()
+    {
+        return HibernateUtil.getSessionFactory().getCurrentSession().connection();
     }
 }

@@ -6,7 +6,7 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search3.business;
 
-import uk.ac.ebi.intact.business.IntactHelper;
+
 import uk.ac.ebi.intact.model.IntactObject;
 
 /**
@@ -107,13 +107,6 @@ public interface IntactUserIF<T extends IntactObject>
      * @see #getBinaryValue
      */
     public void setBinaryValue( String binaryValue );
-
-    /**
-     * Returns the intact helper value.
-     *
-     * @return an IntactHelper object representing the intact helper value
-     */
-    public IntactHelper getIntactHelper();
 
     /**
      * Returns the view value.

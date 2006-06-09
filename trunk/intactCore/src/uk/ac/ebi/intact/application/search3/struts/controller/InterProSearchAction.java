@@ -5,7 +5,7 @@ import uk.ac.ebi.intact.application.search3.business.interpro.InterproSearch;
 import uk.ac.ebi.intact.application.search3.business.interpro.ThresholdExceededException;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
+
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;

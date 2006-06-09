@@ -3,7 +3,7 @@ package uk.ac.ebi.intact.application.search3.business.interpro;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.search3.business.Constants;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.business.IntactHelper;
+
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 

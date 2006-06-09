@@ -145,9 +145,6 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
 
             System.out.println( "\n" + expSet.size() + " experiments processed." );
 
-        } catch ( IntactException e ) {
-            e.printStackTrace();
-            throw new IntactException( "Problems with IntactHelper", e );
         } catch ( SQLException e ) {
             e.printStackTrace();
             throw new IntactException( "Sql Problems", e );
@@ -251,9 +248,6 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
             System.out.println( "\n" + interactionSet.size() + " interactions processed." );
 
 
-        } catch ( IntactException e ) {
-            e.printStackTrace();
-            throw new IntactException( "Problems with IntactHelper", e );
         } catch ( SQLException e ) {
             e.printStackTrace();
             throw new IntactException( "Sql Problems", e );
@@ -346,9 +340,6 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
 
             System.out.println( "\n" + proteinSet.size() + " proteins processed." );
 
-        } catch ( IntactException e ) {
-            e.printStackTrace();
-            throw new IntactException( "Problems with IntactHelper", e );
         } catch ( SQLException e ) {
             e.printStackTrace();
             throw new IntactException( "Sql Problems", e );
@@ -437,9 +428,6 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
             System.out.println( "\n" + cvSet.size() + " CV terms processed." );
 
 
-        } catch ( IntactException e ) {
-            e.printStackTrace();
-            throw new IntactException( "Problems with IntactHelper", e );
         } catch ( SQLException e ) {
             e.printStackTrace();
             throw new IntactException( "Sql Problems", e );
@@ -525,9 +513,6 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
 
             System.out.println( "\n" + bioSoSet.size() + " BioSources processed." );
 
-        } catch ( IntactException e ) {
-            e.printStackTrace();
-            throw new IntactException( "Problems with IntactHelper", e );
         } catch ( SQLException e ) {
             e.printStackTrace();
             throw new IntactException( "Sql Problems", e );

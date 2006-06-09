@@ -14,6 +14,7 @@
     {   // opening block so there is no variable name clash if there is more than one paginator per view
 
         // pagination use the parameter "page"
+
         String strPage = request.getParameter("page");
         int currentPage = 0;
 
@@ -21,7 +22,7 @@
         int totalResults = 0;
         int resultsPerPage = SearchConstants.RESULTS_PER_PAGE;
 
-        if (strPage != null && strPage.length() != 0)
+        if (strPage != null && strPage.length() != 0 && request.getAttribute(SearchConstants.TOTAL_RESULTS_ATT_NAME) != null)
         {
             currentPage = Integer.valueOf(strPage);
             totalResults = (Integer)request.getAttribute(SearchConstants.TOTAL_RESULTS_ATT_NAME);
