@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.util;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvDagObject;
+import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -30,22 +31,11 @@ public class CvDagObjectUtils {
     private int iLeftBound = -1;
     private int iRightBound = -1;
     IntactHelper aHelper;
-    private Connection conn;
 
     /**
      * Constructs a CvDagObjectUtils object.
-     *
-     * @param helper an IntactHelper object
      */
-    public CvDagObjectUtils( IntactHelper helper ) {
-        // build a connection to the database
-        this.aHelper = helper;
-        try {
-            this.conn = aHelper.getJDBCConnection();
-        } catch ( IntactException e ) {
-            //todo throw exception
-            e.printStackTrace();
-        }
+    public CvDagObjectUtils() {
     }
 
     /**
@@ -100,7 +90,7 @@ public class CvDagObjectUtils {
         final String insertStatement = sqlBuffer.toString();
         System.out.println( insertStatement );
         try {
-            stmt = conn.createStatement();
+            stmt = getConnection().createStatement();
             stmt.execute( insertStatement );
         } catch ( SQLException e ) {
             e.printStackTrace();
@@ -159,7 +149,7 @@ public class CvDagObjectUtils {
         ResultSet result = null;
 
         try {
-            stmt = conn.createStatement();
+            stmt = getConnection().createStatement();
             result = stmt.executeQuery( queryStatement1 );
 
             // in case the CvDagObject has more than one parent, the resultSet has more than one result.
@@ -241,7 +231,7 @@ public class CvDagObjectUtils {
         ResultSet result = null;
 
         try {
-            stmt = conn.createStatement();
+            stmt = getConnection().createStatement();
             result = stmt.executeQuery( queryStatement1 );
 
             // in case the CvDagObject has more than one parent, the resultSet has more than one result.
@@ -289,5 +279,10 @@ public class CvDagObjectUtils {
             }
         }
         return cvWithChildren;
+    }
+
+    private Connection getConnection()
+    {
+        return HibernateUtil.getSessionFactory().getCurrentSession().connection();
     }
 }

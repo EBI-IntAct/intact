@@ -2,6 +2,7 @@ package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * @author Michael Kleen
@@ -23,4 +24,19 @@ public class TooLargeViewBean {
         return this.someSingleResultViewBeans;
     }
 
+    /**
+     * Information for the view if we got a searchable value in the statistics
+     *
+     * @return boolean is true if a searchable value is in the bean, false if not
+     */
+    public boolean isSelectable() {
+        boolean result = false;
+        for ( Iterator iterator = someSingleResultViewBeans.iterator(); iterator.hasNext(); ) {
+            SingleResultViewBean singleResultViewBean = (SingleResultViewBean) iterator.next();
+            if ( singleResultViewBean.isSearchable() ) {
+                result = true;
+            }
+        }
+        return result;
+    }
 }

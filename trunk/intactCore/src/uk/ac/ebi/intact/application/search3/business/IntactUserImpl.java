@@ -8,7 +8,7 @@ package uk.ac.ebi.intact.application.search3.business;
 
 import org.apache.ojb.broker.accesslayer.LookupException;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
+
 import uk.ac.ebi.intact.persistence.DAOFactory;
 import uk.ac.ebi.intact.persistence.DAOSource;
 import uk.ac.ebi.intact.persistence.DataSourceException;
@@ -207,11 +207,6 @@ public class IntactUserImpl<T extends IntactObject> implements IntactUserIF<T>, 
 
     public String getFilter() {
         return this.filterValue;
-    }
-
-    public IntactHelper getIntactHelper() {
-        // this method should be removed. No use of IntactHelper
-        return null;
     }
 
 }

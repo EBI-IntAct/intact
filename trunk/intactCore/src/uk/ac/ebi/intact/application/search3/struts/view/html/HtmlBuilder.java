@@ -7,7 +7,8 @@ package uk.ac.ebi.intact.application.search3.struts.view.html;
 
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.search3.business.Constants;
-import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.application.commons.search.SearchClass;
+
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.SearchReplace;
 
@@ -511,7 +512,6 @@ public class HtmlBuilder {
     /**
      * Displays a interaction partner table for <code>BinaryData</code> data structure.
      *
-     * @param binaryData representation of the interaction partners.
      * @throws IOException
      */
 //    public void htmlView( BinaryDetailsViewBean.BinaryData binaryData ) throws IOException {
@@ -828,8 +828,8 @@ public class HtmlBuilder {
      * @param obj the object for which we want the class name to display
      * @return the classname to display in the view.
      */
-    private String getObjectName( Object obj ) {
-        return IntactHelper.getDisplayableClassName( obj );
+    private String getObjectName( IntactObject obj ) {
+        return SearchClass.valueOfMappedClass(obj.getClass()).getShortName();
     }
 
     /**
@@ -1149,21 +1149,11 @@ public class HtmlBuilder {
 
     /** Write an experiment view to html
      *
-     * @param args [0] The shortlabel of the experiment
      * @throws java.lang.Exception
      */
 //    public static void main(String[] args) throws Exception {
 //
-//        IntactHelper helper = null;
-//        try {
-//            helper = new IntactHelper();
-//
-//        } catch (IntactException ie) {
-//
-//            //something failed with type map or datasource...
-//            String msg = "unable to create intact helper class";
-//            logger.info( msg, ie);
-//        }
+//        
 //
 //        // Create a new Writer, associate it with system.out
 //        Writer out = new BufferedWriter(new OutputStreamWriter(System.out));

@@ -15,7 +15,7 @@
         <property name="connection.url">jdbc:oracle:thin:@cumae.ebi.ac.uk:1531:zpro</property>
 
         <property name="connection.url">jdbc:oracle:thin:@swan.ebi.ac.uk:1521:iweb</property>
-        -->
+         -->
         <!--
         <property name="connection.url">jdbc:oracle:thin:@swan.ebi.ac.uk:1521:iweb2</property>
 

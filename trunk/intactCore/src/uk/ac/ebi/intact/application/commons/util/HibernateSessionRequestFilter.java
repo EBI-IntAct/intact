@@ -40,13 +40,13 @@ public class HibernateSessionRequestFilter implements Filter {
                          FilterChain chain)
             throws IOException, ServletException {
 
-        try {
+
             log.debug("Starting a database transaction");
             sf.getCurrentSession().beginTransaction();
 
             // Call the next filter (continue request processing)
             chain.doFilter(request, response);
-        
+        try {
             // Commit and cleanup
             log.debug("Committing the database transaction");
             sf.getCurrentSession().getTransaction().commit();

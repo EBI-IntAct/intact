@@ -10,8 +10,9 @@ import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.util.CvDagObjectUtils;
 import uk.ac.ebi.intact.application.search3.business.Constants;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
+
 import uk.ac.ebi.intact.model.CvDagObject;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -527,47 +528,35 @@ public class QueryBuilder {
         String acParent = null;
         // list of all children ACs
         Collection children = null;
-        IntactHelper helper = null;
-        try {
-            helper = new IntactHelper();
-            // retrieve the intact object for the parent
-            CvDagObject parent = (CvDagObject) helper.getObjectByLabel( CvDagObject.class, parentShortlabel );
-            if ( parent == null ) {
-                throw new IntactException( "invalid shortlabel: " + parentShortlabel );
-            }
-            acParent = parent.getAc();
-            logger.info( "parents AC: " + acParent );
-            CvDagObjectUtils dagUtil = new CvDagObjectUtils( helper );
 
-            logger.info( "dagUtil" + dagUtil );
-            // get all children ACs
-            children = dagUtil.getCvWithChildren( acParent );
-            // start the condition string with the name of the lucene field
-            condition = term + " = '";
-
-            logger.info( "children: " + children );
-            if ( children.isEmpty() ) {
-                return null;
-            }
-            for ( Iterator iterator = children.iterator(); iterator.hasNext(); ) {
-                String childAc = (String) iterator.next();
-                // add all children ac to the condition
-                condition += childAc + " ";
-            }
-
-            // end the condition
-            condition += "'";
-        } catch ( IntactException e ) {
-            e.printStackTrace();
-        } finally {
-            if ( helper != null ) {
-                try {
-                    helper.closeStore();
-                } catch ( IntactException e ) {
-                    e.printStackTrace();
-                }
-            }
+        // retrieve the intact object for the parent
+        CvDagObject parent = DaoFactory.getCvObjectDao(CvDagObject.class).getByShortLabel(parentShortlabel);
+        if ( parent == null ) {
+            throw new IntactException( "invalid shortlabel: " + parentShortlabel );
         }
+        acParent = parent.getAc();
+        logger.info( "parents AC: " + acParent );
+        CvDagObjectUtils dagUtil = new CvDagObjectUtils();
+
+        logger.info( "dagUtil" + dagUtil );
+        // get all children ACs
+        children = dagUtil.getCvWithChildren( acParent );
+        // start the condition string with the name of the lucene field
+        condition = term + " = '";
+
+        logger.info( "children: " + children );
+        if ( children.isEmpty() ) {
+            return null;
+        }
+        for ( Iterator iterator = children.iterator(); iterator.hasNext(); ) {
+            String childAc = (String) iterator.next();
+            // add all children ac to the condition
+            condition += childAc + " ";
+        }
+
+        // end the condition
+        condition += "'";
+
         return condition;
     }
 

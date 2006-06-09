@@ -14,7 +14,7 @@ import uk.ac.ebi.intact.application.search3.searchEngine.business.dao.SearchDAO;
 import uk.ac.ebi.intact.application.search3.searchEngine.business.dao.SearchDAOImpl;
 import uk.ac.ebi.intact.application.search3.searchEngine.lucene.model.SearchObject;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
+
 import uk.ac.ebi.intact.util.Chrono;
 
 import java.io.File;
@@ -153,10 +153,7 @@ public class Indexer {
      * @throws IntactException
      */
     public static void main( String[] args ) throws IOException, IntactException {
-        IntactHelper helper = null;
-
         try {
-            helper = new IntactHelper();
             String usage = "Usage: Indexer <Name of the index directory>";
             System.out.println( "Start to create the Lucene index..." );
 
@@ -195,11 +192,6 @@ public class Indexer {
             e.printStackTrace();
             System.err.println( "" );
             System.err.println( "There went something wrong with fetching the search objects out of the database" );
-        } finally {
-            if ( helper != null ) {
-                System.out.println( "Helper closing" );
-                helper.closeStore();
-            }
         }
     }
 }

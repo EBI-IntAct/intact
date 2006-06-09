@@ -72,7 +72,7 @@ public class AdvTooLargeAction extends IntactBaseAction {
             it.next();
             className = (String) it.getValue();
             className = className.trim();
-            logger.info("tooLarge action: searching for class" + className);
+            logger.debug("tooLarge action: searching for class" + className);
             Class clazz = null;
             try {
                 clazz = Class.forName(className);
