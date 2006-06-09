@@ -13,9 +13,10 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
-import uk.ac.ebi.intact.application.search3.struts.util.ProteinUtils;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -98,6 +99,10 @@ public class AdvDispatcherAction extends IntactBaseAction {
 
             // check the number of results and forward to the corresponding page
             if ( results.size() == 1 ) {
+
+                String ac = ((AnnotatedObject) results.iterator().next()).getAc();
+                request.getParameterMap().put("searchString", ac);
+
                 logger.info( "First item className: " + key );
                 // check for Experiment or Interaction first
                 if ( key.equalsIgnoreCase( "experiment" ) || key.equalsIgnoreCase( "interaction" ) ) {
@@ -107,8 +112,8 @@ public class AdvDispatcherAction extends IntactBaseAction {
                     // now check if it's an Interaction
                 } else if ( key.equalsIgnoreCase( "protein" ) ) {
                     // now we got different choices whether the protein has interaction partners or not
-                    Collection proteinInteractionPartner = ProteinUtils.getNnaryInteractions( (Protein) results.iterator().next() );
-                    logger.info( "Partner Collection: " + proteinInteractionPartner );
+                    Collection proteinInteractionPartner = DaoFactory.getProteinDao().getPartnersCountingInteractionsByProteinAc(ac).keySet();
+                    //logger.info( "Partner Collection: " + proteinInteractionPartner );
                     if ( proteinInteractionPartner.isEmpty() ) {
                         //the protein has no interaction partners so we want the single Protein View
                         logger.info( "It's a Protein, ask forward to SingleResultAction" );
@@ -116,6 +121,7 @@ public class AdvDispatcherAction extends IntactBaseAction {
                     } else {
                         //the protein has interaction partners so we want the partner view
                         logger.info( "It's a Protein, forwarding to  PartnerResultAction" );
+
                         return mapping.findForward( SearchConstants.FORWARD_BINARY_ACTION );
                     }
                 } else if ( key.equalsIgnoreCase( "biosource" ) || key.equalsIgnoreCase( "cvobject" ) ) {
