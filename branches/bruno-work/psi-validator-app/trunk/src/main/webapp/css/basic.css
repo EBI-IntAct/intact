@@ -1,0 +1,25 @@
+.align-left {
+    text-align: left;
+}
+
+.align-right {
+    text-align: right;
+}
+
+.align-center, .page-title {
+    text-align: center;
+}
+
+.page-title {
+    font-size: x-large;
+    font-weight: bold;
+    width: 85%;
+}
+
+.section-header {
+    font-weight: bold;
+}
+
+.info-header {
+    font-weight: bold;
+}
