@@ -76,3 +76,16 @@ label {
     color: red;
     font-weight: bold;
 }
+
+.odd-row {
+   background: #ddd;
+}
+
+.event-row {
+   background: #eee;
+}
+
+.table-header {
+    color: #fff;
+    background-color: #bbb;
+}
