@@ -11,6 +11,10 @@ import org.apache.myfaces.custom.fileupload.UploadedFile;
 
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.event.ActionEvent;
+import javax.faces.context.FacesContext;
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIInput;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.ByteArrayInputStream;
@@ -52,6 +56,7 @@ public class PsiValidatorBean
 
     public void uploadFile(ActionEvent evt)
     {
+
         try
         {
             if (uploadLocalFile)
@@ -109,6 +114,48 @@ public class PsiValidatorBean
     }
 
 
+    public void validateUrlFormat(FacesContext context,
+                          UIComponent toValidate,
+                          Object value)
+    {
+        if (log.isDebugEnabled())
+        {
+            log.debug("Validating URL: "+value);
+        }
+
+        currentPsiReport = null;
+
+        URL url = null;
+        UIInput inputCompToValidate = (UIInput)toValidate;
+
+        String toValidateClientId = inputCompToValidate.getClientId(context);
+
+        try
+        {
+            url = new URL((String)value);
+        }
+        catch (MalformedURLException e)
+        {
+            e.printStackTrace();
+
+            inputCompToValidate.setValid(false);
+            context.addMessage(toValidateClientId, new FacesMessage("Not a valid URL"));
+            return;
+        }
+
+        try
+        {
+            url.openStream();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+
+            inputCompToValidate.setValid(false);
+            context.addMessage(toValidateClientId, new FacesMessage("Unknown URL"));
+        }
+
+    }
 
     // ACCESSORS
 

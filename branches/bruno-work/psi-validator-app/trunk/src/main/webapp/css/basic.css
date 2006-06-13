@@ -67,9 +67,12 @@ label {
      background: #ddd;
 }
 
-
-
 .report {
     font-family: monospace;
     color: #444;
+}
+
+.error-message {
+    color: red;
+    font-weight: bold;
 }
