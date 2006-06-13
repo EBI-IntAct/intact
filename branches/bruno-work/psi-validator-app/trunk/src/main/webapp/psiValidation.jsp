@@ -149,6 +149,33 @@
             <h:outputText value="#{psiValidatorBean.currentPsiReport.semanticsReport}"
                           styleClass="report"/>
 
+            <t:dataTable var="msg" value="#{psiValidatorBean.currentPsiReport.validatorMessages}"
+                         cellspacing="1"
+                         headerClass="table-header"
+                         rowClasses="odd-row,even-row"
+                         renderedIfEmpty="false" >
+                <t:column style="width: 1%">
+                    <h:outputText value="-"/>
+                </t:column>
+                <t:column style="width: 70%">
+                    <f:facet name="header">
+                        <h:outputText value="Message" />
+                    </f:facet>
+
+                    <h:outputText value="#{msg.message}" />
+
+                </t:column>
+                <t:column style="width: 29%">
+                    <f:facet name="header">
+                        <h:outputText value="Rule" />
+                    </f:facet>
+
+                    <h:outputText value="#{msg.rule}" />
+                </t:column>
+
+
+            </t:dataTable>
+
         </h:panelGrid>
 
         <%-- HTML View --%>

@@ -7,6 +7,9 @@ package uk.ac.ebi.imex.psivalidator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import psidev.psi.mi.validator.framework.ValidatorMessage;
+
+import java.util.List;
 
 /**
  * TODO comment this!
@@ -25,6 +28,9 @@ public class PsiReport
     private String xmlSyntaxReport;
     private String semanticsStatus;
     private String semanticsReport;
+
+    private List<ValidatorMessage> validatorMessages;
+
     private String htmlView;
 
     public PsiReport(String name) {
@@ -90,5 +96,16 @@ public class PsiReport
     public void setHtmlView(String htmlView)
     {
         this.htmlView = htmlView;
+    }
+
+
+    public List<ValidatorMessage> getValidatorMessages()
+    {
+        return validatorMessages;
+    }
+
+    public void setValidatorMessages(List<ValidatorMessage> validatorMessages)
+    {
+        this.validatorMessages = validatorMessages;
     }
 }

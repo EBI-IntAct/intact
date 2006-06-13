@@ -110,6 +110,17 @@
     </profiles>
 
     <repositories>
+         <repository>
+            <id>ibiblio</id>
+            <name>Ibiblio repository</name>
+            <url>http://www.ibiblio.org/maven2</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
         <repository>
             <releases>
                 <enabled>false</enabled>
@@ -120,10 +131,21 @@
             <id>apache-maven-snapshots</id>
             <url>http://cvs.apache.org/maven-snapshot-repository</url>
         </repository>
+        <repository>
+            <id>ebi-repo</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
+        </repository>
     </repositories>
 
     <!-- Project dependencies -->
     <dependencies>
+        <dependency>
+            <groupId>uk.ac.ebi</groupId>
+            <artifactId>psi-schema-validator</artifactId>
+            <version>0.2</version>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.myfaces.core</groupId>
             <artifactId>myfaces-api</artifactId>

@@ -13,16 +13,19 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Validator;
-import javax.xml.validation.Schema;
-import javax.xml.XMLConstants;
 import javax.xml.transform.*;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.dom.DOMSource;
 import java.io.*;
 import java.net.URL;
+import java.util.Collection;
+import java.util.ArrayList;
+
+import psidev.psi.mi.validator.util.UserPreferences;
+import psidev.psi.mi.validator.extensions.mi25.Mi25Validator;
+import psidev.psi.mi.validator.framework.ValidatorMessage;
+import psidev.psi.mi.validator.framework.ValidatorException;
+import psidev.psi.mi.validator.framework.MessageLevel;
 
 /**
  *
@@ -69,7 +72,7 @@ public class PsiReportBuilder
         {
             createHtmlView(report, getInputStream());
 
-            validateXmlSemantics(report, getInputStream());
+            validatePsiFileSemantics(report, getInputStream());
         }
         else
         {
@@ -140,7 +143,7 @@ public class PsiReportBuilder
         if (output.equals(""))
         {
             report.setXmlSyntaxStatus("valid");
-            report.setXmlSyntaxReport("Valid document");
+            report.setXmlSyntaxReport("Document is valid");
 
             return true;
         }
@@ -151,32 +154,14 @@ public class PsiReportBuilder
         return false;
     }
 
-    private static String transformToHtml(InputStream is) throws TransformerException
-    {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        InputStream xslt = PsiReportBuilder.class.getResourceAsStream("/uk/ac/ebi/imex/psivalidator/resource/MIF25_view.xsl");
-
-        // JAXP reads data using the Source interface
-        Source xmlSource = new StreamSource(is);
-        Source xsltSource = new StreamSource(xslt);
-
-        // the factory pattern supports different XSLT processors
-        TransformerFactory transFact =
-                TransformerFactory.newInstance();
-        Transformer trans = transFact.newTransformer(xsltSource);
-
-        trans.transform(xmlSource, new StreamResult(outputStream));
-
-        return outputStream.toString();
-    }
 
     private static void createHtmlView(PsiReport report, InputStream is)
     {
         String transformedOutput = null;
         try
         {
-            transformedOutput = transformToHtml(is);
+            transformedOutput = TransformationUtil.transformToHtml(is).toString();
         }
         catch (TransformerException e)
         {
@@ -185,60 +170,67 @@ public class PsiReportBuilder
         report.setHtmlView(transformedOutput);
     }
 
-    private static boolean validateXmlSemantics(PsiReport report, InputStream is)
+    private static void validatePsiFileSemantics(PsiReport report, InputStream is)
     {
-        InputStream xsd = PsiReportBuilder.class.getResourceAsStream("/uk/ac/ebi/imex/psivalidator/resource/MIF252.xsd");
 
         StringWriter sw = new StringWriter();
         PrintWriter writer = new PrintWriter(sw);
 
         try
         {
-            // parse an XML document into a DOM tree
-            DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            Document document = parser.parse(is);
+            String expandedFile = TransformationUtil.transformToExpanded(is).toString();
 
-            // create a SchemaFactory capable of understanding WXS schemas
-            SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            InputStream expandedStream = new ByteArrayInputStream(expandedFile.getBytes());
 
-            // load a WXS schema, represented by a Schema instance
-            Source schemaFile = new StreamSource(xsd);
-            Schema schema = factory.newSchema(schemaFile);
+            InputStream configFile = PsiReportBuilder.class.getResourceAsStream("resource/config-mi-validator.xml");
 
-            // create a Validator instance, which can be used to validate an instance document
-            Validator validator = schema.newValidator();
+            // set work directory
+            UserPreferences preferences = new UserPreferences();
+            preferences.setKeepDownloadedOntologiesOnDisk( true );
+            preferences.setWorkDirectory(new File(System.getProperty("java.io.tmpdir")));
+            preferences.setSaxValidationEnabled( false );
 
-            // validate the DOM tree
-            validator.validate(new DOMSource(document));
+
+            psidev.psi.mi.validator.framework.Validator validator = new Mi25Validator( configFile, preferences );
+
+            Collection<ValidatorMessage> messages = validator.validate( expandedStream );
+            report.setValidatorMessages(new ArrayList<ValidatorMessage>(messages));
         }
-        catch (ParserConfigurationException e)
-        {
-            e.printStackTrace(writer);
-        }
-        catch (SAXException e)
-        {
-            e.printStackTrace(writer);
-        }
-        catch (IOException e)
+        catch (Exception e)
         {
             e.printStackTrace(writer);
         }
 
         String output = sw.getBuffer().toString();
 
-        if (log.isDebugEnabled())
-            log.debug("XML Validation output: "+output);
-
-        if (output.equals(""))
+        if (!output.equals(""))
         {
-            report.setSemanticsStatus("valid");
-            report.setSemanticsReport("Document valid");
+            report.setSemanticsStatus("invalid");
+            report.setSemanticsReport(output);
+            return;
         }
 
-        report.setSemanticsStatus("invalid");
-        report.setSemanticsReport(output);
+        String status = "valid";
+        report.setSemanticsReport("Document is valid");
 
-        return false;
+        for (ValidatorMessage message : report.getValidatorMessages())
+        {
+            if (message.getLevel() == MessageLevel.WARN)
+            {
+                status = "warnings";
+                report.setSemanticsReport("Validated with warnings");
+            }
+
+            if (message.getLevel().isHigher(MessageLevel.WARN))
+            {
+                status = "invalid";
+                report.setSemanticsReport("Validation failed");
+                break;
+            }
+        }
+
+        report.setSemanticsStatus(status);
+
     }
 
 }
