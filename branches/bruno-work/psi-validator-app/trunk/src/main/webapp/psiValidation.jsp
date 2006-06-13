@@ -62,17 +62,21 @@
             <h:panelGrid columns="2"
                          rendered="#{psiValidatorBean.uploadLocalFile}">
                 <h:outputLabel for="inputFile" value="File: " />
-                <t:inputFileUpload id="inputFile"
+                <h:panelGroup>
+                    <t:inputFileUpload id="inputFile"
                         storage="file" size="80" required="true"
                         value="#{psiValidatorBean.psiFile}"/>
+                    <t:message for="inputFile" styleClass="error-message" showDetail="true" showSummary="false"/>
+                </h:panelGroup>
             </h:panelGrid>
 
             <h:panelGrid columns="2" rendered="#{!psiValidatorBean.uploadLocalFile}">
                 <h:outputLabel for="inputUrl" value="Url: "/>
 
                 <h:panelGroup>
-                    <h:inputText id="inputUrl" size="80" value="#{psiValidatorBean.psiUrl}" required="true"/>
-                    <t:message for="inputUrl" showDetail="true" showSummary="false"/>
+                    <h:inputText id="inputUrl" size="80" value="#{psiValidatorBean.psiUrl}"
+                                 required="true" validator="#{psiValidatorBean.validateUrlFormat}"/>
+                    <t:message for="inputUrl" styleClass="error-message" showDetail="true" showSummary="false"/>
                 </h:panelGroup>
             </h:panelGrid>
 
