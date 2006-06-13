@@ -117,26 +117,33 @@
             <releases>
                 <enabled>true</enabled>
             </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <id>apache-maven-snapshots</id>
-            <url>http://cvs.apache.org/maven-snapshot-repository</url>
+             <snapshots>
+                 <enabled>false</enabled>
+             </snapshots>
         </repository>
         <repository>
             <id>ebi-repo</id>
             <name>The EBI internal repository</name>
             <url>http://www.ebi.ac.uk/~maven/m2repo</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+             <snapshots>
+                 <enabled>false</enabled>
+             </snapshots>
+        </repository>
+        <repository>
+            <id>apache-maven-snapshots</id>
+            <url>http://cvs.apache.org/maven-snapshot-repository</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+             <snapshots>
+                 <enabled>true</enabled>
+             </snapshots>
         </repository>
     </repositories>
+
 
     <!-- Project dependencies -->
     <dependencies>
