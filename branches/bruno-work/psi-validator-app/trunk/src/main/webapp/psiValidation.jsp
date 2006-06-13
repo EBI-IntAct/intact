@@ -157,7 +157,7 @@
                 <t:column style="width: 1%">
                     <h:outputText value="-"/>
                 </t:column>
-                <t:column style="width: 70%">
+                <t:column style="width: 30%">
                     <f:facet name="header">
                         <h:outputText value="Message" />
                     </f:facet>
@@ -165,12 +165,26 @@
                     <h:outputText value="#{msg.message}" />
 
                 </t:column>
-                <t:column style="width: 29%">
+                <t:column style="width: 10%">
                     <f:facet name="header">
-                        <h:outputText value="Rule" />
+                        <h:outputText value="Rule Name" />
                     </f:facet>
 
-                    <h:outputText value="#{msg.rule}" />
+                    <h:outputText value="#{msg.rule.name}" />
+                </t:column>
+                 <t:column style="width: 30%">
+                    <f:facet name="header">
+                        <h:outputText value="Rule Description" />
+                    </f:facet>
+
+                    <h:outputText value="#{msg.rule.description}" />
+                </t:column>
+                 <t:column style="width: 29%">
+                    <f:facet name="header">
+                        <h:outputText value="Fix tips" />
+                    </f:facet>
+
+                    <h:outputText value="#{msg.rule.howToFixTips}" />
                 </t:column>
 
 
