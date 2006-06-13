@@ -12,15 +12,34 @@
     <url>http://www.ebi.ac.uk/intact/psivalidator</url>
     <description>Validates PSI files</description>
 
-    <build>
-        <finalName>psivalidator</finalName>
-    </build>
-
     <scm>
         <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/branches/bruno-work/psi-validator-app/trunk</connection>
         <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/branches/bruno-work/psi-validator-app/trunk</developerConnection>
         <url>http://svn.sourceforge.net/viewcvs.py/intact/branches/bruno-work/psi-validator-app/trunk</url>
     </scm>
+
+    <ciManagement>
+        <system>continuum</system>
+        <url>http://degas.ebi.ac.uk:8080/continuum</url>
+        <notifiers>
+            <notifier>
+                <type>mail</type>
+                <configuration>
+                    <address>brunoaranda@gmail.com</address>
+                </configuration>
+            </notifier>
+        </notifiers>
+    </ciManagement>
+
+    <developers>
+        <developer>
+            <id>BA</id>
+            <name>Bruno Aranda</name>
+            <email>baranda@ebi.ac.uk</email>
+            <organization>EBI</organization>
+            <organizationUrl>http://www.ebi.ac.uk</organizationUrl>
+        </developer>
+    </developers>
 
     <!-- Profile to run jetty, so the tomcat jars are included in the bundle. They are not included by default -->
     <profiles>
@@ -134,5 +153,20 @@
         </dependency>
 
     </dependencies>
+
+    <build>
+        <finalName>psivalidator</finalName>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

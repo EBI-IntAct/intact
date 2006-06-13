@@ -81,7 +81,8 @@ public class PsiValidatorBean
         String name = psiFile.getName();
         InputStream is = new ByteArrayInputStream(content);
 
-        this.currentPsiReport = PsiReportFactory.createPsiReport(name, is);
+        PsiReportBuilder builder = new PsiReportBuilder(name, is);
+        this.currentPsiReport = builder.createPsiReport();
     }
 
     private void uploadFromUrl() throws IOException
@@ -97,7 +98,8 @@ public class PsiValidatorBean
 
             String name = psiUrl.substring(psiUrl.lastIndexOf("/")+1, psiUrl.length());
 
-            this.currentPsiReport = PsiReportFactory.createPsiReport(name, url);
+            PsiReportBuilder builder = new PsiReportBuilder(name, url);
+            this.currentPsiReport = builder.createPsiReport();
         }
         catch (MalformedURLException e)
         {
