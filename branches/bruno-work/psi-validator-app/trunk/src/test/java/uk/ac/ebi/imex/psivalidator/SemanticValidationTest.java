@@ -29,7 +29,8 @@ import java.util.Collection;
 public class SemanticValidationTest extends TestCase
 {
 
-    public void semanticValidation() throws ValidatorException, TransformerException, IOException
+
+    public void testSemanticValidation() throws ValidatorException, TransformerException, IOException
     {
         InputStream configFile = SemanticValidationTest.class.getResourceAsStream("resource/config-mi-validator-test.xml");
         InputStream psiFile = SemanticValidationTest.class.getResourceAsStream("resource/10381623.xml");
