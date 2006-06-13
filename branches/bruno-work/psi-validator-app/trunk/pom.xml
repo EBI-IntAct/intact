@@ -8,13 +8,19 @@
     <artifactId>psi-validator-app</artifactId>
     <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>PSI Validator</name>
+    <name>PSI Validator Webapp</name>
     <url>http://www.ebi.ac.uk/intact/psivalidator</url>
     <description>Validates PSI files</description>
 
     <build>
         <finalName>psivalidator</finalName>
     </build>
+
+    <scm>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/branches/bruno-work/psi-validator-app/trunk</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/branches/bruno-work/psi-validator-app/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.py/intact/branches/bruno-work/psi-validator-app/trunk</url>
+    </scm>
 
     <!-- Profile to run jetty, so the tomcat jars are included in the bundle. They are not included by default -->
     <profiles>
