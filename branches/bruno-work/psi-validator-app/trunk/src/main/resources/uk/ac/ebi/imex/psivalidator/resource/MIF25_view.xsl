@@ -68,20 +68,30 @@ Notes:
                     width:              100%;
                 }
                 .title  {
-                    background-color:   #BBBBBB;
+                    background-color:   #ddd;
                     font-weight:        bold;
                 }
                 .table-title    {
-                    background-color:   #BBBBBB;
+                    background-color:   #ddd;
                     width:              20%;
+                    text-align:         right;
+                    padding-right:       5px;
+                    color: #666;
+                    font-weight: bold;
                 }
                 .table-subtitle    {
-                    background-color:   #BBBBBB;
+                    background-color:   #ddd;
                     font-style:         italic;
+                }
+                .normal-cell {
+                    background-color:   #eee;
+                    text-align: left;
+                    padding-left: 5px;
                 }
                 .sequence   {
                     font-family:        "Courier New", monospace;
-                    font-size:          90%;
+                    font-size:          11px;
+                    background-color:   #eee;
                 }
             </style>
         </head>
@@ -115,7 +125,7 @@ Notes:
     <xsl:comment><xsl:value-of select="name(.)"/></xsl:comment>
     <xsl:if test="string-length(name(.)) > 0">
         <div id="{name(.)}">
-            <table border="1">
+            <table style="border-bottom: 1px solid #fff" cellspacing="1">
                 <tr>
                     <td class="title" colspan="2">
                         <xsl:apply-templates select="current()" mode="name"/>
@@ -138,7 +148,7 @@ Notes:
 <xsl:template match="@releaseDate">
     <tr>
         <td class="table-title">Release Date:</td>
-        <td><xsl:value-of select="text()"/></td>
+        <td class="normal-cell"><xsl:value-of select="text()"/></td>
     </tr>
 </xsl:template>
 
@@ -146,7 +156,7 @@ Notes:
 <xsl:template match="psi:names">
     <tr>
         <td class="table-title">Name:</td>
-        <td>
+        <td class="normal-cell">
             <xsl:apply-templates select="current()" mode="no-title"/>
         </td>
     </tr>
@@ -186,7 +196,7 @@ Notes:
             <xsl:value-of select="@db"/>
             <xsl:apply-templates select="@version"/>
         </td>
-        <td>
+        <td class="normal-cell">
             <xsl:choose>
                 <xsl:when test="string-length($url) > 0">
                     <a href="{$url}"
@@ -241,7 +251,7 @@ Notes:
 <xsl:template match="psi:confidence">
     <tr>
         <td class="table-title">Confidence</td>
-        <td>
+        <td class="normal-cell">
             <xsl:apply-templates select="psi:unit/psi:names/psi:shortLabel"/>:
             <xsl:apply-templates select="psi:value"/>
         </td>
@@ -251,7 +261,7 @@ Notes:
 
 <xsl:template match="psi:availability">
     <tr>
-        <td>
+        <td class="normal-cell">
             <a name="{@id}"><xsl:value-of select="@id"/></a>:
             <xsl:value-of select="."/>
         </td>
@@ -266,13 +276,13 @@ Notes:
     </tr>
     <tr>
         <td class="table-title">Name:</td>
-        <td>
+        <td class="normal-cell">
             <xsl:value-of select="psi:names/psi:shortLabel"/>
         </td>
     </tr>
     <tr>
         <td class="table-title">Description:</td>
-        <td>
+        <td class="normal-cell">
             <xsl:value-of select="psi:names/psi:fullName"/>
         </td>
     </tr>
@@ -317,8 +327,8 @@ Notes:
 <xsl:template match="psi:participant">
   <tr>
       <td class="table-title">Participant #<xsl:value-of select="@id"/></td>
-      <td>
-        <table border="1">
+      <td class="normal-cell">
+        <table style="border: 1px solid #eee" cellspacing="1">
             <tr>
                 <td colspan="2">
                     <xsl:apply-templates select="psi:interactorRef" mode="participant"/>
@@ -355,7 +365,7 @@ Notes:
         <td class="table-title">
             Feature #<xsl:value-of select="@id"/>
         </td>
-        <td>
+        <td class="normal-cell">
             <xsl:apply-templates select="psi:featureType/psi:names/psi:shortLabel"/>
             (<xsl:apply-templates select="psi:names/psi:shortLabel"/>)
             [
@@ -372,7 +382,7 @@ Notes:
 </xsl:template>
 
 <xsl:template match="psi:experimentRef">
-    <td>
+    <td class="normal-cell">
         <a href="#e{.}">
             <xsl:apply-templates select="/psi:entrySet/psi:entry/psi:experimentList/psi:experimentDescription[@id = current()/text()]"
                                  mode="ref">
@@ -383,7 +393,7 @@ Notes:
 </xsl:template>
 
 <xsl:template match="psi:availabilityRef">
-    <tr><td><a href="#a{.}"><xsl:value-of select="."/></a></td></tr>
+    <tr><td class="normal-cell"><a href="#a{.}"><xsl:value-of select="."/></a></td></tr>
 </xsl:template>
 
 <xsl:template match="psi:interactorRef" mode="participant">
@@ -418,7 +428,7 @@ Notes:
 <xsl:template match="node()" mode="cellrow">
     <xsl:param name="title"/>
     <td class="table-title"><xsl:value-of select="$title"/>:</td>
-    <td><table border="1"><xsl:apply-templates/></table></td>
+    <td class="normal-cell"><table style="border: 1px solid #eee" cellspacing="0"><xsl:apply-templates/></table></td>
 </xsl:template>
 
 <xsl:template match="psi:interactionType">
@@ -459,7 +469,7 @@ Notes:
             <xsl:if test="local-name() = 'hostOrganism'">Host</xsl:if>
             Organism:
         </td>
-        <td>
+        <td class="normal-cell">
             <a href="{$newtUrl}{@ncbiTaxId}" title="Tax ID: {@ncbiTaxId}">
                 <xsl:apply-templates select="psi:names" mode="no-title"/>
             </a>
@@ -487,7 +497,7 @@ Notes:
         <td class="table-title">
             <xsl:apply-templates select="@name"/>
         </td>
-        <td><xsl:apply-templates select="current()" mode="text"/></td>
+        <td class="normal-cell"><xsl:apply-templates select="current()" mode="text"/></td>
     </tr>
 </xsl:template>
 
