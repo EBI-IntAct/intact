@@ -30,55 +30,72 @@ import java.net.URL;
  * @version $Id$
  * @since <pre>12-Jun-2006</pre>
  */
-public class PsiReportFactory
+public class PsiReportBuilder
 {
 
-    private static final Log log = LogFactory.getLog(PsiReportFactory.class);
+    private static final Log log = LogFactory.getLog(PsiReportBuilder.class);
 
-    public static PsiReport createPsiReport(String name, URL url) throws IOException
+    private String name;
+    private URL url;
+    private InputStream inputStream;
+
+    private enum SourceType { URL, INPUT_STREAM }
+
+    private SourceType currentSourceType;
+
+    public PsiReportBuilder(String name, URL url)
     {
-        PsiReport report = new PsiReport(name);
-        boolean xmlValid = validateXmlSyntax(report, url.openStream());
+        this.name = name;
+        this.url = url;
 
-        if (xmlValid)
-        {
-            createHtmlView(report, url.openStream());
-        }
-
-        validateXmlSemantics(report, url.openStream());
-
-        return report;
+        this.currentSourceType = SourceType.URL;
     }
 
-    public static PsiReport createPsiReport(String name, InputStream is) throws IOException
+    public PsiReportBuilder(String name, InputStream resettableInputStream)
+    {
+        this.name = name;
+        this.inputStream = resettableInputStream;
+
+        this.currentSourceType = SourceType.INPUT_STREAM;
+    }
+
+    public PsiReport createPsiReport() throws IOException
     {
         PsiReport report = new PsiReport(name);
-        boolean xmlValid = validateXmlSyntax(report, is);
+
+        boolean xmlValid = validateXmlSyntax(report, getInputStream());
 
         if (xmlValid)
         {
-            String transformedOutput = null;
-            try
-            {
-                is.reset();
-                transformedOutput = transformToHtml(is);
-            }
-            catch (TransformerException e)
-            {
-                e.printStackTrace();
-            }
-            report.setXmlSyntaxReport(transformedOutput);
+            createHtmlView(report, getInputStream());
+
+            validateXmlSemantics(report, getInputStream());
+        }
+        else
+        {
+            report.setSemanticsStatus("not checked, XML syntax needs to be valid first");
         }
 
-        is.reset();
-        validateXmlSemantics(report, is);
-
         return report;
+
+    }
+
+    private InputStream getInputStream() throws IOException
+    {
+        if (currentSourceType == SourceType.URL)
+        {
+            return url.openStream();
+        }
+        else
+        {
+            inputStream.reset();
+            return inputStream;
+        }
     }
 
     private static boolean validateXmlSyntax(PsiReport report, InputStream is) throws IOException
     {
-        //InputStream xsd = PsiReportFactory.class.getResourceAsStream("/uk/ac/ebi/imex/psivalidator/resource/MIF25.xsd");
+        //InputStream xsd = PsiReportBuilder.class.getResourceAsStream("/uk/ac/ebi/imex/psivalidator/resource/MIF25.xsd");
 
         StringWriter sw = new StringWriter();
         PrintWriter writer = new PrintWriter(sw);
@@ -138,7 +155,7 @@ public class PsiReportFactory
     {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        InputStream xslt = PsiReportFactory.class.getResourceAsStream("/uk/ac/ebi/imex/psivalidator/resource/MIF25_view.xsl");
+        InputStream xslt = PsiReportBuilder.class.getResourceAsStream("/uk/ac/ebi/imex/psivalidator/resource/MIF25_view.xsl");
 
         // JAXP reads data using the Source interface
         Source xmlSource = new StreamSource(is);
@@ -170,7 +187,7 @@ public class PsiReportFactory
 
     private static boolean validateXmlSemantics(PsiReport report, InputStream is)
     {
-        InputStream xsd = PsiReportFactory.class.getResourceAsStream("/uk/ac/ebi/imex/psivalidator/resource/MIF252.xsd");
+        InputStream xsd = PsiReportBuilder.class.getResourceAsStream("/uk/ac/ebi/imex/psivalidator/resource/MIF252.xsd");
 
         StringWriter sw = new StringWriter();
         PrintWriter writer = new PrintWriter(sw);

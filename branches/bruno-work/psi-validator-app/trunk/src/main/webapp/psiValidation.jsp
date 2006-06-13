@@ -63,13 +63,17 @@
                          rendered="#{psiValidatorBean.uploadLocalFile}">
                 <h:outputLabel for="inputFile" value="File: " />
                 <t:inputFileUpload id="inputFile"
-                        storage="file" size="80"
+                        storage="file" size="80" required="true"
                         value="#{psiValidatorBean.psiFile}"/>
             </h:panelGrid>
 
             <h:panelGrid columns="2" rendered="#{!psiValidatorBean.uploadLocalFile}">
                 <h:outputLabel for="inputUrl" value="Url: "/>
-                <h:inputText id="inputUrl" size="80" value="#{psiValidatorBean.psiUrl}"/>
+
+                <h:panelGroup>
+                    <h:inputText id="inputUrl" size="80" value="#{psiValidatorBean.psiUrl}" required="true"/>
+                    <t:message for="inputUrl" showDetail="true" showSummary="false"/>
+                </h:panelGroup>
             </h:panelGrid>
 
             <h:commandButton value="Upload" actionListener="#{psiValidatorBean.uploadFile}"/>
@@ -109,9 +113,10 @@
                                 rendered="#{psiValidatorBean.currentPsiReport.semanticsStatus == 'warnings'}"/>
                 <h:graphicImage url="images/icon_error_sml.gif"
                                 rendered="#{psiValidatorBean.currentPsiReport.semanticsStatus == 'invalid'}"/>
+                <h:outputText value=" " rendered="#{psiValidatorBean.currentPsiReport.xmlSyntaxStatus != 'valid'}"/>
                 <h:outputText value="PSI MI 2.5 semantics"/>
                 <h:outputText value="#{psiValidatorBean.currentPsiReport.semanticsStatus}"/>
-                <h:outputLink value="#semantics_report">
+                <h:outputLink value="#semantics_report" rendered="#{psiValidatorBean.currentPsiReport.semanticsReport != null}">
                     <h:outputText value="Report"/>
                 </h:outputLink>
 
@@ -119,6 +124,7 @@
 
         </h:panelGrid>
 
+        <%-- XML Syntax Validation Report --%>
         <h:panelGrid columns="1" rendered="#{psiValidatorBean.currentPsiReport != null}">
             <h:outputText value="<a name=\"xml_report\"/>" escape="false"/>
             <t:div styleClass="section-header">
@@ -130,7 +136,8 @@
 
         </h:panelGrid>
 
-        <h:panelGrid columns="1" rendered="#{psiValidatorBean.currentPsiReport != null}">
+        <%-- Semantic Validation Report --%>
+        <h:panelGrid columns="1" rendered="#{psiValidatorBean.currentPsiReport.semanticsReport != null}">
             <h:outputText value="<a name=\"semantics_report\"/>" escape="false"/>
             <t:div styleClass="section-header">
                 <h:outputText value="PSI MI 2.5 semantic validation report" />
@@ -140,6 +147,7 @@
 
         </h:panelGrid>
 
+        <%-- HTML View --%>
         <h:panelGrid columns="1" rendered="#{psiValidatorBean.currentPsiReport != null && psiValidatorBean.currentPsiReport.xmlSyntaxStatus == 'valid'}">
             <h:outputText value="<a name=\"html_view\"/>" escape="false"/>
             <t:div styleClass="section-header">
