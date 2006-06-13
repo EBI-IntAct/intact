@@ -5,8 +5,7 @@
  */
 package uk.ac.ebi.imex.psivalidator;
 
-import junit.framework.JUnit4TestAdapter;
-import org.junit.Test;
+import junit.framework.TestCase;
 import psidev.psi.mi.validator.extensions.mi25.Mi25Validator;
 import psidev.psi.mi.validator.framework.Validator;
 import psidev.psi.mi.validator.framework.ValidatorException;
@@ -14,7 +13,10 @@ import psidev.psi.mi.validator.framework.ValidatorMessage;
 import psidev.psi.mi.validator.util.UserPreferences;
 
 import javax.xml.transform.TransformerException;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 
 /**
@@ -24,20 +26,13 @@ import java.util.Collection;
  * @version $Id$
  * @since <pre>13-Jun-2006</pre>
  */
-public class SemanticValidationTest
+public class SemanticValidationTest extends TestCase
 {
 
-    public static junit.framework.Test suite()
-    {
-        return new JUnit4TestAdapter(SemanticValidationTest.class);
-    }
-
-    @Test
     public void semanticValidation() throws ValidatorException, TransformerException, IOException
     {
         InputStream configFile = SemanticValidationTest.class.getResourceAsStream("resource/config-mi-validator-test.xml");
-        //InputStream psiFile = SemanticValidationTest.class.getResourceAsStream("resource/10381623.xml");
-        InputStream psiFile = new FileInputStream("/homes/baranda/projects/psidev/validator/xml/goodSample-psimi25.xml");
+        InputStream psiFile = SemanticValidationTest.class.getResourceAsStream("resource/10381623.xml");
 
         String expandedStr = TransformationUtil.transformToExpanded(psiFile).toString();
         InputStream expandedFile = new ByteArrayInputStream(expandedStr.getBytes());
@@ -53,6 +48,6 @@ public class SemanticValidationTest
 
         Collection<ValidatorMessage> messages = validator.validate( expandedFile );
 
-        System.out.println(messages.size());
+        assertEquals(0, messages.size());
     }
 }
