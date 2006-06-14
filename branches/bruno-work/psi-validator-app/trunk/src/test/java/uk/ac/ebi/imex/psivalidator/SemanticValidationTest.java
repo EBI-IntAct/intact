@@ -33,7 +33,7 @@ public class SemanticValidationTest extends TestCase
     public void testSemanticValidationGoodFile() throws ValidatorException, TransformerException, IOException
     {
         InputStream configFile = SemanticValidationTest.class.getResourceAsStream("resource/config-mi-validator-test.xml");
-        InputStream psiFile = SemanticValidationTest.class.getResourceAsStream("resource/10381623.xml");
+        InputStream psiFile = SemanticValidationTest.class.getResourceAsStream("resource/psiFileOk.xml");
 
         String expandedStr = TransformationUtil.transformToExpanded(psiFile).toString();
         InputStream expandedFile = new ByteArrayInputStream(expandedStr.getBytes());
@@ -55,7 +55,7 @@ public class SemanticValidationTest extends TestCase
     public void testSemanticValidationWithErrors() throws ValidatorException, TransformerException, IOException
     {
         InputStream configFile = SemanticValidationTest.class.getResourceAsStream("resource/config-mi-validator-test.xml");
-        InputStream psiFile = SemanticValidationTest.class.getResourceAsStream("resource/1000867_small.xml");
+        InputStream psiFile = SemanticValidationTest.class.getResourceAsStream("resource/psiFileWithErrors.xml");
 
         String expandedStr = TransformationUtil.transformToExpanded(psiFile).toString();
         InputStream expandedFile = new ByteArrayInputStream(expandedStr.getBytes());
