@@ -71,9 +71,6 @@ public class SemanticValidationTest extends TestCase
 
         Collection<ValidatorMessage> messages = validator.validate( expandedFile );
 
-        for (ValidatorMessage message : messages)
-        {
-            System.out.println(message.getMessage()+" ||| "+message.getContext());
-        }
+        assertEquals(5, messages.size());
     }
 }
