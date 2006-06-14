@@ -30,8 +30,36 @@ import java.util.*;
  */
 public class UpdateCVs {
 
+    // TODO Check the highest IntAct ID in the CV file and synchronize the sequence.
+    //      eg, create a new sequence: id = 51
+    //      load a file which has already IA:250
+    //      when asking for a new id, it is very likely to have been already assigned.
+    //      so pick the highest, say 250, and run the sequence up to that id.
+
     /////////////////////////////////
     // Update of the IntAct Data
+
+    public static long searchLastIntactId( IntactOntology ontology ) {
+
+        long max = 0;
+
+        Collection cvTerms = ontology.getCvTerms();
+        for ( Iterator iterator = cvTerms.iterator(); iterator.hasNext(); ) {
+            CvTerm cvTerm = (CvTerm) iterator.next();
+
+            final String prefix = "IA:";
+
+            String id = cvTerm.getId();
+            if ( id.startsWith( prefix ) ) {
+                // found an intact id
+                String value = id.substring( prefix.length(), id.length() );
+
+                max = Math.max( max, Long.parseLong( value ) );
+            }
+        }
+
+        return max;
+    }
 
     /**
      * Global Update of the IntAct CVs, based upon an Ontology object. This is an iterative process that will update
@@ -1499,7 +1527,6 @@ public class UpdateCVs {
 
         PSILoader psi = new PSILoader();
         IntactOntology ontology = psi.parseOboFile( new File( oboFilename ) );
-
         ontology.print();
 
         System.out.println( "====================================================================" );
@@ -1513,21 +1540,27 @@ public class UpdateCVs {
         System.out.println( "Database: " + instanceName );
         System.out.println( "User: " + helper.getDbUserName() );
 
-//        // 2.2 Check that we don't touch a production instance.
+        /////////////////////////////
+        // 2.2 Checking on sequence
+
+        long max = searchLastIntactId( ontology );
+        SequenceManager.synchronizeUpTo( helper, max );
+
+//        // 2.4 Check that we don't touch a production instance.
 //        if ( instanceName.equalsIgnoreCase( "ZPRO" ) || instanceName.equalsIgnoreCase( "IWEB" ) ) {
 //            helper.closeStore();
 //            System.err.println( "This is an alpha version, you cannot edit " + instanceName + ". abort." );
 //            System.exit( 1 );
 //        }
 
-        // 2.3 Create required vocabulary terms
+        // 2.4 Create required vocabulary terms
         createNecessaryCvTerms( helper );
         helper.closeStore();
 
-        // 2.4 update the CVs
+        // 2.5 update the CVs
         update( ontology );
 
-        // 2.5 Update obsolete terms
+        // 2.6 Update obsolete terms
         listOrphanObsoleteTerms( ontology );
 
         if ( annotFilename != null ) {
