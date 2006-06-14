@@ -7,16 +7,7 @@ package uk.ac.ebi.intact.model;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.JoinColumn;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.FetchType;
-import javax.persistence.JoinTable;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -24,12 +15,11 @@ import java.util.Iterator;
 /**
  * Represents an interaction.
  * <p/>
- * Interaction is derived from Interactor, therefore a given interaction
- * can participate in new interactions. This allows to build up hierachical
- * assemblies.
+ * Interaction is derived from Interactor, therefore a given interaction can participate in new interactions. This
+ * allows to build up hierachical assemblies.
  * <p/>
- * An Interaction may also have other Interactions as products.
- * This allows to model decomposition of complexes into subcomplexes.
+ * An Interaction may also have other Interactions as products. This allows to model decomposition of complexes into
+ * subcomplexes.
  *
  * @author hhe
  * @version $Id$
@@ -56,17 +46,17 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
     /**
      * TODO comments
      */
-    private Collection<Component> components;
+    private Collection<Component> components; // initialized via constructor
 
     /**
      * TODO comments
      */
-    private Collection<Product> released;
+    private Collection<Product> released; // mapping not implemented yet
 
     /**
      * TODO comments
      */
-    private Collection<Experiment> experiments;
+    private Collection<Experiment> experiments; // initialized via constructor
 
     /**
      * TODO comments
@@ -74,9 +64,8 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
     private CvInteractionType cvInteractionType;
 
     /**
-     * This constructor should <b>not</b> be used as it could
-     * result in objects with invalid state. It is here for object mapping
-     * purposes only and if possible will be made private.
+     * This constructor should <b>not</b> be used as it could result in objects with invalid state. It is here for
+     * object mapping purposes only and if possible will be made private.
      *
      * @deprecated Use the full constructor instead
      */
@@ -87,75 +76,60 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
     }
 
     /**
-     * Creates a valid Interaction instance. This requires at least the following:
-     * <ul>
-     * <li> At least one valid Experiment</li>
-     * <li>at least two Components</li>
-     * <li>an Interaction type (eg covalent binding)</li>
-     * <li>a short label to refer to this instance</li>
-     * <li>an owner</li>
-     * </ul>
+     * Creates a valid Interaction instance. This requires at least the following: <ul> <li> At least one valid
+     * Experiment</li> <li>at least two Components</li> <li>an Interaction type (eg covalent binding)</li> <li>a short
+     * label to refer to this instance</li> <li>an owner</li> </ul>
      * <p/>
-     * A side-effect of this constructor is to
-     * set the <code>created</code> and <code>updated</code> fields of the instance
-     * to the current time. NOTE: the BioSource value is required for this class as
-     * it is not set via Interactor - this will be taken from the (first) Experiment
-     * in the Collection parameter. It is tehrefore assumed that the Experiment will
-     * be a valid one.
+     * A side-effect of this constructor is to set the <code>created</code> and <code>updated</code> fields of the
+     * instance to the current time. NOTE: the BioSource value is required for this class as it is not set via
+     * Interactor - this will be taken from the (first) Experiment in the Collection parameter. It is tehrefore assumed
+     * that the Experiment will be a valid one.
      *
-     * @param experiments A Collection of Experiments which observed this Interaction (non-empty)
-     *                    NB The BioSource for this Interaction will be taken from the first element of this Collection.
-     * @param components  A Collection of Interaction components (eg Proteins). This cannot be null
-     *                    but may be empty to allow creation of an Interaction for later population with Components
+     * @param experiments A Collection of Experiments which observed this Interaction (non-empty) NB The BioSource for
+     *                    this Interaction will be taken from the first element of this Collection.
+     * @param components  A Collection of Interaction components (eg Proteins). This cannot be null but may be empty to
+     *                    allow creation of an Interaction for later population with Components
      * @param type        The type of Interaction observed - may be null if initially unkown
      * @param shortLabel  The short label to refer to this instance (non-null)
      * @param owner       the owner of this Interaction
-     * @throws NullPointerException     thrown if any of the specified paraneters are
-     *                                  null OR the Experiment does not contain a BioSource.
-     * @throws IllegalArgumentException thrown if either of the experiments or components Collections
-     *                                  are empty, or if there are less than two components specified
-     * @deprecated Use
-     * {@link #InteractionImpl(java.util.Collection, java.util.Collection, CvInteractionType, CvInteractorType, String, Institution)}
-     * instead.
      *
+     * @throws NullPointerException     thrown if any of the specified paraneters are null OR the Experiment does not
+     *                                  contain a BioSource.
+     * @throws IllegalArgumentException thrown if either of the experiments or components Collections are empty, or if
+     *                                  there are less than two components specified
+     * @deprecated Use {@link #InteractionImpl(java.util.Collection, java.util.Collection, CvInteractionType,
+     *             CvInteractorType, String, Institution)} instead.
      */
     @Deprecated
     public InteractionImpl( Collection experiments, Collection components,
                             CvInteractionType type, String shortLabel,
                             Institution owner ) {
-        this(experiments, components, type, null, shortLabel, owner);
+        this( experiments, components, type, null, shortLabel, owner );
     }
 
     /**
-     * Creates a valid Interaction instance. This requires at least the following:
-     * <ul>
-     * <li> At least one valid Experiment</li>
-     * <li>at least two Components</li>
-     * <li>an Interaction type (eg covalent binding)</li>
-     * <li>an Interactor type</li>
-     * <li>a short label to refer to this instance</li>
-     * <li>an owner</li>
-     * </ul>
+     * Creates a valid Interaction instance. This requires at least the following: <ul> <li> At least one valid
+     * Experiment</li> <li>at least two Components</li> <li>an Interaction type (eg covalent binding)</li> <li>an
+     * Interactor type</li> <li>a short label to refer to this instance</li> <li>an owner</li> </ul>
      * <p/>
-     * A side-effect of this constructor is to
-     * set the <code>created</code> and <code>updated</code> fields of the instance
-     * to the current time. NOTE: the BioSource value is required for this class as
-     * it is not set via Interactor - this will be taken from the (first) Experiment
-     * in the Collection parameter. It is tehrefore assumed that the Experiment will
-     * be a valid one.
+     * A side-effect of this constructor is to set the <code>created</code> and <code>updated</code> fields of the
+     * instance to the current time. NOTE: the BioSource value is required for this class as it is not set via
+     * Interactor - this will be taken from the (first) Experiment in the Collection parameter. It is tehrefore assumed
+     * that the Experiment will be a valid one.
      *
-     * @param experiments A Collection of Experiments which observed this Interaction (non-empty)
-     *                    NB The BioSource for this Interaction will be taken from the first element of this Collection.
-     * @param components  A Collection of Interaction components (eg Proteins). This cannot be null
-     *                    but may be empty to allow creation of an Interaction for later population with Components
-     * @param type        The type of Interaction observed - may be null if initially unkown
+     * @param experiments    A Collection of Experiments which observed this Interaction (non-empty) NB The BioSource
+     *                       for this Interaction will be taken from the first element of this Collection.
+     * @param components     A Collection of Interaction components (eg Proteins). This cannot be null but may be empty
+     *                       to allow creation of an Interaction for later population with Components
+     * @param type           The type of Interaction observed - may be null if initially unkown
      * @param interactorType The interactor type
-     * @param shortLabel  The short label to refer to this instance (non-null)
-     * @param owner       the owner of this Interaction
-     * @throws NullPointerException     thrown if any of the specified paraneters are
-     *                                  null OR the Experiment does not contain a BioSource.
-     * @throws IllegalArgumentException thrown if either of the experiments or components Collections
-     *                                  are empty, or if there are less than two components specified
+     * @param shortLabel     The short label to refer to this instance (non-null)
+     * @param owner          the owner of this Interaction
+     *
+     * @throws NullPointerException     thrown if any of the specified paraneters are null OR the Experiment does not
+     *                                  contain a BioSource.
+     * @throws IllegalArgumentException thrown if either of the experiments or components Collections are empty, or if
+     *                                  there are less than two components specified
      */
     public InteractionImpl( Collection experiments, Collection components,
                             CvInteractionType type, CvInteractorType interactorType,
@@ -170,36 +144,28 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
     }
 
     /**
-     * Creates a valid Interaction instance. This requires at least the following:
-     * <ul>
-     * <li> At least one valid Experiment</li>
-     * <li>at least two Components</li>
-     * <li>an Interaction type (eg covalent binding)</li>
-     * <li>a short label to refer to this instance</li>
-     * <li>an owner</li>
-     * </ul>
+     * Creates a valid Interaction instance. This requires at least the following: <ul> <li> At least one valid
+     * Experiment</li> <li>at least two Components</li> <li>an Interaction type (eg covalent binding)</li> <li>a short
+     * label to refer to this instance</li> <li>an owner</li> </ul>
      * <p/>
-     * A side-effect of this constructor is to
-     * set the <code>created</code> and <code>updated</code> fields of the instance
-     * to the current time. NOTE: the BioSource value is required for this class as
-     * it is not set via Interactor - this will be taken from the (first) Experiment
-     * in the Collection parameter. It is tehrefore assumed that the Experiment will
-     * be a valid one.
-     * <br>
-     * A default empty collection of component is created when calling that constructor.
+     * A side-effect of this constructor is to set the <code>created</code> and <code>updated</code> fields of the
+     * instance to the current time. NOTE: the BioSource value is required for this class as it is not set via
+     * Interactor - this will be taken from the (first) Experiment in the Collection parameter. It is tehrefore assumed
+     * that the Experiment will be a valid one. <br> A default empty collection of component is created when calling
+     * that constructor.
      *
-     * @param experiments A Collection of Experiments which observed this Interaction (non-empty)
-     *                    NB The BioSource for this Interaction will be taken from the first element of this Collection.
+     * @param experiments A Collection of Experiments which observed this Interaction (non-empty) NB The BioSource for
+     *                    this Interaction will be taken from the first element of this Collection.
      * @param type        The type of Interaction observed - may be null if initially unkown
      * @param shortLabel  The short label to refer to this instance (non-null)
      * @param owner       the owner of this Interaction
-     * @throws NullPointerException     thrown if any of the specified paraneters are
-     *                                  null OR the Experiment does not contain a BioSource.
-     * @throws IllegalArgumentException thrown if either of the experiments or components Collections
-     *                                  are empty, or if there are less than two components specified
      *
-     * @deprecated {@link #InteractionImpl(java.util.Collection, CvInteractionType, CvInteractorType, String, Institution)}
-     * instead
+     * @throws NullPointerException     thrown if any of the specified paraneters are null OR the Experiment does not
+     *                                  contain a BioSource.
+     * @throws IllegalArgumentException thrown if either of the experiments or components Collections are empty, or if
+     *                                  there are less than two components specified
+     * @deprecated {@link #InteractionImpl(java.util.Collection, CvInteractionType, CvInteractorType, String,
+     *             Institution)} instead
      */
     public InteractionImpl( Collection experiments, CvInteractionType type,
                             String shortLabel, Institution owner ) {
@@ -208,35 +174,27 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
 
 
     /**
-     * Creates a valid Interaction instance. This requires at least the following:
-     * <ul>
-     * <li> At least one valid Experiment</li>
-     * <li>at least two Components</li>
-     * <li>an Interaction type (eg covalent binding)</li>
-     * <li>an Interactor type</li>
-     * <li>a short label to refer to this instance</li>
-     * <li>an owner</li>
-     * </ul>
+     * Creates a valid Interaction instance. This requires at least the following: <ul> <li> At least one valid
+     * Experiment</li> <li>at least two Components</li> <li>an Interaction type (eg covalent binding)</li> <li>an
+     * Interactor type</li> <li>a short label to refer to this instance</li> <li>an owner</li> </ul>
      * <p/>
-     * A side-effect of this constructor is to
-     * set the <code>created</code> and <code>updated</code> fields of the instance
-     * to the current time. NOTE: the BioSource value is required for this class as
-     * it is not set via Interactor - this will be taken from the (first) Experiment
-     * in the Collection parameter. It is tehrefore assumed that the Experiment will
-     * be a valid one.
-     * <br>
-     * A default empty collection of component is created when calling that constructor.
+     * A side-effect of this constructor is to set the <code>created</code> and <code>updated</code> fields of the
+     * instance to the current time. NOTE: the BioSource value is required for this class as it is not set via
+     * Interactor - this will be taken from the (first) Experiment in the Collection parameter. It is tehrefore assumed
+     * that the Experiment will be a valid one. <br> A default empty collection of component is created when calling
+     * that constructor.
      *
-     * @param experiments A Collection of Experiments which observed this Interaction (non-empty)
-     *                    NB The BioSource for this Interaction will be taken from the first element of this Collection.
-     * @param type        The type of Interaction observed - may be null if initially unkown
+     * @param experiments    A Collection of Experiments which observed this Interaction (non-empty) NB The BioSource
+     *                       for this Interaction will be taken from the first element of this Collection.
+     * @param type           The type of Interaction observed - may be null if initially unkown
      * @param interactorType The interactor type
-     * @param shortLabel  The short label to refer to this instance (non-null)
-     * @param owner       the owner of this Interaction
-     * @throws NullPointerException     thrown if any of the specified paraneters are
-     *                                  null OR the Experiment does not contain a BioSource.
-     * @throws IllegalArgumentException thrown if either of the experiments or components Collections
-     *                                  are empty, or if there are less than two components specified
+     * @param shortLabel     The short label to refer to this instance (non-null)
+     * @param owner          the owner of this Interaction
+     *
+     * @throws NullPointerException     thrown if any of the specified paraneters are null OR the Experiment does not
+     *                                  contain a BioSource.
+     * @throws IllegalArgumentException thrown if either of the experiments or components Collections are empty, or if
+     *                                  there are less than two components specified
      */
     public InteractionImpl( Collection experiments, CvInteractionType type,
                             CvInteractorType interactorType, String shortLabel,
@@ -259,7 +217,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
     // access methods for associations
 
     public void setComponents( Collection<Component> someComponent ) {
-        if( someComponent == null ) {
+        if ( someComponent == null ) {
             throw new NullPointerException( "Cannot create an Interaction without any Components!" );
         }
 
@@ -272,7 +230,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
     }
 
     public void addComponent( Component component ) {
-        if( !this.components.contains( component ) ) {
+        if ( !this.components.contains( component ) ) {
             this.components.add( component );
             component.setInteraction( this );
         }
@@ -280,9 +238,8 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
 
     public void removeComponent( Component component ) {
         boolean removed = this.components.remove( component );
-        if (removed)
-        {
-            component.setInteraction(null);
+        if ( removed ) {
+            component.setInteraction( null );
         }
     }
 
@@ -296,7 +253,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
     }
 
     public void addReleased( Product product ) {
-        if( !this.released.contains( product ) ) {
+        if ( !this.released.contains( product ) ) {
             this.released.add( product );
             product.setInteraction( this );
         }
@@ -304,15 +261,14 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
 
     public void removeReleased( Product product ) {
         boolean removed = this.released.remove( product );
-        if (removed)
-        {
-            product.setInteraction(null);
+        if ( removed ) {
+            product.setInteraction( null );
         }
     }
 
     public void setExperiments( Collection<Experiment> someExperiment ) {
 
-        if( someExperiment == null ) {
+        if ( someExperiment == null ) {
             throw new NullPointerException( "Cannot create an Interaction without an Experiment!" );
         }
         /*
@@ -325,16 +281,16 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
 
     @ManyToMany
     @JoinTable(
-        name="ia_int2exp",
-        joinColumns={@JoinColumn(name="interaction_ac")},
-        inverseJoinColumns={@JoinColumn(name="experiment_ac")}
+            name = "ia_int2exp",
+            joinColumns = { @JoinColumn(name = "interaction_ac") },
+            inverseJoinColumns = { @JoinColumn(name = "experiment_ac") }
     )
     public Collection<Experiment> getExperiments() {
         return experiments;
     }
 
     public void addExperiment( Experiment experiment ) {
-        if( !this.experiments.contains( experiment ) ) {
+        if ( !this.experiments.contains( experiment ) ) {
             this.experiments.add( experiment );
             experiment.addInteraction( this );
         }
@@ -342,13 +298,12 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
 
     public void removeExperiment( Experiment experiment ) {
         boolean removed = this.experiments.remove( experiment );
-        if (removed)
-        {
-            experiment.removeInteraction(this);
+        if ( removed ) {
+            experiment.removeInteraction( this );
         }
     }
 
-    @ManyToOne (fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "interactiontype_ac")
     public CvInteractionType getCvInteractionType() {
         return cvInteractionType;
@@ -386,22 +341,18 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
     // instance methods
 
     /**
-     * Returns the first components marked as bait.
-     * If no such components is found, return null.
+     * Returns the first components marked as bait. If no such components is found, return null.
      *
      * @return The first components marked as bait, otherwise null.
      */
     @Transient
     public Component getBait() {
-        for (Component component : components)
-        {
+        for ( Component component : components ) {
             CvComponentRole role = component.getCvComponentRole();
-            if (null == role)
-            {
+            if ( null == role ) {
                 return null;
             }
-            if (role.getShortLabel().equals("bait"))
-            {
+            if ( role.getShortLabel().equals( "bait" ) ) {
                 return component;
             }
         }
@@ -410,52 +361,47 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
     }
 
     /**
-     * Equality for Interactions is currently based on equality for
-     * <code>Interactors</code>, CvInteractionType, kD and Components.
+     * Equality for Interactions is currently based on equality for <code>Interactors</code>, CvInteractionType, kD and
+     * Components.
      *
      * @param o The object to check
+     *
      * @return true if the parameter equals this object, false otherwise
-     * @see uk.ac.ebi.intact.model.InteractorImpl
-     * @see uk.ac.ebi.intact.model.Component
-     * @see uk.ac.ebi.intact.model.CvInteractionType
+     *
+     * @see InteractorImpl
+     * @see Component
+     * @see CvInteractionType
      */
     @Override
     public boolean equals( Object o ) {
-        if (this == o)
-        {
+        if ( this == o ) {
             return true;
         }
-        if (!(o instanceof Interaction))
-        {
+        if ( !( o instanceof Interaction ) ) {
             return false;
         }
-        if (!super.equals(o))
-        {
+        if ( !super.equals( o ) ) {
             return false;
         }
 
         final Interaction interaction = (Interaction) o;
 
-        if( cvInteractionType != null ) {
-            if (!cvInteractionType.equals(interaction.getCvInteractionType()))
-            {
+        if ( cvInteractionType != null ) {
+            if ( !cvInteractionType.equals( interaction.getCvInteractionType() ) ) {
                 return false;
             }
         } else {
-            if (interaction.getCvInteractionType() != null)
-            {
+            if ( interaction.getCvInteractionType() != null ) {
                 return false;
             }
         }
 
-        if( kD != null ) {
-            if (!kD.equals(interaction.getKD()))
-            {
+        if ( kD != null ) {
+            if ( !kD.equals( interaction.getKD() ) ) {
                 return false;
             }
         } else {
-            if (interaction.getKD() != null)
-            {
+            if ( interaction.getKD() != null ) {
                 return false;
             }
         }
@@ -467,12 +413,10 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
     public int hashCode() {
         int code = super.hashCode();
 
-        if (cvInteractionType != null)
-        {
+        if ( cvInteractionType != null ) {
             code = 29 * code + cvInteractionType.hashCode();
         }
-        if (kD != null)
-        {
+        if ( kD != null ) {
             code = 29 * code + kD.hashCode();
         }
 //        for (Iterator iterator = components.iterator(); iterator.hasNext();) {
@@ -486,14 +430,10 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
     /**
      * Returns a cloned version of the current object.
      *
-     * @return a cloned version of the current Interaction with the folowing
-     *         exceptions.
-     *         <ul>
-     *         <li>Experiments are not cloned. The experiments for the cloned
-     *         interaction is empty.</li>
-     *         <li>New components but with the same proteins. The new components has the
-     *         cloned interaction as their interaction.</li>
-     *         </ul>
+     * @return a cloned version of the current Interaction with the folowing exceptions. <ul> <li>Experiments are not
+     *         cloned. The experiments for the cloned interaction is empty.</li> <li>New components but with the same
+     *         proteins. The new components has the cloned interaction as their interaction.</li> </ul>
+     *
      * @throws CloneNotSupportedException
      */
     @Override
@@ -509,14 +449,13 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         copy.components = new ArrayList<Component>( components.size() );
 
         // Make deep copies.
-        for (Component comp : components)
-        {
+        for ( Component comp : components ) {
             // The cloned component.
             Component copyComp = (Component) comp.clone();
             // Set the interactor as the current cloned interactions.
-            copyComp.setInteractionForClone(copy);
-            copyComp.setInteractorForClone(comp.getInteractor());
-            copy.components.add(copyComp);
+            copyComp.setInteractionForClone( copy );
+            copyComp.setInteractorForClone( comp.getInteractor() );
+            copy.components.add( copyComp );
         }
         return copy;
     }
@@ -524,9 +463,9 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
     @Override
     public String toString() {
         String result = "Interaction: " + getAc() + " Label: " + getShortLabel()
-                + " [" + NEW_LINE;
-        if( null != this.getComponents() ) {
-            for (Iterator iter = this.getComponents().iterator(); iter.hasNext(); ) {
+                        + " [" + NEW_LINE;
+        if ( null != this.getComponents() ) {
+            for ( Iterator iter = this.getComponents().iterator(); iter.hasNext(); ) {
                 result += ( (Component) iter.next() ).getInteractor();
             }
         }
