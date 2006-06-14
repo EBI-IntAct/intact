@@ -5,11 +5,7 @@
  */
 package uk.ac.ebi.intact.model;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.JoinTable;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -79,26 +75,27 @@ public class Publication extends AnnotatedObjectImpl implements Editable {
         experiments.remove( experiment );
     }
 
-    @OneToMany (mappedBy = "publication")
+    @OneToMany(mappedBy = "publication")
     public Collection<Experiment> getExperiments() {
         return experiments;
     }
 
-    public void setExperiments(Collection<Experiment> experiments)
-    {
+    public void setExperiments( Collection<Experiment> experiments ) {
+        if ( experiments == null ) {
+            throw new IllegalArgumentException( "Experiments cannot be null." );
+        }
         this.experiments = experiments;
     }
 
 
     @ManyToMany
     @JoinTable(
-        name="ia_pub2annot",
-        joinColumns={@JoinColumn(name="publication_ac")},
-        inverseJoinColumns={@JoinColumn(name="annotation_ac")}
+            name = "ia_pub2annot",
+            joinColumns = { @JoinColumn(name = "publication_ac") },
+            inverseJoinColumns = { @JoinColumn(name = "annotation_ac") }
     )
     @Override
-    public Collection<Annotation> getAnnotations()
-    {
+    public Collection<Annotation> getAnnotations() {
         return super.getAnnotations();
     }
 
