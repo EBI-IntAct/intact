@@ -1,7 +1,6 @@
 /**
- * Copyright (c) 2002-2006 The European Bioinformatics Institute, and others.
- * All rights reserved. Please see the file LICENSE
- * in the root directory of this distribution.
+ * Copyright (c) 2006 The European Bioinformatics Institute, and others.
+ * All rights reserved.
  */
 package uk.ac.ebi.imex.psivalidator;
 
@@ -18,6 +17,7 @@ import javax.faces.component.UIInput;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.ByteArrayInputStream;
+import java.io.Serializable;
 import java.net.URL;
 import java.net.MalformedURLException;
 
@@ -28,7 +28,7 @@ import java.net.MalformedURLException;
  * @version $Id$
  * @since <pre>12-Jun-2006</pre>
  */
-public class PsiValidatorBean
+public class PsiValidatorBean 
 {
 
     private static final Log log = LogFactory.getLog(PsiValidatorBean.class);
