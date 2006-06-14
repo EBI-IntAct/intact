@@ -7,7 +7,7 @@
     <groupId>uk.ac.ebi.imex</groupId>
     <artifactId>psi-validator-app</artifactId>
     <packaging>war</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <name>PSI Validator Webapp</name>
     <url>http://www.ebi.ac.uk/intact/psivalidator</url>
     <description>Validates PSI files</description>
@@ -198,8 +198,6 @@
     </dependencies>
 
     <build>
-        <finalName>psivalidator</finalName>
-
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -218,5 +216,20 @@
             </plugin>
         </plugins>
     </build>
+
+     <distributionManagement>
+        <repository>
+            <id>ebi-repo</id>
+            <name>EBI Repository</name>
+            <url>scp://localhost/homes/maven/public_html/m2repo</url>
+        </repository>
+
+        <snapshotRepository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>ebi-repo</id>
+            <name>EBI Repository</name>
+            <url>scp://localhost/homes/maven/public_html/m2repo</url>
+        </snapshotRepository>
+    </distributionManagement>
 
 </project>
