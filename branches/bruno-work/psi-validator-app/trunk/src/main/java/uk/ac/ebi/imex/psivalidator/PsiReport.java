@@ -12,7 +12,7 @@ import java.util.List;
 import java.io.Serializable;
 
 /**
- * TODO comment this!
+ * This class is the model of the information reported after the validations
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -23,20 +23,51 @@ public class PsiReport
 
     private static final Log log = LogFactory.getLog(PsiReport.class);
 
+    /**
+     * Name of the file/report
+     */
     private String name;
+
+    /**
+     * The status of the xml syntax validation (valid|invalid)
+     */
     private String xmlSyntaxStatus;
+
+    /**
+     * Report of the validation. If failed, contains the stacktrace
+     */
     private String xmlSyntaxReport;
+
+    /**
+     * The status of the semantics validation (valid|warnings|invalid)
+     */
     private String semanticsStatus;
+
+    /**
+     * Report of the validation.
+     */
     private String semanticsReport;
 
+    /**
+     * Collection of ValidatorMessages after the semantic validation
+     */
     private List<ValidatorMessage> validatorMessages;
 
+    /**
+     * String containing the HTML View of the PSI file shown to the user, after transforming it
+     * using XSLT
+     */
     private String htmlView;
 
+    /**
+     * Constructor
+     * @param name of the file/report
+     */
     public PsiReport(String name) {
          this.name = name;
     }
 
+    // ACCESSOR METHODS
 
     public String getName()
     {
@@ -97,7 +128,6 @@ public class PsiReport
     {
         this.htmlView = htmlView;
     }
-
 
     public List<ValidatorMessage> getValidatorMessages()
     {

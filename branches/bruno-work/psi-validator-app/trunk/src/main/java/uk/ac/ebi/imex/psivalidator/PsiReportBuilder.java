@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2006 The European Bioinformatics Institute, and others.
- * All rights reserved. 
+ * All rights reserved.
  */
 package uk.ac.ebi.imex.psivalidator;
 
@@ -27,6 +27,8 @@ import psidev.psi.mi.validator.framework.ValidatorException;
 import psidev.psi.mi.validator.framework.MessageLevel;
 
 /**
+ * This class is the responsible of reading and validating the PSI File and creating a validation report
+ * with the information found
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -34,17 +36,42 @@ import psidev.psi.mi.validator.framework.MessageLevel;
  */
 public class PsiReportBuilder
 {
-
+    /**
+     * Logging, logging!
+     */
     private static final Log log = LogFactory.getLog(PsiReportBuilder.class);
 
+    /**
+     * Name of the PSI gile
+     */
     private String name;
+
+    /**
+     * If using a URL, the URL
+     */
     private URL url;
+
+    /**
+     * If using an InputStream, this value won't be null
+     */
     private InputStream inputStream;
 
+    /**
+     * Handy enumeration to avoid null checks on the previous attributes, when trying to determine
+     * whether the info comes from URL or a stream
+     */
     private enum SourceType { URL, INPUT_STREAM }
 
+    /**
+     * The current type used
+     */
     private SourceType currentSourceType;
 
+    /**
+     * Creates a PsiReportBuilder instance using an URL
+     * @param name The name of the file, only needed for information purposes
+     * @param url The URL with the PSI xml
+     */
     public PsiReportBuilder(String name, URL url)
     {
         this.name = name;
@@ -53,6 +80,13 @@ public class PsiReportBuilder
         this.currentSourceType = SourceType.URL;
     }
 
+    /**
+     * Creates a PsiReportBuilder instance using an InputStream
+     * @param name The name of the file, only needed for information purposes
+     * @param resettableInputStream The stream with the PSI xml. This InputStream has to be
+     * resettable in order to build the report properly. The stream will be reset a few times, so the information
+     * is parsed in the different validation phases
+     */
     public PsiReportBuilder(String name, InputStream resettableInputStream)
     {
         this.name = name;
@@ -61,20 +95,32 @@ public class PsiReportBuilder
         this.currentSourceType = SourceType.INPUT_STREAM;
     }
 
+    /**
+     * Creates the PSI report
+     * @return the report created, after all the validations
+     * @throws IOException thrown if there is something wrong with the I/O stuff
+     */
     public PsiReport createPsiReport() throws IOException
     {
+        // new instance of the report, that will be filled with the validation information
         PsiReport report = new PsiReport(name);
 
+        // first validation: checks that the XML is valid, and sets the status/report fields
+        // in the report
         boolean xmlValid = validateXmlSyntax(report, getInputStream());
 
+        // if its valid, the HTML view of the document is created and the second validation can be done
         if (xmlValid)
         {
+            // creating the view
             createHtmlView(report, getInputStream());
 
+            // second validation: checks that the semantics is right
             validatePsiFileSemantics(report, getInputStream());
         }
         else
         {
+            // if the xml validation is wrong, the second validation won't be run
             report.setSemanticsStatus("not checked, XML syntax needs to be valid first");
         }
 
@@ -82,8 +128,14 @@ public class PsiReportBuilder
 
     }
 
+    /**
+     * Returns the InputStream, independently of the origin of the information
+     * @return the stream with the info
+     * @throws IOException throw when there are I/O problems
+     */
     private InputStream getInputStream() throws IOException
     {
+        // uses the currentSourceType to determine how to open and return the inputStream
         if (currentSourceType == SourceType.URL)
         {
             return url.openStream();
@@ -95,10 +147,18 @@ public class PsiReportBuilder
         }
     }
 
+    /**
+     * This methods validates the xml syntax of the document
+     * @param report An instance of the report being created where the validation information will be set
+     * @param is The stream with the PSI xml
+     * @return returns true if the validation has been successfull
+     * @throws IOException
+     */
     private static boolean validateXmlSyntax(PsiReport report, InputStream is) throws IOException
     {
         //InputStream xsd = PsiReportBuilder.class.getResourceAsStream("/uk/ac/ebi/imex/psivalidator/resource/MIF25.xsd");
 
+        // we create a printwriter to write the output of the exceptions, if any.
         StringWriter sw = new StringWriter();
         PrintWriter writer = new PrintWriter(sw);
 
@@ -121,6 +181,7 @@ public class PsiReportBuilder
             // validate the DOM tree
             //validator.validate(new DOMSource(document));
         }
+        // all the exceptions write the stacktrace to the printwriter
         catch (ParserConfigurationException e)
         {
             e.printStackTrace(writer);
@@ -134,19 +195,24 @@ public class PsiReportBuilder
             e.printStackTrace(writer);
         }
 
+        // we get a stream with the contents printed by the writer
         String output = sw.getBuffer().toString();
 
         if (log.isDebugEnabled())
-            log.debug("XML Validation output: "+output);
+            log.debug("Is there XML validation output? "+output.equals(""));
 
+        // if the output is empty, the document is valid
         if (output.equals(""))
         {
+            // we set the report status and report with the specified texts
             report.setXmlSyntaxStatus("valid");
             report.setXmlSyntaxReport("Document is valid");
 
             return true;
         }
 
+        // if the output contains information, the xml validation is invalid.
+        // We put that information as the xml syntax report.
         report.setXmlSyntaxStatus("invalid");
         report.setXmlSyntaxReport(output);
 
@@ -154,12 +220,18 @@ public class PsiReportBuilder
     }
 
 
-
+    /**
+     * Creates the HTML view using Xstl Transformation, and sets it to the report
+     * @param report The report to set the view
+     * @param is The input stream with the PSI XML file
+     */
     private static void createHtmlView(PsiReport report, InputStream is)
     {
         String transformedOutput = null;
         try
         {
+            // we transform the xml to html using an utility class that returns
+            // the output stream with the html content
             transformedOutput = TransformationUtil.transformToHtml(is).toString();
         }
         catch (TransformerException e)
@@ -169,18 +241,28 @@ public class PsiReportBuilder
         report.setHtmlView(transformedOutput);
     }
 
+    /**
+     * Validates the PSI Semantics
+     * @param report the PsiReport to complete
+     * @param is the stream with the psi xml file
+     */
     private static void validatePsiFileSemantics(PsiReport report, InputStream is)
     {
 
+        // Printwriter to get the stacktrace messages
         StringWriter sw = new StringWriter();
         PrintWriter writer = new PrintWriter(sw);
 
         try
         {
+            // we "expand" the psi xml file, so we always have an expanded psi. If the psi is already
+            // expanded the transformation does not change anything
             String expandedFile = TransformationUtil.transformToExpanded(is).toString();
 
+            // InputStream with the transformed (expanded) xml
             InputStream expandedStream = new ByteArrayInputStream(expandedFile.getBytes());
 
+            // We read the configuration file, included inside the jar
             InputStream configFile = PsiReportBuilder.class.getResourceAsStream("resource/config-mi-validator.xml");
 
             // set work directory
@@ -189,10 +271,13 @@ public class PsiReportBuilder
             preferences.setWorkDirectory(new File(System.getProperty("java.io.tmpdir")));
             preferences.setSaxValidationEnabled( false );
 
-
+            // we instantiate the MI25 validator (for PSI 2.5 XML)
             psidev.psi.mi.validator.framework.Validator validator = new Mi25Validator( configFile, preferences );
 
+            // and we validate the stream, using the configuration file
             Collection<ValidatorMessage> messages = validator.validate( expandedStream );
+
+            // finally, we set the messages obtained (if any) to the report
             report.setValidatorMessages(new ArrayList<ValidatorMessage>(messages));
         }
         catch (Exception e)
@@ -202,6 +287,7 @@ public class PsiReportBuilder
 
         String output = sw.getBuffer().toString();
 
+        // if the output has content, an exception has been thrown, so the validation has failed
         if (!output.equals(""))
         {
             report.setSemanticsStatus("invalid");
@@ -209,17 +295,25 @@ public class PsiReportBuilder
             return;
         }
 
+        // if the output does not contain anything, no exception has been thrown, validation ok
         String status = "valid";
         report.setSemanticsReport("Document is valid");
 
+        // we need to determine the status of the semantics validation.
+        // If there are no validatorMessages, the status is "valid" (already set).
+        // If there are messages, but all of them are warnings, the status will be "warnings".
+        // If there are error or fatal messages, the status, the status will be failed
         for (ValidatorMessage message : report.getValidatorMessages())
         {
+            // if we find a warning, set the status to warning and continue looping
             if (message.getLevel() == MessageLevel.WARN)
             {
                 status = "warnings";
                 report.setSemanticsReport("Validated with warnings");
             }
 
+            // if a message with a level higher than warning is found, set the status to
+            // error and stop the loop
             if (message.getLevel().isHigher(MessageLevel.WARN))
             {
                 status = "invalid";
@@ -228,6 +322,7 @@ public class PsiReportBuilder
             }
         }
 
+        // set the status to the report
         report.setSemanticsStatus(status);
 
     }
