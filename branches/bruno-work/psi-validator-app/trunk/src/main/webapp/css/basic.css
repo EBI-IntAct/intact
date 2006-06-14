@@ -36,10 +36,10 @@ label {
 
 .section-header {
     font-weight: bold;
-    padding-top: 10px;
+    padding-top: 20px;
     padding-bottom: 5px;
     border-bottom: 1px solid #ddd;
-    font-size:small;
+    font-size: medium;
     width:100%;
 }
 

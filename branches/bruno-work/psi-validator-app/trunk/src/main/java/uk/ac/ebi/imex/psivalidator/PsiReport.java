@@ -1,7 +1,6 @@
 /**
- * Copyright (c) 2002-2006 The European Bioinformatics Institute, and others.
- * All rights reserved. Please see the file LICENSE
- * in the root directory of this distribution.
+ * Copyright (c) 2006 The European Bioinformatics Institute, and others.
+ * All rights reserved.
  */
 package uk.ac.ebi.imex.psivalidator;
 
@@ -10,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import psidev.psi.mi.validator.framework.ValidatorMessage;
 
 import java.util.List;
+import java.io.Serializable;
 
 /**
  * TODO comment this!

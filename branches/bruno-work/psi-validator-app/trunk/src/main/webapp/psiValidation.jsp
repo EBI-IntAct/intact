@@ -12,6 +12,8 @@
 
     <body>
 
+    <f:loadBundle basename="uk.ac.ebi.imex.psivalidator.resource.buildInfo" var="buildInfo"/>
+
     <h:form id="psiValidationForm" enctype="multipart/form-data">
 
         <h:panelGrid columns="1" style="width:100%">
@@ -19,12 +21,16 @@
             <%-- Header --%>
             <h:panelGrid id="header" columns="3"
                          style="width:100%"
-                         columnClasses="align-left,page-title,align-right">
+                         columnClasses="align-left,align-center,align-right">
                 <h:outputLink value="http://psidev.sourceforge.net/">
                     <h:graphicImage url="images/psi.gif" style="border:0"/>
                 </h:outputLink>
 
-                <h:outputText value="The PSI Validator"/>
+                <t:div>
+                    <h:outputText value="The PSI Validator" styleClass="page-title"/>
+                    <h:outputText value=" (v. #{buildInfo.version})" styleClass="page-subtitle"/>
+                </t:div>
+
 
                 <h:outputLink value="http://hupo.org/">
                     <h:graphicImage url="images/hupo.gif" style="border:0"/>
@@ -102,7 +108,7 @@
                                 rendered="#{psiValidatorBean.currentPsiReport.xmlSyntaxStatus == 'invalid'}"/>
                 <h:outputText value="XML Syntax"/>
                 <h:outputText value="#{psiValidatorBean.currentPsiReport.xmlSyntaxStatus}"/>
-                <h:panelGrid columns="2">
+                <h:panelGrid columns="2" cellpadding="0" cellspacing="0">
                     <h:outputLink value="#xml_report">
                         <h:outputText value="Report"/>
                     </h:outputLink>
@@ -154,17 +160,25 @@
                          headerClass="table-header"
                          rowClasses="odd-row,even-row"
                          renderedIfEmpty="false" >
-                <t:column style="width: 1%">
-                    <h:outputText value="-"/>
+                <t:column style="width: 1%, text-align:center, padding-left:2px, padding-right:2px">
+                    <h:graphicImage url="images/icon_warning_sml.gif" rendered="#{msg.level == 'WARN'}" title="#{msg.level}"/>
+                    <h:graphicImage url="images/icon_error_sml.gif" rendered="#{msg.level == 'ERROR'}" title="#{msg.level}"/>
+                    <h:graphicImage url="images/icon_error_sml.gif" rendered="#{msg.level == 'FATAL'}" title="#{msg.level}"/>
                 </t:column>
-                <t:column style="width: 30%">
+                <t:column style="width: 20%">
                     <f:facet name="header">
                         <h:outputText value="Message" />
                     </f:facet>
 
                     <h:outputText value="#{msg.message}" />
+               </t:column>
+                <t:column style="width: 20%, text-align:center">
+                    <f:facet name="header">
+                        <h:outputText value="Context" />
+                    </f:facet>
 
-                </t:column>
+                    <h:outputText value="#{msg.context}" />
+               </t:column>
                 <t:column style="width: 10%">
                     <f:facet name="header">
                         <h:outputText value="Rule Name" />
@@ -172,7 +186,7 @@
 
                     <h:outputText value="#{msg.rule.name}" />
                 </t:column>
-                 <t:column style="width: 30%">
+                 <t:column style="width: 25%">
                     <f:facet name="header">
                         <h:outputText value="Rule Description" />
                     </f:facet>

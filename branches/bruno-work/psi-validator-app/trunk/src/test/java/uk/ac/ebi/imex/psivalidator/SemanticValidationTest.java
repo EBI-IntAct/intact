@@ -30,7 +30,7 @@ public class SemanticValidationTest extends TestCase
 {
 
 
-    public void testSemanticValidation() throws ValidatorException, TransformerException, IOException
+    public void testSemanticValidationGoodFile() throws ValidatorException, TransformerException, IOException
     {
         InputStream configFile = SemanticValidationTest.class.getResourceAsStream("resource/config-mi-validator-test.xml");
         InputStream psiFile = SemanticValidationTest.class.getResourceAsStream("resource/10381623.xml");
@@ -50,5 +50,30 @@ public class SemanticValidationTest extends TestCase
         Collection<ValidatorMessage> messages = validator.validate( expandedFile );
 
         assertEquals(0, messages.size());
+    }
+
+    public void testSemanticValidationWithErrors() throws ValidatorException, TransformerException, IOException
+    {
+        InputStream configFile = SemanticValidationTest.class.getResourceAsStream("resource/config-mi-validator-test.xml");
+        InputStream psiFile = SemanticValidationTest.class.getResourceAsStream("resource/1000867_small.xml");
+
+        String expandedStr = TransformationUtil.transformToExpanded(psiFile).toString();
+        InputStream expandedFile = new ByteArrayInputStream(expandedStr.getBytes());
+        //InputStream expandedFile = psiFile;
+
+        // set work directory
+        UserPreferences preferences = new UserPreferences();
+        preferences.setKeepDownloadedOntologiesOnDisk( true );
+        preferences.setWorkDirectory(new File(System.getProperty("java.io.tmpdir")));
+        preferences.setSaxValidationEnabled( false );
+
+        Validator validator = new Mi25Validator( configFile, preferences );
+
+        Collection<ValidatorMessage> messages = validator.validate( expandedFile );
+
+        for (ValidatorMessage message : messages)
+        {
+            System.out.println(message.getMessage()+" ||| "+message.getContext());
+        }
     }
 }
