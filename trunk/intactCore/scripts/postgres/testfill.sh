@@ -117,13 +117,6 @@ then
     echo "Processing finished."
     echo ""
 else
-    echo ""
-    echo "Inserting Proteins ..."
-    scripts/javaRun.sh UpdateProteins file:data/yeast_test.sp
-    if [ $? != 0 ]
-    then
-        exit 1
-    fi
 
     echo ""
     echo "Inserting Complexes ..."

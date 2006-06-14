@@ -61,14 +61,6 @@ then
     echo ""
 else
     echo ""
-    echo "Inserting Proteins ..."
-    scripts/javaRun.sh UpdateProteins file:data/yeast_test.sp
-    if [ $? != 0 ]
-    then
-        exit 1
-    fi
-
-    echo ""
     echo "Inserting Complexes ..."
     scripts/javaRun.sh InsertComplex -file data/ho_gavin_${DATASET}.dat -taxId 4932 -interactionType aggregation
     if [ $? != 0 ]
