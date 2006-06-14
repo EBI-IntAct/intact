@@ -23,20 +23,33 @@ import java.util.Iterator;
  */
 public class SequenceManager {
 
-    /**
-     * Has the existence of the sequence been checked already ?
-     */
-    private static boolean sequenceChecked = false;
+    private SequenceManager() {
+    }
 
     // Supported Plateform
     public static final String ORACLE_PLATEFORM = "Oracle";
     public static final String POSTGRESQL_PLATEFORM = "PostgreSQL";
 
+    private enum DatabasePlatform {
+        ORACLE,
+        POSTGRES;
+    }
+
+    /**
+     * Has the existence of the sequence been checked already ?
+     */
+    private static boolean sequenceChecked = false;
+
     public static final String SEQUENCE_NAME = "CVOBJECT_ID";
 
     // SQL queries for supported backend
-    public static final String ORACLE_QUERY = "SELECT INTACT." + SEQUENCE_NAME + ".nextval FROM dual";
-    public static final String POSTGRES_QUERY = "SELECT nextval('" + SEQUENCE_NAME + "')";
+    public static final String ORACLE_QUERY_NEXT = "SELECT INTACT." + SEQUENCE_NAME + ".nextval FROM dual";
+    public static final String POSTGRES_QUERY_NEXT = "SELECT nextval('" + SEQUENCE_NAME + "')";
+
+    public static final String ORACLE_QUERY_CURRENT = "SELECT INTACT." + SEQUENCE_NAME + ".currval FROM dual";
+    // note: SELECT nextval('seq') throws an Error:
+    //       currval of sequence "cvobject_id" is not yet defined in this session
+    public static final String POSTGRES_QUERY_CURRENT = "SELECT last_value FROM " + SEQUENCE_NAME;
 
     /**
      * Checks if the given sequence name exists.
@@ -109,6 +122,33 @@ public class SequenceManager {
     }
 
     /**
+     * Check which database plateform the given connection working on.
+     *
+     * @param connection the database connection (should not be null).
+     *
+     * @return ORACLE or POSTGRES
+     *
+     * @throws SQLException
+     * @throws UnsupportedOperationException if we are using an other database than ORACLE or POSTGRES
+     */
+    private static DatabasePlatform getPlateform( Connection connection ) throws SQLException {
+        if ( connection == null ) {
+            throw new IllegalArgumentException( "You must give a non null Connection." );
+        }
+
+        DatabaseMetaData metaData = connection.getMetaData();
+        String databaseProductName = metaData.getDatabaseProductName();
+
+        if ( POSTGRESQL_PLATEFORM.equals( databaseProductName ) ) {
+            return DatabasePlatform.POSTGRES;
+        } else if ( ORACLE_PLATEFORM.equals( databaseProductName ) ) {
+            return DatabasePlatform.ORACLE;
+        } else {
+            throw new UnsupportedOperationException( "We do not support " + databaseProductName + " database." );
+        }
+    }
+
+    /**
      * Returns database specific SQL statement for retreiving the next value of a sequence.
      *
      * @param connection the database conenction.
@@ -119,30 +159,51 @@ public class SequenceManager {
      * @throws UnsupportedOperationException if the current database plateform of something else than Oracle or
      *                                       PostgreSQL.
      */
-    private static String getBackendSpecificSql( Connection connection ) throws SQLException {
+    private static String getNextValueSql( Connection connection ) throws SQLException {
 
         if ( connection == null ) {
             throw new IllegalArgumentException( "You must give a non null Connection." );
         }
 
-        DatabaseMetaData metaData = connection.getMetaData();
-        String databaseProductName = metaData.getDatabaseProductName();
+        DatabasePlatform db = getPlateform( connection );
+        switch ( db ) {
+            case ORACLE:
+                return ORACLE_QUERY_NEXT;
 
-        String sql = null;
-        if ( POSTGRESQL_PLATEFORM.equals( databaseProductName ) ) {
-
-            sql = POSTGRES_QUERY;
-
-        } else if ( ORACLE_PLATEFORM.equals( databaseProductName ) ) {
-
-            sql = ORACLE_QUERY;
-
-        } else {
-
-            throw new UnsupportedOperationException( "We do not support " + databaseProductName + " database." );
+            case POSTGRES:
+                return POSTGRES_QUERY_NEXT;
         }
 
-        return sql;
+        throw new IllegalStateException();
+    }
+
+    /**
+     * Returns database specific SQL statement for retreiving the current value of a sequence.
+     *
+     * @param connection the database conenction.
+     *
+     * @return an SQL statement.
+     *
+     * @throws SQLException                  if an error occurs.
+     * @throws UnsupportedOperationException if the current database plateform of something else than Oracle or
+     *                                       PostgreSQL.
+     */
+    private static String getCurrentValueSql( Connection connection ) throws SQLException {
+
+        if ( connection == null ) {
+            throw new IllegalArgumentException( "You must give a non null Connection." );
+        }
+
+        DatabasePlatform db = getPlateform( connection );
+        switch ( db ) {
+            case ORACLE:
+                return ORACLE_QUERY_CURRENT;
+
+            case POSTGRES:
+                return POSTGRES_QUERY_CURRENT;
+        }
+
+        throw new IllegalStateException();
     }
 
     /**
@@ -169,7 +230,7 @@ public class SequenceManager {
         try {
             if ( sequenceExists( connection, sequenceName ) ) {
 
-                String sql = getBackendSpecificSql( connection );
+                String sql = getNextValueSql( connection );
 
                 PreparedStatement pstmt = null;
                 ResultSet rs = null;
@@ -209,9 +270,102 @@ public class SequenceManager {
         return newId;
     }
 
+    private static long getCurrentSequenceValue( Connection connection, String sequenceName ) {
+
+        if ( connection == null ) {
+            throw new IllegalArgumentException( "You must give a non null Connection." );
+        }
+
+        if ( sequenceName == null ) {
+            throw new IllegalArgumentException( "You must give a non null sequence name." );
+        }
+
+        long newId = -1;
+        try {
+            if ( sequenceExists( connection, sequenceName ) ) {
+
+                String sql = getCurrentValueSql( connection );
+
+                PreparedStatement pstmt = null;
+                ResultSet rs = null;
+                try {
+                    pstmt = connection.prepareStatement( sql );
+                    rs = pstmt.executeQuery();
+                    while ( rs.next() ) {
+                        newId = rs.getLong( 1 );
+                    }
+
+                    if ( newId < 50 ) {
+                        throw new IntactException( "Range 1..50 of sequence(" + sequenceName + ") is reserved. " +
+                                                   "Please create the sequence so the first id is 51." );
+                    }
+                }
+                finally {
+                    try {
+                        if ( rs != null ) {
+                            rs.close();
+                        }
+                    } catch ( Exception ignoreThis ) {
+                    }
+                    try {
+                        if ( pstmt != null ) {
+                            pstmt.close();
+                        }
+                    } catch ( Exception ignoreThis ) {
+                    }
+                }
+            } else {
+                throw new RuntimeException( "Could not find sequence " + sequenceName + " in the database." );
+            }
+        } catch ( SQLException sqle ) {
+            throw new IntactException( "SQL Error while searching for the current value of sequence(" + sequenceName + ")", sqle );
+        }
+
+        return newId;
+    }
+
+    public static void synchronizeUpTo( IntactHelper helper, long id ) {
+
+        if ( helper == null ) {
+            throw new IllegalArgumentException( "You must give a non null IntactHelper." );
+        }
+
+        Connection connection = helper.getJDBCConnection();
+        long current = getCurrentSequenceValue( connection, SEQUENCE_NAME );
+
+        if ( current < id ) {
+            System.out.println( "The current state of the sequence( " + SEQUENCE_NAME + " ) is wrong." );
+            System.out.println( "Synchronizing up to " + id + "..." );
+        }
+
+        while ( current < id ) {
+            current = getNextSequenceValue( connection, SEQUENCE_NAME );
+        }
+
+        System.out.println( "The sequence(" + SEQUENCE_NAME + ") is now set to : " + current );
+    }
+
+    private static String formatId( long id ) {
+
+        String prefix = null;
+
+        if ( id < 10 ) {
+            prefix = "IA:000";
+        } else if ( id < 100 ) {
+            prefix = "IA:00";
+        } else if ( id < 1000 ) {
+            prefix = "IA:0";
+        } else if ( id < 10000 ) {
+            prefix = "IA:";
+        } else {
+            throw new IllegalStateException( "We have used all possible id space." );
+        }
+
+        return prefix + id;
+    }
+
     public static String getNextId( IntactHelper helper ) throws IntactException {
         Connection connection = helper.getJDBCConnection();
-        String prefix = null;
         long id;
         String nextId = null;
         Collection cvObjects;
@@ -225,20 +379,7 @@ public class SequenceManager {
         do {
             id = getNextSequenceValue( connection, SEQUENCE_NAME );
 
-            // format the id
-            if ( id < 10 ) {
-                prefix = "IA:000";
-            } else if ( id < 100 ) {
-                prefix = "IA:00";
-            } else if ( id < 1000 ) {
-                prefix = "IA:0";
-            } else if ( id < 10000 ) {
-                prefix = "IA:";
-            } else {
-                throw new IllegalStateException( "We have used all possible id space." );
-            }
-
-            nextId = prefix + id;
+            nextId = formatId( id );
 
             // to be on the safe side, we make sure that the generated id is not in use in the database.
             // if it is found to be, messages will be displayed and the next id will be retreived until we
@@ -270,6 +411,22 @@ public class SequenceManager {
         return nextId;
     }
 
+    public static String getCurrentId( IntactHelper helper ) throws IntactException {
+        Connection connection = helper.getJDBCConnection();
+        String nextId = null;
+
+        try {
+            checkIfCvSequenceExists( helper );
+        } catch ( SQLException e ) {
+            throw new IntactException( "Error while checking if the sequence is present in the database.", e );
+        }
+
+        nextId = formatId( getCurrentSequenceValue( connection, SEQUENCE_NAME ) );
+
+        return nextId;
+    }
+
+    // Documentation:
     // http://forum.java.sun.com/thread.jspa?threadID=633017&tstart=300
 
     /* On Oracle
@@ -281,7 +438,7 @@ public class SequenceManager {
        GRANT ALL ON cvobject_id TO PUBLIC;
      */
 
-    public static void main( String[] args ) throws IntactException, SQLException {
+    public static void main( String[] args ) throws IntactException {
         IntactHelper helper = null;
         try {
             helper = new IntactHelper();
