@@ -21,7 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import uk.ac.ebi.imex.psivalidator.PsiReportBuilder;
 
 /**
- * TODO comment this!
+ * This filter, configured in the web.xml file, checks if the session is valid. If not,
+ * redirects to a session timed out page
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -31,9 +32,15 @@ public class SessionExpiredFilter implements Filter
 {
     private static final Log log = LogFactory.getLog(PsiReportBuilder.class);
 
+    /**
+     * The page to redirect when the session is not valid
+     */
     public static final String PAGE = "/sessionTimedOut.jsp";
-    private FilterConfig fc;
 
+    /**
+     * FilterConfig, that contains the configuration parameters of the filter (not used)
+     */
+    private FilterConfig fc;
 
     public void destroy()
     {
@@ -55,13 +62,16 @@ public class SessionExpiredFilter implements Filter
 
         HttpServletRequest servletRequest = (HttpServletRequest) request;
 
-
-
-
+        // we check if the session is valid
         if (servletRequest != null && !servletRequest.isRequestedSessionIdValid())
         {
+            // we will redirect if we come from a jsf file only
+            // (in this application I know that files different to JSP redirect to the main page
+            // or is the session timed out page).
             String referer = servletRequest.getHeader("Referer");
             if (referer != null && referer.endsWith(".jsf")) {
+       
+                // redirect to the session timed out page
                 RequestDispatcher rd = request.getRequestDispatcher(PAGE);
                 rd.forward(request, response);
             }

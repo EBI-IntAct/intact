@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2006 The European Bioinformatics Institute, and others.
- * All rights reserved. 
+ * All rights reserved.
  */
 package uk.ac.ebi.imex.psivalidator;
 
@@ -18,6 +18,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 
 /**
+ * This util class deals with XSLT transformations
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -28,19 +29,39 @@ public class TransformationUtil
 
     private static final Log log = LogFactory.getLog(TransformationUtil.class);
 
+    /**
+     * Transforms a PSI XML file to HTML
+     * @param is the stream to stransform
+     * @return the outputStream with the HTML
+     * @throws TransformerException things may fail
+     */
     public static OutputStream transformToHtml(InputStream is) throws TransformerException
     {
-
+        // we use and xslt file to transform to HTML, provided in the jar
         InputStream xslt = TransformationUtil.class.getResourceAsStream("resource/MIF25_view.xsl");
         return transform(is, xslt);
     }
 
+    /**
+     * Transform a PSI XML file to the "expanded" version
+     * @param is the stream to stransform
+     * @return the outputStream with the expanded PSI XML
+     * @throws TransformerException things may fail
+     */
     public static OutputStream transformToExpanded(InputStream is) throws TransformerException
     {
+        // we use and xslt file to transform to the expanded version, provided in the jar
          InputStream xslt = TransformationUtil.class.getResourceAsStream("resource/MIF25_expand.xsl");
          return transform(is, xslt);
     }
 
+    /**
+     * The actual method that does the transformation
+     * @param isToTransform The stream to transform
+     * @param xslt The stream with the XSLT rules
+     * @return The transformed stream
+     * @throws TransformerException thrown if something has been wrong with the transformation
+     */
     private static OutputStream transform(InputStream isToTransform, InputStream xslt) throws TransformerException
     {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
