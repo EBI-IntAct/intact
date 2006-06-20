@@ -4,8 +4,8 @@
 
 package uk.ac.ebi.intact.application.dataConversion.util;
 
-import org.apache.xerces.dom.DOMImplementationImpl;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.xerces.dom.DOMImplementationImpl;
 import org.w3c.dom.*;
 
 import java.io.IOException;
@@ -29,7 +29,7 @@ public class DisplayXML {
      */
     private static String escapeXML( String s ) {
 
-        if( s == null ) {
+        if ( s == null ) {
             return "";
         }
 
@@ -148,8 +148,8 @@ public class DisplayXML {
         switch ( type ) {
 
             case Node.DOCUMENT_NODE:
-                print( ( (Document) node ).getDocumentElement() );
 
+                write( ( (Document) node ).getDocumentElement(), out, indent );
                 break;
 
             case Node.ELEMENT_NODE:
