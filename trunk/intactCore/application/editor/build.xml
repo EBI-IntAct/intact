@@ -560,7 +560,7 @@
         <property name="war.name" value="${ant.project.name}-${dbalias}-${TODAY}.war"/>
 
         <condition property="test.dist">
-            <equals arg1="${dbalias}" arg2="d002"/>
+            <contains string="${dbalias}" substring="d003"></contains>
         </condition>
 
         <antcall target="build-war">
