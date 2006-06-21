@@ -18,6 +18,7 @@ import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.sequence.NucleicAcidViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.sequence.ProteinViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.sm.SmallMoleculeViewBean;
 import uk.ac.ebi.intact.model.*;
 
 /**
@@ -123,6 +124,8 @@ public class EditViewBeanFactory implements KeyedPoolableObjectFactory {
         }
         else if (Protein.class.isAssignableFrom(clazz)) {
             viewbean = new ProteinViewBean();
+        }  else if (SmallMolecule.class.isAssignableFrom(clazz)){
+            viewbean = new SmallMoleculeViewBean();
         }
         else {
             // Assume it is an CV object.

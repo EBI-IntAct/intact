@@ -487,12 +487,14 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
      * post: myComponents = myComponents@pre + 1
      * </pre>
      */
-    public void addPolymer(Polymer polymer) {
+    public void addInteractor(Interactor interactor) {
         //Add to the view.
-        if(polymer instanceof Protein ){
-            myComponents.add(new ComponentBean((Protein)polymer));
-        }else if (polymer instanceof NucleicAcid){
-            myComponents.add(new ComponentBean((NucleicAcid)polymer));
+        if(interactor instanceof Protein ){
+            myComponents.add(new ComponentBean((Protein)interactor));
+        }else if (interactor instanceof NucleicAcid){
+            myComponents.add(new ComponentBean((NucleicAcid)interactor));
+        }else if (interactor instanceof SmallMolecule ){
+            myComponents.add(new ComponentBean((SmallMolecule)interactor));
         }
     }
 

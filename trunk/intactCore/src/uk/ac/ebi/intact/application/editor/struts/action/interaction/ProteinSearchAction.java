@@ -137,6 +137,9 @@ public class ProteinSearchAction extends AbstractEditorAction {
                 if(rw.isEmpty()){
                     rw = user.lookup(NucleicAcidImpl.class, param, value,max);
                 }
+                if(rw.isEmpty()){
+                    rw = user.lookup(SmallMoleculeImpl.class, param, value,max);
+                }
             }
             catch (IntactException ie) {
                 // This can only happen when problems with creating an internal helper
@@ -181,8 +184,8 @@ public class ProteinSearchAction extends AbstractEditorAction {
         InteractionViewBean view = (InteractionViewBean) user.getView();
 
         for (Iterator iter = rw.getResult().iterator(); iter.hasNext();) {
-            Polymer polymer = (Polymer) iter.next();
-            view.addPolymer(polymer);
+            Interactor interactor = (Interactor) iter.next();
+            view.addInteractor(interactor);
         }
         
         // The anchor is set via the Search protein button.
