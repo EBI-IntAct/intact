@@ -52,6 +52,12 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
     <extent-class class-ref="uk.ac.ebi.intact.model.ProteinImpl"/>
 </class-descriptor>
 
+<class-descriptor
+        class="uk.ac.ebi.intact.model.SmallMolecule">
+    <!-- implementations -->
+    <extent-class class-ref="uk.ac.ebi.intact.model.SmallMoleculeImpl" />
+</class-descriptor>
+
         <!-- Implementation class descriptors -->
 
 <class-descriptor
@@ -109,6 +115,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         class="uk.ac.ebi.intact.model.InteractorImpl">
     <extent-class class-ref="uk.ac.ebi.intact.model.InteractionImpl"/>
     <extent-class class-ref="uk.ac.ebi.intact.model.PolymerImpl"/>
+    <extent-class class-ref="uk.ac.ebi.intact.model.SmallMoleculeImpl"/>
 </class-descriptor>
 
 <class-descriptor
@@ -731,6 +738,148 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 
 </class-descriptor>
 
+<class-descriptor
+    class="uk.ac.ebi.intact.model.SmallMoleculeImpl" table="ia_Interactor"
+    proxy="uk.ac.ebi.intact.model.proxy.SmallMoleculeProxy">
+
+    <!-- ***************** fields from superclasses ********************* -->
+    <!-- fields from BasicObject... -->
+    <field-descriptor
+        name="ac"
+        column="ac"
+        jdbc-type="VARCHAR"
+        primarykey="true" autoincrement="true"
+        sequence-name="intact_ac"
+        />
+    <field-descriptor
+        name="ownerAc"
+        column="owner_ac"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor
+        name="updator"
+        column="userstamp"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="creator"
+        column="created_user"
+        jdbc-type="VARCHAR"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="created"
+        column="created"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="updated"
+        column="updated"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        access="readonly"
+        />
+    <field-descriptor
+        name="shortLabel"
+        column="shortLabel"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor
+        name="fullName"
+        column="fullName"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor
+        name="ojbConcreteClass"
+        column="objClass"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor
+        name="bioSourceAc"
+        column="bioSource_ac"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor
+        name="cvInteractorTypeAc"
+        column="interactorType_ac"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+
+    <reference-descriptor
+        name="owner"
+        class-ref="uk.ac.ebi.intact.model.Institution"
+        >
+        <foreignkey field-ref="ownerAc"/>
+    </reference-descriptor>
+
+    <reference-descriptor
+        name="bioSource"
+        class-ref="uk.ac.ebi.intact.model.BioSource"
+        >
+        <!-- key from a BioSource to an Interactor -->
+        <foreignkey field-ref="bioSourceAc"/>
+    </reference-descriptor>
+
+    <reference-descriptor
+        name="interactorType"
+        class-ref="uk.ac.ebi.intact.model.CvInteractorType"
+        >
+        <!-- key from a CvInteractorType to a Protein -->
+        <foreignkey field-ref="cvInteractorTypeAc"/>
+    </reference-descriptor>
+
+    <!-- fields from AnnotatedObject (intactCore only) -->
+    <collection-descriptor
+        name="xrefs"
+        proxy="true"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Xref"
+        >
+
+        <inverse-foreignkey field-ref="parentAc"/>
+    </collection-descriptor>
+
+    <collection-descriptor
+        name="aliases"
+        proxy="true"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Alias"
+        >
+
+        <inverse-foreignkey field-ref="parentAc"/>
+    </collection-descriptor>
+
+    <!-- Interactors and Annotations are linked via a (non-qualified) indirection
+    table INT2ANNOT..... -->
+    <collection-descriptor
+        name="annotations"
+        element-class-ref="uk.ac.ebi.intact.model.Annotation"
+        proxy="true"
+        indirection-table="ia_INT2ANNOT"
+        collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
+        >
+        <fk-pointing-to-this-class column="interactor_ac"/>
+        <fk-pointing-to-element-class column="annotation_ac"/>
+    </collection-descriptor>
+
+    <collection-descriptor
+        name="activeInstances"
+        element-class-ref="uk.ac.ebi.intact.model.Component"
+        proxy="true"
+        >
+        <inverse-foreignkey field-ref="interactorAc"/>
+    </collection-descriptor>
+
+</class-descriptor>
 
         <!-- descriptor for NucleicAcid
         -->
