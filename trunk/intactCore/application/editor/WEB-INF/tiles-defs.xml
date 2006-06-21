@@ -80,6 +80,10 @@
         <put name="cv" value="/pages/sequence/seq.jsp"/>
     </definition>
 
+     <!-- The  page layout. -->
+    <definition name="edit.sm.layout" extends="edit.cv.layout">
+        <put name="cv" value="/pages/sm/sm.jsp"/>
+    </definition>
     <!-- =============== Definitions related to pages ================= -->
 
     <!-- The header layout. The controller may change the header when editing
