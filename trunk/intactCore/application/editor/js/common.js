@@ -11,7 +11,7 @@ var newWindow;
 // front if it is focusable.
 function makeNewWindow(link) {
     if (!newWindow || newWindow.closed) {
-        newWindow = window.open(link, "display", "scrollbars=yes,height=500,width=600");
+        newWindow = window.open(link, "display", "scrollbars=yes,height=700,width=840,resizable=yes");
         newWindow.focus();
     }
     else if (newWindow.focus) {
