@@ -58,6 +58,12 @@ import javax.servlet.http.HttpServletResponse;
  *      scope="session"
  *      validate="false"
  *
+ *  @struts.action
+ *      path="/sm/fill/form"
+ *      name="smForm"
+ *      scope="session"
+ *      validate="false"
+ *
  * @struts.action-forward
  *      name="success"
  *      path="edit.layout"

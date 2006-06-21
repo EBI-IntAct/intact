@@ -36,6 +36,8 @@ public class ComponentBean extends AbstractEditKeyBean {
 
     static final String PROTEIN = "Protein";
     static final String NUCLEIC_ACID = "Nucleic Acid";
+    static final String SMALL_MOLECULE = "Small Molecule";
+
     // Class Data
 
     /**
@@ -146,6 +148,14 @@ public class ComponentBean extends AbstractEditKeyBean {
             Logger.getLogger(EditorConstants.LOGGER).error("Gene Name", ex);
         }
     }
+
+    public ComponentBean(SmallMolecule smallMolecule){
+        myInteractor = IntactHelper.getRealIntactObject(smallMolecule);
+//        setOrganism();
+        setEditState(SAVE_NEW);
+        setType(SMALL_MOLECULE);
+    }
+
     /**
      * Instantiate an object of this class from a Component instance.
      * @param component the <code>Component</code> object.
@@ -157,6 +167,8 @@ public class ComponentBean extends AbstractEditKeyBean {
         }
         else if (component.getInteractor() instanceof NucleicAcid ){
             setType(NUCLEIC_ACID);
+        } else if (component.getInteractor() instanceof SmallMolecule){
+            setType(SMALL_MOLECULE);
         }
 
         // Set the feature for this bean.

@@ -306,7 +306,6 @@ public class EditorMenuFactory {
         while (iter.hasNext()) {
             Object[] row = iter.next();
              menu.add(row[1].toString());
-            LOGGER.error("targetClass is " +  targetClass );
         }
         return menu;
     }

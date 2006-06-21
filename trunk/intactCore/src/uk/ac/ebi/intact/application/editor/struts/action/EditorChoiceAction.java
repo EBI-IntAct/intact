@@ -45,6 +45,10 @@ import javax.servlet.http.HttpServletResponse;
  * @struts.action-forward
  *      name="seq"
  *      path="/do/seq/fill/form"
+ *
+ * @struts.action-forward
+ *      name="sm"
+ *      path="/do/sm/fill/form"
  */
 public class EditorChoiceAction extends AbstractEditorAction {
 
@@ -86,6 +90,9 @@ public class EditorChoiceAction extends AbstractEditorAction {
         }
         if (topic.equals("Protein") || topic.equals("NucleicAcid")) {
             return mapping.findForward("seq");
+        }
+        if(topic.equals("SmallMolecule")) {
+            return mapping.findForward("sm");
         }
         // Must have selected a CV object to edit.
         return mapping.findForward("cv");
