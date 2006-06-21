@@ -24,6 +24,15 @@ public class CvTopic extends CvObject implements Editable {
     //////////////////////////
     // Constants
 
+    public static final String ASSEMBLY = "assembly";
+
+    public static final String THREE_D_R_FACTORS = "3d-r-factors";
+    public static final String THREE_D_R_FACTORS_MI_REF = "MI:0631";
+
+    public static final String THREE_D_R_RESOLUTION = "3d-resolution";
+    public static final String THREE_D_R_RESOLUTION_MI_REF = "MI:0632";
+
+
     public static final String XREF_VALIDATION_REGEXP = "id-validation-regexp";
     public static final String XREF_VALIDATION_REGEXP_MI_REF = "MI:0628";
 

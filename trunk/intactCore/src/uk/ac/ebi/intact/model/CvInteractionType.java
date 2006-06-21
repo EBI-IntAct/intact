@@ -25,7 +25,9 @@ public class CvInteractionType extends CvDagObject {
 
     public static final String DIRECT_INTERACTION_MI_REF = "MI:0407";
 
-
+    public static final String PHYSICAL_INTERACTION = "physical interaction";
+    public static final String PHYSICAL_INTERACTION_MI_REF = "MI:0218";
+        
     /**
      * This constructor should <b>not</b> be used as it could
      * result in objects with invalid state. It is here for object mapping

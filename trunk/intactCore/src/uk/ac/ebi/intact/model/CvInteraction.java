@@ -25,6 +25,7 @@ public class CvInteraction extends CvDagObject {
 
     public static final String EXPERIMENTAL_INTERACTION = "experimental interac";
 
+    
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus. This should not be here as it has no model
      * functionality but is related to eg user interfaces.

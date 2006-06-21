@@ -19,6 +19,10 @@ import javax.persistence.DiscriminatorValue;
 @DiscriminatorValue("uk.ac.ebi.intact.model.CvFeatureIdentification")
 public class CvFeatureIdentification extends CvDagObject {
 
+
+    public static final String X_RAY = "x-ray";
+    public static final String X_RAY_MI_REF = "MI:0114";
+
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus.
      * This should not be here as it has no model functionality but is
