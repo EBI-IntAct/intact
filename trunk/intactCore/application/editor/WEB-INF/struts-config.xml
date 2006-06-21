@@ -41,6 +41,10 @@
       name="seqForm"
       type="uk.ac.ebi.intact.application.editor.struts.view.sequence.SequenceActionForm"
     />
+      <form-bean
+       name="smForm"
+       type="uk.ac.ebi.intact.application.editor.struts.view.sm.SmallMoleculeActionForm"/>
+
 
    <!-- The sidebar form -->
 <form-bean name="sidebarForm"
@@ -133,6 +137,16 @@
       path="/cv/xref/submit"
       type="uk.ac.ebi.intact.application.editor.struts.action.XrefDispatchAction"
       name="cvForm"
+      scope="session"
+      input="edit.layout"
+      unknown="false"
+      validate="false"
+    >
+    </action>
+    <action
+      path="/sm/xref/submit"
+      type="uk.ac.ebi.intact.application.editor.struts.action.XrefDispatchAction"
+      name="smForm"
       scope="session"
       input="edit.layout"
       unknown="false"
@@ -704,6 +718,11 @@
         path="/do/seq/fill/form"
         redirect="false"
       />
+      <forward
+        name="sm"
+        path="/do/sm/fill/form"
+        redirect="false"
+      />
     </action>
     <action
       path="/int/delete"
@@ -862,6 +881,20 @@
       />
     </action>
     <action
+      path="/sm/fill/form"
+      type="uk.ac.ebi.intact.application.editor.struts.action.FillFormAction"
+      name="smForm"
+      scope="session"
+      unknown="false"
+      validate="false"
+    >
+      <forward
+        name="success"
+        path="edit.layout"
+        redirect="false"
+      />
+    </action>
+    <action
       path="/exp/int/search"
       type="uk.ac.ebi.intact.application.editor.struts.action.experiment.InteractionDispatchAction"
       name="expForm"
@@ -887,6 +920,16 @@
       path="/cv/annot/submit"
       type="uk.ac.ebi.intact.application.editor.struts.action.AnnotationDispatchAction"
       name="cvForm"
+      scope="session"
+      input="edit.layout"
+      unknown="false"
+      validate="false"
+    >
+    </action>
+    <action
+      path="/sm/annot/submit"
+      type="uk.ac.ebi.intact.application.editor.struts.action.AnnotationDispatchAction"
+      name="smForm"
       scope="session"
       input="edit.layout"
       unknown="false"
@@ -937,6 +980,22 @@
       path="/cv/submit"
       type="uk.ac.ebi.intact.application.editor.struts.action.cv.CvDispatchAction"
       name="cvForm"
+      scope="session"
+      input="edit.layout"
+      parameter="dispatch"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="success"
+        path="edit.layout"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/sm/submit"
+      type="uk.ac.ebi.intact.application.editor.struts.action.sm.SmDispatchAction"
+      name="smForm"
       scope="session"
       input="edit.layout"
       parameter="dispatch"
@@ -1036,6 +1095,41 @@
       <forward
         name="xref"
         path="/do/cv/xref/submit"
+        redirect="false"
+      />
+    </action>
+
+    <action
+      path="/smDispatch"
+      type="uk.ac.ebi.intact.application.editor.struts.action.sm.SmSubmitAction"
+      name="smForm"
+      scope="session"
+      unknown="false"
+      validate="false"
+    >
+      <forward
+        name="submit"
+        path="/do/sm/submit"
+        redirect="false"
+      />
+      <forward
+        name="cancel"
+        path="/do/cancel"
+        redirect="false"
+      />
+      <forward
+        name="delete"
+        path="/do/delete"
+        redirect="false"
+      />
+      <forward
+        name="annotation"
+        path="/do/sm/annot/submit"
+        redirect="false"
+      />
+      <forward
+        name="xref"
+        path="/do/sm/xref/submit"
         redirect="false"
       />
     </action>
