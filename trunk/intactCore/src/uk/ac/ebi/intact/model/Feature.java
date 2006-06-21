@@ -30,7 +30,7 @@ import java.util.Iterator;
  */
 @Entity
 @Table(name = "ia_feature")
-public class Feature extends AnnotatedObjectImpl {
+public class Feature extends AnnotatedObjectImpl implements Editable{
 
 
     //------------------- attributes -------------------------------

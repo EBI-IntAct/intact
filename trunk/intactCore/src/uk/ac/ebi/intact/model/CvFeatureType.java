@@ -19,6 +19,9 @@ import javax.persistence.DiscriminatorValue;
 @DiscriminatorValue("uk.ac.ebi.intact.model.CvFeatureType")
 public class CvFeatureType extends CvDagObject {
 
+    public static final String SUFFICIENT_FOR_BINDING = "sufficient for binding";
+    public static final String SUFFICIENT_FOR_BINDING_MI_REF = "MI:0442";
+
     public static final String EXPERIMENTAL_FEATURE = "experimental feature";
     public static final String EXPERIMENTAL_FEATURE_MI_REF = "MI:0505";
 

@@ -12,7 +12,7 @@ package uk.ac.ebi.intact.model;
  * @author hhe
  * @version $Id$
  */
-public class SmallMolecule extends InteractorImpl {
+public interface SmallMolecule extends Interactor {
 } // end SmallMolecule
 
 
