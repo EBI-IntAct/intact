@@ -9,7 +9,7 @@
     <property name="project.title" value="Intact Core"/>
     <property name="project.version" value="0.1.0"/>
 
-     <property name="jdk.version" value="1.5"/>
+    <property name="jdk.version" value="1.5"/>
 
     <property name="src.dir" value="src"/>
     <property name="dest.dir" value="classes"/>
@@ -54,7 +54,7 @@
 
     <property file="config/correctionAssigner.properties"/>
 
-     <!-- Hibernate config -->
+    <!-- Hibernate config -->
     <property name="hibernate.cfg.file" value="${src.dir}/hibernate.cfg.xml"/>
 
     <!-- Tutorial specific properties -->
@@ -87,7 +87,7 @@
         <!-- search specific jar files. -->
         <pathelement location="${app.dir}/search3/WEB-INF/classes"/>
         <!--<fileset dir="${app.dir}/search3/WEB-INF/lib">-->
-            <!--<include name="*.jar"/>-->
+        <!--<include name="*.jar"/>-->
         <!--</fileset>-->
 
         <!-- hv specific jar files. -->
@@ -111,7 +111,7 @@
         <!-- dataConversion specific jar files. -->
         <pathelement location="${app.dir}/dataConversion/WEB-INF/classes"/>
         <!--<fileset dir="${app.dir}/dataConversion/WEB-INF/lib">-->
-            <!--<include name="*.jar"/>-->
+        <!--<include name="*.jar"/>-->
         <!--</fileset>-->
     </path>
 
@@ -422,7 +422,8 @@
                 <include name="smtp.properties"/>
                 <include name="sanityCheck.properties"/>
                 <include name="Institution.properties"/>
-		        <include name="correctionAssigner.properties"/>
+                <include name="correctionAssigner.properties"/>
+                <include name="imex.properties"/>
             </fileset>
         </copy>
 
@@ -499,10 +500,10 @@
         <mkdir dir="${dest.dir}"/>
 
         <javac srcdir="${src.dir}"
-        destdir="${dest.dir}"
-        debug="on"
-        deprecation="on"
-        excludes="${non.core.files}">
+               destdir="${dest.dir}"
+               debug="on"
+               deprecation="on"
+               excludes="${non.core.files}">
             <classpath refid="project.class.path"/>
         </javac>
 
