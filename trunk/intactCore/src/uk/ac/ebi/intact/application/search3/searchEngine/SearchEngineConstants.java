@@ -47,6 +47,11 @@ public interface SearchEngineConstants {
     public static final String INTERACTION_TYPE_SHORTLABEL = "interactiontype_shortlabel";
     public static final String INTERACTION_TYPE_FULLNAME = "interactiontype_fullname";
 
+    /**
+     * The name of the hierarchView properties file.
+     */
+    public static final String HV_PROPS = "HierarchView";
+
 
     // SQL query to get all experiment out of the database
     public static final String EXPERIMENT_QUERY =

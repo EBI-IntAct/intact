@@ -18,11 +18,6 @@ public interface SearchConstants {
     // Configuration keys (web.xml, properties files)
 
     /**
-     * The name of the hierarchView properties file.
-     */
-    public static final String HV_PROPS = "HierarchView";
-
-    /**
      * The key to access configuration directory.
      */
     String CONFIG_DIR = "configdir";

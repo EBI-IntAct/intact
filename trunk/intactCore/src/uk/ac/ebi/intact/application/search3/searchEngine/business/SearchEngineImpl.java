@@ -13,7 +13,7 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
-import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.parser.IQLParser;
+import uk.ac.ebi.intact.application.search3.searchEngine.parser.IQLParser;
 import uk.ac.ebi.intact.application.search3.business.Constants;
 import uk.ac.ebi.intact.application.search3.searchEngine.SearchEngineConstants;
 import uk.ac.ebi.intact.application.search3.searchEngine.business.dao.SearchDAO;

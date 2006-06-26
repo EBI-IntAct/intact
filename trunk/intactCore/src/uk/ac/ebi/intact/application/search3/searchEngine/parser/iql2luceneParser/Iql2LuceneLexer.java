@@ -1,6 +1,6 @@
 // $ANTLR 2.7.2: "search3/antlr/iql2lucene.g" -> "Iql2LuceneLexer.java"$
 
-package uk.ac.ebi.intact.application.search3.advancedSearch.parser.iql2luceneParser;
+package uk.ac.ebi.intact.application.search3.searchEngine.parser.iql2luceneParser;
 
 import java.io.InputStream;
 import antlr.TokenStreamException;

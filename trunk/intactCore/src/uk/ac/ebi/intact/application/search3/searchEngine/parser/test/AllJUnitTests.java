@@ -3,7 +3,7 @@
 * All rights reserved. Please see the file LICENSE
 * in the root directory of this distribution.
 */
-package uk.ac.ebi.intact.application.search3.advancedSearch.parser.test;
+package uk.ac.ebi.intact.application.search3.searchEngine.parser.test;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -11,7 +11,7 @@ import junit.framework.TestSuite;
 
 /**
  * @author Anja Friedrichsen
- * @version $Id$
+ * @version $Id:AllJUnitTests.java 5081 2006-06-26 12:39:49 +0000 (Mon, 26 Jun 2006) baranda $
  */
 public class AllJUnitTests extends TestCase {
 

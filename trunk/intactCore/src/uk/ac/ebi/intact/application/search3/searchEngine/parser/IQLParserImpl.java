@@ -3,15 +3,15 @@
 * All rights reserved. Please see the file LICENSE
 * in the root directory of this distribution.
 */
-package uk.ac.ebi.intact.application.search3.advancedSearch.parser;
+package uk.ac.ebi.intact.application.search3.searchEngine.parser;
 
 import antlr.CommonAST;
 import antlr.TokenStreamSelector;
 import org.apache.log4j.Logger;
-import uk.ac.ebi.intact.application.search3.advancedSearch.parser.iql2luceneParser.Iql2LuceneLexer;
-import uk.ac.ebi.intact.application.search3.advancedSearch.parser.iql2luceneParser.Iql2LuceneParser;
-import uk.ac.ebi.intact.application.search3.advancedSearch.parser.iql2luceneParser.Iql2LuceneTreeWalker;
-import uk.ac.ebi.intact.application.search3.advancedSearch.parser.iql2luceneParser.ValLexer;
+import uk.ac.ebi.intact.application.search3.searchEngine.parser.iql2luceneParser.Iql2LuceneLexer;
+import uk.ac.ebi.intact.application.search3.searchEngine.parser.iql2luceneParser.Iql2LuceneParser;
+import uk.ac.ebi.intact.application.search3.searchEngine.parser.iql2luceneParser.Iql2LuceneTreeWalker;
+import uk.ac.ebi.intact.application.search3.searchEngine.parser.iql2luceneParser.ValLexer;
 import uk.ac.ebi.intact.application.search3.business.Constants;
 import uk.ac.ebi.intact.business.IntactException;
 
@@ -21,7 +21,7 @@ import java.io.StringReader;
  * This class provides methods, which parse an IQL query statement to an Lucene query statement.
  *
  * @author Anja Friedrichsen
- * @version $Id$
+ * @version $Id:IQLParserImpl.java 5081 2006-06-26 12:39:49 +0000 (Mon, 26 Jun 2006) baranda $
  */
 public class IQLParserImpl implements IQLParser {
 
