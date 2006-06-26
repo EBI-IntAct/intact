@@ -3,7 +3,7 @@
 * All rights reserved. Please see the file LICENSE
 * in the root directory of this distribution.
 */
-package uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.parser.test;
+package uk.ac.ebi.intact.application.search3.advancedSearch.parser.test;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

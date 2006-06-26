@@ -1,22 +1,12 @@
 // $ANTLR 2.7.2: "search3/antlr/iql2lucene.g" -> "Iql2LuceneTreeWalker.java"$
 
-package uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.parser.iql2luceneParser;
-import antlr.*;
+package uk.ac.ebi.intact.application.search3.advancedSearch.parser.iql2luceneParser;
 import antlr.TokenStreamSelector;
 import uk.ac.ebi.intact.util.SearchReplace;
-import java.util.Locale;
 
-import antlr.TreeParser;
-import antlr.Token;
 import antlr.collections.AST;
 import antlr.RecognitionException;
-import antlr.ANTLRException;
 import antlr.NoViableAltException;
-import antlr.MismatchedTokenException;
-import antlr.SemanticException;
-import antlr.collections.impl.BitSet;
-import antlr.ASTPair;
-import antlr.collections.impl.ASTArray;
 
 
 public class Iql2LuceneTreeWalker extends antlr.TreeParser       implements Iql2LuceneParserTokenTypes

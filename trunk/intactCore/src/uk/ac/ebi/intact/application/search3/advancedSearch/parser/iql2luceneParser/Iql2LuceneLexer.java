@@ -1,10 +1,6 @@
 // $ANTLR 2.7.2: "search3/antlr/iql2lucene.g" -> "Iql2LuceneLexer.java"$
 
-package uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.parser.iql2luceneParser;
-import antlr.*;
-import antlr.TokenStreamSelector;
-import uk.ac.ebi.intact.util.SearchReplace;
-import java.util.Locale;
+package uk.ac.ebi.intact.application.search3.advancedSearch.parser.iql2luceneParser;
 
 import java.io.InputStream;
 import antlr.TokenStreamException;
@@ -12,23 +8,20 @@ import antlr.TokenStreamIOException;
 import antlr.TokenStreamRecognitionException;
 import antlr.CharStreamException;
 import antlr.CharStreamIOException;
-import antlr.ANTLRException;
+
 import java.io.Reader;
 import java.util.Hashtable;
-import antlr.CharScanner;
+
 import antlr.InputBuffer;
 import antlr.ByteBuffer;
 import antlr.CharBuffer;
 import antlr.Token;
-import antlr.CommonToken;
 import antlr.RecognitionException;
 import antlr.NoViableAltForCharException;
-import antlr.MismatchedCharException;
 import antlr.TokenStream;
 import antlr.ANTLRHashString;
 import antlr.LexerSharedInputState;
 import antlr.collections.impl.BitSet;
-import antlr.SemanticException;
 
 public class Iql2LuceneLexer extends antlr.CharScanner implements Iql2LuceneParserTokenTypes, TokenStream
  {

@@ -1,12 +1,6 @@
 // $ANTLR 2.7.2: "search3/antlr/valuelexer.g" -> "ValLexer.java"$
 
-package uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.parser.iql2luceneParser;
-
-import java.util.*;
-import java.io.*;
-import antlr.collections.*;
-import antlr.debug.misc.*;
-import antlr.*;
+package uk.ac.ebi.intact.application.search3.advancedSearch.parser.iql2luceneParser;
 
 public interface valtagTokenTypes {
 	int EOF = 1;
