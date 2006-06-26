@@ -76,7 +76,7 @@
                     <configuration>
                         <jdkLevel>1.5</jdkLevel>
                         <useClassifiers>true</useClassifiers>
-                        <linkModules>false</linkModules>
+                        <linkModules>true</linkModules>
                     </configuration>
                 </plugin>
             </plugins>
@@ -103,6 +103,7 @@
     </build>
 
     <repositories>
+        <!--
         <repository>
             <id>ibiblio</id>
             <name>Ibiblio repository</name>
@@ -114,11 +115,32 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+        -->
         <repository>
             <id>ebi-repo</id>
             <name>The EBI internal repository</name>
             <url>http://www.ebi.ac.uk/~maven/m2repo</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
+         <repository>
+            <id>ebi-repo-snapshots</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+
+        
+        <!--
         <repository>
             <id>Maven Mirror 1</id>
             <url>http://repo1.maven.org/maven2</url>
@@ -129,7 +151,6 @@
                 <enabled>false</enabled>
             </releases>
         </repository>
-        <!--
         <repository>
             <id>Maven Snapshots</id>
             <url>http://snapshots.maven.codehaus.org/maven2/</url>
@@ -155,6 +176,7 @@
     </repositories>
 
     <pluginRepositories>
+        <!--
         <pluginRepository>
             <id>ibiblio</id>
             <url>http://www.ibiblio.org/maven2</url>
@@ -165,6 +187,7 @@
                 <enabled>false</enabled>
             </snapshots>
         </pluginRepository>
+        -->
         <pluginRepository>
             <id>ebi-repo</id>
             <name>The EBI internal repository</name>
@@ -196,6 +219,7 @@
                 <enabled>true</enabled>
             </releases>
         </pluginRepository>
+        <!--
         <pluginRepository>
             <id>Maven Mirror 1</id>
             <url>http://repo1.maven.org/maven2</url>
@@ -206,7 +230,6 @@
                 <enabled>false</enabled>
             </releases>
         </pluginRepository>
-        <!--
         <pluginRepository>
             <id>Maven Snapshots</id>
             <url>http://snapshots.maven.codehaus.org/maven2/</url>
@@ -233,6 +256,12 @@
     </pluginRepositories>
 
     <dependencies>
+	<dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.2</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -259,10 +288,10 @@
 
         <snapshotRepository>
             <uniqueVersion>false</uniqueVersion>
-            <id>ebi-repo</id>
-            <name>EBI Repository</name>
-            <url>scp://localhost/homes/maven/public_html/m2repo</url>
+            <id>ebi-repo-snapshots</id>
+            <name>EBI Snapshots Repository</name>
+            <url>scp://localhost/homes/maven/public_html/m2repo_snapshots</url>
         </snapshotRepository>
     </distributionManagement>
-    -->
+
 </project>
