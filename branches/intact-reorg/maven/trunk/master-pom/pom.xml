@@ -88,6 +88,9 @@
                 <configuration>
                     <source>1.5</source>
                     <target>1.5</target>
+                    <excludes>
+                        <exclude>**/test/**/*.java</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
 
