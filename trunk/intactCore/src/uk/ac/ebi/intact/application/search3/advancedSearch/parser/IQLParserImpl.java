@@ -3,15 +3,15 @@
 * All rights reserved. Please see the file LICENSE
 * in the root directory of this distribution.
 */
-package uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.parser;
+package uk.ac.ebi.intact.application.search3.advancedSearch.parser;
 
 import antlr.CommonAST;
 import antlr.TokenStreamSelector;
 import org.apache.log4j.Logger;
-import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.parser.iql2luceneParser.Iql2LuceneLexer;
-import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.parser.iql2luceneParser.Iql2LuceneParser;
-import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.parser.iql2luceneParser.Iql2LuceneTreeWalker;
-import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.parser.iql2luceneParser.ValLexer;
+import uk.ac.ebi.intact.application.search3.advancedSearch.parser.iql2luceneParser.Iql2LuceneLexer;
+import uk.ac.ebi.intact.application.search3.advancedSearch.parser.iql2luceneParser.Iql2LuceneParser;
+import uk.ac.ebi.intact.application.search3.advancedSearch.parser.iql2luceneParser.Iql2LuceneTreeWalker;
+import uk.ac.ebi.intact.application.search3.advancedSearch.parser.iql2luceneParser.ValLexer;
 import uk.ac.ebi.intact.application.search3.business.Constants;
 import uk.ac.ebi.intact.business.IntactException;
 

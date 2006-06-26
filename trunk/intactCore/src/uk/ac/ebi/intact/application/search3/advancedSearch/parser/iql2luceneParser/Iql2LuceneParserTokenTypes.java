@@ -1,10 +1,6 @@
 // $ANTLR 2.7.2: "search3/antlr/iql2lucene.g" -> "Iql2LuceneTreeWalker.java"$
 
-package uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.parser.iql2luceneParser;
-import antlr.*;
-import antlr.TokenStreamSelector;
-import uk.ac.ebi.intact.util.SearchReplace;
-import java.util.Locale;
+package uk.ac.ebi.intact.application.search3.advancedSearch.parser.iql2luceneParser;
 
 public interface Iql2LuceneParserTokenTypes {
 	int EOF = 1;
