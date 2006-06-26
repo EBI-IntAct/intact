@@ -13,6 +13,8 @@ uk.ac.ebi.intact.application.commons.util.DummyServletContext to uk.ac.ebi.intac
 uk.ac.ebi.intact.application.commons.util.ExternalContext to uk.ac.ebi.intact.core.ExternalContext
 
 uk.ac.ebi.intact.application.search3.advancedSearch.cvIntegration.CvDagObjectTool to uk.ac.ebi.intact.util.CvDagObjectTool
+uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.parser to uk.ac.ebi.intact.application.search3.searchEngine.parser
+
 
 TODO
 ====
