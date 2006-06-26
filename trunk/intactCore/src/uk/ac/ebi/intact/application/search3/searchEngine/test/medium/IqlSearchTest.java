@@ -5,7 +5,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.commons.collections.IterableMap;
 import org.apache.commons.collections.MapIterator;
-import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.parser.IQLParserImpl;
+import uk.ac.ebi.intact.application.search3.searchEngine.parser.IQLParserImpl;
 import uk.ac.ebi.intact.application.search3.searchEngine.business.SearchEngineImpl;
 import uk.ac.ebi.intact.application.search3.searchEngine.business.dao.SearchDAO;
 import uk.ac.ebi.intact.application.search3.searchEngine.business.dao.SearchDAOImpl;

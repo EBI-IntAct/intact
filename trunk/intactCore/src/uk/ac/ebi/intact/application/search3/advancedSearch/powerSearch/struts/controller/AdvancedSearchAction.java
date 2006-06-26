@@ -12,7 +12,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
-import uk.ac.ebi.intact.application.search3.advancedSearch.parser.IQLParserImpl;
+import uk.ac.ebi.intact.application.search3.searchEngine.parser.IQLParserImpl;
 import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.business.QueryBuilder;
 import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search3.searchEngine.business.SearchEngineImpl;

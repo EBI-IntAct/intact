@@ -1,4 +1,4 @@
-package uk.ac.ebi.intact.application.search3.advancedSearch.parser;
+package uk.ac.ebi.intact.application.search3.searchEngine.parser;
 
 import uk.ac.ebi.intact.business.IntactException;
 
