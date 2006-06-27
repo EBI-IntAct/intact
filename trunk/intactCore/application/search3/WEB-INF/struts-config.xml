@@ -294,6 +294,10 @@ Query     _________       ____________      |     _________      _____________
         
     </action-mappings>
 
+    <!-- ========== Message Resources ================================== -->
+    
+    <message-resources key="buildInfo" parameter="config.BuildInfo"/>
+
     <!-- ========== Plug Ins Configuration ================================== -->
 
     <!--
