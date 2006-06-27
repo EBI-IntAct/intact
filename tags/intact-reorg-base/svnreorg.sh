@@ -1,9 +1,16 @@
-#!/bin/bash
+#!/bin/bash --verbose
 
 SOURCE_BASE=~/projects/intact
-DEST_BASE=~/projects/intact-reorg-svn
+DEST_BASE=~/projects/intact-reorg
+
+INTACT_CORE=N
+APP_COMMONS=N
+SEARCH_ENGINE=N
+SEARCH_APP=Y
 
 INTACT_PKG=uk/ac/ebi/intact
+
+if [ "$INTACT_CORE" = "Y" ]; then
 
 # INTACT CORE
 # -----------
@@ -29,6 +36,9 @@ svn rm $IC_DEST_SRC/util/correctionAssigner
 svn rm $IC_DEST_SRC/util/test
 svn rm $IC_DEST_SRC/business/test
 
+fi
+
+if [ "$APP_COMMONS" = "Y" ]; then
 
 # APP COMMONS
 # -----------
@@ -40,6 +50,10 @@ IC_DEST_SRC=$DEST_BASE/app-commons/trunk/src/main/java/$INTACT_PKG/application
 rm -rf $IC_DEST_SRC/*
 svn update $IC_DEST_SRC/
 svn cp $IC_SOURCE_SRC $IC_DEST_SRC
+
+fi
+
+if [ "$SEARCH_ENGINE" = "Y" ]; then
 
 # SEARCH ENGINE
 # -----------
@@ -53,7 +67,9 @@ svn update $IC_DEST_SRC/
 svn cp $IC_SOURCE_SRC/searchEngine $IC_DEST_SRC/searchEngine
 svn cp $IC_SOURCE_SRC/util $IC_DEST_SRC/util
 
-exit
+fi
+
+if [ "$SEARCH_APP" = "Y" ]; then
 
 # SEARCH WEB APP
 # -----------
@@ -62,8 +78,8 @@ echo " " Java files
 IC_SOURCE_SRC=$SOURCE_BASE/src/$INTACT_PKG/application/search3
 IC_DEST_SRC=$DEST_BASE/search/search-app/trunk/src/main/java/$INTACT_PKG/application/search3
 
-svn rm $IC_DEST_SRC
-svn mkdir $IC_DEST_SRC
+rm -rf $IC_DEST_SRC/*
+svn update $IC_DEST_SRC/
 svn cp $IC_SOURCE_SRC/advancedSearch $IC_DEST_SRC/advancedSearch
 svn cp $IC_SOURCE_SRC/business $IC_DEST_SRC/business
 svn cp $IC_SOURCE_SRC/servlet $IC_DEST_SRC/servlet
@@ -73,18 +89,31 @@ echo " " Webapp files
 IC_SOURCE_SRC=$SOURCE_BASE/application/search3
 IC_DEST_SRC=$DEST_BASE/search/search-app/trunk/src/main
 
+rm -rf $IC_DEST_SRC/search3
+rm -rf $IC_DEST_SRC/webapp
+svn update $IC_DEST_SRC/webapp
 svn cp $IC_SOURCE_SRC $IC_DEST_SRC
-svn mv $IC_DEST_SRC/search3 $IC_DEST_SRC/webapp
+mv $IC_DEST_SRC/search3 $IC_DEST_SRC/webapp
 
-svn cp $SOURCE_BASE/application/tld/* $IC_DEST_SRC/webapp/WEB-INF/tld
-svn cp $SOURCE_BASE/application/layouts/* $IC_DEST_SRC/webapp/layouts
-svn cp $IC_SOURCE_SRC/layouts/styles/* $IC_DEST_SRC/webapp/layouts/styles
-svn cp $SOURCE_BASE/application/images/* $IC_DEST_SRC/webapp/images
-svn cp $SOURCE_BASE/src/hibernate.cfg.xml $IC_DEST_SRC/resources/
+for i in `find $SOURCE_BASE/application/tld/*.tld`; do
+  svn cp $i $IC_DEST_SRC/webapp/WEB-INF/tld
+done
+#for i in `find $SOURCE_BASE/application/layouts/*.jsp`; do
+#  svn cp $i $IC_DEST_SRC/webapp/WEB-INF/layouts
+#done
+for h in `find $SOURCE_BASE/application/images/*.gif $SOURCE_BASE/application/images/*.jpg $SOURCE_BASE/application/images/*.png`; do
+  svn cp $h $IC_DEST_SRC/webapp/images
+done
 
-svn mkdir $IC_DEST_SRC/resources/config
-svn cp $SOURCE_BASE/application/search3/WEB-INF/config/* $IC_DEST_SRC/resources/config
-svn cp $SOURCE_BASE/config/Institution.properties $IC_DEST_SRC/resources/config
+echo " " Resource files
 
+IC_DEST_SRC=$DEST_BASE/search/search-app/trunk/src/main/resources
 
+rm -rf $IC_DEST_SRC/*
+svn update $IC_DEST_SRC
+#svn cp $SOURCE_BASE/src/hibernate.cfg.xml $IC_DEST_SRC
+svn cp $SOURCE_BASE/application/search3/WEB-INF/config $IC_DEST_SRC
+svn cp $SOURCE_BASE/config/Institution.properties $IC_DEST_SRC/config
+
+fi
 
