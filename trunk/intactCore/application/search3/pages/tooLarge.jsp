@@ -13,13 +13,9 @@
 <%@ page autoFlush="true" %>
 
 <%@ page import="uk.ac.ebi.intact.application.search3.struts.util.SearchConstants,
-                 uk.ac.ebi.intact.application.search3.struts.controller.SearchAction,
-                 java.util.Collection,
-                 java.util.Iterator,
-                 java.util.Map,
                  uk.ac.ebi.intact.application.search3.struts.view.beans.SingleResultViewBean,
                  uk.ac.ebi.intact.application.search3.struts.view.beans.TooLargeViewBean,
-                 uk.ac.ebi.intact.application.search3.struts.util.SearchConstants"%>
+                 java.util.Iterator"%>
 
 
 <%
