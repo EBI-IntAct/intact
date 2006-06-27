@@ -11,7 +11,9 @@ echo INTACT CORE
 IC_SOURCE_SRC=$SOURCE_BASE/src/$INTACT_PKG
 IC_DEST_SRC=$DEST_BASE/intact-core/trunk/src/main/java/$INTACT_PKG
 
-svn revert $IC_DEST_SRC
+#svn revert $IC_DEST_SRC
+rm -rf $IC_DEST_SRC/*
+svn update $IC_DEST_SRC/
 svn cp $IC_SOURCE_SRC/business $IC_DEST_SRC/business
 svn cp $IC_SOURCE_SRC/model $IC_DEST_SRC/model
 svn cp $IC_SOURCE_SRC/persistence $IC_DEST_SRC/persistence
@@ -34,10 +36,10 @@ echo APP COMMONS
 IC_SOURCE_SRC=$SOURCE_BASE/src/$INTACT_PKG/application/commons
 IC_DEST_SRC=$DEST_BASE/app-commons/trunk/src/main/java/$INTACT_PKG/application
 
-svn revert $IC_DEST_SRC
+#svn revert $IC_DEST_SRC
+rm -rf $IC_DEST_SRC/*
+svn update $IC_DEST_SRC/
 svn cp $IC_SOURCE_SRC $IC_DEST_SRC
-
-exit
 
 # SEARCH ENGINE
 # -----------
@@ -45,9 +47,13 @@ echo SEARCH ENGINE
 IC_SOURCE_SRC=$SOURCE_BASE/src/$INTACT_PKG/application/search3
 IC_DEST_SRC=$DEST_BASE/search/search-engine/trunk/src/main/java/$INTACT_PKG/application/search3
 
-svn revert $IC_DEST_SRC
+#svn revert $IC_DEST_SRC
+rm -rf $IC_DEST_SRC/*
+svn update $IC_DEST_SRC/
 svn cp $IC_SOURCE_SRC/searchEngine $IC_DEST_SRC/searchEngine
 svn cp $IC_SOURCE_SRC/util $IC_DEST_SRC/util
+
+exit
 
 # SEARCH WEB APP
 # -----------
