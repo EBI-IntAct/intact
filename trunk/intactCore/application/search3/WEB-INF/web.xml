@@ -17,10 +17,6 @@
           location....). The exception to this rule seems to be the struts-config.xml
           file....
       -->
-    <context-param>
-        <param-name>mappingfile</param-name>
-        <param-value>/config/repository.xml</param-value>
-    </context-param>
 
     <!-- Where configuration files are stored. -->
     <context-param>
@@ -90,22 +86,11 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
-    <!-- Clear OJB cache of the application -->
-    <servlet>
-        <servlet-name>clearOJBCache</servlet-name>
-        <servlet-class>uk.ac.ebi.intact.application.commons.util.ResetOjbCacheServlet</servlet-class>
-    </servlet>
-
     <!-- Drawing dynamic Images -->
     <servlet>
         <servlet-name>dynamicImage</servlet-name>
         <servlet-class>uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.business.graphdraw.servlet.ImageServlet</servlet-class>
     </servlet>
-
-     <servlet-mapping>
-        <servlet-name>clearOJBCache</servlet-name>
-        <url-pattern>/clearOjbCache</url-pattern>
-    </servlet-mapping>
 
 
     <!-- Action Servlet Mapping -->
@@ -131,6 +116,11 @@
     <taglib>
         <taglib-uri>http://java.sun.com/jstl/core</taglib-uri>
         <taglib-location>/WEB-INF/tld/c.tld</taglib-location>
+    </taglib>
+
+    <taglib>
+        <taglib-uri>http://jakarta.apache.org/struts/tags-bean</taglib-uri>
+        <taglib-location>/WEB-INF/tld/struts-bean.tld</taglib-location>
     </taglib>
 
 </web-app>

@@ -85,7 +85,7 @@ couple of words about ANTLR:
         * iql2lucene.g
 
     They are currently located in intactCore\src\uk\ac\ebi\intact\application\search3\advancedSearch\powerSearch\parser\iql2luceneParser
-    and the resulting Java classes are in the package uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.parser.iql2luceneParser
+    and the resulting Java classes are in the package uk.ac.ebi.intact.application.search3.searchEngine.parser.iql2luceneParser
     How to convert *.g into .java
 
     ANTLR provide a Tool that does that job: antlr.Tool
