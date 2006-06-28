@@ -12,7 +12,7 @@ import uk.ac.ebi.intact.application.search3.searchEngine.parser.iql2luceneParser
 import uk.ac.ebi.intact.application.search3.searchEngine.parser.iql2luceneParser.Iql2LuceneParser;
 import uk.ac.ebi.intact.application.search3.searchEngine.parser.iql2luceneParser.Iql2LuceneTreeWalker;
 import uk.ac.ebi.intact.application.search3.searchEngine.parser.iql2luceneParser.ValLexer;
-import uk.ac.ebi.intact.application.search3.business.Constants;
+import uk.ac.ebi.intact.application.search3.searchEngine.business.Constants;
 import uk.ac.ebi.intact.business.IntactException;
 
 import java.io.StringReader;
