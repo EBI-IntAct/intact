@@ -5,10 +5,8 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 
 
 /**
@@ -23,6 +21,8 @@ public class CvTopic extends CvObject implements Editable {
 
     //////////////////////////
     // Constants
+
+    public static final String CURATED_COMPLEX = "curated-complex";
 
     public static final String ASSEMBLY = "assembly";
 
@@ -42,7 +42,7 @@ public class CvTopic extends CvObject implements Editable {
 
     public static final String REMARK_INTERNAL = "remark-internal";
 
-    public static final String RESULTING_PTM= "resulting-ptm";
+    public static final String RESULTING_PTM = "resulting-ptm";
     public static final String PREREQUISITE_PTM = "prerequisite-ptm";
     public static final String COMMENT = "comment";
     public static final String COMMENT_MI_REF = "MI:0612";
@@ -120,7 +120,6 @@ public class CvTopic extends CvObject implements Editable {
      * @deprecated Use the full constructor instead
      */
 //    protected static Vector menuList = null;
-
 
     /**
      * This constructor should <b>not</b> be used as it could result in objects with invalid state. It is here for
