@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.SearchReplace;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.*;
 
@@ -242,21 +243,7 @@ public class InteractorViewBean extends AbstractViewBean {
     public int getInteractionsCount() {
 
         // count the number of interaction to which related that protein
-
-        // count the number of distinct interactions
-        Set interactions = new HashSet( interactor.getActiveInstances().size() );
-        for ( Iterator iterator = interactor.getActiveInstances().iterator(); iterator.hasNext(); ) {
-            Component component = (Component) iterator.next();
-            interactions.add( component.getInteraction().getAc() );
-        }
-
-        int count = interactions.size();
-
-        // clear resources
-        interactions.clear();
-        interactions = null;
-
-        return count;
+        return DaoFactory.getInteractorDao().countInteractionsForInteractorWithAc(interactor.getAc());
     }
 
     /**
@@ -283,7 +270,6 @@ public class InteractorViewBean extends AbstractViewBean {
      *         this Xref
      */
     public String getPrimaryIdURL( Xref xref ) {
-
         // Check if the id can be hyperlinked
         String searchUrl = (String) dbUrls.get( xref.getCvDatabase() );
         if ( searchUrl == null ) {
@@ -315,16 +301,8 @@ public class InteractorViewBean extends AbstractViewBean {
 
     public Collection getGeneNames() {
 
-        Collection geneNames = new HashSet();
+        Collection geneNames = DaoFactory.getInteractorDao().getGeneNamesByInteractorAc(interactor.getAc());
 
-        Collection aliases = interactor.getAliases();
-        for ( Iterator it = aliases.iterator(); it.hasNext(); ) {
-            Alias alias = (Alias) it.next();
-
-            if ( geneNameFilter.contains( alias.getCvAliasType().getShortLabel() ) ) {
-                geneNames.add( alias.getName() );
-            }
-        }
         //now strip off trailing comma - if there are any names....
         if ( geneNames.size() == 0 ) {
             geneNames.add( "-" );
