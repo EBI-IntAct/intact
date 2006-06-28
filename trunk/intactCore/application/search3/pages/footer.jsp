@@ -21,8 +21,10 @@
         Please send any questions or suggestions to
             <a href="mailto:intact-help@ebi.ac.uk">intact-help@ebi.ac.uk</a>
         <br/>
+        <%-- commented during the reorg to maven
         Last modified: <i><%@ include file="../last-modified.txt" %></i>
         <br/>
+        --%>
         Version: <i><bean:message bundle="buildInfo" key="build.version"/></i>
     </td>
     <td class="tableCell">
