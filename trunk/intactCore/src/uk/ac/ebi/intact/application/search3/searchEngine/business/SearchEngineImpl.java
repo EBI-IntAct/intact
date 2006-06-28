@@ -14,7 +14,6 @@ import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import uk.ac.ebi.intact.application.search3.searchEngine.parser.IQLParser;
-import uk.ac.ebi.intact.application.search3.business.Constants;
 import uk.ac.ebi.intact.application.search3.searchEngine.SearchEngineConstants;
 import uk.ac.ebi.intact.application.search3.searchEngine.business.dao.SearchDAO;
 import uk.ac.ebi.intact.application.search3.searchEngine.lucene.Indexer;
@@ -45,7 +44,7 @@ public class SearchEngineImpl implements SearchEngine {
     private final int MAX_VALUE = 200;
     private final static Object mutex = new Object();
 
-    private static Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
+    private static Logger logger = Logger.getLogger( "search" );
     private int myPossibleSize;
 
     /**

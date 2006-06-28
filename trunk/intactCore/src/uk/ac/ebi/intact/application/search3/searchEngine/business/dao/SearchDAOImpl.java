@@ -3,7 +3,6 @@ package uk.ac.ebi.intact.application.search3.searchEngine.business.dao;
 import org.apache.commons.collections.IterableMap;
 import org.apache.commons.collections.MapIterator;
 import org.apache.commons.collections.map.HashedMap;
-import uk.ac.ebi.intact.application.search3.business.Constants;
 import uk.ac.ebi.intact.application.search3.searchEngine.SearchEngineConstants;
 import uk.ac.ebi.intact.application.search3.searchEngine.lucene.model.SearchObject;
 import uk.ac.ebi.intact.application.search3.searchEngine.util.SearchObjectProvider;
@@ -31,7 +30,7 @@ public class SearchDAOImpl implements SearchDAO {
     /**
      * Logger for this class.
      */
-    private static Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
+    private static Logger logger = Logger.getLogger( "search" );
 
     /**
      * Constructs a SearchDAOImpl object.
