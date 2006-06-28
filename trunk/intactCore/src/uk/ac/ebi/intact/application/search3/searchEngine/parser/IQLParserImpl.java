@@ -12,7 +12,6 @@ import uk.ac.ebi.intact.application.search3.searchEngine.parser.iql2luceneParser
 import uk.ac.ebi.intact.application.search3.searchEngine.parser.iql2luceneParser.Iql2LuceneParser;
 import uk.ac.ebi.intact.application.search3.searchEngine.parser.iql2luceneParser.Iql2LuceneTreeWalker;
 import uk.ac.ebi.intact.application.search3.searchEngine.parser.iql2luceneParser.ValLexer;
-import uk.ac.ebi.intact.application.search3.searchEngine.business.Constants;
 import uk.ac.ebi.intact.business.IntactException;
 
 import java.io.StringReader;
@@ -28,7 +27,7 @@ public class IQLParserImpl implements IQLParser {
     /**
      * Logger for that class.
      */
-    protected transient static final Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
+    protected transient static final Logger logger = Logger.getLogger( "search" );
 
 
     /**
