@@ -41,8 +41,48 @@
         </resources>
     </build>
 
-    <!-- Profile to run jetty, so the tomcat jars are included in the bundle. They are not included by default -->
+    <properties>
+         <lucene.index.directory>/ebi/sp/pro4/intact/public-tomcat/lucene-index</lucene.index.directory>
+    </properties>
+
     <profiles>
+        <profile>
+            <id>ebi-test</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <db>oracle</db>
+                <db.host>bourbon.ebi.ac.uk</db.host>
+                <db.port>1521</db.port>
+                <db.alias>d003</db.alias>
+                <db.user>intact</db.user>
+                <db.reading>reading</db.reading>
+            </properties>
+        </profile>
+        <profile>
+            <id>ebi-curators</id>
+            <properties>
+                <db>oracle</db>
+                <db.host>cumae.ebi.ac.uk</db.host>
+                <db.port>1531</db.port>
+                <db.alias>zpro</db.alias>
+                <db.user>intact</db.user>
+                <db.reading>reading</db.reading>
+            </properties>
+        </profile>
+        <profile>
+            <id>ebi-prod</id>
+            <properties>
+                <db>oracle</db>
+                <db.host>swan.ebi.ac.uk</db.host>
+                <db.port>1521</db.port>
+                <db.alias>iweb</db.alias>
+                <db.user>intact</db.user>
+                <db.reading>reading</db.reading>
+            </properties>
+        </profile>
+
         <profile>
             <id>oracle</id>
             <activation>
@@ -51,9 +91,30 @@
                     <value>oracle</value>
                  </property>
             </activation>
-            <build>
-                <finalName>search-oracle</finalName>
-            </build>
+
+            <properties>
+                <db.platform>Oracle</db.platform>
+                <db.jdbcLevel>2.0</db.jdbcLevel>
+                <db.driver>oracle.jdbc.pool.OracleConnectionCacheImpl</db.driver>
+                <db.protocol>jdbc</db.protocol>
+                <db.subprotocol>oracle:thin:@${db.host}:${db.port}</db.subprotocol>
+                <db.dialect>org.hibernate.dialect.Oracle9Dialect</db.dialect>
+           </properties>
+
+ <!--
+<jdbc-connection-descriptor
+   		platform="PostgreSQL"
+   		jdbc-level="2.0"
+   		driver="org.postgresql.Driver"
+   		protocol="jdbc"
+   		subprotocol="postgresql"
+        eager-release="false"
+		dbalias="DATABASE"
+   		username="USER"
+   		password="PASSWORD"
+        />
+        -->
+
             <dependencies>
                 <dependency>
                     <groupId>com.oracle</groupId>
@@ -102,7 +163,7 @@
         </dependency>
 
         <!-- server -->
-	<dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
             <version>2.4</version>
@@ -115,7 +176,6 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-
 
 
 </project>
