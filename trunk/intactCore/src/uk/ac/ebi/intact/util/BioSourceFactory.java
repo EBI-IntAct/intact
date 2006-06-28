@@ -6,8 +6,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.util;
 
 import org.apache.commons.collections.map.LRUMap;
-import org.apache.log4j.Logger;
-import org.apache.ojb.broker.accesslayer.LookupException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
@@ -15,7 +15,6 @@ import uk.ac.ebi.intact.model.*;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -28,9 +27,9 @@ import java.util.Iterator;
 public class BioSourceFactory {
 
     /**
-     * Logger for the internal processing - can be optionally set
+     * Sets up a logger for that class.
      */
-    private org.apache.log4j.Logger logger = null;
+    public static final Log log = LogFactory.getLog( BioSourceFactory.class );
 
     /**
      * Data access
@@ -53,18 +52,14 @@ public class BioSourceFactory {
      */
     private static NewtServerProxy newtProxy;
     private static final String NEWT_URL = "http://www.ebi.ac.uk/newt/display";
-    // http://web7-node1.ebi.ac.uk:9120/newt/display
-
 
     public BioSourceFactory( IntactHelper helper ) throws IntactException {
         this( helper, helper.getInstitution(), DEFAULT_CACHE_SIZE );
     }
 
-
     public BioSourceFactory( IntactHelper helper, Institution institution ) {
         this( helper, institution, DEFAULT_CACHE_SIZE );
     }
-
 
     public BioSourceFactory( IntactHelper helper, Institution institution, int cacheSize ) {
 
@@ -91,16 +86,6 @@ public class BioSourceFactory {
         bioSourceCache = new LRUMap( cacheSize );
     }
 
-
-    /**
-     * Set a logger to keep track of the internal processing.
-     *
-     * @param logger the logger to set
-     */
-    public void setLogger( Logger logger ) {
-        this.logger = logger;
-    }
-
     /**
      * Sets the Intact helper to access the persistent system. This method is package visible.
      *
@@ -113,7 +98,7 @@ public class BioSourceFactory {
     /**
      * Select a BioSource that has neither CvCellType nor CvTissue.
      *
-     * @param biosources the Collection of BioSource that potentially contains some having CvCellType or CvTissue.
+     * @param bioSources the Collection of BioSource that potentially contains some having CvCellType or CvTissue.
      *
      * @return the unique BioSource that has neither CvCellType nor CvTissue
      *
@@ -122,37 +107,44 @@ public class BioSourceFactory {
     private BioSource getOriginalBioSource( Collection<BioSource> bioSources ) throws IntactException {
         BioSource original = null;
 
-        for (BioSource bioSource : bioSources)
-        {
-             if (bioSource.getCvTissue() == null &&
-                    bioSource.getCvCellType() == null)
-            {
-                if (original == null)
-                {
+        for ( BioSource bioSource : bioSources ) {
+            if ( bioSource.getCvTissue() == null &&
+                 bioSource.getCvCellType() == null ) {
+                if ( original == null ) {
                     // first on is found
                     original = bioSource;
-                }
-                else
-                {
+                } else {
                     // multiple bioSource, error.
-                    if (logger != null)
-                    {
-                        logger.error("More than one BioSource with this taxId found: " + original.getTaxId());
-                    }
-                    throw new IntactException("More than one BioSource with this taxId found: " + original.getTaxId());
+                    log.error( "More than one BioSource with this taxId found: " + original.getTaxId() );
+                    throw new IntactException( "More than one BioSource with this taxId found: " + original.getTaxId() );
                 }
             }
         }
         return original;
     }
 
+    /**
+     * Returns CvDatabase(newt)
+     *
+     * @return
+     *
+     * @throws IntactException
+     */
     private CvDatabase getNewt() throws IntactException {
-        CvDatabase newt =  helper.getObjectByLabel( CvDatabase.class, CvDatabase.NEWT );
+        Collection<CvDatabase> objectsByXref = helper.getObjectsByXref( CvDatabase.class, CvDatabase.NEWT_MI_REF );
+        if ( objectsByXref.isEmpty() ) {
+            throw new IllegalStateException( "Could not find newt in the Database. Please update your controlled vocabularies." );
+        }
+        CvDatabase newt = objectsByXref.iterator().next();
         return newt;
     }
 
     private CvXrefQualifier getIdentity() throws IntactException {
-        CvXrefQualifier identity =  helper.getObjectByLabel( CvXrefQualifier.class, CvXrefQualifier.IDENTITY );
+        Collection<CvXrefQualifier> objectsByXref = helper.getObjectsByXref( CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF );
+        if ( objectsByXref.isEmpty() ) {
+            throw new IllegalStateException( "Could not find the qualifier(identity) in the Database. Please update your controlled vocabularies." );
+        }
+        CvXrefQualifier identity = objectsByXref.iterator().next();
         return identity;
     }
 
@@ -165,17 +157,23 @@ public class BioSourceFactory {
      */
     public BioSource getValidBioSource( String aTaxId ) throws IntactException {
 
+
+        int taxid = 0;
+        try {
+            taxid = Integer.parseInt( aTaxId );
+        } catch ( NumberFormatException e ) {
+            throw new IntactException( "A taxid must be a integer value.", e );
+        }
+
         // If a valid BioSource object already exists, return it.
         if ( bioSourceCache.containsKey( aTaxId ) ) {
             return (BioSource) bioSourceCache.get( aTaxId );
         }
 
         // Get all existing BioSources with aTaxId
-        Collection currentBioSources = helper.search( BioSource.class.getName(), "taxId", aTaxId );
+        Collection currentBioSources = helper.search( BioSource.class, "taxId", aTaxId );
 
-        if ( logger != null ) {
-            logger.info( currentBioSources.size() + " BioSource found for " + aTaxId );
-        }
+        log.info( currentBioSources.size() + " BioSource found for " + aTaxId );
 
         if ( null == currentBioSources ) {
             throw new IntactException( "Search for a BioSource having the taxId: " + aTaxId + " failed." );
@@ -191,22 +189,38 @@ public class BioSourceFactory {
 
         // Get a correct BioSource from Newt
         // we could have created our own biosource like 'in vitro' ... in which case, newt is unaware of it !
-        // TODO in-vitro could be autogenerated by that factory if the user gives -1 !!
-        BioSource validBioSource = getNewtBiosource( aTaxId );
+        BioSource validBioSource = null;
+        if ( taxid != -1 ) {
+            validBioSource = getNewtBiosource( aTaxId );
+        }
 
         if ( null == validBioSource && intactBioSource == null ) {
 
-            if ( logger != null ) {
-                logger.error( "The taxId is invalid: " + aTaxId );
+            if ( taxid == -1 ) {
+                // special case: in vitro was defined as taxid -1.
+                BioSource inVitro = new BioSource( institution, "in-vitro", aTaxId );
+
+                helper.create( inVitro );
+
+                CvDatabase newt = getNewt();
+                CvXrefQualifier identity = getIdentity();
+                Xref xref = new Xref( institution, newt, aTaxId, identity );
+                inVitro.addXref( xref );
+
+                helper.create( xref );
+
+                newBioSource = inVitro;
+
+            } else {
+
+                log.error( "The taxId is invalid: " + aTaxId );
+                throw new IntactException( "The taxId is invalid: " + aTaxId );
             }
-            throw new IntactException( "The taxId is invalid: " + aTaxId );
 
         } else if ( null == validBioSource && intactBioSource != null ) {
 
             // we have a biosource in intact that Newt doesn't know about, return it.
-            if ( logger != null ) {
-                logger.error( "The taxId " + aTaxId + " was found in IntAct but doesn't exists in Newt." );
-            }
+            log.error( "The taxId " + aTaxId + " was found in IntAct but doesn't exists in Newt." );
             newBioSource = intactBioSource;
 
         } else if ( null != validBioSource && intactBioSource == null ) {
@@ -229,9 +243,7 @@ public class BioSourceFactory {
                 switch ( bioSources.size() ) {
                     case 0:
                         // doesn't exists, so create it.
-                        if ( logger != null ) {
-                            logger.info( "Creating new bioSource(" + newTaxid + ")." );
-                        }
+                        log.info( "Creating new bioSource(" + newTaxid + ")." );
                         helper.create( validBioSource );
                         newBioSource = validBioSource;
 
@@ -242,9 +254,7 @@ public class BioSourceFactory {
                     case 1:
                         // it exists, try to update it.
                         BioSource intactBs = (BioSource) bioSources.iterator().next();
-                        if ( logger != null ) {
-                            logger.info( "Updating existing BioSource (" + newTaxid + ")" );
-                        }
+                        log.info( "Updating existing BioSource (" + newTaxid + ")" );
                         newBioSource = updateBioSource( intactBs, validBioSource );
 
                         // cache the new taxid as well.
@@ -253,10 +263,8 @@ public class BioSourceFactory {
 
                     default:
                         // more than one !
-                        if ( logger != null ) {
-                            logger.error( "More than one BioSource with this taxId found: " + aTaxId +
-                                          ". Check for the original one." );
-                        }
+                        log.error( "More than one BioSource with this taxId found: " + aTaxId +
+                                   ". Check for the original one." );
 
                         newBioSource = getOriginalBioSource( bioSources ); // fail if more than one !
                 }
@@ -267,9 +275,7 @@ public class BioSourceFactory {
             // BioSource found in IntAct AND in Newt.
 
             if ( !intactBioSource.equals( validBioSource ) ) {
-                if ( logger != null ) {
-                    logger.info( "Updating existing BioSource (" + validBioSource.getTaxId() + ")" );
-                }
+                log.info( "Updating existing BioSource (" + validBioSource.getTaxId() + ")" );
                 if ( validBioSource.getTaxId().equals( aTaxId ) ) {
 
                     // given taxid was ok
@@ -287,9 +293,7 @@ public class BioSourceFactory {
                     switch ( bioSources.size() ) {
                         case 0:
                             // doesn't exists, so create it.
-                            if ( logger != null ) {
-                                logger.info( "Creating new bioSource(" + newTaxid + ")." );
-                            }
+                            log.info( "Creating new bioSource(" + newTaxid + ")." );
                             helper.create( validBioSource );
                             newBioSource = validBioSource;
 
@@ -306,9 +310,7 @@ public class BioSourceFactory {
                                 helper.update( xref );
 
                             } catch ( IntactException e ) {
-                                if ( logger != null ) {
-                                    logger.error( "An error occured when trying to add Newt Xref to " + newBioSource, e );
-                                }
+                                log.error( "An error occured when trying to add Newt Xref to " + newBioSource, e );
                             }
 
                             break;
@@ -316,19 +318,15 @@ public class BioSourceFactory {
                         case 1:
                             // it exists, try to update it.
                             BioSource intactBs = (BioSource) bioSources.iterator().next();
-                            if ( logger != null ) {
-                                logger.info( "Updating existing BioSource (" + newTaxid + ")" );
-                            }
+                            log.info( "Updating existing BioSource (" + newTaxid + ")" );
                             newBioSource = updateBioSource( intactBs, validBioSource );
 
                             break;
 
                         default:
                             // more than one !
-                            if ( logger != null ) {
-                                logger.error( "More than one BioSource with this taxId found: " + aTaxId +
-                                              ". Check for the original one." );
-                            }
+                            log.error( "More than one BioSource with this taxId found: " + aTaxId +
+                                       ". Check for the original one." );
 
                             BioSource original = getOriginalBioSource( bioSources ); // fail if more than one !
                             newBioSource = updateBioSource( original, validBioSource );
@@ -351,7 +349,6 @@ public class BioSourceFactory {
         return newBioSource;
     } // getValidBioSource
 
-
     /**
      * Gives a valid taxid.
      *
@@ -370,7 +367,6 @@ public class BioSourceFactory {
         return validBioSource.getTaxId();
     }
 
-
     /**
      * Update the given BioSource with data taken from Newt.<br> it assumes that the taxid is existing in the given
      * BioSource.
@@ -385,27 +381,19 @@ public class BioSourceFactory {
             return null;
         }
 
-        if ( logger != null ) {
-            logger.info( "Try to get BioSource data from Newt" );
-        }
+        log.info( "Try to get BioSource data from Newt" );
         NewtServerProxy.NewtResponse response = null;
 
         try {
             response = newtProxy.query( Integer.parseInt( taxid ) );
         } catch ( IOException e ) {
-            if ( logger != null ) {
-                logger.error( "Could not access the Newt web server.", e );
-            }
+            log.error( "Could not access the Newt web server.", e );
             return null;
         } catch ( NumberFormatException e ) {
-            if ( logger != null ) {
-                logger.error( "invalid taxid: " + taxid, e );
-            }
+            log.error( "invalid taxid: " + taxid, e );
             return null;
         } catch ( NewtServerProxy.TaxIdNotFoundException e ) {
-            if ( logger != null ) {
-                logger.error( "taxId not found from Newt: " + taxid, e );
-            }
+            log.error( "taxId not found from Newt: " + taxid, e );
             return null;
         }
 
@@ -430,7 +418,6 @@ public class BioSourceFactory {
         return bioSource;
     }
 
-
     /**
      * Try to update an existing IntAct BioSource from an other.
      * <p/>
@@ -452,10 +439,8 @@ public class BioSourceFactory {
         String newtTaxid = newtBioSource.getTaxId();
         if ( false == bioSource.getTaxId().equals( newtTaxid ) ) {
             bioSource.setTaxId( newtTaxid );
-            if ( logger != null ) {
-                logger.debug( "Obsolete taxid: taxid " + bioSource.getTaxId() +
-                              " becomes " + newtTaxid );
-            }
+            log.debug( "Obsolete taxid: taxid " + bioSource.getTaxId() +
+                       " becomes " + newtTaxid );
             needUpdate = true;
         }
 
@@ -466,7 +451,8 @@ public class BioSourceFactory {
         // get the Newt/identity Xref
         // Note: if the BioSource lacks the identity Xref, we create it !
         boolean foundNewtIdentityXref = false;
-        for ( Iterator iterator = bioSource.getXrefs().iterator(); iterator.hasNext() && foundNewtIdentityXref == false; ) {
+        for ( Iterator iterator = bioSource.getXrefs().iterator(); iterator.hasNext() && foundNewtIdentityXref == false; )
+        {
             Xref xref = (Xref) iterator.next();
 
             CvXrefQualifier qualifier = xref.getCvXrefQualifier();
@@ -477,9 +463,7 @@ public class BioSourceFactory {
                 foundNewtIdentityXref = true;
                 if ( false == xref.getPrimaryId().equals( newtBioSource.getTaxId() ) ) {
 
-                    if ( logger != null ) {
-                        logger.debug( "The identity Xref for that BioSource was not set to the correct taxid, updating it..." );
-                    }
+                    log.debug( "The identity Xref for that BioSource was not set to the correct taxid, updating it..." );
 
                     xref.setPrimaryId( newtBioSource.getTaxId() );
 
@@ -493,9 +477,7 @@ public class BioSourceFactory {
 
         if ( false == foundNewtIdentityXref ) {
 
-            if ( logger != null ) {
-                logger.debug( "The identity Xref for that BioSource was missing, creating it..." );
-            }
+            log.debug( "The identity Xref for that BioSource was missing, creating it..." );
 
             Xref xref = new Xref( institution, newt, newtBioSource.getTaxId(), null, null, identity );
             bioSource.addXref( xref );
@@ -503,7 +485,6 @@ public class BioSourceFactory {
             // persist changes
             helper.create( xref );
         }
-
 
         /**
          * The IntAct shortlabel and fullName has to be maintained.
@@ -513,9 +494,7 @@ public class BioSourceFactory {
 
         if ( needUpdate ) {
 
-            if ( logger != null ) {
-                logger.info( "update biosource (taxid=" + bioSource.getTaxId() + ")" );
-            }
+            log.info( "update biosource (taxid=" + bioSource.getTaxId() + ")" );
 
             try {
                 helper.update( bioSource );
@@ -526,10 +505,4 @@ public class BioSourceFactory {
 
         return bioSource;
     } // updateBioSource
-
-
-    public static void main( String[] args ) throws IntactException, SQLException, LookupException {
-        // TODO global update of all existing bioSource here !!
-    }
-
-} // BioSourceFactory
+}
