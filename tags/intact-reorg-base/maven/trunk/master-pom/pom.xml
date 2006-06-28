@@ -233,6 +233,7 @@
                 <enabled>false</enabled>
             </releases>
         </pluginRepository>
+        -->
         <pluginRepository>
             <id>Maven Snapshots</id>
             <url>http://snapshots.maven.codehaus.org/maven2/</url>
@@ -243,7 +244,7 @@
                 <enabled>false</enabled>
             </releases>
         </pluginRepository>
-        -->
+        
         <!--
         <pluginRepository>
             <id>Maven Apache Snapshots</id>
