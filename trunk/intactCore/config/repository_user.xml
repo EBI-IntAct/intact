@@ -1045,7 +1045,8 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 
         <!-- descriptor for Interaction.....-->
 <class-descriptor
-        class="uk.ac.ebi.intact.model.InteractionImpl" table="ia_Interactor">
+        class="uk.ac.ebi.intact.model.InteractionImpl" table="ia_Interactor"
+        proxy="uk.ac.ebi.intact.model.proxy.InteractionProxy">
 
     <!-- ***************** fields from superclasses ********************* -->
     <!-- fields from BasicObject... -->
