@@ -13,6 +13,7 @@ import org.apache.commons.dbutils.handlers.BeanListHandler;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.CvTopic;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -219,35 +220,32 @@ public class ReactomeXrefs {
             helper = new IntactHelper();
             System.out.println( "Database: " + helper.getDbName() );
 
+            // loading controlled vocabularied
+
+            CvTopic curatedComplex = helper.getObjectByLabel( CvTopic.class, CvTopic.CURATED_COMPLEX );
+            if ( curatedComplex == null ) {
+                throw new IllegalStateException( "Could not find CvTopic by shortlabel: " );
+            }
+
+            Collection<CvDatabase> databases = helper.getObjectsByXref( CvDatabase.class,
+                                                                        CvDatabase.REACTOME_COMPLEX_PSI_REF );
+            if ( databases == null || databases.isEmpty() ) {
+                throw new IllegalStateException( "Could not find CvDatabase( reactome complex ) by Xref: " + CvDatabase.REACTOME_COMPLEX_PSI_REF );
+            }
+
+            CvDatabase reactome = databases.iterator().next();
+
+
             Connection connection = helper.getJDBCConnection();
 
-//            String test = "SELECT i.ac as interactionAC, x.primaryId as reactomeID \n" +
-//                          "FROM ia_experiment e,\n" +
-//                          "     ia_int2exp i2e,\n" +
-//                          "     ia_exp2annot e2a,\n" +
-//                          "     ia_annotation a,\n" +
-//                          "     ia_controlledvocab topic_i,\n" +
-//                          "     ia_interactor i, \n" +
-//                          "     ia_xref x, \n" +
-//                          "     ia_controlledvocab db \n" +
-//                          "WHERE i.objclass LIKE '%Interaction%' \n" +
-//                          "      AND i.ac = i2e.interaction_ac \n" +
-//                          "      AND i2e.experiment_ac = e.ac\n" +
-//                          "      AND e2a.annotation_ac = a.ac \n" +
-//                          "      AND a.topic_ac = topic_i.ac\n" +
-//                          "      AND topic_i.shortlabel LIKE '%' -- should be curated-complex\n" +
-//                          "      AND i.ac = x.parent_ac \n" +
-//                          "      AND x.database_ac = db.ac \n" +
-//                          "      AND db.shortlabel = 'reactome complex'";
-//
-//            System.out.println( test );
-
-            final String sql = "SELECT p.ac as interactionAC, x.primaryId as reactomeID " +
-                               "FROM ia_interactor p, ia_xref x, ia_controlledvocab db " +
-                               "WHERE p.objclass LIKE '%Interaction%' AND" +
-                               "      p.ac = x.parent_ac AND" +
-                               "      x.database_ac = db.ac AND" +
-                               "      db.shortlabel = '" + CvDatabase.REACTOME_COMPLEX + "'";
+            final String sql = "SELECT i.ac as interactionAC, x.primaryId as reactomeID\n" +
+                               "FROM ia_interactor i, ia_xref x, ia_annotation a, ia_int2annot i2a\n" +
+                               "WHERE i.objclass LIKE '%Interaction%' AND\n" +
+                               "      i.ac = x.parent_ac AND\n" +
+                               "      x.database_ac = '" + reactome.getAc() + "' AND\n" +
+                               "      i.ac = i2a.interactor_ac AND\n" +
+                               "      i2a.annotation_ac = a.ac AND\n" +
+                               "      a.topic_ac = '" + curatedComplex.getAc() + "'";
 
             System.out.println( "sql = " + sql );
 
@@ -332,7 +330,7 @@ public class ReactomeXrefs {
 
 
         } finally {
-            if ( helper == null ) {
+            if ( helper != null ) {
                 System.out.println( "Closing database connection." );
                 helper.closeStore();
             }
