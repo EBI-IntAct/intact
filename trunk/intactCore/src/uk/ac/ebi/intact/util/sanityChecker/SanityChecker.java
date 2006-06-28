@@ -14,7 +14,6 @@ import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.ojb.broker.accesslayer.LookupException;
 import uk.ac.ebi.intact.application.commons.util.AnnotationSection;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
@@ -1761,7 +1760,7 @@ public class SanityChecker {
 
         scn.checkProtein( proteinBeans );
         scn.checkCrc64( proteinBeans );
-        scn.checkAnnotations( proteinBeans, EditorMenuFactory.PROTEIN, protUsableTopic );
+        scn.checkAnnotations( proteinBeans, "Protein", protUsableTopic );
 
         //already working
         List ranges = scn.deletionFeatureSch.getBeans( helper, RangeBean.class, "2" );
