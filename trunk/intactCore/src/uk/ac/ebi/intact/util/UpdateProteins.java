@@ -6,6 +6,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.util;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.aristotle.model.sptr.AristotleSPTRException;
 import uk.ac.ebi.aristotle.util.interfaces.AlternativeSplicingAdapter;
 import uk.ac.ebi.intact.core.DummyServletContext;
@@ -165,6 +167,8 @@ import java.util.List;
  */
 public class UpdateProteins extends UpdateProteinsI {
 
+    private static final Log logger = LogFactory.getLog(UpdateProteins.class);
+
     /**
      * <pre>
      * Version of the UpdateProteins
@@ -317,9 +321,7 @@ public class UpdateProteins extends UpdateProteinsI {
     }
 
     private void logInfo( String msg ) {
-        if ( logger != null ) {
-            logger.info( msg );
-        }
+             logger.info( msg );
     }
 
     private void reset() {
