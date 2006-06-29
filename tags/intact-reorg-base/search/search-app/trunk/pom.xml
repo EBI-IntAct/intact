@@ -32,7 +32,7 @@
     </scm>
 
     <build>
-        <finalName>search</finalName>
+        <finalName>search-${db}-${db.alias}</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -56,8 +56,8 @@
                 <db.host>bourbon.ebi.ac.uk</db.host>
                 <db.port>1521</db.port>
                 <db.alias>d003</db.alias>
-                <db.user>intact</db.user>
-                <db.reading>reading</db.reading>
+                <db.user>intactweb</db.user>
+                <db.password>reading</db.password>
             </properties>
         </profile>
         <profile>
@@ -67,8 +67,8 @@
                 <db.host>cumae.ebi.ac.uk</db.host>
                 <db.port>1531</db.port>
                 <db.alias>zpro</db.alias>
-                <db.user>intact</db.user>
-                <db.reading>reading</db.reading>
+                <db.user>intactweb</db.user>
+                <db.password>reading</db.password>
             </properties>
         </profile>
         <profile>
@@ -78,8 +78,8 @@
                 <db.host>swan.ebi.ac.uk</db.host>
                 <db.port>1521</db.port>
                 <db.alias>iweb</db.alias>
-                <db.user>intact</db.user>
-                <db.reading>reading</db.reading>
+                <db.user>intactweb</db.user>
+                <db.password>reading</db.password>
             </properties>
         </profile>
 
@@ -95,7 +95,7 @@
             <properties>
                 <db.platform>Oracle</db.platform>
                 <db.jdbcLevel>2.0</db.jdbcLevel>
-                <db.driver>oracle.jdbc.pool.OracleConnectionCacheImpl</db.driver>
+                <db.driver>oracle.jdbc.OracleDriver</db.driver>
                 <db.protocol>jdbc</db.protocol>
                 <db.subprotocol>oracle:thin:@${db.host}:${db.port}</db.subprotocol>
                 <db.dialect>org.hibernate.dialect.Oracle9Dialect</db.dialect>
