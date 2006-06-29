@@ -8,6 +8,8 @@
 package uk.ac.ebi.intact.util;
 
 import org.apache.log4j.Logger;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
@@ -29,7 +31,7 @@ import java.util.Map;
  */
 public abstract class UpdateProteinsI {
 
-    protected static Logger logger = Logger.getLogger( "updateProtein" );
+    private static final Log logger = LogFactory.getLog(UpdateProteinsI.class);
 
     public static class UpdateException extends RuntimeException {
 
@@ -122,7 +124,6 @@ public abstract class UpdateProteinsI {
         collectDefaultObject( helper );
 
         bioSourceFactory = new BioSourceFactory( helper, myInstitution, cacheSize );
-        bioSourceFactory.setLogger( logger );
     }
 
     /**
@@ -138,7 +139,6 @@ public abstract class UpdateProteinsI {
         collectDefaultObject( helper );
 
         bioSourceFactory = new BioSourceFactory( helper, myInstitution );
-        bioSourceFactory.setLogger( logger );
     }
 
     /**
@@ -221,16 +221,6 @@ public abstract class UpdateProteinsI {
      */
     public Map getParsingExceptions() {
         return parsingExceptions;
-    }
-
-    /**
-     * Set the updateprotein logger and those of 3rd party tools.
-     *
-     * @param aLogger the new logger.
-     */
-    public void setLogger( Logger aLogger ) {
-        logger = aLogger;
-        bioSourceFactory.setLogger( aLogger );
     }
 
     /**
