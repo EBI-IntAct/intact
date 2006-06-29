@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import uk.ac.ebi.intact.annotation.AnnotationUtil;
+
 /**
  * TODO comment this
  *
@@ -53,7 +55,7 @@ public class IntactAnnotator
 
             // Get the list of the files contained in the package
             for (String file : directory.list()) {
-                Class clazz = getAnnotatedClass(packageName+"/"+file);
+                Class clazz = AnnotationUtil.getAnnotatedClass(Entity.class, packageName+"/"+file);
 
                 if (clazz != null)
                 {
@@ -73,7 +75,7 @@ public class IntactAnnotator
             log.info("Searching classes in jar: "+jarPath);
             try
             {
-                annotatedClasses.addAll(getAnnotatedClasses(jarPath));
+                annotatedClasses.addAll(AnnotationUtil.getClassesWithAnnotationFromJar(Entity.class, jarPath));
             }
             catch (IOException e)
             {
@@ -84,62 +86,6 @@ public class IntactAnnotator
         return annotatedClasses;
     }
 
-    private static List<Class> getAnnotatedClasses(String jarPath) throws IOException
-    {
-        List<Class> annotatedClasses = new ArrayList<Class>();
 
-        JarFile jarFile = new JarFile(jarPath);
-
-        Enumeration<JarEntry> e = jarFile.entries();
-
-        while (e.hasMoreElements())
-        {
-            JarEntry entry = e.nextElement();
-
-            Class clazz = getAnnotatedClass(entry.getName());
-
-            if (clazz != null)
-            {
-                annotatedClasses.add(clazz);
-            }
-        }
-
-        jarFile.close();
-
-        return annotatedClasses;
-    }
-
-
-    private static Class getAnnotatedClass(String classFilename)
-    {
-        if (classFilename.endsWith(".class")) {
-
-            String fileDir = classFilename.substring(0, classFilename.lastIndexOf("/"));
-            String className = classFilename.substring(classFilename.lastIndexOf("/")+1,classFilename.indexOf(".class") );
-
-            String packageName = fileDir.replaceAll("/",".");
-
-            if (packageName.startsWith("."))
-                    packageName = packageName.substring(1, fileDir.length());
-
-            //log.info("Classname: "+className+" package: "+packageName);
-
-           // removes the .class extension
-            try {
-                // Try to create an instance of the object
-                Class clazz = Class.forName(packageName+"."+className);
-
-                // check for the @Entity annotation
-                if (clazz.isAnnotationPresent(Entity.class)) {
-                    return clazz;
-                }
-
-            } catch (Throwable e) {
-                log.debug("Error loading class "+packageName+"."+className+": "+e);
-            }
-        }
-
-        return null;
-    }
 
 }

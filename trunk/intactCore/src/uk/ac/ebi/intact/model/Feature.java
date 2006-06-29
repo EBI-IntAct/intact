@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import uk.ac.ebi.intact.annotation.EditorTopic;
+
 /**
  * <p>
  * Represents a feature, a region with specific properties, on a sequence.
@@ -30,6 +32,7 @@ import java.util.Iterator;
  */
 @Entity
 @Table(name = "ia_feature")
+@EditorTopic
 public class Feature extends AnnotatedObjectImpl implements Editable{
 
 

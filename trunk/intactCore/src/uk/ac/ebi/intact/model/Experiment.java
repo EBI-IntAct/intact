@@ -5,6 +5,8 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import uk.ac.ebi.intact.annotation.EditorTopic;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,6 +21,7 @@ import java.util.Collection;
  */
 @Entity
 @Table(name = "ia_experiment")
+@EditorTopic
 public class Experiment extends AnnotatedObjectImpl implements Editable {
 
     ///////////////////////////////////////

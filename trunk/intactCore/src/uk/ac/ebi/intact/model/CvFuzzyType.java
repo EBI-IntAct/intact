@@ -1,5 +1,7 @@
 package uk.ac.ebi.intact.model;
 
+import uk.ac.ebi.intact.annotation.EditorTopic;
+
 import javax.persistence.Entity;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Transient;
@@ -17,6 +19,7 @@ import java.util.regex.Matcher;
  */
 @Entity
 @DiscriminatorValue("uk.ac.ebi.intact.model.CvFuzzyType")
+@EditorTopic
 public class CvFuzzyType extends CvObject implements Editable {
 
     /**
