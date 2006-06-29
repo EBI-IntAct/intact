@@ -5,6 +5,8 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import uk.ac.ebi.intact.annotation.EditorTopic;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.DiscriminatorColumn;
@@ -20,6 +22,7 @@ import javax.persistence.DiscriminatorValue;
  */
 @Entity
 @DiscriminatorValue("uk.ac.ebi.intact.model.CvAliasType")
+@EditorTopic
 public class CvAliasType extends CvObject implements Editable {
 
     ////////////////////////////

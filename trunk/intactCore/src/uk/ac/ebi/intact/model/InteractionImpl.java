@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import uk.ac.ebi.intact.annotation.EditorTopic;
+
 /**
  * Represents an interaction.
  * <p/>
@@ -26,6 +28,7 @@ import java.util.Iterator;
  */
 @Entity
 @DiscriminatorValue("uk.ac.ebi.intact.model.InteractionImpl")
+@EditorTopic(name="Interaction")
 public class InteractionImpl extends InteractorImpl implements Editable, Interaction {
 
     ///////////////////////////////////////

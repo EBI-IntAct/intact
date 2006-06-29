@@ -5,6 +5,8 @@
  */
 package uk.ac.ebi.intact.model;
 
+import uk.ac.ebi.intact.annotation.EditorTopic;
+
 import javax.persistence.*;
 import java.util.Collection;
 
@@ -18,6 +20,7 @@ import java.util.Collection;
 @Table(name = "ia_biosource")
 @AssociationOverride(name = "annotations",
                      joinColumns = {@JoinColumn(name="annotation_ac")} )
+@EditorTopic
 public class BioSource extends AnnotatedObjectImpl implements Editable {
 
     ///////////////////////////////////////

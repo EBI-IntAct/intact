@@ -5,12 +5,15 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import uk.ac.ebi.intact.annotation.EditorTopic;
+
 /**
  * TODO comment it.
  *
  * @author Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id$
  */
+@EditorTopic(name = "SmallMolecule")
 public class SmallMoleculeImpl extends InteractorImpl implements SmallMolecule, Editable{
     public SmallMoleculeImpl(){
     }
