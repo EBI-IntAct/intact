@@ -9,6 +9,8 @@ import org.hibernate.validator.NotNull;
 
 import java.lang.annotation.Target;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  * Annotations for the model classes that are editor topics
@@ -18,6 +20,7 @@ import java.lang.annotation.ElementType;
  * @since <pre>29-Jun-2006</pre>
  */
 @Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
 public @interface EditorTopic
 {
     static String UNDEFINED = "";
