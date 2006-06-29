@@ -1,4 +1,4 @@
-#!/bin/bash --verbose
+#!/bin/bash
 
 SOURCE_BASE=~/projects/intact-clean
 DEST_BASE=~/projects/intact-reorg
@@ -25,6 +25,7 @@ IC_DEST_SRC=$DEST_BASE/intact-core/trunk/src/main/java/$INTACT_PKG
 #svn revert $IC_DEST_SRC
 rm -rf $IC_DEST_SRC/*
 svn update $IC_DEST_SRC/
+svn cp $IC_SOURCE_SRC/annotation $IC_DEST_SRC/annotation
 svn cp $IC_SOURCE_SRC/business $IC_DEST_SRC/business
 svn cp $IC_SOURCE_SRC/model $IC_DEST_SRC/model
 svn cp $IC_SOURCE_SRC/persistence $IC_DEST_SRC/persistence
@@ -59,13 +60,17 @@ svn cp $IC_SOURCE_SRC $IC_DEST_SRC
 
 fi
 
+#############################################################################################
+#                        SANITY CHECKER                                                     #
+#############################################################################################
+
 if [ "$SANITY_CHECKER" = "Y" ]; then
 
-# APP COMMONS
+# SANITY CHECKER
 # -----------
 echo SANITY_CHECKER
 IC_SOURCE_SRC=$SOURCE_BASE/src/$INTACT_PKG/util
-IC_DEST_SRC=$DEST_BASE/app-commons/trunk/src/main/java/$INTACT_PKG/util
+IC_DEST_SRC=$DEST_BASE/sanity-checker/trunk/src/main/java/$INTACT_PKG/util
 
 #svn revert $IC_DEST_SRC
 rm -rf $IC_DEST_SRC/*
@@ -173,9 +178,9 @@ mv $IC_DEST_SRC/editor $IC_DEST_SRC/webapp
 for i in `find $SOURCE_BASE/application/tld/*.tld`; do
   svn cp $i $IC_DEST_SRC/webapp/WEB-INF/tld
 done
-#for i in `find $SOURCE_BASE/application/layouts/*.jsp`; do
-#  svn cp $i $IC_DEST_SRC/webapp/WEB-INF/layouts
-#done
+for i in `find $SOURCE_BASE/application/layouts/*.jsp`; do
+  svn cp $i $IC_DEST_SRC/webapp/layouts
+done
 for h in `find $SOURCE_BASE/application/images/*.gif $SOURCE_BASE/application/images/*.jpg $SOURCE_BASE/application/images/*.png`; do
   svn cp $h $IC_DEST_SRC/webapp/images
 done
@@ -188,11 +193,16 @@ rm -rf $IC_DEST_SRC/config
 svn update $IC_DEST_SRC
 #svn revert $IC_DEST_SRC/hibernate.cfg.xml
 #svn cp $SOURCE_BASE/src/hibernate.cfg.xml $IC_DEST_SRC
-svn cp $SOURCE_BASE/application/editor/WEB-INF/config $IC_DEST_SRC
+svn cp $SOURCE_BASE/config $IC_DEST_SRC
 svn cp $SOURCE_BASE/config/Institution.properties $IC_DEST_SRC/config
 
-for i in `find $SOURCE_BASE/config/*.xml $SOURCE_BASE/config/*.properties`; do
-  svn cp $i $IC_DEST_SRC/config
+for i in `find $IC_SOURCE_SRC/WEB-INF/config/*.properties`; do
+  svn cp $i $IC_DEST_SRC/uk/ac/ebi/intact/application/editor
 done
+
+rm -rf $IC_DEST_SRC/OJB.properties
+svn rm $IC_DEST_SRC/OJB.properties
+svn cp $SOURCE_BASE/template/repository_database.template_mavenreorg $IC_DEST_SRC/config/repository_database.xml
+svn cp $SOURCE_BASE/config/OJB.properties $IC_DEST_SRC/
 
 fi
