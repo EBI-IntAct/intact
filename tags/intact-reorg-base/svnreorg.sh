@@ -181,6 +181,9 @@ done
 for i in `find $SOURCE_BASE/application/layouts/*.jsp`; do
   svn cp $i $IC_DEST_SRC/webapp/layouts
 done
+for i in `find $SOURCE_BASE/application/layouts/styles/*.css`; do
+  svn cp $i $IC_DEST_SRC/webapp/layouts/styles
+done
 for h in `find $SOURCE_BASE/application/images/*.gif $SOURCE_BASE/application/images/*.jpg $SOURCE_BASE/application/images/*.png`; do
   svn cp $h $IC_DEST_SRC/webapp/images
 done
@@ -199,6 +202,9 @@ svn cp $SOURCE_BASE/config/Institution.properties $IC_DEST_SRC/config
 for i in `find $IC_SOURCE_SRC/WEB-INF/config/*.properties`; do
   svn cp $i $IC_DEST_SRC/uk/ac/ebi/intact/application/editor
 done
+
+svn rm $IC_DEST_SRC/config/log4j.properties
+rm -rf $IC_DEST_SRC/config/log4j.properties
 
 rm -rf $IC_DEST_SRC/OJB.properties
 svn rm $IC_DEST_SRC/OJB.properties
