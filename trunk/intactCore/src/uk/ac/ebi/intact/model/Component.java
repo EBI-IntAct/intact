@@ -6,6 +6,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.model;
 
 import uk.ac.ebi.intact.model.proxy.InteractionProxy;
+import uk.ac.ebi.intact.model.proxy.InteractorProxy;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -153,12 +154,12 @@ public class Component extends BasicObjectImpl {
         //Need to check for Proxies - callers should
         //not expect a Proxy back since Component only holds
         //a single interactor, hence no need for a Proxy
-        /*
+
         if((interactor !=  null) & (interactor instanceof InteractorProxy)){
             InteractorProxy proxy = (InteractorProxy)interactor;
             return (Interactor)proxy.getRealSubject();
         }
-        */
+
         return interactor;
     }
 
@@ -170,12 +171,12 @@ public class Component extends BasicObjectImpl {
     public void setInteractor( Interactor interactor ) {
         // TODO (BA) IMPORTANT: I have just commented this method at seems to provoke an illegal access
         // exception to the list of components
-        /*
+
         if (this.interactor != interactor) {
             if (this.interactor != null) this.interactor.removeActiveInstance(this);
             this.interactor = interactor;
             if (interactor != null) interactor.addActiveInstance(this);
-        } */
+        }
         this.interactor = interactor;
     }
 
