@@ -8,7 +8,8 @@ APP_COMMONS=N
 SANITY_CHECKER=N
 SEARCH_ENGINE=N
 SEARCH_APP=N
-EDITOR_APP=Y
+EDITOR_APP=N
+MINE_APP=Y
 
 INTACT_PKG=uk/ac/ebi/intact
 
@@ -210,5 +211,66 @@ rm -rf $IC_DEST_SRC/OJB.properties
 svn rm $IC_DEST_SRC/OJB.properties
 svn cp $SOURCE_BASE/template/repository_database.template_mavenreorg $IC_DEST_SRC/config/repository_database.xml
 svn cp $SOURCE_BASE/config/OJB.properties $IC_DEST_SRC/
+
+fi
+
+
+#############################################################################################
+#                        MINE APP                                                           #
+#############################################################################################
+
+if [ "$MINE_APP" = "Y" ]; then
+
+echo MINE WEB APP
+echo " " Java files
+IC_SOURCE_SRC=$SOURCE_BASE/src/$INTACT_PKG/application/mine
+IC_DEST_SRC=$DEST_BASE/mine-app/trunk/src/main/java/$INTACT_PKG/application/mine
+
+rm -rf $IC_DEST_SRC/*
+svn update $IC_DEST_SRC/
+svn cp $IC_SOURCE_SRC/business $IC_DEST_SRC/business
+svn cp $IC_SOURCE_SRC/struts $IC_DEST_SRC/struts
+
+echo " " Webapp files
+IC_SOURCE_SRC=$SOURCE_BASE/application/mine
+IC_DEST_SRC=$DEST_BASE/mine-app/trunk/src/main
+
+rm -rf $IC_DEST_SRC/mine
+rm -rf $IC_DEST_SRC/webapp
+svn update $IC_DEST_SRC/webapp
+svn cp $IC_SOURCE_SRC $IC_DEST_SRC
+mv $IC_DEST_SRC/mine $IC_DEST_SRC/webapp
+
+for i in `find $SOURCE_BASE/application/tld/*.tld`; do
+  svn cp $i $IC_DEST_SRC/webapp/WEB-INF/tld
+done
+for i in `find $SOURCE_BASE/application/layouts/*.jsp`; do
+  svn cp $i $IC_DEST_SRC/webapp/layouts
+done
+
+svn rm $IC_DEST_SRC/webapp/layouts/styles
+rm -rf $IC_DEST_SRC/webapp/layouts/styles
+svn mkdir $IC_DEST_SRC/webapp/layouts/styles
+for i in `find $SOURCE_BASE/application/layouts/styles/*.css`; do
+  svn cp $i $IC_DEST_SRC/webapp/layouts/styles
+done
+
+for h in `find $SOURCE_BASE/application/images/*.gif $SOURCE_BASE/application/images/*.jpg $SOURCE_BASE/application/images/*.png`; do
+  svn cp $h $IC_DEST_SRC/webapp/images
+done
+
+echo " " Resource files
+
+IC_DEST_SRC=$DEST_BASE/mine-app/trunk/src/main/resources
+
+rm -rf $IC_DEST_SRC/config
+svn update $IC_DEST_SRC
+#svn revert $IC_DEST_SRC/hibernate.cfg.xml
+#svn cp $SOURCE_BASE/src/hibernate.cfg.xml $IC_DEST_SRC
+svn cp $SOURCE_BASE/application/mine/WEB-INF/config $IC_DEST_SRC
+svn cp $SOURCE_BASE/config/Institution.properties $IC_DEST_SRC/config
+
+svn rm $IC_DEST_SRC/config/log4j.properties
+rm -rf $IC_DEST_SRC/config/log4j.properties
 
 fi
