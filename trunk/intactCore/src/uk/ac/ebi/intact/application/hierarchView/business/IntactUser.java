@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactGraphHelper;
 import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
 import uk.ac.ebi.intact.simpleGraph.Graph;
@@ -542,7 +543,7 @@ public class IntactUser implements IntactUserI {
 
     // Implementation of IntactUserI interface.
 
-    public <T> Collection<T> search(Class<T> objectType, String searchParam,
+    public <T extends IntactObject> Collection<T> search(Class<T> objectType, String searchParam,
             String searchValue) throws IntactException {
         return intactHelper.search( objectType, searchParam, searchValue );
     }

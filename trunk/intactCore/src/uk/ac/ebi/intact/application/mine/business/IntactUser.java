@@ -15,11 +15,13 @@ import java.util.Iterator;
 import javax.servlet.http.HttpSessionBindingEvent;
 
 import org.apache.log4j.Logger;
-import org.apache.ojb.broker.accesslayer.LookupException;
+import org.hibernate.Session;
 
 import uk.ac.ebi.intact.application.mine.business.graph.model.NodeObject;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.model.IntactObject;
 
 /**
  * @author Andreas Groscurth
@@ -27,7 +29,6 @@ import uk.ac.ebi.intact.business.IntactHelper;
 public class IntactUser implements IntactUserI {
 	static transient Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
 
-	private IntactHelper intactHelper;
 	private Collection paths;
 	private Collection singletons;
 	private String search;
@@ -38,7 +39,6 @@ public class IntactUser implements IntactUserI {
 	 * @throws IntactException if the initiation of the intacthelper failed
 	 */
 	public IntactUser() throws IntactException {
-		intactHelper = new IntactHelper();
 		paths = new HashSet();
 		singletons = new HashSet();
 		search = "";
@@ -55,11 +55,11 @@ public class IntactUser implements IntactUserI {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see uk.ac.ebi.intact.application.mine.business.IntactUserI#getIntactHelper()
 	 */
 	public IntactHelper getIntactHelper() {
-		return intactHelper;
+		return null;
 	}
 
 	/*
@@ -77,15 +77,7 @@ public class IntactUser implements IntactUserI {
 	 * @see javax.servlet.http.HttpSessionBindingListener#valueUnbound(javax.servlet.http.HttpSessionBindingEvent)
 	 */
 	public void valueUnbound(HttpSessionBindingEvent arg0) {
-		try {
-			this.intactHelper.closeStore();
-			logger.info(
-				"IntactHelper datasource closed "
-					+ "(cause: removing attribute from session)");
-		} catch (IntactException ie) {
-			//failed to close the store - not sure what to do here yet....
-			logger.error("error when closing the IntactHelper store", ie);
-		}
+		// nothing as IntactHelper is not used
 
 	}
 
@@ -95,12 +87,12 @@ public class IntactUser implements IntactUserI {
 	 * @see uk.ac.ebi.intact.application.commons.business.IntactUserI#search(java.lang.String,
 	 *      java.lang.String, java.lang.String)
 	 */
-	public <T> Collection<T> search(
+	public <T extends IntactObject> Collection<T> search(
 		Class<T> objectType,
 		String searchParam,
 		String searchValue)
 		throws IntactException {
-		return intactHelper.search(objectType, searchParam, searchValue);
+		return DaoFactory.getIntactObjectDao(objectType).getColByPropertyName(searchParam, searchValue);
 	}
 
 	/*
@@ -109,14 +101,15 @@ public class IntactUser implements IntactUserI {
 	 * @see uk.ac.ebi.intact.application.commons.business.IntactUserI#getUserName()
 	 */
 	public String getUserName() {
-		if (this.intactHelper != null) {
-			try {
-				return this.intactHelper.getDbUserName();
-			} catch (LookupException e) {
-			} catch (SQLException e) {
-			}
-		}
-		return null;
+		try
+        {
+            return DaoFactory.getBaseDao().getDbUserName();
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
 	}
 
 	/*
@@ -125,11 +118,16 @@ public class IntactUser implements IntactUserI {
 	 * @see uk.ac.ebi.intact.application.commons.business.IntactUserI#getDatabaseName()
 	 */
 	public String getDatabaseName() {
-		if (this.intactHelper != null) {
-            return this.intactHelper.getDbName();
-		}
-		return null;
-	}
+        try
+        {
+            return DaoFactory.getBaseDao().getDbName();
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 	/*
 	 * (non-Javadoc)
@@ -137,12 +135,8 @@ public class IntactUser implements IntactUserI {
 	 * @see uk.ac.ebi.intact.application.mine.business.IntactUserI#getDBConnection()
 	 */
 	public Connection getDBConnection() {
-		try {
-			return intactHelper.getJDBCConnection();
-		} catch (IntactException e) {
-			return null;
-		}
-	}
+		return ((Session)DaoFactory.getBaseDao().getSession()).connection();
+    }
 
 	/*
 	 * (non-Javadoc)

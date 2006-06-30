@@ -12,6 +12,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import uk.ac.ebi.intact.application.commons.search.SearchHelper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
 import uk.ac.ebi.intact.application.commons.search.SearchClass;
@@ -41,11 +43,8 @@ import java.util.*;
  */
 public class SearchAction extends Action {
 
-    static transient Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
+    private static final Log logger = LogFactory.getLog(SearchAction.class);
 
-    private static final String PROTEIN = "Protein";
-    private static final String INTERACTION = "Interaction";
-    private static final String EXPERIMENT = "Experiment";
     private static final String PROTEIN_PARAMETER = "on";
 
     public ActionForward execute( ActionMapping mapping,
@@ -136,7 +135,7 @@ public class SearchAction extends Action {
             Collection mineSearchAc = new HashSet();
 
             // the search helper provides the search for the ac numbers
-            SearchHelper sh = new SearchHelper( logger );
+            SearchHelper sh = new SearchHelper();
             // for every ac number of the list a search is done
             for ( Iterator iter = searchAc.iterator(); iter.hasNext(); ) {
                 searchPhrase = (String) iter.next();
@@ -210,8 +209,8 @@ public class SearchAction extends Action {
             throws IntactException {
         AmbiguousBean ab = new AmbiguousBean();
         ab.setProteins( sh.doLookup( SearchClass.PROTEIN, ac, user ) );
-        ab.setInteractions( sh.doLookup( SearchClass.INTERACTION, ac, user ) );
-        ab.setExperiments( sh.doLookup( SearchClass.EXPERIMENT, ac, user ) );
+        //ab.setInteractions( sh.doLookup( SearchClass.INTERACTION, ac, user ) );
+        //ab.setExperiments( sh.doLookup( SearchClass.EXPERIMENT, ac, user ) );
         return ab;
     }
 

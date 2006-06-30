@@ -7,15 +7,14 @@ package uk.ac.ebi.intact.application.commons.search;
 
 import org.apache.log4j.Logger;
 import org.apache.ojb.broker.query.Query;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.commons.business.IntactUserI;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.Alias;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.IntactObject;
-import uk.ac.ebi.intact.model.Xref;
-import uk.ac.ebi.intact.model.CvObject;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.ObjectBridgeQueryFactory;
+import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.SearchItemDao;
 import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
@@ -49,7 +48,7 @@ public class SearchHelper implements SearchHelperI {
     /**
      * The Logger
      */
-    private transient Logger logger;
+    private static final Log logger = LogFactory.getLog(SearchHelper.class);
 
     /**
      * The table for the initial search request in the searchFast method
@@ -71,20 +70,16 @@ public class SearchHelper implements SearchHelperI {
     /**
      * Create a search helper for which all the log message will be written by the provided logger.
      *
-     * @param logger the user's logger.
      */
-    public SearchHelper(Logger logger) {
-        this.logger = logger;
+    public SearchHelper() {
         this.request = request;
     }
 
     /**
      * Create a search helper for which all the log message will be written by the provided logger.
      *
-     * @param logger the user's logger.
      */
-    public SearchHelper(HttpServletRequest request, Logger logger) {
-        this.logger = logger;
+    public SearchHelper(HttpServletRequest request) {
         this.request = request;
     }
 
@@ -297,7 +292,12 @@ public class SearchHelper implements SearchHelperI {
                 //then need to go through each alias found and accumulate the results...
                 for (Alias alias : aliases)
                 {
-                    results.add(dao.getByAc(alias.getParentAc()));
+                    IntactObject obj = dao.getByAc(alias.getParentAc());
+
+                    if (obj!=null)
+                    {
+                        results.add(obj);
+                    }
                 }
                 currentCriteria = "alias";
             }
@@ -314,7 +314,12 @@ public class SearchHelper implements SearchHelperI {
                 //then need to go through each xref found and accumulate the results...
                 for (Xref xref : xrefs)
                 {
-                    results.add(dao.getByAc(xref.getParentAc()));
+                    IntactObject obj = dao.getByAc(xref.getParentAc());
+
+                    if (obj!=null)
+                    {
+                        results.add(obj);
+                    }
                 }
                 currentCriteria = "xref";
 
@@ -703,7 +708,5 @@ public class SearchHelper implements SearchHelperI {
 
         return resultInfo;
     }
-
-
 
 }

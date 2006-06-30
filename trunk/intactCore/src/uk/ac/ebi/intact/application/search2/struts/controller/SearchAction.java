@@ -129,7 +129,7 @@ public class SearchAction extends IntactBaseAction {
         //with garbage input using this approach...
         logger.info( "search action: attempting to search by AC first..." );
         try {
-            SearchHelper searchHelper = new SearchHelper( logger );
+            SearchHelper searchHelper = new SearchHelper();
             boolean noClass = false;
             if (!searchClass.isSpecified()) {
                 results = searchHelper.doLookup( SEARCH_CLASSES, searchValue, user );

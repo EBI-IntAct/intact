@@ -47,7 +47,7 @@ public class WelcomeAction extends IntactBaseAction {
                                   HttpServletResponse response )
             throws IOException, ServletException {
 
-        SearchHelperI helper = new SearchHelper( logger );
+        SearchHelperI helper = new SearchHelper();
         //all we need to do here is set up a valid user if possible
         if ( super.setupUser( request ) == null ) {
             // not possible to set up an user, forward to errorpage

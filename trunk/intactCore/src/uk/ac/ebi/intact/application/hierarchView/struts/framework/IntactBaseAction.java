@@ -61,7 +61,7 @@ public abstract class IntactBaseAction extends Action {
     /** Message container */
     private ActionMessages myMessages = new ActionMessages();
 
-    private SearchHelperI searchHelper = new SearchHelper( logger );
+    private SearchHelperI searchHelper = new SearchHelper();
 
     /**
      * Says if an IntactUser object is currently available in the session.
