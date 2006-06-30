@@ -134,7 +134,7 @@ public class SearchAction extends IntactBaseAction {
                 return mapping.findForward( SearchConstants.FORWARD_NO_MATCHES );
             }
 
-            SearchHelper searchHelper = new SearchHelper(request, logger );
+            SearchHelper searchHelper = new SearchHelper(request);
 
             // TODO this should probably move to the dispatcher action
 

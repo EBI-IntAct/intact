@@ -153,12 +153,11 @@ public class IntactUserImpl<T extends IntactObject> implements IntactUserIF<T>, 
 //        return this.searchCriteria;
 //    }
 
-    public <T> Collection<T> search( Class<T> objectType, String searchParam,
+    public <T extends IntactObject> Collection<T> search( Class<T> objectType, String searchParam,
                               String searchValue ) throws IntactException {
         //return helper.search( objectType, searchParam, searchValue );
 
-        // this method should not be used
-        return null;
+        return DaoFactory.getIntactObjectDao(objectType).getColByPropertyName(searchParam, searchValue);
     }
 
     public Class<T> getSearchClass() {

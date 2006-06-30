@@ -9,10 +9,11 @@ package uk.ac.ebi.intact.application.predict.struts.action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.predict.business.PredictUser;
 import uk.ac.ebi.intact.application.predict.struts.framework.AbstractPredictAction;
 import uk.ac.ebi.intact.application.predict.struts.framework.PredictConstants;
-import uk.ac.ebi.intact.application.predict.util.PredictLogger;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.persistence.DataSourceException;
 
@@ -31,6 +32,8 @@ import java.io.IOException;
  * @version $Id$
  */
 public class WelcomeAction extends AbstractPredictAction {
+
+    private static final Log log = LogFactory.getLog(WelcomeAction.class);
 
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
@@ -61,28 +64,22 @@ public class WelcomeAction extends AbstractPredictAction {
         // Create a new user if it doesn't exist in the session.
         if (user == null) {
             // Save the context to avoid repeat calls.
-            ServletContext ctx = getServlet().getServletContext();
-
-            // Name of the mapping file and data source.
-            String ds = ctx.getInitParameter("datasource");
             try {
-                user = PredictUser.create(ds);
-                System.out.println("Predict user created");
+                user = PredictUser.create();
+                log.info("Predict user created");
             }
             catch (DataSourceException dse) {
                 // Unable to get a data source...can't proceed
-                PredictLogger.getInstance().log(dse);
-                throw dse;
+                dse.printStackTrace();
             }
             catch (IntactException ie) {
                 // Can't create the helper.. can't proceed
-                PredictLogger.getInstance().log(ie);
-                throw ie;
+                ie.printStackTrace();
             }
             session.setAttribute(PredictConstants.USER, user);
         }
         else {
-            System.out.println("Using an existing session, user");
+            log.debug("Using an existing session, user");
         }
         return mapping.findForward(SUCCESS);
     }

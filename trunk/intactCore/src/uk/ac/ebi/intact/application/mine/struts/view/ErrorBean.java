@@ -12,6 +12,11 @@ import org.apache.struts.action.ActionForm;
 public class ErrorBean extends ActionForm {
     private String error;
 
+    public ErrorBean()
+    {
+        
+    }
+
     public ErrorBean(String error) {
         this.error = error;
     }

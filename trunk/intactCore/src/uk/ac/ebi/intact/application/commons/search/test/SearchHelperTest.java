@@ -125,7 +125,7 @@ public class SearchHelperTest extends TestCase {
     private void doTestGetExperiments() throws IntactException {
         // Any valid logger will do fine here.
         Logger logger = Logger.getLogger( getClass().getName() );
-        SearchHelperI searchHelper = new SearchHelper(logger);
+        SearchHelperI searchHelper = new SearchHelper();
 
         ResultWrapper rw = searchHelper.searchByQuery(SearchClass.EXPERIMENT,"ac", "*", 20);
 
@@ -142,7 +142,7 @@ public class SearchHelperTest extends TestCase {
 
     private void doTestGetInteractions() throws IntactException {
         Logger logger = Logger.getLogger( getClass().getName() );
-        SearchHelperI searchHelper = new SearchHelper(logger);
+        SearchHelperI searchHelper = new SearchHelper();
 
         // within max size
         ResultWrapper rw = searchHelper.searchByQuery(SearchClass.INTERACTION,
@@ -182,7 +182,7 @@ public class SearchHelperTest extends TestCase {
 
     private void doTestGetInteractions2(IntactHelper helper) throws IntactException {
         Logger logger = Logger.getLogger( getClass().getName() );
-        SearchHelperI searchHelper = new SearchHelper(logger);
+        SearchHelperI searchHelper = new SearchHelper();
 
         // within max size
         Query[] queries = getSearchQueries(InteractionImpl.class, "ga-*");
@@ -232,7 +232,7 @@ public class SearchHelperTest extends TestCase {
 
     private void doTestGetProteins() throws IntactException {
         Logger logger = Logger.getLogger( getClass().getName() );
-        SearchHelperI searchHelper = new SearchHelper(logger);
+        SearchHelperI searchHelper = new SearchHelper();
 
         // within max size
         ResultWrapper rw = searchHelper.searchByQuery(SearchClass.PROTEIN,
@@ -277,7 +277,7 @@ public class SearchHelperTest extends TestCase {
 
             // Any valid logger will do fine here.
             Logger logger = Logger.getLogger( getClass().getName() );
-            SearchHelperI searchHelper = new SearchHelper(logger);
+            SearchHelperI searchHelper = new SearchHelper();
 
             // Calling the method which closes the internal helper.
             ResultWrapper rw = searchHelper.searchByQuery(SearchClass.INTERACTION,

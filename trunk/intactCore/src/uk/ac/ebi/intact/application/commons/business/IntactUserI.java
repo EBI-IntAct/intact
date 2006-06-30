@@ -7,6 +7,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.commons.business;
 
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.model.IntactObject;
 
 import java.util.Collection;
 
@@ -33,7 +34,7 @@ public interface IntactUserI {
      * @exception uk.ac.ebi.intact.business.IntactException thrown if problems are encountered during the
      * search process.
      */
-    public <T> Collection<T> search( Class<T> objectType,
+    public <T extends IntactObject> Collection<T> search( Class<T> objectType,
                               String searchParam,
                               String searchValue ) throws IntactException;
 

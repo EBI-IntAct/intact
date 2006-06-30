@@ -7,6 +7,8 @@ package uk.ac.ebi.intact.persistence.dao;
 
 import uk.ac.ebi.intact.model.BioSource;
 
+import java.util.Collection;
+
 /**
  * To access to biosources
  *
@@ -15,4 +17,6 @@ import uk.ac.ebi.intact.model.BioSource;
  * @since <pre>09-Jun-2006</pre>
  */
 public interface BioSourceDao extends AnnotatedObjectDao<BioSource> {
+
+    Collection<BioSource> getByTaxonId(String taxonId);
 }

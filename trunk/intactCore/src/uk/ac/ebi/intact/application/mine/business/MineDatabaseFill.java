@@ -4,11 +4,12 @@
 
 package uk.ac.ebi.intact.application.mine.business;
 
-import org.apache.ojb.broker.accesslayer.LookupException;
+import org.hibernate.Session;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.BaseDao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -163,19 +164,13 @@ public class MineDatabaseFill {
      */
     private static void buildDatabase() throws SQLException, IntactException {
 
-        // the helper and the database connection is fetched
-        IntactHelper helper = new IntactHelper();
+        BaseDao dao = DaoFactory.getBaseDao();
 
         // Displays the user and instance against which we are working.
-        try {
-            System.out.println( "Database: " + helper.getDbName() );
-            System.out.println( "User: " + helper.getDbUserName() );
-        }
-        catch ( LookupException e ) {
-            e.printStackTrace();
-        }
+        System.out.println( "Database: " + dao.getDbName());
+        System.out.println( "User: " + dao.getDbUserName() );
 
-        Connection con = helper.getJDBCConnection();
+        Connection con = ((Session)dao.getSession()).connection();
         Statement stm = con.createStatement();
 
         // get the EBI - ID for a bait

@@ -100,13 +100,18 @@ public abstract class HibernateBaseDaoImpl<T extends IntactObject> implements Ba
         return (T) getCriteriaByPropertyName(propertyName, value, ignoreCase).uniqueResult();
     }
 
-    protected Collection<T> getColByPropertyName(String propertyName, String value)
+    public Collection<T> getColByPropertyName(String propertyName, String value)
     {
          return getColByPropertyName(propertyName, value, true);
     }
 
     protected Collection<T> getColByPropertyName(String propertyName, String value, boolean ignoreCase)
     {
+        if (value.startsWith("%") || value.endsWith("%"))
+        {
+            return getByPropertyNameLike(propertyName, value, ignoreCase);
+        }
+
          return getCriteriaByPropertyName(propertyName, value, ignoreCase).list();
     }
 

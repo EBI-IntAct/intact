@@ -10,12 +10,6 @@
         Prediction application
     </description>
 
-    <!--  Class name of the data source object to be used    -->
-    <context-param>
-        <param-name>datasource</param-name>
-        <param-value>uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource</param-value>
-    </context-param>
-
     <!-- Filter to open the session at the beginning of the request and close on end -->
     <filter>
         <filter-name>hibernateFilter</filter-name>

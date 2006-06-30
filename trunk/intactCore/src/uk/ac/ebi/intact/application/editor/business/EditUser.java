@@ -7,6 +7,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.business;
 
 import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
@@ -25,6 +27,7 @@ import uk.ac.ebi.intact.business.BusinessConstants;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.util.GoServerProxy;
 import uk.ac.ebi.intact.util.NewtServerProxy;
 import uk.ac.ebi.intact.util.UpdateProteins;
@@ -52,6 +55,8 @@ import java.util.regex.Pattern;
  * @version $Id$
  */
 public class EditUser implements EditUserI, HttpSessionBindingListener {
+
+    private static final Log log = LogFactory.getLog(EditUser.class);
 
     // -------------------------------------------------------------------------
 
@@ -270,7 +275,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
             myViewStack = new Stack();
         }
         catch (IntactException ie) {
-            getLogger().error("", ie);
+            log.error("", ie);
             throw new IOException(ie.getMessage());
         }
     }
@@ -348,9 +353,9 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return myDatabaseName;
     }
 
-    public <T> Collection<T> search(Class<T> objectType, String searchParam,
+    public <T extends IntactObject> Collection<T> search(Class<T> objectType, String searchParam,
                              String searchValue) throws IntactException {
-        throw new IntactException("Not implemented");
+        throw new UnsupportedOperationException();
     }
 
     // Implementation of EditUserI interface.
@@ -576,7 +581,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         }
         catch (IntactException e) {
             // This is an internal error. Log it.
-            getLogger().error("", e);
+            log.error("", e);
             // Rethrow it again for the presentaion layer to handle it
             throw e;
         }
@@ -621,7 +626,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
             return doGetNextAvailableShortLabel(clazz, label);
         }
         catch (IntactException ie) {
-            getLogger().error("", ie);
+            log.error("", ie);
             // Error in searching, just return the original name for user to
             // decide.
         }
@@ -640,7 +645,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
             catch (MalformedURLException murle) {
                 // This should never happen because default constructor has a
                 // valid URL.
-                getLogger().info("Problem trying to create a NewtServerProxy, this shouldn't have happen has the " + "" +
+                log.info("Problem trying to create a NewtServerProxy, this shouldn't have happen has the " + "" +
                         "default constructor has a valid url (http://www.ebi.ac.uk/newt/display) :", murle);
             }
         }
@@ -700,7 +705,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
             myProteinFactory = new UpdateProteins(helper);
         }
         catch (UpdateProteinsI.UpdateException e) {
-            getLogger().error("", e);
+            log.error("", e);
             throw new IntactException("Unable to create the Protein factory");
         }
         finally {
@@ -719,13 +724,9 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      */
     private SearchHelperI getSearchHelper() {
         if (mySearchHelper == null) {
-            mySearchHelper = new SearchHelper(getLogger());
+            mySearchHelper = new SearchHelper();
         }
         return mySearchHelper;
-    }
-
-    private Logger getLogger() {
-        return Logger.getLogger(EditorConstants.LOGGER);
     }
 
     /**

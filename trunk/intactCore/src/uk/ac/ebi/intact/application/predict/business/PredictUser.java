@@ -5,18 +5,17 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.predict.business;
 
-import org.apache.ojb.broker.accesslayer.LookupException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.Session;
 import uk.ac.ebi.intact.application.commons.business.IntactUserI;
 import uk.ac.ebi.intact.application.predict.struts.view.ResultBean;
-import uk.ac.ebi.intact.application.predict.util.PredictLogger;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.BioSource;
+import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.persistence.DAOFactory;
-import uk.ac.ebi.intact.persistence.DAOSource;
 import uk.ac.ebi.intact.persistence.DataSourceException;
-import uk.ac.ebi.intact.persistence.ObjectBridgeDAO;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
@@ -38,10 +37,7 @@ public abstract class PredictUser implements IntactUserI,
 
     public static final String SELECTED_SPECIE = "mouse";
 
-    /**
-     * The intact helper to access the database.
-     */
-    private IntactHelper myHelper;
+     private static final Log log = LogFactory.getLog(PredictUser.class);
 
     /**
      * The current specie (as a link).
@@ -64,7 +60,6 @@ public abstract class PredictUser implements IntactUserI,
     /**
      * Factory method to create different instances of Predict user instances
      * depending on the JDBC subprotocol.
-     * @param dsClass the class name of the Data Source.
      *
      * @return an instance of this class created using the JDBC subprotocol.
      * A null object is returned for an unknown JDBC subprotocol. Currently
@@ -74,19 +69,10 @@ public abstract class PredictUser implements IntactUserI,
      * @exception IntactException for errors in creating IntactHelper; problem with reading
      * the repository file.
      */
-    public static PredictUser create(String dsClass) throws DataSourceException,
+    public static PredictUser create() throws DataSourceException,
             IntactException {
-        // The data source for given ds class.
-        DAOSource ds = DAOFactory.getDAOSource(dsClass);
-
         // Connection to get the JDBC url.
-        Connection conn = null;
-        try {
-            conn = ((ObjectBridgeDAO) ds.getDAO()).getJDBCConnection();
-        }
-        catch (LookupException le) {
-            new IntactException("Failed to get JDBC Connection", le);
-        }
+        Connection conn = ((Session)DaoFactory.getBaseDao().getSession()).connection();
 
         // The URL to extract the subprotocol.
         String url = null;
@@ -110,9 +96,6 @@ public abstract class PredictUser implements IntactUserI,
         else if (subprotocol.equals("postgresql")) {
             user = new PredictUserPg();
         }
-        if (user != null) {
-            user.setDS(ds);
-        }
         return user;
     }
 
@@ -129,39 +112,48 @@ public abstract class PredictUser implements IntactUserI,
      * Will call this method when an object is unbound from a session.
      */
     public void valueUnbound(HttpSessionBindingEvent event) {
-        try {
-            myHelper.closeStore();
-        }
-        catch(IntactException ie) {
-            //failed to close the store - not sure what to do here yet....
-        }
+        // nothing
     }
 
     // Implementation of IntactUserI interface.
 
-    public String getUserName() {
-        if (myHelper != null) {
-            try {
-                return myHelper.getDbUserName();
-            }
-            catch (LookupException e) {
-            }
-            catch (SQLException e) {
-            }
+    /*
+	 * (non-Javadoc)
+	 *
+	 * @see uk.ac.ebi.intact.application.commons.business.IntactUserI#getUserName()
+	 */
+	public String getUserName() {
+		try
+        {
+            return DaoFactory.getBaseDao().getDbUserName();
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see uk.ac.ebi.intact.application.commons.business.IntactUserI#getDatabaseName()
+	 */
+	public String getDatabaseName() {
+        try
+        {
+            return DaoFactory.getBaseDao().getDbName();
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
         }
         return null;
     }
 
-    public String getDatabaseName() {
-        if (myHelper != null) {
-            return myHelper.getDbName();
-        }
-        return null;
-    }
-
-    public <T> Collection<T> search(Class<T> objectType, String searchParam,
+    public <T extends IntactObject> Collection<T> search(Class<T> objectType, String searchParam,
                              String searchValue) throws IntactException {
-        return myHelper.search(objectType, searchParam, searchValue);
+        return DaoFactory.getIntactObjectDao(objectType).getColByPropertyName(searchParam, searchValue);
     }
 
     /**
@@ -182,7 +174,20 @@ public abstract class PredictUser implements IntactUserI,
             ResultSet rs = stmt.executeQuery(getSpeciesSQL());
             while (rs.next()) {
                 String taxid = rs.getString(1);
-                species.add(myHelper.getBioSourceByTaxId(taxid).getShortLabel());
+
+                if (log.isDebugEnabled())
+                {
+                    log.debug("Looking for the biosource with taxid: "+taxid);
+                }
+
+                Collection<BioSource> biosources = DaoFactory.getBioSourceDao().getByTaxonId(taxid);
+
+                log.debug(biosources);
+
+                if (!biosources.isEmpty())
+                {
+                    species.add(biosources.iterator().next());
+                }
             }
         }
         finally {
@@ -191,12 +196,13 @@ public abstract class PredictUser implements IntactUserI,
                     stmt.close();
                 }
                 catch (SQLException sqle) {
+                    sqle.printStackTrace();
                 }
             }
         }
-        String[] items = (String[]) species.toArray(new String[0]);
-        Arrays.sort(items);
-        return Arrays.asList(items);
+        Collections.sort(species);
+
+        return species;
     }
 
     public String getDefaultChoice() {
@@ -233,18 +239,18 @@ public abstract class PredictUser implements IntactUserI,
                     results.add(new ResultBean(protein, i));
                 }
                 else {
-                    PredictLogger.getInstance().log("Found a null protein for " + nid);
+                    log.warn("Found a null protein for " + nid);
                 }
             }
         }
         catch (IntactException ie) {
             // Unable to get a connection to the datastore; print stack trace.
-            PredictLogger.getInstance().log(ie);
+            log.error(ie);
             throw ie;
         }
         catch (SQLException sqlex) {
             // Log the SQL exception.
-            PredictLogger.getInstance().log(sqlex);
+            log.error(sqlex);
             throw sqlex;
         }
         finally {
@@ -253,6 +259,7 @@ public abstract class PredictUser implements IntactUserI,
                     stmt.close();
                 }
                 catch (SQLException sqle) {
+                    sqle.printStackTrace();
                 }
             }
         }
@@ -263,12 +270,7 @@ public abstract class PredictUser implements IntactUserI,
      * Closes the connection to the database.
      */
     public void closeConnection() {
-        try {
-            myHelper.closeStore();
-        }
-        catch (IntactException e) {
-            e.printStackTrace();
-        }
+        ((Session)DaoFactory.getBaseDao().getSession()).close();
     }
 
     // Set/Get methods for the current specie.
@@ -287,11 +289,6 @@ public abstract class PredictUser implements IntactUserI,
     protected abstract String getSpeciesSQL();
     protected abstract String getDbInfoSQL(String taxid);
 
-    // Helper Methods
-
-    private void setDS(DAOSource ds) throws IntactException {
-        myHelper = new IntactHelper(ds);
-    }
 
     /**
      * The JDBC connection
@@ -299,7 +296,7 @@ public abstract class PredictUser implements IntactUserI,
      * @throws IntactException for errors in getting the connection.
      */
     private Connection getConnection() throws IntactException {
-        return myHelper.getJDBCConnection();
+        return ((Session)DaoFactory.getBaseDao().getSession()).connection();
     }
 
     /**
@@ -312,8 +309,8 @@ public abstract class PredictUser implements IntactUserI,
      */
     private Protein getProteinForTaxId(String label, String tax)
             throws IntactException {
-        Collection proteins = myHelper.search(
-                Protein.class.getName(), "shortLabel", label);
+        Collection proteins = DaoFactory.getProteinDao().getByShortLabelLike(label);
+
         for (Iterator iter = proteins.iterator(); iter.hasNext(); ) {
             Protein protein = (Protein) iter.next();
             // Only include the protein that has the same tax id as given tid.
@@ -332,8 +329,7 @@ public abstract class PredictUser implements IntactUserI,
      * @throws IntactException for errors in searching the database.
      */
     private String getTaxId(String shortLabel) throws IntactException {
-        BioSource biosrc = (BioSource) myHelper.getObjectByLabel(
-                BioSource.class, shortLabel);
+        BioSource biosrc = DaoFactory.getBioSourceDao().getByShortLabel(shortLabel);
         return biosrc.getTaxId();
     }
 }

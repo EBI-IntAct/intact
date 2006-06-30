@@ -55,7 +55,7 @@ public final class InitAction extends IntactBaseAction {
 
         //// I had problems with the tomcat4 of the testserver,
         //// therefore I copied this part of the search3 WelcomeAction
-        SearchHelperI helper = new SearchHelper( logger );
+        SearchHelperI helper = new SearchHelper();
         //all we need to do here is set up a valid user if possible
         if ( super.setupUser( request ) == null ) {
             // not possible to set up an user, forward to errorpage
