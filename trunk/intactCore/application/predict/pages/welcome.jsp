@@ -12,7 +12,7 @@
 
 <%@ page language="java" %>
 
-<%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
+<%@ taglib uri="http://jakarta.apache.org/struts/tags-html" prefix="html"%>
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 
 <%@ page errorPage="error.jsp" %>
@@ -29,9 +29,9 @@
 </br>
 <font size="4">
 <b>Introduction</b>
-</br>
-</font size="4">
-</br>
+<br/>
+</font>
+<br/>
 </p>
 Uncovering the interactome is one of the primary challenges in the
 post-genomic era. The topology information gained from the coverage of
@@ -53,16 +53,16 @@ using the proteins listed here as baits. This would save years of experimental
 effort. This of course relies on the timely deposition of experimental data
 into the IntAct database in order that the Pay-As-You-Go
 algorithm should be fully uptodate and effective.
-</br>
-</br>
+<br/>
+<br/>
 </p>
 Presented below is a brief outline of the Pay-As-You-Go strategy, for further
 details please see (Lappe, M. Holm, L. 2004). The link below displays the top 50
 target proteins for use as bait in pull-down experiments for the species currently
 contained within the IntAct database.
-</br>
-</br>
-</br>
+<br/>
+<br/>
+<br/>
 <html:form action="/predict.do">
     <table>
         <tr>
@@ -78,13 +78,13 @@ contained within the IntAct database.
         </tr>
     </table>
 </html:form>
-</br>
-</br>
+<br/>
+<br/>
 <font size="4">
 <b>The Pay-As-You-Go Algorithm</b>
-</br>
-</font size="4">
-</br></p>
+<br/>
+</font>
+<br/></p>
 The Pay-As-You-Go algorithm is a method to explore any scale-free network with
 near-optimal efficiency. In the context of the interactome it is intuitive that
 by focussing initial experimental efforts on proteins which form interaction
@@ -98,15 +98,15 @@ available to determine which proteins (that have not been used as bait as yet)
 are seen most often as prey. These proteins are likely to form hubs because they
 have the largest number of interactions and thus yield the most information when
 used in experiments.
-</br>
-</br>
+<br/>
+<br/>
 
-</br>
+<br/>
 <font size="3">
 <b>Performance</b>
-</br>
-</font size="3">
-</br></p>
+<br/>
+</font>
+<br/></p>
 
 
 The efficiency of any given strategy to provide coverage for a scale-free network,
@@ -118,32 +118,32 @@ proteins which have been pulled out as prey most often in previous experiments.
 These are the baits which most likely have a large number of interactions and
 these are the baits, which if selected first will allow faster and more efficient
 coverage of the network.
-</br>
-</br>
+<br/>
+<br/>
 Figure 1 shows how the pay-as-you-go strategy covers the network as compared to a
 random strategy as tested on various <i>Saccharomyces cerevisiae</i> datasets - DIP
 (Xenarios et al, 2000), CORE (Deane et al, 2002), CZ (Gavin et al, 2002) and MDS
 (Ho et al, 2002) datasets. It demonstrates a large performance advantage over
 current, essentially random strategies, for efficient and cost-effective coverage
 of interactomes.
-</br>
+<br/>
 
-</br>
+<br/>
 <center>
 <img border="0" align="center"
     src="<%=ctxpath%>/images/PAYG_random_relative_performance.gif" width="350" height="400">
 <img border="0" align="center"
     src="<%=ctxpath%>/images/PAYG_random_relative_performance_2.gif" width="350" height="400">
 <font size="2">
-</br>
-</br>
+<br/>
+<br/>
 
 
 <b>Figure 1: Relative Performance of Pay-As-You-Go vs Random Strategy for the detection
 of new interactions as tested on MDS, DIP, CZ and CORE datasets</b>
-</br>
+<br/>
 
-</font size="2">
+</font>
 </center>
 The relative performance advantage of pay-as-you-go vs. random plotted over the
 fraction of proteins used as bait (right) demonstrates the huge initial coverage
@@ -156,13 +156,13 @@ the performance of the pay-as-you-go strategy seems to improve with increasing
 density of the interaction networks. It should also be noted that the pay-as-you-go
 strategy performs even better than this at confirming interactions, the results
 are similar to those shown above.
-</br>
-</br>
-</br>
+<br/>
+<br/>
+<br/>
 <font size="3">
 <b>Algorithmic Principles</b><br>
-</font size="3">
-    </br>
+</font>
+    <br/>
     </p>
     Figure 2 illustrates the basic principles of the pay-as-you-go strategy.
     For an in depth description and discussion of the algorithm please see
@@ -178,7 +178,7 @@ are similar to those shown above.
     contained within <i>R</i>. As more and more interactions are revealed in
     successive experiments <i>P</i> and <i>Q</i> contain everlarger fractions
     of the network. Finally after every protein has been used as bait <i>P</i>
-    contains all proteins whilst <i>Q</i> and <i>R</i> are empty.</br>
+    contains all proteins whilst <i>Q</i> and <i>R</i> are empty.<br/>
     </p>
     The bait-prey relationships resulting from experiments can be modelled as
     directed edges leading from <i>P</i> into <i>Q</i>.
@@ -202,8 +202,8 @@ are similar to those shown above.
     <i>Q</i> with the same maximum <i>indegree</i>. In order to break such a tie,
     the node with the highest deltaK is chosen. Both <i>indegree</i> and deltaK
     are initially set to zero for all proteins.
-    </br>
-    </br>
+    <br/>
+    <br/>
     deltaK is a 'distributed' weight factor that is defined as follows. Every time
     a pull-down is performed the number of neighbours (or degrees) k of the bait
     protein is being determined as well. This degree is distributed over all its
@@ -216,18 +216,18 @@ are similar to those shown above.
     less connected to hubs. So deltaK is an empirical measure which guides the
     strategy towards choosing baits which are linked to lowly connected proteins
     and hence these baits are more likely to be hubs.
-</br>
-</br>
+<br/>
+<br/>
 <center>
-</br>
+<br/>
     <img border="0" align="center"
     src="<%=ctxpath%>/images/PAYG_Outline.jpg" width="700" height="500">
 <font size="2">
-</br>
-</br>
+<br/>
+<br/>
 
-<b>Figure 2: Illustration of Pay-As-You-Go principles</b></br>
-</font size="2">
+<b>Figure 2: Illustration of Pay-As-You-Go principles</b><br/>
+</font>
 </center>
 At the top are two representations (C1 & C2) of the same Graph. The graph G = (V,E)
 consists of 9 nodes (V={<i>a,b,c,d,e,f,g,h,i</i>}) linked 	by 10 undirected edges
@@ -237,7 +237,7 @@ satisfy the condition that every edge is adjacent to an edge in
 C1 or C2 respectively. In other words both sets of cone-shaded nodes in C1 & C2
 reveal the entire interaction network, but the set shown in C2 reveal it in fewer
 steps. In reality this means that fewer experiments would be required to reveal
-the same interaction network. </br>
+the same interaction network. <br/>
 In the adjacency matrix	representation of G an entry is marked in red to denote
 an interaction between two proteins. The matrix M<sub>C2</sub> shows that
 C2 = ({<i>c,f,h</i>})
@@ -251,7 +251,7 @@ M<sub>ord</sub>.
 The upper right triangle or M<sub>ord</sub> denotes at what time an interaction
 was first
 seen, whilst the lower half of the matrix denotes at what time an interaction was
-confirmed according to their ordering. </br>
+confirmed according to their ordering. <br/>
 The lower left corner shows a performance plot, generated by plotting the number
 of edges <i>seen and confirmed</i> at time step <i>t</i>. The earlier edges are
 <i>seen</i> and <i>confirmed</i>, the lower the sum of the weight of all entries
@@ -259,10 +259,10 @@ in M<sub>ord</sub> becomes. Hence this time-weight (the sum over all entries
 in M<sub>ord</sub>) can be
 used as an indicator for the performance of an ordering in revealing the topology
 of a network.
-</br>
-</br>
-</br>
-</br>
+<br/>
+<br/>
+<br/>
+<br/>
 
 </p>
 <center>
@@ -270,12 +270,12 @@ of a network.
         src="<%=ctxpath%>/images/PQRprincipiA.gif" width="300" height="250">
      <img border="0" align="center"
         src="<%=ctxpath%>/images/PQRprincipiB.gif" width="300" height="250">
-</br>
-</br>
-</br>
+<br/>
+<br/>
+<br/>
 <font size="2">
 <b>Figure 3: Illustration of the subsets P,Q and R during the Pay-As-You-Go process</b><br>
-</font size="2">
+</font>
 </center>
    The proteins used as bait (set <i>P</i>) are denoted as <i>p</i>. The proteins detected
    as prey at his point are in the set <i>Q</i> and denoted as <i>q</i>. In this example (left)
@@ -285,13 +285,13 @@ of a network.
    prey proteins are detected and inserted into <i>Q</i>. The situation now shows two nodes from
    <i>Q</i> which have the same <i>indegree</i>. In this case the additional measure of deltaK is
    employed to break the tie.
-</br>
-</br>
+<br/>
+<br/>
 
 </p>
 <font size="3">
 <b>References</b><br>
-</font size="3">
+</font>
 <ol>
     <li>Vitkup et al. Completeness in Structural Genomics <i>Nat Struct Biol</i> <b>8</b>, 559-66 (2001).</li>
     <li>Lappe,M. Holm, L. Unravelling unknown interaction networks with near optimal efficiency <i>Nature Biotech</i> doi:10.1038/nbt921, Published online: 7 December 2003. </li>
