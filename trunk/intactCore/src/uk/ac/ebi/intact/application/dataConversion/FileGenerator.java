@@ -9,11 +9,11 @@ import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Inte
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Interaction2xmlI;
 import uk.ac.ebi.intact.application.dataConversion.util.DisplayXML;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.NucleicAcid;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.io.*;
 import java.util.*;
@@ -39,7 +39,7 @@ public class FileGenerator {
      *
      * @throws IntactException thrown if there was a search problem
      */
-    private static HashSet getExperiments( IntactHelper helper, String searchPattern ) throws IntactException {
+    private static HashSet getExperiments(String searchPattern) throws IntactException {
 
         //try this for now, but it may be better to use SQL and get the ACs,
         //then cycle through them and generate PSI one by one.....
@@ -54,7 +54,7 @@ public class FileGenerator {
 
         while ( patterns.hasMoreTokens() ) {
             String experimentShortlabel = patterns.nextToken().trim();
-            searchResults.addAll( helper.search( Experiment.class, "shortLabel", experimentShortlabel ) );
+            searchResults.addAll(DaoFactory.getExperimentDao().getByShortLabelLike(experimentShortlabel));
         }
 
         int resultSize = searchResults.size();
@@ -348,23 +348,20 @@ public class FileGenerator {
                                         PsiVersion version,
                                         File reverseCvFilename ) throws Exception {
 
-        IntactHelper helper = null;
-
-        try {
-            helper = new IntactHelper();
+         try {
             CvMapping mapping = null;
 
             if ( reverseCvFilename != null ) {
                 // try to load the reverse mapping
                 mapping = new CvMapping();
-                mapping.loadFile( reverseCvFilename, helper );
+                mapping.loadFile(reverseCvFilename);
             }
 
             //get all of the Experiment shortlabels and process them according
             //to the size of their interaction list..
             //NB this currently means that if the search result size
             //is one and the number of interactions is large then we process seperately.
-            Collection searchResults = getExperiments( helper, searchPattern );
+            Collection searchResults = getExperiments( searchPattern );
 
             if ( searchResults.size() == 1 && chunkSize != -1 ) {
                 //may be a large experiment - check and process if necessary
@@ -399,11 +396,9 @@ public class FileGenerator {
                 write( psiDoc.getDocumentElement(), new File( fileName ) );
             }
 
-        } finally {
-            if ( helper != null ) {
-                helper.closeStore();
-            }
-        }
+        } catch (Exception e) {
+             e.printStackTrace();
+         }
     }
 
     ////////////////////

@@ -6,8 +6,8 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.graph2MIF;
 
-import org.apache.log4j.Logger;
-import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.graph2MIF.exception.MIFSerializeException;
 import uk.ac.ebi.intact.application.graph2MIF.exception.NoGraphRetrievedException;
 import uk.ac.ebi.intact.application.graph2MIF.exception.NoInteractorFoundException;
@@ -33,11 +33,7 @@ import java.io.PrintWriter;
 public class Graph2MIFWSServlet extends HttpServlet {
 
 
-    /**
-     * logger for proper information
-     * see config/log4j.properties for more informtation
-     */
-    static Logger logger = Logger.getLogger( "graph2MIF" );
+    private static final Log logger = LogFactory.getLog(Graph2MIFWSServlet.class);
 
     /**
      * doGet - the "main" method of a servlet.
@@ -92,22 +88,23 @@ public class Graph2MIFWSServlet extends HttpServlet {
             }
         } catch ( NumberFormatException e ) {
             giveErrorMsg( "depth should be an integer", aResponse );
-            logger.error( e );
+            e.printStackTrace();
         } catch ( IntactException e ) {
             giveErrorMsg( "ERROR: Search for interactor failed (" + e.toString() + ")", aResponse );
-            logger.error( e );
+            e.printStackTrace();
         } catch ( NoInteractorFoundException e ) {
             giveErrorMsg( "ERROR: No Interactor found for this ac (" + e.toString() + ")", aResponse );
-            logger.error( e );
+            e.printStackTrace();
         } catch ( NoGraphRetrievedException e ) {
             giveErrorMsg( "ERROR: Could not retrieve graph from interactor (" + e.toString() + ")", aResponse );
-            logger.error( e );
+            e.printStackTrace();
         } catch ( NullPointerException e ) {
             giveErrorMsg( "ERROR: wrong parameters:\n usage is: <host>/graph2mif/getXML?ac=<ac>&amp;depth=<int>&amp;strict=(true|false)\n" +
                           "\tac\taccession number\n" +
                           "\tdepth\tdepth of graph\n" +
-                          "\tstrict\t(true|false) for retrieval of strict MIF or not.", aResponse );
-            logger.error( e );
+                          "\tstrict\t(true|false) for retrieval of strict MIF or not.\n" +
+                          "\tversion\t(1|2.5) for the PSI XML Version.", aResponse );
+            e.printStackTrace();
         } finally {
             if( out != null ) {
                 out.close();

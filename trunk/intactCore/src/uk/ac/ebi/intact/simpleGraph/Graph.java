@@ -24,10 +24,10 @@ public class Graph extends BasicGraph implements GraphI {
     // attributes
 
     /* Nodes are unique. */
-    private HashMap nodes = new HashMap();
+    private HashMap<String,BasicGraphI> nodes = new HashMap<String,BasicGraphI>();
 
     /* Edges can be repeated */
-    private ArrayList edges = new ArrayList();
+    private ArrayList<EdgeI> edges = new ArrayList<EdgeI>();
 
     /* Record visited Components */
     private HashSet visited = new HashSet();
@@ -39,7 +39,7 @@ public class Graph extends BasicGraph implements GraphI {
     }
 
     public BasicGraphI addNode(Interactor anInteractor){
-        BasicGraphI node = (BasicGraphI) nodes.get(anInteractor.getAc());
+        BasicGraphI node = nodes.get(anInteractor.getAc());
         if (null == node) {
             node = new Node (anInteractor);
             this.addNode (node);
@@ -52,11 +52,11 @@ public class Graph extends BasicGraph implements GraphI {
             edges.add(anEdge);
     }
 
-    public HashMap getNodes() {
+    public HashMap<String,BasicGraphI> getNodes() {
         return nodes;
     }
 
-    public Collection getEdges() {
+    public Collection<EdgeI> getEdges() {
         return edges;
     }
 
@@ -75,11 +75,14 @@ public class Graph extends BasicGraph implements GraphI {
     }
 
     public String toString() {
-        StringBuffer s = new StringBuffer( 256 );
+        StringBuffer s = new StringBuffer();
 
         final int count = edges.size();
+
+        s.append("Graph["+count+"]").append(NEW_LINE);
+
         for ( int i = 0; i < count; i++ ) {
-            EdgeI e = (EdgeI) edges.get( i );
+            EdgeI e = edges.get( i );
             s.append( e.getNode1().getAc() );
             s.append( '(' );
             s.append( e.getComponent1().getCvComponentRole().getShortLabel() );
@@ -91,7 +94,7 @@ public class Graph extends BasicGraph implements GraphI {
             s.append( ')' );
             s.append( NEW_LINE );
         }
-        s.append( NEW_LINE );
+
         return s.toString();
     }
 }

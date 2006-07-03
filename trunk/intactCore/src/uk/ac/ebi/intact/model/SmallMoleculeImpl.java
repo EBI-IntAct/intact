@@ -7,12 +7,17 @@ package uk.ac.ebi.intact.model;
 
 import uk.ac.ebi.intact.annotation.EditorTopic;
 
+import javax.persistence.Entity;
+import javax.persistence.DiscriminatorValue;
+
 /**
  * TODO comment it.
  *
  * @author Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id$
  */
+@Entity
+@DiscriminatorValue("uk.ac.ebi.intact.model.SmallMolleculeImpl")
 @EditorTopic(name = "SmallMolecule")
 public class SmallMoleculeImpl extends InteractorImpl implements SmallMolecule, Editable{
     public SmallMoleculeImpl(){

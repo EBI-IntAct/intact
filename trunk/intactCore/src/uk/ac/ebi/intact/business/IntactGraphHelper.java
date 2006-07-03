@@ -5,6 +5,7 @@ import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
 import uk.ac.ebi.intact.simpleGraph.Edge;
 import uk.ac.ebi.intact.simpleGraph.EdgeI;
 import uk.ac.ebi.intact.simpleGraph.Graph;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,17 +20,14 @@ import java.util.Iterator;
  */
 public class IntactGraphHelper {
 
-    private IntactHelper helper;
     private CvTopic negativeTopic;
     private boolean negativeAlreadySearched = false;
 
     /**
      * Constructs an instance of this class with an Intact helper.
      *
-     * @param helper the helper to access the persistent system.
      */
-    public IntactGraphHelper(IntactHelper helper) {
-        this.helper = helper;
+    public IntactGraphHelper() {
     }
 
     /**
@@ -82,8 +80,7 @@ public class IntactGraphHelper {
         // get the necessary vocabulary (CvTopic: negative)
         if (!negativeAlreadySearched) {
             try {
-                negativeTopic = (CvTopic) helper.getObjectByLabel(CvTopic.class,
-                        CvTopic.NEGATIVE);
+                negativeTopic = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel(CvTopic.NEGATIVE);
             }
             catch (IntactException e) {
                 e.printStackTrace();
@@ -218,15 +215,15 @@ else mark it.
         }
 
 /* Create list of baits - the size is set later according to what we have to store */
-        ArrayList baits = null;
+        ArrayList<Component> baits = null;
 
         switch (complexExpansion) {
             case Constants.EXPANSION_ALL:
                 {
-                    baits = new ArrayList(current.getComponents().size());
+                    baits = new ArrayList<Component>(current.getComponents().size());
 
 /* all components are considered as baits */
-                    Iterator i = current.getComponents().iterator();
+                    Iterator<Component> i = current.getComponents().iterator();
                     while (i.hasNext()) {
                         baits.add(i.next());
                     }
@@ -239,14 +236,14 @@ else mark it.
 */
                     Component bait = current.getBait();
                     if (null == bait) {
-                        baits = new ArrayList(current.getComponents().size());
-                        Iterator i = current.getComponents().iterator();
+                        baits = new ArrayList<Component>(current.getComponents().size());
+                        Iterator<Component> i = current.getComponents().iterator();
                         if (i.hasNext()) {
                             baits.add(i.next());
                         }
                     }
                     else {
-                        baits = new ArrayList(1);
+                        baits = new ArrayList<Component>(1);
                         baits.add(bait);
                     }
                 }

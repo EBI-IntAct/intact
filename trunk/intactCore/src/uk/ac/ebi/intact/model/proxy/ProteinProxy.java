@@ -45,6 +45,10 @@ public class ProteinProxy extends PolymerProxy implements Protein {
 
    @Override
    public boolean equals ( Object o ) {
+       if (o == null || realSubject() == null)
+       {
+           return false;
+       }
        return realSubject().equals( o );
    }
 
