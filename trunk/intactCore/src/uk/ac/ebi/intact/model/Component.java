@@ -7,10 +7,14 @@ package uk.ac.ebi.intact.model;
 
 import uk.ac.ebi.intact.model.proxy.InteractionProxy;
 import uk.ac.ebi.intact.model.proxy.InteractorProxy;
+import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 
 /**
  * The specific instance of an interactor which participates in an interaction.
@@ -24,6 +28,8 @@ import java.util.Collection;
 @Entity
 @Table(name = "ia_component")
 public class Component extends BasicObjectImpl {
+
+    private static final Log log = LogFactory.getLog(Component.class);
 
     ///////////////////////////////////////
     //attributes
@@ -155,7 +161,8 @@ public class Component extends BasicObjectImpl {
         //not expect a Proxy back since Component only holds
         //a single interactor, hence no need for a Proxy
 
-        if((interactor !=  null) & (interactor instanceof InteractorProxy)){
+        if(interactor instanceof InteractorProxy){
+            log.debug("Getting Interactor using InteractionProxy");
             InteractorProxy proxy = (InteractorProxy)interactor;
             return (Interactor)proxy.getRealSubject();
         }
@@ -172,7 +179,9 @@ public class Component extends BasicObjectImpl {
         // TODO (BA) IMPORTANT: I have just commented this method at seems to provoke an illegal access
         // exception to the list of components
 
-        if (this.interactor != interactor) {
+        if (this.interactor instanceof InteractorProxy ) {
+            log.debug("Setting Interactor using InteractionProxy");
+            InteractionProxy proxy = (InteractionProxy) interaction;
             if (this.interactor != null) this.interactor.removeActiveInstance(this);
             this.interactor = interactor;
             if (interactor != null) interactor.addActiveInstance(this);
@@ -187,7 +196,8 @@ public class Component extends BasicObjectImpl {
         //Need to check for Proxies - callers should
         //not expect a Proxy back since Component only holds
         //a single interaction, hence no need for a Proxy
-        if ( ( interaction != null ) & ( interaction instanceof InteractionProxy ) ) {
+        if (  interaction instanceof InteractionProxy) {
+            log.debug("Getting Interaction using InteractionProxy");
             InteractionProxy proxy = (InteractionProxy) interaction;
             return (Interaction) proxy.getRealSubject();
         }
