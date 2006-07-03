@@ -9,7 +9,9 @@ SANITY_CHECKER=N
 SEARCH_ENGINE=N
 SEARCH_APP=N
 EDITOR_APP=N
-MINE_APP=Y
+MINE_APP=N
+PREDICT_APP=N
+DATA_CONVERSION=Y
 
 INTACT_PKG=uk/ac/ebi/intact
 
@@ -222,9 +224,13 @@ fi
 if [ "$MINE_APP" = "Y" ]; then
 
 echo MINE WEB APP
+
+NAME=mine
+ARTIFACT_ID=mine-app
+
 echo " " Java files
-IC_SOURCE_SRC=$SOURCE_BASE/src/$INTACT_PKG/application/mine
-IC_DEST_SRC=$DEST_BASE/mine-app/trunk/src/main/java/$INTACT_PKG/application/mine
+IC_SOURCE_SRC=$SOURCE_BASE/src/$INTACT_PKG/application/$NAME
+IC_DEST_SRC=$DEST_BASE/$ARTIFACT_ID/trunk/src/main/java/$INTACT_PKG/application/$NAME
 
 rm -rf $IC_DEST_SRC/*
 svn update $IC_DEST_SRC/
@@ -232,14 +238,14 @@ svn cp $IC_SOURCE_SRC/business $IC_DEST_SRC/business
 svn cp $IC_SOURCE_SRC/struts $IC_DEST_SRC/struts
 
 echo " " Webapp files
-IC_SOURCE_SRC=$SOURCE_BASE/application/mine
-IC_DEST_SRC=$DEST_BASE/mine-app/trunk/src/main
+IC_SOURCE_SRC=$SOURCE_BASE/application/$NAME
+IC_DEST_SRC=$DEST_BASE/$ARTIFACT_ID/trunk/src/main
 
-rm -rf $IC_DEST_SRC/mine
+rm -rf $IC_DEST_SRC/$NAME
 rm -rf $IC_DEST_SRC/webapp
 svn update $IC_DEST_SRC/webapp
 svn cp $IC_SOURCE_SRC $IC_DEST_SRC
-mv $IC_DEST_SRC/mine $IC_DEST_SRC/webapp
+mv $IC_DEST_SRC/$NAME $IC_DEST_SRC/webapp
 
 for i in `find $SOURCE_BASE/application/tld/*.tld`; do
   svn cp $i $IC_DEST_SRC/webapp/WEB-INF/tld
@@ -261,16 +267,109 @@ done
 
 echo " " Resource files
 
-IC_DEST_SRC=$DEST_BASE/mine-app/trunk/src/main/resources
+IC_DEST_SRC=$DEST_BASE/$ARTIFACT_ID/trunk/src/main/resources
 
 rm -rf $IC_DEST_SRC/config
 svn update $IC_DEST_SRC
 #svn revert $IC_DEST_SRC/hibernate.cfg.xml
 #svn cp $SOURCE_BASE/src/hibernate.cfg.xml $IC_DEST_SRC
-svn cp $SOURCE_BASE/application/mine/WEB-INF/config $IC_DEST_SRC
+svn cp $SOURCE_BASE/application/$NAME/WEB-INF/config $IC_DEST_SRC
 svn cp $SOURCE_BASE/config/Institution.properties $IC_DEST_SRC/config
 
 svn rm $IC_DEST_SRC/config/log4j.properties
 rm -rf $IC_DEST_SRC/config/log4j.properties
+
+fi
+
+#############################################################################################
+#                        PREDICT APP                                                        #
+#############################################################################################
+
+if [ "$PREDICT_APP" = "Y" ]; then
+
+echo PREDICT WEB APP
+
+NAME=predict
+ARTIFACT_ID=predict-app
+
+echo " " Java files
+IC_SOURCE_SRC=$SOURCE_BASE/src/$INTACT_PKG/application/$NAME
+IC_DEST_SRC=$DEST_BASE/$ARTIFACT_ID/trunk/src/main/java/$INTACT_PKG/application/$NAME
+
+rm -rf $IC_DEST_SRC/*
+svn update $IC_DEST_SRC/
+svn cp $IC_SOURCE_SRC/business $IC_DEST_SRC/business
+svn cp $IC_SOURCE_SRC/struts $IC_DEST_SRC/struts
+svn cp $IC_SOURCE_SRC/util $IC_DEST_SRC/util
+
+echo " " Webapp files
+IC_SOURCE_SRC=$SOURCE_BASE/application/$NAME
+IC_DEST_SRC=$DEST_BASE/$ARTIFACT_ID/trunk/src/main
+
+rm -rf $IC_DEST_SRC/$NAME
+rm -rf $IC_DEST_SRC/webapp
+svn update $IC_DEST_SRC/webapp
+svn cp $IC_SOURCE_SRC $IC_DEST_SRC
+mv $IC_DEST_SRC/$NAME $IC_DEST_SRC/webapp
+
+for i in `find $SOURCE_BASE/application/tld/*.tld`; do
+  svn cp $i $IC_DEST_SRC/webapp/WEB-INF/tld
+done
+
+svn rm $IC_DEST_SRC/webapp/layouts
+rm -rf $IC_DEST_SRC/webapp/layouts
+svn mkdir $IC_DEST_SRC/webapp/layouts
+for i in `find $SOURCE_BASE/application/layouts/*.jsp`; do
+  svn cp $i $IC_DEST_SRC/webapp/layouts
+done
+
+svn rm $IC_DEST_SRC/webapp/layouts/styles
+rm -rf $IC_DEST_SRC/webapp/layouts/styles
+svn mkdir $IC_DEST_SRC/webapp/layouts/styles
+for i in `find $SOURCE_BASE/application/layouts/styles/*.css`; do
+  svn cp $i $IC_DEST_SRC/webapp/layouts/styles
+done
+
+for h in `find $SOURCE_BASE/application/images/*.gif $SOURCE_BASE/application/images/*.jpg $SOURCE_BASE/application/images/*.png`; do
+  svn cp $h $IC_DEST_SRC/webapp/images
+done
+
+echo " " Resource files
+
+IC_DEST_SRC=$DEST_BASE/$ARTIFACT_ID/trunk/src/main/resources
+
+rm -rf $IC_DEST_SRC/config
+svn update $IC_DEST_SRC
+#svn revert $IC_DEST_SRC/hibernate.cfg.xml
+#svn cp $SOURCE_BASE/src/hibernate.cfg.xml $IC_DEST_SRC
+svn cp $SOURCE_BASE/application/$NAME/WEB-INF/config $IC_DEST_SRC
+svn cp $SOURCE_BASE/config/Institution.properties $IC_DEST_SRC/config
+
+rm -rf $IC_DEST_SRC/uk/ac/ebi/intact/application/$NAME
+svn update $IC_DEST_SRC/uk/ac/ebi/intact/application/$NAME
+svn cp $SOURCE_BASE/application/$NAME/WEB-INF/config/PredictResources.properties $IC_DEST_SRC/uk/ac/ebi/intact/application/$NAME
+
+svn rm $IC_DEST_SRC/config/log4j.properties
+rm -rf $IC_DEST_SRC/config/log4j.properties
+
+fi
+
+
+#############################################################################################
+#                        APP COMMONS                                                        #
+#############################################################################################
+
+if [ "$DATA_CONVERSION" = "Y" ]; then
+
+echo DATA CONVERSION
+IC_SOURCE_SRC=$SOURCE_BASE/src/$INTACT_PKG/application/dataConversion
+IC_DEST_SRC=$DEST_BASE/data-conversion/trunk/src/main/java/$INTACT_PKG/application
+
+#svn revert $IC_DEST_SRC
+rm -rf $IC_DEST_SRC/*
+svn update $IC_DEST_SRC/
+svn cp $IC_SOURCE_SRC $IC_DEST_SRC
+
+rm -rf IC_DEST_SRC/dataConversion/test
 
 fi
