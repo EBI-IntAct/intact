@@ -166,7 +166,7 @@ public abstract class PredictUser implements IntactUserI,
      * pre: results->forall(obj: Object | obj.oclIsTypeOf(String))
      * </pre>
      */
-    public List getSpecies() throws IntactException, SQLException {
+    public List<String> getSpecies() throws IntactException, SQLException {
         List species = new ArrayList();
         Statement stmt = null;
         try {
@@ -186,9 +186,13 @@ public abstract class PredictUser implements IntactUserI,
 
                 if (!biosources.isEmpty())
                 {
-                    species.add(biosources.iterator().next());
+                    species.add(biosources.iterator().next().getShortLabel());
                 }
             }
+        }
+        catch (Throwable t)
+        {
+           t.printStackTrace();
         }
         finally {
             if (stmt != null) {
