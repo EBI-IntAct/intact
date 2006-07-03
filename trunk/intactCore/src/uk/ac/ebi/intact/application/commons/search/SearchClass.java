@@ -5,29 +5,7 @@
  */
 package uk.ac.ebi.intact.application.commons.search;
 
-import uk.ac.ebi.intact.model.IntactObject;
-import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.model.ProteinImpl;
-import uk.ac.ebi.intact.model.InteractorImpl;
-import uk.ac.ebi.intact.model.InteractionImpl;
-import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.CvXrefQualifier;
-import uk.ac.ebi.intact.model.CvAliasType;
-import uk.ac.ebi.intact.model.CvFeatureIdentification;
-import uk.ac.ebi.intact.model.CvCellType;
-import uk.ac.ebi.intact.model.CvInteractionType;
-import uk.ac.ebi.intact.model.CvFuzzyType;
-import uk.ac.ebi.intact.model.CvTopic;
-import uk.ac.ebi.intact.model.CvIdentification;
-import uk.ac.ebi.intact.model.CvInteractorType;
-import uk.ac.ebi.intact.model.CvDatabase;
-import uk.ac.ebi.intact.model.CvTissue;
-import uk.ac.ebi.intact.model.CvComponentRole;
-import uk.ac.ebi.intact.model.CvInteraction;
-import uk.ac.ebi.intact.model.CvFeatureType;
-import uk.ac.ebi.intact.model.NucleicAcidImpl;
-import uk.ac.ebi.intact.model.BioSource;
+import uk.ac.ebi.intact.model.*;
 
 import java.util.Set;
 import java.util.List;
@@ -49,6 +27,7 @@ public enum SearchClass
     NUCLEIC_ACID("NucleicAcid", NucleicAcidImpl.class),
     INTERACTOR("Interactor", InteractorImpl.class),
     INTERACTION("Interaction", InteractionImpl.class),
+    SMALL_MOLECULE("SmallMollecule", SmallMoleculeImpl.class),
 
     CV_OBJECT("CvObject", CvObject.class),
     CV_ALIAS_TYPE("CvAliasType", CvAliasType.class),

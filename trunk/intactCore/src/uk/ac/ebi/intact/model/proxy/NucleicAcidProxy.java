@@ -45,6 +45,11 @@ public class NucleicAcidProxy extends PolymerProxy implements NucleicAcid {
 
    @Override
    public boolean equals ( Object o ) {
+       if (o == null || realSubject() == null)
+       {
+           return false;
+       }
+       
        return realSubject().equals( o );
    }
 

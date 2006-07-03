@@ -383,9 +383,6 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         if ( !( o instanceof Interaction ) ) {
             return false;
         }
-        if ( !super.equals( o ) ) {
-            return false;
-        }
 
         final Interaction interaction = (Interaction) o;
 

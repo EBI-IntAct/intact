@@ -5,16 +5,18 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.graph2MIF;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.graph2MIF.conversion.FusionableGraph;
 import uk.ac.ebi.intact.application.graph2MIF.exception.NoGraphRetrievedException;
 import uk.ac.ebi.intact.application.graph2MIF.exception.NoInteractorFoundException;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactGraphHelper;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Constants;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.simpleGraph.Graph;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,11 +31,8 @@ import java.util.StringTokenizer;
  */
 public class GraphFactory {
 
-    /**
-     *  logger for proper information
-     *  see config/log4j.properties for more informtation
-     */
-    static Logger logger = Logger.getLogger("graph2MIF");
+    private static final Log logger = LogFactory.getLog(GraphFactory.class);
+
 
     /**
      * getInteractionNetwork retrieves a interactionnetwork (graph) from a given queryString and depth.
@@ -46,7 +45,7 @@ public class GraphFactory {
      * @exception uk.ac.ebi.intact.application.graph2MIF.exception.NoGraphRetrievedException thrown if DOM-Object could not be serialized
      * @exception uk.ac.ebi.intact.application.graph2MIF.exception.NoInteractorFoundException thrown if no Interactor found for queryString
      */
-    public static Graph getGraph( IntactHelper helper, String queryString, Integer depth )
+    public static Graph getGraph( String queryString, Integer depth )
             throws IntactException,
                    NoInteractorFoundException,
                    NoGraphRetrievedException {
@@ -61,12 +60,12 @@ public class GraphFactory {
         }
 
         //for graph retrieval a interactor is necessary. So get the interactor of given queryString.
-        Collection interactors = new ArrayList( queries.size() );
+        Collection<Interactor> interactors = new ArrayList<Interactor>( queries.size() );
         try {
             logger.info( "Retrieve Interactor from queryString("+ queryString +")" );
             for ( Iterator iterator = queries.iterator (); iterator.hasNext (); ) {
                 String query = (String) iterator.next ();
-                interactors.addAll( helper.search( Interactor.class.getName(), "ac", query ) );
+                interactors.add( DaoFactory.getInteractorDao().getByAc(query) );
             }
         } catch (IntactException e) {
             logger.error( "Could not search for Interactor AC: " + queryString, e );
@@ -74,25 +73,25 @@ public class GraphFactory {
         }
         logger.info( interactors.size() + " Interactor found." );
 
-        IntactGraphHelper graphHelper = new IntactGraphHelper(helper);
-        Interactor interactor = null;
-        FusionableGraph interactionNetwork = null;
+        IntactGraphHelper graphHelper = new IntactGraphHelper();
+
+        FusionableGraph interactionNetwork;
         Iterator interactorIterator = interactors.iterator();
         // process the first interactor
         if (interactorIterator.hasNext()) {
-            interactor = (Interactor) interactorIterator.next();
+            Interactor interactor = (Interactor) interactorIterator.next();
             interactionNetwork = new FusionableGraph();
             try {
                 logger.info ( "Start building an Interaction Network from AC: "+ interactor.getAc() +
                         ", depth: "+ depth +"." );
                 graphHelper.subGraph( interactor,
-                        depth.intValue(),
+                        depth,
                         null,
                         Constants.EXPANSION_BAITPREY,
                         interactionNetwork );
                 logger.info ( "Initial graph("+ interactor.getAc() +"):" + interactionNetwork );
             } catch (IntactException e) {
-                logger.warn("IntActException while subgraph() call " + e.getMessage(), e);
+                logger.error("IntActException while subgraph() call " + e.getMessage(), e);
                 throw new NoGraphRetrievedException();
             }
 
@@ -104,7 +103,7 @@ public class GraphFactory {
                     logger.info ( "Start building an Interaction Network from AC: "+ interactor.getAc() +
                             ", depth: "+ depth +"." );
                     graphHelper.subGraph( interactor,
-                            depth.intValue(),
+                            depth,
                             null,
                             Constants.EXPANSION_BAITPREY,
                             interactionNetwork2 );

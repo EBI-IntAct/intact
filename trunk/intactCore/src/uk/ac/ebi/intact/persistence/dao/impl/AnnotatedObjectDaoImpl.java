@@ -7,8 +7,10 @@ package uk.ac.ebi.intact.persistence.dao.impl;
 
 import org.hibernate.Session;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
 
 import java.util.Collection;
+import java.util.List;
 
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
@@ -49,6 +51,19 @@ public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObj
        return getByPropertyNameLike("shortLabel", value, ignoreCase);
     }
 
+    public T getByXref(String primaryId)
+    {
+        return (T) getSession().createCriteria(getEntityClass())
+                .createCriteria("xrefs", "xref")
+                .add(Restrictions.eq("xref.ac", primaryId)).uniqueResult();
+    }
+
+    public List<T> getByXrefLike(String primaryId)
+    {
+        return getSession().createCriteria(getEntityClass())
+                .createCriteria("xrefs", "xref")
+                .add(Restrictions.like("xref.ac", primaryId)).list();
+    }
 
 
 }

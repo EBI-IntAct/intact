@@ -87,14 +87,6 @@ public abstract class CvObject extends AnnotatedObjectImpl {
             return false;
         }
 
-        if ( ! getClass().equals( obj.getClass() ) ) {
-            return false;
-        }
-
-        if ( !( obj instanceof CvObject ) ) {
-            return false;
-        }
-
         final CvObject other = (CvObject) obj;
 
         // Check this object has an identity xref first.

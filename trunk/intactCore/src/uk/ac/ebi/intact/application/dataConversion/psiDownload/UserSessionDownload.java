@@ -10,8 +10,8 @@ import org.w3c.dom.Text;
 import uk.ac.ebi.intact.application.commons.util.AnnotationFilter;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.io.PrintStream;
 import java.util.*;
@@ -574,14 +574,12 @@ public class UserSessionDownload {
      * Load all CvTopic and check which one have been flagged 'obsolete'. Those CvTopic are automatically added to the
      * list of CvTopic to filter out.
      *
-     * @param helper
-     *
      * @throws IntactException
      */
-    public void filterObsoleteAnnotationTopic( IntactHelper helper ) throws IntactException {
+    public void filterObsoleteAnnotationTopic() throws IntactException {
 
         // search all CvTopic
-        Collection cvTopics = helper.search( CvTopic.class, "ac", null );
+        Collection<CvTopic> cvTopics = DaoFactory.getCvObjectDao(CvTopic.class).getAll();
 
         // search for term obsolete
         CvTopic obsolete = null;

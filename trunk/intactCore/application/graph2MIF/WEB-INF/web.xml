@@ -10,7 +10,6 @@
     <display-name>IntAct Graph2MIF</display-name>
 
     <!-- Filter to open the session at the beginning of the request and close on end -->
-    <!--
     <filter>
         <filter-name>hibernateFilter</filter-name>
         <filter-class>uk.ac.ebi.intact.application.commons.util.HibernateSessionRequestFilter</filter-class>
@@ -20,7 +19,7 @@
         <filter-name>hibernateFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-    -->
+
     
     <listener>
             <listener-class>org.apache.axis.transport.http.AxisHTTPSessionListener</listener-class>

@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.persistence.dao;
 import org.hibernate.criterion.MatchMode;
 
 import java.util.Collection;
+import java.util.List;
 
 import uk.ac.ebi.intact.model.AnnotatedObject;
 
@@ -25,4 +26,8 @@ public interface AnnotatedObjectDao<T extends AnnotatedObject> extends IntactObj
     Collection<T> getByShortLabelLike(String value);
 
     Collection<T> getByShortLabelLike(String value, boolean ignoreCase);
+
+    T getByXref(String primaryId);
+
+    List<T> getByXrefLike(String primaryId);
 }

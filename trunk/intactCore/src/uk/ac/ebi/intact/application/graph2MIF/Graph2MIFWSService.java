@@ -5,7 +5,8 @@
  */
 package uk.ac.ebi.intact.application.graph2MIF;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 import org.w3c.dom.Document;
@@ -22,6 +23,7 @@ import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.simpleGraph.EdgeI;
 import uk.ac.ebi.intact.simpleGraph.Graph;
+import uk.ac.ebi.intact.simpleGraph.Edge;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -42,7 +44,7 @@ import java.util.Set;
  */
 public class Graph2MIFWSService implements Graph2MIFWS
 {
-    private static Logger logger = Logger.getLogger("graph2MIF");
+    private static final Log logger = LogFactory.getLog(Graph2MIFWSService.class);
 
     public String getMIF(String ac, Integer depth, Boolean strictmif) throws IntactException,
                                                                              NoGraphRetrievedException,
@@ -108,15 +110,7 @@ public class Graph2MIFWSService implements Graph2MIFWS
                    NoGraphRetrievedException,
                    NoInteractorFoundException
     {
-        //create helper
-        IntactHelper helper = new IntactHelper();
-
-        if (logger.isDebugEnabled())
-        {
-            logger.debug("\tHelper created");
-        }
-
-        Graph graph = GraphFactory.getGraph(helper, ac, depth); //NoGraphRetrievedExceptioni, IntactException and NoInteractorFoundException possible
+        Graph graph = GraphFactory.getGraph(ac, depth); //NoGraphRetrievedExceptioni, IntactException and NoInteractorFoundException possible
 
         if (logger.isDebugEnabled())
         {
@@ -131,27 +125,23 @@ public class Graph2MIFWSService implements Graph2MIFWS
         session.getExperimentListElement();
         session.getInteractorListElement();
 
-        Collection interactions = interactionsFromGraph(graph);
+        Collection<Interaction> interactions = interactionsFromGraph(graph);
 
-        for (Iterator iterator1 = interactions.iterator(); iterator1.hasNext();)
+        for (Interaction interaction : interactions)
         {
-            Interaction interaction = (Interaction) iterator1.next();
-
             interaction2xml.create(session, session.getInteractionListElement(), interaction);
         }
 
         return session.getPsiDocument();
     }
 
-    private static Collection interactionsFromGraph(Graph graph)
+    private static Collection<Interaction> interactionsFromGraph(Graph graph)
     {
-        Collection edges = graph.getEdges();
-        Set interactions = new HashSet();
+        Collection<EdgeI> edges = graph.getEdges();
+        Set<Interaction> interactions = new HashSet<Interaction>();
 
-        for (Iterator iterator = edges.iterator(); iterator.hasNext();)
+        for (EdgeI edge : edges)
         {
-            EdgeI edge = (EdgeI) iterator.next();
-
             Interaction compInter1 = edge.getComponent1().getInteraction();
             Interaction compInter2 = edge.getComponent2().getInteraction();
 

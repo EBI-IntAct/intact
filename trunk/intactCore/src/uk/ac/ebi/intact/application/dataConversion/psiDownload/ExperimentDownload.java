@@ -11,10 +11,11 @@ import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Inte
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Interaction2xmlI;
 import uk.ac.ebi.intact.application.dataConversion.util.DisplayXML;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.util.Chrono;
+import uk.ac.ebi.intact.persistence.dao.BaseDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import javax.xml.transform.TransformerException;
 import java.io.*;
@@ -67,25 +68,8 @@ public class ExperimentDownload {
         System.out.println( version );
 
         UserSessionDownload session = new UserSessionDownload( version );
+        session.filterObsoleteAnnotationTopic();
 
-        IntactHelper helper = null;
-
-        try {
-            helper = new IntactHelper();
-            session.filterObsoleteAnnotationTopic( helper );
-
-        } catch ( IntactException e ) {
-            e.printStackTrace();
-        } finally {
-            if ( helper != null ) {
-                try {
-                    helper.closeStore();
-                    helper = null;
-                } catch ( IntactException e ) {
-                    e.printStackTrace();
-                }
-            }
-        }
 
 
         boolean loadMapping = false;
@@ -96,20 +80,11 @@ public class ExperimentDownload {
 
                 try {
                     cvMapping = new CvMapping();
-                    helper = new IntactHelper();
 
 //                    cvMapping.loadFile( new File( "C:/reverseMapping.txt" ), helper );
 
                 } catch ( IntactException e ) {
                     e.printStackTrace();
-                } finally {
-                    if ( helper != null ) {
-                        try {
-                            helper.closeStore();
-                        } catch ( IntactException e ) {
-                            e.printStackTrace();
-                        }
-                    }
                 }
             }
         }
@@ -156,22 +131,20 @@ public class ExperimentDownload {
     public static void main( String[] args ) throws IntactException, SQLException, LookupException,
                                                     TransformerException, IOException {
 
-        IntactHelper helper = null;
-
         Chrono chrono = new Chrono();
         chrono.start();
 
         try {
-            helper = new IntactHelper();
-            System.out.println( "Database: " + helper.getDbName() );
-            System.out.println( "Username: " + helper.getDbUserName() );
+            BaseDao dao = DaoFactory.getBaseDao();
+            System.out.println( "Database: " + dao.getDbName() );
+            System.out.println( "Username: " + dao.getDbUserName() );
 
             System.out.print( "Searching for all experiment: " );
 
             String experimentShortlabels = "rual-2005-1";
 
-            Collection experiments = new ArrayList();
-            Collection experimentsLabel = new ArrayList();
+            Collection<Experiment> experiments = new ArrayList<Experiment>();
+            Collection<String> experimentsLabel = new ArrayList<String>();
 
             StringTokenizer st = new StringTokenizer( experimentShortlabels, "," );
             while ( st.hasMoreTokens() ) {
@@ -182,7 +155,7 @@ public class ExperimentDownload {
                 String label = (String) iterator.next();
                 System.out.print( "Loading " + label + "..." );
                 System.out.flush();
-                experiments.addAll( helper.search( Experiment.class, "shortlabel", label ) );
+                experiments.addAll( DaoFactory.getExperimentDao().getByShortLabelLike(label));
                 System.out.println( "done." );
             }
 
@@ -222,12 +195,8 @@ public class ExperimentDownload {
                 System.out.println( "PSI v25: " + timePsi25 );
             }
 
-        } finally {
-
-            if ( helper != null ) {
-                helper.closeStore();
-                System.out.println( "Database connexion closed." );
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         chrono.stop();

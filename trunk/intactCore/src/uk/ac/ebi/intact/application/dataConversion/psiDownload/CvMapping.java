@@ -6,13 +6,15 @@
 package uk.ac.ebi.intact.application.dataConversion.psiDownload;
 
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.io.*;
 import java.util.*;
+import java.sql.SQLException;
 
 /**
  * Holds a Controlled Vocabulary Mapping.
@@ -242,11 +244,10 @@ public class CvMapping {
      * </pre>
      *
      * @param file
-     * @param helper
      *
      * @return
      */
-    public Map loadFile( File file, IntactHelper helper ) {
+    public Map loadFile(File file) {
 
         if ( map == null ) {
             // initialise it
@@ -330,23 +331,25 @@ public class CvMapping {
                              && ( toMI.startsWith( "MI:" ) || toMI.equals( STAR ) )
                              && ( !( fromMI.equals( STAR ) && toMI.equals( STAR ) ) ) ) {
 
+                            CvObjectDao<CvObject> cvObjectDao = DaoFactory.getCvObjectDao(CvObject.class);
+
                             CvObject fromCvObject = null;
                             if ( fromMI.startsWith( "MI:" ) ) {
-                                Collection c = helper.getObjectsByXref( CvObject.class, fromMI );
+                                Collection<CvObject> c = cvObjectDao.getByXrefLike(fromMI );
 
                                 if ( c.size() == 1 ) {
-                                    fromCvObject = (CvObject) c.iterator().next();
+                                    fromCvObject =  c.iterator().next();
                                 } else if ( c.size() > 1 ) {
 
                                     // get the class from the other MI ref, and filter using it instead of CvObject
-                                    c = helper.getObjectsByXref( CvObject.class, toMI );
+                                    c = cvObjectDao.getByXrefLike(toMI);
                                     if ( c.size() == 1 ) {
                                         // get the class
-                                        CvObject cv = (CvObject) c.iterator().next();
+                                        CvObject cv = c.iterator().next();
                                         Class clazz = cv.getClass();
 
                                         // there should be only one.
-                                        fromCvObject = (CvObject) helper.getObjectByXref( clazz, fromMI );
+                                        fromCvObject = (CvObject) DaoFactory.getCvObjectDao(clazz).getByXref(fromMI );
                                     }
                                 }
 
@@ -358,7 +361,7 @@ public class CvMapping {
 
                             CvObject toCvObject = null;
                             if ( toMI.startsWith( "MI:" ) ) {
-                                toCvObject = (CvObject) helper.getObjectByXref( CvObject.class, toMI );
+                                toCvObject = cvObjectDao.getByXref(toMI );
 
                                 if ( toCvObject == null ) {
                                     System.err.println( "Line " + lineCount + ": Warning, " + toMI + " could not be found in the database." );
@@ -369,7 +372,7 @@ public class CvMapping {
                             Collection fromCollection = null;
                             if ( fromCvObject == null ) {
                                 // it was a star, hence check our the type of toCvObject
-                                fromCollection = helper.search( toCvObject.getClass(), "ac", null ); // load them all
+                                fromCollection = cvObjectDao.getAll(); // load them all
 
                                 // remove evenutual cycle
                                 fromCollection.remove( toCvObject );
@@ -378,7 +381,7 @@ public class CvMapping {
                             Collection toCollection = null;
                             if ( toCvObject == null ) {
                                 // it was a star, hence check our the type of fromCvObject
-                                toCollection = helper.search( fromCvObject.getClass(), "ac", null ); // load them all
+                                toCollection = cvObjectDao.getAll(); // load them all
 
                                 // remove evenutual cycle
                                 toCollection.remove( fromCvObject );
@@ -450,20 +453,20 @@ public class CvMapping {
     public static void main( String[] args ) throws IntactException {
 
         CvMapping mapping = new CvMapping();
-        IntactHelper helper = null;
-        try {
-            helper = new IntactHelper();
-            System.out.println( "Database: " + helper.getDbName() );
+
+        try
+        {
+            System.out.println( "Database: " + DaoFactory.getBaseDao().getDbName() );
             long start = System.currentTimeMillis();
-            mapping.loadFile( new File( args[ 0 ] ), helper );
+            mapping.loadFile( new File( args[ 0 ] ));
             long stop = System.currentTimeMillis();
 
             System.out.println( "Loading time: " + ( stop - start ) + "ms" );
-
-        } finally {
-            if ( helper == null ) {
-                helper.closeStore();
-            }
         }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+
     }
 }

@@ -5,17 +5,15 @@
  */
 package uk.ac.ebi.intact.persistence.dao.impl;
 
-import org.hibernate.Session;
 import org.hibernate.HibernateException;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.Session;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+import uk.ac.ebi.intact.model.IntactObject;
+import uk.ac.ebi.intact.persistence.dao.IntactObjectDao;
 
 import java.util.Collection;
 import java.util.List;
-
-import uk.ac.ebi.intact.model.IntactObject;
-import uk.ac.ebi.intact.persistence.dao.impl.HibernateBaseDaoImpl;
-import uk.ac.ebi.intact.persistence.dao.IntactObjectDao;
 
 /**
  * Basic queries for IntactObjects
@@ -75,6 +73,5 @@ public class IntactObjectDaoImpl<T extends IntactObject> extends HibernateBaseDa
     {
         return getSession().createCriteria(getEntityClass()).list();
     }
-
 
 }
