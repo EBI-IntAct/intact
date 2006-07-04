@@ -6,13 +6,13 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.util.rangeChecker;
 
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.Chrono;
 import uk.ac.ebi.intact.util.sanityChecker.MessageSender;
 import uk.ac.ebi.intact.util.sanityChecker.ReportTopic;
 import uk.ac.ebi.intact.util.sanityChecker.SanityCheckerHelper;
 import uk.ac.ebi.intact.util.sanityChecker.model.RangeBean;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import javax.mail.MessagingException;
 import java.io.BufferedWriter;
@@ -162,16 +162,14 @@ public class RangeChecker {
         chrono.start();
 
         RangeChecker rangeChecker = new RangeChecker();
-        IntactHelper helper = null;
         try {
-            helper = new IntactHelper();
 
             System.out.print( "Loading proteins ... " );
             System.out.flush();
-            Collection proteinACs = loadProteinAcs( helper );
+            Collection proteinACs = loadProteinAcs( );
             System.out.println( proteinACs.size() + " found." );
 
-            rangeChecker.check( helper, proteinACs );
+            rangeChecker.check( proteinACs );
 
         } catch ( SQLException e ) {
 
@@ -191,10 +189,6 @@ public class RangeChecker {
 
         } finally {
 
-            if ( helper != null ) {
-                helper.closeStore();
-            }
-
             chrono.stop();
             System.out.println( "Time elapsed: " + chrono );
         }
@@ -203,14 +197,13 @@ public class RangeChecker {
     /**
      * Returns a list of Interactor AC that have at least one Range.
      *
-     * @param helper data access
      *
      * @return a non null list of interactor.
      */
-    public static List loadProteinAcs( IntactHelper helper ) throws IntactException, SQLException {
+    public static List loadProteinAcs( ) throws IntactException, SQLException {
         List acs = new ArrayList();
 
-        Connection connection = helper.getJDBCConnection();
+        Connection connection = DaoFactory.connection();
         Statement statement = null;
         ResultSet rs = null;
         try {
@@ -241,7 +234,7 @@ public class RangeChecker {
     /**
      * @param proteins
      */
-    public void check( IntactHelper helper, Collection proteins ) throws IntactException, SQLException {
+    public void check( Collection proteins ) throws IntactException, SQLException {
 
         if ( proteins == null ) {
             throw new IllegalArgumentException( "The parameter 'protein' should not be null" );
@@ -250,9 +243,9 @@ public class RangeChecker {
         int count = 0;
         for ( Iterator iterator = proteins.iterator(); iterator.hasNext(); ) {
             String ac = (String) iterator.next();
-            Polymer polymer = helper.getObjectByAc( Polymer.class, ac );
+            Polymer polymer = (Polymer) DaoFactory.getInteractorDao().getByAc( ac );
 
-            checkRange( polymer, helper );
+            checkRange( polymer );
 
             count++;
 
@@ -303,17 +296,16 @@ public class RangeChecker {
      * This method return all the ranges related to a specific polymer
      *
      * @param polymer      Protein for which you want to be return all the ranges.
-     * @param intactHelper
      *
      * @return a collection containing all the ranges associated to this polymer
      *
      * @throws IntactException
      */
-    private Collection getRangesFromPolymer( Polymer polymer, IntactHelper intactHelper ) throws IntactException {
+    private Collection getRangesFromPolymer( Polymer polymer ) throws IntactException {
         //System.out.println("RangeChecker.getRangesFromProtein");
         Collection allRanges = new ArrayList();
 
-        Collection components = intactHelper.search( Component.class, "interactor_ac", polymer.getAc() );
+        Collection components = DaoFactory.getComponentDao().getByInteractorAc( polymer.getAc() );
         for ( Iterator iterator = components.iterator(); iterator.hasNext(); ) {
             Component component = (Component) iterator.next();
             Collection features = component.getBindingDomains();
@@ -408,14 +400,12 @@ public class RangeChecker {
     /**
      * Return the unique instance of the SanityCheckerHelper.
      *
-     * @param helper data source.
-     *
      * @return an instance of SanityCherckerHelper.
      *
      * @throws IntactException
      * @throws SQLException
      */
-    private SanityCheckerHelper getCheckerHelper( IntactHelper helper ) throws IntactException, SQLException {
+    private SanityCheckerHelper getCheckerHelper(  ) throws IntactException, SQLException {
         if ( sch != null ) {
             // return cache
             return sch;
@@ -423,7 +413,7 @@ public class RangeChecker {
 
         // build it
         sch = new SanityCheckerHelper();
-        sch.addMapping( helper, RangeBean.class, "select c.interactor_ac, c.interaction_ac, r.ac, r.updated, r.userstamp, " +
+        sch.addMapping(  RangeBean.class, "select c.interactor_ac, c.interaction_ac, r.ac, r.updated, r.userstamp, " +
                                                  "       r.feature_ac, r.fromintervalstart, r.fromintervalend, r.fromfuzzytype_ac, " +
                                                  "       r.tofuzzytype_ac, r.fromintervalend, r.tointervalend, r.fromintervalstart, " +
                                                  "       r.tointervalstart, r.created_user " +
@@ -434,12 +424,12 @@ public class RangeChecker {
         return sch;
     }
 
-    private void checkRange( Polymer polymer, IntactHelper helper ) throws IntactException, SQLException {
+    private void checkRange( Polymer polymer ) throws IntactException, SQLException {
 
         String polymerSequence = polymer.getSequence();
 
         if ( polymerSequence != null ) {
-            Collection ranges = getRangesFromPolymer( polymer, helper );
+            Collection ranges = getRangesFromPolymer( polymer);
             for ( Iterator iterator = ranges.iterator(); iterator.hasNext(); ) {
                 Range range = (Range) iterator.next();
 
@@ -462,9 +452,9 @@ public class RangeChecker {
 
                         if ( rangeSeqStored.equals( mSupp ) ) {
 
-                            SanityCheckerHelper sch = getCheckerHelper( helper );
-                            RangeBean rangeBean = (RangeBean) sch.getBeans( helper, RangeBean.class, range.getAc() ).get( 0 );
-                            messageSender.addMessage( helper, ReportTopic.RANGE_SEQUENCE_SAVED_BY_SUPPRESSING_THE_M, rangeBean );
+                            SanityCheckerHelper sch = getCheckerHelper(  );
+                            RangeBean rangeBean = (RangeBean) sch.getBeans(  RangeBean.class, range.getAc() ).get( 0 );
+                            messageSender.addMessage(  ReportTopic.RANGE_SEQUENCE_SAVED_BY_SUPPRESSING_THE_M, rangeBean );
 
                             mSuppCount++;
                             mSuppChangeReport.append( "\n\nProtein Ac: " ).append( polymer.getAc() );
@@ -497,7 +487,7 @@ public class RangeChecker {
                             System.out.println( "range.getSequence before = " + range.getSequence() );
                             range.setSequence( polymerSequence );
 
-                            helper.update( range );
+                            DaoFactory.getRangeDao().update( range );
 
                             mSuppChangeReport.append( "\nPrevious range: " ).append( rangeSeqStored );
                             mSuppChangeReport.append( "\nNew range     : " ).append( range.getSequence() ).append( "\n\n" );
@@ -508,9 +498,9 @@ public class RangeChecker {
                             String mAdded = getRangeSeqMadded( polymerSequence, range, owner );
                             if ( rangeSeqStored.equals( mAdded ) ) {
 
-                                SanityCheckerHelper sch = getCheckerHelper( helper );
-                                RangeBean rangeBean = (RangeBean) sch.getBeans( helper, RangeBean.class, range.getAc() ).get( 0 );
-                                messageSender.addMessage( helper, ReportTopic.RANGE_SEQUENCE_SAVED_BY_ADDING_THE_M, rangeBean );
+                                SanityCheckerHelper sch = getCheckerHelper(  );
+                                RangeBean rangeBean = (RangeBean) sch.getBeans(  RangeBean.class, range.getAc() ).get( 0 );
+                                messageSender.addMessage(  ReportTopic.RANGE_SEQUENCE_SAVED_BY_ADDING_THE_M, rangeBean );
 
                                 mAddedCount++;
 
@@ -537,7 +527,7 @@ public class RangeChecker {
                                 }
 
                                 range.setSequence( polymerSequence );
-                                helper.update( range );
+                                DaoFactory.getRangeDao().update( range );
 
                                 mAddedChangeReport.append( "\nPrevious range: " ).append( rangeSeqStored );
                                 mAddedChangeReport.append( "\nNew range     : " ).append( range.getSequence() ).append( "\n" );
@@ -546,9 +536,9 @@ public class RangeChecker {
 
                                 notEqual++;
 
-                                SanityCheckerHelper sch = getCheckerHelper( helper );
-                                RangeBean rangeBean = (RangeBean) sch.getBeans( helper, RangeBean.class, range.getAc() ).get( 0 );
-                                messageSender.addMessage( helper, ReportTopic.RANGE_SEQUENCE_NOT_EQUAL_TO_PROTEIN_SEQ, rangeBean );
+                                SanityCheckerHelper sch = getCheckerHelper( );
+                                RangeBean rangeBean = (RangeBean) sch.getBeans(  RangeBean.class, range.getAc() ).get( 0 );
+                                messageSender.addMessage(  ReportTopic.RANGE_SEQUENCE_NOT_EQUAL_TO_PROTEIN_SEQ, rangeBean );
 
                                 notEqualReport.append( "\n\nProtein Ac: " ).append( polymer.getAc() );
                                 notEqualReport.append( "\tRange Ac:" ).append( range.getAc() );
@@ -572,7 +562,7 @@ public class RangeChecker {
                         range.setSequence( polymerSequence );
                         String s = range.getSequence();
                         if ( s != null && s.length() > 0 ) {
-                            helper.update( range );
+                            DaoFactory.getRangeDao().update( range );
                             System.out.println( "Fixed." );
                             System.out.println( "Range.getSequence() [length=" + range.getSequence().length() + "]: " + range.getSequence() );
                         } else {

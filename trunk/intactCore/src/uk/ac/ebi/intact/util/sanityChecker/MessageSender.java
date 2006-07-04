@@ -6,12 +6,12 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.util.sanityChecker;
 
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.MailSender;
 import uk.ac.ebi.intact.util.PropertyLoader;
 import uk.ac.ebi.intact.util.correctionAssigner.ComparableExperimentBean;
 import uk.ac.ebi.intact.util.sanityChecker.model.*;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import javax.mail.MessagingException;
 import java.sql.SQLException;
@@ -135,9 +135,7 @@ public class MessageSender {
         String userMessageReport = "";
         String adminMessageReport = "";
 
-        //IntactHelper helper = null;
         //try {
-        //helper = new IntactHelper();
         //Range range = (Range) helper.getObjectByAc(Range.class, rangeBean.getAc());
 
         editorUrl = editorUrlBuilder.getEditorUrl( "Interaction", rangeBean.getInteraction_ac() );
@@ -180,7 +178,7 @@ public class MessageSender {
      * @throws SQLException
      * @throws IntactException
      */
-    public void addMessage( IntactHelper helper, ReportTopic topic, IntactBean intactBean, ControlledvocabBean cv ) throws SQLException, IntactException {
+    public void addMessage( ReportTopic topic, IntactBean intactBean, ControlledvocabBean cv ) throws SQLException, IntactException {
 
         String editorUrl;// = editorUrlBuilder.getEditorUrl(intactBean);
 
@@ -207,7 +205,7 @@ public class MessageSender {
 
             AnnotationBean annotationBean = (AnnotationBean) intactBean;
             SanityCheckerHelper sch = new SanityCheckerHelper();
-            IntactBean annotatedBean = sch.getAnnotatedBeanFromAnnotation( helper, annotationBean.getAc() );
+            IntactBean annotatedBean = sch.getAnnotatedBeanFromAnnotation( annotationBean.getAc() );
             if ( annotatedBean != null ) {
                 editorUrl = editorUrlBuilder.getEditorUrl( annotatedBean );
                 String[] rowValues = new String[6];
@@ -283,7 +281,7 @@ public class MessageSender {
         } else if ( intactBean instanceof FeatureBean ) {
 
             FeatureBean featureBean = (FeatureBean) intactBean;
-            InteractorBean relatedInteraction = getFeaturedInteraction( helper, featureBean.getAc() );
+            InteractorBean relatedInteraction = getFeaturedInteraction( featureBean.getAc() );
             editorUrl = editorUrlBuilder.getEditorUrl( relatedInteraction );
             String[] rowValues = new String[7];
             rowValues[ 0 ] = "<a href=" + editorUrl + ">" + relatedInteraction.getAc() + "</a>";
@@ -301,11 +299,11 @@ public class MessageSender {
             //XREF_WITH_NON_VALID_PRIMARY_ID
             XrefBean xrefBean = (XrefBean) intactBean;
             SanityCheckerHelper sch = new SanityCheckerHelper();
-            IntactBean xreferencedBean = sch.getXreferencedObject( helper, xrefBean );
+            IntactBean xreferencedBean = sch.getXreferencedObject( xrefBean );
             String[] rowValues = new String[9];
             if ( xreferencedBean instanceof FeatureBean ) {
                 FeatureBean featureBean = (FeatureBean) xreferencedBean;
-                InteractorBean relatedInteraction = getFeaturedInteraction( helper, featureBean.getAc() );
+                InteractorBean relatedInteraction = getFeaturedInteraction( featureBean.getAc() );
                 editorUrl = editorUrlBuilder.getEditorUrl( relatedInteraction );
                 //still to test
                 rowValues[ 0 ] = "<a href=" + editorUrl + ">" + relatedInteraction.getAc() + "</a>";
@@ -395,7 +393,7 @@ public class MessageSender {
         addAdminMessage( topic, sbAdminMessageReport.toString() );
     }
 
-    public void addMessage( IntactHelper helper, ReportTopic topic, RangeBean rangeBean ) {
+    public void addMessage( ReportTopic topic, RangeBean rangeBean ) {
         String editorUrl;
 
         String user = rangeBean.getCreated_user();
@@ -405,7 +403,7 @@ public class MessageSender {
         String adminMessageReport = "";
 
         try {
-            Range range = helper.getObjectByAc( Range.class, rangeBean.getAc() );
+            Range range = DaoFactory.getRangeDao().getByAc(rangeBean.getAc());
 
             editorUrl = editorUrlBuilder.getEditorUrl( "Interaction", rangeBean.getInteraction_ac() );
             String[] rowValues = new String[8];
@@ -435,7 +433,7 @@ public class MessageSender {
      * @param topic      the type of error we have dicovered for the given AnnotatedObject.
      * @param intactBean The Intact object that user info is required for.
      */
-    public void addMessage( IntactHelper helper, ReportTopic topic, IntactBean intactBean ) throws SQLException, IntactException {
+    public void addMessage( ReportTopic topic, IntactBean intactBean ) throws SQLException, IntactException {
 
         String editorUrl;// = editorUrlBuilder.getEditorUrl(intactBean);
 
@@ -448,7 +446,7 @@ public class MessageSender {
         if ( intactBean instanceof RangeBean ) {
             RangeBean rangeBean = (RangeBean) intactBean;
 
-            Range range = helper.getObjectByAc( Range.class, rangeBean.getAc() );
+            Range range = DaoFactory.getRangeDao().getByAc( rangeBean.getAc() );
 
             editorUrl = editorUrlBuilder.getEditorUrl( "Interaction", rangeBean.getInteraction_ac() );
             String[] rowValues = new String[10];
@@ -495,11 +493,11 @@ public class MessageSender {
             XrefBean xrefBean = (XrefBean) intactBean;
             SanityCheckerHelper sch = new SanityCheckerHelper();
 
-            IntactBean xreferencedBean = sch.getXreferencedObject( helper, xrefBean );
+            IntactBean xreferencedBean = sch.getXreferencedObject( xrefBean );
             String[] rowValues = new String[8];
             if ( xreferencedBean instanceof FeatureBean ) {
                 FeatureBean featureBean = (FeatureBean) xreferencedBean;
-                InteractorBean relatedInteraction = getFeaturedInteraction( helper, featureBean.getAc() );
+                InteractorBean relatedInteraction = getFeaturedInteraction( featureBean.getAc() );
                 editorUrl = editorUrlBuilder.getEditorUrl( relatedInteraction );
                 //still to test
 
@@ -726,13 +724,13 @@ public class MessageSender {
      * @param annotationBean
      * @param topicShortlabel
      */
-    public void addMessage( IntactHelper helper, ReportTopic topic, AnnotationBean annotationBean, String topicShortlabel ) throws SQLException, IntactException {//( ReportTopic topic, AnnotationBean annotationBean, AnnotatedBean annotatedBean, String annotatedType, String topicShortlabel) throws SQLException, IntactException {
+    public void addMessage( ReportTopic topic, AnnotationBean annotationBean, String topicShortlabel ) throws SQLException, IntactException {//( ReportTopic topic, AnnotationBean annotationBean, AnnotatedBean annotatedBean, String annotatedType, String topicShortlabel) throws SQLException, IntactException {
         //TOPICAC_NOT_VALID
         String user = annotationBean.getCreated_user();
         Timestamp date = annotationBean.getCreated();
 
         SanityCheckerHelper sch = new SanityCheckerHelper();
-        AnnotatedBean annotatedBean = sch.getAnnotatedBeanFromAnnotation( helper, annotationBean.getAc() );
+        AnnotatedBean annotatedBean = sch.getAnnotatedBeanFromAnnotation( annotationBean.getAc() );
 
         String editorUrl;// = editorUrlBuilder.getEditorUrl(annotatedBean);
         String annotatedBeanType = getTypeFromIntactBean( annotatedBean );
@@ -742,7 +740,7 @@ public class MessageSender {
         // Build users report
         if ( annotatedBean instanceof FeatureBean ) {
             FeatureBean featureBean = (FeatureBean) annotatedBean;
-            InteractorBean interaction = getFeaturedInteraction( helper, featureBean.getAc() );
+            InteractorBean interaction = getFeaturedInteraction( featureBean.getAc() );
             editorUrl = editorUrlBuilder.getEditorUrl( interaction );
             //still to test
             rowValues[ 0 ] = featureBean.getAc();
@@ -767,7 +765,7 @@ public class MessageSender {
     }
 
 
-    public void addMessage( IntactHelper helper, AnnotatedBean annotatedBean, ReportTopic reportTopic ) throws IntactException, SQLException {
+    public void addMessage( AnnotatedBean annotatedBean, ReportTopic reportTopic ) throws IntactException, SQLException {
 
         //FEATURE_WITHOUT_A_RANGE
 
@@ -779,7 +777,7 @@ public class MessageSender {
 
         String[] rowValues = new String[4];
         FeatureBean featureBean = (FeatureBean) annotatedBean;
-        InteractorBean interaction = getFeaturedInteraction( helper, featureBean.getAc() );
+        InteractorBean interaction = getFeaturedInteraction( featureBean.getAc() );
         String editorUrl = editorUrlBuilder.getEditorUrl( interaction );
         rowValues[ 0 ] = featureBean.getAc();
         rowValues[ 1 ] = "<a href=" + editorUrl + ">" + interaction.getAc() + "</a>";
@@ -793,7 +791,7 @@ public class MessageSender {
         addAdminMessage( reportTopic, adminMessageReport );
     }
 
-    public void addMessage( IntactHelper helper, AnnotationBean annotationBean ) throws IntactException, SQLException {
+    public void addMessage( AnnotationBean annotationBean ) throws IntactException, SQLException {
 
         //URL_NOT_VALID
 
@@ -801,7 +799,7 @@ public class MessageSender {
         String adminMessageReport;
 
         SanityCheckerHelper sch = new SanityCheckerHelper();
-        AnnotatedBean annotatedBean = sch.getAnnotatedBeanFromAnnotation( helper, annotationBean.getAc() );
+        AnnotatedBean annotatedBean = sch.getAnnotatedBeanFromAnnotation( annotationBean.getAc() );
         String annotatedBeanType = getTypeFromIntactBean( annotatedBean );
 
         String user = annotatedBean.getCreated_user();
@@ -810,7 +808,7 @@ public class MessageSender {
         String[] rowValues = new String[7];
         if ( annotatedBean instanceof FeatureBean ) {
             FeatureBean featureBean = (FeatureBean) annotatedBean;
-            InteractorBean interaction = getFeaturedInteraction( helper, featureBean.getAc() );
+            InteractorBean interaction = getFeaturedInteraction( featureBean.getAc() );
             //still to test
             String editorUrl = editorUrlBuilder.getEditorUrl( interaction );
             rowValues[ 0 ] = featureBean.getAc();
@@ -921,10 +919,9 @@ public class MessageSender {
 
         // send summary of all individual mail to admin
         StringBuffer fullReport = new StringBuffer( 256 );
-        IntactHelper helper;
+
         try {
-            helper = getIntactHelper();
-            fullReport.append( "Instance name: " ).append( helper.getDbName() );
+            fullReport.append( "Instance name: " ).append( DaoFactory.getBaseDao().getDbName() );
             fullReport.append( NEW_LINE ).append( NEW_LINE );
         } catch ( Exception e ) {
             e.printStackTrace();
@@ -1014,41 +1011,22 @@ public class MessageSender {
         return fullReport.toString();
     }
 
-    public IntactHelper getIntactHelper() throws IntactException {
-        IntactHelper helper = new IntactHelper();
-        // Install termination hook, that allows to close cleanly the db connexion if the user hits CTRL+C.
-        Runtime.getRuntime().addShutdownHook( new DatabaseConnexionShutdownHook( helper ) );
-        return helper;
-    }
-
     /**
      * Service termination hook (gets called when the JVM terminates from a signal). eg.
      * <pre>
-     * IntactHelper helper = new IntactHelper();
-     * DatabaseConnexionShutdownHook dcsh = new DatabaseConnexionShutdownHook( helper );
+     * DatabaseConnexionShutdownHook dcsh = new DatabaseConnexionShutdownHook( );
      * Runtime.getRuntime().addShutdownHook( sh );
      * </pre>
      */
     private static class DatabaseConnexionShutdownHook extends Thread {
 
-        private IntactHelper helper;
-
-        public DatabaseConnexionShutdownHook( IntactHelper helper ) {
+        public DatabaseConnexionShutdownHook() {
             super();
-            this.helper = helper;
         }
 
         @Override
         public void run() {
-            if ( helper != null ) {
-                try {
-                    helper.closeStore();
-                    System.out.println( "Connexion to the database closed." );
-                } catch ( IntactException e ) {
-                    System.err.println( "Could not close the connexion to the database." );
-                    e.printStackTrace();
-                }
-            }
+            // nothing to do
         }
     }
 
@@ -1178,15 +1156,15 @@ public class MessageSender {
      * @throws SQLException
      */
 
-    public InteractorBean getFeaturedInteraction( IntactHelper helper, String featureAc ) throws IntactException, SQLException {
+    public InteractorBean getFeaturedInteraction( String featureAc ) throws IntactException, SQLException {
         InteractorBean interactionBean = null;
 
         SanityCheckerHelper sch = new SanityCheckerHelper();
-        sch.addMapping( helper, InteractorBean.class, "select i.ac, i.objclass, i.created_user, i.created, i.fullname, i.shortlabel " +
+        sch.addMapping( InteractorBean.class, "select i.ac, i.objclass, i.created_user, i.created, i.fullname, i.shortlabel " +
                                                       "from ia_interactor i, ia_component c, ia_feature f " +
                                                       "where i.ac=c.interaction_ac and c.ac=f.component_ac and f.ac=?" );
 
-        List featuredInteractions = sch.getBeans( helper, InteractorBean.class, featureAc );
+        List featuredInteractions = sch.getBeans( InteractorBean.class, featureAc );
 
         if ( !featuredInteractions.isEmpty() ) {
             interactionBean = (InteractorBean) featuredInteractions.get( 0 );
