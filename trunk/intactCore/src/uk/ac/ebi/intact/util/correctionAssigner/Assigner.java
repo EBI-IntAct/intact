@@ -45,8 +45,8 @@ public class Assigner {
     //Pubmed assigned to the super-curator going to correct it.
     HashMap pubmedPreviouslyAssigned = new HashMap();
 
-    public Assigner( IntactHelper helper ) throws Exception, IntactException {
-        lister = new ExperimentLister( helper );
+    public Assigner( IntactHelper helper, boolean debug ) throws Exception, IntactException {
+        lister = new ExperimentLister( helper, debug );
         superCuratorsGetter = new SuperCuratorsGetter();
     }
 
@@ -337,19 +337,19 @@ public class Assigner {
         Collection experiments = lister.getOnHoldExperiments();
         for ( Iterator iterator = experiments.iterator(); iterator.hasNext(); ) {
             ExperimentBean experimentBean = (ExperimentBean) iterator.next();
-            messageSender.addMessage( ReportTopic.EXPERIMENT_ON_HOLD, experimentBean );
+            messageSender.addMessage( helper, ReportTopic.EXPERIMENT_ON_HOLD, experimentBean );
         }
 
         experiments = lister.getToBeReviewedExperiments();
         for ( Iterator iterator = experiments.iterator(); iterator.hasNext(); ) {
             ExperimentBean experimentBean = (ExperimentBean) iterator.next();
-            messageSender.addMessage( ReportTopic.EXPERIMENT_TO_BE_REVIEWED, experimentBean );
+            messageSender.addMessage( helper, ReportTopic.EXPERIMENT_TO_BE_REVIEWED, experimentBean );
         }
 
         experiments = lister.getNotAcceptedNotToBeReviewed();
         for ( Iterator iterator = experiments.iterator(); iterator.hasNext(); ) {
             ExperimentBean experimentBean = (ExperimentBean) iterator.next();
-            messageSender.addMessage( ReportTopic.EXPERIMENT_NOT_ACCEPTED_NOT_TO_BE_REVIEWED, experimentBean );
+            messageSender.addMessage( helper, ReportTopic.EXPERIMENT_NOT_ACCEPTED_NOT_TO_BE_REVIEWED, experimentBean );
         }
 
     }
@@ -371,7 +371,7 @@ public class Assigner {
             helper = new IntactHelper();
             System.out.println( "Database: " + helper.getDbName() );
 
-            Assigner assigner = new Assigner( helper );
+            Assigner assigner = new Assigner( helper, true );
             assigner.assign();
             assigner.addMessage( helper );
             try {
