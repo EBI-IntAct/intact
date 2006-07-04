@@ -337,19 +337,19 @@ public class Assigner {
         Collection experiments = lister.getOnHoldExperiments();
         for ( Iterator iterator = experiments.iterator(); iterator.hasNext(); ) {
             ExperimentBean experimentBean = (ExperimentBean) iterator.next();
-            messageSender.addMessage( helper, ReportTopic.EXPERIMENT_ON_HOLD, experimentBean );
+            messageSender.addMessage( ReportTopic.EXPERIMENT_ON_HOLD, experimentBean );
         }
 
         experiments = lister.getToBeReviewedExperiments();
         for ( Iterator iterator = experiments.iterator(); iterator.hasNext(); ) {
             ExperimentBean experimentBean = (ExperimentBean) iterator.next();
-            messageSender.addMessage( helper, ReportTopic.EXPERIMENT_TO_BE_REVIEWED, experimentBean );
+            messageSender.addMessage( ReportTopic.EXPERIMENT_TO_BE_REVIEWED, experimentBean );
         }
 
         experiments = lister.getNotAcceptedNotToBeReviewed();
         for ( Iterator iterator = experiments.iterator(); iterator.hasNext(); ) {
             ExperimentBean experimentBean = (ExperimentBean) iterator.next();
-            messageSender.addMessage( helper, ReportTopic.EXPERIMENT_NOT_ACCEPTED_NOT_TO_BE_REVIEWED, experimentBean );
+            messageSender.addMessage( ReportTopic.EXPERIMENT_NOT_ACCEPTED_NOT_TO_BE_REVIEWED, experimentBean );
         }
 
     }
