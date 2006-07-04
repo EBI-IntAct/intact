@@ -12,8 +12,8 @@ EDITOR_APP=N
 MINE_APP=N
 PREDICT_APP=N
 DATA_CONVERSION=N
-GRAPH2MIF_SERVER=Y
-GRAPH2MIF_CLIENT=N
+GRAPH2MIF_SERVER=N
+INTACT_SITE=Y
 
 INTACT_PKG=uk/ac/ebi/intact
 
@@ -429,5 +429,24 @@ svn cp $SOURCE_BASE/config/Institution.properties $IC_DEST_SRC/config
 svn rm $IC_DEST_SRC/config/log4j.properties
 rm -rf $IC_DEST_SRC/config/log4j.properties
 
+
+fi
+
+
+#############################################################################################
+#                        INTACT SITE                                                        #
+#############################################################################################
+
+if [ "$INTACT_SITE" = "Y" ]; then
+
+echo INTACT SITE
+IC_SOURCE_SRC=$SOURCE_BASE/application/intact
+IC_DEST_SRC=$DEST_BASE/intact-site/trunk/src/main
+
+rm -rf $IC_DEST_SRC/intact
+rm -rf $IC_DEST_SRC/webapp
+svn update $IC_DEST_SRC/webapp
+svn cp $IC_SOURCE_SRC $IC_DEST_SRC
+mv $IC_DEST_SRC/intact $IC_DEST_SRC/webapp
 
 fi
