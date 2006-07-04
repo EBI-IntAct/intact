@@ -55,14 +55,14 @@ public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObj
     {
         return (T) getSession().createCriteria(getEntityClass())
                 .createCriteria("xrefs", "xref")
-                .add(Restrictions.eq("xref.ac", primaryId)).uniqueResult();
+                .add(Restrictions.eq("xref.primaryId", primaryId)).uniqueResult();
     }
 
     public List<T> getByXrefLike(String primaryId)
     {
         return getSession().createCriteria(getEntityClass())
                 .createCriteria("xrefs", "xref")
-                .add(Restrictions.like("xref.ac", primaryId)).list();
+                .add(Restrictions.like("xref.primaryId", primaryId)).list();
     }
 
 
