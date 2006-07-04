@@ -17,8 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 
 
 /**
@@ -76,7 +75,16 @@ public class Graph2MIFWSServlet extends HttpServlet {
                 }
                 catch (MIFSerializeException e)
                 {
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    PrintStream ps = new PrintStream(baos);
+
                     e.printStackTrace();
+                    e.printStackTrace(ps);
+
+                    mif = baos.toString();
+
+                    ps.close();
+                    baos.close();
                 }
 
                 logger.info( "Set MIME type to: text/xml" );

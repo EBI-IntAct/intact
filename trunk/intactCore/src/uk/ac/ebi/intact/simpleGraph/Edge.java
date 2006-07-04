@@ -17,6 +17,14 @@ public class Edge extends BasicGraph implements EdgeI {
     private Component Component1;
     private Component Component2;
 
+    public Edge() {
+        super();
+    }
+
+    public Edge(String ac, String label) {
+        super(ac, label);
+    }
+
     ///////////////////////////////////////
     // access methods for attributes
     public BasicGraphI getNode1() {

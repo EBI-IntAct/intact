@@ -8,8 +8,8 @@ package uk.ac.ebi.intact.application.dataConversion.util;
 import uk.ac.ebi.intact.model.CvComponentRole;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.CvDatabase;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.Collection;
 import java.util.Map;
@@ -50,20 +50,7 @@ public class CvObjectHelper {
             return (CvObject) cache.get( psiId );
         }
 
-        IntactHelper helper = new IntactHelper( );
-
-        CvDatabase psi = (CvDatabase) helper.getObjectByXref( CvDatabase.class, "MI:0488" );
-
-        CvObject cvObjet = null;
-        Collection cvObjets = helper.getObjectsByXref( CvComponentRole.class, psi, psiId );
-
-        if( cvObjets.size() == 1 ) {
-            cvObjet = (CvObject) cvObjets.iterator().next();
-        } else {
-            System.err.println( "Error, found " + cvObjets.size() + " CvObject for " + psiId + ". only 1 was expected." );
-        }
-
-        helper.closeStore();
+        CvObject cvObjet = DaoFactory.getCvObjectDao(CvObject.class).getByXref( psiId );
 
         if( cvObjet != null ) {
             // update cache

@@ -256,7 +256,7 @@ public class PsiDocumentFactory {
         // values fixed by the schema
         psiEntrySet.setAttribute( "level", "2" );
         psiEntrySet.setAttribute( "version", "5" );
-        psiEntrySet.setAttribute( "minorVersion", "2" );
+        psiEntrySet.setAttribute( "minorVersion", "3" );
 
         Element entry = document.createElement( "entry" );
         psiEntrySet.appendChild( entry );
