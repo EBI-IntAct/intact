@@ -264,7 +264,7 @@ else mark it.
 //System.out.println("Bait: " + ((Component) baits.get(j)).getInteractor().getAc());
             for (int k = j; k < countPreys; k++) {
 //System.out.println("Prey: " + ((Component) preys.get(k)).getInteractor().getAc());
-                EdgeI edge = new Edge();
+
                 Component baitComponent = (Component) baits.get(j);
                 Interactor baitInteractor = baitComponent.getInteractor();
                 Component preyComponent = (Component) preys.get(k);
@@ -273,6 +273,12 @@ else mark it.
                 if (baitInteractor != preyInteractor) {
                     BasicGraphI node1 = partialGraph.addNode(baitInteractor);
                     BasicGraphI node2 = partialGraph.addNode(preyInteractor);
+
+                    if (!baitComponent.getInteraction().equals(preyComponent.getInteraction()))
+                    {
+                        throw new RuntimeException ("Interaction for bait and prey must be the same");
+                    }
+                    EdgeI edge = new Edge(baitComponent.getInteraction().getAc(), baitComponent.getInteraction().getShortLabel());
 
                     edge.setNode1(node1);
                     edge.setComponent1(baitComponent);
