@@ -32,7 +32,7 @@ public class EditorUrlBuilder {
 
     public String getEditorUrl(IntactBean intactBean){
 
-        String url = new String();
+        String url = "";
 
         if(intactBean instanceof ExperimentBean){
             url = editorUrl+"ac="+intactBean.getAc()+"&type=Experiment";
