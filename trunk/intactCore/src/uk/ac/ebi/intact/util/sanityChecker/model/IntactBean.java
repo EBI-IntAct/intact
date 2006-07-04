@@ -5,7 +5,8 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.util.sanityChecker.model;
 
-import java.sql.Timestamp;
+
+import java.sql.Date;
 
 /**
  * TODO comment it.
@@ -17,17 +18,17 @@ public class IntactBean {
 
     private String ac;
 
-    private Timestamp updated;
+    private Date updated;
 
     private String userstamp;
 
-    private Timestamp created;
+    private Date created;
 
-    public Timestamp getCreated() {
+    public Date getCreated() {
         return created;
     }
 
-    public void setCreated(Timestamp created) {
+    public void setCreated(Date created) {
         this.created = created;
     }
 
@@ -53,11 +54,11 @@ public class IntactBean {
         this.ac = ac;
     }
 
-    public Timestamp getUpdated() {
+    public Date getUpdated() {
         return updated;
     }
 
-    public void setUpdated(Timestamp updated) {
+    public void setUpdated(Date updated) {
         this.updated = updated;
     }
 
