@@ -3,7 +3,7 @@
 SOURCE_BASE=~/projects/intact-clean
 DEST_BASE=~/projects/intact-reorg
 
-INTACT_CORE=N
+INTACT_CORE=Y
 APP_COMMONS=N
 SANITY_CHECKER=N
 SEARCH_ENGINE=N
@@ -13,7 +13,8 @@ MINE_APP=N
 PREDICT_APP=N
 DATA_CONVERSION=N
 GRAPH2MIF_SERVER=N
-INTACT_SITE=Y
+INTACT_SITE=N
+HIERARCH_VIEW=Y
 
 INTACT_PKG=uk/ac/ebi/intact
 
@@ -142,6 +143,8 @@ for h in `find $SOURCE_BASE/application/images/*.gif $SOURCE_BASE/application/im
   svn cp $h $IC_DEST_SRC/webapp/images
 done
 
+svn rm $IC_DEST_SRC/webapp/WEB-INF/lib
+
 echo " " Resource files
 
 IC_DEST_SRC=$DEST_BASE/search/search-app/trunk/src/main/resources
@@ -192,6 +195,8 @@ done
 for h in `find $SOURCE_BASE/application/images/*.gif $SOURCE_BASE/application/images/*.jpg $SOURCE_BASE/application/images/*.png`; do
   svn cp $h $IC_DEST_SRC/webapp/images
 done
+
+svn rm $IC_DEST_SRC/webapp/WEB-INF/lib
 
 echo " " Resource files
 
@@ -267,6 +272,8 @@ for h in `find $SOURCE_BASE/application/images/*.gif $SOURCE_BASE/application/im
   svn cp $h $IC_DEST_SRC/webapp/images
 done
 
+svn rm $IC_DEST_SRC/webapp/WEB-INF/lib
+
 echo " " Resource files
 
 IC_DEST_SRC=$DEST_BASE/$ARTIFACT_ID/trunk/src/main/resources
@@ -335,6 +342,8 @@ done
 for h in `find $SOURCE_BASE/application/images/*.gif $SOURCE_BASE/application/images/*.jpg $SOURCE_BASE/application/images/*.png`; do
   svn cp $h $IC_DEST_SRC/webapp/images
 done
+
+svn rm $IC_DEST_SRC/webapp/WEB-INF/lib
 
 echo " " Resource files
 
@@ -448,5 +457,81 @@ rm -rf $IC_DEST_SRC/webapp
 svn update $IC_DEST_SRC/webapp
 svn cp $IC_SOURCE_SRC $IC_DEST_SRC
 mv $IC_DEST_SRC/intact $IC_DEST_SRC/webapp
+
+fi
+
+
+#############################################################################################
+#                        HIERARCH VIEW                                                      #
+#############################################################################################
+
+if [ "$HIERARCH_VIEW" = "Y" ]; then
+
+echo HIERARCH VIEW
+
+NAME=hierarchView
+ARTIFACT_ID=hierarch-view/hierarch-view-app
+
+echo " " Java files
+IC_SOURCE_SRC=$SOURCE_BASE/src/$INTACT_PKG/application/$NAME
+IC_DEST_SRC=$DEST_BASE/$ARTIFACT_ID/trunk/src/main/java/$INTACT_PKG/application/$NAME
+
+rm -rf $IC_DEST_SRC
+svn update $IC_DEST_SRC
+svn cp $IC_SOURCE_SRC/business $IC_DEST_SRC
+svn cp $IC_SOURCE_SRC/exception $IC_DEST_SRC
+svn cp $IC_SOURCE_SRC/highlightment $IC_DEST_SRC
+svn cp $IC_SOURCE_SRC/struts $IC_DEST_SRC
+svn cp $IC_SOURCE_SRC/package.html $IC_DEST_SRC
+
+svn rm $IC_DEST_SRC/business/tulip
+
+echo " " Webapp files
+IC_SOURCE_SRC=$SOURCE_BASE/application/$NAME
+IC_DEST_SRC=$DEST_BASE/$ARTIFACT_ID/trunk/src/main
+
+rm -rf $IC_DEST_SRC/$NAME
+rm -rf $IC_DEST_SRC/webapp
+svn update $IC_DEST_SRC/webapp
+svn cp $IC_SOURCE_SRC $IC_DEST_SRC
+mv $IC_DEST_SRC/$NAME $IC_DEST_SRC/webapp
+
+for i in `find $SOURCE_BASE/application/tld/*.tld`; do
+  svn cp $i $IC_DEST_SRC/webapp/WEB-INF/tld
+done
+for i in `find $SOURCE_BASE/application/layouts/*.jsp`; do
+  svn cp $i $IC_DEST_SRC/webapp/layouts
+done
+for h in `find $SOURCE_BASE/application/images/*.gif $SOURCE_BASE/application/images/*.jpg $SOURCE_BASE/application/images/*.png`; do
+  svn cp $h $IC_DEST_SRC/webapp/images
+done
+
+#for i in `find $SOURCE_BASE/application/layouts/styles/*.css`; do
+#  svn cp $i $IC_DEST_SRC/webapp/layouts/styles
+#done
+
+for h in `find $SOURCE_BASE/application/images/*.gif $SOURCE_BASE/application/images/*.jpg $SOURCE_BASE/application/images/*.png`; do
+  svn cp $h $IC_DEST_SRC/webapp/images
+done
+
+svn rm $IC_DEST_SRC/webapp/tulip
+svn rm $IC_DEST_SRC/webapp/ws
+
+svn rm $IC_DEST_SRC/webapp/WEB-INF/lib
+svn rm $IC_DEST_SRC/webapp/WEB-INF/config
+
+echo " " Resource files
+
+IC_DEST_SRC=$DEST_BASE/$ARTIFACT_ID/trunk/src/main/resources
+
+rm -rf $IC_DEST_SRC/config
+svn update $IC_DEST_SRC
+#svn revert $IC_DEST_SRC/hibernate.cfg.xml
+#svn cp $SOURCE_BASE/src/hibernate.cfg.xml $IC_DEST_SRC
+svn cp $SOURCE_BASE/application/$NAME/WEB-INF/config $IC_DEST_SRC
+svn cp $SOURCE_BASE/config/Institution.properties $IC_DEST_SRC/config
+
+svn rm $IC_DEST_SRC/config/log4j.properties
+rm -rf $IC_DEST_SRC/config/log4j.properties
 
 fi
