@@ -31,5 +31,44 @@
         <url>http://intact.cvs.sourceforge.net/viewcvs.py/intact</url>
     </scm>
 
+    <build>
+         <plugins>
+            <plugin>
+               <groupId>org.codehaus.mojo</groupId>
+               <artifactId>wsdl2java-maven-plugin</artifactId>
+               <version>0.4-SNAPSHOT</version>
+               <configuration>
+                  <urls>
+                      <url>src/main/wsdl/graph2mif.wsdl</url>
+                  </urls>
+                  <packageSpace>uk.ac.ebi.intact.application.graph2mif.client</packageSpace>
+                  <testCases>false</testCases>
+                  <serverSide>true</serverSide>
+               </configuration>
+               <executions>
+                 <execution>
+                   <phase>generate-sources</phase>
+                   <goals>
+                     <goal>generate</goal>
+                   </goals>
+                 </execution>
+               </executions>
+            </plugin>
+         </plugins>
+      </build>
+
+      <dependencies>
+          <dependency>
+              <groupId>org.apache.axis</groupId>
+              <artifactId>axis</artifactId>
+              <version>1.4</version>
+          </dependency>
+          <dependency>
+              <groupId>org.apache.axis</groupId>
+              <artifactId>axis-jaxrpc</artifactId>
+              <version>1.4</version>
+          </dependency>
+      </dependencies>
+
 
 </project>
