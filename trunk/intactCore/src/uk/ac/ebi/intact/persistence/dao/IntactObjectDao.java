@@ -26,4 +26,6 @@ public interface IntactObjectDao<T extends IntactObject>
     List<T> getByAc(Collection<String> acs);
 
     List<T> getAll();
+
+    void update(T objToUpdate);
 }
