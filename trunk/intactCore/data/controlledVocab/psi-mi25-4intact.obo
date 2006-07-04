@@ -1718,7 +1718,7 @@ is_a: MI:0414 ! enzymatic reaction
 [Term]
 id: MI:0193
 name: amidation reaction
-def: "Irreversible reaction that can affect A\,R\,N\,D\,C\,Q\,E\,G\,H\,I\,L\,K\,M\,F\,P\,S\,T\,W\,Y or V residues." [pubmed:14755292 "primary-reference", go:go:GO:0006473 "identity", pubmed:14755292 "method reference", resid:AA0041 "see-also", resid:AA0042 "see-also", resid:AA0043 "see-also", resid:AA0044 "see-also", resid:AA0045 "see-also", resid:AA0046 "see-also", resid:AA0047 "see-also", resid:AA0048 "see-also", resid:AA0049 "see-also", resid:AA0050 "see-also", resid:AA0051 "see-also", resid:AA0052 "see-also", resid:AA0053 "see-also", resid:AA0054 "see-also", resid:AA0055 "see-also", resid:AA0056 "see-also", go:GO:0001519 "identity", pubmed:14755292 "method reference", resid:AA0081 "see-also", resid:AA0082 "see-also", resid:AA0083 "see-also", resid:AA0084 "see-also", resid:AA0085 "see-also", resid:AA0086 "see-also", resid:AA0087 "see-also", resid:AA0088 "see-also", resid:AA0089 "see-also", resid:AA0090 "see-also", resid:AA0091 "see-also", resid:AA0092 "see-also", resid:AA0093 "see-also", resid:AA0094 "see-also", resid:AA0095 "see-also", resid:AA0096 "see-also", resid:AA0097 "see-also", resid:AA0098 "see-also", resid:AA0099 "see-also", resid:AA0100 "see-also"]
+def: "Irreversible reaction that can affect A\,R\,N\,D\,C\,Q\,E\,G\,H\,I\,L\,K\,M\,F\,P\,S\,T\,W\,Y or V residues." [pubmed:14755292 "primary-reference", go:GO:0006473 "identity", pubmed:14755292 "method reference", resid:AA0041 "see-also", resid:AA0042 "see-also", resid:AA0043 "see-also", resid:AA0044 "see-also", resid:AA0045 "see-also", resid:AA0046 "see-also", resid:AA0047 "see-also", resid:AA0048 "see-also", resid:AA0049 "see-also", resid:AA0050 "see-also", resid:AA0051 "see-also", resid:AA0052 "see-also", resid:AA0053 "see-also", resid:AA0054 "see-also", resid:AA0055 "see-also", resid:AA0056 "see-also", go:GO:0001519 "identity", pubmed:14755292 "method reference", resid:AA0081 "see-also", resid:AA0082 "see-also", resid:AA0083 "see-also", resid:AA0084 "see-also", resid:AA0085 "see-also", resid:AA0086 "see-also", resid:AA0087 "see-also", resid:AA0088 "see-also", resid:AA0089 "see-also", resid:AA0090 "see-also", resid:AA0091 "see-also", resid:AA0092 "see-also", resid:AA0093 "see-also", resid:AA0094 "see-also", resid:AA0095 "see-also", resid:AA0096 "see-also", resid:AA0097 "see-also", resid:AA0098 "see-also", resid:AA0099 "see-also", resid:AA0100 "see-also"]
 exact_synonym: "amidation" []
 is_a: MI:0414 ! enzymatic reaction
 
@@ -1794,7 +1794,7 @@ is_a: MI:0414 ! enzymatic reaction
 [Term]
 id: MI:0204
 name: deubiquitination reaction
-def: "Cleavage of the G-K bond and release of ubiquitin or ubiquitin like proteins." [pubmed:14755292 "primary-reference", resid:AA0060 "see-also", resid:AA0077 "see-also", resid:AA0106 "see-also", go:go:GO:0016311 "identity", pubmed:14755292 "method reference", resid:AA0033 "see-also", resid:AA0034 "see-also", resid:AA0035 "see-also", resid:AA0036 "see-also", resid:AA0037 "see-also", resid:AA0038 "see-also", resid:AA0039 "see-also", resid:AA0222 "see-also", go:GO:0016579 "identity", pubmed:11583613 "method reference", resid:AA0125 "identity"]
+def: "Cleavage of the G-K bond and release of ubiquitin or ubiquitin like proteins." [pubmed:14755292 "primary-reference", resid:AA0060 "see-also", resid:AA0077 "see-also", resid:AA0106 "see-also", go:GO:0016311 "identity", pubmed:14755292 "method reference", resid:AA0033 "see-also", resid:AA0034 "see-also", resid:AA0035 "see-also", resid:AA0036 "see-also", resid:AA0037 "see-also", resid:AA0038 "see-also", resid:AA0039 "see-also", resid:AA0222 "see-also", go:GO:0016579 "identity", pubmed:11583613 "method reference", resid:AA0125 "identity"]
 exact_synonym: "deubiquitination" []
 is_a: MI:0414 ! enzymatic reaction
 
@@ -1815,7 +1815,7 @@ is_a: MI:0211 ! lipid addition
 [Term]
 id: MI:0207
 name: formylation reaction
-def: "Reaction that can affect K or G residues." [pubmed:14755292 "primary-reference", go:go:GO:0018347 "identity", pubmed:14755292 "method reference", resid:AA0102 "identity", go:GO:0018256 "identity", pubmed:14755292 "method reference", resid:AA0057 "see-also", resid:AA0211 "see-also"]
+def: "Reaction that can affect K or G residues." [pubmed:14755292 "primary-reference", go:GO:0018347 "identity", pubmed:14755292 "method reference", resid:AA0102 "identity", go:GO:0018256 "identity", pubmed:14755292 "method reference", resid:AA0057 "see-also", resid:AA0211 "see-also"]
 exact_synonym: "formylation" []
 is_a: MI:0414 ! enzymatic reaction
 
@@ -1835,14 +1835,14 @@ is_a: MI:0211 ! lipid addition
 [Term]
 id: MI:0210
 name: hydroxylation reaction
-def: "Irreversible reaction that can affect K\,P\,Y or R residues." [pubmed:14755292 "primary-reference", go:go:GO:0018348 "identity", pubmed:14755292 "method reference", resid:AA0104 "identity", go:GO:0018126 "identity", pubmed:14755292 "method reference", resid:AA0028 "see-also", resid:AA0029 "see-also", resid:AA0030 "see-also", resid:AA0146 "see-also", resid:AA0215 "see-also"]
+def: "Irreversible reaction that can affect K\,P\,Y or R residues." [pubmed:14755292 "primary-reference", go:GO:0018348 "identity", pubmed:14755292 "method reference", resid:AA0104 "identity", go:GO:0018126 "identity", pubmed:14755292 "method reference", resid:AA0028 "see-also", resid:AA0029 "see-also", resid:AA0030 "see-also", resid:AA0146 "see-also", resid:AA0215 "see-also"]
 exact_synonym: "hydroxylation" []
 is_a: MI:0414 ! enzymatic reaction
 
 [Term]
 id: MI:0211
 name: lipid addition
-def: "Covalent or non covalent binding of lipid group on a protein residue." [pubmed:14755292 "primary-reference", go:go:go:GO:0018348 "identity", pubmed:14755292 "method reference", resid:AA0104 "identity", go:go:GO:0018126 "identity", pubmed:14755292 "method reference", resid:AA0028 "see-also", resid:AA0029 "see-also", resid:AA0030 "see-also", resid:AA0146 "see-also", resid:AA0215 "see-also", go:GO:0006497 "identity", pubmed:14755292 "method reference"]
+def: "Covalent or non covalent binding of lipid group on a protein residue." [pubmed:14755292 "primary-reference", go:GO:0018348 "identity", pubmed:14755292 "method reference", resid:AA0104 "identity", go:GO:0018126 "identity", pubmed:14755292 "method reference", resid:AA0028 "see-also", resid:AA0029 "see-also", resid:AA0030 "see-also", resid:AA0146 "see-also", resid:AA0215 "see-also", go:GO:0006497 "identity", pubmed:14755292 "method reference"]
 is_a: MI:0414 ! enzymatic reaction
 
 [Term]
@@ -1861,7 +1861,7 @@ is_a: MI:0414 ! enzymatic reaction
 [Term]
 id: MI:0214
 name: myristoylation reaction
-def: "Reaction that can affect K or G residues." [pubmed:14755292 "primary-reference", go:go:GO:0043414 "identity", pubmed:14755292 "method reference", resid:AA0061 "see-also", resid:AA0062 "see-also", resid:AA0063 "see-also", resid:AA0064 "see-also", resid:AA0065 "see-also", resid:AA0066 "see-also", resid:AA0067 "see-also", resid:AA0068 "see-also", resid:AA0069 "see-also", resid:AA0070 "see-also", resid:AA0071 "see-also", resid:AA0072 "see-also", resid:AA0073 "see-also", resid:AA0074 "see-also", resid:AA0075 "see-also", resid:AA0076 "see-also", resid:AA0234 "see-also", resid:AA0272 "see-also", go:GO:0018319 "identity", pubmed:14755292 "method reference", resid:AA0059 "see-also", resid:AA0078 "see-also"]
+def: "Reaction that can affect K or G residues." [pubmed:14755292 "primary-reference", go:GO:0043414 "identity", pubmed:14755292 "method reference", resid:AA0061 "see-also", resid:AA0062 "see-also", resid:AA0063 "see-also", resid:AA0064 "see-also", resid:AA0065 "see-also", resid:AA0066 "see-also", resid:AA0067 "see-also", resid:AA0068 "see-also", resid:AA0069 "see-also", resid:AA0070 "see-also", resid:AA0071 "see-also", resid:AA0072 "see-also", resid:AA0073 "see-also", resid:AA0074 "see-also", resid:AA0075 "see-also", resid:AA0076 "see-also", resid:AA0234 "see-also", resid:AA0272 "see-also", go:GO:0018319 "identity", pubmed:14755292 "method reference", resid:AA0059 "see-also", resid:AA0078 "see-also"]
 exact_synonym: "myristoylation" []
 is_a: MI:0211 ! lipid addition
 
@@ -1883,7 +1883,7 @@ is_a: MI:0211 ! lipid addition
 [Term]
 id: MI:0217
 name: phosphorylation reaction
-def: "Reversible reaction that can affect D\,C\,H\,S\,T\,Y\,R residues." [pubmed:14755292 "primary-reference", go:go:GO:0018318 "identity", pubmed:14755292 "method reference", resid:AA0060 "see-also", resid:AA0077 "see-also", resid:AA0079 "see-also", resid:AA0080 "see-also", resid:AA0106 "see-also", go:GO:0016310 "identity", pubmed:14755292 "method reference", resid:AA0033 "see-also", resid:AA0034 "see-also", resid:AA0035 "see-also", resid:AA0036 "see-also", resid:AA0037 "see-also", resid:AA0038 "see-also", resid:AA0039 "see-also", resid:AA0222 "see-also"]
+def: "Reversible reaction that can affect D\,C\,H\,S\,T\,Y\,R residues." [pubmed:14755292 "primary-reference", go:GO:0018318 "identity", pubmed:14755292 "method reference", resid:AA0060 "see-also", resid:AA0077 "see-also", resid:AA0079 "see-also", resid:AA0080 "see-also", resid:AA0106 "see-also", go:GO:0016310 "identity", pubmed:14755292 "method reference", resid:AA0033 "see-also", resid:AA0034 "see-also", resid:AA0035 "see-also", resid:AA0036 "see-also", resid:AA0037 "see-also", resid:AA0038 "see-also", resid:AA0039 "see-also", resid:AA0222 "see-also"]
 exact_synonym: "phosphorylation" []
 is_a: MI:0414 ! enzymatic reaction
 
@@ -4229,14 +4229,14 @@ is_a: MI:0414 ! enzymatic reaction
 [Term]
 id: MI:0558
 name: deglycosylation reaction
-def: "Reaction catalyzed by PNGase\, a deglycosylating enzyme that promotes the hydrolysis of the beta-aspartylglycosylamine bond of aspargine-linked glycopeptides and glycoproteins." [pubmed:14755292 "primary-reference", resid:AA0124 "identity", go:go:GO:0006471 "identity", pubmed:14755292 "method reference", resid:AA0168 "see-also", resid:AA0169 "see-also", resid:AA0231 "see-also", resid:AA0237 "see-also", resid:AA0295 "see-also", go:GO:0006517 "identity", pubmed:15670854 "method reference"]
+def: "Reaction catalyzed by PNGase\, a deglycosylating enzyme that promotes the hydrolysis of the beta-aspartylglycosylamine bond of aspargine-linked glycopeptides and glycoproteins." [pubmed:14755292 "primary-reference", resid:AA0124 "identity", go:GO:0006471 "identity", pubmed:14755292 "method reference", resid:AA0168 "see-also", resid:AA0169 "see-also", resid:AA0231 "see-also", resid:AA0237 "see-also", resid:AA0295 "see-also", go:GO:0006517 "identity", pubmed:15670854 "method reference"]
 exact_synonym: "deglycosylation" []
 is_a: MI:0414 ! enzymatic reaction
 
 [Term]
 id: MI:0559
 name: glycosylation reaction
-def: "The covalent attachment of a glycosyl residue to one or more monomeric units in a polypeptide\, polynucleotide\, polysaccharide\, or other biological polymer. Reaction that can affect Ser\, Thr\, Cys\, Arg\, and Asn residues. This reaction is known to be reversible in the case of Asn substrate." [pubmed:14755292 "primary-reference", resid:AA0124 "identity", go:go:go:GO:0006471 "identity", pubmed:14755292 "method reference", resid:AA0168 "see-also", resid:AA0169 "see-also", resid:AA0231 "see-also", resid:AA0237 "see-also", resid:AA0295 "see-also", go:go:GO:0006517 "identity", pubmed:15670854 "method reference", go:GO:0043413 "identity", pubmed:14755292 "method reference", resid:AA0122 "see-also", resid:AA0151 "see-also", resid:AA0154 "see-also", resid:AA0155 "see-also", resid:AA0327 "see-also"]
+def: "The covalent attachment of a glycosyl residue to one or more monomeric units in a polypeptide\, polynucleotide\, polysaccharide\, or other biological polymer. Reaction that can affect Ser\, Thr\, Cys\, Arg\, and Asn residues. This reaction is known to be reversible in the case of Asn substrate." [pubmed:14755292 "primary-reference", resid:AA0124 "identity", go:GO:0006471 "identity", pubmed:14755292 "method reference", resid:AA0168 "see-also", resid:AA0169 "see-also", resid:AA0231 "see-also", resid:AA0237 "see-also", resid:AA0295 "see-also", go:GO:0006517 "identity", pubmed:15670854 "method reference", go:GO:0043413 "identity", pubmed:14755292 "method reference", resid:AA0122 "see-also", resid:AA0151 "see-also", resid:AA0154 "see-also", resid:AA0155 "see-also", resid:AA0327 "see-also"]
 exact_synonym: "glycosylation" []
 is_a: MI:0414 ! enzymatic reaction
 
@@ -4292,21 +4292,21 @@ is_a: MI:0414 ! enzymatic reaction
 [Term]
 id: MI:0567
 name: neddylation reaction
-def: "Reversible reaction that create a covalent bond between a Glycine residue of an ubiquitine like NEDD8 protein and a lysine residue of the target." [pubmed:111 "primary-reference", go:go:GO:0016925 "identity", pubmed:15985640 "method reference", go:GO:0045116 "identity", pubmed:16127432 "method reference"]
+def: "Reversible reaction that create a covalent bond between a Glycine residue of an ubiquitine like NEDD8 protein and a lysine residue of the target." [pubmed:111 "primary-reference", go:GO:0016925 "identity", pubmed:15985640 "method reference", go:GO:0045116 "identity", pubmed:16127432 "method reference"]
 exact_synonym: "neddylation" []
 is_a: MI:0414 ! enzymatic reaction
 
 [Term]
 id: MI:0568
 name: desumoylation reaction
-def: "Cleavage of the G-K bond and release of the SUMO ubiquitin like proteins." [pubmed:111 "primary-reference", go:go:go:GO:0016925 "identity", pubmed:15985640 "method reference", go:go:GO:0045116 "identity", pubmed:16127432 "method reference", go:GO:0016926 "identity", pubmed:15985640 "method reference"]
+def: "Cleavage of the G-K bond and release of the SUMO ubiquitin like proteins." [pubmed:111 "primary-reference", go:GO:0016925 "identity", pubmed:15985640 "method reference", go:GO:0045116 "identity", pubmed:16127432 "method reference", go:GO:0016926 "identity", pubmed:15985640 "method reference"]
 exact_synonym: "desumoylation" []
 is_a: MI:0414 ! enzymatic reaction
 
 [Term]
 id: MI:0569
 name: deneddylation reaction
-def: "Cleavage of the G-K bond and release of the NEDD8 ubiquitin like proteins. Deneddylation\, which removes the NEDD8 moiety\, requires the isopeptidase activity of the COP9 signalosome." [pubmed:111 "primary-reference", go:go:go:go:GO:0016925 "identity", pubmed:15985640 "method reference", go:go:go:GO:0045116 "identity", pubmed:16127432 "method reference", go:go:GO:0016926 "identity", pubmed:15985640 "method reference", go:GO:0000338 "identity", pubmed:16127432 "method reference"]
+def: "Cleavage of the G-K bond and release of the NEDD8 ubiquitin like proteins. Deneddylation\, which removes the NEDD8 moiety\, requires the isopeptidase activity of the COP9 signalosome." [pubmed:111 "primary-reference", go:GO:0016925 "identity", pubmed:15985640 "method reference", go:GO:0045116 "identity", pubmed:16127432 "method reference", go:GO:0016926 "identity", pubmed:15985640 "method reference", go:GO:0000338 "identity", pubmed:16127432 "method reference"]
 exact_synonym: "deneddylation" []
 is_a: MI:0414 ! enzymatic reaction
 
