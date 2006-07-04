@@ -106,19 +106,7 @@
     </build>
 
     <repositories>
-        <!--
-        <repository>
-            <id>ibiblio</id>
-            <name>Ibiblio repository</name>
-            <url>http://www.ibiblio.org/maven2</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        -->
+
         <repository>
             <id>ebi-repo</id>
             <name>The EBI internal repository</name>
@@ -142,32 +130,21 @@
             </snapshots>
         </repository>
 
-        
-        <!--
         <repository>
-            <id>Maven Mirror 1</id>
-            <url>http://repo1.maven.org/maven2</url>
+            <id>javanet</id>
+            <url>http://maven-repository.dev.java.net/repository/</url>
             <snapshots>
-                <enabled>true</enabled>
+                <enabled>false</enabled>
             </snapshots>
             <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-        <repository>
-            <id>Maven Snapshots</id>
-            <url>http://snapshots.maven.codehaus.org/maven2/</url>
-            <snapshots>
                 <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
             </releases>
+            <layout>legacy</layout>
         </repository>
-        -->
+
         <repository>
             <id>codehaus</id>
-            <url>http://dist.codehaus.org/</url>
+            <url>http://repository.codehaus.org/</url>
             <layout>default</layout>
             <snapshots>
                 <enabled>false</enabled>
@@ -179,61 +156,29 @@
     </repositories>
 
     <pluginRepositories>
-        <!--
-        <pluginRepository>
-            <id>ibiblio</id>
-            <url>http://www.ibiblio.org/maven2</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-        -->
         <pluginRepository>
             <id>ebi-repo</id>
             <name>The EBI internal repository</name>
             <url>http://www.ebi.ac.uk/~maven/m2repo</url>
             <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </pluginRepository>
-        <pluginRepository>
-            <id>Mortbay (release)</id>
-            <url>http://www.mortbay.org/maven2/release</url>
-            <snapshots>
                 <enabled>false</enabled>
             </snapshots>
             <releases>
                 <enabled>true</enabled>
             </releases>
         </pluginRepository>
+
         <pluginRepository>
             <id>codehaus-plugins</id>
             <url>http://dist.codehaus.org/</url>
             <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </pluginRepository>
-        <!--
-        <pluginRepository>
-            <id>Maven Mirror 1</id>
-            <url>http://repo1.maven.org/maven2</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
                 <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
             </releases>
         </pluginRepository>
-        -->
+
         <pluginRepository>
             <id>Maven Snapshots</id>
             <url>http://snapshots.maven.codehaus.org/maven2/</url>
@@ -244,17 +189,17 @@
                 <enabled>false</enabled>
             </releases>
         </pluginRepository>
-        
         <!--
         <pluginRepository>
-            <id>Maven Apache Snapshots</id>
-            <url>http://cvs.apache.org/maven-snapshot-repository</url>
+            <id>javanet</id>
+            <url>http://maven-repository.dev.java.net/repository/</url>
             <snapshots>
-                <enabled>true</enabled>
+                <enabled>false</enabled>
             </snapshots>
             <releases>
-                <enabled>false</enabled>
+                <enabled>true</enabled>
             </releases>
+            <layout>legacy</layout>
         </pluginRepository>
         -->
     </pluginRepositories>
