@@ -21,6 +21,8 @@ public class ExperimentBean extends AnnotatedBean{
 
     private String identmethod_ac;
 
+    private String pmid;
+
     public String getRelatedexperiment_ac() {
         return relatedexperiment_ac;
     }
