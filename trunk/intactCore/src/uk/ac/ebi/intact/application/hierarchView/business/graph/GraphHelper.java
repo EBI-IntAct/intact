@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.application.hierarchView.exception.MultipleResultExcepti
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.persistence.SearchException;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.simpleGraph.BasicGraph;
 import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
 import uk.ac.ebi.intact.simpleGraph.MineEdge;
@@ -213,10 +214,6 @@ public class GraphHelper {
             tmp = in;
         }
 
-        // if no connection was retrieved by now - the JDBC connection of the
-        // datasource is fetched
-        Connection con = user.getHelper().getJDBCConnection();
-
         // a new interaction network is created with the given interactor as
         // central protein
         in = new InteractionNetwork( interactor );
@@ -275,7 +272,7 @@ public class GraphHelper {
         addSourcesToNode( baitNode, true, network );
         network.addNode( baitNode );
 
-        Connection con = user.getHelper().getJDBCConnection();
+        Connection con = DaoFactory.connection();
 
         /**
          * I1 is a bait in an interaction: -> all preys are collected of that
@@ -430,7 +427,7 @@ public class GraphHelper {
          * all available source to highlight on the right top corner of the HV
          * result page.
          */
-        Connection con = user.getHelper().getJDBCConnection();
+        Connection con = DaoFactory.connection();
 
         PreparedStatement sourceStm = con.prepareStatement( SOURCE_QUERY );
         sourceStm.setString( 2, node.getAc() );

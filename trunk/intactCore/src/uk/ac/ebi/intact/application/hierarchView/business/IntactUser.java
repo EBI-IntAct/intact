@@ -12,11 +12,11 @@ import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwo
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.ClickBehaviourForm;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactGraphHelper;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.persistence.DataSourceException;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
 import uk.ac.ebi.intact.simpleGraph.Graph;
 import uk.ac.ebi.intact.simpleGraph.Node;
@@ -47,11 +47,6 @@ public class IntactUser implements IntactUserI {
     private static final int DEFAULT_DEPTH = 1;
     
     private String minePath;
-    
-    /**
-     * datasource entry point
-     */
-    private IntactHelper intactHelper;
 
     /**
      * The current network with which the user is working
@@ -233,10 +228,6 @@ public class IntactUser implements IntactUserI {
         return selectedKeyType;
     }
 
-    public IntactHelper getHelper() {
-        return intactHelper;
-    }
-
     public String getSourceURL() {
         return sourceURL;
     }
@@ -333,9 +324,6 @@ public class IntactUser implements IntactUserI {
         init();
 
         this.applicationPath = applicationPath;
-        this.intactHelper = new IntactHelper();
-
-        logger.info( "IntactHelper created." );
     }
 
     /**
@@ -422,13 +410,10 @@ public class IntactUser implements IntactUserI {
                 + ", depth=" + graphDepth + ")" );
         Graph graph = in;
 
-        //        intactHelper.clearCache();
-        //        logger.info ("Cache is wiped");
-
         Chrono chrono = new Chrono();
         chrono.start();
 
-        IntactGraphHelper graphHelper = new IntactGraphHelper(intactHelper);
+        IntactGraphHelper graphHelper = new IntactGraphHelper();
         graph = graphHelper.subGraph( ( (Node) in.getCentralProtein() )
                 .getInteractor(), graphDepth, experiments, complexExpansion,
                 graph );
@@ -530,40 +515,36 @@ public class IntactUser implements IntactUserI {
      * Will call this method when an object is unbound from a session.
      */
     public void valueUnbound(HttpSessionBindingEvent event) {
-        try {
-            this.intactHelper.closeStore();
-            logger
-                    .info( "IntactHelper datasource closed (cause: removing attribute from session)" );
-        }
-        catch ( IntactException ie ) {
-            //failed to close the store - not sure what to do here yet....
-            logger.error( "error when closing the IntactHelper store", ie );
-        }
+       // nothing here
     }
 
     // Implementation of IntactUserI interface.
 
     public <T extends IntactObject> Collection<T> search(Class<T> objectType, String searchParam,
             String searchValue) throws IntactException {
-        return intactHelper.search( objectType, searchParam, searchValue );
+        return DaoFactory.getIntactObjectDao(objectType).getColByPropertyName(searchParam, searchValue);
     }
 
     public String getUserName() {
-        if ( this.intactHelper != null ) {
-            try {
-                return this.intactHelper.getDbUserName();
-            }
-            catch ( LookupException e ) {
-            }
-            catch ( SQLException e ) {
-            }
+        try
+        {
+            return DaoFactory.getBaseDao().getDbUserName();
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
         }
         return null;
     }
 
     public String getDatabaseName() {
-        if ( this.intactHelper != null ) {
-            return this.intactHelper.getDbName();
+        try
+        {
+            return DaoFactory.getBaseDao().getDbName();
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
         }
         return null;
     }

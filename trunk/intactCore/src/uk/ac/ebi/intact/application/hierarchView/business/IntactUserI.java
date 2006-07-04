@@ -10,7 +10,6 @@ import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.ClickBehaviourForm;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.util.PropertyLoader;
 
 import javax.servlet.http.HttpSessionBindingListener;
@@ -64,7 +63,6 @@ public interface IntactUserI
     public InteractionNetwork getInteractionNetwork();
     public boolean InteractionNetworkReadyToBeDisplayed();
     public boolean InteractionNetworkReadyToBeHighlighted();
-    public IntactHelper getHelper ();
     public String getSourceURL ();
     public boolean hasSourceUrlToDisplay();
     public String getSearchUrl (String query, boolean addFullContext);
