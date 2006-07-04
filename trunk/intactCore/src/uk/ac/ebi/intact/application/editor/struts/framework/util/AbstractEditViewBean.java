@@ -918,21 +918,6 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
         return map;
     }
 
-    /**
-     * This method is in charge to remove from the Topic menu list of annotation all the topics which are not relevant
-     * for the considered  Editor page. For exemple, it wouldn't be correct to add to an experiment an annotation with
-     * the topic equal to "isoform-annotation". This topic can only fit for a protein so it shouldn't appear in the
-     * Experiment - Editor page.
-     *
-     * @param menu The general menu containing all the cvTopic
-     * @param editorPageName The editor page name. This parameter is taken from EditorMenuFactory :
-     *          Editor - Interaction =====> EditorMenuFactory.INTERACTION
-     *          Editor - Experiment  =====> EditorMenuFactory.EXPERIMENT
-     *          Editor - Cv?         =====> EditorMenuFactory.TOPIC
-     *          Editor - Protein     =====> EditorMenuFactory.PROTEIN
-     * @return  The new menu list
-     */
-
    /**
      * This method is in charge to remove from the Topic menu list of annotation all the topics which are not relevant
      * for the considered  Editor page. For exemple, it wouldn't be correct to add to an experiment an annotation with
@@ -952,8 +937,8 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
 
         //  The annotationSection object contains 5 Maps associating each of the editor page to a List. Those lists
         //  contains the relevant cvTopics that can be used to annotate the considered edited object.
-        IntactHelper intactHelper = IntactHelperUtil.getIntactHelper();
-        AnnotationSection annotationSection = new AnnotationSection(intactHelper);
+
+        AnnotationSection annotationSection = new AnnotationSection();
         if(annotationSection!=null){
             List<String> newMenulist = new ArrayList<String>();
 

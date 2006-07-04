@@ -6,8 +6,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.commons.util;
 
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -72,7 +72,7 @@ public class AnnotationSection {
 
 
 
-    public AnnotationSection (IntactHelper intactHelper) throws IntactException {
+    public AnnotationSection () throws IntactException {
          //   IntactHelper intactHelper = new IntactHelper();
         /*
             Experiment.class.getName() ===> Editor - Experiment
@@ -101,7 +101,7 @@ public class AnnotationSection {
 
         //IntactHelper helper = new IntactHelper();
 
-        Collection<CvTopic> cvTopics = intactHelper.search(CvTopic.class,"ac","%");
+        Collection<CvTopic> cvTopics = DaoFactory.getCvObjectDao(CvTopic.class).getAll();
 
         for (CvTopic cvTopic : cvTopics)
         {
@@ -136,8 +136,7 @@ public class AnnotationSection {
     }
 
     public static void main(String[] args) throws IntactException {
-        IntactHelper helper = new IntactHelper();
-        AnnotationSection annotationSection = new AnnotationSection(helper);
+        AnnotationSection annotationSection = new AnnotationSection();
         annotationSection.getAnnotationSection();
 
 
@@ -157,7 +156,6 @@ public class AnnotationSection {
         {
             System.out.println("topic for bisource " + o);
         }
-        helper.closeStore();
     }
 
 }
