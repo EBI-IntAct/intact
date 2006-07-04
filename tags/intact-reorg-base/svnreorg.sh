@@ -411,9 +411,10 @@ rm -rf $IC_DEST_SRC
 svn update $IC_DEST_SRC/
 svn mkdir $IC_DEST_SRC/WEB-INF
 
+svn cp $IC_SOURCE_SRC/Graph2MIFWS.wsdd $DEST_BASE/$ARTIFACT_ID/trunk/src/main/wsdd
 svn cp $IC_SOURCE_SRC/index.jsp $IC_DEST_SRC/
 svn cp $IC_SOURCE_SRC/WEB-INF/web.xml $IC_DEST_SRC/WEB-INF/web.xml
-svn cp $IC_SOURCE_SRC/WEB-INF/server-config.wsdd $IC_DEST_SRC/WEB-INF/server-config.wsdd
+#svn cp $IC_SOURCE_SRC/WEB-INF/server-config.wsdd $IC_DEST_SRC/WEB-INF/server-config.wsdd
 
 
 echo " " Resource files
