@@ -66,6 +66,7 @@ public class ExperimentLister {
 //    public void removeElementFromAssignedPmid2creator(String pmid){
 //        assignedPmid2creator.remove(pmid);
 //    }
+    private static boolean DEBUG = false;
 
     /**
      * Constructor of ExperimentLister.
@@ -73,10 +74,11 @@ public class ExperimentLister {
      * @throws SQLException
      * @throws IntactException
      */
-    public ExperimentLister( IntactHelper helper ) throws Exception, IntactException {
+    public ExperimentLister( IntactHelper helper, boolean debug ) throws Exception, IntactException {
         if ( helper == null ) {
             throw new IllegalArgumentException( "IntactHelper must not be null." );
         }
+        this.DEBUG = debug;
         initialize( helper );
     }
 
@@ -169,11 +171,16 @@ public class ExperimentLister {
      * @throws SQLException
      */
     private void fillNotAssignedExpCollection( IntactHelper helper ) throws Exception, SQLException {
+
+        if(DEBUG){
+            System.out.println("Searching for experiment not accepted, to-be-reviewed and not assigned : ");
+        }
+
         CvHolder holder = getCvHolder( helper );
 
         SanityCheckerHelper sch = new SanityCheckerHelper();
 
-        sch.addMapping(  ComparableExperimentBean.class, "select e.ac, e.created_user, e.created, e.shortlabel, x.primaryId as pubmedId " +
+        sch.addMapping( helper, ComparableExperimentBean.class, "select e.ac, e.created_user, e.created, e.shortlabel, x.primaryId as pubmedId " +
                                                                 "from ia_experiment e, ia_xref x " +
                                                                 "where x.parent_ac = e.ac and " +
                                                                 "x.database_ac = '" + holder.pubmed.getAc() + "' and " +
@@ -191,10 +198,35 @@ public class ExperimentLister {
                                                                 "e2a.annotation_ac=a.ac and " +
                                                                 "a.topic_ac in  ('" + holder.reviewer.getAc() + "') " +
                                                                 ") " +
-                                                                "and to_date(e.created,'DD-MON-YYYY HH24:MI:SS') >  to_date('01-Sep-2005:00:00:00','DD-MON-YYYY:HH24:MI:SS') and e.ac like ? " +
+                                                                "and e.created >  to_date('01-Sep-2005:00:00:00','DD-MON-YYYY:HH24:MI:SS') and e.ac like ? " +
                                                                 "order by created_user" );
-
-        notAssignedExperiments = sch.getBeans(  ComparableExperimentBean.class, "%" );
+        if (DEBUG){
+            System.out.println("... Here is the request done\n\n");
+            System.out.println("select e.ac, e.created_user, e.created, e.shortlabel, x.primaryId as pubmedId \n" +
+                    "from ia_experiment e, ia_xref x \n" +
+                    "where x.parent_ac = e.ac and \n" +
+                    "x.database_ac = '" + holder.pubmed.getAc() + "' and \n" +
+                    "x.qualifier_ac = '" + holder.primaryRef.getAc() + "' and \n" +
+                    "e.ac not in ( \n" +
+                    "select e.ac \n" +
+                    "from ia_experiment e, ia_exp2annot e2a, ia_annotation a \n" +
+                    "where e.ac=e2a.experiment_ac and \n" +
+                    "e2a.annotation_ac=a.ac and \n" +
+                    "a.topic_ac in  ('" + holder.accepted.getAc() + "','" + holder.toBeReviewed.getAc() + "') \n" +
+                    "union \n" +
+                    "select e.ac \n" +
+                    "from ia_experiment e, ia_exp2annot e2a, ia_annotation a \n" +
+                    "where e.ac=e2a.experiment_ac and \n" +
+                    "e2a.annotation_ac=a.ac and \n" +
+                    "a.topic_ac in  ('" + holder.reviewer.getAc() + "') \n" +
+                    ") \n" +
+                    "and e.created >  to_date('01-Sep-2005:00:00:00','DD-MON-YYYY:HH24:MI:SS') and e.ac like ? \n" +
+                    "order by created_user\n\n");
+    }
+        notAssignedExperiments = sch.getBeans( helper, ComparableExperimentBean.class, "%" );
+        if(DEBUG){
+            System.out.println("..." + notAssignedExperiments.size() + " experiments found.");
+        }
     }
 
     /**
@@ -206,10 +238,13 @@ public class ExperimentLister {
      */
 
     private void fillAssignedExpCollection( IntactHelper helper ) throws Exception, SQLException {
+        if(DEBUG){
+            System.out.println("Searching for experiments assigned and not accepted or to-be-reviewed : ");
+        }
         CvHolder holder = getCvHolder( helper );
 
         SanityCheckerHelper sch = new SanityCheckerHelper();
-        sch.addMapping(  ComparableExperimentBean.class, "select e.ac, e.created_user, e.created, e.shortlabel, x.primaryId as pubmedId, a.description as reviewer " +
+        sch.addMapping( helper, ComparableExperimentBean.class, "select e.ac, e.created_user, e.created, e.shortlabel, x.primaryId as pubmedId, a.description as reviewer " +
                                                                 "from ia_experiment e, ia_exp2annot e2a, ia_annotation a, ia_xref x " +
                                                                 "where e.ac=e2a.experiment_ac and " +
                                                                 "x.parent_ac = e.ac and " +
@@ -217,10 +252,40 @@ public class ExperimentLister {
                                                                 "x.database_ac = '" + holder.pubmed.getAc() + "' and " +
                                                                 "x.qualifier_ac = '" + holder.primaryRef.getAc() + "' and " +
                                                                 "e2a.annotation_ac=a.ac and " +
+                                                                "e.ac not in ("+
+                                                                    "select e.ac " +
+                                                                    "from ia_experiment e, ia_exp2annot e2a, ia_annotation a " +
+                                                                    "where e.ac=e2a.experiment_ac and " +
+                                                                    "e2a.annotation_ac=a.ac and " +
+                                                                    "a.topic_ac in  ('" + holder.accepted.getAc() + "','" + holder.toBeReviewed.getAc() + "') " +
+                                                                    ") and " +
                                                                 "a.topic_ac in  ('" + holder.reviewer.getAc() + "') " +
-                                                                "and to_date(e.created,'DD-MON-YYYY HH24:MI:SS') >  to_date('01-Sep-2005:00:00:00','DD-MON-YYYY:HH24:MI:SS') and e.ac like ? " +
+                                                                "and e.created >  to_date('01-Sep-2005:00:00:00','DD-MON-YYYY:HH24:MI:SS') and e.ac like ? " +
                                                                 "order by created_user" );
-        assignedExperiments = sch.getBeans(  ComparableExperimentBean.class, "%" );
+
+        assignedExperiments = sch.getBeans( helper, ComparableExperimentBean.class, "%" );
+        if(DEBUG){
+            System.out.println("..." + assignedExperiments.size() + " experiments found.");
+            System.out.println("... Here was the request done : \n\n");
+            System.out.println("select e.ac, e.created_user, e.created, e.shortlabel, x.primaryId as pubmedId, a.description as reviewer \n" +
+                    "from ia_experiment e, ia_exp2annot e2a, ia_annotation a, ia_xref x \n" +
+                    "where e.ac=e2a.experiment_ac and \n" +
+                    "x.parent_ac = e.ac and \n" +
+                    "x.parent_ac = e.ac and \n" +
+                    "x.database_ac = '" + holder.pubmed.getAc() + "' and \n" +
+                    "x.qualifier_ac = '" + holder.primaryRef.getAc() + "' and \n" +
+                    "e2a.annotation_ac=a.ac and \n" +
+                    "e.ac not in (\n"+
+                    "select e.ac \n" +
+                    "from ia_experiment e, ia_exp2annot e2a, ia_annotation a \n" +
+                    "where e.ac=e2a.experiment_ac and \n" +
+                    "e2a.annotation_ac=a.ac and \n" +
+                    "a.topic_ac in  ('" + holder.accepted.getAc() + "','" + holder.toBeReviewed.getAc() + "')\n " +
+                    ") and " +
+                    "a.topic_ac in  ('" + holder.reviewer.getAc() + "') \n" +
+                    "and e.created >  to_date('01-Sep-2005:00:00:00','DD-MON-YYYY:HH24:MI:SS') and e.ac like ? \n" +
+                    "order by created_user\n\n");
+    }
     }
 
 
@@ -235,7 +300,9 @@ public class ExperimentLister {
      * @throws Exception
      */
     public void removeCorrectionForSuperCuratorAway( IntactHelper helper ) throws Exception {
-
+        if(DEBUG){
+            System.out.println("Removing assignment to curators being away");
+        }
         SuperCuratorsGetter superCurotorsGetter = new SuperCuratorsGetter();
         Collection superCurators = superCurotorsGetter.getSuperCurators();
 
@@ -243,19 +310,30 @@ public class ExperimentLister {
             SuperCurator sc = (SuperCurator) iterator.next();
             if ( sc.getPercentage() == 0 ) {
                 SanityCheckerHelper sch = new SanityCheckerHelper();
-                sch.addMapping(  ComparableExperimentBean.class, "select e.ac, e.shortlabel, e.created, e.created_user " +
+                sch.addMapping( helper, ComparableExperimentBean.class, "select e.ac, e.shortlabel, e.created, e.created_user " +
                                                                         "from ia_experiment e, ia_exp2annot e2a , ia_annotation a " +
                                                                         "where e.ac = e2a.experiment_ac " +
                                                                         "and a.ac = e2a.annotation_ac " +
                                                                         "and a.topic_ac = '" + cvHolder.reviewer.getAc() + "' " +
                                                                         "and a.description = ? " );
-                Collection experiments = sch.getBeans(  ComparableExperimentBean.class, sc.getName().toLowerCase() );
+                Collection experiments = sch.getBeans( helper, ComparableExperimentBean.class, sc.getName().toLowerCase() );
+                if( DEBUG ) {
+                    System.out.println("... curator " + sc.getName() + "is away and have " + experiments.size() +
+                    " experiments to review : ");
+                }
                 for ( Iterator iterator1 = experiments.iterator(); iterator1.hasNext(); ) {
                     ComparableExperimentBean comparableExperimentBean = (ComparableExperimentBean) iterator1.next();
+
+                    if(DEBUG){
+                        System.out.println("...... " + comparableExperimentBean.getAc() + "," + comparableExperimentBean.getShortlabel() );
+                    }
                     removeReviewerAnnotation( comparableExperimentBean.getAc() );
                 }
+                if(DEBUG){
+                    System.out.println("They will be re-assigned to the others super-curators.");
             }
         }
+    }
     }
 
     /**
@@ -283,6 +361,8 @@ public class ExperimentLister {
         }
 
         helper.update( experiment );
+
+        helper.closeStore();
     }
 
     /**
@@ -328,28 +408,28 @@ public class ExperimentLister {
     private void fillOnHoldAndToBeReviewedExperiments( IntactHelper helper ) throws IntactException, SQLException {
         SanityCheckerHelper sch = new SanityCheckerHelper();
 
-        sch.addMapping(  ExperimentBean.class, "select e.ac, e.created_user, e.created, e.shortlabel " +
+        sch.addMapping( helper, ExperimentBean.class, "select e.ac, e.created_user, e.created, e.shortlabel " +
                                                       "from ia_experiment e, ia_exp2annot e2a, ia_annotation a " +
                                                       "where e2a.annotation_ac = a.ac " +
                                                       "and e2a.experiment_ac = e.ac " +
                                                       "and a.topic_ac = ? " +
                                                       "order by e.shortlabel" );
-        onHoldExperiments = sch.getBeans(  ExperimentBean.class, cvHolder.onHold.getAc() );
-        toBeReviewedExperiments = sch.getBeans(  ExperimentBean.class, cvHolder.toBeReviewed.getAc() );
+        onHoldExperiments = sch.getBeans( helper, ExperimentBean.class, cvHolder.onHold.getAc() );
+        toBeReviewedExperiments = sch.getBeans( helper, ExperimentBean.class, cvHolder.toBeReviewed.getAc() );
 
     }
 
     private void fillNotAcceptedNotToBeReviewedExperiments( IntactHelper helper ) throws IntactException, SQLException {
         SanityCheckerHelper sch = new SanityCheckerHelper();
 
-        sch.addMapping(  ExperimentBean.class, "select ac, created_user, created, shortlabel from ia_experiment where ac not in " +
+        sch.addMapping( helper, ExperimentBean.class, "select ac, created_user, created, shortlabel from ia_experiment where ac not in " +
                                                       "(select e.ac " +
                                                       "from ia_experiment e, ia_exp2annot e2a, ia_annotation a " +
                                                       "where e.ac=e2a.experiment_ac and " +
                                                       "e2a.annotation_ac=a.ac and " +
                                                       "a.topic_ac in ('" + cvHolder.accepted.getAc() + "','" + cvHolder.toBeReviewed.getAc() + "')) " +
-                                                      "and to_date(created,'DD-MON-YYYY HH24:MI:SS') >  to_date('01-Sep-2005:00:00:00','DD-MON-YYYY:HH24:MI:SS') and ac like ? " );
-        notAcceptedNotToBeReviewed = sch.getBeans(  ExperimentBean.class, "%" );
+                                                      "and created >  to_date('01-Sep-2005:00:00:00','DD-MON-YYYY:HH24:MI:SS') and ac like ? " );
+        notAcceptedNotToBeReviewed = sch.getBeans( helper, ExperimentBean.class, "%" );
 
     }
 
@@ -367,12 +447,12 @@ public class ExperimentLister {
         CvHolder holder = getCvHolder( helper );
 
         SanityCheckerHelper sch = new SanityCheckerHelper();
-        sch.addMapping( AnnotationBean.class, "select a.ac " +
+        sch.addMapping( helper, AnnotationBean.class, "select a.ac " +
                                                       "from ia_annotation a, ia_exp2annot e2a " +
                                                       "where e2a.annotation_ac = a.ac and " +
                                                       "a.topic_ac = '" + holder.onHold.getAc() + "' " +
                                                       "and e2a.experiment_ac = ? " );
-        Collection annotations = sch.getBeans( AnnotationBean.class, experiment.getAc() );
+        Collection annotations = sch.getBeans( helper, AnnotationBean.class, experiment.getAc() );
         if ( annotations.isEmpty() ) {
             onHold = false;
         }
@@ -384,10 +464,10 @@ public class ExperimentLister {
 
 
         SanityCheckerHelper sch = new SanityCheckerHelper();
-        sch.addMapping(  Int2ExpBean.class, "select interaction_ac " +
+        sch.addMapping( helper, Int2ExpBean.class, "select interaction_ac " +
                                                    "from ia_int2exp " +
                                                    "where experiment_ac = ? " );
-        Collection int2exps = sch.getBeans( Int2ExpBean.class, experiment.getAc() );
+        Collection int2exps = sch.getBeans( helper, Int2ExpBean.class, experiment.getAc() );
         if ( int2exps.isEmpty() ) {
             hasNoInteractions = true;
         }
@@ -395,14 +475,23 @@ public class ExperimentLister {
     }
 
     private void removeExpOnHoldAndWithNoInteraction( IntactHelper helper, Collection expBeans ) throws Exception, IntactException {
+        if(DEBUG){
+            System.out.println("Filtering out experiments being on-hold or without interactions : ");
+        }
         for ( Iterator iterator = expBeans.iterator(); iterator.hasNext(); ) {
             ComparableExperimentBean exp = (ComparableExperimentBean) iterator.next();
             boolean removed = false;
             if ( isOnHold( helper, exp ) ) {
+                if(DEBUG){
+                    System.out.println("..." + exp.getAc() + ", " + exp.getShortlabel() + " is on hold.");
+                }
                 iterator.remove();
                 removed = true;
             }
             if ( hasNoInteractions( helper, exp ) && false == removed ) {
+                if(DEBUG){
+                    System.out.println("..." + exp.getAc() + ", " + exp.getShortlabel() + " has no interactions.");
+                }
                 iterator.remove();
             }
         }
@@ -443,7 +532,7 @@ public class ExperimentLister {
         public CvHolder( IntactHelper helper ) throws Exception, SQLException {
 
             SanityCheckerHelper sch = new SanityCheckerHelper();
-            sch.addMapping(  ControlledvocabBean.class, "SELECT ac, objclass FROM ia_controlledvocab WHERE shortlabel = ?" );
+            sch.addMapping( helper, ControlledvocabBean.class, "SELECT ac, objclass FROM ia_controlledvocab WHERE shortlabel = ?" );
 
             pubmed = getCvBean( helper, CvDatabase.PUBMED, sch );
 
@@ -467,7 +556,7 @@ public class ExperimentLister {
         private ControlledvocabBean getCvBean( IntactHelper helper, String shortlabel, SanityCheckerHelper sch ) throws Exception {
             ControlledvocabBean cvBean;
 
-            List cvBeans = sch.getBeans(  ControlledvocabBean.class, shortlabel );
+            List cvBeans = sch.getBeans( helper, ControlledvocabBean.class, shortlabel );
             if ( !cvBeans.isEmpty() ) {
                 cvBean = (ControlledvocabBean) cvBeans.get( 0 );
             } else {

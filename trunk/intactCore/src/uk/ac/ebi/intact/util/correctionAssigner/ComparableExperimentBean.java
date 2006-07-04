@@ -6,6 +6,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.util.correctionAssigner;
 
 import java.sql.Timestamp;
+import java.sql.Date;
 
 /**
  * Instead I could have used the ExperimentBean object Used by the util.sanityChecker.SanityChecker class but I needed
@@ -41,7 +42,7 @@ public class ComparableExperimentBean implements Comparable{
     /**
      * The Timestamp corresponding to the creation time of the Experiment.
      */
-    Timestamp created = new Timestamp(1);
+    Date created = new Date(1);//= new Timestamp(1);
 
     /**
      * The name of the superCurator who is suppose to correct the Experiment.
@@ -123,7 +124,7 @@ public class ComparableExperimentBean implements Comparable{
      * Created getter.
      * @return the a Timestamp object representing the time of creation of the Experiment.
      */
-    public Timestamp getCreated() {
+    public Date getCreated() {
         return created;
     }
 
@@ -131,7 +132,7 @@ public class ComparableExperimentBean implements Comparable{
      * Created setter.
      * @param created A timestamp object used to set the value of the created value.
      */
-    public void setCreated(Timestamp created) {
+    public void setCreated(Date created) {
         this.created = created;
     }
 
