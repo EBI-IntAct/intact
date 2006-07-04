@@ -13,12 +13,12 @@
 
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
-        <artifactId>intact-master</artifactId>
+        <artifactId>intact-master-webapp</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>uk.ac.ebi.intact.app.graph2mif</groupId>
+    <groupId>uk.ac.ebi.intact.app.hierarchview</groupId>
     <artifactId>hierarch-view-app</artifactId>
     <packaging>war</packaging>
     <version>2.0-SNAPSHOT</version>
@@ -31,19 +31,10 @@
         <url>http://intact.cvs.sourceforge.net/viewcvs.py/intact</url>
     </scm>
 
-    <build>
-        <finalName>graph2mif</finalName>
-    </build>
-
     <dependencies>
         <dependency>
-            <groupId>uk.ac.ebi.intact.app</groupId>
-            <artifactId>app-commons</artifactId>
-            <version>2.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>uk.ac.ebi.intact.app.graph2mif</groupId>
-            <artifactId>graph2mif-client</artifactId>
+            <groupId>uk.ac.ebi.intact.app.hierarchview</groupId>
+            <artifactId>tulip-client</artifactId>
             <version>2.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
