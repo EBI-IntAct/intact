@@ -387,7 +387,9 @@ public class SanityChecker {
      * @throws SQLException
      * @throws IntactException
      */
-    public void featureWithoutRange() throws SQLException, IntactException {
+    public boolean featureWithoutRange() throws SQLException, IntactException {
+        boolean oneFeatureWithoutRange = false;
+
         List featureBeans = featureSch.getBeans( FeatureBean.class, "%" );
         for ( int i = 0; i < featureBeans.size(); i++ ) {
             FeatureBean feature = (FeatureBean) featureBeans.get( i );
@@ -395,8 +397,10 @@ public class SanityChecker {
             if ( rangeBeans.isEmpty() ) {
                 AnnotatedBean annotatedBean = feature;
                 messageSender.addMessage( annotatedBean, ReportTopic.FEATURE_WITHOUT_A_RANGE );
+                oneFeatureWithoutRange = true;
             }
         }
+        return oneFeatureWithoutRange;
     }
 
     /**
@@ -1732,7 +1736,7 @@ public class SanityChecker {
         scn.checkExperimentsPubmedIds( experimentBeans );
         scn.checkAnnotations( experimentBeans, Experiment.class.getName(), expUsableTopic );
         //This is now listed in the correctionAssigner
-        //scn.checkReviewed( experimentBeans );
+        scn.checkReviewed( experimentBeans );
         //scn.experimentNotSuperCurated();
 
         /*
