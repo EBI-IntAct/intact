@@ -11,7 +11,9 @@ SEARCH_APP=N
 EDITOR_APP=N
 MINE_APP=N
 PREDICT_APP=N
-DATA_CONVERSION=Y
+DATA_CONVERSION=N
+GRAPH2MIF_SERVER=Y
+GRAPH2MIF_CLIENT=N
 
 INTACT_PKG=uk/ac/ebi/intact
 
@@ -76,8 +78,8 @@ IC_SOURCE_SRC=$SOURCE_BASE/src/$INTACT_PKG/util
 IC_DEST_SRC=$DEST_BASE/sanity-checker/trunk/src/main/java/$INTACT_PKG/util
 
 #svn revert $IC_DEST_SRC
-rm -rf $IC_DEST_SRC/*
-svn update $IC_DEST_SRC/
+rm -rf $IC_DEST_SRC
+svn update $IC_DEST_SRC
 svn cp $IC_SOURCE_SRC/sanityChecker $IC_DEST_SRC
 svn cp $IC_SOURCE_SRC/rangeChecker $IC_DEST_SRC
 svn cp $IC_SOURCE_SRC/correctionAssigner $IC_DEST_SRC
@@ -95,8 +97,8 @@ IC_SOURCE_SRC=$SOURCE_BASE/src/$INTACT_PKG/application/search3
 IC_DEST_SRC=$DEST_BASE/search/search-engine/trunk/src/main/java/$INTACT_PKG/application/search3
 
 #svn revert $IC_DEST_SRC
-rm -rf $IC_DEST_SRC/*
-svn update $IC_DEST_SRC/
+rm -rf $IC_DEST_SRC
+svn update $IC_DEST_SRC
 svn cp $IC_SOURCE_SRC/searchEngine $IC_DEST_SRC/searchEngine
 svn cp $IC_SOURCE_SRC/util $IC_DEST_SRC/util
 
@@ -113,8 +115,8 @@ echo " " Java files
 IC_SOURCE_SRC=$SOURCE_BASE/src/$INTACT_PKG/application/search3
 IC_DEST_SRC=$DEST_BASE/search/search-app/trunk/src/main/java/$INTACT_PKG/application/search3
 
-rm -rf $IC_DEST_SRC/*
-svn update $IC_DEST_SRC/
+rm -rf $IC_DEST_SRC
+svn update $IC_DEST_SRC
 svn cp $IC_SOURCE_SRC/advancedSearch $IC_DEST_SRC/advancedSearch
 svn cp $IC_SOURCE_SRC/business $IC_DEST_SRC/business
 svn cp $IC_SOURCE_SRC/servlet $IC_DEST_SRC/servlet
@@ -164,8 +166,8 @@ echo " " Java files
 IC_SOURCE_SRC=$SOURCE_BASE/src/$INTACT_PKG/application/editor
 IC_DEST_SRC=$DEST_BASE/editor/editor-app/trunk/src/main/java/$INTACT_PKG/application
 
-rm -rf $IC_DEST_SRC/*
-svn update $IC_DEST_SRC/
+rm -rf $IC_DEST_SRC
+svn update $IC_DEST_SRC
 svn cp $IC_SOURCE_SRC $IC_DEST_SRC
 
 echo " " Webapp files
@@ -232,8 +234,8 @@ echo " " Java files
 IC_SOURCE_SRC=$SOURCE_BASE/src/$INTACT_PKG/application/$NAME
 IC_DEST_SRC=$DEST_BASE/$ARTIFACT_ID/trunk/src/main/java/$INTACT_PKG/application/$NAME
 
-rm -rf $IC_DEST_SRC/*
-svn update $IC_DEST_SRC/
+rm -rf $IC_DEST_SRC
+svn update $IC_DEST_SRC
 svn cp $IC_SOURCE_SRC/business $IC_DEST_SRC/business
 svn cp $IC_SOURCE_SRC/struts $IC_DEST_SRC/struts
 
@@ -296,8 +298,8 @@ echo " " Java files
 IC_SOURCE_SRC=$SOURCE_BASE/src/$INTACT_PKG/application/$NAME
 IC_DEST_SRC=$DEST_BASE/$ARTIFACT_ID/trunk/src/main/java/$INTACT_PKG/application/$NAME
 
-rm -rf $IC_DEST_SRC/*
-svn update $IC_DEST_SRC/
+rm -rf $IC_DEST_SRC
+svn update $IC_DEST_SRC
 svn cp $IC_SOURCE_SRC/business $IC_DEST_SRC/business
 svn cp $IC_SOURCE_SRC/struts $IC_DEST_SRC/struts
 svn cp $IC_SOURCE_SRC/util $IC_DEST_SRC/util
@@ -356,7 +358,7 @@ fi
 
 
 #############################################################################################
-#                        APP COMMONS                                                        #
+#                        DATA CONVERSION                                                    #
 #############################################################################################
 
 if [ "$DATA_CONVERSION" = "Y" ]; then
@@ -366,10 +368,65 @@ IC_SOURCE_SRC=$SOURCE_BASE/src/$INTACT_PKG/application/dataConversion
 IC_DEST_SRC=$DEST_BASE/data-conversion/trunk/src/main/java/$INTACT_PKG/application
 
 #svn revert $IC_DEST_SRC
-rm -rf $IC_DEST_SRC/*
-svn update $IC_DEST_SRC/
+rm -rf $IC_DEST_SRC
+svn update $IC_DEST_SRC
 svn cp $IC_SOURCE_SRC $IC_DEST_SRC
 
 rm -rf IC_DEST_SRC/dataConversion/test
+
+fi
+
+
+#############################################################################################
+#                        GRAPH 2 MIF SERVER                                                 #
+#############################################################################################
+
+if [ "$GRAPH2MIF_SERVER" = "Y" ]; then
+
+echo GRAPH2MIF SERVER
+
+NAME=graph2MIF
+ARTIFACT_ID=graph2mif/server
+
+echo " " Java files
+IC_SOURCE_SRC=$SOURCE_BASE/src/$INTACT_PKG/application/$NAME
+IC_DEST_SRC=$DEST_BASE/$ARTIFACT_ID/trunk/src/main/java/$INTACT_PKG/application/$NAME
+
+rm -rf $IC_DEST_SRC
+svn update $IC_DEST_SRC/
+svn cp $IC_SOURCE_SRC/conversion $IC_DEST_SRC/conversion
+svn cp $IC_SOURCE_SRC/exception $IC_DEST_SRC/exception
+svn cp $IC_SOURCE_SRC/util $IC_DEST_SRC/util
+svn cp $IC_SOURCE_SRC/Graph2MIFWS.java $IC_DEST_SRC/
+svn cp $IC_SOURCE_SRC/Graph2MIFWSService.java $IC_DEST_SRC/
+svn cp $IC_SOURCE_SRC/Graph2MIFWSServlet.java $IC_DEST_SRC/
+svn cp $IC_SOURCE_SRC/GraphFactory.java $IC_DEST_SRC/
+svn cp $IC_SOURCE_SRC/package.html $IC_DEST_SRC/
+
+echo " " Webapp files
+IC_SOURCE_SRC=$SOURCE_BASE/application/$NAME
+IC_DEST_SRC=$DEST_BASE/$ARTIFACT_ID/trunk/src/main/webapp
+
+rm -rf $IC_DEST_SRC
+svn update $IC_DEST_SRC/
+svn mkdir $IC_DEST_SRC/WEB-INF
+
+svn cp $IC_SOURCE_SRC/index.jsp $IC_DEST_SRC/
+svn cp $IC_SOURCE_SRC/WEB-INF/web.xml $IC_DEST_SRC/WEB-INF/web.xml
+svn cp $IC_SOURCE_SRC/WEB-INF/server-config.wsdd $IC_DEST_SRC/WEB-INF/server-config.wsdd
+
+
+echo " " Resource files
+
+IC_DEST_SRC=$DEST_BASE/graph2mif/server/trunk/src/main/resources
+
+rm -rf $IC_DEST_SRC/config
+svn update $IC_DEST_SRC
+svn cp $SOURCE_BASE/config $IC_DEST_SRC
+svn cp $SOURCE_BASE/config/Institution.properties $IC_DEST_SRC/config
+
+svn rm $IC_DEST_SRC/config/log4j.properties
+rm -rf $IC_DEST_SRC/config/log4j.properties
+
 
 fi
