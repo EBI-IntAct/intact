@@ -27,5 +27,7 @@ public interface IntactObjectDao<T extends IntactObject>
 
     List<T> getAll();
 
+    Collection<T> getColByPropertyName(String propertyName, String value);
+
     void update(T objToUpdate);
 }
