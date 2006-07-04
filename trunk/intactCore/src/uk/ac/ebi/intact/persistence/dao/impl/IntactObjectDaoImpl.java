@@ -74,4 +74,9 @@ public class IntactObjectDaoImpl<T extends IntactObject> extends HibernateBaseDa
         return getSession().createCriteria(getEntityClass()).list();
     }
 
+    public void update(T objToUpdate)
+    {
+       getSession().update(objToUpdate);
+    }
+
 }
