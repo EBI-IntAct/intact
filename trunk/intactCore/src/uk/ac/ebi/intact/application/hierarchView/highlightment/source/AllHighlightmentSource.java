@@ -3,24 +3,19 @@ package uk.ac.ebi.intact.application.hierarchView.highlightment.source;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
-import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.GraphHelper;
-import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
-import uk.ac.ebi.intact.application.hierarchView.struts.view.utils.SourceBean;
-import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
+import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.model.Xref;
-import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
 import uk.ac.ebi.intact.simpleGraph.Node;
-import uk.ac.ebi.intact.util.SearchReplace;
 
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
-import java.net.URLEncoder;
-import java.io.UnsupportedEncodingException;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -106,7 +101,7 @@ public class AllHighlightmentSource extends HighlightmentSource {
             try {
                 logger.info( "Try to get a list of all available source terms (from protein AC="
                         + aProteinAC + ")" );
-                result = user.getHelper().search( Protein.class.getName(), "ac", aProteinAC );
+                result = DaoFactory.getProteinDao().getByAcLike(aProteinAC);
             }
             catch ( IntactException ie ) {
                 logger.error( "When trying to get a list of all allowed source terms", ie );

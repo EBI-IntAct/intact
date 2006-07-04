@@ -27,6 +27,7 @@ import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
 import uk.ac.ebi.intact.simpleGraph.Node;
 import uk.ac.ebi.intact.util.SearchReplace;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 /**
  * Interface allowing to wrap an highlightment source.
@@ -105,8 +106,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
         try {
             logger.info( "Try to get a list of GO term (from protein AC="
                     + aProteinAC + ")" );
-            result = user.getHelper().search( Protein.class.getName(), "ac",
-                    aProteinAC );
+            result = DaoFactory.getProteinDao().getByAcLike(aProteinAC);
         }
         catch ( IntactException ie ) {
             logger.error( "When trying to get a list of GO", ie );
@@ -424,7 +424,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
                               IntactUserI user) throws IntactException, SQLException {
 
         // connection to database
-        Connection con = user.getHelper().getJDBCConnection();
+        Connection con = DaoFactory.connection();
 
         //PreparedStatement sourceStm = con.prepareStatement( "SELECT count(X.ac) FROM ia_xref X, ia_controlledvocab C "
         //  + "WHERE C.ac = X.database_ac AND X.primaryid=? AND X.parent_ac in ?" );
