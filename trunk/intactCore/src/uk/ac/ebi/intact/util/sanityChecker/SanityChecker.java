@@ -15,10 +15,11 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.ojb.broker.accesslayer.LookupException;
 import uk.ac.ebi.intact.application.commons.util.AnnotationSection;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.Crc64;
 import uk.ac.ebi.intact.util.sanityChecker.model.*;
+import uk.ac.ebi.intact.persistence.dao.BaseDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
@@ -115,27 +116,24 @@ public class SanityChecker {
 
     private Map cvTopics;
 
-    private IntactHelper helper;
 
+    public SanityChecker() throws IntactException, SQLException {
 
-    public SanityChecker( IntactHelper helper ) throws IntactException, SQLException {
-
-        this.helper = helper;
 
         editorUrlBuilder = new EditorUrlBuilder();
 
         featureSch = new SanityCheckerHelper();
-        featureSch.addMapping( helper, FeatureBean.class, "select ac, shortlabel, fullname, created_user, created from ia_feature where ac like ? " );
-        featureSch.addMapping( helper, RangeBean.class, "select ac from ia_range where feature_ac = ? " );
+        featureSch.addMapping( FeatureBean.class, "select ac, shortlabel, fullname, created_user, created from ia_feature where ac like ? " );
+        featureSch.addMapping( RangeBean.class, "select ac from ia_range where feature_ac = ? " );
 
 
         objectFromAc = new SanityCheckerHelper();
-        objectFromAc.addMapping( helper, ExperimentBean.class, "select ac, shortlabel, fullname, created, created_user, detectmethod_ac, identmethod_ac, biosource_ac from ia_experiment where ac = ?" );
-        objectFromAc.addMapping( helper, InteractorBean.class, "select ac, shortlabel, fullname, crc64, created, created_user, biosource_ac, interactiontype_ac, objclass from ia_interactor where ac = ? " );
+        objectFromAc.addMapping( ExperimentBean.class, "select ac, shortlabel, fullname, created, created_user, detectmethod_ac, identmethod_ac, biosource_ac from ia_experiment where ac = ?" );
+        objectFromAc.addMapping( InteractorBean.class, "select ac, shortlabel, fullname, crc64, created, created_user, biosource_ac, interactiontype_ac, objclass from ia_interactor where ac = ? " );
 
 
         deletionFeatureSch = new SanityCheckerHelper();
-        deletionFeatureSch.addMapping( helper, RangeBean.class, " select i.created_user, i.created, c.interaction_ac, c.interactor_ac, r.feature_ac , r.ac , r.fromintervalend, r.tointervalstart " +
+        deletionFeatureSch.addMapping( RangeBean.class, " select i.created_user, i.created, c.interaction_ac, c.interactor_ac, r.feature_ac , r.ac , r.fromintervalend, r.tointervalstart " +
                                                                 " from ia_interactor i, ia_feature f, ia_range r, ia_controlledvocab ident, ia_component c, ia_controlledvocab type " +
                                                                 " where i.ac = c.interaction_ac and " +
                                                                 " c.ac=f.component_ac and " +
@@ -147,7 +145,7 @@ public class SanityChecker {
                                                                 " (r.tointervalstart - r.fromintervalend) > ? " );
 
         rangeSeqSch = new SanityCheckerHelper();
-        rangeSeqSch.addMapping( helper, RangeBean.class, "select r.ac, fromintervalstart, fromfuzzytype_ac, sequence, f.component_ac " +
+        rangeSeqSch.addMapping( RangeBean.class, "select r.ac, fromintervalstart, fromfuzzytype_ac, sequence, f.component_ac " +
                                                          "from ia_range r, ia_feature f, ia_component c, ia_interactor i " +
                                                          "where i.ac=c.interactor_ac and " +
                                                          "c.ac=f.component_ac and " +
@@ -155,19 +153,19 @@ public class SanityChecker {
                                                          "sequence is not null and " +
                                                          "i.ac = ?" );
 
-        rangeSeqSch.addMapping( helper, ComponentBean.class, "select interaction_ac from ia_component where ac=?" );
-        rangeSeqSch.addMapping( helper, InteractorBean.class, "select ac, created_user, created, objclass from ia_interactor where ac=?" );
+        rangeSeqSch.addMapping( ComponentBean.class, "select interaction_ac from ia_component where ac=?" );
+        rangeSeqSch.addMapping( InteractorBean.class, "select ac, created_user, created, objclass from ia_interactor where ac=?" );
 
         this.retrieveObjectSch = new SanityCheckerHelper();
 
-        retrieveObjectSch.addMapping( helper, Exp2AnnotBean.class, "SELECT experiment_ac FROM ia_exp2annot WHERE annotation_ac=?" );
-        retrieveObjectSch.addMapping( helper, Bs2AnnotBean.class, "SELECT biosource_ac FROM ia_biosource2annot WHERE annotation_ac=?" );
-        retrieveObjectSch.addMapping( helper, Int2AnnotBean.class, "SELECT interactor_ac FROM ia_int2annot WHERE annotation_ac=?" );
-        retrieveObjectSch.addMapping( helper, CvObject2AnnotBean.class, "SELECT cvobject_ac FROM ia_cvobject2annot WHERE annotation_ac=?" );
-        retrieveObjectSch.addMapping( helper, Feature2AnnotBean.class, "SELECT feature_ac FROM ia_feature2annot WHERE annotation_ac=?" );
+        retrieveObjectSch.addMapping( Exp2AnnotBean.class, "SELECT experiment_ac FROM ia_exp2annot WHERE annotation_ac=?" );
+        retrieveObjectSch.addMapping( Bs2AnnotBean.class, "SELECT biosource_ac FROM ia_biosource2annot WHERE annotation_ac=?" );
+        retrieveObjectSch.addMapping( Int2AnnotBean.class, "SELECT interactor_ac FROM ia_int2annot WHERE annotation_ac=?" );
+        retrieveObjectSch.addMapping( CvObject2AnnotBean.class, "SELECT cvobject_ac FROM ia_cvobject2annot WHERE annotation_ac=?" );
+        retrieveObjectSch.addMapping( Feature2AnnotBean.class, "SELECT feature_ac FROM ia_feature2annot WHERE annotation_ac=?" );
 
         this.hasValidPrimaryIdSch = new SanityCheckerHelper();
-        hasValidPrimaryIdSch.addMapping( helper, AnnotationBean.class, "select a.description " +
+        hasValidPrimaryIdSch.addMapping( AnnotationBean.class, "select a.description " +
                                                                        "from ia_annotation a, ia_cvobject2annot c2a " +
                                                                        "where c2a.cvobject_ac = ? and " +//in (select ac from ia_controlledvocab where objclass like '" + CvDatabase.class.getName() + "') and " +
                                                                        "c2a.annotation_ac=a.ac and " +
@@ -182,7 +180,7 @@ public class SanityChecker {
         "group by interaction_ac "+
         "having count(experiment_ac) > 1)");  */
 
-        oneIntOneExpSch.addMapping( helper, Int2ExpBean.class, "select interaction_ac, experiment_ac " +
+        oneIntOneExpSch.addMapping( Int2ExpBean.class, "select interaction_ac, experiment_ac " +
                                                                "from ia_int2exp " +
                                                                "where interaction_ac like ? and " +
                                                                "interaction_ac in ( select interaction_ac " +
@@ -191,16 +189,16 @@ public class SanityChecker {
                                                                "                    having count(experiment_ac) > 1)" );
 
         //oneIntOneExpSch.addMapping(Int2ExpBean.class, )
-        oneIntOneExpSch.addMapping( helper, ExperimentBean.class, "select ac, shortlabel, created, created_user " +
+        oneIntOneExpSch.addMapping( ExperimentBean.class, "select ac, shortlabel, created, created_user " +
                                                                   "from ia_experiment " +
                                                                   "where ac = ? " );
 
-        oneIntOneExpSch.addMapping( helper, InteractorBean.class, "select ac, objclass, shortlabel, created, created_user " +
+        oneIntOneExpSch.addMapping( InteractorBean.class, "select ac, objclass, shortlabel, created, created_user " +
                                                                   "from ia_interactor " +
                                                                   "where ac = ? " );
 
         this.sch12 = new SanityCheckerHelper();
-        sch12.addMapping( helper, ExperimentBean.class, "select e.ac " +
+        sch12.addMapping( ExperimentBean.class, "select e.ac " +
                                                         "from ia_controlledvocab c, ia_experiment e " +
                                                         "where c.ac=e.detectmethod_ac and  " +
                                                         "e.ac = ? and " +
@@ -209,7 +207,7 @@ public class SanityChecker {
                                                         "         where objclass = '" + CvInteraction.class.getName() + "')" );
 
         this.sch13 = new SanityCheckerHelper();
-        sch13.addMapping( helper, ExperimentBean.class, "SELECT e.ac " +
+        sch13.addMapping( ExperimentBean.class, "SELECT e.ac " +
                                                         "FROM ia_controlledvocab c, ia_experiment e " +
                                                         "WHERE c.ac=e.identmethod_ac AND  " +
                                                         "      e.ac = ? AND " +
@@ -219,9 +217,9 @@ public class SanityChecker {
 
         cvTopics = new HashMap();
         this.annotationTopic = new SanityCheckerHelper();
-        annotationTopic.addMapping( helper, ControlledvocabBean.class, "select shortlabel, ac, objclass from ia_controlledvocab where objclass = '" + CvTopic.class.getName() + "' and ac like ?" );
+        annotationTopic.addMapping( ControlledvocabBean.class, "select shortlabel, ac, objclass from ia_controlledvocab where objclass = '" + CvTopic.class.getName() + "' and ac like ?" );
 
-        List cvTopicBeans = annotationTopic.getBeans( helper, ControlledvocabBean.class, "%" );
+        List cvTopicBeans = annotationTopic.getBeans( ControlledvocabBean.class, "%" );
         for ( int i = 0; i < cvTopicBeans.size(); i++ ) {
             ControlledvocabBean cvBean = (ControlledvocabBean) cvTopicBeans.get( i );
             cvTopics.put( cvBean.getAc(), cvBean.getShortlabel() );
@@ -229,60 +227,60 @@ public class SanityChecker {
 
         this.sch = new SanityCheckerHelper();
 
-        sch.addMapping( helper, ControlledvocabBean.class, "SELECT ac, objclass " +
+        sch.addMapping( ControlledvocabBean.class, "SELECT ac, objclass " +
                                                            "FROM ia_controlledvocab " +
                                                            "WHERE shortlabel = ?" );
 
-        this.onHoldCvBean = (ControlledvocabBean) sch.getBeans( helper, ControlledvocabBean.class, CvTopic.ON_HOLD ).get( 0 );
-        toBeReviewedCvBean = (ControlledvocabBean) sch.getBeans( helper, ControlledvocabBean.class, CvTopic.TO_BE_REVIEWED ).get( 0 );
-        acceptedCvBean = (ControlledvocabBean) sch.getBeans( helper, ControlledvocabBean.class, CvTopic.ACCEPTED ).get( 0 );
-        noUniprotUpdateCvBean = (ControlledvocabBean) sch.getBeans( helper, ControlledvocabBean.class, CvTopic.NON_UNIPROT ).get( 0 );
-        hiddenCvBean = (ControlledvocabBean) sch.getBeans( helper, ControlledvocabBean.class, CvTopic.HIDDEN ).get( 0 );
-        obsoleteCvBean = (ControlledvocabBean) sch.getBeans( helper, ControlledvocabBean.class, CvTopic.OBSOLETE ).get( 0 );
+        this.onHoldCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvTopic.ON_HOLD ).get( 0 );
+        toBeReviewedCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvTopic.TO_BE_REVIEWED ).get( 0 );
+        acceptedCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvTopic.ACCEPTED ).get( 0 );
+        noUniprotUpdateCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvTopic.NON_UNIPROT ).get( 0 );
+        hiddenCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvTopic.HIDDEN ).get( 0 );
+        obsoleteCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvTopic.OBSOLETE ).get( 0 );
 
-        sch.addMapping( helper, ControlledvocabBean.class, "SELECT ac, objclass " +
+        sch.addMapping( ControlledvocabBean.class, "SELECT ac, objclass " +
                                                            "FROM ia_controlledvocab " +
                                                            "WHERE ac IN ( SELECT parent_ac " +
                                                            "              FROM ia_xref " +
                                                            "              WHERE primaryid = ? )" );
 
         // CvComponentRole
-        neutralCvBean = (ControlledvocabBean) sch.getBeans( helper, ControlledvocabBean.class, CvComponentRole.NEUTRAL_PSI_REF ).get( 0 );
-        inhibitedCvBean = (ControlledvocabBean) sch.getBeans( helper, ControlledvocabBean.class, CvComponentRole.INHIBITED_PSI_REF ).get( 0 );
-        inhibitorCvBean = (ControlledvocabBean) sch.getBeans( helper, ControlledvocabBean.class, CvComponentRole.INHIBITOR_PSI_REF ).get( 0 );
-        fluorophoreAcceptorCvBean = (ControlledvocabBean) sch.getBeans( helper, ControlledvocabBean.class, CvComponentRole.FLUROPHORE_ACCEPTOR_MI_REF ).get( 0 );
-        fluorophoreDonorCvBean = (ControlledvocabBean) sch.getBeans( helper, ControlledvocabBean.class, CvComponentRole.FLUROPHORE_DONOR_MI_REF ).get( 0 );
-        electronAcceptorCvBean = (ControlledvocabBean) sch.getBeans( helper, ControlledvocabBean.class, CvComponentRole.ELECTRON_ACCEPTOR_MI_REF ).get( 0 );
-        electronDonorCvBean = (ControlledvocabBean) sch.getBeans( helper, ControlledvocabBean.class, CvComponentRole.ELECTRON_DONOR_MI_REF ).get( 0 );
-        baitCvBean = (ControlledvocabBean) sch.getBeans( helper, ControlledvocabBean.class, CvComponentRole.BAIT_PSI_REF ).get( 0 );
-        preyCvBean = (ControlledvocabBean) sch.getBeans( helper, ControlledvocabBean.class, CvComponentRole.PREY_PSI_REF ).get( 0 );
-        enzymeCvBean = (ControlledvocabBean) sch.getBeans( helper, ControlledvocabBean.class, CvComponentRole.ENZYME_PSI_REF ).get( 0 );
-        enzymeTargetCvBean = (ControlledvocabBean) sch.getBeans( helper, ControlledvocabBean.class, CvComponentRole.ENZYME_TARGET_PSI_REF ).get( 0 );
-        selfCvBean = (ControlledvocabBean) sch.getBeans( helper, ControlledvocabBean.class, CvComponentRole.SELF_PSI_REF ).get( 0 );
-        unspecifiedCvBean = (ControlledvocabBean) sch.getBeans( helper, ControlledvocabBean.class, CvComponentRole.UNSPECIFIED_PSI_REF ).get( 0 );
+        neutralCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvComponentRole.NEUTRAL_PSI_REF ).get( 0 );
+        inhibitedCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvComponentRole.INHIBITED_PSI_REF ).get( 0 );
+        inhibitorCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvComponentRole.INHIBITOR_PSI_REF ).get( 0 );
+        fluorophoreAcceptorCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvComponentRole.FLUROPHORE_ACCEPTOR_MI_REF ).get( 0 );
+        fluorophoreDonorCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvComponentRole.FLUROPHORE_DONOR_MI_REF ).get( 0 );
+        electronAcceptorCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvComponentRole.ELECTRON_ACCEPTOR_MI_REF ).get( 0 );
+        electronDonorCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvComponentRole.ELECTRON_DONOR_MI_REF ).get( 0 );
+        baitCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvComponentRole.BAIT_PSI_REF ).get( 0 );
+        preyCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvComponentRole.PREY_PSI_REF ).get( 0 );
+        enzymeCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvComponentRole.ENZYME_PSI_REF ).get( 0 );
+        enzymeTargetCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvComponentRole.ENZYME_TARGET_PSI_REF ).get( 0 );
+        selfCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvComponentRole.SELF_PSI_REF ).get( 0 );
+        unspecifiedCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvComponentRole.UNSPECIFIED_PSI_REF ).get( 0 );
 
         // CvInteraction
-        inferredByCuratorCvBean = (ControlledvocabBean) sch.getBeans( helper, ControlledvocabBean.class, CvInteraction.INFERRED_BY_CURATOR_MI_REF ).get( 0 );
+        inferredByCuratorCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvInteraction.INFERRED_BY_CURATOR_MI_REF ).get( 0 );
 
         // CvDatabases
-        uniprotDatabaseCvBean = (ControlledvocabBean) sch.getBeans( helper, ControlledvocabBean.class, CvDatabase.UNIPROT_MI_REF ).get( 0 );
-        intactDatabaseCvBean = (ControlledvocabBean) sch.getBeans( helper, ControlledvocabBean.class, CvDatabase.INTACT_MI_REF ).get( 0 );
-        pubmedDatabaseCvBean = (ControlledvocabBean) sch.getBeans( helper, ControlledvocabBean.class, CvDatabase.PUBMED_MI_REF ).get( 0 );
-        newtDatabaseCvBean = (ControlledvocabBean) sch.getBeans( helper, ControlledvocabBean.class, CvDatabase.NEWT_MI_REF ).get( 0 );
+        uniprotDatabaseCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvDatabase.UNIPROT_MI_REF ).get( 0 );
+        intactDatabaseCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvDatabase.INTACT_MI_REF ).get( 0 );
+        pubmedDatabaseCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvDatabase.PUBMED_MI_REF ).get( 0 );
+        newtDatabaseCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvDatabase.NEWT_MI_REF ).get( 0 );
 
         // Xref qualifier
-        primaryReferenceXrefQualifierCvBean = (ControlledvocabBean) sch.getBeans( helper, ControlledvocabBean.class, CvXrefQualifier.PRIMARY_REFERENCE_MI_REF ).get( 0 );
-        identityXrefQualifierCvBean = (ControlledvocabBean) sch.getBeans( helper, ControlledvocabBean.class, CvXrefQualifier.IDENTITY_MI_REF ).get( 0 );
-        isoformParentXrefQualifierCvBean = (ControlledvocabBean) sch.getBeans( helper, ControlledvocabBean.class, CvXrefQualifier.ISOFORM_PARENT_MI_REF ).get( 0 );
+        primaryReferenceXrefQualifierCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvXrefQualifier.PRIMARY_REFERENCE_MI_REF ).get( 0 );
+        identityXrefQualifierCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvXrefQualifier.IDENTITY_MI_REF ).get( 0 );
+        isoformParentXrefQualifierCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvXrefQualifier.ISOFORM_PARENT_MI_REF ).get( 0 );
 
-        cTerminalCvBean = (ControlledvocabBean) sch.getBeans( helper, ControlledvocabBean.class, "MI:0334" ).get( 0 );
+        cTerminalCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, "MI:0334" ).get( 0 );
 
-        nTerminalCvBean = (ControlledvocabBean) sch.getBeans( helper, ControlledvocabBean.class, "MI:0340" ).get( 0 );
+        nTerminalCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, "MI:0340" ).get( 0 );
 
-        undeterminedCvBean = (ControlledvocabBean) sch.getBeans( helper, ControlledvocabBean.class, "MI:0339" ).get( 0 );
+        undeterminedCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, "MI:0339" ).get( 0 );
 
         hiddenObsoleteNotInUsed = new SanityCheckerHelper();
-        hiddenObsoleteNotInUsed.addMapping( helper, ControlledvocabBean.class,
+        hiddenObsoleteNotInUsed.addMapping( ControlledvocabBean.class,
                                             "select c.ac, c.created, c.created_user, c.shortlabel, c.objclass " +
                                             "from ia_controlledvocab c, ia_cvobject2annot c2a, ia_annotation a " +
                                             "where c.ac=c2a.cvobject_ac " +
@@ -291,12 +289,12 @@ public class SanityChecker {
                                             "      and c.ac like ? " );
 
         this.onHoldSch = new SanityCheckerHelper();
-        onHoldSch.addMapping( helper, Exp2AnnotBean.class, "SELECT experiment_ac " +
+        onHoldSch.addMapping( Exp2AnnotBean.class, "SELECT experiment_ac " +
                                                            "FROM ia_exp2annot where experiment_ac = ? " +
                                                            "AND annotation_ac IN (SELECT ac " +
                                                            "                      FROM ia_annotation " +
                                                            "                      WHERE topic_ac='" + onHoldCvBean.getAc() + "')" );
-        onHoldSch.addMapping( helper, Int2AnnotBean.class, "SELECT interactor_ac " +
+        onHoldSch.addMapping( Int2AnnotBean.class, "SELECT interactor_ac " +
                                                            "FROM ia_int2annot " +
                                                            "WHERE interactor_ac = ? " +
                                                            "      AND annotation_ac IN (SELECT ac " +
@@ -304,63 +302,63 @@ public class SanityChecker {
                                                            "                            WHERE topic_ac='" + onHoldCvBean.getAc() + "')" );
 
         this.toBeReviewedSch = new SanityCheckerHelper();
-        toBeReviewedSch.addMapping( helper, Exp2AnnotBean.class, "SELECT experiment_ac " +
+        toBeReviewedSch.addMapping( Exp2AnnotBean.class, "SELECT experiment_ac " +
                                                                  "FROM ia_exp2annot where experiment_ac = ? " +
                                                                  "     AND annotation_ac IN (SELECT ac " +
                                                                  "                           FROM ia_annotation " +
                                                                  "                           WHERE topic_ac='" + toBeReviewedCvBean.getAc() + "')" );
 
         noUniprotUpdateSch = new SanityCheckerHelper();
-        noUniprotUpdateSch.addMapping( helper, Exp2AnnotBean.class, "SELECT interactor_ac " +
+        noUniprotUpdateSch.addMapping( Exp2AnnotBean.class, "SELECT interactor_ac " +
                                                                     "FROM ia_int2annot where interactor_ac = ? " +
                                                                     "     AND annotation_ac IN (SELECT ac " +
                                                                     "                           FROM ia_annotation " +
                                                                     "                           WHERE topic_ac='" + noUniprotUpdateCvBean.getAc() + "')" );
 
-        sch.addMapping( helper, Int2AnnotBean.class, "SELECT interactor_ac " +
+        sch.addMapping( Int2AnnotBean.class, "SELECT interactor_ac " +
                                                      "FROM ia_int2annot where interactor_ac = ? " +
                                                      "     AND annotation_ac IN (SELECT ac " +
                                                      "                           FROM ia_annotation " +
                                                      "                           WHERE topic_ac='" + onHoldCvBean.getAc() + "')" );
 
-        sch.addMapping( helper, Exp2AnnotBean.class, "SELECT experiment_ac " +
+        sch.addMapping( Exp2AnnotBean.class, "SELECT experiment_ac " +
                                                      "FROM ia_exp2annot where experiment_ac = ? " +
                                                      "     AND annotation_ac IN (SELECT ac " +
                                                      "                           FROM ia_annotation " +
                                                      "                           WHERE topic_ac='" + onHoldCvBean.getAc() + "')" );
 
-        sch.addMapping( helper, Int2ExpBean.class, "SELECT experiment_ac " +
+        sch.addMapping( Int2ExpBean.class, "SELECT experiment_ac " +
                                                    "FROM ia_int2exp " +
                                                    "WHERE interaction_ac = ?" );
 
-        sch.addMapping( helper, InteractorBean.class, "SELECT ac, objclass, created_user, created " +
+        sch.addMapping( InteractorBean.class, "SELECT ac, objclass, created_user, created " +
                                                       "FROM ia_interactor " +
                                                       "WHERE ac = ? " +
                                                       "      AND interactiontype_ac IS NULL" );
 
-        sch.addMapping( helper, ComponentBean.class, "SELECT interactor_ac, role, stoichiometry " +
+        sch.addMapping( ComponentBean.class, "SELECT interactor_ac, role, stoichiometry " +
                                                      "FROM ia_component " +
                                                      "WHERE interaction_ac = ? " );
 
-        sch.addMapping( helper, ExperimentBean.class, "SELECT biosource_ac, ac, detectmethod_ac, shortlabel, created_user, created " +
+        sch.addMapping( ExperimentBean.class, "SELECT biosource_ac, ac, detectmethod_ac, shortlabel, created_user, created " +
                                                       "FROM ia_experiment " +
                                                       "WHERE ac like ?" );
 
-        sch.addMapping( helper, XrefBean.class, "SELECT ac, database_ac, qualifier_ac, created_user, created " +
+        sch.addMapping( XrefBean.class, "SELECT ac, database_ac, qualifier_ac, created_user, created " +
                                                 "FROM ia_xref " +
                                                 "WHERE parent_ac = ?" );
 
-        sch.addMapping( helper, BioSourceBean.class, "SELECT ac, shortlabel, taxid, created_user, created " +
+        sch.addMapping( BioSourceBean.class, "SELECT ac, shortlabel, taxid, created_user, created " +
                                                      "FROM ia_biosource " +
                                                      "WHERE ac like ?" );
 
-        sch.addMapping( helper, SequenceChunkBean.class, "select sequence_chunk, sequence_index " +
+        sch.addMapping( SequenceChunkBean.class, "select sequence_chunk, sequence_index " +
                                                          "from ia_sequence_chunk " +
                                                          "where parent_ac = ? " +
                                                          "order by sequence_index" );
 
         superCuratedSch = new SanityCheckerHelper();
-        superCuratedSch.addMapping( helper, ExperimentBean.class, "select ac, created_user, created, shortlabel " +
+        superCuratedSch.addMapping( ExperimentBean.class, "select ac, created_user, created, shortlabel " +
                                                                   "from ia_experiment " +
                                                                   "where ac not in (select e.ac " +
                                                                   "                 from ia_experiment e, ia_exp2annot e2a, ia_annotation a " +
@@ -370,12 +368,12 @@ public class SanityChecker {
                                                                   "                       and to_date(created,'DD-MON-YYYY HH24:MI:SS') > to_date('01-Sep-2005:00:00:00','DD-MON-YYYY:HH24:MI:SS') " +
                                                                   "                       and ac like ? " );
         messageSender = new MessageSender();
-        annotationSection = new AnnotationSection( helper );
+        annotationSection = new AnnotationSection();
     }
 
     public boolean interactionIsOnHold( String ac ) throws SQLException {
         boolean onHold = false;
-        List int2AnnotBeans = onHoldSch.getBeans( helper, Int2AnnotBean.class, ac );
+        List int2AnnotBeans = onHoldSch.getBeans( Int2AnnotBean.class, ac );
         if ( !int2AnnotBeans.isEmpty() ) {
             onHold = true;
         }
@@ -390,13 +388,13 @@ public class SanityChecker {
      * @throws IntactException
      */
     public void featureWithoutRange() throws SQLException, IntactException {
-        List featureBeans = featureSch.getBeans( helper, FeatureBean.class, "%" );
+        List featureBeans = featureSch.getBeans( FeatureBean.class, "%" );
         for ( int i = 0; i < featureBeans.size(); i++ ) {
             FeatureBean feature = (FeatureBean) featureBeans.get( i );
-            List rangeBeans = featureSch.getBeans( helper, RangeBean.class, feature.getAc() );
+            List rangeBeans = featureSch.getBeans( RangeBean.class, feature.getAc() );
             if ( rangeBeans.isEmpty() ) {
                 AnnotatedBean annotatedBean = feature;
-                messageSender.addMessage( helper, annotatedBean, ReportTopic.FEATURE_WITHOUT_A_RANGE );
+                messageSender.addMessage( annotatedBean, ReportTopic.FEATURE_WITHOUT_A_RANGE );
             }
         }
     }
@@ -412,7 +410,7 @@ public class SanityChecker {
      */
     public boolean experimentIsOnHold( String ac ) throws SQLException {
         boolean onHold = false;
-        List exp2AnnotBeans = onHoldSch.getBeans( helper, Exp2AnnotBean.class, ac );
+        List exp2AnnotBeans = onHoldSch.getBeans( Exp2AnnotBean.class, ac );
         if ( !exp2AnnotBeans.isEmpty() ) {
             onHold = true;
         }
@@ -430,60 +428,60 @@ public class SanityChecker {
      * @throws IntactException
      */
     public void checkHiddenAndObsoleteCv() throws SQLException, IntactException {
-        Collection hiddenObsoleteCvs = hiddenObsoleteNotInUsed.getBeans( helper, ControlledvocabBean.class, "EBI-%" );
+        Collection hiddenObsoleteCvs = hiddenObsoleteNotInUsed.getBeans( ControlledvocabBean.class, "EBI-%" );
         //We first check that the hidden or obsolete Cv is not found in the filed database_ac of ia_xref
         System.out.println( "hiddenObsoleteCvs.s = " + hiddenObsoleteCvs.size() );
 
         //---------------------------------------------------------------------------------
         //Make sure that the obsolete or hidden cv ac is not used as a database_ac in xref
         //---------------------------------------------------------------------------------
-        hiddenObsoleteNotInUsed.addMapping( helper, XrefBean.class,
+        hiddenObsoleteNotInUsed.addMapping( XrefBean.class,
                                             "SELECT ac, database_ac, qualifier_ac, primaryid, parent_ac, created_user, created " +
                                             "FROM ia_xref " +
                                             "WHERE database_ac = ? " );
         for ( Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext(); ) {
 
             ControlledvocabBean hiddenOrObsoleteCv = (ControlledvocabBean) iterator.next();
-            Collection xrefBeans = hiddenObsoleteNotInUsed.getBeans( helper, XrefBean.class, hiddenOrObsoleteCv.getAc() );
+            Collection xrefBeans = hiddenObsoleteNotInUsed.getBeans( XrefBean.class, hiddenOrObsoleteCv.getAc() );
 
             for ( Iterator iterator1 = xrefBeans.iterator(); iterator1.hasNext(); ) {
                 XrefBean xrefBean = (XrefBean) iterator1.next();
-                messageSender.addMessage( helper, ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_DATABASE_AC_IN_XREF, xrefBean, hiddenOrObsoleteCv );
+                messageSender.addMessage( ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_DATABASE_AC_IN_XREF, xrefBean, hiddenOrObsoleteCv );
             }
         }
         //---------------------------------------------------------------------------------
         //Make sure that the obsolete or hidden cv ac is not used as a qualifier_ac in xref
         //---------------------------------------------------------------------------------
-        hiddenObsoleteNotInUsed.addMapping( helper, XrefBean.class,
+        hiddenObsoleteNotInUsed.addMapping( XrefBean.class,
                                             "SELECT ac, database_ac, qualifier_ac, primaryid, parent_ac, created_user, created " +
                                             "FROM ia_xref " +
                                             "WHERE qualifier_ac = ? " );
         for ( Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext(); ) {
 
             ControlledvocabBean hiddenOrObsoleteCv = (ControlledvocabBean) iterator.next();
-            Collection xrefBeans = hiddenObsoleteNotInUsed.getBeans( helper, XrefBean.class, hiddenOrObsoleteCv.getAc() );
+            Collection xrefBeans = hiddenObsoleteNotInUsed.getBeans( XrefBean.class, hiddenOrObsoleteCv.getAc() );
 
             for ( Iterator iterator1 = xrefBeans.iterator(); iterator1.hasNext(); ) {
                 XrefBean xrefBean = (XrefBean) iterator1.next();
-                messageSender.addMessage( helper, ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_QUALIFIER_AC_IN_XREF, xrefBean, hiddenOrObsoleteCv );
+                messageSender.addMessage( ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_QUALIFIER_AC_IN_XREF, xrefBean, hiddenOrObsoleteCv );
             }
         }
 
         //----------------------------------------------------------------------------------------------
         // Make sure that the obsolete or hidden cv ac is not used as a identification_ac in ia_feature
         //----------------------------------------------------------------------------------------------
-        hiddenObsoleteNotInUsed.addMapping( helper, FeatureBean.class,
+        hiddenObsoleteNotInUsed.addMapping( FeatureBean.class,
                                             "SELECT ac, shortlabel, fullname, created_user, created, identification_ac, featuretype_ac " +
                                             "FROM ia_feature " +
                                             "WHERE identification_ac = ? " );
         for ( Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext(); ) {
 
             ControlledvocabBean hiddenOrObsoleteCv = (ControlledvocabBean) iterator.next();
-            Collection featureBeans = hiddenObsoleteNotInUsed.getBeans( helper, FeatureBean.class, hiddenOrObsoleteCv.getAc() );
+            Collection featureBeans = hiddenObsoleteNotInUsed.getBeans( FeatureBean.class, hiddenOrObsoleteCv.getAc() );
 
             for ( Iterator iterator1 = featureBeans.iterator(); iterator1.hasNext(); ) {
                 FeatureBean featureBean = (FeatureBean) iterator1.next();
-                messageSender.addMessage( helper, ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_IDENTIFICATION_AC_IN_FEATURE, featureBean, hiddenOrObsoleteCv );
+                messageSender.addMessage( ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_IDENTIFICATION_AC_IN_FEATURE, featureBean, hiddenOrObsoleteCv );
                 //messageSender.addMessage(ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_IDENTIFICATION_AC_IN_FEATURE, hiddenOrObsoleteCv, featureBean.getAc() );
             }
         }
@@ -491,25 +489,25 @@ public class SanityChecker {
         //----------------------------------------------------------------------------------------------
         // Make sure that the obsolete or hidden cv ac is not used as a featuretype_ac in ia_feature
         //----------------------------------------------------------------------------------------------
-        hiddenObsoleteNotInUsed.addMapping( helper, FeatureBean.class,
+        hiddenObsoleteNotInUsed.addMapping( FeatureBean.class,
                                             "SELECT ac, shortlabel, fullname, created_user, created, identification_ac, featuretype_ac " +
                                             "FROM ia_feature " +
                                             "WHERE featuretype_ac = ? " );
         for ( Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext(); ) {
 
             ControlledvocabBean hiddenOrObsoleteCv = (ControlledvocabBean) iterator.next();
-            Collection featureBeans = hiddenObsoleteNotInUsed.getBeans( helper, FeatureBean.class, hiddenOrObsoleteCv.getAc() );
+            Collection featureBeans = hiddenObsoleteNotInUsed.getBeans( FeatureBean.class, hiddenOrObsoleteCv.getAc() );
 
             for ( Iterator iterator1 = featureBeans.iterator(); iterator1.hasNext(); ) {
                 FeatureBean featureBean = (FeatureBean) iterator1.next();
-                messageSender.addMessage( helper, ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_FEATURETYPE_AC_IN_FEATURE, featureBean, hiddenOrObsoleteCv );
+                messageSender.addMessage( ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_IN_USED_AS_FEATURETYPE_AC_IN_FEATURE, featureBean, hiddenOrObsoleteCv );
             }
         }
 
         //----------------------------------------------------------------------------------------------
         // Make sure that the obsolete or hidden cv ac is not used as fromFuzzyTypeAc in IA_RANGE
         //----------------------------------------------------------------------------------------------
-        hiddenObsoleteNotInUsed.addMapping( helper, RangeBean.class,
+        hiddenObsoleteNotInUsed.addMapping( RangeBean.class,
                                             "SELECT r.ac, r.feature_ac,c.interactor_ac, c.interaction_ac, r.created_user, r.created, r.fromfuzzytype_ac, r.tofuzzytype_ac " +
                                             "FROM ia_range r, ia_feature f, ia_component c " +
                                             "WHERE r.fromfuzzytype_ac = ? " +
@@ -518,7 +516,7 @@ public class SanityChecker {
         for ( Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext(); ) {
 
             ControlledvocabBean hiddenOrObsoleteCv = (ControlledvocabBean) iterator.next();
-            Collection featureBeans = hiddenObsoleteNotInUsed.getBeans( helper, RangeBean.class, hiddenOrObsoleteCv.getAc() );
+            Collection featureBeans = hiddenObsoleteNotInUsed.getBeans( RangeBean.class, hiddenOrObsoleteCv.getAc() );
 
             for ( Iterator iterator1 = featureBeans.iterator(); iterator1.hasNext(); ) {
                 RangeBean rangeBean = (RangeBean) iterator1.next();
@@ -528,7 +526,7 @@ public class SanityChecker {
         //----------------------------------------------------------------------------------------------
         // Make sure that the obsolete or hidden cv ac is not used as ToFuzzyTypeAc in IA_RANGE
         //----------------------------------------------------------------------------------------------
-        hiddenObsoleteNotInUsed.addMapping( helper, RangeBean.class,
+        hiddenObsoleteNotInUsed.addMapping( RangeBean.class,
                                             "SELECT r.ac, r.feature_ac,c.interactor_ac, c.interaction_ac, r.created_user, r.created, r.fromfuzzytype_ac, r.tofuzzytype_ac " +
                                             "FROM ia_range r, ia_feature f, ia_component c " +
                                             "WHERE r.tofuzzytype_ac = ? " +
@@ -537,7 +535,7 @@ public class SanityChecker {
         for ( Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext(); ) {
 
             ControlledvocabBean hiddenOrObsoleteCv = (ControlledvocabBean) iterator.next();
-            Collection featureBeans = hiddenObsoleteNotInUsed.getBeans( helper, RangeBean.class, hiddenOrObsoleteCv.getAc() );
+            Collection featureBeans = hiddenObsoleteNotInUsed.getBeans( RangeBean.class, hiddenOrObsoleteCv.getAc() );
 
             for ( Iterator iterator1 = featureBeans.iterator(); iterator1.hasNext(); ) {
                 RangeBean rangeBean = (RangeBean) iterator1.next();
@@ -547,87 +545,87 @@ public class SanityChecker {
         //----------------------------------------------------------------------------------------------
         // Make sure that the obsolete or hidden cv ac is not used as role in IA_COMPONENT
         //----------------------------------------------------------------------------------------------
-        hiddenObsoleteNotInUsed.addMapping( helper, ComponentBean.class, "SELECT ac, interaction_ac, interactor_ac, role, stoichiometry, created_user, created " +
+        hiddenObsoleteNotInUsed.addMapping( ComponentBean.class, "SELECT ac, interaction_ac, interactor_ac, role, stoichiometry, created_user, created " +
                                                                          "FROM ia_component " +
                                                                          "WHERE role = ? " );
         for ( Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext(); ) {
 
             ControlledvocabBean hiddenOrObsoleteCv = (ControlledvocabBean) iterator.next();
-            Collection componentBeans = hiddenObsoleteNotInUsed.getBeans( helper, ComponentBean.class, hiddenOrObsoleteCv.getAc() );
+            Collection componentBeans = hiddenObsoleteNotInUsed.getBeans( ComponentBean.class, hiddenOrObsoleteCv.getAc() );
 
             for ( Iterator iterator1 = componentBeans.iterator(); iterator1.hasNext(); ) {
                 ComponentBean componentBean = (ComponentBean) iterator1.next();
-                messageSender.addMessage( helper, ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_ROLE_IN_COMPONENT, componentBean, hiddenOrObsoleteCv );
+                messageSender.addMessage( ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_ROLE_IN_COMPONENT, componentBean, hiddenOrObsoleteCv );
             }
         }
 
         //----------------------------------------------------------------------------------------------
         // Make sure that the obsolete or hidden cv ac is not used as interactortype in IA_INTERACTOR
         //----------------------------------------------------------------------------------------------
-        hiddenObsoleteNotInUsed.addMapping( helper, InteractorBean.class,
+        hiddenObsoleteNotInUsed.addMapping( InteractorBean.class,
                                             "select ac,  shortlabel, fullname, created_user, created, objclass, interactortype_ac, interactiontype_ac " +
                                             "from ia_interactor " +
                                             "where interactortype_ac = ? " );
         for ( Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext(); ) {
 
             ControlledvocabBean hiddenOrObsoleteCv = (ControlledvocabBean) iterator.next();
-            Collection interactorBeans = hiddenObsoleteNotInUsed.getBeans( helper, InteractorBean.class, hiddenOrObsoleteCv.getAc() );
+            Collection interactorBeans = hiddenObsoleteNotInUsed.getBeans( InteractorBean.class, hiddenOrObsoleteCv.getAc() );
 
             for ( Iterator iterator1 = interactorBeans.iterator(); iterator1.hasNext(); ) {
                 InteractorBean interactorBean = (InteractorBean) iterator1.next();
-                messageSender.addMessage( helper, ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_INTERACTORTYPE_IN_INTERACTOR, interactorBean, hiddenOrObsoleteCv );
+                messageSender.addMessage( ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_INTERACTORTYPE_IN_INTERACTOR, interactorBean, hiddenOrObsoleteCv );
             }
         }
         //----------------------------------------------------------------------------------------------
         // Make sure that the obsolete or hidden cv ac is not used as interactiontype in IA_INTERACTOR
         //----------------------------------------------------------------------------------------------
-        hiddenObsoleteNotInUsed.addMapping( helper, InteractorBean.class,
+        hiddenObsoleteNotInUsed.addMapping( InteractorBean.class,
                                             "select ac,  shortlabel, fullname, created_user, created, objclass, interactortype_ac, interactiontype_ac " +
                                             "from ia_interactor " +
                                             "where interactiontype_ac = ? " );
         for ( Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext(); ) {
 
             ControlledvocabBean hiddenOrObsoleteCv = (ControlledvocabBean) iterator.next();
-            Collection interactorBeans = hiddenObsoleteNotInUsed.getBeans( helper, InteractorBean.class, hiddenOrObsoleteCv.getAc() );
+            Collection interactorBeans = hiddenObsoleteNotInUsed.getBeans( InteractorBean.class, hiddenOrObsoleteCv.getAc() );
 
             for ( Iterator iterator1 = interactorBeans.iterator(); iterator1.hasNext(); ) {
                 InteractorBean interactorBean = (InteractorBean) iterator1.next();
-                messageSender.addMessage( helper, ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_INTERACTIONTYPE_IN_INTERACTOR, interactorBean, hiddenOrObsoleteCv );
+                messageSender.addMessage( ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_INTERACTIONTYPE_IN_INTERACTOR, interactorBean, hiddenOrObsoleteCv );
             }
         }
         //----------------------------------------------------------------------------------------------
         // Make sure that the obsolete or hidden cv ac is not used as proteinform in IA_INTERACTOR
         //----------------------------------------------------------------------------------------------
-        hiddenObsoleteNotInUsed.addMapping( helper, InteractorBean.class,
+        hiddenObsoleteNotInUsed.addMapping( InteractorBean.class,
                                             "select ac, shortlabel, fullname, created_user, created, objclass, interactortype_ac, interactiontype_ac, proteinform_ac " +
                                             "from ia_interactor " +
                                             "where proteinform_ac = ? " );
         for ( Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext(); ) {
 
             ControlledvocabBean hiddenOrObsoleteCv = (ControlledvocabBean) iterator.next();
-            Collection interactorBeans = hiddenObsoleteNotInUsed.getBeans( helper, InteractorBean.class, hiddenOrObsoleteCv.getAc() );
+            Collection interactorBeans = hiddenObsoleteNotInUsed.getBeans( InteractorBean.class, hiddenOrObsoleteCv.getAc() );
 
             for ( Iterator iterator1 = interactorBeans.iterator(); iterator1.hasNext(); ) {
                 InteractorBean interactorBean = (InteractorBean) iterator1.next();
-                messageSender.addMessage( helper, ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_PROTEINFORM_IN_INTERACTOR, interactorBean, hiddenOrObsoleteCv );
+                messageSender.addMessage( ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_PROTEINFORM_IN_INTERACTOR, interactorBean, hiddenOrObsoleteCv );
             }
         }
         //----------------------------------------------------------------------------------------------
         // Make sure that the obsolete or hidden cv ac is not used as tissue_ac in IA_BIOSOURCE
         //----------------------------------------------------------------------------------------------
 
-        hiddenObsoleteNotInUsed.addMapping( helper, BioSourceBean.class,
+        hiddenObsoleteNotInUsed.addMapping( BioSourceBean.class,
                                             "select ac, shortlabel, fullname, tissue_ac, celltype_ac, created_user, created " +
                                             "from ia_biosource " +
                                             "where tissue_ac = ? " );
         for ( Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext(); ) {
 
             ControlledvocabBean hiddenOrObsoleteCv = (ControlledvocabBean) iterator.next();
-            Collection biosourceBeans = hiddenObsoleteNotInUsed.getBeans( helper, BioSourceBean.class, hiddenOrObsoleteCv.getAc() );
+            Collection biosourceBeans = hiddenObsoleteNotInUsed.getBeans( BioSourceBean.class, hiddenOrObsoleteCv.getAc() );
 
             for ( Iterator iterator1 = biosourceBeans.iterator(); iterator1.hasNext(); ) {
                 BioSourceBean biosourceBean = (BioSourceBean) iterator1.next();
-                messageSender.addMessage( helper, ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_TISSUEAC_IN_BIOSOURCE, biosourceBean, hiddenOrObsoleteCv );
+                messageSender.addMessage( ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_TISSUEAC_IN_BIOSOURCE, biosourceBean, hiddenOrObsoleteCv );
             }
         }
 
@@ -635,54 +633,54 @@ public class SanityChecker {
         // Make sure that the obsolete or hidden cv ac is not used as celltype_ac in IA_BIOSOURCE
         //----------------------------------------------------------------------------------------------
 
-        hiddenObsoleteNotInUsed.addMapping( helper, BioSourceBean.class,
+        hiddenObsoleteNotInUsed.addMapping( BioSourceBean.class,
                                             "select ac, shortlabel, fullname, tissue_ac, celltype_ac, created_user, created " +
                                             "from ia_biosource " +
                                             "where celltype_ac = ? " );
         for ( Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext(); ) {
 
             ControlledvocabBean hiddenOrObsoleteCv = (ControlledvocabBean) iterator.next();
-            Collection biosourceBeans = hiddenObsoleteNotInUsed.getBeans( helper, BioSourceBean.class, hiddenOrObsoleteCv.getAc() );
+            Collection biosourceBeans = hiddenObsoleteNotInUsed.getBeans( BioSourceBean.class, hiddenOrObsoleteCv.getAc() );
 
             for ( Iterator iterator1 = biosourceBeans.iterator(); iterator1.hasNext(); ) {
                 BioSourceBean biosourceBean = (BioSourceBean) iterator1.next();
-                messageSender.addMessage( helper, ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_CELLTYPEAC_IN_BIOSOURCE, biosourceBean, hiddenOrObsoleteCv );
+                messageSender.addMessage( ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_CELLTYPEAC_IN_BIOSOURCE, biosourceBean, hiddenOrObsoleteCv );
             }
         }
 
         //----------------------------------------------------------------------------------------------
         // Make sure that the obsolete or hidden cv ac is not used as detectmethod_ac in IA_EXPERIMENT
         //----------------------------------------------------------------------------------------------
-        hiddenObsoleteNotInUsed.addMapping( helper, ExperimentBean.class,
+        hiddenObsoleteNotInUsed.addMapping( ExperimentBean.class,
                                             "select ac, shortlabel, fullname, detectmethod_ac, identmethod_ac, created_user, created " +
                                             "from ia_experiment " +
                                             "where detectmethod_ac = ? " );
         for ( Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext(); ) {
 
             ControlledvocabBean hiddenOrObsoleteCv = (ControlledvocabBean) iterator.next();
-            Collection experimentBeans = hiddenObsoleteNotInUsed.getBeans( helper, ExperimentBean.class, hiddenOrObsoleteCv.getAc() );
+            Collection experimentBeans = hiddenObsoleteNotInUsed.getBeans( ExperimentBean.class, hiddenOrObsoleteCv.getAc() );
 
             for ( Iterator iterator1 = experimentBeans.iterator(); iterator1.hasNext(); ) {
                 ExperimentBean experimentBean = (ExperimentBean) iterator1.next();
-                messageSender.addMessage( helper, ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_DETECTMETHODAC_IN_EXPERIMENT, experimentBean, hiddenOrObsoleteCv );
+                messageSender.addMessage( ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_DETECTMETHODAC_IN_EXPERIMENT, experimentBean, hiddenOrObsoleteCv );
             }
         }
 
         //----------------------------------------------------------------------------------------------
         // Make sure that the obsolete or hidden cv ac is not used as identmethod_ac in IA_EXPERIMENT
         //----------------------------------------------------------------------------------------------
-        hiddenObsoleteNotInUsed.addMapping( helper, ExperimentBean.class,
+        hiddenObsoleteNotInUsed.addMapping( ExperimentBean.class,
                                             "select ac, shortlabel, fullname, detectmethod_ac, identmethod_ac, created_user, created " +
                                             "from ia_experiment " +
                                             "where identmethod_ac = ? " );
         for ( Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext(); ) {
 
             ControlledvocabBean hiddenOrObsoleteCv = (ControlledvocabBean) iterator.next();
-            Collection experimentBeans = hiddenObsoleteNotInUsed.getBeans( helper, ExperimentBean.class, hiddenOrObsoleteCv.getAc() );
+            Collection experimentBeans = hiddenObsoleteNotInUsed.getBeans( ExperimentBean.class, hiddenOrObsoleteCv.getAc() );
 
             for ( Iterator iterator1 = experimentBeans.iterator(); iterator1.hasNext(); ) {
                 ExperimentBean experimentBean = (ExperimentBean) iterator1.next();
-                messageSender.addMessage( helper, ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_IDENTMETHODAC_IN_EXPERIMENT, experimentBean, hiddenOrObsoleteCv );
+                messageSender.addMessage( ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_IDENTMETHODAC_IN_EXPERIMENT, experimentBean, hiddenOrObsoleteCv );
             }
         }
 
@@ -690,36 +688,36 @@ public class SanityChecker {
         // Make sure that the obsolete or hidden cv ac is not used as topic_ac in IA_ANNOTATION
         //----------------------------------------------------------------------------------------------
 
-        hiddenObsoleteNotInUsed.addMapping( helper, AnnotationBean.class,
+        hiddenObsoleteNotInUsed.addMapping( AnnotationBean.class,
                                             "select ac, description, topic_ac, created_user, created " +
                                             "from ia_annotation " +
                                             "where topic_ac = ? " );
         for ( Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext(); ) {
 
             ControlledvocabBean hiddenOrObsoleteCv = (ControlledvocabBean) iterator.next();
-            Collection annotationBeans = hiddenObsoleteNotInUsed.getBeans( helper, AnnotationBean.class, hiddenOrObsoleteCv.getAc() );
+            Collection annotationBeans = hiddenObsoleteNotInUsed.getBeans( AnnotationBean.class, hiddenOrObsoleteCv.getAc() );
 
             for ( Iterator iterator1 = annotationBeans.iterator(); iterator1.hasNext(); ) {
                 AnnotationBean annotationBean = (AnnotationBean) iterator1.next();
-                messageSender.addMessage( helper, ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_TOPICAC_IN_ANNOTATION, annotationBean, hiddenOrObsoleteCv );
+                messageSender.addMessage( ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_TOPICAC_IN_ANNOTATION, annotationBean, hiddenOrObsoleteCv );
             }
         }
 
         //----------------------------------------------------------------------------------------------
         // Make sure that the obsolete or hidden cv ac is not used as aliastype_ac in IA_ALIAS
         //----------------------------------------------------------------------------------------------
-        hiddenObsoleteNotInUsed.addMapping( helper, AliasBean.class,
+        hiddenObsoleteNotInUsed.addMapping( AliasBean.class,
                                             "select ac, parent_ac, name, created_user, created " +
                                             "from ia_alias " +
                                             "where aliastype_ac = ? " );
         for ( Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext(); ) {
 
             ControlledvocabBean hiddenOrObsoleteCv = (ControlledvocabBean) iterator.next();
-            Collection aliasBeans = hiddenObsoleteNotInUsed.getBeans( helper, AliasBean.class, hiddenOrObsoleteCv.getAc() );
+            Collection aliasBeans = hiddenObsoleteNotInUsed.getBeans( AliasBean.class, hiddenOrObsoleteCv.getAc() );
 
             for ( Iterator iterator1 = aliasBeans.iterator(); iterator1.hasNext(); ) {
                 AliasBean aliasBean = (AliasBean) iterator1.next();
-                messageSender.addMessage( helper, ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_ALIASTYPEAC_IN_ALIAS, aliasBean, hiddenOrObsoleteCv );
+                messageSender.addMessage( ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_ALIASTYPEAC_IN_ALIAS, aliasBean, hiddenOrObsoleteCv );
             }
         }
     }
@@ -736,7 +734,7 @@ public class SanityChecker {
      */
     public boolean noUniprotUpdate( String ac ) throws SQLException {
         boolean noUniprotUpdate = false;
-        List exp2AnnotBeans = noUniprotUpdateSch.getBeans( helper, Exp2AnnotBean.class, ac );
+        List exp2AnnotBeans = noUniprotUpdateSch.getBeans( Exp2AnnotBean.class, ac );
         if ( !exp2AnnotBeans.isEmpty() ) {
             noUniprotUpdate = true;
         }
@@ -756,7 +754,7 @@ public class SanityChecker {
      */
     public boolean experimentToBeReviewed( String ac ) throws SQLException {
         boolean toBeReviewed = false;
-        List exp2AnnotBeans = toBeReviewedSch.getBeans( helper, Exp2AnnotBean.class, ac );
+        List exp2AnnotBeans = toBeReviewedSch.getBeans( Exp2AnnotBean.class, ac );
         if ( !exp2AnnotBeans.isEmpty() ) {
             toBeReviewed = true;
         }
@@ -779,7 +777,7 @@ public class SanityChecker {
             String interactionAc = interactionBean.getAc();
 
             if ( false == interactionIsOnHold( interactionAc ) ) {
-                List componentBeans = sch.getBeans( helper, ComponentBean.class, interactionAc );
+                List componentBeans = sch.getBeans( ComponentBean.class, interactionAc );
                 int preyCount = 0,
                         baitCount = 0,
                         enzymeCount = 0,
@@ -852,7 +850,7 @@ public class SanityChecker {
                     case 0:
                         // none of those categories
                         //System.out.println("Interaction " +interactionAc + " with no categories");
-                        messageSender.addMessage( helper, ReportTopic.INTERACTION_WITH_NO_CATEGORIES, interactionBean );
+                        messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_CATEGORIES, interactionBean );
                         break;
 
                     case 1:
@@ -861,38 +859,38 @@ public class SanityChecker {
                             // bait-prey
                             if ( baitCount == 0 ) {
                                 //System.out.println("Interaction " +interactionAc + "  with no bait");
-                                messageSender.addMessage( helper, ReportTopic.INTERACTION_WITH_NO_BAIT, interactionBean );
+                                messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_BAIT, interactionBean );
                             } else if ( preyCount == 0 ) {
                                 //System.out.println("Interaction " +interactionAc + "  with no prey");
-                                messageSender.addMessage( helper, ReportTopic.INTERACTION_WITH_NO_PREY, interactionBean );
+                                messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_PREY, interactionBean );
                             }
                             //if can be only a fluorophore but no donor
                         } else if ( fluorophoreAcceptorDonor == 1 ) {
                             if ( fluorophoreDonorCount == 0 ) {
-                                messageSender.addMessage( helper, ReportTopic.INTERACTION_WITH_NO_FLUOROPHORE_DONOR, interactionBean );
+                                messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_FLUOROPHORE_DONOR, interactionBean );
                             }
                         } else if ( electronAcceptorDonor == 1 ) {
                             if ( electronAcceptorCount == 0 ) {
-                                messageSender.addMessage( helper, ReportTopic.INTERACTION_WITH_NO_ELECTRON_ACCEPTOR, interactionBean );
+                                messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_ELECTRON_ACCEPTOR, interactionBean );
                             } else if ( electronDonorCount == 0 ) {
-                                messageSender.addMessage( helper, ReportTopic.INTERACTION_WITH_NO_ELECTRON_DONOR, interactionBean );
+                                messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_ELECTRON_DONOR, interactionBean );
                             }
                         } else if ( enzymeTarget == 1 ) {
                             // enzyme - enzymeTarget
                             if ( enzymeCount == 0 ) {
                                 //System.out.println("Interaction  " +interactionAc + " with no enzyme");
 
-                                messageSender.addMessage( helper, ReportTopic.INTERACTION_WITH_NO_ENZYME, interactionBean );
+                                messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_ENZYME, interactionBean );
                             } else if ( enzymeTargetCount == 0 ) {
                                 //System.out.println("Interaction " +interactionAc + "  with no enzyme target");
-                                messageSender.addMessage( helper, ReportTopic.INTERACTION_WITH_NO_ENZYME_TARGET, interactionBean );
+                                messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_ENZYME_TARGET, interactionBean );
                             }
 
                         } else if ( self == 1 ) {
                             // it has to be > 1
                             if ( selfCount > 1 ) {
                                 //System.out.println("Interaction " +interactionAc + "  with more then 2 self protein");
-                                messageSender.addMessage( helper, ReportTopic.INTERACTION_WITH_MORE_THAN_2_SELF_PROTEIN, interactionBean );
+                                messageSender.addMessage( ReportTopic.INTERACTION_WITH_MORE_THAN_2_SELF_PROTEIN, interactionBean );
                             } else { // = 1
                                 if ( selfStoichiometry < 1F ) {
                                     //System.out.println("Interaction " +interactionAc + "  self protein and stoichiometry lower than 2");
@@ -905,7 +903,7 @@ public class SanityChecker {
                             if ( neutralCount == 1 && inhibitedInhibitor == 0 ) {
                                 if ( neutralStoichiometry == 1 ) {
                                     //System.out.println("Interaction  " +interactionAc + "  with only one neutral");
-                                    messageSender.addMessage( helper, ReportTopic.INTERACTION_WITH_ONLY_ONE_NEUTRAL, interactionBean );//, editorUrlBuilder.getEditorUrl(interactionBean));
+                                    messageSender.addMessage( ReportTopic.INTERACTION_WITH_ONLY_ONE_NEUTRAL, interactionBean );//, editorUrlBuilder.getEditorUrl(interactionBean));
                                 }
                             }
                         }
@@ -914,7 +912,7 @@ public class SanityChecker {
                     default:
                         // > 1 : mixed up categories !
                         //System.out.println("Interaction  " +interactionAc + "  with mixed component categories");
-                        messageSender.addMessage( helper, ReportTopic.INTERACTION_WITH_MIXED_COMPONENT_CATEGORIES, interactionBean );//, editorUrlBuilder.getEditorUrl(interactionBean));
+                        messageSender.addMessage( ReportTopic.INTERACTION_WITH_MIXED_COMPONENT_CATEGORIES, interactionBean );//, editorUrlBuilder.getEditorUrl(interactionBean));
                 } // switch
             }
         }
@@ -923,11 +921,11 @@ public class SanityChecker {
 
 
     public void experimentNotSuperCurated() throws SQLException, IntactException {
-        List ExperimentBeans = superCuratedSch.getBeans( helper, ExperimentBean.class, "%" );
+        List ExperimentBeans = superCuratedSch.getBeans( ExperimentBean.class, "%" );
         for ( int i = 0; i < ExperimentBeans.size(); i++ ) {
             ExperimentBean experimentBean = (ExperimentBean) ExperimentBeans.get( i );
             if ( experimentIsOnHold( experimentBean.getAc() ) ) {
-                messageSender.addMessage( helper, ReportTopic.EXPERIMENT_NOT_ACCEPTED_NOT_TO_BE_REVIEWED, experimentBean );//, editorUrlBuilder.getEditorUrl(experimentBean));
+                messageSender.addMessage( ReportTopic.EXPERIMENT_NOT_ACCEPTED_NOT_TO_BE_REVIEWED, experimentBean );//, editorUrlBuilder.getEditorUrl(experimentBean));
             }
         }
     }
@@ -948,12 +946,12 @@ public class SanityChecker {
 
 
             if ( false == interactionIsOnHold( interactionAc ) ) {
-                List componentBeans = sch.getBeans( helper, ComponentBean.class, interactionAc );
+                List componentBeans = sch.getBeans( ComponentBean.class, interactionAc );
 
                 if ( componentBeans.size() == 0 ) {
                     //Interaction has no Components!! This is in fact test 5...
                     //System.out.println("Interaction has no component");
-                    messageSender.addMessage( helper, ReportTopic.NO_PROTEIN_CHECK, interactionBean );//, editorUrlBuilder.getEditorUrl(interactionBean) );
+                    messageSender.addMessage( ReportTopic.NO_PROTEIN_CHECK, interactionBean );//, editorUrlBuilder.getEditorUrl(interactionBean) );
                 }
             }
         }
@@ -970,7 +968,7 @@ public class SanityChecker {
      */
     public boolean isInstanceOfProtein( String interactorAc ) throws SQLException {
         boolean instanceOfProtein = false;
-        InteractorBean interactorBean = (InteractorBean) sch.getBeans( helper, InteractorBean.class, interactorAc ).get( 0 );
+        InteractorBean interactorBean = (InteractorBean) sch.getBeans( InteractorBean.class, interactorAc ).get( 0 );
         if ( Protein.class.equals( interactorBean.getObjclass() ) ) {
             instanceOfProtein = true;
         }
@@ -991,7 +989,7 @@ public class SanityChecker {
         //checks 14
         for ( int i = 0; i < interactorBeans.size(); i++ ) {
             InteractorBean proteinBean = (InteractorBean) interactorBeans.get( i );
-            List xrefBeans = sch.getBeans( helper, XrefBean.class, proteinBean.getAc() );
+            List xrefBeans = sch.getBeans( XrefBean.class, proteinBean.getAc() );
             int count = 0;
             for ( int j = 0; j < xrefBeans.size(); j++ ) {
                 XrefBean xrefBean = (XrefBean) xrefBeans.get( j );
@@ -1002,10 +1000,10 @@ public class SanityChecker {
             }
             if ( count == 0 ) {
                 if ( !noUniprotUpdate( proteinBean.getAc() ) ) {
-                    messageSender.addMessage( helper, ReportTopic.PROTEIN_WITH_NO_UNIPROT_IDENTITY, proteinBean );//, editorUrlBuilder.getEditorUrl(proteinBean) );
+                    messageSender.addMessage( ReportTopic.PROTEIN_WITH_NO_UNIPROT_IDENTITY, proteinBean );//, editorUrlBuilder.getEditorUrl(proteinBean) );
                 }
             } else if ( count > 1 ) {
-                messageSender.addMessage( helper, ReportTopic.PROTEIN_WITH_MORE_THAN_ONE_UNIPROT_IDENTITY, proteinBean );//, editorUrlBuilder.getEditorUrl(proteinBean) );
+                messageSender.addMessage( ReportTopic.PROTEIN_WITH_MORE_THAN_ONE_UNIPROT_IDENTITY, proteinBean );//, editorUrlBuilder.getEditorUrl(proteinBean) );
             }
         }
     }
@@ -1027,16 +1025,16 @@ public class SanityChecker {
             if ( false == interactionIsOnHold( interactionAc ) ) {
 
                 //check 7
-                if ( sch.getBeans( helper, Int2ExpBean.class, interactionAc ).isEmpty() ) {
+                if ( sch.getBeans( Int2ExpBean.class, interactionAc ).isEmpty() ) {
                     //record it.....
                     //System.out.println("Interaction "+interactionAc + " with no experiment");
-                    messageSender.addMessage( helper, ReportTopic.INTERACTION_WITH_NO_EXPERIMENT, interactionBean );//, editorUrlBuilder.getEditorUrl(interactionBean) );
+                    messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_EXPERIMENT, interactionBean );//, editorUrlBuilder.getEditorUrl(interactionBean) );
                 }
                 //check 9
-                if ( false == sch.getBeans( helper, InteractorBean.class, interactionAc ).isEmpty() ) {
+                if ( false == sch.getBeans( InteractorBean.class, interactionAc ).isEmpty() ) {
                     //System.out.println("Interaction "+interactionAc + " has no interaction type");
 
-                    messageSender.addMessage( helper, ReportTopic.INTERACTION_WITH_NO_CVINTERACTIONTYPE, interactionBean );//, editorUrlBuilder.getEditorUrl(interactionBean) );
+                    messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_CVINTERACTIONTYPE, interactionBean );//, editorUrlBuilder.getEditorUrl(interactionBean) );
                 }
                 //check 10
                 // 2005-04-14: on-hold ... might be re-introduced later.
@@ -1065,25 +1063,25 @@ public class SanityChecker {
 
             if ( !experimentIsOnHold( experimentBean.getAc() ) ) {
 
-                sch.addMapping( helper, ExperimentBean.class, "select e.ac from ia_experiment e, ia_int2exp i  where e.ac = ? and e.ac=i.experiment_ac" );// in (SELECT experiment_ac FROM ia_int2exp)");
+                sch.addMapping( ExperimentBean.class, "select e.ac from ia_experiment e, ia_int2exp i  where e.ac = ? and e.ac=i.experiment_ac" );// in (SELECT experiment_ac FROM ia_int2exp)");
 
                 //check 8
-                if ( sch.getBeans( helper, ExperimentBean.class, experimentBean.getAc() ).isEmpty() ) {
-                    messageSender.addMessage( helper, ReportTopic.EXPERIMENT_WITHOUT_INTERACTIONS, experimentBean );//, editorUrlBuilder.getEditorUrl(experimentBean) );
+                if ( sch.getBeans( ExperimentBean.class, experimentBean.getAc() ).isEmpty() ) {
+                    messageSender.addMessage( ReportTopic.EXPERIMENT_WITHOUT_INTERACTIONS, experimentBean );//, editorUrlBuilder.getEditorUrl(experimentBean) );
                 }
 
                 //check 11
                 if ( experimentBean.getBiosource_ac() == ( null ) ) {
-                    messageSender.addMessage( helper, ReportTopic.EXPERIMENT_WITHOUT_ORGANISM, experimentBean );//, editorUrlBuilder.getEditorUrl(experimentBean) );
+                    messageSender.addMessage( ReportTopic.EXPERIMENT_WITHOUT_ORGANISM, experimentBean );//, editorUrlBuilder.getEditorUrl(experimentBean) );
                 }
 
                 //check 12
-                if ( sch12.getBeans( helper, ExperimentBean.class, experimentBean.getAc() ).isEmpty() ) {
-                    messageSender.addMessage( helper, ReportTopic.EXPERIMENT_WITHOUT_CVINTERACTION, experimentBean );//, editorUrlBuilder.getEditorUrl(experimentBean) );
+                if ( sch12.getBeans( ExperimentBean.class, experimentBean.getAc() ).isEmpty() ) {
+                    messageSender.addMessage( ReportTopic.EXPERIMENT_WITHOUT_CVINTERACTION, experimentBean );//, editorUrlBuilder.getEditorUrl(experimentBean) );
                 }
                 //check 13
-                if ( sch13.getBeans( helper, ExperimentBean.class, experimentBean.getAc() ).isEmpty() ) {
-                    messageSender.addMessage( helper, ReportTopic.EXPERIMENT_WITHOUT_CVIDENTIFICATION, experimentBean );//, editorUrlBuilder.getEditorUrl(experimentBean) );
+                if ( sch13.getBeans( ExperimentBean.class, experimentBean.getAc() ).isEmpty() ) {
+                    messageSender.addMessage( ReportTopic.EXPERIMENT_WITHOUT_CVIDENTIFICATION, experimentBean );//, editorUrlBuilder.getEditorUrl(experimentBean) );
                 }
             }
         }
@@ -1112,7 +1110,7 @@ public class SanityChecker {
                 if ( !experimentIsOnHold( experimentBean.getAc() ) ) {
                     int pubmedCount = 0;
                     int pubmedPrimaryCount = 0;
-                    List xrefBeans = sch.getBeans( helper, XrefBean.class, experimentBean.getAc() );
+                    List xrefBeans = sch.getBeans( XrefBean.class, experimentBean.getAc() );
                     for ( int j = 0; j < xrefBeans.size(); j++ ) {
                         XrefBean xrefBean = (XrefBean) xrefBeans.get( j );
 
@@ -1125,12 +1123,12 @@ public class SanityChecker {
                     }
                     if ( pubmedCount == 0 ) {
                         //record it.....
-                        messageSender.addMessage( helper, ReportTopic.EXPERIMENT_WITHOUT_PUBMED, experimentBean );//, editorUrlBuilder.getEditorUrl(experimentBean) );
+                        messageSender.addMessage( ReportTopic.EXPERIMENT_WITHOUT_PUBMED, experimentBean );//, editorUrlBuilder.getEditorUrl(experimentBean) );
                     }
 
                     if ( pubmedPrimaryCount < 1 ) {
                         //record it.....
-                        messageSender.addMessage( helper, ReportTopic.EXPERIMENT_WITHOUT_PUBMED_PRIMARY_REFERENCE, experimentBean );//, editorUrlBuilder.getEditorUrl(experimentBean) );
+                        messageSender.addMessage( ReportTopic.EXPERIMENT_WITHOUT_PUBMED_PRIMARY_REFERENCE, experimentBean );//, editorUrlBuilder.getEditorUrl(experimentBean) );
                     }
                 }// experimentIsOnHold
             }
@@ -1161,7 +1159,7 @@ public class SanityChecker {
         for ( int i = 0; i < bioSourceBeans.size(); i++ ) {
             BioSourceBean bioSourceBean = (BioSourceBean) bioSourceBeans.get( i );
             if ( bioSourceBean.getTaxid() == null || "".equals( bioSourceBean.getTaxid() ) ) {
-                messageSender.addMessage( helper, ReportTopic.BIOSOURCE_WITH_NO_TAXID, bioSourceBean );//, editorUrlBuilder.getEditorUrl(bioSourceBean) );
+                messageSender.addMessage( ReportTopic.BIOSOURCE_WITH_NO_TAXID, bioSourceBean );//, editorUrlBuilder.getEditorUrl(bioSourceBean) );
             }
         }
 
@@ -1182,7 +1180,7 @@ public class SanityChecker {
             // splice variant id
 
             // 1. retreive instance(s) of that protein
-            List interactorBeans = sch.getBeans( helper, InteractorBean.class, xrefBean.getPrimaryid() );
+            List interactorBeans = sch.getBeans( InteractorBean.class, xrefBean.getPrimaryid() );
 
             // 2. retreive parent proteins
             BidiMap bidimap = new DualHashBidiMap(); // sv <-> p
@@ -1193,7 +1191,7 @@ public class SanityChecker {
                 String variantAc = interactorBean.getAc();
 
                 // get parent information
-                Collection spliceVariants = sch.getBeans( helper, SpliceVariantParentBean.class, variantAc );
+                Collection spliceVariants = sch.getBeans( SpliceVariantParentBean.class, variantAc );
 
                 for ( Iterator iterator1 = spliceVariants.iterator(); iterator1.hasNext(); ) {
                     SpliceVariantParentBean parentBean = (SpliceVariantParentBean) iterator1.next();
@@ -1222,7 +1220,7 @@ public class SanityChecker {
         } else {
 
             // protein id
-            List interactorBeans = sch.getBeans( helper, InteractorBean.class, xrefBean.getPrimaryid() );
+            List interactorBeans = sch.getBeans( InteractorBean.class, xrefBean.getPrimaryid() );
             List bioSourceAc = new ArrayList();
             List duplicatedInteractorBeans = new ArrayList();
 
@@ -1272,7 +1270,7 @@ public class SanityChecker {
             } catch ( URIException e ) {
                 // e.printStackTrace();
                 //retrieveObject(annotationBean);
-                messageSender.addMessage( helper, annotationBean );
+                messageSender.addMessage( annotationBean );
                 //System.out.println("couldn't create httpURL uri" + urlString);
             }
 
@@ -1287,7 +1285,7 @@ public class SanityChecker {
                     //e.printStackTrace();
                     //System.out.println("Couldn't get method uri" + urlString);
                     //retrieveObject(annotationBean);
-                    messageSender.addMessage( helper, annotationBean );
+                    messageSender.addMessage( annotationBean );
                 }
                 int statusCode = -1;
                 if ( method != null ) {
@@ -1295,12 +1293,12 @@ public class SanityChecker {
                         statusCode = client.executeMethod( method );
                     } catch ( IOException e ) {
                         //retrieveObject(annotationBean);
-                        messageSender.addMessage( helper, annotationBean );
+                        messageSender.addMessage( annotationBean );
                     }
                     if ( statusCode != -1 ) {
                         if ( statusCode >= 300 && statusCode < 600 ) {
                             //retrieveObject(annotationBean);
-                            messageSender.addMessage( helper, annotationBean );
+                            messageSender.addMessage( annotationBean );
                         }
                     }
                 }
@@ -1309,7 +1307,7 @@ public class SanityChecker {
     }
 
     public void cvInteractionChecker( SanityCheckerHelper sch ) throws SQLException, IntactException {
-        sch.addMapping( helper, ControlledvocabBean.class, "select ac, created, created_user, shortlabel, objclass " +
+        sch.addMapping( ControlledvocabBean.class, "select ac, created, created_user, shortlabel, objclass " +
                                                            "from ia_controlledvocab " +
                                                            "where objclass='" + CvInteraction.class.getName() + "' " +
                                                            "minus " +
@@ -1321,11 +1319,11 @@ public class SanityChecker {
                                                            "and a.topic_ac=(select ac " +
                                                            "from ia_controlledvocab " +
                                                            "where shortlabel = ? ) " );
-        Collection cvInteractionBeans = sch.getBeans( helper, ControlledvocabBean.class, CvTopic.UNIPROT_DR_EXPORT );
+        Collection cvInteractionBeans = sch.getBeans( ControlledvocabBean.class, CvTopic.UNIPROT_DR_EXPORT );
 
         for ( Iterator iterator = cvInteractionBeans.iterator(); iterator.hasNext(); ) {
             ControlledvocabBean cv = (ControlledvocabBean) iterator.next();
-            messageSender.addMessage( helper, ReportTopic.CVINTERACTION_WITHOUT_ANNOTATION_UNIPROT_DR_EXPORT, cv );
+            messageSender.addMessage( ReportTopic.CVINTERACTION_WITHOUT_ANNOTATION_UNIPROT_DR_EXPORT, cv );
         }
 
     }
@@ -1342,7 +1340,7 @@ public class SanityChecker {
      */
     public String getProteinSequence( String proteinAc ) throws SQLException {
         String sequence = new String();
-        List sequenceChunkBeans = sch.getBeans( helper, SequenceChunkBean.class, proteinAc );
+        List sequenceChunkBeans = sch.getBeans( SequenceChunkBean.class, proteinAc );
         for ( int i = 0; i < sequenceChunkBeans.size(); i++ ) {
             SequenceChunkBean sequenceChunkBean = (SequenceChunkBean) sequenceChunkBeans.get( i );
             sequence = sequence + sequenceChunkBean.getSequence_chunk();
@@ -1362,10 +1360,10 @@ public class SanityChecker {
         for ( int i = 0; i < experimentBeans.size(); i++ ) {
             ExperimentBean experimentBean = (ExperimentBean) experimentBeans.get( i );
             if ( experimentIsOnHold( experimentBean.getAc() ) ) {
-                messageSender.addMessage( helper, ReportTopic.EXPERIMENT_ON_HOLD, experimentBean );//, editorUrlBuilder.getEditorUrl(experimentBean));
+                messageSender.addMessage( ReportTopic.EXPERIMENT_ON_HOLD, experimentBean );//, editorUrlBuilder.getEditorUrl(experimentBean));
             }
             if ( experimentToBeReviewed( experimentBean.getAc() ) ) {
-                messageSender.addMessage( helper, ReportTopic.EXPERIMENT_TO_BE_REVIEWED, experimentBean );//, editorUrlBuilder.getEditorUrl(experimentBean));
+                messageSender.addMessage( ReportTopic.EXPERIMENT_TO_BE_REVIEWED, experimentBean );//, editorUrlBuilder.getEditorUrl(experimentBean));
             }
         }
     }
@@ -1386,11 +1384,11 @@ public class SanityChecker {
             if ( sequence != null && false == sequence.trim().equals( "" ) ) {
                 String crc64Calculated = Crc64.getCrc64( sequence );
                 if ( !crc64Calculated.equals( crc64Stored ) ) {
-                    messageSender.addMessage( helper, ReportTopic.PROTEIN_WITH_WRONG_CRC64, interactorBean );//, editorUrlBuilder.getEditorUrl(interactorBean));
+                    messageSender.addMessage( ReportTopic.PROTEIN_WITH_WRONG_CRC64, interactorBean );//, editorUrlBuilder.getEditorUrl(interactorBean));
                 }
             } else {
                 if ( crc64Stored != null ) {
-                    messageSender.addMessage( helper, ReportTopic.PROTEIN_WITHOUT_A_SEQUENCE_BUT_WITH_AN_CRC64, interactorBean );//, editorUrlBuilder.getEditorUrl(interactorBean));
+                    messageSender.addMessage( ReportTopic.PROTEIN_WITHOUT_A_SEQUENCE_BUT_WITH_AN_CRC64, interactorBean );//, editorUrlBuilder.getEditorUrl(interactorBean));
                 }
             }
 
@@ -1415,7 +1413,7 @@ public class SanityChecker {
         for ( int i = 0; i < bioSourceBeans.size(); i++ ) {
             boolean hasNewtXref = false;
             BioSourceBean bioSourceBean = (BioSourceBean) bioSourceBeans.get( i );
-            List xrefs = sch.getBeans( helper, XrefBean.class, bioSourceBean.getAc() );
+            List xrefs = sch.getBeans( XrefBean.class, bioSourceBean.getAc() );
             for ( int j = 0; j < xrefs.size(); j++ ) {
                 XrefBean xrefBean = (XrefBean) xrefs.get( j );
                 String xrefQualifier = xrefBean.getQualifier_ac().trim();
@@ -1461,7 +1459,7 @@ public class SanityChecker {
      * @throws SQLException
      */
     public void checkOneIntOneExp() throws SQLException {
-        List int2ExpBeans = oneIntOneExpSch.getBeans( helper, Int2ExpBean.class, "%" );
+        List int2ExpBeans = oneIntOneExpSch.getBeans( Int2ExpBean.class, "%" );
 
         List experimentBeans = new ArrayList();
         InteractorBean interactionBean = new InteractorBean();
@@ -1475,12 +1473,12 @@ public class SanityChecker {
                 if ( !interactionAc.equals( "" ) ) {
                     messageSender.addMessage( ReportTopic.INTERACTION_LINKED_TO_MORE_THEN_ONE_EXPERIMENT, interactionBean, experimentBeans );
                 }
-                interactionBean = retrieveInteractorFromAc( helper, oneIntOneExpSch, currentInteractionAc );
+                interactionBean = retrieveInteractorFromAc( oneIntOneExpSch, currentInteractionAc );
                 experimentBeans.clear();
-                experimentBeans.add( retrieveExperimentFromAc( helper, oneIntOneExpSch, currentExperimentAc ) );
+                experimentBeans.add( retrieveExperimentFromAc( oneIntOneExpSch, currentExperimentAc ) );
                 interactionAc = currentInteractionAc;
             } else {
-                experimentBeans.add( retrieveExperimentFromAc( helper, oneIntOneExpSch, currentExperimentAc ) );
+                experimentBeans.add( retrieveExperimentFromAc( oneIntOneExpSch, currentExperimentAc ) );
             }
         } //end of for on int2ExpBeans list
         if ( !int2ExpBeans.isEmpty() ) {
@@ -1488,19 +1486,19 @@ public class SanityChecker {
         }
     }
 
-    public ExperimentBean retrieveExperimentFromAc( IntactHelper helper, SanityCheckerHelper sch, String ac ) throws SQLException {
+    public ExperimentBean retrieveExperimentFromAc( SanityCheckerHelper sch, String ac ) throws SQLException {
         ExperimentBean experimentBean = new ExperimentBean();
 
-        List experimentBeans = sch.getBeans( helper, ExperimentBean.class, ac );
+        List experimentBeans = sch.getBeans( ExperimentBean.class, ac );
         for ( int i = 0; i < experimentBeans.size(); i++ ) {
             experimentBean = (ExperimentBean) experimentBeans.get( i );
         }
         return experimentBean;
     }
 
-    public InteractorBean retrieveInteractorFromAc( IntactHelper helper, SanityCheckerHelper sch, String ac ) throws SQLException {
+    public InteractorBean retrieveInteractorFromAc( SanityCheckerHelper sch, String ac ) throws SQLException {
         InteractorBean interactorBean = new InteractorBean();
-        List interactorBeans = sch.getBeans( helper, InteractorBean.class, ac );
+        List interactorBeans = sch.getBeans( InteractorBean.class, ac );
         for ( int i = 0; i < interactorBeans.size(); i++ ) {
             interactorBean = (InteractorBean) interactorBeans.get( i );
         }
@@ -1523,7 +1521,7 @@ public class SanityChecker {
             }
 
             //Get the annotationBean containing the regular expression wich describe the primaryid of the database ac
-            List annotationBeans = hasValidPrimaryIdSch.getBeans( helper, AnnotationBean.class, xrefBean.getDatabase_ac() );
+            List annotationBeans = hasValidPrimaryIdSch.getBeans( AnnotationBean.class, xrefBean.getDatabase_ac() );
 
             for ( int j = 0; j < annotationBeans.size(); j++ ) {
 
@@ -1541,7 +1539,7 @@ public class SanityChecker {
                     Matcher matcher = pattern.matcher( primaryId );
                     // If the primaryId hadn't been validate against that regular expression send a message
                     if ( false == matcher.matches() ) {
-                        messageSender.addMessage( helper, ReportTopic.XREF_WITH_NON_VALID_PRIMARYID, xrefBean );
+                        messageSender.addMessage( ReportTopic.XREF_WITH_NON_VALID_PRIMARYID, xrefBean );
                     }
 
                 } catch ( Exception e ) {
@@ -1558,46 +1556,46 @@ public class SanityChecker {
             AnnotatedBean annotatedBean = (AnnotatedBean) annotatedBeans.get( i );
 
             if ( Protein.class.getName().equals( annotatedType ) ) {
-                annotationTopic.addMapping( helper, AnnotationBean.class, "select a.ac, a.topic_ac, a.created, a.created_user " +
+                annotationTopic.addMapping( AnnotationBean.class, "select a.ac, a.topic_ac, a.created, a.created_user " +
                                                                           "from ia_annotation a, " +
                                                                           "ia_int2annot i2a " +
                                                                           "where a.ac=i2a.annotation_ac and " +
                                                                           "i2a.interactor_ac=?" );
-                List annotationBeans = annotationTopic.getBeans( helper, AnnotationBean.class, annotatedBean.getAc() );
+                List annotationBeans = annotationTopic.getBeans( AnnotationBean.class, annotatedBean.getAc() );
                 checkAnnotationTopic( annotationBeans, annotatedBean, Protein.class.getName(), usableTopic );
             } else if ( Interaction.class.getName().equals( annotatedType ) ) {
-                annotationTopic.addMapping( helper, AnnotationBean.class, "select a.ac, a.topic_ac, a.created, a.created_user " +
+                annotationTopic.addMapping( AnnotationBean.class, "select a.ac, a.topic_ac, a.created, a.created_user " +
                                                                           "from ia_annotation a, " +
                                                                           "ia_int2annot i2a " +
                                                                           "where a.ac=i2a.annotation_ac and " +
                                                                           "i2a.interactor_ac=?" );
-                List annotationBeans = annotationTopic.getBeans( helper, AnnotationBean.class, annotatedBean.getAc() );
+                List annotationBeans = annotationTopic.getBeans( AnnotationBean.class, annotatedBean.getAc() );
                 checkAnnotationTopic( annotationBeans, annotatedBean, Interaction.class.getName(), usableTopic );
             } else if ( Experiment.class.getName().equals( annotatedType ) ) {
-                annotationTopic.addMapping( helper, AnnotationBean.class, "select a.ac, a.topic_ac, a.created, a.created_user " +
+                annotationTopic.addMapping( AnnotationBean.class, "select a.ac, a.topic_ac, a.created, a.created_user " +
                                                                           "from ia_annotation a, " +
                                                                           "ia_exp2annot e2a " +
                                                                           "where a.ac=e2a.annotation_ac and " +
                                                                           "e2a.experiment_ac=?" );
-                List annotationBeans = annotationTopic.getBeans( helper, AnnotationBean.class, annotatedBean.getAc() );
+                List annotationBeans = annotationTopic.getBeans( AnnotationBean.class, annotatedBean.getAc() );
                 checkAnnotationTopic( annotationBeans, annotatedBean, Experiment.class.getName(), usableTopic );
             } else if ( BioSource.class.getName().equals( annotatedType ) ) {
-                annotationTopic.addMapping( helper, AnnotationBean.class, "select a.ac, a.topic_ac, a.created, a.created_user " +
+                annotationTopic.addMapping( AnnotationBean.class, "select a.ac, a.topic_ac, a.created, a.created_user " +
                                                                           "from ia_annotation a, " +
                                                                           "ia_biosource2annot bs2a " +
                                                                           "where a.ac=bs2a.annotation_ac and " +
                                                                           "bs2a.biosource_ac=?" );
-                List annotationBeans = annotationTopic.getBeans( helper, AnnotationBean.class, annotatedBean.getAc() );
+                List annotationBeans = annotationTopic.getBeans( AnnotationBean.class, annotatedBean.getAc() );
                 checkAnnotationTopic( annotationBeans, annotatedBean, BioSource.class.getName(), usableTopic );
 
             }
             if ( CvObject.class.getName().equals( annotatedType ) ) {
-                annotationTopic.addMapping( helper, AnnotationBean.class, "select a.ac, a.topic_ac, a.created, a.created_user " +
+                annotationTopic.addMapping( AnnotationBean.class, "select a.ac, a.topic_ac, a.created, a.created_user " +
                                                                           "from ia_annotation a, " +
                                                                           "ia_cvobject2annot cv2a " +
                                                                           "where a.ac=cv2a.annotation_ac and " +
                                                                           "cv2a.cvobject_ac=?" );
-                List annotationBeans = annotationTopic.getBeans( helper, AnnotationBean.class, annotatedBean.getAc() );
+                List annotationBeans = annotationTopic.getBeans( AnnotationBean.class, annotatedBean.getAc() );
                 checkAnnotationTopic( annotationBeans, annotatedBean, CvObject.class.getName(), usableTopic );
             }
 
@@ -1622,10 +1620,10 @@ public class SanityChecker {
         }
     }
 
-    public void checkDeletionFeature( IntactHelper helper, List rangeBeans ) throws SQLException, IntactException {
+    public void checkDeletionFeature( List rangeBeans ) throws SQLException, IntactException {
         for ( int i = 0; i < rangeBeans.size(); i++ ) {
             RangeBean rangeBean = (RangeBean) rangeBeans.get( i );
-            messageSender.addMessage( helper, ReportTopic.DELETION_INTERVAL_TO_LONG_TO_BE_CARACTERIZED_BY_DELETION_ANALYSIS_FEATURE_TYPE, rangeBean );
+            messageSender.addMessage( ReportTopic.DELETION_INTERVAL_TO_LONG_TO_BE_CARACTERIZED_BY_DELETION_ANALYSIS_FEATURE_TYPE, rangeBean );
         }
     }
 
@@ -1635,11 +1633,12 @@ public class SanityChecker {
      */
     public static void main( String[] args ) throws SQLException, IntactException, LookupException {
 
-        IntactHelper helper = new IntactHelper();
-        SanityChecker scn = new SanityChecker( helper );
+        SanityChecker scn = new SanityChecker( );
 
-        System.out.println( "Helper created (User: " + helper.getDbUserName() + " " +
-                            "Database: " + helper.getDbName() + ")" );
+        BaseDao dao = DaoFactory.getBaseDao();
+
+        System.out.println( "Helper created (User: " + dao.getDbUserName() + " " +
+                            "Database: " + dao.getDbName() + ")" );
 
         List expUsableTopic = scn.annotationSection.getUsableTopics( Experiment.class.getName() );
         expUsableTopic.add( CvTopic.ACCEPTED );
@@ -1659,13 +1658,13 @@ public class SanityChecker {
         *     Check on interactor
         */
         SanityCheckerHelper schIntAc = new SanityCheckerHelper();
-        schIntAc.addMapping( helper, InteractorBean.class, "SELECT ac, shortlabel, created_user, created, objclass " +
+        schIntAc.addMapping( InteractorBean.class, "SELECT ac, shortlabel, created_user, created, objclass " +
                                                            "FROM ia_interactor " +
                                                            "WHERE objclass = '" + InteractionImpl.class.getName() + "'" +
                                                            " AND ac like ?" );
 
 
-        List interactorBeans = schIntAc.getBeans( helper, InteractorBean.class, "EBI-%" );
+        List interactorBeans = schIntAc.getBeans( InteractorBean.class, "EBI-%" );
         scn.checkInteractionsComplete( interactorBeans );
         scn.checkInteractionsBaitAndPrey( interactorBeans );
         scn.checkComponentOfInteractions( interactorBeans );
@@ -1681,7 +1680,7 @@ public class SanityChecker {
         /*
         *     Check on xref
         */
-        schIntAc.addMapping( helper, XrefBean.class, "select distinct primaryId " +
+        schIntAc.addMapping( XrefBean.class, "select distinct primaryId " +
                                                      "from ia_xref, ia_controlledvocab db, ia_controlledvocab q " +
                                                      "where database_ac = db.ac and " +
                                                      "db.shortlabel = ? and " +
@@ -1691,9 +1690,9 @@ public class SanityChecker {
                                                      "having count(primaryId) > 1" );
 
 
-        List xrefBeans = schIntAc.getBeans( helper, XrefBean.class, CvDatabase.UNIPROT );
+        List xrefBeans = schIntAc.getBeans( XrefBean.class, CvDatabase.UNIPROT );
 
-        scn.sch.addMapping( helper, InteractorBean.class, "SELECT i.ac,i.objclass, i.shortlabel, i.biosource_ac, i.created_user, i.created " +
+        scn.sch.addMapping( InteractorBean.class, "SELECT i.ac,i.objclass, i.shortlabel, i.biosource_ac, i.created_user, i.created " +
                                                           "FROM ia_interactor i, ia_xref x " +
                                                           "WHERE i.ac = x.parent_ac AND " +
                                                           "0 = ( SELECT count(1) " +
@@ -1705,7 +1704,7 @@ public class SanityChecker {
                                                           "x.qualifier_ac = '" + identityXrefQualifierCvBean.getAc() + "' AND " +
                                                           "x.primaryid=?" );
 
-        scn.sch.addMapping( helper, SpliceVariantParentBean.class, "SELECT distinct p.ac as ac, p.shortlabel as parentName, sv.shortlabel as variantName\n" +
+        scn.sch.addMapping( SpliceVariantParentBean.class, "SELECT distinct p.ac as ac, p.shortlabel as parentName, sv.shortlabel as variantName\n" +
                                                                    "FROM ia_interactor sv, ia_interactor p, ia_xref x\n" +
                                                                    "WHERE ? = sv.ac AND\n" +
                                                                    "      sv.ac = x.parent_ac AND \n" +
@@ -1718,17 +1717,17 @@ public class SanityChecker {
             scn.duplicatedProtein( xrefBean );
         }
 
-        schIntAc.addMapping( helper, XrefBean.class, "select ac, created_user, created, database_ac, primaryid,parent_ac " +
+        schIntAc.addMapping( XrefBean.class, "select ac, created_user, created, database_ac, primaryid,parent_ac " +
                                                      "from ia_xref " +
                                                      "where ac like ?" );
         //"where ac ='EBI-695273' and ac like ?");
-        xrefBeans = schIntAc.getBeans( helper, XrefBean.class, "%" );
+        xrefBeans = schIntAc.getBeans( XrefBean.class, "%" );
         scn.hasValidPrimaryId( xrefBeans );
 
         /*
         *     Check on Experiment
         */
-        List experimentBeans = scn.sch.getBeans( helper, ExperimentBean.class, "EBI-%" );
+        List experimentBeans = scn.sch.getBeans( ExperimentBean.class, "EBI-%" );
         scn.checkExperiment( experimentBeans );
         scn.checkExperimentsPubmedIds( experimentBeans );
         scn.checkAnnotations( experimentBeans, Experiment.class.getName(), expUsableTopic );
@@ -1740,7 +1739,7 @@ public class SanityChecker {
         *     Check on BioSource
         */
 
-        List bioSourceBeans = scn.sch.getBeans( helper, BioSourceBean.class, "EBI-%" );
+        List bioSourceBeans = scn.sch.getBeans( BioSourceBean.class, "EBI-%" );
         //System.out.println("The size of bioSource list is " + bioSourceBeans.size());
         scn.checkBioSource( bioSourceBeans );
         scn.checkNewt( bioSourceBeans );
@@ -1751,42 +1750,42 @@ public class SanityChecker {
         */
         //right now not actual using, as concerning checks appear to commented out
 
-        schIntAc.addMapping( helper, InteractorBean.class, "SELECT ac, crc64, shortlabel, created_user, created, objclass " +
+        schIntAc.addMapping( InteractorBean.class, "SELECT ac, crc64, shortlabel, created_user, created, objclass " +
                                                            "FROM ia_interactor " +
                                                            "WHERE objclass = '" + ProteinImpl.class.getName() +
                                                            "' AND ac like ?" );
 
-        List proteinBeans = schIntAc.getBeans( helper, InteractorBean.class, "%" );
+        List proteinBeans = schIntAc.getBeans( InteractorBean.class, "%" );
 
         scn.checkProtein( proteinBeans );
         scn.checkCrc64( proteinBeans );
         scn.checkAnnotations( proteinBeans, "Protein", protUsableTopic );
 
         //already working
-        List ranges = scn.deletionFeatureSch.getBeans( helper, RangeBean.class, "2" );
-        scn.checkDeletionFeature( helper, ranges );
+        List ranges = scn.deletionFeatureSch.getBeans( RangeBean.class, "2" );
+        scn.checkDeletionFeature( ranges );
 
         /*
         *     Check on annotation
         */
 
         //tested
-        schIntAc.addMapping( helper, AnnotationBean.class, "SELECT ac, description, created, created_user " +
+        schIntAc.addMapping( AnnotationBean.class, "SELECT ac, description, created, created_user " +
                                                            "FROM ia_annotation " +
                                                            "WHERE topic_ac = 'EBI-18' and ac like ?"
         );
 
-        List annotationBeans = schIntAc.getBeans( helper, AnnotationBean.class, "EBI-%" );
+        List annotationBeans = schIntAc.getBeans( AnnotationBean.class, "EBI-%" );
         scn.checkURL( annotationBeans );
 
         /*
         *    Check on controlledvocab
         */
 
-        schIntAc.addMapping( helper, ControlledvocabBean.class, "SELECT ac, objclass, shortlabel, created, created_user " +
+        schIntAc.addMapping( ControlledvocabBean.class, "SELECT ac, objclass, shortlabel, created, created_user " +
                                                                 "FROM ia_controlledvocab " +
                                                                 "WHERE ac = ?" );
-        List controlledvocabBeans = schIntAc.getBeans( helper, ControlledvocabBean.class, "%" );
+        List controlledvocabBeans = schIntAc.getBeans( ControlledvocabBean.class, "%" );
 
         scn.checkAnnotations( controlledvocabBeans, CvObject.class.getName(), cvUsableTopic );
 
@@ -1803,7 +1802,6 @@ public class SanityChecker {
 
         schIntAc = null;
 
-        scn.helper.closeStore();
         scn = null;
     }
 
