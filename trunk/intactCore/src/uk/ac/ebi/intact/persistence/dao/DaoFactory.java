@@ -63,7 +63,12 @@ public class DaoFactory
         return new CvObjectDaoImpl<T>(entityType, getCurrentSession());
     }
 
-    public static ExperimentDao getExperimentDao()
+    public static FeatureDao getExperimentDao()
+    {
+        return new FeatureDaoImpl(getCurrentSession());
+    }
+
+    public static ExperimentDao getFeatureDao()
     {
         return new ExperimentDaoImpl(getCurrentSession());
     }
