@@ -10,8 +10,8 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.XrefTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvIdentification;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,11 +31,10 @@ public final class ParticipantDetectionChecker {
         return (CvIdentification) cache.get( id );
     }
 
-    public static void check( final ParticipantDetectionTag participantDetection,
-                              final IntactHelper helper ) {
+    public static void check( final ParticipantDetectionTag participantDetection ) {
 
         final XrefTag psiDef = participantDetection.getPsiDefinition();
-        XrefChecker.check( psiDef, helper );
+        XrefChecker.check( psiDef );
 
         final String id = psiDef.getId();
 
@@ -43,7 +42,7 @@ public final class ParticipantDetectionChecker {
             CvIdentification cvIdentification = null;
 
             try {
-                cvIdentification = (CvIdentification) helper.getObjectByXref( CvIdentification.class, id );
+                cvIdentification = DaoFactory.getCvObjectDao(CvIdentification.class).getByXref(id);
 
                 if ( cvIdentification == null ) {
                     MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find CvIdentification for the PSI definition: " + id ) );

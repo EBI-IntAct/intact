@@ -10,7 +10,6 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.ProteinIntera
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.ProteinParticipantTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.util.BioSourceFactory;
 import uk.ac.ebi.intact.util.UpdateProteinsI;
 
@@ -26,21 +25,20 @@ import java.util.Iterator;
 public class ProteinParticipantChecker {
 
     public static void check( final ProteinParticipantTag proteinParticipant,
-                              final IntactHelper helper,
                               final UpdateProteinsI proteinFactory,
                               final BioSourceFactory bioSourceFactory ) {
 
         final String role = proteinParticipant.getRole();
-        RoleChecker.check( role, helper );
+        RoleChecker.check( role );
 
         final ProteinInteractorTag proteinInteractor = proteinParticipant.getProteinInteractor();
-        ProteinInteractorChecker.check( proteinInteractor, helper, proteinFactory, bioSourceFactory );
+        ProteinInteractorChecker.check( proteinInteractor, proteinFactory, bioSourceFactory );
 
         final Collection features = proteinParticipant.getFeatures();
         for ( Iterator iterator = features.iterator(); iterator.hasNext(); ) {
             FeatureTag feature = (FeatureTag) iterator.next();
 
-            FeatureChecker.ckeck( feature, helper );
+            FeatureChecker.ckeck( feature );
         }
 
         // check feature clustering (specific to PSI version 1)

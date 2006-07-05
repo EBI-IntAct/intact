@@ -9,8 +9,8 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.XrefTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,15 +30,14 @@ public final class XrefChecker {
         return (CvDatabase) cache.get( databaseName );
     }
 
-    public static void check( final XrefTag xref,
-                              final IntactHelper helper ) {
+    public static void check( final XrefTag xref ) {
 
         final String db = xref.getDb();
 
         if ( !cache.keySet().contains( db ) ) {
             CvDatabase cvDatabase = null;
             try {
-                cvDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, db );
+                cvDatabase = DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel( db );
 
                 if ( cvDatabase != null ) {
                     System.out.println( "Found CvDatabase with shortlabel: " + db );

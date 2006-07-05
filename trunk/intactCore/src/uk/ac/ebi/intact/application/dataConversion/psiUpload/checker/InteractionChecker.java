@@ -9,10 +9,11 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.gui.Monitor;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.*;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvInteractorType;
+import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.util.BioSourceFactory;
 import uk.ac.ebi.intact.util.UpdateProteinsI;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -29,13 +30,12 @@ public final class InteractionChecker {
 
     public static boolean interatorTypeChecked = false;
 
-    public static void checkCvInteractorType( IntactHelper helper ) {
+    public static void checkCvInteractorType( ) {
 
         if ( false == interatorTypeChecked ) {
 
             // Load CvInteractorType( interaction / MI: )
-            cvInteractionType = (CvInteractorType) helper.getObjectByPrimaryId( CvInteractorType.class,
-                                                                                 CvInteractorType.getInteractionMI() );
+            cvInteractionType = DaoFactory.getCvObjectDao(CvInteractorType.class).getByXref(CvInteractorType.getInteractionMI());
             if ( cvInteractionType == null ) {
                 MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find CvInteractorType( interaction )." ) );
             }
@@ -48,19 +48,18 @@ public final class InteractionChecker {
     }
 
     public static void check( final InteractionTag interaction,
-                              final IntactHelper helper,
                               final UpdateProteinsI proteinFactory,
                               final BioSourceFactory bioSourceFactory,
                               final Monitor monitor ) {
 
         // check that the CvInteractorType( interaction is available ).
-        checkCvInteractorType( helper );
+        checkCvInteractorType( );
 
         // experiment
         Collection experiments = interaction.getExperiments();
         for ( Iterator iterator = experiments.iterator(); iterator.hasNext(); ) {
             ExperimentDescriptionTag experimentDescription = (ExperimentDescriptionTag) iterator.next();
-            ExperimentDescriptionChecker.check( experimentDescription, helper, bioSourceFactory );
+            ExperimentDescriptionChecker.check( experimentDescription, bioSourceFactory );
         }
 
         // participants
@@ -88,24 +87,24 @@ public final class InteractionChecker {
             }
 
             // check the participant
-            ProteinParticipantChecker.check( proteinParticipant, helper, proteinFactory, bioSourceFactory );
+            ProteinParticipantChecker.check( proteinParticipant, proteinFactory, bioSourceFactory );
 
             // check the expressedIn if it is there.
             ExpressedInTag expressedIn = proteinParticipant.getExpressedIn();
             if ( null != expressedIn ) {
-                ExpressedInChecker.check( expressedIn, helper );
+                ExpressedInChecker.check( expressedIn );
             }
         }
 
         // interactionType
         final InteractionTypeTag interactionType = interaction.getInteractionType();
-        InteractionTypeChecker.check( interactionType, helper );
+        InteractionTypeChecker.check( interactionType );
 
         // xrefs
         Collection xrefs = interaction.getXrefs();
         for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
             XrefTag xref = (XrefTag) iterator.next();
-            XrefChecker.check( xref, helper );
+            XrefChecker.check( xref );
         }
 
         // annotations
@@ -116,7 +115,7 @@ public final class InteractionChecker {
             if ( annotation.isDissociationConstant() ) {
                 countKd++;
             }
-            AnnotationChecker.check( annotation, helper );
+            AnnotationChecker.check( annotation );
         }
 
         // 0 or 1 dissociation constant can be specified, no more.

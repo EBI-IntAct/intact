@@ -12,9 +12,10 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.CommandLineOpt
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.BioSourceFactory;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -105,7 +106,6 @@ public abstract class AbstractOrganismChecker {
     protected static BioSource check( final String taxid,
                                       final CellTypeTag cellType,
                                       final TissueTag tissue,
-                                      final IntactHelper helper,
                                       final BioSourceFactory bioSourceFactory ) {
 
         if ( DEBUG ) {
@@ -150,7 +150,7 @@ public abstract class AbstractOrganismChecker {
                         System.out.println( "Look for all BioSources having taxid: " + taxid );
                     }
 
-                    biosources = helper.search( BioSource.class.getName(), "taxId", taxid );
+                    biosources = DaoFactory.getBioSourceDao().getByTaxonId(taxid);
 
                     if ( DEBUG ) {
                         System.out.println( biosources.size() + " found." );
@@ -173,7 +173,7 @@ public abstract class AbstractOrganismChecker {
 
                     // create missing bioSource
                     try {
-                        BioSourceFactory factory = new BioSourceFactory( helper );
+                        BioSourceFactory factory = new BioSourceFactory( );
                         BioSource templateBioSource = factory.getValidBioSource( taxid );
                         String label = null;
                         if ( templateBioSource != null ) {
@@ -185,17 +185,20 @@ public abstract class AbstractOrganismChecker {
                         CvCellType bsCellType = null;
                         CvTissue bsTissue = null;
 
+                        Institution institution = DaoFactory.getInstitutionDao().getInstitution();
+
                         if ( tissue != null ) {
                             label += "-" + tissue.getShortlabel();
 
                             // search for the CvTissue, if it can't be found then create it.
-                            bsTissue = (CvTissue) helper.getObjectByLabel( CvTissue.class, tissue.getShortlabel() );
+                            CvObjectDao<CvTissue> cvObjectDao = DaoFactory.getCvObjectDao(CvTissue.class);
+                            bsTissue = cvObjectDao.getByShortLabel(tissue.getShortlabel());
 
                             if ( bsTissue == null ) {
 
                                 // create it
-                                bsTissue = new CvTissue( helper.getInstitution(), tissue.getShortlabel() );
-                                helper.create( bsTissue );
+                                bsTissue = new CvTissue( institution, tissue.getShortlabel() );
+                                cvObjectDao.persist( bsTissue );
 
                                 if ( DEBUG ) {
                                     System.out.println( "Created new CvTissue( " + tissue.getShortlabel() + " )" );
@@ -211,13 +214,14 @@ public abstract class AbstractOrganismChecker {
                             label += "-" + cellType.getShortlabel();
 
                             // search for the CellType, if it can't be found then create it.
-                            bsCellType = (CvCellType) helper.getObjectByLabel( CvCellType.class, cellType.getShortlabel() );
+                            CvObjectDao<CvCellType> cvObjectDao = DaoFactory.getCvObjectDao(CvCellType.class);
+                            bsCellType = cvObjectDao.getByShortLabel( cellType.getShortlabel() );
 
                             if ( bsCellType == null ) {
 
                                 // create it
-                                bsCellType = new CvCellType( helper.getInstitution(), cellType.getShortlabel() );
-                                helper.create( bsCellType );
+                                bsCellType = new CvCellType( institution, cellType.getShortlabel() );
+                                cvObjectDao.persist( bsCellType );
 
                                 if ( DEBUG ) {
                                     System.out.println( "Created new CvCellType( " + cellType.getShortlabel() + " )" );
@@ -230,8 +234,8 @@ public abstract class AbstractOrganismChecker {
                         }
 
                         // create the new BioSource and associate the CellType and Tissue to it.
-                        BioSource bs = new BioSource( helper.getInstitution(), label, taxid );
-                        helper.create( bs );
+                        BioSource bs = new BioSource( institution, label, taxid );
+                        DaoFactory.getBioSourceDao().persist( bs );
 
                         boolean needUpdate = false;
                         if ( bsTissue != null ) {
@@ -245,7 +249,7 @@ public abstract class AbstractOrganismChecker {
                         }
 
                         if ( needUpdate ) {
-                            helper.update( bs );
+                            DaoFactory.getBioSourceDao().update( bs );
                         }
 
                     } catch ( IntactException e ) {

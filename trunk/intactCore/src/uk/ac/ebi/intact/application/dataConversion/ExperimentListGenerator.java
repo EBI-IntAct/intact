@@ -6,10 +6,12 @@
 package uk.ac.ebi.intact.application.dataConversion;
 
 import org.apache.commons.cli.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.MemoryMonitor;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -32,6 +34,8 @@ import java.util.Date;
  * @since <pre>28-Jul-2005</pre>
  */
 public class ExperimentListGenerator {
+
+    private static final Log log = LogFactory.getLog(ExperimentListGenerator.class);
 
     /**
      * Holder for the experiment classification by species and by publication as well as the negative experiments.
@@ -117,7 +121,7 @@ public class ExperimentListGenerator {
      *
      * @throws IntactException thrown if there was a search problem
      */
-    public static Collection getExperiments( IntactHelper helper, String searchPattern ) throws IntactException {
+    public static Collection getExperiments( String searchPattern ) throws IntactException {
 
         //try this for now, but it may be better to use SQL and get the ACs,
         //then cycle through them and generate PSI one by one.....
@@ -129,7 +133,7 @@ public class ExperimentListGenerator {
 
         while ( patterns.hasMoreTokens() ) {
             String shortlabel = patterns.nextToken().trim();
-            searchResults.addAll( helper.search( Experiment.class, "shortLabel", shortlabel ) );
+            searchResults.addAll( DaoFactory.getExperimentDao().getByShortLabelLike(shortlabel));
         }
 
         int resultSize = searchResults.size();
@@ -151,17 +155,24 @@ public class ExperimentListGenerator {
     public static ExperimentClassification classifyExperiments( String searchPattern, boolean forcePubmed ) throws IntactException {
 
         ExperimentClassification classification = new ExperimentClassification();
-        IntactHelper helper = null;
 
-        try {
-            helper = new IntactHelper();
-            System.out.println( "Database: " + helper.getDbName() );
+            if (log.isDebugEnabled())
+            {
+                try
+                {
+                    log.debug( "Database: " + DaoFactory.getBaseDao().getDbName() );
+                }
+                catch (SQLException e)
+                {
+                    e.printStackTrace();
+                }
+            }
 
             // Obtain data, probably experiment by experiment, build
             // PSI data for it then write it to a file....
-            Collection searchResults = getExperiments( helper, searchPattern );
+            Collection searchResults = getExperiments( searchPattern );
 
-            Set experimentFilter = getExperimentWithoutPubmedId( helper, forcePubmed );
+            Set experimentFilter = getExperimentWithoutPubmedId( forcePubmed );
 
             // Split the list of experiments into species- and size-specific files
             for ( Iterator iterator = searchResults.iterator(); iterator.hasNext(); ) {
@@ -180,7 +191,7 @@ public class ExperimentListGenerator {
 
                 // 1. Get the species of one of the interactors of the experiment.
                 //    The bioSource of the Experiment is irrelevant, as it may be an auxiliary experimental system.
-                Collection sources = getTargetSpecies( experiment, helper );
+                Collection sources = getTargetSpecies( experiment );
                 int size = experiment.getInteractions().size();
                 System.out.println( "Classifying " + experiment.getShortLabel() + " (" + size + " interaction" + ( size > 1 ? "s" : "" ) + ")" );
 
@@ -231,16 +242,10 @@ public class ExperimentListGenerator {
             // 5. Now all experiments have been sorted, check for those containing 'negative' results...
             classifyNegatives( classification );
 
-        } finally {
-            if ( helper != null ) {
-                helper.closeStore();
-            }
-        }
-
         return classification;
     }
 
-    private static Set getExperimentWithoutPubmedId( IntactHelper helper, boolean forcePubmed ) throws IntactException {
+    private static Set getExperimentWithoutPubmedId( boolean forcePubmed ) throws IntactException {
 
         Set filter = null;
 
@@ -252,7 +257,7 @@ public class ExperimentListGenerator {
             ResultSet resultSet = null;
             try {
                 filter = new HashSet();
-                Connection connection = helper.getJDBCConnection();
+                Connection connection = DaoFactory.connection();
                 statement = connection.createStatement();
                 final String sql = "SELECT e.ac, e.shortlabel\n" +
                                    "FROM ia_experiment e\n" +
@@ -363,20 +368,19 @@ public class ExperimentListGenerator {
      * Retreive BioSources corresponding ot the target-species assigned to the given experiment.
      *
      * @param experiment The experiment for which we want to get all target-species.
-     * @param helper     Data source.
      *
      * @return A collection of BioSource, or empty if non is found.
      *
      * @throws IntactException if an error occurs.
      */
-    private static Collection getTargetSpecies( Experiment experiment, IntactHelper helper ) throws IntactException {
+    private static Collection getTargetSpecies( Experiment experiment ) throws IntactException {
         Collection species = new ArrayList( 4 );
 
         for ( Iterator iterator = experiment.getXrefs().iterator(); iterator.hasNext(); ) {
             Xref xref = (Xref) iterator.next();
             if ( CvXrefQualifier.TARGET_SPECIES.equals( xref.getCvXrefQualifier().getShortLabel() ) ) {
                 String taxid = xref.getPrimaryId();
-                Collection bioSources = helper.search( BioSource.class, "taxid", taxid );
+                Collection bioSources = DaoFactory.getBioSourceDao().getByTaxonId(taxid);
 
                 if ( bioSources.isEmpty() ) {
                     throw new IntactException( "Experiment(" + experiment.getAc() + ", " + experiment.getShortLabel() +
@@ -460,13 +464,11 @@ public class ExperimentListGenerator {
         Statement stmt = null;  //ordinary Statement will do - won't be reused
         PreparedStatement labelStmt = null; //needs a parameter
         ResultSet rs = null;
-        IntactHelper helper = null;
 
         try {
-            helper = new IntactHelper();
 
             // Safest way to do this is directly through the Connection.....
-            conn = helper.getJDBCConnection();
+            conn = DaoFactory.connection();
 
             stmt = conn.createStatement();
             rs = stmt.executeQuery( expSql );
@@ -493,7 +495,7 @@ public class ExperimentListGenerator {
 
                 // TODO we have actually stored the Experiment, not the AC or the Shortlabel !!!!!
                 String ac = (String) it.next();
-                Experiment experiment = (Experiment) helper.getObjectByAc( Experiment.class, ac );
+                Experiment experiment = DaoFactory.getExperimentDao().getByAc( ac );
                 negExpLabels.add( experiment );
             }
 
@@ -520,9 +522,6 @@ public class ExperimentListGenerator {
 
                 // Do not close the connection ... closeStore hands it back to the pool !
 
-                if ( helper != null ) {
-                    helper.closeStore();
-                }
             } catch ( SQLException se ) {
                 se.printStackTrace();
             }

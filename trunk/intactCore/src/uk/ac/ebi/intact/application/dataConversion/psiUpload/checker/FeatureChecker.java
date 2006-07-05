@@ -10,9 +10,9 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.XrefTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvFeatureIdentification;
 import uk.ac.ebi.intact.model.CvFeatureType;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -42,24 +42,24 @@ public class FeatureChecker {
 
     // TODO where does the CvFuzzyType takes place.
 
-    public static void ckeck( FeatureTag feature, IntactHelper helper ) {
+    public static void ckeck( FeatureTag feature ) {
 
         if ( feature.hasFeatureDetection() ) {
-            checkCvFeatureIdentification( feature, helper );
+            checkCvFeatureIdentification( feature );
         }
 
-        checkCvTypeIdentification( feature, helper );
+        checkCvTypeIdentification( feature );
 
         for ( Iterator iterator = feature.getXrefs().iterator(); iterator.hasNext(); ) {
             XrefTag xref = (XrefTag) iterator.next();
-            XrefChecker.check( xref, helper );
+            XrefChecker.check( xref );
         }
     }
 
-    private static void checkCvTypeIdentification( FeatureTag feature, IntactHelper helper ) {
+    private static void checkCvTypeIdentification( FeatureTag feature ) {
 
         XrefTag psiDef = feature.getFeatureType().getPsiDefinition();
-        XrefChecker.check( psiDef, helper );
+        XrefChecker.check( psiDef );
 
         final String id = psiDef.getId();
 
@@ -67,7 +67,7 @@ public class FeatureChecker {
             CvFeatureType featureType = null;
 
             try {
-                featureType = (CvFeatureType) helper.getObjectByXref( CvFeatureType.class, id );
+                featureType = DaoFactory.getCvObjectDao(CvFeatureType.class).getByXref(id);
 
                 if ( featureType == null ) {
                     MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find CvFeatureType by PSI definition: " + id ) );
@@ -85,11 +85,11 @@ public class FeatureChecker {
     }
 
 
-    private static void checkCvFeatureIdentification( FeatureTag feature, IntactHelper helper ) {
+    private static void checkCvFeatureIdentification( FeatureTag feature ) {
 
         final XrefTag psiDef = feature.getFeatureDetection().getPsiDefinition();
 
-        XrefChecker.check( psiDef, helper );
+        XrefChecker.check( psiDef );
 
         final String id = psiDef.getId();
 
@@ -97,7 +97,7 @@ public class FeatureChecker {
             CvFeatureIdentification cvFeatureIdentification = null;
 
             try {
-                cvFeatureIdentification = (CvFeatureIdentification) helper.getObjectByXref( CvFeatureIdentification.class, id );
+                cvFeatureIdentification = DaoFactory.getCvObjectDao(CvFeatureIdentification.class).getByXref(id);
 
                 if ( cvFeatureIdentification == null ) {
                     MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find CvFeatureIdentification by PSI definition: " + id ) );

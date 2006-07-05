@@ -18,11 +18,12 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.persister.EntrySetP
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.CommandLineOptions;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.util.BioSourceFactory;
 import uk.ac.ebi.intact.util.Chrono;
 import uk.ac.ebi.intact.util.UpdateProteins;
 import uk.ac.ebi.intact.util.UpdateProteinsI;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.BaseDao;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -210,8 +211,6 @@ public class PsiDataLoader {
 
         System.out.println( "Uploading file: " + filename );
 
-        IntactHelper helper = null;
-
 
         //////////////////////////////////
         // (1) Parse the given PSI file
@@ -276,14 +275,12 @@ public class PsiDataLoader {
                 // (2a) Get needed objects before checking
                 /////////////////////////////////////////////
                 try {
-                    System.out.println( "Creating the IntactHelper..." );
-                    System.out.flush();
-                    helper = new IntactHelper();
 
                     try {
-                        String db = helper.getDbName();
+                        BaseDao dao = DaoFactory.getBaseDao();
+                        String db = dao.getDbName();
                         System.out.println( "Database: " + db );
-                        System.out.println( "User:     " + helper.getDbUserName() );
+                        System.out.println( "User:     " + dao.getDbUserName() );
 
                         if ( forceEnabled == false ) {
                             // THIS IS SPECIFIC CODE THAT AVOIDS TO WRITE ON A PRODUCTION DATABASE BY MISTAKES
@@ -306,8 +303,6 @@ public class PsiDataLoader {
                                 }
                             }
                         }
-                    } catch ( LookupException e ) {
-                        e.printStackTrace();
                     } catch ( SQLException e ) {
                         e.printStackTrace();
                     }
@@ -315,7 +310,6 @@ public class PsiDataLoader {
                     System.out.println( "done" );
                 } catch ( IntactException e ) {
                     System.out.println( "error" );
-                    System.err.println( "Could not create an IntactHelper" );
                     e.printStackTrace();
                     System.exit( 1 );
                 }
@@ -325,7 +319,7 @@ public class PsiDataLoader {
                 try {
                     System.out.print( "Creating the protein factory (UpdateProteins)..." );
                     System.out.flush();
-                    proteinFactory = new UpdateProteins( helper );
+                    proteinFactory = new UpdateProteins( );
                     System.out.println( "done" );
 
                 } catch ( UpdateProteinsI.UpdateException e ) {
@@ -340,7 +334,7 @@ public class PsiDataLoader {
                 try {
                     System.out.print( "Creating the organism factory (BioSourceFactory)..." );
                     System.out.flush();
-                    bioSourceFactory = new BioSourceFactory( helper );
+                    bioSourceFactory = new BioSourceFactory( );
                     System.out.println( "done" );
                 } catch ( IntactException e ) {
                     System.out.println( "error" );
@@ -354,10 +348,10 @@ public class PsiDataLoader {
                 // (2b) Check the content of the entrySet
                 ///////////////////////////////////////////
                 // get some necessary objects
-                ControlledVocabularyRepository.check( helper );
+                ControlledVocabularyRepository.check( );
 
                 // check the parsed model
-                EntrySetChecker.check( entrySet, helper, proteinFactory, bioSourceFactory );
+                EntrySetChecker.check( entrySet, proteinFactory, bioSourceFactory );
 
                 if ( messages.checkerMessageExists() ) {
 
@@ -379,7 +373,7 @@ public class PsiDataLoader {
                     // (3) persist the data in the IntAct Database
                     ////////////////////////////////////////////////
                     try {
-                        EntrySetPersister.persist( entrySet, helper );
+                        EntrySetPersister.persist( entrySet );
 
                         if ( messages.checkerMessageExists() ) {
 
@@ -433,16 +427,6 @@ public class PsiDataLoader {
             ioe.printStackTrace();
             System.exit( 1 );
 
-        } finally {
-            if ( helper != null ) {
-                try {
-                    helper.closeStore();
-                } catch ( IntactException e ) {
-
-                    System.err.println( "Could not close the IntactHelper dataabse connexion." );
-                    e.printStackTrace();
-                }
-            }
         }
 
         System.exit( 0 );

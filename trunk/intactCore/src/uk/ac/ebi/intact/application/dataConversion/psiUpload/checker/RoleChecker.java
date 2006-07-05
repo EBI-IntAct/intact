@@ -8,8 +8,8 @@ package uk.ac.ebi.intact.application.dataConversion.psiUpload.checker;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvComponentRole;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,8 +30,7 @@ public final class RoleChecker {
         return (CvComponentRole) cache.get( role );
     }
 
-    public static void check( final String role,
-                              final IntactHelper helper ) {
+    public static void check( final String role ) {
 
         if ( !cache.keySet().contains( role ) ) {
             CvComponentRole cvComponentRole = null;
@@ -51,14 +50,13 @@ public final class RoleChecker {
                     // we may have either 'neutral' or 'neutral component' in the database ...
                     // handle it !!
 
-                    cvComponentRole = (CvComponentRole) helper.getObjectByLabel( CvComponentRole.class, role );
+                    cvComponentRole = DaoFactory.getCvObjectDao(CvComponentRole.class).getByShortLabel(role);
 
                     if ( cvComponentRole == null ) {
 
                         // it was not found, try the other possibility
 
-                        cvComponentRole = (CvComponentRole) helper.getObjectByLabel( CvComponentRole.class,
-                                                                                     CvComponentRole.NEUTRAL );
+                        cvComponentRole = DaoFactory.getCvObjectDao(CvComponentRole.class).getByShortLabel( CvComponentRole.NEUTRAL );
                         if ( cvComponentRole == null ) {
                             // neither worked, there is a problem of data integrity
                             System.out.println( "ERROR: neither " + role + " nor " + CvComponentRole.NEUTRAL +
@@ -69,7 +67,7 @@ public final class RoleChecker {
                 } else {
 
                     // any other role is search simply by shorltabel.
-                    cvComponentRole = (CvComponentRole) helper.getObjectByLabel( CvComponentRole.class, role );
+                    cvComponentRole = DaoFactory.getCvObjectDao(CvComponentRole.class).getByShortLabel( role );
                 }
 
                 if ( cvComponentRole != null ) {

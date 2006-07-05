@@ -11,11 +11,11 @@ import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 
 import static uk.ac.ebi.intact.core.CvContext.CvName;
 import uk.ac.ebi.intact.core.CvContext;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.io.InputStream;
 import java.util.Collection;
@@ -80,8 +80,6 @@ public abstract class UpdateProteinsI {
 
     protected static CvInteractorType proteinType;
 
-    protected IntactHelper helper = null;
-
     protected BioSourceFactory bioSourceFactory;
 
     /**
@@ -110,57 +108,42 @@ public abstract class UpdateProteinsI {
         } catch ( HttpProxyManager.ProxyConfigurationNotFound proxyConfigurationNotFound ) {
             proxyConfigurationNotFound.printStackTrace();
         }
+
+        collectDefaultObject( );
+
+        bioSourceFactory = new BioSourceFactory(  myInstitution );
     }
 
     /**
-     * @param helper    IntactHelper object to access (read/write) the database.
      * @param cacheSize the number of valid biosource to cache during the update process.
      *
      * @throws UpdateException
      */
-    public UpdateProteinsI( IntactHelper helper, int cacheSize ) throws UpdateException {
+    public UpdateProteinsI(  int cacheSize ) throws UpdateException {
         this( true );
-        this.helper = helper;
-        collectDefaultObject( helper );
 
-        bioSourceFactory = new BioSourceFactory( helper, myInstitution, cacheSize );
+
+        bioSourceFactory = new BioSourceFactory( myInstitution, cacheSize );
     }
 
     /**
      * Default constructor which initialize the bioSource cache to default.
      *
-     * @param helper IntactHelper object to access (read/write) the database.
-     *
      * @throws UpdateException
      */
-    public UpdateProteinsI( IntactHelper helper, boolean setOutputOn ) throws UpdateException {
-        this( setOutputOn );
-        this.helper = helper;
-        collectDefaultObject( helper );
-
-        bioSourceFactory = new BioSourceFactory( helper, myInstitution );
-    }
-
-    /**
-     * Default constructor which initialize the bioSource cache to default.
-     *
-     * @param helper IntactHelper object to access (read/write) the database.
-     *
-     * @throws UpdateException
-     */
-    public UpdateProteinsI( IntactHelper helper) throws UpdateException {
-        this( helper, true);
+    public UpdateProteinsI( ) throws UpdateException {
+        this( true);
     }
 
 
     //////////////////////////////////
     // Methods
 
-    private void collectDefaultObject( IntactHelper helper ) {
+    private void collectDefaultObject( ) {
 
         try
         {
-            myInstitution = helper.getInstitution();
+            myInstitution = DaoFactory.getInstitutionDao().getInstitution();
         }
         catch (IntactException e)
         {
@@ -221,17 +204,6 @@ public abstract class UpdateProteinsI {
      */
     public Map getParsingExceptions() {
         return parsingExceptions;
-    }
-
-    /**
-     * Sets the internal helper. This method is used by the editor to set the helper, call necessary methods and close
-     * the helper again (the objective is to keep the scope of the Intact helper to minimum).
-     *
-     * @param helper the Intact helper to set.
-     */
-    public void setIntactHelper( IntactHelper helper ) {
-        this.helper = helper;
-        this.bioSourceFactory.setIntactHelper( helper );
     }
 
     /**
@@ -462,5 +434,5 @@ public abstract class UpdateProteinsI {
      *
      * @param proteins a Collection of protein.
      */
-    public abstract int updateAllProteins( Collection<Protein> proteins ) throws IntactException;
+    public abstract int updateAllProteins( Collection<ProteinImpl> proteins ) throws IntactException;
 }

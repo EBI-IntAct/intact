@@ -9,9 +9,9 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.*;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.util.BioSourceFactory;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -36,7 +36,6 @@ public final class ExperimentDescriptionChecker {
 
 
     public static void check( final ExperimentDescriptionTag experimentDescription,
-                              final IntactHelper helper,
                               final BioSourceFactory bioSourceFactory ) {
 
         final String shortlabel = experimentDescription.getShortlabel();
@@ -44,7 +43,7 @@ public final class ExperimentDescriptionChecker {
             // we check once per shortlabel...
             Experiment experiment = null;
             try {
-                experiment = (Experiment) helper.getObjectByLabel( Experiment.class, shortlabel );
+                experiment = DaoFactory.getExperimentDao().getByShortLabel( shortlabel );
             } catch ( IntactException e ) {
                 MessageHolder.getInstance().addCheckerMessage( new Message( "An error occured while searching for " +
                                                                             "Experiment having the shortlabel: " + shortlabel ) );
@@ -62,34 +61,34 @@ public final class ExperimentDescriptionChecker {
         // We still check the rest of the ExperimentTag object.
 
         final HostOrganismTag hostOrganism = experimentDescription.getHostOrganism();
-        HostOrganismChecker.check( hostOrganism, helper, bioSourceFactory );
+        HostOrganismChecker.check( hostOrganism, bioSourceFactory );
 
         final InteractionDetectionTag interactionDetection = experimentDescription.getInteractionDetection();
-        InteractionDetectionChecker.check( interactionDetection, helper );
+        InteractionDetectionChecker.check( interactionDetection );
 
         final ParticipantDetectionTag participantDetection = experimentDescription.getParticipantDetection();
-        ParticipantDetectionChecker.check( participantDetection, helper );
+        ParticipantDetectionChecker.check( participantDetection );
 
         // bibrefs - primary and secondary.
-        XrefChecker.check( experimentDescription.getBibRef(), helper );
+        XrefChecker.check( experimentDescription.getBibRef() );
         Collection additionalBibRef = experimentDescription.getAdditionalBibRef();
         for ( Iterator iterator = additionalBibRef.iterator(); iterator.hasNext(); ) {
             XrefTag bibRef = (XrefTag) iterator.next();
-            XrefChecker.check( bibRef, helper );
+            XrefChecker.check( bibRef );
         }
 
         // Xrefs
         final Collection xrefs = experimentDescription.getXrefs();
         for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
             XrefTag xref = (XrefTag) iterator.next();
-            XrefChecker.check( xref, helper );
+            XrefChecker.check( xref );
         }
 
         // annotations
         final Collection annotations = experimentDescription.getAnnotations();
         for ( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
             AnnotationTag annotation = (AnnotationTag) iterator.next();
-            AnnotationChecker.check( annotation, helper );
+            AnnotationChecker.check( annotation );
         }
     }
 }

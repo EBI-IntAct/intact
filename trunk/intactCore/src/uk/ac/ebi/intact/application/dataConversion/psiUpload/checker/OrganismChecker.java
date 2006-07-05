@@ -8,7 +8,6 @@ package uk.ac.ebi.intact.application.dataConversion.psiUpload.checker;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.CellTypeTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.OrganismTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.TissueTag;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.util.BioSourceFactory;
 
@@ -32,12 +31,11 @@ public final class OrganismChecker extends AbstractOrganismChecker {
     }
 
     public static void check( final OrganismTag organism,
-                              final IntactHelper helper,
                               final BioSourceFactory bioSourceFactory ) {
 
         final String taxid = organism.getTaxId();
         final CellTypeTag cellType = organism.getCellType();
         final TissueTag tissue = organism.getTissue();
-        check( taxid, cellType, tissue, helper, bioSourceFactory );
+        check( taxid, cellType, tissue, bioSourceFactory );
     }
 }

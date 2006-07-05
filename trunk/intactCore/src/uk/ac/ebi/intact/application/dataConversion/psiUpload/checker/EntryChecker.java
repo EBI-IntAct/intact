@@ -11,7 +11,6 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.ExperimentDes
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.InteractionTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.ProteinInteractorTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.CommandLineOptions;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.util.BioSourceFactory;
 import uk.ac.ebi.intact.util.UpdateProteinsI;
 
@@ -28,7 +27,6 @@ import java.util.Map;
 public final class EntryChecker {
 
     public static void check( final EntryTag entry,
-                              final IntactHelper helper,
                               final UpdateProteinsI proteinFactory,
                               final BioSourceFactory bioSourceFactory ) {
 
@@ -42,7 +40,7 @@ public final class EntryChecker {
             final String key = (String) iterator.next();
             final ExperimentDescriptionTag experimentDescription =
                     (ExperimentDescriptionTag) experimentDescriptions.get( key );
-            ExperimentDescriptionChecker.check( experimentDescription, helper, bioSourceFactory );
+            ExperimentDescriptionChecker.check( experimentDescription, bioSourceFactory );
         }
 
         // According to the object model this should not be needed, that test will be done at the interaction level.
@@ -72,7 +70,7 @@ public final class EntryChecker {
                 monitor.setStatus( "Checking " + uniprotID + " (" + taxid + ")" );
             }
 
-            ProteinInteractorChecker.check( proteinInteractor, helper, proteinFactory, bioSourceFactory );
+            ProteinInteractorChecker.check( proteinInteractor, proteinFactory, bioSourceFactory );
 
             if ( guiEnabled ) {
                 monitor.updateProteinProcessedCound( ++current );
@@ -100,7 +98,7 @@ public final class EntryChecker {
                 monitor.setStatus( "Checking " + name );
                 monitor.updateProteinProcessedCound( ++current );
             }
-            InteractionChecker.check( interaction, helper, proteinFactory, bioSourceFactory, monitor );
+            InteractionChecker.check( interaction, proteinFactory, bioSourceFactory, monitor );
         }
         if ( displayProgressBar ) {
             monitor.setStatus( "finished..." );
