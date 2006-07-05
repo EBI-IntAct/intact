@@ -99,4 +99,9 @@ public class IntactObjectDaoImpl<T extends IntactObject> extends HibernateBaseDa
         return (getSession().get(getEntityClass(), obj.getAc()) != null);
     }
 
+    public void refresh(T objToRefresh)
+    {
+         getSession().refresh(objToRefresh);
+    }
+
 }

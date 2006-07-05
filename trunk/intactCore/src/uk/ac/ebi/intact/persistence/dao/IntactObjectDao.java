@@ -38,4 +38,6 @@ public interface IntactObjectDao<T extends IntactObject>
     void saveOrUpdate(T objToPersist);
 
     boolean exists(T obj);
+
+    void refresh(T objToRefresh);
 }
