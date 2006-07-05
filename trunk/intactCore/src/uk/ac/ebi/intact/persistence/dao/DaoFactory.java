@@ -5,13 +5,29 @@
  */
 package uk.ac.ebi.intact.persistence.dao;
 
-import uk.ac.ebi.intact.model.IntactObject;
+import org.hibernate.Session;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.CvObject;
+import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.model.InteractorImpl;
+import uk.ac.ebi.intact.persistence.dao.impl.AliasDaoImpl;
+import uk.ac.ebi.intact.persistence.dao.impl.AnnotatedObjectDaoImpl;
+import uk.ac.ebi.intact.persistence.dao.impl.AnnotationDaoImpl;
+import uk.ac.ebi.intact.persistence.dao.impl.BioSourceDaoImpl;
+import uk.ac.ebi.intact.persistence.dao.impl.ComponentDaoImpl;
+import uk.ac.ebi.intact.persistence.dao.impl.CvObjectDaoImpl;
+import uk.ac.ebi.intact.persistence.dao.impl.ExperimentDaoImpl;
+import uk.ac.ebi.intact.persistence.dao.impl.FeatureDaoImpl;
+import uk.ac.ebi.intact.persistence.dao.impl.HibernateBaseDaoImpl;
+import uk.ac.ebi.intact.persistence.dao.impl.InstitutionDaoImpl;
+import uk.ac.ebi.intact.persistence.dao.impl.IntactObjectDaoImpl;
+import uk.ac.ebi.intact.persistence.dao.impl.InteractionDaoImpl;
+import uk.ac.ebi.intact.persistence.dao.impl.InteractorDaoImpl;
+import uk.ac.ebi.intact.persistence.dao.impl.ProteinDaoImpl;
+import uk.ac.ebi.intact.persistence.dao.impl.RangeDaoImpl;
+import uk.ac.ebi.intact.persistence.dao.impl.SearchItemDaoImpl;
+import uk.ac.ebi.intact.persistence.dao.impl.XrefDaoImpl;
 import uk.ac.ebi.intact.persistence.util.HibernateUtil;
-import uk.ac.ebi.intact.persistence.dao.impl.*;
-import org.hibernate.Session;
 
 import java.sql.Connection;
 
@@ -63,14 +79,14 @@ public class DaoFactory
         return new CvObjectDaoImpl<T>(entityType, getCurrentSession());
     }
 
-    public static FeatureDao getExperimentDao()
-    {
-        return new FeatureDaoImpl(getCurrentSession());
-    }
-
-    public static ExperimentDao getFeatureDao()
+    public static ExperimentDao getExperimentDao()
     {
         return new ExperimentDaoImpl(getCurrentSession());
+    }
+
+    public static FeatureDao getFeatureDao()
+    {
+        return new FeatureDaoImpl(getCurrentSession());
     }
 
     public static InstitutionDao getInstitutionDao()
