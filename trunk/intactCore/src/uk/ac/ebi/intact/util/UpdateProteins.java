@@ -849,7 +849,7 @@ public class UpdateProteins extends UpdateProteinsI {
                     } // else
 
                     if ( localTransactionControl ) {
-                        tx = HibernateUtil.getSessionFactory().openSession().beginTransaction();
+                        tx = HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
                     }
 
                     if ( doCreate ) {
@@ -896,7 +896,7 @@ public class UpdateProteins extends UpdateProteinsI {
                         logInfo( "A protein exists for that taxid (" + sptrTaxid + "), try to update" );
 
                         if ( localTransactionControl ) {
-                            tx = HibernateUtil.getSessionFactory().openSession().beginTransaction();
+                            tx = HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
                         }
 
                         boolean forceUpdate = false;
@@ -1053,7 +1053,7 @@ public class UpdateProteins extends UpdateProteinsI {
                                          * By using a Database transaction (JDBC_TX) it is written when it's
                                          * asked for and everything is deleted if something goes wrong.
                                          */
-                                        tx = HibernateUtil.getSessionFactory().openSession().beginTransaction();
+                                        tx = HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
                                     }
 
                                     if ( updateExistingSpliceVariant( isoForm,
@@ -1085,7 +1085,7 @@ public class UpdateProteins extends UpdateProteinsI {
 
                                 if ( localTransactionControl ) {
                                     // See remarks about database transaction above.
-                                    tx = HibernateUtil.getSessionFactory().openSession().beginTransaction();
+                                    tx = HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
                                 }
                                 if ( ( spliceVariant = createNewSpliceVariant( isoForm, spliceVariantID, master,
                                                                                sptrEntry, sptrBioSource,
@@ -2528,7 +2528,7 @@ public class UpdateProteins extends UpdateProteinsI {
         Collection<ProteinImpl> newProteins = DaoFactory.getProteinDao().getByXrefLike(anAc);
 
         if ( localTransactionControl ) {
-            tx = HibernateUtil.getSessionFactory().openSession().beginTransaction();
+            tx = HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
         }
 
         // Get or create valid biosource from taxid
