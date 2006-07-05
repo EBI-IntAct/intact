@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE web-app
+        PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+        "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+
+    <description>
+        StatisticView is a Web application made to display:
+        * a table with the main statistics stored in the local IntAct Database:
+        - number of proteins
+        - number of interactions
+        - number of interactions with 2 interactors
+        - number of interactions with more than 2 interactors
+        - number of experiments
+        - number of terms provided by the controlled vocabulary
+        * 4 graphics to show the evolution of these amount of data in the database
+    </description>
+
+
+    <!--  NB XML config files for the DB MUST be referred to here relative
+    to the WEB-INF/classes directory as that is where the class loader
+    will start to look. The leading "/" MUST be present if the config
+    files are in a sub-directory of WEB-INF/classes, otherwise
+    the class loader will only check in the package in which the servlet
+    instance resides (which may not be the same as the config file
+    location....). The exception to this rule seems to be the struts-config.xml
+    file....
+    -->
+
+    <context-param>
+        <param-name>mappingfile</param-name>
+        <param-value>/config/repository.xml</param-value>
+    </context-param>
+
+    <!-- Where configuration files are stored. -->
+    <context-param>
+        <param-name>configdir</param-name>
+        <param-value>/config/</param-value>
+    </context-param>
+
+    <!--  Class name of the data source object to be used    -->
+    <context-param>
+        <param-name>datasource</param-name>
+        <param-value>uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource</param-value>
+    </context-param>
+
+    <!-- Where the log file is stored -->
+    <context-param>
+        <param-name>logfile</param-name>
+        <param-value>intact_log.txt</param-value>
+    </context-param>
+
+    <!-- =================================================================== -->
+
+    <!-- Init servlet for the logging facilities -->
+    <servlet>
+        <servlet-name>logging-init</servlet-name>
+        <servlet-class>uk.ac.ebi.intact.application.commons.util.LoggingInitServlet</servlet-class>
+
+        <init-param>
+            <param-name>log4j-init-file</param-name>
+            <param-value>/WEB-INF/classes/log4j.properties</param-value>
+        </init-param>
+
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <!-- =============================== Action Servlet Configuration ==================================== -->
+
+    <servlet>
+
+        <servlet-name>action</servlet-name>
+        <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
+        <init-param>
+            <!-- The name of the Struts property file, '.properties' is automatically added -->
+            <param-name>application</param-name>
+            <param-value>/config/Struts</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>config</param-name>
+            <param-value>/WEB-INF/struts-config.xml</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>debug</param-name>
+            <param-value>2</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>detail</param-name>
+            <param-value>2</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>validate</param-name>
+            <param-value>true</param-value>
+        </init-param>
+
+        <load-on-startup>1</load-on-startup>
+
+    </servlet>
+
+    <!-- =================================================================== -->
+
+
+    <servlet>
+        <servlet-name>DisplayChart</servlet-name>
+        <servlet-class>org.jfree.chart.servlet.DisplayChart</servlet-class>
+    </servlet>
+
+
+    <!--  Servlet mapping  -->
+
+    <servlet-mapping>
+        <servlet-name>DisplayChart</servlet-name>
+        <url-pattern>/servlet/DisplayChart</url-pattern>
+    </servlet-mapping>
+
+
+    <!-- =================================================================== -->
+
+    <!-- Action Servlet Mapping with servlets adding by Sophie on 03/02 and one welcome file "index.jsp"-->
+    <servlet-mapping>
+        <servlet-name>action</servlet-name>
+        <url-pattern>/do/*</url-pattern>
+    </servlet-mapping>
+
+
+    <session-config>
+        <session-timeout>2</session-timeout>
+    </session-config>
+
+    <!-- =================================================================== -->
+
+    <!-- The Welcome File List --><!-- it's the first page where an user is sent when he uses the URL !-->
+    <welcome-file-list>
+        <welcome-file>init.jsp</welcome-file>
+    </welcome-file-list>
+
+</web-app>
