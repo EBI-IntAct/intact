@@ -87,7 +87,7 @@ public abstract class UpdateProteinsI {
      * transactions are initiated, control is left with the calling class. This can be used e.g. to have transactions
      * span the insertion of all proteins of an entire complex. Default is true.
      */
-    protected static boolean localTransactionControl = true;
+    protected static boolean localTransactionControl = false;
 
     // Keeps eventual parsing error while the processing is carried on
     protected Map<Integer,Exception> parsingExceptions = new HashMap<Integer,Exception>();

@@ -129,7 +129,7 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
-
+        <!--
         <repository>
             <id>javanet</id>
             <url>http://maven-repository.dev.java.net/repository/</url>
@@ -141,7 +141,7 @@
             </releases>
             <layout>legacy</layout>
         </repository>
-
+        -->
         <repository>
             <id>codehaus</id>
             <url>http://repository.codehaus.org/</url>
