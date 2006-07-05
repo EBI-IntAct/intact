@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+/**
+ * Copyright (c) 2006 The European Bioinformatics Institute, and others.
+ * All rights reserved.
+ */
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>uk.ac.ebi.intact</groupId>
+    <artifactId>intact-build</artifactId>
+    <packaging>pom</packaging>
+    <version>2.0-SNAPSHOT</version>
+    <name>Build Project</name>
+    <url>http://www.ebi.ac.uk/intact</url>
+    <description>Base build file</description>
+
+    <scm>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/myfaces/current</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/myfaces/current</developerConnection>
+        <url>http://svn.apache.org/viewcvs.cgi/myfaces/current</url>
+    </scm>
+
+    <modules>
+        <module>maven</module>
+        <module>intact-core</module>
+        <module>app-commons</module>
+        <module>sanity-checker</module>
+        <module>search-engine</module>
+        <module>search-app</module>
+        <module>maven-editortopics-plugin</module>
+        <module>editor-app</module>
+        <module>data-conversion</module>
+        <module>graph2mif-server</module>
+        <module>graph2mif-client</module>
+        <module>tulip-client</module>
+        <module>hierarch-view-app</module>
+        <module>statistic-view</module>
+        <module>mine-app</module>
+        <module>predict-app</module>
+    </modules>
+
+    <build>
+        <defaultGoal>install</defaultGoal>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>legacy</id>
+            <modules>
+                <module>search2-app</module>
+                <module>intseq</module>
+            </modules>
+        </profile>
+    </profiles>
+
+
+</project>
