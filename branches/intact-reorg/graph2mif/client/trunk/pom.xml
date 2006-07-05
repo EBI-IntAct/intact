@@ -39,7 +39,7 @@
                <version>0.4-SNAPSHOT</version>
                <configuration>
                   <urls>
-                      <url>src/main/wsdl/graph2mif.wsdl</url>
+                      <url>${project.basedir}/src/main/wsdl/graph2mif.wsdl</url>
                   </urls>
                   <packageSpace>uk.ac.ebi.intact.application.graph2mif.client</packageSpace>
                   <testCases>false</testCases>

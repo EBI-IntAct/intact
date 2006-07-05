@@ -229,7 +229,7 @@ public class BioSource extends AnnotatedObjectImpl implements Editable {
 
         //check the taxId...
         if ( taxId != null ) {
-            return ( taxId.equals( bioSource.taxId ) );
+            return ( taxId.equals( bioSource.getTaxId() ) );
         }
 
         return bioSource.taxId == null;
