@@ -30,4 +30,12 @@ public interface IntactObjectDao<T extends IntactObject>
     Collection<T> getColByPropertyName(String propertyName, String value);
 
     void update(T objToUpdate);
+
+    void persist(T objToPersist);
+
+    void delete(T objToDelete);
+
+    void saveOrUpdate(T objToPersist);
+
+    boolean exists(T obj);
 }

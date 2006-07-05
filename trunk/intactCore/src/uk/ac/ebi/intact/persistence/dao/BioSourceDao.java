@@ -18,5 +18,7 @@ import java.util.Collection;
  */
 public interface BioSourceDao extends AnnotatedObjectDao<BioSource> {
 
+    BioSource getByTaxonIdUnique(String taxonId);
+
     Collection<BioSource> getByTaxonId(String taxonId);
 }

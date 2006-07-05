@@ -11,6 +11,8 @@ import java.util.Collection;
 import java.util.List;
 
 import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.CvXrefQualifier;
 
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
@@ -30,4 +32,8 @@ public interface AnnotatedObjectDao<T extends AnnotatedObject> extends IntactObj
     T getByXref(String primaryId);
 
     List<T> getByXrefLike(String primaryId);
+
+    List<T> getByXrefLike(CvDatabase database, String primaryId);
+
+    List<T> getByXrefLike(CvDatabase database, CvXrefQualifier qualifier, String primaryId);
 }

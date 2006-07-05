@@ -29,6 +29,23 @@ public class BioSourceDaoImpl extends AnnotatedObjectDaoImpl<BioSource> implemen
     }
 
 
+    public BioSource getByTaxonIdUnique(String taxonId)
+    {
+        Collection<BioSource> biosources = getByTaxonId(taxonId);
+
+        // Get the biosource with null values for cell type and tisse
+        //  (there is only one of them exists).
+        for (BioSource biosrc : biosources)
+        {
+            if ((biosrc.getCvCellType() == null) && (biosrc.getCvTissue() == null))
+            {
+                return biosrc;
+            }
+        }
+        // None found.
+        return null;
+    }
+
     public Collection<BioSource> getByTaxonId(String taxonId)
     {
         return getSession().createCriteria(BioSource.class)

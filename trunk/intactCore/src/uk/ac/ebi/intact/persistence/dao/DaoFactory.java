@@ -31,7 +31,7 @@ public class DaoFactory
         return new AliasDaoImpl(getCurrentSession());
     }
 
-    public static <T extends AnnotatedObject> AnnotatedObjectDaoImpl<T> getAnnotatedObjectDao(Class<T> entityType)
+    public static <T extends AnnotatedObject> AnnotatedObjectDao<T> getAnnotatedObjectDao(Class<T> entityType)
     {
         HibernateBaseDaoImpl.validateEntity(entityType);
 
@@ -66,6 +66,11 @@ public class DaoFactory
     public static ExperimentDao getExperimentDao()
     {
         return new ExperimentDaoImpl(getCurrentSession());
+    }
+
+    public static InstitutionDao getInstitutionDao()
+    {
+        return new InstitutionDaoImpl(getCurrentSession());
     }
 
     public static <T extends IntactObject> IntactObjectDao<T> getIntactObjectDao(Class<T> entityType)

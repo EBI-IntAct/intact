@@ -79,4 +79,24 @@ public class IntactObjectDaoImpl<T extends IntactObject> extends HibernateBaseDa
        getSession().update(objToUpdate);
     }
 
+    public void persist(T objToPersist)
+    {
+       getSession().persist(objToPersist);
+    }
+
+    public void delete(T objToDelete)
+    {
+        getSession().delete(objToDelete);
+    }
+
+    public void saveOrUpdate(T objToPersist)
+    {
+        getSession().saveOrUpdate(objToPersist);
+    }
+
+    public boolean exists(T obj)
+    {
+        return (getSession().get(getEntityClass(), obj.getAc()) != null);
+    }
+
 }
