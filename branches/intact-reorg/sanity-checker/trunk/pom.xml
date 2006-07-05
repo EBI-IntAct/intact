@@ -25,10 +25,10 @@
     <name>Sanity Checker</name>
     <description>Library to do sanity checks on intact</description>
 
-     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/tags/intact-reorg-base/sanity-checker/trunk</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/tags/intact-reorg-base/sanity-checker/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.py/intact/tags/intact-reorg-base/sanity-checker/trunk</url>
+    <scm>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/branches/intact-reorg/sanity-checker/trunk</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/branches/intact-reorg/sanity-checker/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/branches/intact-reorg/sanity-checker/trunk/</url>
     </scm>
 
     <dependencies>

@@ -13,6 +13,36 @@
     <description>This is a master POM that is meant to be used by the various Intact modules. It contains information
         that is common to all projects.</description>
 
+    <scm>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/branches/intact-reorg/maven/trunk/master-pom</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/branches/intact-reorg/maven/trunk/master-pom</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/branches/intact-reorg/maven/trunk/master-pom/</url>
+    </scm>
+
+    <ciManagement>
+        <system>continuum</system>
+        <notifiers>
+            <notifier>
+                <type>mail</type>
+                <configuration>
+                    <address>skerrien@ebi.ac.uk</address>
+                </configuration>
+            </notifier>
+            <notifier>
+                <type>mail</type>
+                <configuration>
+                    <address>cleroy@ebi.ac.uk</address>
+                </configuration>
+            </notifier>
+            <notifier>
+                <type>mail</type>
+                <configuration>
+                    <address>brunoaranda@gmail.com</address>
+                </configuration>
+            </notifier>
+        </notifiers>
+    </ciManagement>
+
     <developers>
         <developer>
             <id>skerrien</id>

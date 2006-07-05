@@ -27,10 +27,9 @@
     <description>Intact Core, which contains the base classes for all intact artifacts</description>
 
     <scm>
-        <connection>scm:cvs:pserver:anonymous:intact.cvs.sourceforge.net:/cvsroot/intact:intactCore</connection>
-        <developerConnection>
-            scm:svn:ext:username@intact.cvs.sourceforge.net:/cvsroot/intact:intactCore</developerConnection>
-        <url>http://cvs.sourceforge.net/viewcvs.py/intact</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/branches/intact-reorg/intact-core/trunk</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/branches/intact-reorg/intact-core/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/branches/intact-reorg/intact-core/trunk/</url>
     </scm>
 
     <build>
