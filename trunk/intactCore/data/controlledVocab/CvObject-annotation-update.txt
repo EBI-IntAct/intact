@@ -165,3 +165,10 @@ peptide sequence database	peptide sequence database	uk.ac.ebi.intact.model.CvDat
 pride	pride	uk.ac.ebi.intact.model.CvDatabase	MI:0738	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
 peptide atlas	peptide atlas	uk.ac.ebi.intact.model.CvDatabase	MI:0741	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
 gpm	gpm	uk.ac.ebi.intact.model.CvDatabase	MI:0742	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
+dna binding domain tag	dna binding domain tag	uk.ac.ebi.intact.model.CvFeatureType	MI:0688	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
+activation domain tag	activation domain tag	uk.ac.ebi.intact.model.CvFeatureType	MI:0689	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
+gal4 activation domain	gal4 activation domain	uk.ac.ebi.intact.model.CvFeatureType	MI:0690	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
+vp16 activation domain	vp16 activation domain	uk.ac.ebi.intact.model.CvFeatureType	MI:0691	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
+b42 activation domain	b42 activation domain	uk.ac.ebi.intact.model.CvFeatureType	MI:0692	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
+gal4 dna binding domain	gal4 dna binding domain	uk.ac.ebi.intact.model.CvFeatureType	MI:0693	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
+lexa dna binding domain	lexa dna binding domain	uk.ac.ebi.intact.model.CvFeatureType	MI:0694	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
