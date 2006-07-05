@@ -1,19 +1,19 @@
 #!/bin/bash
 
 SOURCE_BASE=~/projects/intact-clean
-DEST_BASE=~/projects/intact-reorg
+DEST_BASE=~/projects/intact-reorg-new
 
 INTACT_CORE=Y
-APP_COMMONS=N
-SANITY_CHECKER=N
-SEARCH_ENGINE=N
+APP_COMMONS=Y
+SANITY_CHECKER=Y
+SEARCH_ENGINE=Y
 SEARCH_APP=N
-EDITOR_APP=N
-MINE_APP=N
-PREDICT_APP=N
-DATA_CONVERSION=N
-GRAPH2MIF_SERVER=N
-INTACT_SITE=N
+EDITOR_APP=Y
+MINE_APP=Y
+PREDICT_APP=Y
+DATA_CONVERSION=Y
+GRAPH2MIF_SERVER=Y
+INTACT_SITE=Y
 HIERARCH_VIEW=Y
 
 INTACT_PKG=uk/ac/ebi/intact
@@ -131,7 +131,8 @@ rm -rf $IC_DEST_SRC/search3
 rm -rf $IC_DEST_SRC/webapp
 svn update $IC_DEST_SRC/webapp
 svn cp $IC_SOURCE_SRC $IC_DEST_SRC
-mv $IC_DEST_SRC/search3 $IC_DEST_SRC/webapp
+svn commit -m "Committed by the migration script" $IC_DEST_SRC/search3
+svn mv $IC_DEST_SRC/search3 $IC_DEST_SRC/webapp
 
 for i in `find $SOURCE_BASE/application/tld/*.tld`; do
   svn cp $i $IC_DEST_SRC/webapp/WEB-INF/tld
@@ -181,7 +182,8 @@ rm -rf $IC_DEST_SRC/editor
 rm -rf $IC_DEST_SRC/webapp
 svn update $IC_DEST_SRC/webapp
 svn cp $IC_SOURCE_SRC $IC_DEST_SRC
-mv $IC_DEST_SRC/editor $IC_DEST_SRC/webapp
+svn commit -m "Committed by the migration script" $IC_DEST_SRC/editor
+svn mv $IC_DEST_SRC/editor $IC_DEST_SRC/webapp
 
 for i in `find $SOURCE_BASE/application/tld/*.tld`; do
   svn cp $i $IC_DEST_SRC/webapp/WEB-INF/tld
@@ -252,7 +254,8 @@ rm -rf $IC_DEST_SRC/$NAME
 rm -rf $IC_DEST_SRC/webapp
 svn update $IC_DEST_SRC/webapp
 svn cp $IC_SOURCE_SRC $IC_DEST_SRC
-mv $IC_DEST_SRC/$NAME $IC_DEST_SRC/webapp
+svn commit -m "Committed by the migration script" $IC_DEST_SRC/$NAME
+svn mv $IC_DEST_SRC/$NAME $IC_DEST_SRC/webapp
 
 for i in `find $SOURCE_BASE/application/tld/*.tld`; do
   svn cp $i $IC_DEST_SRC/webapp/WEB-INF/tld
@@ -319,7 +322,8 @@ rm -rf $IC_DEST_SRC/$NAME
 rm -rf $IC_DEST_SRC/webapp
 svn update $IC_DEST_SRC/webapp
 svn cp $IC_SOURCE_SRC $IC_DEST_SRC
-mv $IC_DEST_SRC/$NAME $IC_DEST_SRC/webapp
+svn commit -m "Committed by the migration script" $IC_DEST_SRC/$NAME
+svn mv $IC_DEST_SRC/$NAME $IC_DEST_SRC/webapp
 
 for i in `find $SOURCE_BASE/application/tld/*.tld`; do
   svn cp $i $IC_DEST_SRC/webapp/WEB-INF/tld
@@ -456,7 +460,8 @@ rm -rf $IC_DEST_SRC/intact
 rm -rf $IC_DEST_SRC/webapp
 svn update $IC_DEST_SRC/webapp
 svn cp $IC_SOURCE_SRC $IC_DEST_SRC
-mv $IC_DEST_SRC/intact $IC_DEST_SRC/webapp
+svn commit -m "Committed by the migration script" $IC_DEST_SRC/intact
+svn mv $IC_DEST_SRC/intact $IC_DEST_SRC/webapp
 
 fi
 
@@ -494,7 +499,8 @@ rm -rf $IC_DEST_SRC/$NAME
 rm -rf $IC_DEST_SRC/webapp
 svn update $IC_DEST_SRC/webapp
 svn cp $IC_SOURCE_SRC $IC_DEST_SRC
-mv $IC_DEST_SRC/$NAME $IC_DEST_SRC/webapp
+svn commit -m "Committed by the migration script" $IC_DEST_SRC/$NAME
+svn mv $IC_DEST_SRC/$NAME $IC_DEST_SRC/webapp
 
 for i in `find $SOURCE_BASE/application/tld/*.tld`; do
   svn cp $i $IC_DEST_SRC/webapp/WEB-INF/tld
