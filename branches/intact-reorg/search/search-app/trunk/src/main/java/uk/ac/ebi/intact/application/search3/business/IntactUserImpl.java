@@ -6,11 +6,8 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search3.business;
 
-import org.apache.ojb.broker.accesslayer.LookupException;
 import uk.ac.ebi.intact.business.IntactException;
 
-import uk.ac.ebi.intact.persistence.DAOFactory;
-import uk.ac.ebi.intact.persistence.DAOSource;
 import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.model.IntactObject;
