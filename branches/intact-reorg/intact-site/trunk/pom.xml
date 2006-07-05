@@ -24,9 +24,9 @@
     </build>
 
     <scm>
-        <connection>scm:cvs:pserver:anonymous:cvs.sourceforge.net:/cvsroot/intact:intactCore</connection>
-        <developerConnection>scm:svn:ext:username@cvs.sourceforge.net:/cvsroot/intact:intactCore</developerConnection>
-        <url>http://intact.cvs.sourceforge.net/viewcvs.py/intact</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/branches/intact-reorg/intact-site/trunk</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/branches/intact-reorg/intact-site/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/branches/intact-reorg/intact-site/trunk/</url>
     </scm>
 
 </project>

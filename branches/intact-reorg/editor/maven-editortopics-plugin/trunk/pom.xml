@@ -17,6 +17,12 @@
         This plugin generates a properties file with the editor topics
     </description>
 
+    <scm>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/branches/intact-reorg/editor/maven-editortopics-plugin/trunk</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/branches/intact-reorg/editor/maven-editortopics-plugin/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/branches/intact-reorg/editor/maven-editortopics-plugin/trunk/</url>
+    </scm>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.maven</groupId>
