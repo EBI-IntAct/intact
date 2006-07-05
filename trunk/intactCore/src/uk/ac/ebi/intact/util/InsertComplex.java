@@ -452,7 +452,7 @@ public final class InsertComplex {
                 //first make sure there is a BioSource that is persistent....
                 //NB this must be done in a seperate TX as it is needed later...
 
-                Transaction tx = HibernateUtil.getSessionFactory().openSession().beginTransaction();
+                Transaction tx = HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
                 DaoFactory.getBioSourceDao().persist( bioSource );
                 tx.commit();
             } catch ( Exception ie ) {
