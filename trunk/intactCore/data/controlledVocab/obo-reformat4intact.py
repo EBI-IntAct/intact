@@ -40,21 +40,24 @@ for k in range(0,len(inputt)) :
                 xref_analog.append(xrefa)
         else :
             defi=text
+        defRefs=[]
         defRefs=pezzi[1][0:-1].split(',')
-        newDefRef=''
+        newDefRefs=''
         i=0
         resid_count=pezzi[1].count('RESID')
         
         if defRefs[0][0:5] == 'PMID:' :
             newDefRefs=defRefs[0]+' "primary-reference"' # assign to the FIRST PMID ref the qualifier 'primary-reference'
             i=1
-        elif defRefs[0][0:6] == 'RESID:' and resid_count == 1:              
+        elif (defRefs[0][0:3] == 'GO:') or (defRefs[0][0:3] == 'SO:') or (defRefs[0][0:6] == 'RESID:'): # and resid_count == 1) :              
             newDefRefs=defRefs[0]+' "identity"'
             i=1
-            if len(defRefs) > i :
-                if defRefs[1][0:5] == 'PMID:' :
-                    newDefRefs=', ' +defRefs[1]+' "primary-reference"' # in ptm terms assign to the first PMID ref the qualifier 'primary-reference'
-                    i=2       
+            print pezzi[1]
+            print defRefs[1]
+            if defRefs[1][1:6] == 'PMID:' :
+                
+                newDefRefs=newDefRefs+', ' +defRefs[1][1:]+' "primary-reference"' # in ptm terms assign to the first PMID ref the qualifier 'primary-reference'
+                i=2       
         if len(defRefs) > i :            
             for each in defRefs[i:] :
                 if each[0] == ' ':
@@ -79,14 +82,16 @@ for k in range(0,len(inputt)) :
        
         newDefRefs=newDefRefs.replace('PMID:','pubmed:') #replace PMID tag with pubmed the short label (exact synonym) of pubmed term in CV database
         newDefRefs=newDefRefs.replace('RESID:','resid:') #replace RESID tag with resid the short label (exact synonym) of resid term in CV database
-        newDefRefs=newDefRefs.replace('GO:','go:GO:')# add go short label to go xref
-        newDefRefs=newDefRefs.replace('SO:','so:SO:')# add so short label to so xref
+        newDefRefs=newDefRefs.replace('GO:0','go:GO:0')# add go short label to go xref
+        newDefRefs=newDefRefs.replace('SO:0','so:SO:0')# add so short label to so xref
+       
         output.write('def: '+defi+'" ['+newDefRefs+']\n')
         if xref_analog != [] : 
             for element in xref_analog :
                 output.write(element+'\n')
         printFlag = 1
-        
+        newDefRefs=''
+        defRefs=[]
     elif line[0:9] == 'comment: ':     
         output.write('xref_analog: comment:'+line[9:]+ ' "ANNOTATION"'+'\n')      
     elif line[0:9] == 'synonym: ' :
@@ -94,7 +99,7 @@ for k in range(0,len(inputt)) :
     elif line[0:34] == 'xref_analog: id-validation-regexp:' :
         output.write('xref_analog: id-validation-regexp:'+line[34:-1]+ '" "ANNOTATION"'+'\n')
     elif line[0:25] == 'xref_analog: search-url: ' :
-        output.write('xref_analog: search-url: '+line[25:-1]+ '" "ANNOTATION"'+'\n')
+        output.write('xref_analog: search-url: '+line[26:-2]+ ' "ANNOTATION"'+'\n')
     elif line[0:9] == '[Typedef]':  # end of obo file definition of relationship 'part_of' should not be modified
         for j in range(k,len(inputt)) :
             output.write(inputt[j])
@@ -102,4 +107,6 @@ for k in range(0,len(inputt)) :
     elif printFlag == 1 :
         output.write(line+'\n')
         printFlag = 1
+        newDefRefs=''
+        defRefs=[]
          
