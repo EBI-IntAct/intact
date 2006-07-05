@@ -13,6 +13,8 @@ import java.util.Collection;
 import java.util.List;
 
 import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
 
 /**
@@ -63,6 +65,24 @@ public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObj
         return getSession().createCriteria(getEntityClass())
                 .createCriteria("xrefs", "xref")
                 .add(Restrictions.like("xref.primaryId", primaryId)).list();
+    }
+
+    public List<T> getByXrefLike(CvDatabase database, String primaryId)
+    {
+        return getSession().createCriteria(getEntityClass())
+                .createCriteria("xrefs", "xref")
+                .add(Restrictions.like("xref.primaryId", primaryId))
+                .add(Restrictions.eq("xref.cvDatabase", database)).list();
+    }
+
+    public List<T> getByXrefLike(CvDatabase database, CvXrefQualifier qualifier, String primaryId)
+    {
+        return getSession().createCriteria(getEntityClass())
+                .createCriteria("xrefs", "xref")
+                .add(Restrictions.like("xref.primaryId", primaryId))
+                .add(Restrictions.eq("xref.cvDatabase", database))
+                .add(Restrictions.eq("xref.cvXrefQualifier", qualifier)).list();
+
     }
 
 
