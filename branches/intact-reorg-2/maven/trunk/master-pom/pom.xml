@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>uk.ac.ebi.intact.maven</groupId>
+    <artifactId>intact-master</artifactId>
+    <packaging>pom</packaging>
+    <name>Master POM</name>
+    <version>1.0-SNAPSHOT</version>
+    <description>This is a master POM that is meant to be used by the various Intact modules. It contains information
+        that is common to all projects.</description>
+
+    <developers>
+        <developer>
+            <id>skerrien</id>
+            <name>Sam Kerrien</name>
+            <email>skerrien@ebi.ac.uk</email>
+            <organization>EBI</organization>
+            <timezone>0</timezone>
+        </developer>
+        <developer>
+            <id>cleroy</id>
+            <name>Catherine Leroy</name>
+            <email>cleroy@ebi.ac.uk</email>
+            <organization>EBI</organization>
+            <timezone>0</timezone>
+        </developer>
+        <developer>
+            <id>baranda</id>
+            <name>Bruno Aranda</name>
+            <email>baranda@ebi.ac.uk</email>
+            <organization>EBI</organization>
+            <timezone>0</timezone>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <!--
+    <scm>
+      <connection>scm:svn:http://svn.apache.org/repos/asf/myfaces/maven/trunk/master-pom</connection>
+      <developerConnection>scm:svn:https://svn.apache.org/repos/asf/myfaces/maven/trunk/master-pom</developerConnection>
+      <url>http://svn.apache.org/viewcvs.cgi/myfaces/maven/trunk/master-pom</url>
+    </scm>
+    -->
+
+    <organization>
+        <name>European Bioinformatics Institute, EBI</name>
+        <url>http://www.ebi.ac.uk/</url>
+    </organization>
+
+    <build>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ssh-external</artifactId>
+                <version>1.0-alpha-5</version>
+            </extension>
+        </extensions>
+        <defaultGoal>install</defaultGoal>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-idea-plugin</artifactId>
+                    <version>2.0-beta-2-SNAPSHOT</version>
+                    <configuration>
+                        <jdkLevel>1.5</jdkLevel>
+                        <useClassifiers>true</useClassifiers>
+                        <linkModules>true</linkModules>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                    <excludes>
+                        <exclude>**/test/**/*.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <!--
+            <plugin>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>2.0-SNAPSHOT</version>
+            </plugin>
+            -->
+
+        </plugins>
+
+    </build>
+
+    <repositories>
+
+        <repository>
+            <id>ebi-repo</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+         <repository>
+            <id>ebi-repo-snapshots</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+
+        <repository>
+            <id>javanet</id>
+            <url>http://maven-repository.dev.java.net/repository/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <layout>legacy</layout>
+        </repository>
+
+        <repository>
+            <id>codehaus</id>
+            <url>http://repository.codehaus.org/</url>
+            <layout>default</layout>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>ebi-repo</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </pluginRepository>
+
+        <pluginRepository>
+            <id>codehaus-plugins</id>
+            <url>http://dist.codehaus.org/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </pluginRepository>
+
+        <pluginRepository>
+            <id>Maven Snapshots</id>
+            <url>http://snapshots.maven.codehaus.org/maven2/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </pluginRepository>
+        <!--
+        <pluginRepository>
+            <id>javanet</id>
+            <url>http://maven-repository.dev.java.net/repository/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <layout>legacy</layout>
+        </pluginRepository>
+        -->
+    </pluginRepositories>
+
+    <dependencies>
+	<dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.0</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </reporting>
+
+
+    <distributionManagement>
+        <repository>
+            <id>ebi-repo</id>
+            <name>EBI Repository</name>
+            <url>scp://localhost/homes/maven/public_html/m2repo</url>
+        </repository>
+
+        <snapshotRepository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>ebi-repo-snapshots</id>
+            <name>EBI Snapshots Repository</name>
+            <url>scp://localhost/homes/maven/public_html/m2repo_snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+</project>
