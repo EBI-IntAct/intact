@@ -23,14 +23,13 @@ import java.util.Iterator;
 public final class EntrySetChecker {
 
     public static void check( final EntrySetTag entrySet,
-                              final IntactHelper helper,
                               final UpdateProteinsI proteinFactory,
                               final BioSourceFactory bioSourceFactory ) {
 
         final Collection entries = entrySet.getEntries();
         for ( Iterator iterator = entries.iterator(); iterator.hasNext(); ) {
             final EntryTag entry = (EntryTag) iterator.next();
-            EntryChecker.check( entry, helper, proteinFactory, bioSourceFactory );
+            EntryChecker.check( entry, proteinFactory, bioSourceFactory );
         }
     }
 }

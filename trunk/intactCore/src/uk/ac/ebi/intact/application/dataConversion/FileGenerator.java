@@ -22,7 +22,7 @@ import java.util.*;
  * This class is the main application class for generating a flat file format from the contents of a database.
  * <p>
  * Currently the file format is PSI, and the DBs are postgres or oracle, though the DB details are hidden behind the
- * IntactHelper/persistence layer as usual.
+ * persistence layer as usual.
  *
  * @author Samuel Kerrien, Chris Lewington
  * @version $Id$

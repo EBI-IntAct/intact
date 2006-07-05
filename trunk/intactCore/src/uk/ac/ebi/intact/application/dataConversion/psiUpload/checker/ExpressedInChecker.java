@@ -9,8 +9,8 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.ExpressedInTa
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.BioSource;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -33,8 +33,7 @@ public final class ExpressedInChecker {
         return (BioSource) cache.get( shortlabel );
     }
 
-    public static void check( final ExpressedInTag expressedIn,
-                              final IntactHelper helper ) {
+    public static void check( final ExpressedInTag expressedIn ) {
 
         if ( expressedIn == null ) {
             throw new IllegalArgumentException( "Could not check ExpressedInTag if the given parameter is null" );
@@ -45,7 +44,7 @@ public final class ExpressedInChecker {
             BioSource bioSource = null;
             try {
 
-                Collection bioSources = helper.search( BioSource.class.getName(), "shortlabel", shortlabel );
+                Collection bioSources = DaoFactory.getBioSourceDao().getByShortLabelLike(shortlabel);
 
                 if ( bioSources.size() == 1 ) {
                     // TODO could be a problem if we want to use a biosource that has cell type [and/or] tissue.

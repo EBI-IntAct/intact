@@ -10,8 +10,8 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.XrefTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvInteraction;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,11 +31,10 @@ public final class InteractionDetectionChecker {
         return (CvInteraction) cache.get( id );
     }
 
-    public static void check( final InteractionDetectionTag interactionDetection,
-                              final IntactHelper helper ) {
+    public static void check( final InteractionDetectionTag interactionDetection ) {
 
         final XrefTag psiDef = interactionDetection.getPsiDefinition();
-        XrefChecker.check( psiDef, helper );
+        XrefChecker.check( psiDef );
 
         final String id = psiDef.getId();
 
@@ -43,7 +42,7 @@ public final class InteractionDetectionChecker {
             CvInteraction cvInteraction = null;
 
             try {
-                cvInteraction = (CvInteraction) helper.getObjectByXref( CvInteraction.class, id );
+                cvInteraction = DaoFactory.getCvObjectDao(CvInteraction.class).getByXref(id);
 
                 if ( cvInteraction == null ) {
                     MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find CvInteraction by PSI definition: " + id ) );

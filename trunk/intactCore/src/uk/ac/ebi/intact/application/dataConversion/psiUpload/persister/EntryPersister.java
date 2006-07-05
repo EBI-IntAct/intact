@@ -11,7 +11,6 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.ExperimentDes
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.InteractionTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.CommandLineOptions;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Interaction;
 
 import java.util.Collection;
@@ -28,8 +27,7 @@ import java.util.Map;
  */
 public final class EntryPersister {
 
-    public static void persist( final EntryTag entry,
-                                final IntactHelper helper )
+    public static void persist( final EntryTag entry )
             throws IntactException {
 
         Collection keys;
@@ -41,7 +39,7 @@ public final class EntryPersister {
             final String key = (String) iterator.next();
             final ExperimentDescriptionTag experimentDescription =
                     (ExperimentDescriptionTag) experimentDescriptions.get( key );
-            ExperimentDescriptionPersister.persist( experimentDescription, helper );
+            ExperimentDescriptionPersister.persist( experimentDescription );
         }
 
 
@@ -56,7 +54,7 @@ public final class EntryPersister {
         for ( Iterator iterator = interactions.iterator(); iterator.hasNext(); ) {
             final InteractionTag interaction = (InteractionTag) iterator.next();
             try {
-                Collection createdInteractions = InteractionPersister.persist( interaction, helper );
+                Collection createdInteractions = InteractionPersister.persist( interaction );
 
                 if ( guiEnabled ) {
                     StringBuffer sb = new StringBuffer( 64 );

@@ -8,7 +8,6 @@ package uk.ac.ebi.intact.application.dataConversion.psiUpload.persister;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.EntrySetTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.EntryTag;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -22,14 +21,13 @@ import java.util.Iterator;
  */
 public final class EntrySetPersister {
 
-    public static void persist( final EntrySetTag entrySet,
-                                final IntactHelper helper )
+    public static void persist( final EntrySetTag entrySet )
             throws IntactException {
 
         final Collection entries = entrySet.getEntries();
         for ( Iterator iterator = entries.iterator(); iterator.hasNext(); ) {
             final EntryTag entry = (EntryTag) iterator.next();
-            EntryPersister.persist( entry, helper );
+            EntryPersister.persist( entry );
         }
     }
 }

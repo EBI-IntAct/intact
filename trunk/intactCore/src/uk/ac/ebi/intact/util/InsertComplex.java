@@ -7,10 +7,12 @@ package uk.ac.ebi.intact.util;
 
 import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
-import uk.ac.ebi.intact.business.BusinessConstants;
+import org.hibernate.Transaction;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
+import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -31,7 +33,6 @@ public final class InsertComplex {
     public static final String NEW_LINE = System.getProperty( "line.separator" );
     private final static org.apache.log4j.Logger logger = Logger.getLogger( "InsertComplex" );
 
-    private IntactHelper helper;
     private UpdateProteins proteinFactory;
 
     /**
@@ -61,11 +62,10 @@ public final class InsertComplex {
      */
     public InsertComplex() throws Exception {
         try {
-            helper = new IntactHelper();
-            System.out.println( "Database user:     " + helper.getDbUserName() );
-            System.out.println( "Database instance: " + helper.getDbName() );
+            System.out.println( "Database user:     " + DaoFactory.getBaseDao().getDbUserName() );
+            System.out.println( "Database instance: " + DaoFactory.getBaseDao().getDbName() );
 
-            proteinFactory = new UpdateProteins( helper );
+            proteinFactory = new UpdateProteins( );
 
             // Transactions are controlled by this class, not by UpdateProteins.
             // Set local transaction control to false.
@@ -84,21 +84,6 @@ public final class InsertComplex {
             //something failed with type map or datasource...
             String msg = "unable to create protein factory";
             logger.error( msg );
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Close the database connexion if it has been opened.
-     */
-    public final void closeHelper() {
-        try {
-            if ( helper != null ) {
-                helper.closeStore();
-                System.out.println( "Database connexion closed." );
-            }
-
-        } catch ( IntactException e ) {
             e.printStackTrace();
         }
     }
@@ -145,7 +130,7 @@ public final class InsertComplex {
 
         } else {
 
-            proteins = helper.getObjectsByXref( Protein.class, spAc );
+            proteins = new ArrayList<Protein>(DaoFactory.getProteinDao().getByXrefLike(spAc));
 
             if ( 0 == proteins.size() ) {
                 // * If the protein does not exist, create it
@@ -156,7 +141,7 @@ public final class InsertComplex {
 
                 // if it looks like an sgd protein, create it with an xref to sgd
                 if ( ( 0 == proteins.size() ) && ( spAc.substring( 0, 1 ).equals( "S" ) ) ) {
-                    CvDatabase sgd = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, CvDatabase.SGD );
+                    CvDatabase sgd = DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel(CvDatabase.SGD);
                     Protein protein = proteinFactory.insertSimpleProtein( spAc, sgd, bioSource.getTaxId() );
                     proteins.add( protein );
                 }
@@ -190,7 +175,7 @@ public final class InsertComplex {
 
         //now build the Component.....
         Component comp = new Component( owner, act, targetProtein, role );
-        helper.create( comp );
+        DaoFactory.getComponentDao().persist( comp );
     }
 
     /**
@@ -205,9 +190,12 @@ public final class InsertComplex {
      */
     private Experiment getExperiment( String experimentLabel ) throws IntactException {
 
+        ExperimentDao expDao = DaoFactory.getExperimentDao();
+
         // Get experiment from the local node
         logger.debug( "looking for an Experiment in the DB with label " + experimentLabel + " ...." );
-        Experiment ex = helper.getObjectByLabel( Experiment.class, experimentLabel );
+        Experiment ex = expDao.getByShortLabel(experimentLabel);
+
         if ( null == ex ) {
             // create it - NB under the new model the Experiment needs
             //a non-null owner, shortLabel and BioSource....
@@ -215,9 +203,9 @@ public final class InsertComplex {
             ex = new Experiment( owner, experimentLabel, bioSource );
             //NB as this is already in a TX scope the Experiment will not be persisted yet!!
 
-            helper.create( ex );
+            expDao.persist( ex );
             logger.debug( "checking it was persisted....." );
-            Experiment dummy = helper.getObjectByLabel( Experiment.class, experimentLabel );
+            Experiment dummy = expDao.getByShortLabel( experimentLabel );
             if ( dummy == null ) {
                 logger.debug( "Error: new Experiment not created; may be nested TX problem..." );
                 throw new IllegalStateException( "Failed to save experiment(" + experimentLabel + "). Please check the persistence layer." );
@@ -231,7 +219,8 @@ public final class InsertComplex {
             logger.debug( "Oops, an Experiment in the DB does not have a CvInteraction!" );
             logger.debug( "Setting one for it now...." );
             // Give that experiment a default CvInteraction
-            Collection result = helper.search( CvInteraction.class.getName(), "shortlabel", CvInteraction.EXPERIMENTAL_INTERACTION );
+            Collection result = DaoFactory.getCvObjectDao(CvInteraction.class).getByShortLabelLike(CvInteraction.EXPERIMENTAL_INTERACTION);
+
             if ( result.size() == 1 ) {
                 CvInteraction cvInteraction = (CvInteraction) result.iterator().next();
                 ex.setCvInteraction( cvInteraction );
@@ -248,7 +237,7 @@ public final class InsertComplex {
             logger.debug( "Oops, an Experiment in the DB does not have a CvIdentification!" );
             logger.debug( "Setting one for it now...." );
             // Give that experiment a default CvIdentification
-            Collection result = helper.search( CvIdentification.class.getName(), "shortlabel", CvIdentification.WESTERN_BLOT );
+            Collection result = DaoFactory.getCvObjectDao(CvIdentification.class).getByShortLabelLike(CvIdentification.WESTERN_BLOT);
             if ( result.size() == 1 ) {
                 CvIdentification cvIdentification = (CvIdentification) result.iterator().next();
                 ex.setCvIdentification( cvIdentification );
@@ -282,11 +271,8 @@ public final class InsertComplex {
 
         if ( needUpdate == true ) {
             //persist the change (assumes TX started outside this method..)
-            if ( helper.isPersistent( ex ) ) {
-                helper.update( ex );
-            } else {
-                helper.create( ex );
-            }
+            expDao.saveOrUpdate(ex);
+
             logger.debug( "needUpdate called on Experiment - BioSource added (but not yet persistent).." );
         }
         return ex;
@@ -305,7 +291,8 @@ public final class InsertComplex {
         CvInteractionType cvType = null;
         if ( typeLabel != null ) {
             try {
-                cvType = helper.getObjectByLabel( CvInteractionType.class, typeLabel );
+                cvType = DaoFactory.getCvObjectDao(CvInteractionType.class).getByShortLabel(typeLabel);
+
                 if ( cvType == null ) {
                     // TODO: Problem if type is unknown - do what??
                     logger.debug( typeLabel + " is not known as a CvInteractionType shortLabel." );
@@ -350,24 +337,24 @@ public final class InsertComplex {
         CvInteractionType cvInteractionType = getInteractionType( interactionTypeLabel );
 
         // Get the default interactor type for an interaction.
-        CvInteractorType cvInteractorType = helper.getObjectByPrimaryId(
-                CvInteractorType.class, CvInteractorType.getInteractionMI() );
+        CvInteractorType cvInteractorType = DaoFactory.getCvObjectDao(CvInteractorType.class)
+                .getByXref(CvInteractorType.getInteractionMI());
 
         //got our data - now build the new Interaction (with an empty component Collection)
         //get the info needed to create a new Interaction and build one...
 
-        Interaction interaction = new InteractionImpl(
+        InteractionImpl interaction = new InteractionImpl(
                 experiments, cvInteractionType, cvInteractorType, actLabel, owner );
         interaction.setBioSource( experiment.getBioSource() );
 
-        helper.create( interaction );
+        DaoFactory.getInteractionDao().persist( interaction );
 
         // Initialise list of proteins created
         createdProteins = new HashMap<String, Collection<Protein>>();
 
         // add bait
-        CvComponentRole cvBait = (CvComponentRole) helper.getObjectByLabel( CvComponentRole.class, CvComponentRole.BAIT );
-        CvComponentRole cvPrey = (CvComponentRole) helper.getObjectByLabel( CvComponentRole.class, CvComponentRole.PREY );
+        CvComponentRole cvBait =  DaoFactory.getCvObjectDao(CvComponentRole.class).getByShortLabel(CvComponentRole.BAIT);
+        CvComponentRole cvPrey = DaoFactory.getCvObjectDao(CvComponentRole.class).getByShortLabel(CvComponentRole.PREY);
 
         insertComponent( interaction, bait, cvBait );
 
@@ -413,7 +400,7 @@ public final class InsertComplex {
 
         //makes sense to get the Institution here - avoids a call
         //to the DB for every line processed...
-        owner = helper.getInstitution();
+        owner = DaoFactory.getInstitutionDao().getInstitution();
 
         // TODO: this block below could be replaced by the BioSourceFactory !!!!!!!
 
@@ -445,7 +432,8 @@ public final class InsertComplex {
 
         //check the DB to see if it's already there (and a consistent one!)-
         //if not it will need persisting....
-        bioSource = helper.getBioSourceByTaxId( taxId );
+        bioSource = DaoFactory.getBioSourceDao().getByTaxonIdUnique(taxId);
+
         if ( ( bioSource == null ) || ( bioSource.getOwner() == null ) ||
              ( bioSource.getTaxId() == null ) ) {
 
@@ -463,9 +451,10 @@ public final class InsertComplex {
 
                 //first make sure there is a BioSource that is persistent....
                 //NB this must be done in a seperate TX as it is needed later...
-                helper.startTransaction( BusinessConstants.OBJECT_TX );
-                helper.create( bioSource );
-                helper.finishTransaction();
+
+                Transaction tx = HibernateUtil.getSessionFactory().openSession().beginTransaction();
+                DaoFactory.getBioSourceDao().persist( bioSource );
+                tx.commit();
             } catch ( Exception ie ) {
                 ie.printStackTrace();
                 System.err.println();
@@ -512,7 +501,7 @@ public final class InsertComplex {
                 //then we need some transactions but if not, just print the
                 //legend to say the Complex already exists.....
                 String actLabel = experimentLabel.substring( 0, 2 ) + "-" + interactionNumber;
-                Interaction interaction = helper.getObjectByLabel( Interaction.class, actLabel );
+                Interaction interaction = DaoFactory.getInteractionDao().getByShortLabel( actLabel );
                 if ( interaction == null ) {
 
                     //Doesn't already exist - so need to do some Transactions...
@@ -656,7 +645,6 @@ public final class InsertComplex {
 
             InsertComplex tool = new InsertComplex();
             tool.insert( filename, taxid, interactionType );
-            tool.closeHelper();
             System.exit( 0 );
         } catch ( ParseException exp ) {
             // Oops, something went wrong

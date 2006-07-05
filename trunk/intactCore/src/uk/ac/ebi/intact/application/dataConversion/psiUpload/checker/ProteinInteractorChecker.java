@@ -14,11 +14,11 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.CommandLineOpt
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.BioSourceFactory;
 import uk.ac.ebi.intact.util.Crc64;
 import uk.ac.ebi.intact.util.UpdateProteinsI;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.*;
 
@@ -53,13 +53,12 @@ public final class ProteinInteractorChecker {
 
     public static boolean interatorTypeChecked = false;
 
-    public static void checkCvInteractorType( IntactHelper helper ) {
+    public static void checkCvInteractorType( ) {
 
         if ( false == interatorTypeChecked ) {
 
             // Load CvInteractorType( interaction / MI: )
-            cvProteinType = (CvInteractorType) helper.getObjectByPrimaryId( CvInteractorType.class,
-                                                                            CvInteractorType.getInteractionMI() );
+            cvProteinType = DaoFactory.getCvObjectDao(CvInteractorType.class).getByXref(CvInteractorType.getInteractionMI());
             if ( cvProteinType == null ) {
                 MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find CvInteractorType( interaction )." ) );
             }
@@ -168,14 +167,12 @@ public final class ProteinInteractorChecker {
      *
      * @param id     the id of the object we are looking for (must not be null)
      * @param taxid  the taxid filter (can be null)
-     * @param helper the access to the Intact database.
      *
      * @return the objects that holds either [protein, -] or [protein, spliceVariant] or null if not found.
      */
     private static ProteinHolder getIntactProtein( final String id,
                                                    final String taxid,
-                                                   final ProteinInteractorTag proteinInteractor,
-                                                   final IntactHelper helper )
+                                                   final ProteinInteractorTag proteinInteractor )
             throws AmbiguousBioSourceException {
 
         if ( id == null ) {
@@ -209,7 +206,8 @@ public final class ProteinInteractorChecker {
                 // search all protein having the uniprot Xref for that ID (it doesn't retreive the splice variant).
                 // We only look for Xref( uniprot, identity )
 
-                Collection proteins = helper.getObjectsByXref( Protein.class, uniprot, identity, proteinId );
+                Collection proteins = DaoFactory.getProteinDao().getByXrefLike(uniprot, identity, proteinId);
+
                 if ( proteins != null ) {
 
                     if ( null == taxid ) {
@@ -266,7 +264,8 @@ public final class ProteinInteractorChecker {
                     System.out.println( "search splice variant of master AC: " + protein.getAc() );
                 }
 
-                Collection spliceVariants = helper.getObjectsByXref( Protein.class, protein.getAc() );
+                Collection spliceVariants = DaoFactory.getProteinDao().getByXrefLike(protein.getAc());
+
                 if ( spliceVariants == null || spliceVariants.isEmpty() ) {
                     if ( DEBUG ) {
                         System.out.println( "No splice variant found, abort" );
@@ -322,11 +321,11 @@ public final class ProteinInteractorChecker {
 
             Protein protein = null;
             try {
-                Collection proteins = helper.getObjectsByXref( Protein.class, uniprot, identity, id );
+                Collection proteins = DaoFactory.getProteinDao().getByXrefLike(uniprot, identity, id);
 
                 if ( proteins == null || proteins.isEmpty() ) {
                     // If none found, try also with other uniprot Xrefs
-                    proteins = helper.getObjectsByXref( Protein.class, uniprot, id );
+                    proteins = DaoFactory.getProteinDao().getByXrefLike(uniprot, id);
                 }
 
                 if ( null == taxid ) {
@@ -416,12 +415,10 @@ public final class ProteinInteractorChecker {
 
     /**
      * @param proteinInteractor
-     * @param helper
      * @param proteinFactory
      * @param bioSourceFactory
      */
     public static void check( final ProteinInteractorTag proteinInteractor,
-                              final IntactHelper helper,
                               final UpdateProteinsI proteinFactory,
                               final BioSourceFactory bioSourceFactory ) {
 
@@ -442,11 +439,11 @@ public final class ProteinInteractorChecker {
         }
 
         if ( organism != null ) {
-            OrganismChecker.check( organism, helper, bioSourceFactory );
+            OrganismChecker.check( organism, bioSourceFactory );
         }
 
         // check that the CvInteractorType( interaction is available ).
-        checkCvInteractorType( helper );
+        checkCvInteractorType( );
 
         /**
          * We have to deal with 3 different cases:
@@ -480,12 +477,12 @@ public final class ProteinInteractorChecker {
 
                 // check the CvDatabases of the primary and secondary Xrefs
                 XrefTag primary = proteinInteractor.getPrimaryXref();
-                XrefChecker.check( primary, helper );
+                XrefChecker.check( primary );
 
                 Collection secondaries = proteinInteractor.getSecondaryXrefs();
                 for ( Iterator iterator = secondaries.iterator(); iterator.hasNext(); ) {
                     XrefTag secondaryRef = (XrefTag) iterator.next();
-                    XrefChecker.check( secondaryRef, helper );
+                    XrefChecker.check( secondaryRef );
                 }
 
                 // TODO search in IntAct by primaryXref and BioSource !!! give Tag only if not found.
@@ -494,7 +491,7 @@ public final class ProteinInteractorChecker {
                 Protein protein = null;
                 if( XrefChecker.getCvDatabase( primary.getDb() ) != null  ) {
                     // only create the Protein is the CvDatabase of the primary Id is valid.
-                    protein = getOrCreateNonUniprotProtein( proteinInteractor, helper );
+                    protein = getOrCreateNonUniprotProtein( proteinInteractor );
                 }
 
                 if ( protein != null ) {
@@ -508,7 +505,7 @@ public final class ProteinInteractorChecker {
 
             // it has a UniProt Xref
             final XrefTag uniprotDef = proteinInteractor.getPrimaryXref();
-            XrefChecker.check( uniprotDef, helper );
+            XrefChecker.check( uniprotDef );
 
             /**
              * -STATEGY-
@@ -575,7 +572,7 @@ public final class ProteinInteractorChecker {
 
                     // taxid is not null here so no exception can be thrown.
                     try {
-                        result = getIntactProtein( proteinId, taxId, proteinInteractor, helper );
+                        result = getIntactProtein( proteinId, taxId, proteinInteractor );
                     } catch ( AmbiguousBioSourceException e ) {
                         // we should never get here ! but just in case ...
                         MessageHolder.getInstance().addCheckerMessage( new Message( e.getMessage() ) );
@@ -618,7 +615,7 @@ public final class ProteinInteractorChecker {
 
                         // search against updated database
                         try {
-                            result = getIntactProtein( proteinId, taxId, proteinInteractor, helper );
+                            result = getIntactProtein( proteinId, taxId, proteinInteractor );
                         } catch ( AmbiguousBioSourceException e ) {
                             MessageHolder.getInstance().addCheckerMessage( new Message( e.getMessage() ) );
                             System.out.println( e.getMessage() );
@@ -658,8 +655,7 @@ public final class ProteinInteractorChecker {
         }
     } // check
 
-    private static void createXref( IntactHelper helper,
-                                    Protein protein,
+    private static void createXref( Protein protein,
                                     XrefTag xrefTag,
                                     boolean identity ) throws IntactException {
 
@@ -675,7 +671,7 @@ public final class ProteinInteractorChecker {
 
         } else {
 
-            Xref xref = new Xref( helper.getInstitution(),
+            Xref xref = new Xref( DaoFactory.getInstitutionDao().getInstitution(),
                                   database,
                                   xrefTag.getId(),
                                   xrefTag.getSecondary(),
@@ -683,7 +679,7 @@ public final class ProteinInteractorChecker {
                                   qualifier );
 
             protein.addXref( xref );
-            helper.create( xref );
+            DaoFactory.getXrefDao().persist( xref );
         }
     }
 
@@ -692,11 +688,10 @@ public final class ProteinInteractorChecker {
      * CvDatabase) and if not we create it.
      *
      * @param proteinInteractor protein attributes.
-     * @param helper            data access.
      *
      * @return the created protein or null if it fails.
      */
-    private static Protein getOrCreateNonUniprotProtein( ProteinInteractorTag proteinInteractor, IntactHelper helper ) {
+    private static Protein getOrCreateNonUniprotProtein( ProteinInteractorTag proteinInteractor ) {
 
         Protein protein = null;
 
@@ -705,7 +700,8 @@ public final class ProteinInteractorChecker {
 
         try {
             // firstly search by primaryID
-            Collection proteins = helper.getObjectsByXref( Protein.class, proteinId );
+            Collection proteins = DaoFactory.getProteinDao().getByXrefLike(proteinId);
+
 //            System.out.println( ">>>>>>>>>>>" + proteins.size() + " protein found by Xref(" + proteinId + ")" );
 
             if ( ! proteins.isEmpty() ) {
@@ -793,8 +789,7 @@ public final class ProteinInteractorChecker {
             if ( protein == null ) {
 
                 // create non uniprot proteins
-                CvInteractorType proteinType = (CvInteractorType)
-                        helper.getObjectByXref( CvInteractorType.class, CvInteractorType.getProteinMI() );
+                CvInteractorType proteinType = DaoFactory.getCvObjectDao(CvInteractorType.class).getByXref(CvInteractorType.getProteinMI());
 
                 if ( proteinType == null ) {
 
@@ -821,33 +816,33 @@ public final class ProteinInteractorChecker {
                 }
 
 
-                protein = new ProteinImpl( helper.getInstitution(), bioSource, shortlabel, proteinType );
-                helper.create( protein );
+                protein = new ProteinImpl( DaoFactory.getInstitutionDao().getInstitution(), bioSource, shortlabel, proteinType );
+                DaoFactory.getProteinDao().persist( (ProteinImpl)protein );
 
                 // add Xrefs
-                createXref( helper, protein, proteinInteractor.getPrimaryXref(), true );
+                createXref(  protein, proteinInteractor.getPrimaryXref(), true );
 
                 Collection secondaryXrefs = proteinInteractor.getSecondaryXrefs();
                 for ( Iterator iterator = secondaryXrefs.iterator(); iterator.hasNext(); ) {
                     XrefTag xrefTag = (XrefTag) iterator.next();
-                    createXref( helper, protein, xrefTag, false );
+                    createXref(  protein, xrefTag, false );
                 }
 
                 // update sequence/crc64 if any
                 if ( proteinInteractor.getSequence() != null && proteinInteractor.getSequence().length() > 0 ) {
                     // update sequence
-                    protein.setSequence( helper, proteinInteractor.getSequence() );
+                    protein.setSequence(  proteinInteractor.getSequence() );
 
                     // update CRC64
                     protein.setCrc64( Crc64.getCrc64( proteinInteractor.getSequence() ) );
                 }
 
                 // add no-uniprot-update annotation
-                Annotation annotation = new Annotation( helper.getInstitution(),
+                Annotation annotation = new Annotation( DaoFactory.getInstitutionDao().getInstitution(),
                                                         ControlledVocabularyRepository.getNoUniprotUpdateTopic() );
-                helper.create( annotation );
+                DaoFactory.getAnnotationDao().persist( annotation );
                 proteinType.addAnnotation( annotation );
-                helper.update( protein );
+                DaoFactory.getProteinDao().update( (ProteinImpl)protein );
 
                 System.out.println( "Created 1 protein (" + protein.getShortLabel() + ") for Primary ID: " +
                                     proteinId + ", Database: " + db + " (Not UniProt)" );

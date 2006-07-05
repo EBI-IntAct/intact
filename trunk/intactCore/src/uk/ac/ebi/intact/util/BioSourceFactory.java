@@ -11,6 +11,8 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.BioSourceDao;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -32,11 +34,6 @@ public class BioSourceFactory {
     public static final Log log = LogFactory.getLog( BioSourceFactory.class );
 
     /**
-     * Data access
-     */
-    private IntactHelper helper;
-
-    /**
      * The institution to which we have to link all new BioSource
      */
     private Institution institution;
@@ -53,24 +50,20 @@ public class BioSourceFactory {
     private static NewtServerProxy newtProxy;
     private static final String NEWT_URL = "http://www.ebi.ac.uk/newt/display";
 
-    public BioSourceFactory( IntactHelper helper ) throws IntactException {
-        this( helper, helper.getInstitution(), DEFAULT_CACHE_SIZE );
+    public BioSourceFactory( ) throws IntactException {
+        this( DaoFactory.getInstitutionDao().getInstitution(), DEFAULT_CACHE_SIZE );
     }
 
-    public BioSourceFactory( IntactHelper helper, Institution institution ) {
-        this( helper, institution, DEFAULT_CACHE_SIZE );
+    public BioSourceFactory( Institution institution ) {
+        this( institution, DEFAULT_CACHE_SIZE );
     }
 
-    public BioSourceFactory( IntactHelper helper, Institution institution, int cacheSize ) {
+    public BioSourceFactory( Institution institution, int cacheSize ) {
 
-        if ( helper == null ) {
-            throw new RuntimeException( "The helper must not be null!" );
-        }
         if ( institution == null ) {
             throw new RuntimeException( "The institution must not be null!" );
         }
 
-        this.helper = helper;
         this.institution = institution;
 
         URL url = null;
@@ -84,15 +77,6 @@ public class BioSourceFactory {
         newtProxy.disableCaching();
 
         bioSourceCache = new LRUMap( cacheSize );
-    }
-
-    /**
-     * Sets the Intact helper to access the persistent system. This method is package visible.
-     *
-     * @param helper the Intact helper to set.
-     */
-    void setIntactHelper( IntactHelper helper ) {
-        this.helper = helper;
     }
 
     /**
@@ -131,20 +115,18 @@ public class BioSourceFactory {
      * @throws IntactException
      */
     private CvDatabase getNewt() throws IntactException {
-        Collection<CvDatabase> objectsByXref = helper.getObjectsByXref( CvDatabase.class, CvDatabase.NEWT_MI_REF );
-        if ( objectsByXref.isEmpty() ) {
+        CvDatabase newt = DaoFactory.getCvObjectDao(CvDatabase.class).getByXref(CvDatabase.NEWT_MI_REF);
+        if ( newt == null ) {
             throw new IllegalStateException( "Could not find newt in the Database. Please update your controlled vocabularies." );
         }
-        CvDatabase newt = objectsByXref.iterator().next();
         return newt;
     }
 
     private CvXrefQualifier getIdentity() throws IntactException {
-        Collection<CvXrefQualifier> objectsByXref = helper.getObjectsByXref( CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF );
-        if ( objectsByXref.isEmpty() ) {
+        CvXrefQualifier identity = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByXref(CvXrefQualifier.IDENTITY_MI_REF);
+        if ( identity == null ) {
             throw new IllegalStateException( "Could not find the qualifier(identity) in the Database. Please update your controlled vocabularies." );
         }
-        CvXrefQualifier identity = objectsByXref.iterator().next();
         return identity;
     }
 
@@ -157,6 +139,7 @@ public class BioSourceFactory {
      */
     public BioSource getValidBioSource( String aTaxId ) throws IntactException {
 
+        BioSourceDao bioSourceDao = DaoFactory.getBioSourceDao();
 
         int taxid = 0;
         try {
@@ -171,7 +154,7 @@ public class BioSourceFactory {
         }
 
         // Get all existing BioSources with aTaxId
-        Collection currentBioSources = helper.search( BioSource.class, "taxId", aTaxId );
+        Collection currentBioSources = bioSourceDao.getByTaxonId( aTaxId );
 
         log.info( currentBioSources.size() + " BioSource found for " + aTaxId );
 
@@ -200,14 +183,14 @@ public class BioSourceFactory {
                 // special case: in vitro was defined as taxid -1.
                 BioSource inVitro = new BioSource( institution, "in-vitro", aTaxId );
 
-                helper.create( inVitro );
+                bioSourceDao.persist( inVitro );
 
                 CvDatabase newt = getNewt();
                 CvXrefQualifier identity = getIdentity();
                 Xref xref = new Xref( institution, newt, aTaxId, identity );
                 inVitro.addXref( xref );
 
-                helper.create( xref );
+                DaoFactory.getXrefDao().persist( xref );
 
                 newBioSource = inVitro;
 
@@ -230,7 +213,7 @@ public class BioSourceFactory {
             if ( validBioSource.getTaxId().equals( aTaxId ) ) {
 
                 // not in IntAct and found in Newt so make it persistent in IntAct
-                helper.create( validBioSource );
+                DaoFactory.getBioSourceDao().persist( validBioSource );
                 newBioSource = validBioSource;
 
             } else {
@@ -238,13 +221,13 @@ public class BioSourceFactory {
 
                 // both were found but different taxid, ie. taxid was obsolete.
                 final String newTaxid = validBioSource.getTaxId();
-                Collection<BioSource> bioSources = helper.search( BioSource.class, "taxId", newTaxid );
+                Collection<BioSource> bioSources = bioSourceDao.getByTaxonId( aTaxId );
 
                 switch ( bioSources.size() ) {
                     case 0:
                         // doesn't exists, so create it.
                         log.info( "Creating new bioSource(" + newTaxid + ")." );
-                        helper.create( validBioSource );
+                        bioSourceDao.persist( validBioSource );
                         newBioSource = validBioSource;
 
                         // cache the new taxid as well.
@@ -288,13 +271,13 @@ public class BioSourceFactory {
                     // in intact with the new taxid. In which case, we can't just update or two BioSources
                     // will have the same taxid.
                     final String newTaxid = validBioSource.getTaxId();
-                    Collection<BioSource> bioSources = helper.search( BioSource.class, "taxId", newTaxid );
+                    Collection<BioSource> bioSources = bioSourceDao.getByTaxonId( aTaxId );
 
                     switch ( bioSources.size() ) {
                         case 0:
                             // doesn't exists, so create it.
                             log.info( "Creating new bioSource(" + newTaxid + ")." );
-                            helper.create( validBioSource );
+                            bioSourceDao.persist( validBioSource );
                             newBioSource = validBioSource;
 
                             try {
@@ -307,7 +290,7 @@ public class BioSourceFactory {
                                 newBioSource.addXref( xref );
 
                                 // persist changes
-                                helper.update( xref );
+                                DaoFactory.getXrefDao().update( xref );
 
                             } catch ( IntactException e ) {
                                 log.error( "An error occured when trying to add Newt Xref to " + newBioSource, e );
@@ -468,7 +451,7 @@ public class BioSourceFactory {
                     xref.setPrimaryId( newtBioSource.getTaxId() );
 
                     // update the Xref.
-                    helper.update( xref );
+                    DaoFactory.getXrefDao().update( xref );
 
                     needUpdate = true;
                 }
@@ -483,7 +466,7 @@ public class BioSourceFactory {
             bioSource.addXref( xref );
 
             // persist changes
-            helper.create( xref );
+            DaoFactory.getXrefDao().persist( xref );
         }
 
         /**
@@ -497,7 +480,7 @@ public class BioSourceFactory {
             log.info( "update biosource (taxid=" + bioSource.getTaxId() + ")" );
 
             try {
-                helper.update( bioSource );
+                DaoFactory.getBioSourceDao().update( bioSource );
             } catch ( IntactException ie ) {
                 throw ie;
             }

@@ -10,9 +10,10 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.AnnotationTag
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.ExperimentDescriptionTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.XrefTag;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.cdb.UpdateExperimentAnnotationsFromPudmed;
+import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -39,16 +40,17 @@ public class ExperimentDescriptionPersister {
      * make it persistent.
      *
      * @param experimentDescription the data from which we want to make an Experiment persistent
-     * @param helper                the access to the intact database
      *
      * @return either an already existing Experiment in IntAct or a brand new one created out of the data present in the
      *         PSI file
      *
      * @throws IntactException
      */
-    public static Experiment persist( final ExperimentDescriptionTag experimentDescription,
-                                      final IntactHelper helper )
+    public static Experiment persist( final ExperimentDescriptionTag experimentDescription )
             throws IntactException {
+
+        ExperimentDao expDao = DaoFactory.getExperimentDao();
+        Institution institution = DaoFactory.getInstitutionDao().getInstitution();
 
         Experiment experiment;
         final String shortlabel = experimentDescription.getShortlabel();
@@ -72,9 +74,9 @@ public class ExperimentDescriptionPersister {
         // (3) Create a new Experiment
         final BioSource biosource = HostOrganismChecker.getBioSource( experimentDescription.getHostOrganism() );
 
-        experiment = new Experiment( helper.getInstitution(), shortlabel, biosource );
+        experiment = new Experiment( institution, shortlabel, biosource );
 
-        helper.create( experiment );
+        expDao.persist( experiment );
 
         experiment.setFullName( experimentDescription.getFullname() );
 
@@ -90,7 +92,7 @@ public class ExperimentDescriptionPersister {
 
         // Primary Xrefs: pubmed
         final XrefTag bibRef = experimentDescription.getBibRef();
-        final Xref primaryXref = new Xref( helper.getInstitution(),
+        final Xref primaryXref = new Xref( institution,
                                            XrefChecker.getCvDatabase( bibRef.getDb() ),
                                            bibRef.getId(),
                                            bibRef.getSecondary(),
@@ -98,20 +100,20 @@ public class ExperimentDescriptionPersister {
                                            ControlledVocabularyRepository.getPrimaryXrefQualifier() );
 
         experiment.addXref( primaryXref );
-        helper.create( primaryXref );
+        DaoFactory.getXrefDao().persist( primaryXref );
 
         // based on that primary-reference, retreive information from CDB and update experiment's annotations.
         String pubmedId = primaryXref.getPrimaryId();
         System.out.print( "Updating experiment details from CitExplore..." );
         System.out.flush();
-        UpdateExperimentAnnotationsFromPudmed.update( helper, experiment, pubmedId );
+        UpdateExperimentAnnotationsFromPudmed.update( experiment, pubmedId );
         System.out.println( "done." );
 
         // BibRefs: primary and secondary.
         final Collection secondaryPubmedXrefs = experimentDescription.getAdditionalBibRef();
         for ( Iterator iterator = secondaryPubmedXrefs.iterator(); iterator.hasNext(); ) {
             XrefTag xrefTag = (XrefTag) iterator.next();
-            Xref seeAlsoXref = new Xref( helper.getInstitution(),
+            Xref seeAlsoXref = new Xref( institution,
                                          XrefChecker.getCvDatabase( xrefTag.getDb() ),
                                          xrefTag.getId(),
                                          xrefTag.getSecondary(),
@@ -119,7 +121,7 @@ public class ExperimentDescriptionPersister {
                                          ControlledVocabularyRepository.getSeeAlsoXrefQualifier() );
 
             experiment.addXref( seeAlsoXref );
-            helper.create( seeAlsoXref );
+            DaoFactory.getXrefDao().persist( seeAlsoXref );
         }
 
         // annotations
@@ -129,11 +131,11 @@ public class ExperimentDescriptionPersister {
             final CvTopic cvTopic = AnnotationChecker.getCvTopic( annotationTag.getType() );
 
             // search for an annotation to re-use, instead of creating a new one.
-            Annotation annotation = searchIntactAnnotation( annotationTag, helper );
+            Annotation annotation = searchIntactAnnotation( annotationTag );
 
             if ( annotation == null ) {
                 // doesn't exist, then create a new Annotation
-                annotation = new Annotation( helper.getInstitution(), cvTopic );
+                annotation = new Annotation( institution, cvTopic );
                 annotation.setAnnotationText( annotationTag.getText() );
                 helper.create( annotation );
             }
@@ -154,10 +156,10 @@ public class ExperimentDescriptionPersister {
                                   null );
 
             experiment.addXref( xref );
-            helper.create( xref );
+            DaoFactory.getXrefDao().persist( xref );
         }
 
-        helper.update( experiment );
+        expDao.update( experiment );
 
         // cache it.
         cache.put( experiment.getShortLabel(), experiment );
@@ -175,13 +177,12 @@ public class ExperimentDescriptionPersister {
      *
      * @throws IntactException
      */
-    private static Annotation searchIntactAnnotation( final AnnotationTag annotationTag,
-                                                      final IntactHelper helper )
+    private static Annotation searchIntactAnnotation( final AnnotationTag annotationTag  )
             throws IntactException {
 
         final String text = annotationTag.getText();
 
-        Collection annotations = helper.search( Annotation.class.getName(), "annotationText", text );
+        Collection annotations = DaoFactory.getAnnotationDao().getByTextLike(text); 
         Annotation annotation = null;
 
         if ( annotations != null ) {

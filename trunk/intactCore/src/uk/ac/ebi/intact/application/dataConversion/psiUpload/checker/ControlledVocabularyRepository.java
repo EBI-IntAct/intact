@@ -14,11 +14,12 @@ package uk.ac.ebi.intact.application.dataConversion.psiUpload.checker;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.CvAliasType;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 
 public class ControlledVocabularyRepository {
 
@@ -32,8 +33,8 @@ public class ControlledVocabularyRepository {
     private static CvAliasType geneName;
 
 
-    public static void check( IntactHelper helper ) {
-        initialise( helper );
+    public static void check( ) {
+        initialise( );
     }
 
 
@@ -65,65 +66,25 @@ public class ControlledVocabularyRepository {
 
     /////////////////////////
     // Init
-    private static void initialise( final IntactHelper helper ) {
+    private static void initialise( ) {
 
         if ( initialisationDone == false ) {
 
             // load CVs by shortlabel
-            authorConfidenceTopic = (CvTopic) getCvObjectByLabel( helper, CvTopic.class, CvTopic.AUTHOR_CONFIDENCE );
-            noUniprotUpdate = (CvTopic) getCvObjectByLabel( helper, CvTopic.class, CvTopic.NON_UNIPROT );
+            CvObjectDao<CvTopic> cvTopicDao = DaoFactory.getCvObjectDao(CvTopic.class);
+            authorConfidenceTopic = cvTopicDao.getByShortLabel(CvTopic.AUTHOR_CONFIDENCE);
+            noUniprotUpdate = cvTopicDao.getByShortLabel(CvTopic.NON_UNIPROT);
 
             // load CVs by MI reference
-            primaryReferenceXrefQualifier = (CvXrefQualifier) getCvObjectByMi( helper, CvXrefQualifier.class, CvXrefQualifier.PRIMARY_REFERENCE_MI_REF );
-            seeAlsoXrefQualifier = (CvXrefQualifier) getCvObjectByMi( helper, CvXrefQualifier.class, CvXrefQualifier.SEE_ALSO_MI_REF );
-            identityXrefQualifier = (CvXrefQualifier) getCvObjectByMi( helper, CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF );
-            geneName = (CvAliasType) getCvObjectByMi( helper, CvAliasType.class, CvAliasType.GENE_NAME_MI_REF );
+            CvObjectDao<CvXrefQualifier> cvXrefQualifierDao = DaoFactory.getCvObjectDao(CvXrefQualifier.class);
+            primaryReferenceXrefQualifier = cvXrefQualifierDao.getByXref( CvXrefQualifier.PRIMARY_REFERENCE_MI_REF );
+            seeAlsoXrefQualifier = cvXrefQualifierDao.getByXref( CvXrefQualifier.SEE_ALSO_MI_REF );
+            identityXrefQualifier = cvXrefQualifierDao.getByXref( CvXrefQualifier.IDENTITY_MI_REF );
+            geneName = DaoFactory.getCvObjectDao(CvAliasType.class).getByXref( CvAliasType.GENE_NAME_MI_REF );
 
             initialisationDone = true;
         }
     } // init
 
-    private static CvObject getCvObjectByLabel( final IntactHelper helper, Class clazz, final String name ) {
-        CvObject object = null;
 
-        String shortClassName = clazz.getName().substring( clazz.getName().lastIndexOf( '.' ) + 1,
-                                                           clazz.getName().length() );
-        try {
-            object = (CvObject) helper.getObjectByLabel( clazz, name );
-            if ( object == null ) {
-                final String msg = "Could not find "+ shortClassName +" by shortlabel: " + name;
-                MessageHolder.getInstance().addCheckerMessage( new Message( msg ) );
-            } else {
-                System.out.println( "Found "+ shortClassName +" by shortlabel: " + name );
-            }
-        } catch ( IntactException e ) {
-            final String msg = "An error occured while searching for "+ shortClassName +" by the shortlabel: " + name;
-            MessageHolder.getInstance().addCheckerMessage( new Message( msg ) );
-            e.printStackTrace();
-        }
-
-        return object;
-    }
-
-    private static CvObject getCvObjectByMi( final IntactHelper helper, Class clazz, final String mi ) {
-        CvObject object = null;
-
-        String shortClassName = clazz.getName().substring( clazz.getName().lastIndexOf( '.' ) + 1,
-                                                           clazz.getName().length() );
-        try {
-            object = (CvObject) helper.getObjectByXref( clazz, mi );
-            if ( object == null ) {
-                final String msg = "Could not find "+ shortClassName +" by MI reference: " + mi;
-                MessageHolder.getInstance().addCheckerMessage( new Message( msg ) );
-            } else {
-                System.out.println( "Found "+ shortClassName +" ("+ object.getShortLabel() +") by MI reference: " + mi );
-            }
-        } catch ( IntactException e ) {
-            final String msg = "An error occured while searching for "+ shortClassName +"  having the MI reference: " + mi;
-            MessageHolder.getInstance().addCheckerMessage( new Message( msg ) );
-            e.printStackTrace();
-        }
-
-        return object;
-    }
 }
