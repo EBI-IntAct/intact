@@ -26,6 +26,7 @@
     </scm>
 
     <modules>
+        <module>maven</module>
         <module>intact-core</module>
         <module>app-commons</module>
         <module>sanity-checker</module>
