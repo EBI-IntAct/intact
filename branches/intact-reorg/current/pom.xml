@@ -37,6 +37,7 @@
         <module>data-conversion</module>
         <module>graph2mif-server</module>
         <module>graph2mif-client</module>
+        <module>tulip-client</module>
         <module>hierarch-view-app</module>
         <module>statistic-view</module>
         <module>mine-app</module>
