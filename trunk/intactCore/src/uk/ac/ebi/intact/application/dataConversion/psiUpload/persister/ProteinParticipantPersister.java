@@ -11,8 +11,8 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.ProteinInte
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.RoleChecker;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.*;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -30,8 +30,7 @@ import java.util.Iterator;
 public class ProteinParticipantPersister {
 
     public static void persist( final ProteinParticipantTag proteinParticipant,
-                                final Interaction interaction,
-                                final IntactHelper helper ) throws IntactException {
+                                final Interaction interaction ) throws IntactException {
 
         ProteinInteractorTag proteinInteractor = proteinParticipant.getProteinInteractor();
 
@@ -56,15 +55,16 @@ public class ProteinParticipantPersister {
         }
 
 
-        final Component component = new Component( helper.getInstitution(), interaction, protein, role );
-        helper.create( component );
+        final Component component = new Component(DaoFactory.getInstitutionDao().getInstitution(),
+                interaction, protein, role );
+        DaoFactory.getComponentDao().persist( component );
 
         // add expressedIn if it is available.
         ExpressedInTag expressedIn = proteinParticipant.getExpressedIn();
         if ( null != expressedIn ) {
             BioSource bs = ExpressedInChecker.getBioSource( expressedIn.getBioSourceShortlabel() );
             component.setExpressedIn( bs );
-            helper.update( component );
+            DaoFactory.getComponentDao().update( component );
         }
 
         // TODO process the <confidence> tag here
@@ -74,7 +74,7 @@ public class ProteinParticipantPersister {
         for ( Iterator iterator = features.iterator(); iterator.hasNext(); ) {
             FeatureTag featureTag = (FeatureTag) iterator.next();
 
-            FeaturePersister.persist( featureTag, component, protein, helper );
+            FeaturePersister.persist( featureTag, component, protein );
         }
     }
 }

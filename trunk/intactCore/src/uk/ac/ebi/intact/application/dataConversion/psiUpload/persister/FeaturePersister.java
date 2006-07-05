@@ -12,8 +12,8 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.FeatureTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.LocationTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.XrefTag;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.Iterator;
 
@@ -27,13 +27,14 @@ public class FeaturePersister {
 
     public static void persist( final FeatureTag featureTag,
                                 final Component component,
-                                final Protein protein,
-                                final IntactHelper helper ) throws IntactException {
+                                final Protein protein ) throws IntactException {
 
         String typeId = featureTag.getFeatureType().getPsiDefinition().getId();
         CvFeatureType featureType = FeatureChecker.getCvFeatureType( typeId );
 
-        Feature feature = new Feature( helper.getInstitution(),
+        Institution institution = DaoFactory.getInstitutionDao().getInstitution();
+
+        Feature feature = new Feature( institution,
                                        featureTag.getShortlabel(),
                                        component,
                                        featureType );
@@ -48,7 +49,7 @@ public class FeaturePersister {
         }
 
         // persist the object
-        helper.create( feature );
+        DaoFactory.getFeatureDao().persist( feature );
 
         // add xrefs if any
         for ( Iterator iterator1 = featureTag.getXrefs().iterator(); iterator1.hasNext(); ) {
@@ -59,14 +60,14 @@ public class FeaturePersister {
                 qualifier = ControlledVocabularyRepository.getPrimaryXrefQualifier();
             }
 
-            final Xref xref = new Xref( helper.getInstitution(),
+            final Xref xref = new Xref( institution,
                                         XrefChecker.getCvDatabase( xrefTag.getDb() ),
                                         xrefTag.getId(),
                                         xrefTag.getSecondary(),
                                         xrefTag.getVersion(),
                                         qualifier );
             feature.addXref( xref );
-            helper.create( xref );
+            DaoFactory.getXrefDao().persist( xref );
         }
 
         LocationTag location = featureTag.getLocation();
@@ -79,7 +80,7 @@ public class FeaturePersister {
                 sequence = protein.getSequence();
             }
 
-            Range range = new Range( helper.getInstitution(),
+            Range range = new Range( institution,
                                      (int) location.getFromIntervalStart(),
                                      (int) location.getFromIntervalEnd(),
                                      (int) location.getToIntervalStart(),
@@ -95,7 +96,7 @@ public class FeaturePersister {
             // associate the range to a feature
             feature.addRange( range );
 
-            helper.create( range );
+            DaoFactory.getRangeDao().persist( range );
         }
     }
 }

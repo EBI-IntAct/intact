@@ -6,10 +6,12 @@
 package uk.ac.ebi.intact.util.cdb;
 
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.Institution;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -73,7 +75,6 @@ public class UpdateExperimentAnnotationsFromPudmed {
     /**
      * Update the given Experiment according to the given pubmed ID.
      *
-     * @param helper     data source
      * @param experiment the experiment to update
      * @param pubmedId   the pubmed from which we get the information
      *
@@ -81,14 +82,10 @@ public class UpdateExperimentAnnotationsFromPudmed {
      *
      * @throws IntactException
      */
-    public static UpdateReport update( IntactHelper helper, Experiment experiment, String pubmedId ) throws IntactException {
+    public static UpdateReport update( Experiment experiment, String pubmedId ) throws IntactException {
 
         ///////////////////////////
         // checking input params
-        if ( helper == null ) {
-            throw new IllegalArgumentException( "you must give a non null helper." );
-        }
-
         if ( experiment == null ) {
             throw new IllegalArgumentException( "you must give a non null experiment." );
         }
@@ -105,23 +102,25 @@ public class UpdateExperimentAnnotationsFromPudmed {
 
             //////////////////////////////////////
             // Collecting necessary vocabularies
+            CvObjectDao<CvTopic> cvTopicDao = DaoFactory.getCvObjectDao(CvTopic.class);
 
-            CvTopic authorList = helper.getObjectByLabel( CvTopic.class, CvTopic.AUTHOR_LIST ); // unique
+            CvTopic authorList = cvTopicDao.getByShortLabel(CvTopic.AUTHOR_LIST); // unique
+
             if ( authorList == null ) {
                 throw new IntactException( "Could not find CvTopic(" + CvTopic.AUTHOR_LIST + ") in your intact node. abort update." );
             }
 
-            CvTopic journal = helper.getObjectByLabel( CvTopic.class, CvTopic.JOURNAL );        // unique
+            CvTopic journal = cvTopicDao.getByShortLabel(CvTopic.JOURNAL );        // unique
             if ( journal == null ) {
                 throw new IntactException( "Could not find CvTopic(" + CvTopic.JOURNAL + ") in your intact node. abort update." );
             }
 
-            CvTopic year = helper.getObjectByLabel( CvTopic.class, CvTopic.PUBLICATION_YEAR );  // unique
+            CvTopic year = cvTopicDao.getByShortLabel(CvTopic.PUBLICATION_YEAR );  // unique
             if ( year == null ) {
                 throw new IntactException( "Could not find CvTopic(" + CvTopic.PUBLICATION_YEAR + ") in your intact node. abort update." );
             }
 
-            CvTopic email = helper.getObjectByLabel( CvTopic.class, CvTopic.CONTACT_EMAIL );    // not unique
+            CvTopic email = cvTopicDao.getByShortLabel(CvTopic.CONTACT_EMAIL );    // not unique
             if ( email == null ) {
                 throw new IntactException( "Could not find CvTopic(" + CvTopic.CONTACT_EMAIL + ") in your intact node. abort update." );
             }
@@ -131,34 +130,34 @@ public class UpdateExperimentAnnotationsFromPudmed {
 
             // author-list
             if ( eaf.getAuthorList() != null && eaf.getAuthorList().length() != 0 ) {
-                if ( addUniqueAnnotation( helper, experiment, authorList, eaf.getAuthorList() ) ) {
+                if ( addUniqueAnnotation(  experiment, authorList, eaf.getAuthorList() ) ) {
                     report.setAuthorListUpdated( true );
                 }
             }
 
             // journal
             if ( eaf.getJournal() != null && eaf.getJournal().length() != 0 ) {
-                if ( addUniqueAnnotation( helper, experiment, journal, eaf.getJournal() ) ) {
+                if ( addUniqueAnnotation(  experiment, journal, eaf.getJournal() ) ) {
                     report.setJournalUpdated( true );
                 }
             }
 
             // year of publication
             if ( eaf.getYear() != -1 ) {
-                if ( addUniqueAnnotation( helper, experiment, year, Integer.toString( eaf.getYear() ) ) ) {
+                if ( addUniqueAnnotation(  experiment, year, Integer.toString( eaf.getYear() ) ) ) {
                     report.setYearUpdated( true );
                 }
             }
 
             // email - if not there yet, add it.
             if ( eaf.getAuthorEmail() != null && eaf.getAuthorEmail().length() != 0 ) {
-                Annotation annotation = new Annotation( helper.getInstitution(), email );
+                Annotation annotation = new Annotation( DaoFactory.getInstitutionDao().getInstitution(), email );
                 annotation.setAnnotationText( eaf.getAuthorEmail() );
                 if ( ! experiment.getAnnotations().contains( annotation ) ) {
                     // add it
-                    helper.create( annotation );
+                    DaoFactory.getAnnotationDao().persist( annotation );
                     experiment.addAnnotation( annotation );
-                    helper.update( experiment );
+                    DaoFactory.getExperimentDao().update( experiment );
                     report.setContactUpdated( true );
                 }
             }
@@ -201,15 +200,13 @@ public class UpdateExperimentAnnotationsFromPudmed {
      * <p/>
      * The CvTopic and the text of the annotation are given as parameters so the methods is flexible.
      *
-     * @param helper     database access
      * @param experiment the CvObject in which we want to add the annotation
      * @param topic      the topic of the annotation. must not be null.
      * @param text       the text of the annotation. Can be null.
      *
      * @throws IntactException if something goes wrong during the update.
      */
-    private static boolean addUniqueAnnotation( final IntactHelper helper,
-                                                final Experiment experiment,
+    private static boolean addUniqueAnnotation( final Experiment experiment,
                                                 final CvTopic topic,
                                                 final String text ) throws IntactException {
 
@@ -226,15 +223,17 @@ public class UpdateExperimentAnnotationsFromPudmed {
             // select all annotation of that object filtered by topic
             Collection annotationByTopic = select( experiment.getAnnotations(), topic );
 
+            Institution institution = DaoFactory.getInstitutionDao().getInstitution();
+
             // update annotations
             if ( annotationByTopic.isEmpty() ) {
 
                 // add a new one
-                Annotation annotation = new Annotation( helper.getInstitution(), topic );
+                Annotation annotation = new Annotation( institution, topic );
                 annotation.setAnnotationText( text );
-                helper.create( annotation );
+                DaoFactory.getAnnotationDao().persist( annotation );
                 experiment.addAnnotation( annotation );
-                helper.update( experiment );
+                DaoFactory.getExperimentDao().update( experiment );
 
                 updated = true;
 
@@ -243,7 +242,7 @@ public class UpdateExperimentAnnotationsFromPudmed {
                 // there was at least one annotation
 
                 // first, check if the annotation we want to have in that CvObject is already in
-                Annotation newAnnotation = new Annotation( helper.getInstitution(), topic );
+                Annotation newAnnotation = new Annotation( institution, topic );
                 newAnnotation.setAnnotationText( text );
 
                 if ( annotationByTopic.contains( newAnnotation ) ) {
@@ -255,7 +254,7 @@ public class UpdateExperimentAnnotationsFromPudmed {
                     Annotation annotation = (Annotation) iterator.next();
                     String oldText = annotation.getAnnotationText();
                     annotation.setAnnotationText( text );
-                    helper.update( annotation );
+                    DaoFactory.getAnnotationDao().update( annotation );
 
                     updated = true;
 
@@ -269,8 +268,8 @@ public class UpdateExperimentAnnotationsFromPudmed {
                 Annotation annotation = (Annotation) iterator.next();
                 String _text = annotation.getAnnotationText();
                 experiment.removeAnnotation( annotation );
-                helper.update( experiment );
-                helper.delete( annotation );
+                DaoFactory.getExperimentDao().update( experiment );
+                DaoFactory.getAnnotationDao().delete( annotation );
 
                 updated = true;
             }
