@@ -16,6 +16,8 @@ import uk.ac.ebi.intact.util.UpdateProteins;
 import uk.ac.ebi.intact.util.UpdateProteinsI;
 import uk.ac.ebi.intact.util.test.mocks.MockEntryText;
 import uk.ac.ebi.intact.util.test.mocks.MockInputStream;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.io.InputStream;
 import java.util.Collection;
@@ -62,8 +64,6 @@ public class UpdateProteinsTest extends TestCase {
         return new TestSuite( UpdateProteinsTest.class );
     }
 
-
-    IntactHelper helper;
     UpdateProteinsI proteinBuilder;
 
     /**
@@ -72,13 +72,11 @@ public class UpdateProteinsTest extends TestCase {
     protected void setUp() {
         try {
 
-            helper = new IntactHelper();
-
             loadSharedObject(); // CVs ...
 
             // TODO: in order to avoid to have to write to the database, we could have a special implementation
             //       of the helper which implements the create, update ... but doesn't do anything ...
-            proteinBuilder = new UpdateProteins( helper, false ); // no output
+            proteinBuilder = new UpdateProteins( false ); // no output
             proteinBuilder.setDebugOnScreen( false );
 
         } catch ( Exception e ) {
@@ -118,67 +116,73 @@ public class UpdateProteinsTest extends TestCase {
 
     private void loadSharedObject() throws IntactException {
 
-        sgdDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "sgd" );
+        CvObjectDao<CvDatabase> cvDatabaseDao = DaoFactory.getCvObjectDao(CvDatabase.class);
+
+                sgdDatabase = cvDatabaseDao.getByShortLabel("sgd");
         if( sgdDatabase == null ) {
             fail( "Could not load CvDatabase: sgd" );
         }
 
-        uniprotDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, CvDatabase.UNIPROT );
+        uniprotDatabase =  cvDatabaseDao.getByShortLabel( CvDatabase.UNIPROT );
         if( uniprotDatabase == null ) {
             fail( "Could not load CvDatabase: uniprotkb" );
         }
 
-        intactDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "intact" );
+        intactDatabase =  cvDatabaseDao.getByShortLabel( "intact" );
         if( intactDatabase == null ) {
             fail( "Could not load CvDatabase: intact" );
         }
 
-        goDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "go" );
+        goDatabase =  cvDatabaseDao.getByShortLabel( "go" );
         if( goDatabase == null ) {
             fail( "Could not load CvDatabase: go" );
         }
 
-        interproDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "interpro" );
+        interproDatabase =  cvDatabaseDao.getByShortLabel( "interpro" );
         if( interproDatabase == null ) {
             fail( "Could not load CvDatabase: interpro" );
         }
 
-        flybaseDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "flybase" );
+        flybaseDatabase =  cvDatabaseDao.getByShortLabel( "flybase" );
         if( flybaseDatabase == null ) {
             fail( "Could not load CvDatabase: flybase" );
         }
 
-        identityXrefQualifier = (CvXrefQualifier) helper.getObjectByLabel( CvXrefQualifier.class, "identity" );
+        CvObjectDao<CvXrefQualifier> cvXrefQualifier = DaoFactory.getCvObjectDao(CvXrefQualifier.class);
+
+        identityXrefQualifier = cvXrefQualifier.getByShortLabel( "identity" );
         if( identityXrefQualifier == null ) {
             fail( "Could not load CvXrefQualifier: identity" );
         }
 
-        secondaryXrefQualifier = (CvXrefQualifier) helper.getObjectByLabel( CvXrefQualifier.class, "secondary-ac" );
+        secondaryXrefQualifier = cvXrefQualifier.getByShortLabel( "secondary-ac" );
         if( secondaryXrefQualifier == null ) {
             fail( "Could not load CvXrefQualifier: secondary-ac" );
         }
 
-        isoFormParentXrefQualifier = (CvXrefQualifier) helper.getObjectByLabel( CvXrefQualifier.class, "isoform-parent" );
+        isoFormParentXrefQualifier = cvXrefQualifier.getByShortLabel( "isoform-parent" );
         if( secondaryXrefQualifier == null ) {
             fail( "Could not load CvXrefQualifier: isoform-parent" );
         }
 
-        isoformComment = (CvTopic) helper.getObjectByLabel( CvTopic.class, "isoform-comment" );
+        isoformComment = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel( "isoform-comment" );
         if( isoformComment == null ) {
             fail( "Could not load CvTopic: isoform-comment" );
         }
 
-        isoformSynonym = (CvAliasType) helper.getObjectByLabel( CvAliasType.class, "isoform-synonym" );
+        CvObjectDao<CvAliasType> cvAliasType = DaoFactory.getCvObjectDao(CvAliasType.class);
+
+        isoformSynonym = cvAliasType.getByShortLabel( "isoform-synonym" );
         if( isoformSynonym == null ) {
             fail( "Could not load CvAliasType: isoform-synonym" );
         }
 
-        geneNameAliasType = (CvAliasType) helper.getObjectByLabel( CvAliasType.class, "gene-name" );
+        geneNameAliasType = cvAliasType.getByShortLabel( "gene-name" );
         if( geneNameAliasType == null ) {
             fail( "Could not load CvAliasType: gene-name" );
         }
 
-        geneNameSynonymAliasType = (CvAliasType) helper.getObjectByLabel( CvAliasType.class, "gene-name-synonym" );
+        geneNameSynonymAliasType = cvAliasType.getByShortLabel( "gene-name-synonym" );
         if( geneNameSynonymAliasType == null ) {
             fail( "Could not load CvAliasType: gene-name-synonym" );
         }

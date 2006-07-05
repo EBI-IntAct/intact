@@ -525,14 +525,10 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         ResultWrapper rw = null;
 
         // Set the helper as it has already been closed.
-        myProteinFactory.setIntactHelper(getIntactHelper());
         Collection prots;
-        try {
+
             prots = myProteinFactory.insertSPTrProteins(pid);
-        }
-        finally {
-            myProteinFactory.setIntactHelper(null);
-        }
+
         if (prots.size() > max) {
             // Exceeds the maximum size.
             rw = new ResultWrapper(prots.size(), max);
@@ -702,19 +698,11 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
         // Initialize the Protein factory. Needs a valid to initialize factory values.
         try {
-            myProteinFactory = new UpdateProteins(helper);
+            myProteinFactory = new UpdateProteins();
         }
         catch (UpdateProteinsI.UpdateException e) {
             log.error("", e);
             throw new IntactException("Unable to create the Protein factory");
-        }
-        finally {
-            // We reset it because the current helper will be closed soon (hence
-            // no longer valid). Check for null here as it is possible for
-            // updateProteins fails to create an insance
-            if (myProteinFactory != null) {
-                myProteinFactory.setIntactHelper(null);
-            }
         }
     }
 

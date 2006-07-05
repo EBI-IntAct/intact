@@ -7,13 +7,13 @@ package uk.ac.ebi.intact.util.cdb;
 
 import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.util.HttpProxyManager;
 import uk.ac.ebi.intact.util.SearchReplace;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -91,13 +91,9 @@ public class UpdateExperiments {
     /**
      * Update the given experiment and generate a report for it.
      *
-     * @param helper          access to the database
-     * @param contactTopic    the topic associated to the author's email
-     * @param authorListTopic the topic associated to the author list
      * @param experiment      the experiemnt to update
-     * @param out             where to write the report
      */
-    public static void updateExperiment( IntactHelper helper, Experiment experiment ) {
+    public static void updateExperiment(  Experiment experiment ) {
 
         System.out.println( "=======================================================================================" );
         System.out.println( "Updating experiment: " + experiment.getAc() + " " + experiment.getShortLabel() );
@@ -159,7 +155,7 @@ public class UpdateExperiments {
                 updated = true;
             }
 
-            printReport( UpdateExperimentAnnotationsFromPudmed.update( helper, experiment, pubmedId ) );
+            printReport( UpdateExperimentAnnotationsFromPudmed.update( experiment, pubmedId ) );
 
             ////////////////////////////////
             // Write report.
@@ -223,15 +219,10 @@ public class UpdateExperiments {
         } catch ( HttpProxyManager.ProxyConfigurationNotFound e ) {
             System.err.println( e.getMessage() );
         }
-
-        IntactHelper helper = null;
-
-        try {
-            helper = new IntactHelper();
-
+        
             try {
-                System.out.println( "Helper created (User: " + helper.getDbUserName() + " " +
-                                    "Database: " + helper.getDbName() + ")" );
+                System.out.println( "Helper created (User: " + DaoFactory.getBaseDao().getDbUserName() + " " +
+                                    "Database: " + DaoFactory.getBaseDao().getDbName() + ")" );
             } catch ( Exception e ) {
                 e.printStackTrace();
             }
@@ -239,7 +230,7 @@ public class UpdateExperiments {
             // retreive all experiment ACs
             System.out.print( "Loading experiments ... " );
             System.out.flush();
-            Connection connection = helper.getJDBCConnection();
+            Connection connection = DaoFactory.connection();
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery( "SELECT ac FROM ia_experiment ORDER BY created" );
             List experimentAcs = new ArrayList();
@@ -256,20 +247,12 @@ public class UpdateExperiments {
                 String ac = (String) iterator.next();
 
                 // get the experiment
-                Collection experiments = helper.search( Experiment.class, "ac", ac );
-                Experiment experiment = (Experiment) experiments.iterator().next();
-                experiments = null;
+                Experiment experiment = DaoFactory.getExperimentDao().getByAc(ac);
 
-                updateExperiment( helper, experiment );
+                updateExperiment(  experiment );
 
                 iterator.remove(); // empty the collection as we go
             }
 
-        } finally {
-            if ( helper != null ) {
-                System.out.println( "Datasource closed." );
-                helper.closeStore();
-            }
-        }
     }
 }

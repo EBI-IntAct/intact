@@ -137,7 +137,7 @@ public class ExperimentDescriptionPersister {
                 // doesn't exist, then create a new Annotation
                 annotation = new Annotation( institution, cvTopic );
                 annotation.setAnnotationText( annotationTag.getText() );
-                helper.create( annotation );
+                DaoFactory.getAnnotationDao().persist( annotation );
             }
 
             experiment.addAnnotation( annotation );
@@ -148,7 +148,7 @@ public class ExperimentDescriptionPersister {
         for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
             XrefTag xrefTag = (XrefTag) iterator.next();
 
-            Xref xref = new Xref( helper.getInstitution(),
+            Xref xref = new Xref( DaoFactory.getInstitutionDao().getInstitution(),
                                   XrefChecker.getCvDatabase( xrefTag.getDb() ),
                                   xrefTag.getId(),
                                   xrefTag.getSecondary(),
@@ -171,7 +171,6 @@ public class ExperimentDescriptionPersister {
      * Search in IntAct for an Annotation having the a specific type and annotationText.
      *
      * @param annotationTag the description of the Annotation we are looking for.
-     * @param helper        the access to the IntAct database
      *
      * @return the found Annotation or null if not found.
      *
