@@ -1,0 +1,132 @@
+$Id$
+**********************************************************************
+README for Search (intactCore/application/search3)
+**********************************************************************
+
+DIRECTORIES:
+/ (root)        : JSP and css files.
+WEB-INF/lib     : Library files for web. All the files in this location are
+                  included in the WAR file.
+WEB-INF/classes : search specific (non Intact core) class files.
+WEB-INF/tld     : The tag libraries.
+WEB-INF/config  : Configuration/Property files for the application.
+dist/           : Where the WAR file is created.
+
+INSTALLATION
+    edit repository.xml and OJB.properties in the intact root directory
+    (intactCore/config) to suit your requirements (oracle vs postgres etc).
+    Instead of editing these files manually, you may just run ant set-target-env
+    from intactCore directory. The target environment is specified in the
+    build.properties file (intactCore directory). 'search' has been tested
+    under Oracle 8.1.6 and PostGres 7.2 (local and remote).
+    
+DATABASE:
+    Oracle:
+        Search 3 using for better performance in oracle an materialized view. to generate
+        this view you have to run /sql/oracle/search.sql.
+
+    Postgres:
+        We haven't found an fancy solution for postgres at the moment. We are using simply
+        a table. In that case the data resource for search3 is static. you have to update
+        manually the table. for creating an updating run /sql/postgres/search.sql.
+        (ex : psql intactdb -U intactuser -f ./sql/postgres/search.sql)
+BUILD
+    ant war
+        prepares a WAR file to be deployed in a WEB container. The WAR file is
+        created in the dist/ directory.
+
+OTHER USEFUL COMMANDS
+    ant deploy (Tomcat specific)
+        deploys the WAR file in the dist/ location to the CATALINA_HOME/webapps. The
+        environment variable CATALINA_HOME must be set for this command to work
+        correctly.
+        You might have to specify where to find the war file using the option
+        -Dwar=/dist/MyWarFile.war
+
+    ant undeploy (Tomcat specific)
+        reverses the effects of 'ant deploy' command. In addition to that, this
+        command also stops the WEB server (Tomcat) if it is running. As with
+        deploy command, the environment variable CATALINA_HOME must be set for
+        this command to work correctly. An error message, displayed when trying
+        to shutdown the WEB server if it is not running, can be safely ignored. In
+        addition to removing the WAR file, this command also removes the
+        expanded directory as well. For example, CATALINA_HOME/webapps/search
+        directory is removed in addition to CATALINA_HOME/webapps/search.war file.
+
+    ant undeploy war deploy (Tomcat specific)
+        runs all three targets in the specified order. Undeploys the last deployment,
+        creates a new war file and deploy it again.
+
+NOTES
+    The WAR file is being built using jar and class file from various locations.
+    Given below are locations where it looks for these files:
+        / (root)        - jsp and css files.
+        WEB-INF/        - web.xml, struts-config.xml files and tld libraries.
+        WEB-INF/lib     - all the jar files in this location.
+        ../../dist/     - intact-core.jar file.
+        ../../lib       - application common jar files (only a subset).
+        WEB-INF/classes - search class files.
+
+
+Advanced Search
+*******************************************************
+
+couple of words about ANTLR:
+
+    If you only want to generate the Java Handler from the ANTLR file, you only need to
+    run the Ant task: antlr2java, if you want more information, it's just below ...
+
+    IQL's ANTLR grammar
+    -------------------
+
+    The ANTLR grammar is composed of 2 files
+
+        * valuelexer.g
+        * iql2lucene.g
+
+    They are currently located in intactCore\src\uk\ac\ebi\intact\application\search3\advancedSearch\powerSearch\parser\iql2luceneParser
+    and the resulting Java classes are in the package uk.ac.ebi.intact.application.search3.searchEngine.parser.iql2luceneParser
+    How to convert *.g into .java
+
+    ANTLR provide a Tool that does that job: antlr.Tool
+    The ANTLR jar file is located in intactCore\application\lib\antlr.jar
+
+    Here is how to generate the code:
+
+    java -cp lib/antlr.jar antlr.Tool valuelexer.g
+
+        generates:
+             ValLexer.java
+             valtagTokenTypes.java
+             valtagTokenTypes.txt
+
+    (!) Note: the command below uses some file generated previously
+    java -cp lib/antlr.jar antlr.Tool iql2lucene.g
+
+        generates:
+             Iql2LuceneLexer.java
+             Iql2LuceneParser.java
+             Iql2LuceneParserTokenTypes.java
+             Iql2LuceneParserTokenTypes.txt
+             Iql2LuceneTreeWalker.java
+
+
+Also, before using the advanced search:
+
+create the index:
+    call the script createLuceneIndex.sh (located in /scripts) with the target directory of the index as an argument
+
+set the index path:
+    set the name of the index directory in the file advancedSearch.properties (located in /config)
+
+insert the CV for search3
+    if the table 'treehierarchie' is not jet created in the database:
+        run the script createTableOracle.sh/createTablePostgres (located in /scripts/cv2tree) respectivley,
+        depending on your database
+    if the tabel 'treehierarchie' exists in the database:
+        run the script insertSearch3CVs.sh (located in /scripts/cv2tree)
+        this script will insert the 3 CVs (CvInteraction, CvIdentification, CvInteractionType) into the database
+
+
+COMMENTS
+    Send any comments/feedback to skerrien@ebi.ac.uk
