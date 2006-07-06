@@ -7,10 +7,12 @@ package uk.ac.ebi.intact.application.editor.struts.action;
 
 import servletunit.struts.MockStrutsTestCase;
 import org.apache.struts.action.ActionServlet;
+import org.hibernate.Transaction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.event.EventListener;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
+import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 
 import javax.servlet.ServletContext;
 
@@ -41,9 +43,19 @@ import javax.servlet.ServletContext;
  */
 public class SidebarDispatchActionTest extends MockStrutsTestCase {
 
-    public void setUp() throws Exception { super.setUp(); }
+    private Transaction tx;
 
-    public void tearDown() throws Exception { super.tearDown(); }
+    public void setUp() throws Exception {
+        super.setUp();
+
+        tx = HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+    }
+
+    public void tearDown() throws Exception {
+        super.tearDown();
+        tx.commit();
+
+    }
 
     public SidebarDispatchActionTest(String testName) {
         super(testName);

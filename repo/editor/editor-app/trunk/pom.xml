@@ -48,6 +48,26 @@
         </plugins>
     </build>
 
+    <properties>
+        <maven.test.skip>true</maven.test.skip>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>ebi-test</id>
+            <build>
+                <testResources>
+                    <testResource>
+                        <directory>src/main/webapp</directory>
+                    </testResource>
+                </testResources>
+            </build>
+            <properties>
+                <maven.test.skip>false</maven.test.skip>
+            </properties>
+        </profile>
+    </profiles>
+
       <dependencies>
         <!-- Needed by the EditorTopic plugin -->
         <dependency>
