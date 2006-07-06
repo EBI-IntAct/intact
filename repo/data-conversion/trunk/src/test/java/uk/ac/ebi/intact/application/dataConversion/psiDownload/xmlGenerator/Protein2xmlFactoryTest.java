@@ -2,32 +2,29 @@
 // All rights reserved. Please see the file LICENSE
 // in the root directory of this distribution.
 
-package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.test;
+package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDownloadTest;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.test.PsiDownloadTest;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Experiment2xmlFactory;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Experiment2xmlI;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi1.Experiment2xmlPSI1;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi2.Experiment2xmlPSI2;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi25.Experiment2xmlPSI25;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi1.Protein2xmlPSI1;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi2.Protein2xmlPSI2;
 
 /**
- * Test the behaviour of the Experiment2xmlFactory.
+ * Test the behaviour of the Protein2xmlFactory
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
-public class Experiment2xmlFactoryTest extends PsiDownloadTest {
+public class Protein2xmlFactoryTest extends PsiDownloadTest {
 
     /**
      * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
      */
     public static Test suite() {
-        return new TestSuite( Experiment2xmlFactoryTest.class );
+        return new TestSuite( Protein2xmlFactoryTest.class );
     }
 
     ////////////////////////
@@ -38,7 +35,7 @@ public class Experiment2xmlFactoryTest extends PsiDownloadTest {
         UserSessionDownload session = null;
 
         try {
-            Experiment2xmlFactory.getInstance( session );
+            Protein2xmlFactory.getInstance( session );
             fail( "You should no be allowed to give null to a Factory." );
         } catch ( Exception e ) {
             // ok
@@ -49,29 +46,31 @@ public class Experiment2xmlFactoryTest extends PsiDownloadTest {
 
         UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion1() );
 
-        Experiment2xmlI bsi = Experiment2xmlFactory.getInstance( session );
+        Protein2xmlI bsi = Protein2xmlFactory.getInstance( session );
 
         assertNotNull( bsi );
-        assertTrue( bsi instanceof Experiment2xmlPSI1 );
+        assertTrue( bsi instanceof Protein2xmlPSI1 );
     }
 
     public void testGetInstancePsi2() {
 
         UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion2() );
 
-        Experiment2xmlI bsi = Experiment2xmlFactory.getInstance( session );
+        Protein2xmlI bsi = Protein2xmlFactory.getInstance( session );
 
         assertNotNull( bsi );
-        assertTrue( bsi instanceof Experiment2xmlPSI2 );
+        assertTrue( bsi instanceof Protein2xmlPSI2 );
     }
 
     public void testGetInstancePsi25() {
 
         UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion25() );
 
-        Experiment2xmlI bsi = Experiment2xmlFactory.getInstance( session );
-
-        assertNotNull( bsi );
-        assertTrue( bsi instanceof Experiment2xmlPSI25 );
+        try {
+            Protein2xmlFactory.getInstance( session );
+            fail();
+        } catch ( Throwable t ) {
+            // ok
+        }
     }
 }

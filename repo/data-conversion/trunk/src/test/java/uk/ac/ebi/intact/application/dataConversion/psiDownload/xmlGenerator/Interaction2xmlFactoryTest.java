@@ -2,32 +2,30 @@
 // All rights reserved. Please see the file LICENSE
 // in the root directory of this distribution.
 
-package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.test;
+package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDownloadTest;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.test.PsiDownloadTest;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.BioSource2xmlFactory;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.BioSource2xmlI;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi1.BioSource2xmlPSI1;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi2.BioSource2xmlPSI2;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi25.BioSource2xmlPSI25;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi1.Interaction2xmlPSI1;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi2.Interaction2xmlPSI2;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi25.Interaction2xmlPSI25;
 
 /**
- * Test the behaviour of the Biosource2xmlFactory
+ * Test the behaviour of the Interaction2xmlFactory
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
-public class BioSource2xmlFactoryTest extends PsiDownloadTest {
+public class Interaction2xmlFactoryTest extends PsiDownloadTest {
 
     /**
      * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
      */
     public static Test suite() {
-        return new TestSuite( BioSource2xmlFactoryTest.class );
+        return new TestSuite( Interaction2xmlFactoryTest.class );
     }
 
     ////////////////////////
@@ -38,7 +36,7 @@ public class BioSource2xmlFactoryTest extends PsiDownloadTest {
         UserSessionDownload session = null;
 
         try {
-            BioSource2xmlFactory.getInstance( session );
+            Interaction2xmlFactory.getInstance( session );
             fail( "You should no be allowed to give null to a Factory." );
         } catch ( Exception e ) {
             // ok
@@ -49,29 +47,29 @@ public class BioSource2xmlFactoryTest extends PsiDownloadTest {
 
         UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion1() );
 
-        BioSource2xmlI bsi = BioSource2xmlFactory.getInstance( session );
+        Interaction2xmlI bsi = Interaction2xmlFactory.getInstance( session );
 
         assertNotNull( bsi );
-        assertTrue( bsi instanceof BioSource2xmlPSI1 );
+        assertTrue( bsi instanceof Interaction2xmlPSI1 );
     }
 
     public void testGetInstancePsi2() {
 
         UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion2() );
 
-        BioSource2xmlI bsi = BioSource2xmlFactory.getInstance( session );
+        Interaction2xmlI bsi = Interaction2xmlFactory.getInstance( session );
 
         assertNotNull( bsi );
-        assertTrue( bsi instanceof BioSource2xmlPSI2 );
+        assertTrue( bsi instanceof Interaction2xmlPSI2 );
     }
 
     public void testGetInstancePsi25() {
 
         UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion25() );
 
-        BioSource2xmlI bsi = BioSource2xmlFactory.getInstance( session );
+        Interaction2xmlI bsi = Interaction2xmlFactory.getInstance( session );
 
         assertNotNull( bsi );
-        assertTrue( bsi instanceof BioSource2xmlPSI25 );
+        assertTrue( bsi instanceof Interaction2xmlPSI25 );
     }
 }
