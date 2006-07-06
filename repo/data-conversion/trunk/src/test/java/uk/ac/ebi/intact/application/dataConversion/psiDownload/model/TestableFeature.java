@@ -2,7 +2,7 @@
 // All rights reserved. Please see the file LICENSE
 // in the root directory of this distribution.
 
-package uk.ac.ebi.intact.application.dataConversion.psiDownload.test.model;
+package uk.ac.ebi.intact.application.dataConversion.psiDownload.model;
 
 import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.CvFeatureType;
@@ -16,6 +16,10 @@ import uk.ac.ebi.intact.model.Institution;
  * @version $Id$
  */
 public class TestableFeature extends Feature {
+
+    public TestableFeature() {
+
+    }
 
     public TestableFeature( String ac, Institution owner, String shortLabel, Component component, CvFeatureType featureType ) {
         super( owner, shortLabel, component, featureType );

@@ -2,7 +2,7 @@
 // All rights reserved. Please see the file LICENSE
 // in the root directory of this distribution.
 
-package uk.ac.ebi.intact.application.dataConversion.psiDownload.test.model;
+package uk.ac.ebi.intact.application.dataConversion.psiDownload.model;
 
 import uk.ac.ebi.intact.model.*;
 
@@ -14,6 +14,10 @@ import uk.ac.ebi.intact.model.*;
  */
 public class TestableProtein extends ProteinImpl {
 
+    public TestableProtein() {
+
+    }
+
     public TestableProtein( String ac, Institution owner, BioSource source, String shortLabel, CvInteractorType type, String aSequence ) {
         super( owner, source, shortLabel, type );
 
@@ -21,6 +25,11 @@ public class TestableProtein extends ProteinImpl {
             throw new IllegalArgumentException( "You must give a non null AC." );
         }
         this.ac = ac;
+
+        if (aSequence == null)
+        {
+            return;
+        }
 
         // count of required chunk to fit the sequence
         int chunkCount = aSequence.length() / ourMaxSeqLength;

@@ -1,4 +1,4 @@
-package uk.ac.ebi.intact.application.dataConversion.psiDownload.test;
+package uk.ac.ebi.intact.application.dataConversion.psiDownload;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -6,7 +6,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Annotation2xml;
 import uk.ac.ebi.intact.model.Institution;
 

@@ -2,17 +2,19 @@
 // All rights reserved. Please see the file LICENSE
 // in the root directory of this distribution.
 
-package uk.ac.ebi.intact.application.dataConversion.psiDownload.test;
+package uk.ac.ebi.intact.application.dataConversion.psiDownload;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.model.TestableProtein;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.model.test.util.TestableProtein;
+import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
+import org.hibernate.Transaction;
 
 /**
  * TODO document this ;o)
@@ -22,6 +24,8 @@ import java.util.Collection;
  */
 public class UserSessionDownloadTest extends PsiDownloadTest {
 
+    private Transaction tx;
+
     /**
      * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
      */
@@ -29,7 +33,17 @@ public class UserSessionDownloadTest extends PsiDownloadTest {
         return new TestSuite( UserSessionDownloadTest.class );
     }
 
-    ////////////////////////
+    protected void setUp() throws Exception
+    {
+        super.setUp();
+        tx = HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+    }
+
+    protected void tearDown() throws Exception
+    {
+        super.tearDown();
+        tx.commit();
+    }////////////////////////
     // Tests
 
     public void testIsExportable() {
