@@ -32,7 +32,7 @@ public class ProteinImpl extends PolymerImpl implements Protein, Editable {
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    private ProteinImpl() {
+    public ProteinImpl() {
         //super call sets creation time data
         super();
     }
