@@ -13,9 +13,9 @@
     <description>Validates PSI files</description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/branches/bruno-work/psi-validator-app/trunk</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/branches/bruno-work/psi-validator-app/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.py/intact/branches/bruno-work/psi-validator-app/trunk</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/legacy/branches/bruno-work/psi-validator-app/trunk</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/legacy/branches/bruno-work/psi-validator-app/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.py/intact/legacy/branches/bruno-work/psi-validator-app/trunk</url>
     </scm>
 
     <ciManagement>
