@@ -26,9 +26,9 @@
     <description>Library to do sanity checks on intact</description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/branches/intact-reorg/sanity-checker/trunk</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/branches/intact-reorg/sanity-checker/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/branches/intact-reorg/sanity-checker/trunk/</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/sanity-checker/trunk</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/sanity-checker/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/sanity-checker/trunk/</url>
     </scm>
 
     <dependencies>

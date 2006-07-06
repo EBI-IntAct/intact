@@ -20,9 +20,9 @@
     <description>Base build file</description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/branches/intact-reorg/current</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/branches/intact-reorg/current</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/branches/intact-reorg/current/</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/current</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/current</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/current/</url>
     </scm>
 
     <modules>

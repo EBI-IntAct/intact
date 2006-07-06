@@ -26,9 +26,9 @@
     <description>Search web interface</description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/branches/intact-reorg/search/search-app/trunk</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/branches/intact-reorg/search/search-app/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/branches/intact-reorg/search/search-app/trunk/</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/search/search-app/trunk</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/search/search-app/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/search/search-app/trunk/</url>
     </scm>
 
 

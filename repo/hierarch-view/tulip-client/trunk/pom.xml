@@ -26,9 +26,9 @@
     <description>Tulip Web Service Client</description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/branches/intact-reorg/hierarch-view/tulip-client/trunk</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/branches/intact-reorg/hierarch-view/tulip-client/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/branches/intact-reorg/hierarch-view/tulip-client/trunk/</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/hierarch-view/tulip-client/trunk</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/hierarch-view/tulip-client/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/hierarch-view/tulip-client/trunk/</url>
     </scm>
 
     <build>
