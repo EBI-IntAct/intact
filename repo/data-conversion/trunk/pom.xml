@@ -38,11 +38,7 @@
             <build>
                 <testResources>
                     <testResource>
-                        <directory>src/test-ebi/java</directory>
-                        <filtering>true</filtering>
-                    </testResource>
-                    <testResource>
-                        <directory>src/test-ebi/resources</directory>
+                        <directory>src/test/resources</directory>
                         <filtering>true</filtering>
                     </testResource>
                 </testResources>
