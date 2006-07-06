@@ -45,29 +45,6 @@
         </pluginManagement>
     </build>
 
-    <profiles>
-        <profile>
-            <id>oracle</id>
-             <dependencies>
-                <dependency>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                    <version>1.2.13</version>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>postgres</id>
-             <dependencies>
-                <dependency>
-                    <groupId>postgresql</groupId>
-                    <artifactId>postgresql</artifactId>
-                    <version>8.1-404.jdbc3</version>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
-
     <reporting>
         <plugins>
             <plugin>
