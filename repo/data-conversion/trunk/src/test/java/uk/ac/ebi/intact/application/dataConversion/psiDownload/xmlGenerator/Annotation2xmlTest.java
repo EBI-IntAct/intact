@@ -2,16 +2,17 @@
 // All rights reserved. Please see the file LICENSE
 // in the root directory of this distribution.
 
-package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.test;
+package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.w3c.dom.Element;
+import org.hibernate.Transaction;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDownloadTest;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.test.PsiDownloadTest;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Annotation2xml;
 import uk.ac.ebi.intact.model.Annotation;
+import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 
 /**
  * TODO document this ;o)
@@ -26,6 +27,20 @@ public class Annotation2xmlTest extends PsiDownloadTest {
      */
     public static Test suite() {
         return new TestSuite( Annotation2xmlTest.class );
+    }
+
+    private Transaction tx;
+
+    protected void setUp() throws Exception
+    {
+        super.setUp();
+        tx = HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+    }
+
+    protected void tearDown() throws Exception
+    {
+        super.tearDown();
+        tx.commit();
     }
 
     ////////////////////////

@@ -4,7 +4,7 @@ All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 
-package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.test;
+package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -58,12 +58,12 @@ public class AllJUnitTests extends TestCase {
         suite.addTest( Annotation2xmlTest.suite() );
 
         // check utilities
-        suite.addTest( uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.util.test.AllJUnitTests.suite() );
+        //suite.addTest( uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.util.AllJUnitTests.suite() );
 
         // calling test specific to psi 1, psi 2 and psi 2.5 ...
-        suite.addTest( uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi1.test.AllJUnitTests.suite() );
-        suite.addTest( uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi2.test.AllJUnitTests.suite() );
-        suite.addTest( uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi25.test.AllJUnitTests.suite() );
+        //suite.addTest( uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi1.AllJUnitTests.suite() );
+        //suite.addTest( uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi2.AllJUnitTests.suite() );
+        //suite.addTest( uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi25.AllJUnitTests.suite() );
 
         return suite;
     }
