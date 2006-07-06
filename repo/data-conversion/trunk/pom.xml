@@ -13,7 +13,7 @@
 
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
-        <artifactId>intact-master</artifactId>
+        <artifactId>intact-master-webapp</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
@@ -30,6 +30,33 @@
         <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/data-conversion/trunk</developerConnection>
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/data-conversion/trunk/</url>
     </scm>
+
+    <properties>
+          <maven.test.skip>true</maven.test.skip>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>ebi-test</id>
+
+            <build>
+                <testResources>
+                    <testResource>
+                        <directory>src/test-ebi/java</directory>
+                        <filtering>true</filtering>
+                    </testResource>
+                    <testResource>
+                        <directory>src/test-ebi/resources</directory>
+                        <filtering>true</filtering>
+                    </testResource>
+                </testResources>
+            </build>
+
+            <properties>
+                <maven.test.skip>false</maven.test.skip>
+            </properties>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>

@@ -4,7 +4,7 @@ All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 
-package uk.ac.ebi.intact.application.dataConversion.psiDownload.test;
+package uk.ac.ebi.intact.application.dataConversion.psiDownload;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -43,12 +43,12 @@ public class AllJUnitTests extends TestCase {
     public static Test suite() {
         final TestSuite suite = new TestSuite();
 
-        suite.addTest( uk.ac.ebi.intact.application.dataConversion.psiDownload.test.PsiDownloadTest.suite() );
-        suite.addTest( uk.ac.ebi.intact.application.dataConversion.psiDownload.test.PsiDocumentFactoryTest.suite() );
-        suite.addTest( uk.ac.ebi.intact.application.dataConversion.psiDownload.test.UserSessionDownloadTest.suite() );
+        suite.addTest( uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDownloadTest.suite() );
+        suite.addTest( uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDocumentFactoryTest.suite() );
+        suite.addTest( uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownloadTest.suite() );
 
         // add xmlGenerator package
-        suite.addTest( uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.test.AllJUnitTests.suite() );
+        //suite.addTest( uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.AllJUnitTests.suite() );
 
         return suite;
     }

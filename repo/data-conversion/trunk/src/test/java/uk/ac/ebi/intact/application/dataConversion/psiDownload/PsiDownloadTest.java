@@ -2,7 +2,7 @@
 // All rights reserved. Please see the file LICENSE
 // in the root directory of this distribution.
 
-package uk.ac.ebi.intact.application.dataConversion.psiDownload.test;
+package uk.ac.ebi.intact.application.dataConversion.psiDownload;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -11,7 +11,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.test.model.TestableBioSource;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.model.TestableBioSource;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi25.AnnotatedObject2xmlPSI25;
 import uk.ac.ebi.intact.model.*;
 

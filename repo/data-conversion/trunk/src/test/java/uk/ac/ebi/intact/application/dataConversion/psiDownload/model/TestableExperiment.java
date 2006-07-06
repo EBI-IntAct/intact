@@ -2,7 +2,7 @@
 // All rights reserved. Please see the file LICENSE
 // in the root directory of this distribution.
 
-package uk.ac.ebi.intact.application.dataConversion.psiDownload.test.model;
+package uk.ac.ebi.intact.application.dataConversion.psiDownload.model;
 
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.Experiment;
@@ -19,6 +19,10 @@ public class TestableExperiment extends Experiment {
 //    public TestableExperiment( Institution owner, String shortLabel, BioSource source ) {
 //        super( owner, shortLabel, source );
 //    }
+
+    public TestableExperiment() {
+        
+    }
 
     public TestableExperiment( String ac, Institution owner, String shortLabel, BioSource source ) {
         super( owner, shortLabel, source );
