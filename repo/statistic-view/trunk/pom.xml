@@ -26,9 +26,9 @@
     <description>Statistic View Application</description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/branches/intact-reorg/statistic-view/trunk</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/branches/intact-reorg/statistic-view/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/branches/intact-reorg/statistic-view/trunk/</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/statistic-view/trunk</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/statistic-view/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/statistic-view/trunk/</url>
     </scm>
 
     <dependencies>

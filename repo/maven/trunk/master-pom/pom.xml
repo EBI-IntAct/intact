@@ -14,9 +14,9 @@
         that is common to all projects.</description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/branches/intact-reorg/maven/trunk/master-pom</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/branches/intact-reorg/maven/trunk/master-pom</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/branches/intact-reorg/maven/trunk/master-pom/</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/trunk/master-pom</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/trunk/master-pom</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/trunk/master-pom/</url>
     </scm>
 
     <ciManagement>

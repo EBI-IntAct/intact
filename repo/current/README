@@ -78,7 +78,7 @@ For postgres 7.x:
 ---------
 a) Firstly download the intact sources using subversion, with the command:
 
-    svn co https://svn.sourceforge.net/svnroot/intact/branches/intact-reorg/current intact-current
+    svn co https://svn.sourceforge.net/svnroot/intact/repo/current intact-current
 
 Then, a directory called 'intact-current' will be retrieved with the sources for the modules inside.
 
