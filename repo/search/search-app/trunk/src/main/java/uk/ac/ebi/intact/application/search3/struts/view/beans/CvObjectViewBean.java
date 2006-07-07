@@ -6,8 +6,7 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
-import uk.ac.ebi.intact.application.commons.util.AnnotationFilter;
-import uk.ac.ebi.intact.application.commons.search.SearchClass;
+import uk.ac.ebi.intact.util.AnnotationFilter;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.CvObject;

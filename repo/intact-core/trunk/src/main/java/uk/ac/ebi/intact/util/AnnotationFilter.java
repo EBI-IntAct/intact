@@ -3,7 +3,7 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.application.commons.util;
+package uk.ac.ebi.intact.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,9 +36,13 @@ public class AnnotationFilter {
      */
     private Set<CvTopic> filteredTopics = null;
 
-    private static AnnotationFilter ourInstance = new AnnotationFilter();
+    private static AnnotationFilter ourInstance;
 
     public static AnnotationFilter getInstance() {
+        if (ourInstance == null)
+        {
+            ourInstance = new AnnotationFilter();
+        }
         return ourInstance;
     }
 
@@ -77,7 +81,7 @@ public class AnnotationFilter {
         }
 
         logger.debug( filteredTopics.size() + " CvTopic" + ( filteredTopics.size() > 1 ? "s" : "" ) + " filtered." );
-
+         
     }
 
     /**

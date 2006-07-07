@@ -6,7 +6,7 @@
 package uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.business;
 
 import org.apache.log4j.Logger;
-import uk.ac.ebi.intact.application.commons.util.AnnotationFilter;
+import uk.ac.ebi.intact.util.AnnotationFilter;
 import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.view.bean.CvBean;
 import uk.ac.ebi.intact.application.search3.business.Constants;
 import uk.ac.ebi.intact.business.IntactException;
