@@ -15,8 +15,6 @@ import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.application.editor.LoginPropertiesGetter;
 import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 
-import javax.servlet.ServletContext;
-
 /**
  * This class permit to test the SidebarDispatchAction.
  * This SidebarDispatch action handles the actions occuring on page which appears just after the login. On this page,
