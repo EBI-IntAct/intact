@@ -42,10 +42,14 @@ public class SanityCheckerHelper {
             throw new IllegalArgumentException( "beanClass should not be null" );
         }
 
+
+
         // We test that the sql is valid.
         Connection conn = getJdbcConnection();
         PreparedStatement preparedStatement = conn.prepareStatement( sql );
         preparedStatement.close();
+
+        
 
         // Store the association
         bean2sql.put( beanClass, sql );

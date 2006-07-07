@@ -13,9 +13,13 @@ import uk.ac.ebi.intact.util.sanityChecker.model.ControlledvocabBean;
 import uk.ac.ebi.intact.util.sanityChecker.model.ExperimentBean;
 import uk.ac.ebi.intact.util.sanityChecker.model.Int2ExpBean;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.sanity.SuperCurator;
 
 import java.sql.SQLException;
 import java.util.*;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * TODO comment it.
@@ -24,6 +28,8 @@ import java.util.*;
  * @version $Id$
  */
 public class ExperimentLister {
+
+    private static final Log log = LogFactory.getLog(ExperimentLister.class);
 
     CvHolder cvHolder;
 
@@ -63,10 +69,11 @@ public class ExperimentLister {
      */
     private HashMap assignedPmid2creator = new HashMap();
 
+    private Collection<SuperCurator> superCurators;
+
 //    public void removeElementFromAssignedPmid2creator(String pmid){
 //        assignedPmid2creator.remove(pmid);
 //    }
-    private static boolean DEBUG = false;
 
     /**
      * Constructor of ExperimentLister.
@@ -74,8 +81,8 @@ public class ExperimentLister {
      * @throws SQLException
      * @throws IntactException
      */
-    public ExperimentLister(  boolean debug ) throws Exception, IntactException {
-        this.DEBUG = debug;
+    public ExperimentLister(Collection<SuperCurator> superCurators) throws Exception {
+        this.superCurators = superCurators;
         initialize();
     }
 
@@ -86,7 +93,7 @@ public class ExperimentLister {
         return cvHolder;
     }
 
-    private void initialize() throws Exception, SQLException {
+    private void initialize() throws Exception {
 
         cvHolder = getCvHolder( );
 
@@ -169,8 +176,8 @@ public class ExperimentLister {
      */
     private void fillNotAssignedExpCollection() throws Exception, SQLException {
 
-        if(DEBUG){
-            System.out.println("Searching for experiment not accepted, to-be-reviewed and not assigned : ");
+        if(log.isDebugEnabled()){
+            log.debug("Searching for experiment not accepted, to-be-reviewed and not assigned : ");
         }
 
         CvHolder holder = getCvHolder();
@@ -197,9 +204,9 @@ public class ExperimentLister {
                                                                 ") " +
                                                                 "and e.created >  to_date('01-Sep-2005:00:00:00','DD-MON-YYYY:HH24:MI:SS') and e.ac like ? " +
                                                                 "order by created_user" );
-        if (DEBUG){
-            System.out.println("... Here is the request done\n\n");
-            System.out.println("select e.ac, e.created_user, e.created, e.shortlabel, x.primaryId as pubmedId \n" +
+        if(log.isDebugEnabled()){
+            log.debug("... Here is the request done\n\n");
+            log.debug("select e.ac, e.created_user, e.created, e.shortlabel, x.primaryId as pubmedId \n" +
                     "from ia_experiment e, ia_xref x \n" +
                     "where x.parent_ac = e.ac and \n" +
                     "x.database_ac = '" + holder.pubmed.getAc() + "' and \n" +
@@ -221,8 +228,8 @@ public class ExperimentLister {
                     "order by created_user\n\n");
     }
         notAssignedExperiments = sch.getBeans( ComparableExperimentBean.class, "%" );
-        if(DEBUG){
-            System.out.println("..." + notAssignedExperiments.size() + " experiments found.");
+        if (log.isDebugEnabled()) {
+            log.debug("..." + notAssignedExperiments.size() + " experiments found.");
         }
     }
 
@@ -234,9 +241,9 @@ public class ExperimentLister {
      * @throws SQLException
      */
 
-    private void fillAssignedExpCollection() throws Exception, SQLException {
-        if(DEBUG){
-            System.out.println("Searching for experiments assigned and not accepted or to-be-reviewed : ");
+    private void fillAssignedExpCollection() throws Exception {
+        if (log.isDebugEnabled()) {
+            log.debug("Searching for experiments assigned and not accepted or to-be-reviewed : ");
         }
         CvHolder holder = getCvHolder();
 
@@ -261,10 +268,10 @@ public class ExperimentLister {
                                                                 "order by created_user" );
 
         assignedExperiments = sch.getBeans( ComparableExperimentBean.class, "%" );
-        if(DEBUG){
-            System.out.println("..." + assignedExperiments.size() + " experiments found.");
-            System.out.println("... Here was the request done : \n\n");
-            System.out.println("select e.ac, e.created_user, e.created, e.shortlabel, x.primaryId as pubmedId, a.description as reviewer \n" +
+        if (log.isDebugEnabled()) {
+            log.debug("..." + assignedExperiments.size() + " experiments found.");
+            log.debug("... Here was the request done : \n\n");
+            log.debug("select e.ac, e.created_user, e.created, e.shortlabel, x.primaryId as pubmedId, a.description as reviewer \n" +
                     "from ia_experiment e, ia_exp2annot e2a, ia_annotation a, ia_xref x \n" +
                     "where e.ac=e2a.experiment_ac and \n" +
                     "x.parent_ac = e.ac and \n" +
@@ -297,11 +304,9 @@ public class ExperimentLister {
      * @throws Exception
      */
     public void removeCorrectionForSuperCuratorAway() throws Exception {
-        if(DEBUG){
-            System.out.println("Removing assignment to curators being away");
+        if (log.isDebugEnabled()) {
+            log.debug("Removing assignment to curators being away");
         }
-        SuperCuratorsGetter superCurotorsGetter = new SuperCuratorsGetter();
-        Collection superCurators = superCurotorsGetter.getSuperCurators();
 
         for ( Iterator iterator = superCurators.iterator(); iterator.hasNext(); ) {
             SuperCurator sc = (SuperCurator) iterator.next();
@@ -313,21 +318,21 @@ public class ExperimentLister {
                                                                         "and a.ac = e2a.annotation_ac " +
                                                                         "and a.topic_ac = '" + cvHolder.reviewer.getAc() + "' " +
                                                                         "and a.description = ? " );
-                Collection experiments = sch.getBeans( ComparableExperimentBean.class, sc.getName().toLowerCase() );
-                if( DEBUG ) {
-                    System.out.println("... curator " + sc.getName() + "is away and have " + experiments.size() +
+                Collection experiments = sch.getBeans( ComparableExperimentBean.class, sc.getId().toLowerCase() );
+                if( log.isDebugEnabled() ) {
+                    log.debug("... curator " + sc.getId() + "is away and have " + experiments.size() +
                     " experiments to review : ");
                 }
                 for ( Iterator iterator1 = experiments.iterator(); iterator1.hasNext(); ) {
                     ComparableExperimentBean comparableExperimentBean = (ComparableExperimentBean) iterator1.next();
 
-                    if(DEBUG){
-                        System.out.println("...... " + comparableExperimentBean.getAc() + "," + comparableExperimentBean.getShortlabel() );
+                    if (log.isDebugEnabled()) {
+                        log.debug("...... " + comparableExperimentBean.getAc() + "," + comparableExperimentBean.getShortlabel() );
                     }
                     removeReviewerAnnotation( comparableExperimentBean.getAc() );
                 }
-                if(DEBUG){
-                    System.out.println("They will be re-assigned to the others super-curators.");
+                if (log.isDebugEnabled()) {
+                    log.debug("They will be re-assigned to the others super-curators.");
             }
         }
     }
@@ -341,6 +346,7 @@ public class ExperimentLister {
      * @throws IntactException
      */
     public void removeReviewerAnnotation( String expAc ) throws IntactException {
+
 
         //Get the util.model.Experiment object corresponding to this experiment ac.
         Experiment experiment = DaoFactory.getExperimentDao().getByAc(expAc);
@@ -357,6 +363,8 @@ public class ExperimentLister {
         }
 
         DaoFactory.getExperimentDao().update( experiment );
+
+        
     }
 
     /**
@@ -469,22 +477,22 @@ public class ExperimentLister {
     }
 
     private void removeExpOnHoldAndWithNoInteraction(  Collection expBeans ) throws Exception, IntactException {
-        if(DEBUG){
-            System.out.println("Filtering out experiments being on-hold or without interactions : ");
+        if (log.isDebugEnabled()) {
+            log.debug("Filtering out experiments being on-hold or without interactions : ");
         }
         for ( Iterator iterator = expBeans.iterator(); iterator.hasNext(); ) {
             ComparableExperimentBean exp = (ComparableExperimentBean) iterator.next();
             boolean removed = false;
             if ( isOnHold( exp ) ) {
-                if(DEBUG){
-                    System.out.println("..." + exp.getAc() + ", " + exp.getShortlabel() + " is on hold.");
+                if (log.isDebugEnabled()) {
+                    log.debug("..." + exp.getAc() + ", " + exp.getShortlabel() + " is on hold.");
                 }
                 iterator.remove();
                 removed = true;
             }
             if ( hasNoInteractions( exp ) && false == removed ) {
-                if(DEBUG){
-                    System.out.println("..." + exp.getAc() + ", " + exp.getShortlabel() + " has no interactions.");
+                if (log.isDebugEnabled()) {
+                    log.debug("..." + exp.getAc() + ", " + exp.getShortlabel() + " has no interactions.");
                 }
                 iterator.remove();
             }
