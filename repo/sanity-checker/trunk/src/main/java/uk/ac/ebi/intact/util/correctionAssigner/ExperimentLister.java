@@ -6,13 +6,13 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.util.correctionAssigner;
 
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.sanityChecker.SanityCheckerHelper;
 import uk.ac.ebi.intact.util.sanityChecker.model.AnnotationBean;
 import uk.ac.ebi.intact.util.sanityChecker.model.ControlledvocabBean;
 import uk.ac.ebi.intact.util.sanityChecker.model.ExperimentBean;
 import uk.ac.ebi.intact.util.sanityChecker.model.Int2ExpBean;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -74,37 +74,34 @@ public class ExperimentLister {
      * @throws SQLException
      * @throws IntactException
      */
-    public ExperimentLister( IntactHelper helper, boolean debug ) throws Exception, IntactException {
-        if ( helper == null ) {
-            throw new IllegalArgumentException( "IntactHelper must not be null." );
-        }
+    public ExperimentLister(  boolean debug ) throws Exception, IntactException {
         this.DEBUG = debug;
-        initialize( helper );
+        initialize();
     }
 
-    private CvHolder getCvHolder( IntactHelper helper ) throws Exception {
+    private CvHolder getCvHolder() throws Exception {
         if ( cvHolder == null ) {
-            cvHolder = new CvHolder( helper );
+            cvHolder = new CvHolder();
         }
         return cvHolder;
     }
 
-    private void initialize( IntactHelper helper ) throws Exception, SQLException {
+    private void initialize() throws Exception, SQLException {
 
-        cvHolder = getCvHolder( helper );
+        cvHolder = getCvHolder( );
 
-        removeCorrectionForSuperCuratorAway( helper );
+        removeCorrectionForSuperCuratorAway();
 
-        fillNotAssignedExpCollection( helper );
-        removeExpOnHoldAndWithNoInteraction( helper, notAssignedExperiments );
+        fillNotAssignedExpCollection();
+        removeExpOnHoldAndWithNoInteraction( notAssignedExperiments );
 
-        fillAssignedExpCollection( helper );
-        removeExpOnHoldAndWithNoInteraction( helper, assignedExperiments );
+        fillAssignedExpCollection();
+        removeExpOnHoldAndWithNoInteraction( assignedExperiments );
 
         fillPmid2CreatorMaps();
         fillPmid2expColl();
-        fillNotAcceptedNotToBeReviewedExperiments( helper );
-        fillOnHoldAndToBeReviewedExperiments( helper );
+        fillNotAcceptedNotToBeReviewedExperiments();
+        fillOnHoldAndToBeReviewedExperiments();
     }
 
     /**
@@ -170,13 +167,13 @@ public class ExperimentLister {
      * @throws IntactException
      * @throws SQLException
      */
-    private void fillNotAssignedExpCollection( IntactHelper helper ) throws Exception, SQLException {
+    private void fillNotAssignedExpCollection() throws Exception, SQLException {
 
         if(DEBUG){
             System.out.println("Searching for experiment not accepted, to-be-reviewed and not assigned : ");
         }
 
-        CvHolder holder = getCvHolder( helper );
+        CvHolder holder = getCvHolder();
 
         SanityCheckerHelper sch = new SanityCheckerHelper();
 
@@ -237,11 +234,11 @@ public class ExperimentLister {
      * @throws SQLException
      */
 
-    private void fillAssignedExpCollection( IntactHelper helper ) throws Exception, SQLException {
+    private void fillAssignedExpCollection() throws Exception, SQLException {
         if(DEBUG){
             System.out.println("Searching for experiments assigned and not accepted or to-be-reviewed : ");
         }
-        CvHolder holder = getCvHolder( helper );
+        CvHolder holder = getCvHolder();
 
         SanityCheckerHelper sch = new SanityCheckerHelper();
         sch.addMapping( ComparableExperimentBean.class, "select e.ac, e.created_user, e.created, e.shortlabel, x.primaryId as pubmedId, a.description as reviewer " +
@@ -299,7 +296,7 @@ public class ExperimentLister {
      *
      * @throws Exception
      */
-    public void removeCorrectionForSuperCuratorAway( IntactHelper helper ) throws Exception {
+    public void removeCorrectionForSuperCuratorAway() throws Exception {
         if(DEBUG){
             System.out.println("Removing assignment to curators being away");
         }
@@ -345,24 +342,21 @@ public class ExperimentLister {
      */
     public void removeReviewerAnnotation( String expAc ) throws IntactException {
 
-        IntactHelper helper = new IntactHelper();
         //Get the util.model.Experiment object corresponding to this experiment ac.
-        Experiment experiment = (Experiment) helper.getObjectByAc( Experiment.class, expAc );
+        Experiment experiment = DaoFactory.getExperimentDao().getByAc(expAc);
 
         Collection annotations = experiment.getAnnotations();
         for ( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
             Annotation annotation = (Annotation) iterator.next();
             if ( annotation.getCvTopic().getShortLabel().equals( CvTopic.REVIEWER ) ) {
                 iterator.remove();
-                helper.delete( annotation );
+                DaoFactory.getAnnotationDao().delete( annotation );
                 experiment.removeAnnotation( annotation );
 
             }
         }
 
-        helper.update( experiment );
-
-        helper.closeStore();
+        DaoFactory.getExperimentDao().update( experiment );
     }
 
     /**
@@ -405,7 +399,7 @@ public class ExperimentLister {
 
     }
 
-    private void fillOnHoldAndToBeReviewedExperiments( IntactHelper helper ) throws IntactException, SQLException {
+    private void fillOnHoldAndToBeReviewedExperiments() throws IntactException, SQLException {
         SanityCheckerHelper sch = new SanityCheckerHelper();
 
         sch.addMapping( ExperimentBean.class, "select e.ac, e.created_user, e.created, e.shortlabel " +
@@ -419,7 +413,7 @@ public class ExperimentLister {
 
     }
 
-    private void fillNotAcceptedNotToBeReviewedExperiments( IntactHelper helper ) throws IntactException, SQLException {
+    private void fillNotAcceptedNotToBeReviewedExperiments() throws IntactException, SQLException {
         SanityCheckerHelper sch = new SanityCheckerHelper();
 
         sch.addMapping( ExperimentBean.class, "select ac, created_user, created, shortlabel from ia_experiment where ac not in " +
@@ -441,10 +435,10 @@ public class ExperimentLister {
      * @throws IntactException
      * @throws SQLException
      */
-    private boolean isOnHold( IntactHelper helper, ComparableExperimentBean experiment ) throws Exception, SQLException {
+    private boolean isOnHold(  ComparableExperimentBean experiment ) throws Exception, SQLException {
         boolean onHold = true;
 
-        CvHolder holder = getCvHolder( helper );
+        CvHolder holder = getCvHolder();
 
         SanityCheckerHelper sch = new SanityCheckerHelper();
         sch.addMapping( AnnotationBean.class, "select a.ac " +
@@ -459,7 +453,7 @@ public class ExperimentLister {
         return onHold;
     }
 
-    private boolean hasNoInteractions( IntactHelper helper, ComparableExperimentBean experiment ) throws IntactException, SQLException {
+    private boolean hasNoInteractions(  ComparableExperimentBean experiment ) throws IntactException, SQLException {
         boolean hasNoInteractions = false;
 
 
@@ -474,21 +468,21 @@ public class ExperimentLister {
         return hasNoInteractions;
     }
 
-    private void removeExpOnHoldAndWithNoInteraction( IntactHelper helper, Collection expBeans ) throws Exception, IntactException {
+    private void removeExpOnHoldAndWithNoInteraction(  Collection expBeans ) throws Exception, IntactException {
         if(DEBUG){
             System.out.println("Filtering out experiments being on-hold or without interactions : ");
         }
         for ( Iterator iterator = expBeans.iterator(); iterator.hasNext(); ) {
             ComparableExperimentBean exp = (ComparableExperimentBean) iterator.next();
             boolean removed = false;
-            if ( isOnHold( helper, exp ) ) {
+            if ( isOnHold( exp ) ) {
                 if(DEBUG){
                     System.out.println("..." + exp.getAc() + ", " + exp.getShortlabel() + " is on hold.");
                 }
                 iterator.remove();
                 removed = true;
             }
-            if ( hasNoInteractions( helper, exp ) && false == removed ) {
+            if ( hasNoInteractions( exp ) && false == removed ) {
                 if(DEBUG){
                     System.out.println("..." + exp.getAc() + ", " + exp.getShortlabel() + " has no interactions.");
                 }
@@ -529,19 +523,19 @@ public class ExperimentLister {
         final ControlledvocabBean onHold;
 
 
-        public CvHolder( IntactHelper helper ) throws Exception, SQLException {
+        public CvHolder() throws Exception, SQLException {
 
             SanityCheckerHelper sch = new SanityCheckerHelper();
             sch.addMapping( ControlledvocabBean.class, "SELECT ac, objclass FROM ia_controlledvocab WHERE shortlabel = ?" );
 
-            pubmed = getCvBean( helper, CvDatabase.PUBMED, sch );
+            pubmed = getCvBean( CvDatabase.PUBMED, sch );
 
 
-            primaryRef = getCvBean( helper, CvXrefQualifier.PRIMARY_REFERENCE, sch );
-            reviewer = getCvBean( helper, CvTopic.REVIEWER, sch );
-            accepted = getCvBean( helper, CvTopic.ACCEPTED, sch );
-            toBeReviewed = getCvBean( helper, CvTopic.TO_BE_REVIEWED, sch );
-            onHold = getCvBean( helper, CvTopic.ON_HOLD, sch );
+            primaryRef = getCvBean( CvXrefQualifier.PRIMARY_REFERENCE, sch );
+            reviewer = getCvBean( CvTopic.REVIEWER, sch );
+            accepted = getCvBean( CvTopic.ACCEPTED, sch );
+            toBeReviewed = getCvBean( CvTopic.TO_BE_REVIEWED, sch );
+            onHold = getCvBean( CvTopic.ON_HOLD, sch );
         }
 
         /**
@@ -553,7 +547,7 @@ public class ExperimentLister {
          *
          * @throws Exception if the controlledvocabBean corresponding to this shortlabel was not found.
          */
-        private ControlledvocabBean getCvBean( IntactHelper helper, String shortlabel, SanityCheckerHelper sch ) throws Exception {
+        private ControlledvocabBean getCvBean(  String shortlabel, SanityCheckerHelper sch ) throws Exception {
             ControlledvocabBean cvBean;
 
             List cvBeans = sch.getBeans( ControlledvocabBean.class, shortlabel );
