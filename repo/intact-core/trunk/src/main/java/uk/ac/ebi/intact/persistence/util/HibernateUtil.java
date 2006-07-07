@@ -12,6 +12,7 @@ import org.hibernate.cfg.Environment;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import java.io.File;
 
 /**
  * Basic Hibernate helper class for Hibernate configuration and startup.
@@ -57,11 +58,14 @@ public class HibernateUtil {
     private static Configuration configuration;
     private static SessionFactory sessionFactory;
 
+    private static File hibernateCfg;
+    private static boolean initialized;
+
     private HibernateUtil()
     {
     }
 
-    static {
+    private static void initialize(File cfgFile){
         // Create the initial SessionFactory from the default configuration files
         try {
                // Replace with Configuration() if you don't use annotations or JDK 5.0
@@ -79,7 +83,14 @@ public class HibernateUtil {
                 configuration.setEntityResolver(new ImportFromClasspathEntityResolver());
 
                 // Read not only hibernate.properties, but also hibernate.cfg.xml
+            if (cfgFile != null)
+            {
+                configuration.configure(cfgFile);
+            }
+            else
+            {
                 configuration.configure();
+            }
 
                 // Set global interceptor from configuration
                 setInterceptor(configuration, null);
@@ -96,6 +107,8 @@ public class HibernateUtil {
             log.error("Building SessionFactory failed.", ex);
             throw new ExceptionInInitializerError(ex);
         }
+
+        initialized = true;
     }
 
     /**
@@ -113,6 +126,11 @@ public class HibernateUtil {
      * @return SessionFactory
      */
     public static SessionFactory getSessionFactory() {
+        if (!initialized)
+        {
+            initialize(hibernateCfg);
+        }
+
         SessionFactory sf = null;
         String sfName = configuration.getProperty(Environment.SESSION_FACTORY_NAME);
         if ( sfName != null) {
@@ -128,6 +146,11 @@ public class HibernateUtil {
         if (sf == null)
             throw new IllegalStateException("SessionFactory not available.");
         return sf;
+    }
+
+    public static void setHibernateConfig(File hibernateConfigFile)
+    {
+        hibernateCfg = hibernateConfigFile;
     }
 
     /**
