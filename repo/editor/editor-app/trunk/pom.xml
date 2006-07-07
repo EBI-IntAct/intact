@@ -54,7 +54,7 @@
 
     <profiles>
         <profile>
-            <id>ebi-test</id>
+            <id>test-user</id>
             <build>
                 <testResources>
                     <testResource>
