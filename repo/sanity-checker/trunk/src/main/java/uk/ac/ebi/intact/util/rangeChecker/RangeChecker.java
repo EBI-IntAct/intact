@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.util.rangeChecker;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.Chrono;
+import uk.ac.ebi.intact.sanity.Curator;
 import uk.ac.ebi.intact.util.sanityChecker.MessageSender;
 import uk.ac.ebi.intact.util.sanityChecker.ReportTopic;
 import uk.ac.ebi.intact.util.sanityChecker.SanityCheckerHelper;
@@ -149,7 +150,12 @@ public class RangeChecker {
 
     Institution owner = new Institution( "EBI" );
 
-    MessageSender messageSender = new MessageSender();
+    MessageSender messageSender;
+
+    public RangeChecker(Collection<? extends Curator> curators, String editorBaseUrl)
+    {
+        this.messageSender = new MessageSender(curators, editorBaseUrl);
+    }
 
     /**
      * Unique instance of SanityCheckerHelper.
@@ -161,7 +167,7 @@ public class RangeChecker {
         Chrono chrono = new Chrono();
         chrono.start();
 
-        RangeChecker rangeChecker = new RangeChecker();
+        RangeChecker rangeChecker = new RangeChecker(null, null);
         try {
 
             System.out.print( "Loading proteins ... " );

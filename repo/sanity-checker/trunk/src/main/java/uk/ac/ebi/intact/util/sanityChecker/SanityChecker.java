@@ -12,11 +12,11 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpURL;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.ojb.broker.accesslayer.LookupException;
 import uk.ac.ebi.intact.application.commons.util.AnnotationSection;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.Crc64;
+import uk.ac.ebi.intact.sanity.Curator;
 import uk.ac.ebi.intact.util.sanityChecker.model.*;
 import uk.ac.ebi.intact.persistence.dao.BaseDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
@@ -117,10 +117,9 @@ public class SanityChecker {
     private Map cvTopics;
 
 
-    public SanityChecker() throws IntactException, SQLException {
-
-
-        editorUrlBuilder = new EditorUrlBuilder();
+    public SanityChecker(Collection<? extends Curator> curators, String editorBaseUrl)  throws SQLException
+    {
+        editorUrlBuilder = new EditorUrlBuilder(editorBaseUrl);
 
         featureSch = new SanityCheckerHelper();
         featureSch.addMapping( FeatureBean.class, "select ac, shortlabel, fullname, created_user, created from ia_feature where ac like ? " );
@@ -367,7 +366,7 @@ public class SanityChecker {
                                                                   "                       a.topic_ac in ('" + acceptedCvBean.getAc() + "','" + toBeReviewedCvBean.getAc() + "')) " +
                                                                   "                       and to_date(created,'DD-MON-YYYY HH24:MI:SS') > to_date('01-Sep-2005:00:00:00','DD-MON-YYYY:HH24:MI:SS') " +
                                                                   "                       and ac like ? " );
-        messageSender = new MessageSender();
+        messageSender = new MessageSender(curators, editorBaseUrl);
         annotationSection = new AnnotationSection();
     }
 
@@ -1632,31 +1631,28 @@ public class SanityChecker {
     }
 
 
-    /*
-     * M A I N
-     */
-    public static void main( String[] args ) throws SQLException, IntactException, LookupException {
+    public void start() throws SQLException
+    {
 
-        SanityChecker scn = new SanityChecker( );
+     BaseDao dao = DaoFactory.getBaseDao();
 
-        BaseDao dao = DaoFactory.getBaseDao();
 
         System.out.println( "Helper created (User: " + dao.getDbUserName() + " " +
                             "Database: " + dao.getDbName() + ")" );
 
-        List expUsableTopic = scn.annotationSection.getUsableTopics( Experiment.class.getName() );
+        List expUsableTopic = annotationSection.getUsableTopics( Experiment.class.getName() );
         expUsableTopic.add( CvTopic.ACCEPTED );
         expUsableTopic.add( CvTopic.TO_BE_REVIEWED );
 
-        List intUsableTopic = scn.annotationSection.getUsableTopics( Interaction.class.getName() );
-        List protUsableTopic = scn.annotationSection.getUsableTopics( Protein.class.getName() );
-        List cvUsableTopic = scn.annotationSection.getUsableTopics( CvObject.class.getName() );
-        List bsUsableTopic = scn.annotationSection.getUsableTopics( BioSource.class.getName() );
+        List intUsableTopic = annotationSection.getUsableTopics( Interaction.class.getName() );
+        List protUsableTopic = annotationSection.getUsableTopics( Protein.class.getName() );
+        List cvUsableTopic = annotationSection.getUsableTopics( CvObject.class.getName() );
+        List bsUsableTopic = annotationSection.getUsableTopics( BioSource.class.getName() );
 
         /*
         *     Check on feature
         */
-        scn.featureWithoutRange();
+        featureWithoutRange();
 
         /*
         *     Check on interactor
@@ -1669,17 +1665,17 @@ public class SanityChecker {
 
 
         List interactorBeans = schIntAc.getBeans( InteractorBean.class, "EBI-%" );
-        scn.checkInteractionsComplete( interactorBeans );
-        scn.checkInteractionsBaitAndPrey( interactorBeans );
-        scn.checkComponentOfInteractions( interactorBeans );
-        scn.checkOneIntOneExp();
-        scn.checkAnnotations( interactorBeans, Interaction.class.getName(), intUsableTopic );
+        checkInteractionsComplete( interactorBeans );
+        checkInteractionsBaitAndPrey( interactorBeans );
+        checkComponentOfInteractions( interactorBeans );
+        checkOneIntOneExp();
+        checkAnnotations( interactorBeans, Interaction.class.getName(), intUsableTopic );
 
         /*
         *     Check on Controlled Vocabullary
         */
-        scn.checkHiddenAndObsoleteCv();
-        scn.cvInteractionChecker( scn.hiddenObsoleteNotInUsed );
+        checkHiddenAndObsoleteCv();
+        cvInteractionChecker( hiddenObsoleteNotInUsed );
 
         /*
         *     Check on xref
@@ -1696,7 +1692,7 @@ public class SanityChecker {
 
         List xrefBeans = schIntAc.getBeans( XrefBean.class, CvDatabase.UNIPROT );
 
-        scn.sch.addMapping( InteractorBean.class, "SELECT i.ac,i.objclass, i.shortlabel, i.biosource_ac, i.created_user, i.created " +
+        sch.addMapping( InteractorBean.class, "SELECT i.ac,i.objclass, i.shortlabel, i.biosource_ac, i.created_user, i.created " +
                                                           "FROM ia_interactor i, ia_xref x " +
                                                           "WHERE i.ac = x.parent_ac AND " +
                                                           "0 = ( SELECT count(1) " +
@@ -1708,7 +1704,7 @@ public class SanityChecker {
                                                           "x.qualifier_ac = '" + identityXrefQualifierCvBean.getAc() + "' AND " +
                                                           "x.primaryid=?" );
 
-        scn.sch.addMapping( SpliceVariantParentBean.class, "SELECT distinct p.ac as ac, p.shortlabel as parentName, sv.shortlabel as variantName\n" +
+        sch.addMapping( SpliceVariantParentBean.class, "SELECT distinct p.ac as ac, p.shortlabel as parentName, sv.shortlabel as variantName\n" +
                                                                    "FROM ia_interactor sv, ia_interactor p, ia_xref x\n" +
                                                                    "WHERE ? = sv.ac AND\n" +
                                                                    "      sv.ac = x.parent_ac AND \n" +
@@ -1718,7 +1714,7 @@ public class SanityChecker {
 
         for ( int i = 0; i < xrefBeans.size(); i++ ) {
             XrefBean xrefBean = (XrefBean) xrefBeans.get( i );
-            scn.duplicatedProtein( xrefBean );
+            duplicatedProtein( xrefBean );
         }
 
         schIntAc.addMapping( XrefBean.class, "select ac, created_user, created, database_ac, primaryid,parent_ac " +
@@ -1726,28 +1722,28 @@ public class SanityChecker {
                                                      "where ac like ?" );
         //"where ac ='EBI-695273' and ac like ?");
         xrefBeans = schIntAc.getBeans( XrefBean.class, "%" );
-        scn.hasValidPrimaryId( xrefBeans );
+        hasValidPrimaryId( xrefBeans );
 
         /*
         *     Check on Experiment
         */
-        List experimentBeans = scn.sch.getBeans( ExperimentBean.class, "EBI-%" );
-        scn.checkExperiment( experimentBeans );
-        scn.checkExperimentsPubmedIds( experimentBeans );
-        scn.checkAnnotations( experimentBeans, Experiment.class.getName(), expUsableTopic );
+        List experimentBeans = sch.getBeans( ExperimentBean.class, "EBI-%" );
+        checkExperiment( experimentBeans );
+        checkExperimentsPubmedIds( experimentBeans );
+        checkAnnotations( experimentBeans, Experiment.class.getName(), expUsableTopic );
         //This is now listed in the correctionAssigner
-        scn.checkReviewed( experimentBeans );
-        //scn.experimentNotSuperCurated();
+        checkReviewed( experimentBeans );
+        //experimentNotSuperCurated();
 
         /*
         *     Check on BioSource
         */
 
-        List bioSourceBeans = scn.sch.getBeans( BioSourceBean.class, "EBI-%" );
+        List bioSourceBeans = sch.getBeans( BioSourceBean.class, "EBI-%" );
         //System.out.println("The size of bioSource list is " + bioSourceBeans.size());
-        scn.checkBioSource( bioSourceBeans );
-        scn.checkNewt( bioSourceBeans );
-        scn.checkAnnotations( bioSourceBeans, BioSource.class.getName(), bsUsableTopic );
+        checkBioSource( bioSourceBeans );
+        checkNewt( bioSourceBeans );
+        checkAnnotations( bioSourceBeans, BioSource.class.getName(), bsUsableTopic );
 
         /*
         *     Check on protein
@@ -1761,13 +1757,13 @@ public class SanityChecker {
 
         List proteinBeans = schIntAc.getBeans( InteractorBean.class, "%" );
 
-        scn.checkProtein( proteinBeans );
-        scn.checkCrc64( proteinBeans );
-        scn.checkAnnotations( proteinBeans, "Protein", protUsableTopic );
+        checkProtein( proteinBeans );
+        checkCrc64( proteinBeans );
+        checkAnnotations( proteinBeans, "Protein", protUsableTopic );
 
         //already working
-        List ranges = scn.deletionFeatureSch.getBeans( RangeBean.class, "2" );
-        scn.checkDeletionFeature( ranges );
+        List ranges = deletionFeatureSch.getBeans( RangeBean.class, "2" );
+        checkDeletionFeature( ranges );
 
         /*
         *     Check on annotation
@@ -1780,7 +1776,7 @@ public class SanityChecker {
         );
 
         List annotationBeans = schIntAc.getBeans( AnnotationBean.class, "EBI-%" );
-        scn.checkURL( annotationBeans );
+        checkURL( annotationBeans );
 
         /*
         *    Check on controlledvocab
@@ -1791,11 +1787,11 @@ public class SanityChecker {
                                                                 "WHERE ac = ?" );
         List controlledvocabBeans = schIntAc.getBeans( ControlledvocabBean.class, "%" );
 
-        scn.checkAnnotations( controlledvocabBeans, CvObject.class.getName(), cvUsableTopic );
+        checkAnnotations( controlledvocabBeans, CvObject.class.getName(), cvUsableTopic );
 
         // try to send emails
         try {
-            scn.messageSender.postEmails( MessageSender.SANITY_CHECK );
+            messageSender.postEmails( MessageSender.SANITY_CHECK );
 
         } catch ( MessagingException e ) {
             // scould not send emails, then how error ...
@@ -1803,10 +1799,6 @@ public class SanityChecker {
 
         }
 
-
-        schIntAc = null;
-
-        scn = null;
     }
 
 }

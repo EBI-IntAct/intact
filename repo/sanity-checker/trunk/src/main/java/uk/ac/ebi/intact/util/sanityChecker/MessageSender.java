@@ -8,8 +8,8 @@ package uk.ac.ebi.intact.util.sanityChecker;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.MailSender;
-import uk.ac.ebi.intact.util.PropertyLoader;
 import uk.ac.ebi.intact.util.correctionAssigner.ComparableExperimentBean;
+import uk.ac.ebi.intact.sanity.Curator;
 import uk.ac.ebi.intact.util.sanityChecker.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
@@ -29,7 +29,7 @@ public class MessageSender {
     public static final String SANITY_CHECK = "SANITY CHECK";
     public static final String CORRECTION_ASSIGNMENT = "CORRECTION ASSIGNMENT AND/OR LISTED EXPERIMENT";
 
-    private EditorUrlBuilder editorUrlBuilder = new EditorUrlBuilder();
+    private EditorUrlBuilder editorUrlBuilder;
 
 
     public static final String TIME;
@@ -61,53 +61,36 @@ public class MessageSender {
      */
     private static Collection<String> adminsEmails = new HashSet<String>();
 
-    /**
-     * Configuration file from which we get the lists of curators and admins.
-     */
-    public static final String SANITY_CHECK_CONFIG_FILE = "/config/sanityCheck.properties";
-
-    /**
-     * Prefix of the curator key from the properties file.
-     */
-    public static final String CURATOR = "curator.";
-
-    /**
-     * Prefix of the admin key from the properties file.
-     */
-    public static final String ADMIN = "admin.";
-
     static {
-        Properties props = PropertyLoader.load( SANITY_CHECK_CONFIG_FILE );
-        if ( props != null ) {
-            int index;
-            for ( Iterator iterator = props.keySet().iterator(); iterator.hasNext(); ) {
-                String key = (String) iterator.next();
-
-
-                index = key.indexOf( CURATOR );
-                if ( index != -1 ) {
-                    String userstamp = key.substring( index + CURATOR.length() );
-                    String curatorMail = (String) props.get( key );
-                    usersEmails.put( userstamp, curatorMail );
-                } else {
-                    // is it an admin then ?
-                    index = key.indexOf( "admin." );
-                    if ( index != -1 ) {
-                        // store it
-                        String adminMail = (String) props.get( key );
-                        adminsEmails.add( adminMail );
-                    }
-                }
-            } // keys
-        } else {
-
-            System.err.println( "Unable to open the properties file: " + SANITY_CHECK_CONFIG_FILE );
-        }
-
         // format the current time
         java.util.Date date = new java.util.Date();
         SimpleDateFormat formatter = new SimpleDateFormat( "yyyy.MM.dd@HH.mm" );
         TIME = formatter.format( date );
+    }
+
+    public MessageSender(Collection<? extends Curator> curators, String editorBaseUrl)
+    {
+         this.editorUrlBuilder = new EditorUrlBuilder(editorBaseUrl);
+
+        // fill the e-mail lists, and the unknown users lits
+        for (Curator curator : curators)
+        {
+            if (curator.isAdmin())
+            {
+                adminsEmails.add(curator.getMail());
+            }
+            else
+            {
+                if (curator.getMail() != null)
+                {
+                    usersEmails.put(curator.getId(), curator.getMail());
+                }
+                else
+                {
+                    unknownUsers.add(curator.getId());
+                }
+            }
+        }
     }
 
     /**
@@ -393,6 +376,8 @@ public class MessageSender {
     }
 
     public void addMessage( ReportTopic topic, RangeBean rangeBean ) {
+        
+
         String editorUrl;
 
         String user = rangeBean.getCreated_user();
@@ -423,6 +408,8 @@ public class MessageSender {
         } catch ( IntactException e ) {
             e.printStackTrace();
         }
+
+
     }
 
     /**

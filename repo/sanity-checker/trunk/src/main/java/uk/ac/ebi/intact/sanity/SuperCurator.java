@@ -3,7 +3,9 @@ Copyright (c) 2002 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
-package uk.ac.ebi.intact.util.correctionAssigner;
+package uk.ac.ebi.intact.sanity;
+
+import uk.ac.ebi.intact.util.correctionAssigner.ComparableExperimentBean;
 
 import java.util.Collection;
 import java.util.ArrayList;
@@ -14,7 +16,7 @@ import java.util.ArrayList;
  * @author Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id$
  */
-public class SuperCurator {
+public class SuperCurator extends Curator {
 
     /**
      * Percentage of pubmed this SuperCurator should correct on the total of pubmed to be corrected.
@@ -24,17 +26,12 @@ public class SuperCurator {
     /**
      * List of ComparableExperimentBean corresponding to the experiments this SuperCurator has to correct.
      */
-    Collection experiments = new ArrayList();
-
-    /**
-     * Curator name (should be the name of the user in the database).
-     */
-    private String name;
+    Collection<ComparableExperimentBean> experiments = new ArrayList<ComparableExperimentBean>();
 
     /**
      * Collection of pubmed Ids the super curator has to correct.
      */
-    private Collection pubmedIds = new ArrayList();
+    private Collection<String> pubmedIds = new ArrayList<String>();
 
     /**
      * Empty constructor.
@@ -47,9 +44,9 @@ public class SuperCurator {
      * @param percentage
      * @param name
      */
-    public SuperCurator(int percentage, String name) {
+    public SuperCurator(int percentage, String id) {
         this.percentage = percentage;
-        this.name = name;
+        super.setId(id);
     }
 
     /**
@@ -76,15 +73,7 @@ public class SuperCurator {
         this.percentage = percentage;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Collection getExperiments() {
+    public Collection<ComparableExperimentBean> getExperiments() {
         return experiments;
     }
 
@@ -92,8 +81,8 @@ public class SuperCurator {
         experiments.add(exp);
     }
 
-    public void addExperiment(Collection exps){
-        experiments.add(exps);
+    public void addExperiment(Collection<ComparableExperimentBean> exps){
+        experiments.addAll(exps);
     }
 
 //    public void setExperiments (Collection experiments) {
@@ -109,7 +98,7 @@ public class SuperCurator {
     public String toString() {
         return "SuperCurator{" +
                 "percentage=" + percentage +
-                ", name='" + name + '\'' +
+                ", id='" + getId() + '\'' +
                 '}';
     }
 }

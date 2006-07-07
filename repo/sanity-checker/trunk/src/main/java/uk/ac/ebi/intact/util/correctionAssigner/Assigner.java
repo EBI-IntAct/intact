@@ -14,8 +14,8 @@ import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.util.sanityChecker.MessageSender;
 import uk.ac.ebi.intact.util.sanityChecker.ReportTopic;
 import uk.ac.ebi.intact.util.sanityChecker.model.ExperimentBean;
-import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.sanity.SuperCurator;
 
 import javax.mail.MessagingException;
 import java.sql.SQLException;
@@ -32,23 +32,34 @@ public class Assigner {
     /**
      * MessageSender, to build the message for each superCurator and administrator and send them.
      */
-    MessageSender messageSender = new MessageSender();
+    private MessageSender messageSender;
 
     /**
      * Lister, holding the collection of experiment to assign, the collection of already assigned experiment.
      */
-    ExperimentLister lister;
+    private ExperimentLister lister;
 
-    SuperCuratorsGetter superCuratorsGetter;
+    private Collection<SuperCurator> superCurators;
+
+    private Map<String,SuperCurator> superCuratorMap;
 
     //HashMap pubmedNewlyAssigned = new HashMap();
 
     //Pubmed assigned to the super-curator going to correct it.
     HashMap pubmedPreviouslyAssigned = new HashMap();
 
-    public Assigner( boolean debug ) throws Exception, IntactException {
-        lister = new ExperimentLister( debug );
-        superCuratorsGetter = new SuperCuratorsGetter();
+    public Assigner( Collection<SuperCurator> superCurators, String editorBaseUrl ) throws Exception {
+        lister = new ExperimentLister(superCurators);
+        this.superCurators = superCurators;
+
+        this.messageSender = new MessageSender(superCurators, editorBaseUrl);
+
+        // we put the supercurators in a map, for easy access by id
+        superCuratorMap = new HashMap<String,SuperCurator>();
+        for (SuperCurator superCurator : superCurators)
+        {
+            superCuratorMap.put(superCurator.getId(), superCurator);
+        }
     }
 
     /**
@@ -65,7 +76,7 @@ public class Assigner {
         for ( Iterator iterator = assignedExperiments.iterator(); iterator.hasNext(); ) {
             ComparableExperimentBean exp = (ComparableExperimentBean) iterator.next();
             // We get the super curator having the name contained in the reviewer property.
-            SuperCurator superCurator = superCuratorsGetter.getSuperCurator( exp.getReviewer().toLowerCase() );
+            SuperCurator superCurator = superCuratorMap.get( exp.getReviewer().toLowerCase() );
             if ( superCurator != null ) {
                 superCurator.addExperiment( exp );
             } else {
@@ -125,11 +136,11 @@ public class Assigner {
                 //Get the name of the SuperCurator from the know-reviewer associated to this pubmed.
                 String knownReviewer = (String) pubmedPreviouslyAssigned.get( exp.getPubmedId() );
                 //Get the superCurator object corresponding.
-                SuperCurator superCurator = superCuratorsGetter.getSuperCurator( knownReviewer.toLowerCase() );
+                SuperCurator superCurator = superCuratorMap.get( knownReviewer.toLowerCase() );
                 //Add the experiment to its list of experiments to correct.
                 superCurator.addExperiment( exp );
                 //Add a reviewer annotation to the newly assigned experiment.
-                addReviewerAnnotation( exp.getAc(), superCurator.getName() );
+                addReviewerAnnotation( exp.getAc(), superCurator.getId() );
                 //Remove the experiment from the Collection of experiments to correct.
                 iterator.remove();
             }
@@ -148,7 +159,6 @@ public class Assigner {
      * @throws IntactException
      */
     public void assignExperiments( HashMap notAssignedPmid2creator, HashMap pubmedToExp, Collection notAssignedExperiments ) throws Exception {
-        Collection superCurators = superCuratorsGetter.getSuperCurators();
 
         // For each superCurator :
         for ( Iterator iterator = superCurators.iterator(); iterator.hasNext(); ) {
@@ -167,7 +177,7 @@ public class Assigner {
                     Map.Entry pairs = (Map.Entry) it.next();
                     // Check that the superCurator name is not the creator of the pubmedId. As a curator can not correct
                     // its own data.
-                    if ( !superCurator.getName().toLowerCase().equals( ( (String) pairs.getValue() ).toLowerCase() ) ) {
+                    if ( !superCurator.getId().toLowerCase().equals( ( (String) pairs.getValue() ).toLowerCase() ) ) {
                         Collection expToAdd = (Collection) pubmedToExp.get( pairs.getKey() );
                         //For each experiment corresponding to this pubmed we just assigned.
                         for ( Iterator iterator1 = expToAdd.iterator(); iterator1.hasNext(); ) {
@@ -177,7 +187,7 @@ public class Assigner {
                             //remove the experiment from the Collection of not assigned experiments.
                             notAssignedExperiments.remove( exp );
                             //Add the annotation reviewer to the experiment.
-                            addReviewerAnnotation( exp.getAc(), superCurator.getName() );
+                            addReviewerAnnotation( exp.getAc(), superCurator.getId() );
                         }
                         //remove the key/value pubmedId/creator from the map notAssignedPmid2creator.
                         it.remove();
@@ -206,7 +216,7 @@ public class Assigner {
      * @throws IntactException
      */
     public void assignRemainingExperiments( HashMap notAssignedPmid2creator, HashMap pmid2ExpColl, Collection notAssignedExperiments ) throws Exception {
-        Collection superCurators = superCuratorsGetter.getSuperCurators();
+
         //If there are still some pubmed not assigned...
         if ( notAssignedPmid2creator.size() != 0 ) {
             //then iterate on those pubmed
@@ -218,7 +228,7 @@ public class Assigner {
                     SuperCurator superCurator = (SuperCurator) iterator.next();
                     if ( superCurator.getPercentage() != 0 ) {
                         //If the superCurator is not the curator who entered this pubmed into the database we affect it to him.
-                        if ( !superCurator.getName().toLowerCase().equals( pairs.getValue() ) ) {
+                        if ( !superCurator.getId().toLowerCase().equals( pairs.getValue() ) ) {
                             //Affect all the experiment corresponding to this pubmed Id to the superCurator.
                             Collection expToAdd = (Collection) pmid2ExpColl.get( pairs.getKey() );
                             for ( Iterator iterator1 = expToAdd.iterator(); iterator1.hasNext(); ) {
@@ -228,7 +238,7 @@ public class Assigner {
                                 //remove the experiment from the Collection of not assigned experiments.
                                 notAssignedExperiments.remove( exp );
                                 //Add the annotation reviewer to the experiment.
-                                addReviewerAnnotation( exp.getAc(), superCurator.getName() );
+                                addReviewerAnnotation( exp.getAc(), superCurator.getId() );
                             }
                             //remove the key/value pubmedId/creator from the map notAssignedPmid2creator.
                             iter.remove();
@@ -255,6 +265,7 @@ public class Assigner {
      * @throws IntactException
      */
     public void addReviewerAnnotation( String expAc, String reviewerName ) throws Exception {
+
         //Get the util.model.Experiment object corresponding to this experiment ac.
         Experiment experiment = DaoFactory.getExperimentDao().getByAc(expAc);
         //Create the annotation reviewer using as description the reviewerName.
@@ -265,7 +276,10 @@ public class Assigner {
         //Add the annotation to the experiment.
         experiment.addAnnotation( reviewerAnnotation );
         // If experiment is persistent update it, if not thow an Exception.
+
         DaoFactory.getExperimentDao().update(experiment);
+
+
     }
 
     /**
@@ -281,6 +295,7 @@ public class Assigner {
         Institution owner = DaoFactory.getInstitutionDao().getInstitution();
         CvTopic reviewer = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel(CvTopic.REVIEWER);
         Annotation annotation = new Annotation( owner, reviewer, reviewerName );
+
         return annotation;
     }
 
@@ -299,7 +314,6 @@ public class Assigner {
         filterOutAlreadyAssignedPubmed( notAssignedExperiments );
 
 
-        Collection superCurators = superCuratorsGetter.getSuperCurators();
         HashMap notAssignedPmid2creator = new HashMap( lister.getNotAssignedPmid2creator() );
         HashMap pmid2ExpColl = lister.getPmid2expColl();
 
@@ -316,14 +330,13 @@ public class Assigner {
      * email which is going to be sent to the concerned super-curator.
      */
     public void addMessage() throws SQLException, IntactException {
-        Collection superCurators = superCuratorsGetter.getSuperCurators();
         for ( Iterator iterator = superCurators.iterator(); iterator.hasNext(); ) {
             SuperCurator sc = (SuperCurator) iterator.next();
             Collection exps = sc.getExperiments();
             Collections.sort( (List) exps );
             // exps being the experiment to be corrected and sc.getName the name of the superCurator to whom the email
             // is going to be sent.
-            messageSender.addMessage( exps, sc.getName() );
+            messageSender.addMessage( exps, sc.getId() );
         }
 
         Collection experiments = lister.getOnHoldExperiments();
@@ -356,19 +369,4 @@ public class Assigner {
         treatNotAssignedExperiments();
     }
 
-    public static void main( String[] args ) throws Exception {
-
-            System.out.println( "Database: " + DaoFactory.getBaseDao().getDbName() );
-
-            Assigner assigner = new Assigner(  true );
-            assigner.assign();
-            assigner.addMessage( );
-            try {
-                assigner.messageSender.postEmails( MessageSender.CORRECTION_ASSIGNMENT );
-
-            } catch ( MessagingException e ) {
-                // scould not send emails, then how error ...
-                //e.printStackTrace();
-            }
-    }
 }
