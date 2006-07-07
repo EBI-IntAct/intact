@@ -31,6 +31,11 @@
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/data-conversion/trunk/</url>
     </scm>
 
+    <properties>
+        <maven.test.skip>true</maven.test.skip>
+    </properties>
+
+
     <profiles>
         <profile>
             <id>ebi-test</id>
@@ -43,6 +48,11 @@
                     </testResource>
                 </testResources>
             </build>
+
+            <properties>
+                <maven.test.skip>false</maven.test.skip>
+            </properties>
+
         </profile>
     </profiles>
 
