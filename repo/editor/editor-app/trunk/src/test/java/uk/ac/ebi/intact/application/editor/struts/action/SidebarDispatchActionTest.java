@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants
 import uk.ac.ebi.intact.application.editor.event.EventListener;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
+import uk.ac.ebi.intact.application.editor.LoginPropertiesGetter;
 import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 
 import javax.servlet.ServletContext;
@@ -362,11 +363,12 @@ public class SidebarDispatchActionTest extends MockStrutsTestCase {
 
 
     private ActionServlet getActionServletFromLogin() {
+        LoginPropertiesGetter loginProperties = new LoginPropertiesGetter();
         setRequestPathInfo("/login");
         // set the username property to x
-        addRequestParameter("username", "");
+        addRequestParameter("username", loginProperties.getName());
         // set the username property to y
-        addRequestParameter("password", "");
+        addRequestParameter("password", loginProperties.getPassword());
         // In order to login you need to access the event listener, so we add it to the ServletContext so that the login
         // system can access it later on.
         ActionServlet actionServlet =  getActionServlet();
