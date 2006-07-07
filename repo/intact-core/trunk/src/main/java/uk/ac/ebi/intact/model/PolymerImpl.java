@@ -51,7 +51,7 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
      * The protein sequence. If the protein is present in a public database,
      * the sequence should not be repeated.
      */
-    private List<SequenceChunk> sequenceChunks;
+    private List<SequenceChunk> sequenceChunks = new ArrayList<SequenceChunk>();
 
     // Static methods
 
