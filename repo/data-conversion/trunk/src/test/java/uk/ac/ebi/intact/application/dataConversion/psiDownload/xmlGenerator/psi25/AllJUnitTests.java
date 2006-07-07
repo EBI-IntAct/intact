@@ -4,7 +4,7 @@ All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 
-package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi1.test;
+package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi25;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -43,14 +43,14 @@ public class AllJUnitTests extends TestCase {
     public static Test suite() {
         final TestSuite suite = new TestSuite();
 
-        suite.addTest( Xref2xmlPSI1Test.suite() );
-        suite.addTest( AnnotatedObject2xmlPSI1Test.suite() );
-        suite.addTest( CvObject2xmlPSI1Test.suite() );
-        suite.addTest( BioSource2xmlPSI1Test.suite() );
-        suite.addTest( Protein2xmlPSI1Test.suite() );
-        suite.addTest( Experiment2xmlPSI1Test.suite() );
-        suite.addTest( Interaction2xmlPSI1Test.suite() );
-        suite.addTest( Feature2xmlPSI1Test.suite() );
+        suite.addTest( AnnotatedObject2xmlPSI25Test.suite() );
+        suite.addTest( BioSource2xmlPSI25Test.suite() );
+        suite.addTest( Component2xmlPSI25Test.suite() );
+        suite.addTest( Experiment2xmlPSI25Test.suite() );
+        suite.addTest( Interaction2xmlPSI25Test.suite() );
+        suite.addTest( Interactor2xmlPSI25Test.suite() );
+        suite.addTest( Feature2xmlPSI25Test.suite() );
+        suite.addTest( Xref2xmlPSI25Test.suite() );
 
         return suite;
     }

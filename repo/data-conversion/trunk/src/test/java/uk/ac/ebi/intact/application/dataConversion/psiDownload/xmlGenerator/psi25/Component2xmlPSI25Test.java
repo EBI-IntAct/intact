@@ -4,7 +4,7 @@
  * in the root directory of this distribution.
  */
 
-package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi2.test;
+package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi25;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -13,14 +13,14 @@ import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi2
 import uk.ac.ebi.intact.model.*;
 
 /**
- * Component2xmlPSI2 Tester.
+ * Component2xmlPSI25 Tester.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  * @since <pre>04/25/2005</pre>
  */
-public class Component2xmlPSI2Test extends TestCase {
-    public Component2xmlPSI2Test( String name ) {
+public class Component2xmlPSI25Test extends TestCase {
+    public Component2xmlPSI25Test( String name ) {
         super( name );
     }
 
@@ -33,7 +33,7 @@ public class Component2xmlPSI2Test extends TestCase {
     }
 
     public static Test suite() {
-        return new TestSuite( Component2xmlPSI2Test.class );
+        return new TestSuite( Component2xmlPSI25Test.class );
     }
 
     /////////////////////

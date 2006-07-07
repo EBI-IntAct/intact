@@ -2,20 +2,19 @@
 // All rights reserved. Please see the file LICENSE
 // in the root directory of this distribution.
 
-package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi1.test;
+package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi25;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.w3c.dom.Element;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.test.PsiDownloadTest;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDownloadTest;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.model.TestableBioSource;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.BioSource2xmlFactory;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.BioSource2xmlI;
-import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.model.CvCellType;
-import uk.ac.ebi.intact.model.CvCompartment;
-import uk.ac.ebi.intact.model.CvTissue;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi25.BioSource2xmlPSI25;
+import uk.ac.ebi.intact.model.*;
 
 /**
  * TODO document this ;o)
@@ -23,21 +22,21 @@ import uk.ac.ebi.intact.model.CvTissue;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
-public class BioSource2xmlPSI1Test extends PsiDownloadTest {
+public class BioSource2xmlPSI25Test extends PsiDownloadTest {
 
     /**
      * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
      */
     public static Test suite() {
-        return new TestSuite( BioSource2xmlPSI1Test.class );
+        return new TestSuite( BioSource2xmlPSI25Test.class );
     }
 
     ////////////////////////
     // Tests
 
-    private void testBuildBioSource_nullArguments( PsiVersion version ) {
+    public void testBuildBioSource_nullArguments() {
 
-        UserSessionDownload session = new UserSessionDownload( version );
+        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion2() );
 
         // create a container
         Element parent = session.createElement( "proteinInteractor" );
@@ -80,17 +79,13 @@ public class BioSource2xmlPSI1Test extends PsiDownloadTest {
         assertNull( element );
     }
 
-    public void testBuildBioSource_nullArguments_PSI1() {
-        testBuildBioSource_nullArguments( PsiVersion.getVersion1() );
-    }
+    public void testBuildOrganism_simple_ok() {
 
-    public void testBuildOrganism_simple_ok_PSI1() {
-
-        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion1() );
+        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion25() );
         BioSource2xmlI bsi = BioSource2xmlFactory.getInstance( session );
 
         // create a container
-        Element parent = session.createElement( "proteinInteractor" );
+        Element parent = session.createElement( "interactor" );
 
         // create the IntAct object
         BioSource bioSource = new BioSource( owner, "human", "9606" );
@@ -123,13 +118,13 @@ public class BioSource2xmlPSI1Test extends PsiDownloadTest {
         assertHasShortlabel( names, "human" );
     }
 
-    public void testBuildHostOrganism_simple_ok_PSI1() {
+    public void testBuildHostOrganism_simple_ok() {
 
-        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion1() );
+        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion25() );
         BioSource2xmlI bsi = BioSource2xmlFactory.getInstance( session );
 
         // create a container
-        Element parent = session.createElement( "experimentDescription" );
+        Element parent = session.createElement( BioSource2xmlPSI25.HOST_ORGANISM_PARENT_NODE );
 
         // create the IntAct object
         BioSource bioSource = new BioSource( owner, "human", "9606" );
@@ -162,18 +157,22 @@ public class BioSource2xmlPSI1Test extends PsiDownloadTest {
         assertHasShortlabel( names, "human" );
     }
 
-    public void testBuildBioSource_complex_ok_PSI1() {
+    public void testBuildBioSource_complex_ok() {
 
-        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion1() );
+        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion25() );
         BioSource2xmlI bsi = BioSource2xmlFactory.getInstance( session );
 
         // create a container
-        Element parent = session.createElement( "proteinInteractor" );
+        Element parent = session.createElement( "interactor" );
 
         // create the IntAct object
-        BioSource bioSource = new BioSource( owner, "human", "9606" );
+        BioSource bioSource = new TestableBioSource( "EBI-111", owner, "human", "9606" );
         bioSource.setFullName( "Homo Sapiens" );
         assertNotNull( bioSource );
+
+        CvAliasType aliasType = new CvAliasType( owner, "otherName" );
+        aliasType.addXref( new Xref( owner, psi, "MI:wxyz", null, null, identity ) );
+        bioSource.addAlias( new Alias( owner, bioSource, aliasType, "homme" ) );
 
         CvCellType cellType = (CvCellType) createCvObject( CvCellType.class, "a_431", "Human epidermoid carcinoma",
                                                            "MI:0001" );
@@ -201,7 +200,7 @@ public class BioSource2xmlPSI1Test extends PsiDownloadTest {
         assertEquals( "organism", organism.getNodeName() );
         assertEquals( "9606", organism.getAttribute( "ncbiTaxId" ) );
 
-        // should have names
+        // should have names, cellType, compartment and tissue
         assertEquals( 4, organism.getChildNodes().getLength() );
 
         // check names
@@ -210,9 +209,10 @@ public class BioSource2xmlPSI1Test extends PsiDownloadTest {
         // TODO write a method that returns an Element by name coming from the direct level
         Element names = (Element) organism.getElementsByTagName( "names" ).item( 0 );
         assertNotNull( names );
-        assertEquals( 2, names.getChildNodes().getLength() );
+        assertEquals( 3, names.getChildNodes().getLength() );
         assertHasShortlabel( names, "human" );
         assertHasFullname( names, "Homo Sapiens" );
+        assertHasAlias( names, "homme", "otherName", "MI:wxyz" );
 
         // check celltype
         Element cellTypeElement = (Element) organism.getElementsByTagName( "cellType" ).item( 0 );

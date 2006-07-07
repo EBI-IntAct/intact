@@ -2,18 +2,20 @@
 // All rights reserved. Please see the file LICENSE
 // in the root directory of this distribution.
 
-package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi1.test;
+package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi2;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.w3c.dom.Element;
+import org.hibernate.Transaction;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.test.PsiDownloadTest;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.test.model.TestableExperiment;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDownloadTest;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.model.TestableExperiment;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Experiment2xmlFactory;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Experiment2xmlI;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 
 /**
  * TODO document this ;o)
@@ -21,13 +23,28 @@ import uk.ac.ebi.intact.model.*;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
-public class Experiment2xmlPSI1Test extends PsiDownloadTest {
+public class Experiment2xmlPSI2Test extends PsiDownloadTest {
 
     /**
      * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
      */
     public static Test suite() {
-        return new TestSuite( Experiment2xmlPSI1Test.class );
+        return new TestSuite( Experiment2xmlPSI2Test.class );
+    }
+
+    private Transaction tx;
+
+    protected void setUp() throws Exception
+    {
+        super.setUp();
+        tx = HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+    }
+
+    protected void tearDown() throws Exception
+    {
+        super.tearDown();
+        tx.commit();
+        tx = null;
     }
 
     ////////////////////////
@@ -112,13 +129,13 @@ public class Experiment2xmlPSI1Test extends PsiDownloadTest {
         assertNull( element );
     }
 
-    public void testBuildExperiment_nullArguments_PSI1() {
-        testBuildExperiment_nullArguments( PsiVersion.getVersion1() );
+    public void testBuildExperiment_nullArguments_PSI2() {
+        testBuildExperiment_nullArguments( PsiVersion.getVersion2() );
     }
 
-    public void testBuildExperiment_full_ok_PSI1() {
+    public void testBuildExperiment_full_ok_PSI2() {
 
-        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion1() );
+        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion2() );
         Experiment2xmlI e = Experiment2xmlFactory.getInstance( session );
 
         // create a container
@@ -137,8 +154,9 @@ public class Experiment2xmlPSI1Test extends PsiDownloadTest {
 
         // starting the checks...
         assertNotNull( element );
-        assertEquals( "EBI-1234", element.getAttribute( "id" ) );
-        // names, bibRef, xref, hostOrganism, interactionDetection, participantDetection, confidence, attributeList
+        assertEquals( "" + session.getExperimentIdentifier( experiment ), element.getAttribute( "id" ) );
+        // names, bibRef, xref, hostOrganism, interactionDetection, participantDetectionMethod, confidenceList, attributeList
+
         assertEquals( 8, element.getChildNodes().getLength() );
 
         // Checking names...
@@ -172,11 +190,11 @@ public class Experiment2xmlPSI1Test extends PsiDownloadTest {
         assertEquals( 1, hostOrganism.getElementsByTagName( "names" ).getLength() );
         names = (Element) hostOrganism.getElementsByTagName( "names" ).item( 0 );
         assertNotNull( names );
-        assertEquals( 1, names.getChildNodes().getLength() );
+        assertEquals( 3, names.getChildNodes().getLength() );
         assertHasShortlabel( names, "yeast" );
 
         // Checking interactionDetection...
-        Element interactionDetection = (Element) element.getElementsByTagName( "interactionDetection" ).item( 0 );
+        Element interactionDetection = (Element) element.getElementsByTagName( "interactionDetectionMethod" ).item( 0 );
         assertNotNull( interactionDetection );
         assertEquals( 2, interactionDetection.getChildNodes().getLength() );
         // Checking interactionDetection's names...
@@ -190,7 +208,7 @@ public class Experiment2xmlPSI1Test extends PsiDownloadTest {
         assertHasPrimaryRef( xref, "MI:0004", "psi-mi", null, null );
 
         // Checking interactionDetection...
-        Element participantDetection = (Element) element.getElementsByTagName( "participantDetection" ).item( 0 );
+        Element participantDetection = (Element) element.getElementsByTagName( "participantIdentificationMethod" ).item( 0 );
         assertNotNull( participantDetection );
         assertEquals( 2, participantDetection.getChildNodes().getLength() );
         // Checking participantDetection's names...
@@ -203,17 +221,23 @@ public class Experiment2xmlPSI1Test extends PsiDownloadTest {
         xref = (Element) participantDetection.getElementsByTagName( "xref" ).item( 0 );
         assertHasPrimaryRef( xref, "MI:0080", "psi-mi", null, null );
 
-        // Checking on confidence
-        Element confidence = (Element) element.getElementsByTagName( "confidence" ).item( 0 );
-        assertNotNull( confidence );
+        // Checking on confidenceList
+        Element confidenceList = (Element) element.getElementsByTagName( "confidenceList" ).item( 0 );
+        assertNotNull( confidenceList );
         // names, value
-        assertEquals( 0, confidence.getChildNodes().getLength() );
+        assertEquals( 2, confidenceList.getChildNodes().getLength() );
 
-        String value = confidence.getAttributeNode( "value" ).getNodeValue();
-        assertEquals( "HIGH", value );
+        for ( int i = 0; i < 2; i++ ) {
+            Element confidenceElement = (Element) element.getElementsByTagName( "confidence" ).item( i );
+            assertEquals( 2, confidenceElement.getChildNodes().getLength() );
+            names = (Element) confidenceElement.getElementsByTagName( "names" ).item( 0 );
+            assertHasShortlabel( names, confidence_mapping.getShortLabel() );
 
-        String unit = confidence.getAttributeNode( "unit" ).getNodeValue();
-        assertEquals( confidence_mapping.getShortLabel(), unit );
+
+            Element value = (Element) confidenceElement.getElementsByTagName( "value" ).item( 0 );
+            String myValue = getTextFromElement( value );
+            assertTrue( "HIGH".equals( myValue ) || "VERYHIGH".equals( myValue ) );
+        }
 
         // Checking attributeList...
         Element attributeList = (Element) element.getElementsByTagName( "attributeList" ).item( 0 );

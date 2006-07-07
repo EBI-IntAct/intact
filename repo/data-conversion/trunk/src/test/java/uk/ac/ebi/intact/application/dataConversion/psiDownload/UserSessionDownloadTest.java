@@ -43,7 +43,9 @@ public class UserSessionDownloadTest extends PsiDownloadTest {
     {
         super.tearDown();
         tx.commit();
-    }////////////////////////
+    }
+
+    ////////////////////////
     // Tests
 
     public void testIsExportable() {

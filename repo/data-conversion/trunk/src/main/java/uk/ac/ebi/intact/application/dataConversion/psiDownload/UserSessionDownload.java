@@ -7,7 +7,7 @@ package uk.ac.ebi.intact.application.dataConversion.psiDownload;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
-import uk.ac.ebi.intact.application.commons.util.AnnotationFilter;
+import uk.ac.ebi.intact.util.AnnotationFilter;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
@@ -645,7 +645,7 @@ public class UserSessionDownload {
             }
         }
 
-        // the no-export annotation remains filtered out. 
+        // the no-export annotation remains filtered out.
         return !AnnotationFilter.getInstance().isFilteredOut( annotation );
     }
 
