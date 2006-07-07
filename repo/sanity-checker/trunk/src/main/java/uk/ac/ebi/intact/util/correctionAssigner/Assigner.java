@@ -7,7 +7,6 @@ package uk.ac.ebi.intact.util.correctionAssigner;
 
 
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.model.Experiment;
@@ -15,6 +14,8 @@ import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.util.sanityChecker.MessageSender;
 import uk.ac.ebi.intact.util.sanityChecker.ReportTopic;
 import uk.ac.ebi.intact.util.sanityChecker.model.ExperimentBean;
+import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import javax.mail.MessagingException;
 import java.sql.SQLException;
@@ -45,8 +46,8 @@ public class Assigner {
     //Pubmed assigned to the super-curator going to correct it.
     HashMap pubmedPreviouslyAssigned = new HashMap();
 
-    public Assigner( IntactHelper helper, boolean debug ) throws Exception, IntactException {
-        lister = new ExperimentLister( helper, debug );
+    public Assigner( boolean debug ) throws Exception, IntactException {
+        lister = new ExperimentLister( debug );
         superCuratorsGetter = new SuperCuratorsGetter();
     }
 
@@ -254,24 +255,17 @@ public class Assigner {
      * @throws IntactException
      */
     public void addReviewerAnnotation( String expAc, String reviewerName ) throws Exception {
-        IntactHelper helper = new IntactHelper();
         //Get the util.model.Experiment object corresponding to this experiment ac.
-        Experiment experiment = (Experiment) helper.getObjectByAc( Experiment.class, expAc );
+        Experiment experiment = DaoFactory.getExperimentDao().getByAc(expAc);
         //Create the annotation reviewer using as description the reviewerName.
         Annotation reviewerAnnotation = createAnnotation( reviewerName );
         //It the annotation is not persistant, create it.
-        if ( !helper.isPersistent( reviewerAnnotation ) ) {
-            helper.create( reviewerAnnotation );
-        }
+        DaoFactory.getAnnotationDao().update(reviewerAnnotation);
+
         //Add the annotation to the experiment.
         experiment.addAnnotation( reviewerAnnotation );
         // If experiment is persistent update it, if not thow an Exception.
-        if ( helper.isPersistent( experiment ) ) {
-            helper.update( experiment );
-        } else {
-            throw new Exception( "Experiment [" + experiment.getAc() + "," + experiment.getShortLabel() + "] is not persistent" );
-        }
-        helper.closeStore();
+        DaoFactory.getExperimentDao().update(experiment);
     }
 
     /**
@@ -284,11 +278,9 @@ public class Assigner {
      * @throws IntactException
      */
     public Annotation createAnnotation( String reviewerName ) throws IntactException {
-        IntactHelper helper = new IntactHelper();
-        Institution owner = helper.getInstitution();
-        CvTopic reviewer = (CvTopic) helper.getObjectByLabel( CvTopic.class, CvTopic.REVIEWER );
+        Institution owner = DaoFactory.getInstitutionDao().getInstitution();
+        CvTopic reviewer = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel(CvTopic.REVIEWER);
         Annotation annotation = new Annotation( owner, reviewer, reviewerName );
-        helper.closeStore();
         return annotation;
     }
 
@@ -323,7 +315,7 @@ public class Assigner {
      * Go though the collection of superCurators and for each experiments to be corrected, add a message to the global
      * email which is going to be sent to the concerned super-curator.
      */
-    public void addMessage( IntactHelper helper ) throws SQLException, IntactException {
+    public void addMessage() throws SQLException, IntactException {
         Collection superCurators = superCuratorsGetter.getSuperCurators();
         for ( Iterator iterator = superCurators.iterator(); iterator.hasNext(); ) {
             SuperCurator sc = (SuperCurator) iterator.next();
@@ -366,14 +358,11 @@ public class Assigner {
 
     public static void main( String[] args ) throws Exception {
 
-        IntactHelper helper = null;
-        try {
-            helper = new IntactHelper();
-            System.out.println( "Database: " + helper.getDbName() );
+            System.out.println( "Database: " + DaoFactory.getBaseDao().getDbName() );
 
-            Assigner assigner = new Assigner( helper, true );
+            Assigner assigner = new Assigner(  true );
             assigner.assign();
-            assigner.addMessage( helper );
+            assigner.addMessage( );
             try {
                 assigner.messageSender.postEmails( MessageSender.CORRECTION_ASSIGNMENT );
 
@@ -381,11 +370,5 @@ public class Assigner {
                 // scould not send emails, then how error ...
                 //e.printStackTrace();
             }
-
-        } finally {
-            if ( helper != null ) {
-                helper.closeStore();
-            }
-        }
     }
 }
