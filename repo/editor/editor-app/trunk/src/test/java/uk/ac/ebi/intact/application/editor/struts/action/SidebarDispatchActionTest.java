@@ -364,9 +364,9 @@ public class SidebarDispatchActionTest extends MockStrutsTestCase {
     private ActionServlet getActionServletFromLogin() {
         setRequestPathInfo("/login");
         // set the username property to x
-        addRequestParameter("username", "cleroy");
+        addRequestParameter("username", "");
         // set the username property to y
-        addRequestParameter("password", "cleroy");
+        addRequestParameter("password", "");
         // In order to login you need to access the event listener, so we add it to the ServletContext so that the login
         // system can access it later on.
         ActionServlet actionServlet =  getActionServlet();
