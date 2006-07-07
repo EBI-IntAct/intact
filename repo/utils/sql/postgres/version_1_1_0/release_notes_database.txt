@@ -1,0 +1,24 @@
+DATABASE CHANGES
+
+CHANGE REQUEST 1311656
+Date: 22 may 2006
+By  : Samuel Kerrien
+
+CHANGES
+
+1) ADD COLUMN CREATED_USER
+a) Adding column created_user to all tables so we can keep track of who create the record.
+b) also added a new table IA_DB_INFO for meta-data about the database-schema. Inserted the key:value pair: schema_version:1.1.0.
+
+2) UPDATE NEW COLUMN CREATED_USER
+this is not possible under postgres as we do not have audit tables.
+
+3) ADJUSTED TRIGGERS 
+no triggers developed so far in postgres.
+
+4) DROP COLUMN timestamp in main.
+
+5) create a new table that will allow to store metadata for the database.
+
+
+
