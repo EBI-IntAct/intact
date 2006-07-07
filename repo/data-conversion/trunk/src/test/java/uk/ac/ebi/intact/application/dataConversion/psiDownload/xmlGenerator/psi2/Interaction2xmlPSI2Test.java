@@ -2,20 +2,22 @@
 // All rights reserved. Please see the file LICENSE
 // in the root directory of this distribution.
 
-package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi2.test;
+package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi2;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.w3c.dom.Element;
+import org.hibernate.Transaction;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.test.PsiDownloadTest;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.test.model.TestableFeature;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.test.model.TestableProtein;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDownloadTest;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.model.TestableFeature;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.model.TestableProtein;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Interaction2xmlFactory;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Interaction2xmlI;
 import uk.ac.ebi.intact.application.dataConversion.util.DOMUtil;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,6 +36,21 @@ public class Interaction2xmlPSI2Test extends PsiDownloadTest {
      */
     public static Test suite() {
         return new TestSuite( Interaction2xmlPSI2Test.class );
+    }
+
+    private Transaction tx;
+
+    protected void setUp() throws Exception
+    {
+        super.setUp();
+        tx = HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+    }
+
+    protected void tearDown() throws Exception
+    {
+        super.tearDown();
+        tx.commit();
+        tx = null;
     }
 
     ////////////////////////////////////

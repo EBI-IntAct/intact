@@ -2,15 +2,15 @@
 // All rights reserved. Please see the file LICENSE
 // in the root directory of this distribution.
 
-package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi2.test;
+package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi25;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.w3c.dom.Element;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.test.PsiDownloadTest;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.test.model.TestableExperiment;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDownloadTest;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.model.TestableExperiment;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Experiment2xmlFactory;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Experiment2xmlI;
 import uk.ac.ebi.intact.model.*;
@@ -21,13 +21,13 @@ import uk.ac.ebi.intact.model.*;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
-public class Experiment2xmlPSI2Test extends PsiDownloadTest {
+public class Experiment2xmlPSI25Test extends PsiDownloadTest {
 
     /**
      * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
      */
     public static Test suite() {
-        return new TestSuite( Experiment2xmlPSI2Test.class );
+        return new TestSuite( Experiment2xmlPSI25Test.class );
     }
 
     ////////////////////////
@@ -69,9 +69,9 @@ public class Experiment2xmlPSI2Test extends PsiDownloadTest {
     ////////////////////////
     // Tests
 
-    private void testBuildExperiment_nullArguments( PsiVersion version ) {
+    public void testBuildExperiment_nullArguments() {
 
-        UserSessionDownload session = new UserSessionDownload( version );
+        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion25() );
 
         // create a container
         Element parent = session.createElement( "experimentList" );
@@ -112,13 +112,9 @@ public class Experiment2xmlPSI2Test extends PsiDownloadTest {
         assertNull( element );
     }
 
-    public void testBuildExperiment_nullArguments_PSI2() {
-        testBuildExperiment_nullArguments( PsiVersion.getVersion2() );
-    }
+    public void testBuildExperiment_full_ok() {
 
-    public void testBuildExperiment_full_ok_PSI2() {
-
-        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion2() );
+        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion25() );
         Experiment2xmlI e = Experiment2xmlFactory.getInstance( session );
 
         // create a container

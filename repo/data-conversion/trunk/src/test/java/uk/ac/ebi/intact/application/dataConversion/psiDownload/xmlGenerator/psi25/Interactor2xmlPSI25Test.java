@@ -2,17 +2,16 @@
 // All rights reserved. Please see the file LICENSE
 // in the root directory of this distribution.
 
-package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi2.test;
+package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi25;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.w3c.dom.Element;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.test.PsiDownloadTest;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.test.model.TestableProtein;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Protein2xmlFactory;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Protein2xmlI;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDownloadTest;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.model.TestableProtein;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi25.Interactor2xmlPSI25;
 import uk.ac.ebi.intact.model.*;
 
 /**
@@ -21,13 +20,13 @@ import uk.ac.ebi.intact.model.*;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
-public class Protein2xmlPSI2Test extends PsiDownloadTest {
+public class Interactor2xmlPSI25Test extends PsiDownloadTest {
 
     /**
      * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
      */
     public static Test suite() {
-        return new TestSuite( Protein2xmlPSI2Test.class );
+        return new TestSuite( Interactor2xmlPSI25Test.class );
     }
 
     ////////////////////////
@@ -84,9 +83,9 @@ public class Protein2xmlPSI2Test extends PsiDownloadTest {
     ////////////////////////
     // Tests
 
-    private void testBuildProtein_nullArguments( PsiVersion version ) {
+    public void testBuildProtein_nullArguments( PsiVersion version ) {
 
-        UserSessionDownload session = new UserSessionDownload( version );
+        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion25() );
 
         // create a container
         Element parent = session.createElement( "interactorList" );
@@ -94,7 +93,7 @@ public class Protein2xmlPSI2Test extends PsiDownloadTest {
         // call the method we are testing
         Element element = null;
 
-        Protein2xmlI generator = Protein2xmlFactory.getInstance( session );
+        Interactor2xmlPSI25 generator = Interactor2xmlPSI25.getInstance();
 
         try {
             element = generator.create( session, parent, null );
@@ -102,7 +101,6 @@ public class Protein2xmlPSI2Test extends PsiDownloadTest {
         } catch ( IllegalArgumentException e ) {
             // ok
         }
-
 
         assertNull( element );
 
@@ -138,31 +136,28 @@ public class Protein2xmlPSI2Test extends PsiDownloadTest {
         assertNull( element );
     }
 
-    public void testBuildProtein_PSI2_nullArguments() {
+    public void testBuildProtein_full_ok() {
 
-        testBuildProtein_nullArguments( PsiVersion.getVersion2() );
-    }
-
-    public void testBuildProtein_full_PSI2_ok() {
-
-        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion2() );
+        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion25() );
         session.addAnnotationFilter( remark );
 
         // create a container
-        Element parent = session.createElement( "proteinParticipant" );
+        Element parent = session.createElement( "interactorList" );
 
         Protein protein = createProtein();
 
-        Protein2xmlI generator = Protein2xmlFactory.getInstance( session );
+        Interactor2xmlPSI25 generator = Interactor2xmlPSI25.getInstance();
+        // Protein2xmlI generator = Protein2xmlFactory.getInstance( session );
 
         // generating the PSI element...
         Element element = generator.create( session, parent, protein );
 
+        // names, xref, organism, sequence, attributeList
+        assertEquals( 6, element.getChildNodes().getLength() );
+
         // starting the checks...
         assertNotNull( element );
         assertEquals( "" + session.getInteractorIdentifier( protein ), element.getAttribute( "id" ) );
-        // names, xref, organism, sequence, attributeList
-        assertEquals( 5, element.getChildNodes().getLength() );
 
         // Checking names...
         // TODO write a method that returns an Element by name coming from the direct level
@@ -170,15 +165,17 @@ public class Protein2xmlPSI2Test extends PsiDownloadTest {
         assertNotNull( names );
         assertEquals( 6, names.getChildNodes().getLength() );
         assertHasShortlabel( names, "bbc1_yeast" );
+        assertHasFullname( names, "Myosin tail region-interacting protein MTI1" );
         // Checking Aliases
-        assertHasAlias( names, "BBC1" );
-        assertHasAlias( names, "MTI1" );
-        assertHasAlias( names, "YJL020C/YJL021C" );
-        assertHasAlias( names, "J1305/J1286" );
+        assertHasAlias( names, "BBC1", "gene name", "MI:0301" );
+        assertHasAlias( names, "MTI1", "gene name-synonym", "MI:0302" );
+        assertHasAlias( names, "YJL020C/YJL021C", "locus name", "MI:0305" );
+        assertHasAlias( names, "J1305/J1286", "orf name", "MI:0306" );
 
         // Checking xref...
         Element xref = (Element) element.getElementsByTagName( "xref" ).item( 0 );
         assertNotNull( xref );
+
         assertEquals( 9, xref.getChildNodes().getLength() );
         assertHasPrimaryRef( xref, "P47068", "uniprotkb", null, null );
         assertHasSecondaryRef( xref, "P47067", "uniprotkb", null, null );

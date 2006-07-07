@@ -2,15 +2,19 @@
 // All rights reserved. Please see the file LICENSE
 // in the root directory of this distribution.
 
-package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi1.test;
+package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi25;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.w3c.dom.Element;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.test.PsiDownloadTest;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDownloadTest;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.AbstractXref2Xml;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Xref2xmlFactory;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi25.Xref2xmlPSI2;
+import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.model.Xref;
 
 /**
@@ -19,13 +23,13 @@ import uk.ac.ebi.intact.model.Xref;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
-public class Xref2xmlPSI1Test extends PsiDownloadTest {
+public class Xref2xmlPSI25Test extends PsiDownloadTest {
 
     /**
      * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
      */
     public static Test suite() {
-        return new TestSuite( Xref2xmlPSI1Test.class );
+        return new TestSuite( Xref2xmlPSI25Test.class );
     }
 
     ////////////////////////
@@ -33,7 +37,7 @@ public class Xref2xmlPSI1Test extends PsiDownloadTest {
 
     public void testBuildXref_primaryRef_nullArguments() {
 
-        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion1() );
+        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion25() );
 
         // create a container
         Element xrefElement = session.createElement( "xref" );
@@ -72,15 +76,15 @@ public class Xref2xmlPSI1Test extends PsiDownloadTest {
         assertNull( primaryRef );
     }
 
-    public void testBuildXref_primaryRef_ok() {
+    public void testBuildXref_primaryRef() {
 
-        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion1() );
+        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion25() );
 
         // create a container
         Element xrefElement = session.createElement( "xref" );
 
         // create the IntAct object
-        Xref xref = new Xref( owner, uniprot, "P12345", "P67890", "56", identity );
+        Xref xref = new Xref( owner, uniprot, "P12345", null, null, identity );
 
         // call the method we are testing
         Element primaryRef = Xref2xmlFactory.getInstance( session ).createPrimaryRef( session, xrefElement, xref );
@@ -92,37 +96,43 @@ public class Xref2xmlPSI1Test extends PsiDownloadTest {
         assertEquals( primaryRef, _primaryRef );
 
         // check content of the tag
-        assertEquals( "primaryRef", primaryRef.getNodeName() );
-        assertEquals( "P12345", primaryRef.getAttribute( "id" ) );
-        assertEquals( "uniprotkb", primaryRef.getAttribute( "db" ) );
-        assertEquals( "P67890", primaryRef.getAttribute( "secondary" ) );
-        assertEquals( "56", primaryRef.getAttribute( "version" ) );
+        assertEquals( AbstractXref2Xml.PRIMARY_REF, primaryRef.getNodeName() );
+        assertEquals( CvDatabase.UNIPROT, primaryRef.getAttribute( Xref2xmlPSI2.XREF_DB ) );
+        assertEquals( CvDatabase.UNIPROT_MI_REF, primaryRef.getAttribute( Xref2xmlPSI2.XREF_DB_AC ) );
+        assertEquals( "P12345", primaryRef.getAttribute( Xref2xmlPSI2.XREF_ID ) );
+        assertEquals( "", primaryRef.getAttribute( Xref2xmlPSI2.SECONDARY_REF ) );
+        assertEquals( "", primaryRef.getAttribute( Xref2xmlPSI2.XREF_VERSION ) );
+        assertEquals( CvXrefQualifier.IDENTITY, primaryRef.getAttribute( Xref2xmlPSI2.XREF_REFTYPE ) );
+        assertEquals( CvXrefQualifier.IDENTITY_MI_REF, primaryRef.getAttribute( Xref2xmlPSI2.XREF_REFTYPE_AC ) );
     }
 
-    public void testBuildXref_secondaryRef_ok() {
+    public void testBuildXref_secondaryRef() {
 
-        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion1() );
+        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion25() );
 
         // create a container
         Element xrefElement = session.createElement( "xref" );
 
         // create the IntAct object
-        Xref xref = new Xref( owner, uniprot, "P12345", "P67890", "56", identity );
+        Xref xref = new Xref( owner, uniprot, "P12345", null, null, identity );
 
         // call the method we are testing
-        Element primaryRef = Xref2xmlFactory.getInstance( session ).createSecondaryRef( session, xrefElement, xref );
-        assertNotNull( primaryRef );
+        Element secondaryRef = Xref2xmlFactory.getInstance( session ).createSecondaryRef( session, xrefElement, xref );
+        assertNotNull( secondaryRef );
 
-        // check that we have a primaryRef attached to the given parent tag
+        // check that we have a secondaryRef attached to the given parent tag
         assertEquals( 1, xrefElement.getChildNodes().getLength() );
         Element _primaryRef = (Element) xrefElement.getChildNodes().item( 0 );
-        assertEquals( primaryRef, _primaryRef );
+        assertEquals( secondaryRef, _primaryRef );
 
         // check content of the tag
-        assertEquals( "secondaryRef", primaryRef.getNodeName() );
-        assertEquals( "P12345", primaryRef.getAttribute( "id" ) );
-        assertEquals( "uniprotkb", primaryRef.getAttribute( "db" ) );
-        assertEquals( "P67890", primaryRef.getAttribute( "secondary" ) );
-        assertEquals( "56", primaryRef.getAttribute( "version" ) );
+        assertEquals( AbstractXref2Xml.SECONDARY_REF, secondaryRef.getNodeName() );
+        assertEquals( CvDatabase.UNIPROT, secondaryRef.getAttribute( Xref2xmlPSI2.XREF_DB ) );
+        assertEquals( CvDatabase.UNIPROT_MI_REF, secondaryRef.getAttribute( Xref2xmlPSI2.XREF_DB_AC ) );
+        assertEquals( "P12345", secondaryRef.getAttribute( Xref2xmlPSI2.XREF_ID ) );
+        assertEquals( "", secondaryRef.getAttribute( Xref2xmlPSI2.SECONDARY_REF ) );
+        assertEquals( "", secondaryRef.getAttribute( Xref2xmlPSI2.XREF_VERSION ) );
+        assertEquals( CvXrefQualifier.IDENTITY, secondaryRef.getAttribute( Xref2xmlPSI2.XREF_REFTYPE ) );
+        assertEquals( CvXrefQualifier.IDENTITY_MI_REF, secondaryRef.getAttribute( Xref2xmlPSI2.XREF_REFTYPE_AC ) );
     }
 }

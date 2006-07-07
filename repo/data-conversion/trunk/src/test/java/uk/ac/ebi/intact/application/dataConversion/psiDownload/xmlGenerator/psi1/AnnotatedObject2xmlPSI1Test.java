@@ -2,18 +2,22 @@
 // All rights reserved. Please see the file LICENSE
 // in the root directory of this distribution.
 
-package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi1.test;
+package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi1;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.w3c.dom.Element;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.test.PsiDownloadTest;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.test.model.TestableProtein;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Protein2xmlFactory;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Protein2xmlI;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDownloadTest;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.model.TestableProtein;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.AbstractAnnotatedObject2xml;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi1.AnnotatedObject2xmlPSI1;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi2.AnnotatedObject2xmlPSI2;
+import uk.ac.ebi.intact.model.Alias;
+import uk.ac.ebi.intact.model.Annotation;
+import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.model.Xref;
 
 /**
  * TODO document this ;o)
@@ -21,13 +25,13 @@ import uk.ac.ebi.intact.model.*;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
-public class Protein2xmlPSI1Test extends PsiDownloadTest {
+public class AnnotatedObject2xmlPSI1Test extends PsiDownloadTest {
 
     /**
      * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
      */
     public static Test suite() {
-        return new TestSuite( Protein2xmlPSI1Test.class );
+        return new TestSuite( AnnotatedObject2xmlPSI1Test.class );
     }
 
     ////////////////////////
@@ -84,128 +88,133 @@ public class Protein2xmlPSI1Test extends PsiDownloadTest {
     ////////////////////////
     // Tests
 
-    private void testBuildProtein_nullArguments( PsiVersion version ) {
+    private void testBuildNames_nullArguments( PsiVersion version ) {
 
         UserSessionDownload session = new UserSessionDownload( version );
 
         // create a container
-        Element parent = session.createElement( "interactorList" );
+        Element parentElement = session.createElement( "proteinInteractor" );
 
         // call the method we are testing
-        Element element = null;
+        Element namesElement = null;
 
-        Protein2xmlI generator = Protein2xmlFactory.getInstance( session );
+        AbstractAnnotatedObject2xml aao = null;
+
+        if ( version.equals( PsiVersion.VERSION_1 ) ) {
+            aao = new AnnotatedObject2xmlPSI1();
+        } else if ( version.equals( PsiVersion.VERSION_2 ) ) {
+            aao = new AnnotatedObject2xmlPSI2();
+        } else {
+            fail( "Unsupported version of PSI" );
+        }
+
 
         try {
-            element = generator.create( session, parent, null );
-            fail( "giving a null Protein should throw an exception" );
+            namesElement = aao.createNames( session, parentElement, null );
+            fail( "giving a null AnnotatedObject should throw an exception" );
         } catch ( IllegalArgumentException e ) {
             // ok
         }
 
-
-        assertNull( element );
+        assertNull( namesElement );
 
         // create the IntAct object
-        Protein protein = new ProteinImpl( owner, yeast, "bbc1_yeast", proteinType );
+        Protein protein = createProtein();
 
         try {
-            Element wrongParent = session.createElement( "foobar" );
-            element = generator.create( session, wrongParent, protein );
-            fail( "Creation of a protein from a parent diferent from interactorList or proteinParticipant should not be allowed." );
-        } catch ( IllegalArgumentException e ) {
-            // ok
-        }
-
-        assertNull( element );
-
-        try {
-            element = generator.create( null, parent, protein );
+            namesElement = aao.createNames( null, parentElement, protein );
             fail( "giving a null session should throw an exception" );
         } catch ( IllegalArgumentException e ) {
             // ok
         }
 
-        assertNull( element );
+        assertNull( namesElement );
 
         try {
-            element = generator.create( session, null, protein );
+            namesElement = aao.createNames( session, null, protein );
             fail( "giving a null parent Element should throw an exception" );
         } catch ( IllegalArgumentException e ) {
             // ok
         }
 
-        assertNull( element );
+        assertNull( namesElement );
     }
 
-    public void testBuildProtein_PSI1_nullArguments() {
-
-        testBuildProtein_nullArguments( PsiVersion.getVersion1() );
+    public void testBuildNames_nullArguments_PSI1() {
+        testBuildNames_nullArguments( PsiVersion.VERSION_1 );
     }
 
-    public void testBuildProtein_full_PSI1_ok() {
+    public void testBuildNames_protein_ok_PSI1() {
 
-        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion1() );
-        session.addAnnotationFilter( remark );
+        UserSessionDownload session = new UserSessionDownload( PsiVersion.VERSION_1 );
+        AbstractAnnotatedObject2xml aao = new AnnotatedObject2xmlPSI1();
 
         // create a container
-        Element parent = session.createElement( "proteinParticipant" );
+        Element parentElement = session.createElement( "proteinInteractor" );
+
+        // create the IntAct object
+        Protein protein = createProtein();
+        protein.setFullName( "fullname of the protein." );
 
         // call the method we are testing
-        Element element = null;
+        Element namesElement = aao.createNames( session, parentElement, protein );
 
+        assertNotNull( namesElement );
+
+        // check that we have a primaryRef attached to the given parent tag
+        assertEquals( 1, parentElement.getChildNodes().getLength() );
+        Element _primaryRef = (Element) parentElement.getChildNodes().item( 0 );
+        assertEquals( namesElement, _primaryRef );
+
+        // check content of the tag
+        assertEquals( "names", namesElement.getNodeName() );
+        assertEquals( 2, namesElement.getChildNodes().getLength() );
+
+        assertHasShortlabel( namesElement, "bbc1_yeast" );
+
+//        assertEquals( 1, namesElement.getElementsByTagName( "shortLabel" ).getLength() );
+//        Element shortlabel = (Element) namesElement.getElementsByTagName( "shortlabel" ).item( 0 );
+//        String text = getTextFromElement( shortlabel );
+//        assertNotNull( text );
+//        assertEquals( "bbc1_yeast", text );
+        assertHasFullname( namesElement, "fullname of the protein." );
+
+//        assertEquals( 1, namesElement.getElementsByTagName( "fullname" ).getLength() );
+//        Element fullname = (Element) namesElement.getElementsByTagName( "fullname" ).item( 0 );
+//        text = getTextFromElement( fullname );
+//        assertNotNull( text );
+//        assertEquals( "fullname of the protein.", text );
+    }
+
+    public void testBuildNamesNoFullname_protein_ok_PSI1() {
+
+        UserSessionDownload session = new UserSessionDownload( PsiVersion.VERSION_1 );
+
+        // create a container
+        Element parentElement = session.createElement( "proteinInteractor" );
+
+        // create the IntAct object
         Protein protein = createProtein();
+        protein.setFullName( null );
 
-        Protein2xmlI generator = Protein2xmlFactory.getInstance( session );
+        AbstractAnnotatedObject2xml aao = new AnnotatedObject2xmlPSI1();
 
-        // generating the PSI element...
-        element = generator.create( session, parent, protein );
+        // call the method we are testing
+        Element namesElement = aao.createNames( session, parentElement, protein );
+        assertNotNull( namesElement );
 
-        // starting the checks...
-        assertNotNull( element );
-        assertEquals( "EBI-333333", element.getAttribute( "id" ) );
-        // names, xref, organism, sequence
-        assertEquals( 4, element.getChildNodes().getLength() );
+        // check that we have a primaryRef attached to the given parent tag
+        assertEquals( 1, parentElement.getChildNodes().getLength() );
+        Element _primaryRef = (Element) parentElement.getChildNodes().item( 0 );
+        assertEquals( namesElement, _primaryRef );
 
-        // Checking names...
-        // TODO write a method that returns an Element by name coming from the direct level
-        Element names = (Element) element.getElementsByTagName( "names" ).item( 0 );
-        assertNotNull( names );
-        assertEquals( 2, names.getChildNodes().getLength() );
-        assertHasShortlabel( names, "bbc1_yeast" );
-        assertHasFullname( names, "Myosin tail region-interacting protein MTI1" );
+        // check content of the tag
+        assertEquals( "names", namesElement.getNodeName() );
+        assertEquals( 1, namesElement.getChildNodes().getLength() );
 
-        // Checking xref...
-        Element xref = (Element) element.getElementsByTagName( "xref" ).item( 0 );
-        assertNotNull( xref );
+        assertHasShortlabel( namesElement, "bbc1_yeast" );
 
-        assertEquals( 9, xref.getChildNodes().getLength() );
-        assertHasPrimaryRef( xref, "P47068", "uniprotkb", null, null );
-        assertHasSecondaryRef( xref, "P47067", "uniprotkb", null, null );
-        assertHasSecondaryRef( xref, "Q8X1F4", "uniprotkb", null, null );
-        assertHasSecondaryRef( xref, "S000003557", "sgd", "BBC1", null );
-        // NOTE: the Xref.secondaryId are truncated to 30 characters
-        assertHasSecondaryRef( xref, "GO:0030479", "go", "C:actin cortical patch (sensu ", null );
-        assertHasSecondaryRef( xref, "GO:0017024", "go", "F:myosin I binding", null );
-        assertHasSecondaryRef( xref, "GO:0030036", "go", "P:actin cytoskeleton organizat", null );
-        assertHasSecondaryRef( xref, "GO:0007010", "go", "P:cytoskeleton organization an", null );
-
-        // Checking organism...
-        Element hostOrganism = (Element) element.getElementsByTagName( "organism" ).item( 0 );
-        assertNotNull( hostOrganism );
-        assertEquals( "4932", hostOrganism.getAttribute( "ncbiTaxId" ) );
-        // check names
-        assertEquals( 1, hostOrganism.getElementsByTagName( "names" ).getLength() );
-        names = (Element) hostOrganism.getElementsByTagName( "names" ).item( 0 );
-        assertNotNull( names );
-        assertEquals( 1, names.getChildNodes().getLength() );
-        assertHasShortlabel( names, "yeast" );
-
-        // Checking sequence...
-        Element sequenceElement = (Element) element.getElementsByTagName( "sequence" ).item( 0 );
-        assertNotNull( sequenceElement );
-        // the remark should have been filtered out.
-        assertEquals( 1, sequenceElement.getChildNodes().getLength() );
-        assertEquals( protein.getSequence(), getTextFromElement( sequenceElement ) );
+        // no full name
+        assertEquals( 0, namesElement.getElementsByTagName( "fullname" ).getLength() );
     }
 }

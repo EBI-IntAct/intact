@@ -2,15 +2,15 @@
 // All rights reserved. Please see the file LICENSE
 // in the root directory of this distribution.
 
-package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi1.test;
+package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi25;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.w3c.dom.Element;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.test.PsiDownloadTest;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.test.model.TestableProtein;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDownloadTest;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.model.TestableProtein;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.AbstractAnnotatedObject2xml;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi1.AnnotatedObject2xmlPSI1;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi2.AnnotatedObject2xmlPSI2;
@@ -25,13 +25,13 @@ import uk.ac.ebi.intact.model.Xref;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
-public class AnnotatedObject2xmlPSI1Test extends PsiDownloadTest {
+public class AnnotatedObject2xmlPSI25Test extends PsiDownloadTest {
 
     /**
      * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
      */
     public static Test suite() {
-        return new TestSuite( AnnotatedObject2xmlPSI1Test.class );
+        return new TestSuite( AnnotatedObject2xmlPSI25Test.class );
     }
 
     ////////////////////////
@@ -140,25 +140,23 @@ public class AnnotatedObject2xmlPSI1Test extends PsiDownloadTest {
         assertNull( namesElement );
     }
 
-    public void testBuildNames_nullArguments_PSI1() {
-        testBuildNames_nullArguments( PsiVersion.VERSION_1 );
+    public void testBuildNames_nullArguments_PSI2() {
+        testBuildNames_nullArguments( PsiVersion.VERSION_2 );
     }
 
-    public void testBuildNames_protein_ok_PSI1() {
+    public void testBuildNames_protein_ok_PSI2() {
 
-        UserSessionDownload session = new UserSessionDownload( PsiVersion.VERSION_1 );
-        AbstractAnnotatedObject2xml aao = new AnnotatedObject2xmlPSI1();
+        UserSessionDownload session = new UserSessionDownload( PsiVersion.VERSION_2 );
+        AbstractAnnotatedObject2xml aao = new AnnotatedObject2xmlPSI2();
 
         // create a container
         Element parentElement = session.createElement( "proteinInteractor" );
 
         // create the IntAct object
         Protein protein = createProtein();
-        protein.setFullName( "fullname of the protein." );
 
         // call the method we are testing
         Element namesElement = aao.createNames( session, parentElement, protein );
-
         assertNotNull( namesElement );
 
         // check that we have a primaryRef attached to the given parent tag
@@ -168,27 +166,22 @@ public class AnnotatedObject2xmlPSI1Test extends PsiDownloadTest {
 
         // check content of the tag
         assertEquals( "names", namesElement.getNodeName() );
-        assertEquals( 2, namesElement.getChildNodes().getLength() );
+        assertEquals( 6, namesElement.getChildNodes().getLength() );
 
         assertHasShortlabel( namesElement, "bbc1_yeast" );
 
-//        assertEquals( 1, namesElement.getElementsByTagName( "shortLabel" ).getLength() );
-//        Element shortlabel = (Element) namesElement.getElementsByTagName( "shortlabel" ).item( 0 );
-//        String text = getTextFromElement( shortlabel );
-//        assertNotNull( text );
-//        assertEquals( "bbc1_yeast", text );
-        assertHasFullname( namesElement, "fullname of the protein." );
+        // Checking Aliases
+        assertHasAlias( namesElement, "BBC1" );
+        assertHasAlias( namesElement, "MTI1" );
+        assertHasAlias( namesElement, "YJL020C/YJL021C" );
+        assertHasAlias( namesElement, "J1305/J1286" );
 
-//        assertEquals( 1, namesElement.getElementsByTagName( "fullname" ).getLength() );
-//        Element fullname = (Element) namesElement.getElementsByTagName( "fullname" ).item( 0 );
-//        text = getTextFromElement( fullname );
-//        assertNotNull( text );
-//        assertEquals( "fullname of the protein.", text );
+        assertHasFullname( namesElement, "Myosin tail region-interacting protein MTI1" );
     }
 
-    public void testBuildNamesNoFullname_protein_ok_PSI1() {
+    public void testBuildNamesNoFullname_protein_ok_PSI2() {
 
-        UserSessionDownload session = new UserSessionDownload( PsiVersion.VERSION_1 );
+        UserSessionDownload session = new UserSessionDownload( PsiVersion.VERSION_2 );
 
         // create a container
         Element parentElement = session.createElement( "proteinInteractor" );
@@ -197,10 +190,11 @@ public class AnnotatedObject2xmlPSI1Test extends PsiDownloadTest {
         Protein protein = createProtein();
         protein.setFullName( null );
 
-        AbstractAnnotatedObject2xml aao = new AnnotatedObject2xmlPSI1();
+        AbstractAnnotatedObject2xml aao = new AnnotatedObject2xmlPSI2();
 
         // call the method we are testing
         Element namesElement = aao.createNames( session, parentElement, protein );
+
         assertNotNull( namesElement );
 
         // check that we have a primaryRef attached to the given parent tag
@@ -210,9 +204,15 @@ public class AnnotatedObject2xmlPSI1Test extends PsiDownloadTest {
 
         // check content of the tag
         assertEquals( "names", namesElement.getNodeName() );
-        assertEquals( 1, namesElement.getChildNodes().getLength() );
+        assertEquals( 5, namesElement.getChildNodes().getLength() );
 
         assertHasShortlabel( namesElement, "bbc1_yeast" );
+
+        // Checking Aliases
+        assertHasAlias( namesElement, "BBC1" );
+        assertHasAlias( namesElement, "MTI1" );
+        assertHasAlias( namesElement, "YJL020C/YJL021C" );
+        assertHasAlias( namesElement, "J1305/J1286" );
 
         // no full name
         assertEquals( 0, namesElement.getElementsByTagName( "fullname" ).getLength() );

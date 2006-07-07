@@ -2,15 +2,15 @@
 // All rights reserved. Please see the file LICENSE
 // in the root directory of this distribution.
 
-package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi25.test;
+package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi2;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.w3c.dom.Element;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.test.PsiDownloadTest;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.test.model.TestableProtein;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDownloadTest;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.model.TestableProtein;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.AbstractAnnotatedObject2xml;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi1.AnnotatedObject2xmlPSI1;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi2.AnnotatedObject2xmlPSI2;
@@ -25,13 +25,13 @@ import uk.ac.ebi.intact.model.Xref;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
-public class AnnotatedObject2xmlPSI25Test extends PsiDownloadTest {
+public class AnnotatedObject2xmlPSI2Test extends PsiDownloadTest {
 
     /**
      * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
      */
     public static Test suite() {
-        return new TestSuite( AnnotatedObject2xmlPSI25Test.class );
+        return new TestSuite( AnnotatedObject2xmlPSI2Test.class );
     }
 
     ////////////////////////

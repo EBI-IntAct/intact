@@ -2,14 +2,14 @@
 // All rights reserved. Please see the file LICENSE
 // in the root directory of this distribution.
 
-package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi2.test;
+package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi1;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.w3c.dom.Element;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.test.PsiDownloadTest;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDownloadTest;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Xref2xmlFactory;
 import uk.ac.ebi.intact.model.Xref;
 
@@ -19,13 +19,13 @@ import uk.ac.ebi.intact.model.Xref;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
-public class Xref2xmlPSI2Test extends PsiDownloadTest {
+public class Xref2xmlPSI1Test extends PsiDownloadTest {
 
     /**
      * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
      */
     public static Test suite() {
-        return new TestSuite( Xref2xmlPSI2Test.class );
+        return new TestSuite( Xref2xmlPSI1Test.class );
     }
 
     ////////////////////////
@@ -33,7 +33,7 @@ public class Xref2xmlPSI2Test extends PsiDownloadTest {
 
     public void testBuildXref_primaryRef_nullArguments() {
 
-        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion2() );
+        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion1() );
 
         // create a container
         Element xrefElement = session.createElement( "xref" );
@@ -72,7 +72,7 @@ public class Xref2xmlPSI2Test extends PsiDownloadTest {
         assertNull( primaryRef );
     }
 
-    public void testBuildXref_primaryRef_ok2() {
+    public void testBuildXref_primaryRef_ok() {
 
         UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion1() );
 
@@ -80,7 +80,7 @@ public class Xref2xmlPSI2Test extends PsiDownloadTest {
         Element xrefElement = session.createElement( "xref" );
 
         // create the IntAct object
-        Xref xref = new Xref( owner, uniprot, "P12345", null, null, null );
+        Xref xref = new Xref( owner, uniprot, "P12345", "P67890", "56", identity );
 
         // call the method we are testing
         Element primaryRef = Xref2xmlFactory.getInstance( session ).createPrimaryRef( session, xrefElement, xref );
@@ -95,11 +95,11 @@ public class Xref2xmlPSI2Test extends PsiDownloadTest {
         assertEquals( "primaryRef", primaryRef.getNodeName() );
         assertEquals( "P12345", primaryRef.getAttribute( "id" ) );
         assertEquals( "uniprotkb", primaryRef.getAttribute( "db" ) );
-        assertEquals( "", primaryRef.getAttribute( "secondary" ) );
-        assertEquals( "", primaryRef.getAttribute( "version" ) );
+        assertEquals( "P67890", primaryRef.getAttribute( "secondary" ) );
+        assertEquals( "56", primaryRef.getAttribute( "version" ) );
     }
 
-    public void testBuildXref_secondaryRef_ok2() {
+    public void testBuildXref_secondaryRef_ok() {
 
         UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion1() );
 
@@ -107,7 +107,7 @@ public class Xref2xmlPSI2Test extends PsiDownloadTest {
         Element xrefElement = session.createElement( "xref" );
 
         // create the IntAct object
-        Xref xref = new Xref( owner, uniprot, "P12345", null, null, null );
+        Xref xref = new Xref( owner, uniprot, "P12345", "P67890", "56", identity );
 
         // call the method we are testing
         Element primaryRef = Xref2xmlFactory.getInstance( session ).createSecondaryRef( session, xrefElement, xref );
@@ -122,7 +122,7 @@ public class Xref2xmlPSI2Test extends PsiDownloadTest {
         assertEquals( "secondaryRef", primaryRef.getNodeName() );
         assertEquals( "P12345", primaryRef.getAttribute( "id" ) );
         assertEquals( "uniprotkb", primaryRef.getAttribute( "db" ) );
-        assertEquals( "", primaryRef.getAttribute( "secondary" ) );
-        assertEquals( "", primaryRef.getAttribute( "version" ) );
+        assertEquals( "P67890", primaryRef.getAttribute( "secondary" ) );
+        assertEquals( "56", primaryRef.getAttribute( "version" ) );
     }
 }

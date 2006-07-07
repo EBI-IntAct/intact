@@ -2,14 +2,14 @@
 // All rights reserved. Please see the file LICENSE
 // in the root directory of this distribution.
 
-package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi2.test;
+package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi1;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.w3c.dom.Element;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.test.PsiDownloadTest;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDownloadTest;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.CvObject2xmlFactory;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.CvObject2xmlI;
 import uk.ac.ebi.intact.model.CvFeatureIdentification;
@@ -21,13 +21,13 @@ import uk.ac.ebi.intact.model.Xref;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
-public class CvObject2xmlPSI2Test extends PsiDownloadTest {
+public class CvObject2xmlPSI1Test extends PsiDownloadTest {
 
     /**
      * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
      */
     public static Test suite() {
-        return new TestSuite( CvObject2xmlPSI2Test.class );
+        return new TestSuite( CvObject2xmlPSI1Test.class );
     }
 
     ////////////////////////
@@ -76,13 +76,13 @@ public class CvObject2xmlPSI2Test extends PsiDownloadTest {
         assertNull( element );
     }
 
-    public void testBuildCvObject_nullArguments_PSI2() {
-        testBuildCvObject_nullArguments( PsiVersion.getVersion2() );
+    public void testBuildCvObject_nullArguments_PSI1() {
+        testBuildCvObject_nullArguments( PsiVersion.getVersion1() );
     }
 
-    public void testBuildXref_ok_PSI2() {
+    public void testBuildXref_ok_PSI1() {
 
-        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion2() );
+        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion1() );
         CvObject2xmlI cvo = CvObject2xmlFactory.getInstance( session );
 
         // create a container
@@ -93,11 +93,6 @@ public class CvObject2xmlPSI2Test extends PsiDownloadTest {
         cvObject.setFullName( "longer description of that feature identification." );
         cvObject.addXref( new Xref( owner, psi, "MI:0001", "secondary", "v1", identity ) );
         cvObject.addXref( new Xref( owner, pubmed, "12345678", null, null, null ) );
-
-        // TODO create a TestableCvObject that allows to set the AC, then only we can create Aliases for it !!
-//        cvObject.addAlias( new Alias( owner, ) );
-
-
         assertEquals( 2, cvObject.getXrefs().size() );
 
         // call the method we are testing
@@ -113,7 +108,7 @@ public class CvObject2xmlPSI2Test extends PsiDownloadTest {
         assertEquals( element, _element );
 
         // check content of the tag
-        assertEquals( "featureDetectionMethod", element.getNodeName() );
+        assertEquals( "featureDetection", element.getNodeName() );
 
         // checking names...
         Element names = (Element) element.getElementsByTagName( "names" ).item( 0 );
