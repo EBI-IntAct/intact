@@ -24,12 +24,12 @@ import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 public class ExperimentDispatchActionTest extends MockStrutsTestCase {
     private Transaction tx;
 
-    public void setUp() throws Exception { super.setUp();
+    public void setUp() throws Exception { 
         super.setUp();
         tx = HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
     }
 
-    public void tearDown() throws Exception { super.tearDown();
+    public void tearDown() throws Exception {
         super.tearDown();
         tx.commit();
     }
