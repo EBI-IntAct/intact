@@ -27,6 +27,7 @@
 
     <modules>
         <module>maven</module>
+        <module>plugins</module>
         <module>intact-core</module>
         <module>app-commons</module>
         <module>sanity-checker</module>
