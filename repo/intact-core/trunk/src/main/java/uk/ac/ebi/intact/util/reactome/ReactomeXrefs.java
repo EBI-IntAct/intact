@@ -11,9 +11,9 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvTopic;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -214,21 +214,17 @@ public class ReactomeXrefs {
 
         /////////////////////////////
         // Here the program starts
-
-        IntactHelper helper = null;
-        try {
-            helper = new IntactHelper();
-            System.out.println( "Database: " + helper.getDbName() );
+            
+            System.out.println( "Database: " + DaoFactory.getBaseDao().getDbName() );
 
             // loading controlled vocabularied
 
-            CvTopic curatedComplex = helper.getObjectByLabel( CvTopic.class, CvTopic.CURATED_COMPLEX );
+            CvTopic curatedComplex = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel(CvTopic.CURATED_COMPLEX);
             if ( curatedComplex == null ) {
                 throw new IllegalStateException( "Could not find CvTopic by shortlabel: " );
             }
 
-            Collection<CvDatabase> databases = helper.getObjectsByXref( CvDatabase.class,
-                                                                        CvDatabase.REACTOME_COMPLEX_PSI_REF );
+            Collection<CvDatabase> databases = DaoFactory.getCvObjectDao(CvDatabase.class).getByXrefLike(CvDatabase.REACTOME_COMPLEX_PSI_REF);
             if ( databases == null || databases.isEmpty() ) {
                 throw new IllegalStateException( "Could not find CvDatabase( reactome complex ) by Xref: " + CvDatabase.REACTOME_COMPLEX_PSI_REF );
             }
@@ -236,7 +232,7 @@ public class ReactomeXrefs {
             CvDatabase reactome = databases.iterator().next();
 
 
-            Connection connection = helper.getJDBCConnection();
+            Connection connection = DaoFactory.connection();
 
             final String sql = "SELECT i.ac as interactionAC, x.primaryId as reactomeID\n" +
                                "FROM ia_interactor i, ia_xref x, ia_annotation a, ia_int2annot i2a\n" +
@@ -328,13 +324,6 @@ public class ReactomeXrefs {
                 }
             }
 
-
-        } finally {
-            if ( helper != null ) {
-                System.out.println( "Closing database connection." );
-                helper.closeStore();
-            }
-        }
     }
 
 }

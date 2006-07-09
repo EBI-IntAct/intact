@@ -9,17 +9,21 @@
 package uk.ac.ebi.intact.util;
 
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.IntactObjectDao;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 
 
 /**
  * Helper class for setting up/tearing down objects used for test cases.
  * Typical usage in a TestCase class would be to create a TestCaseHelper
- * in its constructor, optionally use the same IntactHelper instance, and
+ * in its constructor and
  * delegate setUp/tearDown calls to TestCaseHelper. Then you can call one of the
  * 'get' methods to obtain a collection of various intact object types that have been
  * created, and then use any of them at random to perform tests.
@@ -31,8 +35,7 @@ import java.util.Collection;
  */
 public class TestCaseHelper {
 
-
-    private IntactHelper helper;
+    private static final Log log = LogFactory.getLog(TestCaseHelper.class);
 
     private Institution institution;
     private BioSource bio1;
@@ -67,18 +70,6 @@ public class TestCaseHelper {
     private ArrayList components = new ArrayList();
 
     public TestCaseHelper() throws IntactException {
-        helper = new IntactHelper();
-    }
-
-    /**
-     * provides a way to use the same helper object that is used to create/remove the
-     * example test data.
-     *
-     * @return IntactHelper a helper instance - never null unless class constructor failed
-     */
-    public IntactHelper getHelper() {
-
-        return helper;
     }
 
     //get methods for collections of various object types - will all return empty if setUp
@@ -124,7 +115,7 @@ public class TestCaseHelper {
         try {
 
             //now need to create specific info in the DB to use for the tests...
-            System.out.println( "building example test objects..." );
+            log.info( "building example test objects..." );
 
             /*
             * simple scenario:
@@ -156,8 +147,7 @@ public class TestCaseHelper {
             exp2 = new Experiment( institution, "exp2", bio2 );
             exp2.setFullName( "test experiment 2" );
 
-            CvInteractorType protType = (CvInteractorType) helper.getObjectByPrimaryId(
-                    CvInteractorType.class, CvInteractorType.getProteinMI());
+            CvInteractorType protType = DaoFactory.getCvObjectDao(CvInteractorType.class).getByXref( CvInteractorType.getProteinMI());
             prot1 = new ProteinImpl(institution, bio1, "prot1", protType);
             prot2 = new ProteinImpl(institution, bio1, "prot2", protType);
             prot3 = new ProteinImpl(institution, bio1, "prot3", protType);
@@ -182,8 +172,7 @@ public class TestCaseHelper {
             Collection components = new ArrayList();
 
             experiments.add( exp1 );
-            CvInteractorType intType = (CvInteractorType) helper.getObjectByPrimaryId(
-                    CvInteractorType.class, CvInteractorType.getInteractionMI());
+            CvInteractorType intType = DaoFactory.getCvObjectDao(CvInteractorType.class).getByXref( CvInteractorType.getInteractionMI());
             //needs exps, components, type, shortlabel, owner...
             //No need to set BioSource - taken from the Experiment...
             int1 = new InteractionImpl( experiments, components, null, intType, "int1", institution );
@@ -275,22 +264,21 @@ public class TestCaseHelper {
             persistList.add( comp3 );
             persistList.add( comp4 );
 
-            System.out.println( "saving examples to store..." );
-            helper.create( persistList );
+            log.info( "saving examples to store..." );
+            DaoFactory.getIntactObjectDao(IntactObject.class).persistAll( persistList );
 
             //now add an experiment and do an update
-            System.out.println( "examples persisted - adding Experiments..." );
+            log.info( "examples persisted - adding Experiments..." );
             int1.addExperiment( exp2 );
             int2.addExperiment( exp1 );
             int3.addExperiment( exp2 );
 
-            System.out.println( "updating Interactions..." );
-            helper.update( int1 );
-            helper.update( int2 );
-            helper.update( int3 );
+            log.info( "updating Interactions..." );
+            DaoFactory.getInteractorDao().update((InteractorImpl) int1 );
+            DaoFactory.getInteractorDao().update((InteractorImpl) int2 );
+            DaoFactory.getInteractorDao().update((InteractorImpl) int3 );
 
-            System.out.println( "example test data successfully created - executing tests..." );
-            System.out.println();
+            log.info( "example test data successfully created - executing tests..." );
 
             //now put the created objects into their relevant Collections
             institutions.add( institution );
@@ -314,8 +302,8 @@ public class TestCaseHelper {
         } catch ( Exception ie ) {
 
             //something failed with datasource, or helper.create...
-            String msg = "error - helper.create/update failed - see stack trace...";
-            System.out.println( msg );
+            String msg = "helper.create/update failed - see stack trace...";
+            log.error( msg );
             ie.printStackTrace();
 
         }
@@ -326,44 +314,44 @@ public class TestCaseHelper {
         //need to clean out the example object data from the DB...
         try {
 
-            System.out.println( "tests complete - removing test data..." );
-            System.out.println( "deleting test objects..." );
+            log.info( "tests complete - removing test data..." );
+            log.info( "deleting test objects..." );
+
+            IntactObjectDao dao = DaoFactory.getIntactObjectDao(IntactObject.class);
 
             //NB ORDER OF DELETION IS IMPORTANT!!...
-            helper.delete( prot1 );
-            helper.delete( prot2 );
-            helper.delete( prot3 );
-            helper.delete( int1 );
-            helper.delete( int2 );
-            helper.delete( int3 );
+            dao.delete( prot1 );
+            dao.delete( prot2 );
+            dao.delete( prot3 );
+            dao.delete( int1 );
+            dao.delete( int2 );
+            dao.delete( int3 );
 
-            helper.delete( exp1 );
-            helper.delete( exp2 );
+            dao.delete( exp1 );
+            dao.delete( exp2 );
 
-            helper.delete( bio1 );
-            helper.delete( bio2 );
+            dao.delete( bio1 );
+            dao.delete( bio2 );
 
-            helper.delete( comp1 );
-            helper.delete( comp2 );
-            helper.delete( comp3 );
-            helper.delete( comp4 );
+            dao.delete( comp1 );
+            dao.delete( comp2 );
+            dao.delete( comp3 );
+            dao.delete( comp4 );
 
-            helper.delete( xref1 );
-            helper.delete( xref2 );
+            dao.delete( xref1 );
+            dao.delete( xref2 );
 
-            helper.delete( cvDb );
-            helper.delete( compRole );
+            dao.delete( cvDb );
+            dao.delete( compRole );
 
-            helper.delete( institution );
+            dao.delete( institution );
 
-            System.out.println( "done - all example test objects removed successfully." );
-            System.out.println();
+            log.info( "done - all example test objects removed successfully." );
         } catch ( Exception e ) {
 
-            System.out.println( "problem deleteing examples from data store" );
+            log.info( "problem deleteing examples from data store" );
             e.printStackTrace();
         }
-        helper = null;
     }
 
 

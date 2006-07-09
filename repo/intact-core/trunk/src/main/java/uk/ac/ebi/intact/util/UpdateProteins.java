@@ -2009,10 +2009,7 @@ public class UpdateProteins extends UpdateProteinsI {
 
             // update databse
             try {
-                /**
-                 * If the object is proxied, the update will throw an Exception: ClassNotPersistenceCapableException
-                 * So we use the IntactHelper to get the realObject.
-                 */
+
                 proteinDao.update( protein );
 
                 if ( debugOnScreen ) {
@@ -2353,10 +2350,7 @@ public class UpdateProteins extends UpdateProteinsI {
         if ( needUpdate == true ) {
             // update databse
             try {
-                /**
-                 * If the object is proxied, the update will throw an Exception: ClassNotPersistenceCapableException
-                 * So we use the IntactHelper to get the realObject.
-                 */
+                
                 DaoFactory.getProteinDao().update( (ProteinImpl)spliceVariant );
 
                 if ( debugOnScreen ) {
@@ -2431,7 +2425,7 @@ public class UpdateProteins extends UpdateProteinsI {
         String url = getUrl( proteinAc );
         int i = insertSPTrProteinsFromURL( url, null, true );
         if ( debugOnScreen ) {
-            System.out.println( i + " proteins created/updated." );
+            log.debug( i + " proteins created/updated." );
         }
 
         return proteins;
@@ -2478,7 +2472,7 @@ public class UpdateProteins extends UpdateProteinsI {
         String url = getUrl( proteinAc );
         int i = insertSPTrProteinsFromURL( url, taxId, update );
         if ( debugOnScreen ) {
-            System.out.println( i + " proteins created/updated." );
+            log.debug( i + " proteins created/updated." );
         }
 
         // TODO: could be nice to have a method like getProteins() and getProtein( String taxid )
@@ -2585,7 +2579,7 @@ public class UpdateProteins extends UpdateProteinsI {
                 log.debug( "update from URL: " + sourceUrl );
             }
             if ( debugOnScreen ) {
-                System.out.println( "update from URL: " + sourceUrl );
+                log.debug( "update from URL: " + sourceUrl );
             }
 
             if ( sourceUrl == null ) {
@@ -2645,7 +2639,7 @@ public class UpdateProteins extends UpdateProteinsI {
             entryIterator = YASP.parseAll( inputStream );
 
             if ( debugOnScreen ) {
-                System.out.println( "done" );
+                log.debug( "done" );
             }
 
             if ( localEntryCacheEnabled ) {
@@ -2653,7 +2647,7 @@ public class UpdateProteins extends UpdateProteinsI {
                     if ( localEntryCache == null ) {
                         localEntryCache = new BufferedWriter( new FileWriter( localEntryCacheFilename, true ) );
                         if ( displayLocalEntryCacheMessage ) {
-                            System.out.println( "Local Entry cache created: " + localEntryCacheFilename );
+                            log.debug( "Local Entry cache created: " + localEntryCacheFilename );
                             displayLocalEntryCacheMessage = false; // display it only once
                         }
                     }
@@ -2735,7 +2729,7 @@ public class UpdateProteins extends UpdateProteinsI {
                 createProteinFromSPTrEntry( sptrEntry, update );
 
                 if ( debugOnScreen ) {
-                    System.out.println( ")" );
+                    log.debug( ")" );
                 }
 
                 // Display some statistics every 500 entries processed.
@@ -2846,16 +2840,16 @@ public class UpdateProteins extends UpdateProteinsI {
 
         // on STDOUT
         if ( debugOnScreen ) {
-            System.out.println( "Protein created:    " + getProteinCreatedCount() );
-            System.out.println( "Protein updated:    " + getProteinUpdatedCount() );
-            System.out.println( "Protein up-to-date: " + getProteinUpToDateCount() );
-            System.out.println( "Protein skipped:    " + getProteinSkippedCount() );
-            System.out.println( "Splice variant created:    " + getSpliceVariantCreatedCount() );
-            System.out.println( "Splice variant updated:    " + getSpliceVariantUpdatedCount() );
-            System.out.println( "Splice variant up-to-date: " + getSpliceVariantUpToDateCount() );
-            System.out.println( "Splice variant skipped:    " + getSpliceVariantSkippedCount() );
-            System.out.println( "Entry processed:    " + getEntryProcessededCount() );
-            System.out.println( "Entry skipped:      " + getEntrySkippedCount() );
+            log.debug( "Protein created:    " + getProteinCreatedCount() );
+            log.debug( "Protein updated:    " + getProteinUpdatedCount() );
+            log.debug( "Protein up-to-date: " + getProteinUpToDateCount() );
+            log.debug( "Protein skipped:    " + getProteinSkippedCount() );
+            log.debug( "Splice variant created:    " + getSpliceVariantCreatedCount() );
+            log.debug( "Splice variant updated:    " + getSpliceVariantUpdatedCount() );
+            log.debug( "Splice variant up-to-date: " + getSpliceVariantUpToDateCount() );
+            log.debug( "Splice variant skipped:    " + getSpliceVariantSkippedCount() );
+            log.debug( "Entry processed:    " + getEntryProcessededCount() );
+            log.debug( "Entry skipped:      " + getEntrySkippedCount() );
         }
     }
 
@@ -3011,7 +3005,7 @@ public class UpdateProteins extends UpdateProteinsI {
         int proteinCount = proteins.size();
         NumberFormat formatter = new DecimalFormat( ".00" );
 
-        System.out.println( proteinCount + " protein(s) to be updated." );
+        log.debug( proteinCount + " protein(s) to be updated." );
         int proteinProcessed = 0;
         for ( Iterator iterator = proteins.iterator(); iterator.hasNext(); ) {
             Protein protein = (Protein) iterator.next();
@@ -3023,7 +3017,7 @@ public class UpdateProteins extends UpdateProteinsI {
             if ( uniprotID != null ) {
                 if ( uniprotIds.contains( uniprotID ) ) {
 
-                    System.out.println( "Skip " + uniprotID + " was already processed." );
+                    log.debug( "Skip " + uniprotID + " was already processed." );
 
                 } else {
 
@@ -3041,13 +3035,13 @@ public class UpdateProteins extends UpdateProteinsI {
                     }
                 }
             } else {
-                System.out.println( "Protein " + protein.getAc() + " doesn't have a Uniprot ID, skip it." );
+                log.debug( "Protein " + protein.getAc() + " doesn't have a Uniprot ID, skip it." );
             }
 
             proteinProcessed++;
 
             String percent = formatter.format( ( (float) proteinProcessed / (float) proteinCount ) * 100 );
-            System.out.println( proteinProcessed + " protein processed out of " + proteinCount + "( " + percent + "%)" );
+            log.debug( proteinProcessed + " protein processed out of " + proteinCount + "( " + percent + "%)" );
         }
 
         return count;
@@ -3060,7 +3054,7 @@ public class UpdateProteins extends UpdateProteinsI {
      */
     public static void main( String[] args ) throws Exception {
 
-        System.out.println( "UpdateProteins version " + VERSION );
+        log.debug( "UpdateProteins version " + VERSION );
 
         try {
             String url = null;
@@ -3068,17 +3062,17 @@ public class UpdateProteins extends UpdateProteinsI {
             if ( args.length >= 1 ) {
                 url = args[ 0 ];
             } else {
-                System.out.println( "Usage: javaRun.sh UpdateProteins <URL>|<-all> [-version]" );
+                log.debug( "Usage: javaRun.sh UpdateProteins <URL>|<-all> [-version]" );
                 System.exit( 1 );
             }
 
             try {
                 BaseDao dao = DaoFactory.getBaseDao();
-                System.out.println( "Helper created (User: " + dao.getDbUserName() + " " +
+                log.debug( "Helper created (User: " + dao.getDbUserName() + " " +
                                     "Database: " + dao.getDbName() + ")" );
 
             } catch ( IntactException e ) {
-                System.out.println( "Root cause: " + e.getRootCause() );
+                log.debug( "Root cause: " + e.getRootCause() );
                 e.printStackTrace();
                 System.exit( 1 );
             }
@@ -3093,17 +3087,17 @@ public class UpdateProteins extends UpdateProteinsI {
 
             int nb = 0;
             if ( url.equals( "-all" ) ) {
-                System.out.println( "Updating all proteins..." );
+                log.debug( "Updating all proteins..." );
                 nb = update.updateAllProteins( null );
             } else {
                 nb = update.insertSPTrProteinsFromURL( url, null, true );
             }
 
             chrono.stop();
-            System.out.println( "Time elapsed: " + chrono );
-            System.out.println( "Entries error in : " + update.getErrorFileName() );
+            log.debug( "Time elapsed: " + chrono );
+            log.debug( "Entries error in : " + update.getErrorFileName() );
 
-            System.out.println( nb + " protein updated/created" );
+            log.debug( nb + " protein updated/created" );
 
         } catch ( OutOfMemoryError aome ) {
 

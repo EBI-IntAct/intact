@@ -5,16 +5,47 @@
  */
 package uk.ac.ebi.intact.util.uniprotExport;
 
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.ojb.broker.accesslayer.LookupException;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.Annotation;
+import uk.ac.ebi.intact.model.Component;
+import uk.ac.ebi.intact.model.CvInteraction;
+import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.util.MemoryMonitor;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Writer;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 /**
  * That class allow to create a flat file containing the CC line to export to Uniprot.
@@ -23,6 +54,8 @@ import java.util.*;
  * @version $Id$
  */
 public class CCLineExport extends LineExport {
+
+    private static final Log log = LogFactory.getLog(CCLineExport.class);
 
     ///////////////////////////////
     // Inner class
@@ -50,8 +83,6 @@ public class CCLineExport extends LineExport {
     ///////////////////////////////
     // Instance variables
 
-    private IntactHelper helper;
-
     /**
      * Storage of the CC lines per protein. <br> Structure: Map( ProteinAC, Collection( CCLine ) ) <br> <b>Note</b>:
      * proteinAC must be a protein AC, not a Splice Variant ID.
@@ -77,7 +108,7 @@ public class CCLineExport extends LineExport {
     ///////////////////////////////
     // Constructor
 
-    public CCLineExport( IntactHelper helper, Writer ccWriter, Writer goWriter ) throws IntactException,
+    public CCLineExport(  Writer ccWriter, Writer goWriter ) throws IntactException,
                                                                                         DatabaseContentException {
         super();
 
@@ -89,8 +120,7 @@ public class CCLineExport extends LineExport {
             throw new NullPointerException( "You must give a GO Line writer." );
         }
 
-        init( helper );
-        this.helper = helper;
+        init( );
         this.ccWriter = ccWriter;
         this.goWriter = goWriter;
     }
@@ -124,19 +154,15 @@ public class CCLineExport extends LineExport {
     /**
      * retreives using the provided helper a Protein based on its Xref (uniprot, identity).
      *
-     * @param helper    the data source
      * @param uniprotID the primary id of the cross reference
      *
      * @return a Protein having Xref( uniprotId, uniprot, identity )
      *
      * @throws IntactException if none or more than 2 proteins are found.
      */
-    private Collection getProteinFromIntact( IntactHelper helper, String uniprotID ) throws IntactException {
+    private Collection getProteinFromIntact(  String uniprotID ) throws IntactException {
 
-        Collection proteins = helper.getObjectsByXref( Protein.class,
-                                                       uniprotDatabase,
-                                                       identityXrefQualifier,
-                                                       uniprotID );
+        Collection proteins = DaoFactory.getProteinDao().getByXrefLike(uniprotDatabase, identityXrefQualifier, uniprotID);
 
         if ( proteins.size() == 0 ) {
             throw new IntactException( "the ID " + uniprotID + " didn't return the expected number of protein: " +
@@ -150,10 +176,7 @@ public class CCLineExport extends LineExport {
             Protein protein = (Protein) iterator.next();
 
             String ac = protein.getAc();
-            Collection sv = helper.getObjectsByXref( Protein.class,
-                                                     intactDatabase,
-                                                     isoformParentQualifier,
-                                                     ac );
+            Collection sv = DaoFactory.getProteinDao().getByXrefLike(intactDatabase, isoformParentQualifier, ac);
 
             spliceVariants.addAll( sv );
         }
@@ -222,10 +245,10 @@ public class CCLineExport extends LineExport {
         String master1 = null;
         if ( isSpliceVariant( protein1 ) ) {
 
-            Protein proteinMaster1 = getMasterProtein( protein1, helper );
+            Protein proteinMaster1 = getMasterProtein( protein1 );
 
             if ( proteinMaster1 == null ) {
-                System.err.println( "Could not export a CC line related to the master of " + uniprotID1 );
+                log.error( "Could not export a CC line related to the master of " + uniprotID1 );
             } else {
                 master1 = getUniprotID( proteinMaster1 );
             }
@@ -237,10 +260,10 @@ public class CCLineExport extends LineExport {
         String master2 = null;
         if ( isSpliceVariant( protein2 ) ) {
 
-            Protein proteinMaster2 = getMasterProtein( protein2, helper );
+            Protein proteinMaster2 = getMasterProtein( protein2 );
 
             if ( proteinMaster2 == null ) {
-                System.err.println( "Could not export a CC line related to the master of " + uniprotID2 );
+                log.error( "Could not export a CC line related to the master of " + uniprotID2 );
             } else {
                 master2 = getUniprotID( proteinMaster2 );
             }
@@ -310,7 +333,7 @@ public class CCLineExport extends LineExport {
         } else {
 
             // A gene must be there ... it must have been checked before.
-            geneName = getGeneName( protein2, helper );
+            geneName = getGeneName( protein2 );
             if ( geneName == null ) {
                 geneName = "-";
             }
@@ -352,7 +375,7 @@ public class CCLineExport extends LineExport {
             } // xref
 
             if ( found == false ) {
-                System.err.println( experiment.getShortLabel() + " " + pubmedDatabase.getShortLabel() +
+                log.error( experiment.getShortLabel() + " " + pubmedDatabase.getShortLabel() +
                                     " has no (" + primaryReferenceQualifier.getShortLabel() + ") assigned." );
             }
         } // experiments
@@ -370,10 +393,10 @@ public class CCLineExport extends LineExport {
         String master1 = null;
         if ( isSpliceVariant( protein1 ) ) {
 
-            Protein proteinMaster1 = getMasterProtein( protein1, helper );
+            Protein proteinMaster1 = getMasterProtein( protein1 );
 
             if ( proteinMaster1 == null ) {
-                System.err.println( "Could not export a CC line related to the master of " + uniprotID_1 );
+                log.error( "Could not export a CC line related to the master of " + uniprotID_1 );
                 master1 = uniprotID_1;
             } else {
                 master1 = getUniprotID( proteinMaster1 );
@@ -386,10 +409,10 @@ public class CCLineExport extends LineExport {
         String master2 = null;
         if ( isSpliceVariant( protein2 ) ) {
 
-            Protein proteinMaster2 = getMasterProtein( protein2, helper );
+            Protein proteinMaster2 = getMasterProtein( protein2 );
 
             if ( proteinMaster2 == null ) {
-                System.err.println( "Could not export a CC line related to the master of " + uniprotID_2 );
+                log.error( "Could not export a CC line related to the master of " + uniprotID_2 );
                 master2 = uniprotID_2;
             } else {
                 master2 = getUniprotID( proteinMaster2 );
@@ -400,7 +423,7 @@ public class CCLineExport extends LineExport {
 
         Set pubmeds = getPumedIds( eligibleExperiments );
         if ( pubmeds.isEmpty() ) {
-            System.err.println( "No PubMed ID found in that set of experiments. " );
+            log.error( "No PubMed ID found in that set of experiments. " );
             return;
         }
 
@@ -772,7 +795,7 @@ public class CCLineExport extends LineExport {
                 System.out.print( "..." + idProcessed );
 
                 if ( ( idProcessed % 500 ) == 0 ) {
-                    System.out.println( "" );
+                    log.info( "" );
                 } else {
                     System.out.flush();
                 }
@@ -785,7 +808,7 @@ public class CCLineExport extends LineExport {
             log( "Interaction processed: " + alreadyProcessedInteraction.size() );
 
             // get the protein's and splice variants related to that Uniprot ID
-            Collection proteinSet_1 = getProteinFromIntact( helper, uniprot_ID );
+            Collection proteinSet_1 = getProteinFromIntact( uniprot_ID );
 
             for ( Iterator iteratorP = proteinSet_1.iterator(); iteratorP.hasNext(); ) {
                 Protein protein1 = (Protein) iteratorP.next();
@@ -882,7 +905,7 @@ public class CCLineExport extends LineExport {
                             // should be exported. Reminder, only protein exported in the DR are exported in the CCs.
                             String uniprotID_2_check = uniprotID_2;
                             if ( isSpliceVariant( protein2 ) ) {
-                                Protein master = getMasterProtein( protein2, helper );
+                                Protein master = getMasterProtein( protein2 );
                                 if ( master != null ) {
                                     uniprotID_2_check = getUniprotID( master );
                                 }
@@ -1005,9 +1028,9 @@ public class CCLineExport extends LineExport {
         if ( null != ccWriter ) {
             try {
                 ccWriter.close();
-                System.out.println( "Output file closed." );
+                log.info( "Output file closed." );
             } catch ( IOException e ) {
-                System.err.println( "Could not close the output file." );
+                log.error( "Could not close the output file." );
             }
         }
     }
@@ -1048,7 +1071,7 @@ public class CCLineExport extends LineExport {
                 uniprotID = st.nextToken();
                 proteins.add( uniprotID );
             } else {
-                System.err.println( "Could not parse line " + count + ":" + line );
+                log.error( "Could not parse line " + count + ":" + line );
             }
         }
 
@@ -1116,7 +1139,7 @@ public class CCLineExport extends LineExport {
 
             displayUsage( options );
 
-            System.err.println( "Parsing failed.  Reason: " + exp.getMessage() );
+            log.error( "Parsing failed.  Reason: " + exp.getMessage() );
             System.exit( 1 );
         }
 
@@ -1138,17 +1161,16 @@ public class CCLineExport extends LineExport {
             ccExportFilename = line.getOptionValue( "ccExport" );
         }
 
-        System.out.println( "Try to open: " + drExportFilename );
+        log.info( "Try to open: " + drExportFilename );
         Set uniprotIDs = getEligibleProteinsFromFile( drExportFilename );
-        System.out.println( uniprotIDs.size() + " DR protein(s) loaded from drFile: " + drExportFilename );
+        log.info( uniprotIDs.size() + " DR protein(s) loaded from drFile: " + drExportFilename );
 
         // create a database access
-        IntactHelper helper = new IntactHelper();
         try {
-            System.out.println( "Database instance: " + helper.getDbName() );
-            System.out.println( "User: " + helper.getDbUserName() );
-        } catch ( LookupException e ) {
-            System.err.println( "Could not get database information (instance name and username)." );
+            log.info( "Database instance: " + DaoFactory.getBaseDao().getDbName() );
+            log.info( "User: " + DaoFactory.getBaseDao().getDbUserName() );
+        } catch ( SQLException e ) {
+            log.error( "Could not get database information (instance name and username)." );
         }
 
 
@@ -1158,8 +1180,8 @@ public class CCLineExport extends LineExport {
             try {
                 ccFile = new File( ccExportFilename );
                 if ( ccFile.exists() ) {
-                    System.err.println( "Please give a new file name for the CC output file: " + ccFile.getAbsoluteFile() );
-                    System.err.println( "We will use the default filename instead (instead of overwritting the existing file)." );
+                    log.error( "Please give a new file name for the CC output file: " + ccFile.getAbsoluteFile() );
+                    log.error( "We will use the default filename instead (instead of overwritting the existing file)." );
                     ccExportFilename = null;
                     ccFile = null;
                 }
@@ -1170,7 +1192,7 @@ public class CCLineExport extends LineExport {
 
         if ( ccExportFilename == null || ccFile == null ) {
             String filename = "CCLineExport_" + TIME + ".txt";
-            System.out.println( "Using default filename for the CC export: " + filename );
+            log.info( "Using default filename for the CC export: " + filename );
             ccFile = new File( filename );
         }
 
@@ -1180,8 +1202,8 @@ public class CCLineExport extends LineExport {
             try {
                 goFile = new File( goExportFilename );
                 if ( goFile.exists() ) {
-                    System.err.println( "Please give a new file name for the GO output file: " + goFile.getAbsoluteFile() );
-                    System.err.println( "We will use the default filename instead (instead of overwritting the existing file)." );
+                    log.error( "Please give a new file name for the GO output file: " + goFile.getAbsoluteFile() );
+                    log.error( "We will use the default filename instead (instead of overwritting the existing file)." );
                     goExportFilename = null;
                     goFile = null;
                 }
@@ -1192,7 +1214,7 @@ public class CCLineExport extends LineExport {
 
         if ( goExportFilename == null || goFile == null ) {
             String filename = "GOExport_" + TIME + ".txt";
-            System.out.println( "Using default filename for the GO export: " + filename );
+            log.info( "Using default filename for the GO export: " + filename );
             goFile = new File( filename );
         }
 
@@ -1202,7 +1224,7 @@ public class CCLineExport extends LineExport {
             ccFileWriter = new FileWriter( ccFile );
             goFileWriter = new FileWriter( goFile );
 
-            CCLineExport exporter = new CCLineExport( helper, (Writer) ccFileWriter, (Writer) goFileWriter );
+            CCLineExport exporter = new CCLineExport( (Writer) ccFileWriter, (Writer) goFileWriter );
             exporter.setDebugEnabled( debugEnabled );
             exporter.setDebugFileEnabled( debugFileEnabled );
 
@@ -1211,7 +1233,7 @@ public class CCLineExport extends LineExport {
 
         } catch ( IOException e ) {
             e.printStackTrace();
-            System.err.println( "Could not create the output goFile:" + goFile.getAbsolutePath() );
+            log.error( "Could not create the output goFile:" + goFile.getAbsolutePath() );
             System.exit( 1 );
 
         } finally {

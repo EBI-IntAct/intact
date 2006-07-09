@@ -7,11 +7,12 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.util.go;
 
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvDagObject;
 import uk.ac.ebi.intact.model.Alias;
 import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.CvAliasType;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -172,7 +173,6 @@ public class DagNode {
 
         CvDagObject targetNode = null;
 
-        IntactHelper helper = goUtils.getHelper();
         String goidDatabase = goUtils.getGoIdDatabase();
 
         // Get parent and child (targetNode) from the database
@@ -192,6 +192,8 @@ public class DagNode {
                     + " " + myGoTerm + " " + myGoShortLabel);
         }
 
+        CvObjectDao<CvDagObject> cvDagObjectDao = DaoFactory.getCvObjectDao(CvDagObject.class);
+
         // Insert the direct parent
         if (myParent != null) {
             CvDagObject directParent = (CvDagObject) goUtils.selectCvObject(
@@ -205,8 +207,8 @@ public class DagNode {
             }
             // Add the link between parent and child
             targetNode.addParent(directParent);
-            helper.update(directParent);
-            helper.update(targetNode);
+            cvDagObjectDao.update(directParent);
+            cvDagObjectDao.update(targetNode);
         }
 
         // Insert additional parents
@@ -230,14 +232,13 @@ public class DagNode {
             }
             // Add the link between parent and child
             targetNode.addParent(additionalParent);
-            helper.update(additionalParent);
+            cvDagObjectDao.update(additionalParent);
         }
         // Add aliases.
         if (!myAliases.isEmpty()) {
             // Cache objects to create aliases.
-            Institution owner = helper.getInstitution();
-            CvAliasType aliasType = (CvAliasType) helper.getObjectByLabel(
-                    CvAliasType.class, "go synonym");
+            Institution owner = DaoFactory.getInstitutionDao().getInstitution();
+            CvAliasType aliasType = DaoFactory.getCvObjectDao(CvAliasType.class).getByShortLabel("go synonym");
             // Must have an alias type
             if (aliasType == null) {
                 throw new IntactException("Alias type go synonym is missing");
@@ -248,11 +249,11 @@ public class DagNode {
                 // Do the check to avoid creating duplicate aliases.
                 if (!targetNode.getAliases().contains(alias)) {
                     targetNode.addAlias(alias);
-                    helper.create(alias);
+                    DaoFactory.getAliasDao().persist(alias);
                 }
             }
         }
-        helper.update(targetNode);
+        cvDagObjectDao.update(targetNode);
     }
 
     public String toString() {

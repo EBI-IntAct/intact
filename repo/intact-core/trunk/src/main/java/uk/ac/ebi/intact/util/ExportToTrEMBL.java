@@ -6,8 +6,9 @@
 package uk.ac.ebi.intact.util;
 
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.model.ProteinImpl;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -184,10 +185,7 @@ public class ExportToTrEMBL {
      */
     public static void main( String[] args ) throws IntactException {
 
-        IntactHelper helper = null;
-        try {
-            helper = new IntactHelper();
-            Collection<Protein> proteins = helper.search( Protein.class, "shortlabel", "*afcs*" );
+            Collection<ProteinImpl> proteins = DaoFactory.getProteinDao().getByShortLabelLike("%afcs%");
 
             System.out.println( proteins.size() + " protein(s) found." );
 
@@ -254,10 +252,5 @@ public class ExportToTrEMBL {
                                                      rl,
                                                      proteinID));
             }
-        } finally {
-            if ( helper != null ) {
-                helper.closeStore();
-            }
-        }
     }
 }

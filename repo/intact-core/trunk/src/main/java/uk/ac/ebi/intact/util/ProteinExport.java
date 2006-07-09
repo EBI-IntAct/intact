@@ -5,10 +5,10 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.util;
 
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.SearchException;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -19,6 +19,8 @@ import java.io.BufferedWriter;
 import java.sql.SQLException;
 
 import org.apache.ojb.broker.accesslayer.LookupException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  *
@@ -26,6 +28,8 @@ import org.apache.ojb.broker.accesslayer.LookupException;
  * @version $Id$
  */
 public class ProteinExport {
+
+    private static final Log log = LogFactory.getLog(ProteinExport.class);
 
     private static final String NEW_LINE = System.getProperty("line.separator");
 
@@ -41,39 +45,42 @@ public class ProteinExport {
     private void exportProteinUniprotAC( final String outputFile, String bioSourceShortLabel )
             throws IntactException,
             SearchException {
-        IntactHelper helper = new IntactHelper();
         try {
-            System.out.println("Helper created (User: "+helper.getDbUserName()+ " " +
-                               "Database: "+helper.getDbName()+")");
-        } catch ( LookupException e ) {
-            e.printStackTrace ();
+            if (log.isInfoEnabled())
+            {
+                log.info("Helper created (User: "+ DaoFactory.getBaseDao().getDbUserName()+ " " +
+                               "Database: "+DaoFactory.getBaseDao().getDbName()+")");
+            }
         } catch ( SQLException e ) {
             e.printStackTrace ();
         }
 
         BioSource bioSource = null;
         if ( bioSourceShortLabel != null ) {
-            bioSource =  helper.getObjectByLabel( BioSource.class, bioSourceShortLabel );
+            bioSource = DaoFactory.getBioSourceDao().getByShortLabel(bioSourceShortLabel);
+
             if ( bioSource == null ) {
                 throw new SearchException( "The requested bioSource ("+ bioSourceShortLabel +") could not be found." );
             }
         }
 
-        CvDatabase uniprotDatabase = helper.getObjectByLabel( CvDatabase.class, CvDatabase.UNIPROT );
+        CvDatabase uniprotDatabase = DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel(CvDatabase.UNIPROT);
+
         if ( uniprotDatabase == null ) {
             throw new SearchException( "Could not find the UNIPROTKB database in the current intact node." );
         }
 
         // collect proteins
-        Collection<Protein> proteins;
+        Collection<ProteinImpl> proteins;
         if ( bioSource == null) {
-            proteins = helper.search( Protein.class, "ac", null); // all proteins
+            proteins = DaoFactory.getProteinDao().getAll();
         } else {
-            Collection<Protein> interactors = helper.getInteractorBySource( Protein.class, bioSource );
+            Collection<ProteinImpl> interactors = DaoFactory.getProteinDao().getByBioSourceAc(bioSource.getAc());
+
             // keep only instances of Protein.
-            proteins = new ArrayList<Protein>(interactors);
+            proteins = new ArrayList<ProteinImpl>(interactors);
         }
-        System.out.println ( proteins.size() + " proteins found." );
+        log.debug ( proteins.size() + " proteins found." );
 
         // init output file.
         BufferedWriter out;
@@ -114,7 +121,7 @@ public class ProteinExport {
             }
             else
             {
-                System.out.println("no UNIPROT AC for protein " + protein);
+                log.debug("no UNIPROT AC for protein " + protein);
             }
         } // proteins loop
 

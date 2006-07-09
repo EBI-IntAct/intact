@@ -6,12 +6,14 @@
 package uk.ac.ebi.intact.util.uniprotExport;
 
 import org.apache.commons.cli.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.ojb.broker.accesslayer.LookupException;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.Chrono;
 import uk.ac.ebi.intact.util.MemoryMonitor;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.io.*;
 import java.sql.Connection;
@@ -75,6 +77,8 @@ import java.util.*;
  * @version $Id$
  */
 public class DRLineExport extends LineExport {
+
+    private static final Log log = LogFactory.getLog(DRLineExport.class);
 
     /**
      * Define if a Protein object is link to at least one high confidence Interaction.
@@ -204,7 +208,7 @@ public class DRLineExport extends LineExport {
                         } else if ( methodStatus.isNotSpecified() ) {
 
                             // we should never get in here but just in case...
-                            System.out.println( "\t\t No Method specified: protein non exportable" );
+                            log.info( "\t\t No Method specified: protein non exportable" );
 
                         } else if ( methodStatus.isConditionalExport() ) {
 
@@ -553,8 +557,6 @@ public class DRLineExport extends LineExport {
     /**
      * Get a distinct set of Uniprot ID of the protein eligible to export in Swiss-Prot.
      *
-     * @param helper access to the database
-     *
      * @return a distinct set of Uniprot ID of the protein eligible to export in Swiss-Prot.
      *
      * @throws java.sql.SQLException error when handling the JDBC connection or query.
@@ -563,12 +565,12 @@ public class DRLineExport extends LineExport {
      * @throws uk.ac.ebi.intact.util.uniprotExport.CCLineExport.DatabaseContentException
      *                               if the initialisation process failed (CV not found)
      */
-    public final Set getElibibleProteins( IntactHelper helper )
+    public final Set getElibibleProteins( )
             throws SQLException,
                    IntactException,
                    DatabaseContentException {
 
-        Connection connection = helper.getJDBCConnection();
+        Connection connection = DaoFactory.connection();
         Statement statement = connection.createStatement();
 
         // select the protein ordered by Uniprot identity.
@@ -589,13 +591,12 @@ public class DRLineExport extends LineExport {
                      "       x.primaryId not like 'C%'\n" +
                      "ORDER BY x.primaryId ";
 
-        System.out.println( "Executing the following query: " );
-        System.out.println( sql );
+        log.info( "Executing the following query: " );
+        log.info( sql );
         ResultSet proteinAcs = statement.executeQuery( sql );
-        Runtime.getRuntime().addShutdownHook( new CCLineExport.DatabaseConnexionShutdownHook( helper ) );
 
         // fetch necessary vocabulary
-        init( helper );
+        init( );
 
         Set proteinEligible = new HashSet( 4096 );
         Chrono globalChrono = new Chrono();
@@ -612,17 +613,17 @@ public class DRLineExport extends LineExport {
                 System.out.print( "..." + proteinCount );
 
                 if ( ( proteinCount % 1000 ) == 0 ) {
-                    System.out.println( "" );
+                    log.info( "" );
                 } else {
                     System.out.flush();
                 }
             }
 
             String ac = proteinAcs.getString( 1 );
-            proteins = helper.search( Protein.class.getName(), "ac", ac );
+            proteins = DaoFactory.getProteinDao().getByAcLike(ac);
 
             if ( proteins == null || proteins.isEmpty() ) {
-                System.err.println( "Could not find a Protein in IntAct for AC: " + ac );
+                log.error( "Could not find a Protein in IntAct for AC: " + ac );
                 continue; // process next AC
             }
 
@@ -652,19 +653,14 @@ public class DRLineExport extends LineExport {
 
                     if ( masterAc == null ) {
 
-                        System.err.println( "The splice variant having the AC(" + protein.getAc() + ") doesn't have it's master AC." );
+                        log.error( "The splice variant having the AC(" + protein.getAc() + ") doesn't have it's master AC." );
 
                     } else {
 
-                        Collection c = null;
-                        try {
-                            c = helper.search( Protein.class, "ac", masterAc );
-                        } catch ( IntactException e ) {
-                            e.printStackTrace();
-                        }
+                        Collection c = DaoFactory.getProteinDao().getByAcLike(masterAc);
 
                         if ( c == null || c.size() == 0 ) {
-                            System.err.println( "Could not find the master protein of splice variant (" +
+                            log.error( "Could not find the master protein of splice variant (" +
                                                 protein.getAc() + ") having the AC(" + ac + ")" );
                         } else {
                             // it must be one only
@@ -701,7 +697,7 @@ public class DRLineExport extends LineExport {
         }
 
         globalChrono.stop();
-        System.out.println( "Total time elapsed: " + globalChrono );
+        log.info( "Total time elapsed: " + globalChrono );
 
         return proteinEligible;
     }
@@ -720,7 +716,7 @@ public class DRLineExport extends LineExport {
     public static void display( Set proteins ) {
         for ( Iterator iterator = proteins.iterator(); iterator.hasNext(); ) {
             String uniprotID = (String) iterator.next();
-            System.out.println( formatProtein( uniprotID ) );
+            log.info( formatProtein( uniprotID ) );
         }
     }
 
@@ -772,7 +768,7 @@ public class DRLineExport extends LineExport {
 
             displayUsage( options );
 
-            System.err.println( "Parsing failed.  Reason: " + exp.getMessage() );
+            log.error( "Parsing failed.  Reason: " + exp.getMessage() );
             System.exit( 1 );
         }
 
@@ -800,8 +796,8 @@ public class DRLineExport extends LineExport {
             try {
                 file = new File( filename );
                 if ( file.exists() ) {
-                    System.err.println( "Please give a new file name for the DR output file: " + file.getAbsoluteFile() );
-                    System.err.println( "We will use the default filename instead (instead of overwritting the existing file)." );
+                    log.error( "Please give a new file name for the DR output file: " + file.getAbsoluteFile() );
+                    log.error( "We will use the default filename instead (instead of overwritting the existing file)." );
                     filename = null;
                     file = null;
                 }
@@ -812,21 +808,22 @@ public class DRLineExport extends LineExport {
 
         if ( filename == null || file == null ) {
             filename = "DRLineExport_" + TIME + ".txt";
-            System.out.println( "Using default filename for the DR export: " + filename );
+            log.info( "Using default filename for the DR export: " + filename );
             file = new File( filename );
         }
 
-        System.out.println( "DR export will be saved in: " + filename );
+        log.info( "DR export will be saved in: " + filename );
 
-
-        IntactHelper helper = new IntactHelper();
-        System.out.println( "Database instance: " + helper.getDbName() );
-        System.out.println( "User: " + helper.getDbUserName() );
+        if (log.isInfoEnabled())
+        {
+            log.info( "Database instance: " + DaoFactory.getBaseDao().getDbName() );
+            log.info( "User: " + DaoFactory.getBaseDao().getDbUserName() );
+        }
 
         // get the set of Uniprot ID to be exported to Swiss-Prot
-        Set proteinEligible = exporter.getElibibleProteins( helper );
+        Set proteinEligible = exporter.getElibibleProteins( );
 
-        System.out.println( proteinEligible.size() + " protein(s) selected for export." );
+        log.info( proteinEligible.size() + " protein(s) selected for export." );
 
         // save it to a file.
 
@@ -840,8 +837,8 @@ public class DRLineExport extends LineExport {
 
         } catch ( IOException e ) {
             e.printStackTrace();
-            System.err.println( "Could not save the result to :" + filename );
-            System.err.println( "Displays the result on STDOUT:\n\n\n" );
+            log.error( "Could not save the result to :" + filename );
+            log.error( "Displays the result on STDOUT:\n\n\n" );
 
             display( proteinEligible );
             System.exit( 1 );

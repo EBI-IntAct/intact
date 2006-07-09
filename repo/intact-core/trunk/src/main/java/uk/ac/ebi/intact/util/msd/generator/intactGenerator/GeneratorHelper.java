@@ -5,9 +5,16 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.util.msd.generator.intactGenerator;
 
-import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.model.BioSource;
+import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.CvIdentification;
+import uk.ac.ebi.intact.model.CvTopic;
+import uk.ac.ebi.intact.model.CvXrefQualifier;
+import uk.ac.ebi.intact.model.Institution;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+
+import java.util.Collection;
 
 /**
  * This class hold commonly used Cv, BioSource ...etc and there respective static getter methods. It is used, to help
@@ -18,10 +25,6 @@ import uk.ac.ebi.intact.business.IntactException;
  */
 public class GeneratorHelper {
 
-    /**
-     * An intactHelper used to retrieve inVitro, owner, authorList...etc
-     */
-    private static IntactHelper helper;
     /**
      * The in vitro bisource ( the biosource with taxid = -1).
      */
@@ -60,28 +63,22 @@ public class GeneratorHelper {
     private static CvXrefQualifier primaryRef;
 
     /**
-     * Class used to get the IntactHelper. If the helper is null, it instanciates it and then returns it. If it is not
-     * null it returns it directly.
-     * @return an IntactHelper object
-     * @throws IntactException
-     */
-    private static IntactHelper getIntactHelper() throws IntactException {
-        if(helper==null){
-            helper = new IntactHelper();
-        }
-        return helper;
-    }
-
-    /**
      * This method gives the inVitro BioSource. If inVitro is null, it retrieves it from the database.
      * @return the inVitro bioSource.
      * @throws IntactException
      */
     public static BioSource getInVitro() throws IntactException {
         if(inVitro==null){
-            IntactHelper helper = getIntactHelper();
-            inVitro = helper.getBioSourceByTaxId("-1");
-            helper.closeStore();
+
+            Collection<BioSource> inVitroCol = DaoFactory.getBioSourceDao().getByTaxonId("-1");
+
+            if (inVitroCol.size() > 1)
+            {
+                throw new IntactException("Only one bioSource is expected to have taxId -1. Found "+inVitroCol.size()+" biosources with this taxId.");
+            }
+
+            inVitro = inVitroCol.iterator().next();
+
         }
         return inVitro;
     }
@@ -92,9 +89,7 @@ public class GeneratorHelper {
      */
     public static Institution getOwner() throws IntactException {
         if(owner == null){
-            IntactHelper helper = getIntactHelper();
-            owner = helper.getInstitution();
-            helper.closeStore();
+            owner = DaoFactory.getInstitutionDao().getInstitution();
         }
         return owner;
     }
@@ -106,8 +101,7 @@ public class GeneratorHelper {
      */
     public static CvTopic getAuthorList() throws IntactException {
         if(authorList == null){
-            IntactHelper helper = getIntactHelper();
-            authorList=helper.getObjectByPrimaryId(CvTopic.class, CvTopic.AUTHOR_LIST_MI_REF);
+            authorList= DaoFactory.getCvObjectDao(CvTopic.class).getByXref(CvTopic.AUTHOR_LIST_MI_REF);
         }
         return authorList;
     }
@@ -119,8 +113,7 @@ public class GeneratorHelper {
      */
     public static CvTopic getContactEmail() throws IntactException {
         if(contactEmail == null){
-            IntactHelper helper = getIntactHelper();
-            contactEmail=helper.getObjectByPrimaryId(CvTopic.class, CvTopic.CONTACT_EMAIL_MI_REF);
+            contactEmail=DaoFactory.getCvObjectDao(CvTopic.class).getByXref( CvTopic.CONTACT_EMAIL_MI_REF);
         }
         return contactEmail;
     }
@@ -132,8 +125,7 @@ public class GeneratorHelper {
      */
     public static CvTopic getJournal() throws IntactException {
         if(journal == null){
-            IntactHelper helper = getIntactHelper();
-            journal = helper.getObjectByLabel(CvTopic.class, CvTopic.JOURNAL);
+            journal = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel(CvTopic.JOURNAL);
         }
         return journal;
     }
@@ -146,8 +138,7 @@ public class GeneratorHelper {
      */
     public static CvTopic getPublicationYear() throws IntactException {
         if(publicationYear == null){
-            IntactHelper helper = getIntactHelper();
-            publicationYear = helper.getObjectByLabel(CvTopic.class, CvTopic.PUBLICATION_YEAR);
+            publicationYear = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel(CvTopic.PUBLICATION_YEAR);
         }
         return journal;
     }
@@ -160,8 +151,7 @@ public class GeneratorHelper {
      */
     public static CvIdentification getPredetermined() throws IntactException {
         if(predetermined == null){
-            IntactHelper helper = getIntactHelper();
-            predetermined=helper.getObjectByPrimaryId(CvIdentification.class, CvIdentification.PREDETERMINED_MI_REF);
+            predetermined= DaoFactory.getCvObjectDao(CvIdentification.class).getByXref(CvIdentification.PREDETERMINED_MI_REF);
         }
         return predetermined;
     }
@@ -173,8 +163,7 @@ public class GeneratorHelper {
      */
     public static CvDatabase getPubmed() throws IntactException {
         if(pubmed == null){
-            IntactHelper helper = getIntactHelper();
-            pubmed = helper.getObjectByPrimaryId(CvDatabase.class, CvDatabase.PUBMED_MI_REF);
+            pubmed = DaoFactory.getCvObjectDao(CvDatabase.class).getByXref(CvDatabase.PUBMED_MI_REF);
         }
         return pubmed;
     }
@@ -187,8 +176,7 @@ public class GeneratorHelper {
      */
     public static CvXrefQualifier getPrimaryRef() throws IntactException {
         if(primaryRef == null){
-            IntactHelper helper = getIntactHelper();
-            primaryRef = helper.getObjectByPrimaryId(CvXrefQualifier.class, CvXrefQualifier.PRIMARY_REFERENCE_MI_REF);
+            primaryRef = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByXref(CvXrefQualifier.PRIMARY_REFERENCE_MI_REF);
         }
         return primaryRef;
     }

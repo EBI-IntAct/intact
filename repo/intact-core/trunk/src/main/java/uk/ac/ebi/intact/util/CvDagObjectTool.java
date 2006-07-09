@@ -5,7 +5,6 @@
 */
 package uk.ac.ebi.intact.util;
 
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.CvDagObject;
 
@@ -28,13 +27,10 @@ public class CvDagObjectTool {
      * @param args
      */
     public static void main(String[] args) {
-
-        IntactHelper helper = null;
         Class targetClass = null;
 
         // create a connection to the database
         try {
-            helper = new IntactHelper();
 
             CvDagObjectUtils dagUtil = new CvDagObjectUtils();
             String usage = "Usage CvDagObjectTools <aCvDagObjectClassName>";
@@ -59,14 +55,6 @@ public class CvDagObjectTool {
 
         } catch (IntactException e) {
             e.printStackTrace();
-        }finally{
-            if(helper != null){
-                try {
-                    helper.closeStore();
-                } catch (IntactException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 

@@ -10,8 +10,8 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.*;
 
@@ -24,8 +24,6 @@ import org.apache.commons.collections.CollectionUtils;
  * @version $Id$
  */
 public class GoToolsTest extends TestCase {
-
-    private IntactHelper myHelper;
 
     /**
      * Constructs an instance with the specified name.
@@ -42,7 +40,6 @@ public class GoToolsTest extends TestCase {
     protected void setUp() throws Exception {
         // Write setting up code for each test.
         super.setUp();
-        myHelper = new IntactHelper();
     }
 
     /**
@@ -51,7 +48,6 @@ public class GoToolsTest extends TestCase {
     protected void tearDown() throws Exception {
         // Release resources for after running a test.
         super.tearDown();
-        myHelper.closeStore();
     }
 
     /**
@@ -173,7 +169,7 @@ public class GoToolsTest extends TestCase {
     }
 
     private void doTestCvTopicDef() throws IntactException {
-        CvTopic topic = (CvTopic) myHelper.getObjectByLabel(CvTopic.class,
+        CvTopic topic = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel(
                 "definition");
         assertNotNull(topic);
         assertEquals(topic.getFullName(), "Definition of the controlled vocabulary term");
@@ -184,21 +180,21 @@ public class GoToolsTest extends TestCase {
         // Cache the definition.
         CvTopic definition = topic;
 
-        topic = (CvTopic) myHelper.getObjectByLabel(CvTopic.class, "submitted");
+        topic = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel( "submitted");
         assertNotNull(topic);
         assertEquals(topic.getFullName(), "Data submitted by author/s directly to IntAct.");
         // One annotation.
         assertEquals(topic.getAnnotations().size(), 1);
         assertTrue(containsTopic(topic, definition));
 
-        topic = (CvTopic) myHelper.getObjectByLabel(CvTopic.class, "url");
+        topic = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel( "url");
         assertNotNull(topic);
         assertEquals(topic.getFullName(), "URL/Web address");
         // Three annotations.
         assertEquals(topic.getAnnotations().size(), 3);
         assertTrue(containsTopic(topic, definition));
 
-        topic = (CvTopic) myHelper.getObjectByLabel(CvTopic.class, "uniprot-dr-export");
+        topic = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel( "uniprot-dr-export");
         assertNotNull(topic);
         assertEquals(topic.getFullName(),
                 "Determines if the experiment is to be exported to UniProt DR lines.");
@@ -207,13 +203,12 @@ public class GoToolsTest extends TestCase {
         // One is an definition.
         assertTrue(containsTopic(topic, definition));
         // Other is a comment.
-        CvTopic comment = (CvTopic) myHelper.getObjectByLabel(CvTopic.class, "comment");
+        CvTopic comment = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel( "comment");
         assertTrue(containsTopic(topic, comment));
     }
 
     private void doTestCvDatabaseDef() throws IntactException {
-        CvDatabase database = (CvDatabase) myHelper.getObjectByLabel(
-                CvDatabase.class, CvDatabase.UNIPROT);
+        CvDatabase database = DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel( CvDatabase.UNIPROT);
         assertNotNull(database);
         assertEquals(database.getFullName(), "UniProt protein sequence database");
         // No xrefs.
@@ -225,7 +220,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(containsTopic(database, "url"));
         assertTrue(containsTopic(database, "definition"));
 
-        database = (CvDatabase) myHelper.getObjectByLabel(CvDatabase.class, "go");
+        database = DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel( "go");
         assertNotNull(database);
         assertEquals(database.getFullName(), "Gene Ontology");
         // No xrefs.
@@ -236,7 +231,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(containsTopic(database, "url"));
         assertTrue(containsTopic(database, "definition"));
 
-        database = (CvDatabase) myHelper.getObjectByLabel(CvDatabase.class, "psi-mi");
+        database = DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel( "psi-mi");
         assertNotNull(database);
         assertEquals(database.getFullName(),
                 "Proteomics Standards Initiative - Molecular Interaction XML format CVs");
@@ -251,24 +246,21 @@ public class GoToolsTest extends TestCase {
 
     private void doTestCvInteractionDef() throws IntactException {
         // Cache cvobjs
-        CvTopic definition = (CvTopic) myHelper.getObjectByLabel(CvTopic.class,
+        CvTopic definition = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel(
                 "definition");
-        CvDatabase pubmed = (CvDatabase) myHelper.getObjectByLabel(CvDatabase.class,
+        CvDatabase pubmed = DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel(
                 "pubmed");
-        CvDatabase goid = (CvDatabase) myHelper.getObjectByLabel(CvDatabase.class,
+        CvDatabase goid = DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel(
                 "psi-mi");
-        CvXrefQualifier identity = (CvXrefQualifier) myHelper.getObjectByLabel(
-                CvXrefQualifier.class, "identity");
-        CvXrefQualifier godef = (CvXrefQualifier) myHelper.getObjectByLabel(
-                CvXrefQualifier.class, "go-definition-ref");
+        CvXrefQualifier identity = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByShortLabel( "identity");
+        CvXrefQualifier godef = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByShortLabel( "go-definition-ref");
 
         // Temp objects.
         String shortlabel;
         AnnotatedObject annobj;
 
         shortlabel = "affinity techniques";
-        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteraction.class,
-                shortlabel);
+        annobj = DaoFactory.getCvObjectDao(CvInteraction.class).getByShortLabel(shortlabel);
         // Must have the object
         assertNotNull(annobj);
         assertNotNull(annobj.getAc());
@@ -283,7 +275,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(annobj, goid, "MI:0400", identity));
 
         shortlabel = "anti tag coip";
-        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteraction.class,
+        annobj = DaoFactory.getCvObjectDao(CvInteraction.class).getByShortLabel(
                 shortlabel);
         // Must have the object
         assertNotNull(annobj);
@@ -299,7 +291,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(annobj, goid, "MI:0007", identity));
 
         shortlabel = "beta galactosidase";
-        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteraction.class,
+        annobj = DaoFactory.getCvObjectDao(CvInteraction.class).getByShortLabel(
                 shortlabel);
         // Must have the object
         assertNotNull(annobj);
@@ -316,7 +308,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(annobj, goid, "MI:0010", identity));
 
         shortlabel = "x-ray";
-        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteraction.class,
+        annobj = DaoFactory.getCvObjectDao(CvInteraction.class).getByShortLabel(
                 shortlabel);
         // Must have the object
         assertNotNull(annobj);
@@ -332,7 +324,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(annobj, pubmed, "14755292", godef));
 
         shortlabel = "phage display";
-        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteraction.class,
+        annobj = DaoFactory.getCvObjectDao(CvInteraction.class).getByShortLabel(
                 shortlabel);
         // Must have the object
         assertNotNull(annobj);
@@ -351,7 +343,7 @@ public class GoToolsTest extends TestCase {
 
     private void doTestCvInteractionDag() throws IntactException {
         // Check the database contents
-        CvInteraction cvinter = (CvInteraction) myHelper.getObjectByLabel(CvInteraction.class,
+        CvInteraction cvinter = DaoFactory.getCvObjectDao(CvInteraction.class).getByShortLabel(
                 "interaction detectio");
         // Has one child
         assertEquals(cvinter.getChildren().size(), 3);
@@ -361,7 +353,7 @@ public class GoToolsTest extends TestCase {
         // No parents.
         assertTrue(cvinter.getParents().isEmpty());
 
-        cvinter = (CvInteraction) myHelper.getObjectByLabel(CvInteraction.class,
+        cvinter = DaoFactory.getCvObjectDao(CvInteraction.class).getByShortLabel(
                 "biophysical");
         // Has 11 children
         assertEquals(cvinter.getChildren().size(), 11);
@@ -372,7 +364,7 @@ public class GoToolsTest extends TestCase {
         assertEquals(cvinter.getParents().size(), 1);
         assertTrue(hasParent(cvinter, "experimental"));
 
-        cvinter = (CvInteraction) myHelper.getObjectByLabel(CvInteraction.class,
+        cvinter = DaoFactory.getCvObjectDao(CvInteraction.class).getByShortLabel(
                 "bret");
         // Has no children
         assertTrue(cvinter.getChildren().isEmpty());
@@ -381,14 +373,14 @@ public class GoToolsTest extends TestCase {
         assertTrue(hasParent(cvinter, "fluorescence"));
 
         // Nodes with more than one parent.
-        cvinter = (CvInteraction) myHelper.getObjectByLabel(CvInteraction.class,
+        cvinter = DaoFactory.getCvObjectDao(CvInteraction.class).getByShortLabel(
                 "bacterial display");
         // Has two parents.
         assertEquals(cvinter.getParents().size(), 2);
         assertTrue(hasParent(cvinter, "facs"));
         assertTrue(hasParent(cvinter, "display technologies"));
 
-        cvinter = (CvInteraction) myHelper.getObjectByLabel(CvInteraction.class,
+        cvinter = DaoFactory.getCvObjectDao(CvInteraction.class).getByShortLabel(
                 "phosphatase htrf");
         // Has two parents.
         assertEquals(cvinter.getParents().size(), 2);
@@ -399,7 +391,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkAlias(cvinter, "homogeneous time-resolved fluo"));
         assertTrue(checkAlias(cvinter, "phosphatase HTRF"));
 
-        cvinter = (CvInteraction) myHelper.getObjectByLabel(CvInteraction.class,
+        cvinter = DaoFactory.getCvObjectDao(CvInteraction.class).getByShortLabel(
                 "kinase htrf");
         // Has two parents.
         assertEquals(cvinter.getParents().size(), 2);
@@ -413,21 +405,19 @@ public class GoToolsTest extends TestCase {
 
     private void doTestCvIdentificationDef() throws IntactException {
         // Cache cvobjs
-        CvDatabase goid = (CvDatabase) myHelper.getObjectByLabel(CvDatabase.class,
+        CvDatabase goid = DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel(
                 "psi-mi");
-        CvDatabase pubmed = (CvDatabase) myHelper.getObjectByLabel(CvDatabase.class,
+        CvDatabase pubmed = DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel(
                 "pubmed");
-        CvXrefQualifier identity = (CvXrefQualifier) myHelper.getObjectByLabel(
-                CvXrefQualifier.class, "identity");
-        CvXrefQualifier godef = (CvXrefQualifier) myHelper.getObjectByLabel(
-                CvXrefQualifier.class, "go-definition-ref");
+        CvXrefQualifier identity = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByShortLabel( "identity");
+        CvXrefQualifier godef = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByShortLabel( "go-definition-ref");
 
         // Temp objects.
         String shortlabel;
         AnnotatedObject annobj;
 
         shortlabel = "antibody detection";
-        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvIdentification.class,
+        annobj = DaoFactory.getCvObjectDao(CvIdentification.class).getByShortLabel(
                 shortlabel);
         assertNotNull(annobj.getAc());
         // Check the full name.
@@ -438,7 +428,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(annobj, goid, "MI:0421", identity));
 
         shortlabel = "fingerprinting";
-        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvIdentification.class,
+        annobj = DaoFactory.getCvObjectDao(CvIdentification.class).getByShortLabel(
                 shortlabel);
         assertNotNull(annobj.getAc());
         // Check the full name.
@@ -451,7 +441,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(annobj, goid, "MI:0082", identity));
 
         shortlabel = "sequence tag";
-        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvIdentification.class,
+        annobj = DaoFactory.getCvObjectDao(CvIdentification.class).getByShortLabel(
                 shortlabel);
         assertNotNull(annobj.getAc());
         // Check the full name.
@@ -464,7 +454,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(annobj, goid, "MI:0102", identity));
 
         shortlabel = "southern blot";
-        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvIdentification.class,
+        annobj = DaoFactory.getCvObjectDao(CvIdentification.class).getByShortLabel(
                 shortlabel);
         assertNotNull(annobj.getAc());
         // Check the full name.
@@ -477,8 +467,7 @@ public class GoToolsTest extends TestCase {
 
     private void doTestCvIdentificationDag() throws IntactException {
         // Check the database contents
-        CvIdentification cvident = (CvIdentification) myHelper.getObjectByXref(
-                CvIdentification.class, "MI:0002");
+        CvIdentification cvident = DaoFactory.getCvObjectDao(CvIdentification.class).getByXref( "MI:0002");
         // Has 5 children
         assertEquals(cvident.getChildren().size(), 5);
         assertTrue(hasChild(cvident, "antibody detection"));
@@ -492,7 +481,7 @@ public class GoToolsTest extends TestCase {
         assertEquals(cvident.getAliases().size(), 1);
         assertTrue(checkAlias(cvident, "participant detection"));
 
-        cvident = (CvIdentification) myHelper.getObjectByLabel(CvIdentification.class,
+        cvident = DaoFactory.getCvObjectDao(CvIdentification.class).getByShortLabel(
                 "mass spectrometry");
         // Has 3 children
         assertEquals(cvident.getChildren().size(), 3);
@@ -503,7 +492,7 @@ public class GoToolsTest extends TestCase {
         assertEquals(cvident.getParents().size(), 1);
         assertTrue(hasParent(cvident, "participant identif"));
 
-        cvident = (CvIdentification) myHelper.getObjectByLabel(CvIdentification.class,
+        cvident = DaoFactory.getCvObjectDao(CvIdentification.class).getByShortLabel(
                 "nucleotide sequence");
         // Has 2 children
         assertEquals(cvident.getChildren().size(), 2);
@@ -516,7 +505,7 @@ public class GoToolsTest extends TestCase {
         assertEquals(cvident.getAliases().size(), 1);
         assertTrue(checkAlias(cvident, "sequence cloning"));
 
-        cvident = (CvIdentification) myHelper.getObjectByLabel(CvIdentification.class,
+        cvident = DaoFactory.getCvObjectDao(CvIdentification.class).getByShortLabel(
                 "peptide synthesis");
         // Has no children
         assertTrue(cvident.getChildren().isEmpty());
@@ -527,28 +516,26 @@ public class GoToolsTest extends TestCase {
 
     private void doTestCvInteractionTypeDef() throws IntactException {
         // Validate types.
-        verifyCvInteractionTypes(myHelper);
+        verifyCvInteractionTypes();
 
         // Cache cvobjs
-        CvTopic definition = (CvTopic) myHelper.getObjectByLabel(CvTopic.class,
+        CvTopic definition = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel(
                 "definition");
-        CvDatabase goid = (CvDatabase) myHelper.getObjectByLabel(CvDatabase.class,
+        CvDatabase goid = DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel(
                 "psi-mi");
-        CvDatabase pubmed = (CvDatabase) myHelper.getObjectByLabel(CvDatabase.class,
+        CvDatabase pubmed = DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel(
                 "pubmed");
-        CvDatabase resid = (CvDatabase) myHelper.getObjectByLabel(CvDatabase.class,
+        CvDatabase resid = DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel(
                 "resid");
-        CvXrefQualifier identity = (CvXrefQualifier) myHelper.getObjectByLabel(
-                CvXrefQualifier.class, "identity");
-        CvXrefQualifier godef = (CvXrefQualifier) myHelper.getObjectByLabel(
-                CvXrefQualifier.class, "go-definition-ref");
+        CvXrefQualifier identity = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByShortLabel( "identity");
+        CvXrefQualifier godef = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByShortLabel( "go-definition-ref");
 
         // Temp objects.
         String shortlabel;
         AnnotatedObject annobj;
 
         shortlabel = "acetylation";
-        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
+        annobj = DaoFactory.getCvObjectDao(CvInteractionType.class).getByShortLabel(
                 shortlabel);
         assertNotNull(annobj.getAc());
         // Check the full name.
@@ -562,7 +549,7 @@ public class GoToolsTest extends TestCase {
         }
 
         shortlabel = "amidation";
-        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
+        annobj = DaoFactory.getCvObjectDao(CvInteractionType.class).getByShortLabel(
                 shortlabel);
         assertNotNull(annobj.getAc());
         // Check the full name.
@@ -579,7 +566,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(annobj, resid, "AA0100", godef));
 
         shortlabel = "cleavage";
-        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
+        annobj = DaoFactory.getCvObjectDao(CvInteractionType.class).getByShortLabel(
                 shortlabel);
         // Must have the object
         assertNotNull(annobj);
@@ -594,7 +581,7 @@ public class GoToolsTest extends TestCase {
         assertEquals(annobj.getXrefs().size(), 2);
 
         shortlabel = "covalent binding";
-        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
+        annobj = DaoFactory.getCvObjectDao(CvInteractionType.class).getByShortLabel(
                 shortlabel);
         // Must have the object
         assertNotNull(annobj);
@@ -609,7 +596,7 @@ public class GoToolsTest extends TestCase {
         assertEquals(annobj.getXrefs().size(), 2);
 
         shortlabel = "deacetylation";
-        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
+        annobj = DaoFactory.getCvObjectDao(CvInteractionType.class).getByShortLabel(
                 shortlabel);
         // Must have the object
         assertNotNull(annobj);
@@ -626,7 +613,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(annobj, resid, "AA0056", godef));
 
         shortlabel = "defarnesylation";
-        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
+        annobj = DaoFactory.getCvObjectDao(CvInteractionType.class).getByShortLabel(
                 shortlabel);
         // Must have the object
         assertNotNull(annobj);
@@ -642,7 +629,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(annobj, resid, "AA0102", godef));
 
         shortlabel = "deformylation";
-        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
+        annobj = DaoFactory.getCvObjectDao(CvInteractionType.class).getByShortLabel(
                 shortlabel);
         // Must have the object
         assertNotNull(annobj);
@@ -658,7 +645,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(annobj, resid, "AA0211", godef));
 
         shortlabel = "degeranylation";
-        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
+        annobj = DaoFactory.getCvObjectDao(CvInteractionType.class).getByShortLabel(
                 shortlabel);
         // Must have the object
         assertNotNull(annobj);
@@ -674,7 +661,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(annobj, resid, "AA0104", godef));
 
         shortlabel = "demyristoylation";
-        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
+        annobj = DaoFactory.getCvObjectDao(CvInteractionType.class).getByShortLabel(
                 shortlabel);
         // Must have the object
         assertNotNull(annobj);
@@ -690,7 +677,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(annobj, resid, "AA0078", godef));
 
         shortlabel = "depalmitoylation";
-        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
+        annobj = DaoFactory.getCvObjectDao(CvInteractionType.class).getByShortLabel(
                 shortlabel);
         // Must have the object
         assertNotNull(annobj);
@@ -708,7 +695,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(annobj, resid, "AA0077", godef));
 
         shortlabel = "dephosphorylation";
-        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
+        annobj = DaoFactory.getCvObjectDao(CvInteractionType.class).getByShortLabel(
                 shortlabel);
         // Must have the object
         assertNotNull(annobj);
@@ -733,7 +720,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(annobj, resid, "AA0222", godef));
 
         shortlabel = "deubiquitination";
-        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
+        annobj = DaoFactory.getCvObjectDao(CvInteractionType.class).getByShortLabel(
                 shortlabel);
         // Must have the object
         assertNotNull(annobj);
@@ -750,7 +737,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(annobj, resid, "AA0125", godef));
 
         shortlabel = "farnesylation";
-        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
+        annobj = DaoFactory.getCvObjectDao(CvInteractionType.class).getByShortLabel(
                 shortlabel);
         // Must have the object
         assertNotNull(annobj);
@@ -766,7 +753,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(annobj, resid, "AA0102", godef));
 
         shortlabel = "formylation";
-        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
+        annobj = DaoFactory.getCvObjectDao(CvInteractionType.class).getByShortLabel(
                 shortlabel);
         // Must have the object
         assertNotNull(annobj);
@@ -786,7 +773,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(annobj, resid, "AA0057", godef));
 
         shortlabel = "methylation";
-        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
+        annobj = DaoFactory.getCvObjectDao(CvInteractionType.class).getByShortLabel(
                 shortlabel);
         // Must have the object
         assertNotNull(annobj);
@@ -806,7 +793,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(annobj, resid, "AA0272", godef));
 
         shortlabel = "ubiquitination";
-        annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
+        annobj = DaoFactory.getCvObjectDao(CvInteractionType.class).getByShortLabel(
                 shortlabel);
         // Must have the object
         assertNotNull(annobj);
@@ -826,16 +813,16 @@ public class GoToolsTest extends TestCase {
     }
 
     private void doTestCvInteractionTypeDag() throws IntactException {
-        CvInteractionType cvintertype = (CvInteractionType) myHelper.getObjectByLabel(
-                CvInteractionType.class, "cleavage");
+        CvInteractionType cvintertype = DaoFactory.getCvObjectDao(CvInteractionType.class).getByShortLabel(
+                "cleavage");
         // Has no children.
         assertTrue(cvintertype.getChildren().isEmpty());
         // Has one parent
         assertEquals(cvintertype.getParents().size(), 1);
         assertTrue(hasParent(cvintertype, "enzymatic reaction"));
 
-        cvintertype = (CvInteractionType) myHelper.getObjectByLabel(
-                CvInteractionType.class, "lipid addition");
+        cvintertype = DaoFactory.getCvObjectDao(CvInteractionType.class).getByShortLabel(
+                "lipid addition");
         // Has 4 children
         assertEquals(cvintertype.getChildren().size(), 4);
         assertTrue(hasChild(cvintertype, "farnesylation"));
@@ -845,8 +832,8 @@ public class GoToolsTest extends TestCase {
         // Has one parent.
         assertTrue(hasParent(cvintertype, "enzymatic reaction"));
 
-        cvintertype = (CvInteractionType) myHelper.getObjectByLabel(
-                CvInteractionType.class, "lipid cleavage");
+        cvintertype = DaoFactory.getCvObjectDao(CvInteractionType.class).getByShortLabel(
+                "lipid cleavage");
         // Has two children.
         assertEquals(cvintertype.getChildren().size(), 4);
         assertTrue(hasChild(cvintertype, "defarnesylation"));
@@ -856,8 +843,8 @@ public class GoToolsTest extends TestCase {
         // Has one parent.
         assertTrue(hasParent(cvintertype, "enzymatic reaction"));
 
-        cvintertype = (CvInteractionType) myHelper.getObjectByLabel(
-                CvInteractionType.class, "physical interaction");
+        cvintertype = DaoFactory.getCvObjectDao(CvInteractionType.class).getByShortLabel(
+                "physical interaction");
         // Has two children.
         assertEquals(cvintertype.getChildren().size(), 2);
         assertTrue(hasChild(cvintertype, "direct interaction"));
@@ -865,8 +852,8 @@ public class GoToolsTest extends TestCase {
         // Has one parent.
         assertTrue(hasParent(cvintertype, "interaction type"));
 
-        cvintertype = (CvInteractionType) myHelper.getObjectByLabel(
-                CvInteractionType.class, "direct interaction");
+        cvintertype = DaoFactory.getCvObjectDao(CvInteractionType.class).getByShortLabel(
+                "direct interaction");
         // Has two children.
         assertEquals(cvintertype.getChildren().size(), 1);
         assertTrue(hasChild(cvintertype, "covalent binding"));
@@ -879,22 +866,22 @@ public class GoToolsTest extends TestCase {
 //        verifyCvFeatureTypes(myHelper);
 
         // Cache cvobjs.
-        CvTopic definition = (CvTopic) myHelper.getObjectByLabel(CvTopic.class,
+        CvTopic definition = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel(
                 "definition");
-        CvDatabase goid = (CvDatabase) myHelper.getObjectByLabel(CvDatabase.class,
+        CvDatabase goid = DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel(
                 "psi-mi");
-        CvDatabase pubmed = (CvDatabase) myHelper.getObjectByLabel(CvDatabase.class,
+        CvDatabase pubmed = DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel(
                 "pubmed");
-        CvDatabase resid = (CvDatabase) myHelper.getObjectByLabel(CvDatabase.class,
+        CvDatabase resid = DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel(
                 "resid");
-        CvXrefQualifier identity = (CvXrefQualifier) myHelper.getObjectByLabel(
-                CvXrefQualifier.class, "identity");
-        CvXrefQualifier godef = (CvXrefQualifier) myHelper.getObjectByLabel(
-                CvXrefQualifier.class, "go-definition-ref");
+        CvXrefQualifier identity = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByShortLabel(
+                "identity");
+        CvXrefQualifier godef = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByShortLabel(
+                "go-definition-ref");
 
         String shortlabel = "methylthioaspartate";
-        CvFeatureType cvfeature = (CvFeatureType) myHelper.getObjectByLabel(
-                CvFeatureType.class, shortlabel);
+        CvFeatureType cvfeature = DaoFactory.getCvObjectDao(CvFeatureType.class).getByShortLabel(
+                shortlabel);
         // Must have the object
         assertNotNull(cvfeature);
         assertNotNull(cvfeature.getAc());
@@ -915,7 +902,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkAlias(cvfeature, "DM2"));
 
         shortlabel = "4hydroxyproline";
-        cvfeature = (CvFeatureType) myHelper.getObjectByLabel(CvFeatureType.class,
+        cvfeature = DaoFactory.getCvObjectDao(CvFeatureType.class).getByShortLabel(
                 shortlabel);
         // Must have the object
         assertNotNull(cvfeature);
@@ -938,7 +925,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkAlias(cvfeature, "4-hydroxy-L-proline"));
 
         shortlabel = "1-phosphohistidine";
-        cvfeature = (CvFeatureType) myHelper.getObjectByLabel(CvFeatureType.class,
+        cvfeature = DaoFactory.getCvObjectDao(CvFeatureType.class).getByShortLabel(
                 shortlabel);
         // Must have the object
         assertNotNull(cvfeature);
@@ -962,7 +949,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkAlias(cvfeature, "tele-phosphohistidine"));
 
         shortlabel = "acetylarginine";
-        cvfeature = (CvFeatureType) myHelper.getObjectByLabel(CvFeatureType.class,
+        cvfeature = DaoFactory.getCvObjectDao(CvFeatureType.class).getByShortLabel(
                 shortlabel);
         // Must have the object
         assertNotNull(cvfeature);
@@ -985,7 +972,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkAlias(cvfeature, "acetylarginine"));
 
         shortlabel = "hypusine";
-        cvfeature = (CvFeatureType) myHelper.getObjectByLabel(CvFeatureType.class,
+        cvfeature = DaoFactory.getCvObjectDao(CvFeatureType.class).getByShortLabel(
                 shortlabel);
         // Must have the object
         assertNotNull(cvfeature);
@@ -1008,7 +995,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkAlias(cvfeature, "hypusine"));
 
         shortlabel = "his tagged";
-        cvfeature = (CvFeatureType) myHelper.getObjectByLabel(CvFeatureType.class,
+        cvfeature = DaoFactory.getCvObjectDao(CvFeatureType.class).getByShortLabel(
                 shortlabel);
         // Must have the object
         assertNotNull(cvfeature);
@@ -1032,7 +1019,7 @@ public class GoToolsTest extends TestCase {
 
         // No Aliases for this object.
         shortlabel = "tagged molecule";
-        cvfeature = (CvFeatureType) myHelper.getObjectByLabel(CvFeatureType.class,
+        cvfeature = DaoFactory.getCvObjectDao(CvFeatureType.class).getByShortLabel(
                 shortlabel);
         // Must have the object
         assertNotNull(cvfeature);
@@ -1054,8 +1041,8 @@ public class GoToolsTest extends TestCase {
 
     private void doTestCvFeatureTypeDag() throws IntactException {
         // Check the database contents
-        CvFeatureType cvfeature = (CvFeatureType) myHelper.getObjectByLabel(
-                CvFeatureType.class, "binding site");
+        CvFeatureType cvfeature = DaoFactory.getCvObjectDao(CvFeatureType.class).getByShortLabel(
+                "binding site");
         // Has two children
         assertEquals(cvfeature.getChildren().size(), 2);
         assertTrue(hasChild(cvfeature, "required to bind"));
@@ -1064,7 +1051,7 @@ public class GoToolsTest extends TestCase {
         assertEquals(cvfeature.getParents().size(), 1);
         assertTrue(hasParent(cvfeature, "feature type"));
 
-        cvfeature = (CvFeatureType) myHelper.getObjectByLabel(CvFeatureType.class,
+        cvfeature = DaoFactory.getCvObjectDao(CvFeatureType.class).getByShortLabel(
                 "acetylated residue");
         // Has 20 children
         assertEquals(cvfeature.getChildren().size(), 20);
@@ -1075,7 +1062,7 @@ public class GoToolsTest extends TestCase {
         assertEquals(cvfeature.getParents().size(), 1);
         assertTrue(hasParent(cvfeature, "ptm"));
 
-        cvfeature = (CvFeatureType) myHelper.getObjectByLabel(CvFeatureType.class,
+        cvfeature = DaoFactory.getCvObjectDao(CvFeatureType.class).getByShortLabel(
                 "amidated residue");
         // Has 2 children
         assertEquals(cvfeature.getChildren().size(), 2);
@@ -1085,7 +1072,7 @@ public class GoToolsTest extends TestCase {
         assertEquals(cvfeature.getParents().size(), 1);
         assertTrue(hasParent(cvfeature, "ptm"));
 
-        cvfeature = (CvFeatureType) myHelper.getObjectByLabel(CvFeatureType.class,
+        cvfeature = DaoFactory.getCvObjectDao(CvFeatureType.class).getByShortLabel(
                 "v5 tagged");
         // Has no children
         assertTrue(cvfeature.getChildren().isEmpty());
@@ -1096,23 +1083,23 @@ public class GoToolsTest extends TestCase {
 
     private void doTestCvFeatureIdentificationDef() throws IntactException {
         // Validate types.
-        verifyCvFeatureIdentifications(myHelper);
+        verifyCvFeatureIdentifications();
 
         // Cache cvobjs.
-        CvTopic definition = (CvTopic) myHelper.getObjectByLabel(CvTopic.class,
+        CvTopic definition = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel(
                 "definition");
-        CvDatabase goid = (CvDatabase) myHelper.getObjectByLabel(CvDatabase.class,
+        CvDatabase goid = DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel(
                 "psi-mi");
-        CvDatabase pubmed = (CvDatabase) myHelper.getObjectByLabel(CvDatabase.class,
+        CvDatabase pubmed = DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel(
                 "pubmed");
-        CvXrefQualifier identity = (CvXrefQualifier) myHelper.getObjectByLabel(
-                CvXrefQualifier.class, "identity");
-        CvXrefQualifier godef = (CvXrefQualifier) myHelper.getObjectByLabel(
-                CvXrefQualifier.class, "go-definition-ref");
+        CvXrefQualifier identity = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByShortLabel(
+                "identity");
+        CvXrefQualifier godef = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByShortLabel(
+                "go-definition-ref");
 
         String shortlabel = "alanine scanning";
-        CvFeatureIdentification cvfeature = (CvFeatureIdentification) myHelper.getObjectByLabel(
-                CvFeatureIdentification.class, shortlabel);
+        CvFeatureIdentification cvfeature = DaoFactory.getCvObjectDao(CvFeatureIdentification.class).getByShortLabel(
+                shortlabel);
         // Must have the object
         assertNotNull(cvfeature);
         assertNotNull(cvfeature.getAc());
@@ -1131,7 +1118,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(cvfeature.getAliases().isEmpty());
 
         shortlabel = "full dna sequence";
-        cvfeature = (CvFeatureIdentification) myHelper.getObjectByLabel(CvFeatureIdentification.class,
+        cvfeature = DaoFactory.getCvObjectDao(CvFeatureIdentification.class).getByShortLabel(
                 shortlabel);
         // Must have the object
         assertNotNull(cvfeature);
@@ -1151,7 +1138,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(cvfeature.getAliases().isEmpty());
 
         shortlabel = "epr";
-        cvfeature = (CvFeatureIdentification) myHelper.getObjectByLabel(CvFeatureIdentification.class,
+        cvfeature = DaoFactory.getCvObjectDao(CvFeatureIdentification.class).getByShortLabel(
                 shortlabel);
         // Must have the object
         assertNotNull(cvfeature);
@@ -1173,7 +1160,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkAlias(cvfeature, "ESR"));
 
         shortlabel = "protein staining";
-        cvfeature = (CvFeatureIdentification) myHelper.getObjectByLabel(CvFeatureIdentification.class,
+        cvfeature = DaoFactory.getCvObjectDao(CvFeatureIdentification.class).getByShortLabel(
                 shortlabel);
         // Must have the object
         assertNotNull(cvfeature);
@@ -1193,7 +1180,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(cvfeature.getAliases().isEmpty());
 
         shortlabel = "western blot";
-        cvfeature = (CvFeatureIdentification) myHelper.getObjectByLabel(CvFeatureIdentification.class,
+        cvfeature = DaoFactory.getCvObjectDao(CvFeatureIdentification.class).getByShortLabel(
                 shortlabel);
         // Must have the object
         assertNotNull(cvfeature);
@@ -1214,7 +1201,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkAlias(cvfeature, "Immuno blot"));
 
         shortlabel = "x-ray";
-        cvfeature = (CvFeatureIdentification) myHelper.getObjectByLabel(CvFeatureIdentification.class,
+        cvfeature = DaoFactory.getCvObjectDao(CvFeatureIdentification.class).getByShortLabel(
                 shortlabel);
         // Must have the object
         assertNotNull(cvfeature);
@@ -1237,16 +1224,16 @@ public class GoToolsTest extends TestCase {
 
     private void doTestCvFeatureIdentificationDag() throws IntactException {
         // Check the database contents
-        CvFeatureIdentification cvfeature = (CvFeatureIdentification) myHelper.getObjectByLabel(
-                CvFeatureIdentification.class, "alanine scanning");
+        CvFeatureIdentification cvfeature = DaoFactory.getCvObjectDao(CvFeatureIdentification.class).getByShortLabel(
+                "alanine scanning");
         // Has no children
         assertTrue(cvfeature.getChildren().isEmpty());
         // Has one parent.
         assertEquals(cvfeature.getParents().size(), 1);
         assertTrue(hasParent(cvfeature, "feature detection"));
 
-        cvfeature = (CvFeatureIdentification) myHelper.getObjectByLabel(
-                CvFeatureIdentification.class, "electron resonance");
+        cvfeature = DaoFactory.getCvObjectDao(CvFeatureIdentification.class).getByShortLabel(
+                "electron resonance");
         // Has two children
         assertEquals(cvfeature.getChildren().size(), 2);
         assertTrue(hasChild(cvfeature, "endor"));
@@ -1255,16 +1242,16 @@ public class GoToolsTest extends TestCase {
         assertEquals(cvfeature.getParents().size(), 1);
         assertTrue(hasParent(cvfeature, "feature detection"));
 
-        cvfeature = (CvFeatureIdentification) myHelper.getObjectByLabel(
-                CvFeatureIdentification.class, "endor");
+        cvfeature = DaoFactory.getCvObjectDao(CvFeatureIdentification.class).getByShortLabel(
+                "endor");
         // Has no children.
         assertTrue(cvfeature.getChildren().isEmpty());
         // Has one parent.
         assertEquals(cvfeature.getParents().size(), 1);
         assertTrue(hasParent(cvfeature, "electron resonance"));
 
-        cvfeature = (CvFeatureIdentification) myHelper.getObjectByLabel(
-                CvFeatureIdentification.class, "western blot");
+        cvfeature = DaoFactory.getCvObjectDao(CvFeatureIdentification.class).getByShortLabel(
+                "western blot");
         // Has two children
         assertEquals(cvfeature.getChildren().size(), 2);
         assertTrue(hasChild(cvfeature, "monoclonal antibody"));
@@ -1276,7 +1263,7 @@ public class GoToolsTest extends TestCase {
 
     private boolean containsTopic(AnnotatedObject annobj, String topic)
             throws IntactException {
-        CvTopic cvtopic = (CvTopic) myHelper.getObjectByLabel(CvTopic.class, topic);
+        CvTopic cvtopic = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel( topic);
         return containsTopic(annobj, cvtopic);
     }
 
@@ -1291,7 +1278,7 @@ public class GoToolsTest extends TestCase {
     }
 
     private int countsTopic(AnnotatedObject annobj, String topic) throws IntactException {
-        CvTopic cvtopic = (CvTopic) myHelper.getObjectByLabel(CvTopic.class, topic);
+        CvTopic cvtopic = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel( topic);
         return countTopics(annobj, cvtopic);
     }
 
@@ -1340,7 +1327,7 @@ public class GoToolsTest extends TestCase {
         return false;
     }
 
-    private void verifyCvInteractionTypes(IntactHelper helper) throws IntactException {
+    private void verifyCvInteractionTypes() throws IntactException {
         String[] items = new String[] {
             "acetylation", "adp ribosylation", "amidation", "cleavage", "colocalization",
             "covalent binding", "deacetylation", "defarnesylation", "deformylation",
@@ -1352,12 +1339,11 @@ public class GoToolsTest extends TestCase {
             "palmitoylation", "phosphorylation", "physical interaction",
             "synthetic lethal", "transglutamination", "ubiquitination"
         };
-        List results = extractShortLabels((List) helper.search(
-                CvInteractionType.class, "ac", "*"));
+        List results = extractShortLabels(DaoFactory.getCvObjectDao(CvInteractionType.class).getAll());
         assertTrue(CollectionUtils.isEqualCollection(results, Arrays.asList(items)));
     }
 
-    private void verifyCvFeatureTypes(IntactHelper helper) throws IntactException {
+    private void verifyCvFeatureTypes() throws IntactException {
         String[] items = new String[] {
             "1-phosphohistidine", "3-phosphohistidine", "4hydroxyproline",
             "acetylalanine", "acetylarginine", "acetylasparagine", "acetylaspartate",
@@ -1390,12 +1376,11 @@ public class GoToolsTest extends TestCase {
             "tap-tagged", "trimethylalanine", "trimethyllysine", "ubiquitinated lysine",
             "v5-tagged"
         };
-        List results = extractShortLabels((List) helper.search(
-                CvFeatureType.class, "ac", "*"));
+        List results = extractShortLabels(DaoFactory.getCvObjectDao(CvFeatureType.class).getAll());
         assertTrue(CollectionUtils.isEqualCollection(results, Arrays.asList(items)));
     }
 
-    private void verifyCvFeatureIdentifications(IntactHelper helper) throws IntactException {
+    private void verifyCvFeatureIdentifications() throws IntactException {
         String[] items = new String[] {
             "alanine scanning", "correlated mutations", "deletion analysis",
             "docking", "domain profile pairs", "electron resonance", "endor",
@@ -1405,8 +1390,7 @@ public class GoToolsTest extends TestCase {
             "protein footprinting", "protein staining", "surface patches", "western blot",
             "x-ray"
         };
-        List results = extractShortLabels((List) helper.search(
-                CvFeatureIdentification.class, "ac", "*"));
+        List results = extractShortLabels(DaoFactory.getCvObjectDao(CvFeatureIdentification.class).getAll());
         assertTrue(CollectionUtils.isEqualCollection(results, Arrays.asList(items)));
     }
 
