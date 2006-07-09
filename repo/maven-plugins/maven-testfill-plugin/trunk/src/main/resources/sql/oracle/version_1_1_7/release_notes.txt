@@ -1,0 +1,7 @@
+VERSION 1.1.7
+
+REQUEST
+* add missing indexes on tables.
+
+TECHNICAL CHANGES
+* Added 20 new indexes
