@@ -6,15 +6,39 @@
 package uk.ac.ebi.intact.util.uniprotExport;
 
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.Alias;
+import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.Annotation;
+import uk.ac.ebi.intact.model.Component;
+import uk.ac.ebi.intact.model.CvAliasType;
+import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.CvInteraction;
+import uk.ac.ebi.intact.model.CvObject;
+import uk.ac.ebi.intact.model.CvTopic;
+import uk.ac.ebi.intact.model.CvXrefQualifier;
+import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * That class .
@@ -23,6 +47,8 @@ import java.util.*;
  * @version $Id$
  */
 public class LineExport {
+
+    private static final Log log = LogFactory.getLog(LineExport.class);
 
     protected static String TIME;
 
@@ -208,45 +234,7 @@ public class LineExport {
 
 
     /**
-     * Service termination hook (gets called when the JVM terminates from a signal). eg.
-     * <pre>
-     * IntactHelper helper = new IntactHelper();
-     * DatabaseConnexionShutdownHook dcsh = new DatabaseConnexionShutdownHook( helper );
-     * Runtime.getRuntime().addShutdownHook( sh );
-     * </pre>
-     */
-    protected static class DatabaseConnexionShutdownHook extends Thread {
-
-        private IntactHelper helper;
-
-        public DatabaseConnexionShutdownHook( IntactHelper helper ) {
-            super();
-            this.helper = helper;
-            System.out.println( "Database Connexion Shutdown Hook installed." );
-        }
-
-        public void run() {
-            System.out.println( "JDBCShutdownHook thread started" );
-            if ( helper != null ) {
-                try {
-                    helper.closeStore();
-                    System.out.println( "Connexion to the database closed." );
-                } catch ( IntactException e ) {
-                    System.err.println( "Could not close the connexion to the database." );
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-
-    /**
-     * Service termination hook (gets called when the JVM terminates from a signal). eg.
-     * <pre>
-     * IntactHelper helper = new IntactHelper();
-     * DatabaseConnexionShutdownHook dcsh = new DatabaseConnexionShutdownHook( helper );
-     * Runtime.getRuntime().addShutdownHook( sh );
-     * </pre>
+     * Service termination hook (gets called when the JVM terminates from a signal).
      */
     protected static class CloseFileOnShutdownHook extends Thread {
 
@@ -258,7 +246,7 @@ public class LineExport {
             this.outputBufferedWriter = outputBufferedWriter;
             this.outputFileWriter = outputFileWriter;
 
-            System.out.println( "Output File close on Shutdown Hook installed." );
+            log.info( "Output File close on Shutdown Hook installed." );
         }
 
         public void run() {
@@ -266,7 +254,7 @@ public class LineExport {
                 try {
                     outputFileWriter.close();
                 } catch ( IOException e ) {
-                    System.out.println( "An error occured when trying to close the output file" );
+                    log.info( "An error occured when trying to close the output file" );
                     return;
                 }
             }
@@ -275,11 +263,11 @@ public class LineExport {
                 try {
                     outputFileWriter.close();
                 } catch ( IOException e ) {
-                    System.out.println( "An error occured when trying to close the output file" );
+                    log.info( "An error occured when trying to close the output file" );
                     return;
                 }
             }
-            System.out.println( "Output file is now closed." );
+            log.info( "Output file is now closed." );
         }
     }
 
@@ -330,40 +318,36 @@ public class LineExport {
      * Load the minimal Controlled vocabulary needed during the processing. It at least one term is missing, an
      * Exception is thrown.
      *
-     * @param helper data access
-     *
      * @throws uk.ac.ebi.intact.business.IntactException
      *          search error
      * @throws uk.ac.ebi.intact.util.uniprotExport.CCLineExport.DatabaseContentException
      *          if at least one term is missing
      */
-    public void init( IntactHelper helper ) throws IntactException, DatabaseContentException {
+    public void init( ) throws IntactException, DatabaseContentException {
 
-        uniprotDatabase = (CvDatabase) getCvObject( helper, CvDatabase.class, CvDatabase.UNIPROT_MI_REF, CvDatabase.UNIPROT );
-        intactDatabase = (CvDatabase) getCvObject( helper, CvDatabase.class, CvDatabase.INTACT_MI_REF, CvDatabase.INTACT );
-        pubmedDatabase = (CvDatabase) getCvObject( helper, CvDatabase.class, CvDatabase.PUBMED_MI_REF, CvDatabase.PUBMED );
+        uniprotDatabase = (CvDatabase) getCvObject(  CvDatabase.class, CvDatabase.UNIPROT_MI_REF, CvDatabase.UNIPROT );
+        intactDatabase = (CvDatabase) getCvObject(  CvDatabase.class, CvDatabase.INTACT_MI_REF, CvDatabase.INTACT );
+        pubmedDatabase = (CvDatabase) getCvObject(  CvDatabase.class, CvDatabase.PUBMED_MI_REF, CvDatabase.PUBMED );
 
-        identityXrefQualifier = (CvXrefQualifier) getCvObject( helper, CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF, CvXrefQualifier.IDENTITY );
-        isoformParentQualifier = (CvXrefQualifier) getCvObject( helper, CvXrefQualifier.class, CvXrefQualifier.ISOFORM_PARENT_MI_REF, CvXrefQualifier.ISOFORM_PARENT );
-        primaryReferenceQualifier = (CvXrefQualifier) getCvObject( helper, CvXrefQualifier.class, CvXrefQualifier.PRIMARY_REFERENCE_MI_REF, CvXrefQualifier.PRIMARY_REFERENCE );
+        identityXrefQualifier = (CvXrefQualifier) getCvObject(  CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF, CvXrefQualifier.IDENTITY );
+        isoformParentQualifier = (CvXrefQualifier) getCvObject(  CvXrefQualifier.class, CvXrefQualifier.ISOFORM_PARENT_MI_REF, CvXrefQualifier.ISOFORM_PARENT );
+        primaryReferenceQualifier = (CvXrefQualifier) getCvObject(  CvXrefQualifier.class, CvXrefQualifier.PRIMARY_REFERENCE_MI_REF, CvXrefQualifier.PRIMARY_REFERENCE );
 
         // note: CvTopic do not have MI references.
-        uniprotDR_Export = (CvTopic) getCvObject( helper, CvTopic.class, CvTopic.UNIPROT_DR_EXPORT );
-        uniprotCC_Export = (CvTopic) getCvObject( helper, CvTopic.class, CvTopic.UNIPROT_CC_EXPORT );
-        authorConfidenceTopic = (CvTopic) getCvObject( helper, CvTopic.class, CvTopic.AUTHOR_CONFIDENCE );
-        negativeTopic = (CvTopic) getCvObject( helper, CvTopic.class, CvTopic.NEGATIVE );
-        ccNoteTopic = (CvTopic) getCvObject( helper, CvTopic.class, CvTopic.CC_NOTE );
-        noUniprotUpdate = (CvTopic) getCvObject( helper, CvTopic.class, CvTopic.NON_UNIPROT );
+        uniprotDR_Export = (CvTopic) getCvObject(  CvTopic.class, CvTopic.UNIPROT_DR_EXPORT );
+        uniprotCC_Export = (CvTopic) getCvObject(  CvTopic.class, CvTopic.UNIPROT_CC_EXPORT );
+        authorConfidenceTopic = (CvTopic) getCvObject(  CvTopic.class, CvTopic.AUTHOR_CONFIDENCE );
+        negativeTopic = (CvTopic) getCvObject(  CvTopic.class, CvTopic.NEGATIVE );
+        ccNoteTopic = (CvTopic) getCvObject(  CvTopic.class, CvTopic.CC_NOTE );
+        noUniprotUpdate = (CvTopic) getCvObject(  CvTopic.class, CvTopic.NON_UNIPROT );
 
-        geneNameAliasType = (CvAliasType) getCvObject( helper, CvAliasType.class, CvAliasType.GENE_NAME_MI_REF, CvAliasType.GENE_NAME );
-        locusNameAliasType = (CvAliasType) getCvObject( helper, CvAliasType.class, CvAliasType.LOCUS_NAME_MI_REF, CvAliasType.LOCUS_NAME );
-        orfNameAliasType = (CvAliasType) getCvObject( helper, CvAliasType.class, CvAliasType.ORF_NAME_MI_REF, CvAliasType.ORF_NAME );
+        geneNameAliasType = (CvAliasType) getCvObject(  CvAliasType.class, CvAliasType.GENE_NAME_MI_REF, CvAliasType.GENE_NAME );
+        locusNameAliasType = (CvAliasType) getCvObject(  CvAliasType.class, CvAliasType.LOCUS_NAME_MI_REF, CvAliasType.LOCUS_NAME );
+        orfNameAliasType = (CvAliasType) getCvObject(  CvAliasType.class, CvAliasType.ORF_NAME_MI_REF, CvAliasType.ORF_NAME );
     }
 
     /**
      * Get a CvObject based on its class name and its shortlabel.
-     *
-     * @param helper     database access
      * @param clazz      the Class we are looking for
      * @param shortlabel the shortlabel of the object we are looking for
      *
@@ -372,18 +356,17 @@ public class LineExport {
      * @throws IntactException          if the search failed
      * @throws DatabaseContentException if the object is not found.
      */
-    private CvObject getCvObject( IntactHelper helper, Class clazz, String shortlabel )
+    private CvObject getCvObject( Class clazz, String shortlabel )
             throws IntactException,
                    DatabaseContentException {
 
-        return getCvObject( helper, clazz, null, shortlabel );
+        return getCvObject(  clazz, null, shortlabel );
     }
 
     /**
      * Get a CvObject based on its class name and its shortlabel. <br>
      * If specified, the MI reference will be used first, then only the shortlabel.
      *
-     * @param helper     database access
      * @param clazz      the Class we are looking for
      * @param mi         the mi reference of the CvObject (if any, otherwise: null)
      * @param shortlabel the shortlabel of the object we are looking for
@@ -393,7 +376,7 @@ public class LineExport {
      * @throws IntactException          if the search failed
      * @throws DatabaseContentException if the object is not found.
      */
-    private CvObject getCvObject( IntactHelper helper, Class clazz, String mi, String shortlabel )
+    private CvObject getCvObject( Class clazz, String mi, String shortlabel )
             throws IntactException,
                    DatabaseContentException {
 
@@ -404,14 +387,14 @@ public class LineExport {
         CvObject cv = null;
 
         if( mi != null ) {
-            cv = (CvObject) helper.getObjectByPrimaryId( clazz, mi );
+            cv = DaoFactory.getCvObjectDao().getByXref(mi);
             if( cv == null ) {
                 System.err.println( "The MI reference you gave doesn't exists. Using the shortlabel instead." );
             }
         }
 
         if( cv == null ) {
-            cv = (CvObject) helper.getObjectByLabel( clazz, shortlabel );
+            cv = DaoFactory.getCvObjectDao().getByShortLabel( shortlabel );
         }
 
         if ( cv == null ) {
@@ -449,7 +432,7 @@ public class LineExport {
             // create the output file if the user requested it.
             String filename = "export2uniprot_verboseOutput_" + TIME + ".txt";
             File file = new File( filename );
-            System.out.println( "Save verbose output to: " + file.getAbsolutePath() );
+            log.info( "Save verbose output to: " + file.getAbsolutePath() );
             outputBufferedWriter = null;
             outputFileWriter = null;
             try {
@@ -522,11 +505,10 @@ public class LineExport {
      * or if the splice variant doesn't have a valid Xref to the IntAct database.
      *
      * @param protein the protein for which we want a splice variant
-     * @param helper  the data source
      *
      * @return a Protein or null is nothing is found or an error occurs.
      */
-    protected Protein getMasterProtein( Protein protein, IntactHelper helper ) {
+    protected Protein getMasterProtein( Protein protein ) {
 
         Protein master = null;
 
@@ -536,7 +518,7 @@ public class LineExport {
             // search for that Protein
             Collection proteins = null;
             try {
-                proteins = helper.search( Protein.class, "ac", ac );
+                proteins = DaoFactory.getProteinDao().getByAcLike(ac);
             } catch ( IntactException e ) {
                 e.printStackTrace();
             }
@@ -696,7 +678,7 @@ public class LineExport {
     protected final void log( String message ) {
 
         if ( debugEnabled ) {
-            System.out.println( message );
+            log.info( message );
         }
 
         if ( debugFileEnabled ) {
@@ -1100,7 +1082,7 @@ public class LineExport {
      *
      * @return a gene name or null if non could be found.
      */
-    public String getGeneName( Protein protein, IntactHelper helper ) {
+    public String getGeneName( Protein protein ) {
 
         String geneName = null;
 
@@ -1111,7 +1093,7 @@ public class LineExport {
         if ( isSpliceVariant( protein ) ) {
 
             // get the master protein.
-            queryProtein = getMasterProtein( protein, helper );
+            queryProtein = getMasterProtein( protein );
             if ( queryProtein == null ) {
 
                 queryProtein = protein;

@@ -8,9 +8,11 @@ import uk.ac.ebi.intact.util.msd.generator.msdGenerator.MsdExperiment;
 import uk.ac.ebi.intact.util.msd.generator.msdGenerator.MsdInteraction;
 import uk.ac.ebi.intact.util.cdb.*;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 
 import java.util.Collection;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * The aim of this class is to create an Experiment from an MsdExperiment object.
@@ -20,21 +22,7 @@ import java.util.Collection;
  */
 public class ExperimentGenerator {
 
-    private IntactHelper helper;
-
-    /**
-     * Class used to get the IntactHelper. If the helper is null, it instanciates it and then returns it. If it is not
-     * null it returns it directly.
-     * @return an IntactHelper object
-     * @throws IntactException
-     */
-    private  IntactHelper getIntactHelper() throws IntactException {
-        if(helper==null){
-            helper = new IntactHelper();
-        }
-        return helper;
-    }
-
+    private static final Log log = LogFactory.getLog(ExperimentGenerator.class);
 
     /**
      * Given an msdExperiment it creates the corresponding IntAct Experiment with it's associated Interactions.
@@ -67,9 +55,9 @@ public class ExperimentGenerator {
                 return null;
             }
             expAutoFiller = new ExperimentAutoFill(pubmedId);
-            IntactHelper helper = getIntactHelper();
+
             // INSTANTIATE THE EXPERIMENT (WITH IN VITRO BIOSOURCE)
-            experiment = new Experiment(GeneratorHelper.getOwner(), expAutoFiller.getShortlabel(helper), GeneratorHelper.getInVitro());
+            experiment = new Experiment(GeneratorHelper.getOwner(), expAutoFiller.getShortlabel(), GeneratorHelper.getInVitro());
             // SET FULLNAME
             experiment.setFullName(expAutoFiller.getFullname());
             // ADD THE DIFFERENT ANNOTATIONS

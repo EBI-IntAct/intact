@@ -6,9 +6,9 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.util.msd.util;
 
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.util.PropertyLoader;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.io.*;
 import java.util.Map;
@@ -44,7 +44,7 @@ public final class CvMapper {
     /**
      * Map associating a psi-mi Id String to a CvObject.
      */
-    private static Map<String,CvObject> msdTerm2cvObject = new HashMap();
+    private static Map<String,CvObject> msdTerm2cvObject = new HashMap<String,CvObject>();
     /**
      * String beeing the first part of the property names contained in the file MAPPING_FILE.
      */
@@ -53,10 +53,7 @@ public final class CvMapper {
      * String containing the file name where the mapping msdTerm/psi-mi id is done.
      */
     private static final String MAPPING_FILE = "/data/msdMapping.dat";
-    /**
-     * IntactHelper used to retrieve the cvObject from the IntAct database.
-     */
-    private static IntactHelper helper;
+
     /**
      * boolean telling whether or not the file MAPPING_FILE has already been loaded or not.
      * If it's equal to false, it hasn't otherwise, it has been loaded.
@@ -75,29 +72,12 @@ public final class CvMapper {
     }
 
     /**
-     * Class used to get the IntactHelper. If the helper is null, it instanciates it and then returns it. If it is not
-     * null it returns it directly.
-     *
-     * @return an IntactHelper object
-     *
-     * @throws IntactException
-     */
-    private static IntactHelper getIntactHelper() throws IntactException {
-        if ( helper == null ) {
-            helper = new IntactHelper();
-        }
-        return helper;
-    }
-
-    /**
      * Load the msdMapping.dat file into the msdTerm2cvObject Map.
      *
      * @throws IntactException
      */
     private static void loadMappingFile() throws IntactException {
-        IntactHelper helper = null;
-        try {
-            helper = getIntactHelper();
+
             //load the file.
             Properties props = PropertyLoader.load( MAPPING_FILE );
             int i = 1;
@@ -105,7 +85,7 @@ public final class CvMapper {
             String propertyValue = props.getProperty( MAPPING + "." + i++ );
             while ( propertyValue != null ) {
                 // process the property value. ex : electron microscopy,MI:0040
-                processPropertyValue( propertyValue, helper );
+                processPropertyValue( propertyValue );
                 propertyValue = props.getProperty( MAPPING + "." + i++ );
             }
             // If the number of properties contained in the msdMapping.dat is not equal to the number of mapping loaded
@@ -118,13 +98,6 @@ public final class CvMapper {
                 throw new IntactException( MAPPING_FILE + " contains " + props.size() + " properties but we could map" +
                                            "only " + msdTerm2cvObject.size() + " of them. Check " + MAPPING_FILE + "." );
             }
-        } catch ( IntactException e ) {
-            throw new IntactException( e.getMessage() );
-        } finally {
-            if ( helper != null ) {
-                helper.closeStore();
-            }
-        }
 
     }
 
@@ -135,11 +108,10 @@ public final class CvMapper {
      * map as a value associated to the msd term key (NMR in the exemple).
      *
      * @param value  ( a String composed as follow [msdTerm],[psi-mi id])
-     * @param helper (an IntactHelper)
      *
      * @throws IntactException
      */
-    private static void processPropertyValue( String value, IntactHelper helper ) throws IntactException {
+    private static void processPropertyValue( String value ) throws IntactException {
         //Split the value of the property. mapping[0] should correspond to the msd term and mapping[1] to the psi-mi id.
         String[] mapping = value.split( "," );
         //If it was more then on "," throw an IntactException.
@@ -153,7 +125,7 @@ public final class CvMapper {
             String msdTerm = mapping[ 0 ].trim();
             String psiMiId = mapping[ 1 ].trim();
 
-            CvObject cvObject = helper.getObjectByPrimaryId( CvObject.class, psiMiId );
+            CvObject cvObject = DaoFactory.getCvObjectDao().getByXref(psiMiId);
             // If the corresponding IntAct CvObject could not be found, throw an IntactException.
             if ( cvObject == null ) {
                 throw new IntactException( "Could not find CvVocabulary for psi-mi : " + psiMiId );

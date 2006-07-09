@@ -6,13 +6,16 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.util;
 
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 
 import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.io.*;
 import java.util.Collection;
 import java.util.Iterator;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This util class retrieves protein sequences from IntAct
@@ -54,6 +57,7 @@ import java.util.Iterator;
  */
 public class ProteinFastaDownload {
 
+    private static final Log log = LogFactory.getLog(ProteinFastaDownload.class);
 
     //------ CONSTANTS ----//
 
@@ -142,7 +146,7 @@ public class ProteinFastaDownload {
         try {
             //Process returned to the JVM
             final String command = FORMAT_COMMAND_LINE.concat(INTACT_FASTA_FILE_NAME);
-            System.out.println("Execute: " + command);
+            log.debug("Execute: " + command);
             Process child = rt.exec (command);
 
             // screen output management
@@ -160,7 +164,7 @@ public class ProteinFastaDownload {
             int exitValue = child.waitFor();
 
             //test if the process has been finished in a right way ( value 0 if it is the case )
-            System.out.println ("Process sends back: " + exitValue);
+            log.debug ("Process sends back: " + exitValue);
 
             if (exitValue == 0) {
                 return true;
@@ -197,11 +201,9 @@ public class ProteinFastaDownload {
     /**
      * get all protein sequences in a Fasta format (in a String object)
      *
-     * @param helper The IntactHelper object which allows to
-     *          retrieve data thanks to the <code>search</code> method
      * @return String all protein sequences stored in IntAct
      */
-    protected String getAllProteinIntAct (IntactHelper helper) {
+    protected String getAllProteinIntAct () {
 
         StringBuffer fastaSequence = new StringBuffer (8192); // default is 16 ... the buffer is likely to be big
         String lineSeparator = getLineSeparator();
@@ -213,7 +215,7 @@ public class ProteinFastaDownload {
         try {
 
             // search method to get the Protein object and all proteins in IntAct
-            Collection proteins = helper.search("uk.ac.ebi.intact.model.Protein", "ac", "*");
+            Collection proteins = DaoFactory.getProteinDao().getAll();
 
             // for each protein, get the ac and the sequence string
             // and creates the Fasta format there
@@ -224,7 +226,7 @@ public class ProteinFastaDownload {
 
                 String sequence = protein.getSequence();
                 if (sequence == null) {
-                    System.out.println (protein.getAc() + " has no sequence");
+                    log.debug (protein.getAc() + " has no sequence");
                     skipped++;
                     continue;
                 }
@@ -255,13 +257,13 @@ public class ProteinFastaDownload {
             ie.printStackTrace();
         }
 
-        System.out.println ("\nReport");
-        System.out.println ("------\n");
-        System.out.println (total + " protein(s).");
-        System.out.println ((total - skipped) + " sequences stored.");
-        System.out.println (skipped + " protein(s) skipped.");
-        System.out.println("Generated file size: " + fastaSequence.length() + " bytes.");
-        System.out.println ("\n");
+        log.debug ("\nReport");
+        log.debug ("------\n");
+        log.debug (total + " protein(s).");
+        log.debug ((total - skipped) + " sequences stored.");
+        log.debug (skipped + " protein(s) skipped.");
+        log.debug("Generated file size: " + fastaSequence.length() + " bytes.");
+        log.debug ("\n");
 
         return fastaSequence.toString();
     }
@@ -287,7 +289,7 @@ public class ProteinFastaDownload {
 
         if (formattedFiles == null) {
             // the given path doesn't denote a directory.
-            System.out.println("the given path doesn't denote a directory, can't create the output file.");
+            log.debug("the given path doesn't denote a directory, can't create the output file.");
             return false;
         }
 
@@ -300,7 +302,7 @@ public class ProteinFastaDownload {
                 oneFile = formattedFiles[i];
                 delete = oneFile.delete();
                 if (delete == true) {
-                    System.out.println("Deleted file " + formattedFiles[i].getName());
+                    log.debug("Deleted file " + formattedFiles[i].getName());
                 }
             }
         }
@@ -314,13 +316,13 @@ public class ProteinFastaDownload {
 
     private boolean storeContent(File file, String content) {
 
-        System.out.println("proteinFastaFile :" + file.getAbsolutePath());
+        log.debug("proteinFastaFile :" + file.getAbsolutePath());
 
         try {
             if (file.exists() == false) {
                 System.out.print ("Create the file ... ");
                 file.createNewFile();
-                System.out.println("done");
+                log.debug("done");
             }
 
             System.out.print ("Write proteins' sequence in the file ... ");
@@ -328,9 +330,9 @@ public class ProteinFastaDownload {
                 FileWriter fileWriter = new FileWriter(file);
                 fileWriter.write(content);
                 fileWriter.flush();
-                System.out.println("done");
+                log.debug("done");
             } else {
-                System.out.println("Could not write in the file.");
+                log.debug("Could not write in the file.");
                 return false;
             }
 
@@ -361,19 +363,16 @@ public class ProteinFastaDownload {
                             "with all IntAct protein sequences.\n" +
                             "The file is in the path : " + pfd.PATH_INTACT_FORMAT_FILE;
 
-        System.out.println (util);
+        log.debug (util);
 
-
-        IntactHelper helper = new IntactHelper();
-
-        String fileContent = pfd.getAllProteinIntAct(helper);
+        String fileContent = pfd.getAllProteinIntAct();
 
         boolean formatted = pfd.filledProteinFastaFile(fileContent);
         if (formatted == true) {
-            System.out.println("OK the proteinFastaDownload file is formatted.");
+            log.info("OK the proteinFastaDownload file is formatted.");
         }
         else {
-            System.out.println("FAILURE in the format method.");
+            log.fatal("FAILURE in the format method.");
             System.exit (1);
         }
     }

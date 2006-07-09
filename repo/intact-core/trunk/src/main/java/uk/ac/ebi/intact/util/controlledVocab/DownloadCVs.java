@@ -6,9 +6,9 @@
 package uk.ac.ebi.intact.util.controlledVocab;
 
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.controlledVocab.model.IntactOntology;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -16,6 +16,10 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.sql.SQLException;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * TODO comment this
@@ -25,6 +29,8 @@ import java.util.*;
  * @since <pre>29-Oct-2005</pre>
  */
 public class DownloadCVs {
+
+    private static final Log log = LogFactory.getLog(DownloadCVs.class);
 
     public static final String VERSION = "0.3";
 
@@ -40,38 +46,30 @@ public class DownloadCVs {
     public CvTopic definitionTopic = null;
     public CvTopic obsolete = null;
 
-    private IntactHelper helper;
-
-    public DownloadCVs( IntactHelper helper ) throws IntactException {
-
-        if ( helper == null ) {
-            throw new IllegalArgumentException();
-        }
-
-        this.helper = helper;
+    public DownloadCVs( ) throws IntactException {
 
         // Initialises required vocabularies...
-        psi = (CvDatabase) helper.getObjectByPrimaryId( CvDatabase.class, CvDatabase.PSI_MI_MI_REF );
+        psi = DaoFactory.getCvObjectDao(CvDatabase.class).getByXref( CvDatabase.PSI_MI_MI_REF );
         if ( psi == null ) {
             throw new IllegalArgumentException( "Could not find PSI via MI reference: " + CvDatabase.PSI_MI_MI_REF );
         }
 
-        intact = (CvDatabase) helper.getObjectByPrimaryId( CvDatabase.class, CvDatabase.INTACT_MI_REF );
+        intact = DaoFactory.getCvObjectDao(CvDatabase.class).getByXref( CvDatabase.INTACT_MI_REF );
         if ( intact == null ) {
             throw new IllegalArgumentException( "Could not find IntAct via MI reference: " + CvDatabase.INTACT_MI_REF );
         }
 
-        identity = (CvXrefQualifier) helper.getObjectByPrimaryId( CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF );
+        identity = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByXref( CvXrefQualifier.IDENTITY_MI_REF );
         if ( identity == null ) {
             throw new IllegalArgumentException( "Could not find identity via MI reference: " + CvXrefQualifier.IDENTITY_MI_REF );
         }
 
-        definitionTopic = (CvTopic) helper.getObjectByLabel( CvTopic.class, CvTopic.DEFINITION );
+        definitionTopic = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel(CvTopic.DEFINITION );
         if ( definitionTopic == null ) {
             throw new IllegalArgumentException( "Could not find definition by its name: " + CvTopic.DEFINITION );
         }
 
-        obsolete = (CvTopic) helper.getObjectByPrimaryId( CvTopic.class, CvTopic.OBSOLETE_MI_REF );
+        obsolete = DaoFactory.getCvObjectDao(CvTopic.class).getByXref( CvTopic.OBSOLETE_MI_REF );
         if ( obsolete == null ) {
             throw new IllegalArgumentException( "Could not find definition via MI reference: " + CvTopic.OBSOLETE_MI_REF );
         }
@@ -185,9 +183,9 @@ public class DownloadCVs {
 
         String id = getIdentifier( cvObject );
 
-        System.out.println( "Processing " + cvObject.getShortLabel() + " (" + id + ")" );
+        log.info( "Processing " + cvObject.getShortLabel() + " (" + id + ")" );
         if ( id == null ) {
-            System.out.println( "\tWARNING: That term (" + cvObject.getShortLabel() + ") doesn't have an id, skip it." );
+            log.warn( "That term (" + cvObject.getShortLabel() + ") doesn't have an id, skip it." );
             return null;
         }
 
@@ -318,7 +316,7 @@ public class DownloadCVs {
             if ( alias.getCvAliasType() != null ) {
                 sb.append( alias.getCvAliasType().getShortLabel() );
             } else {
-                System.out.println( "WARNING: Term " + id + " has an Alias without a CvAliasType" );
+                log.info( "WARNING: Term " + id + " has an Alias without a CvAliasType" );
                 sb.append( "type_not_specified" );
             }
             sb.append( ":" );
@@ -365,16 +363,16 @@ public class DownloadCVs {
             }
 
             if ( definitionTopic.equals( annot.getCvTopic() ) ) {
-                System.out.println( "WARNING - more than one definition available in the current CV Term." );
-                System.out.println( "          1) \"" + definition.getAnnotationText() + "\"" );
-                System.out.println( "          2) \"" + annot.getAnnotationText() + "\"" );
+                log.info( "WARNING - more than one definition available in the current CV Term." );
+                log.info( "          1) \"" + definition.getAnnotationText() + "\"" );
+                log.info( "          2) \"" + annot.getAnnotationText() + "\"" );
             }
 
             sb.append( "xref_analog: " );
             if ( annot.getCvTopic() != null ) {
                 sb.append( annot.getCvTopic().getShortLabel() );
             } else {
-                System.out.println( "WARNING: Term " + id + " has an Annotation without a CvTopic" );
+                log.info( "WARNING: Term " + id + " has an Annotation without a CvTopic" );
                 sb.append( "type_not_specified" );
             }
             sb.append( ":" );
@@ -422,7 +420,8 @@ public class DownloadCVs {
         // process parents if the object is a dag element
         if ( CvDagObject.class.isAssignableFrom( cvObject.getClass() ) ) {
             // this is a DAG object, may have parents to mention here
-            Collection otherTypes = helper.getObjectsByXref( CvDagObject.class, id );
+            Collection otherTypes = DaoFactory.getCvObjectDao(CvDagObject.class)
+                    .getByXrefLike(id);
             Set alreadyExported = new HashSet( 4 );
 
             // keeps a mapping MI -> CvObject to allow later ordering my MI reference.
@@ -541,7 +540,7 @@ public class DownloadCVs {
                 } else if ( intact.equals( xref.getCvDatabase() ) ) {
                     ia = xref.getPrimaryId();
                     if ( ! ia.startsWith( "IA:" ) ) {
-                        System.out.println( "WARNING: CV Term '" + cvObject.getShortLabel() + "' has an intact identity malformed: " + ia );
+                        log.info( "WARNING: CV Term '" + cvObject.getShortLabel() + "' has an intact identity malformed: " + ia );
                     }
                 }
             }
@@ -637,10 +636,9 @@ public class DownloadCVs {
     private void download( BufferedWriter out ) throws IOException, IntactException {
 
         // 1. Get all CvObject
-        System.out.print( "Loading all IntAct CVs ... " );
-        System.out.flush();
-        Collection cvObjects = helper.search( CvObject.class, "ac", null );
-        System.out.println( cvObjects.size() + " found." );
+        log.info( "Loading all IntAct CVs ... " );
+        Collection cvObjects = DaoFactory.getCvObjectDao().getAll();
+        log.info( cvObjects.size() + " found." );
 
         // creating the root of all CVs
         final VirtualCvRoot superRoot = new VirtualCvRoot( new Institution( "tmp" ), "molecular interaction", "MI:0000" );
@@ -671,13 +669,13 @@ public class DownloadCVs {
 
             if ( typeMapping.containsKey( aCvClass ) ) {
                 String[] miRefs = (String[]) typeMapping.get( aCvClass );
-                System.out.print( aCvClass + " maps to " );
+                log.info( aCvClass + " maps to " );
                 for ( int i = 0; i < miRefs.length; i++ ) {
                     String miRef = miRefs[ i ];
-                    System.out.print( miRef );
+                    log.info( miRef );
 
                     // look up in the database
-                    CvObject root = (CvObject) helper.getObjectByXref( aCvClass, miRef );
+                    CvObject root = DaoFactory.getCvObjectDao().getByXref(miRef);
 
                     if ( root == null ) {
                         // doesn't exist yet, then create it
@@ -685,9 +683,9 @@ public class DownloadCVs {
                             Constructor constructor = aCvClass.getDeclaredConstructor( new Class[]{ Institution.class, String.class } );
                             if ( constructor != null ) {
                                 String name = (String) mi2name.get( miRef );
-                                root = (CvObject) constructor.newInstance( new Object[]{ helper.getInstitution(), name } );
+                                root = (CvObject) constructor.newInstance( new Object[]{ DaoFactory.getInstitutionDao().getInstitution(), name } );
 
-                                helper.create( root );
+                                DaoFactory.getCvObjectDao().persist( root );
 
                                 // add Xref
                                 String database = null;
@@ -699,17 +697,17 @@ public class DownloadCVs {
                                     throw new IllegalArgumentException();
                                 }
                                 // TODO [ intact | psi | identity ] need to exist before hand.
-                                CvDatabase db = (CvDatabase) helper.getObjectByPrimaryId( CvDatabase.class, database );
-                                CvXrefQualifier q = (CvXrefQualifier) helper.getObjectByPrimaryId( CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF );
+                                CvDatabase db = DaoFactory.getCvObjectDao(CvDatabase.class).getByXref( database );
+                                CvXrefQualifier q = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByXref(CvXrefQualifier.IDENTITY_MI_REF);
 
-                                Xref xref = new Xref( helper.getInstitution(), db, miRef, null, null, q );
+                                Xref xref = new Xref( DaoFactory.getInstitutionDao().getInstitution(), db, miRef, null, null, q );
                                 root.addXref( xref );
-                                helper.create( xref );
+                                DaoFactory.getXrefDao().persist( xref );
 
                                 // add it to the list of all CVs so it gets processed later on.
                                 cvObjects.add( root );
 
-                                System.out.print( " ( Node created [" + db.getShortLabel() + ", " + miRef + "] )" );
+                                log.info( " ( Node created [" + db.getShortLabel() + ", " + miRef + "] )" );
                             }
                         } catch ( Exception e ) {
                             throw new IntactException( "Failed to create CV term (" + miRef + "), cf. nested errors.", e );
@@ -719,14 +717,14 @@ public class DownloadCVs {
                     // if not done yet, add mapping CV class to the specific root
                     if ( cvClass2root.containsKey( aCvClass ) ) {
                         CvObject cv = (CvObject) cvClass2root.get( aCvClass );
-                        System.out.println( "\nWARNING: Trying to overwrite root ( " + cv.getShortLabel() + " ) with " + root.getShortLabel() );
-                        System.out.println( "         Skipping " + cv.getShortLabel() + "." );
+                        log.info( "\nWARNING: Trying to overwrite root ( " + cv.getShortLabel() + " ) with " + root.getShortLabel() );
+                        log.info( "         Skipping " + cv.getShortLabel() + "." );
                     } else {
                         cvClass2root.put( aCvClass, root );
                     }
 
                     if ( ( i + 1 ) < miRefs.length ) {
-                        System.out.print( ", " );
+                        log.info( ", " );
                     }
 
                     // keep track of all root of CVs
@@ -735,7 +733,7 @@ public class DownloadCVs {
                     }
 
                 } // CV IDs
-                System.out.println( "." );
+                log.info( "." );
 
             } else {
 
@@ -746,8 +744,8 @@ public class DownloadCVs {
 
         // now that the classification is done, we add the super root to the list (VirtualCvRoot cannot be classified)
         cvObjects.add( superRoot );
-        System.out.println( "Identifier of Super Root is: " + getMiIdentifier( superRoot ) );
-        System.out.println( "Adding Super Root into the collection of all CV Terms: " + cvObjects.contains( superRoot ) );
+        log.info( "Identifier of Super Root is: " + getMiIdentifier( superRoot ) );
+        log.info( "Adding Super Root into the collection of all CV Terms: " + cvObjects.contains( superRoot ) );
 
         // 3. Sort terms by MI reference
         Map mi2cvObject = new HashMap( cvObjects.size() );
@@ -763,7 +761,7 @@ public class DownloadCVs {
                 noMiTerms.add( cvObject );
             }
         }
-        System.out.println( "Found " + noMiTerms.size() + " terms without MI reference" );
+        log.info( "Found " + noMiTerms.size() + " terms without MI reference" );
         List allMiReferences = new ArrayList( mi2cvObject.keySet() );
         Collections.sort( allMiReferences );
 
@@ -779,31 +777,31 @@ public class DownloadCVs {
             CvObject root = null;
 
 
-            System.out.println( "------------------------------" );
-            System.out.println( "Term: " + ref );
+            log.info( "------------------------------" );
+            log.info( "Term: " + ref );
 
             // if super root, give no root
             // if root of type, give super root
             // else give classified root.
             if ( cvObject == superRoot ) {
-                System.out.println( "Super root, give no root" );
+                log.info( "Super root, give no root" );
                 root = null;
             } else if ( rootsOfType.contains( cvObject ) ) {
-                System.out.println( "Simple root, give MI:0000 as root" );
+                log.info( "Simple root, give MI:0000 as root" );
                 root = superRoot;
             } else if ( CvDagObject.class.isAssignableFrom( cvObject.getClass() ) ) {
 
-                System.out.println( "Simple term (assignable from CvDagObject), give root: " );
+                log.info( "Simple term (assignable from CvDagObject), give root: " );
                 // if the term doesn't have parents, we need to attach it to a root, otherwise we won't know its type.
                 CvDagObject cvDagObject = (CvDagObject) cvObject;
                 if ( cvDagObject.getParents().isEmpty() ) {
-                    System.out.println( "Current CvDagObject doesn't have any parent" );
+                    log.info( "Current CvDagObject doesn't have any parent" );
                     root = (CvObject) cvClass2root.get( cvObject.getClass() );
                 } else {
-                    System.out.println( "Current CvDagObject has " + cvDagObject.getParents().size() + " parent(s), we DO NOT give root." );
+                    log.info( "Current CvDagObject has " + cvDagObject.getParents().size() + " parent(s), we DO NOT give root." );
                 }
             } else {
-                System.out.println( "Simple CV Term (CvObject, not a DAG), give root according to class type (" + cvObject.getClass() + ")." );
+                log.info( "Simple CV Term (CvObject, not a DAG), give root according to class type (" + cvObject.getClass() + ")." );
                 // if not a CvDagObject, there is not hierarchy, so we need to give a parent
                 root = (CvObject) cvClass2root.get( cvObject.getClass() );
             }
@@ -812,7 +810,7 @@ public class DownloadCVs {
             if ( root != null ) {
                 rootRef = getIdentifier( root );
                 if ( rootRef == null ) {
-                    System.out.println( "ERROR - could not find an identifier for CV Term: " + root.getShortLabel() + " (" + root.getAc() + ")" );
+                    log.info( "ERROR - could not find an identifier for CV Term: " + root.getShortLabel() + " (" + root.getAc() + ")" );
                 }
             }
 
@@ -825,8 +823,8 @@ public class DownloadCVs {
         }
 
         // 6. Process terms that don't have an MI reference
-        System.out.println( "--------------------------------------------------" );
-        System.out.println( "Processing term having no MI reference." );
+        log.info( "--------------------------------------------------" );
+        log.info( "Processing term having no MI reference." );
 
         // update all terms having no IA:xxxx so they get one.
         for ( Iterator iterator = noMiTerms.iterator(); iterator.hasNext(); ) {
@@ -837,14 +835,14 @@ public class DownloadCVs {
             if ( id == null ) {
                 // neither an IA:xxxx or MI:xxxx available ...
                 try {
-                    String localId = SequenceManager.getNextId( helper );
+                    String localId = SequenceManager.getNextId( );
 
-                    Xref xref = new Xref( helper.getInstitution(), intact, localId, null, null, identity );
+                    Xref xref = new Xref( DaoFactory.getInstitutionDao().getInstitution(), intact, localId, null, null, identity );
                     cvObject.addXref( xref );
-                    helper.create( xref );
+                    DaoFactory.getXrefDao().persist( xref );
 
                     id = localId;
-                    System.out.println( "Added new Xref to '" + cvObject.getShortLabel() + "': " + id );
+                    log.debug( "Added new Xref to '" + cvObject.getShortLabel() + "': " + id );
 
                 } catch ( IntactException e ) {
                     e.printStackTrace();
@@ -870,8 +868,8 @@ public class DownloadCVs {
         for ( Iterator iterator = sortedCVs.iterator(); iterator.hasNext(); ) {
             CvObject cvObject = (CvObject) iterator.next();
 
-            System.out.println( "------------------------------" );
-            System.out.println( "Term: " + getIdentifier( cvObject ) );
+            log.info( "------------------------------" );
+            log.info( "Term: " + getIdentifier( cvObject ) );
 
             CvObject root = null;
 
@@ -921,23 +919,25 @@ public class DownloadCVs {
         try {
             BufferedWriter out = new BufferedWriter( new FileWriter( outputFilename ) );
 
-            IntactHelper helper = null;
-            try {
-                helper = new IntactHelper();
-                System.out.println( "Database: " + helper.getDbName() );
-
-                DownloadCVs downloadCVs = new DownloadCVs( helper );
-                downloadCVs.download( out );
-
-            } finally {
-                if ( helper != null ) {
-                    helper.closeStore();
+            if (log.isInfoEnabled())
+            {
+                try
+                {
+                    log.info( "Database: " + DaoFactory.getBaseDao().getDbName() );
+                }
+                catch (SQLException e)
+                {
+                    e.printStackTrace();
                 }
             }
 
+                DownloadCVs downloadCVs = new DownloadCVs();
+                downloadCVs.download( out );
+
+
             out.flush();
             out.close();
-            System.out.println( "Closing " + outputFilename );
+            log.info( "Closing " + outputFilename );
         } catch ( IOException e ) {
             e.printStackTrace();
         }

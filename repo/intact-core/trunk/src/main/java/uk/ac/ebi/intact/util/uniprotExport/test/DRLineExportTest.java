@@ -9,7 +9,6 @@ package uk.ac.ebi.intact.util.uniprotExport.test;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.uniprotExport.DRLineExport;
 
@@ -329,7 +328,7 @@ public class DRLineExportTest extends TestCase {
         DRLineExport drLineExporter = new DRLineExport() {
 
             // Override that method and give some mock object for init !
-            public void init( IntactHelper helper ) {
+            public void init( ) {
                 // provide the content of what should have been picked up from a Database.
                 this.uniprotDatabase = uniprot;
                 this.intactDatabase = intact;
@@ -345,7 +344,7 @@ public class DRLineExportTest extends TestCase {
 
         try {
             // we have overriden the method but now we have to call it to initialise our object.
-            drLineExporter.init( null );
+            drLineExporter.init( );
         } catch ( Exception e ) {
             // should never happen !!
             e.printStackTrace();

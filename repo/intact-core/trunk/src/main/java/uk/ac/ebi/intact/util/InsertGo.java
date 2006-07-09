@@ -5,15 +5,28 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.util;
 
-import java.util.*;
-import java.io.*;
-import java.net.URL;
-
-import uk.ac.ebi.intact.business.*;
-import uk.ac.ebi.intact.persistence.*;
-import uk.ac.ebi.intact.model.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.Institution;
+import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.ProteinImpl;
+import uk.ac.ebi.intact.persistence.CreateException;
+import uk.ac.ebi.intact.persistence.UpdateException;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.StringTokenizer;
 
 
 /**
@@ -32,11 +45,10 @@ import org.apache.regexp.RESyntaxException;
  */
 public class InsertGo {
 
+    private static final Log log = LogFactory.getLog(InsertGo.class);
+
     public static final int MAX_ID_LEN = 30;
 
-    IntactHelper helper;
-    DAOSource dataSource;
-    DAO dao;
     HashMap goTerms;
 
     /**
@@ -44,38 +56,12 @@ public class InsertGo {
      */
     public InsertGo() throws Exception {
 
-        dataSource = DAOFactory.getDAOSource("uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource");
-
         //set the config details, ie repository file for OJB in this case
         //Map config = new HashMap();
         //config.put("mappingfile", "config/repository.xml");
         //dataSource.setConfig(config);
 
         goTerms = new HashMap();
-
-        try {
-            dao = dataSource.getDAO();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-
-            helper = new IntactHelper(dataSource);
-
-        } catch (IntactException ie) {
-
-            //something failed with type map or datasource...
-            String msg = "unable to create intact helper class - no datasource";
-            System.out.println(msg);
-            ie.printStackTrace();
-
-        }
-
-        // Set cached classes
-        helper.addCachedClass(CvDatabase.class);
-        helper.addCachedClass(Institution.class);
-        helper.addCachedClass(Protein.class);
 
     }
 
@@ -89,7 +75,7 @@ public class InsertGo {
 
         current.addXref( xref );
         if (xref.getParentAc() == current.getAc()){
-            dao.create( xref );
+            DaoFactory.getXrefDao().persist( xref );
         }
     }
 
@@ -109,15 +95,15 @@ public class InsertGo {
         Protein protein = null;
         // TODO: why do we need that for ?
         //Xref spXref = new Xref(helper.getInstitution(),
-        //                  helper.getObjectByLabel(CvDatabase.class, CvDatabase.UNIPROT),
+        //                  DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel( CvDatabase.UNIPROT),
         //                  spAc,
         //                  null, null, null);
 
         try {
-            protein = helper.getObjectByXref(Protein.class, spAc);
+            protein = DaoFactory.getProteinDao().getByXref(spAc);
         }
         catch (IntactException e) {
-            System.err.println("Error retrieving Protein object for " + spAc
+            log.error("Error retrieving Protein object for " + spAc
                                + ". Ignoring associated crossreferences. ");
             e.printStackTrace();
             return null;
@@ -139,10 +125,11 @@ public class InsertGo {
         }
 
         // Now we have a valid protein object, complete it.
+        Institution institution = DaoFactory.getInstitutionDao().getInstitution();
 
         addNewXref(protein,
-                   new Xref(helper.getInstitution(),
-                            helper.getObjectByLabel(CvDatabase.class, "sgd"),
+                   new Xref(institution,
+                            DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel( "sgd"),
                             sgdAc,
                             null, null, null));
         // Get GO term
@@ -153,12 +140,12 @@ public class InsertGo {
 
 
         addNewXref(protein,
-                   new Xref(helper.getInstitution(),
-                            helper.getObjectByLabel(CvDatabase.class, "go"),
+                   new Xref(institution,
+                            DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel( "go"),
                             goAc,
                             goTerm, null, null));
-        if (dao.isPersistent(protein)){
-            dao.update(protein);
+        if (DaoFactory.getProteinDao().exists((ProteinImpl)protein)){
+            DaoFactory.getProteinDao().update((ProteinImpl)protein);
         }
         return protein;
     }
@@ -184,7 +171,7 @@ public class InsertGo {
             String line;
             int lineCount = 0;
 
-            System.err.println("GO definition file lines processed: ");
+            log.error("GO definition file lines processed: ");
 
             RE idPat = new RE("goid: (GO:\\d+)");
             RE termPat =  new RE("term: (.*)");
@@ -254,7 +241,7 @@ public class InsertGo {
     public static void main( String[] args ) throws Exception {
 
         if( args.length < 2 ) {
-            System.err.println ( "Usage: InsertGo " );
+            log.error ( "Usage: InsertGo " );
         }
 
 
@@ -309,7 +296,7 @@ public class InsertGo {
                     System.out.print(lineCount + " ");
                 }
             }
-            System.out.println("\n");
+            log.debug("\n");
         }
         finally {
             // close opened streams.

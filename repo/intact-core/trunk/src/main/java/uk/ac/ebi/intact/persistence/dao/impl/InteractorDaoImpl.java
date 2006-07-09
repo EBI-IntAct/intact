@@ -27,6 +27,7 @@ import java.util.ArrayList;
  * @version $Id$
  * @since <pre>27-Apr-2006</pre>
  */
+@SuppressWarnings("unchecked")
 public class InteractorDaoImpl<T extends InteractorImpl> extends AnnotatedObjectDaoImpl<T> implements InteractorDao<T>
 {
     /**
@@ -62,7 +63,7 @@ public class InteractorDaoImpl<T extends InteractorImpl> extends AnnotatedObject
     {
         //the gene names are obtained from the Aliases for the Protein
         //which are of type 'gene name'...
-        Criteria crit = getSession().createCriteria(ProteinImpl.class)
+        Criteria crit = getSession().createCriteria(getEntityClass())
                 .add(Restrictions.idEq(proteinAc))
                 .createAlias("aliases", "alias")
                 .createAlias("alias.cvAliasType", "aliasType")
@@ -76,5 +77,12 @@ public class InteractorDaoImpl<T extends InteractorImpl> extends AnnotatedObject
         }
 
         return geneNames;
+    }
+
+    public List<T> getByBioSourceAc(String ac)
+    {
+        return getSession().createCriteria(getEntityClass())
+                .createCriteria("bioSource")
+                .add(Restrictions.idEq("ac")).list();
     }
 }

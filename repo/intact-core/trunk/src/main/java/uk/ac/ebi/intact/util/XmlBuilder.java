@@ -8,19 +8,29 @@
  */
 package uk.ac.ebi.intact.util;
 
-import java.util.*;
-import java.lang.reflect.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.traversal.DocumentTraversal;
+import org.w3c.dom.traversal.NodeFilter;
+import org.w3c.dom.traversal.TreeWalker;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
-//XML classes
-import org.w3c.dom.*;
-import org.w3c.dom.traversal.*;
-import javax.xml.parsers.*;
-
-import java.io.*;
-
-//DB accessor
-import uk.ac.ebi.intact.business.*;
-
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.Serializable;
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 
 /**
@@ -34,8 +44,6 @@ import uk.ac.ebi.intact.business.*;
  * @author Chris Lewington
  */
 public class XmlBuilder implements Serializable {
-
-    private IntactHelper helper;
 
     //used for caching XML details, keyed on AC
     private HashMap expandedCache = new HashMap();
@@ -53,38 +61,9 @@ public class XmlBuilder implements Serializable {
      */
     public static final int CONTRACT_NODES = 2;
 
-    /**
-     * Sets up an XML builder with suitable persistent store access. Currently this requires
-     * a suitable IntactHelper object to ensure the caller's connection details can be reused (persistent
-     * storage access is required here since sometimes details of objects referenced from elsewhere by
-     * eg AC only may not yet be materialised). Note that if the builder is to be used in a
-     * web application, this is the correct constructor to be used.
-     *
-     * @param helper The intact helper instance used by the caller - this allows the builder to
-     * use the same data store access configurations.
-     *
-     * @exception IntactException thrown if no helper object was supplied
-     */
-    public XmlBuilder(IntactHelper helper) throws IntactException {
 
-        if(helper == null) {
-            throw new IntactException("Error - cannot use this XML Builder constuctor with a null helper parameter! Either pass a helper (preferred) or use the default constructor");
-        }
-        else this.helper = helper;
-    }
+    public XmlBuilder()  {
 
-    /**
-     * Note that this default constructor will build a default IntactHelper object with
-     * default configuration settings. This is fine for 'standalone' usage but can cause
-     * problems in a web environment where connection profiles are more important. For use
-     * by web applications it is recommended that the constructor taking a <code>IntactHlper</code>
-     * instance is used.
-     *
-     * @exception IntactException thrown if even a default helper object could not be created.
-     */
-    public XmlBuilder() throws IntactException {
-
-        helper = new IntactHelper();
     }
 
     /**
@@ -252,7 +231,7 @@ public class XmlBuilder implements Serializable {
 
                     Collection searchResults = new ArrayList();
                     System.out.println("searching by Standard Collection...");
-                    searchResults = helper.search("uk.ac.ebi.intact.model.BasicObject", "ac", (String)key);
+                    searchResults = DaoFactory.getIntactObjectDao().getByAcLike((String)key);
 //                    System.out.println("searching by Iterator....");
 //                    Iterator iter = null;
 //                    iter = helper.iterSearch("uk.ac.ebi.intact.model.BasicObject", "ac", (String)key);
@@ -262,7 +241,7 @@ public class XmlBuilder implements Serializable {
                     if(searchResults.isEmpty()) {
 
                         //try Institution instead
-                        searchResults = helper.search("uk.ac.ebi.intact.model.Institution", "ac", (String)key);
+                        searchResults = DaoFactory.getInstitutionDao().getByAcLike((String)key);
                     }
                     if(searchResults.size() > 1) {
 

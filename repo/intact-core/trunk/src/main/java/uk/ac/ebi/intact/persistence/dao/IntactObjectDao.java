@@ -33,7 +33,11 @@ public interface IntactObjectDao<T extends IntactObject>
 
     void persist(T objToPersist);
 
+    void persistAll(Collection<T> objsToPersist);
+
     void delete(T objToDelete);
+
+    void deleteAll(Collection<T> objsToDelete);
 
     void saveOrUpdate(T objToPersist);
 

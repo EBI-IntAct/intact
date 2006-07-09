@@ -5,6 +5,9 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.util;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.sql.Timestamp;
 
 /**
@@ -20,6 +23,8 @@ import java.sql.Timestamp;
  * @version : $Id$
  */
 public class IntactStatistics implements Comparable {
+
+    private static final Log log = LogFactory.getLog(IntactStatistics.class);
 
     ///////////////////////////////////////
     //attributes:

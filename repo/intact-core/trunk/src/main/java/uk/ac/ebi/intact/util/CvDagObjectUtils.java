@@ -6,9 +6,10 @@
 package uk.ac.ebi.intact.util;
 
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvDagObject;
+import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.persistence.util.HibernateUtil;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -30,7 +31,6 @@ public class CvDagObjectUtils {
 
     private int iLeftBound = -1;
     private int iRightBound = -1;
-    IntactHelper aHelper;
 
     /**
      * Constructs a CvDagObjectUtils object.
@@ -112,12 +112,13 @@ public class CvDagObjectUtils {
      *
      * @throws IntactException if an error occur.
      */
-    public void insertCVs( Class cvClass ) throws IntactException {
+    public void insertCVs( Class<? extends CvObject> cvClass ) throws IntactException {
         if ( !CvDagObject.class.isAssignableFrom( cvClass ) ) {
             throw new IntactException( "invalid class!" );
         }
 
-        Collection cvDagObjects = aHelper.search( cvClass, "ac", null );
+        Collection cvDagObjects = DaoFactory.getCvObjectDao(cvClass).getAll();
+
         // take any object out of the list to get the root
         CvDagObject aDagObject = (CvDagObject) cvDagObjects.iterator().next();
         // get the root of the specified class
@@ -214,7 +215,7 @@ public class CvDagObjectUtils {
         int rightBound;
         System.out.println( "cvAC: " + cvAc );
         // get the CVDagObject with the given AC number out of the database
-        CvDagObject aCv = (CvDagObject) aHelper.getObjectByAc( CvDagObject.class, cvAc );
+        CvDagObject aCv = DaoFactory.getCvObjectDao(CvDagObject.class).getByAc(cvAc); 
 
         // check if that parent CV really exists
         if ( aCv == null ) {

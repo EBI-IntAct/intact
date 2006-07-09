@@ -6,13 +6,16 @@
 package uk.ac.ebi.intact.util.controlledVocab;
 
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.sql.*;
 import java.util.Collection;
 import java.util.Iterator;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Utility tool to query Sequence object via JDBC on either Oracle or PostgreSQL.
@@ -22,6 +25,8 @@ import java.util.Iterator;
  * @since <pre>03-Mar-2006</pre>
  */
 public class SequenceManager {
+
+    private static final Log log = LogFactory.getLog(SequenceManager.class);
 
     private SequenceManager() {
     }
@@ -103,13 +108,13 @@ public class SequenceManager {
         }
     }
 
-    public static void checkIfCvSequenceExists( IntactHelper helper ) throws IntactException, SQLException {
+    public static void checkIfCvSequenceExists( ) throws IntactException, SQLException {
 
         if ( ! sequenceChecked ) {
 
             System.out.println( "Checking if the sequence if present..." );
 
-            Connection connection = helper.getJDBCConnection();
+            Connection connection = DaoFactory.connection();
 
             if ( ! sequenceExists( connection, SEQUENCE_NAME ) ) {
                 throw new IllegalStateException( "The sequence " + SEQUENCE_NAME + " doesn't not exist in your database. Please create it." );
@@ -324,13 +329,9 @@ public class SequenceManager {
         return newId;
     }
 
-    public static void synchronizeUpTo( IntactHelper helper, long id ) {
+    public static void synchronizeUpTo( long id ) {
 
-        if ( helper == null ) {
-            throw new IllegalArgumentException( "You must give a non null IntactHelper." );
-        }
-
-        Connection connection = helper.getJDBCConnection();
+        Connection connection = DaoFactory.connection();
         long current = getCurrentSequenceValue( connection, SEQUENCE_NAME );
 
         if ( current < id ) {
@@ -364,14 +365,14 @@ public class SequenceManager {
         return prefix + id;
     }
 
-    public static String getNextId( IntactHelper helper ) throws IntactException {
-        Connection connection = helper.getJDBCConnection();
+    public static String getNextId( ) throws IntactException {
+        Connection connection = DaoFactory.connection();
         long id;
         String nextId = null;
         Collection cvObjects;
 
         try {
-            checkIfCvSequenceExists( helper );
+            checkIfCvSequenceExists( );
         } catch ( SQLException e ) {
             throw new IntactException( "Error while checking if the sequence is present in the database.", e );
         }
@@ -387,14 +388,14 @@ public class SequenceManager {
             // Given that we are relying on Database's sequences, we don't expect to encounter that issue,
             // that check may be removed later on.
 
-            cvObjects = helper.getObjectsByXref( CvObject.class, nextId );
+            cvObjects = DaoFactory.getCvObjectDao(CvObject.class).getByXrefLike(nextId);
 
             if ( ! cvObjects.isEmpty() ) {
                 // display error if the IA:xxxx was already in use.
-                System.out.println( "=========================================================" );
-                System.out.println( "--- ERROR ---" );
-                System.out.println( "Generated the next IntAct id: " + nextId );
-                System.out.println( "Though it was used by " + cvObjects.size() + " object(s) already:" );
+                log.error( "=========================================================" );
+                log.error( "--- ERROR ---" );
+                log.error( "Generated the next IntAct id: " + nextId );
+                log.error( "Though it was used by " + cvObjects.size() + " object(s) already:" );
                 for ( Iterator iterator2 = cvObjects.iterator(); iterator2.hasNext(); ) {
                     CvObject cv = (CvObject) iterator2.next();
                     System.out.println( "* " + cv.getShortLabel() + " (" + cv.getAc() + ")" );
@@ -411,12 +412,12 @@ public class SequenceManager {
         return nextId;
     }
 
-    public static String getCurrentId( IntactHelper helper ) throws IntactException {
-        Connection connection = helper.getJDBCConnection();
+    public static String getCurrentId( ) throws IntactException {
+        Connection connection = DaoFactory.connection();
         String nextId = null;
 
         try {
-            checkIfCvSequenceExists( helper );
+            checkIfCvSequenceExists( );
         } catch ( SQLException e ) {
             throw new IntactException( "Error while checking if the sequence is present in the database.", e );
         }
@@ -438,21 +439,13 @@ public class SequenceManager {
        GRANT ALL ON cvobject_id TO PUBLIC;
      */
 
-    public static void main( String[] args ) throws IntactException {
-        IntactHelper helper = null;
-        try {
-            helper = new IntactHelper();
-            System.out.println( "Database: " + helper.getDbName() );
+    public static void main( String[] args ) throws IntactException, SQLException {
+
+            System.out.println( "Database: " + DaoFactory.getBaseDao().getDbName() );
 
             for ( int i = 0; i < 3; i++ ) {
-                String id = getNextId( helper );
+                String id = getNextId( );
                 System.out.println( "id = " + id );
             }
-
-        } finally {
-            if ( helper != null ) {
-                helper.closeStore();
-            }
-        }
     }
 }

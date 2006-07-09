@@ -5,9 +5,9 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.util;
 
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.Iterator;
 import java.util.StringTokenizer;
@@ -20,12 +20,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
+
 /**
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
 public class GoaTools {
+
+    private static final Log log = LogFactory.getLog(GoaTools.class);
 
     //////////////////////
     // Inner class
@@ -108,7 +113,7 @@ public class GoaTools {
             final String isProxySet = System.getProperty( "proxySet" );
             final String proxyHost  = System.getProperty( "proxyHost" );
             final String proxyPort  = System.getProperty( "proxyPort" );
-            System.out.println( "Uses: proxySet="+ isProxySet +", proxyHost="+ proxyHost +", proxyPort="+ proxyPort );
+            log.debug( "Uses: proxySet="+ isProxySet +", proxyHost="+ proxyHost +", proxyPort="+ proxyPort );
 
             try {
                 InputStream in = mySourceURL.openStream();
@@ -164,7 +169,7 @@ public class GoaTools {
             // build a GoaItem
             GoaItem goaItem = null;
             StringTokenizer st = new StringTokenizer( currentLine, "\t" );
-//            System.out.println ( currentLine );
+//            log.debug ( currentLine );
             /* 01 */ String database = st.nextToken();
             /* 02 */ String ac = st.nextToken();
             /* 03 */ String symbol = st.nextToken();
@@ -207,8 +212,6 @@ public class GoaTools {
 
     private GoaCollection goaBrowser;
 
-    private IntactHelper helper;
-
     private GoServerProxy goServerProxy;
 
     private long newAnnotationCount = 0;
@@ -226,13 +229,6 @@ public class GoaTools {
     public GoaTools ( String url ) throws MalformedURLException, IntactException {
         this();
         goaBrowser = new GoaCollection( url );
-        this.helper = new IntactHelper();
-    }
-
-    public GoaTools ( String url, IntactHelper helper ) throws MalformedURLException {
-        this();
-        goaBrowser = new GoaCollection( url );
-        this.helper = helper;
     }
 
 
@@ -275,10 +271,10 @@ public class GoaTools {
         // which is already linked to that AnnotatedObject.
         if (xref.getParentAc() == current.getAc()) {
             try {
-                helper.create(xref);
+                DaoFactory.getXrefDao().persist(xref);
                 newAnnotationCount++;
             } catch (Exception e_xref) {
-                System.err.println ( "Could not create the Xref: " + xref.getPrimaryId() +
+                log.error ( "Could not create the Xref: " + xref.getPrimaryId() +
                                      " for the AnnotatedObject: " + current.getShortLabel() );
             }
         }
@@ -295,11 +291,11 @@ public class GoaTools {
             try {
                 goResponse = goServerProxy.query( goId );
             } catch ( IOException e ) {
-                System.err.println ( "Could not find GO term: " + goId + ". abort creation." );
+                log.error ( "Could not find GO term: " + goId + ". abort creation." );
                 e.printStackTrace ();
                 return;
             } catch ( GoServerProxy.GoIdNotFoundException e ) {
-                System.err.println ( "Could not find GO term: " + goId + ". abort creation." );
+                log.error ( "Could not find GO term: " + goId + ". abort creation." );
                 e.printStackTrace ();
                 return;
             }
@@ -311,13 +307,13 @@ public class GoaTools {
                     null, null );
 
             addNewXref( protein, xref );
-            System.out.println ( "Update protein " + protein.getShortLabel() + " with Xref: " + goId );
+            log.debug ( "Update protein " + protein.getShortLabel() + " with Xref: " + goId );
         }
     } // updateGoXref
 
     public void displayStatistics() {
-        System.out.println ( "#GOA line processed: " + getGoaBrowser().getLineProcessedCount());
-        System.out.println ( "#GO added: " + newAnnotationCount );
+        log.debug ( "#GOA line processed: " + getGoaBrowser().getLineProcessedCount());
+        log.debug ( "#GO added: " + newAnnotationCount );
     }
 
 
@@ -334,27 +330,26 @@ public class GoaTools {
         // Check parameters
         if ( args.length == 0 ) {
             // usage
-            System.err.println ( "Usage: GoaTools <GOA source URL>" );
+            log.error ( "Usage: GoaTools <GOA source URL>" );
             System.exit( 1 );
         }
 
-        IntactHelper helper = new IntactHelper();
-        CvDatabase goDatabase = helper.getObjectByLabel(CvDatabase.class, "go");
+        CvDatabase goDatabase = DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel("go");
 
         if ( goDatabase == null ){
             throw new IntactException ( "Could not find the CvDatabase: go. Stop processing." );
         }
 
-        Institution institution = helper.getInstitution();
+        Institution institution = DaoFactory.getInstitutionDao().getInstitution();
 
         if ( institution == null ){
             throw new IntactException ( "Could not find the Institution: EBI. Stop processing." );
         }
 
 
-        GoaTools goaTools = new GoaTools( args[0], helper );
+        GoaTools goaTools = new GoaTools( args[0] );
         GoaCollection goaCollection = goaTools.getGoaBrowser();
-        Collection<Protein> proteins;
+        Collection<ProteinImpl> proteins;
         Protein protein;
         long count = 0;
         for ( Iterator goaIterator = goaCollection.iterator (); goaIterator.hasNext () ; ) {
@@ -363,9 +358,9 @@ public class GoaTools {
             count++;
             if ((count % 500) == 0) goaTools.displayStatistics();
 
-            proteins = helper.getObjectsByXref( Protein.class, goaItem.getAc() );
+            proteins = DaoFactory.getProteinDao().getByXrefLike(goaItem.getAc());
             if (proteins.size() != 0) {
-                System.out.println ( proteins.size() + " Protein found by Xref: " + goaItem.getAc() );
+                log.debug ( proteins.size() + " Protein found by Xref: " + goaItem.getAc() );
                 for (Protein prot : proteins)
                 {
                     goaTools.updateGoXref(institution, prot, goaItem, goDatabase);
@@ -376,9 +371,10 @@ public class GoaTools {
 
                 String symbol = goaItem.getSymbol();
                 if ( ! goaItem.getAc().equals( symbol ) ) {
-                    protein = helper.getObjectByLabel( Protein.class, symbol );
+                    protein = DaoFactory.getProteinDao().getByShortLabel(symbol);
+
                     if (protein != null) {
-                        System.out.println ( "Protein found by Label: " + symbol );
+                        log.debug ( "Protein found by Label: " + symbol );
                         goaTools.updateGoXref( institution, protein, goaItem, goDatabase );
                         continue;
                     }

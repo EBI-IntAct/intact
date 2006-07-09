@@ -6,13 +6,16 @@
 package uk.ac.ebi.intact.util.cdb;
 
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.*;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Module used to collect information from CitExplore in order to prefill an Experiment (shortlabel, fullname, Xref,
@@ -23,6 +26,8 @@ import java.util.*;
  * @since <pre>17-Aug-2005</pre>
  */
 public class ExperimentAutoFill {
+
+    private static final Log log = LogFactory.getLog(ExperimentAutoFill.class);
 
     /////////////////////////
     // Inner Class
@@ -151,30 +156,29 @@ public class ExperimentAutoFill {
      * (5) get the suffix for the new experiment
      * </pre>
      *
-     * @param helper the access to the database in which we want to create a new experiment.
-     *
      * @return the generated shortlabel.
      *
      * @throws IntactException              if an error occured when accessing IntAct.
      * @throws UnexpectedException          If some unexpected error occured
      * @throws PublicationNotFoundException if the given pubmed ID could not be found or retreived from CitExplore.
      */
-    public String getShortlabel( IntactHelper helper ) throws IntactException,
+    public String getShortlabel() throws IntactException,
                                                               UnexpectedException,
                                                               PublicationNotFoundException {
 
-        CvDatabase pubmed = (CvDatabase) helper.getObjectByXref( CvDatabase.class, CvDatabase.PUBMED_MI_REF );
-        CvXrefQualifier primaryRef = (CvXrefQualifier) helper.getObjectByXref( CvXrefQualifier.class, CvXrefQualifier.PRIMARY_REFERENCE_MI_REF );
+        CvDatabase pubmed = DaoFactory.getCvObjectDao(CvDatabase.class).getByXref( CvDatabase.PUBMED_MI_REF );
+        CvXrefQualifier primaryRef = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByXref(CvXrefQualifier.PRIMARY_REFERENCE_MI_REF );
 
         // Load, from IntAct, all existing experiment having that same pudmed ID.
 
         // (1) load all experimentXrefs having that same pubmed ID
-        Collection experimentXrefs = helper.getObjectsByXref( Experiment.class, pubmed, primaryRef, pubmedID );
+        Collection experimentXrefs = DaoFactory.getExperimentDao().getByXrefLike(pubmedID);
+
         if ( _DEBUG_ ) {
-            System.out.println( "Found " + experimentXrefs.size() + " experiment(s) by PubMed( " + pubmedID + " )" );
+            log.debug( "Found " + experimentXrefs.size() + " experiment(s) by PubMed( " + pubmedID + " )" );
             for ( Iterator iterator = experimentXrefs.iterator(); iterator.hasNext(); ) {
                 Experiment experiment = (Experiment) iterator.next();
-                System.out.println( experiment.getShortLabel() );
+                log.debug( experiment.getShortLabel() );
             }
         }
 
@@ -184,12 +188,13 @@ public class ExperimentAutoFill {
         int year = citation.getYear();
         String prefix = authorLastName + "-" + year;
 
-        Collection experimentLLabels = helper.search( Experiment.class, "shortlabel", prefix + "*" );
+        Collection experimentLLabels = DaoFactory.getExperimentDao().getByShortLabelLike(prefix+"%");
+
         if ( _DEBUG_ ) {
-            System.out.println( "Found " + experimentLLabels.size() + " experiment(s) by prefix( " + prefix + " )" );
+            log.debug( "Found " + experimentLLabels.size() + " experiment(s) by prefix( " + prefix + " )" );
             for ( Iterator iterator = experimentLLabels.iterator(); iterator.hasNext(); ) {
                 Experiment experiment = (Experiment) iterator.next();
-                System.out.println( experiment.getShortLabel() );
+                log.debug( experiment.getShortLabel() );
             }
         }
 
@@ -205,7 +210,7 @@ public class ExperimentAutoFill {
 
         // (4) add then to the Suffix generator as context
         if ( _DEBUG_ ) {
-            System.out.println( "Initialise the current context" );
+            log.debug( "Initialise the current context" );
         }
         ExperimentShortlabelGenerator suffixGenerator = new ExperimentShortlabelGenerator();
         for ( Iterator iterator = allExperiments.iterator(); iterator.hasNext(); ) {
@@ -219,7 +224,7 @@ public class ExperimentAutoFill {
 
             String s = suffixGenerator.getSuffix( citation.getAuthorLastName(), citation.getYear(), pmid );
             if ( _DEBUG_ ) {
-                System.out.println( "   --->   " + s );
+                log.debug( "   --->   " + s );
             }
         }
 
@@ -268,7 +273,8 @@ public class ExperimentAutoFill {
 
     public static void main( String[] args ) throws Exception {
 
-        IntactHelper helper = new IntactHelper();
+        DaoFactory.beginTransaction();
+
         // working cases
 //        ExperimentAutoFill eaf = new ExperimentAutoFill( "12130660" ); // with more than one pub by year
 //        ExperimentAutoFill eaf = new ExperimentAutoFill( "16104060" );   // not in IntAct, neither in CitExplore
@@ -283,15 +289,16 @@ public class ExperimentAutoFill {
 //        ExperimentAutoFill eaf = new ExperimentAutoFill( "blabla" );   // invalid pubmed id
 
 
-        System.out.println( eaf.getShortlabel( helper ) );
-        helper.closeStore();
+        log.info( eaf.getShortlabel( ) );
 
-        System.out.println( eaf.getFullname() );
-        System.out.println( eaf.getAuthorList() );
+        log.info( eaf.getFullname() );
+        log.info( eaf.getAuthorList() );
         if ( eaf.hasAuthorEmail() ) {
-            System.out.println( eaf.getAuthorEmail() );
+            log.info( eaf.getAuthorEmail() );
         } else {
-            System.out.println( "No email" );
+            log.info( "No email" );
         }
+
+        DaoFactory.commitTransaction();
     }
 }

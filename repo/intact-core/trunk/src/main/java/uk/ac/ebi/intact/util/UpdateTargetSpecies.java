@@ -6,10 +6,12 @@
 package uk.ac.ebi.intact.util;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.ojb.broker.accesslayer.LookupException;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -31,6 +33,8 @@ import java.util.*;
  * @since <pre>04-Oct-2005</pre>
  */
 public class UpdateTargetSpecies {
+
+    private static final Log log = LogFactory.getLog(UpdateTargetSpecies.class);
 
     //////////////////////////
     // Inner class
@@ -94,35 +98,33 @@ public class UpdateTargetSpecies {
     /**
      * Collect required CVs. Throws a RuntimeException if one of the object is not found.
      *
-     * @param helper dataSource
-     *
      * @throws IntactException
      */
-    public static void init( IntactHelper helper ) throws IntactException {
+    public static void init() throws IntactException {
 
         // loading required CVs
-        noUniprotUpdate = helper.getObjectByLabel( CvTopic.class, CvTopic.NON_UNIPROT );
+        noUniprotUpdate = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel( CvTopic.NON_UNIPROT );
         if ( noUniprotUpdate == null ) {
             throw new IllegalStateException( "The IntAct database should contain a CvTopic( " +
                                              CvTopic.NON_UNIPROT + " ). abort." );
         } else {
-            System.out.println( "CvTopic( " + CvTopic.NON_UNIPROT + " ) found." );
+            log.warn( "CvTopic( " + CvTopic.NON_UNIPROT + " ) found." );
         }
 
-        newt = helper.getObjectByPrimaryId( CvDatabase.class, CvDatabase.NEWT_MI_REF );
+        newt = DaoFactory.getCvObjectDao(CvDatabase.class).getByXref( CvDatabase.NEWT_MI_REF );
         if ( newt == null ) {
             throw new IllegalStateException( "The IntAct database should contain a CvDatabase( " + CvDatabase.NEWT +
                                              " ) having an Xref( " + CvDatabase.NEWT_MI_REF + " ). abort." );
         } else {
-            System.out.println( "CvDatabase( " + CvDatabase.NEWT + " ) found." );
+            log.debug( "CvDatabase( " + CvDatabase.NEWT + " ) found." );
         }
 
-        targetSpeciesQualifier = helper.getObjectByLabel( CvXrefQualifier.class, CvXrefQualifier.TARGET_SPECIES );
+        targetSpeciesQualifier = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByShortLabel( CvXrefQualifier.TARGET_SPECIES );
         if ( targetSpeciesQualifier == null ) {
             throw new IllegalStateException( "The IntAct database should contain a CvXrefQualifier( " +
                                              CvXrefQualifier.TARGET_SPECIES + " ). abort." );
         } else {
-            System.out.println( "CvXrefQualifier( " + CvXrefQualifier.TARGET_SPECIES + " ) found" );
+            log.debug( "CvXrefQualifier( " + CvXrefQualifier.TARGET_SPECIES + " ) found" );
         }
     }
 
@@ -181,16 +183,16 @@ public class UpdateTargetSpecies {
      */
     public static void main( String[] args ) throws IntactException, SQLException, LookupException {
 
-        IntactHelper helper = null;
-        try {
-            helper = new IntactHelper();
-            System.out.println( "Database: " + helper.getDbName() );
-            System.out.println( "User: " + helper.getDbUserName() );
+            if (log.isInfoEnabled())
+            {
+                log.info( "Database: " + DaoFactory.getBaseDao().getDbName() );
+                log.info( "User: " + DaoFactory.getBaseDao().getDbUserName() );
+            }
 
-            init( helper );
+            init( );
 
             // get all experiments
-            Collection experiments = helper.search( Experiment.class, "shortlabel", "*" );
+            Collection experiments = DaoFactory.getExperimentDao().getAll();
 
             Map biosource2count = new HashMap( 4 );
             Set biosources = new HashSet( 4 );
@@ -201,7 +203,7 @@ public class UpdateTargetSpecies {
             for ( Iterator iterator = experiments.iterator(); iterator.hasNext(); ) {
                 Experiment experiment = (Experiment) iterator.next();
 
-                System.out.println( "Updating " + experiment.getShortLabel() + " (" + experiment.getAc() + ")" );
+                log.debug( "Updating " + experiment.getShortLabel() + " (" + experiment.getAc() + ")" );
 
                 // empty collections
                 biosources.clear();
@@ -246,16 +248,16 @@ public class UpdateTargetSpecies {
                     BioSource bioSource = (BioSource) iterator1.next();
 
                     // create the Xref
-                    Xref xref = new Xref( helper.getInstitution(), newt,
+                    Xref xref = new Xref( DaoFactory.getInstitutionDao().getInstitution(), newt,
                                           bioSource.getTaxId(), bioSource.getShortLabel(),
                                           null,
                                           targetSpeciesQualifier );
 
                     // add it only if not already there
                     if ( ! experiment.getXrefs().contains( xref ) ) {
-                        System.out.println( "\tAdding Xref(" + xref.getPrimaryId() + ", " + xref.getSecondaryId() + ")" );
+                        log.debug( "\tAdding Xref(" + xref.getPrimaryId() + ", " + xref.getSecondaryId() + ")" );
                         experiment.addXref( xref );
-                        helper.create( xref );
+                        DaoFactory.getXrefDao().persist( xref );
                     } else {
                         // only keep in that collection the Xref that do not match the set of BioSource.
                         existingTargetXrefs.remove( xref );
@@ -267,9 +269,9 @@ public class UpdateTargetSpecies {
                 for ( Iterator iterator1 = existingTargetXrefs.iterator(); iterator1.hasNext(); ) {
                     Xref xref = (Xref) iterator1.next();
 
-                    System.out.println( "\tRemove Xref(" + xref.getPrimaryId() + ", " + xref.getSecondaryId() + ")" );
+                    log.debug( "\tRemove Xref(" + xref.getPrimaryId() + ", " + xref.getSecondaryId() + ")" );
                     experiment.removeXref( xref );
-                    helper.delete( xref );
+                    DaoFactory.getXrefDao().delete( xref );
                 }
 
                 // try to free up some resource.
@@ -291,7 +293,7 @@ public class UpdateTargetSpecies {
                 }
 
                 stats.add( sb.toString() );
-                System.out.println( sb.toString() );
+                log.debug( sb.toString() );
 
 
             } // experiments
@@ -308,13 +310,7 @@ public class UpdateTargetSpecies {
 
                 out.close();
             } catch ( IOException e ) {
+                e.printStackTrace();
             }
-
-        } finally {
-            if ( helper != null ) {
-                helper.closeStore();
-                System.out.println( "Database access closed." );
-            }
-        }
     }
 }

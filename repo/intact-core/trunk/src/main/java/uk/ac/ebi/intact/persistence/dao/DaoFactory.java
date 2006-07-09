@@ -6,6 +6,8 @@
 package uk.ac.ebi.intact.persistence.dao;
 
 import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.HibernateException;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.IntactObject;
@@ -40,6 +42,8 @@ import java.sql.Connection;
  */
 public class DaoFactory
 {
+    private static Transaction activeTransaction;
+
     private DaoFactory(){}
 
     public static AliasDao getAliasDao()
@@ -47,6 +51,12 @@ public class DaoFactory
         return new AliasDaoImpl(getCurrentSession());
     }
 
+    public static AnnotatedObjectDao<AnnotatedObject> getAnnotatedObjectDao()
+    {
+       return new AnnotatedObjectDaoImpl<AnnotatedObject>(AnnotatedObject.class, getCurrentSession());
+    }
+
+    @Deprecated
     public static <T extends AnnotatedObject> AnnotatedObjectDao<T> getAnnotatedObjectDao(Class<T> entityType)
     {
         HibernateBaseDaoImpl.validateEntity(entityType);
@@ -74,6 +84,11 @@ public class DaoFactory
         return new ComponentDaoImpl(getCurrentSession());
     }
 
+    public static CvObjectDao<CvObject> getCvObjectDao()
+    {
+        return new CvObjectDaoImpl<CvObject>(CvObject.class, getCurrentSession());
+    }
+
     public static <T extends CvObject> CvObjectDao<T> getCvObjectDao(Class<T> entityType)
     {
         return new CvObjectDaoImpl<T>(entityType, getCurrentSession());
@@ -94,6 +109,12 @@ public class DaoFactory
         return new InstitutionDaoImpl(getCurrentSession());
     }
 
+    public static IntactObjectDao<IntactObject> getIntactObjectDao()
+    {
+        return new IntactObjectDaoImpl<IntactObject>(IntactObject.class, getCurrentSession());
+    }
+
+    @Deprecated
     public static <T extends IntactObject> IntactObjectDao<T> getIntactObjectDao(Class<T> entityType)
     {
         HibernateBaseDaoImpl.validateEntity(entityType);
@@ -139,6 +160,29 @@ public class DaoFactory
     public static Connection connection()
     {
         return getCurrentSession().connection();
+    }
+
+    public static void beginTransaction()
+    {
+       activeTransaction = getCurrentSession().beginTransaction();
+    }
+
+    public static void commitTransaction()
+    {
+        if (activeTransaction != null)
+        {
+            try
+            {
+                activeTransaction.commit();
+            }
+            catch (HibernateException e)
+            {
+                e.printStackTrace();
+                activeTransaction.rollback();
+            }
+        }
+
+        activeTransaction = null;
     }
 
 }
