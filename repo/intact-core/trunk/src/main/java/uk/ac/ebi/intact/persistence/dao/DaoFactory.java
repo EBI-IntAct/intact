@@ -158,8 +158,8 @@ public class DaoFactory
 
     private static Session getCurrentSession()
     {
-        checkStatus();
-        
+        //checkStatus();
+
         return HibernateUtil.getSessionFactory().getCurrentSession();
     }
 
@@ -181,7 +181,7 @@ public class DaoFactory
 
     public static boolean isTransactionActive()
     {
-        return (activeTransaction != null && activeTransaction.isActive());
+        return (activeTransaction != null);
     }
 
     public static void commitTransaction()
