@@ -9,6 +9,7 @@ package uk.ac.ebi.intact.application.editor.business;
 import org.apache.log4j.Logger;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ojb.broker.accesslayer.LookupException;
 import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
@@ -42,6 +43,7 @@ import java.net.MalformedURLException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.sql.SQLException;
 
 /**
  * This class stores information about an Intact Web user session. Instead of
@@ -268,7 +270,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     // Methods to handle special serialization issues.
 
     private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
+                                                         ClassNotFoundException {
         in.defaultReadObject();
         try {
             initialize();
@@ -354,7 +356,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     }
 
     public <T extends IntactObject> Collection<T> search(Class<T> objectType, String searchParam,
-                             String searchValue) throws IntactException {
+                                                         String searchValue) throws IntactException {
         throw new UnsupportedOperationException();
     }
 
@@ -472,7 +474,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         // Construct the the helper.
         return IntactHelperUtil.getIntactHelper(myUserName, myPassword);
     }
-    
+
     public void startEditing() {
         myEditState = true;
     }
@@ -694,8 +696,17 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      */
     private void initialize() throws IntactException {
         IntactHelper helper = getIntactHelper();
-        myDatabaseName = helper.getDbName();
-
+//        myDatabaseName = helper.getDbName();
+//         try {
+//            helper.getJDBCConnection();//.getDbUserName();
+//        } catch (IntactException e) {
+//            throw new IntactException("Invalid helper get with for username : " + myUserName );
+//         }
+        try {
+            helper.getJDBCConnection().getMetaData();
+        } catch (SQLException e) {
+            throw new IntactException("Invalid helper get with for username : " + myUserName );
+        }
         // Initialize the Protein factory. Needs a valid to initialize factory values.
         try {
             myProteinFactory = new UpdateProteins();
