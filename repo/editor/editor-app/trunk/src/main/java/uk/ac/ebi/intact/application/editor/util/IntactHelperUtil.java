@@ -8,6 +8,11 @@ package uk.ac.ebi.intact.application.editor.util;
 
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import org.apache.ojb.broker.accesslayer.LookupException;
+import org.apache.log4j.Logger;
+
+import java.sql.SQLException;
 
 /**
  * This class manages a ThreadLocal IntactHelper instance. Obtain the helper
@@ -39,13 +44,31 @@ public class IntactHelperUtil {
      * thread; otherwise, the IntactHelper for the current thread is returned.
      * @throws IntactException for problems in creating an IntactHelper.
      */
-    public static IntactHelper getIntactHelper(String user, String password)
-            throws IntactException {
+    public static IntactHelper getIntactHelper(String user, String password) throws IntactException {
         IntactHelper helper = (IntactHelper) ourThreadHelper.get();
         if (helper == null) {
             helper = (user == null) ? new IntactHelper() : new IntactHelper(user, password);
             ourThreadHelper.set(helper);
         }
+
+
+        String userName;
+        try {
+            userName = helper.getDbUserName();
+            userName = userName.toLowerCase();
+        } catch (LookupException e) {
+            throw new IntactException("Can't login", e);
+        } catch (SQLException e) {
+            throw new IntactException("Can't login", e);
+
+        }
+        if(user != null){
+        if(!user.toLowerCase().equals(userName)) {
+                helper = (user == null) ? new IntactHelper() : new IntactHelper(user, password);
+                ourThreadHelper.set(helper);
+            }
+        }
+
         return helper;
     }
 

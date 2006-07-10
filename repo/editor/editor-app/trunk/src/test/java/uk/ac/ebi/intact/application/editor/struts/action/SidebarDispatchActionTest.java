@@ -359,7 +359,6 @@ public class SidebarDispatchActionTest extends MockStrutsTestCase {
 
     }
 
-
     private ActionServlet getActionServletFromLogin() {
         LoginPropertiesGetter loginProperties = new LoginPropertiesGetter();
         setRequestPathInfo("/login");

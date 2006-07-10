@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.application.editor.event.EventListener;
 import uk.ac.ebi.intact.application.editor.event.LoginEvent;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.business.IntactException;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
