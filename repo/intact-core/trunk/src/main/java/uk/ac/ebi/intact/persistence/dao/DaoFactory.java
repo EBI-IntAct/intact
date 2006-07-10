@@ -8,6 +8,8 @@ package uk.ac.ebi.intact.persistence.dao;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.HibernateException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.IntactObject;
@@ -42,6 +44,8 @@ import java.sql.Connection;
  */
 public class DaoFactory
 {
+    private static final Log log = LogFactory.getLog(DaoFactory.class);
+
     private static Transaction activeTransaction;
 
     private DaoFactory(){}
@@ -154,6 +158,8 @@ public class DaoFactory
 
     private static Session getCurrentSession()
     {
+        checkStatus();
+        
         return HibernateUtil.getSessionFactory().getCurrentSession();
     }
 
@@ -162,14 +168,27 @@ public class DaoFactory
         return getCurrentSession().connection();
     }
 
-    public static void beginTransaction()
+    public static Object beginTransaction()
     {
-       activeTransaction = getCurrentSession().beginTransaction();
+        log.debug("Starting transaction");
+        if (!isTransactionActive())
+        {
+            activeTransaction = getCurrentSession().beginTransaction();
+        }
+
+        return activeTransaction;
+    }
+
+    public static boolean isTransactionActive()
+    {
+        return (activeTransaction != null && activeTransaction.isActive());
     }
 
     public static void commitTransaction()
     {
-        if (activeTransaction != null)
+        log.debug("Committing transaction");
+
+        if (isTransactionActive())
         {
             try
             {
@@ -183,6 +202,15 @@ public class DaoFactory
         }
 
         activeTransaction = null;
+    }
+
+    private static void checkStatus()
+    {
+        if (!DaoFactory.isTransactionActive())
+        {
+            throw new HibernateException("All queries have to be under a Transaction. Use DaoFactory.beginTransaction() before " +
+                    "using any DAO. Commit the transaction with DaoFactory.commitTransaction() afterwards");
+        }
     }
 
 }
