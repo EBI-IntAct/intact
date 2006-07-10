@@ -74,6 +74,13 @@ public class IntactObjectDaoImpl<T extends IntactObject> extends HibernateBaseDa
         return getSession().createCriteria(getEntityClass()).list();
     }
 
+    public List<T> getAll(int firstResult, int maxResults)
+    {
+        return getSession().createCriteria(getEntityClass())
+                .setFirstResult(firstResult)
+                .setMaxResults(maxResults).list();
+    }
+
     public void update(T objToUpdate)
     {
        getSession().update(objToUpdate);

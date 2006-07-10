@@ -10,6 +10,8 @@ import uk.ac.ebi.intact.model.IntactObject;
 import java.util.List;
 import java.util.Collection;
 
+import org.hibernate.ScrollableResults;
+
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -26,6 +28,8 @@ public interface IntactObjectDao<T extends IntactObject>
     List<T> getByAc(Collection<String> acs);
 
     List<T> getAll();
+
+    List<T> getAll(int firstResult, int maxResults);
 
     Collection<T> getColByPropertyName(String propertyName, String value);
 
