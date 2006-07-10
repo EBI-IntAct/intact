@@ -29,10 +29,13 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.IntactObject;
+import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.util.GoServerProxy;
 import uk.ac.ebi.intact.util.NewtServerProxy;
 import uk.ac.ebi.intact.util.UpdateProteins;
 import uk.ac.ebi.intact.util.UpdateProteinsI;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.InteractorDao;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSessionBindingEvent;
@@ -575,7 +578,14 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
         // The result to return.
         try {
-            return helper.searchByQuery(SearchClass.valueOfMappedClass(clazz), param, value, max);
+            InteractorDao interactorDao = DaoFactory.getInteractorDao();
+            Collection<Interactor> interactors= interactorDao.getColByPropertyName(param, value);
+            if (interactors.isEmpty()) {
+                return new ResultWrapper(0, max);
+            }
+            else {
+                return new ResultWrapper(interactors, max);
+            }
         }
         catch (IntactException e) {
             // This is an internal error. Log it.
