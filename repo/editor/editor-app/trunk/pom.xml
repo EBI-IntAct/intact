@@ -58,6 +58,10 @@
             <build>
                 <testResources>
                     <testResource>
+                        <directory>src/test/resources</directory>
+                        <filtering>true</filtering>
+                    </testResource>
+                    <testResource>
                         <directory>src/main/webapp</directory>
                     </testResource>
                 </testResources>
