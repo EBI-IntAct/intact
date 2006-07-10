@@ -145,7 +145,7 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
             /*************************************************************************************************
             C r e a t i n g   t h e   s h o r t l a b e l   a n d   a d d i n g   i t   t o   t h e   v i e w
             **************************************************************************************************/
-            String shortlabel = eaf.getShortlabel(helper);
+            String shortlabel = eaf.getShortlabel();
             view.setShortLabel(shortlabel);
 
             /******************************************************************************************
