@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.application.editor.LoginPropertiesGetter;
 import uk.ac.ebi.intact.persistence.util.HibernateUtil;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 /**
  * This class permit to test the SidebarDispatchAction.
@@ -34,25 +35,21 @@ import uk.ac.ebi.intact.persistence.util.HibernateUtil;
  * Giving a type of Object and pressing the "Create" button this action will :
  *      Open a blank Editor page corresponding to this object.
  *
- * TODO : Modify this method so that, I enter my self before running the test all the object I want to search for as at
- * present, those tests are not portable.
- *
  * @author Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id$
  */
 public class SidebarDispatchActionTest extends MockStrutsTestCase {
 
-    private Transaction tx;
-
     public void setUp() throws Exception {
         super.setUp();
 
-        tx = HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+        DaoFactory.beginTransaction();
     }
 
     public void tearDown() throws Exception {
         super.tearDown();
-        tx.commit();
+
+        DaoFactory.commitTransaction();
 
     }
 

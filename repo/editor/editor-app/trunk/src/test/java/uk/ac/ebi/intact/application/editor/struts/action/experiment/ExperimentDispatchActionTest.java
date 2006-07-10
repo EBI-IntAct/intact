@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.application.editor.event.EventListener;
 import uk.ac.ebi.intact.application.editor.LoginPropertiesGetter;
 import uk.ac.ebi.intact.persistence.util.HibernateUtil;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 /**
  * TODO comment it.
@@ -22,16 +23,15 @@ import uk.ac.ebi.intact.persistence.util.HibernateUtil;
  * @version $Id$
  */
 public class ExperimentDispatchActionTest extends MockStrutsTestCase {
-    private Transaction tx;
 
     public void setUp() throws Exception { 
         super.setUp();
-        tx = HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+        DaoFactory.beginTransaction();
     }
 
     public void tearDown() throws Exception {
         super.tearDown();
-        tx.commit();
+        DaoFactory.commitTransaction();
     }
 
     public ExperimentDispatchActionTest(String testName) {
