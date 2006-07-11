@@ -91,7 +91,6 @@ public class HibernateConfigCreatorMojo
      */
     private String password;
 
-
     public void execute() throws MojoExecutionException
     {
         getLog().info("Hibernate Mojo in action");
@@ -140,7 +139,8 @@ public class HibernateConfigCreatorMojo
          // Adding the resources
          List includes = Collections.singletonList(filename);
          List excludes = null;
-         helper.addResource(project, outputResourcesDir.toString(), includes, excludes);
+
+        helper.addResource(project, outputResourcesDir.toString(), includes, excludes);
 
     }
 
