@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceViewBean;
+import uk.ac.ebi.intact.application.editor.util.CvHelper;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.BioSource;
@@ -19,6 +20,7 @@ import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.util.NewtServerProxy;
+import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -212,14 +214,17 @@ public class BioSourceAction extends AbstractEditorAction {
     private Xref createTaxXref(IntactHelper helper, String taxid, String label)
             throws IntactException {
         // The database the new xref belong to.
-        CvDatabase db = (CvDatabase) helper.getObjectByLabel(CvDatabase.class,
-                    getService().getResource("taxid.db"));
 
+        //getByXrefLike(CvDatabase database, CvXrefQualifier qualifier, String primaryId)
+//        CvDatabase db = (CvDatabase) helper.getObjectByLabel(CvDatabase.class,
+//                    getService().getResource("taxid.db"));
+        CvDatabase db = CvHelper.getNewt();
         // The qualifier is identity
         CvXrefQualifier xqual = (CvXrefQualifier) helper.getObjectByLabel(
                     CvXrefQualifier.class, "identity");
         return new Xref(getService().getOwner(), db, taxid, label, null, xqual);
     }
+
 
     /**
      * Returns the Xreference bean for given primary id and the database name.
