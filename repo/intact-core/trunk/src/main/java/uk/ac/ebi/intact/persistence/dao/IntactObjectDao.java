@@ -7,10 +7,9 @@ package uk.ac.ebi.intact.persistence.dao;
 
 import uk.ac.ebi.intact.model.IntactObject;
 
-import java.util.List;
 import java.util.Collection;
-
-import org.hibernate.ScrollableResults;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
@@ -30,6 +29,10 @@ public interface IntactObjectDao<T extends IntactObject>
     List<T> getAll();
 
     List<T> getAll(int firstResult, int maxResults);
+
+    public int countAll();
+
+    public Iterator<T> iterator();
 
     Collection<T> getColByPropertyName(String propertyName, String value);
 
