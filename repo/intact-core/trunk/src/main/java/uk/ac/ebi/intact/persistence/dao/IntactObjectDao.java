@@ -33,6 +33,8 @@ public interface IntactObjectDao<T extends IntactObject>
     public int countAll();
 
     public Iterator<T> iterator();
+    
+    public Iterator<T> iterator( int batchSize );
 
     Collection<T> getColByPropertyName(String propertyName, String value);
 
