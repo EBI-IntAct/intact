@@ -16,8 +16,8 @@ import javax.persistence.DiscriminatorValue;
  * @author Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id$
  */
-@Entity
-@DiscriminatorValue("uk.ac.ebi.intact.model.SmallMolleculeImpl")
+@Entity              		
+@DiscriminatorValue("uk.ac.ebi.intact.model.SmallMoleculeImpl")
 @EditorTopic(name = "SmallMolecule")
 public class SmallMoleculeImpl extends InteractorImpl implements SmallMolecule, Editable{
     public SmallMoleculeImpl(){
