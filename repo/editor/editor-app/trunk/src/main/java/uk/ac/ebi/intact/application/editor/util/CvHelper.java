@@ -8,9 +8,13 @@ package uk.ac.ebi.intact.application.editor.util;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 
 import java.util.Collection;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class is an Helper to
@@ -23,6 +27,7 @@ public class CvHelper {
      * psi-mi CvDatabase.
      */
     private static CvDatabase psiMi;
+    private static CvDatabase newt;
     /**
      * Identity CvXrefQualifier.
      */
@@ -44,9 +49,6 @@ public class CvHelper {
      */
     private static CvInteractorType protein;
 
-    private static IntactHelper helper;
-
-
     /**
      * This class is used in the Editor where the IntactHelper is strictly managed.
      * The needed helper are managed and given by the IntactHelperUtil class.
@@ -54,11 +56,7 @@ public class CvHelper {
      * argument of the constructor and we make the no argument constructor private.
      *
      */
-    private CvHelper(){
-    }
-
-    public CvHelper(IntactHelper helper) {
-        this.helper = helper;
+    public CvHelper(){
     }
 
 
@@ -68,9 +66,9 @@ public class CvHelper {
      * @throws IntactException
      */
     public static CvInteractorType getProtein() throws IntactException {
-            if (protein == null)
-                protein = (CvInteractorType) getCvUsingItsMiRef(CvInteractorType.PROTEIN_MI_REF);
-            return protein;
+        if (protein == null)
+            protein = (CvInteractorType) getCvUsingItsMiRef(CvInteractorType.PROTEIN_MI_REF);
+        return protein;
     }
 
     /**
@@ -79,9 +77,9 @@ public class CvHelper {
      * @throws IntactException
      */
     public static CvInteractorType getNucleicAcid() throws IntactException {
-            if (nucleicAcid == null)
-                nucleicAcid = (CvInteractorType) getCvUsingItsMiRef(CvInteractorType.NUCLEIC_ACID_MI_REF);
-            return nucleicAcid;
+        if (nucleicAcid == null)
+            nucleicAcid = (CvInteractorType) getCvUsingItsMiRef(CvInteractorType.NUCLEIC_ACID_MI_REF);
+        return nucleicAcid;
     }
 
     /**
@@ -90,9 +88,9 @@ public class CvHelper {
      * @throws IntactException
      */
     public static CvInteractorType getInteraction() throws IntactException {
-            if (interaction == null)
-                interaction = (CvInteractorType) getCvUsingItsMiRef(CvInteractorType.INTERACTION_MI_REF);
-            return interaction;
+        if (interaction == null)
+            interaction = (CvInteractorType) getCvUsingItsMiRef(CvInteractorType.INTERACTION_MI_REF);
+        return interaction;
     }
 
     /**
@@ -101,10 +99,10 @@ public class CvHelper {
      * @throws IntactException
      */
     public static CvTopic getObsolete() throws IntactException {
-            if (obsolete == null)
-                obsolete = (CvTopic) getCvUsingItsMiRef(CvTopic.OBSOLETE_MI_REF);
-            return obsolete;
-        }
+        if (obsolete == null)
+            obsolete = (CvTopic) getCvUsingItsMiRef(CvTopic.OBSOLETE_MI_REF);
+        return obsolete;
+    }
 
     /**
      * PsiMi CvDatabase getter.
@@ -113,9 +111,19 @@ public class CvHelper {
      */
 
     public static CvDatabase getPsiMi() throws IntactException {
-        if (psiMi == null)
-            psiMi = (CvDatabase) getCvUsingItsMiRef(CvDatabase.PSI_MI_MI_REF);
+        if (psiMi == null){
+            CvObjectDao cvObjectDao = DaoFactory.getCvObjectDao();
+            psiMi = (CvDatabase) cvObjectDao.getByXref(CvDatabase.PSI_MI_MI_REF);
+        }
         return psiMi;
+    }
+
+
+    public static CvDatabase getNewt() throws IntactException {
+        if(newt == null){
+            newt = (CvDatabase) getCvUsingItsMiRef(CvDatabase.NEWT_MI_REF);
+        }
+        return newt;
     }
 
     /**
@@ -124,8 +132,11 @@ public class CvHelper {
      * @throws IntactException
      */
     public  static CvXrefQualifier getIdentity() throws IntactException {
-        if (identity == null)
-            identity = (CvXrefQualifier) getCvUsingItsMiRef(CvXrefQualifier.IDENTITY_MI_REF);
+
+        if (identity == null){
+            CvObjectDao cvObjectDao = DaoFactory.getCvObjectDao();
+            identity = (CvXrefQualifier) cvObjectDao.getByXref(CvXrefQualifier.IDENTITY_MI_REF);
+        }
         return identity;
     }
 
@@ -136,11 +147,16 @@ public class CvHelper {
      * @throws IntactException
      */
     private static CvObject getCvUsingItsMiRef(String psiMiId) throws IntactException {
-            CvObject cv = helper.getObjectByPrimaryId(CvObject.class, psiMiId);
-            if (cv == null)
-                throw new IntactException("Could not retrieve CvObject from database using the MI_REF " + psiMiId);
-            return cv;
+        CvObjectDao cvObjectDao = DaoFactory.getCvObjectDao();
+        List<CvObject> cvObjects = cvObjectDao.getByXrefLike(getPsiMi(), getIdentity(), psiMiId);
+
+        if (! (cvObjects.size()== 1) ){
+            throw new IntactException("Retrieve " + cvObjects.size() + " CvObjects from database using the MI_REF "
+                    + psiMiId);
+        }
+        return cvObjects.get(0);
     }
+
 
     /**
      * Given a CvDagObject, it returns a collection containing all it's children and grand children.
@@ -211,15 +227,18 @@ public class CvHelper {
     }
 
     public static void main(String[] args) throws IntactException {
-        IntactHelper helper = new IntactHelper();
-        CvHelper cvsTest = new CvHelper(helper);
 
-        Collection<String> miRefs = new ArrayList();
-        miRefs = cvsTest.getChildrenMiRefs(cvsTest.getNucleicAcid(), miRefs);
-        System.out.println("miRefs.size() = " + miRefs.size());
-        for(String miRef : miRefs){
-            System.out.println("miRef = " + miRef);
-        }
-
+//        Collection<String> miRefs = new ArrayList();
+//        miRefs = cvsTest.getChildrenMiRefs(cvsTest.getNucleicAcid(), miRefs);
+//        System.out.println("miRefs.size() = " + miRefs.size());
+//        for(String miRef : miRefs){
+//            System.out.println("miRef = " + miRef);
+//        }
+        DaoFactory.beginTransaction();
+        CvInteractorType newt = CvHelper.getNucleicAcid();//.getNewt();
+        System.out.println("newt.getShortLabel() = " + newt.getShortLabel());
+        DaoFactory.commitTransaction();
     }
+
+
 }
