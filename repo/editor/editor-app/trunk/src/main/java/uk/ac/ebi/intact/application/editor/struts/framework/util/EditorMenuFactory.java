@@ -165,13 +165,13 @@ public class EditorMenuFactory {
         Collection<String> nucleicAcidMIs = new ArrayList();
         Collection<String> proteinMIs = new ArrayList();
         try {
-            cvHelper = new CvHelper(IntactHelperUtil.getDefaultIntactHelper());
+            cvHelper = new CvHelper();
 
             CvInteractorType nucleicAcid = cvHelper.getNucleicAcid();
             nucleicAcidMIs = cvHelper.getChildrenMiRefs(nucleicAcid, nucleicAcidMIs);
             nucleicAcidMIs.add(CvInteractorType.NUCLEIC_ACID_MI_REF);
 
-            CvInteractorType protein = cvHelper.getProtein();
+            CvInteractorType protein = CvHelper.getProtein();
             proteinMIs = cvHelper.getChildrenMiRefs(protein, proteinMIs);
             proteinMIs.add(CvInteractorType.PROTEIN_MI_REF);
 
