@@ -18,9 +18,9 @@
     </description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/editor/maven-editortopics-plugin/trunk</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/editor/maven-editortopics-plugin/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/editor/maven-editortopics-plugin/trunk/</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven-plugins/maven-sanitychecker-plugin/trunk</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven-plugins/maven-sanitychecker-plugin/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven-plugins/maven-sanitychecker-plugin/trunk/</url>
     </scm>
 
     <dependencies>
