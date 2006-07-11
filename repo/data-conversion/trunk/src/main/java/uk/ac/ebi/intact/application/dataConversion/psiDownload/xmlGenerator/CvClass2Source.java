@@ -5,6 +5,8 @@
  */
 package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator;
 
+import uk.ac.ebi.intact.persistence.util.CgLibUtil;
+
 /**
  * Class describing the source of the association between a CV class and a node Name.
  *
@@ -17,44 +19,13 @@ public class CvClass2Source {
     private String parentNodeName;
 
     public CvClass2Source( Class clazz, String parentNodeName ) {
-        this.clazz = removeCglibEnhanced(clazz);
+        this.clazz = CgLibUtil.removeCglibEnhanced(clazz);
         this.parentNodeName = parentNodeName;
     }
 
     public CvClass2Source( Class clazz ) {
-        this.clazz = removeCglibEnhanced(clazz);
+        this.clazz = CgLibUtil.removeCglibEnhanced(clazz);
         this.parentNodeName = null;
-    }
-
-    /**
-     * Gets the correct class, removing the CGLIB enhanced part.
-     * (e.g uk.ac.ebi.intact.model.CvInteraction$$EnhancerByCGLIB$$93628752 to uk.ac.ebi.intact.model.CvInteraction)
-     * @return
-     */
-    private Class removeCglibEnhanced(Class clazz)
-    {
-        if (clazz == null)
-        {
-            throw new IllegalArgumentException("You must give a non null Class");
-        }
-
-        String className = clazz.getName();
-
-        if (className.contains("$$"))
-        {
-            className = className.substring(0, className.indexOf("$$"));
-        }
-
-        try
-        {
-            return Class.forName(className);
-        }
-        catch (ClassNotFoundException e)
-        {
-            e.printStackTrace();
-        }
-
-        return clazz;
     }
 
     public boolean equals( Object o ) {
