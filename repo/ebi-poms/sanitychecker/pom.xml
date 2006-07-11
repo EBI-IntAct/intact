@@ -11,6 +11,12 @@
         This plugin executes the sanity check
     </description>
 
+    <scm>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/ebi-poms/sanitychecker/</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/ebi-poms/sanitychecker/</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/ebi-poms/sanitychecker/</url>
+    </scm>
+
     <build>
         <plugins>
             <plugin>
