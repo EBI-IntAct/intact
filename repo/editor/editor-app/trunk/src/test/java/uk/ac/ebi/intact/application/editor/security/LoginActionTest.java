@@ -5,14 +5,13 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.editor.struts.security;
 
-import servletunit.struts.MockStrutsTestCase;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.application.editor.event.EventListener;
-import uk.ac.ebi.intact.application.editor.LoginPropertiesGetter;
-import uk.ac.ebi.intact.persistence.util.HibernateUtil;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import org.apache.struts.action.ActionServlet;
-import org.hibernate.Transaction;
+import servletunit.struts.MockStrutsTestCase;
+import uk.ac.ebi.intact.application.editor.LoginPropertiesGetter;
+import uk.ac.ebi.intact.application.editor.event.EventListener;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
 
 
 /**
@@ -23,15 +22,17 @@ import org.hibernate.Transaction;
  */
 public class LoginActionTest extends MockStrutsTestCase {
 
+    private IntactTransaction tx;
+
     public void setUp() throws Exception {
         super.setUp();
 
-        DaoFactory.beginTransaction();
+        tx = DaoFactory.beginTransaction();
     }
 
     public void tearDown() throws Exception {
         super.tearDown();
-        DaoFactory.commitTransaction();
+        tx.commit();
     }
 
     public LoginActionTest(String testName) {

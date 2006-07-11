@@ -5,16 +5,15 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.editor.struts.action.experiment;
 
-import servletunit.struts.MockStrutsTestCase;
 import org.apache.struts.action.ActionServlet;
-import org.hibernate.Transaction;
+import servletunit.struts.MockStrutsTestCase;
+import uk.ac.ebi.intact.application.editor.LoginPropertiesGetter;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
+import uk.ac.ebi.intact.application.editor.event.EventListener;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
-import uk.ac.ebi.intact.application.editor.event.EventListener;
-import uk.ac.ebi.intact.application.editor.LoginPropertiesGetter;
-import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
 
 /**
  * TODO comment it.
@@ -24,14 +23,17 @@ import uk.ac.ebi.intact.persistence.dao.DaoFactory;
  */
 public class ExperimentDispatchActionTest extends MockStrutsTestCase {
 
-    public void setUp() throws Exception { 
+    private IntactTransaction tx;
+
+    public void setUp() throws Exception {
         super.setUp();
-        DaoFactory.beginTransaction();
+
+        tx = DaoFactory.beginTransaction();
     }
 
     public void tearDown() throws Exception {
         super.tearDown();
-        DaoFactory.commitTransaction();
+        tx.commit();
     }
 
     public ExperimentDispatchActionTest(String testName) {
