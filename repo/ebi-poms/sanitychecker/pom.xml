@@ -8,7 +8,7 @@
     <version>1.0-SNAPSHOT</version>
     <name>Sanity Checker Runner</name>
     <description>
-        This plugin executes the sanity checker
+        This plugin executes the sanity check
     </description>
 
     <build>
@@ -19,7 +19,7 @@
                 <configuration>
                     <dialect>org.hibernate.dialect.Oracle9Dialect</dialect>
                     <driver>oracle.jdbc.OracleDriver</driver>
-                    <url>jdbc:oracle:thin@bourbon.ebi.ac.uk:d003</url>
+                    <url>jdbc:oracle:thin:@bourbon.ebi.ac.uk:1521:d003</url>
                     <user>intactweb</user>
                     <password>reading</password>
                 </configuration>
@@ -38,15 +38,15 @@
                 <artifactId>maven-sanitychecker-plugin</artifactId>
                 <configuration>
                     <editorBaseUrl>http://www.ebi.ac.uk/interpro/internal-tools/intacttest</editorBaseUrl>
- 
+
                     <curators>
                         <superCurator>
                             <id>jyoti</id>
-                            <percentage>0</percentage>
+                            <percentage>40</percentage>
                         </superCurator>
                         <superCurator>
                             <id>orchard</id>
-                            <percentage>30</percentage>
+                            <percentage>20</percentage>
                         </superCurator>
                         <superCurator>
                             <id>krobbe</id>
@@ -54,7 +54,7 @@
                         </superCurator>
                         <superCurator>
                             <id>davet</id>
-                            <percentage>70</percentage>
+                            <percentage>40</percentage>
                         </superCurator>
 
                         <curator>
@@ -133,6 +133,7 @@
                             <mail>agruhler@bmb.sdu.dk</mail>
                         </curator>
                     </curators>
+
                 </configuration>
                 <executions>
                     <execution>
