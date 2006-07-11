@@ -12,7 +12,6 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.InteractionImpl;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
 import uk.ac.ebi.intact.util.sanityChecker.model.*;
 
 import java.sql.Connection;
@@ -49,14 +48,14 @@ public class SanityCheckerHelper {
 
         // We test that the sql is valid.
         //log.debug("Starting transaction");
-        IntactTransaction tx = DaoFactory.beginTransaction();
+       // IntactTransaction tx = DaoFactory.beginTransaction();
 
         Connection conn = getJdbcConnection();
         PreparedStatement preparedStatement = conn.prepareStatement( sql );
         preparedStatement.close();
         conn.close();
 
-        tx.commit();
+        //tx.commit();
 
         // Store the association
         bean2sql.put( beanClass, sql );
@@ -73,7 +72,7 @@ public class SanityCheckerHelper {
 
         List resultList = null;
 
-        IntactTransaction tx = DaoFactory.beginTransaction();
+        //IntactTransaction tx = DaoFactory.beginTransaction();
 
         Connection conn = getJdbcConnection();
         resultList = (List) queryRunner.query( conn,
@@ -81,7 +80,7 @@ public class SanityCheckerHelper {
                                                param,
                                                new BeanListHandler( beanClass ) );
 
-        tx.commit();
+       // tx.commit();
 
         return resultList;
     }

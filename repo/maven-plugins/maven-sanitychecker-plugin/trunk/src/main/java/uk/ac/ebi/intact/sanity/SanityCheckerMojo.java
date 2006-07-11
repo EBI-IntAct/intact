@@ -18,6 +18,9 @@ import java.io.File;
 
 import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
+
 import uk.ac.ebi.intact.util.sanityChecker.SanityChecker;
 
 /**
@@ -76,22 +79,27 @@ public class SanityCheckerMojo
     {
         getLog().info("Sanity Checker Mojo in action");
 
-        getLog().info("\nList of Curators\n");
-        getLog().info("----------------\n");
+        getLog().info("List of Curators");
+        getLog().info("----------------");
 
         for (Curator curator : curators)
         {
             getLog().info("Curator: "+curator.getId()+"\t"+curator.getMail());
         }
 
+        getLog().debug("Using hibernate config file: "+hibernateConfigPath);
         HibernateUtil.setHibernateConfig(new File(hibernateConfigPath));
-
-        getLog().info("DIR: "+project.getBuild().getOutputDirectory());
 
         try
         {
+            getLog().info("Instantiating SanityChecker");
+            IntactTransaction tx = DaoFactory.beginTransaction();
+
             SanityChecker sanityChecker = new SanityChecker(curators, editorBaseUrl);
+
+            getLog().info("Starting Sanity Check");
             sanityChecker.start();
+            tx.commit();
         }
         catch (SQLException e)
         {

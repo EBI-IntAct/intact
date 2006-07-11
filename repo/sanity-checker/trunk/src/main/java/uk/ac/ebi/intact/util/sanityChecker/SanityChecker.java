@@ -12,14 +12,16 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpURL;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.commons.util.AnnotationSection;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.util.Crc64;
-import uk.ac.ebi.intact.sanity.Curator;
-import uk.ac.ebi.intact.util.sanityChecker.model.*;
 import uk.ac.ebi.intact.persistence.dao.BaseDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.sanity.Curator;
+import uk.ac.ebi.intact.util.Crc64;
+import uk.ac.ebi.intact.util.sanityChecker.model.*;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
@@ -38,6 +40,8 @@ import java.util.regex.Pattern;
  * @version $Id$
  */
 public class SanityChecker {
+
+    private static final Log log = LogFactory.getLog(SanityChecker.class);
 
     private SanityCheckerHelper sch;
 
@@ -367,7 +371,10 @@ public class SanityChecker {
                                                                   "                       and to_date(created,'DD-MON-YYYY HH24:MI:SS') > to_date('01-Sep-2005:00:00:00','DD-MON-YYYY:HH24:MI:SS') " +
                                                                   "                       and ac like ? " );
         messageSender = new MessageSender(curators, editorBaseUrl);
+
+        //IntactTransaction tx = DaoFactory.beginTransaction();
         annotationSection = new AnnotationSection();
+        //tx.commit();
     }
 
     public boolean interactionIsOnHold( String ac ) throws SQLException {
@@ -1636,8 +1643,7 @@ public class SanityChecker {
 
      BaseDao dao = DaoFactory.getBaseDao();
 
-
-        System.out.println( "Helper created (User: " + dao.getDbUserName() + " " +
+        log.info("Helper created (User: " + dao.getDbUserName() + " " +
                             "Database: " + dao.getDbName() + ")" );
 
         List expUsableTopic = annotationSection.getUsableTopics( Experiment.class.getName() );
@@ -1652,11 +1658,15 @@ public class SanityChecker {
         /*
         *     Check on feature
         */
+        log.info("Check on feature");
+
         featureWithoutRange();
 
         /*
         *     Check on interactor
         */
+        log.info("Check on interactor");
+
         SanityCheckerHelper schIntAc = new SanityCheckerHelper();
         schIntAc.addMapping( InteractorBean.class, "SELECT ac, shortlabel, created_user, created, objclass " +
                                                            "FROM ia_interactor " +
@@ -1674,12 +1684,16 @@ public class SanityChecker {
         /*
         *     Check on Controlled Vocabullary
         */
+        log.info("Check on Controlled Vocabullary");
+
         checkHiddenAndObsoleteCv();
         cvInteractionChecker( hiddenObsoleteNotInUsed );
 
         /*
         *     Check on xref
         */
+        log.info("Check on xref");
+
         schIntAc.addMapping( XrefBean.class, "select distinct primaryId " +
                                                      "from ia_xref, ia_controlledvocab db, ia_controlledvocab q " +
                                                      "where database_ac = db.ac and " +
@@ -1727,6 +1741,8 @@ public class SanityChecker {
         /*
         *     Check on Experiment
         */
+        log.info("Check on Experiment");
+
         List experimentBeans = sch.getBeans( ExperimentBean.class, "EBI-%" );
         checkExperiment( experimentBeans );
         checkExperimentsPubmedIds( experimentBeans );
@@ -1738,6 +1754,7 @@ public class SanityChecker {
         /*
         *     Check on BioSource
         */
+        log.info("Check on BioSource");
 
         List bioSourceBeans = sch.getBeans( BioSourceBean.class, "EBI-%" );
         //System.out.println("The size of bioSource list is " + bioSourceBeans.size());
@@ -1749,6 +1766,7 @@ public class SanityChecker {
         *     Check on protein
         */
         //right now not actual using, as concerning checks appear to commented out
+        log.info("Check on protein");
 
         schIntAc.addMapping( InteractorBean.class, "SELECT ac, crc64, shortlabel, created_user, created, objclass " +
                                                            "FROM ia_interactor " +
@@ -1768,6 +1786,7 @@ public class SanityChecker {
         /*
         *     Check on annotation
         */
+        log.info("Check on annotation");
 
         //tested
         schIntAc.addMapping( AnnotationBean.class, "SELECT ac, description, created, created_user " +
@@ -1781,6 +1800,7 @@ public class SanityChecker {
         /*
         *    Check on controlledvocab
         */
+        log.info("Check on controlledvocab");
 
         schIntAc.addMapping( ControlledvocabBean.class, "SELECT ac, objclass, shortlabel, created, created_user " +
                                                                 "FROM ia_controlledvocab " +
@@ -1791,11 +1811,12 @@ public class SanityChecker {
 
         // try to send emails
         try {
+            log.info("Trying to send mails");
             messageSender.postEmails( MessageSender.SANITY_CHECK );
 
         } catch ( MessagingException e ) {
             // scould not send emails, then how error ...
-            //e.printStackTrace();
+            e.printStackTrace();
 
         }
 
