@@ -27,7 +27,7 @@ import java.util.Collection;
 @Entity
 @Table(name = "ia_controlledvocab")
 @DiscriminatorColumn(name="objclass")
-@DiscriminatorValue("uk.ac.ebi.intact.model.CvObject")
+
 public abstract class CvObject extends AnnotatedObjectImpl {
 
     /**
