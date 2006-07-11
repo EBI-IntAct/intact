@@ -6,7 +6,7 @@
 
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
-        <artifactId>intact-master</artifactId>
+        <artifactId>intact-hibernate-master</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
@@ -37,60 +37,6 @@
     </build>
 
     <profiles>
-        <profile>
-            <id>ebi-test</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <db>oracle</db>
-                <db.host>bourbon.ebi.ac.uk</db.host>
-                <db.port>1521</db.port>
-                <db.alias>d003</db.alias>
-                <db.user>intactweb</db.user>
-                <db.password>reading</db.password>
-            </properties>
-        </profile>
-        <profile>
-            <id>ebi-curators</id>
-            <properties>
-                <db>oracle</db>
-                <db.host>cumae.ebi.ac.uk</db.host>
-                <db.port>1531</db.port>
-                <db.alias>zpro</db.alias>
-                <db.user>intactweb</db.user>
-                <db.password>reading</db.password>
-            </properties>
-        </profile>
-        
-
-        <profile>
-            <id>oracle</id>
-            <activation>
-                <property>
-                    <name>db</name>
-                    <value>oracle</value>
-                </property>
-            </activation>
-
-            <properties>
-                <db.platform>Oracle</db.platform>
-                <db.jdbcLevel>2.0</db.jdbcLevel>
-                <db.driver>oracle.jdbc.OracleDriver</db.driver>
-                <db.protocol>jdbc</db.protocol>
-                <db.subprotocol>oracle:thin:@${db.host}:${db.port}</db.subprotocol>
-                <db.autoCommit>1</db.autoCommit>
-                <db.dialect>org.hibernate.dialect.Oracle9Dialect</db.dialect>
-            </properties>
-
-            <dependencies>
-                <dependency>
-                    <groupId>com.oracle</groupId>
-                    <artifactId>oracle-thin</artifactId>
-                    <version>9.2.0</version>
-                </dependency>
-            </dependencies>
-        </profile>
         <profile>
             <id>jettyConfig</id>
             <build>

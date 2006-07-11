@@ -136,8 +136,7 @@
     </build>
 
     <repositories>
-
-        <repository>
+       <repository>
             <id>ebi-repo</id>
             <name>The EBI internal repository</name>
             <url>http://www.ebi.ac.uk/~maven/m2repo</url>

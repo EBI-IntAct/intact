@@ -3,7 +3,7 @@
 
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
-        <artifactId>intact-master-webapp</artifactId>
+        <artifactId>intact-master</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
