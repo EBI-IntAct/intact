@@ -126,6 +126,9 @@
             href="doc/html/documentation.html#download">user manual</a></span></li>
     <li class="greenboldsmalllist"><a href="http://www.ebi.ac.uk/intact/statisticView"><span class="text">Statistics<br>
                             </span></a></li>
+    <li class="greenboldsmalllist"><span class="text">IntAct is a member of the International Molecular Exchange Consortium (<a href="http://imex.sourceforge.net/">IMEx</a>).</span> </li>
+
+
 </ul>
 <span class="pbold"><a name="availability"></a>Availability:</span><br>
 <ul>
@@ -273,12 +276,20 @@ The following mailing lists have been set up:
         <span class="text">Developed with IntelliJ IDEA</span>
     </td></tr>
     <tr><td align="right">
-        <a href="http://www.yourkit.com"><img src="http://www.ebi.ac.uk/intact/images/yourkit.gif"
+        <a href="http://www.yourkit.com"><img src="images/yourkit.gif"
                                               alt="YourKit" width=100 border="0" height="36">
         </a>
     </td><td align="left">
         <span class="text">Profiled by YourKit Java Profiler.</span>
-    </td></tr>
+    </td>
+    </tr>
+    <tr><td align="right">
+        <a href="http://www.cenqua.com/clover/"><img src="images/clover_logo.gif"
+                                              alt="Clover" width=100 border="0" height="36"></a>
+    </td><td align="left">
+        <span class="text">Test coverage by Clover.</span>
+    </td>
+    </tr>
 </table>
 
 <div align="right"><a href="#a0"><img src="http://www.ebi.ac.uk/Information/images/arrow_up2.gif" border="0" height="21"
