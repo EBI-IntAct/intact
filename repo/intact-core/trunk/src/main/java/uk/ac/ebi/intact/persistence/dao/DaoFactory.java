@@ -5,32 +5,15 @@
  */
 package uk.ac.ebi.intact.persistence.dao;
 
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.HibernateException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.model.InteractorImpl;
-import uk.ac.ebi.intact.persistence.dao.impl.AliasDaoImpl;
-import uk.ac.ebi.intact.persistence.dao.impl.AnnotatedObjectDaoImpl;
-import uk.ac.ebi.intact.persistence.dao.impl.AnnotationDaoImpl;
-import uk.ac.ebi.intact.persistence.dao.impl.BioSourceDaoImpl;
-import uk.ac.ebi.intact.persistence.dao.impl.ComponentDaoImpl;
-import uk.ac.ebi.intact.persistence.dao.impl.CvObjectDaoImpl;
-import uk.ac.ebi.intact.persistence.dao.impl.ExperimentDaoImpl;
-import uk.ac.ebi.intact.persistence.dao.impl.FeatureDaoImpl;
-import uk.ac.ebi.intact.persistence.dao.impl.HibernateBaseDaoImpl;
-import uk.ac.ebi.intact.persistence.dao.impl.InstitutionDaoImpl;
-import uk.ac.ebi.intact.persistence.dao.impl.IntactObjectDaoImpl;
-import uk.ac.ebi.intact.persistence.dao.impl.InteractionDaoImpl;
-import uk.ac.ebi.intact.persistence.dao.impl.InteractorDaoImpl;
-import uk.ac.ebi.intact.persistence.dao.impl.ProteinDaoImpl;
-import uk.ac.ebi.intact.persistence.dao.impl.RangeDaoImpl;
-import uk.ac.ebi.intact.persistence.dao.impl.SearchItemDaoImpl;
-import uk.ac.ebi.intact.persistence.dao.impl.XrefDaoImpl;
+import uk.ac.ebi.intact.persistence.dao.impl.*;
 import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 
 import java.sql.Connection;
@@ -45,8 +28,6 @@ import java.sql.Connection;
 public class DaoFactory
 {
     private static final Log log = LogFactory.getLog(DaoFactory.class);
-
-    private static Transaction activeTransaction;
 
     private DaoFactory(){}
 
@@ -156,6 +137,31 @@ public class DaoFactory
         return new XrefDaoImpl(getCurrentSession());
     }
 
+    public static Connection connection()
+    {
+        return getCurrentSession().connection();
+    }
+
+    public static IntactTransaction beginTransaction()
+    {
+        log.debug("Starting transaction");
+
+        Transaction transaction = getCurrentSession().beginTransaction();
+
+        // wrap it
+        return new IntactTransaction(transaction);
+    }
+
+    public static IntactTransaction beginTransaction(Connection connection)
+    {
+        log.debug("Starting transaction using a specific connection");
+
+        Transaction transaction = getCurrentSession(connection).beginTransaction();
+
+        // wrap it
+        return new IntactTransaction(transaction);
+    }
+
     private static Session getCurrentSession()
     {
         //checkStatus();
@@ -163,54 +169,11 @@ public class DaoFactory
         return HibernateUtil.getSessionFactory().getCurrentSession();
     }
 
-    public static Connection connection()
+    private static Session getCurrentSession(Connection connection)
     {
-        return getCurrentSession().connection();
-    }
+        //checkStatus();
 
-    public static Object beginTransaction()
-    {
-        log.debug("Starting transaction");
-        if (!isTransactionActive())
-        {
-            activeTransaction = getCurrentSession().beginTransaction();
-        }
-
-        return activeTransaction;
-    }
-
-    public static boolean isTransactionActive()
-    {
-        return (activeTransaction != null);
-    }
-
-    public static void commitTransaction()
-    {
-        log.debug("Committing transaction");
-
-        if (isTransactionActive())
-        {
-            try
-            {
-                activeTransaction.commit();
-            }
-            catch (HibernateException e)
-            {
-                e.printStackTrace();
-                activeTransaction.rollback();
-            }
-        }
-
-        activeTransaction = null;
-    }
-
-    private static void checkStatus()
-    {
-        if (!DaoFactory.isTransactionActive())
-        {
-            throw new HibernateException("All queries have to be under a Transaction. Use DaoFactory.beginTransaction() before " +
-                    "using any DAO. Commit the transaction with DaoFactory.commitTransaction() afterwards");
-        }
+        return HibernateUtil.getSessionFactory().openSession(connection);
     }
 
 }

@@ -7,10 +7,13 @@ package uk.ac.ebi.intact.util.sanityChecker;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.InteractionImpl;
-import uk.ac.ebi.intact.util.sanityChecker.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
+import uk.ac.ebi.intact.util.sanityChecker.model.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -24,6 +27,8 @@ import java.util.*;
  * @version $Id$
  */
 public class SanityCheckerHelper {
+
+    private static final Log log = LogFactory.getLog(SanityCheckerHelper.class);
 
     private Map bean2sql = new HashMap();
 
@@ -42,14 +47,16 @@ public class SanityCheckerHelper {
             throw new IllegalArgumentException( "beanClass should not be null" );
         }
 
-
-
         // We test that the sql is valid.
+        //log.debug("Starting transaction");
+        IntactTransaction tx = DaoFactory.beginTransaction();
+
         Connection conn = getJdbcConnection();
         PreparedStatement preparedStatement = conn.prepareStatement( sql );
         preparedStatement.close();
+        conn.close();
 
-        
+        tx.commit();
 
         // Store the association
         bean2sql.put( beanClass, sql );
@@ -66,11 +73,16 @@ public class SanityCheckerHelper {
 
         List resultList = null;
 
+        IntactTransaction tx = DaoFactory.beginTransaction();
+
         Connection conn = getJdbcConnection();
         resultList = (List) queryRunner.query( conn,
                                                (String) bean2sql.get( beanClass ),
                                                param,
                                                new BeanListHandler( beanClass ) );
+
+        tx.commit();
+
         return resultList;
     }
 

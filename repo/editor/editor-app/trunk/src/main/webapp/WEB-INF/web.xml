@@ -41,7 +41,7 @@
     <!-- Filter to open the session at the beginning of the request and close on end -->
     <filter>
         <filter-name>hibernateFilter</filter-name>
-        <filter-class>uk.ac.ebi.intact.application.commons.util.HibernateSessionRequestFilter</filter-class>
+        <filter-class>uk.ac.ebi.intact.application.editor.util.EditorHibernateFilter</filter-class>
     </filter>
 
     <filter-mapping>

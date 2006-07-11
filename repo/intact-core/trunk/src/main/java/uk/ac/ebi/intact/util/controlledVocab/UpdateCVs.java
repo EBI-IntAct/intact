@@ -8,24 +8,12 @@ package uk.ac.ebi.intact.util.controlledVocab;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.model.Alias;
-import uk.ac.ebi.intact.model.Annotation;
-import uk.ac.ebi.intact.model.CvAliasType;
-import uk.ac.ebi.intact.model.CvDagObject;
-import uk.ac.ebi.intact.model.CvDatabase;
-import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.model.CvTopic;
-import uk.ac.ebi.intact.model.CvXrefQualifier;
-import uk.ac.ebi.intact.model.Institution;
-import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
 import uk.ac.ebi.intact.persistence.dao.XrefDao;
-import uk.ac.ebi.intact.util.controlledVocab.model.CvTerm;
-import uk.ac.ebi.intact.util.controlledVocab.model.CvTermAnnotation;
-import uk.ac.ebi.intact.util.controlledVocab.model.CvTermSynonym;
-import uk.ac.ebi.intact.util.controlledVocab.model.CvTermXref;
-import uk.ac.ebi.intact.util.controlledVocab.model.IntactOntology;
+import uk.ac.ebi.intact.util.controlledVocab.model.*;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -35,16 +23,7 @@ import java.lang.reflect.Constructor;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
 
 /**
  * Class handling the update of CvObject.
@@ -199,7 +178,7 @@ public class UpdateCVs {
                 CvTerm cvTerm = (CvTerm) iterator.next();
                 CvObject cvObject = (CvObject) intactIndex.get( cvTerm.getId() );
 
-                DaoFactory.beginTransaction();
+                IntactTransaction tx = DaoFactory.beginTransaction();
 
                 log.debug( "----------------------------------------------------------------------------------" );
                 if ( cvObject == null ) {
@@ -242,7 +221,7 @@ public class UpdateCVs {
                 // TODO update mapping ?
 
                 // end the transaction as no error occured.
-                DaoFactory.commitTransaction();
+                tx.commit();
 
             } // end of update of the terms' content
 

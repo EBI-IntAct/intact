@@ -3,7 +3,7 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.application.commons.util;
+package uk.ac.ebi.intact.application.editor.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -11,7 +11,10 @@ import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
 
 import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.sql.Connection;
 
 /**
  * When an HTTP request has to be handled, a new Session and database transaction will begin.
@@ -22,17 +25,32 @@ import java.io.IOException;
  * @version $Id$
  * @since <pre>24-Apr-2006</pre>
  */
-public class HibernateSessionRequestFilter implements Filter {
+public class EditorHibernateFilter implements Filter
+{
 
-    private static Log log = LogFactory.getLog(HibernateSessionRequestFilter.class);
+    private static Log log = LogFactory.getLog(EditorHibernateFilter.class);
 
     public void doFilter(ServletRequest request,
                          ServletResponse response,
                          FilterChain chain)
-            throws IOException, ServletException {
+            throws IOException, ServletException
+    {
 
-        log.debug("Starting a database transaction");
-        IntactTransaction tx = DaoFactory.beginTransaction();
+        HttpSession session = ((HttpServletRequest)request).getSession();
+        Connection connection = null; // get your connection here somehow
+
+        EditorHibernateFilter.log.debug("Starting a database transaction");
+
+        IntactTransaction tx = null;
+
+        if (connection == null)
+        {
+             tx = DaoFactory.beginTransaction();
+        }
+        else
+        {
+             tx = DaoFactory.beginTransaction(connection);
+        }
 
         // Call the next filter (continue request processing)
         chain.doFilter(request, response);
@@ -42,7 +60,7 @@ public class HibernateSessionRequestFilter implements Filter {
     }
 
     public void init(FilterConfig filterConfig) throws ServletException {
-        log.debug("Initializing filter...");
+        EditorHibernateFilter.log.debug("Initializing filter...");
     }
 
     public void destroy() {}

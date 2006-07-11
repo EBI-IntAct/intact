@@ -5,17 +5,17 @@
  */
 package uk.ac.ebi.intact.util.cdb;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
 
 import java.util.*;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Module used to collect information from CitExplore in order to prefill an Experiment (shortlabel, fullname, Xref,
@@ -273,7 +273,7 @@ public class ExperimentAutoFill {
 
     public static void main( String[] args ) throws Exception {
 
-        DaoFactory.beginTransaction();
+        IntactTransaction tx = DaoFactory.beginTransaction();
 
         // working cases
 //        ExperimentAutoFill eaf = new ExperimentAutoFill( "12130660" ); // with more than one pub by year
@@ -299,6 +299,6 @@ public class ExperimentAutoFill {
             log.info( "No email" );
         }
 
-        DaoFactory.commitTransaction();
+        tx.commit();
     }
 }
