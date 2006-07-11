@@ -24,6 +24,12 @@
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/trunk/master-hibernate-pom/</url>
     </scm>
 
+    <!-- I set these hibernate mandatory attributes as NOT_DEFINED because otherwise
+         the hibernateconfig plugin will complain if none of the profiles is used -->
+    <properties>
+        <db.dialect>NOT_DEFINED</db.dialect>
+        <db.driver>NOT_DEFINED</db.driver>
+    </properties>
 
     <build>
         <plugins>
