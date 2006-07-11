@@ -19,6 +19,8 @@ import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.persistence.dao.InstitutionDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -140,13 +142,10 @@ public class EditorService {
         moveToFront(getTopic(Experiment.class));
                     
         // Initialize the institution.
-        IntactHelper helper = new IntactHelper();
-        try {
-            myInstitution = helper.getInstitution();
-        }
-        finally {
-            helper.closeStore();
-        }
+        DaoFactory.beginTransaction();
+        InstitutionDao institutionDao = DaoFactory.getInstitutionDao();
+        myInstitution = institutionDao.getInstitution();
+        DaoFactory.commitTransaction();
         assert myInstitution != null: "Institution not set";
     }
 
