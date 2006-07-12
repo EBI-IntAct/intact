@@ -1,9 +1,9 @@
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
-import uk.ac.ebi.intact.util.AnnotationFilter;
 import uk.ac.ebi.intact.application.search3.business.Constants;
 import uk.ac.ebi.intact.application.search3.util.UrlCheckerThread;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.util.AnnotationFilter;
 import uk.ac.ebi.intact.util.SearchReplace;
 
 import java.util.*;
@@ -906,10 +906,9 @@ public class MainDetailViewBean extends AbstractViewBean {
      *
      * @return String a String representation of a URL link for the Xref beans (CvXrefQualifier)
      */
-    public String getCvQualifierURL( Xref xref ) {
-
-        return ( searchURL + xref.getCvXrefQualifier().getAc() +
-                 "&amp;searchClass=CvXrefQualifier&amp;" );
+    public String getCvQualifierURL( CvXrefQualifier cvXrefQualifier) {
+         return ( searchURL + cvXrefQualifier.getAc() +
+                     "&amp;searchClass=CvXrefQualifier&amp;" );
     }
 
     public String getCvDatabaseSearchUrl( CvDatabase cvDatabase ) {

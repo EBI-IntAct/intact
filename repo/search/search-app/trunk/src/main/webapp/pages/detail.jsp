@@ -1,4 +1,4 @@
-<!-- detail page -->
+<!-- detail page (detail.jsp)-->
 <%--
     Page to display a 'detail' view of search results. Current specification is as per the
     mockups August 2004. Details for both Experiment and Interaction  results are displayed using
@@ -25,13 +25,11 @@
 <%@ page autoFlush="true" %>
 
 <%-- Intact classes needed --%>
-<%@ page import="uk.ac.ebi.intact.application.search3.business.Constants,
-                 uk.ac.ebi.intact.application.search3.business.IntactServiceIF,
-                 uk.ac.ebi.intact.application.search3.struts.util.SearchConstants,
+<%@ page import="uk.ac.ebi.intact.application.search3.business.IntactServiceIF,
+                 uk.ac.ebi.intact.application.search3.struts.view.beans.MainDetailView,
                  uk.ac.ebi.intact.application.search3.struts.view.beans.MainDetailViewBean,
                  uk.ac.ebi.intact.model.*,
                  java.util.*" %>
-<%@ page import="uk.ac.ebi.intact.application.search3.struts.view.beans.MainDetailView"%>
 
 <%-- Standard Java classes --%>
 
@@ -51,9 +49,6 @@
     //build the URL for hierarchView from the absolute path and the relative beans..
     String hvPath = relativePath.concat( service.getHierarchViewProp( "hv.url" ) );
     String minePath = relativePath.concat( "mine/display.jsp" );
-
-    //The List of view beans used to provide the data for this JSP.
-    List viewBeanList = (List) request.getAttribute( SearchConstants.VIEW_BEAN_LIST );
 
     //the list of shortlabels for the search matches - need to be highlighted
     //NB the SearchAction ensures (in most cases!) this will not be null
@@ -431,11 +426,20 @@
 
     <%-- CvXrefQualifier, linked to search for CV --%>
     <td style="vertical-align: top;" rowspan="1" colspan="5">
+        <%
+            CvXrefQualifier cvXrefQualifier = xref.getCvXrefQualifier();
+            if (cvXrefQualifier != null)
+            {
+        %>
         <a href="<%= bean.getHelpLink() + "AnnotatedObject.Xref"%>" target="new">
             Type:</a>
         &nbsp;
-        <a href="<%= bean.getCvQualifierURL(xref)%>">
+        <a href="<%= bean.getCvQualifierURL(cvXrefQualifier)%>">
             <%= xref.getCvXrefQualifier().getShortLabel() %></a><br>
+
+        <%   } else {
+                out.write("-");
+             } //cvXrefQualifier != null  %>
     </td>
 </tr>
 
@@ -714,12 +718,20 @@
 
     <%-- CvXrefQualifier, linked to search for CV --%>
     <td style="vertical-align: top;" rowspan="1" colspan="5">
+        <%
+            CvXrefQualifier cvXrefQualifier = xref.getCvXrefQualifier();
+            if (cvXrefQualifier != null)
+            {
+        %>
         <a href="<%= bean.getHelpLink() + "Xref.cvXrefType"%>" target="new">
             Type:</a>
         &nbsp;
-        <a href="<%= bean.getCvQualifierURL(xref)%>">
+        <a href="<%= bean.getCvQualifierURL(cvXrefQualifier)%>">
             <%= xref.getCvXrefQualifier().getShortLabel() %>
         </a><br>
+        <%   } else {
+                out.write("-");
+             } //cvXrefQualifier != null  %>
     </td>
 </tr>
 
