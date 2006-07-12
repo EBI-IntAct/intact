@@ -27,10 +27,9 @@
 
     <modules>
         <module>maven-hibernateconfig-plugin</module>
-<!--
-        <module>maven-testfill-plugin</module>
-        
         <module>maven-sanitychecker-plugin</module>
+        <!--
+        <module>maven-testfill-plugin</module>
         -->
     </modules>
 
