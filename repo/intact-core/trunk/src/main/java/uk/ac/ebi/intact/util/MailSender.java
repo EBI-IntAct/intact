@@ -5,12 +5,18 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.util;
 
-import javax.mail.*;
-import javax.mail.internet.*;
-import java.util.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
-import java.io.IOException;
+import java.util.Properties;
 
 /**
  * Allow to send a basic mail message to a set of recipients.
@@ -24,6 +30,8 @@ import java.io.IOException;
  */
 public class MailSender {
 
+    private static final Log log = LogFactory.getLog(MailSender.class);
+
     private static String SMTP_HOST = null;
     public static final String SMTP_CONFIG_FILE = "/config/smtp.properties";
     public static final String MAIL_FILE_NAME= "mail.html";
@@ -34,7 +42,7 @@ public class MailSender {
         if (props != null) {
             SMTP_HOST = props.getProperty ("mail.smtp.host");
         } else {
-            System.err.println ("Unable to open the properties file: " + SMTP_CONFIG_FILE);
+            log.error ("Unable to open the properties file: " + SMTP_CONFIG_FILE);
         }
     }
 
