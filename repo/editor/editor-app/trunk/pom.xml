@@ -99,12 +99,6 @@
         </dependency>
 
           <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-            <version>3.0</version>
-        </dependency>
-
-          <dependency>
               <groupId>displaytag</groupId>
               <artifactId>displaytag</artifactId>
               <version>1.0-unknown</version>
