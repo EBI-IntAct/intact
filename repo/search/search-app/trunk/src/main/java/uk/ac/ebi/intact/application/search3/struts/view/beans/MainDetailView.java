@@ -13,8 +13,8 @@ import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * TODO comment this
@@ -52,11 +52,11 @@ public class MainDetailView  extends AbstractView
             }
         }
 
-        int firstResult = (getCurrentPage()-1)*getItemsPerPage();
+        int firstResult = (getCurrentPage() - 1) * getItemsPerPage();
 
         if (firstResult > totalItems)
         {
-            throw new RuntimeException("Page out of bounds: "+getCurrentPage()+" (Item: "+firstResult+" of "+getTotalItems()+")");
+            throw new RuntimeException("Page out of bounds: " + getCurrentPage() + " (Item: " + firstResult + " of " + getTotalItems() + ")");
         }
 
         if (totalItems < getItemsPerPage()) firstResult = 0;
@@ -71,27 +71,25 @@ public class MainDetailView  extends AbstractView
         // only we will put the searched at the beginning if we are in the first page (or the view is not paginated)
         if (getCurrentPage() <= 1)
         {
-            String searched = (String) request.getSession().getAttribute( SearchConstants.SEARCH_CRITERIA);
+            String searched = (String) request.getSession().getAttribute(SearchConstants.SEARCH_CRITERIA);
 
             if (searched != null)
             {
-                priorInteractionAcs = searched.split(",");
+                priorInteractionAcs = searched.replaceAll("'", "").split(",");
             }
 
             if (log.isDebugEnabled())
             {
-                log.debug("Interactions placed on a prominent position in the results: ");
-
                 for (String ac : priorInteractionAcs)
                 {
-                    log.info("\t"+ac);
+                    log.info("Interaction placed prominently: " + ac);
                 }
             }
 
-            for (String priorIntAc : priorInteractionAcs)
+
+            for (String priorAc : priorInteractionAcs)
             {
-                priorIntAc = priorIntAc.replaceAll("'", "");
-                Interaction inter = DaoFactory.getInteractionDao().getByAc(priorIntAc);
+                Interaction inter = DaoFactory.getInteractionDao().getByAc(priorAc);
                 if (inter != null)
                 {
                     interactions.add(inter);
@@ -102,11 +100,12 @@ public class MainDetailView  extends AbstractView
         // we load the rest of interactions for that experiment
         // if we are in the first page
         interactions.addAll(DaoFactory.getExperimentDao()
-                .getInteractionsForExperimentWithAcExcluding(experiment.getAc(),priorInteractionAcs, firstResult, maxResults-priorInteractionAcs.length));
+                .getInteractionsForExperimentWithAcExcluding(experiment.getAc(), priorInteractionAcs, firstResult, maxResults - priorInteractionAcs.length));
+
 
         if (log.isDebugEnabled())
         {
-            log.debug("Experiment: "+experiment.getAc()+", showing interactions from "+firstResult+" to "+maxResults);
+            log.debug("Experiment: " + experiment.getAc() + ", showing interactions from " + firstResult + " to " + maxResults);
         }
 
         // if specific interactions for this experiment are searched, fetch them from the database
