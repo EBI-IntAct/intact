@@ -1199,6 +1199,8 @@
   <message-resources
     parameter="uk.ac.ebi.intact.application.editor.MessageResources"/>
 
+  <message-resources key="buildInfo" parameter="uk.ac.ebi.intact.application.editor.BuildInfo"/>
+
   <!--
     Add multiple validator resource files by setting the pathnames property
     with a comma delimitted list of resource files to load.
