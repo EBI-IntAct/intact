@@ -12,7 +12,7 @@
     <artifactId>maven-sanitychecker-plugin</artifactId>
     <packaging>maven-plugin</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>Sanity Checker plugin</name>
+    <name>Plugin - Sanity Checker plugin</name>
     <description>
         This plugin executes the sanity checker
     </description>
