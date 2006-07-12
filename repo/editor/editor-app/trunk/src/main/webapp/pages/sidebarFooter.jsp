@@ -13,6 +13,7 @@
 --%>
 
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
+<%@ taglib uri="http://jakarta.apache.org/struts/tags-bean" prefix="bean"%>
 
 <c:if test="${not empty sessionScope.user}">
 
@@ -29,5 +30,7 @@
     <c:if test="${not empty user.databaseName}">
         Database: <c:out value="${user.databaseName}"/>
     </c:if>
+
+    <i><bean:message bundle="buildInfo" key="build.version"/></i>
 
 </c:if>

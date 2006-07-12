@@ -6,11 +6,11 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.security;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.AuthenticateException;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.business.IntactException;
 
 /**
@@ -20,6 +20,8 @@ import uk.ac.ebi.intact.business.IntactException;
  * @version $Id$
  */
 public class UserAuthenticator {
+
+    private static final Log log = LogFactory.getLog(UserAuthenticator.class);
 
     /**
      * Authenticate a user by accessing a persistent system using given
@@ -37,7 +39,7 @@ public class UserAuthenticator {
             return new EditUser(username, password);
         }
         catch (IntactException ie) {
-            Logger.getLogger(EditorConstants.LOGGER).error(username + " disallowed");
+            log.error(username + " disallowed", ie);
             throw new AuthenticateException(username + " disallowed");
         }
     }
