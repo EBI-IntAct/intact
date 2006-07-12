@@ -18,9 +18,6 @@ import java.io.File;
 
 import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
-
 import uk.ac.ebi.intact.util.sanityChecker.SanityChecker;
 
 /**
@@ -93,13 +90,11 @@ public class SanityCheckerMojo
         try
         {
             getLog().info("Instantiating SanityChecker");
-            IntactTransaction tx = DaoFactory.beginTransaction();
 
             SanityChecker sanityChecker = new SanityChecker(curators, editorBaseUrl);
 
             getLog().info("Starting Sanity Check");
             sanityChecker.start();
-            tx.commit();
         }
         catch (SQLException e)
         {
