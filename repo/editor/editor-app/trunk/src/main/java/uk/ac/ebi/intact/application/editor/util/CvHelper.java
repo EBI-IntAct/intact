@@ -5,15 +5,13 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.editor.util;
 
-import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
 
 import java.util.Collection;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -234,10 +232,14 @@ public class CvHelper {
 //        for(String miRef : miRefs){
 //            System.out.println("miRef = " + miRef);
 //        }
-        DaoFactory.beginTransaction();
+
+        IntactTransaction tx = DaoFactory.beginTransaction();
+
         CvInteractorType newt = CvHelper.getNucleicAcid();//.getNewt();
-        System.out.println("newt.getShortLabel() = " + newt.getShortLabel());
-        DaoFactory.commitTransaction();
+                System.out.println("newt.getShortLabel() = " + newt.getShortLabel());
+
+        tx.commit();
+
     }
 
 
