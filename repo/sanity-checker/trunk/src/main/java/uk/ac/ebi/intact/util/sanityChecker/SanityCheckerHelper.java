@@ -48,14 +48,10 @@ public class SanityCheckerHelper {
 
         // We test that the sql is valid.
         //log.debug("Starting transaction");
-       // IntactTransaction tx = DaoFactory.beginTransaction();
-
         Connection conn = getJdbcConnection();
         PreparedStatement preparedStatement = conn.prepareStatement( sql );
         preparedStatement.close();
         conn.close();
-
-        //tx.commit();
 
         // Store the association
         bean2sql.put( beanClass, sql );
@@ -77,6 +73,35 @@ public class SanityCheckerHelper {
         Connection conn = getJdbcConnection();
         resultList = (List) queryRunner.query( conn,
                                                (String) bean2sql.get( beanClass ),
+                                               param,
+                                               new BeanListHandler( beanClass ) );
+
+       // tx.commit();
+
+        return resultList;
+    }
+
+    public List getBeans( Class beanClass, String param, int firstResult, int maxResults) throws SQLException {
+
+        if ( beanClass == null ) {
+            throw new IllegalArgumentException( "beanClass should not be null" );
+        }
+
+        if ( false == bean2sql.containsKey( beanClass ) ) {
+            throw new IllegalArgumentException( "The beanClass :" + beanClass.getName() + " does not have known sql association" );
+        }
+
+        List resultList = null;
+
+        int lastResult = firstResult+maxResults;
+
+        String sql = "SELECT * from ("+ bean2sql.get( beanClass )+") where rownum > "+firstResult+" and rownum <= "+lastResult;
+
+        log.debug("Getting from "+firstResult+" to "+lastResult);
+
+        Connection conn = getJdbcConnection();
+        resultList = (List) queryRunner.query( conn,
+                                               sql,
                                                param,
                                                new BeanListHandler( beanClass ) );
 

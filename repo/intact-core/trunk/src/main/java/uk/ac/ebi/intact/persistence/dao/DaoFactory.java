@@ -144,8 +144,6 @@ public class DaoFactory
 
     public static IntactTransaction beginTransaction()
     {
-        log.debug("Starting transaction");
-
         Transaction transaction = getCurrentSession().beginTransaction();
 
         // wrap it

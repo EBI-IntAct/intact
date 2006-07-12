@@ -19,7 +19,6 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.BaseDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
 import uk.ac.ebi.intact.sanity.Curator;
 import uk.ac.ebi.intact.util.Crc64;
 import uk.ac.ebi.intact.util.sanityChecker.model.*;
@@ -124,8 +123,6 @@ public class SanityChecker {
 
     public SanityChecker(Collection<? extends Curator> curators, String editorBaseUrl)  throws SQLException
     {
-        IntactTransaction tx = DaoFactory.beginTransaction();
-
         editorUrlBuilder = new EditorUrlBuilder(editorBaseUrl);
 
         featureSch = new SanityCheckerHelper();
@@ -377,7 +374,7 @@ public class SanityChecker {
 
         annotationSection = new AnnotationSection();
 
-        tx.commit();
+
     }
 
     public boolean interactionIsOnHold( String ac ) throws SQLException {
@@ -1528,39 +1525,40 @@ public class SanityChecker {
     public void hasValidPrimaryId( List xrefBeans ) throws SQLException {
 
         for ( int i = 0; i < xrefBeans.size(); i++ ) {
+
             XrefBean xrefBean = (XrefBean) xrefBeans.get( i );
-            if ( xrefBean.getPrimaryid().equals( "MA:1234" ) ) {
-                String temporaryBreak = "";
-            }
+                        if ( xrefBean.getPrimaryid().equals( "MA:1234" ) ) {
+                            String temporaryBreak = "";
+                        }
 
-            //Get the annotationBean containing the regular expression wich describe the primaryid of the database ac
-            List annotationBeans = hasValidPrimaryIdSch.getBeans( AnnotationBean.class, xrefBean.getDatabase_ac() );
+                        //Get the annotationBean containing the regular expression wich describe the primaryid of the database ac
+                        List annotationBeans = hasValidPrimaryIdSch.getBeans( AnnotationBean.class, xrefBean.getDatabase_ac() );
 
-            for ( int j = 0; j < annotationBeans.size(); j++ ) {
+                        for ( int j = 0; j < annotationBeans.size(); j++ ) {
 
-                AnnotationBean annotationBean = (AnnotationBean) annotationBeans.get( j );
-                // Get the regular expression (stored in the field description of the annotation
-                String regexp = annotationBean.getDescription();
-                // PrimaryId to check
-                String primaryId = xrefBean.getPrimaryid();
+                            AnnotationBean annotationBean = (AnnotationBean) annotationBeans.get( j );
+                            // Get the regular expression (stored in the field description of the annotation
+                            String regexp = annotationBean.getDescription();
+                            // PrimaryId to check
+                            String primaryId = xrefBean.getPrimaryid();
 
-                try {
-                    // TODO escape special characters !!
-                    Pattern pattern = Pattern.compile( regexp );
+                            try {
+                                // TODO escape special characters !!
+                                Pattern pattern = Pattern.compile( regexp );
 
-                    // validate the primaryId against that regular expression
-                    Matcher matcher = pattern.matcher( primaryId );
-                    // If the primaryId hadn't been validate against that regular expression send a message
-                    if ( false == matcher.matches() ) {
-                        messageSender.addMessage( ReportTopic.XREF_WITH_NON_VALID_PRIMARYID, xrefBean );
-                    }
+                                // validate the primaryId against that regular expression
+                                Matcher matcher = pattern.matcher( primaryId );
+                                // If the primaryId hadn't been validate against that regular expression send a message
+                                if ( false == matcher.matches() ) {
+                                    messageSender.addMessage( ReportTopic.XREF_WITH_NON_VALID_PRIMARYID, xrefBean );
+                                }
 
-                } catch ( Exception e ) {
-                    // if the RegExp engine thrown an Exception, that may happen if the format is wrong.
-                    // we just display it for debugging sake, but the Xref is declared valid.
-                    //e.printStackTrace();
-                }
-            }
+                            } catch ( Exception e ) {
+                                // if the RegExp engine thrown an Exception, that may happen if the format is wrong.
+                                // we just display it for debugging sake, but the Xref is declared valid.
+                                //e.printStackTrace();
+                            }
+                        }
         }
     }
 
@@ -1644,14 +1642,12 @@ public class SanityChecker {
     public void start() throws SQLException
     {
 
-     IntactTransaction tx = DaoFactory.beginTransaction();
-
      BaseDao dao = DaoFactory.getBaseDao();
 
      log.info("Helper created (User: " + dao.getDbUserName() + " " +
                                  "Database: " + dao.getDbName() + ")" );
 
-     tx.commit();
+
 
         List expUsableTopic = annotationSection.getUsableTopics( Experiment.class.getName() );
         expUsableTopic.add( CvTopic.ACCEPTED );
@@ -1664,21 +1660,21 @@ public class SanityChecker {
 
         /*
         *     Check on feature
-        */
+        *
         log.info("Check on feature");
 
-        tx = DaoFactory.beginTransaction();
+
 
         featureWithoutRange();
 
-        tx.commit();
+
 
         /*
         *     Check on interactor
         */
         log.info("Check on interactor");
 
-        tx = DaoFactory.beginTransaction();
+
 
         SanityCheckerHelper schIntAc = new SanityCheckerHelper();
                 schIntAc.addMapping( InteractorBean.class, "SELECT ac, shortlabel, created_user, created, objclass " +
@@ -1686,7 +1682,7 @@ public class SanityChecker {
                                                                    "WHERE objclass = '" + InteractionImpl.class.getName() + "'" +
                                                                    " AND ac like ?" );
 
-
+         /*
                 List interactorBeans = schIntAc.getBeans( InteractorBean.class, "EBI-%" );
                 checkInteractionsComplete( interactorBeans );
                 checkInteractionsBaitAndPrey( interactorBeans );
@@ -1694,96 +1690,124 @@ public class SanityChecker {
                 checkOneIntOneExp();
                 checkAnnotations( interactorBeans, Interaction.class.getName(), intUsableTopic );
 
-        tx.commit();
+
 
         /*
         *     Check on Controlled Vocabullary
-        */
+        *
         log.info("Check on Controlled Vocabullary");
 
-        tx = DaoFactory.beginTransaction();
+
 
         checkHiddenAndObsoleteCv();
                 cvInteractionChecker( hiddenObsoleteNotInUsed );
+        */
 
-        tx.commit();
 
         /*
         *     Check on xref
         */
         log.info("Check on xref");
 
-        tx = DaoFactory.beginTransaction();
-
-        schIntAc.addMapping( XrefBean.class, "select distinct primaryId " +
-                                                             "from ia_xref, ia_controlledvocab db, ia_controlledvocab q " +
-                                                             "where database_ac = db.ac and " +
-                                                             "db.shortlabel = ? and " +
-                                                             "qualifier_ac = q.ac and " +
-                                                             "q.shortlabel = 'identity' " +
-                                                             "group by primaryId " +
-                                                             "having count(primaryId) > 1" );
 
 
-                List xrefBeans = schIntAc.getBeans( XrefBean.class, CvDatabase.UNIPROT );
+        schIntAc.addMapping(XrefBean.class, "select distinct primaryId " +
+                "from ia_xref, ia_controlledvocab db, ia_controlledvocab q " +
+                "where database_ac = db.ac and " +
+                "db.shortlabel = ? and " +
+                "qualifier_ac = q.ac and " +
+                "q.shortlabel = 'identity' " +
+                "group by primaryId " +
+                "having count(primaryId) > 1");
 
-                sch.addMapping( InteractorBean.class, "SELECT i.ac,i.objclass, i.shortlabel, i.biosource_ac, i.created_user, i.created " +
-                                                                  "FROM ia_interactor i, ia_xref x " +
-                                                                  "WHERE i.ac = x.parent_ac AND " +
-                                                                  "0 = ( SELECT count(1) " +
-                                                                  "FROM ia_annotation a, ia_int2annot i2a, ia_controlledvocab topic " +
-                                                                  "WHERE i.ac = i2a.interactor_ac AND " +
-                                                                  "i2a.annotation_ac = a.ac AND " +
-                                                                  "a.topic_ac = topic.ac AND " +
-                                                                  "topic.shortlabel = 'no-uniprot-update' ) AND " +
-                                                                  "x.qualifier_ac = '" + identityXrefQualifierCvBean.getAc() + "' AND " +
-                                                                  "x.primaryid=?" );
 
-                sch.addMapping( SpliceVariantParentBean.class, "SELECT distinct p.ac as ac, p.shortlabel as parentName, sv.shortlabel as variantName\n" +
-                                                                           "FROM ia_interactor sv, ia_interactor p, ia_xref x\n" +
-                                                                           "WHERE ? = sv.ac AND\n" +
-                                                                           "      sv.ac = x.parent_ac AND \n" +
-                                                                           "      x.qualifier_ac = '" + isoformParentXrefQualifierCvBean.getAc() + "' AND \n" +
-                                                                           "      x.database_ac  = '" + intactDatabaseCvBean.getAc() + "' AND \n" +
-                                                                           "      primaryid = p.ac" );
+        List xrefBeans = schIntAc.getBeans(XrefBean.class, CvDatabase.UNIPROT);
 
-                for ( int i = 0; i < xrefBeans.size(); i++ ) {
-                    XrefBean xrefBean = (XrefBean) xrefBeans.get( i );
-                    duplicatedProtein( xrefBean );
-                }
+        sch.addMapping(InteractorBean.class, "SELECT i.ac,i.objclass, i.shortlabel, i.biosource_ac, i.created_user, i.created " +
+                "FROM ia_interactor i, ia_xref x " +
+                "WHERE i.ac = x.parent_ac AND " +
+                "0 = ( SELECT count(1) " +
+                "FROM ia_annotation a, ia_int2annot i2a, ia_controlledvocab topic " +
+                "WHERE i.ac = i2a.interactor_ac AND " +
+                "i2a.annotation_ac = a.ac AND " +
+                "a.topic_ac = topic.ac AND " +
+                "topic.shortlabel = 'no-uniprot-update' ) AND " +
+                "x.qualifier_ac = '" + identityXrefQualifierCvBean.getAc() + "' AND " +
+                "x.primaryid=?");
 
-                schIntAc.addMapping( XrefBean.class, "select ac, created_user, created, database_ac, primaryid,parent_ac " +
-                                                             "from ia_xref " +
-                                                             "where ac like ?" );
-                //"where ac ='EBI-695273' and ac like ?");
-                xrefBeans = schIntAc.getBeans( XrefBean.class, "%" );
-                hasValidPrimaryId( xrefBeans );
+        sch.addMapping(SpliceVariantParentBean.class, "SELECT distinct p.ac as ac, p.shortlabel as parentName, sv.shortlabel as variantName\n" +
+                "FROM ia_interactor sv, ia_interactor p, ia_xref x\n" +
+                "WHERE ? = sv.ac AND\n" +
+                "      sv.ac = x.parent_ac AND \n" +
+                "      x.qualifier_ac = '" + isoformParentXrefQualifierCvBean.getAc() + "' AND \n" +
+                "      x.database_ac  = '" + intactDatabaseCvBean.getAc() + "' AND \n" +
+                "      primaryid = p.ac");
 
-        tx.commit();
+
+
+
+
+        for (int i = 0; i < xrefBeans.size(); i++)
+        {
+           XrefBean xrefBean = (XrefBean) xrefBeans.get(i);
+           duplicatedProtein(xrefBean);
+        }
+
+
+
+        schIntAc.addMapping(XrefBean.class, "select ac, created_user, created, database_ac, primaryid,parent_ac " +
+                    "from ia_xref " +
+                    "where ac like ?");
+
+        int maxResults = 100;
+        int firstResult = 0;
+
+        do
+        {
+           //"where ac ='EBI-695273' and ac like ?");
+            xrefBeans = schIntAc.getBeans(XrefBean.class, "%", firstResult, maxResults);
+
+            hasValidPrimaryId(xrefBeans);
+
+            firstResult = firstResult+maxResults;
+
+        } while (!xrefBeans.isEmpty());
+
+
+
+
 
         /*
         *     Check on Experiment
         */
         log.info("Check on Experiment");
 
-        tx = DaoFactory.beginTransaction();
 
-        List experimentBeans = sch.getBeans( ExperimentBean.class, "EBI-%" );
-                checkExperiment( experimentBeans );
-                checkExperimentsPubmedIds( experimentBeans );
-                checkAnnotations( experimentBeans, Experiment.class.getName(), expUsableTopic );
-                //This is now listed in the correctionAssigner
-                checkReviewed( experimentBeans );
-                //experimentNotSuperCurated();
 
-        tx.commit();
+        List experimentBeans = null;
+
+        firstResult = 0;
+
+        do
+        {
+            experimentBeans = sch.getBeans(ExperimentBean.class, "EBI-%", firstResult, maxResults);
+            checkExperiment(experimentBeans);
+            checkExperimentsPubmedIds(experimentBeans);
+            checkAnnotations(experimentBeans, Experiment.class.getName(), expUsableTopic);
+            //This is now listed in the correctionAssigner
+            checkReviewed(experimentBeans);
+
+            firstResult = firstResult + maxResults;
+
+        } while (!experimentBeans.isEmpty());
+
+
 
         /*
         *     Check on BioSource
         */
         log.info("Check on BioSource");
 
-        tx = DaoFactory.beginTransaction();
 
         List bioSourceBeans = sch.getBeans( BioSourceBean.class, "EBI-%" );
                 //System.out.println("The size of bioSource list is " + bioSourceBeans.size());
@@ -1791,7 +1815,7 @@ public class SanityChecker {
                 checkNewt( bioSourceBeans );
                 checkAnnotations( bioSourceBeans, BioSource.class.getName(), bsUsableTopic );
 
-        tx.commit();
+
 
         /*
         *     Check on protein
@@ -1799,14 +1823,20 @@ public class SanityChecker {
         //right now not actual using, as concerning checks appear to commented out
         log.info("Check on protein");
 
-        tx = DaoFactory.beginTransaction();
+
 
         schIntAc.addMapping( InteractorBean.class, "SELECT ac, crc64, shortlabel, created_user, created, objclass " +
                                                                    "FROM ia_interactor " +
                                                                    "WHERE objclass = '" + ProteinImpl.class.getName() +
                                                                    "' AND ac like ?" );
 
-                List proteinBeans = schIntAc.getBeans( InteractorBean.class, "%" );
+        firstResult = 0;
+
+        do
+        {
+
+
+                List proteinBeans = schIntAc.getBeans( InteractorBean.class, "%", firstResult, maxResults );
 
                 checkProtein( proteinBeans );
                 checkCrc64( proteinBeans );
@@ -1816,7 +1846,11 @@ public class SanityChecker {
                 List ranges = deletionFeatureSch.getBeans( RangeBean.class, "2" );
                 checkDeletionFeature( ranges );
 
-        tx.commit();
+            firstResult = firstResult + maxResults;
+
+        } while (!experimentBeans.isEmpty());
+
+
 
         /*
         *     Check on annotation
@@ -1824,24 +1858,34 @@ public class SanityChecker {
         log.info("Check on annotation");
 
         //tested
-        tx = DaoFactory.beginTransaction();
+
 
         schIntAc.addMapping( AnnotationBean.class, "SELECT ac, description, created, created_user " +
                                                                    "FROM ia_annotation " +
                                                                    "WHERE topic_ac = 'EBI-18' and ac like ?"
                 );
 
-                List annotationBeans = schIntAc.getBeans( AnnotationBean.class, "EBI-%" );
+        firstResult = 0;
+
+        do
+        {
+
+
+                List annotationBeans = schIntAc.getBeans( AnnotationBean.class, "EBI-%", firstResult, maxResults);
                 checkURL( annotationBeans );
 
-        tx.commit();
+            firstResult = firstResult + maxResults;
+
+        } while (!experimentBeans.isEmpty());
+
+
 
         /*
         *    Check on controlledvocab
         */
         log.info("Check on controlledvocab");
 
-        tx = DaoFactory.beginTransaction();
+
 
         schIntAc.addMapping( ControlledvocabBean.class, "SELECT ac, objclass, shortlabel, created, created_user " +
                                                                         "FROM ia_controlledvocab " +
@@ -1850,7 +1894,7 @@ public class SanityChecker {
 
                 checkAnnotations( controlledvocabBeans, CvObject.class.getName(), cvUsableTopic );
 
-        tx.commit();
+
 
         // try to send emails
         try {

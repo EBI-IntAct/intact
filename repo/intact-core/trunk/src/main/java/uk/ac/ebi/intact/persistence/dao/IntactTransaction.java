@@ -27,6 +27,8 @@ public class IntactTransaction
 
     public IntactTransaction(Transaction transaction) {
         this.transaction = transaction;
+
+        log.debug("Transaction started");
     }
 
     public void commit() throws IntactException
