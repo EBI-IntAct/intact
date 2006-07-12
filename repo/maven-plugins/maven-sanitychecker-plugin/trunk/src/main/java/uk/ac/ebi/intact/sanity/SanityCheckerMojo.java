@@ -10,15 +10,14 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-
-import java.util.List;
-import java.util.Collections;
-import java.sql.SQLException;
-import java.io.File;
-
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
 import uk.ac.ebi.intact.persistence.util.HibernateUtil;
-
 import uk.ac.ebi.intact.util.sanityChecker.SanityChecker;
+
+import java.io.File;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Generates a properties file with the topic names as keys and the classes as values
@@ -91,10 +90,14 @@ public class SanityCheckerMojo
         {
             getLog().info("Instantiating SanityChecker");
 
+            IntactTransaction tx = DaoFactory.beginTransaction();
+
             SanityChecker sanityChecker = new SanityChecker(curators, editorBaseUrl);
 
-            getLog().info("Starting Sanity Check");
-            sanityChecker.start();
+                        getLog().info("Starting Sanity Check");
+                        sanityChecker.start();
+
+            tx.commit();
         }
         catch (SQLException e)
         {
