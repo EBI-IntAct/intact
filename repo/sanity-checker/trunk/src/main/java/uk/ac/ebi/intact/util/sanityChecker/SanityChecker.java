@@ -19,6 +19,7 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.BaseDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
 import uk.ac.ebi.intact.sanity.Curator;
 import uk.ac.ebi.intact.util.Crc64;
 import uk.ac.ebi.intact.util.sanityChecker.model.*;
@@ -123,6 +124,8 @@ public class SanityChecker {
 
     public SanityChecker(Collection<? extends Curator> curators, String editorBaseUrl)  throws SQLException
     {
+        IntactTransaction tx = DaoFactory.beginTransaction();
+
         editorUrlBuilder = new EditorUrlBuilder(editorBaseUrl);
 
         featureSch = new SanityCheckerHelper();
@@ -372,9 +375,9 @@ public class SanityChecker {
                                                                   "                       and ac like ? " );
         messageSender = new MessageSender(curators, editorBaseUrl);
 
-        //IntactTransaction tx = DaoFactory.beginTransaction();
         annotationSection = new AnnotationSection();
-        //tx.commit();
+
+        tx.commit();
     }
 
     public boolean interactionIsOnHold( String ac ) throws SQLException {
@@ -1641,10 +1644,14 @@ public class SanityChecker {
     public void start() throws SQLException
     {
 
+     IntactTransaction tx = DaoFactory.beginTransaction();
+
      BaseDao dao = DaoFactory.getBaseDao();
 
-        log.info("Helper created (User: " + dao.getDbUserName() + " " +
-                            "Database: " + dao.getDbName() + ")" );
+     log.info("Helper created (User: " + dao.getDbUserName() + " " +
+                                 "Database: " + dao.getDbName() + ")" );
+
+     tx.commit();
 
         List expUsableTopic = annotationSection.getUsableTopics( Experiment.class.getName() );
         expUsableTopic.add( CvTopic.ACCEPTED );
@@ -1660,107 +1667,131 @@ public class SanityChecker {
         */
         log.info("Check on feature");
 
+        tx = DaoFactory.beginTransaction();
+
         featureWithoutRange();
+
+        tx.commit();
 
         /*
         *     Check on interactor
         */
         log.info("Check on interactor");
 
+        tx = DaoFactory.beginTransaction();
+
         SanityCheckerHelper schIntAc = new SanityCheckerHelper();
-        schIntAc.addMapping( InteractorBean.class, "SELECT ac, shortlabel, created_user, created, objclass " +
-                                                           "FROM ia_interactor " +
-                                                           "WHERE objclass = '" + InteractionImpl.class.getName() + "'" +
-                                                           " AND ac like ?" );
+                schIntAc.addMapping( InteractorBean.class, "SELECT ac, shortlabel, created_user, created, objclass " +
+                                                                   "FROM ia_interactor " +
+                                                                   "WHERE objclass = '" + InteractionImpl.class.getName() + "'" +
+                                                                   " AND ac like ?" );
 
 
-        List interactorBeans = schIntAc.getBeans( InteractorBean.class, "EBI-%" );
-        checkInteractionsComplete( interactorBeans );
-        checkInteractionsBaitAndPrey( interactorBeans );
-        checkComponentOfInteractions( interactorBeans );
-        checkOneIntOneExp();
-        checkAnnotations( interactorBeans, Interaction.class.getName(), intUsableTopic );
+                List interactorBeans = schIntAc.getBeans( InteractorBean.class, "EBI-%" );
+                checkInteractionsComplete( interactorBeans );
+                checkInteractionsBaitAndPrey( interactorBeans );
+                checkComponentOfInteractions( interactorBeans );
+                checkOneIntOneExp();
+                checkAnnotations( interactorBeans, Interaction.class.getName(), intUsableTopic );
+
+        tx.commit();
 
         /*
         *     Check on Controlled Vocabullary
         */
         log.info("Check on Controlled Vocabullary");
 
+        tx = DaoFactory.beginTransaction();
+
         checkHiddenAndObsoleteCv();
-        cvInteractionChecker( hiddenObsoleteNotInUsed );
+                cvInteractionChecker( hiddenObsoleteNotInUsed );
+
+        tx.commit();
 
         /*
         *     Check on xref
         */
         log.info("Check on xref");
 
+        tx = DaoFactory.beginTransaction();
+
         schIntAc.addMapping( XrefBean.class, "select distinct primaryId " +
-                                                     "from ia_xref, ia_controlledvocab db, ia_controlledvocab q " +
-                                                     "where database_ac = db.ac and " +
-                                                     "db.shortlabel = ? and " +
-                                                     "qualifier_ac = q.ac and " +
-                                                     "q.shortlabel = 'identity' " +
-                                                     "group by primaryId " +
-                                                     "having count(primaryId) > 1" );
+                                                             "from ia_xref, ia_controlledvocab db, ia_controlledvocab q " +
+                                                             "where database_ac = db.ac and " +
+                                                             "db.shortlabel = ? and " +
+                                                             "qualifier_ac = q.ac and " +
+                                                             "q.shortlabel = 'identity' " +
+                                                             "group by primaryId " +
+                                                             "having count(primaryId) > 1" );
 
 
-        List xrefBeans = schIntAc.getBeans( XrefBean.class, CvDatabase.UNIPROT );
+                List xrefBeans = schIntAc.getBeans( XrefBean.class, CvDatabase.UNIPROT );
 
-        sch.addMapping( InteractorBean.class, "SELECT i.ac,i.objclass, i.shortlabel, i.biosource_ac, i.created_user, i.created " +
-                                                          "FROM ia_interactor i, ia_xref x " +
-                                                          "WHERE i.ac = x.parent_ac AND " +
-                                                          "0 = ( SELECT count(1) " +
-                                                          "FROM ia_annotation a, ia_int2annot i2a, ia_controlledvocab topic " +
-                                                          "WHERE i.ac = i2a.interactor_ac AND " +
-                                                          "i2a.annotation_ac = a.ac AND " +
-                                                          "a.topic_ac = topic.ac AND " +
-                                                          "topic.shortlabel = 'no-uniprot-update' ) AND " +
-                                                          "x.qualifier_ac = '" + identityXrefQualifierCvBean.getAc() + "' AND " +
-                                                          "x.primaryid=?" );
+                sch.addMapping( InteractorBean.class, "SELECT i.ac,i.objclass, i.shortlabel, i.biosource_ac, i.created_user, i.created " +
+                                                                  "FROM ia_interactor i, ia_xref x " +
+                                                                  "WHERE i.ac = x.parent_ac AND " +
+                                                                  "0 = ( SELECT count(1) " +
+                                                                  "FROM ia_annotation a, ia_int2annot i2a, ia_controlledvocab topic " +
+                                                                  "WHERE i.ac = i2a.interactor_ac AND " +
+                                                                  "i2a.annotation_ac = a.ac AND " +
+                                                                  "a.topic_ac = topic.ac AND " +
+                                                                  "topic.shortlabel = 'no-uniprot-update' ) AND " +
+                                                                  "x.qualifier_ac = '" + identityXrefQualifierCvBean.getAc() + "' AND " +
+                                                                  "x.primaryid=?" );
 
-        sch.addMapping( SpliceVariantParentBean.class, "SELECT distinct p.ac as ac, p.shortlabel as parentName, sv.shortlabel as variantName\n" +
-                                                                   "FROM ia_interactor sv, ia_interactor p, ia_xref x\n" +
-                                                                   "WHERE ? = sv.ac AND\n" +
-                                                                   "      sv.ac = x.parent_ac AND \n" +
-                                                                   "      x.qualifier_ac = '" + isoformParentXrefQualifierCvBean.getAc() + "' AND \n" +
-                                                                   "      x.database_ac  = '" + intactDatabaseCvBean.getAc() + "' AND \n" +
-                                                                   "      primaryid = p.ac" );
+                sch.addMapping( SpliceVariantParentBean.class, "SELECT distinct p.ac as ac, p.shortlabel as parentName, sv.shortlabel as variantName\n" +
+                                                                           "FROM ia_interactor sv, ia_interactor p, ia_xref x\n" +
+                                                                           "WHERE ? = sv.ac AND\n" +
+                                                                           "      sv.ac = x.parent_ac AND \n" +
+                                                                           "      x.qualifier_ac = '" + isoformParentXrefQualifierCvBean.getAc() + "' AND \n" +
+                                                                           "      x.database_ac  = '" + intactDatabaseCvBean.getAc() + "' AND \n" +
+                                                                           "      primaryid = p.ac" );
 
-        for ( int i = 0; i < xrefBeans.size(); i++ ) {
-            XrefBean xrefBean = (XrefBean) xrefBeans.get( i );
-            duplicatedProtein( xrefBean );
-        }
+                for ( int i = 0; i < xrefBeans.size(); i++ ) {
+                    XrefBean xrefBean = (XrefBean) xrefBeans.get( i );
+                    duplicatedProtein( xrefBean );
+                }
 
-        schIntAc.addMapping( XrefBean.class, "select ac, created_user, created, database_ac, primaryid,parent_ac " +
-                                                     "from ia_xref " +
-                                                     "where ac like ?" );
-        //"where ac ='EBI-695273' and ac like ?");
-        xrefBeans = schIntAc.getBeans( XrefBean.class, "%" );
-        hasValidPrimaryId( xrefBeans );
+                schIntAc.addMapping( XrefBean.class, "select ac, created_user, created, database_ac, primaryid,parent_ac " +
+                                                             "from ia_xref " +
+                                                             "where ac like ?" );
+                //"where ac ='EBI-695273' and ac like ?");
+                xrefBeans = schIntAc.getBeans( XrefBean.class, "%" );
+                hasValidPrimaryId( xrefBeans );
+
+        tx.commit();
 
         /*
         *     Check on Experiment
         */
         log.info("Check on Experiment");
 
+        tx = DaoFactory.beginTransaction();
+
         List experimentBeans = sch.getBeans( ExperimentBean.class, "EBI-%" );
-        checkExperiment( experimentBeans );
-        checkExperimentsPubmedIds( experimentBeans );
-        checkAnnotations( experimentBeans, Experiment.class.getName(), expUsableTopic );
-        //This is now listed in the correctionAssigner
-        checkReviewed( experimentBeans );
-        //experimentNotSuperCurated();
+                checkExperiment( experimentBeans );
+                checkExperimentsPubmedIds( experimentBeans );
+                checkAnnotations( experimentBeans, Experiment.class.getName(), expUsableTopic );
+                //This is now listed in the correctionAssigner
+                checkReviewed( experimentBeans );
+                //experimentNotSuperCurated();
+
+        tx.commit();
 
         /*
         *     Check on BioSource
         */
         log.info("Check on BioSource");
 
+        tx = DaoFactory.beginTransaction();
+
         List bioSourceBeans = sch.getBeans( BioSourceBean.class, "EBI-%" );
-        //System.out.println("The size of bioSource list is " + bioSourceBeans.size());
-        checkBioSource( bioSourceBeans );
-        checkNewt( bioSourceBeans );
-        checkAnnotations( bioSourceBeans, BioSource.class.getName(), bsUsableTopic );
+                //System.out.println("The size of bioSource list is " + bioSourceBeans.size());
+                checkBioSource( bioSourceBeans );
+                checkNewt( bioSourceBeans );
+                checkAnnotations( bioSourceBeans, BioSource.class.getName(), bsUsableTopic );
+
+        tx.commit();
 
         /*
         *     Check on protein
@@ -1768,20 +1799,24 @@ public class SanityChecker {
         //right now not actual using, as concerning checks appear to commented out
         log.info("Check on protein");
 
+        tx = DaoFactory.beginTransaction();
+
         schIntAc.addMapping( InteractorBean.class, "SELECT ac, crc64, shortlabel, created_user, created, objclass " +
-                                                           "FROM ia_interactor " +
-                                                           "WHERE objclass = '" + ProteinImpl.class.getName() +
-                                                           "' AND ac like ?" );
+                                                                   "FROM ia_interactor " +
+                                                                   "WHERE objclass = '" + ProteinImpl.class.getName() +
+                                                                   "' AND ac like ?" );
 
-        List proteinBeans = schIntAc.getBeans( InteractorBean.class, "%" );
+                List proteinBeans = schIntAc.getBeans( InteractorBean.class, "%" );
 
-        checkProtein( proteinBeans );
-        checkCrc64( proteinBeans );
-        checkAnnotations( proteinBeans, "Protein", protUsableTopic );
+                checkProtein( proteinBeans );
+                checkCrc64( proteinBeans );
+                checkAnnotations( proteinBeans, "Protein", protUsableTopic );
 
-        //already working
-        List ranges = deletionFeatureSch.getBeans( RangeBean.class, "2" );
-        checkDeletionFeature( ranges );
+                //already working
+                List ranges = deletionFeatureSch.getBeans( RangeBean.class, "2" );
+                checkDeletionFeature( ranges );
+
+        tx.commit();
 
         /*
         *     Check on annotation
@@ -1789,25 +1824,33 @@ public class SanityChecker {
         log.info("Check on annotation");
 
         //tested
-        schIntAc.addMapping( AnnotationBean.class, "SELECT ac, description, created, created_user " +
-                                                           "FROM ia_annotation " +
-                                                           "WHERE topic_ac = 'EBI-18' and ac like ?"
-        );
+        tx = DaoFactory.beginTransaction();
 
-        List annotationBeans = schIntAc.getBeans( AnnotationBean.class, "EBI-%" );
-        checkURL( annotationBeans );
+        schIntAc.addMapping( AnnotationBean.class, "SELECT ac, description, created, created_user " +
+                                                                   "FROM ia_annotation " +
+                                                                   "WHERE topic_ac = 'EBI-18' and ac like ?"
+                );
+
+                List annotationBeans = schIntAc.getBeans( AnnotationBean.class, "EBI-%" );
+                checkURL( annotationBeans );
+
+        tx.commit();
 
         /*
         *    Check on controlledvocab
         */
         log.info("Check on controlledvocab");
 
-        schIntAc.addMapping( ControlledvocabBean.class, "SELECT ac, objclass, shortlabel, created, created_user " +
-                                                                "FROM ia_controlledvocab " +
-                                                                "WHERE ac = ?" );
-        List controlledvocabBeans = schIntAc.getBeans( ControlledvocabBean.class, "%" );
+        tx = DaoFactory.beginTransaction();
 
-        checkAnnotations( controlledvocabBeans, CvObject.class.getName(), cvUsableTopic );
+        schIntAc.addMapping( ControlledvocabBean.class, "SELECT ac, objclass, shortlabel, created, created_user " +
+                                                                        "FROM ia_controlledvocab " +
+                                                                        "WHERE ac = ?" );
+                List controlledvocabBeans = schIntAc.getBeans( ControlledvocabBean.class, "%" );
+
+                checkAnnotations( controlledvocabBeans, CvObject.class.getName(), cvUsableTopic );
+
+        tx.commit();
 
         // try to send emails
         try {
