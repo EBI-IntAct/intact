@@ -95,7 +95,8 @@ public class SanityCheckerHelper {
 
         int lastResult = firstResult+maxResults;
 
-        String sql = "SELECT * from ("+ bean2sql.get( beanClass )+") where rownum > "+firstResult+" and rownum <= "+lastResult;
+        String sql = "SELECT * from ("+ bean2sql.get( beanClass ).toString().replaceAll("from", ", rownum rn from").replaceAll("FROM", ", rownum rn FROM")
+                +") where rn > "+firstResult+" and rn <= "+lastResult;
 
         log.debug("Getting from "+firstResult+" to "+lastResult);
 

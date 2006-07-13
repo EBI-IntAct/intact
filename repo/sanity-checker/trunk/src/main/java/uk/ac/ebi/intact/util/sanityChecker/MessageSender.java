@@ -5,13 +5,15 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.util.sanityChecker;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.sanity.Curator;
 import uk.ac.ebi.intact.util.MailSender;
 import uk.ac.ebi.intact.util.correctionAssigner.ComparableExperimentBean;
-import uk.ac.ebi.intact.sanity.Curator;
 import uk.ac.ebi.intact.util.sanityChecker.model.*;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import javax.mail.MessagingException;
 import java.sql.SQLException;
@@ -25,6 +27,8 @@ import java.util.*;
  * @version $Id$
  */
 public class MessageSender {
+
+    private static final Log log = LogFactory.getLog(MessageSender.class);
 
     public static final String SANITY_CHECK = "SANITY CHECK";
     public static final String CORRECTION_ASSIGNMENT = "CORRECTION ASSIGNMENT AND/OR LISTED EXPERIMENT";
@@ -200,7 +204,7 @@ public class MessageSender {
                 userMessageReport = formatRow( "html", rowValues, "values", "userReport", false );
                 adminMessageReport = formatRow( "html", rowValues, "values", "adminReport", false );
             } else {
-                System.out.println( "annotationBean.getAc() = " + annotationBean.getAc() );
+                log.debug( "annotationBean.getAc() = " + annotationBean.getAc() );
             }
 
         } else if ( intactBean instanceof ExperimentBean ) {
@@ -786,6 +790,13 @@ public class MessageSender {
 
         SanityCheckerHelper sch = new SanityCheckerHelper();
         AnnotatedBean annotatedBean = sch.getAnnotatedBeanFromAnnotation( annotationBean.getAc() );
+
+        if (annotatedBean == null)
+        {
+            System.err.println("Could not get annotated bean for annotation with AC: "+annotationBean.getAc());
+            return;
+        }
+
         String annotatedBeanType = getTypeFromIntactBean( annotatedBean );
 
         String user = annotatedBean.getCreated_user();
@@ -825,16 +836,14 @@ public class MessageSender {
      *
      * @throws javax.mail.MessagingException
      */
-    public void postEmails( String mailObject ) throws MessagingException, IntactException {
+    public void postEmails( String mailObject, String fromAddress ) throws MessagingException, IntactException {
 
         MailSender mailer = new MailSender();
 
         String countType = "";
-        System.out.println( "" );
-        System.out.println( "" );
-        System.out.println( "MAIL OBJECT " + mailObject );
-        System.out.println( MessageSender.SANITY_CHECK );
-        System.out.println( MessageSender.CORRECTION_ASSIGNMENT );
+        log.info( "MAIL OBJECT " + mailObject );
+        log.info( MessageSender.SANITY_CHECK );
+        log.info( MessageSender.CORRECTION_ASSIGNMENT );
 
 
         if ( MessageSender.SANITY_CHECK.equals( mailObject ) ) {
@@ -842,14 +851,13 @@ public class MessageSender {
         } else if ( MessageSender.CORRECTION_ASSIGNMENT.equals( mailObject ) ) {
             countType = "correction assignment and/or listed experiment";
         }
-        System.out.println( "Count type" + countType );
-        System.out.println( "" );
-        System.out.println( "" );
+        log.info( "Count type" + countType );
+
         // send individual mail to curators
         for ( Iterator iterator = allUsersReport.keySet().iterator(); iterator.hasNext(); ) {
             String user = (String) iterator.next();
 
-            Map<ReportTopic, Collection<String>> reportMessages = (Map<ReportTopic, Collection<String>>) allUsersReport.get( user );
+            Map<ReportTopic, Collection<String>> reportMessages = allUsersReport.get( user );
             StringBuffer fullReport = new StringBuffer( 256 );
             int count = 0;
 
@@ -872,8 +880,10 @@ public class MessageSender {
             // don't send mail to curator if no errors
             if ( count > 0 ) {
 
-                System.out.println( "Send individual report to " + user + "( " + user + ")" );
+                log.info( "Send individual report to " + user + "( " + user + ")" );
                 String email = usersEmails.get( user.toLowerCase() );
+
+                System.out.println("Mail address for: "+user.toLowerCase()+" "+email);
 
                 if ( email != null ) {
                     String[] recipients = new String[ 1 ];
@@ -886,10 +896,10 @@ public class MessageSender {
                     //    mailObject = mailObject + " - " + TIME ;
                     //}
                     mailer.postMail( recipients,
-                                     mailObject + " - " + TIME + " (" + count + " " + countType + ( count > 1 ? "s" : "" ) + ")",
+                                     "Please ignore: SANITY CHECK TEST " + " - " + TIME + " (" + count + " " + countType + ( count > 1 ? "s" : "" ) + ")",
                                      fullReport.toString(),
-                                     "cleroy@ebi.ac.uk" );
-                    System.out.println( "FULL REPORT for User : " + fullReport.toString() );
+                                     fromAddress );
+                    log.info( "FULL REPORT for User : " + fullReport.toString() );
                 } else {
 
                     // keep track of unknown users
@@ -928,7 +938,7 @@ public class MessageSender {
             }
 
             fullReport.append( NEW_LINE ).append( NEW_LINE );
-            System.out.println( "FULL REPORT for User : " + fullReport.toString() );
+            log.info( "FULL REPORT for User : " + fullReport.toString() );
         }
 
         // generate full report
@@ -970,10 +980,10 @@ public class MessageSender {
 
 
         mailer.postMail( recipients,
-                         mailObject + " (ADMIN) - " + TIME + " (" + errorCount + " " + countType + ( errorCount > 1 ? "s" : "" ) + ")",
+                         "Please ignore: SANITY CHECK TEST "+ mailObject + " (ADMIN) - " + TIME + " (" + errorCount + " " + countType + ( errorCount > 1 ? "s" : "" ) + ")",
                          fullReport.toString(),
-                         "cleroy@ebi.ac.uk" );
-        System.out.println( "FULL REPORT for Admin : " + fullReport.toString() );
+                         fromAddress );
+        log.info( "FULL REPORT for Admin : " + fullReport.toString() );
 
     }
 
