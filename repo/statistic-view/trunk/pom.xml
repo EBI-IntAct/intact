@@ -21,7 +21,7 @@
     <groupId>uk.ac.ebi.intact.app</groupId>
     <artifactId>statistic-view</artifactId>
     <packaging>war</packaging>
-    <version>2.0-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
     <name>Statistic View</name>
     <description>Statistic View Application</description>
 
@@ -35,7 +35,7 @@
         <dependency>
             <groupId>uk.ac.ebi.intact.app</groupId>
             <artifactId>app-commons</artifactId>
-            <version>2.0-SNAPSHOT</version>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
