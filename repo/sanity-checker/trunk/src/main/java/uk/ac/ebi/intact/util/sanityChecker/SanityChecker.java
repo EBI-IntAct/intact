@@ -46,6 +46,7 @@ public class SanityChecker {
     private SanityCheckerHelper sch;
 
     private EditorUrlBuilder editorUrlBuilder;
+    private String mailFromAddress;
 
     /*
     * Those are the several SanityCheckerHelper to help retrieving the data in the database
@@ -121,9 +122,10 @@ public class SanityChecker {
     private Map cvTopics;
 
 
-    public SanityChecker(Collection<? extends Curator> curators, String editorBaseUrl)  throws SQLException
+    public SanityChecker(Collection<? extends Curator> curators, String editorBaseUrl, String mailFromAddress)  throws SQLException
     {
-        editorUrlBuilder = new EditorUrlBuilder(editorBaseUrl);
+        this.editorUrlBuilder = new EditorUrlBuilder(editorBaseUrl);
+        this.mailFromAddress = mailFromAddress;
 
         featureSch = new SanityCheckerHelper();
         featureSch.addMapping( FeatureBean.class, "select ac, shortlabel, fullname, created_user, created from ia_feature where ac like ? " );
@@ -393,10 +395,9 @@ public class SanityChecker {
      * @throws SQLException
      * @throws IntactException
      */
-    public boolean featureWithoutRange() throws SQLException, IntactException {
+    public boolean featureWithoutRange(List featureBeans) throws SQLException, IntactException {
         boolean oneFeatureWithoutRange = false;
 
-        List featureBeans = featureSch.getBeans( FeatureBean.class, "%" );
         for ( int i = 0; i < featureBeans.size(); i++ ) {
             FeatureBean feature = (FeatureBean) featureBeans.get( i );
             List rangeBeans = featureSch.getBeans( RangeBean.class, feature.getAc() );
@@ -440,7 +441,7 @@ public class SanityChecker {
     public void checkHiddenAndObsoleteCv() throws SQLException, IntactException {
         Collection hiddenObsoleteCvs = hiddenObsoleteNotInUsed.getBeans( ControlledvocabBean.class, "EBI-%" );
         //We first check that the hidden or obsolete Cv is not found in the filed database_ac of ia_xref
-        System.out.println( "hiddenObsoleteCvs.s = " + hiddenObsoleteCvs.size() );
+        log.debug( "hiddenObsoleteCvs.s = " + hiddenObsoleteCvs.size() );
 
         //---------------------------------------------------------------------------------
         //Make sure that the obsolete or hidden cv ac is not used as a database_ac in xref
@@ -1660,19 +1661,28 @@ public class SanityChecker {
 
         /*
         *     Check on feature
-        *
-        log.info("Check on feature");
+        */
+        System.out.println("Check on feature");
 
 
+        List featureBeans;
 
-        featureWithoutRange();
+        int maxResults = 200;
+        int firstResult = 0;
 
+        do
+        {
+            featureBeans = featureSch.getBeans( FeatureBean.class, "%", firstResult, maxResults );
+            featureWithoutRange(featureBeans);
 
+            firstResult = firstResult+maxResults;
+
+        } while (!featureBeans.isEmpty());
 
         /*
         *     Check on interactor
         */
-        log.info("Check on interactor");
+        System.out.println("Check on interactor");
 
 
 
@@ -1682,32 +1692,41 @@ public class SanityChecker {
                                                                    "WHERE objclass = '" + InteractionImpl.class.getName() + "'" +
                                                                    " AND ac like ?" );
 
-         /*
-                List interactorBeans = schIntAc.getBeans( InteractorBean.class, "EBI-%" );
-                checkInteractionsComplete( interactorBeans );
-                checkInteractionsBaitAndPrey( interactorBeans );
-                checkComponentOfInteractions( interactorBeans );
-                checkOneIntOneExp();
-                checkAnnotations( interactorBeans, Interaction.class.getName(), intUsableTopic );
 
+         List interactorBeans = null;
+
+        firstResult = 0;
+
+        do
+        {
+            interactorBeans = schIntAc.getBeans( InteractorBean.class, "EBI-%", firstResult, maxResults );
+            checkInteractionsComplete( interactorBeans );
+            checkInteractionsBaitAndPrey( interactorBeans );
+            checkComponentOfInteractions( interactorBeans );
+            checkOneIntOneExp();
+            checkAnnotations( interactorBeans, Interaction.class.getName(), intUsableTopic );
+
+            firstResult = firstResult+maxResults;
+
+        } while (!interactorBeans.isEmpty());
 
 
         /*
         *     Check on Controlled Vocabullary
-        *
-        log.info("Check on Controlled Vocabullary");
+        */
+        System.out.println("Check on Controlled Vocabullary");
 
 
 
         checkHiddenAndObsoleteCv();
                 cvInteractionChecker( hiddenObsoleteNotInUsed );
-        */
+
 
 
         /*
         *     Check on xref
         */
-        log.info("Check on xref");
+        System.out.println("Check on xref");
 
 
 
@@ -1759,8 +1778,8 @@ public class SanityChecker {
                     "from ia_xref " +
                     "where ac like ?");
 
-        int maxResults = 100;
-        int firstResult = 0;
+        maxResults = 100;
+        firstResult = 0;
 
         do
         {
@@ -1780,11 +1799,11 @@ public class SanityChecker {
         /*
         *     Check on Experiment
         */
-        log.info("Check on Experiment");
+        System.out.println("Check on Experiment");
 
 
 
-        List experimentBeans = null;
+        List experimentBeans;
 
         firstResult = 0;
 
@@ -1806,7 +1825,7 @@ public class SanityChecker {
         /*
         *     Check on BioSource
         */
-        log.info("Check on BioSource");
+        System.out.println("Check on BioSource");
 
 
         List bioSourceBeans = sch.getBeans( BioSourceBean.class, "EBI-%" );
@@ -1821,7 +1840,7 @@ public class SanityChecker {
         *     Check on protein
         */
         //right now not actual using, as concerning checks appear to commented out
-        log.info("Check on protein");
+        System.out.println("Check on protein");
 
 
 
@@ -1829,6 +1848,7 @@ public class SanityChecker {
                                                                    "FROM ia_interactor " +
                                                                    "WHERE objclass = '" + ProteinImpl.class.getName() +
                                                                    "' AND ac like ?" );
+        List proteinBeans;
 
         firstResult = 0;
 
@@ -1836,7 +1856,7 @@ public class SanityChecker {
         {
 
 
-                List proteinBeans = schIntAc.getBeans( InteractorBean.class, "%", firstResult, maxResults );
+                proteinBeans = schIntAc.getBeans( InteractorBean.class, "%", firstResult, maxResults );
 
                 checkProtein( proteinBeans );
                 checkCrc64( proteinBeans );
@@ -1848,14 +1868,14 @@ public class SanityChecker {
 
             firstResult = firstResult + maxResults;
 
-        } while (!experimentBeans.isEmpty());
+        } while (!proteinBeans.isEmpty());
 
 
 
         /*
         *     Check on annotation
         */
-        log.info("Check on annotation");
+        System.out.println("Check on annotation");
 
         //tested
 
@@ -1865,25 +1885,26 @@ public class SanityChecker {
                                                                    "WHERE topic_ac = 'EBI-18' and ac like ?"
                 );
 
+        List annotationBeans;
+
         firstResult = 0;
 
         do
         {
 
-
-                List annotationBeans = schIntAc.getBeans( AnnotationBean.class, "EBI-%", firstResult, maxResults);
+                annotationBeans = schIntAc.getBeans( AnnotationBean.class, "EBI-%", firstResult, maxResults);
                 checkURL( annotationBeans );
 
             firstResult = firstResult + maxResults;
 
-        } while (!experimentBeans.isEmpty());
+        } while (!annotationBeans.isEmpty());
 
 
 
         /*
         *    Check on controlledvocab
         */
-        log.info("Check on controlledvocab");
+        System.out.println("Check on controlledvocab");
 
 
 
@@ -1899,7 +1920,7 @@ public class SanityChecker {
         // try to send emails
         try {
             log.info("Trying to send mails");
-            messageSender.postEmails( MessageSender.SANITY_CHECK );
+            messageSender.postEmails( MessageSender.SANITY_CHECK , mailFromAddress);
 
         } catch ( MessagingException e ) {
             // scould not send emails, then how error ...

@@ -7,13 +7,13 @@ package uk.ac.ebi.intact.util.rangeChecker;
 
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.util.Chrono;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.sanity.Curator;
+import uk.ac.ebi.intact.util.Chrono;
 import uk.ac.ebi.intact.util.sanityChecker.MessageSender;
 import uk.ac.ebi.intact.util.sanityChecker.ReportTopic;
 import uk.ac.ebi.intact.util.sanityChecker.SanityCheckerHelper;
 import uk.ac.ebi.intact.util.sanityChecker.model.RangeBean;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import javax.mail.MessagingException;
 import java.io.BufferedWriter;
@@ -291,7 +291,7 @@ public class RangeChecker {
         }
 
         try {
-            messageSender.postEmails( "RANGE CHECKER" );
+            messageSender.postEmails( "RANGE CHECKER", "cleory@ebi.ac.uk" );
 
         } catch ( MessagingException e ) {
             System.out.println( "We failed to send reports by email. They were saved in local files (check *.report)." );

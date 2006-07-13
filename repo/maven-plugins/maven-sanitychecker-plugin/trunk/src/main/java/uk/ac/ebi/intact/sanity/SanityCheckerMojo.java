@@ -99,8 +99,8 @@ public class SanityCheckerMojo
 
             SanityChecker sanityChecker = new SanityChecker(curators, editorBaseUrl, mailFromAddress);
 
-                        getLog().info("Starting Sanity Check");
-                        sanityChecker.start();
+             getLog().info("Starting Sanity Check");
+             sanityChecker.start();
 
             tx.commit();
         }
