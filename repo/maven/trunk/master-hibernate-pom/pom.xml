@@ -72,7 +72,7 @@
             </properties>
         </profile>
         <profile>
-            <id>ebi-curators</id>
+            <id>ebi-prod</id>
             <properties>
                 <db>oracle</db>
                 <db.host>cumae.ebi.ac.uk</db.host>
@@ -83,7 +83,7 @@
             </properties>
         </profile>
         <profile>
-            <id>ebi-prod</id>
+            <id>ebi-pub</id>
             <properties>
                 <db>oracle</db>
                 <db.host>swan.ebi.ac.uk</db.host>
@@ -94,7 +94,7 @@
             </properties>
         </profile>
         <profile>
-            <id>ebi-prod2</id>
+            <id>ebi-pub2</id>
             <properties>
                 <db>oracle</db>
                 <db.host>bourbon.ebi.ac.uk</db.host>
