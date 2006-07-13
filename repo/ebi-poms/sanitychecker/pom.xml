@@ -31,9 +31,9 @@
                 <configuration>
                     <dialect>org.hibernate.dialect.Oracle9Dialect</dialect>
                     <driver>oracle.jdbc.OracleDriver</driver>
-                    <url>jdbc:oracle:thin:@bourbon.ebi.ac.uk:1521:d003</url>
-                    <user>intactweb</user>
-                    <password>reading</password>
+                    <url>${db.protocol}:${db.subprotocol}:${db.alias}</url>
+                    <user>${db.user}</user>
+                    <password>${db.alias}</password>
                 </configuration>
                 <executions>
                     <execution>
