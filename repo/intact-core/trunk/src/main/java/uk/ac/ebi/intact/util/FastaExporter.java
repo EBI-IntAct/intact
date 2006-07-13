@@ -39,11 +39,6 @@ public class FastaExporter {
     public static final String NEW_LINE = System.getProperty( "line.separator" );
 
     /**
-     * Xref Qualifier identity
-     */
-    private static CvXrefQualifier identity = null;
-
-    /**
      * Retreive the identity of an Interactor.
      *
      * @param interactor the interactor
@@ -52,12 +47,18 @@ public class FastaExporter {
      */
     private static String getIdentity( Interactor interactor ) {
 
-        if ( identity == null ) {
-            // load CV
+        IntactTransaction tx = DaoFactory.beginTransaction();
+        CvXrefQualifier identity = null;
+
+        try {
             identity = DaoFactory.getCvObjectDao( CvXrefQualifier.class ).getByXref( CvXrefQualifier.IDENTITY_MI_REF );
-            if ( identity == null ) {
-                throw new IllegalStateException( "Could not find CvXrefQualifier( identity ) in the database." );
-            }
+        } catch ( Exception e ) {
+            e.printStackTrace();
+            identity = DaoFactory.getCvObjectDao( CvXrefQualifier.class ).getByXref( CvXrefQualifier.IDENTITY_MI_REF );
+        }
+
+        if ( identity == null ) {
+            throw new IllegalStateException( "Could not find CvXrefQualifier( identity ) in the database." );
         }
 
         for ( Xref xref : interactor.getXrefs() ) {
@@ -66,6 +67,8 @@ public class FastaExporter {
             }
         }
 
+        tx.commit();
+
         return null;
     }
 
@@ -73,8 +76,6 @@ public class FastaExporter {
     public static void main( String[] args ) throws IOException {
 
         BufferedWriter out = new BufferedWriter( new FileWriter( new File( "intact.fasta" ) ) );
-
-        IntactTransaction transaction = DaoFactory.beginTransaction();
 
         ProteinDao proteinDao = DaoFactory.getProteinDao();
 
@@ -89,10 +90,12 @@ public class FastaExporter {
         System.out.println( "Loading all proteins." );
 
         // Load protein count using DAO.
+        IntactTransaction transaction = DaoFactory.beginTransaction();
         int proteinCount = proteinDao.countAll();
+        transaction.commit();
+
         System.out.println( proteinCount + " protein(s) loaded from the database." );
 
-        int idx = 0;
         int count = 0;
         int countExported = 0;
         int countNoSeq = 0;
@@ -144,8 +147,6 @@ public class FastaExporter {
                 System.out.println( "   " + count );
             }
         }
-
-        transaction.commit();
 
         System.out.println( "" );
         System.out.println( "----------------------------------------------------------------------------------" );
