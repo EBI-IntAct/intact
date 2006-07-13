@@ -21,7 +21,7 @@
     <groupId>uk.ac.ebi.intact.app.graph2mif</groupId>
     <artifactId>graph2mif-client</artifactId>
     <packaging>jar</packaging>
-    <version>2.0-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
     <name>Graph2MIF Client</name>
     <description>Graph2MIF Web Service Client</description>
 

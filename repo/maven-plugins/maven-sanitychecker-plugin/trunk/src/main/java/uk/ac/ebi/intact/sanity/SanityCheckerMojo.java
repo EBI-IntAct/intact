@@ -66,6 +66,11 @@ public class SanityCheckerMojo
     private String editorBaseUrl;
 
     /**
+     * @parameter default-value="cleroy@ebi.ac.uk"
+     */
+    private String mailFromAddress;
+
+    /**
      * @parameter default-value="${project.build.outputDirectory}/hibernate.cfg.xml"
      */
     private String hibernateConfigPath;
@@ -80,7 +85,7 @@ public class SanityCheckerMojo
 
         for (Curator curator : curators)
         {
-            getLog().info("Curator: "+curator.getId()+"\t"+curator.getMail());
+            getLog().info("Curator: "+curator.getId()+"\t"+curator.getMail()+"\tAdmin: "+curator.isAdmin());
         }
 
         getLog().debug("Using hibernate config file: "+hibernateConfigPath);
@@ -92,7 +97,7 @@ public class SanityCheckerMojo
 
             IntactTransaction tx = DaoFactory.beginTransaction();
 
-            SanityChecker sanityChecker = new SanityChecker(curators, editorBaseUrl);
+            SanityChecker sanityChecker = new SanityChecker(curators, editorBaseUrl, mailFromAddress);
 
                         getLog().info("Starting Sanity Check");
                         sanityChecker.start();
