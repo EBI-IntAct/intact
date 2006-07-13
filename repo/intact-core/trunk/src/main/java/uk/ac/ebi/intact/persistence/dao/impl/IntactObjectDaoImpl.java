@@ -27,6 +27,7 @@ import java.util.List;
  */
 @SuppressWarnings({ "unchecked" })
 public class IntactObjectDaoImpl<T extends IntactObject> extends HibernateBaseDaoImpl<T> implements IntactObjectDao<T> {
+
     public IntactObjectDaoImpl( Class<T> entityClass, Session session ) {
         super( entityClass, session );
     }
@@ -87,11 +88,11 @@ public class IntactObjectDaoImpl<T extends IntactObject> extends HibernateBaseDa
     }
 
     public Iterator<T> iterator() {
-        return new IntactObjectIterator<T>( this );
+        return new IntactObjectIterator<T>( getEntityClass() );
     }
 
     public Iterator<T> iterator( int batchSize ) {
-        return new IntactObjectIterator<T>( this, batchSize );
+        return new IntactObjectIterator<T>( getEntityClass(), batchSize );
     }
 
     public void update( T objToUpdate ) {
