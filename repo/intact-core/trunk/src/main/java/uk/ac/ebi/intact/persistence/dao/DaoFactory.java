@@ -41,7 +41,6 @@ public class DaoFactory
        return new AnnotatedObjectDaoImpl<AnnotatedObject>(AnnotatedObject.class, getCurrentSession());
     }
 
-    @Deprecated
     public static <T extends AnnotatedObject> AnnotatedObjectDao<T> getAnnotatedObjectDao(Class<T> entityType)
     {
         HibernateBaseDaoImpl.validateEntity(entityType);
@@ -99,7 +98,6 @@ public class DaoFactory
         return new IntactObjectDaoImpl<IntactObject>(IntactObject.class, getCurrentSession());
     }
 
-    @Deprecated
     public static <T extends IntactObject> IntactObjectDao<T> getIntactObjectDao(Class<T> entityType)
     {
         HibernateBaseDaoImpl.validateEntity(entityType);
