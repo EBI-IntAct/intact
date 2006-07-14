@@ -6,16 +6,16 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.security;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.event.EventListener;
 import uk.ac.ebi.intact.application.editor.event.LoginEvent;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.business.IntactException;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 /**
  * Implements the logic to authenticate a user for the editor application.
@@ -51,7 +50,7 @@ import java.util.logging.Logger;
  */
 public class LoginAction extends AbstractEditorAction {
 
-    private Logger loginLogger = Logger.getLogger("uk.co.intact.LoginEditor");
+    private static final Log log = LogFactory.getLog(LoginAction.class);
 
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
@@ -77,8 +76,8 @@ public class LoginAction extends AbstractEditorAction {
         // Get the user's login name and password. They should have already
         // validated by the ActionForm.
         LoginForm theForm = (LoginForm) form;
-        String username = (String) theForm.getUsername();
-        String password = (String) theForm.getPassword();
+        String username = theForm.getUsername();
+        String password = theForm.getPassword();
 
         // Validate the user.
         EditUserI user = UserAuthenticator.authenticate(username, password);
@@ -116,8 +115,8 @@ public class LoginAction extends AbstractEditorAction {
         // Store the server path.
         ctx.setAttribute(EditorConstants.SERVER_PATH, request.getContextPath());
 
-        String ac = (String) theForm.getAc();
-        String type = (String) theForm.getType();
+        String ac = theForm.getAc();
+        String type = theForm.getType();
 
         // Accessing an editor page directly?
         if (!isPropertyNullOrEmpty(ac) && !isPropertyNullOrEmpty(type)) {
@@ -134,7 +133,7 @@ public class LoginAction extends AbstractEditorAction {
             warning = " - /!\\";
         }
 
-        loginLogger.info("Login time: "+username+", "+loginTime+" ms, "+request.getRemoteAddr()+warning);
+        log.info("Login time: "+username+", "+loginTime+" ms, "+request.getRemoteAddr()+warning);
 
         return mapping.findForward(SUCCESS);
     }
