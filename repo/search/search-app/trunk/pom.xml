@@ -31,14 +31,6 @@
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/search/search-app/trunk/</url>
     </scm>
 
-    <dependencies>
-        <dependency>
-            <groupId>uk.ac.ebi.intact.app.search</groupId>
-            <artifactId>search-engine</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -56,6 +48,14 @@
             </plugin>
         </plugins>
     </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>uk.ac.ebi.intact.app.search</groupId>
+            <artifactId>search-engine</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
 
 </project>

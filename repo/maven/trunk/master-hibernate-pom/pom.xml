@@ -90,6 +90,8 @@
                 <db.alias>iweb</db.alias>
                 <db.user>intactweb</db.user>
                 <db.password>reading</db.password>
+
+                <lucene.index.directory>/ebi/sp/pro4/intact/public-tomcat/lucene-index</lucene.index.directory>
             </properties>
         </profile>
         <profile>
@@ -101,6 +103,8 @@
                 <db.alias>iweb2</db.alias>
                 <db.user>intactweb</db.user>
                 <db.password>reading</db.password>
+
+                <lucene.index.directory>/ebi/sp/pro4/intact/public-tomcat/lucene-index</lucene.index.directory>
             </properties>
         </profile>
 
