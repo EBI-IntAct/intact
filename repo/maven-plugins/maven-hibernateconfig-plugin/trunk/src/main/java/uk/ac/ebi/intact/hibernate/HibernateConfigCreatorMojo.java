@@ -91,6 +91,12 @@ public class HibernateConfigCreatorMojo
      */
     private String password;
 
+    /**
+     * @parameter default-value="org.hibernate.connection.C3P0ConnectionProvider"
+     * @required
+     */
+    private String connectionProviderClass;
+
     public void execute() throws MojoExecutionException
     {
         getLog().info("Hibernate Mojo in action");
@@ -151,6 +157,7 @@ public class HibernateConfigCreatorMojo
         line = line.replaceAll("\\$\\{db\\.url\\}", url);
         line = line.replaceAll("\\$\\{db\\.user\\}", user);
         line = line.replaceAll("\\$\\{db\\.password\\}", password);
+        line = line.replaceAll("\\$\\{connection\\.provider_class\\}", connectionProviderClass);
 
         return line;
     }
