@@ -148,28 +148,11 @@ public class DaoFactory
         return new IntactTransaction(transaction);
     }
 
-    public static IntactTransaction beginTransaction(Connection connection)
-    {
-        log.debug("Starting transaction using a specific connection");
-
-        Transaction transaction = getCurrentSession(connection).beginTransaction();
-
-        // wrap it
-        return new IntactTransaction(transaction);
-    }
-
     private static Session getCurrentSession()
     {
         //checkStatus();
 
         return HibernateUtil.getSessionFactory().getCurrentSession();
-    }
-
-    private static Session getCurrentSession(Connection connection)
-    {
-        //checkStatus();
-
-        return HibernateUtil.getSessionFactory().openSession(connection);
     }
 
 }
