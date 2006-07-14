@@ -3,9 +3,9 @@ package uk.ac.ebi.intact.persistence.util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.EmptyInterceptor;
+import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.SessionFactory;
-import org.hibernate.HibernateException;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
@@ -66,6 +66,9 @@ public class HibernateUtil {
     }
 
     private static void initialize(File cfgFile){
+
+        initialized = true;
+
         // Create the initial SessionFactory from the default configuration files
         try {
                // Replace with Configuration() if you don't use annotations or JDK 5.0
@@ -107,8 +110,6 @@ public class HibernateUtil {
             log.error("Building SessionFactory failed.", ex);
             throw new ExceptionInInitializerError(ex);
         }
-
-        initialized = true;
     }
 
     /**
@@ -117,6 +118,8 @@ public class HibernateUtil {
      * @return Configuration
      */
     public static Configuration getConfiguration() {
+        checkInitialization();
+
         return configuration;
     }
 
@@ -126,10 +129,7 @@ public class HibernateUtil {
      * @return SessionFactory
      */
     public static SessionFactory getSessionFactory() {
-        if (!initialized)
-        {
-            initialize(hibernateCfg);
-        }
+        checkInitialization();
 
         SessionFactory sf = null;
         String sfName = configuration.getProperty(Environment.SESSION_FACTORY_NAME);
@@ -254,6 +254,14 @@ public class HibernateUtil {
             configuration.setInterceptor(interceptor);
         } else {
             configuration.setInterceptor(EmptyInterceptor.INSTANCE);
+        }
+    }
+
+    private static void checkInitialization()
+    {
+        if (!initialized)
+        {
+            initialize(hibernateCfg);
         }
     }
 
