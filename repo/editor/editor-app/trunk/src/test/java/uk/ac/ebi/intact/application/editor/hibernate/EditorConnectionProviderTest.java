@@ -8,11 +8,13 @@ package uk.ac.ebi.intact.application.editor.hibernate;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.cfg.Environment;
 import uk.ac.ebi.intact.application.commons.context.IntactContext;
 import uk.ac.ebi.intact.application.editor.LoginPropertiesGetter;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
+import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -32,17 +34,8 @@ public class EditorConnectionProviderTest extends TestCase
 
     public void testDaoAccess()
     {
-        try {
-            // Load the JDBC driver
-            String driverName = "oracle.jdbc.driver.OracleDriver";
-            Class.forName(driverName);
-        }
-        catch (ClassNotFoundException e)
-        {
-            e.printStackTrace();
-        }
+        String url = HibernateUtil.getConfiguration().getProperty(Environment.URL);
 
-        String url = "jdbc:oracle:thin:@bourbon.ebi.ac.uk:1521:d003";
         LoginPropertiesGetter props = new LoginPropertiesGetter();
         String name = props.getName();
         String password = props.getPassword();
