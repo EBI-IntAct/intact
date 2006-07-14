@@ -32,8 +32,11 @@
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-core/trunk/</url>
     </scm>
 
-    <build>
+    <properties>
+        <maven.test.skip>true</maven.test.skip>
+    </properties>
 
+    <build>
         <plugins>
             <plugin>
                 <groupId>uk.ac.ebi.intact.hibernate</groupId>
@@ -44,6 +47,15 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>ebi-test</id>
+            <properties>
+                <maven.test.skip>false</maven.test.skip>
+            </properties>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>

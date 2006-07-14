@@ -1,15 +1,14 @@
 package uk.ac.ebi.intact.application.editor.hibernate;
 
-import org.hibernate.connection.ConnectionProvider;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
+import org.hibernate.connection.ConnectionProvider;
+import uk.ac.ebi.intact.application.commons.context.IntactContext;
 
-import java.util.Properties;
-import java.util.Map;
-import java.util.HashMap;
 import java.sql.Connection;
 import java.sql.SQLException;
-
-import uk.ac.ebi.intact.application.commons.context.IntactContext;
+import java.util.Properties;
 
 /**
  *
@@ -18,7 +17,7 @@ import uk.ac.ebi.intact.application.commons.context.IntactContext;
  */
 public class EditorConnectionProvider implements ConnectionProvider
 {
-    private Map<String,Connection> userConnections = new HashMap<String,Connection>();
+    private static final Log log = LogFactory.getLog(EditorConnectionProvider.class);
 
     public void configure(Properties properties) throws HibernateException
     {
@@ -29,13 +28,14 @@ public class EditorConnectionProvider implements ConnectionProvider
     {
         String currentUser = IntactContext.getCurrentInstance().getUserContext().getUserId();
 
-        if (userConnections.containsKey(currentUser))
-        {
-            return userConnections.get(currentUser);
-        }
+        log.debug("Getting connection for user: "+currentUser);
 
-        // obtain the connection for that user
-        Connection connection = null;
+        Connection connection = IntactContext.getCurrentInstance().getUserContext().getConnection();
+
+        if (connection == null)
+        {
+            throw new SQLException("User with id '"+currentUser+"' is not associated to a connection in the UserContext");
+        }
 
         return connection;
     }
@@ -47,7 +47,6 @@ public class EditorConnectionProvider implements ConnectionProvider
 
     public void close() throws HibernateException
     {
-        userConnections.clear();
     }
 
     public boolean supportsAggressiveRelease()
