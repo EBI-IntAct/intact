@@ -8,8 +8,8 @@ package uk.ac.ebi.intact.persistence;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
 
@@ -26,6 +26,8 @@ public class ProteinTest extends TestCase
 {
 
     private static final Log log = LogFactory.getLog(ProteinTest.class);
+
+    public static final String NEW_LINE = System.getProperty( "line.separator" );
 
     private IntactTransaction tx;
 
@@ -46,19 +48,17 @@ public class ProteinTest extends TestCase
 
     public void testUnexpectedUpdateOnXref()
     {
-        Protein p = DaoFactory.getProteinDao().getByAc("EBI-493");
-        assertNotNull(p);
+        Protein protein = DaoFactory.getProteinDao().getByAc("EBI-493");
+        assertNotNull(protein);
 
-        log.debug("Protein: "+p.getAc());
+        log.debug("Protein: " + protein.getAc());
 
-        Collection<Component> comps = p.getActiveInstances();
+        Collection<Xref> xrefs = protein.getXrefs();
 
-        for (Component c : comps)
+        for (Xref xref : xrefs) // will provoke an update in the db, which brings to the exception
         {
-            log.debug("\tComp: "+c.getAc());
+            log.debug("  Xref: "+xref.getAc());
         }
-
-        assertFalse(comps.isEmpty());
 
     }
 
