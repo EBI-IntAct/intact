@@ -8,16 +8,10 @@ package uk.ac.ebi.intact.model;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 
-import javax.persistence.Entity;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Transient;
-import javax.persistence.OneToMany;
-import javax.persistence.JoinTable;
-import javax.persistence.JoinColumn;
-import javax.persistence.OrderBy;
-import java.util.*;
-
-import org.hibernate.annotations.Sort;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * This is the super class for Protein and Nucleic Acid types.
@@ -260,7 +254,7 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
             joinColumns = { @JoinColumn( name="parent_ac") },
             inverseJoinColumns = @JoinColumn( name="ac")
     )
-    @OrderBy (value = "sequence_index")
+    @OrderBy (value = "sequenceIndex")
     public List<SequenceChunk> getSequenceChunks() {
         return sequenceChunks;
     }

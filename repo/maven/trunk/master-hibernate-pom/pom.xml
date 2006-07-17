@@ -141,7 +141,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-annotations</artifactId>
-            <version>3.1beta10</version>
+            <version>3.2.0.cr1</version>
         </dependency>
         <dependency>
             <groupId>c3p0</groupId>
