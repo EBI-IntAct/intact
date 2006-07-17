@@ -17,10 +17,11 @@ import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentActionForm;
 import uk.ac.ebi.intact.application.commons.util.DateToolbox;
 import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
-import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
 import org.apache.ojb.broker.query.Query;
 import org.apache.ojb.broker.query.QueryFactory;
 import org.apache.ojb.broker.query.ReportQueryByCriteria;
@@ -327,17 +328,18 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
     }
 
     /**
-     * Given a XreferenceBean it creates a Xref and return it
+     * Given a XreferenceBean it creates a Xref and returns it
      * @param xb
      * @return
      * @throws IntactException
      */
 
     public Xref createXref(XreferenceBean xb) throws IntactException {
-        Institution institution = new Institution("ebi");
-        IntactHelper helper = IntactHelperUtil.getDefaultIntactHelper();
-        CvDatabase cvDatabase = (CvDatabase) helper.getObjectByLabel(CvDatabase.class , xb.getDatabase());
-        CvXrefQualifier cvXrefQualifier = new CvXrefQualifier(institution, xb.getQualifier());
+        Institution institution = DaoFactory.getInstitutionDao().getInstitution();//new Institution("ebi");
+        CvObjectDao cvObjectDao = DaoFactory.getCvObjectDao();
+        //IntactHelper helper = IntactHelperUtil.getDefaultIntactHelper();
+        CvDatabase cvDatabase = (CvDatabase) cvObjectDao.getByShortLabel(xb.getDatabase());//CvDatabase) helper.getObjectByLabel(CvDatabase.class , xb.getDatabase()));
+        CvXrefQualifier cvXrefQualifier = (CvXrefQualifier) cvObjectDao.getByShortLabel(xb.getQualifier());//new CvXrefQualifier(institution, xb.getQualifier());
         Xref xref = new Xref(institution,cvDatabase,xb.getPrimaryId(),xb.getSecondaryId(),xb.getReleaseNumber(),cvXrefQualifier);
         return xref;
     }
@@ -468,17 +470,17 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         EditUserI user = getIntactUser(request);
         EditorFormI editorForm = (EditorFormI)form;
         ExperimentActionForm expForm=(ExperimentActionForm)form;
-        IntactHelper helper=user.getIntactHelper();
         String userName = user.getUserName();
 
         // Search for the userstamp corresponding to the experiment (name of the curator who has
         // curated the experiment)
-        String shortlabel = expForm.getShortLabel();
+        String shortLabel = expForm.getShortLabel();
 
         CommentBean cb1 = expForm.getNewAnnotation();
 
 
-        Experiment experiment = helper.getObjectByLabel(Experiment.class,expForm.getShortLabel());
+        ExperimentDao experimentDao = DaoFactory.getExperimentDao();
+        Experiment experiment = experimentDao.getByShortLabel(shortLabel);
         if (experiment == null){
             LOGGER.error("Experiment is null,  we won't be abble to get the creator.");
         }
@@ -504,16 +506,17 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
             CvTopic cvTopic;
             String description = new String();
             String date = year + "-" + DateToolbox.getMonth(month) + "-" + day;
+            CvObjectDao cvObjectDao = DaoFactory.getCvObjectDao();
 
             if(dispatch.equals(acceptButtonLabel)){ // if the button press is "Accept"
                 description = description + "Accepted " + date + " by " + userName.toUpperCase() + ".";
                 // The topic for new annotation.
-                cvTopic = (CvTopic) helper.getObjectByLabel(CvTopic.class, "accepted");
+                cvTopic = (CvTopic) cvObjectDao.getByShortLabel(CvTopic.ACCEPTED);
             }else{ // if the button press is "Review"
                 description = description + "Rejected " + date + " by " + userName.toUpperCase() + ".";
 
                 // The topic for new annotation.
-                cvTopic = (CvTopic) helper.getObjectByLabel(CvTopic.class, "to-be-reviewed");
+                cvTopic = (CvTopic) cvObjectDao.getByShortLabel(CvTopic.TO_BE_REVIEWED);
             }
             if (cb1 != null){
                 description = description + " " + cb1.getDescription();
