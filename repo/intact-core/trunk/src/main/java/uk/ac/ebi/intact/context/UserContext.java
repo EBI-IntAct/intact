@@ -1,4 +1,4 @@
-package uk.ac.ebi.intact.application.commons.context;
+package uk.ac.ebi.intact.context;
 
 import java.sql.Connection;
 
