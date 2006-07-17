@@ -72,9 +72,9 @@
 <ul>
     <li class="greenboldsmalllist"><span class="text"> <a href="doc/html/documentation.html">User manual</a></span></li>
     <li class="greenboldsmalllist"><span class="text"> <a target="_blank"
-                                                          href="doc/html/curation/IntActAnnotationRules.pdf">Curation
+                                                          href="doc/misc/curation/IntActAnnotationRules.pdf">Curation
         manual</a></span></li>
-    <li class="greenboldsmalllist"><span class="text"> <a href="doc/html/tutorial/index.html">IntAct API
+    <li class="greenboldsmalllist"><span class="text"> <a href="doc/misc/tutorial/index.html">IntAct API
         tutorial</a></span></li>
     <li class="greenboldsmalllist"><span class="text">Data model (<a
             href="http://intact.sourceforge.net/uml/intactCore.gif">UML class diagram</a>, <a
