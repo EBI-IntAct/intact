@@ -1,4 +1,7 @@
-package uk.ac.ebi.intact.application.commons.context;
+package uk.ac.ebi.intact.context;
+
+import uk.ac.ebi.intact.model.Institution;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 /**
  *
@@ -9,6 +12,7 @@ public class IntactContext
 {
 
     private UserContext userContext;
+    private Institution institution;
 
     private IntactContext(UserContext userContext)
     {
@@ -33,5 +37,15 @@ public class IntactContext
     public UserContext getUserContext()
     {
         return userContext;
+    }
+
+    public Institution getInstitution()
+    {
+        if (institution == null)
+        {
+            institution = DaoFactory.getInstitutionDao().getInstitution();
+        }
+
+        return institution;
     }
 }
