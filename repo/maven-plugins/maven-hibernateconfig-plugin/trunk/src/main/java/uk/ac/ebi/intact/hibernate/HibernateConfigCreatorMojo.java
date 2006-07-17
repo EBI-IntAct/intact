@@ -12,8 +12,8 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
 import java.io.*;
-import java.util.List;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Generates a properties file with the topic names as keys and the classes as values
@@ -60,6 +60,24 @@ public class HibernateConfigCreatorMojo
      * @required
      */
     private String filename;
+
+    /**
+     * @parameter default-value="false"
+     * @required
+     */
+    private boolean showSql;
+
+    /**
+     * @parameter default-value="true"
+     * @required
+     */
+    private boolean formatSql;
+
+    /**
+     * @parameter default-value="none"
+     * @required
+     */
+    private String hbm2ddlAuto;
 
     /**
      * @parameter
@@ -158,6 +176,9 @@ public class HibernateConfigCreatorMojo
         line = line.replaceAll("\\$\\{db\\.user\\}", user);
         line = line.replaceAll("\\$\\{db\\.password\\}", password);
         line = line.replaceAll("\\$\\{connection\\.provider_class\\}", connectionProviderClass);
+        line = line.replaceAll("\\$\\{format_sql\\}", String.valueOf(formatSql));
+        line = line.replaceAll("\\$\\{show_sql\\}", String.valueOf(showSql));
+        line = line.replaceAll("\\$\\{hbm2ddl\\.auto\\}", hbm2ddlAuto);
 
         return line;
     }
