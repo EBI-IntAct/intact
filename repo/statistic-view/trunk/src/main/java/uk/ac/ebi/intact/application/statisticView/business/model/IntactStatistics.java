@@ -5,6 +5,9 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.statisticView.business.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.sql.Timestamp;
 
 /**
@@ -19,10 +22,10 @@ import java.sql.Timestamp;
  * @author shuet (shuet@ebi.ac.uk), Samuel Kerrien (skerrien:ebi.ac.uk), Michael Kleen (mkleen@ebi.ac.uk)
  * @version : $Id$
  */
-public class IntactStatistics implements Comparable {
+@Entity
+@Table(name = "ia_statistics")
+public class IntactStatistics extends StatsBase implements Comparable {
 
-    private int ac;
-    private Timestamp timestamp;
     private int proteinNumber;
     private int interactionNumber;
     private int binaryInteractions;
@@ -31,25 +34,10 @@ public class IntactStatistics implements Comparable {
     private int termNumber;
 
     public IntactStatistics() {
-        this.timestamp = new java.sql.Timestamp(System.currentTimeMillis());
+        super.setTimestamp(new java.sql.Timestamp(System.currentTimeMillis()));
     }
 
-    public int getAc() {
-        return (this.ac);
-    }
-
-    public void setAc(final int ac) {
-        this.ac = ac;
-    }
-
-    public Timestamp getTimestamp() {
-        return (this.timestamp);
-    }
-
-    public void setTimestamp(final Timestamp timeStamp) {
-        this.timestamp = timeStamp;
-    }
-
+    @Column(name = "protein_number")
     public int getNumberOfProteins() {
         return (this.proteinNumber);
     }
@@ -58,6 +46,7 @@ public class IntactStatistics implements Comparable {
         this.proteinNumber = proteinNumb;
     }
 
+    @Column(name = "interaction_number")
     public int getNumberOfInteractions() {
         return (this.interactionNumber);
     }
@@ -66,6 +55,7 @@ public class IntactStatistics implements Comparable {
         this.interactionNumber = interactionNumb;
     }
 
+    @Column(name = "binary_interactions")
     public int getNumberOfBinaryInteractions() {
         return (this.binaryInteractions);
     }
@@ -74,6 +64,7 @@ public class IntactStatistics implements Comparable {
         this.binaryInteractions = binaryInteraction;
     }
 
+    @Column(name = "complex_interactions")
     public int getNumberOfComplexInteractions() {
         return (this.complexInteractions);
     }
@@ -82,6 +73,7 @@ public class IntactStatistics implements Comparable {
         this.complexInteractions = complexInteraction;
     }
 
+    @Column(name = "experiment_number")
     public int getNumberOfExperiments() {
         return (this.experimentNumber);
     }
@@ -90,6 +82,7 @@ public class IntactStatistics implements Comparable {
         this.experimentNumber = experimentNumb;
     }
 
+    @Column(name = "term_number")
     public int getNumberOfCvTerms() {
         return (this.termNumber);
     }
@@ -98,6 +91,7 @@ public class IntactStatistics implements Comparable {
         this.termNumber = termNumb;
     }
 
+    @Override
     public String toString() {
         return " Timestamp: " + this.getTimestamp()
                 + "; Number of proteins: " + this.getNumberOfProteins()
@@ -112,6 +106,6 @@ public class IntactStatistics implements Comparable {
     public int compareTo(final Object o) {
 
         final Timestamp t = ((IntactStatistics) o).getTimestamp();
-        return timestamp.compareTo(t);
+        return getTimestamp().compareTo(t);
     }
 }

@@ -5,17 +5,17 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.statisticView.business.data;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jfree.chart.JFreeChart;
 import uk.ac.ebi.intact.application.statisticView.business.model.BioSourceStatistics;
 import uk.ac.ebi.intact.application.statisticView.business.model.ExperimentStatistics;
 import uk.ac.ebi.intact.application.statisticView.business.model.IdentificationMethodStatistics;
 import uk.ac.ebi.intact.application.statisticView.business.model.IntactStatistics;
-import uk.ac.ebi.intact.application.statisticView.business.util.Constants;
+import uk.ac.ebi.intact.application.statisticView.business.persistence.dao.StatsDaoFactory;
 import uk.ac.ebi.intact.application.statisticView.business.util.IntactStatisticComparator;
 import uk.ac.ebi.intact.application.statisticView.graphic.ChartBuilder;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -27,7 +27,8 @@ import java.util.*;
  */
 public class StatisticHelper {
 
-    private static final Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
+    private static final Log log = LogFactory.getLog(StatisticHelper.class);
+
     private List intactStatistics = null;
     private List filteredStatistics = null;
     public final SimpleDateFormat dateFormater = new SimpleDateFormat( "dd-MMM-yyyy" );
@@ -84,12 +85,8 @@ public class StatisticHelper {
 
     public JFreeChart getIdentificationChart() throws IntactException {
 
-        IntactHelper helper = null;
-        try {
-            helper = new IntactHelper();
-
-            final SimpleDateFormat dateFormater = new SimpleDateFormat( "dd-MMM-yyyy" );
-            Collection result = helper.search( IdentificationMethodStatistics.class, "ac", null );
+            Collection<IdentificationMethodStatistics> result =
+                    StatsDaoFactory.getStatsBaseDao(IdentificationMethodStatistics.class).getAll();
 
             List toSort = new ArrayList( result );
             Collections.sort( toSort );
@@ -98,20 +95,13 @@ public class StatisticHelper {
             JFreeChart chart = chartBuilder.identificationMethods( toSort );
 
             return chart;
-
-        } finally {
-            if ( helper != null ) {
-                helper.closeStore();
-            }
-        }
     }
 
     public JFreeChart getBioSourceChart() throws IntactException {
 
         // Collect the data
-        IntactHelper intactHelper = new IntactHelper();
-        Collection result = intactHelper.search( BioSourceStatistics.class, "ac", null );
-        intactHelper.closeStore();
+        Collection<BioSourceStatistics> result =
+                    StatsDaoFactory.getStatsBaseDao(BioSourceStatistics.class).getAll();
 
         // sort the items
         List toSort = new ArrayList( result );
@@ -123,18 +113,18 @@ public class StatisticHelper {
     }
 
     public JFreeChart getEvidenceChart( String start ) throws IntactException {
-        IntactHelper intactHelper = new IntactHelper();
         ChartBuilder chartBuilder = new ChartBuilder();
-        Collection intactStatistics = intactHelper.search( ExperimentStatistics.class, "ac", null );
+        Collection<ExperimentStatistics> intactStatistics =
+                    StatsDaoFactory.getStatsBaseDao(ExperimentStatistics.class).getAll();
         JFreeChart result = chartBuilder.evidencePerExperiment( intactStatistics );
-        intactHelper.closeStore();
         return result;
     }
 
     private List getIntactStatistics() throws IntactException {
-        IntactHelper intactHelper = new IntactHelper();
-        Collection result = intactHelper.search( IntactStatistics.class.getName(), "ac", null );
-        intactHelper.closeStore();
+
+        Collection<IntactStatistics> result =
+                    StatsDaoFactory.getStatsBaseDao(IntactStatistics.class).getAll();
+
         ArrayList toSort = new ArrayList( result );
         Collections.sort( toSort, new IntactStatisticComparator() );
         return toSort;
@@ -146,9 +136,7 @@ public class StatisticHelper {
         long start = 0;
         long stop = 0;
 
-        final IntactHelper intactHelper = new IntactHelper();
-        final Collection result = intactHelper.search( IntactStatistics.class.getName(), "ac", null );
-        intactHelper.closeStore();
+        final Collection<IntactStatistics> result = StatsDaoFactory.getStatsBaseDao(IntactStatistics.class).getAll();
 
         if ( startDate == null || startDate.equals( "" ) ) {
             start = ( this.getFirstTimestamp() ).getTime();
@@ -253,15 +241,6 @@ public class StatisticHelper {
         }
 
         IntactStatistics last = (IntactStatistics) intactStatistics.get( intactStatistics.size() - 1 );
-        return last.getTimestamp();
-    }
-
-    private Timestamp getLastBioSourceTimestamp() throws IntactException {
-        IntactHelper intactHelper = new IntactHelper();
-        Collection result = intactHelper.search( BioSourceStatistics.class, "ac", null );
-        intactHelper.closeStore();
-        List list = new ArrayList( result );
-        BioSourceStatistics last = (BioSourceStatistics) list.get( list.size() - 1 );
         return last.getTimestamp();
     }
 }

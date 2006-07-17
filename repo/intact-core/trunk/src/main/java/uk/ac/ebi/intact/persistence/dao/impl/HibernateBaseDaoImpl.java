@@ -5,22 +5,18 @@
  */
 package uk.ac.ebi.intact.persistence.dao.impl;
 
-import org.hibernate.Session;
 import org.hibernate.Criteria;
-import org.hibernate.criterion.SimpleExpression;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.MatchMode;
+import org.hibernate.Session;
 import org.hibernate.criterion.Disjunction;
-import org.apache.ojb.broker.accesslayer.LookupException;
-
-import java.sql.SQLException;
-import java.util.Collection;
-
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.SimpleExpression;
 import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.model.NotAnEntityException;
 import uk.ac.ebi.intact.persistence.dao.BaseDao;
 
 import javax.persistence.Entity;
+import java.sql.SQLException;
+import java.util.Collection;
 
 /**
  * TODO comment this
@@ -29,7 +25,7 @@ import javax.persistence.Entity;
  * @version $Id$
  * @since <pre>24-Apr-2006</pre>
  */
-public abstract class HibernateBaseDaoImpl<T extends IntactObject> implements BaseDao<Session>
+public abstract class HibernateBaseDaoImpl<T> implements BaseDao<Session>
 {
     private Class<T> entityClass;
     private Session session;

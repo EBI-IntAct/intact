@@ -14,11 +14,12 @@ in the root directory of this distribution.
  */
 package uk.ac.ebi.intact.application.statisticView.business.data;
 
-import org.apache.log4j.Logger;
-import org.apache.ojb.broker.accesslayer.LookupException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.application.statisticView.business.model.IntactStatistics;
+import uk.ac.ebi.intact.application.statisticView.business.persistence.dao.StatsDaoFactory;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.util.IntactStatistics;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -58,7 +59,7 @@ public final class StatisticsDataSet {
     /**
      * Data loading logger
      */
-    private static Logger logger;
+    private static final Log logger = LogFactory.getLog(StatisticsDataSet.class);
 
     /**
      * the statistics
@@ -80,10 +81,10 @@ public final class StatisticsDataSet {
     // Instanciation methods
     ///////////////////////////////
 
-    public synchronized static StatisticsDataSet getInstance( final String loggerName ) {
+    public synchronized static StatisticsDataSet getInstance( ) {
 
         if ( ourInstance == null ) {
-            ourInstance = new StatisticsDataSet( loggerName );
+            ourInstance = new StatisticsDataSet();
         } else {
             if ( dataOutDated() ) {
                 try {
@@ -99,15 +100,7 @@ public final class StatisticsDataSet {
         return ourInstance;
     }
 
-    public synchronized static StatisticsDataSet getInstance() {
-
-        return getInstance( StatisticsDataSet.class.getName() );
-    }
-
-    private StatisticsDataSet( final String loggerName ) {
-
-        // get the logger
-        logger = Logger.getLogger( loggerName );
+    private StatisticsDataSet() {
 
         // collect all statistic data from IntAct
         try {
@@ -140,15 +133,11 @@ public final class StatisticsDataSet {
 
         logger.info( "retreiving all statistics..." );
         try {
-            logger.info( "creating IntactHelper..." );
-            final IntactHelper helper = new IntactHelper();
 
             try {
-                userName = helper.getDbUserName();
-                databaseName = helper.getDbName();
+                userName = DaoFactory.getBaseDao().getDbUserName();
+                databaseName = DaoFactory.getBaseDao().getDbName();
                 logger.info( "Helper created - access to database " + databaseName + " as " + userName );
-            } catch ( LookupException e ) {
-                logger.error( "Error when trying to get the database and username.", e );
             } catch ( SQLException e ) {
                 logger.error( "Error when trying to get the database and username.", e );
             }
@@ -157,10 +146,7 @@ public final class StatisticsDataSet {
             // null parameter means no restrictive criteria.
             logger.info( "Look for statistics..." );
 
-            final Collection<IntactStatistics> intactStatistics = helper.search( IntactStatistics.class, "ac", null );
-
-            logger.info( "closing IntactHelper..." );
-            helper.closeStore();
+            final Collection<IntactStatistics> intactStatistics = StatsDaoFactory.getStatsBaseDao(IntactStatistics.class).getAll();
 
             // keep track of the time.
             timestamp = System.currentTimeMillis();

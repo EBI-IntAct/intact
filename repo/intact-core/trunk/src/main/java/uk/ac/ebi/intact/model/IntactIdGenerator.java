@@ -7,11 +7,15 @@ package uk.ac.ebi.intact.model;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.HibernateException;
+import org.hibernate.engine.SessionImplementor;
 import org.hibernate.id.SequenceGenerator;
 import uk.ac.ebi.intact.context.IntactContext;
 
+import java.io.Serializable;
+
 /**
- * TODO comment this!
+ * Generates identifiers for IntAct objects
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -23,16 +27,21 @@ public class IntactIdGenerator extends SequenceGenerator
     private static final Log log = LogFactory.getLog(IntactIdGenerator.class);
 
 
-    public String getSequenceName()
+    public Serializable generate(SessionImplementor sessionImplementor, Object object) throws HibernateException
     {
-
         Institution institution = IntactContext.getCurrentInstance().getInstitution();
-        String prefix = institution.getShortLabel();
+        String prefix = institution.getShortLabel().toUpperCase();
 
-        String id = prefix+"-"+super.getSequenceName();
+        String id = prefix+"-"+super.generate(sessionImplementor, object);
 
         log.trace("Assigning Id: "+id);
 
         return id;
+    }
+
+
+    public String getSequenceName()
+    {
+        return "intact_sequence";
     }
 }

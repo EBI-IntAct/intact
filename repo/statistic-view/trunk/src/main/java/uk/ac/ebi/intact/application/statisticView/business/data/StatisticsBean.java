@@ -5,15 +5,15 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.statisticView.business.data;
 
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.util.IntactStatistics;
+import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.statisticView.business.Constants;
+import uk.ac.ebi.intact.application.statisticView.business.model.IntactStatistics;
+import uk.ac.ebi.intact.business.IntactException;
 
-import java.util.*;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-
-import org.apache.log4j.Logger;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Bean which allows you to hold the data to display in the view.

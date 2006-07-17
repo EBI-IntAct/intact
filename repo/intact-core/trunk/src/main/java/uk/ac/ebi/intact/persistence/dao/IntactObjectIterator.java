@@ -31,7 +31,7 @@ public class IntactObjectIterator<T extends IntactObject> implements Iterator {
     /**
      * Maximum size of a chunk of data.
      */
-    public static final int DEFAULT_CHUNK_SIZE = 51;
+    public static final int DEFAULT_CHUNK_SIZE = 1;
 
     public static final int NOT_INITIALISED = -1;
 
@@ -84,7 +84,7 @@ public class IntactObjectIterator<T extends IntactObject> implements Iterator {
 
         dao = null;
 
-        log.info( objectCount + " object to be read from the iterator." );
+        log.debug( objectCount + " object to be read from the iterator." );
     }
 
     public IntactObjectIterator( Class intactObjectClass, int batchSize ) {
@@ -133,9 +133,9 @@ public class IntactObjectIterator<T extends IntactObject> implements Iterator {
                 log.info( "Starting a transaction" );
             }
 
-            log.info( "Retreiving " + batchSize + " objects." );
+            log.debug( "Retreiving " + batchSize + " objects." );
             chunk = dao.getAll( index, batchSize );
-            log.info( "Retreived " + chunk.size() + " object(s)." );
+            log.debug( "Retreived " + chunk.size() + " object(s)." );
 
             chunkIterator = chunk.iterator();
         }
