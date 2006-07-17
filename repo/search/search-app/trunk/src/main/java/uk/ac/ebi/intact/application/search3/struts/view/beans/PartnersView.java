@@ -7,24 +7,15 @@ package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.ProteinDao;
 import uk.ac.ebi.intact.util.SearchReplace;
-import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.HashMap;
-import java.util.Collections;
+import java.util.*;
 
 /**
  * This class represent the partners view. It contains the main Interactor and all the partners.
@@ -50,10 +41,6 @@ public class PartnersView extends AbstractView
      */
     private String uniprotUrlTemplate;
 
-    /**
-     * Primary identity (in a protein, its uniprot AC)
-     */
-    private String primaryIdXrefIdentity;
 
     private Interactor interactor;
 
@@ -167,17 +154,14 @@ public class PartnersView extends AbstractView
             return "#";
         }
 
+        log.debug("AC: "+interactor.getAc() +"; Url template: "+uniprotUrlTemplate+"; Primary Id: "+primaryIdXrefIdentity);
+
         return SearchReplace.replace(uniprotUrlTemplate, "${ac}", primaryIdXrefIdentity);
     }
 
     private String getPrimaryIdXrefIdentity(Interactor interactor)
     {
-        if (primaryIdXrefIdentity == null)
-        {
-            primaryIdXrefIdentity = DaoFactory.getProteinDao().getUniprotAcByProteinAc(interactor.getAc());
-        }
-
-        return  primaryIdXrefIdentity;
+         return  DaoFactory.getProteinDao().getUniprotAcByProteinAc(interactor.getAc());
     }
 
 
