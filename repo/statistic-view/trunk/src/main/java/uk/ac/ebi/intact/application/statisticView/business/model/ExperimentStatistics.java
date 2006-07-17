@@ -12,7 +12,7 @@ import java.sql.Timestamp;
  * @author Michael Kleen
  * @version ExperimentStatistics.java Date: Feb 18, 2005 Time: 1:06:55 PM
  */
-public class ExperimentStatistics implements Comparable {
+public class ExperimentStatistics extends StatsBase implements Comparable {
 
     private Timestamp timestamp;
     private int experimentNumber;

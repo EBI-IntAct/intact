@@ -5,7 +5,9 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.statisticView.business.model;
 
-import java.sql.Timestamp;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 
 /**
@@ -20,14 +22,14 @@ import java.sql.Timestamp;
  * @author Michael Kleen
  * @version BioSourceStatistics.java Date: Oct 12, 2004 Time: 3:57:09 PM
  */
-public class BioSourceStatistics implements Comparable {
+@Entity
+@Table (name = "ia_biosourcestatistics")
+public class BioSourceStatistics extends StatsBase implements Comparable {
 
     private String taxId;
     private String shortlabel;
-    private Timestamp timestamp;
     private int binaryInteractions;
     private int proteinNumber;
-    private int ac;
 
     public String getShortlabel() {
         return shortlabel;
@@ -35,22 +37,6 @@ public class BioSourceStatistics implements Comparable {
 
     public void setShortlabel(String shortlabel) {
         this.shortlabel = shortlabel;
-    }
-
-    public final int getAc() {
-        return ac;
-    }
-
-    public final void setAc(int ac) {
-        this.ac = ac;
-    }
-
-    public final Timestamp getTimestamp() {
-        return timestamp;
-    }
-
-    public final void setTimestamp(Timestamp timestamp) {
-        this.timestamp = timestamp;
     }
 
     public final String getTaxId() {
@@ -61,6 +47,7 @@ public class BioSourceStatistics implements Comparable {
         this.taxId = taxId;
     }
 
+    @Column(name = "binary_interactions")
     public final int getBinaryInteractions() {
         return binaryInteractions;
     }
@@ -69,6 +56,7 @@ public class BioSourceStatistics implements Comparable {
         this.binaryInteractions = binaryInteractions;
     }
 
+    @Column(name = "protein_number")
     public final int getProteinNumber() {
         return proteinNumber;
     }
@@ -89,8 +77,9 @@ public class BioSourceStatistics implements Comparable {
         return bs.getBinaryInteractions() - binaryInteractions;
     }
 
+    @Override
     public String toString() {
-        return "BioSourceStatistics[[ac]" + this.ac + ",[shortlabel] " + this.shortlabel +
+        return "BioSourceStatistics[[ac]" + this.getAc() + ",[shortlabel] " + this.shortlabel +
                 ", [taxid]" + this.taxId + ", [proteinNumbers] " + this.proteinNumber +
                 ", [binaryInteractions]" + this.binaryInteractions;
     }
