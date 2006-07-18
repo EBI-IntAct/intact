@@ -45,7 +45,7 @@
                             <srcDir>src/main/content/xml</srcDir>
                             <destDir>target/${build.finalName}/doc/html</destDir>
                             <fileNameRegex>intact.xml</fileNameRegex>
-                            <fileNameReplacement>documentation.html</fileNameReplacement>
+                            <fileNameReplacement>tableOfContent.html</fileNameReplacement>
                         </configuration>
                     </execution>
                     <execution>
@@ -59,7 +59,7 @@
                             <srcDir>src/main/content/xml</srcDir>
                             <destDir>target/${build.finalName}/doc/html</destDir>
                             <fileNameRegex>intact.xml</fileNameRegex>
-                            <fileNameReplacement>tableOfContent.html</fileNameReplacement>
+                            <fileNameReplacement>documentation.html</fileNameReplacement>
                         </configuration>
                     </execution>
                 </executions>
