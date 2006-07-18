@@ -142,10 +142,14 @@
 <span class="pbold"><a name="submission"></a>Direct data submission:</span> <br>
 <ul>
     <li class="greenboldsmalllist"><span class="text">
-                                IntAct encourages and welcomes direct user submissions of
-                                protein interaction data to be published in peer-reviewed publications.
-                                Please contact <a href="mailto:datasubs@ebi.ac.uk">datasubs@ebi.ac.uk</a>
-                                for curator assistance.</span></li>
+    IntAct encourages and welcomes direct user submissions of
+    protein interaction data to be published in peer-reviewed publications.
+    Please read the <a href="http://imex.sourceforge.net/MIMIx/">IMEx guideline</a>
+    for further details.
+    <br>
+    Should you require curator assistance, please contact
+    <a href="mailto:intact-help@ebi.ac.uk">intact-help@ebi.ac.uk</a>.</span>
+    </li>
 </ul>
                         <span class="pbold">
                                 <a name="mail"></a>Mailing lists, bug reports:</span> <br>
