@@ -24,21 +24,29 @@
         <section title="Recent changes" name="new">
 
             <blockquote>
+                <u>Changes up to July 18, 2006</u>
+                :
+                <ul>
+                    <li>All data is now available in both <a href="http://psidev.sf.net/mi/xml/doc/user/">version 1.0</a> and
+                    <a href="http://psidev.sf.net/mi/xml/doc/user/">2.5</a> of PSI-MI XML format.</li>
+                    <li>As always, all data can be downloaded from the
+                        <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current">IntAct FTP site</a>.
+                        <br/>
+                        In addition, all publications can be downloaded independently in either PSI-MI
+                        <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi1">1.0</a> and
+                        <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi25">2.5</a>.</li>
+                </ul>
+            </blockquote>
+            <blockquote>
                 <u>Changes up to February 28, 2006</u>
                 :
                 <ul>
-                    <li>New
-                        <a href="http://www.ebi.ac.uk/intact/search/do/initAdvSearch">Advanced search</a>
-                        added.
+                    <li>New <a href="http://www.ebi.ac.uk/intact/search/do/initAdvSearch">Advanced search</a> added.
                     </li>
-                    <li>New
-                        <a href="#interpro.search">InterPro search</a>
-                        added.
-                    </li>
+                    <li>New <a href="#interpro.search">InterPro search</a> added.</li>
                     <li>In addition to the user manual, a dedicated
                         <a href="http://www.ebi.ac.uk/intact/doc/html/curation/IntActAnnotationRules.pdf">curation
-                            manual</a>
-                        has been released.
+                            manual</a> has been released.
                     </li>
                 </ul>
             </blockquote>
@@ -46,32 +54,17 @@
                 <u>Changes up to January 01, 2005</u>
                 :
                 <ul>
-                    <li>New
-                        <a href="http://www.ebi.ac.uk/intact/search">Search</a>
-                        user interface available.
-                    </li>
-                    <li>New IntAct
-                        <a href="./tutorial/index.html">API tutorial.</a>
-                    </li>
+                    <li>New <a href="http://www.ebi.ac.uk/intact/search">Search</a> user interface available. </li>
+                    <li>New IntAct <a href="../misc/tutorial/index.html">API tutorial.</a> </li>
                     <li>Integration of data including features (eg.
                         <a href="http://www.ebi.ac.uk/intact/search/do/hvWelcome?searchString=EBI-474155&amp;searchClass=Experiment&amp;source=simple">
-                            Goehler et al.</a>
-                        ).
-                    </li>
-                    <li>Integration of IntAct data into
-                        <a href="http://www.ebi.uniprot.org/">UniProt</a>
-                    </li>
-                    <li>IntAct takes part in the
-                        <a href="http://imex.sourceforge.net/">IMEx consortium</a>
-                    </li>
-                    <li>New application (
-                        <a href="http://www.ebi.ac.uk/intact/mine">MiNe</a>
-                        ) allowing to find the
+                            Goehler et al.</a> ). </li>
+                    <li>Integration of IntAct data into <a href="http://www.ebi.uniprot.org/">UniProt</a> </li>
+                    <li>IntAct takes part in the <a href="http://imex.sourceforge.net/">IMEx consortium</a> </li>
+                    <li>New application ( <a href="http://www.ebi.ac.uk/intact/mine">MiNe</a> ) allowing to find the
                         minimal connecting network given a set of proteins.
                     </li>
-                    <li>New application (
-                        <a href="http://www.ebi.ac.uk/intact/targets">Targets</a>
-                        ) to predict targets
+                    <li>New application (<a href="http://www.ebi.ac.uk/intact/targets">Targets</a> ) to predict targets
                         for pull-down experiments.
                     </li>
                 </ul>
@@ -81,10 +74,9 @@
                 :
                 <ul>
                     <li>IntAct release 1: IntAct data is now available in
-                        <a href="http://psidev.sf.net/mi/xml/doc/user/">PSI MI XML format</a>
-                        , see the
-                        <a href="#download">download</a>
-                        section. Controlled vocabularies are available in GO DAG format.
+                        <a href="http://psidev.sf.net/mi/xml/doc/user/">PSI MI XML format</a> , see the
+                        <a href="#download">download</a> section. Controlled vocabularies are available in GO DAG
+                        format.
                     </li>
                     <li>20672 interactions have been imported from Giot et al, 2003. The dataset contains extensive
                         crosslinking to UniProt, GO, InterPro, and FlyBase.
@@ -96,17 +88,34 @@
         <section name="data" title="Data">
 
             <section name="download" title="Download">
-                <blockquote>IntAct data is available in
-                    <a href="http://psidev.sf.net/mi/xml/doc/user/">PSI MI XML format</a>
-                    .
-                    Each IntAct release is split into multiple XML files according to the pattern Species_name-[small |
-                    exeriment-name].xml. For example, s-cerevisiae_small.xml contains data on all small-scale
-                    experiments
-                    in S.cerevisiae stored in IntAct, s-cerevisiae_ho-2002.xml contains the data from the Ho et al,
-                    2002 experiment. The current release is available at
-                    <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/xml/">
-                        ftp://ftp.ebi.ac.uk/pub/databases/intact/current/xml/</a>
-                    .
+                <blockquote>
+                    Each IntAct release is split into multiple XML files organised in two sections, each of which is
+                    available in both PSI-MI
+                    <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi1/species">version 1.0</a> and
+                            <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi25/species">version 2.5</a>.:
+                    <ul>
+                        <li>Organisms: the split is done according to the pattern <i>Species_name-[small|exeriment-name].xml</i>.
+                            <br/>
+                            For example, s-cerevisiae_small.xml contains data on all small-scale experiments in
+                            S.cerevisiae stored in IntAct, s-cerevisiae_ho-2002.xml contains the data from the Ho et al,
+                            2002 experiment.
+                        </li>
+                        <li>Publications: each publication can be downloaded as a single file. Files are names according
+                            to the following pattern: <i>pubmedId[-experiment-name].xml</i>.
+                            <br/>
+                            Large scale publications can be splited into multiple files, consequently, a ZIP archive is
+                            also available so one can download a complete publication at once.
+                            <br/>
+                            For example: Lacount et al. published in 2006 A protein interaction network of the malaria
+                            parasite Plasmodium falciparum. That publication has been split into 2 files:
+                            <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi1/pmid/2006/16267556_lacount-2005-1_01.xml">16267556_lacount-2005-1_01.xml</a>
+                            and
+                            <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi1/pmid/2006/16267556_lacount-2005-1_02.xml">16267556_lacount-2005-1_02.xml</a>
+                            which can be both downloaded from a single ZIP archive
+                            <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi1/pmid/2006/16267556.zip">16267556.zip</a>.
+                        </li>
+                    </ul>
+
                 </blockquote>
             </section>
             <!-- end download -->
@@ -114,22 +123,17 @@
             <section name="CVS" title="Controlled Vocabularies">
                 <blockquote>
                     To ensure data consistency, IntAct makes intensive use of controlled vocabularies.
-                    All controlled vocabularies are available in Gene Ontology DAG-Edit format and HTML format.
-                    Some IntAct annotation of controlled vocabulary terms do not fit the GO DAG-Edit format, but
-                    as we want to export all available information, some comments might have to be filtered out from
-                    the *.def files before editing them in GO DAG-Edit. For an overview and download of IntAct
-                    controlled vocabularies, see
+                    All controlled vocabularies are available in <a href="http://obo.sourceforge.net/">OBO format</a>.
+                    For an overview and download of IntAct controlled vocabularies, see
                     <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/cv/">
-                        ftp://ftp.ebi.ac.uk/pub/databases/intact/current/cv/</a>
-                    .
+                        ftp://ftp.ebi.ac.uk/pub/databases/intact/current/cv/</a>.
                 </blockquote>
             </section>
             <!-- end CVS -->
 
             <section name="statistics" title="Statistics">
                 Please see separate
-                <a href="statistics/index.html">statistics section</a>
-                .
+                <a href="statistics/index.html">statistics section</a>.
             </section>
             <!-- end statistics -->
 
@@ -208,21 +212,18 @@
                         Crossreferences to other databases. A crossreference has the following attributes:
                         <ul>
                             <li>
-                                <b>Name</b>
-                                :The name of the external database.
+                                <b>Name</b> :The name of the external database.
                             </li>
                             <li>
                                 <b>Primary id</b>
                                 : The primary id or accession number of the object in the external database.
                             </li>
                             <li>
-                                <b>Secondary id</b>
-                                : The secondary id of the object in the external database.
+                                <b>Secondary id</b> : The secondary id of the object in the external database.
                             </li>
                             <li>
                                 <a name="Xref.cvXrefType"></a>
-                                <b>Crossreference type</b>
-                                : The type of crossreference.
+                                <b>Crossreference type</b> : The type of crossreference.
                             </li>
                         </ul>
                     </blockquote>
@@ -284,8 +285,8 @@
                     of Interleukin 2 to the receptor is represented. Both Interaction objects are linked to an
                     experiment,
                     in which the Interaction has been determined.
-                    <img align="left" src="./images/core/intactMainObjects2.jpg" height="108" width="214"/>
-                    <img align="right" src="./images/core/intactMainObjects.jpg" height="160" width="344"/>
+                    <img align="left" src="../images/core/intactMainObjects2.jpg" height="108" width="214"/>
+                    <img align="right" src="../images/core/intactMainObjects.jpg" height="160" width="344"/>
                     <br clear="all"/>
                     The following section describes the main objects in detail.
                 </blockquote>
@@ -724,7 +725,7 @@
                             is shown below:
                         </p>
                         <p>
-                            <img SRC="./images/search/exp.png" border="0"/>
+                            <img SRC="../images/search/exp.png" border="0"/>
                         </p>
 
                         <p>
@@ -737,7 +738,7 @@
                             This is shown below:
                         </p>
                         <p>
-                            <img SRC="./images/search/exp-chunked.png" border="0"/>
+                            <img SRC="../images/search/exp-chunked.png" border="0"/>
                         </p>
 
                         <p>
@@ -746,7 +747,7 @@
                             the interaction is shown in the context of its experiment:
                         </p>
                         <p>
-                            <img SRC="./images/search/int_single.png" border="0"/>
+                            <img SRC="../images/search/int_single.png" border="0"/>
                         </p>
 
                         <p>
@@ -755,7 +756,7 @@
                             basic statistics:
                         </p>
                         <p>
-                            <img SRC="./images/search/too_many_results.png" border="0"/>
+                            <img SRC="../images/search/too_many_results.png" border="0"/>
                         </p>
 
                         <p>
@@ -765,7 +766,7 @@
                             choose:
                         </p>
                         <p>
-                            <img SRC="./images/search/query_multi_obj.png" border="0"/>
+                            <img SRC="../images/search/query_multi_obj.png" border="0"/>
                         </p>
 
                         <p>
@@ -788,7 +789,7 @@
                             An example result screen for this view is shown below:
                         </p>
                         <p>
-                            <img SRC="./images/search/binary.png" border="0"/>
+                            <img SRC="../images/search/binary.png" border="0"/>
                         </p>
                         <p>
                             <a NAME="interaction.details.view"></a>
@@ -800,7 +801,7 @@
                             The details for an individual protein are displayed as below:
                         </p>
                         <p>
-                            <img SRC="./images/search/protein_single.png" border="0"/>
+                            <img SRC="../images/search/protein_single.png" border="0"/>
                         </p>
                         <br/>
 
@@ -812,7 +813,7 @@
                             like this:
                         </p>
                         <p>
-                            <img SRC="./images/search/uniprot.png" border="0"/>
+                            <img SRC="../images/search/uniprot.png" border="0"/>
                         </p>
                         <p>
                             <u>Note</u>
@@ -979,7 +980,7 @@
                                 advancedSearch :
                                 <br/>
                                 <br/>
-                                <img src="./images/search/advancedSearch1.png" title=""/>
+                                <img src="../images/search/advancedSearch1.png" title=""/>
                                 <br/>
                             </p>
                             <p>
@@ -1032,7 +1033,7 @@
                                 a normal search :
                                 <br/>
                                 <br/>
-                                <img src="./images/search/advancedSearch2.png" title=""/>
+                                <img src="../images/search/advancedSearch2.png" title=""/>
                                 <br/>
                             </p>
 
@@ -1041,7 +1042,7 @@
                                 structure below:
                                 <br/>
                                 <br/>
-                                <img src="./images/search/advancedSearch3.png" title=""/>
+                                <img src="../images/search/advancedSearch3.png" title=""/>
                                 <br/>
                             </p>
 
@@ -1049,7 +1050,7 @@
                                 If you choosed to display Experiments, the result page will follow the structure below:
                                 <br/>
                                 <br/>
-                                <img src="./images/search/advancedSearch4.png" title=""/>
+                                <img src="../images/search/advancedSearch4.png" title=""/>
                             </p>
 
                             <p>
@@ -1057,7 +1058,7 @@
                                 If you choosed to display Interactions, the result page will follow the structure below:
                                 <br/>
                                 <br/>
-                                <img src="./images/search/advancedSearch5.png" title=""/>
+                                <img src="../images/search/advancedSearch5.png" title=""/>
                                 <br/>
                             </p>
 
@@ -1065,7 +1066,7 @@
                                 If you choosed to display Proteins, the result page will follow the structure below:
                                 <br/>
                                 <br/>
-                                <img src="./images/search/advancedSearch6.png" title=""/>
+                                <img src="../images/search/advancedSearch6.png" title=""/>
                                 <br/>
                             </p>
                         </blockquote>
@@ -1094,14 +1095,14 @@
                             The IntAct Search Page with red circles around a tickbox and the InterPro button.
                             <br/>
                             <br/>
-                            <img src="./images/search/intact_red.png" title=""/>
+                            <img src="../images/search/intact_red.png" title=""/>
                             <br/>
                             <br/>
 
                             After a short waiting time,
                             <br/>
                             <br/>
-                            <img src="./images/search/interpro1.png" title=""/>
+                            <img src="../images/search/interpro1.png" title=""/>
                             <br/>
                             <br/>
 
@@ -1110,12 +1111,12 @@
 
                             <br/>
                             <br/>
-                            <img src="./images/search/interpro2.png" title=""/>
+                            <img src="../images/search/interpro2.png" title=""/>
                             <br/>
                             <br/>
                             <br/>
                             <br/>
-                            <img src="./images/search/interpro3.png" title=""/>
+                            <img src="../images/search/interpro3.png" title=""/>
                             <br/>
                             <br/>
 
@@ -1173,7 +1174,7 @@
                         database. The user is presented with a login screen as shown below:
                         <br/>
                         <br/>
-                        <img src="./images/editor/login.png" title="" alt="Login Screen"/>
+                        <img src="../images/editor/login.png" title="" alt="Login Screen"/>
                         <br/>
                         <br/>
                         <br/>
@@ -1181,13 +1182,13 @@
                         display:
                         <br/>
                         <br/>
-                        <img src="./images/editor/login-error.png" title="" alt="Login error"/>
+                        <img src="../images/editor/login-error.png" title="" alt="Login error"/>
                         <br/>
                         <br/>
                         The user is presented with the following screen after a successful login:
                         <br/>
                         <br/>
-                        <img src="./images/editor/login-success.png" title="" alt="Login Success"/>
+                        <img src="../images/editor/login-success.png" title="" alt="Login Success"/>
                         <br/>
                         <br/>
                         In the bottom left corner of the above screen, shows the login name (smudali)
@@ -1207,10 +1208,10 @@
                         first.
                         <br/>
                         <br/>
-                        <img src="./images/editor/types.png" title="" alt="IntAct Types"/>
+                        <img src="../images/editor/types.png" title="" alt="IntAct Types"/>
                         <br/>
                         <br/>
-                        <img src="./images/editor/warning.gif" title="" alt="" align="left"/>
+                        <img src="../images/editor/warning.gif" title="" alt="" align="left"/>
                         The IntAct type list defaults to the first item (i.e., Experiment) if a type wasn't selected.
                         <br/>
                         <br/>
@@ -1233,7 +1234,7 @@
                             <!--                            <li>primary id</li>-->
                             <!--                            <li>full name</li>-->
                         </ol>
-                        <img src="./images/editor/idea.gif" title="" alt="" align="left"/>
+                        <img src="../images/editor/idea.gif" title="" alt="" align="left"/>
                         So, it is faster to search by an accession number than by a shortlabel.
                         <br/>
                         <br/>
@@ -1246,20 +1247,20 @@
                         records.
                         <br/>
                         <br/>
-                        <img src="./images/editor/idea.gif" title="" alt="" align="left"/>
+                        <img src="../images/editor/idea.gif" title="" alt="" align="left"/>
                         Fo faster response, always prefer a restrictive search criteria.
                         <br/>
                         <br/>
                         <br/>
                         An example for a successful search:
                         <br/>
-                        <img src="./images/editor/results.png" title="" alt="Results page"/>
+                        <img src="../images/editor/results.png" title="" alt="Results page"/>
                         <br/>
                         The 'AC link' (see above) links the editor with the search application. The following
                         figure shows the result of clicking on EBI-39 link.
                         <br/>
                         <br/>
-                        <img src="./images/editor/search-link.png" title="Result of clicking on EBI-39 link"
+                        <img src="../images/editor/search-link.png" title="Result of clicking on EBI-39 link"
                              alt="Search Link"/>
                         <br/>
                         <br/>
@@ -1267,14 +1268,14 @@
                         'go' entry will be opened in the CV editor (see below, Cv Editors, for more on CV editor).
                         <br/>
                         <br/>
-                        <img src="./images/editor/idea.gif" title="" alt="" align="left"/>
+                        <img src="../images/editor/idea.gif" title="" alt="" align="left"/>
                         Alternatively, you can go to the edit screen by searching for EBI-39 or 'go' alone.
                         <br/>
                         <br/>
                         A message will be displayed if a search fails to find any matching records.
                         <br/>
                         <br/>
-                        <img src="./images/editor/search-error.png" title="" alt="No Match"/>
+                        <img src="../images/editor/search-error.png" title="" alt="No Match"/>
                         <br/>
                         <br/>
                     </blockquote>
@@ -1292,7 +1293,7 @@
                         creating a new CvDatabase record.
                         <br/>
                         <br/>
-                        <img src="./images/editor/new-cv.png" title="" alt="New CvDatabase"/>
+                        <img src="../images/editor/new-cv.png" title="" alt="New CvDatabase"/>
                         <br/>
                         <br/>
                     </blockquote>
@@ -1319,7 +1320,7 @@
                             <b>ADD THE link to the curation manual</b>
                             <br/>
                             <br/>
-                            <img src="./images/editor/shortlabel-client-error.png" title="" alt="Incorrect shortlabel"/>
+                            <img src="../images/editor/shortlabel-client-error.png" title="" alt="Incorrect shortlabel"/>
                             <br/>
                             <br/>
                             Submitting the form without entering a syntactically valid name
@@ -1329,7 +1330,7 @@
                             appears if Javascript is disabled in the browser).
                             <br/>
                             <br/>
-                            <img src="./images/editor/shortlabel-server-error.png" title=""
+                            <img src="../images/editor/shortlabel-server-error.png" title=""
                                  alt="Shortlabel server validation"/>
                             <br/>
                             <br/>
@@ -1343,7 +1344,7 @@
                             any browser.
                             <br/>
                             <br/>
-                            <img src="./images/editor/warning.gif" title="" alt="" align="left"/>
+                            <img src="../images/editor/warning.gif" title="" alt="" align="left"/>
                             However, some editor components such as Experiment and
                             Interaction editors rely on Javascript and they wouldn't work correctly
                             if Javascript is disabled. You will have then to enable Javascript in order to get
@@ -1366,7 +1367,7 @@
                             the drop down list first.
                             <br/>
                             <br/>
-                            <img src="./images/editor/annotation-error.png" title="" alt="Annotation error"/>
+                            <img src="../images/editor/annotation-error.png" title="" alt="Annotation error"/>
                             <br/>
                             <br/>
                             The editing of an annotation is similar to adding a new Annotation except
@@ -1375,17 +1376,17 @@
                             them from non editing annotations.
                             <br/>
                             <br/>
-                            <img src="./images/editor/edit-annotation.png" title="" alt="Editing an Annotation"/>
+                            <img src="../images/editor/edit-annotation.png" title="" alt="Editing an Annotation"/>
                             <br/>
                             <br/>
-                            <img src="./images/editor/warning.gif" title="" alt="" align="left"/>
+                            <img src="../images/editor/warning.gif" title="" alt="" align="left"/>
                             You cannot save the form if an annotation is in 'edit' mode. In this case, you
                             must either save or delete it first.
                             <br/>
                             <br/>
                             <br/>
                             <br/>
-                            <img src="./images/editor/idea.gif" title="" alt="" align="left"/>
+                            <img src="../images/editor/idea.gif" title="" alt="" align="left"/>
                             Edit one annotation at a time as there is no way to save a group of
                             annotations in a single button click.
                             <br/>
@@ -1405,7 +1406,7 @@
                             the reference qualifier consists of names for CvXrefQualifier.
                             <br/>
                             <br/>
-                            <img src="./images/editor/add-xref.png" title="Adding a new Xref" alt="New Xref"/>
+                            <img src="../images/editor/add-xref.png" title="Adding a new Xref" alt="New Xref"/>
                             <br/>
                             <br/>
                             As with annotations, the values from drop down lists must be selected
@@ -1414,13 +1415,13 @@
                             of empty values.
                             <br/>
                             <br/>
-                            <img src="./images/editor/warning.gif" title="" alt="" align="left"/>
+                            <img src="../images/editor/warning.gif" title="" alt="" align="left"/>
                             Any changes to the form are not saved until the form is submitted. So
                             for a new IntAct type, a record is not created on the database until the
                             Submit or Save &amp; Continue button is clicked and the server reports no errors.
                             <br/>
                             <br/>
-                            <img src="./images/editor/idea.gif" title="" alt="" align="left"/>
+                            <img src="../images/editor/idea.gif" title="" alt="" align="left"/>
                             Save your work periodically by selecting Save &amp; Continue. This avoids the
                             danger of loosing your data due to an extended period of inactivity (session
                             timing out).
@@ -1431,7 +1432,7 @@
                             name already have their existing values.
                             <br/>
                             <br/>
-                            <img src="./images/editor/edit-cv.png" title="Editing an existing entry"
+                            <img src="../images/editor/edit-cv.png" title="Editing an existing entry"
                                  alt="Editing an existing CV object"/>
                             <br/>
                             <br/>
@@ -1458,7 +1459,7 @@
                             label and the full name from a given NCBI taxid.
                             <br/>
                             <br/>
-                            <img src="./images/editor/new-biosrc.png" title="New BioSource"
+                            <img src="../images/editor/new-biosrc.png" title="New BioSource"
                                  alt="Biosource editor"/>
                         </blockquote>
 
@@ -1469,7 +1470,7 @@
                     <section title="Experiment" name="editor.experiment">
 
                         <blockquote>
-                            <img src="./images/editor/new-exp.png" title=""
+                            <img src="../images/editor/new-exp.png" title=""
                                  alt="New Experiment"/>
                             <br/>
                             <br/>
@@ -1489,7 +1490,7 @@
                     <section title="Interaction" name="editor.interaction">
 
                         <blockquote>
-                            <img src="./images/editor/interaction.jpg" title="Interaction Editor"
+                            <img src="../images/editor/interaction.jpg" title="Interaction Editor"
                                  alt="Interaction Editor"/>
                         </blockquote>
 
@@ -1501,7 +1502,7 @@
                                 Interaction as shown below.
                                 <br/>
                                 <br/>
-                                <img src="./images/editor/int-exp.png" title="" alt="Experiments not yet added"/>
+                                <img src="../images/editor/int-exp.png" title="" alt="Experiments not yet added"/>
                                 <br/>
                                 <br/>
                                 Select Add button to add an experiment or Hide to remove from the
@@ -1527,7 +1528,7 @@
                                 (by default the EBI SRS server), to retrieve the corresponding protein.
                                 <br/>
                                 <br/>
-                                <img src="./images/editor/int-protein.png" title="" alt="Adding Proteins"/>
+                                <img src="../images/editor/int-protein.png" title="" alt="Adding Proteins"/>
                                 <br/>
                                 <br/>
                                 The orange colour bar on the left identfies new Proteins not
@@ -1540,7 +1541,7 @@
                                 Any errors in adding Proteins are shown red colour as shown below.
                                 <br/>
                                 <br/>
-                                <img src="./images/editor/int-protein-error.png" title=""
+                                <img src="../images/editor/int-protein-error.png" title=""
                                      alt="Error in adding Proteins"/>
                                 <br/>
                                 <br/>
@@ -1550,7 +1551,7 @@
                                 and 'Edit Feature' button respectively. The 'Edit Feature' only appears
                                 if there is a Feature attached to the Protein.
                                 <br/>
-                                <img src="./images/editor/int-feature.png" title="" alt="Adding Features"/>
+                                <img src="../images/editor/int-feature.png" title="" alt="Adding Features"/>
                                 <br/>
                                 <br/>
                             </blockquote>
@@ -1561,7 +1562,7 @@
                         <section title="Features" name="editor.int.features">
 
                             <blockquote>
-                                <img src="./images/editor/new-feature.png" title="Feature Editor"
+                                <img src="../images/editor/new-feature.png" title="Feature Editor"
                                      alt="Feature Editor"/>
                             </blockquote>
 
@@ -1570,7 +1571,7 @@
                                 in 'required field' colour. The following figure shows a Feature with
                                 multiple Ranges.
                                 <br/>
-                                <img src="./images/editor/add-ranges.png" title="" alt="Adding Ranges"/>
+                                <img src="../images/editor/add-ranges.png" title="" alt="Adding Ranges"/>
                                 <br/>
                                 <br/>
                                 The 'Create Undefined Feature' button provides an easier way to create a Feature
@@ -1578,26 +1579,26 @@
                                 button.
                                 <br/>
                                 <br/>
-                                <img src="./images/editor/feature-undefined.png" title="Undefined Feature"
+                                <img src="../images/editor/feature-undefined.png" title="Undefined Feature"
                                      alt="Undefined Feature"/>
                                 <br/>
                                 <br/>
-                                <img src="./images/editor/warning.gif" title="" alt="" align="left"/>
+                                <img src="../images/editor/warning.gif" title="" alt="" align="left"/>
                                 However, you still need to select the CvFeatureType before submitting the form.
                                 <br/>
                                 <br/>
                                 <br/>
-                                <img src="./images/editor/feature-type-error.png" title="" alt="Missing CvFeatureType"/>
+                                <img src="../images/editor/feature-type-error.png" title="" alt="Missing CvFeatureType"/>
                                 <br/>
                                 <br/>
                                 The 'Mutation' button switches the current view between Mutation/Normal
                                 Feature editor.
                                 <br/>
                                 <br/>
-                                <img src="./images/editor/mutation-button.png" title="" alt="Mutation Button"/>
+                                <img src="../images/editor/mutation-button.png" title="" alt="Mutation Button"/>
                                 <br/>
                                 <br/>
-                                <img src="./images/editor/warning.gif" title="" alt="" align="left"/>
+                                <img src="../images/editor/warning.gif" title="" alt="" align="left"/>
                                 You can switch back to the Normal Feature editor at anytime (or vice versa) but you
                                 will lose data entered in the form.
                                 <br/>
@@ -1606,23 +1607,23 @@
                                 The mutation editor as a result of switching from Normal to Mutation mode.
                                 <br/>
                                 <br/>
-                                <img src="./images/editor/hotspot-editor.png" title="" alt="Hotspot Editor"/>
+                                <img src="../images/editor/hotspot-editor.png" title="" alt="Hotspot Editor"/>
                                 <br/>
                                 <br/>
                                 See the curation manual for the format of hotspots. Any errors in adding hotspot entries
                                 are shown in red with an error message.
                                 <br/>
                                 <br/>
-                                <img src="./images/editor/hotspot-error.png" title="" alt="Hotspot Error"/>
+                                <img src="../images/editor/hotspot-error.png" title="" alt="Hotspot Error"/>
                                 <br/>
                                 <br/>
-                                <img src="./images/editor/warning.gif" title="" alt="" align="left"/>
+                                <img src="../images/editor/warning.gif" title="" alt="" align="left"/>
                                 There is no 'Save &amp; Continue' button. You need to save the data by selecting the
                                 'Submit' button.
                                 <br/>
                                 <br/>
                                 <br/>
-                                <img src="./images/editor/idea.gif" title="" alt="" align="left"/>
+                                <img src="../images/editor/idea.gif" title="" alt="" align="left"/>
                                 The CvFeatureType defaults to hotspot. Ensure that the entire entry for hotspot
                                 is complete before you select the 'Submit' button.
                                 <br/>
@@ -1844,8 +1845,8 @@
                             <table border="0">
                                 <tr>
                                     <td>
-                                        <a href="./images/hierarchView/PPIN.png" target="_blank">
-                                            <img src="./images/hierarchView/PPIN-small.png" border="0" width="300"
+                                        <a href="../images/hierarchView/PPIN.png" target="_blank">
+                                            <img src="../images/hierarchView/PPIN-small.png" border="0" width="300"
                                                  height="197"></img>
                                         </a>
                                     </td>
@@ -2012,8 +2013,8 @@
                                 <table border="0">
                                     <tr>
                                         <td>
-                                            <a href="./images/hierarchView/highlight.png" target="_blank">
-                                                <img src="./images/hierarchView/highlight-small.png" border="0"
+                                            <a href="../images/hierarchView/highlight.png" target="_blank">
+                                                <img src="../images/hierarchView/highlight-small.png" border="0"
                                                      width="299" height="197"></img>
                                             </a>
                                         </td>
@@ -2266,17 +2267,8 @@
                 </section>
                 <section name="graph2mif.references" title="PSI Molecular Interaction Format">
                     <blockquote>
-                        <ul>
-                            For details about the mapping have a look at the annotated
-                            <a href="graph2MIF/MIF-1.23-annotated.xsd">MIF.xsd</a>
-                            or
-                            at the generated mapping documentation
-                            <a href="graph2MIF/mapping/graph2MIF.html">here.</a>
-                        </ul>
-                        <ul>
                             For details about MIF hava a look at the homepage of the PSI project:
                             <a href="http://psidev.sourceforge.net/">Proteomics Standards Initiative</a>
-                        </ul>
                     </blockquote>
                 </section>
             </section>
@@ -2288,7 +2280,7 @@
                     ProViz is a high-performance, standalone visualization system for molecular interactions. For a
                     detailed description,
                     please see the
-                    <a href="proviz/proviz.html">ProViz user manual</a>
+                    <a href="../misc/proviz/proviz.html">ProViz user manual</a>
                     .
                 </blockquote>
             </section>
