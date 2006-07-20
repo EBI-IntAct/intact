@@ -1257,7 +1257,7 @@
                         <img src="../images/editor/results.png" title="" alt="Results page"/>
                         <br/>
                         The 'AC link' (see above) links the editor with the search application. The following
-                        figure shows the result of clicking on EBI-39 link.
+                        figure shows the result of clicking on EBI-448286 link.
                         <br/>
                         <br/>
                         <img src="../images/editor/search-link.png" title="Result of clicking on EBI-39 link"
@@ -1482,6 +1482,16 @@
                             The Participant Detection describes the method which has been used to detect the
                             participants (proteins) involved in the interaction, e.g. peptide mass fingerprinting.
                         </blockquote>
+                        <blockquote>
+                            <img src="../images/editor/exp-autocomp.png" title=""
+                                 alt="Experiment Auto-completion"/>
+                            <br/>
+                            <br/>
+                            As lots of information on the Editor - Experiment are coming from the article (the shortlabel
+                            , the fullname, the xref to pubmed...) we use the Citation webservice to automatically
+                            complete part of the Editor - Experiment page. To use this service, do as shown on the
+                            previous image : enter the pubmed id in the text field and press on the auto-completion button.
+                        </blockquote>
 
                     </section>
                     <!-- Experiment -->
@@ -1512,20 +1522,25 @@
                         </section>
                         <!-- Experiments -->
 
-                        <section title="Proteins" name="editor.int.proteins">
+                        <section titles="Interactors" name="editor.int.proteins">
 
                             <blockquote>
-                                This section lists all the Proteins participating in the current
-                                Interaction. For a new Interaction, this section is empty. To add a
-                                Protein, you must search for existing Proteins first by providing
+                                This section lists all the Interactors participating in the current
+                                Interaction. An Interactor can be a Protein, a Nucleic Acid (DNA, RNA...) or
+                                a Small Molecule.
+                                For a new Interaction, this section is empty. To add an Interactor you must search for
+                                it.
+                                In the case of a Protein, you must search for it by providing
                                 appropriate values for search fields. Only the most specific value
                                 is taken into consideration if multiple values are provided for search.
                                 Since IntAct AC is the most specific, other search values are ignored
                                 if a value was specified for IntAct AC.
-                                <br/>
                                 If a search is performed by UniProt accession number (SP AC),
                                 and no matching protein is found, the editor will access an external server
                                 (by default the EBI SRS server), to retrieve the corresponding protein.
+                                <br/>
+                                In the case of a Nucleic Acid or a Small Molecule you have to provide the Intact
+                                shortlabel or ac.
                                 <br/>
                                 <br/>
                                 <img src="../images/editor/int-protein.png" title="" alt="Adding Proteins"/>
