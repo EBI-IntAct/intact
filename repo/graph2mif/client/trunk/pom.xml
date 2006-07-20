@@ -70,5 +70,12 @@
           </dependency>
       </dependencies>
 
+    <distributionManagement>
+        <site>
+            <id>intact-site</id>
+            <name>Intact site</name>
+            <url>scp://localhost/homes/baranda/public_html/intact/${artifactId}</url>
+        </site>
+    </distributionManagement>
 
 </project>

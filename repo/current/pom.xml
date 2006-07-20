@@ -43,6 +43,7 @@
         <module>statistic-view</module>
         <module>mine-app</module>
         <module>predict-app</module>
+        <module>devsite</module>
     </modules>
 
     <build>
@@ -58,6 +59,14 @@
             </modules>
         </profile>
     </profiles>
+
+    <distributionManagement>
+        <site>
+            <id>intact-site</id>
+            <name>Intact site</name>
+            <url>scp://localhost/homes/baranda/public_html/intact/current</url>
+        </site>
+    </distributionManagement>
 
 
 </project>
