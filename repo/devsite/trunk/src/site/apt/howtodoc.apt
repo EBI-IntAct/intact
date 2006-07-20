@@ -1,0 +1,12 @@
+How to provide documentation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ As you may know, the more documentation is available, the better, and if the documentation is up to date,
+ even better.
+
+ To provide new documentation, just follow the {{{http://maven.apache.org/guides/mini/guide-site.html}Maven documentation guide}},
+ and put the content in the src/site folder of the corresponding modules. If you want to add more information
+ for this main development site, modify the src/site folder of the module called "devsite".
+
+ Modify or create new pages in the format you prefer (apt or xdoc) in the apt or xdoc folder of the
+ src/site folder. You can add more links to the menu modigying the src/site/site.xml file.

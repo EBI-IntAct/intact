@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" "http://apache.org/forrest/dtd/document-v12.dtd">
+<document>
+  <header>
+    <title>Apache MyFaces</title>
+  </header>
+  <body>
+    <section>
+      <title>Welcome to The MyFaces Project</title>
+      <p>This is the official homepage of the first free open source
+          JavaServer(tm) Faces implementation called "Apache MyFaces".</p>
+    </section>
+    <section>
+      <title>What is JavaServer(tm) Faces?</title>
+      <p>
+          JavaServer(tm) Faces is a new and upcoming web application framework
+        that accomplishes the MVC paradigm. It is comparable to the well-known
+        <link href="http://struts.apache.org/">Struts Framework</link> but has features
+        and concepts that are beyond those of Struts; especially the component orientation.
+        Look at <link href="http://java.sun.com/j2ee/javaserverfaces/">Sun's JavaServer(tm)
+        Page</link> to learn more about the
+        <link href="http://www.jcp.org/en/jsr/detail?id=127">Java Specification Request 127
+        </link> and to download the specification. You can also find a useful Tutorial there!
+      </p>
+    </section>
+    <section>
+      <title>Jumpstart into Apache MyFaces</title>
+      <p>
+          Make sure to have a look at our examples - you can find a working
+          distribution at <link href="http://www.irian.at/myfaces.jsf">
+          http://www.irian.at/open_source.jsf</link>.
+          Find instructions on installing them yourselves in our 'Getting Started' section.
+          If you can't find information you need on these pages, make sure you
+          also go to our WIKI at <link href="http://wiki.apache.org/myfaces">
+          http://wiki.apache.org/myfaces</link>
+      </p>
+    </section>
+
+    <section>
+      <title>October 27, 2005 - MyFaces 1.1.1 has been released.</title>
+      <p>
+            MyFaces 1.1.1 has been officially released.  This is a minor patch release that fixes a few of the 
+            major problems with the previous release.
+      </p>
+    </section>
+    
+    <section>
+      <title>October 18, 2005 - MyFaces 1.1.1 RC3 is now available.</title>
+      <p>
+            Please help us test the release candidate before the upcoming official release.  You can download the RC
+            <link href="http://cvs.apache.org/builds/myfaces/release/">here</link>.  Please file any isssues 
+            you find in JIRA and be sure to report them against version 1.1.1.
+      </p>
+    </section>
+
+    <section>
+        <title>Resources</title>
+        <p>If you are new to JavaServer Faces Technology look at the following resources to become familar with JSF:</p>
+        <ul>
+            <li><link href="http://www.jsfcentral.com/">JSFCentral</link></li>
+            <li><link href="http://www.jamesholmes.com/JavaServerFaces/">James Holmes' JSF Resources</link></li>
+            <li><link href="http://wiki.apache.org/myfaces/UsefulLinks">Additional links in the WIKI</link></li>
+        </ul>
+    </section>
+
+  </body>
+</document>
+
