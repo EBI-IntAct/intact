@@ -44,6 +44,7 @@
         <module>mine-app</module>
         <module>predict-app</module>
         <module>devsite</module>
+        <module>intact-test</module>
     </modules>
 
     <build>
