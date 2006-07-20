@@ -28,7 +28,7 @@ public class IntactContext
     {
         protected IntactContext initialValue()
         {
-            UserContext userContext = new UserContext("UNKNOWN_USER");
+            UserContext userContext = new UserContext(null);
             return new IntactContext(userContext);
         }
     };
