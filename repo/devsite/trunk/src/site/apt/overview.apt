@@ -1,0 +1,42 @@
+Module Overview
+~~~~~~~~~~~~~~
+
+ This is the list of modules, in the order they are build:
+
+*-----+------+
+| maven | the master POMs, which are the parent POMs for all the modules |
+*-----+------------------------------------------------------------------+
+| intact-core | core java sources and data model |
+*-----+------------------------------------------------------------------+
+| app-commons | common java sources and utilities for the web applications |
+*-----+------------------------------------------------------------------+
+| sanity-checker | classes to check if the data is not corrupted |
+*-----+------------------------------------------------------------------+
+| search-engine | classes which objective is to perform searches in the database |
+*-----+------------------------------------------------------------------+
+| search-app | the search web application |
+*-----+------------------------------------------------------------------+
+| maven-editortopics-plugin | maven plugin that generates a list of editor topics by parsing the intact core java sources |
+*-----+------------------------------------------------------------------+
+| editor-app | the editor web application |
+*-----+------------------------------------------------------------------+
+| data-conversion | classes to convert the data to/from PSI XML files |
+*-----+------------------------------------------------------------------+
+| graph2mif-server | web application and web service to retrieve IntAct data in PSI XML format |
+*-----+------------------------------------------------------------------+
+| graph2mif-client | client for the graph2mif web service |
+*-----+------------------------------------------------------------------+
+| tulip-client | client for the tulip web service |
+*-----+------------------------------------------------------------------+
+| hierarch-view-app | the hierarch-view web application, to visualise interaction networks |
+*-----+------------------------------------------------------------------+
+| statistic-view | statistics
+*-----+------------------------------------------------------------------+
+| mine-app | the mine web application
+*-----+------------------------------------------------------------------+
+| predict-app | web application that contain the Pay-as-you-go algorithm
+*-----+------+
+
+ The dependency relation of the modules:
+
+[images/artifact_deps.png] Dependency relationship

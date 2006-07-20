@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="IntAct">
+    <body>
+
+        <menu name="IntAct">
+            <item name="Overview" href="overview.html"/>
+            <item name="Installation and Configuration" href="install.html"/>
+            <!--
+            <item name="Downloads" href="intact-core/index.html"/>
+            -->
+        </menu>
+
+        <menu name="Libraries">
+            <item name="Intact Core" href="intact-core/index.html"/>
+            <item name="App Commons" href="app-commons/index.html"/>
+            <item name="Search Engine" href="search-engine/index.html"/>
+            <item name="Data Conversion" href="data-conversion/index.html"/>
+            <item name="Sanity Checker" href="sanity-checker/index.html"/>
+        </menu>
+
+        <menu name="Web Applications">
+            <item name="Search" href="search-app/index.html"/>
+            <item name="Editor" href="editor-app/index.html"/>
+            <item name="Graph2MIF" href="graph2mif-server/index.html"/>
+            <item name="HierarchView" href="hierarch-view-app/index.html"/>
+            <item name="Mine" href="mine-app/index.html"/>
+            <item name="Predict" href="predict-app/index.html"/>
+            <item name="StatisticView" href="statistic-view/index.html"/>
+        </menu>
+
+        <menu name="Web Services Clients">
+            <item name="Graph2MIF Client" href="graph2mif-client/index.html"/>
+            <item name="Tulip Client" href="tulip-client/index.html"/>
+        </menu>
+
+         <menu name="Maven Plugins">
+            <item name="Hibernate config" href="maven-plugins/maven-hibernateconfig-plugin/index.html"/>
+            <item name="Editor Topics" href="maven-plugins/maven-editortopics-plugin/index.html"/>
+            <item name="Sanity Checker" href="maven-plugins/maven-sanitychecker-plugin/index.html"/>
+        </menu>
+
+        <menu name="Developers">
+            <item name="Documentation needed" href="howtodoc.html"/>
+        </menu>
+
+        ${reports}
+    
+  </body>
+</project>
