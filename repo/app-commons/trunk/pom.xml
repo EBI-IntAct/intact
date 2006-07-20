@@ -53,7 +53,7 @@
         </dependency>
 
         <!-- There are assertEquals in the code -->
-	<dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>3.8.2</version>
@@ -62,5 +62,12 @@
 
     </dependencies>
 
+    <distributionManagement>
+        <site>
+            <id>intact-site</id>
+            <name>Intact site</name>
+            <url>scp://localhost/homes/baranda/public_html/intact/${artifactId}</url>
+        </site>
+    </distributionManagement>
 
 </project>

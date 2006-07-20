@@ -31,5 +31,26 @@
         <module>master-webapp-pom</module>
     </modules>
 
+    <distributionManagement>
+        <repository>
+            <id>ebi-repo</id>
+            <name>EBI Repository</name>
+            <url>scp://localhost/homes/maven/public_html/m2repo</url>
+        </repository>
+
+        <snapshotRepository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>ebi-repo-snapshots</id>
+            <name>EBI Snapshots Repository</name>
+            <url>scp://localhost/homes/maven/public_html/m2repo_snapshots</url>
+        </snapshotRepository>
+
+        <site>
+            <id>intact-site</id>
+            <name>Intact site</name>
+            <url>scp://localhost/homes/baranda/public_html/intact/maven-poms</url>
+        </site>
+    </distributionManagement>
+
 
 </project>

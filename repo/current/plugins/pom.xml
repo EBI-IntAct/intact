@@ -16,7 +16,7 @@
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <name>IntAct Maven Plugins</name>
-    <url>http://www.ebi.ac.uk/intact</url>
+    <url>http://www.ebi.ac.uk/~baranda/intact/maven-plugins</url>
     <description>Intact maven plugins</description>
 
     <scm>
@@ -33,5 +33,12 @@
         -->
     </modules>
 
+    <distributionManagement>
+        <site>
+            <id>intact-site</id>
+            <name>Intact site</name>
+            <url>scp://localhost/homes/baranda/public_html/intact/maven-plugins</url>
+        </site>
+    </distributionManagement>
 
 </project>
