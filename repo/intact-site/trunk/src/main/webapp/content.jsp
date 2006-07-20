@@ -247,15 +247,19 @@ The following mailing lists have been set up:
 </div>
 <span class="pbold"><a name="ack"></a>Acknowledgements:</span><br>
 <table cellspacing="5" border="0">
-    <tr><td align="right">
+    <tr><td align="right" valign="top">
         <a href="http://www.cordis.lu/life/">
             <img src="http://iims.ebi.ac.uk/euroflag.gif" width=75 height=50 alt="Fundings"
                  border="0"></a>
     </td>
         <td align="left">
-                <span class="text">Funded by EU grant number QLRI-CT-2001-00015
-                under the RTD programme "Quality of Life and Management of Living
-                Resources".</span>
+                <span class="text">
+                    IntAct is funded by the European Commission under FELICS, contract number 021902 (RII3) within
+                    the Research Infrastructure Action of the FP6 "Structuring the European Research Area" Programme.
+                    <br/>
+                    Formerly IntAct was funded by EU grant number QLRI-CT-2001-00015 under the RTD programme
+                    "Quality of Life and Management of Living Resources".
+                </span>
         </td></tr>
     <tr><td align="right">
         <a href="http://www.ebi.ac.uk/proteomics/">
@@ -289,7 +293,7 @@ The following mailing lists have been set up:
     </tr>
     <tr><td align="right">
         <a href="http://www.cenqua.com/clover/"><img src="images/clover_logo.gif"
-                                              alt="Clover" width=100 border="0" height="36"></a>
+                                              alt="Clover" width=100 border="0"></a>
     </td><td align="left">
         <span class="text">Test coverage by Clover.</span>
     </td>
