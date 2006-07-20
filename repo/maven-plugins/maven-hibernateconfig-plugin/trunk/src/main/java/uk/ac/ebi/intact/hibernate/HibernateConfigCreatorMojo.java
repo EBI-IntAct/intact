@@ -118,6 +118,11 @@ public class HibernateConfigCreatorMojo
     {
         getLog().info("Hibernate Mojo in action");
 
+        if (password == null)
+        {
+            password = "";
+        }
+
         // we get the first folder of the package
         String baseDirFromPackage = targetPath.substring(0, targetPath.indexOf("/"));
 
