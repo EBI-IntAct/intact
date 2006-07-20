@@ -38,7 +38,7 @@
          <site>
             <id>intact-site</id>
             <name>Intact site</name>
-            <url>scp://faldor.ebi.ac.uk/homes/baranda/public_html/intact</url>
+            <url>scp://baranda@faldor.ebi.ac.uk/homes/baranda/public_html/intact</url>
         </site>
     </distributionManagement>
 
