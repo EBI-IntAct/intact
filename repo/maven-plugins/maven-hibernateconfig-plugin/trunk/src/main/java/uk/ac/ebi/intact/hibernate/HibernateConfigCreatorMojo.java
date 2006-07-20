@@ -105,7 +105,6 @@ public class HibernateConfigCreatorMojo
 
     /**
      * @parameter
-     * @required
      */
     private String password;
 
