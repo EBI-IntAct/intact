@@ -24,22 +24,25 @@
         <section title="Recent changes" name="new">
 
             <blockquote>
-                <u>Changes up to July 18, 2006</u>
-                :
+                <u>Changes up to July 18, 2006</u> :
                 <ul>
-                    <li>All data is now available in both <a href="http://psidev.sf.net/mi/xml/doc/user/">version 1.0</a> and
-                    <a href="http://psidev.sf.net/mi/xml/doc/user/">2.5</a> of PSI-MI XML format.</li>
+                    <li>IntAct now contains over 110.000 interactions.</li>
+                    <li>All data is now available in both version <a href="http://psidev.sf.net/mi/xml/doc/user/">1.0</a>
+                        and <a href="http://psidev.sourceforge.net/mi/rel25/">2.5</a> of PSI-MI XML format.</li>
                     <li>As always, all data can be downloaded from the
                         <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current">IntAct FTP site</a>.
                         <br/>
                         In addition, all publications can be downloaded independently in either PSI-MI
                         <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi1">1.0</a> and
-                        <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi25">2.5</a>.</li>
+                        <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi25">2.5</a>.
+                    </li>
+                    <li>IntAct controlled vocabularies are now available in <a href="http://obo.sourceforge.net/">OBO format</a>.
+                        You can find the <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/cv/intact.obo">latest version here</a>.
+                    </li>
                 </ul>
             </blockquote>
             <blockquote>
-                <u>Changes up to February 28, 2006</u>
-                :
+                <u>Changes up to February 28, 2006</u> :
                 <ul>
                     <li>New <a href="http://www.ebi.ac.uk/intact/search/do/initAdvSearch">Advanced search</a> added.
                     </li>
@@ -51,8 +54,7 @@
                 </ul>
             </blockquote>
             <blockquote>
-                <u>Changes up to January 01, 2005</u>
-                :
+                <u>Changes up to January 01, 2005</u> :
                 <ul>
                     <li>New <a href="http://www.ebi.ac.uk/intact/search">Search</a> user interface available. </li>
                     <li>New IntAct <a href="../misc/tutorial/index.html">API tutorial.</a> </li>
@@ -70,13 +72,13 @@
                 </ul>
             </blockquote>
             <blockquote>
-                <u>Changes up to February 01, 2004</u>
-                :
+                <u>Changes up to February 01, 2004</u> :
                 <ul>
                     <li>IntAct release 1: IntAct data is now available in
-                        <a href="http://psidev.sf.net/mi/xml/doc/user/">PSI MI XML format</a> , see the
-                        <a href="#download">download</a> section. Controlled vocabularies are available in GO DAG
-                        format.
+                        <a href="http://psidev.sf.net/mi/xml/doc/user/">PSI-MI XML format version 1.0</a> , see the
+                        <a href="#download">download</a> section.
+                        <br/>
+                        Controlled vocabularies are available in GO DAG format.
                     </li>
                     <li>20672 interactions have been imported from Giot et al, 2003. The dataset contains extensive
                         crosslinking to UniProt, GO, InterPro, and FlyBase.
@@ -91,8 +93,8 @@
                 <blockquote>
                     Each IntAct release is split into multiple XML files organised in two sections, each of which is
                     available in both PSI-MI
-                    <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi1/species">version 1.0</a> and
-                            <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi25/species">version 2.5</a>.:
+                    <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi1">version 1.0</a> and
+                            <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi25">version 2.5</a>:
                     <ul>
                         <li>Organisms: the split is done according to the pattern <i>Species_name-[small|exeriment-name].xml</i>.
                             <br/>
@@ -312,6 +314,9 @@
                                 been detected.
                                 <br/>
                                 Example: Mass spectrometry.
+                                <br/>
+                                The hierarchy of terms can be viewed in the
+                                <a href="http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=MI&amp;termId=MI%3A0002&amp;termName=participant%20identification%20method">Ontology Lookup Service</a>.
                             </dd>
 
                             <dt>
@@ -321,6 +326,9 @@
                             <dd>The experimental method by which the interaction has been detected.
                                 <br/>
                                 Example: yeast two hybrid.
+                                <br/>
+                                The hierarchy of terms can be viewed in the
+                                <a href="http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=MI&amp;termId=MI%3A0001&amp;termName=interaction%20detection%20method">Ontology Lookup Service</a>.
                             </dd>
                         </dl>
                         Each Experiment provides a list of one or more
@@ -337,8 +345,7 @@
 
                     <blockquote>
                         The Interaction object describes the interaction of two or more
-                        <a href="#Interactor">Interactors</a>
-                        (proteins). As the number of Interactors in an Interaction
+                        <a href="#Interactor">Interactors</a>. As the number of Interactors in an Interaction
                         is not limited, an Interaction can describe both binary interactions, which are the result of
                         for example yeast two hybrid experiments, and interactions with more than two Interactors, for
                         example determined by "TAP" experiments. The attributes of an Interaction are
@@ -347,6 +354,9 @@
                             <dd>A description of the type of interaction.
                                 <br/>
                                 Example: association.
+                                <br/>
+                                The hierarchy of terms can be viewed in the
+                                <a href="http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=MI&amp;termId=MI%3A0190&amp;termName=interaction%20type">Ontology Lookup Service</a>.
                             </dd>
                             <dt>kD</dt>
                             <dd>The dissociation constant.</dd>
@@ -361,7 +371,17 @@
 
                     <blockquote>
                         A molecule or complex participating in an Interaction. The
-                        only direct attribute of an Interactor is
+                        direct attributes of an Interactor are
+                        <dl>
+                            <dt>
+                                CvInteractorType
+                            </dt>
+                            <dd>A description of the type of interactor as defined in the PSI-MI ontology.
+                                For example: protein, DNA, small molecules...
+                                The hierarchy of terms can be viewed in the
+                                <a href="http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=MI&amp;termId=MI%3A0313&amp;termName=interactor%20type">Ontology Lookup Service</a>.
+                            </dd>
+                        </dl>
                         <dl>
                             <dt>
                                 <a href="#BioSource">BioSource</a>
@@ -371,7 +391,7 @@
                                 experiment.
                             </dd>
                         </dl>
-                        If the Interactor is a Protein, it additionally has the attributes
+                        If the Interactor is a Polymer, it additionally has the attributes
                         <dl>
                             <dt>sequence</dt>
                             <dd>The amino acid sequence of the protein.</dd>
@@ -488,14 +508,16 @@
                 <section title="CvObject" name="CvObject">
 
                     <blockquote>
-                        IntAct makes intensive use of controlled vocabularies. Where
-                        possible, data attributes are controlled vocabularies, the
-                        terms are selected from a defined list instead of being free
-                        text. For each attribute which is selected from a controlled
-                        vocabulary, a specific CvXXXXX class exists, for example
-                        CvInteractionType. Each term in a controlled vocabulary has a
-                        definition, usually has crossreferences, and may have
-                        additional comments.
+                        IntAct makes intensive use of controlled vocabularies. Where possible, data attributes are
+                        controlled vocabularies, the terms are selected from a defined list instead of being free
+                        text. For each attribute which is selected from a controlled vocabulary, a specific CvXXXXX
+                        class exists, for example CvInteractionType. Each term in a controlled vocabulary has a
+                        definition, usually has crossreferences, and may have additional comments.
+                        <br/>
+                        Most controlled vocabularies in IntAct originate from the PSI-MI ontology. They are updated
+                        from the <a href="http://psidev.sourceforge.net/mi/rel25/data/psi-mi25.obo">PSI-MI web site</a>
+                        on a regular basis. The PSI-MI ontology can be viewed via the
+                        <a href="http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=MI">Ontology Lookup Service</a>.
                     </blockquote>
 
                 </section>
