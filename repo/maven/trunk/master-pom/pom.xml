@@ -236,7 +236,7 @@
         <pluginRepository>
             <id>codehaus-snapshot-plugins</id>
             <name>codehaus-shapshot-plugins</name>
-            <url>http://snapshots.repository.codehaus.org/</url>
+            <url>http://snapshots.maven.codehaus.org/maven2</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
