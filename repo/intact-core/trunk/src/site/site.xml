@@ -24,8 +24,9 @@
             <item name="IntAct" href="http://www.ebi.ac.uk/intact"/>
         </links>
 
-        <menu name="General">
-            <item name="Data Access (DAOs)" href="daos.html"/>
+        <menu name="Data">
+            <item name="Data Access (DAOs)" href="data/daos.html"/>
+            <item name="IDs Generation" href="data/idgeneration.html"/>
         </menu>
 
         <menu name="Maven 2.0">
