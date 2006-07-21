@@ -5,16 +5,14 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.model.proxy.InteractionProxy;
 import uk.ac.ebi.intact.model.proxy.InteractorProxy;
-import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 
 /**
  * The specific instance of an interactor which participates in an interaction.
@@ -30,6 +28,8 @@ import org.apache.commons.logging.Log;
 public class Component extends BasicObjectImpl {
 
     private static final Log log = LogFactory.getLog(Component.class);
+
+    public static final float STOICHIOMETRY_NOT_DEFINED = 0;
 
     ///////////////////////////////////////
     //attributes
@@ -47,7 +47,7 @@ public class Component extends BasicObjectImpl {
      * describe for example a homodimer, an interaction might have only one substrate, but the relative quantity would
      * be 2.
      */
-    private float stoichiometry = 1;
+    private float stoichiometry = STOICHIOMETRY_NOT_DEFINED;
 
     /**
      * TODO Represents ...
@@ -131,6 +131,14 @@ public class Component extends BasicObjectImpl {
 
     ///////////////////////////////////////
     //access methods for attributes
+
+    /**
+     * Answers the question: "is the stoichiometry of the component defined ?".
+     * @return true if the stoichiometry is defined, false otherwise.
+     */
+    public boolean hasStoichiometry() {
+        return ( stoichiometry != STOICHIOMETRY_NOT_DEFINED );
+    }
 
     public float getStoichiometry() {
         return stoichiometry;
