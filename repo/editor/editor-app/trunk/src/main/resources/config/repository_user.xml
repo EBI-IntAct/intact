@@ -4431,65 +4431,6 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 
 </class-descriptor>
 
-        <!-- ======================================================================= -->
-
-        <!-- class "Statistics" dependant of the IntAct model -->
-<class-descriptor
-        class="uk.ac.ebi.intact.util.IntactStatistics" table="ia_statistics">
-
-    <field-descriptor
-            name="ac"
-            column="ac"
-            jdbc-type="INTEGER"
-            primarykey="true"
-            sequence-name="intact_ac"
-            autoincrement="false"
-            nullable="false"
-            />
-    <field-descriptor
-            name="timestamp"
-            column="timestamp"
-            jdbc-type="TIMESTAMP"
-            nullable="false"
-            />
-    <field-descriptor
-            name="proteinNumber"
-            column="protein_number"
-            jdbc-type="INTEGER"
-            nullable="false"
-            />
-    <field-descriptor
-            name="interactionNumber"
-            column="interaction_number"
-            jdbc-type="INTEGER"
-            nullable="false"
-            />
-    <field-descriptor
-            name="binaryInteractions"
-            column="binary_interactions"
-            jdbc-type="INTEGER"
-            nullable="false"
-            />
-    <field-descriptor
-            name="complexInteractions"
-            column="complex_interactions"
-            jdbc-type="INTEGER"
-            nullable="false"
-            />
-    <field-descriptor
-            name="experimentNumber"
-            column="experiment_number"
-            jdbc-type="INTEGER"
-            nullable="false"
-            />
-    <field-descriptor
-            name="termNumber"
-            column="term_number"
-            jdbc-type="INTEGER"
-            nullable="false"
-            />
-</class-descriptor>
-
 
         <!-- Definitions for Sequence Chunk -->
 <class-descriptor
