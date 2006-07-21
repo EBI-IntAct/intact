@@ -12,6 +12,8 @@ import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.AuthenticateException;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.context.UserContext;
 
 /**
  * The custom authenticator for Intact editor.
@@ -36,6 +38,9 @@ public class UserAuthenticator {
     public static EditUserI authenticate(String username, String password)
             throws AuthenticateException {
         try {
+            UserContext userContext = IntactContext.getCurrentInstance().getUserContext();
+            userContext.setUserId(username);
+            userContext.setUserPassword(password);
             return new EditUser(username, password);
         }
         catch (IntactException ie) {
