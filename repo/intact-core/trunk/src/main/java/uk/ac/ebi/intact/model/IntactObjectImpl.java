@@ -92,7 +92,7 @@ public abstract class IntactObjectImpl implements IntactObject, Serializable,
     public void setCreated( Date created ) {
         if ( created != null ) {
 
-            this.created = new Timestamp( created.getTime() );
+            this.created = new Date( created.getTime() );
         } else {
 
             //needed for object-based search
