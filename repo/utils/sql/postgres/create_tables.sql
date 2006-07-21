@@ -293,7 +293,7 @@ CREATE TABLE IA_Component
         , role                    VARCHAR (30)    CONSTRAINT fk_Component_role REFERENCES IA_ControlledVocab(ac)
         , expressedIn_ac          VARCHAR (30)    CONSTRAINT fk_Component_expressedIn REFERENCES IA_BioSource(ac)
         , owner_ac                VARCHAR (30)    CONSTRAINT fk_Component_owner REFERENCES IA_Institution(ac)
-        , stoichiometry           DECIMAL (4,1)
+        , stoichiometry           DECIMAL (4,1)   DEFAULT  0
         , created_user            VARCHAR (30)    DEFAULT  USER    NOT NULL
 );
 
