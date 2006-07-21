@@ -1,17 +1,12 @@
 package uk.ac.ebi.intact.persistence.dao.impl;
 
-import uk.ac.ebi.intact.model.Annotation;
+import org.hibernate.Session;
+import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Institution;
-import uk.ac.ebi.intact.persistence.dao.AnnotationDao;
 import uk.ac.ebi.intact.persistence.dao.InstitutionDao;
 import uk.ac.ebi.intact.util.PropertyLoader;
-import uk.ac.ebi.intact.business.IntactException;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 
-import java.util.List;
 import java.util.Properties;
-import java.util.Collection;
 
 /**
  * DAO for institutions
@@ -35,6 +30,11 @@ public class InstitutionDaoImpl extends IntactObjectDaoImpl<Institution> impleme
         super(Institution.class, session);
     }
 
+    /**
+     * @deprecated Use IntactContext.getCurrentInstance().getInstitution() instead
+     * @return
+     */
+    @Deprecated
     public Institution getInstitution()
     {
         Institution institution = null;
@@ -50,9 +50,16 @@ public class InstitutionDaoImpl extends IntactObjectDaoImpl<Institution> impleme
             // search for it (force it for LC as short labels must be in LC).
             shortlabel = shortlabel.trim();
 
-            institution = getByPropertyName("shortLabel", shortlabel);
+            institution = getByShortLabel(shortlabel);
         }
 
         return institution;
     }
+
+    public Institution getByShortLabel(String shortLabel)
+    {
+        return getByPropertyName("shortLabel", shortLabel);
+    }
+
+
 }

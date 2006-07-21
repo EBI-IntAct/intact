@@ -1,9 +1,6 @@
 package uk.ac.ebi.intact.persistence.dao;
 
-import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.Institution;
-
-import java.util.List;
 
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
@@ -17,4 +14,6 @@ public interface InstitutionDao extends IntactObjectDao<Institution>
      * @return the Institution configured in the properties file
      */
     Institution getInstitution();
+
+    Institution getByShortLabel(String shortLabel);
 }

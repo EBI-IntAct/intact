@@ -26,7 +26,7 @@ public class IntactIdGenerator extends SequenceGenerator
 
     private static final Log log = LogFactory.getLog(IntactIdGenerator.class);
 
-
+    @Override
     public Serializable generate(SessionImplementor sessionImplementor, Object object) throws HibernateException
     {
         Institution institution = IntactContext.getCurrentInstance().getInstitution();
@@ -40,8 +40,16 @@ public class IntactIdGenerator extends SequenceGenerator
     }
 
 
+    @Override
     public String getSequenceName()
     {
         return "intact_sequence";
+    }
+
+
+    @Override
+    public Object generatorKey()
+    {
+        return "intact_generator";
     }
 }
