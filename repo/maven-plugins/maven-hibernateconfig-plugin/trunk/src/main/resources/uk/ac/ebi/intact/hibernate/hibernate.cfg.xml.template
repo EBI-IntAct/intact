@@ -52,6 +52,7 @@
             <listener
               class="org.hibernate.validator.event.ValidatePreInsertEventListener"/>
         </event>
+        ${hibernateEvents}
 
     </session-factory>
 
