@@ -8,7 +8,6 @@ package uk.ac.ebi.intact.application.editor.struts.view.experiment;
 
 import java.util.ResourceBundle;
 import java.util.Date;
-import java.sql.Timestamp;
 
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
