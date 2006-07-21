@@ -25,7 +25,6 @@ import java.util.StringTokenizer;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.sql.Timestamp;
 
 /**
  * The action form for the Feature editor. This form wraps around an EditorActionForm
@@ -382,7 +381,7 @@ public class    FeatureActionForm extends DispatchActionForm implements EditorFo
      * @param fullname
      * @param featureSep
      * @param rangeSep
-     * @return
+     * @return and ActionError
      */
     public ActionErrors testValidateMutations(String fullname, String featureSep,
                                               String rangeSep) {
