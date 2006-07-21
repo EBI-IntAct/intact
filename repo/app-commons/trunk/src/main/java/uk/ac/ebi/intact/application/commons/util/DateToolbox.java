@@ -5,7 +5,6 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.commons.util;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 /**
@@ -41,14 +40,29 @@ public class DateToolbox {
         if(date == null){
             return null;
         }
-        String newDate = date.toString().substring(0,10);
-        int monthNumber =  Integer.parseInt(newDate.substring(5, 7) );
-        String monthName = getMonth(monthNumber);
-        String year = newDate.substring(0,4);
-        String day = newDate.substring(8,10);
+        String newDate = date.toString();
+//        int monthNumber =  Integer.parseInt(newDate.substring(5, 7) );
+        String[] dateData = newDate.split(" ");
+        String monthName = dateData[1].toUpperCase();
+        System.out.println("monthName = " + monthName);
+        String year = dateData[5];//newDate.substring(newDate.length(),newDate.length()-4);
+        System.out.println("year = " + year);
+        String day = dateData[2];//newDate.substring(8,10);
+        System.out.println("day = " + day);
         newDate = year + "-" + monthName + "-" + day;
         newDate = newDate.trim();
         return newDate;
     }
+
+    public static String formatDateResultWrapper(Date date){
+        String dateString = date.toString();
+        String dateData[] = dateString.split("-");
+        String month = getMonth(Integer.parseInt(dateData[1]));
+        String year =  dateData[1];
+        String day = dateData[3];
+        return year + "-" + month + "-" + day;
+
+    }
+
 
 }
