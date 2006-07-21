@@ -27,6 +27,16 @@ public class IntactIdGenerator extends SequenceGenerator
 
     private static final Log log = LogFactory.getLog(IntactIdGenerator.class);
 
+    /**
+     * The ID generation is handled by the class uk.ac.ebi.intact.model.IntactIdGeneration, which extends
+     * Hibernate's SequenceGeneration. This class provides the new ID to the underlying hibernate layer.
+     * This new ID is the concatenation of the prefix and a sequence provided by the database, separated
+     * by a dash.
+     * @param sessionImplementor a hibernate session implementor
+     * @param object the object being persisted
+     * @return the new generated ID
+     * @throws HibernateException if something goes wrong
+     */
     @Override
     public Serializable generate(SessionImplementor sessionImplementor, Object object) throws HibernateException
     {
