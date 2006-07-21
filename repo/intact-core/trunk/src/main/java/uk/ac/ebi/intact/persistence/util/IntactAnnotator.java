@@ -37,10 +37,8 @@ public class IntactAnnotator
      * <code>@javax.persistence.Entity</code> in the uk.ac.ebi.intact.model package
      * @return  The list of hibernate annotated classes
      */
-    public static List<Class> getAnnotatedClasses() {
+    public static List<Class> getAnnotatedClasses(String packageName) {
         List<Class> annotatedClasses = new ArrayList<Class>();
-
-        String packageName = "/uk/ac/ebi/intact/model";
 
         // Get a File object for the package
         URL url = IntactAnnotator.class.getResource(packageName);
@@ -62,7 +60,7 @@ public class IntactAnnotator
         }
         else
         {
-            log.warn("Directory not found: "+directory);
+            log.info("Directory not found: "+directory+". Reading classes from jar");
 
             // probably directory points inside a jar file, we get the jar name
             // and will look for annotated classes inside

@@ -5,10 +5,9 @@
  */
 package uk.ac.ebi.intact.model;
 
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Temporal;
-import javax.persistence.Column;
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -61,6 +60,9 @@ public abstract class IntactObjectImpl implements IntactObject, Serializable,
     //access methods for attributes
 
     @Id
+    @GeneratedValue(generator="intact-id")
+    @GenericGenerator(name="intact-id", strategy = "uk.ac.ebi.intact.model.IntactIdGenerator")
+    @Column(length = 30)
     public String getAc() {
         return ac;
     }

@@ -9,10 +9,13 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
+import uk.ac.ebi.intact.business.IntactException;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Basic Hibernate helper class for Hibernate configuration and startup.
@@ -61,6 +64,13 @@ public class HibernateUtil {
     private static File hibernateCfg;
     private static boolean initialized;
 
+    private static List<String> packagesWithEntities = new ArrayList<String>();
+
+    static
+    {
+        packagesWithEntities.add("/uk/ac/ebi/intact/model");
+    }
+
     private HibernateUtil()
     {
     }
@@ -75,17 +85,22 @@ public class HibernateUtil {
                 configuration = new AnnotationConfiguration();
 //            configuration = new Configuration();
 
-                for (Class clazz : IntactAnnotator.getAnnotatedClasses())
+            for (String packageName : packagesWithEntities)
+            {
+                log.debug("Processing package: "+packageName);
+
+                for (Class clazz : IntactAnnotator.getAnnotatedClasses(packageName))
                 {
                     log.debug("Adding annotated class to hibernate: "+clazz.getName());
-                    ((AnnotationConfiguration)configuration).addAnnotatedClass(clazz);
+                    ((AnnotationConfiguration) configuration).addAnnotatedClass(clazz);
                 }
+            }
 
-                // This custom entity resolver supports entity placeholders in XML mapping files
-                // and tries to resolve them on the classpath as a resource
-                configuration.setEntityResolver(new ImportFromClasspathEntityResolver());
+            // This custom entity resolver supports entity placeholders in XML mapping files
+            // and tries to resolve them on the classpath as a resource
+            configuration.setEntityResolver(new ImportFromClasspathEntityResolver());
 
-                // Read not only hibernate.properties, but also hibernate.cfg.xml
+            // Read not only hibernate.properties, but also hibernate.cfg.xml
             if (cfgFile != null)
             {
                 configuration.configure(cfgFile);
@@ -233,6 +248,16 @@ public class HibernateUtil {
     public static void resetInterceptor() {
         log.debug("Resetting global interceptor to configuration setting");
         setInterceptor(configuration, null);
+    }
+
+    public static void addPackageWithEntities(String packageName)
+    {
+        if (initialized)
+        {
+            throw new IntactException("Cannot add package after the sessionFactory has been initialized");
+        }
+
+        packagesWithEntities.add(packageName);
     }
 
     /**
