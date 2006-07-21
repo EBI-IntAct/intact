@@ -16,18 +16,23 @@ import java.util.Date;
  */
 public interface IntactObject {
 
-    public String getAc();
+    String getAc();
 
-    public void setAc(String ac);
+    void setAc(String ac);
 
-    public Date getCreated();
+    Date getCreated();
 
-    public void setCreated(java.util.Date created);
+    void setCreated(java.util.Date created);
 
-    public Date getUpdated();
+    Date getUpdated();
 
-    public void setUpdated(java.util.Date updated);
+    void setUpdated(java.util.Date updated);
 
-    public String toString();
+    String getCreator();
 
+    void setCreator(String createdUser);
+
+    String getUpdator();
+
+    void setUpdator(String userStamp);
 }

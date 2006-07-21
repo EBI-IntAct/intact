@@ -49,6 +49,16 @@
                     <url>${db.protocol}:${db.subprotocol}:${db.alias}</url>
                     <user>${db.user}</user>
                     <password>${db.password}</password>
+                    <hibernateEvents>
+                        <hibernateEvent>
+                            <type>pre-insert</type>
+                            <className>uk.ac.ebi.intact.model.IntactObjectEventListener</className>
+                        </hibernateEvent>
+                        <hibernateEvent>
+                            <type>pre-update</type>
+                            <className>uk.ac.ebi.intact.model.IntactObjectEventListener</className>
+                        </hibernateEvent>
+                    </hibernateEvents>
                 </configuration>
                 <executions>
                     <execution>
@@ -148,7 +158,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-annotations</artifactId>
-            <version>3.2.0.cr1</version>
+            <version>3.2.0.cr2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>c3p0</groupId>

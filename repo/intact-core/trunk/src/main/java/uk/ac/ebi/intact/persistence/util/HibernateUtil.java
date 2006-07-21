@@ -75,23 +75,24 @@ public class HibernateUtil {
     {
     }
 
-    private static void initialize(File cfgFile){
+    private static void initialize(File cfgFile)
+    {
 
         initialized = true;
 
         // Create the initial SessionFactory from the default configuration files
-        try {
-               // Replace with Configuration() if you don't use annotations or JDK 5.0
-                configuration = new AnnotationConfiguration();
-//            configuration = new Configuration();
+        try
+        {
+            // Replace with Configuration() if you don't use annotations or JDK 5.0
+            configuration = new AnnotationConfiguration();
 
             for (String packageName : packagesWithEntities)
             {
-                log.debug("Processing package: "+packageName);
+                log.debug("Processing package: " + packageName);
 
                 for (Class clazz : IntactAnnotator.getAnnotatedClasses(packageName))
                 {
-                    log.debug("Adding annotated class to hibernate: "+clazz.getName());
+                    log.debug("Adding annotated class to hibernate: " + clazz.getName());
                     ((AnnotationConfiguration) configuration).addAnnotatedClass(clazz);
                 }
             }
@@ -110,18 +111,23 @@ public class HibernateUtil {
                 configuration.configure();
             }
 
-                // Set global interceptor from configuration
-                setInterceptor(configuration, null);
+            // Set global interceptor from configuration
+            setInterceptor(configuration, null);
 
-                if (configuration.getProperty(Environment.SESSION_FACTORY_NAME) != null) {
-                    // Let Hibernate bind the factory to JNDI
-                    configuration.buildSessionFactory();
-                } else {
-                    // or use static variable handling
-                    sessionFactory = configuration.buildSessionFactory();
-                }
+            if (configuration.getProperty(Environment.SESSION_FACTORY_NAME) != null)
+            {
+                // Let Hibernate bind the factory to JNDI
+                configuration.buildSessionFactory();
+            }
+            else
+            {
+                // or use static variable handling
+                sessionFactory = configuration.buildSessionFactory();
+            }
 
-        } catch (HibernateException ex) {
+        }
+        catch (HibernateException ex)
+        {
             log.error("Building SessionFactory failed.", ex);
             throw new ExceptionInInitializerError(ex);
         }

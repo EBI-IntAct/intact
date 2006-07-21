@@ -5,6 +5,7 @@ import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.util.PropertyLoader;
 
+import java.sql.SQLException;
 import java.util.Properties;
 
 /**
@@ -38,7 +39,19 @@ public final class IntactContext
     {
         protected IntactContext initialValue()
         {
-            UserContext userContext = new UserContext(null);
+            String defaultUser = null;
+
+            try
+            {
+                defaultUser = DaoFactory.getBaseDao().getDbUserName();
+            }
+            catch (SQLException e)
+            {
+                e.printStackTrace();
+            }
+
+            UserContext userContext = new UserContext(defaultUser);
+
             return new IntactContext(userContext);
         }
     };

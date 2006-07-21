@@ -5,9 +5,6 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.business.IntactException;
-
 import java.util.Collection;
 
 /**
@@ -41,10 +38,6 @@ public interface AnnotatedObject extends BasicObject {
     public void addAnnotation(Annotation annotation);
 
     public void removeAnnotation(Annotation annotation);
-
-    public String getCreator();
-
-    public String getUpdator();
 
     ///////////////////
     // Xref related

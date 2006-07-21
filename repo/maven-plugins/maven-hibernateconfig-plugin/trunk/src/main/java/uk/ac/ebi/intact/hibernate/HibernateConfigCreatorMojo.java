@@ -114,6 +114,13 @@ public class HibernateConfigCreatorMojo
      */
     private String connectionProviderClass;
 
+    /**
+     * @parameter
+     */
+    private List<HibernateEvent> hibernateEvents;
+
+    private String hibernateEventsAsString = "";
+
     public void execute() throws MojoExecutionException
     {
         getLog().info("Hibernate Mojo in action");
@@ -121,6 +128,11 @@ public class HibernateConfigCreatorMojo
         if (password == null)
         {
             password = "";
+        }
+
+        if (hibernateEvents != null && !hibernateEvents.isEmpty())
+        {
+            createHibernateEventsString();
         }
 
         // we get the first folder of the package
@@ -172,6 +184,21 @@ public class HibernateConfigCreatorMojo
 
     }
 
+    private void createHibernateEventsString()
+    {
+        StringBuffer sb = new StringBuffer();
+
+        for (HibernateEvent hibernateEvent : hibernateEvents)
+        {
+            sb.append("<event type=\""+hibernateEvent.getType()+"\">\n" +
+                    "            <listener\n" +
+                    "              class=\""+hibernateEvent.getClassName()+"\"/>\n" +
+                    "        </event>\n");
+        }
+
+        hibernateEventsAsString = sb.toString();
+    }
+
     private String filterLine(String line)
     {
         line = line.replaceAll("\\$\\{db\\.dialect\\}", dialect);
@@ -183,6 +210,7 @@ public class HibernateConfigCreatorMojo
         line = line.replaceAll("\\$\\{format_sql\\}", String.valueOf(formatSql));
         line = line.replaceAll("\\$\\{show_sql\\}", String.valueOf(showSql));
         line = line.replaceAll("\\$\\{hbm2ddl\\.auto\\}", hbm2ddlAuto);
+        line = line.replaceAll("\\$\\{hibernateEvents\\}", hibernateEventsAsString);
 
         return line;
     }

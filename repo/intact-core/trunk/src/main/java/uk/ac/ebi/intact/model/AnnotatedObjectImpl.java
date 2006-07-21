@@ -8,15 +8,12 @@ package uk.ac.ebi.intact.model;
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.validator.Length;
 
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
-import javax.persistence.Column;
-import javax.persistence.Basic;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
 import javax.persistence.JoinColumn;
-import java.util.Collection;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Represents an object with biological annotation.
@@ -51,17 +48,7 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
      *
      */
     public Collection<Annotation> annotations = new ArrayList<Annotation>();
-
-    /**
-     * The curator who has last edited the object.
-     */
-    public String updator;
-
-    /**
-     * The curator who has created the edited object
-     */
-    public String creator;
-
+    
     /**
      *
      */
@@ -175,28 +162,6 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
 
     public void removeAnnotation( Annotation annotation ) {
         this.annotations.remove( annotation );
-    }
-
-    @Basic(fetch = FetchType.LAZY)
-    @Column(name="created_user")
-    public String getCreator() {
-        return creator;
-    }
-
-    @Basic(fetch = FetchType.LAZY)
-    @Column(name="userstamp")
-    public String getUpdator() {
-        return updator;
-    }
-
-    public void setUpdator(String updator)
-    {
-        this.updator = updator;
-    }
-
-    public void setCreator(String creator)
-    {
-        this.creator = creator;
     }
 
     ///////////////////
