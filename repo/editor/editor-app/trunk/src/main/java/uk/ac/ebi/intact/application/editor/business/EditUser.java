@@ -9,11 +9,9 @@ package uk.ac.ebi.intact.application.editor.business;
 import org.apache.log4j.Logger;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ojb.broker.accesslayer.LookupException;
 import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
-import uk.ac.ebi.intact.application.commons.search.SearchClass;
 import uk.ac.ebi.intact.application.editor.event.EventListener;
 import uk.ac.ebi.intact.application.editor.event.LogoutEvent;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
@@ -36,6 +34,7 @@ import uk.ac.ebi.intact.util.UpdateProteins;
 import uk.ac.ebi.intact.util.UpdateProteinsI;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.InteractorDao;
+import uk.ac.ebi.intact.persistence.util.CgLibUtil;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSessionBindingEvent;
@@ -417,7 +416,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         startEditing();
         // View based on the class for given edit object.
         myEditView = EditViewBeanFactory.getInstance().borrowObject(
-                IntactHelper.getRealClassName(annobj), 0);
+                CgLibUtil.getRealClassName(annobj), 0);
         // Resets the view with the new annotated object.
         myEditView.reset(annobj);
         // Load menus after setting the annotated object.
@@ -429,7 +428,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         // Return the view back to the pool.
         releaseView();
         myEditView = EditViewBeanFactory.getInstance().borrowObject(
-                IntactHelper.getRealClassName(obj), 0);
+                CgLibUtil.getRealClassName(obj), 0);
         myEditView.resetClonedObject(obj, this);
         // Load menus after setting the annotated object.
         myEditView.loadMenus();
