@@ -15,7 +15,6 @@ import uk.ac.ebi.intact.model.Xref;
 
 import java.util.Iterator;
 import java.util.Date;
-import java.sql.Timestamp;
 
 /**
  * This class contains data for an Experiment row in the Interaction editor.
