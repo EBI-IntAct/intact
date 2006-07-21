@@ -9,10 +9,14 @@ package uk.ac.ebi.intact.application.editor.struts.action;
 import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
+import uk.ac.ebi.intact.application.commons.search.SearchClass;
 import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.IntactObject;
+import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -96,7 +100,8 @@ public class ResultAction extends AbstractEditorAction {
             helper.removeFromCache(clazz, ac);
         }
         // The selected Annotated object.
-        AnnotatedObject annobj = (AnnotatedObject) helper.getObjectByAc(clazz, ac);
+        AnnotatedObjectDao annotatedObjectDao = DaoFactory.getAnnotatedObjectDao();
+        AnnotatedObject annobj = getAnnotatedObject(ac,type);//AnnotatedObject) helper.getObjectByAc(clazz, ac));
         // Set the object and the type we are about to edit.
         user.setSelectedTopic(type);
         user.setView(annobj);
@@ -105,6 +110,47 @@ public class ResultAction extends AbstractEditorAction {
         LOGGER.info("Number of xrefs: " + annobj.getXrefs().size());
 
         return mapping.findForward(SUCCESS);
+    }
+
+
+    /**
+     * Having the ac of the search object taken from the sidebar and the type of object
+     * searched (experiment, interaction...). We determine which Dao we need, ExperimentDao and search
+     * for the object in the database an return it.
+     * @param ac
+     * @param type
+     * @return  the annotated object searched.
+     */
+    public AnnotatedObject getAnnotatedObject(String ac, String type){
+        AnnotatedObject annobj;
+        AnnotatedObjectDao annotatedObjectDao;
+        if(SearchClass.EXPERIMENT.getShortName().equals(type)){
+            annotatedObjectDao = DaoFactory.getExperimentDao();
+        }else if (SearchClass.BIOSOURCE.getShortName().equals(type)){
+            annotatedObjectDao = DaoFactory.getBioSourceDao();
+        }else if (SearchClass.CV_ALIAS_TYPE.getShortName().equals(type) ||
+                  SearchClass.CV_CELL_TYPE.getShortName().equals(type) ||
+                  SearchClass.CV_COMPONENT_ROLE.getShortName().equals(type) ||
+                  SearchClass.CV_DATABASE.getShortName().equals(type) ||
+                  SearchClass.CV_FUZZY_TYPE.getShortName().equals(type) ||
+                  SearchClass.CV_TISSUE.getShortName().equals(type) ||
+                  SearchClass.CV_TOPIC.getShortName().equals(type) ||
+                  SearchClass.CV_XREF_QUALIFIER.getShortName().equals(type)){
+            annotatedObjectDao = DaoFactory.getCvObjectDao();
+        }else if (SearchClass.INTERACTION.getShortName().equals(type)){
+            annotatedObjectDao = DaoFactory.getInteractionDao();
+        }else if (SearchClass.NUCLEIC_ACID.getShortName().equals(type)){
+            annotatedObjectDao = DaoFactory.getInteractorDao();
+        }else if (SearchClass.PROTEIN.getShortName().equals(type)){
+            annotatedObjectDao = DaoFactory.getInteractorDao();
+        }else if(SearchClass.SMALL_MOLECULE.getShortName().equals(type)){
+            annotatedObjectDao = DaoFactory.getInteractorDao();
+        }else {
+            LOGGER.error(new IntactException("Unknown search type : " + type + "."));
+            throw new IntactException("Unknown search type : " + type + ".");
+        }
+        annobj = (AnnotatedObject) annotatedObjectDao.getByAc(ac);
+        return annobj;
     }
 
     private static String getValue(HttpServletRequest request, String key) {
