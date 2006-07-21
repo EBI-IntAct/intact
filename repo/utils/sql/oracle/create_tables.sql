@@ -285,7 +285,7 @@ CREATE TABLE IA_Component
         , role                    VARCHAR2(30)    CONSTRAINT fk_Component$role REFERENCES IA_ControlledVocab(ac)
         , expressedIn_ac          VARCHAR2(30)    CONSTRAINT fk_Component$expressedIn REFERENCES IA_BioSource(ac)
         , owner_ac                VARCHAR2(30)    CONSTRAINT fk_Component$owner REFERENCES IA_Institution(ac)
-        , stoichiometry           NUMBER(4,1)
+        , stoichiometry           NUMBER(4,1)     DEFAULT  0
      , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
 )
 TABLESPACE &&intactMainTablespace
