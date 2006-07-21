@@ -44,11 +44,8 @@ public class DateToolbox {
 //        int monthNumber =  Integer.parseInt(newDate.substring(5, 7) );
         String[] dateData = newDate.split(" ");
         String monthName = dateData[1].toUpperCase();
-        System.out.println("monthName = " + monthName);
         String year = dateData[5];//newDate.substring(newDate.length(),newDate.length()-4);
-        System.out.println("year = " + year);
         String day = dateData[2];//newDate.substring(8,10);
-        System.out.println("day = " + day);
         newDate = year + "-" + monthName + "-" + day;
         newDate = newDate.trim();
         return newDate;
