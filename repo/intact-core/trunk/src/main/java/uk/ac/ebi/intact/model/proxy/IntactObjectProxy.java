@@ -86,6 +86,26 @@ public class IntactObjectProxy  extends VirtualProxy implements IntactObject {
         realSubject().setUpdated( updated );
     }
 
+    public String getCreator()
+    {
+        return realSubject().getUpdator();
+    }
+
+    public void setCreator(String createdUser)
+    {
+       realSubject().setCreator(createdUser);
+    }
+
+    public String getUpdator()
+    {
+        return realSubject().getUpdator();
+    }
+
+    public void setUpdator(String userStamp)
+    {
+       realSubject().setUpdator(userStamp);
+    }
+
     @Override
     public boolean equals ( Object o ) {
         return realSubject().equals( o );

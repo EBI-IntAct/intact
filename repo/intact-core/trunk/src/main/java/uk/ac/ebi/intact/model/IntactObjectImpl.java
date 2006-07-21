@@ -9,7 +9,6 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.util.Date;
 
 /**
@@ -31,6 +30,16 @@ public abstract class IntactObjectImpl implements IntactObject, Serializable,
     //attributes
 
     private String ojbConcreteClass;
+
+    /**
+     * The curator who has last edited the object.
+     */
+    public String updator;
+
+    /**
+     * The curator who has created the edited object
+     */
+    public String creator;
 
 
     /**
@@ -55,6 +64,8 @@ public abstract class IntactObjectImpl implements IntactObject, Serializable,
     public IntactObjectImpl() {
         ojbConcreteClass = this.getClass().getName();
     }
+
+
 
     ///////////////////////////////////////
     //access methods for attributes
@@ -90,14 +101,7 @@ public abstract class IntactObjectImpl implements IntactObject, Serializable,
      * field is declared as read-only</b>
      */
     public void setCreated( Date created ) {
-        if ( created != null ) {
-
-            this.created = new Date( created.getTime() );
-        } else {
-
-            //needed for object-based search
-            this.created = null;
-        }
+        this.created = created;
     }
 
     @Temporal
@@ -110,16 +114,27 @@ public abstract class IntactObjectImpl implements IntactObject, Serializable,
      * be modifiable via OJB because 'updated' field is declared as read-only</b>
      */
     public void setUpdated(Date updated) {
+        this.updated = updated;
+    }
 
-        if(updated != null) {
+    @Column(name="created_user")
+    public String getCreator() {
+        return creator;
+    }
 
-            this.updated = new Date(updated.getTime());
-        }
-        else {
+    public void setCreator(String creator)
+    {
+        this.creator = creator;
+    }
 
-            //needed for object-based search
-            this.updated = null;
-        }
+    @Column(name="userstamp")
+    public String getUpdator() {
+        return updator;
+    }
+
+    public void setUpdator(String updator)
+    {
+        this.updator = updator;
     }
 
     /**
