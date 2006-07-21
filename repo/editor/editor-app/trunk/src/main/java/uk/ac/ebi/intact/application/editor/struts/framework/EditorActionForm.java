@@ -17,7 +17,6 @@ import uk.ac.ebi.intact.application.commons.util.DateToolbox;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Date;
-import java.sql.Timestamp;
 
 /**
  * The form to edit cv data. This form also is the super class for other
