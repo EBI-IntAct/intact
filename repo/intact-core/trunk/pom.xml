@@ -35,6 +35,8 @@
     <properties>
         <maven.test.skip>true</maven.test.skip>
         <maven.pmd.skip>true</maven.pmd.skip>
+
+        <ac.prefix>EBI</ac.prefix>
     </properties>
 
     <build>

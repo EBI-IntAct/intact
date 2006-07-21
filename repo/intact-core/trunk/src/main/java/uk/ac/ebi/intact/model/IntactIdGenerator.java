@@ -10,9 +10,10 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.SessionImplementor;
 import org.hibernate.id.SequenceGenerator;
-import uk.ac.ebi.intact.context.IntactContext;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.Properties;
 
 /**
  * Generates identifiers for IntAct objects
@@ -29,8 +30,17 @@ public class IntactIdGenerator extends SequenceGenerator
     @Override
     public Serializable generate(SessionImplementor sessionImplementor, Object object) throws HibernateException
     {
-        Institution institution = IntactContext.getCurrentInstance().getInstitution();
-        String prefix = institution.getShortLabel().toUpperCase();
+        Properties props = new Properties();
+        try
+        {
+            props.load(IntactIdGenerator.class.getResourceAsStream("ac.properties"));
+        }
+        catch (IOException e)
+        {
+            throw new HibernateException("Error loading default AC prefix", e);
+        }
+
+        String prefix = props.getProperty("ac.prefix");
 
         String id = prefix+"-"+super.generate(sessionImplementor, object);
 
