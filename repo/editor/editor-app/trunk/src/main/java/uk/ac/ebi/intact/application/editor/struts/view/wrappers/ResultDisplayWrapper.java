@@ -7,6 +7,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.wrappers;
 
 import org.apache.taglibs.display.TableDecorator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
@@ -14,7 +16,6 @@ import uk.ac.ebi.intact.application.commons.util.DateToolbox;
 import uk.ac.ebi.intact.model.Experiment;
 
 import java.text.SimpleDateFormat;
-import java.sql.Timestamp;
 
 /**
  * This class is the wrapper class for the display library to display
@@ -24,6 +25,8 @@ import java.sql.Timestamp;
  * @version $Id$
  */
 public class ResultDisplayWrapper extends TableDecorator {
+
+    private static final Log log = LogFactory.getLog(ResultDisplayWrapper.class);
 
     /**
      * The formatter for the date.
@@ -99,21 +102,32 @@ public class ResultDisplayWrapper extends TableDecorator {
     }
 
     public String getCreated(){
-        return DateToolbox.formatDate(new Timestamp(((ResultRowData) getObject()).getCreated().getTime()));
+        log.debug("getCreated" + ((ResultRowData) getObject()).getCreated().toString());
+        return ((ResultRowData) getObject()).getCreated().toString();
     }
 
     public String getUpdated(){
-        return DateToolbox.formatDate(new Timestamp(((ResultRowData) getObject()).getUpdated().getTime()));
+        log.debug("getUpdated" + ((ResultRowData) getObject()).getUpdated().toString());
+
+        return ((ResultRowData) getObject()).getUpdated().toString());
     }
 
     public String getCreationInfo(){
          //Created 2005-JAN-26 by LUISA.
+        log.debug("getShortlabel" + ((ResultRowData) getObject()).getShortLabel());
+        log.debug("getCreated" + ((ResultRowData) getObject()).getCreated());
+        log.debug("getCreator" + ((ResultRowData) getObject()).getCreator());
+
          return  this.getCreated() + " by " + this.getCreator() + ".";
     }
 
     public String getUpdateInfo(){
          //Created 2005-JAN-26 by LUISA.
-         return this.getCreated() + " by " + this.getCreator() + ".";
+        log.debug("getShortlabel" + ((ResultRowData) getObject()).getShortLabel());
+        log.debug("getUpdaed" + ((ResultRowData) getObject()).getUpdated());
+        log.debug("getUpdator" + ((ResultRowData) getObject()).getUpdator());
+
+         return this.getUpdated() + " by " + this.getUpdator() + ".";
     }
 
     /**
