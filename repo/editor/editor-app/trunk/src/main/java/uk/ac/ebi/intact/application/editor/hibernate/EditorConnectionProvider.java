@@ -32,8 +32,12 @@ public class EditorConnectionProvider implements ConnectionProvider
     public Connection getConnection() throws SQLException
     {
         String currentUser = IntactContext.getCurrentInstance().getUserContext().getUserId();
+        String currentUserPassword = IntactContext.getCurrentInstance().getUserContext().getUserPassword();
+        String url = HibernateUtil.getConfiguration().getProperty(Environment.URL);
 
-        log.debug("Getting connection for user: "+currentUser);
+        log.debug("Getting connection for user: " + currentUser);
+        log.debug("CurrentUser: " + currentUser);
+        log.debug("CurrentUserPassword: " + currentUserPassword);
 
         if (!driverLoaded)
         {
@@ -48,13 +52,12 @@ public class EditorConnectionProvider implements ConnectionProvider
             }
             driverLoaded = true;
         }
-
-        Connection connection = IntactContext.getCurrentInstance().getUserContext().getConnection();
-
-        if (connection == null)
-        {
+        Connection connection;
+        if(currentUser != null){
+            connection = DriverManager.getConnection(url, currentUser, currentUserPassword);
+        }
+        else{
             log.debug("Using default connection");
-            String url = HibernateUtil.getConfiguration().getProperty(Environment.URL);
             String name = HibernateUtil.getConfiguration().getProperty(Environment.USER);
             String password = HibernateUtil.getConfiguration().getProperty(Environment.PASS);
 
