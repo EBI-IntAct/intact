@@ -109,7 +109,7 @@ public class ResultDisplayWrapper extends TableDecorator {
     public String getUpdated(){
         log.debug("getUpdated" + ((ResultRowData) getObject()).getUpdated().toString());
 
-        return ((ResultRowData) getObject()).getUpdated().toString());
+        return ((ResultRowData) getObject()).getUpdated().toString();
     }
 
     public String getCreationInfo(){
