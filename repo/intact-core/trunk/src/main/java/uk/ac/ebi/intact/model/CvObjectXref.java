@@ -21,7 +21,7 @@ import javax.persistence.ManyToOne;
  * @since <pre>21-Jul-2006</pre>
  */
 @Entity
-@DiscriminatorValue("BioSource")
+@DiscriminatorValue("uk.ac.ebi.intact.model.CvObject")
 public class CvObjectXref extends Xref
 {
 

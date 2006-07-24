@@ -21,28 +21,28 @@ import javax.persistence.ManyToOne;
  * @since <pre>21-Jul-2006</pre>
  */
 @Entity
-@DiscriminatorValue("uk.ac.ebi.intact.model.BioSource")
-public class BioSourceXref extends Xref
+@DiscriminatorValue("uk.ac.ebi.intact.model.Publication")
+public class PublicationXref extends Xref
 {
 
-    private static final Log log = LogFactory.getLog(BioSourceXref.class);
+    private static final Log log = LogFactory.getLog(PublicationXref.class);
 
 
-    public BioSourceXref()
+    public PublicationXref()
     {
     }
 
-    public BioSourceXref(Institution anOwner, CvDatabase aDatabase, String aPrimaryId, String aSecondaryId, String aDatabaseRelease, CvXrefQualifier aCvXrefQualifier)
+    public PublicationXref(Institution anOwner, CvDatabase aDatabase, String aPrimaryId, String aSecondaryId, String aDatabaseRelease, CvXrefQualifier aCvXrefQualifier)
     {
         super(anOwner, aDatabase, aPrimaryId, aSecondaryId, aDatabaseRelease, aCvXrefQualifier);
     }
 
-    public BioSourceXref(Institution anOwner, CvDatabase aDatabase, String aPrimaryId, CvXrefQualifier aCvXrefQualifier)
+    public PublicationXref(Institution anOwner, CvDatabase aDatabase, String aPrimaryId, CvXrefQualifier aCvXrefQualifier)
     {
         super(anOwner, aDatabase, aPrimaryId, aCvXrefQualifier);
     }
 
-    @ManyToOne(targetEntity = BioSource.class)
+    @ManyToOne(targetEntity = Publication.class)
     @JoinColumn(name = "parent_ac")
     public AnnotatedObject getParent()
     {

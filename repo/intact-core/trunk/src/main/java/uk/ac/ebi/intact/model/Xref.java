@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
  */
 @Entity
 @Table(name = "ia_xref")
-@DiscriminatorColumn(name = "xreftype", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name = "parent_class", discriminatorType = DiscriminatorType.STRING)
 public abstract class Xref extends BasicObjectImpl {
 
     ///////////////////////////////////////
