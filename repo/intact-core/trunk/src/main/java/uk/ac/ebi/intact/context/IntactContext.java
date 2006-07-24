@@ -62,8 +62,7 @@ public final class IntactContext
         return userContext;
     }
 
-    public Institution getInstitution()
-    {
+    public Institution getInstitution() throws IntactException {
         if (institution == null)
         {
             institution = loadInstitutionFromProperties();
@@ -79,8 +78,7 @@ public final class IntactContext
      *
      * @return the Institution to which all created object will be linked.
      */
-    private Institution loadInstitutionFromProperties()
-    {
+    private Institution loadInstitutionFromProperties() throws IntactException {
         Institution institution = null;
 
         Properties props = PropertyLoader.load( INSTITUTION_CONFIG_FILE );
