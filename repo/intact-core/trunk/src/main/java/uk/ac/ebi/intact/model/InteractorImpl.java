@@ -193,7 +193,14 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl<InteractorXref>
     public Collection<Annotation> getAnnotations() {
         return super.getAnnotations();
     }
-
+    /*
+    @OneToMany (mappedBy = "parent")
+    @Cascade(value = org.hibernate.annotations.CascadeType.PERSIST)
+    @Override
+    public Collection<InteractorXref> getXrefs() {
+        return super.getXrefs();
+    }
+    */
     @Column(insertable = false, updatable = false)
     public String getObjClass() {
         return objClass;

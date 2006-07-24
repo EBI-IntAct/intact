@@ -7,8 +7,9 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.framework.util;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.struts.tiles.ComponentContext;
 import org.apache.log4j.Logger;
+import org.apache.struts.tiles.ComponentContext;
+import uk.ac.ebi.intact.application.commons.util.AnnotationSection;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
@@ -16,10 +17,9 @@ import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
-import uk.ac.ebi.intact.application.commons.util.AnnotationSection;
-import uk.ac.ebi.intact.core.CvContext;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.core.CvContext;
 import uk.ac.ebi.intact.model.*;
 
 import java.io.Serializable;
@@ -307,7 +307,7 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
         resetAnnotatedObject(copy);
 
         // Add the annotations in the cloned as new annotations to add.
-        for (Annotation annotation : copy.getAnnotations())
+        for (Annotation annotation : (Collection<Annotation>) copy.getAnnotations())
         {
             addAnnotation(new CommentBean(annotation));
         }
@@ -317,7 +317,7 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
         copy.getAnnotations().clear();
 
         // Add the xrefs in the cloned as new xrefs to add.
-        for (Xref xref : copy.getXrefs())
+        for (Xref xref : (Collection<Xref>) copy.getXrefs())
         {
             addXref(new XreferenceBean(xref));
         }
@@ -1214,21 +1214,21 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
         // Create xrefs and add them to CV object.
         for (XreferenceBean xreferenceBean : getXrefsToAdd())
         {
-            Xref xref = xreferenceBean.getXref(helper);
+            Xref xref = xreferenceBean.getXref();
             helper.create(xref);
             myAnnotObject.addXref(xref);
         }
         // Delete xrefs and remove them from CV object.
         for (XreferenceBean xreferenceBean : getXrefsToDel())
         {
-            Xref xref = xreferenceBean.getXref(helper);
+            Xref xref = xreferenceBean.getXref();
             helper.delete(xref);
             myAnnotObject.removeXref(xref);
         }
         // Update xrefs; see the comments for annotation update above.
         for (XreferenceBean xreferenceBean : getXrefsToUpdate())
         {
-            Xref xref = xreferenceBean.getXref(helper);
+            Xref xref = xreferenceBean.getXref();
             helper.update(xref);
         }
         // Update the cv object only for an object already persisted.

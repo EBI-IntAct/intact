@@ -6,10 +6,7 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
-import uk.ac.ebi.intact.model.Annotation;
-import uk.ac.ebi.intact.model.Feature;
-import uk.ac.ebi.intact.model.Xref;
-import uk.ac.ebi.intact.model.CvObject;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.SearchReplace;
 
 import java.util.*;
@@ -188,7 +185,7 @@ public class FeatureViewBean extends AbstractViewBean {
      *
      * @return a Collection of String with the shortlabel of the Xref of the wrapped Feature
      */
-    public Collection<Xref> getFeatureXrefs() {
+    public Collection<FeatureXref> getFeatureXrefs() {
         return feature.getXrefs();
 
     }

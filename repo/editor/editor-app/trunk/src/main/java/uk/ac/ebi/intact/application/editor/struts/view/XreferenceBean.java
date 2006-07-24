@@ -13,10 +13,10 @@ import uk.ac.ebi.intact.application.commons.util.XrefHelper;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.util.GoServerProxy;
 
 import java.io.IOException;
@@ -117,30 +117,34 @@ public class XreferenceBean extends AbstractEditKeyBean {
     }
 
     /**
-     * Updates the internal xref with the new values from the form.
-     * @param helper the IntactHelper to search the database
+     * Updates the internal xref with the new values from the form
      * @throws IntactException for errors in searching the database.
      */
-    public Xref getXref(IntactHelper helper) throws IntactException {
+    public Xref getXref() throws IntactException {
         // The CV objects to set.
-        CvDatabase db = (CvDatabase) helper.getObjectByLabel(
-                CvDatabase.class, myDatabaseName);
-        CvXrefQualifier xqual = (CvXrefQualifier) helper.getObjectByLabel(
-                CvXrefQualifier.class, myReferenceQualifer);
+        CvDatabase db = DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel(myDatabaseName);
+        CvXrefQualifier xqual = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByShortLabel(myReferenceQualifer);
 
         // Create a new xref (true if this object was cloned).
         if (myXref == null) {
-            myXref = new Xref(getService().getOwner(), db, myPrimaryId,
-                    mySecondaryId, myReleaseNumber, xqual);
+            try
+            {
+                myXref = (Xref) Class.forName(myXref.getClass().getName()).newInstance();
+                myXref.setOwner(getService().getOwner());
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
         }
-        else {
-            // Update the existing xref with new values.
-            myXref.setCvDatabase(db);
-            myXref.setPrimaryId(myPrimaryId);
-            myXref.setSecondaryId(mySecondaryId);
-            myXref.setDbRelease(myReleaseNumber);
-            myXref.setCvXrefQualifier(xqual);
-        }
+
+        // Update the existing xref with new values.
+        myXref.setCvDatabase(db);
+        myXref.setPrimaryId(myPrimaryId);
+        myXref.setSecondaryId(mySecondaryId);
+        myXref.setDbRelease(myReleaseNumber);
+        myXref.setCvXrefQualifier(xqual);
+
         return myXref;
     }
 

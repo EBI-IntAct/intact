@@ -8,8 +8,8 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.w3c.dom.Element;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDownloadTest;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.model.TestableExperiment;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Experiment2xmlFactory;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Experiment2xmlI;
@@ -19,7 +19,7 @@ import uk.ac.ebi.intact.model.*;
  * TODO document this ;o)
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:Experiment2xmlPSI25Test.java 5298 2006-07-07 09:35:05 +0000 (Fri, 07 Jul 2006) baranda $
  */
 public class Experiment2xmlPSI25Test extends PsiDownloadTest {
 
@@ -53,9 +53,9 @@ public class Experiment2xmlPSI25Test extends PsiDownloadTest {
                                                    "partial dna sequence identification by hybridization", "MI:0080" );
         experiment.setCvIdentification( cvIdentification );
 
-        experiment.addXref( new Xref( owner, pubmed, "12345678", null, null, primaryReference ) );
-        experiment.addXref( new Xref( owner, pubmed, "98765432", null, null, seeAlso ) );
-        experiment.addXref( new Xref( owner, intact, "EBI-xxxxxx", null, "jan05", null ) );
+        experiment.addXref( new ExperimentXref( owner, pubmed, "12345678", null, null, primaryReference ) );
+        experiment.addXref( new ExperimentXref( owner, pubmed, "98765432", null, null, seeAlso ) );
+        experiment.addXref( new ExperimentXref( owner, intact, "EBI-xxxxxx", null, "jan05", null ) );
 
         experiment.addAnnotation( new Annotation( owner, comment, "an interresting comment." ) );
         experiment.addAnnotation( new Annotation( owner, remark, "an interresting remark." ) );

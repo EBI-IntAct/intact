@@ -9,14 +9,13 @@ package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi2.Component2xmlPSI2;
 import uk.ac.ebi.intact.model.*;
 
 /**
  * Component2xmlPSI2 Tester.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:Component2xmlPSI2Test.java 5298 2006-07-07 09:35:05 +0000 (Fri, 07 Jul 2006) baranda $
  * @since <pre>04/25/2005</pre>
  */
 public class Component2xmlPSI2Test extends TestCase {
@@ -51,30 +50,30 @@ public class Component2xmlPSI2Test extends TestCase {
         CvXrefQualifier identity = new CvXrefQualifier( institution, "identity" );
 
         CvFeatureType featureType1 = new CvFeatureType( institution, "1" );
-        featureType1.addXref( new Xref( institution, psi, "MI:0001", null, null, identity ) );
+        featureType1.addXref( new CvObjectXref( institution, psi, "MI:0001", null, null, identity ) );
 
         CvFeatureType featureType2 = new CvFeatureType( institution, "2" );
-        featureType2.addXref( new Xref( institution, psi, "MI:0507", null, null, identity ) );
+        featureType2.addXref( new CvObjectXref( institution, psi, "MI:0507", null, null, identity ) );
         featureType2.addParent( featureType1 );
 
         CvFeatureType featureType3 = new CvFeatureType( institution, "3" );
-        featureType3.addXref( new Xref( institution, psi, "MI:0003", null, null, identity ) );
+        featureType3.addXref( new CvObjectXref( institution, psi, "MI:0003", null, null, identity ) );
         featureType3.addParent( featureType1 );
 
         CvFeatureType featureType4 = new CvFeatureType( institution, "4" );
-        featureType4.addXref( new Xref( institution, psi, "MI:0034", null, null, identity ) );
+        featureType4.addXref( new CvObjectXref( institution, psi, "MI:0034", null, null, identity ) );
         featureType4.addParent( featureType2 );
 
         CvFeatureType featureType5 = new CvFeatureType( institution, "5" );
-        featureType5.addXref( new Xref( institution, psi, "MI:0065", null, null, identity ) );
+        featureType5.addXref( new CvObjectXref( institution, psi, "MI:0065", null, null, identity ) );
         featureType5.addParent( featureType2 );
 
         CvFeatureType featureType6 = new CvFeatureType( institution, "6" );
-        featureType6.addXref( new Xref( institution, psi, "MI:0222", null, null, identity ) );
+        featureType6.addXref( new CvObjectXref( institution, psi, "MI:0222", null, null, identity ) );
         featureType6.addParent( featureType3 );
 
         CvFeatureType featureType7 = new CvFeatureType( institution, "7" );
-        featureType7.addXref( new Xref( institution, psi, "MI:9999", null, null, identity ) );
+        featureType7.addXref( new CvObjectXref( institution, psi, "MI:9999", null, null, identity ) );
         featureType7.addParent( featureType5 );
 
         /* Node 2 has the MI we are looking after !

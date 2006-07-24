@@ -15,10 +15,10 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.util.BioSourceFactory;
 import uk.ac.ebi.intact.util.Crc64;
 import uk.ac.ebi.intact.util.UpdateProteinsI;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.*;
 
@@ -671,7 +671,7 @@ public final class ProteinInteractorChecker {
 
         } else {
 
-            Xref xref = new Xref( DaoFactory.getInstitutionDao().getInstitution(),
+            InteractorXref xref = new InteractorXref( DaoFactory.getInstitutionDao().getInstitution(),
                                   database,
                                   xrefTag.getId(),
                                   xrefTag.getSecondary(),

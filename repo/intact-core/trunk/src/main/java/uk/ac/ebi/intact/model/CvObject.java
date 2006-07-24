@@ -19,7 +19,7 @@ import java.util.Collection;
 @Table(name = "ia_controlledvocab")
 @DiscriminatorColumn(name="objclass", discriminatorType = DiscriminatorType.STRING, length = 255)
 
-public abstract class CvObject extends AnnotatedObjectImpl<Xref> {
+public abstract class CvObject extends AnnotatedObjectImpl<CvObjectXref> {
 
     /**
      * no-arg constructor provided for compatibility with subclasses that have no-arg constructors.
@@ -55,6 +55,13 @@ public abstract class CvObject extends AnnotatedObjectImpl<Xref> {
     {
         return super.getAnnotations();
     }
+    /*
+    @OneToMany (mappedBy = "parent")
+    @Cascade(value = org.hibernate.annotations.CascadeType.PERSIST)
+    @Override
+    public Collection<CvObjectXref> getXrefs() {
+        return super.getXrefs();
+    }*/
 
     /**
      * Equality for CvObject is currently based on equality for primary id of Xref having the qualifier of identity and

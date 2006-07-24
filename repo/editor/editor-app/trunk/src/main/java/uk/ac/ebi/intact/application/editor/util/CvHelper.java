@@ -211,7 +211,7 @@ public class CvHelper {
     public String getPsiMiRef(CvDagObject dag) throws IntactException {
         String miRef = new String();
         boolean psiMiRefFound = false;
-        Collection<Xref> xrefs = dag.getXrefs();
+        Collection<CvObjectXref> xrefs = dag.getXrefs();
         for ( Xref xref : xrefs ){
             if(getPsiMi().getAc().equals(xref.getCvDatabase().getAc()) && getIdentity().getAc().equals(xref.getCvXrefQualifier().getAc())){
                 psiMiRefFound = true;

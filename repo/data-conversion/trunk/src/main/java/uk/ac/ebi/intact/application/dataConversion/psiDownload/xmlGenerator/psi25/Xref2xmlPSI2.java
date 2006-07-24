@@ -9,9 +9,7 @@ import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownlo
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.AbstractXref2Xml;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Xref2xmlFactory;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.util.ToolBox;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.CvXrefQualifier;
-import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.*;
 
 /**
  * Convert an IntAct Xref to PSI XML.
@@ -67,11 +65,54 @@ public class Xref2xmlPSI2 extends AbstractXref2Xml {
 
             if ( session.getSourceDatabase() != null ) {
 
-                Xref xref = new Xref( object.getOwner(),
+                Xref xref;
+
+                if (object instanceof Experiment)
+                {
+                    xref = new ExperimentXref( object.getOwner(),
                                       session.getSourceDatabase(),
                                       object.getAc(),
                                       object.getShortLabel(),
                                       null, null );
+                }
+                else if (object instanceof Interactor)
+                {
+                    xref = new InteractorXref( object.getOwner(),
+                                      session.getSourceDatabase(),
+                                      object.getAc(),
+                                      object.getShortLabel(),
+                                      null, null );
+                }
+                else if (object instanceof BioSource)
+                {
+                    xref = new BioSourceXref( object.getOwner(),
+                                      session.getSourceDatabase(),
+                                      object.getAc(),
+                                      object.getShortLabel(),
+                                      null, null );
+                }
+                else if (object instanceof Feature)
+                {
+                    xref = new FeatureXref( object.getOwner(),
+                                      session.getSourceDatabase(),
+                                      object.getAc(),
+                                      object.getShortLabel(),
+                                      null, null );
+                }
+                else if (object instanceof Publication)
+                {
+                    xref = new PublicationXref( object.getOwner(),
+                                      session.getSourceDatabase(),
+                                      object.getAc(),
+                                      object.getShortLabel(),
+                                      null, null );
+                }
+                else
+                {
+                    throw new RuntimeException("Not Xref type found for this object: "+object.getClass()+
+                            " ; Maybe it is a new Xref type and Xref2xmlPSI2 is not yet implemented for it" +
+                            "This might happen for Xref2xmlPSI1 too");
+                }
 
                 if ( parent.getChildNodes().getLength() == 0 ) {
                     Xref2xmlFactory.getInstance( session ).createPrimaryRef( session, parent, xref );

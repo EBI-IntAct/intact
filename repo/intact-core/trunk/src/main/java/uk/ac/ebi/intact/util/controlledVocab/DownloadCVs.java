@@ -699,7 +699,7 @@ public class DownloadCVs {
                                 CvDatabase db = DaoFactory.getCvObjectDao(CvDatabase.class).getByXref( database );
                                 CvXrefQualifier q = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByXref(CvXrefQualifier.IDENTITY_MI_REF);
 
-                                Xref xref = new CvObjectXref( DaoFactory.getInstitutionDao().getInstitution(), db, miRef, null, null, q );
+                                CvObjectXref xref = new CvObjectXref( DaoFactory.getInstitutionDao().getInstitution(), db, miRef, null, null, q );
                                 root.addXref( xref );
                                 DaoFactory.getXrefDao().persist( xref );
 
@@ -836,7 +836,7 @@ public class DownloadCVs {
                 try {
                     String localId = SequenceManager.getNextId( );
 
-                    Xref xref = new CvObjectXref( DaoFactory.getInstitutionDao().getInstitution(), intact, localId, null, null, identity );
+                    CvObjectXref xref = new CvObjectXref( DaoFactory.getInstitutionDao().getInstitution(), intact, localId, null, null, identity );
                     cvObject.addXref( xref );
                     DaoFactory.getXrefDao().persist( xref );
 

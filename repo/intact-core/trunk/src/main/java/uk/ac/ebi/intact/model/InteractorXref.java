@@ -10,8 +10,6 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 /**
  * TODO comment this!
@@ -41,12 +39,12 @@ public class InteractorXref extends Xref
     {
         super(anOwner, aDatabase, aPrimaryId, aCvXrefQualifier);
     }
-
+      /*
     @ManyToOne(targetEntity = InteractorImpl.class)
     @JoinColumn(name = "parent_ac")
     public AnnotatedObject getParent()
     {
         return super.getParent();
-    }
+    }    */
 
 }

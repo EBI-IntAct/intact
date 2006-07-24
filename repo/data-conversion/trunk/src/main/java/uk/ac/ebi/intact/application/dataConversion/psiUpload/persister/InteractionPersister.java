@@ -11,8 +11,8 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.*;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.CommandLineOptions;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.util.SearchReplace;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.util.SearchReplace;
 
 import java.util.*;
 
@@ -218,10 +218,9 @@ public final class InteractionPersister {
                         }
                     }
 
-                    Xref xref = new Xref( institution, cvDatabase, xrefTag.getId(), secondaryId, "", cvXrefQualifier );
-                    xref.setParentAc( interaction.getAc() );
-                    DaoFactory.getXrefDao().persist( xref );
+                    InteractorXref xref = new InteractorXref( institution, cvDatabase, xrefTag.getId(), secondaryId, "", cvXrefQualifier );
                     interaction.addXref( xref );
+                    DaoFactory.getXrefDao().persist( xref );
                 }
             }
 

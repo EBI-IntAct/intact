@@ -821,7 +821,7 @@ public class GoUtils {
         if ( goRec.hasGoId() && goidDB != null ) {
 
             CvXrefQualifier identity = getIdentityQualifier();
-            Xref xref = new CvObjectXref( inst, goidDB, goRec.getGoId(), null, null, identity );
+            CvObjectXref xref = new CvObjectXref( inst, goidDB, goRec.getGoId(), null, null, identity );
             if ( ! current.getXrefs().contains( xref ) ) {
                 current.addXref( xref );
                 DaoFactory.getXrefDao().persist( xref );
@@ -837,7 +837,7 @@ public class GoUtils {
                 // add Pubmed xref
                 CvXrefQualifier goDefRef = getGoDefinitionQualifier();
                 CvDatabase pubmedDB = getPubmedDatabase();
-                Xref xref = new CvObjectXref( inst, pubmedDB, m.group( 1 ), null, null, goDefRef );
+                CvObjectXref xref = new CvObjectXref( inst, pubmedDB, m.group( 1 ), null, null, goDefRef );
                 if ( ! current.getXrefs().contains( xref ) ) {
                     current.addXref( xref );
                     DaoFactory.getXrefDao().persist( xref );
@@ -853,7 +853,7 @@ public class GoUtils {
                     // add Resid xref
                     CvXrefQualifier goDefRef = getGoDefinitionQualifier();
                     CvDatabase residDB = getResidDatabase();
-                    Xref xref = new CvObjectXref( inst, residDB, token.trim(), null, null, goDefRef );
+                    CvObjectXref xref = new CvObjectXref( inst, residDB, token.trim(), null, null, goDefRef );
                     if ( ! current.getXrefs().contains( xref ) ) {
                         current.addXref( xref );
                         DaoFactory.getXrefDao().persist( xref );

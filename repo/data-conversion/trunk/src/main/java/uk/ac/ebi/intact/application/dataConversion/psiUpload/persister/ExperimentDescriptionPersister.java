@@ -11,9 +11,9 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.ExperimentDes
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.XrefTag;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.util.cdb.UpdateExperimentAnnotationsFromPudmed;
-import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
+import uk.ac.ebi.intact.util.cdb.UpdateExperimentAnnotationsFromPudmed;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -92,7 +92,7 @@ public class ExperimentDescriptionPersister {
 
         // Primary Xrefs: pubmed
         final XrefTag bibRef = experimentDescription.getBibRef();
-        final Xref primaryXref = new Xref( institution,
+        final ExperimentXref primaryXref = new ExperimentXref( institution,
                                            XrefChecker.getCvDatabase( bibRef.getDb() ),
                                            bibRef.getId(),
                                            bibRef.getSecondary(),
@@ -113,7 +113,7 @@ public class ExperimentDescriptionPersister {
         final Collection secondaryPubmedXrefs = experimentDescription.getAdditionalBibRef();
         for ( Iterator iterator = secondaryPubmedXrefs.iterator(); iterator.hasNext(); ) {
             XrefTag xrefTag = (XrefTag) iterator.next();
-            Xref seeAlsoXref = new Xref( institution,
+            ExperimentXref seeAlsoXref = new ExperimentXref( institution,
                                          XrefChecker.getCvDatabase( xrefTag.getDb() ),
                                          xrefTag.getId(),
                                          xrefTag.getSecondary(),
@@ -148,7 +148,7 @@ public class ExperimentDescriptionPersister {
         for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
             XrefTag xrefTag = (XrefTag) iterator.next();
 
-            Xref xref = new Xref( DaoFactory.getInstitutionDao().getInstitution(),
+            ExperimentXref xref = new ExperimentXref( DaoFactory.getInstitutionDao().getInstitution(),
                                   XrefChecker.getCvDatabase( xrefTag.getDb() ),
                                   xrefTag.getId(),
                                   xrefTag.getSecondary(),

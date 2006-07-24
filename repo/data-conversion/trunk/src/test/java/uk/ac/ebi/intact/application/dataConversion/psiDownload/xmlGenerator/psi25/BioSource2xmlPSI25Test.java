@@ -8,19 +8,18 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.w3c.dom.Element;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDownloadTest;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.model.TestableBioSource;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.BioSource2xmlFactory;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.BioSource2xmlI;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi25.BioSource2xmlPSI25;
 import uk.ac.ebi.intact.model.*;
 
 /**
  * TODO document this ;o)
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:BioSource2xmlPSI25Test.java 5298 2006-07-07 09:35:05 +0000 (Fri, 07 Jul 2006) baranda $
  */
 public class BioSource2xmlPSI25Test extends PsiDownloadTest {
 
@@ -171,7 +170,7 @@ public class BioSource2xmlPSI25Test extends PsiDownloadTest {
         assertNotNull( bioSource );
 
         CvAliasType aliasType = new CvAliasType( owner, "otherName" );
-        aliasType.addXref( new Xref( owner, psi, "MI:wxyz", null, null, identity ) );
+        aliasType.addXref( new CvObjectXref( owner, psi, "MI:wxyz", null, null, identity ) );
         bioSource.addAlias( new Alias( owner, bioSource, aliasType, "homme" ) );
 
         CvCellType cellType = (CvCellType) createCvObject( CvCellType.class, "a_431", "Human epidermoid carcinoma",

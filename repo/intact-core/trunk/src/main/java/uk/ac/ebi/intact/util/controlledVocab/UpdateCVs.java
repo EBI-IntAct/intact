@@ -156,7 +156,7 @@ public class UpdateCVs {
                         try {
                             ia = SequenceManager.getNextId( );
 
-                            Xref xref = new CvObjectXref( institution, intact, ia, null, null, identity );
+                            CvObjectXref xref = new CvObjectXref( institution, intact, ia, null, null, identity );
                             cvObject.addXref( xref );
                             DaoFactory.getXrefDao().persist( xref );
                             log.debug( "Added: " + xref + " to " );
@@ -611,7 +611,7 @@ public class UpdateCVs {
                                                                   CvXrefQualifier.IDENTITY_MI_REF );
                     }
 
-                    Xref xref = new CvObjectXref( institution, psi, mi, null, null, identity );
+                    CvObjectXref xref = new CvObjectXref( institution, psi, mi, null, null, identity );
 
                     cv.addXref( xref );
                     DaoFactory.getXrefDao().persist( xref );
@@ -832,7 +832,7 @@ public class UpdateCVs {
             CvDatabase psi = (CvDatabase) getCvObject(CvDatabase.class, CvDatabase.PSI_MI, CvDatabase.PSI_MI_MI_REF );
             CvXrefQualifier identity = (CvXrefQualifier) getCvObject(CvXrefQualifier.class, CvXrefQualifier.IDENTITY, CvXrefQualifier.IDENTITY_MI_REF );
 
-            Xref xref = new CvObjectXref( institution, psi, id, null, null, identity );
+            CvObjectXref xref = new CvObjectXref( institution, psi, id, null, null, identity );
             cvObject.addXref( xref );
             DaoFactory.getXrefDao().persist( xref );
             log.debug( "\t\t Added PSI Xref (" + id + ")" );
@@ -856,13 +856,13 @@ public class UpdateCVs {
                 String newId = SequenceManager.getNextId( );
                 if ( ! xrefs.isEmpty() ) {
                     Iterator it = xrefs.iterator();
-                    Xref xref = (Xref) it.next();
+                    CvObjectXref xref = (CvObjectXref) it.next();
                     xref.setPrimaryId( newId );
                     DaoFactory.getXrefDao().update( xref );
                     log.debug( "Updated Xref (" + id + ") updated to " + newId + " on term '" + conflict.getShortLabel() + "'." );
 
                     while ( it.hasNext() ) {
-                        xref = (Xref) it.next();
+                        xref = (CvObjectXref) it.next();
                         conflict.removeXref( xref );
                         DaoFactory.getXrefDao().delete( xref );
                         DaoFactory.getCvObjectDao(CvObject.class).update( conflict );
@@ -873,7 +873,7 @@ public class UpdateCVs {
                 }
             }
 
-            Xref xref = new CvObjectXref( institution, intact, id, null, null, identity );
+            CvObjectXref xref = new CvObjectXref( institution, intact, id, null, null, identity );
             cvObject.addXref( xref );
             DaoFactory.getXrefDao().persist( xref );
             log.debug( "\t\t Added IntAct Xref (" + id + ")" );
@@ -1031,7 +1031,7 @@ public class UpdateCVs {
             CvDatabase database = (CvDatabase) getCvObject(CvDatabase.class, cvTermXref.getDatabase() );
             CvXrefQualifier qualifier = (CvXrefQualifier) getCvObject(CvXrefQualifier.class, cvTermXref.getQualifier() );
 
-            Xref newXref = new CvObjectXref( institution, database, cvTermXref.getId(), null, null, qualifier );
+            CvObjectXref newXref = new CvObjectXref( institution, database, cvTermXref.getId(), null, null, qualifier );
 
             if ( cvObject.getXrefs().contains( newXref ) ) {
                 // found it, skip.
@@ -1053,7 +1053,7 @@ public class UpdateCVs {
 
                 // update first one to the new qualifier
                 Iterator itx = xrefs.iterator();
-                Xref xref = (Xref) itx.next();
+                CvObjectXref xref = (CvObjectXref) itx.next();
                 CvXrefQualifier old = xref.getCvXrefQualifier();
                 xref.setCvXrefQualifier( qualifier );
                 xrefDao.update( xref );
@@ -1065,7 +1065,7 @@ public class UpdateCVs {
                     log.debug( "\t\t Deleting Xrefs having the same Database / ID as only one should be there:" );
                 }
                 while ( itx.hasNext() ) {
-                    xref = (Xref) itx.next();
+                    xref = (CvObjectXref) itx.next();
                     cvObject.removeXref( xref );
                     xrefDao.delete( xref );
                     log.debug("\t\t\t Xref( " + database.getShortLabel() + ", " +
