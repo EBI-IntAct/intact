@@ -6,11 +6,11 @@ package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.w3c.dom.Element;
 import org.hibernate.Transaction;
+import org.w3c.dom.Element;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDownloadTest;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.model.TestableProtein;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Interaction2xmlFactory;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Interaction2xmlI;
@@ -26,7 +26,7 @@ import java.util.Iterator;
  * TODO document this ;o)
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:Interaction2xmlPSI1Test.java 5298 2006-07-07 09:35:05 +0000 (Fri, 07 Jul 2006) baranda $
  */
 public class Interaction2xmlPSI1Test extends PsiDownloadTest {
 
@@ -61,7 +61,7 @@ public class Interaction2xmlPSI1Test extends PsiDownloadTest {
         experiments.add( Experiment2xmlPSI1Test.buildExperiment() );
 
         CvInteractionType anInteractionType = new CvInteractionType( owner, "anInteractionType" );
-        anInteractionType.addXref( new Xref( owner, psi, "MI:0055", null, null, identity ) );
+        anInteractionType.addXref( new InteractorXref( owner, psi, "MI:0055", null, null, identity ) );
 
         Interaction interaction = new InteractionImpl( experiments, anInteractionType, interactionType, "gene1-gene2-3", owner );
         interaction.setFullName( "interaction's fullname." );
@@ -77,9 +77,9 @@ public class Interaction2xmlPSI1Test extends PsiDownloadTest {
         // put features on that Interaction !!
 
         // add xrefs
-        interaction.addXref( new Xref( owner, go, "GO:0000000", "a fake GO term", null, null ) );
-        interaction.addXref( new Xref( owner, go, "GO:0000001", "an other fake GO term", null, null ) );
-        interaction.addXref( new Xref( owner, pubmed, "12345678", null, null, null ) );
+        interaction.addXref( new InteractorXref( owner, go, "GO:0000000", "a fake GO term", null, null ) );
+        interaction.addXref( new InteractorXref( owner, go, "GO:0000001", "an other fake GO term", null, null ) );
+        interaction.addXref( new InteractorXref( owner, pubmed, "12345678", null, null, null ) );
 
         // add annotations (internal + public)
         interaction.addAnnotation( new Annotation( owner, comment, "a comment on that interaction." ) );

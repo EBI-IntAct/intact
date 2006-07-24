@@ -276,7 +276,14 @@ public class Experiment extends AnnotatedObjectImpl<ExperimentXref> implements E
         return super.getAnnotations();
     }
 
-
+    /*
+    @OneToMany (mappedBy = "parent")
+    @Cascade(value = org.hibernate.annotations.CascadeType.PERSIST)
+    @Override
+    public Collection<ExperimentXref> getXrefs() {
+        return super.getXrefs();
+    }
+     */
     /**
      * Equality for Experiments is currently based on equality for <code>AnnotatedObjects</code> and BioSources only.
      *

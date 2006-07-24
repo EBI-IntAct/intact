@@ -14,11 +14,13 @@ import java.util.Collection;
  * @version $Id$
  * @since <pre>08-May-2006</pre>
  */
-public interface XrefDao extends IntactObjectDao<Xref>
+public interface XrefDao<T extends Xref> extends IntactObjectDao<T>
 {
 
-    public Collection<Xref> getByPrimaryId(String primaryId);
+    public Collection<T> getByPrimaryId(String primaryId);
 
-    public Collection<Xref> getByPrimaryIdLike(String primaryId);
+    public Collection<T> getByPrimaryIdLike(String primaryId);
+
+    public Collection<T> getByParentAc(String parentAc);
 
 }

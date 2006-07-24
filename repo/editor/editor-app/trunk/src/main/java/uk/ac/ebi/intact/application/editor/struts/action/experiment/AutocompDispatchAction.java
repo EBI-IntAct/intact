@@ -26,23 +26,19 @@ previous one.
 
 package uk.ac.ebi.intact.application.editor.struts.action.experiment;
 
-import org.apache.ojb.broker.query.Query;
 import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
-import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentActionForm;
-import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
-import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
-import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.cdb.ExperimentAutoFill;
 import uk.ac.ebi.intact.util.cdb.PublicationNotFoundException;
 import uk.ac.ebi.intact.util.cdb.UnexpectedException;
-import uk.ac.ebi.intact.util.cdb.UpdateExperiments;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -347,7 +343,7 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
             */
             if(false=="".equals(expAc) && null != expAc){
                 Experiment exp = helper.getObjectByAc(Experiment.class, expAc);
-                Collection<Xref> xrefs = exp.getXrefs();
+                Collection<ExperimentXref> xrefs = exp.getXrefs();
 
                 for (Xref xref : xrefs) {
                     if(CvDatabase.PUBMED.equals(xref.getCvDatabase().getShortLabel()) && CvXrefQualifier.PRIMARY_REFERENCE.equals(xref.getCvXrefQualifier().getShortLabel()) && false==pubmedId.equals(xref.getPrimaryId())){

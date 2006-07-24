@@ -19,8 +19,8 @@ import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.util.NewtServerProxy;
-import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -211,7 +211,7 @@ public class BioSourceAction extends AbstractEditorAction {
         return newlabel;
     }
 
-    private Xref createTaxXref(IntactHelper helper, String taxid, String label)
+    private Xref createTaxXref(String taxid, String label)
             throws IntactException {
         // The database the new xref belong to.
 
@@ -220,8 +220,7 @@ public class BioSourceAction extends AbstractEditorAction {
 //                    getService().getResource("taxid.db"));
         CvDatabase db = CvHelper.getNewt();
         // The qualifier is identity
-        CvXrefQualifier xqual = (CvXrefQualifier) helper.getObjectByLabel(
-                    CvXrefQualifier.class, "identity");
+        CvXrefQualifier xqual = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByShortLabel( "identity");
         return new Xref(getService().getOwner(), db, taxid, label, null, xqual);
     }
 

@@ -383,7 +383,7 @@ public class MainDetailViewBean extends AbstractViewBean {
      *
      * @return Collection the list of xrefs for the wrapped object.
      */
-    public Collection<Xref> getXrefs() {
+    public Collection<ExperimentXref> getXrefs() {
         return obj.getXrefs();
     }
 
@@ -398,8 +398,8 @@ public class MainDetailViewBean extends AbstractViewBean {
     public String getPrimaryIdFromXrefIdentity( Interactor interactor ) {
 
         String primaryId = "-";  //default for display
-        Collection<Xref> xrefs = interactor.getXrefs();
-        for ( Iterator<Xref> it = xrefs.iterator(); it.hasNext(); ) {
+        Collection<InteractorXref> xrefs = interactor.getXrefs();
+        for ( Iterator<InteractorXref> it = xrefs.iterator(); it.hasNext(); ) {
             Xref xref = it.next();
             if ( xref.getCvXrefQualifier() != null ) {
                 if ( CvXrefQualifier.IDENTITY.equals( xref.getCvXrefQualifier().getShortLabel() ) ) {
@@ -540,7 +540,7 @@ public class MainDetailViewBean extends AbstractViewBean {
         return singleFeatures;
     }
 
-    private boolean hasPsiReference( final AnnotatedObject ao, final String psiRef ) {
+    private boolean hasPsiReference( final AnnotatedObject<? extends Xref> ao, final String psiRef ) {
         for (Xref xref : ao.getXrefs())
         {
             if (CvDatabase.PSI_MI.equals(xref.getCvDatabase().getShortLabel()))
@@ -649,7 +649,7 @@ public class MainDetailViewBean extends AbstractViewBean {
                         buffer.append( SPACE ).append( '(' );
 
                         // link 2
-                        for ( Iterator<Xref> iter1 = firstFeature.getFeatureXrefs().iterator(); iter1.hasNext(); ) {
+                        for ( Iterator<FeatureXref> iter1 = firstFeature.getFeatureXrefs().iterator(); iter1.hasNext(); ) {
                             Xref xref = iter1.next();
 
                             buffer.append( "<a href=\"" ).append( firstFeature.getPrimaryIdURL( xref ) ).append( "\">" );
@@ -692,7 +692,7 @@ public class MainDetailViewBean extends AbstractViewBean {
 
                         buffer.append( SPACE ).append( "(" );
 
-                        for ( Iterator<Xref> iter1 = firstBoundFeature.getFeatureXrefs().iterator(); iter1.hasNext(); ) {
+                        for ( Iterator<FeatureXref> iter1 = firstBoundFeature.getFeatureXrefs().iterator(); iter1.hasNext(); ) {
                             Xref xref = iter1.next();
 
                             buffer.append( "<a href=\"" ).append( firstBoundFeature.getPrimaryIdURL( xref ) ).append( "\">" );
@@ -742,7 +742,7 @@ public class MainDetailViewBean extends AbstractViewBean {
 
                         buffer.append( SPACE ).append( "(" );
 
-                        for ( Iterator<Xref> iter1 = firstFeature.getFeatureXrefs().iterator(); iter1.hasNext(); ) {
+                        for ( Iterator<FeatureXref> iter1 = firstFeature.getFeatureXrefs().iterator(); iter1.hasNext(); ) {
                             Xref xref = iter1.next();
 
                             buffer.append( "<a href=\"" ).append( firstFeature.getPrimaryIdURL( xref ) ).append( "\">" );
@@ -902,8 +902,6 @@ public class MainDetailViewBean extends AbstractViewBean {
      * Provides a String representation of a URL to access the CV qualifier info related to the Xref (ie the Cv beans
      * describing the Xref's qualifier info).
      *
-     * @param xref The Xref for which the URL is required
-     *
      * @return String a String representation of a URL link for the Xref beans (CvXrefQualifier)
      */
     public String getCvQualifierURL( CvXrefQualifier cvXrefQualifier) {
@@ -961,9 +959,9 @@ public class MainDetailViewBean extends AbstractViewBean {
 //    public String getUniprotSearchURL( Protein protein ) { // 1 usage in detail.jsp
     public String getIdentityXrefSearchURL( Interactor interactor ) { // 1 usage in detail.jsp
 
-        Collection<Xref> xrefs = interactor.getXrefs();
+        Collection<InteractorXref> xrefs = interactor.getXrefs();
         String url = "-";
-        for ( Iterator<Xref> it = xrefs.iterator(); it.hasNext(); ) {
+        for ( Iterator<InteractorXref> it = xrefs.iterator(); it.hasNext(); ) {
             Xref xref = it.next();
             if ( xref.getCvXrefQualifier() != null ) {
                 if ( CvXrefQualifier.IDENTITY.equals( xref.getCvXrefQualifier().getShortLabel() ) ) {
@@ -1206,7 +1204,7 @@ public class MainDetailViewBean extends AbstractViewBean {
 
     private String getPubmedId( Experiment experiment ) {
 
-        for ( Iterator<Xref> iterator = experiment.getXrefs().iterator(); iterator.hasNext(); ) {
+        for ( Iterator<ExperimentXref> iterator = experiment.getXrefs().iterator(); iterator.hasNext(); ) {
             Xref xref = iterator.next();
 
             if ( xref.getCvDatabase().getShortLabel().equals( CvDatabase.PUBMED ) ) {

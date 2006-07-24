@@ -135,7 +135,7 @@ public class PsiDownloadTest extends TestCase {
     private static BioSource createBioSource( Institution owner, String shortlabel, String taxid, String[] aliases ) {
 
         BioSource bioSource = new TestableBioSource( "EBI-1234567", owner, shortlabel, taxid );
-        bioSource.addXref( new Xref( owner, newt, taxid, null, null, identity ) );
+        bioSource.addXref( new BioSourceXref( owner, newt, taxid, null, null, identity ) );
         for ( int i = 0; i < aliases.length; i++ ) {
             String alias = aliases[ i ];
             // TODO: update the way the Alias is created in order to mimic the Xref.
@@ -466,7 +466,7 @@ public class PsiDownloadTest extends TestCase {
 
     protected static void addPsiReference( CvObject cvObject, String psiId ) {
 
-        cvObject.addXref( new Xref( owner, psi, psiId, null, null, identity ) );
+        cvObject.addXref( new CvObjectXref( owner, psi, psiId, null, null, identity ) );
     }
 
     protected static CvObject createCvObject( Class clazz, String shortlabel, String fullname, String psiID ) {
@@ -487,7 +487,7 @@ public class PsiDownloadTest extends TestCase {
             }
 
             if ( psiID != null && !"".equals( psiID.trim() ) ) {
-                cvObject.addXref( new Xref( owner, psi, psiID, null, null, identity ) );
+                cvObject.addXref( new CvObjectXref( owner, psi, psiID, null, null, identity ) );
             }
 
         } catch ( NoSuchMethodException e ) {

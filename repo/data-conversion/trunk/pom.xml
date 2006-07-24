@@ -14,14 +14,14 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-master-webapp</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0b-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.ac.ebi.intact.app</groupId>
     <artifactId>data-conversion</artifactId>
     <packaging>jar</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0b-SNAPSHOT</version>
     <name>Data conversions</name>
     <description>Import/Exports from/to PSI files</description>
 
@@ -55,14 +55,6 @@
 
         </profile>
     </profiles>
-
-    <dependencies>
-        <dependency>
-            <groupId>uk.ac.ebi.intact</groupId>
-            <artifactId>intact-core</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
 
     <distributionManagement>
         <site>

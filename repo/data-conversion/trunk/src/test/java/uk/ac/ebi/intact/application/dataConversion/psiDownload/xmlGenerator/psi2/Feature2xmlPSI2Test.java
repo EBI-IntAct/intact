@@ -8,8 +8,8 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.w3c.dom.Element;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDownloadTest;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Feature2xmlFactory;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Feature2xmlI;
 import uk.ac.ebi.intact.model.*;
@@ -21,7 +21,7 @@ import java.util.Collection;
  * TODO document this ;o)
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:Feature2xmlPSI2Test.java 5298 2006-07-07 09:35:05 +0000 (Fri, 07 Jul 2006) baranda $
  */
 public class Feature2xmlPSI2Test extends PsiDownloadTest {
 
@@ -44,17 +44,17 @@ public class Feature2xmlPSI2Test extends PsiDownloadTest {
         Component component = new Component( owner, interaction, protein, bait );
 
         CvFeatureType acetylation = new CvFeatureType( owner, "acetylation" );
-        acetylation.addXref( new Xref( owner, psi, "MI:0121", null, null, identity ) );
+        acetylation.addXref( new CvObjectXref( owner, psi, "MI:0121", null, null, identity ) );
 
         Feature feature = new Feature( owner, "region", component, acetylation );
 
         Range range = new Range( owner, 2, 34, null );
         feature.addRange( range );
 
-        feature.addXref( new Xref( owner, interpro, "IPRxxxxxxx", null, null, null ) );
+        feature.addXref( new FeatureXref( owner, interpro, "IPRxxxxxxx", null, null, null ) );
 
         CvFeatureIdentification docking = new CvFeatureIdentification( owner, "docking" );
-        docking.addXref( new Xref( owner, psi, "MI:0035", null, null, identity ) );
+        docking.addXref( new CvObjectXref( owner, psi, "MI:0035", null, null, identity ) );
         feature.setCvFeatureIdentification( docking );
 
         return feature;

@@ -6,11 +6,11 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
-import uk.ac.ebi.intact.util.AnnotationFilter;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.CvObjectXref;
+import uk.ac.ebi.intact.util.AnnotationFilter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -200,9 +200,9 @@ public class CvObjectViewBean extends AbstractViewBean {
 
     public Collection<XrefViewBean> getXrefs() {
         final ArrayList<XrefViewBean> result = new ArrayList<XrefViewBean>();
-        final Collection<Xref> someXrefs = this.obj.getXrefs();
+        final Collection<CvObjectXref> someXrefs = this.obj.getXrefs();
 
-        for (Xref aXref : someXrefs)
+        for (CvObjectXref aXref : someXrefs)
         {
             result.add(new XrefViewBean(aXref, this.getHelpLink(), this.searchURL));
 

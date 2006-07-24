@@ -8,16 +8,17 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.w3c.dom.Element;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDownloadTest;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Xref2xmlFactory;
+import uk.ac.ebi.intact.model.InteractorXref;
 import uk.ac.ebi.intact.model.Xref;
 
 /**
  * TODO document this ;o)
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:Xref2xmlPSI1Test.java 5298 2006-07-07 09:35:05 +0000 (Fri, 07 Jul 2006) baranda $
  */
 public class Xref2xmlPSI1Test extends PsiDownloadTest {
 
@@ -51,7 +52,7 @@ public class Xref2xmlPSI1Test extends PsiDownloadTest {
         assertNull( primaryRef );
 
         // create the IntAct object
-        Xref xref = new Xref( owner, uniprot, "P12345", "P67890", "56", identity );
+        Xref xref = new InteractorXref( owner, uniprot, "P12345", "P67890", "56", identity );
 
         try {
             primaryRef = Xref2xmlFactory.getInstance( session ).createPrimaryRef( null, xrefElement, xref );
@@ -80,7 +81,7 @@ public class Xref2xmlPSI1Test extends PsiDownloadTest {
         Element xrefElement = session.createElement( "xref" );
 
         // create the IntAct object
-        Xref xref = new Xref( owner, uniprot, "P12345", "P67890", "56", identity );
+        Xref xref = new InteractorXref( owner, uniprot, "P12345", "P67890", "56", identity );
 
         // call the method we are testing
         Element primaryRef = Xref2xmlFactory.getInstance( session ).createPrimaryRef( session, xrefElement, xref );
@@ -107,7 +108,7 @@ public class Xref2xmlPSI1Test extends PsiDownloadTest {
         Element xrefElement = session.createElement( "xref" );
 
         // create the IntAct object
-        Xref xref = new Xref( owner, uniprot, "P12345", "P67890", "56", identity );
+        Xref xref = new InteractorXref( owner, uniprot, "P12345", "P67890", "56", identity );
 
         // call the method we are testing
         Element primaryRef = Xref2xmlFactory.getInstance( session ).createSecondaryRef( session, xrefElement, xref );

@@ -7,18 +7,13 @@ package uk.ac.ebi.intact.model;
 
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.CvDagObject;
-import uk.ac.ebi.intact.model.Editable;
-import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.model.Xref;
 
-import javax.persistence.Entity;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 
 /**
  * Controlled vocabulary class for GeneOntology. CVs which are organised in
@@ -72,7 +67,7 @@ public class CvGoNode extends CvDagObject {
      */
     @Transient
     public String getGoId() {
-        Collection<Xref> someXrefs = this.getXrefs();
+        Collection<CvObjectXref> someXrefs = this.getXrefs();
         if (someXrefs.size() != 1) {
             System.out.println("warning: a CvGoNode can only have one specific Xref");
         }

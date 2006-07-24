@@ -6,6 +6,8 @@
 package uk.ac.ebi.intact.model;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.validator.Length;
 
 import javax.persistence.JoinColumn;
@@ -23,6 +25,7 @@ import java.util.Collection;
 @MappedSuperclass
 public abstract class AnnotatedObjectImpl<T extends Xref> extends BasicObjectImpl implements AnnotatedObject<T> {
 
+    private static final Log log = LogFactory.getLog(AnnotatedObjectImpl.class);
 
     /////////////////////////////////
     //attributes
@@ -167,12 +170,24 @@ public abstract class AnnotatedObjectImpl<T extends Xref> extends BasicObjectImp
     ///////////////////
     // Xref related
     ///////////////////
+    // FIXME: this method do nothing now...
     public void setXrefs( Collection<T> someXrefs ) {
+        //log.warn("FIXME: This method has been hacked to make the getXrefs thing work");
         this.xrefs = someXrefs;
     }
 
-    @Transient
+    @OneToMany
+    @JoinColumn(name = "parent_ac", referencedColumnName = "ac")
+    // FIXME: using called to DAO instead hibernate mappings (not possible with the current db)
     public Collection<T> getXrefs() {
+        /*
+       log.warn("FIXME: Call to getXrefs method, which is not mapped and uses a DAO call instead");
+        if (ac == null)
+        {
+            throw new IntactException("There is an ugly hack in the getXrefs methods that might have provoked this exception.");
+        }
+
+        return DaoFactory.getXrefDao().getByParentAc(ac);   */
         return xrefs;
     }
 
@@ -181,13 +196,23 @@ public abstract class AnnotatedObjectImpl<T extends Xref> extends BasicObjectImp
      * if an equivalent xref is not yet part of the object.
      */
     public void addXref( T aXref ) {
-        if( !this.xrefs.contains( aXref ) ) {
-            this.xrefs.add( aXref );
-            aXref.setParent(this);
-        }
+        //if( !this.xrefs.contains( aXref ) ) {
+        //    this.xrefs.add( aXref );
+            //aXref.setParent(this);
+            aXref.setParentAc(this.getAc());
+        //}
     }
 
+    // FIXME: using called to DAO instead hibernate mappings (not possible with the current db)
     public void removeXref( T xref ) {
+        /*
+        log.warn("FIXME: Call to removeXref method, which is not mapped and uses a DAO call instead");
+        if (ac == null)
+        {
+            throw new IntactException("There is an ugly hack in the getXrefs methods that might have provoked this exception.");
+        }  */
+
+        //DaoFactory.getXrefDao().delete(xref);
         this.xrefs.remove( xref );
     }
 
@@ -300,7 +325,7 @@ public abstract class AnnotatedObjectImpl<T extends Xref> extends BasicObjectImp
             }
         }
 
-        return CollectionUtils.isEqualCollection( xrefs, annotatedObject.getXrefs() );
+        return CollectionUtils.isEqualCollection( getXrefs(), annotatedObject.getXrefs() );
     }
 
     /**
@@ -318,7 +343,7 @@ public abstract class AnnotatedObjectImpl<T extends Xref> extends BasicObjectImp
 
         int code = 29;
 
-        for (Xref xref : xrefs)
+        for (Xref xref : getXrefs())
         {
             code = 29 * code + xref.hashCode();
         }
@@ -339,6 +364,8 @@ public abstract class AnnotatedObjectImpl<T extends Xref> extends BasicObjectImp
     public Object clone() throws CloneNotSupportedException {
         AnnotatedObjectImpl copy = (AnnotatedObjectImpl) super.clone();
 
+        Collection<T> xrefs = getXrefs();
+
         // Append the "-x" to the short label.
         copy.shortLabel += "-x";
 
@@ -351,12 +378,14 @@ public abstract class AnnotatedObjectImpl<T extends Xref> extends BasicObjectImp
         }
 
         // Clone xrefs.
-        copy.xrefs = new ArrayList<Xref>( xrefs.size() );
+        Collection<Xref> copiedXrefs = new ArrayList<Xref>(xrefs.size());
         // Make deep copies.
-        for (Xref xref : xrefs)
+        for (Xref xref : getXrefs())
         {
-            copy.xrefs.add((Xref)xref.clone());
+            copiedXrefs.add((Xref)xref.clone());
         }
+
+        copy.setXrefs(copiedXrefs);
 
         return copy;
     }

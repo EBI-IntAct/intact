@@ -8,22 +8,22 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.w3c.dom.Element;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDownloadTest;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.model.TestableProtein;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.AbstractAnnotatedObject2xml;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi1.AnnotatedObject2xmlPSI1;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi2.AnnotatedObject2xmlPSI2;
 import uk.ac.ebi.intact.model.Alias;
 import uk.ac.ebi.intact.model.Annotation;
+import uk.ac.ebi.intact.model.InteractorXref;
 import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.model.Xref;
 
 /**
  * TODO document this ;o)
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:AnnotatedObject2xmlPSI25Test.java 5298 2006-07-07 09:35:05 +0000 (Fri, 07 Jul 2006) baranda $
  */
 public class AnnotatedObject2xmlPSI25Test extends PsiDownloadTest {
 
@@ -64,15 +64,15 @@ public class AnnotatedObject2xmlPSI25Test extends PsiDownloadTest {
         Protein protein = new TestableProtein( "EBI-333333", owner, yeast, "bbc1_yeast", proteinType, sequence );
         protein.setFullName( "Myosin tail region-interacting protein MTI1" );
 
-        protein.addXref( new Xref( owner, uniprot, "P47068", null, null, identity ) );
-        protein.addXref( new Xref( owner, uniprot, "P47067", null, null, secondaryAc ) );
-        protein.addXref( new Xref( owner, uniprot, "Q8X1F4", null, null, secondaryAc ) );
-        protein.addXref( new Xref( owner, sgd, "S000003557", "BBC1", null, secondaryAc ) );
+        protein.addXref( new InteractorXref ( owner, uniprot, "P47068", null, null, identity ) );
+        protein.addXref( new InteractorXref( owner, uniprot, "P47067", null, null, secondaryAc ) );
+        protein.addXref( new InteractorXref ( owner, uniprot, "Q8X1F4", null, null, secondaryAc ) );
+        protein.addXref( new InteractorXref ( owner, sgd, "S000003557", "BBC1", null, secondaryAc ) );
         // NOTE: the Xref.secondaryId are truncated to 30 characters
-        protein.addXref( new Xref( owner, go, "GO:0030479", "C:actin cortical patch (sensu Fungi)", null, null ) );
-        protein.addXref( new Xref( owner, go, "GO:0017024", "F:myosin I binding", null, null ) );
-        protein.addXref( new Xref( owner, go, "GO:0030036", "P:actin cytoskeleton organization and biogenesis", null, null ) );
-        protein.addXref( new Xref( owner, go, "GO:0007010", "P:cytoskeleton organization and biogenesis", null, null ) );
+        protein.addXref( new InteractorXref ( owner, go, "GO:0030479", "C:actin cortical patch (sensu Fungi)", null, null ) );
+        protein.addXref( new InteractorXref ( owner, go, "GO:0017024", "F:myosin I binding", null, null ) );
+        protein.addXref( new InteractorXref ( owner, go, "GO:0030036", "P:actin cytoskeleton organization and biogenesis", null, null ) );
+        protein.addXref( new InteractorXref ( owner, go, "GO:0007010", "P:cytoskeleton organization and biogenesis", null, null ) );
 
         protein.addAlias( new Alias( owner, protein, geneName, "BBC1" ) );
         protein.addAlias( new Alias( owner, protein, geneNameSynonym, "MTI1" ) );

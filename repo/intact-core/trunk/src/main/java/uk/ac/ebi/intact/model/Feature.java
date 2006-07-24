@@ -210,7 +210,14 @@ public class Feature extends AnnotatedObjectImpl<FeatureXref> implements Editabl
     public void setCvFeatureIdentification(CvFeatureIdentification cvFeatureIdentification) {
         this.cvFeatureIdentification = cvFeatureIdentification;
     }
-
+    /*
+    @OneToMany (mappedBy = "parent")
+    @Cascade(value = org.hibernate.annotations.CascadeType.PERSIST)
+    @Override
+    public Collection<FeatureXref> getXrefs() {
+        return super.getXrefs();
+    }
+    */
     /**
      * Equality for Features is currently based on owner, shortLabel, Component
      * and any non-null Ranges. NOTE: we cannot check equality for a related

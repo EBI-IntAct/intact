@@ -5,7 +5,6 @@
  */
 package uk.ac.ebi.intact.model;
 
-import org.hibernate.annotations.Cascade;
 import uk.ac.ebi.intact.annotation.EditorTopic;
 
 import javax.persistence.*;
@@ -119,15 +118,14 @@ public class BioSource extends AnnotatedObjectImpl<BioSourceXref> implements Edi
         return super.getAnnotations();
     }
 
-
+    /*
     @OneToMany (mappedBy = "parent")
-    @JoinColumn(name = "parent_ac", referencedColumnName = "ac")
     @Cascade(value = org.hibernate.annotations.CascadeType.PERSIST)
     @Override
     public Collection<BioSourceXref> getXrefs() {
         return super.getXrefs();
     }
-
+    */
 
     public String getTaxId() {
         return taxId;

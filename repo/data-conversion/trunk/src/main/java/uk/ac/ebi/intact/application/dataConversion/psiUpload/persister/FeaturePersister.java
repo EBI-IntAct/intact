@@ -60,7 +60,7 @@ public class FeaturePersister {
                 qualifier = ControlledVocabularyRepository.getPrimaryXrefQualifier();
             }
 
-            final Xref xref = new Xref( institution,
+            final FeatureXref xref = new FeatureXref( institution,
                                         XrefChecker.getCvDatabase( xrefTag.getDb() ),
                                         xrefTag.getId(),
                                         xrefTag.getSecondary(),

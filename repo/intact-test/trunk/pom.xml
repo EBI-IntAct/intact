@@ -39,9 +39,20 @@
                 <configuration>
                     <dialect>org.hibernate.dialect.H2Dialect</dialect>
                     <driver>org.h2.Driver</driver>
-                    <url>jdbc:h2:mem/h2test</url>
+                    <url>jdbc:h2:intact/intact-test</url>
                     <user>sa</user>
+                    <password></password>
                     <hbm2ddlAuto>create</hbm2ddlAuto>
+                    <hibernateEvents>
+                        <hibernateEvent>
+                            <type>pre-insert</type>
+                            <className>uk.ac.ebi.intact.model.IntactObjectEventListener</className>
+                        </hibernateEvent>
+                        <hibernateEvent>
+                            <type>pre-update</type>
+                            <className>uk.ac.ebi.intact.model.IntactObjectEventListener</className>
+                        </hibernateEvent>
+                    </hibernateEvents>
                 </configuration>
                 <executions>
                     <execution>
@@ -59,7 +70,7 @@
         <dependency>
             <groupId>uk.ac.ebi.intact</groupId>
             <artifactId>intact-core</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0b-SNAPSHOT</version>
         </dependency>
 
         <dependency>

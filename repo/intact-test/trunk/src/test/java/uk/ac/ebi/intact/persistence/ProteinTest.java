@@ -5,17 +5,13 @@
  */
 package uk.ac.ebi.intact.persistence;
 
+import junit.framework.Assert;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.Collection;
-
-import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.AbstractIntactTest;
 import uk.ac.ebi.intact.model.Institution;
-import junit.framework.TestCase;
-import junit.framework.Assert;
+import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 /**
  * TODO comment this!
@@ -24,48 +20,24 @@ import junit.framework.Assert;
  * @version $Id$
  * @since <pre>13-Jul-2006</pre>
  */
-public class ProteinTest extends TestCase
+public class ProteinTest extends AbstractIntactTest
 {
 
     private static final Log log = LogFactory.getLog(ProteinTest.class);
 
     public static final String NEW_LINE = System.getProperty( "line.separator" );
 
-    private IntactTransaction tx;
-
-    protected void setUp() throws Exception
-    {
-        super.setUp();
-
-        tx = DaoFactory.beginTransaction();
-    }
-
-    protected void tearDown() throws Exception
-    {
-        super.tearDown();
-
-        tx.commit();
-        tx = null;
-    }
-
     public void testCreateInstitution()
     {
-        Institution institution = new Institution("EBITEST");
+        Institution institution = new Institution("EBI");
         institution.setFullName("Test Institution");
-        institution.setAc("EBITEST-1");
 
         DaoFactory.getInstitutionDao().persist(institution);
     }
 
-    public void testCreateProtein()
-    {
-        //Protein protein = DaoFactory.getProteinDao().getByAc("EBITEST-1");
-        //Assert.assertNull(protein);
-    }
-
     public void testGetProtein()
     {
-        Protein protein = DaoFactory.getProteinDao().getByAc("EBITEST-2");
+        Protein protein = DaoFactory.getProteinDao().getByAc("NOTHING-2");
         Assert.assertNull(protein);
     }
 

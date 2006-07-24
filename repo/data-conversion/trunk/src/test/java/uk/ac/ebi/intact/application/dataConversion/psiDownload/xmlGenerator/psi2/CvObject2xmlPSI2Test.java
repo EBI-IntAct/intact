@@ -7,21 +7,19 @@ package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.w3c.dom.Element;
-import org.hibernate.Transaction;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDownloadTest;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.CvObject2xmlFactory;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.CvObject2xmlI;
 import uk.ac.ebi.intact.model.CvFeatureIdentification;
-import uk.ac.ebi.intact.model.Xref;
-import uk.ac.ebi.intact.persistence.util.HibernateUtil;
+import uk.ac.ebi.intact.model.CvObjectXref;
 
 /**
  * TODO document this ;o)
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:CvObject2xmlPSI2Test.java 5298 2006-07-07 09:35:05 +0000 (Fri, 07 Jul 2006) baranda $
  */
 public class CvObject2xmlPSI2Test extends PsiDownloadTest {
 
@@ -93,8 +91,8 @@ public class CvObject2xmlPSI2Test extends PsiDownloadTest {
         // create the IntAct object
         CvFeatureIdentification cvObject = new CvFeatureIdentification( owner, "feature ident" );
         cvObject.setFullName( "longer description of that feature identification." );
-        cvObject.addXref( new Xref( owner, psi, "MI:0001", "secondary", "v1", identity ) );
-        cvObject.addXref( new Xref( owner, pubmed, "12345678", null, null, null ) );
+        cvObject.addXref( new CvObjectXref( owner, psi, "MI:0001", "secondary", "v1", identity ) );
+        cvObject.addXref( new CvObjectXref( owner, pubmed, "12345678", null, null, null ) );
 
         // TODO create a TestableCvObject that allows to set the AC, then only we can create Aliases for it !!
 //        cvObject.addAlias( new Alias( owner, ) );
