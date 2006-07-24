@@ -248,7 +248,7 @@ public class UpdateTargetSpecies {
                     BioSource bioSource = (BioSource) iterator1.next();
 
                     // create the Xref
-                    Xref xref = new Xref( DaoFactory.getInstitutionDao().getInstitution(), newt,
+                    ExperimentXref xref = new ExperimentXref( DaoFactory.getInstitutionDao().getInstitution(), newt,
                                           bioSource.getTaxId(), bioSource.getShortLabel(),
                                           null,
                                           targetSpeciesQualifier );
@@ -267,7 +267,7 @@ public class UpdateTargetSpecies {
 
                 // 3. remove Xref( target-species ) that should not be there
                 for ( Iterator iterator1 = existingTargetXrefs.iterator(); iterator1.hasNext(); ) {
-                    Xref xref = (Xref) iterator1.next();
+                    ExperimentXref xref = (ExperimentXref) iterator1.next();
 
                     log.debug( "\tRemove Xref(" + xref.getPrimaryId() + ", " + xref.getSecondaryId() + ")" );
                     experiment.removeXref( xref );

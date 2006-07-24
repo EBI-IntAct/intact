@@ -5,16 +5,7 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.JoinTable;
-import javax.persistence.JoinColumn;
-import javax.persistence.DiscriminatorValue;
-import java.util.Iterator;
+import javax.persistence.*;
 import java.util.Collection;
 
 /**
@@ -26,9 +17,9 @@ import java.util.Collection;
  */
 @Entity
 @Table(name = "ia_controlledvocab")
-@DiscriminatorColumn(name="objclass")
+@DiscriminatorColumn(name="objclass", discriminatorType = DiscriminatorType.STRING, length = 255)
 
-public abstract class CvObject extends AnnotatedObjectImpl {
+public abstract class CvObject extends AnnotatedObjectImpl<Xref> {
 
     /**
      * no-arg constructor provided for compatibility with subclasses that have no-arg constructors.

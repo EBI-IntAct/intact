@@ -156,7 +156,7 @@ public class UpdateCVs {
                         try {
                             ia = SequenceManager.getNextId( );
 
-                            Xref xref = new Xref( institution, intact, ia, null, null, identity );
+                            Xref xref = new CvObjectXref( institution, intact, ia, null, null, identity );
                             cvObject.addXref( xref );
                             DaoFactory.getXrefDao().persist( xref );
                             log.debug( "Added: " + xref + " to " );
@@ -611,7 +611,7 @@ public class UpdateCVs {
                                                                   CvXrefQualifier.IDENTITY_MI_REF );
                     }
 
-                    Xref xref = new Xref( institution, psi, mi, null, null, identity );
+                    Xref xref = new CvObjectXref( institution, psi, mi, null, null, identity );
 
                     cv.addXref( xref );
                     DaoFactory.getXrefDao().persist( xref );
@@ -752,7 +752,6 @@ public class UpdateCVs {
     /**
      * Update an IntAct CV term based on the definition read externally, and contained in a CvTerm.
      *
-     * @param helper   data access.
      * @param cvObject the IntAct CV to update.
      * @param cvTerm   the new definition of that CV.
      *
@@ -833,7 +832,7 @@ public class UpdateCVs {
             CvDatabase psi = (CvDatabase) getCvObject(CvDatabase.class, CvDatabase.PSI_MI, CvDatabase.PSI_MI_MI_REF );
             CvXrefQualifier identity = (CvXrefQualifier) getCvObject(CvXrefQualifier.class, CvXrefQualifier.IDENTITY, CvXrefQualifier.IDENTITY_MI_REF );
 
-            Xref xref = new Xref( institution, psi, id, null, null, identity );
+            Xref xref = new CvObjectXref( institution, psi, id, null, null, identity );
             cvObject.addXref( xref );
             DaoFactory.getXrefDao().persist( xref );
             log.debug( "\t\t Added PSI Xref (" + id + ")" );
@@ -874,7 +873,7 @@ public class UpdateCVs {
                 }
             }
 
-            Xref xref = new Xref( institution, intact, id, null, null, identity );
+            Xref xref = new CvObjectXref( institution, intact, id, null, null, identity );
             cvObject.addXref( xref );
             DaoFactory.getXrefDao().persist( xref );
             log.debug( "\t\t Added IntAct Xref (" + id + ")" );
@@ -1032,7 +1031,7 @@ public class UpdateCVs {
             CvDatabase database = (CvDatabase) getCvObject(CvDatabase.class, cvTermXref.getDatabase() );
             CvXrefQualifier qualifier = (CvXrefQualifier) getCvObject(CvXrefQualifier.class, cvTermXref.getQualifier() );
 
-            Xref newXref = new Xref( institution, database, cvTermXref.getId(), null, null, qualifier );
+            Xref newXref = new CvObjectXref( institution, database, cvTermXref.getId(), null, null, qualifier );
 
             if ( cvObject.getXrefs().contains( newXref ) ) {
                 // found it, skip.

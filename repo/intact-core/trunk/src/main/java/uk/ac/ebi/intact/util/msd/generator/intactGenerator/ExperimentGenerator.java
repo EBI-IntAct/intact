@@ -1,18 +1,19 @@
 package uk.ac.ebi.intact.util.msd.generator.intactGenerator;
 
-import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.model.Annotation;
-import uk.ac.ebi.intact.model.CvInteraction;
-import uk.ac.ebi.intact.model.Xref;
-import uk.ac.ebi.intact.util.msd.generator.msdGenerator.MsdExperiment;
-import uk.ac.ebi.intact.util.msd.generator.msdGenerator.MsdInteraction;
-import uk.ac.ebi.intact.util.cdb.*;
-import uk.ac.ebi.intact.business.IntactException;
-
-import java.util.Collection;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.model.Annotation;
+import uk.ac.ebi.intact.model.CvInteraction;
+import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.ExperimentXref;
+import uk.ac.ebi.intact.util.cdb.ExperimentAutoFill;
+import uk.ac.ebi.intact.util.cdb.PublicationNotFoundException;
+import uk.ac.ebi.intact.util.cdb.UnexpectedException;
+import uk.ac.ebi.intact.util.msd.generator.msdGenerator.MsdExperiment;
+import uk.ac.ebi.intact.util.msd.generator.msdGenerator.MsdInteraction;
+
+import java.util.Collection;
 
 /**
  * The aim of this class is to create an Experiment from an MsdExperiment object.
@@ -172,7 +173,7 @@ public class ExperimentGenerator {
      */
     private Experiment addXrefToPubmed(String pubmedId, Experiment experiment){
         try {
-            Xref xref = new Xref(GeneratorHelper.getOwner(),GeneratorHelper.getPubmed(),pubmedId,null,null,GeneratorHelper.getPrimaryRef());
+            ExperimentXref xref = new ExperimentXref(GeneratorHelper.getOwner(),GeneratorHelper.getPubmed(),pubmedId,null,null,GeneratorHelper.getPrimaryRef());
             experiment.addXref(xref);
             return experiment;
         } catch (IntactException e) {

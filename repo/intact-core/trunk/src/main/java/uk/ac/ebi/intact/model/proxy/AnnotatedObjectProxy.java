@@ -17,7 +17,7 @@ import java.util.Collection;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
-public class AnnotatedObjectProxy  extends BasicObjectProxy implements AnnotatedObject {
+public class AnnotatedObjectProxy<T extends Xref>  extends BasicObjectProxy implements AnnotatedObject<T> {
 
     public AnnotatedObjectProxy()
     {
@@ -105,19 +105,19 @@ public class AnnotatedObjectProxy  extends BasicObjectProxy implements Annotated
     ///////////////////
     // Xref related
     ///////////////////
-    public void setXrefs ( Collection<Xref> someXrefs ) {
+    public void setXrefs ( Collection<T> someXrefs ) {
         realSubject().setXrefs( someXrefs );
     }
 
-    public Collection<Xref> getXrefs () {
+    public Collection<T> getXrefs () {
         return realSubject().getXrefs();
     }
 
-    public void addXref ( Xref aXref ) {
+    public void addXref ( T aXref ) {
         realSubject().addXref( aXref );
     }
 
-    public void removeXref ( Xref xref ) {
+    public void removeXref ( T xref ) {
         realSubject().removeXref( xref );
     }
 

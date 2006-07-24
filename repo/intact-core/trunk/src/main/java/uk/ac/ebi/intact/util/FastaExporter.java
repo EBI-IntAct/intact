@@ -104,6 +104,8 @@ public class FastaExporter {
         while ( iterator.hasNext() ) {
             ProteinImpl protein = iterator.next();
 
+            System.out.println(protein.getAc());
+
             // Process the chunk of data
             if ( ! protein.getActiveInstances().isEmpty() ) {
 
