@@ -10,8 +10,10 @@ import java.sql.Connection;
 public class UserContext
 {
 
-    private String userId;
+    private String userId = null;
     private String userMail;
+    private String userPassword;
+
     private Connection connection;
 
     public UserContext(String userId)
@@ -45,6 +47,13 @@ public class UserContext
         this.userMail = userMail;
     }
 
+    public String getUserPassword() {
+        return userPassword;
+    }
+
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
+    }
 
     public Connection getConnection()
     {
@@ -55,4 +64,5 @@ public class UserContext
     {
         this.connection = connection;
     }
+
 }
