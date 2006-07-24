@@ -288,7 +288,7 @@ public class IntactOntology {
      *
      * @param cvObjectClass
      *
-     * @return
+     * @return Root terms
      */
     public Collection getRoots( Class cvObjectClass ) {
         return (Collection) intact2psi.get( cvObjectClass );
@@ -299,7 +299,7 @@ public class IntactOntology {
      *
      * @param cvObjectClass
      *
-     * @return
+     * @return All CvTerms
      */
     public Set getCvTerms( Class cvObjectClass ) {
         Collection roots = (Collection) intact2psi.get( cvObjectClass );
@@ -320,7 +320,7 @@ public class IntactOntology {
     /**
      * Get all CvTerm.
      *
-     * @return
+     * @return An unmodifiable collection of all CvTerms
      */
     public Collection getCvTerms() {
         return Collections.unmodifiableCollection( cvTerms );
@@ -329,7 +329,7 @@ public class IntactOntology {
     /**
      * Returns all CvTerm that are not linked to an IntAct type.
      *
-     * @return
+     * @return all CvTerms not linked to an IntAct type
      */
     public Collection getOrphanTerms() {
 

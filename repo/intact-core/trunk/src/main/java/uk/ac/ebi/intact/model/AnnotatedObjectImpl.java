@@ -21,7 +21,7 @@ import java.util.Collection;
  * @author hhe
  */
 @MappedSuperclass
-public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements AnnotatedObject {
+public abstract class AnnotatedObjectImpl<T extends Xref> extends BasicObjectImpl implements AnnotatedObject<T> {
 
 
     /////////////////////////////////
@@ -48,11 +48,11 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
      *
      */
     public Collection<Annotation> annotations = new ArrayList<Annotation>();
-    
+
     /**
      *
      */
-    public Collection<Xref> xrefs = new ArrayList<Xref>();
+    public Collection<T> xrefs = new ArrayList<T>();
 
     /**
      * Hold aliases of an Annotated object.
@@ -167,13 +167,12 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
     ///////////////////
     // Xref related
     ///////////////////
-    public void setXrefs( Collection<Xref> someXrefs ) {
+    public void setXrefs( Collection<T> someXrefs ) {
         this.xrefs = someXrefs;
     }
 
-    @OneToMany
-    @JoinColumn(name = "parent_ac", referencedColumnName = "ac")
-    public Collection<Xref> getXrefs() {
+    @Transient
+    public Collection<T> getXrefs() {
         return xrefs;
     }
 
@@ -181,14 +180,14 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
      * Adds an xref to the object. The xref will only be added
      * if an equivalent xref is not yet part of the object.
      */
-    public void addXref( Xref aXref ) {
+    public void addXref( T aXref ) {
         if( !this.xrefs.contains( aXref ) ) {
             this.xrefs.add( aXref );
-            aXref.setParentAc( this.getAc() );
+            aXref.setParent(this);
         }
     }
 
-    public void removeXref( Xref xref ) {
+    public void removeXref( T xref ) {
         this.xrefs.remove( xref );
     }
 

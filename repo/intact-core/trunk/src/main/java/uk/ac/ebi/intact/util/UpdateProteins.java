@@ -8,58 +8,26 @@ package uk.ac.ebi.intact.util;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Transaction;
 import uk.ac.ebi.aristotle.model.sptr.AristotleSPTRException;
 import uk.ac.ebi.aristotle.util.interfaces.AlternativeSplicingAdapter;
+import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.core.DummyServletContext;
 import uk.ac.ebi.intact.core.ExternalContext;
-import uk.ac.ebi.intact.business.BusinessConstants;
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.model.Alias;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.Annotation;
-import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.model.CvDatabase;
-import uk.ac.ebi.intact.model.CvXrefQualifier;
-import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.model.ProteinImpl;
-import uk.ac.ebi.intact.model.Xref;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.persistence.dao.AliasDao;
-import uk.ac.ebi.intact.persistence.dao.ProteinDao;
-import uk.ac.ebi.intact.persistence.dao.BaseDao;
-import uk.ac.ebi.intact.persistence.util.HibernateUtil;
+import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.dao.*;
 import uk.ac.ebi.interfaces.Factory;
 import uk.ac.ebi.interfaces.feature.FeatureException;
-import uk.ac.ebi.interfaces.sptr.Gene;
-import uk.ac.ebi.interfaces.sptr.Isoform;
-import uk.ac.ebi.interfaces.sptr.SPTRComment;
-import uk.ac.ebi.interfaces.sptr.SPTRCrossReference;
-import uk.ac.ebi.interfaces.sptr.SPTREntry;
-import uk.ac.ebi.interfaces.sptr.SPTRException;
+import uk.ac.ebi.interfaces.sptr.*;
 import uk.ac.ebi.sptr.flatfile.yasp.EntryIterator;
 import uk.ac.ebi.sptr.flatfile.yasp.YASP;
 import uk.ac.ebi.sptr.flatfile.yasp.YASPException;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Parse an URL and update the IntAct database.
@@ -363,12 +331,12 @@ public class UpdateProteins extends UpdateProteinsI {
             return false; // throw IllegalArgumentException ??
         }
 
-        Collection<Xref> xrefs = protein.getXrefs();
+        Collection<InteractorXref> xrefs = protein.getXrefs();
         if ( xrefs == null ) {
             return false;
         }
 
-        for ( Xref xref : xrefs ) {
+        for ( InteractorXref xref : xrefs ) {
             CvXrefQualifier qualifier = xref.getCvXrefQualifier();
             if ( qualifier != null && qualifier.equals( isoFormParentXrefQualifier ) ) {
                 return true;
@@ -693,7 +661,7 @@ public class UpdateProteins extends UpdateProteinsI {
         log.debug( "update requested: " + update );
 
         ProteinImpl selectedProtein = null;
-        Transaction tx = null;
+        IntactTransaction tx = null;
 
         try {
             // according to the SPTR entry's primary AC, get the corresponding proteins in IntAct
@@ -845,7 +813,7 @@ public class UpdateProteins extends UpdateProteinsI {
                     } // else
 
                     if ( localTransactionControl ) {
-                        tx = HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+                        tx = DaoFactory.beginTransaction();
                     }
 
                     if ( doCreate ) {
@@ -892,7 +860,7 @@ public class UpdateProteins extends UpdateProteinsI {
                         log.debug( "A protein exists for that taxid (" + sptrTaxid + "), try to update" );
 
                         if ( localTransactionControl ) {
-                            tx = HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+                            tx = DaoFactory.beginTransaction();
                         }
 
                         boolean forceUpdate = false;
@@ -1049,7 +1017,7 @@ public class UpdateProteins extends UpdateProteinsI {
                                          * By using a Database transaction (JDBC_TX) it is written when it's
                                          * asked for and everything is deleted if something goes wrong.
                                          */
-                                        tx = HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+                                        tx = DaoFactory.beginTransaction();
                                     }
 
                                     if ( updateExistingSpliceVariant( isoForm,
@@ -1081,7 +1049,7 @@ public class UpdateProteins extends UpdateProteinsI {
 
                                 if ( localTransactionControl ) {
                                     // See remarks about database transaction above.
-                                    tx = HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+                                    tx = DaoFactory.beginTransaction();
                                 }
                                 if ( ( spliceVariant = createNewSpliceVariant( isoForm, spliceVariantID, master,
                                                                                sptrEntry, sptrBioSource,
@@ -1127,19 +1095,7 @@ public class UpdateProteins extends UpdateProteinsI {
             writeEntry2file( entryIterator );
 
             // Try to rollback
-            if ( tx.isActive() ) {
-                if ( log != null ) {
-                    log.error( "Try to undo transaction." );
-                }
-                try {
-                    // try to undo the transaction
-                    tx.rollback();
-                } catch ( IntactException ie2 ) {
-                    if ( log != null ) {
-                        log.error( "Could not undo the current transaction" );
-                    }
-                }
-            }
+            tx.rollback();
         }
     }
 
@@ -1262,7 +1218,7 @@ public class UpdateProteins extends UpdateProteinsI {
         log.debug( "Look in the entry for Xref of type: " + database + " (" + cr.length + " found)" );
 
         // create a list of new xrefs
-        Collection<Xref> xrefs = new ArrayList<Xref>( cr.length );
+        Collection<InteractorXref> xrefs = new ArrayList<InteractorXref>( cr.length );
 
         for ( SPTRCrossReference sptrXref : cr ) {
             String ac = sptrXref.getAccessionNumber();
@@ -1281,7 +1237,7 @@ public class UpdateProteins extends UpdateProteinsI {
                 }
             }
 
-            xrefs.add( new Xref( myInstitution,
+            xrefs.add( new InteractorXref( myInstitution,
                                  cvDatabase,
                                  ac,
                                  id,
@@ -1310,16 +1266,16 @@ public class UpdateProteins extends UpdateProteinsI {
                                     Protein protein ) throws SPTRException, IntactException {
 
         Gene[] genes = sptrEntry.getGenes();
-        Collection<Xref> kiaas = null;
+        Collection<InteractorXref> kiaas = null;
         for ( Gene gene : genes ) {
             String geneName = gene.getName();
             if ( geneName.startsWith( "KIAA" ) ) {
 
                 if ( kiaas == null ) {
-                    kiaas = new ArrayList<Xref>( 1 );
+                    kiaas = new ArrayList<InteractorXref>( 1 );
                 }
 
-                kiaas.add( new Xref( myInstitution, hugeDatabase, geneName, null, null, null ) );
+                kiaas.add( new InteractorXref( myInstitution, hugeDatabase, geneName, null, null, null ) );
             }
 
             // get KIAAs from synonyms (if any)
@@ -1328,10 +1284,10 @@ public class UpdateProteins extends UpdateProteinsI {
                 if ( syn != null && syn.startsWith( "KIAA" ) ) {
 
                     if ( kiaas == null ) {
-                        kiaas = new ArrayList<Xref>( 1 );
+                        kiaas = new ArrayList<InteractorXref>( 1 );
                     }
 
-                    kiaas.add( new Xref( myInstitution, hugeDatabase, syn, null, null, null ) );
+                    kiaas.add( new InteractorXref( myInstitution, hugeDatabase, syn, null, null, null ) );
                 }
             } // Gene name synonyms
         } // genes
@@ -1737,12 +1693,12 @@ public class UpdateProteins extends UpdateProteinsI {
         // could be annotRelease/seqRelease.
 //        String seqRelease = sptrEntry.getLastSequenceUpdateRelease();
 
-        Collection<Xref> xrefs = new ArrayList<Xref>( proteinAC.length );
+        Collection<InteractorXref> xrefs = new ArrayList<InteractorXref>( proteinAC.length );
 
         // TODO looks bizarre here as we do the update twice !!
 
         // create a list of all new Xrefs
-        xrefs.add( new Xref( myInstitution,
+        xrefs.add( new InteractorXref( myInstitution,
                              uniprotDatabase,
                              proteinAC[ 0 ],
                              shortLabel,
@@ -1753,7 +1709,7 @@ public class UpdateProteins extends UpdateProteinsI {
         for ( int i = 1; i < proteinAC.length; i++ ) {
             ac = proteinAC[ i ];
 
-            xrefs.add( new Xref( myInstitution,
+            xrefs.add( new InteractorXref( myInstitution,
                                  uniprotDatabase,
                                  ac,
                                  shortLabel,
@@ -1791,8 +1747,8 @@ public class UpdateProteins extends UpdateProteinsI {
         String version = getSPTREntryReleaseVersion( sptrEntry );
 
         // create a list of all new Xrefs
-        Collection<Xref> xrefs = new ArrayList<Xref>( isoIds.length );
-        xrefs.add( new Xref( myInstitution,
+        Collection<InteractorXref> xrefs = new ArrayList<InteractorXref>( isoIds.length );
+        xrefs.add( new InteractorXref( myInstitution,
                              uniprotDatabase,
                              isoIds[ 0 ],
                              masterAc,
@@ -1802,7 +1758,7 @@ public class UpdateProteins extends UpdateProteinsI {
         for ( int i = 1; i < isoIds.length; i++ ) {
 
             String isoId = isoIds[ i ];
-            xrefs.add( new Xref( myInstitution,
+            xrefs.add( new InteractorXref( myInstitution,
                                  uniprotDatabase,
                                  isoId,
                                  masterAc,
@@ -2101,7 +2057,7 @@ public class UpdateProteins extends UpdateProteinsI {
         spliceVariant.setCrc64( crc64 );
 
         // add Xref (isoform-parent), which links to the splice variant's master protein ...
-        Xref isoformXref = new Xref( myInstitution,
+        InteractorXref isoformXref = new InteractorXref( myInstitution,
                                      intactDatabase,
                                      master.getAc(),
                                      master.getShortLabel(),
@@ -2244,7 +2200,7 @@ public class UpdateProteins extends UpdateProteinsI {
 
             if ( !found ) {
                 // error ... but create it.
-                isoformXref = new Xref( myInstitution,
+                isoformXref = new InteractorXref( myInstitution,
                                         intactDatabase,
                                         master.getAc(),
                                         master.getShortLabel().toLowerCase(),
@@ -2512,13 +2468,13 @@ public class UpdateProteins extends UpdateProteinsI {
     @Override
     public Protein insertSimpleProtein( String anAc, CvDatabase aDatabase, String aTaxId ) throws IntactException {
 
-        Transaction tx = null;
+        IntactTransaction tx = null;
 
         // Search for the protein or create it
         Collection<ProteinImpl> newProteins = DaoFactory.getProteinDao().getByXrefLike(anAc);
 
         if ( localTransactionControl ) {
-            tx = HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+            tx = DaoFactory.beginTransaction();
         }
 
         // Get or create valid biosource from taxid
@@ -2549,17 +2505,17 @@ public class UpdateProteins extends UpdateProteinsI {
 
             // Create new Protein
             targetProtein = new ProteinImpl( myInstitution, validBioSource, anAc, proteinType );
-            DaoFactory.getProteinDao().persist( targetProtein );
 
             // Create new Xref if a DB has been given
             if ( null != aDatabase ) {
-                Xref newXref = new Xref( myInstitution, aDatabase, anAc, null, null, null );
+                InteractorXref newXref = new InteractorXref( myInstitution, aDatabase, anAc, null, null, null );
                 newXref.setOwner( myInstitution );
                 newXref.setCvDatabase( aDatabase );
                 newXref.setPrimaryId( anAc );
                 targetProtein.addXref( newXref );
-                DaoFactory.getXrefDao().persist( newXref );
             }
+
+            DaoFactory.getProteinDao().persist( targetProtein );
         }
 
         if ( localTransactionControl ) {
@@ -2974,9 +2930,9 @@ public class UpdateProteins extends UpdateProteinsI {
 
         String uniprot = null;
 
-        Collection<Xref> xrefs = protein.getXrefs();
+        Collection<InteractorXref> xrefs = protein.getXrefs();
         boolean found = false;
-        for ( Iterator<Xref> iterator = xrefs.iterator(); iterator.hasNext() && !found; ) {
+        for ( Iterator<InteractorXref> iterator = xrefs.iterator(); iterator.hasNext() && !found; ) {
             Xref xref = iterator.next();
 
             if ( uniprotDatabase.equals( xref.getCvDatabase() ) &&

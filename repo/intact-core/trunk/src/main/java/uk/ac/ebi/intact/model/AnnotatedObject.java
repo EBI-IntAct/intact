@@ -14,7 +14,7 @@ import java.util.Collection;
  *
  * @see uk.ac.ebi.intact.model.AnnotatedObjectImpl
  */
-public interface AnnotatedObject extends BasicObject {
+public interface AnnotatedObject<T extends Xref> extends BasicObject {
 
     /**
      * This matches with the column size for short label
@@ -42,13 +42,13 @@ public interface AnnotatedObject extends BasicObject {
     ///////////////////
     // Xref related
     ///////////////////
-    public void setXrefs(Collection<Xref> someXrefs);
+    public void setXrefs(Collection<T> someXrefs);
 
-    public Collection<Xref> getXrefs();
+    public Collection<T> getXrefs();
 
-    public void addXref(Xref aXref);
+    public void addXref(T aXref);
 
-    public void removeXref(Xref xref);
+    public void removeXref(T xref);
 
     ///////////////////
     // Alias related

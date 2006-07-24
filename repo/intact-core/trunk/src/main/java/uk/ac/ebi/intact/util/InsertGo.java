@@ -10,12 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.CvDatabase;
-import uk.ac.ebi.intact.model.Institution;
-import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.model.Xref;
-import uk.ac.ebi.intact.model.ProteinImpl;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.CreateException;
 import uk.ac.ebi.intact.persistence.UpdateException;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
@@ -74,7 +69,7 @@ public class InsertGo {
         // Todo: Make sure the xref does not yet exist in the object
 
         current.addXref( xref );
-        if (xref.getParentAc() == current.getAc()){
+        if (xref.getParentAc().equals(current.getAc())){
             DaoFactory.getXrefDao().persist( xref );
         }
     }
@@ -128,7 +123,7 @@ public class InsertGo {
         Institution institution = DaoFactory.getInstitutionDao().getInstitution();
 
         addNewXref(protein,
-                   new Xref(institution,
+                   new InteractorXref(institution,
                             DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel( "sgd"),
                             sgdAc,
                             null, null, null));
@@ -140,7 +135,7 @@ public class InsertGo {
 
 
         addNewXref(protein,
-                   new Xref(institution,
+                   new InteractorXref(institution,
                             DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel( "go"),
                             goAc,
                             goTerm, null, null));

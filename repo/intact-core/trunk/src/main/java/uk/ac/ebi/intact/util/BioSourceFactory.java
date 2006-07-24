@@ -10,8 +10,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.BioSourceDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -186,7 +186,7 @@ public class BioSourceFactory {
 
                 CvDatabase newt = getNewt();
                 CvXrefQualifier identity = getIdentity();
-                Xref xref = new Xref( institution, newt, aTaxId, identity );
+                BioSourceXref xref = new BioSourceXref( institution, newt, aTaxId, identity );
                 inVitro.addXref( xref );
 
                 DaoFactory.getXrefDao().persist( xref );
@@ -285,7 +285,7 @@ public class BioSourceFactory {
                                 CvXrefQualifier identity = getIdentity();
 
                                 // create identity Newt Xref
-                                Xref xref = new Xref( institution, newt, newTaxid, null, null, identity );
+                                BioSourceXref xref = new BioSourceXref( institution, newt, newTaxid, null, null, identity );
                                 newBioSource.addXref( xref );
 
                                 // persist changes
@@ -392,7 +392,7 @@ public class BioSourceFactory {
         CvXrefQualifier identity = getIdentity();
 
         // create identity Newt Xref
-        Xref xref = new Xref( institution, newt, "" + response.getTaxId(), null, null, identity );
+        BioSourceXref xref = new BioSourceXref( institution, newt, "" + response.getTaxId(), null, null, identity );
         bioSource.addXref( xref );
 
         // Note: We do not persist that Xref as it will be used for checking against IntAct data.
@@ -461,7 +461,7 @@ public class BioSourceFactory {
 
             log.debug( "The identity Xref for that BioSource was missing, creating it..." );
 
-            Xref xref = new Xref( institution, newt, newtBioSource.getTaxId(), null, null, identity );
+            BioSourceXref xref = new BioSourceXref( institution, newt, newtBioSource.getTaxId(), null, null, identity );
             bioSource.addXref( xref );
 
             // persist changes

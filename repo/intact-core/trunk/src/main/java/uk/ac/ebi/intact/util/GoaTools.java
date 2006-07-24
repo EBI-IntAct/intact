@@ -5,23 +5,22 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.util;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
-import java.util.Iterator;
-import java.util.StringTokenizer;
-import java.util.NoSuchElementException;
-import java.util.Collection;
-import java.net.URL;
-import java.net.MalformedURLException;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.IOException;
-
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
 
 /**
  *
@@ -240,7 +239,7 @@ public class GoaTools {
         return goaBrowser;
     }
 
-    private boolean isXrefAlreadyExisting( Collection<Xref> xrefs, String primaryId, CvDatabase database) {
+    private boolean isXrefAlreadyExisting( Collection<InteractorXref> xrefs, String primaryId, CvDatabase database) {
 
         for (Xref xref : xrefs)
         {
@@ -282,7 +281,7 @@ public class GoaTools {
 
     private void updateGoXref ( Institution institution, Protein protein, GoaItem goaItem, CvDatabase database ) {
 
-        Collection<Xref> xrefs = protein.getXrefs();
+        Collection<InteractorXref> xrefs = protein.getXrefs();
         if ( ! isXrefAlreadyExisting( xrefs, goaItem.getGoId(), database ) ) {
             // add a new Xref
             String goId = goaItem.getGoId();
@@ -300,7 +299,7 @@ public class GoaTools {
                 return;
             }
 
-            Xref xref = new Xref( institution,
+            InteractorXref xref = new InteractorXref( institution,
                     database,
                     goId,
                     goResponse.getName(),

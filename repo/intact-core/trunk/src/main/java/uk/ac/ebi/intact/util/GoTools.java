@@ -6,21 +6,16 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.util;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.model.CvDatabase;
-import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.model.CvXrefQualifier;
-import uk.ac.ebi.intact.model.Xref;
-import uk.ac.ebi.intact.model.Institution;
-import uk.ac.ebi.intact.util.go.GoUtils;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.util.go.GoUtils;
 
 import java.io.File;
 import java.util.Iterator;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Utilities to read and write files in GO format
@@ -177,7 +172,7 @@ public class GoTools {
                 psi = new CvDatabase( institution, PSI_SHORTLABEL );
                 cvDatabaseDao.persist( psi );
 
-                Xref xref = new Xref( institution, psi, PSI_MI_REFERENCE, null, null, identity );
+                CvObjectXref xref = new CvObjectXref( institution, psi, PSI_MI_REFERENCE, null, null, identity );
                 psi.addXref( xref );
 
                 DaoFactory.getXrefDao().persist( xref );
@@ -196,7 +191,7 @@ public class GoTools {
         if ( identityCreated ) {
 
             // add the psi reference to the identity term.
-            Xref xref = new Xref( institution, psi, IDENTITY_MI_REFERENCE, null, null, identity );
+            CvObjectXref xref = new CvObjectXref( institution, psi, IDENTITY_MI_REFERENCE, null, null, identity );
             identity.addXref( xref );
 
             DaoFactory.getXrefDao().persist( xref );
@@ -221,7 +216,7 @@ public class GoTools {
                 pubmed = new CvDatabase( institution, CvDatabase.PUBMED );
                 cvDatabaseDao.persist( pubmed );
 
-                Xref xref = new Xref( institution, psi, CvDatabase.PUBMED_MI_REF, null, null, identity );
+                CvObjectXref xref = new CvObjectXref( institution, psi, CvDatabase.PUBMED_MI_REF, null, null, identity );
                 pubmed.addXref( xref );
 
                 DaoFactory.getXrefDao().persist( xref );
@@ -254,7 +249,7 @@ public class GoTools {
                 goDefRef = new CvXrefQualifier( institution, CvXrefQualifier.GO_DEFINITION_REF );
                 cvXrefQualifierDao.persist( goDefRef );
 
-                Xref xref = new Xref( institution, psi, CvXrefQualifier.GO_DEFINITION_REF_MI_REF, null, null, identity );
+                CvObjectXref xref = new CvObjectXref( institution, psi, CvXrefQualifier.GO_DEFINITION_REF_MI_REF, null, null, identity );
                 goDefRef.addXref( xref );
 
                 DaoFactory.getXrefDao().persist( xref );
@@ -340,7 +335,7 @@ public class GoTools {
 
         if ( !psiRefFound ) {
             // then create the PSI ref
-            Xref xref = new Xref( DaoFactory.getInstitutionDao().getInstitution(), psi, mi, null, null, identity );
+            CvObjectXref xref = new CvObjectXref( DaoFactory.getInstitutionDao().getInstitution(), psi, mi, null, null, identity );
             psi.addXref( xref );
 
             DaoFactory.getXrefDao().persist( xref );

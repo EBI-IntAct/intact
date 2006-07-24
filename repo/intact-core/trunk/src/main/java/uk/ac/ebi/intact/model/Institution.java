@@ -18,7 +18,7 @@ import java.io.Serializable;
 // TODO cf. note
 
 @Entity
-@Table(name = "IA_INSTITUTION")
+@Table(name = "ia_institution")
 public class Institution extends IntactObjectImpl implements Serializable {
 
     ///////////////////////////////////////

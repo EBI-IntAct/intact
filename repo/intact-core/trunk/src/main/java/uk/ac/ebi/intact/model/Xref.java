@@ -5,14 +5,7 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Id;
-import javax.persistence.Column;
-import javax.persistence.Transient;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.FetchType;
+import javax.persistence.*;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,7 +18,8 @@ import java.util.regex.Pattern;
  */
 @Entity
 @Table(name = "ia_xref")
-public class Xref extends BasicObjectImpl {
+@DiscriminatorColumn(name = "xreftype", discriminatorType = DiscriminatorType.STRING)
+public abstract class Xref extends BasicObjectImpl {
 
     ///////////////////////////////////////
     // Constamt
@@ -45,6 +39,8 @@ public class Xref extends BasicObjectImpl {
      * Ac of the object which holds that Xref
      */
     private String parentAc;
+
+    private AnnotatedObject parent;
 
     //attributes used for mapping BasicObjects - project synchron
     // TODO: should be move out of the model.
@@ -217,13 +213,28 @@ public class Xref extends BasicObjectImpl {
         this.dbRelease = aDbRelease;
     }
 
-    @Column(name = "parent_ac")
+    @Column(name = "parent_ac", insertable = false, updatable = false)
     public String getParentAc() {
+        if (parent != null)
+        {
+            parentAc = parent.getAc();
+        }
         return parentAc;
     }
 
     public void setParentAc( String parentAc ) {
         this.parentAc = parentAc;
+    }
+
+    @Transient
+    public AnnotatedObject getParent()
+    {
+        return parent;
+    }
+
+    public void setParent(AnnotatedObject parent)
+    {
+        this.parent = parent;
     }
 
     ///////////////////////////////////////

@@ -5,21 +5,20 @@
  */
 package uk.ac.ebi.intact.util.controlledVocab;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.util.controlledVocab.model.IntactOntology;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.util.controlledVocab.model.IntactOntology;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.sql.SQLException;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * TODO comment this
@@ -629,7 +628,7 @@ public class DownloadCVs {
             }
 
             // add PSI Xref
-            addXref( new Xref( owner, psi, mi, null, null, identity ) );
+            addXref( new CvObjectXref( owner, psi, mi, null, null, identity ) );
         }
     }
 
@@ -700,7 +699,7 @@ public class DownloadCVs {
                                 CvDatabase db = DaoFactory.getCvObjectDao(CvDatabase.class).getByXref( database );
                                 CvXrefQualifier q = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByXref(CvXrefQualifier.IDENTITY_MI_REF);
 
-                                Xref xref = new Xref( DaoFactory.getInstitutionDao().getInstitution(), db, miRef, null, null, q );
+                                Xref xref = new CvObjectXref( DaoFactory.getInstitutionDao().getInstitution(), db, miRef, null, null, q );
                                 root.addXref( xref );
                                 DaoFactory.getXrefDao().persist( xref );
 
@@ -837,7 +836,7 @@ public class DownloadCVs {
                 try {
                     String localId = SequenceManager.getNextId( );
 
-                    Xref xref = new Xref( DaoFactory.getInstitutionDao().getInstitution(), intact, localId, null, null, identity );
+                    Xref xref = new CvObjectXref( DaoFactory.getInstitutionDao().getInstitution(), intact, localId, null, null, identity );
                     cvObject.addXref( xref );
                     DaoFactory.getXrefDao().persist( xref );
 

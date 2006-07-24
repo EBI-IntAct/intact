@@ -95,32 +95,32 @@ public class DRLineExportTest extends TestCase {
         CvInteractorType protType = new CvInteractorType(institution, "protein");
 
         protein1 = new TestableProtein( "EBI-123", institution, bioSource, "PROT1_bio1", protType );
-        protein1.addXref( new Xref( institution, uniprot, "PROTEIN1", null, null, identityCvXrefQualifier ) );
-        protein1.addXref( new Xref( institution, cvDatabase, "1laigvh", null, null, null ) );
-        protein1.addXref( new Xref( institution, cvDatabase, "1slgn", null, null, null ) );
+        protein1.addXref( new InteractorXref( institution, uniprot, "PROTEIN1", null, null, identityCvXrefQualifier ) );
+        protein1.addXref( new InteractorXref( institution, cvDatabase, "1laigvh", null, null, null ) );
+        protein1.addXref( new InteractorXref( institution, cvDatabase, "1slgn", null, null, null ) );
 
         protein1SpliceVariant = new TestableProtein( "EBI-123", institution, bioSource, "PROT1_bio1-1", protType );
-        protein1SpliceVariant.addXref( new Xref( institution, uniprot, "PROTEIN1-1", null, null, identityCvXrefQualifier ) );
+        protein1SpliceVariant.addXref( new InteractorXref( institution, uniprot, "PROTEIN1-1", null, null, identityCvXrefQualifier ) );
         // Link to its master protein
-        protein1SpliceVariant.addXref( new Xref( institution, intact, "EBI-123", "PROTEIN1", null, isoformParentXrefQualifier ) );
-        protein1SpliceVariant.addXref( new Xref( institution, cvDatabase, "1laigvh", null, null, null ) );
-        protein1SpliceVariant.addXref( new Xref( institution, cvDatabase, "1slgn", null, null, null ) );
+        protein1SpliceVariant.addXref( new InteractorXref( institution, intact, "EBI-123", "PROTEIN1", null, isoformParentXrefQualifier ) );
+        protein1SpliceVariant.addXref( new InteractorXref( institution, cvDatabase, "1laigvh", null, null, null ) );
+        protein1SpliceVariant.addXref( new InteractorXref( institution, cvDatabase, "1slgn", null, null, null ) );
 
         protein2 = new ProteinImpl( institution, bioSource, "PROT2_bio1", protType );
-        protein2.addXref( new Xref( institution, cvDatabase, "2qwerty", null, null, null ) );
-        protein2.addXref( new Xref( institution, uniprot, "PROTEIN2", null, null, identityCvXrefQualifier ) );
-        protein2.addXref( new Xref( institution, cvDatabase, "2zxcvb", null, null, null ) );
+        protein2.addXref( new InteractorXref( institution, cvDatabase, "2qwerty", null, null, null ) );
+        protein2.addXref( new InteractorXref( institution, uniprot, "PROTEIN2", null, null, identityCvXrefQualifier ) );
+        protein2.addXref( new InteractorXref( institution, cvDatabase, "2zxcvb", null, null, null ) );
 
         protein3 = new ProteinImpl( institution, bioSource, "PROT3_bio1", protType );
-        protein3.addXref( new Xref( institution, cvDatabase, "3asfdg", null, null, null ) );
-        protein3.addXref( new Xref( institution, cvDatabase, "3ryuk", null, null, null ) );
-        protein3.addXref( new Xref( institution, uniprot, "PROTEIN3", null, null, identityCvXrefQualifier ) );
-        protein3.addXref( new Xref( institution, cvDatabase, "3lkjhgf", null, null, null ) );
+        protein3.addXref( new InteractorXref( institution, cvDatabase, "3asfdg", null, null, null ) );
+        protein3.addXref( new InteractorXref( institution, cvDatabase, "3ryuk", null, null, null ) );
+        protein3.addXref( new InteractorXref( institution, uniprot, "PROTEIN3", null, null, identityCvXrefQualifier ) );
+        protein3.addXref( new InteractorXref( institution, cvDatabase, "3lkjhgf", null, null, null ) );
 
         protein4 = new ProteinImpl( institution, bioSource, "PROT4_bio1", protType );
-        protein4.addXref( new Xref( institution, cvDatabase, "4alklk", null, null, null ) );
-        protein4.addXref( new Xref( institution, cvDatabase, "4pppp", null, null, null ) );
-        protein4.addXref( new Xref( institution, uniprot, "PROTEIN4", null, null, identityCvXrefQualifier ) );
+        protein4.addXref( new InteractorXref( institution, cvDatabase, "4alklk", null, null, null ) );
+        protein4.addXref( new InteractorXref( institution, cvDatabase, "4pppp", null, null, null ) );
+        protein4.addXref( new InteractorXref( institution, uniprot, "PROTEIN4", null, null, identityCvXrefQualifier ) );
     }
 
 

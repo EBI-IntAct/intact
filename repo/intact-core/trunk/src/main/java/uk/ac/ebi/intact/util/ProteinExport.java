@@ -5,22 +5,20 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.util;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.ArrayList;
-import java.io.IOException;
-import java.io.FileWriter;
-import java.io.BufferedWriter;
-import java.sql.SQLException;
-
-import org.apache.ojb.broker.accesslayer.LookupException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  *
@@ -92,11 +90,11 @@ public class ProteinExport {
 
         // export found proteins
         String uniprotAc    = null;
-        Collection<Xref> xrefs;
+        Collection<InteractorXref> xrefs;
         for (Protein protein : proteins)
         {
             xrefs = protein.getXrefs();
-            for (Iterator<Xref> iterator2 = xrefs.iterator(); iterator2.hasNext() && uniprotAc == null;)
+            for (Iterator<InteractorXref> iterator2 = xrefs.iterator(); iterator2.hasNext() && uniprotAc == null;)
             {
                 Xref xref = iterator2.next();
                 if (xref.getCvDatabase().equals(uniprotDatabase))

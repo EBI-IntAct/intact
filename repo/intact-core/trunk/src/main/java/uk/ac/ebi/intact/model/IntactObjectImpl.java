@@ -71,8 +71,8 @@ public abstract class IntactObjectImpl implements IntactObject, Serializable,
     //access methods for attributes
 
     @Id
-    @GeneratedValue(generator="intact-id")
-    @GenericGenerator(name="intact-id", strategy = "uk.ac.ebi.intact.model.IntactIdGenerator")
+    @GeneratedValue(generator="intact-id-generator")
+    @GenericGenerator(name="intact-id-generator", strategy = "uk.ac.ebi.intact.model.IntactIdGenerator")
     @Column(length = 30)
     public String getAc() {
         return ac;

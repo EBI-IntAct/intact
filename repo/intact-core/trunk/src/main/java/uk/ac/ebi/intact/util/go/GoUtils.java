@@ -6,6 +6,8 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.util.go;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.DuplicateLabelException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
@@ -17,9 +19,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 
 /**
  * Utilities to read and write files in GO format
@@ -822,7 +821,7 @@ public class GoUtils {
         if ( goRec.hasGoId() && goidDB != null ) {
 
             CvXrefQualifier identity = getIdentityQualifier();
-            Xref xref = new Xref( inst, goidDB, goRec.getGoId(), null, null, identity );
+            Xref xref = new CvObjectXref( inst, goidDB, goRec.getGoId(), null, null, identity );
             if ( ! current.getXrefs().contains( xref ) ) {
                 current.addXref( xref );
                 DaoFactory.getXrefDao().persist( xref );
@@ -838,7 +837,7 @@ public class GoUtils {
                 // add Pubmed xref
                 CvXrefQualifier goDefRef = getGoDefinitionQualifier();
                 CvDatabase pubmedDB = getPubmedDatabase();
-                Xref xref = new Xref( inst, pubmedDB, m.group( 1 ), null, null, goDefRef );
+                Xref xref = new CvObjectXref( inst, pubmedDB, m.group( 1 ), null, null, goDefRef );
                 if ( ! current.getXrefs().contains( xref ) ) {
                     current.addXref( xref );
                     DaoFactory.getXrefDao().persist( xref );
@@ -854,7 +853,7 @@ public class GoUtils {
                     // add Resid xref
                     CvXrefQualifier goDefRef = getGoDefinitionQualifier();
                     CvDatabase residDB = getResidDatabase();
-                    Xref xref = new Xref( inst, residDB, token.trim(), null, null, goDefRef );
+                    Xref xref = new CvObjectXref( inst, residDB, token.trim(), null, null, goDefRef );
                     if ( ! current.getXrefs().contains( xref ) ) {
                         current.addXref( xref );
                         DaoFactory.getXrefDao().persist( xref );

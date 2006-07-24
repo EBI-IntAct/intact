@@ -8,8 +8,12 @@ package uk.ac.ebi.intact.model;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
+import org.hibernate.MappingException;
+import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.SessionImplementor;
 import org.hibernate.id.SequenceGenerator;
+import org.hibernate.type.Type;
+import org.hibernate.util.PropertiesHelper;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -28,9 +32,31 @@ public class IntactIdGenerator extends SequenceGenerator
     private static final Log log = LogFactory.getLog(IntactIdGenerator.class);
 
     /**
-     * The ID generation is handled by the class uk.ac.ebi.intact.model.IntactIdGeneration, which extends
-     * Hibernate's SequenceGeneration. This class provides the new ID to the underlying hibernate layer.
-     * This new ID is the concatenation of the prefix and a sequence provided by the database, separated
+	 * The sequence parameter
+	 */
+	public static final String SEQUENCE = "sequence";
+
+    private String sequenceName;
+
+
+    @Override
+    public void configure(Type type, Properties properties, Dialect dialect) throws MappingException
+    {
+        String defaultSeqValue = "hibernate_sequence";
+        sequenceName = PropertiesHelper.getString(SEQUENCE, properties, defaultSeqValue);
+
+        // use "intact-sequence" only if the default sequence name is provided
+        if (sequenceName.equals(defaultSeqValue))
+        {
+            sequenceName = "intact_sequence";
+            properties.put(SEQUENCE, sequenceName);
+        }
+
+        super.configure(type, properties, dialect);
+    }
+
+    /**
+     * The ID is the concatenation of the prefix and a sequence provided by the database, separated
      * by a dash.
      * @param sessionImplementor a hibernate session implementor
      * @param object the object being persisted
@@ -64,12 +90,5 @@ public class IntactIdGenerator extends SequenceGenerator
     public String getSequenceName()
     {
         return "intact_sequence";
-    }
-
-
-    @Override
-    public Object generatorKey()
-    {
-        return "intact_generator";
     }
 }

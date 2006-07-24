@@ -17,7 +17,7 @@ import java.util.Collection;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
-public class InteractorProxy  extends AnnotatedObjectProxy implements Interactor {
+public class InteractorProxy  extends AnnotatedObjectProxy<InteractorXref> implements Interactor {
 
     public InteractorProxy() {
     }

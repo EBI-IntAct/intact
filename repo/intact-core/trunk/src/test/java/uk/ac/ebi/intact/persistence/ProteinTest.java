@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.persistence;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.model.InteractorXref;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
@@ -53,7 +54,7 @@ public class ProteinTest extends TestCase
 
         log.debug("Protein: " + protein.getAc());
 
-        Collection<Xref> xrefs = protein.getXrefs();
+        Collection<InteractorXref> xrefs = protein.getXrefs();
 
         for (Xref xref : xrefs) // will provoke an update in the db, which brings to the exception
         {

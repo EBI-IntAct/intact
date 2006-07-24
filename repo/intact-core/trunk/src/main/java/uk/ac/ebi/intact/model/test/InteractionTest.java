@@ -155,11 +155,11 @@ public class InteractionTest extends TestCase {
     public void doCloneTest1() throws IntactException, CloneNotSupportedException {
         InteractionImpl orig = (InteractionImpl) myHelper.getObjectByLabel( Interaction.class, "ga-3" );
 
-        CvTopic topic = (CvTopic) myHelper.getObjectByLabel( CvTopic.class, "comment" );
+        CvTopic topic = myHelper.getObjectByLabel( CvTopic.class, "comment" );
         orig.addAnnotation( new Annotation( orig.getOwner(), topic ) );
 
-        CvDatabase db = (CvDatabase) myHelper.getObjectByLabel( CvDatabase.class, "go" );
-        Xref xref = new Xref( orig.getOwner(), db, "a", "b", "c", null );
+        CvDatabase db = myHelper.getObjectByLabel( CvDatabase.class, "go" );
+        InteractorXref xref = new InteractorXref( orig.getOwner(), db, "a", "b", "c", null );
         orig.addXref( xref );
 
         // Make a copy.
