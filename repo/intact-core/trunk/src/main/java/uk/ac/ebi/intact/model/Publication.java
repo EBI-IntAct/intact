@@ -18,7 +18,7 @@ import java.util.Iterator;
  * @since <pre>11-May-2006</pre>
  */
 @Entity(name = "ia_publication")
-public class Publication extends AnnotatedObjectImpl implements Editable {
+public class Publication extends AnnotatedObjectImpl<PublicationXref> implements Editable {
 
     /**
      * PubMed Id of the publication.

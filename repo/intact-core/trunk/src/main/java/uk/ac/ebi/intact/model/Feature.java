@@ -6,19 +6,11 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.model;
 
 import org.apache.commons.collections.CollectionUtils;
+import uk.ac.ebi.intact.annotation.EditorTopic;
 
-import javax.persistence.ManyToOne;
-import javax.persistence.JoinColumn;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.OneToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.FetchType;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
-
-import uk.ac.ebi.intact.annotation.EditorTopic;
 
 /**
  * <p>
@@ -33,7 +25,7 @@ import uk.ac.ebi.intact.annotation.EditorTopic;
 @Entity
 @Table(name = "ia_feature")
 @EditorTopic
-public class Feature extends AnnotatedObjectImpl implements Editable{
+public class Feature extends AnnotatedObjectImpl<FeatureXref> implements Editable{
 
 
     //------------------- attributes -------------------------------
