@@ -72,6 +72,11 @@ public class SearchAction extends IntactBaseAction {
             page = Integer.valueOf(strPage);
         }
 
+        if (logger.isDebugEnabled() && paginatedSearch)
+        {
+            logger.debug("Performing paginated search. Page: "+page);
+        }
+
         // Session to access various session objects. This will create
         //a new session if one does not exist.
         HttpSession session = super.getSession( request );
@@ -326,7 +331,7 @@ public class SearchAction extends IntactBaseAction {
 
         //BRUNO changed here
     //    if ( searchClass.isSpecified() || SearchValidator.isSearchable( searchClass )) {
-            logger.info( "SearchAction: searchfast: " + searchValue + " searchClass: " + searchClass );
+            logger.info( "SearchAction: searchfast: " + searchValue + "; searchClass: " + searchClass+ "; page: "+page+"; firstResult: "+firstResult );
             result = helper.searchFast( searchValue, searchClass, filterValue, maxResults, firstResult, paginatedSearch);
    /*     } else {
             // this is a normal request from the servlet, we know the class, we know the value.

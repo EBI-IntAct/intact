@@ -533,8 +533,8 @@ public class SearchHelper implements SearchHelperI {
             }
 
             // the query is paginated, so if there is more than a certain number of results, pagination will appear
-            logger.info("Getting ACs for class: "+clazzToSearch);
-            List<String> acList = searchItemDao.getDistinctAc(values, classesToSearch, type, 0, maximumResultSize);
+            logger.info("Getting ACs for class: "+clazzToSearch+"; firstResult: "+firstResult);
+            List<String> acList = searchItemDao.getDistinctAc(values, classesToSearch, type, firstResult, maximumResultSize);
             String[] acs = acList.toArray(new String[acList.size()]);
 
             // we perform a query for all the ACs. This kind of query is limited in oracle to 1000 items,
