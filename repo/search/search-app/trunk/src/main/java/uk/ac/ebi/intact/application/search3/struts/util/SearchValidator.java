@@ -1,7 +1,7 @@
 package uk.ac.ebi.intact.application.search3.struts.util;
 
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.application.commons.search.SearchClass;
+import uk.ac.ebi.intact.searchengine.SearchClass;
 
 /**
  * Provides basic validations for the search3 search struts action class.

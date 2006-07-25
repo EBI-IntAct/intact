@@ -9,10 +9,10 @@ package uk.ac.ebi.intact.application.search3.struts.controller;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import uk.ac.ebi.intact.application.commons.search.SearchHelper;
-import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
 import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
+import uk.ac.ebi.intact.searchengine.SearchHelper;
+import uk.ac.ebi.intact.searchengine.SearchHelperI;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

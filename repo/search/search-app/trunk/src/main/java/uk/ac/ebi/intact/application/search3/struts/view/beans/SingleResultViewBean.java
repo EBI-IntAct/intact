@@ -1,7 +1,7 @@
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
-import uk.ac.ebi.intact.application.commons.search.SearchClass;
+import uk.ac.ebi.intact.searchengine.SearchClass;
 
 /**
  * @author Michael Kleen

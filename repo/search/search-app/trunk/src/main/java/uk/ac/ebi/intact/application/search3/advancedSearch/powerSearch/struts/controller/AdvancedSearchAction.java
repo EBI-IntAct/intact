@@ -12,18 +12,17 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
-import uk.ac.ebi.intact.application.search3.searchEngine.parser.IQLParserImpl;
+import uk.ac.ebi.intact.application.commons.util.UrlUtil;
 import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.business.QueryBuilder;
 import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
-import uk.ac.ebi.intact.application.search3.searchEngine.business.SearchEngineImpl;
-import uk.ac.ebi.intact.application.search3.searchEngine.business.dao.SearchDAOImpl;
-import uk.ac.ebi.intact.application.search3.searchEngine.lucene.IntactAnalyzer;
 import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
-import uk.ac.ebi.intact.application.commons.util.UrlUtil;
 import uk.ac.ebi.intact.business.IntactException;
-
 import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.searchengine.business.SearchEngineImpl;
+import uk.ac.ebi.intact.searchengine.business.dao.SearchDAOImpl;
+import uk.ac.ebi.intact.searchengine.lucene.IntactAnalyzer;
+import uk.ac.ebi.intact.searchengine.parser.IQLParserImpl;
 import uk.ac.ebi.intact.util.PropertyLoader;
 
 import javax.servlet.ServletException;

@@ -7,13 +7,16 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.action.interaction;
 
 import org.apache.struts.action.*;
-import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.model.NucleicAcidImpl;
+import uk.ac.ebi.intact.model.ProteinImpl;
+import uk.ac.ebi.intact.model.SmallMoleculeImpl;
+import uk.ac.ebi.intact.searchengine.ResultWrapper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

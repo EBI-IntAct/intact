@@ -32,14 +32,14 @@ to identify the source page of the request to the Action classes.
 <%@ page autoFlush="true" %>
 
 <%-- Intact classes needed --%>
-<%@ page import="uk.ac.ebi.intact.application.commons.search.SearchClass,
-                 uk.ac.ebi.intact.application.commons.util.UrlUtil,
+<%@ page import="uk.ac.ebi.intact.application.commons.util.UrlUtil,
                  uk.ac.ebi.intact.application.search3.business.IntactServiceIF,
                  uk.ac.ebi.intact.application.search3.struts.util.SearchConstants,
                  uk.ac.ebi.intact.application.search3.struts.view.beans.SimpleViewBean,
                  uk.ac.ebi.intact.model.Experiment,
                  uk.ac.ebi.intact.model.Interaction,
-                 uk.ac.ebi.intact.model.Interactor"%>
+                 uk.ac.ebi.intact.model.Interactor,
+                 uk.ac.ebi.intact.searchengine.SearchClass"%>
 
 <%-- Standard Java classes --%>
 <%@ page import="java.util.*"%>
@@ -394,9 +394,10 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
             %>
 
              <%
-                if(firstItemSearchClass == SearchClass.PROTEIN || firstItemSearchClass == SearchClass.NUCLEIC_ACID) {
+                 if (firstItemSearchClass == SearchClass.PROTEIN || firstItemSearchClass == SearchClass.NUCLEIC_ACID)
+                 {
 
-            %>
+             %>
             <td class="data">
                 <nobr><%= bean.getNumberOfInteractions(((Interactor)bean.getObject())) %><br></nobr>
             </td>
