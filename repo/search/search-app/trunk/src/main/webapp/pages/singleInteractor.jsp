@@ -21,19 +21,15 @@
 <%@ page autoFlush="true" %>
 
 <!-- Mostly used by the javascript for HV -->
-<%@ page import="uk.ac.ebi.intact.application.search3.struts.util.SearchConstants,
+<%@ page import="uk.ac.ebi.intact.application.commons.util.UrlUtil,
                  uk.ac.ebi.intact.application.search3.business.IntactServiceIF,
+                 uk.ac.ebi.intact.application.search3.struts.util.SearchConstants,
                  uk.ac.ebi.intact.application.search3.struts.view.beans.InteractorViewBean,
                  uk.ac.ebi.intact.model.Xref,
-                 uk.ac.ebi.intact.application.search3.struts.util.SearchConstants,
-                 uk.ac.ebi.intact.model.Protein,
-                 uk.ac.ebi.intact.model.Interactor,
-                 uk.ac.ebi.intact.model.Component,
-                 uk.ac.ebi.intact.model.Interaction"%>
+                 java.util.Collection,
+                 java.util.Iterator"%>
 
 <!-- Standard Java imports -->
-<%@ page import="java.util.*"%>
-<%@ page import="uk.ac.ebi.intact.application.commons.util.*"%>
 
 <!-- taglibs: maybe make use of these later to tidy up the JSP -->
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
@@ -126,7 +122,13 @@ mockups, June 2004
                 </td>
 
                 <td class="lefttop" rowspan="1" colspan="4">
-                    <a href="<%= bean.getBioSearchURL()%>"><%= bean. getBioSourceName()%></a>
+                    <% if (bean.getBioSearchURL() != null) { %>
+                        <a href="<%= bean.getBioSearchURL()%>">
+                    <% } %>
+                        <%= bean. getBioSourceName()%>
+                    <% if (bean.getBioSearchURL() != null) { %>
+                        </a>
+                    <% } %>
                 </td>
             </tr>
 

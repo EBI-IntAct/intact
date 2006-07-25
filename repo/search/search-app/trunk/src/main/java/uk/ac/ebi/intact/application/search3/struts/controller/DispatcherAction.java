@@ -95,55 +95,38 @@ public class DispatcherAction extends IntactBaseAction {
 
                 return mapping.findForward( SearchConstants.FORWARD_DETAILS_ACTION );
                 // check if it's Protein
-            } else if ( ( Protein.class.isAssignableFrom( resultItem.getClass() ) ) ) {
+            } else if ( ( Protein.class.isAssignableFrom( resultItem.getClass() ) ||
+                        NucleicAcid.class.isAssignableFrom( resultItem.getClass() ) ||
+                        SmallMolecule.class.isAssignableFrom( resultItem.getClass() )) ) {
 
                 // now we got different choices
                 if ( ( viewSource != null ) && ( viewSource.equals( "partner" ) ) ) {
                     if ( binaryValue != null && !binaryValue.equals( "" ) ) {
                         // it's a self interactions from outside
-                        logger.info( "It's a Protein,  forwarding to BinaryProteinAction" );
+                        logger.info( "It's a Protein, NucleicAcid or SmallMolecule,  forwarding to BinaryProteinAction" );
                         return mapping.findForward( SearchConstants.FORWARD_BINARYINTERACTOR_ACTION );
                     } else {
                         // it's a request from inside the jsp
-                        logger.info( "It's a Protein, forwarding to  PartnerResultAction" );
+                        logger.info( "It's a Protein, NucleicAcid or SmallMolecule, forwarding to  PartnerResultAction" );
                         return mapping.findForward( SearchConstants.FORWARD_BINARY_ACTION );
                     }
                 }
                 // we want the single Protein View
-                logger.info( "It's a Protein, ask forward to SingleResultAction" );
-                return mapping.findForward( SearchConstants.FORWARD_SINGLE_ACTION );
-
-            } // check if it's NucleicAcid
-            else if ( ( NucleicAcid.class.isAssignableFrom( resultItem.getClass() ) ) ) {
-
-                // now we got different choices
-                if ( ( viewSource != null ) && ( viewSource.equals( "partner" ) ) ) {
-                    if ( binaryValue != null && !binaryValue.equals( "" ) ) {
-                        // it's a self interactions from outside
-                        logger.info( "It's a NucleicAcid,  forwarding to BinaryProteinAction" );
-                        return mapping.findForward( SearchConstants.FORWARD_BINARYINTERACTOR_ACTION );
-                    } else {
-                        // it's a request from inside the jsp
-                        logger.info( "It's a NucleicAcid, forwarding to  PartnerResultAction" );
-                        return mapping.findForward( SearchConstants.FORWARD_BINARY_ACTION );
-                    }
-                }
-                // we want the single Protein View
-                logger.info( "It's a NucleicAcid, ask forward to SingleResultAction" );
+                logger.info( "It's a Protein, NucleicAcid or SmallMolecule, ask forward to SingleResultAction" );
                 return mapping.findForward( SearchConstants.FORWARD_SINGLE_ACTION );
 
             } // now it can only be a CvObject or a BioSource
             else if ( CvObject.class.isAssignableFrom( resultItem.getClass() ) ) {
 
-                logger.info( "It's a CvObjects, ask forward to SingleResultAction" );
+                logger.debug( "It's a CvObjects, ask forward to SingleResultAction" );
                 return mapping.findForward( SearchConstants.FORWARD_SINGLE_ACTION );
             } else if ( BioSource.class.isAssignableFrom( resultItem.getClass() ) ) {
 
-                logger.info( "It's a BioSource, ask forward to SingleResultAction" );
+                logger.debug( "It's a BioSource, ask forward to SingleResultAction" );
                 return mapping.findForward( SearchConstants.FORWARD_SINGLE_ACTION );
             } else {
                 // need to give up, we got an unknown type
-                logger.info( resultItem.getClass() + "is not supported" );
+                logger.error( resultItem.getClass() + "is not supported" );
                 return mapping.findForward( SearchConstants.FORWARD_FAILURE );
             }
         }

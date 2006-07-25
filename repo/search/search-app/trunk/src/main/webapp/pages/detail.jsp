@@ -26,10 +26,11 @@
 
 <%-- Intact classes needed --%>
 <%@ page import="uk.ac.ebi.intact.application.search3.business.IntactServiceIF,
+                 uk.ac.ebi.intact.application.search3.struts.util.SearchConstants,
                  uk.ac.ebi.intact.application.search3.struts.view.beans.MainDetailView,
                  uk.ac.ebi.intact.application.search3.struts.view.beans.MainDetailViewBean,
-                 uk.ac.ebi.intact.model.*,
-                 java.util.*" %>
+                 uk.ac.ebi.intact.model.*" %>
+<%@ page import="java.util.*" %>
 
 <%-- Standard Java classes --%>
 
@@ -40,20 +41,21 @@
 
 <%
     // To allow access hierarchView properties. Used only by the javascript.
-    IntactServiceIF service = (IntactServiceIF) application.getAttribute( SearchConstants.INTACT_SERVICE );
+    IntactServiceIF service = (IntactServiceIF) application.getAttribute(SearchConstants.INTACT_SERVICE);
 
     //build the absolute path out of the context path for 'search'
-    String ctxtPath = ( request.getContextPath() );
-    String relativePath = ctxtPath.substring( 0, ctxtPath.lastIndexOf( "search" ) );
+    String ctxtPath = (request.getContextPath());
+    String relativePath = ctxtPath.substring(0, ctxtPath.lastIndexOf("search"));
 
     //build the URL for hierarchView from the absolute path and the relative beans..
-    String hvPath = relativePath.concat( service.getHierarchViewProp( "hv.url" ) );
-    String minePath = relativePath.concat( "mine/display.jsp" );
+    String hvPath = relativePath.concat(service.getHierarchViewProp("hv.url"));
+    String minePath = relativePath.concat("mine/display.jsp");
 
     //the list of shortlabels for the search matches - need to be highlighted
     //NB the SearchAction ensures (in most cases!) this will not be null
-    List highlightList = (List) request.getAttribute( SearchConstants.HIGHLIGHT_LABELS_LIST );
-    if ( highlightList == null ) {
+    List highlightList = (List) request.getAttribute(SearchConstants.HIGHLIGHT_LABELS_LIST);
+    if (highlightList == null)
+    {
         highlightList = new ArrayList();  //avoids null checks everywhere!
     }
 %>
