@@ -39,7 +39,7 @@ fi
 
 if [ "$JAVA_HOME" ]; then
     echo "The Lucene index will be created in: $1"
-    $JAVA_HOME/bin/java -Xms256m -Xmx1024m -classpath $CLASSPATH uk.ac.ebi.intact.application.search3.searchEngine.lucene.Indexer $1
+    $JAVA_HOME/bin/java -Xms256m -Xmx1024m -classpath $CLASSPATH uk.ac.ebi.intact.searchengine.lucene.Indexer $1
 else
     echo Please set JAVA_HOME for this script to exceute
 fi

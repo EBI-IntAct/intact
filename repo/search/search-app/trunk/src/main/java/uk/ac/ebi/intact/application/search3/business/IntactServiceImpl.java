@@ -6,7 +6,7 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search3.business;
 
-import uk.ac.ebi.intact.application.search3.searchEngine.SearchEngineConstants;
+import uk.ac.ebi.intact.searchengine.SearchEngineConstants;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;

@@ -7,18 +7,13 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.search3.struts.controller;
 
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
-import uk.ac.ebi.intact.application.search3.struts.view.beans.MainDetailViewBean;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.MainDetailView;
-import uk.ac.ebi.intact.application.commons.search.SearchClass;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.searchengine.SearchClass;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Performs the beans view for the Experiement View.

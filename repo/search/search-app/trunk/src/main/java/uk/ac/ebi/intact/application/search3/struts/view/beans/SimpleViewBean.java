@@ -9,9 +9,12 @@ package uk.ac.ebi.intact.application.search3.struts.view.beans;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.InteractionDao;
-import uk.ac.ebi.intact.application.commons.search.SearchClass;
+import uk.ac.ebi.intact.searchengine.SearchClass;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * This class provides JSP view information for a particular AnnotatedObject. Its main purpose is to provide very simple

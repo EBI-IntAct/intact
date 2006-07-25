@@ -6,12 +6,8 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
-import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.application.commons.search.SearchClass;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.searchengine.SearchClass;
 
 /**
  * @author Michael Kleen

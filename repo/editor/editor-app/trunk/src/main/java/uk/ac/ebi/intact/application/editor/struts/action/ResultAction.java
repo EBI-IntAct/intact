@@ -9,14 +9,14 @@ package uk.ac.ebi.intact.application.editor.struts.action;
 import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.commons.search.SearchClass;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.searchengine.SearchClass;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

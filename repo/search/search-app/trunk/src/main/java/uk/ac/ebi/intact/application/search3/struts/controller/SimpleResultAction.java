@@ -3,14 +3,13 @@ package uk.ac.ebi.intact.application.search3.struts.controller;
 import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.SimpleViewBean;
-import uk.ac.ebi.intact.application.commons.search.SearchClass;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.searchengine.SearchClass;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 /**

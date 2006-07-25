@@ -10,20 +10,15 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
-import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
-import uk.ac.ebi.intact.application.commons.search.SearchHelper;
-import uk.ac.ebi.intact.application.commons.search.SearchClass;
-import uk.ac.ebi.intact.application.search3.business.Constants;
+import uk.ac.ebi.intact.application.commons.util.UrlUtil;
 import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
-import uk.ac.ebi.intact.application.search3.struts.util.SearchValidator;
 import uk.ac.ebi.intact.business.IntactException;
-
 import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.IntactObject;
-import uk.ac.ebi.intact.model.ProteinImpl;
-import uk.ac.ebi.intact.application.commons.util.UrlUtil;
+import uk.ac.ebi.intact.searchengine.ResultWrapper;
+import uk.ac.ebi.intact.searchengine.SearchClass;
+import uk.ac.ebi.intact.searchengine.SearchHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

@@ -13,9 +13,6 @@ import org.apache.struts.Globals;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.actions.LookupDispatchAction;
-import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
-import uk.ac.ebi.intact.application.commons.search.SearchHelper;
-import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
@@ -25,6 +22,9 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.OJBQueryFactory
 import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.searchengine.ResultWrapper;
+import uk.ac.ebi.intact.searchengine.SearchHelper;
+import uk.ac.ebi.intact.searchengine.SearchHelperI;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;

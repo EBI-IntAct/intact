@@ -8,8 +8,8 @@ package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.search3.business.Constants;
-import uk.ac.ebi.intact.application.commons.search.SearchClass;
 import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.searchengine.SearchClass;
 
 import java.io.Serializable;
 import java.util.Set;

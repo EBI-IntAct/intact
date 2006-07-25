@@ -7,9 +7,8 @@ package uk.ac.ebi.intact.application.search3.struts.view.html;
 
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.search3.business.Constants;
-import uk.ac.ebi.intact.application.commons.search.SearchClass;
-
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.searchengine.SearchClass;
 import uk.ac.ebi.intact.util.SearchReplace;
 
 import java.io.IOException;
