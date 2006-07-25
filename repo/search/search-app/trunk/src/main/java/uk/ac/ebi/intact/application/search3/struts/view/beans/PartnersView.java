@@ -78,7 +78,7 @@ public class PartnersView extends AbstractView
             throw new RuntimeException("Page out of bounds: "+getCurrentPage()+" ("+firstResult+"/"+maxResults+")");
         }
 
-        if (totalItems < getItemsPerPage()) firstResult = 0;
+        if (totalItems <= getItemsPerPage()) firstResult = 0;
 
         // Load the list of partners ACs, each partner has a list with the interaction ACs
         Map<String,List<String>> partnersWithInteractionAcs = getPartnerInteractorsAcsPage(firstResult, maxResults);
