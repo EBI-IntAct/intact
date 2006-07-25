@@ -96,6 +96,8 @@
                 <db.alias>zpro</db.alias>
                 <db.user>intactweb</db.user>
                 <db.password>reading</db.password>
+
+                <lucene.index.directory>/ebi/sp/pro4/intact/lucene-index/prod/current</lucene.index.directory>
             </properties>
         </profile>
         <profile>
