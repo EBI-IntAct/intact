@@ -7,8 +7,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.util.SearchReplace;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.util.SearchReplace;
 
 import java.util.*;
 
@@ -137,6 +137,8 @@ public class InteractorViewBean extends AbstractViewBean {
                 return "Protein";
             } else if ( interactor instanceof NucleicAcid ) {
                 return "Nucleic Acid";
+            }  else if ( interactor instanceof SmallMolecule ) {
+                return "Small Molecule";
             } else {
                 return "Interactor";
             }
@@ -170,7 +172,14 @@ public class InteractorViewBean extends AbstractViewBean {
      * @return String the BioSource AC
      */
     public String getBioAc() {
-        return interactor.getBioSource().getAc();
+        BioSource bioSource = interactor.getBioSource();
+
+        if (bioSource != null)
+        {
+            return bioSource.getAc();
+        }
+
+        return null;
     }
 
     /**
@@ -188,7 +197,14 @@ public class InteractorViewBean extends AbstractViewBean {
      * @return String the BioSource's 'common' name.
      */
     public String getBioSourceName() {
-        return interactor.getBioSource().getShortLabel();
+        BioSource bioSource = interactor.getBioSource();
+
+        if (bioSource != null)
+        {
+            return bioSource.getShortLabel();
+        }
+
+        return "-";
     }
 
     /**
@@ -201,7 +217,12 @@ public class InteractorViewBean extends AbstractViewBean {
 
         if ( bioSearchURL == null ) {
             //set it on the first call
-            bioSearchURL = searchURL + getBioAc() + "&amp;searchClass=BioSource";
+            String ac = getBioAc();
+
+            if (ac != null)
+            {
+                bioSearchURL = searchURL + getBioAc() + "&amp;searchClass=BioSource";
+            }
         }
 
         return bioSearchURL;

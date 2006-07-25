@@ -1,8 +1,9 @@
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
 import uk.ac.ebi.intact.application.search3.business.Constants;
-import uk.ac.ebi.intact.application.search3.util.UrlCheckerThread;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.searchengine.SearchClass;
+import uk.ac.ebi.intact.searchengine.UrlCheckerThread;
 import uk.ac.ebi.intact.util.AnnotationFilter;
 import uk.ac.ebi.intact.util.SearchReplace;
 
@@ -1158,13 +1159,9 @@ public class MainDetailViewBean extends AbstractViewBean {
 //public String getProteinSearchURL( Protein prot ) { // 1 usage in detail.jsp
     public String getInteractorSearchURL( Interactor interactor ) {
 
-        // TRY TO MODIFY FROM PROTEIN TO INTERACTOR
+        SearchClass sc = SearchClass.valueOfMappedClass(interactor.getClass());
 
-        if ( interactor instanceof Protein ) {
-            return searchURL + interactor.getAc() + "&amp;searchClass=Protein&amp;view=single&filter=ac";
-        } else {
-            return searchURL + interactor.getAc() + "&amp;searchClass=NucleicAcid&amp;view=single&filter=ac";
-        }
+        return searchURL + interactor.getAc() + "&amp;searchClass="+sc.getShortName()+"&amp;view=single&filter=ac";
     }
 
     /**

@@ -59,7 +59,7 @@ public class MainDetailView  extends AbstractView
             throw new RuntimeException("Page out of bounds: " + getCurrentPage() + " (Item: " + firstResult + " of " + getTotalItems() + ")");
         }
 
-        if (totalItems < getItemsPerPage()) firstResult = 0;
+        if (totalItems <= getItemsPerPage()) firstResult = 0;
 
         // get the interactions to be shown
         // When coming from the partners view, the interactions queried have to be placed in the first position if we are in the first page.
@@ -75,6 +75,7 @@ public class MainDetailView  extends AbstractView
 
             if (searched != null)
             {
+                // FIXME not only the search is an AC. Now, if another thing is used, the interaction won't be placed prominently
                 priorInteractionAcs = searched.replaceAll("'", "").split(",");
             }
 

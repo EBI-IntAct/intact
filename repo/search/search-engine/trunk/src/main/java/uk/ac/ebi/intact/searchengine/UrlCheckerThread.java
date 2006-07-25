@@ -3,7 +3,7 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.application.search3.util;
+package uk.ac.ebi.intact.searchengine;
 
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.GetMethod;
