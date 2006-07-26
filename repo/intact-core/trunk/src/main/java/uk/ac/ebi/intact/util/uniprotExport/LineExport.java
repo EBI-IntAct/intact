@@ -5,22 +5,10 @@
  */
 package uk.ac.ebi.intact.util.uniprotExport;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.model.Alias;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.Annotation;
-import uk.ac.ebi.intact.model.Component;
-import uk.ac.ebi.intact.model.CvAliasType;
-import uk.ac.ebi.intact.model.CvDatabase;
-import uk.ac.ebi.intact.model.CvInteraction;
-import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.model.CvTopic;
-import uk.ac.ebi.intact.model.CvXrefQualifier;
-import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.io.BufferedWriter;
@@ -28,17 +16,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.*;
 
 /**
  * That class .
@@ -579,22 +557,30 @@ public class LineExport {
      */
     public boolean isBinary( Interaction interaction ) {
 
-        boolean isBinaryInteraction = false;
-        // if that interaction has not exactly 2 interactors, it is not taken into account
+        boolean isBinaryInteraction;
 
-        if ( interaction.getComponents() != null ) {
+        int stoichiometrySum = 0;
+        Collection<Component> components = interaction.getComponents();
+        int componentCount = components.size();
 
-            int componentCount = interaction.getComponents().size();
+        for ( Component component : components ) {
+            stoichiometrySum += component.getStoichiometry();
+        }
+
+        if (stoichiometrySum == 0 && componentCount == 2) {
+            log.debug("Binary interaction. Stoichiometry 0, components 2");
+            isBinaryInteraction = true;
+        } else {
 
             if ( componentCount == 2 ) {
 
                 // check that the stochiometry is 1 for each component
-                Iterator iterator1 = interaction.getComponents().iterator();
+                Iterator<Component> iterator1 = components.iterator();
 
-                Component component1 = (Component) iterator1.next();
+                Component component1 = iterator1.next();
                 float stochio1 = component1.getStoichiometry();
 
-                Component component2 = (Component) iterator1.next();
+                Component component2 = iterator1.next();
                 float stochio2 = component2.getStoichiometry();
 
                 if ( stochio1 == 1 && stochio2 == 1 ) {
