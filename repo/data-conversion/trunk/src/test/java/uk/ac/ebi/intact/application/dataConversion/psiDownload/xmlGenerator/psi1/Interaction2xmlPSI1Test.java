@@ -61,7 +61,7 @@ public class Interaction2xmlPSI1Test extends PsiDownloadTest {
         experiments.add( Experiment2xmlPSI1Test.buildExperiment() );
 
         CvInteractionType anInteractionType = new CvInteractionType( owner, "anInteractionType" );
-        anInteractionType.addXref( new InteractorXref( owner, psi, "MI:0055", null, null, identity ) );
+        anInteractionType.addXref( new CvObjectXref( owner, psi, "MI:0055", null, null, identity ) );
 
         Interaction interaction = new InteractionImpl( experiments, anInteractionType, interactionType, "gene1-gene2-3", owner );
         interaction.setFullName( "interaction's fullname." );
