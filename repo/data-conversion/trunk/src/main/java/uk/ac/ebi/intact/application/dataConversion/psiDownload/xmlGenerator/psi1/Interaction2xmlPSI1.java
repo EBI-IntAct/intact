@@ -7,7 +7,10 @@ package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi
 import org.w3c.dom.Element;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.*;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.Component;
+import uk.ac.ebi.intact.model.CvTopic;
+import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.Interaction;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -109,12 +112,13 @@ public class Interaction2xmlPSI1 extends AnnotatedObject2xmlPSI1 implements Inte
         //       PSI content if such case occur and generate a warning message, that the user will be able to collect
         //       from the session.
         int stoichiometrySum = 0;
-        for ( Iterator iterator = interaction.getComponents().iterator(); iterator.hasNext(); ) {
-            Component component = (Component) iterator.next();
+        Collection<Component> components = interaction.getComponents();
+
+        for ( Component component : components ) {
             stoichiometrySum += component.getStoichiometry();
         }
 
-        if ( stoichiometrySum < 2 ) {
+        if ( stoichiometrySum < 2 && components.size() < 2) {
             // we can't generate that interaction ...
             session.addMessage( "WARNING: could not generate PSI-MI content for interaction (" +
                     interaction.getAc() + " / " + interaction.getShortLabel() + ") as PSI-MI v1.0 requires" +
