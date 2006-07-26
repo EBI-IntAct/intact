@@ -197,7 +197,7 @@ public abstract class AnnotatedObjectImpl<T extends Xref> extends BasicObjectImp
      */
     public void addXref( T aXref ) {
         //if( !this.xrefs.contains( aXref ) ) {
-        //    this.xrefs.add( aXref );
+            this.xrefs.add( aXref );
             //aXref.setParent(this);
             aXref.setParentAc(this.getAc());
         //}
