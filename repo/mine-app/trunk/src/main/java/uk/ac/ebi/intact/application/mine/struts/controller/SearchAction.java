@@ -6,17 +6,13 @@
 
 package uk.ac.ebi.intact.application.mine.struts.controller;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
-import uk.ac.ebi.intact.application.commons.search.SearchHelper;
-import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
-import uk.ac.ebi.intact.application.commons.search.SearchClass;
 import uk.ac.ebi.intact.application.mine.business.Constants;
 import uk.ac.ebi.intact.application.mine.business.IntactUser;
 import uk.ac.ebi.intact.application.mine.business.IntactUserI;
@@ -24,10 +20,9 @@ import uk.ac.ebi.intact.application.mine.struts.view.AmbiguousBean;
 import uk.ac.ebi.intact.application.mine.struts.view.ErrorBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.model.ProteinImpl;
-import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.model.InteractionImpl;
+import uk.ac.ebi.intact.searchengine.SearchClass;
+import uk.ac.ebi.intact.searchengine.SearchHelper;
+import uk.ac.ebi.intact.searchengine.SearchHelperI;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
