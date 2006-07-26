@@ -7,14 +7,13 @@
 package uk.ac.ebi.intact.application.hierarchView.business;
 
 import org.apache.log4j.Logger;
-import org.apache.ojb.broker.accesslayer.LookupException;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.ClickBehaviourForm;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactGraphHelper;
-import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.model.IntactObject;
+import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.simpleGraph.BasicGraphI;

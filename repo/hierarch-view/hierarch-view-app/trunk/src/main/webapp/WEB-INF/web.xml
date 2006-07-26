@@ -14,28 +14,6 @@
         interaction network.
     </description>
 
-
-    <!--  NB XML config files for the DB MUST be referred to here relative
-          to the WEB-INF/classes directory as that is where the class loader
-          will start to look. The leading "/" MUST be present if the config
-          files are in a sub-directory of WEB-INF/classes, otherwise
-          the class loader will only check in the package in which the servlet
-          instance resides (which may not be the same as the config file
-          location....). The exception to this rule seems to be the struts-config.xml
-          file....
-     -->
-    <context-param>
-        <param-name>mappingfile</param-name>
-        <param-value>/config/repository.xml</param-value>
-    </context-param>
-
-    <!--  Class name of the data source object to be used    -->
-    <context-param>
-        <param-name>datasource</param-name>
-        <param-value>uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource</param-value>
-    </context-param>
-
-
     <context-param>
         <param-name>logfile</param-name>
         <param-value>intact_log.txt</param-value>
@@ -51,21 +29,6 @@
         <filter-name>hibernateFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-
-    <!-- =================================================================== -->
-
-    <!-- Init servlet for the logging facilities -->
-    <servlet>
-      <servlet-name>logging-init</servlet-name>
-      <servlet-class>uk.ac.ebi.intact.application.commons.util.LoggingInitServlet</servlet-class>
-
-      <init-param>
-        <param-name>log4j-init-file</param-name>
-        <param-value>/WEB-INF/classes/config/log4j.properties</param-value>
-      </init-param>
-
-      <load-on-startup>1</load-on-startup>
-    </servlet>
 
     <!-- =================================================================== -->
 
