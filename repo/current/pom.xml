@@ -33,16 +33,8 @@
         <module>sanity-checker</module>
         <module>search-engine</module>
         <module>search-app</module>
-        <module>maven-editortopics-plugin</module>
-        <!--<module>editor-app</module>-->
+        <module>editor-app</module>
         <module>data-conversion</module>
-        <module>graph2mif-server</module>
-        <module>graph2mif-client</module>
-        <module>tulip-client</module>
-        <module>hierarch-view-app</module>
-        <module>statistic-view</module>
-        <module>mine-app</module>
-        <module>predict-app</module>
         <module>devsite</module>
         <!--<module>intact-test</module>-->
     </modules>
@@ -53,10 +45,15 @@
 
     <profiles>
         <profile>
-            <id>legacy</id>
+            <id>include-non-active</id>
             <modules>
-                <module>search2-app</module>
-                <module>intseq</module>
+                <module>graph2mif-server</module>
+                <module>graph2mif-client</module>
+                <module>tulip-client</module>
+                <module>hierarch-view-app</module>
+                <module>mine-app</module>
+                <module>predict-app</module>
+                <module>statistic-view</module>
             </modules>
         </profile>
     </profiles>
