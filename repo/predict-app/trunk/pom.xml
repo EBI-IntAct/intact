@@ -31,6 +31,25 @@
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/predict-app/trunk/</url>
     </scm>
 
+    <dependencies>
+        <dependency>
+            <groupId>displaytag</groupId>
+            <artifactId>displaytag</artifactId>
+            <version>1.0-unknown</version>
+        </dependency>
+        <dependency>
+            <groupId>taglibs</groupId>
+            <artifactId>standard</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>jstl</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.0</version>
+        </dependency>
+    </dependencies>
+
+
     <distributionManagement>
         <site>
             <id>intact-site</id>
