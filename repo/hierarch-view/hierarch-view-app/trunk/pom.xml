@@ -21,7 +21,7 @@
     <groupId>uk.ac.ebi.intact.app.hierarchview</groupId>
     <artifactId>hierarch-view-app</artifactId>
     <packaging>war</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0b-SNAPSHOT</version>
     <name>Hierarch View</name>
     <description>Hierarch View Application</description>
 
@@ -35,8 +35,19 @@
         <dependency>
             <groupId>uk.ac.ebi.intact.app.hierarchview</groupId>
             <artifactId>tulip-client</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>uk.ac.ebi.intact.app.search</groupId>
+            <artifactId>search-engine</artifactId>
+            <version>1.0b-SNAPSHOT</version>
+        </dependency>
+
+          <dependency>
+              <groupId>displaytag</groupId>
+              <artifactId>displaytag</artifactId>
+              <version>1.0</version>
+          </dependency>
     </dependencies>
 
     <distributionManagement>

@@ -14,13 +14,7 @@ package uk.ac.ebi.intact.application.hierarchView.business.graph;
  *          Exp $
  */
 
-import java.awt.Color;
-import java.rmi.RemoteException;
-import java.util.*;
-
 import org.apache.log4j.Logger;
-
-import uk.ac.ebi.intact.application.commons.search.CriteriaBean;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageDimension;
@@ -28,11 +22,17 @@ import uk.ac.ebi.intact.application.hierarchView.business.image.Utilities;
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.TulipClient;
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.ProteinCoordinate;
 import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.searchengine.CriteriaBean;
 import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
 import uk.ac.ebi.intact.simpleGraph.EdgeI;
 import uk.ac.ebi.intact.simpleGraph.Graph;
 import uk.ac.ebi.intact.simpleGraph.Node;
 import uk.ac.ebi.intact.util.Chrono;
+
+import java.awt.*;
+import java.rmi.RemoteException;
+import java.util.*;
+import java.util.List;
 
 public class InteractionNetwork extends Graph {
 
