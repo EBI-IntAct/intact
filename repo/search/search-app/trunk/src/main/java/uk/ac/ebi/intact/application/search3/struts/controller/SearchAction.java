@@ -108,6 +108,13 @@ public class SearchAction extends IntactBaseAction {
         String viewValue = (String) dyForm.get( "view" );
         String filterValue = (String) dyForm.get( "filter" );
 
+        // Feature Request #1485467 : Add a wildcard at the end
+        if (!searchValue.endsWith("*"))
+        {
+            searchValue = searchValue+"*";
+        }
+
+
         //set a few useful user beans
         user.setSearchValue( searchValue );
         user.setSearchClass( searchClass.getMappedClass() );
