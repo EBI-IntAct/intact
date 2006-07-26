@@ -9,8 +9,8 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.struts.view.utils;
 
-import org.displaytag.decorator.TableDecorator;
 import org.apache.log4j.Logger;
+import org.displaytag.decorator.TableDecorator;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 
 
@@ -40,7 +40,8 @@ import uk.ac.ebi.intact.application.hierarchView.business.Constants;
  *        Class SourceDecorator modified to be compatible with new "display.tld"
  *
  */
-public class SourceDecorator extends TableDecorator {
+public class SourceDecorator extends TableDecorator
+{
 
     static Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
 

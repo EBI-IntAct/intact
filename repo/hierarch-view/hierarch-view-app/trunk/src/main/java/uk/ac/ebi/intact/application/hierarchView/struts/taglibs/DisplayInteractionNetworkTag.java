@@ -6,12 +6,12 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.hierarchView.struts.taglibs;
 
 import org.apache.log4j.Logger;
-import uk.ac.ebi.intact.application.commons.search.CriteriaBean;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 import uk.ac.ebi.intact.application.hierarchView.highlightment.HighlightProteins;
+import uk.ac.ebi.intact.searchengine.CriteriaBean;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;

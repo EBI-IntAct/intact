@@ -8,10 +8,6 @@ package uk.ac.ebi.intact.application.hierarchView.struts.framework;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.action.*;
-import uk.ac.ebi.intact.application.commons.search.CriteriaBean;
-import uk.ac.ebi.intact.application.commons.search.SearchHelper;
-import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
-import uk.ac.ebi.intact.application.commons.search.SearchClass;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
@@ -24,9 +20,12 @@ import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredExcepti
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.model.InteractorImpl;
 import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.persistence.SearchException;
+import uk.ac.ebi.intact.searchengine.CriteriaBean;
+import uk.ac.ebi.intact.searchengine.SearchClass;
+import uk.ac.ebi.intact.searchengine.SearchHelper;
+import uk.ac.ebi.intact.searchengine.SearchHelperI;
 import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
 import uk.ac.ebi.intact.util.Chrono;
 
@@ -36,7 +35,6 @@ import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Properties;
 
 /**
  * Super class for all hierarchView related action classes.
