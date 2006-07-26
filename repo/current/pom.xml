@@ -14,7 +14,7 @@
     <groupId>uk.ac.ebi.intact</groupId>
     <artifactId>intact-build</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <name>IntAct Project</name>
     <url>http://www.ebi.ac.uk/intact</url>
     <description>Base build file</description>
@@ -34,7 +34,7 @@
         <module>search-engine</module>
         <module>search-app</module>
         <module>maven-editortopics-plugin</module>
-<!--        <module>editor-app</module>-->
+        <!--<module>editor-app</module>-->
         <module>data-conversion</module>
         <module>graph2mif-server</module>
         <module>graph2mif-client</module>
@@ -44,7 +44,7 @@
         <module>mine-app</module>
         <module>predict-app</module>
         <module>devsite</module>
-        <module>intact-test</module>
+        <!--<module>intact-test</module>-->
     </modules>
 
     <build>

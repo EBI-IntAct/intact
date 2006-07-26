@@ -14,7 +14,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-master-webapp</artifactId>
-        <version>1.0b-SNAPSHOT</version>
+        <version>1.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -35,7 +35,7 @@
         <dependency>
             <groupId>uk.ac.ebi.intact.app</groupId>
             <artifactId>app-commons</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0</version>
         </dependency>
 
         <dependency>
@@ -44,6 +44,12 @@
             <version>1.1</version>
             <scope>runtime</scope>
         </dependency>
+
+        <dependency>
+              <groupId>displaytag</groupId>
+              <artifactId>displaytag</artifactId>
+              <version>1.0</version>
+          </dependency>
 
     </dependencies>
 
