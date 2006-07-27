@@ -8,7 +8,7 @@ package uk.ac.ebi.intact.searchengine;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ojb.broker.query.Query;
-import uk.ac.ebi.intact.application.commons.business.IntactUserI;
+import uk.ac.ebi.intact.searchengine.business.IntactUserI;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
