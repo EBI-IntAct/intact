@@ -1,9 +1,0 @@
-VERSION 1.2.1
-
-REQUEST
-* We need a discriminator in the Xref so we can find out what is the type of the parent.
-
-
-TECHNICAL CHANGES
-    * Added 1 new column in IA_Xref: parentClass
-    * Added 1 PL*SQL script that updates the field
