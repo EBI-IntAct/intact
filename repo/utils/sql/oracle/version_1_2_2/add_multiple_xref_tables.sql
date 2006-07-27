@@ -1,7 +1,9 @@
 -- add multiple xref tables
+DEFINE intactMainTablespace         = INTACT_TAB
+DEFINE intactIndexTablespace        = INTACT_IDX
 
-PROMPT Creating table "IA_BioSourceXref"
-CREATE TABLE IA_BioSourceXref
+PROMPT Creating table "IA_BioSource_Xref"
+CREATE TABLE IA_BioSource_Xref
 (       ac                      VARCHAR2(30)    NOT NULL
                                                 CONSTRAINT pk_BioSourceXref
                                                 PRIMARY KEY USING INDEX TABLESPACE &&intactIndexTablespace
@@ -21,38 +23,41 @@ CREATE TABLE IA_BioSourceXref
 TABLESPACE &&intactMainTablespace
 ;
 
-CREATE index i_BioSourceXref$parent_ac on IA_BioSourceXref(parent_ac) TABLESPACE &&intactIndexTablespace;
+CREATE index i_BioSourceXref$parent_ac on IA_BioSource_Xref(parent_ac) TABLESPACE &&intactIndexTablespace;
+CREATE INDEX i_BioSourceXref$database_ac ON IA_BioSource_Xref(database_ac) TABLESPACE &&intactIndexTablespace;
+CREATE INDEX i_BioSourceXref$primaryid   ON IA_BioSource_Xref(primaryid)   TABLESPACE &&intactIndexTablespace;
 
 set term on
-    COMMENT ON TABLE IA_BioSourceXref IS
-    'Represents a crossreference. Several objects may have crossREFERENCES IA_e.g. Interactor Experiment. Therefore the column parent_ac can unfortunately not have a foreign key constraint.';
-    COMMENT ON COLUMN IA_BioSourceXref.primaryId IS
+    COMMENT ON TABLE IA_BioSource_Xref IS
+    'Represents a crossreference. Several objects may have crossreferences e.g. Interactor Experiment. Therefore the column parent_ac can unfortunately not have a foreign key constraint.';
+    COMMENT ON COLUMN IA_BioSource_Xref.primaryId IS
     'The primary id of the object referred to in the external database.';
-    COMMENT ON COLUMN IA_BioSourceXref.secondaryId IS
+    COMMENT ON COLUMN IA_BioSource_Xref.secondaryId IS
     'The secondary id of the object referred to in the external database.';
-    COMMENT ON COLUMN IA_BioSourceXref.dbRelease IS
+    COMMENT ON COLUMN IA_BioSource_Xref.dbRelease IS
     'Highest release number of the external database in which the xref was known to be correct.';
-    COMMENT ON COLUMN IA_BioSourceXref.qualifier_ac IS
+    COMMENT ON COLUMN IA_BioSource_Xref.qualifier_ac IS
     'Refers to an object qualifying the relationship between the object to which this crossreference belongs and the external object referred to. Example: identity generalisation.';
-    COMMENT ON COLUMN IA_BioSourceXref.database_ac IS
+    COMMENT ON COLUMN IA_BioSource_Xref.database_ac IS
     'Refers to the object describing the external database.';
-    COMMENT ON COLUMN IA_BioSourceXref.parent_ac IS
+    COMMENT ON COLUMN IA_BioSource_Xref.parent_ac IS
     'Refers to the parent object this crossreference belongs to.';
-    COMMENT ON COLUMN IA_BioSourceXref.owner_ac IS
+    COMMENT ON COLUMN IA_BioSource_Xref.owner_ac IS
     'Refers to the owner of this object. ';
-    COMMENT ON COLUMN IA_BioSourceXref.ac IS
+    COMMENT ON COLUMN IA_BioSource_Xref.ac IS
     'Unique auto-generated accession number.';
-    COMMENT ON COLUMN IA_BioSourceXref.created IS
+    COMMENT ON COLUMN IA_BioSource_Xref.created IS
     'Date of the creation of the row.';
-    COMMENT ON COLUMN IA_BioSourceXref.updated IS
+    COMMENT ON COLUMN IA_BioSource_Xref.updated IS
     'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_BioSourceXref.userstamp IS
+    COMMENT ON COLUMN IA_BioSource_Xref.userstamp IS
     'Database user who has performed the last update of the column.';
 set term off
 
 
-PROMPT Creating table "IA_ExperimentXref"
-CREATE TABLE IA_ExperimentXref
+
+PROMPT Creating table "IA_Experiment_Xref"
+CREATE TABLE IA_Experiment_Xref
 (       ac                      VARCHAR2(30)    NOT NULL
                                                 CONSTRAINT pk_ExperimentXref
                                                 PRIMARY KEY USING INDEX TABLESPACE &&intactIndexTablespace
@@ -72,38 +77,41 @@ CREATE TABLE IA_ExperimentXref
 TABLESPACE &&intactMainTablespace
 ;
 
-CREATE index i_ExperimentXref$parent_ac on IA_ExperimentXref(parent_ac) TABLESPACE &&intactIndexTablespace;
+CREATE index i_ExperimentXref$parent_ac on IA_Experiment_Xref(parent_ac) TABLESPACE &&intactIndexTablespace;
+CREATE INDEX i_ExperimentXref$database_ac ON IA_Experiment_Xref(database_ac) TABLESPACE &&intactIndexTablespace;
+CREATE INDEX i_ExperimentXref$primaryid   ON IA_Experiment_Xref(primaryid)   TABLESPACE &&intactIndexTablespace;
 
 set term on
-    COMMENT ON TABLE IA_ExperimentXref IS
-    'Represents a crossreference. Several objects may have crossREFERENCES IA_e.g. Interactor Experiment. Therefore the column parent_ac can unfortunately not have a foreign key constraint.';
-    COMMENT ON COLUMN IA_ExperimentXref.primaryId IS
+    COMMENT ON TABLE IA_Experiment_Xref IS
+    'Represents a crossreference. Several objects may have crossreferences e.g. Interactor Experiment. Therefore the column parent_ac can unfortunately not have a foreign key constraint.';
+    COMMENT ON COLUMN IA_Experiment_Xref.primaryId IS
     'The primary id of the object referred to in the external database.';
-    COMMENT ON COLUMN IA_ExperimentXref.secondaryId IS
+    COMMENT ON COLUMN IA_Experiment_Xref.secondaryId IS
     'The secondary id of the object referred to in the external database.';
-    COMMENT ON COLUMN IA_ExperimentXref.dbRelease IS
+    COMMENT ON COLUMN IA_Experiment_Xref.dbRelease IS
     'Highest release number of the external database in which the xref was known to be correct.';
-    COMMENT ON COLUMN IA_ExperimentXref.qualifier_ac IS
+    COMMENT ON COLUMN IA_Experiment_Xref.qualifier_ac IS
     'Refers to an object qualifying the relationship between the object to which this crossreference belongs and the external object referred to. Example: identity generalisation.';
-    COMMENT ON COLUMN IA_ExperimentXref.database_ac IS
+    COMMENT ON COLUMN IA_Experiment_Xref.database_ac IS
     'Refers to the object describing the external database.';
-    COMMENT ON COLUMN IA_ExperimentXref.parent_ac IS
+    COMMENT ON COLUMN IA_Experiment_Xref.parent_ac IS
     'Refers to the parent object this crossreference belongs to.';
-    COMMENT ON COLUMN IA_ExperimentXref.owner_ac IS
+    COMMENT ON COLUMN IA_Experiment_Xref.owner_ac IS
     'Refers to the owner of this object. ';
-    COMMENT ON COLUMN IA_ExperimentXref.ac IS
+    COMMENT ON COLUMN IA_Experiment_Xref.ac IS
     'Unique auto-generated accession number.';
-    COMMENT ON COLUMN IA_ExperimentXref.created IS
+    COMMENT ON COLUMN IA_Experiment_Xref.created IS
     'Date of the creation of the row.';
-    COMMENT ON COLUMN IA_ExperimentXref.updated IS
+    COMMENT ON COLUMN IA_Experiment_Xref.updated IS
     'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_ExperimentXref.userstamp IS
+    COMMENT ON COLUMN IA_Experiment_Xref.userstamp IS
     'Database user who has performed the last update of the column.';
 set term off
 
 
-PROMPT Creating table "IA_ControlledVocabXref"
-CREATE TABLE IA_ControlledVocabXref
+
+PROMPT Creating table "IA_ControlledVocab_Xref"
+CREATE TABLE IA_ControlledVocab_Xref
 (       ac                      VARCHAR2(30)    NOT NULL
                                                 CONSTRAINT pk_ControlledVocabXref
                                                 PRIMARY KEY USING INDEX TABLESPACE &&intactIndexTablespace
@@ -123,38 +131,41 @@ CREATE TABLE IA_ControlledVocabXref
 TABLESPACE &&intactMainTablespace
 ;
 
-CREATE index i_ControlledVocabXref$parent_ac on IA_ControlledVocabXref(parent_ac) TABLESPACE &&intactIndexTablespace;
+CREATE index i_ControlledVocabXref$parent_ac on IA_ControlledVocab_Xref(parent_ac) TABLESPACE &&intactIndexTablespace;
+CREATE INDEX i_ControlledVocabXref$database_ac ON IA_ControlledVocab_Xref(database_ac) TABLESPACE &&intactIndexTablespace;
+CREATE INDEX i_ControlledVocabXref$primaryid   ON IA_ControlledVocab_Xref(primaryid)   TABLESPACE &&intactIndexTablespace;
 
 set term on
-    COMMENT ON TABLE IA_ControlledVocabXref IS
-    'Represents a crossreference. Several objects may have crossREFERENCES IA_e.g. Interactor Experiment. Therefore the column parent_ac can unfortunately not have a foreign key constraint.';
-    COMMENT ON COLUMN IA_ControlledVocabXref.primaryId IS
+    COMMENT ON TABLE IA_ControlledVocab_Xref IS
+    'Represents a crossreference. Several objects may have crossreferences e.g. Interactor Experiment. Therefore the column parent_ac can unfortunately not have a foreign key constraint.';
+    COMMENT ON COLUMN IA_ControlledVocab_Xref.primaryId IS
     'The primary id of the object referred to in the external database.';
-    COMMENT ON COLUMN IA_ControlledVocabXref.secondaryId IS
+    COMMENT ON COLUMN IA_ControlledVocab_Xref.secondaryId IS
     'The secondary id of the object referred to in the external database.';
-    COMMENT ON COLUMN IA_ControlledVocabXref.dbRelease IS
+    COMMENT ON COLUMN IA_ControlledVocab_Xref.dbRelease IS
     'Highest release number of the external database in which the xref was known to be correct.';
-    COMMENT ON COLUMN IA_ControlledVocabXref.qualifier_ac IS
+    COMMENT ON COLUMN IA_ControlledVocab_Xref.qualifier_ac IS
     'Refers to an object qualifying the relationship between the object to which this crossreference belongs and the external object referred to. Example: identity generalisation.';
-    COMMENT ON COLUMN IA_ControlledVocabXref.database_ac IS
+    COMMENT ON COLUMN IA_ControlledVocab_Xref.database_ac IS
     'Refers to the object describing the external database.';
-    COMMENT ON COLUMN IA_ControlledVocabXref.parent_ac IS
+    COMMENT ON COLUMN IA_ControlledVocab_Xref.parent_ac IS
     'Refers to the parent object this crossreference belongs to.';
-    COMMENT ON COLUMN IA_ControlledVocabXref.owner_ac IS
+    COMMENT ON COLUMN IA_ControlledVocab_Xref.owner_ac IS
     'Refers to the owner of this object. ';
-    COMMENT ON COLUMN IA_ControlledVocabXref.ac IS
+    COMMENT ON COLUMN IA_ControlledVocab_Xref.ac IS
     'Unique auto-generated accession number.';
-    COMMENT ON COLUMN IA_ControlledVocabXref.created IS
+    COMMENT ON COLUMN IA_ControlledVocab_Xref.created IS
     'Date of the creation of the row.';
-    COMMENT ON COLUMN IA_ControlledVocabXref.updated IS
+    COMMENT ON COLUMN IA_ControlledVocab_Xref.updated IS
     'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_ControlledVocabXref.userstamp IS
+    COMMENT ON COLUMN IA_ControlledVocab_Xref.userstamp IS
     'Database user who has performed the last update of the column.';
 set term off
 
 
-PROMPT Creating table "IA_FeatureXref"
-CREATE TABLE IA_FeatureXref
+
+PROMPT Creating table "IA_Feature_Xref"
+CREATE TABLE IA_Feature_Xref
 (       ac                      VARCHAR2(30)    NOT NULL
                                                 CONSTRAINT pk_FeatureXref
                                                 PRIMARY KEY USING INDEX TABLESPACE &&intactIndexTablespace
@@ -174,38 +185,41 @@ CREATE TABLE IA_FeatureXref
 TABLESPACE &&intactMainTablespace
 ;
 
-CREATE index i_FeatureXref$parent_ac on IA_FeatureXref(parent_ac) TABLESPACE &&intactIndexTablespace;
+CREATE index i_FeatureXref$parent_ac on IA_Feature_Xref(parent_ac) TABLESPACE &&intactIndexTablespace;
+CREATE INDEX i_FeatureXref$database_ac ON IA_Feature_Xref(database_ac) TABLESPACE &&intactIndexTablespace;
+CREATE INDEX i_FeatureXref$primaryid   ON IA_Feature_Xref(primaryid)   TABLESPACE &&intactIndexTablespace;
 
 set term on
-    COMMENT ON TABLE IA_FeatureXref IS
-    'Represents a crossreference. Several objects may have crossREFERENCES IA_e.g. Interactor Experiment. Therefore the column parent_ac can unfortunately not have a foreign key constraint.';
-    COMMENT ON COLUMN IA_FeatureXref.primaryId IS
+    COMMENT ON TABLE IA_Feature_Xref IS
+    'Represents a crossreference. Several objects may have crossreferences e.g. Interactor Experiment. Therefore the column parent_ac can unfortunately not have a foreign key constraint.';
+    COMMENT ON COLUMN IA_Feature_Xref.primaryId IS
     'The primary id of the object referred to in the external database.';
-    COMMENT ON COLUMN IA_FeatureXref.secondaryId IS
+    COMMENT ON COLUMN IA_Feature_Xref.secondaryId IS
     'The secondary id of the object referred to in the external database.';
-    COMMENT ON COLUMN IA_FeatureXref.dbRelease IS
+    COMMENT ON COLUMN IA_Feature_Xref.dbRelease IS
     'Highest release number of the external database in which the xref was known to be correct.';
-    COMMENT ON COLUMN IA_FeatureXref.qualifier_ac IS
+    COMMENT ON COLUMN IA_Feature_Xref.qualifier_ac IS
     'Refers to an object qualifying the relationship between the object to which this crossreference belongs and the external object referred to. Example: identity generalisation.';
-    COMMENT ON COLUMN IA_FeatureXref.database_ac IS
+    COMMENT ON COLUMN IA_Feature_Xref.database_ac IS
     'Refers to the object describing the external database.';
-    COMMENT ON COLUMN IA_FeatureXref.parent_ac IS
+    COMMENT ON COLUMN IA_Feature_Xref.parent_ac IS
     'Refers to the parent object this crossreference belongs to.';
-    COMMENT ON COLUMN IA_FeatureXref.owner_ac IS
+    COMMENT ON COLUMN IA_Feature_Xref.owner_ac IS
     'Refers to the owner of this object. ';
-    COMMENT ON COLUMN IA_FeatureXref.ac IS
+    COMMENT ON COLUMN IA_Feature_Xref.ac IS
     'Unique auto-generated accession number.';
-    COMMENT ON COLUMN IA_FeatureXref.created IS
+    COMMENT ON COLUMN IA_Feature_Xref.created IS
     'Date of the creation of the row.';
-    COMMENT ON COLUMN IA_FeatureXref.updated IS
+    COMMENT ON COLUMN IA_Feature_Xref.updated IS
     'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_FeatureXref.userstamp IS
+    COMMENT ON COLUMN IA_Feature_Xref.userstamp IS
     'Database user who has performed the last update of the column.';
 set term off
 
 
-PROMPT Creating table "IA_InteractorXref"
-CREATE TABLE IA_InteractorXref
+
+PROMPT Creating table "IA_Interactor_Xref"
+CREATE TABLE IA_Interactor_Xref
 (       ac                      VARCHAR2(30)    NOT NULL
                                                 CONSTRAINT pk_InteractorXref
                                                 PRIMARY KEY USING INDEX TABLESPACE &&intactIndexTablespace
@@ -225,38 +239,41 @@ CREATE TABLE IA_InteractorXref
 TABLESPACE &&intactMainTablespace
 ;
 
-CREATE index i_InteractorXref$parent_ac on IA_InteractorXref(parent_ac) TABLESPACE &&intactIndexTablespace;
+CREATE index i_InteractorXref$parent_ac on IA_Interactor_Xref(parent_ac) TABLESPACE &&intactIndexTablespace;
+CREATE INDEX i_InteractorXref$database_ac ON IA_Interactor_Xref(database_ac) TABLESPACE &&intactIndexTablespace;
+CREATE INDEX i_InteractorXref$primaryid   ON IA_Interactor_Xref(primaryid)   TABLESPACE &&intactIndexTablespace;
 
 set term on
-    COMMENT ON TABLE IA_InteractorXref IS
-    'Represents a crossreference. Several objects may have crossREFERENCES IA_e.g. Interactor Experiment. Therefore the column parent_ac can unfortunately not have a foreign key constraint.';
-    COMMENT ON COLUMN IA_InteractorXref.primaryId IS
+    COMMENT ON TABLE IA_Interactor_Xref IS
+    'Represents a crossreference. Several objects may have crossreferences e.g. Interactor Experiment. Therefore the column parent_ac can unfortunately not have a foreign key constraint.';
+    COMMENT ON COLUMN IA_Interactor_Xref.primaryId IS
     'The primary id of the object referred to in the external database.';
-    COMMENT ON COLUMN IA_InteractorXref.secondaryId IS
+    COMMENT ON COLUMN IA_Interactor_Xref.secondaryId IS
     'The secondary id of the object referred to in the external database.';
-    COMMENT ON COLUMN IA_InteractorXref.dbRelease IS
+    COMMENT ON COLUMN IA_Interactor_Xref.dbRelease IS
     'Highest release number of the external database in which the xref was known to be correct.';
-    COMMENT ON COLUMN IA_InteractorXref.qualifier_ac IS
+    COMMENT ON COLUMN IA_Interactor_Xref.qualifier_ac IS
     'Refers to an object qualifying the relationship between the object to which this crossreference belongs and the external object referred to. Example: identity generalisation.';
-    COMMENT ON COLUMN IA_InteractorXref.database_ac IS
+    COMMENT ON COLUMN IA_Interactor_Xref.database_ac IS
     'Refers to the object describing the external database.';
-    COMMENT ON COLUMN IA_InteractorXref.parent_ac IS
+    COMMENT ON COLUMN IA_Interactor_Xref.parent_ac IS
     'Refers to the parent object this crossreference belongs to.';
-    COMMENT ON COLUMN IA_InteractorXref.owner_ac IS
+    COMMENT ON COLUMN IA_Interactor_Xref.owner_ac IS
     'Refers to the owner of this object. ';
-    COMMENT ON COLUMN IA_InteractorXref.ac IS
+    COMMENT ON COLUMN IA_Interactor_Xref.ac IS
     'Unique auto-generated accession number.';
-    COMMENT ON COLUMN IA_InteractorXref.created IS
+    COMMENT ON COLUMN IA_Interactor_Xref.created IS
     'Date of the creation of the row.';
-    COMMENT ON COLUMN IA_InteractorXref.updated IS
+    COMMENT ON COLUMN IA_Interactor_Xref.updated IS
     'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_InteractorXref.userstamp IS
+    COMMENT ON COLUMN IA_Interactor_Xref.userstamp IS
     'Database user who has performed the last update of the column.';
 set term off
 
 
-PROMPT Creating table "IA_PublicationXref"
-CREATE TABLE IA_PublicationXref
+
+PROMPT Creating table "IA_Publication_Xref"
+CREATE TABLE IA_Publication_Xref
 (       ac                      VARCHAR2(30)    NOT NULL
                                                 CONSTRAINT pk_PublicationXref
                                                 PRIMARY KEY USING INDEX TABLESPACE &&intactIndexTablespace
@@ -276,31 +293,33 @@ CREATE TABLE IA_PublicationXref
 TABLESPACE &&intactMainTablespace
 ;
 
-CREATE index i_PublicationXref$parent_ac on IA_PublicationXref(parent_ac) TABLESPACE &&intactIndexTablespace;
+CREATE index i_PublicationXref$parent_ac on IA_Publication_Xref(parent_ac) TABLESPACE &&intactIndexTablespace;
+CREATE INDEX i_PublicationXref$database_ac ON IA_Publication_Xref(database_ac) TABLESPACE &&intactIndexTablespace;
+CREATE INDEX i_PublicationXref$primaryid   ON IA_Publication_Xref(primaryid)   TABLESPACE &&intactIndexTablespace;
 
 set term on
-    COMMENT ON TABLE IA_PublicationXref IS
-    'Represents a crossreference. Several objects may have crossREFERENCES IA_e.g. Interactor Experiment. Therefore the column parent_ac can unfortunately not have a foreign key constraint.';
-    COMMENT ON COLUMN IA_PublicationXref.primaryId IS
+    COMMENT ON TABLE IA_Publication_Xref IS
+    'Represents a crossreference. Several objects may have crossreferences e.g. Interactor Experiment. Therefore the column parent_ac can unfortunately not have a foreign key constraint.';
+    COMMENT ON COLUMN IA_Publication_Xref.primaryId IS
     'The primary id of the object referred to in the external database.';
-    COMMENT ON COLUMN IA_PublicationXref.secondaryId IS
+    COMMENT ON COLUMN IA_Publication_Xref.secondaryId IS
     'The secondary id of the object referred to in the external database.';
-    COMMENT ON COLUMN IA_PublicationXref.dbRelease IS
+    COMMENT ON COLUMN IA_Publication_Xref.dbRelease IS
     'Highest release number of the external database in which the xref was known to be correct.';
-    COMMENT ON COLUMN IA_PublicationXref.qualifier_ac IS
+    COMMENT ON COLUMN IA_Publication_Xref.qualifier_ac IS
     'Refers to an object qualifying the relationship between the object to which this crossreference belongs and the external object referred to. Example: identity generalisation.';
-    COMMENT ON COLUMN IA_PublicationXref.database_ac IS
+    COMMENT ON COLUMN IA_Publication_Xref.database_ac IS
     'Refers to the object describing the external database.';
-    COMMENT ON COLUMN IA_PublicationXref.parent_ac IS
+    COMMENT ON COLUMN IA_Publication_Xref.parent_ac IS
     'Refers to the parent object this crossreference belongs to.';
-    COMMENT ON COLUMN IA_PublicationXref.owner_ac IS
+    COMMENT ON COLUMN IA_Publication_Xref.owner_ac IS
     'Refers to the owner of this object. ';
-    COMMENT ON COLUMN IA_PublicationXref.ac IS
+    COMMENT ON COLUMN IA_Publication_Xref.ac IS
     'Unique auto-generated accession number.';
-    COMMENT ON COLUMN IA_PublicationXref.created IS
+    COMMENT ON COLUMN IA_Publication_Xref.created IS
     'Date of the creation of the row.';
-    COMMENT ON COLUMN IA_PublicationXref.updated IS
+    COMMENT ON COLUMN IA_Publication_Xref.updated IS
     'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_PublicationXref.userstamp IS
+    COMMENT ON COLUMN IA_Publication_Xref.userstamp IS
     'Database user who has performed the last update of the column.';
 set term off
