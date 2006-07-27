@@ -6,7 +6,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.searchengine;
 
 import org.apache.ojb.broker.query.Query;
-import uk.ac.ebi.intact.application.commons.business.IntactUserI;
+import uk.ac.ebi.intact.searchengine.business.IntactUserI;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.IntactObject;
 
