@@ -33,6 +33,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>uk.ac.ebi.intact.app.search</groupId>
+            <artifactId>search-engine</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+
+        <dependency>
             <groupId>displaytag</groupId>
             <artifactId>displaytag</artifactId>
             <version>1.0-unknown</version>
