@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>uk.ac.ebi.intact.maven</groupId>
+        <artifactId>intact-master</artifactId>
+        <version>1.0</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>uk.ac.ebi.intact.maven</groupId>
+    <artifactId>intact-hibernate-master</artifactId>
+    <packaging>pom</packaging>
+    <name>Master Hibernate POM</name>
+    <version>1.0</version>
+    <description>This is a master POM that contains the data access (hibernate) configuration</description>
+
+    <scm>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/trunk/master-hibernate-pom</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/trunk/master-hibernate-pom</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/trunk/master-hibernate-pom/</url>
+    </scm>
+
+    <!-- I set these hibernate mandatory attributes as NOT_DEFINED because otherwise
+         the hibernateconfig plugin will complain if none of the profiles is used -->
+    <properties>
+        <db.dialect>NOT_DEFINED</db.dialect>
+        <db.driver>NOT_DEFINED</db.driver>
+    </properties>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>uk.ac.ebi.intact.hibernate</groupId>
+                <artifactId>maven-hibernateconfig-plugin</artifactId>
+                <configuration>
+                    <dialect>${db.dialect}</dialect>
+                    <driver>${db.driver}</driver>
+                    <url>${db.protocol}:${db.subprotocol}:${db.alias}</url>
+                    <user>${db.user}</user>
+                    <password>${db.password}</password>
+                    <hibernateEvents>
+                        <hibernateEvent>
+                            <type>pre-insert</type>
+                            <className>uk.ac.ebi.intact.model.IntactObjectEventListener</className>
+                        </hibernateEvent>
+                        <hibernateEvent>
+                            <type>pre-update</type>
+                            <className>uk.ac.ebi.intact.model.IntactObjectEventListener</className>
+                        </hibernateEvent>
+                    </hibernateEvents>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>generate-config</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>ebi-test</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <db>oracle</db>
+                <db.host>bourbon.ebi.ac.uk</db.host>
+                <db.port>1521</db.port>
+                <db.alias>d003</db.alias>
+                <db.user>intactweb</db.user>
+                <db.password>reading</db.password>
+            </properties>
+        </profile>
+        <profile>
+            <id>ebi-prod</id>
+            <properties>
+                <db>oracle</db>
+                <db.host>cumae.ebi.ac.uk</db.host>
+                <db.port>1531</db.port>
+                <db.alias>zpro</db.alias>
+                <db.user>intactweb</db.user>
+                <db.password>reading</db.password>
+
+                <lucene.index.directory>/ebi/sp/pro4/intact/lucene-index/prod/current</lucene.index.directory>
+            </properties>
+        </profile>
+        <profile>
+            <id>ebi-pub</id>
+            <properties>
+                <db>oracle</db>
+                <db.host>swan.ebi.ac.uk</db.host>
+                <db.port>1521</db.port>
+                <db.alias>iweb</db.alias>
+                <db.user>intactweb</db.user>
+                <db.password>reading</db.password>
+
+                <lucene.index.directory>/ebi/sp/pro4/intact/public-tomcat/lucene-index</lucene.index.directory>
+            </properties>
+        </profile>
+        <profile>
+            <id>ebi-pub2</id>
+            <properties>
+                <db>oracle</db>
+                <db.host>bourbon.ebi.ac.uk</db.host>
+                <db.port>1571</db.port>
+                <db.alias>iweb2</db.alias>
+                <db.user>intactweb</db.user>
+                <db.password>reading</db.password>
+
+                <lucene.index.directory>/ebi/sp/pro4/intact/public-tomcat/lucene-index</lucene.index.directory>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>oracle</id>
+            <activation>
+                <property>
+                    <name>db</name>
+                    <value>oracle</value>
+                </property>
+            </activation>
+
+            <properties>
+                <db.platform>Oracle</db.platform>
+                <db.jdbcLevel>2.0</db.jdbcLevel>
+                <db.driver>oracle.jdbc.OracleDriver</db.driver>
+                <db.protocol>jdbc</db.protocol>
+                <db.subprotocol>oracle:thin:@${db.host}:${db.port}</db.subprotocol>
+                <db.autoCommit>1</db.autoCommit>
+                <db.dialect>org.hibernate.dialect.Oracle9Dialect</db.dialect>
+            </properties>
+
+            <dependencies>
+                <dependency>
+                    <groupId>com.oracle</groupId>
+                    <artifactId>oracle-thin</artifactId>
+                    <version>9.2.0</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-annotations</artifactId>
+            <version>3.2.0.cr2-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>c3p0</groupId>
+            <artifactId>c3p0</artifactId>
+            <version>0.9.0.4</version>
+        </dependency>
+    </dependencies>
+
+</project>
