@@ -571,20 +571,19 @@ set term on
 set term off
 
 
-
 PROMPT Creating table "IA_ControlledVocab_Xref"
 CREATE TABLE IA_ControlledVocab_Xref
 (       ac                      VARCHAR2(30)    NOT NULL
-                                                CONSTRAINT pk_ControlledVocabXref
+                                                CONSTRAINT pk_CvObjectXref
                                                 PRIMARY KEY USING INDEX TABLESPACE &&intactIndexTablespace
      ,  deprecated              NUMBER(1)       DEFAULT  0       NOT NULL
      ,  created                 DATE            DEFAULT  SYSDATE NOT NULL
      ,  updated                 DATE            DEFAULT  SYSDATE NOT NULL
      ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
-     ,  qualifier_ac            VARCHAR2(30)    CONSTRAINT fk_ControlledVocabXref$qualifier REFERENCES IA_ControlledVocab(ac)
-     ,  database_ac             VARCHAR2(30)    CONSTRAINT fk_ControlledVocabXref$database  REFERENCES IA_ControlledVocab(ac)
-     ,  parent_ac               VARCHAR2(30)    CONSTRAINT fk_ControlledVocabXref$controlledVocab  REFERENCES IA_ControlledVocab(ac)
-     ,  owner_ac                VARCHAR2(30)    CONSTRAINT fk_ControlledVocabXref$owner REFERENCES IA_Institution(ac)
+     ,  qualifier_ac            VARCHAR2(30)    CONSTRAINT fk_CvObjectXref$qualifier REFERENCES IA_ControlledVocab(ac)
+     ,  database_ac             VARCHAR2(30)    CONSTRAINT fk_CvObjectXref$database  REFERENCES IA_ControlledVocab(ac)
+     ,  parent_ac               VARCHAR2(30)    CONSTRAINT fk_CvXref$controlledVocab  REFERENCES IA_ControlledVocab(ac)
+     ,  owner_ac                VARCHAR2(30)    CONSTRAINT fk_CvObjectXref$owner REFERENCES IA_Institution(ac)
      ,  primaryId               VARCHAR2(30)
      ,  secondaryId             VARCHAR2(30)
      ,  dbRelease               VARCHAR2(10)
@@ -593,9 +592,9 @@ CREATE TABLE IA_ControlledVocab_Xref
 TABLESPACE &&intactMainTablespace
 ;
 
-CREATE index i_ControlledVocabXref$parent_ac on IA_ControlledVocab_Xref(parent_ac) TABLESPACE &&intactIndexTablespace;
-CREATE INDEX i_ControlledVocabXref$database_ac ON IA_ControlledVocab_Xref(database_ac) TABLESPACE &&intactIndexTablespace;
-CREATE INDEX i_ControlledVocabXref$primaryid   ON IA_ControlledVocab_Xref(primaryid)   TABLESPACE &&intactIndexTablespace;
+CREATE index i_CvObjectXref$parent_ac on IA_ControlledVocab_Xref(parent_ac) TABLESPACE &&intactIndexTablespace;
+CREATE INDEX i_CvObjectXref$database_ac ON IA_ControlledVocab_Xref(database_ac) TABLESPACE &&intactIndexTablespace;
+CREATE INDEX i_CvObjectXref$primaryid   ON IA_ControlledVocab_Xref(primaryid)   TABLESPACE &&intactIndexTablespace;
 
 set term on
     COMMENT ON TABLE IA_ControlledVocab_Xref IS
@@ -623,7 +622,6 @@ set term on
     COMMENT ON COLUMN IA_ControlledVocab_Xref.userstamp IS
     'Database user who has performed the last update of the column.';
 set term off
-
 
 
 PROMPT Creating table "IA_Feature_Xref"
