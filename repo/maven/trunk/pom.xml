@@ -14,7 +14,7 @@
     <groupId>uk.ac.ebi.intact.maven</groupId>
     <artifactId>maven-poms</artifactId>
     <packaging>pom</packaging>
-    <version>1.0</version>
+    <version>1.1-SNAPSHOT</version>
     <name>Master POMs</name>
     <url>http://www.ebi.ac.uk/intact</url>
     <description>POM to build the master POMs</description>
