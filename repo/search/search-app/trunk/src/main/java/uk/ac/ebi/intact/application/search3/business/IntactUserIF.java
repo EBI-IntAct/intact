@@ -16,7 +16,8 @@ import uk.ac.ebi.intact.model.IntactObject;
  * @version $Id$
  */
 public interface IntactUserIF<T extends IntactObject>
-        extends uk.ac.ebi.intact.application.commons.business.IntactUserI {
+        extends uk.ac.ebi.intact.searchengine.business.IntactUserI
+{
 
     /**
      * Specifies the help link value.
