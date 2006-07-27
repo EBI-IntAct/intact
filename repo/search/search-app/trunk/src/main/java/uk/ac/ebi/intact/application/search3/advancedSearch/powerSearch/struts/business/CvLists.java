@@ -18,11 +18,7 @@ import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 /**
  * This class provides method to retrieve the list of shortlabel for different CVs.
@@ -64,9 +60,10 @@ public class CvLists {
      */
     public void addMenuListItem( Class<? extends CvObject> clazz, Collection<CvBean> list ) {
 
-        List<? extends CvObject> cvs = DaoFactory.getCvObjectDao(clazz).getAll(true,true);
+        List<? extends CvObject> allCvs = DaoFactory.getCvObjectDao(clazz).getAll(true,true);
+        Set<? extends CvObject> cvs = new HashSet<CvObject>(allCvs);
 
-            for (CvObject cv : cvs)
+        for (CvObject cv : cvs)
             {
                 String ac = cv.getAc();
                 String shortlabel = cv.getShortLabel();

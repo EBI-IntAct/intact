@@ -40,25 +40,25 @@ public class CvObjectDaoImpl<T extends CvObject> extends AnnotatedObjectDaoImpl<
     {
         Criteria crit = getSession().createCriteria(getEntityClass());
 
-        if (excludeObsolete && excludeHidden)
+        if (excludeObsolete || excludeHidden)
         {
             crit.createAlias("annotations", "annot")
                 .createAlias("annot.cvTopic", "annotTopic");
+        }
+
+        if (excludeObsolete && excludeHidden)
+        {
             crit.add(Restrictions.disjunction()
                     .add(Restrictions.ne("annotTopic.shortLabel", CvTopic.OBSOLETE))
                     .add(Restrictions.ne("annotTopic.shortLabel", CvTopic.HIDDEN)));
         }
         else if (excludeObsolete && !excludeHidden)
         {
-            crit.createAlias("annotations", "annot")
-                .createAlias("annot.cvTopic", "annotTopic")
-                .add(Restrictions.ne("annotTopic.shortLabel", CvTopic.OBSOLETE));
+            crit.add(Restrictions.ne("annotTopic.shortLabel", CvTopic.OBSOLETE));
         }
         else if (!excludeObsolete && excludeHidden)
         {
-            crit.createAlias("annotations", "annot")
-                .createAlias("annot.cvTopic", "annotTopic")
-                .add(Restrictions.ne("annotTopic.shortLabel", CvTopic.HIDDEN));
+            crit.add(Restrictions.ne("annotTopic.shortLabel", CvTopic.HIDDEN));
         }
 
         return crit.list();
