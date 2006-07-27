@@ -633,7 +633,11 @@
     %>
     <td style="vertical-align: top;" rowspan="1" colspan="7">
         <a href="<%= annot.getAnnotationText() %>" class="tdlink" target="_blank">
-            <%= annot.getAnnotationText() %>
+            <%
+                String ann = annot.getAnnotationText();
+                if (ann == null) ann = "-";
+                out.write(ann);
+            %>
         </a><br>
         <%
 
@@ -642,7 +646,11 @@
 
         %>
     <td style="vertical-align: top;" rowspan="1" colspan="7" class="data">
-        <%= annot.getAnnotationText() %><br>
+        <%
+                String ann = annot.getAnnotationText();
+                if (ann == null) ann = "-";
+                out.write(ann);
+            %><br>
         <%
             }
         %>
