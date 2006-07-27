@@ -84,7 +84,7 @@ public class IntactUser implements IntactUserI {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see uk.ac.ebi.intact.application.commons.business.IntactUserI#search(java.lang.String,
+	 * @see uk.ac.ebi.intact.searchengine.business.IntactUserI#search(java.lang.String,
 	 *      java.lang.String, java.lang.String)
 	 */
 	public <T extends IntactObject> Collection<T> search(
@@ -98,7 +98,7 @@ public class IntactUser implements IntactUserI {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see uk.ac.ebi.intact.application.commons.business.IntactUserI#getUserName()
+	 * @see uk.ac.ebi.intact.searchengine.business.IntactUserI#getUserName()
 	 */
 	public String getUserName() {
 		try
@@ -115,7 +115,7 @@ public class IntactUser implements IntactUserI {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see uk.ac.ebi.intact.application.commons.business.IntactUserI#getDatabaseName()
+	 * @see uk.ac.ebi.intact.searchengine.business.IntactUserI#getDatabaseName()
 	 */
 	public String getDatabaseName() {
         try

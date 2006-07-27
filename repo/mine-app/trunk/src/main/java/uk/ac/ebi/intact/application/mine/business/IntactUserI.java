@@ -23,7 +23,8 @@ import uk.ac.ebi.intact.util.PropertyLoader;
  * @author Andreas Groscurth
  */
 public interface IntactUserI extends Serializable, HttpSessionBindingListener,
-        uk.ac.ebi.intact.application.commons.business.IntactUserI {
+        uk.ac.ebi.intact.searchengine.business.IntactUserI
+{
 
     // properties file which contains informations which are needed for the mine
     // application. E.g. the maximal depth to search in the graph
