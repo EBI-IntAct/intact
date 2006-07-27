@@ -66,13 +66,9 @@ public class PersistTutorialTest extends AbstractIntactTest
         BioSource organism = new BioSource(getInstitution(), ORGANISM_LABEL, ORGANISM_TAXID);
 
         BioSourceXref xref = new BioSourceXref(getInstitution(), getCvDatabase(),  "testPrimaryId", getCvXrefQualifier());
-
-        DaoFactory.getBioSourceDao().persist(organism);
-
         organism.addXref(xref);
 
-        //DaoFactory.getBioSourceDao().persist(organism);
-        DaoFactory.getXrefDao().persist(xref);
+        DaoFactory.getBioSourceDao().persist(organism);
 
         organismAc = organism.getAc();
         assertNotNull(organismAc);
