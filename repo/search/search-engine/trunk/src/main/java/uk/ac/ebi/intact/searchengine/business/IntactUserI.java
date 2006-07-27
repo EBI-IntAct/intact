@@ -4,7 +4,7 @@ All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 
-package uk.ac.ebi.intact.application.commons.business;
+package uk.ac.ebi.intact.searchengine.business;
 
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.IntactObject;
