@@ -36,7 +36,7 @@
         <module>editor-app</module>
         <module>data-conversion</module>
         <module>devsite</module>
-        <!--<module>intact-test</module>-->
+        <module>intact-test</module>
     </modules>
 
     <build>
