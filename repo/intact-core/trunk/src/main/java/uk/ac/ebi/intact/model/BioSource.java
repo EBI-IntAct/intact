@@ -11,6 +11,8 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.hibernate.annotations.Cascade;
+
 /**
  * Represents a biological source. TODO write a proper comment
  *
@@ -118,14 +120,14 @@ public class BioSource extends AnnotatedObjectImpl<BioSourceXref> implements Edi
         return super.getAnnotations();
     }
 
-    /*
+
     @OneToMany (mappedBy = "parent")
     @Cascade(value = org.hibernate.annotations.CascadeType.PERSIST)
     @Override
     public Collection<BioSourceXref> getXrefs() {
         return super.getXrefs();
     }
-    */
+    
 
     public String getTaxId() {
         return taxId;

@@ -5,6 +5,8 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.*;
 import java.util.Collection;
 
@@ -55,13 +57,13 @@ public abstract class CvObject extends AnnotatedObjectImpl<CvObjectXref> {
     {
         return super.getAnnotations();
     }
-    /*
+
     @OneToMany (mappedBy = "parent")
     @Cascade(value = org.hibernate.annotations.CascadeType.PERSIST)
     @Override
     public Collection<CvObjectXref> getXrefs() {
         return super.getXrefs();
-    }*/
+    }
 
     /**
      * Equality for CvObject is currently based on equality for primary id of Xref having the qualifier of identity and

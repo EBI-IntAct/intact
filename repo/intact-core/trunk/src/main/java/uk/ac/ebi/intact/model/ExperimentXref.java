@@ -8,8 +8,7 @@ package uk.ac.ebi.intact.model;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import javax.persistence.*;
 
 /**
  * TODO comment this!
@@ -19,7 +18,7 @@ import javax.persistence.Entity;
  * @since <pre>21-Jul-2006</pre>
  */
 @Entity
-@DiscriminatorValue("uk.ac.ebi.intact.model.Experiment")
+@Table(name = "ia_experiment_xref")
 public class ExperimentXref extends Xref
 {
 
@@ -39,12 +38,17 @@ public class ExperimentXref extends Xref
     {
         super(anOwner, aDatabase, aPrimaryId, aCvXrefQualifier);
     }
-    /*
+
     @ManyToOne(targetEntity = Experiment.class)
-    @JoinColumn(name = "parent_ac", updatable = false, insertable = false)
+    @JoinColumn(name = "parent_ac")
     public AnnotatedObject getParent()
     {
         return super.getParent();
     }
-    */
+
+    @Column(name = "parent_ac", insertable = false, updatable = false)
+    public String getParentAc() {
+        return super.getParentAc();
+    }
+
 }

@@ -11,6 +11,8 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.hibernate.annotations.Cascade;
+
 /**
  * Represents one experiment. Describes the conditions in which the experiment has been performed. The information
  * should allow to classify experiments and make them comparable. The Experiment object does not aim to contain enough
@@ -276,14 +278,14 @@ public class Experiment extends AnnotatedObjectImpl<ExperimentXref> implements E
         return super.getAnnotations();
     }
 
-    /*
+
     @OneToMany (mappedBy = "parent")
     @Cascade(value = org.hibernate.annotations.CascadeType.PERSIST)
     @Override
     public Collection<ExperimentXref> getXrefs() {
         return super.getXrefs();
     }
-     */
+
     /**
      * Equality for Experiments is currently based on equality for <code>AnnotatedObjects</code> and BioSources only.
      *
