@@ -33,7 +33,7 @@
         <module>sanity-checker</module>
         <module>search-engine</module>
         <module>search-app</module>
-        <!--<module>editor-app</module>-->
+        <module>editor-app</module>
         <module>data-conversion</module>
         <module>devsite</module>
         <!--<module>intact-test</module>-->
@@ -46,10 +46,9 @@
     <profiles>
         <profile>
             <id>include-non-active</id>
-            <modules><!--
+            <modules>
                 <module>graph2mif-server</module>
                 <module>graph2mif-client</module>
--->
                 <module>tulip-client</module>
                 <module>hierarch-view-app</module>
                 <module>mine-app</module>
