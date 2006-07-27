@@ -5,6 +5,8 @@
  */
 package uk.ac.ebi.intact.model;
 
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -98,14 +100,14 @@ public class Publication extends AnnotatedObjectImpl<PublicationXref> implements
     public Collection<Annotation> getAnnotations() {
         return super.getAnnotations();
     }
-    /*
+
     @OneToMany (mappedBy = "parent")
     @Cascade(value = org.hibernate.annotations.CascadeType.PERSIST)
     @Override
     public Collection<PublicationXref> getXrefs() {
         return super.getXrefs();
     }
-    */
+    
     ////////////////////////////
     // Object's override
     @Override

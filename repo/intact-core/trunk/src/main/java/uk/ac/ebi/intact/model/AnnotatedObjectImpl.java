@@ -170,24 +170,12 @@ public abstract class AnnotatedObjectImpl<T extends Xref> extends BasicObjectImp
     ///////////////////
     // Xref related
     ///////////////////
-    // FIXME: this method do nothing now...
     public void setXrefs( Collection<T> someXrefs ) {
-        //log.warn("FIXME: This method has been hacked to make the getXrefs thing work");
         this.xrefs = someXrefs;
     }
 
-    @OneToMany
-    @JoinColumn(name = "parent_ac", referencedColumnName = "ac")
-    // FIXME: using called to DAO instead hibernate mappings (not possible with the current db)
+    @Transient
     public Collection<T> getXrefs() {
-        /*
-       log.warn("FIXME: Call to getXrefs method, which is not mapped and uses a DAO call instead");
-        if (ac == null)
-        {
-            throw new IntactException("There is an ugly hack in the getXrefs methods that might have provoked this exception.");
-        }
-
-        return DaoFactory.getXrefDao().getByParentAc(ac);   */
         return xrefs;
     }
 
@@ -198,21 +186,12 @@ public abstract class AnnotatedObjectImpl<T extends Xref> extends BasicObjectImp
     public void addXref( T aXref ) {
         //if( !this.xrefs.contains( aXref ) ) {
             this.xrefs.add( aXref );
-            //aXref.setParent(this);
-            aXref.setParentAc(this.getAc());
+            aXref.setParent(this);
+            //aXref.setParentAc(this.getAc());
         //}
     }
 
-    // FIXME: using called to DAO instead hibernate mappings (not possible with the current db)
     public void removeXref( T xref ) {
-        /*
-        log.warn("FIXME: Call to removeXref method, which is not mapped and uses a DAO call instead");
-        if (ac == null)
-        {
-            throw new IntactException("There is an ugly hack in the getXrefs methods that might have provoked this exception.");
-        }  */
-
-        //DaoFactory.getXrefDao().delete(xref);
         this.xrefs.remove( xref );
     }
 

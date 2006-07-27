@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
  */
 @Entity
 @Table(name = "ia_xref")
-@DiscriminatorColumn(name = "parentclass", discriminatorType = DiscriminatorType.STRING, length = 100)
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class Xref extends BasicObjectImpl {
 
     ///////////////////////////////////////
@@ -213,19 +213,19 @@ public abstract class Xref extends BasicObjectImpl {
         this.dbRelease = aDbRelease;
     }
 
-    @Column(name = "parent_ac")
+    @Transient
     public String getParentAc() {
-        //if (parent != null)
-        //{
-        //    parentAc = parent.getAc();
-        //}
+        if (parent != null)
+        {
+            parentAc = parent.getAc();
+        }
         return parentAc;
     }
 
     public void setParentAc( String parentAc ) {
         this.parentAc = parentAc;
     }
-    /*
+
     @Transient
     public AnnotatedObject getParent()
     {
@@ -236,7 +236,7 @@ public abstract class Xref extends BasicObjectImpl {
     {
         this.parent = parent;
     }
-     */
+
     ///////////////////////////////////////
     // access methods for associations
     @ManyToOne(fetch = FetchType.LAZY)
