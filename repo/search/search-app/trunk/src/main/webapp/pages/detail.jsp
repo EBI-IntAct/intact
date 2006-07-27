@@ -139,6 +139,12 @@
 
 <%
     }
+    else
+    {
+%>
+    <br/>
+<%
+    }
 %>
 
 <!-- main results tables -->
@@ -976,6 +982,12 @@
 
 <%@include file="tablePagination.jspf"%>
 
+<%
+    }
+    else
+    {
+%>
+     <br/>
 <%
     }
 %>
