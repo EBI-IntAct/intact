@@ -18,7 +18,8 @@
                  uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork,
                  java.util.ArrayList,
                  java.util.Iterator,
-                 java.util.StringTokenizer" %>
+                 java.util.StringTokenizer,
+                 uk.ac.ebi.intact.searchengine.CriteriaBean" %>
 
 <%
     /**
