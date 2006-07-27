@@ -1,0 +1,936 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ANT build configuration file for hierarchView module.
+Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
+Verison: $Id$
+-->
+<project name="hierarchView" basedir="." default="compile">
+    <property name="intact.root" value="../.."/>
+    <property name="root.lib.dir" value="${intact.root}/lib"/>
+    <property name="root.dist.dir" value="${intact.root}/dist"/>
+    <property name="root.src.dir" value="${intact.root}/src"/>
+    <property name="root.dest.dir" value="${intact.root}/classes"/>
+    <property name="root.config.dir" value="${intact.root}/config"/>
+    <property name="root.dist.dir" value="${intact.root}/dist"/>
+
+    <property name="root.jar.file" value="${root.dist.dir}/intact-core.jar"/>
+
+    <!-- Intact application location. -->
+    <property name="intact.app.dir" value=".."/>
+
+    <!-- context path for hierarchView store in the application level -->
+    <property name="intact.context.dir" value="${intact.app.dir}/context"/>
+    <property name="hierarchView.context.file" value="hierarchView-context.xml"/>
+
+    <property name="commons.pages.dir" value="${intact.app.dir}/pages"/>
+    <property name="commons.layouts.dir" value="${intact.app.dir}/layouts"/>
+    <property name="commons.images.dir" value="${intact.app.dir}/images"/>
+
+    <property name="pages.dir" value="pages"/>
+    <property name="images.dir" value="images"/>
+    <property name="layouts.dir" value="layouts"/>
+    <property name="layouts.styles.dir" value="${layouts.dir}/styles"/>
+    <property name="lib.dir" value="WEB-INF/lib"/>
+    <property name="tld.dir" value="WEB-INF/tld"/>
+    <property name="dest.dir" value="WEB-INF/classes"/>
+    <property name="config.dir" value="WEB-INF/config"/>
+    <property name="jdoc.dir" value="doc/api"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="pg.war.file" value="${ant.project.name}.war"/>
+
+    <!-- The build properties. -->
+    <property file="${intact.root}/config/build.properties"/>
+
+    <!-- The jdbc properties. -->
+    <property file="${intact.root}/config/jdbc.properties"/>
+
+    <!-- The logging configuration -->
+    <property file="${intact.root}/config/log4j.properties"/>
+
+    <!-- Web service related properties. -->
+    <property name="ws.dir" value="ws"/>
+    <property name="ws.lib.dir" value="ws/lib"/>
+    <property name="ws.wsdd.dir" value="ws/wsdd"/>
+    <property name="ws.wsdl.dir" value="ws/wsdl"/>
+    <property name="ws.tulip.wsdl" value="${ws.wsdl.dir}/tulip.wsdl"/>
+    <property name="webService.archive.filename" value="tulipWebService.tar.gz"/>
+    <property name="webService.archive.path" value="${dist.dir}/${webService.archive.filename}"/>
+
+    <!-- Properties related to Tulip server -->
+    <property name="ws.tulip.server.pkg"
+              value="uk.ac.ebi.intact.application.hierarchView.business.tulip.webService"/>
+    <property name="ws.tulip.server.dir"
+              value="uk/ac/ebi/intact/application/hierarchView/business/tulip/webService"/>
+    <property name="ws.tulip.jar.name" value="tulipService.jar"/>
+    <property name="ws.tulip.jar" value="${ws.dir}/${ws.tulip.jar.name}"/>
+    <property name="ws.props.file" value="WebService.properties"/>
+    <property name="ws.deploy.file" value="${ws.wsdd.dir}/deploy.wsdd"/>
+    <property name="ws.undeploy.file" value="${ws.wsdd.dir}/undeploy.wsdd"/>
+
+    <!-- Properties related to Tulip client -->
+    <property name="ws.tulip.client.pkg"
+              value="uk.ac.ebi.intact.application.hierarchView.business.tulip.client"/>
+    <property name="ws.tulip.client.dir"
+              value="uk/ac/ebi/intact/application/hierarchView/business/tulip/client"/>
+
+    <property name="ws.session.type" value="Application"/>
+
+    <!-- We need this flag because deploy targets need to know where to deploy. -->
+    <property environment="env"/>
+    <property name="tomcat.home" value="${env.CATALINA_HOME}"/>
+    <property name="webapps.dir" value="${tomcat.home}/webapps"/>
+    <property name="java.opts" value="${env.JAVA_OPTS}"/>
+
+    <property name="webService.properties.filename" value="${config.dir}/WebService.properties"/>
+    <property name="highlighting.properties.filename" value="${config.dir}/Highlighting.properties"/>
+    <property name="search.properties.filename" value="${config.dir}/Search.properties"/>
+
+    <!-- Properties files on which some tests will be performed -->
+    <property file="${webService.properties.filename}"/>
+    <property file="${highlighting.properties.filename}"/>
+    <property file="${search.properties.filename}"/>
+
+    <!-- The name of the last modified file -->
+    <property name="last.modified.file" value="last-modified.txt"/>
+
+    <!-- Build working classpath -->
+    <path id="project.class.path">
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <pathelement path="${root.dest.dir}"/>
+        <pathelement path="${dest.dir}"/>
+        <pathelement path="${root.lib.dir}/jaxrpc-impl.jar"/>
+        <pathelement path="${root.lib.dir}/jaxrpc-api.jar"/>
+        <pathelement path="${root.lib.dir}/db-ojb-1.0.rc6.jar"/>
+        <pathelement path="${root.lib.dir}/log4j-1.2.11.jar"/>
+        <pathelement path="${root.lib.dir}/servlet.jar"/>
+        <pathelement path="${root.lib.dir}/commons-lang-2.0.jar"/>
+        <pathelement path="${root.lib.dir}/junit.jar"/>
+        <pathelement path="${root.lib.dir}/commons-logging-1.0.4.jar"/>
+        <pathelement path="${root.lib.dir}/commons-pool-1.2.jar"/>
+        <pathelement path="${root.lib.dir}/commons-dbcp-1.1.jar"/>
+        <pathelement path="${root.lib.dir}/commons-collections-3.0.jar"/>
+        <pathelement path="${root.lib.dir}/jdbc_oracle9i_thin_9.2.0.jar"/>
+
+        <!-- hibernate -->
+        <fileset dir="${root.lib.dir}/hibernate">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <!-- hibernate -->
+        <fileset dir="${root.lib.dir}/hibernate">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <pathelement path="${intact.app.dir}/lib/struts.jar"/>
+
+    </path>
+
+    <!-- =================================================================== -->
+
+    <!--
+        Test some configuration point to warn the user in case of configuration problem.
+        The build process is stopped if smething goes wrong.
+    -->
+    <target name="all-config-test" depends="test-config"
+            description="Performs configuration test and describes eventual problem.">
+        <antcall target="webService-hostname-result"/>
+        <antcall target="console-location-result"/>
+        <antcall target="console-location-available-result"/>
+        <antcall target="interpro-hostname-result"/>
+        <antcall target="search-hostname-result"/>
+    </target>
+
+
+    <target name="test-config">
+        <echo message="${webService.properties.filename} :"/>
+
+        <condition property="webService.hostname.notCustomized">
+            <contains string="${webService.adress}" substring="[HOSTNAME]"/>
+        </condition>
+        <echo message="    webService.adress = ${webService.adress}"/>
+
+        <condition property="webService.console.location.notCustomized">
+            <contains string="${webService.console.location}" substring="[FULL_PATH_OF_THE_TULIP_COMSOLE]"/>
+        </condition>
+        <echo message="    webService.console.location = ${webService.console.location}"/>
+
+        <available file="${webService.console.location}" type="file" property="webService.console.isAvailable"/>
+
+        <echo message="${highlighting.properties.filename} :"/>
+
+        <condition property="interpro.hostname.notCustomized">
+            <contains string="${highlightment.source.GO.hostname}" substring="[HOSTNAME]"/>
+        </condition>
+        <echo message="    highlightment.source.GO.hostname = ${highlightment.source.GO.applicationPath}"/>
+
+        <echo message="${search.properties.filename} :"/>
+
+        <condition property="search.hostname.notCustomized">
+            <contains string="${search.url}" substring="[SEARCH_HOSTNAME]"/>
+        </condition>
+        <echo message="    search.url = ${search.url}"/>
+    </target>
+
+
+    <target name="console-location-result" if="webService.console.location.notCustomized">
+        <echo>
+            WARNING :
+            If you plan to run the web service on an other computer, don't take
+            the following message in to account.
+            -----------------------------------------------------------------------
+            You have to edit the following file : ${webService.properties.filename}
+            and customized the webService.console.location property.
+            -----------------------------------------------------------------------
+        </echo>
+    </target>
+
+
+    <target name="console-location-available-result" unless="webService.console.isAvailable">
+        <echo>
+            WARNING :
+            If you plan to run the web service on an other computer, don't take
+            the following message in to account.
+            -----------------------------------------------------------------------
+            You have to edit the following file : ${webService.properties.filename}
+            and customized the webService.console.location with the right path.
+            Currently the file ${webService.console.location} is not found.
+            -----------------------------------------------------------------------
+        </echo>
+    </target>
+
+
+    <target name="webService-hostname-result" if="webService.hostname.notCustomized">
+        <fail>
+            ERROR :
+            You have to edit the following file : ${webService.properties.filename}
+            and customized the webService.adress property.
+        </fail>
+    </target>
+
+
+    <target name="interpro-hostname-result" if="interpro.hostname.notCustomized">
+        <fail>
+            ERROR :
+            You have to edit the following file : ${highlighting.properties.filename}
+            and customized the highlightment.source.GO.hostname property.
+        </fail>
+    </target>
+
+
+    <target name="search-hostname-result" if="search.hostname.notCustomized">
+        <fail>
+            ERROR :
+            You have to edit the following file : ${search.properties.filename}
+            and customized the search.url property.
+        </fail>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Sets the time stamp and 'intact.jar.present' property if intact core
+    jar file is found.
+    -->
+    <target name="prepare">
+        <tstamp/>
+        <available file="${root.jar.file}" type="file" property="intact.jar.present"/>
+
+        <!-- These targets are called to display messages if tomcat or axis are not present. -->
+        <ant dir=".." inheritAll="false" target="check-tomcat"/>
+        <ant dir=".." inheritAll="false" target="check-axis"/>
+
+        <ant target="check-log-level"/>
+
+    </target>
+
+
+    <!-- =================================================================== -->
+
+    <target name="check-log-level">
+
+        <!-- Check the log level -->
+        <condition property="log.level.is.info">
+            <contains string="${log4j.logger.hierarchView}" substring="INFO"/>
+        </condition>
+
+        <condition property="log.level.is.debug">
+            <contains string="${log4j.logger.hierarchView}" substring="DEBUG"/>
+        </condition>
+
+        <ant target="check-log-level-info"/>
+
+        <ant target="check-log-level-debug"/>
+
+    </target>
+
+    <!-- If the log level isn't set to ERROR, a blocking message is displayed to let the user know -->
+    <target name="check-log-level-info" if="log.level.is.info">
+
+        <echo>
+            BEWARE that if the logging feature is set to a verbose mode (${log4j.logger.hierarchView}),
+            it might affect considerably the performance of the application.
+            Up to now, even the WARN level is generating a huge load of log.
+            cf. the file $INTACT_CORE/config/log4j.properties (section hierarchView).
+        </echo>
+
+        <input message="Press the ENTER to continue..."/>
+
+    </target>
+
+    <!-- If the log level isn't set to ERROR, a blocking message is displayed to let the user know -->
+    <target name="check-log-level-debug" if="log.level.is.debug">
+
+        <echo>
+            BEWARE that if the logging feature is set to a verbose mode (${log4j.logger.hierarchView}),
+            it might affect considerably the performance of the application.
+            Up to now, even the WARN level is generating a huge load of log.
+            cf. the file $INTACT_CORE/config/log4j.properties (section hierarchView).
+        </echo>
+
+        <input message="Press the ENTER to continue..."/>
+
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Sets the time stamp. -->
+    <target name="set-tstamp">
+        <tstamp>
+            <format property="TODAY" pattern="yyyy-MM-dd" locale="en"/>
+        </tstamp>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Remove some directories/files for clean build. -->
+    <target name="clean"
+            description="Prepare for clean build; removes api docs and classes dirs">
+        <delete dir="${dest.dir}"/>
+        <delete dir="${dist.dir}"/>
+        <delete dir="${jdoc.dir}"/>
+        <delete dir="${dist.dir}"/>
+
+        <delete file="last-modified.txt"/>
+
+        <!-- Clean up the web service directory -->
+        <delete file="${ws.dir}/${ws.tulip.jar.name}"/>
+        <delete dir="${ws.wsdd.dir}"/>
+        <delete dir="${ws.wsdl.dir}"/>
+
+        <!-- Struts imported tlds-->
+        <delete>
+            <fileset dir="${tld.dir}">
+                <exclude name="hierarchView.tld"/>
+                <exclude name="display.tld"/>
+                <exclude name="redirect.tld"/>
+            </fileset>
+        </delete>
+
+        <!-- Libraries -->
+        <delete file="{lib.dir}/jstl.jar"/>
+
+        <!-- Tiles commons files -->
+        <delete>
+            <fileset dir="${layouts.dir}">
+                <!-- Do not remove hv specific files -->
+                <exclude name="index.jsp"/>
+                <exclude name="sidebar.jsp"/>
+                <exclude name="contentFrame.jsp"/>
+                <exclude name="graphFrame.jsp"/>
+                <exclude name="sourceListFrame.jsp"/>
+                <exclude name="selectedSourceFrame.jsp"/>
+                <exclude name="hvHeaderLayout.jsp"/>
+                <exclude name="styles/**"/>
+            </fileset>
+        </delete>
+
+        <delete>
+            <fileset dir="${layouts.styles.dir}">
+                <!-- Do not remove hv specific files -->
+                <exclude name="hv.css"/>
+            </fileset>
+        </delete>
+
+        <delete>
+            <fileset dir="${pages.dir}">
+                <!-- Do not remove hv specific files -->
+                <exclude name="index.jsp"/>
+                <exclude name="blank.jsp"/>
+                <exclude name="errorFrame.jsp"/>
+                <exclude name="forwardToSearch.jsp"/>
+                <exclude name="restoreContext.jsp"/>
+                <exclude name="sidebarSearch.jsp"/>
+                <exclude name="sidebarGraph.jsp"/>
+                <exclude name="sidebarPsiDownload.jsp"/>
+                <exclude name="sidebarMine.jsp"/>
+                <exclude name="sidebarClickBehaviour.jsp"/>
+                <exclude name="graphTitle.jsp"/>
+                <exclude name="highlightTitle.jsp"/>
+                <exclude name="graph.jsp"/>
+                <exclude name="highlight.jsp"/>
+                <exclude name="selectedSource.jsp"/>
+                <exclude name="warning.jsp"/>
+                <exclude name="allTab.jsp"/>
+                <exclude name="goTab.jsp"/>
+                <exclude name="interproTab.jsp"/>
+            </fileset>
+        </delete>
+
+        <delete>
+            <fileset dir="${images.dir}">
+                <!-- Do not remove hv specific files -->
+                <exclude name="clockT.gif"/>
+                <exclude name="select.gif"/>
+                <exclude name="select-chk.gif"/>
+                <exclude name="ok-grey.png"/>
+                <exclude name="ok-red.png"/>
+                <exclude name="graph.png"/>
+            </fileset>
+        </delete>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Calls the jar task from core build file if intact core jar file
+    is missing.
+    -->
+    <target name="make-jar" depends="prepare" unless="intact.jar.present">
+        <ant dir="${intact.root}" target="jar-core" inheritAll="false"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Copy configuration files. -->
+    <target name="cpConfigFiles">
+        <!-- Copy repository files -->
+        <copy todir="${dest.dir}/config">
+            <fileset dir="${root.config.dir}">
+                <include name="repository*.xml"/>
+                <include name="repository.dtd"/>
+                <include name="Institution.properties"/>
+                <include name="proxy.properties"/>
+            </fileset>
+        </copy>
+
+        <!-- Copy property files -->
+        <copy todir="${dest.dir}/config">
+            <fileset dir="${config.dir}">
+                <include name="*.properties"/>
+            </fileset>
+        </copy>
+
+        <!-- the OJB and Institution properties files should be at the top level in 'dest' -->
+        <copy todir="${dest.dir}" file="${root.config.dir}/OJB.properties"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
+    <target name="compile"
+            description="Compile the source tree and copy the configuration files"
+            depends="prepare">
+        <mkdir dir="${dest.dir}"/>
+
+
+        <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
+               source="1.5"
+               includes="**/application/hierarchView/**,
+                      **/application/commons/**,
+                      **/util/PropertyLoader*,
+                      **/util/SearchReplace*,
+                      **/util/logging/**"
+
+               debug="on">
+            <classpath refid="project.class.path"/>
+        </javac>
+
+        <copy todir="${dest.dir}/config" filtering="on">
+            <fileset dir="WEB-INF/config">
+                <include name="*.properties"/>
+            </fileset>
+        </copy>
+
+        <!-- Copy configuration files -->
+        <antcall target="cpConfigFiles"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Ensures that tomcat.present property is called only once to avoid
+    error from Ant.
+    -->
+    <target name="run-once" unless="tomcat.present">
+        <available file="${tomcat.home}/conf/server.xml" property="tomcat.present"/>
+        <available file="${webapps.dir}/axis/WEB-INF/web.xml" property="axis.present"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Compile the web service source tree. -->
+    <target name="make-ws" description="Create the web service" depends="compile">
+
+        <mkdir dir="${ws.lib.dir}"/>
+        <mkdir dir="${ws.wsdd.dir}"/>
+        <mkdir dir="${ws.wsdl.dir}"/>
+
+        <!-- Generate WSDL file. This needs to run in a separate JVM to avoid
+        any clashes with linkage problem with Document class. Also, -o
+        option is passed via arg line instead of value to avoid creating
+        a wsdl with a space in the name!
+        The variable ${webService.adress} come from WebService.properties file.
+        -->
+        <echo message="Generating WSDL file..."/>
+
+        <taskdef name="java2Wsdl"
+             classname="org.apache.axis.tools.ant.wsdl.Java2WsdlAntTask"
+             classpathref="project.class.path" />
+        <taskdef name="wsdl2Java"
+             classname="org.apache.axis.tools.ant.wsdl.Wsdl2javaAntTask"
+             classpathref="project.class.path" />
+
+        <!-- Generate WSDL -->
+        <java2Wsdl output="${ws.tulip.wsdl}"
+            className="${ws.tulip.server.pkg}.TulipAccess"
+            implClass="${ws.tulip.server.pkg}.TulipAccessImpl"
+            namespace="urn:tulip"
+            style="RPC" use="ENCODED"
+            extraClasses="${ws.tulip.server.pkg}.ProteinCoordinate"
+            typeMappingVersion="1.1"
+            location="${webService.adress}">
+            <mapping namespace="urn:tulip" package="${ws.tulip.server.pkg}"/>
+            <classpath>
+                <path refid="project.class.path"/>
+                <pathelement location="${dest.dir}"/>
+            </classpath>
+        </java2Wsdl>
+
+        <!-- Generate server side files.  (Commented because it does not generate the WSDD files)
+        <wsdl2Java
+            output="."
+            helpergen="false"
+            url="${ws.tulip.wsdl}"
+            deployscope="${ws.session.type}"
+            typeMappingVersion="1.1">
+            <mapping namespace="urn:tulip" package="${root.src.dir}/${ws.tulip.client.dir}.generated"/>
+        </wsdl2Java>
+        -->
+
+        <!-- Generate server side files. -->
+        <echo message="Generating Server side files..."/>
+        <java classname="org.apache.axis.wsdl.WSDL2Java" fork="yes">
+            <arg line="-o ."/>
+            <arg line="-d ${ws.session.type}"/>
+            <arg value="-s"/>
+            <arg line="-p ${ws.tulip.server.pkg}.generated"/>
+            <arg value="${ws.tulip.wsdl}"/>
+
+            <classpath refid="project.class.path"/>
+        </java>
+
+        <!-- Extract the wsdd files. -->
+        <echo message="Extracting deploy/undeploy WSDD files"/>
+        <copy todir="${ws.wsdd.dir}">
+            <fileset dir="${ws.tulip.server.dir}/generated">
+                <include name="*.wsdd"/>
+            </fileset>
+        </copy>
+
+        <!-- Remove the generated directories. -->
+        <echo message="Removing generated server files..."/>
+        <delete dir="${ws.tulip.server.dir}"/>
+
+        <!-- Generate client side files. -->
+        <echo message="Generating Client side files..."/>
+        <java classname="org.apache.axis.wsdl.WSDL2Java" fork="yes">
+            <arg line="-o ."/>
+            <arg line="-d ${ws.session.type}"/>
+            <arg line="-p ${ws.tulip.client.pkg}.generated"/>
+            <arg value="${ws.tulip.wsdl}"/>
+            <classpath refid="project.class.path"/>
+        </java>
+
+        <!-- Copy generated client files. -->
+        <echo message="Copying generated client files in the source tree..."/>
+        <copy todir="${root.src.dir}/${ws.tulip.client.dir}">
+            <fileset dir="${ws.tulip.client.dir}">
+                <include name="**/*.java"/>
+            </fileset>
+        </copy>
+
+        <!-- Compile the client generated files -->
+        <echo message="Compiling client generated files"/>
+        <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
+               includes="${ws.tulip.client.dir}/generated/**" debug="on">
+            <classpath refid="project.class.path"/>
+        </javac>
+
+        <!-- Copy the configuration file to the current directory. -->
+        <echo message="Copying configuration file to the ${root.dest.dir} dir"/>
+        <copy file="${config.dir}/${ws.props.file}" todir="${root.dest.dir}"
+              overwrite="true"/>
+
+        <!-- Create the web service jar file (which will be deployed later on Axis). -->
+        <!-- First delete the jar file if it exists. -->
+        <delete file="${ws.tulip.jar}" quiet="true"/>
+        <echo message="Create the service jar file"/>
+
+        <jar destfile="${ws.tulip.jar}">
+            <fileset dir="${root.dest.dir}" includes="${ws.props.file}"/>
+            <fileset dir="${dest.dir}" includes="${ws.tulip.server.dir}/**"/>
+        </jar>
+
+        <!-- Delete the webservice properties file. -->
+        <echo message="Deleting the configuration file"/>
+        <delete file="${root.dest.dir}/${ws.props.file}"/>
+
+        <echo message="Modify the deployment file"/>
+        <antcall target="mod-deployfile"/>
+
+        <!-- ask the user if he wants to use Tulip or GVF -->
+        <echo message=""/>
+        <echo message=""/>
+        <input message="Do you want the web service to use Tulip or the Graph Visualization Framework ? "
+               validargs="T,GVF"
+               addproperty="choosen.layout.engine"/>
+
+        <condition property="use.gvf">
+            <equals arg1="GVF" arg2="${choosen.layout.engine}"/>
+        </condition>
+
+        <antcall target="modify-deploy-to-use-gvf"/>
+
+        <!-- Cleaning up -->
+        <echo message="Delete generated files"/>
+        <delete dir="uk"/>
+
+        <!-- Create an TAR archive which includes everythings needed to install
+             and deploy the web service.
+          -->
+        <mkdir dir="${dist.dir}"/>
+        <delete file="${webService.archive.path}" quiet="true"/>
+        <echo message="Create the web service archive"/>
+        <tar destfile="${webService.archive.path}" compression="gzip">
+            <tarfileset dir="${ws.dir}/.." mode="766">
+                <include name="${ws.dir}/**"/>
+            </tarfileset>
+        </tar>
+
+        <echo>
+            The web service archive has been built under ${webService.archive.path}
+            Now, you have to :
+            (1) copy that archive to your server
+            (2) decompress it (tar zxvf ${webService.archive.filename})
+            (3) enter the ${ws.dir} directory and read the README file to
+            know how to install and manage the web service.
+        </echo>
+
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- In case the user has choosen to use royere (ie. variable use.royere is true)
+         We replace the default implementation class (TulipAccessImpl) by the one using
+         Royere (RoyereImpl).
+      -->
+    <target name="modify-deploy-to-use-gvf" if="use.gvf">
+
+        <!-- Replace Tulip implementation (default) by Royere's -->
+        <echo message="Replace Tulip implementation (default) by the one using GVF"/>
+        <replace file="${ws.deploy.file}" token="TulipAccessImpl" value="GVFImpl"/>
+
+        <!-- Copy the royere library in the package -->
+        <echo message="Include the royere library (contains GVF) in the web service archive."/>
+        <copy todir="${ws.lib.dir}">
+            <fileset dir="${lib.dir}">
+                <include name="royere.jar"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Replace current class in the deployment file by those from the implementation -->
+    <target name="mod-deployfile">
+
+        <!-- Replace generated package name by the implementation one -->
+        <echo message="Replace generated package name by the implementation one"/>
+        <replace file="${ws.deploy.file}" token=".generated." value="."/>
+
+        <!-- Replace the SoapBinding generated class name by the implementation one -->
+        <echo message="Replace the SoapBinding name by the implementation one"/>
+        <replace file="${ws.deploy.file}" token="TulipSoapBindingImpl"
+                 value="TulipAccessImpl"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Tests the web service  -->
+    <target name="test-ws"
+            description="Test the web service and display results on the screen"
+            depends="compile">
+
+        <echo message="Testing the web service"/>
+        <echo message="End point: ${webService.adress}"/>
+
+        <java classname="uk.ac.ebi.intact.application.hierarchView.business.tulip.client.TulipClient" fork="yes">
+            <classpath refid="project.class.path"/>
+        </java>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Builds a war file using the current database setup. -->
+
+    <target name="war" description="Builds a war file"
+            depends="all-config-test, set-tstamp, set-db-type,
+                 war-postgres, war-oracle"/>
+
+    <!-- =================================================================== -->
+
+    <!-- Builds a war file. The database to include is specified as a parameter. -->
+
+    <target name="build-war" depends="compile, gen-last-modified-file, make-jar">
+        <echo message="Generating ${war.file} file"/>
+
+        <!-- Create the distribution dir if it doesn't exist. -->
+        <mkdir dir="${dist.dir}"/>
+
+        <!-- Create local directories to copy common files. -->
+        <mkdir dir="${layouts.styles.dir}"/>
+        <mkdir dir="${images.dir}"/>
+
+        <!-- Common layouts -->
+        <copy todir="${layouts.dir}">
+            <fileset dir="${commons.layouts.dir}">
+                <exclude name="headerLayout.jsp"/>
+                <!-- has been replaced by hvHeaderLayout.jsp -->
+            </fileset>
+        </copy>
+
+        <!-- Common images -->
+        <copy todir="${images.dir}">
+            <fileset dir="${commons.images.dir}"/>
+        </copy>
+
+        <!-- Common jsp files -->
+        <copy todir="${pages.dir}">
+            <fileset dir="${commons.pages.dir}"/>
+        </copy>
+
+        <!-- Delete the war file or else it will keep the old one -->
+        <delete file="${dist.dir}/${war.file}" quiet="true"/>
+
+        <!-- Copy struts standard tld files -->
+        <copy todir="${tld.dir}">
+            <fileset dir="${intact.app.dir}/tld">
+                <include name="*.tld"/>
+            </fileset>
+        </copy>
+
+        <!-- Copy log4j properties file -->
+        <copy todir="${dest.dir}/config">
+            <fileset dir="${root.config.dir}">
+                <include name="log4j.properties"/>
+            </fileset>
+        </copy>
+
+        <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
+            <fileset dir="${basedir}">
+                <include name="*.jsp"/>
+                <include name="*.css"/>
+                <include name="WEB-INF/struts-config.xml"/>
+                <include name="WEB-INF/tiles-defs.xml"/>
+                <include name="${tld.dir}/**"/>
+                <include name="${images.dir}/*"/>
+                <include name="${pages.dir}/**"/>
+                <include name="${layouts.dir}/**"/>
+                <include name="${last.modified.file}"/>
+                <exclude name="hibernate.cfg.xml" />
+            </fileset>
+
+            <!-- Include jar files for hv. -->
+            <lib dir="${lib.dir}"/>
+
+            <!-- JAXRPC files from the root lib folder -->
+            <lib dir="${root.lib.dir}">
+                <include name="jaxrpc*.jar"/>
+            </lib>
+
+            <!-- Include the intact core  -->
+            <lib dir="${root.dist.dir}">
+                <include name="intact-core.jar"/>
+            </lib>
+
+            <!-- Inlcude application common jar files exclude test files. -->
+            <lib dir="${intact.app.dir}/lib">
+                <exclude name="test/**"/>
+            </lib>
+
+            <!-- Include common jar files from intact core. -->
+            <lib dir="${root.lib.dir}">
+                <include name="db-ojb-1.0.rc6.jar"/>
+                <include name="commons-dbcp-1.1.jar"/>
+                <include name="log4j-1.2.11.jar"/>
+                <include name="${db}"/>
+                <include name="commons-lang-2.0.jar"/>
+                <include name="commons-collections-3.0.jar"/>
+                <include name="commons-pool-1.1.jar"/>
+            </lib>
+
+            <!-- hibernate -->
+            <lib dir="${root.lib.dir}/hibernate" />
+            <lib dir="${root.lib.dir}/hibernate/transitive-deps"/>
+
+            <!-- HierarchView classes and config files. -->
+            <classes dir="${dest.dir}"/>
+        </war>
+
+        <antcall target="gen-context-file"/>
+
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Sets the database type using the values given in build.properties. -->
+
+    <target name="set-db-type">
+        <condition property="postgres">
+            <contains string="${target.env}" substring="-postgres-"/>
+        </condition>
+        <condition property="oracle">
+            <contains string="${target.env}" substring="-oracle-"/>
+        </condition>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!--
+         Builds a war file with postgres;
+         should be called only after calling set-db-type.
+      -->
+
+    <target name="war-postgres" if="postgres">
+        <!-- Load postgres properties. -->
+        <property file="${intact.root}/config/postgres.properties"/>
+
+        <echo message="Building a war for postgres ${dbalias} database"/>
+        <property name="war.name" value="${ant.project.name}-${dbalias}-${TODAY}.war"/>
+
+        <echo message="Using PostgreSQL JAR file: ${postgresql.jar}"/>
+
+        <antcall target="build-war">
+            <param name="db" value="${postgresql.jar}"/>
+            <param name="war.file" value="${war.name}"/>
+        </antcall>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!--
+        Builds a war file for oracle database;
+        should be called only after calling set-db-type.
+      -->
+
+    <target name="war-oracle" description="Builds a war file for oracle" if="oracle">
+        <!-- Load oracle properties. -->
+        <property file="${intact.root}/config/oracle.properties"/>
+
+        <echo message="Building a war for oracle ${dbalias} database"/>
+        <property name="war.name" value="${ant.project.name}-${dbalias}-${TODAY}.war"/>
+
+        <echo message="Using Oracle JAR file: ${oracle.jar}"/>
+
+        <antcall target="build-war">
+            <param name="db" value="${oracle.jar}"/>
+            <param name="war.file" value="${war.name}"/>
+        </antcall>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Deploys the war file on the Tomcat server. -->
+
+    <target name="deploy" description="Deploys the WAR file on the Tomcat server">
+        <ant dir=".." inheritAll="false" target="deploy">
+            <property name="war" value="hierarchView/${dist.dir}/${war.name}"/>
+        </ant>
+
+        <!-- Copy context files in the Tomcat's webapps directory -->
+        <copy file="${dist.dir}/${hierarchView.context.file}"
+              todir="${webapps.dir}" overwrite="yes"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Undeploys the war file from the Tomcat server. Also stops the web service. -->
+    <target name="undeploy"
+            description="Undeploys the WAR file from the Tomcat server">
+        <ant dir=".." inheritAll="false" target="undeploy">
+            <property name="war" value="hierarchView"/>
+        </ant>
+
+        <!-- Delete context files from the Tomcat's webapps directory -->
+        <delete file="${webapps.dir}/${hierarchView.context.file}" quiet="true"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Starts the Tomcat server. -->
+
+    <target name="start-tomcat" description="Start the Tomcat server">
+        <ant dir=".." inheritAll="false" target="start-tomcat"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Stops the Tomcat server. -->
+
+    <target name="stop-tomcat" description="Stop the Tomcat server">
+        <ant dir=".." inheritAll="false" target="stop-tomcat"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Generates the last modified date file. -->
+
+    <target name="gen-last-modified-file">
+        <ant dir=".." inheritAll="false" target="gen-last-modified-file">
+            <property name="file" value="hierarchView/${last.modified.file}"/>
+        </ant>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Create the context file. -->
+
+    <target name="gen-context-file">
+        <echo message="Creating the context file..."/>
+
+        <!-- Copy the template file -->
+        <copy todir="${dist.dir}"
+              file="${intact.context.dir}/${hierarchView.context.file}"
+              overwrite="true"/>
+
+        <!-- Customize the context file -->
+        <replace file="${dist.dir}/${hierarchView.context.file}"
+                 token="[WAR.FILE.NAME]"
+                 value="${war.file}"/>
+        <replace file="${dist.dir}/${hierarchView.context.file}"
+                 token="[server.name]"
+                 value="${server.name}"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Runs the JUnit tester directly. The output is redirected to std out -->
+    <target name="junit" depends="compile"
+            description="Runs JUnit directly with output directed to stdout">
+        <java classname="junit.textui.TestRunner" fork="true">
+            <arg value="uk.ac.ebi.intact.application.hierarchView.business.graph.test.AllJUnitTests"/>
+            <classpath refid="project.class.path"/>
+        </java>
+    </target>
+
+</project>
