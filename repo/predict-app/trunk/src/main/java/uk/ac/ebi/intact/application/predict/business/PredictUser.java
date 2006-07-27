@@ -8,7 +8,7 @@ package uk.ac.ebi.intact.application.predict.business;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
-import uk.ac.ebi.intact.application.commons.business.IntactUserI;
+import uk.ac.ebi.intact.searchengine.business.IntactUserI;
 import uk.ac.ebi.intact.application.predict.struts.view.ResultBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.BioSource;
@@ -120,7 +120,7 @@ public abstract class PredictUser implements IntactUserI,
     /*
 	 * (non-Javadoc)
 	 *
-	 * @see uk.ac.ebi.intact.application.commons.business.IntactUserI#getUserName()
+	 * @see uk.ac.ebi.intact.searchengine.business.IntactUserI#getUserName()
 	 */
 	public String getUserName() {
 		try
@@ -137,7 +137,7 @@ public abstract class PredictUser implements IntactUserI,
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see uk.ac.ebi.intact.application.commons.business.IntactUserI#getDatabaseName()
+	 * @see uk.ac.ebi.intact.searchengine.business.IntactUserI#getDatabaseName()
 	 */
 	public String getDatabaseName() {
         try
