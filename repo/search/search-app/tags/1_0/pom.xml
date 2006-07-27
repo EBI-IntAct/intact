@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+/**
+ * Copyright (c) 2006 The European Bioinformatics Institute, and others.
+ * All rights reserved.
+ */
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>uk.ac.ebi.intact.maven</groupId>
+        <artifactId>intact-master-webapp</artifactId>
+        <version>1.0</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>uk.ac.ebi.intact.app.search</groupId>
+    <artifactId>search-app</artifactId>
+    <packaging>war</packaging>
+    <version>1.0</version>
+    <name>Search application</name>
+    <description>Search web interface</description>
+
+    <scm>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/search/search-app/trunk</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/search/search-app/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/search/search-app/trunk/</url>
+    </scm>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.0.1</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/assembly/bin.xml</descriptor>
+                        <!--<descriptor>src/main/assembly/src.xml</descriptor>-->
+                    </descriptors>
+                    <finalName>${build.finalName}</finalName>
+                    <outputDirectory>target/assembly/out</outputDirectory>
+                    <workDirectory>target/assembly/work</workDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>uk.ac.ebi.intact.app.search</groupId>
+            <artifactId>search-engine</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+              <groupId>displaytag</groupId>
+              <artifactId>displaytag</artifactId>
+              <version>1.0-unknown</version>
+          </dependency>
+          <dependency>
+              <groupId>taglibs</groupId>
+              <artifactId>standard</artifactId>
+              <version>1.0</version>
+          </dependency>
+          <dependency>
+              <groupId>jstl</groupId>
+              <artifactId>jstl</artifactId>
+              <version>1.0</version>
+          </dependency>
+        
+    </dependencies>
+
+    <distributionManagement>
+        <site>
+            <id>intact-site</id>
+            <name>Intact site</name>
+            <url>scp://localhost/homes/baranda/public_html/intact/${artifactId}</url>
+        </site>
+    </distributionManagement>
+
+
+</project>
