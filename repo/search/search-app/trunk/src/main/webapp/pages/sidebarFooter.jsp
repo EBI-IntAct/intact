@@ -18,8 +18,8 @@
 
     <jsp:useBean id="user"
                  scope="session"
-                 beanName="uk.ac.ebi.intact.application.commons.business.IntactUserI"
-                 type="uk.ac.ebi.intact.application.commons.business.IntactUserI"/>
+                 beanName="uk.ac.ebi.intact.searchengine.business.IntactUserI"
+                 type="uk.ac.ebi.intact.searchengine.business.IntactUserI"/>
 
     <c:if test="${not empty user.userName}">
         User: <c:out value="${user.userName}"/>
