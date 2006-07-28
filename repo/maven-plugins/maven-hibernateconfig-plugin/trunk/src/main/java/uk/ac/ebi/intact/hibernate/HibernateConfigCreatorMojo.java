@@ -50,71 +50,91 @@ public class HibernateConfigCreatorMojo
     private MavenProjectHelper helper;
 
     /**
-     * @parameter default-value="/"
+     * The path where the file will be situated inside the classes build directory
+     * @parameter default-value="target/hibernate-config"
      * @required
      */
     private String targetPath;
 
     /**
+     * Name of the config filename
      * @parameter default-value="hibernate.cfg.xml"
      * @required
      */
     private String filename;
 
     /**
+     * Whether SQL will be shown when the application is executed or not
      * @parameter default-value="false"
      * @required
      */
     private boolean showSql;
 
     /**
+     * Whether the SQL statements will be formatted, if shown
      * @parameter default-value="true"
      * @required
      */
     private boolean formatSql;
 
     /**
+     * Ddl behaviour. Possible values are: "create-drop", "create", "update" and "none"
      * @parameter default-value="none"
      * @required
      */
     private String hbm2ddlAuto;
 
     /**
+     * The hibernate dialect to use
      * @parameter
      * @required
      */
     private String dialect;
 
     /**
+     * The JDBC driver class name
      * @parameter
      * @required
      */
     private String driver;
 
     /**
+     * The URL to use for the connections
      * @parameter
      * @required
      */
     private String url;
 
     /**
+     * The database user name
      * @parameter
      * @required
      */
     private String user;
 
     /**
+     * The database user password
      * @parameter
      */
     private String password;
 
     /**
+     * The hibernate connection provider class, if not using c3p0
      * @parameter default-value="org.hibernate.connection.C3P0ConnectionProvider"
      * @required
      */
     private String connectionProviderClass;
 
     /**
+     * The scope where the file will be placed (possible values are "runtime" and "test").
+     * If using "runtime" the config file will be available for runtime and tests.
+     * @parameter default-value="runtime"
+     * @required
+     */
+    private String scope;
+
+    /**
+     * List of hibernate events
      * @parameter
      */
     private List<HibernateEvent> hibernateEvents;
@@ -135,17 +155,7 @@ public class HibernateConfigCreatorMojo
             createHibernateEventsString();
         }
 
-        // we get the first folder of the package
-        String baseDirFromPackage = targetPath.substring(0, targetPath.indexOf("/"));
-
-        // and remove it for the targetPath. We need this because later we will need the name
-        // of the folder up to the first package folder, when adding the resource
-        targetPath = targetPath.substring(targetPath.indexOf("/")+1, targetPath.length());
-
-        File outputResourcesDir;
-
-        outputResourcesDir = new File(project.getBuild().getOutputDirectory(), baseDirFromPackage);
-        File tempDir = new File(outputResourcesDir, targetPath);
+        File tempDir = new File(project.getBasedir(), targetPath);
 
         if (!tempDir.exists())
         {
@@ -170,6 +180,8 @@ public class HibernateConfigCreatorMojo
             }
 
             writer.close();
+
+            getLog().debug("File created: "+outputFile);
         }
         catch (IOException e)
         {
@@ -180,7 +192,15 @@ public class HibernateConfigCreatorMojo
          List includes = Collections.singletonList(filename);
          List excludes = null;
 
-        helper.addResource(project, outputResourcesDir.toString(), includes, excludes);
+        if (scope.equalsIgnoreCase("test"))
+        {
+            // add the config only in test
+            helper.addTestResource(project, outputFile.getParent(), includes, excludes);
+        }
+        else
+        {
+            helper.addResource(project, outputFile.getParent(), includes, excludes);
+        }
 
     }
 
