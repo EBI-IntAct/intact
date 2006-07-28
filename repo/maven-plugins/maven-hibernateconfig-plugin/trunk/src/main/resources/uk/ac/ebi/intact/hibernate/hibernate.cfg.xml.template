@@ -35,8 +35,9 @@
         <!-- Bind the getCurrentSession() method to the thread. -->
         <property name="current_session_context_class">thread</property>
 
-        <!-- Lucene index dir -->
-        <property name="lucene.index_dir">${lucene.index_dir}</property>
+        ${lucene.index_dir}
+
+        ${lucene.analyzer}
 
         <!-- Hibernate Annotations (and package-info.java)
 
@@ -55,7 +56,8 @@
             <listener
               class="org.hibernate.validator.event.ValidatePreInsertEventListener"/>
         </event>
-        ${hibernateEvents}
+        
+${hibernateEvents}
 
     </session-factory>
 
