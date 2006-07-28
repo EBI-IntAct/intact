@@ -20,9 +20,9 @@ import java.util.Collection;
  */
 public class XrefDaoImpl<T extends Xref> extends IntactObjectDaoImpl<T> implements XrefDao<T>
 {
-    public XrefDaoImpl(Session session)
+    public XrefDaoImpl(Class<T> entityClass, Session session)
     {
-        super((Class)Xref.class, session);
+        super(entityClass, session);
     }
 
     public Collection<T> getByPrimaryId(String primaryId)

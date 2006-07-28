@@ -89,6 +89,16 @@ public class PersistTutorialTest extends AbstractIntactTest
 
     }
 
+    public void testSearchXref()
+    {
+        Collection<Xref> xrefs = DaoFactory.getXrefDao().getByPrimaryId("testPrimaryId");
+        assertEquals(1, xrefs.size());
+
+        Xref xref = xrefs.iterator().next();
+        assertNotNull(xref);
+        log.debug("Xref: "+xref.getAc()+" ParentAc: "+xref.getParent().getAc());
+    }
+
     private Institution getInstitution()
     {
         return IntactContext.getCurrentInstance().getInstitution();
