@@ -6,7 +6,6 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.business;
 
-import uk.ac.ebi.intact.application.commons.business.IntactUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.InteractionRowData;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentRowData;
@@ -14,6 +13,7 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.searchengine.ResultWrapper;
+import uk.ac.ebi.intact.searchengine.business.IntactUserI;
 import uk.ac.ebi.intact.util.GoServerProxy;
 import uk.ac.ebi.intact.util.NewtServerProxy;
 
