@@ -9,6 +9,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.validator.Length;
+import org.hibernate.lucene.Keyword;
+import org.hibernate.lucene.Text;
 
 import javax.persistence.JoinColumn;
 import javax.persistence.MappedSuperclass;
@@ -99,6 +101,7 @@ public abstract class AnnotatedObjectImpl<T extends Xref> extends BasicObjectImp
     //access methods for attributes
 
     @Length(min = 1, max = MAX_SHORT_LABEL_LEN)
+    @Text
     public String getShortLabel() {
         return shortLabel;
     }

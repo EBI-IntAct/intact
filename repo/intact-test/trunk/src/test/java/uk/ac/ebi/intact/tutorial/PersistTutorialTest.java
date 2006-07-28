@@ -7,12 +7,21 @@ package uk.ac.ebi.intact.tutorial;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.Hits;
+import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexReader;
 import uk.ac.ebi.intact.AbstractIntactTest;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.Collection;
+import java.io.IOException;
 
 /**
  * Test the tutorial persisting examples
@@ -97,6 +106,43 @@ public class PersistTutorialTest extends AbstractIntactTest
         Xref xref = xrefs.iterator().next();
         assertNotNull(xref);
         log.debug("Xref: "+xref.getAc()+" ParentAc: "+xref.getParent().getAc());
+    }
+
+    public void testSearchIndex()
+    {
+        try
+        {
+            IndexReader reader = IndexReader.open("lucene-indexes/intact-objects");
+            /*
+            for (Object fn : reader.getFieldNames(IndexReader.FieldOption.INDEXED))
+            {
+                log.debug("Field name: " + fn);
+            }
+             */
+
+            IndexSearcher is = new IndexSearcher(reader);
+            Analyzer analyzer = new StandardAnalyzer();
+            QueryParser parser = new QueryParser("shortLabel", analyzer);
+            Query query = parser.parse("dros*");
+            Hits hits = is.search(query);
+
+            //assertEquals(1, hits.length());
+
+            Document doc = hits.doc(0);
+            assertEquals(organismAc, doc.get("ac"));
+            log.debug("LUCENE AC: " + doc.get("ac"));
+
+            is.close();
+            reader.close();
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            log.error(e);
+            fail(e.getMessage());
+        }
+
     }
 
     private Institution getInstitution()
