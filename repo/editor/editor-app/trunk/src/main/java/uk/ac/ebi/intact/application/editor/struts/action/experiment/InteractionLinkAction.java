@@ -16,6 +16,8 @@ import uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentActionForm;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.persistence.dao.InteractionDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -60,9 +62,10 @@ public class InteractionLinkAction extends CommonDispatchAction {
 
         // The Intact helper to access the Interaction.
         IntactHelper helper = user.getIntactHelper();
+        InteractionDao interactionDao = DaoFactory.getInteractionDao();
 
         // The interaction we are about to edit.
-        Interaction inter = (Interaction) helper.getObjectByAc(Interaction.class, intAc);
+        Interaction inter = interactionDao.getByAc(intAc);//(Interaction) helper.getObjectByAc(Interaction.class, intAc);
 
         // We must have this Interaction.
         assert inter != null;
