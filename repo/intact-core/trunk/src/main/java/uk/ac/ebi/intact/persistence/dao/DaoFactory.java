@@ -9,10 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.model.IntactObject;
-import uk.ac.ebi.intact.model.InteractorImpl;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.impl.*;
 import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 
@@ -130,9 +127,14 @@ public class DaoFactory
         return new SearchItemDaoImpl(getCurrentSession());
     }
 
-    public static XrefDao getXrefDao()
+    public static XrefDao<Xref> getXrefDao()
     {
-        return new XrefDaoImpl(getCurrentSession());
+        return new XrefDaoImpl<Xref>(Xref.class, getCurrentSession());
+    }
+
+    public static  <T extends Xref> XrefDao<T> getXrefDao(Class<T> xrefClass)
+    {
+        return new XrefDaoImpl<T>(xrefClass, getCurrentSession());
     }
 
     public static Connection connection()
