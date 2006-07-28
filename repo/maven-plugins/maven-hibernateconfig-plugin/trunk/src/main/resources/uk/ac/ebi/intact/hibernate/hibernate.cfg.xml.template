@@ -35,6 +35,9 @@
         <!-- Bind the getCurrentSession() method to the thread. -->
         <property name="current_session_context_class">thread</property>
 
+        <!-- Lucene index dir -->
+        <property name="lucene.index_dir">${lucene.index_dir}</property>
+
         <!-- Hibernate Annotations (and package-info.java)
 
         Done in the class IntactAnnotator.
