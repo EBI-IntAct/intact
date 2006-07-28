@@ -15,12 +15,11 @@ import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceViewBean;
 import uk.ac.ebi.intact.application.editor.util.CvHelper;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.model.CvDatabase;
-import uk.ac.ebi.intact.model.CvXrefQualifier;
-import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.util.NewtServerProxy;
+import uk.ac.ebi.intact.persistence.dao.BioSourceDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -132,7 +131,7 @@ public class BioSourceAction extends AbstractEditorAction {
             bioview.delXref(taxXref);
         }
         // Add the nex Xref.
-        Xref xref = createTaxXref(user.getIntactHelper(), taxid, newtLabel);
+        Xref xref = createTaxXref(taxid, newtLabel);
         bioview.addXref(new XreferenceBean(xref));
 
         // Set the view with the new inputs.
@@ -147,7 +146,9 @@ public class BioSourceAction extends AbstractEditorAction {
         IntactHelper helper = user.getIntactHelper();
 
         // Collection of biosources for the current taxid.
-        Collection results = helper.search(BioSource.class.getName(), "taxId", taxid);
+        BioSourceDao bioSourceDao = DaoFactory.getBioSourceDao();
+        Collection results = bioSourceDao.getByTaxonId(taxid);
+//        Collection results = helper.search(BioSource.class.getName(), "taxId", taxid);
         // AC of the current biosource.
         String ac = user.getView().getAc();
 
@@ -221,7 +222,7 @@ public class BioSourceAction extends AbstractEditorAction {
         CvDatabase db = CvHelper.getNewt();
         // The qualifier is identity
         CvXrefQualifier xqual = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByShortLabel( "identity");
-        return new Xref(getService().getOwner(), db, taxid, label, null, xqual);
+        return new BioSourceXref(getService().getOwner(), db, taxid, label, null, xqual);
     }
 
 
