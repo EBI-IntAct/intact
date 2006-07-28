@@ -14,7 +14,16 @@ import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
+import uk.ac.ebi.intact.application.editor.struts.view.sm.SmallMoleculeViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.sequence.NucleicAcidViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.sequence.ProteinViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.sequence.SequenceViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.cv.CvViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentActionForm;
+import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
 import uk.ac.ebi.intact.application.commons.util.DateToolbox;
 import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
 import uk.ac.ebi.intact.business.IntactException;
@@ -306,7 +315,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         // We test that the xref has a valid primaryId, has the hasValidPrimaryId is already implemented in
         // uk.ac.ebi.intact.model.Xref, out of the XreferenceBean we create an xref and use its method hasValidPrimaryId
         // If if return false we display the error.
-        Xref xref = createXref(xb);
+        Xref xref = createXref(xb, view);
         if(!xref.hasValidPrimaryId()){
             ActionErrors errors = new ActionErrors();
             errors.add("new.xref", new ActionError("error.xref.pid.not.valid"));
@@ -334,13 +343,31 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
      * @throws IntactException
      */
 
-    public Xref createXref(XreferenceBean xb) throws IntactException {
+    public Xref createXref(XreferenceBean xb, AbstractEditViewBean view) throws IntactException {
         Institution institution = DaoFactory.getInstitutionDao().getInstitution();//new Institution("ebi");
         CvObjectDao cvObjectDao = DaoFactory.getCvObjectDao();
         //IntactHelper helper = IntactHelperUtil.getDefaultIntactHelper();
         CvDatabase cvDatabase = (CvDatabase) cvObjectDao.getByShortLabel(xb.getDatabase());//CvDatabase) helper.getObjectByLabel(CvDatabase.class , xb.getDatabase()));
         CvXrefQualifier cvXrefQualifier = (CvXrefQualifier) cvObjectDao.getByShortLabel(xb.getQualifier());//new CvXrefQualifier(institution, xb.getQualifier());
-        Xref xref = new Xref(institution,cvDatabase,xb.getPrimaryId(),xb.getSecondaryId(),xb.getReleaseNumber(),cvXrefQualifier);
+        Xref xref;
+        if( view instanceof BioSourceViewBean ){
+            xref = new BioSourceXref(institution,cvDatabase,xb.getPrimaryId(),xb.getSecondaryId(),xb.getReleaseNumber(),cvXrefQualifier);
+        } else if ( view instanceof CvViewBean ){
+            xref = new CvObjectXref(institution,cvDatabase,xb.getPrimaryId(),xb.getSecondaryId(),xb.getReleaseNumber(),cvXrefQualifier);
+        } else if ( view instanceof ExperimentViewBean ){
+            xref = new ExperimentXref(institution,cvDatabase,xb.getPrimaryId(),xb.getSecondaryId(),xb.getReleaseNumber(),cvXrefQualifier);
+        } else if ( view instanceof FeatureViewBean ){
+            xref = new FeatureXref(institution,cvDatabase,xb.getPrimaryId(),xb.getSecondaryId(),xb.getReleaseNumber(),cvXrefQualifier);
+        } else if ( view instanceof InteractionViewBean ||
+                    view instanceof NucleicAcidViewBean ||
+                    view instanceof ProteinViewBean ||
+                    view instanceof SequenceViewBean ||
+                    view instanceof SmallMoleculeViewBean ){
+            xref = new InteractorXref(institution,cvDatabase,xb.getPrimaryId(),xb.getSecondaryId(),xb.getReleaseNumber(),cvXrefQualifier);
+        }
+        else{
+            throw new IntactException("Not known AbstractEditViewBean sub-classes : " + view.getClass().getName());
+        }
         return xref;
     }
 
