@@ -25,6 +25,7 @@
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/current/</url>
     </scm>
 
+   
     <modules>
         <module>maven</module>
         <module>plugins</module>
@@ -40,7 +41,7 @@
     </modules>
 
     <build>
-        <defaultGoal>install</defaultGoal>
+        <defaultGoal>clean install</defaultGoal>
     </build>
 
     <profiles>

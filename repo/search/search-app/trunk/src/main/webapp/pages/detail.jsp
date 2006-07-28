@@ -561,7 +561,7 @@
 
     <!-- dissociation constant -->
     <td class="data" style="vertical-align: top;" rowspan="1" colspan="5">
-        <%= ( interaction.getKD() != null ) ? interaction.getKD().toString() : "-" %>
+        <%= ( interaction.getKD() != null && interaction.getKD() != 0F ) ? interaction.getKD().toString() : "-" %>
     </td>
 </tr>
 
