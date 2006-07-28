@@ -36,6 +36,7 @@
             <plugin>
                 <groupId>uk.ac.ebi.intact.hibernate</groupId>
                 <artifactId>maven-hibernateconfig-plugin</artifactId>
+                <version>1.1-SNAPSHOT</version>
                 <configuration>
                     <dialect>org.hibernate.dialect.H2Dialect</dialect>
                     <driver>org.h2.Driver</driver>
@@ -43,6 +44,7 @@
                     <user>sa</user>
                     <password></password>
                     <hbm2ddlAuto>create</hbm2ddlAuto>
+                    <scope>test</scope>
                     <hibernateEvents>
                         <hibernateEvent>
                             <type>pre-insert</type>
