@@ -7,9 +7,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.cv;
 
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvObject;
@@ -54,7 +52,7 @@ public class CvViewBean extends AbstractEditViewBean<CvObject> {
 
     // Implements abstract methods
     @Override
-    protected void updateAnnotatedObject(IntactHelper helper) throws IntactException {
+    protected void updateAnnotatedObject(IntactHelper helper) throws IntactException{
         // The current CV object.
         CvObject cvobj = getAnnotatedObject();
 
