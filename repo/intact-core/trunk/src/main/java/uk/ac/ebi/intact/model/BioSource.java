@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.hibernate.annotations.Cascade;
+import org.hibernate.lucene.Indexed;
 
 /**
  * Represents a biological source. TODO write a proper comment
@@ -23,6 +24,7 @@ import org.hibernate.annotations.Cascade;
 @Table(name = "ia_biosource")
 @AssociationOverride(name = "annotations",
                      joinColumns = {@JoinColumn(name="annotation_ac")} )
+@Indexed(index = "lucene-indexes/intact-objects")
 @EditorTopic
 public class BioSource extends AnnotatedObjectImpl<BioSourceXref> implements Editable {
 

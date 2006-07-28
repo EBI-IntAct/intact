@@ -6,6 +6,7 @@
 package uk.ac.ebi.intact.model;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.lucene.Keyword;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -74,6 +75,7 @@ public abstract class IntactObjectImpl implements IntactObject, Serializable,
     @GeneratedValue(generator="intact-id-generator")
     @GenericGenerator(name="intact-id-generator", strategy = "uk.ac.ebi.intact.model.IntactIdGenerator")
     @Column(length = 30)
+    @Keyword(id=true)
     public String getAc() {
         return ac;
     }
