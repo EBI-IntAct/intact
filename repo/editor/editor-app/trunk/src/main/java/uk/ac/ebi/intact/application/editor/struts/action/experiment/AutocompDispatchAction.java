@@ -345,7 +345,7 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
                 Experiment exp = helper.getObjectByAc(Experiment.class, expAc);
                 Collection<ExperimentXref> xrefs = exp.getXrefs();
 
-                for (Xref xref : xrefs) {
+                for (ExperimentXref xref : xrefs) {
                     if(CvDatabase.PUBMED.equals(xref.getCvDatabase().getShortLabel()) && CvXrefQualifier.PRIMARY_REFERENCE.equals(xref.getCvXrefQualifier().getShortLabel()) && false==pubmedId.equals(xref.getPrimaryId())){
                         if(helper.isPersistent(xref)){
                             xref.setPrimaryId(pubmedId);
@@ -501,7 +501,7 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
         Xref pubmedXref;
         CvXrefQualifier primaryRefQualifier = helper.getObjectByLabel( CvXrefQualifier.class, CvXrefQualifier.PRIMARY_REFERENCE );
         CvDatabase pubmedDatabase= helper.getObjectByLabel(CvDatabase.class, CvDatabase.PUBMED);
-        pubmedXref=new Xref(getService().getOwner(),pubmedDatabase,pubmedId,"","",primaryRefQualifier);
+        pubmedXref=new ExperimentXref(getService().getOwner(),pubmedDatabase,pubmedId,"","",primaryRefQualifier);
         return pubmedXref;
     }
 
