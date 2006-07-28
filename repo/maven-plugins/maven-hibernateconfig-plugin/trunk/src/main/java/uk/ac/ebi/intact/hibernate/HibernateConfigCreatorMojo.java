@@ -14,6 +14,7 @@ import org.apache.maven.project.MavenProjectHelper;
 import java.io.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Generates a properties file with the topic names as keys and the classes as values
@@ -51,7 +52,7 @@ public class HibernateConfigCreatorMojo
 
     /**
      * The path where the file will be situated inside the classes build directory
-     * @parameter default-value="target/hibernate-config"
+     * @parameter default-value="target/hibernate/config"
      * @required
      */
     private String targetPath;
@@ -139,6 +140,12 @@ public class HibernateConfigCreatorMojo
      */
     private List<HibernateEvent> hibernateEvents;
 
+    /**
+     * The absolute path where the lucene index used can be found
+     * @parameter
+     */
+    private String luceneIndexDir;
+
     private String hibernateEventsAsString = "";
 
     public void execute() throws MojoExecutionException
@@ -148,6 +155,17 @@ public class HibernateConfigCreatorMojo
         if (password == null)
         {
             password = "";
+        }
+
+        if (luceneIndexDir != null)
+        {
+             if (hibernateEvents == null)
+             {
+                 hibernateEvents = new ArrayList<HibernateEvent>();
+             }
+            hibernateEvents.add(new HibernateEvent("post-commit-update", "org.hibernate.lucene.event.LuceneEventListener"));
+            hibernateEvents.add(new HibernateEvent("post-commit-insert", "org.hibernate.lucene.event.LuceneEventListener"));
+            hibernateEvents.add(new HibernateEvent("post-commit-delete", "org.hibernate.lucene.event.LuceneEventListener"));
         }
 
         if (hibernateEvents != null && !hibernateEvents.isEmpty())
@@ -195,10 +213,12 @@ public class HibernateConfigCreatorMojo
         if (scope.equalsIgnoreCase("test"))
         {
             // add the config only in test
+            getLog().debug("Adding hibernate config file to tests");
             helper.addTestResource(project, outputFile.getParent(), includes, excludes);
         }
         else
         {
+            getLog().debug("Adding hibernate config file to output classes: "+outputFile.getParent()+" "+filename);
             helper.addResource(project, outputFile.getParent(), includes, excludes);
         }
 
@@ -231,6 +251,13 @@ public class HibernateConfigCreatorMojo
         line = line.replaceAll("\\$\\{show_sql\\}", String.valueOf(showSql));
         line = line.replaceAll("\\$\\{hbm2ddl\\.auto\\}", hbm2ddlAuto);
         line = line.replaceAll("\\$\\{hibernateEvents\\}", hibernateEventsAsString);
+
+        if (luceneIndexDir == null)
+        {
+            luceneIndexDir = "target/hibernate/lucene-index";
+        }
+
+        line = line.replaceAll("\\$\\{lucene.index_dir\\}", luceneIndexDir);
 
         return line;
     }

@@ -20,6 +20,16 @@ public class HibernateEvent
     private String className;
 
 
+    public HibernateEvent()
+    {
+    }
+
+    public HibernateEvent(String type, String className)
+    {
+        this.type = type;
+        this.className = className;
+    }
+
     public String getType()
     {
         return type;
