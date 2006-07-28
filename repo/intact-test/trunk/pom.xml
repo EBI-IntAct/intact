@@ -45,6 +45,7 @@
                     <password></password>
                     <hbm2ddlAuto>create</hbm2ddlAuto>
                     <scope>test</scope>
+                    <luceneIndexDir>${project.basedir}/target/lucene-index</luceneIndexDir>
                     <hibernateEvents>
                         <hibernateEvent>
                             <type>pre-insert</type>
@@ -85,6 +86,11 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-annotations</artifactId>
             <version>3.2.0.cr2-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>2.0.0</version>
         </dependency>
 
     </dependencies>
