@@ -146,6 +146,12 @@ public class HibernateConfigCreatorMojo
      */
     private String luceneIndexDir;
 
+    /**
+     * The lucene analyzer class (default, the class name of the @Indexed entity)
+     * @parameter
+     */
+    private String luceneAnalyzer;
+
     private String hibernateEventsAsString = "";
 
     public void execute() throws MojoExecutionException
@@ -230,9 +236,8 @@ public class HibernateConfigCreatorMojo
 
         for (HibernateEvent hibernateEvent : hibernateEvents)
         {
-            sb.append("<event type=\""+hibernateEvent.getType()+"\">\n" +
-                    "            <listener\n" +
-                    "              class=\""+hibernateEvent.getClassName()+"\"/>\n" +
+            sb.append("        <event type=\""+hibernateEvent.getType()+"\">\n" +
+                    "            <listener class=\""+hibernateEvent.getClassName()+"\"/>\n" +
                     "        </event>\n");
         }
 
@@ -252,14 +257,20 @@ public class HibernateConfigCreatorMojo
         line = line.replaceAll("\\$\\{hbm2ddl\\.auto\\}", hbm2ddlAuto);
         line = line.replaceAll("\\$\\{hibernateEvents\\}", hibernateEventsAsString);
 
-        if (luceneIndexDir == null)
-        {
-            luceneIndexDir = "target/hibernate/lucene-index";
-        }
+        line = line.replaceAll("\\$\\{lucene.index_dir\\}",
+               createPropertyLine("hibernate.lucene.index_dir", luceneIndexDir, "Lucene index dir"));
+        line = line.replaceAll("\\$\\{lucene.analyzer\\}",
+               createPropertyLine("hibernate.lucene.analyzer", luceneAnalyzer, "Lucene analyser") );
 
-        line = line.replaceAll("\\$\\{lucene.index_dir\\}", luceneIndexDir);
 
         return line;
+    }
+
+    private String createPropertyLine(String name, String value, String comments)
+    {
+        if (value == null) return "";
+
+        return "<!-- "+comments+" -->\n        <property name=\""+name+"\">"+value+"</property>";
     }
 
 }
