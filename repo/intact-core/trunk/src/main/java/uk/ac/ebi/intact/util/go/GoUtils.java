@@ -738,7 +738,7 @@ public class GoUtils {
         } else {
             if ( deleteold ) {
                 // Delete all old data
-                DaoFactory.getXrefDao().deleteAll( current.getXrefs() );
+                DaoFactory.getXrefDao(CvObjectXref.class).deleteAll( current.getXrefs() );
                 current.getXrefs().clear();
                 DaoFactory.getAnnotationDao().deleteAll( current.getAnnotations() );
                 current.getAnnotations().clear();
