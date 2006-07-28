@@ -318,7 +318,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clover-plugin</artifactId>
             </plugin>
-
+             <!--
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
@@ -327,7 +327,7 @@
                     <threshold>Normal</threshold>
                 </configuration>
             </plugin>
-            <!--
+
             <plugin>
                 <artifactId>maven-pmd-plugin</artifactId>
                 <version>2.1-SNAPSHOT</version>
