@@ -28,7 +28,7 @@
                  uk.ac.ebi.intact.application.statisticView.business.data.StatisticHelper"%>
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="http://jakarta.apache.org/struts/tags-bean" prefix="bean"%>
 
 <%
     Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
@@ -67,7 +67,7 @@
         <tr>
           <th colspan="2">
              <div align="left">
-                <strong><bean:message key="sidebar.filter.section.title1"/></strong>
+                <strong><bean:message bundle="main" key="sidebar.filter.section.title1"/></strong>
              </div>
           </th>
         </tr>
@@ -90,7 +90,7 @@
                    <td align="right">
 
                        <html:submit property="action" titleKey="filter.button.submit.title">
-                            <bean:message key="filter.button.submit.title"/>
+                            <bean:message bundle="main" key="filter.button.submit.title"/>
                        </html:submit>
                  </td>
                </tr>
@@ -99,7 +99,7 @@
 
               <hr>
 
-                <b><bean:message key="sidebar.filter.section.title2"/></b><br>
+                <b><bean:message bundle="main" key="sidebar.filter.section.title2"/></b><br>
 
                    <%
                       String start = request.getParameter( "start" );
@@ -115,7 +115,7 @@
                <table>
                   <tr>
                      <td valign="top" align="right">
-                        <bean:message key="filter.label.from"/>
+                        <bean:message bundle="main" key="filter.label.from"/>
                      </td>
                      <td>
                         <html:text property="start" value="<%= startValue %>" size="12" maxlength="11" />
@@ -126,7 +126,7 @@
 
                   <tr>
                     <td valign="top" align="right">
-                       <bean:message key="filter.label.to"/>
+                       <bean:message bundle="main" key="filter.label.to"/>
                     </td>
                     <td>
                        <html:text property="stop" value="<%= stopValue %>" size="12" maxlength="11" />
@@ -137,7 +137,7 @@
                   <tr>
                     <td colspan="2" align="right">
                        <html:submit property="action" titleKey="filter.button.submit.title">
-                            <bean:message key="filter.button.submit.title"/>
+                            <bean:message bundle="main" key="filter.button.submit.title"/>
                        </html:submit>
                     </td>
                   </tr>

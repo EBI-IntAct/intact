@@ -9,7 +9,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jfree.chart.JFreeChart;
 import uk.ac.ebi.intact.application.statisticView.business.model.BioSourceStatistics;
-import uk.ac.ebi.intact.application.statisticView.business.model.ExperimentStatistics;
 import uk.ac.ebi.intact.application.statisticView.business.model.IdentificationMethodStatistics;
 import uk.ac.ebi.intact.application.statisticView.business.model.IntactStatistics;
 import uk.ac.ebi.intact.application.statisticView.business.persistence.dao.StatsDaoFactory;
@@ -110,14 +109,6 @@ public class StatisticHelper {
         ChartBuilder chartBuilder = new ChartBuilder();
         JFreeChart chart = chartBuilder.binaryInteractionsPerOrganism( toSort );
         return chart;
-    }
-
-    public JFreeChart getEvidenceChart( String start ) throws IntactException {
-        ChartBuilder chartBuilder = new ChartBuilder();
-        Collection<ExperimentStatistics> intactStatistics =
-                    StatsDaoFactory.getStatsBaseDao(ExperimentStatistics.class).getAll();
-        JFreeChart result = chartBuilder.evidencePerExperiment( intactStatistics );
-        return result;
     }
 
     private List getIntactStatistics() throws IntactException {

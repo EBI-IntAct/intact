@@ -31,4 +31,14 @@
             <tiles:insert attribute="menu" ignore="true"/>
         </td>
 	</tr>
+
+    <%-- The footer --%>
+    <%-- Sidebar footer --%>
+    <tr>
+        <span class="footer">
+            <td valign="top" height="5%">
+                <tiles:insert attribute="footer" ignore="true"/>
+            </td>
+        </span>
+    </tr>
 </table>

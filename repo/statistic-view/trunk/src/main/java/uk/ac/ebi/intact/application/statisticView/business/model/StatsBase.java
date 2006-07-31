@@ -23,7 +23,7 @@ import java.sql.Timestamp;
 public class StatsBase
 {
 
-    private static final Log log = LogFactory.getLog(StatsBase.class);
+    private static Log log = LogFactory.getLog(StatsBase.class);
 
     private int ac;
     private Timestamp timestamp;
@@ -33,7 +33,7 @@ public class StatsBase
         return (this.ac);
     }
 
-    public void setAc(final int ac) {
+    public void setAc(int ac) {
         this.ac = ac;
     }
 
@@ -41,7 +41,7 @@ public class StatsBase
         return (this.timestamp);
     }
 
-    public void setTimestamp(final Timestamp timeStamp) {
+    public void setTimestamp(Timestamp timeStamp) {
         this.timestamp = timeStamp;
     }
 
