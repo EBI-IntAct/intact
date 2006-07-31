@@ -12,7 +12,7 @@ PROMPT
 PROMPT *********************************************************************************/
 PROMPT Creating synonims and Grants
 PROMPT
-@create_synonims_and_grants.sql
+@create_synonyms_and_grants.sql
 
 UPDATE ia_db_info
 set value = '1.2.2'
