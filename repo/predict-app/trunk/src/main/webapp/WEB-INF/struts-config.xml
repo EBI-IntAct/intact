@@ -94,6 +94,7 @@
     <!-- ========== Message Resources Definitions =========================== -->
 
     <message-resources parameter="uk.ac.ebi.intact.application.predict.MessageResources"/>
+    <message-resources key="buildInfo" parameter="uk.ac.ebi.intact.application.predict.BuildInfo"/>
 
     <!-- ============ Plug Ins Configuration ================================== -->
 
