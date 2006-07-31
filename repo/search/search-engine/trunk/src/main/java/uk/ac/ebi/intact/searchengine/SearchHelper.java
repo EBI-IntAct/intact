@@ -93,7 +93,7 @@ public class SearchHelper implements SearchHelperI {
         boolean itemFound = false;
         for (String subQuery : queries)
         {
-            logger.info("Search for subquery: " + subQuery);
+            logger.info("Search for subquery '" + subQuery+"' in search classes: "+searchClasses);
 
             final int size = searchClasses.size();
             for (int i = 0; i < size; i++)
@@ -112,8 +112,10 @@ public class SearchHelper implements SearchHelperI {
                     }
                 }
 
+                logger.debug("Searching for '"+subQuery+"' of search class: "+searchClass.getMappedClass());
+
                 Collection<? extends IntactObject> subResult = doSearch(searchClass, subQuery, user);
-                logger.info("sub result count: " + subResult.size());
+                logger.debug("sub result count: " + subResult.size());
 
                 if (subResult.size() > 0)
                 {
@@ -257,7 +259,7 @@ public class SearchHelper implements SearchHelperI {
 
         if (results.isEmpty()) {
             // No matches found - try a search by label now...
-            logger.info("no match found for " + mappedClass + " with ac= " + value);
+            logger.info("no match found for " + mappedClass + " with ac = '" + value+"'");
             logger.info("now searching for class " + mappedClass + " with label " + value);
 
             results = dao.getByShortLabelLike(value);
