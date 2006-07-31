@@ -163,12 +163,12 @@ public class SearchObjectIndexer {
         CvSearchObject cvInterType = interaction.getCvInteractionsType();
         // only add the CvInteractionType to the document, if it really exists
         if ( cvInterType != null ) {
-            doc.add( Field.Text( SearchEngineConstants.INTERACTION_TYPE_AC, cvInterType.getAc() ) );
+                 doc.add( new Field( SearchEngineConstants.INTERACTION_TYPE_AC, cvInterType.getAc(), Field.Store.YES, Field.Index.UN_TOKENIZED ) );
             if ( cvInterType.getShortLabel() != null ) {
-                doc.add( Field.Text( SearchEngineConstants.INTERACTION_TYPE_SHORTLABEL, cvInterType.getShortLabel() ) );
+                doc.add( new Field( SearchEngineConstants.INTERACTION_TYPE_SHORTLABEL, cvInterType.getShortLabel(), Field.Store.YES, Field.Index.UN_TOKENIZED ) );
             }
             if ( cvInterType.getFullName() != null ) {
-                doc.add( Field.Text( SearchEngineConstants.INTERACTION_TYPE_FULLNAME, cvInterType.getFullName() ) );
+                doc.add( new Field( SearchEngineConstants.INTERACTION_TYPE_FULLNAME, cvInterType.getFullName(), Field.Store.YES, Field.Index.UN_TOKENIZED ) );
             }
         }
         return doc;
@@ -192,12 +192,12 @@ public class SearchObjectIndexer {
         CvSearchObject cvIdent = experiment.getCvIdentification();
         // only add the CvIdentification to the document, if it really exists
         if ( cvIdent != null ) {
-            doc.add( Field.Text( SearchEngineConstants.IDENT_AC, cvIdent.getAc() ) );
+            doc.add( new Field( SearchEngineConstants.IDENT_AC, cvIdent.getAc(), Field.Store.YES, Field.Index.UN_TOKENIZED ) );
             if ( cvIdent.getShortLabel() != null ) {
-                doc.add( Field.Text( SearchEngineConstants.IDENT_SHORTLABEL, cvIdent.getShortLabel() ) );
+                doc.add( new Field( SearchEngineConstants.IDENT_SHORTLABEL, cvIdent.getShortLabel(), Field.Store.YES, Field.Index.UN_TOKENIZED) );
             }
             if ( cvIdent.getFullName() != null ) {
-                doc.add( Field.Text( SearchEngineConstants.IDENT_FULLNAME, cvIdent.getFullName() ) );
+                doc.add( new Field( SearchEngineConstants.IDENT_FULLNAME, cvIdent.getFullName(), Field.Store.YES, Field.Index.UN_TOKENIZED ) );
             }
         }
 
@@ -205,12 +205,12 @@ public class SearchObjectIndexer {
         CvSearchObject cvInter = experiment.getCvInteraction();
         // only add the CvInteraction to the document, if it really exists
         if ( cvInter != null ) {
-            doc.add( Field.Text( SearchEngineConstants.INTERACTION_AC, cvInter.getAc() ) );
+            doc.add( new Field( SearchEngineConstants.INTERACTION_AC, cvInter.getAc(), Field.Store.YES, Field.Index.UN_TOKENIZED ) );
             if ( cvInter.getShortLabel() != null ) {
-                doc.add( Field.Text( SearchEngineConstants.INTERACTION_SHORTLABEL, cvInter.getShortLabel() ) );
+                doc.add( new Field( SearchEngineConstants.INTERACTION_SHORTLABEL, cvInter.getShortLabel(), Field.Store.YES, Field.Index.UN_TOKENIZED ) );
             }
             if ( cvInter.getFullName() != null ) {
-                doc.add( Field.Text( SearchEngineConstants.INTERACTION_FULLNAME, cvInter.getFullName() ) );
+                doc.add( new Field( SearchEngineConstants.INTERACTION_FULLNAME, cvInter.getFullName(), Field.Store.YES, Field.Index.UN_TOKENIZED ) );
             }
         }
         return doc;
@@ -252,12 +252,12 @@ public class SearchObjectIndexer {
         CvSearchObject cvIdent = experiment.getCvIdentification();
         // only add the CvIdentification to the document, if it really exists
         if ( cvIdent != null ) {
-            doc.add( Field.Text( SearchEngineConstants.IDENT_AC, cvIdent.getAc() ) );
+            doc.add( new Field( SearchEngineConstants.IDENT_AC, cvIdent.getAc(), Field.Store.YES, Field.Index.UN_TOKENIZED ) );
             if ( cvIdent.getShortLabel() != null ) {
-                doc.add( Field.Text( SearchEngineConstants.IDENT_SHORTLABEL, cvIdent.getShortLabel() ) );
+                doc.add( new Field( SearchEngineConstants.IDENT_SHORTLABEL, cvIdent.getShortLabel(), Field.Store.YES, Field.Index.UN_TOKENIZED ) );
             }
             if ( cvIdent.getFullName() != null ) {
-                doc.add( Field.Text( SearchEngineConstants.IDENT_FULLNAME, cvIdent.getFullName() ) );
+                doc.add( new Field( SearchEngineConstants.IDENT_FULLNAME, cvIdent.getFullName(), Field.Store.YES, Field.Index.UN_TOKENIZED ) );
             }
         }
 
@@ -265,12 +265,12 @@ public class SearchObjectIndexer {
         CvSearchObject cvInter = experiment.getCvInteraction();
         // only add the CvInteraction to the document, if it really exists
         if ( cvInter != null ) {
-            doc.add( Field.Text( SearchEngineConstants.INTERACTION_AC, cvInter.getAc() ) );
+            doc.add( new Field( SearchEngineConstants.INTERACTION_AC, cvInter.getAc(), Field.Store.YES, Field.Index.UN_TOKENIZED ) );
             if ( cvInter.getShortLabel() != null ) {
-                doc.add( Field.Text( SearchEngineConstants.INTERACTION_SHORTLABEL, cvInter.getShortLabel() ) );
+                doc.add( new Field( SearchEngineConstants.INTERACTION_SHORTLABEL, cvInter.getShortLabel(), Field.Store.YES, Field.Index.UN_TOKENIZED ) );
             }
             if ( cvInter.getFullName() != null ) {
-                doc.add( Field.Text( SearchEngineConstants.INTERACTION_FULLNAME, cvInter.getFullName() ) );
+                doc.add( new Field( SearchEngineConstants.INTERACTION_FULLNAME, cvInter.getFullName(), Field.Store.YES, Field.Index.UN_TOKENIZED ) );
             }
         }
         // write the document to the index
@@ -296,12 +296,12 @@ public class SearchObjectIndexer {
         CvSearchObject cvInterType = interaction.getCvInteractionsType();
         // only add the CvInteraction to the document, if it really exists
         if ( cvInterType != null ) {
-            doc.add( Field.Text( SearchEngineConstants.INTERACTION_TYPE_AC, cvInterType.getAc() ) );
+            doc.add( new Field( SearchEngineConstants.INTERACTION_TYPE_AC, cvInterType.getAc(), Field.Store.YES, Field.Index.UN_TOKENIZED ) );
             if ( cvInterType.getShortLabel() != null ) {
-                doc.add( Field.Text( SearchEngineConstants.INTERACTION_TYPE_SHORTLABEL, cvInterType.getShortLabel() ) );
+                doc.add( new Field( SearchEngineConstants.INTERACTION_TYPE_SHORTLABEL, cvInterType.getShortLabel(), Field.Store.YES, Field.Index.UN_TOKENIZED ) );
             }
             if ( cvInterType.getFullName() != null ) {
-                doc.add( Field.Text( SearchEngineConstants.INTERACTION_TYPE_FULLNAME, cvInterType.getFullName() ) );
+                doc.add( new Field( SearchEngineConstants.INTERACTION_TYPE_FULLNAME, cvInterType.getFullName(), Field.Store.YES, Field.Index.UN_TOKENIZED ));
             }
         }
         this.writeDocument( doc );
@@ -372,16 +372,16 @@ public class SearchObjectIndexer {
     private Document addSearchObjectFields( final Document doc, final SearchObject searchObject ) {
 
 
-        doc.add( Field.Text( SearchEngineConstants.AC, searchObject.getAc() ) );
+        doc.add( new Field( SearchEngineConstants.AC, searchObject.getAc(), Field.Store.YES, Field.Index.UN_TOKENIZED ) );
         // it is not allowed to index a field with null, therefore check if it is not null
         if ( searchObject.getShortLabel() != null ) {
-            doc.add( Field.Text( SearchEngineConstants.SHORTLABEL, searchObject.getShortLabel() ) );
+            doc.add( new Field( SearchEngineConstants.SHORTLABEL, searchObject.getShortLabel(), Field.Store.YES, Field.Index.UN_TOKENIZED ) );
         }
         if ( searchObject.getFullName() != null ) {
-            doc.add( Field.Text( SearchEngineConstants.FULLNAME, searchObject.getFullName() ) );
+            doc.add( new Field( SearchEngineConstants.FULLNAME, searchObject.getFullName(), Field.Store.YES, Field.Index.UN_TOKENIZED ) );
         }
         if ( searchObject.getObjClass() != null ) {
-            doc.add( Field.Text( SearchEngineConstants.OBJCLASS, searchObject.getObjClass() ) );
+            doc.add( new Field( SearchEngineConstants.OBJCLASS, searchObject.getObjClass(), Field.Store.YES, Field.Index.UN_TOKENIZED ) );
         }
         if ( searchObject.getAnnotations().isEmpty() == false ) {
             this.addAnnotations( doc, searchObject.getAnnotations() );
@@ -421,9 +421,9 @@ public class SearchObjectIndexer {
                 for ( Iterator iterator = value.iterator(); iterator.hasNext(); ) {
                     String content = (String) iterator.next();
                     // the key is the cvTopic of the annotation
-                    doc.add( Field.Text( key, content ) );
+                    doc.add( new Field( key, content, Field.Store.YES, Field.Index.UN_TOKENIZED ) );
                     // add all values to the field 'annotation'
-                    doc.add( Field.Text( SearchEngineConstants.ANNOTATION, content ) );
+                    doc.add( new Field( SearchEngineConstants.ANNOTATION, content, Field.Store.YES, Field.Index.UN_TOKENIZED ) );
                 }
             }
         }
@@ -455,9 +455,9 @@ public class SearchObjectIndexer {
                 for ( Iterator iterator = value.iterator(); iterator.hasNext(); ) {
                     String content = (String) iterator.next();
                     //the lucene document field is named after the name of the database
-                    doc.add( Field.Text( key, content ) );
+                    doc.add( new Field( key, content, Field.Store.YES, Field.Index.UN_TOKENIZED ) );
                     // add all values to the field xrefs
-                    doc.add( Field.Text( SearchEngineConstants.XREF, content ) );
+                    doc.add( new Field( SearchEngineConstants.XREF, content, Field.Store.YES, Field.Index.UN_TOKENIZED ) );
                 }
             }
         }
@@ -490,9 +490,9 @@ public class SearchObjectIndexer {
                 for ( Iterator iterator = value.iterator(); iterator.hasNext(); ) {
                     String content = (String) iterator.next();
                     // the lucene document is named after the alias type
-                    doc.add( Field.Text( key, content ) );
+                    doc.add( new Field( key, content, Field.Store.YES, Field.Index.UN_TOKENIZED ) );
                     // add all values to the field alias
-                    doc.add( Field.Text( SearchEngineConstants.ALIAS, content ) );
+                    doc.add( new Field( SearchEngineConstants.ALIAS, content, Field.Store.YES, Field.Index.UN_TOKENIZED ) );
                 }
             }
         }
@@ -511,7 +511,7 @@ public class SearchObjectIndexer {
 
             try {
                 writer = new IndexWriter( index, analyzer, false );
-                writer.mergeFactor = 100;
+                writer.setMergeFactor(100);
                 writer.addDocument( doc );
                 writer.optimize();
                 writer.close();
@@ -532,7 +532,7 @@ public class SearchObjectIndexer {
             final IndexWriter writer;
             try {
                 writer = new IndexWriter( index, analyzer, false );
-                writer.mergeFactor = 100;
+                writer.setMergeFactor(100);
                 writer.addIndexes( dir );
                 writer.optimize();
                 writer.close();
