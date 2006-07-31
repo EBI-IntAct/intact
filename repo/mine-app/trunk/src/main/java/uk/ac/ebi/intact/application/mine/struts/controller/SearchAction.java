@@ -204,8 +204,8 @@ public class SearchAction extends Action {
             throws IntactException {
         AmbiguousBean ab = new AmbiguousBean();
         ab.setProteins( sh.doLookup( SearchClass.PROTEIN, ac, user ) );
-        //ab.setInteractions( sh.doLookup( SearchClass.INTERACTION, ac, user ) );
-        //ab.setExperiments( sh.doLookup( SearchClass.EXPERIMENT, ac, user ) );
+        ab.setInteractions( sh.doLookup( SearchClass.INTERACTION, ac, user ) );
+        ab.setExperiments( sh.doLookup( SearchClass.EXPERIMENT, ac, user ) );
         return ab;
     }
 

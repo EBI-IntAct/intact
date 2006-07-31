@@ -33,8 +33,12 @@
 	</action-mappings>
 	<!-- ========== Plug Ins Configuration ================================== -->
 	<message-resources parameter="config.Struts"/>
-	
-	<!--
+
+    <!-- ========== Message Resources ================================== -->
+
+    <message-resources key="buildInfo" parameter="uk.ac.ebi.intact.app.mine.BuildInfo"/>
+
+    <!--
         Add multiple validator resource files by setting the pathnames property
         with a comma delimitted list of resource files to load.
     -->

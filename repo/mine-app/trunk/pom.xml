@@ -14,14 +14,14 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-master-webapp</artifactId>
-        <version>1.0</version>
+        <version>1.1-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.ac.ebi.intact.app</groupId>
     <artifactId>mine-app</artifactId>
     <packaging>war</packaging>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1.0-rc1</version>
     <name>Mine</name>
     <description>Mine application</description>
 
@@ -35,7 +35,7 @@
         <dependency>
             <groupId>uk.ac.ebi.intact.app.search</groupId>
             <artifactId>search-engine</artifactId>
-            <version>1.0.1</version>
+            <version>1.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -43,6 +43,22 @@
             <artifactId>shiftone-cache</artifactId>
             <version>2.0b</version>
         </dependency>
+        
+        <dependency>
+              <groupId>displaytag</groupId>
+              <artifactId>displaytag</artifactId>
+              <version>1.0-unknown</version>
+          </dependency>
+          <dependency>
+              <groupId>taglibs</groupId>
+              <artifactId>standard</artifactId>
+              <version>1.0</version>
+          </dependency>
+          <dependency>
+              <groupId>jstl</groupId>
+              <artifactId>jstl</artifactId>
+              <version>1.0</version>
+          </dependency>
     </dependencies>
 
 
