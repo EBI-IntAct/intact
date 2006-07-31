@@ -40,7 +40,7 @@
                         <artifactId>maven-jetty6-plugin</artifactId>
                         <configuration>
                             <scanIntervalSeconds>10</scanIntervalSeconds>
-                            <contextPath>intact/target</contextPath>
+                            <contextPath>intact/${build.finalName}</contextPath>
                         </configuration>
                     </plugin>
                 </plugins>
