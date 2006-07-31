@@ -28,6 +28,7 @@
         <!-- <put name="filter" value="/layouts/sidebar.jsp"/> -->
         <put name="menu" value="stat.menu.links"/>
         <put name="filter" value="/pages/sidebarFilter.jsp"/>
+        <put name="footer" value="/pages/sidebarFooter.jsp" />
     </definition>
 
     <!-- ============ Definitions of StatisticView screens ================= -->

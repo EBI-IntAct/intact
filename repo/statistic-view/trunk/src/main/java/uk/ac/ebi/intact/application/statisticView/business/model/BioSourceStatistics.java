@@ -39,34 +39,34 @@ public class BioSourceStatistics extends StatsBase implements Comparable {
         this.shortlabel = shortlabel;
     }
 
-    public final String getTaxId() {
+    public String getTaxId() {
         return taxId;
     }
 
-    public final void setTaxId(String taxId) {
+    public void setTaxId(String taxId) {
         this.taxId = taxId;
     }
 
     @Column(name = "binary_interactions")
-    public final int getBinaryInteractions() {
+    public int getBinaryInteractions() {
         return binaryInteractions;
     }
 
-    public final void setBinaryInteractions(int binaryInteractions) {
+    public void setBinaryInteractions(int binaryInteractions) {
         this.binaryInteractions = binaryInteractions;
     }
 
     @Column(name = "protein_number")
-    public final int getProteinNumber() {
+    public int getProteinNumber() {
         return proteinNumber;
     }
 
-    public final void setProteinNumber(int proteinNumber) {
+    public void setProteinNumber(int proteinNumber) {
         this.proteinNumber = proteinNumber;
     }
 
-    public final int compareTo(Object o) {
-        //  final Timestamp t = ( (BioSourceStatistics) o ).getUpdated();
+    public int compareTo(Object o) {
+        //  Timestamp t = ( (BioSourceStatistics) o ).getUpdated();
 
         BioSourceStatistics bs = null;
         if( o instanceof BioSourceStatistics ) {

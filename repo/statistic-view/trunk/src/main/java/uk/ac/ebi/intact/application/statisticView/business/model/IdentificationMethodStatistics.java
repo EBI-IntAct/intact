@@ -15,7 +15,7 @@ import javax.persistence.Table;
  * @version identificationMethods.java Date: Feb 18, 2005 Time: 1:06:33 PM
  */
 @Entity
-@Table(name = "ia_detectionmethodstatistics")
+@Table(name = "ia_detectionmethodsstatistics")
 public class IdentificationMethodStatistics extends StatsBase implements Comparable {
 
     private String detectionName;
@@ -43,7 +43,7 @@ public class IdentificationMethodStatistics extends StatsBase implements Compara
     }
 
     public int compareTo(Object o) {
-        final String detectionName = ((IdentificationMethodStatistics) o).getDetectionName();
+        String detectionName = ((IdentificationMethodStatistics) o).getDetectionName();
         return detectionName.compareTo(detectionName);
     }
 

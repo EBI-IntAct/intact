@@ -42,7 +42,7 @@ public class IntactStatistics extends StatsBase implements Comparable {
         return (this.proteinNumber);
     }
 
-    public void setNumberOfProteins(final int proteinNumb) {
+    public void setNumberOfProteins(int proteinNumb) {
         this.proteinNumber = proteinNumb;
     }
 
@@ -51,7 +51,7 @@ public class IntactStatistics extends StatsBase implements Comparable {
         return (this.interactionNumber);
     }
 
-    public void setNumberOfInteractions(final int interactionNumb) {
+    public void setNumberOfInteractions(int interactionNumb) {
         this.interactionNumber = interactionNumb;
     }
 
@@ -60,7 +60,7 @@ public class IntactStatistics extends StatsBase implements Comparable {
         return (this.binaryInteractions);
     }
 
-    public void setNumberOfBinaryInteractions(final int binaryInteraction) {
+    public void setNumberOfBinaryInteractions(int binaryInteraction) {
         this.binaryInteractions = binaryInteraction;
     }
 
@@ -69,7 +69,7 @@ public class IntactStatistics extends StatsBase implements Comparable {
         return (this.complexInteractions);
     }
 
-    public void setNumberOfComplexInteractions(final int complexInteraction) {
+    public void setNumberOfComplexInteractions(int complexInteraction) {
         this.complexInteractions = complexInteraction;
     }
 
@@ -78,7 +78,7 @@ public class IntactStatistics extends StatsBase implements Comparable {
         return (this.experimentNumber);
     }
 
-    public void setNumberOfExperiments(final int experimentNumb) {
+    public void setNumberOfExperiments(int experimentNumb) {
         this.experimentNumber = experimentNumb;
     }
 
@@ -87,7 +87,7 @@ public class IntactStatistics extends StatsBase implements Comparable {
         return (this.termNumber);
     }
 
-    public void setNumberOfCvTerms(final int termNumb) {
+    public void setNumberOfCvTerms(int termNumb) {
         this.termNumber = termNumb;
     }
 
@@ -103,9 +103,9 @@ public class IntactStatistics extends StatsBase implements Comparable {
                 + "\n";
     }
 
-    public int compareTo(final Object o) {
+    public int compareTo(Object o) {
 
-        final Timestamp t = ((IntactStatistics) o).getTimestamp();
+        Timestamp t = ((IntactStatistics) o).getTimestamp();
         return getTimestamp().compareTo(t);
     }
 }

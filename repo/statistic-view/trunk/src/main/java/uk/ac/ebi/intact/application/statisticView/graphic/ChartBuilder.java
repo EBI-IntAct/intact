@@ -12,7 +12,6 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import uk.ac.ebi.intact.application.statisticView.business.model.BioSourceStatistics;
-import uk.ac.ebi.intact.application.statisticView.business.model.ExperimentStatistics;
 import uk.ac.ebi.intact.application.statisticView.business.model.IdentificationMethodStatistics;
 import uk.ac.ebi.intact.application.statisticView.business.model.IntactStatistics;
 import uk.ac.ebi.intact.application.statisticView.business.util.Constants;
@@ -429,7 +428,7 @@ public class ChartBuilder {
      *         period
      *
      * @throws IntactException
-     */
+     *
     public JFreeChart evidencePerExperiment( Collection someEvidenceExperiments ) throws IntactException {
         // first check if it is not null
         if ( someEvidenceExperiments == null ) {
@@ -448,5 +447,5 @@ public class ChartBuilder {
         final JFreeChart chart = ChartFactory.getBarChart( dataSet, EVIDENCE_PER_EXPERIMENT_CHART_TITLE, "Experiments", "Binary interactions", false );
         chart.setAntiAlias( true );
         return chart;
-    }
+    }    */
 }
