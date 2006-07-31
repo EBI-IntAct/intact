@@ -120,7 +120,9 @@ public class SearchEngineImpl implements SearchEngine {
 
         try {
             // set the default field to Shortlabel
-            query = QueryParser.parse( luceneQuery, "SHORTLABEL", analyzer );
+            QueryParser parser = new QueryParser( "SHORTLABEL", analyzer );
+            query = parser.parse(luceneQuery);
+
             logger.info( "final query: " + query.toString() );
 
         } catch ( ParseException e ) {
@@ -140,7 +142,7 @@ public class SearchEngineImpl implements SearchEngine {
                 // a problem with the BooleanQuery is that the hits are limited
                 // that causes an error for example if you search for EBI-*
                 // set the maximum number of hits higher (default: 1024)
-                BooleanQuery.maxClauseCount = 9999;
+                BooleanQuery.setMaxClauseCount(9999);
                 hits = searcher.search( query );
             } catch ( BooleanQuery.TooManyClauses e ) {
                 logger.error( "Lucene is limited: BooleanQuery TooManyClauses!", e );
@@ -275,7 +277,7 @@ public class SearchEngineImpl implements SearchEngine {
         try {
             final IndexReader reader = IndexReader.open( index );
             final Term term = new Term( SearchEngineConstants.AC, aSearchObject.getAc() );
-            reader.delete( term );
+            reader.deleteDocuments( term );
             reader.close();
         } catch ( IOException e ) {
             logger.error( "problems with removing a term", e );
