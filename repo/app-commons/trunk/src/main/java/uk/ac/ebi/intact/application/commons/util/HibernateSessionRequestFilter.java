@@ -35,9 +35,22 @@ public class HibernateSessionRequestFilter implements Filter {
         IntactTransaction tx = DaoFactory.beginTransaction();
 
         // Call the next filter (continue request processing)
-        chain.doFilter(request, response);
-
-        tx.commit();
+        try
+        {
+            chain.doFilter(request, response);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        catch (ServletException e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            tx.commit();
+        }
 
     }
 
