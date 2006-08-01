@@ -130,6 +130,8 @@ public class PsiValidator {
             r.setFeature( schemaFeature, true );
 
             r.setErrorHandler( handler );
+            r.setEntityResolver(new XsdEntityResolver());
+
             r.parse( inputSource );
 
         } catch ( SAXException e ) {
