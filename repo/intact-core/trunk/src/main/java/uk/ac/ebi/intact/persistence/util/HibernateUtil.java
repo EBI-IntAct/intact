@@ -104,10 +104,12 @@ public class HibernateUtil {
             // Read not only hibernate.properties, but also hibernate.cfg.xml
             if (cfgFile != null)
             {
+                log.debug("Reading from config file: " + cfgFile);
                 configuration.configure(cfgFile);
             }
             else
             {
+                log.debug("Reading from default config file");
                 configuration.configure();
             }
 
