@@ -20,7 +20,7 @@ import java.util.Iterator;
  */
 @Entity
 @Table(name = "ia_interactor")
-@DiscriminatorColumn(name = "objclass")
+@DiscriminatorColumn(name = "objclass", length = 100)
 public abstract class InteractorImpl extends AnnotatedObjectImpl<InteractorXref> implements Interactor {
 
     ///////////////////////////////////////
