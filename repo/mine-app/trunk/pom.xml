@@ -21,7 +21,7 @@
     <groupId>uk.ac.ebi.intact.app</groupId>
     <artifactId>mine-app</artifactId>
     <packaging>war</packaging>
-    <version>1.1.0</version>
+    <version>1.2-SNAPSHOT</version>
     <name>Mine</name>
     <description>Mine application</description>
 
