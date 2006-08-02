@@ -17,6 +17,7 @@
         * 4 graphics to show the evolution of these amount of data in the database
     </description>
 
+    <distributable/>
 
     <!-- Where the log file is stored -->
     <context-param>
@@ -39,9 +40,10 @@
 
     <!-- Listeners -->
     <listener>
-        <listener-class>
-            uk.ac.ebi.intact.application.statisticView.webapp.HibernateWebappListener
-        </listener-class>
+        <listener-class>uk.ac.ebi.intact.application.statisticView.webapp.HibernateWebappListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>uk.ac.ebi.intact.application.statisticView.webapp.ChartDeleterSessionListener</listener-class>
     </listener>
 
 

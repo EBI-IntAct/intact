@@ -5,70 +5,46 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.statisticView.struts.view;
 
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.ChartUtilities;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.servlet.ServletContext;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.Writer;
+import java.io.File;
 
 /**
  * User: Michael Kleen mkleen@ebi.ac.uk Date: Mar 17, 2005 Time: 5:16:48 PM
  */
 public class IntactStatisticsBean {
 
-    private String contextPath;
-    private String experimentChartName;
-    private String interactionChartName;
-    private String proteinChartName;
-    private String binaryChartName;
-    private String cvTermChartName;
-    private String bioSourceChartName;
-    private String evidenceChartName;
-    private String detectionChartName;
+    private static final Log log = LogFactory.getLog(IntactStatisticsBean.class);
+
+    private final String contextPath;
+    private String experimentChartUrl;
+    private String interactionChartUrl;
+    private String proteinChartUrl;
+    private String binaryChartUrl;
+    private String cvTermChartUrl;
+    private String bioSourceChartUrl;
+    private String evidenceChartUrl;
+    private String detectionChartUrl;
     private int experimentCount;
     private int interactionCount;
     private int proteinCount;
     private int cvTermCount;
     private int binaryInteractionCount;
-    private final static String SERVLET_PATH = "/servlet/DisplayChart?filename=";
 
 
     public IntactStatisticsBean( String contextPath ) {
         this.contextPath = contextPath;
     }
 
-    public void setInteractionChartName( String interactionChartName ) {
-        this.interactionChartName = interactionChartName;
-    }
-
-    public void setExperimentChartName( String experimentChartName ) {
-        this.experimentChartName = experimentChartName;
-    }
-
-    public void setProteinChartName( String proteinChartName ) {
-        this.proteinChartName = proteinChartName;
-    }
-
-    public void setCvTermChartName( String cvTermChartName ) {
-        this.cvTermChartName = cvTermChartName;
-    }
-
-    public void setBinaryChartName( String binaryChartName ) {
-        this.binaryChartName = binaryChartName;
-    }
-
-    public void setExperimentCount( int experimentCount ) {
-        this.experimentCount = experimentCount;
-    }
-
-    public void setBioSourceChartName( String bioSourceChartName ) {
-        this.bioSourceChartName = bioSourceChartName;
-    }
-
-    public void setEvidenceChartName( String evidenceChartName ) {
-        this.evidenceChartName = evidenceChartName;
-    }
-
-    public void setDetectionChartName( String detectionChartName ) {
-        this.detectionChartName = detectionChartName;
-    }
 
     public int getInteractionCount() {
         return interactionCount;
@@ -84,6 +60,17 @@ public class IntactStatisticsBean {
 
     public void setProteinCount( int proteinCount ) {
         this.proteinCount = proteinCount;
+    }
+
+
+    public int getExperimentCount()
+    {
+        return experimentCount;
+    }
+
+    public void setExperimentCount(int experimentCount)
+    {
+        this.experimentCount = experimentCount;
     }
 
     public int getCvTermCount() {
@@ -103,35 +90,76 @@ public class IntactStatisticsBean {
     }
 
     public String getExperimentChartUrl() {
-        return contextPath + SERVLET_PATH + experimentChartName;
+        return contextPath + experimentChartUrl;
     }
 
     public String getInteractionChartUrl() {
-        return contextPath + SERVLET_PATH + interactionChartName;
+        return contextPath + interactionChartUrl;
     }
 
     public String getProteinChartUrl() {
-        return contextPath + SERVLET_PATH + proteinChartName;
+        return contextPath + proteinChartUrl;
     }
 
     public String getBinaryChartUrl() {
-        return contextPath + SERVLET_PATH + binaryChartName;
+        return contextPath + binaryChartUrl;
     }
 
     public String getCvTermChartUrl() {
-        return contextPath + SERVLET_PATH + cvTermChartName;
+        return contextPath + cvTermChartUrl;
     }
 
     public String getBioSourceChartUrl() {
-        return contextPath + SERVLET_PATH + bioSourceChartName;
+        return contextPath + bioSourceChartUrl;
     }
 
     public String getEvidenceChartUrl() {
-        return contextPath + SERVLET_PATH + evidenceChartName;
+        return contextPath + evidenceChartUrl;
     }
 
     public String getDetectionChartUrl() {
-        return contextPath + SERVLET_PATH + detectionChartName;
+        return contextPath + detectionChartUrl;
+    }
+
+
+    public void setExperimentChartUrl(String experimentChartUrl)
+    {
+        this.experimentChartUrl = experimentChartUrl;
+    }
+
+    public void setInteractionChartUrl(String interactionChartUrl)
+    {
+        this.interactionChartUrl = interactionChartUrl;
+    }
+
+    public void setProteinChartUrl(String proteinChartUrl)
+    {
+        this.proteinChartUrl = proteinChartUrl;
+    }
+
+    public void setBinaryChartUrl(String binaryChartUrl)
+    {
+        this.binaryChartUrl = binaryChartUrl;
+    }
+
+    public void setCvTermChartUrl(String cvTermChartUrl)
+    {
+        this.cvTermChartUrl = cvTermChartUrl;
+    }
+
+    public void setBioSourceChartUrl(String bioSourceChartUrl)
+    {
+        this.bioSourceChartUrl = bioSourceChartUrl;
+    }
+
+    public void setEvidenceChartUrl(String evidenceChartUrl)
+    {
+        this.evidenceChartUrl = evidenceChartUrl;
+    }
+
+    public void setDetectionChartUrl(String detectionChartUrl)
+    {
+        this.detectionChartUrl = detectionChartUrl;
     }
 
     public static final String PROTEINS = "Proteins";
