@@ -498,6 +498,15 @@ public class SearchHelper implements SearchHelperI {
             return new ResultWrapper(count, maximumResultSize, resultInfo);
         }
 
+        // if there is only one result, and the search is paginated, we have probably clicked
+        // in a page of the partner results. So the first result have to be retrieved (the protein
+        // being queried)
+        if (count == 1 && paginatedSearch)
+        {
+            logger.debug("The query only returns one result, and it is paginated. This must be a partner view, with paginated parnters");
+            firstResult = 0;
+        }
+
         boolean searchedForCvObject = false;
 
         for (String className : resultInfo.keySet())
