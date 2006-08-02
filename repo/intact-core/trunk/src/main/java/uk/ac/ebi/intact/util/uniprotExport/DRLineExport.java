@@ -555,7 +555,15 @@ public class DRLineExport extends LineExport {
     }
 
     /**
-     * Get a distinct set of Uniprot ID of the protein eligible to export in Swiss-Prot.
+     * Get a distinct set of Uniprot ID of the protein eligible to export in Swiss-Prot,
+     * using a paginated query to avoid excessive memory usage. The pagination is done before
+     * the selection of the distinct IDs, so the number of results obtained by this query
+     * will be different than the number of maxResults if several rows for the same AC are
+     * returned.
+     *
+     * @param firstResult First result of the page
+     * @param maxResults Maximum number of results. The number of rows returned will be the
+     * maxResults less the number of repetition of each AC.
      *
      * @return a distinct set of Uniprot ID of the protein eligible to export in Swiss-Prot.
      *
@@ -565,7 +573,7 @@ public class DRLineExport extends LineExport {
      * @throws uk.ac.ebi.intact.util.uniprotExport.CCLineExport.DatabaseContentException
      *                               if the initialisation process failed (CV not found)
      */
-    public final Set getElibibleProteins( )
+    public final Set<String> getEligibleProteins( int firstResult, int maxResults )
             throws SQLException,
                    IntactException,
                    DatabaseContentException {
@@ -575,7 +583,8 @@ public class DRLineExport extends LineExport {
 
         // select the protein ordered by Uniprot identity.
         // TODO update that query so that it uses the MI references of uniprot and identity.
-        String sql = "SELECT distinct P.ac, x.primaryId\n" +
+        String sql = "SELECT distinct(ac),primaryId from \n" +
+                    " ( SELECT distinct P.ac, x.primaryId, rownum rn \n" +
                      "FROM   ia_interactor P, ia_component C, ia_xref x, ia_controlledvocab q, ia_controlledvocab db\n" +
                      "WHERE  P.objclass like '%Protein%' and\n" +
                      "       P.ac IN C.interactor_ac and\n" +
@@ -589,7 +598,8 @@ public class DRLineExport extends LineExport {
                      "       x.primaryId not like 'A%' and \n" +
                      "       x.primaryId not like 'B%' and \n" +
                      "       x.primaryId not like 'C%'\n" +
-                     "ORDER BY x.primaryId ";
+                     "ORDER BY x.primaryId ) \n" +
+                    " WHERE rn > "+firstResult +" AND rn <= "+(firstResult+maxResults);
 
         log.info( "Executing the following query: " );
         log.info( sql );
@@ -601,7 +611,7 @@ public class DRLineExport extends LineExport {
         Set proteinEligible = new HashSet( 4096 );
         Chrono globalChrono = new Chrono();
         globalChrono.start();
-        Collection proteins = null;
+        
         int proteinCount = 0;
 
         // Process the proteins one by one.
@@ -620,17 +630,15 @@ public class DRLineExport extends LineExport {
             }
 
             String ac = proteinAcs.getString( 1 );
-            proteins = DaoFactory.getProteinDao().getByAcLike(ac);
+            Protein protein = DaoFactory.getProteinDao().getByAc(ac);
 
-            if ( proteins == null || proteins.isEmpty() ) {
+            if ( protein == null  ) {
                 log.error( "Could not find a Protein in IntAct for AC: " + ac );
                 continue; // process next AC
             }
 
             // only used in case the current protein is a splice variant
             Protein master = null;
-
-            Protein protein = (Protein) proteins.iterator().next();
 
             // Skip proteins annotated no-uniprot-update
             if ( false == needsUniprotUpdate( protein ) ) {
@@ -657,15 +665,12 @@ public class DRLineExport extends LineExport {
 
                     } else {
 
-                        Collection c = DaoFactory.getProteinDao().getByAcLike(masterAc);
+                        master = DaoFactory.getProteinDao().getByAc(masterAc);
 
-                        if ( c == null || c.size() == 0 ) {
+                        if ( master == null ) {
                             log.error( "Could not find the master protein of splice variant (" +
-                                                protein.getAc() + ") having the AC(" + ac + ")" );
+                                                protein.getAc() + ") having the AC(" + masterAc + ")" );
                         } else {
-                            // it must be one only
-                            master = (Protein) c.iterator().next();
-
                             // check that the master hasn't been processed already
                             uniprotId = getUniprotID( master );
                         }
@@ -820,46 +825,56 @@ public class DRLineExport extends LineExport {
             log.info( "User: " + DaoFactory.getBaseDao().getDbUserName() );
         }
 
-        // get the set of Uniprot ID to be exported to Swiss-Prot
-        Set proteinEligible = exporter.getElibibleProteins( );
+        // get the set of Uniprot ID to be exported to Swiss-Prot, using a paginated query
+        // to avoid OutOfMemory errors
+        Set proteinEligible;
+        int firstResult = 0;
+        int maxResults = 100000;
 
-        log.info( proteinEligible.size() + " protein(s) selected for export." );
+        do {
+            proteinEligible = exporter.getEligibleProteins( firstResult, maxResults );
 
-        // save it to a file.
+            log.info( proteinEligible.size() + " protein(s) selected for export using a paginated query. First result: "+firstResult );
 
-        BufferedWriter out = null;
-        FileWriter fw = null;
-        try {
-            fw = new FileWriter( file );
-            out = new BufferedWriter( fw );
-            writeToFile( proteinEligible, out );
-            out.flush();
+            // save it to a file.
 
-        } catch ( IOException e ) {
-            e.printStackTrace();
-            log.error( "Could not save the result to :" + filename );
-            log.error( "Displays the result on STDOUT:\n\n\n" );
+            BufferedWriter out = null;
+            FileWriter fw = null;
+            try {
+                fw = new FileWriter( file );
+                out = new BufferedWriter( fw );
+                writeToFile( proteinEligible, out );
+                out.flush();
 
-            display( proteinEligible );
-            System.exit( 1 );
+            } catch ( IOException e ) {
+                e.printStackTrace();
+                log.error( "Could not save the result to :" + filename );
+                log.error( "Displays the result on STDOUT:\n\n\n" );
 
-        } finally {
-            if ( out != null ) {
-                try {
-                    out.close();
-                } catch ( IOException e ) {
-                    System.exit( 1 );
+                display( proteinEligible );
+                System.exit( 1 );
+
+            } finally {
+                if ( out != null ) {
+                    try {
+                        out.close();
+                    } catch ( IOException e ) {
+                        System.exit( 1 );
+                    }
+                }
+
+                if ( fw != null ) {
+                    try {
+                        fw.close();
+                    } catch ( IOException e ) {
+                        System.exit( 1 );
+                    }
                 }
             }
 
-            if ( fw != null ) {
-                try {
-                    fw.close();
-                } catch ( IOException e ) {
-                    System.exit( 1 );
-                }
-            }
-        }
+            firstResult = firstResult + maxResults;
+
+        } while (!proteinEligible.isEmpty());
 
         System.exit( 0 );
     }

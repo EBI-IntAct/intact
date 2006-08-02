@@ -5,6 +5,10 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.validator.Length;
+
 import javax.persistence.*;
 import java.util.Iterator;
 import java.util.regex.Matcher;
@@ -20,6 +24,8 @@ import java.util.regex.Pattern;
 @Table(name = "ia_xref")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class Xref extends BasicObjectImpl {
+
+    private static final Log log = LogFactory.getLog(Xref.class);
 
     ///////////////////////////////////////
     // Constamt
@@ -118,14 +124,10 @@ public abstract class Xref extends BasicObjectImpl {
                  CvXrefQualifier aCvXrefQualifier ) {
 
         //super call sets creation time data
-        super( anOwner );
+        this( anOwner, aDatabase, aPrimaryId, aCvXrefQualifier);
 
-        setPrimaryId( aPrimaryId );
-        setSecondaryId( aSecondaryId );
-        setCvDatabase( aDatabase );
-
-        setDbRelease( aDatabaseRelease );
-        setCvXrefQualifier( aCvXrefQualifier );
+        this.secondaryId = fixId(aSecondaryId);
+        this.dbRelease = aDatabaseRelease;
     }
 
     /**
@@ -148,10 +150,19 @@ public abstract class Xref extends BasicObjectImpl {
         //super call sets creation time data
         super( anOwner );
 
-        setPrimaryId( aPrimaryId );
-        setCvDatabase( aDatabase );
+        if( aPrimaryId == null ) {
+            throw new NullPointerException( "valid Xref must have a primary ID!" );
+        }
 
-        setCvXrefQualifier( aCvXrefQualifier );
+        aPrimaryId = fixId(aPrimaryId);
+
+        if( aPrimaryId.length() == 0 ) {
+            throw new IllegalArgumentException( "Must define a non empty primaryId for an Xref." );
+        }
+
+        this.primaryId = aPrimaryId;
+        this.cvDatabase = aDatabase;
+        this.cvXrefQualifier = aCvXrefQualifier;
     }
 
     ///////////////////////////////////////
@@ -167,15 +178,8 @@ public abstract class Xref extends BasicObjectImpl {
             throw new NullPointerException( "valid Xref must have a primary ID!" );
         }
 
-        // delete leading and trailing spaces.
-        aPrimaryId = aPrimaryId.trim();
-
         if( "".equals( aPrimaryId ) ) {
             throw new IllegalArgumentException( "Must define a non empty primaryId for an Xref." );
-        }
-
-        if( aPrimaryId != null && aPrimaryId.length() > MAX_ID_LEN ) {
-            aPrimaryId = aPrimaryId.substring( 0, MAX_ID_LEN );
         }
 
         this.primaryId = aPrimaryId;
@@ -185,17 +189,8 @@ public abstract class Xref extends BasicObjectImpl {
         return secondaryId;
     }
 
+    @Length(max = MAX_ID_LEN)
     public void setSecondaryId( String aSecondaryId ) {
-
-        if( aSecondaryId != null ) {
-            // delete leading and trailing spaces.
-            aSecondaryId = aSecondaryId.trim();
-
-            if( aSecondaryId.length() > MAX_ID_LEN ) {
-                aSecondaryId = aSecondaryId.substring( 0, MAX_ID_LEN );
-            }
-        }
-
         this.secondaryId = aSecondaryId;
     }
 
@@ -209,7 +204,7 @@ public abstract class Xref extends BasicObjectImpl {
         if( aDbRelease != null && aDbRelease.length() >= MAX_DB_RELEASE_LEN ) {
             aDbRelease = aDbRelease.substring( 0, MAX_DB_RELEASE_LEN );
         }
-
+        
         this.dbRelease = aDbRelease;
     }
 
@@ -371,6 +366,18 @@ public abstract class Xref extends BasicObjectImpl {
         // Reset the parent ac.
         copy.parentAc = null;
         return copy;
+    }
+
+    private String fixId(String id) {
+        if( id != null ) {
+            // delete leading and trailing spaces.
+            id = id.trim();
+
+            if( id.length() > MAX_ID_LEN ) {
+                id = id.substring( 0, MAX_ID_LEN );
+            }
+        }
+        return id;
     }
 
 } // end Xref
