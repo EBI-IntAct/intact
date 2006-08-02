@@ -1,0 +1,86 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>uk.ac.ebi.intact.maven</groupId>
+        <artifactId>intact-master</artifactId>
+        <version>1.0</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>uk.ac.ebi.intact.hibernate</groupId>
+    <artifactId>maven-hibernateconfig-plugin</artifactId>
+    <packaging>maven-plugin</packaging>
+    <version>1.1.0</version>
+    <name>Plugin - Hibernate config file creator</name>
+    <description>
+        This plugin creates a hibernate config file
+    </description>
+
+    <scm>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven-plugins/maven-hibernateconfig-plugin/trunk</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven-plugins/maven-hibernateconfig-plugin/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven-plugins/maven-hibernateconfig-plugin/trunk/</url>
+    </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
+            <version>2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-project</artifactId>
+            <version>2.0.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-artifact</artifactId>
+            <version>2.0.4</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>2.1</version>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <!-- EBI repositories -->
+    <repositories>
+       <repository>
+            <id>ebi-repo</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <site>
+            <id>intact-site</id>
+            <name>Intact site</name>
+            <url>scp://localhost/homes/baranda/public_html/intact/maven-plugins/${artifactId}</url>
+        </site>
+    </distributionManagement>
+
+</project>
