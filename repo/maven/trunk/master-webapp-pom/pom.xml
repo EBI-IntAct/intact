@@ -15,7 +15,7 @@
     <artifactId>intact-master-webapp</artifactId>
     <packaging>pom</packaging>
     <name>Master Webapp POM</name>
-    <version>1.1.0</version>
+    <version>1.2-SNAPSHOT</version>
     <description>This is the master webapp POM that is meant to be used by the various Intact Web applications. It contains information
         that is common to all web applications.
     </description>
