@@ -21,7 +21,7 @@
     <groupId>uk.ac.ebi.intact.app.graph2mif</groupId>
     <artifactId>graph2mif-server</artifactId>
     <packaging>war</packaging>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.0.1</version>
     <!-- last released 1.0.0 -->
     <name>Graph2MIF Server</name>
     <description>Graph2MIF Web Service</description>
@@ -98,7 +98,7 @@
         <dependency>
             <groupId>uk.ac.ebi.intact.app</groupId>
             <artifactId>data-conversion</artifactId>
-            <version>1.1.0</version>
+            <version>1.1.1</version>
         </dependency>
 
         <!-- needed by ojb -->
