@@ -15,7 +15,7 @@
     <groupId>uk.ac.ebi.intact.app.search</groupId>
     <artifactId>search-app</artifactId>
     <packaging>war</packaging>
-    <version>1.0</version>
+    <version>1.1</version>
     <name>IntAct Site</name>
     <description>The main web interface for intact</description>
 
@@ -66,5 +66,48 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>jettyConfig</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.mortbay.jetty</groupId>
+                        <artifactId>maven-jetty6-plugin</artifactId>
+                        <configuration>
+                            <scanIntervalSeconds>10</scanIntervalSeconds>
+                            <contextPath>intact/${build.finalName}</contextPath>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+
+            <pluginRepositories>
+                <!-- Repository to get the jetty plugin -->
+                <pluginRepository>
+                    <id>Mortbay (release)</id>
+                    <url>http://www.mortbay.org/maven2/release</url>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                </pluginRepository>
+                <pluginRepository>
+                    <id>mortbay-repo</id>
+                    <name>mortbay-repo</name>
+                    <url>http://www.mortbay.org/maven2/snapshot</url>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>false</enabled>
+                    </releases>
+                </pluginRepository>
+            </pluginRepositories>
+         </profile>
+    </profiles>
 
 </project>
