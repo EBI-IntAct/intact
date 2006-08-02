@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+/**
+ * Copyright (c) 2006 The European Bioinformatics Institute, and others.
+ * All rights reserved.
+ */
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>uk.ac.ebi.intact.app.search</groupId>
+    <artifactId>search-app</artifactId>
+    <packaging>war</packaging>
+    <version>1.0</version>
+    <name>IntAct Site</name>
+    <description>The main web interface for intact</description>
+
+    <scm>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-site/trunk</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-site/trunk
+        </developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-site/trunk/</url>
+    </scm>
+
+    <build>
+        <finalName>intact</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>xslt-maven-plugin</artifactId>
+                <version>1.0</version>
+                <executions>
+                    <execution>
+                        <id>generate-tableOfContent</id>
+                        <goals>
+                            <goal>transform</goal>
+                        </goals>
+                        <configuration>
+                            <xslFile>src/main/content/xsl/contents.xsl</xslFile>
+                            <srcIncludes>intact.xml</srcIncludes>
+                            <srcDir>src/main/content/xml</srcDir>
+                            <destDir>target/${build.finalName}/doc/html</destDir>
+                            <fileNameRegex>intact.xml</fileNameRegex>
+                            <fileNameReplacement>tableOfContent.html</fileNameReplacement>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-usermanual</id>
+                        <goals>
+                            <goal>transform</goal>
+                        </goals>
+                        <configuration>
+                            <xslFile>src/main/content/xsl/contentonly.xsl</xslFile>
+                            <srcIncludes>intact.xml</srcIncludes>
+                            <srcDir>src/main/content/xml</srcDir>
+                            <destDir>target/${build.finalName}/doc/html</destDir>
+                            <fileNameRegex>intact.xml</fileNameRegex>
+                            <fileNameReplacement>documentation.html</fileNameReplacement>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
