@@ -325,7 +325,7 @@ public abstract class AnnotatedObjectImpl<T extends Xref> extends BasicObjectImp
 
         int code = 29;
 
-        for (Xref xref : getXrefs())
+        for (Xref xref : xrefs)
         {
             code = 29 * code + xref.hashCode();
         }

@@ -49,18 +49,8 @@ public class ProteinTest extends TestCase
 
     public void testUnexpectedUpdateOnXref()
     {
-        Protein protein = DaoFactory.getProteinDao().getByAc("EBI-493");
-        assertNotNull(protein);
-
-        log.debug("Protein: " + protein.getAc());
-
-        Collection<InteractorXref> xrefs = protein.getXrefs();
-
-        for (Xref xref : xrefs) // will provoke an update in the db, which brings to the exception
-        {
-            log.debug("  Xref: "+xref.getAc());
-        }
-
+        Xref xref = DaoFactory.getXrefDao(InteractorXref.class).getByAc("EBI-595609");
+        assertNotNull(xref);
     }
 
 }
