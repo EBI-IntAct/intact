@@ -21,7 +21,8 @@
     <groupId>uk.ac.ebi.intact.app</groupId>
     <artifactId>predict-app</artifactId>
     <packaging>war</packaging>
-    <version>1.1.0</version>
+    <version>1.2-SNAPSHOT</version>
+    <!-- last release: 1.1.0 -->
     <name>Predict</name>
     <description>Predict application</description>
 
