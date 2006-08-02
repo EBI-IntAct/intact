@@ -28,12 +28,27 @@ public class XsdEntityResolver implements EntityResolver
 
         InputSource inputSource = null;
 
-        if (systemId != null &&
-                systemId.equals("http://psidev.sourceforge.net/mi/rel25/src/MIF25.xsd"))
+        if (systemId != null)
         {
-            log.debug("Entity resolved using XsdEntityResolver");
+            if (systemId.equals("http://psidev.sourceforge.net/mi/rel25/src/MIF25.xsd"))
+            {
 
-            inputSource = new InputSource(XsdEntityResolver.class.getResourceAsStream("/META-INF/MIF25.xsd"));
+                log.debug("Entity resolved using XsdEntityResolver - MIF 2.5");
+
+                inputSource = new InputSource(XsdEntityResolver.class.getResourceAsStream("/META-INF/MIF25.xsd"));
+            }
+            else if (systemId.equals("http://psidev.sourceforge.net/mi/xml/src/MIF.xsd"))
+            {
+                log.debug("Entity resolved using XsdEntityResolver - MIF 1.0");
+
+                inputSource = new InputSource(XsdEntityResolver.class.getResourceAsStream("/META-INF/MIF10.xsd"));
+            }
+
+        }
+
+
+        if (inputSource != null)
+        {
             inputSource.setPublicId(publicId);
             inputSource.setSystemId(systemId);
         }
