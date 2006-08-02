@@ -80,12 +80,14 @@ public class XrefTest extends AbstractIntactTest
 
     public void testPersistBioSource()
     {
-        BioSource organism = new BioSource(institution, "drosophila", "7215");
+        BioSource organism = new BioSource(institution, "human", "9610");
         DaoFactory.getBioSourceDao().persist(organism);
 
         assertNotNull(cvInteractionType);
 
         ProteinImpl prot = new ProteinImpl(institution, organism, INTERACTOR_LABEL, cvInteractionType);
+        prot.setFullName("Test protein in XrefTest");
+        prot.setCrc64("InvalidCRC_Test");
 
         assertNotNull(cvDatabase);
         assertNotNull(cvXrefQualifier);

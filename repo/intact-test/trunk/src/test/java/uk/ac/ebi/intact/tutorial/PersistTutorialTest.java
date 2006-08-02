@@ -113,12 +113,6 @@ public class PersistTutorialTest extends AbstractIntactTest
         try
         {
             IndexReader reader = IndexReader.open("lucene-indexes/intact-objects");
-            /*
-            for (Object fn : reader.getFieldNames(IndexReader.FieldOption.INDEXED))
-            {
-                log.debug("Field name: " + fn);
-            }
-             */
 
             IndexSearcher is = new IndexSearcher(reader);
             Analyzer analyzer = new StandardAnalyzer();
