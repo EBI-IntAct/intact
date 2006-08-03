@@ -12,11 +12,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import uk.ac.ebi.intact.application.mine.business.Constants;
-import uk.ac.ebi.intact.model.Component;
-import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.model.*;
 
 /**
  * The <tt>AmbiguousBean</tt> is used when the search of the MiNe application
@@ -28,9 +24,9 @@ import uk.ac.ebi.intact.model.Protein;
  */
 public class AmbiguousBean {
 	private static final String HELP_LINK = "/displayDoc.jsp?section=";
-	private Collection proteins = null;
-	private Collection interactions = null;
-	private Collection experiments = null;
+	private Collection<ProteinImpl> proteins = null;
+	private Collection<InteractionImpl> interactions = null;
+	private Collection<Experiment> experiments = null;
 	private String searchAc;
 	private String context;
 
@@ -81,7 +77,7 @@ public class AmbiguousBean {
 	 * 
 	 * @return Returns the experiments.
 	 */
-	public Collection getExperiments() {
+	public Collection<Experiment> getExperiments() {
 		return experiments;
 	}
 
@@ -90,7 +86,7 @@ public class AmbiguousBean {
 	 * 
 	 * @param experiments The experiments to set.
 	 */
-	public void setExperiments(Collection experiments) {
+	public void setExperiments(Collection<Experiment> experiments) {
 		this.experiments = experiments;
 	}
 
@@ -99,7 +95,7 @@ public class AmbiguousBean {
 	 * 
 	 * @return Returns the interactions.
 	 */
-	public Collection getInteractions() {
+	public Collection<InteractionImpl> getInteractions() {
 		return interactions;
 	}
 
@@ -108,7 +104,7 @@ public class AmbiguousBean {
 	 * 
 	 * @param interactions The interactions to set.
 	 */
-	public void setInteractions(Collection interactions) {
+	public void setInteractions(Collection<InteractionImpl> interactions) {
 		this.interactions = interactions;
 	}
 
@@ -117,7 +113,7 @@ public class AmbiguousBean {
 	 * 
 	 * @return Returns the proteins.
 	 */
-	public Collection getProteins() {
+	public Collection<ProteinImpl> getProteins() {
 		return proteins;
 	}
 
@@ -148,7 +144,7 @@ public class AmbiguousBean {
 	 * 
 	 * @param proteins The proteins to set.
 	 */
-	public void setProteins(Collection proteins) {
+	public void setProteins(Collection<ProteinImpl> proteins) {
 		this.proteins = proteins;
 	}
 

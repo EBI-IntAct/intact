@@ -19,7 +19,7 @@ import uk.ac.ebi.intact.application.mine.business.IntactUserI;
 import uk.ac.ebi.intact.application.mine.struts.view.AmbiguousBean;
 import uk.ac.ebi.intact.application.mine.struts.view.ErrorBean;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.searchengine.SearchClass;
 import uk.ac.ebi.intact.searchengine.SearchHelper;
 import uk.ac.ebi.intact.searchengine.SearchHelperI;
@@ -203,9 +203,40 @@ public class SearchAction extends Action {
                                         IntactUserI user )
             throws IntactException {
         AmbiguousBean ab = new AmbiguousBean();
-        ab.setProteins( sh.doLookup( SearchClass.PROTEIN, ac, user ) );
-        ab.setInteractions( sh.doLookup( SearchClass.INTERACTION, ac, user ) );
-        ab.setExperiments( sh.doLookup( SearchClass.EXPERIMENT, ac, user ) );
+
+        List<SearchClass> searchClasses = new ArrayList<SearchClass>();
+        searchClasses.add(SearchClass.PROTEIN);
+        searchClasses.add(SearchClass.INTERACTION);
+        searchClasses.add(SearchClass.EXPERIMENT);
+
+        Collection<IntactObject> results = sh.doLookup(searchClasses, ac, user);
+
+        Collection<ProteinImpl> proteins = new ArrayList<ProteinImpl>();
+        Collection<InteractionImpl> interactions = new ArrayList<InteractionImpl>();
+        Collection<Experiment> experiments = new ArrayList<Experiment>();
+
+        for (IntactObject result : results)
+        {
+            if (result instanceof ProteinImpl)
+            {
+                proteins.add((ProteinImpl)result);
+            }
+            else if (result instanceof InteractionImpl)
+            {
+                interactions.add((InteractionImpl)result);
+            }
+            else if (result instanceof Experiment)
+            {
+                experiments.add((Experiment)result);
+            }
+        }
+
+        ab.setProteins( proteins );
+        ab.setInteractions( interactions );
+        ab.setExperiments( experiments );
+
+        logger.debug("Results: Prot "+proteins.size()+" Int "+interactions.size()+" Exp "+experiments.size());
+        
         return ab;
     }
 
@@ -223,7 +254,10 @@ public class SearchAction extends Action {
                                              IntactUserI user )
             throws IntactException {
         AmbiguousBean ab = new AmbiguousBean();
-        ab.setProteins( sh.doLookup( SearchClass.PROTEIN, ac, user ) );
+
+        Collection results = sh.doLookup(SearchClass.PROTEIN, ac, user);
+
+        ab.setProteins( (Collection<ProteinImpl>) results );
         return ab;
     }
 }
