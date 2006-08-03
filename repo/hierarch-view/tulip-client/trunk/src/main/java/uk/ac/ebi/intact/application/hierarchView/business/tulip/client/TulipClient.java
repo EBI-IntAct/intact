@@ -47,6 +47,23 @@ public class TulipClient
 
     } // constructor
 
+    public TulipClient(String tulipWsUrl) {
+
+        try
+        {
+            GVFImplServiceLocator serviceLocator = new GVFImplServiceLocator();
+            serviceLocator.setMaintainSession(true);
+
+            this.tulip = serviceLocator.gettulip(new URL(tulipWsUrl));
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+    } // constructor
+
+
 
     /**
      * allows to compute a tlp content
