@@ -39,7 +39,7 @@
     <!-- The help link (relative to context root)-->
     <context-param>
         <param-name>helpLink</param-name>
-        <param-value>displayDoc.jsp?section=</param-value>
+        <param-value>intact/site/displayDoc.jsp?section=</param-value>
     </context-param>
 
     <!-- Filter to open the session at the beginning of the request and close on end -->
