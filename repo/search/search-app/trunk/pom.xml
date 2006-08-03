@@ -25,7 +25,7 @@
     <!-- last released: 1.1.2 -->
     <name>Search application</name>
     <description>Search web interface</description>
-                                          f ~/
+                                          
     <scm>
         <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/search/search-app/trunk</connection>
         <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/search/search-app/trunk</developerConnection>
