@@ -42,9 +42,6 @@
     <listener>
         <listener-class>uk.ac.ebi.intact.application.statisticView.webapp.HibernateWebappListener</listener-class>
     </listener>
-    <listener>
-        <listener-class>uk.ac.ebi.intact.application.statisticView.webapp.ChartDeleterSessionListener</listener-class>
-    </listener>
 
 
     <!-- =============================== Action Servlet Configuration ==================================== -->
@@ -87,16 +84,16 @@
 
 
     <servlet>
-        <servlet-name>DisplayChart</servlet-name>
-        <servlet-class>org.jfree.chart.servlet.DisplayChart</servlet-class>
+        <servlet-name>ChartProvider</servlet-name>
+        <servlet-class>uk.ac.ebi.intact.application.statisticView.webapp.ChartProviderServlet</servlet-class>
     </servlet>
 
 
     <!--  Servlet mapping  -->
 
     <servlet-mapping>
-        <servlet-name>DisplayChart</servlet-name>
-        <url-pattern>/servlet/DisplayChart</url-pattern>
+        <servlet-name>ChartProvider</servlet-name>
+        <url-pattern>/servlet/ChartProvider</url-pattern>
     </servlet-mapping>
 
 
