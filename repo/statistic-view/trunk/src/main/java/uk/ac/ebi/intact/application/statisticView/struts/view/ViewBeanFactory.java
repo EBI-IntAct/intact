@@ -5,23 +5,18 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.statisticView.struts.view;
 
-import org.apache.log4j.Logger;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.entity.StandardEntityCollection;
-import org.jfree.chart.servlet.ServletUtilities;
 import uk.ac.ebi.intact.application.statisticView.business.data.StatisticHelper;
-import uk.ac.ebi.intact.application.statisticView.business.util.Constants;
+import uk.ac.ebi.intact.application.statisticView.webapp.ChartSessionInfo;
 import uk.ac.ebi.intact.business.IntactException;
 
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.ServletContext;
 import java.io.IOException;
-import java.io.File;
 
 /**
  * User: Michael Kleen mkleen@ebi.ac.uk Date: Mar 22, 2005 Time: 4:24:29 PM
@@ -39,8 +34,7 @@ public class ViewBeanFactory {
     }
 
 
-    public IntactStatisticsBean createViewBean( String start, String stop, HttpSession session ) throws IntactException,
-                                                                                                        IOException {
+    public IntactStatisticsBean createViewBean( String start, String stop, HttpSession session ) throws IOException {
 
         final JFreeChart cvChart = helper.getCvChart( start, stop );
 
@@ -56,42 +50,30 @@ public class ViewBeanFactory {
 
         final ChartRenderingInfo info = new ChartRenderingInfo( new StandardEntityCollection() );
         IntactStatisticsBean intactBean = new IntactStatisticsBean( contextPath );
-        intactBean.setCvTermChartUrl(writeChart(cvChart, 600, 400, info, session));
-        intactBean.setExperimentChartUrl ( writeChart( experimentChart, 600, 400, info, session ) );
-        intactBean.setInteractionChartUrl ( writeChart( interactionChart, 600, 400, info, session ) );
-        intactBean.setProteinChartUrl ( writeChart( proteinChart, 600, 400, info, session ) );
-        intactBean.setBinaryChartUrl ( writeChart( binaryChart, 600, 400, info, session ) );
+        intactBean.setCvTermChartUrl(putChartInSession("cvTermChart", cvChart, 600, 400, info, session));
+        intactBean.setExperimentChartUrl ( putChartInSession( "experimentChart", experimentChart, 600, 400, info, session ) );
+        intactBean.setInteractionChartUrl ( putChartInSession( "interactionChart", interactionChart, 600, 400, info, session ) );
+        intactBean.setProteinChartUrl ( putChartInSession( "proteinChart", proteinChart, 600, 400, info, session ) );
+        intactBean.setBinaryChartUrl ( putChartInSession( "binaryChart", binaryChart, 600, 400, info, session ) );
 
         intactBean.setCvTermCount( helper.getCvCount() );
         intactBean.setExperimentCount( helper.getExperimentCount() );
         intactBean.setInteractionCount( helper.getInteractionCount() );
         intactBean.setProteinCount( helper.getProteinCount() );
         intactBean.setBinaryInteractionCount( helper.getBinaryInteractionCount() );
-        intactBean.setBioSourceChartUrl ( writeChart( bioSourceChart, 600, 400, info, session ) );
-        intactBean.setDetectionChartUrl ( writeChart( identificationChart, 600, 400, info, session ) );
+        intactBean.setBioSourceChartUrl ( putChartInSession( "bioSourcechart", bioSourceChart, 600, 400, info, session ) );
+        intactBean.setDetectionChartUrl ( putChartInSession( "identificationChart", identificationChart, 600, 400, info, session ) );
 
         return intactBean;
     }
 
-    private static String writeChart(JFreeChart chart, int length, int width, ChartRenderingInfo info, HttpSession session)
+    private static String putChartInSession(String name, JFreeChart chart, int height, int width, ChartRenderingInfo info, HttpSession session)
             throws IOException
     {
-        ServletContext context = session.getServletContext();
+        ChartSessionInfo chartSessionInfo = new ChartSessionInfo(chart, height, width, info);
 
-        String chartFilename = session.getId()+"_"+chart.hashCode()+".png";
+        session.setAttribute(name, chartSessionInfo);
 
-        String strTempDir = "/temp";
-        String chartContextPath = strTempDir+"/"+chartFilename;
-
-        File realChartfile = new File(context.getRealPath(chartContextPath));
-
-        if (realChartfile.exists())
-        {
-            return chartContextPath;
-        }
-
-        ChartUtilities.saveChartAsPNG(realChartfile, chart, length, width, info);
-
-        return chartContextPath;
+        return "/servlet/ChartProvider?name="+name;
     }
 }
