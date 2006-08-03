@@ -18,8 +18,6 @@ public interface Constants {
      * The name of the logger specific of statisticView
      * cf. config/log4j.properties
      */
-    public static final String LOGGER_NAME = "stat";
-
     public static final String FORWARD_RESULT_PAGE = "sucess";
 
     public static final String FORWARD_ERROR_PAGE = "error";

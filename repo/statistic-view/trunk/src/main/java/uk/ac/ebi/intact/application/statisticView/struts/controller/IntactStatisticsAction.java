@@ -10,6 +10,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.statisticView.business.util.Constants;
 import uk.ac.ebi.intact.application.statisticView.struts.view.FilterForm;
 import uk.ac.ebi.intact.application.statisticView.struts.view.IntactStatisticsBean;
@@ -31,7 +33,7 @@ import java.io.IOException;
  */
 public class IntactStatisticsAction extends Action {
 
-    private static Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
+    private static final Log logger = LogFactory.getLog(IntactStatisticsAction.class);
 
     /**
      * Process the specified HTTP request, and create the corresponding HTTP response (or forward to another web

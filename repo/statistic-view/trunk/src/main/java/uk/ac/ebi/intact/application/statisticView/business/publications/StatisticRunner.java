@@ -1,6 +1,8 @@
 package uk.ac.ebi.intact.application.statisticView.business.publications;
 
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.statisticView.business.publications.jfreechart.GraphRenderer;
 import uk.ac.ebi.intact.application.statisticView.business.publications.jfreechart.StackedBarData;
@@ -26,7 +28,7 @@ import java.util.List;
  */
 public class StatisticRunner {
 
-    protected transient static Logger logger = Logger.getLogger( StatisticConstants.LOGGER_NAME );
+    private static final Log logger = LogFactory.getLog(StatisticRunner.class);
 
     public static void main( String[] args ) throws IntactException, SQLException {
 
