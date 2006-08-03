@@ -1,6 +1,8 @@
 package uk.ac.ebi.intact.application.statisticView.business.publications.jfreechart;
 
 import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jfree.chart.*;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.CategoryLabelPositions;
@@ -35,9 +37,9 @@ import java.util.List;
  * @version $Id$
  * @since <pre>14-Feb-2006</pre>
  */
-public class GraphRenderer extends JFrame implements Externalizable {
+public class GraphRenderer extends JFrame implements Serializable {
 
-    protected transient static Logger logger = Logger.getLogger( StatisticConstants.LOGGER_NAME );
+    private static final Log logger = LogFactory.getLog(GraphRenderer.class);
 
     /**
      * Data of the Chart
@@ -242,14 +244,4 @@ new StandardCategoryURLGenerator
         return chart;
     }
 
-    ///////////////////////////////
-    // Externalizable
-
-    public void writeExternal( ObjectOutput out ) throws IOException {
-        logger = null;
-    }
-
-    public void readExternal( ObjectInput in ) throws IOException, ClassNotFoundException {
-        logger = Logger.getLogger( StatisticConstants.LOGGER_NAME );
-    }
 }

@@ -16,11 +16,6 @@ public interface StatisticConstants {
 
 
     /**
-     * The name of the logger
-     */
-    public static final String LOGGER_NAME = "statistic";
-
-    /**
      * The rotation angle for the labels within the BarChart.
      */
     public static final double ROTATION_ANGLE_OF_CATEGORY_ITEM_LABEL_POSITION = 0.0;

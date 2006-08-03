@@ -6,7 +6,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.statisticView.business.data;
 
 import org.apache.log4j.Logger;
-import uk.ac.ebi.intact.application.statisticView.business.Constants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.statisticView.business.model.IntactStatistics;
 import uk.ac.ebi.intact.business.IntactException;
 
@@ -27,7 +28,7 @@ public final class StatisticsBean {
 
     public static final SimpleDateFormat dateFormater = new SimpleDateFormat ( "dd MMM yyyy" );
 
-    static final Logger logger = Logger.getLogger ( Constants.LOGGER_NAME );
+    private static final Log logger = LogFactory.getLog(StatisticsBean.class);
 
     /**
      * the statistics
