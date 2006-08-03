@@ -1,3 +1,5 @@
+<%@ page import="java.io.IOException" %>
+<%@ page import="java.util.Properties" %>
 <%@ page language="java" %>
 
 <!--
@@ -14,16 +16,19 @@
 
 <%
     // Parameters collection
-    String ac        = request.getParameter("AC");
+    String ac = request.getParameter("AC");
     if (ac == null) ac = "";
 
-    String myDepth     = request.getParameter("depth");
+    String myDepth = request.getParameter("depth");
     if (myDepth == null) myDepth = "1";
     int depth = 1;
-    try {
-        depth = Integer.parseInt( myDepth );
+    try
+    {
+        depth = Integer.parseInt(myDepth);
         if (depth < 1) depth = 1;
-    } catch ( NumberFormatException e ) {
+    }
+    catch (NumberFormatException e)
+    {
         depth = 1;
     }
 
@@ -33,6 +38,19 @@
     String falseSelected = "";
     if (strictMIF.equalsIgnoreCase("true")) trueSelected = "selected";
     else falseSelected = "selected";
+
+    // Version
+    Properties properties = new Properties();
+    try
+    {
+        properties.load(this.getClass().getResourceAsStream("/uk/ac/ebi/intact/app/graph2mif/BuildInfo.properties"));
+    }
+    catch (IOException e)
+    {
+        e.printStackTrace();
+    }
+
+    String graph2mifVersion = properties.getProperty("version");
 
 %>
 
@@ -101,6 +119,7 @@
     <hr>
 
     <p>
+      v. <%=graph2mifVersion%>&nbsp;-&nbsp;
       <a href="<%= request.getContextPath() %>/services">See AxisServlet</a>
     </p>
 

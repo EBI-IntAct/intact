@@ -21,7 +21,7 @@
     <groupId>uk.ac.ebi.intact.app.graph2mif</groupId>
     <artifactId>graph2mif-server</artifactId>
     <packaging>war</packaging>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.0.2</version>
     <!-- last released 1.0.1 -->
     <name>Graph2MIF Server</name>
     <description>Graph2MIF Web Service</description>
