@@ -93,10 +93,13 @@ public class Graph2MIFWSService implements Graph2MIFWS
 
         String xmlPsi = writer.toString();
 
-        boolean psiIsValid = PsiValidator.validate(xmlPsi);
+        if (strictmif)
+        {
+            boolean psiIsValid = PsiValidator.validate(xmlPsi);
 
-        if (!psiIsValid)
-             throw new MIFSerializeException("Output PSI xml is invalid for AC: "+ac);
+            if (!psiIsValid)
+                 throw new MIFSerializeException("Output PSI xml is invalid for AC: "+ac);
+        }
 
         //return the PSI-MIF-XML
         return xmlPsi;
