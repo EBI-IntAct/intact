@@ -4,24 +4,24 @@
 
 package uk.ac.ebi.intact.application.mine.business.graph;
 
+import jdsl.graph.api.Vertex;
+import jdsl.graph.ref.IncidenceListGraph;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.shiftone.cache.Cache;
+import uk.ac.ebi.intact.application.mine.business.Constants;
+import uk.ac.ebi.intact.application.mine.business.graph.model.EdgeObject;
+import uk.ac.ebi.intact.application.mine.business.graph.model.GraphData;
+import uk.ac.ebi.intact.application.mine.business.graph.model.NodeObject;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
-
-import jdsl.graph.api.Vertex;
-import jdsl.graph.ref.IncidenceListGraph;
-
-import org.apache.log4j.Logger;
-import org.shiftone.cache.Cache;
-
-import uk.ac.ebi.intact.application.mine.business.Constants;
-import uk.ac.ebi.intact.application.mine.business.IntactUserI;
-import uk.ac.ebi.intact.application.mine.business.graph.model.EdgeObject;
-import uk.ac.ebi.intact.application.mine.business.graph.model.GraphData;
-import uk.ac.ebi.intact.application.mine.business.graph.model.NodeObject;
 
 /**
  * @author Andreas Groscurth
@@ -30,23 +30,21 @@ public class GraphBuildThread extends Thread {
 	private static final String SELECT_QUERY =
 		"SELECT * FROM ia_interactions WHERE graphid=";
 
-	static transient Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
+	private static final Log logger = LogFactory.getLog(GraphBuildThread.class);
 
 	// the static values are set by the GraphManager !
 	private Cache cache;
 	private Set running;
 
 	private Integer toProcceed;
-	private IntactUserI user;
 
 	/**
 	 * Creates new Thread to build a graph for the given ID
 	 * 
 	 * @param i the graphID
 	 */
-	public GraphBuildThread(Integer i, IntactUserI user, Cache cache, Set running) {
+	public GraphBuildThread(Integer i, Cache cache, Set running) {
 		toProcceed = i;
-		this.user = user;
 		this.cache = cache;
 		this.running = running;
 	}
@@ -83,7 +81,10 @@ public class GraphBuildThread extends Thread {
 	 */
 	private GraphData buildGraph(Integer graphid) throws SQLException {
 		logger.info("build graph for " + graphid);
-		Statement stm = user.getDBConnection().createStatement();
+
+        IntactTransaction tx = DaoFactory.beginTransaction();
+
+        Statement stm = DaoFactory.connection().createStatement();
 		ResultSet set = null;
 		IncidenceListGraph graph = null;
 		Vertex v1, v2;
@@ -140,6 +141,10 @@ public class GraphBuildThread extends Thread {
 		}
 		set.close();
 		stm.close();
-		return new GraphData(graph, nodeLabelMap);
+
+        // commit the transaction
+        tx.commit();
+
+        return new GraphData(graph, nodeLabelMap);
 	}
 }

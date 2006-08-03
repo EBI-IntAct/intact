@@ -4,17 +4,16 @@
 
 package uk.ac.ebi.intact.application.mine.business.graph;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Stack;
-
 import org.apache.log4j.Logger;
 import org.shiftone.cache.Cache;
 import org.shiftone.cache.policy.lru.LruCacheFactory;
-
 import uk.ac.ebi.intact.application.mine.business.Constants;
 import uk.ac.ebi.intact.application.mine.business.IntactUserI;
 import uk.ac.ebi.intact.application.mine.business.graph.model.GraphData;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Stack;
 
 /**
  * @author Andreas Groscurth
@@ -34,7 +33,6 @@ public class GraphManager extends Thread {
 	/**
 	 * Creates a new GraphManager.
 	 * 
-	 * @param user the intact user
 	 */
 	private GraphManager() {
 		/**
@@ -131,7 +129,6 @@ public class GraphManager extends Thread {
 							// the given intact user
 							new GraphBuildThread(
 								buildData.toProceed,
-								buildData.user,
 								cache,
 								running)
 								.start();

@@ -6,7 +6,8 @@
 
 package uk.ac.ebi.intact.application.mine.struts.controller;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -36,7 +37,7 @@ import java.util.Map;
  */
 public class DisplayAction extends Action {
 
-    static transient Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
+    private static final Log logger = LogFactory.getLog(DisplayAction.class);
 
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
@@ -107,7 +108,7 @@ public class DisplayAction extends Action {
             // if the current search ac are in a graph in the database
             if( graphid != Constants.SINGLETON_GRAPHID && search.size() > 1 ) {
                 // the shortest path is computed
-                logger.warn( "searching for MiNe with " + search );
+                logger.debug( "searching for MiNe with " + search );
                 GraphData graphData;
                 // the graphManager is responsible for building and storing the
                 // graphs it is implemented as a singleton so just one instance
@@ -116,7 +117,7 @@ public class DisplayAction extends Action {
                 // the graph is fetched for the given graphid. As long as there
                 // is no graph given for the graphid the action waits 25ms and
                 // then tries again to retrieve the graph
-                logger.warn( "starting it with " );
+                logger.debug( "starting it with " );
                 while ( ( graphData = graphManager.getGraphData( graphid, user ) )
                         == null ) {
                     try {

@@ -6,22 +6,19 @@
 
 package uk.ac.ebi.intact.application.mine.business;
 
+import org.apache.log4j.Logger;
+import uk.ac.ebi.intact.application.mine.business.graph.model.NodeObject;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.model.IntactObject;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+
+import javax.servlet.http.HttpSessionBindingEvent;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-
-import javax.servlet.http.HttpSessionBindingEvent;
-
-import org.apache.log4j.Logger;
-import org.hibernate.Session;
-
-import uk.ac.ebi.intact.application.mine.business.graph.model.NodeObject;
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.model.IntactObject;
 
 /**
  * @author Andreas Groscurth
@@ -135,7 +132,7 @@ public class IntactUser implements IntactUserI {
 	 * @see uk.ac.ebi.intact.application.mine.business.IntactUserI#getDBConnection()
 	 */
 	public Connection getDBConnection() {
-		return ((Session)DaoFactory.getBaseDao().getSession()).connection();
+		return DaoFactory.connection();
     }
 
 	/*
