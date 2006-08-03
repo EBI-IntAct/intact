@@ -26,11 +26,11 @@
 <tr>
 <td><span class="pbold"><a name="search"></a>Search IntAct:</span>
 
-<form name="sidebarForm" method="post" action="../search/do/hvWelcome">
+<form name="sidebarForm" method="post" action="http://www.ebi.ac.uk/intact/search/do/hvWelcome">
     <ul>
         <li class="greenboldsmalllist"><span class="text"> <input name="searchString" size="16" type="text">
                             <input value="Search" title="Search IntAct" type="submit">
-                            <a class="red_boldsmall" href="../search/do/initAdvSearch"><b>Advanced Search</b></a>
+                            <a class="red_boldsmall" href="http://www.ebi.ac.uk/intact/search/do/initAdvSearch"><b>Advanced Search</b></a>
                             </span></li>
         <li class="greenboldsmalllist"><span class="text">Examples: </span>
             <ul>
@@ -108,10 +108,10 @@
     <p>Additional software developed within the IntAct project: </p>
     <ul>
         <li><a href="http://cbi.labri.fr/eng/proviz.htm ">ProViz</a> graph visualisation system.</li>
-        <li><a href="../targets/">Targets</a> application to predict targets for pull-down experiments</li>
-        <li><a href="../mine/">MiNe</a> application computes minimal connecting network for protein sets.<br>
+        <li><a href="http://www.ebi.ac.uk/intact/targets/">Targets</a> application to predict targets for pull-down experiments</li>
+        <li><a href="http://www.ebi.ac.uk/intact/mine/">MiNe</a> application computes minimal connecting network for protein sets.<br>
             <span class="psmall"> <span style="text-decoration: underline;">Example</span>: <a
-                    href="../mine/display.jsp?AC=EBI-1389,EBI-1765">Q12277 and Q08491</a></span><span
+                    href="http://www.ebi.ac.uk/intact/mine/display.jsp?AC=EBI-1389,EBI-1765">Q12277 and Q08491</a></span><span
                 class="psmall">.</span></li>
     </ul>
 </ul>
@@ -124,7 +124,7 @@
     </li>
     <li class="greenboldsmalllist"><span class="text">More detailed information is available in the <a
             href="doc/html/documentation.html#download">user manual</a></span></li>
-    <li class="greenboldsmalllist"><a href="../statisticView"><span class="text">Statistics<br>
+    <li class="greenboldsmalllist"><a href="http://www.ebi.ac.uk/intact/statisticView"><span class="text">Statistics<br>
                             </span></a></li>
     <li class="greenboldsmalllist"><span class="text">IntAct is a member of the International Molecular Exchange Consortium (<a href="http://imex.sourceforge.net/">IMEx</a>).</span> </li>
 
