@@ -21,11 +21,11 @@
     <groupId>uk.ac.ebi.intact.app.search</groupId>
     <artifactId>search-app</artifactId>
     <packaging>war</packaging>
-    <version>1.1.1</version>
-    <!-- last released: 1.1.0 -->
+    <version>1.2-SNAPSHOT</version>
+    <!-- last released: 1.1.1 -->
     <name>Search application</name>
     <description>Search web interface</description>
-
+                                          f ~/
     <scm>
         <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/search/search-app/trunk</connection>
         <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/search/search-app/trunk</developerConnection>
