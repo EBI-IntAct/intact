@@ -26,17 +26,32 @@ public class HibernateSessionRequestFilter implements Filter {
 
     private static Log log = LogFactory.getLog(HibernateSessionRequestFilter.class);
 
+    private static final String TX_TOKEN = IntactTransaction.class.getName();
+
     public void doFilter(ServletRequest request,
                          ServletResponse response,
                          FilterChain chain)
             throws IOException, ServletException {
 
+        // checks if the transaction has been opened before for this request
+        if (request.getAttribute(TX_TOKEN) != null)
+        {
+            chain.doFilter(request, response);
+            return;
+        }
+
         log.debug("Starting a database transaction");
+
+        // initializes the transaction
         IntactTransaction tx = DaoFactory.beginTransaction();
 
-        // Call the next filter (continue request processing)
+        // puts the token in the request to indicate that this request has already started
+        // a transaction
+        request.setAttribute(TX_TOKEN, true);
+
         try
         {
+            // Call the next filter (continue request processing)
             chain.doFilter(request, response);
         }
         catch (IOException e)
@@ -49,6 +64,9 @@ public class HibernateSessionRequestFilter implements Filter {
         }
         finally
         {
+            log.debug("Committing transaction");
+
+            // commits the transaction
             tx.commit();
         }
 
