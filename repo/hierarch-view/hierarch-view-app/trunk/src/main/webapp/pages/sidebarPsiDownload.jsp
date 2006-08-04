@@ -72,20 +72,18 @@
         <tr>
             <td valign="bottom" align="center">
                     <nobr>
-                        <a href="<%= url10 %>"><img border="0" src="<%= request.getContextPath() %>/images/psi10.png"
-                                                                alt="PSI-MI 1.0 Download"
-                                                                onmouseover="return overlib('Download data from publication in PSI-MI XML 1.0', DELAY, 150, TEXTCOLOR, '#FFFFFF', FGCOLOR, '#EA8323', BGCOLOR, '#FFFFFF');"
-                                                                onmouseout="return nd();"></a>
+                        <img border="0" src="<%= request.getContextPath() %>/images/psi10.png"
+                                alt="PSI-MI 1.0 Download"
+                                onclick="w=window.open('<%= url10 %>', 'graph2mif');w.focus();">
                     </nobr>
              </td>
         </tr>
         <tr>
             <td valign="bottom" align="center">
                     <nobr>
-                        <a href="<%= url25 %>"><img border="0" src="<%= request.getContextPath() %>/images/psi25.png"
-                                                                 alt="PSI-MI 2.5 Download"
-                                                                 onmouseover="return overlib('Download data from publication in PSI-MI XML 2.5', DELAY, 150, TEXTCOLOR, '#FFFFFF', FGCOLOR, '#EA8323', BGCOLOR, '#FFFFFF');"
-                                                                 onmouseout="return nd();"></a>
+                        <img border="0" src="<%= request.getContextPath() %>/images/psi25.png"
+                             alt="PSI-MI 2.5 Download"
+                             onclick="w=window.open('<%= url25 %>', 'graph2mif');w.focus();">
                     </nobr>
              </td>
 
