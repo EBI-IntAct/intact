@@ -111,11 +111,11 @@ public class SearchAction extends IntactBaseAction {
         String filterValue = (String) dyForm.get( "filter" );
 
         // Feature Request #1485467 : Add a wildcard at the end
-        Institution institution = IntactContext.getCurrentInstance().getInstitution();
-        //if (!searchValue.endsWith("*") && IntactContext.getCurrentInstance() )
-        //{
-        //    searchValue = searchValue+"*";
-        //}
+        String acPrefix = IntactContext.getCurrentInstance().getConfig().getAcPrefix();
+        if (!searchValue.endsWith("*") && !searchValue.toLowerCase().startsWith(acPrefix.toLowerCase()));
+        {
+            searchValue = searchValue+"*";
+        }
 
 
         //set a few useful user beans
