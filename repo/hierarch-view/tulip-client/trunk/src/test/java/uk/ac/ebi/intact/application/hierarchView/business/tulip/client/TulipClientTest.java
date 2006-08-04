@@ -2,6 +2,7 @@ package uk.ac.ebi.intact.application.hierarchView.business.tulip.client;
 
 import junit.framework.TestCase;
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.ProteinCoordinate;
+import uk.ac.ebi.intact.tulip.client.TulipClient;
 
 import java.rmi.RemoteException;
 
