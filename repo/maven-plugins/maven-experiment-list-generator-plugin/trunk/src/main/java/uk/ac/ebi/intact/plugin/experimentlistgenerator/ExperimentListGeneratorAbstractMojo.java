@@ -14,7 +14,7 @@ import java.io.File;
  * TODO: comment this!
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
- * @version $Id:$
+ * @version $Id$
  * @since <pre>04/08/2006</pre>
  */
 public abstract class ExperimentListGeneratorAbstractMojo extends AbstractMojo
@@ -45,26 +45,6 @@ public abstract class ExperimentListGeneratorAbstractMojo extends AbstractMojo
     * @parameter default-value="classification_by_publications.txt"
     */
     protected String publicationsFilename;
-
-    /**
-    * File containing the publications
-    * @parameter default-value="%"
-    */
-    protected String searchPattern;
-
-    /**
-     * If true, all experiment without a PubMed ID (primary-reference) will be filtered out.
-     *
-     * @parameter default-value="true"
-     */
-    protected boolean onlyWithPmid;
-
-    /**
-     * Whether to update the existing project files or overwrite them.
-     *
-     * @parameter expression="${overwrite}" default-value="false"
-     */
-    protected boolean overwrite;
 
 
     protected File getSpeciesFile()
