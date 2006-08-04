@@ -19,20 +19,29 @@ import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageDimension;
 import uk.ac.ebi.intact.application.hierarchView.business.image.Utilities;
-import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.TulipClient;
-import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.ProteinCoordinate;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.searchengine.CriteriaBean;
 import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
 import uk.ac.ebi.intact.simpleGraph.EdgeI;
 import uk.ac.ebi.intact.simpleGraph.Graph;
 import uk.ac.ebi.intact.simpleGraph.Node;
+import uk.ac.ebi.intact.tulip.client.TulipClient;
+import uk.ac.ebi.intact.tulip.client.generated.ProteinCoordinate;
 import uk.ac.ebi.intact.util.Chrono;
 
 import java.awt.*;
 import java.rmi.RemoteException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.Vector;
 
 public class InteractionNetwork extends Graph {
 
