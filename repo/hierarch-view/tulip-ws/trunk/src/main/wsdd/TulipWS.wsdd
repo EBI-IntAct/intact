@@ -17,7 +17,7 @@
       <parameter name="wsdlServiceElement" value="TulipAccessService"/>
       <parameter name="schemaUnqualified" value="urn:tulip"/>
       <parameter name="wsdlServicePort" value="tulip"/>
-      <parameter name="className" value="uk.ac.ebi.intact.application.hierarchView.business.tulip.webService.GVFImpl"/>
+      <parameter name="className" value="uk.ac.ebi.intact.tulip.ws.GVFImpl"/>
       <parameter name="wsdlPortType" value="TulipAccess"/>
       <parameter name="typeMappingVersion" value="1.2"/>
       <operation name="getComputedTlpContent" qname="operNS:getComputedTlpContent" xmlns:operNS="urn:tulip" returnQName="getComputedTlpContentReturn" returnType="rtns:ArrayOfProteinCoordinate" xmlns:rtns="urn:tulip" returnItemType="tns2:ProteinCoordinate" xmlns:tns2="urn:tulip" soapAction="" >
@@ -43,7 +43,7 @@
       <typeMapping
         xmlns:ns="urn:tulip"
         qname="ns:ProteinCoordinate"
-        type="java:uk.ac.ebi.intact.application.hierarchView.business.tulip.webService.ProteinCoordinate"
+        type="java:uk.ac.ebi.intact.tulip.ws.ProteinCoordinate"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
@@ -51,7 +51,7 @@
       <typeMapping
         xmlns:ns="urn:tulip"
         qname="ns:ArrayOfProteinCoordinate"
-        type="java:uk.ac.ebi.intact.application.hierarchView.business.tulip.webService.ProteinCoordinate[]"
+        type="java:uk.ac.ebi.intact.tulip.ws.ProteinCoordinate[]"
         serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
         deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
         encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
