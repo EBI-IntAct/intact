@@ -1,14 +1,10 @@
-package uk.ac.ebi.intact.application.hierarchView.business.tulip.client;
+package uk.ac.ebi.intact.tulip.client;
 
-import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.ProteinCoordinate;
-import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.GVFImplService;
-import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.GVFImplServiceLocator;
-import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.GVFImpl;
+import uk.ac.ebi.intact.tulip.client.generated.ProteinCoordinate;
+import uk.ac.ebi.intact.tulip.client.generated.TulipAccess;
+import uk.ac.ebi.intact.tulip.client.generated.TulipAccessServiceLocator;
 
-import javax.xml.rpc.ServiceException;
-import java.util.Properties;
 import java.net.URL;
-import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 
 /**
@@ -22,7 +18,7 @@ public class TulipClient
      /**
      * Stub to handle the tulip web service
      */
-    private GVFImpl tulip;
+    private TulipAccess tulip;
 
 
     ////////////////
@@ -35,7 +31,7 @@ public class TulipClient
 
         try
         {
-            GVFImplServiceLocator serviceLocator = new GVFImplServiceLocator();
+            TulipAccessServiceLocator serviceLocator = new TulipAccessServiceLocator();
             serviceLocator.setMaintainSession(true);
 
             this.tulip = serviceLocator.gettulip(new URL("http://www.ebi.ac.uk/intact/axis/services/tulip"));
@@ -51,7 +47,7 @@ public class TulipClient
 
         try
         {
-            GVFImplServiceLocator serviceLocator = new GVFImplServiceLocator();
+            TulipAccessServiceLocator serviceLocator = new TulipAccessServiceLocator();
             serviceLocator.setMaintainSession(true);
 
             this.tulip = serviceLocator.gettulip(new URL(tulipWsUrl));
