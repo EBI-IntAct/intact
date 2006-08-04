@@ -97,11 +97,6 @@
             <version>1.0</version>
         </dependency>
         <dependency>
-            <groupId>commons-dbutils</groupId>
-            <artifactId>commons-dbutils</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
             <groupId>commons-pool</groupId>
             <artifactId>commons-pool</artifactId>
             <version>1.2</version>
@@ -116,19 +111,6 @@
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-core</artifactId>
             <version>2.0.0</version>
-        </dependency>
-
-        <!-- statistics dep? -->
-        <dependency>
-            <groupId>jfree</groupId>
-            <artifactId>jfreechart</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>jdsl</groupId>
-            <artifactId>jdsl</artifactId>
-            <version>2.1</version>
         </dependency>
 
         <!-- server -->
@@ -150,32 +132,22 @@
             <version>1.4</version>
         </dependency>
 
-        <!-- Web development-->
-        <dependency>
-            <groupId>struts</groupId>
-            <artifactId>struts</artifactId>
-            <version>1.1</version>
-        </dependency>
-
-        <!-- Web services -->
-        <dependency>
-            <groupId>axis</groupId>
-            <artifactId>axis</artifactId>
-            <version>1.3</version>
-        </dependency>
-
         <!-- In ebi repo -->
+        <!--
         <dependency>
             <groupId>ojb</groupId>
             <artifactId>ojb</artifactId>
             <version>1.0.rc6</version>
         </dependency>
+        -->
         <!-- from application/lib -->
+        <!--
         <dependency>
             <groupId>com.sun</groupId>
             <artifactId>jimi</artifactId>
             <version>1.0</version>
         </dependency>
+        -->
 
         <!-- EBI projects -->
         <dependency>
@@ -220,20 +192,6 @@
             </snapshots>
         </repository>
     </repositories>
-
-     <pluginRepositories>
-        <pluginRepository>
-            <id>ebi-repo</id>
-            <name>The EBI internal repository</name>
-            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </pluginRepository>
-    </pluginRepositories>
 
     <distributionManagement>
         <site>
