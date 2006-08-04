@@ -28,10 +28,8 @@
    
     <modules>
         <module>maven</module>
-        <module>plugins</module>
         <module>intact-core</module>
         <module>app-commons</module>
-        <module>sanity-checker</module>
         <module>search-engine</module>
         <module>search-app</module>
         <module>editor-app</module>
@@ -46,8 +44,10 @@
 
     <profiles>
         <profile>
-            <id>include-non-active</id>
+            <id>all-modules</id>
             <modules>
+                <module>plugins</module>
+                <module>sanity-checker</module>
                 <module>graph2mif-server</module>
                 <module>graph2mif-client</module>
                 <module>tulip-ws</module>
