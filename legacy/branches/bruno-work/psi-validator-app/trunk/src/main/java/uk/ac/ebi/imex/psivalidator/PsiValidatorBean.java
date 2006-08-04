@@ -8,18 +8,18 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
 
-import javax.faces.event.ValueChangeEvent;
-import javax.faces.event.ActionEvent;
-import javax.faces.context.FacesContext;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
-import java.io.InputStream;
-import java.io.IOException;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
-import java.net.URL;
 import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * This is the managed bean that contains the model of the information show to the user. From this bean,
@@ -29,7 +29,7 @@ import java.net.MalformedURLException;
  * @version $Id$
  * @since <pre>12-Jun-2006</pre>
  */
-public class PsiValidatorBean
+public class PsiValidatorBean implements Serializable
 {
     /**
      * Logging is an essential part of an application
