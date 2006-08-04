@@ -16,6 +16,8 @@ import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.model.ExperimentXref;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
+import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -44,7 +46,7 @@ import java.util.StringTokenizer;
  * Generates list of experiments
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
- * @version $Id:$
+ * @version $Id$
  * @since <pre>04/08/2006</pre>
  *
  * @goal generate-list
@@ -53,10 +55,46 @@ import java.util.StringTokenizer;
 public class ExperimentListGeneratorMojo extends ExperimentListGeneratorAbstractMojo
 {
 
+    /**
+    * File containing the publications
+    * @parameter default-value="%"
+    */
+    protected String searchPattern;
+
+    /**
+     * If true, all experiment without a PubMed ID (primary-reference) will be filtered out.
+     *
+     * @parameter default-value="true"
+     */
+    protected boolean onlyWithPmid;
+
+    /**
+     * Whether to update the existing project files or overwrite them.
+     *
+     * @parameter expression="${overwrite}" default-value="false"
+     */
+    protected boolean overwrite;
+
+    /**
+     * @parameter default-value="${project.build.outputDirectory}/hibernate/config/hibernate.cfg.xml"
+     * @required
+     */
+    private File hibernateConfig;
+    
+
     public void execute() throws MojoExecutionException
     {
         getLog().info("ExperimentListGeneratorMojo in action");
-        
+
+        getLog().debug("Using hibernate cfg file: "+hibernateConfig);
+
+        if (!hibernateConfig.exists())
+        {
+            throw new MojoExecutionException("No hibernate config file found: "+hibernateConfig);
+        }
+
+        HibernateUtil.setHibernateConfig(hibernateConfig);
+
         if (!targetPath.exists())
         {
             targetPath.mkdirs();
@@ -78,6 +116,8 @@ public class ExperimentListGeneratorMojo extends ExperimentListGeneratorAbstract
         getLog().debug("Species filename: "+speciesFile);
         getLog().debug("Publications filename: "+publicationsFile);
 
+        IntactTransaction tx = DaoFactory.beginTransaction();
+
         try
         {
             Writer writerSpecies = new FileWriter( speciesFile );
@@ -90,8 +130,13 @@ public class ExperimentListGeneratorMojo extends ExperimentListGeneratorAbstract
             writeExperimentsClassificationBySpecies( classification.getSpecie2experimentSet(),
                                                      classification.getNegativeExperiments(),
                                                      writerSpecies );
+
+            tx.commit();
+
             writerSpecies.flush();
             writerSpecies.close();
+
+            tx = DaoFactory.beginTransaction();
 
             writeExperimentsClassificationByPubmed( classification.getPubmed2experimentSet(),
                                                     classification.getNegativeExperiments(),
@@ -103,6 +148,13 @@ public class ExperimentListGeneratorMojo extends ExperimentListGeneratorAbstract
         {
             e.printStackTrace();
             throw new MojoExecutionException("Exception when producing the output files", e);
+        }
+        finally
+        {
+            if (!tx.wasCommitted())
+            {
+                tx.commit();
+            }
         }
     }
 
@@ -150,7 +202,9 @@ public class ExperimentListGeneratorMojo extends ExperimentListGeneratorAbstract
 
         while ( patterns.hasMoreTokens() ) {
             String shortlabel = patterns.nextToken().trim();
+
             searchResults.addAll( DaoFactory.getExperimentDao().getByShortLabelLike(shortlabel));
+
         }
 
         int resultSize = searchResults.size();
@@ -283,8 +337,10 @@ public class ExperimentListGeneratorMojo extends ExperimentListGeneratorAbstract
 
             Statement statement = null;
             ResultSet resultSet = null;
+
             try {
                 filter = new HashSet<String>();
+
                 Connection connection = DaoFactory.connection();
                 statement = connection.createStatement();
                 final String sql = "SELECT e.ac, e.shortlabel\n" +

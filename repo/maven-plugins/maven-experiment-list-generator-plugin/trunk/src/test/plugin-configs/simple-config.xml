@@ -1,11 +1,5 @@
 <project>
 
-    <parent>
-        <groupId>uk.ac.ebi.intact.maven</groupId>
-        <artifactId>intact-hibernate-master</artifactId>
-        <version>1.1.0</version>
-    </parent>
-
     <build>
         <plugins>
             <plugin>
@@ -16,6 +10,7 @@
                     <publicationsFilename>classification_by_publications.txt</publicationsFilename>
                     <searchPattern>EBI-14%</searchPattern>
                     <overwrite>true</overwrite>
+                    <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
                 </configuration>
             </plugin>
         </plugins>
