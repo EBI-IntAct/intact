@@ -133,13 +133,13 @@
         </dependency>
 
         <!-- In ebi repo -->
-        <!--
+        <!-- TO BE REMOVED -->
         <dependency>
             <groupId>ojb</groupId>
             <artifactId>ojb</artifactId>
             <version>1.0.rc6</version>
         </dependency>
-        -->
+        
         <!-- from application/lib -->
         <!--
         <dependency>
