@@ -4,34 +4,48 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.util.PropertyLoader;
+import uk.ac.ebi.intact.context.impl.StandaloneSession;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
 import java.util.Properties;
+import java.io.Serializable;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public final class IntactContext
+public class IntactContext implements Serializable
 {
+    private static final Log log = LogFactory.getLog(IntactContext.class);
+
+    public static String SESSION_CONTEXT_NAME = IntactContext.class.getName();
+
+    private IntactSession session;
 
     private UserContext userContext;
-    private Institution institution;
 
-    /**
-     * Path of the configuration file which allow to retrieve the inforamtion related to the IntAct node we are running
-     * on.
-     */
-    private static final String INSTITUTION_CONFIG_FILE = "/config/Institution.properties";
 
-    private IntactContext(UserContext userContext)
+    protected IntactContext(UserContext userContext, IntactSession session)
     {
         this.userContext = userContext;
+        this.session = session;
     }
 
     public static IntactContext getCurrentInstance()
     {
+        if (currentInstance.get() == null)
+        {
+            log.debug("Current instance of IntactContext is null. Initializing with StandaloneSession," +
+                    "because probably this application is not a web application");
+            IntactConfigurator.initIntact(new StandaloneSession());
+        }
+
        return currentInstance.get();
     }
 
@@ -39,6 +53,8 @@ public final class IntactContext
     {
         protected IntactContext initialValue()
         {
+            return null;
+            /*
             String defaultUser = null;
 
             try
@@ -52,9 +68,14 @@ public final class IntactContext
 
             UserContext userContext = new UserContext(defaultUser);
 
-            return new IntactContext(userContext);
+            return new IntactContext(userContext, null);  */
         }
     };
+
+    protected static void setCurrentInstance(IntactContext context)
+    {
+        currentInstance.set(context);
+    }
 
 
     public UserContext getUserContext()
@@ -62,94 +83,15 @@ public final class IntactContext
         return userContext;
     }
 
-    public Institution getInstitution() throws IntactException {
-        if (institution == null)
-        {
-            institution = loadInstitutionFromProperties();
-        }
-
-        return institution;
+    public Institution getInstitution() throws IntactException
+     {
+        return getConfig().getInstitution();
     }
 
-    /**
-     * Allow the user not to know about the it's Institution, it has to be configured once in the properties file:
-     * ${INTACTCORE_HOME}/config/Institution.properties and then when calling that method, the Institution is either
-     * retreived or created according to its shortlabel.
-     *
-     * @return the Institution to which all created object will be linked.
-     */
-    private Institution loadInstitutionFromProperties() throws IntactException {
-        Institution institution = null;
-
-        Properties props = PropertyLoader.load( INSTITUTION_CONFIG_FILE );
-        if ( props != null ) {
-            String shortlabel = props.getProperty( "Institution.shortLabel" );
-            if ( shortlabel == null || shortlabel.trim().equals( "" ) ) {
-                throw new IntactException( "Your institution is not properly configured, check out the configuration file:" +
-                                           INSTITUTION_CONFIG_FILE + " and set 'Institution.shortLabel' correctly" );
-            }
-
-            // search for it (force it for LC as short labels must be in LC).
-            shortlabel = shortlabel.trim();
-            institution = DaoFactory.getInstitutionDao().getByShortLabel( shortlabel );
-
-            if ( institution == null ) {
-                // doesn't exist, create it
-                institution = new Institution( shortlabel );
-
-                String fullname = props.getProperty( "Institution.fullName" );
-                if ( fullname != null ) {
-                    fullname = fullname.trim();
-                    if ( !fullname.equals( "" ) ) {
-                        institution.setFullName( fullname );
-                    }
-                }
-
-
-                String lineBreak = System.getProperty( "line.separator" );
-                StringBuffer address = new StringBuffer( 128 );
-                appendLineFromProperty( address, props, "Institution.postalAddress.line1" );
-                appendLineFromProperty( address, props, "Institution.postalAddress.line2" );
-                appendLineFromProperty( address, props, "Institution.postalAddress.line3" );
-                appendLineFromProperty( address, props, "Institution.postalAddress.line4" );
-                appendLineFromProperty( address, props, "Institution.postalAddress.line5" );
-
-                if ( address.length() > 0 ) {
-                    address.deleteCharAt( address.length() - 1 ); // delete the last line break;
-                    institution.setPostalAddress( address.toString() );
-                }
-
-                String url = props.getProperty( "Institution.url" );
-                if ( url != null ) {
-                    url = url.trim();
-                    if ( !url.equals( "" ) ) {
-                        institution.setUrl( url );
-                    }
-                }
-
-                DaoFactory.getInstitutionDao().persist( institution );
-
-            }
-
-        } else {
-            throw new IntactException( "Unable to read the properties from " + INSTITUTION_CONFIG_FILE );
-        }
-
-        return institution;
-    }
-
-    private void appendLineFromProperty(StringBuffer sb, Properties props, String propertyName)
+    public RuntimeConfig getConfig()
     {
-        String lineBreak = System.getProperty("line.separator");
-
-        String line = props.getProperty(propertyName);
-        if (line != null)
-        {
-            line = line.trim();
-        }
-        if (!line.equals(""))
-        {
-            sb.append(line).append(lineBreak);
-        }
+        return RuntimeConfig.getCurrentInstance(session);
     }
+
+   
 }
