@@ -21,7 +21,8 @@
     <groupId>uk.ac.ebi.intact.app.hierarchview</groupId>
     <artifactId>tulip-client</artifactId>
     <packaging>jar</packaging>
-    <version>1.1.0</version>
+    <version>1.2-SNAPSHOT</version>
+    <!-- last released 1.1.0 -->
     <name>Tulip WS Client</name>
     <description>Tulip Web Service Client</description>
 
