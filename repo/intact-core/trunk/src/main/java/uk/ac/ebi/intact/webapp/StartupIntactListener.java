@@ -35,11 +35,13 @@ public class StartupIntactListener implements ServletContextListener, HttpSessio
     {
         IntactSession intactSession = new WebappSession(servletContextEvent.getServletContext(), null);
 
-        boolean initDone = (Boolean)intactSession.getApplicationAttribute(FACES_INIT_DONE);
+        boolean initDone = (intactSession.getApplicationAttribute(FACES_INIT_DONE) != null);
 
         if (!initDone) {
             // start the intact application (e.g. load Institution, etc)
             IntactConfigurator.initIntact(intactSession);
+
+            intactSession.setApplicationAttribute(FACES_INIT_DONE, true);
         }
 
     }
