@@ -1,0 +1,23 @@
+<project>
+
+    <parent>
+        <groupId>uk.ac.ebi.intact.maven</groupId>
+        <artifactId>intact-hibernate-master</artifactId>
+        <version>1.1.0</version>
+    </parent>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-experiment-list-generator-plugin</artifactId>
+                <configuration>
+                    <targetPath>target/experiment-list-test/generate-list</targetPath>
+                    <speciesFilename>classification_by_species.txt</speciesFilename>
+                    <publicationsFilename>classification_by_publications.txt</publicationsFilename>
+                    <searchPattern>EBI-14%</searchPattern>
+                    <overwrite>true</overwrite>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
