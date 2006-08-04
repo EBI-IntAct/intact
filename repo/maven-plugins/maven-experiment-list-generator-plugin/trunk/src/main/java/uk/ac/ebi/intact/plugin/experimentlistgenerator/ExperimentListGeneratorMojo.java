@@ -208,7 +208,7 @@ public class ExperimentListGeneratorMojo extends ExperimentListGeneratorAbstract
         }
 
         int resultSize = searchResults.size();
-        System.out.println( "done (found " + resultSize + " experiment" + ( resultSize > 1 ? "s" : "" ) + ")" );
+        logOut( "done (found " + resultSize + " experiment" + ( resultSize > 1 ? "s" : "" ) + ")" );
 
         return searchResults;
     }
@@ -252,14 +252,14 @@ public class ExperimentListGeneratorMojo extends ExperimentListGeneratorAbstract
 
             if (experimentFilter.contains(experiment.getAc()))
             {
-                System.out.println("Skipping " + experiment.getShortLabel());
+                logOut("Skipping " + experiment.getShortLabel());
                 continue;
             }
 
             // Skip empty experiments and give a warning about'em
             if (experiment.getInteractions().isEmpty())
             {
-                System.out.println("ERROR: experiment " + experiment.getShortLabel() + " (" + experiment.getAc() + ") has no interaction.");
+                logOut("ERROR: experiment " + experiment.getShortLabel() + " (" + experiment.getAc() + ") has no interaction.");
                 continue;
             }
 
@@ -267,7 +267,7 @@ public class ExperimentListGeneratorMojo extends ExperimentListGeneratorAbstract
             //    The bioSource of the Experiment is irrelevant, as it may be an auxiliary experimental system.
             Collection<BioSource> sources = getTargetSpecies(experiment);
             int size = experiment.getInteractions().size();
-            System.out.println("Classifying " + experiment.getShortLabel() + " (" + size + " interaction" + (size > 1 ? "s" : "") + ")");
+            logOut("Classifying " + experiment.getShortLabel() + " (" + size + " interaction" + (size > 1 ? "s" : "") + ")");
 
             // 2. get the pubmedId (primary-ref)
             String pubmedId = getPrimaryId(experiment);
@@ -296,7 +296,7 @@ public class ExperimentListGeneratorMojo extends ExperimentListGeneratorAbstract
             }
             else
             {
-                System.out.println("ERROR: Could not find a pubmed ID for experiment: " + experiment.getShortLabel() + "(" + experiment.getAc() + ")");
+                logOut("ERROR: Could not find a pubmed ID for experiment: " + experiment.getShortLabel() + "(" + experiment.getAc() + ")");
             }
 
             // 4. create the classification by species
@@ -327,64 +327,34 @@ public class ExperimentListGeneratorMojo extends ExperimentListGeneratorAbstract
         return classification;
     }
 
-    private static Set<String> getExperimentWithoutPubmedId( boolean forcePubmed ) throws IntactException {
+    private Set<String> getExperimentWithoutPubmedId( boolean forcePubmed ) throws IntactException {
 
         Set<String> filter = null;
 
-        if ( forcePubmed == false ) {
+        if (forcePubmed == false)
+        {
             filter = Collections.EMPTY_SET;
-        } else {
-
-            Statement statement = null;
-            ResultSet resultSet = null;
-
-            try {
-                filter = new HashSet<String>();
-
-                Connection connection = DaoFactory.connection();
-                statement = connection.createStatement();
-                final String sql = "SELECT e.ac, e.shortlabel\n" +
-                                   "FROM ia_experiment e\n" +
-                                   "MINUS \n" +
-                                   "SELECT e.ac, e.shortlabel\n" +
-                                   "FROM ia_experiment e,\n" +
-                                   "     ia_xref x,\n" +
-                                   "     ia_controlledvocab q, \n" +
-                                   "     ia_controlledvocab db\n" +
-                                   "WHERE     e.ac = x.parent_ac    \n" +
-                                   "      AND x.database_ac = db.ac\n" +
-                                   "      AND db.shortlabel = '" + CvDatabase.PUBMED + "' \n" +
-                                   "      AND x.qualifier_ac = q.ac\n" +
-                                   "      AND q.shortlabel = '" + CvXrefQualifier.PRIMARY_REFERENCE + "'";
-
-                resultSet = statement.executeQuery( sql );
-
-                while ( resultSet.next() ) {
-                    String ac = resultSet.getString( 1 );
-                    String shortlabel = resultSet.getString( 2 );
-
-                    System.out.println( "Filter out: " + shortlabel + " (" + ac + ")" );
-                    filter.add( ac );
-                }
-
-                System.out.println( filter.size() + " experiment filtered out." );
-
-            } catch ( SQLException e ) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    if ( resultSet != null ) {
-                        resultSet.close();
-                    }
-
-                    if ( statement != null ) {
-                        statement.close();
-                    }
-                } catch ( SQLException e1 ) {
-                    e1.printStackTrace();
-                }
-            }
         }
+        else
+        {
+
+            filter = new HashSet<String>();
+
+            List<String[]> expAcAndLabels = ExperimentListGeneratorDao.getExperimentAcAndLabelWithoutPubmedId();
+
+            for (String[] acAndLabel : expAcAndLabels)
+            {
+                String ac = acAndLabel[0];
+                String shortlabel = acAndLabel[1];
+
+                logOut("Filter out: " + shortlabel + " (" + ac + ")");
+                filter.add(ac);
+            }
+
+            logOut(filter.size() + " experiment filtered out.");
+
+        }
+
         return filter;
     }
 
@@ -393,7 +363,7 @@ public class ExperimentListGeneratorMojo extends ExperimentListGeneratorAbstract
      *
      * @param allExp HashMap of HashMap of ArrayLists of Experiments: {species}{scale}[n]
      */
-    public static void writeExperimentsClassificationBySpecies( Map<BioSource,Collection<Experiment>> allExp,
+    public void writeExperimentsClassificationBySpecies( Map<BioSource,Collection<Experiment>> allExp,
                                                                 Collection negExpLabels,
                                                                 Writer writer ) throws IOException {
 
@@ -422,7 +392,7 @@ public class ExperimentListGeneratorMojo extends ExperimentListGeneratorAbstract
      *
      * @return a pubmed Id or null if none found.
      */
-    private static String getPrimaryId( Experiment experiment ) {
+    private String getPrimaryId( Experiment experiment ) {
         String pubmedId = null;
 
         for ( Iterator iterator1 = experiment.getXrefs().iterator(); iterator1.hasNext() && null == pubmedId; ) {
@@ -440,7 +410,7 @@ public class ExperimentListGeneratorMojo extends ExperimentListGeneratorAbstract
                         pubmedId = xref.getPrimaryId();
 
                     } catch ( NumberFormatException e ) {
-                        System.out.println( experiment.getShortLabel() + " has pubmedId(" + xref.getPrimaryId() + ") which  is not an integer value, skip it." );
+                        logOut( experiment.getShortLabel() + " has pubmedId(" + xref.getPrimaryId() + ") which  is not an integer value, skip it." );
                     }
                 }
             }
@@ -515,109 +485,14 @@ public class ExperimentListGeneratorMojo extends ExperimentListGeneratorAbstract
      * 'negative' (not the Experiment), and so these should be checked also, with duplicate matches being ignored. </p>
      * This method has to be static because it is called by the static 'classifyExperiments'.
      */
-    private static void classifyNegatives( ExperimentClassification classification ) throws IntactException {
+    private void classifyNegatives( ExperimentClassification classification ) throws IntactException {
 
         Collection<Experiment> negExps = classification.getNegativeExperiments();
 
-        // Query to get at the Experiment ACs containing negative interaction annotations
-        String sql = "SELECT experiment_ac " +
-                     "FROM ia_int2exp " +
-                     "WHERE interaction_ac in " +
-                     "   (SELECT interactor_ac " +
-                     "    FROM ia_int2annot " +
-                     "    WHERE annotation_ac in " +
-                     "       (SELECT ac " +
-                     "        FROM ia_annotation " +
-                     "        WHERE topic_ac in " +
-                     "            (SELECT ac " +
-                     "             FROM ia_controlledvocab " +
-                     "             WHERE shortlabel='" + CvTopic.NEGATIVE + "'" +
-                     "            )" +
-                     "        )" +
-                     "    )";
-
-        // Query to obtain Experiment ACs by searching for an Annotation for the
-        // Experiment classified as 'negative' itself
-        String expSql = "SELECT experiment_ac " +
-                        "FROM ia_exp2annot " +
-                        "WHERE annotation_ac in " +
-                        "     (SELECT ac " +
-                        "      FROM ia_annotation " +
-                        "      WHERE topic_ac in " +
-                        "            (SELECT ac " +
-                        "             FROM ia_controlledvocab " +
-                        "             WHERE shortlabel = '" + CvTopic.NEGATIVE + "'" +
-                        "            )" +
-                        "     )";
-
-        Set<String> expAcs = new HashSet<String>( 32 ); //used to collect ACs from a query - Set avoids duplicates
-
-        Connection conn = null;
-        Statement stmt = null;  //ordinary Statement will do - won't be reused
-        PreparedStatement labelStmt = null; //needs a parameter
-        ResultSet rs = null;
-
-        try {
-
-            // Safest way to do this is directly through the Connection.....
-            conn = DaoFactory.connection();
-
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery( expSql );
-            while ( rs.next() ) {
-                //stick them into the Set of ACs
-                expAcs.add( rs.getString( "experiment_ac" ) );
-            }
-            rs.close();
-            stmt.close();
-
-            // Now query via the Interactions...
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery( sql );
-            while ( rs.next() ) {
-                //stick them into the Set of ACs
-                expAcs.add( rs.getString( "experiment_ac" ) );
-            }
-            rs.close();
-            stmt.close();
-            // do not close the connexion ... helper.closeStore() takes care of giving it back to the connexion pool.
-
-            // Now get the Experiments by AC as these are what we need...
-            for (String ac : expAcs)
-            {
-                Experiment experiment = DaoFactory.getExperimentDao().getByAc(ac);
-                negExps.add(experiment);
-            }
-
-        } catch ( SQLException se ) {
-
-            System.out.println( se.getSQLState() );
-            System.out.println( se.getErrorCode() );
-            se.printStackTrace();
-
-            while ( ( se.getNextException() ) != null ) {
-                System.out.println( se.getSQLState() );
-                System.out.println( se.getErrorCode() );
-                se.printStackTrace();
-            }
-
-        } finally {
-            try {
-                if ( stmt != null ) {
-                    stmt.close();
-                }
-                if ( labelStmt != null ) {
-                    labelStmt.close();
-                }
-
-                // Do not close the connection ... closeStore hands it back to the pool !
-
-            } catch ( SQLException se ) {
-                se.printStackTrace();
-            }
-        }
-
-        System.out.println( negExps.size() + " negative experiment found." );
+        negExps.addAll(ExperimentListGeneratorDao.getExpWithInteractionsContainingAnnotation(CvTopic.NEGATIVE));
+        negExps.addAll(ExperimentListGeneratorDao.getContainingAnnotation(Experiment.class, CvTopic.NEGATIVE));
+        
+        logOut( negExps.size() + " negative experiment found." );
     }
 
     /**
@@ -827,7 +702,7 @@ public class ExperimentListGeneratorMojo extends ExperimentListGeneratorAbstract
      *
      * @throws IOException
      */
-    private static void writeExperimentsClassificationByPubmed( Map<String,Collection<Experiment>> pubmed2experimentSet,
+    private void writeExperimentsClassificationByPubmed( Map<String,Collection<Experiment>> pubmed2experimentSet,
                                                                 Collection<Experiment> negExps,
                                                                 Writer writer ) throws IOException {
 
@@ -886,7 +761,7 @@ public class ExperimentListGeneratorMojo extends ExperimentListGeneratorAbstract
      *
      * @throws IOException
      */
-    private static void writeLines( Map<String,Collection<Experiment>> file2experimentSet,
+    private  void writeLines( Map<String,Collection<Experiment>> file2experimentSet,
             Collection<Experiment> negativeExperiments, Writer writer ) throws IOException {
 
         // write each subset into the classification file
@@ -940,7 +815,7 @@ public class ExperimentListGeneratorMojo extends ExperimentListGeneratorAbstract
             {
                 String smallFilename = filePrefix + FileHelper.XML_FILE_EXTENSION;
                 String line = smallFilename + " " + pattern.toString();
-                System.out.println(line);
+                logOut(line);
                 writer.write(line);
                 writer.write(NEW_LINE);
             }
@@ -949,7 +824,7 @@ public class ExperimentListGeneratorMojo extends ExperimentListGeneratorAbstract
             {
                 String negativeFilename = filePrefix + "_negative" + FileHelper.XML_FILE_EXTENSION;
                 String line = negativeFilename + " " + negPattern.toString();
-                System.out.println(line);
+                logOut(line);
                 writer.write(line);
                 writer.write(NEW_LINE);
             }
