@@ -34,7 +34,7 @@ public class TulipClient
             TulipAccessServiceLocator serviceLocator = new TulipAccessServiceLocator();
             serviceLocator.setMaintainSession(true);
 
-            this.tulip = serviceLocator.gettulip(new URL("http://www.ebi.ac.uk/intact/axis/services/tulip"));
+            this.tulip = serviceLocator.gettulip(new URL("http://www.ebi.ac.uk/intact/tulip-ws/services/Tulip"));
         }
         catch (Exception e)
         {
