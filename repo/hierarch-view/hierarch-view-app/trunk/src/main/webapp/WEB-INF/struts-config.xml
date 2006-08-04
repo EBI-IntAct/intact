@@ -134,6 +134,10 @@
                 scope="request"/>
     </action-mappings>
 
+    <!-- ========== Message Resources ================================== -->
+
+    <message-resources key="buildInfo" parameter="uk.ac.ebi.intact.app.hierarchview.BuildInfo"/>
+
     <!-- ============ Plug Ins Configuration ================================== -->
 
     <!-- Declaration of the use of Tiles (where to find its configuration file) -->
@@ -143,9 +147,5 @@
         <set-property  property="moduleAware"         value="true" />
 
     </plug-in>
-
-    <!-- ========== Message Resources ================================== -->
-
-    <message-resources key="buildInfo" parameter="uk.ac.ebi.intact.app.hierarchview.BuildInfo"/>
 
 </struts-config>
