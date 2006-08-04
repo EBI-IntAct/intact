@@ -8,7 +8,7 @@
                     <targetPath>target/experiment-list-test/generate-list</targetPath>
                     <speciesFilename>classification_by_species.txt</speciesFilename>
                     <publicationsFilename>classification_by_publications.txt</publicationsFilename>
-                    <searchPattern>EBI-14%</searchPattern>
+                    <searchPattern>gavin-%</searchPattern>
                     <overwrite>true</overwrite>
                     <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
                 </configuration>

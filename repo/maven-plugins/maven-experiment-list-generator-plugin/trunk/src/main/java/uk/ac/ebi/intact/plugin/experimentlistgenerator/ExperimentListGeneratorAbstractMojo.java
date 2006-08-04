@@ -7,8 +7,12 @@ package uk.ac.ebi.intact.plugin.experimentlistgenerator;
 
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.Writer;
+import java.io.IOException;
 
 /**
  * TODO: comment this!
@@ -46,6 +50,25 @@ public abstract class ExperimentListGeneratorAbstractMojo extends AbstractMojo
     */
     protected String publicationsFilename;
 
+    /**
+    * File containing the publications
+    * @parameter default-value="target/experiment-list/experiment-list-generation.log"
+    */
+    protected File outputLogFile;
+
+    protected Writer outputLogWriter;
+
+    public ExperimentListGeneratorAbstractMojo()
+    {
+        try
+        {
+            outputLogWriter = new FileWriter(outputLogFile);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
 
     protected File getSpeciesFile()
     {
@@ -55,6 +78,30 @@ public abstract class ExperimentListGeneratorAbstractMojo extends AbstractMojo
     protected File getPublicationsFile()
     {
         return new File(targetPath, publicationsFilename);
+    }
+
+    protected void logOut(Object info)
+    {
+        try
+        {
+            outputLogWriter.write(info+"\n");
+            outputLogWriter.flush();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    protected void close(){
+        try
+        {
+            outputLogWriter.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
 }
