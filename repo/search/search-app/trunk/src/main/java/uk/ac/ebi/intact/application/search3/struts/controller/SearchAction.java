@@ -16,9 +16,11 @@ import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.searchengine.ResultWrapper;
 import uk.ac.ebi.intact.searchengine.SearchClass;
 import uk.ac.ebi.intact.searchengine.SearchHelper;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -109,10 +111,11 @@ public class SearchAction extends IntactBaseAction {
         String filterValue = (String) dyForm.get( "filter" );
 
         // Feature Request #1485467 : Add a wildcard at the end
-        if (!searchValue.endsWith("*"))
-        {
-            searchValue = searchValue+"*";
-        }
+        Institution institution = IntactContext.getCurrentInstance().getInstitution();
+        //if (!searchValue.endsWith("*") && IntactContext.getCurrentInstance() )
+        //{
+        //    searchValue = searchValue+"*";
+        //}
 
 
         //set a few useful user beans

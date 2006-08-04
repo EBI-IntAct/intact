@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Properties;
 
+import uk.ac.ebi.intact.context.IntactContext;
+
 /**
  * Generates identifiers for IntAct objects
  *
@@ -66,17 +68,7 @@ public class IntactIdGenerator extends SequenceGenerator
     @Override
     public Serializable generate(SessionImplementor sessionImplementor, Object object) throws HibernateException
     {
-        Properties props = new Properties();
-        try
-        {
-            props.load(IntactIdGenerator.class.getResourceAsStream("ac.properties"));
-        }
-        catch (IOException e)
-        {
-            throw new HibernateException("Error loading default AC prefix", e);
-        }
-
-        String prefix = props.getProperty("ac.prefix");
+        String prefix = IntactContext.getCurrentInstance().getConfig().getAcPrefix();
 
         String id = prefix+"-"+super.generate(sessionImplementor, object);
 
