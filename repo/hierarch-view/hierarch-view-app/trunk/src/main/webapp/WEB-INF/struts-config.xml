@@ -144,4 +144,8 @@
 
     </plug-in>
 
+    <!-- ========== Message Resources ================================== -->
+
+    <message-resources key="buildInfo" parameter="uk.ac.ebi.intact.app.hierarchview.BuildInfo"/>
+
 </struts-config>
