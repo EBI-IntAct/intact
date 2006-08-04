@@ -7,7 +7,8 @@
     <groupId>uk.ac.ebi.imex</groupId>
     <artifactId>psi-validator-app</artifactId>
     <packaging>war</packaging>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.0.2</version>
+    <!-- last released 1.0.1 -->
     <name>PSI Validator Webapp</name>
     <url>http://www.ebi.ac.uk/intact/psivalidator</url>
     <description>Validates PSI files</description>
