@@ -35,7 +35,7 @@ public class XsdEntityResolver implements EntityResolver
 
                 log.debug("Entity resolved using XsdEntityResolver - MIF 2.5");
 
-                inputSource = new InputSource(XsdEntityResolver.class.getResourceAsStream("/META-INF/MIF25.xsd"));
+                inputSource = new InputSource(XsdEntityResolver.class.getResourceAsStream("/META-INF/MIF253.xsd"));
             }
             else if (systemId.equals("http://psidev.sourceforge.net/mi/xml/src/MIF.xsd"))
             {
