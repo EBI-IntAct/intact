@@ -7,7 +7,6 @@ package uk.ac.ebi.intact.core;
 
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvObject;
 
 import javax.servlet.ServletContext;
@@ -92,7 +91,7 @@ public abstract class CvContext {
 
         if ( cvContext == null ) {
             try {
-                cvContext = CvContextFactory.createCvContext( new IntactHelper() );
+                cvContext = CvContextFactory.createCvContext( );
 
                 if ( log.isInfoEnabled() ) {
                     log.info( "New CvContext instance created" );

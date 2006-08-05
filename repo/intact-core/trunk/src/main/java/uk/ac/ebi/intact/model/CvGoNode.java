@@ -6,7 +6,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.model;
 
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -88,20 +87,6 @@ public class CvGoNode extends CvDagObject {
         Collection<CvGoNode> childs = new ArrayList<CvGoNode>();
         childs = this.calculateAllChilds(this, childs);
         return childs; // Collection of CvGoNodes
-    }
-
-    /**
-     * @return Collection of Interactors, which were associated with this GO term / id
-     */
-    @Transient
-    public Collection<Interactor> getInteractors(IntactHelper helper) throws IntactException {
-        Collection<Interactor> interactors = new ArrayList<Interactor>();
-        try {
-            interactors.addAll(helper.getObjectsByXref(Interactor.class, this.getGoId()));
-        } catch (IntactException e) {
-            throw e;
-        }
-        return interactors; // Collection of Interactors
     }
 
     // === Common interface ==================================================

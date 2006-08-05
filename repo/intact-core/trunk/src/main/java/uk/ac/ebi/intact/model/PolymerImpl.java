@@ -6,7 +6,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.model;
 
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -159,86 +158,6 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
         // Check for null chunkPool
         return chunkPool == null ? Collections.EMPTY_LIST : chunkPool;
     }
-
-    /**
-     * If there is existing sequence (and chunks), reuse existing chunk
-     * in order to save AC.<br>
-     * The update is canceled if the sequence is null or the same.
-     *
-     * @param helper
-     * @param aSequence the sequence to update in the protein
-     * @throws uk.ac.ebi.intact.business.IntactException
-     */
-    public void setSequence(IntactHelper helper, String aSequence) throws IntactException {
-        if (null == aSequence) {
-            return;
-        }
-
-        if (null == getAc()) {
-            throw new IntactException("The object AC must be set before setting the sequence.");
-        }
-
-        // Save work if the new sequence is identical to the old one.
-        if (aSequence.equals(getSequence())) {
-            return;
-        }
-
-        ArrayList<SequenceChunk> chunkPool = null;
-        SequenceChunk s;
-        String chunk;
-
-        // All old data are kept, we try to recycle as much chunk as possible
-        if (sequenceChunks == null) {
-            sequenceChunks = new ArrayList<SequenceChunk>();
-        }
-        else if (false == sequenceChunks.isEmpty()) {
-            // There is existing chunk ... prepare them for recycling.
-            chunkPool = new ArrayList<SequenceChunk>(sequenceChunks.size());
-            chunkPool.addAll(sequenceChunks);
-            int count = chunkPool.size();
-
-            // clean chunk to recycle
-            for (int i = 0; i < count; i++) {
-                s = chunkPool.get(i);
-                removeSequenceChunk(s);
-            }
-        }
-
-        // Note the use of integer operations
-        int chunkCount = aSequence.length() / ourMaxSeqLength;
-        if (aSequence.length() % ourMaxSeqLength > 0) {
-            chunkCount++;
-        }
-
-        for (int i = 0; i < chunkCount; i++) {
-            chunk = aSequence.substring(i * ourMaxSeqLength,
-                                        Math.min((i + 1) * ourMaxSeqLength, aSequence.length()));
-
-            if (chunkPool != null && chunkPool.size() > 0) {
-                // recycle chunk
-                s = chunkPool.remove(0);
-                s.setSequenceChunk(chunk);
-                s.setSequenceIndex(i);
-                addSequenceChunk(s);
-
-                helper.update(s);
-            }
-            else {
-                // create new chunk
-                s = new SequenceChunk(i, chunk);
-                addSequenceChunk(s);
-
-                helper.create(s);
-            }
-        }
-
-        // Delete non recyclable chunk
-        while (chunkPool != null && chunkPool.size() > 0) {
-            s = chunkPool.remove(0);
-            helper.delete(s);
-        }
-    }
-
 
     public String getCrc64() {
         return crc64;

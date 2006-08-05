@@ -8,7 +8,6 @@ package uk.ac.ebi.intact.util;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ojb.broker.accesslayer.LookupException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
@@ -181,7 +180,7 @@ public class UpdateTargetSpecies {
     /**
      * M A I N
      */
-    public static void main( String[] args ) throws IntactException, SQLException, LookupException {
+    public static void main( String[] args ) throws IntactException, SQLException {
 
             if (log.isInfoEnabled())
             {
