@@ -41,7 +41,7 @@ public class IntactContext implements Serializable
     {
         if (currentInstance.get() == null)
         {
-            log.debug("Current instance of IntactContext is null. Initializing with StandaloneSession," +
+            log.warn("Current instance of IntactContext is null. Initializing with StandaloneSession," +
                     "because probably this application is not a web application");
             IntactConfigurator.initIntact(new StandaloneSession());
         }

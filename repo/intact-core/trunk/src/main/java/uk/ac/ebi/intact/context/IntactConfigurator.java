@@ -28,12 +28,23 @@ public class IntactConfigurator
 {
     private static final Log log = LogFactory.getLog(IntactConfigurator.class);
 
+    private static final String INTACT_INIT_DONE
+            = IntactConfigurator.class.getName() + ".INTACT_INIT_DONE";
+
     private static final String AC_PREFIX_PARAM_NAME = "uk.ac.ebi.intact.AC_PREFIX";
     private static final String DEFAULT_AC_PREFIX = "UNK";
 
     public static void initIntact(IntactSession session)
     {
         log.info("Initializing intact-core...");
+
+        boolean initDone = (session.getApplicationAttribute(INTACT_INIT_DONE) != null);
+
+        if (initDone)
+        {
+            return;
+        }
+
         IntactTransaction tx = DaoFactory.beginTransaction();
 
         RuntimeConfig config = RuntimeConfig.getCurrentInstance(session);
@@ -61,6 +72,8 @@ public class IntactConfigurator
         }
 
         tx.commit();
+
+        session.setApplicationAttribute(INTACT_INIT_DONE, true);
 
     }
 

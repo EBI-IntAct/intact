@@ -28,21 +28,12 @@ public class StartupIntactListener implements ServletContextListener, HttpSessio
 {
     private static final Log log = LogFactory.getLog(StartupIntactListener.class);
 
-    private static final String FACES_INIT_DONE
-            = StartupIntactListener.class.getName() + ".INTACT_INIT_DONE";
-
     public void contextInitialized(ServletContextEvent servletContextEvent)
     {
         IntactSession intactSession = new WebappSession(servletContextEvent.getServletContext(), null);
 
-        boolean initDone = (intactSession.getApplicationAttribute(FACES_INIT_DONE) != null);
-
-        if (!initDone) {
-            // start the intact application (e.g. load Institution, etc)
-            IntactConfigurator.initIntact(intactSession);
-
-            intactSession.setApplicationAttribute(FACES_INIT_DONE, true);
-        }
+        // start the intact application (e.g. load Institution, etc)
+        IntactConfigurator.initIntact(intactSession);
 
     }
 
