@@ -109,7 +109,7 @@ public class SearchAction extends IntactBaseAction {
         String filterValue = (String) dyForm.get( "filter" );
 
         // Feature Request #1485467 : Add a wildcard at the end
-        if (!searchValue.endsWith("*"))
+        if (!searchValue.endsWith("*") && !searchValue.startsWith("EBI-"))
         {
             searchValue = searchValue+"*";
         }
