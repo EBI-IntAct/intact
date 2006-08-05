@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
 
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
 import uk.ac.ebi.intact.context.impl.IntactContextWrapper;
 import uk.ac.ebi.intact.model.Institution;
 
@@ -33,6 +34,7 @@ public class IntactConfigurator
     public static void initIntact(IntactSession session)
     {
         log.info("Initializing intact-core...");
+        IntactTransaction tx = DaoFactory.beginTransaction();
 
         RuntimeConfig config = RuntimeConfig.getCurrentInstance(session);
 
@@ -57,6 +59,8 @@ public class IntactConfigurator
             log.debug("Using default AC prefix: "+DEFAULT_AC_PREFIX);
             config.setAcPrefix(DEFAULT_AC_PREFIX);
         }
+
+        tx.commit();
 
     }
 
