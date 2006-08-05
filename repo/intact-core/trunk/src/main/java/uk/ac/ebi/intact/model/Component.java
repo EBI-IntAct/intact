@@ -7,8 +7,6 @@ package uk.ac.ebi.intact.model;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.model.proxy.InteractionProxy;
-import uk.ac.ebi.intact.model.proxy.InteractorProxy;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -164,17 +162,6 @@ public class Component extends BasicObjectImpl {
     @ManyToOne(targetEntity = InteractorImpl.class)
     @JoinColumn(name = "interactor_ac")
     public Interactor getInteractor() {
-
-        //Need to check for Proxies - callers should
-        //not expect a Proxy back since Component only holds
-        //a single interactor, hence no need for a Proxy
-
-        if(interactor instanceof InteractorProxy){
-            log.debug("Getting Interactor using InteractionProxy");
-            InteractorProxy proxy = (InteractorProxy)interactor;
-            return (Interactor)proxy.getRealSubject();
-        }
-
         return interactor;
     }
 
@@ -184,44 +171,16 @@ public class Component extends BasicObjectImpl {
      * @param interactor
      */
     public void setInteractor( Interactor interactor ) {
-        // TODO (BA) IMPORTANT: I have just commented this method at seems to provoke an illegal access
-        // exception to the list of components
-
-        if (this.interactor instanceof InteractorProxy ) {
-            log.debug("Setting Interactor using InteractionProxy");
-            InteractionProxy proxy = (InteractionProxy) interaction;
-            if (this.interactor != null) this.interactor.removeActiveInstance(this);
-            this.interactor = interactor;
-            if (interactor != null) interactor.addActiveInstance(this);
-        }
         this.interactor = interactor;
     }
 
     @ManyToOne(targetEntity = InteractionImpl.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "interaction_ac")
     public Interaction getInteraction() {
-
-        //Need to check for Proxies - callers should
-        //not expect a Proxy back since Component only holds
-        //a single interaction, hence no need for a Proxy
-        if (  interaction instanceof InteractionProxy) {
-            log.debug("Getting Interaction using InteractionProxy");
-            InteractionProxy proxy = (InteractionProxy) interaction;
-            return (Interaction) proxy.getRealSubject();
-        }
         return interaction;
     }
 
-    // TODO document that non obvious method
     public void setInteraction( Interaction interaction ) {
-        // TODO (BA) IMPORTANT: I have just commented this method at seems to provoke an illegal access
-        // exception to the list of components
-        /*
-        if (this.interaction != interaction) {
-            if (this.interaction != null) this.interaction.removeComponent(this);
-            this.interaction = interaction;
-            if (interaction != null) interaction.addComponent(this);
-        } */
         this.interaction = interaction;
     }
 

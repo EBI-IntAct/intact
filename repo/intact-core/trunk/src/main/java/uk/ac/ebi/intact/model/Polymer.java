@@ -6,7 +6,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.model;
 
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 
 import java.util.List;
 
@@ -23,23 +22,13 @@ public interface Polymer extends Interactor {
     public String getSequence();
 
     /**
-     * Sets the current sequence. Use this method instead of
-     * {@link #setSequence(uk.ac.ebi.intact.business.IntactHelper, String)} because
-     * in the near future, reference to IntactHelper will be removed from model classes.
+     * Sets the current sequence. 
      * @param aSequence the sequence to set
      * @return a list of SequenceChunk objects to remove. This list is non empty
      * only when the current sequence is longer than the new sequence
      * (i.e, <code>aSequence</code>).
      */
     public List<SequenceChunk> setSequence(String aSequence);
-
-    /**
-     * Sets the current sequence. Use the method {@link #setSequence(String)} instead.
-     * @param helper
-     * @param aSequence
-     * @throws IntactException
-     */
-    public void setSequence(IntactHelper helper, String aSequence) throws IntactException;
 
     /**
      * @return crc64 as a string

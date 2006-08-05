@@ -48,7 +48,6 @@ public class AllJUnitTests extends TestCase {
 
         suite.addTest(ProteinTest.suite());
         suite.addTest(NucleicAcidTest.suite());
-        suite.addTest(InteractionTest.suite());
 
         // will be replaced by smaller test in dedicated files.
 //        suite.addTest( EqualityTests.suite() );

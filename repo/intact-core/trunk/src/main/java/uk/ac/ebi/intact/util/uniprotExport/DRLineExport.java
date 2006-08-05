@@ -8,7 +8,6 @@ package uk.ac.ebi.intact.util.uniprotExport;
 import org.apache.commons.cli.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ojb.broker.accesslayer.LookupException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.Chrono;
@@ -739,7 +738,7 @@ public class DRLineExport extends LineExport {
         formatter.printHelp( "DRLineExport [-file <filename>] [-debug] [-debugFile]", options );
     }
 
-    public static void main( String[] args ) throws IntactException, SQLException, LookupException,
+    public static void main( String[] args ) throws IntactException, SQLException, 
                                                     DatabaseContentException {
 
         MemoryMonitor memoryMonitor = new MemoryMonitor();
