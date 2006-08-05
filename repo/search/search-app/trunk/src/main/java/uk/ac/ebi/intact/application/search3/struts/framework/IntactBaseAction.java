@@ -165,15 +165,6 @@ public abstract class IntactBaseAction extends Action {
             user = new IntactUserImpl(repfile, ds);
             logger.info("new user created..");
         }
-        catch (DataSourceException de) {
-            // Unable to get a data source...can't proceed
-            logger.info(ExceptionUtils.getStackTrace(de));
-            // The errors to report back.
-            ActionErrors errors = new ActionErrors();
-            errors.add(INTACT_ERROR, new ActionError("error.invalid.user"));
-            super.saveErrors(request, errors);
-            return null;
-        }
         catch (IntactException se) {
             // Unable to construct lists such as topics, db names etc.
             logger.info(ExceptionUtils.getStackTrace(se));
