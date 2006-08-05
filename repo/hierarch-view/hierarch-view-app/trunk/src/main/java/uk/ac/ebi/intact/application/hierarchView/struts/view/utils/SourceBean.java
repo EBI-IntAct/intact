@@ -5,13 +5,16 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.struts.view.utils;
 
+import java.io.Serializable;
+
 /**
  * Simple JavaBean to represent a source data.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk) & Alexandre Liban (aliban@ebi.ac.uk)
  * @version $Id$
  */
-public class SourceBean implements java.lang.Comparable {
+public class SourceBean implements java.lang.Comparable, Serializable
+{
 
     // ----------------------------------------------------------- Instance variables
 
