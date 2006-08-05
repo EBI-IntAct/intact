@@ -6,24 +6,23 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search3.struts.framework;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import uk.ac.ebi.intact.application.search3.business.Constants;
 import uk.ac.ebi.intact.application.search3.business.IntactServiceIF;
 import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search3.business.IntactUserImpl;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
-import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.business.IntactException;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.servlet.ServletContext;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Super class for all Intact related action classes.
