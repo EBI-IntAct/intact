@@ -84,15 +84,6 @@ public abstract class Xref extends BasicObjectImpl {
      */
     private CvDatabase cvDatabase;
 
-
-    /**
-     * This constructor should <b>not</b> be used as it could
-     * result in objects with invalid state. It is here for object mapping
-     * purposes only and if possible will be made private.
-     *
-     * @deprecated Use the full constructor instead
-     */
-    @Deprecated
     public Xref() {
         //super call sets creation time data
         super();
