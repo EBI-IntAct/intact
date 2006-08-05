@@ -8,7 +8,6 @@ package uk.ac.ebi.intact.application.search3.business;
 
 import uk.ac.ebi.intact.business.IntactException;
 
-import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.model.IntactObject;
 
@@ -59,24 +58,10 @@ public class IntactUserImpl<T extends IntactObject> implements IntactUserIF<T>, 
      *
      * @param mapping the name of the mapping file.
      * @param dsClass the class name of the Data Source.
-     *
-     * @throws DataSourceException for error in getting the data source; this could be due to the errors in repository
-     *                             files or the underlying persistent mechanism rejected <code>user</code> and
-     *                             <code>password</code> combination.
      * @throws IntactException     thrown for any error in creating an IntactHelper, XmlBuilder etc
      */
-    public IntactUserImpl( String mapping, String dsClass )
-            throws DataSourceException, IntactException {
-        //DAOSource ds = DAOFactory.getDAOSource( dsClass );
-
-        // Pass config beans to data source - don't need fast keys as only
-        // accessed once
-        // Map fileMap = new HashMap();
-        // fileMap.put(Constants.MAPPING_FILE_KEY, mapping);
-        // ds.setConfig(fileMap);
-
-        // build a helper and XmlBuilder for use throughout a session
-        //this.helper = new IntactHelper( ds );
+    public IntactUserImpl( String mapping, String dsClass ) {
+   
     }
 
     /**
