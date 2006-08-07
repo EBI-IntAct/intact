@@ -9,6 +9,7 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.util.PropertyLoader;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.io.*;
 import java.util.Map;
@@ -125,7 +126,7 @@ public final class CvMapper {
             String msdTerm = mapping[ 0 ].trim();
             String psiMiId = mapping[ 1 ].trim();
 
-            CvObject cvObject = DaoFactory.getCvObjectDao().getByXref(psiMiId);
+            CvObject cvObject = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao().getByXref(psiMiId);
             // If the corresponding IntAct CvObject could not be found, throw an IntactException.
             if ( cvObject == null ) {
                 throw new IntactException( "Could not find CvVocabulary for psi-mi : " + psiMiId );

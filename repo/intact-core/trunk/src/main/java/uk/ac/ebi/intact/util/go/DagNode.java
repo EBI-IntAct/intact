@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.CvAliasType;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -192,7 +193,7 @@ public class DagNode {
                     + " " + myGoTerm + " " + myGoShortLabel);
         }
 
-        CvObjectDao<CvDagObject> cvDagObjectDao = DaoFactory.getCvObjectDao(CvDagObject.class);
+        CvObjectDao<CvDagObject> cvDagObjectDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDagObject.class);
 
         // Insert the direct parent
         if (myParent != null) {
@@ -237,8 +238,8 @@ public class DagNode {
         // Add aliases.
         if (!myAliases.isEmpty()) {
             // Cache objects to create aliases.
-            Institution owner = DaoFactory.getInstitutionDao().getInstitution();
-            CvAliasType aliasType = DaoFactory.getCvObjectDao(CvAliasType.class).getByShortLabel("go synonym");
+            Institution owner = IntactContext.getCurrentInstance().getInstitution();
+            CvAliasType aliasType = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvAliasType.class).getByShortLabel("go synonym");
             // Must have an alias type
             if (aliasType == null) {
                 throw new IntactException("Alias type go synonym is missing");
@@ -249,7 +250,7 @@ public class DagNode {
                 // Do the check to avoid creating duplicate aliases.
                 if (!targetNode.getAliases().contains(alias)) {
                     targetNode.addAlias(alias);
-                    DaoFactory.getAliasDao().persist(alias);
+                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAliasDao().persist(alias);
                 }
             }
         }

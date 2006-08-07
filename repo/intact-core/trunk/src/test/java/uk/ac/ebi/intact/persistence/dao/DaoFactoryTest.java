@@ -9,6 +9,7 @@ import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.context.IntactContext;
 
 /**
  * TODO comment this!
@@ -35,12 +36,10 @@ public class DaoFactoryTest extends TestCase
     public void testBeginTransactionWithConnection()
     {
 
-        IntactTransaction tx = DaoFactory.beginTransaction();
-
-        Protein p = DaoFactory.getProteinDao().getByAc("EBI-493");
+        Protein p = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByAc("EBI-493");
         assertNotNull(p);
 
-        tx.commit();
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
     }
 }

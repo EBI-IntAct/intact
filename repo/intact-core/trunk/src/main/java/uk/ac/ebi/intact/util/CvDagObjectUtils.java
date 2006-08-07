@@ -6,9 +6,9 @@
 package uk.ac.ebi.intact.util;
 
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvDagObject;
 import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.sql.Connection;
@@ -117,7 +117,7 @@ public class CvDagObjectUtils {
             throw new IntactException( "invalid class!" );
         }
 
-        Collection cvDagObjects = DaoFactory.getCvObjectDao(cvClass).getAll();
+        Collection cvDagObjects = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(cvClass).getAll();
 
         // take any object out of the list to get the root
         CvDagObject aDagObject = (CvDagObject) cvDagObjects.iterator().next();
@@ -215,7 +215,7 @@ public class CvDagObjectUtils {
         int rightBound;
         System.out.println( "cvAC: " + cvAc );
         // get the CVDagObject with the given AC number out of the database
-        CvDagObject aCv = DaoFactory.getCvObjectDao(CvDagObject.class).getByAc(cvAc); 
+        CvDagObject aCv = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDagObject.class).getByAc(cvAc);
 
         // check if that parent CV really exists
         if ( aCv == null ) {
@@ -284,6 +284,6 @@ public class CvDagObjectUtils {
 
     private Connection getConnection()
     {
-        return HibernateUtil.getSessionFactory().getCurrentSession().connection();
+        return IntactContext.getCurrentInstance().getDataContext().getDaoFactory().connection();
     }
 }

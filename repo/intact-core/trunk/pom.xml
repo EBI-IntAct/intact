@@ -21,7 +21,7 @@
     <groupId>uk.ac.ebi.intact</groupId>
     <artifactId>intact-core</artifactId>
     <packaging>jar</packaging>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.2.0</version>
     <name>Intact Core</name>
     <url>http://www.ebi.ac.uk/intact</url>
     <description>Intact Core, which contains the base classes for all intact artifacts</description>

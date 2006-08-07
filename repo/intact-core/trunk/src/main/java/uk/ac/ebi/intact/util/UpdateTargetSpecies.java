@@ -11,6 +11,7 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -102,7 +103,7 @@ public class UpdateTargetSpecies {
     public static void init() throws IntactException {
 
         // loading required CVs
-        noUniprotUpdate = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel( CvTopic.NON_UNIPROT );
+        noUniprotUpdate = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class).getByShortLabel( CvTopic.NON_UNIPROT );
         if ( noUniprotUpdate == null ) {
             throw new IllegalStateException( "The IntAct database should contain a CvTopic( " +
                                              CvTopic.NON_UNIPROT + " ). abort." );
@@ -110,7 +111,7 @@ public class UpdateTargetSpecies {
             log.warn( "CvTopic( " + CvTopic.NON_UNIPROT + " ) found." );
         }
 
-        newt = DaoFactory.getCvObjectDao(CvDatabase.class).getByXref( CvDatabase.NEWT_MI_REF );
+        newt = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDatabase.class).getByXref( CvDatabase.NEWT_MI_REF );
         if ( newt == null ) {
             throw new IllegalStateException( "The IntAct database should contain a CvDatabase( " + CvDatabase.NEWT +
                                              " ) having an Xref( " + CvDatabase.NEWT_MI_REF + " ). abort." );
@@ -118,7 +119,7 @@ public class UpdateTargetSpecies {
             log.debug( "CvDatabase( " + CvDatabase.NEWT + " ) found." );
         }
 
-        targetSpeciesQualifier = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByShortLabel( CvXrefQualifier.TARGET_SPECIES );
+        targetSpeciesQualifier = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvXrefQualifier.class).getByShortLabel( CvXrefQualifier.TARGET_SPECIES );
         if ( targetSpeciesQualifier == null ) {
             throw new IllegalStateException( "The IntAct database should contain a CvXrefQualifier( " +
                                              CvXrefQualifier.TARGET_SPECIES + " ). abort." );
@@ -184,14 +185,14 @@ public class UpdateTargetSpecies {
 
             if (log.isInfoEnabled())
             {
-                log.info( "Database: " + DaoFactory.getBaseDao().getDbName() );
-                log.info( "User: " + DaoFactory.getBaseDao().getDbUserName() );
+                log.info( "Database: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName() );
+                log.info( "User: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbUserName() );
             }
 
             init( );
 
             // get all experiments
-            Collection experiments = DaoFactory.getExperimentDao().getAll();
+            Collection experiments = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao().getAll();
 
             Map biosource2count = new HashMap( 4 );
             Set biosources = new HashSet( 4 );
@@ -247,7 +248,7 @@ public class UpdateTargetSpecies {
                     BioSource bioSource = (BioSource) iterator1.next();
 
                     // create the Xref
-                    ExperimentXref xref = new ExperimentXref( DaoFactory.getInstitutionDao().getInstitution(), newt,
+                    ExperimentXref xref = new ExperimentXref( IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution(), newt,
                                           bioSource.getTaxId(), bioSource.getShortLabel(),
                                           null,
                                           targetSpeciesQualifier );
@@ -256,7 +257,7 @@ public class UpdateTargetSpecies {
                     if ( ! experiment.getXrefs().contains( xref ) ) {
                         log.debug( "\tAdding Xref(" + xref.getPrimaryId() + ", " + xref.getSecondaryId() + ")" );
                         experiment.addXref( xref );
-                        DaoFactory.getXrefDao().persist( xref );
+                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
                     } else {
                         // only keep in that collection the Xref that do not match the set of BioSource.
                         existingTargetXrefs.remove( xref );
@@ -270,7 +271,7 @@ public class UpdateTargetSpecies {
 
                     log.debug( "\tRemove Xref(" + xref.getPrimaryId() + ", " + xref.getSecondaryId() + ")" );
                     experiment.removeXref( xref );
-                    DaoFactory.getXrefDao().delete( xref );
+                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().delete( xref );
                 }
 
                 // try to free up some resource.

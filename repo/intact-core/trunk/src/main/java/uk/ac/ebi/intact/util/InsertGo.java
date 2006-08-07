@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.CreateException;
 import uk.ac.ebi.intact.persistence.UpdateException;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -70,7 +71,7 @@ public class InsertGo {
 
         current.addXref( xref );
         if (xref.getParentAc().equals(current.getAc())){
-            DaoFactory.getXrefDao().persist( xref );
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
         }
     }
 
@@ -90,12 +91,12 @@ public class InsertGo {
         Protein protein = null;
         // TODO: why do we need that for ?
         //Xref spXref = new Xref(helper.getInstitution(),
-        //                  DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel( CvDatabase.UNIPROT),
+        //                  IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDatabase.class).getByShortLabel( CvDatabase.UNIPROT),
         //                  spAc,
         //                  null, null, null);
 
         try {
-            protein = DaoFactory.getProteinDao().getByXref(spAc);
+            protein = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByXref(spAc);
         }
         catch (IntactException e) {
             log.error("Error retrieving Protein object for " + spAc
@@ -120,11 +121,11 @@ public class InsertGo {
         }
 
         // Now we have a valid protein object, complete it.
-        Institution institution = DaoFactory.getInstitutionDao().getInstitution();
+        Institution institution = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
 
         addNewXref(protein,
                    new InteractorXref(institution,
-                            DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel( "sgd"),
+                            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDatabase.class).getByShortLabel( "sgd"),
                             sgdAc,
                             null, null, null));
         // Get GO term
@@ -136,11 +137,11 @@ public class InsertGo {
 
         addNewXref(protein,
                    new InteractorXref(institution,
-                            DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel( "go"),
+                            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDatabase.class).getByShortLabel( "go"),
                             goAc,
                             goTerm, null, null));
-        if (DaoFactory.getProteinDao().exists((ProteinImpl)protein)){
-            DaoFactory.getProteinDao().update((ProteinImpl)protein);
+        if (IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().exists((ProteinImpl)protein)){
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().update((ProteinImpl)protein);
         }
         return protein;
     }

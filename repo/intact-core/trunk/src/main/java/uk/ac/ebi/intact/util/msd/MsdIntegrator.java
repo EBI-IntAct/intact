@@ -16,6 +16,7 @@ import uk.ac.ebi.intact.util.msd.model.PdbBean;
 import uk.ac.ebi.intact.util.msd.util.MsdHelper;
 import uk.ac.ebi.intact.util.msd.util.MsdToolBox;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -105,12 +106,12 @@ public class MsdIntegrator {
         CvXrefQualifier cvIdentity = MsdToolBox.getIdentity();
         for ( String pmid : pmidMap.keySet() ) {
 
-            if ( !(DaoFactory.getExperimentDao().getByXrefLike(cvPubMed, cvPrimaryRef, pmid).isEmpty() ) ) {
+            if ( !(IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao().getByXrefLike(cvPubMed, cvPrimaryRef, pmid).isEmpty() ) ) {
                 if (log.isDebugEnabled()) {
                 log.debug( "Experiment(s) with the PMID " + pmid + " already in IntAct" );
                 }
                 for ( String pdbCode : pmidMap.get( pmid ) ) {
-                    if ( !( DaoFactory.getInteractionDao().getByXrefLike(cvPdb, cvIdentity, pmid).isEmpty() ) ) {
+                    if ( !( IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInteractionDao().getByXrefLike(cvPdb, cvIdentity, pmid).isEmpty() ) ) {
                         if (log.isDebugEnabled()) {
                             log.debug( "Interaction with the PDB " +pdbCode + " the PMID "+pmid+" are already in IntAct" );
                             }
@@ -129,7 +130,7 @@ public class MsdIntegrator {
 
             }else{
                 for ( String pdbCode : pmidMap.get( pmid ) ) {
-                    if ( !(DaoFactory.getInteractionDao().getByXrefLike(cvPdb, cvIdentity, pmid).isEmpty() ) ) {
+                    if ( !(IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInteractionDao().getByXrefLike(cvPdb, cvIdentity, pmid).isEmpty() ) ) {
                         if (log.isDebugEnabled()) {
                             log.warn( "Interaction with the PDB " +pdbCode + " already in IntAct but not experiment(s) associated to the PMID "+pmid+"!" );
                             // Check manualy this entry

@@ -30,7 +30,9 @@ public class StartupIntactListener implements ServletContextListener, HttpSessio
 
     public void contextInitialized(ServletContextEvent servletContextEvent)
     {
-        IntactSession intactSession = new WebappSession(servletContextEvent.getServletContext(), null);
+        IntactSession intactSession = new WebappSession(servletContextEvent.getServletContext(), null, null);
+
+        log.info("Starting application");
 
         // start the intact application (e.g. load Institution, etc)
         IntactConfigurator.initIntact(intactSession);
@@ -43,10 +45,10 @@ public class StartupIntactListener implements ServletContextListener, HttpSessio
 
         log.debug("Session started: "+session.getId());
 
-        IntactSession intactSession = new WebappSession(session.getServletContext(), session);
+        //IntactSession intactSession = new WebappSession(session.getServletContext(), session);
 
         // start a intactContext for this session
-        IntactConfigurator.createIntactContext(intactSession);
+        //IntactConfigurator.createIntactContext(intactSession);
 
     }
 

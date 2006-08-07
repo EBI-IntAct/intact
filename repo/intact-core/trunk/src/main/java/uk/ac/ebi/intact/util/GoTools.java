@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.util.go.GoUtils;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.io.File;
 import java.util.Iterator;
@@ -127,9 +128,9 @@ public class GoTools {
      */
     private static void createNecessaryCvTerms() throws IntactException {
 
-        Institution institution = DaoFactory.getInstitutionDao().getInstitution();
+        Institution institution = IntactContext.getCurrentInstance().getInstitution();
 
-        CvObjectDao<CvXrefQualifier> cvXrefQualifierDao = DaoFactory.getCvObjectDao(CvXrefQualifier.class);
+        CvObjectDao<CvXrefQualifier> cvXrefQualifierDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvXrefQualifier.class);
 
         // 1. check that the CvXrefQualifier 'identity'/'MI:0356' is present...
         boolean identityCreated = false;
@@ -156,7 +157,7 @@ public class GoTools {
 
 
         // 2. check that the CvDatabase 'psi-mi'/'MI:0356' is present...
-        CvObjectDao<CvDatabase> cvDatabaseDao = DaoFactory.getCvObjectDao(CvDatabase.class);
+        CvObjectDao<CvDatabase> cvDatabaseDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDatabase.class);
 
         boolean psiAlreadyExists = false;
         CvDatabase psi = cvDatabaseDao.getByXref(PSI_MI_REFERENCE );
@@ -175,7 +176,7 @@ public class GoTools {
                 CvObjectXref xref = new CvObjectXref( institution, psi, PSI_MI_REFERENCE, null, null, identity );
                 psi.addXref( xref );
 
-                DaoFactory.getXrefDao().persist( xref );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
             } else {
                 psiAlreadyExists = true;
             }
@@ -194,7 +195,7 @@ public class GoTools {
             CvObjectXref xref = new CvObjectXref( institution, psi, IDENTITY_MI_REFERENCE, null, null, identity );
             identity.addXref( xref );
 
-            DaoFactory.getXrefDao().persist( xref );
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
         } else {
             // identity already existed, check that it has the right PSI Xref.
             updatePsiXref( identity, IDENTITY_MI_REFERENCE, psi, identity );
@@ -219,7 +220,7 @@ public class GoTools {
                 CvObjectXref xref = new CvObjectXref( institution, psi, CvDatabase.PUBMED_MI_REF, null, null, identity );
                 pubmed.addXref( xref );
 
-                DaoFactory.getXrefDao().persist( xref );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
             } else {
                 pubmedAlreadyExists = true;
             }
@@ -252,7 +253,7 @@ public class GoTools {
                 CvObjectXref xref = new CvObjectXref( institution, psi, CvXrefQualifier.GO_DEFINITION_REF_MI_REF, null, null, identity );
                 goDefRef.addXref( xref );
 
-                DaoFactory.getXrefDao().persist( xref );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
             } else {
                 goDefRefAlreadyExists = true;
             }
@@ -319,14 +320,14 @@ public class GoTools {
                     log.debug( "Updating " + cv.getShortLabel() + "'s MI reference (" +
                                         xref.getPrimaryId() + " becomes " + mi + ")" );
                     xref.setPrimaryId( mi );
-                    DaoFactory.getXrefDao().update( xref );
+                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().update( xref );
                 }
 
                 if ( false == identity.equals( xref.getCvXrefQualifier() ) ) {
                     log.debug( "Updating " + cv.getShortLabel() + "'s CvXrefQualifier to identity." );
 
                     xref.setCvXrefQualifier( identity );
-                    DaoFactory.getXrefDao().update( xref );
+                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().update( xref );
                 }
 
                 psiRefFound = true;
@@ -335,10 +336,10 @@ public class GoTools {
 
         if ( !psiRefFound ) {
             // then create the PSI ref
-            CvObjectXref xref = new CvObjectXref( DaoFactory.getInstitutionDao().getInstitution(), psi, mi, null, null, identity );
+            CvObjectXref xref = new CvObjectXref( IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution(), psi, mi, null, null, identity );
             psi.addXref( xref );
 
-            DaoFactory.getXrefDao().persist( xref );
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
         }
     }
 }

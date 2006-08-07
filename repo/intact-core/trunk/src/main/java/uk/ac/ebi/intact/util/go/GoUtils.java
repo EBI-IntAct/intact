@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.business.DuplicateLabelException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.io.*;
 import java.lang.reflect.Constructor;
@@ -316,7 +317,7 @@ public class GoUtils {
      */
     private CvObject getCvObject( Class clazz, String shortlabel ) throws IntactException {
 
-        CvObject cv = DaoFactory.getCvObjectDao(CvObject.class).getByShortLabel(shortlabel );
+        CvObject cv = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).getByShortLabel(shortlabel );
         if ( cv == null ) {
             StringBuffer sb = new StringBuffer( 128 );
             sb.append( "Could not find " );
@@ -343,7 +344,7 @@ public class GoUtils {
      */
     private CvObject getCvObjectViaMI( Class clazz, String miRef ) throws IntactException {
 
-        CvObject cv = DaoFactory.getCvObjectDao(CvObject.class).getByXref( miRef );
+        CvObject cv = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).getByXref( miRef );
 
         if ( cv == null ) {
             StringBuffer sb = new StringBuffer( 128 );
@@ -362,7 +363,7 @@ public class GoUtils {
     // Class methods.
 
     /**
-     * Returns a string that has maximum of {@link AnnotatedObject.MAX_SHORT_LABEL_LEN} and all characters are in
+     * Returns a string that has maximum of 30 and all characters are in
      * lowercase. Givenb string is only truncated if it exceeds max characters.
      *
      * @param label given string
@@ -417,10 +418,10 @@ public class GoUtils {
     public CvObject selectCvObject( String goid, String shortLabel ) throws IntactException {
         // If the GO database '-' or no GO id
         if ( myGoIdDatabase.equals( "-" ) || ( goid == null ) ) {
-            return DaoFactory.getCvObjectDao(CvObject.class).getByShortLabel( shortLabel );
+            return IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).getByShortLabel( shortLabel );
         }
         // Try with Go id
-        CvObject current = DaoFactory.getCvObjectDao(CvObject.class).getByXref( goid );
+        CvObject current = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).getByXref( goid );
         if ( null != current ) {
             for ( Iterator iterator = current.getXrefs().iterator(); iterator.hasNext(); ) {
                 Xref x = (Xref) iterator.next();
@@ -431,7 +432,7 @@ public class GoUtils {
             }
         }
         // We have not found any match by goid. Try shortlabel.
-        return DaoFactory.getCvObjectDao(CvObject.class).getByShortLabel( shortLabel );
+        return IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).getByShortLabel( shortLabel );
     }
 
 
@@ -587,7 +588,7 @@ public class GoUtils {
             out = new PrintWriter( new BufferedWriter( new FileWriter( targetFile ) ) );
 
             // Get all members of the class
-            Collection result = DaoFactory.getIntactObjectDao(myTargetClass).getAll();
+            Collection result = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getIntactObjectDao(myTargetClass).getAll();
 
             for ( Iterator iterator = result.iterator(); iterator.hasNext(); ) {
                 printGoDef( (CvObject) iterator.next(), out );
@@ -615,7 +616,7 @@ public class GoUtils {
             out = new PrintWriter( new BufferedWriter( new FileWriter( targetFile ) ) );
 
             // Get a random members of the class
-            Collection result = DaoFactory.getIntactObjectDao(myTargetClass).getAll();
+            Collection result = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getIntactObjectDao(myTargetClass).getAll();
 
             if ( result.size() > 0 ) {
                 Iterator iterator = result.iterator();
@@ -706,7 +707,7 @@ public class GoUtils {
      */
     private CvObject insertDefinition( GoRecord goRec, boolean deleteold ) throws IntactException {
         // Cache the institution.
-        Institution inst = DaoFactory.getInstitutionDao().getInstitution();
+        Institution inst = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
 
         // Update shortLabel. Label has to be unique!
         String goTerm = goRec.getGoTerm();
@@ -734,15 +735,15 @@ public class GoUtils {
                 throw new IntactException( "failed to create new CvObject of type " + myTargetClass.getName() );
             }
             current.setOwner( inst );
-            DaoFactory.getCvObjectDao().persist( current );
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao().persist( current );
         } else {
             if ( deleteold ) {
                 // Delete all old data
-                DaoFactory.getXrefDao(CvObjectXref.class).deleteAll( current.getXrefs() );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao(CvObjectXref.class).deleteAll( current.getXrefs() );
                 current.getXrefs().clear();
-                DaoFactory.getAnnotationDao().deleteAll( current.getAnnotations() );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().deleteAll( current.getAnnotations() );
                 current.getAnnotations().clear();
-                DaoFactory.getAliasDao().deleteAll( current.getAliases() );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAliasDao().deleteAll( current.getAliases() );
                 current.getAliases().clear();
             }
         }
@@ -754,11 +755,11 @@ public class GoUtils {
         // Update fullName
         current.setFullName( goTerm.substring( 0, Math.min( goTerm.length(), ourMaxNameLen ) ) );
 
-        DaoFactory.getCvObjectDao().update( current );
+        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao().update( current );
 
         // Update main object
-        if ( DaoFactory.getCvObjectDao().exists( current ) ) {
-            DaoFactory.getCvObjectDao().update( current );
+        if ( IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao().exists( current ) ) {
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao().update( current );
         }
         return current;
     }
@@ -767,12 +768,12 @@ public class GoUtils {
     private void updateAnnotations( CvObject current, GoRecord goRec ) throws IntactException {
 
         // Cache the institution.
-        Institution inst = DaoFactory.getInstitutionDao().getInstitution();
+        Institution inst = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
 
         // Update all comments
         for ( Iterator comments = goRec.getKeys(); comments.hasNext(); ) {
             String topic = (String) comments.next();
-            CvTopic cvtopic = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel( topic );
+            CvTopic cvtopic = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class).getByShortLabel( topic );
             if ( cvtopic == null ) {
                 // Topic is not found, continue with the next.
                 if ( ! "definition_reference".equals( topic ) ) {
@@ -781,7 +782,7 @@ public class GoUtils {
                 }
                 continue;
             } else {
-                CvTopic definition = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel( CvTopic.DEFINITION );
+                CvTopic definition = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class).getByShortLabel( CvTopic.DEFINITION );
                 // There should be only one definition
                 if ( cvtopic.equals( definition ) ) {
                     handleDefinition( goRec, current );
@@ -801,7 +802,7 @@ public class GoUtils {
                 }
                 // Unique annotation, create it on the persistent system.
                 current.addAnnotation( annotation );
-                DaoFactory.getAnnotationDao().persist( annotation );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().persist( annotation );
             }
         }
 
@@ -810,7 +811,7 @@ public class GoUtils {
         // TODO check that upfront in GoTools.
         CvDatabase goidDB = null;
         if ( ! myGoIdDatabase.equals( "-" ) ) {
-            goidDB = DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel( myGoIdDatabase );
+            goidDB = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDatabase.class).getByShortLabel( myGoIdDatabase );
 
             if ( goidDB == null ) {
                 log.error( "The requested CvDatabase: " + myGoIdDatabase + " could not be found." );
@@ -824,7 +825,7 @@ public class GoUtils {
             CvObjectXref xref = new CvObjectXref( inst, goidDB, goRec.getGoId(), null, null, identity );
             if ( ! current.getXrefs().contains( xref ) ) {
                 current.addXref( xref );
-                DaoFactory.getXrefDao().persist( xref );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
             }
         }
 
@@ -840,7 +841,7 @@ public class GoUtils {
                 CvObjectXref xref = new CvObjectXref( inst, pubmedDB, m.group( 1 ), null, null, goDefRef );
                 if ( ! current.getXrefs().contains( xref ) ) {
                     current.addXref( xref );
-                    DaoFactory.getXrefDao().persist( xref );
+                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
                 }
                 continue;
             }
@@ -856,15 +857,15 @@ public class GoUtils {
                     CvObjectXref xref = new CvObjectXref( inst, residDB, token.trim(), null, null, goDefRef );
                     if ( ! current.getXrefs().contains( xref ) ) {
                         current.addXref( xref );
-                        DaoFactory.getXrefDao().persist( xref );
+                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
                     }
                 }
             }
         }
 
         // Update main object
-        if ( DaoFactory.getCvObjectDao().exists( current ) ) {
-            DaoFactory.getCvObjectDao().update( current );
+        if ( IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao().exists( current ) ) {
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao().update( current );
         }
     }
 
@@ -882,7 +883,7 @@ public class GoUtils {
     private boolean shortLabelExist( String label, String ac ) {
         // get all objects by label. If more than one, need to modify label.
         try {
-            AnnotatedObject result = DaoFactory.getAnnotatedObjectDao(myTargetClass).getByShortLabel( label );
+            AnnotatedObject result = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotatedObjectDao(myTargetClass).getByShortLabel( label );
             if ( result == null ) {
                 return false;
             }
@@ -1003,7 +1004,7 @@ public class GoUtils {
         // Construct the result.
         StringBuffer sb = new StringBuffer();
 
-        CvDatabase pubmedDB = DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel( ourPubMedDB );
+        CvDatabase pubmedDB = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDatabase.class).getByShortLabel( ourPubMedDB );
         Collection xref = cvobj.getXrefs();
         for ( Iterator iterator = xref.iterator(); iterator.hasNext(); ) {
             Xref x = (Xref) iterator.next();
@@ -1023,7 +1024,7 @@ public class GoUtils {
         // Construct the result.
         StringBuffer sb = new StringBuffer();
 
-        CvDatabase residDB = DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel( ourResIdDB );
+        CvDatabase residDB = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDatabase.class).getByShortLabel( ourResIdDB );
 
         // A flag to print to print first resid entry.
         boolean first = true;
@@ -1049,8 +1050,8 @@ public class GoUtils {
 
     private void handleDefinition( GoRecord goRec, CvObject current ) throws IntactException {
         // Cache the institution and definition topic
-        Institution inst = DaoFactory.getInstitutionDao().getInstitution();
-        CvTopic definition = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel( "definition" );
+        Institution inst = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
+        CvTopic definition = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class).getByShortLabel( "definition" );
 
         // Collect any existing definition definition annotations (can be
         // more than one if we are updating an existing CVs
@@ -1070,7 +1071,7 @@ public class GoUtils {
         // If we don't have any existing defs, then create a new def and return.
         if ( exdefs.isEmpty() ) {
             current.addAnnotation( newdef );
-            DaoFactory.getAnnotationDao().persist( newdef );
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().persist( newdef );
             return;
         }
 
@@ -1082,7 +1083,7 @@ public class GoUtils {
                 Annotation annotation = (Annotation) iter.next();
                 if ( !newdef.equals( annotation ) ) {
                     current.removeAnnotation( annotation );
-                    DaoFactory.getAnnotationDao().delete( annotation );
+                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().delete( annotation );
                 }
             }
         } else {
@@ -1095,7 +1096,7 @@ public class GoUtils {
                 Annotation annotation = (Annotation) iter.next();
                 if ( updatedExisting ) {
                     current.removeAnnotation( annotation );
-                    DaoFactory.getAnnotationDao().delete( annotation );
+                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().delete( annotation );
                 } else {
                     annotation.setAnnotationText( text );
                     updatedExisting = true;

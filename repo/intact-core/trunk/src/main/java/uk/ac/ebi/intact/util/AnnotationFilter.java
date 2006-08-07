@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -54,12 +55,12 @@ public class AnnotationFilter {
         logger.debug( "Initializing which CvTopic should be filtered out." );
 
         // search for the CvTopic no-export
-        CvTopic noExport = DaoFactory.getAnnotatedObjectDao( CvTopic.class ).getByShortLabel( CvTopic.NO_EXPORT );
+        CvTopic noExport = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotatedObjectDao( CvTopic.class ).getByShortLabel( CvTopic.NO_EXPORT );
 
         if ( noExport != null ) {
 
             // load all CvTopics
-            Collection<CvTopic> cvTopics = DaoFactory.getCvObjectDao( CvTopic.class ).getAll();
+            Collection<CvTopic> cvTopics = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao( CvTopic.class ).getAll();
 
             // select those that have an Annotation( no-export )
             for ( CvTopic cvTopic : cvTopics ) {

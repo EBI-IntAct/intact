@@ -24,9 +24,15 @@ public abstract class IntactSession
 
     public abstract void setAttribute(String name, Serializable attribute);
 
+    public abstract Object getRequestAttribute(String name);
+
+    public abstract void setRequestAttribute(String name, Object value);
+
     public abstract boolean containsInitParam(String name);
 
     public abstract String getInitParam(String name);
+
+    public abstract void setInitParam(String name, String value);
 
     public abstract boolean isWebapp();
 }

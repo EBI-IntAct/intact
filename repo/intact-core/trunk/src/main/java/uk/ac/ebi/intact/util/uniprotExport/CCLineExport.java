@@ -25,6 +25,7 @@ import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.util.MemoryMonitor;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -161,7 +162,7 @@ public class CCLineExport extends LineExport {
      */
     private Collection getProteinFromIntact(  String uniprotID ) throws IntactException {
 
-        Collection proteins = DaoFactory.getProteinDao().getByXrefLike(uniprotDatabase, identityXrefQualifier, uniprotID);
+        Collection proteins = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByXrefLike(uniprotDatabase, identityXrefQualifier, uniprotID);
 
         if ( proteins.size() == 0 ) {
             throw new IntactException( "the ID " + uniprotID + " didn't return the expected number of protein: " +
@@ -175,7 +176,7 @@ public class CCLineExport extends LineExport {
             Protein protein = (Protein) iterator.next();
 
             String ac = protein.getAc();
-            Collection sv = DaoFactory.getProteinDao().getByXrefLike(intactDatabase, isoformParentQualifier, ac);
+            Collection sv = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByXrefLike(intactDatabase, isoformParentQualifier, ac);
 
             spliceVariants.addAll( sv );
         }
@@ -1166,8 +1167,8 @@ public class CCLineExport extends LineExport {
 
         // create a database access
         try {
-            log.info( "Database instance: " + DaoFactory.getBaseDao().getDbName() );
-            log.info( "User: " + DaoFactory.getBaseDao().getDbUserName() );
+            log.info( "Database instance: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName() );
+            log.info( "User: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbUserName() );
         } catch ( SQLException e ) {
             log.error( "Could not get database information (instance name and username)." );
         }

@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.util.Collection;
 
@@ -70,7 +71,7 @@ public class GeneratorHelper {
     public static BioSource getInVitro() throws IntactException {
         if(inVitro==null){
 
-            Collection<BioSource> inVitroCol = DaoFactory.getBioSourceDao().getByTaxonId("-1");
+            Collection<BioSource> inVitroCol = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBioSourceDao().getByTaxonId("-1");
 
             if (inVitroCol.size() > 1)
             {
@@ -89,7 +90,7 @@ public class GeneratorHelper {
      */
     public static Institution getOwner() throws IntactException {
         if(owner == null){
-            owner = DaoFactory.getInstitutionDao().getInstitution();
+            owner = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
         }
         return owner;
     }
@@ -101,7 +102,7 @@ public class GeneratorHelper {
      */
     public static CvTopic getAuthorList() throws IntactException {
         if(authorList == null){
-            authorList= DaoFactory.getCvObjectDao(CvTopic.class).getByXref(CvTopic.AUTHOR_LIST_MI_REF);
+            authorList= IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class).getByXref(CvTopic.AUTHOR_LIST_MI_REF);
         }
         return authorList;
     }
@@ -113,7 +114,7 @@ public class GeneratorHelper {
      */
     public static CvTopic getContactEmail() throws IntactException {
         if(contactEmail == null){
-            contactEmail=DaoFactory.getCvObjectDao(CvTopic.class).getByXref( CvTopic.CONTACT_EMAIL_MI_REF);
+            contactEmail=IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class).getByXref( CvTopic.CONTACT_EMAIL_MI_REF);
         }
         return contactEmail;
     }
@@ -125,7 +126,7 @@ public class GeneratorHelper {
      */
     public static CvTopic getJournal() throws IntactException {
         if(journal == null){
-            journal = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel(CvTopic.JOURNAL);
+            journal = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class).getByShortLabel(CvTopic.JOURNAL);
         }
         return journal;
     }
@@ -138,7 +139,7 @@ public class GeneratorHelper {
      */
     public static CvTopic getPublicationYear() throws IntactException {
         if(publicationYear == null){
-            publicationYear = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel(CvTopic.PUBLICATION_YEAR);
+            publicationYear = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class).getByShortLabel(CvTopic.PUBLICATION_YEAR);
         }
         return journal;
     }
@@ -151,7 +152,7 @@ public class GeneratorHelper {
      */
     public static CvIdentification getPredetermined() throws IntactException {
         if(predetermined == null){
-            predetermined= DaoFactory.getCvObjectDao(CvIdentification.class).getByXref(CvIdentification.PREDETERMINED_MI_REF);
+            predetermined= IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvIdentification.class).getByXref(CvIdentification.PREDETERMINED_MI_REF);
         }
         return predetermined;
     }
@@ -163,7 +164,7 @@ public class GeneratorHelper {
      */
     public static CvDatabase getPubmed() throws IntactException {
         if(pubmed == null){
-            pubmed = DaoFactory.getCvObjectDao(CvDatabase.class).getByXref(CvDatabase.PUBMED_MI_REF);
+            pubmed = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDatabase.class).getByXref(CvDatabase.PUBMED_MI_REF);
         }
         return pubmed;
     }
@@ -176,7 +177,7 @@ public class GeneratorHelper {
      */
     public static CvXrefQualifier getPrimaryRef() throws IntactException {
         if(primaryRef == null){
-            primaryRef = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByXref(CvXrefQualifier.PRIMARY_REFERENCE_MI_REF);
+            primaryRef = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvXrefQualifier.class).getByXref(CvXrefQualifier.PRIMARY_REFERENCE_MI_REF);
         }
         return primaryRef;
     }

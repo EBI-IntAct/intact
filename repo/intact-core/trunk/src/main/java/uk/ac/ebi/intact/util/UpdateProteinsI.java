@@ -16,6 +16,7 @@ import uk.ac.ebi.intact.model.*;
 import static uk.ac.ebi.intact.core.CvContext.CvName;
 import uk.ac.ebi.intact.core.CvContext;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.io.InputStream;
 import java.util.Collection;
@@ -143,7 +144,7 @@ public abstract class UpdateProteinsI {
 
         try
         {
-            myInstitution = DaoFactory.getInstitutionDao().getInstitution();
+            myInstitution = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
         }
         catch (IntactException e)
         {

@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.business.IntactException;
 import static uk.ac.ebi.intact.core.CvContext.CvName;
 import uk.ac.ebi.intact.core.CvContext;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -165,7 +166,7 @@ public class CvContextFactory
                     shortlabel) throws IntactException, UpdateException
     {
 
-        CvObject cv = DaoFactory.getCvObjectDao().getByShortLabel(shortlabel);
+        CvObject cv = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao().getByShortLabel(shortlabel);
         if (cv == null)
         {
             StringBuffer sb = new StringBuffer(128);
@@ -200,7 +201,7 @@ public class CvContextFactory
                                   UpdateException
     {
 
-        CvObject cv = DaoFactory.getCvObjectDao().getByXref(miRef);
+        CvObject cv = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao().getByXref(miRef);
 
         if (cv == null)
         {

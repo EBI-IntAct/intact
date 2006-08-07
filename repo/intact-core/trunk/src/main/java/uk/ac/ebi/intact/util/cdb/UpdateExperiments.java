@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.util.HttpProxyManager;
 import uk.ac.ebi.intact.util.SearchReplace;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -221,8 +222,8 @@ public class UpdateExperiments {
         }
         
             try {
-                System.out.println( "Helper created (User: " + DaoFactory.getBaseDao().getDbUserName() + " " +
-                                    "Database: " + DaoFactory.getBaseDao().getDbName() + ")" );
+                System.out.println( "Helper created (User: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbUserName() + " " +
+                                    "Database: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName() + ")" );
             } catch ( Exception e ) {
                 e.printStackTrace();
             }
@@ -230,7 +231,7 @@ public class UpdateExperiments {
             // retreive all experiment ACs
             System.out.print( "Loading experiments ... " );
             System.out.flush();
-            Connection connection = DaoFactory.connection();
+            Connection connection = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().connection();
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery( "SELECT ac FROM ia_experiment ORDER BY created" );
             List experimentAcs = new ArrayList();
@@ -247,7 +248,7 @@ public class UpdateExperiments {
                 String ac = (String) iterator.next();
 
                 // get the experiment
-                Experiment experiment = DaoFactory.getExperimentDao().getByAc(ac);
+                Experiment experiment = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao().getByAc(ac);
 
                 updateExperiment(  experiment );
 
