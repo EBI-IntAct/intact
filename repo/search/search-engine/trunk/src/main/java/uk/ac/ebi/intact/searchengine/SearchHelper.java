@@ -7,18 +7,15 @@ package uk.ac.ebi.intact.searchengine;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ojb.broker.query.Query;
-import uk.ac.ebi.intact.searchengine.business.IntactUserI;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.ObjectBridgeQueryFactory;
 import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.SearchItemDao;
+import uk.ac.ebi.intact.searchengine.business.IntactUserI;
 
 import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -56,7 +53,7 @@ public class SearchHelper implements SearchHelperI {
      *
      */
     public SearchHelper() {
-        this.request = request;
+        this(null);
     }
 
     /**
@@ -133,84 +130,6 @@ public class SearchHelper implements SearchHelperI {
         return results;
     }
 
-    public ResultWrapper searchByQuery(SearchClass searchClass, String searchParam,
-                                       String searchValue, int max) throws IntactException {
-        // The helper to run the query against.
-        IntactHelper helper = null;
-
-        Class<? extends IntactObject> clazz = searchClass.getMappedClass();
-
-        // The query factory to get a query.
-        ObjectBridgeQueryFactory qf = ObjectBridgeQueryFactory.getInstance();
-
-        // The query to search for AC or shortlabel.
-        Query query = qf.getLikeQuery(clazz, searchParam, searchValue);
-        try {
-            helper = new IntactHelper();
-            int count = helper.getCountByQuery(query);
-            if (count > max) {
-                // Exceeds the maximum size.
-                logger.info("return empty resultwrapper");
-                return new ResultWrapper(count, max);
-            }
-            // We have a result which is within limits. Do the search.
-            Collection searchResults = helper.getCollectionByQuery(query);
-            if (searchResults.isEmpty()) {
-                return new ResultWrapper(0, max);
-            }
-            else {
-                return new ResultWrapper(searchResults, max);
-            }
-        }
-        finally {
-            if (helper != null) {
-                helper.closeStore();
-            }
-        }
-    }
-
-    public ResultWrapper searchByQuery(Query[] queries, int max) throws IntactException {
-        // The count returned by the query.
-        Object rowCount;
-
-        // The actual search count.
-        int count = 0;
-
-        // The helper to run the query against.
-        IntactHelper helper = new IntactHelper();
-
-        try {
-            Iterator iter0 = helper.getIteratorByReportQuery(queries[0]);
-            rowCount = ((Object[]) iter0.next())[0];
-
-            // Check for oracle
-            if (rowCount.getClass().isAssignableFrom(BigDecimal.class)) {
-                count =  ((BigDecimal) rowCount).intValue();
-            }
-            else {
-                // postgres driver returns Long. Could be a problem for another DB
-                // This may throw a classcast exception.
-                count =  ((Long) rowCount).intValue();
-            }
-            if ((count > 0) && (count <= max)) {
-                // Not empty and within the max limits. Do the search
-                // The result collection to set.
-                List results = new ArrayList();
-                for (Iterator iter = helper.getIteratorByReportQuery(queries[1]); iter.hasNext();) {
-                    results.add(iter.next());
-                }
-                return new ResultWrapper(results, max);
-            }
-        }
-        finally {
-            if (helper != null) {
-                helper.closeStore();
-            }
-        }
-        // Either too large or none found (empty search).
-        return new ResultWrapper(count, max);
-    }
-
 
     /**
      * Split the query string. It generated one sub query by comma separated parameter. e.g.
@@ -250,7 +169,7 @@ public class SearchHelper implements SearchHelperI {
 
         Class<? extends AnnotatedObject> mappedClass = searchClass.getMappedClass();
 
-        AnnotatedObjectDao<? extends AnnotatedObject> dao = DaoFactory.getAnnotatedObjectDao(mappedClass);
+        AnnotatedObjectDao<? extends AnnotatedObject> dao = getDaoFactory().getAnnotatedObjectDao(mappedClass);
 
         //try search on AC first...
        Collection results = dao.getByAcLike(value);
@@ -272,7 +191,7 @@ public class SearchHelper implements SearchHelperI {
                             " with name alias ID " +
                             value);
 
-                Collection<Alias> aliases = DaoFactory.getAliasDao().getByNameLike(value);
+                Collection<Alias> aliases = getDaoFactory().getAliasDao().getByNameLike(value);
 
                 //could get more than one alias, eg if the name is a wildcard search value -
                 //then need to go through each alias found and accumulate the results...
@@ -294,7 +213,7 @@ public class SearchHelper implements SearchHelperI {
                             " with primary xref ID " +
                             value);
 
-                Collection<Xref> xrefs = DaoFactory.getXrefDao().getByPrimaryIdLike(value);
+                Collection<Xref> xrefs = getDaoFactory().getXrefDao().getByPrimaryIdLike(value);
 
                 //could get more than one xref, eg if the primary id is a wildcard search value -
                 //then need to go through each xref found and accumulate the results...
@@ -445,7 +364,7 @@ public class SearchHelper implements SearchHelperI {
         if (isQuerySearchingOnlyOneAc(values) && searchClass.isSpecified())
         {
             logger.debug("Search is for only one AC, and search class is specified. No need to go through ia_search");
-            AnnotatedObject result = DaoFactory.getAnnotatedObjectDao(searchClass.getMappedClass()).getByAc(values[0].toUpperCase());
+            AnnotatedObject result = getDaoFactory().getAnnotatedObjectDao(searchClass.getMappedClass()).getByAc(values[0].toUpperCase());
 
             if (result == null)
             {
@@ -458,7 +377,7 @@ public class SearchHelper implements SearchHelperI {
             return new ResultWrapper(searchResult, 1);
         }
 
-        SearchItemDao searchItemDao = DaoFactory.getSearchItemDao();
+        SearchItemDao searchItemDao = getDaoFactory().getSearchItemDao();
 
         //  type and objClass have to be null if they are not to be used in the query
         if (!hasType) type = null;
@@ -515,7 +434,7 @@ public class SearchHelper implements SearchHelperI {
             String[] classesToSearch = new String[] { className };
 
             // we determine the class to use in the search
-            Class<? extends AnnotatedObject> clazzToSearch = null;
+            Class<? extends AnnotatedObject> clazzToSearch;
             try
             {
                 clazzToSearch = (Class<? extends AnnotatedObject>) Class.forName(className);
@@ -551,7 +470,7 @@ public class SearchHelper implements SearchHelperI {
             // we perform a query for all the ACs. This kind of query is limited in oracle to 1000 items,
             // far from our situation now, so no problem
             logger.info("\t"+acList);
-            List<? extends AnnotatedObject> res = DaoFactory.getAnnotatedObjectDao(clazzToSearch).getByAc(acs);
+            List<? extends AnnotatedObject> res = getDaoFactory().getAnnotatedObjectDao(clazzToSearch).getByAc(acs);
 
             searchResult.addAll(res);
 
@@ -583,7 +502,7 @@ public class SearchHelper implements SearchHelperI {
         if (proteins.isTooLarge() || interactions.isTooLarge()) {
 
             logger.info("Search Helper: getInteractors method, result too large");
-            int count = 0;
+            int count;
             int proteinCount = 0;
             int interactionCount = 0;
             Map<String,Integer> resultInfo = new HashMap<String,Integer>();
@@ -700,7 +619,7 @@ public class SearchHelper implements SearchHelperI {
         {
             logger.info("Executing count query - type: " + type+" objClass: "+firstObjClass);
 
-            resultInfo = DaoFactory.getSearchItemDao().countGroupsByValuesLike(values, objClasses, type);
+            resultInfo = getDaoFactory().getSearchItemDao().countGroupsByValuesLike(values, objClasses, type);
 
             if (request != null)
             {
@@ -711,6 +630,11 @@ public class SearchHelper implements SearchHelperI {
         }
 
         return resultInfo;
+    }
+
+    private DaoFactory getDaoFactory()
+    {
+        return IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
     }
 
 }
