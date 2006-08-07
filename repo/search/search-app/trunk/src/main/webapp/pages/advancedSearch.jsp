@@ -10,10 +10,11 @@ response.setDateHeader ("Expires", 0);          //prevents caching at the proxy 
 <%@ page import="uk.ac.ebi.intact.application.search3.struts.util.SearchConstants"%>
 <%@ page language="java" %>
 
-<%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic" %>
-<%@ taglib uri="/WEB-INF/tld/intact.tld"      prefix="intact"%>
+<%@ taglib uri="
+s-html" prefix="html"%>
+<%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean"%>
+<%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic" %>
+<%@ taglib uri="http://ebi.ac.uk/intact/commons"      prefix="intact"%>
 
 <%--
     Search view which contains testfields to specify the query.

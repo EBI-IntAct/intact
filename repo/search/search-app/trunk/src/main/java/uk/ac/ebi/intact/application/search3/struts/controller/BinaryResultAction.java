@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class BinaryResultAction extends AbstractResultAction {
 
-    private static final Log log = LogFactory.getLog(BinaryResultAction.class);
+    private static final Log logger = LogFactory.getLog(BinaryResultAction.class);
 
     /**
      * Implements abstract method AbstractResultAction.processResults.

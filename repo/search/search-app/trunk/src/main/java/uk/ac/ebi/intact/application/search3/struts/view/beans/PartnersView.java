@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.ProteinDao;
 import uk.ac.ebi.intact.util.SearchReplace;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -55,7 +56,7 @@ public class PartnersView extends AbstractView
         super(request);
         this.interactor = interactor;
 
-        ProteinDao proteinDao = DaoFactory.getProteinDao();
+        ProteinDao proteinDao = getDaoFactory().getProteinDao();
 
         // Using the ac, we retrieve the uniprot url template (by using the identity "Xref")
         uniprotUrlTemplate = proteinDao.getUniprotUrlTemplateByProteinAc(interactor.getAc());
@@ -106,7 +107,7 @@ public class PartnersView extends AbstractView
             if (!partnerInteractorAc.equals(interactor.getAc()))
             {
                 // We retrieve each interactor from the database, to create the bean
-                Interactor partnerInteractor = DaoFactory.getInteractorDao().getByAc(partnerInteractorAc);
+                Interactor partnerInteractor = getDaoFactory().getInteractorDao().getByAc(partnerInteractorAc);
                 PartnersViewBean bean = createPartnersViewBean(partnerInteractor, false, helpLink, searchUrl, request.getContextPath(), entry.getValue());
                 interactionPartners.add(bean);
             }
@@ -119,7 +120,7 @@ public class PartnersView extends AbstractView
          PartnersViewBean bean = new PartnersViewBean(interactor,helpLink, contextPath);
 
         // Bean creation
-        List<String> geneNames = DaoFactory.getInteractorDao().getGeneNamesByInteractorAc(interactor.getAc());
+        List<String> geneNames = getDaoFactory().getInteractorDao().getGeneNamesByInteractorAc(interactor.getAc());
         bean.setGeneNames(geneNames);
 
         // All this setters set the information necessary for the view
@@ -139,7 +140,7 @@ public class PartnersView extends AbstractView
      * @return String the Protein's Uniprot AC.
      */
     public String getUniprotAc(Interactor interactor) {
-       return DaoFactory.getProteinDao().getUniprotAcByProteinAc(interactor.getAc());
+       return getDaoFactory().getProteinDao().getUniprotAcByProteinAc(interactor.getAc());
     }
 
     /**
@@ -161,7 +162,7 @@ public class PartnersView extends AbstractView
 
     private String getPrimaryIdXrefIdentity(Interactor interactor)
     {
-         return  DaoFactory.getProteinDao().getUniprotAcByProteinAc(interactor.getAc());
+         return  getDaoFactory().getProteinDao().getUniprotAcByProteinAc(interactor.getAc());
     }
 
 
@@ -291,7 +292,7 @@ public class PartnersView extends AbstractView
         }
         else
         {
-            partnerAcs = DaoFactory.getProteinDao().getPartnersWithInteractionAcsByProteinAc(interactor.getAc());
+            partnerAcs = getDaoFactory().getProteinDao().getPartnersWithInteractionAcsByProteinAc(interactor.getAc());
 
             getSession().setAttribute(attName, partnerAcs);
             getSession().setAttribute(CURRENT_AC_ATT, interactor.getAc());
@@ -328,5 +329,10 @@ public class PartnersView extends AbstractView
         }
 
         return subMap;
+    }
+
+    private DaoFactory getDaoFactory()
+    {
+        return IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
     }
 }

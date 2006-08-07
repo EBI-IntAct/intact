@@ -10,6 +10,7 @@ import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
@@ -19,6 +20,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This Action class performs the determination of UniprotKB IDs out of IntAct ACs. <br> These UniprotKB IDs are then
@@ -38,6 +42,8 @@ import java.util.StringTokenizer;
  * @version $Id$
  */
 public class InterProSearchAction extends AbstractResultAction {
+
+    private static final Log logger = LogFactory.getLog(InterProSearchAction.class);
 
     protected String processResults( HttpServletRequest request, String helpLink ) {
 
@@ -491,21 +497,21 @@ public class InterProSearchAction extends AbstractResultAction {
      */
     public AnnotatedObject searchAO( String ac ) throws IntactException {
 
-        AnnotatedObject ao = DaoFactory.getProteinDao().getByAc(ac);
+        AnnotatedObject ao = getDaoFactory().getProteinDao().getByAc(ac);
 
         if (ao != null)
         {
             return ao;
         }
 
-        ao = DaoFactory.getInteractionDao().getByAc(ac);
+        ao = getDaoFactory().getInteractionDao().getByAc(ac);
 
         if (ao != null)
         {
             return ao;
         }
 
-        ao = DaoFactory.getExperimentDao().getByAc(ac);
+        ao = getDaoFactory().getExperimentDao().getByAc(ac);
 
         if (ao != null)
         {
@@ -535,5 +541,10 @@ public class InterProSearchAction extends AbstractResultAction {
             }
         }
         return proteinACset;
+    }
+
+    private DaoFactory getDaoFactory()
+    {
+        return IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
     }
 }

@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -90,7 +91,7 @@ public class MainDetailView  extends AbstractView
 
             for (String priorAc : priorInteractionAcs)
             {
-                Interaction inter = DaoFactory.getInteractionDao().getByAc(priorAc);
+                Interaction inter = getDaoFactory().getInteractionDao().getByAc(priorAc);
                 if (inter != null)
                 {
                     interactions.add(inter);
@@ -100,7 +101,7 @@ public class MainDetailView  extends AbstractView
 
         // we load the rest of interactions for that experiment
         // if we are in the first page
-        interactions.addAll(DaoFactory.getExperimentDao()
+        interactions.addAll(getDaoFactory().getExperimentDao()
                 .getInteractionsForExperimentWithAcExcluding(experiment.getAc(), priorInteractionAcs, firstResult, maxResults - priorInteractionAcs.length));
 
 
@@ -131,7 +132,7 @@ public class MainDetailView  extends AbstractView
 
         if (getSession().getAttribute(attName) == null)
         {
-            totalItems = DaoFactory.getExperimentDao().countInteractionsForExperimentWithAc(experiment.getAc());
+            totalItems = getDaoFactory().getExperimentDao().countInteractionsForExperimentWithAc(experiment.getAc());
 
             getSession().setAttribute(attName, totalItems);
         }
@@ -143,5 +144,10 @@ public class MainDetailView  extends AbstractView
         getRequest().setAttribute(SearchConstants.TOTAL_RESULTS_ATT_NAME, totalItems);
 
         return totalItems;
+    }
+
+    private DaoFactory getDaoFactory()
+    {
+        return IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
     }
 }

@@ -10,6 +10,7 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.InteractionDao;
 import uk.ac.ebi.intact.searchengine.SearchClass;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -169,7 +170,7 @@ public class SimpleViewBean extends AbstractViewBean {
     public String getNumberOfInteractions( Interactor anInteractor ) {
 
        return String.valueOf(
-               DaoFactory.getInteractorDao().countInteractionsForInteractorWithAc(anInteractor.getAc()));
+               getDaoFactory().getInteractorDao().countInteractionsForInteractorWithAc(anInteractor.getAc()));
     }
 
     /**
@@ -182,7 +183,7 @@ public class SimpleViewBean extends AbstractViewBean {
     public String getNumberOfInteractors( Interactor anInteractor ) {
 
        return String.valueOf(
-               DaoFactory.getProteinDao().countPartnersByProteinAc(anInteractor.getAc()));
+               getDaoFactory().getProteinDao().countPartnersByProteinAc(anInteractor.getAc()));
     }
 
 
@@ -231,7 +232,7 @@ public class SimpleViewBean extends AbstractViewBean {
             Class clazz = obj.getClass();
 
             if ( Experiment.class.isAssignableFrom( clazz ) ) {
-                long size = DaoFactory.getExperimentDao().countInteractionsForExperimentWithAc(getObjAc());
+                long size = getDaoFactory().getExperimentDao().countInteractionsForExperimentWithAc(getObjAc());
                 logger.debug("Counting interactions for experiment with AC "+getObjAc()+": "+size);
                 relatedItemsSize = String.valueOf( size );
             }
@@ -266,7 +267,7 @@ public class SimpleViewBean extends AbstractViewBean {
 
 //    public Collection getGeneNames( Protein protein ) {    //1 usage in simple.jsp
     public Collection<String> getGeneNames( Interactor interactor ) {
-        return DaoFactory.getInteractorDao().getGeneNamesByInteractorAc(interactor.getAc());
+        return getDaoFactory().getInteractorDao().getGeneNamesByInteractorAc(interactor.getAc());
     }
 
 
@@ -313,7 +314,7 @@ public class SimpleViewBean extends AbstractViewBean {
     {
         int count = 0;
 
-        InteractionDao dao = DaoFactory.getInteractionDao();
+        InteractionDao dao = getDaoFactory().getInteractionDao();
 
         int interactorsIncInteractionsCount = dao.countInteractorsByInteractionAc(interactionAc);
 
@@ -329,6 +330,11 @@ public class SimpleViewBean extends AbstractViewBean {
         }
 
         return count;
+    }
+
+    private DaoFactory getDaoFactory()
+    {
+        return IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
     }
 
 

@@ -18,8 +18,8 @@
  <%@ page import="uk.ac.ebi.intact.application.search3.struts.util.SearchConstants"%>
  <%@ page import="uk.ac.ebi.intact.application.commons.util.*"%>
 
-<%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="http://struts.apache.org/tags-html" prefix="html"%>
+<%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/tld/c.tld" prefix="c"%>
 
 

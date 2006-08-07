@@ -14,6 +14,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.StringTokenizer;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * This Action class performs the calculating and the construction of view beans that will be used for a for an url
  * based search query for 2 protein. It will calculate the interactions and give back the code to forward to the
@@ -27,6 +30,7 @@ import java.util.StringTokenizer;
  */
 public class BinaryProteinAction extends AbstractResultAction {
 
+    private static final Log logger = LogFactory.getLog(BinaryProteinAction.class);
 
     /**
      * This method overrides the parent one to process the request more effectively. It avoids

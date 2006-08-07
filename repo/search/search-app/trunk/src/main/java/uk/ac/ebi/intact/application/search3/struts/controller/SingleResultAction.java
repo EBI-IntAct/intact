@@ -15,6 +15,9 @@ import uk.ac.ebi.intact.model.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * This Action class performs the construction of view beans that will be used for every  single view for Interactions,
  * Proteins, and CvObjects. It will give back the code to forward to the coresponding JSP site for the representation of
@@ -24,6 +27,8 @@ import java.util.Collection;
  * @version $Id$
  */
 public class SingleResultAction extends AbstractResultAction {
+
+    private static final Log logger = LogFactory.getLog(SingleResultAction.class);
 
     /**
      * Used to process a 'single item' view on Interaction, Proteins and CvObjects.

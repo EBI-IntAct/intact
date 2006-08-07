@@ -7,6 +7,8 @@ package uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.c
 
 import org.apache.commons.collections.IterableMap;
 import org.apache.commons.collections.MapIterator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -35,6 +37,8 @@ import javax.servlet.http.HttpSession;
  * @version $Id$
  */
 public class AdvTooLargeAction extends IntactBaseAction {
+
+    private static final Log logger = LogFactory.getLog(AdvTooLargeAction.class);
 
     /**
      * counts the complete result information in 4 different categories this is necessary because

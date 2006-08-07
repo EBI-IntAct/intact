@@ -7,11 +7,11 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.search3.struts.framework;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
-import uk.ac.ebi.intact.application.search3.business.Constants;
 import uk.ac.ebi.intact.application.search3.business.IntactServiceIF;
 import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search3.business.IntactUserImpl;
@@ -32,10 +32,7 @@ import java.util.Map;
  */
 public abstract class IntactBaseAction extends Action {
 
-    /**
-     * Logger for that class.
-     */
-    protected transient static final Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
+    private static final Log logger = LogFactory.getLog(IntactBaseAction.class);
 
     /**
      * The global Intact error key.

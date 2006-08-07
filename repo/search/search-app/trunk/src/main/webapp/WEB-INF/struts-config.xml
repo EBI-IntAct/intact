@@ -295,7 +295,7 @@ Query     _________       ____________      |     _________      _____________
     </action-mappings>
 
     <!-- ========== Message Resources ================================== -->
-    
+    <message-resources parameter="config.IntactResources"/>
     <message-resources key="buildInfo" parameter="config.BuildInfo"/>
 
     <!-- ========== Plug Ins Configuration ================================== -->

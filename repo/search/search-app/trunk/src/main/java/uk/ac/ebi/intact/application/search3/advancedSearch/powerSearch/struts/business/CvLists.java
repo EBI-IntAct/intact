@@ -17,6 +17,7 @@ import uk.ac.ebi.intact.model.CvInteractionType;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.util.*;
 
@@ -60,7 +61,8 @@ public class CvLists {
      */
     public void addMenuListItem( Class<? extends CvObject> clazz, Collection<CvBean> list ) {
 
-        List<? extends CvObject> allCvs = DaoFactory.getCvObjectDao(clazz).getAll(true,true);
+        List<? extends CvObject> allCvs = IntactContext.getCurrentInstance()
+                .getDataContext().getDaoFactory().getCvObjectDao(clazz).getAll(true,true);
         Set<? extends CvObject> cvs = new HashSet<CvObject>(allCvs);
 
         for (CvObject cv : cvs)
@@ -141,7 +143,8 @@ public class CvLists {
         CvBean emptyBean = new CvBean( null, "-all topics-", "all topics selected" );
         this.cvTopic.add( emptyBean );
 
-        List<CvTopic> cvTopics = DaoFactory.getCvObjectDao(CvTopic.class).getAll();
+        List<CvTopic> cvTopics = IntactContext.getCurrentInstance()
+                .getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class).getAll();
 
         for (CvTopic cvTo : cvTopics)
         {

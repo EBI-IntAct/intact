@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.persistence.dao.InteractionDao;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -126,7 +127,7 @@ public class CvDagObjectToolTest extends TestCase {
 
     public void testInsert() throws IntactException {
         dagUtils.insertCVs(CvInteraction.class);
-        CvObjectDao<CvInteraction> dao = DaoFactory.getCvObjectDao(CvInteraction.class);
+        CvObjectDao<CvInteraction> dao = getDaoFactory().getCvObjectDao(CvInteraction.class);
         CvDagObject aDagObject = dao.getByShortLabel("anti tag coimmunopre");
         CvDagObject aChild1 = dao.getByShortLabel("flag tag");
         CvDagObject aChild2 = dao.getByShortLabel("his tag");
@@ -148,7 +149,7 @@ public class CvDagObjectToolTest extends TestCase {
         assertEquals(5, allChildren.size());
 
         dagUtils.insertCVs(CvIdentification.class);
-        CvObjectDao<CvIdentification> dao2 = DaoFactory.getCvObjectDao(CvIdentification.class);
+        CvObjectDao<CvIdentification> dao2 = getDaoFactory().getCvObjectDao(CvIdentification.class);
         aDagObject = dao2.getByShortLabel("nucleotide sequence");
         aChild1 = dao2.getByShortLabel("partial dna sequence");
         aChild2 = dao2.getByShortLabel("full identification");
@@ -163,7 +164,7 @@ public class CvDagObjectToolTest extends TestCase {
         assertEquals(4, allChildren.size());
 
         dagUtils.insertCVs(CvInteractionType.class);
-        CvObjectDao<CvInteractionType> dao3 = DaoFactory.getCvObjectDao(CvInteractionType.class);
+        CvObjectDao<CvInteractionType> dao3 = getDaoFactory().getCvObjectDao(CvInteractionType.class);
         aDagObject = dao3.getByShortLabel("lipid cleavage");
         aChild1 = dao3.getByShortLabel("degeranylation");
         aChild2 = dao3.getByShortLabel("defarnesylation reac");
@@ -178,5 +179,10 @@ public class CvDagObjectToolTest extends TestCase {
         assertEquals(4, allChildren.size());
 
 
+    }
+
+    private DaoFactory getDaoFactory()
+    {
+        return IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
     }
 }

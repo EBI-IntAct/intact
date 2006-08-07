@@ -15,6 +15,9 @@ import uk.ac.ebi.intact.searchengine.SearchClass;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Performs the beans view for the Experiement View.
  * <p>
@@ -24,6 +27,8 @@ import java.util.Collection;
  * @version $Id$
  */
 public class DetailsResultAction extends AbstractResultAction {
+
+    private static final Log logger = LogFactory.getLog(DetailsResultAction.class);
 
     /**
      * Overrides the parent one to process the request more effectively.

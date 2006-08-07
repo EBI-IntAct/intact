@@ -1,8 +1,8 @@
 <%@ page language="java" %>
 <%@ page import="uk.ac.ebi.intact.application.search3.struts.util.SearchConstants" %>
 
-<%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html" %>
-<%@ taglib uri="/WEB-INF/tld/struts-tiles.tld" prefix="tiles" %>
+<%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
+<%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 
 <%--
     Intact default look & feel layout. It consists of a sidebar and a display
