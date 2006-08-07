@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.application.commons.util;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -101,7 +102,7 @@ public class AnnotationSection {
 
         //IntactHelper helper = new IntactHelper();
 
-        Collection<CvTopic> cvTopics = DaoFactory.getCvObjectDao(CvTopic.class).getAll();
+        Collection<CvTopic> cvTopics = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class).getAll();
 
         for (CvTopic cvTopic : cvTopics)
         {
