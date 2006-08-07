@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -365,14 +366,14 @@ public class LineExport {
         CvObject cv = null;
 
         if( mi != null ) {
-            cv = DaoFactory.getCvObjectDao().getByXref(mi);
+            cv = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao().getByXref(mi);
             if( cv == null ) {
                 System.err.println( "The MI reference you gave doesn't exists. Using the shortlabel instead." );
             }
         }
 
         if( cv == null ) {
-            cv = DaoFactory.getCvObjectDao().getByShortLabel( shortlabel );
+            cv = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao().getByShortLabel( shortlabel );
         }
 
         if ( cv == null ) {
@@ -496,7 +497,7 @@ public class LineExport {
             // search for that Protein
             Collection proteins = null;
             try {
-                proteins = DaoFactory.getProteinDao().getByAcLike(ac);
+                proteins = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByAcLike(ac);
             } catch ( IntactException e ) {
                 e.printStackTrace();
             }

@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.util.controlledVocab.model.IntactOntology;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -48,27 +49,27 @@ public class DownloadCVs {
     public DownloadCVs( ) throws IntactException {
 
         // Initialises required vocabularies...
-        psi = DaoFactory.getCvObjectDao(CvDatabase.class).getByXref( CvDatabase.PSI_MI_MI_REF );
+        psi = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDatabase.class).getByXref( CvDatabase.PSI_MI_MI_REF );
         if ( psi == null ) {
             throw new IllegalArgumentException( "Could not find PSI via MI reference: " + CvDatabase.PSI_MI_MI_REF );
         }
 
-        intact = DaoFactory.getCvObjectDao(CvDatabase.class).getByXref( CvDatabase.INTACT_MI_REF );
+        intact = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDatabase.class).getByXref( CvDatabase.INTACT_MI_REF );
         if ( intact == null ) {
             throw new IllegalArgumentException( "Could not find IntAct via MI reference: " + CvDatabase.INTACT_MI_REF );
         }
 
-        identity = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByXref( CvXrefQualifier.IDENTITY_MI_REF );
+        identity = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvXrefQualifier.class).getByXref( CvXrefQualifier.IDENTITY_MI_REF );
         if ( identity == null ) {
             throw new IllegalArgumentException( "Could not find identity via MI reference: " + CvXrefQualifier.IDENTITY_MI_REF );
         }
 
-        definitionTopic = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel(CvTopic.DEFINITION );
+        definitionTopic = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class).getByShortLabel(CvTopic.DEFINITION );
         if ( definitionTopic == null ) {
             throw new IllegalArgumentException( "Could not find definition by its name: " + CvTopic.DEFINITION );
         }
 
-        obsolete = DaoFactory.getCvObjectDao(CvTopic.class).getByXref( CvTopic.OBSOLETE_MI_REF );
+        obsolete = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class).getByXref( CvTopic.OBSOLETE_MI_REF );
         if ( obsolete == null ) {
             throw new IllegalArgumentException( "Could not find definition via MI reference: " + CvTopic.OBSOLETE_MI_REF );
         }
@@ -419,7 +420,7 @@ public class DownloadCVs {
         // process parents if the object is a dag element
         if ( CvDagObject.class.isAssignableFrom( cvObject.getClass() ) ) {
             // this is a DAG object, may have parents to mention here
-            Collection otherTypes = DaoFactory.getCvObjectDao(CvDagObject.class)
+            Collection otherTypes = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDagObject.class)
                     .getByXrefLike(id);
             Set alreadyExported = new HashSet( 4 );
 
@@ -636,7 +637,7 @@ public class DownloadCVs {
 
         // 1. Get all CvObject
         log.info( "Loading all IntAct CVs ... " );
-        Collection cvObjects = DaoFactory.getCvObjectDao().getAll();
+        Collection cvObjects = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao().getAll();
         log.info( cvObjects.size() + " found." );
 
         // creating the root of all CVs
@@ -674,7 +675,7 @@ public class DownloadCVs {
                     log.info( miRef );
 
                     // look up in the database
-                    CvObject root = DaoFactory.getCvObjectDao().getByXref(miRef);
+                    CvObject root = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao().getByXref(miRef);
 
                     if ( root == null ) {
                         // doesn't exist yet, then create it
@@ -682,9 +683,9 @@ public class DownloadCVs {
                             Constructor constructor = aCvClass.getDeclaredConstructor( new Class[]{ Institution.class, String.class } );
                             if ( constructor != null ) {
                                 String name = (String) mi2name.get( miRef );
-                                root = (CvObject) constructor.newInstance( new Object[]{ DaoFactory.getInstitutionDao().getInstitution(), name } );
+                                root = (CvObject) constructor.newInstance( new Object[]{ IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution(), name } );
 
-                                DaoFactory.getCvObjectDao().persist( root );
+                                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao().persist( root );
 
                                 // add Xref
                                 String database = null;
@@ -696,12 +697,12 @@ public class DownloadCVs {
                                     throw new IllegalArgumentException();
                                 }
                                 // TODO [ intact | psi | identity ] need to exist before hand.
-                                CvDatabase db = DaoFactory.getCvObjectDao(CvDatabase.class).getByXref( database );
-                                CvXrefQualifier q = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByXref(CvXrefQualifier.IDENTITY_MI_REF);
+                                CvDatabase db = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDatabase.class).getByXref( database );
+                                CvXrefQualifier q = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvXrefQualifier.class).getByXref(CvXrefQualifier.IDENTITY_MI_REF);
 
-                                CvObjectXref xref = new CvObjectXref( DaoFactory.getInstitutionDao().getInstitution(), db, miRef, null, null, q );
+                                CvObjectXref xref = new CvObjectXref( IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution(), db, miRef, null, null, q );
                                 root.addXref( xref );
-                                DaoFactory.getXrefDao().persist( xref );
+                                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
 
                                 // add it to the list of all CVs so it gets processed later on.
                                 cvObjects.add( root );
@@ -836,9 +837,9 @@ public class DownloadCVs {
                 try {
                     String localId = SequenceManager.getNextId( );
 
-                    CvObjectXref xref = new CvObjectXref( DaoFactory.getInstitutionDao().getInstitution(), intact, localId, null, null, identity );
+                    CvObjectXref xref = new CvObjectXref( IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution(), intact, localId, null, null, identity );
                     cvObject.addXref( xref );
-                    DaoFactory.getXrefDao().persist( xref );
+                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
 
                     id = localId;
                     log.debug( "Added new Xref to '" + cvObject.getShortLabel() + "': " + id );
@@ -922,7 +923,7 @@ public class DownloadCVs {
             {
                 try
                 {
-                    log.info( "Database: " + DaoFactory.getBaseDao().getDbName() );
+                    log.info( "Database: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName() );
                 }
                 catch (SQLException e)
                 {

@@ -20,7 +20,7 @@ DaoFactory
 
 +-----+
 
-ExperimentDao experimentDao = DaoFactory.getExperimentDao();
+ExperimentDao experimentDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao();
 Experiment myExperiment = experimentDao.getByAc("EBI-141");
 
 +-----+
@@ -34,7 +34,7 @@ Transactions
 
 IntactTransaction tx = DaoFactory.beginTransaction();
 
-ExperimentDao experimentDao = DaoFactory.getExperimentDao();
+ExperimentDao experimentDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao();
 Experiment myExperiment = experimentDao.getByAc("EBI-141");
 ...
 

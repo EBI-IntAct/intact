@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.context.impl;
 import uk.ac.ebi.intact.context.IntactSession;
 
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.ServletContext;
 import java.io.Serializable;
 
@@ -23,11 +24,13 @@ public class WebappSession extends IntactSession
 
     private HttpSession session;
     private ServletContext servletContext;
+    private HttpServletRequest request;
 
-    public WebappSession(ServletContext servletContext, HttpSession session)
+    public WebappSession(ServletContext servletContext, HttpSession session, HttpServletRequest request)
     {
         this.session = session;
         this.servletContext = servletContext;
+        this.request = request;
     }
 
 
@@ -51,6 +54,16 @@ public class WebappSession extends IntactSession
         session.setAttribute(name, attribute);
     }
 
+    public Object getRequestAttribute(String name)
+    {
+        return request.getAttribute(name);
+    }
+
+    public void setRequestAttribute(String name, Object value)
+    {
+       request.setAttribute(name,value);
+    }
+
     public boolean containsInitParam(String name)
     {
         return (servletContext.getInitParameter(name) != null);
@@ -59,6 +72,11 @@ public class WebappSession extends IntactSession
     public String getInitParam(String name)
     {
         return servletContext.getInitParameter(name);
+    }
+
+    public void setInitParam(String name, String value)
+    {
+        throw new UnsupportedOperationException("It is not possible to add init-params to a webapp session.");
     }
 
     public boolean isWebapp()

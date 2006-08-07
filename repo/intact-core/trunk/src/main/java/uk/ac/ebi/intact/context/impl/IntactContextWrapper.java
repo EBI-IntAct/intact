@@ -5,9 +5,7 @@
  */
 package uk.ac.ebi.intact.context.impl;
 
-import uk.ac.ebi.intact.context.UserContext;
-import uk.ac.ebi.intact.context.IntactSession;
-import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.context.*;
 
 /**
  * TODO: comment this!
@@ -18,9 +16,9 @@ import uk.ac.ebi.intact.context.IntactContext;
  */
 public class IntactContextWrapper extends IntactContext
 {
-        public IntactContextWrapper(UserContext userContext, IntactSession session)
+        public IntactContextWrapper(UserContext userContext, DataContext dataContext, IntactSession session)
         {
-            super(userContext, session);
+            super(userContext, dataContext, session);
             setCurrentInstance(this);
         }
 

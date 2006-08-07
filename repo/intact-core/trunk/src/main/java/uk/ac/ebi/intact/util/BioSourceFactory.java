@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.BioSourceDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -50,7 +51,7 @@ public class BioSourceFactory {
     private static final String NEWT_URL = "http://www.ebi.ac.uk/newt/display";
 
     public BioSourceFactory( ) throws IntactException {
-        this( DaoFactory.getInstitutionDao().getInstitution(), DEFAULT_CACHE_SIZE );
+        this( IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution(), DEFAULT_CACHE_SIZE );
     }
 
     public BioSourceFactory( Institution institution ) {
@@ -114,7 +115,7 @@ public class BioSourceFactory {
      * @throws IntactException
      */
     private CvDatabase getNewt() throws IntactException {
-        CvDatabase newt = DaoFactory.getCvObjectDao(CvDatabase.class).getByXref(CvDatabase.NEWT_MI_REF);
+        CvDatabase newt = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDatabase.class).getByXref(CvDatabase.NEWT_MI_REF);
         if ( newt == null ) {
             throw new IllegalStateException( "Could not find newt in the Database. Please update your controlled vocabularies." );
         }
@@ -122,7 +123,7 @@ public class BioSourceFactory {
     }
 
     private CvXrefQualifier getIdentity() throws IntactException {
-        CvXrefQualifier identity = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByXref(CvXrefQualifier.IDENTITY_MI_REF);
+        CvXrefQualifier identity = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvXrefQualifier.class).getByXref(CvXrefQualifier.IDENTITY_MI_REF);
         if ( identity == null ) {
             throw new IllegalStateException( "Could not find the qualifier(identity) in the Database. Please update your controlled vocabularies." );
         }
@@ -138,7 +139,7 @@ public class BioSourceFactory {
      */
     public BioSource getValidBioSource( String aTaxId ) throws IntactException {
 
-        BioSourceDao bioSourceDao = DaoFactory.getBioSourceDao();
+        BioSourceDao bioSourceDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBioSourceDao();
 
         int taxid = 0;
         try {
@@ -189,7 +190,7 @@ public class BioSourceFactory {
                 BioSourceXref xref = new BioSourceXref( institution, newt, aTaxId, identity );
                 inVitro.addXref( xref );
 
-                DaoFactory.getXrefDao().persist( xref );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
 
                 newBioSource = inVitro;
 
@@ -212,7 +213,7 @@ public class BioSourceFactory {
             if ( validBioSource.getTaxId().equals( aTaxId ) ) {
 
                 // not in IntAct and found in Newt so make it persistent in IntAct
-                DaoFactory.getBioSourceDao().persist( validBioSource );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBioSourceDao().persist( validBioSource );
                 newBioSource = validBioSource;
 
             } else {
@@ -289,7 +290,7 @@ public class BioSourceFactory {
                                 newBioSource.addXref( xref );
 
                                 // persist changes
-                                DaoFactory.getXrefDao().update( xref );
+                                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().update( xref );
 
                             } catch ( IntactException e ) {
                                 log.error( "An error occured when trying to add Newt Xref to " + newBioSource, e );
@@ -450,7 +451,7 @@ public class BioSourceFactory {
                     xref.setPrimaryId( newtBioSource.getTaxId() );
 
                     // update the Xref.
-                    DaoFactory.getXrefDao().update( xref );
+                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().update( xref );
 
                     needUpdate = true;
                 }
@@ -465,7 +466,7 @@ public class BioSourceFactory {
             bioSource.addXref( xref );
 
             // persist changes
-            DaoFactory.getXrefDao().persist( xref );
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
         }
 
         /**
@@ -479,7 +480,7 @@ public class BioSourceFactory {
             log.info( "update biosource (taxid=" + bioSource.getTaxId() + ")" );
 
             try {
-                DaoFactory.getBioSourceDao().update( bioSource );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBioSourceDao().update( bioSource );
             } catch ( IntactException ie ) {
                 throw ie;
             }

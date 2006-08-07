@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
 import uk.ac.ebi.intact.persistence.dao.XrefDao;
 import uk.ac.ebi.intact.util.controlledVocab.model.*;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -107,7 +108,7 @@ public class UpdateCVs {
 
         log.info( "Updating " + cvObjectClass.getName() );
 
-        Institution institution = DaoFactory.getInstitutionDao().getInstitution();
+        Institution institution = IntactContext.getCurrentInstance().getInstitution();
 
         /**
          * ALGO
@@ -125,7 +126,7 @@ public class UpdateCVs {
          *     check children and apply hierarchy to IntAct
          */
 
-            Collection intactTerms = DaoFactory.getCvObjectDao(CvObject.class).getAll();
+            Collection intactTerms = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).getAll();
 
             log.debug( "\t " + intactTerms.size() + " term(s) found in IntAct." );
 
@@ -158,7 +159,7 @@ public class UpdateCVs {
 
                             CvObjectXref xref = new CvObjectXref( institution, intact, ia, null, null, identity );
                             cvObject.addXref( xref );
-                            DaoFactory.getXrefDao().persist( xref );
+                            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
                             log.debug( "Added: " + xref + " to " );
                             log.debug( "\t\t Created Xref( " + intact.getShortLabel() + ", " +
                                                 identity.getShortLabel() + ", " + xref.getPrimaryId() + " ) (" + cvObject.getShortLabel() + ")" );
@@ -178,12 +179,10 @@ public class UpdateCVs {
                 CvTerm cvTerm = (CvTerm) iterator.next();
                 CvObject cvObject = (CvObject) intactIndex.get( cvTerm.getId() );
 
-                IntactTransaction tx = DaoFactory.beginTransaction();
-
                 log.debug( "----------------------------------------------------------------------------------" );
                 if ( cvObject == null ) {
 
-                    CvObjectDao<CvObject> cvObjectDao = DaoFactory.getCvObjectDao(CvObject.class);
+                    CvObjectDao<CvObject> cvObjectDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class);
 
                     // search by shortlabel
                     cvObject = cvObjectDao.getByShortLabel(cvTerm.getShortName());
@@ -217,11 +216,6 @@ public class UpdateCVs {
 
                 // update its content
                 updateTerm( cvObject, cvTerm );
-
-                // TODO update mapping ?
-
-                // end the transaction as no error occured.
-                tx.commit();
 
             } // end of update of the terms' content
 
@@ -278,8 +272,8 @@ public class UpdateCVs {
                                             " ---child---> (" + intactChild.getAc() + ") " + intactChild.getShortLabel() + "]" );
 
                         // TODO may need to do at at SQL level
-                        DaoFactory.getCvObjectDao(CvDagObject.class).persist( dagObject );
-                        DaoFactory.getCvObjectDao(CvDagObject.class).persist( intactChild );
+                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDagObject.class).persist( dagObject );
+                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDagObject.class).persist( intactChild );
                     }
 
                     allChildren.remove( intactChild );
@@ -290,7 +284,7 @@ public class UpdateCVs {
                     CvDagObject child = (CvDagObject) iterator2.next();
 
                     try {
-                        Connection connection = DaoFactory.connection();
+                        Connection connection = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().connection();
                         Statement statement = connection.createStatement();
                         statement.execute( "DELETE FROM ia_cv2cv " +
                                            "WHERE parent_ac = '" + dagObject.getAc() + "' AND " +
@@ -318,7 +312,7 @@ public class UpdateCVs {
             ///////////////////////////////////////
             // 4. Flag root term as hidden
             Collection roots = ontology.getRoots( cvObjectClass );
-            CvTopic hidden = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel(CvTopic.HIDDEN);
+            CvTopic hidden = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class).getByShortLabel(CvTopic.HIDDEN);
 
             if ( hidden == null ) {
                 log.warn( "The CvTopic(" + CvTopic.HIDDEN + ") could not be found or created in IntAct. " +
@@ -364,7 +358,7 @@ public class UpdateCVs {
                 CvTerm cvTerm = (CvTerm) iterator.next();
 
                 String id = cvTerm.getId();
-                CvObject cvObject = DaoFactory.getCvObjectDao(CvObject.class).getByXref(id);
+                CvObject cvObject = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).getByXref(id);
 
                 if ( cvObject == null ) {
                     missingTerms.add( cvTerm );
@@ -410,7 +404,7 @@ public class UpdateCVs {
                                              final CvTopic topic,
                                              final String text ) throws IntactException {
 
-        Institution institution = DaoFactory.getInstitutionDao().getInstitution();
+        Institution institution = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
 
         if ( topic == null ) {
             log.error( "You must give a non null topic when updating term " + cvObject.getShortLabel() );
@@ -435,9 +429,9 @@ public class UpdateCVs {
                 // add a new one
                 Annotation annotation = new Annotation( institution, topic );
                 annotation.setAnnotationText( text );
-                DaoFactory.getAnnotationDao().persist( annotation );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().persist( annotation );
                 cvObject.addAnnotation( annotation );
-                DaoFactory.getCvObjectDao(CvObject.class).update( cvObject );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update( cvObject );
                 log.debug( "Added Annotation " + topic.getShortLabel() + " to '" + cvObject.getShortLabel() + "'." );
 
             } else {
@@ -457,7 +451,7 @@ public class UpdateCVs {
                     Annotation annotation = (Annotation) iterator.next();
                     String oldText = annotation.getAnnotationText();
                     annotation.setAnnotationText( text );
-                    DaoFactory.getAnnotationDao().update( annotation );
+                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().update( annotation );
                     log.debug( "Updated " + cvObject.getShortLabel() + ", Annotation(" + topic.getShortLabel() + ")\n" +
                                         "        updated text from '" + oldText + "' to '" + text + "'." );
 
@@ -471,8 +465,8 @@ public class UpdateCVs {
                 Annotation annotation = (Annotation) iterator.next();
                 String _text = annotation.getAnnotationText();
                 cvObject.removeAnnotation( annotation );
-                DaoFactory.getCvObjectDao(CvObject.class).update( cvObject );
-                DaoFactory.getAnnotationDao().delete( annotation );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update( cvObject );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().delete( annotation );
                 log.debug( "Deleted redondant Annotation(" + topic.getShortLabel() +
                                     ", '" + _text + "'), we want it unique and there's already one." );
             }
@@ -563,8 +557,8 @@ public class UpdateCVs {
         // Search by MI
         CvObject cv = null;
 
-        CvObjectDao<CvObject> cvObjectDao = DaoFactory.getCvObjectDao(CvObject.class);
-        Institution institution = DaoFactory.getInstitutionDao().getInstitution();
+        CvObjectDao<CvObject> cvObjectDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class);
+        Institution institution = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
 
         // if an MI is available, search using it
         if ( mi != null ) {
@@ -614,7 +608,7 @@ public class UpdateCVs {
                     CvObjectXref xref = new CvObjectXref( institution, psi, mi, null, null, identity );
 
                     cv.addXref( xref );
-                    DaoFactory.getXrefDao().persist( xref );
+                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
                     log.debug( "Added required PSI Xref to " + shortlabel + ": " + mi );
                 }
             } catch ( Exception e ) {
@@ -824,7 +818,7 @@ public class UpdateCVs {
 
         // TODO if we convert the id into a Xref before starting the update, the two if below would be handled in the loop for Xrefs.
 
-        Institution institution = DaoFactory.getInstitutionDao().getInstitution();
+        Institution institution = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
 
         // Xref psi-mi/identity
         if ( ! hasIntactTermGotPsiIdentifier && hasPsiIdentifier ) {
@@ -834,7 +828,7 @@ public class UpdateCVs {
 
             CvObjectXref xref = new CvObjectXref( institution, psi, id, null, null, identity );
             cvObject.addXref( xref );
-            DaoFactory.getXrefDao().persist( xref );
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
             log.debug( "\t\t Added PSI Xref (" + id + ")" );
         }
 
@@ -846,7 +840,7 @@ public class UpdateCVs {
             CvDatabase intact = (CvDatabase) getCvObject(CvDatabase.class, CvDatabase.INTACT, CvDatabase.INTACT_MI_REF );
             CvXrefQualifier identity = (CvXrefQualifier) getCvObject(CvXrefQualifier.class, CvXrefQualifier.IDENTITY, CvXrefQualifier.IDENTITY_MI_REF );
 
-            Collection conflictingTerms = DaoFactory.getCvObjectDao(CvObject.class).getByXrefLike(intact, identity, id);
+            Collection conflictingTerms = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).getByXrefLike(intact, identity, id);
 
             for ( Iterator iterator = conflictingTerms.iterator(); iterator.hasNext(); ) {
                 CvObject conflict = (CvObject) iterator.next();
@@ -858,14 +852,14 @@ public class UpdateCVs {
                     Iterator it = xrefs.iterator();
                     CvObjectXref xref = (CvObjectXref) it.next();
                     xref.setPrimaryId( newId );
-                    DaoFactory.getXrefDao().update( xref );
+                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().update( xref );
                     log.debug( "Updated Xref (" + id + ") updated to " + newId + " on term '" + conflict.getShortLabel() + "'." );
 
                     while ( it.hasNext() ) {
                         xref = (CvObjectXref) it.next();
                         conflict.removeXref( xref );
-                        DaoFactory.getXrefDao().delete( xref );
-                        DaoFactory.getCvObjectDao(CvObject.class).update( conflict );
+                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().delete( xref );
+                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update( conflict );
                         log.debug( "Deleted additional Xref:" + xref );
                     }
                 } else {
@@ -875,12 +869,12 @@ public class UpdateCVs {
 
             CvObjectXref xref = new CvObjectXref( institution, intact, id, null, null, identity );
             cvObject.addXref( xref );
-            DaoFactory.getXrefDao().persist( xref );
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
             log.debug( "\t\t Added IntAct Xref (" + id + ")" );
         }
 
         if ( needsUpdate ) {
-            DaoFactory.getCvObjectDao(CvObject.class).update( cvObject );
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update( cvObject );
         }
 
         // Annotations
@@ -923,7 +917,7 @@ public class UpdateCVs {
 
         Set uniqueCvTopics = loadUniqueCvTopics( );
 
-        Institution institution = DaoFactory.getInstitutionDao().getInstitution();
+        Institution institution = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
 
         // Start updating ...
         for ( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
@@ -944,10 +938,10 @@ public class UpdateCVs {
                         // create one
                         Annotation annot = new Annotation( institution, topic, annotation.getAnnotation() );
 
-                        DaoFactory.getAnnotationDao().persist( annot );
+                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().persist( annot );
 
                         cvObject.addAnnotation( annot );
-                        DaoFactory.getCvObjectDao(CvObject.class).update( cvObject );
+                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update( cvObject );
                         log.debug("\t\t Created unique Annotation( " + topic.getShortLabel() + ", '" + annot.getAnnotationText() + "' )" );
 
                     } else {
@@ -962,7 +956,7 @@ public class UpdateCVs {
                         if ( ! text.equals( newtext ) ) {
                             // only update if required.
                             annot.setAnnotationText( annotation.getAnnotation() );
-                            DaoFactory.getAnnotationDao().update( annot );
+                            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().update( annot );
                             log.debug( "\t\t Updated Annotation( " + topic.getShortLabel() + ", '" + annot.getAnnotationText() + "' )" );
                         }
 
@@ -972,8 +966,8 @@ public class UpdateCVs {
 
                             log.debug( "\t\t Removed Annotation( " + topic.getShortLabel() + ", '" + annot.getAnnotationText() + "' )" );
                             cvObject.removeAnnotation( annot );
-                            DaoFactory.getCvObjectDao(CvObject.class).update( cvObject );
-                            DaoFactory.getAnnotationDao().delete( annot );
+                            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update( cvObject );
+                            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().delete( annot );
                         }
                     } // end - at least one annotation
 
@@ -985,10 +979,10 @@ public class UpdateCVs {
                     if ( ! cvObject.getAnnotations().contains( annot ) ) {
                         // add missing annotation
 
-                        DaoFactory.getAnnotationDao().persist( annot );
+                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().persist( annot );
 
                         cvObject.addAnnotation( annot );
-                        DaoFactory.getCvObjectDao(CvObject.class).update( cvObject );
+                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update( cvObject );
                         log.debug( "\t\t Created Annotation( " + topic.getShortLabel() + ", '" + annot.getAnnotationText() + "' ). <topic not unique>" );
                     }
                 }
@@ -1015,8 +1009,8 @@ public class UpdateCVs {
         dbMapping.put( "SO", CvDatabase.SO );
         dbMapping.put( "GO", CvDatabase.GO );
 
-        XrefDao xrefDao = DaoFactory.getXrefDao();
-        Institution institution = DaoFactory.getInstitutionDao().getInstitution();
+        XrefDao xrefDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao();
+        Institution institution = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
 
         // xrefs -- we don't delete any Xrefs, just adding missing ones
         // TODO should we affect a default qualifier if none is supplied ?
@@ -1145,7 +1139,7 @@ public class UpdateCVs {
             throw new IllegalStateException( "Could not find " + CvAliasType.GO_SYNONYM + " in the IntAct node. Abort." );
         }
 
-        Institution institution = DaoFactory.getInstitutionDao().getInstitution();
+        Institution institution = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
 
         for ( Iterator iterator = cvTerm.getSynonyms().iterator(); iterator.hasNext(); ) {
             CvTermSynonym synonym = (CvTermSynonym) iterator.next();
@@ -1173,7 +1167,7 @@ public class UpdateCVs {
 
             if ( ! cvObject.getAliases().contains( alias ) ) {
                 cvObject.addAlias( alias );
-                DaoFactory.getAliasDao().persist( alias );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAliasDao().persist( alias );
                 log.debug("\t\t Created Alias( " + specificType.getShortLabel() + ", '" + synonym.getName() + "' )" );
             }
         }
@@ -1216,8 +1210,8 @@ public class UpdateCVs {
             System.out.println( "Removing extra annotation: Annotation(" + annotation.getCvTopic().getShortLabel() + ", '" +
                                 annotation.getAnnotationText() + "')" );
             cvObject.removeAnnotation( annotation );
-            DaoFactory.getCvObjectDao(CvObject.class).update( cvObject );
-            DaoFactory.getAnnotationDao().delete( annotation );
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update( cvObject );
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().delete( annotation );
         }
 
         return myAnnotation;
@@ -1312,7 +1306,7 @@ public class UpdateCVs {
             {
                 try
                 {
-                    log.info( "Database: " + DaoFactory.getBaseDao().getDbName() );
+                    log.info( "Database: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName() );
                 }
                 catch (SQLException e)
                 {
@@ -1360,7 +1354,7 @@ public class UpdateCVs {
                     // find the CvObject
                     CvObject cv = null;
                     if ( mi != null && mi.startsWith( "MI:" ) ) {
-                        cv = DaoFactory.getCvObjectDao(CvObject.class).getByXref(mi);
+                        cv = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).getByXref(mi);
 
                         if ( cv == null ) {
                             log.warn( "Could not find the object by the given reference: '" + mi + "'." );
@@ -1370,7 +1364,7 @@ public class UpdateCVs {
                     if ( cv == null ) {
                         // wasn't found using MI reference, then try shortlabel
                         if ( shorltabel != null && shorltabel.trim().length() > 0 ) {
-                            cv = DaoFactory.getCvObjectDao(CvObject.class).getByShortLabel(shorltabel);
+                            cv = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).getByShortLabel(shorltabel);
                         } else {
                             throw new Exception( "Line " + lineCount + ": Neither a valid shortlabel (" + shorltabel + ") " +
                                                  "nor MI ref (" + mi + ") were given, could not find the corresponding " +
@@ -1394,7 +1388,7 @@ public class UpdateCVs {
                         }
 
                         // we have the object, now build the annotation
-                        CvTopic cvTopic = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel(topic);
+                        CvTopic cvTopic = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class).getByShortLabel(topic);
                         if ( cvTopic == null ) {
                             throw new Exception( "Line " + lineCount + ": Could not find CvTopic( " + topic + " ). Skip line." );
                         }
@@ -1422,14 +1416,14 @@ public class UpdateCVs {
                             // now update that single term
                             Annotation annot = getUniqueAnnotation(aTermToUpdate, cvTopic );
 
-                            Institution institution = DaoFactory.getInstitutionDao().getInstitution();
+                            Institution institution = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
 
                             Annotation newAnnotation = new Annotation( institution, cvTopic, reason );
                             if ( annot == null ) {
                                 // then add the new one
-                                DaoFactory.getAnnotationDao().persist( newAnnotation );
+                                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().persist( newAnnotation );
                                 aTermToUpdate.addAnnotation( newAnnotation );
-                                DaoFactory.getCvObjectDao(CvObject.class).update( aTermToUpdate );
+                                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update( aTermToUpdate );
                                 log.info( "\tCREATED new Annotation( " + cvTopic.getShortLabel() + ", '" + reason + "' )" );
 
                             } else {
@@ -1442,7 +1436,7 @@ public class UpdateCVs {
 
                                     // do the update.
                                     annot.setAnnotationText( reason );
-                                    DaoFactory.getAnnotationDao().update( annot );
+                                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().update( annot );
                                     String myClassName = type.substring( type.lastIndexOf( "." ) + 1, type.length() );
                                     log.info( "\tUPDATED Annotation( " + cvTopic.getShortLabel() + ", '" + reason + "' )" );
                                 }
@@ -1517,9 +1511,9 @@ public class UpdateCVs {
         // 2. Updating
 
         // 2.1 Connect to the database.
-        String instanceName = DaoFactory.getBaseDao().getDbName();
+        String instanceName = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName();
         System.out.println( "Database: " + instanceName );
-        System.out.println( "User: " + DaoFactory.getBaseDao().getDbUserName() );
+        System.out.println( "User: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbUserName() );
 
         /////////////////////////////
         // 2.2 Checking on sequence

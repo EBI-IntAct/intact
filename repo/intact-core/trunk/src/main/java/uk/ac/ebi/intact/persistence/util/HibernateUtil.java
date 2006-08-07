@@ -208,7 +208,7 @@ public class HibernateUtil {
     /**
      * Rebuild the SessionFactory with the given Hibernate Configuration.
      * <p>
-     * HibernateUtil does not configure() the given Configuration object,
+     * HibernateUtil does not initialize() the given Configuration object,
      * it directly calls buildSessionFactory(). This method also closes
      * the old SessionFactory before, if still open.
      *
@@ -280,7 +280,7 @@ public class HibernateUtil {
                         HibernateUtil.class.getClassLoader().loadClass(interceptorName);
                 interceptor = (Interceptor)interceptorClass.newInstance();
             } catch (Exception ex) {
-                throw new RuntimeException("Could not configure interceptor: " + interceptorName, ex);
+                throw new RuntimeException("Could not initialize interceptor: " + interceptorName, ex);
             }
         }
         if (interceptor != null) {

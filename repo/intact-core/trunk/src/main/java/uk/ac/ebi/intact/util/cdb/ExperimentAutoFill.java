@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.util.*;
 
@@ -166,13 +167,13 @@ public class ExperimentAutoFill {
                                                               UnexpectedException,
                                                               PublicationNotFoundException {
 
-        CvDatabase pubmed = DaoFactory.getCvObjectDao(CvDatabase.class).getByXref( CvDatabase.PUBMED_MI_REF );
-        CvXrefQualifier primaryRef = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByXref(CvXrefQualifier.PRIMARY_REFERENCE_MI_REF );
+        CvDatabase pubmed = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDatabase.class).getByXref( CvDatabase.PUBMED_MI_REF );
+        CvXrefQualifier primaryRef = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvXrefQualifier.class).getByXref(CvXrefQualifier.PRIMARY_REFERENCE_MI_REF );
 
         // Load, from IntAct, all existing experiment having that same pudmed ID.
 
         // (1) load all experimentXrefs having that same pubmed ID
-        Collection experimentXrefs = DaoFactory.getExperimentDao().getByXrefLike(pubmedID);
+        Collection experimentXrefs = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao().getByXrefLike(pubmedID);
 
         if ( _DEBUG_ ) {
             log.debug( "Found " + experimentXrefs.size() + " experiment(s) by PubMed( " + pubmedID + " )" );
@@ -188,7 +189,7 @@ public class ExperimentAutoFill {
         int year = citation.getYear();
         String prefix = authorLastName + "-" + year;
 
-        Collection experimentLLabels = DaoFactory.getExperimentDao().getByShortLabelLike(prefix+"%");
+        Collection experimentLLabels = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao().getByShortLabelLike(prefix+"%");
 
         if ( _DEBUG_ ) {
             log.debug( "Found " + experimentLLabels.size() + " experiment(s) by prefix( " + prefix + " )" );
@@ -273,8 +274,6 @@ public class ExperimentAutoFill {
 
     public static void main( String[] args ) throws Exception {
 
-        IntactTransaction tx = DaoFactory.beginTransaction();
-
         // working cases
 //        ExperimentAutoFill eaf = new ExperimentAutoFill( "12130660" ); // with more than one pub by year
 //        ExperimentAutoFill eaf = new ExperimentAutoFill( "16104060" );   // not in IntAct, neither in CitExplore
@@ -299,6 +298,6 @@ public class ExperimentAutoFill {
             log.info( "No email" );
         }
 
-        tx.commit();
+        IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
     }
 }

@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.Chrono;
 import uk.ac.ebi.intact.util.MemoryMonitor;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.io.*;
 import java.sql.Connection;
@@ -577,7 +578,7 @@ public class DRLineExport extends LineExport {
                    IntactException,
                    DatabaseContentException {
 
-        Connection connection = DaoFactory.connection();
+        Connection connection = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().connection();
         Statement statement = connection.createStatement();
 
         // select the protein ordered by Uniprot identity.
@@ -629,7 +630,7 @@ public class DRLineExport extends LineExport {
             }
 
             String ac = proteinAcs.getString( 1 );
-            Protein protein = DaoFactory.getProteinDao().getByAc(ac);
+            Protein protein = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByAc(ac);
 
             if ( protein == null  ) {
                 log.error( "Could not find a Protein in IntAct for AC: " + ac );
@@ -664,7 +665,7 @@ public class DRLineExport extends LineExport {
 
                     } else {
 
-                        master = DaoFactory.getProteinDao().getByAc(masterAc);
+                        master = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByAc(masterAc);
 
                         if ( master == null ) {
                             log.error( "Could not find the master protein of splice variant (" +
@@ -820,8 +821,8 @@ public class DRLineExport extends LineExport {
 
         if (log.isInfoEnabled())
         {
-            log.info( "Database instance: " + DaoFactory.getBaseDao().getDbName() );
-            log.info( "User: " + DaoFactory.getBaseDao().getDbUserName() );
+            log.info( "Database instance: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName() );
+            log.info( "User: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbUserName() );
         }
 
         // get the set of Uniprot ID to be exported to Swiss-Prot, using a paginated query

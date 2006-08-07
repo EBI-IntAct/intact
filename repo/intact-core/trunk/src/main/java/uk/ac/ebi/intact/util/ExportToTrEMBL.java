@@ -9,6 +9,7 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.model.ProteinImpl;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -185,7 +186,7 @@ public class ExportToTrEMBL {
      */
     public static void main( String[] args ) throws IntactException {
 
-            Collection<ProteinImpl> proteins = DaoFactory.getProteinDao().getByShortLabelLike("%afcs%");
+            Collection<ProteinImpl> proteins = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByShortLabelLike("%afcs%");
 
             System.out.println( proteins.size() + " protein(s) found." );
 

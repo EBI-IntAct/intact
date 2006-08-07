@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -102,7 +103,7 @@ public class UpdateExperimentAnnotationsFromPudmed {
 
             //////////////////////////////////////
             // Collecting necessary vocabularies
-            CvObjectDao<CvTopic> cvTopicDao = DaoFactory.getCvObjectDao(CvTopic.class);
+            CvObjectDao<CvTopic> cvTopicDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class);
 
             CvTopic authorList = cvTopicDao.getByShortLabel(CvTopic.AUTHOR_LIST); // unique
 
@@ -151,13 +152,13 @@ public class UpdateExperimentAnnotationsFromPudmed {
 
             // email - if not there yet, add it.
             if ( eaf.getAuthorEmail() != null && eaf.getAuthorEmail().length() != 0 ) {
-                Annotation annotation = new Annotation( DaoFactory.getInstitutionDao().getInstitution(), email );
+                Annotation annotation = new Annotation( IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution(), email );
                 annotation.setAnnotationText( eaf.getAuthorEmail() );
                 if ( ! experiment.getAnnotations().contains( annotation ) ) {
                     // add it
-                    DaoFactory.getAnnotationDao().persist( annotation );
+                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().persist( annotation );
                     experiment.addAnnotation( annotation );
-                    DaoFactory.getExperimentDao().update( experiment );
+                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao().update( experiment );
                     report.setContactUpdated( true );
                 }
             }
@@ -223,7 +224,7 @@ public class UpdateExperimentAnnotationsFromPudmed {
             // select all annotation of that object filtered by topic
             Collection annotationByTopic = select( experiment.getAnnotations(), topic );
 
-            Institution institution = DaoFactory.getInstitutionDao().getInstitution();
+            Institution institution = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
 
             // update annotations
             if ( annotationByTopic.isEmpty() ) {
@@ -231,9 +232,9 @@ public class UpdateExperimentAnnotationsFromPudmed {
                 // add a new one
                 Annotation annotation = new Annotation( institution, topic );
                 annotation.setAnnotationText( text );
-                DaoFactory.getAnnotationDao().persist( annotation );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().persist( annotation );
                 experiment.addAnnotation( annotation );
-                DaoFactory.getExperimentDao().update( experiment );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao().update( experiment );
 
                 updated = true;
 
@@ -254,7 +255,7 @@ public class UpdateExperimentAnnotationsFromPudmed {
                     Annotation annotation = (Annotation) iterator.next();
                     String oldText = annotation.getAnnotationText();
                     annotation.setAnnotationText( text );
-                    DaoFactory.getAnnotationDao().update( annotation );
+                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().update( annotation );
 
                     updated = true;
 
@@ -268,8 +269,8 @@ public class UpdateExperimentAnnotationsFromPudmed {
                 Annotation annotation = (Annotation) iterator.next();
                 String _text = annotation.getAnnotationText();
                 experiment.removeAnnotation( annotation );
-                DaoFactory.getExperimentDao().update( experiment );
-                DaoFactory.getAnnotationDao().delete( annotation );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao().update( experiment );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().delete( annotation );
 
                 updated = true;
             }

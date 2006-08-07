@@ -9,6 +9,7 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.sql.*;
 import java.util.Collection;
@@ -114,7 +115,7 @@ public class SequenceManager {
 
             System.out.println( "Checking if the sequence if present..." );
 
-            Connection connection = DaoFactory.connection();
+            Connection connection = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().connection();
 
             if ( ! sequenceExists( connection, SEQUENCE_NAME ) ) {
                 throw new IllegalStateException( "The sequence " + SEQUENCE_NAME + " doesn't not exist in your database. Please create it." );
@@ -331,7 +332,7 @@ public class SequenceManager {
 
     public static void synchronizeUpTo( long id ) {
 
-        Connection connection = DaoFactory.connection();
+        Connection connection = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().connection();
         long current = getCurrentSequenceValue( connection, SEQUENCE_NAME );
 
         if ( current < id ) {
@@ -366,7 +367,7 @@ public class SequenceManager {
     }
 
     public static String getNextId( ) throws IntactException {
-        Connection connection = DaoFactory.connection();
+        Connection connection = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().connection();
         long id;
         String nextId = null;
         Collection cvObjects;
@@ -388,7 +389,7 @@ public class SequenceManager {
             // Given that we are relying on Database's sequences, we don't expect to encounter that issue,
             // that check may be removed later on.
 
-            cvObjects = DaoFactory.getCvObjectDao(CvObject.class).getByXrefLike(nextId);
+            cvObjects = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).getByXrefLike(nextId);
 
             if ( ! cvObjects.isEmpty() ) {
                 // display error if the IA:xxxx was already in use.
@@ -413,7 +414,7 @@ public class SequenceManager {
     }
 
     public static String getCurrentId( ) throws IntactException {
-        Connection connection = DaoFactory.connection();
+        Connection connection = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().connection();
         String nextId = null;
 
         try {
@@ -441,7 +442,7 @@ public class SequenceManager {
 
     public static void main( String[] args ) throws IntactException, SQLException {
 
-            System.out.println( "Database: " + DaoFactory.getBaseDao().getDbName() );
+            System.out.println( "Database: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName() );
 
             for ( int i = 0; i < 3; i++ ) {
                 String id = getNextId( );

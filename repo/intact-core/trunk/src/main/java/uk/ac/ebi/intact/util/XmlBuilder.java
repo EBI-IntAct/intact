@@ -16,6 +16,7 @@ import org.w3c.dom.traversal.NodeFilter;
 import org.w3c.dom.traversal.TreeWalker;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -231,7 +232,7 @@ public class XmlBuilder implements Serializable {
 
                     Collection searchResults = new ArrayList();
                     System.out.println("searching by Standard Collection...");
-                    searchResults = DaoFactory.getIntactObjectDao().getByAcLike((String)key);
+                    searchResults = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getIntactObjectDao().getByAcLike((String)key);
 //                    System.out.println("searching by Iterator....");
 //                    Iterator iter = null;
 //                    iter = helper.iterSearch("uk.ac.ebi.intact.model.BasicObject", "ac", (String)key);
@@ -241,7 +242,7 @@ public class XmlBuilder implements Serializable {
                     if(searchResults.isEmpty()) {
 
                         //try Institution instead
-                        searchResults = DaoFactory.getInstitutionDao().getByAcLike((String)key);
+                        searchResults = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getByAcLike((String)key);
                     }
                     if(searchResults.size() > 1) {
 

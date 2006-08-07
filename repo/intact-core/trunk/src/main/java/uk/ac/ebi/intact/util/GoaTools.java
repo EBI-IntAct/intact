@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -270,7 +271,7 @@ public class GoaTools {
         // which is already linked to that AnnotatedObject.
         if (xref.getParentAc() == current.getAc()) {
             try {
-                DaoFactory.getXrefDao().persist(xref);
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist(xref);
                 newAnnotationCount++;
             } catch (Exception e_xref) {
                 log.error ( "Could not create the Xref: " + xref.getPrimaryId() +
@@ -333,13 +334,13 @@ public class GoaTools {
             System.exit( 1 );
         }
 
-        CvDatabase goDatabase = DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel("go");
+        CvDatabase goDatabase = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDatabase.class).getByShortLabel("go");
 
         if ( goDatabase == null ){
             throw new IntactException ( "Could not find the CvDatabase: go. Stop processing." );
         }
 
-        Institution institution = DaoFactory.getInstitutionDao().getInstitution();
+        Institution institution = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
 
         if ( institution == null ){
             throw new IntactException ( "Could not find the Institution: EBI. Stop processing." );
@@ -357,7 +358,7 @@ public class GoaTools {
             count++;
             if ((count % 500) == 0) goaTools.displayStatistics();
 
-            proteins = DaoFactory.getProteinDao().getByXrefLike(goaItem.getAc());
+            proteins = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByXrefLike(goaItem.getAc());
             if (proteins.size() != 0) {
                 log.debug ( proteins.size() + " Protein found by Xref: " + goaItem.getAc() );
                 for (Protein prot : proteins)
@@ -370,7 +371,7 @@ public class GoaTools {
 
                 String symbol = goaItem.getSymbol();
                 if ( ! goaItem.getAc().equals( symbol ) ) {
-                    protein = DaoFactory.getProteinDao().getByShortLabel(symbol);
+                    protein = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByShortLabel(symbol);
 
                     if (protein != null) {
                         log.debug ( "Protein found by Label: " + symbol );

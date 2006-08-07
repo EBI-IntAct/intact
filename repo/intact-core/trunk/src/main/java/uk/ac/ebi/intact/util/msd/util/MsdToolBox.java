@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.util.msd.util;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -93,7 +94,7 @@ public class MsdToolBox {
     public static BioSource getInVitro() throws IntactException {
         if(inVitro==null){
 
-            Collection<BioSource> inVitroCol = DaoFactory.getBioSourceDao().getByTaxonId("-1");
+            Collection<BioSource> inVitroCol = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBioSourceDao().getByTaxonId("-1");
 
             if (inVitroCol.size() > 1)
             {
@@ -112,7 +113,7 @@ public class MsdToolBox {
      */
     public static Institution getOwner() throws IntactException {
         if(owner == null){
-            owner = DaoFactory.getInstitutionDao().getInstitution();
+            owner = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
         }
         return owner;
     }
@@ -124,7 +125,7 @@ public class MsdToolBox {
      */
     public static CvTopic getAuthorList() throws IntactException {
         if(authorList == null){
-            authorList= DaoFactory.getCvObjectDao(CvTopic.class).getByXref(CvTopic.AUTHOR_LIST_MI_REF);
+            authorList= IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class).getByXref(CvTopic.AUTHOR_LIST_MI_REF);
         }
         return authorList;
     }
@@ -136,7 +137,7 @@ public class MsdToolBox {
      */
     public static CvTopic getContactEmail() throws IntactException {
         if(contactEmail == null){
-            contactEmail=DaoFactory.getCvObjectDao(CvTopic.class).getByXref( CvTopic.CONTACT_EMAIL_MI_REF);
+            contactEmail=IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class).getByXref( CvTopic.CONTACT_EMAIL_MI_REF);
         }
         return contactEmail;
     }
@@ -148,7 +149,7 @@ public class MsdToolBox {
      */
     public static CvTopic getJournal() throws IntactException {
         if(journal == null){
-            journal = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel(CvTopic.JOURNAL);
+            journal = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class).getByShortLabel(CvTopic.JOURNAL);
         }
         return journal;
     }
@@ -161,7 +162,7 @@ public class MsdToolBox {
      */
     public static CvTopic getPublicationYear() throws IntactException {
         if(publicationYear == null){
-            publicationYear = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel(CvTopic.PUBLICATION_YEAR);
+            publicationYear = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class).getByShortLabel(CvTopic.PUBLICATION_YEAR);
         }
         return journal;
     }
@@ -174,7 +175,7 @@ public class MsdToolBox {
      */
     public static CvIdentification getPredetermined() throws IntactException {
        if(predetermined == null){
-            predetermined= DaoFactory.getCvObjectDao(CvIdentification.class).getByXref(CvIdentification.PREDETERMINED_MI_REF);
+            predetermined= IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvIdentification.class).getByXref(CvIdentification.PREDETERMINED_MI_REF);
         }
         return predetermined;
     }
@@ -186,7 +187,7 @@ public class MsdToolBox {
      */
     public static CvDatabase getPubmed() throws IntactException {
         if(pubmed == null){
-            pubmed = DaoFactory.getCvObjectDao(CvDatabase.class).getByXref(CvDatabase.PUBMED_MI_REF);
+            pubmed = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDatabase.class).getByXref(CvDatabase.PUBMED_MI_REF);
         }
         return pubmed;
     }
@@ -199,7 +200,7 @@ public class MsdToolBox {
      */
     public static CvXrefQualifier getPrimaryRef() throws IntactException {
        if(primaryRef == null){
-            primaryRef = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByXref(CvXrefQualifier.PRIMARY_REFERENCE_MI_REF);
+            primaryRef = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvXrefQualifier.class).getByXref(CvXrefQualifier.PRIMARY_REFERENCE_MI_REF);
         }
         return primaryRef;
     }
@@ -213,7 +214,7 @@ public class MsdToolBox {
     public static CvInteractorType getInteraction() throws IntactException {
         if(interaction == null){
 
-            interaction = DaoFactory.getCvObjectDao(CvInteractorType.class).getByXref(CvInteractorType.INTERACTION_MI_REF);
+            interaction = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvInteractorType.class).getByXref(CvInteractorType.INTERACTION_MI_REF);
         }
         return interaction;
     }
@@ -225,7 +226,7 @@ public class MsdToolBox {
      */
     public static CvInteractionType getDirectInteraction() throws IntactException {
         if(directInteraction == null){
-            directInteraction = DaoFactory.getCvObjectDao(CvInteractionType.class).getByXref(CvInteractionType.DIRECT_INTERACTION_MI_REF);
+            directInteraction = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvInteractionType.class).getByXref(CvInteractionType.DIRECT_INTERACTION_MI_REF);
         }
         return directInteraction;
     }
@@ -238,7 +239,7 @@ public class MsdToolBox {
      */
     public static CvComponentRole getNeutral() throws IntactException {
         if(neutral == null){
-            neutral = DaoFactory.getCvObjectDao(CvComponentRole.class).getByXref(CvComponentRole.NEUTRAL_PSI_REF);
+            neutral = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvComponentRole.class).getByXref(CvComponentRole.NEUTRAL_PSI_REF);
         }
         return neutral;
     }
@@ -252,7 +253,7 @@ public class MsdToolBox {
     public static CvXrefQualifier getIdentity() throws IntactException {
         if(identity == null){
 
-            identity = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByXref(CvXrefQualifier.IDENTITY_MI_REF);
+            identity = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvXrefQualifier.class).getByXref(CvXrefQualifier.IDENTITY_MI_REF);
         }
         return identity;
     }
@@ -266,7 +267,7 @@ public class MsdToolBox {
      */
     public static CvDatabase getUniprot() throws IntactException {
         if(uniprot == null){
-            uniprot = DaoFactory.getCvObjectDao(CvDatabase.class).getByXref(CvDatabase.UNIPROT_MI_REF);
+            uniprot = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDatabase.class).getByXref(CvDatabase.UNIPROT_MI_REF);
         }
         return uniprot;
     }
@@ -279,7 +280,7 @@ public class MsdToolBox {
      */
     public static CvDatabase getPdb() throws IntactException {
         if(uniprot == null){
-            uniprot = DaoFactory.getCvObjectDao(CvDatabase.class).getByXref(CvDatabase.PDB_MI_REF);
+            uniprot = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDatabase.class).getByXref(CvDatabase.PDB_MI_REF);
         }
         return uniprot;
     }

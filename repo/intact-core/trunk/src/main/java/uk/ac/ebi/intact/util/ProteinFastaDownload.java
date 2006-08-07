@@ -9,6 +9,7 @@ import uk.ac.ebi.intact.business.IntactException;
 
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.io.*;
 import java.util.Collection;
@@ -215,7 +216,7 @@ public class ProteinFastaDownload {
         try {
 
             // search method to get the Protein object and all proteins in IntAct
-            Collection proteins = DaoFactory.getProteinDao().getAll();
+            Collection proteins = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getAll();
 
             // for each protein, get the ac and the sequence string
             // and creates the Fasta format there

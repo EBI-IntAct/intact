@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.core.DummyServletContext;
 import uk.ac.ebi.intact.core.ExternalContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.*;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.interfaces.Factory;
 import uk.ac.ebi.interfaces.feature.FeatureException;
 import uk.ac.ebi.interfaces.sptr.*;
@@ -395,7 +396,7 @@ public class UpdateProteins extends UpdateProteinsI {
         int i = 0;
         for ( i = start; i < stop; i++ ) {
             String ac = spAC[ i ];
-            Collection<ProteinImpl> tmp = DaoFactory.getProteinDao().getByXrefLike(uniprotDatabase, qualifier, ac);
+            Collection<ProteinImpl> tmp = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByXrefLike(uniprotDatabase, qualifier, ac);
 
             log.debug( "look for " + ac );
             log.debug( tmp.size() + " proteins found" );
@@ -578,7 +579,7 @@ public class UpdateProteins extends UpdateProteinsI {
         log.debug( "Look for splice variant for the master: " + master.getShortLabel() + "(" + ac + ")" );
 
         // All splice proteins have 'this' protein as the primary id.
-        Collection<ProteinImpl> proteins = DaoFactory.getProteinDao().getByXrefLike(intactDatabase, isoFormParentXrefQualifier, ac);
+        Collection<ProteinImpl> proteins = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByXrefLike(intactDatabase, isoFormParentXrefQualifier, ac);
 
         if ( proteins != null || !proteins.isEmpty() ) {
             log.debug( proteins.size() + " splice variant(s) found." );
@@ -812,10 +813,6 @@ public class UpdateProteins extends UpdateProteinsI {
                         }
                     } // else
 
-                    if ( localTransactionControl ) {
-                        tx = DaoFactory.beginTransaction();
-                    }
-
                     if ( doCreate ) {
                         log.debug( "Call createProtein with parameter BioSource.taxId=" + sptrBioSource.getTaxId() );
 
@@ -858,10 +855,6 @@ public class UpdateProteins extends UpdateProteinsI {
                         * user request it we only update its content if needed
                         */
                         log.debug( "A protein exists for that taxid (" + sptrTaxid + "), try to update" );
-
-                        if ( localTransactionControl ) {
-                            tx = DaoFactory.beginTransaction();
-                        }
 
                         boolean forceUpdate = false;
                         if ( updateExistingProtein( selectedProtein,
@@ -1005,21 +998,6 @@ public class UpdateProteins extends UpdateProteinsI {
                                      */
                                     log.debug( "A splice variant exists for that taxid (" + sptrTaxid + "), try to update" );
 
-                                    if ( localTransactionControl ) {
-                                        /**
-                                         * We want here to use a database transaction (NOT OBJECT) because
-                                         * the creation of a splice variant can involves the creation of
-                                         * Annotation. This is a problem with an Object transaction because
-                                         * everything is written in the database when the transaction is
-                                         * commited ... in the case of an Annotation, it needs to be written
-                                         * in the DB before the Annotated object in order not to violate
-                                         * any integrity rule.
-                                         * By using a Database transaction (JDBC_TX) it is written when it's
-                                         * asked for and everything is deleted if something goes wrong.
-                                         */
-                                        tx = DaoFactory.beginTransaction();
-                                    }
-
                                     if ( updateExistingSpliceVariant( isoForm,
                                                                       spliceVariantID,
                                                                       spliceVariant,
@@ -1047,10 +1025,6 @@ public class UpdateProteins extends UpdateProteinsI {
                                 // could not find the splice variant in IntAct, then we create it.
                                 log.debug( "No existing splice variant for that taxid (" + sptrTaxid + "), create a new one" );
 
-                                if ( localTransactionControl ) {
-                                    // See remarks about database transaction above.
-                                    tx = DaoFactory.beginTransaction();
-                                }
                                 if ( ( spliceVariant = createNewSpliceVariant( isoForm, spliceVariantID, master,
                                                                                sptrEntry, sptrBioSource,
                                                                                generateProteinShortlabelUsingBiosource ) ) != null )
@@ -1114,7 +1088,7 @@ public class UpdateProteins extends UpdateProteinsI {
         // which is already linked to that AnnotatedObject.
         if ( xref.getParentAc() == current.getAc() ) {
             try {
-                DaoFactory.getXrefDao().persist( xref );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
                 if ( log != null ) {
                     log.debug( "CREATED: [" + xref + "]" );
                 }
@@ -1148,7 +1122,7 @@ public class UpdateProteins extends UpdateProteinsI {
         // which is already linked to that AnnotatedObject.
         if ( alias.getParentAc() == current.getAc() ) {
             try {
-                DaoFactory.getAliasDao().persist( alias );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAliasDao().persist( alias );
                 log.debug( "CREATED: [" + alias + "]" );
             } catch ( Exception e_alias ) {
                 if ( log != null ) {
@@ -1185,7 +1159,7 @@ public class UpdateProteins extends UpdateProteinsI {
         current.addAnnotation( annotation );
 
         try {
-            DaoFactory.getAnnotationDao().persist( annotation );
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().persist( annotation );
             log.debug( "ADD " + annotation + " to: " + current.getShortLabel() );
         } catch ( Exception e_alias ) {
             if ( log != null ) {
@@ -1446,7 +1420,7 @@ public class UpdateProteins extends UpdateProteinsI {
                 recycledXref.setCvXrefQualifier( xref.getCvXrefQualifier() );
                 recycledXref.setDbRelease( xref.getDbRelease() );
 
-                DaoFactory.getXrefDao().update( recycledXref );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().update( recycledXref );
                 updated = true;
 
             } else {
@@ -1458,7 +1432,7 @@ public class UpdateProteins extends UpdateProteinsI {
         for ( ; toDeleteIterator.hasNext(); ) {
             // delete remaining outdated/unrecycled xrefs
             Xref xref = (Xref) toDeleteIterator.next();
-            DaoFactory.getXrefDao().delete( xref );
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().delete( xref );
 
             updated = true;
         }
@@ -1485,7 +1459,7 @@ public class UpdateProteins extends UpdateProteinsI {
      */
     private boolean updateAliasCollection( Protein protein, Collection<Alias> newAliases ) throws IntactException {
 
-        AliasDao aliasDao = DaoFactory.getAliasDao();
+        AliasDao aliasDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAliasDao();
 
         if ( protein == null ) {
             throw new IllegalArgumentException( "You must give a non null protein." );
@@ -1786,7 +1760,7 @@ public class UpdateProteins extends UpdateProteinsI {
             throws SPTRException,
                    IntactException {
 
-        ProteinDao proteinDao = DaoFactory.getProteinDao();
+        ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
 
         /**
          * To avoid to have multiple species having the same short label
@@ -1872,7 +1846,7 @@ public class UpdateProteins extends UpdateProteinsI {
             throws SPTRException,
                    IntactException {
 
-        ProteinDao proteinDao = DaoFactory.getProteinDao();
+        ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
 
         if ( !protein.getBioSource().getTaxId().equals( bioSource.getTaxId() ) ) {
 
@@ -2034,7 +2008,7 @@ public class UpdateProteins extends UpdateProteinsI {
         ProteinImpl spliceVariant = new ProteinImpl( myInstitution, bioSource, shortLabel.toLowerCase(), proteinType );
 
         // get the spliceVariant info we need
-        DaoFactory.getProteinDao().persist( spliceVariant );
+        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().persist( spliceVariant );
 
         String fullName = sptrEntry.getProteinName();
 
@@ -2090,7 +2064,7 @@ public class UpdateProteins extends UpdateProteinsI {
         // update database
         try {
             // TODO bug here when running the InsertComplex (Q9NRI5, Q9NV70, Q9UKE5). could be nested transaction ...
-            DaoFactory.getProteinDao().update( spliceVariant );
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().update( spliceVariant );
 
             // keep that spliceVariant
             proteins.add( spliceVariant );
@@ -2225,7 +2199,7 @@ public class UpdateProteins extends UpdateProteinsI {
                 if ( !isoformXref.getSecondaryId().equals( shortlabel ) ) {
                     isoformXref.setSecondaryId( shortlabel );
                     log.debug( "secondaryId of Xref[isoFormParentXrefQualifier] was different" );
-                    DaoFactory.getXrefDao().update( isoformXref );
+                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().update( isoformXref );
                     needUpdate = true;
                 }
             }
@@ -2253,7 +2227,7 @@ public class UpdateProteins extends UpdateProteinsI {
                     // create it
                     annotation = new Annotation( myInstitution, isoformComment );
                     annotation.setAnnotationText( note );
-                    DaoFactory.getAnnotationDao().persist( annotation );
+                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().persist( annotation );
                     spliceVariant.addAnnotation( annotation );
                     log.debug( "CREATE: " + annotation );
                     needUpdate = true;
@@ -2261,7 +2235,7 @@ public class UpdateProteins extends UpdateProteinsI {
                     // try to update it.
                     if ( !annotation.getAnnotationText().equals( note ) ) {
                         annotation.setAnnotationText( note );
-                        DaoFactory.getAnnotationDao().update( annotation );
+                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().update( annotation );
                         log.debug( "UPDATE" + annotation );
                         needUpdate = true;
                     }
@@ -2307,7 +2281,7 @@ public class UpdateProteins extends UpdateProteinsI {
             // update databse
             try {
                 
-                DaoFactory.getProteinDao().update( (ProteinImpl)spliceVariant );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().update( (ProteinImpl)spliceVariant );
 
                 if ( debugOnScreen ) {
                     System.out.print( " svU" );
@@ -2471,11 +2445,7 @@ public class UpdateProteins extends UpdateProteinsI {
         IntactTransaction tx = null;
 
         // Search for the protein or create it
-        Collection<ProteinImpl> newProteins = DaoFactory.getProteinDao().getByXrefLike(anAc);
-
-        if ( localTransactionControl ) {
-            tx = DaoFactory.beginTransaction();
-        }
+        Collection<ProteinImpl> newProteins = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByXrefLike(anAc);
 
         // Get or create valid biosource from taxid
         BioSource validBioSource = bioSourceFactory.getValidBioSource( aTaxId );
@@ -2515,7 +2485,7 @@ public class UpdateProteins extends UpdateProteinsI {
                 targetProtein.addXref( newXref );
             }
 
-            DaoFactory.getProteinDao().persist( targetProtein );
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().persist( targetProtein );
         }
 
         if ( localTransactionControl ) {
@@ -2952,7 +2922,7 @@ public class UpdateProteins extends UpdateProteinsI {
 
         if ( proteins == null ) {
             // retreive all proteins.
-            proteins =  DaoFactory.getProteinDao().getAll();
+            proteins =  IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getAll();
         }
 
 
@@ -3023,7 +2993,7 @@ public class UpdateProteins extends UpdateProteinsI {
             }
 
             try {
-                BaseDao dao = DaoFactory.getBaseDao();
+                BaseDao dao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao();
                 log.debug( "Helper created (User: " + dao.getDbUserName() + " " +
                                     "Database: " + dao.getDbName() + ")" );
 

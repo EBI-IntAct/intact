@@ -29,12 +29,14 @@ public class IntactContext implements Serializable
     private IntactSession session;
 
     private UserContext userContext;
+    private DataContext dataContext;
 
 
-    protected IntactContext(UserContext userContext, IntactSession session)
+    protected IntactContext(UserContext userContext, DataContext dataContext, IntactSession session)
     {
         this.userContext = userContext;
         this.session = session;
+        this.dataContext = dataContext;
     }
 
     public static IntactContext getCurrentInstance()
@@ -43,7 +45,9 @@ public class IntactContext implements Serializable
         {
             log.warn("Current instance of IntactContext is null. Initializing with StandaloneSession," +
                     "because probably this application is not a web application");
-            IntactConfigurator.initIntact(new StandaloneSession());
+            IntactSession session = new StandaloneSession();
+            IntactConfigurator.initIntact(session);
+            IntactConfigurator.createIntactContext(session);
         }
 
        return currentInstance.get();
@@ -59,7 +63,7 @@ public class IntactContext implements Serializable
 
             try
             {
-                defaultUser = DaoFactory.getBaseDao().getDbUserName();
+                defaultUser = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbUserName();
             }
             catch (SQLException e)
             {
@@ -93,5 +97,14 @@ public class IntactContext implements Serializable
         return RuntimeConfig.getCurrentInstance(session);
     }
 
-   
+
+    public IntactSession getSession()
+    {
+        return session;
+    }
+
+    public DataContext getDataContext()
+    {
+        return dataContext;
+    }
 }

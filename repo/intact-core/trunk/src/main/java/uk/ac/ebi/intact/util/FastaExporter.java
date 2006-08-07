@@ -17,6 +17,7 @@ import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
 import uk.ac.ebi.intact.persistence.dao.ProteinDao;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -47,14 +48,13 @@ public class FastaExporter {
      */
     private static String getIdentity( Interactor interactor ) {
 
-        IntactTransaction tx = DaoFactory.beginTransaction();
         CvXrefQualifier identity = null;
 
         try {
-            identity = DaoFactory.getCvObjectDao( CvXrefQualifier.class ).getByXref( CvXrefQualifier.IDENTITY_MI_REF );
+            identity = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao( CvXrefQualifier.class ).getByXref( CvXrefQualifier.IDENTITY_MI_REF );
         } catch ( Exception e ) {
             e.printStackTrace();
-            identity = DaoFactory.getCvObjectDao( CvXrefQualifier.class ).getByXref( CvXrefQualifier.IDENTITY_MI_REF );
+            identity = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao( CvXrefQualifier.class ).getByXref( CvXrefQualifier.IDENTITY_MI_REF );
         }
 
         if ( identity == null ) {
@@ -67,7 +67,7 @@ public class FastaExporter {
             }
         }
 
-        tx.commit();
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
         return null;
     }
@@ -77,7 +77,7 @@ public class FastaExporter {
 
         BufferedWriter out = new BufferedWriter( new FileWriter( new File( "intact.fasta" ) ) );
 
-        ProteinDao proteinDao = DaoFactory.getProteinDao();
+        ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
 
         System.out.println( "" );
         System.out.println( "--------------------------------------------------------" );
@@ -90,9 +90,8 @@ public class FastaExporter {
         System.out.println( "Loading all proteins." );
 
         // Load protein count using DAO.
-        IntactTransaction transaction = DaoFactory.beginTransaction();
         int proteinCount = proteinDao.countAll();
-        transaction.commit();
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
         System.out.println( proteinCount + " protein(s) loaded from the database." );
 

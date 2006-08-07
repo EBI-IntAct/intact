@@ -9,6 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.IntactObject;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.util.Iterator;
 import java.util.List;
@@ -41,8 +42,6 @@ public class IntactObjectIterator<T extends IntactObject> implements Iterator {
     // Data access.
     private IntactObjectDao<T> dao;
 
-    private IntactTransaction transaction;
-
     // chunk of data.
     private List<T> chunk;
 
@@ -64,7 +63,7 @@ public class IntactObjectIterator<T extends IntactObject> implements Iterator {
     // Constructor
 
     private IntactObjectDao<T> buildDao() {
-        return DaoFactory.getIntactObjectDao( intactObjectClass );
+        return IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getIntactObjectDao( intactObjectClass );
     }
 
     public IntactObjectIterator( Class<T> intactObjectClass ) {
@@ -78,11 +77,11 @@ public class IntactObjectIterator<T extends IntactObject> implements Iterator {
         this.dao = buildDao();
 
         // initialisation
-        IntactTransaction tx = DaoFactory.beginTransaction();
         objectCount = dao.countAll();
-        tx.commit();
 
-        dao = null;
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+                dao = null;
 
         log.debug( objectCount + " object to be read from the iterator." );
     }
@@ -118,20 +117,7 @@ public class IntactObjectIterator<T extends IntactObject> implements Iterator {
 
         if ( chunk == null || chunkIterator == null ) {
 
-            if ( transaction != null ) {
-                try {
-                    transaction.commit();
-                } catch ( IntactException e ) {
-                    e.printStackTrace();
-                }
-                transaction = null;
-            }
-
-            if ( transaction == null ) {
-                dao = buildDao();
-                transaction = DaoFactory.beginTransaction();
-                log.info( "Starting a transaction" );
-            }
+            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
             log.debug( "Retreiving " + batchSize + " objects." );
             chunk = dao.getAll( index, batchSize );

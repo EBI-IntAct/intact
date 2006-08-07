@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -46,8 +47,8 @@ public class ProteinExport {
         try {
             if (log.isInfoEnabled())
             {
-                log.info("Helper created (User: "+ DaoFactory.getBaseDao().getDbUserName()+ " " +
-                               "Database: "+DaoFactory.getBaseDao().getDbName()+")");
+                log.info("Helper created (User: "+ IntactContext.getCurrentInstance().getUserContext().getUserId()+ " " +
+                               "Database: "+IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName()+")");
             }
         } catch ( SQLException e ) {
             e.printStackTrace ();
@@ -55,14 +56,14 @@ public class ProteinExport {
 
         BioSource bioSource = null;
         if ( bioSourceShortLabel != null ) {
-            bioSource = DaoFactory.getBioSourceDao().getByShortLabel(bioSourceShortLabel);
+            bioSource = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBioSourceDao().getByShortLabel(bioSourceShortLabel);
 
             if ( bioSource == null ) {
                 throw new SearchException( "The requested bioSource ("+ bioSourceShortLabel +") could not be found." );
             }
         }
 
-        CvDatabase uniprotDatabase = DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel(CvDatabase.UNIPROT);
+        CvDatabase uniprotDatabase = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDatabase.class).getByShortLabel(CvDatabase.UNIPROT);
 
         if ( uniprotDatabase == null ) {
             throw new SearchException( "Could not find the UNIPROTKB database in the current intact node." );
@@ -71,9 +72,9 @@ public class ProteinExport {
         // collect proteins
         Collection<ProteinImpl> proteins;
         if ( bioSource == null) {
-            proteins = DaoFactory.getProteinDao().getAll();
+            proteins = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getAll();
         } else {
-            Collection<ProteinImpl> interactors = DaoFactory.getProteinDao().getByBioSourceAc(bioSource.getAc());
+            Collection<ProteinImpl> interactors = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByBioSourceAc(bioSource.getAc());
 
             // keep only instances of Protein.
             proteins = new ArrayList<ProteinImpl>(interactors);
