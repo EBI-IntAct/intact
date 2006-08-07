@@ -10,6 +10,7 @@ import uk.ac.ebi.intact.searchengine.SearchEngineConstants;
 import uk.ac.ebi.intact.searchengine.lucene.model.SearchObject;
 import uk.ac.ebi.intact.searchengine.util.SearchObjectProvider;
 import uk.ac.ebi.intact.searchengine.util.sql.SqlSearchObjectProvider;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,7 +63,7 @@ public class SearchDAOImpl implements SearchDAO {
 
             if ( objclass.equalsIgnoreCase( "uk.ac.ebi.intact.model.ProteinImpl" ) ) {
 
-                Protein result = DaoFactory.getProteinDao().getByAc( ac );
+                Protein result = getDaoFactory().getProteinDao().getByAc( ac );
                 if ( result == null ) {
                     // this should not happen unless the Lucene index is not in synch with the database.
                     logger.warning( "Looking for AC:" + ac + " Type: Protein.class and no object was found. Index and database not in synch." );
@@ -71,7 +72,7 @@ public class SearchDAOImpl implements SearchDAO {
                 }
 
             } else if ( objclass.equalsIgnoreCase( "uk.ac.ebi.intact.model.InteractionImpl" ) ) {
-                Interaction result = DaoFactory.getInteractionDao().getByAc(ac);
+                Interaction result = getDaoFactory().getInteractionDao().getByAc(ac);
                 if ( result == null ) {
                     // this should not happen unless the Lucene index is not in synch with the database.
                     logger.warning( "Looking for AC:" + ac + " Type: Interaction.class and no object was found. Index and database not in synch." );
@@ -79,7 +80,7 @@ public class SearchDAOImpl implements SearchDAO {
                     interResults.add( result );
                 }
             } else if ( objclass.equalsIgnoreCase( "uk.ac.ebi.intact.model.Experiment" ) ) {
-                Experiment result = DaoFactory.getExperimentDao().getByAc(ac);
+                Experiment result = getDaoFactory().getExperimentDao().getByAc(ac);
                 if ( result == null ) {
                     // this should not happen unless the Lucene index is not in synch with the database.
                     logger.warning( "Looking for AC:" + ac + " Type: Experiment.class and no object was found. Index and database not in synch." );
@@ -87,7 +88,7 @@ public class SearchDAOImpl implements SearchDAO {
                     expResults.add( result );
                 }
             } else if ( objclass.equalsIgnoreCase( "uk.ac.ebi.intact.model.CvObject" ) ) {
-                CvObject result = DaoFactory.getCvObjectDao(CvObject.class).getByAc(ac);
+                CvObject result = getDaoFactory().getCvObjectDao(CvObject.class).getByAc(ac);
                 if ( result == null ) {
                     // this should not happen unless the Lucene index is not in synch with the database.
                     logger.warning( "Looking for AC:" + ac + " Type: CvObject.class and no object was found. Index and database not in synch." );
@@ -95,7 +96,7 @@ public class SearchDAOImpl implements SearchDAO {
                     cvResults.add( result );
                 }
             } else if ( objclass.equalsIgnoreCase( "uk.ac.ebi.intact.model.BioSource" ) ) {
-                BioSource result = DaoFactory.getBioSourceDao().getByAc(ac);
+                BioSource result = getDaoFactory().getBioSourceDao().getByAc(ac);
                 if ( result == null ) {
                     // this should not happen unless the Lucene index is not in synch with the database.
                     logger.warning( "Looking for AC:" + ac + " Type: Protein.class and no object was found. Index and database not in synch." );
@@ -148,5 +149,10 @@ public class SearchDAOImpl implements SearchDAO {
 
     public SearchObject getSearchObject( String ac, String objClass ) throws IntactException {
         return soProvider.getSearchObject( ac, objClass );
+    }
+
+    private DaoFactory getDaoFactory()
+    {
+        return IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
     }
 }
