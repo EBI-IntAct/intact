@@ -21,8 +21,8 @@
     <groupId>uk.ac.ebi.intact.app.search</groupId>
     <artifactId>search-app</artifactId>
     <packaging>war</packaging>
-    <version>1.2.0</version>
-    <!-- last released: 1.1.2 -->
+    <version>1.3-SNAPSHOT</version>
+    <!-- last released: 1.2.0 -->
     <name>Search application</name>
     <description>Search web interface</description>
                                           
