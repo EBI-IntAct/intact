@@ -9,6 +9,8 @@ package uk.ac.ebi.intact.application.search3.struts.controller;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
@@ -27,6 +29,8 @@ import java.util.Collection;
  * @version $Id$
  */
 public class DispatcherAction extends IntactBaseAction {
+
+    private static final Log logger = LogFactory.getLog(DispatcherAction.class);
 
     /**
      * Process the specified HTTP request, and create the corresponding HTTP response (or forward to another web

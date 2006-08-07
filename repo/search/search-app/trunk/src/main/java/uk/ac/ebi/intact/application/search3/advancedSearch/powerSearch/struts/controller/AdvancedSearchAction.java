@@ -7,6 +7,8 @@ package uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.c
 
 import org.apache.commons.collections.IterableMap;
 import org.apache.commons.collections.MapIterator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -43,6 +45,8 @@ import java.util.*;
  * @version $Id$
  */
 public class AdvancedSearchAction extends IntactBaseAction {
+
+    private static final Log logger = LogFactory.getLog(AdvancedSearchAction.class);
 
     private String indexPath;
 

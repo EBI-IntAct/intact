@@ -3,6 +3,8 @@ package uk.ac.ebi.intact.application.search3.struts.controller;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.commons.util.UrlUtil;
 import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
@@ -26,6 +28,8 @@ import java.util.Map;
  * @version $Id$
  */
 public class TooLargeAction extends IntactBaseAction {
+
+    private static final Log logger = LogFactory.getLog(TooLargeAction.class);
 
     /**
      * Counts the complete result information in 4 different categories this is necessary because all controlled

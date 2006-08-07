@@ -10,6 +10,7 @@ import uk.ac.ebi.intact.business.IntactException;
 
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.model.IntactObject;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
@@ -108,7 +109,7 @@ public class IntactUserImpl<T extends IntactObject> implements IntactUserIF<T>, 
     public String getUserName() {
         try
         {
-            return DaoFactory.getBaseDao().getDbUserName();
+            return getDaoFactory().getBaseDao().getDbUserName();
         }
         catch (SQLException e)
         {
@@ -121,7 +122,7 @@ public class IntactUserImpl<T extends IntactObject> implements IntactUserIF<T>, 
     public String getDatabaseName() {
         try
         {
-            return DaoFactory.getBaseDao().getDbName();
+            return getDaoFactory().getBaseDao().getDbName();
         }
         catch (SQLException e)
         {
@@ -139,7 +140,7 @@ public class IntactUserImpl<T extends IntactObject> implements IntactUserIF<T>, 
                               String searchValue ) throws IntactException {
         //return helper.search( objectType, searchParam, searchValue );
 
-        return DaoFactory.getIntactObjectDao(objectType).getColByPropertyName(searchParam, searchValue);
+        return getDaoFactory().getIntactObjectDao(objectType).getColByPropertyName(searchParam, searchValue);
     }
 
     public Class<T> getSearchClass() {
@@ -188,6 +189,11 @@ public class IntactUserImpl<T extends IntactObject> implements IntactUserIF<T>, 
 
     public String getFilter() {
         return this.filterValue;
+    }
+
+    private DaoFactory getDaoFactory()
+    {
+        return IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
     }
 
 }

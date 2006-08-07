@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * This Action class performs the construction of view beans that will be used by the simple.jsp
  * page to display initial search results. Note that this Action is different to all others in that
@@ -23,6 +26,8 @@ import java.util.List;
  * @version $Id$
  */
 public class SimpleResultAction extends AbstractResultAction {
+
+    private static final Log logger = LogFactory.getLog(SimpleResultAction.class);
 
     /**
      * This method overrides the parent one to process the request more effectively. It avoids

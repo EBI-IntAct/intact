@@ -9,6 +9,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.Constants;
 import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.business.graphdraw.CvGraph;
 import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.business.graphdraw.ImageBean;
@@ -34,6 +36,8 @@ import java.util.Map;
  * @version $Id$
  */
 public class ShowCvGraphAction extends IntactBaseAction {
+
+    private static final Log logger = LogFactory.getLog(ShowCvGraphAction.class);
 
     // Basic Caching parameters
     private static final long CACHE_TIMEOUT = 5 * 60 * 1000; // 5 minutes

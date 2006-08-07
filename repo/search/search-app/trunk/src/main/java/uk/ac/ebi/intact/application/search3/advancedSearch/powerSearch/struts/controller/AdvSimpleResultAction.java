@@ -2,6 +2,8 @@ package uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.c
 
 import org.apache.commons.collections.IterableMap;
 import org.apache.commons.collections.MapIterator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search3.struts.controller.AbstractResultAction;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
@@ -28,6 +30,8 @@ import java.util.List;
  * @version $Id$
  */
 public class AdvSimpleResultAction extends AbstractResultAction {
+
+    private static final Log logger = LogFactory.getLog(AdvSimpleResultAction.class);
 
     /**
      * This method overrides the parent one to process the request more effectively. It avoids

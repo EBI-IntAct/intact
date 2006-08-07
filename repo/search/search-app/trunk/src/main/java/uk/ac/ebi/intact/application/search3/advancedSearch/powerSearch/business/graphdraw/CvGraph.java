@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.application.search3.business.Constants;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -110,7 +111,8 @@ public class CvGraph {
             Collection cvObjects = new ArrayList( nodes.size() );
             for (Iterator iterator = nodes.iterator(); iterator.hasNext();) {
                 CvBean cvBean = (CvBean) iterator.next();
-                CvDagObject cdo = DaoFactory.getCvObjectDao(CvDagObject.class).getByAc(cvBean.getAc() );
+                CvDagObject cdo = IntactContext.getCurrentInstance().getDataContext()
+                        .getDaoFactory().getCvObjectDao(CvDagObject.class).getByAc(cvBean.getAc() );
                 cvObjects.add( cdo );
             }
 

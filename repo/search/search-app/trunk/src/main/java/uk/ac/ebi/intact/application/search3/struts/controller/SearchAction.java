@@ -10,6 +10,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.commons.util.UrlUtil;
 import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
@@ -37,6 +39,8 @@ import java.util.*;
  * @version $Id$
  */
 public class SearchAction extends IntactBaseAction {
+
+    private static final Log logger = LogFactory.getLog(SearchAction.class);
 
     /**
      * Process the specified HTTP request, and create the corresponding HTTP response (or forward to another web
@@ -112,7 +116,8 @@ public class SearchAction extends IntactBaseAction {
 
         // Feature Request #1485467 : Add a wildcard at the end
         String acPrefix = IntactContext.getCurrentInstance().getConfig().getAcPrefix();
-        if (!searchValue.endsWith("*") && !searchValue.toLowerCase().startsWith(acPrefix.toLowerCase()));
+
+        if (!searchValue.endsWith("*") && !searchValue.toLowerCase().startsWith(acPrefix.toLowerCase()))
         {
             searchValue = searchValue+"*";
         }

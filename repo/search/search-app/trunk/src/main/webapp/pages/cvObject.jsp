@@ -25,8 +25,8 @@ in the root directory of this distribution.
                  uk.ac.ebi.intact.model.CvTopic"
     %>
 
-<%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="http://struts.apache.org/tags-html" prefix="html"%>
+<%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean"%>
 
 <%
     CvObjectViewBean bean = (CvObjectViewBean) session.getAttribute(SearchConstants.VIEW_BEAN);

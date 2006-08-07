@@ -6,6 +6,9 @@ import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Abstraction of the IntactBaseAction. Gives access to the IntActUser.
  *
@@ -13,6 +16,8 @@ import javax.servlet.http.HttpSession;
  * @version SearchBaseAction.java Date: Feb 17, 2005 Time: 4:13:44 PM
  */
 public abstract class SearchBaseAction extends IntactBaseAction {
+
+    private static final Log log = LogFactory.getLog(SearchBaseAction.class);
 
     private HttpServletRequest myRequest;
 

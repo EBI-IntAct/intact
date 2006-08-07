@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.business.IntactException;
 
 import uk.ac.ebi.intact.model.CvDagObject;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -530,7 +531,7 @@ public class QueryBuilder {
         Collection children = null;
 
         // retrieve the intact object for the parent
-        CvDagObject parent = DaoFactory.getCvObjectDao(CvDagObject.class).getByShortLabel(parentShortlabel);
+        CvDagObject parent = getDaoFactory().getCvObjectDao(CvDagObject.class).getByShortLabel(parentShortlabel);
         if ( parent == null ) {
             throw new IntactException( "invalid shortlabel: " + parentShortlabel );
         }
@@ -605,5 +606,10 @@ public class QueryBuilder {
                 break;
         }
         return termName;
+    }
+
+    private DaoFactory getDaoFactory()
+    {
+        return IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
     }
 }

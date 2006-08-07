@@ -6,6 +6,7 @@ import uk.ac.ebi.intact.model.*;
 
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.io.Serializable;
 import java.util.*;
@@ -46,7 +47,8 @@ public class InterproSearch implements Serializable {
                                      Set unmappedProteins,
                                      Map proteinsWithUniprotKB) throws ThresholdExceededException {
 
-        String uniprotId = DaoFactory.getProteinDao().getUniprotAcByProteinAc(p.getAc());
+        String uniprotId = IntactContext.getCurrentInstance().getDataContext()
+            .getDaoFactory().getProteinDao().getUniprotAcByProteinAc(p.getAc());
 
         if (uniprotId == null) {
             unmappedProteins.add(p);

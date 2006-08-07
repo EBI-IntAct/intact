@@ -8,6 +8,8 @@ package uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.c
 
 import org.apache.commons.collections.IterableMap;
 import org.apache.commons.collections.MapIterator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -17,6 +19,7 @@ import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,6 +36,8 @@ import java.util.Collection;
  * @version $Id$
  */
 public class AdvDispatcherAction extends IntactBaseAction {
+
+    private static final Log logger = LogFactory.getLog(AdvDispatcherAction.class);
 
     /**
      * Process the specified HTTP request, and create the corresponding HTTP response (or forward to another web
@@ -112,7 +117,8 @@ public class AdvDispatcherAction extends IntactBaseAction {
                     // now check if it's an Interaction
                 } else if ( key.equalsIgnoreCase( "protein" ) ) {
                     // now we got different choices whether the protein has interaction partners or not
-                    Collection proteinInteractionPartner = DaoFactory.getProteinDao().getPartnersCountingInteractionsByProteinAc(ac).keySet();
+                    Collection proteinInteractionPartner = IntactContext.getCurrentInstance()
+                            .getDataContext().getDaoFactory().getProteinDao().getPartnersCountingInteractionsByProteinAc(ac).keySet();
                     //logger.info( "Partner Collection: " + proteinInteractionPartner );
                     if ( proteinInteractionPartner.isEmpty() ) {
                         //the protein has no interaction partners so we want the single Protein View

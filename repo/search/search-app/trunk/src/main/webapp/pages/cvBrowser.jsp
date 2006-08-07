@@ -1,6 +1,6 @@
 <%@ page import="uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.Constants,
                  uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.business.graphdraw.ImageBean"%><html><head>
-<%@ taglib uri="/WEB-INF/tld/cvGraph.tld" prefix="advancedSearch" %>
+<%@ taglib uri="http://ebi.ac.uk/intact/advanced-search" prefix="advancedSearch" %>
 
 <html:html>
 

@@ -9,6 +9,8 @@ in the root directory of this distribution.
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.Constants;
 import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.business.CvLists;
 import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
@@ -31,6 +33,8 @@ import java.util.Collection;
  * @version $Id$
  */
 public final class InitAction extends IntactBaseAction {
+
+    private static final Log logger = LogFactory.getLog(InitAction.class);
 
     /**
      * Process the specified HTTP request, and create the corresponding HTTP response (or forward to another web

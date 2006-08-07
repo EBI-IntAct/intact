@@ -9,6 +9,7 @@ package uk.ac.ebi.intact.application.search3.struts.view.beans;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.util.SearchReplace;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.util.*;
 
@@ -264,7 +265,7 @@ public class InteractorViewBean extends AbstractViewBean {
     public int getInteractionsCount() {
 
         // count the number of interaction to which related that protein
-        return DaoFactory.getInteractorDao().countInteractionsForInteractorWithAc(interactor.getAc());
+        return getDaoFactory().getInteractorDao().countInteractionsForInteractorWithAc(interactor.getAc());
     }
 
     /**
@@ -322,7 +323,7 @@ public class InteractorViewBean extends AbstractViewBean {
 
     public Collection getGeneNames() {
 
-        Collection geneNames = DaoFactory.getInteractorDao().getGeneNamesByInteractorAc(interactor.getAc());
+        Collection geneNames = getDaoFactory().getInteractorDao().getGeneNamesByInteractorAc(interactor.getAc());
 
         //now strip off trailing comma - if there are any names....
         if ( geneNames.size() == 0 ) {
@@ -376,5 +377,10 @@ public class InteractorViewBean extends AbstractViewBean {
 
     public String getBinaryViewUrl() {
         return ( searchURL + interactor.getAc() + "&amp;filter=ac&amp;searchClass=Interactor&amp;view=partner" );
+    }
+
+    private DaoFactory getDaoFactory()
+    {
+        return IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
     }
 }

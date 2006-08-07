@@ -1,6 +1,8 @@
 package uk.ac.ebi.intact.application.search3.struts.util;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.Protein;
@@ -16,6 +18,8 @@ import java.util.*;
  * @version ProteinUtils.java Date: Feb 11, 2005 Time: 10:51:08 AM
  */
 public class ProteinUtils {
+
+    private static final Log log = LogFactory.getLog(ProteinUtils.class);
 
     /**
      * ProteinUtils should not be instantiated.
@@ -40,12 +44,12 @@ public class ProteinUtils {
                 // someone put rubbish in, throw an exception
                 throw new IllegalArgumentException( "Wrong datatype in protein collection" );
             } else {
-                myProteins.add( (Protein) o );
+                myProteins.add( o );
             }
         } // for
 
         // let's start first to calculating all interactions in which all proteins involved
-        Collection intersection = new HashSet();
+        Collection<Interaction> intersection = new HashSet<Interaction>();
 
         final Iterator iterator = myProteins.iterator();
         final Protein first = (Protein) iterator.next();
@@ -59,28 +63,14 @@ public class ProteinUtils {
             intersection = CollectionUtils.intersection( intersection, proteinInteraction );
         }
 
-        Collection result = new HashSet();
+        Collection<Interaction> result = new HashSet<Interaction>();
 
         // now check for every interaction if it's binary
-        for ( Iterator iterator1 = intersection.iterator(); iterator1.hasNext(); ) {
-
-            final Interaction anInteraction = (Interaction) iterator1.next();
-            final Collection someComponents = anInteraction.getComponents();
-
-            if ( someComponents.size() <= 2 ) {
-                // we got 1 or 2 Components, this could be an Self Interaction or a Binary Interaction
-                // Let's check this with the summ of the stoichiometry, if it's 2 we are sucessfull
-                int stoichiometry = 0;
-
-                for ( Iterator iterator2 = someComponents.iterator(); iterator2.hasNext(); ) {
-                    final Component aComponent = (Component) iterator2.next();
-                    stoichiometry = stoichiometry + (int) aComponent.getStoichiometry();
-                }
-
-                if ( stoichiometry == 2 ) {
-                    // it's a banary/self interaction
-                    result.add( anInteraction );
-                }
+        for (Interaction interaction : intersection)
+        {
+            if (isBinaryInteraction(interaction))
+            {
+                result.add(interaction);
             }
         } // for
 
@@ -128,27 +118,11 @@ public class ProteinUtils {
         final Collection<Interaction> someInteractions = getNnaryInteractions( anInteractor );
 
         // now check for every interaction
-        for (Interaction anInteraction : someInteractions)
+        for (Interaction interaction : someInteractions)
         {
-            final Collection<Component> someComponents = anInteraction.getComponents();
-            //TODO it should work with someComponents.size == 1
-            if (someComponents.size() <= 2)
+            if (isBinaryInteraction(interaction))
             {
-                int stoichiometry = 0;
-
-                for (Component aComponent : someComponents)
-                {
-                    if (anInteractor.equals(aComponent.getInteractor()))
-                    {
-                        stoichiometry = stoichiometry + (int) aComponent.getStoichiometry();
-                    }
-                } // for
-
-                if (stoichiometry == 2)
-                {
-                    // it's a self interaction
-                    result.add(anInteraction);
-                }
+                result.add(interaction);
             }
         } // for
 
@@ -157,6 +131,45 @@ public class ProteinUtils {
             return Collections.EMPTY_SET;
         }
         return result;
+    }
+
+    public static boolean isBinaryInteraction(Interaction interaction) {
+        boolean isBinaryInteraction = false;
+
+        int stoichiometrySum = 0;
+        Collection<Component> components = interaction.getComponents();
+        int componentCount = components.size();
+
+        for ( Component component : components ) {
+            stoichiometrySum += component.getStoichiometry();
+        }
+
+        if (stoichiometrySum == 0 && componentCount == 2) {
+            log.debug("Binary interaction. Stoichiometry 0, components 2");
+            isBinaryInteraction = true;
+        } else {
+
+            if ( componentCount == 2 ) {
+
+                // check that the stochiometry is 1 for each component
+                Iterator<Component> iterator1 = components.iterator();
+
+                Component component1 = iterator1.next();
+                float stochio1 = component1.getStoichiometry();
+
+                Component component2 = iterator1.next();
+                float stochio2 = component2.getStoichiometry();
+
+                if ( stochio1 == 1 && stochio2 == 1 ) {
+                    log.debug("Binary interaction. Stoichiometry 2, each component with stoichiometry 1");
+                    isBinaryInteraction = true;
+
+                }
+
+            }
+        }
+
+        return isBinaryInteraction;
     }
 
 }
