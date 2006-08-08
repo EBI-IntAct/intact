@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 
 import java.rmi.RemoteException;
 
-public class TulipClientTest extends TestCase
+public class SearchClientTest extends TestCase
 {
 
     public void testClient()
