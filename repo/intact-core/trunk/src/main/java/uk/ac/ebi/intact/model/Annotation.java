@@ -5,13 +5,7 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Column;
-import javax.persistence.Transient;
-import javax.persistence.ManyToOne;
-import javax.persistence.JoinColumn;
-import javax.persistence.FetchType;
+import javax.persistence.*;
 
 
 /**
@@ -94,7 +88,7 @@ public class Annotation extends BasicObjectImpl {
     public Annotation( Institution owner, CvTopic topic, String annotationText ) {
 
         this( owner, topic );
-        setAnnotationText( annotationText );
+        this.annotationText = annotationText.trim();
     }
 
     ///////////////////////////////////////
@@ -105,12 +99,6 @@ public class Annotation extends BasicObjectImpl {
     }
 
     public void setAnnotationText( String annotationText ) {
-
-        if( annotationText != null ) {
-            // delete leading and trailing spaces.
-            annotationText = annotationText.trim();
-        }
-
         this.annotationText = annotationText;
     }
 

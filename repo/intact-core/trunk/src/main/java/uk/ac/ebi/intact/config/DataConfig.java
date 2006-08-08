@@ -5,10 +5,6 @@
  */
 package uk.ac.ebi.intact.config;
 
-import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
-
-import java.io.File;
-
 /**
  * TODO comment this!
  *
@@ -16,15 +12,20 @@ import java.io.File;
  * @version $Id$
  * @since <pre>07-Aug-2006</pre>
  */
-public interface DataConfig<T,C>
+public abstract class DataConfig<T,C>
 {
 
-    String getName();
+    public abstract String getName();
 
-    T initialize();
+    public abstract T initialize();
 
-    C getConfiguration();
+    public abstract C getConfiguration();
 
-    boolean isInitialized();
+    public abstract boolean isInitialized();
 
+    @Override
+    public String toString()
+    {
+        return getName();
+    }
 }
