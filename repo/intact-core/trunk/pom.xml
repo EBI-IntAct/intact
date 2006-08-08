@@ -21,9 +21,8 @@
     <groupId>uk.ac.ebi.intact</groupId>
     <artifactId>intact-core</artifactId>
     <packaging>jar</packaging>
-    <version>1.3-SNAPSHOT</version>
-    <!-- last released 1.2.1
-     -->
+    <version>1.2.2</version>
+    <!-- last released 1.2.2 -->
     <name>Intact Core</name>
     <url>http://www.ebi.ac.uk/intact</url>
     <description>Intact Core, which contains the base classes for all intact artifacts</description>
@@ -42,6 +41,12 @@
     <profiles>
         <profile>
             <id>ebi-test</id>
+            <properties>
+                <maven.test.skip>false</maven.test.skip>
+            </properties>
+        </profile>
+        <profile>
+            <id>ebi-pub</id>
             <properties>
                 <maven.test.skip>false</maven.test.skip>
             </properties>
