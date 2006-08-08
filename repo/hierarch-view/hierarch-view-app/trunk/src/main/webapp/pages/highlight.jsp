@@ -23,9 +23,9 @@
 -->
 
 
-<%@ taglib uri="/WEB-INF/tld/hierarchView.tld" prefix="hierarchView" %>
-<%@ taglib uri="/WEB-INF/tld/struts-tiles.tld" prefix="tiles" %>
-<%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic" %>
+<%@ taglib uri="http://www.ebi.ac.uk/intact/hierarch-view" prefix="hierarchView" %>
+<%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
+<%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic" %>
 
 <tiles:useAttribute name="parameterName" classname="java.lang.String" />
 <tiles:useAttribute name="selectedIndex" classname="java.lang.String" id="selectedIndexStr" ignore="true" />

@@ -10,11 +10,11 @@
 -->
 
 <%@ page language="java" %>
-<%@ taglib uri="/WEB-INF/tld/struts-html.tld"  prefix="html" %>
-<%@ taglib uri="/WEB-INF/tld/struts-bean.tld"  prefix="bean" %>
-<%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic" %>
-<%@ taglib uri="/WEB-INF/tld/intact.tld"       prefix="intact" %>
-<%@ taglib uri="/WEB-INF/tld/hierarchView.tld" prefix="hierarchView" %>
+<%@ taglib uri="http://struts.apache.org/tags-html"  prefix="html" %>
+<%@ taglib uri="http://struts.apache.org/tags-bean"  prefix="bean" %>
+<%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic" %>
+<%@ taglib uri="http://ebi.ac.uk/intact/commons"       prefix="intact" %>
+<%@ taglib uri="http://www.ebi.ac.uk/intact/hierarch-view" prefix="hierarchView" %>
 
 <!-- Restore the last context -->
 <hierarchView:restoreContextFromCookie/>

@@ -1,5 +1,5 @@
-<%@ taglib uri="/WEB-INF/tld/struts-tiles.tld" prefix="tiles"%>
-<%@ taglib uri="/WEB-INF/tld/intact.tld"      prefix="intact"%>
+<%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles"%>
+<%@ taglib uri="http://ebi.ac.uk/intact/commons"      prefix="intact"%>
 
 <%--
     HierarchView header

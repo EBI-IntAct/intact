@@ -7,19 +7,21 @@
 package uk.ac.ebi.intact.application.hierarchView.business;
 
 import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
+import uk.ac.ebi.intact.application.hierarchView.business.graph.IntactGraphHelper;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.ClickBehaviourForm;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactGraphHelper;
 import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
 import uk.ac.ebi.intact.simpleGraph.Graph;
 import uk.ac.ebi.intact.simpleGraph.Node;
 import uk.ac.ebi.intact.util.Chrono;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import javax.servlet.http.HttpSessionBindingEvent;
 import java.sql.SQLException;
@@ -38,8 +40,7 @@ import java.util.*;
  */
 public class IntactUser implements IntactUserI {
 
-    static Logger logger = Logger
-            .getLogger( uk.ac.ebi.intact.application.hierarchView.business.Constants.LOGGER_NAME );
+    private static final Log logger = LogFactory.getLog(IntactUser.class);
 
     private static final int MINIMAL_DEPTH = 1;
     private static final int MAXIMAL_DEPTH = 2;
@@ -309,15 +310,10 @@ public class IntactUser implements IntactUserI {
      * of the data source class.
      * 
      * @param applicationPath the current application path
-     * 
-     * @exception DataSourceException for error in getting the data source; this
-     *                could be due to the errors in repository files or the
-     *                underlying persistent mechanism rejected <code>user</code>
-     *                and <code>password</code> combination.
      * @exception IntactException thrown for any error in creating lists such as
      *                topics, database names etc.
      */
-    public IntactUser(String applicationPath) throws DataSourceException,
+    public IntactUser(String applicationPath) throws
             IntactException {
 
         init();
@@ -521,25 +517,17 @@ public class IntactUser implements IntactUserI {
 
     public <T extends IntactObject> Collection<T> search(Class<T> objectType, String searchParam,
             String searchValue) throws IntactException {
-        return DaoFactory.getIntactObjectDao(objectType).getColByPropertyName(searchParam, searchValue);
+        return getDaoFactory().getIntactObjectDao(objectType).getColByPropertyName(searchParam, searchValue);
     }
 
     public String getUserName() {
-        try
-        {
-            return DaoFactory.getBaseDao().getDbUserName();
-        }
-        catch (SQLException e)
-        {
-            e.printStackTrace();
-        }
-        return null;
+        return IntactContext.getCurrentInstance().getUserContext().getUserId();
     }
 
     public String getDatabaseName() {
         try
         {
-            return DaoFactory.getBaseDao().getDbName();
+            return getDaoFactory().getBaseDao().getDbName();
         }
         catch (SQLException e)
         {
@@ -560,5 +548,10 @@ public class IntactUser implements IntactUserI {
      */
     public String getMinePath() {
        return minePath;
+    }
+
+    private DaoFactory getDaoFactory()
+    {
+        return IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
     }
 }

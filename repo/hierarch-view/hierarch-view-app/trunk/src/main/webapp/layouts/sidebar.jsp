@@ -12,7 +12,7 @@
    - @version $Id$
 -->
 
-<%@ taglib uri="/WEB-INF/tld/struts-tiles.tld" prefix="tiles"%>
+<%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles"%>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 

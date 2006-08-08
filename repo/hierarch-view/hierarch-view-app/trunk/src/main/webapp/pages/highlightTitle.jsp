@@ -2,7 +2,7 @@
                  uk.ac.ebi.intact.application.hierarchView.business.Constants"%>
 <%@ page language="java" %>
 
-<%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
+<%@ taglib uri="http://ebi.ac.uk/intact/commons" prefix="intact"%>
 
 <!--
    - Copyright (c) 2002 The European Bioinformatics Institute, and others.

@@ -18,6 +18,7 @@ import uk.ac.ebi.intact.simpleGraph.BasicGraph;
 import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
 import uk.ac.ebi.intact.simpleGraph.MineEdge;
 import uk.ac.ebi.intact.simpleGraph.EdgeI;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -272,7 +273,7 @@ public class GraphHelper {
         addSourcesToNode( baitNode, true, network );
         network.addNode( baitNode );
 
-        Connection con = DaoFactory.connection();
+        Connection con = getDaoFactory().connection();
 
         /**
          * I1 is a bait in an interaction: -> all preys are collected of that
@@ -427,7 +428,7 @@ public class GraphHelper {
          * all available source to highlight on the right top corner of the HV
          * result page.
          */
-        Connection con = DaoFactory.connection();
+        Connection con = getDaoFactory().connection();
 
         PreparedStatement sourceStm = con.prepareStatement( SOURCE_QUERY );
         sourceStm.setString( 2, node.getAc() );
@@ -492,58 +493,9 @@ public class GraphHelper {
         sourceStm.close();
     }
 
+    private DaoFactory getDaoFactory()
+    {
+        return IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
+    }
 
-    //    /**
-    //     * update the interaction in given in parameter, by reloading the whole
-    // set of
-    //     * entry point with the given depth.
-    //     *
-    //     * @param in the interaction in to update
-    //     * @param depth the depth to update to.
-    //     * @return the new interaction in.
-    //     * @throws IntactException when the graph generation is not going right.
-    //     */
-    //    public InteractionNetwork updateInteractionNetwork (InteractionNetwork
-    // in, int depth)
-    //            throws IntactException {
-    //
-    //        // Retreiving interactor from the database according to the given AC
-    //        logger.info( "Updating interaction network ..." );
-    //        InteractionNetwork newNetwork = null;
-    //        Collection centrals = in.getCentralInteractors();
-    //
-    //        for ( Iterator iterator = centrals.iterator (); iterator.hasNext (); ) {
-    //            Interactor interactor = (Interactor) iterator.next ();
-    //            InteractionNetwork tmp = new InteractionNetwork( interactor );
-    //
-    //            tmp = this.user.subGraph (tmp,
-    //                                      depth, // new depth
-    //                                      null,
-    //                                      uk.ac.ebi.intact.model.Constants.EXPANSION_BAITPREY);
-    //            if (newNetwork == null) {
-    //                // first in
-    //                newNetwork = tmp;
-    //            } else {
-    //                logger.info( "Fusion interaction in ..." );
-    //                newNetwork.fusion( tmp );
-    //            }
-    //
-    //            // add the central node to the new in
-    //            // TODO check if that's not done by the fusion
-    //            // TODO: this adds nodes to the same networks they come from ????!!!!!
-    //            HashMap nodes = newNetwork.getNodes();
-    //            Node aNode = (Node) nodes.get( interactor.getAc() );
-    //            newNetwork.addCentralProtein( aNode );
-    //        } // for each central proteins
-    //
-    //        // to finish, copy criterias
-    //        // TODO check if that's not done by the fusion
-    //        Collection criteria = in.getCriteria();
-    //        for ( Iterator iterator = criteria.iterator (); iterator.hasNext (); ) {
-    //            CriteriaBean criteriaBean = (CriteriaBean) iterator.next ();
-    //            newNetwork.addCriteria( criteriaBean);
-    //        }
-    //
-    //        return newNetwork;
-    //    }
 }
