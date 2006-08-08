@@ -135,7 +135,7 @@
     </action-mappings>
 
     <!-- ========== Message Resources ================================== -->
-
+    <message-resources parameter="config.Struts"/>
     <message-resources key="buildInfo" parameter="uk.ac.ebi.intact.app.hierarchview.BuildInfo"/>
 
     <!-- ============ Plug Ins Configuration ================================== -->
