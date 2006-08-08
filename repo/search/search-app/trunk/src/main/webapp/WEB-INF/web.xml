@@ -107,4 +107,31 @@
         <welcome-file>welcome.jsp</welcome-file>
     </welcome-file-list>
 
+    <!-- JSTL Tag Library Descriptors  -->
+
+    <taglib>
+        <taglib-uri>http://java.sun.com/jstl/core</taglib-uri>
+        <taglib-location>/WEB-INF/tld/c.tld</taglib-location>
+    </taglib>
+    <taglib>
+        <taglib-uri>http://struts.apache.org/tags-html</taglib-uri>
+        <taglib-location>/WEB-INF/tld/struts-html.tld</taglib-location>
+    </taglib>
+    <taglib>
+        <taglib-uri>http://struts.apache.org/tags-bean</taglib-uri>
+        <taglib-location>/WEB-INF/tld/struts-bean.tld</taglib-location>
+    </taglib>
+    <taglib>
+        <taglib-uri>http://struts.apache.org/tags-logic</taglib-uri>
+        <taglib-location>/WEB-INF/tld/struts-logic.tld</taglib-location>
+    </taglib>
+    <taglib>
+        <taglib-uri>http://ebi.ac.uk/intact/commons</taglib-uri>
+        <taglib-location>/WEB-INF/tld/intact.tld</taglib-location>
+    </taglib>
+    <taglib>
+        <taglib-uri>http://ebi.ac.uk/intact/advanced-search</taglib-uri>
+        <taglib-location>/WEB-INF/tld/cvGraph.tld</taglib-location>
+    </taglib>
+
 </web-app>
