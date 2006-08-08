@@ -3,7 +3,7 @@
                  java.util.ArrayList"%>
 <%@ page language="java" %>
 
-<%@ taglib uri="/WEB-INF/tld/display.tld" prefix="display" %>
+<%@ taglib uri="http://displaytag.sf.net" prefix="display" %>
 
 
 <table border="0" cellspacing="0" cellpadding="3" width="100%" style="margin-width:0px;">

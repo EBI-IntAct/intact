@@ -15,6 +15,8 @@ package uk.ac.ebi.intact.application.hierarchView.business.graph;
  */
 
 import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageDimension;
@@ -45,7 +47,7 @@ import java.util.Vector;
 
 public class InteractionNetwork extends Graph {
 
-    static Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
+    private static final Log logger = LogFactory.getLog(InteractionNetwork.class);
 
     public static final int DEFAULT_MAX_CENTRAL_PROTEIN = 7;
 
@@ -617,13 +619,13 @@ public class InteractionNetwork extends Graph {
             float proteinHeight = ( (Float) currentProtein.get( Constants.ATTRIBUTE_HEIGHT ) )
                  .floatValue();
 
-            logger.info( "Initial coordinates of node : " + currentProtein.getAc() + " | X=" + proteinX + " | Y=" + proteinY);
+            logger.debug( "Initial coordinates of node : " + currentProtein.getAc() + " | X=" + proteinX + " | Y=" + proteinY);
 
             // convertion to real coordinates
             float x = ( proteinX - dimension.xmin() ) / rateX - ( proteinLength / 2 ) + borderSize;
             float y = ( proteinY - dimension.ymin() ) / rateY - ( proteinHeight / 2 ) + borderSize;
 
-            logger.info( "Real coordinates : X=" + x + " | Y=" + y);
+            logger.debug( "Real coordinates : X=" + x + " | Y=" + y);
 
             out.append( "new Array(\"" + currentProtein.getAc() + "\",\"" + x + "\",\"" + y + "\")" );
             if ( i < proteinList.size() - 1 ) {

@@ -1,7 +1,7 @@
 <%@ page language="java"%>
-<%@ taglib uri="/WEB-INF/tld/struts-html.tld"  prefix="html"%>
-<%@ taglib uri="/WEB-INF/tld/struts-tiles.tld" prefix="tiles"%>
-<%@ taglib uri="/WEB-INF/tld/hierarchView.tld" prefix="hierarchView" %>
+<%@ taglib uri="http://struts.apache.org/tags-html"  prefix="html"%>
+<%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles"%>
+<%@ taglib uri="http://www.ebi.ac.uk/intact/hierarch-view" prefix="hierarchView" %>
 
 <!--
    - Copyright (c) 2002 The European Bioinformatics Institute, and others.

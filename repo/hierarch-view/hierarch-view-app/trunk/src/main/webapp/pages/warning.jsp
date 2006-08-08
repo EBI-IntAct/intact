@@ -16,10 +16,10 @@
   --%>
 
 <%@ page language="java" %>
-<%@ taglib uri="/WEB-INF/tld/struts-html.tld"  prefix="html" %>
-<%@ taglib uri="/WEB-INF/tld/struts-bean.tld"  prefix="bean" %>
-<%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic" %>
-<%@ taglib uri="/WEB-INF/tld/intact.tld"       prefix="intact" %>
+<%@ taglib uri="http://struts.apache.org/tags-html"  prefix="html" %>
+<%@ taglib uri="http://struts.apache.org/tags-bean"  prefix="bean" %>
+<%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic" %>
+<%@ taglib uri="http://ebi.ac.uk/intact/commons"       prefix="intact" %>
 
 <%-- restore eventual errors inorder to be displayed --%>
 <intact:restoreErrors/>

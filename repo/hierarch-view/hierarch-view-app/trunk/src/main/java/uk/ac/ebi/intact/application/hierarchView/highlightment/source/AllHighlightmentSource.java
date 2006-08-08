@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
 import uk.ac.ebi.intact.simpleGraph.Node;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -101,7 +102,7 @@ public class AllHighlightmentSource extends HighlightmentSource {
             try {
                 logger.info( "Try to get a list of all available source terms (from protein AC="
                         + aProteinAC + ")" );
-                result = DaoFactory.getProteinDao().getByAcLike(aProteinAC);
+                result = getDaoFactory().getProteinDao().getByAcLike(aProteinAC);
             }
             catch ( IntactException ie ) {
                 logger.error( "When trying to get a list of all allowed source terms", ie );
@@ -508,4 +509,9 @@ public class AllHighlightmentSource extends HighlightmentSource {
 
             return keys;
         }
+
+    private DaoFactory getDaoFactory()
+    {
+        return IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
+    }
 }

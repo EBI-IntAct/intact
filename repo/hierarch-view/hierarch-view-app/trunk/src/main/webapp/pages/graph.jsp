@@ -15,7 +15,7 @@
    - @version $Id$
 -->
 
-<%@ taglib uri="/WEB-INF/tld/hierarchView.tld" prefix="hierarchView" %>
+<%@ taglib uri="http://www.ebi.ac.uk/intact/hierarch-view" prefix="hierarchView" %>
 
 <table border="0" cellspacing="0" cellpadding="0" width="100%" height="100%">
 

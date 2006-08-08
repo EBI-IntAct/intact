@@ -28,6 +28,7 @@ import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
 import uk.ac.ebi.intact.simpleGraph.Node;
 import uk.ac.ebi.intact.util.SearchReplace;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 /**
  * Interface allowing to wrap an highlightment source.
@@ -104,9 +105,9 @@ public class InterproHighlightmentSource extends HighlightmentSource {
         }
 
         try {
-            logger.info( "Try to get a list of Interpro term (from protein AC="
+            logger.debug( "Try to get a list of Interpro term (from protein AC="
                     + aProteinAC + ")" );
-            result = DaoFactory.getProteinDao().getByAcLike(aProteinAC);
+            result = getDaoFactory().getProteinDao().getByAcLike(aProteinAC);
         }
         catch ( IntactException ie ) {
             logger.error( "When trying to get a list of Interpro", ie );
@@ -419,7 +420,7 @@ public class InterproHighlightmentSource extends HighlightmentSource {
                               IntactUserI user) throws IntactException, SQLException {
 
         // connection to database
-        Connection con = DaoFactory.connection();
+        Connection con = getDaoFactory().connection();
 
         // get in the Highlightment properties file where is interpro
         Properties props = IntactUserI.HIGHLIGHTING_PROPERTIES;
@@ -605,6 +606,11 @@ public class InterproHighlightmentSource extends HighlightmentSource {
         }
 
         return keys;
+    }
+
+    private DaoFactory getDaoFactory()
+    {
+        return IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
     }
 }
 

@@ -20,7 +20,6 @@ import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredExcepti
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.searchengine.CriteriaBean;
 import uk.ac.ebi.intact.searchengine.SearchClass;
@@ -262,13 +261,6 @@ public abstract class IntactBaseAction extends Action {
 
             user = new IntactUser( applicationPath );
             session.setAttribute( Constants.USER_KEY, user );
-        }
-        catch ( DataSourceException de ) {
-            // Unable to get a data source...can't proceed
-            logger.error( de.getMessage(), de );
-            String applicationPath = aRequest.getContextPath();
-            addError( "error.datasource.notCreated", applicationPath );
-            return null;
         }
         catch ( IntactException ie ) {
             logger.error( "Could not initialize user's settings", ie );

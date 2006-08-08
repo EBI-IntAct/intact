@@ -1,7 +1,7 @@
 <%@ page language="java"%>
-<%@ taglib uri="/WEB-INF/tld/struts-html.tld"  prefix="html"%>
-<%@ taglib uri="/WEB-INF/tld/struts-tiles.tld" prefix="tiles"%>
-<%@ taglib uri="/WEB-INF/tld/intact.tld"       prefix="intact"%>
+<%@ taglib uri="http://struts.apache.org/tags-html"  prefix="html"%>
+<%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles"%>
+<%@ taglib uri="http://ebi.ac.uk/intact/commons"       prefix="intact"%>
 
 <%--
     Intact default look & feel layout with frames.
