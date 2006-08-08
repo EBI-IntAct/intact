@@ -18,11 +18,11 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>uk.ac.ebi.intact.app.hierarchview</groupId>
+    <groupId>uk.ac.ebi.intact.app.search</groupId>
     <artifactId>search-wclient</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.0</version>
-    <!-- last released 1.0.0 -->
+    <version>1.0.1</version>
+    <!-- last released 1.0.1 -->
     <name>Search WS Client</name>
     <description>Client for the Search Web Services</description>
 

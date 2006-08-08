@@ -9,7 +9,7 @@ public class SearchClientTest extends TestCase
 
     public void testClient()
     {
-       SearchServiceClient client = new SearchServiceClient("http://localhost:8080/search-ws/services/SearchService");
+       SearchServiceClient client = new SearchServiceClient();
 
         try
         {
