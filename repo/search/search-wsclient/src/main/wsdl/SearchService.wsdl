@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="urn:searchws" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="urn:searchws" xmlns:intf="urn:searchws" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.4
+Built on Apr 22, 2006 (06:55:48 PDT)-->
+ <wsdl:types>
+  <schema targetNamespace="urn:searchws" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="ArrayOf_xsd_string">
+    <complexContent>
+     <restriction base="soapenc:Array">
+      <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:string[]"/>
+
+     </restriction>
+    </complexContent>
+   </complexType>
+   <complexType name="PartnerResult">
+    <sequence>
+     <element name="partnerUniprotAcs" nillable="true" type="impl:ArrayOf_xsd_string"/>
+     <element name="uniprotAc" nillable="true" type="xsd:string"/>
+    </sequence>
+   </complexType>
+
+   <complexType name="ArrayOfPartnerResult">
+    <complexContent>
+     <restriction base="soapenc:Array">
+      <attribute ref="soapenc:arrayType" wsdl:arrayType="impl:PartnerResult[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="findPartnersUsingUniprotIdsResponse">
+
+      <wsdl:part name="findPartnersUsingUniprotIdsReturn" type="impl:ArrayOfPartnerResult"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getVersionRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="getVersionResponse">
+
+      <wsdl:part name="getVersionReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="findPartnersUsingUniprotIdsRequest">
+
+      <wsdl:part name="proteinIds" type="impl:ArrayOf_xsd_string"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="Search">
+
+      <wsdl:operation name="findPartnersUsingUniprotIds" parameterOrder="proteinIds">
+
+         <wsdl:input message="impl:findPartnersUsingUniprotIdsRequest" name="findPartnersUsingUniprotIdsRequest"/>
+
+         <wsdl:output message="impl:findPartnersUsingUniprotIdsResponse" name="findPartnersUsingUniprotIdsResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getVersion">
+
+         <wsdl:input message="impl:getVersionRequest" name="getVersionRequest"/>
+
+         <wsdl:output message="impl:getVersionResponse" name="getVersionResponse"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="SearchServiceSoapBinding" type="impl:Search">
+
+      <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="findPartnersUsingUniprotIds">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="findPartnersUsingUniprotIdsRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.search.intact.ebi.ac.uk" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="findPartnersUsingUniprotIdsResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:searchws" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getVersion">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getVersionRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.search.intact.ebi.ac.uk" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getVersionResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:searchws" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="SearchAccessService">
+
+      <wsdl:port binding="impl:SearchServiceSoapBinding" name="SearchService">
+
+         <wsdlsoap:address location="http://localhost:8080/search-ws/services/SearchService"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>
+
+
