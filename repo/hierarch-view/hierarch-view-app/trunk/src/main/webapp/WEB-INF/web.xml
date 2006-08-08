@@ -14,15 +14,10 @@
         interaction network.
     </description>
 
-    <context-param>
-        <param-name>logfile</param-name>
-        <param-value>intact_log.txt</param-value>
-    </context-param>
-
     <!-- Filter to open the session at the beginning of the request and close on end -->
     <filter>
         <filter-name>hibernateFilter</filter-name>
-        <filter-class>uk.ac.ebi.intact.application.commons.util.HibernateSessionRequestFilter</filter-class>
+        <filter-class>uk.ac.ebi.intact.webapp.HibernateSessionRequestFilter</filter-class>
     </filter>
 
     <filter-mapping>
@@ -46,16 +41,6 @@
         <init-param>
             <param-name>config</param-name>
             <param-value>/WEB-INF/struts-config.xml</param-value>
-        </init-param>
-
-        <init-param>
-            <param-name>debug</param-name>
-            <param-value>2</param-value>
-        </init-param>
-
-        <init-param>
-            <param-name>detail</param-name>
-            <param-value>2</param-value>
         </init-param>
 
         <init-param>
@@ -112,5 +97,6 @@
         <taglib-uri>http://java.sun.com/jstl/core</taglib-uri>
         <taglib-location>/WEB-INF/tld/c.tld</taglib-location>
     </taglib>
+
 
 </web-app>
