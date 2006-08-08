@@ -7,18 +7,17 @@ package uk.ac.ebi.intact.context;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.config.DataConfig;
+import uk.ac.ebi.intact.config.impl.StandardCoreDataConfig;
+import uk.ac.ebi.intact.context.impl.IntactContextWrapper;
+import uk.ac.ebi.intact.model.Institution;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
+import uk.ac.ebi.intact.util.PropertyLoader;
 
 import java.sql.SQLException;
 import java.util.Properties;
-
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
-import uk.ac.ebi.intact.context.impl.IntactContextWrapper;
-import uk.ac.ebi.intact.model.Institution;
-import uk.ac.ebi.intact.config.impl.StandardCoreDataConfig;
-import uk.ac.ebi.intact.config.DataConfig;
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.util.PropertyLoader;
 
 /**
  * TODO: comment this!
@@ -30,9 +29,6 @@ import uk.ac.ebi.intact.util.PropertyLoader;
 public class IntactConfigurator
 {
     private static final Log log = LogFactory.getLog(IntactConfigurator.class);
-
-    private static final String INTACT_INIT_DONE
-            = IntactConfigurator.class.getName() + ".INTACT_INIT_DONE";
 
     private static final String DATA_CONFIG_PARAM_NAME = "uk.ac.ebi.intact.DATA_CONFIG";
     private static final String AC_PREFIX_PARAM_NAME = "uk.ac.ebi.intact.AC_PREFIX";
@@ -49,13 +45,6 @@ public class IntactConfigurator
     public static void initIntact(IntactSession session)
     {
         log.info("Initializing intact-core...");
-
-        boolean initDone = (session.getApplicationAttribute(INTACT_INIT_DONE) != null);
-
-        if (initDone)
-        {
-            return;
-        }
 
         RuntimeConfig config = RuntimeConfig.getCurrentInstance(session);
 
@@ -125,14 +114,16 @@ public class IntactConfigurator
             log.debug("Using default AC prefix: "+DEFAULT_AC_PREFIX);
             config.setAcPrefix(DEFAULT_AC_PREFIX);
         }
-
-        session.setApplicationAttribute(INTACT_INIT_DONE, true);
-
     }
 
     public static IntactContext createIntactContext(IntactSession session)
     {
         String defaultUser = null;
+
+        if (log.isInfoEnabled())
+        {
+            log.debug("Data Configs registered: "+RuntimeConfig.getCurrentInstance(session).getDataConfigs());
+        }
 
         DaoFactory daoFactory = DaoFactory.getCurrentInstance(session,
                 RuntimeConfig.getCurrentInstance(session).getDataConfig(StandardCoreDataConfig.NAME));

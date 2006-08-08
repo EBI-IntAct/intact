@@ -7,17 +7,17 @@ package uk.ac.ebi.intact.config.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.SessionFactory;
+import org.hibernate.EmptyInterceptor;
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
-import org.hibernate.EmptyInterceptor;
-import org.hibernate.cfg.Configuration;
+import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
+import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
-import uk.ac.ebi.intact.config.DataConfig;
-import uk.ac.ebi.intact.persistence.util.IntactAnnotator;
-import uk.ac.ebi.intact.persistence.util.ImportFromClasspathEntityResolver;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.config.DataConfig;
+import uk.ac.ebi.intact.persistence.util.ImportFromClasspathEntityResolver;
+import uk.ac.ebi.intact.persistence.util.IntactAnnotator;
 
 import java.io.File;
 import java.util.List;
@@ -29,11 +29,12 @@ import java.util.List;
  * @version $Id$
  * @since <pre>07-Aug-2006</pre>
  */
-public abstract class AbstractHibernateDataConfig implements DataConfig<SessionFactory, Configuration>
+public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFactory, Configuration>
 {
 
     private static final Log log = LogFactory.getLog(AbstractHibernateDataConfig.class);
 
+    private static final String SESSION_FACTORY_NAME = "jndi/intact/sessionfactory";
     private static final String INTERCEPTOR_CLASS = "hibernate.util.interceptor_class";
 
     private Configuration configuration;
@@ -111,6 +112,37 @@ public abstract class AbstractHibernateDataConfig implements DataConfig<SessionF
                 // or use static variable handling
                 sessionFactory = configuration.buildSessionFactory();
             }
+
+            /*
+            try
+            {
+                InitialContext initialContext = new InitialContext();
+
+                if (initialContext.lookup(SESSION_FACTORY_NAME) != null)
+                {
+                    log.debug("Using session factory from JNDI");
+                    return (SessionFactory) initialContext.lookup(SESSION_FACTORY_NAME);
+                }
+            }
+            catch (NamingException e)
+            {
+                log.warn("SessionFactory does not exist in context. Will create a new one.");
+            }
+
+            // or use static variable handling
+            sessionFactory = configuration.buildSessionFactory();
+
+            try
+            {
+                InitialContext initialContext = new InitialContext();
+
+                log.debug("Binding session factory to JNDI");
+                initialContext.bind(SESSION_FACTORY_NAME, sessionFactory);
+            }
+            catch (NamingException e)
+            {
+                e.printStackTrace();
+            } */
 
         }
         catch (HibernateException ex)
