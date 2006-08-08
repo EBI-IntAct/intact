@@ -8,10 +8,9 @@ package uk.ac.ebi.intact.persistence;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.InteractorXref;
 import uk.ac.ebi.intact.model.Xref;
-import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
-import uk.ac.ebi.intact.context.IntactContext;
 
 /**
  * TODO comment this!
@@ -24,8 +23,6 @@ public class ProteinTest extends TestCase
 {
 
     private static final Log log = LogFactory.getLog(ProteinTest.class);
-
-    public static final String NEW_LINE = System.getProperty( "line.separator" );
 
     protected void setUp() throws Exception
     {

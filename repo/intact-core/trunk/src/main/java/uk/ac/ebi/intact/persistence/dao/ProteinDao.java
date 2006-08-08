@@ -27,5 +27,7 @@ public interface ProteinDao extends InteractorDao<ProteinImpl>
 
     Map<String, List<String>> getPartnersWithInteractionAcsByProteinAc(String proteinAc);
 
+    List<String> getPartnersUniprotIdsByProteinAc(String proteinAc);
+
     Integer countPartnersByProteinAc(String proteinAc);
 }

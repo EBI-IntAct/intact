@@ -5,24 +5,24 @@
  */
 package uk.ac.ebi.intact.persistence.dao.impl;
 
-import uk.ac.ebi.intact.model.ProteinImpl;
-import uk.ac.ebi.intact.model.CvXrefQualifier;
-import uk.ac.ebi.intact.model.CvTopic;
-import uk.ac.ebi.intact.model.InteractorImpl;
-import uk.ac.ebi.intact.persistence.dao.impl.InteractorDaoImpl;
-import uk.ac.ebi.intact.persistence.dao.ProteinDao;
-import org.hibernate.Session;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Order;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Property;
+import org.hibernate.criterion.Restrictions;
+import uk.ac.ebi.intact.model.CvTopic;
+import uk.ac.ebi.intact.model.CvXrefQualifier;
+import uk.ac.ebi.intact.model.InteractorImpl;
+import uk.ac.ebi.intact.model.ProteinImpl;
+import uk.ac.ebi.intact.persistence.dao.ProteinDao;
 
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * TODO comment this
@@ -168,6 +168,20 @@ public class ProteinDaoImpl extends InteractorDaoImpl<ProteinImpl> implements Pr
         }
 
         return results;
+    }
+
+    /**
+     * Returns the protein id of the parners
+     * @param proteinAc
+     * @return
+     */
+    public List<String> getPartnersUniprotIdsByProteinAc(String proteinAc)
+    {
+        return partnersByProteinAcCriteria(proteinAc)
+                .createAlias("prot.xrefs", "xref")
+                .createAlias("xref.cvXrefQualifier", "qual")
+                .add(Restrictions.eq("qual.shortLabel", CvXrefQualifier.IDENTITY ))
+                .setProjection(Projections.distinct(Property.forName("xref.primaryId"))).list();
     }
 
     private Criteria partnersByProteinAcCriteria(String proteinAc)
