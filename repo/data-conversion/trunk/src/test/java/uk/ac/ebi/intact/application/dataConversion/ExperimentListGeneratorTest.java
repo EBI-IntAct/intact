@@ -9,6 +9,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
+import java.util.List;
+import java.util.Set;
+
+import uk.ac.ebi.intact.model.Experiment;
 
 /**
  * TODO comment this!
@@ -24,14 +28,24 @@ public class ExperimentListGeneratorTest
 
     public void testGenerateList()
     {
-        ExperimentListGenerator gen = new ExperimentListGenerator();
-        gen.setSpeciesFile(new File("target/classification_by_species.txt"));
-        gen.setPublicationsFile(new File("target/classification_by_publications.txt"));
-        gen.setSearchPattern("gavin-%");
-        gen.setOverwrite(true);
+
+        ExperimentListGenerator gen = new ExperimentListGenerator("gavin%");
         gen.setOnlyWithPmid(true);
 
-        gen.execute();
+        List<ExperimentListItem> eliSpecies = gen.generateClassificationBySpecies();
+        System.out.println("By species: "+eliSpecies.size());
+
+        List<ExperimentListItem> eliPublications = gen.generateClassificationByPublications();
+        System.out.println("By publications: "+eliPublications.size());
+
+        Set<Experiment> negativeExps = gen.getNegativeExperiments();
+        System.out.println("Negative experiments: "+negativeExps.size());
+
+        for (Experiment e : negativeExps)
+        {
+            System.out.println("\tNegative: "+e.getShortLabel());
+        }
+
     }
 
 }

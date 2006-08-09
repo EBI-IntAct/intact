@@ -8,13 +8,11 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.model.TestableProtein;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
-import org.hibernate.Transaction;
 
 /**
  * TODO document this ;o)
@@ -23,8 +21,6 @@ import org.hibernate.Transaction;
  * @version $Id$
  */
 public class UserSessionDownloadTest extends PsiDownloadTest {
-
-    private Transaction tx;
 
     /**
      * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
@@ -36,13 +32,12 @@ public class UserSessionDownloadTest extends PsiDownloadTest {
     protected void setUp() throws Exception
     {
         super.setUp();
-        tx = HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
     }
 
     protected void tearDown() throws Exception
     {
         super.tearDown();
-        tx.commit();
+        IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
     }
 
     ////////////////////////

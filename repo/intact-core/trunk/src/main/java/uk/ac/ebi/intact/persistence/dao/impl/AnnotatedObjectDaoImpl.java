@@ -48,9 +48,24 @@ public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObj
        return getByPropertyNameLike("shortLabel", value);
     }
 
+    public Collection<T> getByShortLabelLike(String value, int firstResult, int maxResults)
+    {
+        return getByPropertyNameLike("shortLabel", value, true, firstResult, maxResults);
+    }
+
     public Collection<T> getByShortLabelLike(String value, boolean ignoreCase)
     {
-       return getByPropertyNameLike("shortLabel", value, ignoreCase);
+       return getByPropertyNameLike("shortLabel", value, ignoreCase, -1, -1);
+    }
+
+    public Collection<T> getByShortLabelLike(String value, boolean ignoreCase, int firstResult, int maxResults)
+    {
+        return getByPropertyNameLike("shortLabel", value, ignoreCase, firstResult, maxResults);
+    }
+
+    public Collection<T> getByShortLabelLike(String value, boolean ignoreCase, int firstResult, int maxResults, boolean orderAsc)
+    {
+        return getByPropertyNameLike("shortLabel", value, ignoreCase, firstResult, maxResults, orderAsc);
     }
 
     public T getByXref(String primaryId)
