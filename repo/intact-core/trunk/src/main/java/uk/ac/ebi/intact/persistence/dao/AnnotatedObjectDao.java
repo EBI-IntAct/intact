@@ -27,7 +27,13 @@ public interface AnnotatedObjectDao<T extends AnnotatedObject> extends IntactObj
 
     Collection<T> getByShortLabelLike(String value);
 
+    Collection<T> getByShortLabelLike(String value, int firstResult, int maxResults);
+
     Collection<T> getByShortLabelLike(String value, boolean ignoreCase);
+
+    Collection<T> getByShortLabelLike(String value, boolean ignoreCase, int firstResult, int maxResults);
+
+    Collection<T> getByShortLabelLike(String value, boolean ignoreCase, int firstResult, int maxResults, boolean orderAsc);
 
     T getByXref(String primaryId);
 

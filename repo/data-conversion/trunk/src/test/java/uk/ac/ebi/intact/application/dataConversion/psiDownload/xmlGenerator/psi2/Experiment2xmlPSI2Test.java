@@ -15,7 +15,7 @@ import uk.ac.ebi.intact.application.dataConversion.psiDownload.model.TestableExp
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Experiment2xmlFactory;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Experiment2xmlI;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.util.HibernateUtil;
+import uk.ac.ebi.intact.context.IntactContext;
 
 /**
  * TODO document this ;o)
@@ -37,14 +37,12 @@ public class Experiment2xmlPSI2Test extends PsiDownloadTest {
     protected void setUp() throws Exception
     {
         super.setUp();
-        tx = HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
     }
 
     protected void tearDown() throws Exception
     {
         super.tearDown();
-        tx.commit();
-        tx = null;
+        IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
     }
 
     ////////////////////////

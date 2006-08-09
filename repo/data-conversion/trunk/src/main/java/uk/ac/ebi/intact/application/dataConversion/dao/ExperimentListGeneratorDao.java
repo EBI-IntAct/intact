@@ -33,32 +33,35 @@ public class ExperimentListGeneratorDao
     /**
      * Query to get at the Experiment ACs containing negative interaction annotations
      */
-    public static List<Experiment> getExpWithInteractionsContainingAnnotation(String cvShortLabel)
+    public static List<Experiment> getExpWithInteractionsContainingAnnotation(String cvshortLabel, String labelLike)
     {
 
         return getSession().createCriteria(Experiment.class)
+                .add(Restrictions.like("shortLabel", labelLike))
                 .createCriteria("interactions")
                 .createCriteria("annotations")
                 .createCriteria("cvTopic")
-                .add(Restrictions.eq("shortLabel", cvShortLabel)).list();
+                .add(Restrictions.eq("shortLabel", cvshortLabel)).list();
     }
 
     /**
      * Query to obtain annotated objects by searching for an Annotation
      * with the cvTopic label provided
      */
-    public static <T extends AnnotatedObjectImpl> List<T> getContainingAnnotation(Class<T> annObject, String cvShortLabel)
+    public static <T extends AnnotatedObjectImpl> List<T> getContainingAnnotation(Class<T> annObject, String cvshortLabel, String labelLike)
     {
          return getSession().createCriteria(annObject.getClass())
+                .add(Restrictions.like("shortLabel", labelLike))
                 .createCriteria("annotations")
                 .createCriteria("cvTopic")
-                .add(Restrictions.eq("shortLabel", cvShortLabel)).list();
+                .add(Restrictions.eq("shortLabel", cvshortLabel)).list();
     }
 
-    public static Map<String,String> getExperimentAcAndLabelWithoutPubmedId()
+    public static Map<String,String> getExperimentAcAndLabelWithoutPubmedId(String labelLike)
     {
         List<Object[]> allExps = getSession().createCriteria(Experiment.class)
-                 .setProjection(Projections.projectionList()
+                .add(Restrictions.like("shortLabel", labelLike))
+                .setProjection(Projections.projectionList()
                         .add(Projections.distinct(Projections.property("ac")))
                         .add(Projections.property("shortLabel"))).list();
 
@@ -70,6 +73,7 @@ public class ExperimentListGeneratorDao
         }
 
         List<String> expsWithPmid = getSession().createCriteria(Experiment.class, "exp")
+                .add(Restrictions.like("exp.shortLabel", labelLike))
                 .createCriteria("xrefs")
                 .createAlias("cvDatabase", "cvDb")
                 .createAlias("cvXrefQualifier", "cvXrefQual")

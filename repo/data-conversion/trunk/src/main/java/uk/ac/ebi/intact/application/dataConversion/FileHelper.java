@@ -49,7 +49,6 @@ public class FileHelper {
      *
      * @return the fixed path
      *
-     * @see File.separator
      */
     public static String fixFileSeparator( String filename ) {
 
@@ -111,15 +110,15 @@ public class FileHelper {
     public static void checkParentDirectory( String filename ) {
         // check that all parent directory exist in the given filename
         // 1, change SLASH by the
-        if ( filename.indexOf( ExperimentListGenerator.SLASH ) != -1 ) {
+        if ( filename.indexOf( FileGenerator.SLASH ) != -1 ) {
 
             // 2. replace all slash by plateform specific file separator (if necessary)
             final String separator = System.getProperty( "file.separator" );
-            if ( ! ExperimentListGenerator.SLASH.equals( separator ) ) {
+            if ( ! FileGenerator.SLASH.equals( separator ) ) {
                 StringBuffer sb = new StringBuffer( filename );
 
                 int idx;
-                while ( ( idx = sb.indexOf( ExperimentListGenerator.SLASH ) ) != -1 ) {
+                while ( ( idx = sb.indexOf( FileGenerator.SLASH ) ) != -1 ) {
                     sb.replace( idx, idx + 1, separator );
                 }
 

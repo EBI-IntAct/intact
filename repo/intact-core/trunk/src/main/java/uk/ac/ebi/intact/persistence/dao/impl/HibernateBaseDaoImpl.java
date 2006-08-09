@@ -10,6 +10,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.SimpleExpression;
+import org.hibernate.criterion.Order;
 import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.model.NotAnEntityException;
 import uk.ac.ebi.intact.persistence.dao.BaseDao;
@@ -105,7 +106,7 @@ public abstract class HibernateBaseDaoImpl<T> implements BaseDao<Session>
     {
         if (value.startsWith("%") || value.endsWith("%"))
         {
-            return getByPropertyNameLike(propertyName, value, ignoreCase);
+            return getByPropertyNameLike(propertyName, value, ignoreCase, -1, -1);
         }
 
          return getCriteriaByPropertyName(propertyName, value, ignoreCase).list();
@@ -113,13 +114,18 @@ public abstract class HibernateBaseDaoImpl<T> implements BaseDao<Session>
 
     protected Collection<T> getByPropertyNameLike(String propertyName, String value)
     {
-        return getByPropertyNameLike(propertyName, value, true);
+        return getByPropertyNameLike(propertyName, value, true, -1, -1);
     }
 
-    protected Collection<T> getByPropertyNameLike(String propertyName, String value, boolean ignoreCase)
+    protected Collection<T> getByPropertyNameLike(String propertyName, String value, boolean ignoreCase, int firstResult, int maxResults)
+    {
+        return getByPropertyNameLike(propertyName, value, ignoreCase, firstResult, maxResults, false);
+    }
+
+     protected Collection<T> getByPropertyNameLike(String propertyName, String value, boolean ignoreCase, int firstResult, int maxResults, boolean orderAsc)
     {
         Criteria criteria = getSession().createCriteria(entityClass);
-        
+
         SimpleExpression rest = Restrictions.like(propertyName, value);
 
         if (ignoreCase)
@@ -128,6 +134,21 @@ public abstract class HibernateBaseDaoImpl<T> implements BaseDao<Session>
         }
 
         criteria.add(rest);
+
+        if (firstResult >= 0)
+        {
+            criteria.setFirstResult(firstResult);
+        }
+
+        if (maxResults > 0)
+        {
+            criteria.setMaxResults(maxResults);
+        }
+
+        if (orderAsc)
+        {
+            criteria.addOrder(Order.asc(propertyName));
+        }
 
         return criteria.list();
     }

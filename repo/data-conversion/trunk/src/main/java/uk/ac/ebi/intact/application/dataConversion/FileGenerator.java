@@ -29,6 +29,8 @@ import java.util.*;
  */
 public class FileGenerator {
 
+    public static final String SLASH = System.getProperty("file.separator");
+
     /////////////////////
     // Private methods
 
@@ -511,15 +513,15 @@ public class FileGenerator {
 
             // check that all parent directory exist in the given filename
             // 1, change SLASH by the
-            if ( fileName.indexOf( ExperimentListGenerator.SLASH ) != -1 ) {
+            if ( fileName.indexOf( SLASH ) != -1 ) {
 
                 // 2. replace all slash by plateform specific file separator (if necessary)
                 final String separator = System.getProperty( "file.separator" );
-                if ( ! ExperimentListGenerator.SLASH.equals( separator ) ) {
+                if ( ! SLASH.equals( separator ) ) {
                     StringBuffer sb = new StringBuffer( fileName );
 
                     int idx;
-                    while ( ( idx = sb.indexOf( ExperimentListGenerator.SLASH ) ) != -1 ) {
+                    while ( ( idx = sb.indexOf( SLASH ) ) != -1 ) {
                         sb.replace( idx, idx + 1, separator );
                     }
 
