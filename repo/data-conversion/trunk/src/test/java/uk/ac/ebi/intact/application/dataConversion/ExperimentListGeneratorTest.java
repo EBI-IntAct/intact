@@ -8,6 +8,8 @@ package uk.ac.ebi.intact.application.dataConversion;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.File;
+
 /**
  * TODO comment this!
  *
@@ -23,6 +25,8 @@ public class ExperimentListGeneratorTest
     public void testGenerateList()
     {
         ExperimentListGenerator gen = new ExperimentListGenerator();
+        gen.setSpeciesFile(new File("target/classification_by_species.txt"));
+        gen.setPublicationsFile(new File("target/classification_by_publications.txt"));
         gen.setSearchPattern("gavin-%");
         gen.setOverwrite(true);
         gen.setOnlyWithPmid(true);
