@@ -7,13 +7,13 @@ package uk.ac.ebi.intact.context;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.config.impl.StandardCoreDataConfig;
 import uk.ac.ebi.intact.config.DataConfig;
+import uk.ac.ebi.intact.config.impl.StandardCoreDataConfig;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * TODO comment this!
@@ -95,13 +95,18 @@ public class DataContext
 
     public DaoFactory getDaoFactory()
     {
-        return getDaoFactory(StandardCoreDataConfig.NAME);
+        DataConfig dataConfig = RuntimeConfig.getCurrentInstance(session).getDefaultDataConfig();
+        return getDaoFactory(dataConfig);
     }
 
     public DaoFactory getDaoFactory(String dataConfigName)
     {
         DataConfig dataConfig = RuntimeConfig.getCurrentInstance(session).getDataConfig(dataConfigName);
+        return getDaoFactory(dataConfig);
+    }
 
+    private DaoFactory getDaoFactory(DataConfig dataConfig)
+    {
         daoFactory = DaoFactory.getCurrentInstance(session, dataConfig);
         beginTransaction(); // starts or uses an existing transaction
 

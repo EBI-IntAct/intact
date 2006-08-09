@@ -59,7 +59,7 @@ public class IntactConfigurator
         {
             e.printStackTrace();
         }
-        config.addDataConfig(stdDataConfig);
+        config.addDataConfig(stdDataConfig, true);
 
         // load the data configs
         if (session.containsInitParam(DATA_CONFIG_PARAM_NAME))

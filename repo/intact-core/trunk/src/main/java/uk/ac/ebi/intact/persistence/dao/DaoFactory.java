@@ -9,12 +9,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
-import uk.ac.ebi.intact.config.impl.StandardCoreDataConfig;
 import uk.ac.ebi.intact.config.DataConfig;
+import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
+import uk.ac.ebi.intact.context.DataContext;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.IntactSession;
-import uk.ac.ebi.intact.context.DataContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.impl.*;
 
@@ -46,7 +45,7 @@ public class DaoFactory implements Serializable
 
     public static DaoFactory getCurrentInstance(IntactContext context)
     {
-        return getCurrentInstance(context, StandardCoreDataConfig.NAME);
+        return getCurrentInstance(context.getConfig().getDefaultDataConfig());
     }
 
     public static DaoFactory getCurrentInstance(IntactContext context, String dataConfigName)

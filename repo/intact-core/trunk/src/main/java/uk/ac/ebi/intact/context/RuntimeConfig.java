@@ -5,17 +5,18 @@
  */
 package uk.ac.ebi.intact.context;
 
-import uk.ac.ebi.intact.model.Institution;
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.util.PropertyLoader;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.config.DataConfig;
-
-import java.util.*;
-import java.io.Serializable;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.config.ConfigurationException;
+import uk.ac.ebi.intact.config.DataConfig;
+import uk.ac.ebi.intact.config.impl.StandardCoreDataConfig;
+import uk.ac.ebi.intact.model.Institution;
+
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * TODO: comment this!
@@ -33,6 +34,7 @@ public class RuntimeConfig implements Serializable
     private Institution institution;
     private String acPrefix;
     private final Map<String, DataConfig> dataConfigs;
+    private DataConfig defaultDataConfig;
 
     private RuntimeConfig()
     {
@@ -72,7 +74,6 @@ public class RuntimeConfig implements Serializable
         this.acPrefix = acPrefix;
     }
 
-
     public Collection<DataConfig> getDataConfigs()
     {
         return dataConfigs.values();
@@ -85,12 +86,38 @@ public class RuntimeConfig implements Serializable
 
     public void addDataConfig(DataConfig dataConfig)
     {
+        addDataConfig(dataConfig, false);
+    }
+
+    public void addDataConfig(DataConfig dataConfig, boolean isTheDefaultOne)
+    {
         if (!dataConfig.isInitialized())
         {
             throw new IllegalArgumentException("DataConfig added to RuntimeConfig must be already initialized: "+dataConfig.getName());
         }
 
         this.dataConfigs.put(dataConfig.getName(), dataConfig);
+    }
+
+    public void setDefaultDataConfig(String dataConfigName)
+    {
+        defaultDataConfig = getDataConfig(dataConfigName);
+
+        if (defaultDataConfig == null)
+        {
+            throw new ConfigurationException("Data-config not found or not registered: "+dataConfigName);
+        }
+    }
+
+    public DataConfig getDefaultDataConfig()
+    {
+        if (defaultDataConfig == null)
+        {
+            log.warn("No default data config configured. Using: "+ StandardCoreDataConfig.NAME);
+            defaultDataConfig = getDataConfig(StandardCoreDataConfig.NAME);
+        }
+
+        return defaultDataConfig;
     }
 
 }
