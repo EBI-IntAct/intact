@@ -9,11 +9,11 @@ import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Inte
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Interaction2xmlI;
 import uk.ac.ebi.intact.application.dataConversion.util.DisplayXML;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.NucleicAcid;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.io.*;
 import java.util.*;
@@ -54,7 +54,8 @@ public class FileGenerator {
 
         while ( patterns.hasMoreTokens() ) {
             String experimentShortlabel = patterns.nextToken().trim();
-            searchResults.addAll(DaoFactory.getExperimentDao().getByShortLabelLike(experimentShortlabel));
+            searchResults.addAll(IntactContext.getCurrentInstance()
+                    .getDataContext().getDaoFactory().getExperimentDao().getByShortLabelLike(experimentShortlabel));
         }
 
         int resultSize = searchResults.size();

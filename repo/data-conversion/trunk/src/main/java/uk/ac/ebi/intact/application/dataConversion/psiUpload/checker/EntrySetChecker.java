@@ -7,7 +7,6 @@ package uk.ac.ebi.intact.application.dataConversion.psiUpload.checker;
 
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.EntrySetTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.EntryTag;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.util.BioSourceFactory;
 import uk.ac.ebi.intact.util.UpdateProteinsI;
 

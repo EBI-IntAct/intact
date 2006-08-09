@@ -6,7 +6,6 @@
 package uk.ac.ebi.intact.application.dataConversion;
 
 import org.apache.commons.cli.*;
-import org.apache.ojb.broker.accesslayer.LookupException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -18,12 +17,12 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.persister.EntrySetP
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.CommandLineOptions;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.persistence.dao.BaseDao;
 import uk.ac.ebi.intact.util.BioSourceFactory;
 import uk.ac.ebi.intact.util.Chrono;
 import uk.ac.ebi.intact.util.UpdateProteins;
 import uk.ac.ebi.intact.util.UpdateProteinsI;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.persistence.dao.BaseDao;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -277,10 +276,10 @@ public class PsiDataLoader {
                 try {
 
                     try {
-                        BaseDao dao = DaoFactory.getBaseDao();
+                        BaseDao dao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao();
                         String db = dao.getDbName();
                         System.out.println( "Database: " + db );
-                        System.out.println( "User:     " + dao.getDbUserName() );
+                        System.out.println( "User:     " + IntactContext.getCurrentInstance().getUserContext().getUserId());
 
                         if ( forceEnabled == false ) {
                             // THIS IS SPECIFIC CODE THAT AVOIDS TO WRITE ON A PRODUCTION DATABASE BY MISTAKES

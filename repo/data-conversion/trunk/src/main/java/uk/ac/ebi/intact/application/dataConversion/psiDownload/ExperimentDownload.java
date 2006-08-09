@@ -4,18 +4,18 @@
 
 package uk.ac.ebi.intact.application.dataConversion.psiDownload;
 
-import org.apache.ojb.broker.accesslayer.LookupException;
 import org.w3c.dom.Element;
 import uk.ac.ebi.intact.application.dataConversion.*;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Interaction2xmlFactory;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Interaction2xmlI;
 import uk.ac.ebi.intact.application.dataConversion.util.DisplayXML;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.util.Chrono;
 import uk.ac.ebi.intact.persistence.dao.BaseDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.util.Chrono;
 
 import javax.xml.transform.TransformerException;
 import java.io.*;
@@ -128,16 +128,18 @@ public class ExperimentDownload {
     }
 
 
-    public static void main( String[] args ) throws IntactException, SQLException, LookupException,
+    public static void main( String[] args ) throws IntactException, SQLException,
                                                     TransformerException, IOException {
 
         Chrono chrono = new Chrono();
         chrono.start();
 
+        DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
+
         try {
-            BaseDao dao = DaoFactory.getBaseDao();
+            BaseDao dao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao();
             System.out.println( "Database: " + dao.getDbName() );
-            System.out.println( "Username: " + dao.getDbUserName() );
+            System.out.println( "Username: " + IntactContext.getCurrentInstance().getUserContext().getUserId() );
 
             System.out.print( "Searching for all experiment: " );
 
@@ -155,7 +157,7 @@ public class ExperimentDownload {
                 String label = (String) iterator.next();
                 System.out.print( "Loading " + label + "..." );
                 System.out.flush();
-                experiments.addAll( DaoFactory.getExperimentDao().getByShortLabelLike(label));
+                experiments.addAll( IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao().getByShortLabelLike(label));
                 System.out.println( "done." );
             }
 
@@ -198,6 +200,8 @@ public class ExperimentDownload {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
 
         chrono.stop();
         System.out.println( "Time elapsed: " + chrono );

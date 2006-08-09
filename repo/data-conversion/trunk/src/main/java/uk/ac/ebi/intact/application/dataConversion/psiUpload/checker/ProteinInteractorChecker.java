@@ -14,8 +14,8 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.CommandLineOpt
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.util.BioSourceFactory;
 import uk.ac.ebi.intact.util.Crc64;
 import uk.ac.ebi.intact.util.UpdateProteinsI;
@@ -58,7 +58,7 @@ public final class ProteinInteractorChecker {
         if ( false == interatorTypeChecked ) {
 
             // Load CvInteractorType( interaction / MI: )
-            cvProteinType = DaoFactory.getCvObjectDao(CvInteractorType.class).getByXref(CvInteractorType.getInteractionMI());
+            cvProteinType = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvInteractorType.class).getByXref(CvInteractorType.getInteractionMI());
             if ( cvProteinType == null ) {
                 MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find CvInteractorType( interaction )." ) );
             }
@@ -206,7 +206,7 @@ public final class ProteinInteractorChecker {
                 // search all protein having the uniprot Xref for that ID (it doesn't retreive the splice variant).
                 // We only look for Xref( uniprot, identity )
 
-                Collection proteins = DaoFactory.getProteinDao().getByXrefLike(uniprot, identity, proteinId);
+                Collection proteins = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByXrefLike(uniprot, identity, proteinId);
 
                 if ( proteins != null ) {
 
@@ -264,7 +264,7 @@ public final class ProteinInteractorChecker {
                     System.out.println( "search splice variant of master AC: " + protein.getAc() );
                 }
 
-                Collection spliceVariants = DaoFactory.getProteinDao().getByXrefLike(protein.getAc());
+                Collection spliceVariants = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByXrefLike(protein.getAc());
 
                 if ( spliceVariants == null || spliceVariants.isEmpty() ) {
                     if ( DEBUG ) {
@@ -321,11 +321,11 @@ public final class ProteinInteractorChecker {
 
             Protein protein = null;
             try {
-                Collection proteins = DaoFactory.getProteinDao().getByXrefLike(uniprot, identity, id);
+                Collection proteins = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByXrefLike(uniprot, identity, id);
 
                 if ( proteins == null || proteins.isEmpty() ) {
                     // If none found, try also with other uniprot Xrefs
-                    proteins = DaoFactory.getProteinDao().getByXrefLike(uniprot, id);
+                    proteins = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByXrefLike(uniprot, id);
                 }
 
                 if ( null == taxid ) {
@@ -671,7 +671,7 @@ public final class ProteinInteractorChecker {
 
         } else {
 
-            InteractorXref xref = new InteractorXref( DaoFactory.getInstitutionDao().getInstitution(),
+            InteractorXref xref = new InteractorXref( IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution(),
                                   database,
                                   xrefTag.getId(),
                                   xrefTag.getSecondary(),
@@ -679,7 +679,7 @@ public final class ProteinInteractorChecker {
                                   qualifier );
 
             protein.addXref( xref );
-            DaoFactory.getXrefDao().persist( xref );
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
         }
     }
 
@@ -700,7 +700,7 @@ public final class ProteinInteractorChecker {
 
         try {
             // firstly search by primaryID
-            Collection proteins = DaoFactory.getProteinDao().getByXrefLike(proteinId);
+            Collection proteins = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByXrefLike(proteinId);
 
 //            System.out.println( ">>>>>>>>>>>" + proteins.size() + " protein found by Xref(" + proteinId + ")" );
 
@@ -789,7 +789,7 @@ public final class ProteinInteractorChecker {
             if ( protein == null ) {
 
                 // create non uniprot proteins
-                CvInteractorType proteinType = DaoFactory.getCvObjectDao(CvInteractorType.class).getByXref(CvInteractorType.getProteinMI());
+                CvInteractorType proteinType = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvInteractorType.class).getByXref(CvInteractorType.getProteinMI());
 
                 if ( proteinType == null ) {
 
@@ -816,8 +816,8 @@ public final class ProteinInteractorChecker {
                 }
 
 
-                protein = new ProteinImpl( DaoFactory.getInstitutionDao().getInstitution(), bioSource, shortlabel, proteinType );
-                DaoFactory.getProteinDao().persist( (ProteinImpl)protein );
+                protein = new ProteinImpl( IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution(), bioSource, shortlabel, proteinType );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().persist( (ProteinImpl)protein );
 
                 // add Xrefs
                 createXref(  protein, proteinInteractor.getPrimaryXref(), true );
@@ -838,11 +838,11 @@ public final class ProteinInteractorChecker {
                 }
 
                 // add no-uniprot-update annotation
-                Annotation annotation = new Annotation( DaoFactory.getInstitutionDao().getInstitution(),
+                Annotation annotation = new Annotation( IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution(),
                                                         ControlledVocabularyRepository.getNoUniprotUpdateTopic() );
-                DaoFactory.getAnnotationDao().persist( annotation );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().persist( annotation );
                 proteinType.addAnnotation( annotation );
-                DaoFactory.getProteinDao().update( (ProteinImpl)protein );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().update( (ProteinImpl)protein );
 
                 System.out.println( "Created 1 protein (" + protein.getShortLabel() + ") for Primary ID: " +
                                     proteinId + ", Database: " + db + " (Not UniProt)" );

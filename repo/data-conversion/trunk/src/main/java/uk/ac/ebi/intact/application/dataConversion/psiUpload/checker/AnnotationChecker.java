@@ -9,8 +9,8 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.AnnotationTag
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvTopic;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -82,7 +82,7 @@ public final class AnnotationChecker {
             CvTopic cvTopic = null;
 
             try {
-                cvTopic = DaoFactory.getCvObjectDao(CvTopic.class).getByShortLabel( type );
+                cvTopic = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class).getByShortLabel( type );
 
                 if ( cvTopic == null ) {
                     MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find CvTopic having the " +

@@ -9,9 +9,10 @@ import org.apache.commons.cli.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.util.MemoryMonitor;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.util.MemoryMonitor;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -133,7 +134,7 @@ public class ExperimentListGenerator {
 
         while ( patterns.hasMoreTokens() ) {
             String shortlabel = patterns.nextToken().trim();
-            searchResults.addAll( DaoFactory.getExperimentDao().getByShortLabelLike(shortlabel));
+            searchResults.addAll( getDaoFactory().getExperimentDao().getByShortLabelLike(shortlabel));
         }
 
         int resultSize = searchResults.size();
@@ -160,7 +161,7 @@ public class ExperimentListGenerator {
             {
                 try
                 {
-                    log.debug( "Database: " + DaoFactory.getBaseDao().getDbName() );
+                    log.debug( "Database: " + getDaoFactory().getBaseDao().getDbName() );
                 }
                 catch (SQLException e)
                 {
@@ -257,7 +258,7 @@ public class ExperimentListGenerator {
             ResultSet resultSet = null;
             try {
                 filter = new HashSet();
-                Connection connection = DaoFactory.connection();
+                Connection connection = getDaoFactory().connection();
                 statement = connection.createStatement();
                 final String sql = "SELECT e.ac, e.shortlabel\n" +
                                    "FROM ia_experiment e\n" +
@@ -380,7 +381,7 @@ public class ExperimentListGenerator {
             Xref xref = (Xref) iterator.next();
             if ( CvXrefQualifier.TARGET_SPECIES.equals( xref.getCvXrefQualifier().getShortLabel() ) ) {
                 String taxid = xref.getPrimaryId();
-                Collection bioSources = DaoFactory.getBioSourceDao().getByTaxonId(taxid);
+                Collection bioSources = getDaoFactory().getBioSourceDao().getByTaxonId(taxid);
 
                 if ( bioSources.isEmpty() ) {
                     throw new IntactException( "Experiment(" + experiment.getAc() + ", " + experiment.getShortLabel() +
@@ -468,7 +469,7 @@ public class ExperimentListGenerator {
         try {
 
             // Safest way to do this is directly through the Connection.....
-            conn = DaoFactory.connection();
+            conn = getDaoFactory().connection();
 
             stmt = conn.createStatement();
             rs = stmt.executeQuery( expSql );
@@ -495,7 +496,7 @@ public class ExperimentListGenerator {
 
                 // TODO we have actually stored the Experiment, not the AC or the Shortlabel !!!!!
                 String ac = (String) it.next();
-                Experiment experiment = DaoFactory.getExperimentDao().getByAc( ac );
+                Experiment experiment = getDaoFactory().getExperimentDao().getByAc( ac );
                 negExpLabels.add( experiment );
             }
 
@@ -1018,5 +1019,10 @@ public class ExperimentListGenerator {
                                                 writerPublication );
         writerPublication.flush();
         writerPublication.close();
+    }
+
+    private static DaoFactory getDaoFactory()
+    {
+        return IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
     }
 }

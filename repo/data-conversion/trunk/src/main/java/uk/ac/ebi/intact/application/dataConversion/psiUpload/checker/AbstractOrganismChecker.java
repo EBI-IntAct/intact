@@ -12,10 +12,10 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.CommandLineOpt
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.util.BioSourceFactory;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.util.BioSourceFactory;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -150,7 +150,8 @@ public abstract class AbstractOrganismChecker {
                         System.out.println( "Look for all BioSources having taxid: " + taxid );
                     }
 
-                    biosources = DaoFactory.getBioSourceDao().getByTaxonId(taxid);
+                    biosources = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCurrentInstance(IntactContext.getCurrentInstance())
+                            .getBioSourceDao().getByTaxonId(taxid);
 
                     if ( DEBUG ) {
                         System.out.println( biosources.size() + " found." );
@@ -185,13 +186,13 @@ public abstract class AbstractOrganismChecker {
                         CvCellType bsCellType = null;
                         CvTissue bsTissue = null;
 
-                        Institution institution = DaoFactory.getInstitutionDao().getInstitution();
+                        Institution institution = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCurrentInstance(IntactContext.getCurrentInstance()).getInstitutionDao().getInstitution();
 
                         if ( tissue != null ) {
                             label += "-" + tissue.getShortlabel();
 
                             // search for the CvTissue, if it can't be found then create it.
-                            CvObjectDao<CvTissue> cvObjectDao = DaoFactory.getCvObjectDao(CvTissue.class);
+                            CvObjectDao<CvTissue> cvObjectDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCurrentInstance(IntactContext.getCurrentInstance()).getCvObjectDao(CvTissue.class);
                             bsTissue = cvObjectDao.getByShortLabel(tissue.getShortlabel());
 
                             if ( bsTissue == null ) {
@@ -214,7 +215,8 @@ public abstract class AbstractOrganismChecker {
                             label += "-" + cellType.getShortlabel();
 
                             // search for the CellType, if it can't be found then create it.
-                            CvObjectDao<CvCellType> cvObjectDao = DaoFactory.getCvObjectDao(CvCellType.class);
+                            CvObjectDao<CvCellType> cvObjectDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCurrentInstance(IntactContext.getCurrentInstance())
+                                    .getCvObjectDao(CvCellType.class);
                             bsCellType = cvObjectDao.getByShortLabel( cellType.getShortlabel() );
 
                             if ( bsCellType == null ) {
@@ -235,7 +237,7 @@ public abstract class AbstractOrganismChecker {
 
                         // create the new BioSource and associate the CellType and Tissue to it.
                         BioSource bs = new BioSource( institution, label, taxid );
-                        DaoFactory.getBioSourceDao().persist( bs );
+                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCurrentInstance(IntactContext.getCurrentInstance()).getBioSourceDao().persist( bs );
 
                         boolean needUpdate = false;
                         if ( bsTissue != null ) {
@@ -249,7 +251,8 @@ public abstract class AbstractOrganismChecker {
                         }
 
                         if ( needUpdate ) {
-                            DaoFactory.getBioSourceDao().update( bs );
+                            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCurrentInstance(IntactContext.getCurrentInstance())
+                                    .getBioSourceDao().update( bs );
                         }
 
                     } catch ( IntactException e ) {

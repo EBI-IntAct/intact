@@ -10,9 +10,9 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.XrefTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvFeatureIdentification;
 import uk.ac.ebi.intact.model.CvFeatureType;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -67,7 +67,7 @@ public class FeatureChecker {
             CvFeatureType featureType = null;
 
             try {
-                featureType = DaoFactory.getCvObjectDao(CvFeatureType.class).getByXref(id);
+                featureType = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvFeatureType.class).getByXref(id);
 
                 if ( featureType == null ) {
                     MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find CvFeatureType by PSI definition: " + id ) );
@@ -97,7 +97,7 @@ public class FeatureChecker {
             CvFeatureIdentification cvFeatureIdentification = null;
 
             try {
-                cvFeatureIdentification = DaoFactory.getCvObjectDao(CvFeatureIdentification.class).getByXref(id);
+                cvFeatureIdentification = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvFeatureIdentification.class).getByXref(id);
 
                 if ( cvFeatureIdentification == null ) {
                     MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find CvFeatureIdentification by PSI definition: " + id ) );

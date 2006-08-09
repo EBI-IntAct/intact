@@ -9,11 +9,10 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.gui.Monitor;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.*;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvInteractorType;
-import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.util.BioSourceFactory;
 import uk.ac.ebi.intact.util.UpdateProteinsI;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -35,7 +34,7 @@ public final class InteractionChecker {
         if ( false == interatorTypeChecked ) {
 
             // Load CvInteractorType( interaction / MI: )
-            cvInteractionType = DaoFactory.getCvObjectDao(CvInteractorType.class).getByXref(CvInteractorType.getInteractionMI());
+            cvInteractionType = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvInteractorType.class).getByXref(CvInteractorType.getInteractionMI());
             if ( cvInteractionType == null ) {
                 MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find CvInteractorType( interaction )." ) );
             }

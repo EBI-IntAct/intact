@@ -10,8 +10,8 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.*;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.*;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.CommandLineOptions;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.util.SearchReplace;
 
 import java.util.*;
@@ -95,7 +95,7 @@ public final class InteractionPersister {
 
         Collection interactions = new ArrayList( 1 );
 
-        Institution institution = DaoFactory.getInstitutionDao().getInstitution();
+        Institution institution = IntactContext.getCurrentInstance().getInstitution();
 
         // Generating shortlabels
         Collection e = interactionTag.getExperiments();
@@ -171,7 +171,7 @@ public final class InteractionPersister {
                 }
             }
 
-            DaoFactory.getInteractionDao().persist((InteractionImpl) interaction );
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInteractionDao().persist((InteractionImpl) interaction );
 
             interactions.add( interaction );
             System.out.println( "Interaction " + shortlabel + " created under experiment " +
@@ -191,7 +191,7 @@ public final class InteractionPersister {
                         // doesn't exist, then create a new Annotation
                         annotation = new Annotation( institution, cvTopic );
                         annotation.setAnnotationText( annotationTag.getText() );
-                        DaoFactory.getAnnotationDao().persist( annotation );
+                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().persist( annotation );
                     }
 
                     interaction.addAnnotation( annotation );
@@ -211,7 +211,7 @@ public final class InteractionPersister {
                     if ( cvDatabase.getShortLabel().equals( CvDatabase.GO ) ) {
                         GoXrefHelper goXrefHelper = new GoXrefHelper( xrefTag.getId() );
                         if ( goXrefHelper.getQualifier() != null ) {
-                            cvXrefQualifier = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByShortLabel(goXrefHelper.getQualifier());
+                            cvXrefQualifier = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvXrefQualifier.class).getByShortLabel(goXrefHelper.getQualifier());
                         }
                         if ( goXrefHelper.getSecondaryId() != null ) {
                             secondaryId = goXrefHelper.getSecondaryId();
@@ -220,7 +220,7 @@ public final class InteractionPersister {
 
                     InteractorXref xref = new InteractorXref( institution, cvDatabase, xrefTag.getId(), secondaryId, "", cvXrefQualifier );
                     interaction.addXref( xref );
-                    DaoFactory.getXrefDao().persist( xref );
+                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
                 }
             }
 
@@ -232,7 +232,7 @@ public final class InteractionPersister {
                 final CvTopic authorConfidence = ControlledVocabularyRepository.getAuthorConfidenceTopic();
 
                 // check if that annotation could not be shared.
-                Collection _annotations = DaoFactory.getAnnotationDao().getByDescriptionLike(confidence.getValue());
+                Collection _annotations = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().getByDescriptionLike(confidence.getValue());
 
                 Annotation annotation = null;
                 for ( Iterator iterator3 = _annotations.iterator(); iterator3.hasNext() && annotation == null; ) {
@@ -246,13 +246,13 @@ public final class InteractionPersister {
                     // create it !
                     annotation = new Annotation( institution, authorConfidence );
                     annotation.setAnnotationText( confidence.getValue() );
-                    DaoFactory.getAnnotationDao().persist( annotation );
+                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().persist( annotation );
                 }
 
                 interaction.addAnnotation( annotation );
             }
 
-            DaoFactory.getInteractionDao().update( (InteractionImpl) interaction );
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInteractionDao().update( (InteractionImpl) interaction );
 
             // Now process the components...
             final Collection participants = interactionTag.getParticipants();
@@ -513,7 +513,7 @@ public final class InteractionPersister {
             if ( DEBUG ) {
                 System.out.println( "Search interaction by label: " + label );
             }
-            Collection interactions = DaoFactory.getInteractionDao().getByShortLabelLike(label);
+            Collection interactions = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInteractionDao().getByShortLabelLike(label);
 
             if ( interactions.size() == 0 ) {
 
@@ -992,7 +992,7 @@ public final class InteractionPersister {
                                 // the feature on the component (intactComponent.getBindingDomains.size() return null)
                                 // even if in the dabase the Component is associated to a Feature
                                 // Todo : Find why is that
-                                DaoFactory.getComponentDao().refresh(intactComponent);
+                                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getComponentDao().refresh(intactComponent);
 
                                 if ( DEBUG ) {
                                     System.out.print( "\tINTACT: " + intactComponent.getInteractor().getShortLabel() +
@@ -1137,7 +1137,7 @@ public final class InteractionPersister {
         Annotation annotation = null;
 
         final String text = annotationTag.getText();
-        Collection annotations = DaoFactory.getAnnotationDao().getByTextLike(text);
+        Collection annotations = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().getByTextLike(text);
 
         for ( Iterator iterator = annotations.iterator(); iterator.hasNext() && annotation == null; ) {
             Annotation anAnnotation = (Annotation) iterator.next();

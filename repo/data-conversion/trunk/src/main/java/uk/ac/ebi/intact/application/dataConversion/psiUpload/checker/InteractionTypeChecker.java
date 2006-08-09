@@ -10,8 +10,8 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.XrefTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvInteractionType;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +42,7 @@ public class InteractionTypeChecker {
             CvInteractionType cvInteractionType = null;
 
             try {
-                cvInteractionType = DaoFactory.getCvObjectDao(CvInteractionType.class).getByXref(id);
+                cvInteractionType = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvInteractionType.class).getByXref(id);
 
                 if ( cvInteractionType == null ) {
                     MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find CvInteractionType " +
