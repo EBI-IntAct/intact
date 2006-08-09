@@ -10,6 +10,7 @@
                     <publicationsFilename>classification_by_publications.txt</publicationsFilename>
                     <searchPattern>gavin-%</searchPattern>
                     <overwrite>true</overwrite>
+                    <experimentErrorFile>target/experiment-list-test/generate-list/experiment-error.log</experimentErrorFile>
                     <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
                 </configuration>
             </plugin>
