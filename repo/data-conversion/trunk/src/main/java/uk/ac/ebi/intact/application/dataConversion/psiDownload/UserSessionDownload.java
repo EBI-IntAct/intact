@@ -7,11 +7,11 @@ package uk.ac.ebi.intact.application.dataConversion.psiDownload;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
-import uk.ac.ebi.intact.util.AnnotationFilter;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.util.AnnotationFilter;
 
 import java.io.PrintStream;
 import java.util.*;
@@ -579,7 +579,7 @@ public class UserSessionDownload {
     public void filterObsoleteAnnotationTopic() throws IntactException {
 
         // search all CvTopic
-        Collection<CvTopic> cvTopics = DaoFactory.getCvObjectDao(CvTopic.class).getAll();
+        Collection<CvTopic> cvTopics = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class).getAll();
 
         // search for term obsolete
         CvTopic obsolete = null;

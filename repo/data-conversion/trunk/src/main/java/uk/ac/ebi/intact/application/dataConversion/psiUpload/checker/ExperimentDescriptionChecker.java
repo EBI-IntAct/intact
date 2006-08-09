@@ -9,9 +9,9 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.*;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.util.BioSourceFactory;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -43,7 +43,7 @@ public final class ExperimentDescriptionChecker {
             // we check once per shortlabel...
             Experiment experiment = null;
             try {
-                experiment = DaoFactory.getExperimentDao().getByShortLabel( shortlabel );
+                experiment = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao().getByShortLabel( shortlabel );
             } catch ( IntactException e ) {
                 MessageHolder.getInstance().addCheckerMessage( new Message( "An error occured while searching for " +
                                                                             "Experiment having the shortlabel: " + shortlabel ) );

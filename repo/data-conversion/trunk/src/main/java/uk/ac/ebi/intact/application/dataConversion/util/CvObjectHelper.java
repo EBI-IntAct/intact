@@ -5,15 +5,13 @@
  */
 package uk.ac.ebi.intact.application.dataConversion.util;
 
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvComponentRole;
 import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.model.CvDatabase;
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
-import java.util.Collection;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Gives easy access to some CVs
@@ -50,7 +48,8 @@ public class CvObjectHelper {
             return (CvObject) cache.get( psiId );
         }
 
-        CvObject cvObjet = DaoFactory.getCvObjectDao(CvObject.class).getByXref( psiId );
+        CvObject cvObjet = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
+                .getCvObjectDao(CvObject.class).getByXref( psiId );
 
         if( cvObjet != null ) {
             // update cache

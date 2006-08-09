@@ -11,8 +11,8 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.ProteinInte
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.RoleChecker;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.*;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -55,16 +55,16 @@ public class ProteinParticipantPersister {
         }
 
 
-        final Component component = new Component(DaoFactory.getInstitutionDao().getInstitution(),
+        final Component component = new Component(IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution(),
                 interaction, protein, role );
-        DaoFactory.getComponentDao().persist( component );
+        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getComponentDao().persist( component );
 
         // add expressedIn if it is available.
         ExpressedInTag expressedIn = proteinParticipant.getExpressedIn();
         if ( null != expressedIn ) {
             BioSource bs = ExpressedInChecker.getBioSource( expressedIn.getBioSourceShortlabel() );
             component.setExpressedIn( bs );
-            DaoFactory.getComponentDao().update( component );
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getComponentDao().update( component );
         }
 
         // TODO process the <confidence> tag here

@@ -6,15 +6,15 @@
 package uk.ac.ebi.intact.application.dataConversion.psiDownload;
 
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.io.*;
-import java.util.*;
 import java.sql.SQLException;
+import java.util.*;
 
 /**
  * Holds a Controlled Vocabulary Mapping.
@@ -331,7 +331,7 @@ public class CvMapping {
                              && ( toMI.startsWith( "MI:" ) || toMI.equals( STAR ) )
                              && ( !( fromMI.equals( STAR ) && toMI.equals( STAR ) ) ) ) {
 
-                            CvObjectDao<CvObject> cvObjectDao = DaoFactory.getCvObjectDao(CvObject.class);
+                            CvObjectDao<CvObject> cvObjectDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class);
 
                             CvObject fromCvObject = null;
                             if ( fromMI.startsWith( "MI:" ) ) {
@@ -349,7 +349,7 @@ public class CvMapping {
                                         Class clazz = cv.getClass();
 
                                         // there should be only one.
-                                        fromCvObject = (CvObject) DaoFactory.getCvObjectDao(clazz).getByXref(fromMI );
+                                        fromCvObject = (CvObject) IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(clazz).getByXref(fromMI );
                                     }
                                 }
 
@@ -456,7 +456,7 @@ public class CvMapping {
 
         try
         {
-            System.out.println( "Database: " + DaoFactory.getBaseDao().getDbName() );
+            System.out.println( "Database: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName() );
             long start = System.currentTimeMillis();
             mapping.loadFile( new File( args[ 0 ] ));
             long stop = System.currentTimeMillis();

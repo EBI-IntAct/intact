@@ -12,8 +12,8 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.FeatureTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.LocationTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.XrefTag;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.Iterator;
 
@@ -32,7 +32,7 @@ public class FeaturePersister {
         String typeId = featureTag.getFeatureType().getPsiDefinition().getId();
         CvFeatureType featureType = FeatureChecker.getCvFeatureType( typeId );
 
-        Institution institution = DaoFactory.getInstitutionDao().getInstitution();
+        Institution institution = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
 
         Feature feature = new Feature( institution,
                                        featureTag.getShortlabel(),
@@ -49,7 +49,7 @@ public class FeaturePersister {
         }
 
         // persist the object
-        DaoFactory.getFeatureDao().persist( feature );
+        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getFeatureDao().persist( feature );
 
         // add xrefs if any
         for ( Iterator iterator1 = featureTag.getXrefs().iterator(); iterator1.hasNext(); ) {
@@ -67,7 +67,7 @@ public class FeaturePersister {
                                         xrefTag.getVersion(),
                                         qualifier );
             feature.addXref( xref );
-            DaoFactory.getXrefDao().persist( xref );
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
         }
 
         LocationTag location = featureTag.getLocation();
@@ -96,7 +96,7 @@ public class FeaturePersister {
             // associate the range to a feature
             feature.addRange( range );
 
-            DaoFactory.getRangeDao().persist( range );
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getRangeDao().persist( range );
         }
     }
 }

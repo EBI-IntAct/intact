@@ -10,8 +10,8 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.AnnotationTag
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.ExperimentDescriptionTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.XrefTag;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
 import uk.ac.ebi.intact.util.cdb.UpdateExperimentAnnotationsFromPudmed;
 
@@ -49,8 +49,8 @@ public class ExperimentDescriptionPersister {
     public static Experiment persist( final ExperimentDescriptionTag experimentDescription )
             throws IntactException {
 
-        ExperimentDao expDao = DaoFactory.getExperimentDao();
-        Institution institution = DaoFactory.getInstitutionDao().getInstitution();
+        ExperimentDao expDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao();
+        Institution institution = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
 
         Experiment experiment;
         final String shortlabel = experimentDescription.getShortlabel();
@@ -100,7 +100,7 @@ public class ExperimentDescriptionPersister {
                                            ControlledVocabularyRepository.getPrimaryXrefQualifier() );
 
         experiment.addXref( primaryXref );
-        DaoFactory.getXrefDao().persist( primaryXref );
+        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( primaryXref );
 
         // based on that primary-reference, retreive information from CDB and update experiment's annotations.
         String pubmedId = primaryXref.getPrimaryId();
@@ -121,7 +121,7 @@ public class ExperimentDescriptionPersister {
                                          ControlledVocabularyRepository.getSeeAlsoXrefQualifier() );
 
             experiment.addXref( seeAlsoXref );
-            DaoFactory.getXrefDao().persist( seeAlsoXref );
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( seeAlsoXref );
         }
 
         // annotations
@@ -137,7 +137,7 @@ public class ExperimentDescriptionPersister {
                 // doesn't exist, then create a new Annotation
                 annotation = new Annotation( institution, cvTopic );
                 annotation.setAnnotationText( annotationTag.getText() );
-                DaoFactory.getAnnotationDao().persist( annotation );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().persist( annotation );
             }
 
             experiment.addAnnotation( annotation );
@@ -148,7 +148,7 @@ public class ExperimentDescriptionPersister {
         for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
             XrefTag xrefTag = (XrefTag) iterator.next();
 
-            ExperimentXref xref = new ExperimentXref( DaoFactory.getInstitutionDao().getInstitution(),
+            ExperimentXref xref = new ExperimentXref( IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution(),
                                   XrefChecker.getCvDatabase( xrefTag.getDb() ),
                                   xrefTag.getId(),
                                   xrefTag.getSecondary(),
@@ -156,7 +156,7 @@ public class ExperimentDescriptionPersister {
                                   null );
 
             experiment.addXref( xref );
-            DaoFactory.getXrefDao().persist( xref );
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
         }
 
         expDao.update( experiment );
@@ -181,7 +181,7 @@ public class ExperimentDescriptionPersister {
 
         final String text = annotationTag.getText();
 
-        Collection annotations = DaoFactory.getAnnotationDao().getByTextLike(text); 
+        Collection annotations = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().getByTextLike(text);
         Annotation annotation = null;
 
         if ( annotations != null ) {

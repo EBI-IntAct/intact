@@ -11,14 +11,10 @@
   */
 package uk.ac.ebi.intact.application.dataConversion.psiUpload.checker;
 
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
-import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.CvAliasType;
 import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
-import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.model.CvAliasType;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 
 public class ControlledVocabularyRepository {
@@ -71,16 +67,16 @@ public class ControlledVocabularyRepository {
         if ( initialisationDone == false ) {
 
             // load CVs by shortlabel
-            CvObjectDao<CvTopic> cvTopicDao = DaoFactory.getCvObjectDao(CvTopic.class);
+            CvObjectDao<CvTopic> cvTopicDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class);
             authorConfidenceTopic = cvTopicDao.getByShortLabel(CvTopic.AUTHOR_CONFIDENCE);
             noUniprotUpdate = cvTopicDao.getByShortLabel(CvTopic.NON_UNIPROT);
 
             // load CVs by MI reference
-            CvObjectDao<CvXrefQualifier> cvXrefQualifierDao = DaoFactory.getCvObjectDao(CvXrefQualifier.class);
+            CvObjectDao<CvXrefQualifier> cvXrefQualifierDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvXrefQualifier.class);
             primaryReferenceXrefQualifier = cvXrefQualifierDao.getByXref( CvXrefQualifier.PRIMARY_REFERENCE_MI_REF );
             seeAlsoXrefQualifier = cvXrefQualifierDao.getByXref( CvXrefQualifier.SEE_ALSO_MI_REF );
             identityXrefQualifier = cvXrefQualifierDao.getByXref( CvXrefQualifier.IDENTITY_MI_REF );
-            geneName = DaoFactory.getCvObjectDao(CvAliasType.class).getByXref( CvAliasType.GENE_NAME_MI_REF );
+            geneName = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvAliasType.class).getByXref( CvAliasType.GENE_NAME_MI_REF );
 
             initialisationDone = true;
         }

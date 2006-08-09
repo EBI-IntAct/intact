@@ -9,8 +9,8 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.ExpressedInTa
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -44,7 +44,7 @@ public final class ExpressedInChecker {
             BioSource bioSource = null;
             try {
 
-                Collection bioSources = DaoFactory.getBioSourceDao().getByShortLabelLike(shortlabel);
+                Collection bioSources = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBioSourceDao().getByShortLabelLike(shortlabel);
 
                 if ( bioSources.size() == 1 ) {
                     // TODO could be a problem if we want to use a biosource that has cell type [and/or] tissue.
