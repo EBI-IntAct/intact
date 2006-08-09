@@ -52,6 +52,12 @@ public abstract class ExperimentListGeneratorAbstractMojo extends AbstractMojo
     */
     protected File outputLogFile;
 
+    /**
+    * File containing the publications
+    * @parameter default-value="target/experiment-list/experiment-error.log"
+    */
+    protected File experimentErrorFile;
+
     public ExperimentListGeneratorAbstractMojo()
     {
     }
