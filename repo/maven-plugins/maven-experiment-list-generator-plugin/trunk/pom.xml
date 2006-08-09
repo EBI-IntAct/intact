@@ -27,7 +27,7 @@
         <dependency>
             <groupId>uk.ac.ebi.intact.app</groupId>
             <artifactId>data-conversion</artifactId>
-            <version>1.1.1</version>
+            <version>1.2-SNAPSHOT</version>
         </dependency>
         
         <dependency>
