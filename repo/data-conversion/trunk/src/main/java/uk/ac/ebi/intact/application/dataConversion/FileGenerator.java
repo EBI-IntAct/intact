@@ -25,8 +25,10 @@ import java.util.*;
  * persistence layer as usual.
  *
  * @author Samuel Kerrien, Chris Lewington
+ * @deprecated use NewFileGenerator instead
  * @version $Id$
  */
+@Deprecated
 public class FileGenerator {
 
     public static final String SLASH = System.getProperty("file.separator");

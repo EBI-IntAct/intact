@@ -66,7 +66,6 @@ public class ExperimentListGeneratorTest extends TestCase
         assertEquals("human_small-02_negative.xml lim-2006-4", eliSpecies.get(2).toString());
 
         List<ExperimentListItem> eliPublications = gen.generateClassificationByPublications();
-        log.debug("By publications: "+eliPublications);
 
         assertEquals(3, eliPublications.size());
         assertEquals("2006/16713569-01.xml lim-2006-2", eliPublications.get(0).toString());
@@ -75,6 +74,25 @@ public class ExperimentListGeneratorTest extends TestCase
 
         Set<Experiment> negativeExps = gen.getNegativeExperiments();
         assertEquals(1, negativeExps.size());
+    }
+
+    public void testGenerateListWithLargeScaleExperiment()
+    {
+        ExperimentListGenerator gen = new ExperimentListGenerator("giot-2003-%");
+
+        List<ExperimentListItem> eliSpecies = gen.generateClassificationBySpecies();
+        System.out.println("By species: "+eliSpecies);
+
+        assertEquals(11, eliSpecies.size());
+        assertEquals("drome_giot-2003-1_01.xml giot-2003-1 [1,2000]", eliSpecies.get(0).toString());
+        assertEquals("drome_giot-2003-1_10.xml giot-2003-1 [18001,20000]", eliSpecies.get(9).toString());
+
+        List<ExperimentListItem> eliPublications = gen.generateClassificationByPublications();
+        System.out.println("By pub: "+eliPublications);
+
+        assertEquals(11, eliPublications.size());
+        assertEquals("2004/14605208_giot-2003-1_04.xml giot-2003-1 [6001,8000]", eliPublications.get(3).toString());
+        assertEquals("2004/14605208_giot-2003-1_10.xml giot-2003-1 [18001,20000]", eliPublications.get(9).toString());
     }
 
     public void testOnlyPmid()
