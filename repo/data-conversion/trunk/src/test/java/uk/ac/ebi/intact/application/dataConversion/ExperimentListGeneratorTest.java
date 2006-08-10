@@ -54,14 +54,27 @@ public class ExperimentListGeneratorTest extends TestCase
 
     }
 
-    public void testNegativeExperimentCount()
+    public void testGenerateListWithNegative()
     {
+        ExperimentListGenerator gen = new ExperimentListGenerator("lim-2006-%");
 
-        ExperimentListGenerator gen = new ExperimentListGenerator("%-2004-%");
+        List<ExperimentListItem> eliSpecies = gen.generateClassificationBySpecies();
+
+        assertEquals(3, eliSpecies.size());
+        assertEquals("human_small-01.xml lim-2006-2", eliSpecies.get(0).toString());
+        assertEquals("human_small-02.xml lim-2006-3,lim-2006-1", eliSpecies.get(1).toString());
+        assertEquals("human_small-02_negative.xml lim-2006-4", eliSpecies.get(2).toString());
+
+        List<ExperimentListItem> eliPublications = gen.generateClassificationByPublications();
+        log.debug("By publications: "+eliPublications);
+
+        assertEquals(3, eliPublications.size());
+        assertEquals("2006/16713569-01.xml lim-2006-2", eliPublications.get(0).toString());
+        assertEquals("2006/16713569-02.xml lim-2006-3,lim-2006-1", eliPublications.get(1).toString());
+        assertEquals("2006/16713569-02_negative.xml lim-2006-4", eliPublications.get(2).toString());
 
         Set<Experiment> negativeExps = gen.getNegativeExperiments();
         assertEquals(1, negativeExps.size());
-
     }
 
     public void testOnlyPmid()
