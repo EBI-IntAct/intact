@@ -64,7 +64,7 @@ public class ExperimentListGeneratorTest extends TestCase
 
     }
 
-    public void testOnlyPmidTrue()
+    public void testOnlyPmid()
     {
 
         ExperimentListGenerator gen = new ExperimentListGenerator("human");
