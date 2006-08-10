@@ -99,7 +99,7 @@ public class ExperimentListGenerator {
      * Holds the shortLabels of any Experiments found to contain Interactions with 'negative' information. It has to
      * be a static because the method used for writing the classifications is a static...
      */
-    private Set<Experiment> negativeExperiments = new HashSet<Experiment>();
+    private Set<Experiment> negativeExperiments;
 
     private Map<String,String> experimentsWithErrors = new HashMap<String,String>();
 
@@ -139,9 +139,9 @@ public class ExperimentListGenerator {
 
     public Set<Experiment> getNegativeExperiments()
     {
-        if (!experimentsClassified)
+        if (negativeExperiments == null)
         {
-            classifyExperiments();
+            classifyNegatives();
         }
 
         return negativeExperiments;
@@ -265,9 +265,6 @@ public class ExperimentListGenerator {
             firstResult = firstResult + experimentsPerChunk;
 
         } while (!searchResults.isEmpty());
-
-        //Now all experiments have been sorted, check for those containing 'negative' results...
-        classifyNegatives();
 
         experimentsClassified = true;
 
@@ -401,6 +398,8 @@ public class ExperimentListGenerator {
      */
     private void classifyNegatives()
     {
+        negativeExperiments = new HashSet<Experiment>();
+
         negativeExperiments.addAll(ExperimentListGeneratorDao.getExpWithInteractionsContainingAnnotation(CvTopic.NEGATIVE, searchPattern));
         negativeExperiments.addAll(ExperimentListGeneratorDao.getContainingAnnotation(Experiment.class, CvTopic.NEGATIVE, searchPattern));
 
@@ -790,7 +789,7 @@ public class ExperimentListGenerator {
     private boolean isNegative(String experimentLabel)
     {
 
-        for (Experiment experiment : negativeExperiments)
+        for (Experiment experiment : getNegativeExperiments())
         {
             if (experiment.getShortLabel().equals(experimentLabel))
             {
