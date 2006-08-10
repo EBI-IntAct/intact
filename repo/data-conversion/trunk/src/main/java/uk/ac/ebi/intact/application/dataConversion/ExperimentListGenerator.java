@@ -51,6 +51,8 @@ public class ExperimentListGenerator {
 
     public static final String NEW_LINE = System.getProperty("line.separator");
 
+    private static final int MAX_EXPERIMENTS_PER_CHUNK_DEFAULT = 100;
+
     private enum Classification
     { SPECIES, PUBLICATIONS };
 
@@ -64,23 +66,24 @@ public class ExperimentListGenerator {
      */
     protected boolean onlyWithPmid = true;
 
-    /**
-     * Current time.
-     */
-    private static String CURRENT_TIME;
-
-    static
-    {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd@HH.mm");
-        CURRENT_TIME = formatter.format(new Date());
-        formatter = null;
-    }
-
     private List<ExperimentListItem> speciesListItems = new ArrayList<ExperimentListItem>();
     private List<ExperimentListItem> publicationsListItems = new ArrayList<ExperimentListItem>();
 
     private boolean experimentsClassified;
     private Set<String> filteredExperimentAcs;
+
+    private int experimentsPerChunk = MAX_EXPERIMENTS_PER_CHUNK_DEFAULT;
+
+    /**
+     * The key being the experiment AC and the value the number of interactions for that experiment
+     */
+    private Map<String,Integer> interactionCount;
+
+    private Map<String,String> expAcToPmid;
+
+    private Map<String,List<String>> expAcToTaxid;
+
+    private Map<String,BioSource> targetSpeciesCache = new HashMap<String,BioSource>();
 
     /**
      * Classification of experiments by pubmedId
@@ -180,13 +183,12 @@ public class ExperimentListGenerator {
         // PSI data for it then write it to a file....
         Collection<Experiment> searchResults;
         int firstResult = 0;
-        int maxResults = 50;
 
         Set<String> experimentFilter = getFilteredExperimentAcs();
 
         do
         {
-            searchResults = getExperiments(firstResult, maxResults);
+            searchResults = getExperiments(firstResult, experimentsPerChunk);
 
             // Split the list of experiments into species- and size-specific files
             for (Experiment experiment : searchResults)
@@ -197,7 +199,7 @@ public class ExperimentListGenerator {
                     continue;
                 }
 
-                int interactionCount = getDaoFactory().getExperimentDao().countInteractionsForExperimentWithAc(experiment.getAc());
+                int interactionCount = interactionsForExperiment(experiment.getAc());
                 // Skip empty experiments and give a warning about'em
                 if (interactionCount == 0)
                 {
@@ -208,12 +210,12 @@ public class ExperimentListGenerator {
 
                 // 1. Get the species of one of the interactors of the experiment.
                 //    The bioSource of the Experiment is irrelevant, as it may be an auxiliary experimental system.
-                Collection<BioSource> sources = getTargetSpecies(experiment);
+                Collection<BioSource> sources = getTargetSpecies(experiment.getAc());
 
                 log.debug("Classifying " + experiment.getShortLabel() + " (" + interactionCount + " interaction" + (interactionCount > 1 ? "s" : "") + ")");
 
                 // 2. get the pubmedId (primary-ref)
-                String pubmedId = getPubmedId(experiment);
+                String pubmedId = String.valueOf(getPubmedId(experiment.getAc()));
 
                 // 3. create the classification by publication
                 if (pubmedId != null)
@@ -260,7 +262,7 @@ public class ExperimentListGenerator {
                 }
             }
 
-            firstResult = firstResult + maxResults;
+            firstResult = firstResult + experimentsPerChunk;
 
         } while (!searchResults.isEmpty());
 
@@ -295,90 +297,95 @@ public class ExperimentListGenerator {
     /**
      * Retreive BioSources corresponding ot the target-species assigned to the given experiment.
      *
-     * @param experiment The experiment for which we want to get all target-species.
+     * @param experimentAc  The experiment AC for which we want to get all target-species.
      * @return A collection of BioSource, or empty if non is found.
      * @throws IntactException if an error occurs.
      */
-    private static Collection<BioSource> getTargetSpecies(Experiment experiment) throws IntactException
+    private Collection<BioSource> getTargetSpecies(String experimentAc) throws IntactException
     {
-        Collection<BioSource> species = new ArrayList<BioSource>();
+        List<String> taxIds = taxIdsForExperiment(experimentAc);
 
-        for (ExperimentXref xref : experiment.getXrefs())
+        List<BioSource> targetSpeciesList = new ArrayList<BioSource>();
+
+        for (String taxId : taxIds)
         {
-            if (CvXrefQualifier.TARGET_SPECIES.equals(xref.getCvXrefQualifier().getShortLabel()))
+            if (targetSpeciesCache.containsKey(taxId))
             {
-                String taxid = xref.getPrimaryId();
-                Collection<BioSource> bioSources = getDaoFactory().getBioSourceDao().getByTaxonId(taxid);
+                targetSpeciesList.add(targetSpeciesCache.get(taxId));
+            }
 
-                if (bioSources.isEmpty())
-                {
-                    throw new IntactException("Experiment(" + experiment.getAc() + ", " + experiment.getShortLabel() +
-                            ") has a target-species:" + taxid +
-                            " but we cannot find the corresponding BioSource.");
-                }
+            Collection<BioSource> bioSources = getDaoFactory().getBioSourceDao().getByTaxonId(taxId);
 
-                // if choice given, get the less specific one (without tissue, cell type...)
-                BioSource selectedBioSource = null;
-                for (Iterator iterator1 = bioSources.iterator(); iterator1.hasNext() && selectedBioSource == null;)
-                {
-                    BioSource bioSource = (BioSource) iterator1.next();
-                    if (bioSource.getCvCellType() == null && bioSource.getCvTissue() == null
-                            &&
-                            bioSource.getCvCellCycle() == null && bioSource.getCvCompartment() == null)
-                    {
-                        selectedBioSource = bioSource;
-                    }
-                }
+            if (bioSources.isEmpty())
+            {
+                throw new IntactException("Experiment(" + experimentAc + ") has a target-species:" + taxId +
+                        " but we cannot find the corresponding BioSource.");
+            }
 
-                if (selectedBioSource != null)
+            BioSource targetSpecies;
+
+            // if choice given, get the less specific one (without tissue, cell type...)
+            BioSource selectedBioSource = null;
+            for (Iterator iterator1 = bioSources.iterator(); iterator1.hasNext() && selectedBioSource == null;)
+            {
+                BioSource bioSource = (BioSource) iterator1.next();
+                if (bioSource.getCvCellType() == null && bioSource.getCvTissue() == null
+                        &&
+                        bioSource.getCvCellCycle() == null && bioSource.getCvCompartment() == null)
                 {
-                    species.add(selectedBioSource);
-                }
-                else
-                {
-                    // add the first one we find
-                    BioSource bioSource = bioSources.iterator().next();
-                    species.add(bioSource);
+                    selectedBioSource = bioSource;
                 }
             }
+
+            if (selectedBioSource != null)
+            {
+                targetSpecies = selectedBioSource;
+            }
+            else
+            {
+                // add the first one we find
+                targetSpecies = bioSources.iterator().next();
+            }
+
+            targetSpeciesCache.put(experimentAc, targetSpecies);
+            targetSpeciesList.add(targetSpecies);
         }
 
-        return species;
+        return targetSpeciesList;
     }
 
     /**
-         * Fetch publication primaryId from experiment.
-         *
-         * @param experiment the experiment for which we want the primary pubmed ID.
-         *
-         * @return a pubmed Id or null if none found.
-         */
-        private String getPubmedId( Experiment experiment ) {
-            String pubmedId = null;
-
-            for ( Iterator iterator1 = experiment.getXrefs().iterator(); iterator1.hasNext() && null == pubmedId; ) {
-                Xref xref = (Xref) iterator1.next();
-
-                if ( CvDatabase.PUBMED.equals( xref.getCvDatabase().getShortLabel() ) ) {
-
-                    if ( xref.getCvXrefQualifier() != null
-                         &&
-                         CvXrefQualifier.PRIMARY_REFERENCE.equals( xref.getCvXrefQualifier().getShortLabel() ) ) {
-
-                        try {
-
-                            Integer.parseInt( xref.getPrimaryId() );
-                            pubmedId = xref.getPrimaryId();
-
-                        } catch ( NumberFormatException e ) {
-                            log.debug( experiment.getShortLabel() + " has pubmedId(" + xref.getPrimaryId() + ") which  is not an integer value, skip it." );
-                        }
-                    }
-                }
-            }
-
-            return pubmedId;
+     * Fetch publication primaryId from experiment.
+     *
+     * @param experimentAc the experiment AC for which we want the primary pubmed ID.
+     * @return a pubmed Id or null if none found.
+     */
+    private String getPubmedId(String experimentAc)
+    {
+        if (expAcToPmid == null)
+        {
+            // map all exps to pmid
+            expAcToPmid = ExperimentListGeneratorDao.getExperimentAcAndPmid(searchPattern);
         }
+
+        String pubmedId = expAcToPmid.get(experimentAc);
+
+        if (pubmedId == null)
+        {
+            experimentsWithErrors.put(experimentAc, "Null pubmed Id");
+        }
+
+        try
+        {
+            Integer.parseInt(pubmedId);
+        }
+        catch (NumberFormatException e)
+        {
+            experimentsWithErrors.put(experimentAc, "Not a number pubmedId");
+        }
+
+        return pubmedId;
+    }
 
     /**
      * Checks for a negative interaction. NB This will have to be done using SQL otherwise we end up materializing all
@@ -529,7 +536,7 @@ public class ExperimentListGenerator {
      * @param largeScalePrefix the prefix for large scale files.
      * @return a map (filename_prefix -> subset)
      */
-    private static Map<String, Collection<SimplifiedAnnotatedObject<Experiment>>> splitExperiment(Collection<SimplifiedAnnotatedObject<Experiment>> experiments, String smallScalePrefix, String largeScalePrefix)
+    private Map<String, Collection<SimplifiedAnnotatedObject<Experiment>>> splitExperiment(Collection<SimplifiedAnnotatedObject<Experiment>> experiments, String smallScalePrefix, String largeScalePrefix)
     {
 
         final Collection<Collection<SimplifiedAnnotatedObject<Experiment>>> smallScaleChunks = new ArrayList<Collection<SimplifiedAnnotatedObject<Experiment>>>();
@@ -547,7 +554,7 @@ public class ExperimentListGenerator {
         for (SimplifiedAnnotatedObject<Experiment> experiment : experiments)
         {
 
-            final int size = getDaoFactory().getExperimentDao().countInteractionsForExperimentWithAc(experiment.getAc());
+            final int size = interactionsForExperiment(experiment.getAc());
 
             if (size >= LARGE_SCALE_CHUNK_SIZE)
             {
@@ -793,6 +800,26 @@ public class ExperimentListGenerator {
         return false;
     }
 
+    private int interactionsForExperiment(String experimentAc)
+    {
+        if (interactionCount == null)
+        {
+            interactionCount = ExperimentListGeneratorDao.countInteractionCountsForExperiments(searchPattern);
+        }
+
+        return interactionCount.get(experimentAc);
+    }
+
+    private List<String> taxIdsForExperiment(String experimentAc)
+    {
+        if (expAcToTaxid == null)
+        {
+            expAcToTaxid = ExperimentListGeneratorDao.getExperimentAcAndTaxids(searchPattern);
+        }
+
+        return expAcToTaxid.get(experimentAc);
+    }
+
     public String getSearchPattern()
     {
         return searchPattern;
@@ -806,6 +833,16 @@ public class ExperimentListGenerator {
     public void setOnlyWithPmid(boolean onlyWithPmid)
     {
         this.onlyWithPmid = onlyWithPmid;
+    }
+
+    public int getExperimentsPerChunk()
+    {
+        return experimentsPerChunk;
+    }
+
+    public void setExperimentsPerChunk(int experimentsPerChunk)
+    {
+        this.experimentsPerChunk = experimentsPerChunk;
     }
 
     private static DaoFactory getDaoFactory()
@@ -842,6 +879,8 @@ public class ExperimentListGenerator {
         {
             return created;
         }
+
+
 
         @Override
         public boolean equals(Object obj)

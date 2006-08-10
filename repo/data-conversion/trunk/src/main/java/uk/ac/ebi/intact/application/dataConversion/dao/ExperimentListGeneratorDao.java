@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.application.dataConversion.dao;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Projection;
 import uk.ac.ebi.intact.config.impl.StandardCoreDataConfig;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.AnnotatedObjectImpl;
@@ -18,6 +19,7 @@ import uk.ac.ebi.intact.model.Experiment;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 /**
  * TODO: comment this!
@@ -72,22 +74,97 @@ public class ExperimentListGeneratorDao
             filteredExpsMap.put((String)exp[0], (String)exp[1]);
         }
 
-        List<String> expsWithPmid = getSession().createCriteria(Experiment.class, "exp")
-                .add(Restrictions.like("exp.shortLabel", labelLike))
-                .createCriteria("xrefs")
-                .createAlias("cvDatabase", "cvDb")
-                .createAlias("cvXrefQualifier", "cvXrefQual")
-                .add(Restrictions.eq("cvDb.shortLabel", CvDatabase.PUBMED))
-                .add(Restrictions.eq("cvXrefQual.shortLabel", CvXrefQualifier.PRIMARY_REFERENCE))
-                .setProjection(Projections.distinct(Projections.property("exp.ac")))
-                .list();
+        Map<String,String> expsAndPmid = getExperimentAcAndPmid(labelLike);
         
-        for (String expWithPmid : expsWithPmid)
+        for (String expWithPmid : expsAndPmid.keySet())
         {
             filteredExpsMap.remove(expWithPmid);
         }
 
         return filteredExpsMap;
+    }
+
+    public static Map<String,String> getExperimentAcAndPmid(String shortLabelLike)
+    {
+         List<Object[]> expsAndPmidResults = getSession().createCriteria(Experiment.class)
+                 .add(Restrictions.like("shortLabel", shortLabelLike))
+                 .createAlias("xrefs", "xref")
+                 .createAlias("xref.cvDatabase", "cvDb")
+                .createAlias("xref.cvXrefQualifier", "cvXrefQual")
+                .add(Restrictions.eq("cvDb.shortLabel", CvDatabase.PUBMED))
+                .add(Restrictions.eq("cvXrefQual.shortLabel", CvXrefQualifier.PRIMARY_REFERENCE))
+                 .setProjection(Projections.projectionList()
+                         .add(Projections.distinct(Projections.property("ac")))
+                         .add(Projections.property("xref.primaryId"))).list();
+
+        Map<String,String> expAndPmids = new HashMap<String,String>();
+
+        for (Object[] expAndPmid : expsAndPmidResults)
+        {
+            String pmid = (String)expAndPmid[1];
+
+            if (pmid != null)
+            {
+                expAndPmids.put((String)expAndPmid[0], pmid);
+            }
+        }
+
+        return expAndPmids;
+
+    }
+
+    public static Map<String,List<String>> getExperimentAcAndTaxids(String shortLabelLike)
+    {
+         List<Object[]> expsAndTaxidResults = getSession().createCriteria(Experiment.class)
+                 .add(Restrictions.like("shortLabel", shortLabelLike))
+                 .createAlias("xrefs", "xref")
+                .createAlias("xref.cvXrefQualifier", "cvXrefQual")
+                .add(Restrictions.eq("cvXrefQual.shortLabel", CvXrefQualifier.TARGET_SPECIES))
+                 .setProjection(Projections.projectionList()
+                         .add(Projections.distinct(Projections.property("ac")))
+                         .add(Projections.property("xref.primaryId"))).list();
+
+        Map<String,List<String>> expAndTaxid = new HashMap<String,List<String>>();
+
+        for (Object[] expAndTaxidResult : expsAndTaxidResults)
+        {
+            String expAc = (String)expAndTaxidResult[0];
+            String taxId = (String)expAndTaxidResult[1];
+
+            if (expAndTaxid.containsKey(expAc))
+            {
+                expAndTaxid.get(expAc).add(taxId);
+            }
+            else
+            {
+                List<String> taxIds = new ArrayList<String>();
+                taxIds.add(taxId);
+                expAndTaxid.put(expAc, taxIds);
+            }
+        }
+
+        return expAndTaxid;
+    }
+
+    public static Map<String,Integer> countInteractionCountsForExperiments(String shortLabelLike)
+    {
+         List<Object[]> expWithInteractionsCount = getSession().createCriteria(Experiment.class)
+                 .add(Restrictions.like("shortLabel", shortLabelLike))
+                 .createAlias("interactions", "int")
+                 .setProjection(Projections.projectionList()
+                         .add(Projections.distinct(Projections.property("ac")))
+                         .add(Projections.count("int.ac"))
+                         .add(Projections.groupProperty("ac"))).list();
+
+       Map<String,Integer> interactionCountByExpAc = new HashMap<String,Integer>();
+
+       for (Object[] expAndIntCount : expWithInteractionsCount)
+        {
+            interactionCountByExpAc.put((String)expAndIntCount[0], (Integer)expAndIntCount[1]);
+        }
+
+        return interactionCountByExpAc;
+
     }
 
     private static Session getSession()

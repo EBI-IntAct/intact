@@ -29,7 +29,7 @@ public class ExperimentListGeneratorTest
     public void testGenerateList()
     {
 
-        ExperimentListGenerator gen = new ExperimentListGenerator("gavin%");
+        ExperimentListGenerator gen = new ExperimentListGenerator("ab%");
         gen.setOnlyWithPmid(true);
 
         List<ExperimentListItem> eliSpecies = gen.generateClassificationBySpecies();
