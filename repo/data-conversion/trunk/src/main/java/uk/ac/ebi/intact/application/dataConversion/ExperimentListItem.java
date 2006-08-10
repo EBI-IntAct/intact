@@ -8,6 +8,9 @@ package uk.ac.ebi.intact.application.dataConversion;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.util.Collection;
+import java.util.Date;
+
 /**
  * TODO comment this!
  *
@@ -20,27 +23,81 @@ public class ExperimentListItem
 
     private static final Log log = LogFactory.getLog(ExperimentListItem.class);
 
-    private String filename;
-    private String pattern;
+    private Collection<String> experimentLabels;
+    private String name;
+    private boolean negative;
+    private Integer chunkNumber;
 
 
-    public ExperimentListItem(String filename, String pattern)
+    public ExperimentListItem(Collection<String> experimentLabels, String name, boolean negative, Integer chunkNumber)
     {
-        this.filename = filename;
-        this.pattern = pattern;
+        this.experimentLabels = experimentLabels;
+        this.name = name;
+        this.negative = negative;
+        this.chunkNumber = chunkNumber;
     }
-
 
     public String getFilename()
     {
-        return filename;
+        String strNegative = "";
+        if (negative)
+        {
+            strNegative = "_negative";
+        }
+
+        String fileNumber = "";
+        if (chunkNumber != null)
+        {
+            String indexPrefix = "-";
+            if (chunkNumber < 10)
+            {
+                indexPrefix = "-0";
+            }
+            fileNumber = indexPrefix+chunkNumber;
+        }
+
+        return name + fileNumber + strNegative + FileHelper.XML_FILE_EXTENSION;
     }
 
     public String getPattern()
     {
-        return pattern;
+        StringBuffer sb = new StringBuffer();
+
+        int i=0;
+        for (String experimentLabel : experimentLabels)
+        {
+            if (i>0)
+            {
+               sb.append(",");
+            }
+
+            sb.append(experimentLabel);
+
+            i++;
+        }
+
+        return sb.toString();
     }
 
+    public Integer getChunkNumber()
+    {
+        return chunkNumber;
+    }
+
+    public boolean isNegative()
+    {
+        return negative;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public Collection<String> getExperimentLabels()
+    {
+        return experimentLabels;
+    }
 
     @Override
     public boolean equals(Object obj)
@@ -52,18 +109,18 @@ public class ExperimentListItem
 
         ExperimentListItem eli = (ExperimentListItem) obj;
 
-        return filename.equals(eli.getFilename()) && pattern.equals(eli.getPattern());
+        return getFilename().equals(eli.getFilename()) && getPattern().equals(eli.getPattern());
     }
 
     @Override
     public String toString()
     {
-        return filename+" "+pattern;
+        return getFilename()+" "+getPattern();
     }
 
     @Override
     public int hashCode()
     {
-        return 47*filename.hashCode()*pattern.hashCode();
+        return 47*getFilename().hashCode()*getPattern().hashCode();
     }
 }

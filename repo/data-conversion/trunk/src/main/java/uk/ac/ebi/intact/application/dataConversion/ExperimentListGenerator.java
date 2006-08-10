@@ -450,12 +450,10 @@ public class ExperimentListGenerator {
 
             // split the set into subset of size under SMALL_SCALE_LIMIT
             String filePrefixGlobal = bioSource.getShortLabel().replace(' ', '-');
-            Map<String, Collection<SimplifiedAnnotatedObject<Experiment>>> filename2experimentList =
-                    splitExperiment(smallScaleExp,
+            createExpListItems(smallScaleExp,
                             filePrefixGlobal + "_" + SMALL, // small scale
-                            filePrefixGlobal);             // large scale
-
-            createExperimentListItems(filename2experimentList, Classification.SPECIES);
+                            filePrefixGlobal,              // large scale
+                            Classification.SPECIES);
         }
     }
 
@@ -476,72 +474,22 @@ public class ExperimentListGenerator {
             // get experiments associated to that pubmed ID.
             Set<SimplifiedAnnotatedObject<Experiment>> experiments = (Set<SimplifiedAnnotatedObject<Experiment>>) pubmed2experimentSet.get(pubmedid);
 
-            // all experiment under that pubmed if should have the same year
-            SimplifiedAnnotatedObject<Experiment> exp = experiments.iterator().next();
-
             String year = getCreatedYear(experiments);
             String prefix = year + FileGenerator.SLASH;
 
             // split the set into subset of size under SMALL_SCALE_LIMIT
-            Map<String, Collection<SimplifiedAnnotatedObject<Experiment>>> file2experimentSet = splitExperiment(experiments,
+            createExpListItems(experiments,
                     prefix + pubmedid,   // small scale
-                    prefix + pubmedid); // large scale
+                    prefix + pubmedid, // large scale
+                    Classification.PUBLICATIONS);
 
-            // write the line in the pubmed classification file
-            createExperimentListItems(file2experimentSet, Classification.PUBLICATIONS);
         } // pubmeds
     }
 
-    /**
-     * Given a set of Experiments, it returns the year of the date of creation of the oldest experiment.
-     *
-     * @param experiments experiments
-     * @return an int corresponding to the year.
-     */
 
-    private static String getCreatedYear(Set<SimplifiedAnnotatedObject<Experiment>> experiments)
+    private void createExpListItems(Collection<SimplifiedAnnotatedObject<Experiment>> experiments, String smallScalePrefix, String largeScalePrefix, Classification classification)
     {
-
-        if (experiments.isEmpty())
-        {
-            throw new IllegalArgumentException("The given Set of Experiments is empty");
-        }
-
-        int year = Integer.MAX_VALUE;
-
-        for (SimplifiedAnnotatedObject<Experiment> exp : experiments)
-        {
-            Date created = exp.getCreated();
-
-            java.sql.Date d = new java.sql.Date(created.getTime());
-            Calendar c = new GregorianCalendar();
-            c.setTime(d);
-
-            if (year > c.get(Calendar.YEAR))
-            {
-                year = c.get(Calendar.YEAR);
-            }
-        }
-
-        return String.valueOf(year);
-    }
-
-    /**
-     * Split a set of experiment into (if necessary) subsets so that each subset has not more interaction than
-     * LARGE_SCALE_CHUNK_SIZE.
-     *
-     * @param experiments      the set of experiments.
-     * @param smallScalePrefix the prefix for small scale files.
-     * @param largeScalePrefix the prefix for large scale files.
-     * @return a map (filename_prefix -> subset)
-     */
-    private Map<String, Collection<SimplifiedAnnotatedObject<Experiment>>> splitExperiment(Collection<SimplifiedAnnotatedObject<Experiment>> experiments, String smallScalePrefix, String largeScalePrefix)
-    {
-
-        final Collection<Collection<SimplifiedAnnotatedObject<Experiment>>> smallScaleChunks = new ArrayList<Collection<SimplifiedAnnotatedObject<Experiment>>>();
-
-        final Map<String, Collection<SimplifiedAnnotatedObject<Experiment>>> name2smallScale = new HashMap<String, Collection<SimplifiedAnnotatedObject<Experiment>>>();
-        final Map<String, Collection<SimplifiedAnnotatedObject<Experiment>>> name2largeScale = new HashMap<String, Collection<SimplifiedAnnotatedObject<Experiment>>>();
+         final Collection<Collection<SimplifiedAnnotatedObject<Experiment>>> smallScaleChunks = new ArrayList<Collection<SimplifiedAnnotatedObject<Experiment>>>();
 
         Collection<SimplifiedAnnotatedObject<Experiment>> subset = null;
 
@@ -567,7 +515,7 @@ public class ExperimentListGenerator {
                 String prefix = largeScalePrefix + "_" + experiment.getShortLabel() + "[" + LARGE_SCALE_CHUNK_SIZE + "]";
 
                 // put it in the map
-                name2largeScale.put(prefix, largeScale);
+                createExperimentListItems(prefix, largeScale, null, classification);
 
             }
             else
@@ -636,116 +584,87 @@ public class ExperimentListGenerator {
         // 2. Look at the list of small scale chunks and generate their filename prefixes
         //    Note: no index if only one chunk
         boolean hasMoreThanOneChunk = (smallScaleChunks.size() > 1);
-        int index = 1;
-        String prefix = null;
+        Integer index = 0;
+
         for (Collection<SimplifiedAnnotatedObject<Experiment>> chunk : smallScaleChunks)
         {
             // generate a prefix
             if (hasMoreThanOneChunk)
             {
-                // other prefix in use, use the next chunk id
-
-                // prefix index with a zero if lower than 10, so we get 01, 02, ..., 10, 11 ...
-                String indexPrefix = "-";
-                if (index < 10)
-                {
-                    indexPrefix = "-0";
-                }
-
-                prefix = smallScalePrefix + indexPrefix + index;
                 index++;
             }
             else
             {
-                // if no other subset have been stored, we don't bother with chunk id.
-                prefix = smallScalePrefix;
+                index = null;
             }
 
             // add to the map
-            name2smallScale.put(prefix, chunk);
+            createExperimentListItems(smallScalePrefix, chunk, index, classification);
         }
 
-        // 3. merge both maps
-        name2smallScale.putAll(name2largeScale);
-
-        // return merged result
-        return name2smallScale;
     }
 
+    private void createExperimentListItems(String name, Collection<SimplifiedAnnotatedObject<Experiment>> exps, Integer chunkNumber, Classification classification)
+    {
+        List<String> labels = new ArrayList<String>();
+        List<String> labelsNegative = new ArrayList<String>();
+
+        for (SimplifiedAnnotatedObject exp : exps)
+        {
+            if (isNegative(exp.getShortLabel()))
+            {
+                labelsNegative.add(exp.getShortLabel());
+            }
+            else
+            {
+                labels.add(exp.getShortLabel());
+            }
+        }
+
+        if (!labels.isEmpty())
+        {
+            addToList(new ExperimentListItem(labels, name, false, chunkNumber), classification);
+        }
+
+        if (!labelsNegative.isEmpty())
+        {
+            addToList(new ExperimentListItem(labelsNegative, name, true, chunkNumber), classification);
+        }
+    }
+
+
     /**
-     * Given a Map containing the following associations: filename -> List of Experiment, generate a flat file
-     * representing these associations for later processing.
+     * Given a set of Experiments, it returns the year of the date of creation of the oldest experiment.
      *
-     * @param file2experimentSet the map upon which we generate the file.
-     * @throws java.io.IOException
+     * @param experiments experiments
+     * @return an int corresponding to the year.
      */
-    private void createExperimentListItems(Map<String, Collection<SimplifiedAnnotatedObject<Experiment>>> file2experimentSet, Classification classification)
+
+    private static String getCreatedYear(Set<SimplifiedAnnotatedObject<Experiment>> experiments)
     {
 
-        // write each subset into the classification file
-        List<String> orderedFilenames = new ArrayList<String>(file2experimentSet.keySet());
-        Collections.sort(orderedFilenames);
-
-        for (String filePrefix : orderedFilenames)
+        if (experiments.isEmpty())
         {
-            Collection<SimplifiedAnnotatedObject<Experiment>> chunk = file2experimentSet.get(filePrefix);
+            throw new IllegalArgumentException("The given Set of Experiments is empty");
+        }
 
-            //buffers to hold the labels for small and negative small exps
-            StringBuffer negPattern = new StringBuffer(20);  // AVG 1 experiment
-            StringBuffer pattern = new StringBuffer(5 * 20); // AVG 5 experiments
+        int year = Integer.MAX_VALUE;
 
-            // sort the collection by alphabetical order
-            List<String> shortlabels = getSortedShortlabel(chunk);
-            for (Iterator<String> iterator2 = shortlabels.iterator(); iterator2.hasNext();)
+        for (SimplifiedAnnotatedObject<Experiment> exp : experiments)
+        {
+            Date created = exp.getCreated();
+
+            java.sql.Date d = new java.sql.Date(created.getTime());
+            Calendar c = new GregorianCalendar();
+            c.setTime(d);
+
+            if (year > c.get(Calendar.YEAR))
             {
-                String shortlabel = iterator2.next();
-
-                //put the Experiment label in the correct place, depending upon
-                //its sub-classification (ie negative or not)
-                boolean negative = isNegative(shortlabel);
-                if (negative)
-                {
-                    negPattern.append(shortlabel);
-                }
-                else
-                {
-                    pattern.append(shortlabel);
-                }
-
-                if (iterator2.hasNext())
-                {
-                    if (negative)
-                    {
-                        negPattern.append(',');
-                    }
-                    else
-                    {
-                        pattern.append(',');
-                    }
-                }
+                year = c.get(Calendar.YEAR);
             }
+        }
 
-            // classification for this BioSource is output as:
-            // '<filename> <comma-seperated shortLabel list>'
-            // only print patterns if they are non-empty
-            if (pattern.length() != 0)
-            {
-                String smallFilename = filePrefix + FileHelper.XML_FILE_EXTENSION;
-
-                ExperimentListItem eli = new ExperimentListItem(smallFilename, pattern.toString());
-                addToList(eli, classification);
-                log.debug(eli);
-            }
-
-            if (negPattern.length() != 0)
-            {
-                String negativeFilename = filePrefix + "_negative" + FileHelper.XML_FILE_EXTENSION;
-
-                ExperimentListItem eli = new ExperimentListItem(negativeFilename, negPattern.toString());
-                addToList(eli, classification);
-                log.debug(eli);
-            }
-        } // chunk of experiments
+        return String.valueOf(year);
     }
 
     private void addToList(ExperimentListItem eli, Classification classification)
