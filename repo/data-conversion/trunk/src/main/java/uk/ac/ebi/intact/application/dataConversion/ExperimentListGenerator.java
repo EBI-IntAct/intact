@@ -39,12 +39,12 @@ public class ExperimentListGenerator {
    /**
      * Maximum count of interaction for a small scale experiment.
      */
-    public static final int SMALL_SCALE_LIMIT = 500;
+    public static final int SMALL_SCALE_LIMIT_DEFAULT = 500;
 
     /**
      * if an experiment has more than this many interactions it is considered to be large scale.
      */
-    public static final int LARGE_SCALE_CHUNK_SIZE = 2000;
+    public static final int LARGE_SCALE_CHUNK_SIZE_DEFAULT = 2000;
 
     public static final String SMALL = "small";
     public static final String LARGE = "large";
@@ -73,6 +73,8 @@ public class ExperimentListGenerator {
     private Set<String> filteredExperimentAcs;
 
     private int experimentsPerChunk = MAX_EXPERIMENTS_PER_CHUNK_DEFAULT;
+    private int smallScaleLimit = SMALL_SCALE_LIMIT_DEFAULT;
+    private int largeScaleChunkSize = LARGE_SCALE_CHUNK_SIZE_DEFAULT;
 
     /**
      * The key being the experiment AC and the value the number of interactions for that experiment
@@ -503,26 +505,28 @@ public class ExperimentListGenerator {
 
             final int size = interactionsForExperiment(experiment.getAc());
 
-            if (size >= LARGE_SCALE_CHUNK_SIZE)
+            if (size >= largeScaleChunkSize)
             {
                 // Process large scale dataset appart from the small ones.
 
                 // generate the large scale format: filePrefix[chunkSize]
                 Collection<SimplifiedAnnotatedObject<Experiment>> largeScale = new ArrayList<SimplifiedAnnotatedObject<Experiment>>(1);
                 largeScale.add(experiment);
-                // [LARGE_SCALE_CHUNK_SIZE] should be interpreted when producing XML as split that experiment into
-                // chunks of size LARGE_SCALE_CHUNK_SIZE.
-                String prefix = largeScalePrefix + "_" + experiment.getShortLabel() + "[" + LARGE_SCALE_CHUNK_SIZE + "]";
 
                 // put it in the map
-                createExperimentListItems(prefix, largeScale, null, classification);
+                int chunk = 1;
+                for (int i=0; i<size; i=i+largeScaleChunkSize)
+                {
+                    createExperimentListItems(largeScalePrefix, largeScale, chunk, classification, largeScaleChunkSize);
+                    chunk++;
+                }
 
             }
             else
             {
                 // that experiment is not large scale.
 
-                if (size > SMALL_SCALE_LIMIT)
+                if (size > smallScaleLimit)
                 {
 
                     // that experiment by itself is a chunk.
@@ -534,7 +538,7 @@ public class ExperimentListGenerator {
 
 
                 }
-                else if ((sum + size) >= SMALL_SCALE_LIMIT)
+                else if ((sum + size) >= smallScaleLimit)
                 {
 
                     // that experiment would overload that chunk ... then store the subset.
@@ -599,12 +603,12 @@ public class ExperimentListGenerator {
             }
 
             // add to the map
-            createExperimentListItems(smallScalePrefix, chunk, index, classification);
+            createExperimentListItems(smallScalePrefix, chunk, index, classification, null);
         }
 
     }
 
-    private void createExperimentListItems(String name, Collection<SimplifiedAnnotatedObject<Experiment>> exps, Integer chunkNumber, Classification classification)
+    private void createExperimentListItems(String name, Collection<SimplifiedAnnotatedObject<Experiment>> exps, Integer chunkNumber, Classification classification, Integer largeScaleChunkSize)
     {
         List<String> labels = new ArrayList<String>();
         List<String> labelsNegative = new ArrayList<String>();
@@ -623,12 +627,12 @@ public class ExperimentListGenerator {
 
         if (!labels.isEmpty())
         {
-            addToList(new ExperimentListItem(labels, name, false, chunkNumber), classification);
+            addToList(new ExperimentListItem(labels, name, false, chunkNumber, largeScaleChunkSize), classification);
         }
 
         if (!labelsNegative.isEmpty())
         {
-            addToList(new ExperimentListItem(labelsNegative, name, true, chunkNumber), classification);
+            addToList(new ExperimentListItem(labelsNegative, name, true, chunkNumber, largeScaleChunkSize), classification);
         }
     }
 
@@ -763,6 +767,27 @@ public class ExperimentListGenerator {
         this.experimentsPerChunk = experimentsPerChunk;
     }
 
+
+    public int getLargeScaleChunkSize()
+    {
+        return largeScaleChunkSize;
+    }
+
+    public void setLargeScaleChunkSize(int largeScaleChunkSize)
+    {
+        this.largeScaleChunkSize = largeScaleChunkSize;
+    }
+
+    public int getSmallScaleLimit()
+    {
+        return smallScaleLimit;
+    }
+
+    public void setSmallScaleLimit(int smallScaleLimit)
+    {
+        this.smallScaleLimit = smallScaleLimit;
+    }
+
     private static DaoFactory getDaoFactory()
     {
         return IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
@@ -797,8 +822,6 @@ public class ExperimentListGenerator {
         {
             return created;
         }
-
-
 
         @Override
         public boolean equals(Object obj)

@@ -30,6 +30,7 @@ public class ExperimentListItemTest extends TestCase {
     private static final String LABEL_2 = "test-2006-2";
 
     private ExperimentListItem mockWithOneLabel;
+    private ExperimentListItem mockWithOneLabelLarge;
     private ExperimentListItem mockWithManyLabels;
 
     public void setUp() throws Exception {
@@ -38,13 +39,14 @@ public class ExperimentListItemTest extends TestCase {
         List<String> labels = new ArrayList<String>();
         labels.add(LABEL_1);
 
-        mockWithOneLabel = new ExperimentListItem(labels, "onelabel", true, null);
+        mockWithOneLabel = new ExperimentListItem(labels, "onelabel", true, null, null);
+        mockWithOneLabelLarge = new ExperimentListItem(labels, "onelabellarge", false, 2, 2000);
 
         List<String> labels2 = new ArrayList<String>();
         labels2.add(LABEL_1);
         labels2.add(LABEL_2);
 
-        mockWithManyLabels = new ExperimentListItem(labels2, "manylabel", false, 3);
+        mockWithManyLabels = new ExperimentListItem(labels2, "manylabel", false, 3, null);
     }
 
     public void tearDown() throws Exception {
@@ -53,17 +55,24 @@ public class ExperimentListItemTest extends TestCase {
 
     public void testGetFilename() throws Exception {
         assertEquals("onelabel_negative.xml", mockWithOneLabel.getFilename());
+        assertEquals("onelabellarge_test-2006-1_02.xml", mockWithOneLabelLarge.getFilename());
         assertEquals("manylabel-03.xml", mockWithManyLabels.getFilename());
     }
 
     public void testGetPattern() throws Exception {
         assertEquals("test-2006-1", mockWithOneLabel.getPattern());
+        assertEquals("test-2006-1", mockWithOneLabelLarge.getPattern());
         assertEquals("test-2006-1,test-2006-2", mockWithManyLabels.getPattern());
     }
 
     public void testGetChunkNumber() throws Exception {
         assertNull(mockWithOneLabel.getChunkNumber());
         assertEquals(Integer.valueOf(3), mockWithManyLabels.getChunkNumber());
+    }
+
+    public void testGetLargeScaleChunkSize() throws Exception {
+        assertNull(mockWithOneLabel.getLargeScaleChunkSize());
+        assertEquals(Integer.valueOf(2000), mockWithOneLabelLarge.getLargeScaleChunkSize());
     }
 
     public void testGetName() throws Exception {
@@ -76,8 +85,14 @@ public class ExperimentListItemTest extends TestCase {
         assertEquals(2, mockWithManyLabels.getExperimentLabels().size());
     }
 
+    public void testGetInteractionRange() throws Exception {
+        assertEquals("", mockWithOneLabel.getInteractionRange());
+        assertEquals(" [2001,4000]", mockWithOneLabelLarge.getInteractionRange());
+    }
+
     public void testToString() throws Exception {
         assertEquals("onelabel_negative.xml test-2006-1", mockWithOneLabel.toString());
+        assertEquals("onelabellarge_test-2006-1_02.xml test-2006-1 [2001,4000]", mockWithOneLabelLarge.toString());
         assertEquals("manylabel-03.xml test-2006-1,test-2006-2", mockWithManyLabels.toString());
     }    
 

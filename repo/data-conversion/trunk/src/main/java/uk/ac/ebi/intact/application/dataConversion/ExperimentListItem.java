@@ -9,7 +9,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.Collection;
-import java.util.Date;
 
 /**
  * TODO comment this!
@@ -27,14 +26,16 @@ public class ExperimentListItem
     private String name;
     private boolean negative;
     private Integer chunkNumber;
+    private Integer largeScaleChunkSize;
 
 
-    public ExperimentListItem(Collection<String> experimentLabels, String name, boolean negative, Integer chunkNumber)
+    public ExperimentListItem(Collection<String> experimentLabels, String name, boolean negative, Integer chunkNumber, Integer largeScaleSize)
     {
         this.experimentLabels = experimentLabels;
         this.name = name;
         this.negative = negative;
         this.chunkNumber = chunkNumber;
+        this.largeScaleChunkSize = largeScaleSize;
     }
 
     public String getFilename()
@@ -48,15 +49,24 @@ public class ExperimentListItem
         String fileNumber = "";
         if (chunkNumber != null)
         {
-            String indexPrefix = "-";
-            if (chunkNumber < 10)
-            {
-                indexPrefix = "-0";
-            }
-            fileNumber = indexPrefix+chunkNumber;
+            fileNumber = "-"+twoDigitNumber(chunkNumber);
         }
 
-        return name + fileNumber + strNegative + FileHelper.XML_FILE_EXTENSION;
+        String strLargeScale = "";
+
+        if (largeScaleChunkSize != null)
+        {
+            if (experimentLabels.size() > 1)
+            {
+                throw new RuntimeException("On large scale items, only one experiment label is allowed");
+            }
+
+            strLargeScale = "_"+experimentLabels.iterator().next()+"_"+twoDigitNumber(chunkNumber);
+            fileNumber = "";
+        }
+
+
+        return name + strLargeScale +fileNumber + strNegative + FileHelper.XML_FILE_EXTENSION;
     }
 
     public String getPattern()
@@ -79,6 +89,19 @@ public class ExperimentListItem
         return sb.toString();
     }
 
+    public String getInteractionRange()
+    {
+        if (largeScaleChunkSize == null)
+        {
+            return "";
+        }
+
+        int first = ((chunkNumber-1)*largeScaleChunkSize)+1;
+        int last = chunkNumber*largeScaleChunkSize;
+
+        return " ["+first+","+last+"]";
+    }
+
     public Integer getChunkNumber()
     {
         return chunkNumber;
@@ -99,6 +122,12 @@ public class ExperimentListItem
         return experimentLabels;
     }
 
+
+    public Integer getLargeScaleChunkSize()
+    {
+        return largeScaleChunkSize;
+    }
+
     @Override
     public boolean equals(Object obj)
     {
@@ -115,12 +144,25 @@ public class ExperimentListItem
     @Override
     public String toString()
     {
-        return getFilename()+" "+getPattern();
+        return getFilename()+" "+getPattern()+getInteractionRange();
     }
 
     @Override
     public int hashCode()
     {
         return 47*getFilename().hashCode()*getPattern().hashCode();
+    }
+
+    private static String twoDigitNumber(Integer number)
+    {
+        String strNum = "";
+
+        if (number < 10)
+        {
+            strNum = "0";
+        }
+        strNum = strNum + number;
+
+        return strNum;
     }
 }

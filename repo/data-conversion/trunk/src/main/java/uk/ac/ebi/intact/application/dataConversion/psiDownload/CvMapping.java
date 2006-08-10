@@ -16,6 +16,9 @@ import java.io.*;
 import java.sql.SQLException;
 import java.util.*;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Holds a Controlled Vocabulary Mapping.
  * <p/>
@@ -26,6 +29,8 @@ import java.util.*;
  * @since <pre>25-Jun-2005</pre>
  */
 public class CvMapping {
+
+    private static final Log log = LogFactory.getLog(CvMapping.class);
 
     public static final String TABULATION = "\t";
     public static final String STAR = "*";
@@ -96,7 +101,7 @@ public class CvMapping {
         String mapping = getPsiReference( from ) + " --> " + getPsiReference( to );
 
         if ( from.equals( to ) ) {
-            System.out.println( "WARNING: skip unuseful mapping, " + mapping );
+            log.warn( "skip unuseful mapping, " + mapping );
             return;
         }
 
@@ -105,7 +110,7 @@ public class CvMapping {
             String toCls = getSimpleName( to.getClass() );
             String msg = fromCls + "->" + toCls;
 
-            System.out.println( "ERROR: skip mapping involving incompatible class type (" + msg + "), " + mapping );
+            log.error( "skip mapping involving incompatible class type (" + msg + "), " + mapping );
             return;
         }
 
@@ -116,7 +121,7 @@ public class CvMapping {
             return;
         }
 
-        System.out.println( "ADD: " + mapping );
+        log.debug( "ADD: " + mapping );
         map.put( from, to );
     }
 
@@ -147,7 +152,7 @@ public class CvMapping {
         try {
             if ( serializedFile.exists() && serializedFile.canRead() ) {
 
-                System.out.println( "Loading mapping from serialized cache (" + serializedFile.getAbsolutePath() + ")" );
+                log.debug( "Loading mapping from serialized cache (" + serializedFile.getAbsolutePath() + ")" );
 
                 FileInputStream in = new FileInputStream( serializedFile );
                 ObjectInputStream ois = new ObjectInputStream( in );
@@ -168,7 +173,7 @@ public class CvMapping {
 
                 ois.close();
 
-                System.out.println( map.size() + " association loaded." );
+                log.debug( map.size() + " association loaded." );
             }
         } catch ( Exception e ) {
             aMap = null;
@@ -201,7 +206,7 @@ public class CvMapping {
         FileOutputStream out = null;
         try {
             if ( ! aMap.isEmpty() ) {
-                System.out.println( "Caching " + aMap.size() + " associations into " + serializedFile.getAbsolutePath() );
+                log.debug( "Caching " + aMap.size() + " associations into " + serializedFile.getAbsolutePath() );
                 out = new FileOutputStream( serializedFile );
                 ObjectOutputStream oos = new ObjectOutputStream( out );
 
@@ -322,7 +327,7 @@ public class CvMapping {
 
                         if ( fromMI.equals( toMI ) ) {
                             // self mapping, skip quietly
-                            System.out.println( "SKIP self mapping of " + fromMI );
+                            log.debug( "SKIP self mapping of " + fromMI );
                             continue;
                         }
 
@@ -456,12 +461,12 @@ public class CvMapping {
 
         try
         {
-            System.out.println( "Database: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName() );
+            log.debug( "Database: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName() );
             long start = System.currentTimeMillis();
             mapping.loadFile( new File( args[ 0 ] ));
             long stop = System.currentTimeMillis();
 
-            System.out.println( "Loading time: " + ( stop - start ) + "ms" );
+            log.debug( "Loading time: " + ( stop - start ) + "ms" );
         }
         catch (SQLException e)
         {
