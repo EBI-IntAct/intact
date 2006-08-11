@@ -81,7 +81,7 @@ public class NewFileGeneratorTest extends TestCase
 
         for (ExperimentListItem item : allItems)
         {
-            NewFileGenerator.writePsiData(item, PsiVersion.VERSION_25, mapping, new File("target/psi25"));
+            NewFileGenerator.writePsiData(item, PsiVersion.VERSION_25, mapping, new File("target/psi25"), true);
         }
 
         // check if the files exist and are not empty

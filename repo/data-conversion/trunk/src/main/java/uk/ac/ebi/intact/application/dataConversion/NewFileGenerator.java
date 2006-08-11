@@ -46,12 +46,14 @@ public abstract class NewFileGenerator
      * @param psiVersion The version of PSI to use
      * @param cvMapping The cv mapping
      * @param baseDir The base dir where to put the files
+     * @param validate whether to validate the xml
      * @throws IOException thrown if there is some problem writing to the file
+     * @return if validating, true if the document is valid. If not validating, it will always return true
      */
-    public static void writePsiData(ExperimentListItem eli,
+    public static boolean writePsiData(ExperimentListItem eli,
                                     PsiVersion psiVersion,
                                     CvMapping cvMapping,
-                                    File baseDir) throws IOException
+                                    File baseDir, boolean validate) throws IOException
     {
         File xmlFile = new File(baseDir, eli.getFilename());
 
@@ -68,6 +70,13 @@ public abstract class NewFileGenerator
         DisplayXML.write(doc, writer, "   ");
 
         writer.close();
+
+        if (validate)
+        {
+            return PsiValidator.validate(xmlFile);
+        }
+
+        return true;
     }
 
     /**
