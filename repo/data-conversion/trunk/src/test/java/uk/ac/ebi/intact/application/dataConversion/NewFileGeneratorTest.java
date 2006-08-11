@@ -68,7 +68,7 @@ public class NewFileGeneratorTest extends TestCase
 
     }
 
-    public void testGenerateXmlFiles() throws Exception
+    public void testGenerateXmlFiles_Psi25() throws Exception
     {
         File reverseMappingFile = new File(NewFileGeneratorTest.class.getResource("/reverseMapping.txt").getFile());
 
@@ -88,6 +88,32 @@ public class NewFileGeneratorTest extends TestCase
         for (ExperimentListItem item : allItems)
         {
             File xmlFile = new File("target/psi25", item.getFilename());
+
+            assertTrue(xmlFile.exists());
+            assertTrue(xmlFile.length() > 0);
+        }
+    }
+
+    public void testGenerateXmlFiles_Psi1() throws Exception
+    {
+        File reverseMappingFile = new File(NewFileGeneratorTest.class.getResource("/reverseMapping.txt").getFile());
+
+        CvMapping mapping = new CvMapping();
+        mapping.loadFile(reverseMappingFile);
+
+        ExperimentListGenerator gen = new ExperimentListGenerator("ab%");
+
+        List<ExperimentListItem> allItems = gen.generateAllClassifications();
+
+        for (ExperimentListItem item : allItems)
+        {
+            NewFileGenerator.writePsiData(item, PsiVersion.VERSION_1, mapping, new File("target/psi1"), false);
+        }
+
+        // check if the files exist and are not empty
+        for (ExperimentListItem item : allItems)
+        {
+            File xmlFile = new File("target/psi1", item.getFilename());
 
             assertTrue(xmlFile.exists());
             assertTrue(xmlFile.length() > 0);
