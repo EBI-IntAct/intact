@@ -97,7 +97,11 @@ public class PsiValidator {
         }
     }
 
-
+    /**
+     * Validates a xml document
+     * @param file the file with the xml to validate
+     * @return if the document is valid returns true
+     */
     public static boolean validate( File file ) throws FileNotFoundException {
         String filename = file.getAbsolutePath();
 
@@ -108,6 +112,11 @@ public class PsiValidator {
         return validate( inputSource );
     }
 
+    /**
+     * Validates a xml document
+     * @param xmlString the string with the xml to validate
+     * @return if the document is valid returns true
+     */
     public static boolean validate( String xmlString ) {
 
         InputSource inputSource = new InputSource( new StringReader( xmlString ) );
@@ -115,6 +124,11 @@ public class PsiValidator {
         return validate( inputSource );
     }
 
+    /**
+     * Validates a xml document
+     * @param inputSource the source for the doc to validate
+     * @return if the document is valid returns true
+     */
     public static boolean validate( InputSource inputSource ) {
 
         String parserClass = SAXParser.class.getName();
