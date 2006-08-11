@@ -55,7 +55,7 @@ public class ZipFileGenerator {
      *
      * @param directory the directory to process.
      */
-    private static void clusterAllXmlFilesFromDirectory( File directory, boolean processSubdirectories ) {
+    public static void clusterAllXmlFilesFromDirectory( File directory, boolean processSubdirectories ) {
 
         // TODO remove recursivity, should be easy.
 
