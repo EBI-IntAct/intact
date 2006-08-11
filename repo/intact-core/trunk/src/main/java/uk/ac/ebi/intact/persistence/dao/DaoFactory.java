@@ -36,6 +36,8 @@ public class DaoFactory implements Serializable
     private AbstractHibernateDataConfig dataConfig;
     private DataContext dataContext;
 
+    private IntactTransaction currentTransaction;
+
     private static DaoFactory instance;
 
     private DaoFactory(DataConfig dataConfig)
@@ -192,14 +194,26 @@ public class DaoFactory implements Serializable
     {
         Transaction transaction = getCurrentSession().beginTransaction();
 
+        currentTransaction = new IntactTransaction(transaction);
+
         // wrap it
-        return new IntactTransaction(transaction);
+        return currentTransaction;
     }
 
-    private Session getCurrentSession()
+    public Session getCurrentSession()
     {
         //checkStatus();
 
         return dataConfig.initialize().getCurrentSession();
+    }
+
+    public boolean isTransactionActive()
+    {
+        return (currentTransaction != null && !currentTransaction.wasCommitted());
+    }
+
+    public IntactTransaction getCurrentTransaction()
+    {
+        return currentTransaction;
     }
 }
