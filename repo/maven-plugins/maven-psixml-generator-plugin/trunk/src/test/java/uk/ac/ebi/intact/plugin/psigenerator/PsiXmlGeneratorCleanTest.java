@@ -3,7 +3,7 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.plugin.experimentlistgenerator;
+package uk.ac.ebi.intact.plugin.psigenerator;
 
 import org.codehaus.plexus.util.FileUtils;
 import org.apache.maven.plugin.Mojo;
@@ -15,17 +15,17 @@ import java.io.File;
  * TODO: comment this!
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
- * @version $Id:$
+ * @version $Id$
  * @since <pre>04/08/2006</pre>
  */
-public class ExperimentListGeneratorCleanTest extends AbstractMojoTestCase
+public class PsiXmlGeneratorCleanTest extends AbstractMojoTestCase
 {
         public void testClean()
             throws Exception
         {
             File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/clean-config.xml" );
 
-            File basedir = new File( getBasedir(), "target/experiment-list-test/clean" );
+            File basedir = new File( getBasedir(), "target/psixml-test/clean" );
             if ( basedir.exists() )
             {
                 FileUtils.deleteDirectory( basedir );
