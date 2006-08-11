@@ -6,11 +6,13 @@
 package uk.ac.ebi.intact.persistence.dao.impl;
 
 import org.hibernate.Session;
+import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Projections;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
 import uk.ac.ebi.intact.model.InteractionImpl;
+import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.persistence.dao.InteractionDao;
 
 import java.util.List;
@@ -64,5 +66,24 @@ public class InteractionDaoImpl extends InteractorDaoImpl<InteractionImpl> imple
                 .createAlias("comp.interactor", "interactor")
                 .add(Restrictions.eq("interactor.objClass", InteractionImpl.class.getName()))
                 .setProjection(Projections.distinct(Projections.property("interactor.ac"))).list();
+    }
+
+    public List<Interaction> getInteractionByExperimentShortLabel(String[] experimentLabels, Integer firstResult, Integer maxResults)
+    {
+        Criteria criteria = getSession().createCriteria(Interaction.class)
+                 .createCriteria("experiments")
+                 .add(Restrictions.in("shortLabel", experimentLabels));
+
+        if (firstResult != null && firstResult >=0)
+        {
+            criteria.setFirstResult(firstResult);
+        }
+
+        if (maxResults != null && maxResults > 0)
+        {
+            criteria.setMaxResults(maxResults);
+        }
+
+        return criteria.list();
     }
 }

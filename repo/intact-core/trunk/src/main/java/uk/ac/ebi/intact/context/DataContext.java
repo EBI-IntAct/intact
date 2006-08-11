@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Collection;
 
 /**
  * TODO comment this!
@@ -27,68 +28,69 @@ public class DataContext
 
     private static final Log log = LogFactory.getLog(DataContext.class);
 
-    private Map<String,IntactTransaction> txMap;
     private IntactSession session;
-
-    private DaoFactory daoFactory;
 
     public DataContext(IntactSession session)
     {
-        txMap = new HashMap<String,IntactTransaction>();
-        this.session = session;
+          this.session = session;
     }
 
-    protected IntactTransaction beginTransaction()
+    public void beginTransaction()
     {
-        return beginTransaction(StandardCoreDataConfig.NAME);
+        beginTransaction(getDefaultDataConfig().getName());
     }
 
-    protected IntactTransaction beginTransaction(String dataConfigName)
+    public void beginTransaction(String dataConfigName)
     {
-        IntactTransaction tx = txMap.get(dataConfigName);
+        DaoFactory daoFactory = getDaoFactory(dataConfigName);
 
-        if (!isTransactionActive(tx))
+        if (!daoFactory.isTransactionActive())
         {
-            log.debug("Creating new transaction");
-
-            tx = daoFactory.beginTransaction();
-            txMap.put(dataConfigName, tx);
+            log.debug("Creating new transaction for: "+dataConfigName);
+            daoFactory.beginTransaction();
         }
         else
         {
-            log.debug("Using existing transaction");
+            log.debug("Using existing transaction for: "+dataConfigName);
         }
-
-        return tx;
     }
 
-    public static boolean isTransactionActive(IntactTransaction tx)
+    public boolean isTransactionActive()
     {
-        return (tx != null && !tx.wasCommitted());
+        return isTransactionActive(getDefaultDataConfig().getName());
+    }
+
+    public boolean isTransactionActive(String dataConfigName)
+    {
+        return getDaoFactory(dataConfigName).isTransactionActive();
     }
 
     public void commitTransaction()
     {
-         commitTransaction(StandardCoreDataConfig.NAME);
+         commitTransaction(getDefaultDataConfig().getName());
     }
 
     public void commitTransaction(String dataConfigName)
     {
-        IntactTransaction tx = txMap.get(dataConfigName);
+        DaoFactory daoFactory = getDaoFactory(dataConfigName);
 
-        if (tx != null && !tx.wasCommitted())
+        if (daoFactory.isTransactionActive())
         {
-            tx.commit();
+            daoFactory.getCurrentTransaction().commit();
         }
     }
 
     public void commitAllActiveTransactions()
     {
-        for (IntactTransaction tx : txMap.values())
+        Collection<DataConfig> dataConfigs = RuntimeConfig.getCurrentInstance(session).getDataConfigs();
+
+        for (DataConfig dataConfig : dataConfigs)
         {
-            if (isTransactionActive(tx))
+            DaoFactory daoFactory = getDaoFactory(dataConfig);
+
+            if (daoFactory.isTransactionActive())
             {
-                tx.commit();
+                daoFactory.getCurrentTransaction().commit();
             }
         }
     }
@@ -107,10 +109,19 @@ public class DataContext
 
     private DaoFactory getDaoFactory(DataConfig dataConfig)
     {
-        daoFactory = DaoFactory.getCurrentInstance(session, dataConfig);
-        beginTransaction(); // starts or uses an existing transaction
+        DaoFactory daoFactory = DaoFactory.getCurrentInstance(session, dataConfig);
+
+        if (!daoFactory.isTransactionActive())
+        {
+            daoFactory.beginTransaction(); // starts or uses an existing transaction
+        }
 
         return daoFactory;
+    }
+
+    private DataConfig getDefaultDataConfig()
+    {
+        return RuntimeConfig.getCurrentInstance(session).getDefaultDataConfig();
     }
 
 }

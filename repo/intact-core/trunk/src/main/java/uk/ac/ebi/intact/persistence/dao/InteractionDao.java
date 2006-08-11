@@ -20,4 +20,6 @@ public interface InteractionDao extends InteractorDao<InteractionImpl>
     Integer countInteractorsByInteractionAc(String interactionAc);
 
     List<String> getNestedInteractionAcsByInteractionAc(String interactionAc);
+
+    List<Interaction> getInteractionByExperimentShortLabel(String[] experimentLabels, Integer firstResult, Integer maxResults);
 }

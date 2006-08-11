@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.persistence.dao.impl;
 import org.hibernate.Session;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Property;
 
 import java.util.Collection;
 import java.util.List;
@@ -97,6 +98,17 @@ public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObj
                 .add(Restrictions.like("xref.primaryId", primaryId))
                 .add(Restrictions.eq("xref.cvDatabase", database))
                 .add(Restrictions.eq("xref.cvXrefQualifier", qualifier)).list();
+
+    }
+
+    public String getPrimaryIdByAc(String ac, String cvDatabaseShortLabel)
+    {
+       return (String) getSession().createCriteria(getEntityClass())
+               .add(Restrictions.idEq(ac))
+               .createAlias("xrefs", "xref")
+               .createAlias("xref.cvDatabase", "cvDatabase")
+               .add(Restrictions.like("cvDatabase.shortLabel", cvDatabaseShortLabel))
+               .setProjection(Property.forName("xref.primaryId")).uniqueResult();
 
     }
 
