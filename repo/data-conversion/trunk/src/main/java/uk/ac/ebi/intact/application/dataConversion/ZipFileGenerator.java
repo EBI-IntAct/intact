@@ -6,6 +6,8 @@
 package uk.ac.ebi.intact.application.dataConversion;
 
 import org.apache.commons.cli.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.commons.util.ZipBuilder;
 
 import java.io.File;
@@ -22,6 +24,8 @@ import java.util.regex.Pattern;
  * @since <pre>02-Feb-2006</pre>
  */
 public class ZipFileGenerator {
+
+    private static final Log log = LogFactory.getLog(ZipFileGenerator.class);
 
     ///////////////////////
     // Constants
@@ -65,7 +69,7 @@ public class ZipFileGenerator {
 
         boolean isCurrentDirectoryWriteable = directory.canWrite();
 
-        System.out.println( "Processing directory: " + directory.getAbsolutePath() );
+        log.debug( "Processing directory: " + directory.getAbsolutePath() );
 
         if ( ! directory.canRead() ) {
             throw new IllegalArgumentException( "Cannot read: " + directory.getAbsolutePath() );
@@ -110,7 +114,7 @@ public class ZipFileGenerator {
 
                     filenames.add( file );
                 } else {
-                    System.out.println( "ERROR: Could not extract a pubmed id from filename: " + file.getName() );
+                    log.debug( "ERROR: Could not extract a pubmed id from filename: " + file.getName() );
                 }
             }
 
@@ -131,7 +135,7 @@ public class ZipFileGenerator {
                 File zipFile = new File( zipFullpath );
                 if ( zipFile.exists() ) {
                     if ( VERBOSE ) {
-                        System.out.println( zipFile.getName() + " already exists, skip." );
+                        log.debug( zipFile.getName() + " already exists, skip." );
                     }
                 } else {
                     try {
@@ -144,7 +148,7 @@ public class ZipFileGenerator {
                 iterator.remove(); // free resource as we go
             }
         } else {
-            System.out.println( "ERROR: the current directory is not writable: " + directory.getAbsolutePath() );
+            log.debug( "ERROR: the current directory is not writable: " + directory.getAbsolutePath() );
         }
 
         // process all subdirectories
@@ -259,13 +263,13 @@ public class ZipFileGenerator {
 
         // Process arguments
         String directoryName = line.getOptionValue( "dir" );
-        System.out.println( "Directory: " + directoryName );
+        log.debug( "Directory: " + directoryName );
 
         final boolean recursive = line.hasOption( "recursive" );
-        System.out.println( "Recursive: " + recursive );
+        log.debug( "Recursive: " + recursive );
 
         final boolean verbose = line.hasOption( "verbose" );
-        System.out.println( "Verbose: " + verbose );
+        log.debug( "Verbose: " + verbose );
         VERBOSE = verbose;
 
         // build plateform specific filename

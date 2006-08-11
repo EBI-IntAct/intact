@@ -12,6 +12,7 @@ import junit.framework.TestCase;
 
 import java.util.List;
 import java.util.Set;
+import java.util.ArrayList;
 import java.io.File;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -65,6 +66,32 @@ public class NewFileGeneratorTest extends TestCase
         xmlDoc = writer.toString();
         assertEquals(128792, xmlDoc.length());
 
+    }
+
+    public void testGenerateXmlFiles() throws Exception
+    {
+        File reverseMappingFile = new File(NewFileGeneratorTest.class.getResource("/reverseMapping.txt").getFile());
+
+        CvMapping mapping = new CvMapping();
+        mapping.loadFile(reverseMappingFile);
+
+        ExperimentListGenerator gen = new ExperimentListGenerator("ab%");
+
+        List<ExperimentListItem> allItems = gen.generateAllClassifications();
+
+        for (ExperimentListItem item : allItems)
+        {
+            NewFileGenerator.writePsiData(item, PsiVersion.VERSION_25, mapping, new File("target/psi25"));
+        }
+
+        // check if the files exist and are not empty
+        for (ExperimentListItem item : allItems)
+        {
+            File xmlFile = new File("target/psi25", item.getFilename());
+
+            assertTrue(xmlFile.exists());
+            assertTrue(xmlFile.length() > 0);
+        }
     }
 
 }

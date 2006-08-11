@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownlo
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Interaction2xmlI;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Interaction2xmlFactory;
 import uk.ac.ebi.intact.application.dataConversion.dao.ExperimentListGeneratorDao;
+import uk.ac.ebi.intact.application.dataConversion.util.DisplayXML;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.Component;
@@ -21,9 +22,13 @@ import uk.ac.ebi.intact.model.NucleicAcid;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.io.File;
+import java.io.Writer;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
- * TODO comment this!
+ * Generates PSI XML files from the intact objects stored in the database
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -34,6 +39,45 @@ public abstract class NewFileGenerator
 
     private static final Log log = LogFactory.getLog(NewFileGenerator.class);
 
+    /**
+     * Writes a file containing the PSI XML, for the information contained in the ExperimentListItem
+     *
+     * @param eli The ExperimentListItem, which contaisn information about the experiment to be fetched, the pagination and files
+     * @param psiVersion The version of PSI to use
+     * @param cvMapping The cv mapping
+     * @param baseDir The base dir where to put the files
+     * @throws IOException thrown if there is some problem writing to the file
+     */
+    public static void writePsiData(ExperimentListItem eli,
+                                    PsiVersion psiVersion,
+                                    CvMapping cvMapping,
+                                    File baseDir) throws IOException
+    {
+        File xmlFile = new File(baseDir, eli.getFilename());
+
+        // create the parent dir if it does not exist
+        if (!xmlFile.getParentFile().exists())
+        {
+            log.info("Creating dir: "+xmlFile.getParentFile());
+            xmlFile.getParentFile().mkdirs();
+        }
+
+        Document doc = generatePsiData(eli,psiVersion,cvMapping);
+
+        Writer writer = new FileWriter(xmlFile);
+        DisplayXML.write(doc, writer, "   ");
+
+        writer.close();
+    }
+
+    /**
+     * Converts a list of experiments to PSI XML, providing the experiment labels
+     *
+     * @param eli The ExperimentListItem, which contaisn information about the experiment to be fetched, the pagination and files
+     * @param psiVersion The version of PSI to use
+     * @param cvMapping The cv mapping
+     * @return The Document containing the PSI XML
+     */
     public static Document generatePsiData(ExperimentListItem eli, PsiVersion psiVersion, CvMapping cvMapping)
     {
         UserSessionDownload session = new UserSessionDownload(psiVersion);
@@ -46,33 +90,43 @@ public abstract class NewFileGenerator
         Integer firstResult = null;
         Integer maxResults = null;
 
+        // if there is pagination, get the first and the max resulta
         if (eli.getLargeScaleChunkSize() != null)
         {
             firstResult = (eli.getChunkNumber()-1)*eli.getLargeScaleChunkSize();
             maxResults = eli.getLargeScaleChunkSize();
         }
 
-        return generateData(eli.getExperimentLabels(), session, firstResult, maxResults);
+        return generatePsiData(eli.getExperimentLabels(), session, firstResult, maxResults);
     }
 
-    private static Document generateData(Collection<String> experimentLabels, UserSessionDownload session, Integer firstInteraction, Integer maxInteractions)
+    /**
+     * Converts a list of experiments to PSI XML, providing the experiment labels
+     *
+     * @param experimentLabels A list with the short labels of the experiments to convert, which will be fetched from the db
+     * @param session the user session
+     * @param firstInteraction if paginating the interactions, the first interaction to be fetched (null to get all)
+     * @param maxInteractions if paginating the interactions, the maximum number of interactions per page (null to get all)
+     * @return the PSI XML Document
+     */
+    private static Document generatePsiData(Collection<String> experimentLabels, UserSessionDownload session, Integer firstInteraction, Integer maxInteractions)
     {
         Collection<Interaction> interactions = ExperimentListGeneratorDao
                 .getInteractionByExperimentShortLabel(experimentLabels.toArray(new String[experimentLabels.size()]),
                                             firstInteraction, maxInteractions);
 
-        return generateData(interactions, session);
+        return generatePsiData(interactions, session);
     }
 
      /**
-     * Convert a list of experiment into PSI XML
+     * Convert a list of interactions into PSI XML
      *
      * @param interactions a list of interactions to export in PSI XML
      * @param session     the PSI doanload session.
      *
      * @return the generated XML Document
      */
-    private static Document generateData( Collection<Interaction> interactions, UserSessionDownload session ) {
+    private static Document generatePsiData( Collection<Interaction> interactions, UserSessionDownload session ) {
 
         Interaction2xmlI interaction2xml = Interaction2xmlFactory.getInstance(session);
 
@@ -116,14 +170,11 @@ public abstract class NewFileGenerator
      * This is used in case psi version is psi1 as psi1 do not allow Nucleic Acid as Interaction's participant.
      * @param interactions Collection of interactions
      */
+    public static void filterInteractions(Collection<Interaction> interactions){
 
-    public static void filterInteractions(Collection interactions){
-
-        for (Iterator iterator = interactions.iterator(); iterator.hasNext();) {
-            Interaction interaction =  (Interaction) iterator.next();
-            Collection components = interaction.getComponents();
-            for (Iterator iterator1 = components.iterator(); iterator1.hasNext();) {
-                Component component =  (Component) iterator1.next();
+        for (Iterator<Interaction> iterator = interactions.iterator(); iterator.hasNext();) {
+            Interaction interaction = iterator.next();
+            for (Component component : interaction.getComponents()) {
                 if ( component.getInteractor() instanceof NucleicAcid){
                     iterator.remove();
                     break;
