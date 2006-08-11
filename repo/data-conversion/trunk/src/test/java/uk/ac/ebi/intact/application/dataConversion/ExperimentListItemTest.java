@@ -39,14 +39,14 @@ public class ExperimentListItemTest extends TestCase {
         List<String> labels = new ArrayList<String>();
         labels.add(LABEL_1);
 
-        mockWithOneLabel = new ExperimentListItem(labels, "onelabel", true, null, null);
-        mockWithOneLabelLarge = new ExperimentListItem(labels, "onelabellarge", false, 2, 2000);
+        mockWithOneLabel = new ExperimentListItem(labels, "onelabel", "species", true, null, null);
+        mockWithOneLabelLarge = new ExperimentListItem(labels, "onelabellarge", "pmid/2006", false, 2, 2000);
 
         List<String> labels2 = new ArrayList<String>();
         labels2.add(LABEL_1);
         labels2.add(LABEL_2);
 
-        mockWithManyLabels = new ExperimentListItem(labels2, "manylabel", false, 3, null);
+        mockWithManyLabels = new ExperimentListItem(labels2, "manylabel", "species", false, 3, null);
     }
 
     public void tearDown() throws Exception {
@@ -54,9 +54,9 @@ public class ExperimentListItemTest extends TestCase {
     }
 
     public void testGetFilename() throws Exception {
-        assertEquals("onelabel_negative.xml", mockWithOneLabel.getFilename());
-        assertEquals("onelabellarge_test-2006-1_02.xml", mockWithOneLabelLarge.getFilename());
-        assertEquals("manylabel-03.xml", mockWithManyLabels.getFilename());
+        assertEquals("species/onelabel_negative.xml", mockWithOneLabel.getFilename());
+        assertEquals("pmid/2006/onelabellarge_test-2006-1_02.xml", mockWithOneLabelLarge.getFilename());
+        assertEquals("species/manylabel-03.xml", mockWithManyLabels.getFilename());
     }
 
     public void testGetPattern() throws Exception {
@@ -90,10 +90,16 @@ public class ExperimentListItemTest extends TestCase {
         assertEquals(" [2001,4000]", mockWithOneLabelLarge.getInteractionRange());
     }
 
+    public void testGetParentFolders() throws Exception {
+        assertEquals("species", mockWithOneLabel.getParentFolders());
+        assertEquals("pmid/2006", mockWithOneLabelLarge.getParentFolders());
+        assertEquals("species", mockWithManyLabels.getParentFolders());
+    }
+
     public void testToString() throws Exception {
-        assertEquals("onelabel_negative.xml test-2006-1", mockWithOneLabel.toString());
-        assertEquals("onelabellarge_test-2006-1_02.xml test-2006-1 [2001,4000]", mockWithOneLabelLarge.toString());
-        assertEquals("manylabel-03.xml test-2006-1,test-2006-2", mockWithManyLabels.toString());
+        assertEquals("species/onelabel_negative.xml test-2006-1", mockWithOneLabel.toString());
+        assertEquals("pmid/2006/onelabellarge_test-2006-1_02.xml test-2006-1 [2001,4000]", mockWithOneLabelLarge.toString());
+        assertEquals("species/manylabel-03.xml test-2006-1,test-2006-2", mockWithManyLabels.toString());
     }    
 
     public static Test suite() {

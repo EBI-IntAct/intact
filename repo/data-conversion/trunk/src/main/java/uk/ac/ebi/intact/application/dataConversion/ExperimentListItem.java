@@ -27,15 +27,17 @@ public class ExperimentListItem
     private boolean negative;
     private Integer chunkNumber;
     private Integer largeScaleChunkSize;
+    private String parentFolders;
 
 
-    public ExperimentListItem(Collection<String> experimentLabels, String name, boolean negative, Integer chunkNumber, Integer largeScaleSize)
+    public ExperimentListItem(Collection<String> experimentLabels, String name, String parentFolders, boolean negative, Integer chunkNumber, Integer largeScaleSize)
     {
         this.experimentLabels = experimentLabels;
         this.name = name;
         this.negative = negative;
         this.chunkNumber = chunkNumber;
         this.largeScaleChunkSize = largeScaleSize;
+        this.parentFolders = parentFolders;
     }
 
     public String getFilename()
@@ -66,7 +68,8 @@ public class ExperimentListItem
         }
 
 
-        return name + strLargeScale +fileNumber + strNegative + FileHelper.XML_FILE_EXTENSION;
+        return parentFolders + FileHelper.SLASH + name +
+                strLargeScale +fileNumber + strNegative + FileHelper.XML_FILE_EXTENSION;
     }
 
     public String getPattern()
@@ -126,6 +129,12 @@ public class ExperimentListItem
     public Integer getLargeScaleChunkSize()
     {
         return largeScaleChunkSize;
+    }
+
+
+    public String getParentFolders()
+    {
+        return parentFolders;
     }
 
     @Override

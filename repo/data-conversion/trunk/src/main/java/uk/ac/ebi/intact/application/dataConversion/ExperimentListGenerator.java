@@ -53,28 +53,32 @@ public class ExperimentListGenerator {
 
     private static final int MAX_EXPERIMENTS_PER_CHUNK_DEFAULT = 100;
 
-    private enum Classification
-    { SPECIES, PUBLICATIONS };
+    private enum Classification { SPECIES, PUBLICATIONS }
+
+    private static final String SPECIES_FOLDER_NAME_DEFAULT = "species";
+    private static final String PUBLICATIONS_FOLDER_NAME_DEFAULT = "pmid";
 
     /**
      * Pattern used to select experiment by its label
      */
-    protected String searchPattern;
+    private String searchPattern;
 
     /**
      * If true, all experiment without a PubMed ID (primary-reference) will be filtered out.
      */
-    protected boolean onlyWithPmid = true;
+    private boolean onlyWithPmid = true;
 
-    private List<ExperimentListItem> speciesListItems = new ArrayList<ExperimentListItem>();
+    private String speciesFolderName = SPECIES_FOLDER_NAME_DEFAULT;
+    private String publicationsFolderName = PUBLICATIONS_FOLDER_NAME_DEFAULT;
+    private int experimentsPerChunk = MAX_EXPERIMENTS_PER_CHUNK_DEFAULT;
+    private int smallScaleLimit = SMALL_SCALE_LIMIT_DEFAULT;
+    private int largeScaleChunkSize = LARGE_SCALE_CHUNK_SIZE_DEFAULT;
+
+        private List<ExperimentListItem> speciesListItems = new ArrayList<ExperimentListItem>();
     private List<ExperimentListItem> publicationsListItems = new ArrayList<ExperimentListItem>();
 
     private boolean experimentsClassified;
     private Set<String> filteredExperimentAcs;
-
-    private int experimentsPerChunk = MAX_EXPERIMENTS_PER_CHUNK_DEFAULT;
-    private int smallScaleLimit = SMALL_SCALE_LIMIT_DEFAULT;
-    private int largeScaleChunkSize = LARGE_SCALE_CHUNK_SIZE_DEFAULT;
 
     /**
      * The key being the experiment AC and the value the number of interactions for that experiment
@@ -137,6 +141,20 @@ public class ExperimentListGenerator {
         createItemClassificationByPubmed();
 
         return publicationsListItems;
+    }
+
+    public List<ExperimentListItem> generateAllClassifications()
+    {
+        if (!experimentsClassified)
+        {
+            classifyExperiments();
+        }
+
+        List<ExperimentListItem> allItems = new ArrayList<ExperimentListItem>();
+        allItems.addAll(generateClassificationBySpecies());
+        allItems.addAll(generateClassificationByPublications());
+
+        return allItems;
     }
 
     public Set<Experiment> getNegativeExperiments()
@@ -452,6 +470,7 @@ public class ExperimentListGenerator {
 
             // split the set into subset of size under SMALL_SCALE_LIMIT
             String filePrefixGlobal = bioSource.getShortLabel().replace(' ', '-');
+
             createExpListItems(smallScaleExp,
                             filePrefixGlobal + "_" + SMALL, // small scale
                             filePrefixGlobal,              // large scale
@@ -476,13 +495,10 @@ public class ExperimentListGenerator {
             // get experiments associated to that pubmed ID.
             Set<SimplifiedAnnotatedObject<Experiment>> experiments = (Set<SimplifiedAnnotatedObject<Experiment>>) pubmed2experimentSet.get(pubmedid);
 
-            String year = getCreatedYear(experiments);
-            String prefix = year + FileGenerator.SLASH;
-
             // split the set into subset of size under SMALL_SCALE_LIMIT
             createExpListItems(experiments,
-                    prefix + pubmedid,   // small scale
-                    prefix + pubmedid, // large scale
+                    pubmedid,   // small scale
+                    pubmedid, // large scale
                     Classification.PUBLICATIONS);
 
         } // pubmeds
@@ -608,6 +624,28 @@ public class ExperimentListGenerator {
 
     }
 
+    /**
+     * Gets the parent folders for the element
+     */
+    private String parentFolders(Collection<SimplifiedAnnotatedObject<Experiment>> experiments,
+                         Classification classification)
+    {
+        String parentFolders = null;
+
+        switch(classification)
+        {
+            case SPECIES:
+                parentFolders = speciesFolderName;
+                break;
+            case PUBLICATIONS:
+                String year = getCreatedYear(experiments);
+                parentFolders = publicationsFolderName+ FileHelper.SLASH + year;
+                break;
+        }
+
+        return parentFolders;
+    }
+
     private void createExperimentListItems(String name, Collection<SimplifiedAnnotatedObject<Experiment>> exps, Integer chunkNumber, Classification classification, Integer largeScaleChunkSize)
     {
         List<String> labels = new ArrayList<String>();
@@ -625,14 +663,16 @@ public class ExperimentListGenerator {
             }
         }
 
+        String parentFolders = parentFolders(exps, classification);
+
         if (!labels.isEmpty())
         {
-            addToList(new ExperimentListItem(labels, name, false, chunkNumber, largeScaleChunkSize), classification);
+            addToList(new ExperimentListItem(labels, name, parentFolders, false, chunkNumber, largeScaleChunkSize), classification);
         }
 
         if (!labelsNegative.isEmpty())
         {
-            addToList(new ExperimentListItem(labelsNegative, name, true, chunkNumber, largeScaleChunkSize), classification);
+            addToList(new ExperimentListItem(labelsNegative, name, parentFolders, true, chunkNumber, largeScaleChunkSize), classification);
         }
     }
 
@@ -644,7 +684,7 @@ public class ExperimentListGenerator {
      * @return an int corresponding to the year.
      */
 
-    private static String getCreatedYear(Set<SimplifiedAnnotatedObject<Experiment>> experiments)
+    private static String getCreatedYear(Collection<SimplifiedAnnotatedObject<Experiment>> experiments)
     {
 
         if (experiments.isEmpty())
@@ -786,6 +826,27 @@ public class ExperimentListGenerator {
     public void setSmallScaleLimit(int smallScaleLimit)
     {
         this.smallScaleLimit = smallScaleLimit;
+    }
+
+
+    public String getSpeciesFolderName()
+    {
+        return speciesFolderName;
+    }
+
+    public void setSpeciesFolderName(String speciesFolderName)
+    {
+        this.speciesFolderName = speciesFolderName;
+    }
+
+    public String getPublicationsFolderName()
+    {
+        return publicationsFolderName;
+    }
+
+    public void setPublicationsFolderName(String publicationsFolderName)
+    {
+        this.publicationsFolderName = publicationsFolderName;
     }
 
     private static DaoFactory getDaoFactory()
