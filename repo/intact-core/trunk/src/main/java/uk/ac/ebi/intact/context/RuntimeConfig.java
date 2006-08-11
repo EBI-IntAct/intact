@@ -35,7 +35,6 @@ public class RuntimeConfig implements Serializable
     private String acPrefix;
     private final Map<String, DataConfig> dataConfigs;
     private DataConfig defaultDataConfig;
-    private DataConfig standardDataConfig;
 
     private RuntimeConfig()
     {
@@ -98,16 +97,21 @@ public class RuntimeConfig implements Serializable
         }
 
         this.dataConfigs.put(dataConfig.getName(), dataConfig);
+
+        if (isTheDefaultOne)
+        {
+            setDefaultDataConfig(dataConfig);
+        }
     }
 
-    public void setDefaultDataConfig(String dataConfigName)
+    public void setDefaultDataConfig(DataConfig dataConfig)
     {
-        defaultDataConfig = getDataConfig(dataConfigName);
-
-        if (defaultDataConfig == null)
+        if (!dataConfigs.containsKey(dataConfig.getName()))
         {
-            throw new ConfigurationException("Data-config not found or not registered: "+dataConfigName);
+            addDataConfig(dataConfig);
         }
+
+        defaultDataConfig = dataConfig;
     }
 
     public DataConfig getDefaultDataConfig()
@@ -119,16 +123,5 @@ public class RuntimeConfig implements Serializable
         }
 
         return defaultDataConfig;
-    }
-
-
-    public DataConfig getStandardDataConfig()
-    {
-        return standardDataConfig;
-    }
-
-    public void setStandardDataConfig(DataConfig standardDataConfig)
-    {
-        this.standardDataConfig = standardDataConfig;
     }
 }

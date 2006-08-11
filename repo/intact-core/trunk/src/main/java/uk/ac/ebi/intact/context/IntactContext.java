@@ -5,6 +5,8 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.impl.StandaloneSession;
 import uk.ac.ebi.intact.model.Institution;
+import uk.ac.ebi.intact.config.DataConfig;
+import uk.ac.ebi.intact.config.impl.StandardCoreDataConfig;
 
 import java.io.Serializable;
 
@@ -38,19 +40,23 @@ public class IntactContext implements Serializable
         {
             log.warn("Current instance of IntactContext is null. Initializing with StandaloneSession," +
                     "because probably this application is not a web application");
-            IntactSession session = new StandaloneSession();
-            initContext(session);
+            initStandaloneContext(null);
         }
 
        return currentInstance.get();
     }
 
-    public static IntactContext initContext(IntactSession session)
+    public static void initStandaloneContext(DataConfig standardDataConfig)
     {
+        if (standardDataConfig == null)
+        {
+            standardDataConfig = new StandardCoreDataConfig();
+        }
+
+       IntactSession session = new StandaloneSession();
+       RuntimeConfig.getCurrentInstance(session).setDefaultDataConfig(standardDataConfig);
        IntactConfigurator.initIntact(session);
        IntactConfigurator.createIntactContext(session);
-
-       return currentInstance.get();
     }
 
     private static ThreadLocal<IntactContext> currentInstance = new ThreadLocal<IntactContext>()
