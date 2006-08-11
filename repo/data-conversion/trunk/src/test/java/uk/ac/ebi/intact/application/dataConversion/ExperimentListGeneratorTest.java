@@ -5,15 +5,13 @@
  */
 package uk.ac.ebi.intact.application.dataConversion;
 
+import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.model.Experiment;
 
-import java.io.File;
 import java.util.List;
 import java.util.Set;
-
-import uk.ac.ebi.intact.model.Experiment;
-import junit.framework.TestCase;
 
 /**
  * TODO comment this!
@@ -84,14 +82,14 @@ public class ExperimentListGeneratorTest extends TestCase
         ExperimentListGenerator gen = new ExperimentListGenerator("giot-2003-%");
 
         List<ExperimentListItem> eliSpecies = gen.generateClassificationBySpecies();
-        System.out.println("By species: "+eliSpecies);
+        //System.out.println("By species: "+eliSpecies);
 
         assertEquals(11, eliSpecies.size());
         assertEquals("species/drome_giot-2003-1_01.xml giot-2003-1 [1,2000]", eliSpecies.get(0).toString());
         assertEquals("species/drome_giot-2003-1_10.xml giot-2003-1 [18001,20000]", eliSpecies.get(9).toString());
 
         List<ExperimentListItem> eliPublications = gen.generateClassificationByPublications();
-        System.out.println("By pub: "+eliPublications);
+        //System.out.println("By pub: "+eliPublications);
 
         assertEquals(11, eliPublications.size());
         assertEquals("pmid/2004/14605208_giot-2003-1_04.xml giot-2003-1 [6001,8000]", eliPublications.get(3).toString());
@@ -106,14 +104,14 @@ public class ExperimentListGeneratorTest extends TestCase
 
         List<ExperimentListItem> eliPublications = gen.generateClassificationByPublications();
         assertEquals(0, eliPublications.size());
-        log.debug("By publications (onlyPmid=true): "+eliPublications.size());
+        //log.debug("By publications (onlyPmid=true): "+eliPublications.size());
 
         gen = new ExperimentListGenerator("human");
         gen.setOnlyWithPmid(false);
 
         eliPublications = gen.generateClassificationByPublications();
         assertEquals(1, eliPublications.size());
-        log.debug("By publications (onlyPmid=false): "+eliPublications.size());
+        //log.debug("By publications (onlyPmid=false): "+eliPublications.size());
 
     }
 
