@@ -14,7 +14,7 @@ import org.apache.maven.plugin.MojoFailureException;
  * Generates the list of experiments
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:ExperimentListGeneratorMojo.java 5772 2006-08-11 16:08:37 +0100 (Fri, 11 Aug 2006) baranda $
  * @since <pre>11-Aug-2006</pre>
  *
  * @goal classification
