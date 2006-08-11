@@ -48,18 +48,22 @@ public class IntactConfigurator
 
         RuntimeConfig config = RuntimeConfig.getCurrentInstance(session);
 
-        // add the core model data config
-        log.info("Registering standard data-config");
-        StandardCoreDataConfig stdDataConfig = new StandardCoreDataConfig();
-        try
+        if (config.getStandardDataConfig() == null)
         {
-            stdDataConfig.initialize();
+            // add the core model data config
+            log.info("Registering standard data-config");
+            StandardCoreDataConfig stdDataConfig = new StandardCoreDataConfig();
+            try
+            {
+                stdDataConfig.initialize();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            config.addDataConfig(stdDataConfig, true);
+            config.setStandardDataConfig(stdDataConfig);
         }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        config.addDataConfig(stdDataConfig, true);
 
         // load the data configs
         if (session.containsInitParam(DATA_CONFIG_PARAM_NAME))
@@ -88,7 +92,7 @@ public class IntactConfigurator
         }
 
         // load the default institution
-        DaoFactory daoFactory = DaoFactory.getCurrentInstance(stdDataConfig);
+        DaoFactory daoFactory = DaoFactory.getCurrentInstance(config.getStandardDataConfig());
 
         IntactTransaction tx = daoFactory.beginTransaction();
         Institution institution = loadInstitutionFromProperties(daoFactory);

@@ -1,19 +1,12 @@
 package uk.ac.ebi.intact.context;
 
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.model.Institution;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.util.PropertyLoader;
-import uk.ac.ebi.intact.context.impl.StandaloneSession;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
-import java.sql.SQLException;
-import java.util.Properties;
-import java.io.Serializable;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.impl.StandaloneSession;
+import uk.ac.ebi.intact.model.Institution;
+
+import java.io.Serializable;
 
 /**
  *
@@ -46,9 +39,16 @@ public class IntactContext implements Serializable
             log.warn("Current instance of IntactContext is null. Initializing with StandaloneSession," +
                     "because probably this application is not a web application");
             IntactSession session = new StandaloneSession();
-            IntactConfigurator.initIntact(session);
-            IntactConfigurator.createIntactContext(session);
+            initContext(session);
         }
+
+       return currentInstance.get();
+    }
+
+    public static IntactContext initContext(IntactSession session)
+    {
+       IntactConfigurator.initIntact(session);
+       IntactConfigurator.createIntactContext(session);
 
        return currentInstance.get();
     }
