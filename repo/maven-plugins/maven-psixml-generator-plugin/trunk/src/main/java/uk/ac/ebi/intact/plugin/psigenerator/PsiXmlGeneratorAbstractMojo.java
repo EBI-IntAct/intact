@@ -8,21 +8,19 @@ package uk.ac.ebi.intact.plugin.psigenerator;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-
-import java.io.*;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Date;
-
-import uk.ac.ebi.intact.application.dataConversion.ExperimentListItem;
 import uk.ac.ebi.intact.application.dataConversion.ExperimentListGenerator;
+import uk.ac.ebi.intact.application.dataConversion.ExperimentListItem;
 import uk.ac.ebi.intact.config.impl.CustomCoreDataConfig;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.context.RuntimeConfig;
-import uk.ac.ebi.intact.context.IntactSession;
-import uk.ac.ebi.intact.context.impl.StandaloneSession;
 import uk.ac.ebi.intact.model.Experiment;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Map;
 
 /**
  * TODO: comment this!
@@ -160,10 +158,7 @@ public abstract class PsiXmlGeneratorAbstractMojo extends AbstractMojo
         // configure the context
         CustomCoreDataConfig testConfig = new CustomCoreDataConfig("PsiXmlGeneratorTest", hibernateConfig);
         testConfig.initialize();
-        IntactSession session = new StandaloneSession();
-        RuntimeConfig.getCurrentInstance(session).addDataConfig(testConfig, true);
-        RuntimeConfig.getCurrentInstance(session).setStandardDataConfig(testConfig);
-        IntactContext.initContext(session);
+        IntactContext.initStandaloneContext(testConfig);
 
         experimentListGenerator = new ExperimentListGenerator(searchPattern);
         experimentListGenerator.setOnlyWithPmid(onlyWithPmid);
