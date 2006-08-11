@@ -19,7 +19,7 @@ public class IntactContextWrapper extends IntactContext
         public IntactContextWrapper(UserContext userContext, DataContext dataContext, IntactSession session)
         {
             super(userContext, dataContext, session);
-            setCurrentInstance(this);
+            IntactContext.setCurrentInstance(this);
         }
 
 }
