@@ -29,7 +29,7 @@
         <module>maven-hibernateconfig-plugin</module>
         <module>maven-sanitychecker-plugin</module>
         <module>maven-editortopics-plugin</module>
-        <module>maven-experiment-list-generator-plugin</module>
+        <module>maven-psixml-generator-plugin</module>
     </modules>
 
     <distributionManagement>
