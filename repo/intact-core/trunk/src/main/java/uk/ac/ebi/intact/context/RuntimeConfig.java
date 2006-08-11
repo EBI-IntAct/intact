@@ -35,6 +35,7 @@ public class RuntimeConfig implements Serializable
     private String acPrefix;
     private final Map<String, DataConfig> dataConfigs;
     private DataConfig defaultDataConfig;
+    private DataConfig standardDataConfig;
 
     private RuntimeConfig()
     {
@@ -120,4 +121,14 @@ public class RuntimeConfig implements Serializable
         return defaultDataConfig;
     }
 
+
+    public DataConfig getStandardDataConfig()
+    {
+        return standardDataConfig;
+    }
+
+    public void setStandardDataConfig(DataConfig standardDataConfig)
+    {
+        this.standardDataConfig = standardDataConfig;
+    }
 }
