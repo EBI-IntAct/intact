@@ -6,18 +6,19 @@
 package uk.ac.ebi.intact.application.dataConversion.dao;
 
 import org.hibernate.Session;
-import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Projection;
 import uk.ac.ebi.intact.config.impl.StandardCoreDataConfig;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.AnnotatedObjectImpl;
+import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.CvXrefQualifier;
+import uk.ac.ebi.intact.model.Experiment;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
 
 /**
  * TODO: comment this!
@@ -163,25 +164,6 @@ public class ExperimentListGeneratorDao
 
         return interactionCountByExpAc;
 
-    }
-
-    public static List<Interaction> getInteractionByExperimentShortLabel(String[] experimentLabels, Integer firstResult, Integer maxResults)
-    {
-        Criteria criteria = getSession().createCriteria(Interaction.class)
-                 .createCriteria("experiments")
-                 .add(Restrictions.in("shortLabel", experimentLabels));
-
-        if (firstResult != null && firstResult >=0)
-        {
-            criteria.setFirstResult(firstResult);
-        }
-
-        if (maxResults != null && maxResults > 0)
-        {
-            criteria.setMaxResults(maxResults);
-        }
-
-        return criteria.list();
     }
 
     private static Session getSession()

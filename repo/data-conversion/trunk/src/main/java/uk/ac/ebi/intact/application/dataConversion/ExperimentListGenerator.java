@@ -10,15 +10,14 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.dataConversion.dao.ExperimentListGeneratorDao;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.BioSource;
+import uk.ac.ebi.intact.model.CvTopic;
+import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -126,6 +125,11 @@ public class ExperimentListGenerator {
             classifyExperiments();
         }
 
+        if (speciesListItems != null && !speciesListItems.isEmpty())
+        {
+            return speciesListItems;
+        }
+
         createItemClassificationBySpecies();
 
         return speciesListItems;
@@ -136,6 +140,11 @@ public class ExperimentListGenerator {
         if (!experimentsClassified)
         {
             classifyExperiments();
+        }
+
+        if (publicationsListItems != null && !publicationsListItems.isEmpty())
+        {
+            return publicationsListItems;
         }
 
         createItemClassificationByPubmed();

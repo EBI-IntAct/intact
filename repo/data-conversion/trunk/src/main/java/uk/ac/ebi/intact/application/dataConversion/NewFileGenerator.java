@@ -10,22 +10,20 @@ import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.CvMapping;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Interaction2xmlI;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Interaction2xmlFactory;
-import uk.ac.ebi.intact.application.dataConversion.dao.ExperimentListGeneratorDao;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Interaction2xmlI;
 import uk.ac.ebi.intact.application.dataConversion.util.DisplayXML;
-import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Component;
+import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.NucleicAcid;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 import java.io.File;
-import java.io.Writer;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * Generates PSI XML files from the intact objects stored in the database
@@ -120,7 +118,7 @@ public abstract class NewFileGenerator
      */
     private static Document generatePsiData(Collection<String> experimentLabels, UserSessionDownload session, Integer firstInteraction, Integer maxInteractions)
     {
-        Collection<Interaction> interactions = ExperimentListGeneratorDao
+        Collection<Interaction> interactions = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInteractionDao()
                 .getInteractionByExperimentShortLabel(experimentLabels.toArray(new String[experimentLabels.size()]),
                                             firstInteraction, maxInteractions);
 
@@ -136,6 +134,7 @@ public abstract class NewFileGenerator
      * @return the generated XML Document
      */
     private static Document generatePsiData( Collection<Interaction> interactions, UserSessionDownload session ) {
+
 
         Interaction2xmlI interaction2xml = Interaction2xmlFactory.getInstance(session);
 

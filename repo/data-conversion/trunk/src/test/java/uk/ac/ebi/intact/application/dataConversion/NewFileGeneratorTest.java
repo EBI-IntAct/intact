@@ -5,21 +5,18 @@
  */
 package uk.ac.ebi.intact.application.dataConversion;
 
+import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
-import junit.framework.TestCase;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.CvMapping;
+import uk.ac.ebi.intact.application.dataConversion.util.DisplayXML;
+import uk.ac.ebi.intact.context.IntactContext;
 
-import java.util.List;
-import java.util.Set;
-import java.util.ArrayList;
 import java.io.File;
 import java.io.StringWriter;
 import java.io.Writer;
-
-import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.CvMapping;
-import uk.ac.ebi.intact.application.dataConversion.util.DisplayXML;
+import java.util.List;
 
 /**
  * TODO comment this!
@@ -33,6 +30,17 @@ public class NewFileGeneratorTest extends TestCase
 
     private static final Log log = LogFactory.getLog(NewFileGeneratorTest.class);
 
+    protected void setUp() throws Exception
+    {
+        super.setUp();
+    }
+
+    protected void tearDown() throws Exception
+    {
+        super.tearDown();
+        IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
+    }
+    
     public void testGenerateListGavin() throws Exception
     {
         File reverseMappingFile = new File(NewFileGeneratorTest.class.getResource("/reverseMapping.txt").getFile());
@@ -119,5 +127,5 @@ public class NewFileGeneratorTest extends TestCase
             assertTrue(xmlFile.length() > 0);
         }
     }
-
+     
 }
