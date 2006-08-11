@@ -12,9 +12,9 @@
     <artifactId>maven-psixml-generator-plugin</artifactId>
     <packaging>maven-plugin</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>Plugin - Generates PSI XML files from the stored data</name>
+    <name>Plugin - PSI XML Generator</name>
     <description>
-        This plugin creates the PSI XML files
+        Generates PSI XML files from the stored data
     </description>
 
     <scm>
