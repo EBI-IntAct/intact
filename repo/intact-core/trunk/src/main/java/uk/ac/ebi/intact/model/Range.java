@@ -235,7 +235,7 @@ public class Range extends BasicObjectImpl {
         this.toIntervalStart = toStart;
         this.toIntervalEnd = toEnd;
 
-        setSequence( seq );
+        this.sequence = prepareSequence( seq );
     }
 
     //------------------------- public methods --------------------------------------
@@ -383,10 +383,15 @@ public class Range extends BasicObjectImpl {
      * @param sequence the raw sequence (generally this string is the full sequence).
      */
     public void setSequence( String sequence ) {
-        // Get the sequence from start if there is no fuzzy type.
+       this.sequence = sequence;
+    }
+
+    public String prepareSequence(String sequence)
+    {
+       // Get the sequence from start if there is no fuzzy type.
         if ( fromCvFuzzyType == null ) {
             setSequenceIntern( getSequenceStartingFrom( sequence, fromIntervalStart ) );
-            return;
+            return sequence;
         }
         // Truncate according to type.
         if ( fromCvFuzzyType.isCTerminal() ) {
@@ -396,6 +401,8 @@ public class Range extends BasicObjectImpl {
         } else {
             setSequenceIntern( getSequenceStartingFrom( sequence, fromIntervalStart ) );
         }
+
+        return sequence;
     }
 
     public String getSequence() {
