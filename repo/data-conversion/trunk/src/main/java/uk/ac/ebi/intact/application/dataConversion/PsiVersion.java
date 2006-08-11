@@ -84,6 +84,10 @@ public final class PsiVersion {
         {
             return getVersion25();
         }
+        else if (version.equals("1.0"))
+        {
+            return getVersion1();
+        }
 
         throw new IllegalArgumentException("Invalid PSI version: "+version);
 
