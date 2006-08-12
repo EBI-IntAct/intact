@@ -783,6 +783,16 @@ public class ExperimentListGenerator {
             interactionCount = ExperimentListGeneratorDao.countInteractionCountsForExperiments(searchPattern);
         }
 
+        if (interactionCount == null)
+        {
+            throw new NullPointerException("Interaction count null for experiment: "+experimentAc);
+        }
+
+        if (experimentAc == null)
+        {
+            throw new NullPointerException("Experiment AC is null!");
+        }
+
         return interactionCount.get(experimentAc);
     }
 
