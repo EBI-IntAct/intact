@@ -54,7 +54,7 @@ public class IntactContext implements Serializable
         }
 
        IntactSession session = new StandaloneSession();
-       RuntimeConfig.getCurrentInstance(session).setDefaultDataConfig(standardDataConfig);
+       RuntimeConfig.getCurrentInstance(session).addDataConfig(standardDataConfig, true);
        IntactConfigurator.initIntact(session);
        IntactConfigurator.createIntactContext(session);
     }

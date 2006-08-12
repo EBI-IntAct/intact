@@ -53,14 +53,7 @@ public class IntactConfigurator
             // add the core model data config
             log.info("Registering standard data-config");
             StandardCoreDataConfig stdDataConfig = new StandardCoreDataConfig();
-            try
-            {
-                stdDataConfig.initialize();
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
+            stdDataConfig.initialize();
             config.addDataConfig(stdDataConfig, true);
         }
 
@@ -129,7 +122,7 @@ public class IntactConfigurator
         }
 
         DaoFactory daoFactory = DaoFactory.getCurrentInstance(session,
-                RuntimeConfig.getCurrentInstance(session).getDataConfig(StandardCoreDataConfig.NAME));
+                RuntimeConfig.getCurrentInstance(session).getDefaultDataConfig());
 
         try
         {
