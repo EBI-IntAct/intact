@@ -331,6 +331,11 @@ public class ExperimentListGenerator {
     {
         List<String> taxIds = taxIdsForExperiment(experimentAc);
 
+        if (taxIds == null)
+        {
+            throw new IntactException("No taxId found for experiment: "+experimentAc);
+        }
+
         List<BioSource> targetSpeciesList = new ArrayList<BioSource>();
 
         for (String taxId : taxIds)
