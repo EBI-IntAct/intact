@@ -333,7 +333,8 @@ public class ExperimentListGenerator {
 
         if (taxIds == null)
         {
-            throw new IntactException("No taxId found for experiment: "+experimentAc);
+            experimentsWithErrors.put(experimentAc, "[INFO] No target-species found for experiment");
+            return new ArrayList<BioSource>();
         }
 
         List<BioSource> targetSpeciesList = new ArrayList<BioSource>();
