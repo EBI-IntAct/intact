@@ -48,8 +48,6 @@ public class Version
         this.folderName = folderName;
     }
 
-
-    @Override
     public String toString()
     {
         return getNumber();
