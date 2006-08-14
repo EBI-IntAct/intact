@@ -21,7 +21,7 @@ import java.util.*;
  * Creates PSI XML files from the database
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:PsiXmlGeneratorMojo.java 5772 2006-08-11 16:08:37 +0100 (Fri, 11 Aug 2006) baranda $
  * @since <pre>04/08/2006</pre>
  *
  * @goal psi
@@ -49,22 +49,37 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo
 
         getLog().debug("Reverse mapping file: "+getReverseMapping());
 
+        getLog().info("Classifying and writing classification by species");
         writeClassificationBySpeciesToFile();
+
+        getLog().info("Writing classifications by publications");
         writeClassificationByPublicationsToFile();
 
         CvMapping mapping = new CvMapping();
         mapping.loadFile(getReverseMapping());
+
+        Collection<ExperimentListItem> items = generateAllClassifications();
+
+        getLog().info("Going to generate "+items.size()+" PSI-MI xml files for each of this versions: "+psiVersions);
+
+        int count = 0;
 
         // create xml files
         try
         {
             for (Version version : psiVersions)
             {
-                for (ExperimentListItem item : generateAllClassifications())
+                for (ExperimentListItem item : items)
                 {
                     getLog().debug("Exporting: "+item+" (PSI: "+version.getNumber()+")");
                     NewFileGenerator.writePsiData(item, PsiVersion.valueOf(version.getNumber()), mapping,
                                                   new File(targetPath, version.getFolderName()), false);
+                    count++;
+
+                    if (count % 100 == 0)
+                    {
+                        getLog().info("Exported "+count+" experiments (Version "+version+")");
+                    }
                 }
             }
         }
@@ -75,6 +90,7 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo
 
         if (zipXml)
         {
+            getLog().info("Clustering and zipping files");
             ZipFileGenerator.clusterAllXmlFilesFromDirectory( targetPath, true );
         }
     }

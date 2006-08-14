@@ -12,7 +12,7 @@ import org.apache.commons.logging.LogFactory;
  * TODO comment this!
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:Version.java 5772 2006-08-11 16:08:37 +0100 (Fri, 11 Aug 2006) baranda $
  * @since <pre>11-Aug-2006</pre>
  */
 public class Version
@@ -46,5 +46,12 @@ public class Version
     public void setFolderName(String folderName)
     {
         this.folderName = folderName;
+    }
+
+
+    @Override
+    public String toString()
+    {
+        return getNumber();
     }
 }
