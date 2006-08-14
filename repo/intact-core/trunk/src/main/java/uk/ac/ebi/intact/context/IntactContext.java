@@ -3,10 +3,10 @@ package uk.ac.ebi.intact.context;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.context.impl.StandaloneSession;
-import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.config.DataConfig;
 import uk.ac.ebi.intact.config.impl.StandardCoreDataConfig;
+import uk.ac.ebi.intact.context.impl.StandaloneSession;
+import uk.ac.ebi.intact.model.Institution;
 
 import java.io.Serializable;
 
@@ -54,7 +54,12 @@ public class IntactContext implements Serializable
         }
 
        IntactSession session = new StandaloneSession();
-       RuntimeConfig.getCurrentInstance(session).addDataConfig(standardDataConfig, true);
+
+       if (standardDataConfig.isInitialized())
+       {
+            RuntimeConfig.getCurrentInstance(session).addDataConfig(standardDataConfig, true);
+       }
+        
        IntactConfigurator.initIntact(session);
        IntactConfigurator.createIntactContext(session);
     }
