@@ -49,6 +49,12 @@
                 <maven.test.skip>false</maven.test.skip>
             </properties>
         </profile>
+        <profile>
+            <id>ebi-prod</id>
+            <properties>
+                <maven.test.skip>false</maven.test.skip>
+            </properties>
+        </profile>
     </profiles>
 
     <build>

@@ -14,9 +14,7 @@ import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Inte
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Interaction2xmlI;
 import uk.ac.ebi.intact.application.dataConversion.util.DisplayXML;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.Component;
-import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.model.NucleicAcid;
+import uk.ac.ebi.intact.model.*;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -183,9 +181,15 @@ public abstract class NewFileGenerator
         for (Iterator<Interaction> iterator = interactions.iterator(); iterator.hasNext();) {
             Interaction interaction = iterator.next();
             for (Component component : interaction.getComponents()) {
-                if ( component.getInteractor() instanceof NucleicAcid){
+                Interactor interactor = component.getInteractor();
+                if ( interactor instanceof NucleicAcid){
                     iterator.remove();
                     break;
+                }
+                else if (interactor instanceof SmallMoleculeImpl)
+                {
+                    iterator.remove();
+                     break;
                 }
             }
         }
