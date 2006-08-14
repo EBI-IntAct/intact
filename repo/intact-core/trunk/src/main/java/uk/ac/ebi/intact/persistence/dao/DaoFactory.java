@@ -165,6 +165,11 @@ public class DaoFactory implements Serializable
         return new ProteinDaoImpl(getCurrentSession());
     }
 
+    public PublicationDao getPublicationDao()
+    {
+        return new PublicationDaoImpl(getCurrentSession());
+    }
+
     public RangeDao getRangeDao()
     {
         return new RangeDaoImpl(getCurrentSession());
