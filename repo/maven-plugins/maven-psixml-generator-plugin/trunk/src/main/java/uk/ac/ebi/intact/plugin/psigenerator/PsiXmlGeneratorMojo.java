@@ -67,20 +67,17 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo
         {
             for (Version version : psiVersions)
             {
-                int count = 0;
+                int count = 1;
 
                 getLog().info("Generating files for version: "+version);
                 for (ExperimentListItem item : items)
                 {
-                    getLog().debug("Exporting: "+item+" (PSI: "+version.getNumber()+")");
+                    getLog().debug("Exporting "+count+": "+item+" (PSI: "+version.getNumber()+")");
                     NewFileGenerator.writePsiData(item, PsiVersion.valueOf(version.getNumber()), mapping,
                                                   new File(targetPath, version.getFolderName()), false);
+
                     count++;
 
-                    if (count % 100 == 0)
-                    {
-                        getLog().info("Exported "+count+" experiments");
-                    }
                 }
             }
         }
