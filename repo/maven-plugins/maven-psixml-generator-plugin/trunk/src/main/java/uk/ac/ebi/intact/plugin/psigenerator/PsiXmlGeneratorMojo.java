@@ -62,13 +62,13 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo
 
         getLog().info("Going to generate "+items.size()+" PSI-MI xml files for each of this versions: "+psiVersions);
 
-        int count = 0;
-
         // create xml files
         try
         {
             for (Version version : psiVersions)
             {
+                int count = 0;
+
                 getLog().info("Generating files for version: "+version);
                 for (ExperimentListItem item : items)
                 {
