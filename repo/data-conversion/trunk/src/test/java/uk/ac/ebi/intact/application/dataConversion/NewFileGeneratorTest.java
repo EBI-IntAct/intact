@@ -127,5 +127,31 @@ public class NewFileGeneratorTest extends TestCase
             assertTrue(xmlFile.length() > 0);
         }
     }
+
+    public void testGenerateXmlFilesWithSmallMolecule_Psi1() throws Exception
+    {
+        File reverseMappingFile = new File(NewFileGeneratorTest.class.getResource("/reverseMapping.txt").getFile());
+
+        CvMapping mapping = new CvMapping();
+        mapping.loadFile(reverseMappingFile);
+
+        ExperimentListGenerator gen = new ExperimentListGenerator("gonzalez-2003-1");
+
+        List<ExperimentListItem> allItems = gen.generateAllClassifications();
+
+        for (ExperimentListItem item : allItems)
+        {
+            NewFileGenerator.writePsiData(item, PsiVersion.VERSION_1, mapping, new File("target/psi1"), false);
+        }
+
+        // check if the files exist and are not empty
+        for (ExperimentListItem item : allItems)
+        {
+            File xmlFile = new File("target/psi1", item.getFilename());
+
+            assertTrue(xmlFile.exists());
+            assertTrue(xmlFile.length() > 0);
+        }
+    }
      
 }
