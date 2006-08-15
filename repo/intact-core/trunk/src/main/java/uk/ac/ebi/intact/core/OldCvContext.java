@@ -20,10 +20,12 @@ import java.util.Map;
  * @version $Id$
  * @since <pre>27-Mar-2006</pre>
  */
-public abstract class CvContext {
-    public static final String CONTEXT_KEY = CvContext.class.getName();
+@Deprecated
+public abstract class OldCvContext
+{
+    public static final String CONTEXT_KEY = OldCvContext.class.getName();
 
-    public static final Logger log = Logger.getLogger( CvContext.class );
+    public static final Logger log = Logger.getLogger( OldCvContext.class );
 
     private String srsUrl;
 
@@ -59,16 +61,16 @@ public abstract class CvContext {
     // Map that contains all the CvObjects
     private final Map<CvName, CvObject> cvMap;
 
-    protected CvContext() {
+    protected OldCvContext() {
         cvMap = new HashMap<CvName, CvObject>();
     }
 
     // ThreadLocal pattern
     /*
-    private static ThreadLocal<CvContext> currentInstance = new ThreadLocal()
+    private static ThreadLocal<OldCvContext> currentInstance = new ThreadLocal()
     {
-        // the initial value of the CvContext is null
-        protected CvContext initialValue()
+        // the initial value of the OldCvContext is null
+        protected OldCvContext initialValue()
         {
             return null;
         }
@@ -76,39 +78,39 @@ public abstract class CvContext {
     };   */
 
     /**
-     * Gets the current instance of the CvContext
+     * Gets the current instance of the OldCvContext
      *
-     * @return the current instance of the CvContext
+     * @return the current instance of the OldCvContext
      */
-    public static synchronized CvContext getCurrentInstance() {
+    public static synchronized OldCvContext getCurrentInstance() {
         ServletContext servletContext = ExternalContext.getCurrentInstance().getServletContext();
 
         if ( servletContext == null ) {
-            throw new NullPointerException( "ServletContext null in CvContext" );
+            throw new NullPointerException( "ServletContext null in OldCvContext" );
         }
 
-        CvContext cvContext = (CvContext) servletContext.getAttribute( CONTEXT_KEY );
+        OldCvContext oldCvContext = (OldCvContext) servletContext.getAttribute( CONTEXT_KEY );
 
-        if ( cvContext == null ) {
+        if ( oldCvContext == null ) {
             try {
-                cvContext = CvContextFactory.createCvContext( );
+                oldCvContext = OldCvContextFactory.createCvContext( );
 
                 if ( log.isInfoEnabled() ) {
-                    log.info( "New CvContext instance created" );
+                    log.info( "New OldCvContext instance created" );
                 }
             }
             catch ( IntactException e ) {
                 e.printStackTrace();
             }
 
-            servletContext.setAttribute( CvContext.CONTEXT_KEY, cvContext );
+            servletContext.setAttribute(CONTEXT_KEY, oldCvContext);
         } else {
             if ( log.isInfoEnabled() ) {
-                log.info( "CvContext already exists" );
+                log.info( "CvOldCvContextlready exists" );
             }
         }
 
-        return cvContext;
+        return oldCvContext;
     }
 
     /**

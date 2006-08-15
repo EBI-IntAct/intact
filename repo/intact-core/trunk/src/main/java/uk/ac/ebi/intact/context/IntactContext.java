@@ -69,21 +69,6 @@ public class IntactContext implements Serializable
         protected IntactContext initialValue()
         {
             return null;
-            /*
-            String defaultUser = null;
-
-            try
-            {
-                defaultUser = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbUserName();
-            }
-            catch (SQLException e)
-            {
-                e.printStackTrace();
-            }
-
-            UserContext userContext = new UserContext(defaultUser);
-
-            return new IntactContext(userContext, null);  */
         }
     };
 
@@ -96,6 +81,11 @@ public class IntactContext implements Serializable
     public UserContext getUserContext()
     {
         return userContext;
+    }
+
+    public CvContext getCvContext()
+    {
+        return CvContext.getCurrentInstance(session);
     }
 
     public Institution getInstitution() throws IntactException

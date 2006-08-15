@@ -5,53 +5,50 @@
  */
 package uk.ac.ebi.intact.core;
 
-import uk.ac.ebi.intact.model.*;
+import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.business.IntactException;
-
-import static uk.ac.ebi.intact.core.CvContext.CvName;
-import uk.ac.ebi.intact.core.CvContext;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.context.IntactContext;
+import static uk.ac.ebi.intact.core.OldCvContext.CvName;
+import uk.ac.ebi.intact.model.*;
 
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.apache.log4j.Logger;
-
 /**
- * Creates new instances of CvContext
+ * Creates new instances of OldCvContext
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  * @since <pre>27-Mar-2006</pre>
  */
-public class CvContextFactory
+@Deprecated
+public class OldCvContextFactory
 {
     protected static final Logger logger = Logger.getLogger("updateProtein");
 
     private static final String CV_TOPIC_SEARCH_URL_ASCII = "search-url-ascii";
 
     /**
-     * This method creates a new instance of a <code>CvContext</code> and stores it in the ServletContext
+     * This method creates a new instance of a <code>OldCvContext</code> and stores it in the ServletContext
      * so it is only created once
-     * @return the new CvContext
+     * @return the new OldCvContext
      * @throws UpdateException thrown if something goes wrong during the retrieval of the CvObjects
      * from the database
      */
-    public static CvContext createCvContext() throws UpdateException
+    public static OldCvContext createCvContext() throws UpdateException
     {
-        CvContext cvContext = new CvContext(){};
+        OldCvContext oldCvContext = new OldCvContext(){};
 
         /**
-         * Load CVs abd put them in the cvContext.
+         * Load CVs abd put them in the oldCvContext.
          */
         try
         {
             CvObject sgdDatabase = getCvObjectViaMI( CvDatabase.class, CvDatabase.SGD_MI_REF); // sgd
-            cvContext.putCvObject(CvName.SGD_DB, sgdDatabase);
+            oldCvContext.putCvObject(CvName.SGD_DB, sgdDatabase);
 
             CvObject uniprotDatabase = getCvObjectViaMI( CvDatabase.class, CvDatabase.UNIPROT_MI_REF); // uniprot
-            cvContext.putCvObject(CvName.UNIPROT_DB, uniprotDatabase);
+            oldCvContext.putCvObject(CvName.UNIPROT_DB, uniprotDatabase);
 
             // search for the SRS link.
             Collection annotations = uniprotDatabase.getAnnotations();
@@ -71,7 +68,7 @@ public class CvContextFactory
                 if (searchedAnnotation != null)
                 {
                     String srsUrl = searchedAnnotation.getAnnotationText();
-                    cvContext.setSrsUrl(srsUrl);
+                    oldCvContext.setSrsUrl(srsUrl);
                     if (logger != null)
                     {
                         logger.info("Found UniProt URL in the Uniprot CvDatabase: " + srsUrl);
@@ -99,45 +96,45 @@ public class CvContextFactory
             }
 
             CvObject intactDatabase = getCvObjectViaMI( CvDatabase.class, CvDatabase.INTACT_MI_REF);
-            cvContext.putCvObject(CvName.INTACT_DB, intactDatabase);
+            oldCvContext.putCvObject(CvName.INTACT_DB, intactDatabase);
             CvObject goDatabase = getCvObjectViaMI( CvDatabase.class, CvDatabase.GO_MI_REF);
-            cvContext.putCvObject(CvName.GO_DB, goDatabase);
+            oldCvContext.putCvObject(CvName.GO_DB, goDatabase);
             CvObject interproDatabase = getCvObjectViaMI( CvDatabase.class, CvDatabase.INTERPRO_MI_REF);
-            cvContext.putCvObject(CvName.INTERPRO_DB, interproDatabase);
+            oldCvContext.putCvObject(CvName.INTERPRO_DB, interproDatabase);
             CvObject flybaseDatabase = getCvObjectViaMI( CvDatabase.class, CvDatabase.FLYBASE_MI_REF);
-            cvContext.putCvObject(CvName.FLYBASE_DB, flybaseDatabase);
+            oldCvContext.putCvObject(CvName.FLYBASE_DB, flybaseDatabase);
             CvObject reactomeDatabase = getCvObjectViaMI( CvDatabase.class, CvDatabase.REACTOME_PROTEIN_PSI_REF);
-            cvContext.putCvObject(CvName.REACTOME_DB, reactomeDatabase);
+            oldCvContext.putCvObject(CvName.REACTOME_DB, reactomeDatabase);
             CvObject hugeDatabase = getCvObjectViaMI( CvDatabase.class, CvDatabase.HUGE_MI_REF);
-            cvContext.putCvObject(CvName.HUGE_DB, hugeDatabase);
+            oldCvContext.putCvObject(CvName.HUGE_DB, hugeDatabase);
 
             CvObject identityXrefQualifier = getCvObjectViaMI( CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF);
-            cvContext.putCvObject(CvName.IDENTITY_XREF_QUALIFIER, identityXrefQualifier);
+            oldCvContext.putCvObject(CvName.IDENTITY_XREF_QUALIFIER, identityXrefQualifier);
             CvObject secondaryXrefQualifier = getCvObjectViaMI( CvXrefQualifier.class, CvXrefQualifier.SECONDARY_AC_MI_REF);
-            cvContext.putCvObject(CvName.SECONDARY_XREF_QUALIFIER, secondaryXrefQualifier);
+            oldCvContext.putCvObject(CvName.SECONDARY_XREF_QUALIFIER, secondaryXrefQualifier);
             CvObject isoFormParentXrefQualifier = getCvObjectViaMI( CvXrefQualifier.class, CvXrefQualifier.ISOFORM_PARENT_MI_REF);
-            cvContext.putCvObject(CvName.ISOFORM_PARENT_XREF_QUALIFIER, isoFormParentXrefQualifier);
+            oldCvContext.putCvObject(CvName.ISOFORM_PARENT_XREF_QUALIFIER, isoFormParentXrefQualifier);
 
             // only one search by shortlabel as it still doesn't have MI number.
             CvObject isoformComment = getCvObject( CvTopic.class, CvTopic.ISOFORM_COMMENT);
-            cvContext.putCvObject(CvName.ISOFORM_COMMENT, isoformComment);
+            oldCvContext.putCvObject(CvName.ISOFORM_COMMENT, isoformComment);
             CvObject noUniprotUpdate = getCvObject( CvTopic.class, CvTopic.NON_UNIPROT);
-            cvContext.putCvObject(CvName.NO_UNIPROT_UPDATE, noUniprotUpdate);
+            oldCvContext.putCvObject(CvName.NO_UNIPROT_UPDATE, noUniprotUpdate);
 
 
             CvObject geneNameAliasType = getCvObjectViaMI( CvAliasType.class, CvAliasType.GENE_NAME_MI_REF);
-            cvContext.putCvObject(CvName.GENE_NAME_ALIAS_TYPE, geneNameAliasType);
+            oldCvContext.putCvObject(CvName.GENE_NAME_ALIAS_TYPE, geneNameAliasType);
             CvObject geneNameSynonymAliasType = getCvObjectViaMI( CvAliasType.class, CvAliasType.GENE_NAME_SYNONYM_MI_REF);
-            cvContext.putCvObject(CvName.GENE_NAME_SYNONYM_ALIAS_TYPE, geneNameSynonymAliasType);
+            oldCvContext.putCvObject(CvName.GENE_NAME_SYNONYM_ALIAS_TYPE, geneNameSynonymAliasType);
             CvObject isoformSynonym = getCvObjectViaMI( CvAliasType.class, CvAliasType.ISOFORM_SYNONYM_MI_REF);
-            cvContext.putCvObject(CvName.ISOFORM_SYNONYM, isoformSynonym);
+            oldCvContext.putCvObject(CvName.ISOFORM_SYNONYM, isoformSynonym);
             CvObject locusNameAliasType = getCvObjectViaMI( CvAliasType.class, CvAliasType.LOCUS_NAME_MI_REF);
-            cvContext.putCvObject(CvName.LOCUS_NAME_ALIAS_TYPE, locusNameAliasType);
+            oldCvContext.putCvObject(CvName.LOCUS_NAME_ALIAS_TYPE, locusNameAliasType);
             CvObject orfNameAliasType = getCvObjectViaMI( CvAliasType.class, CvAliasType.ORF_NAME_MI_REF);
-            cvContext.putCvObject(CvName.ORF_NAME_ALIAS_TYPE, orfNameAliasType);
+            oldCvContext.putCvObject(CvName.ORF_NAME_ALIAS_TYPE, orfNameAliasType);
 
             CvObject proteinType = getCvObjectViaMI( CvInteractorType.class, CvInteractorType.getProteinMI());
-            cvContext.putCvObject(CvName.PROTEIN_TYPE, proteinType);
+            oldCvContext.putCvObject(CvName.PROTEIN_TYPE, proteinType);
 
         }
         catch (IntactException e)
@@ -149,7 +146,7 @@ public class CvContextFactory
             throw new UpdateException("Couldn't find needed object in IntAct, cause: " + e.getMessage());
         }
 
-       return cvContext;
+       return oldCvContext;
     }
 
     /**

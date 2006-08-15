@@ -8,7 +8,6 @@ package uk.ac.ebi.intact.context;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.config.ConfigurationException;
 import uk.ac.ebi.intact.config.DataConfig;
 import uk.ac.ebi.intact.config.impl.StandardCoreDataConfig;
 import uk.ac.ebi.intact.model.Institution;
@@ -25,7 +24,7 @@ import java.util.Map;
  * @version $Id$
  * @since <pre>04/08/2006</pre>
  */
-public class RuntimeConfig implements Serializable
+public final class RuntimeConfig implements Serializable
 {
     private static final Log log = LogFactory.getLog(RuntimeConfig.class);
 
