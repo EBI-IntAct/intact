@@ -9,8 +9,11 @@ import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.InteractorXref;
-import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * TODO comment this!
@@ -38,6 +41,27 @@ public class ProteinTest extends TestCase
     {
         Xref xref = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao(InteractorXref.class).getByAc("EBI-595609");
         assertNotNull(xref);
+    }
+
+    public void testInteractionsForProtein()
+    {
+        Protein protein = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao()
+                .getByAc("EBI-100018");
+
+        Collection<Component> components = protein.getActiveInstances();
+        List<Interaction> interactions = new ArrayList<Interaction>( components.size() );
+
+        for (Component component : components)
+        {
+            Interaction interaction = component.getInteraction();
+
+            if (!interactions.contains(interaction))
+            {
+                interactions.add(interaction);
+            }
+        }
+
+        assertEquals(20, interactions.size());
     }
 
 }

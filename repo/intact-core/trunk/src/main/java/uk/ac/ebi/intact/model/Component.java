@@ -118,11 +118,8 @@ public class Component extends BasicObjectImpl {
             throw new NullPointerException( "valid Component must have a role set (ie a CvComponentRole)!" );
         }
 
-//        this.interaction = interaction;
-//        this.interactor = interactor;
-
-        setInteraction( interaction );
-        setInteractor( interactor );
+        this.interaction = interaction;
+        this.interactor = interactor;
 
         this.cvComponentRole = role;
     }
@@ -263,11 +260,12 @@ public class Component extends BasicObjectImpl {
 
         //need these checks because we still have a no-arg
         //constructor at the moment.....
+
         if ( interactor != null ) {
-            code = code * 29 + getInteractor().hashCode();
+            code = code * 29 + interactor.hashCode();
         }
         if ( interaction != null ) {
-            code = code * 29 + getInteractor().hashCode();
+            code = code * 29 + interaction.hashCode();
         }
         if ( cvComponentRole != null ) {
             code = code * 29 + cvComponentRole.hashCode();

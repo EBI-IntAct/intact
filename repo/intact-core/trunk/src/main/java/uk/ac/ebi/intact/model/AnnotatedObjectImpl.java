@@ -8,9 +8,8 @@ package uk.ac.ebi.intact.model;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.validator.Length;
-import org.hibernate.lucene.Keyword;
 import org.hibernate.lucene.Text;
+import org.hibernate.validator.Length;
 
 import javax.persistence.JoinColumn;
 import javax.persistence.MappedSuperclass;
@@ -282,6 +281,11 @@ public abstract class AnnotatedObjectImpl<T extends Xref> extends BasicObjectImp
 
         final AnnotatedObject annotatedObject = (AnnotatedObject) o;
 
+        if (annotatedObject.getAc() != null & ac != null)
+        {
+            return ac.equals(annotatedObject.getAc());
+        }
+
         //short label and full name (if it exists) must be equal also..
         if( shortLabel != null ) {
             if (!shortLabel.equals(annotatedObject.getShortLabel()))
@@ -324,6 +328,11 @@ public abstract class AnnotatedObjectImpl<T extends Xref> extends BasicObjectImp
         //int code = super.hashCode();
 
         int code = 29;
+
+        if (ac != null)
+        {
+            return code * ac.hashCode();
+        }
 
         for (Xref xref : xrefs)
         {

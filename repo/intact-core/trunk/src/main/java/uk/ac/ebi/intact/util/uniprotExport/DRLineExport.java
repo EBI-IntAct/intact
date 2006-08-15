@@ -9,17 +9,12 @@ import org.apache.commons.cli.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.util.Chrono;
-import uk.ac.ebi.intact.util.MemoryMonitor;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.util.MemoryMonitor;
 
 import java.io.*;
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.*;
 
 /**
@@ -87,49 +82,49 @@ public class DRLineExport extends LineExport {
      *
      * @return true is the protein is plays a role in at least one high confidence interaction, otherwise false.
      */
-    private final boolean isHighConfidence( final Protein protein ) {
+    private boolean isHighConfidence( final Protein protein ) {
 
         boolean isHighConfidence = false;
 
         String uniprotID = getUniprotID( protein );
-        log( "\n\nChecking on Protein: " + uniprotID + "(" + protein.getAc() + ", " + protein.getShortLabel() + ") ..." );
+        log.debug( "\n\nChecking on Protein: " + uniprotID + "(" + protein.getAc() + ", " + protein.getShortLabel() + ") ..." );
 
         // getting all interactions in which that protein plays a role.
         List interactions = getInteractions( protein );
-        log( interactions.size() + " interactions found." );
+        log.debug( interactions.size() + " interactions found." );
 
         for ( int i = 0; i < interactions.size() && isHighConfidence == false; i++ ) {
 
             Interaction interaction = (Interaction) interactions.get( i );
 
-            log( "  (" + ( i + 1 ) + ") Interaction: Shortlabel:" + interaction.getShortLabel() + "  AC: " + interaction.getAc() );
+            log.debug( "  (" + ( i + 1 ) + ") Interaction: Shortlabel:" + interaction.getShortLabel() + "  AC: " + interaction.getAc() );
 
             if ( isNegative( interaction ) ) {
 
-                log( "\t That interaction or at least one of its experiments is negative, skip it." );
+                log.debug( "\t That interaction or at least one of its experiments is negative, skip it." );
                 continue; // skip that interaction
             }
 
             Collection experiments = interaction.getExperiments();
 
             int expCount = experiments.size();
-            log( "\t interaction related to " + expCount + " experiment" + ( expCount > 1 ? "s" : "" ) + "." );
+            log.debug( "\t interaction related to " + expCount + " experiment" + ( expCount > 1 ? "s" : "" ) + "." );
 
             // TODO add shortcut here on && isHighConfidence == false as we stop as soon as we find a high confidence.
             for ( Iterator iterator2 = experiments.iterator(); iterator2.hasNext() && isHighConfidence == false; ) {
                 Experiment experiment = (Experiment) iterator2.next();
 
-                log( "\t Experiment: Shortlabel:" + experiment.getShortLabel() + "  AC: " + experiment.getAc() );
+                log.debug( "\t Experiment: Shortlabel:" + experiment.getShortLabel() + "  AC: " + experiment.getAc() );
 
                 ExperimentStatus experimentStatus = getExperimentExportStatus( experiment, "\t\t" );
                 if ( experimentStatus.doNotExport() ) {
 
                     // forbid export for all interactions of that experiment (and their proteins).
-                    log( "\t\t No interactions of that experiment will be exported: protein non exportable" );
+                    log.debug( "\t\t No interactions of that experiment will be exported: protein non exportable" );
 
                 } else if ( experimentStatus.doExport() ) {
 
-                    log( "\t\t All interaction of that experiment will be exported." );
+                    log.debug( "\t\t All interaction of that experiment will be exported." );
                     isHighConfidence = true;
 
                 } else if ( experimentStatus.isLargeScale() ) {
@@ -146,7 +141,7 @@ public class DRLineExport extends LineExport {
                         if ( authorConfidenceTopic.equals( annotation.getCvTopic() ) ) {
                             String text = annotation.getAnnotationText();
 
-                            log( "\t Interaction has " + authorConfidenceTopic.getShortLabel() + ": '" + text + "'" );
+                            log.debug( "\t Interaction has " + authorConfidenceTopic.getShortLabel() + ": '" + text + "'" );
 
                             if ( text != null ) {
                                 text = text.trim();
@@ -156,11 +151,11 @@ public class DRLineExport extends LineExport {
                                 String kw = (String) iterator4.next();
                                 // NOT case sensitive
 
-                                log( "\t\t Compare it with '" + kw + "'" );
+                                log.debug( "\t\t Compare it with '" + kw + "'" );
 
                                 if ( kw.equalsIgnoreCase( text ) ) {
                                     annotationFound = true;
-                                    log( "\t\t\t Equals !" );
+                                    log.debug( "\t\t\t Equals !" );
                                 }
                             }
                         }
@@ -173,17 +168,17 @@ public class DRLineExport extends LineExport {
                         * in the current state, the annotation is on the experiment level that is
                         * lower and hence is dominant on the method's one.
                         */
-                        log( "\t that interaction is eligible for export in the context of a large scale experiment" );
+                        log.debug( "\t that interaction is eligible for export in the context of a large scale experiment" );
                         isHighConfidence = true;
 
                     } else {
 
-                        log( "\t interaction not eligible: protein non exportable" );
+                        log.debug( "\t interaction not eligible: protein non exportable" );
                     }
 
                 } else if ( experimentStatus.isNotSpecified() ) {
 
-                    log( "\t\t No experiment status, check the experimental method." );
+                    log.debug( "\t\t No experiment status, check the experimental method." );
 
                     // Then check the experimental method (CvInteraction)
                     // Nothing specified at the experiment level, check for the method (CvInteraction)
@@ -203,7 +198,7 @@ public class DRLineExport extends LineExport {
 
                         } else if ( methodStatus.doNotExport() ) {
 
-                            log( "\t\t Method specified as non exportable" );
+                            log.debug( "\t\t Method specified as non exportable" );
 
                         } else if ( methodStatus.isNotSpecified() ) {
 
@@ -212,7 +207,7 @@ public class DRLineExport extends LineExport {
 
                         } else if ( methodStatus.isConditionalExport() ) {
 
-                            log( "\t\t As conditional export, check the count of distinct experiment for that method." );
+                            log.debug( "\t\t As conditional export, check the count of distinct experiment for that method." );
 
                             // if the threshold is not reached, iterates over all available interactions to check if
                             // there is (are) one (many) that could allow to reach the threshold.
@@ -228,7 +223,7 @@ public class DRLineExport extends LineExport {
                             for ( Iterator iterator4 = experiments.iterator(); iterator4.hasNext(); ) {
                                 Experiment experiment1 = (Experiment) iterator4.next();
 
-                                log( "\t\t Experiment: Shortlabel:" + experiment1.getShortLabel() + "  AC: " + experiment1.getAc() );
+                                log.debug( "\t\t Experiment: Shortlabel:" + experiment1.getShortLabel() + "  AC: " + experiment1.getAc() );
 
                                 CvInteraction method = experiment1.getCvInteraction();
 
@@ -238,15 +233,15 @@ public class DRLineExport extends LineExport {
 
                                     // we only update if we found one
                                     enoughExperimentFound = ( experimentAcs.size() >= threshold );
-                                    log( "\t\t\t That experiment add an other evidence with that same CvInteraction( " + cvInteraction.getShortLabel() + " )." );
+                                    log.debug( "\t\t\t That experiment add an other evidence with that same CvInteraction( " + cvInteraction.getShortLabel() + " )." );
 
                                 } else {
 
-                                    log( "\t\t\t That experiment doesn't consolidate what we have, discard it." );
+                                    log.debug( "\t\t\t That experiment doesn't consolidate what we have, discard it." );
                                 }
                             }
 
-                            log( "\t Looking for other interactions that support that method in other experiments..." );
+                            log.debug( "\t Looking for other interactions that support that method in other experiments..." );
 
                             for ( int j = 0; j < interactions.size() && !enoughExperimentFound; j++ ) {
 
@@ -266,14 +261,14 @@ public class DRLineExport extends LineExport {
 
                                 Interaction interaction2 = (Interaction) interactions.get( j );
 
-                                log( "\t\t Interaction: Shortlabel:" + interaction2.getShortLabel() + "  AC: " + interaction2.getAc() );
+                                log.debug( "\t\t Interaction: Shortlabel:" + interaction2.getShortLabel() + "  AC: " + interaction2.getAc() );
 
                                 Collection experiments2 = interaction2.getExperiments();
 
                                 for ( Iterator iterator5 = experiments2.iterator(); iterator5.hasNext() && !enoughExperimentFound; )
                                 {
                                     Experiment experiment2 = (Experiment) iterator5.next();
-                                    log( "\t\t\t Experiment: Shortlabel:" + experiment2.getShortLabel() + "  AC: " + experiment2.getAc() );
+                                    log.debug( "\t\t\t Experiment: Shortlabel:" + experiment2.getShortLabel() + "  AC: " + experiment2.getAc() );
 
                                     CvInteraction method = experiment2.getCvInteraction();
 
@@ -284,25 +279,25 @@ public class DRLineExport extends LineExport {
 
                                         // we only update if we found one
                                         enoughExperimentFound = ( experimentAcs.size() >= threshold );
-                                        log( "\t\t\t\t That experiment add an other evidence with that same CvInteraction( " + cvInteraction.getShortLabel() + " )." );
+                                        log.debug( "\t\t\t\t That experiment add an other evidence with that same CvInteraction( " + cvInteraction.getShortLabel() + " )." );
 
                                     } else {
 
-                                        log( "\t\t\t\t That experiment doesn't consolidate what we have, discard it." );
+                                        log.debug( "\t\t\t\t That experiment doesn't consolidate what we have, discard it." );
                                     }
 
                                 } // j's experiments
 
-                                log( "\t\t\t " + cvInteraction.getShortLabel() + ", threshold: " +
+                                log.debug( "\t\t\t " + cvInteraction.getShortLabel() + ", threshold: " +
                                      threshold + " #experiment: " +
                                      ( experimentAcs == null ? "none" : "" + experimentAcs.size() ) );
                             } // for( j in interactions )
 
                             if ( enoughExperimentFound ) {
-                                log( "\t\t\t Enough experiment found." );
+                                log.debug( "\t\t\t Enough experiment found." );
                                 isHighConfidence = true;
                             } else {
-                                log( "\t\t\t Not enough experiment found: protein non exportable." );
+                                log.debug( "\t\t\t Not enough experiment found: protein non exportable." );
                             }
 
                         } // conditional status
@@ -330,12 +325,12 @@ public class DRLineExport extends LineExport {
         HashMap conditionalMethods = new HashMap();
 
         String uniprotID = getUniprotID( protein );
-        log( "\n\n" + uniprotID + " Shortlabel:" + protein.getShortLabel() + "  AC: " + protein.getAc() );
+        log.debug( uniprotID + " Shortlabel:" + protein.getShortLabel() + "  AC: " + protein.getAc() );
 
         String masterUniprotID = null;
         if ( null != master ) {
             masterUniprotID = getUniprotID( master );
-            log( "\n\nhaving master protein " + masterUniprotID + " Shortlabel:" + master.getShortLabel() + "  AC: " + master.getAc() );
+            log.debug( "\n\nhaving master protein " + masterUniprotID + " Shortlabel:" + master.getShortLabel() + "  AC: " + master.getAc() );
         }
 
         /**
@@ -346,52 +341,53 @@ public class DRLineExport extends LineExport {
          *          - if nothing specified: check if the CvInteraction has a local annotation allowing the export
          *          - if yes, the protein become eligible to export.
          */
-        Collection interactions = getInteractions( protein );
-        log( "\t related to " + interactions.size() + " interactions." );
+        Collection<Interaction> interactions = getInteractions( protein );
+        log.debug( "\t related to " + interactions.size() + " interactions." );
 
         boolean export = false;
         boolean stop = false;
 
-        for ( Iterator iterator1 = interactions.iterator(); iterator1.hasNext() && !stop; ) {
-            Interaction interaction = (Interaction) iterator1.next();
+        for ( Iterator<Interaction> iterator1 = interactions.iterator(); iterator1.hasNext() && !stop; ) {
+            Interaction interaction = iterator1.next();
 
-            log( "\t Interaction: Shortlabel:" + interaction.getShortLabel() + "  AC: " + interaction.getAc() );
+            log.debug( "\t Interaction: Shortlabel:" + interaction.getShortLabel() + "  AC: " + interaction.getAc() );
 
             // if that interaction is flagged as negative, we don't take it into account
             if ( isNegative( interaction ) ) {
-                log( "\t\t Interaction is flagged as negative, we don't take it into account." );
+                log.debug( "\t\t Interaction is flagged as negative, we don't take it into account." );
                 continue; // loop to the next interaction
             } else {
-                log( "\t\t Interaction is NOT flagged as negative." );
+                log.debug( "\t\t Interaction is NOT flagged as negative." );
             }
 
             // if that interaction has not exactly 2 interactors, it is not taken into account
             if ( !isBinary( interaction ) ) {
 
-                log( "\t\t Interaction has not exactly 2 interactors (" + interaction.getComponents().size() +
+                log.debug( "\t\t Interaction has not exactly 2 interactors (" + interaction.getComponents().size() +
                      "), we don't take it into account." );
+
                 continue; // loop to the next interaction
 
             } else {
-                log( "\t\t Interaction is binary." );
+                log.debug( "\t\t Interaction is binary." );
             }
 
             Collection experiments = interaction.getExperiments();
 
             int count = experiments.size();
-            log( "\t\t interaction related to " + count + " experiment" + ( count > 1 ? "s" : "" ) + "." );
+            log.debug( "\t\t interaction related to " + count + " experiment" + ( count > 1 ? "s" : "" ) + "." );
 
             for ( Iterator iterator2 = experiments.iterator(); iterator2.hasNext() && !stop; ) {
                 Experiment experiment = (Experiment) iterator2.next();
 
-                log( "\t\t\t Experiment: Shortlabel:" + experiment.getShortLabel() + "  AC: " + experiment.getAc() );
+                log.debug( "\t\t\t Experiment: Shortlabel:" + experiment.getShortLabel() + "  AC: " + experiment.getAc() );
 
                 // if that experiment is flagged as negative, we don't take it into account
                 if ( isNegative( experiment ) ) {
-                    log( "\t\t\t\t Experiment is flagged as negative, we don't take it into account." );
+                    log.debug( "\t\t\t\t Experiment is flagged as negative, we don't take it into account." );
                     continue; // loop to the next experiment
                 } else {
-                    log( "\t\t\t\t Experiment is NOT flagged as negative." );
+                    log.debug( "\t\t\t\t Experiment is NOT flagged as negative." );
                 }
 
                 ExperimentStatus experimentStatus = getExperimentExportStatus( experiment, "" );
@@ -399,7 +395,7 @@ public class DRLineExport extends LineExport {
 
                     // forbid export for all interactions of that experiment (and their proteins).
 
-                    log( "\t\t\t\t No interactions of that experiment will be exported." );
+                    log.debug( "\t\t\t\t No interactions of that experiment will be exported." );
                     export = false;
                     stop = true;
 
@@ -410,7 +406,7 @@ public class DRLineExport extends LineExport {
                     // Authorise export for all interactions of that experiment (and their proteins),
                     // This overwrite the setting of the CvInteraction concerning the export.
 
-                    log( "\t\t\t\t All interaction of that experiment will be exported." );
+                    log.debug( "\t\t\t\t All interaction of that experiment will be exported." );
                     export = true;
                     stop = true;
 
@@ -431,7 +427,7 @@ public class DRLineExport extends LineExport {
                             String text = annotation.getAnnotationText();
 
 
-                            log( "\t\t\t\t Interaction has " + authorConfidenceTopic.getShortLabel() +
+                            log.debug( "\t\t\t\t Interaction has " + authorConfidenceTopic.getShortLabel() +
                                  ": '" + text + "'" );
 
                             if ( text != null ) {
@@ -442,11 +438,11 @@ public class DRLineExport extends LineExport {
                                 String kw = (String) iterator4.next();
                                 // NOT case sensitive
 
-                                log( "\t\t\t\t\t Compare it with '" + kw + "'" );
+                                log.debug( "\t\t\t\t\t Compare it with '" + kw + "'" );
 
                                 if ( kw.equalsIgnoreCase( text ) ) {
                                     found = true;
-                                    log( "\t\t\t\t\t Equals !" );
+                                    log.debug( "\t\t\t\t\t Equals !" );
                                 }
                             }
                         }
@@ -463,16 +459,16 @@ public class DRLineExport extends LineExport {
                         export = true;
                         stop = true;
 
-                        log( "\t\t\t that interaction is eligible for export in the context of a large scale experiment" );
+                        log.debug( "\t\t\t that interaction is eligible for export in the context of a large scale experiment" );
 
                     } else {
 
-                        log( "\t\t\t interaction not eligible" );
+                        log.debug( "\t\t\t interaction not eligible" );
                     }
 
                 } else if ( experimentStatus.isNotSpecified() ) {
 
-                    log( "\t\t\t No experiment status, check the experimental method." );
+                    log.debug( "\t\t\t No experiment status, check the experimental method." );
 
                     // Then check the experimental method (CvInteraction)
                     // Nothing specified at the experiment level, check for the method (CvInteraction)
@@ -500,7 +496,7 @@ public class DRLineExport extends LineExport {
 
                     } else if ( methodStatus.isConditionalExport() ) {
 
-                        log( "\t\t\t As conditional export, check the count of distinct experiment for that method." );
+                        log.debug( "\t\t\t As conditional export, check the count of distinct experiment for that method." );
 
                         // non redundant set of experiment AC.
                         HashSet experimentAcs = (HashSet) conditionalMethods.get( cvInteraction );
@@ -512,7 +508,7 @@ public class DRLineExport extends LineExport {
 
                             // stores it back in the collection ... needs to be done only once ! We are using reference ;o)
                             conditionalMethods.put( cvInteraction, experimentAcs );
-                            log( "\t\t\t Created a container for experiment ID for that method" );
+                            log.debug( "\t\t\t Created a container for experiment ID for that method" );
                         }
 
                         // add the experiment ID
@@ -520,12 +516,12 @@ public class DRLineExport extends LineExport {
 
                         if ( experimentAcs.size() == threshold ) {
                             // We reached the threshold, export allowed !
-                            log( "\t\t\t Count of distinct experiment reached for that method" );
+                            log.debug( "\t\t\t Count of distinct experiment reached for that method" );
                             export = true;
                             stop = true;
                         }
 
-                        log( "\t\t\t " + cvInteraction.getShortLabel() + ", threshold: " +
+                        log.debug( "\t\t\t " + cvInteraction.getShortLabel() + ", threshold: " +
                              threshold + " #experiment: " +
                              ( experimentAcs == null ? "none" : "" + experimentAcs.size() ) );
                     } // conditional status
@@ -538,17 +534,17 @@ public class DRLineExport extends LineExport {
             // The ID will be still unique even if it already exists.
 
             if ( null != masterUniprotID ) {
-                log( "As the protein is a splice variant, we export the Swiss-Prot AC of its master." );
+                log.debug( "As the protein is a splice variant, we export the Swiss-Prot AC of its master." );
                 selectedUniprotID = masterUniprotID;
             } else {
                 selectedUniprotID = uniprotID;
             }
 
-            log( "Protein exported to Swiss-Prot (AC: " + selectedUniprotID + ")" );
+            log.debug( "Protein exported to Swiss-Prot (AC: " + selectedUniprotID + ")\n" );
 
         } else {
 
-            log( "Protein NOT exported to Swiss-Prot" );
+            log.debug( "Protein NOT exported to Swiss-Prot\n" );
         }
 
         return selectedUniprotID;
@@ -565,7 +561,8 @@ public class DRLineExport extends LineExport {
      * @param maxResults Maximum number of results. The number of rows returned will be the
      * maxResults less the number of repetition of each AC.
      *
-     * @return a distinct set of Uniprot ID of the protein eligible to export in Swiss-Prot.
+     * @return a distinct set of Uniprot ID of the protein eligible to export in Swiss-Prot. It will return
+     * null if no elligible proteins are found in the range used
      *
      * @throws java.sql.SQLException error when handling the JDBC connection or query.
      * @throws uk.ac.ebi.intact.business.IntactException
@@ -578,44 +575,23 @@ public class DRLineExport extends LineExport {
                    IntactException,
                    DatabaseContentException {
 
-        Connection connection = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().connection();
-        Statement statement = connection.createStatement();
+        List<ProteinImpl> proteins = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
+                                    .getProteinDao().getUniprotProteins(firstResult, maxResults);
 
-        // select the protein ordered by Uniprot identity.
-        // TODO update that query so that it uses the MI references of uniprot and identity.
-        String sql = "SELECT distinct(ac),primaryId from \n" +
-                    " ( SELECT distinct P.ac, x.primaryId, rownum rn \n" +
-                     "FROM   ia_interactor P, ia_component C, ia_xref x, ia_controlledvocab q, ia_controlledvocab db\n" +
-                     "WHERE  P.objclass like '%Protein%' and\n" +
-                     "       P.ac IN C.interactor_ac and\n" +
-                     "       p.ac = x.parent_ac and\n" +
-                     "       x.database_ac = db.ac and\n" +
-                     "       x.qualifier_ac = q.ac and\n" +
-                     "       db.shortlabel = '" + CvDatabase.UNIPROT + "' and\n" +
-                     "       q.shortlabel = '" + CvXrefQualifier.IDENTITY + "' and\n" +
-
-                     // filtering TREMBL entries: AAF.., BAA..., ...
-                     "       x.primaryId not like 'A%' and \n" +
-                     "       x.primaryId not like 'B%' and \n" +
-                     "       x.primaryId not like 'C%'\n" +
-                     "ORDER BY x.primaryId ) \n" +
-                    " WHERE rn > "+firstResult +" AND rn <= "+(firstResult+maxResults);
-
-        log.info( "Executing the following query: " );
-        log.info( sql );
-        ResultSet proteinAcs = statement.executeQuery( sql );
+        if (proteins.isEmpty())
+        {
+            return null;
+        }
 
         // fetch necessary vocabulary
         init( );
 
-        Set proteinEligible = new HashSet( 4096 );
-        Chrono globalChrono = new Chrono();
-        globalChrono.start();
+        Set proteinEligible = new HashSet( maxResults );
         
-        int proteinCount = 0;
+        int proteinCount = firstResult;
 
         // Process the proteins one by one.
-        while ( proteinAcs.next() ) {
+        for (Protein protein : proteins) {
 
             proteinCount++;
 
@@ -629,20 +605,12 @@ public class DRLineExport extends LineExport {
                 }
             }
 
-            String ac = proteinAcs.getString( 1 );
-            Protein protein = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByAc(ac);
-
-            if ( protein == null  ) {
-                log.error( "Could not find a Protein in IntAct for AC: " + ac );
-                continue; // process next AC
-            }
-
             // only used in case the current protein is a splice variant
             Protein master = null;
 
             // Skip proteins annotated no-uniprot-update
             if ( false == needsUniprotUpdate( protein ) ) {
-                log( protein.getAc() + " " + protein.getShortLabel() + " is not from UniProt, skip it." );
+                log.debug( protein.getAc() + " " + protein.getShortLabel() + " is not from UniProt, skip it." );
                 continue; // process next AC
             }
 
@@ -650,7 +618,7 @@ public class DRLineExport extends LineExport {
 
             if ( isHighConfidence( protein ) ) {
 
-                log( "Wasn't low confidence ... export it ;o)" );
+                log.debug( "Wasn't low confidence ... export it ;o)" );
 
                 // means a protein is low-confidence if it has at least one low-confidence interaction.
 
@@ -682,27 +650,17 @@ public class DRLineExport extends LineExport {
             }
 
             if ( uniprotId != null && !proteinEligible.contains( uniprotId ) ) {
-                log( "Exporting UniProt( " + uniprotId + " )" );
+                log.debug( "Exporting UniProt( " + uniprotId + " )" );
                 proteinEligible.add( uniprotId );
             }
 
             int count = proteinEligible.size();
             float percentage = ( (float) count / (float) proteinCount ) * 100;
-            log( count + " protein" + ( count > 1 ? "s" : "" ) +
+            log.debug( count + " protein" + ( count > 1 ? "s" : "" ) +
                  " eligible for export out of " + proteinCount +
                  " processed (" + percentage + "%)." );
 
         } // all proteins
-
-        try {
-            statement.close();
-            proteinAcs.close();
-        } catch ( SQLException e ) {
-            e.printStackTrace();
-        }
-
-        globalChrono.stop();
-        log.info( "Total time elapsed: " + globalChrono );
 
         return proteinEligible;
     }

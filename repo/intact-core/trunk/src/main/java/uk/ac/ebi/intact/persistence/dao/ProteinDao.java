@@ -30,4 +30,8 @@ public interface ProteinDao extends InteractorDao<ProteinImpl>
     List<String> getPartnersUniprotIdsByProteinAc(String proteinAc);
 
     Integer countPartnersByProteinAc(String proteinAc);
+
+    List<ProteinImpl> getUniprotProteins(Integer firstResult, Integer maxResults);
+
+    List<ProteinImpl> getByUniprotId(String uniprotId);
 }

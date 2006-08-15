@@ -4,19 +4,21 @@ All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 
-package uk.ac.ebi.intact.util.uniprotExport.test;
+package uk.ac.ebi.intact.util.uniprotExport;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import uk.ac.ebi.intact.util.uniprotExport.CcLine;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 public class CCLineExportTest extends TestCase {
+
+    private static final Log log = LogFactory.getLog(CCLineExportTest.class);
 
     /**
      * Returns this test suite. Reflection is used here to add all
@@ -32,7 +34,7 @@ public class CCLineExportTest extends TestCase {
     public void testCCLinesOrdering() {
 
         // create a collection of CC Lines to order
-        List ccLines = new LinkedList();
+        List<CcLine> ccLines = new LinkedList<CcLine>();
 
 
         // Note: ASCII( 'a' )=65, and ASCII( 'A' )=97
@@ -46,36 +48,36 @@ public class CCLineExportTest extends TestCase {
 
         assertEquals( 6, ccLines.size() );
 
-        System.out.println( "Before:" );
-        for( Iterator iterator = ccLines.iterator(); iterator.hasNext(); ) {
-            CcLine ccLine = (CcLine) iterator.next();
-            System.out.println( ccLine.getGeneName() );
+        log.debug( "Before:" );
+        for (CcLine ccLine : ccLines)
+        {
+            log.debug(ccLine.getGeneName());
         }
 
         Collections.sort( ccLines );
 
         assertEquals( 6, ccLines.size() );
 
-        System.out.println( "After:" );
-        for( Iterator iterator = ccLines.iterator(); iterator.hasNext(); ) {
-            CcLine ccLine = (CcLine) iterator.next();
-            System.out.println( ccLine.getGeneName() );
+        log.debug( "After:" );
+        for( CcLine ccLine : ccLines ) {
+            log.debug( ccLine.getGeneName() );
         }
 
         // check the ordering
-        assertEquals( "Self", ( (CcLine) ccLines.get( 0 ) ).getGeneName() );
-        assertEquals( "abCDef", ( (CcLine) ccLines.get( 1 ) ).getGeneName() );
-        assertEquals( "abcdef", ( (CcLine) ccLines.get( 2 ) ).getGeneName() );
-        assertEquals( "aBcdEf", ( (CcLine) ccLines.get( 3 ) ).getGeneName() );
-        assertEquals( "aBCdef", ( (CcLine) ccLines.get( 4 ) ).getGeneName() );
-        assertEquals( "fedcba", ( (CcLine) ccLines.get( 5 ) ).getGeneName() );
+        assertEquals( "Self", ( ccLines.get( 0 ) ).getGeneName() );
+        assertEquals( "aBCdef", ( ccLines.get( 1 ) ).getGeneName() );
+        assertEquals( "aBcdEf", ( ccLines.get( 2 ) ).getGeneName() );
+        assertEquals( "abCDef", ( ccLines.get( 3 ) ).getGeneName() );
+        assertEquals( "abcdef", ( ccLines.get( 4 ) ).getGeneName() );
+        assertEquals( "fedcba", ( ccLines.get( 5 ) ).getGeneName() );
+
     }
 
 
     public void testCCLinesOrdering_2() {
 
         // create a collection of CC Lines to order
-        List ccLines = new LinkedList();
+        List<CcLine> ccLines = new LinkedList<CcLine>();
 
 
         // Note: ASCII( 'a' )=65, and ASCII( 'A' )=97
@@ -88,34 +90,34 @@ public class CCLineExportTest extends TestCase {
 
         assertEquals( 5, ccLines.size() );
 
-        System.out.println( "Before:" );
-        for( Iterator iterator = ccLines.iterator(); iterator.hasNext(); ) {
-            CcLine ccLine = (CcLine) iterator.next();
-            System.out.println( ccLine.getGeneName() );
+        log.debug( "Before:" );
+        for (CcLine ccLine : ccLines)
+        {
+            log.debug(ccLine.getGeneName());
         }
 
         Collections.sort( ccLines );
 
         assertEquals( 5, ccLines.size() );
 
-        System.out.println( "After:" );
-        for( Iterator iterator = ccLines.iterator(); iterator.hasNext(); ) {
-            CcLine ccLine = (CcLine) iterator.next();
-            System.out.println( ccLine.getGeneName() );
+        log.debug( "After:" );
+        for (CcLine ccLine : ccLines)
+        {
+            log.debug(ccLine.getGeneName());
         }
 
         // check the ordering
-        assertEquals( "abCDef", ( (CcLine) ccLines.get( 0 ) ).getGeneName() );
-        assertEquals( "abcdef", ( (CcLine) ccLines.get( 1 ) ).getGeneName() );
-        assertEquals( "aBcdEf", ( (CcLine) ccLines.get( 2 ) ).getGeneName() );
-        assertEquals( "aBCdef", ( (CcLine) ccLines.get( 3 ) ).getGeneName() );
-        assertEquals( "fedcba", ( (CcLine) ccLines.get( 4 ) ).getGeneName() );
+        assertEquals( "aBCdef", ( ccLines.get( 0 ) ).getGeneName() );
+        assertEquals( "aBcdEf", ( ccLines.get( 1 ) ).getGeneName() );
+        assertEquals( "abCDef", ( ccLines.get( 2 ) ).getGeneName() );
+        assertEquals( "abcdef", ( ccLines.get( 3 ) ).getGeneName() );
+        assertEquals( "fedcba", ( ccLines.get( 4 ) ).getGeneName() );
     }
 
     public void testCCLinesOrdering_3() {
 
         // create a collection of CC Lines to order
-        List ccLines = new LinkedList();
+        List<CcLine> ccLines = new LinkedList<CcLine>();
 
 
         // Note: ASCII( 'a' )=65, and ASCII( 'A' )=97
@@ -141,29 +143,28 @@ public class CCLineExportTest extends TestCase {
 
         assertEquals( 7, ccLines.size() );
 
-        System.out.println( "Before:" );
-        for( Iterator iterator = ccLines.iterator(); iterator.hasNext(); ) {
-            CcLine ccLine = (CcLine) iterator.next();
-            System.out.println( ccLine.getGeneName() );
+        log.debug( "Before:" );
+        for( CcLine ccLine : ccLines ) {
+            log.debug( ccLine.getGeneName() );
         }
 
         Collections.sort( ccLines );
 
         assertEquals( 7, ccLines.size() );
 
-        System.out.println( "After:" );
-        for( Iterator iterator = ccLines.iterator(); iterator.hasNext(); ) {
-            CcLine ccLine = (CcLine) iterator.next();
-            System.out.println( ccLine.getGeneName() );
+        log.debug( "After:" );
+        for (CcLine ccLine : ccLines)
+        {
+            log.debug(ccLine.getGeneName());
         }
 
         // check the ordering
-        assertEquals( "-", ( (CcLine) ccLines.get( 0 ) ).getGeneName() );
-        assertEquals( "-", ( (CcLine) ccLines.get( 1 ) ).getGeneName() );
-        assertEquals( "JUN", ( (CcLine) ccLines.get( 2 ) ).getGeneName() );
-        assertEquals( "MAFF", ( (CcLine) ccLines.get( 3 ) ).getGeneName() );
-        assertEquals( "MAFG", ( (CcLine) ccLines.get( 4 ) ).getGeneName() );
-        assertEquals( "MAFK", ( (CcLine) ccLines.get( 5 ) ).getGeneName() );
-        assertEquals( "V-MAF", ( (CcLine) ccLines.get( 6 ) ).getGeneName() );
+        assertEquals( "-", ( ccLines.get( 0 ) ).getGeneName() );
+        assertEquals( "-", ( ccLines.get( 1 ) ).getGeneName() );
+        assertEquals( "JUN", ( ccLines.get( 2 ) ).getGeneName() );
+        assertEquals( "MAFF", ( ccLines.get( 3 ) ).getGeneName() );
+        assertEquals( "MAFG", ( ccLines.get( 4 ) ).getGeneName() );
+        assertEquals( "MAFK", ( ccLines.get( 5 ) ).getGeneName() );
+        assertEquals( "V-MAF", ( ccLines.get( 6 ) ).getGeneName() );
     }
 }

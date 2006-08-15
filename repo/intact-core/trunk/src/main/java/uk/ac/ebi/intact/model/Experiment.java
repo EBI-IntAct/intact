@@ -5,13 +5,12 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import org.hibernate.annotations.Cascade;
 import uk.ac.ebi.intact.annotation.EditorTopic;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import org.hibernate.annotations.Cascade;
 
 /**
  * Represents one experiment. Describes the conditions in which the experiment has been performed. The information
@@ -280,7 +279,7 @@ public class Experiment extends AnnotatedObjectImpl<ExperimentXref> implements E
 
 
     @OneToMany (mappedBy = "parent")
-    @Cascade(value = org.hibernate.annotations.CascadeType.PERSIST)
+    @Cascade(value = org.hibernate.annotations.CascadeType.ALL)
     @Override
     public Collection<ExperimentXref> getXrefs() {
         return super.getXrefs();
