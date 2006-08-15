@@ -5,14 +5,14 @@
  */
 package uk.ac.ebi.intact.persistence.dao.impl;
 
-import org.hibernate.Session;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Projections;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
-import uk.ac.ebi.intact.model.InteractionImpl;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.model.InteractionImpl;
 import uk.ac.ebi.intact.persistence.dao.InteractionDao;
 
 import java.util.List;
@@ -85,5 +85,13 @@ public class InteractionDaoImpl extends InteractorDaoImpl<InteractionImpl> imple
         }
 
         return criteria.list();
+    }
+
+    public List<Interaction> getInteractionsByInteractorAc(String interactorAc)
+    {
+        return getSession().createCriteria(Interaction.class)
+                .createAlias("components", "comp")
+                .createAlias("comp.interactor", "interactor")
+                .add(Restrictions.eq("interactor.ac", interactorAc)).list();
     }
 }

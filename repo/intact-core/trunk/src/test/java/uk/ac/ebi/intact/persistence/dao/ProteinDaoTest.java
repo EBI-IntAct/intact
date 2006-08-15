@@ -9,6 +9,7 @@ import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.ProteinImpl;
 
 import java.util.List;
 
@@ -24,12 +25,45 @@ public class ProteinDaoTest extends TestCase
 
     private static final Log log = LogFactory.getLog(ProteinDaoTest.class);
 
+    private ProteinDao proteinDao;
+
+    @Override
+    protected void setUp() throws Exception
+    {
+        super.setUp();
+        proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
+
+    }
+
+    @Override
+    protected void tearDown() throws Exception
+    {
+        super.tearDown();
+        proteinDao = null;
+    }
+
     public void testGetPartnersUniprotIdsByProteinAc()
     {
-        List<String> uniprotIds = IntactContext.getCurrentInstance().getDataContext()
-                 .getDaoFactory().getProteinDao().getPartnersUniprotIdsByProteinAc("EBI-100028");
+        List<String> uniprotIds = proteinDao.getPartnersUniprotIdsByProteinAc("EBI-100028");
 
         assertEquals(6, uniprotIds.size());
+    }
+
+    public void testGetUniprotProteins()
+    {
+        List<ProteinImpl> uniprots = proteinDao.getUniprotProteins(0,50);
+        assertEquals("Max results is 50, so we expect 50 results", 50, uniprots.size());
+    }
+
+    public void testGetByUniprotId()
+    {
+        List<ProteinImpl> prots = proteinDao.getByUniprotId("Q9VE54");
+
+        ProteinImpl prot = prots.get(0);
+        
+        assertNotNull(prot);
+        assertEquals("EBI-100018", prot.getAc());
+
     }
 
 }

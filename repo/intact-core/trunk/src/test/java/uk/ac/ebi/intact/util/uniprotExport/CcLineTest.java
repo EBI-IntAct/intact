@@ -4,12 +4,13 @@ All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 
-package uk.ac.ebi.intact.util.uniprotExport.test;
+package uk.ac.ebi.intact.util.uniprotExport;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import uk.ac.ebi.intact.util.uniprotExport.CcLine;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -17,6 +18,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class CcLineTest extends TestCase {
+
+    private static final Log log = LogFactory.getLog(CcLineTest.class);
 
     /**
      * Returns this test suite. Reflection is used here to add all
@@ -31,18 +34,18 @@ public class CcLineTest extends TestCase {
 
     private void displayCollection( List list, String title ) {
 
-        System.out.println( title );
-        System.out.println( "----------" );
+        log.debug( title );
+        log.debug( "----------" );
         for( Iterator iterator = list.iterator(); iterator.hasNext(); ) {
             CcLine ccLine = (CcLine) iterator.next();
-            System.out.println( "\t" + ccLine.getGeneName() );
+            log.debug( "\t" + ccLine.getGeneName() );
         }
     }
 
     public void testCCLinesOrdering() {
 
         // create a collection of CC Lines to order
-        List ccLines = new LinkedList();
+        List<CcLine> ccLines = new LinkedList<CcLine>();
 
 
         // Note: ASCII( 'a' )=65, and ASCII( 'A' )=97
@@ -65,19 +68,19 @@ public class CcLineTest extends TestCase {
         displayCollection( ccLines, "After:" );
 
         // check the ordering
-        assertEquals( "Self", ( (CcLine) ccLines.get( 0 ) ).getGeneName() );
-        assertEquals( "aBCdef", ( (CcLine) ccLines.get( 1 ) ).getGeneName() );
-        assertEquals( "aBcdEf", ( (CcLine) ccLines.get( 2 ) ).getGeneName() );
-        assertEquals( "abCDef", ( (CcLine) ccLines.get( 3 ) ).getGeneName() );
-        assertEquals( "abcdef", ( (CcLine) ccLines.get( 4 ) ).getGeneName() );
-        assertEquals( "fedcba", ( (CcLine) ccLines.get( 5 ) ).getGeneName() );
+        assertEquals( "Self", ( ccLines.get( 0 ) ).getGeneName() );
+        assertEquals( "aBCdef", ( ccLines.get( 1 ) ).getGeneName() );
+        assertEquals( "aBcdEf", ( ccLines.get( 2 ) ).getGeneName() );
+        assertEquals( "abCDef", ( ccLines.get( 3 ) ).getGeneName() );
+        assertEquals( "abcdef", ( ccLines.get( 4 ) ).getGeneName() );
+        assertEquals( "fedcba", ( ccLines.get( 5 ) ).getGeneName() );
     }
 
 
     public void testCCLinesOrdering_2() {
 
         // create a collection of CC Lines to order
-        List ccLines = new LinkedList();
+        List<CcLine> ccLines = new LinkedList<CcLine>();
 
 
         // Note: ASCII( 'a' )=65, and ASCII( 'A' )=97
@@ -100,10 +103,10 @@ public class CcLineTest extends TestCase {
 
 
         // check the ordering
-        assertEquals( "aBCdef", ( (CcLine) ccLines.get( 0 ) ).getGeneName() );
-        assertEquals( "aBcdEf", ( (CcLine) ccLines.get( 1 ) ).getGeneName() );
-        assertEquals( "abCDef", ( (CcLine) ccLines.get( 2 ) ).getGeneName() );
-        assertEquals( "abcdef", ( (CcLine) ccLines.get( 3 ) ).getGeneName() );
-        assertEquals( "fedcba", ( (CcLine) ccLines.get( 4 ) ).getGeneName() );
+        assertEquals( "aBCdef", ( ccLines.get( 0 ) ).getGeneName() );
+        assertEquals( "aBcdEf", ( ccLines.get( 1 ) ).getGeneName() );
+        assertEquals( "abCDef", ( ccLines.get( 2 ) ).getGeneName() );
+        assertEquals( "abcdef", ( ccLines.get( 3 ) ).getGeneName() );
+        assertEquals( "fedcba", ( ccLines.get( 4 ) ).getGeneName() );
     }
 }

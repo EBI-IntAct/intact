@@ -6,13 +6,12 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.model;
 
 import org.apache.commons.collections.CollectionUtils;
+import uk.ac.ebi.intact.annotation.EditorTopic;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-
-import uk.ac.ebi.intact.annotation.EditorTopic;
 
 /**
  * Represents an interaction.
@@ -377,6 +376,11 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
      */
     @Override
     public boolean equals( Object o ) {
+        if (super.equals(o))
+        {
+            return true;
+        }
+
         if ( this == o ) {
             return true;
         }

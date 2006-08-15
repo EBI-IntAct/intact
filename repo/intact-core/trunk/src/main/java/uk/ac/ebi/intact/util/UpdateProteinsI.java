@@ -7,16 +7,13 @@
  */
 package uk.ac.ebi.intact.util;
 
-import org.apache.log4j.Logger;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.model.*;
-
-import static uk.ac.ebi.intact.core.CvContext.CvName;
-import uk.ac.ebi.intact.core.CvContext;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.core.OldCvContext;
+import static uk.ac.ebi.intact.core.OldCvContext.CvName;
+import uk.ac.ebi.intact.model.*;
 
 import java.io.InputStream;
 import java.util.Collection;
@@ -161,40 +158,40 @@ public abstract class UpdateProteinsI {
 //                throw new UpdateException( msg );
 //            }
 
-            CvContext cvContext = CvContext.getCurrentInstance();
+            OldCvContext oldCvContext = OldCvContext.getCurrentInstance();
 
             /**
              * Load CVs from the context
              */
-            sgdDatabase = (CvDatabase) cvContext.getCvObject(CvName.SGD_DB); // sgd
-            uniprotDatabase = (CvDatabase) cvContext.getCvObject(CvName.UNIPROT_DB); // uniprot
+            sgdDatabase = (CvDatabase) oldCvContext.getCvObject(CvName.SGD_DB); // sgd
+            uniprotDatabase = (CvDatabase) oldCvContext.getCvObject(CvName.UNIPROT_DB); // uniprot
 
             // search for the SRS link.
-            srsUrl = cvContext.getSrsUrl();
+            srsUrl = oldCvContext.getSrsUrl();
 
-            intactDatabase = (CvDatabase) cvContext.getCvObject(CvName.INTACT_DB);
-            goDatabase = (CvDatabase) cvContext.getCvObject(CvName.GO_DB);
-            interproDatabase = (CvDatabase) cvContext.getCvObject(CvName.INTERPRO_DB);
-            flybaseDatabase = (CvDatabase) cvContext.getCvObject(CvName.FLYBASE_DB);
-            reactomeDatabase = (CvDatabase) cvContext.getCvObject(CvName.REACTOME_DB);
-            hugeDatabase = (CvDatabase) cvContext.getCvObject(CvName.HUGE_DB);
+            intactDatabase = (CvDatabase) oldCvContext.getCvObject(CvName.INTACT_DB);
+            goDatabase = (CvDatabase) oldCvContext.getCvObject(CvName.GO_DB);
+            interproDatabase = (CvDatabase) oldCvContext.getCvObject(CvName.INTERPRO_DB);
+            flybaseDatabase = (CvDatabase) oldCvContext.getCvObject(CvName.FLYBASE_DB);
+            reactomeDatabase = (CvDatabase) oldCvContext.getCvObject(CvName.REACTOME_DB);
+            hugeDatabase = (CvDatabase) oldCvContext.getCvObject(CvName.HUGE_DB);
 
-            identityXrefQualifier = (CvXrefQualifier) cvContext.getCvObject(CvName.IDENTITY_XREF_QUALIFIER);
-            secondaryXrefQualifier = (CvXrefQualifier) cvContext.getCvObject(CvName.SECONDARY_XREF_QUALIFIER);
-            isoFormParentXrefQualifier = (CvXrefQualifier) cvContext.getCvObject(CvName.ISOFORM_PARENT_XREF_QUALIFIER);
+            identityXrefQualifier = (CvXrefQualifier) oldCvContext.getCvObject(CvName.IDENTITY_XREF_QUALIFIER);
+            secondaryXrefQualifier = (CvXrefQualifier) oldCvContext.getCvObject(CvName.SECONDARY_XREF_QUALIFIER);
+            isoFormParentXrefQualifier = (CvXrefQualifier) oldCvContext.getCvObject(CvName.ISOFORM_PARENT_XREF_QUALIFIER);
 
             // only one search by shortlabel as it still doesn't have MI number.
-            isoformComment = (CvTopic) cvContext.getCvObject(CvName.ISOFORM_COMMENT);
-            noUniprotUpdate = (CvTopic) cvContext.getCvObject(CvName.NO_UNIPROT_UPDATE);
+            isoformComment = (CvTopic) oldCvContext.getCvObject(CvName.ISOFORM_COMMENT);
+            noUniprotUpdate = (CvTopic) oldCvContext.getCvObject(CvName.NO_UNIPROT_UPDATE);
 
 
-            geneNameAliasType = (CvAliasType) cvContext.getCvObject(CvName.GENE_NAME_ALIAS_TYPE);
-            geneNameSynonymAliasType = (CvAliasType) cvContext.getCvObject(CvName.GENE_NAME_SYNONYM_ALIAS_TYPE);
-            isoformSynonym = (CvAliasType) cvContext.getCvObject(CvName.ISOFORM_SYNONYM);
-            locusNameAliasType = (CvAliasType) cvContext.getCvObject(CvName.LOCUS_NAME_ALIAS_TYPE);
-            orfNameAliasType = (CvAliasType) cvContext.getCvObject(CvName.ORF_NAME_ALIAS_TYPE);
+            geneNameAliasType = (CvAliasType) oldCvContext.getCvObject(CvName.GENE_NAME_ALIAS_TYPE);
+            geneNameSynonymAliasType = (CvAliasType) oldCvContext.getCvObject(CvName.GENE_NAME_SYNONYM_ALIAS_TYPE);
+            isoformSynonym = (CvAliasType) oldCvContext.getCvObject(CvName.ISOFORM_SYNONYM);
+            locusNameAliasType = (CvAliasType) oldCvContext.getCvObject(CvName.LOCUS_NAME_ALIAS_TYPE);
+            orfNameAliasType = (CvAliasType) oldCvContext.getCvObject(CvName.ORF_NAME_ALIAS_TYPE);
 
-            proteinType = (CvInteractorType) cvContext.getCvObject(CvName.PROTEIN_TYPE);
+            proteinType = (CvInteractorType) oldCvContext.getCvObject(CvName.PROTEIN_TYPE);
 
     }
 

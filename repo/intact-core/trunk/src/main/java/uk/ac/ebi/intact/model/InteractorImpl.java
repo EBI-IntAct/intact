@@ -202,15 +202,6 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl<InteractorXref>
     public Collection<InteractorXref> getXrefs() {
         return super.getXrefs();
     }
-    
-    @Column(insertable = false, updatable = false)
-    public String getObjClass() {
-        return objClass;
-    }
-
-    public void setObjClass( String objClass ) {
-        this.objClass = objClass;
-    }
 
     ///////////////////////////////////////
     // instance methods
@@ -234,6 +225,10 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl<InteractorXref>
 
     @Override
     public boolean equals( Object o ) {
+        if (super.equals(o))
+        {
+            return true;
+        }
         if ( this == o ) {
             return true;
         }
@@ -265,7 +260,9 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl<InteractorXref>
         int result = super.hashCode();
         result = 29 * result + ( bioSource != null ? bioSource.hashCode() : 0 );
         result = 29 * result + ( interactorType != null ? interactorType.hashCode() : 0 );
-        result = 29 * result + ( activeInstances != null ? activeInstances.hashCode() : 0 );
+
+        // next line is commented because is making hibernate (cglib) fail from time to time
+        //result = 29 * result + ( activeInstances != null ? activeInstances.size() : 0 );
         return result;
     }
 

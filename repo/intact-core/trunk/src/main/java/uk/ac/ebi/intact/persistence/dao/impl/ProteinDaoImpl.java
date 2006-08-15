@@ -13,10 +13,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
-import uk.ac.ebi.intact.model.CvTopic;
-import uk.ac.ebi.intact.model.CvXrefQualifier;
-import uk.ac.ebi.intact.model.InteractorImpl;
-import uk.ac.ebi.intact.model.ProteinImpl;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.ProteinDao;
 
 import java.util.ArrayList;
@@ -135,6 +132,48 @@ public class ProteinDaoImpl extends InteractorDaoImpl<ProteinImpl> implements Pr
                 .setProjection(Projections.countDistinct("prot.ac")).uniqueResult();
     }
 
+    public List<ProteinImpl> getUniprotProteins(Integer firstResult, Integer maxResults)
+    {
+        Criteria crit =  getSession().createCriteria(ProteinImpl.class)
+                .createAlias("xrefs", "xref")
+                .createAlias("xref.cvDatabase", "cvDatabase")
+                .createAlias("xref.cvXrefQualifier", "cvXrefQualifier")
+                .add(Restrictions.eq("cvDatabase.shortLabel",
+                        CvDatabase.UNIPROT))
+                .add(Restrictions.eq("cvXrefQualifier.shortLabel",
+                        CvXrefQualifier.IDENTITY))
+
+                .add(Restrictions.not(Restrictions.like("xref.primaryId", "A%")))
+                .add(Restrictions.not(Restrictions.like("xref.primaryId", "B%")))
+                .add(Restrictions.not(Restrictions.like("xref.primaryId", "C%")))
+                .addOrder(Order.asc("xref.primaryId"));
+
+         if (firstResult != null && firstResult >= 0)
+         {
+             crit.setFirstResult(firstResult);
+         }
+
+        if (maxResults != null && maxResults > 0)
+         {
+             crit.setMaxResults(maxResults);
+         }
+           
+        return crit.list();
+    }
+
+    public List<ProteinImpl> getByUniprotId(String uniprotId)
+    {
+        return getSession().createCriteria(getEntityClass())
+                .createAlias("xrefs", "xref")
+                .createAlias("xref.cvXrefQualifier", "qual")
+                .createAlias("xref.cvDatabase", "database")
+                .createCriteria("qual.xrefs", "qualXref")
+                .createCriteria("database.xrefs", "dbXref")
+                .add(Restrictions.eq("qualXref.primaryId", CvXrefQualifier.IDENTITY_MI_REF ))
+                .add(Restrictions.eq("dbXref.primaryId", CvDatabase.UNIPROT_MI_REF ))
+                .add(Restrictions.eq("xref.primaryId", uniprotId)).list();
+    }
+
     public Map<String, List<String>> getPartnersWithInteractionAcsByProteinAc(String proteinAc)
     {
         Criteria crit = partnersByProteinAcCriteria(proteinAc)
@@ -142,8 +181,6 @@ public class ProteinDaoImpl extends InteractorDaoImpl<ProteinImpl> implements Pr
                     .add(Projections.distinct(Projections.property("prot.ac")))
                     .add(Projections.property("int.ac")))
                .addOrder(Order.asc("prot.ac"));
-
-        int countAcs = 0;
 
         Map<String,List<String>> results = new HashMap<String,List<String>>();
 
@@ -158,8 +195,6 @@ public class ProteinDaoImpl extends InteractorDaoImpl<ProteinImpl> implements Pr
             }
             else
             {
-                countAcs++;
-
                 List<String> interactionAcList = new ArrayList<String>();
                 interactionAcList.add(interactionAc);
 
@@ -180,7 +215,11 @@ public class ProteinDaoImpl extends InteractorDaoImpl<ProteinImpl> implements Pr
         return partnersByProteinAcCriteria(proteinAc)
                 .createAlias("prot.xrefs", "xref")
                 .createAlias("xref.cvXrefQualifier", "qual")
-                .add(Restrictions.eq("qual.shortLabel", CvXrefQualifier.IDENTITY ))
+                .createAlias("xref.cvDatabase", "database")
+                .createCriteria("qual.xrefs", "qualXref")
+                .createCriteria("database.xrefs", "dbXref")
+                .add(Restrictions.eq("qualXref.primaryId", CvXrefQualifier.IDENTITY_MI_REF ))
+                .add(Restrictions.eq("dbXref.primaryId", CvDatabase.UNIPROT_MI_REF ))
                 .setProjection(Projections.distinct(Property.forName("xref.primaryId"))).list();
     }
 

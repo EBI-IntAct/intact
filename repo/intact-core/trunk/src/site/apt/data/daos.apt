@@ -27,17 +27,15 @@ Experiment myExperiment = experimentDao.getByAc("EBI-141");
 
 Transactions
 
- DAO methods need to be execute within the scope of an IntactTransaction. To do this, we wrap the
- code like this:
+ DAO methods need execute within the scope of an IntactTransaction. It is started automatically when instantiating the Dao,
+ but the transaction must be committed in order to update the database.
 
 +-----+
-
-IntactTransaction tx = DaoFactory.beginTransaction();
 
 ExperimentDao experimentDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao();
 Experiment myExperiment = experimentDao.getByAc("EBI-141");
 ...
 
-tx.commit(); // will throw an IntactException if there are problems
+IntactContext.getCurrentInstance().getDataContext().commitTransaction(); // will throw an IntactException if there are problems
 
 +-----+
