@@ -1,0 +1,18 @@
+<project>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-uniprotexport-plugin</artifactId>
+                <configuration>
+                    <targetPath>target/uniprotexport-test</targetPath>
+
+                    <uniprotCommentsFilename>uniprotcomments.dat</uniprotCommentsFilename>
+                    <goaFilename>gene_association.goa_intact</goaFilename>
+                    <overwrite>true</overwrite>
+                    <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
+                </configuration>
+            </plugin>
+        </plugins>
+     </build>
+</project>
