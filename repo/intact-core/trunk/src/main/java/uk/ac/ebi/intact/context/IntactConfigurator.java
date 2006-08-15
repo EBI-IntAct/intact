@@ -30,8 +30,9 @@ public class IntactConfigurator
 {
     private static final Log log = LogFactory.getLog(IntactConfigurator.class);
 
-    private static final String DATA_CONFIG_PARAM_NAME = "uk.ac.ebi.intact.DATA_CONFIG";
-    private static final String AC_PREFIX_PARAM_NAME = "uk.ac.ebi.intact.AC_PREFIX";
+    public static final String DATA_CONFIG_PARAM_NAME = "uk.ac.ebi.intact.DATA_CONFIG";
+    public static final String AC_PREFIX_PARAM_NAME = "uk.ac.ebi.intact.AC_PREFIX";
+    public static final String PRELOAD_COMMON_CVS_PARAM_NAME = "uk.ac.ebi.intact.PRELOAD_COMMON_CVOBJECTS";
 
     private static final String DEFAULT_AC_PREFIX = "UNK";
 
@@ -95,21 +96,39 @@ public class IntactConfigurator
         log.info("Institution: "+institution.getFullName());
 
         // load the default prefix for generated ACs
+        String prefix = (String) getInitParamValue(session, AC_PREFIX_PARAM_NAME, DEFAULT_AC_PREFIX);
+        config.setAcPrefix(prefix);
+
+
+        // preload the most common CvObjects
+        boolean preloadCommonCvs = (Boolean) getInitParamValue(session, PRELOAD_COMMON_CVS_PARAM_NAME, Boolean.FALSE);
+        if (preloadCommonCvs)
+        {
+            log.info("Preloading common CvObjects");
+            CvContext.getCurrentInstance(session).loadCommonCvObjects();
+        }
+    }
+
+    private static Object getInitParamValue(IntactSession session, String initParamName, Object defaultValue )
+    {
+        Object initParamValue;
+
         if (session.containsInitParam(AC_PREFIX_PARAM_NAME))
         {
-            String prefix = session.getInitParam(AC_PREFIX_PARAM_NAME);
-            log.debug("AC prefix: "+prefix);
-            config.setAcPrefix(prefix);
+            initParamValue = session.getInitParam(AC_PREFIX_PARAM_NAME);
+            log.debug(initParamName+": "+initParamValue);
         }
         else
         {
             if (session.isWebapp())
             {
-                log.warn("Init-Param missing in web.xml: "+AC_PREFIX_PARAM_NAME);
+                log.warn("Init-Param missing in web.xml: "+initParamName);
             }
-            log.debug("Using default AC prefix: "+DEFAULT_AC_PREFIX);
-            config.setAcPrefix(DEFAULT_AC_PREFIX);
+            log.debug("Using default value for param "+initParamName+": "+defaultValue);
+            initParamValue = defaultValue;
         }
+
+        return initParamValue;
     }
 
     public static IntactContext createIntactContext(IntactSession session)

@@ -17,6 +17,7 @@ import javax.servlet.ServletContext;
  * @version $Id$
  * @since <pre>28-Mar-2006</pre>
  */
+@Deprecated
 public class ExternalContext {
 
     public static final Logger log = Logger.getLogger( ExternalContext.class );
@@ -29,7 +30,7 @@ public class ExternalContext {
     }
 
     private static ThreadLocal<ExternalContext> currentInstance = new ThreadLocal() {
-        // the initial value of the CvContext is null
+        // the initial value of the OldCvContext is null
         protected ExternalContext initialValue() {
             return null;
         }

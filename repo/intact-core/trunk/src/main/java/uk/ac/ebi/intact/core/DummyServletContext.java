@@ -25,6 +25,7 @@ import java.util.Set;
  * @version $Id$
  * @since <pre>03-Apr-2006</pre>
  */
+@Deprecated
 public class DummyServletContext implements javax.servlet.ServletContext {
     private Map<String, Object> attMap = new HashMap<String, Object>();
 
