@@ -14,7 +14,11 @@ import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Inte
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Interaction2xmlI;
 import uk.ac.ebi.intact.application.dataConversion.util.DisplayXML;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.Component;
+import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.model.NucleicAcid;
+import uk.ac.ebi.intact.model.SmallMoleculeImpl;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -62,18 +66,37 @@ public abstract class NewFileGenerator
 
         Document doc = generatePsiData(eli,psiVersion,cvMapping);
 
-        Writer writer = new FileWriter(xmlFile);
-        DisplayXML.write(doc, writer, "   ");
+        return writeFile(doc, xmlFile, validate);
+    }
 
-        writer.close();
+    /**
+     * Writes a file containing the PSI XML, with the interactions provided
+     *
+     * @param interactions
+     * @param psiVersion
+     * @param cvMapping
+     * @param xmlTargetFile
+     * @param validate
+     * @return
+     * @throws IOException
+     */
+    public static boolean writePsiData(Collection<Interaction> interactions,
+                                       PsiVersion psiVersion,
+                                       CvMapping cvMapping,
+                                       File xmlTargetFile, boolean validate) throws IOException
+    {
+       UserSessionDownload session = new UserSessionDownload(psiVersion);
 
-        if (validate)
+        if (cvMapping != null)
         {
-            return PsiValidator.validate(xmlFile);
+            session.setReverseCvMapping(cvMapping);
         }
 
-        return true;
+        Document doc =  generatePsiData(interactions, session);
+
+        return writeFile(doc, xmlTargetFile, validate);
     }
+
 
     /**
      * Converts a list of experiments to PSI XML, providing the experiment labels
@@ -86,39 +109,25 @@ public abstract class NewFileGenerator
     public static Document generatePsiData(ExperimentListItem eli, PsiVersion psiVersion, CvMapping cvMapping)
     {
         UserSessionDownload session = new UserSessionDownload(psiVersion);
-        
+
         if (cvMapping != null)
         {
             session.setReverseCvMapping(cvMapping);
         }
 
-        Integer firstResult = null;
-        Integer maxResults = null;
+        Collection<Interaction> interactions = getInteractionsForExperimentListItem(eli);
 
-        // if there is pagination, get the first and the max resulta
-        if (eli.getLargeScaleChunkSize() != null)
-        {
-            firstResult = (eli.getChunkNumber()-1)*eli.getLargeScaleChunkSize();
-            maxResults = eli.getLargeScaleChunkSize();
-        }
-
-        return generatePsiData(eli.getExperimentLabels(), session, firstResult, maxResults);
+        return generatePsiData(interactions, session);
     }
 
-    /**
-     * Converts a list of experiments to PSI XML, providing the experiment labels
-     *
-     * @param experimentLabels A list with the short labels of the experiments to convert, which will be fetched from the db
-     * @param session the user session
-     * @param firstInteraction if paginating the interactions, the first interaction to be fetched (null to get all)
-     * @param maxInteractions if paginating the interactions, the maximum number of interactions per page (null to get all)
-     * @return the PSI XML Document
-     */
-    private static Document generatePsiData(Collection<String> experimentLabels, UserSessionDownload session, Integer firstInteraction, Integer maxInteractions)
+    public static Document generatePsiData(Collection<Interaction> interactions, PsiVersion psiVersion, CvMapping cvMapping)
     {
-        Collection<Interaction> interactions = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInteractionDao()
-                .getInteractionByExperimentShortLabel(experimentLabels.toArray(new String[experimentLabels.size()]),
-                                            firstInteraction, maxInteractions);
+       UserSessionDownload session = new UserSessionDownload(psiVersion);
+
+        if (cvMapping != null)
+        {
+            session.setReverseCvMapping(cvMapping);
+        }
 
         return generatePsiData(interactions, session);
     }
@@ -171,6 +180,21 @@ public abstract class NewFileGenerator
          return session.getPsiDocument();
     }
 
+    private static boolean writeFile(Document doc, File xmlFile, boolean validate) throws IOException
+    {
+        Writer writer = new FileWriter(xmlFile);
+        DisplayXML.write(doc, writer, "   ");
+
+        writer.close();
+
+        if (validate)
+        {
+            return PsiValidator.validate(xmlFile);
+        }
+
+        return true;
+    }
+
     /**
      * It take an interactions Collection and remove from it all the interactions having a NucleicAcid as component.
      * This is used in case psi version is psi1 as psi1 do not allow Nucleic Acid as Interaction's participant.
@@ -193,7 +217,25 @@ public abstract class NewFileGenerator
                 }
             }
         }
+    }
 
+    public static Collection<Interaction> getInteractionsForExperimentListItem(ExperimentListItem eli)
+    {
+        Integer firstInteraction = null;
+        Integer maxInteractions = null;
+
+        // if there is pagination, get the first and the max result
+        if (eli.getLargeScaleChunkSize() != null)
+        {
+            firstInteraction = (eli.getChunkNumber() - 1) * eli.getLargeScaleChunkSize();
+            maxInteractions = eli.getLargeScaleChunkSize();
+        }
+
+        Collection<String> experimentLabels = eli.getExperimentLabels();
+
+        return IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInteractionDao()
+                .getInteractionByExperimentShortLabel(experimentLabels.toArray(new String[experimentLabels.size()]),
+                        firstInteraction, maxInteractions);
     }
 
 }
