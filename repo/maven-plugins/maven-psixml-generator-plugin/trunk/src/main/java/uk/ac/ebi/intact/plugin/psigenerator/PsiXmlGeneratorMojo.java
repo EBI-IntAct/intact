@@ -12,13 +12,15 @@ import uk.ac.ebi.intact.application.dataConversion.NewFileGenerator;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
 import uk.ac.ebi.intact.application.dataConversion.ZipFileGenerator;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.CvMapping;
+import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.util.Chrono;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
-import java.util.*;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Creates PSI XML files from the database
@@ -52,10 +54,10 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo
 
         getLog().debug("Reverse mapping file: "+getReverseMapping());
 
-        getLog().info("Classifying and writing classification by species");
+        //getLog().info("Classifying and writing classification by species");
         writeClassificationBySpeciesToFile();
 
-        getLog().info("Writing classifications by publications");
+        //getLog().info("Writing classifications by publications");
         writeClassificationByPublicationsToFile();
 
         CvMapping mapping = new CvMapping();
@@ -104,16 +106,21 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo
 
     private void writePsiDataFile(ExperimentListItem item, CvMapping mapping) throws IOException
     {
+        getLog().info("Loading interactions");
+        Collection<Interaction> interactions = NewFileGenerator.getInteractionsForExperimentListItem(item);
+
         for (Version version : psiVersions)
         {
+            File targetFile = new File(targetPath, version.getFolderName()+"/"+item.getFilename());
+
             long start = System.currentTimeMillis();
 
-            NewFileGenerator.writePsiData(item, PsiVersion.valueOf(version.getNumber()), mapping,
-                    new File(targetPath, version.getFolderName()), false);
+            NewFileGenerator.writePsiData(interactions, PsiVersion.valueOf(version.getNumber()), mapping,
+                    targetFile, false);
 
             long elapsed = System.currentTimeMillis() - start;
 
-            getLog().debug("Elapsed time: " + new Chrono().printTime(elapsed));
+            getLog().debug("Elapsed time to export to version "+version.getNumber()+": " + new Chrono().printTime(elapsed));
 
         }
     }
