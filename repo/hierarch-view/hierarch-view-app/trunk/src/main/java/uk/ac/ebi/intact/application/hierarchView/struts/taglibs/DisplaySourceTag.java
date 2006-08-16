@@ -19,6 +19,7 @@ import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
 import uk.ac.ebi.intact.simpleGraph.Node;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -102,7 +103,7 @@ public class DisplaySourceTag extends TagSupport {
         HttpSession session = pageContext.getSession();
 
         try {
-            IntactUserI user = (IntactUserI) session.getAttribute( Constants.USER_KEY );
+            IntactUserI user = (IntactUserI) IntactContext.getCurrentInstance().getSession().getAttribute( Constants.USER_KEY );
             if ( user == null ) {
                 logger.error( "No existing session" );
                 return EVAL_PAGE;

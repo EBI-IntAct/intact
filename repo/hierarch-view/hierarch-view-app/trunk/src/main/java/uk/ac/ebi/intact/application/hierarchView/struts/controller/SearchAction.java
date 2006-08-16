@@ -8,6 +8,8 @@ package uk.ac.ebi.intact.application.hierarchView.struts.controller;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.exception.MultipleResultException;
 import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
@@ -30,6 +32,8 @@ import java.util.Properties;
  */
 
 public final class SearchAction extends IntactBaseAction {
+
+    private static final Log logger = LogFactory.getLog(SearchAction.class);
 
     /**
      * Process the specified HTTP request, and create the corresponding HTTP

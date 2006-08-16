@@ -3,6 +3,7 @@
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.IntactUserI,
                  uk.ac.ebi.intact.application.hierarchView.business.Constants,
                  uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork"%>
+<%@ page import="uk.ac.ebi.intact.context.IntactContext" %>
 
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html"%>
 
@@ -24,14 +25,15 @@
     <meta http-equiv="pragma" content="no-cache">
     <meta http-equiv="expires" content="-1">
 <%
-   /**
-    * Retreive user's data from the session
-    */
-   IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
-   int maxInteractor = InteractionNetwork.getMaxCentralProtein();
-   // Displays Http content if URL updated in the session -->
+    /**
+     * Retreive user's data from the session
+     */
+    IntactUserI user = (IntactUserI) IntactContext.getCurrentInstance().getSession().getAttribute(Constants.USER_KEY);
+    int maxInteractor = InteractionNetwork.getMaxCentralProtein();
+    // Displays Http content if URL updated in the session -->
     String searchUrl = user.getSearchUrl();
-    if (searchUrl != null) {
+    if (searchUrl != null)
+    {
 %>
        <META HTTP-EQUIV="REFRESH" CONTENT="1; URL=<%= searchUrl %>">
 <%

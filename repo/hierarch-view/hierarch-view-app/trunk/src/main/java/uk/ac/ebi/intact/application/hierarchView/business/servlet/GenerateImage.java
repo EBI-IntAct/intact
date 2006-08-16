@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 import uk.ac.ebi.intact.util.Chrono;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -56,7 +57,7 @@ public class GenerateImage extends HttpServlet {
                 return;
             }
 
-            IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
+            IntactUserI user = (IntactUserI) IntactContext.getCurrentInstance().getSession().getAttribute (Constants.USER_KEY);
 
             if (user == null) {
                 aResponse.getOutputStream().print(ERROR_MESSAGE);

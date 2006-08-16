@@ -8,6 +8,8 @@ package uk.ac.ebi.intact.application.hierarchView.struts.framework;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.action.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
@@ -27,6 +29,7 @@ import uk.ac.ebi.intact.searchengine.SearchHelper;
 import uk.ac.ebi.intact.searchengine.SearchHelperI;
 import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
 import uk.ac.ebi.intact.util.Chrono;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -44,7 +47,7 @@ import java.util.Iterator;
 
 public abstract class IntactBaseAction extends Action {
 
-    public static Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
+    private static final Log logger = LogFactory.getLog(IntactBaseAction.class);
 
     /** The global Intact error key. */
     public static final String INTACT_ERROR = "IntactError";
@@ -67,7 +70,7 @@ public abstract class IntactBaseAction extends Action {
      * @return true is the IntactUser exists, else false.
      */
     protected boolean intactUserExists(HttpSession session) {
-        IntactUserI user = (IntactUserI) session
+        IntactUserI user = (IntactUserI) IntactContext.getCurrentInstance().getSession()
                 .getAttribute( Constants.USER_KEY );
         return ( null != user );
     }
@@ -81,7 +84,7 @@ public abstract class IntactBaseAction extends Action {
      */
     protected IntactUserI getIntactUser(HttpSession session)
             throws SessionExpiredException {
-        IntactUserI user = (IntactUserI) session
+        IntactUserI user = (IntactUserI) IntactContext.getCurrentInstance().getSession()
                 .getAttribute( Constants.USER_KEY );
 
         if ( null == user ) {
@@ -260,7 +263,7 @@ public abstract class IntactBaseAction extends Action {
             String applicationPath = aRequest.getContextPath();
 
             user = new IntactUser( applicationPath );
-            session.setAttribute( Constants.USER_KEY, user );
+            IntactContext.getCurrentInstance().getSession().setAttribute(Constants.USER_KEY, user);
         }
         catch ( IntactException ie ) {
             logger.error( "Could not initialize user's settings", ie );

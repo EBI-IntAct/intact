@@ -8,12 +8,15 @@ package uk.ac.ebi.intact.application.hierarchView.struts.controller;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.InitForm;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -30,6 +33,8 @@ import java.io.IOException;
  */
 
 public final class InitAction extends IntactBaseAction {
+
+    private static final Log logger = LogFactory.getLog(InitAction.class);
 
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
@@ -57,7 +62,7 @@ public final class InitAction extends IntactBaseAction {
 
         // get a session
         HttpSession session = getNewSession(request);
-        IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
+        IntactUserI user = (IntactUserI) IntactContext.getCurrentInstance().getSession().getAttribute (Constants.USER_KEY);
 
         if (null != user) {
             // user already exists

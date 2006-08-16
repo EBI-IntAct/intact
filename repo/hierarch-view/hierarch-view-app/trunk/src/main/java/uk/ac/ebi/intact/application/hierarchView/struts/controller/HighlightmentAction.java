@@ -9,6 +9,8 @@ package uk.ac.ebi.intact.application.hierarchView.struts.controller;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource;
@@ -29,6 +31,8 @@ import java.io.IOException;
  */
 
 public final class HighlightmentAction extends IntactBaseAction {
+
+    private static final Log logger = LogFactory.getLog(HighlightmentAction.class);
 
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
