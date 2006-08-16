@@ -11,6 +11,7 @@ import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseForm;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -147,7 +148,7 @@ public final class SearchForm extends IntactBaseForm {
         // in the case the network already exists and the user ADD with an
         // EMPTY searchString ... we display a warning MESSAGE instead of ERROR
         if ((addSelected()) && (null != session)) {
-            IntactUserI user = (IntactUserI) session.getAttribute(Constants.USER_KEY);
+            IntactUserI user = (IntactUserI) IntactContext.getCurrentInstance().getSession().getAttribute(Constants.USER_KEY);
             if (user != null) {
                 if (null != user.getInteractionNetwork()) {
                     networkExists = true;

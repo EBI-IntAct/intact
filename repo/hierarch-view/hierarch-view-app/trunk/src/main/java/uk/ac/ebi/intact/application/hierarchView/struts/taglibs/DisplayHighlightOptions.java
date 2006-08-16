@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
@@ -43,7 +44,7 @@ public class DisplayHighlightOptions extends TagSupport {
         HttpSession session = pageContext.getSession();
 
         try {
-            IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
+            IntactUserI user = (IntactUserI) IntactContext.getCurrentInstance().getSession().getAttribute (Constants.USER_KEY);
             String methodClass = user.getMethodClass();
 
             // Search the list of protein to highlight

@@ -56,7 +56,7 @@ public class AllHighlightmentSource extends HighlightmentSource {
          */
         public String getHtmlCodeOption(HttpSession aSession) {
             String htmlCode;
-            IntactUserI user = (IntactUserI) aSession
+            IntactUserI user = (IntactUserI) IntactContext.getCurrentInstance().getSession()
                     .getAttribute( uk.ac.ebi.intact.application.hierarchView.business.Constants.USER_KEY );
             String check = (String) user
                     .getHighlightOption( ATTRIBUTE_OPTION_CHILDREN );
@@ -91,7 +91,7 @@ public class AllHighlightmentSource extends HighlightmentSource {
             Collection result = null;
             Iterator iterator;
             Collection listInterproTerm = new ArrayList();
-            IntactUserI user = (IntactUserI) aSession
+            IntactUserI user = (IntactUserI) IntactContext.getCurrentInstance().getSession()
                     .getAttribute( uk.ac.ebi.intact.application.hierarchView.business.Constants.USER_KEY );
 
             if ( null == user ) {
@@ -368,7 +368,7 @@ public class AllHighlightmentSource extends HighlightmentSource {
         public Collection proteinToHightlight(HttpSession aSession,
                 InteractionNetwork aGraph) {
 
-            IntactUserI user = (IntactUserI) aSession.getAttribute( Constants.USER_KEY );
+            IntactUserI user = (IntactUserI) IntactContext.getCurrentInstance().getSession().getAttribute( Constants.USER_KEY );
             Collection children = user.getKeys();
             String selectedSourceTerm = user.getSelectedKey();
             String selectedSourceTermType = user.getSelectedKeyType();
@@ -426,7 +426,7 @@ public class AllHighlightmentSource extends HighlightmentSource {
          */
         public void saveOptions(HttpServletRequest aRequest, HttpSession aSession) {
 
-            IntactUserI user = (IntactUserI) aSession
+            IntactUserI user = (IntactUserI) IntactContext.getCurrentInstance().getSession()
                     .getAttribute( Constants.USER_KEY );
             String[] result = aRequest
                     .getParameterValues( ATTRIBUTE_OPTION_CHILDREN );

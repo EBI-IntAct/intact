@@ -61,7 +61,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
      */
     public String getHtmlCodeOption(HttpSession aSession) {
         String htmlCode;
-        IntactUserI user = (IntactUserI) aSession
+        IntactUserI user = (IntactUserI) IntactContext.getCurrentInstance().getSession()
                 .getAttribute( uk.ac.ebi.intact.application.hierarchView.business.Constants.USER_KEY );
         String check = (String) user
                 .getHighlightOption( ATTRIBUTE_OPTION_CHILDREN );
@@ -96,7 +96,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
         Collection result = null;
         Iterator iterator;
         Collection listGOTerm = new ArrayList();
-        IntactUserI user = (IntactUserI) aSession
+        IntactUserI user = (IntactUserI) IntactContext.getCurrentInstance().getSession()
                 .getAttribute( uk.ac.ebi.intact.application.hierarchView.business.Constants.USER_KEY );
 
         if ( null == user ) {
@@ -359,7 +359,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
     public Collection proteinToHightlight(HttpSession aSession,
             InteractionNetwork aGraph) {
 
-        IntactUserI user = (IntactUserI) aSession.getAttribute( Constants.USER_KEY );
+        IntactUserI user = (IntactUserI) IntactContext.getCurrentInstance().getSession().getAttribute( Constants.USER_KEY );
         Collection children = user.getKeys();
         String selectedGOTerm = user.getSelectedKey();
 
@@ -411,7 +411,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
      */
     public void saveOptions(HttpServletRequest aRequest, HttpSession aSession) {
 
-        IntactUserI user = (IntactUserI) aSession
+        IntactUserI user = (IntactUserI) IntactContext.getCurrentInstance().getSession()
                 .getAttribute( Constants.USER_KEY );
         String[] result = aRequest
                 .getParameterValues( ATTRIBUTE_OPTION_CHILDREN );

@@ -17,6 +17,7 @@
 
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.IntactUserI,
                  uk.ac.ebi.intact.application.hierarchView.business.Constants"%>
+<%@ page import="uk.ac.ebi.intact.context.IntactContext" %>
 
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html"%>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean"%>
@@ -26,9 +27,10 @@
     /**
      * Retreive user's data from the session
      */
-    IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
+    IntactUserI user = (IntactUserI) IntactContext.getCurrentInstance().getSession().getAttribute(Constants.USER_KEY);
 
-    if (user == null) {
+    if (user == null)
+    {
         // no user in the session, don't display anything
         return;
     }

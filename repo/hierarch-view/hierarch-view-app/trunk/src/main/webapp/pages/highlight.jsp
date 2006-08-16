@@ -2,6 +2,7 @@
                  uk.ac.ebi.intact.application.hierarchView.business.IntactUserI,
                  java.util.ArrayList,
                  uk.ac.ebi.intact.application.hierarchView.business.Constants"%>
+<%@ page import="uk.ac.ebi.intact.context.IntactContext" %>
 <%@ page language="java" %>
 
 <!--
@@ -36,56 +37,63 @@
 <hierarchView:displaySource />
 
 <%
-    IntactUserI user = (IntactUserI) session.getAttribute( Constants.USER_KEY );
-                                            
+    IntactUserI user = (IntactUserI) IntactContext.getCurrentInstance().getSession().getAttribute(Constants.USER_KEY);
+
     // get the list of nodes coordinates
     String nodeCoordinates = user.getNodeCoordinates();
 
     String selectedSourceType = user.getSelectedKeyType();
 
-    String selectedColor="#336666";
-    String notSelectedColor="#CCCCCC";
+    String selectedColor = "#336666";
+    String notSelectedColor = "#CCCCCC";
 
     int index = 0; // Loop index
     int selectedIndex = 0;
     // Check if selected come from request parameter
-    try {
+    try
+    {
         //selectedIndex = Integer.parseInt( selectedIndexStr );
         // Try to retrieve from http parameter, or previous storage
         // Need to use a more unique id for storage name
-        String paramValue = request.getParameter( parameterName );
-        String selectedTabIndex = (String) session.getAttribute( "selectedTabIndex" );
+        String paramValue = request.getParameter(parameterName);
+        String selectedTabIndex = (String) session.getAttribute("selectedTabIndex");
 
-        if( paramValue == null ) {
-            selectedIndex = ( (Integer)(session.getAttribute( request.getRequestURI() + parameterName )) ).intValue();
+        if (paramValue == null)
+        {
+            selectedIndex = ((Integer) (session.getAttribute(request.getRequestURI() + parameterName))).intValue();
         }
-        else {
-            selectedIndex = Integer.parseInt( paramValue );
+        else
+        {
+            selectedIndex = Integer.parseInt(paramValue);
         }
 
-        if( selectedTabIndex != null ) {
-            selectedIndex = ( Integer.parseInt(selectedTabIndex) );
-            session.removeAttribute( "selectedTabIndex" );
+        if (selectedTabIndex != null)
+        {
+            selectedIndex = (Integer.parseInt(selectedTabIndex));
+            session.removeAttribute("selectedTabIndex");
         }
 
     }
-    catch( java.lang.NumberFormatException ex ) {
+    catch (java.lang.NumberFormatException ex)
+    {
         // do nothing
     }
-    catch( java.lang.NullPointerException ex ) {
+    catch (java.lang.NullPointerException ex)
+    {
         // do nothing
     }
 
     // Check selectedIndex bounds
-    if( selectedIndex < 0 || selectedIndex >= tabList.size() ) {
+    if (selectedIndex < 0 || selectedIndex >= tabList.size())
+    {
         selectedIndex = 0;
     }
     // Selected body
-    String selectedBody = ((org.apache.struts.tiles.beans.MenuItem)tabList.get(selectedIndex)).getLink();
-    String tabType = ((org.apache.struts.tiles.beans.MenuItem)tabList.get(selectedIndex)).getValue();
+    String selectedBody = ((org.apache.struts.tiles.beans.MenuItem) tabList.get(selectedIndex)).getLink();
+    String tabType = ((org.apache.struts.tiles.beans.MenuItem) tabList.get(selectedIndex)).getValue();
     // Store selected index for future references
-    session.setAttribute( request.getRequestURI() + parameterName, new Integer(selectedIndex) );
-    session.setAttribute( "tabType", tabType );
+    session.setAttribute(request.getRequestURI() + parameterName, new Integer(selectedIndex));
+    session.setAttribute("tabType", tabType);
 %>
 
 <table border="0" cellspacing="0" cellpadding="0" width="100%">

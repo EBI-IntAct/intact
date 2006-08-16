@@ -16,6 +16,7 @@
                  uk.ac.ebi.intact.application.hierarchView.business.IntactUserI,
                  uk.ac.ebi.intact.application.hierarchView.business.Constants,
                  uk.ac.ebi.intact.application.hierarchView.struts.view.utils.LabelValueBean"%>
+<%@ page import="uk.ac.ebi.intact.context.IntactContext" %>
 
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html"%>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean"%>
@@ -25,7 +26,7 @@
 
     IntactUserI user = null;
 
-    user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
+    user = (IntactUserI) IntactContext.getCurrentInstance().getSession().getAttribute(Constants.USER_KEY);
 
     /**
      * Retreive user's data from the session
@@ -34,11 +35,14 @@
     String methodLabel = null;
     String fieldMethod = null;
 
-    if (user != null) {
+    if (user != null)
+    {
         queryString = user.getQueryString();
         methodLabel = user.getMethodLabel();
         fieldMethod = (null == methodLabel ? "" : methodLabel);
-    } else {
+    }
+    else
+    {
         queryString = "";
         fieldMethod = "";
     }

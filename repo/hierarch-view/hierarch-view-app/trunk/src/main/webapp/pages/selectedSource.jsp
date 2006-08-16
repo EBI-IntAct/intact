@@ -14,6 +14,7 @@
 
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.IntactUserI,
                  uk.ac.ebi.intact.application.hierarchView.business.Constants"%>
+<%@ page import="uk.ac.ebi.intact.context.IntactContext" %>
 
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html"%>
 
@@ -26,13 +27,14 @@
     <meta http-equiv="expires" content="-1">
 
     <%
-       /**
-        * Retreive user's data from the session
-        */
-       IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
+        /**
+         * Retreive user's data from the session
+         */
+        IntactUserI user = (IntactUserI) IntactContext.getCurrentInstance().getSession().getAttribute(Constants.USER_KEY);
 
-       // Displays Http content if URL updated in the session
-       if (user.hasSourceUrlToDisplay()) {
+        // Displays Http content if URL updated in the session
+        if (user.hasSourceUrlToDisplay())
+        {
 
     %>
             <script>

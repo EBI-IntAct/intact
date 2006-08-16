@@ -17,6 +17,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.business.image.DrawGraph;
@@ -38,6 +40,8 @@ import uk.ac.ebi.intact.application.hierarchView.struts.view.utils.OptionGenerat
  */
 
 public final class DisplayAction extends IntactBaseAction {
+
+    private static final Log logger = LogFactory.getLog(DisplayAction.class);
 
     // --------------------------------------------------------- Public Methods
 
