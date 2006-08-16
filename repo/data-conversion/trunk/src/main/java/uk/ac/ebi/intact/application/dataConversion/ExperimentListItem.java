@@ -9,6 +9,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Arrays;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
+import uk.ac.ebi.intact.business.IntactException;
 
 /**
  * TODO comment this!
@@ -21,6 +27,12 @@ public class ExperimentListItem
 {
 
     private static final Log log = LogFactory.getLog(ExperimentListItem.class);
+
+    /**
+     * Unreadable but working pattern to parse an experimentListItem from a String
+     */
+    private static final Pattern PATTERN =
+            Pattern.compile("((?:\\w+/)*)(\\w+(?:_small)?)(?:_\\w+-\\d{4}-\\d+)?(?:-|_)?(\\d{1,2})?_?(negative)?\\.xml\\s(\\S+(?:,\\S)*)+(?:\\s\\[(\\d+),(\\d+)\\])?");
 
     private Collection<String> experimentLabels;
     private String name;
@@ -37,7 +49,7 @@ public class ExperimentListItem
         this.negative = negative;
         this.chunkNumber = chunkNumber;
         this.largeScaleChunkSize = largeScaleSize;
-        this.parentFolders = parentFolders;
+        this.parentFolders = removeTrailingSlash(parentFolders);
     }
 
     public String getFilename()
@@ -66,6 +78,7 @@ public class ExperimentListItem
             strLargeScale = "_"+experimentLabels.iterator().next()+"_"+twoDigitNumber(chunkNumber);
             fileNumber = "";
         }
+
 
 
         return parentFolders + FileHelper.SLASH + name +
@@ -102,7 +115,7 @@ public class ExperimentListItem
         int first = ((chunkNumber-1)*largeScaleChunkSize)+1;
         int last = chunkNumber*largeScaleChunkSize;
 
-        return " ["+first+","+last+"]";
+        return "["+first+","+last+"]";
     }
 
     public Integer getChunkNumber()
@@ -137,6 +150,59 @@ public class ExperimentListItem
         return parentFolders;
     }
 
+    /**
+     * Instantiates a ExperimentListItem by parsing a String
+     * @param strItem
+     * @return
+     */
+    public static ExperimentListItem parseString(String strItem)
+    {
+        strItem = strItem.trim();
+
+        Matcher matcher = PATTERN.matcher(strItem);
+
+        if (matcher.find())
+        {
+            String parentFolder = removeTrailingSlash(matcher.group(1));
+            String name = matcher.group(2);
+            String strChunk = matcher.group(3);
+            String strNegative = matcher.group(4);
+            String strExperimentLabels = matcher.group(5);
+            String strFirstResult = matcher.group(6);
+            String strLastResult = matcher.group(7);
+
+            Integer chunk = null;
+
+            if (strChunk != null)
+            {
+                chunk = Integer.parseInt(strChunk);
+            }
+
+            boolean negative = false;
+
+            if (name.endsWith("_negative") || strNegative != null)
+            {
+                negative = true;
+                name = name.replaceAll("_negative", "");
+            }
+
+            String[] experimentLabels = strExperimentLabels.split(",");
+
+            Integer largeScaleSize = null;
+
+            if (strFirstResult != null && strLastResult != null)
+            {
+                largeScaleSize = Integer.parseInt(strLastResult)-Integer.parseInt(strFirstResult)+1;
+            }
+
+            return new ExperimentListItem(Arrays.asList(experimentLabels), name, parentFolder, negative, chunk, largeScaleSize);
+        }
+        else
+        {
+            throw new IntactException("Could not parse string: " + strItem);
+        }
+    }
+
     @Override
     public boolean equals(Object obj)
     {
@@ -153,7 +219,7 @@ public class ExperimentListItem
     @Override
     public String toString()
     {
-        return getFilename()+" "+getPattern()+getInteractionRange();
+        return getFilename()+" "+getPattern()+" "+getInteractionRange();
     }
 
     @Override
@@ -173,5 +239,15 @@ public class ExperimentListItem
         strNum = strNum + number;
 
         return strNum;
+    }
+
+    private static String removeTrailingSlash(String folder)
+    {
+        if (folder.endsWith(FileHelper.SLASH))
+        {
+            folder = folder.substring(0, folder.length()-1);
+        }
+
+        return folder;
     }
 }

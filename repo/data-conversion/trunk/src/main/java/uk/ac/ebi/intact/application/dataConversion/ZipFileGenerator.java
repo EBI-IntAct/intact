@@ -31,18 +31,6 @@ public class ZipFileGenerator {
     // Constants
 
     /**
-     * Pattern matching the filename of PSI-XML file generated using the pubmed classification.
-     * <p/>
-     * It matches 12345.xml, 12345_author-2006-1.xml
-     */
-    public static final String XML_FILE_PATTERN = "([0-9]+)\\D.*xml";
-
-    /**
-     * Compiled pattern.
-     */
-    public static Pattern FILENAME_PATTERN = Pattern.compile( XML_FILE_PATTERN );
-
-    /**
      * If set to true, the program displays verbose output.
      */
     private static boolean VERBOSE;
@@ -82,7 +70,7 @@ public class ZipFileGenerator {
         // start processing.
         Stack subdirectories = new Stack();
 
-        File[] files = directory.listFiles();
+        File[] files = directory.listFiles(new PmidXmlFileFilter());
 
         Map pmid2files = new HashMap( files.length );
 
@@ -114,7 +102,7 @@ public class ZipFileGenerator {
 
                     filenames.add( file );
                 } else {
-                    log.debug( "ERROR: Could not extract a pubmed id from filename: " + file.getName() );
+                    log.error( "Could not extract a pubmed id from filename: " + file.getName() );
                 }
             }
 
@@ -217,7 +205,7 @@ public class ZipFileGenerator {
 
         String pmid = null;
 
-        Matcher matcher = FILENAME_PATTERN.matcher( filename );
+        Matcher matcher = PmidXmlFileFilter.PMID_FILENAME_PATTERN.matcher( filename );
         boolean matchFound = matcher.find();
 
         if ( matchFound ) {

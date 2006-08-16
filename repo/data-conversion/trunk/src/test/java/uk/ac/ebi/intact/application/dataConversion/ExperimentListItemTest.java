@@ -87,7 +87,7 @@ public class ExperimentListItemTest extends TestCase {
 
     public void testGetInteractionRange() throws Exception {
         assertEquals("", mockWithOneLabel.getInteractionRange());
-        assertEquals(" [2001,4000]", mockWithOneLabelLarge.getInteractionRange());
+        assertEquals("[2001,4000]", mockWithOneLabelLarge.getInteractionRange());
     }
 
     public void testGetParentFolders() throws Exception {
@@ -100,7 +100,13 @@ public class ExperimentListItemTest extends TestCase {
         assertEquals("species/onelabel_negative.xml test-2006-1", mockWithOneLabel.toString());
         assertEquals("pmid/2006/onelabellarge_test-2006-1_02.xml test-2006-1 [2001,4000]", mockWithOneLabelLarge.toString());
         assertEquals("species/manylabel-03.xml test-2006-1,test-2006-2", mockWithManyLabels.toString());
-    }    
+    }
+
+    public void testParseString() throws Exception {
+        assertEquals(mockWithOneLabel, ExperimentListItem.parseString(mockWithOneLabel.toString()));
+        assertEquals(mockWithOneLabelLarge, ExperimentListItem.parseString(mockWithOneLabelLarge.toString()));
+        assertEquals(mockWithManyLabels, ExperimentListItem.parseString(mockWithManyLabels.toString()));
+    }
 
     public static Test suite() {
         return new TestSuite(ExperimentListItemTest.class);
