@@ -12,9 +12,12 @@ import uk.ac.ebi.intact.application.dataConversion.NewFileGenerator;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
 import uk.ac.ebi.intact.application.dataConversion.ZipFileGenerator;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.CvMapping;
+import uk.ac.ebi.intact.util.Chrono;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.*;
 
 /**
@@ -59,27 +62,15 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo
         mapping.loadFile(getReverseMapping());
 
         Collection<ExperimentListItem> items = generateAllClassifications();
-
         getLog().info("Going to generate "+items.size()+" PSI-MI xml files for each of this versions: "+psiVersions);
-
-        // create xml files
+        
         try
         {
-            for (Version version : psiVersions)
-            {
-                int count = 1;
+            getLog().info("Exporting XML files classified by species");
+            readClassificationAndWritePsiXmls(getSpeciesFile(), mapping);
 
-                getLog().info("Generating files for version: "+version);
-                for (ExperimentListItem item : items)
-                {
-                    getLog().debug("Exporting "+count+": "+item+" (PSI: "+version.getNumber()+")");
-                    NewFileGenerator.writePsiData(item, PsiVersion.valueOf(version.getNumber()), mapping,
-                                                  new File(targetPath, version.getFolderName()), false);
-
-                    count++;
-
-                }
-            }
+            getLog().info("Exporting XML files classified by publications");
+            readClassificationAndWritePsiXmls(getPublicationsFile(), mapping);
         }
         catch (IOException e)
         {
@@ -90,6 +81,40 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo
         {
             getLog().info("Clustering and zipping files");
             ZipFileGenerator.clusterAllXmlFilesFromDirectory( targetPath, true );
+        }
+    }
+
+    private void readClassificationAndWritePsiXmls(File classificationFile, CvMapping mapping) throws IOException
+    {
+        BufferedReader reader = new BufferedReader(new FileReader(classificationFile));
+        String line;
+
+        int count = 1;
+
+        while ((line = reader.readLine()) != null){
+            ExperimentListItem item = ExperimentListItem.parseString(line.trim());
+
+            getLog().debug("Exporting item: " + count);
+
+            writePsiDataFile(item, mapping);
+
+            count++;
+        }
+    }
+
+    private void writePsiDataFile(ExperimentListItem item, CvMapping mapping) throws IOException
+    {
+        for (Version version : psiVersions)
+        {
+            long start = System.currentTimeMillis();
+
+            NewFileGenerator.writePsiData(item, PsiVersion.valueOf(version.getNumber()), mapping,
+                    new File(targetPath, version.getFolderName()), false);
+
+            long elapsed = System.currentTimeMillis() - start;
+
+            getLog().debug("Elapsed time: " + new Chrono().printTime(elapsed));
+
         }
     }
 
