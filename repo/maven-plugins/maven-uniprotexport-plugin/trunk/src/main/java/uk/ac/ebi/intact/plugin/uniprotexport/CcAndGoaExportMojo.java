@@ -5,18 +5,15 @@
  */
 package uk.ac.ebi.intact.plugin.uniprotexport;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-
-import java.io.*;
-import java.util.Set;
-
 import uk.ac.ebi.intact.util.MemoryMonitor;
-import uk.ac.ebi.intact.util.uniprotExport.DRLineExport;
 import uk.ac.ebi.intact.util.uniprotExport.CCLineExport;
-import uk.ac.ebi.intact.context.IntactContext;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.util.Set;
 
 /**
  * TODO comment this!
@@ -88,6 +85,7 @@ public class CcAndGoaExportMojo extends UniprotExportAbstractMojo
             CCLineExport exporter = new CCLineExport( ccWriter, goaWriter );
             //exporter.setDebugEnabled( debugEnabled );
             //exporter.setDebugFileEnabled( debugFileEnabled );
+             
 
             // launch the CC export
             exporter.generateCCLines( uniprotIDs );
