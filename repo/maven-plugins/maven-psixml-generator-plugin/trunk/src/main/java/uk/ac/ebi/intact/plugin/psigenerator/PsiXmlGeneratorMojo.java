@@ -65,7 +65,10 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo
 
         Collection<ExperimentListItem> items = generateAllClassifications();
         getLog().info("Going to generate "+items.size()+" PSI-MI xml files for each of this versions: "+psiVersions);
-        
+
+        items.clear();
+        items = null;
+
         try
         {
             getLog().info("Exporting XML files classified by species");
@@ -81,7 +84,7 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo
 
         if (zipXml)
         {
-            getLog().info("Clustering and zipping files");
+            getLog().info("Clustering and zipping files recursively from folder: "+targetPath);
             ZipFileGenerator.clusterAllXmlFilesFromDirectory( targetPath, true );
         }
     }
@@ -96,7 +99,7 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo
         while ((line = reader.readLine()) != null){
             ExperimentListItem item = ExperimentListItem.parseString(line.trim());
 
-            getLog().debug("Exporting item: " + count);
+            getLog().debug("Exporting item " + count+": "+item);
 
             writePsiDataFile(item, mapping);
 
@@ -106,7 +109,7 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo
 
     private void writePsiDataFile(ExperimentListItem item, CvMapping mapping) throws IOException
     {
-        getLog().info("Loading interactions");
+        getLog().debug("\tLoading interactions");
         Collection<Interaction> interactions = NewFileGenerator.getInteractionsForExperimentListItem(item);
 
         for (Version version : psiVersions)
@@ -120,7 +123,7 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo
 
             long elapsed = System.currentTimeMillis() - start;
 
-            getLog().debug("Elapsed time to export to version "+version.getNumber()+": " + new Chrono().printTime(elapsed));
+            getLog().debug("\tTime to export to version "+version.getNumber()+": " + new Chrono().printTime(elapsed));
 
         }
     }
