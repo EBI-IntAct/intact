@@ -8,8 +8,10 @@ package uk.ac.ebi.intact.application.dataConversion;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.CvMapping;
 import uk.ac.ebi.intact.model.Experiment;
 
+import java.io.File;
 import java.util.List;
 import java.util.Set;
 
@@ -24,7 +26,7 @@ public class ExperimentListGeneratorTest extends TestCase
 {
 
     private static final Log log = LogFactory.getLog(ExperimentListGeneratorTest.class);
-
+    
     public void testGenerateListGavin()
     {
 
@@ -113,6 +115,40 @@ public class ExperimentListGeneratorTest extends TestCase
         assertEquals(1, eliPublications.size());
         //log.debug("By publications (onlyPmid=false): "+eliPublications.size());
 
+    }
+
+    public void test_Haynes()
+    {
+
+        ExperimentListGenerator gen = new ExperimentListGenerator("haynes-2006-2");
+        gen.setOnlyWithPmid(true);
+
+        List<ExperimentListItem> eliSpecies = gen.generateClassificationBySpecies();
+        System.out.println(eliSpecies);
+        assertEquals(2, eliSpecies.size());
+
+
+    }
+
+    public void testSearchPatternWithCommas() throws Exception
+    {
+        File reverseMappingFile = new File(NewFileGeneratorTest.class.getResource("/reverseMapping.txt").getFile());
+
+        CvMapping mapping = new CvMapping();
+        mapping.loadFile(reverseMappingFile);
+
+        boolean failed = false;
+        try
+        {
+            ExperimentListGenerator gen = new ExperimentListGenerator("jin-2000-3,jin-2000-5,jin-2000-4,jin-2000-2,jin-2000-1");
+            gen.generateAllClassifications();
+        }
+        catch (Exception e)
+        {
+            failed = true;
+        }
+
+        assertTrue("If a search pattern containing commas is provided, the generator should fail", failed);
     }
 
 }

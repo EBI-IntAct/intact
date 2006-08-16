@@ -241,10 +241,25 @@ public class ExperimentListGenerator {
                 //    The bioSource of the Experiment is irrelevant, as it may be an auxiliary experimental system.
                 Collection<BioSource> sources = getTargetSpecies(experiment.getAc());
 
-                log.debug("Classifying " + experiment.getShortLabel() + " (" + interactionCount + " interaction" + (interactionCount > 1 ? "s" : "") + ")");
+                if (log.isDebugEnabled())
+                    log.debug("Classifying " + experiment.getShortLabel() + " (" + interactionCount + " interaction" + (interactionCount > 1 ? "s" : "") + ")");
 
                 // 2. get the pubmedId (primary-ref)
                 String pubmedId = String.valueOf(getPubmedId(experiment.getAc()));
+
+                if (log.isDebugEnabled())
+                {
+                    log.debug("\tPubmedId: "+pubmedId+"; Sources: "+sources.size());
+                }
+
+                if (log.isWarnEnabled())
+                {
+                    if (sources.isEmpty())
+                    {
+                        experimentsWithErrors.put(experiment.getShortLabel(), "Experiment without biosources");
+                        log.error("Experiment without target-species: "+experiment.getAc()+" ("+experiment.getShortLabel()+")");
+                    }
+                }
 
                 // 3. create the classification by publication
                 if (pubmedId != null)
@@ -299,20 +314,16 @@ public class ExperimentListGenerator {
 
     }
 
-    private List<Experiment> getExperiments(int firstResult, int maxResults)
+    private Collection<Experiment> getExperiments(int firstResult, int maxResults)
     {
-        ArrayList<Experiment> searchResults = new ArrayList<Experiment>();
         log.debug("Retrieving data from DB store, from "+firstResult);
 
-        StringTokenizer patterns = new StringTokenizer(searchPattern, ",");
-
-        while (patterns.hasMoreTokens())
+        if (searchPattern.contains(","))
         {
-            String shortlabel = patterns.nextToken().trim();
-
-            searchResults.addAll(getDaoFactory().getExperimentDao().getByShortLabelLike(shortlabel, true, firstResult, maxResults, true));
-
+            throw new IntactException("Lists with comma-separated experiments are not accepted anymore");
         }
+
+        Collection<Experiment> searchResults = getDaoFactory().getExperimentDao().getByShortLabelLike(searchPattern, true, firstResult, maxResults, true);
 
         int resultSize = searchResults.size();
         log.debug("done (retrieved " + resultSize + " experiment" + (resultSize > 1 ? "s" : "") + ")");
