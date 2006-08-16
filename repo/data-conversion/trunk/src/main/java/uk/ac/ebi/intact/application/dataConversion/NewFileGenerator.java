@@ -57,13 +57,6 @@ public abstract class NewFileGenerator
     {
         File xmlFile = new File(baseDir, eli.getFilename());
 
-        // create the parent dir if it does not exist
-        if (!xmlFile.getParentFile().exists())
-        {
-            log.info("Creating dir: "+xmlFile.getParentFile());
-            xmlFile.getParentFile().mkdirs();
-        }
-
         Document doc = generatePsiData(eli,psiVersion,cvMapping);
 
         return writeFile(doc, xmlFile, validate);
@@ -182,6 +175,13 @@ public abstract class NewFileGenerator
 
     private static boolean writeFile(Document doc, File xmlFile, boolean validate) throws IOException
     {
+        // create the parent dir if it does not exist
+        if (!xmlFile.getParentFile().exists())
+        {
+            log.info("Creating dir: "+xmlFile.getParentFile());
+            xmlFile.getParentFile().mkdirs();
+        }
+
         Writer writer = new FileWriter(xmlFile);
         DisplayXML.write(doc, writer, "   ");
 
