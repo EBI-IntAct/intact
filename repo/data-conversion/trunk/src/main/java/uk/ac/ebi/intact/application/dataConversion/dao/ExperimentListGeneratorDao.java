@@ -8,7 +8,6 @@ package uk.ac.ebi.intact.application.dataConversion.dao;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import uk.ac.ebi.intact.config.impl.StandardCoreDataConfig;
 import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.AnnotatedObjectImpl;
@@ -170,7 +169,7 @@ public class ExperimentListGeneratorDao
     private static Session getSession()
     {
         AbstractHibernateDataConfig dataConfig = (AbstractHibernateDataConfig) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig();
-        return dataConfig.initialize().getCurrentSession(); 
+        return dataConfig.getSessionFactory().getCurrentSession(); 
     }
 
 }
