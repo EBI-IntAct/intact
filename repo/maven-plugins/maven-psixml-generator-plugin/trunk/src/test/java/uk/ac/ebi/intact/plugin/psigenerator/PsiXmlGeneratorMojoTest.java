@@ -6,7 +6,6 @@
 package uk.ac.ebi.intact.plugin.psigenerator;
 
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 
 import java.io.File;
@@ -15,10 +14,10 @@ import java.io.File;
  * TODO: comment this!
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
- * @version $Id:PsiXmlGeneratorTest.java 5772 2006-08-11 16:08:37 +0100 (Fri, 11 Aug 2006) baranda $
+ * @version $Id:PsiXmlGeneratorMojoTest.java 5772 2006-08-11 16:08:37 +0100 (Fri, 11 Aug 2006) baranda $
  * @since <pre>04/08/2006</pre>
  */
-public class PsiXmlGeneratorTest extends AbstractMojoTestCase
+public class PsiXmlGeneratorMojoTest extends AbstractMojoTestCase
 {
         public void testSimpleGeneration() throws Exception
         {

@@ -1,0 +1,24 @@
+<project>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-psixml-generator-plugin</artifactId>
+                <configuration>
+                    <targetPath>target/psixml-classification-test</targetPath>
+                    <speciesFilename>classification_by_species.txt</speciesFilename>
+                    <publicationsFilename>classification_by_publications.txt</publicationsFilename>
+                    
+                    <searchPattern>giot-2003-1</searchPattern>
+
+                    <overwrite>true</overwrite>
+                    <experimentErrorFile>target/psixml-classification-test/experiment-error.log</experimentErrorFile>
+                    <negativeExperimentsFile>target/psixml-classification-test/negative-experiments.log</negativeExperimentsFile>
+
+                    <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
+
+                </configuration>
+            </plugin>
+        </plugins>
+     </build>
+</project>
