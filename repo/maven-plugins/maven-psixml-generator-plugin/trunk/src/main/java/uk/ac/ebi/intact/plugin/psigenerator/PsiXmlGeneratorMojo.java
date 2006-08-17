@@ -14,6 +14,8 @@ import uk.ac.ebi.intact.application.dataConversion.ZipFileGenerator;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.CvMapping;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.util.Chrono;
+import uk.ac.ebi.intact.util.MemoryMonitor;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -52,12 +54,15 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo
     {
         getLog().info("PsiXmlGeneratorMojo in action");
 
+        new MemoryMonitor();
+
         getLog().debug("Reverse mapping file: "+getReverseMapping());
 
         if (!getSpeciesFile().exists())
         {
             getLog().info("Classifying and writing classification by species");
             writeClassificationBySpeciesToFile();
+            IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
         }
         else
         {
@@ -68,6 +73,7 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo
         {
             getLog().info("Writing classifications by publications");
             writeClassificationByPublicationsToFile();
+            IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
         }
         else
         {
@@ -77,11 +83,14 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo
         CvMapping mapping = new CvMapping();
         mapping.loadFile(getReverseMapping());
 
-        Collection<ExperimentListItem> items = generateAllClassifications();
-        getLog().info("Going to generate "+items.size()+" PSI-MI xml files for each of this versions: "+psiVersions);
+        if (getSpeciesFile().exists() && getPublicationsFile().exists())
+        {
+            Collection<ExperimentListItem> items = generateAllClassifications();
+            getLog().info("Going to generate "+items.size()+" PSI-MI xml files for each of this versions: "+psiVersions);
 
-        items.clear();
-        items = null;
+            items.clear();
+            items = null;
+        }
 
         try
         {
@@ -140,6 +149,8 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo
             getLog().debug("\tTime to export to version "+version.getNumber()+": " + new Chrono().printTime(elapsed));
 
         }
+
+        IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
     }
 
     private File getReverseMapping()
