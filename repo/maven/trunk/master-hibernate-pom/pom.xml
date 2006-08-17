@@ -15,7 +15,7 @@
     <artifactId>intact-hibernate-master</artifactId>
     <packaging>pom</packaging>
     <name>Master Hibernate POM</name>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.2.0</version>
     <!-- last released 1.1.1 -->
     <description>This is a master POM that contains the data access (hibernate) configuration</description>
 
@@ -25,12 +25,11 @@
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/trunk/master-hibernate-pom/</url>
     </scm>
 
-    <!-- I set these hibernate mandatory attributes as NOT_DEFINED because otherwise
-         the hibernateconfig plugin will complain if none of the profiles is used -->
     <properties>
         <db.dialect>NOT_DEFINED</db.dialect>
         <db.driver>NOT_DEFINED</db.driver>
         <showSql>false</showSql>
+        <hibernate.scope>runtime</hibernate.scope>
     </properties>
 
     <build>
@@ -45,14 +44,16 @@
             <plugin>
                 <groupId>uk.ac.ebi.intact.hibernate</groupId>
                 <artifactId>maven-hibernateconfig-plugin</artifactId>
-                <version>1.1.0</version>
+                <version>1.2.0</version>
                 <configuration>
+                    <sessionFactoryName>${sessionFactoryName}</sessionFactoryName>
                     <dialect>${db.dialect}</dialect>
                     <driver>${db.driver}</driver>
                     <url>${db.protocol}:${db.subprotocol}:${db.alias}</url>
                     <user>${db.user}</user>
                     <password>${db.password}</password>
                     <showSql>${showSql}</showSql>
+                    <scope>${hibernate.scope}</scope>
                     <hibernateEvents>
                         <hibernateEvent>
                             <type>pre-insert</type>
@@ -89,6 +90,8 @@
                 <db.alias>d003</db.alias>
                 <db.user>intactweb</db.user>
                 <db.password>reading</db.password>
+
+                <sessionFactoryName>SF_INTACT_TEST</sessionFactoryName>
             </properties>
         </profile>
         <profile>
@@ -100,6 +103,8 @@
                 <db.alias>zpro</db.alias>
                 <db.user>intactweb</db.user>
                 <db.password>reading</db.password>
+
+                <sessionFactoryName>SF_INTACT_PROD</sessionFactoryName>
 
                 <lucene.index.directory>/ebi/sp/pro4/intact/lucene-index/prod/current</lucene.index.directory>
             </properties>
@@ -114,6 +119,8 @@
                 <db.user>intactweb</db.user>
                 <db.password>reading</db.password>
 
+                <sessionFactoryName>SF_INTACT_PUB</sessionFactoryName>
+
                 <lucene.index.directory>/ebi/sp/pro4/intact/public-tomcat/lucene-index</lucene.index.directory>
             </properties>
         </profile>
@@ -126,6 +133,8 @@
                 <db.alias>iweb2</db.alias>
                 <db.user>intactweb</db.user>
                 <db.password>reading</db.password>
+
+                <sessionFactoryName>SF_INTACT_PUB2</sessionFactoryName>
 
                 <lucene.index.directory>/ebi/sp/pro4/intact/public-tomcat/lucene-index</lucene.index.directory>
             </properties>
