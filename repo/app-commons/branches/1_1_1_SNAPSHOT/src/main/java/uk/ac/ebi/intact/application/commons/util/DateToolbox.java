@@ -38,53 +38,18 @@ public class DateToolbox {
     }
 
     public static String formatDate(Date date){
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        String day = Integer.toString(calendar.get(Calendar.DAY_OF_MONTH));
-        String monthName = getMonth(calendar.get(Calendar.MONTH));
-        String year = Integer.toString(calendar.get(Calendar.YEAR));
-
-        if(date == null){
+        if(date != null){
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            String day = Integer.toString(calendar.get(Calendar.DAY_OF_MONTH));
+            String monthName = getMonth(calendar.get(Calendar.MONTH));
+            String year = Integer.toString(calendar.get(Calendar.YEAR));
+            String newDate = year + "-" + monthName + "-" + day;
+            newDate = newDate.trim();
+            return newDate;
+        }else{
             return null;
         }
-//        String newDate = date.toString();
-////        int monthNumber =  Integer.parseInt(newDate.substring(5, 7) );
-//        String[] dateData = newDate.split(" ");
-//        String monthName = dateData[1].toUpperCase();
-//        String year = dateData[5];//newDate.substring(newDate.length(),newDate.length()-4);
-//        String day = Integer.toString(date.getDay());// dateData[2];//newDate.substring(8,10);
-        String newDate = year + "-" + monthName + "-" + day;
-        newDate = newDate.trim();
-        return newDate;
-    }
-
-    public static String formatDateResultWrapper(Date date){
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        String day = Integer.toString(calendar.get(Calendar.DAY_OF_MONTH));
-        String monthName = getMonth(calendar.get(Calendar.MONTH));
-        String year = Integer.toString(calendar.get(Calendar.YEAR));
-
-        if(date == null){
-            return null;
-        }
-//        String newDate = date.toString();
-////        int monthNumber =  Integer.parseInt(newDate.substring(5, 7) );
-//        String[] dateData = newDate.split(" ");
-//        String monthName = dateData[1].toUpperCase();
-//        String year = dateData[5];//newDate.substring(newDate.length(),newDate.length()-4);
-//        String day = Integer.toString(date.getDay());// dateData[2];//newDate.substring(8,10);
-        String newDate = year + "-" + monthName + "-" + day;
-        newDate = newDate.trim();
-        return newDate;
-
-//        String dateString = date.toString();
-//        String dateData[] = dateString.split("-");
-//        String month = getMonth(Integer.parseInt(dateData[1]));
-//        String year =  dateData[1];
-//        String day = dateData[3];
-//        return year + "-" + month + "-" + day;
-
     }
 
 
