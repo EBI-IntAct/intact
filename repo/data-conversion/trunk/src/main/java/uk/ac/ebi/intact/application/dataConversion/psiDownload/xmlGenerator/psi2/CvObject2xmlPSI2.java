@@ -11,8 +11,8 @@ import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownlo
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Cv2Source;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.CvObject2xmlCommons;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.CvObject2xmlI;
-import uk.ac.ebi.intact.application.dataConversion.util.CvObjectHelper;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 
 import java.util.Iterator;
@@ -251,11 +251,11 @@ public class CvObject2xmlPSI2 extends AnnotatedObject2xmlPSI2 implements CvObjec
                 } else if ( hasPsiXref( cvObject, CvComponentRole.SELF_PSI_REF ) ) {
                     newCvObject = cvObject;
                 } else if ( hasPsiXref( cvObject, CvComponentRole.ENZYME_PSI_REF ) ) {
-                    newCvObject = CvObjectHelper.getInstance().getNeutral();
+                    newCvObject = IntactContext.getCurrentInstance().getCvContext().getNeutral();
                 } else if ( hasPsiXref( cvObject, CvComponentRole.ENZYME_TARGET_PSI_REF ) ) {
-                    newCvObject = CvObjectHelper.getInstance().getNeutral();
+                    newCvObject = IntactContext.getCurrentInstance().getCvContext().getNeutral();
                 } else if ( hasPsiXref( cvObject, CvComponentRole.UNSPECIFIED_PSI_REF ) ) {
-                    newCvObject = CvObjectHelper.getInstance().getNeutral();
+                    newCvObject = IntactContext.getCurrentInstance().getCvContext().getNeutral();
                 } else {
                     // TODO Log this !!
                     newCvObject = cvObject;
@@ -336,11 +336,11 @@ public class CvObject2xmlPSI2 extends AnnotatedObject2xmlPSI2 implements CvObjec
 
             try {
                 if ( hasPsiXref( cvObject, CvComponentRole.BAIT_PSI_REF ) ) {
-                    newCvObject = CvObjectHelper.getInstance().getUnspecified();
+                    newCvObject = IntactContext.getCurrentInstance().getCvContext().getUnspecified();
                 } else if ( hasPsiXref( cvObject, CvComponentRole.PREY_PSI_REF ) ) {
-                    newCvObject = CvObjectHelper.getInstance().getUnspecified();
+                    newCvObject = IntactContext.getCurrentInstance().getCvContext().getUnspecified();
                 } else if ( hasPsiXref( cvObject, CvComponentRole.NEUTRAL_PSI_REF ) ) {
-                    newCvObject = CvObjectHelper.getInstance().getUnspecified();
+                    newCvObject = IntactContext.getCurrentInstance().getCvContext().getUnspecified();
                 } else if ( hasPsiXref( cvObject, CvComponentRole.SELF_PSI_REF ) ) {
                     newCvObject = cvObject;
                 } else if ( hasPsiXref( cvObject, CvComponentRole.ENZYME_PSI_REF ) ) {
