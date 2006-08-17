@@ -152,6 +152,12 @@ public class HibernateConfigCreatorMojo
      */
     private String luceneAnalyzer;
 
+    /**
+     * The name of the session factory. When deployed, the session factory will be put in the JNDI context
+     * @parameter
+     */
+    private String sessionFactoryName;
+
     private String hibernateEventsAsString = "";
 
     public void execute() throws MojoExecutionException
@@ -258,10 +264,12 @@ public class HibernateConfigCreatorMojo
         line = line.replaceAll("\\$\\{hibernateEvents\\}", hibernateEventsAsString);
 
         line = line.replaceAll("\\$\\{lucene.index_dir\\}",
-               createPropertyLine("hibernate.lucene.index_dir", luceneIndexDir, "Lucene index dir"));
+               createPropertyLine("lucene.index_dir", luceneIndexDir, "Lucene index dir"));
         line = line.replaceAll("\\$\\{lucene.analyzer\\}",
-               createPropertyLine("hibernate.lucene.analyzer", luceneAnalyzer, "Lucene analyser") );
+               createPropertyLine("lucene.analyzer", luceneAnalyzer, "Lucene analyser") );
 
+        if (sessionFactoryName == null) sessionFactoryName = "";
+        line = line.replaceAll("\\$\\{session_factory_name\\}", "name=\""+sessionFactoryName+"\"");
 
         return line;
     }

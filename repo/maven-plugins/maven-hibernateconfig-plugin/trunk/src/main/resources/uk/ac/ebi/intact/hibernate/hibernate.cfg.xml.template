@@ -3,7 +3,7 @@
     "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 
 <hibernate-configuration>
-    <session-factory>
+    <session-factory ${session_factory_name}>
 
         <!-- Settings for a local HSQL (testing) database. -->
         <property name="dialect">${db.dialect}</property>
