@@ -1,21 +1,30 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!DOCTYPE web-app
-    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN"
-    "http://java.sun.com/j2ee/dtds/web-app_2.2.dtd">
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/j2ee/dtds/web-app_2.3.dtd">
 
 <web-app>
 
 
     <display-name>IntAct Graph2MIF</display-name>
 
-     <!-- IntAct Init parameters -->
+    <!-- IntAct Init parameters -->
     <context-param>
         <param-name>uk.ac.ebi.intact.AC_PREFIX</param-name>
         <param-value>EBI</param-value>
         <description>
             The Accession Number Prefix for the objects created
             by the application and stored in the database.
+        </description>
+    </context-param>
+
+    <context-param>
+        <param-name>uk.ac.ebi.intact.INSTITUTION_LABEL</param-name>
+        <param-value>ebi</param-value>
+        <description>
+            The label of the institution, used to retrieve the Institution object
+            if it already exists, or to create a new institution
         </description>
     </context-param>
 
