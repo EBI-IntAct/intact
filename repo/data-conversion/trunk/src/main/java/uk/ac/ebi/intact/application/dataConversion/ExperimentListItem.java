@@ -217,7 +217,7 @@ public class ExperimentListItem
     @Override
     public String toString()
     {
-        return getFilename()+" "+getPattern()+" "+getInteractionRange();
+        return (getFilename()+" "+getPattern()+" "+getInteractionRange()).trim();
     }
 
     @Override
