@@ -8,12 +8,8 @@ package uk.ac.ebi.intact.application.dataConversion;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.CvMapping;
-import uk.ac.ebi.intact.model.Experiment;
 
-import java.io.File;
 import java.util.List;
-import java.util.Set;
 
 /**
  * TODO comment this!
@@ -26,7 +22,7 @@ public class ExperimentListGeneratorTest extends TestCase
 {
 
     private static final Log log = LogFactory.getLog(ExperimentListGeneratorTest.class);
-    
+    /*
     public void testGenerateListGavin()
     {
 
@@ -124,7 +120,6 @@ public class ExperimentListGeneratorTest extends TestCase
         gen.setOnlyWithPmid(true);
 
         List<ExperimentListItem> eliSpecies = gen.generateClassificationBySpecies();
-        System.out.println(eliSpecies);
         assertEquals(2, eliSpecies.size());
 
 
@@ -149,6 +144,15 @@ public class ExperimentListGeneratorTest extends TestCase
         }
 
         assertTrue("If a search pattern containing commas is provided, the generator should fail", failed);
+    }
+    */
+    public void testGenerate_ni1998() throws Exception
+    {
+        ExperimentListGenerator gen = new ExperimentListGenerator("ni-1998-2");
+        gen.setOnlyWithPmid(true);
+
+        List<ExperimentListItem> eliSpecies = gen.generateClassificationBySpecies();
+        assertEquals(2, eliSpecies.size());
     }
 
 }

@@ -7,14 +7,12 @@ package uk.ac.ebi.intact.application.dataConversion;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Arrays;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-
 import uk.ac.ebi.intact.business.IntactException;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * TODO comment this!
@@ -32,7 +30,7 @@ public class ExperimentListItem
      * Unreadable but working pattern to parse an experimentListItem from a String
      */
     private static final Pattern PATTERN =
-            Pattern.compile("((?:\\w+/)*)(\\w+(?:_small)?)(?:_\\w+-\\d{4}-\\d+)?(?:-|_)?(\\d{1,2})?_?(negative)?\\.xml\\s(\\S+(?:,\\S)*)+(?:\\s\\[(\\d+),(\\d+)\\])?");
+            Pattern.compile("((?:\\w+/)*)(\\w+(?:-1)?(?:_small)?)(?:_\\w+-\\d{4}-\\d+)?(?:-|_)?(\\d{1,2})?_?(negative)?\\.xml\\s(\\S+(?:,\\S)*)+(?:\\s\\[(\\d+),(\\d+)\\])?");
 
     private Collection<String> experimentLabels;
     private String name;
