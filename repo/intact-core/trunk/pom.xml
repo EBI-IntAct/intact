@@ -39,6 +39,15 @@
         <hibernate.scope>test</hibernate.scope>
     </properties>
 
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
+
     <profiles>
         <profile>
             <id>ebi-test</id>

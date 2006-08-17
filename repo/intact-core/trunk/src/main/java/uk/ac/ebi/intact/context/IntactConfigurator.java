@@ -14,10 +14,8 @@ import uk.ac.ebi.intact.context.impl.IntactContextWrapper;
 import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
-import uk.ac.ebi.intact.util.PropertyLoader;
 
 import java.sql.SQLException;
-import java.util.Properties;
 
 /**
  * TODO: comment this!
@@ -31,8 +29,23 @@ public class IntactConfigurator
     private static final Log log = LogFactory.getLog(IntactConfigurator.class);
 
     public static final String DATA_CONFIG_PARAM_NAME = "uk.ac.ebi.intact.DATA_CONFIG";
+
+    public static final String INSTITUTION_LABEL = "uk.ac.ebi.intact.INSTITUTION_LABEL";
+    public static final String INSTITUTION_FULL_NAME = "uk.ac.ebi.intact.INSTITUTION_FULL_NAME";
+    public static final String INSTITUTION_POSTAL_ADDRESS = "uk.ac.ebi.intact.INSTITUTION_POSTAL_ADDRESS";
+    public static final String INSTITUTION_URL = "uk.ac.ebi.intact.INSTITUTION_URL";
+
     public static final String AC_PREFIX_PARAM_NAME = "uk.ac.ebi.intact.AC_PREFIX";
     public static final String PRELOAD_COMMON_CVS_PARAM_NAME = "uk.ac.ebi.intact.PRELOAD_COMMON_CVOBJECTS";
+
+    private static final String DEFAULT_INSTITUTION_LABEL = "ebi";
+    private static final String DEFAULT_INSTITUTION_FULL_NAME = "European Bioinformatics Institute";
+    private static final String DEFAULT_INSTITUTION_POSTAL_ADDRESS = "European Bioinformatics Institute \n" +
+                                                                    "Wellcome Trust Genome Campus\n" +
+                                                                    "Hinxton, Cambridge\n" +
+                                                                    "CB10 1SD\n" +
+                                                                    "United Kingdom";
+    private static final String DEFAULT_INSTITUTION_URL = "http://www.ebi.ac.uk/";
 
     private static final String DEFAULT_AC_PREFIX = "UNK";
 
@@ -88,7 +101,7 @@ public class IntactConfigurator
         DaoFactory daoFactory = DaoFactory.getCurrentInstance(config.getDefaultDataConfig());
 
         IntactTransaction tx = daoFactory.beginTransaction();
-        Institution institution = loadInstitutionFromProperties(daoFactory);
+        Institution institution = loadInstitution(daoFactory, session);
         tx.commit();
         
         config.setInstitution(institution);
@@ -101,7 +114,7 @@ public class IntactConfigurator
 
 
         // preload the most common CvObjects
-        boolean preloadCommonCvs = Boolean.valueOf(getInitParamValue(session, PRELOAD_COMMON_CVS_PARAM_NAME, Boolean.FALSE));
+        boolean preloadCommonCvs = Boolean.valueOf(getInitParamValue(session, PRELOAD_COMMON_CVS_PARAM_NAME, String.valueOf(Boolean.FALSE)));
         if (preloadCommonCvs)
         {
             log.info("Preloading common CvObjects");
@@ -109,7 +122,12 @@ public class IntactConfigurator
         }
     }
 
-    private static String getInitParamValue(IntactSession session, String initParamName, Object defaultValue )
+    private static String getInitParamValue(IntactSession session, String initParamName, String defaultValue )
+    {
+        return getInitParamValue(session,initParamName,defaultValue,null);
+    }
+
+    private static String getInitParamValue(IntactSession session, String initParamName, String defaultValue, String systemPropertyDefault )
     {
         String initParamValue;
 
@@ -124,8 +142,22 @@ public class IntactConfigurator
             {
                 log.warn("Init-Param missing in web.xml: "+initParamName);
             }
+            else
+            {
+                if (systemPropertyDefault != null)
+                {
+                    String propValue = System.getProperty(systemPropertyDefault);
+
+                    if (propValue != null)
+                    {
+                        log.debug("Found environment property for default value: "+propValue);
+                        defaultValue = propValue;
+                    }
+                }
+            }
             log.debug("Using default value for param "+initParamName+": "+defaultValue);
-            initParamValue = defaultValue.toString();
+
+            initParamValue = (String) defaultValue;
         }
 
         return initParamValue;
@@ -172,81 +204,49 @@ public class IntactConfigurator
      *
      * @return the Institution to which all created object will be linked.
      */
-    private static Institution loadInstitutionFromProperties(DaoFactory daoFactory) throws IntactException
+    private static Institution loadInstitution(DaoFactory daoFactory, IntactSession session) 
     {
-        Institution institution = null;
 
-        Properties props = PropertyLoader.load( INSTITUTION_CONFIG_FILE );
-        if ( props != null ) {
-            String shortlabel = props.getProperty( "Institution.shortLabel" );
-            if ( shortlabel == null || shortlabel.trim().equals( "" ) ) {
-                throw new IntactException( "Your institution is not properly configured, check out the configuration file:" +
-                                           INSTITUTION_CONFIG_FILE + " and set 'Institution.shortLabel' correctly" );
+        String institutionLabel = getInitParamValue(session, INSTITUTION_LABEL, null, "institution");
+
+        if (institutionLabel == null)
+        {
+            if (session.isWebapp())
+            {
+                throw new IntactException("A institution label is mandatory. " +
+                        "Provide it by setting the init parameter "+INSTITUTION_LABEL+" " +
+                        "in the web.xml file");
             }
-
-            // search for it (force it for LC as short labels must be in LC).
-            shortlabel = shortlabel.trim();
-            institution = daoFactory.getInstitutionDao().getByShortLabel( shortlabel );
-
-            if ( institution == null ) {
-                // doesn't exist, create it
-                institution = new Institution( shortlabel );
-
-                String fullname = props.getProperty( "Institution.fullName" );
-                if ( fullname != null ) {
-                    fullname = fullname.trim();
-                    if ( !fullname.equals( "" ) ) {
-                        institution.setFullName( fullname );
-                    }
-                }
-
-
-                String lineBreak = System.getProperty( "line.separator" );
-                StringBuffer address = new StringBuffer( 128 );
-                appendLineFromProperty( address, props, "Institution.postalAddress.line1" );
-                appendLineFromProperty( address, props, "Institution.postalAddress.line2" );
-                appendLineFromProperty( address, props, "Institution.postalAddress.line3" );
-                appendLineFromProperty( address, props, "Institution.postalAddress.line4" );
-                appendLineFromProperty( address, props, "Institution.postalAddress.line5" );
-
-                if ( address.length() > 0 ) {
-                    address.deleteCharAt( address.length() - 1 ); // delete the last line break;
-                    institution.setPostalAddress( address.toString() );
-                }
-
-                String url = props.getProperty( "Institution.url" );
-                if ( url != null ) {
-                    url = url.trim();
-                    if ( !url.equals( "" ) ) {
-                        institution.setUrl( url );
-                    }
-                }
-
-                daoFactory.getInstitutionDao().persist( institution );
-
+            else
+            {
+                throw new IntactException("A institution label is mandatory. " +
+                        "Provide it by setting the environment variable 'institution'" +
+                        " when executing the java command. (e.g. java ... -Dinstitution=yourInstitution)." +
+                        " You can also pass the init parameter "+INSTITUTION_LABEL+" to the IntactSession Object " +
+                        "when calling the IntactContext.getCurrentInstance(IntactSession)");
             }
+        }
 
-        } else {
-            throw new IntactException( "Unable to read the properties from " + INSTITUTION_CONFIG_FILE );
+        Institution institution = daoFactory.getInstitutionDao().getByShortLabel( institutionLabel );
+
+        if ( institution == null ) {
+            // doesn't exist, create it
+            institution = new Institution( institutionLabel );
+
+            String fullName = getInitParamValue(session, INSTITUTION_FULL_NAME, DEFAULT_INSTITUTION_FULL_NAME);
+            String postalAddress = getInitParamValue(session, INSTITUTION_POSTAL_ADDRESS, DEFAULT_INSTITUTION_POSTAL_ADDRESS);
+            String url = getInitParamValue(session, INSTITUTION_URL, DEFAULT_INSTITUTION_POSTAL_ADDRESS);
+
+            institution.setFullName(fullName);
+            institution.setPostalAddress(postalAddress);
+            institution.setUrl(url);
+
+            log.info("Inserting institution information in the database");
+            daoFactory.getInstitutionDao().persist( institution );
+
         }
 
         return institution;
     }
-
-    private static void appendLineFromProperty(StringBuffer sb, Properties props, String propertyName)
-    {
-        String lineBreak = System.getProperty("line.separator");
-
-        String line = props.getProperty(propertyName);
-        if (line != null)
-        {
-            line = line.trim();
-        }
-        if (!line.equals(""))
-        {
-            sb.append(line).append(lineBreak);
-        }
-    }
-
 
 }
