@@ -90,6 +90,8 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo
 
             items.clear();
             items = null;
+
+            IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
         }
 
         try
