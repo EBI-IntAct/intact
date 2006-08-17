@@ -105,7 +105,7 @@ public final class CvContext implements Serializable
 
     public CvObject getByMiRef(String miRef)
     {
-        return getByMiRef(miRef);
+        return getByMiRef(miRef, false);
     }
 
     public CvObject getByMiRef(String miRef, boolean forceReload)
@@ -161,37 +161,37 @@ public final class CvContext implements Serializable
 
     public CvComponentRole getBait() throws IntactException
     {
-        return (CvComponentRole) getByLabel( CvComponentRole.BAIT_PSI_REF );
+        return (CvComponentRole) getByMiRef( CvComponentRole.BAIT_PSI_REF );
     }
 
     public CvComponentRole getPrey() throws IntactException {
 
-        return (CvComponentRole) getByLabel( CvComponentRole.PREY_PSI_REF );
+        return (CvComponentRole) getByMiRef( CvComponentRole.PREY_PSI_REF );
     }
 
     public CvComponentRole getNeutral() throws IntactException {
 
-        return (CvComponentRole) getByLabel( CvComponentRole.NEUTRAL_PSI_REF );
+        return (CvComponentRole) getByMiRef( CvComponentRole.NEUTRAL_PSI_REF );
     }
 
     public CvComponentRole getSelf() throws IntactException {
 
-        return (CvComponentRole) getByLabel( CvComponentRole.SELF_PSI_REF );
+        return (CvComponentRole) getByMiRef( CvComponentRole.SELF_PSI_REF );
     }
 
     public CvComponentRole getEnzyme() throws IntactException {
 
-        return (CvComponentRole) getByLabel( CvComponentRole.ENZYME_PSI_REF );
+        return (CvComponentRole) getByMiRef( CvComponentRole.ENZYME_PSI_REF );
     }
 
     public CvComponentRole getEnzymeTarget() throws IntactException {
 
-        return (CvComponentRole) getByLabel( CvComponentRole.ENZYME_TARGET_PSI_REF );
+        return (CvComponentRole) getByMiRef( CvComponentRole.ENZYME_TARGET_PSI_REF );
     }
 
     public CvComponentRole getUnspecified() throws IntactException {
 
-        return (CvComponentRole) getByLabel( CvComponentRole.UNSPECIFIED_PSI_REF );
+        return (CvComponentRole) getByMiRef( CvComponentRole.UNSPECIFIED_PSI_REF );
     }
 
     private void putCv(CvObject cv)
