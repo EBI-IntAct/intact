@@ -11,12 +11,10 @@ import uk.ac.ebi.intact.application.graph2MIF.conversion.FusionableGraph;
 import uk.ac.ebi.intact.application.graph2MIF.exception.NoGraphRetrievedException;
 import uk.ac.ebi.intact.application.graph2MIF.exception.NoInteractorFoundException;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactGraphHelper;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Constants;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.simpleGraph.Graph;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -65,7 +63,8 @@ public class GraphFactory {
             logger.info( "Retrieve Interactor from queryString("+ queryString +")" );
             for ( Iterator iterator = queries.iterator (); iterator.hasNext (); ) {
                 String query = (String) iterator.next ();
-                interactors.add( DaoFactory.getInteractorDao().getByAc(query) );
+                interactors.add( IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
+                    .getInteractorDao().getByAc(query) );
             }
         } catch (IntactException e) {
             logger.error( "Could not search for Interactor AC: " + queryString, e );
