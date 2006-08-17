@@ -11,6 +11,8 @@ import uk.ac.ebi.intact.business.IntactHelper;
 
 import static uk.ac.ebi.intact.core.CvContext.CvName;
 import uk.ac.ebi.intact.core.CvContext;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -166,7 +168,8 @@ public class CvContextFactory
                     shortlabel) throws IntactException, UpdateException
     {
 
-        CvObject cv = (CvObject) helper.getObjectByLabel(clazz, shortlabel);
+        CvObjectDao<CvObject> cvObjectDao = DaoFactory.getCvObjectDao();
+        CvObject cv =  cvObjectDao.getByShortLabel(shortlabel);
         if (cv == null)
         {
             StringBuffer sb = new StringBuffer(128);
@@ -201,8 +204,8 @@ public class CvContextFactory
                     miRef) throws IntactException,
                                   UpdateException
     {
-
-        CvObject cv = (CvObject) helper.getObjectByXref(clazz, miRef);
+        CvObjectDao<CvObject> cvObjectDao = DaoFactory.getCvObjectDao();
+        CvObject cv = cvObjectDao.getByXref(miRef);
 
         if (cv == null)
         {
