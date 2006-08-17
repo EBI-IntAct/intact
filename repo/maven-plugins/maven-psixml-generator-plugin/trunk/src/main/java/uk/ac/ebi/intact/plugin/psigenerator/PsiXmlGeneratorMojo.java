@@ -54,11 +54,25 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo
 
         getLog().debug("Reverse mapping file: "+getReverseMapping());
 
-        //getLog().info("Classifying and writing classification by species");
-        writeClassificationBySpeciesToFile();
+        if (!getSpeciesFile().exists())
+        {
+            getLog().info("Classifying and writing classification by species");
+            writeClassificationBySpeciesToFile();
+        }
+        else
+        {
+            getLog().info("Using existing classification by species: "+getSpeciesFile());
+        }
 
-        //getLog().info("Writing classifications by publications");
-        writeClassificationByPublicationsToFile();
+        if (!getPublicationsFile().exists())
+        {
+            getLog().info("Writing classifications by publications");
+            writeClassificationByPublicationsToFile();
+        }
+        else
+        {
+             getLog().info("Using existing classification by publications: "+getPublicationsFile());
+        }
 
         CvMapping mapping = new CvMapping();
         mapping.loadFile(getReverseMapping());

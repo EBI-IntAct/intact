@@ -156,7 +156,7 @@ public abstract class PsiXmlGeneratorAbstractMojo extends AbstractMojo
         }
 
         // configure the context
-        CustomCoreDataConfig testConfig = new CustomCoreDataConfig("PsiXmlGeneratorTest", hibernateConfig);
+        CustomCoreDataConfig testConfig = new CustomCoreDataConfig("PsiXmlGeneratorMojoTest", hibernateConfig);
         testConfig.initialize();
         IntactContext.initStandaloneContext(testConfig);
 
@@ -235,7 +235,7 @@ public abstract class PsiXmlGeneratorAbstractMojo extends AbstractMojo
 
         for (ExperimentListItem item : items)
         {
-            writer.write(item.getFilename() + " " + item.getPattern() + NEW_LINE);
+            writer.write(item.toString() + NEW_LINE);
         }
 
         writer.close();
