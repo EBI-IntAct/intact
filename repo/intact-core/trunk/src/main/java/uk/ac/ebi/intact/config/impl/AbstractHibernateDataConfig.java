@@ -19,6 +19,8 @@ import uk.ac.ebi.intact.config.DataConfig;
 import uk.ac.ebi.intact.persistence.util.ImportFromClasspathEntityResolver;
 import uk.ac.ebi.intact.persistence.util.IntactAnnotator;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.io.File;
 import java.util.List;
 
@@ -41,8 +43,6 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
 
     private SessionFactory sessionFactory;
 
-    private boolean initialized;
-
     private List<String> packagesWithEntities;
 
     public AbstractHibernateDataConfig()
@@ -50,15 +50,8 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
         this.packagesWithEntities = getPackagesWithEntities();
     }
 
-    public SessionFactory initialize()
+    public void initialize()
     {
-        if (initialized)
-        {
-            return sessionFactory;
-        }
-
-        initialized = true;
-
         File cfgFile = getConfigFile();
 
         // Create the initial SessionFactory from the default configuration files
@@ -113,37 +106,6 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
                 sessionFactory = configuration.buildSessionFactory();
             }
 
-            /*
-            try
-            {
-                InitialContext initialContext = new InitialContext();
-
-                if (initialContext.lookup(SESSION_FACTORY_NAME) != null)
-                {
-                    log.debug("Using session factory from JNDI");
-                    return (SessionFactory) initialContext.lookup(SESSION_FACTORY_NAME);
-                }
-            }
-            catch (NamingException e)
-            {
-                log.warn("SessionFactory does not exist in context. Will create a new one.");
-            }
-
-            // or use static variable handling
-            sessionFactory = configuration.buildSessionFactory();
-
-            try
-            {
-                InitialContext initialContext = new InitialContext();
-
-                log.debug("Binding session factory to JNDI");
-                initialContext.bind(SESSION_FACTORY_NAME, sessionFactory);
-            }
-            catch (NamingException e)
-            {
-                e.printStackTrace();
-            } */
-
         }
         catch (HibernateException ex)
         {
@@ -151,24 +113,38 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
             throw new ExceptionInInitializerError(ex);
         }
 
+        setInitialized(true);
+    }
+
+    public SessionFactory getSessionFactory()
+    {
+        checkInitialization();
+
+        if (sessionFactory != null)
+        {
+            return sessionFactory;
+        }
+
+        try
+        {
+            sessionFactory = (SessionFactory) new InitialContext().lookup(configuration.getProperty(Environment.SESSION_FACTORY_NAME));
+        }
+        catch (NamingException e)
+        {
+            throw new IntactException("SessionFactory could not be retrieved from JNDI: "+Environment.SESSION_FACTORY_NAME);
+        }
+
         return sessionFactory;
     }
 
     public Configuration getConfiguration()
     {
-        checkInitialization();
-
         return configuration;
-    }
-
-    public boolean isInitialized()
-    {
-        return initialized;
     }
 
     public void addPackageWithEntities(String packageName)
     {
-        if (initialized)
+        if (isInitialized())
         {
             throw new IntactException("Cannot add package after the sessionFactory has been initialized");
         }
@@ -199,15 +175,6 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
             configuration.setInterceptor(interceptor);
         } else {
             configuration.setInterceptor(EmptyInterceptor.INSTANCE);
-        }
-    }
-
-    private void checkInitialization()
-    {
-        if (!isInitialized())
-        {
-            initialize();
-            this.initialized = true;
         }
     }
 }

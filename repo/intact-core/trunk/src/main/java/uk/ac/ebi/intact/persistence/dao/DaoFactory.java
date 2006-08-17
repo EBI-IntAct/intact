@@ -209,7 +209,7 @@ public class DaoFactory implements Serializable
     {
         //checkStatus();
 
-        return dataConfig.initialize().getCurrentSession();
+        return dataConfig.getSessionFactory().getCurrentSession();
     }
 
     public boolean isTransactionActive()

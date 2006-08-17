@@ -17,11 +17,32 @@ public abstract class DataConfig<T,C>
 
     public abstract String getName();
 
-    public abstract T initialize();
+    public abstract void initialize();
+
+    public abstract T getSessionFactory();
 
     public abstract C getConfiguration();
 
-    public abstract boolean isInitialized();
+    private boolean initialized;
+
+    protected void checkInitialization()
+    {
+        if (!isInitialized())
+        {
+            initialize();
+            this.initialized = true;
+        }
+    }
+
+    public boolean isInitialized()
+    {
+        return initialized;
+    }
+
+    public void setInitialized(boolean initialized)
+    {
+        this.initialized = initialized;
+    }
 
     @Override
     public String toString()

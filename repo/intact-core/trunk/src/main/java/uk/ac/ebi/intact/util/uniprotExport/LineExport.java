@@ -63,7 +63,7 @@ public class LineExport {
         public static final int LARGE_SCALE = 3;
 
         private int status;
-        private Collection keywords;
+        private Collection<String> keywords;
 
         public ExperimentStatus( int status ) {
             this.status = status;
@@ -73,7 +73,7 @@ public class LineExport {
             this.status = status;
         }
 
-        public Collection getKeywords() {
+        public Collection<String> getKeywords() {
             return keywords;
         }
 
@@ -93,7 +93,7 @@ public class LineExport {
             return status == LARGE_SCALE;
         }
 
-        public void addKeywords( Collection keywords ) {
+        public void addKeywords( Collection<String> keywords ) {
             if ( keywords == null ) {
                 throw new IllegalArgumentException( "Keywords must not be null" );
             }
@@ -106,9 +106,9 @@ public class LineExport {
 
             sb.append( "ExperimentStatus{ keywords= " );
             if ( keywords != null ) {
-                for ( Iterator iterator = keywords.iterator(); iterator.hasNext(); ) {
-                    String kw = (String) iterator.next();
-                    sb.append( kw ).append( ' ' );
+                for (String kw : keywords)
+                {
+                    sb.append(kw).append(' ');
                 }
             }
 
@@ -219,12 +219,10 @@ public class LineExport {
      */
     protected static class CloseFileOnShutdownHook extends Thread {
 
-        private BufferedWriter outputBufferedWriter;
         private FileWriter outputFileWriter;
 
         public CloseFileOnShutdownHook( BufferedWriter outputBufferedWriter, FileWriter outputFileWriter ) {
             super();
-            this.outputBufferedWriter = outputBufferedWriter;
             this.outputFileWriter = outputFileWriter;
 
             log.info( "Output File close on Shutdown Hook installed." );
@@ -278,12 +276,12 @@ public class LineExport {
     /**
      * Cache the CvInteraction property for the export. CvInteraction.ac -> Boolean.TRUE or Boolean.FALSE
      */
-    protected HashMap cvInteractionExportStatusCache = new HashMap();
+    protected HashMap<String, CvInteractionStatus> cvInteractionExportStatusCache = new HashMap<String, CvInteractionStatus>();
 
     /**
      * Cache the Experiment property for the export. Experiment.ac -> Integer (EXPORT, DO_NOT_EXPORT, NOT_SPECIFIED)
      */
-    protected HashMap experimentExportStatusCache = new HashMap();
+    protected HashMap<String, ExperimentStatus> experimentExportStatusCache = new HashMap<String, ExperimentStatus>();
 
     protected boolean debugEnabled = false; // protected to allow the testcase to modify it.
 
@@ -344,7 +342,7 @@ public class LineExport {
      * @throws IntactException          if the search failed
      * @throws DatabaseContentException if the object is not found.
      */
-    private CvObject getCvObject( Class clazz, String shortlabel )
+    private CvObject getCvObject( Class<CvTopic> clazz, String shortlabel )
             throws IntactException,
                    DatabaseContentException {
 
@@ -471,10 +469,10 @@ public class LineExport {
 
         String ac = null;
 
-        Collection xrefs = protein.getXrefs();
+        Collection<InteractorXref> xrefs = protein.getXrefs();
         boolean found = false;
-        for ( Iterator iterator = xrefs.iterator(); iterator.hasNext() && !found; ) {
-            Xref xref = (Xref) iterator.next();
+        for ( Iterator<InteractorXref> iterator = xrefs.iterator(); iterator.hasNext() && !found; ) {
+            Xref xref = iterator.next();
 
             if ( intactDatabase.equals( xref.getCvDatabase() ) &&
                  isoformParentQualifier.equals( xref.getCvXrefQualifier() ) ) {
@@ -502,7 +500,7 @@ public class LineExport {
 
         if ( ac != null ) {
             // search for that Protein
-            Collection proteins = null;
+            Collection<ProteinImpl> proteins = null;
             try {
                 proteins = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByAcLike(ac);
             } catch ( IntactException e ) {
@@ -511,7 +509,7 @@ public class LineExport {
 
             if ( proteins != null ) {
                 if ( !proteins.isEmpty() ) {
-                    master = (Protein) proteins.iterator().next();
+                    master = proteins.iterator().next();
                 } else {
                     log.error( "Could not find the master protein (AC: " + ac +
                                         " ) of the splice variant AC: " + protein.getAc() );
@@ -637,7 +635,7 @@ public class LineExport {
         // cache the CvInteraction status
         if ( null != cvInteraction ) {
 
-            CvInteractionStatus cache = (CvInteractionStatus) cvInteractionExportStatusCache.get( cvInteraction.getAc() );
+            CvInteractionStatus cache = cvInteractionExportStatusCache.get( cvInteraction.getAc() );
             if ( null != cache ) {
 
 //                log.debug( logPrefix + "\t\t\t\t CvInteraction: Status already processed, retreived from cache." );
@@ -707,7 +705,7 @@ public class LineExport {
                             // it must be an integer value, let's check it.
                             try {
                                 Integer value = new Integer( text );
-                                int i = value.intValue();
+                                int i = value;
 
                                 if ( i >= 2 ) {
 
@@ -782,41 +780,49 @@ public class LineExport {
         ExperimentStatus status = null;
 
         // cache the cvInteraction
-        ExperimentStatus cache = (ExperimentStatus) experimentExportStatusCache.get( experiment.getAc() );
+        ExperimentStatus cache = experimentExportStatusCache.get( experiment.getAc() );
         if ( null != cache ) {
 
             status = cache;
             return status;
 
         } else {
-            Collection annotations = experiment.getAnnotations();
+            Collection<Annotation> annotations = experiment.getAnnotations();
             boolean yesFound = false;
             boolean noFound = false;
 
 
-            for ( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
-                Annotation _annotation = (Annotation) iterator.next();
-                if ( uniprotCC_Export.equals( _annotation.getCvTopic() ) ) {
+            for (Annotation _annotation : annotations)
+            {
+                if (uniprotCC_Export.equals(_annotation.getCvTopic()))
+                {
 
-                    log.debug( logPrefix + _annotation );
+                    log.debug(logPrefix + _annotation);
 
                     String text = _annotation.getAnnotationText();
-                    if ( text != null ) {
+                    if (text != null)
+                    {
                         text = text.trim().toLowerCase();
                     }
 
-                    if ( EXPERIMENT_EXPORT_KEYWORK_EXPORT.equals( text ) ) {
+                    if (EXPERIMENT_EXPORT_KEYWORK_EXPORT.equals(text))
+                    {
                         yesFound = true;
-                        log.debug( logPrefix + "\t\t\t\t '" + EXPERIMENT_EXPORT_KEYWORK_EXPORT + "' found" );
+                        log.debug(logPrefix + "\t\t\t\t '" + EXPERIMENT_EXPORT_KEYWORK_EXPORT + "' found");
 
-                    } else {
-                        if ( EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT.equals( text ) ) {
+                    }
+                    else
+                    {
+                        if (EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT.equals(text))
+                        {
                             noFound = true;
-                            log.debug( logPrefix + "\t\t\t\t '" + EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT + "' found" );
+                            log.debug(logPrefix + "\t\t\t\t '" + EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT + "' found");
 
-                        } else {
+                        }
+                        else
+                        {
 
-                            log.debug( logPrefix + "\t\t\t\t '" + text + "' found, that keyword wasn't recognised." );
+                            log.debug(logPrefix + "\t\t\t\t '" + text + "' found, that keyword wasn't recognised.");
                         }
                     }
                 }
@@ -862,7 +868,7 @@ public class LineExport {
         ExperimentStatus status = null;
 
         // cache the cvInteraction
-        ExperimentStatus cache = (ExperimentStatus) experimentExportStatusCache.get( experiment.getAc() );
+        ExperimentStatus cache = experimentExportStatusCache.get( experiment.getAc() );
         if ( null != cache ) {
 
             status = cache;
@@ -874,39 +880,48 @@ public class LineExport {
             boolean keywordFound = false;
 
             // most experiment won't need that, so we jsut allocate the collection when needed
-            Collection keywords = null;
+            Collection<String> keywords = null;
 
-            Collection annotations = experiment.getAnnotations();
+            Collection<Annotation> annotations = experiment.getAnnotations();
             log.debug( logPrefix + annotations.size() + " annotation(s) found" );
 
-            for ( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
-                Annotation _annotation = (Annotation) iterator.next();
-                if ( uniprotDR_Export.equals( _annotation.getCvTopic() ) ) {
+            for (Annotation annotation : annotations)
+            {
+                if (uniprotDR_Export.equals(annotation.getCvTopic()))
+                {
 
-                    log.debug( logPrefix + _annotation );
+                    log.debug(logPrefix + annotation);
 
-                    String text = _annotation.getAnnotationText();
-                    if ( text != null ) {
+                    String text = annotation.getAnnotationText();
+                    if (text != null)
+                    {
                         text = text.trim().toLowerCase();
                     }
 
-                    if ( EXPERIMENT_EXPORT_KEYWORK_EXPORT.equals( text ) ) {
+                    if (EXPERIMENT_EXPORT_KEYWORK_EXPORT.equals(text))
+                    {
                         yesFound = true;
-                        log.debug( logPrefix + "'" + EXPERIMENT_EXPORT_KEYWORK_EXPORT + "' found" );
+                        log.debug(logPrefix + "'" + EXPERIMENT_EXPORT_KEYWORK_EXPORT + "' found");
 
-                    } else {
-                        if ( EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT.equals( text ) ) {
+                    }
+                    else
+                    {
+                        if (EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT.equals(text))
+                        {
                             noFound = true;
-                            log.debug( logPrefix + "'" + EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT + "' found" );
+                            log.debug(logPrefix + "'" + EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT + "' found");
 
-                        } else {
-                            if ( keywords == null ) {
-                                keywords = new ArrayList( 2 );
+                        }
+                        else
+                        {
+                            if (keywords == null)
+                            {
+                                keywords = new ArrayList<String>(2);
                             }
                             keywordFound = true;
 
-                            log.debug( logPrefix + "'" + text + "' keyword found" );
-                            keywords.add( text );
+                            log.debug(logPrefix + "'" + text + "' keyword found");
+                            keywords.add(text);
                         }
                     }
                 }
@@ -943,9 +958,9 @@ public class LineExport {
 
         boolean isNegative = false;
 
-        Collection annotations = annotatedObject.getAnnotations();
-        for ( Iterator iterator = annotations.iterator(); iterator.hasNext() && false == isNegative; ) {
-            Annotation annotation = (Annotation) iterator.next();
+        Collection<Annotation> annotations = annotatedObject.getAnnotations();
+        for ( Iterator<Annotation> iterator = annotations.iterator(); iterator.hasNext() && false == isNegative; ) {
+            Annotation annotation = iterator.next();
 
             if ( negativeTopic.equals( annotation.getCvTopic() ) ) {
                 isNegative = true;
@@ -960,18 +975,19 @@ public class LineExport {
      *
      * @return
      */
-    protected Collection getCCnote( Interaction interaction ) {
-        Collection notes = null;
+    protected Collection<String> getCCnote( Interaction interaction ) {
+        Collection<String> notes = null;
 
-        for ( Iterator iterator = interaction.getAnnotations().iterator(); iterator.hasNext(); ) {
-            Annotation annotation = (Annotation) iterator.next();
-
-            if ( ccNoteTopic.equals( annotation.getCvTopic() ) ) {
-                if ( notes == null ) {
-                    notes = new ArrayList( 2 ); // should rarely have more than 2
+        for (Annotation annotation : interaction.getAnnotations())
+        {
+            if (ccNoteTopic.equals(annotation.getCvTopic()))
+            {
+                if (notes == null)
+                {
+                    notes = new ArrayList<String>(2); // should rarely have more than 2
                 }
 
-                notes.add( annotation.getAnnotationText() );
+                notes.add(annotation.getAnnotationText());
             }
         }
 
@@ -1032,7 +1048,7 @@ public class LineExport {
         }
 
         // look first for gene-name
-        List geneNames = selectAliasByCvTopic( queryProtein.getAliases(), geneNameAliasType );
+        List<Alias> geneNames = selectAliasByCvTopic( queryProtein.getAliases(), geneNameAliasType );
 
         if ( geneNames.isEmpty() ) {
 
@@ -1049,15 +1065,15 @@ public class LineExport {
                     // no gene-name, locus or orf for that protein, will display a dash ( '-' ) instead.
 
                 } else {
-                    geneName = ( (Alias) geneNames.get( 0 ) ).getName();
+                    geneName = ( geneNames.get( 0 ) ).getName();
                 }
 
             } else {
-                geneName = ( (Alias) geneNames.get( 0 ) ).getName();
+                geneName = ( geneNames.get( 0 ) ).getName();
             }
 
         } else {
-            geneName = ( (Alias) geneNames.get( 0 ) ).getName();
+            geneName = ( geneNames.get( 0 ) ).getName();
         }
 
 //        // search for a gene name in the aliases of that protein - stop when we find one.
@@ -1072,20 +1088,21 @@ public class LineExport {
         return geneName;
     }
 
-    public List selectAliasByCvTopic( Collection aliases, CvAliasType aliasType ) {
+    public List<Alias> selectAliasByCvTopic( Collection<Alias> aliases, CvAliasType aliasType ) {
 
-        List result = null;
+        List<Alias> result = null;
 
-        for ( Iterator iterator = aliases.iterator(); iterator.hasNext(); ) {
-            Alias alias = (Alias) iterator.next();
+        for (Alias alias : aliases)
+        {
+            if (aliasType.equals(alias.getCvAliasType()))
+            {
 
-            if ( aliasType.equals( alias.getCvAliasType() ) ) {
-
-                if ( result == null ) {
-                    result = new ArrayList( 4 );
+                if (result == null)
+                {
+                    result = new ArrayList<Alias>(4);
                 }
 
-                result.add( alias );
+                result.add(alias);
             }
         }
 
@@ -1095,13 +1112,9 @@ public class LineExport {
 
         } else {
 
-            Comparator c = new Comparator() {
-                public int compare( Object o1, Object o2 ) {
-
-                    Alias alias1 = (Alias) o1;
-                    Alias alias2 = (Alias) o2;
-
-                    return alias1.getName().compareTo( alias2.getName() );
+            Comparator<Alias> c = new Comparator<Alias>() {
+                public int compare( Alias alias1, Alias alias2 ) {
+                     return alias1.getName().compareTo( alias2.getName() );
                 }
             };
 
@@ -1131,8 +1144,8 @@ public class LineExport {
             return true;
         }
 
-        for ( Iterator iterator = protein.getAnnotations().iterator(); iterator.hasNext() && true == needsUpdate; ) {
-            Annotation annotation = (Annotation) iterator.next();
+        for ( Iterator<Annotation> iterator = protein.getAnnotations().iterator(); iterator.hasNext() && true == needsUpdate; ) {
+            Annotation annotation = iterator.next();
 
             if ( noUniprotUpdate.equals( annotation.getCvTopic() ) ) {
                 needsUpdate = false;

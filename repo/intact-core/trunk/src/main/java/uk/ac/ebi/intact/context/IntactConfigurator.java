@@ -96,12 +96,12 @@ public class IntactConfigurator
         log.info("Institution: "+institution.getFullName());
 
         // load the default prefix for generated ACs
-        String prefix = (String) getInitParamValue(session, AC_PREFIX_PARAM_NAME, DEFAULT_AC_PREFIX);
+        String prefix = getInitParamValue(session, AC_PREFIX_PARAM_NAME, DEFAULT_AC_PREFIX);
         config.setAcPrefix(prefix);
 
 
         // preload the most common CvObjects
-        boolean preloadCommonCvs = (Boolean) getInitParamValue(session, PRELOAD_COMMON_CVS_PARAM_NAME, Boolean.FALSE);
+        boolean preloadCommonCvs = Boolean.valueOf(getInitParamValue(session, PRELOAD_COMMON_CVS_PARAM_NAME, Boolean.FALSE));
         if (preloadCommonCvs)
         {
             log.info("Preloading common CvObjects");
@@ -109,13 +109,13 @@ public class IntactConfigurator
         }
     }
 
-    private static Object getInitParamValue(IntactSession session, String initParamName, Object defaultValue )
+    private static String getInitParamValue(IntactSession session, String initParamName, Object defaultValue )
     {
-        Object initParamValue;
+        String initParamValue;
 
-        if (session.containsInitParam(AC_PREFIX_PARAM_NAME))
+        if (session.containsInitParam(initParamName))
         {
-            initParamValue = session.getInitParam(AC_PREFIX_PARAM_NAME);
+            initParamValue = session.getInitParam(initParamName);
             log.debug(initParamName+": "+initParamValue);
         }
         else
@@ -125,7 +125,7 @@ public class IntactConfigurator
                 log.warn("Init-Param missing in web.xml: "+initParamName);
             }
             log.debug("Using default value for param "+initParamName+": "+defaultValue);
-            initParamValue = defaultValue;
+            initParamValue = defaultValue.toString();
         }
 
         return initParamValue;
