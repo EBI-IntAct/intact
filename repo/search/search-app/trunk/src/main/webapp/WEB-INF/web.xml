@@ -8,12 +8,22 @@
 
     <distributable/>
 
+    <!-- IntAct Init parameters -->
     <context-param>
         <param-name>uk.ac.ebi.intact.AC_PREFIX</param-name>
         <param-value>EBI</param-value>
         <description>
             The Accession Number Prefix for the objects created
             by the application and stored in the database.
+        </description>
+    </context-param>
+
+    <context-param>
+        <param-name>uk.ac.ebi.intact.PRELOAD_COMMON_CVOBJECTS</param-name>
+        <param-value>false</param-value>
+        <description>
+            Preload the most common CvObjects on application start, so it is
+            faster to retrieve them later
         </description>
     </context-param>
 

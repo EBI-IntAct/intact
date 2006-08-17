@@ -7,10 +7,8 @@ package uk.ac.ebi.intact.application.search3.servlet;
 
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.search3.business.Constants;
-import uk.ac.ebi.intact.business.IntactException;
-
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.util.SearchReplace;
-import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -135,6 +133,6 @@ public class ExternalServiceSearchServlet extends HttpServlet implements Externa
 
     private static Connection getConnection()
     {
-        return HibernateUtil.getSessionFactory().getCurrentSession().connection();
+        return IntactContext.getCurrentInstance().getDataContext().getDaoFactory().connection();
     }
 }
