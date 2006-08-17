@@ -7,6 +7,7 @@ package uk.ac.ebi.intact.context;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
@@ -156,6 +157,41 @@ public final class CvContext implements Serializable
         getByMiRef( CvAliasType.LOCUS_NAME_MI_REF);
         getByMiRef( CvAliasType.ORF_NAME_MI_REF);
         getByMiRef( CvInteractorType.getProteinMI());
+    }
+
+    public CvComponentRole getBait() throws IntactException
+    {
+        return (CvComponentRole) getByLabel( CvComponentRole.BAIT_PSI_REF );
+    }
+
+    public CvComponentRole getPrey() throws IntactException {
+
+        return (CvComponentRole) getByLabel( CvComponentRole.PREY_PSI_REF );
+    }
+
+    public CvComponentRole getNeutral() throws IntactException {
+
+        return (CvComponentRole) getByLabel( CvComponentRole.NEUTRAL_PSI_REF );
+    }
+
+    public CvComponentRole getSelf() throws IntactException {
+
+        return (CvComponentRole) getByLabel( CvComponentRole.SELF_PSI_REF );
+    }
+
+    public CvComponentRole getEnzyme() throws IntactException {
+
+        return (CvComponentRole) getByLabel( CvComponentRole.ENZYME_PSI_REF );
+    }
+
+    public CvComponentRole getEnzymeTarget() throws IntactException {
+
+        return (CvComponentRole) getByLabel( CvComponentRole.ENZYME_TARGET_PSI_REF );
+    }
+
+    public CvComponentRole getUnspecified() throws IntactException {
+
+        return (CvComponentRole) getByLabel( CvComponentRole.UNSPECIFIED_PSI_REF );
     }
 
     private void putCv(CvObject cv)

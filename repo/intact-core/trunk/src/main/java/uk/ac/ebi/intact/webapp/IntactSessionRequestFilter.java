@@ -7,17 +7,14 @@ package uk.ac.ebi.intact.webapp;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
-import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactConfigurator;
-import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.context.impl.WebappSession;
 
 import javax.servlet.*;
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
@@ -29,9 +26,9 @@ import java.io.IOException;
  * @version $Id$
  * @since <pre>24-Apr-2006</pre>
  */
-public class HibernateSessionRequestFilter implements Filter {
+public class IntactSessionRequestFilter implements Filter {
 
-    private static Log log = LogFactory.getLog(HibernateSessionRequestFilter.class);
+    private static Log log = LogFactory.getLog(IntactSessionRequestFilter.class);
 
     public void doFilter(ServletRequest request,
                          ServletResponse response,
@@ -44,21 +41,21 @@ public class HibernateSessionRequestFilter implements Filter {
         IntactSession intactSession = new WebappSession(session.getServletContext(), session, (HttpServletRequest) request);
         IntactContext context = IntactConfigurator.createIntactContext(intactSession);
 
-        try
-        {
+        //try
+        //{
             // Call the next filter (continue request processing)
             chain.doFilter(request, response);
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        catch (ServletException e)
-        {
-            e.printStackTrace();
-        }
-        finally
-        {
+        //}
+        //catch (IOException e)
+        //{
+         //   e.printStackTrace();
+        //}
+        //catch (ServletException e)
+        //{
+         //   e.printStackTrace();
+        //}
+        //finally
+        //{
             log.debug("Committing active transactions");
             try
             {
@@ -68,7 +65,7 @@ public class HibernateSessionRequestFilter implements Filter {
             {
                 e.printStackTrace();
             }
-        }
+        //}
 
     }
 
