@@ -47,10 +47,10 @@ public class IntactIdGenerator extends SequenceGenerator
         String defaultSeqValue = "hibernate_sequence";
         sequenceName = PropertiesHelper.getString(SEQUENCE, properties, defaultSeqValue);
 
-        // use "intact-sequence" only if the default sequence name is provided
+        // use "intact_ac" only if the default sequence name is provided
         if (sequenceName.equals(defaultSeqValue))
         {
-            sequenceName = "intact_sequence";
+            sequenceName = "intact_ac";
             properties.put(SEQUENCE, sequenceName);
         }
 
@@ -81,6 +81,6 @@ public class IntactIdGenerator extends SequenceGenerator
     @Override
     public String getSequenceName()
     {
-        return "intact_sequence";
+        return "intact_ac";
     }
 }
