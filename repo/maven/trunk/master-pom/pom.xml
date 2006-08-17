@@ -20,6 +20,19 @@
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/trunk/master-pom/</url>
     </scm>
 
+    <properties>
+        <institution.shortLabel>ebi</institution.shortLabel>
+        <institution.fullName>European Bioinformatics Institute</institution.fullName>
+        <institution.postalAddress>
+            European Bioinformatics Institute
+            Wellcome Trust Genome Campus
+            Hinxton, Cambridge
+            CB10 1SD
+            United Kingdom
+        </institution.postalAddress>
+        <institution.url>http://www.ebi.ac.uk</institution.url>
+    </properties>
+
     <ciManagement>
         <system>continuum</system>
         <url>http://faldor.ebi.ac.uk:8080/continuum</url>
