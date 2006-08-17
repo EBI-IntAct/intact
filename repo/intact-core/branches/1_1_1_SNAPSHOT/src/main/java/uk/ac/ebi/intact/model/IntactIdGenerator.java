@@ -48,7 +48,7 @@ public class IntactIdGenerator extends SequenceGenerator
         // use "intact-sequence" only if the default sequence name is provided
         if (sequenceName.equals(defaultSeqValue))
         {
-            sequenceName = "intact_sequence";
+            sequenceName = "intact_ac";
             properties.put(SEQUENCE, sequenceName);
         }
 
@@ -79,6 +79,7 @@ public class IntactIdGenerator extends SequenceGenerator
         String prefix = props.getProperty("ac.prefix");
 
         String id = prefix+"-"+super.generate(sessionImplementor, object);
+        
 
         log.trace("Assigning Id: "+id);
 
@@ -89,6 +90,6 @@ public class IntactIdGenerator extends SequenceGenerator
     @Override
     public String getSequenceName()
     {
-        return "intact_sequence";
+        return "intact_ac";
     }
 }
