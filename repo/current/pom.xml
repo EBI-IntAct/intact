@@ -56,6 +56,7 @@
                 <module>mine-app</module>
                 <module>predict-app</module>
                 <module>statistic-view</module>
+                <module>confidence-score</module>
             </modules>
         </profile>
     </profiles>
