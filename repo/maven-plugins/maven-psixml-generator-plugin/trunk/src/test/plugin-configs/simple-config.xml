@@ -14,6 +14,7 @@
                     <overwrite>true</overwrite>
                     <experimentErrorFile>target/psixml-test/experiment-error.log</experimentErrorFile>
                     <negativeExperimentsFile>target/psixml-test/negative-experiments.log</negativeExperimentsFile>
+                    <invalidFilePrefix>invalid-xmls</invalidFilePrefix>
                     <reverseMappingFile>reverseMapping.txt</reverseMappingFile>
                     <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
                     <zipXml>true</zipXml>
@@ -22,10 +23,12 @@
                         <version>
                             <number>1.0</number>
                             <folderName>psi1</folderName>
+                            <validate>true</validate>
                         </version>
                         <version>
                             <number>2.5</number>
                             <folderName>psi25</folderName>
+                            <validate>true</validate>
                         </version>
                     </psiVersions>
 
