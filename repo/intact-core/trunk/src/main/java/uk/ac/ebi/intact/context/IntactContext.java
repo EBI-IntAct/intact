@@ -40,20 +40,28 @@ public class IntactContext implements Serializable
         {
             log.warn("Current instance of IntactContext is null. Initializing with StandaloneSession," +
                     "because probably this application is not a web application");
-            initStandaloneContext(null);
+            initStandaloneContext();
         }
 
        return currentInstance.get();
     }
 
-    public static void initStandaloneContext(DataConfig standardDataConfig)
+    public static void initStandaloneContext()
     {
-        if (standardDataConfig == null)
+        initContext(null,null);
+    }
+
+    public static void initContext(DataConfig standardDataConfig, IntactSession session)
+    {
+        if (session == null)
         {
-            standardDataConfig = new StandardCoreDataConfig();
+            session = new StandaloneSession();
         }
 
-       IntactSession session = new StandaloneSession();
+        if (standardDataConfig == null)
+        {
+            standardDataConfig = new StandardCoreDataConfig(session);
+        }
 
        if (standardDataConfig.isInitialized())
        {

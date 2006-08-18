@@ -66,7 +66,7 @@ public class IntactConfigurator
         {
             // add the core model data config
             log.info("Registering standard data-config");
-            StandardCoreDataConfig stdDataConfig = new StandardCoreDataConfig();
+            StandardCoreDataConfig stdDataConfig = new StandardCoreDataConfig(session);
             stdDataConfig.initialize();
             config.addDataConfig(stdDataConfig, true);
         }
@@ -222,8 +222,7 @@ public class IntactConfigurator
                 throw new IntactException("A institution label is mandatory. " +
                         "Provide it by setting the environment variable 'institution'" +
                         " when executing the java command. (e.g. java ... -Dinstitution=yourInstitution)." +
-                        " You can also pass the init parameter "+INSTITUTION_LABEL+" to the IntactSession Object " +
-                        "when calling the IntactContext.getCurrentInstance(IntactSession)");
+                        " You can also set the init parameter "+INSTITUTION_LABEL+" in the IntactSession Object. ");
             }
         }
 

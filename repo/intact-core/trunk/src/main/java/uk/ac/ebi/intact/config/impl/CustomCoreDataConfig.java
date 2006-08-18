@@ -10,6 +10,8 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
 
+import uk.ac.ebi.intact.context.IntactSession;
+
 /**
  * TODO comment this!
  *
@@ -25,8 +27,9 @@ public class CustomCoreDataConfig extends StandardCoreDataConfig
     private String name;
     private File configFile;
 
-    public CustomCoreDataConfig(String name, File configFile)
+    public CustomCoreDataConfig(String name, File configFile, IntactSession session)
     {
+        super(session);
         this.name = name;
         this.configFile = configFile;
     }
