@@ -15,16 +15,18 @@ import uk.ac.ebi.intact.confidence.attribute.Attribute;
  * @version $Id$
  * @since 14-Jul-2006
  */
-public class NullAttribute extends Attribute {
+public class NullAttribute extends Attribute
+{
     // 'null' attribute present in all binary interactions
     // needed as a placeholder for the maxent classifier
 
 
-       public NullAttribute() {
-           type = NULL_TYPE;
-           typename = NULL_TYPENAME;
-           this.name = NULL_TYPENAME;
-       }
+    public NullAttribute()
+    {
+        type = NULL_TYPE;
+        typename = NULL_TYPENAME;
+        this.name = NULL_TYPENAME;
+    }
 
 
 }

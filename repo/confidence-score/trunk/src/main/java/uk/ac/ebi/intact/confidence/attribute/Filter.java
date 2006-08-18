@@ -24,19 +24,22 @@ import java.util.HashSet;
  *        <p/>
  *        write interactions with filtered attributes to new file
  */
-public class Filter implements AnnotationConstants {
+public class Filter implements AnnotationConstants
+{
 
     private String inPath;
     private String outPath;
 
     private boolean verbose = true;
 
-    public Filter(String inPath, String outPath)  {
+    public Filter(String inPath, String outPath)
+    {
         this.inPath = inPath;
         this.outPath = outPath;
     }
 
-    public void filterBySet(String filterSetPath) throws IOException {
+    public void filterBySet(String filterSetPath) throws IOException
+    {
 
         HashSet<Attribute> filterSet = FileMethods.getAttribSet(filterSetPath);
 
@@ -50,30 +53,41 @@ public class Filter implements AnnotationConstants {
         HashSet<Attribute> someAttribs;
         StringBuilder sb;
         int lineCount = 0;
-        while ((line = br.readLine()) != null) {
-            if (Pattern.matches(commentExpr, line)) continue; // skip comment lines
+        while ((line = br.readLine()) != null)
+        {
+            if (Pattern.matches(commentExpr, line))
+            {
+                continue; // skip comment lines
+            }
             prot = FileMethods.getFirstItem(line);
             someAttribs = FileMethods.parseAttributeLine(line);
             HashSet<Attribute> removal = new HashSet<Attribute>();
             // avoids ConcurrentModificationException
-            for (Attribute a : someAttribs) {
+            for (Attribute a : someAttribs)
+            {
                 // remove all attributes which do not occur in the filter set
-                if (!filterSet.contains(a)) removal.add(a);
+                if (!filterSet.contains(a))
+                {
+                    removal.add(a);
+                }
             }
-            for (Attribute a: removal) {
+            for (Attribute a : removal)
+            {
                 someAttribs.remove(a);
             }
 
             sb = new StringBuilder();
             sb.append(prot);
-            for (Attribute a : someAttribs) {
+            for (Attribute a : someAttribs)
+            {
                 sb.append(",");
                 sb.append(a.toString());
             }
             pw.println(sb.toString());
-            if (verbose) {
+            if (verbose)
+            {
                 lineCount++;
-                String comment = "Attributes filtered for interaction "+lineCount;
+                String comment = "Attributes filtered for interaction " + lineCount;
                 System.out.println(comment);
             }
         }
@@ -83,7 +97,7 @@ public class Filter implements AnnotationConstants {
 
 
     }
-   
+
 /*
 private HashMap<ProteinPair, HashSet<Attribute>> getAttribMap(String inPath)
         throws IOException {

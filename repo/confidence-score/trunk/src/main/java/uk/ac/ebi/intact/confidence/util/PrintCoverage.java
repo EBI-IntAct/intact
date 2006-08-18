@@ -16,24 +16,27 @@ import java.io.IOException;
  * @version $Id$
  * @since 16-Aug-2006
  */
-public class PrintCoverage implements UtilConstants {
+public class PrintCoverage implements UtilConstants
+{
 
-        public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException
+    {
 
         // test version -- comment this out for command-line utility
         //String path = dataDir + "lowconf_go_attribs.txt";
-         String path = dataDir + "lowconf_all_attribs.txt";
+        String path = dataDir + "lowconf_all_attribs.txt";
 
         // command-line utility version
         //String path = args[0];
 
-         PrintCoverage print = new PrintCoverage(path);
+        PrintCoverage print = new PrintCoverage(path);
     }
 
-    public PrintCoverage(String path) throws IOException {
+    public PrintCoverage(String path) throws IOException
+    {
 
         double cov = FileMethods.findCoverage(path);
-        String out = "Proportion of interactions without attributes = "+cov;
+        String out = "Proportion of interactions without attributes = " + cov;
         System.out.println(out);
     }
 

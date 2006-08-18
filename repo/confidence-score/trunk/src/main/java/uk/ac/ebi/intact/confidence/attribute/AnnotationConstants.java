@@ -13,7 +13,8 @@ import java.util.HashSet;
  *        Useful for finding attributes
  *        Eg. regular expressions to denote GO and InterPro terms
  */
-public interface AnnotationConstants {
+public interface AnnotationConstants
+{
 
     // identify protein accession number line in uniprot flatfile
     static String uniprotNameExpr = "^AC.*";
@@ -35,8 +36,8 @@ public interface AnnotationConstants {
     static String forbiddenGoTerm = "GO:0005515"; // GO term for protein binding
     static String[] forbiddenGoTerms = {
             forbiddenGoTerm, // GO term for protein binding
-             // the following are all children of "GO:0005515" as of 31/07/2006
-             // grandchildren etc. omitted for now -- can add these later
+            // the following are all children of "GO:0005515" as of 31/07/2006
+            // grandchildren etc. omitted for now -- can add these later
             "GO:0048185",
             "GO:0045294",
             "GO:0043532",

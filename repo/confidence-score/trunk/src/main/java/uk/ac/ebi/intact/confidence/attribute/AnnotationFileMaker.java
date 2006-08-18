@@ -24,13 +24,15 @@ import java.io.*;
  *        Read annotation from uniprot file
  *        Write protein annotation file(s)
  */
-public class AnnotationFileMaker implements AnnotationConstants {
+public class AnnotationFileMaker implements AnnotationConstants
+{
 
     File uniprotFile;
     HashSet<String> allProts;
     static boolean verbose = true; // debug switch
 
-    public AnnotationFileMaker(BinaryInteractionSet biSet, String uniprotPath) {
+    public AnnotationFileMaker(BinaryInteractionSet biSet, String uniprotPath)
+    {
 
         allProts = biSet.getAllProtNames(); // proteins to find annotation for
         uniprotFile = new File(uniprotPath); // path to uniprot flatfile
@@ -38,7 +40,8 @@ public class AnnotationFileMaker implements AnnotationConstants {
     }
 
 
-    public void writeInterproAnnotation(String outPath) throws IOException {
+    public void writeInterproAnnotation(String outPath) throws IOException
+    {
 
 
         HashSet<String> equivalentProts = new HashSet<String>();
@@ -58,29 +61,51 @@ public class AnnotationFileMaker implements AnnotationConstants {
 
         int protCount = 0; // if debugging -- keep track of number of proteins read
         int totalProts = allProts.size();
-        while ((line = br.readLine()) != null) {
+        while ((line = br.readLine()) != null)
+        {
 
-            if (Pattern.matches(uniprotNameExpr, line)) {
+            if (Pattern.matches(uniprotNameExpr, line))
+            {
                 items = line.split("\\W+"); // split by nonword characters
-                for (String name : items) if (allProts.contains(name)) equivalentProts.add(name);
-            } else if (equivalentProts.isEmpty()) {
+                for (String name : items)
+                {
+                    if (allProts.contains(name))
+                    {
+                        equivalentProts.add(name);
+                    }
+                }
+            }
+            else if (equivalentProts.isEmpty())
+            {
                 continue; // current protein is not found in allProts
-            } else if (Pattern.matches(ipLineExprUniProt, line)) {
+            }
+            else if (Pattern.matches(ipLineExprUniProt, line))
+            {
                 items = line.split(";*\\s+");
-                if (Pattern.matches(ipTermExpr, items[2])) termList.add(items[2]);
+                if (Pattern.matches(ipTermExpr, items[2]))
+                {
+                    termList.add(items[2]);
+                }
                 //if (verbose) System.out.println(line);
-            } else if (Pattern.matches(endExprUniProt, line)) {
+            }
+            else if (Pattern.matches(endExprUniProt, line))
+            {
                 // end of uniProt entry -- write output lines
                 // for each interaction, output a comma-separated list of attributes
 
                 StringBuffer outBuf;
 
-                for (String name : equivalentProts) {
+                for (String name : equivalentProts)
+                {
 
-                    if (termList.isEmpty()) noAnnotation.add(name);
+                    if (termList.isEmpty())
+                    {
+                        noAnnotation.add(name);
+                    }
                     outBuf = new StringBuffer(name);
                     outBuf.append(",");
-                    for (String term : termList) {
+                    for (String term : termList)
+                    {
                         term = term + ",";
                         outBuf.append(term);
                     }
@@ -89,7 +114,8 @@ public class AnnotationFileMaker implements AnnotationConstants {
                     //if (verbose) System.out.println(outLine);
                 }
 
-                if (verbose) {
+                if (verbose)
+                {
                     protCount++;
                     String comment = termList.size() + " annotation term(s) found for protein "
                             + protCount + " of " + totalProts + ".";
@@ -104,7 +130,8 @@ public class AnnotationFileMaker implements AnnotationConstants {
         }
 
         // finally, print number of proteins for which no annotation was found
-        if (verbose) {
+        if (verbose)
+        {
             String comment = "No annotation found for " + noAnnotation.size() +
                     " of " + totalProts + " proteins.";
             System.out.println(comment);
@@ -115,10 +142,12 @@ public class AnnotationFileMaker implements AnnotationConstants {
 
     }
 
-    public void writeGoAnnotation(String outPath) throws IOException {
+    public void writeGoAnnotation(String outPath) throws IOException
+    {
 
         HashSet<String> forbiddenGo = new HashSet<String>();
-        for (String goTerm : forbiddenGoTerms) {
+        for (String goTerm : forbiddenGoTerms)
+        {
             // use static array of forbidden GO terms, recorded in AnnotationConstants interface
             forbiddenGo.add(goTerm);
         }
@@ -142,31 +171,55 @@ public class AnnotationFileMaker implements AnnotationConstants {
         int forbidCount = 0; // also number of disallowed GO terms
         int totalProts = allProts.size();
 
-        while ((line = br.readLine()) != null) {
+        while ((line = br.readLine()) != null)
+        {
 
-            if (Pattern.matches(uniprotNameExpr, line)) {
+            if (Pattern.matches(uniprotNameExpr, line))
+            {
                 items = line.split("\\W+"); // split by nonword characters
-                for (String name : items) if (allProts.contains(name)) equivalentProts.add(name);
-            } else if (equivalentProts.isEmpty()) {
+                for (String name : items)
+                {
+                    if (allProts.contains(name))
+                    {
+                        equivalentProts.add(name);
+                    }
+                }
+            }
+            else if (equivalentProts.isEmpty())
+            {
                 continue; // current protein is not found in allProts
-            } else if (Pattern.matches(goLineExprUniProt, line)) {
+            }
+            else if (Pattern.matches(goLineExprUniProt, line))
+            {
                 items = line.split(";*\\s+");
                 if (Pattern.matches(goTermExpr, items[2]) &&
-                        !forbiddenGo.contains(items[2])) {
+                        !forbiddenGo.contains(items[2]))
+                {
                     termList.add(items[2]);
-                } else if (forbiddenGo.contains(items[2])) forbidCount++;
-            } else if (Pattern.matches(endExprUniProt, line)) {
+                }
+                else if (forbiddenGo.contains(items[2]))
+                {
+                    forbidCount++;
+                }
+            }
+            else if (Pattern.matches(endExprUniProt, line))
+            {
                 // end of uniProt entry -- write output lines
                 // for each protein, output a comma-separated list of annotation terms
 
                 StringBuffer outBuf;
-                for (String name : equivalentProts) {
+                for (String name : equivalentProts)
+                {
 
-                    if (termList.isEmpty()) noAnnotation.add(name);
+                    if (termList.isEmpty())
+                    {
+                        noAnnotation.add(name);
+                    }
 
                     outBuf = new StringBuffer(name);
                     outBuf.append(",");
-                    for (String term : termList) {
+                    for (String term : termList)
+                    {
                         term = term + ",";
                         outBuf.append(term);
                     }
@@ -174,7 +227,8 @@ public class AnnotationFileMaker implements AnnotationConstants {
                     pw.println(outLine);
                 }
 
-                if (verbose) {
+                if (verbose)
+                {
                     protCount++;
                     String comment = termList.size() + " annotation term(s) found for protein "
                             + protCount + " of " + totalProts + ".";
@@ -189,7 +243,8 @@ public class AnnotationFileMaker implements AnnotationConstants {
         }
 
         // finally, print proteins for which no annotation was found
-        if (verbose) {
+        if (verbose)
+        {
             String comment = "No annotation found for " + noAnnotation.size()
                     + " of " + totalProts + " proteins.";
             System.out.println(comment);

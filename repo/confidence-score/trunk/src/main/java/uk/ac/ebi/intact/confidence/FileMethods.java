@@ -36,43 +36,58 @@ import java.text.SimpleDateFormat;
  *        Lines are of the form:
  *        Proteinpair,attribute1,attribute2, ... , attributeN
  */
-public class FileMethods implements AnnotationConstants {
+public class FileMethods implements AnnotationConstants
+{
 
 
-    public static String getFirstItem(String line) {
+    public static String getFirstItem(String line)
+    {
         String[] items = line.split(",");
         return items[0];
     }
 
-    public static ProteinPair getProteinPair(String line) {
+    public static ProteinPair getProteinPair(String line)
+    {
         String pairString = getFirstItem(line);
         String[] prots = pairString.split(";");
         return new ProteinPair(prots[0], prots[1]);
     }
 
-    public static boolean correctUniprotFormats(ProteinPair pair) {
+    public static boolean correctUniprotFormats(ProteinPair pair)
+    {
         // checks if protein names in a ProteinPair are correctly formatted
 
         String[] protNames = pair.getNames();
         // String name = protNames[0] + ";" + protNames[1];
 
         if (!Pattern.matches(uniprotTermExpr, protNames[0]) ||
-                !Pattern.matches(uniprotTermExpr, protNames[1])) {
+                !Pattern.matches(uniprotTermExpr, protNames[1]))
+        {
             return false;
-        } else return true;
+        }
+        else
+        {
+            return true;
+        }
     }
 
-    public static boolean correctUniprotFormats(String[] names) {
+    public static boolean correctUniprotFormats(String[] names)
+    {
         // as above, but checks if all names in a list of strings are correctly formatted
 
-        for (String name : names) {
-            if (!Pattern.matches(uniprotTermExpr, name)) return false;
+        for (String name : names)
+        {
+            if (!Pattern.matches(uniprotTermExpr, name))
+            {
+                return false;
+            }
         }
         return true;
     }
 
 
-    public static HashMap<Attribute, Integer> attribFreqs(String inPath) throws IOException {
+    public static HashMap<Attribute, Integer> attribFreqs(String inPath) throws IOException
+    {
 
         FileReader fr = new FileReader(inPath);
         BufferedReader br = new BufferedReader(fr);
@@ -81,14 +96,22 @@ public class FileMethods implements AnnotationConstants {
         HashMap<Attribute, Integer> allCounts = new HashMap<Attribute, Integer>();
         Integer count;
         HashSet<Attribute> someAttribs;
-        while ((line = br.readLine()) != null) {
-            if (Pattern.matches(commentExpr, line)) continue; // skip comment lines
+        while ((line = br.readLine()) != null)
+        {
+            if (Pattern.matches(commentExpr, line))
+            {
+                continue; // skip comment lines
+            }
             someAttribs = parseAttributeLine(line);
-            for (Attribute a : someAttribs) {
-                if (allCounts.containsKey(a)) {
+            for (Attribute a : someAttribs)
+            {
+                if (allCounts.containsKey(a))
+                {
                     count = allCounts.get(a) + 1;
                     allCounts.put(a, count);
-                } else {  // first time attribute has been observed
+                }
+                else
+                {  // first time attribute has been observed
                     allCounts.put(a, 1);
                 }
             }
@@ -98,21 +121,27 @@ public class FileMethods implements AnnotationConstants {
 
     }
 
-    public static int[] findCountProfile(String inPath) throws IOException {
+    public static int[] findCountProfile(String inPath) throws IOException
+    {
         // print number of attributes with each frequency to standard output
 
         HashMap<Attribute, Integer> attribFreqs = attribFreqs(inPath);
         int freq, max = 0;
 
         // find greatest frequency
-        for (Attribute a : attribFreqs.keySet()) {
+        for (Attribute a : attribFreqs.keySet())
+        {
             freq = attribFreqs.get(a);
-            if (freq > max) max = freq;
+            if (freq > max)
+            {
+                max = freq;
+            }
         }
 
         // now populate array of frequency counts
         int[] profile = new int[max];
-        for (Attribute a : attribFreqs.keySet()) {
+        for (Attribute a : attribFreqs.keySet())
+        {
             freq = attribFreqs.get(a);
             profile[freq - 1]++;
         }
@@ -120,7 +149,8 @@ public class FileMethods implements AnnotationConstants {
         return profile;
     }
 
-    public static int findTotalInteractions(String inPath) throws IOException {
+    public static int findTotalInteractions(String inPath) throws IOException
+    {
         // count number of non-comment lines in an attribute file
 
         int i = 0;
@@ -129,9 +159,16 @@ public class FileMethods implements AnnotationConstants {
         BufferedReader br = new BufferedReader(fr);
         String line;
 
-        while ((line = br.readLine()) != null) {
-            if (Pattern.matches(commentExpr, line)) continue; // skip comment lines
-            else i++;
+        while ((line = br.readLine()) != null)
+        {
+            if (Pattern.matches(commentExpr, line))
+            {
+                continue; // skip comment lines
+            }
+            else
+            {
+                i++;
+            }
         }
         fr.close();
 
@@ -139,7 +176,8 @@ public class FileMethods implements AnnotationConstants {
     }
 
 
-    public static double findCoverage(String inPath) throws IOException {
+    public static double findCoverage(String inPath) throws IOException
+    {
         // count proportion of interactions without attributes in an attribute file
 
         double total = 0.0;
@@ -149,12 +187,20 @@ public class FileMethods implements AnnotationConstants {
         BufferedReader br = new BufferedReader(fr);
         String line;
 
-        while ((line = br.readLine()) != null) {
-            if (Pattern.matches(commentExpr, line)) continue; // skip comment lines
-            else {
+        while ((line = br.readLine()) != null)
+        {
+            if (Pattern.matches(commentExpr, line))
+            {
+                continue; // skip comment lines
+            }
+            else
+            {
                 total++;
                 HashSet<Attribute> attribs = parseAttributeLine(line);
-                if (attribs.isEmpty()) empty++;
+                if (attribs.isEmpty())
+                {
+                    empty++;
+                }
             }
         }
         fr.close();
@@ -162,16 +208,21 @@ public class FileMethods implements AnnotationConstants {
         return empty / total;
     }
 
-    public static int[] findCountProfile(String inPath, int threshold) throws IOException {
+    public static int[] findCountProfile(String inPath, int threshold) throws IOException
+    {
         // print number of attributes with each frequency to standard output
 
         HashMap<Attribute, Integer> attribFreqs = attribFreqs(inPath);
         int freq, max = 0;
 
         // find greatest frequency
-        for (Attribute a : attribFreqs.keySet()) {
+        for (Attribute a : attribFreqs.keySet())
+        {
             freq = attribFreqs.get(a);
-            if (freq > max) max = freq;
+            if (freq > max)
+            {
+                max = freq;
+            }
         }
 
         String comment = "Printing attributes with frequencies greater than " + threshold;
@@ -179,16 +230,21 @@ public class FileMethods implements AnnotationConstants {
 
         // now populate array of frequency counts
         int[] profile = new int[max];
-        for (Attribute a : attribFreqs.keySet()) {
+        for (Attribute a : attribFreqs.keySet())
+        {
             freq = attribFreqs.get(a);
             profile[freq - 1]++;
-            if (freq > threshold) System.out.println(a.toString());
+            if (freq > threshold)
+            {
+                System.out.println(a.toString());
+            }
         }
 
         return profile;
     }
 
-    public static void printCountProfile(String inPath) throws IOException {
+    public static void printCountProfile(String inPath) throws IOException
+    {
 
         int[] profile = findCountProfile(inPath);
 
@@ -198,7 +254,8 @@ public class FileMethods implements AnnotationConstants {
         System.out.println(getDateTime());
         out = "[Frequency] [Number of attributes]";
         System.out.println(out);
-        for (int i = 0; i < profile.length; i++) {
+        for (int i = 0; i < profile.length; i++)
+        {
             freq = i + 1;
             out = freq + "\t" + profile[i];
             System.out.println(out);
@@ -207,30 +264,40 @@ public class FileMethods implements AnnotationConstants {
 
     }
 
-    public static HashSet<Attribute> getAttribSet(String inPath) throws IOException {
+    public static HashSet<Attribute> getAttribSet(String inPath) throws IOException
+    {
 
         FileReader fr = new FileReader(inPath);
         BufferedReader br = new BufferedReader(fr);
         String line;
         HashSet<Attribute> allAttribSet = new HashSet<Attribute>();
         HashSet<Attribute> someAttribs;
-        while ((line = br.readLine()) != null) {
-            if (Pattern.matches(commentExpr, line)) continue; // skip comment lines
+        while ((line = br.readLine()) != null)
+        {
+            if (Pattern.matches(commentExpr, line))
+            {
+                continue; // skip comment lines
+            }
             someAttribs = parseAttributeLine(line);
-            for (Attribute a : someAttribs) allAttribSet.add(a);
+            for (Attribute a : someAttribs)
+            {
+                allAttribSet.add(a);
+            }
         }
         fr.close();
         return allAttribSet;
 
     }
 
-    public static String getAttribString(HashSet<Attribute> set) throws IOException {
+    public static String getAttribString(HashSet<Attribute> set) throws IOException
+    {
         // generate string of attributes to append to existing line
         // starts with a comma
         // attributes separated by commas
 
         StringBuilder sb = new StringBuilder();
-        for (Attribute a : set) {
+        for (Attribute a : set)
+        {
             sb.append(",");
             sb.append(a.toString());
         }
@@ -238,7 +305,8 @@ public class FileMethods implements AnnotationConstants {
 
     }
 
-    public static String getAttribString(String line) throws IOException {
+    public static String getAttribString(String line) throws IOException
+    {
 
         HashSet<Attribute> set = parseAttributeLine(line);
         return getAttribString(set);
@@ -246,12 +314,14 @@ public class FileMethods implements AnnotationConstants {
 
     }
 
-    public static TreeSet<Attribute> getSortedAttribSet(String inPath) throws IOException {
+    public static TreeSet<Attribute> getSortedAttribSet(String inPath) throws IOException
+    {
         HashSet<Attribute> unsorted = getAttribSet(inPath);
         return new TreeSet<Attribute>(unsorted);
     }
 
-    public static BinaryInteractionSet getInteractionSet(String inPath) throws IOException {
+    public static BinaryInteractionSet getInteractionSet(String inPath) throws IOException
+    {
         // get binary interactions from an interaction/attribute file in standard format
 
         FileReader fr = new FileReader(inPath);
@@ -259,8 +329,12 @@ public class FileMethods implements AnnotationConstants {
         String line, pair;
         String[] items, proteins;
         HashSet<ProteinPair> interactions = new HashSet<ProteinPair>();
-        while ((line = br.readLine()) != null) {
-            if (Pattern.matches(commentExpr, line)) continue; // skip comment lines
+        while ((line = br.readLine()) != null)
+        {
+            if (Pattern.matches(commentExpr, line))
+            {
+                continue; // skip comment lines
+            }
             items = line.split(",");
             pair = items[0];
             proteins = pair.split(";");
@@ -272,12 +346,14 @@ public class FileMethods implements AnnotationConstants {
     }
 
 
-    public static HashSet<Attribute> parseAttributeLine(String line) {
+    public static HashSet<Attribute> parseAttributeLine(String line)
+    {
 
         HashSet<Attribute> attribSet = new HashSet<Attribute>();
 
         String[] items = line.split(",");
-        for (int i = 1; i < items.length; i++) {
+        for (int i = 1; i < items.length; i++)
+        {
             // first item is protein pair -- ignore it and find attributes
             attribSet.add(parseAttribute(items[i]));
         }
@@ -286,34 +362,43 @@ public class FileMethods implements AnnotationConstants {
     }
 
 
-    public static Attribute parseAttribute(String input) throws IllegalArgumentException {
+    public static Attribute parseAttribute(String input) throws IllegalArgumentException
+    {
 
         String ipAttribExpr = ipTermExpr + ";" + ipTermExpr;
         String goPairAttribExpr = goTermExpr + ";" + goTermExpr;
         //String alignAttribExpr = uniprotTermExpr + ";" + uniprotTermExpr;
         String alignAttribExpr = "\\w+;\\w+";
 
-        if (Pattern.matches(ipAttribExpr, input)) {
+        if (Pattern.matches(ipAttribExpr, input))
+        {
             String[] terms = input.split(";");
             IpAttribute ipa = new IpAttribute(new IpTermPair(terms[0], terms[1]));
             return ipa;
-        } else if (Pattern.matches(goPairAttribExpr, input)) {
+        }
+        else if (Pattern.matches(goPairAttribExpr, input))
+        {
             String[] terms = input.split(";");
             GoPairAttribute gpa = new GoPairAttribute(new GoTermPair(terms[0], terms[1]));
             return gpa;
-        } else if (Pattern.matches(alignAttribExpr, input)) {
+        }
+        else if (Pattern.matches(alignAttribExpr, input))
+        {
             String[] terms = input.split(";");
             AlignmentAttribute aa = new AlignmentAttribute(
                     new ProteinPair(terms[0], terms[1]));
             return aa;
-        } else {
+        }
+        else
+        {
             throw new IllegalArgumentException(
                     "Cannot parse attribute from input string " + input);
         }
     }
 
 
-    public static String getDateTime() {
+    public static String getDateTime()
+    {
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = new Date();
         return dateFormat.format(date);

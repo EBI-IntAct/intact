@@ -16,7 +16,8 @@ import java.io.IOException;
  * @version $Id$
  * @since 17-Aug-2006
  */
-public class CombineFiles implements UtilConstants {
+public class CombineFiles implements UtilConstants
+{
 
     // front-end for the FileCombiner class
     // combine the attributes in files in standard format
@@ -24,7 +25,8 @@ public class CombineFiles implements UtilConstants {
     String[] inPaths;
     String outPath;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException
+    {
 
         // command-line version
         //CombineFiles combine = new CombineFiles(args);
@@ -36,9 +38,9 @@ public class CombineFiles implements UtilConstants {
 //                dataDir+"highconf_alignment_attribs.txt"
 //        };
 
-        String[] testArgs = {dataDir+"medconf_all_attribs.txt", // first argument is output file
-                dataDir+"medconf_ip_attribs.txt", // subsequent arguments are input files
-                dataDir+"medconf_go_attribs.txt",
+        String[] testArgs = {dataDir + "medconf_all_attribs.txt", // first argument is output file
+                dataDir + "medconf_ip_attribs.txt", // subsequent arguments are input files
+                dataDir + "medconf_go_attribs.txt",
                 //dataDir+"medconf_alignment_attribs.txt"
         };
 
@@ -46,11 +48,15 @@ public class CombineFiles implements UtilConstants {
 
     }
 
-    public CombineFiles(String[] args) throws IOException {
+    public CombineFiles(String[] args) throws IOException
+    {
 
         outPath = args[0];
-        inPaths = new String[args.length-1];
-        for (int i=1;i<args.length;i++) inPaths[i-1] = args[i];
+        inPaths = new String[args.length - 1];
+        for (int i = 1; i < args.length; i++)
+        {
+            inPaths[i - 1] = args[i];
+        }
         FileCombiner fc = new FileCombiner(inPaths, outPath);
 
     }
