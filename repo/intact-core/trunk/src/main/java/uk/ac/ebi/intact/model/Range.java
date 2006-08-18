@@ -6,15 +6,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.model;
 
 import org.hibernate.annotations.Type;
-import org.hibernate.type.BooleanType;
-import org.hibernate.type.YesNoType;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * <p/>
@@ -103,11 +96,6 @@ public class Range extends BasicObjectImpl {
      */
     private boolean linked = true;
 
-    /**
-     * Only needed by OJB to get a handle to an inverse FK from Feature
-     */
-    private String featureAc;   //can go later by using OJB 'anonymous' field
-
     //------------------- cvObjects --------------------------------------
 
     /**
@@ -122,7 +110,6 @@ public class Range extends BasicObjectImpl {
     private String toCvFuzzyTypeAc;  //get rid of this later with OJB 'anonymous'
 
     private Feature feature;
-
 
     /**
      * Sets the bean's from range
@@ -239,6 +226,8 @@ public class Range extends BasicObjectImpl {
     }
 
     //------------------------- public methods --------------------------------------
+
+
 
     public int getFromIntervalStart() {
         return fromIntervalStart;
@@ -365,10 +354,6 @@ public class Range extends BasicObjectImpl {
 
     public void setToCvFuzzyType( CvFuzzyType type ) {
         toCvFuzzyType = type;
-    }
-
-    public void setParentAc( String parentAc ) {
-        this.featureAc = parentAc;
     }
 
     /**
