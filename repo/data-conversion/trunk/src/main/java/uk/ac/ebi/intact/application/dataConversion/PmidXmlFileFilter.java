@@ -8,10 +8,9 @@ package uk.ac.ebi.intact.application.dataConversion;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.FileFilter;
 import java.io.File;
+import java.io.FileFilter;
 import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
 /**
  * Filters the files that follow this pattern %PMID%.xml
@@ -30,7 +29,7 @@ public class PmidXmlFileFilter implements FileFilter
      * <p/>
      * It matches 12345.xml, 12345_author-2006-1.xml
      */
-    public static final String PMID_XML_FILE_PATTERN = "(\\d+)\\D.*xml";
+    public static final String PMID_XML_FILE_PATTERN = "^(\\d+)\\D.*xml";
 
     /**
      * Compiled pattern.
