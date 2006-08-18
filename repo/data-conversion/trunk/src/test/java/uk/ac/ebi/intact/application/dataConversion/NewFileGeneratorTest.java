@@ -63,7 +63,7 @@ public class NewFileGeneratorTest extends TestCase
         DisplayXML.write(doc, writer, "   ");
 
         String xmlDoc = writer.toString();
-        assertEquals(25939, xmlDoc.length());
+        assertEquals(58964, xmlDoc.length());
 
         // 2.5
         doc = NewFileGenerator.generatePsiData(eliSpecies.get(0), PsiVersion.getVersion25(), mapping);
