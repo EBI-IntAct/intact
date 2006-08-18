@@ -14,11 +14,13 @@ import uk.ac.ebi.intact.confidence.ProteinPair;
  * @version $Id$
  * @since 09-Aug-2006
  */
-public class AlignmentAttribute extends Attribute {
+public class AlignmentAttribute extends Attribute
+{
 
     private ProteinPair pair;
 
-    public AlignmentAttribute(ProteinPair pair) {
+    public AlignmentAttribute(ProteinPair pair)
+    {
 
         // type and name are instance variables inherited from superclass
         type = Attribute.ALIGNMENT_TYPE;
@@ -27,42 +29,59 @@ public class AlignmentAttribute extends Attribute {
     }
 
 
-    public int compareTo(Attribute other) {
+    public int compareTo(Attribute other)
+    {
 
-        if (other instanceof AlignmentAttribute) {
+        if (other instanceof AlignmentAttribute)
+        {
             AlignmentAttribute otherAtt = (AlignmentAttribute) other;
             return pair.compareTo(otherAtt.getProteinPair());
-        } else {
+        }
+        else
+        {
             Integer typeInt = type;
             return typeInt.compareTo(other.getType());
         }
 
     }
 
-    public boolean equals(Object other) {
+    public boolean equals(Object other)
+    {
         // override standard equals() method
-        if (other == null) return false;
-        else if (other instanceof AlignmentAttribute) {
+        if (other == null)
+        {
+            return false;
+        }
+        else if (other instanceof AlignmentAttribute)
+        {
             AlignmentAttribute otherAtt = (AlignmentAttribute) other;
             ProteinPair otherPair = otherAtt.getProteinPair();
             return pair.equals(otherPair);
-        } else return false;
+        }
+        else
+        {
+            return false;
+        }
     }
 
-    public int hashCode() {
+    public int hashCode()
+    {
         // need to override hashCode()  because equals()  has been overridden
         return pair.hashCode();
     }
 
-    public ProteinPair getProteinPair() {
+    public ProteinPair getProteinPair()
+    {
         return pair;
     }
 
-    public String toString() {
+    public String toString()
+    {
         return name;
     }
 
-    public String getTypeName() {
+    public String getTypeName()
+    {
         return Attribute.ALIGNMENT_TYPENAME;
     }
 

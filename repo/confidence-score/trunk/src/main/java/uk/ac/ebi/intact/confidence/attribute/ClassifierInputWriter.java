@@ -22,7 +22,8 @@ import java.io.*;
  *        writes input for classifier programs
  *        eg. TADM event files, c4.5 format for jBNC and decision trees
  */
-public class ClassifierInputWriter implements AnnotationConstants {
+public class ClassifierInputWriter implements AnnotationConstants
+{
 
     private HashMap<Attribute, Integer> attribIndices;
     // mapping from attributes to their indices
@@ -33,7 +34,8 @@ public class ClassifierInputWriter implements AnnotationConstants {
     private String hcPath, lcPath, outPath;
 
     public ClassifierInputWriter(String hcPath, String lcPath, String outPath, String type)
-            throws IllegalArgumentException, IOException {
+            throws IllegalArgumentException, IOException
+    {
 
         this.hcPath = hcPath;
         this.lcPath = lcPath;
@@ -52,33 +54,44 @@ public class ClassifierInputWriter implements AnnotationConstants {
         attribIndices = new HashMap<Attribute, Integer>();
         attribIndices.put(new NullAttribute(), 0);
         int i = 1;
-        for (Attribute a : sortedAttribs) {
-            if (a.getType() == Attribute.NULL_TYPE) continue; // null attribute already added
+        for (Attribute a : sortedAttribs)
+        {
+            if (a.getType() == Attribute.NULL_TYPE)
+            {
+                continue; // null attribute already added
+            }
             attribIndices.put(a, i);
             i++;
         }
 
 
-        if (type.equals("TADM")) {
+        if (type.equals("TADM"))
+        {
             writeTadmFile(hcPath, lcPath, outPath);
-        } else if (type.equals("c4.5")) {
+        }
+        else if (type.equals("c4.5"))
+        {
             writeC45File();
-        } else {
+        }
+        else
+        {
             throw new IllegalArgumentException(
                     "Incorrect classifier type supplied to ClassifierInputWriter: " + type);
         }
 
     }
 
-    public void writeAttribList(String path) throws IOException {
+    public void writeAttribList(String path) throws IOException
+    {
 
         FileWriter fw = new FileWriter(path);
         PrintWriter pw = new PrintWriter(fw);
 
-        String header = "> Attributes present in HC file "+hcPath+" and LC file "+lcPath+"\n"+
-          "> written to TADM file "+outPath+" on "+FileMethods.getDateTime();
+        String header = "> Attributes present in HC file " + hcPath + " and LC file " + lcPath + "\n" +
+                "> written to TADM file " + outPath + " on " + FileMethods.getDateTime();
         pw.println(header);
-        for (Attribute a: sortedAttribs) {
+        for (Attribute a : sortedAttribs)
+        {
             pw.println(a.toString());
         }
 
@@ -86,7 +99,8 @@ public class ClassifierInputWriter implements AnnotationConstants {
     }
 
 
-    private void writeTadmFile(String hcPath, String lcPath, String outPath) throws IOException {
+    private void writeTadmFile(String hcPath, String lcPath, String outPath) throws IOException
+    {
         /* write an input file for the Toolkit for Advanced Discriminative Modelling (TADM)
          * TADM is MaxEnt modelling software
          * also need two BinaryInteractionSet objects -- respectively positive and negative examples
@@ -130,8 +144,12 @@ public class ClassifierInputWriter implements AnnotationConstants {
         // read high-confidence interactions
         fr = new FileReader(hcPath);
         br = new BufferedReader(fr);
-        while ((line = br.readLine()) != null) {
-            if (Pattern.matches(commentExpr, line)) continue;  // skip comment lines
+        while ((line = br.readLine()) != null)
+        {
+            if (Pattern.matches(commentExpr, line))
+            {
+                continue;  // skip comment lines
+            }
             sorted = new TreeSet<Attribute>(FileMethods.parseAttributeLine(line));
             sorted.add(new NullAttribute());
             block = eventFileBlock(sorted, true);
@@ -142,8 +160,12 @@ public class ClassifierInputWriter implements AnnotationConstants {
         // repeat for low-confidence interactions
         fr = new FileReader(lcPath);
         br = new BufferedReader(fr);
-        while ((line = br.readLine()) != null) {
-            if (Pattern.matches(commentExpr, line)) continue;  // skip comment lines
+        while ((line = br.readLine()) != null)
+        {
+            if (Pattern.matches(commentExpr, line))
+            {
+                continue;  // skip comment lines
+            }
             sorted = new TreeSet<Attribute>(FileMethods.parseAttributeLine(line));
             block = eventFileBlock(sorted, false);
             pw.println(block);
@@ -154,7 +176,8 @@ public class ClassifierInputWriter implements AnnotationConstants {
     }
 
 
-    private String eventFileBlock(TreeSet<Attribute> sorted, boolean outcome) {
+    private String eventFileBlock(TreeSet<Attribute> sorted, boolean outcome)
+    {
         // find event file block for a given context (binary interaction)
 
 
@@ -162,20 +185,28 @@ public class ClassifierInputWriter implements AnnotationConstants {
 
         // generate object to represent this context (binary interaction) for TADM
         TadmContext tc;
-        if (outcome == true) tc = new TadmContext(1, // frequency of 'true' interaction
-                0, // frequency of 'false' interaction
-                attribIndicesPresent);
-        else tc = new TadmContext(0, // frequency of 'true' interaction
-                1, // frequency of 'false' interaction
-                attribIndicesPresent);
+        if (outcome == true)
+        {
+            tc = new TadmContext(1, // frequency of 'true' interaction
+                    0, // frequency of 'false' interaction
+                    attribIndicesPresent);
+        }
+        else
+        {
+            tc = new TadmContext(0, // frequency of 'true' interaction
+                    1, // frequency of 'false' interaction
+                    attribIndicesPresent);
+        }
 
         return tc.getEventFileBlock();
     }
 
-    private int[] findAttribIndicesPresent(TreeSet<Attribute> sortedAttribs) {
+    private int[] findAttribIndicesPresent(TreeSet<Attribute> sortedAttribs)
+    {
         int[] indices = new int[sortedAttribs.size()];
         int i = 0;
-        for (Attribute a : sortedAttribs) {
+        for (Attribute a : sortedAttribs)
+        {
             indices[i] = attribIndices.get(a);
             i++;
         }
@@ -184,7 +215,8 @@ public class ClassifierInputWriter implements AnnotationConstants {
     }
 
 
-    private void writeC45File() throws IllegalArgumentException {
+    private void writeC45File() throws IllegalArgumentException
+    {
         throw new IllegalArgumentException("c4.5 method not defined yet!");
     }
 

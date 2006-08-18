@@ -25,7 +25,8 @@ import java.io.*;
  *        read attributes of multiple types from file
  *        combine into a single file
  */
-public class FileCombiner implements AnnotationConstants {
+public class FileCombiner implements AnnotationConstants
+{
 
 
     private boolean verbose = true;
@@ -35,7 +36,8 @@ public class FileCombiner implements AnnotationConstants {
     private int rejected;  // count number of incorrectly formatted protein pairs rejected
 
     public FileCombiner(String[] attributePaths, String outPath)
-            throws IOException {
+            throws IOException
+    {
         // this version finds attributes for blocks of 1000 protein pairs
         // avoids out-of-memory errors
 
@@ -45,24 +47,31 @@ public class FileCombiner implements AnnotationConstants {
 
         rejected = 0; // count number of incorrectly formatted protein pairs rejected
 
-        for (String path : attributePaths) {
+        for (String path : attributePaths)
+        {
             FileReader fr = new FileReader(path);
             BufferedReader br = new BufferedReader(fr);
             String line;
             boolean firstBuffer = true;
-            while ((line = br.readLine()) != null) {
+            while ((line = br.readLine()) != null)
+            {
                 ProteinPair pair = FileMethods.getProteinPair(line);
-                if (allPairs.contains(pair)) continue;
+                if (allPairs.contains(pair))
+                {
+                    continue;
+                }
                 // ignore pairs for which annotation has already been written
-                if (!FileMethods.correctUniprotFormats(pair)) {
+                if (!FileMethods.correctUniprotFormats(pair))
+                {
                     // also ignore pairs containing incorrectly formatted uniprot names
                     rejected++;
-                    if (verbose) {
-                          String comment = pair.toString()+
-                                  " rejected -- badly formatted UniProt ID.";
+                    if (verbose)
+                    {
+                        String comment = pair.toString() +
+                                " rejected -- badly formatted UniProt ID.";
                         System.out.println(comment);
-                        comment = rejected+" pairs of "+allPairs.size()
-                                +" rejected so far.";
+                        comment = rejected + " pairs of " + allPairs.size()
+                                + " rejected so far.";
                         System.out.println(comment);
                     }
                     continue;
@@ -71,16 +80,21 @@ public class FileCombiner implements AnnotationConstants {
 
                 allPairs.add(pair);
                 pairBuffer.add(pair);
-                if (pairBuffer.size() == maxBufferSize) {
-                    if (firstBuffer) {
+                if (pairBuffer.size() == maxBufferSize)
+                {
+                    if (firstBuffer)
+                    {
                         appendAttributeInfo(pairBuffer, attributePaths, outPath, false);
                         firstBuffer = false;
                         // open new output file instead of appending to old one
-                    } else {
+                    }
+                    else
+                    {
                         appendAttributeInfo(pairBuffer, attributePaths, outPath, true);
                     }
                     pairBuffer.clear();
-                    if (verbose) {
+                    if (verbose)
+                    {
                         String comment =
                                 "Annotation for " + allPairs.size() + " protein pairs found.";
                         System.out.println(comment);
@@ -91,34 +105,43 @@ public class FileCombiner implements AnnotationConstants {
 
             fr.close();
         }
-        if (verbose) {
+        if (verbose)
+        {
             String comment = allPairs.size() + " protein pairs found.";
             System.out.println(comment);
         }
     }
 
 
-    public int getRejected() {
+    public int getRejected()
+    {
         return rejected;
     }
 
     private void appendAttributeInfo(
             HashSet<ProteinPair> interactions, String[] attribPaths, String outPath, boolean append)
-            throws IOException {
+            throws IOException
+    {
 
         HashMap<ProteinPair, HashSet<Attribute>> pairToAttribs =
                 new HashMap<ProteinPair, HashSet<Attribute>>();
-        for (String path : attribPaths) {
+        for (String path : attribPaths)
+        {
             FileReader fr = new FileReader(path);
             BufferedReader br = new BufferedReader(fr);
             String line;
-            while ((line = br.readLine()) != null) {
+            while ((line = br.readLine()) != null)
+            {
                 ProteinPair pair = FileMethods.getProteinPair(line);
-                if (interactions.contains(pair)) {
+                if (interactions.contains(pair))
+                {
                     HashSet<Attribute> newAttribs = FileMethods.parseAttributeLine(line);
                     HashSet<Attribute> oldAttribs = pairToAttribs.get(pair);
                     ArrayList<Attribute> update = new ArrayList<Attribute>();
-                    if (oldAttribs != null) update.addAll(oldAttribs);
+                    if (oldAttribs != null)
+                    {
+                        update.addAll(oldAttribs);
+                    }
                     update.addAll(newAttribs);
                     pairToAttribs.put(pair, new HashSet<Attribute>(update));
                 }
@@ -130,10 +153,12 @@ public class FileCombiner implements AnnotationConstants {
         FileWriter fw = new FileWriter(outPath, append); // open FileWriter for appending
         PrintWriter pw = new PrintWriter(fw);
         StringBuilder out;
-        for (ProteinPair pair : pairToAttribs.keySet()) {
+        for (ProteinPair pair : pairToAttribs.keySet())
+        {
             out = new StringBuilder(pair.toString());
             HashSet<Attribute> attribs = pairToAttribs.get(pair);
-            for (Attribute a : attribs) {
+            for (Attribute a : attribs)
+            {
                 out.append(",");
                 out.append(a.toString());
             }

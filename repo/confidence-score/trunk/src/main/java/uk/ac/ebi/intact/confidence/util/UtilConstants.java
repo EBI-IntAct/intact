@@ -7,7 +7,8 @@ package uk.ac.ebi.intact.confidence.util;
  * @version $Id$
  * @since 14-Aug-2006
  */
-public interface UtilConstants {
+public interface UtilConstants
+{
 
     public static String tmpDir = "/tmp/";
     public static String blastDir = "/disk/scratch/blast/";

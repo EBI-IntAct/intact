@@ -20,18 +20,21 @@ import java.util.regex.Pattern;
  * @version $Id$
  * @since 31-Jul-2006
  */
-public class FileMaker {
+public class FileMaker
+{
 
     BinaryInteractionSet biSet;
     private boolean verbose = false; // debug switch
 
-    public FileMaker(BinaryInteractionSet biSet) {
+    public FileMaker(BinaryInteractionSet biSet)
+    {
 
         this.biSet = biSet;
 
     }
 
-    public void writeAnnotationAttributes(String notePath, String outPath) throws IOException {
+    public void writeAnnotationAttributes(String notePath, String outPath) throws IOException
+    {
         // write attributes based on UniProt annotation -- eg. GO and InterPro terms
 
         // generate File objects for input/output
@@ -47,23 +50,36 @@ public class FileMaker {
         String[] annotation1, annotation2;
 
         // now write output for each interaction
-        for (ProteinPair bi : biSet.getSet()) {
+        for (ProteinPair bi : biSet.getSet())
+        {
             String[] names = bi.getNames();
             annotation1 = annotationMap.get(names[0]);
             annotation2 = annotationMap.get(names[1]);
-            if (annotation1 == null || annotation2 == null) continue;
+            if (annotation1 == null || annotation2 == null)
+            {
+                continue;
+            }
 
             sb = new StringBuilder();
             sb.append(names[0] + ";" + names[1]); // append protein names, separated by semicolon
-            for (String term1 : annotation1) {
-                for (String term2 : annotation2) {
-                    if (term1.equals(term2)) continue;
-                    else sb.append("," + term1 + ";" + term2); // comma-separated list of term pairs
+            for (String term1 : annotation1)
+            {
+                for (String term2 : annotation2)
+                {
+                    if (term1.equals(term2))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        sb.append("," + term1 + ";" + term2); // comma-separated list of term pairs
+                    }
                     // terms in pair separated by semicolon
                 }
             }
             pw.println(sb.toString());
-            if (verbose) {
+            if (verbose)
+            {
                 String comment = "Annotation written for protein pair " + bi.toString();
                 System.out.println(comment);
             }
@@ -75,7 +91,8 @@ public class FileMaker {
     }
 
     public void writeAlignmentAttributes(String hitPath, String hiconfPath, String outPath)
-            throws IOException {
+            throws IOException
+    {
         // similar to writeAnnotationAttributes, but based on sequence alignment
         // hitPath is path to a file with:
         //   * (possible) interactors
@@ -88,7 +105,8 @@ public class FileMaker {
         HashMap<String, String[]> hitMap = getAlignmentMap(hitPath);
 
         HashSet<ProteinPair> hiConfSet = new BinaryInteractionSet(hiconfPath).getSet();
-        if (verbose) {
+        if (verbose)
+        {
             String comment = hiConfSet.size() + " high-confidence protein pairs found.\n";
             System.out.println(comment);
         }
@@ -99,16 +117,21 @@ public class FileMaker {
 
         String[] prots, hits0, hits1;
         StringBuilder sb;
-        for (ProteinPair pair : biSet.getSet()) {
+        for (ProteinPair pair : biSet.getSet())
+        {
             sb = new StringBuilder(pair.toString());
             prots = pair.getNames();
             hits0 = hitMap.get(prots[0]);
             hits1 = hitMap.get(prots[1]);
-            if (hits0 != null && hits1 != null) {
-                for (String p0 : hits0) {
-                    for (String p1 : hits1) {
+            if (hits0 != null && hits1 != null)
+            {
+                for (String p0 : hits0)
+                {
+                    for (String p1 : hits1)
+                    {
                         ProteinPair hitPair = new ProteinPair(p0, p1);
-                        if (hiConfSet.contains(hitPair)) {
+                        if (hiConfSet.contains(hitPair))
+                        {
                             // this protein pair is related to a high-confidence pair
                             // (by significant sequence similarity)
                             sb.append(',');
@@ -127,7 +150,8 @@ public class FileMaker {
     }
 
 
-    private HashMap<String, String[]> getProteinAnnotations(String notePath) throws IOException {
+    private HashMap<String, String[]> getProteinAnnotations(String notePath) throws IOException
+    {
 
         File noteFile = new File(notePath);
         FileReader fr = new FileReader(noteFile);
@@ -136,11 +160,13 @@ public class FileMaker {
 
         String line, prot;
         String[] items, terms;
-        while ((line = br.readLine()) != null) {
+        while ((line = br.readLine()) != null)
+        {
             items = line.split(","); // split by commas
             prot = items[0];  // first item is a protein name
             terms = new String[items.length - 1];
-            for (int i = 1; i < items.length; i++) { // subsequent items are annotation terms
+            for (int i = 1; i < items.length; i++)
+            { // subsequent items are annotation terms
                 terms[i - 1] = items[i];
             }
             annotationMap.put(prot, terms);
@@ -151,7 +177,8 @@ public class FileMaker {
 
     }
 
-    private HashMap<String, String[]> getAlignmentMap(String hitPath) throws IOException {
+    private HashMap<String, String[]> getAlignmentMap(String hitPath) throws IOException
+    {
         // similar to the above, but for sequence alignments
 
 
@@ -160,21 +187,30 @@ public class FileMaker {
         BufferedReader br = new BufferedReader(fr);
         String line, prot;
         String[] items, hits;
-        while ((line = br.readLine()) != null) {
+        while ((line = br.readLine()) != null)
+        {
             items = line.split(","); // split by commas
             prot = items[0];
             //if (!Pattern.matches("\\w+", prot)) continue;
-            if (items.length == 1) {
+            if (items.length == 1)
+            {
                 hitMap.put(prot, null);
-                if (verbose) {
+                if (verbose)
+                {
                     String comment = "No alignments found for protein " + prot;
                     System.out.println(comment);
                 }
-            } else {
+            }
+            else
+            {
                 hits = new String[items.length - 1];
-                for (int i = 1; i < items.length; i++) hits[i - 1] = items[i];
+                for (int i = 1; i < items.length; i++)
+                {
+                    hits[i - 1] = items[i];
+                }
                 hitMap.put(prot, hits);
-                if (verbose) {
+                if (verbose)
+                {
                     int some = items.length - 1;
                     String comment = some + " alignments found for protein " + prot;
                     System.out.println(comment);

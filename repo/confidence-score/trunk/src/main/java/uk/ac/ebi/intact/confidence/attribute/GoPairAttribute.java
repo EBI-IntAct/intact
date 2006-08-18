@@ -13,57 +13,74 @@ package uk.ac.ebi.intact.confidence.attribute;
  * @version $Id$
  * @since 21-Jun-2006
  */
-public class GoPairAttribute extends Attribute {
+public class GoPairAttribute extends Attribute
+{
 
     private GoTermPair pair;
 
-    public GoPairAttribute(GoTermPair pair) {
+    public GoPairAttribute(GoTermPair pair)
+    {
         // type and name are instance variables inherited from superclass
         type = Attribute.GO_PAIR_TYPE;
         this.pair = pair;
         this.name = pair.toString();
     }
 
-    public int compareTo(Attribute other) {
+    public int compareTo(Attribute other)
+    {
 
-        if (other instanceof GoPairAttribute) {
+        if (other instanceof GoPairAttribute)
+        {
             GoPairAttribute otherAtt = (GoPairAttribute) other;
             return pair.compareTo(otherAtt.getTermPair());
-        } else {
+        }
+        else
+        {
             Integer typeInt = type;
             return typeInt.compareTo(other.getType());
         }
 
     }
 
-    public boolean equals(Object other) {
+    public boolean equals(Object other)
+    {
         // override standard equals() method
-        if (other == null) return false;
-        else if (other instanceof GoPairAttribute) {
+        if (other == null)
+        {
+            return false;
+        }
+        else if (other instanceof GoPairAttribute)
+        {
             GoPairAttribute otherAtt = (GoPairAttribute) other;
             GoTermPair otherTermPair = otherAtt.getTermPair();
             return pair.equals(otherTermPair);
-        } else return false;
+        }
+        else
+        {
+            return false;
+        }
     }
 
-    public int hashCode() {
+    public int hashCode()
+    {
         // need to override hashCode()  because equals()  has been overridden
         return pair.hashCode();
     }
 
-    public GoTermPair getTermPair() {
+    public GoTermPair getTermPair()
+    {
         return pair;
     }
 
-    public String toString() {
+    public String toString()
+    {
         return name;
     }
 
-    public String getTypeName() {
+    public String getTypeName()
+    {
         return Attribute.GO_PAIR_TYPENAME;
     }
-
-
 
 
 }

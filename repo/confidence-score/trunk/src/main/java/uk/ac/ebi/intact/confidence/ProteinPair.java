@@ -12,10 +12,12 @@ package uk.ac.ebi.intact.confidence;
  * @version $Id$
  * @since 14-Jun-2006
  */
-public class ProteinPair extends BinaryItem {
+public class ProteinPair extends BinaryItem
+{
 
-      public ProteinPair(String name1, String name2) {
-          super(name1, name2);
-      }
+    public ProteinPair(String name1, String name2)
+    {
+        super(name1, name2);
+    }
 
 }

@@ -14,10 +14,11 @@ package uk.ac.ebi.intact.confidence.attribute;
  * @since 12-Jul-2006
  *        <p/>
  *        Specifies a context (binary interaction)
- *  in the Toolkit for Advanced Discriminative Modelling (TADM) MaxEnt modelling software
+ *        in the Toolkit for Advanced Discriminative Modelling (TADM) MaxEnt modelling software
  *        Only has binary events (true/false) and binary-valued features in this implementation
  */
-public class TadmContext {
+public class TadmContext
+{
     // context is a data point, eg. binary interaction
 
     static int totalEvents = 2; // events in a given context are true/false
@@ -31,7 +32,8 @@ public class TadmContext {
     int[] features0;  // array of feature indices for 'false' interaction
 
 
-    public TadmContext(int freq1, int freq0, int[] attribs) {
+    public TadmContext(int freq1, int freq0, int[] attribs)
+    {
         // attribs is an array of attribute indices
         // feature index for (attribute, true) = attribute index * 2
         // feature index for (attribute, false) = (attribute index * 2) +1
@@ -46,7 +48,8 @@ public class TadmContext {
         features0 = new int[fvPairs];
 
         int attribIndex;
-        for (int i = 0; i < fvPairs; i++) {
+        for (int i = 0; i < fvPairs; i++)
+        {
             attribIndex = attribs[i];
             features1[i] = attribIndex * 2;
             features0[i] = (attribIndex * 2) + 1;
@@ -54,36 +57,46 @@ public class TadmContext {
 
     }
 
-    public String getEventFileBlock() {
+    public String getEventFileBlock()
+    {
         // returns a three-line block to represent this context in an event file
 
         String fvPair, block;
 
         StringBuilder fvList1 = new StringBuilder();
-        for (int i : features1) {
+        for (int i : features1)
+        {
             fvPair = " " + i + " 1";
             fvList1.append(fvPair);
         }
         StringBuilder fvList0 = new StringBuilder();
-        for (int i : features0) {
+        for (int i : features0)
+        {
             fvPair = " " + i + " 1";
             fvList0.append(fvPair);
         }
 
 
         block = uk.ac.ebi.intact.confidence.attribute.TadmContext.totalEvents + "\n" +  // first line:  total events = 2
-                freq1 + " " + fvPairs + fvList1.toString()+"\n"+
+                freq1 + " " + fvPairs + fvList1.toString() + "\n" +
                 // second line -- attributes for 'true' event
                 freq0 + " " + fvPairs + fvList0.toString();
-                // third line -- attributes for 'false' event
+        // third line -- attributes for 'false' event
         return block;
 
     }
 
-    public void incrFreq(boolean outcome) throws IllegalArgumentException {
+    public void incrFreq(boolean outcome) throws IllegalArgumentException
+    {
         // increase frequency of a true/false outcome by 1
-        if (outcome == true) freq1++;
-        else freq0++;
+        if (outcome == true)
+        {
+            freq1++;
+        }
+        else
+        {
+            freq0++;
+        }
     }
 
 

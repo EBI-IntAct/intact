@@ -17,7 +17,8 @@ import java.io.FileNotFoundException;
  * @version $Id$
  * @since 17-Aug-2006
  */
-public class RocAnalyzer {
+public class RocAnalyzer
+{
 
     // analyse false-positive and false-negative results from maxent classifier
     // determine false-positive and false-negative according to score threshold used
@@ -37,7 +38,8 @@ public class RocAnalyzer {
     static boolean verbose = false; // debug switch
 
     public RocAnalyzer(String attribPath, String weightPath,
-                       String posTest, String negTest) throws IOException {
+                       String posTest, String negTest) throws IOException
+    {
 
         // posTest and negTest are paths to positive/negative test sets
         // attributes and weights must be for a classifier trained without postTest and negTest
@@ -51,7 +53,8 @@ public class RocAnalyzer {
 
     }
 
-    public void printSummary() throws IOException {
+    public void printSummary() throws IOException
+    {
 
         double threshold = 0.5;
         int total = totalNeg() + totalPos();
@@ -62,7 +65,8 @@ public class RocAnalyzer {
         int truePos = truePositives(threshold, true);
         int falsePos = falsePositives(threshold, true);
 
-        if (verbose) {
+        if (verbose)
+        {
             String comment = "True positives = " + truePos;
             System.out.println(comment);
             comment = "False positives = " + falsePos;
@@ -86,12 +90,15 @@ public class RocAnalyzer {
 
     }
 
-    public void printRocPoints(int points) throws IOException {
+    public void printRocPoints(int points) throws IOException
+    {
 
         double[] thresholds = new double[points];
-        for (int i = 0; i < points; i++) {
+        for (int i = 0; i < points; i++)
+        {
             thresholds[i] = new Double((i + 1.0)) * (1 / new Double(points));
-            if (verbose) {
+            if (verbose)
+            {
                 String comment = "threshold = " + thresholds[i];
                 System.out.println(comment);
             }
@@ -99,24 +106,29 @@ public class RocAnalyzer {
         double[] truePositives = positives(thresholds, true);
         double[] falsePositives = positives(thresholds, false);
         double[] trueNegatives = new double[points];
-        for (int i = 0; i < points; i++) {
+        for (int i = 0; i < points; i++)
+        {
             trueNegatives[i] = 1.0 - falsePositives[i];
         }
 
         System.out.println("[Fraction of true positives] [Fraction of true negatives]");
-        for (int i = 0; i < points; i++) {
+        for (int i = 0; i < points; i++)
+        {
             String out = truePositives[i] + "\t" + trueNegatives[i];
             System.out.println(out);
         }
 
     }
 
-    public double[] truePositives(int points) throws IOException {
+    public double[] truePositives(int points) throws IOException
+    {
 
         double[] thresholds = new double[points];
-        for (int i = 0; i < points; i++) {
+        for (int i = 0; i < points; i++)
+        {
             thresholds[i] = new Double((i + 1.0)) * (1 / new Double(points));
-            if (verbose) {
+            if (verbose)
+            {
                 String comment = "threshold = " + thresholds[i];
                 System.out.println(comment);
             }
@@ -125,19 +137,23 @@ public class RocAnalyzer {
         return positives(thresholds, true);
     }
 
-    public double[] trueNegatives(int points) throws IOException {
+    public double[] trueNegatives(int points) throws IOException
+    {
 
         double[] thresholds = new double[points];
-        for (int i = 0; i < points; i++) {
+        for (int i = 0; i < points; i++)
+        {
             thresholds[i] = new Double((i + 1.0)) * (1 / new Double(points));
-            if (verbose) {
+            if (verbose)
+            {
                 String comment = "threshold = " + thresholds[i];
                 System.out.println(comment);
             }
         }
         double[] falsePositives = positives(thresholds, false);
         double[] trueNegatives = new double[points];
-        for (int i = 0; i < points; i++) {
+        for (int i = 0; i < points; i++)
+        {
             trueNegatives[i] = 1.0 - falsePositives[i];
         }
 
@@ -146,7 +162,8 @@ public class RocAnalyzer {
 
     }
 
-    public double getFractionCorrect() throws IOException {
+    public double getFractionCorrect() throws IOException
+    {
 
         double threshold = 0.5;
         int total = totalNeg() + totalPos();
@@ -171,20 +188,31 @@ public class RocAnalyzer {
     }
 
     private double[] positives(double thresholds[], boolean positiveType)
-            throws IOException {
+            throws IOException
+    {
         // get fractions of true (or false) positives for a given threshold
         // assume equality for threshold
 
 
         Double total = 0.0;
-        if (positiveType == true) total = new Double(totalPos());
-        else total = new Double(totalNeg());
+        if (positiveType == true)
+        {
+            total = new Double(totalPos());
+        }
+        else
+        {
+            total = new Double(totalNeg());
+        }
 
         double[] positiveFractions = new double[thresholds.length];
-        for (int i = 0; i < thresholds.length; i++) {
-            if (positiveType == true) {
+        for (int i = 0; i < thresholds.length; i++)
+        {
+            if (positiveType == true)
+            {
                 positiveFractions[i] = (new Double(truePositives(thresholds[i], true)) / total);
-            } else {
+            }
+            else
+            {
                 positiveFractions[i] = (new Double(falsePositives(thresholds[i], true)) / total);
             }
 
@@ -193,7 +221,8 @@ public class RocAnalyzer {
 
     }
 
-    private int truePositives(double threshold, boolean equality) throws IOException {
+    private int truePositives(double threshold, boolean equality) throws IOException
+    {
 
         int truePos = 0;
 
@@ -201,11 +230,15 @@ public class RocAnalyzer {
         BufferedReader br = new BufferedReader(fr);
         double tScore;
         String line;
-        while ((line = br.readLine()) != null) {
+        while ((line = br.readLine()) != null)
+        {
             tScore = mec.trueScoreFromLine(line);
-            if (equality && tScore >= threshold) {
+            if (equality && tScore >= threshold)
+            {
                 truePos++;
-            } else if (!equality && tScore > threshold) {
+            }
+            else if (!equality && tScore > threshold)
+            {
                 truePos++;
             }
         }
@@ -213,7 +246,8 @@ public class RocAnalyzer {
         return truePos;
     }
 
-    private int falsePositives(double threshold, boolean equality) throws IOException {
+    private int falsePositives(double threshold, boolean equality) throws IOException
+    {
 
         int falsePos = 0;
 
@@ -221,11 +255,15 @@ public class RocAnalyzer {
         BufferedReader br = new BufferedReader(fr);
         double tScore;
         String line;
-        while ((line = br.readLine()) != null) {
+        while ((line = br.readLine()) != null)
+        {
             tScore = mec.trueScoreFromLine(line);
-            if (equality && tScore >= threshold) {
+            if (equality && tScore >= threshold)
+            {
                 falsePos++;
-            } else if (!equality && tScore > threshold) {
+            }
+            else if (!equality && tScore > threshold)
+            {
                 falsePos++;
             }
         }
@@ -234,24 +272,32 @@ public class RocAnalyzer {
 
     }
 
-    private int totalPos() throws IOException {
+    private int totalPos() throws IOException
+    {
         // find total of positive & negative examples
         int total = 0;
         FileReader fr = new FileReader(posTest);
         BufferedReader br = new BufferedReader(fr);
-        while (br.readLine() != null) total++;
+        while (br.readLine() != null)
+        {
+            total++;
+        }
         fr.close();
         return total;
 
     }
 
-    private int totalNeg() throws IOException {
+    private int totalNeg() throws IOException
+    {
         // find total of negative examples
 
         int total = 0;
         FileReader fr = new FileReader(negTest);
         BufferedReader br = new BufferedReader(fr);
-        while (br.readLine() != null) total++;
+        while (br.readLine() != null)
+        {
+            total++;
+        }
         fr.close();
         return total;
 

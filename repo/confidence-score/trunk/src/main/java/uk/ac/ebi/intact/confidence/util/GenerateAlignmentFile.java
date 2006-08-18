@@ -25,7 +25,8 @@ import java.io.IOException;
  *        -l main name list
  *        -a list of significant sequence alignnments
  */
-public class GenerateAlignmentFile implements UtilConstants {
+public class GenerateAlignmentFile implements UtilConstants
+{
 
     static String notes = "GenerateAlignmentFile.java\nRequired arguments:\n" +
             "\t-h [Path to high-confidence binary interaction list]\n" +
@@ -34,22 +35,24 @@ public class GenerateAlignmentFile implements UtilConstants {
             "See documentation for file formats.";
 
 
-
     String hcPath;
     String hitPath;
     String outPath;
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
 
         GenerateAlignmentFile generator = new GenerateAlignmentFile(args);
 
 
     }
 
-    public GenerateAlignmentFile(String[] args) {
+    public GenerateAlignmentFile(String[] args)
+    {
 
-        if (args.length == 0) {
+        if (args.length == 0)
+        {
             System.out.println(notes);
             System.exit(0);
         }
@@ -57,27 +60,38 @@ public class GenerateAlignmentFile implements UtilConstants {
         File hcFile;
         File hitFile;
 
-        try {
-            for (int i = 0; i < args.length; i++) {
-                if (args[i].equals("-h")) {
+        try
+        {
+            for (int i = 0; i < args.length; i++)
+            {
+                if (args[i].equals("-h"))
+                {
                     hcPath = args[i + 1];
                     hcFile = new File(hcPath);
-                    if (!hcFile.canRead()) {
+                    if (!hcFile.canRead())
+                    {
                         throw new IOException("Incorrect argument to GenerateAlignmentFile.main()");
                     }
 
-                } else if (args[i].equals("-a")) {
+                }
+                else if (args[i].equals("-a"))
+                {
                     hitPath = args[i + 1];
                     hitFile = new File(hitPath);
-                    if (!hitFile.canRead()) {
+                    if (!hitFile.canRead())
+                    {
                         throw new IOException("Incorrect argument to GenerateAlignmentFile.main()");
                     }
-                } else if (args[i].equals("-o")) {
+                }
+                else if (args[i].equals("-o"))
+                {
                     outPath = args[i + 1];
                 }
             }
             writeAlignmentFile();
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             System.out.println(e.toString());
             e.printStackTrace();
             System.out.println(notes);
@@ -88,7 +102,8 @@ public class GenerateAlignmentFile implements UtilConstants {
     }
 
     private void writeAlignmentFile
-            () throws IOException {
+            () throws IOException
+    {
         FileMaker fm = new FileMaker(new BinaryInteractionSet(hcPath));
         fm.writeAlignmentAttributes(hitPath, hcPath, outPath);
     }

@@ -16,9 +16,11 @@ import java.io.IOException;
  * @version $Id$
  * @since 16-Aug-2006
  */
-public class PrintCountProfile implements UtilConstants {
+public class PrintCountProfile implements UtilConstants
+{
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException
+    {
 
         // test version -- comment this out for command-line utility
         String path = dataDir + "foo.txt"; //"medconf_go_attribs.txt";
@@ -26,15 +28,16 @@ public class PrintCountProfile implements UtilConstants {
         // command-line utility version
         //String path = args[0];
 
-         PrintCountProfile print = new PrintCountProfile(path);
+        PrintCountProfile print = new PrintCountProfile(path);
     }
 
-    public PrintCountProfile(String path) throws IOException {
+    public PrintCountProfile(String path) throws IOException
+    {
 
         FileMethods.printCountProfile(path);
 
         int total = FileMethods.findTotalInteractions(path);
-        String comment = total+" total interactions present in file.";
+        String comment = total + " total interactions present in file.";
         System.out.println(comment);
     }
 
