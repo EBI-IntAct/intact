@@ -1,4 +1,4 @@
-package uk.ac.ebi.intact.confidence;
+package uk.ac.ebi.intact.confidence.old;
 
 /**
  * TODO comment that
